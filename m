@@ -1,223 +1,327 @@
-Return-Path: <linux-kernel+bounces-747965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E418CB13ABF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:48:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E162AB13AC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE4D716A6BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:48:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77E61892D5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6561526772D;
-	Mon, 28 Jul 2025 12:48:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h2nJ4+ec"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2079.outbound.protection.outlook.com [40.107.95.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B9B26561E;
+	Mon, 28 Jul 2025 12:49:33 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2322C26739E;
-	Mon, 28 Jul 2025 12:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753706890; cv=fail; b=A53u9LZpuzyOqia9drKrccZ9WrcIm5eRMAcv1thZLENmfvUX6Sk9wKTP+U5C4A+OwpJsEY3jNcKLVLuaffhAmYGhtbiE1v5uv+Xfear+7BzymvMHnU49S8+UrSCCgGmDq+jMNKHT1zHZCt85XpUU9AzZq50jkzsKhfNpJCHyVak=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753706890; c=relaxed/simple;
-	bh=TFUxzJXq3omBp56KmANoMBYZR/rSlNvi4iOqP8N3HDA=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=hAxZnePe1JzEp1AfxrN/pvGhSIr5eJXNvNnoftovXpG+ugcrttOi74i7w+Oq8rURF2MBMgeHS1LFF1nsf+bzcgWqMawNNs2y8M/cm2z9AZlLpPoeNLrQgibUUKN3Mzxoc/3Th9mxo9/1qR83hIvekwvVAyp2VBRwRjoVKSHBLqM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h2nJ4+ec; arc=fail smtp.client-ip=40.107.95.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=v1nAYHLeikhRGJLUjdKftmwKxNf+YrFsr7O3qAe6+ZODNCfvc5LQSaRyYi10RAhcacUs2LjGOVXJ/pgYNo33ecZyK8XD5Y4ssPL3hICu4fSgR19pzRHpzSvpnwY/eSCrAqc/berE4Mrq+FfIxabCCfwCG1aLdUbWgBfkPyzCl9EoQhgGqESQn3FKy1gqw07FjnSPXZuBC+p4Zu0EvgIkUml1RRSOo5bz+QVevOQ67LHRnOcVIvxI1ChUxaBVmIfdl/2NPyFaevRAmGR+RGUKZs55VcA279UxfG9I1hWV6zo/0QWvUeYYItnRPAqGfz/GZx5DF/055pOitb+SCV9ldQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fLNtD5FNcikQ3yWgOAxSWxHZwCkmvAvMD8SesIYL7fM=;
- b=xQI3qu1qIilt9vDQ2ygSB3zyE3VAXNj/+HiGYdRyna4yS++K3uppRmh5EksOsE3yxo1fH1RIvX86PFT3XgYJEroey82brRUazfXFwCtJ9qkd/gBxaVBCo+/ntFzQh82OW2lUbSjCevgRhmFbl50B98eePIxfcoOWJYCkWMjJFaVyEZIWrGyR4B/As/JycRuegaSNXlfnuylLYywlacjEcMjfL2F+s5/tsst2E4QEw6PxoistMmtcr6AP9v+lEpvSm/BIMznTOLJKmnwYIuGem6apkiIP4ZQh+nVYWDnZzfGKzSUrnS9AAc2SxNfysYU8TE4yEQH0zWVhKVpHOwspag==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fLNtD5FNcikQ3yWgOAxSWxHZwCkmvAvMD8SesIYL7fM=;
- b=h2nJ4+ecs/cAwhvuMKR2vnzXJ0baCBkgmYYgvoTcV7ahbUJy7CNfaj88GL9EneRHwzER3GCjMwUxafgwnSQ/UdUODQmI7OFzyR6JGAtywCVEugU5c+eEhsUyJ4zcPq/v7zTfpOUETEdIvraClYNEnkkf9NL3k1eUgMzQRxMvINzV/fsGvMbZe6x9BSiEwWpheBizJ4UFOFiRIjFzjI1ngekiZp9lyciIXTgvPjFdQzRsmYYTvqzeIpoKf3rpq0k+yOCZ5H8Y+gsvL+ND/CH5n9ixuyWxtQKkktrPx/hTiSt5XCvL35PP900XqEOL2UNUonZKn3uQCwq+EVmOzTA88Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
- by SJ2PR12MB8848.namprd12.prod.outlook.com (2603:10b6:a03:537::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Mon, 28 Jul
- 2025 12:48:06 +0000
-Received: from CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
- ([fe80::6e37:569f:82ee:3f99%4]) with mapi id 15.20.8964.026; Mon, 28 Jul 2025
- 12:48:06 +0000
-From: Alexandre Courbot <acourbot@nvidia.com>
-Date: Mon, 28 Jul 2025 21:47:52 +0900
-Subject: [PATCH v4 2/2] rust: transmute: add `as_bytes_mut` method to
- `AsBytes` trait
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250728-as_bytes-v4-2-b9156af37e33@nvidia.com>
-References: <20250728-as_bytes-v4-0-b9156af37e33@nvidia.com>
-In-Reply-To: <20250728-as_bytes-v4-0-b9156af37e33@nvidia.com>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>, 
- Danilo Krummrich <dakr@kernel.org>, 
- Daniel Almeida <daniel.almeida@collabora.com>, 
- Robin Murphy <robin.murphy@arm.com>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>
-Cc: "Christian S. Lima" <christiansantoslima21@gmail.com>, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Alexandre Courbot <acourbot@nvidia.com>
-X-Mailer: b4 0.14.2
-X-ClientProxiedBy: TYAPR01CA0067.jpnprd01.prod.outlook.com
- (2603:1096:404:2b::31) To CH2PR12MB3990.namprd12.prod.outlook.com
- (2603:10b6:610:28::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BDD1F95C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753706973; cv=none; b=C9ZU38HNd1Z/PPzC28zCg6Z9jzErwWsxOiXwV9KfC5oxAJoBLjocKTjcUs2CvIbxdlhEMd4ZHRT74a80rWpOHT0pglI3U8mgkK0iXVXk6EMr5DRYsVqm7CcIQrPBjsf03RAGbKRd8a7vsv4HHo+wEBbwGigxyvmf3wKNhc/T9oc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753706973; c=relaxed/simple;
+	bh=UXtAyiwmAAmK3apGh/3DjA+dpdu9JpjLDGI0DOFIqHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bGJgj6dhhAjDZ7zQo6kzy/w22nY2UpTR/7UoWTIOU1oEd2m3gw34EHD9o9QEHNnn3IdS+uu99tP0mG7DEG+U53LijmIniD5LeXhiP3EcWGx61OvO+AFO9kK0cQQ0A/s1LG+5uRG1jYeQ7qx4F2y1wYwHgc+ICjjS2G0Bwps2jJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [141.14.220.42] (g42.guest.molgen.mpg.de [141.14.220.42])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id B456261E64850;
+	Mon, 28 Jul 2025 14:48:37 +0200 (CEST)
+Message-ID: <04cd7aaa-e1f6-410c-98e7-49cb7ec8e582@molgen.mpg.de>
+Date: Mon, 28 Jul 2025 14:48:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SJ2PR12MB8848:EE_
-X-MS-Office365-Filtering-Correlation-Id: d08b9035-7f3b-46f5-5684-08ddcdd4ff86
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|10070799003|7416014|376014|366016|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Z0dVRVoraEtVa3FQS3ZIRVZMbUlXdWw3RDkwTnJDZFNjQ2NRQkxFM3BBcDRP?=
- =?utf-8?B?RjBSRm5nd1BGZWNDNm5FWDN6Nis5WXJSZDlEQVBuMDJwMjg4cy9yOXc4Q2JL?=
- =?utf-8?B?UnROWXB3aHZFT1FjelFUakdlM1ByQTQzTjA0UU1DeTBaakN0ODdETlFOVXNq?=
- =?utf-8?B?bjE2SHYyQmp1K083dnpjZkJ5UnhqZVhycHkwbjkzUHQvZFBONk9sTXAzWnht?=
- =?utf-8?B?bDgrU1JBTlpzank1ejAySmI1cDk4bXF0T3hDNlo4TFIrOEJtTkxNRjYveHhC?=
- =?utf-8?B?SkZkWFhrRWpObDZabUtmWWJXdmZ3MG1TdldzU1ZuZ3V6R0RzZmtUWEdqOG1S?=
- =?utf-8?B?T0xnbGhvVEZ1OFE2cmxHbndyQkh1Z2tGaTVHdmR0NUcwNnQzNDg0Y3Zub1ps?=
- =?utf-8?B?VGtJbktZVXJibDFRVkQ5WWJySDNDRjdQS0g1ak5Fc09EMnh2ZkxHL3BrTHAv?=
- =?utf-8?B?enNTdndtdm1BVVdPQUhYcmpNNEEwYVVUb1AyRVd2N2p4R0g0Wk5HL2RaWFUw?=
- =?utf-8?B?ZFZ3T256Rm1LbGw5R2tFcDk2bm92YmxkNDVGZmlRTzNqOHVQcEM1UFVLRmU3?=
- =?utf-8?B?ZWpqamREeGd3NjN0SmhnMjBXRjB4clRGeTdNVFVVb2dIMGlDRzhGbHNPN2My?=
- =?utf-8?B?STJYS21MK3VjbUNidXJna1FpOCt1WUNEUDRmYkVGWEVscmIrdnlxeFlrS2Fj?=
- =?utf-8?B?dWhjQnFhcGVabUhEbEVWYmZVdncxeUpNTTlHRXdXaTgxNU9LMklyZ2l4bE5h?=
- =?utf-8?B?YUhmeVN2Zkw4MlNhYlZIdENoUFh6ZWVXRlBwS1JsZU5GR0IyNFdKU1VTYzc3?=
- =?utf-8?B?OFBTQzFWc2d0U0FsRTUrQ055WFFDdVVvZXBUbHRxOXczZFl3Y1Q0YW5rL3FQ?=
- =?utf-8?B?S29DdGhOd2o1dDZJTkY4ZTZqSmN6amhLQ2dLM255QTlxWUIwYlpaMVZKNERQ?=
- =?utf-8?B?bkRkZnJSejBTa01ENktjM2lxOHRKeER3ME9zWmRDZTZYdFRtekZ1VjFtSXFj?=
- =?utf-8?B?MUtQWHNaR3IzT1BMVFVUWmkvQkhvWnJ2ZkppZlA5bk1mcnBHLzZlS0tZOWVW?=
- =?utf-8?B?WWIzN0xqYncrZjVXb0pBMWE5MGJOS3ZsRGhFVkNNdXVzMTZKbnVxNTlad3hr?=
- =?utf-8?B?VUJWMzZvbE5xV1k0YlhkN25YYjFjSzNFejNnditpU2Q0UXlUUjZmRFFzbDRU?=
- =?utf-8?B?Vmpqb0YwL2RoR1B6YVRqYjc1TFYyN0UvbVZ6NmFId0NJcjZLN0NzcjVPbU91?=
- =?utf-8?B?L3Z4WFFJbXVqaGZhRnI0N25uMThWZUx3Yk5SMWRBM3NDamRScFMvWHlTZ2lx?=
- =?utf-8?B?UUwzSGJnOFBEYWxmR3dHeTIyRmFWQUY0dko4VDZHbXpkOTkwUEwyRlV4VHZa?=
- =?utf-8?B?TFFheDRnWmIxU3VmTS9yeUZNNFhlbDRRYjFBVXV5eWFXOXZZVG1mSHIyd1p5?=
- =?utf-8?B?UTRMaGpYY2NEclR6VTd6STJMdW5saGFOUnhubVZLNWJmMWZBQitHRWUxVkpF?=
- =?utf-8?B?WExnRUtGalB4K1Y1bkZDTnhoVHorWSs0S3Q1MW1QbDJqbXZiVVN1bWRHeGVW?=
- =?utf-8?B?KzlqcGUzNEdGSUxnTEZQY1dFdjBna2l0Qzd6V0F4b2hmcWxTQXRhalhjV1BQ?=
- =?utf-8?B?VWhsalRuRHFMejV6ampLZUJHd2R6eGtjYkdYRGovcmVTZ253d3RFeE1MdlVl?=
- =?utf-8?B?QjBIaDdXcElJVjlwRURONk15UUJTdzluN0x5SXEzMjZHQVZxSVF3d3RtNnVz?=
- =?utf-8?B?QW03cmJqc2d3N3VVYXZ6ZFh6N0psWStHYURiQkZ4TFBwY2VReFp3UTF0dDJa?=
- =?utf-8?B?cjJ5ZW9HM0RmQ3pXVi9NYThPU3J5MTM2YUw3VTJqNTFweTdwaUhET0tSREdp?=
- =?utf-8?B?LzRWYnByc0Y4U3Fkc01tOWxwRTZINGE5a0plNTFTS3FaOGVOWmVsQnNsdkpl?=
- =?utf-8?B?VFVRTjRjL3pSMDF1c21OUWE1MHdPYUJKQkFKSGwrQUNpU0J5c0dxd0pFZ0dL?=
- =?utf-8?B?N1JZTkVVdzVRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?aTE4Nml6aFV2czFpbVhJb201WDh1OWkyOWJWZlArbjRQUEhxa3hVRGIwYmtP?=
- =?utf-8?B?bW5oTzRjTDcrWVVFeTFQVktualFUQWh3eHFpR2N0THhxd3oybVVHUmhjNDBI?=
- =?utf-8?B?dDhQaGEzYVB4bzZtUHVXbUJtWGt1T1hHS2RpT21MQ0hoYVZjNXFZYVNkMVJw?=
- =?utf-8?B?ZjB4WXVzdUpJbE1oOVR4b0JWZ3dCUElDK0QyYnlldytKby8xdTFNVmgvRnVo?=
- =?utf-8?B?YUNLSlpGaERXRE95Uks1aHBPV2xPU2JDWm5MSHNWemRnRjY5VGFraTcxaWoz?=
- =?utf-8?B?dWVVNzBadGlVMUJRcnRsVWMzWGVrNk5KR1lXWWhNdUpwbDhpclhuZWNZYUJq?=
- =?utf-8?B?Si8vd1RSYzlPM1kvZmhGdmJ3U3RjdXhXcWFsalZ4MWFBYnloNU9LWjZpZlY0?=
- =?utf-8?B?RGI4N2dKa1lUbFNRK0xabjJSQjZBR0cxdm1MTktDWGQrSHJTUXRzcnNWbkdk?=
- =?utf-8?B?TVV4aWIySlo4OENPOUFScGdhd1ZSbnZ5elVBUUlXcGdaQ0xYUm02N1hxT1pi?=
- =?utf-8?B?dzJtK213dlg2blk0Z1RxTXVyWVRiSU1LNDBlcDFBNGVxK0FuSS9maHJZSVZz?=
- =?utf-8?B?SXAzMjBINlNBOVhWeTBuYWdhb1lxOTEyMEwwaGd4c253SmZCSFJvanJoeWdQ?=
- =?utf-8?B?RkdyWDk4TklaQkdBbDNRSng5VVBnR3F1YzRmRmhNU0o2eUQvY1M5bHdpakxq?=
- =?utf-8?B?d2xLRm4rYXlSZ1ZmTXdJM1g3R3RNZDZ5cm5QWjVCT0VWMWJLZVhSRW1kRmUx?=
- =?utf-8?B?UHp5cmdFVllMdVE1TG1YeG52dGhJRndrR2ZXQ243NnBOY1R2S2o0OHl6ZDNh?=
- =?utf-8?B?UmN0L1h4SmlZeXJOdTZzMWt2ZTZxeUZyd1pkNGFKcGhwK0RpY3VWL3FTRUtS?=
- =?utf-8?B?NlRuc2JXWFhXUC9sTmhyaFdZTmVqKzNxdVkyUjRRQS8wdWxXVXNpS3pqMHFL?=
- =?utf-8?B?clRXUEVhU1RKZWNpS2hnbklNTU5lclIwZ1BpN2kzWUg4eDNWNjlBUkFiRnRX?=
- =?utf-8?B?di9VTEF3K1dKWlZQY3ptZGZ6ZE5MTER5cjVwRzMxSWNHc1RvZDErMGpQeDB3?=
- =?utf-8?B?Z3V2UGxQa1RYUXVyNHF0cWlKWXc0YnNFTEptaGZ6OU5jR3JtK3pYRXRuVnQx?=
- =?utf-8?B?RHZ2d3JEU3VXbG5SYXd2N3ZTNjBSZC9Eci92bDlTTkl5NWh4NmlRSi8rWWFW?=
- =?utf-8?B?UmswdXRKUkdBdVIzcVNZam4zc0JVeURHbXcyVW9rQ05iZ29YYlNGM2l1bjg2?=
- =?utf-8?B?ZWZZNjdaUVFLK3RsQVprMzY1Y0hhd3F0emdGSDlSLzRSbVRBYXZQZm5vMklm?=
- =?utf-8?B?aFdVTXlkN29KeDRDaFZBa0ZYMlBNQUg4RVAreENueWNxaXJEaTNBNGdwR3VD?=
- =?utf-8?B?Q1YzdzNiNk9tWmJ6ekdpZm5pUldsMzRFczlUZ0I5T3RpdFpXcFJFUStBUEs0?=
- =?utf-8?B?WEZqMEZyclQ3eGQ5czI2bWR4NytHSUhRd0pKZDdkMUREd3pFdEdPTksyWFJF?=
- =?utf-8?B?ZnBvRW92R0RmUTY0OXFkeWU1eUIzSk9lcFNtcHMySVlDM1RwWUtScEl4SUpT?=
- =?utf-8?B?RUhtdGtNR2hvbVJFZmtZOWZpMWo3N21mb1pBWGxiMGpydC9mM01wckRaaDhl?=
- =?utf-8?B?eDRTUmQ2c1NkYklYNXBybkw2RFFmZXdHb1VxTkdMMFJSY3IwdlhuenRVejJq?=
- =?utf-8?B?TndtQXhpdG5zMWFUaEpGUW5YV3NEV2NSVjlxamU2OUl3MWJrdW1kcmR1UG40?=
- =?utf-8?B?cUNEYzNHSEs4VytLdTVhbThVYUluY0x6eGtZMlNjZU10WlQra1J4c210TnU2?=
- =?utf-8?B?Wk04M0d0RVFDY25HSFNtcHlGcE5KL2l6RFdHREdnY0d3MWg2TFhZeWE1WlA0?=
- =?utf-8?B?VUMxSCswRTh1QzE0QlhEcGJVaURFVHh5VHR4QUQxQ2pIeTFUTXNKaXpRakM5?=
- =?utf-8?B?aDBnSkZJL3NIRTVkTFNza0FQU2oxQU1QTDJPZnVIUS9LN2E4Y3p2NERUQks2?=
- =?utf-8?B?UVdjaVUreTVuQmVBT2JVQndiZE9KVjJvWXk1UmxzcE9uOWhPYTFFWWxvZ20z?=
- =?utf-8?B?UTRZcmFhSzhJeXdVZXp5ZW1JSVpNVlhtY1FYRWZSdFFXWFFLQkt0SkFZSmg3?=
- =?utf-8?B?Mm1qYk1KVmd3bllyTWpZVnE5OGxrOHF4OE5rWVA2YnVjc3RvNjQ1VHNxRnBP?=
- =?utf-8?Q?k/FXC00SZG6H2m7TuOYHXYXmjdeJyq/aBhnex1tvlbjp?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d08b9035-7f3b-46f5-5684-08ddcdd4ff86
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jul 2025 12:48:06.2295
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LTLrmZafSR307Lczg3659BBI6vWDSYGhqJ2VbvlZc3OlKn6fhdnJ0C/VYKpnAkA1vVufLe5EFmfsGDLrBF603Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8848
+User-Agent: Mozilla Thunderbird
+Subject: Re: athk10: Poll service ready completion by default to avoid warning
+ `failed to receive service ready completion, polling..`?
+To: Baochen Qiang <baochen.qiang@oss.qualcomm.com>
+Cc: Baochen Qiang <quic_bqiang@quicinc.com>,
+ Jeff Johnson <jjohnson@kernel.org>, ath10k@lists.infradead.org,
+ James Prestwood <prestwoj@gmail.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <97a15967-5518-4731-a8ff-d43ff7f437b0@molgen.mpg.de>
+ <3cbe13e1-a820-4804-a28c-a57e2ee7a020@oss.qualcomm.com>
+ <8716a67c-6e33-4a35-8d96-33f81c07c8e0@molgen.mpg.de>
+ <1e797dea-d2e1-4947-8ef3-d2ac5ea0c156@oss.qualcomm.com>
+ <4e5a3a4d-9b6b-443b-b3c2-eac1b44e96e0@molgen.mpg.de>
+ <4f00e46c-598e-4661-87fe-cabc6a678be0@oss.qualcomm.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <4f00e46c-598e-4661-87fe-cabc6a678be0@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Types that implement both `AsBytes` and `FromBytes` can be safely
-modified as a slice of bytes. Add a `as_bytes_mut` method for that
-purpose.
+Dear Baochen,
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- rust/kernel/transmute.rs | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
 
-diff --git a/rust/kernel/transmute.rs b/rust/kernel/transmute.rs
-index d541c9960904d8c7f755351f22d06e4e8dbd546a..000fda2a78f8e6e8378bbe93cddd8a5008db20cc 100644
---- a/rust/kernel/transmute.rs
-+++ b/rust/kernel/transmute.rs
-@@ -56,6 +56,19 @@ fn as_bytes(&self) -> &[u8] {
-         // SAFETY: `data` is non-null and valid for reads over `len * sizeof::<u8>()` bytes.
-         unsafe { core::slice::from_raw_parts(data, len) }
-     }
-+
-+    /// Returns `self` as a mutable slice of bytes.
-+    fn as_bytes_mut(&mut self) -> &mut [u8]
-+    where
-+        Self: FromBytes,
-+    {
-+        let data = core::ptr::from_mut(self).cast::<u8>();
-+        let len = size_of_val(self);
-+
-+        // SAFETY: `data` is non-null and valid for read and writes over `len * sizeof::<u8>()`
-+        // bytes. Since `Self` implements `FromBytes` it can be represented by any value.
-+        unsafe { core::slice::from_raw_parts_mut(data, len) }
-+    }
- }
- 
- macro_rules! impl_asbytes {
+Am 28.07.25 um 10:50 schrieb Baochen Qiang:
 
--- 
-2.50.1
+> On 7/28/2025 3:39 PM, Paul Menzel wrote:
+>> [CC: +scheduler folks for input on the wait_for_completion_timeout() part]
 
+>> Am 28.07.25 um 04:18 schrieb Baochen Qiang:
+>>> On 7/25/2025 8:15 PM, Paul Menzel wrote:
+>>
+>>>> Am 22.07.25 um 11:38 schrieb Baochen Qiang:
+>>>>
+>>>>> On 7/22/2025 4:37 PM, Paul Menzel wrote:
+>>>>
+>>>>>> Today, on the Intel Kaby Lake laptop Dell XPS 13 9360 with
+>>>>>>
+>>>>>>        $ lspci -nn -s 3a:
+>>>>>>        3a:00.0 Network controller [0280]: Qualcomm Atheros QCA6174 802.11ac Wireless
+>>>>>> Network Adapter [168c:003e] (rev 32)
+>>>>>>
+>>>>>> resuming from ACPI S3 took longer, as it sometimes does, and looking into this, I see
+>>>>>> `failed to receive service ready completion, polling..` after a delay of five seconds:
+>>>>>>
+>>>>>> ```
+>>>>>> [    0.000000] Linux version 6.16.0-rc6-00253-g4871b7cb27f4 (build@bohemianrhapsody.molgen.mpg.de) (gcc (Debian 14.2.0-19) 14.2.0, GNU ld (GNU Binutils for Debian) 2.44) #90 SMP PREEMPT_DYNAMIC Sat Jul 19 08:53:39 CEST 2025
+>>>>>> […]
+>>>>>> [    8.588020] abreu kernel: ath10k_pci 0000:3a:00.0: qca6174 hw3.2 target 0x05030000 chip_id 0x00340aff sub 1a56:1535
+>>>>>> [    8.588372] abreu kernel: ath10k_pci 0000:3a:00.0: kconfig debug 0 debugfs 0 tracing 0 dfs 0 testmode 0
+>>>>>> [    8.588603] abreu kernel: ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4.1-00309- api 6 features wowlan,ignore-otp,mfp crc32 0793bcf2
+>>>>>> […]
+>>>>>> [    9.113550] Bluetooth: hci0: QCA: patch rome 0x302 build 0x3e8, firmware rome 0x302 build 0x111
+>>>>>> […]
+>>>>>> [41804.953487] PM: suspend entry (deep)
+>>>>>> [41804.988361] Filesystems sync: 0.034 seconds
+>>>>>> [41805.007216] Freezing user space processes
+>>>>>> [41805.009650] Freezing user space processes completed (elapsed 0.002 seconds)
+>>>>>> [41805.009663] OOM killer disabled.
+>>>>>> [41805.009666] Freezing remaining freezable tasks
+>>>>>> [41805.011383] Freezing remaining freezable tasks completed (elapsed 0.001 seconds)
+>>>>>> [41805.011502] printk: Suspending console(s) (use no_console_suspend to debug)
+>>>>>> [41805.523883] ACPI: EC: interrupt blocked
+>>>>>> [41805.545779] ACPI: PM: Preparing to enter system sleep state S3
+>>>>>> [41805.556040] ACPI: EC: event blocked
+>>>>>> [41805.556045] ACPI: EC: EC stopped
+>>>>>> [41805.556046] ACPI: PM: Saving platform NVS memory
+>>>>>> [41805.559408] Disabling non-boot CPUs ...
+>>>>>> [41805.562480] smpboot: CPU 3 is now offline
+>>>>>> [41805.567105] smpboot: CPU 2 is now offline
+>>>>>> [41805.572122] smpboot: CPU 1 is now offline
+>>>>>> [41805.582034] ACPI: PM: Low-level resume complete
+>>>>>> [41805.582079] ACPI: EC: EC started
+>>>>>> [41805.582080] ACPI: PM: Restoring platform NVS memory
+>>>>>> [41805.583986] Enabling non-boot CPUs ...
+>>>>>> [41805.584009] smpboot: Booting Node 0 Processor 1 APIC 0x2
+>>>>>> [41805.584734] CPU1 is up
+>>>>>> [41805.584749] smpboot: Booting Node 0 Processor 2 APIC 0x1
+>>>>>> [41805.585514] CPU2 is up
+>>>>>> [41805.585530] smpboot: Booting Node 0 Processor 3 APIC 0x3
+>>>>>> [41805.586216] CPU3 is up
+>>>>>> [41805.589070] ACPI: PM: Waking up from system sleep state S3
+>>>>>> [41805.623652] ACPI: EC: interrupt unblocked
+>>>>>> [41805.640074] ACPI: EC: event unblocked
+>>>>>> [41805.651951] nvme nvme0: 4/0/0 default/read/poll queues
+>>>>>> [41805.865391] atkbd serio0: Failed to deactivate keyboard on isa0060/serio0
+>>>>>> [41810.933639] ath10k_pci 0000:3a:00.0: failed to receive service ready completion, polling..
+>>>>>> [41810.933769] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
+>>>>>> [41810.986330] OOM killer enabled.
+>>>>>> [41810.986332] Restarting tasks: Starting
+>>>>>> […]
+>>>>>> ```
+>>>>>>
+>>>>>> Commit e57b7d62a1b2 (wifi: ath10k: poll service ready message before failing) [1][2],
+>>>>>> present since Linux v6.10-rc1, added this to avoid the hardware not being initialized:
+>>>>>>
+>>>>>>            time_left = wait_for_completion_timeout(&ar->wmi.service_ready,
+>>>>>>                                                    WMI_SERVICE_READY_TIMEOUT_HZ);
+>>>>>>            if (!time_left) {
+>>>>>>                    /* Sometimes the PCI HIF doesn't receive interrupt
+>>>>>>                     * for the service ready message even if the buffer
+>>>>>>                     * was completed. PCIe sniffer shows that it's
+>>>>>>                     * because the corresponding CE ring doesn't fires
+>>>>>>                     * it. Workaround here by polling CE rings once.
+>>>>>>                     */
+>>>>>>                    ath10k_warn(ar, "failed to receive service ready completion, polling..\n");
+>>>>>>
+>>>>>>                    for (i = 0; i < CE_COUNT; i++)
+>>>>>>                            ath10k_hif_send_complete_check(ar, i, 1);
+>>>>>>
+>>>>>>                    time_left = wait_for_completion_timeout(&ar->wmi.service_ready,
+>>>>>>                                                            WMI_SERVICE_READY_TIMEOUT_HZ);
+>>>>>>                    if (!time_left) {
+>>>>>>                            ath10k_warn(ar, "polling timed out\n");
+>>>>>>                            return -ETIMEDOUT;
+>>>>>>                    }
+>>>>>>
+>>>>>>                    ath10k_warn(ar, "service ready completion received, continuing normally\n");
+>>>>>>            }
+>>>>>>
+>>>>>> The comment says, it’s a hardware issue. I guess from the Qualcomm device and not the
+>>>>>> board design, as it happens with several devices like James’?
+>>>>>>
+>>>>>> Anyway, should polling be used by default then to avoid the delay?
+>>>>>
+>>>>> Adding additional polling before wait seems OK to me
+>>>>
+>>>> With the attached diff, I didn’t notice any issue on the Dell XPS 13 9360 with QCA6174.
+>>>
+>>> In the diff you are moving polling ahead of wait, IMO this might introduce some race: what
+>>> if hardware/firmware send the event right after polling is done?
+>>>
+>>> So how about, instead of moving, just adding a new polling before wait:
+>>>
+>>> 1. polling
+>>> 2. wait
+>>> 3. poling again if wait fail
+>>
+>> I do not know the hardware behavior/design and the error, so cannot judge, if a race would
+>> be possible.
+>>
+>> Could Qualcomm take over to cook up a patch
+>> I’d appreciated if Qualcomm could take over to cook up a patch, as you have the
+>> datasheets, erratas and a line to the hardware designers.
+> 
+> sure, I will see what I can do here
+
+Awesome. Thank you!
+
+>>>> Unrelated: The only thing I noticed is, that during boot (not resume) the function seems
+>>>> to be called twice. It looks like once for Wi-Fi and once for Bluetooth:
+>>>>
+>>>> ```
+>>>> [   35.507604] ath10k_pci 0000:3a:00.0: board_file api 2 bmi_id N/A crc32 d2863f91
+>>>> [   35.516010] usb 1-5: New USB device found, idVendor=0c45, idProduct=670c, bcdDevice=56.26
+>>>> [   35.516022] usb 1-5: New USB device strings: Mfr=2, Product=1, SerialNumber=0
+>>>> [   35.516026] usb 1-5: Product: Integrated_Webcam_HD
+>>>> [   35.516029] usb 1-5: Manufacturer: CN09GTFMLOG008C8B7FWA01
+>>>> [   35.587852] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
+>>>> [   35.606632] ath10k_pci 0000:3a:00.0: htt-ver 3.87 wmi-op 4 htt-op 3 cal otp max-sta 32 raw 0 hwcrypto 1
+>>>> [   35.628744] mc: Linux media interface: v0.10
+>>>> [   35.651301] nvme nvme0: using unchecked data buffer
+>>>> [   35.687466] Bluetooth: Core ver 2.22
+>>>> [   35.687493] NET: Registered PF_BLUETOOTH protocol family
+>>>> [   35.687495] Bluetooth: HCI device and connection manager initialized
+>>>> [   35.687499] Bluetooth: HCI socket layer initialized
+>>>> [   35.687501] Bluetooth: L2CAP socket layer initialized
+>>>> [   35.687505] Bluetooth: SCO socket layer initialized
+>>>> [   35.696050] ath: EEPROM regdomain: 0x6c
+>>>> [   35.696055] ath: EEPROM indicates we should expect a direct regpair map
+>>>> [   35.696057] ath: Country alpha2 being used: 00
+>>>> [   35.696058] ath: Regpair used: 0x6c
+>>>> [   35.712821] ath10k_pci 0000:3a:00.0 wlp58s0: renamed from wlan0
+>>>> [   35.716790] input: ELAN Touchscreen as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input40
+>>>> [   35.718912] videodev: Linux video capture interface: v2.00
+>>>> [   35.719492] input: ELAN Touchscreen UNKNOWN as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input41
+>>>> [   35.719595] input: ELAN Touchscreen UNKNOWN as /devices/pci0000:00/0000:00:14.0/usb1/1-4/1-4:1.0/0003:04F3:2234.0002/input/input42
+>>>> [   35.720899] hid-multitouch 0003:04F3:2234.0002: input,hiddev0,hidraw1: USB HID v1.10 Device [ELAN Touchscreen] on usb-0000:00:14.0-4/input0
+>>>> [   35.720947] usbcore: registered new interface driver usbhid
+>>>> [   35.720949] usbhid: USB HID core driver
+>>>> [   35.812081] usbcore: registered new interface driver btusb
+>>>> [   35.815263] Bluetooth: hci0: using rampatch file: qca/rampatch_usb_00000302.bin
+>>>> [   35.815270] Bluetooth: hci0: QCA: patch rome 0x302 build 0x3e8, firmware rome 0x302 build 0x111
+>>>> [   36.174345] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
+>>>> [   36.199643] Bluetooth: hci0: HCI Enhanced Setup Synchronous Connection command is advertised, but not supported.
+>>>> [   36.398657] ath10k_pci 0000:3a:00.0: service ready completion received, continuing normally
+>>>
+>>> Hmm, I don't think this is for BT as ath10k is not a BT driver. Something must be wrong
+>>> here ...
+>>>
+>>>> ```
+>>
+>> Can you reproduce it?
+>>
+>> How would I get a call graph for both function calls?
+> 
+> # cd /sys/kernel/debug/tracing/
+> # echo 0 > ./tracing_on
+> # echo function >./current_tracer
+> /* replace function with what you want to trace, e.g. ath10k_wmi_wait_for_service_ready */
+> # echo <function> > ./set_ftrace_filter
+> # echo 1 > ./options/func_stack_trace
+> # echo 1 > ./tracing_on
+> # cat trace_pipe
+> /* reload ath10k driver */
+
+Somehow it did not work for me. I think, reloading the module seems to 
+make it forget the function `ath10k_wmi_wait_for_service_ready()`.
+
+     $ sudo cat /sys/kernel/debug/tracing/set_ftrace_filter
+     ath10k_wmi_wait_for_service_ready [ath10k_core]
+
+Unload the module with `sudo modprobe -r ath10k_pci`.
+
+     $ sudo cat /sys/kernel/debug/tracing/set_ftrace_filter
+     $
+
+Load the module, and it’s still empty:
+
+     $ sudo cat /sys/kernel/debug/tracing/set_ftrace_filter
+     $
+
+>>>>>> Additionally I have two questions regarding the code:
+>>>>>>
+>>>>>> 1.  Is `WMI_SERVICE_READY_TIMEOUT_HZ` the right value to pass to
+>>>>>> `wait_for_completion_timeout(struct completion *done, unsigned long timeout)`?
+>>>>>>
+>>>>>> The macro is defined as:
+>>>>>>
+>>>>>>        drivers/net/wireless/ath/ath10k/wmi.h:#define WMI_SERVICE_READY_TIMEOUT_HZ (5 * HZ)
+>>>>>>
+>>>>>> `timeout` is supposed to be in jiffies, and `CONFIG_HZ_250=y` on my system. I wonder how
+>>>>>> that amounts to five seconds on my system.
+>>>>>
+>>>>> HZ is defined as jiffies per second, so 5 * HZ equals 5 seconds.
+>>
+>> Sorry, I missed to comment here in my previous reply. HZ can be defined differently – like
+>> 1000 HZ –, so the timeout would very, and then not match the actual timeout required by
+>> the hardware? `Documentation/scheduler/completion.rst` contains:
+>>
+>>> Timeouts are preferably calculated with msecs_to_jiffies() or usecs_to_jiffies(),
+>>> to make the code largely HZ-invariant.
+> 
+> Hmm, new knowledge to me. Will check and update.
+
+Awesome!
+
+>>>>>> The timeout should probably be defined in seconds? Does the WMI specification say
+>>>>>> something about this?
+>>>>>>
+>>>>>> 2.  Is the task interruptible and should
+>>>>>> `wait_for_completion_interruptible_timeout(struct completion *done, unsigned long timeout)` be used?
+>>>>>
+>>>>> While I am not sure for now, may I ask why the question?
+>>>>
+>>>> I was just reading up on `wait_for_completion_*()`, and so the different variants.
+>>>
+>>> If there is no obvious benefits I don't think the change is necessary.
+>>
+>> Thinking about it, the driver initialization is in the boot path (hot patch) so would
+>> block one thread(?) – or is that a wrong assumption –, which is unwanted?
+> 
+> Indeed a thread would block there ... So you want to make the thread responsible to
+> signals? such as killing it when ath10k goes wrong?
+
+You got me, that I actually do not know, what the downsides are, and 
+what signal/interrupt could be fired, and how it should be handled. As a 
+side note: Other drivers use 
+`wait_for_completion_interruptible_timeout()` also without checking the 
+return value. If nobody else sheds light into this, please ignore my 
+comment.
+
+
+Kind regards,
+
+Paul
+
+
+>>>>>> [1]: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e57b7d62a1b2f496caf0beba81cec3c90fad80d5
+>>>>>> [2]: https://lore.kernel.org/all/20240227030409.89702-1-quic_bqiang@quicinc.com/
 
