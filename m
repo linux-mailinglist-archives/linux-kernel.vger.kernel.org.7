@@ -1,223 +1,140 @@
-Return-Path: <linux-kernel+bounces-747393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA26AB13346
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:01:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D640B13348
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D9033A997B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 03:01:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B44A8175885
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 03:01:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642701E6DC5;
-	Mon, 28 Jul 2025 03:01:24 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9E01F1505;
+	Mon, 28 Jul 2025 03:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="i1TEqPCP"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DA1CDDAD;
-	Mon, 28 Jul 2025 03:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C602B9A7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 03:01:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753671683; cv=none; b=c5hs3Y15g4UB+XoSvD7TCISEXbBIKRbnHzfTelohHfCzjO1l57DsiBqtDUjOlLHiYe6psLdw27PXiRx+nS2c8EiwP9LmM+/Q1v/6dIoaMNxXatHbPPH/YX6pwln+X6yd2afp0jBaAY81fqAVChA5yQ5GmphzYMbZ5/vRzv05Jxc=
+	t=1753671698; cv=none; b=JzMS++K60H6orZrtlzlMQxq/Ea54Jy6xg8qN2sIWtVdT/iLw30+gnBWP7NZjVjst+WalhRcIUi/nTGU6CIWbt2iD47pndX2kDWh8fntM11n+ghxOFqEBQpPdpAC35bVYLtMmXrzFNNhhhsMBnHM23gQugu/gTda07laX00HU4WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753671683; c=relaxed/simple;
-	bh=jPMCFYdbF9X9n8p5sLgnoYeJacE8N/jAR6FZREXO3cU=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=mbxSoT4QYJ9rxOwwp1LG1zwtH5DsHhO1iBU9qOUtKZ2TGpp0o3V3MFRuP15msay8m+eb4X2V731vbCIHHAd2mADV11t2V1LAUSwO5KZVE2T8pdWP4H0jgSN1ju8VT7l9AWSgOaEgUogISVTdd4EJ+RgpOG4KClbKeoLOjyJL1kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4br3CC0C0nz8Xs70;
-	Mon, 28 Jul 2025 11:01:11 +0800 (CST)
-Received: from xaxapp05.zte.com.cn ([10.99.98.109])
-	by mse-fl2.zte.com.cn with SMTP id 56S30m1g051987;
-	Mon, 28 Jul 2025 11:00:48 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 28 Jul 2025 11:00:49 +0800 (CST)
-Date: Mon, 28 Jul 2025 11:00:49 +0800 (CST)
-X-Zmail-TransId: 2afa6886e7e10ed-caa28
-X-Mailer: Zmail v1.0
-Message-ID: <20250728110049857ybykx9BfYo6k-aFoinz4T@zte.com.cn>
-In-Reply-To: <20250728105611902ENzYOxJcTdsXoAd-8dSZi@zte.com.cn>
-References: 20250728105611902ENzYOxJcTdsXoAd-8dSZi@zte.com.cn
+	s=arc-20240116; t=1753671698; c=relaxed/simple;
+	bh=0vKfwUHfNQR2JxpeH1mjLInwJuziDSzoCPLeGXD166w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=STe6gIRVn9y8LYEN1D77Ke1bepM9MYtmHKY4rOsIzxWY74xdCkwzuFgcV9Q1pNFvULmiSYWg4IktroZWtjoe+D9Qv3Rc1bgJ1CDcCIjPefn578av3pYoI3XQemSzH/9Omo0xEvtif4stGkX39Gc84JdYOKU2xYeYufv1CthP7ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=i1TEqPCP; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451d7b50815so25891645e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jul 2025 20:01:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1753671694; x=1754276494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oEoci9qMGq3mZsbtJsvexp6JhXmJXNusPRjzxxOh55E=;
+        b=i1TEqPCP7dFx6y1M+V4DDDgQIGYukkyZyCUilAIy7nI8XAniubEi918sU3QqNb/X+J
+         URwHFw9YKVwbWAeCEoibkfjc1a75NNOn4yiWUfUYhLpoJBMQg6JW28lMCQ0VB99HFJ/O
+         LDwjNiK9tuofO4qaCAEuxN/BOWLaEhcUpwcEJrJJ9Uw26C5dkjaN7lCreUcg7aIIsw02
+         0v5RjDf7uAUi8MAlv8vLMmxMIMysC8sEMWy1tQwFRL6a6WxLnusauBHumPjsQ4ad95/3
+         XmIo/0Ls8nVrt9fh656YX1+ChIxh14fQQn1Ps05X4J7sf/GGyi2zyS4CW5oXQaWcOv9H
+         KGJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753671694; x=1754276494;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oEoci9qMGq3mZsbtJsvexp6JhXmJXNusPRjzxxOh55E=;
+        b=KfBRy6HlVoilJ9Iib8Vv2dFQ98m+KORMSP7Lm8z63tmAPqc4x+aFCyH/L0Q3l5vbKd
+         0PH55+39lABh99Y3VSaveViKMJL9t9FUe4Uw84q8epDqUQDCmdx1W//I9BTyyic8mNoz
+         s+wUvgQlswevoZ2+vwXXOx3R9USJSdlr6AoPsAdzqn7OCbnGXI8akSetJcOohsFikYJ5
+         Fp7O2EeF9j3AoAxeqRs7Aq5l0ddFSe7GCrsINVszojbUkyBtx76tTL9qtLhm89ipo6B5
+         q+B9TosmyvPj8FeySwASSDtUodrOXb0TbXTkw7wjsk/Z9UdsU/RNRNgWEyei3wyql92t
+         ek3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWbARsFqYUc00eWWM0THRgSIwRBLgWYNZ32m3YdwykhxR4A8l2KcQPIU5ndUEUT89UxdG2cDoYhgEhD2vM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6mgd1/uw1GBIuGVW/tXEkZvLnOq3Qe3N2zS638glRdrlOloQZ
+	tkPyOIwK5YYpE+LwFsApNGmS6Z9cN63RKzEygL8FzhQd/HuS5G+ERNt5M2FEHmf20y4=
+X-Gm-Gg: ASbGncs7N1ScKbrqqN9wjvE/fREUcQGKHI12CKAS8wxjpZdVg8bByrqflc+i55q+6JX
+	LZoJh2mFe/mX6kWw59Zp9w1ZKCEtfAS3QbQw8Fnhag+rQ55aZIu2OIhfUmLjtHGaXjQzZYSKdNe
+	owvcOAXd4OfXr+cTOg1dQnTZ5swlDkd14m/jW8NQLXOMlFcjXxcLAgLP+faJ/Dd2mMfUt4xxxnk
+	l25uDGc/9j6VVs5NG61IH+2uFx0WmNDuWiDtAP7nFoZQ/ztq4yUW2etI5Rq8xmzsVOiCM8YHcgp
+	U/egGiI7I8EyPXpsfQJ6iy7v6B6Qbtugxg+CgGH0r4nNBSQ2VGnbhFH9h2dY16bw9SEmQfI7gwu
+	vGwwo0N9Q5Yc4Uu6CDrgXm5QFUQy5GipLBW0isXu43l/DM4t+/RIP4yivonflY31yAIN75qt8fY
+	Y=
+X-Google-Smtp-Source: AGHT+IGQxNb0uTRmgaXFIWNAxJsx2ABBH3vJc/u5BlArY34ZoKzsrRmq3jNV4kVoBvHvbjNr05ibwQ==
+X-Received: by 2002:a05:600c:6812:b0:456:207e:fd83 with SMTP id 5b1f17b1804b1-458762fcfe9mr81396495e9.4.1753671694214;
+        Sun, 27 Jul 2025 20:01:34 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4587054f2e6sm137373995e9.12.2025.07.27.20.01.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 20:01:33 -0700 (PDT)
+Date: Sun, 27 Jul 2025 20:01:26 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>, Jason Wang
+ <jasowang@redhat.com>, Cindy Lu <lulu@redhat.com>, KY Srinivasan
+ <kys@microsoft.com>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui
+ <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Michael Kelley
+ <mhklinux@outlook.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>,
+ Kees Cook <kees@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki
+ Iwashima <kuniyu@google.com>, Alexander Lobakin
+ <aleksander.lobakin@intel.com>, Guillaume Nault <gnault@redhat.com>, Joe
+ Damato <jdamato@fastly.com>, Ahmed Zaki <ahmed.zaki@intel.com>, "open
+ list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, "open
+ list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
+Message-ID: <20250727200126.2682aa39@hermes.local>
+In-Reply-To: <20250723151622.0606cc99@kernel.org>
+References: <20250718061812.238412-1-lulu@redhat.com>
+	<20250721162834.484d352a@kernel.org>
+	<CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
+	<20250721181807.752af6a4@kernel.org>
+	<CACGkMEtEvkSaYP1s+jq-3RPrX_GAr1gQ+b=b4oytw9_dGnSc_w@mail.gmail.com>
+	<20250723080532.53ecc4f1@kernel.org>
+	<SJ2PR21MB40138F71138A809C3A2D903BCA5FA@SJ2PR21MB4013.namprd21.prod.outlook.com>
+	<20250723151622.0606cc99@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <shao.mingyin@zte.com.cn>
-Cc: <alexs@kernel.org>, <si.yanteng@linux.dev>, <dzm91@hust.edu.cn>,
-        <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
-        <xu.xin16@zte.com.cn>, <yang.tao172@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIHYyIDEvNV0gRG9jcy96aF9DTjogVHJhbnNsYXRlIHViaWZzLnJzdCB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 56S30m1g051987
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: shao.mingyin@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Mon, 28 Jul 2025 11:01:11 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6886E7F7.000/4br3CC0C0nz8Xs70
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Shao Mingyin <shao.mingyin@zte.com.cn>
+On Wed, 23 Jul 2025 15:16:22 -0700
+Jakub Kicinski <kuba@kernel.org> wrote:
 
-translate the "ubifs.rst" into Simplified Chinese.
+> On Wed, 23 Jul 2025 20:18:03 +0000 Haiyang Zhang wrote:
+> > > > Btw, if I understand this correctly. This is for future development so
+> > > > it's not a blocker for this patch?    
+> > >
+> > > Not a blocker, I'm just giving an example of the netvsc auto-weirdness
+> > > being a source of tech debt and bugs. Commit d7501e076d859d is another
+> > > recent one off the top of my head. IIUC systemd-networkd is broadly
+> > > deployed now. It'd be great if there was some migration plan for moving
+> > > this sort of VM auto-bonding to user space (with the use of the common
+> > > bonding driver, not each hypervisor rolling its own).    
+> > 
+> > Actually, we had used the common bonding driver 9 years ago. But it's
+> > replaced by this kernel/netvsc based "transparent" bonding mode. See
+> > the patches listed below.
+> > 
+> > The user mode bonding scripts were unstable, and difficult to deliver
+> > & update for various distros. So Stephen developed the new "transparent"
+> > bonding mode, which greatly improves the situation.  
+> 
+> I specifically highlighted systemd-networkd as the change in the user
+> space landscape.
 
-Update to commit 5f5cae9b0e81("Documentation: ubifs: Fix
-compression idiom")
-
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Signed-off-by: yang tao <yang.tao172@zte.com.cn>
----
-v1->v2
-send patches of one patchset in the same thread.
- .../translations/zh_CN/filesystems/index.rst  |   1 +
- .../translations/zh_CN/filesystems/ubifs.rst  | 114 ++++++++++++++++++
- 2 files changed, 115 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/filesystems/ubifs.rst
-
-diff --git a/Documentation/translations/zh_CN/filesystems/index.rst b/Documentation/translations/zh_CN/filesystems/index.rst
-index 9f2a8b003778..faaa0f097223 100644
---- a/Documentation/translations/zh_CN/filesystems/index.rst
-+++ b/Documentation/translations/zh_CN/filesystems/index.rst
-@@ -26,4 +26,5 @@ Linux Kernel中的文件系统
-    virtiofs
-    debugfs
-    tmpfs
-+   ubifs
-
-diff --git a/Documentation/translations/zh_CN/filesystems/ubifs.rst b/Documentation/translations/zh_CN/filesystems/ubifs.rst
-new file mode 100644
-index 000000000000..16c28bfd6fc3
---- /dev/null
-+++ b/Documentation/translations/zh_CN/filesystems/ubifs.rst
-@@ -0,0 +1,114 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/filesystems/ubifs.rst
-+
-+:翻译:
-+
-+   邵明寅 Shao Mingyin <shao.mingyin@zte.com.cn>
-+
-+:校译:
-+
-+   - 杨涛 yang tao <yang.tao172@zte.com.cn>
-+
-+============
-+UBI 文件系统
-+============
-+
-+简介
-+============
-+
-+UBIFS 文件系统全称为 UBI 文件系统（UBI File System）。UBI 代表无序块镜
-+像（Unsorted Block Images）。UBIFS 是一种闪存文件系统，这意味着它专为闪
-+存设备设计。需要理解的是，UBIFS与 Linux 中任何传统文件系统（如 Ext2、
-+XFS、JFS 等）完全不同。UBIFS 代表一类特殊的文件系统，它们工作在 MTD 设备
-+而非块设备上。该类别的另一个 Linux 文件系统是 JFFS2。
-+
-+为更清晰说明，以下是 MTD 设备与块设备的简要比较：
-+
-+1. MTD 设备代表闪存设备，由较大尺寸的擦除块组成，通常约 128KiB。块设备由
-+   小块组成，通常 512 字节。
-+2. MTD 设备支持 3 种主要操作：在擦除块内偏移位置读取、在擦除块内偏移位置写
-+   入、以及擦除整个擦除块。块设备支持 2 种主要操作：读取整个块和写入整个块。
-+3. 整个擦除块必须先擦除才能重写内容。块可直接重写。
-+4. 擦除块在经历一定次数的擦写周期后会磨损，通常 SLC NAND 和 NOR 闪存为
-+   100K-1G 次，MLC NAND 闪存为 1K-10K 次。块设备不具备磨损特性。
-+5. 擦除块可能损坏（仅限 NAND 闪存），软件需处理此问题。硬盘上的块通常不会损
-+   坏，因为硬件有坏块替换机制（至少现代 LBA 硬盘如此）。
-+
-+这充分说明了 UBIFS 与传统文件系统的本质差异。
-+
-+UBIFS 工作在 UBI 层之上。UBI 是一个独立的软件层（位于 drivers/mtd/ubi），
-+本质上是卷管理和磨损均衡层。它提供称为 UBI 卷的高级抽象，比 MTD 设备更上层。
-+UBI 设备的编程模型与 MTD 设备非常相似，仍由大容量擦除块组成，支持读/写/擦
-+除操作，但 UBI 设备消除了磨损和坏块限制（上述列表的第 4 和第 5 项）。
-+
-+某种意义上，UBIFS 是 JFFS2 文件系统的下一代产品，但它与 JFFS2 差异巨大且
-+不兼容。主要区别如下：
-+
-+* JFFS2 工作在 MTD 设备之上，UBIFS 依赖于 UBI 并工作在 UBI 卷之上。
-+* JFFS2 没有介质索引，需在挂载时构建索引，这要求全介质扫描。UBIFS 在闪存
-+  介质上维护文件系统索引信息，无需全介质扫描，因此挂载速度远快于 JFFS2。
-+* JFFS2 是直写（write-through）文件系统，而 UBIFS 支持回写
-+  （write-back），这使得 UBIFS 写入速度快得多。
-+
-+与 JFFS2 类似，UBIFS 支持实时压缩，可将大量数据存入闪存。
-+
-+与 JFFS2 类似，UBIFS 能容忍异常重启和断电。它不需要类似 fsck.ext2 的工
-+具。UBIFS 会自动重放日志并从崩溃中恢复，确保闪存数据结构的一致性。
-+
-+UBIFS 具有对数级扩展性（其使用的数据结构多为树形），因此挂载时间和内存消耗不
-+像 JFFS2 那样线性依赖于闪存容量。这是因为 UBIFS 在闪存介质上维护文件系统
-+索引。但 UBIFS 依赖于线性扩展的 UBI 层，因此整体 UBI/UBIFS 栈仍是线性扩
-+展。尽管如此，UBIFS/UBI 的扩展性仍显著优于 JFFS2。
-+
-+UBIFS 开发者认为，未来可开发同样具备对数级扩展性的 UBI2。UBI2 将支持与
-+UBI 相同的 API，但二进制不兼容。因此 UBIFS 无需修改即可使用 UBI2。
-+
-+挂载选项
-+========
-+
-+(*) 表示默认选项。
-+
-+====================    =======================================================
-+bulk_read               批量读取以利用闪存介质的顺序读取加速特性
-+no_bulk_read (*)        禁用批量读取
-+no_chk_data_crc (*)     跳过数据节点的 CRC 校验以提高读取性能。 仅在闪存
-+                        介质高度可靠时使用此选项。 此选项可能导致文件内容损坏无法被
-+                        察觉。
-+chk_data_crc            强制校验数据节点的 CRC
-+compr=none              覆盖默认压缩器，设置为"none"
-+compr=lzo               覆盖默认压缩器，设置为"LZO"
-+compr=zlib              覆盖默认压缩器，设置为"zlib"
-+auth_key=               指定用于文件系统身份验证的密钥。
-+                        使用此选项将强制启用身份验证。
-+                        传入的密钥必须存在于内核密钥环中， 且类型必须是'logon'
-+auth_hash_name=         用于身份验证的哈希算法。同时用于哈希计算和 HMAC
-+                        生成。典型值包括"sha256"或"sha512"
-+====================    =======================================================
-+
-+快速使用指南
-+============
-+
-+挂载的 UBI 卷通过 "ubiX_Y" 或 "ubiX:NAME" 语法指定，其中 "X" 是 UBI
-+设备编号，"Y" 是 UBI 卷编号，"NAME" 是 UBI 卷名称。
-+
-+将 UBI 设备 0 的卷 0 挂载到 /mnt/ubifs::
-+
-+    $ mount -t ubifs ubi0_0 /mnt/ubifs
-+
-+将 UBI 设备 0 的 "rootfs" 卷挂载到 /mnt/ubifs（"rootfs" 是卷名）::
-+
-+    $ mount -t ubifs ubi0:rootfs /mnt/ubifs
-+
-+以下是内核启动参数的示例，用于将 mtd0 附加到 UBI 并挂载 "rootfs" 卷：
-+ubi.mtd=0 root=ubi0:rootfs rootfstype=ubifs
-+
-+参考资料
-+========
-+
-+UBIFS 文档及常见问题解答/操作指南请访问 MTD 官网：
-+
-+- http://www.linux-mtd.infradead.org/doc/ubifs.html
-+- http://www.linux-mtd.infradead.org/faq/ubifs.html
--- 
-2.25.1
+Haiyang tried valiantly but getting every distro to do the right thing
+with VF's bonding and hot plug was impossible to support.
 
