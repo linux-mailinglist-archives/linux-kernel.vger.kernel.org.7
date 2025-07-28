@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-748289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65181B13F19
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:47:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE1BB13F17
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:47:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D59AA3B0AFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:43:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B52021609E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9AA272812;
-	Mon, 28 Jul 2025 15:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9365272819;
+	Mon, 28 Jul 2025 15:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oHZJq9mc"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1P3s1fhu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16DB424BD03;
-	Mon, 28 Jul 2025 15:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1A926D4E4;
+	Mon, 28 Jul 2025 15:44:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753717436; cv=none; b=KQTl/97K94Qsb6JXLOYQg77wl0SQatSHOW4zIsac/WE4cyMYSBMGr17MqdrMEe+Zo1X2miQ8qbcyN6jCA3yIQ3ssOG2sIixv3dkB/j3J2Gi/9vXFXuqq0P6yAmMUe4JRtsgFFhBkB8m8IL/O19l64SgtxKAegMx/SPxl5ztRtas=
+	t=1753717461; cv=none; b=lStLF4hIXbCnozamyX/h5qC+TBq0FsMXiLbiv0G2XT4ccSPglOQzJxdAF2CLk4NHC5pyg8AkiXBtjK9OecMaSNmbhYTFwCGnjYFMdJOUQ6lWYrzqnfvmwaV3z3DfLUV2A/gaDeIub3D+HwuGbY2vJNQO3OiGmXKIyoPcy6r/giY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753717436; c=relaxed/simple;
-	bh=UpfLfyz2FGwl4AaV13bqIck27LH2eOFyLASKUpZVdoA=;
+	s=arc-20240116; t=1753717461; c=relaxed/simple;
+	bh=QHYzZrNRpbqv8YnzcImUFT1caQKEPMQJ29G73MsnVO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=KDWDIzdy2rXODMliHEt+2AmBbXcR9mhmAg3BIjPBgIn1+l78DwXHBGl78mTrq9NSAdNvm4oOFt1t9Pg+JhRu73w2tqu2jY0l541kXRGk60WXajLVUHeU0G20HJeeLtKkSaql1GKuQ82MoeQOrAOk9YVk+Ag0wfQ10uC5uQidpeU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oHZJq9mc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5FFC4CEE7;
-	Mon, 28 Jul 2025 15:43:54 +0000 (UTC)
+	 Content-Disposition; b=gcfsKstQcqH0hhwptEc2+dQs7VbAIOBgZk8Dbk0Nwuf39mf6/H9Jlubl5/LPmkBFMc/WdX1IWhlzOKyO+aokJ4PehkBrAsonVrOVlL1LO2vv5o1DbsLBEgDVWYA6ndGnBIcSCGsyXxu6aXZlBBieMyRlq8iIJ5G6lt2RKe8Urdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1P3s1fhu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8A00C4CEE7;
+	Mon, 28 Jul 2025 15:44:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753717435;
-	bh=UpfLfyz2FGwl4AaV13bqIck27LH2eOFyLASKUpZVdoA=;
+	s=korg; t=1753717461;
+	bh=QHYzZrNRpbqv8YnzcImUFT1caQKEPMQJ29G73MsnVO8=;
 	h=Date:From:To:Cc:Subject:From;
-	b=oHZJq9mcKNAMcPgn9pFIdp2munD4zGHq7TKeATmDs3oOmQwmdUml+9XK0ZdKLuFbL
-	 sLbRxVsZ3YMf77U5Q4EVEgyubbEmVjBAfPv0fJF/pKJKh8NG6v5/3duErT7v9xhA8+
-	 01rtWlbJUC3fU8XAW6Slgbe5teB7yaIce6IzQk50=
-Date: Mon, 28 Jul 2025 17:43:52 +0200
+	b=1P3s1fhumUQgJP3jGqpTcXHfjCJ+5A5C6zgBK4VlZ+JDCaO+Naq22C7w7wyvdgxan
+	 +Anthr7jzGVzX6L2Gwe0apfpGA6g1VP/cEwqC+GLLQb5coC16mgime2OmaPtT37qz9
+	 ku+HbmWwkMzidnS719ThSiWfMAhBF3nqGsxe1PZY=
+Date: Mon, 28 Jul 2025 17:44:18 +0200
 From: Greg KH <gregkh@linuxfoundation.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Jiri Slaby <jslaby@suse.cz>, Stephen Rothwell <sfr@canb.auug.org.au>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: [GIT PULL] TTY / Serial driver updates for 6.17-rc1
-Message-ID: <aIeauLNt3kwvH2TM@kroah.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org
+Subject: [GIT PULL] USB/Thunderbolt driver updates for 6.17-rc1
+Message-ID: <aIea0h6hkgqgeFUf@kroah.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
 The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
 
@@ -60,225 +60,344 @@ The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-6.17-rc1
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-6.17-rc1
 
-for you to fetch changes up to 57b4ca42359c63ad61548431c184a7d63efbd0b9:
+for you to fetch changes up to 51d4b0a44c82e5eff056ef76acd2c3c605a8eb74:
 
-  dt-bindings: serial: snps-dw-apb-uart: Allow use of a power-domain (2025-07-24 11:41:01 +0200)
+  usb: musb: omap2430: clean up probe error handling (2025-07-25 10:50:44 +0200)
 
 ----------------------------------------------------------------
-TTY / Serial driver update for 6.17-rc1
+USB / Thunderbolt changes for 6.17-rc1
 
-Here is the big set of TTY and Serial driver updates for 6.17-rc1.
-Included in here is the following types of changes:
-  - another cleanup round from Jiri for the 8250 serial driver and some
-    other tty drivers, things are slowly getting better with our apis
-    thanks to this work.  This touched many tty drivers all over the
-    tree.
-  - qcom_geni_serial driver update for new platforms and devices
-  - 8250 quirk handling fixups
-  - dt serial binding updates for different boards/platforms
-  - other minor cleanups and fixes
+Here is the big set of USB and Thunderbolt driver changes for 6.17-rc1.
 
-All of these have been in linux-next with no reported issues.
+Lots of little things in here, mostly all small cleanups and updates, no
+major new features this development cycle.  Stuff included in here is:
+  - xhci minor tweaks for error handling
+  - typec minor updates and a driver update
+  - gadget driver api cleanups
+  - unused function removals
+  - unbind memory leak fixes
+  - a few new device ids added
+  - a few new devices supported for some drivers
+  - other minor cleanups and changes
+
+All of these have been in linux-next with no reported issues, with the
+leak fixes being in the shortest amount of time, but they are "obviously
+correct" :)
 
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Andy Shevchenko (3):
-      serial: 8250: Move CE4100 quirks to a module under 8250 driver
-      serial: 8520_ce4100: Reuse mem_serial_in() in ce4100_mem_serial_in()
-      serial: 8250_ce4100: Fix CONFIG_SERIAL_8250=n build
+Akash Kumar (1):
+      usb: gadget: uvc: Initialize frame-based format color matching descriptor
 
-Anup Kulkarni (1):
-      serial: qcom-geni: Enable support for half-duplex mode
+Alok Tiwari (1):
+      thunderbolt: Fix typos in documentation comments
 
-Chaitanya Vadrevu (2):
-      serial: 8250_ni: Fix build warning
-      serial: 8250_ni: Reorder local variables
+André Draszik (3):
+      usb: typec: tcpm/tcpci_maxim: fix irq wake usage
+      usb: typec: tcpm/tcpci_maxim: drop CONFIG_OF
+      usb: typec: tcpm/tcpci_maxim: enable PROBE_PREFER_ASYNCHRONOUS
 
-Christophe JAILLET (1):
-      tty: serial: fsl_lpuart: Constify struct lpuart_soc_data
+Arnd Bergmann (1):
+      usb: typec: ucsi: yoga-c630: add DRM dependency
 
-Dr. David Alan Gilbert (1):
-      serial: Remove unused uart_get_console
+Bagas Sanjaya (1):
+      Documentation: usb: gadget: Wrap remaining usage snippets in literal code block
+
+Bartosz Golaszewski (2):
+      USB: serial: ftdi_sio: use new GPIO line value setter callbacks
+      USB: serial: cp210x: use new GPIO line value setter callbacks
+
+Benson Leung (1):
+      usb: typec: ucsi: psy: Set current max to 100mA for BC 1.2 and Default
+
+Charalampos Mitrodimas (1):
+      usb: misc: apple-mfi-fastcharge: Make power supply names unique
+
+Chen Ni (9):
+      usb: gadget: m66592-udc: Use USB API functions rather than constants
+      usb: gadget: f_fs: Use USB API functions rather than constants
+      usb: gadget: udc-xilinx: Use USB API functions rather than constants
+      usb: gadget: pch_udc: Use USB API functions rather than constants
+      usb: gadget: net2280: Use USB API functions rather than constants
+      usb: gadget: composite: Use USB API functions rather than constants
+      usb: gadget: dummy_hcd: Use USB API functions rather than constants
+      usb: ohci-spear: Remove unnecessary NULL check before clk_disable_unprepare()
+      usb: fsl-mph-dr-of: Remove unnecessary NULL check before clk_disable_unprepare()
+
+Dan Carpenter (3):
+      usb: gadget: u_serial: remove some dead code
+      arm64: dts: s32g: Add USB device tree information for s32g2/s32g3
+      usb: chipidea: imx: Add a missing blank line
+
+Darshan Rathod (1):
+      usb: usblp: clean up assignment inside if conditions
+
+Dmitry Baryshkov (10):
+      usb: typec: ucsi: yoga-c630: fix error and remove paths
+      usb: typec: ucsi: add recipient arg to update_altmodes() callback
+      usb: typec: ucsi: yoga-c630: remove duplicate AltModes
+      usb: typec: ucsi: yoga-c630: remove extra AltModes for port 1
+      usb: typec: ucsi: yoga-c630: fake AltModes for port 0
+      usb: typec: ucsi: yoga-c630: correct response for GET_CURRENT_CAM
+      usb: typec: ucsi: yoga-c630: handle USB / HPD messages to set port orientation
+      usb: typec: ucsi: yoga-c630: register DRM HPD bridge
+      dt-bindings: usb: genesys,gl850g: use usb-hub.yaml
+      dt-bindings: usb: genesys,gl850g: add downstream facing ports
+
+Dr. David Alan Gilbert (5):
+      usb: phy: tegra: Remove unused functions
+      usb: gadget: config: Remove unused usb_gadget_config_buf
+      usb: gadget: Remove unused usb_remove_config
+      usb: core: Remove unused usb_unlink_anchored_urbs
+      usb: typec: Remove unused ucsi_cci_str
+
+Eric Biggers (1):
+      thunderbolt: Fix copy+paste error in match_service_id()
 
 Frank Li (1):
-      dt-bindings: serial: 8250: allow clock 'uartclk' and 'reg' for nxp,lpc1850-uart
+      dt-bindings: usb: convert lpc32xx-udc.txt to yaml format
 
-Geert Uytterhoeven (1):
-      serial: sh-sci: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+Geert Uytterhoeven (2):
+      usb: renesas_usbhs: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+      usb: gadget: udc: renesas_usb3: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
 
-Greg Kroah-Hartman (2):
-      Merge 6.16-rc4 into tty-next
-      Merge tag 'v6.16-rc7' into tty-next
+Ghennadi Procopciuc (3):
+      dt-bindings: usb: Add compatible strings for s32g2/s32g3
+      usb: chipidea: s32g: Add usb support for s32g2
+      usb: chipidea: s32g: Add usb support for s32g3
 
-Ivaylo Ivanov (1):
-      dt-bindings: serial: samsung: add samsung,exynos2200-uart compatible
+Greg Kroah-Hartman (5):
+      Merge merge point of tag 'usb-6.16-rc5' into usb-next
+      Merge tag 'thunderbolt-for-v6.17-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/westeri/thunderbolt into usb-next
+      Merge tag 'v6.16-rc7' into usb-next
+      Merge tag 'usb-serial-6.17-rc1' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-next
+      Merge tag 'usb-serial-6.17-rc1-2' of ssh://gitolite.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-next
 
-Jiri Slaby (SUSE) (41):
-      tty: introduce and use tty_port_tty_vhangup() helper
-      powerpc/legacy_serial: cache serial port and info in add_legacy_port()
-      powerpc/legacy_serial: use %pa for phys_addr_t prints
-      m68k: remove unneeded tty includes
-      powerpc/powermac: remove unneeded tty includes
-      tty: vt: use sane types for userspace API
-      tty: vt: use _IO() to define ioctl numbers
-      serial: 8250: sanitize uart_port::serial_{in,out}() types
-      serial: 8250: remove CONFIG_SERIAL_8250_RSA inline macros from code
-      serial: 8250: invert conditions in RSA functions
-      serial: 8250: put RSA functions to their namespace
-      serial: 8250: move RSA functions to 8250_rsa.c
-      serial: 8250: extract serial8250_startup_special()
-      serial: 8250: extract serial8250_set_TRG_levels()
-      serial: 8250: extract serial8250_THRE_test()
-      serial: 8250: extract serial8250_initialize()
-      serial: 8250: extract serial8250_clear_interrupts()
-      serial: 8250: extract serial8250_set_mini()
-      serial: 8250: extract serial8250_set_trigger_for_slow_speed()
-      serial: 8250: extract serial8250_set_afe()
-      serial: 8250: extract serial8250_set_errors_and_ignores
-      serial: 8250: extract serial8250_set_ier()
-      serial: 8250: extract serial8250_set_efr()
-      serial: 8250: extract serial8250_set_fcr()
-      serial: 8250: lcr compute cleanup
-      serial: 8250: drop unused frac from serial8250_do_get_divisor()
-      serial: 8250: extract serial_get_or_create_irq_info()
-      serial: 8250: remove debug prints from ISR
-      serial: 8250: drop DEBUG_AUTOCONF() macro
-      serial: 8250: invert serial8250_register_8250_port() CIR condition
-      serial: 8250: invert condition to avoid a goto label
-      serial: 8250: use hashtable
-      serial: 8250_omap: use uart_port pointer when available
-      serial: 8250: export RSA functions
-      serial: ce4100: fix build after serial_in/out() changes
-      serial: ce4100: clean up serial_in/out() hooks
-      serial: 8250: extract serial8250_init_mctrl()
-      serial: 8250: extract serial8250_iir_txen_test()
-      serial: 8250: rename lsr_TEMT, iir_NOINT to lowercase
-      serial: 8250: document doubled "type == PORT_8250_CIR" check
-      tty: fix tty_port_tty_*hangup() kernel-doc
+Hanne-Lotta Mäenpää (1):
+      usb: core: Use sysfs_emit_at() when showing dynamic IDs
 
-Jonas Karlman (1):
-      dt-bindings: serial: snps-dw-apb-uart: Allow use of a power-domain
+Hendrik Hamerlinck (1):
+      usb: ehci: replace scnprintf() with sysfs_emit()
 
-Joseph Tilahun (1):
-      tty: serial: fix print format specifiers
+Ingo Rohloff (1):
+      usb: gadget: f_fs: Remove unnecessary spinlocks.
 
-Jyothi Kumar Seerapu (1):
-      serial: qcom-geni: Add support for 8 Mbps baud rate
+Inochi Amaoto (2):
+      dt-bindings: usb: dwc2: rename sophgo usb compatible string
+      usb: dwc2: follow compatible string change for Sophgo CV18XX/SG200X series SoC
 
-Kuninori Morimoto (1):
-      serial: sh-sci: Add R-Car Gen5 support
+Jameson Thies (1):
+      usb: typec: ucsi: Add poll_cci operation to cros_ec_ucsi
 
-Lad Prabhakar (4):
-      dt-bindings: serial: renesas,rsci: Document RZ/N2H support
-      dt-bindings: serial: rsci: Update maintainer entry
-      serial: sh-sci: Replace direct stop_rx/stop_tx calls with port ops in sci_shutdown()
-      dt-bindings: serial: renesas: Document RZ/V2N SCIF
+Jay Chen (1):
+      usb: xhci: Set avg_trb_len = 8 for EP0 during Address Device Command
 
-Max Shevchenko (1):
-      dt-bindings: serial: mediatek,uart: add MT6572
+Jens Glathe (1):
+      usb: misc: onboard_usb_dev: Add Bison Electronics Inc. Integrated Camera
 
-Mikulas Patocka (1):
-      tty: omit need_resched() before cond_resched()
+Jiayi Li (1):
+      usb: core: Add 0x prefix to quirks debug output
 
-Myrrh Periwinkle (2):
-      vt: keyboard: Don't process Unicode characters in K_OFF mode
-      vt: defkeymap: Map keycodes above 127 to K_HOLE
+Jisheng Zhang (1):
+      usb: dwc2: disable platform lowlevel hw resources during shutdown
 
-Nghia Nguyen (1):
-      dt-bindings: serial: sh-sci: Document r8a78000 bindings
+Johan Hovold (7):
+      usb: gadget: udc: renesas_usb3: drop unused module alias
+      usb: musb: omap2430: enable compile testing
+      usb: dwc3: imx8mp: fix device leak at unbind
+      usb: dwc3: meson-g12a: fix device leaks at unbind
+      usb: gadget: udc: renesas_usb3: fix device leak at unbind
+      usb: musb: omap2430: fix device leak at unbind
+      usb: musb: omap2430: clean up probe error handling
 
-Nikunj Kela (2):
-      dt-bindings: serial: describe SA8255p
-      dt-bindings: qcom: geni-se: describe SA8255p
+Johannes Schneider (1):
+      usb: dwc3: gadget: Simplify TRB reclaim logic by removing redundant 'chain' argument
 
-Praveen Talari (6):
-      soc: qcom: geni-se: Enable QUPs on SA8255p Qualcomm platforms
-      serial: qcom-geni: move resource initialization to separate function
-      serial: qcom-geni: move resource control logic to separate functions
-      serial: qcom-geni: move clock-rate logic to separate function
-      serial: qcom-geni: Enable PM runtime for serial driver
-      serial: qcom-geni: Enable Serial on SA8255p Qualcomm platforms
+Lad Prabhakar (1):
+      dt-bindings: usb: renesas,usbhs: Add RZ/V2N SoC support
 
-Thierry Bultel (3):
-      dt-bindings: serial: renesas,rsci: Add optional secondary clock input
-      serial: sh-sci: Use private port ID
-      serial: sh-sci: Add support for RZ/T2H SCI
+Lucas De Marchi (1):
+      usb: early: xhci-dbc: Fix early_ioremap leak
 
-WangYuli (1):
-      serial: 8250_dw: Fix typo "notifer"
+Mario Limonciello (2):
+      usb: xhci: Avoid showing errors during surprise removal
+      usb: xhci: Avoid showing warnings for dying controller
 
-Yixun Lan (1):
-      dt-bindings: serial: 8250: spacemit: set clocks property as required
+Mihai Sain (1):
+      usb: ohci-at91: Use dynamic device name for OHCI HCD creation
 
-Yunhui Cui (1):
-      serial: 8250: fix panic due to PSLVERR
+Myrrh Periwinkle (1):
+      usb: typec: ucsi: Update power_supply on power role change
 
- Documentation/devicetree/bindings/serial/8250.yaml |  45 +-
- .../devicetree/bindings/serial/mediatek,uart.yaml  |   1 +
- .../bindings/serial/qcom,sa8255p-geni-uart.yaml    |  69 ++
- .../devicetree/bindings/serial/renesas,hscif.yaml  |   7 +
- .../devicetree/bindings/serial/renesas,rsci.yaml   |  27 +-
- .../devicetree/bindings/serial/renesas,scif.yaml   |   8 +
- .../devicetree/bindings/serial/samsung_uart.yaml   |   4 +
- .../bindings/serial/snps-dw-apb-uart.yaml          |   3 +
- .../soc/qcom/qcom,sa8255p-geni-se-qup.yaml         | 107 +++
- Documentation/driver-api/serial/driver.rst         |   7 +-
- Documentation/driver-api/tty/tty_port.rst          |   5 +-
- arch/m68k/amiga/config.c                           |   2 -
- arch/m68k/apollo/config.c                          |   2 -
- arch/m68k/atari/config.c                           |   1 -
- arch/m68k/mac/config.c                             |   2 -
- arch/m68k/q40/config.c                             |   2 -
- arch/powerpc/kernel/legacy_serial.c                |  60 +-
- arch/powerpc/platforms/powermac/setup.c            |   2 -
- arch/x86/include/asm/ce4100.h                      |   6 +
- arch/x86/platform/ce4100/ce4100.c                  |  95 ---
- drivers/isdn/capi/capi.c                           |   8 +-
- drivers/soc/qcom/qcom-geni-se.c                    |  13 +-
- drivers/staging/greybus/uart.c                     |   7 +-
- drivers/tty/serial/8250/8250.h                     |   8 +
- drivers/tty/serial/8250/8250_ce4100.c              |  93 +++
- drivers/tty/serial/8250/8250_core.c                | 318 ++++----
- drivers/tty/serial/8250/8250_dw.c                  |  36 +-
- drivers/tty/serial/8250/8250_em.c                  |   4 +-
- drivers/tty/serial/8250/8250_ingenic.c             |   8 +-
- drivers/tty/serial/8250/8250_ioc3.c                |   4 +-
- drivers/tty/serial/8250/8250_lpc18xx.c             |   2 +-
- drivers/tty/serial/8250/8250_ni.c                  |  56 +-
- drivers/tty/serial/8250/8250_omap.c                |  53 +-
- drivers/tty/serial/8250/8250_pci.c                 |   6 +-
- drivers/tty/serial/8250/8250_port.c                | 832 ++++++++++-----------
- drivers/tty/serial/8250/8250_rsa.c                 |  96 +++
- drivers/tty/serial/8250/8250_rt288x.c              |   4 +-
- drivers/tty/serial/8250/8250_uniphier.c            |   4 +-
- drivers/tty/serial/8250/Makefile                   |   3 +
- drivers/tty/serial/Kconfig                         |   7 +
- drivers/tty/serial/Makefile                        |   1 +
- drivers/tty/serial/fsl_lpuart.c                    |   8 +-
- drivers/tty/serial/qcom_geni_serial.c              | 395 ++++++++--
- drivers/tty/serial/rsci.c                          | 480 ++++++++++++
- drivers/tty/serial/rsci.h                          |  10 +
- drivers/tty/serial/serial_core.c                   |  78 +-
- drivers/tty/serial/sh-sci-common.h                 |   8 +
- drivers/tty/serial/sh-sci.c                        | 223 +++---
- drivers/tty/tty_buffer.c                           |   3 +-
- drivers/tty/tty_port.c                             |  17 +-
- drivers/tty/vt/defkeymap.c_shipped                 | 112 +++
- drivers/tty/vt/keyboard.c                          |   2 +-
- drivers/usb/class/cdc-acm.c                        |   7 +-
- drivers/usb/serial/usb-serial.c                    |   7 +-
- include/linux/serial_8250.h                        |   4 +-
- include/linux/serial_core.h                        |   6 +-
- include/linux/tty_port.h                           |  21 +-
- include/uapi/linux/vt.h                            |  78 +-
- net/bluetooth/rfcomm/tty.c                         |   7 +-
- 59 files changed, 2331 insertions(+), 1153 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/serial/qcom,sa8255p-geni-uart.yaml
- create mode 100644 Documentation/devicetree/bindings/soc/qcom/qcom,sa8255p-geni-se-qup.yaml
- create mode 100644 drivers/tty/serial/8250/8250_ce4100.c
- create mode 100644 drivers/tty/serial/rsci.c
- create mode 100644 drivers/tty/serial/rsci.h
+Nathan Chancellor (1):
+      usb: atm: cxacru: Merge cxacru_upload_firmware() into cxacru_heavy_init()
+
+Oliver Neukum (2):
+      usb: core: usb_submit_urb: downgrade type check
+      cdc-acm: fix race between initial clearing halt and open
+
+Prashanth K (1):
+      usb: dwc3: gadget: Remove duplicate check while setting xfer resource
+
+RD Babiera (1):
+      usb: typec: altmodes/displayport: add irq_hpd to sysfs
+
+Radhey Shyam Pandey (2):
+      usb: dwc3: xilinx: add shutdown callback
+      usb: dwc3: xilinx: set coherency mode for AMD versal adaptive platform
+
+RubenKelevra (1):
+      include: fsl_devices.h: drop unused, misspelled FLS_USB2_WORKAROUND_ENGCM09152
+
+Sebastian Reichel (1):
+      usb: typec: fusb302: cache PD RX state
+
+Seungjin Bae (1):
+      usb: host: xhci-plat: fix incorrect type for of_match variable in xhci_plat_probe()
+
+Slark Xiao (1):
+      USB: serial: option: add Foxconn T99W709
+
+Su Hui (1):
+      usb: xhci: print xhci->xhc_state when queue_command failed
+
+Sumanth Gavini (2):
+      usb: gadget: f_uac2: replace scnprintf() with sysfs_emit()
+      usb: gadget: f_uac1: replace scnprintf() with sysfs_emit()
+
+Tao Xue (1):
+      usb: gadget : fix use-after-free in composite_dev_cleanup()
+
+Tomasz Michalec (1):
+      usb: typec: intel_pmc_mux: Defer probe if SCU IPC isn't present
+
+Uwe Kleine-König (1):
+      docs: usb: gadget: Reindent numbered list
+
+Wolfram Sang (1):
+      usb: renesas_usbhs: use proper DMAENGINE API for termination
+
+Xinyu Liu (1):
+      usb: core: config: Prevent OOB read in SS endpoint companion parsing
+
+Xu Rao (1):
+      usb: core: modify comments xhci_hc_driver has HCD_MEMORY just like ehci ohci
+
+Xu Yang (7):
+      usb: chipidea: udc: add CI_HDRC_CONTROLLER_PULLUP_EVENT event
+      usb: chipidea: imx: add imx_usbmisc_pullup() hook
+      usb: chipidea: imx: implement workaround for ERR051725
+      usb: core: add dma-noncoherent buffer alloc and free API
+      media: uvcvideo: use usb_alloc_noncoherent/usb_free_noncoherent()
+      media: stk1160: use usb_alloc_noncoherent/usb_free_noncoherent()
+      usb: core: add urb->sgt parameter description
+
+Yongbo Zhang (1):
+      usb: typec: fusb302: fix scheduling while atomic when using virtio-gpio
+
+Yuesong Li (1):
+      usb: storage: reltek_cr: convert to use secs_to_jiffies
+
+Yuhao Jiang (1):
+      USB: gadget: f_hid: Fix memory leak in hidg_bind error path
+
+ .../ABI/testing/sysfs-driver-typec-displayport     |  10 ++
+ .../devicetree/bindings/usb/ci-hdrc-usb2.yaml      |   5 +
+ Documentation/devicetree/bindings/usb/dwc2.yaml    |   2 +-
+ .../devicetree/bindings/usb/fsl,usbmisc.yaml       |   2 +
+ .../devicetree/bindings/usb/genesys,gl850g.yaml    |  28 ++--
+ .../devicetree/bindings/usb/lpc32xx-udc.txt        |  28 ----
+ .../devicetree/bindings/usb/nxp,lpc3220-udc.yaml   |  50 ++++++
+ .../devicetree/bindings/usb/renesas,usbhs.yaml     |   1 +
+ Documentation/driver-api/usb/anchors.rst           |  11 --
+ Documentation/usb/gadget_configfs.rst              |  45 +++---
+ arch/arm64/boot/dts/freescale/s32g2.dtsi           |  23 +++
+ arch/arm64/boot/dts/freescale/s32g3.dtsi           |  23 +++
+ drivers/media/usb/stk1160/stk1160-v4l.c            |   4 -
+ drivers/media/usb/stk1160/stk1160-video.c          |  43 ++---
+ drivers/media/usb/stk1160/stk1160.h                |   7 -
+ drivers/media/usb/uvc/uvc_video.c                  |  61 ++-----
+ drivers/thunderbolt/domain.c                       |   2 +-
+ drivers/thunderbolt/nvm.c                          |   2 +-
+ drivers/thunderbolt/switch.c                       |   2 +-
+ drivers/usb/atm/cxacru.c                           | 172 ++++++++++----------
+ drivers/usb/chipidea/ci_hdrc_imx.c                 |  11 ++
+ drivers/usb/chipidea/ci_hdrc_imx.h                 |   1 +
+ drivers/usb/chipidea/udc.c                         |   5 +
+ drivers/usb/chipidea/usbmisc_imx.c                 | 128 +++++++++++++++
+ drivers/usb/class/cdc-acm.c                        |  11 +-
+ drivers/usb/class/usblp.c                          |  33 ++--
+ drivers/usb/core/config.c                          |  10 +-
+ drivers/usb/core/driver.c                          |   4 +-
+ drivers/usb/core/hcd-pci.c                         |   2 +-
+ drivers/usb/core/hcd.c                             |  29 +++-
+ drivers/usb/core/quirks.c                          |   2 +-
+ drivers/usb/core/urb.c                             |  31 +---
+ drivers/usb/core/usb.c                             |  80 ++++++++++
+ drivers/usb/dwc2/params.c                          |   2 +-
+ drivers/usb/dwc2/platform.c                        |   3 +
+ drivers/usb/dwc3/dwc3-imx8mp.c                     |   7 +-
+ drivers/usb/dwc3/dwc3-meson-g12a.c                 |   3 +
+ drivers/usb/dwc3/dwc3-xilinx.c                     |  35 ++--
+ drivers/usb/dwc3/gadget.c                          |  16 +-
+ drivers/usb/early/xhci-dbc.c                       |   4 +
+ drivers/usb/gadget/composite.c                     |  31 +---
+ drivers/usb/gadget/config.c                        |  53 -------
+ drivers/usb/gadget/function/f_fs.c                 |  12 +-
+ drivers/usb/gadget/function/f_hid.c                |   7 +-
+ drivers/usb/gadget/function/f_uac1.c               |   2 +-
+ drivers/usb/gadget/function/f_uac2.c               |   2 +-
+ drivers/usb/gadget/function/u_serial.c             |   6 -
+ drivers/usb/gadget/function/uvc_configfs.c         |  10 ++
+ drivers/usb/gadget/udc/dummy_hcd.c                 |   2 +-
+ drivers/usb/gadget/udc/m66592-udc.c                |   6 +-
+ drivers/usb/gadget/udc/net2280.c                   |   8 +-
+ drivers/usb/gadget/udc/pch_udc.c                   |   2 +-
+ drivers/usb/gadget/udc/renesas_usb3.c              |  10 +-
+ drivers/usb/gadget/udc/udc-xilinx.c                |   4 +-
+ drivers/usb/host/ehci-sysfs.c                      |  18 +--
+ drivers/usb/host/fsl-mph-dr-of.c                   |   3 +-
+ drivers/usb/host/ohci-at91.c                       |   2 +-
+ drivers/usb/host/ohci-spear.c                      |   3 +-
+ drivers/usb/host/xhci-mem.c                        |   2 +
+ drivers/usb/host/xhci-plat.c                       |   2 +-
+ drivers/usb/host/xhci-ring.c                       |  10 +-
+ drivers/usb/host/xhci.c                            |   6 +-
+ drivers/usb/misc/apple-mfi-fastcharge.c            |  24 ++-
+ drivers/usb/misc/onboard_usb_dev.c                 |   2 +
+ drivers/usb/misc/onboard_usb_dev.h                 |   8 +
+ drivers/usb/musb/Kconfig                           |   3 +-
+ drivers/usb/musb/omap2430.c                        |  37 ++---
+ drivers/usb/phy/phy-tegra-usb.c                    |  89 -----------
+ drivers/usb/renesas_usbhs/common.c                 |   8 +-
+ drivers/usb/renesas_usbhs/fifo.c                   |   2 +-
+ drivers/usb/serial/cp210x.c                        |  10 +-
+ drivers/usb/serial/ftdi_sio.c                      |  18 ++-
+ drivers/usb/serial/option.c                        |   2 +
+ drivers/usb/storage/realtek_cr.c                   |   2 +-
+ drivers/usb/typec/altmodes/displayport.c           |  28 ++++
+ drivers/usb/typec/mux/intel_pmc_mux.c              |   2 +-
+ drivers/usb/typec/tcpm/fusb302.c                   |  20 ++-
+ drivers/usb/typec/tcpm/tcpci_maxim_core.c          |  51 +++---
+ drivers/usb/typec/ucsi/Kconfig                     |   2 +
+ drivers/usb/typec/ucsi/cros_ec_ucsi.c              |   1 +
+ drivers/usb/typec/ucsi/psy.c                       |   2 +-
+ drivers/usb/typec/ucsi/trace.c                     |  17 --
+ drivers/usb/typec/ucsi/trace.h                     |   1 -
+ drivers/usb/typec/ucsi/ucsi.c                      |   6 +-
+ drivers/usb/typec/ucsi/ucsi.h                      |  11 +-
+ drivers/usb/typec/ucsi/ucsi_ccg.c                  |   4 +
+ drivers/usb/typec/ucsi/ucsi_yoga_c630.c            | 176 ++++++++++++++++++++-
+ include/linux/fsl_devices.h                        |   1 -
+ include/linux/usb.h                                |  16 +-
+ include/linux/usb/chipidea.h                       |   1 +
+ include/linux/usb/composite.h                      |   3 -
+ include/linux/usb/gadget.h                         |   4 -
+ include/linux/usb/tegra_usb_phy.h                  |   9 --
+ 93 files changed, 1016 insertions(+), 683 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/lpc32xx-udc.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/nxp,lpc3220-udc.yaml
 
