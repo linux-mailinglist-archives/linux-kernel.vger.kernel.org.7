@@ -1,182 +1,163 @@
-Return-Path: <linux-kernel+bounces-748667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07F5DB1447C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:50:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB84DB14480
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:53:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24AA518C166E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FA524E263B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 22:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B57F8236431;
-	Mon, 28 Jul 2025 22:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E5E137923;
+	Mon, 28 Jul 2025 22:53:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jz3AhKYX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="chefU6wp"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6E82E3708;
-	Mon, 28 Jul 2025 22:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CDC2E3708;
+	Mon, 28 Jul 2025 22:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753743044; cv=none; b=PYKYkR7tjJ18WMANyEUiR6rNCSgdl1rQowsMZZz6kue33tYT9sLI+8DlHRWaVyeYQPXXB23ER6N7m//mNgvDpEQWshrqx0Ui7uKdVEGGAlGHNBqdcM5VV7sAFoi0rEitB2CvIVESdQYsXVBOAHLLXep3WKP+6y0pXi5lK7ndC88=
+	t=1753743229; cv=none; b=Pq6t5gINkdIAV3dLbavu+xNdx38r1P9DOn0jcngisF0sStWFrIpQeZm0+B9gqt+ufdr2AmpvBpvMkNGiezQEL68gxG72Vzgi1VUD3LB05/fwbJsj7Cmsp/K8iqzeEPW0dnwFARgwn5+z8rQA/YhvdSF/Vlh4qYOKY4J43+m69hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753743044; c=relaxed/simple;
-	bh=aUFYEhrBDCMb4rwh/p3Q8a9jltXCwz63SKfYeyEBQ9c=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V374/Bd8lQWuTVZ6WVJhnR0+eRY1wtHYjBndG4Q0RCQ1GuojjI1HyEeIaqP9CczVTqfRiZgbfGQ0yHavIRkQphxorzafXLH+177R63GW/189RjPUkuz9U/g7BHi0fWtGI8Fhy2vGh/HLqjCBAQxs212IUxPgO5iZFvB9tzJAj9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jz3AhKYX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753743040;
-	bh=aUFYEhrBDCMb4rwh/p3Q8a9jltXCwz63SKfYeyEBQ9c=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=jz3AhKYXHiMcXAa5/TA6plvdh9o27whoXtIwBXldnVh6kY0wZbIFp7Bd0PdmUBkhV
-	 JrSb5Qui32vWAwBDerTapR7pJhoeT4wXj4fJJeWefITauKHpqg2AL5Yh1h1qhWqiA/
-	 wM7TRDt5Yt7gVJdy1ohMmrHfFyjdZgWcBbjnGzzVGZwIG/+Ov+oZSBVsGyGCGyH3bu
-	 LVjpw2IRptw6sFa87JZKElLRc5vpiGkiMDbSo/1tftTGTjrO/+3QLoLvRSDC63Va6a
-	 gr5bYx9CTVwRQujAPVn1n4NYndKo7cQ6lZHX3c40SKA2+yKYme+4aZV2jJWgWjJd18
-	 7NAzEwERFL0iQ==
-Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nicolas)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id E982017E0FA8;
-	Tue, 29 Jul 2025 00:50:38 +0200 (CEST)
-Message-ID: <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
-Subject: Re: [PATCH] media: rkvdec: Fix an error handling path in
- rkvdec_probe()
-From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Detlev Casanova	
- <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Hans Verkuil
- <hverkuil@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org
-Date: Mon, 28 Jul 2025 18:50:36 -0400
-In-Reply-To: <b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
-References: 
-	<b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
-Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
- keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
- oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
- zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
- TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
- 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
- 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
- cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
- tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
- bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
- qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
- BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
- tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
- zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
- 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
- s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
- An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
- ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
- AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
- CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
- 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
- BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
- +E7ItOqZEHAs+xabBgknYZIFPU=
-Organization: Collabora Canada
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-	boundary="=-HBQA1dSSAY++JW3+CEB6"
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1753743229; c=relaxed/simple;
+	bh=eX1UGc2px7NNJRV+K844aeoOGavd5NMfTfT1ElqBmSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OaJOjz8HZo1CaSdC4waXtA42UQWormf06FI2T56zaFeMlJynuBD9+G/kplQiMPQyiydD9rIsSpuAUsYUoDqFdwrBp76ZTrkzqmEro1WMAeIWNsUE+0M+JD+DOudZ95WRdF3jfEKxBcgNAKwMpWJl7H4U7yNwGUEKsrNnwWBvRoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=chefU6wp; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56SMrFo4504906
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Mon, 28 Jul 2025 15:53:15 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56SMrFo4504906
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1753743197;
+	bh=DLZscN1JLmc9m0yOJsmL9MRhp++5xLyFwWfLkGSOTlw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=chefU6wpD5w13i9V1zz18YEIIAtX6p7IB3eC+ekRoslZQN2ONwhdAeEvYPbRi3P4L
+	 YKHM3gWik675D606SqIjnx0U/u5NXIXJUrapLJ4Ka+VVILsOOdLf5UoskqbzTw8uBu
+	 qw4s1lpTLLP/+YV4e30BXr58XCXy4+iOYmUChSN19+l+PBEVpdWzt9BfyDWlw20ZPI
+	 VbrM7eC6D2FT+IrpThfvmx42IOZkVl5JNcr2JtPXvOcFwWgj6XxeNON8bjHxYzqtmf
+	 nkDgU+ZOqu6Vsg9fewPRsBWaKxgyoB6+0MulZwA0B4ljyKceopBqVZb41aqq1KeHqy
+	 y9qBqQRpaZxsg==
+Message-ID: <b63275a2-8d7e-4e45-ae4b-f69e90644fe5@zytor.com>
+Date: Mon, 28 Jul 2025 15:53:14 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-
-
---=-HBQA1dSSAY++JW3+CEB6
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-Le dimanche 27 juillet 2025 =C3=A0 12:02 +0200, Christophe JAILLET a =C3=A9=
-crit=C2=A0:
-> If an error occurs after a successful iommu_paging_domain_alloc() call, i=
-t
-> should be undone by a corresponding iommu_domain_free() call, as already
-> done in the remove function.
->=20
-> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Compile tested only
-> ---
-> =C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++++++---
-> =C2=A01 file changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> index d707088ec0dc..eb0d41f85d89 100644
-> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_device *p=
-dev)
-> =C2=A0	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
-> =C2=A0
-> =C2=A0	irq =3D platform_get_irq(pdev, 0);
-> -	if (irq <=3D 0)
-> -		return -ENXIO;
-> +	if (irq <=3D 0) {
-> +		ret =3D -ENXIO;
-> +		goto err_free_domain;
-> +	}
-> =C2=A0
-> =C2=A0	ret =3D devm_request_threaded_irq(&pdev->dev, irq, NULL,
-> =C2=A0					rkvdec_irq_handler, IRQF_ONESHOT,
-> =C2=A0					dev_name(&pdev->dev), rkvdec);
-> =C2=A0	if (ret) {
-> =C2=A0		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
-> -		return ret;
-> +		goto err_free_domain;
-> =C2=A0	}
-> =C2=A0
-> =C2=A0	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
-
-Have you considered moving the allocation of the domain right above the abo=
-ve
-line instead ? The empty domain can't possibly be used unless the probe hav=
-e
-fully completed.
-
-Nicolas
-
-> @@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device *pde=
-v)
-> =C2=A0err_disable_runtime_pm:
-> =C2=A0	pm_runtime_dont_use_autosuspend(&pdev->dev);
-> =C2=A0	pm_runtime_disable(&pdev->dev);
-> +err_free_domain:
-> +	if (rkvdec->empty_domain)
-> +		iommu_domain_free(rkvdec->empty_domain);
-> =C2=A0	return ret;
-> =C2=A0}
-> =C2=A0
-
---=-HBQA1dSSAY++JW3+CEB6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 12/23] KVM: VMX: Introduce CET VMCS fields and control
+ bits
+To: Chao Gao <chao.gao@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, x86@kernel.org, seanjc@google.com,
+        pbonzini@redhat.com, dave.hansen@intel.com
+Cc: rick.p.edgecombe@intel.com, mlevitsk@redhat.com, john.allen@amd.com,
+        weijiang.yang@intel.com, minipli@grsecurity.net,
+        Zhang Yi Z <yi.z.zhang@linux.intel.com>,
+        Thomas Gleixner
+ <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>
+References: <20250704085027.182163-1-chao.gao@intel.com>
+ <20250704085027.182163-13-chao.gao@intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20250704085027.182163-13-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
------BEGIN PGP SIGNATURE-----
+On 7/4/2025 1:49 AM, Chao Gao wrote:
+> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
+> index cca7d6641287..ce10a7e2d3d9 100644
+> --- a/arch/x86/include/asm/vmx.h
+> +++ b/arch/x86/include/asm/vmx.h
+> @@ -106,6 +106,7 @@
+>   #define VM_EXIT_CLEAR_BNDCFGS                   0x00800000
+>   #define VM_EXIT_PT_CONCEAL_PIP			0x01000000
+>   #define VM_EXIT_CLEAR_IA32_RTIT_CTL		0x02000000
+> +#define VM_EXIT_LOAD_CET_STATE                  0x10000000
+>   
+>   #define VM_EXIT_ALWAYSON_WITHOUT_TRUE_MSR	0x00036dff
+>   
+> @@ -119,6 +120,7 @@
+>   #define VM_ENTRY_LOAD_BNDCFGS                   0x00010000
+>   #define VM_ENTRY_PT_CONCEAL_PIP			0x00020000
+>   #define VM_ENTRY_LOAD_IA32_RTIT_CTL		0x00040000
+> +#define VM_ENTRY_LOAD_CET_STATE                 0x00100000
+>   
+>   #define VM_ENTRY_ALWAYSON_WITHOUT_TRUE_MSR	0x000011ff
+>   
+> @@ -369,6 +371,9 @@ enum vmcs_field {
+>   	GUEST_PENDING_DBG_EXCEPTIONS    = 0x00006822,
+>   	GUEST_SYSENTER_ESP              = 0x00006824,
+>   	GUEST_SYSENTER_EIP              = 0x00006826,
+> +	GUEST_S_CET                     = 0x00006828,
+> +	GUEST_SSP                       = 0x0000682a,
+> +	GUEST_INTR_SSP_TABLE            = 0x0000682c,
+>   	HOST_CR0                        = 0x00006c00,
+>   	HOST_CR3                        = 0x00006c02,
+>   	HOST_CR4                        = 0x00006c04,
+> @@ -381,6 +386,9 @@ enum vmcs_field {
+>   	HOST_IA32_SYSENTER_EIP          = 0x00006c12,
+>   	HOST_RSP                        = 0x00006c14,
+>   	HOST_RIP                        = 0x00006c16,
+> +	HOST_S_CET                      = 0x00006c18,
+> +	HOST_SSP                        = 0x00006c1a,
+> +	HOST_INTR_SSP_TABLE             = 0x00006c1c
+>   };
+>   
+>   /*
 
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaIf+vAAKCRBxUwItrAao
-HIh7AJ9siqERzUwFpo03WB/ccY47zYm2BwCcDeERz+YrhGQaSfBNmTmJ7h2Kxgw=
-=gy7Q
------END PGP SIGNATURE-----
+A comment not on this patch itself.
 
---=-HBQA1dSSAY++JW3+CEB6--
+Both spaces and tabs are currently used to align columns in 
+arch/x86/include/asm/vmx.h.  Can we standardize on one, either spaces or 
+tabs?
+
+Thanks!
+     Xin
 
