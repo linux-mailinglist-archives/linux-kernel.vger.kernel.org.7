@@ -1,262 +1,251 @@
-Return-Path: <linux-kernel+bounces-747991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF16AB13B14
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:14:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042F4B13B85
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BCA43BB752
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:13:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B6E616BB0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB291267B07;
-	Mon, 28 Jul 2025 13:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39712676DE;
+	Mon, 28 Jul 2025 13:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JSqCDE+l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mouUhkFg"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4642673BE;
-	Mon, 28 Jul 2025 13:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B58B4437A;
+	Mon, 28 Jul 2025 13:29:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753708434; cv=none; b=B5XX+qZHK82OtiLWdcX+gRMsa1Nb1Ks/e6m1VxQ8OrOq6Mrk8v5O6bechOVzxeVTcQfndL1jfI6LVJubIdMZ3ugDkcb5Iuh00YpLCkpZG3yo05zKmBRF/tS7DbXQjp1SJ5/b9LZsHIvyLJY1m2TSbGY2gcQSDJqQiIMUJ1LEDCU=
+	t=1753709400; cv=none; b=bk1N9hQFj56qNhclQf5NO17LrIH0o5OHo5nsV6X3/Z8VfRvgaCqUw3LUKyXkdzs5CXyKfCda5iYNaMOTSSbOLPj9ZkFn8DJKMuEVjj6HzcZGU5KR7su2Tp08G+Xl3MZrQQzJudTIFXzUwLZuGVFsPf45wunTFsbhOVtd1NMcSyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753708434; c=relaxed/simple;
-	bh=iv0JxBRvZ7WR02RiHo40yoMEe7M/0o1fvAq6dWb/CC4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=EErkkkylWukqCXodbkJNHWIXLkBr+JD9s0+m9kSAootsduFTsyNuPe6aehbxBEhYJMoXjugrBUZxKDkaQxqE9k9cgn3Y0NSRTZxwNUu9q98gwwvqbxXjuafLdmJRl96HaRabU578FHWwbzdstSytXAA54wWc76VZPxBApZXhvpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JSqCDE+l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B48FC4CEE7;
-	Mon, 28 Jul 2025 13:13:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753708433;
-	bh=iv0JxBRvZ7WR02RiHo40yoMEe7M/0o1fvAq6dWb/CC4=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=JSqCDE+lO87RfltHUSMhJlTOrK6gsYOx1oMHvc2PBRoG63/wpyMFzQslkgceVPgkB
-	 iep3JddRzg84LQwXdfnvVBsZbZT9b5Mm43bVYV9DYu5tDXSebKolV3L2CsTbnU9q1g
-	 iOr3hn+mSu3PPH9uWn7VEIrgj5G4z2iLbPIACkkmQk4Qhnasm42iPvHu6fuYVNa/fq
-	 BZgu0lu8z/IR9w1woLyqjMljnnjsAaxFJKOa9WI8wpH/aSLdSjIO7Uw41Q/n6zzuN/
-	 0HlNMwKmi1jC9m2k0ukIJSswstGnk4Ngfv8EUq5ebhL5QpHAdWZATfVw4/Vum6Nep9
-	 eyZjgBHAmCf3w==
+	s=arc-20240116; t=1753709400; c=relaxed/simple;
+	bh=7Gi7wVAXtEdKVNW6s1qSEV87zKdzdjTkh/VWVFv8jfE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qMQwl5DjulQSzseA2x26jCgWoXI5juthiK1MObxGzjeAfoLtq5BIggc9vfetVsI1Ih0kxVx9rlwT5xVkEdD+Abxzse5lPj5M9fSgq84EIkPx4A2i7kt8CBN9VRvWm5+GGj+GclBztWKk9q10xIDLYKI6v+nY7OVTSRqAB3g0td8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mouUhkFg; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-74924255af4so3803368b3a.1;
+        Mon, 28 Jul 2025 06:29:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753709398; x=1754314198; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lFNzLNCZ+mO1DSqPdBgFXnK9D2An91nqRyo5zO3fspE=;
+        b=mouUhkFgwpoIfwoR1n5PmrMVkh25NVj5uzUUXjDEO1QUL+/QmX0IujZxpzhQ/7xU0d
+         /YZM+oi491Eoxgi9r9Y9bnQwFFOOP9wdhVrg1rsJILEhaR3v30q4TikjFDKevKeceW09
+         vMagjo+IA1p7yek4S+P+1AxUG4KpQ/2ToiFzeZgr3DYqYckPUWzxAM1T9E8LbyRjsiU+
+         01D9kBRMKaojc5fqt7owl/kLe7pVbmidES1EL0XeYW3K1ozlfHBZPetf/1KTxA9G96Xd
+         PQpw1TpXk4RTybZ1U0twDl5bHmYgNsmMfkd1x9fBPSmQmE7wUft6+WJ9A5HRe6y0csdj
+         iiFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753709398; x=1754314198;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lFNzLNCZ+mO1DSqPdBgFXnK9D2An91nqRyo5zO3fspE=;
+        b=Oa4EyRX1Um7zYIoUC3uV7eF9xZP3GvSaYcjxy07kRbb43ToQAcBaDfLzlD8zeByq72
+         YjQXYf9FTnkSDZsURZrorZUe44LLhscbRVFONOoOgHdPjjQ6/QYbOqQpM7U+k+SUHczz
+         4ALJXOILQjfJpTv5YS3yVweWmaAogTchofPR6zSuFy+73Xog8192/2tcV8zgISfydyfT
+         REkLLALED9sajBRTgLTRYcplk+/tY/Xr+3B3ICF4zWtOfmcvDMN/gXvPSIGbxG3Mic2X
+         AV6985qzsIYEc7VXfLMAm6j26M+tq9HT7zraOCo5DDaT/x3Q2Kiduo+zAnRzjbzD0WZs
+         fVHg==
+X-Forwarded-Encrypted: i=1; AJvYcCXcgEJTP6VAZmJBuP81P3cj/A29r4HZIIITVHjrwZ4L1ah1fWhWim/C2t4r16oZMd9x5ewjIzNIqsQb4O8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhvb6F6h6JWgmxBVM/rljhzgHf01g0Em1lutUtLMIKL63sDHwK
+	YYRGOMDGSr4vNm4PaCrS7A/vN9xjOwqTJaA1Rz0FjriLdn+NFYf4mEncxUV1YbMy
+X-Gm-Gg: ASbGncsLKxkls7TGa4fn8NGsEHstyFMu5FKLZf8GeS1kUfOCSHIbJfaQKsO6kdyk9cb
+	Oy84i93TceGaP9OJvZVIcZI98+nUetLH/V1kV9uFuDGzaw8Q10IaEv+MMoDmbqn0IaNUgHBiVM6
+	zB6U8X9O3EkqFRe/PFNsfuvXyv0aBXl4BoeySyVn2Sx2IHW5ogLfsQwFL1BW+WvcqGdMo0Z+yQe
+	2hFL7/Sf45wNVcZ7ErZRvfD7HkZgLK9y1+eR1M0e7bFdefOmhCzzmBdbgZNC+6qQRzGTpA87zjm
+	XpHAvbNnuz9cuLJyRpd7I0z8zNKNQVjPM5Pd4UQQe7G+q8gEmiFxw0PSJ8jQHZZjdmnGMsF2WVP
+	zC5gqKdH47VcN0QXJCKUpgwcWLMzu2yCfZfxRFIVnPK0NQIjhfXOT0vPxXLhpvVy318ZHDVN+pD
+	o4VP5igfIhEUAsN2Gh
+X-Google-Smtp-Source: AGHT+IGYmO3/lYKBceRpf1yVUHUcdzSSKOc2OS5og63TakU0XWsmJW0EvhPDORCJ2KuQ/yWVFeTa+Q==
+X-Received: by 2002:a05:6a00:2e23:b0:742:b3a6:db16 with SMTP id d2e1a72fcca58-763377f25f6mr17601605b3a.20.1753709397578;
+        Mon, 28 Jul 2025 06:29:57 -0700 (PDT)
+Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([122.162.223.145])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-766d5821fa2sm3614887b3a.64.2025.07.28.06.29.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 06:29:56 -0700 (PDT)
+From: "Darshan R." <rathod.darshan.0896@gmail.com>
+To: jdelvare@suse.com,
+	andi.shyti@kernel.org
+Cc: linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Darshan R." <rathod.darshan.0896@gmail.com>
+Subject: [PATCH] i2c: sis96x: Refactor for readability and style improvements
+Date: Mon, 28 Jul 2025 13:14:18 +0000
+Message-ID: <20250728131418.9424-1-rathod.darshan.0896@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 28 Jul 2025 15:13:45 +0200
-Message-Id: <DBNPR4KQZXY5.279JBMO315A12@kernel.org>
-Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
-Cc: <linux-kernel@vger.kernel.org>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, <rust-for-linux@vger.kernel.org>,
- <netdev@vger.kernel.org>, <andrew@lunn.ch>, <hkallweit1@gmail.com>,
- <tmgross@umich.edu>, <ojeda@kernel.org>, <alex.gaynor@gmail.com>,
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
- <a.hindborg@samsung.com>, <aliceryhl@google.com>,
- <anna-maria@linutronix.de>, <frederic@kernel.org>, <tglx@linutronix.de>,
- <arnd@arndb.de>, <jstultz@google.com>, <sboyd@kernel.org>,
- <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
- <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
- <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
- <vschneid@redhat.com>, <tgunders@redhat.com>, <me@kloenk.dev>,
- <david.laight.linux@gmail.com>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
- <20250220070611.214262-8-fujita.tomonori@gmail.com>
-In-Reply-To: <20250220070611.214262-8-fujita.tomonori@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu Feb 20, 2025 at 8:06 AM CET, FUJITA Tomonori wrote:
-> diff --git a/rust/kernel/cpu.rs b/rust/kernel/cpu.rs
-> new file mode 100644
-> index 000000000000..eeeff4be84fa
-> --- /dev/null
-> +++ b/rust/kernel/cpu.rs
-> @@ -0,0 +1,13 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Processor related primitives.
-> +//!
-> +//! C header: [`include/linux/processor.h`](srctree/include/linux/proces=
-sor.h).
-> +
-> +/// Lower CPU power consumption or yield to a hyperthreaded twin process=
-or.
-> +///
-> +/// It also happens to serve as a compiler barrier.
-> +pub fn cpu_relax() {
-> +    // SAFETY: FFI call.
-> +    unsafe { bindings::cpu_relax() }
-> +}
+This commit introduces several minor, non-functional code quality
+improvements to the SiS96x I2C bus driver. The primary goal is to
+enhance code clarity and align better with standard kernel coding
+practices.
 
-Please split this out in a separate patch.
+Key changes include:
+*   **Separating assignments from conditionals:** Break out `read` operations
+    (e.g., `sis96x_read()`) from `if` statement conditions, making the
+    control flow more explicit and easier to follow. This avoids
+    common pitfalls of assignment within conditional expressions.
+*   **Whitespace and alignment fixes:** Adjust parameter alignment in
+    function definitions and remove extraneous trailing whitespace,
+    improving visual consistency and adherence to kernel coding style.
 
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index f6ecf09cb65f..8858eb13b3df 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -64,6 +64,7 @@ macro_rules! declare_err {
->      declare_err!(EPIPE, "Broken pipe.");
->      declare_err!(EDOM, "Math argument out of domain of func.");
->      declare_err!(ERANGE, "Math result not representable.");
-> +    declare_err!(ETIMEDOUT, "Connection timed out.");
->      declare_err!(ERESTARTSYS, "Restart the system call.");
->      declare_err!(ERESTARTNOINTR, "System call was interrupted by a signa=
-l and will be restarted.");
->      declare_err!(ERESTARTNOHAND, "Restart if no handler.");
-> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-> index d4a73e52e3ee..be63742f517b 100644
-> --- a/rust/kernel/io.rs
-> +++ b/rust/kernel/io.rs
-> @@ -7,6 +7,8 @@
->  use crate::error::{code::EINVAL, Result};
->  use crate::{bindings, build_assert};
-> =20
-> +pub mod poll;
-> +
->  /// Raw representation of an MMIO region.
->  ///
->  /// By itself, the existence of an instance of this structure does not p=
-rovide any guarantees that
-> diff --git a/rust/kernel/io/poll.rs b/rust/kernel/io/poll.rs
-> new file mode 100644
-> index 000000000000..5977b2082cc6
-> --- /dev/null
-> +++ b/rust/kernel/io/poll.rs
-> @@ -0,0 +1,120 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! IO polling.
-> +//!
-> +//! C header: [`include/linux/iopoll.h`](srctree/include/linux/iopoll.h)=
-.
-> +
-> +use crate::{
-> +    cpu::cpu_relax,
-> +    error::{code::*, Result},
-> +    time::{delay::fsleep, Delta, Instant},
-> +};
-> +
-> +/// Polls periodically until a condition is met or a timeout is reached.
-> +///
-> +/// The function repeatedly executes the given operation `op` closure an=
-d
-> +/// checks its result using the condition closure `cond`.
+These changes are purely refactoring-oriented and have no functional
+impact on the driver's operation.
 
-I'd add an empty line here,
+Signed-off-by: Darshan R. <rathod.darshan.0896@gmail.com>
+---
+ drivers/i2c/busses/i2c-sis96x.c | 51 ++++++++++++++++++---------------
+ 1 file changed, 28 insertions(+), 23 deletions(-)
 
-> +/// If `cond` returns `true`, the function returns successfully with the=
- result of `op`.
-> +/// Otherwise, it waits for a duration specified by `sleep_delta`
-> +/// before executing `op` again.
+diff --git a/drivers/i2c/busses/i2c-sis96x.c b/drivers/i2c/busses/i2c-sis96x.c
+index 77529dda6fcd..1bab881b2610 100644
+--- a/drivers/i2c/busses/i2c-sis96x.c
++++ b/drivers/i2c/busses/i2c-sis96x.c
+@@ -11,7 +11,7 @@
+ 
+     This module relies on quirk_sis_96x_smbus (drivers/pci/quirks.c)
+     for just about every machine for which users have reported.
+-    If this module isn't detecting your 96x south bridge, have a 
++    If this module isn't detecting your 96x south bridge, have a
+     look there.
+ 
+     We assume there can only be one SiS96x with one SMBus interface.
+@@ -65,12 +65,12 @@ static u16 sis96x_smbus_base;
+ 
+ static inline u8 sis96x_read(u8 reg)
+ {
+-	return inb(sis96x_smbus_base + reg) ;
++	return inb(sis96x_smbus_base + reg);
+ }
+ 
+ static inline void sis96x_write(u8 reg, u8 data)
+ {
+-	outb(data, sis96x_smbus_base + reg) ;
++	outb(data, sis96x_smbus_base + reg);
+ }
+ 
+ /* Execute a SMBus transaction.
+@@ -85,22 +85,24 @@ static int sis96x_transaction(int size)
+ 	dev_dbg(&sis96x_adapter.dev, "SMBus transaction %d\n", size);
+ 
+ 	/* Make sure the SMBus host is ready to start transmitting */
+-	if (((temp = sis96x_read(SMB_CNT)) & 0x03) != 0x00) {
++	temp = sis96x_read(SMB_CNT);
+ 
+-		dev_dbg(&sis96x_adapter.dev, "SMBus busy (0x%02x). "
+-			"Resetting...\n", temp);
++	if ((temp & 0x03) != 0x00) {
++		dev_dbg(&sis96x_adapter.dev, "SMBus busy (0x%02x). Resetting...\n", temp);
+ 
+-		/* kill the transaction */
+-		sis96x_write(SMB_HOST_CNT, 0x20);
++	/* kill the transaction */
++	sis96x_write(SMB_HOST_CNT, 0x20);
+ 
+-		/* check it again */
+-		if (((temp = sis96x_read(SMB_CNT)) & 0x03) != 0x00) {
+-			dev_dbg(&sis96x_adapter.dev, "Failed (0x%02x)\n", temp);
+-			return -EBUSY;
+-		} else {
+-			dev_dbg(&sis96x_adapter.dev, "Successful\n");
+-		}
++	/* check it again */
++	temp = sis96x_read(SMB_CNT);
++
++	if ((temp & 0x03) != 0x00) {
++		dev_dbg(&sis96x_adapter.dev, "Failed (0x%02x)\n", temp);
++		return -EBUSY;
++	} else {
++		dev_dbg(&sis96x_adapter.dev, "Successful\n");
+ 	}
++}
+ 
+ 	/* Turn off timeout interrupts, set fast host clock */
+ 	sis96x_write(SMB_CNT, 0x20);
+@@ -138,7 +140,9 @@ static int sis96x_transaction(int size)
+ 
+ 	/* Finish up by resetting the bus */
+ 	sis96x_write(SMB_STS, temp);
+-	if ((temp = sis96x_read(SMB_STS))) {
++
++	temp = sis96x_read(SMB_STS);
++	if (temp) {
+ 		dev_dbg(&sis96x_adapter.dev, "Failed reset at "
+ 			"end of transaction! (0x%02x)\n", temp);
+ 	}
+@@ -147,9 +151,9 @@ static int sis96x_transaction(int size)
+ }
+ 
+ /* Return negative errno on error. */
+-static s32 sis96x_access(struct i2c_adapter * adap, u16 addr,
++static s32 sis96x_access(struct i2c_adapter *adap, u16 addr,
+ 			 unsigned short flags, char read_write,
+-			 u8 command, int size, union i2c_smbus_data * data)
++			 u8 command, int size, union i2c_smbus_data *data)
+ {
+ 	int status;
+ 
+@@ -182,7 +186,7 @@ static s32 sis96x_access(struct i2c_adapter * adap, u16 addr,
+ 			sis96x_write(SMB_BYTE, data->word & 0xff);
+ 			sis96x_write(SMB_BYTE + 1, (data->word & 0xff00) >> 8);
+ 		}
+-		size = (size == I2C_SMBUS_PROC_CALL ? 
++		size = (size == I2C_SMBUS_PROC_CALL ?
+ 			SIS96x_PROC_CALL : SIS96x_WORD_DATA);
+ 		break;
+ 
+@@ -196,7 +200,7 @@ static s32 sis96x_access(struct i2c_adapter * adap, u16 addr,
+ 		return status;
+ 
+ 	if ((size != SIS96x_PROC_CALL) &&
+-		((read_write == I2C_SMBUS_WRITE) || (size == SIS96x_QUICK)))
++	   ((read_write == I2C_SMBUS_WRITE) || (size == SIS96x_QUICK)))
+ 		return 0;
+ 
+ 	switch (size) {
+@@ -240,7 +244,7 @@ static const struct pci_device_id sis96x_ids[] = {
+ MODULE_DEVICE_TABLE (pci, sis96x_ids);
+ 
+ static int sis96x_probe(struct pci_dev *dev,
+-				const struct pci_device_id *id)
++			const struct pci_device_id *id)
+ {
+ 	u16 ww = 0;
+ 	int retval;
+@@ -263,7 +267,7 @@ static int sis96x_probe(struct pci_dev *dev,
+ 		return -EINVAL;
+ 	}
+ 	dev_info(&dev->dev, "SiS96x SMBus base address: 0x%04x\n",
+-			sis96x_smbus_base);
++		 sis96x_smbus_base);
+ 
+ 	retval = acpi_check_resource_conflict(&dev->resource[SIS96x_BAR]);
+ 	if (retval)
+@@ -286,7 +290,8 @@ static int sis96x_probe(struct pci_dev *dev,
+ 	snprintf(sis96x_adapter.name, sizeof(sis96x_adapter.name),
+ 		"SiS96x SMBus adapter at 0x%04x", sis96x_smbus_base);
+ 
+-	if ((retval = i2c_add_adapter(&sis96x_adapter))) {
++	retval = i2c_add_adapter(&sis96x_adapter);
++	if (retval) {
+ 		dev_err(&dev->dev, "Couldn't register adapter!\n");
+ 		release_region(sis96x_smbus_base, SMB_IOSIZE);
+ 		sis96x_smbus_base = 0;
+-- 
+2.43.0
 
-and here.
-
-> +/// This process continues until either `cond` returns `true` or the tim=
-eout,
-> +/// specified by `timeout_delta`, is reached. If `timeout_delta` is `Non=
-e`,
-> +/// polling continues indefinitely until `cond` evaluates to `true` or a=
-n error occurs.
-> +///
-> +/// # Examples
-> +///
-> +/// ```rust,ignore
-
-Why ignore? This should be possible to compile test.
-
-> +/// fn wait_for_hardware(dev: &mut Device) -> Result<()> {
-
-I think the parameter here can just be `&Io<SIZE>`.
-
-> +///     // The `op` closure reads the value of a specific status registe=
-r.
-> +///     let op =3D || -> Result<u16> { dev.read_ready_register() };
-> +///
-> +///     // The `cond` closure takes a reference to the value returned by=
- `op`
-> +///     // and checks whether the hardware is ready.
-> +///     let cond =3D |val: &u16| *val =3D=3D HW_READY;
-> +///
-> +///     match read_poll_timeout(op, cond, Delta::from_millis(50), Some(D=
-elta::from_secs(3))) {
-> +///         Ok(_) =3D> {
-> +///             // The hardware is ready. The returned value of the `op`=
-` closure isn't used.
-> +///             Ok(())
-> +///         }
-> +///         Err(e) =3D> Err(e),
-> +///     }
-> +/// }
-> +/// ```
-> +///
-> +/// ```rust
-> +/// use kernel::io::poll::read_poll_timeout;
-> +/// use kernel::time::Delta;
-> +/// use kernel::sync::{SpinLock, new_spinlock};
-> +///
-> +/// let lock =3D KBox::pin_init(new_spinlock!(()), kernel::alloc::flags:=
-:GFP_KERNEL)?;
-> +/// let g =3D lock.lock();
-> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), Some=
-(Delta::from_micros(42)));
-> +/// drop(g);
-> +///
-> +/// # Ok::<(), Error>(())
-> +/// ```
-> +#[track_caller]
-> +pub fn read_poll_timeout<Op, Cond, T>(
-> +    mut op: Op,
-> +    mut cond: Cond,
-> +    sleep_delta: Delta,
-> +    timeout_delta: Option<Delta>,
-> +) -> Result<T>
-> +where
-> +    Op: FnMut() -> Result<T>,
-> +    Cond: FnMut(&T) -> bool,
-> +{
-> +    let start =3D Instant::now();
-> +    let sleep =3D !sleep_delta.is_zero();
-> +
-> +    if sleep {
-> +        might_sleep();
-> +    }
-
-I think a conditional might_sleep() is not great.
-
-I also think we can catch this at compile time, if we add two different var=
-iants
-of read_poll_timeout() instead and be explicit about it. We could get Klint=
- to
-catch such issues for us at compile time.
-
-> +
-> +    loop {
-> +        let val =3D op()?;
-> +        if cond(&val) {
-> +            // Unlike the C version, we immediately return.
-> +            // We know the condition is met so we don't need to check ag=
-ain.
-> +            return Ok(val);
-> +        }
-> +        if let Some(timeout_delta) =3D timeout_delta {
-> +            if start.elapsed() > timeout_delta {
-> +                // Unlike the C version, we immediately return.
-> +                // We have just called `op()` so we don't need to call i=
-t again.
-> +                return Err(ETIMEDOUT);
-> +            }
-> +        }
-> +        if sleep {
-> +            fsleep(sleep_delta);
-> +        }
-> +        // fsleep() could be busy-wait loop so we always call cpu_relax(=
-).
-> +        cpu_relax();
-> +    }
-> +}
 
