@@ -1,65 +1,66 @@
-Return-Path: <linux-kernel+bounces-747818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7ADB138C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:18:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263FBB138C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:18:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF0B83A8E43
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:17:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E46E7AA07D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCD125C70C;
-	Mon, 28 Jul 2025 10:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B757125E816;
+	Mon, 28 Jul 2025 10:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MmPNSoMy"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R1m79JI1"
 Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4D12561A2
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:17:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BBE2586EC;
+	Mon, 28 Jul 2025 10:17:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753697835; cv=none; b=pZr8RKz1kEhAO3k67vb/dzyYDRoum8qvMayqS2g7XqcDeWa3LrWR/NtUZ7dq26zAgfnsTiocY73QAdFDwJ/yJE8d4f7vmo97rz/4330UrbC1ROKgxOVCHrNwYxPHHth6XYhQyppMYEeYKL+IWZwhzdr4r0W+5ew4y2X0xZufsIg=
+	t=1753697836; cv=none; b=OBCnSmcshxO7X789a6xIZUEVXyyB3pjMHVw42B4D1NUt9MqIVEqmseALHEi+szgVtX2NKnQ366yoX7RULxQzb9YDlBrbaRskkvJLNDg1IUOoBLzNMbplmmXjNtcjPoB0Jn/DqmjZNeZygtrYspHYpgSCOMfBV+2H7U/B3zyWGS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753697835; c=relaxed/simple;
-	bh=c1RN+g2nu0vBJY1sBA694gPA4b5sCMgfkOXEiVtSlAA=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fomiKApCvYB3PU4Fl8Nr58qHP4p3C0TdloC4sj//EeiEP2nAqzBtqG/xgjMn1Ch4L9Br3iPXZZ8LB1NVkLzQRujFU4LOdc6Eht3VtmyLcX4FzH0+buzc4wk1OUJkArgPj3q8NQYyDY1stnbq4EnQFq544537YiF3qFeTeq86MAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MmPNSoMy; arc=none smtp.client-ip=217.70.183.198
+	s=arc-20240116; t=1753697836; c=relaxed/simple;
+	bh=TZmEsefxyY0xGF4MKLPq59pNiOpozRzRUKbRxdk+psI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=AQYbzLog+MqkzPHdBjUSkFS/EsZeT90zVLqoeTuyq5qpJy16BVuXMG4JG6RHFskFvEe9NLPgPyuJo5ssfnnOzQjSwQzcqYkqQy6RCNx+4iFuSQzcvBle88gcc+pBkTkbhLmencDM0MbWUk/uF65wylmJyHJjM0gPFIZaxAgjn4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R1m79JI1; arc=none smtp.client-ip=217.70.183.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 60BF843216;
-	Mon, 28 Jul 2025 10:17:04 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A7512431FF;
+	Mon, 28 Jul 2025 10:17:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753697825;
+	t=1753697826;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=r1rfcU6bVAroB+JlXo4xz195PlOMcJxuJT/+Bzp7VP0=;
-	b=MmPNSoMyWtFWYBokuTGwidoP3LyRH6iia+669R49ySQ4QmUwJlKh059AT7CpYf0GfjYqpF
-	3+KpnHOTtSCtL07PcpHsi+yjFPIX5AOdIJF+zffnTUJ8fJM8OzrOwzqs6qOFG6j0d4jLGi
-	/vXinb5e45jkQ/03yNXwhRtpYRItTY6e3AdWxys7TIHZk0yKrKo7ukXdN9M8+R9X8xCvFC
-	zy0bHEH3mb6Y05rQEL8fgoJAXLkaPNd+YY5mBYH9svZIG5KulZu4Xk3vYuR+40T5tytpib
-	tIFvNYPgQTRUZqqnF0Tpa/iMZ+3zv5zIV07ERFOSUq2dBRDtV8aro7KO+WU11Q==
+	bh=K6Z+Z6Ihro2Vvf1ko6ncjYpOQCSv1nCFxoBgIgd+GJg=;
+	b=R1m79JI1SGaeAfFCTyg4t8XnXnmjOiGBLC07lmLpS4FOrmIBZbqMtM6mYS9MuWPxOY4m6g
+	IqV1bimS1WcruMsW+8RkiU782hmnOHZFWNF7yT5FbHuClu/JseugmE6ifHFreU2dE/wWEg
+	wikesA4HWd723havLjdjgXEXU8BYJrmDGfWht+7ILF0G9hRg8GfDMoYSxgeY0PajDhEJn7
+	+dqp81tNRXfcLAqg/FSDa9A4mRkp4yrYnvMFbKk7/bdKrjjO2LAqfzXih9VUmAkfY3hmB1
+	iqTOsT4PKbIYA8KwvtKEpvXXbT1ZrCvZRXZOcykHvbflB5KKG4eePy8y1kXlPg==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org, 
- bcm-kernel-feedback-list@broadcom.com, william.zhang@broadcom.com, 
- anand.gore@broadcom.com, florian.fainelli@broadcom.com, 
- kamal.dasu@broadcom.com, dan.beygelman@broadcom.com, 
- =?utf-8?q?=C3=81lvaro_Fern=C3=A1ndez_Rojas?= <noltari@gmail.com>, 
- rafal@milecki.pl, computersforpeace@gmail.com, frieder.schrempf@kontron.de, 
- vigneshr@ti.com, richard@nod.at, bbrezillon@kernel.org, 
- kdasu.kdev@gmail.com, jaimeliao.tw@gmail.com, kilobyte@angband.pl, 
- jonas.gorski@gmail.com, dgcbueu@gmail.com, dregan@mail.com, 
- david regan <dregan@broadcom.com>
-In-Reply-To: <20250703024719.2256470-1-dregan@broadcom.com>
-References: <20250703024719.2256470-1-dregan@broadcom.com>
-Subject: Re: [PATCH v3] mtd: nand: brcmnand: fix mtd corrected bits stat
-Message-Id: <175369782433.102528.8293919155705720078.b4-ty@bootlin.com>
-Date: Mon, 28 Jul 2025 12:17:04 +0200
+To: Thomas Fourier <fourier.thomas@gmail.com>
+Cc: stable@vger.kernel.org, Richard Weinberger <richard@nod.at>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, 
+ Nicolas Ferre <nicolas.ferre@microchip.com>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+ =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+ Alexander Dahl <ada@thorsis.com>, Boris Brezillon <bbrezillon@kernel.org>, 
+ linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250702064515.18145-2-fourier.thomas@gmail.com>
+References: <20250702064515.18145-2-fourier.thomas@gmail.com>
+Subject: Re: [PATCH v2] mtd: rawnand: atmel: Fix dma_mapping_error()
+ address
+Message-Id: <175369782562.102528.1752000425924545922.b4-ty@bootlin.com>
+Date: Mon, 28 Jul 2025 12:17:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,22 +72,20 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: b4 0.14.2
 X-GND-State: clean
 X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeludeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvjghfuffkffggtgfgofesthekredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffhfdufefgueeuheeuveduieeijefhjeduveduveeitedvteeftdffhfejieelfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrdegvddrgeeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvvddprhgtphhtthhopegurhgvghgrnhessghrohgruggtohhmrdgtohhmpdhrtghpthhtohepfhhlohhrihgrnhdrfhgrihhnvghllhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopegughgtsghuvghusehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqmhhtugeslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehvihhgnhgvshhhrhesthhir
- dgtohhmpdhrtghpthhtohepsggtmhdqkhgvrhhnvghlqdhfvggvuggsrggtkhdqlhhishhtsegsrhhorggutghomhdrtghomhdprhgtphhtthhopehjrghimhgvlhhirghordhtfiesghhmrghilhdrtghomhdprhgtphhtthhopegtohhmphhuthgvrhhsfhhorhhpvggrtggvsehgmhgrihhlrdgtohhm
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeludeludcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvegjfhfukfffgggtgffosehtkeertdertdejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepheeifffhueelgfdtleetgfelvefggfehudelvdehuddulefgheelgfehieevvdegnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrgedvrdegiegnpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudefpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepsggsrhgviihilhhlohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehurdhklhgvihhnvgdqkhhovghnihhgsegsrgihlhhisghrvgdrtghomhdprhgtphhtthhopegtlhgruhguihhurdgsvgiinhgvrgesthhugihonhdruggvvhdprhgtp
+ hhtthhopehlihhnuhigqdhmthgusehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnihgtohhlrghsrdhfvghrrhgvsehmihgtrhhotghhihhprdgtohhmpdhrtghpthhtoheprhhitghhrghrugesnhhougdrrght
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, 02 Jul 2025 19:47:05 -0700, david regan wrote:
-> Currently we attempt to get the amount of flipped bits from a hardware
-> location which is reset on every subpage. Instead obtain total flipped
-> bits stat from hardware accumulator. In addition identify the correct
-> maximum subpage corrected bits.
+On Wed, 02 Jul 2025 08:45:11 +0200, Thomas Fourier wrote:
+> It seems like what was intended is to test if the dma_map of the
+> previous line failed but the wrong dma address was passed.
 > 
 > 
 
 Applied to nand/next, thanks!
 
-[1/1] mtd: nand: brcmnand: fix mtd corrected bits stat
-      commit: a0276550dd4474a3767b435db1b41c37ea5dd718
+[1/1] mtd: rawnand: atmel: Fix dma_mapping_error() address
+      commit: 9e2e2576bc49c3bc352d402963f7ba8774c3d95f
 
 Patche(s) should be available on mtd/linux.git and will be
 part of the next PR (provided that no robot complains by then).
