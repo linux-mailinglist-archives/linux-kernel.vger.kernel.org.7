@@ -1,195 +1,179 @@
-Return-Path: <linux-kernel+bounces-748105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D4AB13C72
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:09:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83BA6B13C82
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 16:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7AAA1C20D6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:03:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990C71885BFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E2E0283FC9;
-	Mon, 28 Jul 2025 13:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CC226E6EB;
+	Mon, 28 Jul 2025 13:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KiNI+HKV"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJSwV6Bh"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A2B274653
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 13:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A87F7261C;
+	Mon, 28 Jul 2025 13:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753710965; cv=none; b=PY6PhExa+WbczqF2iuYkNXZljlCv+f3ag35nye1haTzEf3kfR9m+jAqHHzPKCatLWG2db2AuzrlDKWWJAhnbM6n1HLfe2ITt2AxRroP42agEziJnjjh0QhmxDhOg9x9Q+fxQqJ6hU/J84hASyWaP5frP4cIeJuW51KwbSExlDEA=
+	t=1753711006; cv=none; b=OvlxQAFTw+g4MJ8eE24cKPIOV/xldUtAu5ImoPShC4MwxTzxSt7/zpQR3Lo9PJHXKpoXf0Kfe88UIhvhbgBePU9AkAOLtbOMof6vNoYveijwUWCskSZr6SetimK1P7sh3mnSArZp+PWKa4dRm/C5hf7LcmM2MDb95jR0n2/n2vU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753710965; c=relaxed/simple;
-	bh=ypSzciL2jkJ+Mog3EIhQdI7vmqYVGIRiOmTYgtOu+Fk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=SX1hPY+bq1X6YdC79HYQnbhjidNjxyQOqkPDWh3/hM/BsGM3HJ5B4AKPWHBE5XefkApBOqKLMg13JW0xhn2SHlKQZIidxG/TcBy6IfzLDrGZNGOnkRhTpRZLJd7i5fyDZGb6GAoIn6dcYULw/CJV6xzoiCZw73LL/Uvhrm+IE9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KiNI+HKV; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so50158945e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 06:56:03 -0700 (PDT)
+	s=arc-20240116; t=1753711006; c=relaxed/simple;
+	bh=Yj+5izj8Mt9uJqcA+pwBtpmYYGEAxnFMMaHSgbYMwWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=byMi+tQF5NAx1GukhFhg5hFiFxUVTqsWmGokkC7/IRIUsio5FJcndSKguNq2VWrlOJ1FUFIf/UoEzvyTdKSzBeC5Ui0gpbHQo2jH9jKOHV3TqPJ6UQkg1Jft7hH+qve1i2yE9mcUYqL2o67vnPjDf8Ic0YBH4Zst5mB2LbeRfpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IJSwV6Bh; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-456065d60a8so3963915e9.3;
+        Mon, 28 Jul 2025 06:56:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753710962; x=1754315762; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EV0p8ZNhxkQtgdsERR4qTiYCDN9W/4GIw/qe1A8PF14=;
-        b=KiNI+HKVEPezd0gTl+RaSybfvWwFpJ/GZrmflnNS4MeQ2FZIm4BNz4JoseAe0EwrmA
-         nibGuBGlrl8Tlsm8kxkCElU6+km7FSlRaTvgf0DG4AY2KlPOtqFrHo7nEYwWGSxtgGYl
-         LkuIjBWp3qIQmBFAYYL2irytbZfzYDxMyPtupGsEkZmyMQM4PJO9pN5bN7jl8WGlZ6yq
-         G34CnoFX1XnYYPR1d4f6hQkdguqlRrwslcrGB4g/uO2iMZtb8/vE6YxKNQcUrF88lyBS
-         QUcn1HZvPC5ixo9fLG5nuK63OgKQVGeAHDvK2evq0SeXda1OCe289PWMurSd/pYv1Z3v
-         Fi1Q==
+        d=gmail.com; s=20230601; t=1753711002; x=1754315802; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IG2cga25LP6ZPuVt0z2STMNNsIhvl1pufwSwAK8ecLo=;
+        b=IJSwV6BhPprgFhrtwECYXgbHh84aFDZt5d4Bv5QCaJTPnvzjAARuIROHMF1YvZcZlL
+         Rcwtpo7dZwVsvWDfoRfKqx6BLmvHHTLXZ5I882Rivi1Ht04x6+DlttC4fhkqQNXbR8Cw
+         Lcle8CMJyIWQSy/CD1lLjUzbzmp3lq8wsjlG72Wf/W6IgH6R2IUBavdWqqgSbP8WBiWu
+         NSHGrtvxqkMszW1kDPPZKsy5NC8wLHKSncE0Eg+1phY8X3DL2AXJIr21KaZBfMcJ4dzZ
+         BbLnvn7eaX5Q+4VpcIZj177J4ff6E0esQ7rTnyRIyFzMQYmm19B8tlHW03A4gBfgHq1I
+         uhag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753710962; x=1754315762;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EV0p8ZNhxkQtgdsERR4qTiYCDN9W/4GIw/qe1A8PF14=;
-        b=wHIzjUNOGo+X2G3+6tvgEPt2qhjL7U0OpYQBiyp6cFTtdWv9PSvwb5dnjjKoHwiyHZ
-         q8Y5s4lEhO/Pap2q3PUhHA6Oghcms8kn8acw33R3jz/4b63F5YVVKYQ+Oqm8DbLaw6aP
-         RlnmIpt7U0ucckFa0n1PFiIe3irWYKV1TE/XLkrG7WZ9prwBeMrpijk1+K0vTdEbYoYd
-         4fyg4bFPcLCQDYVIxYsQg+bdYw3GLcCRjFtsqaAv7cclFkBkys+Qk4E9cKNaulGjy97d
-         v2ENIQgyNq1Tg09DuhHbxOVZuYabUsc67g1wwccg0G23O86ROAvQbpLcXgRdOZ0GjF8N
-         2swg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYBLs4o3tVmdJOo7oQp6LJAKuDvF+SRM4/FxrTpXMgyUgq38m4PAtDMfYoV7+z3BukCrnLSYQc6EBwAV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyByoIT8qsF+4uZwTvCzkbobYZoV663LyU7EjW5fmqVk+ZaJPMd
-	73ZuyJC0vVyBBTO4xXzHV3zWe+l18GIgHuEzdtVY+1bCYtqfODWB5DVGbBp6kpv7a4c=
-X-Gm-Gg: ASbGnctkRMPn/ZONtwe+NUGdwL9NFNeK+jn3orx2rqsg10QChd/Ey8Ra3QmKE/gROES
-	hDVIqhpezNS0vD5sIJ0tEvhCu4/VTvcm/yoKQSunXYHAd/v/Q+1TSIl5Gj18rWkfHY7tJp5gtW9
-	CvYc7kz9/YXxM4seuFkFoAL7RBsFck5pyzaxPLMeBVWERSvSsCdPkmg9TnH2SeT5WGukoSIwH9E
-	f2qHmhWbvNvq/BpVmDhNlMCjHlewMxFKjpa817PUq1I6pgkVZ7T/UOeACNdmhLqEZWxWWagPOXl
-	EMk+qja1620D968gTPsLJxq496omYzoBTN36iyUWvkyLRrqHd+2DNeSLMjFqH9Yw16QQCuqRROh
-	hzztfw18HFDm1FltkqByYGlUgsKA=
-X-Google-Smtp-Source: AGHT+IHSRNjCsvA+a17XVvG0X0bD2L2S+7tCdoJMe7B6ypVA2l90htjyJerFVwbt0qj0fz/EWvewhA==
-X-Received: by 2002:a05:600c:35c6:b0:456:1d06:f38b with SMTP id 5b1f17b1804b1-4587d335362mr66236365e9.8.1753710961839;
-        Mon, 28 Jul 2025 06:56:01 -0700 (PDT)
-Received: from localhost ([2a02:c7c:7259:a00:ef61:42d3:92bc:95e1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705bcbe8sm162665305e9.17.2025.07.28.06.56.01
+        d=1e100.net; s=20230601; t=1753711002; x=1754315802;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IG2cga25LP6ZPuVt0z2STMNNsIhvl1pufwSwAK8ecLo=;
+        b=qIfCRTduM7JgNIlf+19Cz7HkKdwH0bau66sANfPZRHQWm11SCfwNkUxuZhQ55vQLi1
+         dzpoAkQiVmP/y3Up2RU3Ld41ZnH/2x0piSPNPwSULiRS/6CleUK4aDBNpvJmoGf38yug
+         APOanAnQnqvVPkLSqKukWSTX7kUhh2CBiHAD39B11NBNWtAF9O0IJiETItO0fCS4K2lt
+         e9Q9VSGKJ1sS5co0dCaQJnIRfrWrnaKJXs7jJ59gAzHkHiSQatknDz+p5oLFd+jTluBy
+         uBhjsiEfhlwRI0CCCv4lPVQcmmQH/Xx1Mpw5pW1T/PRz3g/b2aQiuQEZh2Jvc9xeScRu
+         TWrw==
+X-Forwarded-Encrypted: i=1; AJvYcCUE/ozbPpCD59g7x2tIj/3OO0X3/pj1joFmxTtnKXpuuNE9n05evw66VdS3Ac9maX7jglFa4LRb@vger.kernel.org, AJvYcCXRv2tz18SSnpYrZertKme7MQD6doFvg29AfZwTy/E1aFDCuMNM25LV5DavCmaz70DA4QymLunJTimyrOo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQjbQj/w6wlD1U5ZP1bx5uXJYuacSLLhQ1asy4oPwASwj1HADj
+	sYQPsvkpj9y0Q5CM2N6IIlHN+CwliUwkzKRArj5CfGdRfC/FsU2TS0g8
+X-Gm-Gg: ASbGncsY6FVhAu9eApAw18H8IFg/t/cxIqXcA/8Xo5f7Rp1NVEZm3YecffMsETfAnEz
+	QVjUnzLu5dzxSOw+lAurkGb5Yf/Yd9Xn61IwThZaUl8yRxYoWC9tQTPnkjLGGTQsMYWtMWFRyyW
+	shS5+OXFMOAlxZN8KIHgEL7lOuzDg3/UFmDK+ZF5Ot/P/bd6plOwxQZD68kS8IyJTjF/1doazPn
+	wRDrjUgOGkGu9T2zgHCfrMd0gJK7S4S15nJzpnL2Eb59VLgvbIMrom6Zgr8ubx+2RGjMIBHABz6
+	Ogj5Ak7Yi88NvbWSRookGM/8d/rQCJcsK477Qk4aWQQWYxlSLEvQ0hOh2HLo9vYfka6/ANaQzbp
+	Vy77CmxWqqr5Vo4/X53lOARDLey8lDHgK1S/WbI62llxLSU7NFZIYhfQmYKHl4+ELi2sW
+X-Google-Smtp-Source: AGHT+IGkZJ0Ic6sg2dJlYiQQQzQ55W+RUIUNJxxRy+p/h7Xai0zbiSZgULA8th8fzmAbAnq2ongyMw==
+X-Received: by 2002:a05:600c:4fcc:b0:453:9b3:5b70 with SMTP id 5b1f17b1804b1-4587665e19dmr37574035e9.8.1753711002143;
+        Mon, 28 Jul 2025 06:56:42 -0700 (PDT)
+Received: from ?IPV6:2001:660:5301:24:fe77:9d9a:a12:ac83? ([2001:660:5301:24:fe77:9d9a:a12:ac83])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705377e5sm157800215e9.7.2025.07.28.06.56.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 06:56:01 -0700 (PDT)
+        Mon, 28 Jul 2025 06:56:41 -0700 (PDT)
+Message-ID: <ab715726-77e2-4af7-bc1d-98a92a653617@gmail.com>
+Date: Mon, 28 Jul 2025 15:56:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 28 Jul 2025 14:56:00 +0100
-Message-Id: <DBNQNHBU5D4Y.1YB8M6DTKR6E9@linaro.org>
-Cc: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] arm64: dts: qcom: Add initial audio support for
- Hamoa-IOT-EVK
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: <leqi@qti.qualcomm.com>, "Konrad Dybcio" <konradybcio@kernel.org>,
- "Bjorn Andersson" <andersson@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>
-X-Mailer: aerc 0.20.0
-References: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
-In-Reply-To: <20250728-initial_audio_support_for_qualcomm_hamoa_iot_evk_board-v2-1-58aa30b60c7b@qti.qualcomm.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: ethernet: nixge: Add missing check after DMA map
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Paolo Abeni <pabeni@redhat.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Moritz Fischer <mdf@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baptiste Lepers <baptiste.lepers@gmail.com>
+References: <20250725133311.143814-2-fourier.thomas@gmail.com>
+ <CANn89iJW+4xLsTGU6LU4Y=amciL5Kni=wS1uTKy-wC8pCwNDGQ@mail.gmail.com>
+ <20250725081045.34ac4130@kernel.org>
+Content-Language: en-US, fr
+From: Thomas Fourier <fourier.thomas@gmail.com>
+In-Reply-To: <20250725081045.34ac4130@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon Jul 28, 2025 at 8:16 AM BST, leqi via B4 Relay wrote:
-> From: leqi <leqi@qti.qualcomm.com>
+On 25/07/2025 17:10, Jakub Kicinski wrote:
+> On Fri, 25 Jul 2025 06:53:16 -0700 Eric Dumazet wrote:
+>> Not sure if this driver is actively used...
+> Like most of the drivers that are missing dma_mappnig_error() :(
 >
-> This patch adds initial audio codec support for the Hamoa-IOT-EVK board,
-> including WCD9385 configuration, micbias voltage settings, GPIO reset,
-> and power supply bindings. It enables basic audio functionality for
-> further development. Basic test is good in Hamoa-IOT-EVK board.
->
-> Signed-off-by: leqi <leqi@qti.qualcomm.com>
-> ---
-> Changes in v2:
-> - Updated author email address to leqi@qti.qualcomm.com.
-> - Clarified that audio is validated with this change.
-> - Link to v1: https://lore.kernel.org/all/20250723-initial_audio_support_=
-for_qualcomm_hamoa_iot_evk_board-v1-1-816991701952@quicinc.com/
-> ---
->  arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 232 +++++++++++++++++++++++=
-++++++
->  1 file changed, 232 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot=
-/dts/qcom/hamoa-iot-evk.dts
-> index 843f39c9d59286a9303a545411b2518d7649a059..91618e22e86c46c698b3639f6=
-0bc19314705b391 100644
-> --- a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
-> @@ -124,6 +124,94 @@ pmic_glink_ss2_con_sbu_in: endpoint {
->  		};
->  	};
-> =20
-> +	sound {
-> +		compatible =3D "qcom,x1e80100-sndcard";
-> +		model =3D "X1E80100-EVK";
-> +		audio-routing =3D "WooferLeft IN", "WSA WSA_SPK1 OUT",
-> +				"TweeterLeft IN", "WSA WSA_SPK2 OUT",
-> +				"WooferRight IN", "WSA2 WSA_SPK2 OUT",
-> +				"TweeterRight IN", "WSA2 WSA_SPK2 OUT",
+> Thomas, would it be possible for you to sort the drivers you have
+> reports for in the reverse chronological order (when they were added
+> or last time they had significant work done on them)? Start from
+> the most recent ones?
 
-Could you please check/confirm that above routing path
-"WooferRight IN" -> "WSA2 WSA_SPK2 OUT" is correct?
+This is already one of the most recent drivers with missing 
+dma_mapping_error(),
 
-Left path get input from both WSA_SPK{1,2} while the right one only uses
-WSA_SPK2.
+I have patched the missing dma_mapping_error from 2017 onward that I 
+could find.
 
+Here are the drivers that are missing a dma_ampping_error() that I could 
+find sorted by
 
-> +				"IN1_HPHL", "HPHL_OUT",
-> +				"IN2_HPHR", "HPHR_OUT",
-> +				"AMIC2", "MIC BIAS2",
-> +				"VA DMIC0", "MIC BIAS3",
-> +				"VA DMIC1", "MIC BIAS3",
-> +				"VA DMIC2", "MIC BIAS1",
-> +				"VA DMIC3", "MIC BIAS1",
-> +				"VA DMIC0", "VA MIC BIAS3",
-> +				"VA DMIC1", "VA MIC BIAS3",
-> +				"VA DMIC2", "VA MIC BIAS1",
-> +				"VA DMIC3", "VA MIC BIAS1",
-> +				"TX SWR_INPUT1", "ADC2_OUTPUT";
-> +
-> +		wcd-playback-dai-link {
-> +			link-name =3D "WCD Playback";
-> +
-> +			cpu {
-> +				sound-dai =3D <&q6apmbedai RX_CODEC_DMA_RX_0>;
-> +			};
-> +
-> +			codec {
-> +				sound-dai =3D <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
-> +			};
-> +
-> +			platform {
-> +				sound-dai =3D <&q6apm>;
-> +			};
-> +		};
+the last date in their copyright notice:
 
-Please sort subnodes alphabetically here and below.
+2017 drivers/net/ethernet/ni/nixge.c
+2017 drivers/scsi/aacraid/commctrl.c
+2013 drivers/net/ethernet/samsung/sxgbe/sxgbe_main.c
+2012 drivers/net/ethernet/rdc/r6040.c
+2011 drivers/scsi/isci/request.c
+2010 drivers/tty/serial/amba-pl011.c
+2010 drivers/net/ethernet/neterion/s2io.c
+2010 drivers/net/ethernet/micrel/ksz884x.c
+2010 drivers/net/ethernet/marvell/pxa168_eth.c
+2009 crypto/async_tx/async_pq.c
+2008 drivers/message/fusion/mptlan.c
+2008 drivers/message/fusion/mptctl.c
+2008 drivers/atm/solos-pci.c
+2007 sound/pci/sis7019.c
+2007 drivers/scsi/initio.c
+2007 drivers/scsi/esp_scsi.c
+2007 drivers/net/ethernet/tehuti/tehuti.c
+2007 drivers/media/pci/ivtv/ivtv-udma.c
+2007 drivers/crypto/hifn_795x.c
+2006 crypto/async_tx/async_xor.c
+2006 crypto/async_tx/async_memcpy.c
+2005 drivers/scsi/megaraid.c
+2005 drivers/net/ethernet/chelsio/cxgb/sge.c
+2005 drivers/net/ethernet/dec/tulip/uli526x.c
+2004 drivers/net/ethernet/via/via-velocity.c
+2004 drivers/net/ethernet/sun/sungem.c
+2004 drivers/net/ethernet/marvell/mv643xx_eth.c
+2003 drivers/tty/serial/atmel_serial.c
+2003 drivers/scsi/ips.c
+2003 drivers/scsi/dc395x.c
+2003 drivers/net/wan/wanxl.c
+2003 drivers/net/ethernet/sun/cassini.c
+2002 drivers/net/hippi/rrunner.c
+2002 drivers/net/ethernet/ti/tlan.c
+2002 drivers/net/ethernet/alteon/acenic.c
+2002 crypto/async_tx/async_raid6_recov.c
+2001 drivers/scsi/53c700.c
+2001 drivers/parport/parport_pc.c
+2001 drivers/net/ethernet/smsc/epic100.c
+2001 drivers/net/ethernet/packetengines/yellowfin.c
+2001 drivers/net/ethernet/natsemi/ns83820.c
+2001 drivers/net/ethernet/dlink/dl2k.c
+2001 drivers/net/ethernet/dec/tulip/winbond-840.c
+2001 drivers/net/ethernet/dec/tulip/tulip_core.c
+2001 drivers/net/ethernet/dec/tulip/de2104x.c
+2001 drivers/atm/he.c
+2000 drivers/net/ethernet/toshiba/tc35815.c
+2000 drivers/net/ethernet/packetengines/hamachi.c
+2000 drivers/net/ethernet/fealnx.c
+2000 drivers/net/ethernet/amd/amd8111e.c
+2000 drivers/net/ethernet/3com/typhoon.c
+1999 drivers/net/fddi/skfp/skfddi.c
+1999 drivers/net/ethernet/3com/3c59x.c
+1999 drivers/atm/nicstar.c
+1998 drivers/net/wireless/intel/ipw2x00/ipw2200.c
+1998 drivers/net/ethernet/dec/tulip/dmfe.c
+1997 drivers/scsi/aha1740.c
 
-> +		wcd-capture-dai-link {
-> +			link-name =3D "WCD Capture";
-> +
-> +			cpu {
-> +				sound-dai =3D <&q6apmbedai TX_CODEC_DMA_TX_3>;
-> +			};
-> +
-> +			codec {
-> +				sound-dai =3D <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
-> +			};
-> +
-> +			platform {
-> +				sound-dai =3D <&q6apm>;
-> +			};
-> +		};
-> +
-
-[...]
-
-Best regards,
-Alexey
 
