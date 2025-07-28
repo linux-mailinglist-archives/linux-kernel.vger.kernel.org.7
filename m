@@ -1,312 +1,230 @@
-Return-Path: <linux-kernel+bounces-747894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94582B139D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:27:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7C2B139E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 13:31:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B270416F39B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:27:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5ECD18918FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 11:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5473B25BF1B;
-	Mon, 28 Jul 2025 11:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1901B25CC4B;
+	Mon, 28 Jul 2025 11:30:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ShqSADWY"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyGfYIwY"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAB8241664
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 11:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C553B212B3D;
+	Mon, 28 Jul 2025 11:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753702026; cv=none; b=JDpDGDa/FVLqdaOrHksCI18SiXrM+f4AUoPujKiBMxHUkLF/37V56XNb27B/GwQ9ZSEDAobbRkiA1Ber1LC24ThW0HnE3hc9xuraLnubTurKU1dpgdq8a82E044xDRmZGOLfh3I/rNDh4X1lt3iIrBddxyxJpLNs7RW5mcUjo50=
+	t=1753702253; cv=none; b=R8EHMvy0iLJcMWWAngmawYz9RCZq+3CG1DJyiad4xvpU+A83oCXXAG9v22uF0EpxYuiVkSoxS1Vayyw9zx8wzGS0tnhEiSKOQEHtk0gRGFnFlkMyuO1D/sJabPkAN5/+wnmZR+dgpQrOEJ2Q3tNxLYK7rwlneciIWDCA8ALIrL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753702026; c=relaxed/simple;
-	bh=ziOTa5YPs8HW2PRR9nFsy52v/8yS0R8cUFHTbK4w9aQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pFmrj3Zg2p9svLx5S1EoKetrBtQKRM2JxDVu493VHK2R1we+RqMpKAFPzbxMGZ9SiFcEDr8YC8fcSAKeWnu926iMpd9iZ6npXxgKZJRgf41oPmG4ZF2gCkHo7mWa4siCqlPEmxnnZYiBAqWxe3lEaMowdlAaABYJHS5y1B2pA8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ShqSADWY; arc=none smtp.client-ip=209.85.214.173
+	s=arc-20240116; t=1753702253; c=relaxed/simple;
+	bh=LyM2zoTWmsxPJEfljMiEUCzkv9Ob2+5GaIos55WbWmA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JqxntHju3gdXxMnYkmtR5udSfe7QkAZ9zylzdzabTqxPCtuPZhdtU6qZ7Igl6giQu3iiu5qZ0qxc2DOlIsgiozAdOAyt4riDJ00eXsxShr2007oA5eyNt+2o8pihI37cT7ZC2I+zkG0oRsTRRvrHlj2vwqgZv4YNpFdwTYiM7jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DyGfYIwY; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23fc5aedaf0so12575785ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 04:27:04 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e75668006b9so3826759276.3;
+        Mon, 28 Jul 2025 04:30:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753702024; x=1754306824; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gnq0HeTj4iQCJ6vFIeZFzMP1bpvU5SCN2MHWpO/U8cw=;
-        b=ShqSADWYaRCJ+RBMblQfFvR+9Rd267JhWBL8kPGg+M42HfUmZc88KIboP6e/YvDHlR
-         lVjr5Mx3nL2n509/jcmbGKtIkPVAKC+TKdAUtToDVGb2XJyF2iSc3RGCQWSzg7if3UIO
-         o26Jf0M/J835YNsUENJIAZ242lOfdd0nltoIpUUJ9/sn22riMnzNdgvw1FA0aSgNmt4K
-         7laWe0bSUcQUo8flmcg556HNnM0IEWOrSwVlrk5kh5ndVPsqHd/UsGfI/ihWABvX+xio
-         uEWie/yT5FyC5gkqWbuxGmGovMZ3NcaL9dOlGADWnqtWWDJ6HW115IO1Av43lquA6fYC
-         PwBw==
+        d=gmail.com; s=20230601; t=1753702250; x=1754307050; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nNtNrao6UVesGhYjMLNvpZlbMAwweAAO5D4RH4zwPlI=;
+        b=DyGfYIwYldPtNtuYkMZ4t//9zZuldn3xydKsu1ShoCTvMYar4REhzG6AX3/5AcUINv
+         J8N6xxeuiaNo2WT+m6qtd5VsgdIAy6KusY+NL8OnO4v5jb46GNDRm+jFr05ux4cbw+eG
+         RLzLfrhd70hvC8XunHMn8YABXBGRxPNJf9Xv6EQsuAdRJxa90nvJ0kedPqz3SKkr/iKj
+         80hjtJ/+FPvt18JhQG/EmSacIV2uQslTJPo0Aw+fNIs0moTge+N7ylxFvBxxi12B2I/H
+         WctaVtAGnoZg15zu/iQKPLBLWwje4T40eEATRU7oQYhdcl+NcMZNa2aFcvovcsMsmaJh
+         b8RQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753702024; x=1754306824;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gnq0HeTj4iQCJ6vFIeZFzMP1bpvU5SCN2MHWpO/U8cw=;
-        b=gJZSCDNS24U8QzMEtPeFygwyV/qGeaTzwlcpSARvTDg4MRlWJLy2qyEvA5Thyh6qRt
-         7M2xQQhR881jW3Ju53FDBIQOnOc1aCybIWpyWtOK1rV1hNpFRdOtO3GAWZAS2SQiiFll
-         w6ucNaKOdAOWQDJGrLHAIIalCffm78b6vE9a+hElZjIRLV1rlDQhL0nBPf/UX/N/DNyZ
-         zNqQkbzCJuxjfrHHGsZvqjcqhWWuAC7dBfRXHtf15fs+Orxj1D2qxkfxa+4Ivzab9lfb
-         sj0+LSBMJFPuXB7155yGAPwaOvbLf/KRM7kVyFQXQWTUZLBAC4vn8VC3thv7qxx7P1qh
-         UPOQ==
-X-Gm-Message-State: AOJu0YxsKWJs0UZ/1Z6WhWaRWfHQMTwtOHiJMzFVIjQ9H2Mcf5gOXGzX
-	LnVJltZDkMn0+Ay9/jdA5raZ/kGw5TykVxNXr6NQPWSkgCZF38m3AD8IQKBY3Gi9
-X-Gm-Gg: ASbGncujGk+TKuk6FRzTyxg87UjuEZLNAibpKW7UGL1JiRS6ImjPMqavBhl8k9XFqZV
-	FrVyHBmhbS1iZv8RyDDI+8ohYDPUgNu8F4l38I1cd57Oz2auFe0/a626zfp6mSXpWVKVEPlpVrp
-	mTRAimMU2gStm8NooAqLr+OvhBKAhb4nQWCPQ0bm+BcTY05Ob2Fkghp62twxRwGKMcECSJKfJhR
-	4uWpyylZeaAsDEy/9hQLy0EszveeUA2pB6lMysRdD9Ipbm9u8DNGAw5PmK02HB6i+tMi2xaxU+D
-	TsiKgTuqzfxuZ4MtCTwa5oE0+o2GdzOPqtV5MqD3TcRZUHj1lnkbj7W2Q6y86qewZK20cemY47r
-	a3bw5PuA3ABPi7ypJWP+FNBJbC0igy146jak=
-X-Google-Smtp-Source: AGHT+IHfpci7G2278Vsdv2Xh22iVLTzypdkFRHBiVtAxyKJR3o4rC1Q8WOecRzbZIVzbqvpOE4e5YA==
-X-Received: by 2002:a17:903:4407:b0:23e:2340:7698 with SMTP id d9443c01a7336-23fb2ff9719mr162694815ad.1.1753702023856;
-        Mon, 28 Jul 2025 04:27:03 -0700 (PDT)
-Received: from imran-device.. ([132.237.156.254])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24014fa6d8esm25667195ad.78.2025.07.28.04.27.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 04:27:03 -0700 (PDT)
-From: Mande Imran Ahmed <immu.ahmed1905@gmail.com>
-To: pkshih@realtek.com,
-	kevin_yang@realtek.com,
-	rtl8821cerfe2@gmail.com,
-	phhuang@realtek.com,
-	damon.chen@realtek.com
-Cc: linux-kernel@vger.kernel.org,
-	Mande Imran Ahmed <immu.ahmed1905@gmail.com>
-Subject: [PATCH v2] net:realtek:use sysfs_emit() instead of scnprintf() for sysfs consistency
-Date: Mon, 28 Jul 2025 16:56:38 +0530
-Message-ID: <20250728112638.39412-1-immu.ahmed1905@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <a28456f5b8d2477785493c6081f24401@realtek.com>
-References: <a28456f5b8d2477785493c6081f24401@realtek.com>
+        d=1e100.net; s=20230601; t=1753702250; x=1754307050;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nNtNrao6UVesGhYjMLNvpZlbMAwweAAO5D4RH4zwPlI=;
+        b=Z1L2nsb6ue15RgZoqORAdDpROIcQR6MoB1q1ZoOczKRb0aP5Zu2r34JrmK1cl60UIm
+         YBqUno70NCGYe0E0e7B3PfNmhD7b7imQdZhdGDdKBmboMS860h0v6b+siI7PR/TcZ8GR
+         +9MIgQS+OV3uEt0xAQSUaMhhqfQ9wXWw3/fonevbkpOXZYZnuod2hcaCV0edBZYaHjdY
+         zxhasKZ+sYA5sKtRRk/pl19XigNDqpoAYn22TXIjVTwMOCb2gQcApCzpjJ3fRKUsiVLH
+         ko5HBPfvP7ZnJdBXFbnJdpQ1Aml/ASyZ1z3jSGBvvLL8r+v1ym+GD4GNznMb5uuvLPXN
+         2npg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEtfjcK+YrT5b162YBN+5uicU/3fJeSDKPdmvKYpCoRkUFRTtw4q1reCJm/Br2hSDaHsucdJPbqO2i@vger.kernel.org, AJvYcCUWj9xdNixI2llXgFpaHRzXffpgRmLnZt8vD9bmgjuB1tpToJlBYOz6NkIHMW2BdTW+zJZdE1kLBntHKHO1@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywz6Xp0e4tEuI/ufPrxpxPqtnf89R6Ed1qi0YY2RnOmFmi0v0Ed
+	Nl7dxzNhv01gWGk6RHLp53KaR65gGFpt9QnHmWIvgBZBInkAyCid5l/wy9u0mjRZXzBIH8wqD3Y
+	6CSXhrDj+PRY8fhrxu7UmPWmgl6OxUPI=
+X-Gm-Gg: ASbGnctsXDoIdSJhUHN2fM1jWxOFKumlU297U2OYkqL6Cg9Cve/MIngFCEMiVy+scaf
+	t9IUKvF6qAg4Cyc3ViCNqcc/PwQpk2pARfUjTv3Fbfjf6a753jVnwKojbfASCUydtUbyzfQLMZ5
+	Vqmrx4wLVzK6QKc1OqEai3LGHrv7CQLTLJJMRrjD21CgHVJfZGIfUVN22dFhg1xIsazG0Ymg8ZF
+	HBENKNWXoz7menCpYQ=
+X-Google-Smtp-Source: AGHT+IFumFg2UZwvA+f5kl7EQMHXkNUZt/zwa/n9YKY+QhiLG1qhJTrDdz/0F0M5MYN/krBckT6OuIygxIbgPz/5mng=
+X-Received: by 2002:a05:6902:c0f:b0:e8b:7064:b with SMTP id
+ 3f1490d57ef6-e8df1231b91mr11050441276.43.1753702250334; Mon, 28 Jul 2025
+ 04:30:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250717135336.3974758-1-tmaimon77@gmail.com> <20250717135336.3974758-2-tmaimon77@gmail.com>
+ <db07c25c-4064-4330-8bdb-8a619b0b2915@linaro.org>
+In-Reply-To: <db07c25c-4064-4330-8bdb-8a619b0b2915@linaro.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Mon, 28 Jul 2025 14:30:39 +0300
+X-Gm-Features: Ac12FXynceWX6vHFauZXjIJ3-QNlcwbofxe7Djt0AreDMabbmJlyHL9RKrb110Q
+Message-ID: <CAP6Zq1jDCfhOWj4JwORy22TDZRBr0fnuy5-=G4WO9DFRv7pTdQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] arm64: dts: nuvoton: npcm845: Add peripheral nodes
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Update the Realtek rtw89 wireless driver to replace scnprintf() with
-sysfs_emit() for formatting sysfs attribute output, in line with the
-recommendations from Documentation/filesystems/sysfs.rst.
+Hi Krzysztof
 
-This change enhances the safety and correctness of sysfs handling,
-promotes consistency throughout the kernel, and aids long-term
-maintainability.
+Thanks for your comments
 
-Functionality verified using ping, iperf, and connection tests to ensure
-stability after the changes.
+On Thu, 17 Jul 2025 at 17:05, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 17/07/2025 15:53, Tomer Maimon wrote:
+> > Enable peripheral support for the Nuvoton NPCM845 SoC by adding device
+> > nodes for Ethernet controllers, MMC controller, SPI controllers, USB
+> > device controllers, random number generator, ADC, PWM-FAN controller,
+> > and I2C controllers. Include pinmux configurations for relevant
+> > peripherals to support hardware operation. Add an OP-TEE firmware node
+> > for secure services.
+> > This patch enhances functionality for NPCM845-based platforms.
+>
+> Drop this sentence, redundant and not in style (see submitting patches).
+> >
+> > Depends-on: ARM: dts: nuvoton: npcm845: Add pinctrl groups
+Maybe it's an issue with our work mail server,
+https://patchwork.ozlabs.org/project/openbmc/patch/20250706153551.2180052-1-tmaimon77@gmail.com/
+I believe you didn't receive the patches below as well, since I didn't
+see any comments. Am I correct?
+https://patchwork.ozlabs.org/project/openbmc/patch/20250706134207.2168184-2-tmaimon77@gmail.com/
+https://patchwork.ozlabs.org/project/openbmc/patch/20250706134207.2168184-3-tmaimon77@gmail.com/
 
-Changes since v1:
-- Replaced sysfs_emit() with sysfs_emit_at()
-- Removed unused function parameters.
+>
+> There is no such tag.
+>
+> Use changelog for this purpose or b4 dependencies.
+>
+>
+> > Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+> > ---
+> >  .../dts/nuvoton/nuvoton-common-npcm8xx.dtsi   | 695 ++++++++++++++++++
+> >  .../boot/dts/nuvoton/nuvoton-npcm845.dtsi     |   7 +
+> >  2 files changed, 702 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+> > index 5cd877e6c20a..3564e0e30791 100644
+> > --- a/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+> > +++ b/arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi
+> > @@ -4,6 +4,7 @@
+> >  #include <dt-bindings/clock/nuvoton,npcm845-clk.h>
+> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >  #include <dt-bindings/interrupt-controller/irq.h>
+> > +#include <dt-bindings/gpio/gpio.h>
+> >
+> >  / {
+> >       #address-cells = <2>;
+> > @@ -40,6 +41,11 @@ ppi_cluster0: interrupt-partition-0 {
+> >               };
+> >       };
+> >
+> > +     udc0_phy: usb-phy {
+> > +             #phy-cells = <0>;
+> > +             compatible = "usb-nop-xceiv";
+>
+> Please follow DTS coding style.
+Do you mean the property order?
+>
+> > +     };
+> > +
+> >       ahb {
+> >               #address-cells = <2>;
+> >               #size-cells = <2>;
+> > @@ -56,6 +62,259 @@ clk: rstc: reset-controller@f0801000 {
+> >                       #clock-cells = <1>;
+> >               };
+> >
+> > +             gmac1: eth@f0804000 {
+>
+> Please follow established naming for node names. I'll fix whatever old
+> stuff you took it from.
+>
+>
+> > +                     device_type = "network";
+> > +                     compatible = "snps,dwmac";
+>
+> I don't think we want the generic one, even if it is allowed by bindings.
+Do you mean to use "snps,dwmac-3.72a" and not "snps,dwmac"?
+>
+> Also... You CC-ed an address, which suggests you do not work on mainline
+> kernel or you do not use get_maintainers.pl/b4/patman. Please rebase and
+> always work on mainline or start using mentioned tools, so correct
+> addresses will be used.
+>
+>
+> > +                     reg = <0x0 0xf0804000 0x0 0x2000>;
+>
+>
+> > +                     interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
+> > +                     interrupt-names = "macirq";
+> > +                     clocks  = <&clk NPCM8XX_CLK_AHB>;
+> > +                     clock-names = "stmmaceth";
+> > +                     pinctrl-names = "default";
+> > +                     pinctrl-0 = <&rg2_pins
+> > +                                     &rg2mdio_pins>;
+> > +                     status = "disabled";
+> > +             };
+>
+>
+> ...
+>
+> > +
+> > +             mc: memory-controller@f0824000 {
+> > +                     compatible = "nuvoton,npcm845-memory-controller";
+> > +                     reg = <0x0 0xf0824000 0x0 0x1000>;
+> > +                     interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+> > +             };
+> > +
+> > +             udc0:usb@f0830000 {
+>
+> DTS coding style...
+>
+> > +                     compatible = "nuvoton,npcm845-udc";
+> > +                     reg = <0x0 0xf0830000 0x0 0x1000
+> > +                            0x0 0xfffeb000 0x0 0x800>;
+> > +                     interrupts = <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
+> > +                     clocks = <&clk NPCM8XX_CLK_SU>;
+> > +                     clock-names = "clk_usb_bridge";
+> > +
+> > +                     phys = <&udc0_phy>;
+> > +                     phy_type = "utmi_wide";
+> > +                     dr_mode = "peripheral";
+> > +                     status = "disabled";
+> > +             };
+> > +
+>
+> ...
+>
+>
+> Best regards,
+> Krzysztof
 
-Signed-off-by: Mande Imran Ahmed <immu.ahmed1905@gmail.com>
----
- drivers/net/wireless/realtek/rtw89/debug.c |  4 +-
- drivers/net/wireless/realtek/rtw89/phy.c   | 12 ++---
- drivers/net/wireless/realtek/rtw89/phy.h   |  2 +-
- drivers/net/wireless/realtek/rtw89/sar.c   | 58 +++++++++++-----------
- drivers/net/wireless/realtek/rtw89/sar.h   |  2 +-
- 5 files changed, 39 insertions(+), 39 deletions(-)
+Thanks,
 
-diff --git a/drivers/net/wireless/realtek/rtw89/debug.c b/drivers/net/wireless/realtek/rtw89/debug.c
-index d6016fa107fb..74a8e0976715 100644
---- a/drivers/net/wireless/realtek/rtw89/debug.c
-+++ b/drivers/net/wireless/realtek/rtw89/debug.c
-@@ -941,13 +941,13 @@ ssize_t rtw89_debug_priv_txpwr_table_get(struct rtw89_dev *rtwdev,
- 	p += rtw89_debug_priv_txpwr_table_get_regd(rtwdev, p, end - p, chan);
- 
- 	p += scnprintf(p, end - p, "[SAR]\n");
--	p += rtw89_print_sar(rtwdev, p, end - p, &sar_parm);
-+	p += rtw89_print_sar(rtwdev, p, &sar_parm);
- 
- 	p += scnprintf(p, end - p, "[TAS]\n");
- 	p += rtw89_print_tas(rtwdev, p, end - p);
- 
- 	p += scnprintf(p, end - p, "[DAG]\n");
--	p += rtw89_print_ant_gain(rtwdev, p, end - p, chan);
-+	p += rtw89_print_ant_gain(rtwdev, p, chan);
- 
- 	tbl = dbgfs_txpwr_tables[chip_gen];
- 	if (!tbl)
-diff --git a/drivers/net/wireless/realtek/rtw89/phy.c b/drivers/net/wireless/realtek/rtw89/phy.c
-index a58aefb51fb5..1fa2c7a04bd7 100644
---- a/drivers/net/wireless/realtek/rtw89/phy.c
-+++ b/drivers/net/wireless/realtek/rtw89/phy.c
-@@ -2084,25 +2084,25 @@ s16 rtw89_phy_ant_gain_pwr_offset(struct rtw89_dev *rtwdev,
- }
- EXPORT_SYMBOL(rtw89_phy_ant_gain_pwr_offset);
- 
--int rtw89_print_ant_gain(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
-+int rtw89_print_ant_gain(struct rtw89_dev *rtwdev, char *buf,
- 			 const struct rtw89_chan *chan)
- {
--	char *p = buf;
-+	int len;
- 	s8 offset_patha, offset_pathb;
- 
- 	if (!rtw89_can_apply_ant_gain(rtwdev, chan->band_type)) {
--		p += sysfs_emit(p, "no DAG is applied\n");
-+		len = sysfs_emit(buf, "no DAG is applied\n");
- 		goto out;
- 	}
- 
- 	offset_patha = rtw89_phy_ant_gain_query(rtwdev, RF_PATH_A, chan->freq);
- 	offset_pathb = rtw89_phy_ant_gain_query(rtwdev, RF_PATH_B, chan->freq);
- 
--	p += sysfs_emit(p, "ChainA offset: %d dBm\n", offset_patha);
--	p += sysfs_emit(p, "ChainB offset: %d dBm\n", offset_pathb);
-+	len = sysfs_emit(buf, "ChainA offset: %d dBm\n", offset_patha);
-+	len += sysfs_emit_at(buf, len, "ChainB offset: %d dBm\n", offset_pathb);
- 
- out:
--	return p - buf;
-+	return len;
- }
- 
- static const u8 rtw89_rs_idx_num_ax[] = {
-diff --git a/drivers/net/wireless/realtek/rtw89/phy.h b/drivers/net/wireless/realtek/rtw89/phy.h
-index 5b451f1cfaac..f5518f5bc668 100644
---- a/drivers/net/wireless/realtek/rtw89/phy.h
-+++ b/drivers/net/wireless/realtek/rtw89/phy.h
-@@ -836,7 +836,7 @@ s8 rtw89_phy_read_txpwr_byrate(struct rtw89_dev *rtwdev, u8 band, u8 bw,
- void rtw89_phy_ant_gain_init(struct rtw89_dev *rtwdev);
- s16 rtw89_phy_ant_gain_pwr_offset(struct rtw89_dev *rtwdev,
- 				  const struct rtw89_chan *chan);
--int rtw89_print_ant_gain(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
-+int rtw89_print_ant_gain(struct rtw89_dev *rtwdev, char *buf,
- 			 const struct rtw89_chan *chan);
- void rtw89_phy_load_txpwr_byrate(struct rtw89_dev *rtwdev,
- 				 const struct rtw89_txpwr_table *tbl);
-diff --git a/drivers/net/wireless/realtek/rtw89/sar.c b/drivers/net/wireless/realtek/rtw89/sar.c
-index 80eacada6911..14cefbe64124 100644
---- a/drivers/net/wireless/realtek/rtw89/sar.c
-+++ b/drivers/net/wireless/realtek/rtw89/sar.c
-@@ -311,14 +311,14 @@ s8 rtw89_query_sar(struct rtw89_dev *rtwdev, const struct rtw89_sar_parm *sar_pa
- }
- EXPORT_SYMBOL(rtw89_query_sar);
- 
--int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
-+int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf,
- 		    const struct rtw89_sar_parm *sar_parm)
- {
- 	const enum rtw89_sar_sources src = rtwdev->sar.src;
- 	/* its members are protected by rtw89_sar_set_src() */
- 	const struct rtw89_sar_handler *sar_hdl = &rtw89_sar_handlers[src];
- 	const u8 fct_mac = rtwdev->chip->txpwr_factor_mac;
--	char *p = buf;
-+	int len;
- 	int ret;
- 	s32 cfg;
- 	u8 fct;
-@@ -326,58 +326,58 @@ int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
- 	lockdep_assert_wiphy(rtwdev->hw->wiphy);
- 
- 	if (src == RTW89_SAR_SOURCE_NONE) {
--		p += sysfs_emit(p, "no SAR is applied\n");
-+		len = sysfs_emit(buf, "no SAR is applied\n");
- 		goto out;
- 	}
- 
--	p += sysfs_emit(p, "source: %d (%s)\n", src,
--		       sar_hdl->descr_sar_source);
-+	len = sysfs_emit(buf, "source: %d (%s)\n", src,
-+			 sar_hdl->descr_sar_source);
- 
- 	ret = sar_hdl->query_sar_config(rtwdev, sar_parm, &cfg);
- 	if (ret) {
--		p += sysfs_emit(p, "config: return code: %d\n", ret);
--		p += sysfs_emit(p,
--			       "assign: max setting: %d (unit: 1/%lu dBm)\n",
--			       RTW89_SAR_TXPWR_MAC_MAX, BIT(fct_mac));
-+		len += sysfs_emit_at(buf, len, "config: return code: %d\n", ret);
-+		len += sysfs_emit_at(buf, len,
-+				"assign: max setting: %d (unit: 1/%lu dBm)\n",
-+				RTW89_SAR_TXPWR_MAC_MAX, BIT(fct_mac));
- 		goto out;
- 	}
- 
- 	fct = sar_hdl->txpwr_factor_sar;
- 
--	p += sysfs_emit(p, "config: %d (unit: 1/%lu dBm)\n", cfg,
--		       BIT(fct));
-+	len += sysfs_emit_at(buf, len, "config: %d (unit: 1/%lu dBm)\n", cfg,
-+			BIT(fct));
- 
--	p += sysfs_emit(p, "support different configs by antenna: %s\n",
--		       str_yes_no(rtwdev->chip->support_sar_by_ant));
-+	len += sysfs_emit_at(buf, len, "support different configs by antenna: %s\n",
-+			str_yes_no(rtwdev->chip->support_sar_by_ant));
- out:
--	return p - buf;
-+	return len;
- }
- 
- int rtw89_print_tas(struct rtw89_dev *rtwdev, char *buf, size_t bufsz)
- {
- 	struct rtw89_tas_info *tas = &rtwdev->tas;
--	char *p = buf;
-+	int len;
- 
- 	if (!rtw89_tas_is_active(rtwdev)) {
--		p += sysfs_emit(p, "no TAS is applied\n");
-+		len = sysfs_emit(buf, "no TAS is applied\n");
- 		goto out;
- 	}
- 
--	p += sysfs_emit(p, "State: %s\n",
--		       rtw89_tas_state_str(tas->state));
--	p += sysfs_emit(p, "Average time: %d\n",
--		       tas->window_size * 2);
--	p += sysfs_emit(p, "SAR gap: %d dBm\n",
--		       RTW89_TAS_SAR_GAP >> RTW89_TAS_FACTOR);
--	p += sysfs_emit(p, "DPR gap: %d dBm\n",
--		       RTW89_TAS_DPR_GAP >> RTW89_TAS_FACTOR);
--	p += sysfs_emit(p, "DPR ON offset: %d dBm\n",
--		       RTW89_TAS_DPR_ON_OFFSET >> RTW89_TAS_FACTOR);
--	p += sysfs_emit(p, "DPR OFF offset: %d dBm\n",
--		       RTW89_TAS_DPR_OFF_OFFSET >> RTW89_TAS_FACTOR);
-+	len = sysfs_emit(buf, "State: %s\n",
-+			 rtw89_tas_state_str(tas->state));
-+	len += sysfs_emit_at(buf, len, "Average time: %d\n",
-+			tas->window_size * 2);
-+	len += sysfs_emit_at(buf, len, "SAR gap: %d dBm\n",
-+			RTW89_TAS_SAR_GAP >> RTW89_TAS_FACTOR);
-+	len += sysfs_emit_at(buf, len, "DPR gap: %d dBm\n",
-+			RTW89_TAS_DPR_GAP >> RTW89_TAS_FACTOR);
-+	len += sysfs_emit_at(buf, len, "DPR ON offset: %d dBm\n",
-+			RTW89_TAS_DPR_ON_OFFSET >> RTW89_TAS_FACTOR);
-+	len += sysfs_emit_at(buf, len, "DPR OFF offset: %d dBm\n",
-+			RTW89_TAS_DPR_OFF_OFFSET >> RTW89_TAS_FACTOR);
- 
- out:
--	return p - buf;
-+	return len;
- }
- 
- static int rtw89_apply_sar_common(struct rtw89_dev *rtwdev,
-diff --git a/drivers/net/wireless/realtek/rtw89/sar.h b/drivers/net/wireless/realtek/rtw89/sar.h
-index 4b7f3d44f57b..b84277a3ea38 100644
---- a/drivers/net/wireless/realtek/rtw89/sar.h
-+++ b/drivers/net/wireless/realtek/rtw89/sar.h
-@@ -28,7 +28,7 @@ struct rtw89_sar_handler {
- extern const struct cfg80211_sar_capa rtw89_sar_capa;
- 
- s8 rtw89_query_sar(struct rtw89_dev *rtwdev, const struct rtw89_sar_parm *sar_parm);
--int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf, size_t bufsz,
-+int rtw89_print_sar(struct rtw89_dev *rtwdev, char *buf,
- 		    const struct rtw89_sar_parm *sar_parm);
- int rtw89_print_tas(struct rtw89_dev *rtwdev, char *buf, size_t bufsz);
- int rtw89_ops_set_sar_specs(struct ieee80211_hw *hw,
--- 
-2.43.0
-
+Tomer
 
