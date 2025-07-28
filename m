@@ -1,292 +1,189 @@
-Return-Path: <linux-kernel+bounces-747939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9142EB13A74
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:25:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5982EB13A75
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 14:27:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5978189C803
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B81016DB93
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63407264630;
-	Mon, 28 Jul 2025 12:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB42264630;
+	Mon, 28 Jul 2025 12:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E26ONR4P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LqNG3IYB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABDD1C8606;
-	Mon, 28 Jul 2025 12:24:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C269A25178C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 12:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753705487; cv=none; b=FIpHJSR9r0uzSzaaOClGzfOC2RqsSXQpPftWRgdW3xJ31b2x8nNSBEFxdBz1Z9BmzgUW8Hth75uf7Cw3dvNuE4rh0pjIasFASZKcVZWKucYHA05aMgQstsG7TmfuriV7g28qpZnaGoihg2ZQx6wN0SGTlve8N4eJ/0XyXipUhEE=
+	t=1753705632; cv=none; b=gXVvUZv32AT5t95/T+uND7TBb8xAItiy44ijy/U5LALBPRYBLj8Y48ANpPFbfKPd8NPxmOCwH4g0AuCnCUCAsCq6Z2i96cg5/NlHWLxtm8/LOQuLNcTKJ0vukwF/zY7qKx1MsjVbGVNcCshkJLMEaEa7sjcnqbuIfYk6yV3EB0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753705487; c=relaxed/simple;
-	bh=GnbJTTc9uc5u8yqjxhZ3d9PZFrYsgp3uI8ziD/c0gYQ=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=RAv5vi0G6kHz/CR+BFriI4lLNjB1fwTi9wTxX2MtfLQi+HDYukSOPIvWBrQ5+AM0XC4nE6IzFQTZ87CwBbJhaZeFTXA+LcIiMvPNmTlrMKVPu46w8L/ZQVqwmpFa1pjRUm9Czm7R9b3qFHgGymYElYi/lwkobx3M3gxefSkggLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E26ONR4P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93B9C4CEE7;
-	Mon, 28 Jul 2025 12:24:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753705487;
-	bh=GnbJTTc9uc5u8yqjxhZ3d9PZFrYsgp3uI8ziD/c0gYQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=E26ONR4Pm8x1XYff5eyMxsXgvk+uZSuHCkWRYke1s0XQL+zY9AYJlzlSYAT0+krZX
-	 a6MV2duqJrGUz0exjMpcAaovUAd7jGsErlY5/4Rq7m+w5Qnm/txyFOsd2GbNY3WTw/
-	 qGzNInZzSB2SmYJO0yzM9wERWTC2OnwWNfa2RBocdn2RFEdd9+VwV3jC0ybeYkF6FS
-	 eGiepXYJ0g3Y97tl34DATJWkF78dCP5KWx9emPHKtcAyA+8SEJxqh3AMe8eQELRcIh
-	 ErykXzac5W91IMVBq9x1Ztz+OGAF/gk8nfAVku4cBg5vQmGQ3ljlHldKm9uuEzW+x2
-	 SQU7c2Bq+agUA==
-Message-ID: <ead4b31b9f656b8a7ac9280d368fd210.broonie@kernel.org>
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: [GIT PULL] SPI updates for v6.17
-Date: Mon, 28 Jul 2025 13:24:37 +0100
+	s=arc-20240116; t=1753705632; c=relaxed/simple;
+	bh=e5VmTSf9yBtpefrrgOBwugqJ+51j+zLZf0foYFAv4L4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aV0Gu9wrvVWYLQxKejjEK3Y4XH8qSnfHbELoAwlwWguiv6WjTK2pMO1moUVW2ceTAb1xjVsuqloBpc7G841KJ8Dk6MvID1oD9I/Nu9UaLcfrC7gA+9etICOTa+SiAtn76tVGIX0DfdjHPdjZ11fXXxUr4yZJMMjYxxW3y1ASee8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LqNG3IYB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753705629;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QnQuEJmQQe5QI9lnPew2rtDphQn82+YCCHj3hCzNitw=;
+	b=LqNG3IYBCJJc2eneqioPpY8WQFlVqIsnLHrlxe+3CTCUvDOE2fP+02AfVFRLyC4r09JPgF
+	SLY87dyOY0ebuKuw3g3gYY7dKFdpVI5KioRp6rklqH4cdHiMlt6R3WbBIc2YgxFfjE3L24
+	t/7vwnkxZiVJ5UVehUAGbw02ZJBZi54=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-360-f3xIS5fgNfyOY2lk4P_uNg-1; Mon, 28 Jul 2025 08:27:05 -0400
+X-MC-Unique: f3xIS5fgNfyOY2lk4P_uNg-1
+X-Mimecast-MFC-AGG-ID: f3xIS5fgNfyOY2lk4P_uNg_1753705624
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4538f375e86so32483835e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 05:27:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753705624; x=1754310424;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QnQuEJmQQe5QI9lnPew2rtDphQn82+YCCHj3hCzNitw=;
+        b=Zp1eormB3lppb+NK4oqQ+OstJvSROyRxB01Trl/nlTaYQsOozvI8kteBmyZtzfvve4
+         tnvpMh8k98U/ShwCnsAvCZ4/6iPfMtwDhZ46i4gYyCXUSOFUnfHjEz65C7mTM/CBXM97
+         u7BZ62qcoLoseCUBQ54Ls1hr8WCKjW6ckx1EC7VBzs25bqyZy64DeirTikidHffzAfwc
+         jmgL4idesmlv9BBc6j4pQXxM9ydaSrduZFSzW+RJV81nKfW19BxXSeLV001cO0XxybhU
+         /VgClC4EcXLEGgotfCZhLJv5kAYVJPnaM9q8XYL1+LbbAedcD1N4SGjclXz/EPY3RBLS
+         8Vsw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjKlDtw/eqcGwaYIshtHZquDk8V4hcjXMFIiekwDOgtIyZDhCepWG0gzmLEcvQirpvrAABJB0iHjoLlhg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqdgpmG37YVE2cN3fboKyAnM7oeM3/63hatL3Mc5dVeXIGwVBf
+	fZfcgavjr5BmCzaCYySYMqONZZBWVj9BuLJ2xNCAZpucinN4kbo7FAVZFL+kZXL/NnX6XljHJQt
+	MOKUGN3CVIwM9YFDuOVReYs6mBNDOD0jF+LsoG2ah1mxLYl+ePvRIjBbdDOIEjGySdw==
+X-Gm-Gg: ASbGncu5FvFZNpin3+wq82tH2o6MdowLszrIOjtvMgATTX1j5x7D5RSSS+6VOlXGN/g
+	LQivgTPDbt0RaKjF10ytvoz30Mzi7DNWZkV5eERRyd6/CM9DKY6g4x58fDA6CoTNqHDQ5FYlC9H
+	JzAceHI8JPslHEWul81rbW1+zVcrIzuhn5uBzYcPS0zGPATZ0i9Ky15tIwnZ5a8yfJGS/Fr8Z9U
+	AJSXnwmeV54PFs3Dl/H0celKAB+OeJusD8KZWM7LycXL9pRmayZSq8NcDKDCJMYB18hy1vk2Wtf
+	0sNhEMjoOYpwokzx+T+PKw0Wm6OPt50O/xj+i2eq9SzLyVF+DMHGPwEiydIZus25OKYj1ZxM4J4
+	5iCvP9U9ckP53F7OaR/mmGYnyeP9QZNn5JRWbkTEW4y0KPyjf0hQ9CO3mBSoNV3lnWAI=
+X-Received: by 2002:a05:600c:6089:b0:456:1752:2b39 with SMTP id 5b1f17b1804b1-4587666c5f8mr77032425e9.33.1753705624334;
+        Mon, 28 Jul 2025 05:27:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH6t+wpPuc6znKz8nZXvCG8hSmYbB+9cHwFq6tAmgHTss/ZYl4BlI0qI6FlX6v6tmq3ljU9SA==
+X-Received: by 2002:a05:600c:6089:b0:456:1752:2b39 with SMTP id 5b1f17b1804b1-4587666c5f8mr77032195e9.33.1753705623840;
+        Mon, 28 Jul 2025 05:27:03 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f47:2b00:c5f3:4053:2918:d17c? (p200300d82f472b00c5f340532918d17c.dip0.t-ipconnect.de. [2003:d8:2f47:2b00:c5f3:4053:2918:d17c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4586eef77e8sm114032575e9.3.2025.07.28.05.27.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Jul 2025 05:27:03 -0700 (PDT)
+Message-ID: <1f8d924d-3554-43a6-a75e-66a08d1ce7b9@redhat.com>
+Date: Mon, 28 Jul 2025 14:27:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
+To: Michal Hocko <mhocko@suse.com>
+Cc: Oscar Salvador <osalvador@suse.de>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Hannes Reinecke <hare@kernel.org>
+References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
+ <aIc5XxgkbAwF6wqE@tiehlicka>
+ <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
+ <aIc9DQ1PwsbiOQwc@tiehlicka>
+ <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
+ <aIdqVNCY-XMNICng@tiehlicka>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <aIdqVNCY-XMNICng@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
+On 28.07.25 14:17, Michal Hocko wrote:
+> On Mon 28-07-25 11:10:44, David Hildenbrand wrote:
+>> On 28.07.25 11:04, Michal Hocko wrote:
+>>> On Mon 28-07-25 10:53:08, David Hildenbrand wrote:
+> [...]
+>>>> daxctl wants to online memory itself. We want to keep that memory offline
+>>>> from a kernel perspective and let daxctl handle it in this case.
+>>>>
+>>>> We have that problem in RHEL where we currently require user space to
+>>>> disable udev rules so daxctl "can win".
+>>>
+>>> ... this is the result. Those shouldn't really race. If udev is suppose
+>>> to see the device then only in its entirity so regular memory block
+>>> based onlining rules shouldn't even see that memory. Or am I completely
+>>> missing the picture?
+>>
+>> We can't break user space, which relies on individual memory blocks.
+> 
+> We do have userspace which onlines specific memory blocks and we cannot
+> break that. But do we have any userspace that wants to online CXL like
+> memory (or in general dax like memory) that would need to operate on
+> those memory blocks with that kind of granularity?
 
-  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
+I'm afraid that ship has sailed.
 
-are available in the Git repository at:
+> 
+> In other words what would break if we didn't expose CXL memory through
+> memory blocks in sysfs?
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-v6.17
+I think the whole libdaxctl handling for onlining memory is based on that.
 
-for you to fetch changes up to 2d442a0c781403702de27ccfbc4bb233721585f5:
+-- 
+Cheers,
 
-  spi: SPISG: Fix less than zero comparison on a u32 variable (2025-07-25 18:46:31 +0100)
+David / dhildenb
 
-----------------------------------------------------------------
-spi: Updates for v6.17
-
-This release is almost entirely driver work, mostly new drivers with the
-usual smattering of per driver updates anf fixes, with only trivial
-changes in the core.  Highlights include:
-
- - Quite a bit of maintainence work on the STM32 and Qualcomm drivers.
- - Usage of the newly added devm_dma_request_chan() in the ateml driver,
-   pulling in the relevant dmaengine change.
- - Cleanups of our usage of the PM autosuspend functions, this pulls in
-   some PM core changes on a shared tag.
- - Support for ADI sigma-delta triggers, Amlogic SPISG, Mediatek MT6991
-   and MT8196, Renesas RZ/V2H(P) and SOPHGO SG2042.
-
-----------------------------------------------------------------
-Andra-Teodora Ilie (1):
-      spi: spi-fsl-dspi: Enable modified transfer protocol on S32G
-
-AngeloGioacchino Del Regno (2):
-      spi: dt-bindings: mediatek,spi-mt65xx: Add support for MT6991/MT8196 SPI
-      spi: spi-mt65xx: Add support for MT6991 Dimensity 9400 SPI IPM
-
-Antonio Quartulli (1):
-      spi: stm32: fix pointer-to-pointer variables usage
-
-Bence Csókás (2):
-      dmaengine: Add devm_dma_request_chan()
-      spi: atmel-quadspi: Use `devm_dma_request_chan()`
-
-Ciprian Marian Costea (2):
-      dt-bindings: spi: dspi: Add S32G support
-      spi: spi-fsl-dspi: Enable support for S32G platforms
-
-Clément Le Goffic (7):
-      spi: stm32: Add SPI_READY mode to spi controller
-      spi: stm32: Check for cfg availability in stm32_spi_probe
-      spi: stm32: use STM32 DMA with STM32 MDMA to enhance DDR use
-      spi: stm32: deprecate `st,spi-midi-ns` property
-      spi: dt-bindings: stm32: update bindings with SPI Rx DMA-MDMA chaining
-      spi: dt-bindings: stm32: deprecate `st,spi-midi-ns` property
-      spi: stm32: fix sram pool free in probe error path
-
-Colin Ian King (1):
-      spi: SPISG: Fix less than zero comparison on a u32 variable
-
-Conor Dooley (2):
-      spi: microchip-core-qspi: set min_speed_hz during probe
-      spi: microchip-core-qspi: remove unused param from mchp_coreqspi_write_op()
-
-Cyril Jean (1):
-      spi: microchip-core-qspi: Add regular transfers
-
-Dan Carpenter (2):
-      spi: stm32: delete stray tabs in stm32h7_spi_data_idleness()
-      spi: stm32-ospi: Fix NULL vs IS_ERR() bug in stm32_ospi_get_resources()
-
-Darshan Rathod (2):
-      spi: xilinx: Fix block comment style and minor cleanups
-      spi: gpio: Use explicit 'unsigned int' for parameter types
-
-David Lechner (2):
-      dt-bindings: trigger-source: add ADI Util Sigma-Delta SPI
-      spi: offload trigger: add ADI Util Sigma-Delta SPI driver
-
-Fabrizio Castro (2):
-      spi: dt-bindings: Document the RZ/V2H(P) RSPI
-      spi: Add driver for the RZ/V2H(P) RSPI IP
-
-Frank Li (2):
-      spi: dt-bindings: mxs-spi: allow clocks properpty
-      spi: dt-bindings: add nxp,lpc3220-spi.yaml
-
-Gabor Juhos (5):
-      spi: spi-qpic-snand: use NANDC_STEP_SIZE consistently
-      spi: spi-qpic-snand: remove 'qpic_snand_op' structure
-      mtd: nand: qpic-common: add defines for ECC_MODE values
-      spi: spi-qpic-snand: add support for 8 bits ECC strength
-      spi: spi-qpic-snand: simplify bad block marker duplication
-
-Geert Uytterhoeven (2):
-      spi: sh-msiof: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-      spi: rspi: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
-
-Heiko Schocher (2):
-      dt-bindings: trivial-devices: Document ABB sensors
-      spi: spidev: Add an entry for the ABB spi sensors
-
-Jakub Czapiga (1):
-      spi: intel: Allow writeable MTD partition with module param
-
-James Clark (2):
-      spi: spi-fsl-dspi: Re-use one volatile regmap for both device types
-      spi: spi-fsl-dspi: Define regmaps per device
-
-Larisa Grigore (4):
-      spi: spi-fsl-dspi: Add config and regmaps for S32G platforms
-      spi: spi-fsl-dspi: Avoid setup_accel logic for DMA transfers
-      spi: spi-fsl-dspi: Use DMA for S32G controller in target mode
-      spi: spi-fsl-dspi: Reinitialize DSPI regs after resuming for S32G
-
-Lukas Bulwahn (1):
-      spi: spi-fsl-dspi: Revert unintended dependency change in config SPI_FSL_DSPI
-
-Marius Trifu (1):
-      spi: spi-fsl-dspi: Use spi_alloc_target for target
-
-Mark Brown (12):
-      spi: spi-fsl-dspi: DSPI support for NXP S32G
-      spi: Merge up fixes
-      spi: microchip-core-qspi: Add regular transfers
-      Add few updates to the STM32 SPI driver
-      Add `devm_dma_request_chan()` to simplify probe
-      iio: adc: ad7173: add SPI offload support
-      spi: spi-qpic-snand: enable 8 bits ECC strength
-      treewide: Remove redundant
-      spidev: introduce trivial abb sensor device
-      support for amlogic the new SPI IP
-      Add RSPI support for RZ/V2H
-      spi: sophgo: Add SPI NOR controller for SG2042
-
-Raphael Gallais-Pou (1):
-      spi: st: Switch from CONFIG_PM_SLEEP guards to pm_sleep_ptr()
-
-Rob Herring (Arm) (3):
-      spi: dt-bindings: Convert marvell,orion-spi to DT schema
-      spi: stm32-ospi: Use of_reserved_mem_region_to_resource() for "memory-region"
-      spi: dt-bindings: spi-mux: Drop "spi-max-frequency" as required
-
-Sakari Ailus (7):
-      PM: runtime: Document return values of suspend-related API functions
-      PM: runtime: Mark last busy stamp in pm_runtime_put_autosuspend()
-      PM: runtime: Mark last busy stamp in pm_runtime_put_sync_autosuspend()
-      PM: runtime: Mark last busy stamp in pm_runtime_autosuspend()
-      PM: runtime: Mark last busy stamp in pm_request_autosuspend()
-      Documentation: PM: *_autosuspend() functions update last busy time
-      spi: Remove redundant pm_runtime_mark_last_busy() calls
-
-Shiji Yang (1):
-      spi: falcon: mark falcon_sflash_xfer() as static
-
-Sunny Luo (2):
-      spi: dt-bindings: Add binding document of Amlogic SPISG controller
-      spi: Add Amlogic SPISG driver
-
-Thangaraj Samynathan (3):
-      spi: spi-pci1xxxx: Add support for 25MHz Clock frequency in C0
-      spi: spi-pci1xxxx: Add support for per-instance DMA interrupt vectors
-      spi: spi-pci1xxxx: enable concurrent DMA read/write across SPI transfers
-
-Xianwei Zhao (1):
-      MAINTAINERS: Add an entry for Amlogic spi driver
-
-Zixian Zeng (3):
-      spi: dt-bindings: spi-sg2044-nor: Change SOPHGO SG2042
-      spi: spi-sg2044-nor: Add configurable chip_info
-      spi: spi-sg2044-nor: Add SPI-NOR controller for SG2042
-
- .../devicetree/bindings/spi/amlogic,a4-spisg.yaml  |  59 ++
- .../devicetree/bindings/spi/fsl,dspi.yaml          |  18 +
- .../devicetree/bindings/spi/marvell,orion-spi.yaml | 102 +++
- .../bindings/spi/mediatek,spi-mt65xx.yaml          |   5 +
- Documentation/devicetree/bindings/spi/mxs-spi.yaml |   3 +
- .../devicetree/bindings/spi/nxp,lpc3220-spi.yaml   |  44 +
- .../bindings/spi/renesas,rzv2h-rspi.yaml           |  96 +++
- Documentation/devicetree/bindings/spi/spi-mux.yaml |   1 -
- .../devicetree/bindings/spi/spi-orion.txt          |  79 --
- .../bindings/spi/spi-peripheral-props.yaml         |   1 +
- .../devicetree/bindings/spi/spi-sg2044-nor.yaml    |   9 +-
- .../devicetree/bindings/spi/st,stm32-spi.yaml      |  48 +-
- .../trigger-source/adi,util-sigma-delta-spi.yaml   |  49 ++
- .../devicetree/bindings/trivial-devices.yaml       |   2 +
- Documentation/power/runtime_pm.rst                 |  50 +-
- MAINTAINERS                                        |  16 +-
- drivers/dma/dmaengine.c                            |  30 +
- drivers/mtd/nand/raw/qcom_nandc.c                  |   6 +-
- drivers/spi/Kconfig                                |  26 +-
- drivers/spi/Makefile                               |   3 +
- drivers/spi/atmel-quadspi.c                        |  53 +-
- drivers/spi/spi-amlogic-spisg.c                    | 888 +++++++++++++++++++++
- drivers/spi/spi-cadence-quadspi.c                  |   2 -
- drivers/spi/spi-cadence.c                          |   1 -
- drivers/spi/spi-falcon.c                           |   5 +-
- drivers/spi/spi-fsl-dspi.c                         | 356 ++++++---
- drivers/spi/spi-fsl-espi.c                         |   2 -
- drivers/spi/spi-fsl-lpspi.c                        |   2 -
- drivers/spi/spi-gpio.c                             |  16 +-
- drivers/spi/spi-imx.c                              |   3 -
- drivers/spi/spi-intel.c                            |  13 +-
- drivers/spi/spi-microchip-core-qspi.c              | 226 +++++-
- drivers/spi/spi-mt65xx.c                           |  11 +
- drivers/spi/spi-mtk-nor.c                          |   1 -
- drivers/spi/spi-nxp-fspi.c                         |   1 -
- .../spi/spi-offload-trigger-adi-util-sigma-delta.c |  59 ++
- drivers/spi/spi-omap2-mcspi.c                      |   3 -
- drivers/spi/spi-pci1xxxx.c                         | 285 ++++---
- drivers/spi/spi-qpic-snand.c                       |  72 +-
- drivers/spi/spi-rockchip-sfc.c                     |   3 -
- drivers/spi/spi-rspi.c                             |   9 +-
- drivers/spi/spi-rzv2h-rspi.c                       | 466 +++++++++++
- drivers/spi/spi-s3c64xx.c                          |   3 -
- drivers/spi/spi-sg2044-nor.c                       |  29 +-
- drivers/spi/spi-sh-msiof.c                         |  11 +-
- drivers/spi/spi-sprd.c                             |   1 -
- drivers/spi/spi-st-ssc4.c                          |  14 +-
- drivers/spi/spi-stm32-ospi.c                       |  31 +-
- drivers/spi/spi-stm32-qspi.c                       |   7 -
- drivers/spi/spi-stm32.c                            | 318 +++++++-
- drivers/spi/spi-ti-qspi.c                          |   2 -
- drivers/spi/spi-xilinx.c                           |   5 +-
- drivers/spi/spi-zynqmp-gqspi.c                     |   1 -
- drivers/spi/spi.c                                  |   3 -
- drivers/spi/spidev.c                               |   2 +
- include/linux/dmaengine.h                          |   7 +
- include/linux/mtd/nand-qpic-common.h               |   2 +
- include/linux/pm_runtime.h                         | 187 ++++-
- 58 files changed, 3150 insertions(+), 597 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/spi/amlogic,a4-spisg.yaml
- create mode 100644 Documentation/devicetree/bindings/spi/marvell,orion-spi.yaml
- create mode 100644 Documentation/devicetree/bindings/spi/nxp,lpc3220-spi.yaml
- create mode 100644 Documentation/devicetree/bindings/spi/renesas,rzv2h-rspi.yaml
- delete mode 100644 Documentation/devicetree/bindings/spi/spi-orion.txt
- create mode 100644 Documentation/devicetree/bindings/trigger-source/adi,util-sigma-delta-spi.yaml
- create mode 100644 drivers/spi/spi-amlogic-spisg.c
- create mode 100644 drivers/spi/spi-offload-trigger-adi-util-sigma-delta.c
- create mode 100644 drivers/spi/spi-rzv2h-rspi.c
 
