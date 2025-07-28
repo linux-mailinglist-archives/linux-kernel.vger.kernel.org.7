@@ -1,453 +1,157 @@
-Return-Path: <linux-kernel+bounces-747483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3EAB13454
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:55:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DF0B1345A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6B4D1895523
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:55:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEC93176EF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A93221FBD;
-	Mon, 28 Jul 2025 05:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4E822127E;
+	Mon, 28 Jul 2025 05:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lOky2Brq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DU/JI0dn"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA721D5147;
-	Mon, 28 Jul 2025 05:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611D781ACA;
+	Mon, 28 Jul 2025 05:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753682093; cv=none; b=aFzY/PHa0e1w4vLbDNVSHKgCPVvqRN5eMx+MqAcwdjKgLm+n3lpD3/bhWizCQw0RukZ7qMuXsqd2YRfRp2My6ucqp4BGCPbcfInGky7FlfVvzwHmQ3zpPvStoJmWlCfn7c5B9mf7+K8R7QemW9CitiatOIwmSHwFrEgUcDR+ZVg=
+	t=1753682184; cv=none; b=enQyWtx+O7rJZdrVD4v8EUhjhZoxkiKFd5f3xw44jD3oSlKgYbuQJytrya5JlWZQsqkhErhlg1UkfGuGASW7jZBwcfnJRus5uy51tXGU23h3UqH2SMCDm3u9aL0K60Alm68vakWPezckaGvJSLqDUXIddFwtXw4gsX4qzPlEAIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753682093; c=relaxed/simple;
-	bh=cCKM2xSPs1SaHA/XS8K6rNJfFARxaon21ig+00tOWAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hsFfJ9bJtLyaA4mZGLEyVrkC89U9A3n2P+Z5EzljwANAFZShTvZhTPN4iUIgzN2zQFM+0KMF98RZSVrkVIE0WMTJHhrT5sYWuUYUcoqIyuj5Ko/Y+xOv7r3FQ5dGYEfpxf+TKaWka+MFugSc67EN4O5crfxS5YdipcMQAaAMq98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lOky2Brq; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753682092; x=1785218092;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cCKM2xSPs1SaHA/XS8K6rNJfFARxaon21ig+00tOWAo=;
-  b=lOky2Brq2cQBGPuG57qBTr8ps1eLVgkoZ2fi7+ggmEiGvIdCHTUvLaGx
-   BURrZxJqpUvVS/iOmhNQV1+plCWDMo+YiDKWhTMkeGHTlVBjz+26IuDe/
-   s/Uau3Uix8zdL1i8/z0VhKDXgUVvj9Xr5Zj/xDsM38JfJirKKTOODykQW
-   f3FexA67uA4SUUXEXFsGfOaMLyP5g9p8JNdcPZyr/sLSz21l2Whr64jV2
-   Rthugxs0pYi59mIEdbbxjODIfZuReMo1Qaq2o9iCHZTa0fXDpa89wxHaR
-   oY002PAn4iZv46UYLH3OlMDjWYWL3fucCV34SK0Gm8SLkI+pkhtAVnRYy
-   Q==;
-X-CSE-ConnectionGUID: UHXqaY1BSVaYlD1lN4/nxw==
-X-CSE-MsgGUID: 8wIVQSkRTLGzJRrrLL4Qsg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="73372787"
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="73372787"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 22:54:52 -0700
-X-CSE-ConnectionGUID: IfNdnTbWTKihqWXp3ygQ9w==
-X-CSE-MsgGUID: Es5a5F7AQVqGprDq+8nDvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
-   d="scan'208";a="162385073"
-Received: from opintica-mobl1 (HELO kekkonen.fi.intel.com) ([10.245.245.174])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 22:54:48 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id A87391202CF;
-	Mon, 28 Jul 2025 08:54:44 +0300 (EEST)
-Date: Mon, 28 Jul 2025 05:54:44 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Bin Du <Bin.Du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com, Svetoslav.Stoilov@amd.com
-Subject: Re: [PATCH v2 1/8] media: platform: amd: Introduce amd isp4 capture
- driver
-Message-ID: <aIcQpB3pD8oWJPHZ@kekkonen.localdomain>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <20250618091959.68293-2-Bin.Du@amd.com>
+	s=arc-20240116; t=1753682184; c=relaxed/simple;
+	bh=jKAPId/urgZV73peSpLEDxCDNG6Wtdr7sc0wU3uwgA8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ryp5GnkbznNyCPqWxryE43jGeguHFnF1WRZce1eSQ+Mjq7GuSnYZ2/KciNlKB5OBlAaHdufrQnVrKrdV2a0rvNsD9vNYNfEhrxWhWXVsIWd+853cZ6NzTHR84y1AZclaIBAcP8/xcfc3qsiNsMUQvDFjaM5PIBFhIqV1+wBJ6dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DU/JI0dn; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b3bdab4bf19so3366100a12.2;
+        Sun, 27 Jul 2025 22:56:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753682183; x=1754286983; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AfBX2Dn6gQHlMzI4pjH3b2TDwu+3+H5wPtDXO245HqA=;
+        b=DU/JI0dnUupGm0AQRXxYq3KdhL/3Ilo1djCAD4dVxyvHlUMYeNEfCDk9SaFzOFbys3
+         S6loHIoydb2BLh/WKHlksGUDykRJf06Wue9UJd+pOF/FCQGtIGxvt1AV+8xcE9D6pn9M
+         RasdR3CQlAtBf8Ay7YN4C8G+4LNVq5JywAX73cM9J0xnaL92ed+G3iMd2dgP810CReB7
+         BCm0YzSG32rvdlEmEO7Vasve6aXXq8Qa/eLPnt7wBiDM0ZNrVsr5L+2ZwhNQwglPg3wg
+         ix3ONnvLfKOVLwEpoOTppEHiZfNYbaR1CUsy2lAIVaCFU/89AOKvTPfzmas4hSmUY4m+
+         iaSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753682183; x=1754286983;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AfBX2Dn6gQHlMzI4pjH3b2TDwu+3+H5wPtDXO245HqA=;
+        b=ntGpaXNfralxdP+47ih/i1HJa16oBDn3aLDSoKy6ske/W7sufY2OJ7AyCgdoQ17g2K
+         9XTTNLGwBDNoIQx5mpPSHBbfbzwQXCHOpFpz+kQe3PtS6UCRVMhKzv6ag+iSfFqt4r74
+         g96mZXkJ7n8OAzzsCrJVoD3htoctTvohNDgWShM4NWhjOEtej4GGgDxKW+0zn1Awgku7
+         1N3KNfX5Ls+L8Ie0896gU1Ea5KW7m9RtO9RKmVyWipTxN++QNaJnI1w9ek3NQXezb9nc
+         f8rvdbBmfyH0b9cu2WA/n66KCs1lqg5OgBH7FAuJcLYA1RTTuWybmGf46+2tiv42y8Rp
+         xyjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuzpmrV6KQrk2kJiBlJsMOk4Wr5Pr9/7AbP6LbXVl4/p1ZtSNhbPVCDAJZLJp0MgTteNAF5WAH5Ii1b0Dc@vger.kernel.org, AJvYcCXFn4+YHFiRSvOzZbpGWaVd+l7+xjmWndd/pWDqsbAqJTNtODC58Q+cHCSr8RIb+ITwSpyK7FNS/WzC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzio5j/2kzL5dJiudMw50qzpReRzmEUjJzKmleVkl8FVIdRE0s8
+	FVCCKJx4Vl66iHZnEU1lz7OHffzpPSNC2/LK3vgDzEkMn6zARd2do55Y
+X-Gm-Gg: ASbGncv5FxkXnY4VfTmj9KpHyj2fAvH5ibjsP2gRNJXsFQwCDDMyF1SKy9XEf89VT42
+	N+vPJrUnDqPOYTubDzPZm5NRG+TlIlBD9wgl0xX+N5h0MiUvPMCfnxzqaJKDxUIYOypjNlXDQ9O
+	qCtBL/THiKvKF3Qj3srGsIO8XV/DDc1s92/N2puGkulqGuSJLf1+pIItu7f7IqoI2RulAX0RMXI
+	L+nVmMm2+JybJL2idqu47Sl5eYsIhyKDh9jiiz+CRcnl7JFL5R9apnHR+yJZAM0koIpWUaJ5W2j
+	/oqafDawqCOPAm5r0JyfO0ydOhrii4xTDj5loL9U9L8mgkk5tk28iJHFJPlNn1i52SfUHu8Lfwn
+	DZgBk+ViVvWDx2pyOoZbgBuITD2A2Z9CjKIF3pcyk/u+YOQvNpe+xUJsmFzhGIlMn38FmoPeAGs
+	YUz9LzMn869w==
+X-Google-Smtp-Source: AGHT+IEAtZDtFkeJNbSH5GWI9Ubuq7ax/Mj9S7hmCp9fOAX7SqKDyq386D0ys1EjsIruhFyyf9MRaw==
+X-Received: by 2002:a17:902:ebca:b0:235:ea0d:ae23 with SMTP id d9443c01a7336-23fb304f9b5mr141625795ad.6.1753682182526;
+        Sun, 27 Jul 2025 22:56:22 -0700 (PDT)
+Received: from localhost.localdomain (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe514b59sm45091795ad.128.2025.07.27.22.56.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Jul 2025 22:56:21 -0700 (PDT)
+From: rentao.bupt@gmail.com
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Andrew Lunn <andrew@lunn.ch>,
+	Tao Ren <taoren@meta.com>
+Cc: Tao Ren <rentao.bupt@gmail.com>
+Subject: [PATCH v4 00/13] ARM: dts: aspeed: Add Meta Darwin dts
+Date: Sun, 27 Jul 2025 22:56:02 -0700
+Message-ID: <20250728055618.61616-1-rentao.bupt@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250618091959.68293-2-Bin.Du@amd.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Bin,
+From: Tao Ren <rentao.bupt@gmail.com>
 
-On Wed, Jun 18, 2025 at 05:19:52PM +0800, Bin Du wrote:
-> Amd isp4 capture is a v4l2 media device which implements media controller
-> interface.
-> It has one sub-device (amd ISP4 sub-device) endpoint which can be connected
-> to a remote CSI2 TX endpoint. It supports only one physical interface for
-> now.
-> Also add ISP4 driver related entry info into the MAINAINERS file
+The patch series introduces the initial device tree for Meta/Facebook
+Darwin AST2600 BMC.
 
-You could rewrap the text and use the full lines here -- up to 75
-characters per line.
+Patches #1, #2 and #3 fixes the DTB warnings in wedge400/fuji dts and
+ast2600-facebook-netbmc-common.dtsi.
 
-> 
-> Signed-off-by: Bin Du <Bin.Du@amd.com>
-> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
-> ---
->  MAINTAINERS                              |  10 ++
->  drivers/media/platform/Kconfig           |   1 +
->  drivers/media/platform/Makefile          |   1 +
->  drivers/media/platform/amd/Kconfig       |  17 +++
->  drivers/media/platform/amd/Makefile      |   5 +
->  drivers/media/platform/amd/isp4/Makefile |  21 ++++
->  drivers/media/platform/amd/isp4/isp4.c   | 139 +++++++++++++++++++++++
->  drivers/media/platform/amd/isp4/isp4.h   |  35 ++++++
->  8 files changed, 229 insertions(+)
->  create mode 100644 drivers/media/platform/amd/Kconfig
->  create mode 100644 drivers/media/platform/amd/Makefile
->  create mode 100644 drivers/media/platform/amd/isp4/Makefile
->  create mode 100644 drivers/media/platform/amd/isp4/isp4.c
->  create mode 100644 drivers/media/platform/amd/isp4/isp4.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 10893c91b1c1..15070afb14b5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1107,6 +1107,16 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/iommu/linux.git
->  F:	drivers/iommu/amd/
->  F:	include/linux/amd-iommu.h
->  
-> +AMD ISP4 DRIVER
-> +M:	Bin Du <bin.du@amd.com>
-> +M:	Nirujogi Pratap <pratap.nirujogi@amd.com>
-> +L:	linux-media@vger.kernel.org
-> +S:	Maintained
-> +T:	git git://linuxtv.org/media.git
-> +F:	drivers/media/platform/amd/Kconfig
-> +F:	drivers/media/platform/amd/Makefile
-> +F:	drivers/media/platform/amd/isp4/*
-> +
->  AMD KFD
->  M:	Felix Kuehling <Felix.Kuehling@amd.com>
->  L:	amd-gfx@lists.freedesktop.org
-> diff --git a/drivers/media/platform/Kconfig b/drivers/media/platform/Kconfig
-> index 85d2627776b6..d525c2262a7d 100644
-> --- a/drivers/media/platform/Kconfig
-> +++ b/drivers/media/platform/Kconfig
-> @@ -89,5 +89,6 @@ source "drivers/media/platform/ti/Kconfig"
->  source "drivers/media/platform/verisilicon/Kconfig"
->  source "drivers/media/platform/via/Kconfig"
->  source "drivers/media/platform/xilinx/Kconfig"
-> +source "drivers/media/platform/amd/Kconfig"
->  
->  endif # MEDIA_PLATFORM_DRIVERS
-> diff --git a/drivers/media/platform/Makefile b/drivers/media/platform/Makefile
-> index ace4e34483dd..9f3d1693868d 100644
-> --- a/drivers/media/platform/Makefile
-> +++ b/drivers/media/platform/Makefile
-> @@ -32,6 +32,7 @@ obj-y += ti/
->  obj-y += verisilicon/
->  obj-y += via/
->  obj-y += xilinx/
-> +obj-y += amd/
->  
->  # Please place here only ancillary drivers that aren't SoC-specific
->  # Please keep it alphabetically sorted by Kconfig name
-> diff --git a/drivers/media/platform/amd/Kconfig b/drivers/media/platform/amd/Kconfig
-> new file mode 100644
-> index 000000000000..3b1dba0400a0
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/Kconfig
-> @@ -0,0 +1,17 @@
-> +# SPDX-License-Identifier: MIT
-> +
-> +config AMD_ISP4
-> +	tristate "AMD ISP4 and camera driver"
-> +	default y
-> +	depends on VIDEO_DEV && VIDEO_V4L2_SUBDEV_API
-> +	select VIDEOBUF2_CORE
-> +	select VIDEOBUF2_V4L2
-> +	select VIDEOBUF2_MEMOPS
-> +	select VIDEOBUF2_VMALLOC
-> +	select VIDEOBUF2_DMA_CONTIG
-> +	select VIDEOBUF2_DMA_SG
+Patch #4 moves eMMC entries from ast2600-facebook-netbmc-common.dtsi to
+each BMC platform because eMMC was removed from future Meta Network BMC
+platforms.
 
-Do you need all these three? Most drivers need only one.
+Patch #5 introduces new BMC flash layout with 64MB data partition.
 
-> +	help
-> +	  This is support for AMD ISP4 and camera subsystem driver.
-> +	  Say Y here to enable the ISP4 and camera device for video capture.
-> +	  To compile this driver as a module, choose M here. The module will
-> +	  be called amd_capture.
-> diff --git a/drivers/media/platform/amd/Makefile b/drivers/media/platform/amd/Makefile
-> new file mode 100644
-> index 000000000000..76146efcd2bf
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/Makefile
-> @@ -0,0 +1,5 @@
-> +# Copyright 2024 Advanced Micro Devices, Inc.
-> +# add isp block
-> +ifneq ($(CONFIG_AMD_ISP4),)
-> +obj-y += isp4/
-> +endif
-> diff --git a/drivers/media/platform/amd/isp4/Makefile b/drivers/media/platform/amd/isp4/Makefile
-> new file mode 100644
-> index 000000000000..e9e84160517d
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/isp4/Makefile
-> @@ -0,0 +1,21 @@
-> +# SPDX-License-Identifier: GPL-2.0+
-> +#
-> +# Copyright (C) 2025 Advanced Micro Devices, Inc.
-> +
-> +obj-$(CONFIG_AMD_ISP4) += amd_capture.o
-> +amd_capture-objs := isp4.o
-> +
-> +ccflags-y += -I$(srctree)/drivers/media/platform/amd/isp4
-> +ccflags-y += -I$(srctree)/include
-> +
-> +ifneq ($(call cc-option, -mpreferred-stack-boundary=4),)
-> +	cc_stack_align := -mpreferred-stack-boundary=4
-> +endif
+Patches #6, #7 and #8 add "wedge400-data64-bmc" board. "wedge400-bmc"
+and "wedge400-data64-bmc" are identical except BMC flash layout.
 
-Uh... does the driver actually depend on this?
+Patches #9, #10 and #11 add "fuji-data64-bmc" board. "fuji-bmc" and
+"fuji-data64-bmc" are identical except BMC flash layout.
 
-> +
-> +ccflags-y += $(cc_stack_align)
-> +ccflags-y += -DCONFIG_COMPAT
-> +ccflags-y += -Wunused-but-set-variable
-> +ccflags-y += -Wmissing-include-dirs
-> +ccflags-y += -Wunused-const-variable
-> +ccflags-y += -Wmaybe-uninitialized
-> +ccflags-y += -Wunused-value
-> diff --git a/drivers/media/platform/amd/isp4/isp4.c b/drivers/media/platform/amd/isp4/isp4.c
-> new file mode 100644
-> index 000000000000..d0be90c5ec3b
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/isp4/isp4.c
-> @@ -0,0 +1,139 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#include <linux/pm_runtime.h>
-> +#include <linux/vmalloc.h>
-> +#include <media/v4l2-ioctl.h>
+Patches #12 and #13 add Meta Darwin BMC and updates devicetree
+bindings.
 
-Alphabetic order, please.
+Tao Ren (13):
+  ARM: dts: aspeed: wedge400: Fix DTB warnings
+  ARM: dts: aspeed: fuji: Fix DTB warnings
+  ARM: dts: aspeed: Fix DTB warnings in
+    ast2600-facebook-netbmc-common.dtsi
+  ARM: dts: aspeed: Move eMMC out of ast2600-facebook-netbmc-common.dtsi
+  ARM: dts: aspeed: Add facebook-bmc-flash-layout-128-data64.dtsi
+  dt-bindings: arm: aspeed: add Facebook Wedge400-data64 board
+  ARM: dts: aspeed: Add Facebook Wedge400-data64 (AST2500) BMC
+  ARM: dts: aspeed: wedge400: Include wedge400-data64.dts
+  dt-bindings: arm: aspeed: add Facebook Fuji-data64 board
+  ARM: dts: aspeed: Add Facebook Fuji-data64 (AST2600) Board
+  ARM: dts: aspeed: facebook-fuji: Include facebook-fuji-data64.dts
+  dt-bindings: arm: aspeed: add Facebook Darwin board
+  ARM: dts: aspeed: Add Facebook Darwin (AST2600) BMC
 
-> +
-> +#include "isp4.h"
-> +
-> +#define VIDEO_BUF_NUM 5
-
-Unused.
-
-> +
-> +#define ISP4_DRV_NAME "amd_isp_capture"
-> +
-> +/* interrupt num */
-> +static const u32 isp4_ringbuf_interrupt_num[] = {
-> +	0, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT9 */
-> +	1, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT10 */
-> +	3, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT11 */
-> +	4, /* ISP_4_1__SRCID__ISP_RINGBUFFER_WPT12 */
-> +};
-> +
-> +#define to_isp4_device(dev) \
-> +	((struct isp4_device *)container_of(dev, struct isp4_device, v4l2_dev))
-
-No need for the cast.
-
-> +
-> +static irqreturn_t isp4_irq_handler(int irq, void *arg)
-> +{
-> +	struct isp4_device *isp_dev = dev_get_drvdata((struct device *)arg);
-> +
-> +	if (!isp_dev)
-> +		goto error_drv_data;
-> +
-> +error_drv_data:
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +/*
-> + * amd capture module
-> + */
-> +static int isp4_capture_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct isp4_device *isp_dev;
-> +
-
-Extra newline.
-
-> +	int i, irq, ret;
-
-unsigned int i?
-
-> +
-> +	isp_dev = devm_kzalloc(&pdev->dev, sizeof(*isp_dev), GFP_KERNEL);
-> +	if (!isp_dev)
-> +		return -ENOMEM;
-> +
-> +	isp_dev->pdev = pdev;
-> +	dev->init_name = ISP4_DRV_NAME;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(isp4_ringbuf_interrupt_num); i++) {
-> +		irq = platform_get_irq(pdev, isp4_ringbuf_interrupt_num[i]);
-> +		if (irq < 0)
-> +			return dev_err_probe(dev, -ENODEV,
-> +					     "fail to get irq %d\n",
-> +					     isp4_ringbuf_interrupt_num[i]);
-> +		ret = devm_request_irq(&pdev->dev, irq, isp4_irq_handler, 0,
-> +				       "ISP_IRQ", &pdev->dev);
-> +		if (ret)
-> +			return dev_err_probe(dev, ret, "fail to req irq %d\n",
-> +					     irq);
-> +	}
-> +
-> +	isp_dev->pltf_data = pdev->dev.platform_data;
-> +
-> +	dev_dbg(dev, "isp irq registration successful\n");
-
-Please leave this out.
-
-> +
-> +	/* Link the media device within the v4l2_device */
-> +	isp_dev->v4l2_dev.mdev = &isp_dev->mdev;
-> +
-> +	/* Initialize media device */
-> +	strscpy(isp_dev->mdev.model, "amd_isp41_mdev",
-> +		sizeof(isp_dev->mdev.model));
-> +	snprintf(isp_dev->mdev.bus_info, sizeof(isp_dev->mdev.bus_info),
-> +		 "platform:%s", ISP4_DRV_NAME);
-> +	isp_dev->mdev.dev = &pdev->dev;
-> +	media_device_init(&isp_dev->mdev);
-> +
-> +	/* register v4l2 device */
-> +	snprintf(isp_dev->v4l2_dev.name, sizeof(isp_dev->v4l2_dev.name),
-> +		 "AMD-V4L2-ROOT");
-> +	ret = v4l2_device_register(&pdev->dev, &isp_dev->v4l2_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "fail register v4l2 device\n");
-> +
-> +	dev_dbg(dev, "AMD ISP v4l2 device registered\n");
-
-This doesn't seem useful.
-
-> +
-> +	ret = media_device_register(&isp_dev->mdev);
-> +	if (ret) {
-> +		dev_err(dev, "fail to register media device %d\n", ret);
-> +		goto err_unreg_v4l2;
-> +	}
-> +
-> +	platform_set_drvdata(pdev, isp_dev);
-> +
-> +	pm_runtime_set_suspended(dev);
-> +	pm_runtime_enable(dev);
-
-You'll need to enable runtime PM before registering any interfaces on UAPI.
-Same goes for setting driver data for the device.
-
-> +
-> +	return 0;
-> +
-> +err_unreg_v4l2:
-> +	v4l2_device_unregister(&isp_dev->v4l2_dev);
-> +
-> +	return dev_err_probe(dev, ret, "isp probe fail\n");
-> +}
-> +
-> +static void isp4_capture_remove(struct platform_device *pdev)
-> +{
-> +	struct isp4_device *isp_dev = platform_get_drvdata(pdev);
-> +	struct device *dev = &pdev->dev;
-> +
-> +	media_device_unregister(&isp_dev->mdev);
-> +	v4l2_device_unregister(&isp_dev->v4l2_dev);
-> +	dev_dbg(dev, "AMD ISP v4l2 device unregistered\n");
-
-I'd say this is redundant.
-
-> +}
-> +
-> +static struct platform_driver isp4_capture_drv = {
-> +	.probe = isp4_capture_probe,
-> +	.remove = isp4_capture_remove,
-> +	.driver = {
-> +		.name = ISP4_DRV_NAME,
-> +		.owner = THIS_MODULE,
-> +	}
-> +};
-> +
-> +module_platform_driver(isp4_capture_drv);
-> +
-> +MODULE_ALIAS("platform:" ISP4_DRV_NAME);
-> +MODULE_IMPORT_NS("DMA_BUF");
-> +
-> +MODULE_DESCRIPTION("AMD ISP4 Driver");
-> +MODULE_AUTHOR("Bin Du <bin.du@amd.com>");
-> +MODULE_AUTHOR("Pratap Nirujogi <pratap.nirujogi@amd.com>");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/media/platform/amd/isp4/isp4.h b/drivers/media/platform/amd/isp4/isp4.h
-> new file mode 100644
-> index 000000000000..27a7362ce6f9
-> --- /dev/null
-> +++ b/drivers/media/platform/amd/isp4/isp4.h
-> @@ -0,0 +1,35 @@
-> +/* SPDX-License-Identifier: GPL-2.0+ */
-> +/*
-> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
-> + */
-> +
-> +#ifndef _ISP4_H_
-> +#define _ISP4_H_
-> +
-> +#include <linux/mutex.h>
-> +#include <media/v4l2-device.h>
-> +#include <media/videobuf2-memops.h>
-> +#include <media/videobuf2-vmalloc.h>
-> +
-> +#define ISP4_GET_ISP_REG_BASE(isp4sd) (((isp4sd))->mmio)
-> +
-> +struct isp4_platform_data {
-> +	void *adev;
-> +	void *bo;
-> +	void *cpu_ptr;
-> +	u64 gpu_addr;
-> +	u32 size;
-> +	u32 asic_type;
-> +	resource_size_t base_rmmio_size;
-> +};
-> +
-> +struct isp4_device {
-> +	struct v4l2_device v4l2_dev;
-> +	struct media_device mdev;
-> +
-> +	struct isp4_platform_data *pltf_data;
-> +	struct platform_device *pdev;
-> +	struct notifier_block i2c_nb;
-> +};
-> +
-> +#endif /* isp4.h */
-
-Use the same name as for the macro here, please.
+ .../bindings/arm/aspeed/aspeed.yaml           |    3 +
+ arch/arm/boot/dts/aspeed/Makefile             |    3 +
+ .../dts/aspeed/aspeed-bmc-facebook-darwin.dts |   72 +
+ .../dts/aspeed/aspeed-bmc-facebook-elbert.dts |   12 +
+ .../aspeed-bmc-facebook-fuji-data64.dts       | 1256 +++++++++++++++++
+ .../dts/aspeed/aspeed-bmc-facebook-fuji.dts   | 1245 +---------------
+ .../aspeed-bmc-facebook-wedge400-data64.dts   |  375 +++++
+ .../aspeed/aspeed-bmc-facebook-wedge400.dts   |  366 +----
+ .../ast2600-facebook-netbmc-common.dtsi       |   22 +-
+ .../facebook-bmc-flash-layout-128-data64.dtsi |   60 +
+ 10 files changed, 1795 insertions(+), 1619 deletions(-)
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-fuji-data64.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-wedge400-data64.dts
+ create mode 100644 arch/arm/boot/dts/aspeed/facebook-bmc-flash-layout-128-data64.dtsi
 
 -- 
-Kind regards,
+2.47.3
 
-Sakari Ailus
 
