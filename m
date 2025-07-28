@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-747360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0876FB132F4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:28:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE54DB132F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 04:30:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33296172AC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:28:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB7A2189427E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 02:30:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5AD1E8837;
-	Mon, 28 Jul 2025 02:28:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBBE51E8837;
+	Mon, 28 Jul 2025 02:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VIA7qPPS"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lWdz531I"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9026613D51E;
-	Mon, 28 Jul 2025 02:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A733D984;
+	Mon, 28 Jul 2025 02:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753669728; cv=none; b=ZTT9ZmT+eNEZ+g1jWGZJvAj75DUuMc6yFudHaTIoYkUUYxt/gGwJTUMXJy4DuZOLvyMAreZIlqgODQQStz2FpHYQkjyrJ72M/fpo/Y087tz/WDmelvfR2gXEQvNfFRAWs5YB02dQMp/jejkICT8toNh3wlOK8P72Mr27FYPV2Fg=
+	t=1753669810; cv=none; b=C/Rh6RTv312ohb/jx4TPGnAO2Q3COq27/z/ETjA1mZ76moVqHrmcf1FGIYwMCNB7WlYoV3Ya/4knvb+9BuXUH5q6Px5O1HduX7PI4Egma8meSdOM/xSBQv/tz34S++B2jfanL8HgOqKuDhpuw3qpnc/Tr1eVc1ltA8RB4Tmx9RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753669728; c=relaxed/simple;
-	bh=04Q/IQbYaUnmsKtizhEjQMSpuc7k5isaCKweQiKd19o=;
+	s=arc-20240116; t=1753669810; c=relaxed/simple;
+	bh=vOkJ1RzqHkoMiZ4cLBnYGI698brLIal+ciVpcz/ehuQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dhdWh03z8Z4+w39ho0mlTjF32ohVJ2QBKxawPoA5+okSGncBKX4V/g1NNa/rdo3I+uSxn3spCm4MgV//ObvuEC5o38J8kKpYFeCk9oOihrNFnD9FDYjskx30IX7K1xmMXEnY38e2Z1z/F/IkZS5+fSURyeW7J65kax3qvoRqwnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VIA7qPPS; arc=none smtp.client-ip=148.163.158.5
+	 In-Reply-To:Content-Type; b=V+HCFsjPfsoUP/oSdxNLBUjttCVsxTZAJKP8gbbSt19cdAP/9Uat1yr0Xw8eVGZ2nn+WRZ5zfpGy7QvNzvjeV7ULPwIcwyQpkFSkRi3Aqs+YvL6QSv8UpN5NLyp5dpBfYmG81jpRisXxXxZXB1T/wyu6/K1bNJqf2WjTOufKCzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lWdz531I; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56RLe2EC008006;
-	Mon, 28 Jul 2025 02:28:26 GMT
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56RKUAVs001988;
+	Mon, 28 Jul 2025 02:29:27 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=T7TBnh
-	vwJxZeNQf8ohXhQ0QqduJYLe2O2CG/Agz1HVM=; b=VIA7qPPSZb+C0ddyy4VO4L
-	siJmXW6XUpy4Rb0HqjlaARCXgfxm9lRAxWz6AxVLxo5MCnK0YjWj8/TCE/K+TI+v
-	TOTZx4adifGF4kiXRylOFZTaiFQV0POqgv1Lhse5lXuMboaY0Y+4kHFceZ7W0oQs
-	tMko4+s2ObMw6JvJtOxu2i52/uJtQo+A2+sR1OolsaDJyqV5DWN8ycVq8lqy6TzC
-	eh6BqPH+f36MnKB7kdmhWy/VMBgt9IQ1XhlAuNw3vCXYA6nt+rbqji72W6aieDFG
-	XtK88KKDQglPMrmU+JxqwaWjugC+xAp7NbQcogGp+4CfFFBBjH3UhasLHdfl8MDw
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Udz1ZS
+	L6XnQ4VlWJT3DNSHPYMWqsB+qvgEoKroxXnLQ=; b=lWdz531Iq6GRxFzQzLa23g
+	kNETsBiDYdiITImnX2amSLUqljOH5HzWl0jdUAWRWLXgOq0gn66mmIc8qYEsvGEL
+	T9dbf/zsvKSnPIJM4l2InG28L8Tt7wfXpSC+kIC7JoRs/Plqzaa17+eKqZoJpAod
+	Ec9JlWT0yNKid4nW8pZy9RloUw7GxYzZa+zPSJKQGn5azXtRnS4o3G/Z5XkPl+rc
+	zpNohXoVFalGV4uliRRNI0qkPGoH0zDeMPlgLS/IuYaeJTrNRczz9guaWI7Y/d2O
+	j8j2Qh85D43AbLNGG0RM7M1mg5ZcEFTAx77u93mTS0pPDqnOQ79k9RpKtlMGoYGg
 	==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcfpk0k-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 485u6w0vrt-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 02:28:26 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56S2SP9v010212;
-	Mon, 28 Jul 2025 02:28:25 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcfpk0j-1
+	Mon, 28 Jul 2025 02:29:27 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56S2TQwk031463;
+	Mon, 28 Jul 2025 02:29:26 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 485u6w0vrr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 02:28:25 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56S0LFpG018304;
-	Mon, 28 Jul 2025 02:28:24 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485abnuus2-1
+	Mon, 28 Jul 2025 02:29:26 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56S0tCPl015940;
+	Mon, 28 Jul 2025 02:29:25 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485aumbsj1-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Jul 2025 02:28:24 +0000
+	Mon, 28 Jul 2025 02:29:25 +0000
 Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56S2SOWY27525886
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56S2TOiF65339824
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Jul 2025 02:28:24 GMT
+	Mon, 28 Jul 2025 02:29:24 GMT
 Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E404858054;
-	Mon, 28 Jul 2025 02:28:23 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 67D5C5804E;
+	Mon, 28 Jul 2025 02:29:24 +0000 (GMT)
 Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4EF995803F;
-	Mon, 28 Jul 2025 02:28:20 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id D80545803F;
+	Mon, 28 Jul 2025 02:29:13 +0000 (GMT)
 Received: from [9.39.20.72] (unknown [9.39.20.72])
 	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Jul 2025 02:28:19 +0000 (GMT)
-Message-ID: <8096841d-4d94-4b62-83cd-c35d05ee3626@linux.ibm.com>
-Date: Mon, 28 Jul 2025 07:58:13 +0530
+	Mon, 28 Jul 2025 02:29:13 +0000 (GMT)
+Message-ID: <352e0ea6-7a35-4617-ad6e-34e102061732@linux.ibm.com>
+Date: Mon, 28 Jul 2025 07:59:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,98 +83,163 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: powerpc: add htm.rst to toctree
-To: Randy Dunlap <rdunlap@infradead.org>,
-        Vishal Parmar <vishistriker@gmail.com>
-Cc: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
-        corbet@lwn.net, linuxppc-dev@lists.ozlabs.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250727110145.839906-1-vishistriker@gmail.com>
- <5ac25ceb-023d-409d-8e7e-014d010c5028@infradead.org>
+Subject: Re: [PATCH RESEND bpf-next 1/1] powerpc64/bpf: Add jit support for
+ load_acquire and store_release
+To: Daniel Borkmann <daniel@iogearbox.net>,
+        Saket Kumar Bhaskar <skb99@linux.ibm.com>, puranjay@kernel.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin
+ <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Hari Bathini <hbathini@linux.ibm.com>,
+        Naveen N Rao <naveen@kernel.org>, Mykola Lysenko <mykolal@fb.com>,
+        Peilin Ye <yepeilin@google.com>,
+        Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, "Paul E . McKenney" <paulmck@kernel.org>,
+        lkmm@lists.linux.dev
+References: <20250717202935.29018-1-puranjay@kernel.org>
+ <20250717202935.29018-2-puranjay@kernel.org> <mb61pfreuy1rm.fsf@kernel.org>
+ <aIIKo39dK22ew1T5@linux.ibm.com>
+ <c3eff304-8dd3-418d-afa9-eaf91020c535@iogearbox.net>
 Content-Language: en-US
 From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <5ac25ceb-023d-409d-8e7e-014d010c5028@infradead.org>
+In-Reply-To: <c3eff304-8dd3-418d-afa9-eaf91020c535@iogearbox.net>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDAxNiBTYWx0ZWRfX2vlYdEbACMBZ
- LsKk5O2Oq14Xq5WMK8i21bEOcDgR0uZ2yXtRUQ17fh90qS0LRuSKTC+7mD5X1+R/GfQLFHOymvH
- ll062xaKTarNIHODyX3IvtUhyfxOh17+iikh1Kfx/vkPUOb7KTW7m8iUjFkE1tSftRhet0p1Q08
- 2tkx50uc7IuaAjG5MbLTXryB+KDfSoJU7EGFJ8qH1YpSoVuNZVzTaw6+cYyOKmHxEebl9o0o3OL
- CuKDURAahTSQI+XN5Qe+gu+5lDBsdHZfClhWdHVzPGYsdWPb6Qs4LSX8AyxHFhLvFh/TCWL99qd
- 7JCBqUUSHxjC26oNfpnwZexPQGlgHBOOGFlznnbGA1BFaU4uVmRNF7vP7jVSRWGLydQ7ZUVwQYv
- paG7YuowdVKm+abZCP9DWQlQ8W23nR0ZpGHkHkHZoHVXVBlYPqQfKLU2itZf3rh+9pVia17I
-X-Proofpoint-ORIG-GUID: bpvzLCELX4mmRrgOpwkDezLAMXBtoMQv
-X-Authority-Analysis: v=2.4 cv=Lp2Symdc c=1 sm=1 tr=0 ts=6886e04a cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=pGLkceISAAAA:8 a=80uqdGE25AKLF_4ApEwA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 088rYj0OLFalEC5ah73O0gGUsJxtqgra
+X-Authority-Analysis: v=2.4 cv=K4siHzWI c=1 sm=1 tr=0 ts=6886e087 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=MP_mQu3T_XVgOpPGKvUA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI4MDAxNiBTYWx0ZWRfX2mgFZC7txfAK
+ 5F2sw3GKUp0JDsfdxssKlJ2eh8q+Ech4RYeGciHEWo1/UQUmv8K2FK2IbB0ACnJ6zUWHrZoHqoc
+ OrgTGwHRjUknDttIKCLcjd2YeIJjgL0Nw8FTIb5Zk8UnqC6oUPz6CQTQg1Gf/I82ETY8wAekqPM
+ OEBYOJsW5QcTiTHwq4m5jc0a4JewbYvGUEvr8mkXXGwv9aA/d/QHJupoMlqjWKGHNc/kNppqDtn
+ AzBssJrLEXHaKW9hIuTrM6KTYC4F6AT/lk/uvCuRsgS071eDSP4aJTEVD1A417YpBLVUXl7Oi+5
+ HAIZtLSA1mpXJ1+0eQisnI8XwIsk91f9X9xytBDsA6KX9I003y2vI3OySid+Tg+hqA9L0e2av3A
+ KPeQvPx5hj2KDzPKIae7yDwwALSWzaA3gLoerMkjONO9qacDDrY92PC5LfJ20xS+YwD1H2ak
+X-Proofpoint-ORIG-GUID: VH9OaA3fh2bI9vlvx6XDQ7FAuZtsLfMa
+X-Proofpoint-GUID: RGmbb0kq1z6B8SdZiVqdBiwpyELLQwWo
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-07-28_01,2025-07-24_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
- adultscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0 suspectscore=0
- mlxlogscore=949 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ priorityscore=1501 lowpriorityscore=0 adultscore=0 mlxlogscore=909
+ phishscore=0 suspectscore=0 spamscore=0 clxscore=1011 mlxscore=0 bulkscore=0
+ malwarescore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
  route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
  definitions=main-2507280016
 
 
 
-On 7/27/25 9:11 PM, Randy Dunlap wrote:
-> Hi,
-> 
-> On 7/27/25 4:01 AM, Vishal Parmar wrote:
->> The file Documentation/arch/powerpc/htm.rst is not included in the
->> index.rst toctree. This results in a warning when building the docs:
+On 7/27/25 10:59 PM, Daniel Borkmann wrote:
+> On 7/24/25 12:27 PM, Saket Kumar Bhaskar wrote:
+> [...]
+>> Thanks for the patch. I applied the patch and tested it.
 >>
->>   WARNING: document isn't included in any toctree: htm.rst
+>> Before this patch:
 >>
->> Add it to the index.rst file so that it is properly included in the
->> PowerPC documentation TOC.
+>> # ./test_progs -a \
+>>    verifier_load_acquire,verifier_store_release,atomics
+>> #11/1    atomics/add:OK
+>> #11/2    atomics/sub:OK
+>> #11/3    atomics/and:OK
+>> #11/4    atomics/or:OK
+>> #11/5    atomics/xor:OK
+>> #11/6    atomics/cmpxchg:OK
+>> #11/7    atomics/xchg:OK
+>> #11      atomics:OK
+>> #528/1   verifier_load_acquire/Clang version < 18, ENABLE_ATOMICS_TESTS not defined, and/or JIT doesn't support load-acquire, use a dummy test:OK
+>> #528     verifier_load_acquire:OK
+>> #565/1   verifier_store_release/Clang version < 18, ENABLE_ATOMICS_TESTS not defined, and/or JIT doesn't support store-release, use a dummy test:OK
+>> #565     verifier_store_release:OK
+>> Summary: 3/9 PASSED, 0 SKIPPED, 0 FAILED
 >>
->> Signed-off-by: Vishal Parmar <vishistriker@gmail.com>
+>> After this patch:
+>>
+>> # ./test_progs -a \
+>>    verifier_load_acquire,verifier_store_release,atomics
+>> #11/1    atomics/add:OK
+>> #11/2    atomics/sub:OK
+>> #11/3    atomics/and:OK
+>> #11/4    atomics/or:OK
+>> #11/5    atomics/xor:OK
+>> #11/6    atomics/cmpxchg:OK
+>> #11/7    atomics/xchg:OK
+>> #11      atomics:OK
+>> #529/1   verifier_load_acquire/load-acquire, 8-bit:OK
+>> #529/2   verifier_load_acquire/load-acquire, 8-bit @unpriv:OK
+>> #529/3   verifier_load_acquire/load-acquire, 16-bit:OK
+>> #529/4   verifier_load_acquire/load-acquire, 16-bit @unpriv:OK
+>> #529/5   verifier_load_acquire/load-acquire, 32-bit:OK
+>> #529/6   verifier_load_acquire/load-acquire, 32-bit @unpriv:OK
+>> #529/7   verifier_load_acquire/load-acquire, 64-bit:OK
+>> #529/8   verifier_load_acquire/load-acquire, 64-bit @unpriv:OK
+>> #529/9   verifier_load_acquire/load-acquire with uninitialized src_reg:OK
+>> #529/10  verifier_load_acquire/load-acquire with uninitialized src_reg @unpriv:OK
+>> #529/11  verifier_load_acquire/load-acquire with non-pointer src_reg:OK
+>> #529/12  verifier_load_acquire/load-acquire with non-pointer src_reg @unpriv:OK
+>> #529/13  verifier_load_acquire/misaligned load-acquire:OK
+>> #529/14  verifier_load_acquire/misaligned load-acquire @unpriv:OK
+>> #529/15  verifier_load_acquire/load-acquire from ctx pointer:OK
+>> #529/16  verifier_load_acquire/load-acquire from ctx pointer @unpriv:OK
+>> #529/17  verifier_load_acquire/load-acquire with invalid register R15:OK
+>> #529/18  verifier_load_acquire/load-acquire with invalid register R15 @unpriv:OK
+>> #529/19  verifier_load_acquire/load-acquire from pkt pointer:OK
+>> #529/20  verifier_load_acquire/load-acquire from flow_keys pointer:OK
+>> #529/21  verifier_load_acquire/load-acquire from sock pointer:OK
+>> #529     verifier_load_acquire:OK
+>> #566/1   verifier_store_release/store-release, 8-bit:OK
+>> #566/2   verifier_store_release/store-release, 8-bit @unpriv:OK
+>> #566/3   verifier_store_release/store-release, 16-bit:OK
+>> #566/4   verifier_store_release/store-release, 16-bit @unpriv:OK
+>> #566/5   verifier_store_release/store-release, 32-bit:OK
+>> #566/6   verifier_store_release/store-release, 32-bit @unpriv:OK
+>> #566/7   verifier_store_release/store-release, 64-bit:OK
+>> #566/8   verifier_store_release/store-release, 64-bit @unpriv:OK
+>> #566/9   verifier_store_release/store-release with uninitialized src_reg:OK
+>> #566/10  verifier_store_release/store-release with uninitialized src_reg @unpriv:OK
+>> #566/11  verifier_store_release/store-release with uninitialized dst_reg:OK
+>> #566/12  verifier_store_release/store-release with uninitialized dst_reg @unpriv:OK
+>> #566/13  verifier_store_release/store-release with non-pointer dst_reg:OK
+>> #566/14  verifier_store_release/store-release with non-pointer dst_reg @unpriv:OK
+>> #566/15  verifier_store_release/misaligned store-release:OK
+>> #566/16  verifier_store_release/misaligned store-release @unpriv:OK
+>> #566/17  verifier_store_release/store-release to ctx pointer:OK
+>> #566/18  verifier_store_release/store-release to ctx pointer @unpriv:OK
+>> #566/19  verifier_store_release/store-release, leak pointer to stack:OK
+>> #566/20  verifier_store_release/store-release, leak pointer to stack @unpriv:OK
+>> #566/21  verifier_store_release/store-release, leak pointer to map:OK
+>> #566/22  verifier_store_release/store-release, leak pointer to map @unpriv:OK
+>> #566/23  verifier_store_release/store-release with invalid register R15:OK
+>> #566/24  verifier_store_release/store-release with invalid register R15 @unpriv:OK
+>> #566/25  verifier_store_release/store-release to pkt pointer:OK
+>> #566/26  verifier_store_release/store-release to flow_keys pointer:OK
+>> #566/27  verifier_store_release/store-release to sock pointer:OK
+>> #566     verifier_store_release:OK
+>> Summary: 3/55 PASSED, 0 SKIPPED, 0 FAILED
+>>
+>> Tested-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
 > 
-> There is a fix is available and scheduled to be merged (when?).
-> 
-> See
-> https://lore.kernel.org/all/98a8a5ef-45fd-4b1e-a775-d1e1306ad682@linux.ibm.com/
-> 
-> 
-> | Yes. I am planning to send it as a fix patch in earliest rc for 6.16.
-> 
-> @Maddy, does that mean during the merge window after 6.16 or as a
-> merge into 6.16-rcX (which is now)?
+> Michael/Madhavan, I presume you'll pick this patch up?
 > 
 
-My bad. I lost track of this. I thought I did push this,
-but then looks like not. Apologizes.
-
-Will handle this as part of this merge.
+yes, Will do.
 
 Thanks
 Maddy
 
-
-> Thanks.
-> 
->> ---
->>  Documentation/arch/powerpc/index.rst | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
->> index 0560cbae5fa1..173a787b6cc3 100644
->> --- a/Documentation/arch/powerpc/index.rst
->> +++ b/Documentation/arch/powerpc/index.rst
->> @@ -36,6 +36,7 @@ powerpc
->>      vas-api
->>      vcpudispatch_stats
->>      vmemmap_dedup
->> +    htm
->>  
->>      features
->>  
-> 
+> Thanks,
+> Daniel
 
 
