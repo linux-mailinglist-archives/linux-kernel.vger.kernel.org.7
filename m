@@ -1,88 +1,115 @@
-Return-Path: <linux-kernel+bounces-748262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 725B2B13EB8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:37:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 443C1B13EC4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 17:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87EDB3A1F97
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12ADE3A9C92
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 15:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92881274666;
-	Mon, 28 Jul 2025 15:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D97274FF5;
+	Mon, 28 Jul 2025 15:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NkpEyrt7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="GBMthJrg"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA66274676;
-	Mon, 28 Jul 2025 15:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1ED27380F;
+	Mon, 28 Jul 2025 15:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753716887; cv=none; b=s+4+ENU0R022YxUN0YkqPqY6L1dnzEQAan8oyGogm6zgbuxQ30kiCFtkpgF7OUFNoOL2RX9Q5jQiqWppUzXVRhuy4+79ZA7bvcLQaSnCkOtewfti/e6TjN0tZEUfk1rgb7Ui8+7/NDgcb0cdLw6DvRvwAU89JjS6necnwxPh5vE=
+	t=1753716920; cv=none; b=sfyL+HkkSbN1g7OUgxudbUYC3s/qT05hhR/QVqi9VJvEoq23qRNa+cKBAUBw5WJ8m3Q2kDUCd4FTQxYzqV9MdS5z7UgBS8yH1nuakWqf6s44H8dedRWu8wSTuD9ViHtGtkDli+t6mOdTib42KOtgBIzvgnIp16Q4D3i6p6eXgGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753716887; c=relaxed/simple;
-	bh=2xPBmRHeSoQvOWnAnsiNXsyXNpYv0Ly4lmJEuLMt6S4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZKodBf5qahwR3nVUSMsmoucDe1R00Nyz3K1GlR+tsWw4oPOwNCaEuu7OzN8/itVgfRliM8pfnS5EzzrCZmBPtChR8hxfvuBhHCxkPm6TyXYxV6u08ivtLugHI+7X9aTMFIlrphaa1bIxSf8kxrTrUHxRUFOzhbZzbSqj614+UiE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NkpEyrt7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABDBDC4CEE7;
-	Mon, 28 Jul 2025 15:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753716886;
-	bh=2xPBmRHeSoQvOWnAnsiNXsyXNpYv0Ly4lmJEuLMt6S4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NkpEyrt7JFeapc4gmZKoQ7bGbUNXx+sgazOY1wldwNPeXhWK+HNszrZsMzvO8v0hb
-	 gPPw3+8zI9us+gnpCgaz9fe9GHp8Ra1NYPtPGXwVaVYm2u2KCDq150IZpdbq3nPbRS
-	 TWFNrUgtNPIeCvUtjq7ufKNzTpRHL7OFbbRWPQ/Y=
-Date: Mon, 28 Jul 2025 17:34:43 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Marc-Etienne Vargenau (Nokia)" <marc-etienne.vargenau@nokia.com>
-Cc: Thomas Huth <thuth@redhat.com>, Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-spdx@vger.kernel.org" <linux-spdx@vger.kernel.org>
-Subject: Re: [PATCH] arch/x86/kvm/ioapic: Remove license boilerplate with bad
- FSF address
-Message-ID: <2025072806-swept-retype-4f7c@gregkh>
-References: <20250728141540.296816-1-thuth@redhat.com>
- <PR3PR07MB81837F4778329A2270CC9318AC5AA@PR3PR07MB8183.eurprd07.prod.outlook.com>
- <2025072843-browbeat-rocket-c549@gregkh>
- <PR3PR07MB81835DAC6ACE7162E81A3AC4AC5AA@PR3PR07MB8183.eurprd07.prod.outlook.com>
+	s=arc-20240116; t=1753716920; c=relaxed/simple;
+	bh=fVUmTsT1aVGwMRX+rjvd/Y9HAd0yJQPHy+zphDQ3/zE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hdLiyC18F9J4saUSIl5O6lcrvOkOQSFx3YRG0s8Ke2IW9JYg56GTBpBEMiSll3flbBxZ1LBfCk+Dupju5zugKUvlej7y3nZ9g0q3fBP3qX0VnUutOw+l1W/bbM276Y8JKHJqfkJ7wIAwJcjeRFUSot+pONNZ2TqiW2sR1bdaL5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=GBMthJrg; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E7177A0A55;
+	Mon, 28 Jul 2025 17:35:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=ITO07SSY5VSdV4RAypVkZOuvZxUXVYAV/4k1hVCN4Lg=; b=
+	GBMthJrglHxwjqJagUQSixLDuDXpnM3CYjvTmc8IXIMQ9Mxpyp+PiuA7OPboaLRb
+	rT7WWmyH7wdWW1ePdhA6Myn6TlHnBqjfbD0MwvTL3yoY2v2+FbbbvkeihIeACMIm
+	tkGsQ5WVyndzixNVt/zsE6UF1RQSBhaEkvRxVLaOzjEfRcewc2IgtdAb1ai/637G
+	+G3+Xw9cbCCByoshTX9/Vxwq/g/GKt5WF4os+Tpd7DC/ul2rTIRbd7XhzP5rdzmX
+	76KXwPxW13XELePfYbxJjCcAvolnOGK2/McbIcFTqoFumJs8fH23H5Krqh9NMEjB
+	34zu0ykmrXJmVN6citIRYyOTUSaqsbpAvWw3yG/dLw/Z9jA2Ug8fd9AtkxARLUnP
+	AxZAkMeIwjdLYIBaNGQWHwa8zq3OOK9AIRTUZ+/ItHadyNi9/0F2WstEsMvPDjzG
+	ziNikPiLB0m3S4vS48QzesHwGFbXyd6JJrmxmGpotNnZjmGs1OZEEuotShSyIQEB
+	ga4XfTEbS8oeSyM4bcJJkW+6ASwwdf1t9BhUOvtMcY/8FxOwT8qhKAnL2nFsyeS9
+	Bu4mlDDRtFLTLPPSkQl5DB7HvyXQF41BzGREyKVcXeyNs82T0uXSteCJvnihs1yw
+	iXrH+CoHMY4QWUJS0PtpNiHJzd+Q98C81HyuctuM9I4=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Sergei Shtylyov
+	<sergei.shtylyov@cogentembedded.com>, "David S. Miller"
+	<davem@davemloft.net>, Rob Herring <robh@kernel.org>, Andrew Lunn
+	<andrew@lunn.ch>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	"Dmitry Torokhov" <dmitry.torokhov@gmail.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>, Csaba Buday
+	<buday.csaba@prolan.hu>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+	<linux@armlinux.org.uk>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH net] net: mdio_bus: Use devm for getting reset GPIO
+Date: Mon, 28 Jul 2025 17:34:55 +0200
+Message-ID: <20250728153455.47190-2-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <PR3PR07MB81835DAC6ACE7162E81A3AC4AC5AA@PR3PR07MB8183.eurprd07.prod.outlook.com>
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1753716913;VERSION=7994;MC=189549094;ID=373804;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A296767155E677063
 
-Please don't top-post on kernel mailing lists.
+Commit bafbdd527d56 ("phylib: Add device reset GPIO support") removed
+devm_gpiod_get_optional() in favor of the non-devres managed
+fwnode_get_named_gpiod(). When it was kind-of reverted by commit
+40ba6a12a548 ("net: mdio: switch to using gpiod_get_optional()"), the devm
+functionality was not reinstated. Nor was the GPIO unclaimed on device
+remove. This leads to the GPIO being claimed indefinitely, even when the
+device and/or the driver gets removed.
 
-On Mon, Jul 28, 2025 at 03:19:51PM +0000, Marc-Etienne Vargenau (Nokia) wrote:
-> Hi Greg,
-> 
-> I agree this is not major, but it means that for example Yocto creates invalid SPDX SBOMs that must be fixed before it can be used.
+Fixes: bafbdd527d56 ("phylib: Add device reset GPIO support")
+Fixes: 40ba6a12a548 ("net: mdio: switch to using gpiod_get_optional()")
+Cc: Csaba Buday <buday.csaba@prolan.hu>
+Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+---
+ drivers/net/phy/mdio_bus.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Then Yocto already has that regex setup as the kernel has many such
-instances of this.
+diff --git a/drivers/net/phy/mdio_bus.c b/drivers/net/phy/mdio_bus.c
+index fda2e27c1810..24bdab5bdd24 100644
+--- a/drivers/net/phy/mdio_bus.c
++++ b/drivers/net/phy/mdio_bus.c
+@@ -36,8 +36,8 @@
+ static int mdiobus_register_gpiod(struct mdio_device *mdiodev)
+ {
+ 	/* Deassert the optional reset signal */
+-	mdiodev->reset_gpio = gpiod_get_optional(&mdiodev->dev,
+-						 "reset", GPIOD_OUT_LOW);
++	mdiodev->reset_gpio = devm_gpiod_get_optional(&mdiodev->dev,
++						      "reset", GPIOD_OUT_LOW);
+ 	if (IS_ERR(mdiodev->reset_gpio))
+ 		return PTR_ERR(mdiodev->reset_gpio);
+ 
 
-> It’s better to use the correct syntax in the kernel.
+base-commit: fa582ca7e187a15e772e6a72fe035f649b387a60
+-- 
+2.43.0
 
-Again, either is fine for now, as per our documentation, don't add
-additional requirements for contributors that are not there at all.
 
-thanks,
-
-greg k-h
 
