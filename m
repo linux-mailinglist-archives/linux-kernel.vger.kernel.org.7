@@ -1,218 +1,335 @@
-Return-Path: <linux-kernel+bounces-747497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 769A7B1347F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:59:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349CFB13481
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 07:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881B53B3A8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:58:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 558FE17784C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 05:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CD05253F03;
-	Mon, 28 Jul 2025 05:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAEB221F1A;
+	Mon, 28 Jul 2025 05:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UkEjlZYI"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RGWUJT87"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239B12517A5;
-	Mon, 28 Jul 2025 05:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DBD21FF50;
+	Mon, 28 Jul 2025 05:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753682206; cv=none; b=OP7KdlfV7yVDgzwATRRAke8l+qPYXl+hVu4hq7uNJ1WUca2ywiDZrKM+3xK5zPa5o4txf9UqhskwJbVUALIqhYOMUrukXgaPmoTDcKgnbxoY+bSBIK3fWNIcShBIOc0welfIEcDtRq+J8to8fcSBipKvLweSnOPDTknzeTlDwbI=
+	t=1753682262; cv=none; b=hTpCHyI73qBHR+dpKalJ4L8fUNuirnkTcl4tALMOmClgpSWc7OWv2aulqRudX0Y2h6K5qRxBNi8yWSq9CWgiB5gxzemZLY0qI4fRzaEecXBBUau4ns8808fl44wkjuCuZ6XwflXHSKf+YED9pdtyFxfH2bbbNhc+ER4PtKgUeys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753682206; c=relaxed/simple;
-	bh=TPZgCgjAkax5i2/pB1EewOK8U5/Ji+0ZtO9LqIpr2vc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UpCcb0Iu5YDDLayZBYOZByC39F86np2L7HubMozPhanwgCznyu1DIyJgFPKDec5WqPVTZjTtDCeV09+hRyhS0hotPlCKPiv9kXgjvstasnO1Lrxy3Bx4AfbAyN/Mw9FoCSmMAw+ocHy+hFRKt232yWX7t0tkUniaJF7SaZofDXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UkEjlZYI; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-23ffa7b3b30so8704495ad.1;
-        Sun, 27 Jul 2025 22:56:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753682204; x=1754287004; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=h+hROFZIJ4zafnbkZoU/ntEvBJYn2g7xzj4eJTsFhmI=;
-        b=UkEjlZYIG15+mXH4rHlq7aijfZvgZW2aG6mtvq4hmQtbN0hnnlD8MTrdgBeADBdq3S
-         uqS77zZirNQZNWxF3USSnH3LUDDXxKDwEsXp19Ra4BMHM7c/WaJKD7ncucM1xv2SwT80
-         moYceNNsYCVrXZD6zRON5g/AdJ2oMU2Bu9Be+oZYhFFFiKZ8JdmodDyVdU78NVyiJbKr
-         HTtf8MgyvOsYeU71yPzCTLzgeu44vaIVjuHbl0/4PlcH4htshlT76ZIIe3Bu55bJeEGV
-         QkkjmMoorn8u8vTcBqGCVd7nZswPd6SFRvop7xOUi0PYMNEhORL8MyA6MSliymeI+fze
-         zw0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753682204; x=1754287004;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=h+hROFZIJ4zafnbkZoU/ntEvBJYn2g7xzj4eJTsFhmI=;
-        b=WOIi3ivuJBqJ2drwtCVMUEzUldbfehrUBbo92TB06LlPRYiUh6wNi/cACUkUm0DhvX
-         8a/Sx0XCfHUrb0OGGO/VwU4PG5BTjoeozcSxV/LuobO7fa53RJZcc0OKjsIPI30KTXt4
-         wuK2HXeJGSl4gmVyoXeiYbwidSnImluhi337D6maTE1QLN4mvw7M9MGUzA8q0OEXbKc5
-         RgFylcfl+H/hx6LHY3nlYVjotTShZoAGFJwsxNcWDUWlCULP3t7RfdK3iUhX5oYHKFhn
-         PKcvmCZGhYhIqqFD+6HFbHZmID4hL1z4nU6eDeMSSv2jK513+F7MRU/Wjj1q71gWo1X/
-         RFzA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3QDPLCysSuxb6kUwRm/ng738EMe8Gh1IO9TDFK3T6E+46I4rIAk1Nabg2O6Ml01IEXgkbup11Klzl7Vmp@vger.kernel.org, AJvYcCWBvaShilqJzLbhFPI7iI44LpgsQ1nlwcSf2f1dDm8X1NL1dUbjOZCCq0YPVKJLBywSq5gkJq1Hml1A@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywoo5SX639To5cKdezS9tv0MUHs6NqSKK7aUdxiyeTr1r/akrIL
-	1vEVdKSKlAq9rZJoi2K3BJX5kr99c07q68vHl7KavZlVe+wD6Oyvgq8m
-X-Gm-Gg: ASbGncsuDOgRmooDqPiclbDZyKFdluxr11yzMYkR6o+z7MpiUQNYp6SQ9PNvahaN2Kw
-	1hVY1Zt3bikaIk8uIGBd4+zwv/px6wM5iI9jEG7Iie9BinyD3cnt5vIwm5rkbYiHoaTa/hhrmBD
-	kkfORRwhRdhh75Jti8f4oVz08tBu/onIij4lvhHCTdRS0lyiSCecUu2WUC7lrQTOG3OtOoq4jYg
-	MKUj7F1pEOXLTJk+j3f2vF3mcjC9/XbUyq+RMyyeKVKLYwCX1TNVKWNzsvS7a5Iknewq5W0bdwv
-	LiEWlhsrI8FBclM/KhxwNVNFD/bYhsQgScqLWRcYmeGVve5Zs03WWJQ6VqruxfO4ddrWc4B4fbX
-	GowtzIzw4qmr7iLpFFieoQOKVrj7vEK5UK+qqkZ8uaD3oH9SVOOAy/1WNXcS5NApAWYhr0EFueZ
-	c=
-X-Google-Smtp-Source: AGHT+IESYMV9/aCSq8+ZkMIq1xghfGxILNOdIuRhEeldG3+nYfcr3Y2QDDogE793q0IX8dW9AYzfjA==
-X-Received: by 2002:a17:902:c409:b0:234:f4da:7eeb with SMTP id d9443c01a7336-23fb3051350mr152238685ad.7.1753682204352;
-        Sun, 27 Jul 2025 22:56:44 -0700 (PDT)
-Received: from localhost.localdomain (c-76-133-73-115.hsd1.ca.comcast.net. [76.133.73.115])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe514b59sm45091795ad.128.2025.07.27.22.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Jul 2025 22:56:43 -0700 (PDT)
-From: rentao.bupt@gmail.com
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Joel Stanley <joel@jms.id.au>,
-	Andrew Jeffery <andrew@codeconstruct.com.au>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	Andrew Lunn <andrew@lunn.ch>,
-	Tao Ren <taoren@meta.com>
-Cc: Tao Ren <rentao.bupt@gmail.com>
-Subject: [PATCH v4 13/13] ARM: dts: aspeed: Add Facebook Darwin (AST2600) BMC
-Date: Sun, 27 Jul 2025 22:56:15 -0700
-Message-ID: <20250728055618.61616-14-rentao.bupt@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250728055618.61616-1-rentao.bupt@gmail.com>
-References: <20250728055618.61616-1-rentao.bupt@gmail.com>
+	s=arc-20240116; t=1753682262; c=relaxed/simple;
+	bh=93FmW8XV2jJxelvz++7T6HWXvhNpHYrpAeDkgbikgKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aXE+JMBv1P+U0vZmDLpo4DiTRHHAah4CxbJbXKkcLHWxCTySAb00sCXz3zzIt3s5hG3YpivTHI3ZWYxkeCCNcxSwbOXpwAU/+JeRBYmqZst7WWHiGLLsi8ChcQSI4iMo7G0u47wCrs2jjfe6EpTDiwmwpz4heSK5RNwrZQ/qeEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RGWUJT87; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753682260; x=1785218260;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=93FmW8XV2jJxelvz++7T6HWXvhNpHYrpAeDkgbikgKQ=;
+  b=RGWUJT87d1gYTqOJHeRHdNOhtSSbQypWm7qhpEXDgAb0M4YXUgJ2QJLP
+   gdEnNOSHqhmgQXBnpZYGPC/g325pXruj1YR5Jpr/Ap6i5hDRcubUNrXdZ
+   C0f5QmzlGi3yiI3b6ZwAL6joIIf6i9zHLZho4WTY9Hlxay278YKogIhE+
+   HuFbJoT4MlLAuHI99UwJZCWHXurPlrw3Fj8+Py9xJW1mUPJ9ku6jbZh9z
+   znaIbGq/L5HSuxPu2T6XqKA+4qmGWJMK74MyhKFIXO7c5zg8bRoNHxT0c
+   tYu7s3mLRlSXiI3tQ5OByCyMiSj4CJSXte0DIo+Ok27FtVYcU2MsP00p+
+   g==;
+X-CSE-ConnectionGUID: mXWtSjVvR2m9e2ox+88sKA==
+X-CSE-MsgGUID: 1ZjU8vhuSpmw3vENRs4eQQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11504"; a="58543784"
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="58543784"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 22:57:39 -0700
+X-CSE-ConnectionGUID: Pn+BF0l3Swm79I6tIvPCSQ==
+X-CSE-MsgGUID: TA+jyJIVQYyuoKCKw1yjyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,339,1744095600"; 
+   d="scan'208";a="162647152"
+Received: from opintica-mobl1 (HELO kekkonen.fi.intel.com) ([10.245.245.174])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jul 2025 22:57:36 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 196AA1202CF;
+	Mon, 28 Jul 2025 08:57:33 +0300 (EEST)
+Date: Mon, 28 Jul 2025 05:57:33 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Bin Du <Bin.Du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+	laurent.pinchart+renesas@ideasonboard.com,
+	bryan.odonoghue@linaro.org, prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
+	Dominic.Antony@amd.com, Svetoslav.Stoilov@amd.com
+Subject: Re: [PATCH v2 2/8] media: platform: amd: low level support for isp4
+ firmware
+Message-ID: <aIcRTapInMVSIkx5@kekkonen.localdomain>
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <20250618091959.68293-3-Bin.Du@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250618091959.68293-3-Bin.Du@amd.com>
 
-From: Tao Ren <rentao.bupt@gmail.com>
+Hi Bin,
 
-Add initial device tree for the Meta (Facebook) Darwin AST2600 BMC.
+On Wed, Jun 18, 2025 at 05:19:53PM +0800, Bin Du wrote:
+> Low level functions for access the registers and mapping to their ranges.
+> This change also includes register definitions for ring buffer used to
+> communicate with ISP Firmware.
+> Ring buffer is the communication interface between driver and ISP Firmware.
+> Command and responses are exchanged through the ring buffer.
 
-Darwin is Meta's rack switch platform with an AST2600 BMC integrated for
-health monitoring purpose.
+Please rewrap this, the third line could well be longer.
 
-Signed-off-by: Tao Ren <rentao.bupt@gmail.com>
----
-Changes in v4:
-  - None.
-Changes in v3:
-  - Removed flash layout (use the "default" in common.dtsi).
-Changes in v2:
-  - Removed mac3 controller.
-  - Fixed DTB warnings.
+> 
+> Signed-off-by: Bin Du <Bin.Du@amd.com>
+> Signed-off-by: Svetoslav Stoilov <Svetoslav.Stoilov@amd.com>
+> ---
+>  drivers/media/platform/amd/isp4/Makefile      |   3 +-
+>  drivers/media/platform/amd/isp4/isp4_hw.c     |  46 +++++++
+>  drivers/media/platform/amd/isp4/isp4_hw.h     |  14 +++
+>  drivers/media/platform/amd/isp4/isp4_hw_reg.h | 116 ++++++++++++++++++
+>  4 files changed, 178 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/media/platform/amd/isp4/isp4_hw.c
+>  create mode 100644 drivers/media/platform/amd/isp4/isp4_hw.h
+>  create mode 100644 drivers/media/platform/amd/isp4/isp4_hw_reg.h
+> 
+> diff --git a/drivers/media/platform/amd/isp4/Makefile b/drivers/media/platform/amd/isp4/Makefile
+> index e9e84160517d..8ca1c4dfe246 100644
+> --- a/drivers/media/platform/amd/isp4/Makefile
+> +++ b/drivers/media/platform/amd/isp4/Makefile
+> @@ -3,7 +3,8 @@
+>  # Copyright (C) 2025 Advanced Micro Devices, Inc.
+>  
+>  obj-$(CONFIG_AMD_ISP4) += amd_capture.o
+> -amd_capture-objs := isp4.o
+> +amd_capture-objs := isp4.o	\
+> +			isp4_hw.o	\
+>  
+>  ccflags-y += -I$(srctree)/drivers/media/platform/amd/isp4
+>  ccflags-y += -I$(srctree)/include
+> diff --git a/drivers/media/platform/amd/isp4/isp4_hw.c b/drivers/media/platform/amd/isp4/isp4_hw.c
+> new file mode 100644
+> index 000000000000..e5315330a514
+> --- /dev/null
+> +++ b/drivers/media/platform/amd/isp4/isp4_hw.c
+> @@ -0,0 +1,46 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#include <linux/io.h>
+> +#include <linux/types.h>
+> +
+> +#include "isp4_hw.h"
+> +#include "isp4_hw_reg.h"
+> +
+> +#define RMMIO_SIZE 524288
+> +
+> +u32 isp4hw_rreg(void __iomem *base, u32 reg)
+> +{
+> +	void __iomem *reg_addr;
+> +
+> +	if (reg >= RMMIO_SIZE)
+> +		return RREG_FAILED_VAL;
+> +
+> +	if (reg < ISP_MIPI_PHY0_REG0)
+> +		reg_addr = base + reg;
+> +	else if (reg <= ISP_MIPI_PHY0_REG0 + ISP_MIPI_PHY0_SIZE)
+> +		reg_addr = base + (reg - ISP_MIPI_PHY0_REG0);
 
- arch/arm/boot/dts/aspeed/Makefile             |  1 +
- .../dts/aspeed/aspeed-bmc-facebook-darwin.dts | 72 +++++++++++++++++++
- 2 files changed, 73 insertions(+)
- create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts
+Redundant parentheses.
 
-diff --git a/arch/arm/boot/dts/aspeed/Makefile b/arch/arm/boot/dts/aspeed/Makefile
-index f6e714b7db2d..dce32ee0ace7 100644
---- a/arch/arm/boot/dts/aspeed/Makefile
-+++ b/arch/arm/boot/dts/aspeed/Makefile
-@@ -20,6 +20,7 @@ dtb-$(CONFIG_ARCH_ASPEED) += \
- 	aspeed-bmc-facebook-bletchley.dtb \
- 	aspeed-bmc-facebook-catalina.dtb \
- 	aspeed-bmc-facebook-cmm.dtb \
-+	aspeed-bmc-facebook-darwin.dtb \
- 	aspeed-bmc-facebook-elbert.dtb \
- 	aspeed-bmc-facebook-fuji-data64.dtb \
- 	aspeed-bmc-facebook-fuji.dtb \
-diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts
-new file mode 100644
-index 000000000000..58c107a1b6cf
---- /dev/null
-+++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-darwin.dts
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+// Copyright (c) 2021 Facebook Inc.
-+
-+/dts-v1/;
-+
-+#include "ast2600-facebook-netbmc-common.dtsi"
-+
-+/ {
-+	model = "Facebook Darwin BMC";
-+	compatible = "facebook,darwin-bmc", "aspeed,ast2600";
-+
-+	aliases {
-+		serial0 = &uart5;
-+		serial1 = &uart1;
-+		serial2 = &uart2;
-+		serial3 = &uart3;
-+	};
-+
-+	chosen {
-+		stdout-path = &uart5;
-+	};
-+
-+	iio-hwmon {
-+		compatible = "iio-hwmon";
-+		io-channels = <&adc0 0>, <&adc0 1>, <&adc0 2>, <&adc0 3>,
-+			      <&adc0 4>, <&adc0 5>, <&adc0 6>, <&adc0 7>,
-+			      <&adc1 0>, <&adc1 1>, <&adc1 2>, <&adc1 3>,
-+			      <&adc1 4>, <&adc1 5>, <&adc1 6>, <&adc1 7>;
-+	};
-+
-+	spi_gpio: spi {
-+		num-chipselects = <1>;
-+		cs-gpios = <&gpio0 ASPEED_GPIO(X, 0) GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
-+&i2c0 {
-+	eeprom@50 {
-+		compatible = "atmel,24c512";
-+		reg = <0x50>;
-+	};
-+};
-+
-+&adc0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&pinctrl_adc0_default &pinctrl_adc1_default
-+		     &pinctrl_adc2_default &pinctrl_adc3_default
-+		     &pinctrl_adc4_default &pinctrl_adc5_default
-+		     &pinctrl_adc6_default &pinctrl_adc7_default>;
-+};
-+
-+&adc1 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&pinctrl_adc8_default &pinctrl_adc9_default
-+		     &pinctrl_adc10_default &pinctrl_adc11_default
-+		     &pinctrl_adc12_default &pinctrl_adc13_default
-+		     &pinctrl_adc14_default &pinctrl_adc15_default>;
-+};
-+
-+&emmc_controller {
-+	status = "okay";
-+};
-+
-+&emmc {
-+	status = "okay";
-+
-+	non-removable;
-+	max-frequency = <25000000>;
-+	bus-width = <4>;
-+};
+> +	else
+> +		return RREG_FAILED_VAL;
+> +
+> +	return readl(reg_addr);
+> +};
+> +
+> +void isp4hw_wreg(void __iomem *base, u32 reg, u32 val)
+> +{
+> +	void __iomem *reg_addr;
+> +
+> +	if (reg >= RMMIO_SIZE)
+> +		return;
+> +
+> +	if (reg < ISP_MIPI_PHY0_REG0)
+> +		reg_addr = base + reg;
+> +	else if (reg <= ISP_MIPI_PHY0_REG0 + ISP_MIPI_PHY0_SIZE)
+> +		reg_addr = base + (reg - ISP_MIPI_PHY0_REG0);
+
+Ditto.
+
+> +	else
+> +		return;
+> +
+> +	writel(val, reg_addr);
+> +};
+> diff --git a/drivers/media/platform/amd/isp4/isp4_hw.h b/drivers/media/platform/amd/isp4/isp4_hw.h
+> new file mode 100644
+> index 000000000000..072d135b9e3a
+> --- /dev/null
+> +++ b/drivers/media/platform/amd/isp4/isp4_hw.h
+> @@ -0,0 +1,14 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#ifndef _ISP4_HW_H_
+> +#define _ISP4_HW_H_
+> +
+> +#define RREG_FAILED_VAL 0xFFFFFFFF
+> +
+> +u32 isp4hw_rreg(void __iomem *base, u32 reg);
+> +void isp4hw_wreg(void __iomem *base, u32 reg, u32 val);
+> +
+> +#endif
+> diff --git a/drivers/media/platform/amd/isp4/isp4_hw_reg.h b/drivers/media/platform/amd/isp4/isp4_hw_reg.h
+> new file mode 100644
+> index 000000000000..b11f12ba6c56
+> --- /dev/null
+> +++ b/drivers/media/platform/amd/isp4/isp4_hw_reg.h
+> @@ -0,0 +1,116 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * Copyright (C) 2025 Advanced Micro Devices, Inc.
+> + */
+> +
+> +#ifndef _ISP4_HW_REG_H_
+> +#define _ISP4_HW_REG_H_
+> +
+> +#define ISP_SOFT_RESET		0x62000
+> +#define ISP_SYS_INT0_EN		0x62010
+> +#define ISP_SYS_INT0_STATUS	0x62014
+> +#define ISP_SYS_INT0_ACK	0x62018
+> +#define ISP_CCPU_CNTL		0x62054
+> +#define ISP_STATUS		0x62058
+> +#define ISP_LOG_RB_BASE_LO0	0x62148
+> +#define ISP_LOG_RB_BASE_HI0	0x6214C
+
+Lower case hexadecimals, please.
+
+> +#define ISP_LOG_RB_SIZE0	0x62150
+> +#define ISP_LOG_RB_RPTR0	0x62154
+> +#define ISP_LOG_RB_WPTR0	0x62158
+> +#define ISP_RB_BASE_LO1		0x62170
+> +#define ISP_RB_BASE_HI1		0x62174
+> +#define ISP_RB_SIZE1		0x62178
+> +#define ISP_RB_RPTR1		0x6217C
+> +#define ISP_RB_WPTR1		0x62180
+> +#define ISP_RB_BASE_LO2		0x62184
+> +#define ISP_RB_BASE_HI2		0x62188
+> +#define ISP_RB_SIZE2		0x6218C
+> +#define ISP_RB_RPTR2		0x62190
+> +#define ISP_RB_WPTR2		0x62194
+> +#define ISP_RB_BASE_LO3		0x62198
+> +#define ISP_RB_BASE_HI3		0x6219C
+> +#define ISP_RB_SIZE3		0x621A0
+> +#define ISP_RB_RPTR3		0x621A4
+> +#define ISP_RB_WPTR3		0x621A8
+> +#define ISP_RB_BASE_LO4		0x621AC
+> +#define ISP_RB_BASE_HI4		0x621B0
+> +#define ISP_RB_SIZE4		0x621B4
+> +#define ISP_RB_RPTR4		0x621B8
+> +#define ISP_RB_WPTR4		0x621BC
+> +#define ISP_RB_BASE_LO5		0x621C0
+> +#define ISP_RB_BASE_HI5		0x621C4
+> +#define ISP_RB_SIZE5		0x621C8
+> +#define ISP_RB_RPTR5		0x621CC
+> +#define ISP_RB_WPTR5		0x621D0
+> +#define ISP_RB_BASE_LO6		0x621D4
+> +#define ISP_RB_BASE_HI6		0x621D8
+> +#define ISP_RB_SIZE6		0x621DC
+> +#define ISP_RB_RPTR6		0x621E0
+> +#define ISP_RB_WPTR6		0x621E4
+> +#define ISP_RB_BASE_LO7		0x621E8
+> +#define ISP_RB_BASE_HI7		0x621EC
+> +#define ISP_RB_SIZE7		0x621F0
+> +#define ISP_RB_RPTR7		0x621F4
+> +#define ISP_RB_WPTR7		0x621F8
+> +#define ISP_RB_BASE_LO8		0x621FC
+> +#define ISP_RB_BASE_HI8		0x62200
+> +#define ISP_RB_SIZE8		0x62204
+> +#define ISP_RB_RPTR8		0x62208
+> +#define ISP_RB_WPTR8		0x6220C
+> +#define ISP_RB_BASE_LO9		0x62210
+> +#define ISP_RB_BASE_HI9		0x62214
+> +#define ISP_RB_SIZE9		0x62218
+> +#define ISP_RB_RPTR9		0x6221C
+> +#define ISP_RB_WPTR9		0x62220
+> +#define ISP_RB_BASE_LO10	0x62224
+> +#define ISP_RB_BASE_HI10	0x62228
+> +#define ISP_RB_SIZE10		0x6222C
+> +#define ISP_RB_RPTR10		0x62230
+> +#define ISP_RB_WPTR10		0x62234
+> +#define ISP_RB_BASE_LO11	0x62238
+> +#define ISP_RB_BASE_HI11	0x6223C
+> +#define ISP_RB_SIZE11		0x62240
+> +#define ISP_RB_RPTR11		0x62244
+> +#define ISP_RB_WPTR11		0x62248
+> +#define ISP_RB_BASE_LO12	0x6224C
+> +#define ISP_RB_BASE_HI12	0x62250
+> +#define ISP_RB_SIZE12		0x62254
+> +#define ISP_RB_RPTR12		0x62258
+> +#define ISP_RB_WPTR12		0x6225C
+> +
+> +#define ISP_POWER_STATUS	0x60000
+> +
+> +#define ISP_MIPI_PHY0_REG0	0x66700
+> +#define ISP_MIPI_PHY1_REG0	0x66780
+> +#define ISP_MIPI_PHY2_REG0	0x67400
+> +
+> +#define ISP_MIPI_PHY0_SIZE	0xD30
+> +
+> +/* ISP_SOFT_RESET */
+> +#define ISP_SOFT_RESET__CCPU_SOFT_RESET_MASK			0x00000001UL
+> +
+> +/* ISP_CCPU_CNTL */
+> +#define ISP_CCPU_CNTL__CCPU_HOST_SOFT_RST_MASK			0x00040000UL
+> +
+> +/* ISP_STATUS */
+> +#define ISP_STATUS__CCPU_REPORT_MASK				0x000000feUL
+> +
+> +/* ISP_SYS_INT0_STATUS */
+> +#define ISP_SYS_INT0_STATUS__SYS_INT_RINGBUFFER_WPT9_INT_MASK	0x00010000UL
+> +#define ISP_SYS_INT0_STATUS__SYS_INT_RINGBUFFER_WPT10_INT_MASK	0x00040000UL
+> +#define ISP_SYS_INT0_STATUS__SYS_INT_RINGBUFFER_WPT11_INT_MASK	0x00100000UL
+> +#define ISP_SYS_INT0_STATUS__SYS_INT_RINGBUFFER_WPT12_INT_MASK	0x00400000UL
+> +
+> +/* ISP_SYS_INT0_EN */
+> +#define ISP_SYS_INT0_EN__SYS_INT_RINGBUFFER_WPT9_EN_MASK	0x00010000UL
+> +#define ISP_SYS_INT0_EN__SYS_INT_RINGBUFFER_WPT10_EN_MASK	0x00040000UL
+> +#define ISP_SYS_INT0_EN__SYS_INT_RINGBUFFER_WPT11_EN_MASK	0x00100000UL
+> +#define ISP_SYS_INT0_EN__SYS_INT_RINGBUFFER_WPT12_EN_MASK	0x00400000UL
+> +
+> +/* ISP_SYS_INT0_ACK */
+> +#define ISP_SYS_INT0_ACK__SYS_INT_RINGBUFFER_WPT9_ACK_MASK	0x00010000UL
+> +#define ISP_SYS_INT0_ACK__SYS_INT_RINGBUFFER_WPT10_ACK_MASK	0x00040000UL
+> +#define ISP_SYS_INT0_ACK__SYS_INT_RINGBUFFER_WPT11_ACK_MASK	0x00100000UL
+> +#define ISP_SYS_INT0_ACK__SYS_INT_RINGBUFFER_WPT12_ACK_MASK	0x00400000UL
+> +
+> +#endif
+
 -- 
-2.47.3
+Kind regards,
 
+Sakari Ailus
 
