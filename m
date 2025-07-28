@@ -1,266 +1,104 @@
-Return-Path: <linux-kernel+bounces-747843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-747842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CE13B13904
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:32:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93884B13903
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 12:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25EA51747C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:32:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DBDE7AA63A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Jul 2025 10:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC6B253925;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B343124A078;
 	Mon, 28 Jul 2025 10:31:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F619213E89;
-	Mon, 28 Jul 2025 10:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="jyQuzSfB"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8C91C6BE
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 10:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753698710; cv=none; b=Ysci7fVF+S6tUgGpzk+jH84+7nAzdRKhBnpJn1h66mDqqB5AYngz0ItM9Retqh22E71y42j8rdZMon4H+tCZgTt4Wj++gy1k2CgEpqnfdK2kan4x2vxaMl6MXU0NjxDg1DFP2dXDNjjRDW++b5Bj4qDGiDrfUECKxGYw9cvP+Ok=
+	t=1753698709; cv=none; b=TYML/Tzm3pE7LX0uiCDYsMB+KSD1BKO3AuuF6rbEinIi2m+rW2U70qCZWbeFnBhhIxN2ex3PdG+tjMLTtlFYdxgvUjHAPZroc0E6eYqeoPfsThQf7HzSi0zO0619b5OZFvxtniTlu9ZYypYupHNW2VLsfLmrdh55rd+E18cUgyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753698710; c=relaxed/simple;
-	bh=1mIXaQLVma8tjoBewSPrGSnMUY8R39so72XipdZv+uM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EU5yzDKl5MJTGeHTG1dL6r0IrpJzMbMQtXUvLxlu95Gob86W+MZ+pIl4Qe6Aia7/xG+ORBT1mNZTWIV9SQyZ2fft6QVHSfrROrySXRYRMKZNNoZ9ltkjrcRiDODyroPnN276DI8pLW2YvBz68o6QKXYL+ub8RfNdsx0TkMI5L/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 88D50153B;
-	Mon, 28 Jul 2025 03:31:39 -0700 (PDT)
-Received: from MacBook-Pro.blr.arm.com (unknown [10.164.18.47])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 073EB3F673;
-	Mon, 28 Jul 2025 03:31:42 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: catalin.marinas@arm.com,
-	will@kernel.org
-Cc: anshuman.khandual@arm.com,
-	quic_zhenhuah@quicinc.com,
-	ryan.roberts@arm.com,
-	kevin.brodsky@arm.com,
-	yangyicong@hisilicon.com,
-	joey.gouly@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	mark.rutland@arm.com,
-	maz@kernel.org,
-	Dev Jain <dev.jain@arm.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] arm64/mm: Fix use-after-free due to race between memory hotunplug and ptdump
-Date: Mon, 28 Jul 2025 16:01:37 +0530
-Message-Id: <20250728103137.94726-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1753698709; c=relaxed/simple;
+	bh=cc5wL9C6sVJ0p18vU5oQI/666swL81L7ti9UR40UUaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TPh0TU5+tqtaBHH3afkOpYB/95PC4ROx6LOCEKYOEAbnLgOlaUZpH/hslJLuuqSc3jQPdosk1UUocbgz0cm14J5KqhqdfckiDCCXTju/dMdgP74qLzuFexHvB2SviuETpmJiZfc8bhfEYfiZQgqpsgp0FBcy08h9erIkP5iPT/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=jyQuzSfB; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=cc5w
+	L9C6sVJ0p18vU5oQI/666swL81L7ti9UR40UUaw=; b=jyQuzSfBQVbZMNDQyTjn
+	4hHRXQUvSeJhdWJt1EWWJbHa4DQ3+0nhrzOklXQs03YIS/87MlZq5SIeZ2P0JTMN
+	9Pv5bZ21qv7xyniyfnjhiUgm9dR8k789C57vQXNphyNAh9+2noWCKkStU5mmVLzX
+	1OUEu+rigWcmCfnqi6EczCeLzo+oyminr1dP7p7gZ7hxqhkrBERmPbqJVBrBoOZQ
+	0E1UvWdEQ2I2A9ZRD0wCBxcXTuq0hKFp9Ua3qkiPRPR3c0dkZzk6AVhH1XN8QZ4r
+	XRHUD44hyosSy40i4YYPQDsOKmTsgYr08Bn9jF8QuUulCzqPfXrmANVLmULcAJ9j
+	ow==
+Received: (qmail 3402892 invoked from network); 28 Jul 2025 12:31:41 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 28 Jul 2025 12:31:41 +0200
+X-UD-Smtp-Session: l3s3148p1@pTsezPo63m5tKPLn
+Date: Mon, 28 Jul 2025 12:31:40 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Wojciech Siudy <wojciech.siudy@nokia.com>
+Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+	peda@axentia.se, andi.shyti@kernel.org, mariusz.madej@nokia.com
+Subject: Re: [PATCH v6 RESEND 1/2] i2c: muxes: pca954x: Use reset controller
+ only
+Message-ID: <aIdRjB2fIa09m29A@shikoro>
+References: <20250603124721.449739-1-wojciech.siudy@nokia.com>
+ <20250603124721.449739-2-wojciech.siudy@nokia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Px5MLaBzWfo1OMoy"
+Content-Disposition: inline
+In-Reply-To: <20250603124721.449739-2-wojciech.siudy@nokia.com>
 
-Memory hotunplug is done under the hotplug lock and ptdump walk is done
-under the init_mm.mmap_lock. Therefore, ptdump and hotunplug can run
-simultaneously without any synchronization. During hotunplug,
-free_empty_tables() is ultimately called to free up the pagetables.
-The following race can happen, where x denotes the level of the pagetable:
 
-CPU1					CPU2
-free_empty_pxd_table
-					ptdump_walk_pgd()
-					Get p(x+1)d table from pxd entry
-pxd_clear
-free_hotplug_pgtable_page(p(x+1)dp)
-					Still using the p(x+1)d table
+--Px5MLaBzWfo1OMoy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-which leads to a user-after-free.
+On Tue, Jun 03, 2025 at 02:47:20PM +0200, Wojciech Siudy wrote:
+> Fallback to legacy reset-gpios is no more needed, because the framework
+> can use reset-gpios properity now as well.
+>=20
+> Signed-off-by: Wojciech Siudy <wojciech.siudy@nokia.com>
 
-To solve this, we need to synchronize ptdump_walk_pgd() with
-free_hotplug_pgtable_page() in such a way that ptdump never takes a
-reference on a freed pagetable.
+Nice cleanup. But I can't apply the patch on top of 6.16-rc7. Against
+which kernel was this developed?
 
-Since this race is very unlikely to happen in practice, we do not want to
-penalize other code paths taking the init_mm mmap_lock. Therefore, we use
-static keys. ptdump will enable the static key - upon observing that,
-the free_empty_pxd_table() functions will get patched in with an
-mmap_read_lock/unlock sequence. A code comment explains in detail, how
-a combination of acquire semantics of static_branch_enable() and the
-barriers in __flush_tlb_kernel_pgtable() ensures that ptdump will never
-get a hold on the address of a freed pagetable - either ptdump will block
-the table freeing path due to write locking the mmap_lock, or, the nullity
-of the pxd entry will be observed by ptdump, therefore having no access to
-the isolated p(x+1)d pagetable.
 
-This bug was found by code inspection, as a result of working on [1].
-1. https://lore.kernel.org/all/20250723161827.15802-1-dev.jain@arm.com/
+--Px5MLaBzWfo1OMoy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Cc: <stable@vger.kernel.org>
-Fixes: bbd6ec605c0f ("arm64/mm: Enable memory hot remove")
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
-Rebased on Linux 6.16.
+-----BEGIN PGP SIGNATURE-----
 
- arch/arm64/include/asm/ptdump.h |  2 ++
- arch/arm64/mm/mmu.c             | 61 +++++++++++++++++++++++++++++++++
- arch/arm64/mm/ptdump.c          | 11 ++++--
- 3 files changed, 72 insertions(+), 2 deletions(-)
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiHUYgACgkQFA3kzBSg
+KbbDShAAotckOep4ATsmDNtdp1aqOwzcuPPPmKAkhHKijixotGTJ+TPRaF8/zW4f
+L6uKrdj9nBAmJIui+++VyJhsH+ARCtTCpxHfX2ezQANIbT2oqa7GAucDJaopTMiM
+9WBwDLEhVa5I3dhULAQesA6k63lchjWhfABiWm8nu8s6MAGE7k41AEHGA/wSbSd1
+Wz5+C3FyN6o3OjjnwnmGUbsAxfW4yezP3Cwa2R5lviTtYIU0pd1S6ZQXodWY2rf+
+5ELxg4sUD9zKZX39FusM+BmeFXH1/g+wugPltMqJEIQczZHb/Ow0FR58REFG8zMh
+ypnRlZcaqBU62UlFWRbOE6ABSPgDUwgFtfKEa0NVTPLR0td64hINSltVHa+UxJyn
+vQGltbA0ZBZ2UUSGZbI3eSogBn3DEjcAS5jlYStsvHRCQ2VgRBvyi/4XwO1eoS4k
++8vtSUEdBUVMuYpHPhWkM7ArZPT6wHK5/35JOEbbewpn865QZwX07kfBTFki36sN
+daAUwRcuXyzG4izGDlyhm1WO1NQ78y56mEHDooCGWppKHb/pxDACPXKixchkEzZO
+BKl1PJBZVQ55mVPZJl3pFQbd0Jg0ZZbUgrEoqUaUoeieCnNCmyNq8/J0lwj+g5Xv
+3VcXBAteCmSKGpqdWmfXgA3PlC8yPimadQK1zF45bm2oQawzwd4=
+=OWtI
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/arm64/include/asm/ptdump.h b/arch/arm64/include/asm/ptdump.h
-index fded5358641f..4760168cbd6e 100644
---- a/arch/arm64/include/asm/ptdump.h
-+++ b/arch/arm64/include/asm/ptdump.h
-@@ -7,6 +7,8 @@
- 
- #include <linux/ptdump.h>
- 
-+DECLARE_STATIC_KEY_FALSE(arm64_ptdump_key);
-+
- #ifdef CONFIG_PTDUMP
- 
- #include <linux/mm_types.h>
-diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
-index 00ab1d648db6..d2feef270880 100644
---- a/arch/arm64/mm/mmu.c
-+++ b/arch/arm64/mm/mmu.c
-@@ -46,6 +46,8 @@
- #define NO_CONT_MAPPINGS	BIT(1)
- #define NO_EXEC_MAPPINGS	BIT(2)	/* assumes FEAT_HPDS is not used */
- 
-+DEFINE_STATIC_KEY_FALSE(arm64_ptdump_key);
-+
- enum pgtable_type {
- 	TABLE_PTE,
- 	TABLE_PMD,
-@@ -1002,6 +1004,61 @@ static void unmap_hotplug_range(unsigned long addr, unsigned long end,
- 	} while (addr = next, addr < end);
- }
- 
-+/*
-+ * Our objective is to prevent ptdump from reading a pagetable which has
-+ * been freed.  Assume that ptdump_walk_pgd() (call this thread T1)
-+ * executes completely on CPU1 and free_hotplug_pgtable_page() (call this
-+ * thread T2) executes completely on CPU2. Let the region sandwiched by the
-+ * mmap_write_lock/unlock in T1 be called CS (the critical section).
-+ *
-+ * Claim: The CS of T1 will never operate on a freed pagetable.
-+ *
-+ * Proof:
-+ *
-+ * Case 1: The static branch is visible to T2.
-+ *
-+ * Case 1 (a): T1 acquires the lock before T2 can.
-+ * T2 will block until T1 drops the lock, so free_hotplug_pgtable_page() will
-+ * only be executed after T1 exits CS.
-+ *
-+ * Case 1 (b): T2 acquires the lock before T1 can.
-+ * The acquire semantics of mmap_read_lock() ensure that an empty pagetable
-+ * entry (via pxd_clear()) is visible to T1 before T1 can enter CS, therefore
-+ * it is impossible for the CS to get hold of the isolated level + 1 pagetable.
-+ *
-+ * Case 2: The static branch is not visible to T2.
-+ *
-+ * Since static_branch_enable() and mmap_write_lock() (via smp_mb()) have
-+ * acquire semantics, it implies that the static branch will be visible to
-+ * all CPUs before T1 can enter CS. The static branch not being visible to
-+ * T2 therefore implies that T1 has not yet entered CS .... (i)
-+ *
-+ * The sequence of barriers via __flush_tlb_kernel_pgtable() in T2
-+ * implies that if the invisibility of the static branch has been
-+ * observed by T2 (i.e static_branch_unlikely() is observed as false),
-+ * then all CPUs will have observed an empty pagetable entry via
-+ * pxd_clear() ... (ii)
-+ *
-+ * Combining (i) and (ii), we conclude that T1 observes an empty pagetable
-+ * entry before entering CS => it is impossible for the CS to get hold of
-+ * the isolated level + 1 pagetable. Q.E.D
-+ *
-+ * We have proven that the claim is true on the assumption that
-+ * there is no context switch for T1 and T2. Note that the reasoning
-+ * of the proof uses barriers operating on the inner shareable domain,
-+ * which means that they will affect all CPUs, and also a context switch
-+ * will insert extra barriers into the code paths => the claim will
-+ * stand true even if we drop the assumption.
-+ */
-+static void synchronize_with_ptdump(void)
-+{
-+	if (!static_branch_unlikely(&arm64_ptdump_key))
-+		return;
-+
-+	mmap_read_lock(&init_mm);
-+	mmap_read_unlock(&init_mm);
-+}
-+
- static void free_empty_pte_table(pmd_t *pmdp, unsigned long addr,
- 				 unsigned long end, unsigned long floor,
- 				 unsigned long ceiling)
-@@ -1036,6 +1093,7 @@ static void free_empty_pte_table(pmd_t *pmdp, unsigned long addr,
- 
- 	pmd_clear(pmdp);
- 	__flush_tlb_kernel_pgtable(start);
-+	synchronize_with_ptdump();
- 	free_hotplug_pgtable_page(virt_to_page(ptep));
- }
- 
-@@ -1076,6 +1134,7 @@ static void free_empty_pmd_table(pud_t *pudp, unsigned long addr,
- 
- 	pud_clear(pudp);
- 	__flush_tlb_kernel_pgtable(start);
-+	synchronize_with_ptdump();
- 	free_hotplug_pgtable_page(virt_to_page(pmdp));
- }
- 
-@@ -1116,6 +1175,7 @@ static void free_empty_pud_table(p4d_t *p4dp, unsigned long addr,
- 
- 	p4d_clear(p4dp);
- 	__flush_tlb_kernel_pgtable(start);
-+	synchronize_with_ptdump();
- 	free_hotplug_pgtable_page(virt_to_page(pudp));
- }
- 
-@@ -1156,6 +1216,7 @@ static void free_empty_p4d_table(pgd_t *pgdp, unsigned long addr,
- 
- 	pgd_clear(pgdp);
- 	__flush_tlb_kernel_pgtable(start);
-+	synchronize_with_ptdump();
- 	free_hotplug_pgtable_page(virt_to_page(p4dp));
- }
- 
-diff --git a/arch/arm64/mm/ptdump.c b/arch/arm64/mm/ptdump.c
-index 421a5de806c6..d543c9f8ffa8 100644
---- a/arch/arm64/mm/ptdump.c
-+++ b/arch/arm64/mm/ptdump.c
-@@ -283,6 +283,13 @@ void note_page_flush(struct ptdump_state *pt_st)
- 	note_page(pt_st, 0, -1, pte_val(pte_zero));
- }
- 
-+static void arm64_ptdump_walk_pgd(struct ptdump_state *st, struct mm_struct *mm)
-+{
-+	static_branch_enable(&arm64_ptdump_key);
-+	ptdump_walk_pgd(st, mm, NULL);
-+	static_branch_disable(&arm64_ptdump_key);
-+}
-+
- void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
- {
- 	unsigned long end = ~0UL;
-@@ -311,7 +318,7 @@ void ptdump_walk(struct seq_file *s, struct ptdump_info *info)
- 		}
- 	};
- 
--	ptdump_walk_pgd(&st.ptdump, info->mm, NULL);
-+	arm64_ptdump_walk_pgd(&st.ptdump, info->mm);
- }
- 
- static void __init ptdump_initialize(void)
-@@ -353,7 +360,7 @@ bool ptdump_check_wx(void)
- 		}
- 	};
- 
--	ptdump_walk_pgd(&st.ptdump, &init_mm, NULL);
-+	arm64_ptdump_walk_pgd(&st.ptdump, &init_mm);
- 
- 	if (st.wx_pages || st.uxn_pages) {
- 		pr_warn("Checked W+X mappings: FAILED, %lu W+X pages found, %lu non-UXN pages found\n",
--- 
-2.30.2
-
+--Px5MLaBzWfo1OMoy--
 
