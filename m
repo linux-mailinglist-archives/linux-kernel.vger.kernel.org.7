@@ -1,332 +1,412 @@
-Return-Path: <linux-kernel+bounces-749353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00098B14D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 204E9B14D40
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182EF5454E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:57:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44B743B294B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B52528F935;
-	Tue, 29 Jul 2025 11:57:04 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D662228F533;
+	Tue, 29 Jul 2025 11:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BbEnVP60"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93C8C28F520;
-	Tue, 29 Jul 2025 11:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8034228F51D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753790223; cv=none; b=NhuiSa7nZN6MUsMokNqOx1ivSpNgMEAS+0jhf8LqqKs5F3YB8YmVvQLGG4sua6ix/KmQM1yESeeESCw05OPlMvSJaRDjJSxsFTmdu0CESBvR62A41bTmrsME4yD9JalUTJWY89J0lfJRYJejJblYKgAH6rKspMwmVkIcMb+KeTw=
+	t=1753790196; cv=none; b=Cc954Wa66hJcxdt3wyBTRTrUW6zLLn0TPzF2RZL+CRIsqxqio8VCTsQfAN8itzAK+1idD1m9mqIcma2cyBAIZ27RVxBxRZ8gSNF+cBuL1m6munS+Fc/krkRsVSPA5BO2HvZvhIkwc0btb0gyzFhLbknFjkzLpTxR8UU7+WXiG5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753790223; c=relaxed/simple;
-	bh=sgBWE9aRoVb2GUaP6hlYxqwMo2c5HnxPRxEthjGG4JQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LFl5mddq1cQr7H6HK3piEfeIiK5YBHzvaD5Mh52YO2M9NOGzhkho0Ow4X0h0i+xRmGDKxMAGYVpjCbElEwUkjpC9mfL1MvuU7jg2AQp/HGLUj37oC/ILhPM3FNo7mWgodvLTiRL4G0ux1Fjro55qRdI88uLM06rNd3QH3EKspw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 195775fc6c7311f0b29709d653e92f7d-20250729
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_TXT
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
-	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
-	CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1
-	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:f757bc24-5074-47c4-83e1-596935bb0909,IP:15,
-	URL:0,TC:0,Content:9,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:15
-X-CID-INFO: VERSION:1.1.45,REQID:f757bc24-5074-47c4-83e1-596935bb0909,IP:15,UR
-	L:0,TC:0,Content:9,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:15
-X-CID-META: VersionHash:6493067,CLOUDID:43c9a2aa86b11cb7553a8327b43a864f,BulkI
-	D:250728103101KH33AOP9,BulkQuantity:10,Recheck:0,SF:17|19|24|43|64|66|74|7
-	8|80|81|82|83|102|841,TC:nil,Content:4|50,EDM:-3,IP:-2,URL:0,File:nil,RT:n
-	il,Bulk:40,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,
-	BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_OBB,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,
-	TF_CID_SPAM_FSD
-X-UUID: 195775fc6c7311f0b29709d653e92f7d-20250729
-X-User: duanchenghao@kylinos.cn
-Received: from localhost [(116.128.244.171)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 712775828; Tue, 29 Jul 2025 19:56:45 +0800
-Date: Tue, 29 Jul 2025 19:56:20 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: Hengqi Chen <hengqi.chen@gmail.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev,
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name,
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev,
-	bpf@vger.kernel.org, guodongtai@kylinos.cn, youling.tang@linux.dev,
-	jianghaoran@kylinos.cn, vincent.mc.li@gmail.com
-Subject: Re: [PATCH v4 3/5] LoongArch: BPF: Add bpf_arch_xxxxx support for
- Loongarch
-Message-ID: <20250729115620.GA1584398@chenghao-pc>
-References: <20250724141929.691853-1-duanchenghao@kylinos.cn>
- <20250724141929.691853-4-duanchenghao@kylinos.cn>
- <CAEyhmHREKJ7WQ+SYiGTX+zypeZYcUdPNKtHu6cPxqb1wid7TtQ@mail.gmail.com>
- <20250728132125.GB1439240@chenghao-pc>
+	s=arc-20240116; t=1753790196; c=relaxed/simple;
+	bh=EUBFSrIBvufAvOyMALXkyNiU3XwOAdrsLmtKCdZ9/LY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WZb0vzIqvWDlnG2qXnjEFQTMQCu+ntxAv7KqYh5cJyhNW2GoRzwu/U1/268J97/jqUe5fWWy4ENUPLVBnY34BPCFsJYc3XQSpmgn+N2XoHu7bRnD9lkI+ohdq8hPu7L/eu64fJtQr4Vv4JlNO+XHQyvr9dLQxE54y5qQtNgsqvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BbEnVP60; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-55a25635385so6091897e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:56:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753790192; x=1754394992; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=E9BDSmPma3UjQ81slGazmNmNV1DlBgyTj8yTNQ8/nB0=;
+        b=BbEnVP6074xBziXGrUHsdFz9PEKb8dpZLgO7oDGEePRSZM+PauqHjLnHS3HbYCtKor
+         rDXww6f8WqHzZaNVcL6H7yYFoP5/bbbxHHF/1iNhVUAVogkz17N73RM9/zs9gZwAd4bJ
+         wEw0g6o2iwFq3lcazhrlKwlnxrFtMRnHoE6W+Vy3ecjtoq3dKdhgasMxHlRYfnoGOEVK
+         463LGuBVT8Zb1kdZVRuThsuK0mZC4rpNCnd+m5AqvS+ILL/SctfefOTh4SFZADmpYkRp
+         iJ7bgePbsBfODBO/gkDY3pYd+2a/pjEnl3GHCLd7vYHXWqPIsitLY9OPwtEklQnC1vEo
+         AFww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753790192; x=1754394992;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E9BDSmPma3UjQ81slGazmNmNV1DlBgyTj8yTNQ8/nB0=;
+        b=icAJvLcl9LoY3voW7oVWip15hTq5MMxbEW7xbv/ENOK72ctddZOPQc10dxXUu96KMk
+         i0wTWnO9nTIvB75+7RRotP4x0/+3+Uq3uynBqrW6VLEsPqbFyGZ3optkuW/MrL9CkL1c
+         E9kvKvfbYys6sN/rgbcy41F0dVHN8VvZnQIxWSXd5VsoofvpexDn+tJipS0x1eyoIsEi
+         +wN/w4oI8SvCYJCPnKvd17Q7azrNcMCJ0/k/FaqNA7FyuWAMR43spb4JJyqEkBAwOefs
+         rfKVj7R/nQsm26AcXeuFTpyp+W5r/w8K6+8vESBhLZ8RBRdgyCMwCd5GWRM0DEcVxw6+
+         0lXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSqHZjO8XQK8Oa1tySIAoPUpAdfcFdfwCOsxAIUCYKG3zM8G8AaX0lo6AOtSbHJNhaXPdBKbtW4dUBSs4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHOGqklmb6GDxOT/axXqXe1NuZRqurKID38xb+2kH7DsTwJJSy
+	dsRd5vs1HLBJOaej3fS95XUo3v0IwozTrCpaP076j9OgZC1vQ++4GSyu++k8ssWBXw0=
+X-Gm-Gg: ASbGnctUKMZ0xT3U0MxJO57dPuQPJoGnilCpTBfl2b6O6ShRdmQSC0EtGXNYS086LL9
+	YuvWNeUWIZY5COOYtJbPj+p4Qg6jxCPGt8l0t2erRjZUbg89id2lNbJNpqQrduW/4zkKh0SMihj
+	uAUiY0x6aiEOIZhLPsDGWiX/poNK6X0341E1DQMHI0K9MnTjz5pIApIRMK5hrkzVLd1e3xIX1JT
+	ePBDOn/aIp1MaIj4fflLZ4ZBougrJDDwFtTMran3xecyxnEx5JfnN2V61k/DgHxFyNKLF9vwMJn
+	Ihy30H14Ww2PQXUIsItwAAvDD76LgM2zuIOu3h3U7uAobOzNXaY26r6ABMecAQW+2vefcn7ecQx
+	Eoa4SOcsjoDM5oxHWj+uEmokHALOyyx0DzZ+Ztp2Lnbg3VNcIDazHs6HPSE86icSoIV0BJAKr
+X-Google-Smtp-Source: AGHT+IGEWzq3tLsKAIHbDQw6uMrDu8out+Xr5pKnJaLmJryCZUY6r1LldaPSM7kUFZ3MyWBQglqKSA==
+X-Received: by 2002:a05:6512:220f:b0:55b:5a1a:6425 with SMTP id 2adb3069b0e04-55b5f487eb5mr4171406e87.35.1753790192427;
+        Tue, 29 Jul 2025 04:56:32 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b6339b9b0sm1641464e87.186.2025.07.29.04.56.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 04:56:31 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: [GIT PULL] MMC updates for v6.17
+Date: Tue, 29 Jul 2025 13:56:25 +0200
+Message-ID: <20250729115630.16917-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250728132125.GB1439240@chenghao-pc>
 
-On Mon, Jul 28, 2025 at 09:21:52PM +0800, Chenghao Duan wrote:
-> On Mon, Jul 28, 2025 at 06:47:03PM +0800, Hengqi Chen wrote:
-> > On Thu, Jul 24, 2025 at 10:21 PM Chenghao Duan <duanchenghao@kylinos.cn> wrote:
-> > >
-> > > Implement the functions of bpf_arch_text_poke, bpf_arch_text_copy, and
-> > > bpf_arch_text_invalidate on the LoongArch architecture.
-> > >
-> > > On LoongArch, since symbol addresses in the direct mapping
-> > > region cannot be reached via relative jump instructions from the paged
-> > > mapping region, we use the move_imm+jirl instruction pair as absolute
-> > > jump instructions. These require 2-5 instructions, so we reserve 5 NOP
-> > > instructions in the program as placeholders for function jumps.
-> > >
-> > > larch_insn_text_copy is solely used for BPF. The use of
-> > > larch_insn_text_copy() requires page_size alignment. Currently, only
-> > > the size of the trampoline is page-aligned.
-> > >
-> > > Co-developed-by: George Guo <guodongtai@kylinos.cn>
-> > > Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> > > Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
-> > > Reviewed-by: Hengqi Chen <hengqi.chen@gmail.com>
-> > > Reviewed-by: Huacai Chen <chenhuacai@kernel.org>
-> > > ---
-> > >  arch/loongarch/include/asm/inst.h |  1 +
-> > >  arch/loongarch/kernel/inst.c      | 32 ++++++++++
-> > >  arch/loongarch/net/bpf_jit.c      | 97 +++++++++++++++++++++++++++++++
-> > >  3 files changed, 130 insertions(+)
-> > >
-> > > diff --git a/arch/loongarch/include/asm/inst.h b/arch/loongarch/include/asm/inst.h
-> > > index 2ae96a35d..88bb73e46 100644
-> > > --- a/arch/loongarch/include/asm/inst.h
-> > > +++ b/arch/loongarch/include/asm/inst.h
-> > > @@ -497,6 +497,7 @@ void arch_simulate_insn(union loongarch_instruction insn, struct pt_regs *regs);
-> > >  int larch_insn_read(void *addr, u32 *insnp);
-> > >  int larch_insn_write(void *addr, u32 insn);
-> > >  int larch_insn_patch_text(void *addr, u32 insn);
-> > > +int larch_insn_text_copy(void *dst, void *src, size_t len);
-> > >
-> > >  u32 larch_insn_gen_nop(void);
-> > >  u32 larch_insn_gen_b(unsigned long pc, unsigned long dest);
-> > > diff --git a/arch/loongarch/kernel/inst.c b/arch/loongarch/kernel/inst.c
-> > > index 674e3b322..8d6594968 100644
-> > > --- a/arch/loongarch/kernel/inst.c
-> > > +++ b/arch/loongarch/kernel/inst.c
-> > > @@ -4,6 +4,7 @@
-> > >   */
-> > >  #include <linux/sizes.h>
-> > >  #include <linux/uaccess.h>
-> > > +#include <linux/set_memory.h>
-> > >
-> > >  #include <asm/cacheflush.h>
-> > >  #include <asm/inst.h>
-> > > @@ -218,6 +219,37 @@ int larch_insn_patch_text(void *addr, u32 insn)
-> > >         return ret;
-> > >  }
-> > >
-> > > +int larch_insn_text_copy(void *dst, void *src, size_t len)
-> > > +{
-> > > +       unsigned long flags;
-> > > +       size_t wlen = 0;
-> > > +       size_t size;
-> > > +       void *ptr;
-> > > +       int ret = 0;
-> > > +
-> > > +       set_memory_rw((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE_SIZE);
-> > > +       raw_spin_lock_irqsave(&patch_lock, flags);
-> > > +       while (wlen < len) {
-> > > +               ptr = dst + wlen;
-> > > +               size = min_t(size_t, PAGE_SIZE - offset_in_page(ptr),
-> > > +                            len - wlen);
-> > > +
-> > > +               ret = copy_to_kernel_nofault(ptr, src + wlen, size);
-> > > +               if (ret) {
-> > > +                       pr_err("%s: operation failed\n", __func__);
-> > > +                       break;
-> > > +               }
-> > > +               wlen += size;
-> > > +       }
-> > > +       raw_spin_unlock_irqrestore(&patch_lock, flags);
-> > > +       set_memory_rox((unsigned long)dst, round_up(len, PAGE_SIZE) / PAGE_SIZE);
-> > > +
-> > > +       if (!ret)
-> > > +               flush_icache_range((unsigned long)dst, (unsigned long)dst + len);
-> > > +
-> > > +       return ret;
-> > > +}
-> > > +
-> > >  u32 larch_insn_gen_nop(void)
-> > >  {
-> > >         return INSN_NOP;
-> > > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> > > index 7032f11d3..86504e710 100644
-> > > --- a/arch/loongarch/net/bpf_jit.c
-> > > +++ b/arch/loongarch/net/bpf_jit.c
-> > > @@ -4,8 +4,12 @@
-> > >   *
-> > >   * Copyright (C) 2022 Loongson Technology Corporation Limited
-> > >   */
-> > > +#include <linux/memory.h>
-> > >  #include "bpf_jit.h"
-> > >
-> > > +#define LOONGARCH_LONG_JUMP_NINSNS 5
-> > > +#define LOONGARCH_LONG_JUMP_NBYTES (LOONGARCH_LONG_JUMP_NINSNS * 4)
-> > > +
-> > >  #define REG_TCC                LOONGARCH_GPR_A6
-> > >  #define TCC_SAVED      LOONGARCH_GPR_S5
-> > >
-> > > @@ -88,6 +92,7 @@ static u8 tail_call_reg(struct jit_ctx *ctx)
-> > >   */
-> > >  static void build_prologue(struct jit_ctx *ctx)
-> > >  {
-> > > +       int i;
-> > >         int stack_adjust = 0, store_offset, bpf_stack_adjust;
-> > >
-> > >         bpf_stack_adjust = round_up(ctx->prog->aux->stack_depth, 16);
-> > > @@ -98,6 +103,10 @@ static void build_prologue(struct jit_ctx *ctx)
-> > >         stack_adjust = round_up(stack_adjust, 16);
-> > >         stack_adjust += bpf_stack_adjust;
-> > >
-> > > +       /* Reserve space for the move_imm + jirl instruction */
-> > > +       for (i = 0; i < LOONGARCH_LONG_JUMP_NINSNS; i++)
-> > > +               emit_insn(ctx, nop);
-> > > +
-> > >         /*
-> > >          * First instruction initializes the tail call count (TCC).
-> > >          * On tail call we skip this instruction, and the TCC is
-> > > @@ -1367,3 +1376,91 @@ bool bpf_jit_supports_subprog_tailcalls(void)
-> > >  {
-> > >         return true;
-> > >  }
-> > > +
-> > > +static int emit_jump_and_link(struct jit_ctx *ctx, u8 rd, u64 target)
-> > > +{
-> > > +       if (!target) {
-> > > +               pr_err("bpf_jit: jump target address is error\n");
-> > 
-> > is error ? is NULL ?
-> 
-> What I mean is: This is an illegal target address.
-> 
-> > 
-> > > +               return -EFAULT;
-> > > +       }
-> > > +
-> > > +       move_imm(ctx, LOONGARCH_GPR_T1, target, false);
-> > > +       emit_insn(ctx, jirl, rd, LOONGARCH_GPR_T1, 0);
-> > > +
-> > > +       return 0;
-> > > +}
-> > > +
-> > > +static int gen_jump_or_nops(void *target, void *ip, u32 *insns, bool is_call)
-> > > +{
-> > > +       struct jit_ctx ctx;
-> > > +
-> > > +       ctx.idx = 0;
-> > > +       ctx.image = (union loongarch_instruction *)insns;
-> > > +
-> > > +       if (!target) {
-> > > +               emit_insn((&ctx), nop);
-> > > +               emit_insn((&ctx), nop);
-> > > +               return 0;
-> > > +       }
-> > > +
-> > > +       return emit_jump_and_link(&ctx, is_call ? LOONGARCH_GPR_T0 : LOONGARCH_GPR_ZERO,
-> > > +                                 (unsigned long)target);
-> > > +}
-> > > +
-> > > +int bpf_arch_text_poke(void *ip, enum bpf_text_poke_type poke_type,
-> > > +                      void *old_addr, void *new_addr)
-> > > +{
-> > > +       u32 old_insns[LOONGARCH_LONG_JUMP_NINSNS] = {[0 ... 4] = INSN_NOP};
-> > > +       u32 new_insns[LOONGARCH_LONG_JUMP_NINSNS] = {[0 ... 4] = INSN_NOP};
-> > > +       bool is_call = poke_type == BPF_MOD_CALL;
-> > > +       int ret;
-> > > +
-> > > +       if (!is_kernel_text((unsigned long)ip) &&
-> > > +               !is_bpf_text_address((unsigned long)ip))
-> > > +               return -ENOTSUPP;
-> > > +
-> > > +       ret = gen_jump_or_nops(old_addr, ip, old_insns, is_call);
-> > > +       if (ret)
-> > > +               return ret;
-> > > +
-> > > +       if (memcmp(ip, old_insns, LOONGARCH_LONG_JUMP_NBYTES))
-> > > +               return -EFAULT;
-> > > +
-> > > +       ret = gen_jump_or_nops(new_addr, ip, new_insns, is_call);
-> > > +       if (ret)
-> > > +               return ret;
-> > > +
-> > > +       mutex_lock(&text_mutex);
-> > > +       if (memcmp(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES))
-> > > +               ret = larch_insn_text_copy(ip, new_insns, LOONGARCH_LONG_JUMP_NBYTES);
-> > > +       mutex_unlock(&text_mutex);
-> > > +       return ret;
-> > > +}
-> > > +
-> > > +int bpf_arch_text_invalidate(void *dst, size_t len)
-> > > +{
-> > > +       int i;
-> > > +       int ret = 0;
-> > > +       u32 *inst;
-> > > +
-> > > +       inst = kvmalloc(len, GFP_KERNEL);
-> > > +       if (!inst)
-> > > +               return -ENOMEM;
-> > > +
-> > > +       for (i = 0; i < (len/sizeof(u32)); i++)
-> > > +               inst[i] = INSN_BREAK;
-> > > +
-> > > +       if (larch_insn_text_copy(dst, inst, len))
-> > 
-> > Do we need text_mutex here and below for larch_insn_text_copy() ?
-> 
-> As a matter of fact, my use of text_mutex is modeled after the arm64
-> code. Arm64 also only adds text_mutex to bpf_arch_text_poke. Therefore,
-> I have only added text_mutex to bpf_arch_text_poke as well.
-> 
-> In the next version of the code, I will try to add text_mutex to all
-> contexts where larch_insn_text_copy is used and conduct tests accordingly.
+Hi Linus,
 
-Adding text_mutex tests in all contexts of larch_insn_text_copy passed.
+Here's the pull-request with updates for MMC for v6.17. Details about the
+highlights are as usual found in the signed tag.
 
-> > 
-> > > +               ret = -EINVAL;
-> > > +
-> > > +       kvfree(inst);
-> > > +       return ret;
-> > > +}
-> > > +
-> > > +void *bpf_arch_text_copy(void *dst, void *src, size_t len)
-> > > +{
-> > > +       if (larch_insn_text_copy(dst, src, len))
-> > > +               return ERR_PTR(-EINVAL);
-> > > +
-> > > +       return dst;
-> > > +}
-> > > --
-> > > 2.25.1
-> > >
+Please pull this in!
+
+Kind regards
+Ulf Hansson
+
+
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
+
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.17
+
+for you to fetch changes up to c3ad4ec3fdaba1f5367dd15b5a2e6dc9a9cde3f1:
+
+  mmc: Merge branch fixes into next (2025-07-16 12:05:36 +0200)
+
+----------------------------------------------------------------
+MMC core:
+ - Remove redundant pm_runtime_mark_last_busy() calls
+
+MMC host:
+ - Convert drivers to use devm_mmc_alloc_host()
+ - Remove redundant pm_runtime_mark_last_busy() calls
+ - renesas_sdhi: Add support for the RZ/T2H and RZ/N2H variants
+ - renesas_sdhi: Fix incorrect auto retuning for an SDIO card
+ - rtsx_usb_sdmmc: Add 74 clocks in poweron flow
+ - rtsx_usb_sdmmc: Re-work the code in sd_set_power_mode()
+ - loongson2: Add driver for the Loongson-2K SD/SDIO controller
+ - loongson2: Add support for the Loongson-2K2000 SD/SDIO/eMMC controller
+ - sdhci: Drop sdhci_free_host()/sdhci_pltfm_free() interface
+ - sdhci: Remove the sdhci_free_host() and sdhci_pltfm_free() helpers
+ - sdhci-cadence: Add support for the Mobileye EyeQ controller
+ - sdhci-esdhc-imx: Optimize clock loopback selection
+ - sdhci-esdhc-imx: Don't change pinctrl in suspend if wakeup source
+ - sdhci-msm: Add support for the Milos variant
+ - sdhci-msm: Add support for the qcs8300 variant
+ - sdhci-msm: Ensure SD card power isn't ON when card gets removed
+ - sdhci-of-k1: Disable HW busy detection
+
+----------------------------------------------------------------
+Adrian Hunter (1):
+      mmc: sdhci: Return void from sdhci_runtime_suspend|resume_host()
+
+Avri Altman (1):
+      mmc: core: sd: Apply BROKEN_SD_DISCARD quirk earlier
+
+Benoît Monin (3):
+      dt-bindings: mmc: cdns: add Mobileye EyeQ MMC/SDHCI controller
+      mmc: sdhci-cadence: add Mobileye eyeQ support
+      mmc: sdhci-cadence: use of_property_present
+
+Binbin Zhou (75):
+      mmc: alcor: Use devm_mmc_alloc_host() helper
+      mmc: atmel: Use devm_mmc_alloc_host() helper
+      mmc: au1xmmc: Use devm_mmc_alloc_host() helper
+      mmc: bcm2835: Use devm_mmc_alloc_host() helper
+      mmc: cavium: Use devm_mmc_alloc_host() helper
+      mmc: cb710: Use devm_mmc_alloc_host() helper
+      mmc: davinci_mmc: Use devm_mmc_alloc_host() helper
+      mmc: dw_mmc: Use devm_mmc_alloc_host() helper
+      mmc: jz4740: Use devm_mmc_alloc_host() helper
+      mmc: litex_mmc: Use devm_mmc_alloc_host() helper
+      mmc: meson-mx-sdhc: Use devm_mmc_alloc_host() helper
+      mmc: mmci: Use devm_mmc_alloc_host() helper
+      mmc: moxart-mmc: Use devm_mmc_alloc_host() helper
+      mmc: mvsdio: Use devm_mmc_alloc_host() helper
+      mmc: mxcmmc: Use devm_mmc_alloc_host() helper
+      mmc: mxs-mmc: Use devm_mmc_alloc_host() helper
+      mmc: omap: Use devm_mmc_alloc_host() helper
+      mmc: omap_hsmmc: Use devm_mmc_alloc_host() helper
+      mmc: owl-mmc: Use devm_mmc_alloc_host() helper
+      mmc: pxamci: Use devm_mmc_alloc_host() helper
+      mmc: rtsx_pci: Use devm_mmc_alloc_host() helper
+      mmc: rtsx_usb_sdmmc: Use devm_mmc_alloc_host() helper
+      mmc: sdricoh_cs: Use devm_mmc_alloc_host() helper
+      mmc: sh_mmicf: Use devm_mmc_alloc_host() helper
+      mmc: tifm_sd: Use devm_mmc_alloc_host() helper
+      mmc: toshsd: Use devm_mmc_alloc_host() helper
+      mmc: usdhi6ro10: Use devm_mmc_alloc_host() helper
+      mmc: ushc: Use devm_mmc_alloc_host() helper
+      mmc: via-sdmmc: Use devm_mmc_alloc_host() helper
+      mmc: vub300: Use devm_mmc_alloc_host() helper
+      mmc: wbsd: Use devm_mmc_alloc_host() helper
+      mmc: wmt-sdmmc: Use devm_mmc_alloc_host() helper
+      mmc: tmio: Use devm_mmc_alloc_host() helper
+      mmc: sunxi: Use devm_mmc_alloc_host() helper
+      mmc: mmc_spi: Use devm_mmc_alloc_host() helper
+      mmc: sdhci: Use devm_mmc_alloc_host() helper
+      mmc: sdhci-acpi: Drop the use of sdhci_free_host()
+      mmc: sdhci-milbeaut: Drop the use of sdhci_free_host()
+      mmc: sdhci-pci: Drop the use of sdhci_free_host()
+      mmc: sdhci-s3c: Drop the use of sdhci_free_host()
+      mmc: sdhci-spear: Drop the use of sdhci_free_host()
+      mmc: sdhci-pltfm: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-bcm-kona: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-brcmstb: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-cadence: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-dove: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-esdhc-imx: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-esdhc-mcf: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-iproc: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-msm: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-npcm: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-of-arasan: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-of-aspeed: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-of-at91: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-of-dwcmshc: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-of-esdhc: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-of-k1: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-of-ma35d1: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-of-sparx5: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-omap: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-pic32: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-pxav2: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-pxav3: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-sprd: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-st: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-tegra: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci-xenon: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci_am654: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci_f_sdh30: Drop the use of sdhci_pltfm_free()
+      mmc: sdhci: Drop sdhci_free_host()/sdhci_pltfm_free() interface
+      dt-bindings: mmc: Add Loongson-2K SD/SDIO/eMMC controller binding
+      mmc: loongson2: Add Loongson-2K SD/SDIO controller driver
+      dt-bindings: mmc: loongson,ls2k0500-mmc: Add compatible for Loongson-2K2000
+      mmc: loongson2: Add Loongson-2K2000 SD/SDIO/eMMC controller driver
+      mmc: loongson2: Unify the function prefixes for loongson2_mmc_pdata
+
+Dan Carpenter (2):
+      mmc: sdhci-of-k1: Fix error code in probe()
+      mmc: loongson2: Fix error code in loongson2_mmc_resource_request()
+
+Edson Juliano Drosdeck (1):
+      mmc: sdhci-pci: Quirk for broken command queuing on Intel GLK-based Positivo models
+
+Frank Li (1):
+      dt-bindings: mmc: mxs-mmc: change ref to mmc-controller-common.yaml from mmc-controller.yaml
+
+Haibo Chen (1):
+      mmc: sdhci-esdhc-imx: Don't change pinctrl in suspend if wakeup source
+
+Judith Mendez (1):
+      mmc: sdhci_am654: Workaround for Errata i2312
+
+Lad Prabhakar (1):
+      dt-bindings: mmc: renesas,sdhi: Document RZ/T2H and RZ/N2H support
+
+Li Dong (2):
+      mmc: cb710-mmc: Convert ternary operator to str_plural() helper
+      mmc: Convert ternary operator to str_true_false() helper
+
+Luca Weiss (1):
+      dt-bindings: mmc: sdhci-msm: document the Milos SDHCI Controller
+
+Luke Wang (2):
+      mmc: sdhci-esdhc-imx: refactor clock loopback selection logic
+      mmc: sdhci-esdhc-imx: optimize clock loopback selection with dummy pad support
+
+Masami Hiramatsu (Google) (2):
+      mtk-sd: Fix a pagefault in dma_unmap_sg() for not prepared data
+      mtk-sd: Prevent memory corruption from DMA map failure
+
+Nathan Chancellor (2):
+      mmc: rtsx_usb_sdmmc: Fix clang -Wimplicit-fallthrough in sd_set_power_mode()
+      memstick: core: Zero initialize id_reg in h_memstick_read_dev_id()
+
+Ricky Wu (1):
+      mmc: rtsx_usb_sdmmc: Add 74 clocks in poweron flow
+
+Sakari Ailus (7):
+      PM: runtime: Document return values of suspend-related API functions
+      PM: runtime: Mark last busy stamp in pm_runtime_put_autosuspend()
+      PM: runtime: Mark last busy stamp in pm_runtime_put_sync_autosuspend()
+      PM: runtime: Mark last busy stamp in pm_runtime_autosuspend()
+      PM: runtime: Mark last busy stamp in pm_request_autosuspend()
+      Documentation: PM: *_autosuspend() functions update last busy time
+      mmc: Remove redundant pm_runtime_mark_last_busy() calls
+
+Sarthak Garg (1):
+      mmc: sdhci-msm: Ensure SD card power isn't ON when card removed
+
+Sayali Lokhande (1):
+      dt-bindings: mmc: Add sdhci compatible for qcs8300
+
+Sergey Senozhatsky (1):
+      mtk-sd: reset host->mrq on prepare_data() error
+
+Sergio Perez Gonzalez (1):
+      mmc: loongson2: prevent integer overflow in ret variable
+
+Thomas Fourier (1):
+      mmc: bcm2835: Fix dma_unmap_sg() nents value
+
+Ulf Hansson (11):
+      mmc: rtsx_usb_sdmmc: Fix error-path in sd_set_power_mode()
+      mmc: rtsx_usb_sdmmc: Print debug-messages at power-on/off errors
+      mmc: rtsx_usb_sdmmc: Convert sd_set_power_mode() into void
+      mmc: rtsx_usb_sdmmc: Re-work the code in sd_set_power_mode()
+      mmc: Merge branch fixes into next
+      Revert "mmc: sdhci: Disable SD card clock before changing parameters"
+      mmc: Merge branch fixes into next
+      mmc: Merge branch fixes into next
+      mmc: Merge branch fixes into next
+      mmc: Merge tag pm-runtime-6.17-rc1 into next
+      mmc: Merge branch fixes into next
+
+Victor Shih (3):
+      mmc: core: Adjust some error messages for SD UHS-II cards
+      mmc: sdhci: Add a helper function for dump register in dynamic debug mode
+      mmc: sdhci-uhs2: Adjust some error messages and register dump for SD UHS-II card
+
+Yixun Lan (2):
+      mmc: sdhci-of-k1: make register definition vendor specific
+      mmc: sdhci-of-k1: disable HW busy detection
+
+Yoshihiro Shimoda (2):
+      mmc: host: tmio: Add .sdio_irq()
+      mmc: host: renesas_sdhi: Fix incorrect auto retuning for an SDIO card
+
+ .../devicetree/bindings/mmc/cdns,sdhci.yaml        |    1 +
+ .../bindings/mmc/loongson,ls2k0500-mmc.yaml        |  112 +++
+ Documentation/devicetree/bindings/mmc/mxs-mmc.yaml |    7 +-
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml      |   85 +-
+ .../devicetree/bindings/mmc/sdhci-msm.yaml         |    2 +
+ Documentation/power/runtime_pm.rst                 |   50 +-
+ MAINTAINERS                                        |    7 +
+ drivers/memstick/core/memstick.c                   |    2 +-
+ drivers/mmc/core/core.c                            |    1 -
+ drivers/mmc/core/quirks.h                          |   12 +-
+ drivers/mmc/core/sd_uhs2.c                         |    4 +-
+ drivers/mmc/host/Kconfig                           |   13 +
+ drivers/mmc/host/Makefile                          |    1 +
+ drivers/mmc/host/alcor.c                           |   20 +-
+ drivers/mmc/host/atmel-mci.c                       |   12 +-
+ drivers/mmc/host/au1xmmc.c                         |   14 +-
+ drivers/mmc/host/bcm2835.c                         |    8 +-
+ drivers/mmc/host/cavium.c                          |   10 +-
+ drivers/mmc/host/cb710-mmc.c                       |    8 +-
+ drivers/mmc/host/davinci_mmc.c                     |   22 +-
+ drivers/mmc/host/dw_mmc.c                          |   15 +-
+ drivers/mmc/host/jz4740_mmc.c                      |   40 +-
+ drivers/mmc/host/litex_mmc.c                       |   12 +-
+ drivers/mmc/host/loongson2-mmc.c                   | 1030 ++++++++++++++++++++
+ drivers/mmc/host/meson-mx-sdhc-mmc.c               |   13 +-
+ drivers/mmc/host/mmc_spi.c                         |    4 +-
+ drivers/mmc/host/mmci.c                            |   32 +-
+ drivers/mmc/host/moxart-mmc.c                      |   40 +-
+ drivers/mmc/host/mtk-sd.c                          |   21 +-
+ drivers/mmc/host/mvsdio.c                          |   24 +-
+ drivers/mmc/host/mxcmmc.c                          |   31 +-
+ drivers/mmc/host/mxs-mmc.c                         |   31 +-
+ drivers/mmc/host/omap.c                            |   25 +-
+ drivers/mmc/host/omap_hsmmc.c                      |   20 +-
+ drivers/mmc/host/owl-mmc.c                         |   37 +-
+ drivers/mmc/host/pxamci.c                          |   42 +-
+ drivers/mmc/host/renesas_sdhi.h                    |    1 +
+ drivers/mmc/host/renesas_sdhi_core.c               |   54 +-
+ drivers/mmc/host/rtsx_pci_sdmmc.c                  |    5 +-
+ drivers/mmc/host/rtsx_usb_sdmmc.c                  |   42 +-
+ drivers/mmc/host/sdhci-acpi.c                      |   11 +-
+ drivers/mmc/host/sdhci-bcm-kona.c                  |    2 -
+ drivers/mmc/host/sdhci-brcmstb.c                   |    1 -
+ drivers/mmc/host/sdhci-cadence.c                   |   34 +-
+ drivers/mmc/host/sdhci-dove.c                      |   12 +-
+ drivers/mmc/host/sdhci-esdhc-imx.c                 |   78 +-
+ drivers/mmc/host/sdhci-esdhc-mcf.c                 |   25 +-
+ drivers/mmc/host/sdhci-iproc.c                     |   18 +-
+ drivers/mmc/host/sdhci-milbeaut.c                  |   19 +-
+ drivers/mmc/host/sdhci-msm.c                       |   26 +-
+ drivers/mmc/host/sdhci-npcm.c                      |   15 +-
+ drivers/mmc/host/sdhci-of-arasan.c                 |   26 +-
+ drivers/mmc/host/sdhci-of-aspeed.c                 |   10 +-
+ drivers/mmc/host/sdhci-of-at91.c                   |   38 +-
+ drivers/mmc/host/sdhci-of-dwcmshc.c                |   14 +-
+ drivers/mmc/host/sdhci-of-esdhc.c                  |   11 +-
+ drivers/mmc/host/sdhci-of-k1.c                     |  144 +--
+ drivers/mmc/host/sdhci-of-ma35d1.c                 |   23 +-
+ drivers/mmc/host/sdhci-of-sparx5.c                 |   24 +-
+ drivers/mmc/host/sdhci-omap.c                      |   23 +-
+ drivers/mmc/host/sdhci-pci-core.c                  |   31 +-
+ drivers/mmc/host/sdhci-pic32.c                     |    9 +-
+ drivers/mmc/host/sdhci-pltfm.c                     |   16 +-
+ drivers/mmc/host/sdhci-pltfm.h                     |    1 -
+ drivers/mmc/host/sdhci-pxav2.c                     |   26 +-
+ drivers/mmc/host/sdhci-pxav3.c                     |   17 +-
+ drivers/mmc/host/sdhci-s3c.c                       |   26 +-
+ drivers/mmc/host/sdhci-spear.c                     |   11 +-
+ drivers/mmc/host/sdhci-sprd.c                      |   34 +-
+ drivers/mmc/host/sdhci-st.c                        |    6 +-
+ drivers/mmc/host/sdhci-tegra.c                     |    9 +-
+ drivers/mmc/host/sdhci-uhs2.c                      |   20 +-
+ drivers/mmc/host/sdhci-xenon.c                     |   24 +-
+ drivers/mmc/host/sdhci.c                           |   26 +-
+ drivers/mmc/host/sdhci.h                           |   21 +-
+ drivers/mmc/host/sdhci_am654.c                     |   38 +-
+ drivers/mmc/host/sdhci_f_sdh30.c                   |   13 +-
+ drivers/mmc/host/sdricoh_cs.c                      |   10 +-
+ drivers/mmc/host/sh_mmcif.c                        |   17 +-
+ drivers/mmc/host/sunxi-mmc.c                       |   22 +-
+ drivers/mmc/host/tifm_sd.c                         |    7 +-
+ drivers/mmc/host/tmio_mmc.h                        |    2 +-
+ drivers/mmc/host/tmio_mmc_core.c                   |   24 +-
+ drivers/mmc/host/toshsd.c                          |    4 +-
+ drivers/mmc/host/uniphier-sd.c                     |    8 +-
+ drivers/mmc/host/usdhi6rol0.c                      |   30 +-
+ drivers/mmc/host/ushc.c                            |    4 +-
+ drivers/mmc/host/via-sdmmc.c                       |    7 +-
+ drivers/mmc/host/vub300.c                          |   16 +-
+ drivers/mmc/host/wbsd.c                            |    4 +-
+ drivers/mmc/host/wmt-sdmmc.c                       |    8 +-
+ include/linux/pm_runtime.h                         |  187 +++-
+ 92 files changed, 2050 insertions(+), 1092 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/loongson,ls2k0500-mmc.yaml
+ create mode 100644 drivers/mmc/host/loongson2-mmc.c
 
