@@ -1,153 +1,138 @@
-Return-Path: <linux-kernel+bounces-749582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96132B15043
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:39:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB6DB15047
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:40:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA6497A4307
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:37:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A894546EF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CBE293C73;
-	Tue, 29 Jul 2025 15:38:33 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 646E42951BA;
+	Tue, 29 Jul 2025 15:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JGQyaGNm"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3CB3293C77
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CF022951B3
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:39:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753803513; cv=none; b=k38BlyNIdjiOdWkZUQkEV4M0Q4LX5Nle0nnm6sOcwIJ8EidzSYbmzXWVwfY9YUA3hizzPAaSx9Ipzl42fjf7MNcKIUPmr2IKMXXAqaqpVZ+jdjvSh3fVcRKzxM59p0B7BqvklV8gbOrgZ0MHia8Cga0nDpZ7xFKkC2Zr0V0j/54=
+	t=1753803545; cv=none; b=d+xrNvovskrGaE/PpdD3+H69kfkgv9bGxAjLRjz2VOvFzxckzBEHwiFkKF9QsR4wYokhV23NZpbp/aUZSrx1mqk6JLYYIQCJPrvuBg+0un7LcDfDfT2+zLFLl/t//hU5Ev9Szs+6fIy6w1RO8gq50ClhQUiRCSO0X8WalFes/O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753803513; c=relaxed/simple;
-	bh=KJzheRQfyRAydciUNWS2xsbioY0FAmSaFYrR9j6Q/EI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X70lGF8euzM9nSks8UKXcXrW42xRhkcN05eg9qlp/6sXX4SXOctSCbC2kuRBs/3m8grCdyMMN4MBIpt9Z9ZN57Xi5Z/1n2+nFdXWjMrTfo8mj9mQz7wqRL+LisKu6/NkSyhQmV2ZtJoKCukG+FD8xU/umxK2PfozJWFOf/K2W1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4brzvq2FLVz23jcW;
-	Tue, 29 Jul 2025 23:36:07 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 31C2B1A016C;
-	Tue, 29 Jul 2025 23:38:28 +0800 (CST)
-Received: from kwepemn100008.china.huawei.com (7.202.194.111) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 29 Jul 2025 23:38:27 +0800
-Received: from localhost.huawei.com (10.90.31.46) by
- kwepemn100008.china.huawei.com (7.202.194.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 29 Jul 2025 23:38:27 +0800
-From: Yushan Wang <wangyushan12@huawei.com>
-To: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<fanghao11@huawei.com>, <linuxarm@huawei.com>, <yangyicong@hisilicon.com>,
-	<wangyushan12@huawei.com>
-Subject: [PATCH 8/8] Documentation: hisi-pmu: Add introduction to HiSilicon V3 PMU
-Date: Tue, 29 Jul 2025 23:38:23 +0800
-Message-ID: <20250729153823.2026154-9-wangyushan12@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250729153823.2026154-1-wangyushan12@huawei.com>
-References: <20250729153823.2026154-1-wangyushan12@huawei.com>
+	s=arc-20240116; t=1753803545; c=relaxed/simple;
+	bh=OfOL42eD9JTUc+4eGZAYldNVEOn18zoOKYFUTi9OmhY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FEctBp9fcA8B0O5O1xUrdxL1BLgHLvU39C6BpAbwERVOtDgW3gWKNGaNy1YURtn6x0MJxe8JONhRrxY+5ocqMLiO7WFS0bpEngwjf7V64gMqy6y4lKpMSvifPIt+bv+3tif4wZF803/UN3t/hJDw95n6d9g/5CbC82d11YDzROk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JGQyaGNm; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31ed9a17f22so4000225a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:39:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753803543; x=1754408343; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Glsh0iAv4o3uNk39nP/OoAS1uxmDAWFJSCvfZQY8U3w=;
+        b=JGQyaGNm3fzX9r8HveAMNMyGM1Y8v90TYKyNm6RoQGeYx1pVL3pIAjrlb5Za/4iMG6
+         y8VCW7iD464VUFx/wFJ9wx3lslCr87y1a8BU2BUTR/sJm0c+6Kpo2QMkvVSO2tT7h0uJ
+         SqkpsuUd5aB9RF5+xQzP/va+FkUtjm9+AW0CH75P1kcMdMc4HfkqYcB76IY6P56W6Zg7
+         FMfJodDfRnen80P7GFTdj0+pxTThmx6KJaiJ6E8XwcrUEeL1unF0KRqTgVnF3x+KQuNL
+         cw5ktlfdMK/Fs/EMRXf4XZc0ZcOKtuejsmQPskUzCLX8jPMEkVYFPnuxwuuAiHm5YSfK
+         sSNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753803543; x=1754408343;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Glsh0iAv4o3uNk39nP/OoAS1uxmDAWFJSCvfZQY8U3w=;
+        b=rBy3Mm1lhzEqXIJ8gKhGD4SFQIGZsQpOT4PfX5r768t+5ZO81nUFPZ17zQWr0nHsJ/
+         1xPoIoOVu8+UyskSyMcafUqm2GeWfmlKVlGe53e1AVp7THTruDK8DuOph1FaRN5MUMir
+         k+n+MuCSbR2sbBLqxWhDLl9pa/GvQmrLLJykGIEzxMBABaz7VVigqhlEGRNAmLRVRUGZ
+         686+sWmv1Mu3OgnbwmOAC5eTUs+ACH//7qPx+KKZJua5WOiSSWPCGlXeFcbEDOHWprHF
+         mQo+RpsVbtfDKDEJPssh9YH8ZwwGCa6fd3jM0L9/CvXMvwxBQ1HEA1Nb2i4QScQEhyNt
+         OFRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVI0W6kh8GSw/rhKuoXIHjePhLm2lLgdlxVIl/RGvYgIZmqcznEddQWS7jDrOlhuFQiMfuPD0ZJOhF+rLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyH+FAEMii34UP5n+1f9qP7yF0oXeTHGLJae9ihIQLDGzDFWws/
+	PMLR/G8MticRQ6UTvfwAY0YJE9tQg4HX2o7p7IXwfBPm9kh+lB4/5x7/Ku3WXb2p+tB9sCviYGg
+	xSOqOFw==
+X-Google-Smtp-Source: AGHT+IF+TXpdC+oVnYt+YHocSx/QqcMuplDXaRRM2xGX1W6yq4xq1t881NAizm2HIeClnrMQru1DE3cPUfk=
+X-Received: from pjbsr11.prod.google.com ([2002:a17:90b:4e8b:b0:31e:cee1:4d04])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:240b:b0:31e:ebb6:6499
+ with SMTP id 98e67ed59e1d1-31eebb6657emr9096042a91.24.1753803543611; Tue, 29
+ Jul 2025 08:39:03 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 29 Jul 2025 08:39:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- kwepemn100008.china.huawei.com (7.202.194.111)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
+Message-ID: <20250729153901.564123-1-seanjc@google.com>
+Subject: [PATCH] x86/kvm: Make kvm_async_pf_task_wake() a local static helper
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Some of HiSilicon V3 PMU hardware is divided into parts to fulfill the
-job of monitoring specific parts of a device.  Add description on that
-as well as the newly added ext operand for L3C PMU.
+Make kvm_async_pf_task_wake() static and drop its export, as the symbol is
+only referenced from within kvm.c.
 
-Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+No functional change intended.
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- Documentation/admin-guide/perf/hisi-pmu.rst | 43 +++++++++++++++++++--
- 1 file changed, 39 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/kvm_para.h | 2 --
+ arch/x86/kernel/kvm.c           | 3 +--
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
-index 48992a0b8e94..4c7584fe3c1a 100644
---- a/Documentation/admin-guide/perf/hisi-pmu.rst
-+++ b/Documentation/admin-guide/perf/hisi-pmu.rst
-@@ -12,15 +12,16 @@ The HiSilicon SoC encapsulates multiple CPU and IO dies. Each CPU cluster
- called Super CPU cluster (SCCL) and is made up of 6 CCLs. Each SCCL has
- two HHAs (0 - 1) and four DDRCs (0 - 3), respectively.
+diff --git a/arch/x86/include/asm/kvm_para.h b/arch/x86/include/asm/kvm_para.h
+index 57bc74e112f2..4a47c16e2df8 100644
+--- a/arch/x86/include/asm/kvm_para.h
++++ b/arch/x86/include/asm/kvm_para.h
+@@ -124,7 +124,6 @@ bool kvm_para_available(void);
+ unsigned int kvm_arch_para_features(void);
+ unsigned int kvm_arch_para_hints(void);
+ void kvm_async_pf_task_wait_schedule(u32 token);
+-void kvm_async_pf_task_wake(u32 token);
+ u32 kvm_read_and_reset_apf_flags(void);
+ bool __kvm_handle_async_pf(struct pt_regs *regs, u32 token);
  
--HiSilicon SoC uncore PMU driver
---------------------------------
-+HiSilicon SoC uncore PMU v1
-+---------------------------
+@@ -148,7 +147,6 @@ static inline void kvm_spinlock_init(void)
  
- Each device PMU has separate registers for event counting, control and
- interrupt, and the PMU driver shall register perf PMU drivers like L3C,
- HHA and DDRC etc. The available events and configuration options shall
--be described in the sysfs, see:
-+be described in the sysfs, see::
-+
-+/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}/hha{Y}/ddrc{Y}>
+ #else /* CONFIG_KVM_GUEST */
+ #define kvm_async_pf_task_wait_schedule(T) do {} while(0)
+-#define kvm_async_pf_task_wake(T) do {} while(0)
  
--/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}/hha{Y}/ddrc{Y}>.
- The "perf list" command shall list the available events from sysfs.
+ static inline bool kvm_para_available(void)
+ {
+diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
+index 921c1c783bc1..180a8c146846 100644
+--- a/arch/x86/kernel/kvm.c
++++ b/arch/x86/kernel/kvm.c
+@@ -190,7 +190,7 @@ static void apf_task_wake_all(void)
+ 	}
+ }
  
- Each L3C, HHA and DDRC is registered as a separate PMU with perf. The PMU
-@@ -55,6 +56,9 @@ Example usage of perf::
-   $# perf stat -a -e hisi_sccl3_l3c0/rd_hit_cpipe/ sleep 5
-   $# perf stat -a -e hisi_sccl3_l3c0/config=0x02/ sleep 5
+-void kvm_async_pf_task_wake(u32 token)
++static void kvm_async_pf_task_wake(u32 token)
+ {
+ 	u32 key = hash_32(token, KVM_TASK_SLEEP_HASHBITS);
+ 	struct kvm_task_sleep_head *b = &async_pf_sleepers[key];
+@@ -241,7 +241,6 @@ void kvm_async_pf_task_wake(u32 token)
+ 	/* A dummy token might be allocated and ultimately not used.  */
+ 	kfree(dummy);
+ }
+-EXPORT_SYMBOL_GPL(kvm_async_pf_task_wake);
  
-+HiSilicon SoC uncore PMU v2
-+----------------------------------
-+
- For HiSilicon uncore PMU v2 whose identifier is 0x30, the topology is the same
- as PMU v1, but some new functions are added to the hardware.
- 
-@@ -112,6 +116,37 @@ uring channel. It is 2 bits. Some important codes are as follows:
- - 2'b00: default value, count the events which sent to the both uring and
-   uring_ext channel;
- 
-+HiSilicon SoC uncore PMU v3
-+----------------------------------
-+
-+For HiSilicon uncore PMU v3 whose identifier is 0x40, some uncore PMUs are
-+further divided into parts for finer granularity of tracing, each part has its
-+own dedicated PMU, and all such PMUs together cover the monitoring job of events
-+on particular uncore device. Such PMUs are described in sysfs with name format
-+slightly changed::
-+
-+/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}_{Z}/ddrc{Y}_{Z}/noc{Y}_{Z}>
-+
-+Z is the sub-id, indicating different PMUs for part of hardware device.
-+
-+Usage of most PMUs with different sub-ids are identical. Specially, L3C PMU
-+provides ``ext`` operand to allow exploration of even finer granual statistics
-+of L3C PMU, L3C PMU driver use that as hint of termination when delivering perf
-+command to hardware:
-+
-+- ext=0: Default, could be used with event names.
-+- ext=1 and ext=2: Must be used with event codes, event names are not supported.
-+
-+An example of perf command could be::
-+
-+  $# perf stat -a -e hisi_sccl0_l3c1_0/event=0x1,ext=1/ sleep 5
-+
-+or::
-+
-+  $# perf stat -a -e hisi_sccl0_l3c1_0/rd_spipe/ sleep 5
-+
-+As above, ``hisi_sccl0_l3c1_0`` locates PMU on CPU cluster 0, L3 cache 1 pipe0.
-+
- Users could configure IDs to count data come from specific CCL/ICL, by setting
- srcid_cmd & srcid_msk, and data desitined for specific CCL/ICL by setting
- tgtid_cmd & tgtid_msk. A set bit in srcid_msk/tgtid_msk means the PMU will not
+ noinstr u32 kvm_read_and_reset_apf_flags(void)
+ {
+
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
 -- 
-2.33.0
+2.50.1.487.gc89ff58d15-goog
 
 
