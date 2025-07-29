@@ -1,162 +1,75 @@
-Return-Path: <linux-kernel+bounces-749123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC637B14A67
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:48:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1852BB14A69
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:48:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB711AA0806
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:48:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ED131AA0A14
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A88286404;
-	Tue, 29 Jul 2025 08:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A622286D6F;
+	Tue, 29 Jul 2025 08:48:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AvjEw0uP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mNAAoGpN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF857285C92;
-	Tue, 29 Jul 2025 08:48:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6741E286887;
+	Tue, 29 Jul 2025 08:48:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753778901; cv=none; b=fTqaZ1rZZWMwo5nhmoK8JiWiokcNh+T8op9ZFkr4pCKd+CjzzmX0M7AGTQv3bUvXyNrv7PsL4WnY6l+rL1DcpWPXvZ2cvCGsVvDEnGoFzgBLOssqIT8/4C0S8Z2++sYJ5UUblYdrQsUxr27hTUQ/6esck9C/uNXhlGby4mJ/qu4=
+	t=1753778902; cv=none; b=kRc6+rcViOr6oI3bCQz2Wo119+BARtidtl/uLuFlEPN6O5NUldfGtxUKgb8MOqECcffaUMHkMlFZYFJ/VvwBwXv3v3iKs83CoxtHgs8Uvo4QuJ5NQZdkRRqIiCDo8s3eEn+59/LPL2AXnspOaB7lJ8BQCBlehuKrDWTVl8Gzhkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753778901; c=relaxed/simple;
-	bh=DWClKgtik3dSP7hS+sfMKrIBbVeYIF9pwnDwUXbOOvU=;
+	s=arc-20240116; t=1753778902; c=relaxed/simple;
+	bh=2JhJ23PKDGh0rNTPf4+9GEhrGZZAPJDZKUqvEUJMYfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P+XKzx0+Q49l9AoEKzWjaWc937WFuefhUmkWKxGQh5Yzf36JT2XfQ66SteiSaSOkuSeNgY0ETB3e1gAeRJnJAh/GmprE+SaWaudG1B3ItUDVXvYR14caUe7caF32qfl831xXf+Kr7I6vAcdVRf1Cvi5gMWNXPnCkNwp1kJxaiSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AvjEw0uP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF9BBC4CEF7;
-	Tue, 29 Jul 2025 08:48:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753778900;
-	bh=DWClKgtik3dSP7hS+sfMKrIBbVeYIF9pwnDwUXbOOvU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/fP+nRptjW3EJ0NkUbBxmp2VIZqsOFO2WKFABa25KI55wOps6eN1MFGlR2lEk2JsmR3LVqsvwoK9YRswlOOP2B1Fz4HrhNOdGuSzVaIPWGY5zba6P0O3xZJI+Ag1PeqlQnDDMp4noe6xP4ke7Y1efJ3/OJ/o3mqkZMf+4P8RM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mNAAoGpN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B402FC4CEF5;
+	Tue, 29 Jul 2025 08:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753778902;
+	bh=2JhJ23PKDGh0rNTPf4+9GEhrGZZAPJDZKUqvEUJMYfY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AvjEw0uPhqOljw9wIpMFg9N6QHHZG9RTCaUWs47dr3lij92PuORNjceVBnjefImJZ
-	 omAlLsMJgSZ3cEuPCOwQwf4VEYcjA6LmLTUOHPvssS4pb/JyzD0pWhBkFAOd33qzCL
-	 4GwgjO2jrT00IXGJb2IWcDPUfUr5nJ8lH+2XuDic=
-Date: Tue, 29 Jul 2025 10:48:17 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH] tty: serial: 8250: exar: fix kernel warning in
- default_setup function
-Message-ID: <2025072929-distant-hardener-0e75@gregkh>
-References: <aIiDf31HzRBGuMN2@monster.localdomain>
+	b=mNAAoGpN/YY4FI3E9IjMxHdPD0kk9XalVNVAzKrpsR5O3jdpDjrcpf1gyFV00y2b+
+	 2kB3X6Wel/4P8A52a5+S/oPsWTptQrti7af0fojd+r7RIbsKtdq88TkGOmzleDfftC
+	 L40j/hPxabP0hFKIdZLm2X6p6yf72JrwFd8QtgDCyKk82X/DMB0yYdRYlVp4i4bQke
+	 jcz/YOD2N3EAKJfUi/Em2gF1rdVg9hEiivzvzcflPhLz48zsBTV4nrqO5zfoX43Os1
+	 ucB0/ejIRjdvNv4Tsg7bUCcNi3OJT/EKp/cgomKb2rc0ITUC+7p8/MjUXvy2JWrBMt
+	 Ou+p1ZXShTW0w==
+Date: Tue, 29 Jul 2025 10:48:19 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Erik Beck <xunil@tahomasoft.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] dt-bindings: arm: rockchip: add
+ LinkStar-H68k-1432v1
+Message-ID: <20250729-passionate-jerboa-of-superiority-c7aff5@kuoka>
+References: <20250728-linkstarpatch_v5-v5-0-b4ebfeaca652@tahomasoft.com>
+ <20250728-linkstarpatch_v5-v5-2-b4ebfeaca652@tahomasoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aIiDf31HzRBGuMN2@monster.localdomain>
+In-Reply-To: <20250728-linkstarpatch_v5-v5-2-b4ebfeaca652@tahomasoft.com>
 
-On Tue, Jul 29, 2025 at 08:17:04AM +0000, Wilken Gottwalt wrote:
-> Fixes:
+On Mon, Jul 28, 2025 at 11:07:37AM -0400, Erik Beck wrote:
+> Add device tree bindings.
 
-But no "Fixes:" tag in the commit?  No cc: stable added?
+I don't understand why correct patch order was changed to incorrect.
 
-> 
-> [    2.601213] WARNING: CPU: 3 PID: 1 at pcim_iomap.part.0+0xbc/0xc0
-> [    2.601224] Modules linked in:
-> [    2.601230] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.38-vanilla-standard #1
-> [    2.601237] Hardware name: Default string Default string/CXC-BT-JERO, BIOS S1.61.1.0# 09/17/2018
-> [    2.601241] RIP: 0010:pcim_iomap.part.0+0xbc/0xc0
-> [    2.601248] Code: 31 ed e8 07 a5 14 00 4c 89 e8 5b 41 5c 41 5d 41 5e 5d c3 cc cc cc cc 45 31 ed 5b 41 5c 4c 89 e8 41 5d 41 5e 5d c3 cc cc cc cc <0f> 0b eb a0 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f
-> [    2.601253] RSP: 0000:ffffa7444001f830 EFLAGS: 00010286
-> [    2.601259] RAX: ffffa066c1321f28 RBX: 0000000000000000 RCX: ffffa066c1215330
-> [    2.601264] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffffa066c121532c
-> [    2.601268] RBP: ffffa7444001f850 R08: 0000000000000000 R09: 0000000000000286
-> [    2.601272] R10: 0000000000000000 R11: 000ffffffffff000 R12: ffffa066c1215000
-> [    2.601275] R13: ffffa744403b0000 R14: ffffa066c1310208 R15: ffffa066c12150c8
-> [    2.601279] FS:  0000000000000000(0000) GS:ffffa067d7d80000(0000) knlGS:0000000000000000
-> [    2.601284] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    2.601288] CR2: 0000000000000000 CR3: 000000005f22a000 CR4: 00000000001006f0
-> [    2.601292] Call Trace:
-> [    2.601296]  <TASK>
-> [    2.601301]  pcim_iomap+0x1a/0x20
-> [    2.601308]  serial8250_pci_setup_port+0xea/0x190
-> [    2.601337]  default_setup.constprop.0+0x27/0x90
-> [    2.601347]  pci_xr17v35x_setup+0xd0/0x190
-> [    2.601355]  exar_pci_probe+0x297/0x400
-> [    2.601365]  ? __pfx_generic_rs485_config+0x10/0x10
-> [    2.601383]  local_pci_probe+0x4b/0xb0
-> [    2.601390]  pci_device_probe+0xc5/0x200
-> [    2.601397]  really_probe+0xe5/0x390
-> [    2.601405]  __driver_probe_device+0x7e/0x160
-> [    2.601412]  driver_probe_device+0x23/0xa0
-> [    2.601418]  __driver_attach+0xe4/0x1e0
-> [    2.601424]  ? __pfx___driver_attach+0x10/0x10
-> [    2.601431]  bus_for_each_dev+0x7d/0xd0
-> [    2.601438]  driver_attach+0x1e/0x30
-> [    2.601444]  bus_add_driver+0x114/0x240
-> [    2.601450]  driver_register+0x64/0x130
-> [    2.601457]  ? __pfx_exar_pci_driver_init+0x10/0x10
-> [    2.601466]  __pci_register_driver+0x61/0x70
-> [    2.601471]  exar_pci_driver_init+0x1e/0x30
-> [    2.601479]  do_one_initcall+0x49/0x310
-> [    2.601487]  kernel_init_freeable+0x1aa/0x2e0
-> [    2.601495]  ? __pfx_kernel_init+0x10/0x10
-> [    2.601503]  kernel_init+0x1a/0x1c0
-> [    2.601510]  ret_from_fork+0x3c/0x60
-> [    2.601516]  ? __pfx_kernel_init+0x10/0x10
-> [    2.601523]  ret_from_fork_asm+0x1a/0x30
-> [    2.601531]  </TASK>
-> 
-> >From kernel 6.8 to 6.9 the default_setup function was changed to use the
-> more generic serial8250_pci_setup_port function to setup the serial
-> ports, but that results in this kernel warning.
-> 
-> The serial8250_pci_setup_port function internally relies on the
-> pcim_iomap function. The way this function works was changed from kernel
-> 6.10 to 6.11 and now clearly states in the description "This SHOULD only
-> be used once per BAR". And this is the issue. Basically all the hardware
-> handled by the 8250_exar driver are multi-port cards, which have
-> multiple ports on one PCI bar. The serial8250_pci_setup_port/pcim_iomap
-> functions can not be used with that driver anymore. Reverting the code
-> back to the older pci_resource_start approach fixes this issue.
+See submitting patches in DT bindings dir.
 
-These two paragraphs should be above the warning splat.
+Best regards,
+Krzysztof
 
-
-> 
-> Signed-off-by: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-> ---
->  drivers/tty/serial/8250/8250_exar.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-> index 04a0cbab02c2..5660bb897803 100644
-> --- a/drivers/tty/serial/8250/8250_exar.c
-> +++ b/drivers/tty/serial/8250/8250_exar.c
-> @@ -500,12 +500,13 @@ static int default_setup(struct exar8250 *priv, struct pci_dev *pcidev,
->  			 struct uart_8250_port *port)
->  {
->  	const struct exar8250_board *board = priv->board;
-> +	unsigned int bar = 0;
-
-Why is this needed?
-
->  	unsigned char status;
-> -	int err;
->  
-> -	err = serial8250_pci_setup_port(pcidev, port, 0, offset, board->reg_shift);
-> -	if (err)
-> -		return err;
-> +	port->port.iotype = UPIO_MEM;
-> +	port->port.mapbase = pci_resource_start(pcidev, bar) + offset;
-> +	port->port.membase = priv->virt + offset;
-> +	port->port.regshift = board->reg_shift;
-
-And so now serial8250_pci_setup_port() is never called?  Are you sure
-that's ok?
-
-thanks,
-
-greg k-h
 
