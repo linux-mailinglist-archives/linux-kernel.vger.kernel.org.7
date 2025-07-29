@@ -1,102 +1,124 @@
-Return-Path: <linux-kernel+bounces-749337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB9ACB14D15
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:38:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D2D1B14D1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04A9818A1BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44FCB544673
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:40:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4583F28EA4F;
-	Tue, 29 Jul 2025 11:37:56 +0000 (UTC)
-Received: from mail.mifritscher.de (mifritscher.de [188.40.170.105])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44ACE28F50F;
+	Tue, 29 Jul 2025 11:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qpcxA/u9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F01E254841;
-	Tue, 29 Jul 2025 11:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.40.170.105
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8921F27A928;
+	Tue, 29 Jul 2025 11:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753789075; cv=none; b=qynJ1JNbQXVrB4XXl0MN1La9uiyQIvSz5doN/mup0QEoE2C3g3YqFInBreVilNFCIVMvJp5Pj3asmKdi1HxtwqtfnKEhcAwjQ6JTSKJ0nw3d/EKiBp85juOQOv9YT7nsETtwFmp7Q+OJOQjEXEErjUqJnHNA9+fzogcgXnu6BPM=
+	t=1753789188; cv=none; b=REyPMDrYAfCzMH8JBLFVbW3/OaTgCp1iFP2cux76SSoUabz+s7svF/IvOG7iO7wmk5WLRsTasKhjIps4bibmSE19oEhCM7JjH3e1bmlOPzNUjf7UDPSjRp1UbqoLiruYF+xo2hU7sDVWYkbE/Vd2EGmgd8ej0Y+nTeTZGCIWla4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753789075; c=relaxed/simple;
-	bh=2DUyleINyY08kAK5LexsCuMRMN4kuOxIaaYE2HdWLiE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=iurtwFA31KH2PrybmBe4ZOfMEjFXx2eUYdGMlkeE6YthxVG7g7ljUfkgAjsUyGo/liwEr9Nyji8+OQqM2qQVfcWCGmYtZyTaDTmQZCwp7bwDAG0gUmdkp6ZLBINLR+Q5OJZjq7Amj7ERB+BrH4LLTNtr2MWyk3vOvzKAYIM85nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fritscher.net; spf=pass smtp.mailfrom=fritscher.net; arc=none smtp.client-ip=188.40.170.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fritscher.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fritscher.net
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.mifritscher.de (Postfix) with ESMTP id 4BAD23B1E61;
-	Tue, 29 Jul 2025 13:37:52 +0200 (CEST)
-X-Virus-Scanned: Debian amavis at mifritscher.vserverkompetenz.de
-Received: from mail.mifritscher.de ([127.0.0.1])
- by localhost (mail.mifritscher.vserverkompetenz.de [127.0.0.1]) (amavis, port 10024)
- with ESMTP id F3-12V5rI6IY; Tue, 29 Jul 2025 13:37:51 +0200 (CEST)
-Received: from sonst.vserverkompetenz.de (sonst.mifritscher.de [188.40.170.101])
-	by mail.mifritscher.de (Postfix) with ESMTPSA id D005C3AED53;
-	Tue, 29 Jul 2025 13:37:51 +0200 (CEST)
-From: Michael Fritscher <michael@fritscher.net>
-Date: Tue, 29 Jul 2025 13:37:51 +0200
-Subject: [PATCH] bus: mhi: host: pci_generic: Add Quectel RM520N-GLAP to
- pci id table
+	s=arc-20240116; t=1753789188; c=relaxed/simple;
+	bh=RPpvSK/8qiFnebjIGVvl4LqDX43VTor4nmtafMFjlfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D71Cb7roQo8oPuo9QhHH6f3i3kaECT8TgXgQaX78z9qerhPfAbq553xlTanJDVkxrV0+YgqxmwvY6JbAM5xpNlulZcEH/1+b49q0su57/VlNUZMQ4mlJc/y0amcti3eWR86ClNMCH8JrEsdn2qHOYTpbCpYr2LReBr1nk9S0CRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qpcxA/u9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D158C4CEEF;
+	Tue, 29 Jul 2025 11:39:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753789188;
+	bh=RPpvSK/8qiFnebjIGVvl4LqDX43VTor4nmtafMFjlfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qpcxA/u9Tznj7llG4bq8FgGR6n8loB2QOxor+6SdCBhDOlGqqCbPcbo6ut4+3zXzL
+	 O5B+31lN4CYNt7zw8YTEfSBOXxZFWo+0AsNmp1TdE0XL16apisn11dsrtPqTtYAHln
+	 VCS+YdU5DPkiycpCq/fSNmsqkqr8kFs7KFT5s5fsNGA/S8X9xcFgGaDoBgAo4DoPRF
+	 aMN7RJsq0IlBv4/1hktW6Ljb6F9jYory7s2E+kTM/3t3aXsuUFLKZRJBPZxHTdv1oc
+	 KuceSjXps91R6vKXxveoKFcrxBdr11X2quBjbA9AraUBemCTyZvSzA7Y7ok9Ir4LiX
+	 qadsSroZsSBiw==
+Date: Tue, 29 Jul 2025 14:39:43 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+	Jens Axboe <axboe@kernel.dk>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+	linux-mm@kvack.org, linux-pci@vger.kernel.org,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	Vivek Kasireddy <vivek.kasireddy@intel.com>,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 02/10] PCI/P2PDMA: Introduce p2pdma_provider structure
+ for cleaner abstraction
+Message-ID: <20250729113943.GJ402218@unreal>
+References: <cover.1753274085.git.leonro@nvidia.com>
+ <c2307cb4c3f1af46da138f3410738754691fbb3d.1753274085.git.leonro@nvidia.com>
+ <20250724075145.GB30590@lst.de>
+ <20250724075533.GR402218@unreal>
+ <20250724075922.GD30590@lst.de>
+ <20250727185158.GE7551@nvidia.com>
+ <20250729075209.GA23823@lst.de>
+ <20250729085336.GG402218@unreal>
+ <20250729104100.GA29053@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250729-add-rm520n-glap-support-v1-1-736ee6bbb385@fritscher.net>
-X-B4-Tracking: v=1; b=H4sIAI6yiGgC/x2OywqDMBBFf0Wy7mASatX+Sukimmky0DyYpEUQ/
- 72xy8O5B+4uCjJhEfduF4xfKpRiA3XpxOpNdAhkGwst9SBHPYOxFjgMWkZwb5OhfHJOXGFqYla
- 36zRqJVq9mIKwsImrP3vGkCqWPjE5in3wBBG3ei4z44u2/4fH8zh+kBxZkpMAAAA=
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Michael Fritscher <michael@fritscher.net>
-X-Mailer: b4 0.12.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729104100.GA29053@lst.de>
 
-Quectel RM520N-GLAP is a variant of Quectel RM520N-GLAA with fused out USB.
-Add its PCI vendor and product id to the list to use the right dev info.
+On Tue, Jul 29, 2025 at 12:41:00PM +0200, Christoph Hellwig wrote:
+> On Tue, Jul 29, 2025 at 11:53:36AM +0300, Leon Romanovsky wrote:
+> > > Because the struct page is the only thing that:
+> > > 
+> > >  a) dma-mapping works on
+> > >  b) is the only place we can discover the routing information, but also
+> > >     more importantly ensure that the underlying page is still present
+> > >     and the device is not hot unplugged, or in a very theoretical worst
+> > >     case replaced by something else.
+> > 
+> > It is correct in general case, but here we are talking about MMIO
+> > memory, which is "connected" to device X and routing information is
+> > stable.
+> 
+> MMIO is literally the only thing we support to P2P to/from as that is
+> how PCIe P2P is defined.  And not, it's not stable - devices can be
+> unplugged, and BARs can be reenumerated.
 
-Signed-off-by: Michael Fritscher <michael@fritscher.net>
----
-This series add support for the Quectel RM520N-GLAP, which uses a
-Qualcomm PCI Vendor ID. Origin is linked at the end. After this it is
-found as
+I have a feeling that we are drifting from the current patchset to more
+general discussion.
 
-MHI PCI device found: quectel-rm5xx
+The whole idea of new DMA API is to provide flexibility to the callers
+(subsystems) who are perfectly aware of their data and limitations to
+implement direct addressing natively.
 
-and works.
+In this series, device is controlled by VFIO and DMABUF. It is not
+possible to unplug it without VFIO notices it. In such case, p2pdma_provider
+and related routing information (DMABUF) will be reevaluated.
 
-Link: https://forum.gl-inet.com/t/how-to-installing-vanilla-openwrt-on-gl-x3000/45404/15
----
- drivers/bus/mhi/host/pci_generic.c | 3 +++
- 1 file changed, 3 insertions(+)
+So for VFIO + DMABUF, the pointer is very stable.
 
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index 589cb6722316..3f3212dda5bb 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -857,6 +857,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
- 		.driver_data = (kernel_ulong_t) &mhi_telit_fn980_hw_v1_info },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0306),
- 		.driver_data = (kernel_ulong_t) &mhi_qcom_sdx55_info },
-+	/* RM520N-GL variant with Qualcomm vendor and subvendor ID */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_QCOM, 0x5201),
-+		.driver_data = (kernel_ulong_t) &mhi_quectel_rm5xx_info },
- 	/* Telit FN990 */
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, 0x1c5d, 0x2010),
- 		.driver_data = (kernel_ulong_t) &mhi_telit_fn990_info },
+For other cases (general case), the flow is not changed.
+Users  will continue to call to old and well-known pci_p2pdma_state()
+to calculate p2p type.
 
----
-base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
-change-id: 20250729-add-rm520n-glap-support-8add91648721
+Thanks
 
-Best regards,
--- 
-Michael Fritscher <michael@fritscher.net>
-
+> 
 
