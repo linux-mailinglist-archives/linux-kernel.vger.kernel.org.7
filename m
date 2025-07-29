@@ -1,158 +1,103 @@
-Return-Path: <linux-kernel+bounces-748901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E66B1476A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:05:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A386B1475D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:00:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3B91AA17DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:05:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D78717DBF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FE0233735;
-	Tue, 29 Jul 2025 05:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449A3224AF2;
+	Tue, 29 Jul 2025 05:00:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEC8rh+u"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ao3vXmdY"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E025224AF2;
-	Tue, 29 Jul 2025 05:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6F51581EE;
+	Tue, 29 Jul 2025 05:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753765513; cv=none; b=bxa/CaISuHRQTSteqd6JLuzqdmTrE2+NyiZjxuMLKh7NmOBkkxRiWxful2PjnSPhFULV9K5sutrPFxMDU2/rtlXlMBNjtk0XCReek+pc1dq1baUsgPj31Y66k4faN1A99IZUv+1KFoaOi1njTP4x5nEYF4X6lXOOcdYCsRoEZr4=
+	t=1753765249; cv=none; b=S86yO+8eUuZZ8p9YO+trIp1fP7YHC7hmLcWBrnWpSff7cE6n/rvq9aApnC3P9hCHjG6L3YrYipaPvvMwZFBVy7AqG+tVTk0hANRZvIFdHpoDdZ8IJajKO3oAtvPURp50IOOuJbGYGEm2rj+kCWaSMl9LiDf1iq3Oceq/Wi6bZf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753765513; c=relaxed/simple;
-	bh=5egcKgD4FYDc9odofRDQJ94rLDaE5PJqwRcIkar3lGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apIn3ZKNIka7XFZYLatVPgk3nHlve8EKd0odVgwi9DVsqLzupqpkqrsfEk22pnuJrOHtaH/+qIPBxxAP51sMO64AA3AVbTzoOYnGtMF79f4toonrfyarz7lPYQRv3gL6DpQCLuuUCEfPqs3rnbu0IpJ+jovtlHnSKoxH0rkufis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEC8rh+u; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753765512; x=1785301512;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5egcKgD4FYDc9odofRDQJ94rLDaE5PJqwRcIkar3lGo=;
-  b=jEC8rh+uj5kSZgFbvwlnzjVx+n7L50vIpMUAlFIJCizlHoakH52GR1cN
-   VJ/WVVJ+lDKUhuseKemjFlxp5evxVvRU0eADliJwcYcWDB48aWhnRwbhz
-   WnTDSnRnwrVa7oq/XAOP04/G7/eWP5nCWpBH1+dbcTWERk5xIml9JnJ1G
-   lzb3OmtZbxM7HNLX5hIUmo52jl3DLjqefAzS8KwCaeIS1XDZkiKLCu5+2
-   Q1Qi3UwhMyYPPvMJma3MF09GkXwWgRmL36u8QCZeraFDrSvhmT+pYM1aJ
-   qqM2bW4LfQw9oxUIUXAuKhpRvwS6DO2R+AHiGFL7dOEAARo57OpcHMtcO
-   w==;
-X-CSE-ConnectionGUID: YHc11TtWRTKLEUlT46UY9g==
-X-CSE-MsgGUID: PYjPUCX4R2uo8LzxQa1ASg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="59671659"
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="59671659"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 22:05:11 -0700
-X-CSE-ConnectionGUID: NtU2Nli6Ro2azAlZ/UeGhA==
-X-CSE-MsgGUID: WWnmbXg2QjKOC6qN3TIygg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="162172796"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by fmviesa007.fm.intel.com with ESMTP; 28 Jul 2025 22:05:06 -0700
-Date: Tue, 29 Jul 2025 12:55:51 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: linux-coco@lists.linux.dev, x86@kernel.org, kvm@vger.kernel.org,
-	seanjc@google.com, pbonzini@redhat.com, eddie.dong@intel.com,
-	kirill.shutemov@intel.com, dave.hansen@intel.com,
-	dan.j.williams@intel.com, kai.huang@intel.com,
-	isaku.yamahata@intel.com, elena.reshetova@intel.com,
-	rick.p.edgecombe@intel.com, Farrah Chen <farrah.chen@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 07/20] x86/virt/tdx: Expose SEAMLDR information via
- sysfs
-Message-ID: <aIhUVyJVQ+rhRB4r@yilunxu-OptiPlex-7050>
-References: <20250523095322.88774-1-chao.gao@intel.com>
- <20250523095322.88774-8-chao.gao@intel.com>
+	s=arc-20240116; t=1753765249; c=relaxed/simple;
+	bh=TTpfk4KsF3m9PG/TlGd3walgX8f8MA59W5qQ9NM9FBM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DIUqouwKBTYwmX/h6OhPhEGjrSxpw6Ib5evg1Obmg2vQuV/upOcWwAPSn8ieY+gtN5KMbfjxUhols7Mw9Fk0LaQQ3S7SwgZmzg1kLwn6Q8HWHJ9RaYwY96tQ2qB6X9wA1MLijMosdQUUuyD9HAGFJfFvnY8DAC8S1L1lBGakayo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ao3vXmdY; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753765035;
+	bh=wSCXxiSq/vIcRqnR23+raiaYERqVjtsS2EZrtY0sDsc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ao3vXmdYNfIUJixve+8j2HmGlWXH0AfRHm+wkvtLUH0mzl4XWli/BJHLX2sX+H6Ug
+	 j1eY7An2sjKgkIudxrs8Zmz7wH+DNffP1Eez8ES8p+CXM0CXhY/DJy50XCVmc7TCxD
+	 6FgCyY2365ez8QWIQ6SaRHgPP4u7rHotjAnJCiagpMqwwNaGd9d37JflT7PDkVpqc2
+	 7WDVwn+z6k8bs60GehJrXbs0NB6F3g0YWNh0xE4GHVZqg8MTG7X/pqIxN9x5+U8EnA
+	 ww8UGsbPZWNC/EDx24gJxNKPAYEIbvJOZtBhS3u0gxGJbdYUcCX8geydQNkyx4Y7m5
+	 2UE57Fz9ftH0w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brjkg3mt0z4wbd;
+	Tue, 29 Jul 2025 14:57:15 +1000 (AEST)
+Date: Tue, 29 Jul 2025 15:00:42 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Mike Rapoport (Microsoft)" <rppt@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the mm-nonmm-unstable tree
+Message-ID: <20250729150042.77832045@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250523095322.88774-8-chao.gao@intel.com>
+Content-Type: multipart/signed; boundary="Sig_/m4M2kWq1RvIn2Wymz=oPA9K";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-> +static const struct attribute_group *tdx_subsys_groups[] = {
-> +	SEAMLDR_GROUP,
-> +	NULL,
-> +};
-> +
->  static void tdx_subsys_init(void)
->  {
->  	struct tdx_tsm *tdx_tsm;
->  	int err;
->  
-> +	err = get_seamldr_info();
-> +	if (err) {
-> +		pr_err("failed to get seamldr info %d\n", err);
-> +		return;
-> +	}
-> +
->  	/* Establish subsystem for global TDX module attributes */
-> -	err = subsys_virtual_register(&tdx_subsys, NULL);
-> +	err = subsys_virtual_register(&tdx_subsys, tdx_subsys_groups);
->  	if (err) {
->  		pr_err("failed to register tdx_subsys %d\n", err);
->  		return;
+--Sig_/m4M2kWq1RvIn2Wymz=oPA9K
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-As mentioned, TDX Connect also uses this virtual TSM device. And I tend
-to extend it to TDX guest, also make the guest TSM management run on
-the virtual device which represents the TDG calls and TDG_VP_VM calls.
+Hi all,
 
-So I'm considering extract the common part of tdx_subsys_init() out of
-TDX host and into a separate file, e.g.
+After merging the mm-nonmm-unstable tree, today's linux-next build
+(x86_64 allmodconfig) produced this warning:
 
----
+WARNING: modpost: vmlinux: section mismatch in reference: kho_test_restore+=
+0x16c (section: .text.unlikely) -> kho_test_restore_data.isra.0 (section: .=
+init.text)
 
-+source "drivers/virt/coco/tdx-tsm/Kconfig"
-+
- config TSM
-        bool
-diff --git a/drivers/virt/coco/Makefile b/drivers/virt/coco/Makefile
-index c0c3733be165..a54d3cb5b4e9 100644
---- a/drivers/virt/coco/Makefile
-+++ b/drivers/virt/coco/Makefile
-@@ -10,3 +10,4 @@ obj-$(CONFIG_INTEL_TDX_GUEST) += tdx-guest/
- obj-$(CONFIG_ARM_CCA_GUEST)    += arm-cca-guest/
- obj-$(CONFIG_TSM)              += tsm-core.o
- obj-$(CONFIG_TSM_GUEST)                += guest/
-+obj-y                          += tdx-tsm/
-diff --git a/drivers/virt/coco/tdx-tsm/Kconfig b/drivers/virt/coco/tdx-tsm/Kconfig
-new file mode 100644
-index 000000000000..768175f8bb2c
---- /dev/null
-+++ b/drivers/virt/coco/tdx-tsm/Kconfig
-@@ -0,0 +1,2 @@
-+config TDX_TSM_BUS
-+       bool
-diff --git a/drivers/virt/coco/tdx-tsm/Makefile b/drivers/virt/coco/tdx-tsm/Makefile
-new file mode 100644
-index 000000000000..09f0ac08988a
---- /dev/null
-+++ b/drivers/virt/coco/tdx-tsm/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_TDX_TSM_BUS) += tdx-tsm-bus.o
+Introduced by commit
 
----
+  c2d288f7ab13 ("kho: add test for kexec handover")
 
-And put the tdx_subsys_init() in tdx-tsm-bus.c. We need to move host
-specific initializations out of tdx_subsys_init(), e.g. seamldr_group &
-seamldr fw upload.
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
-Yilun
+--Sig_/m4M2kWq1RvIn2Wymz=oPA9K
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIVXoACgkQAVBC80lX
+0GyS+QgApmoBM+z5h+OwB/PKI0BOrtfzWW9YpJyMWAqhpr6EYXL0OcHSqIqwwk6L
+zZ5ywQbWo5XSsY3KuNxgnLvrb3aGM1pVHzsVoQJu29Evt4rLgrMjVVV0ATIs/1QN
+pxu42oWMwIJQZ7HoIxTgh07OecKhWwqiJ1Dmhv3gP2QccESVsTLSJ+lAvCGGd30S
+YZ+SzdslqtL9UCf64e1iTpCCtWAlO8hVx3+l81JS6/8wegJLpIROpbiMS+9/El33
+/Kg4TrziUxoUUHzdpIxPLPHmGPkPRpKfM0lW4OFtQdnF4o14kB7UOkyTW8H9GBeM
+fQ1bcLz9ge+uNgGfWNwHz31LuMHEbQ==
+=LIrx
+-----END PGP SIGNATURE-----
+
+--Sig_/m4M2kWq1RvIn2Wymz=oPA9K--
 
