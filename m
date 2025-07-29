@@ -1,166 +1,122 @@
-Return-Path: <linux-kernel+bounces-750007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A114B155D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:16:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66FDAB155D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:17:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71A82560B9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:16:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AFEE560B22
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95096286408;
-	Tue, 29 Jul 2025 23:16:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A36A28540B;
+	Tue, 29 Jul 2025 23:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="N2Etk7G4"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jxiaJ71q"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3E327F00F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2742905;
+	Tue, 29 Jul 2025 23:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753830995; cv=none; b=SEkrHCBWPPbLTTBbajqX/wGpSkx8yFmS3+UxUUYYjtie2GgvlaCqYAG82sd585b90Jb0+NltiZiRzdUiyEmYFhuaorHH7OrNuF9NcP++rNe6FN9Hv6XxlFg5l9DHNFX9MkHbWMQC1DjbJuTmLRId+16fR+AMYj0zGNnM8paDTok=
+	t=1753831054; cv=none; b=q5W9eBRcpiy4o6IS92EO2JEomBRAFOU6DGY5YLF3yg2UkLKY7m00gnUUyH1U0J4eptJoYiUNOkuBFe+ON5MMbZVyPnpSWsai2k/A6uG/aivazS8VnCwM8MNDXmGCAcXm3UNo9KZqQVA6T35bOt4rAuQoZFZAm3gKageVEB2gmA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753830995; c=relaxed/simple;
-	bh=bq2RlWHsFjj3W7R7JIUlOjH7x9ItqrAb031ifSmshcc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q/4sIi7jGK8LvXc9/gIIBUTHAomUDAmFUMHdjrE3xpNvhh5xnpd+0ls8p4zFofnTggqRxEXDaXA70CHGJMup3vZJ4RgC4UdfC9wa5O7TF6vAC9y+VuXExIDvREk244NIOrJXDs1DpJzGF+xQ09j0ID1ZgV01FReEaWu/dHFqOSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=N2Etk7G4; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab9ba884c6so5225151cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1753830992; x=1754435792; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8wQLLnlIOT2tj87satzYfNp/smzLn3IXRBaMhgwLr/E=;
-        b=N2Etk7G4Xi8hSlqlf89KDSnUG2poyLfgf+GT19Utfp7E9xQQIKf7SDwmWUGpNMAf63
-         4FVmff2yAYU0qMxgXNkt4G3yQ841Q/Hu8wrk2ukqb2h5RiW/HH2djbrBBVg4h4NfYs3X
-         Fj8JArGKdu96S5HjS6uHaBoMdr/aaXRQnvnKLTmyY6kUFsVmnW/AC3COA7iLAqkY8QVh
-         7wWcqRvbWVMICrwfHS+nj9vF6rnyDAJFGm/fTLfDA18t6sGV8FnFIV2bYfsobF2npCqs
-         hvVjq9I9gAufg5GYmpsheT1UIGoNeoHK6mmgaJ1Q73pFU9MUy/4zBbbMvkrnvGhkl1zc
-         3MLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753830992; x=1754435792;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8wQLLnlIOT2tj87satzYfNp/smzLn3IXRBaMhgwLr/E=;
-        b=Q5tzJH7A3WAwD4nUuWJwRnGTutchgxYNsKXsM3OVdaLMe2F5sJm17oJ0iizGxLPGmr
-         Sa2g5Ka9HbEyAh8hhtIPxsdbvQeuV22OBgyDfpQH2NvXFJCP65yCynvsIliS+FpgYJ51
-         P1N2MlscJiI3g8yLXUpIDD0O1Ocj3QByGmx2do+qsnC8vZLJEiEP3J7bV6oEz55b6CNs
-         0jZI/mDHj5tdJRWWGR8LRHzr9D/ep08m2++bztMddLfBKSI3pXKrpwbPrdqVORwnRAT/
-         Py6naPebOPUDjBWxKbqEQ+tiOVie7LTbU7kR4T7iXPRHbOfKsxuJct5OXEmu/JoKmWyl
-         vKLw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7Q+3Th2YgBGBZ0OJ+A4a5gUIaIl7AUtDsIUbS6bCbxPGLl9zHGpF/5V5jKclI9whPSywaeB2mdRraeFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmTlQYgtRS0+fXH7qOKe0auYM8p13oAMUv1kBjraG69DxegWHu
-	rNbRLZszKn7v4mBAXel+luz+SmM7SD2sIuak1u72qlqgQBO7PmYXiRsl+RDw0bkvXs0=
-X-Gm-Gg: ASbGncteEj8OTqPjTWWOpMTxGTqIpp7USBQq16j5I9eeg7kB/JXZukOOqOdaDSnke7M
-	BrvGdBQgQeo4k2YT+yOem0jHo56BAkG/ZpU91eTx/eWQQZnHiT7Otkr0XMCU1uNOBDr3mWMASCl
-	VmVOURmb+fS1TG6OpbLdpXJ4BOjWmOflUEHCQ47rhoEhZo3HrxuqpfVaEL0SuUlvgsfcn9SRoi4
-	vzJRzKNU6GTaWqoigKcujP7v1Lu5VbbR0PvhS9YfwJwwmLYCCshve8U/VdwGeUrZNlV3lBXGb8V
-	UE/nmon8dGRVSTQ/DYMnhwsQbwuM73/7vYbVsOPP9vzekCDC1TY9c7uAdGGutBaczX5x/0Sjutv
-	2bhgl7ZjCOTeI1mlKfjGTtcCELlbrMcFgG8Mvdxckzzbwc7Z8UMsV0IGlaQM/yp8MsRrf
-X-Google-Smtp-Source: AGHT+IEwE6N4arL2Nfp7kwi5xzmxE5rT1vejHQ7TsbwA2ZmSnSBM/dGl+o0EjInQ6KuJFac70KrvZQ==
-X-Received: by 2002:ac8:5846:0:b0:4ab:552a:fac9 with SMTP id d75a77b69052e-4aedc4361f2mr22773811cf.10.1753830992101;
-        Tue, 29 Jul 2025 16:16:32 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae9963b732sm55042891cf.39.2025.07.29.16.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 16:16:31 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1ugtYd-00000000Meu-02WY;
-	Tue, 29 Jul 2025 20:16:31 -0300
-Date: Tue, 29 Jul 2025 20:16:30 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 07/38] iommufd/viommu: Add support to associate
- viommu with kvm instance
-Message-ID: <20250729231630.GI26511@ziepe.ca>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-8-aneesh.kumar@kernel.org>
- <20250729172621.00006344@huawei.com>
+	s=arc-20240116; t=1753831054; c=relaxed/simple;
+	bh=Mu9mHskU7ZW9p+bBmWaxHhowEXIMrWxTcX4EPT6523Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wz20jpJ8UJksRKOJYTAdDnHdW0hLoTEDDrm7qhIPc8JcvsKBtYEmZfaPzvLqoRiRZK111dZhqupTphJsE3BwQ5bUmHpnmvIWkpiTTl9hWE93SP3gE++vrplAtURb36uNB4QHkY70HEICLYBVW28BuPA2PCicaGJYRfnoNF3xdBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jxiaJ71q; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753830836;
+	bh=Dawg1OG80cS3bwzcEkZDEaug1zPi1A+LSM7b4WH3x/8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jxiaJ71qJKq3E6+mUbuTepc354gNdwoDSMB6BJfxvTABXmpeOuzyJIX85InKTfwxv
+	 /dXLv0Gu6P9hNxYfaqOTeb/D/Q+mBlfKP9SbI1HtJ035kVkZsViQDWaOxb69bUJ5/W
+	 HqYbZ5dlt8NeUmgOKm0lBkW5q6ohRf/SdbIMQXXKe7/PthuSJo42H/LtbEzz3+irpZ
+	 sfsHtXrnQfqrvJuA3RsglPYAL2fZQS+qPYAqM9EsDSlsa7yil6kPiwgjaCRNw32KCD
+	 8OoCB80Rfb+pkc+BVbICpq9foYiFY4B6evoNkzBRzJAtw9XM2zYI8wgv7aWFL4/xuf
+	 5/ylQ5zdJVPDA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsB440qycz4w2N;
+	Wed, 30 Jul 2025 09:13:56 +1000 (AEST)
+Date: Wed, 30 Jul 2025 09:17:29 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>
+Subject: Re: linux-next: manual merge of the mfd tree with the input tree
+Message-ID: <20250730091729.1154b5ee@canb.auug.org.au>
+In-Reply-To: <20250703140155.1e118ece@canb.auug.org.au>
+References: <20250703140155.1e118ece@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729172621.00006344@huawei.com>
+Content-Type: multipart/signed; boundary="Sig_/0CJwmDI0YrOTZkT2baBjAE4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Jul 29, 2025 at 05:26:21PM +0100, Jonathan Cameron wrote:
-> On Mon, 28 Jul 2025 19:21:44 +0530
-> "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
-> 
-> > The associated kvm instance will be used in later patch by iommufd to
-> > bind a tdi to kvm.
-> > 
-> > Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> > ---
-> >  drivers/iommu/iommufd/viommu.c | 45 +++++++++++++++++++++++++++++++++-
-> >  include/linux/iommufd.h        |  3 +++
-> >  include/uapi/linux/iommufd.h   | 12 +++++++++
-> >  3 files changed, 59 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> > index 2ca5809b238b..59f1e1176f7f 100644
-> > --- a/drivers/iommu/iommufd/viommu.c
-> > +++ b/drivers/iommu/iommufd/viommu.c
-> > @@ -2,6 +2,36 @@
-> >  /* Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES
-> >   */
-> >  #include "iommufd_private.h"
-> > +#include "linux/tsm.h"
-> > +
-> > +#if IS_ENABLED(CONFIG_KVM)
-> > +#include <linux/kvm_host.h>
-> > +
-> > +static int viommu_get_kvm(struct iommufd_viommu *viommu, int kvm_vm_fd)
-> > +{
-> > +	int rc = -EBADF;
-> > +	struct file *filp;
-> > +
-> > +	filp = fget(kvm_vm_fd);
-> > +
-> > +	if (!file_is_kvm(filp))
-> > +		goto err_out;
-> > +
-> > +	/* hold the kvm reference via file descriptor */
-> > +	viommu->kvm_filp = filp;
-> > +	return 0;
-> > +err_out:
-> > +	viommu->kvm_filp = NULL;
-> 
-> Is this to undo side effects from this function on error?
-> 
-> kvm_filp is only set after all error paths so maybe this isn't
-> needed?
+--Sig_/0CJwmDI0YrOTZkT2baBjAE4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Looks like you are right to me
+Hi all,
 
-> If this isn't needed then use __free(fput) and no_free_ptr() to
-> deal with filp more simply and in teh erorr path can just return -EBADF
-> directly rather than the goto.
-> 
-> Or are we avoiding that stuff in iommufd?
+On Thu, 3 Jul 2025 14:01:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the mfd tree got a conflict in:
+>=20
+>   drivers/input/keyboard/adp5589-keys.c
+>=20
+> between commit:
+>=20
+>   43a8440f3969 ("Input: adp5589 - use new GPIO line value setter callback=
+s")
+>=20
+> from the input tree and commit:
+>=20
+>   3bdbd0858df6 ("Input: adp5589: remove the driver")
+>=20
+> from the mfd tree.
+>=20
+> I fixed it up (I just removed the file) and can carry the fix as
+> necessary. This is now fixed as far as linux-next is concerned, but any
+> non trivial conflicts should be mentioned to your upstream maintainer
+> when your tree is submitted for merging.  You may also want to consider
+> cooperating with the maintainer of the conflicting tree to minimise any
+> particularly complex conflicts.
 
-Nope, gentle obvious use is fine :)
+This is now a conflict between the input tree and Linus' tree.
 
-Jason
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0CJwmDI0YrOTZkT2baBjAE4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiJVokACgkQAVBC80lX
+0Gyg5Qf/YDS+amemm63Al9DPMf6uutOeAS3pf6m1IrS8FLUSXMgW7UbXGcp2GsWA
+U9/HIF3UsFTJ4jb8LSSlTfDCrGUZ/bMIf+4JBTQhZgj1JEsxt2DGjtciPVUCTVbm
+3n4/fEZR5e7DpdobX49nK1Fzu5tQcxHR4vfySmNHwbfHoxTRnxenU4TFfaWlbz8A
+vWQZnRKrXK8cxAJJ6xUHQh4lllDvxB44MAdmJTpWaN6UjKYm102wUoLuSnjTp1V+
+/+8ijiGBNKcHU47+oZOtULSNag8CICfLIMqA13q8IKs0UacEi0geFyj6mpR4T2xg
+7ytsKGnsFSI/HoBEMe/nzsnWJqJvRA==
+=fsRm
+-----END PGP SIGNATURE-----
+
+--Sig_/0CJwmDI0YrOTZkT2baBjAE4--
 
