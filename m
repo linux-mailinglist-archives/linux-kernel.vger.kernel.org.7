@@ -1,122 +1,470 @@
-Return-Path: <linux-kernel+bounces-749255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA1CB14C03
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:15:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF68AB14C08
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F28F4E6D1D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:15:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B1873A64C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38D3289346;
-	Tue, 29 Jul 2025 10:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28F6288C39;
+	Tue, 29 Jul 2025 10:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZRm++n9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VJtr3Kxs";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HaNrvSDI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ZB0oNNi9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MzF+ilWB"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157131D54F7;
-	Tue, 29 Jul 2025 10:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4093287253
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:16:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753784134; cv=none; b=eeePFRnDLWZHxkAlSNz9Au7hp1xmAEACyaKPEfZ69oVsLHLTFd7Cw9IsqSFpzgDFU0AZAqw6OXb/jehNzCdLzsmMJ8arcxmiFFbcwnHkFyNvrxvw1nwCiPe9nwO90V/tuKMubjH6K6iDwW0z2BqXtzWlhePqxiW3MpVNsBcThXM=
+	t=1753784214; cv=none; b=IF4zK4ZiN4JP2ekty122tPDWDkgY6t7zHZ0wEk0/9Pf2QYdTggEtWkimLKwuUAWhhOElvaOl9+ci/7VK34S4Nx9w0ttafYscaK7dGh1s6L/n2ryUnt84gppIlmeTyKnR6dyCy3USuV1A0d436zDogtQ4Rjbwsk5CXAw5xdNgdCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753784134; c=relaxed/simple;
-	bh=L0YRy8jHpIrww9oOg8kDytmNf+kzFY60V1Yp5wcWr1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=DboqiMvOfNP3nWHJwoBs8bix1EtlzpTixEF1f4e25vhubGv0OhZX3CbA3K+hMnoB5s0lmbuO6fL1F+NU6+QuosNoHdKkEeERzmQFfNGT4D+QWyrBtgt2vEsC5lhG3NAzxTr4fIMcJYmZPc9D8z9dG+7ioNGhzL3tiikfOjbqzBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZRm++n9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 786CEC4CEEF;
-	Tue, 29 Jul 2025 10:15:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753784133;
-	bh=L0YRy8jHpIrww9oOg8kDytmNf+kzFY60V1Yp5wcWr1I=;
-	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
-	b=dZRm++n9Fi5uX9c5qiSa4x2loGBo+6goCRce5nsaedbyru1d8dM2SMyGi2CXDFvCE
-	 0DWrvBNcuEES423fwtoKdlslyJoABgKbTGsiuHam/5PvDYc4Gk5VLKh5wkpMzDmEq/
-	 Fqj/6HGJADYch8mYm7bVPwf1TdnegTn0eELBk1dq9zirM6iUt3/EqYtCj1pVZs00tA
-	 C52Fdo597Z2C9/Y42E6FJYPm4CFAnTJ4irxXCpVMHakmgx0u9vWBAMQGYXGxrxkX42
-	 414PLsirOO2/so/nfBOFDFEGbA/1Ah7XGKSdv+dur/wMFsAXDWg++KgxY0TTSgUhwM
-	 EMTc0/0iR9rkA==
-Message-ID: <73add9b2-2155-4c4f-92bb-8166138b226b@kernel.org>
-Date: Tue, 29 Jul 2025 12:15:23 +0200
+	s=arc-20240116; t=1753784214; c=relaxed/simple;
+	bh=xElxQ5puQJFTTINIjRXYJq3D+WGt+7tbh1FN4iFIX6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W0Ewlfn93t+eZ1vP5B1iVbDE5IfCMZRCExQEkQepIjjGC6o9fA8wi9LR/22UFUsibwbPWEvLDLv/RCnptuwpqKRn4jGV5q6qQofxCynkCSPm+Ibi4hs3zQAHLgq64EfqPuX7ylRni4yYaWZ1UE8loNjgfJTmb1ejYnWsZqHwEzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VJtr3Kxs; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HaNrvSDI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ZB0oNNi9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MzF+ilWB; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D04091F80D;
+	Tue, 29 Jul 2025 10:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753784211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ugx6lDwYiDI3+wBxQFwOQtjjnepeEoUkCI5Yq12M4MM=;
+	b=VJtr3KxslqXb/fKNsAweLjkwE7yMykWjtKO6vSqpRufqxf9naG2hmH39caVDI9Nnd8TbTi
+	OZwzke+ttCW+wWdZBePfG+SiXp4E++zdbW4cakWRsdE7fDjEtGgjsLsmLh5d3Og2R6EsGk
+	PF/LgkVhroNEiS/2FKZQx/ZeyWueMao=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753784211;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ugx6lDwYiDI3+wBxQFwOQtjjnepeEoUkCI5Yq12M4MM=;
+	b=HaNrvSDIO9ic5qD16JtlYTfq60JnqQqQlGWe2EQysIOK5wk80j05Qck8z275udtXcFjVqy
+	jMoqLNlNhn8qXTCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753784210; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ugx6lDwYiDI3+wBxQFwOQtjjnepeEoUkCI5Yq12M4MM=;
+	b=ZB0oNNi9FJhZLOBuBLLQi18J3CmxcxRCP8kcuIaoei4/RNdQSbg+ARBJZ6ntkR0zXy6ncN
+	xTU/yL4yZK4e4MIuJFohh1afQoADT+JrMTKfY3R6/uLZe4GXY5damMeQ3HciHmWQmuw+lj
+	msn3QtOmJk+bMwG+LrfSBLAXC1O9Ir4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753784210;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ugx6lDwYiDI3+wBxQFwOQtjjnepeEoUkCI5Yq12M4MM=;
+	b=MzF+ilWBZPvrt2GYZuUsVYPmwZbgQ4l8aC7m4Dwy0eJzLGCy5LnvH+1u8klwWyCbyAYlZU
+	AMI8Vj8FGFABkCCQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A95B813A73;
+	Tue, 29 Jul 2025 10:16:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mbIHKZKfiGiwXwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 29 Jul 2025 10:16:50 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4401FA09DE; Tue, 29 Jul 2025 12:16:50 +0200 (CEST)
+Date: Tue, 29 Jul 2025 12:16:50 +0200
+From: Jan Kara <jack@suse.cz>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, axboe@kernel.dk, akpm@linux-foundation.org, 
+	yang.yang@vivo.com, dlemoal@kernel.org, ming.lei@redhat.com, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai3@huawei.com, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com, 
+	Omar Sandoval <osandov@fb.com>
+Subject: Re: [PATCH v2 1/2] lib/sbitmap: convert shallow_depth from one word
+ to the whole sbitmap
+Message-ID: <ozjsdoiqa2uem65qqj4fjbrwm6toxlj5bzv7f5dg5xfiljv3zi@wcaamboo2r6h>
+References: <20250729031906.3615228-1-yukuai1@huaweicloud.com>
+ <20250729031906.3615228-2-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] net: mana: Use page pool fragments for RX buffers
- instead of full pages to improve memory efficiency.
-To: Dipayaan Roy <dipayanroy@linux.microsoft.com>, horms@kernel.org,
- kuba@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
- wei.liu@kernel.org, decui@microsoft.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- longli@microsoft.com, kotaranov@microsoft.com, ast@kernel.org,
- daniel@iogearbox.net, john.fastabend@gmail.com, sdf@fomichev.me,
- lorenzo@kernel.org, michal.kubiak@intel.com, ernis@linux.microsoft.com,
- shradhagupta@linux.microsoft.com, shirazsaleem@microsoft.com,
- rosenp@gmail.com, netdev@vger.kernel.org, linux-hyperv@vger.kernel.org,
- linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org, ssengar@linux.microsoft.com,
- dipayanroy@microsoft.com
-References: <20250723190706.GA5291@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Language: en-US
-Cc: Chris Arges <carges@cloudflare.com>,
- kernel-team <kernel-team@cloudflare.com>, Tariq Toukan <tariqt@nvidia.com>,
- Saeed Mahameed <saeedm@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>,
- Yunsheng Lin <linyunsheng@huawei.com>
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <20250723190706.GA5291@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729031906.3615228-2-yukuai1@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-
-
-On 23/07/2025 21.07, Dipayaan Roy wrote:
-> This patch enhances RX buffer handling in the mana driver by allocating
-> pages from a page pool and slicing them into MTU-sized fragments, rather
-> than dedicating a full page per packet. This approach is especially
-> beneficial on systems with large page sizes like 64KB.
+On Tue 29-07-25 11:19:05, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Key improvements:
+> Currently elevators will record internal 'async_depth' to throttle
+> asynchronous requests, and they both calculate shallow_dpeth based on
+> sb->shift, with the respect that sb->shift is the available tags in one
+> word.
 > 
-> - Proper integration of page pool for RX buffer allocations.
-> - MTU-sized buffer slicing to improve memory utilization.
-> - Reduce overall per Rx queue memory footprint.
-> - Automatic fallback to full-page buffers when:
->     * Jumbo frames are enabled (MTU > PAGE_SIZE / 2).
->     * The XDP path is active, to avoid complexities with fragment reuse.
-> - Removal of redundant pre-allocated RX buffers used in scenarios like MTU
->    changes, ensuring consistency in RX buffer allocation.
+> However, sb->shift is not the availbale tags in the last word, see
+> __map_depth:
 > 
-> Testing on VMs with 64KB pages shows around 200% throughput improvement.
-> Memory efficiency is significantly improved due to reduced wastage in page
-> allocations. Example: We are now able to fit 35 rx buffers in a single 64kb
-> page for MTU size of 1500, instead of 1 rx buffer per page previously.
+> if (index == sb->map_nr - 1)
+>   return sb->depth - (index << sb->shift);
 > 
-> Tested:
+> For consequence, if the last word is used, more tags can be get than
+> expected, for example, assume nr_requests=256 and there are four words,
+> in the worst case if user set nr_requests=32, then the first word is
+> the last word, and still use bits per word, which is 64, to calculate
+> async_depth is wrong.
 > 
-> - iperf3, iperf2, and nttcp benchmarks.
-> - Jumbo frames with MTU 9000.
-> - Native XDP programs (XDP_PASS, XDP_DROP, XDP_TX, XDP_REDIRECT) for
->    testing the XDP path in driver.
-> - Page leak detection (kmemleak).
-> - Driver load/unload, reboot, and stress scenarios.
+> One the other hand, due to cgroup qos, bfq can allow only one request
+> to be allocated, and set shallow_dpeth=1 will still allow the number
+> of words request to be allocated.
+> 
+> Fix this problems by using shallow_depth to the whole sbitmap instead
+> of per word, also change kyber, mq-deadline and bfq to follow this.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 
-Chris (Cc) discovered a crash/bug[1] with page pool fragments used from 
-the mlx5 driver.
-He put together a BPF program that reproduces the issue here:
-- [2] https://github.com/arges/xdp-redirector
+I agree with these problems but AFAIU this implementation of shallow depth
+has been done for a reason. Omar can chime in here as the original author
+or perhaps Jens but the idea of current shallow depth implementation is
+that each sbitmap user regardless of used shallow depth has a chance to
+allocate from each sbitmap word which evenly distributes pressure among
+available sbitmap words. With the implementation you've chosen there will
+be higher pressure (and thus contention) on words with low indices.
 
-Can I ask you to test that your driver against this reproducer?
+So I think we would be good to fix issues with shallow depth for small
+number of sbitmap words (because that's where these buggy cornercases may
+matter in practice) but I believe the logic which constrains number of used
+bits from each *word* when shallow_depth is specified should be kept.  It
+might make sense to change the API so that shallow_depth is indeed
+specified compared to the total size of the bitmap, not to the size of the
+word (because that's confusing practically everybody I've met and is a
+constant source of bugs) if it can be made to perform well.
 
+								Honza
 
-[1] https://lore.kernel.org/all/aIEuZy6fUj_4wtQ6@861G6M3/
-
---Jesper
-
+> ---
+>  block/bfq-iosched.c     | 35 ++++++++++++--------------
+>  block/bfq-iosched.h     |  3 +--
+>  block/kyber-iosched.c   |  9 ++-----
+>  block/mq-deadline.c     | 16 +-----------
+>  include/linux/sbitmap.h |  6 ++---
+>  lib/sbitmap.c           | 55 +++++++++++++++++++++--------------------
+>  6 files changed, 51 insertions(+), 73 deletions(-)
+> 
+> diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+> index f71ec0887733..a6a574a8eac9 100644
+> --- a/block/bfq-iosched.c
+> +++ b/block/bfq-iosched.c
+> @@ -694,17 +694,13 @@ static void bfq_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
+>  {
+>  	struct bfq_data *bfqd = data->q->elevator->elevator_data;
+>  	struct bfq_io_cq *bic = bfq_bic_lookup(data->q);
+> -	int depth;
+> -	unsigned limit = data->q->nr_requests;
+> -	unsigned int act_idx;
+> +	unsigned int limit, act_idx;
+>  
+>  	/* Sync reads have full depth available */
+> -	if (op_is_sync(opf) && !op_is_write(opf)) {
+> -		depth = 0;
+> -	} else {
+> -		depth = bfqd->word_depths[!!bfqd->wr_busy_queues][op_is_sync(opf)];
+> -		limit = (limit * depth) >> bfqd->full_depth_shift;
+> -	}
+> +	if (op_is_sync(opf) && !op_is_write(opf))
+> +		limit = data->q->nr_requests;
+> +	else
+> +		limit = bfqd->async_depths[!!bfqd->wr_busy_queues][op_is_sync(opf)];
+>  
+>  	for (act_idx = 0; bic && act_idx < bfqd->num_actuators; act_idx++) {
+>  		/* Fast path to check if bfqq is already allocated. */
+> @@ -718,14 +714,16 @@ static void bfq_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
+>  		 * available requests and thus starve other entities.
+>  		 */
+>  		if (bfqq_request_over_limit(bfqd, bic, opf, act_idx, limit)) {
+> -			depth = 1;
+> +			limit = 1;
+>  			break;
+>  		}
+>  	}
+> +
+>  	bfq_log(bfqd, "[%s] wr_busy %d sync %d depth %u",
+> -		__func__, bfqd->wr_busy_queues, op_is_sync(opf), depth);
+> -	if (depth)
+> -		data->shallow_depth = depth;
+> +		__func__, bfqd->wr_busy_queues, op_is_sync(opf), limit);
+> +
+> +	if (limit < data->q->nr_requests)
+> +		data->shallow_depth = limit;
+>  }
+>  
+>  static struct bfq_queue *
+> @@ -7114,9 +7112,8 @@ void bfq_put_async_queues(struct bfq_data *bfqd, struct bfq_group *bfqg)
+>   */
+>  static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
+>  {
+> -	unsigned int depth = 1U << bt->sb.shift;
+> +	unsigned int nr_requests = bfqd->queue->nr_requests;
+>  
+> -	bfqd->full_depth_shift = bt->sb.shift;
+>  	/*
+>  	 * In-word depths if no bfq_queue is being weight-raised:
+>  	 * leaving 25% of tags only for sync reads.
+> @@ -7128,13 +7125,13 @@ static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
+>  	 * limit 'something'.
+>  	 */
+>  	/* no more than 50% of tags for async I/O */
+> -	bfqd->word_depths[0][0] = max(depth >> 1, 1U);
+> +	bfqd->async_depths[0][0] = max(nr_requests >> 1, 1U);
+>  	/*
+>  	 * no more than 75% of tags for sync writes (25% extra tags
+>  	 * w.r.t. async I/O, to prevent async I/O from starving sync
+>  	 * writes)
+>  	 */
+> -	bfqd->word_depths[0][1] = max((depth * 3) >> 2, 1U);
+> +	bfqd->async_depths[0][1] = max((nr_requests * 3) >> 2, 1U);
+>  
+>  	/*
+>  	 * In-word depths in case some bfq_queue is being weight-
+> @@ -7144,9 +7141,9 @@ static void bfq_update_depths(struct bfq_data *bfqd, struct sbitmap_queue *bt)
+>  	 * shortage.
+>  	 */
+>  	/* no more than ~18% of tags for async I/O */
+> -	bfqd->word_depths[1][0] = max((depth * 3) >> 4, 1U);
+> +	bfqd->async_depths[1][0] = max((nr_requests * 3) >> 4, 1U);
+>  	/* no more than ~37% of tags for sync writes (~20% extra tags) */
+> -	bfqd->word_depths[1][1] = max((depth * 6) >> 4, 1U);
+> +	bfqd->async_depths[1][1] = max((nr_requests * 6) >> 4, 1U);
+>  }
+>  
+>  static void bfq_depth_updated(struct blk_mq_hw_ctx *hctx)
+> diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
+> index 687a3a7ba784..31217f196f4f 100644
+> --- a/block/bfq-iosched.h
+> +++ b/block/bfq-iosched.h
+> @@ -813,8 +813,7 @@ struct bfq_data {
+>  	 * Depth limits used in bfq_limit_depth (see comments on the
+>  	 * function)
+>  	 */
+> -	unsigned int word_depths[2][2];
+> -	unsigned int full_depth_shift;
+> +	unsigned int async_depths[2][2];
+>  
+>  	/*
+>  	 * Number of independent actuators. This is equal to 1 in
+> diff --git a/block/kyber-iosched.c b/block/kyber-iosched.c
+> index 4dba8405bd01..bfd9a40bb33d 100644
+> --- a/block/kyber-iosched.c
+> +++ b/block/kyber-iosched.c
+> @@ -157,10 +157,7 @@ struct kyber_queue_data {
+>  	 */
+>  	struct sbitmap_queue domain_tokens[KYBER_NUM_DOMAINS];
+>  
+> -	/*
+> -	 * Async request percentage, converted to per-word depth for
+> -	 * sbitmap_get_shallow().
+> -	 */
+> +	/* Number of allowed async requests. */
+>  	unsigned int async_depth;
+>  
+>  	struct kyber_cpu_latency __percpu *cpu_latency;
+> @@ -454,10 +451,8 @@ static void kyber_depth_updated(struct blk_mq_hw_ctx *hctx)
+>  {
+>  	struct kyber_queue_data *kqd = hctx->queue->elevator->elevator_data;
+>  	struct blk_mq_tags *tags = hctx->sched_tags;
+> -	unsigned int shift = tags->bitmap_tags.sb.shift;
+> -
+> -	kqd->async_depth = (1U << shift) * KYBER_ASYNC_PERCENT / 100U;
+>  
+> +	kqd->async_depth = hctx->queue->nr_requests * KYBER_ASYNC_PERCENT / 100U;
+>  	sbitmap_queue_min_shallow_depth(&tags->bitmap_tags, kqd->async_depth);
+>  }
+>  
+> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> index 2edf1cac06d5..9ab6c6256695 100644
+> --- a/block/mq-deadline.c
+> +++ b/block/mq-deadline.c
+> @@ -487,20 +487,6 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>  	return rq;
+>  }
+>  
+> -/*
+> - * 'depth' is a number in the range 1..INT_MAX representing a number of
+> - * requests. Scale it with a factor (1 << bt->sb.shift) / q->nr_requests since
+> - * 1..(1 << bt->sb.shift) is the range expected by sbitmap_get_shallow().
+> - * Values larger than q->nr_requests have the same effect as q->nr_requests.
+> - */
+> -static int dd_to_word_depth(struct blk_mq_hw_ctx *hctx, unsigned int qdepth)
+> -{
+> -	struct sbitmap_queue *bt = &hctx->sched_tags->bitmap_tags;
+> -	const unsigned int nrr = hctx->queue->nr_requests;
+> -
+> -	return ((qdepth << bt->sb.shift) + nrr - 1) / nrr;
+> -}
+> -
+>  /*
+>   * Called by __blk_mq_alloc_request(). The shallow_depth value set by this
+>   * function is used by __blk_mq_get_tag().
+> @@ -517,7 +503,7 @@ static void dd_limit_depth(blk_opf_t opf, struct blk_mq_alloc_data *data)
+>  	 * Throttle asynchronous requests and writes such that these requests
+>  	 * do not block the allocation of synchronous requests.
+>  	 */
+> -	data->shallow_depth = dd_to_word_depth(data->hctx, dd->async_depth);
+> +	data->shallow_depth = dd->async_depth;
+>  }
+>  
+>  /* Called by blk_mq_update_nr_requests(). */
+> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
+> index 189140bf11fc..4adf4b364fcd 100644
+> --- a/include/linux/sbitmap.h
+> +++ b/include/linux/sbitmap.h
+> @@ -213,12 +213,12 @@ int sbitmap_get(struct sbitmap *sb);
+>   * sbitmap_get_shallow() - Try to allocate a free bit from a &struct sbitmap,
+>   * limiting the depth used from each word.
+>   * @sb: Bitmap to allocate from.
+> - * @shallow_depth: The maximum number of bits to allocate from a single word.
+> + * @shallow_depth: The maximum number of bits to allocate from the bitmap.
+>   *
+>   * This rather specific operation allows for having multiple users with
+>   * different allocation limits. E.g., there can be a high-priority class that
+>   * uses sbitmap_get() and a low-priority class that uses sbitmap_get_shallow()
+> - * with a @shallow_depth of (1 << (@sb->shift - 1)). Then, the low-priority
+> + * with a @shallow_depth of (sb->depth >> 1). Then, the low-priority
+>   * class can only allocate half of the total bits in the bitmap, preventing it
+>   * from starving out the high-priority class.
+>   *
+> @@ -478,7 +478,7 @@ unsigned long __sbitmap_queue_get_batch(struct sbitmap_queue *sbq, int nr_tags,
+>   * sbitmap_queue, limiting the depth used from each word, with preemption
+>   * already disabled.
+>   * @sbq: Bitmap queue to allocate from.
+> - * @shallow_depth: The maximum number of bits to allocate from a single word.
+> + * @shallow_depth: The maximum number of bits to allocate from the queue.
+>   * See sbitmap_get_shallow().
+>   *
+>   * If you call this, make sure to call sbitmap_queue_min_shallow_depth() after
+> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+> index d3412984170c..f2e90ac6b56e 100644
+> --- a/lib/sbitmap.c
+> +++ b/lib/sbitmap.c
+> @@ -208,8 +208,27 @@ static int sbitmap_find_bit_in_word(struct sbitmap_word *map,
+>  	return nr;
+>  }
+>  
+> +static unsigned int __map_depth_with_shallow(const struct sbitmap *sb,
+> +					     int index,
+> +					     unsigned int shallow_depth)
+> +{
+> +	unsigned int lower_bound = 0;
+> +
+> +	if (shallow_depth >= sb->depth)
+> +		return __map_depth(sb, index);
+> +
+> +	if (index > 0)
+> +		lower_bound += (index - 1) << sb->shift;
+> +
+> +	if (shallow_depth <= lower_bound)
+> +		return 0;
+> +
+> +	return min_t(unsigned int, __map_depth(sb, index),
+> +				   shallow_depth - lower_bound);
+> +}
+> +
+>  static int sbitmap_find_bit(struct sbitmap *sb,
+> -			    unsigned int depth,
+> +			    unsigned int shallow_depth,
+>  			    unsigned int index,
+>  			    unsigned int alloc_hint,
+>  			    bool wrap)
+> @@ -218,12 +237,12 @@ static int sbitmap_find_bit(struct sbitmap *sb,
+>  	int nr = -1;
+>  
+>  	for (i = 0; i < sb->map_nr; i++) {
+> -		nr = sbitmap_find_bit_in_word(&sb->map[index],
+> -					      min_t(unsigned int,
+> -						    __map_depth(sb, index),
+> -						    depth),
+> -					      alloc_hint, wrap);
+> +		unsigned int depth = __map_depth_with_shallow(sb, index,
+> +							      shallow_depth);
+>  
+> +		if (depth)
+> +			nr = sbitmap_find_bit_in_word(&sb->map[index], depth,
+> +						      alloc_hint, wrap);
+>  		if (nr != -1) {
+>  			nr += index << sb->shift;
+>  			break;
+> @@ -406,27 +425,9 @@ EXPORT_SYMBOL_GPL(sbitmap_bitmap_show);
+>  static unsigned int sbq_calc_wake_batch(struct sbitmap_queue *sbq,
+>  					unsigned int depth)
+>  {
+> -	unsigned int wake_batch;
+> -	unsigned int shallow_depth;
+> -
+> -	/*
+> -	 * Each full word of the bitmap has bits_per_word bits, and there might
+> -	 * be a partial word. There are depth / bits_per_word full words and
+> -	 * depth % bits_per_word bits left over. In bitwise arithmetic:
+> -	 *
+> -	 * bits_per_word = 1 << shift
+> -	 * depth / bits_per_word = depth >> shift
+> -	 * depth % bits_per_word = depth & ((1 << shift) - 1)
+> -	 *
+> -	 * Each word can be limited to sbq->min_shallow_depth bits.
+> -	 */
+> -	shallow_depth = min(1U << sbq->sb.shift, sbq->min_shallow_depth);
+> -	depth = ((depth >> sbq->sb.shift) * shallow_depth +
+> -		 min(depth & ((1U << sbq->sb.shift) - 1), shallow_depth));
+> -	wake_batch = clamp_t(unsigned int, depth / SBQ_WAIT_QUEUES, 1,
+> -			     SBQ_WAKE_BATCH);
+> -
+> -	return wake_batch;
+> +	return clamp_t(unsigned int,
+> +		       min(depth, sbq->min_shallow_depth) / SBQ_WAIT_QUEUES,
+> +		       1, SBQ_WAKE_BATCH);
+>  }
+>  
+>  int sbitmap_queue_init_node(struct sbitmap_queue *sbq, unsigned int depth,
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
