@@ -1,157 +1,140 @@
-Return-Path: <linux-kernel+bounces-748755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E6EB145B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:17:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF765B145B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:20:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36BAD16E435
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:17:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE2A03A8C8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258E01C862E;
-	Tue, 29 Jul 2025 01:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2B31DE4C3;
+	Tue, 29 Jul 2025 01:19:52 +0000 (UTC)
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCD42E36E2;
-	Tue, 29 Jul 2025 01:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27401D618A;
+	Tue, 29 Jul 2025 01:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753751844; cv=none; b=cRcUKGbffugdZ4GbFGncpMIuviA3SDDUCHnlzYy8+0RGlHAjsuv72xAxcYh8D0sN9PWGIaqGnDP7uGdcnjc2wF97lZKHLZf94610X0jp8NclqgdHSnx0afOIbjDF5LPBygRlCNSGmZgnKsXNp5Gy78HJV2AvczNzol9zX/YuYl0=
+	t=1753751992; cv=none; b=Y/SsKNHDT41J8YGINVNekYYv1o/MoTfEb0v+EYabug8Cs1iFu6S2bW23ICMsdJ4AIQQFLuxAFLaHnlVjLqlaMs0bGMmWJF4giERLyv+uAqWfPFRqhQVllfDP0lvhm4qhpHHAPR2fIjyXRUgSf2UEGxpEFv4rPBjXLwMb86l4H0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753751844; c=relaxed/simple;
-	bh=jc90gW/XuTCxbBVJ2qSJinzr5efKOvWwANS1C3Ke07I=;
+	s=arc-20240116; t=1753751992; c=relaxed/simple;
+	bh=pv2t86bZQ/rELamMHgCjP+pHPtiplV7FkqeMSyQOgIo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Af8RPR18pifM0hFORsObwsODHvicQvzHflY1V9iEU1g32L0+7Iyens5h9GB6AvNVNvIRlkHaDlfJq+8D9qEVq10wR7za2BOdK6zZnlyUo/DV8DljfbjtXxCmbRLKuJAHlB3C+eq7XsUw3c7TYNjzYsR4jzB87+8YA4uMVCDGPMA=
+	 Content-Type:Content-Disposition:In-Reply-To; b=UlnAyxRV8utA4yqoQS0bgkXDqBZANPBcbILUhNUxw76eGiNqEzKTKN16DhUD2NpdkaY5iJrCdt6puPgL/DM9Svl0FE/2CgEFGy6uKbfWD2E8qtgBUkxmhSUFkeWqfofSjzW8ewjcRWjKmJ1sCMKIKozlqjOdylUp0XsgjurTh/M=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-5e-6888211def48
-Date: Tue, 29 Jul 2025 10:17:11 +0900
+X-AuditID: a67dfc5b-669ff7000002311f-64-688821b27ee0
+Date: Tue, 29 Jul 2025 10:19:41 +0900
 From: Byungchul Park <byungchul@sk.com>
 To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, hawk@kernel.org, toke@redhat.com,
-	kernel_team@skhynix.com
-Subject: Re: [RFC net-next] netmem: replace __netmem_clear_lsb() with
- netmem_to_nmdesc()
-Message-ID: <20250729011711.GE56089@system.software.com>
-References: <20250728042050.24228-1-byungchul@sk.com>
- <CAHS8izPv8zmPaxzCSPAnybiCc0KrqjEZA+x5wpFOE8u=_nM1WA@mail.gmail.com>
- <b239b40b-0abe-43a5-af41-346283a634f6@gmail.com>
- <087ca43a-49b7-40c9-915d-558075181fd1@gmail.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+	akpm@linux-foundation.org, david@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+	almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page
+ pool in page type
+Message-ID: <20250729011941.GA74655@system.software.com>
+References: <20250728052742.81294-1-byungchul@sk.com>
+ <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <087ca43a-49b7-40c9-915d-558075181fd1@gmail.com>
+In-Reply-To: <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LhesuzSFdWsSPD4HE3r8XqHxUWc1ZtY7SY
-	c76FxeLpsUfsFnvatzNbPOo/wWZxYVsfq8XlXXPYLI4tELP4dvoNo8Wlw49YHLg9tqy8yeSx
-	c9Zddo8Fm0o9Nq3qZPN4v+8qm8fnTXIBbFFcNimpOZllqUX6dglcGaenexX8Ea348vwLUwNj
-	i0AXIweHhICJxLxW9y5GTjBzcuMrdhCbRUBVYnf3WRYQm01AXeLGjZ/MILaIgLbE6+uHwGqY
-	BZqYJM62JYCMERaIkthyhAkkzCtgIbFh5jsgm4tDSOARo8SZ/a9YIRKCEidnPmGB6FWX+DPv
-	EjNIL7OAtMTyfxwQYXmJ5q2zwVZxCthKXNn5mRHEFhVQljiw7TjYTAmB22wS/1pbGSFulpQ4
-	uOIGywRGwVlIVsxCsmIWwopZSFYsYGRZxSiUmVeWm5iZY6KXUZmXWaGXnJ+7iREYM8tq/0Tv
-	YPx0IfgQowAHoxIPb0Zne4YQa2JZcWXuIUYJDmYlEd6CpW0ZQrwpiZVVqUX58UWlOanFhxil
-	OViUxHmNvpWnCAmkJ5akZqemFqQWwWSZODilGhiNSh4vYF14brFWkjtL+nSvzrznr9rKbZv/
-	+3K2btjgPVH8eP72Qx/Ovmrbt/uZesmlQ1USXx+pGxUa73xo8Hu/EWOy1KqfV87sfPrIgLOt
-	qPvZ+thXRzat21/z8lzl5ozox6pTF/AfKTnkpjAv/vODIuM3h83SL1z9d+avhVeCoH/x8Sil
-	lxwCSizFGYmGWsxFxYkAwgqUK5UCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsXC5WfdrCuj2JFhML/V0mL1jwqLOau2MVrM
-	Od/CYvH02CN2iz3t25ktHvWfYLM4PPckq8WFbX2sFpd3zWGzOLZAzOLb6TeMFpcOP2Jx4PHY
-	svImk8fOWXfZPRZsKvXYtKqTzeP9vqtsHotffGDy+LxJLoA9issmJTUnsyy1SN8ugSvj9HSv
-	gj+iFV+ef2FqYGwR6GLk5JAQMJGY3PiKHcRmEVCV2N19lgXEZhNQl7hx4ycziC0ioC3x+voh
-	sBpmgSYmibNtCV2MHBzCAlESW44wgYR5BSwkNsx8B2RzcQgJPGKUOLP/FStEQlDi5MwnLBC9
-	6hJ/5l1iBullFpCWWP6PAyIsL9G8dTbYKk4BW4krOz8zgtiiAsoSB7YdZ5rAyDcLyaRZSCbN
-	Qpg0C8mkBYwsqxhFMvPKchMzc0z1irMzKvMyK/SS83M3MQJjYFntn4k7GL9cdj/EKMDBqMTD
-	m9HZniHEmlhWXJl7iFGCg1lJhLdgaVuGEG9KYmVValF+fFFpTmrxIUZpDhYlcV6v8NQEIYH0
-	xJLU7NTUgtQimCwTB6dUA6OSe/AVzkyfd+3yJ6/Ufo/O7DafIaVr9b5iTcv+hluvl5ntFOLJ
-	/BQxcUXzvEmcZvPNC42iV65XdC19JedqJWjEa+OWWz9d1Pr7/Upp032iFhqqDyR7mK5uvzxj
-	UVm9Z23cZlOFugOOhxpFWR4yx5w9ZOpi/EK85f5jqXmdave5liecXl99QYmlOCPRUIu5qDgR
-	APUwEBN9AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0yTZxTH87zPe6Np42tB94jRZFW2pMvEC4lH3YVEPzzReItLpjM6mvGG
+	txGQFKygMSmODSXAiHdLmxQXBCpZWYtQtHSjYBEvUdiY3URANolXQHANFQNSL9Fvv/zOOf9z
+	PhwRa89z8aIxM0c2ZRrSdbyKVT1RV3zq/vCQsrhzJBFsrloezo3nQlW/lwObswHBs8htAaaa
+	gwjG2tp5eNQ6iuDnijAG240CFv53PcdwLzggwDn3eug7O8iCr7ARw8BPl3koKZjA0BwZEuCg
+	t5oBm8ciwM2GUg6OPa/E0GjpF+CPCzYeemunOBgMlLDQYa1hYeR4G4a+0mQIOmZD+OpjBG2u
+	RgbCxXYeuk9fYOBol4OHfwv6EHS1DrBw/MUhHsrzSxFMjE+nDZU946D8Uq+QrKetj4cxra/5
+	m6Eh/xWGNlnvCNTh3kM91XpaFOrC1O08zFP36BGB9vzl4+nlUxMsbbq7gjZ5xxha8v0QT5/e
+	+4elw/5uflPsN6rPUuV0o1k2JX6RolJslR6cFVTnDnd2IwvyxRShGJFISeR+ezPzluudbi7K
+	rJRATp7oEqLMSx+TUCiCoxwnfUIe3QpMe5WIpRMCKXT5+CIkirHSDlL326poj0YCUtoUYaOs
+	lRRSfaMMvfYzScfp/155LOlJaPIBEx3F0lxSNSlGdYz0Obl+seLVqlnSAvJ7Q/ub03pE4rl/
+	4DXPIS3VIbYMSdb3Uq3vpVrfpToQdiKtMdOcYTCmJy1S8jKNuYu+253hRtPPdPbAi+1eNHpz
+	SwBJItKpNcrhQkXLGczZeRkBRESsi9NkVf6oaDWphrx9smn3t6Y96XJ2AM0VWd0HmqXhvala
+	Kc2QI++S5SzZ9LbKiDHxFvQRZ1aSuDX18WMJHcsrZtpTHC3L988fLLTlq/M2Fi/WTs7bYKw7
+	Y9kaCmlHOsD18GKny+ANqlbr/U89a2ntwy295lmTaQdrMtTJPfZ+d4J6ddV4+eZbfn9xy0bf
+	vnUzrv3wi92+curPu+GFc37d+dWIM3/V1/O21UaWNa6Z0fdlS46OzVYMS/TYlG14CeEPn9JI
+	AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfUyMcRzA93t+z1s3Z49zeCYW18xWXof5Wpi8PmzMX4wRR888x/XirlI2
+	HJXSKomi69rOKNVl2dWqI7G7nELikg4Roc20Xk/Ti9Jlxn+ffX7fz/f3z5fFimvUTFYTHiXq
+	wtVaFS0jZTuC4hda5yZLSxxmJZhKS2iw/IyFWx+rKDAVVyDwDL5jYOy+E0F/7WMavjv6ENy4
+	PoDB1JhAwo/SIQxfne0MWKzboa2gg4TqpEoM7RfraEhLGMZwf7CLgXNVhQSYygwMOPLqKXhR
+	kU7BlaF8DJWGjww03TXR8KFkjIIOexoJ9cYiEnqyajG0pa8Dp3k6DDztRFBbWknAQGoeDc05
+	dwm47DLT8DmhDYHL0U5C1kgyDbln0xEM/xzf1pXhoSD30QdmXaDg6OzGQnnRG0Jw1zwhBJvx
+	PSOYrdFCWWGAkOJ2YcFafIEWrH2ZjND6upoW6q4Nk4Lt0yrBVtVPCGnxXbTQ+/UtKXTXNNM7
+	lXtlq0NFrSZG1C1ee1AmmfLLcKRzUmz3y2ZkQNU+KciH5bnlfHmxlfIyyc3jr2a7GC/T3Hze
+	7R7EXlZygfz3Fvu4l7GYy2b4pNJqOgWx7FRuP3/nQZB3Rs4Bn24bJL2s4CS+sDED/fFT+Pqc
+	LxMecwG8e/Qb4U0x58vfGmW92odbwzfcuz7x1TTOn39Y8ZjIQHLjf7Xxv9r4rzYjXIyUmvCY
+	MLVGu2KR/pgUF66JXXQ4IsyKxu+l4NTIpSrkadpiRxyLVJPk0oUkSUGpY/RxYXbEs1illEfm
+	n5cU8lB13ElRF3FAF60V9Xbky5KqGfJtu8WDCu6IOko8JoqRou7vK8H6zDSg2wtobR93aM7y
+	zf01s1PTxE2GeKdnj9/plzMKfj1JWe9xzgl9kFgX+mLYcvJoozNfyny+UUtdalrbMuJ3oiF7
+	V4n/UHavo7Xcz9Ua3bCS/ZW3NcsyOWhZ2PxZpLIo1bw540bj6sToEMuGm7XB056eCXnW39Iz
+	q75jX6bfp+NLfsiDX6lIvaReGoB1evVvqtLRXSsDAAA=
 X-CFilter-Loop: Reflected
 
-On Mon, Jul 28, 2025 at 07:58:13PM +0100, Pavel Begunkov wrote:
-> On 7/28/25 19:46, Pavel Begunkov wrote:
-> > On 7/28/25 18:44, Mina Almasry wrote:
-> > > On Sun, Jul 27, 2025 at 9:21 PM Byungchul Park <byungchul@sk.com> wrote:
-> > > > 
-> > 
-> > ...>> - * Return: the netmem_ref cast to net_iov* regardless of its underlying type.
-> > > > + * Return: the pointer to struct netmem_desc * regardless of its
-> > > > + * underlying type.
-> > > >    */
-> > > > -static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
-> > > > +static inline struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
-> > > >   {
-> > > > -       return (struct net_iov *)((__force unsigned long)netmem & ~NET_IOV);
-> > > > +       if (netmem_is_net_iov(netmem))
-> > > > +               return &((struct net_iov *)((__force unsigned long)netmem &
-> > > > +                                           ~NET_IOV))->desc;
-> > > > +
-> > > > +       return __netmem_to_nmdesc(netmem);
-> > > 
-> > > The if statement generates overhead. I'd rather avoid it. We can
-> > > implement netmem_to_nmdesc like this, no?
-> > > 
-> > > netmem_to_nmdesc(netmem_ref netmem)
-> > > {
-> > >    return (struct netmem_desc)((__force unsigned long)netmem & ~NET_IOV);
-> > > }
-> > > 
-> > > Because netmem_desc is the first element in both net_iov and page for
-> > > the moment. (yes I know that will change eventually, but we don't have
-> > > to incur overhead of an extra if statement until netmem_desc is
-> > > removed from page, right?)
-> > 
-> > Same concern, but I think the goal here should be to make enough
+On Mon, Jul 28, 2025 at 07:36:54PM +0100, Pavel Begunkov wrote:
+> On 7/28/25 06:27, Byungchul Park wrote:
+> > Changes from v1:
+> >       1. Rebase on linux-next.
 > 
-> s/make/give/
-> 
-> 
-> > info to the compiler to optimise it out without assumptions on
-> > the layouts nor NET_IOV_ASSERT_OFFSET. Currently it's not so bad,
-> > but we should be able to remove this test+cmove.
-> > 
-> >      movq    %rdi, %rax    # netmem, tmp105
-> >      andq    $-2, %rax    #, tmp105
-> >      testb    $1, %dil    #, netmem
-> >      cmove    %rdi, %rax    # tmp105,, netmem, <retval>
-> >      jmp    __x86_return_thunk
-> 
-> struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
-> {
->        void *p = (void *)((__force unsigned long)netmem & ~NET_IOV);
-> 
->        if (netmem_is_net_iov(netmem))
->                return &((struct net_iov *)p)->desc;
->        return __pp_page_to_nmdesc((struct page *)p);
-> }
+> net-next is closed, looks like until August 11.
 
-I wanted to remove constraints that can be removed, but Mina want not to
-add additional overhead more.  So I'm thinking to keep the constraint,
-'netmem_desc is the first member of net_iov'.
-
-Thoughts?
+Worth noting, this is based on linux-next, not net-next :-)
 
 	Byungchul
 
-> movq    %rdi, %rax      # netmem, netmem
-> andq    $-2, %rax       #, netmem
-> jmp     __x86_return_thunk
+> >       2. Initialize net_iov->pp = NULL when allocating net_iov in
+> >          net_devmem_bind_dmabuf() and io_zcrx_create_area().
+> >       3. Use ->pp for net_iov to identify if it's pp rather than
+> >          always consider net_iov as pp.
+> >       4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
 > 
+> Oops, looks you killed my suggested-by tag now. Since it's still
+> pretty much my diff spliced with David's suggestions, maybe
+> Co-developed-by sounds more appropriate. Even more so goes for
+> the second patch getting rid of __netmem_clear_lsb().
 > 
-> This should do it, and if the layouts change, it'd still
-> remain correct.
+> Looks fine, just one comment below.
+> 
+> ...> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+> > index 100b75ab1e64..34634552cf74 100644
+> > --- a/io_uring/zcrx.c
+> > +++ b/io_uring/zcrx.c
+> > @@ -444,6 +444,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+> >               area->freelist[i] = i;
+> >               atomic_set(&area->user_refs[i], 0);
+> >               niov->type = NET_IOV_IOURING;
+> > +             niov->pp = NULL;
+> 
+> It's zero initialised, you don't need it.
+> 
+> And a friendly reminder, please never send patches modifying a
+> subsystem without CC'ing it, especially kept in another tree.
+> Sure, you CC'ed me, but it's easy to lose.
 > 
 > --
 > Pavel Begunkov
+> 
 
