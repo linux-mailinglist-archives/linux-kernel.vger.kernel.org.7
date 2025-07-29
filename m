@@ -1,164 +1,180 @@
-Return-Path: <linux-kernel+bounces-749040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9CBB14935
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9480AB1493A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:36:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 391C816FD05
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:34:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC302188BFEC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:36:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B9E264638;
-	Tue, 29 Jul 2025 07:34:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986FB264F96;
+	Tue, 29 Jul 2025 07:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="acFtYNW2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mBWTPmP3"
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B1C235041;
-	Tue, 29 Jul 2025 07:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 368CC19ADBF;
+	Tue, 29 Jul 2025 07:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753774442; cv=none; b=nMcJfVreUsjQL5EcVZ7cdJj3soZt5rtZ4UhU+3OMe+iQHV87RRGGI+0gakqX83O58lJt/VqrwPXeplVXYKtp7/Ut0VBhKTvsepAlYCsUrtWFJRqA0OZXVrFYx7DImDfkKC14wbA5EXHadr2JzNL+l4keQm4bjzlh/ZD7kqgO63s=
+	t=1753774574; cv=none; b=TOTi39w7QqssCDjKICWyptyyOOyA08vNcc1X/Nsq2YkSsEXdONmfv/dOHj4FdxCJb8+sfZh/lzzMZPMekpOlK05xQLNmzgrq8AldkLQeBjITsbIPLbZ1tGsh9g2EJSJT3V7mnnT8eKy4obcg/P/ecDsMScI5QDJIfoBQelX8ZIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753774442; c=relaxed/simple;
-	bh=Zi8RMlPIjpydMUQf5WzmsY1yxjV/z/BZfcnMp+TLv8Q=;
-	h=Content-Type:Date:Message-Id:Cc:From:To:Subject:References:
-	 In-Reply-To; b=KbOoKjbyrWB/VRyx9r55UmuRr0Jub6mAi+6UbnlOTeuPRfkjBf1lz+LScxElaS5Wrzi+tCntpSotXGNJmlSp/RVm/jRT48uk5eBP5rdRxHikqWDBZ2JGm7ZKfd1jnx1K3e1FZlhlUMVwhjfbqhozR+ugk/SRfwCEmoWI276LCS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=acFtYNW2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D3C9C4CEEF;
-	Tue, 29 Jul 2025 07:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753774441;
-	bh=Zi8RMlPIjpydMUQf5WzmsY1yxjV/z/BZfcnMp+TLv8Q=;
-	h=Date:Cc:From:To:Subject:References:In-Reply-To:From;
-	b=acFtYNW2SzxisLDN0t6OiGJuWBpoZiL6PUTYFnoHWgxA5eC4zLKD6g+6zjHjKCwjP
-	 SSRXuZ4uIS5LQPFgV35NPkz/PgSz5Qg/1fO5jTwLAbvR3/Vnkf9LvENvN7DWLN8NMs
-	 fG2IT/IOoS6nTHW2h1xjrmfa19w+zE6yRmbBA9939I8v78SbFGIP28KK6zIPXQoCRh
-	 qKml/R7PZzUAy98AISaWQw4MhusL8F2p2/P/1JzJdj9pe1OrfUN4yNHIOK53XoP0g7
-	 R7cAZgP6asZz+X1Lhd6kN0Pz3voYEW3su4j2Cd/A5LadpdqKjSexL5IYFMh+CtZ1k2
-	 6Gxx7JnUj7rNg==
-Content-Type: multipart/signed;
- boundary=0c63bfa51af3e9ed96fbe52ced56120bb19c51bb22ebc0cea3350f8f2e56;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 29 Jul 2025 09:33:57 +0200
-Message-Id: <DBOD5ICCVSL1.23R4QZPSFPVSM@kernel.org>
-Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Roger
- Quadros" <rogerq@kernel.org>, "Simon Horman" <horms@kernel.org>, "Siddharth
- Vadapalli" <s-vadapalli@ti.com>, "Matthias Schiffer"
- <matthias.schiffer@ew.tq-group.com>, "Maxime Chevallier"
- <maxime.chevallier@bootlin.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Andrew Lunn" <andrew@lunn.ch>
-Subject: Re: [PATCH net-next] Revert "net: ethernet: ti: am65-cpsw: fixup
- PHY mode for fixed RGMII TX delay"
-X-Mailer: aerc 0.16.0
-References: <20250728064938.275304-1-mwalle@kernel.org>
- <57823bd1-265c-4d01-92d9-9019a2635301@lunn.ch>
-In-Reply-To: <57823bd1-265c-4d01-92d9-9019a2635301@lunn.ch>
+	s=arc-20240116; t=1753774574; c=relaxed/simple;
+	bh=OCgAuH0poRpM8EdoB+9XWQ7QaY6GNM7nY8AsgVITxYg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r8pJg5Ugq899iwvbPYf2zkaxSdafGO0RwZZH3FRRJMKspPo65S7X7rTkaoP+ir3pngazq7creZGGrMynjvEvtDWjuSNBD6rNPz1ykVbRceb6GL1eUSclRi22d6viG19Ba9wg1u5qHuQaUCbowCU+WeCHQyS5bfTENXgk5UxpzOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mBWTPmP3; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4e7ef5d6bffso1552546137.3;
+        Tue, 29 Jul 2025 00:36:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753774572; x=1754379372; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ybx9ZEB7Knt4sq4h7VniyBzicrS5wNfctmysoMkVU7g=;
+        b=mBWTPmP3RTtrzKoLGzJo2Avp1zm3x5gp0MeIc3Oe+0Hvp2LCubnEwOSvWOmRUZz14q
+         vFVc0zcajWDoQfi+ZgXo6U7/OkHVS1JeMK8Z25hjJv24CvHFTrzIFB8Auc33AKFsrcAb
+         LXhhKJ2GgyzeTPYPonl1B3YvF+DkA/acLRqPgbUTbdIInwi3EgevFVc4FDE46RMi3E6o
+         ciF3+6CZ85O/PDgOD5BG9FHsVxpYod9h9rXgI17zmC1KwYHNqv9TRTqBsOhJOsXs1u2t
+         vZyP+KTIxTOrvoC2MnFXWam7rJ2uogHbeNXePVHlznPIb3Pd2YWKF8Lg5IVdvxGtT4AO
+         PDKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753774572; x=1754379372;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ybx9ZEB7Knt4sq4h7VniyBzicrS5wNfctmysoMkVU7g=;
+        b=FgV6j7O7lCIHHTM3/CCXLj/rElyS0EX4VtAT1ueYws5wMA2/FsBetMWmKoyqgymNBB
+         5oXJkatPKcG5HPArxODdYE2tbgJLuxDPXicOBrz8S7C6ntIgjuNXdDDO8ZyUBpiK60Eu
+         iW/CubVuRCsd6z1t1kam19dtRRKcxfvb1OSgPKt3CVDykdEsJ0Ml+P6NLimACHQwwic1
+         Xb1mXGJ1OXN+uJkBUSrYA/DpOuv1b3u4Bq/iMyQXRCtz9AuBvV94I4CW7eaaf1pjbf9M
+         1MEGT3M68eaKyihkwIyIRxlTUM08Fs+AGU8iyUKE5tBDn9xef2p97aIoieSbE1kCRSZF
+         2aUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoriUJavntt27Cho1Or3/3xTQ1XBG+MhrrmWkiyyXPcCNMFxcHw47sGsL0FL6C/NL9mViHjEexQ/xBon6u@vger.kernel.org, AJvYcCVbtgBGHDe+RM3c0vwrZJzWU7TGbGBqOrKus0Uu9bvjjtkSSFFJoSoM6HKi5jszna23XQ6Xg1bea853@vger.kernel.org, AJvYcCWDJfGchxpqiX5F+1krxwp3NnlUDmOsXx3Dg3lEruO8q/x+2d3xSwuSP5m8lh3+50MHVIr90tV3r1lAPhGeMi4prls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAVeTJ8uq3a6AAlxW2j3XPMs0EfbubytJOBeGTRBtGWgzRVwu1
+	b3Ei420DmEjkSL2s3VZMfaHq86lSyXMC2KzY8SxUbxaMjF/9I1AeTAWdwTtLNnObHo+p/Vk0a4p
+	DEcxI/1wmiHZonezaROea5caUBqOxJ4k=
+X-Gm-Gg: ASbGncu1Rn1sFC9Xgttrb+AzIlyYkNtdQtiGaqh3Sg50FZU5kagqyz8ahSUNtSfeAtZ
+	uXmuSk8PtvBuoy+MakHGnLOdqbU2o0mIt9Z0j0ACz799qDRQBiQwZE7daEbXKd3Uvi/1hvYTqOw
+	SbFG45E8O+QMV4wPI51pZE+/FAR02T/dxGgcRT2KK1yqvbI+nmpQhBPjNyvyEy6r3foANhPAXoY
+	u2eBA==
+X-Google-Smtp-Source: AGHT+IENH2AW1ZXDnTlpVuHy58DEAA8L0hmQ3yc6dY3oxN1NrLrIl4BCIubHSKcHLtCqUNYVz4YtdWuKh0KtO3j5xGY=
+X-Received: by 2002:a05:6102:3053:b0:4e9:add0:2816 with SMTP id
+ ada2fe7eead31-4fa3fc4c5b4mr5102345137.5.1753774572016; Tue, 29 Jul 2025
+ 00:36:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
---0c63bfa51af3e9ed96fbe52ced56120bb19c51bb22ebc0cea3350f8f2e56
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org>
+In-Reply-To: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org>
+From: Inki Dae <daeinki@gmail.com>
+Date: Tue, 29 Jul 2025 16:35:29 +0900
+X-Gm-Features: Ac12FXzR2-3ASwmrKN7QegXsTXtT3Y5L39TTtfej0LBVwYdqfV-4142nEMemsSM
+Message-ID: <CAAQKjZP12LZPHcPo1ztvKq6Vts=Mp0o5NyJfdCZZoMB633wynQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/13] Support for Exynos7870 DSIM bridge
+To: Kaustabh Chakraborty <kauschluss@disroot.org>
+Cc: Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-On Mon Jul 28, 2025 at 4:41 PM CEST, Andrew Lunn wrote:
-> On Mon, Jul 28, 2025 at 08:49:38AM +0200, Michael Walle wrote:
-> > This reverts commit ca13b249f291f4920466638d1adbfb3f9c8db6e9.
-> >=20
-> > This patch breaks the transmit path on an AM67A/J722S. This SoC has an
-> > (undocumented) configurable delay (CTRL_MMR0_CFG0_ENET1_CTRL, bit 4).
+Hi Kaustabh Chakraborty,
+
+2025=EB=85=84 7=EC=9B=94 7=EC=9D=BC (=EC=9B=94) =EC=98=A4=EC=A0=84 3:26, Ka=
+ustabh Chakraborty <kauschluss@disroot.org>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=
+=84=B1:
 >
-> Is this undocumented register only on the AM67A/J722S?
-
-I've looked at the AM65x TRM (search for MMR0 or RGMII_ID_MODE),
-which reads that bit 4 is r/w but only '0' is documented as
-'internal transmit delay', value '1' is called "reserved".
-
-I couldn't find anything in the AM64x TRM. Didn't look further.
-
-There has to be a reason why TI states that TX delay is always on
-and don't document that bit. OTOH, they wrote code to serve that bit
-in u-boot. Sigh. Someone from TI have to chime in here to shed some
-light to this.
-
-> The patch being reverted says:
+> This patch series introduces a lot of changes to the existing DSIM
+> bridge driver, by introdcing new registers and making register offsets
+> configurable for different SoCs. These preliminary changes are followed
+> by the introduction of support for Exynos7870's DSIM IP block.
 >
->    All am65-cpsw controllers have a fixed TX delay
+> Work is heavily inspired and only possible due to Samsung's vendor
+> kernel sources. Testing has been done with Samsung Galaxy J7 Prime
+> (samsung-on7xelte), Samsung Galaxy A2 Core (samsung-a2corelte), and
+> Samsung Galaxy J6 (samsung-j6lte), all with DSI video mode panels.
+
+Patches 1 through 12 have been merged into the exynos-drm-misc-next branch.
+- Patch 9 was merged as-is. If you decide to accept my suggestion and
+submit a revised version later, I will apply it on top of the existing
+patch.
+- Patch 10 was also merged without modification. Although it includes
+a behavioral change (removal of the fallback to pll_clk), I don=E2=80=99t
+foresee any issues. If any problems arise, I=E2=80=99ll revert it.
+
+And patch 13 has been merged into the exynos-drm-next branch.
+
+Thanks,
+Inki Dae
+
 >
-> So we have some degree of contradiction here.
-
-I've digged through the old thread and Matthias just references the
-datasheet saying it is fixed. Matthias, could you actually try to
-set/read this bit? I'm not sure it is really read-only.
-
-> > The u-boot driver (net/ti/am65-cpsw-nuss.c) will configure the delay in
-> > am65_cpsw_gmii_sel_k3(). If the u-boot device tree uses rgmii-id this
-> > patch will break the transmit path because it will disable the PHY dela=
-y
-> > on the transmit path, but the bootloader has already disabled the MAC
-> > delay, hence there will be no delay at all.
+> Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
+> ---
+> Changes in v3:
+> - support both legacy STATUS and LINK_STATUS & DPHY_STATUS split (daeinki=
+)
+> - Link to v2: https://lore.kernel.org/r/20250627-exynos7870-dsim-v2-0-143=
+3b67378d3@disroot.org
 >
-> We have maybe 8 weeks to fix this, before it makes it into a released
-> kernel. So rather than revert, i would prefer to extend the patch to
-> make it work with all variants of the SoC.
+> Changes in v2:
+> - added commit to isolate clock names for each variant
+> - replaced clock names with generic ones (krzk)
+> - added maxItems to clocks property in dtschema (krzk)
+> - Link to v1: https://lore.kernel.org/r/20250612-exynos7870-dsim-v1-0-1a3=
+30bca89df@disroot.org
 >
-> Is CTRL_MMR0_CFG0_ENET1_CTRL in the Ethernet address space?
-
-No, that register is part of the global configuration space (search
-for phy_gmii_sel in the k3-am62p-j722s-common-main.dtsi), but is
-modeled after a PHY (not a network PHY). And actually, I've just
-found out that the PHY driver for that will serve the rgmii_id bit
-if .features has PHY_GMII_SEL_RGMII_ID_MODE set. So there is already
-a whitelist (although it's wrong at the moment, because the J722S
-SoC is not listed as having it). As a side note, the j722s also
-doesn't have it's own SoC specific compatible it is reusing the
-am654-phy-gmii-sel compatible. That might or might not bite us now..
-
-I digress..
-
-> Would it be possible for the MAC driver to read it, and know if the delay=
- has
-> been disabled? The switch statement can then be made conditional?
+> ---
+> Kaustabh Chakraborty (13):
+>       drm/bridge: samsung-dsim: support separate LINK and DPHY status reg=
+isters
+>       drm/bridge: samsung-dsim: add SFRCTRL register
+>       drm/bridge: samsung-dsim: add flag to control header FIFO wait
+>       drm/bridge: samsung-dsim: allow configuring bits and offsets of CLK=
+CTRL register
+>       drm/bridge: samsung-dsim: allow configuring the MAIN_VSA offset
+>       drm/bridge: samsung-dsim: allow configuring the VIDEO_MODE bit
+>       drm/bridge: samsung-dsim: allow configuring PLL_M and PLL_S offsets
+>       drm/bridge: samsung-dsim: allow configuring the PLL_STABLE bit
+>       drm/bridge: samsung-dsim: increase timeout value for PLL_STABLE
+>       drm/bridge: samsung-dsim: add ability to define clock names for eve=
+ry variant
+>       dt-bindings: samsung,mipi-dsim: document exynos7870 DSIM compatible
+>       drm/bridge: samsung-dsim: add driver support for exynos7870 DSIM br=
+idge
+>       drm/exynos: dsi: add support for exynos7870
 >
-> If this register actually exists on all SoC variants, can we just
-> globally disable it, and remove the switch statement?
-
-Given that all the handling is in the PHY subsystem I don't know.
-You'd have to ask the PHY if it supports that, before patching the
-phy-interface-mode - before attaching the network PHY I guess?
-
-If we want to just disable (and I assume with disable you mean
-disable the MAC delay) it: the PHY is optional, not sure every SoC
-will have one. And also, the reset default is exactly the opposite
-and TI says it's fixed to the opposite and there has to be a reason
-for that.
-
-Sounds like a real mess to me.
-
--michael
-
---0c63bfa51af3e9ed96fbe52ced56120bb19c51bb22ebc0cea3350f8f2e56
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaIh5ZhIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/glVAGAqnGGUJg8LAwwhUnP0qdRvUf3OIZraRX4
-/r5R7hwv+9Okx1ZR/EAqpQDWrT640xbEAX4zyv7EjYmxv5OEFcMnwmrsIuLC5qIi
-9TS8uteU0IgdJRTcjcIin8GD9ge1LnH02yo=
-=KtFg
------END PGP SIGNATURE-----
-
---0c63bfa51af3e9ed96fbe52ced56120bb19c51bb22ebc0cea3350f8f2e56--
+>  .../bindings/display/bridge/samsung,mipi-dsim.yaml |  27 ++
+>  drivers/gpu/drm/bridge/samsung-dsim.c              | 353 +++++++++++++++=
++-----
+>  drivers/gpu/drm/exynos/exynos_drm_dsi.c            |   9 +
+>  include/drm/bridge/samsung-dsim.h                  |  16 +-
+>  4 files changed, 317 insertions(+), 88 deletions(-)
+> ---
+> base-commit: 26ffb3d6f02cd0935fb9fa3db897767beee1cb2a
+> change-id: 20250523-exynos7870-dsim-f29d6eafca52
+>
+> Best regards,
+> --
+> Kaustabh Chakraborty <kauschluss@disroot.org>
+>
+>
 
