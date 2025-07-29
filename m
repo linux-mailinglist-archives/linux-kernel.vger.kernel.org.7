@@ -1,146 +1,78 @@
-Return-Path: <linux-kernel+bounces-749998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD0A8B155BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:08:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB0E8B155BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5D0318A7DC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E0F3A7C46
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C132798FF;
-	Tue, 29 Jul 2025 23:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFF4281526;
+	Tue, 29 Jul 2025 23:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y3Wnh/dE"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lo2xhfcY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18862528E1
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900FA1D5154
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753830514; cv=none; b=JhqkggDv0eMuK5lQPoiF/Xi6Vs5ADRBmnA5YGKxLbOFW+prRTUxD/P5M954gJ2Uk5YmkmB6mrh0z7UzeFVI00vY+Okhe1rRytmZsQTFUWNrLj6x1uvPBz5To/7VvuRh+Jq7G1mPkZ8KWZxed7ISPM1piWr6+uoq+rNjE1eXOVgw=
+	t=1753830718; cv=none; b=KQSoqavRnpAnrTf9LssCAZBrAkElM5d/JjG+sZ1mb7ZY3UM1WPXvCtCbwWGmEEr0Foww7IXBHSwmiMpaHBFRxBV4vxXAyBIerA9yyYNDs3PxrFtECVruvwvZq/FwjNQx22Ilu8GtZEWCQYlD5kgfdG+vERnj43OFdw+sW6nhm8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753830514; c=relaxed/simple;
-	bh=0qJxsC49CDR508iKW1WBl6QLhRYxBufKIgrL6bgW4pc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=YEbZQqWm8NK50BMDIib3I7YQVMj+gIGSYbpOVbWoo2P2hiyVxZv1WSqpxxbBUon1mAHqdOgQL16JoThNfTdvaleN6x19VVozYJwqyvkWfFhXpFp1/FeA80vLioLnYFEROK2IJ4aodFpCYAkG6lg0vEjmY6HwJrqFJdOm6r5Zv04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y3Wnh/dE; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23ff6e5c131so2540465ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:08:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753830512; x=1754435312; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LqZ3rHUmVe6G0p0/31oKw+qMwbPcZALS7DvYpljMN9M=;
-        b=y3Wnh/dEyD1vBKLpWhr3yoJanPTgJXf/9KOu4CBbanX256psOj9N7Qajp88SR7mxMi
-         xnVNt1YpE96YXvKUMrjmmGO2aVCrXztsFC2zTbTqdLEGoaY0Re9LgOQni3PBg1x/ROG5
-         Mqvmre7DTry9N+dkp0i17lHwmnMhTGz8jfHkorNRhTWGUYweOhGog/XDo8wlNEdZbaoa
-         f9eu2tDut9APr+7UqOwx1xh2hV7peTJDrPuxl5FJvaiFhU+ilonXEoR5XNHlM/3Fy71d
-         /V+HyUUo3OQ5Ko8tO9J44sOAbXqqQm0RtED7CBax2NvJ5nqhLicociddEaPliHcnnwqk
-         h2wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753830512; x=1754435312;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=LqZ3rHUmVe6G0p0/31oKw+qMwbPcZALS7DvYpljMN9M=;
-        b=RdiXQNphUGX9Is7LuVJiK7v06H75cotwve3CbPblxKcfGQnE2TjULy4jkHazgQHzAY
-         kbhIbRqIF4JqMHqPX/Jgr/mNbBZj0Nm6knp22HHEm0OBp5dvxkgsd3A3Lfs7Ol52pCl6
-         Zj2AHB5XrYPsSluLlbbCpayYBPLCdRkDjwl0IRfrVHTxkcHzhTve417NxkF+MFwsN2LK
-         9+UmFg2JUY+fQtU5n4uMkOsXx8aI6zXLFZaI9gaZ6SePHu1/355jx7ZIXvqbSMso05lP
-         38hQ47/wWZ6KHzifSs8X0ZWyceO9AFWM/Om2TPgbRNiNTlAye7ny+7roGAJxk1rT1EaB
-         T7Og==
-X-Gm-Message-State: AOJu0YwqqaZLMuNsrasW+4OV3ce1lOaSBOxw3UZH+Nbg6LRCxqPMLGSW
-	YTMam9gF2ZRX1n40x8UIuBiAT9aKyNBLZ96uQRsTFqoDx2shAqMlD866OLrMvtyeXXiMS4x5Al9
-	jo4p+/g==
-X-Google-Smtp-Source: AGHT+IEyEA4YX1TwqE1OHkPIShxbjzy59E1nb5MsO32y1ZAQO9ZQMLAuLwnLMldTTuOlaQTIYiJv0rnX0uU=
-X-Received: from pjpo16.prod.google.com ([2002:a17:90a:9f90:b0:31f:1dad:d0a4])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:fc45:b0:240:3915:99d8
- with SMTP id d9443c01a7336-24096b2f983mr14218495ad.47.1753830512332; Tue, 29
- Jul 2025 16:08:32 -0700 (PDT)
-Date: Tue, 29 Jul 2025 16:08:30 -0700
-In-Reply-To: <e45806c6ae3eef2c707f0c3886cb71015341741b.camel@intel.com>
+	s=arc-20240116; t=1753830718; c=relaxed/simple;
+	bh=Jp7+7x/8NdveDAWzRogvYT20aHe9DBA6tsqBWg5Ot/4=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=Dhb0nkgsHKFOVX2IKdfFDjhAlrK6aCNdrovaTxEMsUcdczRkBa0NaJb5fAhk00zD35622Cs2wZy6OtuQu/LIe57COApWe7iec0QzOZp0PQMZ5XIszri6iJyb357eNvhMTjctGKRNY7C8Zk+oUZdADxjZzP6SdyqkZB319dnWso4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lo2xhfcY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E823C4CEF6;
+	Tue, 29 Jul 2025 23:11:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753830718;
+	bh=Jp7+7x/8NdveDAWzRogvYT20aHe9DBA6tsqBWg5Ot/4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Lo2xhfcYnyTjS/5Wmtwbmd/PtyOUGghKPMD81fLZWq4GhrYZrIOvCT6MTEyVVcTzm
+	 cP+wWU73/INdvC70qAisjGa09FpvhK6bi0auDc7g50L+ojR5y4MuuidoJYOC5QLJ9R
+	 yCbcLBu/0qeF4JtUx85XQ5isi4BNgtAWPvi8gbc6TxPJGJju4mPidiCWbvH0kA8YW+
+	 L0qw0Gu4AJ4htIJpBjPMQ+e0n+XTePaV3HwG/1KEOSa1wpIK347YYsxMOXWwNaIYDK
+	 xSzry5cgzEExso5InQ9mLwuUSi2OiYzoKzzF1bocZhRtTmkN9fu2xrqXKIET73e6i8
+	 VczUg72jVLeAw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1ugtUT-00000005K8j-1vES;
+	Tue, 29 Jul 2025 19:12:13 -0400
+Message-ID: <20250729231157.059587961@kernel.org>
+User-Agent: quilt/0.68
+Date: Tue, 29 Jul 2025 19:11:57 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>
+Subject: [for-next][PATCH 0/2] rtla: Updates for v6.17
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250729193341.621487-1-seanjc@google.com> <20250729193341.621487-3-seanjc@google.com>
- <1d9d6e35ebf4658bbe48e6273eefff3267759519.camel@intel.com>
- <aIlRONVnWJiVbcCv@google.com> <e45806c6ae3eef2c707f0c3886cb71015341741b.camel@intel.com>
-Message-ID: <aIlUbpQlYqaSO6wr@google.com>
-Subject: Re: [PATCH 2/5] KVM: TDX: Exit with MEMORY_FAULT on unexpected
- pending S-EPT Violation
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, Vishal Annapurve <vannapurve@google.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "maz@kernel.org" <maz@kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "nik.borisov@suse.com" <nik.borisov@suse.com>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2025, Rick P Edgecombe wrote:
-> On Tue, 2025-07-29 at 15:54 -0700, Sean Christopherson wrote:
-> > > The vm_dead was added because mirror EPT will KVM_BUG_ON() if there i=
-s an
-> > > attempt to set the mirror EPT entry when it is already present. And t=
-he
-> > > unaccepted memory access will trigger an EPT violation for a mirror P=
-TE
-> > > that is already set. I think this is a better solution irrespective o=
-f
-> > > the vm_dead changes.
-> >=20
-> > In that case, this change will expose KVM to the KVM_BUG_ON(), because =
-nothing
-> > prevents userspace from re-running the vCPU.=C2=A0
->=20
-> If userspace runs the vCPU again then an EPT violation gets triggered aga=
-in,
-> which again gets kicked out to userspace. The new check will prevent it f=
-rom
-> getting into the fault handler, right?
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+tools/for-next
 
-Yes?  But I'm confused about why you mentioned vm_dead, and why you're call=
-ing
-this a "new check".  This effectively does two things: drops kvm_vm_dead() =
-and
-switches from EOI =3D> EFAULT.  _If_ setting vm_dead was necessary, then we=
- have a
-problem.
+Head SHA1: a80db1f85774ae571b94077f65c5cd57467641d3
 
-I assume by "The vm_dead was added" you really mean "forcing an exit to use=
-rspace",
-and that kvm_vm_dead()+EIO was a somewhat arbitrary way of forcing an exit?
 
-> >  Which KVM_BUG_ON() exactly gets hit?
->=20
-> Should be:
->=20
-> static int __must_check set_external_spte_present(struct kvm *kvm, tdp_pt=
-ep_t
-> sptep,
-> 						 gfn_t gfn, u64 old_spte,
-> 						 u64 new_spte, int level)
-> {
-> 	bool was_present =3D is_shadow_present_pte(old_spte);
-> 	bool is_present =3D is_shadow_present_pte(new_spte);
-> 	bool is_leaf =3D is_present && is_last_spte(new_spte, level);
-> 	kvm_pfn_t new_pfn =3D spte_to_pfn(new_spte);
-> 	int ret =3D 0;
->=20
-> 	KVM_BUG_ON(was_present, kvm);
+Tomas Glozar (2):
+      rtla/tests: Add grep checks for base test cases
+      rtla/tests: Test timerlat -P option using actions
 
-Yeah, I don't see how that can be reach in this scenario.=20
+----
+ tools/tracing/rtla/tests/engine.sh                 |  2 +-
+ tools/tracing/rtla/tests/hwnoise.t                 | 11 ++++++-----
+ tools/tracing/rtla/tests/osnoise.t                 |  6 +++---
+ tools/tracing/rtla/tests/scripts/check-priority.sh |  8 ++++++++
+ tools/tracing/rtla/tests/timerlat.t                | 15 +++++++++------
+ 5 files changed, 27 insertions(+), 15 deletions(-)
+ create mode 100755 tools/tracing/rtla/tests/scripts/check-priority.sh
 
