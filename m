@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-749844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37380B1539C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:37:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE1BB1539F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08B8518A7C07
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:38:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE5A18A7C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D86D2571C2;
-	Tue, 29 Jul 2025 19:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826F626159E;
+	Tue, 29 Jul 2025 19:37:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zSijkJkz"
-Received: from mail-qt1-f202.google.com (mail-qt1-f202.google.com [209.85.160.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nCzHZ1yO"
+Received: from mail-qt1-f201.google.com (mail-qt1-f201.google.com [209.85.160.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60152561A2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6C92571AC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753817842; cv=none; b=J857Vl12aj7yF9O0p8ec1i5Zmv++/Fh0Ap4/tMK4+4CyIsD9TvMuQmYSjToBapLAasAJ4dPy8gtc4AAQeY796So5kanz542D8bszVI+yY4iJP89Ojc+Oqu656oLORs1NUktJfyUfxJBO4cvjO/GFWUjNDeY2xsbPTMsKF2hDyzk=
+	t=1753817844; cv=none; b=X9NBNiawQH4314WqENAayjea/17VdRSXSWOxUBw693zpsjqy+5yxM/3RYIzWR/c5x82/hveY61kh6ywWxT6utBkXBfxSa8a0fzXt8SOOJ25jJpLEW6L9YL5dk/7unWBQ/SRifJkqc+p8pxpUzo2nnwfqOydpLp9d1Ki9QwRubXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753817842; c=relaxed/simple;
-	bh=zbQaQ6zPDEvMaH4SGHFOo3O8aSEe60ypCwxlGBEUT5A=;
+	s=arc-20240116; t=1753817844; c=relaxed/simple;
+	bh=NsAsE0K6XtC838sAhCEDbzWc2+LZjzuI5QUtOwwrrho=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tT5kbMsW/tJqiWbGQbXbh9rD9LC3LDfCo4+qcT7QrrAClIaFJjJJgh/XU+BDdMENqx9DefDkAm3TsiUnFFHunkbRxdji4Eh2RCzUARR6wG0HDcLS+jkcRlz/UiNwRqcF1ULv+rMe5JS/V51z6CHbkvhFX+EocCmE99ChEaWLGZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zSijkJkz; arc=none smtp.client-ip=209.85.160.202
+	 To:Cc:Content-Type; b=e6CmUfk1fTRKURCUIbWIdW5A3s0sfYi/ONnIwnkRMo5uC6QNXFQ7megwvpp+TZkGZKDYC1zhRjQ1AjzWi1B3mq7ahRAIbpGLseWKSUVHvT/G8BjuCI1kNVBPJ9XElk0WjlDmHplN5FZAXZkwqf3HGGs6kfMgUTL+IRX5m3mSlaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nCzHZ1yO; arc=none smtp.client-ip=209.85.160.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com
-Received: by mail-qt1-f202.google.com with SMTP id d75a77b69052e-4ab44642abeso125139911cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:37:20 -0700 (PDT)
+Received: by mail-qt1-f201.google.com with SMTP id d75a77b69052e-4ab3b89760bso136621021cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:37:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753817840; x=1754422640; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753817842; x=1754422642; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tISY+xBUYYz9JGsqhSxSDiuo5pXcWFPbk33bCR9svy4=;
-        b=zSijkJkzKHR6F/DQicDIGt/7DEMKF3lSaEjeK5yVnJRWBJzrcwR+pksUPVwIT9vbgq
-         LdqjZpGXWyK++5iKDYCrdsz37R4aOCZd/b6IMDB/ivGhYQdFyUYPDf2bUrgRaqYz4cSV
-         kX+qZ9JyOHU+68N33B8cUPkFglemVkTvU2tLOopCxiz0L7dyEApx3RFNbdyf0C6ajI6U
-         2CrqTyNa33vDHO+YtJSu3r+hHS31kTvJuNN8bQltTQnihBB7C9e6Ph+tG3Fq4g5KBhRZ
-         yZILhrANJpXOFpuFQxLFkBED95U4QMBSjQjZQJZUW7v6ox9/AUg4dQFtq3cPN/S6NNBM
-         zu0g==
+        bh=LOeFclXy3T+mxjPs2r95qUwInGd9f34oaUC//E5T6EQ=;
+        b=nCzHZ1yO7T9pJ3wHabAWFYM2HubXgRW+CvhcwQqefvDfuW7qBSOx2ibOfMEslKbDeS
+         C3iX9VAHET8CsN45MogiazT94f+j8Kon7jAHjSrrW51U35bWkMasqFlrPJLd4xtEnTkZ
+         3z3RprfOqf51uJWLFG/IOTPsPAqivW2DjZpr7MvqXfwaJoJUHLUes2m9WGXhQWeRBk7J
+         8yUgRIbNrx3htvxL7vnCgu7ArPtJwrGL8fy+zbnNLSv+8BRbfFCEwJC321KDKOJgtW6I
+         LvZnnmexDPfIEk2BjA4h31ocVw+il3WTe4vF6yfeFYjTpklX61RRBQGoI5U9nu6N8YM0
+         hddQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753817840; x=1754422640;
+        d=1e100.net; s=20230601; t=1753817842; x=1754422642;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tISY+xBUYYz9JGsqhSxSDiuo5pXcWFPbk33bCR9svy4=;
-        b=dbImRL5UhZ5Ammt5lxaXTUaEp2sOqsF33klgMHi9p9BMoZNiVmioPmk9gVtr1+Fkgh
-         FzfvkNqYUnya7bCBfN7leFF+j7VPEfyFJXwRy1Iu9wZMXM6PFTwtM0tZ/576Uy3hti8c
-         KENOvcygOxYrhEXWC+jhDCt7gj7wepQXBIB00tF9CuFi0+GssJfqmCUiEeCWr8RkC1wL
-         Wkw+XMlEoF7stBqzvnTAJyVzWjWkJR/B89ehxRBI3iEOdTqcoZPJyy5pKFy9VT57Ou8W
-         qTidCVcikld4UIA9V+/Hy9kTgns1sPy3VeRutdg7qVHBQ4xkyr8PuIaFdFwg4tuAAx5F
-         yV9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVX6A1SE9g+hg/HI17FiI2ToEY4altgGuEPML+aRq+/yPXkPekPgCQjfuwvNsbf7eTfY7/YhvJHbd/Vh8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxorWT73R5JGXscUEUt6nvrR/W0mAZKgtgW7MmtO8Mk/VknqBj/
-	hbbd48MrnY8AiAFyuXJKUM2abgfT+ZXDs3GV5xb+C9Un0o2OtQIuH46wOKY7733D8nc4O5VLvQ1
-	dSM/1/0FqMcytOA==
-X-Google-Smtp-Source: AGHT+IHO3w/OWxc0bh2stWMFfWMHfCNuwQ8ImCAJ/qrdu5G1dagcPV42fbu2D6wVRt/h4M0z28H1fFDxXyPbjg==
-X-Received: from qtbcf19.prod.google.com ([2002:a05:622a:4013:b0:4ab:9556:af14])
+        bh=LOeFclXy3T+mxjPs2r95qUwInGd9f34oaUC//E5T6EQ=;
+        b=V+l5/NnKHE7f42uku7lPtz1/CptJEn2ChFKMVkw+kUUHIpiB0C/j79ZLwCoR5Au34o
+         TAv1GPjwW89kiAYXEUWvyznKW9hcqYvqFDQNw6uB7J2brDB3asmm4Oa2Fan51Wop3TMm
+         GgJZZktGX8Nx8EZo7YvqxKs1BqwknfMj1k9ErJcRNEczi4N3LFEjxj8Ykp6bWA+nhAnR
+         6/g1CxtCY3qzcsNxauadkFt8rUgFslrGgoyhNAAp5CN5H31QBdigUuegBycIHcNiyiZy
+         5IQAAIS+dhqfvCTIRI6a1SeC1nWdCu3WjZzIOcdRrUdfAGgcH75xueJrtrQimSpQf+na
+         TRhw==
+X-Forwarded-Encrypted: i=1; AJvYcCWGnz+Umaux1mnx4TYWRsOJT9CfqNCViO4zY87BQgJkBb+Y6bpnzkJ64f4kbIiQ/f+Jq5wbJs7cVIr/1QE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw79vGKaccFyxJWuWcZiTGGIt3Jj9QLXKCYoUfg5YH9CEBAPkW1
+	6bsaAyTFZqQcpuEFaqIrnDXHNvig8APUGHxCFkNwcAuPCdBHayC0zFuC5+I8Na6BvdQF3bO0Ltp
+	sxM2xyIi2Z5+sGg==
+X-Google-Smtp-Source: AGHT+IGMUSrZqdOskeosr+igUyfuxaNIUOfIiK4baHfY/+3YYV3woVzpXvK0qcFaE6oy2EYskMsu3hBqN2Ggaw==
+X-Received: from qtbfh7.prod.google.com ([2002:a05:622a:5887:b0:4ab:b3a4:9650])
  (user=marievic job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:622a:ca:b0:4a8:19d5:f8a5 with SMTP id d75a77b69052e-4aedbc45df3mr13576391cf.35.1753817839732;
- Tue, 29 Jul 2025 12:37:19 -0700 (PDT)
-Date: Tue, 29 Jul 2025 19:36:40 +0000
+ 2002:a05:622a:1906:b0:4ab:6a4c:83a2 with SMTP id d75a77b69052e-4aedbc5d048mr14740211cf.39.1753817842099;
+ Tue, 29 Jul 2025 12:37:22 -0700 (PDT)
+Date: Tue, 29 Jul 2025 19:36:41 +0000
 In-Reply-To: <20250729193647.3410634-1-marievic@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,9 +73,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250729193647.3410634-1-marievic@google.com>
 X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250729193647.3410634-3-marievic@google.com>
-Subject: [PATCH 2/9] kunit: Introduce param_init/exit for parameterized test
- shared context management
+Message-ID: <20250729193647.3410634-4-marievic@google.com>
+Subject: [PATCH 3/9] kunit: Pass additional context to generate_params for
+ parameterized testing
 From: Marie Zhussupova <marievic@google.com>
 To: rmoar@google.com, davidgow@google.com, shuah@kernel.org, 
 	brendan.higgins@linux.dev
@@ -87,143 +87,83 @@ Cc: elver@google.com, dvyukov@google.com, lucas.demarchi@intel.com,
 	Marie Zhussupova <marievic@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add `param_init` and `param_exit` function pointers to
-`struct kunit_case`. Users will be able to set them
-via the new `KUNIT_CASE_PARAM_WITH_INIT` macro.
+To enable more complex parameterized test scenarios,
+the `generate_params` function sometimes needs additional
+context beyond just the previously generated parameter.
+This patch modifies the `generate_params` function signature
+to include an extra `struct kunit *test` argument, giving
+users access to the parent kunit test's context when
+generating subsequent parameters.
 
-These functions are invoked by kunit_run_tests() once before
-and once after the entire parameterized test series, respectively.
-They will receive the parent kunit test instance, allowing users
-to register and manage shared resources. Resources added to this
-parent kunit test will be accessible to all individual parameterized
-tests, facilitating init and exit for shared state.
+The `struct kunit *test` argument was added as the first parameter
+to the function signature as it aligns with the convention
+of other KUnit functions that accept `struct kunit *test` first.
+This also mirrors the "this" or "self" reference found
+in object-oriented programming languages.
 
 Signed-off-by: Marie Zhussupova <marievic@google.com>
 ---
- include/kunit/test.h | 33 ++++++++++++++++++++++++++++++++-
- lib/kunit/test.c     | 23 ++++++++++++++++++++++-
- 2 files changed, 54 insertions(+), 2 deletions(-)
+ include/kunit/test.h | 9 ++++++---
+ lib/kunit/test.c     | 5 +++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/include/kunit/test.h b/include/kunit/test.h
-index a42d0c8cb985..d8dac7efd745 100644
+index d8dac7efd745..4ba65dc35710 100644
 --- a/include/kunit/test.h
 +++ b/include/kunit/test.h
-@@ -92,6 +92,8 @@ struct kunit_attributes {
-  * @name:     the name of the test case.
-  * @generate_params: the generator function for parameterized tests.
-  * @attr:     the attributes associated with the test
-+ * @param_init: The init function to run before parameterized tests.
-+ * @param_exit: The exit function to run after parameterized tests.
-  *
-  * A test case is a function with the signature,
-  * ``void (*)(struct kunit *)``
-@@ -129,6 +131,13 @@ struct kunit_case {
- 	const void* (*generate_params)(const void *prev, char *desc);
+@@ -128,7 +128,8 @@ struct kunit_attributes {
+ struct kunit_case {
+ 	void (*run_case)(struct kunit *test);
+ 	const char *name;
+-	const void* (*generate_params)(const void *prev, char *desc);
++	const void* (*generate_params)(struct kunit *test,
++				       const void *prev, char *desc);
  	struct kunit_attributes attr;
  
-+	/*
-+	 * Optional user-defined functions: one to register shared resources once
-+	 * before the parameterized test series, and another to release them after.
-+	 */
-+	int (*param_init)(struct kunit *test);
-+	void (*param_exit)(struct kunit *test);
-+
- 	/* private: internal use only. */
- 	enum kunit_status status;
- 	char *module_name;
-@@ -218,6 +227,27 @@ static inline char *kunit_status_to_ok_not_ok(enum kunit_status status)
- 		  .generate_params = gen_params,				\
- 		  .attr = attributes, .module_name = KBUILD_MODNAME}
- 
-+/**
-+ * KUNIT_CASE_PARAM_WITH_INIT() - Define a parameterized KUnit test case with custom
-+ * init and exit functions.
-+ * @test_name: The function implementing the test case.
-+ * @gen_params: The function to generate parameters for the test case.
-+ * @init: The init function to run before parameterized tests.
-+ * @exit: The exit function to run after parameterized tests.
-+ *
-+ * Provides the option to register init and exit functions that take in the
-+ * parent of the parameterized tests and run once before and once after the
-+ * parameterized test series. The init function can be used to add any resources
-+ * to share between the parameterized tests or to pass parameter arrays. The
-+ * exit function can be used to clean up any resources that are not managed by
-+ * the test.
-+ */
-+#define KUNIT_CASE_PARAM_WITH_INIT(test_name, gen_params, init, exit)		\
-+		{ .run_case = test_name, .name = #test_name,			\
-+		  .generate_params = gen_params,				\
-+		  .param_init = init, .param_exit = exit,			\
-+		  .module_name = KBUILD_MODNAME}
-+
- /**
-  * struct kunit_suite - describes a related collection of &struct kunit_case
-  *
-@@ -269,7 +299,8 @@ struct kunit_suite_set {
-  * @priv: for user to store arbitrary data. Commonly used to pass data
-  *	  created in the init function (see &struct kunit_suite).
-  * @parent: for user to store data that they want to shared across
-- *	    parameterized tests.
-+ *	    parameterized tests. Typically, the data is provided in
-+ *	    the param_init function (see &struct kunit_case).
-  *
-  * Used to store information about the current context under which the test
-  * is running. Most of this data is private and should only be accessed
+ 	/*
+@@ -1701,7 +1702,8 @@ do {									       \
+  * Define function @name_gen_params which uses @array to generate parameters.
+  */
+ #define KUNIT_ARRAY_PARAM(name, array, get_desc)						\
+-	static const void *name##_gen_params(const void *prev, char *desc)			\
++	static const void *name##_gen_params(struct kunit *test,				\
++					     const void *prev, char *desc)			\
+ 	{											\
+ 		typeof((array)[0]) *__next = prev ? ((typeof(__next)) prev) + 1 : (array);	\
+ 		if (__next - (array) < ARRAY_SIZE((array))) {					\
+@@ -1722,7 +1724,8 @@ do {									       \
+  * Define function @name_gen_params which uses @array to generate parameters.
+  */
+ #define KUNIT_ARRAY_PARAM_DESC(name, array, desc_member)					\
+-	static const void *name##_gen_params(const void *prev, char *desc)			\
++	static const void *name##_gen_params(struct kunit *test,				\
++					     const void *prev, char *desc)			\
+ 	{											\
+ 		typeof((array)[0]) *__next = prev ? ((typeof(__next)) prev) + 1 : (array);	\
+ 		if (__next - (array) < ARRAY_SIZE((array))) {					\
 diff --git a/lib/kunit/test.c b/lib/kunit/test.c
-index 4d6a39eb2c80..d80b5990d85d 100644
+index d80b5990d85d..f50ef82179c4 100644
 --- a/lib/kunit/test.c
 +++ b/lib/kunit/test.c
-@@ -641,6 +641,19 @@ static void kunit_accumulate_stats(struct kunit_result_stats *total,
- 	total->total += add.total;
- }
- 
-+static void __kunit_init_parent_test(struct kunit_case *test_case, struct kunit *test)
-+{
-+	if (test_case->param_init) {
-+		int err = test_case->param_init(test);
-+
-+		if (err) {
-+			kunit_err(test_case, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
-+				"# failed to initialize parent parameter test.");
-+			test_case->status = KUNIT_FAILURE;
-+		}
-+	}
-+}
-+
- int kunit_run_tests(struct kunit_suite *suite)
- {
- 	char param_desc[KUNIT_PARAM_DESC_SIZE];
-@@ -668,6 +681,8 @@ int kunit_run_tests(struct kunit_suite *suite)
- 		struct kunit_result_stats param_stats = { 0 };
- 
- 		kunit_init_test(&test, test_case->name, test_case->log);
-+		__kunit_init_parent_test(test_case, &test);
-+
- 		if (test_case->status == KUNIT_SKIPPED) {
- 			/* Test marked as skip */
- 			test.status = KUNIT_SKIPPED;
-@@ -677,7 +692,7 @@ int kunit_run_tests(struct kunit_suite *suite)
- 			test_case->status = KUNIT_SKIPPED;
- 			kunit_run_case_catch_errors(suite, test_case, &test);
- 			kunit_update_stats(&param_stats, test.status);
--		} else {
-+		} else if (test_case->status != KUNIT_FAILURE) {
+@@ -696,7 +696,7 @@ int kunit_run_tests(struct kunit_suite *suite)
  			/* Get initial param. */
  			param_desc[0] = '\0';
  			/* TODO: Make generate_params try-catch */
-@@ -727,6 +742,12 @@ int kunit_run_tests(struct kunit_suite *suite)
+-			curr_param = test_case->generate_params(NULL, param_desc);
++			curr_param = test_case->generate_params(&test, NULL, param_desc);
+ 			test_case->status = KUNIT_SKIPPED;
+ 			kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
+ 				  "KTAP version 1\n");
+@@ -727,7 +727,8 @@ int kunit_run_tests(struct kunit_suite *suite)
  
- 		kunit_update_stats(&suite_stats, test_case->status);
- 		kunit_accumulate_stats(&total_stats, param_stats);
-+		/*
-+		 * TODO: Put into a try catch. Since we don't need suite->exit
-+		 * for it we can't reuse kunit_try_run_cleanup for this yet.
-+		 */
-+		if (test_case->param_exit)
-+			test_case->param_exit(&test);
- 		/* TODO: Put this kunit_cleanup into a try-catch. */
- 		kunit_cleanup(&test);
- 	}
+ 				/* Get next param. */
+ 				param_desc[0] = '\0';
+-				curr_param = test_case->generate_params(curr_param, param_desc);
++				curr_param = test_case->generate_params(&test, curr_param,
++									param_desc);
+ 			}
+ 		}
+ 
 -- 
 2.50.1.552.g942d659e1b-goog
 
