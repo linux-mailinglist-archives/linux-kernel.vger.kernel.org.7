@@ -1,296 +1,510 @@
-Return-Path: <linux-kernel+bounces-749865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B325B153E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:49:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4CCBB153E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:49:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E6623B31D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:49:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61D356093C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095D1254876;
-	Tue, 29 Jul 2025 19:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCD424C669;
+	Tue, 29 Jul 2025 19:49:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mpyg8GGC"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOzlHsKG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6681B3925;
-	Tue, 29 Jul 2025 19:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD9323184F;
+	Tue, 29 Jul 2025 19:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753818587; cv=none; b=jLgINZG49z0OFeBapws7KfQUowlrwJ9XouMSf1U+/tJ9XA5W2cvohsuOT5KkTg50jlKfJvj1stlYFzCa6PehOlLzjpBBbSuw3sJ2uhpPd43weLkr9o0L2gGTqaqBQ/e0Ks/EwNgBUXaGcSSni2Eu5g1bisSlXSv3vbO2Xy5rPEQ=
+	t=1753818564; cv=none; b=tmedVAm+pDEO4oXWOM+sjuCBXqLBL3b2e0sY/lhD5nJF/tliLoVN8FYg7tGa/HRxMS2FZiTJeDSB8tF2hy6/Miq4hxR2cn9F2pQ4ojKB7yPb4d1x2QNQ9uRw1fmcpezgiRZ7JhkIfbAMt091cm065Qf1esCWvjO6ufHyPctfBHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753818587; c=relaxed/simple;
-	bh=H+dbHDPIf2KcliiSjv9Kdbk9W7jeZvpyIRsXOLZIJUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gAZo9qPozbkVxCfFNO6IOEpXPuLtcTCsmVY7hDNYVxaYe+cco1d0XgXMDOAztfhNftJ8MYzRJNJ/z9aiTyvYMZ4g5v7g82CCdQDccH+BWYZYOwwHcI71apVzJjOepHcZMuZhtuikp/Ps91fzfdkQojbDcffqs8qXC1hke3xwI9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mpyg8GGC; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b7746135acso3012693f8f.2;
-        Tue, 29 Jul 2025 12:49:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753818584; x=1754423384; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=H+dbHDPIf2KcliiSjv9Kdbk9W7jeZvpyIRsXOLZIJUg=;
-        b=mpyg8GGCkLrKyjDBYaJ0eyB4dDf4TcOa71gLnCIUrFiH79LNAPaEFIpX0KeL5w3yU/
-         plZghxhS530DUeoVA8E4ctGdysg3pvSlT61Wazcn1G8V1ErzVdmmI9s8j2KRbpdtiAPy
-         +ToMK4zUmf0ho5PPZLnvNiXNN8N35C68DBc/3QlFcE+IHHvS849xXc1A25O3l4P474vk
-         +yf1EGPG4LHEJMLtDTdnnYrA3bHGJfrTMTMGN3N+CxWWhF60utJKaYkZ1WEzMhMZY/cN
-         VAeU+sYsKexgE3TtELT7mTDYaNa/ZfqkBUCT06Jl7oETTlHXXZd6R2kVDTc2LOr0+Zwu
-         zjdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753818584; x=1754423384;
-        h=in-reply-to:autocrypt:from:content-language:references:cc:to
-         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H+dbHDPIf2KcliiSjv9Kdbk9W7jeZvpyIRsXOLZIJUg=;
-        b=Y0KZ9SSrFPWk52SFTxbPZVHamCsWTemwm96OkacwCmEtlfCB/f2PvNJ/P5sT6XCq3+
-         5jzyEko12xY9LZNEhheZkqvApYo0OOgG9opvOrDr3VKdnSpFE+olC60v3WTXNImDfdwK
-         F1NrSdLbHvwIhXWteKw01AsiKd4rA09tAb7P022mL2e4tByBgKok4Y5QU1e19hMUjUMw
-         iKTILYdQHlBylSN8hULg36ruX4rCa0ZAj9IoNVGQfKRkA6IfWEIyxKDGSDROrOGVY9YQ
-         38dGFzevmhUM+hHrZ4WoeSDriRjN40Rej+RxwykWuPn6f15kv5fSDw9K6P4Rr2SZvaJU
-         HKRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1bLXhhUaPO9xXkKc5gGQrUTadYPh1obZgxel2VwAnqH9ViXhgi1l2bfJagAKspWZ1llC2HeROYyZzyw==@vger.kernel.org, AJvYcCUySUvHU9I5pW/jyBrKpVCmgi+bi7LkPec/Q0MUF82hHkdl9VKqmD9tKJ/LjwX1R/zMx6zuDrTVDp06o4M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/qcSwvx3mA8Kx4DRVeCyYI2CPLvEBryhEjUgvvUqCiS6vGIk2
-	rZGmSwiDpip02k38gRIKT9OHOVcCw4ssWrNYZQsxLjvlqxvF7bnMSefq
-X-Gm-Gg: ASbGncuO9bPnQx483u8ufFhA2XlI+Phmo0N2ed0LeEBdDJOVufO+x2aYGKFU8/Rz4CF
-	B1iFC/kTg5Vykx2pzkvesSHPGUlu8aSBD3gBUxjKIoi3/RAbiIPd4aR1lAGrFzPcapXHQzlON+l
-	RY7CjtIUiFRfT46c3roBBifrbDuM2VMyY6zNM+0VyFzs8gZg9QFM3xcJB0OzIFPyZs40GV1J0Kk
-	rIpo2O7MdiSZqa6kZpp5lI/PEYqWRj453a/URztqZFnde4dDjYoh19aSrCLlV9HqarwoWR9sZA/
-	HGatLoUn9jblZaHDOCzw7Mclev4N5WfXRnj8S2CVFeWHAb7fKOpoMAMSZjdFXIw3Gzx10gr5nTg
-	oOjdZuyQqYboK17ex2qWUJo83AZl5
-X-Google-Smtp-Source: AGHT+IFEGUmolEghmkJCvpJKOH02h0kF70Sd7xkB7lrvd3yNTAu1jOtRldmwy+N6MWom8zCNOPWT7w==
-X-Received: by 2002:a5d:5f44:0:b0:3a8:38b4:1d55 with SMTP id ffacd0b85a97d-3b794ff1718mr689807f8f.28.1753818583346;
-        Tue, 29 Jul 2025 12:49:43 -0700 (PDT)
-Received: from [192.168.1.201] ([87.254.0.133])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b782b2bca5sm10945038f8f.70.2025.07.29.12.49.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 12:49:42 -0700 (PDT)
-Message-ID: <64ec6c5e-5eb3-4db8-9540-7679ac694c11@gmail.com>
-Date: Tue, 29 Jul 2025 20:49:07 +0100
+	s=arc-20240116; t=1753818564; c=relaxed/simple;
+	bh=cFk4vFIsASUg+tOLvZKl6Km/LTyb5ZNVyfjNHmpGF9k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oZxQRIuirSPu8WGWo2GOWyTXrBM1H3pfQaEQnWqQd4aXDcnptzPqh2KA2AQpfB8RWvRpyCjvm2cKuyy+2hK+JGt8hG/nq/DvuKx+9gB221/EA3PUueMJBp/c+gX2meVKTZQzoB+kVSUyyF+GBv5H9ZoiAmiqIrvBzgJoxujtXjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOzlHsKG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE4ABC4CEEF;
+	Tue, 29 Jul 2025 19:49:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753818564;
+	bh=cFk4vFIsASUg+tOLvZKl6Km/LTyb5ZNVyfjNHmpGF9k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vOzlHsKGJGBL77oZbcfHIgL9H4CbdTWGAke8jHXfl7/nsS/6iJcxouTQungV60PUi
+	 SUI6q2c6JTARlaQq6kZDdwoVujLmPkzbiSYJZxA0P7oMXpc2L9LU4KpszhMrjka0oF
+	 bltJ/RjDXAu9L0zWovRUVzYVFI5INjrBNCtOe+4PYp8iEblu2EdBeH1dj9wderM0wj
+	 kn4piSBZhbBjDu+sT/tBJKh9rXFSRZyVE4kryHiM2vFwWKdXOA4jxBwNrgBirzx+K2
+	 wOutTnWZ4H8Dkt4bWgdKgwml0qFet942y2J5YfOAbJM1U8aJXIb+0dXERu+8sz88Vy
+	 OkLvy9rwtTdpg==
+Date: Tue, 29 Jul 2025 12:49:23 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: Zorro Lang <zlang@redhat.com>, fstests@vger.kernel.org,
+	Ritesh Harjani <ritesh.list@gmail.com>, john.g.garry@oracle.com,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 09/13] generic/1230: Add sudden shutdown tests for
+ multi block atomic writes
+Message-ID: <20250729194923.GW2672039@frogsfrogsfrogs>
+References: <cover.1752329098.git.ojaswin@linux.ibm.com>
+ <4965ba3e281a81558f1fe06fe1c478d29adca1e5.1752329098.git.ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] scsi: scsi_debug: make read-only arrays static
- const
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729064930.1659007-1-colin.i.king@gmail.com>
- <86f359c3-8eb6-4fd7-8411-12d12e301d61@wanadoo.fr>
-Content-Language: en-US
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-Autocrypt: addr=colin.i.king@gmail.com; keydata=
- xsFNBE6TJCgBEACo6nMNvy06zNKj5tiwDsXXS+LhT+LwtEsy9EnraKYXAf2xwazcICSjX06e
- fanlyhB0figzQO0n/tP7BcfMVNG7n1+DC71mSyRK1ZERcG1523ajvdZOxbBCTvTitYOy3bjs
- +LXKqeVMhK3mRvdTjjmVpWnWqJ1LL+Hn12ysDVVfkbtuIm2NoaSEC8Ae8LSSyCMecd22d9Pn
- LR4UeFgrWEkQsqROq6ZDJT9pBLGe1ZS0pVGhkRyBP9GP65oPev39SmfAx9R92SYJygCy0pPv
- BMWKvEZS/7bpetPNx6l2xu9UvwoeEbpzUvH26PHO3DDAv0ynJugPCoxlGPVf3zcfGQxy3oty
- dNTWkP6Wh3Q85m+AlifgKZudjZLrO6c+fAw/jFu1UMjNuyhgShtFU7NvEzL3RqzFf9O1qM2m
- uj83IeFQ1FZ65QAiCdTa3npz1vHc7N4uEQBUxyXgXfCI+A5yDnjHwzU0Y3RYS52TA3nfa08y
- LGPLTf5wyAREkFYou20vh5vRvPASoXx6auVf1MuxokDShVhxLpryBnlKCobs4voxN54BUO7m
- zuERXN8kadsxGFzItAyfKYzEiJrpUB1yhm78AecDyiPlMjl99xXk0zs9lcKriaByVUv/NsyJ
- FQj/kmdxox3XHi9K29kopFszm1tFiDwCFr/xumbZcMY17Yi2bQARAQABzSdDb2xpbiBJYW4g
- S2luZyA8Y29saW4uaS5raW5nQGdtYWlsLmNvbT7CwZEEEwEIADsCGwMFCwkIBwMFFQoJCAsF
- FgIDAQACHgECF4AWIQRwYtqk8AG5xmFnAM9owoffxqgCJgUCY8GcawIZAQAKCRBowoffxqgC
- Jtd/EACIWcaxfVt/MH4qqo5ELsjCFPVp+RhVpQDWy8v9Np2YbTcZ4AY2Zj4Pq/HrZ3F/Bh02
- v85C6mNv8BDTKev6Qcq3BYw0iqw6/xLNvRcSFHM81mQI9xtnAWIWfI9k5hpX19QooPIIP3GO
- MdMc1uRUGTxTgTFAAsAswRY3kMzo6k7arQnUs9zbiZ9SmS43qWOIxzGnvneekHHDAcomc/oh
- o7kgj6rKp/f9qRrhForkgVQwdj6iBlW934yRXzeFVF3wr7Lk5GQNIEkJiNQPZs54ojBS/Kx6
- 3UTLT1HgOp6UY9RPEi9wubmUR+J6YjLRZMr5PCcA86EYmRoysnnJ8Q/SlBVD8nppGVEcuvrb
- H3MBfhmwOPDc3RyLkEtKfSTB92k1hsmRkx9zkyuUzhcSnqQnpWGJD+xtKHvcHRT7Uxaa+SDw
- UDM36BjkyVcZQy8c+Is2jA55uwNgPpiA7n82pTeT+FRGd+7iCLQHaryu6FO6DNDv09RbPBjI
- iC/q814aeKJaSILP1ld9/PEBrLPdm+6lG6OKOt9DDV6jPmfR96FydjxcmI1cgZVgPomSxv2J
- B1erOggB8rmX4hhWYsVQl1AXZs3LdEpJ6clmCPspn/ufZxHslgR9/WR1EvPMQc8XtssF55p8
- ehRIcVSXDRcMFr3ZuqMTXcL68YbDmv5OGS95O1Gs4c7BTQROkyQoARAAxfoc/nNKhdEefA8I
- jPDPz6KcxbuYnrQaZdI1M4JWioTGSilu5QK+Kc3hOD4CeGcEHdHUpMet4UajPetxXt+Yl663
- oJacGcYG2xpbkSaaHqBls7lKVxOmXtANpyAhS5O/WmB7BUcJysqJfTNAMmRwrwV4tRwHY9e4
- l3qwmDf2SCw+UjtHQ4kJee9P9Uad3dc9Jdeg7gpyvl9yOxk/GfQd1gK+igkYj9Bq76KY8cJI
- +GdfdZj/2rn9aqVj1xADy1QL7uaDO3ZUyMV+3WGun8JXJtbqG2b5rV3gxLhyd05GxYER62cL
- oedBjC4LhtUI4SD15cxO/zwULM4ecxsT4/HEfNbcbOiv9BhkZyKz4QiJTqE1PC/gXp8WRd9b
- rrXUnB8NRAIAegLEXcHXfGvQEfl3YRxs0HpfJBsgaeDAO+dPIodC/fjAT7gq0rHHI8Fffpn7
- E7M622aLCIVaQWnhza1DKYcBXvR2xlMEHkurTq/qcmzrTVB3oieWlNzaaN3mZFlRnjz9juL6
- /K41UNcWTCFgNfMVGi071Umq1e/yKoy29LjE8+jYO0nHqo7IMTuCd+aTzghvIMvOU5neTSnu
- OitcRrDRts8310OnDZKH1MkBRlWywrXX0Mlle/nYFJzpz4a0yqRXyeZZ1qS6c3tC38ltNwqV
- sfceMjJcHLyBcNoS2jkAEQEAAcLBXwQYAQgACQUCTpMkKAIbDAAKCRBowoffxqgCJniWD/43
- aaTHm+wGZyxlV3fKzewiwbXzDpFwlmjlIYzEQGO3VSDIhdYj2XOkoIojErHRuySYTIzLi08Q
- NJF9mej9PunWZTuGwzijCL+JzRoYEo/TbkiiT0Ysolyig/8DZz11RXQWbKB5xFxsgBRp4nbu
- Ci1CSIkpuLRyXaDJNGWiUpsLdHbcrbgtSFh/HiGlaPwIehcQms50c7xjRcfvTn3HO/mjGdeX
- ZIPV2oDrog2df6+lbhMPaL55A0+B+QQLMrMaP6spF+F0NkUEmPz97XfVjS3ly77dWiTUXMHC
- BCoGeQDt2EGxCbdXRHwlO0wCokabI5wv4kIkBxrdiLzXIvKGZjNxEBIu8mag9OwOnaRk50av
- TkO3xoY9Ekvfcmb6KB93wSBwNi0br4XwwIE66W1NMC75ACKNE9m/UqEQlfBRKR70dm/OjW01
- OVjeHqmUGwG58Qu7SaepC8dmZ9rkDL310X50vUdY2nrb6ZN4exfq/0QAIfhL4LD1DWokSUUS
- 73/W8U0GYZja8O/XiBTbESJLZ4i8qJiX9vljzlBAs4dZXy6nvcorlCr/pubgGpV3WsoYj26f
- yR7NRA0YEqt7YoqzrCq4fyjKcM/9tqhjEQYxcGAYX+qM4Lo5j5TuQ1Rbc38DsnczZV05Mu7e
- FVPMkxl2UyaayDvhrO9kNXvl1SKCpdzCMQ==
-In-Reply-To: <86f359c3-8eb6-4fd7-8411-12d12e301d61@wanadoo.fr>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------lhYBXaDOQHKMbUOSf5L0iOV3"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4965ba3e281a81558f1fe06fe1c478d29adca1e5.1752329098.git.ojaswin@linux.ibm.com>
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------lhYBXaDOQHKMbUOSf5L0iOV3
-Content-Type: multipart/mixed; boundary="------------3jEM91eYIyqgzD0eTtM6gp2j";
- protected-headers="v1"
-From: "Colin King (gmail)" <colin.i.king@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <64ec6c5e-5eb3-4db8-9540-7679ac694c11@gmail.com>
-Subject: Re: [PATCH][next] scsi: scsi_debug: make read-only arrays static
- const
-References: <20250729064930.1659007-1-colin.i.king@gmail.com>
- <86f359c3-8eb6-4fd7-8411-12d12e301d61@wanadoo.fr>
-In-Reply-To: <86f359c3-8eb6-4fd7-8411-12d12e301d61@wanadoo.fr>
+On Sat, Jul 12, 2025 at 07:42:51PM +0530, Ojaswin Mujoo wrote:
+> This test is intended to ensure that multi blocks atomic writes
+> maintain atomic guarantees across sudden FS shutdowns.
+> 
+> The way we work is that we lay out a file with random mix of written,
+> unwritten and hole extents. Then we start performing atomic writes
+> sequentially on the file while we parallely shutdown the FS. Then we
+> note the last offset where the atomic write happened just before shut
+> down and then make sure blocks around it either have completely old
+> data or completely new data, ie the write was not torn during shutdown.
+> 
+> We repeat the same with completely written, completely unwritten and completely
+> empty file to ensure these cases are not torn either.  Finally, we have a
+> similar test for append atomic writes
+> 
+> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
---------------3jEM91eYIyqgzD0eTtM6gp2j
-Content-Type: multipart/mixed; boundary="------------yAZnIaS17TGrm9EZIQVN0jVW"
+Looks fine to me,
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
---------------yAZnIaS17TGrm9EZIQVN0jVW
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+--D
 
-T24gMjkvMDcvMjAyNSAxODo0NSwgQ2hyaXN0b3BoZSBKQUlMTEVUIHdyb3RlOg0KPiBMZSAy
-OS8wNy8yMDI1IMOgIDA4OjQ5LCBDb2xpbiBJYW4gS2luZyBhIMOpY3JpdMKgOg0KPj4gRG9u
-J3QgcG9wdWxhdGUgdGhlIHJlYWQtb25seSBhcnJheXMgb24gdGhlIHN0YWNrIGF0IHJ1biB0
-aW1lLCBpbnN0ZWFkDQo+PiBtYWtlIHRoZW0gc3RhdGljIGNvbnN0LiBBbHNvIHJlZHVjZXMg
-b3ZlcmFsbCBzaXplLg0KPj4NCj4+IGJlZm9yZToNCj4+IMKgwqDCoCB0ZXh0wqDCoMKgwqDC
-oMKgIGRhdGHCoMKgwqDCoMKgwqDCoCBic3PCoMKgwqDCoMKgwqDCoCBkZWPCoMKgwqDCoMKg
-wqDCoCBoZXjCoMKgwqAgZmlsZW5hbWUNCj4+IMKgIDM2NzQzOcKgwqDCoMKgwqAgODk1ODLC
-oMKgwqDCoMKgwqAgNTk1MsKgwqDCoMKgIDQ2Mjk3M8KgwqDCoMKgwqAgNzEwN2TCoMKgwqAg
-ZHJpdmVycy9zY3NpLyANCj4+IHNjc2lfZGVidWcubw0KPj4NCj4+IGFmdGVyOg0KPj4gwqDC
-oMKgIHRleHTCoMKgwqDCoMKgwqAgZGF0YcKgwqDCoMKgwqDCoMKgIGJzc8KgwqDCoMKgwqDC
-oMKgIGRlY8KgwqDCoMKgwqDCoMKgIGhleMKgwqDCoCBmaWxlbmFtZQ0KPj4gwqAgMzY1ODQ3
-wqDCoMKgwqDCoCA5MDcwMsKgwqDCoMKgwqDCoCA1OTUywqDCoMKgwqAgNDYyNTAxwqDCoMKg
-wqDCoCA3MGVhNcKgwqDCoCBkcml2ZXJzL3Njc2kvIA0KPj4gc2NzaV9kZWJ1Zy5vDQo+IA0K
-PiBIaSwNCj4gDQo+IG91dCBvZiBjdXJpb3NpdHksIGFueSBpZGVhIHdoeSAnZGF0YScgaW5j
-cmVhc2U/DQoNCkJlY2F1c2UgdGhlIGFycmF5cyBhcmUgYmVpbmcgc3RvcmVkIGluIHRoZSBk
-YXRhIHNlY3Rpb24gcmF0aGVyIHRoYW4gb24gDQp0aGUgc3RhY2suDQoNCj4gDQo+IEFsbCBt
-eSBjb25zdGlmaWNhdGlvbiBwYXRjaGVzIGxlYWQgdG8gZGF0YSByZWR1Y3Rpb24uDQo+IA0K
-Pj4NCj4+IChnY2MgMTQuMi4wLCB4ODYtNjQpDQo+IA0KPiAoc2FtZSBraW5kIG9mIGJlaGF2
-aW9yIHdpdGggMTUuMS4xKQ0KPiANCj4gDQo+IENKDQoNCg==
---------------yAZnIaS17TGrm9EZIQVN0jVW
-Content-Type: application/pgp-keys; name="OpenPGP_0x68C287DFC6A80226.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x68C287DFC6A80226.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xsFNBE6TJCgBEACo6nMNvy06zNKj5tiwDsXXS+LhT+LwtEsy9EnraKYXAf2xwazc
-ICSjX06efanlyhB0figzQO0n/tP7BcfMVNG7n1+DC71mSyRK1ZERcG1523ajvdZO
-xbBCTvTitYOy3bjs+LXKqeVMhK3mRvdTjjmVpWnWqJ1LL+Hn12ysDVVfkbtuIm2N
-oaSEC8Ae8LSSyCMecd22d9PnLR4UeFgrWEkQsqROq6ZDJT9pBLGe1ZS0pVGhkRyB
-P9GP65oPev39SmfAx9R92SYJygCy0pPvBMWKvEZS/7bpetPNx6l2xu9UvwoeEbpz
-UvH26PHO3DDAv0ynJugPCoxlGPVf3zcfGQxy3otydNTWkP6Wh3Q85m+AlifgKZud
-jZLrO6c+fAw/jFu1UMjNuyhgShtFU7NvEzL3RqzFf9O1qM2muj83IeFQ1FZ65QAi
-CdTa3npz1vHc7N4uEQBUxyXgXfCI+A5yDnjHwzU0Y3RYS52TA3nfa08yLGPLTf5w
-yAREkFYou20vh5vRvPASoXx6auVf1MuxokDShVhxLpryBnlKCobs4voxN54BUO7m
-zuERXN8kadsxGFzItAyfKYzEiJrpUB1yhm78AecDyiPlMjl99xXk0zs9lcKriaBy
-VUv/NsyJFQj/kmdxox3XHi9K29kopFszm1tFiDwCFr/xumbZcMY17Yi2bQARAQAB
-zSdDb2xpbiBJYW4gS2luZyA8Y29saW4uaS5raW5nQGdtYWlsLmNvbT7CwZEEEwEI
-ADsCGwMFCwkIBwMFFQoJCAsFFgIDAQACHgECF4AWIQRwYtqk8AG5xmFnAM9owoff
-xqgCJgUCY8GcawIZAQAKCRBowoffxqgCJtd/EACIWcaxfVt/MH4qqo5ELsjCFPVp
-+RhVpQDWy8v9Np2YbTcZ4AY2Zj4Pq/HrZ3F/Bh02v85C6mNv8BDTKev6Qcq3BYw0
-iqw6/xLNvRcSFHM81mQI9xtnAWIWfI9k5hpX19QooPIIP3GOMdMc1uRUGTxTgTFA
-AsAswRY3kMzo6k7arQnUs9zbiZ9SmS43qWOIxzGnvneekHHDAcomc/oho7kgj6rK
-p/f9qRrhForkgVQwdj6iBlW934yRXzeFVF3wr7Lk5GQNIEkJiNQPZs54ojBS/Kx6
-3UTLT1HgOp6UY9RPEi9wubmUR+J6YjLRZMr5PCcA86EYmRoysnnJ8Q/SlBVD8npp
-GVEcuvrbH3MBfhmwOPDc3RyLkEtKfSTB92k1hsmRkx9zkyuUzhcSnqQnpWGJD+xt
-KHvcHRT7Uxaa+SDwUDM36BjkyVcZQy8c+Is2jA55uwNgPpiA7n82pTeT+FRGd+7i
-CLQHaryu6FO6DNDv09RbPBjIiC/q814aeKJaSILP1ld9/PEBrLPdm+6lG6OKOt9D
-DV6jPmfR96FydjxcmI1cgZVgPomSxv2JB1erOggB8rmX4hhWYsVQl1AXZs3LdEpJ
-6clmCPspn/ufZxHslgR9/WR1EvPMQc8XtssF55p8ehRIcVSXDRcMFr3ZuqMTXcL6
-8YbDmv5OGS95O1Gs4c0iQ29saW4gS2luZyA8Y29saW4ua2luZ0B1YnVudHUuY29t
-PsLBdwQTAQgAIQUCTwq47wIbAwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgAAKCRBo
-woffxqgCJo1bD/4gPIQ0Muy5TGHqTQ/bSiQ9oWjS5rAQvsrsVwcm2Ka7Uo8LzG8e
-grZrYieJxn3Qc22b98TiT6/5+sMa3XxhxBZ9FvALve175NPOz+2pQsAV88tR5NWk
-5YSzhrpzi7+klkWEVAB71hKFZcT0qNlDSeg9NXfbXOyCVNPDJQJfrtOPEuutuRuU
-hrXziaRchqmlhmszKZGHWybmPWnDQEAJdRs2Twwsi68WgScqapqd1vq2+5vWqzUT
-JcoHrxVOnlBq0e0IlbrpkxnmxhfQ+tx/Sw9BP9RITgOEFh6tf7uwly6/aqNWMgFL
-WACArNMMkWyOsFj8ouSMjk4lglT96ksVeCUfKqvCYRhMMUuXxAe+q/lxsXC+6qok
-Jlcd25I5U+hZ52pz3A+0bDDgIDXKXn7VbKooJxTwN1x2g3nsOLffXn/sCsIoslO4
-6nbr0rfGpi1YqeXcTdU2Cqlj2riBy9xNgCiCrqrGfX7VCdzVwpQHyNxBzzGG6JOm
-9OJ2UlpgbbSh6/GJFReW+I62mzC5VaAoPgxmH38g0mA8MvRT7yVpLep331F3Inmq
-4nkpRxLd39dgj6ejjkfMhWVpSEmCnQ/Tw81z/ZCWExFp6+3Q933hGSvifTecKQlO
-x736wORwjjCYH/A3H7HK4/R9kKfL2xKzD+42ejmGqQjleTGUulue8JRtpM1AQ29s
-aW4gSWFuIEtpbmcgKEludGVsIENvbGluIElhbiBLaW5nIGtleSkgPGNvbGluLmtp
-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
-=3DQKm6
------END PGP PUBLIC KEY BLOCK-----
-
---------------yAZnIaS17TGrm9EZIQVN0jVW--
-
---------------3jEM91eYIyqgzD0eTtM6gp2j--
-
---------------lhYBXaDOQHKMbUOSf5L0iOV3
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wsF5BAABCAAjFiEEcGLapPABucZhZwDPaMKH38aoAiYFAmiJJbMFAwAAAAAACgkQaMKH38aoAiYw
-eRAAlNOjiMuNlmJnY38YpnfDHY4fadzdiY0jfLguuGzTFxOQ0eZLCaPNsm2MKNz9Jpwujn3ISlbv
-1xhhSQHfh6ap75oKwNGciJF9f5sqT5aNMMOdj0vDD/9ARJkxbSTctLZRxYcIHVIfWXXQXdlk9FOw
-91lVRTo1DtOgjfq1aYq/zPDUmPNYe9QPCeab92jrwpg0/H7ZBw+NMw4NwTdy+Vl9ERycl+6xDho9
-7eC+bjDEPgzPnX66N69ZzdD3r3RPsqqdtIO9xZUpBADQ7fpmkXrQH5Y/v1/QQE3evFrI/RkunoVw
-x5QCMVbVL36rnVJK/9Qf4PUTtA80YLnIAvK6ZCfLD/9uXi9c/nJCZxKm1aThLgIk55TFGjOTTmwO
-o9lTXmU8pVzaQ8fHa75kTG3vT1SzzO4cb7wxysQtIYsVIV6ZECwaOqCmA7qr8imWdKcdXDuPSS8t
-fAEYWAe0kwLBI/YvSXzTlwSZ162Uj5+KNT9gQb0UTIZ3VbkxhMcb7iHtz6xTZlHiXIV0SpwmFRxd
-h7PmTL1wFNc3O3UWLeyNfdK/pS17HFpLpSpsMFGrlGxnh1iCrB4LYJMrsdyJjjY6TWRPQ0vSaVhb
-LlkBwu7OYoc1U9HZh916SHFtidbErPM+v4LRy8lYUXEHcqyhYMD2QvO+uDairwuT/iW8spD+s5Rg
-xNY=
-=A7aF
------END PGP SIGNATURE-----
-
---------------lhYBXaDOQHKMbUOSf5L0iOV3--
+> ---
+>  tests/generic/1230     | 397 +++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/1230.out |   2 +
+>  2 files changed, 399 insertions(+)
+>  create mode 100755 tests/generic/1230
+>  create mode 100644 tests/generic/1230.out
+> 
+> diff --git a/tests/generic/1230 b/tests/generic/1230
+> new file mode 100755
+> index 00000000..cff5adc0
+> --- /dev/null
+> +++ b/tests/generic/1230
+> @@ -0,0 +1,397 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (c) 2025 IBM Corporation. All Rights Reserved.
+> +#
+> +# FS QA Test No. 1230
+> +#
+> +# Test multi block atomic writes with sudden FS shutdowns to ensure
+> +# the FS is not tearing the write operation
+> +. ./common/preamble
+> +. ./common/atomicwrites
+> +_begin_fstest auto atomicwrites
+> +
+> +_require_scratch_write_atomic_multi_fsblock
+> +_require_atomic_write_test_commands
+> +_require_scratch_shutdown
+> +_require_xfs_io_command "truncate"
+> +
+> +_scratch_mkfs >> $seqres.full 2>&1
+> +_scratch_mount >> $seqres.full
+> +
+> +testfile=$SCRATCH_MNT/testfile
+> +touch $testfile
+> +
+> +awu_max=$(_get_atomic_write_unit_max $testfile)
+> +blksz=$(_get_block_size $SCRATCH_MNT)
+> +echo "Awu max: $awu_max" >> $seqres.full
+> +
+> +num_blocks=$((awu_max / blksz))
+> +# keep initial value high for dry run. This will be
+> +# tweaked in dry_run() based on device write speed.
+> +filesize=$(( 10 * 1024 * 1024 * 1024 ))
+> +
+> +_cleanup() {
+> +	[ -n "$awloop_pid" ] && kill $awloop_pid &> /dev/null
+> +	wait
+> +}
+> +
+> +atomic_write_loop() {
+> +	local off=0
+> +	local size=$awu_max
+> +	for ((i=0; i<$((filesize / $size )); i++)); do
+> +		# Due to sudden shutdown this can produce errors so just
+> +		# redirect them to seqres.full
+> +		$XFS_IO_PROG -c "open -fsd $testfile" -c "pwrite -S 0x61 -DA -V1 -b $size $off $size" >> /dev/null 2>>$seqres.full
+> +		echo "Written to offset: $off" >> $tmp.aw
+> +		off=$((off + $size))
+> +	done
+> +}
+> +
+> +# This test has the following flow:
+> +# 1. Start doing sequential atomic writes in bg, upto $filesize
+> +# 2. Sleep for 0.2s and shutdown the FS
+> +# 3. kill the atomic write process
+> +# 4. verify the writes were not torn
+> +#
+> +# We ideally want the shutdown to happen while an atomic write is ongoing
+> +# but this gets tricky since faster devices can actually finish the whole
+> +# atomic write loop before sleep 0.2s completes, resulting in the shutdown
+> +# happening after the write loop which is not what we want. A simple solution
+> +# to this is to increase $filesize so step 1 takes long enough but a big
+> +# $filesize leads to create_mixed_mappings() taking very long, which is not
+> +# ideal.
+> +#
+> +# Hence, use the dry_run function to figure out the rough device speed and set
+> +# $filesize accordingly.
+> +dry_run() {
+> +	echo >> $seqres.full
+> +	echo "# Estimating ideal filesize..." >> $seqres.full
+> +	atomic_write_loop &
+> +	awloop_pid=$!
+> +
+> +	local i=0
+> +	# Wait for atleast first write to be recorded or 10s
+> +	while [ ! -f "$tmp.aw" -a $i -le 50 ]; do i=$((i + 1)); sleep 0.2; done
+> +
+> +	if [[ $i -gt 50 ]]
+> +	then
+> +		_fail "atomic write process took too long to start"
+> +	fi
+> +
+> +	echo >> $seqres.full
+> +	echo "# Shutting down filesystem while write is running" >> $seqres.full
+> +	_scratch_shutdown
+> +
+> +	kill $awloop_pid 2>/dev/null  # the process might have finished already
+> +	wait $awloop_pid
+> +	unset $awloop_pid
+> +
+> +	bytes_written=$(tail -n 1 $tmp.aw | cut -d" " -f4)
+> +	echo "# Bytes written in 0.2s: $bytes_written" >> $seqres.full
+> +
+> +	filesize=$((bytes_written * 3))
+> +	echo "# Setting \$filesize=$filesize" >> $seqres.full
+> +
+> +	rm $tmp.aw
+> +	sleep 0.5
+> +
+> +	_scratch_cycle_mount
+> +
+> +}
+> +
+> +create_mixed_mappings() {
+> +	local file=$1
+> +	local size_bytes=$2
+> +
+> +	echo "# Filling file $file with alternate mappings till size $size_bytes" >> $seqres.full
+> +	#Fill the file with alternate written and unwritten blocks
+> +	local off=0
+> +	local operations=("W" "U")
+> +
+> +	for ((i=0; i<$((size_bytes / blksz )); i++)); do
+> +		index=$(($i % ${#operations[@]}))
+> +		map="${operations[$index]}"
+> +
+> +		case "$map" in
+> +		    "W")
+> +			$XFS_IO_PROG -fc "pwrite -b $blksz $off $blksz" $file  >> /dev/null
+> +			;;
+> +		    "U")
+> +			$XFS_IO_PROG -fc "falloc $off $blksz" $file >> /dev/null
+> +			;;
+> +		esac
+> +		off=$((off + blksz))
+> +	done
+> +
+> +	sync $file
+> +}
+> +
+> +populate_expected_data() {
+> +	# create a dummy file with expected old data for different cases
+> +	create_mixed_mappings $testfile.exp_old_mixed $awu_max
+> +	expected_data_old_mixed=$(od -An -t x1 -j 0 -N $awu_max $testfile.exp_old_mixed)
+> +
+> +	$XFS_IO_PROG -fc "falloc 0 $awu_max" $testfile.exp_old_zeroes >> $seqres.full
+> +	expected_data_old_zeroes=$(od -An -t x1 -j 0 -N $awu_max $testfile.exp_old_zeroes)
+> +
+> +	$XFS_IO_PROG -fc "pwrite -b $awu_max 0 $awu_max" $testfile.exp_old_mapped >> $seqres.full
+> +	expected_data_old_mapped=$(od -An -t x1 -j 0 -N $awu_max $testfile.exp_old_mapped)
+> +
+> +	# create a dummy file with expected new data
+> +	$XFS_IO_PROG -fc "pwrite -S 0x61 -b $awu_max 0 $awu_max" $testfile.exp_new >> $seqres.full
+> +	expected_data_new=$(od -An -t x1 -j 0 -N $awu_max $testfile.exp_new)
+> +}
+> +
+> +verify_data_blocks() {
+> +	local verify_start=$1
+> +	local verify_end=$2
+> +	local expected_data_old="$3"
+> +	local expected_data_new="$4"
+> +
+> +	echo >> $seqres.full
+> +	echo "# Checking data integrity from $verify_start to $verify_end" >> $seqres.full
+> +
+> +	# After an atomic write, for every chunk we ensure that the underlying
+> +	# data is either the old data or new data as writes shouldn't get torn.
+> +	local off=$verify_start
+> +	while [[ "$off" -lt "$verify_end" ]]
+> +	do
+> +		#actual_data=$(xxd -s $off -l $awu_max -p $testfile)
+> +		actual_data=$(od -An -t x1 -j $off -N $awu_max $testfile)
+> +		if [[ "$actual_data" != "$expected_data_new" ]] && [[ "$actual_data" != "$expected_data_old" ]]
+> +		then
+> +			echo "Checksum match failed at off: $off size: $awu_max"
+> +			echo "Expected contents: (Either of the 2 below):"
+> +			echo
+> +			echo "Expected old: "
+> +			echo "$expected_data_old"
+> +			echo
+> +			echo "Expected new: "
+> +			echo "$expected_data_new"
+> +			echo
+> +			echo "Actual contents: "
+> +			echo "$actual_data"
+> +
+> +			_fail
+> +		fi
+> +		echo -n "Check at offset $off suceeded! " >> $seqres.full
+> +		if [[ "$actual_data" == "$expected_data_new" ]]
+> +		then
+> +			echo "matched new" >> $seqres.full
+> +		elif [[ "$actual_data" == "$expected_data_old" ]]
+> +		then
+> +			echo "matched old" >> $seqres.full
+> +		fi
+> +		off=$(( off + awu_max ))
+> +	done
+> +}
+> +
+> +# test data integrity for file by shutting down in between atomic writes
+> +test_data_integrity() {
+> +	echo >> $seqres.full
+> +	echo "# Writing atomically to file in background" >> $seqres.full
+> +	atomic_write_loop &
+> +	awloop_pid=$!
+> +
+> +	local i=0
+> +	# Wait for atleast first write to be recorded or 10s
+> +	while [ ! -f "$tmp.aw" -a $i -le 50 ]; do i=$((i + 1)); sleep 0.2; done
+> +
+> +	if [[ $i -gt 50 ]]
+> +	then
+> +		_fail "atomic write process took too long to start"
+> +	fi
+> +
+> +	echo >> $seqres.full
+> +	echo "# Shutting down filesystem while write is running" >> $seqres.full
+> +	_scratch_shutdown
+> +
+> +	kill $awloop_pid 2>/dev/null  # the process might have finished already
+> +	wait $awloop_pid
+> +	unset $awloop_pid
+> +
+> +	last_offset=$(tail -n 1 $tmp.aw | cut -d" " -f4)
+> +	if [[ -z $last_offset ]]
+> +	then
+> +		last_offset=0
+> +	fi
+> +
+> +	echo >> $seqres.full
+> +	echo "# Last offset of atomic write: $last_offset" >> $seqres.full
+> +
+> +	rm $tmp.aw
+> +	sleep 0.5
+> +
+> +	_scratch_cycle_mount
+> +
+> +	# we want to verify all blocks around which the shutdown happended
+> +	verify_start=$(( last_offset - (awu_max * 5)))
+> +	if [[ $verify_start < 0 ]]
+> +	then
+> +		verify_start=0
+> +	fi
+> +
+> +	verify_end=$(( last_offset + (awu_max * 5)))
+> +	if [[ "$verify_end" -gt "$filesize" ]]
+> +	then
+> +		verify_end=$filesize
+> +	fi
+> +}
+> +
+> +# test data integrity for file wiht written and unwritten mappings
+> +test_data_integrity_mixed() {
+> +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Creating testfile with mixed mappings" >> $seqres.full
+> +	create_mixed_mappings $testfile $filesize
+> +
+> +	test_data_integrity
+> +
+> +	verify_data_blocks $verify_start $verify_end "$expected_data_old_mixed" "$expected_data_new"
+> +}
+> +
+> +# test data integrity for file with completely written mappings
+> +test_data_integrity_writ() {
+> +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Creating testfile with fully written mapping" >> $seqres.full
+> +	$XFS_IO_PROG -c "pwrite -b $filesize 0 $filesize" $testfile >> $seqres.full
+> +	sync $testfile
+> +
+> +	test_data_integrity
+> +
+> +	verify_data_blocks $verify_start $verify_end "$expected_data_old_mapped" "$expected_data_new"
+> +}
+> +
+> +# test data integrity for file with completely unwritten mappings
+> +test_data_integrity_unwrit() {
+> +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Creating testfile with fully unwritten mappings" >> $seqres.full
+> +	$XFS_IO_PROG -c "falloc 0 $filesize" $testfile >> $seqres.full
+> +	sync $testfile
+> +
+> +	test_data_integrity
+> +
+> +	verify_data_blocks $verify_start $verify_end "$expected_data_old_zeroes" "$expected_data_new"
+> +}
+> +
+> +# test data integrity for file with no mappings
+> +test_data_integrity_hole() {
+> +	$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Creating testfile with no mappings" >> $seqres.full
+> +	$XFS_IO_PROG -c "truncate $filesize" $testfile >> $seqres.full
+> +	sync $testfile
+> +
+> +	test_data_integrity
+> +
+> +	verify_data_blocks $verify_start $verify_end "$expected_data_old_zeroes" "$expected_data_new"
+> +}
+> +
+> +test_filesize_integrity() {
+> +	$XFS_IO_PROG -c "truncate 0" $testfile >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Performing extending atomic writes over file in background" >> $seqres.full
+> +	atomic_write_loop &
+> +	awloop_pid=$!
+> +
+> +	local i=0
+> +	# Wait for atleast first write to be recorded or 10s
+> +	while [ ! -f "$tmp.aw" -a $i -le 50 ]; do i=$((i + 1)); sleep 0.2; done
+> +
+> +	if [[ $i -gt 50 ]]
+> +	then
+> +		_fail "atomic write process took too long to start"
+> +	fi
+> +
+> +	echo >> $seqres.full
+> +	echo "# Shutting down filesystem while write is running" >> $seqres.full
+> +	_scratch_shutdown
+> +
+> +	kill $awloop_pid 2>/dev/null  # the process might have finished already
+> +	wait $awloop_pid
+> +	unset $awloop_pid
+> +
+> +	local last_offset=$(tail -n 1 $tmp.aw | cut -d" " -f4)
+> +	if [[ -z $last_offset ]]
+> +	then
+> +		last_offset=0
+> +	fi
+> +
+> +	echo >> $seqres.full
+> +	echo "# Last offset of atomic write: $last_offset" >> $seqres.full
+> +	rm $tmp.aw
+> +	sleep 0.5
+> +
+> +	_scratch_cycle_mount
+> +	local filesize=$(_get_filesize $testfile)
+> +	echo >> $seqres.full
+> +	echo "# Filesize after shutdown: $filesize" >> $seqres.full
+> +
+> +	# To confirm that the write went atomically, we check:
+> +	# 1. The last block should be a multiple of awu_max
+> +	# 2. The last block should be the completely new data
+> +
+> +	if (( $filesize % $awu_max ))
+> +	then
+> +		echo "Filesize after shutdown ($filesize) not a multiple of atomic write unit ($awu_max)"
+> +	fi
+> +
+> +	verify_start=$(( filesize - (awu_max * 5)))
+> +	if [[ $verify_start < 0 ]]
+> +	then
+> +		verify_start=0
+> +	fi
+> +
+> +	local verify_end=$filesize
+> +
+> +	# Here the blocks should always match new data hence, for simplicity of
+> +	# code, just corrupt the $expected_data_old buffer so it never matches
+> +	local expected_data_old="POISON"
+> +	verify_data_blocks $verify_start $verify_end "$expected_data_old" "$expected_data_new"
+> +}
+> +
+> +$XFS_IO_PROG -fc "truncate 0" $testfile >> $seqres.full
+> +
+> +dry_run
+> +
+> +echo >> $seqres.full
+> +echo "# Populating expected data buffers" >> $seqres.full
+> +populate_expected_data
+> +
+> +# Loop 20 times to shake out any races due to shutdown
+> +for ((iter=0; iter<20; iter++))
+> +do
+> +	echo >> $seqres.full
+> +	echo "------ Iteration $iter ------" >> $seqres.full
+> +
+> +	echo >> $seqres.full
+> +	echo "# Starting data integrity test for atomic writes over mixed mapping" >> $seqres.full
+> +	test_data_integrity_mixed
+> +
+> +	echo >> $seqres.full
+> +	echo "# Starting data integrity test for atomic writes over fully written mapping" >> $seqres.full
+> +	test_data_integrity_writ
+> +
+> +	echo >> $seqres.full
+> +	echo "# Starting data integrity test for atomic writes over fully unwritten mapping" >> $seqres.full
+> +	test_data_integrity_unwrit
+> +
+> +	echo >> $seqres.full
+> +	echo "# Starting data integrity test for atomic writes over holes" >> $seqres.full
+> +	test_data_integrity_hole
+> +
+> +	echo >> $seqres.full
+> +	echo "# Starting filesize integrity test for atomic writes" >> $seqres.full
+> +	test_filesize_integrity
+> +done
+> +
+> +echo "Silence is golden"
+> +status=0
+> +exit
+> diff --git a/tests/generic/1230.out b/tests/generic/1230.out
+> new file mode 100644
+> index 00000000..d01f54ea
+> --- /dev/null
+> +++ b/tests/generic/1230.out
+> @@ -0,0 +1,2 @@
+> +QA output created by 1230
+> +Silence is golden
+> -- 
+> 2.49.0
+> 
+> 
 
