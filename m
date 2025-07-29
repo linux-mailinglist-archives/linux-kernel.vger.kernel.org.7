@@ -1,183 +1,187 @@
-Return-Path: <linux-kernel+bounces-749644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81693B150EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:09:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADADB150F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:10:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CC44175DD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0BCB18A251C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCE3295537;
-	Tue, 29 Jul 2025 16:08:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 468CF29994C;
+	Tue, 29 Jul 2025 16:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="UTyCFXGg"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12olkn2031.outbound.protection.outlook.com [40.92.22.31])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="MNFZOA4c"
+Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C052222A3;
-	Tue, 29 Jul 2025 16:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.22.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753805290; cv=fail; b=SFAd3j8OgIjVNKBQ3xxd9Unrp/UjYdIzBVvhesF4JjoNEyFzQ1fhzd5C8a9XchhLc9wpstx+TyEXikzfjlDhzFdxVXcPSQHTeI+1niCLJToaliozlOv8fVJvjwZacRZ1V0VVfM3DD1yD8cq9KEXN0C6jsSwFGOq+4GhdcdF9kw4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753805290; c=relaxed/simple;
-	bh=xRxOIbpHb38qmtg64soQ3InbDo4b3Q93PZdcxvJO/T4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=DL5/65QiTgsvDpbfVYNAiP/zzSopJjDVzc5geAH8iFcDUW6GRItGbLsqUmDcAeqp6VRXw6rLFJIMMI+S5Nm/3/q2CV143huqqz5U7W1Hgt8OvVsQDQSaUtobYEpuHzN+wQRWzJZvUMYHDYkuyMczF3N4ufXGEwx1IOAARCZcJcM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=UTyCFXGg; arc=fail smtp.client-ip=40.92.22.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aglnApMmZWhIu4+WfEfkKDXjgq8hE7JwWDqYBcYq/uqbMSp7FO2mvUjzW7udQwtdlF6lcOt1OhJgZbts6l3pyxK3Dm53Fd80h/mquxt2KM6sWnc/SL6HwvhJm2OzJaIAat9tzmO2zY9wXb/S4iNsWrmcgaXNkO3YlMYiN0xCu3PubzUaIsTI/5OZfln2+c4NRwe5ur+/VCGygmWFZf7yeiqad+HQhfK0Ja0sDdJiw7ElPkJfB7ZviGg2xEw2/ozoJ+PZmc91pOFe06GBtpF2k8eDMzQOSm+uQz+nZnimug4FoJXM6NhOYvuWgpXa4JJK+3Wg/nQBeR+fKxg+JcMnNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=akojdZxtkSBoEdTSTJ0sS1Goypw1DS3lY7MKwi+7I6c=;
- b=A4yhPbGQ54ulzaZLyLIKxfSOoy/S9p8iAmS0fKvjXNjJ/nQCvMj0vs3pouCGMewU02Z5JqhVCZaMmNE+q+U4WBU8pXvYTYNot/PDvrftngz0G4cO9EyoK9kWFA3LjrJpZu0cZSHjzQJsusOIB6iMOxOuNtJ+kjlicFDtYzyd78wiMvDGQCjBa0gKgJwJC4g0FYhGg6a3EHQvqX4iVFo2bvF9Bes5S379/b9hAzadeZL58PxOlZb2PbGm/bF8TZc50xyl6xRDx2Wb9PusPEnfmQAuSJmEioyTDhCunnIyLk56J1f6SpfJyUaFjuXHBcbqYNsChImaqWVFMv4PnnZh+g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=akojdZxtkSBoEdTSTJ0sS1Goypw1DS3lY7MKwi+7I6c=;
- b=UTyCFXGguQTaUQuGttlrgwD40smepy2dI4Uf+CAaVTln4ORvR3k+BOiKJE+dpmbuvDpeH7b92giZ6P+rU0UlVTqHFB3nXRxjMFbcHwadkbcqYtxDjstQR40tYSGuu8bgFDLkqW8qzy22n3ulFMn4BZr8gkrv1zk3i7d87NBca+zI6xAtTOyV7qwqzI1Zs3fZe4pHYQFmknrWPWNbHRnZ63OoNdhK7Ovwa+eVXWeQzbZvDXjOOTZlhMGon9aN7ga+XqsHB/MysIpvwQlw4mcttxaVrtDpV9HpVpryB56nqpjKLoZoKtPL6O2CsApvodEnXgA76P7kuqzdwYDXZy6WJA==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by PH0PR02MB7606.namprd02.prod.outlook.com (2603:10b6:510:5c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Tue, 29 Jul
- 2025 16:08:06 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8989.010; Tue, 29 Jul 2025
- 16:08:06 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan"
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-CC: Roman Kisel <romank@linux.microsoft.com>, Anirudh Rayabharam
-	<anrayabh@linux.microsoft.com>, Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>, Nuno Das Neves
-	<nunodasneves@linux.microsoft.com>, ALOK TIWARI <alok.a.tiwari@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: RE: [PATCH v7 2/2] Drivers: hv: Introduce mshv_vtl driver
-Thread-Topic: [PATCH v7 2/2] Drivers: hv: Introduce mshv_vtl driver
-Thread-Index: AQHcAEe7BCycNzS65EWgBS558cVtR7RJRO7w
-Date: Tue, 29 Jul 2025 16:08:06 +0000
-Message-ID:
- <SN6PR02MB41576C39BA1977F0BBA406F4D425A@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250729051436.190703-1-namjain@linux.microsoft.com>
- <20250729051436.190703-3-namjain@linux.microsoft.com>
-In-Reply-To: <20250729051436.190703-3-namjain@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB7606:EE_
-x-ms-office365-filtering-correlation-id: 39ce7378-de7f-42b5-3898-08ddceba1aac
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799012|8060799015|8062599012|41001999006|461199028|15080799012|440099028|40105399003|3412199025|102099032;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?HaCtrUZOhEe/RflS9b7LgSDBRdQpj+t4Gj9WktrCyo7RPqjWv5pO7vAnaLo1?=
- =?us-ascii?Q?79DRUi7JZhhmL5NsMSHQz/MAzavEXNeDq9ICSLDf0TCnBfENwCtfDX5kKMOr?=
- =?us-ascii?Q?Y4b7L4Wcxo8CaB7G/yqugMOIBNvRo9ueVzJBPEyyKP0MycbGBMF1LzPUuFj2?=
- =?us-ascii?Q?kzHvNlBukruuDNPbhWpnIVj+GWtsBvO+MFAzLJWcrZqVlkD/wkL1zquIc+Yk?=
- =?us-ascii?Q?qQ6ILt6gEg5r/sY2ZTkCoKf8wBjf24oROOc3QDOqYjN94oB6lrW/hBIew1i/?=
- =?us-ascii?Q?pzlzkGen+YA+XWfVMNVJk2ggvSzwsmQ43V9Dn4lU+W77ZLblFWcDkWew1/+l?=
- =?us-ascii?Q?hFJNXAaR65VbpwX1ElRHmxz6IW3B6K5P/h7r5WHlx8gggmdOTKNwsw4fjF62?=
- =?us-ascii?Q?t1NaQdlGDK/Yete3FMPmr6Mvjz1/yPf/6qmX2L9lnXkl8w0A2o9SNuLyFrLF?=
- =?us-ascii?Q?WF+3h9hTaAg6ktV3r4axnHar1Zt5BlIpnsWiesRYAqqHrRBXHE4q5pND6IwH?=
- =?us-ascii?Q?GYmAU05gFFXXzCn+mx0Up/uenRym5FhGc9bowPDGez2eVuUqRoULAiPLGRIu?=
- =?us-ascii?Q?Q/KI9IrxwLCU3Cu1ZmFQAlyFT+3fc0XUPU/ueWy+UGiAKIL27ChmTUXRnku0?=
- =?us-ascii?Q?xHj3QEHmITFZHYTG9hqjhRDcDmCWUCbqvTfv8F2IsOoViNwrLGv+NGIodFo0?=
- =?us-ascii?Q?U5bpwZF/THu0ygnhRlkKcPclbYPzsWkcyJIk85g0ByRB4nqeo1uCY3kgzmDw?=
- =?us-ascii?Q?0SoG8vQLM/vfAUO3xbbMd7FZW7OyNhm2U5QvNuD7tX7zsWDtq+IcmAUqrGd3?=
- =?us-ascii?Q?Brd8VxCnKTqagTYaZalgf1poNEXcI3JShvUNx5sp7hJA7WIBdiODVYtPCKgR?=
- =?us-ascii?Q?EkzGORZTotMkxuyoSNuHIoe1GF3GalpUAt+4ahoyNYhOY2hgsRs4TYbbdNa3?=
- =?us-ascii?Q?Y7PGPzZcqdIU4X875RVL0np6PiFNLFY7+KcQcvbuHNXfAxewbwEaVFjcdULg?=
- =?us-ascii?Q?ijq3WdJ3CCAlRsCy2SLZZ2dCBY4r2UWs2xaJKuWseGX5jdhS/ZK0oVSfPyGx?=
- =?us-ascii?Q?f6mvoasQP5updID8Ye+h8kGGW7M9sUQlupXPZQwe0l8URtgJundkmuF9/m60?=
- =?us-ascii?Q?hjaWvwU1XR66aGXuFLTCAOd8MGbyo89whw=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?kI2TWSKd3U8iWr6zGaUWR38uMtKGfuq9OnzlZRtv8CpscCNbMVODK6gY1Nn9?=
- =?us-ascii?Q?RHvXhoNG5xCWbrKM/hr9q5Dg6k0QT+31NAa46MDbmfehygvo0g1JASC4X76t?=
- =?us-ascii?Q?UaTxLonTRfOIoWikMQV3SMwTJUSMtwumKcexe/OqHiCObIPWzgZp2sx8uZ/Z?=
- =?us-ascii?Q?koa+jYD+ycb7/qmzPMZQ55xR1TSxoz6bMmoxLVNOaMmJ1Gu7Dree8fzhILMf?=
- =?us-ascii?Q?sdARfPOxmnVTyEDixO3afH4ka7MnXNtASQ81L5IAut96TIMy/xFVDr8OLMEk?=
- =?us-ascii?Q?Fgo69g4X34p396EIyMTybt2qSjaBySngZ1Ebwx6pFFYG76QgdGLWX/TLI2uW?=
- =?us-ascii?Q?5QEUAGIn5ztP6i8aWO9mKMlOSrY/MqBQPz465rAEAFgx+AwjOy7MjxRRojek?=
- =?us-ascii?Q?et7W0XNaDOnVMjCo92dJZU6whdDD7AF925MCkV/NjOTFHiVbakJ+27FI9qo/?=
- =?us-ascii?Q?g8uCMcEuCAEPXfQRI7Q7toywyzc3eMhLuh9JP9n6LaL/SyWOWcq9C1az4x1G?=
- =?us-ascii?Q?cA6xwQHpJmDC+nd0usduPInqhgnck0BKXpSR1hGcb3Fa8OU3NINs/c5rsdJ0?=
- =?us-ascii?Q?FdhErZ7iRFbets1Pf/cF6eCZTCdu/HgXkYv+0A7un4TmauTEvhQ+nIcmx93c?=
- =?us-ascii?Q?/5toVWom3HYnBK69QBbM09dHo0E7aXxcpGoie98Nk0PYs5FL50l6Rei7b0LK?=
- =?us-ascii?Q?uWq2F7mKS/cW//vf86ujYJGxThfg5sErD7KLoFKuZ4F2D11wqS+LlcDyfLC/?=
- =?us-ascii?Q?qGm8a61K15Q3dgAsNX/OxkPDeAPC3z5uZa6eUdyKia7tlcz/U+fEFJhocQ5c?=
- =?us-ascii?Q?cXS9SXGz0F3xnRM7xYv+ui9DsUN6hKEbxPzfTJMjuQCffwSLVX10EmKr7Dnz?=
- =?us-ascii?Q?n1FmAIMSbiW3+v05cYAO41rLm7CFysnA3iez/hE+PPlQS1F8iSDQldDO9S9O?=
- =?us-ascii?Q?mLkiKUqQlq5upm9WK7G04N0aPI3OJoBfExoGmFRxj/L4Jj5k1jrlMPBeYopS?=
- =?us-ascii?Q?vePzJncUUQ3kCmmjZKymgsklVXoeMxSPRbHNnqM3+fhNW3beyCVh8QEHgP8t?=
- =?us-ascii?Q?O1csc2ZDlWxfJVLCjejkndJF7YLbfSzcRAJ44H1KFLze9vHIa23+tJ72a73r?=
- =?us-ascii?Q?ybL3R/8vXaGIvJMG7RKh9tgGwCyuKFFhy5jgmywDmshk/VWd8D1Zkn3kw/oS?=
- =?us-ascii?Q?hSXoUxcNgfV70hkz6nSZ+iHwCkdvz/f8szUgVRzWSr2vJtGk0XjaF8ZJlp8?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D87D29617A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753805314; cv=none; b=agtQoF+Zkc2+wqSHRKL7AZDzxgMDYLcQmrf5Ce91rsEk/0KgTUcsSsxuhMzkhuIw/s3tBzjtHM3FZMEclAIHmCkp9nFO1+7WVGHL06LU4B4Fc9EiA7n8f1HqtiaHEvf5kk/U0jC288gTv0YCvUD1kutdbaDwkHLQps/jZ/VUrWI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753805314; c=relaxed/simple;
+	bh=Y9zplbesg+n+uaqGf/jqos/my3gJKcrm77xTP40xPCs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YhJHuJlAji7oxLeuaVckaK1lbf6gUuAaovvj/j1sN/4BVCMhsDr1TgfSpIY82BK7uv0L94wn+vTIpN6TjTGTBxhjMdCp+kViWnBVQ/olhR1R9oawTUMkdB1B+Hqp9jPcNUkysNXrmvRpeG7IJbHM8QCemJ3qjSL6aCKSat4GCFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=MNFZOA4c; arc=none smtp.client-ip=209.85.210.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-73e810dc4cdso2030020a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:08:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753805311; x=1754410111; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iisZZW4Cr/AQvtrcy4WRz8ws+tzToFhKZHiBGfmsH9Y=;
+        b=MNFZOA4cBh3Z4tnXgHSr8ZmPVZs+VILKkMJQHgDriuNUJnkUOhxop6HK6Z5PcMtpZH
+         A7SlM+/ULh3b0W4yUpqMiDg6uIt+tW5uazk/hktbFiXogGM7l66a8woXVTdnc1ZNt847
+         FLicGF0T5i+KxOQ8nzS+jDK79lBwLqcQJW10cYJ0yaDOLkqdY2QOgXrIr1Lrzt00amS8
+         xV1ZelKLz8XoL7gnJGb0oksgYtHB9mIZBJOohE9w5E7n+nkPuK8nzA3ktC4SyAV05sA8
+         AZMBqxXz0yOhkquTVNjkG59ZQ1eqP3d2fDsuJPH50dtl8YcY/dIxZuEueGN12AV7TRff
+         BlOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753805311; x=1754410111;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iisZZW4Cr/AQvtrcy4WRz8ws+tzToFhKZHiBGfmsH9Y=;
+        b=NZ2UId+nRb5V8MVjyHsf2AVQTngv5zgjm6cEzwxD5OuIS/8KVw94EgglPatzShzTIv
+         M7mJqlXMCDe9Ec0+MHiqGxVty3DVc2/c01Qrh0SxNE7Tk+fCqYSn+0DXn1U1RuFfcTBW
+         Q1/z/iM8uWLVvhI7cw0KmEMnO3cPxSU90CKO+TJQHGMEhl8fgJXY7nCzaIRTB2/OeCW7
+         q7Tp8HVQl4nTrYx0JtK4PJQuJsITGampY8iJqF992vlWbLySPYcyuKtsBP2jufzCPw3W
+         Svc/8SgcqvEe/dEnSssRSgUv9VTHA70S/034YYjPVfmO/t38StNfurLYPVX7mxXhsg7Y
+         jyUw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcsSa+haJxcPP3NBLSnjvxcE8YHTCWQync4a08BPq+2S+6y9SQVVk/u2mxWrR0rWHoLi+b+L710PJNYJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGWD6BdB68Zc7GPgWn5yb8y2K5Uh7iHbbDiTCqCvgzwsrPeTA4
+	ojALAjuxO8ax7HdnkjugcdZc189zRYPiM6DzsWDpnwNu4HRY2VEo4FGLlVKkMJLyHtu+OhKdnDn
+	su+wh
+X-Gm-Gg: ASbGncvwJOIhuH9g8AlN/yf4elcISJSVRH+wgPNLMRSw05EJ2IKB4BW8CCdF2ig4P49
+	5Z6TfrP8bW3ID6BmLtES4FYKqVbVDhydPey6ORd6G+Ya7oSt9L1GDhMoGSMnnHB51oeZtRwZHQi
+	FC152cCB1DaQ65KHKWpkbtiz8hX4BcYHjXRabO5UpYcX4SFit99LXRdWFlaqk3cQy+TLSy6X7L9
+	HkVuHAUTMI0YwYZBfM5mGlzzFHUzUJXjJ/um/TPrlJmWkpc9AyreGHSvfzKcdi9VvfjRLj0z/1F
+	9T5zbdTYF2tBnLjMUl3B27rNnJqqdi+SABgIUdc8/ENDhNiYQk+VBo270j4FHiHLfq4IA/f1fyx
+	lzZJhsLx8ccfLY3I07Tq1PXn8A5tAj/dWEKiKMZ67lYsih2B1wypgBFe3SWR3QUQtddnSA01vnT
+	c=
+X-Google-Smtp-Source: AGHT+IFDGl5SETxkBjW/H31hwu1U5JxJwMyDzgnv3ruh05bOarPZvWxXwwo3/ACHAvk332S0oYi2Fg==
+X-Received: by 2002:a05:6830:4d8b:10b0:727:3111:1416 with SMTP id 46e09a7af769-74177ca43d4mr203693a34.24.1753805311343;
+        Tue, 29 Jul 2025 09:08:31 -0700 (PDT)
+Received: from ?IPV6:2600:8803:e7e4:1d00:c7d5:61e1:68d6:dd54? ([2600:8803:e7e4:1d00:c7d5:61e1:68d6:dd54])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-74147f9460csm1597928a34.17.2025.07.29.09.08.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 09:08:30 -0700 (PDT)
+Message-ID: <1c897cf7-dc31-4e39-84c1-f8ab4b3e0aa8@baylibre.com>
+Date: Tue, 29 Jul 2025 11:08:29 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 39ce7378-de7f-42b5-3898-08ddceba1aac
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2025 16:08:06.2813
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7606
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] iio: adc: ad7124: do not require mclk
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250724-iio-adc-ad7124-proper-clock-support-v1-0-88f35db2fcaf@baylibre.com>
+ <20250724-iio-adc-ad7124-proper-clock-support-v1-2-88f35db2fcaf@baylibre.com>
+ <20250727132143.35a44547@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20250727132143.35a44547@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Naman Jain <namjain@linux.microsoft.com> Sent: Monday, July 28, 2025 =
-10:15 PM
->=20
-> Provide an interface for Virtual Machine Monitor like OpenVMM and its
-> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
-> Expose devices and support IOCTLs for features like VTL creation,
-> VTL0 memory management, context switch, making hypercalls,
-> mapping VTL0 address space to VTL2 userspace, getting new VMBus
-> messages and channel events in VTL2 etc.
->=20
-> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
-> Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
-> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> ---
->  drivers/hv/Kconfig          |   22 +
->  drivers/hv/Makefile         |    7 +-
->  drivers/hv/mshv_vtl.h       |   52 ++
->  drivers/hv/mshv_vtl_main.c  | 1468 +++++++++++++++++++++++++++++++++++
->  include/hyperv/hvgdk_mini.h |  106 +++
->  include/uapi/linux/mshv.h   |   80 ++
->  6 files changed, 1734 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/hv/mshv_vtl.h
->  create mode 100644 drivers/hv/mshv_vtl_main.c
->=20
+On 7/27/25 7:21 AM, Jonathan Cameron wrote:
+> On Thu, 24 Jul 2025 18:25:23 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
 
-Looks good!
+...
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+>> @@ -1111,21 +1112,49 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
+>>  static int ad7124_setup(struct ad7124_state *st)
+>>  {
+>>  	struct device *dev = &st->sd.spi->dev;
+>> -	unsigned int fclk, power_mode;
+>> +	unsigned int power_mode;
+>> +	struct clk *mclk;
+>>  	int i, ret;
+>>  
+>> -	fclk = clk_get_rate(st->mclk);
+>> -	if (!fclk)
+>> -		return dev_err_probe(dev, -EINVAL, "Failed to get mclk rate\n");
+>> +	/*
+>> +	 * Always use full power mode for max performance. If needed, the driver
+>> +	 * could be adapted to use a dynamic power mode based on the requested
+>> +	 * output data rate.
+>> +	 */
+>> +	power_mode = AD7124_ADC_CONTROL_POWER_MODE_FULL;
+>>  
+>> -	/* The power mode changes the master clock frequency */
+>> -	power_mode = ad7124_find_closest_match(ad7124_master_clk_freq_hz,
+>> -					ARRAY_SIZE(ad7124_master_clk_freq_hz),
+>> -					fclk);
+>> -	if (fclk != ad7124_master_clk_freq_hz[power_mode]) {
+>> -		ret = clk_set_rate(st->mclk, fclk);
+>> -		if (ret)
+>> -			return dev_err_probe(dev, ret, "Failed to set mclk rate\n");
+>> +	/*
+>> +	 * HACK: This "mclk" business is needed for backwards compatibility with
+> 
+> I'd drop the HACK bit of this. Whilst I understand the spirit of the comment
+> that term tends to make people try to 'fix' things ;)
+> 
+>> +	 * old devicetrees that specified a fake clock named "mclk" to select
+>> +	 * the power mode.
+>> +	 */
+>> +	mclk = devm_clk_get_optional_enabled(dev, "mclk");
+>> +	if (IS_ERR(mclk))
+>> +		return dev_err_probe(dev, PTR_ERR(mclk), "Failed to get mclk\n");
+>> +
+>> +	if (mclk) {
+>> +		unsigned long mclk_hz;
+>> +
+>> +		mclk_hz = clk_get_rate(mclk);
+>> +		if (!mclk_hz)
+>> +			return dev_err_probe(dev, -EINVAL, "Failed to get mclk rate\n");
+>> +
+>> +		/*
+>> +		 * This logic is a bit backwards, which is why it is considered
+>> +		 * a hack and is only here for backwards compatibility. The
+>> +		 * driver should be able to set the power mode as it sees fit
+>> +		 * and the f_clk/mclk rate should be dynamic accordingly. But
+>> +		 * here, we are selecting a fixed power mode based on the given
+>> +		 * "mclk" rate.
+> 
+> My assumption is that someone had a board with a fixed rate clock on this pin.
+> So it might not be possible to have the driver do that adjustment.
+> If anyone ever adds that support, we'll have to be careful about handling fixed
+> clocks.
+
+In order to use an external clock, you have to program a register field to
+allow that. Since the driver isn't doing that, we can be sure that even if
+someone had an external clock, the driver was still using the internal clock.
+
+> 
+> This looks fine though.
+> 
+>> +		 */
+>> +		power_mode = ad7124_find_closest_match(ad7124_master_clk_freq_hz,
+>> +			ARRAY_SIZE(ad7124_master_clk_freq_hz), mclk_hz);
+>> +
+>> +		if (mclk_hz != ad7124_master_clk_freq_hz[power_mode]) {
+>> +			ret = clk_set_rate(mclk, mclk_hz);
+>> +			if (ret)
+>> +				return dev_err_probe(dev, ret, "Failed to set mclk rate\n");
+>> +		}
+>>  	}
 
