@@ -1,87 +1,111 @@
-Return-Path: <linux-kernel+bounces-748893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72638B14750
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:47:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4DB1B14755
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:51:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94EAA17DCFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:47:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 341BD1AA0EA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:51:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D072AF1C;
-	Tue, 29 Jul 2025 04:47:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63950234963;
+	Tue, 29 Jul 2025 04:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uubVqkPQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DBA4A01
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA58D1E0E1F;
+	Tue, 29 Jul 2025 04:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753764426; cv=none; b=u9CMCnslc1CICcHm9ZJPA6lE60EX8UBcv5xjqgHVwmIdgdb4brIHVYC5AFFc/zT1zqXDsCdbc3Rdi+zzpQVQHasOq8Cm3F9kcCbWlwGVxD7bKI/ABBYpgEQx2DFgB2Q0+50gnN9p9EuGH8QfXxC4yIBw+FZixIvKdShW3xKh5Xs=
+	t=1753764687; cv=none; b=TRG7/5LCpALDHm3b/s+Ijkv8zDI3ATARFNybw6FJ+D4ODM3CclPQ+BwBBIRnbXZkTMiuVxOhl+c1gMGGisYrBG111SdcIUq6inXptGL6tQsi0/OPQ5OHq9O3dZOXp/qpSPmfvBepHZBrOqL6rygT1PNyUIsemKxcfQfDB+hpCw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753764426; c=relaxed/simple;
-	bh=F9qogi6VpHQCHUEQDmC7FTZNS81hv+ghQg1nqkYyyTc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=e3pq4a1FCcScaTsxGufqicssePq+E9GqY4BiQvkOtVk35a+ZbJeczDA9o9kLDrNCk37iwYbAS4HbNp9xnCVC92RFdEgxV6x/PVEIDtjJ1YY0rctyMIrniQD7zPiXgeHiR9/erEYJh1MEGx1eQlrnd5EePGfwe2xsy0hKwy2w6Js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-8649be94fa1so1064288739f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:47:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753764424; x=1754369224;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DE37bBcNfqDRgiBWzg/hRcBvVxig85zs1eJLgiJraNw=;
-        b=HHojSpSZrOzjLtRB7fy0It3qC/Ju/ZncWUWIoUkIUusKS0TOx51ITn89vWCdKV1F+v
-         8/A0jcz6fCDBZf3w4wEWjmqR7fXhedbpHHBn988P7ZUS5weTJxhxTGOjbJKoYyHzvJEu
-         4M2xry194lTT45OviCwi1T2746DNvgOTZtLvKIq516ujhDJF6a8pphbs2ZhqYWS+s5IM
-         Cv7nMVk+Fizu51oYpJC6FfgTLhAt+U0k9Hx5SB9SB3bCWbu3L8Q+6jdfEJYvkE8QALLW
-         1hIJS6M+CfMPbxNezmmtzMZT2ErfBAl2JX1m6YqVp8aAWinFa0W7vj3XmY+5J0yhjUS2
-         uKHg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5Bh/a90CX5n15DOIXEgz3K3Nn7OZGrxXxRjmU7GUK5p2DIp6srfjH6bUsMF1CYqu8YHuD6wnOboGOvjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7wcnGBdYhy5tLTchKEIDlHrRgQGt/+igR8zG1Pmxmrg70B22W
-	2EKe6j2oHZhTF91qpveAeGbREZ2LzcRzqjEaAb3NYMroJ8z8lTrveQ7dtj4OkCgGzgBhdu+QJKR
-	Pa4lHkbPRzC7b8deGPjpm8n6xdd6hfflzaHAwb2E44rDy4avnlV4R+1rQA1U=
-X-Google-Smtp-Source: AGHT+IFE5lMR2y0yStx4KZzGwzl4aLvqSyYulQyG/1JeEaJmZqPWW6F6jKKbQJXJP1/8I2kzFAnWogq6tgMZaXw6txAxGE3H2fU/
+	s=arc-20240116; t=1753764687; c=relaxed/simple;
+	bh=dKYGSCbks/KUDflV6ussEDmTnM88IuSNnO/6SfSJ1v4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SHWAQyd50KydNts8ImsV8PJWkFt5wgsdUkj28GQHHVfsN//rRynHDtgmY5SEFs558H1F5xXRaNhQw2rSmNkFfLzVCai/UvlYSNUoZSThwaj+0gYtpp/q0kg4nWIt1CKfWCMmDNO/QSw62Tu0uOSFfakxuL6CwqAV8JEjLqGZL3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uubVqkPQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4EBC6C4CEEF;
+	Tue, 29 Jul 2025 04:51:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753764687;
+	bh=dKYGSCbks/KUDflV6ussEDmTnM88IuSNnO/6SfSJ1v4=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=uubVqkPQoKz0J3lyriL2V0UX3htgCq+DQ51i8QnLqyDF8sgeP7gt75mRYvVe3QMwy
+	 P/GGX+WVn49TrO5ao78yjx0+AvsnwraUgVVG0cx9SgWN6OB6hp8DMkG9VTW+WLJCAt
+	 zWNbC/1Ml/oEKZRiHqLtweKRacop6k2V2zP353EdenozvFkcds7Tod4ycKqEwRk82r
+	 S2YN6GMNzrRQAL0r6es4LNxfT1ez7BsMGPDSdTqIy0oftspSmf+vXSoi4/PlBwdQuv
+	 dXNcjk7VxNCZNjhJjcWPmcciLp03dPVUu3y13+Ed/pu8xtLDmsPLPbmftZm403lGbq
+	 TmQafMflpIf8Q==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CE21C87FC9;
+	Tue, 29 Jul 2025 04:51:27 +0000 (UTC)
+From: Fenglin Wu via B4 Relay <devnull+fenglin.wu.oss.qualcomm.com@kernel.org>
+Subject: [PATCH v2 0/2] leds: flash: leds-qcom-flash: update torch current
+ clamp setting
+Date: Tue, 29 Jul 2025 12:51:21 +0800
+Message-Id: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:60c6:b0:87c:3990:5d27 with SMTP id
- ca18e2360f4ac-880228ef211mr2445116039f.9.1753764423822; Mon, 28 Jul 2025
- 21:47:03 -0700 (PDT)
-Date: Mon, 28 Jul 2025 21:47:03 -0700
-In-Reply-To: <20250729010657.3326-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68885247.a00a0220.b12ec.00c8.GAE@google.com>
-Subject: Re: [syzbot] [mm?] INFO: rcu detected stall in exit_to_user_mode_loop
-From: syzbot <syzbot+2642f347f7309b4880dc@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAElTiGgC/4WNTQ6CQAyFr0JmbQlUkMSV9zAs6likCTA4FaIhc
+ 3crF3Dzku/l/WxOOQqrO2ebi7yKSpgM8JA539P0YJC7scMC66LBGjp5wytE34MfaJxBVBcGT1h
+ jiUSIlbPuHNmC++61Ne5FrfTZb9by5/5bXEsooPLdkW9ElT81l6CaPxcafBjH3MS1KaUvXmf1f
+ sEAAAA=
+X-Change-ID: 20250725-fix-torch-clamp-issue-ca25212aa224
+To: kernel@oss.qualcomm.com, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753764686; l=1056;
+ i=fenglin.wu@oss.qualcomm.com; s=20240327; h=from:subject:message-id;
+ bh=dKYGSCbks/KUDflV6ussEDmTnM88IuSNnO/6SfSJ1v4=;
+ b=p9Dd8qj3QnbN00t2Peuil908E+TcycfB7gOqALi/uoCKxFI5+XdLiGUtTL2g7bhMGPcekUA2B
+ V7TY8+rRf1GA86fo54pMZ1XRpqjVV2ljD9Ol9VD0QtVMOMQwpz2lWbH
+X-Developer-Key: i=fenglin.wu@oss.qualcomm.com; a=ed25519;
+ pk=BF8SA4IVDk8/EBCwlBehKtn2hp6kipuuAuDAHh9s+K4=
+X-Endpoint-Received: by B4 Relay for fenglin.wu@oss.qualcomm.com/20240327
+ with auth_id=406
+X-Original-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Reply-To: fenglin.wu@oss.qualcomm.com
 
-Hello,
+There is a current clamp register needs to be updated when enabling
+torch LED, and the register address is different between different
+PMIC flash LED modules. Add changes to address it.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+---
+Changes in v2:
+- Update the register mapping to use designated initializers and ensure
+  they are sorted by register address.
+- Update the 'msb' of 'status1' register to 5 for pmi8998 flash LED
+  module
+- Link to v1: https://lore.kernel.org/r/20250725-fix-torch-clamp-issue-v1-0-4cf3ebaa4c67@oss.qualcomm.com
 
-Reported-by: syzbot+2642f347f7309b4880dc@syzkaller.appspotmail.com
-Tested-by: syzbot+2642f347f7309b4880dc@syzkaller.appspotmail.com
+---
+Fenglin Wu (2):
+      leds: flash: leds-qcom-flash: update torch current clamp setting
+      leds: flash: leds-qcom-flash: add a separate register map for PMI8998
 
-Tested on:
+ drivers/leds/flash/leds-qcom-flash.c | 87 +++++++++++++++++++++++++-----------
+ 1 file changed, 60 insertions(+), 27 deletions(-)
+---
+base-commit: 4903924ac7ef31fbbe48b3261b1bc86ce6cd7e97
+change-id: 20250725-fix-torch-clamp-issue-ca25212aa224
 
-commit:         ae388edd Merge tag 'landlock-6.17-rc1' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13dd1782580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=97ec33249d4bfda3
-dashboard link: https://syzkaller.appspot.com/bug?extid=2642f347f7309b4880dc
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=133e94a2580000
+Best regards,
+-- 
+Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 
-Note: testing is done by a robot and is best-effort only.
+
 
