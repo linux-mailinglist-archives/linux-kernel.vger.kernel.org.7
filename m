@@ -1,115 +1,129 @@
-Return-Path: <linux-kernel+bounces-749035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8564B14927
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E7DB14925
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:31:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 270C5172CE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:31:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41201189D526
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4092264A74;
-	Tue, 29 Jul 2025 07:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2463235046;
+	Tue, 29 Jul 2025 07:30:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VYpHpmfE"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hn+DvuJy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A31D1B412A;
-	Tue, 29 Jul 2025 07:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D7A2248BF;
+	Tue, 29 Jul 2025 07:30:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753774254; cv=none; b=SsEt/d7UGRFwEN5zmgZF4FBGWILlKao8mhGh1vOXppB/AAZDv3hGa346zNX3JxpYR9Me3c4eViZX3f7vWB32VjL98pS6n3vkYZfmcYX7DJRWbGMgeKlthkeSPCdl067h+g7w9daaVRincU8tGhHfdwJsKUP3jqW5/aFg1cJdb4E=
+	t=1753774245; cv=none; b=dLCxBopneP8a9m34g/CIFLurIv479Mp2cLY2aBa1Qhkrg3yGBnSBBFFphRxc6RmBCxXspDUc7HTCKWzGuPfEY17woxHsdpItB4v2+90SYIykGnO+RcfIj8UnY9ZnNAUzSc7w6YHctL5ZlPmfpnDEJO1gEBWcbvoa8FAPRHdw9JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753774254; c=relaxed/simple;
-	bh=lUhap1EjQHUB+qogjc7azCKG++yvozXP/Rs6ISomUxY=;
+	s=arc-20240116; t=1753774245; c=relaxed/simple;
+	bh=coKTsMLVDBf6r0VF8A4W9McCs0iZm5oFPtW97NBjROg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PPp+DUpJ1HPqPyjPwEnf/IxGpJlvoJXhlSw41zKZKLHrW52NGskapPlSzDx7mmpcrjLK5hpUswdWMEE1MHIerFo2G4TBXzzny1lyVRD3xzGIFTKuJdyBZx+DuJ/Ay7+s979bdAeL2mo5m4J23u6QXp405bwML6jo9wWGwiDlbIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VYpHpmfE; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753774253; x=1785310253;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=lUhap1EjQHUB+qogjc7azCKG++yvozXP/Rs6ISomUxY=;
-  b=VYpHpmfE+jNS7RqM7Jw1skI3Cs6Tgek2LImFoFZliup2StzAniKu5Geo
-   cpaawqvYg5ZmRgZF5cabcXH8gmczcPI3Sl2KH+pqIV8wK2+W8qJYNm/th
-   YIHPX2MWiJIpWOl7xg6NmOsaE6xGeCQImZ6lq64byCZNYfxekbV8U3+Zh
-   DE8wRmxSDOsKpdGsuU4PQPbR96b8bnJUXNnROD0/pS8A1PYh5/gHfDjcK
-   ghlM0S8y7cCuhcIsLjXiKnO3pvmJP2brhlMK2QNveqi/BDsDtQsgeU++k
-   mNzPhqvHRuyNFyGc7X4X6ihzjxWvPwdG8BmMCeksiEZKgTwYyYE3WvmAu
-   Q==;
-X-CSE-ConnectionGUID: eLAgfC7BR4Gu3RTKuYgJoA==
-X-CSE-MsgGUID: KQAXVqGxQbWWaKzPTWs2WA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="55972153"
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="55972153"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 00:30:52 -0700
-X-CSE-ConnectionGUID: p2ftCgCOSTeYFQQAfJfzWA==
-X-CSE-MsgGUID: XqI/ZmteQXy4E8WlMJVolw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="162666154"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 29 Jul 2025 00:30:49 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ugenP-00015X-25;
-	Tue, 29 Jul 2025 07:30:47 +0000
-Date: Tue, 29 Jul 2025 15:30:26 +0800
-From: kernel test robot <lkp@intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
-	dan.j.williams@intel.com, Nikolay Borisov <nik.borisov@suse.com>
-Subject: Re: [PATCH v2 2/3] lockdown/kunit: Introduce kunit tests
-Message-ID: <202507291419.PQ4uKtRo-lkp@intel.com>
-References: <20250728111517.134116-3-nik.borisov@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oyfJugyXsoCCxgWLiQv3oZzbYDNU0CFtAWu27OYqiIs5c+N1kuj6oCCvuJW1/3aw5p3/RGwg0w+hzJUpih0UW34mZt/cExIwB8voMgSp9ABOmwb5VPDErUYtqrNcfUftypKfJda5Vw/6phtR/rODEL7OZJmdTZvxe8xFOPVP+o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hn+DvuJy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F4FEC4CEF5;
+	Tue, 29 Jul 2025 07:30:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753774244;
+	bh=coKTsMLVDBf6r0VF8A4W9McCs0iZm5oFPtW97NBjROg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hn+DvuJy941T5WWhLwdlgRzqUOzSLP9y1hoWzClJzJ5vVihcN4mAJ/fDyXYHjI/EM
+	 ht9c+CGHWAofkr9umRMI3SCH5yrzYfr3SU5OTs1MZLiNkFu3gLShgdDjHKBohYn3X3
+	 1brGoebiG7IwHSs1sCsh0KjiPQ/4q8cTf6bjbvK6gQUiVx1C0zw7tXMKJVyc/FtYCd
+	 bS4XOIOpcq2rVSvaWSYwA13aZnPRnxrKCPwvN2ta1SbuAaDubmbDMtvSogLtT4e+w/
+	 zjaLgc6oMH6pwaCByx64pQrnRVGEBkRh+AcvIR7Q9iHvpu4ZoQUWp+OmtsjYB3MnO5
+	 aT0k8AE/UEYkA==
+Date: Tue, 29 Jul 2025 09:30:42 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Damon Ding <damon.ding@rock-chips.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
+	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com, 
+	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com, hjc@rock-chips.com, 
+	heiko@sntech.de, andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com, 
+	l.stach@pengutronix.de, dianders@chromium.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v3 04/14] drm/bridge: analogix_dp: Add
+ &analogix_dp_plat_data.bridge
+Message-ID: <20250729-wooden-opalescent-baboon-f24fa2@houat>
+References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+ <20250724080304.3572457-5-damon.ding@rock-chips.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="oafxeh4vinfkct5o"
 Content-Disposition: inline
-In-Reply-To: <20250728111517.134116-3-nik.borisov@suse.com>
+In-Reply-To: <20250724080304.3572457-5-damon.ding@rock-chips.com>
 
-Hi Nikolay,
 
-kernel test robot noticed the following build errors:
+--oafxeh4vinfkct5o
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 04/14] drm/bridge: analogix_dp: Add
+ &analogix_dp_plat_data.bridge
+MIME-Version: 1.0
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.16 next-20250728]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Hi,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Nikolay-Borisov/lockdown-Switch-implementation-to-using-bitmap/20250728-191807
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250728111517.134116-3-nik.borisov%40suse.com
-patch subject: [PATCH v2 2/3] lockdown/kunit: Introduce kunit tests
-config: i386-randconfig-004-20250729 (https://download.01.org/0day-ci/archive/20250729/202507291419.PQ4uKtRo-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250729/202507291419.PQ4uKtRo-lkp@intel.com/reproduce)
+On Thu, Jul 24, 2025 at 04:02:54PM +0800, Damon Ding wrote:
+> In order to move the parnel/bridge parsing and attachmenet to the
+> Analogix side, add component struct drm_bridge *bridge to platform
+> data struct analogix_dp_plat_data.
+>=20
+> The movemenet makes sense because the panel/bridge should logically
+> be positioned behind the Analogix bridge in the display pipeline.
+>=20
+> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+> ---
+>  include/drm/bridge/analogix_dp.h | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analog=
+ix_dp.h
+> index cf17646c1310..15cb6b706e9f 100644
+> --- a/include/drm/bridge/analogix_dp.h
+> +++ b/include/drm/bridge/analogix_dp.h
+> @@ -27,6 +27,7 @@ static inline bool is_rockchip(enum analogix_dp_devtype=
+ type)
+>  struct analogix_dp_plat_data {
+>  	enum analogix_dp_devtype dev_type;
+>  	struct drm_panel *panel;
+> +	struct drm_bridge *bridge;
+>  	struct drm_encoder *encoder;
+>  	struct drm_connector *connector;
+>  	bool skip_connector;
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507291419.PQ4uKtRo-lkp@intel.com/
+So it's not the analogix_dp bridge, but the bridge after that if any?
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+You should probably change it to next_bridge to avoid any confusion.
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in security/lockdown/lockdown_test.o
->> ERROR: modpost: "lock_kernel_down" [security/lockdown/lockdown_test.ko] undefined!
+Maxime
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--oafxeh4vinfkct5o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaIh4oQAKCRAnX84Zoj2+
+dny6AX4lOggIEb8lQNPrxNej+S0dVv7qskx+vSl0C36fU5HUiF0+6CBKZiz3el7U
+6s5d/OkBfjGyQ7uwq5vKT0ASCi71FHRzNGynDjVQB1ShScAr+kp4qhm/0+swkWfl
+/Qwui0BIPw==
+=5MI3
+-----END PGP SIGNATURE-----
+
+--oafxeh4vinfkct5o--
 
