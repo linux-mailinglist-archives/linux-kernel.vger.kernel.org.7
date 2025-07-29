@@ -1,268 +1,233 @@
-Return-Path: <linux-kernel+bounces-748837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 595F4B1468A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:02:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B55B146BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712E317E524
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:02:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8159A4E0CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:17:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511EB219A7A;
-	Tue, 29 Jul 2025 03:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A43F21770C;
+	Tue, 29 Jul 2025 03:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aMQrPjHi"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Z0t5SR8B"
+Received: from mail-m4921.qiye.163.com (mail-m4921.qiye.163.com [45.254.49.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CC641AAC;
-	Tue, 29 Jul 2025 03:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203822260C;
+	Tue, 29 Jul 2025 03:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753758147; cv=none; b=QmY5X+GKtzVFSDRdOV9lvx5YL6m34ESRbrZR07E42V3dxHYjjkIVaUmbhTxyg/j5n+PJrYqmI3MonLXYUnjEY4rUkAh+S/okXew2xnuOrwHNjirP788BVkndANf16L+Jw3/0rYxbvotEmM1f9k9iXegYGiA9TbJ0n4gNsmvT3F0=
+	t=1753759088; cv=none; b=iLQ63WLWP2JAhON4rX/3qftxQKaXoN1Lv24pbnVWzjhoBBkpfje6uKUSdlVnyo3y1ow0VQxqy7bCbSOllnZni96knrZOJW8nq/pin/cNLdogg+GrUeMRaK4bD3ZvQQxDAIRKhbOQ6icUZFZdmXnFhJ/4m6bxWpz36spTD0dvDBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753758147; c=relaxed/simple;
-	bh=OsQNjlXG5/0UkxcrZKePdxVb1VHFUkgy+LIaTlH62r4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CEMoRQRKh4LfwQkqBuJWxIdtbBDtqZr0KNkkBE+AOcJcWNkUM3nyKOjJDjxu0dJYh9j0gf2x3H870o6BgmdTvh7PJRzBew+3VQW42HxRqNxf1WTg+fTsoUz0kgipH0VZf0sRqi6vTAeaKSPMmRQoFDAzslWjx58CFkadxdWHIL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aMQrPjHi; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-70749d4c5b5so12806856d6.1;
-        Mon, 28 Jul 2025 20:02:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753758145; x=1754362945; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RxLZEk8ucHjmDXpW5WET4F80L4SqpMmaK9Cn+SQMPVY=;
-        b=aMQrPjHiQFNjrb9rJ2bXB7+VQhceQaKJ8rD1cd2HL58oiqbv8TrYR3vrp4L5wRcFIY
-         IH4DiSc4d7gMB+Kqcf45xa3riwZoK2cnXWHMd0AgHg9GOMlDysZq4dE4MIhbvZaolxRP
-         Dmjuz7V+IsdGs4QQ+dhfNcPSQRbPgbaGbIQ2L8lvLWKRoIXODiR35MnfExiePyYm+D5w
-         zWCTdhZAQp0sI1wc+16hRjTMkAnmTVWzL60cj/tCXAnIRSzmu9derv9N80xcrTNC8IyR
-         6yDHZ4R3dvu0Zex24GVURGW+D6vNjYnPjwc98lDTaRNTtbJQUmNL3rAuJPXeNhIy4Mq0
-         IJwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753758145; x=1754362945;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RxLZEk8ucHjmDXpW5WET4F80L4SqpMmaK9Cn+SQMPVY=;
-        b=GuKVa7E+hNyfMPqdjx4Jczacp8oroqYOHYtcNO2C94mqo0nnJO7c4QPMCAu0lsrDCj
-         pnklv24Lb5yOIhdtm1XyasWy4KtjkIT3jr++tGK7WGYrpY5ab4VwJrheofm2qj/DKraw
-         a3SzdJjn24BxMot75aIAMoqSe5IVPEWDfQXORhfrxp4PnGHeEtEUJCz9HzAjK5/WWyml
-         Dx22Mwahl37zci2OX9qvy/a5ln1uKi2siEhlHw+asr09g5nhS5L1Ke4UpnHBMm0tI/wi
-         idCZww0S3JWvsh43TF7wW6j4mGPDA8RfwqXbmkWsxmCwKgNLuvIh10ZzNuWfUeMAcYlT
-         XPag==
-X-Forwarded-Encrypted: i=1; AJvYcCUSQ7lKV/+yaAWuiqSoOsQqkbSdRaFEx780sufpfmanBxUeQl1xI79yAM+Wowj7s6D4vi9jiRv76vA=@vger.kernel.org, AJvYcCVMqXwnR2apZQ5SKQCozXaj4HlIkn6iuRMQcOFF1TNVdRj/2SDrmKn5F0Ml0+kDQtviwwABnfXYRYTc92XvzToXI6X5KQ==@vger.kernel.org, AJvYcCXjE9L6LA9h7b9DpjQk3Ay+swa/JyP5Foi9ob7KEeP7kj16aoeqG0s3FSWslbL+UHPBp4emt46THtNhf4qs@vger.kernel.org, AJvYcCXrf197F7RZ/UEal7AKffRz/zhbyNSvcw3+CuGpqHHTWbLJeluK9OnyrksvxUXHUEXLZPiQzM+MlRDC9ME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylgI5HiKRR1Ubz6YRjdY3x2Ejr6j+rtwPLk5+PwM3GDhARsry0
-	EmW20Pq6qdwlUJu1lNsCiDpNQLdTq2DbVBzBKk1KPgnvJkoIZ3uua8QtqB1q2L2Hl61dgAZ3oxR
-	gUev1d19UgrNMrW+1SI/EbfNHks5UWDk=
-X-Gm-Gg: ASbGncsI0HUdnVAxebKclpRXCO68krNpqIrSef5t2WeHpClDP8VaRSJ9t44gpH1p7OO
-	DoToU4v/4lMj16Ngifr2R2YHpjR2DR1OwNyC5yW4eRlI78e2+270zwyzFlocwOKEn6RzFrDPxKY
-	jx0poyGBvX8CLgKatK/F3MZ6mLFCYhdMPAM2wgkU5s0O2pc3QVgIPoIwSV65p+oKe1CfhaPw2BA
-	IOIRdHN
-X-Google-Smtp-Source: AGHT+IEZ5i7Ft/9QMigDfDc5lmR9YFBRwOuQYysTzY5Fv2RZ8/M8Gw5DLqfeIOsaJJzgAJZunv/Yi9odXz1qy8iyWE4=
-X-Received: by 2002:ad4:5bc6:0:b0:707:34db:4579 with SMTP id
- 6a1803df08f44-70734db474amr143750296d6.13.1753758144731; Mon, 28 Jul 2025
- 20:02:24 -0700 (PDT)
+	s=arc-20240116; t=1753759088; c=relaxed/simple;
+	bh=JyjFda6f4EE/8fOIgLBq9b6zmENABJvBFkWKEbibw2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XJF6rkhg0HtcMB6NLA2xamUQCP9bSWQnnFVvheB60Sw6M/DCGKFFxaRaQ8qe/8+MpDxXbaWLGsC7nxvw/RCmvyG60U5EmCVVoIDuaPdWk5jyTjjVF7jZZHgJg1s4n45tNvntopmD5/PSO2/+HlFBISRCzXUUumaj7XE7ue+Jj+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Z0t5SR8B; arc=none smtp.client-ip=45.254.49.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d8d1d917;
+	Tue, 29 Jul 2025 11:02:36 +0800 (GMT+08:00)
+Message-ID: <c73fa024-fdd0-4f62-9c8a-11e7eee3c475@rock-chips.com>
+Date: Tue, 29 Jul 2025 11:02:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726204041.516440-1-derekjohn.clark@gmail.com>
- <20250726204041.516440-3-derekjohn.clark@gmail.com> <edc7d119-ee64-489b-ab1d-9577f007e918@gmx.de>
-In-Reply-To: <edc7d119-ee64-489b-ab1d-9577f007e918@gmx.de>
-From: Derek John Clark <derekjohn.clark@gmail.com>
-Date: Mon, 28 Jul 2025 20:02:13 -0700
-X-Gm-Features: Ac12FXzf37qvI2c21oO1Bf1Tj5IZWdjVkuM1aw6d5-SoAjyoXUrZ8vjsBSASMAM
-Message-ID: <CAFqHKT==O2qNwojfp_LCBXN4xLGkpaoSit36zv9M-paoCSaD2g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] platform/x86: (ayn-ec) Add Temperature Sensors
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Hans de Goede <hansg@kernel.org>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Alok Tiwari <alok.a.tiwari@oracle.com>, David Box <david.e.box@linux.intel.com>, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 00/14] Apply drm_bridge_connector and panel_bridge
+ helper for the Analogix DP driver
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org
+Cc: Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+ <3890785.kQq0lBPeGt@diego>
+ <b0ce0d8d-4ceb-419e-a892-d39b8633aa13@rock-chips.com>
+ <6070443.MhkbZ0Pkbq@diego>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <6070443.MhkbZ0Pkbq@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a985421c7f003a3kunmfdedbf933ad983
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ09JS1YaSkxCT0tOTE9NTk1WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Z0t5SR8B0vNhWrIok1/FmCtBb+MTf4osUwhrg8hT1btBuvXhnXOGGjVTAQgW39ozpyvLP5Q97tYO5BKW2/6juag1AJ0ZQrSFHBf4lVoR4JhL4AzzBGqbv7v4FVFPC/44dOfHwmC+/7dor0OH9WnhILMXY+7qat0tS0i7c5Oxedo=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=MM2qm6q8mkhokguSCCLMixLY0zbxDFkGmL61vvZn9Nc=;
+	h=date:mime-version:subject:message-id:from;
 
-On Sat, Jul 26, 2025 at 4:37=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
->
-> Am 26.07.25 um 22:40 schrieb Derek J. Clark:
->
-> > Adds temperature sensors to the ayn-ec hwmon interface. These read-only
-> > values include Battery, Motherboard, Charger IC, vCore, and CPU Core, a=
-s
-> > well as labels for each entry. The temperature values provided by the E=
-C
-> > are whole numbers in degrees Celsius. As hwmon expects millidegrees, we
-> > scale the raw value up.
-> >
-> > `sensors` output after this patch is applied:
-> > aynec-isa-0000
-> > Adapter: ISA adapter
-> > fan1:        1876 RPM
-> > Battery:      +29.0=C2=B0C
-> > Motherboard:  +30.0=C2=B0C
-> > Charger IC:   +30.0=C2=B0C
-> > vCore:        +36.0=C2=B0C
-> > CPU Core:     +48.0=C2=B0C
-> >
-> > Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
-> > ---
-> >   drivers/platform/x86/ayn-ec.c | 88 ++++++++++++++++++++++++++++++++++=
--
-> >   1 file changed, 86 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/platform/x86/ayn-ec.c b/drivers/platform/x86/ayn-e=
-c.c
-> > index 8bd3ed1c69eb..466cc33adcb0 100644
-> > --- a/drivers/platform/x86/ayn-ec.c
-> > +++ b/drivers/platform/x86/ayn-ec.c
-> > @@ -61,6 +61,14 @@
-> >   #define HWMON_PWM_FAN_MODE_AUTO     0x02
-> >   #define HWMON_PWM_FAN_MODE_EC_CURVE 0x03
-> >
-> > +/* EC Temperature Sensors */
-> > +#define AYN_SENSOR_BAT_TEMP_REG              0x04 /* Battery */
-> > +#define AYN_SENSOR_CHARGE_TEMP_REG   0x07 /* Charger IC */
-> > +#define AYN_SENSOR_MB_TEMP_REG               0x05 /* Motherboard */
-> > +#define AYN_SENSOR_PROC_TEMP_REG     0x09 /* CPU Core */
-> > +#define AYN_SENSOR_VCORE_TEMP_REG    0x08 /* vCore */
-> > +
-> > +
->
-> Please avoid multiple blank lines.
->
-> >   /* Handle ACPI lock mechanism */
-> >   #define ACPI_LOCK_DELAY_MS 500
-> >
-> > @@ -81,8 +89,19 @@ struct ayn_device {
-> >       u32 ayn_lock; /* ACPI EC Lock */
-> >   } drvdata;
-> >
-> > -/* Handle ACPI lock mechanism */
-> > -#define ACPI_LOCK_DELAY_MS 500
-> > +struct thermal_sensor {
-> > +     char *name;
-> > +     int reg;
-> > +};
-> > +
-> > +static struct thermal_sensor thermal_sensors[] =3D {
-> > +     { "Battery",            AYN_SENSOR_BAT_TEMP_REG },
-> > +     { "Motherboard",        AYN_SENSOR_MB_TEMP_REG },
-> > +     { "Charger IC",         AYN_SENSOR_CHARGE_TEMP_REG },
-> > +     { "vCore",              AYN_SENSOR_VCORE_TEMP_REG },
-> > +     { "CPU Core",           AYN_SENSOR_PROC_TEMP_REG },
-> > +     {}
-> > +};
->
-> Please declare this array as const.
->
-> >
-> >   static bool lock_global_acpi_lock(void)
-> >   {
-> > @@ -428,6 +447,61 @@ static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_temp=
-, pwm_curve, 7);
-> >   static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_temp, pwm_curve, 8);
-> >   static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_temp, pwm_curve, 9);
-> >
-> > +/**
-> > + * thermal_sensor_show() - Read a thermal sensor attribute value.
-> > + *
-> > + * @dev: The attribute's parent device.
-> > + * @attr: The attribute to read.
-> > + * @buf: Buffer to write the result into.
-> > + *
-> > + * Return: Number of bytes read, or an error.
-> > + */
-> > +static ssize_t thermal_sensor_show(struct device *dev,
-> > +                                struct device_attribute *attr, char *b=
-uf)
-> > +{
-> > +     long ret, val;
-> > +     int i;
-> > +
-> > +     i =3D to_sensor_dev_attr(attr)->index;
-> > +
-> > +     ret =3D read_from_ec(thermal_sensors[i].reg, 1, &val);
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     val =3D val * 1000L;
->
-> Please use MILLIDEGREE_PER_DEGREE from linux/units.h here.
->
-> > +
-> > +     return sysfs_emit(buf, "%ld\n", val);
-> > +}
-> > +
-> > +/**
-> > + * thermal_sensor_label_show() - Read a thermal sensor attribute label=
-.
-> > + *
-> > + * @dev: The attribute's parent device.
-> > + * @attr: The attribute to read.
-> > + * @buf: Buffer to read to.
-> > + *
-> > + * Return: Number of bytes read, or an error.
-> > + */
-> > +static ssize_t thermal_sensor_label_show(struct device *dev,
-> > +                                      struct device_attribute *attr,
-> > +                                      char *buf)
-> > +{
-> > +     int i =3D to_sensor_dev_attr(attr)->index;
-> > +
-> > +     return sysfs_emit(buf, "%s\n", thermal_sensors[i].name);
-> > +}
-> > +
-> > +static SENSOR_DEVICE_ATTR_RO(temp1_input, thermal_sensor, 0);
-> > +static SENSOR_DEVICE_ATTR_RO(temp2_input, thermal_sensor, 1);
-> > +static SENSOR_DEVICE_ATTR_RO(temp3_input, thermal_sensor, 2);
-> > +static SENSOR_DEVICE_ATTR_RO(temp4_input, thermal_sensor, 3);
-> > +static SENSOR_DEVICE_ATTR_RO(temp5_input, thermal_sensor, 4);
-> > +static SENSOR_DEVICE_ATTR_RO(temp1_label, thermal_sensor_label, 0);
-> > +static SENSOR_DEVICE_ATTR_RO(temp2_label, thermal_sensor_label, 1);
-> > +static SENSOR_DEVICE_ATTR_RO(temp3_label, thermal_sensor_label, 2);
-> > +static SENSOR_DEVICE_ATTR_RO(temp4_label, thermal_sensor_label, 3);
-> > +static SENSOR_DEVICE_ATTR_RO(temp5_label, thermal_sensor_label, 4);
-> > +
-> >   static struct attribute *ayn_sensors_attrs[] =3D {
-> >       &sensor_dev_attr_pwm1_auto_point1_pwm.dev_attr.attr,
-> >       &sensor_dev_attr_pwm1_auto_point1_temp.dev_attr.attr,
-> > @@ -439,6 +513,16 @@ static struct attribute *ayn_sensors_attrs[] =3D {
-> >       &sensor_dev_attr_pwm1_auto_point4_temp.dev_attr.attr,
-> >       &sensor_dev_attr_pwm1_auto_point5_pwm.dev_attr.attr,
-> >       &sensor_dev_attr_pwm1_auto_point5_temp.dev_attr.attr,
-> > +     &sensor_dev_attr_temp1_input.dev_attr.attr,
-> > +     &sensor_dev_attr_temp1_label.dev_attr.attr,
-> > +     &sensor_dev_attr_temp2_input.dev_attr.attr,
-> > +     &sensor_dev_attr_temp2_label.dev_attr.attr,
-> > +     &sensor_dev_attr_temp3_input.dev_attr.attr,
-> > +     &sensor_dev_attr_temp3_label.dev_attr.attr,
-> > +     &sensor_dev_attr_temp4_input.dev_attr.attr,
-> > +     &sensor_dev_attr_temp4_label.dev_attr.attr,
-> > +     &sensor_dev_attr_temp5_input.dev_attr.attr,
-> > +     &sensor_dev_attr_temp5_label.dev_attr.attr,
->
-> Please use the standard hwmon API for exposing those temperature sensors.
->
-> Thanks,
-> Armin Wolf
->
+Hi Heiko,
 
-Hmm, not sure how I missed those, but yeah they are certainly there...
-That will make things more simple for sure.
+On 2025/7/26 3:45, Heiko Stübner wrote:
+> Hi Damon,
+> Am Freitag, 25. Juli 2025, 04:15:06 Mitteleuropäische Sommerzeit schrieb Damon Ding:
+>> On 2025/7/24 21:10, Heiko Stübner wrote:
+>>> Am Donnerstag, 24. Juli 2025, 10:02:50 Mitteleuropäische Sommerzeit schrieb Damon Ding:
+>>>> PATCH 1 is a small format optimization for struct analogid_dp_device.
+>>>> PATCH 2 is to perform mode setting in &drm_bridge_funcs.atomic_enable.
+>>>> PATCH 3 is to apply a better API for the encoder initialization.
+>>>> PATCH 4-7 are preparations for apply drm_bridge_connector helper.
+>>>> PATCH 8 is to apply the drm_bridge_connector helper.
+>>>> PATCH 9-11 are to move the panel/bridge parsing to the Analogix side.
+>>>> PATCH 12-13 are preparations for apply panel_bridge helper.
+>>>> PATCH 14 is to apply the panel_bridge helper.
+>>>
+>>> for future revisions, please provide a changelog on what changed since
+>>> the previous version, I guess ideally here in the cover-letter.
+>>>
+>>>
+>>> On my rk3588-tiger-displayport-carrier this works like a charm
+>>> Tested-by: Heiko Stuebner <heiko@sntech.de>
+>>>
+>>>
+>>>
+>>>
+>>
+>> Glad to see your review and test. :-)
+>>
+>> I will include the version-to-version changelogs (v2 -> v3 and v3 -> v4)
+>> in the next iteration.
+> 
+> I have to amend that a bit, sadly. When doing a reboot with the edp
+> running, I see logs like:
+> 
+> [...]
+> [  139.614749] systemd-shutdown[1]: Syncing filesystems and block devices.
+> [  139.622201] systemd-shutdown[1]: Rebooting.
+> [  139.684845] ------------[ cut here ]------------
+> [  139.690050] WARNING: CPU: 0 PID: 110 at drivers/iommu/rockchip-iommu.c:989 rk_iommu_identity_attach+0xac/0xbc
+> [  139.701175] Modules linked in: panthor rockchip_vdec rocket drm_gpuvm v4l2_vp9 v4l2_h264 drm_exec rockchip_rng drm_shmem_helper v4l2_mem2mem gpu_sched rng_core fuse
+> [  139.717685] CPU: 0 UID: 0 PID: 110 Comm: irq/58-HPD Not tainted 6.16.0-rc7-00183-gd436cbe8e4b3 #1541 PREEMPT
+> [  139.728799] Hardware name: Theobroma Systems RK3588-Q7 SoM on Tiger Displayport Carrier v1 (DT)
+> [  139.738548] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [  139.746351] pc : rk_iommu_identity_attach+0xac/0xbc
+> [  139.751821] lr : rk_iommu_identity_attach+0x70/0xbc
+> [  139.757290] sp : ffff800080e4b7c0
+> [  139.761001] x29: ffff800080e4b7c0 x28: ffff0001f6f98080 x27: ffff0001f0a4b010
+> [  139.769006] x26: ffff0001f6f98e58 x25: 0000000000000000 x24: 0000000000000000
+> [  139.777010] x23: 0000000000000000 x22: ffffdbf23c0485e0 x21: ffff0001f0e9cc10
+> [  139.785014] x20: ffff0001f0df17a0 x19: ffff0001f0e2cb80 x18: 0000000000000038
+> [  139.793018] x17: 0002550800000009 x16: 0000046c0446043e x15: 0438000008ca080c
+> [  139.801021] x14: 07d008ca07800780 x13: 0438000008ca080c x12: 07d0078000025508
+> [  139.809024] x11: 0002550800000009 x10: 0000046c0446043e x9 : ffffdbf23c137000
+> [  139.817031] x8 : 0000000000000438 x7 : 0000000000000000 x6 : 0000000000000000
+> [  139.825034] x5 : ffffdbf23adbb9c0 x4 : ffff0001f0df1780 x3 : ffff0001f0df1780
+> [  139.833038] x2 : 0000000000000081 x1 : ffff0001f6fad500 x0 : 00000000ffffffea
+> [  139.841042] Call trace:
+> [  139.843780]  rk_iommu_identity_attach+0xac/0xbc (P)
+> [  139.849252]  rk_iommu_attach_device+0x54/0x134
+> [  139.854236]  __iommu_device_set_domain+0x7c/0x110
+> [  139.859510]  __iommu_group_set_domain_internal+0x60/0x134
+> [  139.865561]  __iommu_attach_group+0x88/0x9c
+> [  139.870250]  iommu_attach_device+0x68/0xa0
+> [  139.874841]  rockchip_drm_dma_attach_device+0x28/0x7c
+> [  139.880508]  vop2_crtc_atomic_enable+0x620/0xaa0
+> [  139.885678]  drm_atomic_helper_commit_modeset_enables+0xac/0x26c
+> [  139.892413]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+> [  139.898369]  commit_tail+0xa0/0x1a0
+> [  139.902279]  drm_atomic_helper_commit+0x17c/0x1b0
+> [  139.907552]  drm_atomic_commit+0x8c/0xcc
+> [  139.911951]  drm_client_modeset_commit_atomic+0x228/0x298
+> [  139.918005]  drm_client_modeset_commit_locked+0x5c/0x188
+> [  139.923960]  drm_client_modeset_commit+0x2c/0x58
+> [  139.929137]  __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x100
+> [  139.936164]  drm_fb_helper_hotplug_event+0xe8/0xf8
+> [  139.941526]  drm_fbdev_client_hotplug+0x24/0xe0
+> [  139.946605]  drm_client_hotplug+0x48/0xc4
+> [  139.951100]  drm_client_dev_hotplug+0x9c/0xd4
+> [  139.955984]  drm_kms_helper_connector_hotplug_event+0x20/0x30
+> [  139.962426]  drm_bridge_connector_hpd_cb+0x88/0xa0
+> [  139.967790]  drm_bridge_hpd_notify+0x3c/0x60
+> [  139.972577]  display_connector_hpd_irq+0x30/0xa4
+> [  139.978835]  irq_thread_fn+0x2c/0xb0
+> [  139.983894]  irq_thread+0x170/0x304
+> [  139.988833]  kthread+0x12c/0x204
+> [  139.993468]  ret_from_fork+0x10/0x20
+> [  139.998486] ---[ end trace 0000000000000000 ]---
+> [  140.004737] ------------[ cut here ]------------
+> [  140.010884] WARNING: CPU: 0 PID: 110 at drivers/iommu/rockchip-iommu.c:1040 rk_iommu_attach_device+0x114/0x134
+> [  140.023079] Modules linked in: panthor rockchip_vdec rocket drm_gpuvm v4l2_vp9 v4l2_h264 drm_exec rockchip_rng drm_shmem_helper v4l2_mem2mem gpu_sched rng_core fuse
+> [  140.040577] CPU: 0 UID: 0 PID: 110 Comm: irq/58-HPD Tainted: G        W           6.16.0-rc7-00183-gd436cbe8e4b3 #1541 PREEMPT
+> [  140.054457] Tainted: [W]=WARN
+> [  140.058804] Hardware name: Theobroma Systems RK3588-Q7 SoM on Tiger Displayport Carrier v1 (DT)
+> [  140.069595] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [  140.078454] pc : rk_iommu_attach_device+0x114/0x134
+> [  140.084989] lr : rk_iommu_attach_device+0x98/0x134
+> [  140.091423] sp : ffff800080e4b7e0
+> [  140.096197] x29: ffff800080e4b7e0 x28: ffff0001f6f98080 x27: ffff0001f0a4b010
+> [  140.105270] x26: ffff0001f6f98e58 x25: 0000000000000000 x24: 0000000000000000
+> [  140.114351] x23: ffff0001f6f843e0 x22: ffffdbf23c0485e0 x21: ffff0001f0e9cc10
+> [  140.123425] x20: ffff0001f0e2cb80 x19: ffff0001f6f843c0 x18: 0000000000000038
+> [  140.132489] x17: 0002550800000009 x16: 0000046c0446043e x15: 0438000008ca080c
+> [  140.141552] x14: 07d008ca07800780 x13: 0438000008ca080c x12: 07d0078000025508
+> [  140.150623] x11: 0002550800000009 x10: 0000046c0446043e x9 : ffffdbf23c137000
+> [  140.159701] x8 : 0000000000000438 x7 : 0000000000000000 x6 : 0000000000000000
+> [  140.168772] x5 : ffffdbf23adbb9c0 x4 : ffff0001f0df1780 x3 : ffff0001f0e2cbe0
+> [  140.177825] x2 : 0000000000000081 x1 : ffff0001f6fad500 x0 : 00000000ffffffea
+> [  140.186858] Call trace:
+> [  140.190627]  rk_iommu_attach_device+0x114/0x134 (P)
+> [  140.197124]  __iommu_device_set_domain+0x7c/0x110
+> [  140.203417]  __iommu_group_set_domain_internal+0x60/0x134
+> [  140.210492]  __iommu_attach_group+0x88/0x9c
+> [  140.216203]  iommu_attach_device+0x68/0xa0
+> [  140.221802]  rockchip_drm_dma_attach_device+0x28/0x7c
+> [  140.228479]  vop2_crtc_atomic_enable+0x620/0xaa0
+> [  140.234664]  drm_atomic_helper_commit_modeset_enables+0xac/0x26c
+> [  140.242400]  drm_atomic_helper_commit_tail_rpm+0x50/0xa0
+> [  140.249349]  commit_tail+0xa0/0x1a0
+> [  140.254246]  drm_atomic_helper_commit+0x17c/0x1b0
+> [  140.260496]  drm_atomic_commit+0x8c/0xcc
+> [  140.265866]  drm_client_modeset_commit_atomic+0x228/0x298
+> [  140.272885]  drm_client_modeset_commit_locked+0x5c/0x188
+> [  140.279791]  drm_client_modeset_commit+0x2c/0x58
+> [  140.285914]  __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x100
+> [  140.293889]  drm_fb_helper_hotplug_event+0xe8/0xf8
+> [  140.300214]  drm_fbdev_client_hotplug+0x24/0xe0
+> [  140.306248]  drm_client_hotplug+0x48/0xc4
+> [  140.311695]  drm_client_dev_hotplug+0x9c/0xd4
+> [  140.317531]  drm_kms_helper_connector_hotplug_event+0x20/0x30
+> [  140.324930]  drm_bridge_connector_hpd_cb+0x88/0xa0
+> [  140.331248]  drm_bridge_hpd_notify+0x3c/0x60
+> [  140.336990]  display_connector_hpd_irq+0x30/0xa4
+> [  140.343120]  irq_thread_fn+0x2c/0xb0
+> [  140.348081]  irq_thread+0x170/0x304
+> [  140.352937]  kthread+0x12c/0x204
+> [  140.357501]  ret_from_fork+0x10/0x20
+> [  140.362453] ---[ end trace 0000000000000000 ]---
+> 
+> 
+> After some minutes of hanging it does reboot afterall.
+> 
+> Heiko
+> 
+> 
 
-Thanks,
-Derek
+Could you please help confirm whether the same error still occurs with 
+this patch series under the same conditions?
 
-> >       NULL,
-> >   };
-> >
+And I will also perform additional verification on my RK3588S EVB1 board.
+
+Best regards,
+Damon
+
 
