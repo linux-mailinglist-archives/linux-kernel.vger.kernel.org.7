@@ -1,138 +1,98 @@
-Return-Path: <linux-kernel+bounces-748931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED73B147B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:42:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C18B147DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:45:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2737617F696
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:42:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3108189B9C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5992237180;
-	Tue, 29 Jul 2025 05:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M6kfYEMm"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857D62512FC;
+	Tue, 29 Jul 2025 05:43:25 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6322386250;
-	Tue, 29 Jul 2025 05:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE25F23D2A2
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 05:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753767726; cv=none; b=Jw3OR37insU9v520WQNYY9IGEqBZ4uDGaepuZtqFFnTNrq7y/BQKJMrykuUfTVhJZWDwwOsxgXM9OdoTB5fds4ZEiqiaXMYy6Wxc1DkRrCFkJeV5hCMn87m9p5jdRdf7qiMduhSlOwEaINXirx7ud5iY/dCqVr1GA6jzmDDYtGo=
+	t=1753767805; cv=none; b=l8qp0qz/p8k+aAuJlsoFnAecW6AdHeA/cXcUb2+J36etm4oi3ZAvQiJ4F8q6nYeZWnQ8F60GGyg64qb/80fyH+ymMhdZmd2fy8hxHPdkuyv05W0CjqIw/pG8W8JJR8bvLNGhYOJvCDguaqI2CtFf+xj2hPalbcBCJaNhVEY1fDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753767726; c=relaxed/simple;
-	bh=zW+H0+MpviuGnEP+uGGy+bWOqykVTj+bOH8fIF6/mRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pi/xuoLYk+jvhosx+LP2rEzgTZGMeMYADW0Jk00vJmBOt9QDbGxEiqsDERFCJroFbQH4GKvwC8W+rNS1JoidfafYpLevok/HbvZMaXXeYxGAJbD/cw6CMwFKh4gRc/Xw56Ure6a1d3G8HZrqaFBlTcjXijJjIIEFdPQkUcPQPTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M6kfYEMm; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753767724; x=1785303724;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zW+H0+MpviuGnEP+uGGy+bWOqykVTj+bOH8fIF6/mRc=;
-  b=M6kfYEMmQK2r+Y+cYn/QpOkEO0OXuI5NZBZRsvvZHdLHIQmJSitlVUMG
-   jBYzq2YXGMWTD5J9Vu7ewQxeGV2Z6wHzIyJhJBWfwVrxY/bTK/dDxgVEj
-   8OJQT+VgFDYKk8tbbuTAoPs23qErdNnvx+nuhZX9F8qNOnl2chKGCHKoH
-   XPayPSnqcD4IakNJsr/cjmf8AhMYmwqURsbllIbFR9FN3XKvFf6jui/H1
-   dGsundTelmfyjkwXWiyfCnOIBhJ2kC8RLIK4gyIsi71Quwf3WnTPQB1WF
-   Hrks5nl/bk6zTrMqjB7u5icLO8FF7tdk+s8rx/I2XfThW/XHE1P/KPmg1
-   Q==;
-X-CSE-ConnectionGUID: xLG2MfE6S+Ws92wckTW9QQ==
-X-CSE-MsgGUID: A78qoROPSQmQlDmG2Zcl/A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="59829002"
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="59829002"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 22:42:03 -0700
-X-CSE-ConnectionGUID: 0WTSdhJRQRqeVvlEQdiLjQ==
-X-CSE-MsgGUID: wbhnLJhNSBmvcP/WZSLqcw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="163384314"
-Received: from kmlindbe-mobl.amr.corp.intel.com (HELO [10.125.192.163]) ([10.125.192.163])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 22:42:03 -0700
-Message-ID: <ef9c9418-2def-484a-89fb-b0235391ad83@linux.intel.com>
-Date: Mon, 28 Jul 2025 22:41:54 -0700
+	s=arc-20240116; t=1753767805; c=relaxed/simple;
+	bh=rfA1JS/fvd9p4kryGFPlRgls9rZsx7+PUcj+yzGF/G4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XWYUGH1/oZylQkGPKXNbj2gLLutMXmuRHYGXC78mJ80v8co8rjdcp9IICTo9iRbU9XRLzex4RRJ1XAVoeU93SEScIGib/txIof+IkB7um1ASBvrR4rs1YE+63cHjqnYuUH6C0xZh5CGgVhIFbd1wDj9QcawlQlz/qMV2zeB+UdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowABHNqpsX4ho97DhBw--.735S2;
+	Tue, 29 Jul 2025 13:43:08 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: neil.armstrong@linaro.org,
+	jessica.zhang@oss.qualcomm.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] drm/panel: himax-hx8279: Remove unneeded semicolon
+Date: Tue, 29 Jul 2025 13:42:14 +0800
+Message-Id: <20250729054214.2264377-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: "invalid agent type: 1" in acpi/ghes, cper: Recognize and cache
- CXL Protocol errors
-To: "Koralahalli Channabasappa, Smita"
- <Smita.KoralahalliChannabasappa@amd.com>, linux-efi@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org
-Cc: Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Yazen Ghannam <yazen.ghannam@amd.com>, Terry Bowman <terry.bowman@amd.com>,
- Dave Jiang <dave.jiang@intel.com>, tony.luck@intel.com,
- Gregory Price <gourry@gourry.net>
-References: <20250123084421.127697-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250123084421.127697-5-Smita.KoralahalliChannabasappa@amd.com>
- <074f5f77-7bef-4857-97fe-b68ee9b0afaf@linux.intel.com>
- <dfc6cedd-c125-4201-a98b-cbaa84a4f370@amd.com>
-Content-Language: en-GB
-From: Marc Herbert <marc.herbert@linux.intel.com>
-In-Reply-To: <dfc6cedd-c125-4201-a98b-cbaa84a4f370@amd.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowABHNqpsX4ho97DhBw--.735S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DXFWDWrWrAFb_yoW3JFb_C3
+	Wjqa4xurWDCFn0gF1xAay7ZF9Ika1kuan7Z3Wvkasakry7ur4UXa4xWrsxZw1DWr1jyF98
+	Ca18XFyFvFnrWjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbTkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxa
+	n2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8WwCF04k20xvY0x0EwIxGrw
+	CFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE
+	14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2
+	IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxK
+	x2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI
+	0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUfkuxUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On 2025-07-28 09:25, Koralahalli Channabasappa, Smita wrote:
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
-> On 7/22/2025 12:24 PM, Marc Herbert wrote:
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/gpu/drm/panel/panel-himax-hx8279.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>    The code below triggers the error "invalid agent type: 1" in Intel
->> validation (internal issue 15018133056)
->>
->> It's not clear to anyone we asked why you did not include RCH_DP in
->> the `switch (prot_err->agent_type)` in cxl_cper_post_prot_err() below.
->>
->> I can see how RCH_DP is special in cxl_cper_PRINT_prot_err() and I can
->> even understand (despite my near-zero CPER knowledge) some of the
->> special cases there. But in cxl_cper_post_prot_err() here, it's not
->> clear why RCH_DP would be rejected. Could this be an oversight? If not,
->> a comment with a short explanation would not hurt.
->>
-> 
-> You're right. RCH_DP was excluded because it doesn’t report a valid
-> SBDF in the CPER record. Instead, it provides only the RCRB base
-> address.
-> 
-> I haven't thoroughly investigated whether SBDF can be reliably derived
-> from the RCRB base. There might be a platform-specific mechanism for
-> that, but at the time, it seemed non-trivial to implement. Introducing
-> additional infrastructure solely to support RCH_DP felt like it was
-> adding more complexity.
-> 
-> I agree that a brief comment explaining this rationale would help. I'm
-> okay if you plan to include a fixup for this along with the one for
-> the device serial number.
+diff --git a/drivers/gpu/drm/panel/panel-himax-hx8279.c b/drivers/gpu/drm/panel/panel-himax-hx8279.c
+index fb302d1f91b9..9e443c719843 100644
+--- a/drivers/gpu/drm/panel/panel-himax-hx8279.c
++++ b/drivers/gpu/drm/panel/panel-himax-hx8279.c
+@@ -935,7 +935,7 @@ static int hx8279_check_dig_gamma(struct hx8279 *hx, struct device *dev, const u
+ 			j++;
+ 			x++;
+ 		} while (x < 4);
+-	};
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
 
-If I understood you correctly, I think a different error message
-would be much better than a comment. Like this?
-
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -730,6 +730,9 @@ static void cxl_cper_post_prot_err(struct cxl_cper_sec_prot_err *prot_err,
- 		memcpy(&wd.ras_cap, cap_start, sizeof(wd.ras_cap));
- 		wd.severity = cper_severity_to_aer(severity);
- 		break;
-+	case RCH_DP:
-+		pr_err_ratelimited("CXL CPER agent type unsupported: RCH_DP\n");
-+		return;
- 	default:
- 		pr_err_ratelimited("CXL CPER invalid agent type: %d\n",
- 				   prot_err->agent_type);
 
