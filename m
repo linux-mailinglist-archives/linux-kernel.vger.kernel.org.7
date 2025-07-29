@@ -1,103 +1,126 @@
-Return-Path: <linux-kernel+bounces-749527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5ABB14F7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:45:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00FBBB14F7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:45:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FBCE545462
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:45:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BF0D54549D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591081E7C27;
-	Tue, 29 Jul 2025 14:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BECA1EFFA6;
+	Tue, 29 Jul 2025 14:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CiHUMa30"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwk+hC9D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ABDF13D8B1;
-	Tue, 29 Jul 2025 14:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FE91E492;
+	Tue, 29 Jul 2025 14:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753800318; cv=none; b=k2tUKzZL2Lpwu5aRSh4O0dLlo7rHQtwCITHauO5JdtpqHZ1d0F4qCzmrdJ1Af+RAHtHta3r/hbjt0JDYOdv7toqUfB2T+e29qQR1fONDHQP62NRlpsNFWShU0hhXj6DBJHXYMYL215aJLxfrsEaY1cYiQ3bvuD5vwB8iSO+lRlg=
+	t=1753800327; cv=none; b=IW2O1wbFxrbZZcOCKfF6DMYcsysESh5jDMyH59TzrKFiVGS+JoyVoJmn+BQfwmD7vCXvpPwrYEhbGOu2ETubdq/iRnWtMJIbV6jjln001QWfs2dlL13q9FtkJM4cLffdxV1Q8nsNQ7RzBA1AkZYNHecLgXWJC7FAKwDlB3OwYgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753800318; c=relaxed/simple;
-	bh=SqKSXMyKE1pb1btB4u4HtX000tSuP3Xq7jg/MY0Ben8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EB17ffj/tW8k14492sNY+iM/ICt+/MtP9uIYImWPH5E8csvR6oiD9WHAeoAjdQlT420uvZK68gRUze7QaL268tddVWn1K5K8EivvQoVRSo7dXjbBJrozEXmNwdR5C95dCJOw+O/lOs9+JyejXEKPrVbDERUcla2GC/HxMTjxj00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CiHUMa30; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-615e56591aeso3127863eaf.2;
-        Tue, 29 Jul 2025 07:45:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753800315; x=1754405115; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SqKSXMyKE1pb1btB4u4HtX000tSuP3Xq7jg/MY0Ben8=;
-        b=CiHUMa30kn5VD03XP8lWtZunaptFr5GBrW41iJ1f++JFM4rG9/A09HSwo3ILaJt7V4
-         Q2hmCiUCFyrZCh8grAdlwh/mMSY5dyoB64vFfaId50H3ZiC38dFcMoTgRmr06ghrL3qv
-         eK6dS9GHBm+czCSum+2kSMbwr6hqlyiQ2GQQcv1DrDRQuys4iZ2Z/yp1arSzRxAGxnoo
-         OAAzthQBIht5qXKYvLvV9t1z6HjGVJBqKnjbC5qqX9oc0dSV7LsEbBK4w348z224gGqp
-         WFj8xCygNKaY40TbjI23T3LNdYkKq64U3uLj+vglRYvo24wPcto6cJkE+w9kPRs74mo5
-         JhSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753800315; x=1754405115;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SqKSXMyKE1pb1btB4u4HtX000tSuP3Xq7jg/MY0Ben8=;
-        b=tuT0lWFF0aOU7l72a2bfMABDDvF6TBpSBWETPKKFj64zPlQGCPyemtpuCmfGWHttW+
-         vosWtct4pA/JPrarcgpFYOKnIP823Ytc37LYjh7fqixRDaoOxvidqzaXsbFzkhP+WVD4
-         5UulR7s3BF4zYcAUr5vHrs/RWkqkKcD6Q2RemI8901dPzSxnfVShz4pSN568SU1NX/Bq
-         WYA7aCGuZ+VwVm1fALsmKf6MtZovsmFkySg1DPFtHR/W3ScCQvn1xL7zo08dBGZKAq/L
-         8ZkYVYrtU7Vpwn5jmbGVBtco8RuoGjwN2dTxH8YEjAUDH2GYW1XVCIUDIicQvTBD7OPr
-         itqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUERVr6Er6GNu41Z1fg5ZrAMoD08uYKzkj7idNeYoTIoJK14Bs6bZRAMjoh14kfQ295ZDLpON2AYWhRslea79w=@vger.kernel.org, AJvYcCXGW+g0+bHTXWuzwCdUXkPwR0QTQe8CXImYyVp+Gx5CvmuDgzJO/kyoIBUah1FPP7lCK0B+xlU3sjS9If5Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YyipYDJ0K8bqeegxTwTdCweBpvqCUGpZEzRptrMhzY1n7PN4FBW
-	GkZaS/lfq2AqN6HU1OGpbyaLvph5KhjJJhlq266VWei4q6j0lGPZh7nP6sV7isFmkSdmrAWx2l/
-	0f6Uc40PWwOEhC42ebke6LXZJMYFU44M=
-X-Gm-Gg: ASbGncsWrIIpWOjZAKYGLm0jY/2Ww6FHe8ALNKnhSrNlE3oy4AKXJ8BITAd9YOYi7H4
-	3J4+HJ4dHKmXBt56WQFdUS+S5MuHz9MEYzy0svU9bvKDhxX23VwqNBK+E4ngsdZJwMwvUsChYcs
-	6Q3dMHaRpvDemcw65Lqz9oJOv8mIFKOXy8JapHyxuPvKC4x+YrzXmSyCu5KgGOkfumO/pFiQ1LT
-	KU4bSHZ
-X-Google-Smtp-Source: AGHT+IFHmgLm4QtA1gMM68QZkXVDwXCrzQje62zufxoahmmzdI/oX1Oj1iWO1COkXuVtE5Extl2/Y5qlaKrXIMvaQ4M=
-X-Received: by 2002:a4a:e906:0:b0:611:ffa0:3863 with SMTP id
- 006d021491bc7-6195d29252cmr38156eaf.3.1753800315371; Tue, 29 Jul 2025
- 07:45:15 -0700 (PDT)
+	s=arc-20240116; t=1753800327; c=relaxed/simple;
+	bh=F/Bh+Ko7ppvbg/wnZKDwtyoTD+8mKkxRf3M7eQV81Rc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aQSGH4AyDtqHklkl0tGiPe8BorZLbQBQHa1hXdGNKECaezXc34huLYOpbhtsLHQQqLCtv/s9rVmpo+NlcpkvFyp8Zm+rW0Up5pMboMIaVemGKfpNaYHJTcjfqoYklNzdsG07NNo4jpV6HCBrNKHQoy5Sfz40WjGld4AVYzgrgek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwk+hC9D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0354FC4CEF4;
+	Tue, 29 Jul 2025 14:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753800327;
+	bh=F/Bh+Ko7ppvbg/wnZKDwtyoTD+8mKkxRf3M7eQV81Rc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uwk+hC9DrAJEjata9Hgdy5oewaZG9KXV8YmIkeUonkXlDl9Mo/ZaRNNAAFHmLlXIm
+	 KLHSpkAK72Q0nnZKayxuc8nOidM4LctrisYowwCVXZ0GcqvgP6CwEc2BrW49MlMhII
+	 QffzsvQNO4ow09OKUf8X1rnNUinMUPXjz63ccvCaoZRxTXxjy2neZm4rMNokYZhfSW
+	 2bPa/99E7L7WnnOlI1tOfD+ALfreLAq4WKutVmwVgktgg7u+4/vPIHsWJL/PYiNt9i
+	 c0OmBB5PYJXqf/iRUoposDzCl13gxxlfMU5R744HRzpyscXfbxBADBajxAfGIKc1j3
+	 NtG88owBSUi/A==
+Date: Tue, 29 Jul 2025 07:45:26 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: John Garry <john.g.garry@oracle.com>, Zorro Lang <zlang@redhat.com>,
+	fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	tytso@mit.edu, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
+ crc check verifier
+Message-ID: <20250729144526.GB2672049@frogsfrogsfrogs>
+References: <7fc0f04e-dcec-47a4-b522-eb5a8b90637c@oracle.com>
+ <aIDozETJ8aLparYV@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <9b9ed959-bda5-4a92-90c7-a621ffe58240@oracle.com>
+ <aIMjrunlU04jI2lF@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <0af205d9-6093-4931-abe9-f236acae8d44@oracle.com>
+ <aIccCgrCuQ4Wf1OH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <2ae4bb04-fbf7-4a53-b498-ea6361cdab3e@oracle.com>
+ <aId8oZGXSg5DW48X@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <3a4854ac-75ad-4783-acbd-048fe7c7fdb0@oracle.com>
+ <aIhmG-l4nWOAzz2I@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727125044.101779-1-suchitkarunakaran@gmail.com> <079be718-ae8f-408d-a789-05f4816e0bd4@web.de>
-In-Reply-To: <079be718-ae8f-408d-a789-05f4816e0bd4@web.de>
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Date: Tue, 29 Jul 2025 20:15:03 +0530
-X-Gm-Features: Ac12FXxxh7hpT3FnQiBPNFL1EGOADL2JW_Lh4kOSk8OhVExH7PpSacHx4mz2er0
-Message-ID: <CAO9wTFiQdHA3JjXAbmXdxmeUHehVY+43+zg4BiYBxY7coSi+Ng@mail.gmail.com>
-Subject: Re: [PATCH v2] checkpatch: suppress strscpy warnings for userspace tools
-To: Markus Elfring <Markus.Elfring@web.de>
-Cc: linux-kernel-mentees@lists.linux.dev, Andy Whitcroft <apw@canonical.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Joe Perches <joe@perches.com>, 
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
-	kernel-janitors@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIhmG-l4nWOAzz2I@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 
-On Tue, 29 Jul 2025 at 20:12, Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> =E2=80=A6
-> > This patch suppresses =E2=80=A6
->
-> See also:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/process/submitting-patches.rst?h=3Dv6.16#n94
->
+On Tue, Jul 29, 2025 at 11:41:39AM +0530, Ojaswin Mujoo wrote:
+> On Mon, Jul 28, 2025 at 03:00:40PM +0100, John Garry wrote:
+> > On 28/07/2025 14:35, Ojaswin Mujoo wrote:
+> > > > We guarantee that the write is committed all-or-nothing, but do rely on
+> > > > userspace not issuing racing atomic writes or racing regular writes.
+> > > > 
+> > > > I can easily change this, as I mentioned, but I am not convinced that it is
+> > > > a must.
+> > > Purely from a design point of view, I feel we are breaking atomicity and
+> > > hence we should serialize or just stop userspace from doing this (which
+> > > is a bit extreme).
+> > 
+> > If you check the man page description of RWF_ATOMIC, it does not mention
+> > serialization. The user should conclude that usual direct IO rules apply,
+> > i.e. userspace is responsible for serializing.
+> 
+> My mental model of serialization in context of atomic writes is that if
+> user does 64k atomic write A followed by a parallel overlapping 64kb
+> atomic write B then the user might see complete A or complete B (we
+> don't guarantee) but not a mix of A and B.
 
-Thanks for the suggestion. Will keep this in mind next time.
+Heh, here comes that feature naming confusing again.  This is my
+definition:
+
+RWF_ATOMIC means the system won't introduce new tearing when persisting
+file writes.  The application is allowed to introduce tearing by writing
+to overlapping ranges at the same time.  The system does not isolate
+overlapping reads from writes.
+
+--D
+
+> > 
+> > > 
+> > > I know userspace should ideally not do overwriting atomic writes but if
+> > > it is something we are allowing (which we do) then it is
+> > > kernel's responsibility to ensure atomicity. Sure we can penalize them
+> > > by serializing the writes but not by tearing it.
+> > > 
+> > > With that reasoning, I don't think the test should accomodate for this
+> > > particular scenario.
+> > 
+> > I can send a patch to the community for xfs (to provide serialization), like
+> > I showed earlier, to get opinion.
+> 
+> Thanks, that would be great.
+> 
+> Regards,
+> John
+> > 
+> > Thanks,
+> > John
+> > 
+> 
 
