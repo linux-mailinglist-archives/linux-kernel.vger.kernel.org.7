@@ -1,162 +1,1001 @@
-Return-Path: <linux-kernel+bounces-749931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC130B154EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:59:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47642B15512
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3A264E7EB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61D5C4E7DFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D5D727F18F;
-	Tue, 29 Jul 2025 21:59:34 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E76275867;
+	Tue, 29 Jul 2025 22:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="f3LA7VbG"
+Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83919238D53
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:59:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDE221B908;
+	Tue, 29 Jul 2025 22:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753826374; cv=none; b=Z0enm614EOAInXayqf3FEOJMcQZU+EdqQIZ9H5Mo3bNEH4JB9vFSQaTmrHDIpauSPS7mVb37m+ZMDOrEYJAOKXesSEbgp6OrlWSPxxLrxXNY60Lv9TgI4u3WMUvZdsj3gU9EfQlbIoZm/1LY6pwmclzZZXsHEo8yIbanJcrsMzU=
+	t=1753826876; cv=none; b=OgMLNf1YKdQoUh0NbxFAHItVERVuAwcgZ8Ej0um4YoYdJFYmZLiYnm7AE+9WduvN71wY8vX1oaOh6Eggh84SBgAoEd9kgv/kNggc9EIe8cf6ZeINey+rajNpFk4ly94jerq7uj51MWWYTuUn5FxXzWiMrFO/YjAR7ublkIFGIEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753826374; c=relaxed/simple;
-	bh=YRFpxV4BWVaPQXqT/sVspwiaGrUu+GkIHK18/WjN1uE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oIUMr1kBTFHLm+tgB5hp2BQ2BykwfpANdmmKfhFsA1ivBJK9xmgxSQJdaQ2YVYnUTkp2hdwkiblJ+WeSwYEXlb8naSpP2WaVlGPI2HhLxz12c38IwhKs5TrdCIwuMfiF00Gd0IBEmSxIm8GzSHvliHQtvfsjY8i1KmMRciBebhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3e3eec010b9so12773215ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:59:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753826371; x=1754431171;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=w4i3DmsI+e9RvNOSMGjTmBe3p3py/apqNamFPP6nbds=;
-        b=bkWuu30axT9XRDLlA/610tfG/EdbysYZJOqJh767X0jIKIDrUvwfoiS5CVPrUFuG8c
-         RowhLPGL4un9W28mwUBSKP29M+4dyep6cAy5YGyhdZAyapqK0z8Bq6ciizygh5Rl7Lpa
-         orRfwUFkd+6gqGLvcGlzu85f/PRew9cZWCqdthEFxNqIHS44G9PdYx5q5h3NjlUi+7PZ
-         0tHsyPagvT1b6OhrI+/AfOu3DPw5zta9Pa1J3e65J4smWcc/nQtoopWAGZItFB8APmH/
-         LIeZ8V0ykzSuFfhVdomIg7XysuTUlX02FDWULyIkDw4ByTAA/elNO3A+d+aALYqwH2eq
-         8aog==
-X-Forwarded-Encrypted: i=1; AJvYcCWYBRDlUQ1whjI6X+2wksrO68rb9CHAHTY7RkzlAHbZYcpDpz/zbOKC7vOpr6NlUZqEFIPEH5ZJnfjO31g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6M2pO4u73bw+41U23vUMfAtoFxEie74KsRwK2xm33IwVCcjwp
-	8EWwDyE0sI7Kid2Lz7f72xtbg7IRadBVuEbZxAeqMyKvWq75gIzQwvfiJe4feh26X6LF2W+aSom
-	Cr/UXYIOGvZciMjDJRYPMtQpMLlzhrdq38uZS3dCehu9BqsakaUWiks/M7YY=
-X-Google-Smtp-Source: AGHT+IEqWXRKyjxRWtIYrW77iYkgRU41DtQPOoB0SxD37GQqCoobMtJPcldlIoELJXkfGRF6BsNf4fFyfkYuqIGunRPhD1ZGQ/Qv
+	s=arc-20240116; t=1753826876; c=relaxed/simple;
+	bh=jdP8s86vYvElqMc9MRRxZ21Uvfhmc6d7quFvHaC2cSY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JqmKUScYDHXwNtf/WlhgkDrTMy7VlsmU3WAzhSlmhKAaRUnHdfPG3PCEGQmvPZxoBVaPyn+OfDTPj7wAdsRU9oo2PEP0QNqJ9AylBAuuVdC37Xl1tyZNCjKOaCjH3naaHEuD7PCs1DA1utPzQ5b7rQXVHZPd7j1TnZvovkznumA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=f3LA7VbG; arc=none smtp.client-ip=209.222.21.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
+	s=default; t=1753826872;
+	bh=jdP8s86vYvElqMc9MRRxZ21Uvfhmc6d7quFvHaC2cSY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f3LA7VbGPBbQ5/xlUivOR+0h9d3FOLbpu+zg18TKb3sR1N1Wvg4IZMgbEDsxC3hLn
+	 3ccmzQus/3WulSamWmqfkUsKsIQQhjHfhGt83Lx1oVKXoOtpR92p4WurBaVSJiVbb/
+	 dYS7h8OC98jaj/z7T055KTYPUnsfqB9zCwS5ExozDmMDbEQOttRZO9bU6qvjX39iss
+	 TKgngZtvGyE4fdFHnXhYTkhV1Fe/IZnAg9inbbY5SHOWKvTvkwub9oRxAfyBYtyU50
+	 vIDSB6UxyCFPyF9OeyG0ctuzm9yBqyotbrBUmeJcUl2YhNk4o04/i0Bw6/owkkj3+u
+	 Y6c4npL07YCOQ==
+Received: from WahpenayoPeak.tahoma.link (unknown [IPv6:2600:4040:50b7:b604:2ea0:d8ae:cc27:168f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by chumsalmon.baetis.net (Postfix) with ESMTPSA id 5FF2927E211;
+	Tue, 29 Jul 2025 22:07:52 +0000 (UTC)
+Date: Tue, 29 Jul 2025 18:07:45 -0400
+From: Erik Beck <xunil@tahomasoft.com>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 2/2] arm64: dts: rockchip: add LinkStar-H68k-1432v1
+Message-ID: <20250729180745.713b4f75.xunil@tahomasoft.com>
+In-Reply-To: <8ef3e1f4-4658-408f-8f46-ee9fc48d7a8d@kwiboo.se>
+References: <20250729-linkstar-6-16-rc1-v6-v6-0-92307f465835@tahomasoft.com>
+	<20250729-linkstar-6-16-rc1-v6-v6-2-92307f465835@tahomasoft.com>
+	<8ef3e1f4-4658-408f-8f46-ee9fc48d7a8d@kwiboo.se>
+Organization: Tahoma Soft
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b28:b0:3e3:d185:9163 with SMTP id
- e9e14a558f8ab-3e3f62b8420mr16305895ab.20.1753826371609; Tue, 29 Jul 2025
- 14:59:31 -0700 (PDT)
-Date: Tue, 29 Jul 2025 14:59:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68894443.a00a0220.26d0e1.0015.GAE@google.com>
-Subject: [syzbot] [dri?] WARNING in __ww_mutex_wound
-From: syzbot <syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com>
-To: airlied@gmail.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, simona@ffwll.ch, syzkaller-bugs@googlegroups.com, 
-	tzimmermann@suse.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Tue, 29 Jul 2025 22:30:35 +0200
+Jonas Karlman <jonas@kwiboo.se> wrote:
 
-syzbot found the following issue on:
+> Hi Erik,
+> 
 
-HEAD commit:    d086c886ceb9 Add linux-next specific files for 20250718
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=161204a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=69896dd7b8c4e81e
-dashboard link: https://syzkaller.appspot.com/bug?extid=602c4720aed62576cd79
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16fff4f0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111204a2580000
+Hi Jonas, 
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/54504fbc2437/disk-d086c886.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b427b00abffe/vmlinux-d086c886.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/5a87731b006b/bzImage-d086c886.xz
+Thanks for the in-depth review!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com
+> On 7/29/2025 4:39 PM, Erik Beck wrote:
+> > Add DTS for Seeed LinkStar H68K-1432v1 board, a travel router using
+> > Rockchip rk3568 SoC.
+> > 
+> > Signed-off-by: Erik Beck <xunil@tahomasoft.com>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+> >  .../dts/rockchip/rk3568-linkstar-h68k-1432v1.dts   | 740
+> > +++++++++++++++++++++ 2 files changed, 741 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/Makefile
+> > b/arch/arm64/boot/dts/rockchip/Makefile index
+> > 4bf84622db473696f64b157ba94560f476d4f52f..baae5a9a3f06e0c7f74c9252eb244bb03989f2d7
+> > 100644 --- a/arch/arm64/boot/dts/rockchip/Makefile +++
+> > b/arch/arm64/boot/dts/rockchip/Makefile @@ -128,6 +128,7 @@
+> > dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-bpi-r2-pro.dtb
+> > dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-evb1-v10.dtb
+> > dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r66s.dtb
+> > dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-fastrhino-r68s.dtb
+> > +dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-linkstar-h68k-1432v1.dtb
+> > dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-lubancat-2.dtb
+> > dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-mecsbc.dtb
+> > dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3568-nanopi-r5c.dtb diff --git
+> > a/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts
+> > b/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts new file
+> > mode 100644 index
+> > 0000000000000000000000000000000000000000..1d05ce94746288299618961280378b50eb3ade42
+> > --- /dev/null +++
+> > b/arch/arm64/boot/dts/rockchip/rk3568-linkstar-h68k-1432v1.dts @@ -0,0
+> > +1,740 @@ +// SPDX-License-Identifier: (GPL-2.0+ OR MIT) +/*
+> > + * Copyright (c) 2025 TahomaSoft xunil@tahomasoft.com
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/leds/common.h>
+> > +#include <dt-bindings/input/input.h>
+> > +#include <dt-bindings/pinctrl/rockchip.h>
+> > +#include <dt-bindings/soc/rockchip,vop2.h>
+> > +#include "rk3568.dtsi"
+> > +
+> > +/ {
+> > +	model = "Seeed LinkStar H68K-1432V1 (RK3568) DDR4 Board";  
+> 
+> I suggest you name this board "Seeed Studio LinkStar-H68K".
+> 
 
-------------[ cut here ]------------
-WARNING: ./include/linux/sched.h:2173 at __clear_task_blocked_on include/linux/sched.h:2173 [inline], CPU#1: syz.1.8698/395
-WARNING: ./include/linux/sched.h:2173 at __ww_mutex_wound+0x21a/0x2b0 kernel/locking/ww_mutex.h:346, CPU#1: syz.1.8698/395
-Modules linked in:
-CPU: 1 UID: 0 PID: 395 Comm: syz.1.8698 Not tainted 6.16.0-rc6-next-20250718-syzkaller #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:__clear_task_blocked_on include/linux/sched.h:2173 [inline]
-RIP: 0010:__ww_mutex_wound+0x21a/0x2b0 kernel/locking/ww_mutex.h:346
-Code: 5f 5d c3 cc cc cc cc cc 90 0f 0b 90 e9 89 fe ff ff 90 0f 0b 90 e9 39 ff ff ff 90 0f 0b 90 4d 85 ff 0f 85 67 ff ff ff eb 95 90 <0f> 0b 90 eb 8f 48 c7 c1 70 00 e4 8f 80 e1 07 80 c1 03 38 c1 0f 8c
-RSP: 0018:ffffc900030e7720 EFLAGS: 00010046
-RAX: ffff888024a1b000 RBX: dffffc0000000000 RCX: 8f1a7ab232ebe500
-RDX: 00000000000003ef RSI: ffffffff8de5b067 RDI: ffffffff8c04d400
-RBP: 0000000000000001 R08: ffff888024a224bf R09: 1ffff11004944497
-R10: dffffc0000000000 R11: ffffed1004944498 R12: ffff88802dee8a78
-R13: ffffc900030e7ae8 R14: ffff88802dee8000 R15: ffff888024a224b8
-FS:  00007fe6e4a7f6c0(0000) GS:ffff8881258ab000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fe6e4a5ed58 CR3: 000000003115e000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- __ww_mutex_add_waiter kernel/locking/ww_mutex.h:574 [inline]
- __mutex_lock_common kernel/locking/mutex.c:642 [inline]
- __ww_mutex_lock+0xba3/0x2930 kernel/locking/mutex.c:771
- ww_mutex_lock_interruptible+0x3f/0x1c0 kernel/locking/mutex.c:904
- modeset_lock+0x21a/0x650 drivers/gpu/drm/drm_modeset_lock.c:-1
- drm_modeset_lock drivers/gpu/drm/drm_modeset_lock.c:398 [inline]
- drm_modeset_lock_all_ctx+0x62/0x300 drivers/gpu/drm/drm_modeset_lock.c:459
- setplane_internal drivers/gpu/drm/drm_plane.c:1118 [inline]
- drm_mode_setplane+0x577/0xba0 drivers/gpu/drm/drm_plane.c:1175
- drm_ioctl_kernel+0x2cc/0x390 drivers/gpu/drm/drm_ioctl.c:796
- drm_ioctl+0x67f/0xb10 drivers/gpu/drm/drm_ioctl.c:893
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:598 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe6e3b8e9a9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe6e4a7f038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fe6e3db5fa0 RCX: 00007fe6e3b8e9a9
-RDX: 0000200000000080 RSI: 00000000c03064b7 RDI: 0000000000000003
-RBP: 00007fe6e3c10d69 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fe6e3db5fa0 R15: 00007ffdf1fa90a8
- </TASK>
+I think this is a great idea; glad to get guidance and a reason to drop the
+long, clunky name I had been using for this board. 
 
+Your other comments below look great; it will take me a bit of time to dig
+into some of them to make sure I get them right.  If I have follow-up
+questions, should I ask them on the mailing lists, or is sending you
+questions via direct email (not sending to the lists) the proper procedure?
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Again, thanks for your thoughtful review and comments. I'll start working on them.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Regards,
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Erik
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+> From what I can tell from e.g. wiki.seeedstudio.com and other boards in
+> tree "Seeed Studio" seem to be more used than only "Seeed".
+> 
+> Also the 1432 numbers seem to just help indicate WiFi (1), RAM (4) and
+> eMMC (32), there is e.g. also a 0232 variant that has no WiFi, 2 GiB RAM
+> and 32 GiB eMMC. No need to have this information in the board model or
+> DT name, please drop it.
+> 
+> Use of v1 is possible also not needed, the V2 model is clearly marketed
+> as a different product and not just an updated hw revision. I suggest
+> you name this board without v1, the V2 can be named "LinkStar-H68K-V2"
+> to closer match product wiki and marketing.
+> 
+> > +	compatible = "seeed,rk3568-linkstar-h68k-1432v1",
+> > "rockchip,rk3568";  
+> 
+> Use of rk3568 seem redundant, suggest something like:
+> 
+>   "seeed,linkstar-h68k", "rockchip,rk3568"
+> 
+> and V2 would be:
+> 
+>   "seeed,linkstar-h68k-v2", "rockchip,rk3568"
+> 
+> > +
+> > +	aliases {
+> > +		ethernet0 = &gmac0;
+> > +		ethernet1 = &gmac1;
+> > +
+> > +		/* fixed eMMC */
+> > +		mmc0 = &sdhci;
+> > +
+> > +		/* removable uSD/TF Card */
+> > +		mmc1 = &sdmmc0;
+> > +
+> > +		rtc0 = &rk809;
+> > +	};
+> > +
+> > +	chosen {
+> > +		stdout-path = "serial2:1500000n8";
+> > +	};
+> > +
+> > +	hdmi-con {
+> > +		compatible = "hdmi-connector";
+> > +		type = "a";
+> > +
+> > +		port {
+> > +			hdmi_con_in: endpoint {
+> > +				remote-endpoint = <&hdmi_out_con>;
+> > +			};
+> > +		};
+> > +	};
+> > +
+> > +	gpio-keys {
+> > +		compatible = "gpio-keys";
+> > +		pinctrl-0 = <&reset_button_pin>;
+> > +		pinctrl-names = "default";  
+> 
+> Please be consistent in pinctrl-names/pinctrl-0 ordering, here you
+> define pins before the state name.
+> 
+> > +
+> > +		/* Middle inset/recessed button,
+> > +		 * marked by clockwise arrow/circle
+> > +		 */
+> > +
+> > +		button-reset {
+> > +			label = "button:system:reset";
+> > +			gpios = <&gpio0 RK_PA0 GPIO_ACTIVE_LOW>;
+> > +			linux,code = <KEY_RESTART>;
+> > +			debounce-interval = <50>;  
+> 
+> Please order props alphabetically.
+> 
+> > +		};
+> > +	};
+> > +
+> > +	gpio-leds {
+> > +		compatible = "gpio-leds";
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&led_white_pin>, <&led_green_pin>,
+> > +			<&led_amber_pin>, <&led_blue_pin>;  
+> 
+> And here pinctrl-names comes before the pins, this is my personal
+> preferred ordering for pinctrl-* props, I will settle for being
+> consistent.
+> 
+> > +
+> > +		/* White LED inset in power button */
+> > +
+> > +		led_white: led-0   {
+> > +			color = <LED_COLOR_ID_WHITE>;
+> > +			default-state = "on";
+> > +			function = LED_FUNCTION_POWER;
+> > +			gpios = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
+> > +			linux,default-trigger = "default-on";
+> > +		};
+> > +
+> > +		led_green: led-1 {
+> > +			color = <LED_COLOR_ID_GREEN>;
+> > +			default-state = "off";
+> > +			function = LED_FUNCTION_STATUS;
+> > +			gpios = <&gpio3 RK_PB0 GPIO_ACTIVE_HIGH>;
+> > +			linux,default-trigger = "none";
+> > +		};
+> > +
+> > +		led_amber: led-2 {
+> > +			color = <LED_COLOR_ID_AMBER>;
+> > +			default-state = "off";
+> > +			function = LED_FUNCTION_STATUS;
+> > +			gpios = <&gpio3 RK_PA7 GPIO_ACTIVE_HIGH>;
+> > +			linux,default-trigger = "none";
+> > +		};
+> > +
+> > +		led_blue: led-3 {
+> > +			color = <LED_COLOR_ID_BLUE>;
+> > +			default-state = "off";
+> > +			function = LED_FUNCTION_STATUS;
+> > +			gpios = <&gpio3 RK_PA5 GPIO_ACTIVE_HIGH>;
+> > +			linux,default-trigger = "heartbeat";
+> > +		};
+> > +	};
+> > +
+> > +	vcc12v_dcin: regulator-vcc12v-dcin {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-min-microvolt = <12000000>;
+> > +		regulator-max-microvolt = <12000000>;
+> > +		regulator-name = "vcc12v_dcin";  
+> 
+> I would sort regulator-name before regulator-min, same for rest of the
+> regulators.
+> 
+> > +	};
+> > +
+> > +	vcc3v3_sys: regulator-vcc3v3-sys {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +		regulator-name = "vcc3v3_sys";
+> > +		vin-supply = <&vcc12v_dcin>;
+> > +	};
+> > +
+> > +	vcc5v0_sys: regulator-vcc5v0-sys {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-min-microvolt = <5000000>;
+> > +		regulator-max-microvolt = <5000000>;
+> > +		regulator-name = "vcc5v0_sys";
+> > +		vin-supply = <&vcc12v_dcin>;
+> > +	};
+> > +
+> > +	vcc5v0_usb: regulator-vcc5v0-usb {
+> > +		compatible = "regulator-fixed";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;
+> > +		regulator-min-microvolt = <5000000>;
+> > +		regulator-max-microvolt = <5000000>;
+> > +		regulator-name = "vcc5v0_usb";
+> > +		vin-supply = <&vcc12v_dcin>;
+> > +	};
+> > +
+> > +	vcc5v0_usb_host: regulator-vcc5v0-usb-host {
+> > +		compatible = "regulator-fixed";
+> > +		enable-active-high;
+> > +		gpio = <&gpio0 RK_PA5 GPIO_ACTIVE_HIGH>;  
+> 
+> Please use gpios instead of the deprecated gpio name.
+> 
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&vcc5v0_usb_host_en>;
+> > +		regulator-min-microvolt = <5000000>;
+> > +		regulator-max-microvolt = <5000000>;
+> > +		regulator-name = "vcc5v0_usb_host";
+> > +		vin-supply = <&vcc5v0_usb>;
+> > +	};
+> > +
+> > +	vcc3v3_pcie: regulator-vcc3v3-pcie {
+> > +		compatible = "regulator-fixed";
+> > +		enable-active-high;  
+> 
+> Is this missing gpios and pinctrl props? or should enable-active-high be
+> dropped?
+> 
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +		regulator-name = "vcc3v3_pcie";
+> > +		startup-delay-us = <5000>;  
+> 
+> I think startup delay make little sense without gpios.
+> 
+> > +		vin-supply = <&vcc5v0_sys>;
+> > +	};
+> > +
+> > +	rk809-sound {
+> > +		compatible = "simple-audio-card";
+> > +		simple-audio-card,format = "i2s";
+> > +		simple-audio-card,name = "Analog RK809";
+> > +		simple-audio-card,mclk-fs = <256>;
+> > +
+> > +		simple-audio-card,cpu {
+> > +			sound-dai = <&i2s1_8ch>;
+> > +		};
+> > +		simple-audio-card,codec {
+> > +			sound-dai = <&rk809>;
+> > +		};  
+> 
+> 
+> Nodes should typically be separated with a space.
+> 
+> > +	};
+> > +};
+> > +
+> > +&gmac0 {
+> > +	assigned-clocks = <&cru SCLK_GMAC0_RX_TX>, <&cru SCLK_GMAC0>;
+> > +	assigned-clock-parents = <&cru SCLK_GMAC0_RGMII_SPEED>;
+> > +	assigned-clock-rates = <0>, <125000000>;
+> > +	clock_in_out = "output";
+> > +	phy-mode = "rgmii-id";
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&gmac0_miim
+> > +		     &gmac0_tx_bus2
+> > +		     &gmac0_rx_bus2
+> > +		     &gmac0_rgmii_clk
+> > +		     &gmac0_rgmii_bus>;  
+> 
+> Please separate each phandle, mostly for consistency and it also has a
+> small semantic differance when dts is being parsed.
+> 
+>   <&gmac0_miim>, <&gmac0_tx_bus2>, ...
+> 
+> > +	snps,reset-gpio = <&gpio2 RK_PD3 GPIO_ACTIVE_LOW>;
+> > +	snps,reset-active-low;
+> > +	snps,reset-delays-us = <0 20000 100000>;  
+> 
+> These snps,reset-* props are deprecated, please drop and instead add
+> correct resets-gpios pros in the rgmii_phy0 node.
+> 
+> > +	phy-handle = <&rgmii_phy0>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&gmac1 {
+> > +	assigned-clocks = <&cru SCLK_GMAC1_RX_TX>, <&cru SCLK_GMAC1>;
+> > +	assigned-clock-parents = <&cru SCLK_GMAC1_RGMII_SPEED>;
+> > +	assigned-clock-rates = <0>, <125000000>;
+> > +	clock_in_out = "output";
+> > +	phy-mode = "rgmii-id";
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&gmac1m1_miim
+> > +		     &gmac1m1_tx_bus2
+> > +		     &gmac1m1_rx_bus2
+> > +		     &gmac1m1_rgmii_clk
+> > +		     &gmac1m1_rgmii_bus>;  
+> 
+> Same as gmac0.
+> 
+> > +	snps,reset-gpio = <&gpio1 RK_PB0 GPIO_ACTIVE_LOW>;
+> > +	snps,reset-active-low;
+> > +	snps,reset-delays-us = <0 20000 100000>;  
+> 
+> Same as gmac0.
+> 
+> > +	phy-handle = <&rgmii_phy1>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&combphy0 {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&combphy1 {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&combphy2 {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&cpu0 {
+> > +	cpu-supply = <&vdd_cpu>;
+> > +};
+> > +
+> > +&cpu1 {
+> > +	cpu-supply = <&vdd_cpu>;
+> > +};
+> > +
+> > +&cpu2 {
+> > +	cpu-supply = <&vdd_cpu>;
+> > +};
+> > +
+> > +&cpu3 {
+> > +	cpu-supply = <&vdd_cpu>;
+> > +};
+> > +
+> > +&gpu {
+> > +	mali-supply = <&vdd_gpu>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&hdmi {
+> > +	avdd-0v9-supply = <&vdda0v9_image>;
+> > +	avdd-1v8-supply = <&vcca1v8_image>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&hdmi_in {
+> > +	hdmi_in_vp0: endpoint {
+> > +		remote-endpoint = <&vp0_out_hdmi>;
+> > +	};
+> > +};
+> > +
+> > +&hdmi_out {
+> > +	hdmi_out_con: endpoint {
+> > +		remote-endpoint = <&hdmi_con_in>;
+> > +	};
+> > +};
+> > +
+> > +&hdmi_sound {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&i2c0 {
+> > +	status = "okay";
+> > +
+> > +	vdd_cpu: regulator@1c {
+> > +		compatible = "tcs,tcs4525";
+> > +		reg = <0x1c>;
+> > +		fcs,suspend-voltage-selector = <1>;
+> > +		regulator-name = "vdd_cpu";
+> > +		regulator-always-on;
+> > +		regulator-boot-on;  
+> 
+> Please be consistent in regulator-* props ordering across all regulators.
+> 
+> > +		regulator-min-microvolt = <800000>;
+> > +		regulator-max-microvolt = <1150000>;
+> > +		regulator-ramp-delay = <2300>;
+> > +		vin-supply = <&vcc5v0_sys>;
+> > +
+> > +		regulator-state-mem {
+> > +			regulator-off-in-suspend;
+> > +		};
+> > +	};
+> > +
+> > +	rk809: pmic@20 {
+> > +		compatible = "rockchip,rk809";
+> > +		reg = <0x20>;
+> > +		interrupt-parent = <&gpio0>;
+> > +		interrupts = <RK_PA3 IRQ_TYPE_LEVEL_LOW>;
+> > +		assigned-clocks = <&cru I2S1_MCLKOUT_TX>;
+> > +		assigned-clock-parents = <&cru CLK_I2S1_8CH_TX>;
+> > +		#clock-cells = <1>;
+> > +		clock-names = "mclk";
+> > +		clocks = <&cru I2S1_MCLKOUT_TX>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&pmic_int>, <&i2s1m0_mclk>;
+> > +		rockchip,system-power-controller;  
+> 
+> This prop is deprecated, please use system-power-controller.
+> 
+> > +		#sound-dai-cells = <0>;
+> > +		wakeup-source;
+> > +
+> > +		vcc1-supply = <&vcc3v3_sys>;
+> > +		vcc2-supply = <&vcc3v3_sys>;
+> > +		vcc3-supply = <&vcc3v3_sys>;
+> > +		vcc4-supply = <&vcc3v3_sys>;
+> > +		vcc5-supply = <&vcc3v3_sys>;
+> > +		vcc6-supply = <&vcc3v3_sys>;
+> > +		vcc7-supply = <&vcc3v3_sys>;
+> > +		vcc8-supply = <&vcc3v3_sys>;
+> > +		vcc9-supply = <&vcc3v3_sys>;
+> > +
+> > +		regulators {
+> > +			vdd_logic: DCDC_REG1 {
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-initial-mode = <0x2>;
+> > +				regulator-min-microvolt = <500000>;
+> > +				regulator-max-microvolt = <1350000>;
+> > +				regulator-name = "vdd_logic";
+> > +				regulator-ramp-delay = <6001>;
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vdd_gpu: DCDC_REG2 {
+> > +				regulator-always-on;
+> > +				regulator-initial-mode = <0x2>;
+> > +				regulator-min-microvolt = <500000>;
+> > +				regulator-max-microvolt = <1350000>;
+> > +				regulator-name = "vdd_gpu";
+> > +				regulator-ramp-delay = <6001>;
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc_ddr: DCDC_REG3 {
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-initial-mode = <0x2>;
+> > +				regulator-name = "vcc_ddr";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vdd_npu: DCDC_REG4 {
+> > +				regulator-initial-mode = <0x2>;
+> > +				regulator-min-microvolt = <500000>;
+> > +				regulator-max-microvolt = <1350000>;
+> > +				regulator-name = "vdd_npu";
+> > +				regulator-ramp-delay = <6001>;
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc_1v8: DCDC_REG5 {
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <1800000>;
+> > +				regulator-name = "vcc_1v8";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vdda0v9_image: LDO_REG1 {
+> > +				regulator-name = "vdda0v9_image";
+> > +				regulator-min-microvolt = <900000>;
+> > +				regulator-max-microvolt = <900000>;
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vdda_0v9: LDO_REG2 {
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <900000>;
+> > +				regulator-max-microvolt = <900000>;
+> > +				regulator-name = "vdda_0v9";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vdda0v9_pmu: LDO_REG3 {
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <900000>;
+> > +				regulator-max-microvolt = <900000>;
+> > +				regulator-name = "vdda0v9_pmu";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt =
+> > <900000>;
+> > +				};
+> > +			};
+> > +
+> > +			vccio_acodec: LDO_REG4 {
+> > +				regulator-always-on;
+> > +				regulator-min-microvolt = <3300000>;
+> > +				regulator-max-microvolt = <3300000>;
+> > +				regulator-name = "vccio_acodec";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vccio_sd: LDO_REG5 {
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <3300000>;
+> > +				regulator-name = "vccio_sd";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc3v3_pmu: LDO_REG6 {
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <3300000>;
+> > +				regulator-max-microvolt = <3300000>;
+> > +				regulator-name = "vcc3v3_pmu";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt =
+> > <3300000>;
+> > +				};
+> > +			};
+> > +
+> > +			vcca_1v8: LDO_REG7 {
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <1800000>;
+> > +				regulator-name = "vcca_1v8";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcca1v8_pmu: LDO_REG8 {
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <1800000>;
+> > +				regulator-name = "vcca1v8_pmu";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-on-in-suspend;
+> > +					regulator-suspend-microvolt =
+> > <1800000>;
+> > +				};
+> > +			};
+> > +
+> > +			vcca1v8_image: LDO_REG9 {
+> > +				regulator-min-microvolt = <1800000>;
+> > +				regulator-max-microvolt = <1800000>;
+> > +				regulator-name = "vcca1v8_image";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc_3v3: SWITCH_REG1 {
+> > +				regulator-name = "vcc_3v3";
+> > +				regulator-always-on;
+> > +				regulator-boot-on;
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +
+> > +			vcc3v3_sd: SWITCH_REG2 {
+> > +				regulator-name = "vcc3v3_sd";
+> > +
+> > +				regulator-state-mem {
+> > +					regulator-off-in-suspend;
+> > +				};
+> > +			};
+> > +		};
+> > +
+> > +		codec {
+> > +			rockchip,mic-in-differential;
+> > +		};
+> > +	};
+> > +};
+> > +
+> > +&i2s0_8ch {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&i2s1_8ch {
+> > +	rockchip,trcm-sync-tx-only;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&mdio0 {
+> > +	rgmii_phy0: ethernet-phy@0 {
+> > +		compatible = "ethernet-phy-ieee802.3-c22";
+> > +		reg = <0x0>;  
+> 
+> Please add reset-gpios related props here.
+> 
+> > +	};
+> > +};
+> > +
+> > +&mdio1 {
+> > +	rgmii_phy1: ethernet-phy@0 {
+> > +		compatible = "ethernet-phy-ieee802.3-c22";
+> > +		reg = <0x0>;  
+> 
+> Same here.
+> 
+> > +	};
+> > +};
+> > +
+> > +&pcie30phy {
+> > +	 data-lanes = <1 2>;
+> > +	 status = "okay";
+> > +};
+> > +
+> > +&pcie2x1 {
+> > +	 reset-gpios = <&gpio2 RK_PD6 GPIO_ACTIVE_HIGH>;  
+> 
+> This should probably also include pinctrl props.
+> 
+> > +	 vpcie3v3-supply = <&vcc3v3_pcie>;
+> > +	 status = "okay";
+> > +};
+> > +
+> > +&pcie3x1 {
+> > +	 num-lanes= <1>;
+> > +	 bus-range = <0x10 0x1f>;
+> > +	 reset-gpios = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;  
+> 
+> Same here, use of gpios typically means you will also need pinctrl.
+> 
+> > +	 vpcie3v3-supply = <&vcc3v3_pcie>;
+> > +	 status = "okay";
+> > +
+> > +};
+> > +
+> > +&pcie3x2 {
+> > +	 num-lanes= <1>;
+> > +	 bus-range = <0x20 0x2f>;
+> > +	 reset-gpios = <&gpio2 RK_PD0 GPIO_ACTIVE_HIGH>;  
+> 
+> And here.
+> 
+> > +	 vpcie3v3-supply = <&vcc3v3_pcie>;
+> > +	 status = "okay";
+> > +};
+> > +
+> > +&pinctrl {
+> > +	button {
+> > +		reset_button_pin: reset-button-pin {
+> > +			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO
+> > &pcfg_pull_up>;
+> > +		};
+> > +	};
+> > +
+> > +	bluetooth {
+> > +		bt_wake_host_h: bt-wake-host-h {
+> > +			rockchip,pins = <3 RK_PA1 RK_FUNC_GPIO
+> > &pcfg_pull_down>;
+> > +		};
+> > +
+> > +		host_wake_bt_h: host-wake-bt-h {
+> > +			rockchip,pins = <3 RK_PA2 RK_FUNC_GPIO
+> > &pcfg_pull_none>;
+> > +		};
+> > +	};
+> > +
+> > +	gpio-leds {
+> > +	     led_white_pin: led-white-pin  {
+> > +		    rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO
+> > &pcfg_pull_none>;
+> > +	     };
+> > +
+> > +	     led_green_pin: led-green-pin {
+> > +		    rockchip,pins = <3 RK_PB0 RK_FUNC_GPIO
+> > &pcfg_pull_none>;
+> > +	     };
+> > +
+> > +	     led_amber_pin: led-amber-pin {
+> > +		    rockchip,pins = <3 RK_PA7 RK_FUNC_GPIO
+> > &pcfg_pull_none>;
+> > +	     };
+> > +
+> > +	     led_blue_pin: led-blue-pin {
+> > +		    rockchip,pins = <3 RK_PA5 RK_FUNC_GPIO
+> > &pcfg_pull_none>;
+> > +	     };
+> > +
+> > +	};
+> > +
+> > +	pmic {
+> > +		pmic_int: pmic_int {
+> > +			rockchip,pins = <0 RK_PA3 RK_FUNC_GPIO
+> > &pcfg_pull_up>;
+> > +		};
+> > +	};
+> > +
+> > +	usb {
+> > +		vcc5v0_usb_host_en: vcc5v0_usb_host_en {
+> > +			rockchip,pins = <0 RK_PA5 RK_FUNC_GPIO
+> > &pcfg_pull_none>;
+> > +		};
+> > +	};
+> > +};
+> > +
+> > +&pmu_io_domains {
+> > +	pmuio1-supply = <&vcc3v3_pmu>;
+> > +	pmuio2-supply = <&vcc3v3_pmu>;
+> > +	vccio1-supply = <&vccio_acodec>;
+> > +	vccio2-supply = <&vcc_1v8>;
+> > +	vccio3-supply = <&vccio_sd>;
+> > +	vccio4-supply = <&vcc_1v8>;
+> > +	vccio5-supply = <&vcc_3v3>;
+> > +	vccio6-supply = <&vcc_1v8>;
+> > +	vccio7-supply = <&vcc_3v3>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&rng {
+> > +	status = "okay";
+> > +};  
+> 
+> rng is already enabled in rk3568.dtsi, please drop.
+> 
+> > +
+> > +&saradc {
+> > +	vref-supply = <&vcca_1v8>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&sata0 {
+> > +	status = "disabled";
+> > +};
+> > +
+> > +&sata1 {
+> > +	status = "disabled";
+> > +};
+> > +
+> > +&sata2 {
+> > +	status = "disabled";
+> > +};  
+> 
+> These sataX are already disabled by default, should not be needed here?
+> 
+> > +
+> > +&sdhci {
+> > +	bus-width = <8>;
+> > +	max-frequency = <200000000>;
+> > +	non-removable;  
+> 
+> This should probably also have cap-mmc-highspeed and mmc-hs200-1_8v.
+> 
+> > +	pinctrl-0 = <&emmc_bus8 &emmc_clk &emmc_cmd &emmc_datastrobe>;  
+> 
+> This is missing pinctrl-names and please separate each phandle as mentioned
+> above.
+> 
+> Maybe add vmmc/vqmmc regulators?
+> 
+> > +	status = "okay";
+> > +};
+> > +
+> > +&sdmmc0 {
+> > +	bus-width = <4>;
+> > +	cap-sd-highspeed;
+> > +	cd-gpios = <&gpio0 RK_PA4 GPIO_ACTIVE_LOW>;
+> > +	disable-wp;
+> > +	pinctrl-names = "default";
+> > +	pinctrl-0 = <&sdmmc0_bus4 &sdmmc0_clk &sdmmc0_cmd &sdmmc0_det>;  
+> 
+> Please separate each phandle as mentioned above.
+> 
+> > +	sd-uhs-sdr104;
+> > +	vmmc-supply = <&vcc3v3_sd>;
+> > +	vqmmc-supply = <&vccio_sd>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&tsadc {
+> > +	rockchip,hw-tshut-mode = <1>;
+> > +	rockchip,hw-tshut-polarity = <0>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&uart2 {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb_host0_ehci {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb_host1_ehci {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb_host0_ohci {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb_host1_ohci {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb_host0_xhci {
+> > +	phys = <&combphy0 PHY_TYPE_USB3>;
+> > +	phy-names = "usb3-phy";  
+> 
+> Is the usb2-phy not used?
+> 
+> The default from rk3568.dtsi add both the usb2 and usb3 phys.
+> 
+> Regards,
+> Jonas
+> 
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb_host1_xhci {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb2phy0 {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb2phy0_host {
+> > +	phy-supply = <&vcc5v0_usb_host>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb2phy1 {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb2phy1_host {
+> > +	phy-supply = <&vcc5v0_usb_host>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&usb2phy1_otg {
+> > +	phy-supply = <&vcc5v0_usb_host>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&vop {
+> > +	assigned-clocks = <&cru DCLK_VOP0>, <&cru DCLK_VOP1>;
+> > +	assigned-clock-parents = <&pmucru PLL_HPLL>, <&cru PLL_VPLL>;
+> > +	status = "okay";
+> > +};
+> > +
+> > +&vop_mmu {
+> > +	status = "okay";
+> > +};
+> > +
+> > +&vp0 {
+> > +	vp0_out_hdmi: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
+> > +		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
+> > +		remote-endpoint = <&hdmi_in_vp0>;
+> > +	};
+> > +};
+> >   
+> 
+> 
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
