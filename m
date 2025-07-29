@@ -1,153 +1,227 @@
-Return-Path: <linux-kernel+bounces-748915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0AEAB1478C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E96C6B14774
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E88F1AA116E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:22:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3548B3BDC1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:09:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2D8234964;
-	Tue, 29 Jul 2025 05:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521CF233735;
+	Tue, 29 Jul 2025 05:09:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eX88Y/zY"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2538638B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 05:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CXVfl0BH"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334DB231C91;
+	Tue, 29 Jul 2025 05:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753766506; cv=none; b=RBqNjTegANd2Z0v1MHTRxUfoJBPQ5Jh2YsGx2N4/XmimMsPBHEZS+iaowG0crsPtErLUkTwhYxsGdko7KOOVgJTzbeH0UWeG+mUG5BJN+BUelM7Z+5JvVsNQUCxM287O40WQkbb3NyYDLfobJLNNnk3Q5/mlzPutPrsef9j65LI=
+	t=1753765795; cv=none; b=PeUL4ktp2eO3JaiOV+ni74f7ExA5TmnR4E+ZHPivdZsW44mIz5nZ+0KIEbD19OXFqWhETZDvwUDfSSWmQW8KI1yKmUrvVvHy/8Kyuys6NhdkA8cT429KhF0XyTmXUl4BEZGlztqJBpRzKaLYo4/cXK7/9LGiXWItRpfdBt2+Okc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753766506; c=relaxed/simple;
-	bh=gN8omh9+jZRnT2WyX5FyUkbqpxQzn9dfqD1XgXawL5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sUVasYjWN+NV09tqWs/6/UIXzzx5JtlafB612hl8WrhRZzUJ760B5MD2LDgpdEEXSJrilUWEq1w0wEAxlc8s1Cb1C35GfVJO3dNRxgI3vLfnvyv3xRpgrAgV1fOTJnhXBokwQiGmxQp275EvZw8XIvE1kVDw8wI5RduzUvBtsSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eX88Y/zY; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-7074bad055eso9493106d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:21:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753766503; x=1754371303; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yCNWGElp5pC1atxEbdepPd2VdGD7IrJ4GQmz0sudHLw=;
-        b=eX88Y/zYhqfoyxvNv8Nl8NEA/MBUwjWDZIYZ5jP939333qitX7ppAUNGCwJ1V/kOqM
-         H94Ux0Eindx1YffIyevjP3RJMzwu2oi+PDb8gcHEZnQ+RGSBe9U165FMkuN2yIuLejwQ
-         /6Gbkn5Pk29MG402AZNA0sPyIcoWPNKBQBzx4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753766503; x=1754371303;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yCNWGElp5pC1atxEbdepPd2VdGD7IrJ4GQmz0sudHLw=;
-        b=UyLrZWNQfzlYR3bahvgPOOqzRSCKn0VEfcKO7nRz+it9n+2093QYXT1WFHvh9W53l8
-         KCCLAaznjeQpp86Xyhw+gXRLEec7C22WOvM9o9uNWON2N0YeY/1r9PvtVpe4tEtxKDFH
-         uMbdzi94kNIYhmmNpmf6+TxQsEMSMiEv4dqGgufu2PXmjCw/0MlcdOhNcRNUiV8RPL+K
-         BPSXSl+nCJuCt0vCc3ICALFYT7jJtQtdnWTUgEKgW9S+5fCrS+evtMiJikmxQIL2kjHv
-         Q2F8nQ8otCB5A2veDtWNz2Onxh0vCYPUfHSZyh+BzQFAvDlG8d7LzN4FkBD8CRUvo037
-         iu9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWz2ChlL/+2i/DIWjJBZvCoY5YewudLup5GrjJ3BqD1Y0eyv0JdppwQum+/Y4N0BWz7uUhQ7EvvYelDe7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKdyRn6uTTrYy3QCVzhZhdATsiUPbZaZ6cSsU7BAEMgHk0lSZt
-	Q7f1HPeKzYKy2ufaf34/WwBNo/vT9DESh/AMR51i30HD00Ry2idbvk34f/+aYaeotA==
-X-Gm-Gg: ASbGncsGRS+CidrS9fgHP1HJmmr5azOuxsWNcTYqvTTt89PLK4n5ta6v8voSrfOH5nP
-	L5aG2FCwwK1vwm1YNn/QqkyLYrVA2MjdhA86o8qm8nc4k2k/ty70fz5lWSiDeBy7cIrqe1QLAHE
-	s3Fxwz8SL6wPT9+pVzHA47fX3lzAc03BRgUYhBLUPJeA+r2qrHvG8AwLVPQbejdo5nqM/Z6OO9M
-	195/vWeOUJQ8vPTnFjoQ7PlcNk5mp++pU+us5YeAvsKjgNYFWMzXS4KW8k91XBcV5xyxBEZNMqY
-	jmjOq5MlgXBu5IXohJlRD+ls+9AEYh6tVAd61EzUz8g9ghVU4jnnxDlKxgPccJuvPurds7c8frk
-	1tlEzQANiQ9QDjswgQmDcoKuvNjxMzHcNdV7akqxzW6KVWHUOoUDrbl34U8pSaAweygfT4KeILl
-	mYSxH4PNQxTQ==
-X-Google-Smtp-Source: AGHT+IF/SW2bBwaEzMPz1p7KR+YUAhGTkvxxeMNF+awmsUxOwYCQHqsob47D0nMgbULN58Y1tyFZrQ==
-X-Received: by 2002:a05:6214:dcc:b0:707:1654:cf90 with SMTP id 6a1803df08f44-707204b8fb9mr198625856d6.2.1753766503088;
-        Mon, 28 Jul 2025 22:21:43 -0700 (PDT)
-Received: from shivania.lvn.broadcom.net ([192.19.161.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7075e3208d1sm1260226d6.72.2025.07.28.22.21.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 22:21:42 -0700 (PDT)
-From: Shivani Agarwal <shivani.agarwal@broadcom.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org
-Cc: bcm-kernel-feedback-list@broadcom.com,
-	linux-kernel@vger.kernel.org,
-	ajay.kaher@broadcom.com,
-	alexey.makhalov@broadcom.com,
-	tapas.kundu@broadcom.com,
-	axboe@kernel.dk,
-	linux-block@vger.kernel.org,
-	Ming Lei <ming.lei@redhat.com>,
-	Yu Kuai <yukuai3@huawei.com>,
-	tj@kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Sasha Levin <sashal@kernel.org>,
-	Shivani Agarwal <shivani.agarwal@broadcom.com>
-Subject: [PATCH v5.10] block: don't call rq_qos_ops->done_bio if the bio isn't  tracked
-Date: Mon, 28 Jul 2025 22:09:01 -0700
-Message-Id: <20250729050901.98518-1-shivani.agarwal@broadcom.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1753765795; c=relaxed/simple;
+	bh=/Uf+Pxz21IzDt0yntLmrEa/esebmzlSCFWhcb6GbOUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Afa4bIvBtCxdFR6XGD7TOmtWWW3YjIKay2ItA1DTw4R0hsZLCEf1m66ppkkYqmgMr5f0n41WLtsSukcDf+ff6Gnzra8XawA+jMMpYieP36DOTwNha+c5ULdz4UN2esHWAFkZwgvo03KEKIAvD7PLX/ZMYWJ96ZVRX7I6XWaMNjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CXVfl0BH; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.161.187] (unknown [4.194.122.136])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 39B9F2116DD5;
+	Mon, 28 Jul 2025 22:09:49 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 39B9F2116DD5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753765793;
+	bh=SBrdiyjvaPw73d4co86gOHCd9t5BOIS2mb3SAsHzhxY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CXVfl0BHjY25Cq7SrhAQXqtzKtixCOYK+4nX9U0Pb0ep5u8ajOO0pWkoyKfWUZvRN
+	 1Zxrd6z7BieT14IVlLQW0L8zM3onQ7nZ2CKOMIjI5QyLeFwN+/DNMrWMtA0M2GngZu
+	 wVDPczOzfmc92INYGUyceQ9BC4kcBDvSPJqYWT7Q=
+Message-ID: <6a6e50da-43e8-4fb1-a010-13f43b062adc@linux.microsoft.com>
+Date: Tue, 29 Jul 2025 10:39:46 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] Drivers: hv: Introduce mshv_vtl driver
+To: Michael Kelley <mhklinux@outlook.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
+ Dexuan Cui <decui@microsoft.com>
+Cc: Roman Kisel <romank@linux.microsoft.com>,
+ Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
+ Saurabh Sengar <ssengar@linux.microsoft.com>,
+ Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
+ Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+ ALOK TIWARI <alok.a.tiwari@oracle.com>,
+ Markus Elfring <Markus.Elfring@web.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
+References: <20250724082547.195235-1-namjain@linux.microsoft.com>
+ <20250724082547.195235-3-namjain@linux.microsoft.com>
+ <SN6PR02MB4157495A60189FB3D9A7C5CAD458A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157495A60189FB3D9A7C5CAD458A@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit a647a524a46736786c95cdb553a070322ca096e3 ]
 
-rq_qos framework is only applied on request based driver, so:
+On 7/27/2025 5:20 AM, Michael Kelley wrote:
+> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, July 24, 2025 1:26 AM
+>>
+>> Provide an interface for Virtual Machine Monitor like OpenVMM and its
+>> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
+>> Expose devices and support IOCTLs for features like VTL creation,
+>> VTL0 memory management, context switch, making hypercalls,
+>> mapping VTL0 address space to VTL2 userspace, getting new VMBus
+>> messages and channel events in VTL2 etc.
+>>
+>> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
+>> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+>> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+>> Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
+>> Message-ID: <20250512140432.2387503-3-namjain@linux.microsoft.com>
+>> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+>> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>> ---
+>>   drivers/hv/Kconfig          |   22 +
+>>   drivers/hv/Makefile         |    7 +-
+>>   drivers/hv/mshv_vtl.h       |   52 ++
+>>   drivers/hv/mshv_vtl_main.c  | 1508 +++++++++++++++++++++++++++++++++++
+>>   include/hyperv/hvgdk_mini.h |  106 +++
+>>   include/uapi/linux/mshv.h   |   80 ++
+>>   6 files changed, 1774 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/hv/mshv_vtl.h
+>>   create mode 100644 drivers/hv/mshv_vtl_main.c
+>>
+> 
+> [snip]
+> 
+>> +
+>> +static int mshv_vtl_set_reg(struct hv_register_assoc *regs)
+>> +{
+>> +	u64 reg64;
+>> +	enum hv_register_name gpr_name;
+>> +	int i;
+>> +
+>> +	gpr_name = regs->name;
+>> +	reg64 = regs->value.reg64;
+>> +
+>> +	/* Search for the register in the table */
+>> +	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
+>> +		if (reg_table[i].reg_name == gpr_name) {
+>> +			if (reg_table[i].debug_reg_num != -1) {
+>> +				/* Handle debug registers */
+>> +				if (gpr_name == HV_X64_REGISTER_DR6 &&
+>> +				    !mshv_vsm_capabilities.dr6_shared)
+>> +					goto hypercall;
+>> +				native_set_debugreg(reg_table[i].debug_reg_num, reg64);
+>> +			} else {
+>> +				/* Handle MSRs */
+>> +				wrmsrl(reg_table[i].msr_addr, reg64);
+>> +			}
+>> +			return 0;
+>> +		}
+>> +	}
+>> +
+>> +hypercall:
+>> +	return 1;
+>> +}
+>> +
+>> +static int mshv_vtl_get_reg(struct hv_register_assoc *regs)
+>> +{
+>> +	u64 *reg64;
+>> +	enum hv_register_name gpr_name;
+>> +	int i;
+>> +
+>> +	gpr_name = regs->name;
+>> +	reg64 = (u64 *)&regs->value.reg64;
+>> +
+>> +	/* Search for the register in the table */
+>> +	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
+>> +		if (reg_table[i].reg_name == gpr_name) {
+>> +			if (reg_table[i].debug_reg_num != -1) {
+>> +				/* Handle debug registers */
+>> +				if (gpr_name == HV_X64_REGISTER_DR6 &&
+>> +				    !mshv_vsm_capabilities.dr6_shared)
+>> +					goto hypercall;
+>> +				*reg64 = native_get_debugreg(reg_table[i].debug_reg_num);
+>> +			} else {
+>> +				/* Handle MSRs */
+>> +				rdmsrl(reg_table[i].msr_addr, *reg64);
+>> +			}
+>> +			return 0;
+>> +		}
+>> +	}
+>> +
+>> +hypercall:
+>> +	return 1;
+>> +}
+>> +
+> 
+> One more comment on this patch. What do you think about
+> combining mshv_vtl_set_reg() and mshv_vtl_get_reg() into a single
+> function? The two functions have a lot code duplication that could be
+> avoided. Here's my untested version (not even compile tested):
+> 
+> +static int mshv_vtl_get_set_reg(struct hv_register_assoc *regs, bool set)
+> +{
+> +	u64 *reg64;
+> +	enum hv_register_name gpr_name;
+> +	int i;
+> +
+> +	gpr_name = regs->name;
+> +	reg64 = &regs->value.reg64;
+> +
+> +	/* Search for the register in the table */
+> +	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
+> +		if (reg_table[i].reg_name != gpr_name)
+> +			continue;
+> +		if (reg_table[i].debug_reg_num != -1) {
+> +			/* Handle debug registers */
+> +			if (gpr_name == HV_X64_REGISTER_DR6 &&
+> +			    !mshv_vsm_capabilities.dr6_shared)
+> +				goto hypercall;
+> +			if (set)
+> +				native_set_debugreg(reg_table[i].debug_reg_num, *reg64);
+> +			else
+> +				*reg64 = native_get_debugreg(reg_table[i].debug_reg_num);
+> +		} else {
+> +			/* Handle MSRs */
+> +			if (set)
+> +				wrmsrl(reg_table[i].msr_addr, *reg64);
+> +			else
+> +				rdmsrl(reg_table[i].msr_addr, *reg64);
+> +		}
+> +		return 0;
+> +	}
+> +
+> +hypercall:
+> +	return 1;
+> +}
+> +
+> 
+> Two call sites would need to be updated to pass "true" and "false",
+> respectively, for the "set" parameter.
+> 
+> I changed the gpr_name matching to do "continue" on a mismatch
+> just to avoid a level of indentation. It's functionally the same as your
+> code.
+> 
+> Michael
 
-1) rq_qos_done_bio() needn't to be called for bio based driver
+Acked, looks good. Thanks for sharing the improvements. Sending v7 now.
 
-2) rq_qos_done_bio() needn't to be called for bio which isn't tracked,
-such as bios ended from error handling code.
-
-Especially in bio_endio():
-
-1) request queue is referred via bio->bi_bdev->bd_disk->queue, which
-may be gone since request queue refcount may not be held in above two
-cases
-
-2) q->rq_qos may be freed in blk_cleanup_queue() when calling into
-__rq_qos_done_bio()
-
-Fix the potential kernel panic by not calling rq_qos_ops->done_bio if
-the bio isn't tracked. This way is safe because both ioc_rqos_done_bio()
-and blkcg_iolatency_done_bio() are nop if the bio isn't tracked.
-
-Reported-by: Yu Kuai <yukuai3@huawei.com>
-Cc: tj@kernel.org
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Tejun Heo <tj@kernel.org>
-Link: https://lore.kernel.org/r/20210924110704.1541818-1-ming.lei@redhat.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-[Shivani: Modified to apply on 5.10.y]
-Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
----
- block/bio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/block/bio.c b/block/bio.c
-index 88a09c31095f..7851f54edc76 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1430,7 +1430,7 @@ void bio_endio(struct bio *bio)
- 	if (!bio_integrity_endio(bio))
- 		return;
- 
--	if (bio->bi_disk)
-+	if (bio->bi_disk && bio_flagged(bio, BIO_TRACKED))
- 		rq_qos_done_bio(bio->bi_disk->queue, bio);
- 
- 	/*
--- 
-2.40.4
-
+Regards,
+Naman
 
