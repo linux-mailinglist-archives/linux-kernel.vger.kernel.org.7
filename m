@@ -1,236 +1,148 @@
-Return-Path: <linux-kernel+bounces-749066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6326AB14998
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:56:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BF4B1499A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C62F1610E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:56:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797D53A99A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FBF26B0B6;
-	Tue, 29 Jul 2025 07:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDC726B74E;
+	Tue, 29 Jul 2025 07:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b="fu1CRp2o"
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11021104.outbound.protection.outlook.com [40.107.130.104])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RklG3KhH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D13C246BC4;
-	Tue, 29 Jul 2025 07:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.104
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753775786; cv=fail; b=rFUQaaJB9XoXLGlFBRANkE4mQbmlIp1CsWqB1B7TxnK39J6uD3OqCEixqhkTMCoM096YULOKve12hvgGCKmiyh9uSI5xDhXWxaFDe0ieXJ2VCHBHnR/eQ22jVvWgx1Uao4NaUpvm22d2vrkeJEXtt8ZZ2ZMnu38pLGrNfY/lnOw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753775786; c=relaxed/simple;
-	bh=afoa43koyeJD3rFccguvQqdfpidrxGOKR/k/PlbOntY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LWpdAGDgoHPEaoAC89jPLQzyGtYhoW/WTR/miz1T6CIIkQTuoczLBSaTg6qbUEpQvL1xiz5soffkrHEchZfb0UaoWfJVIzOacg37ZBo0xXCZjiY7fF0UVrG/zs184+ZVi8O/Krx6qHf3GMYzwBJfdnKPJQfiIlBeoLMn6CKTpKM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu; spf=pass smtp.mailfrom=genexis.eu; dkim=pass (2048-bit key) header.d=iopsys.eu header.i=@iopsys.eu header.b=fu1CRp2o; arc=fail smtp.client-ip=40.107.130.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iopsys.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=genexis.eu
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TfA+f3Ylyk4YimZGSnQuuKYPBd02HuDMgTR/lQBue326+Us0tOjBnmBBuRoK9yHcQklEWD6R+Db6Gf58sDOFKvPHZTnPlJcaKqUZef11lU56MvpYWevGEHeez3m3GxYjZZOP/gqb/OJnXMS5zCLw/TTMPHEnCYMJJ9+2oEHz3/j/Yaepf42eqZmV64sO2/dsDhNA5CbjtsGXBlU61w0v0cCYS8+YnZ8Oiszr1nDM4nxsE3EJzkAIZSqs0IAO2D93YI96DX0ymBN6jlyC83GwHqQyus5UgpJ7ZRYV22aStQNepHqV7pI7QJQfuDx0Ub/4FCcsYmxcrs9PKG+r/v3R5w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KkLgMAPtmXVRihPkBVFL3JAavZVAJs7pv35BCuhjrPQ=;
- b=oqbLkpG9zq/obuVab+zilEALdsSvSDmxa1FWr25NyE+xixueO0KpvNPpWoSkg1GyeJ+uBHkNyZ2VCt0U5mbLdiYhc0FHQB6knv8tkBDMPQeBLVBXVNg+eyD4zg3sl4ZkiY0fWiu6AitXgoEoall7iLcovLFLuZxEmCkw0xVQmx8wsRPVCcKQrMMOovPriOihM0aOwjxmkAU0tVwG6XLsIpboK95EMNvI81/gOWWmEdKVqLIPIFEm0teOtMY+jLWnbL1AtMhB3LtBTDyOH/lxSuR6caJdZIo0HzPp9fPF9F8oIAXjdErCov6509LJi9CgSIH2GOOu8slJkNBVkgHTZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=genexis.eu; dmarc=pass action=none header.from=iopsys.eu;
- dkim=pass header.d=iopsys.eu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iopsys.eu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KkLgMAPtmXVRihPkBVFL3JAavZVAJs7pv35BCuhjrPQ=;
- b=fu1CRp2oDnFknUL22hGgAIxVrT8YyjgTGojRQRKiHMB/vS3CDTNexoi1CfUvsC7MPiMws0GZU7L4E9xA4MM3yUcEl9oL+XB3zBiE18KZ37cMrmpYcdyUkvEhSzVOFge077Irp4xfaJo7/ivNfaZ5snd8+X5yzEAO8b0H4DbF4gnlAizwgwZapgSuaaDGyDbEJTfVX0rmGny4EgFT59e5ixS4WJ4jlF9R2PfMNv+Z+8eLHj8/KZnzTKSvlksDD1ef2zeyUY6Z6A62StPjYozR8Dqm9RQW4fQafVcibMTUj4q/QxfKMp79Fgw2m6zF0a2aMheGH3cMfyQAUcVvHPWHbg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=iopsys.eu;
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com (2603:10a6:150:7d::22)
- by PAVPR08MB9481.eurprd08.prod.outlook.com (2603:10a6:102:319::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Tue, 29 Jul
- 2025 07:56:19 +0000
-Received: from GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0]) by GV2PR08MB8121.eurprd08.prod.outlook.com
- ([fe80::4cd3:da80:2532:daa0%4]) with mapi id 15.20.8964.025; Tue, 29 Jul 2025
- 07:56:18 +0000
-From: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Frank Wunderlich <frank-w@public-files.de>
-Cc: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Subject: [PATCH v4] arm64: dts: mediatek: mt7986-bpi-r3: Change fan PWM value for mid speed
-Date: Tue, 29 Jul 2025 10:56:08 +0300
-Message-ID: <20250729075608.1651898-1-mikhail.kshevetskiy@iopsys.eu>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <B06376CB-BE3F-4645-8A4D-A9C67CDCA3EC@public-files.de>
-References: <B06376CB-BE3F-4645-8A4D-A9C67CDCA3EC@public-files.de>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR0P281CA0175.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b4::9) To GV2PR08MB8121.eurprd08.prod.outlook.com
- (2603:10a6:150:7d::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891312192FC;
+	Tue, 29 Jul 2025 07:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753775819; cv=none; b=cUwjye6DvcYiou/A8sE6jpEtY2HT6nDaHSE5V8sX5GeQLyZtOJV+m55ltEhj5YFDf6ASjTxYCckp7cCU0iQ+DllylU8c5g9w7e9vzsWUj6WKSrDRSv1xsMEeQ5jqBmVcpC/SCRHHoKVTBg8DWZq9sQhy82H7L7/A+3sOKutVQyU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753775819; c=relaxed/simple;
+	bh=npIOaJvSmi4YJZFOcIiWmLWYcrUrACiFT+JLNhShhpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6NYA8k4Qp0pHBZi3pjQLzhGvw36krsN7a7xyOaV2GcABsbx1hHXYKvG65Bu4SecZ5dfeuvMbwt/x5o7LywwI5qNBXUBcAvyYk7oNy6T2AuI2jXif1mym/NLYogVPi/qB2Ym2iucy3KMzHNItrPhml6Yya3+P+IIp81i9ox335E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RklG3KhH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92C6C4CEF5;
+	Tue, 29 Jul 2025 07:56:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753775819;
+	bh=npIOaJvSmi4YJZFOcIiWmLWYcrUrACiFT+JLNhShhpw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RklG3KhHZTFCqLPorPMDBul+T2GPoK2u43fN5gzfOTSc22B9B8/vI42ZNkL1HFlqF
+	 VoaEsrys3tmcjbpEGjxCH7r5IjW3ajpus39uXx+wibBoMRLPfequjLP3MWgpbAZSem
+	 cOamrINbM28sFSRepzSLoFDLFtr5KYRydGD2KPgA=
+Date: Tue, 29 Jul 2025 09:56:56 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, hpa@zytor.com, darwi@linutronix.de,
+	sohil.mehta@intel.com, peterz@infradead.org, ravi.bangoria@amd.com,
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] x86/intel: Fix always false range check in x86_vfm
+ model matching
+Message-ID: <2025072931-recount-stifling-73e8@gregkh>
+References: <20250729042621.6403-1-suchitkarunakaran@gmail.com>
+ <2025072925-lint-agreement-77e8@gregkh>
+ <CAO9wTFg_jCUZ+DxXVDM11_715r6ALJ=HyRXkcBxhGrBUo4iVUg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: GV2PR08MB8121:EE_|PAVPR08MB9481:EE_
-X-MS-Office365-Filtering-Correlation-Id: ddeb6f08-1a24-49fe-0f80-08ddce75669c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|52116014|366016|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?CLzgsWYu3GdC4ZKYX8Y1bi2o65y/WOeZa7FUNQI0nGuYzSO1NAFTZRiZGP9I?=
- =?us-ascii?Q?CVgg+1CXeKhXBPILiIxa03iHYv9Y9iEbwKSEhA6poasFWEzUvFz8RYAAejjc?=
- =?us-ascii?Q?Woxk6yWmd0zGh74lRvD9wZXyC9KFbTRJs2wZYay2CkmlkXVC8y9l/dOowWHA?=
- =?us-ascii?Q?UwtLbRawh3QtAhjS2MmgxLnmHU05z2iK+ymT+7r78UZMJZoogk5l9ugcbQ0U?=
- =?us-ascii?Q?r32IsNokTDdJ2o8HfoE5eDJKx8eNZJcI3gOiEvQ8tv1PcBwQY9tA0ni/Ezru?=
- =?us-ascii?Q?JLZlMeDcqcGU5c34wotBVy25HrPl9SnZW8/iqKpsGRf80t7Gx/LRIUgC/wif?=
- =?us-ascii?Q?KQufo9b1cKY3kdBFxu2bMarnvnboW1J2J/gqrcj7tV0Pm/9+twL7BdZuYgz+?=
- =?us-ascii?Q?j5ZzPOWqnEOVuaddeNDh/LJPQb3cdFZN71anZsOhvj0ujMlBs/B4SgIQUsjB?=
- =?us-ascii?Q?2flXDaWHjh+m9ajYOJ2YkcrSlNpk6kBt2d/gX/FTUpTwKtgNxp2CQ2bEmpuF?=
- =?us-ascii?Q?iGsxc1OM8lLfxtqjzEzajKyONWA3WTMyexUikICjvYeC2tl1knf4cV94gjB9?=
- =?us-ascii?Q?eDWIwLac8X+R6PnDSZTxjevVVJX/YeOK4W8WRLvQqhMiAUjXeqN08j6vUKw6?=
- =?us-ascii?Q?pt9JCyHoiySq6M8eTluSBueOkiraiEIvD5rao+n1zAPDZNmTOWhG6v5FC6TN?=
- =?us-ascii?Q?/2sJYNBWLfZKR5Ivr8oLxuTMWjtdPNQGV3QJCO4swHqg50fCyE58TAyx2OrT?=
- =?us-ascii?Q?Qd/bB5I3v0z7s+IhNBa9HN6RZR4EKEXui3S1bPZxmiLDP4IvYRfEZIzJxxX6?=
- =?us-ascii?Q?j8Q8DF/pp83SW9X4fiD5+t4e3xNLwVtdGGAkwkIGdzJWWiBJ6h3zNFdENRS+?=
- =?us-ascii?Q?0mq7gVmuwnHLIA98UTsqa2SGFpbi4Au1rDVOItSRMCZFNdRERjFYd5S2aM4s?=
- =?us-ascii?Q?X3q+/fLOFE2DfBZzLlgidCAS/b5G2M1Z6VujyILnpoemX4l0vDJVcS0obDjC?=
- =?us-ascii?Q?HxDfTXxPQKjrJq4s6lnIr0uBuUqGJtN5KnhhDsZ5mlNl55hY2wkhznHFzfgd?=
- =?us-ascii?Q?56K4+13soeipV/5/ZsQGz6/zpAsd/ZyxmzvOHd4rGw+d9nFxRXrwhQhvybWw?=
- =?us-ascii?Q?8r6LEwl2JZPSaVvDsBsd2ES7mFA80o/nSyK1b4H84wS6UE55YRtzkD31fGVf?=
- =?us-ascii?Q?PKi5j6yS5YL/95FMdULUzvuvLuA97937K3gGv+vFvgOEp4PjanEvtHlUoXMf?=
- =?us-ascii?Q?nurjiMW0UzaMhpD2FVG6VLGMVpElWVNreepgZj6hUfUgnY9gCW6MQyY0AUVt?=
- =?us-ascii?Q?5Lxmeg6R5U/J4m2izb+G7dwmrWtouhjFilq8jb6gTeZsS9ZlmsCObynWFO0h?=
- =?us-ascii?Q?ZJqk+YdP1bXHROAuYX3729eLGYmiFQPpVFmPpblHW03l3agYEuc5y95HQYah?=
- =?us-ascii?Q?PPJTK/ftwhXOFqeeSYrcl3Riz0s2goL1eupEf2Cm/a0FCCX8xjXz1pU5CZ7w?=
- =?us-ascii?Q?SHn7IBrMH8/f+tc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV2PR08MB8121.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(52116014)(366016)(38350700014)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bAL9BCZbViD3QS3wOKKMnO0JBtThg+oJK54kyn5gF3ZjA+Lkvxjp1BefjcsM?=
- =?us-ascii?Q?+7GjUwnXZPj+MF1Lg+8bF6ZWV5S5e/s2ITcyHoAN5xPN5vdmR0WyLuvGm5h2?=
- =?us-ascii?Q?6JB2+9Wl2nVwTTsjtBQGa7hh9RzLKJDWfecJhLTcxADExxgioMXpTU7jHMPi?=
- =?us-ascii?Q?wNJUozORdGRKq6AmxznQBF4NeQnxwgKsNrAaw7+7miakiioXH2fd1Vm1zCKc?=
- =?us-ascii?Q?jj4wE8wCQim11GAroU2DKthBBMoiDzYdePVDexW7dLiw3fmEEbHpj8xeB5ZQ?=
- =?us-ascii?Q?YUh7s7mnDEAYTAyocW4AZ5rFTmoOx39b3EMbxHTzjrVIYTzAS58FCaS8Xa1O?=
- =?us-ascii?Q?56npacLHSwPAPFJGvMIF5oqzkgs1fXi58L2e8E6S3j+FixhGMxZ2GNqcyZtk?=
- =?us-ascii?Q?sIFzt03rO9ug1vRsv7Ya1sPZMmNYepMgFMbaKYqvDTKQK1NNuwN5S2Bsuj5e?=
- =?us-ascii?Q?7Wp2EI7IQY+ccVHFAYfWKnopVxZY04sbUg1gemMX18ndyv6uVTvT0dh5fmIZ?=
- =?us-ascii?Q?9DyzSE3sGZt3jqvPQuGJxv1IZU5nIl6HFY2EkSVBoQoJ1gLfpJcQkHg8tYUK?=
- =?us-ascii?Q?oj5FCwPThGUwOajEQQDeElkbinA2ri5wfJ2pfdjUjfjboEZ2UviR9YMzwq1+?=
- =?us-ascii?Q?yfZFw2I/K2+qm1xTCitwMyLGY6gEU8fe2z190CWg02DzThb48Vn1GQHjbgJM?=
- =?us-ascii?Q?IF02+FH83VSYITGEOZAViMPUahZhntjU6Wgd+HLlcOS73hDjP6wu80E7ZFji?=
- =?us-ascii?Q?6PhBpQ3EeA0zWeaj84Mxl7K/mgDnTY1d00S6EunQIYi+too1njEHLJM62oMm?=
- =?us-ascii?Q?9uSplpGxWHWi8S141pXF7sZtOejGgSKCIi6Yzo4SRoHyk1+oUvD7M5aaSbKu?=
- =?us-ascii?Q?JWL/eFff8/Eb7ncvf8Yl3dtY1+0CUEMJcXFsDrLgu/vseJ92dAS5Ve94x7m3?=
- =?us-ascii?Q?2hcmfz+6hYqMo+BCR2y9rlrc4eH78we4NFgQag9yZaEeuanQ06BNjGu0GVxJ?=
- =?us-ascii?Q?JMllOqa3SW5vYeJ2H6Fvd1nBlytoqW6Ac+yUOYKK8tHkVjmpWPRBIJsCL37W?=
- =?us-ascii?Q?OrnGk2iBmLncFLhMv3Bf06xrzHowlAOXsWe+WqOPj8bXHm6QoFHrlWumGVWd?=
- =?us-ascii?Q?Me1w38x8zWXt/dOwaot22N7r8lcH/DvJRxdQU/i/02Q4JHxcb/4dnU2sATqz?=
- =?us-ascii?Q?7SprR4/4frWuSfEJ4L+5u7RvIYeCy9aHJB5X4s/D7Y+8vDMOv0t9V9p6Jjkg?=
- =?us-ascii?Q?szRRmHDhWHExsxJA419QmPtTHlIhtXh8hrVRCD2TlIEKsRMJGulndIzglMsX?=
- =?us-ascii?Q?ZjsRQXaZfGSUYL2ge0PPbxAfopvzd8FXXLvPiStnhL6DJntA3grAXgky7TXp?=
- =?us-ascii?Q?2ek+C4QsuJx55zVhbod1pDF/DdarUH7/b/KJ7h8jo3fmgmcPr36hwoBVJxDw?=
- =?us-ascii?Q?WkpbdPUNITU11zRT8GnXevtYZjWGcXUwjJUzYmZzMo8xjNTrqTZ3An85ZXg1?=
- =?us-ascii?Q?+0Cwe0glvykHwowTxSbryY4NNDk+wPV9bl/AWMYpUzWNx+8PwfUfIl6+JM/4?=
- =?us-ascii?Q?rIIw/i0SdWi1jXWLHHccNYph2PnzBdpG6RhrdWMKbBbA8MCkZN5RGhF3LDq9?=
- =?us-ascii?Q?xDtDGRDPiXJEjh+VZQ3JSTI=3D?=
-X-OriginatorOrg: iopsys.eu
-X-MS-Exchange-CrossTenant-Network-Message-Id: ddeb6f08-1a24-49fe-0f80-08ddce75669c
-X-MS-Exchange-CrossTenant-AuthSource: GV2PR08MB8121.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 07:56:18.7141
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8d891be1-7bce-4216-9a99-bee9de02ba58
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0VE8xqpcA3kUh6+T1aojPIYsR55Pxdc46UgAkuFrulhVMkgOuJR2ItS6LtXBad+a/M3Qs446MXySKu8ee/s+ms5hLp5b8mgOlORfZNmUDO4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR08MB9481
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAO9wTFg_jCUZ+DxXVDM11_715r6ALJ=HyRXkcBxhGrBUo4iVUg@mail.gmail.com>
 
-Popular cheap PWM fans for this machine, like the ones coming in
-heatsink+fan combos will not work properly at the currently defined
-medium speed. Trying different pwm setting using a command
+On Tue, Jul 29, 2025 at 12:23:27PM +0530, Suchit Karunakaran wrote:
+> On Tue, 29 Jul 2025 at 10:58, Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Tue, Jul 29, 2025 at 09:56:21AM +0530, Suchit Karunakaran wrote:
+> > > Fix a logic bug in early_init_intel() where a conditional range check:
+> > > (c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE)
+> > > was always false due to (PRESCOTT) being numerically greater than the
+> > > upper bound (WILLAMETTE). This triggers:-Werror=logical-op:
+> > > logical ‘and’ of mutually exclusive tests is always false
+> > > The fix corrects the constant ordering to ensure the range is valid:
+> > > (c->x86_vfm >=  INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL)
+> > >
+> > > Fixes: fadb6f569b10 ("x86/cpu/intel: Limit the non-architectural
+> > > constant_tsc model checks")
+> > >
+> > > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> > >
+> > > Changes since v1:
+> > > - Fix incorrect logic
+> > > ---
+> > >  arch/x86/kernel/cpu/intel.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+> > > index 076eaa41b8c8..6f5bd5dbc249 100644
+> > > --- a/arch/x86/kernel/cpu/intel.c
+> > > +++ b/arch/x86/kernel/cpu/intel.c
+> > > @@ -262,7 +262,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+> > >       if (c->x86_power & (1 << 8)) {
+> > >               set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+> > >               set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
+> > > -     } else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE) ||
+> > > +     } else if ((c->x86_vfm >=  INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL) ||
+> > >                  (c->x86_vfm >= INTEL_CORE_YONAH  && c->x86_vfm <= INTEL_IVYBRIDGE)) {
+> > >               set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+> > >       }
+> > > --
+> > > 2.50.1
+> > >
+> > >
+> >
+> > Hi,
+> >
+> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+> > a patch that has triggered this response.  He used to manually respond
+> > to these common problems, but in order to save his sanity (he kept
+> > writing the same thing over and over, yet to different people), I was
+> > created.  Hopefully you will not take offence and will fix the problem
+> > in your patch and resubmit it so that it can be accepted into the Linux
+> > kernel tree.
+> >
+> > You are receiving this message because of the following common error(s)
+> > as indicated below:
+> >
+> > - You have marked a patch with a "Fixes:" tag for a commit that is in an
+> >   older released kernel, yet you do not have a cc: stable line in the
+> >   signed-off-by area at all, which means that the patch will not be
+> >   applied to any older kernel releases.  To properly fix this, please
+> >   follow the documented rules in the
+> >   Documentation/process/stable-kernel-rules.rst file for how to resolve
+> >   this.
+> >
+> > If you wish to discuss this problem further, or you have questions about
+> > how to resolve this issue, please feel free to respond to this email and
+> > Greg will reply once he has dug out from the pending patches received
+> > from other developers.
+> >
+> > thanks,
+> >
+> > greg k-h's patch email bot
+> 
+> Hi Greg,
+> I've a question regarding backporting this fix. Can this fix be
+> backported to stable kernel version 6.15.8? Also, should I send the
+> backport patch only after the initial patch has been merged in
+> mainline or linux-next?
 
-  echo $value > /sys/devices/platform/pwm-fan/hwmon/hwmon1/pwm1
+Did you read the document that my bot linked to above?  It should answer
+those questions :)
 
-I found:
+thanks,
 
-  pwm1 value     fan rotation speed   cpu temperature     notes
-  -----------------------------------------------------------------
-    0            maximal              31.5 Celsius        too noisy
-   40            optimal              35.2 Celsius        no noise hearable
-   95            minimal
-   above 95      does not rotate      55.5 Celsius
-  -----------------------------------------------------------------
-
-Thus only cpu-active-high and cpu-active-low modes are usable.
-I think this is wrong.
-
-This patch fixes cpu-active-medium settings for bpi-r3 board.
-
-I know, the patch is not ideal as it can break pwm fan for some users.
-Likely this is the only official mt7986-bpi-r3 heatsink+fan solution
-available on the market.
-
-This patch may not be enough. Users may wants to tweak their thermal_zone0
-trip points, thus tuning fan rotation speed depending on cpu temperature.
-That can be done on the base of the following example:
-
-  === example =========
-  # cpu temperature below 25 Celsius degrees, no rotation
-  echo 25000 > /sys/class/thermal/thermal_zone0/trip_point_4_temp
-  # cpu temperature in [25..32] Celsius degrees, normal rotation speed
-  echo 32000 > /sys/class/thermal/thermal_zone0/trip_point_3_temp
-  # cpu temperature above 50 Celsius degrees, max rotation speed
-  echo 50000 > /sys/class/thermal/thermal_zone0/trip_point_2_temp
-  =====================
-
-Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-Acked-by: Frank Wunderlich <frank-w@public-files.de>
-
----
-Changes from v1 to v2:
- * improve patch description
-
-Changes from v2 to v3:
- * added question to Frank Wunderlich
-
-Changes from v3 to v4:
- * Acked by Frank Wunderlich
----
- arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
-index ed79ad1ae871..b0cc0cbdff0f 100644
---- a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3.dts
-@@ -42,7 +42,7 @@ fan: pwm-fan {
- 		compatible = "pwm-fan";
- 		#cooling-cells = <2>;
- 		/* cooling level (0, 1, 2) - pwm inverted */
--		cooling-levels = <255 96 0>;
-+		cooling-levels = <255 40 0>;
- 		pwms = <&pwm 0 10000>;
- 		status = "okay";
- 	};
--- 
-2.47.2
-
+greg k-h
 
