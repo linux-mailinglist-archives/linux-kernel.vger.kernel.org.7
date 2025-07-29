@@ -1,86 +1,115 @@
-Return-Path: <linux-kernel+bounces-749632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5E7B150C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:03:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC906B150CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:03:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 342F87B117F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:01:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB8F4E15B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ECAE298998;
-	Tue, 29 Jul 2025 16:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49948298CC7;
+	Tue, 29 Jul 2025 16:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="IoAm2fx7"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2nc+heFU"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2D420ED;
-	Tue, 29 Jul 2025 16:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C485186295
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753804946; cv=none; b=G7/aQ0PLaBMMqgeUkIqBLKEHGDMi2ZKP6HcQ5uFseNo1ByU2nsLJGPefGt+RZAi188QMxQFudV/bEDG4zkn5FEh8awerS1nB2b4pTaMw/Dopj5kW3Dsa4uFTCz5qNJ74J3aubKRsbZn3kqsZ0x6BmoyUXh/SEJHNMIYVjpd1ac4=
+	t=1753804961; cv=none; b=clHykYCzAFo1kCMTID1pJ+QhIDda3v2KDb+4qt3vQIH+ghBhMqr0x1uNm7H3mEIjqKk+eFkhklTn3BLt9lykCgnkWGRQSNsWbGKreXPdtSdogI3hjuN/cwEdktGNpCHs7i5o5v2P9CrW3tDyBrNfzWRAOPv7pdB49dR1VjiJZ/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753804946; c=relaxed/simple;
-	bh=DgOOyW4bnQ1fsfxtNFV0vK/zBqC5/IWaRvqjVw7oaKU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SZY4PM7hkN3aY99koQUGP5KRNi2LXGBmeNHLw+eEzwaUFoj83Vs7AW11LydlGxUl87Z6Z/aMnmdk01HVnboVLIGcynbpN/JtuqOwRn46/kl0iQoMC9Wwrc4a/+nnHKT+N+bM6efx1azzDt53I61QjKpCEktIqqgbkubN2TRDh2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=IoAm2fx7; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bs0V210qwzlgqTt;
-	Tue, 29 Jul 2025 16:02:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1753804936; x=1756396937; bh=DgOOyW4bnQ1fsfxtNFV0vK/z
-	BqC5/IWaRvqjVw7oaKU=; b=IoAm2fx7IGKBJ+/B+kVLOyRQA0b11mRbVYTc+0vU
-	qTdliOFH+U9Md4XrpJuZsfQ+YO+90yZj0ULXvGJ+v7PHHmRKnzvFrYd+e9nKEBbF
-	SKqaTxyUwxMB2y7RlMnIRO8rAQg7SiWLcQ2UfJ/WmGP7tqxwf6vBe0N+ZrMUq2YT
-	NvR6pJeEpMjdTlU6a1/2Nuj/V3BQZsAniOnMFH3hi0LMNIw8Qc4NTidQ8e84KJEh
-	0vd9X7QQuvREyIEXSQgsk1w2B+b3jrMhAMnk659CuZ/at9TeTHz8pPGMMvD049ys
-	RjgvEn4mTldTDKXxTlgo7SNCImw0tM7XO+iU15yiETN7vw==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id IakzHzLVHy8P; Tue, 29 Jul 2025 16:02:16 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bs0Tw4vh8zlgqTs;
-	Tue, 29 Jul 2025 16:02:11 +0000 (UTC)
-Message-ID: <b08bc755-e70d-41a4-8323-30958aa7df86@acm.org>
-Date: Tue, 29 Jul 2025 09:02:10 -0700
+	s=arc-20240116; t=1753804961; c=relaxed/simple;
+	bh=ztVlmoHg/WR34918FmaRTygu0KaZzKfql6qzplA3G18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cIyBHbtEY/8NoPWSi1NEn5AlhAM3tz13OgJGhthM/VEio5/GyJH1xaagfPZabhwC83gAyEitm21CNL5OTpb/JuU8/5FrMPVCHSdgac4KzFxRu5zwU/tEBEYNfqwbgfu8LA0o7p9fs7Idzc3kDnf2PVgP3Derwvaic6+BjzYvuMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2nc+heFU; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-73e88bc3891so3146072a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:02:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753804959; x=1754409759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ztVlmoHg/WR34918FmaRTygu0KaZzKfql6qzplA3G18=;
+        b=2nc+heFUMcoNHRZGcohiLf1gnzy2ehJnLR1TWF5twwNx9zBu4sri7qf7oAQwCYzkvL
+         AI4P5xKLjQPGIsjJhmgPhchjMS9djHkn/Wc4W2ppD9CbM+J1Rm4FuWl922YTbYjDuDBO
+         mOsHmy0o9nmGCi3OGdNqXmbdQO3U+SjkDtYRPP7ctJ2zZIkuAAzu302u+/dYnv65DjKe
+         1p+Qt6Z7Egwo4YUGQBPpu3CiIuwgPK6Y9/dOfH8xnNzu1nc3Zl4DgriZ0AAOBYVHHhiw
+         5X8wpgw3c8ORvq76Z5Y/AFTSsjHaT9/K3kLFUpilVNRZQBIZV6DJqycmIktdBaXvogmb
+         HXtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753804959; x=1754409759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ztVlmoHg/WR34918FmaRTygu0KaZzKfql6qzplA3G18=;
+        b=wba8rL5ZiDYcszuvrZai8xGiPLyELoSzaQVPjtFCDbtgz6eq1XqF/INBWWFUAdXJtz
+         0pXdZblD/VvFs6N5BAWomN04R/QKVHf2ZHEqyBmhG6uNC+WplQP6nJaGvbuao1ZvNkqw
+         tR/Olw9EPzX8zkSLaUUcDYHbPMVF5WLheiOkuvgZt/QTsqmCxFLwMM71VIs/UpA5YhO0
+         wQIVFeXWs25AjLdyBl2rvkTYxAU6UPObMHnrsTlmeY+XCGJnT5AWMeFMqt1dEmcTQQl5
+         k4aV5/fINl+79h79C4ZKHXDza1oF+Skt6LnYyMD6j/rPgOU/EgVTHrBINQAsSfcCqA2M
+         k6Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUc3ubVHgfyF6obvdUdECT9873j9blyLoyaaGyQc6kz/6BXB5UAl9cXABplzoXFM2tIGfgWhFvyj5wKElw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyinHKBXBIPm7EeOMbRR8dEi/Vi7Gxjw7UiKe7f01YiZKQ4HBfe
+	4FrYFf0ORXIbHHIIBbiCRecimBEg4dsf59PjFui//KVcsN6hCA6VGhZqA0DwG3U17fPfWnJc1ZU
+	XthUrCKrHsHcSveQaJJQjUq3fs+Br0SAypBg2gnkv
+X-Gm-Gg: ASbGncvz2njVhuaPEysQ+hsvx5t04mI7gc+y+bm2DR5YkNLFBFqWBFL6Gh1IczG5ZsQ
+	LeV1jWEC4+/xxHEHyK8onj/QE98ftYMA51rwC0NTW2plPKRSbd7B8rUuX824rCHQlRNm6jMw9gH
+	qQkY2sjpSyPqC5KUPmro2ghV93+lekud3MwG3lCwvPHs6To1Y7K2ceKSOCUas7S3jqNULDOwnYc
+	Wtcaw==
+X-Google-Smtp-Source: AGHT+IFtDaagUGc57GHBurJ0UGpZR3EwjNZqGule8Cnk2sgfeLM0OC6t6k4vR+xjhntyTC578HmcKgNJF9PLaUrfbsE=
+X-Received: by 2002:a05:6830:6506:b0:73e:5def:537 with SMTP id
+ 46e09a7af769-74177cfee78mr255833a34.21.1753804958964; Tue, 29 Jul 2025
+ 09:02:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] scsi: scsi_debug: make read-only arrays static
- const
-To: Colin Ian King <colin.i.king@gmail.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729064930.1659007-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250729064930.1659007-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CAFQ-Uc_5nAo6ymVkCda5+_y+bT=GngFibankmfdL8_Mu-4cqfQ@mail.gmail.com>
+In-Reply-To: <CAFQ-Uc_5nAo6ymVkCda5+_y+bT=GngFibankmfdL8_Mu-4cqfQ@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 29 Jul 2025 09:02:27 -0700
+X-Gm-Features: Ac12FXxuKmliLvuMm-O1HFYoHQCpE86vZdzri5w96Q7QVoJYt6RQh4GzE_NbA_0
+Message-ID: <CANn89iJNKR8uBNrRCdqs-M6RspvgSK9+vxzfvXe3xUvDT538Lw@mail.gmail.com>
+Subject: Re: [PATCH v2 net] net/sched: mqprio: fix stack out-of-bounds write
+ in tc entry parsing
+To: maher azz <maherazz04@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, jiri@resnulli.us, 
+	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	Simon Horman <horms@kernel.org>, Ferenc Fejes <fejes@inf.elte.hu>, 
+	Vladimir Oltean <vladimir.oltean@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/28/25 11:49 PM, Colin Ian King wrote:
-> Don't populate the read-only arrays on the stack at run time, instead
-> make them static const. Also reduces overall size.
+On Tue, Jul 29, 2025 at 8:36=E2=80=AFAM maher azz <maherazz04@gmail.com> wr=
+ote:
+>
+> From: Maher Azzouzi <maherazz04@gmail.com>
+>
+> TCA_MQPRIO_TC_ENTRY_INDEX is validated using
+> NLA_POLICY_MAX(NLA_U32, TC_QOPT_MAX_QUEUE), which allows the value
+> TC_QOPT_MAX_QUEUE (16). This leads to a 4-byte out-of-bounds stack write =
+in
+> the fp[] array, which only has room for 16 elements (0=E2=80=9315).
+>
+> Fix this by changing the policy to allow only up to TC_QOPT_MAX_QUEUE - 1=
+.
+>
+> Fixes: f62af20bed2d ("net/sched: mqprio: allow per-TC user input of FP ad=
+minStatus")
+>
+> Signed-off-by: Maher Azzouzi <maherazz04@gmail.com>
+>
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
