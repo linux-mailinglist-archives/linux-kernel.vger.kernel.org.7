@@ -1,88 +1,120 @@
-Return-Path: <linux-kernel+bounces-749497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07996B14F19
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:12:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CED5B14F15
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56CDA7AFA71
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:11:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01AD754112A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:12:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E1D01D63F2;
-	Tue, 29 Jul 2025 14:12:41 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 091081D7999;
+	Tue, 29 Jul 2025 14:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cxynFBV/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D2DA1D7999;
-	Tue, 29 Jul 2025 14:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69597433D9;
+	Tue, 29 Jul 2025 14:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753798361; cv=none; b=uRkf9DxmxlNwwlnThZrDypNsPXDsy7s6Qfoe1Pkqe77nkGM5E/8aPNNoQt6ukr5DoQ+8gR4p/pX/o6yw++uR7jkdoAsNUVebfaogg09FBaOUDUihhW186//Q1NS4YO/olqTV2FcH6/kClKxKk3r1lpOH44f18r+CvzT6Wm0TbzE=
+	t=1753798335; cv=none; b=LsY7DCQ6N6cX0gdYg2hMKgoEdLwj4zBGmHQpqbxHHjcjDaImzASflP4E7FoVs+/fmM3VrxWBYC8v3zagmo3Pg4oONJYjFxXE+QpM2+6JiFGIB65dOD+vdJApJQk0YOm2u6393DQO4tJXJ6sgT4DwL1k1DeVbpWnNVi/usVBtj0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753798361; c=relaxed/simple;
-	bh=eO8ZrookEskYLtv48KoN1fSfR5jGOWzxlsis5CUrNnk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJq7WFU0pSl/nAHfByMItx0XRRDIGFBzqWd0S7eSO/2d4moGh/hi6SlVQ2ETNDF0l9C3wsBbXWXIHKpbAOYUrrGsX54m256JI7TWwq/b9Cb0u7HR5zzsev2JRrBeSYvGnoGmfV7QHooesrwuURuspf5NfrOtRnyzBotMZJcLisk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from hay.lan (unknown [IPv6:2605:59c0:2078:cf00:6ecf:39ff:fe00:8375])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id 286E9B4E0042;
-	Tue, 29 Jul 2025 16:12:24 +0200 (CEST)
-From: E Shattow <e@freeshell.de>
-To: Conor Dooley <conor@kernel.org>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>
-Cc: devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hal Feng <hal.feng@starfivetech.com>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	E Shattow <e@freeshell.de>,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v2] riscv: dts: starfive: jh7110-common: drop no-sdio property from mmc1
-Date: Tue, 29 Jul 2025 07:11:35 -0700
-Message-ID: <20250729141142.13907-1-e@freeshell.de>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753798335; c=relaxed/simple;
+	bh=jDRhN2IMBSob6zPe87nVLlzN7gWt3TNYEl/hJ6F36lU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p842a+n2qxVWqHD1uqkhMhs/LGv9Kxnn/j8OaDrBJLH5i5pKtDIpAR3x0lYpkmqbXz+kOIx9UZmzS+2BtnE79CBL7Reb5VMi6I64Xo64k9S47u+tmSkkWHuTwPQ6ylJDWQZ+FF2OsVCVQd2i2OKrfLYZfiSzK/7JRg+eJi++0xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cxynFBV/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11D2BC4CEEF;
+	Tue, 29 Jul 2025 14:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753798335;
+	bh=jDRhN2IMBSob6zPe87nVLlzN7gWt3TNYEl/hJ6F36lU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=cxynFBV/6Bqqn6+gbuDvgsSNX7LB9BSsQhfh8nq/SyjSNUkGevn68dKBsbSn8NEQ4
+	 dytSuMpEeDZP9Wl//PM6Xh0lUkugz4sC+DMEJZ/yIphA95V+ldLwvga6Phb7IvtWA+
+	 3cHTVCrvynOQCZ+vbkLRj77g8CGP1vOr3MPNe64+MYi8/q8MXOLIc0Q5XFZsoI25pf
+	 CZWUxWKDLQwBPkdhimiHCvNLhxO+vO4h3FzN1w9lOgGrYM8VGUrLxcAt1s1KuIH6ya
+	 Zu/LNyiNcogw2bNzT+CSYoscxtjiYnpJz700h3XDaYWjVMtIg4irmqGWN9cn6rvmSU
+	 jguLnq4nOrWTw==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-32e14cf205cso55700321fa.1;
+        Tue, 29 Jul 2025 07:12:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWpuiB8bG9LSXEV3EEdJlIcxxcPkRsmz0/hOiGa9alfbsJe+BLEUCN5XIDe/3QU7vrymhTq6+f4HLzG3h5X@vger.kernel.org, AJvYcCXAhD9iCOhaHYy+WZQDkEKGMNNUvDE92dzaPPalS/Xk3vzKh1Fhazv5nQx2RioVeMoLrGe6ATdN1mo0wvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4osSIzhB+oMACHsxqReW4ckHERryAANJCQA8DZyMrnjUN3ymb
+	J/Besx17qMQYwyVIVK/SWPJjUK6UzZPnJaLHF8StxY74xUXIcJyvtgPEqYZ22bxQ/zWEeTciMya
+	2fgZDRxVm+NcShOophR/hVOkpghAu0qg=
+X-Google-Smtp-Source: AGHT+IH23hRA/y0GXDlQjGAIRAipKSLMeP2SE9aWCB8j/9drPhwYl9q06csg2Q2zs9K02T+77MvfoHiRKXg8Sgpvvz4=
+X-Received: by 2002:a05:651c:1991:b0:332:2235:911c with SMTP id
+ 38308e7fff4ca-33222359358mr463391fa.37.1753798333708; Tue, 29 Jul 2025
+ 07:12:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250726194307.182093-1-suchitkarunakaran@gmail.com>
+In-Reply-To: <20250726194307.182093-1-suchitkarunakaran@gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Tue, 29 Jul 2025 23:11:36 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQBLKpvZnSnDQwbByVvCvSWMEJYo4=pnx6_9ZTZRqFCBQ@mail.gmail.com>
+X-Gm-Features: Ac12FXyO8Zpy3bEwD1XaiVntflmoj0BvI1AivtiRIL0j8BjKTord1rBYVAGRK-E
+Message-ID: <CAK7LNAQBLKpvZnSnDQwbByVvCvSWMEJYo4=pnx6_9ZTZRqFCBQ@mail.gmail.com>
+Subject: Re: [PATCH] kconfig/lxdialog: replace strcpy with snprintf in print_autowrap
+To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Cc: nicolas.schier@linux.dev, linux-kbuild@vger.kernel.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Relax no-sdio restriction on mmc1 for jh7110 boards. Property was
-introduced for StarFive VisionFive2 dts to configure mmc1 for SD Card
-but this is not necessary, the restriction is only needed to block use of
-commands that would cause a device to malfunction.
+On Sun, Jul 27, 2025 at 4:43=E2=80=AFAM Suchit Karunakaran
+<suchitkarunakaran@gmail.com> wrote:
+>
+> strcpy() does not perform bounds checking and can lead to buffer overflow=
+s
+> if the source string exceeds the destination buffer size. In
+> print_autowrap(), replace strcpy() with snprintf() to safely copy the
+> prompt string into the fixed-size tempstr buffer.
+>
+> Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> ---
 
-Signed-off-by: E Shattow <e@freeshell.de>
----
- arch/riscv/boot/dts/starfive/jh7110-common.dtsi | 1 -
- 1 file changed, 1 deletion(-)
+Applied to linux-kbuild.
+Thanks.
 
-diff --git a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-index 4baeb981d4df..b156f8703016 100644
---- a/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-+++ b/arch/riscv/boot/dts/starfive/jh7110-common.dtsi
-@@ -290,7 +290,6 @@ &mmc1 {
- 	assigned-clock-rates = <50000000>;
- 	bus-width = <4>;
- 	bootph-pre-ram;
--	no-sdio;
- 	no-mmc;
- 	cd-gpios = <&sysgpio 41 GPIO_ACTIVE_LOW>;
- 	disable-wp;
 
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
--- 
-2.50.0
 
+>  scripts/kconfig/lxdialog/util.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/scripts/kconfig/lxdialog/util.c b/scripts/kconfig/lxdialog/u=
+til.c
+> index 964139c87fcb..b34000beb294 100644
+> --- a/scripts/kconfig/lxdialog/util.c
+> +++ b/scripts/kconfig/lxdialog/util.c
+> @@ -345,8 +345,7 @@ void print_autowrap(WINDOW * win, const char *prompt,=
+ int width, int y, int x)
+>         int prompt_len, room, wlen;
+>         char tempstr[MAX_LEN + 1], *word, *sp, *sp2, *newline_separator =
+=3D 0;
+>
+> -       strcpy(tempstr, prompt);
+> -
+> +       snprintf(tempstr, sizeof(tempstr), "%s", prompt);
+>         prompt_len =3D strlen(tempstr);
+>
+>         if (prompt_len <=3D width - x * 2) {      /* If prompt is short *=
+/
+> --
+> 2.50.1
+>
+
+
+--=20
+Best Regards
+Masahiro Yamada
 
