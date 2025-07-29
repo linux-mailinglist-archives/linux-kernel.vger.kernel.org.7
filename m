@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-749598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C95B4B15066
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:47:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8E6B15068
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 099C83AE31A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:46:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D0BD7A88A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECD022951C9;
-	Tue, 29 Jul 2025 15:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2DgZaQS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1EE1295531;
+	Tue, 29 Jul 2025 15:47:51 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586531DE4C9;
-	Tue, 29 Jul 2025 15:47:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062A1293C5A;
+	Tue, 29 Jul 2025 15:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753804025; cv=none; b=fgIyPyT/AW4jGFjahWjk5gLuLHJRKrneiRe59z41TFZ4Xt8+leKcqSty43aRt/v66IbstKx0LAvzgvPRyt8SoGNKAnSqtrCRFAmB25XgMpHN5cjRNtwYCELAblZ8ci06TZh1pOr4r/ikaRgOcJ6aO+O1UqAljdZb7OC+4jPDLLY=
+	t=1753804071; cv=none; b=TiCYB/sZk4PjlXmP7UCs0aiYhhjkC3mdk3QjcWU/YX6UFHvl5DKGAZgd5tUgSbQKInIdhTOLIA2ddTMVLYQog2tfnIBtSpoDxyycqYvFpVgZCFGYgq6eAcXnLgIqdxzIoc/EPOM323re+iab3yQ3OUVpHnUn0o/D15lWfC58dLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753804025; c=relaxed/simple;
-	bh=asf759iARhCsqlW3LV9P1RiiwlEqeEAcEfX9/r8vZSU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jpnO2j+UP0vwQePE3ponFiOYJSv2idj8zO/cdt9NXPJ9KrkSR1RlMg7LsY05gKBGtJF91Zyv6wTz35sQgY3vtI/UXxb99ncc6aRTqs0xsK1q/Hk/AAMNhZIlTzusbtoyFX+jQ2N+MtkxM91SMD5xDJKCxP4vF2X38fsdbuU2hW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2DgZaQS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CECC5C4CEEF;
-	Tue, 29 Jul 2025 15:47:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753804024;
-	bh=asf759iARhCsqlW3LV9P1RiiwlEqeEAcEfX9/r8vZSU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i2DgZaQS6K3Vd6+mPAu9iGvuNRMCHZcr9QOs7zi3mtZ/f8s1gvwO0vy1CDZDba40p
-	 FDUoNHvYXjZNzwchfQuacmVUX75jrVU6vkEndnGuv0bhr8/y55eJXEdvkQQdFqJYcJ
-	 e7G98H90edHlHhCzx4/acrH+yRp2NHhVcvCPxvhiXrVpIUuW4KX4C28NUUs8lpcmtD
-	 6WdKnq44DhRYOSKpjc0oQ7WPoc82VNIt/gP1mZNF3nVhDBnnLFxCegG/VbSeHuh9wd
-	 OUFr+mMfae87IM6Tf4X2Tv55W2L+++e7QbSYDrS3BRP6iuYnHBhrJdMrB1avRrO9IZ
-	 hiIGOLFkTQmHQ==
-Date: Tue, 29 Jul 2025 16:46:58 +0100
-From: Will Deacon <will@kernel.org>
-To: perlarsen@google.com
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ahomescu@google.com,
-	armellel@google.com, arve@android.com, ayrton@google.com,
-	qperret@google.com, sebastianene@google.com, qwandor@google.com
-Subject: Re: [PATCH v8 5/7] KVM: arm64: Mask response to FFA_FEATURE call
-Message-ID: <aIjs8p5Ti0pXbf2Y@willie-the-truck>
-References: <20250719-virtio-msg-ffa-v8-0-03e8e8dbe856@google.com>
- <20250719-virtio-msg-ffa-v8-5-03e8e8dbe856@google.com>
+	s=arc-20240116; t=1753804071; c=relaxed/simple;
+	bh=uGRMRCj20czLxiDkFZxyVp8jFrQzLQNLA8NZyCpiVl4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gJHk//JWMVJI94P4YWke3dw6ylTxQwaX/TAU+Pt+c2VJGjEwuUmmHtpmlSUZywxU7gPWHJ0i4dK8F+Hi5IjNugaYwZ76ovcou14Lg5Geek0NWORf7HAv5rXxE5cT0Ly9Ca+Zd7PCSOuud38WzfLKrCUWjzdCRjPu0DuVZHkGjE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bs07S71gTz6H7WG;
+	Tue, 29 Jul 2025 23:46:12 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A5689140372;
+	Tue, 29 Jul 2025 23:47:47 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Jul
+ 2025 17:47:46 +0200
+Date: Tue, 29 Jul 2025 16:47:45 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yi lun
+	<yilun.xu@linux.intel.com>
+Subject: Re: [PATCH v4 08/10] PCI/IDE: Report available IDE streams
+Message-ID: <20250729164745.000079ab@huawei.com>
+In-Reply-To: <20250717183358.1332417-9-dan.j.williams@intel.com>
+References: <20250717183358.1332417-1-dan.j.williams@intel.com>
+	<20250717183358.1332417-9-dan.j.williams@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250719-virtio-msg-ffa-v8-5-03e8e8dbe856@google.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Sat, Jul 19, 2025 at 02:11:27AM +0000, Per Larsen via B4 Relay wrote:
-> From: Per Larsen <perlarsen@google.com>
-> 
-> The minimum size and alignment boundary for FFA_RXTX_MAP is returned in
-> bit[1:0]. Mask off any other bits in w2 when reading the minimum buffer
-> size in hyp_ffa_post_init.
-> 
-> Signed-off-by: Per Larsen <perlarsen@google.com>
-> ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 2 +-
->  include/linux/arm_ffa.h       | 1 +
->  2 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 5a173ea481940236356e2bc4248d094a858a0923..2cbecc9af5d27a9e7c8497001cf9b0987c72bdb4 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -733,7 +733,7 @@ static int hyp_ffa_post_init(void)
->  	if (res.a0 != FFA_SUCCESS)
->  		return -EOPNOTSUPP;
->  
-> -	switch (res.a2) {
-> +	switch (res.a2 & FFA_FEAT_RXTX_MIN_SZ_MASK) {
->  	case FFA_FEAT_RXTX_MIN_SZ_4K:
->  		min_rxtx_sz = SZ_4K;
->  		break;
-> diff --git a/include/linux/arm_ffa.h b/include/linux/arm_ffa.h
-> index e1634897e159cdc208931938649eb0fb04d5a070..cd7ee4df9045dceca1c4e0dca2d533b770b1b056 100644
-> --- a/include/linux/arm_ffa.h
-> +++ b/include/linux/arm_ffa.h
-> @@ -128,6 +128,7 @@
->  #define FFA_FEAT_RXTX_MIN_SZ_4K		0
->  #define FFA_FEAT_RXTX_MIN_SZ_64K	1
->  #define FFA_FEAT_RXTX_MIN_SZ_16K	2
-> +#define FFA_FEAT_RXTX_MIN_SZ_MASK	GENMASK(1, 0)
+On Thu, 17 Jul 2025 11:33:56 -0700
+Dan Williams <dan.j.williams@intel.com> wrote:
 
-Acked-by: Will Deacon <will@kernel.org>
+> The limited number of link-encryption (IDE) streams that a given set of
+> host bridges supports is a platform specific detail. Provide
+> pci_ide_init_nr_streams() as a generic facility for either platform TSM
+> drivers, or PCI core native IDE, to report the number available streams.
+> After invoking pci_ide_init_nr_streams() an "available_secure_streams"
+> attribute appears in PCI host bridge sysfs to convey that count.
+> 
+> Introduce a device-type, @pci_host_bridge_type, now that both a release
+> method and sysfs attribute groups are being specified for all 'struct
+> pci_host_bridge' instances.
+> 
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: Samuel Ortiz <sameo@rivosinc.com>
+> Cc: Alexey Kardashevskiy <aik@amd.com>
+> Cc: Xu Yi lun <yilun.xu@linux.intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+LGTM
 
-Will
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
 
