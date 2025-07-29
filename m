@@ -1,191 +1,182 @@
-Return-Path: <linux-kernel+bounces-749381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C8B2B14D99
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:24:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5500B14D9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D32718A15CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:24:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1588618A2EB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:26:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210F4290DAC;
-	Tue, 29 Jul 2025 12:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F074290DB1;
+	Tue, 29 Jul 2025 12:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oy9VzxSF"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fGw06QsE"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3502A1CF;
-	Tue, 29 Jul 2025 12:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40400262FF0
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753791874; cv=none; b=GeoDRaObTzbQ5KbZoVhN6IT5mKHxWmMOxIEHIBwmY1a2qJObzKyscOxtvwBMQw8MPKzxex84M+NGb7pNMOTJfQIpPeXba1GaS4ZIlFK2sx8CdVghbCrWbE1SCMvHWOjnL8m/a/73OghA7F7GawmAutt3yFUyJa6fW/0pwXnD8rI=
+	t=1753791964; cv=none; b=uoXjj+tMfRm8120eOh1pQHsCX4Hcb/ZxNi1dJ3OPr34/S9LO1eEemKVKtgYUtaW6aN/y/zOKkSsXX3hcFfG4YXzNSez9xKQ+Wrmvdnl/KWDruwc6+G5Kn5fsypz3IvTinyVFNdpHefB+qk3R+USkBuOMbhf52T28DwXvaRfc3rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753791874; c=relaxed/simple;
-	bh=nASNEneDc2vUmkSpKiTTFWlA4LwOZopVuKeuvQmuZrs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SCYFocTIMpBeBjm9XysKWqWiSd7Y/3FJfd/RN/wLbXChiFYm54fj2HsYUZNzLDLsK8SfO4wICz7Wke33FK94rGbDq3h+Vb3QewcL5xhg8NgnZdxuF0gEBIl5SzuAZMv9YzRWqrBY2FDCpmp6woit4c32+X/EsoQh0wf7IopS2SI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oy9VzxSF; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b790dbb112so393718f8f.3;
-        Tue, 29 Jul 2025 05:24:32 -0700 (PDT)
+	s=arc-20240116; t=1753791964; c=relaxed/simple;
+	bh=Sa0+7pkvbvKnzUBV/+DKIeFT3oZOcJAjMjz/TTYldSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hxG2HmwvVWeTSN8euHMBpbDKQ2CzuIPsbGmKPavFqZfbir+OQVTCipXRRYRO0bZ1DfN+AOScnki1nlEo4I2x5Xbzo/tLF15W3grC2+3Aux/o3slK9hS2uhM1FLP9umhfp1NDAs+u89peDoHRDVDwuhKDEbs8OZMSoovH3IQIAew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fGw06QsE; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso8844436a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 05:26:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753791871; x=1754396671; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5oCMcTRmSVA0zf+uyjFHlTMcPakXnRfN5JlQ9Uq8wo0=;
-        b=Oy9VzxSFofmPd80gV0W9F9MaG1cpWLmZ6hg7qxZrbH2lNI1zVdQNq9YV2fdpQ1wp/K
-         piziN5DMEeEein8XfW8apn23HP4g8gMeGyD8g6mFbDG2vZQk59NF+uBSG9QXFhcOzM0A
-         bIT5yMkjbxnOsCLe4h3Pzd6FI6yA1gwuIFhjPoiS9HmbwgY0pqFBgrUQI46clO1nBnCz
-         55XoyIHyEa8LkyWCpRS8s2enSPdipxoxJS+/5U+88oNAXe9NJpB3uRp6L3+pQ7gqGlDr
-         ODqpySBf7mV0F6rOY6M1n953elOXFrqZaJ9Um+YXQp7J2QDBJ4Uo7/51zgiRpoi6QUuD
-         BWUQ==
+        d=suse.com; s=google; t=1753791960; x=1754396760; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ePWiaVAU8uB+7gZPcArmwtlemoHV5AVhlPG7UbOq0OQ=;
+        b=fGw06QsEJiNENHplR5B6J726zioFOh7DVSlDbazeDm4jYyG9UAa0hPUJrjyFiXjH2y
+         YDv7AvVlXyBZcvs8OPnJLffWD6W9bpbphZ6bkjx1GofzSdFPhbHlV9sINTlPeePYz8ua
+         4300ElGFOdpAodUkbRZ+n8MYvTpivUKPOGC888JED8ynx/CkQ1ti4CDRAHkhYa8Jm2/M
+         lGkWIFWrGVc9fCzyqqKvu0RcQNf7xkgmXWPu4YoK8FXYp0nM3yCgHDA8tLtggUxNh8nb
+         3BAp/gFZcECkRMG46F0mq4fhN8nI+sTEI8nm8gs7yPUA/ygnvhofZqIHNmXpufpTpRmg
+         lsow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753791871; x=1754396671;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5oCMcTRmSVA0zf+uyjFHlTMcPakXnRfN5JlQ9Uq8wo0=;
-        b=D9X8VGI6Tvzdie+df46nqSdyX148FmUM4adzg5FIY94VY1Mb0kclDoxthXS+neFokP
-         IGV1LFJirx6lHv0Pid8uc/j0R9AdQdF34ayOEMlw7pXz/+0aDpJ4ZeiJB+0XCwfrHRAG
-         wCBjmfZyoyIyOX+2pRMgFkhd7ToasT/2DJp3DYLhFBZqTuE7ZDuvdlXI/BQYPXwCaxcp
-         TTtsRWY15zIrf+g8YnXVHHyUbpZe8AVBXfJMu27RMvkss5dDAgbyACCvA3YW3xtr/9Aq
-         ugFFFEG+gGHBM9OYRvfVFl+ZSwbzl3Z0aKt0O+Gg3z2Y8r15BDFSa08wTT8gSUKUxK1U
-         xrWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUK4kRztmPbTgCB1vUpGV9WpvbQAOMag478SVP/QbGeAaeK/L/8DovUgtq7FlboClkReXPnbjYWau5JN4o=@vger.kernel.org, AJvYcCV/xMz/A89vKtoAmuDKSbswCoJ0SNIVB5ObmfNfizM32rAWMkL8QLmaQaKt3JVfZBDTZYY2U3r9SBlxhHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVEjVR/sSn5gA67jlTGvpMQRFmGfaN6WUxb1/JiD2Ynvp1c7eH
-	h4GbYwWetmts0dBdZW1xw2nKBgEfsqDHysrxvm65V3Kd50stjuy7rkFv
-X-Gm-Gg: ASbGncuX/hIuN1UNrPL8TjkOcw52bUceAzSs8P2SoxeETPofTQmp3JAUniDO6yhh10R
-	ky8wX5nn9ILhOSUhnbq0h9w9aXlhoEGHUGXVeaWn5WL0M2rNh62iyj35+JitYgFZQIhz2J0Z0x1
-	dOsHdHOU5gxETihpFPCD8SzFV4yResdHoJXPC27SrUZH182kpD2+WJGuDF+z7eT7g+keZKCEoX8
-	/8lzufEtA0PVGgeoLAfECjJqZld0Vo+mplt+c29CmSsUalvKqzANLO50mBMDJGYZKP6e6WTc0OV
-	XE6ec2o1z9FNZCgtWMIYMhYaNvI9av/xViYrAY7o+KT3FN/rYQK/WF+XCzY7MYcnjLwxbsr4swQ
-	lWHe6OAc08+LzQkg8gYAaSozDQ0mRZOI5uE8oCDgQcQ0qDO+XAxKY3ClDDdqSL2/V4xE+P1C0rY
-	AtAvSTD8nI
-X-Google-Smtp-Source: AGHT+IHR50aIpq5zzNNibOCb1m449Ln3Ht/rLZE8jAjfCT7HhLynq8ThYUyqNNscWPQitSOsXie/hQ==
-X-Received: by 2002:a05:6000:2c04:b0:3a6:d7ec:c701 with SMTP id ffacd0b85a97d-3b77664199emr10509916f8f.30.1753791870783;
-        Tue, 29 Jul 2025 05:24:30 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778eb27f8sm12254125f8f.16.2025.07.29.05.24.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 05:24:28 -0700 (PDT)
-Date: Tue, 29 Jul 2025 14:24:27 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rob Herring (Arm)" <robh@kernel.org>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firmware: tegra: bpmp: Use
- of_reserved_mem_region_to_resource() for "memory-region"
-Message-ID: <yxxk4cffjm7rx2pbndibrp7a6txmi4urnrt5bipr24z7dlstk7@sybqp3gp6gqi>
-References: <20250703183434.2073375-1-robh@kernel.org>
- <550bcad5-4de6-46fe-9f2d-f77ccbd582c6@nvidia.com>
+        d=1e100.net; s=20230601; t=1753791960; x=1754396760;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ePWiaVAU8uB+7gZPcArmwtlemoHV5AVhlPG7UbOq0OQ=;
+        b=qa9QJGIM9dxoegjpx6kgd2FbOH0EGsJZiVN4M5LJvPIOiGLGm4TB+jS0wtLKZKGS54
+         /Dws0B8iDKWDlSt9Z81lcuo0l7yjJtGBvwP0EIW8wtdtTGf6fFF7Bn2rc9Y2M8ikCx5m
+         sTcam+XXBoKHvIVQjfjXwvQeTcF4jMB8fuJgZDhCnfAqH9zqOy/hnkjplELRwxhvbgzi
+         w61zlOyXGnn4wLckbK7rclBfacTWZ1kIDypYecGdE9WnLRM55KS6JiXwP0y2ZYh4luM7
+         j4LiS97SiGQ9S56g8WV0Y9Y74lz37R8t7ynyl9rMq0Tn+12fJoQFJuIovCvWMPfIdgap
+         OMUg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6yMgVp+EY1VyDl1M3gH2kOgoEP/HCQ7DHNMEQQSRUDp/zqPkLuR7AbJpE3/P45i0beWM5+3o9cmpzedQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn5ZrDmUr/UEsqkYLwjJzAn3iBagqBES3aUQDY5/VRrRlAeOO/
+	qf8Qai3AsQedxn0FFqciBuB+rYSty7aYGFQF50Q9RAMv6xf5QcoI4kIDr/BtmrM96sg=
+X-Gm-Gg: ASbGncsXXS3OQqqRrExwPGeq3TqEDqOL3I/Vy/oNRoB8vaU5BGdJFfw/pWMEQxJ0Hxz
+	ODmN1HgCAyzoUbedVDoO/ygLPIiuYKuyQCzkIpyC4BJ7Sf4ooVi5OFeUAHJOgq1lkkD5PbnG5A0
+	Onjqg0Fml03UwWazYtCYFwJsDyKIcaI50HYozRpSWUKzdXH9TxId68kclbJJIoS7iZ6NDSvGrde
+	ikUKoqQiyqJEYe4MJJZGGCjUuMV1VGIFM0Rh7D11PGpiQCETzsHaEOY5CmTDAMa/IwQtMb80QBN
+	U4elpZ68zSBoR2GgO7VIwm/rhvRva+m7KRWX0bsU7daBitPfi1Gd1dfppVzCp6Veggl+jdpoKV2
+	3RGl8rkpOq2cac3QfB3uCTNWxDWehZmz+Yrr2
+X-Google-Smtp-Source: AGHT+IEbL9Glao9a0iC/Zrseyqg2ADGMfqJYmHiqZmrd0fzTrffzSC1ITDlHHAq/xFq0xAY7VlV21w==
+X-Received: by 2002:a05:6402:210e:b0:615:546a:932f with SMTP id 4fb4d7f45d1cf-615546a93e7mr5485770a12.18.1753791960574;
+        Tue, 29 Jul 2025 05:26:00 -0700 (PDT)
+Received: from [10.20.4.146] ([149.62.209.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6153a7a3a10sm2724359a12.56.2025.07.29.05.25.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 05:26:00 -0700 (PDT)
+Message-ID: <9b6fd06e-5438-4539-821c-6f3d5fa6b7d1@suse.com>
+Date: Tue, 29 Jul 2025 15:25:58 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qxhhnnhnzy5x3ccd"
-Content-Disposition: inline
-In-Reply-To: <550bcad5-4de6-46fe-9f2d-f77ccbd582c6@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
+To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
+ dan.j.williams@intel.com
+References: <20250728111517.134116-1-nik.borisov@suse.com>
+ <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---qxhhnnhnzy5x3ccd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] firmware: tegra: bpmp: Use
- of_reserved_mem_region_to_resource() for "memory-region"
-MIME-Version: 1.0
 
-On Mon, Jul 28, 2025 at 03:17:11PM +0100, Jon Hunter wrote:
-> Hi Rob, Thierry,
->=20
-> On 03/07/2025 19:34, Rob Herring (Arm) wrote:
-> > Use the newly added of_reserved_mem_region_to_resource() function to
-> > handle "memory-region" properties.
-> >=20
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> >   drivers/firmware/tegra/bpmp-tegra186.c | 9 ++-------
-> >   1 file changed, 2 insertions(+), 7 deletions(-)
-> >=20
-> > diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/=
-tegra/bpmp-tegra186.c
-> > index 6f0d0511b486..7cfc5fdfa49d 100644
-> > --- a/drivers/firmware/tegra/bpmp-tegra186.c
-> > +++ b/drivers/firmware/tegra/bpmp-tegra186.c
-> > @@ -6,7 +6,7 @@
-> >   #include <linux/genalloc.h>
-> >   #include <linux/io.h>
-> >   #include <linux/mailbox_client.h>
-> > -#include <linux/of_address.h>
-> > +#include <linux/of_reserved_mem.h>
-> >   #include <linux/platform_device.h>
-> >   #include <soc/tegra/bpmp.h>
-> > @@ -192,16 +192,11 @@ static void tegra186_bpmp_teardown_channels(struc=
-t tegra_bpmp *bpmp)
-> >   static int tegra186_bpmp_dram_init(struct tegra_bpmp *bpmp)
-> >   {
-> >   	struct tegra186_bpmp *priv =3D bpmp->priv;
-> > -	struct device_node *np;
-> >   	struct resource res;
-> >   	size_t size;
-> >   	int err;
-> > -	np =3D of_parse_phandle(bpmp->dev->of_node, "memory-region", 0);
-> > -	if (!np)
-> > -		return -ENODEV;
-> > -
-> > -	err =3D of_address_to_resource(np, 0, &res);
-> > +	err =3D of_reserved_mem_region_to_resource(bpmp->dev->of_node, 0, &re=
-s);
-> >   	if (err < 0) {
-> >   		dev_warn(bpmp->dev, "failed to parse memory region: %d\n", err);
-> >   		return err;
->=20
->=20
-> This change is now causing the following warning to be observed on Tegra1=
-94
-> Jetson AGX Xavier platform ...
->=20
->  WARNING KERN tegra-bpmp bpmp: failed to parse memory region: -19
->=20
-> Looking at the binding only one of 'memory-region' or 'shmem' is required
-> and for Tegra194 we are using shmem. So I am not sure if it is worth maki=
-ng
-> this change for this driver.
+On 29.07.25 г. 15:16 ч., Nicolas Bouchinet wrote:
+> Hi Nikolay,
+> 
+> Thanks for you patch.
+> 
+> Quoting Kees [1], Lockdown is "about creating a bright line between
+> uid-0 and ring-0".
+> 
+> Having a bitmap enabled Lockdown would mean that Lockdown reasons could
+> be activated independently. I fear this would lead to a false sense of
+> security, locking one reason alone often permits Lockdown restrictions
+> bypass. i.e enforcing kernel module signature verification but not
+> blocking accesses to `/dev/{k,}mem` or authorizing gkdb which can be
+> used to disable the module signature enforcement.
+> 
+> If one wants to restrict accesses to `/dev/mem`,
+> `security_locked_down(LOCKDOWN_DEV_MEM)` should be sufficient.
+> 
+> My understanding of your problem is that this locks too much for your
+> usecase and you want to restrict reasons of Lockdown independently in
+> case it has not been enabled in "integrity" mode by default ?
+> 
+> Can you elaborate more on the usecases for COCO ?
 
-I guess the change still makes sense for merging both calls into one but
-we now need to check for -ENODEV and not warn about it for this to
-remain really equivalent.
+Initially this patchset was supposed to allow us selectively disable 
+/dev/iomem access in a CoCo context [0]. As evident from Dan's initial 
+response that point pretty much became moot as the issue was fixed in a 
+different way. However, later [1] he came back and said that actually 
+this patch could be useful in a similar context. So This v2 is 
+essentially following up on that.
 
-I can patch it up.
 
-Thierry
+[0] 
+https://lore.kernel.org/all/67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch/
 
---qxhhnnhnzy5x3ccd
-Content-Type: application/pgp-signature; name="signature.asc"
+[1] 
+https://lore.kernel.org/all/68226ad551afd_29032945b@dwillia2-xfh.jf.intel.com.notmuch/
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiIvXcACgkQ3SOs138+
-s6HOjg//cTf5d2FIw8Xf/Z7sBWgu91puvfblYo2HDMeYcmy/CuO6qCDxOSTB4cSz
-mHFAY6DBtfooqyOhcaD4fyHfeiLXoV9dSV1BT8GcmjNiozzNHy/suy2Y1rzeETs0
-3F3M5ULkOpqvFISQ36rATTDPaTdTo/d/3yiCkLTkF4+9/PoFuko42assXPs68tvA
-RXWaoqEIY88tXIJf1ts8eh4Bwq+Pbm+1kVhajyF92WkYnifzNFrrV+abLCITSvTU
-RyW670mKbNUVlvolm8Uz3lEv/x4YM3jVds/HEHb5GfdDK/TcQrq2yOKahNJf9TWH
-1F9qz1ybKxHAMgLqF45q/FvNXRyHvvtBx0strug76yB/qBd4p02VVA7VMAmwt1u8
-+Z6lH0gMmMPBST5fPR3YRZBT+8Jg8j3mDbcnRn0hvxb8KOHlKGjtSH1+MS0viGnM
-i58UJIAofuhYpM7h8lRL0mP0S6viwMBpJ6Re+5Lt0zGA5ziNyup9waX5gkty2neO
-/Hvh9DcTZg9c9vKn54FXM0hnZjBFiGyQLHTNKaECYS15xDIYJgqdg/O7TEKuQcR1
-6lc8Vsu/DufQYlBB3THiCVit/J4P/GnyeEjesEJc/pToAFDOIhwhy4jJ4obMSEA6
-PpkXmX4J++enQiGvIkBQosBnT5AWOsE+DcsT4wwUNpviCNAdWv0=
-=y6sp
------END PGP SIGNATURE-----
-
---qxhhnnhnzy5x3ccd--
+<snip>
 
