@@ -1,91 +1,148 @@
-Return-Path: <linux-kernel+bounces-749372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B44EB14D7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD44B14D80
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4363D3B814C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:11:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56897544267
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:12:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BCA28FAB9;
-	Tue, 29 Jul 2025 12:12:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rtIXyz1E";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mm8w37hU"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF6628FFC8;
+	Tue, 29 Jul 2025 12:12:41 +0000 (UTC)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AFF11E3DF2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:12:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0F28CF61;
+	Tue, 29 Jul 2025 12:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753791144; cv=none; b=u2RRCQgSIaf+No70pS1yhIJLfYG+Xh7fa4jl8PMONPPbIXB22pyF5kQdOGmjkJGs1q1FaDg3VwEGk+uoJahfbuse62yizpkg+ChcZLXkAJEXhVsucPjBSD373aqMf7znNW38Bpzlgtt4QY26/TylWnNHP01r407OkLmS0J51dec=
+	t=1753791160; cv=none; b=C3HwCXZ9EZcfP5JeDjUOedcIfkzWHMaHXGQhvSZFIoMj8Uam2HzyyGB5+VqN+bUpe464dGN6sV1x67NySb8nNr9ScjVgH6LX29ccu+Ti+oopMU7P9HpmADH2zkIEnCd1l4LhR3XFVc2pcV2RJKHVRD5Rn4pbRf3C2EcA1SGa6+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753791144; c=relaxed/simple;
-	bh=CIyIE85AOYRmCE225NpAy/BekkHdYredGw/fGNU1gvw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JhZ1UYuQUbuA17Nrsoe/+pQKau/W8kb+EfabMbvk2JeB3bkVSrthXwJomXMql0cHb/oQL9Wok14y1vCDwXbdml4W3UUPZgu4WVcHm2SIl7pTxKUnW33mqgqpsK/qH4P5nsRdueHq3diaDA52xVyNuWaoXNjblpZDqNL00yk1yEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rtIXyz1E; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mm8w37hU; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753791141;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cbMRaOhTOnCc6MKMXbhpXd01xayO/NHZvZh8ufGEQ/M=;
-	b=rtIXyz1E8nue8Ncq7zshh3rGtNwsIuS4mivROQWhxJyX/odmCKwhPvGbKxHCMvTm64R3MO
-	38rXg176aKcZe8WAkCsKXE9SZjXU3c+VznUUnLVIY916QOxEds05+55gzBmlmo1uriOQi4
-	WcYfnYQ7xKaI7k6kUuD0KqCbxBUy5hZIKi8rH2hnKL9ykJSyBOoJoPmPuNux2T9nz1DlyG
-	WK4XxD+IwePiofYhcKkD/ey66/Rac09mSSrsH5zLYn8uJAyiEigSIeBEf0AjY8BQ1NjT7W
-	6C/Wdu9Nj+HnCdSOiXTw9jyxrIXfzG19wb6XM4FMpp/3Uy7u/5ybinvXbLTOvQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753791141;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cbMRaOhTOnCc6MKMXbhpXd01xayO/NHZvZh8ufGEQ/M=;
-	b=mm8w37hUmI4spBn55arD3t79ppxbHC9aFo0OlUwfMUbkhzXYnU/tpLSan/amGm290pi0lt
-	bOmcjQO9fCE8+RCw==
-To: Pan Chuang <panchuang@vivo.com>
-Cc: linux-kernel@vger.kernel.org, miquel.raynal@bootlin.com,
- Jonathan.Cameron@Huawei.com, u.kleine-koenig@pengutronix.de,
- angeg.delregno@collabora.com, krzk@kernel.org, a.fatoum@pengutronix.de,
- frank.li@vivo.com, Pan Chuang <panchuang@vivo.com>
-Subject: Re: [PATCH v8 1/1] genirq/devres: Add dev_err_probe() in
- devm_request_threaded_irq() and devm_request_any_context_irq()
-In-Reply-To: <20250729114804.21984-1-panchuang@vivo.com>
-References: <87qzxzjr3l.ffs@tglx> <20250729114804.21984-1-panchuang@vivo.com>
-Date: Tue, 29 Jul 2025 14:12:20 +0200
-Message-ID: <87ikjbjivv.ffs@tglx>
+	s=arc-20240116; t=1753791160; c=relaxed/simple;
+	bh=k/QzDvxzz7eUgrIoBQCTgy6Nq8zXFkfHD/A0I1l670Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hZqkYGb1nKI17zQbgCOpZ8+jhOZXMrcDGZx4AF0rLRWbLpva/9TXr4XF61IK+jvpszIzGnOG9jm6oWVaMqDEIGsW8C+anFp7oZlD6VIUxlil1taOy6rvZjbzKrnctagXGGJ9XTZq7kXk6pT1ZQx3dsyERCdi3fzPcaBfnrdSTGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4e7949d9753so1815324137.2;
+        Tue, 29 Jul 2025 05:12:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753791155; x=1754395955;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=S7XU1ug3rQX7pi1f2uA7IAzNZHjOYpNlCdoI3vP2IM8=;
+        b=kR9UljK5BfKsmkTGDZhtvy2rpL5cLYI2gco3B9jbr6DdyyiAMCIDcLfsdUOfC9MF9U
+         wpOMXVdhyTk3rTIFmLxeljVhpUWsjw0unbDk+swDgEnW4He2ZsRBcouTA8n4qdOjnbfw
+         DS8KyRbbQA3TmGudruGlvTJVFcqIpPM/H7WUCqM0G5YmnUiswaVF79i0MTzC263kHhfj
+         dQwGMbqDbSp1vJ2uMS1FZ+BZtPPKXT2tCUzjlfifYyDSh969W17EutqcFBFi0Iubarnl
+         fZJcPtcBGD8e9kWfqNGggLR8JNwzvUqVQKjFZXCMjFVtFX4+R1uPcGuhr3Fy8CoSovAi
+         Ly8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVwgLuRWRpyCimEWQnEzfbVGN4cUS0lo5fNPze6l88N159NBrOIM1/aoQ8SVJKSDbDvr83KpRsur9eF@vger.kernel.org, AJvYcCXNJunhmg+Y5xuL+XaZwj46IzqxWZZHq0TjWfeaRu1PuT0OZ6hkvTHa2P0SWOndsR2gsBIrLBWyImgLF/1b@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzOH31PuWHn4l1QmBSNBg/cibx6EZhyMuMNIgLF+Rrcdw19DA5
+	hx1f+cdpwhYrx2D7l4A58+DHnvHusAMXznGV9VGlfGj3VWmJ5pSo3Jj+NRTmnBrI
+X-Gm-Gg: ASbGncvnXOJC3cQgA+ik7CWc/mOaMdVRPkt/Tgv1gJ4VyHpZJV4IuLgoSfojGD05hfh
+	6moGTbxUQMj8Ksd4+8UHo44+NwSzpN9DSss2XHWXRJ0HM/IrenqC1RwnF9ayLWcTEwLbjaeS/jN
+	92RJZypA34mJn9eE5lCK5kVopG8GMaIGa+6Rtq4Fz5EE8fIs69u7+CSZlt5t2rLOyjM8gchVx4F
+	LR66uYe5NgCfD/7wYOpvR3Vzcy4Na5N/DNBEb+BCGxwZqvtUNWyv1dRNTnijE6MXa1HJeLbUHBO
+	kxEbGLgnJi6qIfm/nhVwRqDL9sExFidrDueWZDkPSFgZ7ArMl+M7YMKAGIaGRP+sPVVtymnLHwv
+	eEt4zXGNYxr5XhIV+61tMWWT1usd8wPjZw09p/Eep++pcgnHfk2zP2COZGHWqtlnOMsusEw4=
+X-Google-Smtp-Source: AGHT+IHSU2uf0KtXEg4BD/gwgWzGnCiuO/9wxbG0WhcTxO+FFd1I4ngtXr5apDzKD3UK55hlPzf8/w==
+X-Received: by 2002:a05:6102:441a:b0:4fa:156c:b814 with SMTP id ada2fe7eead31-4fa3ff85f1cmr5793810137.23.1753791154774;
+        Tue, 29 Jul 2025 05:12:34 -0700 (PDT)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b9a53df4bsm1500484241.13.2025.07.29.05.12.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 05:12:33 -0700 (PDT)
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-886c8de5d90so1056797241.0;
+        Tue, 29 Jul 2025 05:12:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVV0Pxun46gDG1n06jA4hIGfKhKIxknJbJ5uapudWjpLjYHjXB61EVE0iZf2HQG4sB9bdZY4q2/OQqrhUGD@vger.kernel.org, AJvYcCXSoclzn0sRQ8xuNwEePowjtILK/fgrpxaWwfrd7R2hydC3zZ8mBZt8p9HZPYs8PjZ+c8dVEs4tlfkV@vger.kernel.org
+X-Received: by 2002:a05:6102:3586:b0:4f6:25ca:e797 with SMTP id
+ ada2fe7eead31-4fa3ffb4b3amr5387462137.25.1753791151998; Tue, 29 Jul 2025
+ 05:12:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250726211053.2226857-1-arnd@kernel.org> <CAMuHMdU6Akz0GC2hooAxn=C2F0WjagPkzRKcH1SJiW0CBeUOaw@mail.gmail.com>
+ <f0a2a000-381e-40d8-a9ac-4d75dba332e9@app.fastmail.com>
+In-Reply-To: <f0a2a000-381e-40d8-a9ac-4d75dba332e9@app.fastmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 Jul 2025 14:12:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUSsKeY-Uj1xA4SatDk+Mb0e4LJyOU=aS52YbA3DSMLrA@mail.gmail.com>
+X-Gm-Features: Ac12FXwNtZApsYmdgRtNB5UxpJvCHRjvJTKkx3Z6TTt4ItX-oxBnFqiB4T-XmJI
+Message-ID: <CAMuHMdUSsKeY-Uj1xA4SatDk+Mb0e4LJyOU=aS52YbA3DSMLrA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	kernel test robot <lkp@intel.com>, Peng Fan <peng.fan@nxp.com>, 
+	Koichiro Den <koichiro.den@canonical.com>, Lee Jones <lee@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Niko Pasaloukos <nikolaos.pasaloukos@blaize.com>, 
+	Thomas Richard <thomas.richard@bootlin.com>, Yixun Lan <dlan@gentoo.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 29 2025 at 19:48, Pan Chuang wrote:
-> On Tue, Jul 29 2025 at 17:14, Thomas Gleixner wrote:
->>> Signed-off-by: Yangtao Li <frank.li@vivo.com>
->>> Signed-off-by: Pan Chuang <panchuang@vivo.com>
->> This SOB chain is still incorrect. Again:
->>
->>   https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
->>
->> If anything is unclear, then please ask.
->
-> Could you please advise if this SOB chain is correct:
->
-> Co-developed-by: Yangtao Li <frank.li@vivo.com>
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Signed-off-by: Pan Chuang <panchuang@vivo.com>
+Hi Arnd,
 
-If you are supposed to be listed as author of the patch in git, then
-yes.
+On Tue, 29 Jul 2025 at 13:58, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Tue, Jul 29, 2025, at 12:47, Geert Uytterhoeven wrote:
+> >>
+> >> -if GPIOLIB
+> >> -
+> >>  config GPIOLIB_LEGACY
+> >>         def_bool y
+> >>
+> >> +if GPIOLIB
+> >> +
+> >>  config GPIOLIB_FASTPATH_LIMIT
+> >>         int "Maximum number of GPIOs for fast path"
+> >>         range 32 512
+> >
+> > This won't work for everything.
+> > While I now get CONFIG_GPIOLIB_LEGACY=y in all m68k defconfigs, and
+> > simple inline functions like gpio_is_valid() are now available, more
+> > complex functions will still fail, as drivers/gpio/gpiolib-legacy.c
+> > is not built.
+> >
+> > drivers/Makefile:
+> >
+> >     obj-$(CONFIG_GPIOLIB)           += gpio/
+
+> Do you have an example config that shows this problem?
+> I've tried a couple of configurations on m68k now but are unable
+> to reproduce this, using 'defconfig' (without GPIOLIB) and
+> 'm5475evb_defconfig' (with GPIOLIB).
+>
+> The intention of this patch (in combination with the previous one)
+> was that the legacy interfaces would still behave exactly like
+> before, falling back to the stubs when GPIOLIB is disabled.
+
+I haven't seen any actual failures.  When discovering
+CONFIG_GPIOLIB_LEGACY=y in all m68k defconfigs, my initial worry
+was that it would increase kernel size by needlessly including
+gpiolib-legacy.o. When that didn't turn out to be true, I started
+wondering how your commit would fix anything without including
+gpiolib-legacy.o.  Looks like any users just uses the simple static
+inlines...
+Sorry for confusing you.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
