@@ -1,153 +1,78 @@
-Return-Path: <linux-kernel+bounces-749855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84969B153C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:45:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2577B153C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 618701895A72
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:45:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 746077ADC50
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E05253B40;
-	Tue, 29 Jul 2025 19:44:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DFD25A2BF;
+	Tue, 29 Jul 2025 19:44:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HwknOKXV"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JeAO7L88"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 704B0239E81;
-	Tue, 29 Jul 2025 19:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7BF255F4C;
+	Tue, 29 Jul 2025 19:44:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753818275; cv=none; b=rUWHXkxwrm5N6qV8ejTPOZzOadpHKeXRDx7sewEf8J0AJ1JT9fHl7wQ580rtSws9Z6YoNReQx+1anDeB3qZN+1VLbmfqE+3EvAWc/FwPGWNQIh3N1Z0ekLUPWDgFA6EFqNuBkN1GeholxuaW9akG+4NcXCKD/0XAga65bHKBh8c=
+	t=1753818283; cv=none; b=u9T5e8Ku1YjnD+pOyoUOt5rXf3jU91ogpTPDF9+l+mm9H/KnkYytVBe9MpuewIizOiSut7ExJ5VMU7Qgldz+3CtbyD1ads9IP93XsvOhYLzZo7VQcuR+0FiD5BP+q2CtD/AQWiFDkIOzJ3KAICpb+1g0KGsfHPhcjCrNwRL008Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753818275; c=relaxed/simple;
-	bh=t5rBEPy8lyRXVnt8hpZYd6LYWIoFVy22g9IXu7rHQZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sqp5mLkcfBoTv0+uF9aAmQSBZVKzLCEahWPxES9ofhnXqsqtOsKpdssiEN0Fdg9I595CJZIRcpGRmKMoAl952VOv2ZQPBbe6BZSG7YJnvsYkI4M1WpwjxaR1EmoLVJAJYDaszTXKCvPGAAGR9d7W4zTd+ccHRRKtqTiCmjR8XWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HwknOKXV; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-456108bf94bso32741665e9.0;
-        Tue, 29 Jul 2025 12:44:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753818271; x=1754423071; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=i6WRel8vteowVQsID2OZy9WxilgTBD0nyTvxuC5AojI=;
-        b=HwknOKXVOcWN+bBFzC2CDwq/9j6TvtE5OzmXcfclIo/dmMTb5GEGOn2nhZ3hNN6OZ3
-         enTrSTix5AhUSK/13NcjkAYhDjyQftl/wE9s/bm7C+lm5ve4IymcqopVCPAwslrrlqJK
-         1t1nJOBeY3jVqsKLPtIlggRxZedBLgRaUmAkl5fZFFUb58WSZqY1aKNhRdNIKUm8Laq4
-         qOkCvZZb/Ab5p4GlC1UxDzpYluY3YLz6+T+YNBcuMwxUi3xkf2w3YumIvTYP1Q7UR2hV
-         YPkQ6y6LB3lJrkvHJTu9r88dGQc5kDW5/+pV9uVmaHz4ywTlmIvYD8GJxVLc/R1t/NjM
-         1NVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753818271; x=1754423071;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=i6WRel8vteowVQsID2OZy9WxilgTBD0nyTvxuC5AojI=;
-        b=azpNTSy8acyVYd+X361SPXIdGkZtBaCyD9X0IGMwjDckR2wVUkSONdQNf0UlrxB56K
-         nHnY+z+l6ouPDewhWPI1z1MShI74IOJ+zutTIpmGbfy0yCnMuWBGDSzVZisNl2WTBVbt
-         Bkw0euHBXGHetQlra7bEP/VlnVBu7YitId+ZnUGO5v6SGwTZLn5jwOqtph6SErtzZP7n
-         YSOtGCWf3gmwCQt4u7VTbfT5yGZZTijqJgwRJD5Z+MeGfbEga0PWa+/slAJviXSbdmKK
-         sUbMZRYAr2PKOrkabDjnT/IN5nb+aKZ/HA6P008IDCvmN4wMeCHRREt1XgI6s9PrNq5p
-         MRhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlBAY/jHPvRqWpnDQA5SWwcPsgft489uTjWS6RWXuCJBcUyuego+0HbN2p4v1B4xgFGVKHxeCIq415M38aaw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1mm9aQST/yQTDHo0YckQzBqeuEJhEZ0Lk/Pb+kuSR3z29Zq1k
-	cuYtEQ1ZLqGBCrhm6aWCfEZ6FnY1GBqnJlzbZgWurOEskFpzQ39KQffG2rbqdw==
-X-Gm-Gg: ASbGncvI/0lLan+GY7SMVl0i6yfsaziB1iGiI8etEvv+1/3AcKDa7ZpoAJvbTJx8gqj
-	ovRZ7bTjsRI1Rk+7E6YqTUSz1W1CntjZWfkudyvLZq4ibfmeR41fIU+EwGol+mt++IRpka9ChPG
-	+LDBBK5AOM2o8IYkAP4Wva/w+Qtr2u3ZHBtG6Xr7DgDplAZQruSvkY3QStdM/i8tGj/ljnezFYS
-	mhIKmRY2taJXSbRPWtV0I2foDTA0jm/L9swBou8qyzUEhw2r0kAYzuvyCMIJhAMCiidydW/XYns
-	zBd1+LCt3aPRiSy4WoOnW+hD4isMPF98DjE8Q6FTAa3zjZ8I8MVJKIhIpS7XjAjrbxz6KeieizA
-	GNrnayscoWdFo9qajgM3gEcMxuC1uMw==
-X-Google-Smtp-Source: AGHT+IFU29dRiRxSRID6Xbo4H8eFoYhiPevioddhqBZiIFbq3Gsf5fWcrl3Vu6i7dfMaQ7WxB5AdcA==
-X-Received: by 2002:a05:600c:1c20:b0:456:2d06:618a with SMTP id 5b1f17b1804b1-45892bc7929mr9402185e9.18.1753818271281;
-        Tue, 29 Jul 2025 12:44:31 -0700 (PDT)
-Received: from [192.168.0.50] ([81.196.40.253])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778f04744sm12868602f8f.54.2025.07.29.12.44.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 12:44:30 -0700 (PDT)
-Message-ID: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
-Date: Tue, 29 Jul 2025 22:44:29 +0300
+	s=arc-20240116; t=1753818283; c=relaxed/simple;
+	bh=tcDsuAoiaaM76wFOzY0SxBKTvoLfG7AMBnUMYwUV4O0=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OL3LCbC0CI87LwIIe4AL1rE1TCPkDkISQTfhJyVhHePH421m1KonwMD8jwBD+/U0VHH3oJAhDJnYParkNEtalvpqUjcG0AGuwr5NQidewzXDWuxdnjchrhFGhEv7wVZbNgbjjrHQMklV0FWRuiOv5l2iYKpwmtH7pTyCnK28/5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JeAO7L88; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A76C4CEEF;
+	Tue, 29 Jul 2025 19:44:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753818282;
+	bh=tcDsuAoiaaM76wFOzY0SxBKTvoLfG7AMBnUMYwUV4O0=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=JeAO7L88FzPGI7BaY21czmYhqSf+u3bTcREGIZoPadRvepFiUp8sa/Qxb5LsljYC2
+	 W6rE4j0NxTLAkwDh845cBFmDG+aGzHt3MpXM1eCYnH4Rv50mImaB0IksIfFY22vEKK
+	 GFyKs5otNo1knw9SNA++V+titfbeS/YG6qP8Bw3x9ertLJ+ov2b9Aa26LOvgJRK36r
+	 TIL0gLzP2y5BgykGTFpUKaHJKSNUC6yuAIQ+YS75N8cNlD+GRQr+fbnpp00mhfKEhO
+	 V/uUJu+tBV/uFo+FS1G/qzsCotxDrkbIWIuImzBHdFxs64wV9et4WvWkTc8VgvdODm
+	 mCcLM+Q3ERIkw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 710C3383BF5F;
+	Tue, 29 Jul 2025 19:45:00 +0000 (UTC)
+Subject: Re: [GIT PULL] pmdomain/cpuidle-psci updates for v6.17
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250729111743.14723-1-ulf.hansson@linaro.org>
+References: <20250729111743.14723-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
+X-PR-Tracked-Message-Id: <20250729111743.14723-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.17
+X-PR-Tracked-Commit-Id: 05e35bd07d56780f0a5119973995b97a16843579
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: fc8f5028eb0cc5aee0501a99f59a04f748fbff1c
+Message-Id: <175381829885.1616007.17630324003432809799.pr-tracker-bot@kernel.org>
+Date: Tue, 29 Jul 2025 19:44:58 +0000
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: rtw89: Print only once for unsupported c2h classes
-To: Sean Anderson <sean.anderson@linux.dev>, Ping-Ke Shih
- <pkshih@realtek.com>, linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20250729182743.114733-1-sean.anderson@linux.dev>
-Content-Language: en-US
-From: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-In-Reply-To: <20250729182743.114733-1-sean.anderson@linux.dev>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 29/07/2025 21:27, Sean Anderson wrote:
-> There are more unsupported functions than just LOWRT_RTY. Improve on
-> commit 3b66519b023b ("wifi: rtw89: phy: add dummy c2h handler to avoid
-> warning message") by printing a message just once when we first
-> encounter an unsupported class. This prevents messages like
-> 
-> rtw89_8922ae 0000:81:00.0: PHY c2h class 2 not support
-> 
-> from filling up dmesg.
-> 
+The pull request you sent on Tue, 29 Jul 2025 13:17:33 +0200:
 
-I also get "MAC c2h class 1 func 3 not support" and "MAC c2h class
-0 func 6 not support" with RTL8832CU.
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.17
 
-The second one appears a lot in AP mode.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/fc8f5028eb0cc5aee0501a99f59a04f748fbff1c
 
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
-> 
->  drivers/net/wireless/realtek/rtw89/phy.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/realtek/rtw89/phy.c b/drivers/net/wireless/realtek/rtw89/phy.c
-> index f4eee642e5ce..5280ffd77b39 100644
-> --- a/drivers/net/wireless/realtek/rtw89/phy.c
-> +++ b/drivers/net/wireless/realtek/rtw89/phy.c
-> @@ -3535,6 +3535,7 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtwdev, struct sk_buff *skb,
->  {
->  	void (*handler)(struct rtw89_dev *rtwdev,
->  			struct sk_buff *c2h, u32 len) = NULL;
-> +	static DECLARE_BITMAP(printed_support, U8_MAX);
->  
->  	switch (class) {
->  	case RTW89_PHY_C2H_CLASS_RA:
-> @@ -3549,17 +3550,15 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtwdev, struct sk_buff *skb,
->  		if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_report_handler))
->  			handler = rtw89_phy_c2h_rfk_report_handler[func];
->  		break;
-> -	case RTW89_PHY_C2H_CLASS_DM:
-> -		if (func == RTW89_PHY_C2H_DM_FUNC_LOWRT_RTY)
-> -			return;
-> -		fallthrough;
->  	default:
-> -		rtw89_info(rtwdev, "PHY c2h class %d not support\n", class);
-> +		if (!test_and_set_bit(class, printed_support))
-> +			rtw89_info(rtwdev, "PHY c2h class %d not supported\n",
-> +				   class);
->  		return;
->  	}
->  	if (!handler) {
-> -		rtw89_info(rtwdev, "PHY c2h class %d func %d not support\n", class,
-> -			   func);
-> +		rtw89_info(rtwdev, "PHY c2h class %d func %d not supported\n",
-> +			   class, func);
->  		return;
->  	}
->  	handler(rtwdev, skb, len);
+Thank you!
 
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
