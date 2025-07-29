@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-749429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC1EB14E42
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A84B14E47
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:20:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55855448FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:16:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED25F5456C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4911A18DB27;
-	Tue, 29 Jul 2025 13:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB941B0413;
+	Tue, 29 Jul 2025 13:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m8xdKihB"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R4p0JICv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452942F24;
-	Tue, 29 Jul 2025 13:16:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F44CA4B;
+	Tue, 29 Jul 2025 13:19:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753795000; cv=none; b=U9Ya6Zf0adJ3PP25kXdJAvRNz56aH7blk3s7Ze+NjJlm5C5BF9OMB2GnAI91NaB9ZfLUDoZN7j0uZnOlNL/+KCrLE51IGjRyh2DZL5k/9kx2pp2N4LPWhV0iZl/bIi5XLKy/7oqsdooFBpkXz2daMqqPkAT0+dFW1uXZNOHayuw=
+	t=1753795194; cv=none; b=fWdTIyamraPuga/NvxGILCTBKcYSo90nU2KMI3GCqftTWjNT9Wi3JZc4taX0IK15vwXQzpvkTjDSUkyl5h501kHCAq3f2zCvNaCiYVRSqHarYpBZ3u4ek4BUEMQV2CIjGNOhOUyWpH6V0ZPG/y4wteN/Jwo/cNHXpajz5uyHxuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753795000; c=relaxed/simple;
-	bh=RUF08R7NpLN8blL4sUVGgdMI/qgrbUe2bQ4Li7BkTuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iwYLV2hPdivVGLI25t4zKGnwA++oXO5tEsOhGDtlrhgc9qmsgWJX7cDXCNZskkaWRMuSbkLTL4VMNI38ZRXlYazvU92f7A/YWimIvyewKAnGTHrfj5Sl8soJTKoSIfB25RL4jTsEFijDSYS02ItnpfuOZQWarjMppiWPDLBP8Hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m8xdKihB; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-719fe335186so23143167b3.1;
-        Tue, 29 Jul 2025 06:16:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753794998; x=1754399798; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/lfTifbzeJtDBdptx2/mM5xq8Rur7Nj3CsrchIJIonA=;
-        b=m8xdKihBrATcQr+acs9o3iORy4t+8g6HjjJdo6i7id8tsMmEIz6Q3zyhszaMrOoTrl
-         9RgsMD75QBmzc/T1DQJUk16Dcyl8bvaCcZCrpluivrfX7XhSWpqFnEk6UwPvERvx3fGw
-         gduHSY2whughOhgDq06TBYNau6M20mgq9OcBiYRVkp9Kd0xLXjg4fJfQ1gW7AVe0klNM
-         Rs/XOTB9H3kJHqqmTzNgN+JEjx+7MRaxbRXN6XTZ2CUKNaUOqmyuAMdI5eI+8UVDq0EL
-         YGP1BEL82aDRlt53x8TK6ERjpZmxk7G3H+WDPhQgAr4ZhwKhHJSL+gBMVhsxL6xF8tY5
-         vSjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753794998; x=1754399798;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/lfTifbzeJtDBdptx2/mM5xq8Rur7Nj3CsrchIJIonA=;
-        b=BnlTV68psQoC9slLYJytMifK5ZCSSpObaKnMDvXNXYLF7Ewh65uedbwKtOatK+KXuW
-         t9uncpZQhNwZFC5xoJjbVAHYAxOXtifMvBsXmxZeSENqQN+Uk9dtCbHxg1MhTwk8udT2
-         Y+k9RPjeI200f+t86qDpAd+DAJurqdA9WEkXy0g9gewclS8RCqXYS7jAD+f2RCPv2OXl
-         a+VQMEziTlDNf3anH0AaIDax9zhbY4Px0IeaeUlw7zfFjJiJIFk3BStuTYpwu+3GzHsN
-         lXFQ5wb31c7BEWj7hbBKHE6Qnk0BQxTPYuOFqjUum5uP0840E+dX/S+WlGsPCL0j/CO0
-         HOIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Kjn6o+NT48WmgZTx8QK8srqVMvT/ByuyivsiAv7rKt0wCo9uanMq1+OHhwR/nsHK8gZtQC1SKllnPRz7@vger.kernel.org, AJvYcCWu9QOXq4SyRUDWN0lrLyF5nUOjkBJJ45QsK2dDimUCm2WJp7eYQ97g5vEdm8kjpBFOEIY6lRgsZGpq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEA/i8rQHfUUsI80r1p1KMwm4IG+19Z4ZltKpCGlTRY/iEUq1U
-	ARnemujY39aW5npWqmy5gHU4H1OIsGnWufmKQqKoTvkpkW7vYyDJ/Apm5JcO19IQoBG0aD5mopb
-	MSvoHnxQ9ZymiTPgLRsYZyrrBLK8ilqQ=
-X-Gm-Gg: ASbGncs00ZQlBM1a0LRpjGl/pegiBTQYfvnkm+OBPnL3EyrPq3WTbAx3HB3uuE08E3R
-	BRxtVumYVL2AFOgpPtbdwOyoVoNSP2epP0sI2F6LvT6PyMXeiiYNiURSr180xhvWCnCC2BA6fAJ
-	9V68bwo4NfBHtqxHn/FRvynEMRLRm7wixNDn1lDpUBag/m/7mA4TKcRF3fGGj6u2dF33P+dbP8F
-	ey7fI99
-X-Google-Smtp-Source: AGHT+IEVae635NG5Lnt4HLDioDmt7SEj8cMo8l/+8dWgrcypmmqoDPY8G7XnLkcZ+fTaIcEF50pQVxzPBwWh8wy3V2o=
-X-Received: by 2002:a05:690c:f87:b0:71a:18fb:7386 with SMTP id
- 00721157ae682-71a18fb79admr125380267b3.2.1753794998174; Tue, 29 Jul 2025
- 06:16:38 -0700 (PDT)
+	s=arc-20240116; t=1753795194; c=relaxed/simple;
+	bh=YM987/82foYTtFS7Ru1EkSgshFaDDES4SWlKS0fv0Ss=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ube+BBfFSe9iYuHD35aQWio+13Ntk7bmtXfCRDWBKht7xON157WBkx/LSzDmTDqPezMsfzTNxNjTsJ3jgiMWA3uxuwniDNI0WIRJX/fUbjcYkaZeL4x9WQT3T7xlgFg/jaeQQ6b8vJ5QaeJpwq84JXy3ACh4UpIHcu8SozajAy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R4p0JICv; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753795192; x=1785331192;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=YM987/82foYTtFS7Ru1EkSgshFaDDES4SWlKS0fv0Ss=;
+  b=R4p0JICvrGVTv7/zD6go+StFVAopqynyDcLPRlakQOpJl/OJeAYhhd2v
+   X3iSmacF/hPV8tCvba44K/fho/wKy1quApL1O1RNSnmIOCn39QJoI7wyf
+   pZrXBJ3o4GS8y2tAL3AMRrsJg9k3l6Ui9dCumjXyRaS8yhiBnVcuC+/+P
+   3yQJqWvdUtpMsh4qjjw4u+UnlwjeArxgG2NYaaMkuXPW6tMC/YWSXVlV/
+   XOWoEd3SWgbfVqi+K22/tQ0uxsVP+Gyw/K5CG2zXjKFc1fP/fbzmlEuPj
+   fptlb3TxwdX64eH6ovDTaZjY6UM8SvBcRYjWc0ODpqCq1LQjD3XPJG/y3
+   g==;
+X-CSE-ConnectionGUID: WdgHt8qWTXGsqNNbMHdzTg==
+X-CSE-MsgGUID: xIpO3TmXSqSs8jXc+O/dMg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="66628639"
+X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
+   d="scan'208";a="66628639"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 06:19:51 -0700
+X-CSE-ConnectionGUID: 1LjYHoaKTOSWMv7O/LMNVw==
+X-CSE-MsgGUID: AWTWK4uMQcqGahgEGQDp0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
+   d="scan'208";a="161967838"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.22])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 06:19:49 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Akira Yokosawa <akiyks@gmail.com>, mchehab+huawei@kernel.org
+Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH 1/2] docs: kernel-doc: avoid script crash on ancient Python
+In-Reply-To: <8251d567-5218-4fa1-aed2-f38ec089989d@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <dc75423e817f92cc6b8369892ee79166c2fb5ecc.1753713955.git.mchehab+huawei@kernel.org>
+ <8251d567-5218-4fa1-aed2-f38ec089989d@gmail.com>
+Date: Tue, 29 Jul 2025 16:19:45 +0300
+Message-ID: <e9cf21e5332616f2fb58a90fe8ba6f91359915b8@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717135336.3974758-1-tmaimon77@gmail.com> <20250717135336.3974758-3-tmaimon77@gmail.com>
- <91119587-789e-485d-9cf1-da2c500f241c@linaro.org> <CAP6Zq1gN28y-6_OwnzMbJ+EiubtABVw+FUqbmAo5bvBW-5tDdw@mail.gmail.com>
- <c661130c-3d18-4e6c-9c63-ac4c10c415de@linaro.org>
-In-Reply-To: <c661130c-3d18-4e6c-9c63-ac4c10c415de@linaro.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Tue, 29 Jul 2025 16:16:27 +0300
-X-Gm-Features: Ac12FXxH-ZuZJCzUxfuM_gJnXAtYQn_WVuODI9WBIPAGyW5P6swnPSsLiOyEMH8
-Message-ID: <CAP6Zq1jxysc+Uy0U_2dczyLDb5mwKBEafaJJ9+ouJMfipjBoYw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] arm64: dts: nuvoton: npcm845-evb: Add peripheral nodes
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hi Krzysztof
+On Tue, 29 Jul 2025, Akira Yokosawa <akiyks@gmail.com> wrote:
+> Hi,
+>
+> On Mon, 28 Jul 2025 16:54:28 +0200, Mauro Carvalho Chehab wrote:
+>> While we do need at least 3.6 for kernel-doc to work, and at least
+>> 3.7 for it to output functions and structs with parameters at the
+>> right order, let the python binary be compatible with legacy
+>                               code?
+>
+>> versions.
+>> 
+> [...]
+>> 
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+>> ---
+>>  scripts/kernel-doc.py | 37 ++++++++++++++++++++++++++-----------
+>>  1 file changed, 26 insertions(+), 11 deletions(-)
+>> 
+>> diff --git a/scripts/kernel-doc.py b/scripts/kernel-doc.py
+>> index fc3d46ef519f..d4f9188d6a19 100755
+>> --- a/scripts/kernel-doc.py
+>> +++ b/scripts/kernel-doc.py
+>> @@ -1,9 +1,19 @@
+>> -#!/usr/bin/env python3
+>> +#!/usr/bin/env python
+>
+> This would conflict with my existing setup which has
+> /usr/bin/python3 only.
+>
+> Please don't do this!
 
-On Tue, 29 Jul 2025 at 09:21, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 28/07/2025 14:12, Tomer Maimon wrote:
-> >>> +
-> >>> +     mdio0: mdio@0 {
-> >>
-> >> Huh... this should fail checks. It's not MMIO node, is it?
-> > No, it's MDIO node,
-> > https://elixir.bootlin.com/linux/v6.16-rc7/source/Documentation/devicetree/bindings/net/mdio-gpio.yaml#L48
-> > Should I modify the node name? If yes, which node name should I use?
-> >>
-> >>
-> >>> +             compatible = "virtual,mdio-gpio";
-> >>
-> >> where is the reg?
-> > It does not include reg in the mother node, but only in the child.
->
-> You put the unit address...
-OK
->
-> >>
-> >> Please confirm that you introduced no new dtbs_check W=1 warnings.
->
-> I need you to answer this.
-I didn't run dtbs_check with W=1 and the mdio-gpio document. I will
-make sure to run dtbs_check W=1 before submitting the next version
->
->
->
-> Best regards,
-> Krzysztof
+Agreed, this breaks more than it fixes.
 
-Best regards,
+Python 2.7 reached end-of-life over five years ago. Do we really have to
+cater for ancient stuff? Which actual real world cases do not have
+Python 3+ available? Please just let it go, and see if anyone ever
+notices?
 
-Tomer
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel
 
