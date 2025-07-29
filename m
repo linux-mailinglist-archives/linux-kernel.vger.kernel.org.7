@@ -1,144 +1,153 @@
-Return-Path: <linux-kernel+bounces-748904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB4AB14771
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:09:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0AEAB1478C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:21:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E554717FE08
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E88F1AA116E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC685231C91;
-	Tue, 29 Jul 2025 05:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2D8234964;
+	Tue, 29 Jul 2025 05:21:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="n0PwQJiN"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED24472634;
-	Tue, 29 Jul 2025 05:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="eX88Y/zY"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2538638B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 05:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753765743; cv=none; b=oqXbEtCAaORs/ooCwWO1cR58HqjiBLpXjKeragwCeI73jo0i0oOSayOD0TmZMmROWsPX7aDkec8R0KcB9BxxNt5ucsO5XxNI9dcaVYAFj3Ii1at6M7FfDB1+kdP0KeaxIrl+UTxtPrNQGI1H/BtNGeGM8A7uqkG5dDv7lYkjKZ4=
+	t=1753766506; cv=none; b=RBqNjTegANd2Z0v1MHTRxUfoJBPQ5Jh2YsGx2N4/XmimMsPBHEZS+iaowG0crsPtErLUkTwhYxsGdko7KOOVgJTzbeH0UWeG+mUG5BJN+BUelM7Z+5JvVsNQUCxM287O40WQkbb3NyYDLfobJLNNnk3Q5/mlzPutPrsef9j65LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753765743; c=relaxed/simple;
-	bh=XWxFCn699OEVDNLgs8wLGR4eS0m1rSlLO9FCPacfvkg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oUw2JP1sqadHoj6SEVXSoOdg2P3zYMlGarqznziV6K0hTovDsh3QCifpaUZa0mcqBxy349IpbSMoM5SKMqwKyDcYIg4XWPzFvUY8TB1CL0gpbLflAxWR5Bia/xvuiFqz2hKlm2R4KpfzN3xQFIQ06+MsiRXMN19O5sD5BLSsEfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=n0PwQJiN; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.161.187] (unknown [4.194.122.170])
-	by linux.microsoft.com (Postfix) with ESMTPSA id DDE912021866;
-	Mon, 28 Jul 2025 22:08:56 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DDE912021866
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753765741;
-	bh=GkNCKUMZl6WNjOw5VJi2LlNf14Ca9uH/SfWTITXfLYA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=n0PwQJiNfB9DOEIOy0lUKaMiVMBwkkBM+6BeIgnpZQifzkAx2LxAejwp/bXLX9ISt
-	 TIftWdWLROq7bO95zPIsK+HzkfO2g+vU8TpqrU8vchvWMbwJFMGKZqv2zonYpCNzQC
-	 Qs3KrywEPD1mAnSF+KhwwcKg1Xl2WDBiRpF3ntXA=
-Message-ID: <9965dc77-eab9-4252-8c93-01c27e417bdc@linux.microsoft.com>
-Date: Tue, 29 Jul 2025 10:38:51 +0530
+	s=arc-20240116; t=1753766506; c=relaxed/simple;
+	bh=gN8omh9+jZRnT2WyX5FyUkbqpxQzn9dfqD1XgXawL5U=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sUVasYjWN+NV09tqWs/6/UIXzzx5JtlafB612hl8WrhRZzUJ760B5MD2LDgpdEEXSJrilUWEq1w0wEAxlc8s1Cb1C35GfVJO3dNRxgI3vLfnvyv3xRpgrAgV1fOTJnhXBokwQiGmxQp275EvZw8XIvE1kVDw8wI5RduzUvBtsSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=eX88Y/zY; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-7074bad055eso9493106d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:21:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753766503; x=1754371303; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yCNWGElp5pC1atxEbdepPd2VdGD7IrJ4GQmz0sudHLw=;
+        b=eX88Y/zYhqfoyxvNv8Nl8NEA/MBUwjWDZIYZ5jP939333qitX7ppAUNGCwJ1V/kOqM
+         H94Ux0Eindx1YffIyevjP3RJMzwu2oi+PDb8gcHEZnQ+RGSBe9U165FMkuN2yIuLejwQ
+         /6Gbkn5Pk29MG402AZNA0sPyIcoWPNKBQBzx4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753766503; x=1754371303;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yCNWGElp5pC1atxEbdepPd2VdGD7IrJ4GQmz0sudHLw=;
+        b=UyLrZWNQfzlYR3bahvgPOOqzRSCKn0VEfcKO7nRz+it9n+2093QYXT1WFHvh9W53l8
+         KCCLAaznjeQpp86Xyhw+gXRLEec7C22WOvM9o9uNWON2N0YeY/1r9PvtVpe4tEtxKDFH
+         uMbdzi94kNIYhmmNpmf6+TxQsEMSMiEv4dqGgufu2PXmjCw/0MlcdOhNcRNUiV8RPL+K
+         BPSXSl+nCJuCt0vCc3ICALFYT7jJtQtdnWTUgEKgW9S+5fCrS+evtMiJikmxQIL2kjHv
+         Q2F8nQ8otCB5A2veDtWNz2Onxh0vCYPUfHSZyh+BzQFAvDlG8d7LzN4FkBD8CRUvo037
+         iu9g==
+X-Forwarded-Encrypted: i=1; AJvYcCWz2ChlL/+2i/DIWjJBZvCoY5YewudLup5GrjJ3BqD1Y0eyv0JdppwQum+/Y4N0BWz7uUhQ7EvvYelDe7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKdyRn6uTTrYy3QCVzhZhdATsiUPbZaZ6cSsU7BAEMgHk0lSZt
+	Q7f1HPeKzYKy2ufaf34/WwBNo/vT9DESh/AMR51i30HD00Ry2idbvk34f/+aYaeotA==
+X-Gm-Gg: ASbGncsGRS+CidrS9fgHP1HJmmr5azOuxsWNcTYqvTTt89PLK4n5ta6v8voSrfOH5nP
+	L5aG2FCwwK1vwm1YNn/QqkyLYrVA2MjdhA86o8qm8nc4k2k/ty70fz5lWSiDeBy7cIrqe1QLAHE
+	s3Fxwz8SL6wPT9+pVzHA47fX3lzAc03BRgUYhBLUPJeA+r2qrHvG8AwLVPQbejdo5nqM/Z6OO9M
+	195/vWeOUJQ8vPTnFjoQ7PlcNk5mp++pU+us5YeAvsKjgNYFWMzXS4KW8k91XBcV5xyxBEZNMqY
+	jmjOq5MlgXBu5IXohJlRD+ls+9AEYh6tVAd61EzUz8g9ghVU4jnnxDlKxgPccJuvPurds7c8frk
+	1tlEzQANiQ9QDjswgQmDcoKuvNjxMzHcNdV7akqxzW6KVWHUOoUDrbl34U8pSaAweygfT4KeILl
+	mYSxH4PNQxTQ==
+X-Google-Smtp-Source: AGHT+IF/SW2bBwaEzMPz1p7KR+YUAhGTkvxxeMNF+awmsUxOwYCQHqsob47D0nMgbULN58Y1tyFZrQ==
+X-Received: by 2002:a05:6214:dcc:b0:707:1654:cf90 with SMTP id 6a1803df08f44-707204b8fb9mr198625856d6.2.1753766503088;
+        Mon, 28 Jul 2025 22:21:43 -0700 (PDT)
+Received: from shivania.lvn.broadcom.net ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7075e3208d1sm1260226d6.72.2025.07.28.22.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 22:21:42 -0700 (PDT)
+From: Shivani Agarwal <shivani.agarwal@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	tapas.kundu@broadcom.com,
+	axboe@kernel.dk,
+	linux-block@vger.kernel.org,
+	Ming Lei <ming.lei@redhat.com>,
+	Yu Kuai <yukuai3@huawei.com>,
+	tj@kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Sasha Levin <sashal@kernel.org>,
+	Shivani Agarwal <shivani.agarwal@broadcom.com>
+Subject: [PATCH v5.10] block: don't call rq_qos_ops->done_bio if the bio isn't  tracked
+Date: Mon, 28 Jul 2025 22:09:01 -0700
+Message-Id: <20250729050901.98518-1-shivani.agarwal@broadcom.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] Drivers: hv: Introduce mshv_vtl driver
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- ALOK TIWARI <alok.a.tiwari@oracle.com>,
- Markus Elfring <Markus.Elfring@web.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-References: <20250724082547.195235-1-namjain@linux.microsoft.com>
- <20250724082547.195235-3-namjain@linux.microsoft.com>
- <SN6PR02MB41571331AF61BE197F76B970D459A@SN6PR02MB4157.namprd02.prod.outlook.com>
- <03c90b7d-e9b8-4f8f-9267-c273791077c2@linux.microsoft.com>
- <SN6PR02MB41579F474B6FC43D4E5754CDD459A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB41579F474B6FC43D4E5754CDD459A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+From: Ming Lei <ming.lei@redhat.com>
 
+[ Upstream commit a647a524a46736786c95cdb553a070322ca096e3 ]
 
-On 7/25/2025 8:05 PM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, July 24, 2025 10:54 PM
->>
->> On 7/25/2025 8:52 AM, Michael Kelley wrote:
->>> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, July 24, 2025 1:26 AM
->>>>
-> 
-> [snip]
-> 
->>>> +
->>>> +static int mshv_vtl_sint_ioctl_set_eventfd(struct mshv_vtl_set_eventfd __user *arg)
->>>> +{
->>>> +	struct mshv_vtl_set_eventfd set_eventfd;
->>>> +	struct eventfd_ctx *eventfd, *old_eventfd;
->>>> +
->>>> +	if (copy_from_user(&set_eventfd, arg, sizeof(set_eventfd)))
->>>> +		return -EFAULT;
->>>> +	if (set_eventfd.flag >= HV_EVENT_FLAGS_COUNT)
->>>> +		return -EINVAL;
->>>> +
->>>> +	eventfd = NULL;
->>>> +	if (set_eventfd.fd >= 0) {
->>>> +		eventfd = eventfd_ctx_fdget(set_eventfd.fd);
->>>> +		if (IS_ERR(eventfd))
->>>> +			return PTR_ERR(eventfd);
->>>> +	}
->>>> +
->>>> +	guard(mutex)(&flag_lock);
->>>> +	old_eventfd = READ_ONCE(flag_eventfds[set_eventfd.flag]);
->>>> +	WRITE_ONCE(flag_eventfds[set_eventfd.flag], eventfd);
->>>> +
->>>> +	if (old_eventfd) {
->>>> +		synchronize_rcu();
->>>> +		eventfd_ctx_put(old_eventfd);
->>>
->>> Again, I wonder if is OK to do eventfd_ctx_put() while holding
->>> flag_lock, since the use of guard() changes the scope of the lock
->>> compared with the previous version of this patch.
->>>
->>
->> I didn't find eventfd_ctx_put() to be a blocking operation, so I thought
->> of keeping guard() here. Although, synchronize_rcu() is a blocking
->> operation. Please advise, I am Ok with removing the guard, as the lock
->> is just being used here, and automatic cleanup should not be an issue
->> here.
-> 
-> Yes, I think you are right. I saw the kref_put() and was unsure what
-> would be called if the object was freed. But the "free" function is
-> right there staring at me. :-) All it does is ida_free() and kfree(),
-> both of which would be safe.
-> 
-> You should be good keeping the guard().
-> 
-> Michael
+rq_qos framework is only applied on request based driver, so:
 
-Acked.
+1) rq_qos_done_bio() needn't to be called for bio based driver
 
-> 
->>
->>
->>>> +	}
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
+2) rq_qos_done_bio() needn't to be called for bio which isn't tracked,
+such as bios ended from error handling code.
+
+Especially in bio_endio():
+
+1) request queue is referred via bio->bi_bdev->bd_disk->queue, which
+may be gone since request queue refcount may not be held in above two
+cases
+
+2) q->rq_qos may be freed in blk_cleanup_queue() when calling into
+__rq_qos_done_bio()
+
+Fix the potential kernel panic by not calling rq_qos_ops->done_bio if
+the bio isn't tracked. This way is safe because both ioc_rqos_done_bio()
+and blkcg_iolatency_done_bio() are nop if the bio isn't tracked.
+
+Reported-by: Yu Kuai <yukuai3@huawei.com>
+Cc: tj@kernel.org
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Tejun Heo <tj@kernel.org>
+Link: https://lore.kernel.org/r/20210924110704.1541818-1-ming.lei@redhat.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+[Shivani: Modified to apply on 5.10.y]
+Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+---
+ block/bio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/block/bio.c b/block/bio.c
+index 88a09c31095f..7851f54edc76 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1430,7 +1430,7 @@ void bio_endio(struct bio *bio)
+ 	if (!bio_integrity_endio(bio))
+ 		return;
+ 
+-	if (bio->bi_disk)
++	if (bio->bi_disk && bio_flagged(bio, BIO_TRACKED))
+ 		rq_qos_done_bio(bio->bi_disk->queue, bio);
+ 
+ 	/*
+-- 
+2.40.4
 
 
