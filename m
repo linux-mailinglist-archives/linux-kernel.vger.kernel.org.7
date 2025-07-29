@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-748761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B316DB145C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:32:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D06B4B145D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:33:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E76013AFF3E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:31:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7EB316B858
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:33:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BE81F3FEC;
-	Tue, 29 Jul 2025 01:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515521F8753;
+	Tue, 29 Jul 2025 01:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ei/y7HXS"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="rVeF7vFo"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47EA1428E7;
-	Tue, 29 Jul 2025 01:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DCC1F4162
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753752738; cv=none; b=Qookg93Qvj9jEWMgD1IKt6tVG68/7HVluGBOdkPaHzzlv8fwOr3M+laVC0dswTH0Qt3enNC12wsYM9+kM18gsFuN+YikveiU/WEk3ErCRqxEjvVELZljO8M1nCr6PJcezY4CL+lyW/Q9m08U8RI+fiZIk0KSChkbGBFw0HyMhGI=
+	t=1753752794; cv=none; b=MqtUGsD3wAQhYYqZ53opfm4vBz5S2VXi5rUDUsQRhToH7yo/csZAO09irkrYHR1tI1xDCXVXGvfwdyjH8Ij1AESRhGiRJqAXG/0jHX3CVoRMFb2RxCDZvxubucRrnM9ZB2+hUrOD/c2RNWlCl7HGJ7ra8lCXp3gDqcKso5+XMG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753752738; c=relaxed/simple;
-	bh=vIa3tGqyPkXcn4ICh16DMsWYrC2pjZzhbU+o6wZNUQA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jDH/kNnNPgRtThjKpnsrTsWgcV5qXAlXdn5SZPdbIgU0eqAbS2Mxdv+kzYzxkkw2Y6etBCwMtIMHY1Z6weW7w4PoB+fZKDU31uwiCoPeY4A/ZBQyzwhPp7B55L05TW/ploiLF6Nr8aP2cKblnZ231xK+yZdJPwYacHc3PVA6y9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ei/y7HXS; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7600271f3e9so492193b3a.0;
-        Mon, 28 Jul 2025 18:32:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753752736; x=1754357536; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MraiPYf2+FbTMmayxJzfGpBb+bg366e5GcMnwSJ/XSQ=;
-        b=ei/y7HXS1hD8RwkMcT3ZFX3/qhdnl0ygSrtY6v/2Hvqz0TVJIySpJNM64205dDrYRX
-         HyzZ7U07yVKnRKavhfUEmyyiqSCeGB4UgPnsHOLA3YDZzahGF3fzS6t8gPik1sgkaKL5
-         to2W3DNz4u+E981E2cPdYWzUnv0kDYDkg/3vTzs+kUJ5xhmpD/ngREu745u0T0cEMmLB
-         +Uc2D9Ev1ScijGlDH+IsWrQiWBYPXDdp3aVjhTiS4fEfK0aGmEZI8slkhxM0+n0Ny5r0
-         8eJLTh8W9yL9fHjPo0LG2IMlI2SgOAHYMaGWfjXSQWWCOjq3+LlKgvOwC+DBJRTErnYT
-         7rNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753752736; x=1754357536;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MraiPYf2+FbTMmayxJzfGpBb+bg366e5GcMnwSJ/XSQ=;
-        b=L/tAy7UFTkFnUinQVw4A6WjMucD0WEqwf8d+6HFf5kJX5nsRi3AkG0Y1tCczc80qP0
-         wJCsKi+rYxqXNZ0eVL75Px+mFlDyHz08X61ZG6JXUjxlJ3l5KyBXuOwiNvbpFTnbJxGY
-         Z/ZDs/PoZb/blQ11sQxrwvr3e0cTccsvZ8OKKO5ETrk2+4SwX8ZDr8TfE0DaBvOH90lq
-         v4e/55QDantsXafbTwKkVnTvcQGk85dJd6Z/RmmTXKTHjj4PmWw3yZcCLTik1vowjwW9
-         qDT5h8rvqlSl7anVWM5WpEtFcJWIMY6CZcZlTn3TILorYB/NNidC+uzTrKpGpLb/7nw4
-         YW/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUTR/O1GvYLEwiNjLT+jzouTCYftUxsBcqULBroqlXUIO5hX+WD5f0Un1BLNqWZnhUtFsBbpkn9a3NVwQ==@vger.kernel.org, AJvYcCXNjtDn4RCnqFCkHhvidSAmah0OenI37IbnEVdjaAxFCLIiObSNAQk7XKa02j3t/Z80bWTJCQ5IZDA=@vger.kernel.org, AJvYcCXnRF1u2psz8yqs4Xz1dvzSfI+W8fH4wZhttwQdWgyFu1sSbgvJfLmm4ULyLZUQ7RQV5KVVFVUr5af1down@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5WziisxS5JwKw8c3RSxZBXhkqubx+jKqoiyITzJszJCscnKE0
-	fYYh6ViHaz0TzEu/uYSf6oLuFIVRkxt0Qny+fantmW2jqROnB+UAaQxkN16ADhCZd0Y=
-X-Gm-Gg: ASbGnctA7NhNO5gwl7iUlZC0IqBQkptbItiHXdQf7C5JnQCchwZxA4eUZxc+bGfs0B7
-	10abDFwxrpIcsm9C0sWUJPMMEPMRHyw/x3jW8b236bzaGtP2/L7rAmK2TXgmMjzbIm7uKg8jPld
-	eDpUJYCyON/tFWLfzNfjWC6Sza71muIaB5X3RTR1q0oL0Y4Nq5Bratu2W0+yMkqejcJQMAKLj7L
-	+dnX0pMgm5EFc8WWFdu7EsrAali1thnmxz/WjMDFrLd6NQlki72ujdXLYEOVxRHYyF+CULuvc2C
-	dlpDz644y5fVWdT0CXW69upvUXHEQF9tlNFNCE42GIizWhWx7sjME3UoJrK1sbJOL5UaJgEro4h
-	eMEjciwBv6pGEvcNO2c+vbz4BrdmF2RhErwhWFfo+8Xv4pA==
-X-Google-Smtp-Source: AGHT+IHWto+iJ+vUCURLqJpNabBDdIsDCieG85fhrW1rK0u12Wa78eQmvHVH9vy7EXSUvyDmNGNAVQ==
-X-Received: by 2002:a05:6a00:1144:b0:746:195b:bf1c with SMTP id d2e1a72fcca58-76967971ed6mr2073049b3a.10.1753752736008;
-        Mon, 28 Jul 2025 18:32:16 -0700 (PDT)
-Received: from alkaleus ([168.0.235.14])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640ad06762sm6593299b3a.80.2025.07.28.18.32.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 18:32:15 -0700 (PDT)
-From: Andre Luiz da Nobrega <andreluizrodriguescastro@gmail.com>
-To: tytso@mit.edu
-Cc: adilger.kernel@dilger.ca,
-	corbet@lwn.net,
-	linux-ext4@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH] Fixed commit: Fixes Sphinx warnings about duplicate reference labels in Documentation/filesystems/ext4/atomic_writes.rst.
-Date: Mon, 28 Jul 2025 22:32:00 -0300
-Message-ID: <20250729013200.84919-1-andreluizrodriguescastro@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753752794; c=relaxed/simple;
+	bh=/HGRnYEQGLZaT3xJ+wFvEsemHMJyMzBhBEQdzubwELs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RtN/d31J3Xjyeb9WbrfOtTigsddE0ylW2VyyeYWfwnilalIssy9v080XSQroep3Ex56B1fu7gU3IkEf9pchhyTrWWyL+r0HStnXnGIqTYYL0jOVD7qn13RuGri+UF5oK1M6C5IIzgoLJ2PL9PCmyzoIrwAGpEACpwxkccf1fXoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=rVeF7vFo; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56T1X5bD4858423, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1753752785; bh=gdWasU/IdPl8ekcovteXs63yrb725xyVBg7HglMYh28=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=rVeF7vFoTxG3NldToXT14GRHdZdQbkTmUCttieSgiY/D+Q64bFfFApr6C6EcoHp4h
+	 uKV0qQW5kFKvEm4uH/9Uvh+6Ur3VaQS4i8i5omiLr0xPxUCxtmv1r65M8RiEqi/1aH
+	 z9x1oR3hkaqhEOHDzz4YtNjfgzTaGdLR/+ut/ivzMrUVAD+1+/2vsg+eFiVDUMi+f+
+	 mwWHhIHMktqnEx/ghqd0wDkoDUEPk53n2OfXutbIm1k/czC2BLTTFS1qgpUoRaUqpo
+	 gAyzYP944EhkQNOb38OcBSY4ljPLFawd956rpYdHIV02N/1r64IdEYRtGhnesjUNac
+	 N+l0tOvN99EsA==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56T1X5bD4858423
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Jul 2025 09:33:05 +0800
+Received: from RTEXMBS05.realtek.com.tw (172.21.6.98) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 29 Jul 2025 09:33:06 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS05.realtek.com.tw (172.21.6.98) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Tue, 29 Jul 2025 09:33:05 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
+ RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
+ 15.01.2507.035; Tue, 29 Jul 2025 09:33:05 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Mande Imran Ahmed <immu.ahmed1905@gmail.com>,
+        Zong-Zhe Yang
+	<kevin_yang@realtek.com>,
+        "rtl8821cerfe2@gmail.com"
+	<rtl8821cerfe2@gmail.com>,
+        Bernie Huang <phhuang@realtek.com>,
+        Damon Chen
+	<damon.chen@realtek.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] net:realtek:use sysfs_emit() instead of scnprintf() for sysfs consistency
+Thread-Topic: [PATCH v2] net:realtek:use sysfs_emit() instead of scnprintf()
+ for sysfs consistency
+Thread-Index: AQHb/7KNKr1y0kye70a0T4vlsYw6t7RIT+LA
+Date: Tue, 29 Jul 2025 01:33:05 +0000
+Message-ID: <532f36a2a3524f2aac67b95935387302@realtek.com>
+References: <a28456f5b8d2477785493c6081f24401@realtek.com>
+ <20250728112638.39412-1-immu.ahmed1905@gmail.com>
+In-Reply-To: <20250728112638.39412-1-immu.ahmed1905@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Specifically, the label '.. _atomic_write_bdev_support:' was renamed to
-'.. _atomic_write_bdev_support_section:' to ensure label uniqueness
-within the document.
+Mande Imran Ahmed <immu.ahmed1905@gmail.com> wrote:
+> Update the Realtek rtw89 wireless driver to replace scnprintf() with
+> sysfs_emit() for formatting sysfs attribute output, in line with the
+> recommendations from Documentation/filesystems/sysfs.rst.
 
-Signed-off-by: Andre Luiz da Nobrega <andreluizrodriguescastro@gmail.com>
----
- Documentation/filesystems/ext4/atomic_writes.rst |  2 +-
- warn_output.txt                                  | 12 ++++++++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
- create mode 100644 warn_output.txt
+As mentioned in v1. This is debugfs, not sysfs. The assumption of PAGE_SIZE
+buffer can't be guaranteed. More, this driver must not depend on sysfs.
 
-diff --git a/Documentation/filesystems/ext4/atomic_writes.rst b/Documentation/filesystems/ext4/atomic_writes.rst
-index 80f83112d24d..e8cf983049b4 100644
---- a/Documentation/filesystems/ext4/atomic_writes.rst
-+++ b/Documentation/filesystems/ext4/atomic_writes.rst
-@@ -204,7 +204,7 @@ writes are supported.
- .. _atomic_write_bdev_support_section:
- 
- Hardware Support
------------------
-+-----------------
- 
- The underlying storage device must support atomic write operations.
- Modern NVMe and SCSI devices often provide this capability.
-diff --git a/warn_output.txt b/warn_output.txt
-new file mode 100644
-index 000000000000..593c6fa5b65d
---- /dev/null
-+++ b/warn_output.txt
-@@ -0,0 +1,12 @@
-+Using alabaster theme
-+[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/filesystems/ext4/atomic_writes.rst:5: WARNING: duplicate label atomic_writes, other instance in /home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/filesystems/ext4/atomic_writes.rst[39;49;00m
-+[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/filesystems/ext4/atomic_writes.rst:207: WARNING: duplicate label atomic_write_bdev_support, other instance in /home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/filesystems/ext4/atomic_writes.rst[39;49;00m
-+[91mWARNING: ./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:1068 struct member 'mcm' not described in 'mpc_funcs'[39;49;00m
-+[91mWARNING: ./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:1068 struct member 'rmcm' not described in 'mpc_funcs'[39;49;00m
-+[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/gpu/drm-kms:360: ./drivers/gpu/drm/drm_fourcc.c:362: WARNING: Duplicate C declaration, also defined at gpu/drm-kms:35.
-+Declaration is '.. c:function:: const struct drm_format_info * drm_format_info (u32 format)'.[39;49;00m
-+[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/gpu/drm-kms:476: ./drivers/gpu/drm/drm_modeset_lock.c:375: WARNING: Duplicate C declaration, also defined at gpu/drm-kms:49.
-+Declaration is '.. c:function:: int drm_modeset_lock (struct drm_modeset_lock *lock, struct drm_modeset_acquire_ctx *ctx)'.[39;49;00m
-+[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/gpu/drm-uapi:557: ./drivers/gpu/drm/drm_ioctl.c:915: WARNING: Duplicate C declaration, also defined at gpu/drm-uapi:70.
-+Declaration is '.. c:function:: bool drm_ioctl_flags (unsigned int nr, unsigned int *flags)'.[39;49;00m
-+[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/arch/powerpc/htm.rst: WARNING: document isn't included in any toctree[39;49;00m
--- 
-2.50.1
+NACK. Please do not try to respin patch by v3 I'll ignore it.
+
+>=20
+> This change enhances the safety and correctness of sysfs handling,
+> promotes consistency throughout the kernel, and aids long-term
+> maintainability.
+>=20
+> Functionality verified using ping, iperf, and connection tests to ensure
+> stability after the changes.
+>=20
+> Changes since v1:
+> - Replaced sysfs_emit() with sysfs_emit_at()
+> - Removed unused function parameters.
+>=20
+> Signed-off-by: Mande Imran Ahmed <immu.ahmed1905@gmail.com>
+
+[...]
+
+
+>=20
+> -       p +=3D sysfs_emit(p, "ChainA offset: %d dBm\n", offset_patha);
+> -       p +=3D sysfs_emit(p, "ChainB offset: %d dBm\n", offset_pathb);
+
+By the way, the original driver never uses sysfs_emit().=20
+
+> +       len =3D sysfs_emit(buf, "ChainA offset: %d dBm\n", offset_patha);
+> +       len +=3D sysfs_emit_at(buf, len, "ChainB offset: %d dBm\n", offse=
+t_pathb);
+
+[...]
 
 
