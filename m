@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-749011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFFEFB148DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:01:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320D5B148E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:07:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EC644E44C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:00:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D77F3AA6F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9109A25DAFF;
-	Tue, 29 Jul 2025 07:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848ED25D8F0;
+	Tue, 29 Jul 2025 07:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rn0SQqDd"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="NJOwyYUm"
+Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64486290F;
-	Tue, 29 Jul 2025 07:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF04C1F874F;
+	Tue, 29 Jul 2025 07:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753772459; cv=none; b=Yc50de+nu+KsuhjhDtc8EkpypLCAguUQBeeF3NSTdmGgbbt1TbYjS6E7H016Lpu/mWy93HBAlCu2/bsFh/tjiSIVGmw524IbLVxXMpNeDo+jgmQT8+A8CRkxV7FR4OMIFuH0cAJgf40328Zpyq48Xkj7YMjAehV15k1PDIWoKqk=
+	t=1753772843; cv=none; b=azZ5cJcWcQZAYGDLpVGAjJ8uiU7QfYU4OXzj0Cnblg9Laubo3Ao1/nDOHqNKAZKOtWrgmevQSb0HXcpN9OCp6a6niqa1kHZX44Xamtwp8ESNarEbVsZuZf+1qjOqhvedyjwIXoCcFkikSrP4J/68tGfZC/6x4bU0yH6agT6Z3Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753772459; c=relaxed/simple;
-	bh=4zir6EZFKxTAw5jAMxPZ3bM9r0SW/RrUbrbCmKXQq7k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NllnLQHhrG7zBEiyMPaEJhHk70AN0hHlizo4hRXfSEO1TkGM3ODYvx8Pvy2lO7DVMco03bn+c7iQugdaWLNK4vd08LF8gx/0ZKCTQBzo5HusBJJi9acg1ZnT+o56DtHxb484XyZtJX9j/Ydnays0djBTPH24s8qcn8yJyRMDh8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rn0SQqDd; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so31535555e9.1;
-        Tue, 29 Jul 2025 00:00:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753772456; x=1754377256; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ttNeMXJ7C0/yz0Q1cFAKO+GXt2M48g6T6K0pnZ0/AhI=;
-        b=Rn0SQqDddBtHqCrF15Fjk/DqDsOqa2N+YRWWVbXOED2j5SGBGr5JKrG/CcoD1lbYsw
-         PEbUl2n3FrE7tX/J/qKazDykOFCczqCSCMhQGKFZTVNIXsSRUqzbOSORNyloF6a/FKr8
-         65N7S23zSqfcvIg638DvW0f83hi3m+CvxJl6cm5aNAoX5n40zbJ2rsHELHf3H9gtCt16
-         oeYik4jj75oXaTZk3K0+Q/ZTavGf0khwyI/KrGwx52R1wSNFbn79hhcWdI48qCtzwO/e
-         SpJUJDBw3eQ+qZcdRLMkAGHTQpRagAMD0wHf7RHz5iO/Mu6xDIM3IOgTBSBygQcePGWU
-         veCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753772456; x=1754377256;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ttNeMXJ7C0/yz0Q1cFAKO+GXt2M48g6T6K0pnZ0/AhI=;
-        b=YpEGpkXtInTB37mQ+OD1ocrsys9vd9w4M0F6u+uoRWgRvt+syMYOeP55I10+UoE0RC
-         yqQze93Coc8dx3pdqbK7VXRvRBO7NpEKEeKnhdrdx62/tAJC7hxx01KxlisXAcVbCaqI
-         m2j/QKQXB5BiNctaEVcMJAcOknePKr0wf3RIQZAOMwain9hdYlFr/f3PYET1aKF4kYA3
-         wPo8n+xF7iKrpPN1q0DHfTx444JueVZJBA6ZEeaQ+RdhKwLQePCHdA/UtU47ZDB0NkYt
-         Kxyw8lBhD1Ph5gfg/7dN3zWd54k3R5R0JWs+zQlSsAqylufYkHA5HOtSnR/WDgtINb9h
-         CU+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUS8AE8EGIy8d9ucQZ0vGGNStxWSw9Q3AvnMYFIx7pcrQTIJowx/b4IlS/03GMhCGYhWUFSGRSeaOs+1dM=@vger.kernel.org, AJvYcCUjdhzIWF11wapgR2V/8tWsnI7mWi9a4Ke1JtPMF3gRYuAP91UqCXz0m0JFxvYh+2EjcykypMFt+oGwllk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr7MsQReHdUIYaE9Sav4p+iYg+4t8krcuueQL31m4Sg9+4n059
-	dRYGLp4dj0rAq7mQeHctdK+alsR7kgxH5xQY+S2IZJla/0CahazWzbGT
-X-Gm-Gg: ASbGncshw3/vnUrOMelX5HUpxDdMpN3obdEmZyewOCMzQmMFxMhqnOPwGxBBrYi9jSg
-	TpQfi8NI2ioJOY3Z5N8oxZvmxGwQYisYgJc1oovnYTPwU4TnK9VkAyQzjz1WvC8ek3xWdBeJd0F
-	jGmI0H5rnqur7V3cHFdfN2d5lL5Q+dfSZ73H0ln2sFRikZA34q0pwS+rd94vZ6As/NaqOBMMJiJ
-	2JcGcC7IvuEkqAZuNcoD/00NkfLjnlVkXSy9VyNiCQkyEWtGYRlcAr7aa7/W1qkPARU+jQxxM2f
-	KCe0QJ6OA1l210dUtgatdg99zXde0t+SuXhGS3Yj0GfsnnU2QXtJXhJah5GviIhjasoTEfF6fMS
-	Ef6Sazrpzr57cq6XtaQ44
-X-Google-Smtp-Source: AGHT+IGF3754rBDu14/bYmKAnzfiy/mo2VV5nBc+fe9fTEAHSBar23LpWafsxPoAvG1Ah6venOuKlg==
-X-Received: by 2002:a05:600c:518d:b0:456:24aa:9586 with SMTP id 5b1f17b1804b1-45876449ee6mr91588465e9.21.1753772455275;
-        Tue, 29 Jul 2025 00:00:55 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778f034a6sm11271145f8f.47.2025.07.29.00.00.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 00:00:54 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: i2c: ov5648: make read-only arrays regs and values static const
-Date: Tue, 29 Jul 2025 08:00:21 +0100
-Message-ID: <20250729070021.1659848-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753772843; c=relaxed/simple;
+	bh=1TfdvzGT+nwpn2cSdU76FR+epNvzw84ISJiVRYDwLGU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vF4BKvCxXXpVgYnu8xr3EBMrBcySyyjvhjZU5AdUPPXvG+S8BsOIrj0lRuRZ+ddH/r4Ro5grkxS4gEbnpZuOYGUrVvB9Iqg2q6AJlqcN40L0+5pdqwgguL54ZnLVTMy7CLaqj3UZrdyx+UjA8Een6s48cmY0gKAlE/9ijsWMV8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=NJOwyYUm; arc=none smtp.client-ip=178.154.239.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
+Received: from mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:16c5:0:640:b9af:0])
+	by forward501d.mail.yandex.net (Yandex) with ESMTPS id E774781C12;
+	Tue, 29 Jul 2025 10:00:53 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id p0TZYSMIm0U0-yBcThmRl;
+	Tue, 29 Jul 2025 10:00:53 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
+	t=1753772453; bh=nvCU/Cru1rShKUWctXKkh21j8jRPqnuBB6hEKKhcS1M=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=NJOwyYUmzeLh+Z4QPdedyXiPN139pwgkoPGUdlyJOQstv5OR82QuCvMTZTUT0kA7g
+	 gYz8LkLNhl3UJljfeWmjAUV8GImBGbHAs4lof/ZsA/BHro3ZP7kYADcvCfqrOntxss
+	 XN3kbueGmUqnjxrTO6W4KScmf7tYLSniP4xQr+Pw=
+Authentication-Results: mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net; dkim=pass header.i=@0upti.me
+Message-ID: <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
+Date: Tue, 29 Jul 2025 10:00:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
+To: Armin Wolf <W_Armin@gmx.de>, rafael@kernel.org, lenb@kernel.org
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250729062038.303734-1-W_Armin@gmx.de>
+Content-Language: en-US
+From: Ilya K <me@0upti.me>
+In-Reply-To: <20250729062038.303734-1-W_Armin@gmx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Don't populate the read-only arrays regs and values on the stack at run
-time, instead make them static const.
+On 2025-07-29 09:20, Armin Wolf wrote:
+> It turns out that the ECDT table inside the ThinkBook 14 G7 IML
+> contains a valid EC description but an invalid ID string
+> ("_SB.PC00.LPCB.EC0"). Ignoring this ECDT based on the invalid
+> ID string prevents the kernel from detecting the built-in touchpad,
+> so relax the sanity check of the ID string and only reject ECDTs
+> with empty ID strings.
+> 
+> Compile-tested only.
+> 
+> Reported-by: Ilya K <me@0upti.me>
+> Fixes: 7a0d59f6a913 ("ACPI: EC: Ignore ECDT tables with an invalid ID string")
+> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/acpi/ec.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/media/i2c/ov5648.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks, this works!
 
-diff --git a/drivers/media/i2c/ov5648.c b/drivers/media/i2c/ov5648.c
-index 4b86d2631bd1..02bfb948e2fb 100644
---- a/drivers/media/i2c/ov5648.c
-+++ b/drivers/media/i2c/ov5648.c
-@@ -1061,8 +1061,8 @@ static int ov5648_sw_standby(struct ov5648_sensor *sensor, int standby)
- 
- static int ov5648_chip_id_check(struct ov5648_sensor *sensor)
- {
--	u16 regs[] = { OV5648_CHIP_ID_H_REG, OV5648_CHIP_ID_L_REG };
--	u8 values[] = { OV5648_CHIP_ID_H_VALUE, OV5648_CHIP_ID_L_VALUE };
-+	static const u16 regs[] = { OV5648_CHIP_ID_H_REG, OV5648_CHIP_ID_L_REG };
-+	static const u8 values[] = { OV5648_CHIP_ID_H_VALUE, OV5648_CHIP_ID_L_VALUE };
- 	unsigned int i;
- 	u8 value;
- 	int ret;
--- 
-2.50.0
+Tested-by: Ilya K <me@0upti.me>
 
+> diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
+> index 75c7db8b156a..7855bbf752b1 100644
+> --- a/drivers/acpi/ec.c
+> +++ b/drivers/acpi/ec.c
+> @@ -2033,7 +2033,7 @@ void __init acpi_ec_ecdt_probe(void)
+>  		goto out;
+>  	}
+>  
+> -	if (!strstarts(ecdt_ptr->id, "\\")) {
+> +	if (!strlen(ecdt_ptr->id)) {
+>  		/*
+>  		 * The ECDT table on some MSI notebooks contains invalid data, together
+>  		 * with an empty ID string ("").
+> @@ -2042,9 +2042,13 @@ void __init acpi_ec_ecdt_probe(void)
+>  		 * a "fully qualified reference to the (...) embedded controller device",
+>  		 * so this string always has to start with a backslash.
+>  		 *
+> -		 * By verifying this we can avoid such faulty ECDT tables in a safe way.
+> +		 * However some ThinkBook machines have a ECDT table with a valid EC
+> +		 * description but an invalid ID string ("_SB.PC00.LPCB.EC0").
+> +		 *
+> +		 * Because of this we only check if the ID string is empty in order to
+> +		 * avoid the obvious cases.
+>  		 */
+> -		pr_err(FW_BUG "Ignoring ECDT due to invalid ID string \"%s\"\n", ecdt_ptr->id);
+> +		pr_err(FW_BUG "Ignoring ECDT due to empty ID string\n");
+>  		goto out;
+>  	}
+>  
+
+Would it maybe make sense to also log a warning for the old case? Maybe a vendor will notice it and fix the firmware...
+(yeah yeah fat chance)
 
