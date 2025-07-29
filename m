@@ -1,205 +1,153 @@
-Return-Path: <linux-kernel+bounces-749751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4046FB15277
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:06:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47E01B1527C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:09:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6782A18A3C3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:07:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C3A18A43EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4EA296158;
-	Tue, 29 Jul 2025 18:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FD1298CDE;
+	Tue, 29 Jul 2025 18:09:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="OmPDSU53"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMX4zuex"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F1A2AE90
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC852AE90;
+	Tue, 29 Jul 2025 18:09:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753812394; cv=none; b=TtiXy+ROHzb3g4i45gdNlMV6750xebU03KY9bv51snaAyry13a1ubUfjPRQY2eTTa/vSZGK66+r00pwa/a9NSxLCkjqhKHZl8lncz2EA+4HlLrrWyd8iUlyDmQXPKDEBbgWiBttiZJe++D4dEwIdvIPs/QZLPDKN0d7bsOxuSVg=
+	t=1753812583; cv=none; b=FNc0PJy8EmU6InjBkvWoHvLoWNU51946FyaFpRgYLewj5MybikVfZZPwpqfc9vm7xY5ESPcAFWAP9cMwRAIqX+pm6lyw9I6hCBSPtmQcNOExShWiKzqXGEBae5LkGNHARKnsG8+qmoLVA4djhtjOFMJq3/y+j8AG6GtZjjcHevs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753812394; c=relaxed/simple;
-	bh=UHjSZSLqRGvbAquAUIqqIg+kswpH3hdSmAuFD7Hm+LY=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=e6ozd6qIKo3yWpDWICGOHBpesVuo8elriZsqbrSSboDcN1DHHll3UOWZeWlF0rleSD5mHfxvwSNtNnpjYRIJQgaOrJu7CgqX++Zud0+d+aimu9JVvXJk8h9QSWLpdNp0N8J0p/PRAoO+aWvHHXyT7Pfk5mTybuOYxzaTbbOF5Wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu; spf=pass smtp.mailfrom=maine.edu; dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b=OmPDSU53; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maine.edu
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e6399d0656so439072385a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:06:32 -0700 (PDT)
+	s=arc-20240116; t=1753812583; c=relaxed/simple;
+	bh=ywqvu+KrKdqKad+AKdA4ygwDzPPd7QjOOhpjC2V8Pbc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EFEv61GiZXjf9YPZvwBVFRdQEboa+kyqwnd1yMHWYNfV12UhnZdoNcrEWOIgInfFmkFHvVRkSdoqXn9mdodPqJg0pUtmFj+fLBPoMMlHbZfz/5TFnfZy7OmcRdGGYbA2gj8tjM4yaavstDvg+lFGebseOzB/zzR4LM6NLPxuFuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMX4zuex; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-32b5226e6beso51058141fa.2;
+        Tue, 29 Jul 2025 11:09:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google; t=1753812391; x=1754417191; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3hsNN4tBk8HZkdsjsm/7BszW2d4F/WvJrs6hXwBGls=;
-        b=OmPDSU53yW4c0HOBk/pNNCxpbb8o4JKWyqsPerfvy2a+YOXfvgtdwQX/k2NvrGqAZy
-         B6mqEoTbupadND7lthUnBHG98d4CCaZ9Nw+6uFJAMWTFcF1pYsaF8QusVebdCTlWMWsm
-         GsFTphcmPkJqeN5BERfzUH3X+KWyrkKoSpvGM=
+        d=gmail.com; s=20230601; t=1753812579; x=1754417379; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pRH8pLPGb1KqaZNb18HazOqZ8bQupnXae13vT3Qg1TU=;
+        b=DMX4zuex2ncyM4URetii3r4U60wcl1n6x5REJOvJycqjrb9FUeQcuuWDpn9JqWk6//
+         boUHhd523xEH6OrHbMMJIlufpF5tFcVM8fgHCXos9tFLN/7odaH6JYf3M72ZZdN58LFe
+         sxrjwLfE5X3y7BB5c56utMA0Q9mbkXo5/P0AakU0Z4D+kFZnhYeHTwzKN2U+nwRL8FmP
+         HB7GDwmldiIyyYytd9rxH0NzdtS8+n+TsG02oicY1zEZnHe4vWNowv1p2wB2OTRwnAFE
+         qM44K8tb0+akC1moa+3rpTlc3OF6MCixmyicFNsRlWVQEp5T1qx8/e4YiJAJ4N3DNkNw
+         E08Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753812391; x=1754417191;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:date
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3hsNN4tBk8HZkdsjsm/7BszW2d4F/WvJrs6hXwBGls=;
-        b=O1yQPP0wJ4rzmSZTGUA+aG2vNZjbQu993xcuzdHZEH6PrnP/XRKntsP05OTyssGxCJ
-         wY99d9G+sA6NJAldBZPj9OMKf6cYXrhWaaKURunG1Ljg5C0GwC+lwIu8JNkXg25MGOK6
-         wUjDSdCVvOqdhhKRId86QSF769whq++lw2gD+suCVx1Wt6BifJIqXCihrshtHx2OPjze
-         K5k+TM/zdJmQDnl/NHhWL1or2YO/DO8Lqb2dW23S7HC+3c2483iUDzlSmyKZHuFie6Zm
-         vTya8o/ajxj0YlM0UlekBcPCAuRfPImjGz9yvW5QR01gLu/A/KH6CuPUCDM/WGpjY1oG
-         0RgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSiGp0GlP7DpzjmpKbRFAmiyEoKiSP1dw0IhtaJoT5uXNf/mrWQj6waa8z3NqPuaJoxcvOxyi9L3cwxak=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNMkzEV1NNdkO0zGPRKlAg3As/aWcMYE87aN6vtVkZO9pb1NmG
-	qeCKdgsMekTcToa/XiDBY/N08pubECzox0Cq3MQ219nyjmGjpce3MH5kKxPsJXVoew==
-X-Gm-Gg: ASbGncsQrUJI9dG2a8yM83c/tlo0LR473pT//EPuBpwNTF6Dkzt64q2mkoo/GLOvcn/
-	G97Jc6orEz1aIpX8uyEiNHpkLOgYCCwxCkhHcyNn/nFpTYB70hLo00itt8PYLp9dNAU3fZ8h5eo
-	C+Qapv1igxnpCm2G6xvfMxC+sEniVGXw/BtOCrMc1PCMllQ/WF7OjvFda0FnwBZb8awMas8gwYB
-	i5Y4JTyt0ePlLqUNFOTNLW07ef3ED5MYgSJ94dxZ67EDSDpQ5qCe3fmVffTuw3KvVC7U6eh80WD
-	TycEWUwFBfFGmrsvW940t0fW3BwMvAsXQQYFofvyTncPpwqh4HojV7wgdEnmoAA+95RCO7KqTeZ
-	l5JoG6Yg3PeWQjGqPYOFaVidsAIJoEC55fY+OUQk2/A==
-X-Google-Smtp-Source: AGHT+IGOZeWnoyllekiZdDJDMMRxSIQ5WNjBrcKo11O3Y6bTvb57Tzuub2uvd0v21wtUzUpTY4nOhQ==
-X-Received: by 2002:a05:620a:17a7:b0:7e3:35e3:3412 with SMTP id af79cd13be357-7e66f3571b2mr32513485a.34.1753812391016;
-        Tue, 29 Jul 2025 11:06:31 -0700 (PDT)
-Received: from [192.168.8.146] (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e668fd0d44sm60133485a.47.2025.07.29.11.06.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 11:06:30 -0700 (PDT)
-From: Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date: Tue, 29 Jul 2025 14:06:29 -0400 (EDT)
-To: Vince Weaver <vincent.weaver@maine.edu>
-cc: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>, linux-kernel@vger.kernel.org, 
-    linux-perf-users@vger.kernel.org, "Liang, Kan" <kan.liang@linux.intel.com>, 
-    Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-    Arnaldo Carvalho de Melo <acme@kernel.org>, 
-    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-    Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [perf] fuzzer triggers "BUG: kernel NULL pointer dereference"
-In-Reply-To: <ff282f45-9f17-5790-174c-e765aae0038c@maine.edu>
-Message-ID: <6f2ecd8e-a041-6c0d-e4bc-7a3886b7bdd2@maine.edu>
-References: <5baea1f7-6edd-d6fa-27ce-04eddb7e5199@maine.edu> <fdcdd5a7-76b5-6c52-63dc-95fadddf7772@maine.edu> <db7043a4-f815-4178-8d81-2da1dda6236e@linux.intel.com> <ff282f45-9f17-5790-174c-e765aae0038c@maine.edu>
+        d=1e100.net; s=20230601; t=1753812579; x=1754417379;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pRH8pLPGb1KqaZNb18HazOqZ8bQupnXae13vT3Qg1TU=;
+        b=pxa54LuShyiztEwmI2XpJtINFgSGEL0jk2/OoQx6SlwfL+c7UtgYDUo/rBEKU+K9tB
+         1uEAawNZg3Cfj3tTi+4tI2dLKeXW5iHv4W3TBFM/J1jkRcGrUZc0QNmwT7GHc0w7e50+
+         pbVDSxEBHUHNvAhqYXtCDizvG7WXJhqT9luGxJN4JCmt7nEpc/paDriIn4//YnCDspqL
+         s9/A2ho64/KEfDEgpFCdduDuK/Blny+gNuhm1BzyIfqsofIQSAH06EUoXRV3s2WmED3b
+         cvddhbeyognMVf6gYxTHEfX/eQhTPeLomw7CfrzUILSIZEpKGUopeeAG7lmjq4UwcHT5
+         33JQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgEx1nNMiLzo3nUwTWsl74NgovCvljYcjVEb+ivsi5B2PmgcwnnVqpsXZP2S2pOUJYnk64/O0YWucthMwS@vger.kernel.org, AJvYcCXW6nPJs6/f2MdBZ7rFKG0lRlJ+4MbeLlFJHxRyr/LgWBPUbLxrH2Zh2WX7Z8z/Y1Y9ohhqaMb1LMQUcUKgs+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF+LMIjC9AGYFnL5NVZF9bxeZu6zD3+FcFcTxf+pPKqoXGfxZO
+	M4aplenno35vNNV1hyKPm9POwPpaYsRdKLYqKk2dSjNriJEurVVfH6NO4eKLXIfcXyAEq7ALpwI
+	aAXU70GTQ35a21walDipFQRVowkTMUTs=
+X-Gm-Gg: ASbGncuNMz/3EMlS0Nlp0I0pBOZao7IH4l1lPJsY6a1l9ePNBOkvzI7golw0rSwA0xT
+	iYK0hvug8k11gsHCzfAlCIfS7Z6GOsqsgHQSquqgsTzM0cMIyuFiILmpzOLzn8LCHPqccV73p7b
+	mSmORP0Q/HPw3ZYxyKKbVyRO3UoK3MD+8PouhzKn4mbh/AQCl1+zVTyGPFOFNXsJdz5Yk5a5MiW
+	0G7Yg==
+X-Google-Smtp-Source: AGHT+IHlpvqrRu9z+KD5pfs45/H08BEm1z8FNPDDdVDgZDQmY2eeOnq/THFvNlCRyMaUK+JlW9EC53z7GMcwNBEo1TI=
+X-Received: by 2002:a2e:a005:0:b0:32a:778d:be76 with SMTP id
+ 38308e7fff4ca-33224ba02damr724221fa.26.1753812579170; Tue, 29 Jul 2025
+ 11:09:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250729152743.2394727-1-arnd@kernel.org>
+In-Reply-To: <20250729152743.2394727-1-arnd@kernel.org>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Tue, 29 Jul 2025 14:09:26 -0400
+X-Gm-Features: Ac12FXzP7ozXTfw7dL1L74mia_Wa8v0jXJtc91QPj7y2bY-PN859ffQcnUdE500
+Message-ID: <CABBYNZLk8ZrMLuEmjx=CwgWrtqC1rBcsFb89ZqdFffdBs_LhvA@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: btintel_pcie: fix CONFIG_PM_SLEEP check
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Kiran K <kiran.k@intel.com>, 
+	Paul Menzel <pmenzel@molgen.mpg.de>, Arnd Bergmann <arnd@arndb.de>, 
+	Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>, Vijay Satija <vijay.satija@intel.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 29 Jul 2025, Vince Weaver wrote:
+Hi Arnd,
 
-> This is on a RaptorLake system.
-> 
-> I can reproduce this issue with the perf_fuzzer but it is possibly timing 
-> sensitive and so if I enable fuzzer trace logging to try to make a 
-> reproducible test case it won't trigger anymore.
-> 
-> The system locks up extremely hard and so I can't really get the panic 
-> message besides taking a picture of the screen.
-> 
-> I can try enabling KASAN to see if that helps get better debug messages.
+On Tue, Jul 29, 2025 at 11:27=E2=80=AFAM Arnd Bergmann <arnd@kernel.org> wr=
+ote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> Using both pm_sleep_ptr() and an #ifdef around the definition is not
+> valid:
+>
+> In file included from include/linux/kernel.h:36,
+>                  from drivers/bluetooth/btintel_pcie.c:9:
+> drivers/bluetooth/btintel_pcie.c:2674:36: error: 'btintel_pcie_pm_ops' un=
+declared here (not in a function); did you mean 'btintel_pcie_in_op'?
+>  2674 |         .driver.pm =3D pm_sleep_ptr(&btintel_pcie_pm_ops),
+>       |                                    ^~~~~~~~~~~~~~~~~~~
+>
+> Remove the #ifdef check to let the compiler's dead-code-elimination drop
+> this as intended by pm_sleep_ptr().
+>
+> Fixes: d1b3de23042b ("Bluetooth: btintel_pcie: Add support for _suspend()=
+ / _resume()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I managed to get KASAN to trigger the issue without crashing the system, 
-not sure if this helps at all:
+Ive fixed it up in place since this hasn't been merged yet, thanks.
 
-[  115.636383] ==================================================================
-[  115.636432] BUG: KASAN: slab-use-after-free in rb_erase+0xd25/0x1370
-[  115.636467] Read of size 8 at addr ffff8881151dc0b8 by task swapper/5/0
+> ---
+>  drivers/bluetooth/btintel_pcie.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel=
+_pcie.c
+> index 8e65def192a9..aa47bc38d298 100644
+> --- a/drivers/bluetooth/btintel_pcie.c
+> +++ b/drivers/bluetooth/btintel_pcie.c
+> @@ -2574,7 +2574,6 @@ static void btintel_pcie_coredump(struct device *de=
+v)
+>  }
+>  #endif
+>
+> -#ifdef CONFIG_PM_SLEEP
+>  static int btintel_pcie_suspend_late(struct device *dev, pm_message_t me=
+sg)
+>  {
+>         struct pci_dev *pdev =3D to_pci_dev(dev);
+> @@ -2664,7 +2663,6 @@ static const struct dev_pm_ops btintel_pcie_pm_ops =
+=3D {
+>         .poweroff =3D btintel_pcie_hibernate,
+>         .restore =3D btintel_pcie_resume,
+>  };
+> -#endif
+>
+>  static struct pci_driver btintel_pcie_driver =3D {
+>         .name =3D KBUILD_MODNAME,
+> --
+> 2.39.5
+>
 
-[  115.636508] CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 6.16.0+ #13 PREEMPT(voluntary) 
-[  115.636517] Hardware name: Dell Inc. Precision 3660/0VJ7G2, BIOS 2.17.0 08/09/2024
-[  115.636520] Call Trace:
-[  115.636524]  <TASK>
-[  115.636528]  dump_stack_lvl+0x64/0x80
-[  115.636536]  print_report+0xce/0x650
-[  115.636547]  ? rb_erase+0xd25/0x1370
-[  115.636552]  kasan_report+0xce/0x100
-[  115.636559]  ? rb_erase+0xd25/0x1370
-[  115.636565]  rb_erase+0xd25/0x1370
-[  115.636570]  ? __tmigr_cpu_activate+0x13d/0x310
-[  115.636578]  timerqueue_del+0x68/0x120
-[  115.636585]  __remove_hrtimer+0x84/0x200
-[  115.636592]  hrtimer_try_to_cancel+0x19c/0x350
-[  115.636597]  hrtimer_cancel+0x15/0x30
-[  115.636602]  tick_nohz_restart_sched_tick+0x5b/0x210
-[  115.636609]  tick_nohz_idle_exit+0xfc/0x180
-[  115.636615]  do_idle+0x258/0x410
-[  115.636623]  ? __pfx_do_idle+0x10/0x10
-[  115.636631]  ? do_idle+0x2c1/0x410
-[  115.636638]  cpu_startup_entry+0x54/0x60
-[  115.636645]  start_secondary+0x20f/0x290
-[  115.636654]  ? __pfx_start_secondary+0x10/0x10
-[  115.636661]  common_startup_64+0x13e/0x141
-[  115.636671]  </TASK>
 
-[  115.637037] Allocated by task 1091:
-[  115.637054]  kasan_save_stack+0x33/0x60
-[  115.637062]  kasan_save_track+0x14/0x30
-[  115.637069]  __kasan_slab_alloc+0x89/0x90
-[  115.637076]  kmem_cache_alloc_node_noprof+0x136/0x450
-[  115.637086]  perf_event_alloc+0x100/0x41e0
-[  115.637093]  __do_sys_perf_event_open+0x39b/0x1c30
-[  115.637098]  do_syscall_64+0x82/0x2f0
-[  115.637105]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-[  115.637121] Freed by task 0:
-[  115.637136]  kasan_save_stack+0x33/0x60
-[  115.637143]  kasan_save_track+0x14/0x30
-[  115.637149]  kasan_save_free_info+0x3b/0x60
-[  115.637155]  __kasan_slab_free+0x51/0x70
-[  115.637162]  kmem_cache_free+0x2f2/0x540
-[  115.637167]  rcu_do_batch+0x39a/0xe00
-[  115.637174]  rcu_core+0x3f0/0xb10
-[  115.637180]  handle_softirqs+0x1bf/0x5d0
-[  115.637188]  __irq_exit_rcu+0x14e/0x1a0
-[  115.637193]  sysvec_apic_timer_interrupt+0x72/0x90
-[  115.637201]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-
-[  115.637216] Last potentially related work creation:
-[  115.637235]  kasan_save_stack+0x33/0x60
-[  115.637242]  kasan_record_aux_stack+0xa7/0xc0
-[  115.637248]  __call_rcu_common.constprop.0+0xc8/0x1160
-[  115.637255]  perf_event_release_kernel+0x2f6/0x400
-[  115.637262]  perf_release+0x31/0x50
-[  115.637270]  __fput+0x35b/0xac0
-[  115.637276]  task_work_run+0x11a/0x1f0
-[  115.637282]  do_exit+0x6c6/0x2400
-[  115.637289]  do_group_exit+0xac/0x230
-[  115.637297]  get_signal+0x1cbc/0x1e40
-[  115.637304]  arch_do_signal_or_restart+0x8d/0x5e0
-[  115.637312]  irqentry_exit_to_user_mode+0x12c/0x1f0
-[  115.637319]  asm_sysvec_reschedule_ipi+0x1a/0x20
-
-[  115.637334] The buggy address belongs to the object at ffff8881151dbf40
-                which belongs to the cache perf_event of size 1344
-[  115.637376] The buggy address is located 376 bytes inside of
-                freed 1344-byte region [ffff8881151dbf40, ffff8881151dc480)
-
-[  115.637428] The buggy address belongs to the physical page:
-[  115.637450] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1151d8
-[  115.637457] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-[  115.637461] flags: 0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
-[  115.637470] page_type: f5(slab)
-[  115.637477] raw: 0017ffffc0000040 ffff88810004b040 dead000000000122 0000000000000000
-[  115.637483] raw: 0000000000000000 0000000000160016 00000000f5000000 0000000000000000
-[  115.637488] head: 0017ffffc0000040 ffff88810004b040 dead000000000122 0000000000000000
-[  115.637492] head: 0000000000000000 0000000000160016 00000000f5000000 0000000000000000
-[  115.637497] head: 0017ffffc0000003 ffffea0004547601 00000000ffffffff 00000000ffffffff
-[  115.637501] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-[  115.637504] page dumped because: kasan: bad access detected
-
-[  115.637517] Memory state around the buggy address:
-[  115.637537]  ffff8881151dbf80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[  115.637564]  ffff8881151dc000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[  115.637590] >ffff8881151dc080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[  115.637615]                                         ^
-[  115.637636]  ffff8881151dc100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[  115.637661]  ffff8881151dc180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-[  115.637687] ==================================================================
-[  115.637712] Disabling lock debugging due to kernel taint
+--=20
+Luiz Augusto von Dentz
 
