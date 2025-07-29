@@ -1,141 +1,141 @@
-Return-Path: <linux-kernel+bounces-750016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA5CB155EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1034CB155F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E7D7AF1C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:22:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AADFB7B03E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC912874E9;
-	Tue, 29 Jul 2025 23:23:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC6328642F;
+	Tue, 29 Jul 2025 23:27:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExfrNWag"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tU7aTxra"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B5228469A;
-	Tue, 29 Jul 2025 23:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B62319D8BC;
+	Tue, 29 Jul 2025 23:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753831421; cv=none; b=iL+jO/PXKf65OVWkj41qTZ6qPhSfKlXtibE5P1xbj7QyEPPdz6lxiiX8ib5ISz3cg4vwoQNxfYvgiDPTVut1upWPH6FSwfS68Y0Bu/E018M/WmvrNJrLRaVLRyu7WxPVmAHtgMHrXh7Bd8EEbYkI+yADMo3hiHcSliAe5GSn2D4=
+	t=1753831672; cv=none; b=NY2v/2Oj1Pke/YjdK+6iFwt1CMKta4mmX67LWaeg5Pcss4/yzbtJYteS4edUls9otQ51OXP4lrRhnI/4qCnUZAeSkukexwBL7s7pZMcUSd7XnpRgiYDqT6zMiQDkxlwxIzRyK4zbYzEQbO9ZJG/Ts3jS20sAse3UDp3NBUa4EVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753831421; c=relaxed/simple;
-	bh=k87dPy6BPkaKz6PVwZ9QExifXqUdGreO1XryLzhHrAU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SmnlwQsku4uADO/4WFv/7wRbq/RYURKDCICv53VR53zp/Jq27Gb8Bqzj0zHE0torXyvWWi7ZRPl1gRTx5R81RGC31yoOr3VQpdIvHz+sgbaQJQfHbW6Tm1s/L7PiMDDYqyuT9O1Tc93+mie++CkDsDSEYHiOHwyiNbekYQIGbGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExfrNWag; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50991C4CEF7;
-	Tue, 29 Jul 2025 23:23:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753831420;
-	bh=k87dPy6BPkaKz6PVwZ9QExifXqUdGreO1XryLzhHrAU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ExfrNWagdnrOUCqpiU3Lx9CVfPIp7MiWDZf8en0ZPlkT/sSBVYPfQm95IJrm+lavz
-	 xO3ixcF5LdhPdpxIhjbbIDM//OnwrYz2GlfzTafjYRm0z9rgGffZIy49H4UOsMDIim
-	 MxXUAu7OBYRjdF+bOLfiMb3F2+nvBVDJfkZf1tOxdoGyMHEp5CPbGUpMX0Tde4Oc/A
-	 dUTAZX7snWGKF++MpaMUDxcAOcifca93aYE7gxxcGtOlyWyZOzVWPQRuHA8jp8SVV0
-	 Gsb68qtK7cOd352+mtgM9MLjS41RS3uKrcDMiOkE/kYX3hQeVqn6I0Nuhg1AD5dbxN
-	 XH02XJsRenO3A==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,  Thomas Gleixner <tglx@linutronix.de>,
-  Pasha Tatashin <pasha.tatashin@soleen.com>,  pratyush@kernel.org,
-  jasonmiu@google.com,  graf@amazon.com,  changyuanl@google.com,
-  rppt@kernel.org,  dmatlack@google.com,  rientjes@google.com,
-  corbet@lwn.net,  rdunlap@infradead.org,  ilpo.jarvinen@linux.intel.com,
-  kanie@linux.alibaba.com,  ojeda@kernel.org,  aliceryhl@google.com,
-  masahiroy@kernel.org,  akpm@linux-foundation.org,  tj@kernel.org,
-  yoann.congal@smile.fr,  mmaurer@google.com,  roman.gushchin@linux.dev,
-  chenridong@huawei.com,  axboe@kernel.dk,  mark.rutland@arm.com,
-  jannh@google.com,  vincent.guittot@linaro.org,  hannes@cmpxchg.org,
-  dan.j.williams@intel.com,  david@redhat.com,  joel.granados@kernel.org,
-  anna.schumaker@oracle.com,  song@kernel.org,  zhangguopeng@kylinos.cn,
-  linux@weissschuh.net,  linux-kernel@vger.kernel.org,
-  linux-doc@vger.kernel.org,  linux-mm@kvack.org,
-  gregkh@linuxfoundation.org,  mingo@redhat.com,  bp@alien8.de,
-  dave.hansen@linux.intel.com,  x86@kernel.org,  hpa@zytor.com,
-  rafael@kernel.org,  dakr@kernel.org,  bartosz.golaszewski@linaro.org,
-  cw00.choi@samsung.com,  myungjoo.ham@samsung.com,
-  yesanishhere@gmail.com,  Jonathan.Cameron@huawei.com,
-  quic_zijuhu@quicinc.com,  aleksander.lobakin@intel.com,
-  ira.weiny@intel.com,  andriy.shevchenko@linux.intel.com,
-  leon@kernel.org,  lukas@wunner.de,  bhelgaas@google.com,
-  wagi@kernel.org,  djeffery@redhat.com,  stuart.w.hayes@gmail.com,
-  lennart@poettering.net,  brauner@kernel.org,  linux-api@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  saeedm@nvidia.com,
-  ajayachandra@nvidia.com,  parav@nvidia.com,  leonro@nvidia.com,
-  witu@nvidia.com
-Subject: Re: [PATCH v2 31/32] libluo: introduce luoctl
-In-Reply-To: <20250729183548.49d6c2dc@gandalf.local.home>
-References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
-	<20250723144649.1696299-32-pasha.tatashin@soleen.com>
-	<20250729161450.GM36037@nvidia.com> <877bzqkc38.ffs@tglx>
-	<20250729222157.GT36037@nvidia.com>
-	<20250729183548.49d6c2dc@gandalf.local.home>
-Date: Wed, 30 Jul 2025 01:23:30 +0200
-Message-ID: <mafs07bzqeg3x.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1753831672; c=relaxed/simple;
+	bh=uwSpHf7Svq/Z+HcDlHfqihJ9wMTLx3vVkNJZ8UnB8Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rKrR/7hlflnO5V1zOkUPsBYXiCbChthj9KHPuO2taafOfbr+vZ4y2FEaflNELkjjcxfTRCxDeRtJyiap4e6o00N4sHR3Um4GTZFJXhuLnrkrdNOeW3oi0HevFEuAbhDcxOPoR6ivJ/O/O/d4HZvg7RBEkOwYu00yyTxerObuxAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tU7aTxra; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753831455;
+	bh=6mTBlnRa8PfraSaaxyB4E03DncCpm/bdVtGK3eHDw28=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tU7aTxranuaaz+DwfXamuiJ/PpaLzLGSReMsdUZgXmLOHRlhUihAJRQ7xeG8ET8N6
+	 BSjXVXF/DsVBMbT4Xtr+uziHC7jNV1ezuY9hTGjoyk23SgzBNLVuHIisuslBFUW+qo
+	 HNaVzs5PQzB9eAJQu6ZPsHzyz+b0E1FAEv4PW557NRP3JGnAbOVh8IS7PdqEPbLHWn
+	 fu6Y0VaZOvSKML3e2A0XLJPg1TlpFYzdTmV0bnCK6dJOG3pQwBh5jySLSr34HeveKh
+	 mjcX6P11IzxTM6EhbGULbzRkJYZrQ1J4JEFBCv2oTgXrlmC2ZopXyVx/MSP102qDi6
+	 P12CytnqSM31Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsBHy73Dcz4w2R;
+	Wed, 30 Jul 2025 09:24:14 +1000 (AEST)
+Date: Wed, 30 Jul 2025 09:27:46 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>
+Cc: Greg KH <greg@kroah.com>, Danilo Krummrich <dakr@kernel.org>, Alexandre
+ Courbot <acourbot@nvidia.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, DRI <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: manual merge of the driver-core tree with the
+ drm-nova tree
+Message-ID: <20250730092746.1576eaa3@canb.auug.org.au>
+In-Reply-To: <20250701155159.47b914a3@canb.auug.org.au>
+References: <20250701155159.47b914a3@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/AMgr8NzSUK_p=U_yMkTt9h=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Jul 29 2025, Steven Rostedt wrote:
+--Sig_/AMgr8NzSUK_p=U_yMkTt9h=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> On Tue, 29 Jul 2025 19:21:57 -0300
-> Jason Gunthorpe <jgg@nvidia.com> wrote:
->
->> > As this is an evolving mechanism, having the corresponding library in
->> > the kernel similar to what we do with perf and other things makes a lot
->> > of sense.  
->> 
->> If we did this everywhere we'd have hundreds of libraries in the
->> kernel tree and I would feel bad for all the distros that have to deal
->> with packaging such a thing :(
->> 
->> It is great for development but I'm not sure mono-repo directions are
->> so good for the overall ecosystem.
->
-> I have to agree here. When libtraceevent was in the kernel, it was a pain
-> to orchestrate releases with distros. When it was moved out of the kernel,
-> it made it much easier to manage.
->
-> The main issue was versioning numbers. I know the kernel versioning is
-> simply just "hey we added more stuff" and the numbers are meaningless.
->
-> But a library usually has a different cycle than the kernel. If it doesn't
-> have any changes from one kernel release to the next, the distros will make
-> a new version anyway, as each kernel release means a new library release.
->
-> This luoctl.c isn't even a library, as it has a "main()" and looks to me
-> like an application. So my question is, why is it in tools/lib?
+Hi all,
 
-luoctl isn't the library, it is a user of it. See previous patches for
-the main library. Don't get too excited though, it is only a thin
-wrapper around the ioctls. The more interesting stuff is in patch 32
-which shows the API in action.
+On Tue, 1 Jul 2025 15:51:59 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>=20
+> Today's linux-next merge of the driver-core tree got a conflict in:
+>=20
+>   drivers/gpu/nova-core/driver.rs
+>=20
+> between commit:
+>=20
+>   94a08721435c ("gpu: nova-core: increase BAR0 size to 16MB")
+>=20
+> from the drm-nova tree and commit:
+>=20
+>   f5d3ef25d238 ("rust: devres: get rid of Devres' inner Arc")
+>=20
+> from the driver-core tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc drivers/gpu/nova-core/driver.rs
+> index 518ef8739550,110f2b355db4..000000000000
+> --- a/drivers/gpu/nova-core/driver.rs
+> +++ b/drivers/gpu/nova-core/driver.rs
+> @@@ -1,6 -1,6 +1,6 @@@
+>   // SPDX-License-Identifier: GPL-2.0
+>  =20
+> - use kernel::{auxiliary, bindings, c_str, device::Core, pci, prelude::*,=
+ sizes::SZ_16M};
+>  -use kernel::{auxiliary, bindings, c_str, device::Core, pci, prelude::*,=
+ sync::Arc};
+> ++use kernel::{auxiliary, bindings, c_str, device::Core, pci, prelude::*,=
+ sizes::SZ_16M, sync::Arc};
+>  =20
+>   use crate::gpu::Gpu;
+>  =20
 
-To add some context: one of the reasons to include it in the series as
-an RFC at the end was to showcase the userspace side of the API and have
-a way for people to see how it can be used. Seeing an API in action
-provides useful context for reviewing patches.
+This is now a conflict between the drm tree and Linus' tree.
 
-I think Pasha forgot to add the RFC tags when he created v2, since it is
-only meant to be RFC right now and not proper patches.
+--=20
+Cheers,
+Stephen Rothwell
 
-The point of moving out of tree was also brought up in the live update
-call and I agree with Jason's feedback on it. The plan is to drop it
-from the series in the next revision, and just leave a reference to it
-in the cover letter instead.
+--Sig_/AMgr8NzSUK_p=U_yMkTt9h=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
--- 
-Regards,
-Pratyush Yadav
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiJWPIACgkQAVBC80lX
+0Gwbcgf/RCYzMVrfgLKrYwOzn0BcMoNWMGL7Z5Ew3wMyRelaWSOrkIvFHSL6m290
+luqRdmfLxE1SPmZfD1mfW7f4sxEbzixFa0n8LCkGr+1NtfgMryLYrLAje9o1Tz5w
+QvlFxuBSifzmMV4EKTSoKW6PLc1Ay9rQgk0ACcKkZ/QGBhVwqotFzLZElwTR5y5m
+wjF0s0b8wTwqEl76qhkHRDS9ILaaA8XLQwWL3Hxy8IILm9siVQlngRsa+au1HqHf
+HazP4ciXAWVkm4kxxLPg+z/mXlln7uGozB5m7Jn137tEjtAhhjQipKqiCQsx23pj
+8wT6Jvwv/t/4+CVZJZ3GnL2nDEmiag==
+=xobR
+-----END PGP SIGNATURE-----
+
+--Sig_/AMgr8NzSUK_p=U_yMkTt9h=--
 
