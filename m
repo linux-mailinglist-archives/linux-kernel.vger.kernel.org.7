@@ -1,299 +1,205 @@
-Return-Path: <linux-kernel+bounces-749759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37269B1528F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:19:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5E3B15291
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D349189B3BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:20:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41AC5545689
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:19:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBE0D23535A;
-	Tue, 29 Jul 2025 18:19:36 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46EA23A997;
+	Tue, 29 Jul 2025 18:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kzdKmxk8"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5504E19F40B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D50D236A7C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753813176; cv=none; b=HrxWmL8I3wlCJDRUKMfb0TfAgiGlfL+DT/KqFw26D9+w+AmxUVkMNQU/z+rFHXnumduJyzJ4JNBd0+8FLf9Xy6zBLXq3RfNHYKjdEcA56SylUvoUgzarSkffS1C01c/8951UiYcwHXd8ZoV4ddHCOc8belfjEw8Nm7LsX/eQ0rA=
+	t=1753813186; cv=none; b=amI8RmJEuHG6U4MZJsfs3PV47tUoicLTFYyF1hPXy0Vj7xQBWpTUl+b28GVkJ1QKoAyJTJBEC+6EeQrnIfe6HYmmEnrDsDmFzpX16Zl71D4qGGVc90GAmHKTGImX/DoHocdneufx5zMfxsCqYiSy0Bh/7m+y/0Y+5355nUKVnuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753813176; c=relaxed/simple;
-	bh=wpUlOwybmwMZ5+iQbeX5IpGD5/zT9tH9IX/TjdHjMBI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=V+lD/rBR/xsBcvUZh50KoftqhRcgE8dWiT2ZcYNrkzT+Eld1oqbBmAV4kgYFz2oB7IuxeL/Wrl0S3NZRgRbEX8pjzJahi1+B/r3lCkB1T2UqcpRZ4dz5iHvjlFBHI70F75PqsgIe13ebPKvBww4hH55Za/Z1LE1NUrqY8yJtXDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-87c73351935so15448839f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:19:34 -0700 (PDT)
+	s=arc-20240116; t=1753813186; c=relaxed/simple;
+	bh=Zl7KLWafk74sQL+8j6ytR4kxPDeV/QUPEgtH+rTuR6I=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=eiLoQBrtz5QXbE6nsjrOpYFPzB9ecgnOO9uOnPdkO1dXUHKI0C9geXtJzhvuJnqZxM9rNgEypfni2xx+6hnv5TDTeK9IHNDSxf4Mskhtrzvbf2EEQeGOZVfg04PWOkFXSQyvg3obhoLovL1PVLMy4gUcKzRzzRSpH8Bdn5LtAy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kzdKmxk8; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b00e4358a34so4054406a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753813184; x=1754417984; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=wn3gJxWA3uJgeB3JDV1mVkQm4z7b+VZjhC6w+XYIxiA=;
+        b=kzdKmxk8tSA7DBr9QUp/GkWWJL22OhWDEbKgyO60D2RBtMCy6KBcc4JgvmuZcpWQTj
+         jElkLmcmdz1OHKrX4x6AbvSXBAnvRhK+fVFi82KWd2sxZxcAm/qqq+ITXmt0M/xljV33
+         D0woaLvIqpz6rWSzw5h4oIAO5DQ2mI9mPrfaCwHB1Fz1hDjkY+W9UOMK0DmIKHdsld3e
+         9wCL9B023KbAGN+NbUvR4mg/7ly3+RDx3+wgYKa+IkDZJCiYZFa2/RHY1IFa8LcKoAEI
+         EgDHcEuL02952wLtduOBOh6Bcl7JGZVKCTyMBBZHs5shNvQZIp7GIjt1tZPwV1/OuvhK
+         QOpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753813173; x=1754417973;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDoCJCkPySBSG4VIhCf6u4oigoDGG+MZ0xFI3r4cOxI=;
-        b=DtgS77PQ8Mc6Ts4RttO2fo2TG7kwR1YjDMlcVdd7tx9rJJsJF5oY0pXfV35BFVfQz1
-         exUYIcPrFdxblPS1K4QmTKMChPtZ8Kk1FqbrgjfTDatDzN9z6MV0DNKqykU6qBx0t8Uw
-         ACrruY1pvMJyWA6wQ3QaYH/z9/LA2HxWBTezietViXyPF53Plobs+Lu2ooNU40hNIhKJ
-         i8IzEU3BcMRZiUMDAlewU1UfGuSvAbDe1DLy1le9LBh0wnT0g0HDcgp1fW8CdBSm/Rfd
-         RyfJFyh7sBj4TP4T6e6mYgLyxWdppQ/avoGgCKlNUXw/uanSJ5x/w5LR0qxc2U7qrowq
-         eShg==
-X-Forwarded-Encrypted: i=1; AJvYcCVO/vAvjQGV1r+dG6GvQbqIWvz4EYOEa3w4VzFfnJy2/I+tRZTk8Vos9LP+J3XUhqHhzjNGB2FqWKNV5G8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt5/d+BKuiS07XDGfVDq+c395uLih3Ot7N2Mj9SzO4yY68DLgf
-	whxM9JlfdqXNWn2iO5khhN+44CTsV3MWZ/GaGgDJ28YA1BXz0OvWdUDAuhZt3AjwtlbZ7HxX8EO
-	gtuz0qoFWPxMltF1bwqc26nM0DKHpWBvbCBq3UYWn4yXo30rER2kj83uolG8=
-X-Google-Smtp-Source: AGHT+IHPctcsSm85/iVsXJRwOipgbdYxSmPDMzNzh12hRxt2kY76EbVt/k09cu43KBgqpugYcD4qzAR/OyrOooIJZGHgxshCIeD3
+        d=1e100.net; s=20230601; t=1753813184; x=1754417984;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wn3gJxWA3uJgeB3JDV1mVkQm4z7b+VZjhC6w+XYIxiA=;
+        b=mr8+oU2WzGKvZYWrTD+KRWka5K3wGpkyxotcBzjdtNaja1F+SK0Zph7/hUkZzLOUwL
+         OGJtVPezSzh/YPoRPrFDJrGrhORC6VWf+4+ceGFY5vOFpL+70d6r/fhWdcWUm1fpKcvk
+         inmD0R/Pid2Bm2vbdc+ljFpOQ9nisq4l62PNbWo/r2E5sOTj+B66Z/MC1mOyGewoHaTm
+         7emXBWYyLrL3/M/OiOVW/h3uj7C1PsUMklaROMNreH5w0tYaX2vMuR9y+2G0kkBVw2I1
+         OssYKrLGH8+4makMcYzsHKnEV11Lhbrx2V4bb3pkU5FhpPZ+rACclkQhr8j8LkuDSPiy
+         p6MA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3H/exQao60VsYmfx7BrroI5HPeX2Kyq15Vbh6vXUx5t1wHbNL0a2n79Mi2tjcTBpjjWC1De84L91jqkU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDDo9yrUBdyPVdoWzm7CNwnDXmw9wNYK8u5+ssZmbuAl00pQY0
+	kts+1Cj6e3hpbs5UG3d+kcqWCA3Iv6188NWIqCc8TK5mqTFqvI9f6T/htltHQTKlKTmhRBFJBxq
+	uSnYX5A==
+X-Google-Smtp-Source: AGHT+IHEpLXvt767w0GL4NtfNvD307U11Z/kcZVZLSuSK0JImdMWtTujcBTE1fUybj6KQU1bt7BHRbDk8u4=
+X-Received: from pjxx5.prod.google.com ([2002:a17:90b:58c5:b0:312:15b:e5d1])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e7d2:b0:311:c1ec:7d0a
+ with SMTP id 98e67ed59e1d1-31f5de47ef7mr544335a91.25.1753813183765; Tue, 29
+ Jul 2025 11:19:43 -0700 (PDT)
+Date: Tue, 29 Jul 2025 11:19:42 -0700
+In-Reply-To: <aIgZjW2PZEdR/DYr@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:718b:b0:87c:63cd:62a2 with SMTP id
- ca18e2360f4ac-8813744dfe1mr93183239f.1.1753813173441; Tue, 29 Jul 2025
- 11:19:33 -0700 (PDT)
-Date: Tue, 29 Jul 2025 11:19:33 -0700
-In-Reply-To: <6879a305.a70a0220.693ce.0058.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688910b5.a00a0220.26d0e1.000c.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] INFO: task hung in bch2_run_recovery_passes
-From: syzbot <syzbot+c2294ae43bae606e3c7d@syzkaller.appspotmail.com>
-To: anna-maria@linutronix.de, frederic@kernel.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250704085027.182163-1-chao.gao@intel.com> <20250704085027.182163-2-chao.gao@intel.com>
+ <5591ecc4-2383-4804-b3f0-0dcef692e8f6@zytor.com> <aIgZjW2PZEdR/DYr@intel.com>
+Message-ID: <aIkQvhGhRKisonmh@google.com>
+Subject: Re: [PATCH v11 01/23] KVM: x86: Rename kvm_{g,s}et_msr()* to show
+ that they emulate guest accesses
+From: Sean Christopherson <seanjc@google.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: Xin Li <xin@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, pbonzini@redhat.com, dave.hansen@intel.com, 
+	rick.p.edgecombe@intel.com, mlevitsk@redhat.com, john.allen@amd.com, 
+	weijiang.yang@intel.com, minipli@grsecurity.net, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Jul 29, 2025, Chao Gao wrote:
+> On Mon, Jul 28, 2025 at 03:31:41PM -0700, Xin Li wrote:
+> >>   	/* Set L1 segment info according to Intel SDM
+> >>   	    27.5.2 Loading Host Segment and Descriptor-Table Registers */
+> >> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> >> index 7543dac7ae70..11d84075cd14 100644
+> >> --- a/arch/x86/kvm/x86.c
+> >> +++ b/arch/x86/kvm/x86.c
+> >> @@ -1929,33 +1929,35 @@ static int kvm_get_msr_ignored_check(struct kvm_vcpu *vcpu,
+> >>   				 __kvm_get_msr);
+> >>   }
+> >> -int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data)
+> >> +int kvm_emulate_msr_read_with_filter(struct kvm_vcpu *vcpu, u32 index,
+> >> +				     u64 *data)
+> >
+> >I think the extra new line doesn't improve readability, but it's the
+> >maintainer's call.
+> >
+> 
+> Sure. Seems "let it poke out" is Sean's preference. I saw he made similar
+> requests several times. e.g.,
 
-HEAD commit:    ae388edd4a8f Merge tag 'landlock-6.17-rc1' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15424cf0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8004f1b1e0ae8198
-dashboard link: https://syzkaller.appspot.com/bug?extid=c2294ae43bae606e3c7d
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1583f034580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1038d4a2580000
+Depends on the situation.  I'd probably mentally flip a coin in this case.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/720dce21f23a/disk-ae388edd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a83240c628a9/vmlinux-ae388edd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/1cabbf436747/bzImage-ae388edd.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2b16c3a29557/mount_0.gz
+But what I'd actually do here is choose names that are (a) less verbose and (b)
+capture the relationship between the APIs.  Instead of:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c2294ae43bae606e3c7d@syzkaller.appspotmail.com
+  int kvm_emulate_msr_read_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+  int kvm_emulate_msr_write_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data);
+  int kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+  int kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data);
 
-INFO: task syz.4.23:6214 blocked for more than 143 seconds.
-      Tainted: G        W           6.16.0-syzkaller-01056-gae388edd4a8f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.4.23        state:D stack:21160 pid:6214  tgid:6213  ppid:5960   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x165b/0x4c50 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6879
- schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
- ___down_common kernel/locking/semaphore.c:268 [inline]
- __down_common+0x319/0x6a0 kernel/locking/semaphore.c:293
- down+0x80/0xd0 kernel/locking/semaphore.c:100
- bch2_run_recovery_passes+0x177/0x210 fs/bcachefs/recovery_passes.c:609
- bch2_fs_recovery+0x28c9/0x3a50 fs/bcachefs/recovery.c:1050
- bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
- bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
- vfs_get_tree+0x92/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
- do_mount fs/namespace.c:4133 [inline]
- __do_sys_mount fs/namespace.c:4344 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4321
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0774e9014a
-RSP: 002b:00007f07740f5e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f07740f5ef0 RCX: 00007f0774e9014a
-RDX: 0000200000000080 RSI: 00002000000001c0 RDI: 00007f07740f5eb0
-RBP: 0000200000000080 R08: 00007f07740f5ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007f07740f5eb0 R14: 000000000000f628 R15: 00002000000000c0
- </TASK>
-INFO: task syz.0.26:6216 blocked for more than 143 seconds.
-      Tainted: G        W           6.16.0-syzkaller-01056-gae388edd4a8f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.0.26        state:D stack:21160 pid:6216  tgid:6215  ppid:5947   task_flags:0x40[  344.100863][   T38] task:syz.0.26        state:D stack:21160 pid:6216  tgid:6215  ppid:5947   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x165b/0x4c50 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6879
- schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
- ___down_common kernel/locking/semaphore.c:268 [inline]
- __down_common+0x319/0x6a0 kernel/locking/semaphore.c:293
- down+0x80/0xd0 kernel/locking/semaphore.c:100
- bch2_run_recovery_passes+0x177/0x210 fs/bcachefs/recovery_passes.c:609
- bch2_fs_recovery+0x28c9/0x3a50 fs/bcachefs/recovery.c:1050
- bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
- bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
- vfs_get_tree+0x92/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
- do_mount fs/namespace.c:4133 [inline]
- __do_sys_mount fs/namespace.c:4344 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4321
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ffbf91d014a
-RSP: 002b:00007ffbf8435e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffbf8435ef0 RCX: 00007ffbf91d014a
-RDX: 0000200000000080 RSI: 00002000000001c0 RDI: 00007ffbf8435eb0
-RBP: 0000200000000080 R08: 00007ffbf8435ef0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007ffbf8435eb0 R14: 000000000000f628 R15: 00002000000000c0
- </TASK>
-INFO: task syz.3.28:6241 blocked for more than 143 seconds.
-      Tainted: G        W           6.16.0-syzkaller-01056-gae388edd4a8f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.3.28        state:D stack:21160 pid:6241  tgid:6240  ppid:5956   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x165b/0x4c50 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6879
- schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
- ___down_common kernel/locking/semaphore.c:268 [inline]
- __down_common+0x319/0x6a0 kernel/locking/semaphore.c:293
- down+0x80/0xd0 kernel/locking/semaphore.c:100
- bch2_run_recovery_passes+0x177/0x210 fs/bcachefs/recovery_passes.c:609
- bch2_fs_recovery+0x28c9/0x3a50 fs/bcachefs/recovery.c:1050
- bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
- bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
- vfs_get_tree+0x92/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
- do_mount fs/namespace.c:4133 [inline]
- __do_sys_mount fs/namespace.c:4344 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4321
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f05843e014a
-RSP: 002b:00007f058364de68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f058364def0 RCX: 00007f05843e014a
-RDX: 0000200000000080 RSI: 00002000000001c0 RDI: 00007f058364deb0
-RBP: 0000200000000080 R08: 00007f058364def0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007f058364deb0 R14: 000000000000f628 R15: 00002000000000c0
- </TASK>
-INFO: task syz.1.30:6287 blocked for more than 143 seconds.
-      Tainted: G        W           6.16.0-syzkaller-01056-gae388edd4a8f #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz.1.30        state:D stack:21160 pid:6287  tgid:6286  ppid:5950   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5397 [inline]
- __schedule+0x165b/0x4c50 kernel/sched/core.c:6786
- __schedule_loop kernel/sched/core.c:6864 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6879
- schedule_timeout+0x9a/0x270 kernel/time/sleep_timeout.c:75
- ___down_common kernel/locking/semaphore.c:268 [inline]
- __down_common+0x319/0x6a0 kernel/locking/semaphore.c:293
- down+0x80/0xd0 kernel/locking/semaphore.c:100
- bch2_run_recovery_passes+0x177/0x210 fs/bcachefs/recovery_passes.c:609
- bch2_fs_recovery+0x28c9/0x3a50 fs/bcachefs/recovery.c:1050
- bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
- bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
- vfs_get_tree+0x92/0x2b0 fs/super.c:1815
- do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
- do_mount fs/namespace.c:4133 [inline]
- __do_sys_mount fs/namespace.c:4344 [inline]
- __se_sys_mount+0x317/0x410 fs/namespace.c:4321
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f3e578b014a
-RSP: 002b:00007f3e56b1de68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f3e56b1def0 RCX: 00007f3e578b014a
-RDX: 0000200000000080 RSI: 00002000000001c0 RDI: 00007f3e56b1deb0
-RBP: 0000200000000080 R08: 00007f3e56b1def0 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00002000000001c0
-R13: 00007f3e56b1deb0 R14: 000000000000f628 R15: 00002000000000c0
- </TASK>
+rename to:
 
-Showing all locks held in the system:
-4 locks held by pr/legacy/17:
-1 lock held by khungtaskd/38:
- #0: ffffffff8d9aa300 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8d9aa300 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8d9aa300 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6770
-2 locks held by kworker/u8:5/1011:
-2 locks held by getty/5582:
- #0: ffff88823bf4c8a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90003e932e0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x444/0x1410 drivers/tty/n_tty.c:2222
-3 locks held by kworker/1:5/6095:
-1 lock held by udevd/6527:
-3 locks held by udevd/6529:
-3 locks held by syz.0.218/7187:
-2 locks held by syz.4.219/7189:
+  int kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+  int kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data);
+  int __kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data);
+  int __kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data);
 
-=============================================
+And then we can do a follow-up patch to solidify the relationship:
 
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 38 Comm: khungtaskd Tainted: G        W           6.16.0-syzkaller-01056-gae388edd4a8f #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xe9e/0xee0 kernel/hung_task.c:470
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 17 Comm: pr/legacy Tainted: G        W           6.16.0-syzkaller-01056-gae388edd4a8f #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:io_serial_in+0x77/0xc0 drivers/tty/serial/8250/8250_port.c:409
-Code: e8 9e 32 83 fc 44 89 f9 d3 e3 49 83 ee 80 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 74 08 4c 89 f7 e8 ef 14 e1 fc 41 03 1e 89 da ec <0f> b6 c0 5b 41 5c 41 5e 41 5f e9 8a ad b9 05 cc 44 89 f9 80 e1 07
-RSP: 0018:ffffc90000167890 EFLAGS: 00000202
-RAX: 1ffffffff326fe00 RBX: 00000000000003fd RCX: 0000000000000000
-RDX: 00000000000003fd RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffffff9937f7d0 R08: 0000000000000000 R09: 0000000000000000
-R10: dffffc0000000000 R11: ffffffff853b0150 R12: dffffc0000000000
-R13: 0000000000000000 R14: ffffffff9937f540 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8881268fa000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2ed5ffff CR3: 0000000036c16000 CR4: 00000000003526f0
-Call Trace:
- <TASK>
- serial_in drivers/tty/serial/8250/8250.h:137 [inline]
- serial_lsr_in drivers/tty/serial/8250/8250.h:159 [inline]
- wait_for_lsr+0x1a7/0x2f0 drivers/tty/serial/8250/8250_port.c:2094
- fifo_wait_for_lsr drivers/tty/serial/8250/8250_port.c:3348 [inline]
- serial8250_console_fifo_write drivers/tty/serial/8250/8250_port.c:3371 [inline]
- serial8250_console_write+0x11bd/0x1b40 drivers/tty/serial/8250/8250_port.c:3456
- console_emit_next_record kernel/printk/printk.c:3118 [inline]
- console_flush_all+0x695/0xcd0 kernel/printk/printk.c:3226
- __console_flush_and_unlock+0xa4/0x240 kernel/printk/printk.c:3285
- legacy_kthread_func+0x13b/0x1a0 kernel/printk/printk.c:3638
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+--
+From: Sean Christopherson <seanjc@google.com>
+Date: Tue, 29 Jul 2025 11:13:48 -0700
+Subject: [PATCH] KVM: x86: Use double-underscore read/write MSR helpers as
+ appropriate
 
+Use the double-underscore helpers for emulating MSR reads and writes in
+he no-underscore versions to better capture the relationship between the
+two sets of APIs (the double-underscore versions don't honor userspace MSR
+filters).
 
+No functional change intended.
+
+Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+ arch/x86/kvm/x86.c | 29 ++++++++++++++++-------------
+ 1 file changed, 16 insertions(+), 13 deletions(-)
+
+diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+index 09b106a5afdf..65c787bcfe8b 100644
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -1932,11 +1932,24 @@ static int kvm_get_msr_ignored_check(struct kvm_vcpu *vcpu,
+ 				 __kvm_get_msr);
+ }
+ 
++int __kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data)
++{
++	return kvm_get_msr_ignored_check(vcpu, index, data, false);
++}
++EXPORT_SYMBOL_GPL(__kvm_emulate_msr_read);
++
++int __kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data)
++{
++	return kvm_set_msr_ignored_check(vcpu, index, data, false);
++}
++EXPORT_SYMBOL_GPL(__kvm_emulate_msr_write);
++
+ int kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data)
+ {
+ 	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_READ))
+ 		return KVM_MSR_RET_FILTERED;
+-	return kvm_get_msr_ignored_check(vcpu, index, data, false);
++
++	return __kvm_emulate_msr_read(vcpu, index, data);
+ }
+ EXPORT_SYMBOL_GPL(kvm_emulate_msr_read);
+ 
+@@ -1944,21 +1957,11 @@ int kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data)
+ {
+ 	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_WRITE))
+ 		return KVM_MSR_RET_FILTERED;
+-	return kvm_set_msr_ignored_check(vcpu, index, data, false);
++
++	return __kvm_emulate_msr_write(vcpu, index, data);
+ }
+ EXPORT_SYMBOL_GPL(kvm_emulate_msr_write);
+ 
+-int __kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data)
+-{
+-	return kvm_get_msr_ignored_check(vcpu, index, data, false);
+-}
+-EXPORT_SYMBOL_GPL(__kvm_emulate_msr_read);
+-
+-int __kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data)
+-{
+-	return kvm_set_msr_ignored_check(vcpu, index, data, false);
+-}
+-EXPORT_SYMBOL_GPL(__kvm_emulate_msr_write);
+ 
+ static void complete_userspace_rdmsr(struct kvm_vcpu *vcpu)
+ {
+
+base-commit: 1877e7b0749cbaa2d2ba4056eeda93adb373f7d4
+--
 
