@@ -1,134 +1,161 @@
-Return-Path: <linux-kernel+bounces-749154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86802B14ABE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:07:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A2EB14AC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:08:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF95F16468E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E92304E683D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4853628642E;
-	Tue, 29 Jul 2025 09:07:24 +0000 (UTC)
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8527C28750C;
+	Tue, 29 Jul 2025 09:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YoILE9fe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686E1285CAD;
-	Tue, 29 Jul 2025 09:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59286286D64;
+	Tue, 29 Jul 2025 09:08:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753780043; cv=none; b=iNJOvup48t8iaZO+3VG+YZGqRIFiv3IuOfAzuBSQlrTMaMTAfsEIoNNRuPhNWeo6hQzux76vovCXhW3qE6p91pN32YTXRaTnD2v6PLdc9xd20etyoNK+Jdwm+oBBNNAFC/M5NV1cuTcq2YDss0kUo7WdyUhklUOhWF+tCfCqDkY=
+	t=1753780085; cv=none; b=L0YGsO43oYd8wIo+1GExjn4zQvaZc7ONX5T87ggkPybwez1WUHXieQ9k2Z9zCKsxNkZmnVY3Wg30QDBI4SiDqLNYDSEi84/8c4RUutI5cF/vL4O95xsMna7rW8Pfkm90h7MFIMIpbRC/vOs36glDvxji1D0A7hbg0V2WcEdPaMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753780043; c=relaxed/simple;
-	bh=ecjkvecP5NqSvqFl308Avop4YFgulP7Zpyo+eKxO91M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KO6fwq9Ttjeq1mTbx/3t5QEOpx8ZRtnneS3w13pmaz2UHji7smtG8TSGM+rBB5MJf7giKETbDhCSDdD0REmsbPHmjnKu5R3OcSyhpB3uedPzn1Lo3iLjgqdTWRGA/rrNI1OXgv8pO/El07J5E6XZlfOEXFD7e5lhKhI+zkTsov8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5347686c12cso1412413e0c.0;
-        Tue, 29 Jul 2025 02:07:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753780040; x=1754384840;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WkOjGmt6FRb/fWmi2ESCljwkz9qkq8rezEdxE529VyY=;
-        b=Fac83ZLVZr01Rf4D2qW0sQ26pVSffn7oB8c7MVbnv2pmsm06KW02wruZJoGTWDHfcX
-         8PSGc+sZIUeTMbGZoGHJioP0fmDhHIlWvbw6ZFxBqTNcS391UrE1oM7DROueLOjNt1bz
-         d+FOP2Mqenx5+5rtEAj1AQMwbLtM4sToNQZMeSUojl/Ro/mGcdmrGh0OHYZ8qD6nO/da
-         PX7ldNJjJi0qDSnNlZPHZR67HvlbmBM5rxvl0oZTwNDHYD/H/tQSlYh/t8owCULHexPc
-         i2A5S/bNGLsZOE3+Xa7PqWy7l+PFVPgFCe7ncGl7vyCweFkAnkOw+AjwBjDmRmWzJAwg
-         DlYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbbR9Q7pw8vcWmMbXs8mubBlX1yCMwWPxMPRYv7l8y+T7LztOAa2AY/5UXysXJk7CIJe4msukzayDYU3U=@vger.kernel.org, AJvYcCWkVpXO6Q50Rd9XKq+rC2w5XFwml2p0b5I+8bvzUUtHA4Q6tMJm5KapRFIU0XglwqOtCpJ2w7Mn8MYZDw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAcptE/DLmlWcmPlbo+wN06fnVf7bJNNlJJ/41niLd5GIv1FU+
-	T7AaOdK+Q3Mcif+OFZocK2LXLvWcsinD8XxIFNVxnvp8sUR9lJdMHLFKrMgKlmRq
-X-Gm-Gg: ASbGncs+TcfGOePDSRT09RubdtfRUYDvVRpBgZfHLFTF7FF2gOnhfNs+1VdA2kxr0v6
-	/PbwsdqFzLmA90V95oVcdboSbWiwt7V/BOQFPV9zBxOzae9BR8o4QCcpF4ygaVcTAU1asyEWo2/
-	piyN8Mk1UzEq6Tf0zsm00n8PeucoqunyjcD+PUYHbs6XAS+956FFDQZAKjrAzLlo7E/nC5hjR5D
-	sBk1Uju8Jc2chK3TotFUi3XgBc3fu4/DU0elBk5kute9FUhRfQ8pjL6SoOK+5SXTLHV2uzV5IKK
-	TWUwypTYi1rCwd/174wUUNIj7Q2TCj637YnH2xa7xfrKQ36/+T7PJC0o2mw1HbwqYeJ5npfOyj+
-	Y6kGMA4k5uANA5qOmfq0J58GQ8RcRFVGCpbVH13U4TLM3gL6foBohddMChQVMZh4UqeheDpI=
-X-Google-Smtp-Source: AGHT+IGMGwwvP+9jsj1F9BLplIXmi8KJnCGaIAAw43pPrZZ5Rvdr23+D+zYiEqo/RxHsVux9b3GkIA==
-X-Received: by 2002:a05:6122:8c0e:b0:531:312c:a715 with SMTP id 71dfb90a1353d-538db4d73afmr6342381e0c.2.1753780039885;
-        Tue, 29 Jul 2025 02:07:19 -0700 (PDT)
-Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-538e28591absm1990913e0c.23.2025.07.29.02.07.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 02:07:19 -0700 (PDT)
-Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-88bb3eebeacso407052241.0;
-        Tue, 29 Jul 2025 02:07:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVUib1L0i/iN81Wiamz7ukqvdPF/m2QCP6n/VySKyXm70p9ULs+y9xL+gvd4nbByeRn7mK9f7lEadMBoA==@vger.kernel.org, AJvYcCWF7M1PTDPCwhUfTKclW9BSzzvrORvsdgPoDaaKDsRt+ea8J4lnQY3Mzl6fHiDY8hXXQOWXOkZtzQp3l/U=@vger.kernel.org
-X-Received: by 2002:a05:6102:5a91:b0:4f1:2ec7:af39 with SMTP id
- ada2fe7eead31-4fa3ff0655cmr5886798137.18.1753780039018; Tue, 29 Jul 2025
- 02:07:19 -0700 (PDT)
+	s=arc-20240116; t=1753780085; c=relaxed/simple;
+	bh=6xqd3ZGPvMT14nG70kPsq5tJ9sNdsKyLjJnQfae58F8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XCXEZ1nC1U/FpwtC/Wk+UX5yY/keyrJmmy6UymnIeMgTioe1WjSlo4U8M6ccblqsVFBj6GKnhMsnCtPkxb2muQ0cg5WptQTtXxkxkT3gzE2WgWdXUhbe2LrigNJJ7I+lsUmi8lWxnudcSNmtG2Vqa3+9QwPL4DjRzmJ/hnJ4ShU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YoILE9fe; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753780084; x=1785316084;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=6xqd3ZGPvMT14nG70kPsq5tJ9sNdsKyLjJnQfae58F8=;
+  b=YoILE9feTRKcaGS517ILBoZkzjjwOJjeTwSOACVSZ1GorwhzoThomxzQ
+   z2V4wi4YlM2HV3PVp4WJIBs59rQnu0cC6GJVHSyzSaoaaEGrVy2dx2/ui
+   +++RAfxiKyo6YbTlvwV+INNPnlQkKw3BCV8PVILSqwlEnMlpfgTkyTLsx
+   W0faFyxxIm8tZn8qv9e3mGsEeYD0AfUS/9OeXVIM9qnoR1TQ/hDr23ttD
+   I6SHjIh/AXT66RdSZFkst7TFQ9FyV+aS5PNoJ9NGhm/ZR7mBLd4PaI8Je
+   oO2juvv43aDSS31xYGhSnMe9KVWfN6lentUURjD0UxzBCf+0XXn4AxzT2
+   g==;
+X-CSE-ConnectionGUID: OTetJJfDRx2BIG6dy3scsA==
+X-CSE-MsgGUID: rtfw9CwvTdmSJzu5Vwh6EQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="55980657"
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="55980657"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 02:08:02 -0700
+X-CSE-ConnectionGUID: TyZw7sn9S422x4l1rFBgQA==
+X-CSE-MsgGUID: s8Ah/v+2SsKq8DjNu4eM7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="162360901"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 29 Jul 2025 02:07:59 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uggJP-00018t-1o;
+	Tue, 29 Jul 2025 09:07:55 +0000
+Date: Tue, 29 Jul 2025 17:07:10 +0800
+From: kernel test robot <lkp@intel.com>
+To: Rob Clark <robin.clark@oss.qualcomm.com>,
+	dri-devel@lists.freedesktop.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	freedreno@lists.freedesktop.org,
+	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+	Rob Clark <robin.clark@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] drm/msm: Fix a7xx debugbus read
+Message-ID: <202507291635.fl7cCAyl-lkp@intel.com>
+References: <20250728203412.22573-6-robin.clark@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250709172138.34ffb49f@canb.auug.org.au> <2025070903-census-heavily-929a@gregkh>
-In-Reply-To: <2025070903-census-heavily-929a@gregkh>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Jul 2025 11:07:08 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUGUFAXrCDyO-FufuEib9jVWi9FNF8oX-kifTjZEPvNFQ@mail.gmail.com>
-X-Gm-Features: Ac12FXw4Iu3SiZyrFc7lsYkwidmDVIvTjFHBm8xbxRb02DcQ9ETGSJ7lZXMiE_o
-Message-ID: <CAMuHMdUGUFAXrCDyO-FufuEib9jVWi9FNF8oX-kifTjZEPvNFQ@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the usb tree with the imx-mxs tree
-To: Greg KH <greg@kroah.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Shawn Guo <shawnguo@kernel.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Larisa Grigore <Larisa.Grigore@nxp.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	"Radu Pirea (NXP OSS)" <radu-nicolae.pirea@oss.nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728203412.22573-6-robin.clark@oss.qualcomm.com>
 
-Hi Greg,
+Hi Rob,
 
-On Wed, 9 Jul 2025 at 10:18, Greg KH <greg@kroah.com> wrote:
-> On Wed, Jul 09, 2025 at 05:21:38PM +1000, Stephen Rothwell wrote:
-> > Today's linux-next merge of the usb tree got conflicts in:
-> >
-> >   arch/arm64/boot/dts/freescale/s32g2.dtsi
-> >   arch/arm64/boot/dts/freescale/s32g3.dtsi
-> >
-> > between commit:
-> >
-> >   06ee2f0e2180 ("arm64: dts: Add DSPI entries for S32G platforms")
-> >
-> > from the imx-mxs tree and commit:
-> >
-> >   d1b07cc0868f ("arm64: dts: s32g: Add USB device tree information for s32g2/s32g3")
-> >
-> > from the usb tree.
-> >
-> > I fixed it up (see below) and can carry the fix as necessary. This
-> > is now fixed as far as linux-next is concerned, but any non trivial
-> > conflicts should be mentioned to your upstream maintainer when your tree
-> > is submitted for merging.  You may also want to consider cooperating
-> > with the maintainer of the conflicting tree to minimise any particularly
-> > complex conflicts.
->
-> Looks good to me, thanks!
+kernel test robot noticed the following build errors:
 
-No it is not: the USB nodes do not follow the DTS sorting rules
-(by unit-address).
-Oh, apparently that was an issue with the original patch.  Looks like
-it was applied (to the USB tree, not the freescale SoC tree), despite
-several review comments pointing out valid issues?
+[auto build test ERROR on drm/drm-next]
+[also build test ERROR on next-20250729]
+[cannot apply to drm-exynos/exynos-drm-next linus/master drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip v6.16]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Gr{oetje,eeting}s,
+url:    https://github.com/intel-lab-lkp/linux/commits/Rob-Clark/drm-msm-Add-missing-location-s-to-devcoredump/20250729-043615
+base:   git://anongit.freedesktop.org/drm/drm drm-next
+patch link:    https://lore.kernel.org/r/20250728203412.22573-6-robin.clark%40oss.qualcomm.com
+patch subject: [PATCH 5/7] drm/msm: Fix a7xx debugbus read
+config: powerpc-randconfig-002-20250729 (https://download.01.org/0day-ci/archive/20250729/202507291635.fl7cCAyl-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250729/202507291635.fl7cCAyl-lkp@intel.com/reproduce)
 
-                        Geert
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507291635.fl7cCAyl-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c: In function 'debugbus_read':
+>> drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c:180:9: error: implicit declaration of function 'FIELD_PREP'; did you mean 'FIELD'? [-Werror=implicit-function-declaration]
+      reg = FIELD_PREP(GENMASK(7, 0), offset) |
+            ^~~~~~~~~~
+            FIELD
+   cc1: some warnings being treated as errors
+
+
+vim +180 drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c
+
+   172	
+   173	/* read a value from the GX debug bus */
+   174	static int debugbus_read(struct msm_gpu *gpu, u32 block, u32 offset,
+   175			u32 *data)
+   176	{
+   177		u32 reg;
+   178	
+   179		if (to_adreno_gpu(gpu)->info->family >= ADRENO_7XX_GEN1) {
+ > 180			reg = FIELD_PREP(GENMASK(7, 0), offset) |
+   181				FIELD_PREP(GENMASK(24, 16), block);
+   182		} else {
+   183			reg = A6XX_DBGC_CFG_DBGBUS_SEL_D_PING_INDEX(offset) |
+   184				A6XX_DBGC_CFG_DBGBUS_SEL_D_PING_BLK_SEL(block);
+   185		}
+   186	
+   187		gpu_write(gpu, REG_A6XX_DBGC_CFG_DBGBUS_SEL_A, reg);
+   188		gpu_write(gpu, REG_A6XX_DBGC_CFG_DBGBUS_SEL_B, reg);
+   189		gpu_write(gpu, REG_A6XX_DBGC_CFG_DBGBUS_SEL_C, reg);
+   190		gpu_write(gpu, REG_A6XX_DBGC_CFG_DBGBUS_SEL_D, reg);
+   191	
+   192		/* Wait 1 us to make sure the data is flowing */
+   193		udelay(1);
+   194	
+   195		data[0] = gpu_read(gpu, REG_A6XX_DBGC_CFG_DBGBUS_TRACE_BUF2);
+   196		data[1] = gpu_read(gpu, REG_A6XX_DBGC_CFG_DBGBUS_TRACE_BUF1);
+   197	
+   198		return 2;
+   199	}
+   200	
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
