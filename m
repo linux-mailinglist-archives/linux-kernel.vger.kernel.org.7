@@ -1,145 +1,217 @@
-Return-Path: <linux-kernel+bounces-749501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18185B14F20
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:14:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A955B14F1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD13016EC87
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:14:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9643A167D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D005E1E1A3F;
-	Tue, 29 Jul 2025 14:13:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148ED1F09A5;
+	Tue, 29 Jul 2025 14:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNV2l+B3"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b="krn3jAK/"
+Received: from chumsalmon.baetis.net (chumsalmon.baetis.net [209.222.21.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BEA1CDFD5
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD8A1DE4E7;
+	Tue, 29 Jul 2025 14:13:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.222.21.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753798410; cv=none; b=RVDEjvL9Ys2xPjEq4UrvnZ0tKtfP/u7qLgHHRyBCFiac3XyLUVfZ+QKP+mt8meR9JN+ltHoCu/Qoo+fv3DTEzhmYIQVbHK8sAIX2DvVfRcY07Bq/lwh/zSI7UMcm2V1m98rQGuueyYjdijH2qoyV4oWH59IodpmzvVSzlNMMzt4=
+	t=1753798393; cv=none; b=C4kZf9urgJGUtneIcB3sZYBGVdYFA8HPb/t2eUzixsM7e/hNFg8EySOp/PJazPSJ9CjBoiU9B+8QpsIOwIfs/NfMMVMiFsrLbIWw7ZXcUQ/Nc+DurLZ16JFb5iHtpb6lFXZGeO6s3E5zUSVr4G2CG6eRseTWPzczEgJQ0AjKqVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753798410; c=relaxed/simple;
-	bh=FjA+c9Z3l+4QM+NHVNGoenTDXDVzESzeLLANK4ezG8E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FWhrbmv1/A1x0tk7hER2TTtgxmniwN4yPhkaJ4ZbE+5z/Ox/SYXfwcCsio0VEqfqhw8c25jxTNe9hB59PYVGvb8LH/LS1ScmeWj/LVtaJDzuiQPlJDG3tARFUdrl6ITRH3N3ggCcmxtn1s9dgqbNsAajFuEzsRWnWp0p1u3kZvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNV2l+B3; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24031a3e05cso8625545ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:13:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753798408; x=1754403208; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yitw0gBISuOZ2v41sPRu4k5vKVXgFczbihRYKhefvpk=;
-        b=BNV2l+B3h+IonYv8CbtOxZuSWdsbn5d/IOMsrF+wc8SPzM+EGS6iJQz/uWdDhR4uu8
-         +5ZrFwdpoC57g/794FJzJj+bfP01uoxdEAPM4xh5JdF7m/28ZayqMY5lvwWlTKqPXPbs
-         gya5Qta/hD/QpL+/BcVZlbMBGJYZzAzqsVFYX7dSj2n4I+QtQbSkL8ZVYd1kxBKedi9+
-         rSurpwC6ENEWnql7AO90YqgawaCATuGRVl8naCgf4hDml1rd2JmSwFgMUqElnXLkJGdQ
-         zPvHQvqnjoYIYlYnnzdBRyQRlh9v3xyif6w+6vRal2SQcLGYpLYwmwv8Qxl6pEfcbKAr
-         OXOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753798408; x=1754403208;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yitw0gBISuOZ2v41sPRu4k5vKVXgFczbihRYKhefvpk=;
-        b=Zfmy9n3X6bH44krYTzOCAe6pLC75sN40jlxwnb8vWtpXTxIVuViGAlLsMaEdYzTud2
-         Ul8XcsXKkd4LTNjO73Y8TM5nqipzmNudxdtoS3IfZ47H1AExfk6L/QRk2hF6WLslYqn8
-         vG7UR+0MnTwnBj3PRdg1baOQVlHsleyCEFNvhgf8wGcSsJOnfN+W85qgF8khDBi8Z/Xp
-         uV6JpLb7P4DfzJdBbfBsFpc3wbeANTBWHP/WiB6Jy5x9HZSOHWIhpxa0h5RN2a1zHFCR
-         /CopH5KFkQOkbNjKok1LZ+cq7itc9uEND4XAvrkMyXEY2PB2zKzPdGEcWNYxCHzaw5Yv
-         ut2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVR1FxjeCHycul/RGE08AqCoZyG/ivRAss5wq0hQF2ygzNwSjdPX2RFclZQgtendJlzL11GXyu2Eneic3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP294k57T05xs/Q0uCutHj7ws+4bSVkq2gLtZwQVizThIW6FZL
-	GyZoDcrMeNq7T206t7tLrw3Oybk1FviIN84Hn+entrR0GIq5D14hM58s
-X-Gm-Gg: ASbGncuL/8+ffw16mpM2srfQUGVldU2Mn7/uizBCCaxNbXoMoXwN98eeeoFtuS87BWi
-	HIjFuiO6S7JDgpYjA/3fwyGAisPyaWYa7mwI2sMDsPLcffYneMvK5Y+V/F1BvvLFqqhrS/CvuiO
-	/c5XnA1UlW1Hl2meqZ+I5+MbaEJ9Mn2skOL3Ptev58ZFmtxiR+8pwuRFu5WoPurupX7EBaApWr0
-	fTE7u6Iep2z+AiVvJi1tCJtBsqRu3Kyzr4IwM60Ws8R4FdiydqOjtnEBlYwQL+4B9NisfmK83jE
-	R0mITVucr9LxnugbZ3HyjBOlesp94EwwEzzZZpdwIabhAcqsJmjWqWRtTmTQgd704auT69dALmH
-	e6vxBtyw3v644e5VqHOG9BS1H1v8CjA7a8w==
-X-Google-Smtp-Source: AGHT+IEh8uGgxD/fdfhuPyfTdSWJ4/hYFFr9SgxPTOKH4o1yLWj1vXkRgP+kd9clAvFUmaIRreFW3g==
-X-Received: by 2002:a17:903:298b:b0:23f:fa47:f933 with SMTP id d9443c01a7336-24063cd35b2mr53089125ad.8.1753798407855;
-        Tue, 29 Jul 2025 07:13:27 -0700 (PDT)
-Received: from localhost ([2409:4089:1091:3d13:b803:71:1df8:9600])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-240469a8084sm36273345ad.79.2025.07.29.07.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 07:13:27 -0700 (PDT)
-From: ashirvadm04@gmail.com
-To: gregkh@linuxfoundation.org
-Cc: philipp.g.hortmann@gmail.com,
-	dan.carpenter@linaro.org,
-	sayyad.abid16@gmail.com,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Ashirvad Mohanty <ashirvadm04@gmail.com>
-Subject: [PATCH] staging: rtl8723bs: Replace magic numbers in rtl8723b_InitBeaconParameters
-Date: Tue, 29 Jul 2025 19:42:10 +0530
-Message-ID: <20250729141224.16013-1-ashirvadm04@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753798393; c=relaxed/simple;
+	bh=tlrwdUMxmTMP/unojB4dl0fYvza21xaNXsLWOMIPgxs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=U7JtuN6rwj6W5Qo38mDOKlBaTsJxYwcfjEfWqPmEZrVHrjkEP9svx3+OboFIw7qciNK9Jw8Rfj+jM8YZDGt62u3Z49gTX6JHz5SCLiK6NPoBe712VANmVakdvVtI7zfLXnM09P9GrPRdZymFyPzLUMxreNnXM+G/OGHOBEvoTjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com; spf=pass smtp.mailfrom=tahomasoft.com; dkim=pass (2048-bit key) header.d=tahomasoft.com header.i=@tahomasoft.com header.b=krn3jAK/; arc=none smtp.client-ip=209.222.21.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=tahomasoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tahomasoft.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=tahomasoft.com;
+	s=default; t=1753798388;
+	bh=tlrwdUMxmTMP/unojB4dl0fYvza21xaNXsLWOMIPgxs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=krn3jAK/z2vFO1+nbqOz/i2yxFFMBC4f/Sp5Az4WM3KHq+RYyg0vyWgkOYDMIZOo1
+	 CczfiIURAxSY7ImjtFj5Ssa86QOltP0/FdSoJGTxyuCZrlFlgdLybkNqgivW1FZhvm
+	 8V+h/WOgSvoGISbzAyhPBpHrDjqfmYRzNUkmbdfoWqnecIl118RRbcAGfwrTa50Ott
+	 AW+mVJPW2rZzXIz70JBPTsTs3napshhY37SaU24Z2KDuyt1JZemMFTarMvU6FWSc2h
+	 t+c7q8gRFk6AFeMrAGoPOPRMC++M7BohXp/F1xsXEOTwZd146B7vAeVHvex04MIGHI
+	 qkJAedlKy8bbQ==
+Received: from localhost (unknown [IPv6:2600:4040:50b7:b604:f717:c76f:99e7:4a24])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by chumsalmon.baetis.net (Postfix) with ESMTPSA id D3E3727E434;
+	Tue, 29 Jul 2025 14:13:08 +0000 (UTC)
+From: Erik Beck <xunil@tahomasoft.com>
+Subject: [PATCH 0/2] Add Support for LinkStar H68K board: ARM64 and RK3568:
+ dts and dt-bindings.
+Date: Tue, 29 Jul 2025 10:13:07 -0400
+Message-Id: <20250729-linkstar-6-16-rc1-v6-v1-0-8bd4a63f343a@tahomasoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPPWiGgC/x3MSwqAMAwA0atI1gZs1fq5iriQNmpQqqRSBPHuF
+ pdvMfNAIGEK0GcPCEUOfPgElWdg18kvhOySQRe6Lhrd4c5+C9ckaFAZFKswGpxJt6WtS9dUDlJ
+ 6Cs18/9thfN8P56JWjGYAAAA=
+X-Change-ID: 20250729-linkstar-6-16-rc1-v6-fe283c53d74d
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Erik Beck <xunil@tahomasoft.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753798388; l=4962;
+ i=xunil@tahomasoft.com; s=20250724; h=from:subject:message-id;
+ bh=tlrwdUMxmTMP/unojB4dl0fYvza21xaNXsLWOMIPgxs=;
+ b=re7BwhPgidEIq4ayUlGl3dy8zPROGtz1bQgf8HYWldWWDN9W5dmY0cjRikZKVLJ0ZQ5nZMkUx
+ qpaLD9oZBiiB6vNmH8vuLSSsEcZBEb51+JTTNtRP9SZGMhGi1GCU0xM
+X-Developer-Key: i=xunil@tahomasoft.com; a=ed25519;
+ pk=FTZVGUexvkWb4j8v0wbtm7CtJLijIAaa5x0XV72WWC0=
 
-From: Ashirvad Mohanty <ashirvadm04@gmail.com>
+Provide support for the Seeed LinkStar H68K-1432v1, previously
+unsupported in mainline Linux kernel. It is a compact single board
+travel router with the following features:
 
-Replace magic numbers 0x6404 and 0x660F in rtl8723b_InitBeaconParameters
-with macros TBTT_PROHIBIT_TIME_8723B and BCN_AIFS_CFG_8723B, respectively,
-defined in rtl8723b_hal.h. This addresses the TODO to remove magic numbers,
-improving code readability and maintainability per Linux kernel coding style.
+  - Rockchip rk3568 SoC;
+  - Four Gib RAM;
+  - Four ethernet ports:
+    -  Two 1 GigE ports;
+    -  Two 2.5 GigE ports (RTL8125);
+    
+  - Ethernet ports support Precision Time Protocol (PTP IEEE 1588);
+  
+  - Four USB ports:
+    - Three USB 3.0 ports;
+    - Two USB 2.0 ports;
+    
+  - Integrated WiFi:
+    - MediaTek MT7921e
+    
+  - Audio and video outputs:
+    - HDMI;
+    - Headphone;
+    
+  - eMMC (32 Gib) and microSD storage;
+  - Real-time clock (rk809)
+  - Powered by:
+    - USB Type-C;
+    - Barrel connector (DC 12-24v);
+    
+These patches:
+  - Create a devicetree for the board;
+  - Add a (dtb) Makefile entry for the board;
+  - Add the board to dt-bindings;
 
-Signed-off-by: Ashirvad Mohanty <ashirvadm04@gmail.com>
+ChangeLog:
+
+v6:
+
+  - Responsive to comments received from Krzysztof Kozlowski <krzk+dt@kernel.org>
+    - https://lore.kernel.org/all/20250729-poised-proud-ibex-5ab838@kuoka/
+    - https://lore.kernel.org/all/20250729-passionate-jerboa-of-superiority-c7aff5@kuoka/
+
+  - Change made:
+    - Put patchset back into proper order, with dt-binding before dts,
+      per Krzysztof and '.../bindings/submitting-patches.rst'.
+
+(/* Thank you Krzysztof! */)
+
+v5:
+  - Responsive to comments received from  Krzysztof Kozlowski <krzk+dt@kernel.org>
+    - https://lore.kernel.org/all/20250728-dashing-discerning-roadrunner-bc8b87@kuoka/
+    - https://lore.kernel.org/all/93c39b36-07c8-4883-bd23-7d0194c50a7a@kernel.org/
+    - https://lore.kernel.org/all/642df1ee-5e92-4f0a-bcdf-7e10dbc0d59b@kernel.org/
+    - https://lore.kernel.org/all/9ebd9797-8d92-4799-bb8d-59a796e6043c@linaro.org/
+    
+  - Changes made are:
+    - Revisions to commit messages:
+        - Removed notes on base commit;
+	- Fixed checkpatch warning;
+	- Removed notes on device history;
+	- Fleshed out the top-line summary of the dts patch;
+
+v4:
+  - Responsive to comments received from  Krzysztof Kozlowski <krzk+dt@kernel.org>
+    - https://lore.kernel.org/all/20250725-muskox-of-authentic-gaiety-b8eda4@kuoka/
+    - https://lore.kernel.org/all/20250725-nocturnal-messy-cicada-dbcc10@kuoka/
+    - /* (Thank you Krzysztof!) */
+    
+  - Changes made are:
+    - Clarified the base commit working from;
+    - Base patched against:
+      - Commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494 (tag: v6.16-rc1);
+	
+    - Revised commit message for devicetree to be clearer, contain
+      more details about the hardware, and be more succinct;
+
+    - Revised commit message for devicetree binding to be clearer, contain
+      more details about the hardware, and be more succinct;
+  
+v3:
+  Responsive to comments received from:
+  - Chukun Pan <amadeus@jmu.edu.cn>
+  - Krzysztof Kozlowski <krzk+dt@kernel.org>
+  - Rob Herring <robh@kernel.org>
+  - Heiko Stuebner <heiko@sntech.de>
+
+   /* (Thank you all!) */
+
+  Those changes are:
+     - Removed copyright line of <amadeus@jmu.edu.cn> per their request;
+     - Fixed indentations;
+     - Replaced space indentations with tabs;
+     - Packaging this patch set together properly using b4, fixing the threading;
+     - Clarifying versioning and Changelog;
+
+v2: (https://lore.kernel.org/all/20250721201137.233166-1-xunil@tahomasoft.com/)
+  Responding to comments received from Heiko Stuebner <heiko@sntech.de> 
+
+  Those changes are:
+
+     - Splits the single commit into two, one for the yaml binding,
+       and the other for the board devicetree plus Makefile addition;
+
+     - Adds other recipients needed from get_maintainer.pl --nol and --nom;
+     
+     - Uses git send-email to send the patches, to avoid adding line
+       breaks from the MUA;
+
+     - Changes comment style to conform with style guide;
+     - Removes several unneeded comments from the devicetree;
+     - Changes LED naming scheme with more standard nomenclature;
+     - Changes naming of regulators, prepending 'regulator', such as:
+        ~ from: vcc12v_dcin: vcc12v-dcin {}
+        ~ to:   vcc12v_dcin: regulator-vcc12v-dcin {}
+
+     - Removes unneeded tx_delay/rx_delay from rgmii-id
+        
+v1: (https://lore.kernel.org/all/20250718075058.243a5619.xunil@tahomasoft.com/)
+  - Initial patch to provide support for Seeed LinkStar H68K
+
+Signed-off-by: Erik Beck <xunil@tahomasoft.com>
 ---
- drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 5 ++---
- drivers/staging/rtl8723bs/include/rtl8723b_hal.h  | 2 ++
- 2 files changed, 4 insertions(+), 3 deletions(-)
+Erik Beck (2):
+      dt-bindings: arm: rockchip: add LinkStar-H68k-1432v1
+      arm64: dts: rockchip: add LinkStar-H68k-1432v1
 
-diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-index 893cab0532ed..d6c75854f27a 100644
---- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-+++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
-@@ -1197,8 +1197,7 @@ void rtl8723b_InitBeaconParameters(struct adapter *padapter)
- 
- 	rtw_write16(padapter, REG_BCN_CTRL, val16);
- 
--	/*  TODO: Remove these magic number */
--	rtw_write16(padapter, REG_TBTT_PROHIBIT, 0x6404);/*  ms */
-+	rtw_write16(padapter, REG_TBTT_PROHIBIT, TBTT_PROHIBIT_TIME_8723B); /*  ms */
- 	/*  Firmware will control REG_DRVERLYINT when power saving is enable, */
- 	/*  so don't set this register on STA mode. */
- 	if (check_fwstate(&padapter->mlmepriv, WIFI_STATION_STATE) == false)
-@@ -1207,7 +1206,7 @@ void rtl8723b_InitBeaconParameters(struct adapter *padapter)
- 
- 	/*  Suggested by designer timchen. Change beacon AIFS to the largest number */
- 	/*  because test chip does not contension before sending beacon. by tynli. 2009.11.03 */
--	rtw_write16(padapter, REG_BCNTCFG, 0x660F);
-+	rtw_write16(padapter, REG_BCNTCFG, BCN_AIFS_CFG_8723B);
- 
- 	pHalData->RegBcnCtrlVal = rtw_read8(padapter, REG_BCN_CTRL);
- 	pHalData->RegTxPause = rtw_read8(padapter, REG_TXPAUSE);
-diff --git a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-index a4a14474c35d..5b4e303e20eb 100644
---- a/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-+++ b/drivers/staging/rtl8723bs/include/rtl8723b_hal.h
-@@ -71,6 +71,8 @@ struct rt_firmware_hdr {
- 
- #define DRIVER_EARLY_INT_TIME_8723B  0x05
- #define BCN_DMA_ATIME_INT_TIME_8723B 0x02
-+#define TBTT_PROHIBIT_TIME_8723B     0x6404
-+#define BCN_AIFS_CFG_8723B           0x660F
- 
- /* for 8723B */
- /* TX 32K, RX 16K, Page size 128B for TX, 8B for RX */
+ .../devicetree/bindings/arm/rockchip.yaml          |   5 +
+ arch/arm64/boot/dts/rockchip/Makefile              |   1 +
+ .../dts/rockchip/rk3568-linkstar-h68k-1432v1.dts   | 740 +++++++++++++++++++++
+ 3 files changed, 746 insertions(+)
+---
+base-commit: 19272b37aa4f83ca52bdf9c16d5d81bdd1354494
+change-id: 20250729-linkstar-6-16-rc1-v6-fe283c53d74d
+
+Best regards,
 -- 
-2.43.0
+Erik Beck <xunil@tahomasoft.com>
 
 
