@@ -1,137 +1,145 @@
-Return-Path: <linux-kernel+bounces-750001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A96B0B155BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:12:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECDD9B155C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB5C3178D22
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2487D5A008B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97655284B57;
-	Tue, 29 Jul 2025 23:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B11728152A;
+	Tue, 29 Jul 2025 23:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIbhssgZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ru7WRi+g"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03ADE27FD52
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2826C27816B;
+	Tue, 29 Jul 2025 23:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753830719; cv=none; b=MiM+1xOVkoog850YgmQkcEudDxLZ6hBrdIMkfunjvF54lGmE984efN3KAamgWn/rj5VEGY53n8hSbhg/TMsYg1MMjHKTHy3VQOakH+1X/XMzG5FJsZ2JLONGGHdxynXMQwFfATht2l67kpjhRaL2rF1Y3bZaJi5XgRmNnyUIKE0=
+	t=1753830777; cv=none; b=Ordh1gsy4BaZC+qmLfdAG72uqK5tOgjdhexNp1St//E0LEMF/lkG+MnbKs706AdjeBv54558r16j9+lII6gTLMSAqgBC6S+bkzIInvLJLwwhxzlsDYWH9/oQu9m4mPizKlkyt7MZ9+OQPR8ZboTZZ8t/6orRPdGsHXdfD9PK00o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753830719; c=relaxed/simple;
-	bh=qeqWr+5CFM8kfIaWbcmNXhke27HYh1Kx9tPy5RgZ8qg=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=P5dLIji9gFP6BXuG1kxYpZ69ULmS0VRU3ytgx3hgq+TiLid6pqj153VQamqK8Pn9cZ18P3pMtO4h8vHqtsvBYlrTF8HOz6xEgI3uM89iit2QyD8XOYoorAVJ4esAPlU/7+xm2ViHiNL8b5SlxNGbjIX4NUmTN3WtvX4dCpNsty8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIbhssgZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9567CC4CEF7;
-	Tue, 29 Jul 2025 23:11:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753830718;
-	bh=qeqWr+5CFM8kfIaWbcmNXhke27HYh1Kx9tPy5RgZ8qg=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=eIbhssgZJN5/TaQqQBdSKkKmLoufS05iHVZnMrtXLTWbDlyLlyRIt6u36r13niUQh
-	 23MmPqVLE7TpxhpimrOg6YSb6yQXYUGw/K/aHNLuLAT6ABQzvbUJydhJccmpmIiBHs
-	 bsR4It2y5seLKODb22glxg2bKvT4AXCF2ICvWDPb2c7xviihR6hsuZkWhyBIR35KGC
-	 gYHk4H4sPxfzRuIZM7VCteTvi2J77lT0KPJA9k79vQf5/40Vl4lUOWWGiTDkIkoMg1
-	 TuuulO/byDPeC6cS6SYPHPEnOBZmBA7ptT0Ql8OctsfjoPekEt2vsZfvHyh7QOtF5j
-	 rteZL+ULtObdA==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1ugtUT-00000005K9j-3LQH;
-	Tue, 29 Jul 2025 19:12:13 -0400
-Message-ID: <20250729231213.654134958@kernel.org>
-User-Agent: quilt/0.68
-Date: Tue, 29 Jul 2025 19:11:59 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Tomas Glozar <tglozar@redhat.com>,
- John Kacur <jkacur@redhat.com>,
- Luis Goncalves <lgoncalv@redhat.com>,
- Chang Yin <cyin@redhat.com>,
- Costa Shulyupin <costa.shul@redhat.com>
-Subject: [for-next][PATCH 2/2] rtla/tests: Test timerlat -P option using actions
-References: <20250729231157.059587961@kernel.org>
+	s=arc-20240116; t=1753830777; c=relaxed/simple;
+	bh=uPq/kE7iNyO7OwB7/uyePBpmlkNwt+HCR4Fbo00OuAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WOb/x59qfG1vxMygFQQzsvPzMeeauBDb8G1Drkrvq7/dlOdZ1zFZTKr1aiKArCAYsdfi6Ca80af0czNvCvMAxNcXLcUjYLqBvJVS3QVZECKlPY39Ww9NlddK3zEt+5k7haKeaZILoNQkK3Zl8jxTvhAtj3ELzOpR3P6yEF6cei8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ru7WRi+g; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753830559;
+	bh=KBGQApNwEeHbHArSakRCMAC+j54PRDlzUKMki6/2QIU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Ru7WRi+gx0//JoRMWLCfPfbd88k4u5K2jrT+Q2iIrQoAvSJ5O4FrsEqYNJr4zqjWU
+	 eYIOIEQ3aUdbira5ddmDN3m04Wix7BItyBeOMNeOIZsb2dLYb83hCvRMN5avpMNce7
+	 mguBR6YUhnLfc6KIi2WkYRPg7QmQ1vciSjEb2mivSQCdObCHhYcf1fFKdbCiI/1g8n
+	 hGFgyczOFoDUuqZw8gGXweYmkWzzkG15rOsnuusnbsQdwLATWVSsFWHJQac4aFy+WU
+	 tzBLcthlYphFS/nNoTgjTcf6CfGMXHdg3I3BWL71WRTcyw6hmO6QpP0PDx1wGYrktc
+	 DVFYXEUmdcuGA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bs9yl4dryz4x3q;
+	Wed, 30 Jul 2025 09:09:19 +1000 (AEST)
+Date: Wed, 30 Jul 2025 09:12:52 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Corbet <corbet@lwn.net>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Rob Herring (Arm)" <robh@kernel.org>, Xose
+ Vazquez Perez <xose.vazquez@gmail.com>
+Subject: Re: linux-next: manual merge of the gpio-brgl tree with Linus' tree
+ and the jc_docs tree
+Message-ID: <20250730091252.42ef36a4@canb.auug.org.au>
+In-Reply-To: <20250718190551.6f250af5@canb.auug.org.au>
+References: <20250718190551.6f250af5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="Sig_/3iX_Mmup+wzSgI1fauIH+KV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Tomas Glozar <tglozar@redhat.com>
+--Sig_/3iX_Mmup+wzSgI1fauIH+KV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The -P option is used to set priority of osnoise and timerlat threads.
+Hi all,
 
-Extend the test for -P with --on-threshold calling a script that looks
-for running timerlat threads and checks if their priority is set
-correctly.
+On Fri, 18 Jul 2025 19:05:51 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Today's linux-next merge of the gpio-brgl tree got a conflict in:
+>=20
+>   MAINTAINERS
+>=20
+> between commit:
+>=20
+>   edb471108cf1 ("MAINTAINERS: remove bouncing address for Nandor Han")
+>=20
+> from Linus' tree, commit:
+>=20
+>   739ca710a777 ("MAINTAINERS: replace git protocol for github")
+>=20
+> from the jc_docs tree and commits:
+>=20
+>   ae455b249449 ("dt-bindings: gpio: Convert qca,ar7100-gpio to DT schema")
+>   f03a7f20b23c ("dt-bindings: gpio: Create a trivial GPIO schema")
+>=20
+> from the gpio-brgl tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc MAINTAINERS
+> index caf590460070,971ee194ee83..000000000000
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@@ -3871,8 -3814,8 +3870,8 @@@ ATHEROS 71XX/9XXX GPIO DRIVE
+>   M:	Alban Bedel <albeu@free.fr>
+>   S:	Maintained
+>   W:	https://github.com/AlbanBedel/linux
+>  -T:	git git://github.com/AlbanBedel/linux
+>  +T:	git https://github.com/AlbanBedel/linux.git
+> - F:	Documentation/devicetree/bindings/gpio/gpio-ath79.txt
+> + F:	Documentation/devicetree/bindings/gpio/qca,ar7100-gpio.yaml
+>   F:	drivers/gpio/gpio-ath79.c
+>  =20
+>   ATHEROS 71XX/9XXX USB PHY DRIVER
 
-As --on-threshold is only supported by timerlat at the moment, this is
-only implemented there so far.
+This is now a conflict between the jc_docs tree and Linus' tree.
 
-Cc: John Kacur <jkacur@redhat.com>
-Cc: Luis Goncalves <lgoncalv@redhat.com>
-Cc: Chang Yin <cyin@redhat.com>
-Cc: Costa Shulyupin <costa.shul@redhat.com>
-Link: https://lore.kernel.org/20250725133817.59237-3-tglozar@redhat.com
-Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- tools/tracing/rtla/tests/engine.sh                 | 2 +-
- tools/tracing/rtla/tests/scripts/check-priority.sh | 8 ++++++++
- tools/tracing/rtla/tests/timerlat.t                | 3 ++-
- 3 files changed, 11 insertions(+), 2 deletions(-)
- create mode 100755 tools/tracing/rtla/tests/scripts/check-priority.sh
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/tools/tracing/rtla/tests/engine.sh b/tools/tracing/rtla/tests/engine.sh
-index 64c5be4313de..a97d644ead99 100644
---- a/tools/tracing/rtla/tests/engine.sh
-+++ b/tools/tracing/rtla/tests/engine.sh
-@@ -69,7 +69,7 @@ check() {
- 			# Add rtla output and exit code as comments in case of failure
- 			echo "$result" | col -b | while read line; do echo "# $line"; done
- 			printf "#\n# exit code %s\n" $exitcode
--			[ -n "$expected_output" ] && \
-+			[ -n "$expected_output" ] && [ $grep_result -ne 0 ] && \
- 				printf "# Output match failed: \"%s\"\n" "$expected_output"
- 		fi
- 	fi
-diff --git a/tools/tracing/rtla/tests/scripts/check-priority.sh b/tools/tracing/rtla/tests/scripts/check-priority.sh
-new file mode 100755
-index 000000000000..79b702a34a96
---- /dev/null
-+++ b/tools/tracing/rtla/tests/scripts/check-priority.sh
-@@ -0,0 +1,8 @@
-+#!/bin/bash
-+# SPDX-License-Identifier: GPL-2.0
-+pids="$(pgrep ^$1)" || exit 1
-+for pid in $pids
-+do
-+  chrt -p $pid | cut -d ':' -f 2 | head -n1 | grep "^ $2\$" >/dev/null
-+  chrt -p $pid | cut -d ':' -f 2 | tail -n1 | grep "^ $3\$" >/dev/null
-+done && echo "Priorities are set correctly"
-diff --git a/tools/tracing/rtla/tests/timerlat.t b/tools/tracing/rtla/tests/timerlat.t
-index db263dc90a2d..c71aed5534bf 100644
---- a/tools/tracing/rtla/tests/timerlat.t
-+++ b/tools/tracing/rtla/tests/timerlat.t
-@@ -25,7 +25,8 @@ check "verify help page" \
- check "verify -s/--stack" \
- 	"timerlat top -s 3 -T 10 -t" 2 "Blocking thread stack trace"
- check "verify -P/--priority" \
--	"timerlat top -P F:1 -c 0 -d 10s -q"
-+	"timerlat top -P F:1 -c 0 -d 10s -q -T 1 --on-threshold shell,command=\"tests/scripts/check-priority.sh timerlatu/ SCHED_FIFO 1\"" \
-+	2 "Priorities are set correctly"
- check "test in nanoseconds" \
- 	"timerlat top -i 2 -c 0 -n -d 10s" 2 "ns"
- check "set the automatic trace mode" \
--- 
-2.47.2
+--Sig_/3iX_Mmup+wzSgI1fauIH+KV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiJVXQACgkQAVBC80lX
+0GzJUwf/cyrUAgYlSEBYYe0oTRwMnuWk8CctNSOew8ZRdgIW7Cd6J3GeL8mhLAtR
+nYxGd7Y5wBqO6lauYRPe1Lf9IhSrCtllA3ansjKQFdpFVum9aA+pLvlviNPfEDCq
+gUmlR5cMDG/RZc1+oa4cF+wlZzA0dcOMwWwd8abvCKYDk5Hb6sRzBFQyS1P6EMfI
+qknknxtnp6Oy8cCLcNtCjG2fn+Ppr15MAniBGtRZa2p9pOLh6n7vOzbLYO7uwaWh
+2JdjRJ+6F0JjT3LH47nX55IGJmz+mxTLBzjKidBYDrlDLSfFMGg70HfluiueBTFX
+XybxYRz5KS0b+SMHjuNKTLSLjgpU8g==
+=28KF
+-----END PGP SIGNATURE-----
+
+--Sig_/3iX_Mmup+wzSgI1fauIH+KV--
 
