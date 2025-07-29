@@ -1,199 +1,157 @@
-Return-Path: <linux-kernel+bounces-748754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22C6B145AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E6EB145B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:17:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A21316D253
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:13:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36BAD16E435
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:17:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38921B0439;
-	Tue, 29 Jul 2025 01:13:32 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AEA19ADBF;
-	Tue, 29 Jul 2025 01:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258E01C862E;
+	Tue, 29 Jul 2025 01:17:25 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CCD42E36E2;
+	Tue, 29 Jul 2025 01:17:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753751612; cv=none; b=H63wzln6NhSnpPv16M448deVJBoK8cT+jZBeAoF6kyRyz2ObfpurLki1/Upfb+PbSn+tZgNyyj+5lzr01ac9ZoyGMG5vOl81ocvo//23s8O+po1j6HLIhCXIP++PIcg364REW9AKNlugfcEHtpJGPvPaS5jz4zdE497ePcQg/yw=
+	t=1753751844; cv=none; b=cRcUKGbffugdZ4GbFGncpMIuviA3SDDUCHnlzYy8+0RGlHAjsuv72xAxcYh8D0sN9PWGIaqGnDP7uGdcnjc2wF97lZKHLZf94610X0jp8NclqgdHSnx0afOIbjDF5LPBygRlCNSGmZgnKsXNp5Gy78HJV2AvczNzol9zX/YuYl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753751612; c=relaxed/simple;
-	bh=JxQhMbieoH+pcYD4gh0c2BRRXzBkkH+0ATFusGNdDrE=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=uFhKLlQP6qfh88Pv4gjG007Od2t8ZqMTNUloXuKG42yXCpXJjlRExpFO2Hmi3TtP8i7E1kGkPNVBJmOQ6lppyr0ekj5KYOizsF0upNLhoPTxqkfYNa9oK+2vk/Dx093mmFXF2eZa7alggseXIaMyniIYjkqJzbkdBhPQqCajhpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com; spf=pass smtp.mailfrom=h-partners.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=h-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=h-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4brcjc1nFNz23jZm;
-	Tue, 29 Jul 2025 09:11:00 +0800 (CST)
-Received: from kwepemo100013.china.huawei.com (unknown [7.202.195.244])
-	by mail.maildlp.com (Postfix) with ESMTPS id 539D1180044;
-	Tue, 29 Jul 2025 09:13:20 +0800 (CST)
-Received: from [10.67.120.83] (10.67.120.83) by kwepemo100013.china.huawei.com
- (7.202.195.244) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Jul
- 2025 09:13:19 +0800
-Message-ID: <b51519d6-ce45-4b6d-8135-c70169bd110e@h-partners.com>
-Date: Tue, 29 Jul 2025 09:13:19 +0800
+	s=arc-20240116; t=1753751844; c=relaxed/simple;
+	bh=jc90gW/XuTCxbBVJ2qSJinzr5efKOvWwANS1C3Ke07I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Af8RPR18pifM0hFORsObwsODHvicQvzHflY1V9iEU1g32L0+7Iyens5h9GB6AvNVNvIRlkHaDlfJq+8D9qEVq10wR7za2BOdK6zZnlyUo/DV8DljfbjtXxCmbRLKuJAHlB3C+eq7XsUw3c7TYNjzYsR4jzB87+8YA4uMVCDGPMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-5e-6888211def48
+Date: Tue, 29 Jul 2025 10:17:11 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	horms@kernel.org, hawk@kernel.org, toke@redhat.com,
+	kernel_team@skhynix.com
+Subject: Re: [RFC net-next] netmem: replace __netmem_clear_lsb() with
+ netmem_to_nmdesc()
+Message-ID: <20250729011711.GE56089@system.software.com>
+References: <20250728042050.24228-1-byungchul@sk.com>
+ <CAHS8izPv8zmPaxzCSPAnybiCc0KrqjEZA+x5wpFOE8u=_nM1WA@mail.gmail.com>
+ <b239b40b-0abe-43a5-af41-346283a634f6@gmail.com>
+ <087ca43a-49b7-40c9-915d-558075181fd1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: <bhelgaas@google.com>
-CC: <ilpo.jarvinen@linux.intel.com>, <lukas@wunner.de>, linux-arm
-	<linux-arm-kernel@lists.infradead.org>, linux-kernl
-	<linux-kernel@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>,
-	fanghao <fanghao11@huawei.com>, gaozhihao <gaozhihao6@h-partners.com>,
-	lujunhua <lujunhua7@h-partners.com>, shenyang <shenyang39@huawei.com>,
-	wushanping <wushanping@huawei.com>, zengtao <prime.zeng@hisilicon.com>,
-	<jonathan.cameron@huawei.com>
-From: moubingquan <moubingquan@h-partners.com>
-Subject: [BUG] sysfs: duplicate resource file creation during PCIe rescan
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemo100013.china.huawei.com (7.202.195.244)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <087ca43a-49b7-40c9-915d-558075181fd1@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpikeLIzCtJLcpLzFFi42LhesuzSFdWsSPD4HE3r8XqHxUWc1ZtY7SY
+	c76FxeLpsUfsFnvatzNbPOo/wWZxYVsfq8XlXXPYLI4tELP4dvoNo8Wlw49YHLg9tqy8yeSx
+	c9Zddo8Fm0o9Nq3qZPN4v+8qm8fnTXIBbFFcNimpOZllqUX6dglcGaenexX8Ea348vwLUwNj
+	i0AXIweHhICJxLxW9y5GTjBzcuMrdhCbRUBVYnf3WRYQm01AXeLGjZ/MILaIgLbE6+uHwGqY
+	BZqYJM62JYCMERaIkthyhAkkzCtgIbFh5jsgm4tDSOARo8SZ/a9YIRKCEidnPmGB6FWX+DPv
+	EjNIL7OAtMTyfxwQYXmJ5q2zwVZxCthKXNn5mRHEFhVQljiw7TjYTAmB22wS/1pbGSFulpQ4
+	uOIGywRGwVlIVsxCsmIWwopZSFYsYGRZxSiUmVeWm5iZY6KXUZmXWaGXnJ+7iREYM8tq/0Tv
+	YPx0IfgQowAHoxIPb0Zne4YQa2JZcWXuIUYJDmYlEd6CpW0ZQrwpiZVVqUX58UWlOanFhxil
+	OViUxHmNvpWnCAmkJ5akZqemFqQWwWSZODilGhiNSh4vYF14brFWkjtL+nSvzrznr9rKbZv/
+	+3K2btjgPVH8eP72Qx/Ovmrbt/uZesmlQ1USXx+pGxUa73xo8Hu/EWOy1KqfV87sfPrIgLOt
+	qPvZ+thXRzat21/z8lzl5ozox6pTF/AfKTnkpjAv/vODIuM3h83SL1z9d+avhVeCoH/x8Sil
+	lxwCSizFGYmGWsxFxYkAwgqUK5UCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsXC5WfdrCuj2JFhML/V0mL1jwqLOau2MVrM
+	Od/CYvH02CN2iz3t25ktHvWfYLM4PPckq8WFbX2sFpd3zWGzOLZAzOLb6TeMFpcOP2Jx4PHY
+	svImk8fOWXfZPRZsKvXYtKqTzeP9vqtsHotffGDy+LxJLoA9issmJTUnsyy1SN8ugSvj9HSv
+	gj+iFV+ef2FqYGwR6GLk5JAQMJGY3PiKHcRmEVCV2N19lgXEZhNQl7hx4ycziC0ioC3x+voh
+	sBpmgSYmibNtCV2MHBzCAlESW44wgYR5BSwkNsx8B2RzcQgJPGKUOLP/FStEQlDi5MwnLBC9
+	6hJ/5l1iBullFpCWWP6PAyIsL9G8dTbYKk4BW4krOz8zgtiiAsoSB7YdZ5rAyDcLyaRZSCbN
+	Qpg0C8mkBYwsqxhFMvPKchMzc0z1irMzKvMyK/SS83M3MQJjYFntn4k7GL9cdj/EKMDBqMTD
+	m9HZniHEmlhWXJl7iFGCg1lJhLdgaVuGEG9KYmVValF+fFFpTmrxIUZpDhYlcV6v8NQEIYH0
+	xJLU7NTUgtQimCwTB6dUA6OSe/AVzkyfd+3yJ6/Ufo/O7DafIaVr9b5iTcv+hluvl5ntFOLJ
+	/BQxcUXzvEmcZvPNC42iV65XdC19JedqJWjEa+OWWz9d1Pr7/Upp032iFhqqDyR7mK5uvzxj
+	UVm9Z23cZlOFugOOhxpFWR4yx5w9ZOpi/EK85f5jqXmdave5liecXl99QYmlOCPRUIu5qDgR
+	APUwEBN9AgAA
+X-CFilter-Loop: Reflected
 
-Hi all,
+On Mon, Jul 28, 2025 at 07:58:13PM +0100, Pavel Begunkov wrote:
+> On 7/28/25 19:46, Pavel Begunkov wrote:
+> > On 7/28/25 18:44, Mina Almasry wrote:
+> > > On Sun, Jul 27, 2025 at 9:21 PM Byungchul Park <byungchul@sk.com> wrote:
+> > > > 
+> > 
+> > ...>> - * Return: the netmem_ref cast to net_iov* regardless of its underlying type.
+> > > > + * Return: the pointer to struct netmem_desc * regardless of its
+> > > > + * underlying type.
+> > > >    */
+> > > > -static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
+> > > > +static inline struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
+> > > >   {
+> > > > -       return (struct net_iov *)((__force unsigned long)netmem & ~NET_IOV);
+> > > > +       if (netmem_is_net_iov(netmem))
+> > > > +               return &((struct net_iov *)((__force unsigned long)netmem &
+> > > > +                                           ~NET_IOV))->desc;
+> > > > +
+> > > > +       return __netmem_to_nmdesc(netmem);
+> > > 
+> > > The if statement generates overhead. I'd rather avoid it. We can
+> > > implement netmem_to_nmdesc like this, no?
+> > > 
+> > > netmem_to_nmdesc(netmem_ref netmem)
+> > > {
+> > >    return (struct netmem_desc)((__force unsigned long)netmem & ~NET_IOV);
+> > > }
+> > > 
+> > > Because netmem_desc is the first element in both net_iov and page for
+> > > the moment. (yes I know that will change eventually, but we don't have
+> > > to incur overhead of an extra if statement until netmem_desc is
+> > > removed from page, right?)
+> > 
+> > Same concern, but I think the goal here should be to make enough
+> 
+> s/make/give/
+> 
+> 
+> > info to the compiler to optimise it out without assumptions on
+> > the layouts nor NET_IOV_ASSERT_OFFSET. Currently it's not so bad,
+> > but we should be able to remove this test+cmove.
+> > 
+> >      movq    %rdi, %rax    # netmem, tmp105
+> >      andq    $-2, %rax    #, tmp105
+> >      testb    $1, %dil    #, netmem
+> >      cmove    %rdi, %rax    # tmp105,, netmem, <retval>
+> >      jmp    __x86_return_thunk
+> 
+> struct netmem_desc *netmem_to_nmdesc(netmem_ref netmem)
+> {
+>        void *p = (void *)((__force unsigned long)netmem & ~NET_IOV);
+> 
+>        if (netmem_is_net_iov(netmem))
+>                return &((struct net_iov *)p)->desc;
+>        return __pp_page_to_nmdesc((struct page *)p);
+> }
 
-When uninstalling the driver on the ARM64 platform and invoking `sriov_disable()`,
-another thread simultaneously performed `echo 1 > /sys/bus/pci/rescan`,
-which resulted in a call trace error (`sysfs: cannot create duplicate filename`) when subsequently loading the driver.
+I wanted to remove constraints that can be removed, but Mina want not to
+add additional overhead more.  So I'm thinking to keep the constraint,
+'netmem_desc is the first member of net_iov'.
 
-Under certain multi-threaded scenarios (e.g. VF teardown + PCI rescan triggered in parallel),
-The following sequence may result in files appearing in sysfs that should not exist:
+Thoughts?
 
-1. sriov_disable() uninstalls VFs and removes the corresponding VF files in sysfs.
-2.At the same time, when rescan_store() rescan the entire PCI device tree,
-there is a possibility that VF files that should have been deleted are added back,
-resulting in VF files in sysfs that should have been removed but were not.
+	Byungchul
 
-Tested on:
-- Kernel version: Linux version 6.15.0-rc4+ (phisik3@10-50-163-153-ARM-openEuler22-3)
-- Platform: ARM64 (Huawei Kunpeng920)
-- Repro steps:
-1.Thread A unloads the driver and VF (requires calling sriov_disable()).
-2.Thread B calls `echo 1 > /sys/bus/pci/rescan `
-
-The system will report a call trace as follows:
-
-sysfs: cannot create duplicate filename '/devices/pci0000:3c/0000:3c:01.0/0000:3e:00.2/resource2'
-CPU: 138 UID: 0 PID: 11067 Comm: sh Kdump: loaded Tainted: G      D W  O        6.15.0-rc4+ #1 PREEMPT
-Tainted: [D]=DIE, [W]=WARN, [O]=OOT_MODULE
-Call trace:
-  show_stack+0x20/0x38 (C)
-  dump_stack_lvl+0x80/0xf8
-  dump_stack+0x18/0x28
-  sysfs_warn_dup+0x6c/0x90
-  sysfs_add_bin_file_mode_ns+0x12c/0x178
-  sysfs_create_bin_file+0x7c/0xb8
-  pci_create_attr+0x104/0x1b0
-  pci_create_resource_files.part.0+0x50/0xd0
-  pci_create_sysfs_dev_files+0x30/0x50
-  pci_bus_add_device+0x40/0x120
-  pci_bus_add_devices+0x40/0x98
-  pci_bus_add_devices+0x6c/0x98
-  pci_rescan_bus+0x38/0x58
-  rescan_store+0x80/0xb0
-  bus_attr_store+0x2c/0x48
-  sysfs_kf_write+0x84/0xa8
-  kernfs_fop_write_iter+0x120/0x1b8
-  vfs_write+0x338/0x3f8
-  ksys_write+0x70/0x110
-  __arm64_sys_write+0x24/0x38
-  invoke_syscall+0x50/0x120
-  el0_svc_common.constprop.0+0xc8/0xf0
-  do_el0_svc+0x24/0x38
-  el0_svc+0x34/0xf0
-  el0t_64_sync_handler+0xc8/0xd0
-  el0t_64_sync+0x1ac/0x1b0
-
-The general analysis and corresponding code are as follows:
-
-drivers/pci/iov.c
-
-736 static void sriov_disable(struct pci_dev *dev)
-737 {
-738         struct pci_sriov *iov = dev->sriov;
-739
-740         if (!iov->num_VFs)
-741                 return;
-742
-743         sriov_del_vfs(dev);
-744         iov->ctrl &= ~(PCI_SRIOV_CTRL_VFE | PCI_SRIOV_CTRL_MSE);
-745         pci_cfg_access_lock(dev);
-746         pci_write_config_word(dev, iov->pos + PCI_SRIOV_CTRL, iov->ctrl);
-747         ssleep(1);
-748         pci_cfg_access_unlock(dev);
-749
-750         pcibios_sriov_disable(dev);
-751
-752         if (iov->link != dev->devfn)
-753                 sysfs_remove_link(&dev->dev.kobj, "dep_link");
-754
-755         iov->num_VFs = 0;
-756         pci_iov_set_numvfs(dev, 0);
-757 }
-
-sriov_disable() will unload the VF and remove its files from sysfs.
-
-drivers/pci/pci-sysfs.c
-
-  435 static ssize_t rescan_store(const struct bus_type *bus, const char *buf, size_t count)
-  436 {
-  437         unsigned long val;
-  438         struct pci_bus *b = NULL;
-  439
-  440         if (kstrtoul(buf, 0, &val) < 0)
-  441                 return -EINVAL;
-  442
-  443         if (val) {
-  444                 pci_lock_rescan_remove();
-  445                 while ((b = pci_find_next_bus(b)) != NULL)
-  446                         pci_rescan_bus(b);
-  447                 pci_unlock_rescan_remove();
-  448         }
-  449         return count;
-  450 }
-  451 static BUS_ATTR_WO(rescan);
-
-The `rescan_store()` function will scan the entire PCI bus, including the relevant sysfs files for the aforementioned VFs.
-
-Initially, it seemed that directly adding the pci_lock_rescan_remove() lock to sriov_disable() could solve the problem.
-However, it was later discovered that this might lead to a deadlock issue (because the remove_store() function would call sriov_disable(), causing a deadlock).
-
-drivers/pci/pci-sysfs.c
-
-  487 static ssize_t remove_store(struct device *dev, struct device_attribute *attr,
-  488                             const char *buf, size_t count)
-  489 {
-  490         unsigned long val;
-  491
-  492         if (kstrtoul(buf, 0, &val) < 0)
-  493                 return -EINVAL;
-  494
-  495         if (val && device_remove_file_self(dev, attr))
-  496
-         //Subsequently, sriov_disable() will be invoked.
-                 pci_stop_and_remove_bus_device_locked(to_pci_dev(dev));
-  497         return count;
-  498 }
-  499 static DEVICE_ATTR_IGNORE_LOCKDEP(remove, 0220, NULL,
-  500                                   remove_store);
-
-The function `pci_stop_and_remove_bus_device_locked()` acquires the `pci_lock_rescan_remove()` lock and subsequently calls `sriov_disable()`.
-If the lock is added within `sriov_disable()`, it could lead to a deadlock.
-
-Should we add a new lock to address this issue, or are there any other ideas? I would like to consult and discuss this with everyone.
-
-Thanks,
-Bingquan Mou <moubingquan@h-partners.com>
+> movq    %rdi, %rax      # netmem, netmem
+> andq    $-2, %rax       #, netmem
+> jmp     __x86_return_thunk
+> 
+> 
+> This should do it, and if the layouts change, it'd still
+> remain correct.
+> 
+> --
+> Pavel Begunkov
 
