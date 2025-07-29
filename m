@@ -1,84 +1,144 @@
-Return-Path: <linux-kernel+bounces-749126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0245CB14A6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:49:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0966FB14A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 267E4168873
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:49:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C10907AD6DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E459285CAA;
-	Tue, 29 Jul 2025 08:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA736285C92;
+	Tue, 29 Jul 2025 08:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFPRWVqW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nCaHUcdK";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ahVrBH8+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA81E28540F;
-	Tue, 29 Jul 2025 08:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFD527E04F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753778934; cv=none; b=r/d52zzC2EmY6nsZJJ1P8aR3D/gVJifs+2379jzNmsSBwQDXQlRfIvhsIoWoari3G4em693bm00famUBsewTJ912dD2iU7SvFA+QfDFQkVB6OR7cv0+R41T5hGLgjNoMf4Sff1R4KEyGchDAbXeWqrnn5XPizI6l/HGJBKaMYg8=
+	t=1753779204; cv=none; b=Uo9G3K6Bxtht/NMD2ktWMF4ZZKfoirnC4FZ30g9T9zsrwmoHlde4J4e7q0RbgU/tbE9UYPXjTw9O5rh+v/nSk8zpi+oMVgvgBodKaCJU/hwroG1ndYkYcEkDsHlnGvtlyh3L6CnN++cjPzbV7OH+alm93VkZn22qdELlsu1+5us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753778934; c=relaxed/simple;
-	bh=JGzmTwYYrbI59qkPeNZItYLq2tGzPcEAIKyarJo8Rlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PspTHJRBdcn2GlnL0btMagn9Yp6xPkzB66BP5UVheFkLAI41Gk86JC/RV6w0q4EyvCreaPqMTtLaqOm4HeG6FcNIlFVUmWLhqAoMyH9Zx01p20NzbynaCOWRPazBsZv0VVk4ut/VJFiC9RTd3bu5nRiSb779zut6SfeOD/wtIIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFPRWVqW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5106C4CEF5;
-	Tue, 29 Jul 2025 08:48:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753778933;
-	bh=JGzmTwYYrbI59qkPeNZItYLq2tGzPcEAIKyarJo8Rlw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JFPRWVqWozpr9+yoP1tCz7C0r6F52FrK7dKuDTazEJvCIQ/ZocjB72A2hvZJiKpKZ
-	 ykB4j6BW7P2bMALc5s6VqnfC/y+F71CWEppBw5WD2RcjCkBOubl1mfUI9PD20KNDsV
-	 gxwSpZPVMykmuy+24v513UKfNXnYnOFMZ6ge9nvp/oGZClFjKcbh75Q5OjctU5Yx31
-	 7ps/MAUm0wbf9Nz8M+wD4NLziDZj2SkFUemYW2ENXoyeUtEhNv5o8LrVWwbCKz0Se4
-	 NXzEM/aNINayGi/aGAiJQnIJjsoshMbJOeS0GHg4fctL6ROzZly3+CLHjXQ0nAJgad
-	 kNlzKbmDBLvAQ==
-Date: Tue, 29 Jul 2025 10:48:50 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Erik Beck <xunil@tahomasoft.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Heiko Stuebner <heiko@sntech.de>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 0/2] Add Support for LinkStar H68K board: ARM64 and
- RK3568: dts and dt-bindings.
-Message-ID: <20250729-poised-proud-ibex-5ab838@kuoka>
-References: <20250728-linkstarpatch_v5-v5-0-b4ebfeaca652@tahomasoft.com>
+	s=arc-20240116; t=1753779204; c=relaxed/simple;
+	bh=kcunrLwKW3+Cyy+EkXPz0UdOdH9oXcgabm37NXP1zsE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=PQA1uorlm2r3hCIGFB3EVUaDl8yxEtO96Tj6i4MLWc2KyZFVe4i+GUpK9OwGrKBfxAVnQQ678mO4RDUKhfw/yjm5zdTgIIvI6xm2xRogz4OlukJKXUX0PNGQks3Pm7NZP87Ym5QToeiQbb55G8FV1d8Cy71Z40/WbErgInNv6Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nCaHUcdK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ahVrBH8+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753779200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lRQOr/YVtMtv09gApfsn4UVzkLLUbuZZhG3yNy8T49c=;
+	b=nCaHUcdK6QvrJD0l1CHiZBttddtmqSdFk3OAaJ/BhXmcQmESBDFuFjdd6YTFbZhe2tWTAo
+	9HOqloREadqoChYcrCA9Ks1NlUJUSAylFpkVcvOFCKFHul5IicMWZQri60GmtT9OWaz7qy
+	3411sqLhFXmeOJXYBaHNiXR/we72MPC9Yt3x8FNYZhDMbYFpqrlLTkJ0JP8oRgls4SzokO
+	RpJqPp8E1zqo+GDu0kBuNL6N8TG/cMVGEbYecfh9veFY5ieTz/DY4nc1qaNDPd8CmpYUgN
+	ngWkhKIZWpKpow2HUFNmI8LBM+1yQLQEM5LvfK053uy7vfpIcyN11Ig0Mzm/aA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753779200;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lRQOr/YVtMtv09gApfsn4UVzkLLUbuZZhG3yNy8T49c=;
+	b=ahVrBH8+xRG4ng6Njk9WqQnoAl8ukB1Gx2Qj30Yr3dzQrtoyPk5x+t+hQSWjsYpAjGWudp
+	UeLYTy9Fs2ZE2vAA==
+To: Yipeng Zou <zouyipeng@huawei.com>, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ peterz@infradead.org, sohil.mehta@intel.com, rui.zhang@intel.com,
+ arnd@arndb.de, yuntao.wang@linux.dev, linux-kernel@vger.kernel.org
+Cc: zouyipeng@huawei.com
+Subject: Re: [BUG REPORT] x86/apic: CPU Hang in x86 VM During Kdump
+In-Reply-To: <87ecu1pfnn.ffs@tglx>
+References: <20250604083319.144500-1-zouyipeng@huawei.com>
+ <87ecu1pfnn.ffs@tglx>
+Date: Tue, 29 Jul 2025 10:53:20 +0200
+Message-ID: <87tt2vnzsv.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250728-linkstarpatch_v5-v5-0-b4ebfeaca652@tahomasoft.com>
+Content-Type: text/plain
 
-On Mon, Jul 28, 2025 at 11:07:35AM -0400, Erik Beck wrote:
- v5:
->   - Responsive to comments received from  Krzysztof Kozlowski <krzk+dt@kernel.org>
->     - https://lore.kernel.org/all/20250728-dashing-discerning-roadrunner-bc8b87@kuoka/
->     - https://lore.kernel.org/all/93c39b36-07c8-4883-bd23-7d0194c50a7a@kernel.org/
->     - https://lore.kernel.org/all/642df1ee-5e92-4f0a-bcdf-7e10dbc0d59b@kernel.org/
->     - https://lore.kernel.org/all/9ebd9797-8d92-4799-bb8d-59a796e6043c@linaro.org/
->     
->   - Changes made are:
->     - Revisions to commit messages:
->         - Removed notes on base commit;
-> 	- Fixed checkpatch warning;
-> 	- Removed notes on device history;
-> 	- Fleshed out the top-line summary of the dts patch;
+On Sun, Jul 27 2025 at 22:01, Thomas Gleixner wrote:
 
-You did more - also changed order of patches.
+> On Wed, Jun 04 2025 at 08:33, Yipeng Zou wrote:
+>> Recently, A issue has been reported that CPU hang in x86 VM.
+>>
+>> The CPU halted during Kdump likely due to IPI issues when one CPU was
+>> rebooting and another was in Kdump:
+>>
+>> CPU0			  CPU2
+>> ========================  ======================
+>> reboot			  Panic
+>> machine shutdown	  Kdump
+>> 			  machine shutdown
+>> stop other cpus
+>> 			  stop other cpus
+>> ...			  ...
+>> local_irq_disable	  local_irq_disable
+>> send_IPIs(REBOOT)	  [critical regions]
+>> [critical regions]	  1) send_IPIs(REBOOT)
+>
+> After staring more at it, this makes absolutely no sense at all.
+>
+> stop_other_cpus() does:
+>
+> 	/* Only proceed if this is the first CPU to reach this code */
+> 	old_cpu = -1;
+> 	this_cpu = smp_processor_id();
+> 	if (!atomic_try_cmpxchg(&stopping_cpu, &old_cpu, this_cpu))
+> 		return;
+>
+> So CPU2 _cannot_ reach the code, which issues the reboot IPIs, because
+> at that point @stopping_cpu == 0 ergo the cmpxchg() fails.
+>
+> So what actually happens in this case is:
+>
+> CPU0			  CPU2
+> ========================  ======================
+> reboot			  Panic
+> machine shutdown	  Kdump
+> 			  machine_crash_shutdown()
+> stop other cpus           local_irq_disable()
+> try_cmpxchg() succeeds	  stop other cpus
+> ...		          try_cmpxchg() fails	  
+> send_IPIs(REBOOT)	  --> REBOOT vector becomes pending in IRR
+> wait timeout
 
-Best regards,
-Krzysztof
+But looking even deeper. machine_crash_shutdown() does not end up in
+stop_other_cpus() at all. It immediately uses the NMI shutdown. There
+are still a few inconsistencies in that code, but they are not really
+critical.
 
+So the actual scenario is:
+
+CPU0			  CPU2
+========================  ======================
+reboot			  Panic
+machine shutdown	  Kdump
+			  machine_crash_shutdown()
+stop other cpus           
+send_IPIs(REBOOT)	  --> REBOOT vector becomes pending in IRR
+wait timeout
+                          send NMI stop
+NMI -> CPU stop
+                          jump to crash kernel
+
+So the patch I gave you should handle the reboot vector pending in IRR
+gracefully. Can you please give it a try?
+
+Thanks,
+
+        tglx
 
