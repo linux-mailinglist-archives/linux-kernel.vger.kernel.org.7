@@ -1,123 +1,99 @@
-Return-Path: <linux-kernel+bounces-749682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D23EB15192
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:44:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FBEBB15198
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1CF23BAB6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1413543F19
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E646D2989A5;
-	Tue, 29 Jul 2025 16:44:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BBD288C9C;
+	Tue, 29 Jul 2025 16:46:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S2z2aTR0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=shadowice.org header.i=@shadowice.org header.b="SmEVtYeY"
+Received: from shadowice.org (shadowice.org [95.216.8.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3EA295DBD;
-	Tue, 29 Jul 2025 16:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5ADF33993;
+	Tue, 29 Jul 2025 16:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.216.8.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753807445; cv=none; b=qYYI5Yo0mVEHUI4xHXg8+bQMfrTZqOTFsv6B+Ggv2zKB+ZDKln9+NpfbfowRAmrrm6R474ZdHDpQOlnx13gNtg5xTPzA1Df2cVxZXFtL+YVm8Km/a9+UkHh2Vr+CGoCO0htUxrQqUOlzBcpD7ddXUEeRxMRmx0ZR24BGJN8geZk=
+	t=1753807559; cv=none; b=sz1uY81cUeVlfYBSxzs/fMXqUQrXv0O5jptPRjzx1013ZZnudF3jGq3xUIZ3ix6DG0reVaMkqVBwwz0s/jzQ1f3bSFvxWrr6QoaYB1Fbp20NNr4fLDzZb5QxGkvFqfBt2idcpf8/VKoprwDrftTIqD5huA80KYIPFqRDoiZtIio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753807445; c=relaxed/simple;
-	bh=lOU+N6iFtUxmqWL6eqLxeLa6+vrLLwnK+Ndej65rQCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UDJnOAJ23N0p14UUayMTfSXv5A0M41vSveAQtrFvG+tJXZrjhbElFjipMXoc1Ph1puIPqmuExEuAqjMS6nq0I7Ph8t98YTkMuTuvlOJNalMwHyhpTh3zexTGk40q2+pWKNLvcc9gKQmlDGQbEHI+GXPvQUNMA+LUHkw74hzUsWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S2z2aTR0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9469C4CEF5;
-	Tue, 29 Jul 2025 16:44:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753807445;
-	bh=lOU+N6iFtUxmqWL6eqLxeLa6+vrLLwnK+Ndej65rQCk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=S2z2aTR0ykKrDlA70tWXjh22sefKXYcctAXlQbLqXv+QhgVyANlVEEb69tPCNJjaE
-	 jG+q7zpAT+3Gr2HdQE7YAHOzDfW7VPMD/4NzKMm/D9f+n3LjRbHZp0EgZkho7g9KeZ
-	 Qm7/soE9Mptjt18kwAx/jdPZ90gRkQhldAybOPMYI0yjOtKaEKO8yf69HD4nr//q+e
-	 ABEyMZ+qyyYutK6j3oMX2tH1gT0/XIcWdZx4y6KuUVc8iPk7q3wML4L/iaq/qCEcgD
-	 bePU0mD8htFGw4ieiXXLviEB/o+IJXxy77w1tSdIARlYEN+tLgvtPlR/EP2K92rARp
-	 uqJNq+iuOUpeg==
-Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
-	(envelope-from <mchehab@kernel.org>)
-	id 1ugnQo-00000000Liz-1dmP;
-	Tue, 29 Jul 2025 18:44:02 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>,
-	Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	workflows@vger.kernel.org
-Subject: [PATCH v2 2/2] docs: changes: better document Python needs
-Date: Tue, 29 Jul 2025 18:43:04 +0200
-Message-ID: <b03b95b8d09358e81e4f27942839191f49b0ba80.1753806485.git.mchehab+huawei@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1753806485.git.mchehab+huawei@kernel.org>
-References: <cover.1753806485.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1753807559; c=relaxed/simple;
+	bh=pVF1vswbbxePK12gpYAzIN0tf9oD1WO9AGE7jn/ow1o=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=VI1+wROLsu4SnH1zpuZq7OrxFzJiEjL/ovCK1jRNmUhISRm3IBJmHgjC6liaybDmtdmtyKTSmd1ru8jg1ou6DbaEthlRlu3F//2Fsctec7SnME/5GRThVnQ7LfEjYSnJipoko34McuxzZssAT46QpPnj6xECcC1z4E/seUcAFTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shadowice.org; spf=pass smtp.mailfrom=shadowice.org; dkim=pass (1024-bit key) header.d=shadowice.org header.i=@shadowice.org header.b=SmEVtYeY; arc=none smtp.client-ip=95.216.8.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shadowice.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shadowice.org
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; s=default; bh=pVF1vswbbxeP
+	K12gpYAzIN0tf9oD1WO9AGE7jn/ow1o=; h=in-reply-to:references:to:from:
+	subject:cc:date; d=shadowice.org; b=SmEVtYeYg7yuSdJNqbZjzzM0rZ/EKpiLiy
+	hLIKDWtSoqXDMEd0cLvjakg19yr4v3jC3LFHiRs0hZimAe22B2AjcTsg+Y5Yzo49cGCCcm
+	5T3YAaivjr+nLmw6vu5BDkIEZAMo6hpb5Tv1X9Js7mQ1Jy1Bf0RDmCw57BBUag5XEqg=
+Received: from localhost (p4fc618b5.dip0.t-ipconnect.de [79.198.24.181])
+	by shadowice.org (OpenSMTPD) with ESMTPSA id 49603c6b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Tue, 29 Jul 2025 18:45:47 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 29 Jul 2025 18:45:46 +0200
+Message-Id: <DBOOW06CYM2U.11R0PDE4QNQK9@shadowice.org>
+Cc: "Andy Lutomirski" <luto@amacapital.net>, "Will Drewry"
+ <wad@chromium.org>, "Sargun Dhillon" <sargun@sargun.me>, "Shuah Khan"
+ <shuah@kernel.org>, <linux-kernel@vger.kernel.org>, "Ali Polatel"
+ <alip@chesswob.org>, <linux-kselftest@vger.kernel.org>,
+ <bpf@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] selftests/seccomp: Add a test for the
+ WAIT_KILLABLE_RECV fast reply race
+From: "Johannes Nixdorf" <mixi@shadowice.org>
+To: "Kees Cook" <kees@kernel.org>, "Johannes Nixdorf" <johannes@nixdorf.dev>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250725-seccomp-races-v2-0-cf8b9d139596@nixdorf.dev>
+ <20250725-seccomp-races-v2-2-cf8b9d139596@nixdorf.dev>
+ <202507281805.14457D3EAF@keescook>
+In-Reply-To: <202507281805.14457D3EAF@keescook>
 
-Python is listed as an optional dependency, but this is not
-true, as:
+On Tue Jul 29, 2025 at 3:07 AM CEST, Kees Cook wrote:
+> On Fri, Jul 25, 2025 at 06:31:19PM +0200, Johannes Nixdorf wrote:
+>> +		struct itimerval timer =3D {
+>> +			.it_value =3D { .tv_usec =3D 1000 },
+>> +			.it_interval =3D { .tv_usec =3D 1000 },
+>> +		};
+>
+> To get this to build, I needed to add a sys/time.h include:
+>
+> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testin=
+g/selftests/seccomp/seccomp_bpf.c
+> index b24d0cbe88b4..fc4910d35342 100644
+> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
+> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+> @@ -24,6 +24,7 @@
+>  #include <linux/filter.h>
+>  #include <sys/prctl.h>
+>  #include <sys/ptrace.h>
+> +#include <sys/time.h>
+>  #include <sys/user.h>
+>  #include <linux/prctl.h>
+>  #include <linux/ptrace.h>
+>
+> But, with that, yes, I can confirm the race and the fix. Thank you!
+> I can fix that up locally.
 
-1) arm (multi_v7_defconfig and other defconfigs) and arm64 defconfig
-   needs it due to DRM_MSM dependencies;
+Sounds good. The change looks correct to me as well.
 
-2) CONFIG_LTO_CLANG runs a python script at scripts/Makefile.vmlinux_o;
+>
+> -Kees
 
-3) kernel-doc is called during compilation when some DRM options
-   like CONFIG_DRM_I915_WERROR are enabled;
-
-4) allyesconfig/allmodconfig will enable CONFIG_* dependencies
-   that needs it;
-
-5) besides DRM, other subsystems seem to have logic calling *.py
-   scripts.
-
-So, better document that and change the dependency from optional
-to mandatory to reflect the current needs.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
----
- Documentation/process/changes.rst | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index bccfa19b45df..4c9088e429c8 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -61,7 +61,7 @@ Sphinx\ [#f1]_         3.4.3            sphinx-build --version
- GNU tar                1.28             tar --version
- gtags (optional)       6.6.5            gtags --version
- mkimage (optional)     2017.01          mkimage --version
--Python (optional)      3.9.x            python3 --version
-+Python                 3.9.x            python3 --version
- GNU AWK (optional)     5.1.0            gawk --version
- ====================== ===============  ========================================
- 
-@@ -154,6 +154,13 @@ Perl
- You will need perl 5 and the following modules: ``Getopt::Long``,
- ``Getopt::Std``, ``File::Basename``, and ``File::Find`` to build the kernel.
- 
-+Python
-+------
-+
-+Several config options require it: it is required for arm/arm64
-+default configs, CONFIG_LTO_CLANG, some DRM optional configs,
-+the kernel-doc tool, and docs build (Sphinx), among others.
-+
- BC
- --
- 
--- 
-2.49.0
-
+Best regards,
+Johannes
 
