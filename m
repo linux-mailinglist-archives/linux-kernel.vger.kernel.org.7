@@ -1,194 +1,200 @@
-Return-Path: <linux-kernel+bounces-749048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAF49B14951
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:44:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584A6B14957
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:45:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192943AC7C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944E93A5F46
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:45:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19CA2266595;
-	Tue, 29 Jul 2025 07:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773B5266B6F;
+	Tue, 29 Jul 2025 07:45:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f989TDkf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="GlxFpxZb"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0E725BEE7
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F376224898
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753775067; cv=none; b=raPnNlXALZ8p34hYkkeRROPySalf0w0NyeyQmMpgy4cQieF7HL6TSUGCKDDJE+U+hjByEdJTWskBk6lAePGVbz7yYtJ0JNZKoqp6L9Aa9SAA8M9XIoEXyX17NNnEQfllyGEVwyoxyDkpGjsa/MwD4ZSjCiGlgtBkmFvRficS3Qs=
+	t=1753775147; cv=none; b=AVKyQd0pwC9rrA+lJHEKfVvXpT8T9SHi99wNEElZurtryStCf9vvhsrxEOnj2gImlAWd7wfkNRrwxPlye2UIW95Fj+O9ylKDdeWaJbGK5twm9/dv3TKhTR1bJh9aXi5ZYM2y0NJKGmMyJ82zkPq2iTxvRARt2eYeq9V5ILdPNbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753775067; c=relaxed/simple;
-	bh=dyiGK4DqNe7kPZ6VmMcv/MYNSURoRRN7GbgZVgXGWuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LfuHMjgtAA8uW8vFRVhsTjgw0Hw3XlVNlBLjp8pR3qZ3fyHql24gLy+r587XYttL6oAUt0tOdAoe+WMEr3O5P+XxPay+z+hky6Vp6jKUkoQP0KywiuKh63k/x2UA8h9rpn2aF9j8mkka7yZSyhafaQai14VviEUm+ylSjPUOz/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f989TDkf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753775064;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=88syDxS7vDDsk5BDyBeMg2TdAJ6UBls0dz/LG9t30Vo=;
-	b=f989TDkfYJvYHZadL7i5gGs6is1zi9eZ3iKRgLvDnVT5qfC7Q3DxH5r74Nc+RP23UP6iun
-	njRvFpfCUD3xlsGIYi3yB60AXf+Yfb4YFNH8KosWR/eNj0hQWCKmNKrOQz5W+ou+hVbh27
-	UqtyGQoIU5TQjML0mQGQkL88VkYcAvU=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-685-ACObe7g5OzqGzrGtjXwRHA-1; Tue, 29 Jul 2025 03:44:22 -0400
-X-MC-Unique: ACObe7g5OzqGzrGtjXwRHA-1
-X-Mimecast-MFC-AGG-ID: ACObe7g5OzqGzrGtjXwRHA_1753775062
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-23638e1605dso41716785ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:44:22 -0700 (PDT)
+	s=arc-20240116; t=1753775147; c=relaxed/simple;
+	bh=cFticMHp5jFLRVtZav4MT7bGjKaA7x1ww0DkFagI4YM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I0nBAAtEeVXnURLMjzwO0GTNQCJXo70RI7/ZQg6f4ZtbpWIfxDsXj27oYKW7pC99f2iqH0czP0UtwpbLBUH+BrYLuiV/BeeomXF/kN8YViHuHGzJHqxcI6QkpvVpCXAa63R7chEtbKLg+tti+D417H1DG20I0oOeHutrT7tn+aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=GlxFpxZb; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b3bcb168fd5so4592690a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:45:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kerneltoast.com; s=google; t=1753775145; x=1754379945; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tGm54EbCHZoz70giSmTC6+R0IC8NxL6CQ8fr0Y7M3pg=;
+        b=GlxFpxZbxlB3hOoRgnu2ACUl0GrhxoIXttXAIF4j2ltuQD78Sv+8fKFpiffK2JGPFW
+         OeLrYMKhNcjvD4565X9yuk+lSsYOL7tTJ8pMPNLMzeQ6foHX0D6tYWh1yAGbCXv2chWK
+         C7sJJn80YhorX0vMVbdbZTtdQFV7LZsz7adqOBxDA3bW6ytvOfIrW4BI/aLT6DT+T5OO
+         WRVzADJwQsWPe8sx+k9fbX+UYmEnsc7HKnea2bswBz4VyhJlZ9Q44s6pUqpbTsC+IpR3
+         xO0O+oK+YjNIaMC1gV68c2fe/Rg0NKrxSlxZr4y/70DnrrVE03E3maVcRcNkjqJI0JnV
+         33Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753775061; x=1754379861;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=88syDxS7vDDsk5BDyBeMg2TdAJ6UBls0dz/LG9t30Vo=;
-        b=JJH/naQ7XZF8TiYwlExlEyVZ9Nua5Z5/6XNyD3biFuTP8TuY4IC7iu40QN/moEf+jR
-         apt2gZN9BTWClUPszSFxjpzi3wfUUHxQ6Bo7RQ+j+klZEcthPRxN7pd/6lE59/0UB78K
-         dVcp3mpzswACagJrf8GKuhUqZIu77aU3CqWuBP1G4zkUV1XQPpUvBTzR2BrWogS+q3q4
-         8PPb+MxYcOmKIDXu0EpBHQUbSv1QGK4DJN3G+ic4MRDawSyp30PWRkSGrgK1izJnB3uC
-         CRIyJ3Scdn/0C5p5bzpmBTM6BEVCMQeK2LGM9QLjaKcuZ132wWtMJQ3WzNHPOsU8f8NW
-         MAYA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrcXSVHy/QhlzVlyhdDflquvez2W0kvF/Esvb3bEpdbxzujX4Zmbx9IF9g2Q5vKeV8hsVr05tL3ywbXnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZEGv7fMFvEei5AATZAlJUgWI58OS5Cc9z9UtshKW5zStpA2z+
-	s9DvzAt563NqeGupHIqM1SSAOk2lbLZaHpxVldp7D8j9BkYOjEdbGoQEhYXF4X0UUSGaPkSj5Le
-	hAHs6a2WcNyeB2Wa5Qr99KCgYV4YQ9SEMxiVsRoTM5SKbqt6mz/dTp8EfismzkjaT02zLRlUAy2
-	3f0or/TxYJ5UlteZOQi9e+k6GCDkF2PGCP5Kbj1qFu
-X-Gm-Gg: ASbGncvlNKTnDxMuw+b5vOSSj3EEOMwxgHTaZk4GHdl327vWNAJOtDHPPXb7kQgLVvx
-	wBonIS7ldAXX0/KE8zoNNVoVBXhipsw1Azd0AV3nE3PnOi2L/Akx/RXNhHmoMadIhU/xJOQY5of
-	fdo6IGoek6G03w7YFBU1rYCw==
-X-Received: by 2002:a17:903:fa3:b0:235:f298:cbbd with SMTP id d9443c01a7336-23fb30ac008mr247732535ad.21.1753775061582;
-        Tue, 29 Jul 2025 00:44:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHuYlex1cEb8RIST85ReAXq2m5E1nNciybZWdJsmd2xRcAEtdMBLIiQb5jqnfhOKYl5YBz4BLsR3zB+0t6bG4=
-X-Received: by 2002:a17:903:fa3:b0:235:f298:cbbd with SMTP id
- d9443c01a7336-23fb30ac008mr247732065ad.21.1753775061042; Tue, 29 Jul 2025
- 00:44:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753775145; x=1754379945;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tGm54EbCHZoz70giSmTC6+R0IC8NxL6CQ8fr0Y7M3pg=;
+        b=UjpsjRRjWRrU0+B3J4AjQHn3NLew1UQbroM02KN0/dqP3YDSNBfnChJxLdkDtfL01X
+         wJn8m1AtHpBh0mUaVD4bRl95P9wBmAcIhvmiSXEBiONHsXZLCvJpYLhdlk4bhhETOvL/
+         kFvIWwhLUOCfRMYIIME4OjJMh0MQoj+tVfMJ09sbiDprTBhtXJuKRIbySFYPXVvAFeOT
+         64xDC3XZXTP/NfAdUhklBcczi9tngbHpwQAcTeRMYXOOWk2TqwQAgenJc1KxlR8RnDyx
+         6+t1MtfByygM8VeU4c3MJjO0DX8aZXFX4lPU+RhR4eq16K8MLnyLOtmc0Hk8c1wnWwb2
+         bi3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZG4BgXr5W4cnSiqM5mvobm0CTF7snnFacvCbr3Z0Mv3rEHbyH6F894c+GaVQwHed/BeCMLy6X5FXRX3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBNDAsfcdfp4hp8eOnAVc2kpZH1S9zWdi4mCwmhwbLlSwlXbQs
+	WAIKCR1qU55n5GeXDTwT/H2tq1IAdB/qrARChNoTCOX+ORspgYNXi13GhF+0fRG/Gee9
+X-Gm-Gg: ASbGncs2y7JwXKMsCRoSko1l+Jf9CHSOaLLnD70/x6O4bgkJ91AbulvBamwro/A71lH
+	8k615DDB5IYvnK9Xf6KNcX/AzQ3Ia3+SpS5/COUU4Joh2FxEC5TsDi+hfvXKilRwuWBc+BLVCVP
+	g8pdH/Y15Ju8V9qNYVfflEeMjyJMKUKqF11yZle/Mz54fme8lpbtZKXcs/MCH7EkZ8z6dWg1F5l
+	QN0r8VcSIht2Ui9x9zQmzPDfV+wfM3Ndbg4fyhhMoka7Gq1VUejFZdxU7z/bXj+ZoOJ0b/uTtxn
+	a6UxB2RBFsXIvgOeg2I/pmQpqBA8GnsR5GXzoY+qAVB1cV6wZsWiblvm1vlbPwMYW9OwhOHY6/V
+	jUY0KR/hRlpW4xZEdSsMTWORK
+X-Google-Smtp-Source: AGHT+IGI8hwRjhPfWqqIfaH8WcvqvlbosGRJ6/9MKvGJPM2PYwCDd8KBUuiB5+aT0Qw0lrKMA+MWtA==
+X-Received: by 2002:a17:902:dac9:b0:240:418c:b9f6 with SMTP id d9443c01a7336-240418cbaccmr82148825ad.49.1753775144566;
+        Tue, 29 Jul 2025 00:45:44 -0700 (PDT)
+Received: from sultan-box ([79.127.217.54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe533b1esm70833165ad.158.2025.07.29.00.45.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 00:45:44 -0700 (PDT)
+Date: Tue, 29 Jul 2025 00:45:40 -0700
+From: Sultan Alsawaf <sultan@kerneltoast.com>
+To: "Du, Bin" <bin.du@amd.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+	laurent.pinchart+renesas@ideasonboard.com,
+	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
+	Dominic.Antony@amd.com
+Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
+Message-ID: <aIh8JPTv9Z5lphRQ@sultan-box>
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <aIEmJXNpNN0QF233@sultan-box>
+ <12fb4d09-6b94-4f54-86b8-8a3ac0949151@amd.com>
+ <aIVXVpg_9XxRXUAH@sultan-box>
+ <b02d0749-6ecb-4e69-818a-6268f894464d@amd.com>
+ <aIh7WB0TGNU15Zm1@sultan-box>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1b28a10e-0cff-405e-9106-0c20e70854f9@linux.ibm.com> <c2bba86f-d9d2-4bab-97e4-d983bffbb485@linux.ibm.com>
-In-Reply-To: <c2bba86f-d9d2-4bab-97e4-d983bffbb485@linux.ibm.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 29 Jul 2025 15:44:09 +0800
-X-Gm-Features: Ac12FXwkw_WDh6m3kZRveRMBbGdfdy-TUoBAoEJlxUImf9DlXn6-BKy_ShBwr3A
-Message-ID: <CACGkMEu+Qn06bmp6br699Gk6SxTbSDZCW8mQ0qFUfDZUpAx62A@mail.gmail.com>
-Subject: Re: vhost: linux-next: kernel crash at vhost_dev_cleanup/kfree
-To: JAEHOON KIM <jhkim@linux.ibm.com>
-Cc: mst@redhat.com, kvm@vger.kernel.org, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, jonah.palmer@oracle.com, 
-	Eric Farman <farman@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIh7WB0TGNU15Zm1@sultan-box>
 
-On Tue, Jul 29, 2025 at 5:25=E2=80=AFAM JAEHOON KIM <jhkim@linux.ibm.com> w=
-rote:
->
->
-> Dear Jason Wang,
->
-> I would like to kindly report a kernel crash issue on our s390x server
-> which seems to be related to the following patch.
-> -------------------------------------------------------------------------=
--------------------------------------------------
->    commit 7918bb2d19c9 ("vhost: basic in order support")
-> https://git.kernel.org/pub/scm/linux/kernel/git/mst/vhost.git/commit/?id=
-=3D7918bb2d19c9
-> -------------------------------------------------------------------------=
--------------------------------------------------
->
-> This patch landed in linux-next between July 16th and 17th. Since then,
-> kernel crash have been observed during stress testing.
-> The issue can be confirmed using the following command:
-> -------------------------------------------
->    stress-ng --dev 1 -t 10s
-> -------------------------------------------
+On Tue, Jul 29, 2025 at 12:42:16AM -0700, Sultan Alsawaf wrote:
+> On Tue, Jul 29, 2025 at 11:32:23AM +0800, Du, Bin wrote:
+> > Thanks Sultan, please see my comments
+> > 
+> > On 7/27/2025 6:31 AM, Sultan Alsawaf wrote:
+> > > On Fri, Jul 25, 2025 at 06:22:03PM +0800, Du, Bin wrote:
+> > > > > I have the Ryzen AI MAX+ 395 SKU of the HP ZBook Ultra G1a 14.
+> > > > > 
+> > > > > I cannot for the life of me get the webcam working under Linux. The webcam works
+> > > > > under Windows so it's not a hardware issue.
+> > > > > 
+> > > > > With this patchset and all of the patches you link here applied to 6.15, I get
+> > > > > the following errors:
+> > > > >     [   11.970038] amd_isp_i2c_designware amd_isp_i2c_designware: Unknown Synopsys component type: 0xffffffff
+> > > > >     [   11.973162] amd_isp_i2c_designware amd_isp_i2c_designware: error -19: i2c_dw_probe failed
+> > > > > 
+> > > > > With the old ispkernel code from February [1] applied on 6.15, the webcam
+> > > > > indicator LED lights up but there's no image. I see these messages at boot:
+> > > > >     [    9.449005] amd_isp_capture amd_isp_capture.1.auto: amdgpu: AMD ISP v4l2 device registered
+> > > > >     [    9.489005] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: The OV05 sensor device is added to the ISP I2C bus
+> > > > >     [    9.529012] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
+> > > > >     [    9.554046] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
+> > > > >     [    9.554174] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
+> > > > >     [    9.580022] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
+> > > > > 
+> > > > > And then the kernel crashes due to the same use-after-free issues I pointed out
+> > > > > in my other email [2].
+> > > > > 
+> > > > > Any idea what's going on?
+> > > > > 
+> > > > > [1] https://github.com/amd/Linux_ISP_Kernel/commit/c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4
+> > > > > [2] https://lore.kernel.org/r/aIEiJL83pOYO8lUJ@sultan-box
+> > > > Hi Sultan,
+> > > > 
+> > > > [1] is for kernel 6.8, believe it can't be applied to 6.15. We didn't verify
+> > > > on 6.15 but we are really glad to help, would you please provide some info,
+> > > > 1. Suppose you are using Ubuntu, right? What's the version?
+> > > > 2. 6.15, do you mean https://github.com/torvalds/linux/tree/v6.15 ?
+> > > > 
+> > > > After your confirmation, we'll see what we can do to enable your camera
+> > > > quickly and easily
+> > > > 
+> > > > Regards,
+> > > > Bin
+> > > 
+> > > Thank you, Bin!
+> > > 
+> > > 1. I'm using Arch Linux with the ISP4-patched libcamera [1].
+> > > 2. Yes, here is my kernel source [2].
+> > > 
+> > > I have some more findings:
+> > > 
+> > > Currently, the first blocking issue is that the I2C adapter fails to initialize.
+> > > This is because the ISP tile isn't powered on.
+> > > 
+> > > I noticed that in the old version of amd_isp_i2c_designware [3], there were
+> > > calls to isp_power_set(), which is available in the old ISP4 sources [4].
+> > > Without isp_power_set(), the I2C adapter always fails to initialize for me.
+> > > 
+> > > How is the ISP tile supposed to get powered on in the current ISP4 code?
+> > > 
+> > You are correct, yes, i believe the I2C adapter failure is caused by ISP not
+> > being powered up. Currently in latest code, isp_power_set is no longer
+> > available, instead, we implemented genPD for ISP in amdgpu
+> > https://lore.kernel.org/all/20250618221923.3944751-1-pratap.nirujogi@amd.com/
+> > Both amd_isp_i2c and amd_isp_capture are in the power domain and use the
+> > standard runtime PM API to do the power control
+> 
+> Thanks for that link, I found it along with another patch on the list to make
+> the fwnode work ("drm/amd/amdgpu: Initialize swnode for ISP MFD device").
+> 
+> > > Also, I noticed that the driver init ordering matters between all of the drivers
+> > > needed for the ISP4 camera. In particular, amd_isp_i2c_designware and amd_isp4
+> > > must be initialized before amd_capture, otherwise amd_capture will fail to find
+> > > the fwnode properties for the OV05C10 device attached to the I2C bus.
+> > > 
+> > > But there is no driver init ordering enforced, which also caused some issues for
+> > > me until I figured it out. Maybe probe deferral (-EPROBE_DEFER) should be used
+> > > to ensure each driver waits for its dependencies to init first?
+> > > 
+> > amd_isp_capture only has dependency on amd_isp4 which is the ACPI platform
+> > driver, it is init before amd_isp_catpure.
+> > Do you see in your side the amd_capture probe failure caused by failing to
+> > read fwnode properties? If that's the case please help to check if amd_isp4
+> > is loaded successfully
+> 
+> I got much further now: there aren't any driver initialization errors, but when
+> I open the camera, there's no image. The camera LED turns on so it's active.
+> 
+> And then shortly afterwards, amdgpu dies and the entire system freezes.
+> 
+> I've attached my full dmesg, please let me know what you think. Thanks!
 
-Right, I forgot to initialize vq->nheads in vhost_dev_init().
+I almost forgot, here is my current kernel tree:
+https://github.com/kerneltoast/kernel_x86_laptop/tree/v6.16-sultan-isp4
 
-I've posted a fix here:
-
-https://lore.kernel.org/virtualization/20250729073916.80647-1-jasowang@redh=
-at.com/T/#u
-
-Thanks
-
->
-> Crash log and call stack are as follows.
-> Additionally, this crash appears similar to the issue discussed in the
-> following thread:
-> https://lore.kernel.org/kvm/bvjomrplpsjklglped5pmwttzmljigasdafjiizt2sfmy=
-tc5rr@ljpu455kx52j/
->
-> [ 5413.029569] Unable to handle kernel pointer dereference in virtual
-> kernel address space
-> [ 5413.029573] Failing address: 00000328856e8000 TEID: 00000328856e8803
-> [ 5413.029576] Fault in home space mode while using kernel ASCE.
-> [ 5413.029580] AS:0000000371fdc007 R3:0000000000000024
-> [ 5413.029607] Oops: 003b ilc:3 [#1]SMP
->    .......
-> [ 5413.029655] CPU: 23 UID: 0 PID: 2339 Comm: stress-ng-dev Not tainted
-> 6.16.0-rc6-10099-g60a66ed35d6b #63 NONE
-> [ 5413.029659] Hardware name: IBM 3906 M05 780 (LPAR)
-> [ 5413.029662] Krnl PSW : 0704e00180000000 0000032714b9f156
-> (kfree+0x66/0x340)
-> [ 5413.029673]            R:0 T:1 IO:1 EX:1 Key:0 M:1 W:0 P:0 AS:3 CC:2
-> PM:0 RI:0 EA:3
-> [ 5413.029677] Krnl GPRS: 0000000000000002 0000008c056e8000
-> 0000262500000000 0000000085bf4610
-> [ 5413.029681]            0000000085bf4660 0000000085bf4618
-> 0000032716402270 0000032694e0391a
-> [ 5413.029683]            0000032716402290 0000032714720000
-> 00000328856e8000 0000262500000000
-> [ 5413.029685]            000003ff8312cfa8 0000000000000000
-> 000023015ba00000 000002a71e8d3ba8
-> [ 5413.029697] Krnl Code: 0000032714b9f146: e3e060080008 ag %r14,8(%r6)
-> [ 5413.029697]            0000032714b9f14c: ec1e06b93a59 risbgn
-> %r1,%r14,6,185,58
-> [ 5413.029697]           #0000032714b9f152: b90800a1 agr %r10,%r1
-> [ 5413.029697]           >0000032714b9f156: e320a0080004 lg      %r2,8(%r=
-10)
-> [ 5413.029697]            0000032714b9f15c: a7210001 tmll    %r2,1
-> [ 5413.029697]            0000032714b9f160: a77400e0 brc 7,0000032714b9f3=
-20
-> [ 5413.029697]            0000032714b9f164: c004000000ca brcl
-> 0,0000032714b9f2f8
-> [ 5413.029697]            0000032714b9f16a: 95f5a030 cli 48(%r10),245
-> [ 5413.029738] Call Trace:
-> [ 5413.029741]  [<0000032714b9f156>] kfree+0x66/0x340
-> [ 5413.029747]  [<0000032694e0391a>] vhost_dev_free_iovecs+0x9a/0xc0 [vho=
-st]
-> [ 5413.029757]  [<0000032694e05406>] vhost_dev_cleanup+0xb6/0x210 [vhost]
-> [ 5413.029763]  [<000003269507000a>] vhost_vsock_dev_release+0x1aa/0x1e0
-> [vhost_vsock]
-> [ 5413.029768]  [<0000032714c16ece>] __fput+0xee/0x2e0
-> [ 5413.029774]  [<00000327148c0488>] task_work_run+0x88/0xd0
-> [ 5413.029783]  [<00000327148977aa>] do_exit+0x18a/0x4e0
-> [ 5413.029786]  [<0000032714897cf0>] do_group_exit+0x40/0xc0
-> [ 5413.029789]  [<0000032714897dce>] __s390x_sys_exit_group+0x2e/0x30
-> [ 5413.029792]  [<00000327156519c6>] __do_syscall+0x136/0x340
-> [ 5413.029797]  [<000003271565d5de>] system_call+0x6e/0x90
-> [ 5413.029802] Last Breaking-Event-Address:
-> [ 5413.029803]  [<0000032694e03914>] vhost_dev_free_iovecs+0x94/0xc0 [vho=
-st]
-> [ 5413.029811] Kernel panic - not syncing: Fatal exception: panic_on_oops
->
->
-> Best regards,
-> Jaehoon Kim
->
-
+Sultan
 
