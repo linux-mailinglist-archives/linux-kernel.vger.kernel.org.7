@@ -1,52 +1,55 @@
-Return-Path: <linux-kernel+bounces-749898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B067B15474
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:55:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F2FB15478
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D4018A717E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:55:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0511547E8E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F56D279917;
-	Tue, 29 Jul 2025 20:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA92127934B;
+	Tue, 29 Jul 2025 20:56:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="ShHf+ekc"
-Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="gqCIwiG4"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37932777EA;
-	Tue, 29 Jul 2025 20:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D59D24EABC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 20:56:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753822481; cv=none; b=nso9+MOP9Cv0yxMcqQJWht57EAJNeg5IQyIsZIhe1178fFpg/sIO9aVtyPs19DJFw1VQokfgNUXmqPKjDjVx1JxN26ggsLm3FfI5Z0435xG5EI83DGl/2yEmnWzlt/wsNLishQVZV4N2cTsFePRKqOQXgAURdRSi718vPw6r7F8=
+	t=1753822585; cv=none; b=jZE5hCHs37Fr6yNKUBjwXq5a44SjiEsbtSjahcVFBH3zNYg9pmUOnMN/gh64qeLP5X8CuzlBMa5YwsXQpicNuy4rA4pHLHZ65kvJlKfSwj2kbjWH6yx2x+JXtVwnrru4b5VvhtCT0c3n7qEjSNEUeFCswv6yptmtwxaHVA8WgnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753822481; c=relaxed/simple;
-	bh=xiSBce8M3qwbOSe7BecatNeL5QmxrnKF1dSV1338vfE=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:References:In-Reply-To:
-	 Content-Type:Subject; b=pe3ABQFUUX78bBIXw2/fe7/Y2DgIv6i+zmziZgltUToJHsNKHDWndv2jYilsRQerx/gaYM7spkjBz4hZ0CKAo3YLWifpUbVS2yvImc+tN30+eQFg9dCtYGHiNg/JZEgla4ElEM5+lf4DxoJPqBO7kJhBEM7myr7EfmWmKcm9oqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=ShHf+ekc; arc=none smtp.client-ip=204.191.154.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:References:Cc:To:From:
-	MIME-Version:Date:Message-ID:content-disposition;
-	bh=NNh1yThG7TvPWKpLvY5OC7tLgkYClB2Gxhne1Vp0HTw=; b=ShHf+ekceHcINuu8D0K30j3qUO
-	L9xqTvYP9Zh8bk//ApqFzejUahb6bACPQNlM5iV2A1IRyuDGPfzEQSqmXhx/bf9dL9cTxYDN4p1dO
-	50kSae/x3VuYLc4DSVcE7A32AkN9a8vnc7cWq76JX7ZFC29ItBPasnUx2PUIOypT5NvQJIqqQpb+A
-	hKS/mcRzJw9NmBzbYunfCu5/y6lbCyBnLxF5fuWkORd2HDquxo3R8hxzx9e/Jxu7yv1HNrpU9R5TP
-	HOqWZkyevVjQIYp4dmyfA+4gv+aeKblKfLpxMhglWKNR2gAcipr0qNsWYlfNjGHBFoQ3Nad1bjaCo
-	0fckrAUw==;
-Received: from guinness.priv.deltatee.com ([172.16.1.162])
-	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <logang@deltatee.com>)
-	id 1ugrL8-009DTi-1i;
-	Tue, 29 Jul 2025 14:54:27 -0600
-Message-ID: <f332e2b9-151f-49ca-ac0c-8c9494c38027@deltatee.com>
-Date: Tue, 29 Jul 2025 14:54:13 -0600
+	s=arc-20240116; t=1753822585; c=relaxed/simple;
+	bh=Z1Kr26XwW405L9j7UMRlKke0625JiBNeN1OtSRfhsDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eVGFe88nvFgm0s4P5e11zPdBMHTaEcdVRKahQr5MLC2kXG2HmNl6rOuZP+BhYRyiDEbwO09YY6Y/0PjPh2AxyT3uNLc/GZFsDJROZO4K8K+UF/1Gzk7UTTkZe2yoywVd2XJxfgW3wew/cCHCEAHxuhUfJs1JzixVzj01UK4xSV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=gqCIwiG4; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1753822582;
+ bh=v+EFRhrySWl3zLJ7XlS9rNLMc1j/yRIrm57mAagtY1s=;
+ b=gqCIwiG4BMiE0mElqmp4QBZdK5D9DlxDxEj63+YqL5l9ivG2AvG4FVitWjVC9fZT6ZyYETkCq
+ 9JPrSL1/wro0a4p3Jha4XmVs1i2eVrxhENzNG5DU0MfnkHbtLnWPHN61qwrP6qjjHJbUWGRxbAf
+ yIB+79L5TAjb/CDDlp6CyK19IVRfdkqQegkK9/FB/PWeMC5/13JTRGG2wVOzCUPqibBJ8xNyUl+
+ 2Ldo1wUCIAPJ3AwCN/qmu8JhQ13/X4Vm55zxYYbSF1T8KVbnPGx/Xjf6fSJghppY8CvVvjlayiK
+ UtI6S/Pg+dew807b8SuTVdHViYbaftQshO8WT1VMPu7A==
+X-Forward-Email-ID: 688935605983c8a2f4b4a751
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 1.1.8
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <db1f42c3-c8bb-43ef-a605-12bfc8cd0d46@kwiboo.se>
+Date: Tue, 29 Jul 2025 22:55:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,272 +57,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Logan Gunthorpe <logang@deltatee.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
- Alex Williamson <alex.williamson@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
- Jens Axboe <axboe@kernel.dk>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
- <jglisse@redhat.com>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
- linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mm@kvack.org, linux-pci@vger.kernel.org,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
- Vivek Kasireddy <vivek.kasireddy@intel.com>, Will Deacon <will@kernel.org>
-References: <cover.1753274085.git.leonro@nvidia.com>
- <82e62eb59afcd39b68ae143573d5ed113a92344e.1753274085.git.leonro@nvidia.com>
- <20250724080313.GA31887@lst.de> <20250724081321.GT402218@unreal>
- <b32ae619-6c4a-46fc-a368-6ad4e245d581@deltatee.com>
- <20250727190514.GG7551@nvidia.com>
- <d69e0d74-285e-4cde-a2e4-a803accfa9e1@deltatee.com>
- <20250728164136.GD402218@unreal>
- <d3c8c573-f201-4450-9400-cc3ccafd2c04@deltatee.com>
- <20250728231107.GE36037@nvidia.com>
-Content-Language: en-CA
-In-Reply-To: <20250728231107.GE36037@nvidia.com>
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add RTL8367RB-VB switch to
+ Radxa E24C
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: "alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>,
+ "andrew@lunn.ch" <andrew@lunn.ch>, "conor+dt@kernel.org"
+ <conor+dt@kernel.org>, "davem@davemloft.net" <davem@davemloft.net>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "heiko@sntech.de" <heiko@sntech.de>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "kuba@kernel.org" <kuba@kernel.org>,
+ "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "olteanv@gmail.com" <olteanv@gmail.com>,
+ "pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org"
+ <robh@kernel.org>, "ziyao@disroot.org" <ziyao@disroot.org>
+References: <5bdd0009-589f-49bc-914f-62e5dc4469e9@kwiboo.se>
+ <20250729115009.2158019-1-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250729115009.2158019-1-amadeus@jmu.edu.cn>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 172.16.1.162
-X-SA-Exim-Rcpt-To: jgg@nvidia.com, leon@kernel.org, hch@lst.de, alex.williamson@redhat.com, akpm@linux-foundation.org, bhelgaas@google.com, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, axboe@kernel.dk, jglisse@redhat.com, joro@8bytes.org, kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, linux-pci@vger.kernel.org, m.szyprowski@samsung.com, robin.murphy@arm.com, sumit.semwal@linaro.org, vivek.kasireddy@intel.com, will@kernel.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Level: 
-Subject: Re: [PATCH 05/10] PCI/P2PDMA: Export pci_p2pdma_map_type() function
-X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
+Hi Chukun,
 
-
-On 2025-07-28 17:11, Jason Gunthorpe wrote:
->> If the dma mapping for P2P memory doesn't need to create an iommu
->> mapping then that's fine. But it should be the dma-iommu layer to decide
->> that.
+On 7/29/2025 1:50 PM, Chukun Pan wrote:
+> Hi,
 > 
-> So above, we can't use dma-iommu.c, it might not be compiled into the
-> kernel but the dma_map_phys() path is still valid.
+>> The issue is with TSO and RX checksum offload, with those disabled on
+>> the conduit interface (gmac1/eth0) my issues disappeared.
+> 
+> I did a test today and the same problem occurred when running the new
+> kernel on my rk3568 + rtl8367s board. This problem does not exist on
+> older kernels (6.1 and 6.6). Not sure where the problem is.
 
-This is an easily solved problem. I did a very rough sketch below to say
-it's really not that hard. (Note it has some rough edges that could be
-cleaned up and I based it off Leon's git repo which appears to not be
-the same as what was posted, but the core concept is sound).
+I had only tested on a next-20250722 based kernel and on a vendor 6.1
+based kernel. And similar to your findings, on 6.1 based kernel there
+was no issue only on the newer kernel.
 
-Logan
+I will probably drop the use of "/delete-property/ snps,tso" and include
+a note in commit message about the TSO and RX checksum issue for v2.
 
+> 
+>> With a 'mdio' child node 'make CHECK_DTBS=y' report something like:
+>>
+>>    rockchip/rk3528-radxa-e24c.dtb: ethernet-switch@1d (realtek,rtl8365mb): mdio: False schema does not allow { [snip] }
+>>          from schema $id: http://devicetree.org/schemas/net/dsa/realtek.yaml#
+>>
+>> With a mdio node the driver is happy and dtschema is sad, and without
+>> the mdio node it was the other way around.
+> 
+> On older kernels (6.1/6.6) only realtek-smi requires mdio child OF node.
+> Commit bba140a566ed ("net: dsa: realtek: use the same mii bus driver for both interfaces")
+> changed this behavior, both MDIO interface and SMI interface need it
+> (rtl83xx_setup_user_mdio), but the dt-bindings has not been updated.
+> I think this needs a Fixes tag.
 
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index 1853a969e197..da1a6003620a 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -1806,6 +1806,22 @@ bool dma_iova_try_alloc(struct device *dev,
-struct dma_iova_state *state,
- }
- EXPORT_SYMBOL_GPL(dma_iova_try_alloc);
- +void dma_iova_try_alloc_p2p(struct p2pdma_provider *provider, struct
-device *dev,
-+		struct dma_iova_state *state, phys_addr_t phys, size_t size)
-+{
-+	switch (pci_p2pdma_map_type(provider, dev)) {
-+	case PCI_P2PDMA_MAP_THRU_HOST_BRIDGE:
-+		dma_iova_try_alloc(dev, state, phys, size);
-+		return;
-+	case PCI_P2PDMA_MAP_BUS_ADDR:
-+		state->bus_addr = true;
-+		return;
-+	default:
-+		return;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(dma_iova_try_alloc_p2p);
-+
- /**
-  * dma_iova_free - Free an IOVA space
-  * @dev: Device to free the IOVA space for
-diff --git a/drivers/vfio/pci/vfio_pci_dmabuf.c
-b/drivers/vfio/pci/vfio_pci_dmabuf.c
-index 455541d21538..5749be3a9b58 100644
---- a/drivers/vfio/pci/vfio_pci_dmabuf.c
-+++ b/drivers/vfio/pci/vfio_pci_dmabuf.c
-@@ -30,25 +30,12 @@ static int vfio_pci_dma_buf_attach(struct dma_buf
-*dmabuf,
- 	if (priv->revoked)
- 		return -ENODEV;
- -	switch (pci_p2pdma_map_type(priv->vdev->provider, attachment->dev)) {
--	case PCI_P2PDMA_MAP_THRU_HOST_BRIDGE:
--		break;
--	case PCI_P2PDMA_MAP_BUS_ADDR:
--		/*
--		 * There is no need in IOVA at all for this flow.
--		 * We rely on attachment->priv == NULL as a marker
--		 * for this mode.
--		 */
--		return 0;
--	default:
--		return -EINVAL;
--	}
--
- 	attachment->priv = kzalloc(sizeof(struct dma_iova_state), GFP_KERNEL);
- 	if (!attachment->priv)
- 		return -ENOMEM;
- -	dma_iova_try_alloc(attachment->dev, attachment->priv, 0, priv->size);
-+	dma_iova_try_alloc_p2p(priv->vdev->provider, attachment->dev,
-+			       attachment->priv, 0, priv->size);
- 	return 0;
- }
- @@ -98,26 +85,11 @@ vfio_pci_dma_buf_map(struct dma_buf_attachment
-*attachment,
- 	sgl = sgt->sgl;
-  	for (i = 0; i < priv->nr_ranges; i++) {
--		if (!state) {
--			addr = pci_p2pdma_bus_addr_map(provider,
--						       phys_vec[i].paddr);
--		} else if (dma_use_iova(state)) {
--			ret = dma_iova_link(attachment->dev, state,
--					    phys_vec[i].paddr, 0,
--					    phys_vec[i].len, dir, attrs);
--			if (ret)
--				goto err_unmap_dma;
--
--			mapped_len += phys_vec[i].len;
--		} else {
--			addr = dma_map_phys(attachment->dev, phys_vec[i].paddr,
--					    phys_vec[i].len, dir, attrs);
--			ret = dma_mapping_error(attachment->dev, addr);
--			if (ret)
--				goto err_unmap_dma;
--		}
-+		addr = dma_map_phys_prealloc(attachment->dev, phys_vec[i].paddr,
-+					     phys_vec[i].len, dir, attrs, state,
-+					     provider);
- -		if (!state || !dma_use_iova(state)) {
-+		if (addr != DMA_MAPPING_USE_IOVA) {
- 			/*
- 			 * In IOVA case, there is only one SG entry which spans
- 			 * for whole IOVA address space. So there is no need
-@@ -128,7 +100,7 @@ vfio_pci_dma_buf_map(struct dma_buf_attachment
-*attachment,
- 		}
- 	}
- -	if (state && dma_use_iova(state)) {
-+	if (addr == DMA_MAPPING_USE_IOVA) {
- 		WARN_ON_ONCE(mapped_len != priv->size);
- 		ret = dma_iova_sync(attachment->dev, state, 0, mapped_len);
- 		if (ret)
-@@ -139,7 +111,7 @@ vfio_pci_dma_buf_map(struct dma_buf_attachment
-*attachment,
- 	return sgt;
-  err_unmap_dma:
--	if (!i || !state)
-+	if (!i || state->bus_addr)
- 		; /* Do nothing */
- 	else if (dma_use_iova(state))
- 		dma_iova_destroy(attachment->dev, state, mapped_len, dir,
-@@ -164,7 +136,7 @@ static void vfio_pci_dma_buf_unmap(struct
-dma_buf_attachment *attachment,
- 	struct scatterlist *sgl;
- 	int i;
- -	if (!state)
-+	if (state->bus_addr)
- 		; /* Do nothing */
- 	else if (dma_use_iova(state))
- 		dma_iova_destroy(attachment->dev, state, priv->size, dir,
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index ba54bbeca861..675e5ac13265 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -70,11 +70,14 @@
-  */
- #define DMA_MAPPING_ERROR		(~(dma_addr_t)0)
- +#define DMA_MAPPING_USE_IOVA		((dma_addr_t)-2)
-+
- #define DMA_BIT_MASK(n)	(((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
-  struct dma_iova_state {
- 	dma_addr_t addr;
- 	u64 __size;
-+	bool bus_addr;
- };
-  /*
-@@ -120,6 +123,12 @@ void dma_unmap_page_attrs(struct device *dev,
-dma_addr_t addr, size_t size,
- 		enum dma_data_direction dir, unsigned long attrs);
- dma_addr_t dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
- 		enum dma_data_direction dir, unsigned long attrs);
-+
-+struct p2pdma_provider;
-+dma_addr_t dma_map_phys_prealloc(struct device *dev, phys_addr_t phys,
-size_t size,
-+		enum dma_data_direction dir, unsigned long attrs,
-+		struct dma_iova_state *state, struct p2pdma_provider *provider);
-+
- void dma_unmap_phys(struct device *dev, dma_addr_t addr, size_t size,
- 		enum dma_data_direction dir, unsigned long attrs);
- unsigned int dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
-@@ -321,6 +330,8 @@ static inline bool dma_use_iova(struct
-dma_iova_state *state)
-  bool dma_iova_try_alloc(struct device *dev, struct dma_iova_state *state,
- 		phys_addr_t phys, size_t size);
-+void dma_iova_try_alloc_p2p(struct p2pdma_provider *provider, struct
-device *dev,
-+		struct dma_iova_state *state, phys_addr_t phys, size_t size);
- void dma_iova_free(struct device *dev, struct dma_iova_state *state);
- void dma_iova_destroy(struct device *dev, struct dma_iova_state *state,
- 		size_t mapped_len, enum dma_data_direction dir,
-@@ -343,6 +354,11 @@ static inline bool dma_iova_try_alloc(struct device
-*dev,
- {
- 	return false;
- }
-+static inline void dma_iova_try_alloc_p2p(struct p2pdma_provider *provider,
-+		struct device *dev, struct dma_iova_state *state, phys_addr_t phys,
-+		size_t size)
-+{
-+}
- static inline void dma_iova_free(struct device *dev,
- 		struct dma_iova_state *state)
- {
-diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
-index e1586eb52ab3..b2110098a29b 100644
---- a/kernel/dma/mapping.c
-+++ b/kernel/dma/mapping.c
-@@ -13,6 +13,7 @@
- #include <linux/iommu-dma.h>
- #include <linux/kmsan.h>
- #include <linux/of_device.h>
-+#include <linux/pci-p2pdma.h>
- #include <linux/slab.h>
- #include <linux/vmalloc.h>
- #include "debug.h"
-@@ -202,6 +203,27 @@ dma_addr_t dma_map_phys(struct device *dev,
-phys_addr_t phys, size_t size,
- }
- EXPORT_SYMBOL_GPL(dma_map_phys);
- +dma_addr_t dma_map_phys_prealloc(struct device *dev, phys_addr_t phys,
-size_t size,
-+		enum dma_data_direction dir, unsigned long attrs,
-+		struct dma_iova_state *state, struct p2pdma_provider *provider)
-+{
-+	int ret;
-+
-+	if (state->bus_addr)
-+		return pci_p2pdma_bus_addr_map(provider, phys);
-+
-+	if (dma_use_iova(state)) {
-+		ret = dma_iova_link(dev, state, phys, 0, size, dir, attrs);
-+		if (ret)
-+			return DMA_MAPPING_ERROR;
-+
-+		return DMA_MAPPING_USE_IOVA;
-+	}
-+
-+	return dma_map_phys(dev, phys, size, dir, attrs);
-+}
-+EXPORT_SYMBOL_GPL(dma_map_phys_prealloc);
-+
- dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
- 		size_t offset, size_t size, enum dma_data_direction dir,
- 		unsigned long attrs)
+Thanks for finding this, and yes I can see that commit bba140a566ed
+changed the behavior of the driver and probably broke out-of-tree users.
 
+My current plan for a v2 is to:
+- include a new dt-bindings patch to allow use of a mdio node
+- include a mdio node in the switch node
+- add a Fixes tag to the driver patch
+
+Then leave up to maintainers to decide if they want to accept this patch
+or not.
+
+Regards,
+Jonas
+
+> 
+> Thanks,
+> Chukun
+> 
+> --
+> 2.25.1
+> 
+> 
 
 
