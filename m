@@ -1,130 +1,89 @@
-Return-Path: <linux-kernel+bounces-749182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D0EB14B16
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:21:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C340AB14B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:23:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 122E93B6E80
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:20:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3E74E4C12
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED162857CD;
-	Tue, 29 Jul 2025 09:21:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E03227FB3B;
+	Tue, 29 Jul 2025 09:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RVLW2e54"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUsR+dq8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C69122538F;
-	Tue, 29 Jul 2025 09:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0291214F98;
+	Tue, 29 Jul 2025 09:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753780875; cv=none; b=E5FDpugDvc2Xa3y0PYyCBTgWSpl7YutBTtbY7dWvsAoZSIFjA4VH9SVd+dNgyeBdEwzpBb5qdwSBrTaIqt9mz1DXn2HLrzrLsGhsYXi9WICmr5O5BrlCTyBOJXj6vOpbZgbScpmndaQD4w3uOZBw+pbD9bQ4EDFgzi3G09hZ5Kw=
+	t=1753781001; cv=none; b=PSSojUloDYWXbLim1lfBZapgt1/h8gsx37ODwhkiXhGy7oOaa/ol0f5B5PnJFn6hYCL355oIeRkqkbPJ9qI0PixWaao3YWpTspFncjz1d/qhkxsSD6aiJIDCg3osV86cpzKtcTlikG10M1ay87NsnUHOdSl8MWg/B8Ag/pWs99k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753780875; c=relaxed/simple;
-	bh=EpKjTlfw0kd8rON0v9QAxAUM6H8C5WKYIrqJkAcA4HY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FIG1qVberHboYdUkWtzczvua1WWPFMEDLPC+QmonuVQ4dDztOSxSlITPqOW+/UsyTnDsBDV6W/3izQ03aV2MtmiUTD1dr/0GG34QiCZ6zuIMzrU33742z7DXS6A2MqziSj6AEqbamnUOMk+GvU8IIB4CR18UN69iqJcGJmaroJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RVLW2e54; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso53230115e9.3;
-        Tue, 29 Jul 2025 02:21:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753780872; x=1754385672; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2u4rjqAF5Zc7Kz0jelPex7W70gE8IrEqV1bRA0AwlWo=;
-        b=RVLW2e54oJ/MtM8SI6uUORf1TmYGgy/WiLmhvd6oDr9D9rPtbsLdWE4qbiaHEGpArW
-         t0OCYvYg1sviS30hOhV3/Np5rBIcJYOKSIzlpXsdyU4OEBIqClrw8MpjCil/+AGa77qV
-         THfZA8I4fO5BWhYO0nxTJxE9iNETlX/E0uRFZrKlUR2PmBG5SckrWKUN7hA1WG9OIS1O
-         NhqwUh5iDNBLS5ZLUXyCKt8d+zvF47ktFoMI+AB58dL+6GvTTcAmPqaOOFUbxR9BTFXI
-         Vu5scKnFJjDTE71jsf1BJsyzWvGkxGBFjSynifVLf6nV19rOWkqcesX/mhMbcwE4M/tH
-         Y3cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753780872; x=1754385672;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2u4rjqAF5Zc7Kz0jelPex7W70gE8IrEqV1bRA0AwlWo=;
-        b=ti/iLyKbD4ctQtpf3VqNy18f7YyZyX47xyhOgn2zy6xad9N47Ppxrw6Ow7oJcJbKEQ
-         SEDHrLzTHM6aEt1Tof6N/wTw0ohMo10wrZbY4oANm43YLVpYwkeOFNBTIWeHq4hRwRyl
-         epiGABWpMpmNtosI63zjHdprKW5sFYufptJe93LkZ040oBkTlN3fVNVyO0hXPHVFH/ln
-         Z90JDRtnrkE3QRMhppZOgfCordpiZTT9ZbmpGJHlvE0bI0SH5n94t4HeCD+FxE7XZz4r
-         u+4vNqRloZhpYSoG+CpQoZr/ZFrcwmGeZXCrLgzRr7ReHmgHSV3Q+UXqD1VE9tXXVEtL
-         lqFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmrQvGZV/QIHoYymb98JeRb03H4Me/Do0TOE0C6AJ2O5Qkvav+MdwWt04qJ4B+nVqhGjc0dmo5kbCevbsc@vger.kernel.org, AJvYcCUtnOXDZz61yt+zm7NZncpNUCXAqGB6q4QkiWKfUDhj+e31EGMmxvnE2GV/Oeewy85HVqPkFPTIiR+U6g==@vger.kernel.org, AJvYcCVp8xFG1Xph0KqrZl57CeZ2P7c3rxF+yOr2H+ObxZLXt5kXaz/D7Cnz+IK+EokADr1/IsLfiN6E@vger.kernel.org, AJvYcCVu3hKvcY3/wvIs77B0e/6lEDZz25fRXDSn3TSPS22xxyWJeuJsDzr3ySbH5TBzUaLQ94o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8hjTxESt/q/5nxJ8YlEDmnDATXEejeSY+dxEEC5Syjr1RCW4x
-	GsuQ37jks4BZLEzwy0JXn16QCAcGXTcfFdLZwVc3S+o6+/Q4oDg4TQZX
-X-Gm-Gg: ASbGnctBVjOAd0ji2xJs5HtWG5yO4102arSzW8SIUs8RB8a0FrCKicv6pis9lzHO410
-	rbxfIVbikKkW+X1wlkAIaPR2e5SBO5DhWxUmPP2s34HjYL//W1eY1yTJgcuJmFTQMWH3uZQmZJ7
-	rsuJJLj/Osl/1y+fyTLpfGrBNJ2CpawjGU/HkvkMxagI2PES495yylmu2R/ZcWw6jVv3uMTmIVU
-	eWQFzC1cCbivu8bp1d2grHXiKEoCZHGnW7o9Ned1+l/xQy6+OIPYz08qeMlPo7hvGgk5a79sHSc
-	40JNq48P2G2ug2BrsXZgoKYzDX/7pjxleW+V9AamqPikvM3UazhKhiDsSCb1VPy42PpBsAV13j2
-	lTooNX8z6rEokXI/e4k55y8d74qhTzpexKt8=
-X-Google-Smtp-Source: AGHT+IEMHicGGzOV7QARfXRDayyJkBXpLEq9lHyvKxQ609TVgvsTQ+QeaMTZZwxl6gjtb3oKoyYgXw==
-X-Received: by 2002:a05:600c:4513:b0:43c:ee3f:2c3 with SMTP id 5b1f17b1804b1-4587630a123mr108515205e9.7.1753780871722;
-        Tue, 29 Jul 2025 02:21:11 -0700 (PDT)
-Received: from ?IPV6:2620:10d:c096:325::26f? ([2620:10d:c092:600::1:72ea])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4588e5b7722sm17504375e9.3.2025.07.29.02.21.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 02:21:11 -0700 (PDT)
-Message-ID: <18eb9e6c-1d60-4db1-81e1-6bce22425afe@gmail.com>
-Date: Tue, 29 Jul 2025 10:22:30 +0100
+	s=arc-20240116; t=1753781001; c=relaxed/simple;
+	bh=DTeOnZdMC3MfXRHjclumebjcnfJJ1n0Hu2E8xtaiyFI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SaPshSJ1gyLzNTKncKifwoSPrlMRnhZ2epwRRnA3ZrjPEevwPqHlqLhjLunxjM7z/yMzGYfLTNfGRtZUyTMq9FhMeMxCybFSjSwZjpFKb/UE+cLBW3WFEcbiD2K+KBjW/bdchbtpYZSLi92BTg4JEZCWP9ieAmfWyBTB8Pyv6hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUsR+dq8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7228BC4CEEF;
+	Tue, 29 Jul 2025 09:23:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753781000;
+	bh=DTeOnZdMC3MfXRHjclumebjcnfJJ1n0Hu2E8xtaiyFI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nUsR+dq8cm0MFVfSTKWuwUZBsDePzgL98fwFHgU1M4evFQ5cS8Fxul5QI1oZ7KxL6
+	 j/qKtHz+dWcsrBegHb/Qe53Syuuv6vRiz/hExL1MP2E0ngADZmfVFS3P6b1P3LrCfj
+	 9RoKTFUze6Xx/rZKOm7gtF4Z6lehp+T8VTeSWNAwCQRgGK/BETCnt63J+n2FZEbMF0
+	 qLsF0lZS2VVFZ45wyCHszBmIQAYaOtZ7EFlhfW/fpThXkIQpb15UQFXl0fRwKB0OOY
+	 H3Bv6K7PPI6HGYYTixYoQ7qIYUwWCasmRje/nSW7nRAHnnLmKXsCDZ9wBnH3Xc/BFX
+	 Or9D6MmsG9Zfg==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1uggYK-000000002ZZ-3d0o;
+	Tue, 29 Jul 2025 11:23:20 +0200
+Date: Tue, 29 Jul 2025 11:23:20 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH] usb: gadget: udc: renesas_usb3: drop unused module alias
+Message-ID: <aIiTCDy-_EjUt1zd@hovoldconsulting.com>
+References: <20250724092006.21216-1-johan@kernel.org>
+ <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page pool
- in page type
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel_team@skhynix.com, harry.yoo@oracle.com, ast@kernel.org,
- daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
- mhocko@suse.com, horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
- ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
- brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
- usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
- almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
- linux-rdma@vger.kernel.org
-References: <20250728052742.81294-1-byungchul@sk.com>
- <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
- <20250729011941.GA74655@system.software.com>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <20250729011941.GA74655@system.software.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
 
-On 7/29/25 02:19, Byungchul Park wrote:
-> On Mon, Jul 28, 2025 at 07:36:54PM +0100, Pavel Begunkov wrote:
->> On 7/28/25 06:27, Byungchul Park wrote:
->>> Changes from v1:
->>>        1. Rebase on linux-next.
->>
->> net-next is closed, looks like until August 11.
+Hi Geert,
+
+On Mon, Jul 28, 2025 at 10:56:18AM +0200, Geert Uytterhoeven wrote:
+
+> On Thu, 24 Jul 2025 at 11:21, Johan Hovold <johan@kernel.org> wrote:
+> > Since commit f3323cd03e58 ("usb: gadget: udc: renesas_usb3: remove R-Car
+> > H3 ES1.* handling") the driver only supports OF probe so drop the unused
+> > platform module alias.
+> >
+> > Signed-off-by: Johan Hovold <johan@kernel.org>
 > 
-> Worth noting, this is based on linux-next, not net-next :-)
+> While I don't debate the actual change, I would like to comment on
+> the patch description.  The driver only ever supported OF probe.
+> The call to soc_device_match() was just used to override the match
+> data for quirk handling.
 
-It doesn't matter, you're still sending it to be merged into
-the net tree. Please read
+The driver initially indeed only supported OF probe, but that changed
+with commit ca02a5af650c ("usb: gadget: udc: renesas_usb3: Use
+of_device_get_match_data() helper") after which the driver could at
+least theoretically also bind based on the platform device name.
 
-https://docs.kernel.org/process/maintainer-netdev.html
-
-Especially the "git-trees-and-patch-flow" section.
-
--- 
-Pavel Begunkov
-
+Johan
 
