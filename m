@@ -1,258 +1,109 @@
-Return-Path: <linux-kernel+bounces-749359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B59CB14D59
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:03:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F46EB14D5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:04:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 496E43BF8F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:03:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC1C27A4081
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:02:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D3328FAAB;
-	Tue, 29 Jul 2025 12:03:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4CB290D8E;
+	Tue, 29 Jul 2025 12:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=atl.tools header.i=@atl.tools header.b="GwFIQdmI"
+Received: from mail.atl.tools (mail.atl.tools [49.12.87.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CCD27A914;
-	Tue, 29 Jul 2025 12:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBCB528FFC8;
+	Tue, 29 Jul 2025 12:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.87.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753790615; cv=none; b=pet8tq3IIaEv0b8dmhMchuN5dDpTZUw6VnneD02yz0Z3rsOqKr0m7dZOKKU+2VkeBN2UKPQnlGbCtyGm7Hp1GIlIjAiWDgPKIiwimd3Jq0QK3Iai4qgzuNhXMWm5vfjPchgd9CTvUhva/bUOTrNvWSLDexBmNbl4zbv3wBTQVjk=
+	t=1753790628; cv=none; b=d/kYdnX/vQRGovdVvNG2r8HJmfODPn6jXzy1+EJP/h2lEI+aMGJgw0ZynnbSDv0Ike2brrZP5esrCRpgqk50Q4J6+Y0y1Gv1CmTGG8MsDbdOBRr6De/M/nZpklxPvHtEA5ksL2B/51A6yhFPHHoWsHnW3Q6OuI5LS3kymG3IkE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753790615; c=relaxed/simple;
-	bh=ZTbXRgaGJW2XWJm4M6TWmnAxNNiya+NdURKLPZa20QY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TYBJd62eQu2kFW1q5nkDL5OvREv/zbnzrAhjNSKoejP7ia6gpVtoF8RUppBPIPr9rT9fCQOurdEgoM95YtI3X8LsvsPJN+3UL+3ySrcrdb/KZn060hdAaYtm1VnkJoLF43tu9MG00NnzN7OkRUeDDjv9kEOQFKzTKHNMjzPGZDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4brv8K13qRz6L5Q6;
-	Tue, 29 Jul 2025 20:01:37 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9088E1400E3;
-	Tue, 29 Jul 2025 20:03:29 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Jul
- 2025 14:03:28 +0200
-Date: Tue, 29 Jul 2025 13:03:27 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Dan Williams <dan.j.williams@intel.com>
-CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
-	<lukas@wunner.de>, Yilun Xu <yilun.xu@intel.com>, Aneesh Kumar K.V
-	<aneesh.kumar@kernel.org>
-Subject: Re: [PATCH v4 02/10] PCI/IDE: Enumerate Selective Stream IDE
- capabilities
-Message-ID: <20250729130327.00005fc2@huawei.com>
-In-Reply-To: <20250717183358.1332417-3-dan.j.williams@intel.com>
-References: <20250717183358.1332417-1-dan.j.williams@intel.com>
-	<20250717183358.1332417-3-dan.j.williams@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753790628; c=relaxed/simple;
+	bh=fwaCjLD6EB6n8W82GgacUq5Hd72P7HmejoAcodIb8hQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dyNbLc2Zx8X5gtP1NzSUojFmpmIPlogc/0qsknulFf2rLUr0Fnbnkc4Rud6GpeTU1JLKnlLujU1HQyRAd2myS4uP4+4cF/qExkvHk00mty/Ea4SuCCiwXskFMWMEZUK9MIzpRZ2ikzZOEqaB2Luk6ciTIiwQ9LBHBMM0+KHp1/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=atl.tools; spf=pass smtp.mailfrom=atl.tools; dkim=pass (2048-bit key) header.d=atl.tools header.i=@atl.tools header.b=GwFIQdmI; arc=none smtp.client-ip=49.12.87.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=atl.tools
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atl.tools
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 623F52A8F9;
+	Tue, 29 Jul 2025 12:03:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atl.tools; s=dkim;
+	t=1753790624; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=p0FOHDWyMZP0lChScy57LuBVhQcpOIP/X2zCiU5WuuI=;
+	b=GwFIQdmIPgqPCC+OFcZeIYQAxg0zsyJPpQbgFN10msg14G0Kh1UQtX+F4n7doS0VnDzQrP
+	i33LMOC6LSjqXXeJ4u4NkjkFHkLOBSQQR2WftTV7uKiBRp2f957ZTby3Dp52JKtdExpqRU
+	ZUV524cYtb2PW+GmtgHSvaOIxd1Gr+8Xfg7Of/FZM1ZvwRY1l66srNDLxlGrBsbnH1HbbX
+	qU47l7YMvGrcx69cDuCGxmqlnRAc6k4zq/wM7MbTTqtXMs9Txock+E65n+BM107d3tmNkB
+	7sJNLC0cIImxdC7bjSghyfE2smjNAPXQ6B+QylT4hXClgqoopDi+eQjWZ7Itaw==
+From: Violet <violet@atl.tools>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v7 0/2] arm64: dts: qcom: add initial support for Samsung Galaxy S22
+Date: Tue, 29 Jul 2025 12:03:29 +0000
+Message-ID: <20250729120331.287245-1-violet@atl.tools>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Thu, 17 Jul 2025 11:33:50 -0700
-Dan Williams <dan.j.williams@intel.com> wrote:
+Changes in v7:
+- Document the reserved GPIO pins, remove pin 50 as it does not
+ need to be reserved
+- Clarify the phone isn't limited to USB 2.0 but rather USB 3.0
+ isn't implemented yet
+- Add a newline before every 'status' node
 
-> Link encryption is a new PCIe feature enumerated by "PCIe 6.2 section
-> 7.9.26 IDE Extended Capability".
-> 
-> It is both a standalone port + endpoint capability, and a building block
-> for the security protocol defined by "PCIe 6.2 section 11 TEE Device
-> Interface Security Protocol (TDISP)". That protocol coordinates device
-> security setup between a platform TSM (TEE Security Manager) and a
-> device DSM (Device Security Manager). While the platform TSM can
-> allocate resources like Stream ID and manage keys, it still requires
-> system software to manage the IDE capability register block.
-> 
-> Add register definitions and basic enumeration in preparation for
-> Selective IDE Stream establishment. A follow on change selects the new
-> CONFIG_PCI_IDE symbol. Note that while the IDE specification defines
-> both a point-to-point "Link Stream" and a Root Port to endpoint
-> "Selective Stream", only "Selective Stream" is considered for Linux as
-> that is the predominant mode expected by Trusted Execution Environment
-> Security Managers (TSMs), and it is the security model that limits the
-> number of PCI components within the TCB in a PCIe topology with
-> switches.
-> 
-> Cc: Yilun Xu <yilun.xu@intel.com>
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-> Co-developed-by: Alexey Kardashevskiy <aik@amd.com>
-> Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
-> Co-developed-by: Yilun Xu <yilun.xu@intel.com>
-> Signed-off-by: Yilun Xu <yilun.xu@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Changes in v6:
+- Remove debug features (bootargs, etc) that slipped in the v5 DTS
+- Format and organize nodes correctly based on existing DTS, 
+ move "status = "okay";" to the bottom always
+- Solve "ddr_device_type" and "qcom,rmtfs-mem" warnings, the rest are
+ from existing SoC .dtsi
+- Disable buttons, ufs and other features for later revision
 
-Seems that one field has changed naming and gained broader meaning
-between 6.0 and 6.2 (which I was checking against).
-I guess resolving that will require some digging into whether it
-was an errata an intentional change.  Definitely wants a comment
-though.
+Changes in v5:
+- Properly format the thread
 
-Other than that and a few trivial things LGTM.
+Changes in v4:
+- Try to properly format the thread
 
-> diff --git a/drivers/pci/ide.c b/drivers/pci/ide.c
-> new file mode 100644
-> index 000000000000..e15937cdb2a4
-> --- /dev/null
-> +++ b/drivers/pci/ide.c
-> @@ -0,0 +1,93 @@
+Changes in v3:
+- Removed unnecessary initrd start and end addresses
+- Make sure r0q is in right order on Makefile
+- Properly format memory addresses
+- Set r0q to the correct, alphabetical order in documents
 
-> +static int __sel_ide_offset(u16 ide_cap, u8 nr_link_ide, u8 stream_index,
-> +			    u8 nr_ide_mem)
-> +{
-> +	u32 offset;
-> +
-> +	offset = ide_cap + PCI_IDE_LINK_STREAM_0 +
-> +		 nr_link_ide * PCI_IDE_LINK_BLOCK_SIZE;
-> +
-> +	/*
-> +	 * Assume a constant number of address association resources per
-> +	 * stream index
-> +	 */
-> +	offset += stream_index * PCI_IDE_SEL_BLOCK_SIZE(nr_ide_mem);
-> +	return offset;
+Changes in v2:
+- Attempt to format the patchset thread correctly
 
-	return offset + stream_index * PCI_IDE_SEL_BLOCK_SIZE(nr_ide_mem);
+Signed-off-by: Violet <violet@atl.tools>
 
-is perhaps a little bit neater?
+Violet (2):
+  dt-bindings: arm: qcom: document r0q board binding
+  arm64: dts: qcom: add initial support for Samsung Galaxy S22
 
-> +}
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 147 ++++++++++++++++++
+ 3 files changed, 149 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
 
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index a3a3e942dedf..ab4ebf0f8a46 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> +/* Integrity and Data Encryption Extended Capability */
-> +#define PCI_IDE_CAP			0x4
-
-Spec uses two digits. Things are a bit inconsistent in this file but
-0x04 looks like the most common syntax if hex.  Curiously some are
-not in hex.  Anyhow, I'd go with 0x04 etc for all register offsets
-unless Bjorn or someone else shouts otherwise!
-
-
-> +#define  PCI_IDE_CAP_LINK		0x1  /* Link IDE Stream Supported */
-> +#define  PCI_IDE_CAP_SELECTIVE		0x2  /* Selective IDE Streams Supported */
-> +#define  PCI_IDE_CAP_FLOWTHROUGH	0x4  /* Flow-Through IDE Stream Supported */
-> +#define  PCI_IDE_CAP_PARTIAL_HEADER_ENC 0x8  /* Partial Header Encryption Supported */
-> +#define  PCI_IDE_CAP_AGGREGATION	0x10 /* Aggregation Supported */
-> +#define  PCI_IDE_CAP_PCRC		0x20 /* PCRC Supported */
-> +#define  PCI_IDE_CAP_IDE_KM		0x40 /* IDE_KM Protocol Supported */
-> +#define  PCI_IDE_CAP_SEL_CFG		0x80 /* Selective IDE for Config Request Support */
-> +#define  PCI_IDE_CAP_ALG_MASK		__GENMASK(12, 8) /* Supported Algorithms */
-> +#define  PCI_IDE_CAP_ALG_AES_GCM_256	0    /* AES-GCM 256 key size, 96b MAC */
-Looking at the rest of this file I think this should be.
-#define  PCI_IDE_CAP_ALG_MASK		__GENMASK(12, 8) /* Supported Algorithms */
-#define   PCI_IDE_CAP_ALG_AES_GCM_256	0    /* AES-GCM 256 key size, 96b MAC */
-
-So indent one more space. Example being PCI_LPH_LOC_NONE
-
-> +#define  PCI_IDE_CAP_LINK_TC_NUM_MASK	__GENMASK(15, 13) /* Link IDE TCs */
-> +#define  PCI_IDE_CAP_SEL_NUM_MASK	__GENMASK(23, 16)/* Supported Selective IDE Streams */
-
-Space before comment missing?
-
-> +#define  PCI_IDE_CAP_TEE_LIMITED	0x1000000 /* TEE-Limited Stream Supported */
-> +#define PCI_IDE_CTL			0x8
-As above 0x08 more consistent with rest of the file.  Same for remaining cases.
-> +#define  PCI_IDE_CTL_FLOWTHROUGH_IDE	0x4  /* Flow-Through IDE Stream Enabled */
-> +
-> +#define PCI_IDE_LINK_STREAM_0		0xc  /* First Link Stream Register Block */
-> +#define  PCI_IDE_LINK_BLOCK_SIZE	8
-> +/* Link IDE Stream block, up to PCI_IDE_CAP_LINK_TC_NUM */
-> +#define PCI_IDE_LINK_CTL_0		   0x0               /* First Link Control Register Offset in block */
-
-Event this I think should be 0x01 for consistency
-
-> +#define  PCI_IDE_LINK_CTL_EN		   0x1               /* Link IDE Stream Enable */
-> +#define  PCI_IDE_LINK_CTL_TX_AGGR_NPR_MASK __GENMASK(3, 2)   /* Tx Aggregation Mode NPR */
-> +#define  PCI_IDE_LINK_CTL_TX_AGGR_PR_MASK  __GENMASK(5, 4)   /* Tx Aggregation Mode PR */
-> +#define  PCI_IDE_LINK_CTL_TX_AGGR_CPL_MASK __GENMASK(7, 6)   /* Tx Aggregation Mode CPL */
-> +#define  PCI_IDE_LINK_CTL_PCRC_EN	   0x100	     /* PCRC Enable */
-> +#define  PCI_IDE_LINK_CTL_PART_ENC_MASK	   __GENMASK(13, 10) /* Partial Header Encryption Mode */
-> +#define  PCI_IDE_LINK_CTL_ALG_MASK	   __GENMASK(18, 14) /* Selection from PCI_IDE_CAP_ALG */
-> +#define  PCI_IDE_LINK_CTL_TC_MASK	   __GENMASK(21, 19) /* Traffic Class */
-> +#define  PCI_IDE_LINK_CTL_ID_MASK	   __GENMASK(31, 24) /* Stream ID */
-> +#define PCI_IDE_LINK_STS_0		   0x4               /* First Link Status Register Offset in block */
-> +#define  PCI_IDE_LINK_STS_STATE		   __GENMASK(3, 0)   /* Link IDE Stream State */
-> +#define  PCI_IDE_LINK_STS_RECVD_INTEGRITY_CHECK	0x80000000   /* Received Integrity Check Fail Msg */
-Naming here is drawing on stuff not in the Status register description (in 6.2 anyway which is what I'm
-checking against).  That just calls this Received IDE Fail Message.
-The text else where calls it out 'Upon transition from Secure to Insecure for any reason, other than
-corresponding Link/Selective IDE Stream Enable bit is Cleared, for a given Stream, the Port must transmit an
-IDE Fail Message indicating the Stream ID to the Partner port'
-
-To me the integrity check naming doesn't really cover that.
-
-I did some minimal digging. Your text matches 6.0. 
-
-
-> +
-> +/* Selective IDE Stream block, up to PCI_IDE_CAP_SELECTIVE_STREAMS_NUM */
-> +/* Selective IDE Stream Capability Register */
-> +#define  PCI_IDE_SEL_CAP		 0
-
-0x00
-
-> +#define  PCI_IDE_SEL_CAP_ASSOC_NUM_MASK	 __GENMASK(3, 0)
-> +/* Selective IDE Stream Control Register */
-> +#define  PCI_IDE_SEL_CTL		 4
-> +#define   PCI_IDE_SEL_CTL_EN		 0x1	/* Selective IDE Stream Enable */
-> +#define   PCI_IDE_SEL_CTL_TX_AGGR_NPR_MASK __GENMASK(3, 2) /* Tx Aggregation Mode NPR */
-> +#define   PCI_IDE_SEL_CTL_TX_AGGR_PR_MASK  __GENMASK(5, 4) /* Tx Aggregation Mode PR */
-> +#define   PCI_IDE_SEL_CTL_TX_AGGR_CPL_MASK __GENMASK(7, 6) /* Tx Aggregation Mode CPL */
-> +#define   PCI_IDE_SEL_CTL_PCRC_EN	 0x100	/* PCRC Enable */
-> +#define   PCI_IDE_SEL_CTL_CFG_EN	 0x200	/* Selective IDE for Configuration Requests */
-> +#define   PCI_IDE_SEL_CTL_PART_ENC_MASK	 __GENMASK(13, 10) /* Partial Header Encryption Mode */
-> +#define   PCI_IDE_SEL_CTL_ALG_MASK	 __GENMASK(18, 14) /* Selection from PCI_IDE_CAP_ALG */
-> +#define   PCI_IDE_SEL_CTL_TC_MASK	 __GENMASK(21, 19) /* Traffic Class */
-> +#define   PCI_IDE_SEL_CTL_DEFAULT	 0x400000 /* Default Stream */
-> +#define   PCI_IDE_SEL_CTL_TEE_LIMITED	 0x800000 /* TEE-Limited Stream */
-> +#define   PCI_IDE_SEL_CTL_ID_MASK	 __GENMASK(31, 24) /* Stream ID */
-> +#define   PCI_IDE_SEL_CTL_ID_MAX	 255
-> +/* Selective IDE Stream Status Register */
-> +#define  PCI_IDE_SEL_STS		 8
-> +#define   PCI_IDE_SEL_STS_STATE_MASK	 __GENMASK(3, 0) /* Selective IDE Stream State */
-> +#define   PCI_IDE_SEL_STS_STATE_INSECURE 0
-> +#define   PCI_IDE_SEL_STS_STATE_SECURE   2
-> +#define   PCI_IDE_SEL_STS_RECVD_INTEGRITY_CHECK	0x80000000 /* Received Integrity Check Fail Msg */
-
-Same thing.
-
-> +/* IDE RID Association Register 1 */
-> +#define  PCI_IDE_SEL_RID_1		 0xc
-> +#define   PCI_IDE_SEL_RID_1_LIMIT_MASK	 __GENMASK(23, 8)
-> +/* IDE RID Association Register 2 */
-> +#define  PCI_IDE_SEL_RID_2		 0x10
-> +#define   PCI_IDE_SEL_RID_2_VALID	 0x1
-> +#define   PCI_IDE_SEL_RID_2_BASE_MASK	 __GENMASK(23, 8)
-> +#define   PCI_IDE_SEL_RID_2_SEG_MASK	 __GENMASK(31, 24)
-> +/* Selective IDE Address Association Register Block, up to PCI_IDE_SEL_CAP_ASSOC_NUM */
-> +#define PCI_IDE_SEL_ADDR_BLOCK_SIZE	    12
-> +#define  PCI_IDE_SEL_ADDR_1(x)		    (20 + (x) * PCI_IDE_SEL_ADDR_BLOCK_SIZE)
-> +#define   PCI_IDE_SEL_ADDR_1_VALID	    0x1
-> +#define   PCI_IDE_SEL_ADDR_1_BASE_LOW_MASK  __GENMASK(19, 8)
-> +#define   PCI_IDE_SEL_ADDR_1_LIMIT_LOW_MASK __GENMASK(31, 20)
-> +/* IDE Address Association Register 2 is "Memory Limit Upper" */
-> +#define  PCI_IDE_SEL_ADDR_2(x)		    (24 + (x) * PCI_IDE_SEL_ADDR_BLOCK_SIZE)
-> +/* IDE Address Association Register 3 is "Memory Base Upper" */
-> +#define  PCI_IDE_SEL_ADDR_3(x)		    (28 + (x) * PCI_IDE_SEL_ADDR_BLOCK_SIZE)
-> +#define PCI_IDE_SEL_BLOCK_SIZE(nr_assoc)  (20 + PCI_IDE_SEL_ADDR_BLOCK_SIZE * (nr_assoc))
-> +
->  #endif /* LINUX_PCI_REGS_H */
+-- 
+2.50.1
 
 
