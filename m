@@ -1,163 +1,142 @@
-Return-Path: <linux-kernel+bounces-749094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8EDFB14A00
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:21:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBC2B14A04
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3A33A037C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:21:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 965B77AEDCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DAD27EC99;
-	Tue, 29 Jul 2025 08:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B8627F16C;
+	Tue, 29 Jul 2025 08:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhdgjGPv"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SRdeohwF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1482AF1C;
-	Tue, 29 Jul 2025 08:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD34136348;
+	Tue, 29 Jul 2025 08:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753777301; cv=none; b=U6jdqcFxcfrKI0ctPWVvwfHT2sANdgaZkPG49UvNfOdHHmYsxpE7HZ0GNuvN7hG6GMgdrhFGaCWsrT8LzQuXuPdF9ZzRVhnRc2YyOUhYbj24VFxHUQhtYrNOLCpIslmqPyY3lP0s9Ieq7AHLSFXcJiJxrimNTcnPXW/gamZRUIc=
+	t=1753777402; cv=none; b=OJslwfqQJuUVhmMYMWd2Vy88bjedi6GtcPFbGLgSHlwtt3YdS5/1oJfCN8A0nZtRXotRlqcqti+avOT9mOW/Y1KHPG86IMguoEiP+ku7t9d36hi98jLmuil9hPmcWYnZbeVxkqS8oQzGanJaUKQBo53Cgl6pEO7F6BGgIQ+Yugk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753777301; c=relaxed/simple;
-	bh=3MadP4h48DIdERsGiQK9qL9UflRCokl2zYAzYujjKO8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OZ/hLSWok3ZplfuJTUP07ImfjiISRTGG2QrWbW9lz/y+cBjOlOxS1Nv+giV2toAXgoljgBVG6tAPxKkoMflyjkJn4FBsLqmbH6wOndzzS+tSRgz/5r+kZXzNOKOOr+3/8Vf8levTruzgcbV0iAjLLEcpyJUDxdCTbjoZg1c81hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EhdgjGPv; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b78315ff04so1843616f8f.0;
-        Tue, 29 Jul 2025 01:21:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753777298; x=1754382098; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tT0dGPVL2JwzDZcMhwQgYP1Gkj3ongsGTyx+y3Z3CrE=;
-        b=EhdgjGPvE5u6i088g2OPrnRSfuAlPv5/5qzVGzrcy9N7BqY+e51xNG3B/SUtneYc29
-         Xrw8y3juyYtZ59d5iQr63WpHne4Iutj7bPWr1z1k4PgjAGrujB/YWTPO7HTh0GfjRMku
-         4EkJBQPZDgmISraaSnuBwqFkqAGv0IBrdoh67/ua167E/60+GbDpEd8ETjw/9zs+SX3s
-         y0HEvHkwATCfgX7YhfboCMsFJ7xpXjSdbHht4Z0n9bk6GpOrJrvyiF6bqDzz3cQyahC9
-         nupl3ocHkveLKeYQWzFwxcbXy617qTVusUaHhvyy2DmemIIfxsioMXzZvoTd+RFacinF
-         rfuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753777298; x=1754382098;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tT0dGPVL2JwzDZcMhwQgYP1Gkj3ongsGTyx+y3Z3CrE=;
-        b=XIkFZE0ivHl7TERU6E/QuwDi1FhfZx0sRKc2Crxd9U6OmJ0uXzh/WodjYKJq+ixGi2
-         RvcprdyLAfp7mgB54mrAcwZpTJDNbKvEHho68XQMtEfglu9J6o/sRkbjPS4PhZNY5nz0
-         CDUMGda4cWaVtjI1gzRNXubZ+3uemki06zB9JDXvErVZRNZ5/BPD2qAmxpyZQFg/B8o3
-         aktQCBHDV0T/9T5EAjokkrGMY+x8jimTRv/84J8QrruIrkf0rlSZGvLR/gHkFhe5n7Jn
-         eJ+69ZTtXxiCUNnq+DgBbuZ3MaXTaVgoT7h0PA00FGW7MR3Dr6Fi5MWkY0Hi01/xxf4F
-         GOZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVLrRXybHzp/Os4xHxq4cKYzBX+dCXjAgsLav6OU5jeqpofR/u4nUjZXH3Ftsx8JeiobvEUnKY5bVCJMKI=@vger.kernel.org, AJvYcCXbXrYIr5cQFBXMT1wjXaaJlaTcb5FjlfJQ4XVDGD+Q7iVQsGvxdtCn8HPxAHOmHqDc8QXOJYHw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxjfMiohdofm9Qdv2PV++lTrpL6vNyeXOcoZKt2pQOjmyE2vk9
-	zkAdgHLPEMVntxNkz2A46+1qTu/597v+HpyWcTmbKXUdPArpX6syrnyl
-X-Gm-Gg: ASbGncsFHid0nn47tlLivm1qxk19ewC/Ey2bYKFWfU0jiIjDkbC8Rd3XZXt0SY1x8Kn
-	Nw/AVfg3d6evIBsNTXjXRv2k9mAqLUsUCA4x2TvFXTFI8ijLvs5J7jAHRJtyze6xgS/WSSTWWLu
-	O7ErIwpcvDGjxPLOO8cF6bL3fELw9AInScSSMRa1bdnlWg6GFPvHWcHjM+WTFJmwpgbjki3VPHK
-	UMoayXR8+ce/NIGPWWyTdv/77hUt35e00neHcKVYKTQIGDjixTclTE8K4mfTYIzeHXjZeR8KSW/
-	/O/KtU6mM2afjJrXbXIYRsTdBN7VmKKvMSQO/qjblbRai1fumjOWYqlFQsbWmjK0opZBl3sQkJN
-	sD2vQfhUbUf7jUaGY8qHnccpwMVX86xnluHGs3Da7gHLCBuhVGWvERXvmAnqLt4rS5ih82tpWGU
-	Anhw==
-X-Google-Smtp-Source: AGHT+IE3SfkwZGuKiUVH9aKbgdBfmo7svBjLqSORlG/pClNgCFm7LSnPOXcJJ8FgGS2H6kv2vQVYvQ==
-X-Received: by 2002:a05:6000:2411:b0:3a4:bfda:1e9 with SMTP id ffacd0b85a97d-3b77678ba22mr11791862f8f.46.1753777297639;
-        Tue, 29 Jul 2025 01:21:37 -0700 (PDT)
-Received: from Ansuel-XPS24 (host-80-181-255-224.pool80181.interbusiness.it. [80.181.255.224])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b778eb27f8sm11472037f8f.16.2025.07.29.01.21.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 01:21:36 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Russell King <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [net-next RFC PATCH] net: phylink: add .pcs_link_down PCS OP
-Date: Tue, 29 Jul 2025 10:21:23 +0200
-Message-ID: <20250729082126.2261-1-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753777402; c=relaxed/simple;
+	bh=Mi2Uvf2FddisuYEcMTdmOzIi0nnlwedNbEXfEGZ6n+k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W3AO/vSV7Qg4lmyuY+cYVhhZUVS9hGO0v3xMRNEHSd4aFUgtBZtYgVyOPIWvzRUqMVZ9IUAKZF53o7g3C3ljZMC+F7gyfWVqb+cDZUvEfzrJ83XIQDKbXmtmVfqfzqX1opbBt0ahNMG2x83Kx2EMi2cY/wm6CbjrGHGNlPWjUVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SRdeohwF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B502C4CEEF;
+	Tue, 29 Jul 2025 08:23:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753777398;
+	bh=Mi2Uvf2FddisuYEcMTdmOzIi0nnlwedNbEXfEGZ6n+k=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=SRdeohwFGI1KMuFQHqkLd+SYzL2X8AV3SyodvrLjC1Iu/1AoucisGFRdVx0RNdtQY
+	 j/+/NphOfDRy37bseqcpF5Fq6AJeedUYsW8uMi8kWZZTOQbNK0gDJmcVtqqwoZIMl8
+	 bNV6H2GTYKsvq7eqxu+9Zjkp4p/QG+KtU+zRxRGyKh/p0YrwSsgbr1F6CxcWMaMWD5
+	 YAsgFSPFb8RKxNxnEDmmxZjApHuyhem7JGae4dnhghwEBmZ/kT8nv9bkr64rq2fcCz
+	 jY+7/TQHkFLqUWSG7/uZmW7lJps3Yg/UfgLfL/TkNZSJriyYw/17yx6xEWbc6hsOXL
+	 0VVGPO63brHzA==
+X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, aik@amd.com,
+	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 04/38] tsm: Support DMA Allocation from private
+ memory
+In-Reply-To: <20250728143318.GD26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-5-aneesh.kumar@kernel.org>
+ <20250728143318.GD26511@ziepe.ca>
+Date: Tue, 29 Jul 2025 13:53:10 +0530
+Message-ID: <yq5a5xfbbe35.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Permit for PCS driver to define specific operation to torn down the link
-between the MAC and the PCS.
+Jason Gunthorpe <jgg@ziepe.ca> writes:
 
-This might be needed for some PCS that reset counter or require special
-reset to correctly work if the link needs to be restored later.
+> On Mon, Jul 28, 2025 at 07:21:41PM +0530, Aneesh Kumar K.V (Arm) wrote:
+>> @@ -48,3 +49,12 @@ int set_memory_decrypted(unsigned long addr, int numpages)
+>>  	return crypt_ops->decrypt(addr, numpages);
+>>  }
+>>  EXPORT_SYMBOL_GPL(set_memory_decrypted);
+>> +
+>> +bool force_dma_unencrypted(struct device *dev)
+>> +{
+>> +	if (dev->tdi_enabled)
+>> +		return false;
+>
+> Is this OK? I see code like this:
+>
+> static inline dma_addr_t phys_to_dma_direct(struct device *dev,
+> 		phys_addr_t phys)
+> {
+> 	if (force_dma_unencrypted(dev))
+> 		return phys_to_dma_unencrypted(dev, phys);
+> 	return phys_to_dma(dev, phys);
+>
+> What are the ARM rules for generating dma addreses?
+>
+> 1) Device is T=0, memory is unencrypted, call dma_addr_unencrypted()
+>    and do "top bit IBA set"
+>
+> 2) Device is T=1, memory is encrypted, use the phys_to_dma() normally
+>
+> 3) Device it T=1, memory is uncrypted, use the phys_to_dma()
+>    normally??? Seems odd, I would have guessed the DMA address sould
+>    be the same as case #1?
+>
+> Can you document this in a comment?
+>
 
-On phylink_link_down() call, the additional phylink_pcs_link_down() will
-be called before .mac_link_down to torn down the link.
+If a device is operating in secure mode (T=1), it is currently assumed
+that only access to private (encrypted) memory is supported. It is
+unclear whether devices would need to perform DMA to shared
+(unencrypted) memory while operating in this mode, as TLPs with T=1 are
+generally expected to target private memory.
 
-PCS driver will need to define .pcs_link_down to make use of this.
+Based on this assumption, T=1 devices will always access
+private/encrypted memory, while T=0 devices will be restricted to
+shared/unencrypted memory.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/net/phy/phylink.c | 8 ++++++++
- include/linux/phylink.h   | 2 ++
- 2 files changed, 10 insertions(+)
+>
+>> diff --git a/include/linux/device.h b/include/linux/device.h
+>> index 4940db137fff..d62e0dd9d8ee 100644
+>> --- a/include/linux/device.h
+>> +++ b/include/linux/device.h
+>> @@ -688,6 +688,7 @@ struct device {
+>>  #ifdef CONFIG_IOMMU_DMA
+>>  	bool			dma_iommu:1;
+>>  #endif
+>> +	bool			tdi_enabled:1;
+>>  };
+>
+> I would give the dev->tdi_enabled a clearer name, maybe
+> dev->encrypted_dma_supported ?
+>
+> Also need to think carefully of a bitfield is OK here, we can't
+> locklessly change a bitfield so need to audit that all members are set
+> under, probably, the device lock or some other single threaded hand
+> waving. It seems believable it is like that but should be checked out,
+> and add a lockdep if it relies on the device lock.
+>
 
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index c7f867b361dd..6605ee3670fb 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -927,6 +927,12 @@ static void phylink_pcs_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
- 		pcs->ops->pcs_link_up(pcs, neg_mode, interface, speed, duplex);
- }
- 
-+static void phylink_pcs_link_down(struct phylink_pcs *pcs)
-+{
-+	if (pcs && pcs->ops->pcs_link_down)
-+		pcs->ops->pcs_link_down(pcs);
-+}
-+
- static void phylink_pcs_disable_eee(struct phylink_pcs *pcs)
- {
- 	if (pcs && pcs->ops->pcs_disable_eee)
-@@ -1566,6 +1572,8 @@ static void phylink_link_down(struct phylink *pl)
- 
- 	phylink_deactivate_lpi(pl);
- 
-+	phylink_pcs_link_down(pl->pcs);
-+
- 	pl->mac_ops->mac_link_down(pl->config, pl->act_link_an_mode,
- 				   pl->cur_interface);
- 	phylink_info(pl, "Link is Down\n");
-diff --git a/include/linux/phylink.h b/include/linux/phylink.h
-index 30659b615fca..73172c398dd6 100644
---- a/include/linux/phylink.h
-+++ b/include/linux/phylink.h
-@@ -484,6 +484,7 @@ struct phylink_pcs {
-  * @pcs_an_restart: restart 802.3z BaseX autonegotiation.
-  * @pcs_link_up: program the PCS for the resolved link configuration
-  *               (where necessary).
-+ * @pcs_link_down: torn down link between MAC and PCS.
-  * @pcs_disable_eee: optional notification to PCS that EEE has been disabled
-  *		     at the MAC.
-  * @pcs_enable_eee: optional notification to PCS that EEE will be enabled at
-@@ -511,6 +512,7 @@ struct phylink_pcs_ops {
- 	void (*pcs_an_restart)(struct phylink_pcs *pcs);
- 	void (*pcs_link_up)(struct phylink_pcs *pcs, unsigned int neg_mode,
- 			    phy_interface_t interface, int speed, int duplex);
-+	void (*pcs_link_down)(struct phylink_pcs *pcs);
- 	void (*pcs_disable_eee)(struct phylink_pcs *pcs);
- 	void (*pcs_enable_eee)(struct phylink_pcs *pcs);
- 	int (*pcs_pre_init)(struct phylink_pcs *pcs);
--- 
-2.50.0
+Will check and update the patch.
 
+-aneesh
 
