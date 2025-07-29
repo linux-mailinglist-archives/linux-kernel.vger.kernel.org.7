@@ -1,51 +1,55 @@
-Return-Path: <linux-kernel+bounces-749831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5B59B1536D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:31:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B2FB15371
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54F9F7AF1B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10BC87B0C81
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2960424EA80;
-	Tue, 29 Jul 2025 19:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D619D2512DE;
+	Tue, 29 Jul 2025 19:33:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bxn7XCOv"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p8PaVsrZ"
+Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4AB290F;
-	Tue, 29 Jul 2025 19:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4198324886F;
+	Tue, 29 Jul 2025 19:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753817493; cv=none; b=sHH6fFL2EVvOnIVwF4ccF6ToMknK8Ad8y7ECB0Tba5XVWHlGUBRWDYbz/vGVYoXpSHyW82ubRwvt2HMagt/QcXu8pzGE2oci2fEYCSVLkpSnF5vGKM5q1GUnMTPpDEPKvUU/fQ8OHm2Z5hVzFgAkfvRPinJ9AOKQl56EuXYjVP0=
+	t=1753817619; cv=none; b=BE1QNLD6tT1GkOYF63x3FpHalUYKXOzFqM/XdaJUVLBnqUgsRXWAySuK2FiheHsCxS7R1ocku9hDTCIKW7k2YO7Lkx9BHcinta7uwUkBYOF6VLZ+3LNwlKNhT/Uylp5bR9qP8mhlCLWDIZPN0uqmHnC+5+MdDoA6hVoRvXbz4Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753817493; c=relaxed/simple;
-	bh=lf6ecvMS5lLzD0DRcpsuhPk873JChd5ltyBTyFxKsro=;
+	s=arc-20240116; t=1753817619; c=relaxed/simple;
+	bh=Pn/4wU3FWzPANPeulCS77bi1iXkwqEjETvGQ2NElXbU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XoTZhM0v6Riv45tXyOncDN1gohE5LTHouP83Cy8gOZaJ54KpxcHhSWHBfVR/J5VaBrm73K1BLuk6aw42mgaDFVhyTMNEfJ2ZfeEPkDiW5l4aGepiPdxrb1QmIWpeF3WcRFNpBhD0QblmLkNiks5i+BGyWGCjrQid5ziDeKjbRFo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Bxn7XCOv; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=8UtUbjq+gsXVwNRHEqmPskVJ8RBN/bsJxXpAuzkbI2o=; b=Bxn7XCOv7anPwOISWDwXK9AZvk
-	s6PmHPur67emnifPf5wGCBw80V8TwAiukXaw42qwHm9n+s4S024vJjgLCnTII2Y9ALe7KO4UGyVCD
-	6784V+tKf5Yv9n8el10fAX6wLvDgS9e6D5Z/j3dGuQuRbDIPHz4NRv03psVOzgU/ADwMW5lDqNGiQ
-	99WFvuYIb1N9Z5nGpSYbJHq+En/1suw3Dd4jOwMPUo0Lh8ZwNdkjzaAGkAGQq/4TbYrpQbKyzNh8S
-	pZI1a3l4Z/m7ANpVfUJLAgro22SQT1VuzH6L9lziSAnS0iqQWT34gbDyW57I0xcx5qk8N9Q+RHpue
-	AOLqM3pA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ugq2t-0000000HYfs-0e84;
-	Tue, 29 Jul 2025 19:31:31 +0000
-Message-ID: <3b0a2731-6072-467f-937b-4135f53b9031@infradead.org>
-Date: Tue, 29 Jul 2025 12:31:30 -0700
+	 In-Reply-To:Content-Type; b=U/rWCADIUdlOuAXZBu5PtZZCkz+jRLgjMSrao4V2B+wRsB9fEqf7LjSycBRfOga0rs6XHFROj418laqxAe1TJ2hCgoBYZXDxG5AQSk7nPSBu8xA65nGOl1h0PeLOVweUWFniJTHoozjH/ZfBZCm+JpvuvJkAS5T5ibk8h/O/Gho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p8PaVsrZ; arc=none smtp.client-ip=80.12.242.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+ ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id gq4ru80ArUD3Ugq4ru4oqm; Tue, 29 Jul 2025 21:33:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1753817614;
+	bh=z+SRRL3rRltS4sAuSdLWbFetbEgJEuFio4WE2T9Xyb4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=p8PaVsrZqWeFVlslirJenx5xHw0FCGjNcLzugJozH3WTmqHGn5fi/qsz9EKnhlDK9
+	 8JnMXrCM24Qd8qHpbd0v82eiHrGWsWvz67yHCkwUIeW/kpFRRXZesPKDtGtsm0o9HR
+	 XPKiEtHRSaO5ZA/9LCOSS/bpEo60rz9OyhO5hbNKUR3Dw3vnDrf0x3hfIOjB5y66dj
+	 3uLSIJutYRHOBiP3Og5JMCsFgPFW7+jrjnxXIKOAiXhIwVrClRFn9ueI1gApEyuyfq
+	 bL9Nf8wuWKX293f2HmS2HmQAFpz10J0/bwqDv7uI1lCkcz61PMaOxB04RQek127Hfo
+	 ZsoBmEp7pBInA==
+X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 29 Jul 2025 21:33:34 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+Message-ID: <884293c1-f6f4-48b3-a5d9-9b41fa8614a5@wanadoo.fr>
+Date: Tue, 29 Jul 2025 21:33:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,137 +57,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Documentation: tracing: Add documentation about
- eprobes
-To: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>, Namhyung Kim
- <namhyung@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-References: <20250729161816.678462962@kernel.org>
- <20250729161912.226505358@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250729161912.226505358@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] media: rkvdec: Fix an error handling path in
+ rkvdec_probe()
+To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Hans Verkuil <hverkuil@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+References: <b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
+ <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Content-Language: en-US, fr-FR
+In-Reply-To: <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Steven,
-
-
-On 7/29/25 9:18 AM, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
+Le 29/07/2025 à 00:50, Nicolas Dufresne a écrit :
+> Hi,
 > 
-> Eprobes was added back in 5.15, but was never documented. It became a
-> "secret" interface even though it has been a topic of several
-> presentations. For some reason, when eprobes was added, documenting it
-> never became a priority, until now.
+> Le dimanche 27 juillet 2025 à 12:02 +0200, Christophe JAILLET a écrit :
+>> If an error occurs after a successful iommu_paging_domain_alloc() call, it
+>> should be undone by a corresponding iommu_domain_free() call, as already
+>> done in the remove function.
+>>
+>> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+>> ---
+>> Compile tested only
+>> ---
+>>   drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++++++---
+>>   1 file changed, 8 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> index d707088ec0dc..eb0d41f85d89 100644
+>> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+>> @@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_device *pdev)
+>>   	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+>>   
+>>   	irq = platform_get_irq(pdev, 0);
+>> -	if (irq <= 0)
+>> -		return -ENXIO;
+>> +	if (irq <= 0) {
+>> +		ret = -ENXIO;
+>> +		goto err_free_domain;
+>> +	}
+>>   
+>>   	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+>>   					rkvdec_irq_handler, IRQF_ONESHOT,
+>>   					dev_name(&pdev->dev), rkvdec);
+>>   	if (ret) {
+>>   		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
+>> -		return ret;
+>> +		goto err_free_domain;
+>>   	}
+>>   
+>>   	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
 > 
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
-> Changes since v1: https://lore.kernel.org/20250728171522.7d54e116@batman.local.home
+> Have you considered moving the allocation of the domain right above the above
+> line instead ? The empty domain can't possibly be used unless the probe have
+> fully completed.
+
+That would not change things much. We still need to handle 
+rkvdec_v4l2_init() failure a few lines below.
+
+If it is correct to move it at the very end of the function, after 
+rkvdec_v4l2_init(), then the patch would be simpler.
+
+
+Honestly, I'm not very confident with it. request_threaded_irq() 
+documentation states that "From the point this call is made your handler 
+function may be invoked."
+And rkvdec_irq_handler() may call rkvdec_iommu_restore() which uses 
+empty_domain.
+
+Not sure if I'm right and if this can happen, but the existing order 
+looks safer to me.
+
+
+That said, if it is fine for you, I can send a v2.
+
+
+This would be:
+
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c 
+b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+index d707088ec0dc..6eae10e16c73 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+@@ -1159,13 +1159,6 @@ static int rkvdec_probe(struct platform_device *pdev)
+                 return ret;
+         }
+
+-       if (iommu_get_domain_for_dev(&pdev->dev)) {
+-               rkvdec->empty_domain = 
+iommu_paging_domain_alloc(rkvdec->dev);
+-
+-               if (!rkvdec->empty_domain)
+-                       dev_warn(rkvdec->dev, "cannot alloc new empty 
+domain\n");
+-       }
+-
+         vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+
+         irq = platform_get_irq(pdev, 0);
+@@ -1188,6 +1181,13 @@ static int rkvdec_probe(struct platform_device *pdev)
+         if (ret)
+                 goto err_disable_runtime_pm;
+
++       if (iommu_get_domain_for_dev(&pdev->dev)) {
++               rkvdec->empty_domain = 
+iommu_paging_domain_alloc(rkvdec->dev);
++
++               if (!rkvdec->empty_domain)
++                       dev_warn(rkvdec->dev, "cannot alloc new empty 
+domain\n");
++       }
++
+         return 0;
+
+  err_disable_runtime_pm:
+
+
+CJ
+
 > 
-> - Renamed to eprobetrace.rst (Masami Hiramatsu)
+> Nicolas
 > 
-> - Fixed title of document (Masami Hiramatsu)
-> 
-> - Fixed grammar and spellings (Randy Dunlap)
-> 
->  Documentation/trace/eprobetrace.rst | 269 ++++++++++++++++++++++++++++
->  Documentation/trace/index.rst       |   1 +
->  2 files changed, 270 insertions(+)
->  create mode 100644 Documentation/trace/eprobetrace.rst
-> 
-> diff --git a/Documentation/trace/eprobetrace.rst b/Documentation/trace/eprobetrace.rst
-> new file mode 100644
-> index 000000000000..6d8946983466
-> --- /dev/null
-> +++ b/Documentation/trace/eprobetrace.rst
-> @@ -0,0 +1,269 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +==================================
-> +Eprobe - Event-based Probe Tracing
-> +==================================
-> +
-> +:Author: Steven Rostedt <rostedt@goodmis.org>
-> +
-> +- Written for v6.17
-> +
-> +Overview
-> +========
-> +
-> +Eprobes are dynamic events that are placed on existing events to either
-> +dereference a field that is a pointer, or simply to limit what fields are
-> +recorded in the trace event.
-> +
-> +Eprobes depend on kprobe events so to enable this feature; build your kernel
+>> @@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device *pdev)
+>>   err_disable_runtime_pm:
+>>   	pm_runtime_dont_use_autosuspend(&pdev->dev);
+>>   	pm_runtime_disable(&pdev->dev);
+>> +err_free_domain:
+>> +	if (rkvdec->empty_domain)
+>> +		iommu_domain_free(rkvdec->empty_domain);
+>>   	return ret;
+>>   }
+>>   
 
-I mucked that one up also. :(
-Please s/;/,/ above. Sorry.
-
-
-> +with CONFIG_EPROBE_EVENTS=y.
-> +
-> +Eprobes are created via the /sys/kernel/tracing/dynamic_events file.
-> +
-> +Synopsis of eprobe_events
-> +-------------------------
-> +::
-> +
-> +  e[:[EGRP/][EEVENT]] GRP.EVENT [FETCHARGS]	: Set a probe
-> +  -:[EGRP/][EEVENT]				: Clear a probe
-> +
-> + EGRP		: Group name of the new event. If omitted, use "eprobes" for it.
-> + EEVENT		: Event name. If omitted, the event name is generated and will
-> +		  be the same event name as the event it attached to.
-> + GRP		: Group name of the event to attach to.
-> + EVENT		: Event name of the event to attach to.
-> +
-> + FETCHARGS	: Arguments. Each probe can have up to 128 args.
-> +  $FIELD	: Fetch the value of the event field called FIELD.
-> +  @ADDR		: Fetch memory at ADDR (ADDR should be in kernel)
-> +  @SYM[+|-offs]	: Fetch memory at SYM +|- offs (SYM should be a data symbol)
-> +  $comm		: Fetch current task comm.
-> +  +|-[u]OFFS(FETCHARG) : Fetch memory at FETCHARG +|- OFFS address.(\*3)(\*4)
-> +  \IMM		: Store an immediate value to the argument.
-> +  NAME=FETCHARG : Set NAME as the argument name of FETCHARG.
-> +  FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
-> +		  (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
-> +		  (x8/x16/x32/x64), VFS layer common type(%pd/%pD), "char",
-> +                  "string", "ustring", "symbol", "symstr" and "bitfield" are
-> +                  supported.
-> +
-> +Types
-> +-----
-> +The FETCHARGS above is very similar to the kprobe events as described in
-> +Documentation/trace/kprobetrace.rst.
-> +
-> +The difference between eprobes and kprobes FETCHARGS is that eprobes has a
-> +$FIELD command that returns the content of the event field of the event
-> +that is attached. Eprobes do not have access to registers, stacks and function
-> +arguments that kprobes has.
-> +
-> +If a field argument is a pointer, it may be dereferenced just like a memory
-> +address using the FETCHARGS syntax.
-> +
-> +
-> +Attaching to dynamic events
-> +---------------------------
-> +
-> +Eprobes may attach to dynamic events as well as to normal events. It may
-> +attach to a kprobe event, a synthetic event or a fprobe event. This is useful
-
-                                                  an fprobe event.
-
-> +if the type of a field needs to be changed. See Example 2 below.
-
-Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
--- 
-~Randy
 
