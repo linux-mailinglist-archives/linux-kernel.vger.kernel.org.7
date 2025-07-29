@@ -1,134 +1,146 @@
-Return-Path: <linux-kernel+bounces-749016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24229B148E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:06:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A6EB148EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B905189F702
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:06:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC65170094
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71A8525CC62;
-	Tue, 29 Jul 2025 07:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GbGmnjzU"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A592609D9;
+	Tue, 29 Jul 2025 07:08:34 +0000 (UTC)
+Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8948720D4F9;
-	Tue, 29 Jul 2025 07:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC562036EC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753772793; cv=none; b=hl2BtIBHbaotUT89NYuQe/LLExn0Qp+uJZ3K+cKYPaC4iRNK4iBR95MNQudzdenpQxoJVmYYRUfUPkhOSio7p6DWy6F4DVIYesAyiw4lTWvq8js9XJ4DWz1a4vhWL7krPksFfv0/SyBJvzGxLVLyz0LiqebSIhrkCEknR5/e4/A=
+	t=1753772914; cv=none; b=Eayn5vRTGUQJf5oijl1cJVOyGTEByVbYSX6UYzUne7NA/JjUAlY8zCTtpjW1s139Ttyt2wEU7a7C7rELsQ52kVmSN2vnYbzR+Me4XbQcgmahnlfzHsehsfrmwvMBg4fhnLtJQzxC3Nj8q0+4yz7f50maOyDiOTwyZEWXmBPvYNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753772793; c=relaxed/simple;
-	bh=9X7FbclAlAgH064Wn2VJEp64tOlkfUs5O5CddFL27Os=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Xscix6Z4MdRBbVDememmpAH8R3RFgQqsme3eKhyH1xdb/TpCUeu+qU4vLG9pxmBEkwBQNC11vPtUZMZeGF/TEIhiaZcIKxqze/1aG2bHek29zmQgNxa9MrADzkJROPS+LCMT8O0h0Xkkwv2+cTJZMJeIsY6cdMLB6foyF/SQp54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GbGmnjzU; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so6494281a12.0;
-        Tue, 29 Jul 2025 00:06:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753772792; x=1754377592; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WVwEerSqyXqjnTvB4E0wQkicRSlmUziq2hhxax3RXag=;
-        b=GbGmnjzUm7wfF37vejwEqHSLukHyEhJci84j89JO65WkjsQ0oAY4gxHpvKH/zjLgm+
-         7Q3rbT6YrHHJ08Ln37JNH7px69uuGA/TWP2Q3+Bz9y5SGooOMWZjzhr0cNDy63iwhhxY
-         ju/hjC9OlTh2kvi15CLCC5ONU6ehJSpWIvqw2boUPRprJ4AuWjf0yBqs7Bl8ZHZrwzJ0
-         yLDKksBrFFSVd9h6DQGmP4K5to81rmmoT8pB0VZLev072Y2WIsqYMGRQB78KL7QjmkJh
-         ePLSbIlopoMnJ4Iwy/fS3GdobHWlbU9kbdR0i9tFF2bdYCRR8LpHw+wirEIWudFoU7mA
-         bSDg==
+	s=arc-20240116; t=1753772914; c=relaxed/simple;
+	bh=EnkfyD1eONdwDuOcQ81d8igQbfRxCP2MfV+jpHYpfUA=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ddVzk6ZG16orlKi2VBD92UaXok9yvGACfQAawk1Y5ZfSg1jkeahWUojUXqk62JRMp19qLrGeufRjgRU7poxzVevEioqbQO4ZYvoYd/1FiIm5XfQLefm5iqF5izdAEUjOrvHJ2RcH1q1p4kxBxKcyvfRE1AsqIK8qhTnyUeLjbnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-87c33c0b62eso481234339f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:08:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753772792; x=1754377592;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WVwEerSqyXqjnTvB4E0wQkicRSlmUziq2hhxax3RXag=;
-        b=EiAuYDTq7Od3VA83Mp8HoorA33QfTGsPtcguzmFpAL26HkblHpASbvIheWbLcwEm3d
-         RMlDhddO79z0zzVspQCS6vd1tTUX0a0jw2qPpWIqhEEeularzPCSbGY64eMHjFjC/uKS
-         vPD3vflfRNfBokU7J2o/yHHFCW2SKg+pgng+aRkkX6fhkMS0Z719/+ZDYbAFhZJA3T0M
-         KnUeHZcjsezwP2Pbg1vd2S5P12kdQZtdGGjvuC27pTODI563jYCxnnCTcewrA22vZamn
-         2qjac7dmMc0TrRvOHqqab1WSiOvPIfF0l1B97fX99yGptBMxSMEHEt588UUV6L5nUdUF
-         Iytg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2EnrQrsDgzYPe2SVfFEHiJ3wq68G7YqoIZi3YiqieWfm8Iardv/SNn35fsOtg5PAQN6KbzfuHzkN0oBXlmTjJLw==@vger.kernel.org, AJvYcCWbw9uoIaxKxKxGJef2fcfGd8XI6BoWsFoGRV2xZbJAtL9hFUAXDOjul+M/pxFp8IYqcP+DLYyHKNjjvEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3Kfu4B3YhcOGUspjD8PAdHFgOxfyN6ND3bXzTLP9R476hslZH
-	ALJ3iMAjLoYq7pJrAw/IgO5lvlUbVAVmHLKM5i6VOCuREnK8xdC0qQSz
-X-Gm-Gg: ASbGncs+eT1ErLcv6aGKgSYvxaKK6o9rqpndmvRDRjNLu9bvWBivYLInYxOnHGsf2RZ
-	xsAbtX8NzyRF/2zbE/onxjyNf3aAmtG5W9PLsIggIk9ExfVjq2RVtHOkCNDByoIpe6o4ikLfotV
-	5zU0ABFMRKZU3nh1W+lwHUaEYkNecLD8O25T5rZV2GmbPZ8EtoD2DhKf+cXzrZJXHz99gZ/UNKe
-	X7poqrNJHEdVMmOGl+615I7pSHpd9PoVW7MuYwZ8rAU/ylXi8T9u6G61AfWUZbE9uucJvAo/EbD
-	BxFxEql+ntLspoO2qE2dU3PNNY/csz/IHw+QveOcIoc5qqqh7YTXswOwy4WyahCx49BdMj6b3XA
-	pwhLxnkLySLQmtUlTl/Q3O9o9
-X-Google-Smtp-Source: AGHT+IFwHc/m22qVlTvdQ4PIQixQsuTFAFaEOuAgj5iw0EdQMBeT/2y7vmG4ge4xXg9Q0A2ouF47lQ==
-X-Received: by 2002:a17:903:230c:b0:240:96a:b81d with SMTP id d9443c01a7336-240096abbc8mr122047935ad.5.1753772791731;
-        Tue, 29 Jul 2025 00:06:31 -0700 (PDT)
-Received: from localhost.localdomain ([2406:5900:2:f21::2a1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe512d29sm70039485ad.140.2025.07.29.00.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 00:06:31 -0700 (PDT)
-From: Ryan Chung <seokwoo.chung130@gmail.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org
-Cc: mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ryan Chung <seokwoo.chung130@gmail.com>
-Subject: [PATCH] event/core.c: fix warning format specifier to use %llu instead of %lld for u64 values.
-Date: Tue, 29 Jul 2025 16:06:03 +0900
-Message-ID: <20250729070620.527482-1-seokwoo.chung130@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1753772912; x=1754377712;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lQVoZnv4ZsTO42Vddkk5EKweteHfbTD2qSGromaUy/M=;
+        b=gUqpPkaLN/W4f1yyrxGt2VwWlzvqwi7Bu2nyFMpx4jL8QjZdJV0oiP+IkmhnKd2XuP
+         vm1g9KSoFC6WPUlGW0hvVBHI3twkts48wgf04+WhqImLzM9UkJ/Kriq2fH9iYrbkGUHX
+         R54CM0GEIHHpHvuIpuec/fpSNoTgFfEWbbdUPlZ1gr+mdLsBBoWp0HNNpiHabRS7mvvv
+         tHSzgE0H5Yi7pPARwc4+5vbMtrtJNR2ZYAWqsPz/IeM90XqlZsvRRABvjpm1NB7bWCFk
+         zSqFY0vCuEjcm9WYRXKER166xjaYEJAjmpwspKNV/pm8sMMACoM3Q62XanwdhT/BzY6L
+         cJeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWomTURX3YNziRqoMD5GOA/IECTMm9/lIkcN8+mWIaXyvcdF6cSO1pJNusmzbDbxeOCN0EDsUvStd51J6w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+lVblk2/nb5IaBOU69rPGibXYu2VM0pBlFvHe3KZoeD/zbJt7
+	uRmYNVnhxobClEyrEUDAa2UpmqHKdEKPJoO/acI09o3D5DxUQfCB/8DRFrrmeMDtBwEGMBxJUOj
+	/o4Zk2TvyOkXNriXuxt/EsPH1+GtI50TLFt4JBxlRG8nLjwddUy0MN+xnRU0=
+X-Google-Smtp-Source: AGHT+IH4hjmux0mT79p3Xd0+N4UcVv5UJkP/3MJnwQoLoRW32xEsK6uDlCFIzzqDjSuS6mqjyn/SYWfJcs2+RKD3b7QKjVvchCv7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:3106:b0:3dd:d194:f72d with SMTP id
+ e9e14a558f8ab-3e3c527da5bmr258539915ab.8.1753772912033; Tue, 29 Jul 2025
+ 00:08:32 -0700 (PDT)
+Date: Tue, 29 Jul 2025 00:08:31 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6888736f.a00a0220.b12ec.00ca.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in xfrm_state_fini (3)
+From: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Updates the perf duration warning to use the unsigned 64‑bit format specifier `%llu` instead of `%lld`, ensuring the format matches the `u64` types.
+Hello,
 
-No functional change intended.
+syzbot found the following issue on:
 
-Signed-off-by: Ryan Chung <seokwoo.chung130@gmail.com>
+HEAD commit:    038d61fd6422 Linux 6.16
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b88cf0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4066f1c76cfbc4fe
+dashboard link: https://syzkaller.appspot.com/bug?extid=6641a61fe0e2e89ae8c5
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ca1782580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140194a2580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6505c612be11/disk-038d61fd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e466ef29c1ca/vmlinux-038d61fd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b6d3d8fc5cbb/bzImage-038d61fd.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 36 at net/xfrm/xfrm_state.c:3284 xfrm_state_fini+0x270/0x2f0 net/xfrm/xfrm_state.c:3284
+Modules linked in:
+CPU: 1 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted 6.16.0-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Workqueue: netns cleanup_net
+RIP: 0010:xfrm_state_fini+0x270/0x2f0 net/xfrm/xfrm_state.c:3284
+Code: c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 68 fa 0b f8 48 8b 3b 5b 41 5c 41 5d 41 5e 41 5f 5d e9 56 c8 ec f7 e8 51 e8 a9 f7 90 <0f> 0b 90 e9 fd fd ff ff e8 43 e8 a9 f7 90 0f 0b 90 e9 60 fe ff ff
+RSP: 0018:ffffc90000ac7898 EFLAGS: 00010293
+RAX: ffffffff8a163e8f RBX: ffff888034008000 RCX: ffff888143299e00
+RDX: 0000000000000000 RSI: ffffffff8db8419f RDI: ffff888143299e00
+RBP: ffffc90000ac79b0 R08: ffffffff8f6196e7 R09: 1ffffffff1ec32dc
+R10: dffffc0000000000 R11: fffffbfff1ec32dd R12: ffffffff8f617760
+R13: 1ffff92000158f40 R14: ffff8880340094c0 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff888125d23000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fbd9e960960 CR3: 00000000316d3000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ xfrm_net_exit+0x2d/0x70 net/xfrm/xfrm_policy.c:4348
+ ops_exit_list net/core/net_namespace.c:200 [inline]
+ ops_undo_list+0x49a/0x990 net/core/net_namespace.c:253
+ cleanup_net+0x4c5/0x800 net/core/net_namespace.c:686
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
+ worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
+ kthread+0x711/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+
 ---
- kernel/events/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 22fdf0c187cd..b8d7c4a64c44 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -602,7 +602,7 @@ static u64 __report_allowed;
- static void perf_duration_warn(struct irq_work *w)
- {
- 	printk_ratelimited(KERN_INFO
--		"perf: interrupt took too long (%lld > %lld), lowering "
-+		"perf: interrupt took too long (%llu > %llu), lowering "
- 		"kernel.perf_event_max_sample_rate to %d\n",
- 		__report_avg, __report_allowed,
- 		sysctl_perf_event_sample_rate);
-@@ -655,7 +655,7 @@ void perf_sample_event_took(u64 sample_len_ns)
- 	perf_sample_period_ns = NSEC_PER_SEC / sysctl_perf_event_sample_rate;
- 
- 	if (!irq_work_queue(&perf_duration_work)) {
--		early_printk("perf: interrupt took too long (%lld > %lld), lowering "
-+		early_printk("perf: interrupt took too long (%llu > %llu), lowering "
- 			     "kernel.perf_event_max_sample_rate to %d\n",
- 			     __report_avg, __report_allowed,
- 			     sysctl_perf_event_sample_rate);
--- 
-2.43.0
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
