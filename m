@@ -1,124 +1,103 @@
-Return-Path: <linux-kernel+bounces-748870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E22B2B146FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:51:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B92B146FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D5C3B9255
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D343A9C5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48814224892;
-	Tue, 29 Jul 2025 03:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C5092248AC;
+	Tue, 29 Jul 2025 03:52:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JajFpT3A"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="rzGUbzf1"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A0A224240;
-	Tue, 29 Jul 2025 03:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE06223DF1
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 03:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753761089; cv=none; b=nXF80Ni0Q8V3Xljmqexd70JOebzX5QKUwpvMSklvXKDpqnNGpY5HAGcmOJuOBSTLuMFZ0y4Upaqapgc5hyd3UiV/Ib94EZ4VdZ8lsppLao053yYzrNtC1KtZZtpGaNY4ytjTR8LFxvOJUwp9n/tKguH6Y2zi32VTBVKpALov7A0=
+	t=1753761128; cv=none; b=YcH0+GdfS1nx2Dtl+I23WUaGopLLhb7gS2pT+A253b2eMQAMmJu9dS+2ZMjRqCervgCF7yl2l7uySwUImzqJ2j+a0V7pFSHSx+IZI7WMQPVdHt5ra7aPDyF202e9dDgvxlK51l7TpRiN6P0n2MJe2kixVf1BDq8bjb2sfCzki30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753761089; c=relaxed/simple;
-	bh=QX3pJcNeLergKLmQUtnua8p/S99y32pnQR2GPvvDjcM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rI8WkUpgVoOrUtWmcBr/EBDnnuPSbRS6n4WZGZNyq72BBgXpCsPvY984175GlNh0CJVFWwNJAIakz2/yeNdD4xNDoW4XCTrmvaevn2OzzpyRFxDHk7rZgDkuojOgKoRxHG4RjNPlZGpVr4hVJqCKA63CaEtcI9XteIvEiz9Yw4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JajFpT3A; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2403c13cac3so4780445ad.0;
-        Mon, 28 Jul 2025 20:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753761087; x=1754365887; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VaH78BxSqInc7YWoloFx3Urvp7YqnyUZb3BPxUwn1CQ=;
-        b=JajFpT3A4ytx8j6Jr5r2pXuLgU/OO5H65h2363BxxzXqrZx6FeGvhh/Jny9Xqwpe5z
-         +MyEf9efcTCsg8Q8JWVAXCsGEEsW0otJmLRR91qfVhJsd9/rK+vtaxZzXWkbWn3x0qOR
-         pjw0SCO/znZDjDKl2duKMxDRngtyPi6zP2K9gC+TcgdBhXJAVzzQfMmt7ZP0VSVRG7uJ
-         qRE5j6du+oHR8sfd8B8OyauYFANsbOw144fdbyEymKcHIizA0zu2q+tjszcVcDLAoS4G
-         WYfdwqqBlc7r2KO63t22qYLFcjHs0aZ/4bjqBez/g9rRKp2pymlu+pqe1y77CtlU8fCb
-         TRbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753761087; x=1754365887;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VaH78BxSqInc7YWoloFx3Urvp7YqnyUZb3BPxUwn1CQ=;
-        b=MLqdif/caHIagRm9Spcr33GtY6uX5Gup0jzajx3R+eF46+5FW9Fg62fyMvKrTm8UJM
-         xQ42K8IYMJl5pefeQjoCRuPodoTStelrr2rkPOyMJ8/N2L0r0ckP/LAXTEbcYvaXodYT
-         uRAa2iA1SHnf4hCpL1kDQVY+wOtEyeDMDmYcG9OL9CAM1cDyRjxJv5Zlf188+DCvo0Fw
-         gAUI67oEtownbWW5JgC+IMufD9fYiyECm+h3SmrmJzeam8jdgLPyH2NS3JsLrTUC2KUL
-         ffBZH8Wd7Q+Jdb3sRkx7AapqLFFFpMgB5M2uvyH35eD33+MXDSn5HH/lwKr7fZaTuU1l
-         r7qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXC+e43zSWTLgWdx7PSysFo7GFNjeZEClFj7IuiqiYouSfXPbOw6bdwkzckaM//GwMLoZxwvwzbFw8n30Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL6C5f72oUkUUH75RZcIyNgv3Kn3c3jX4rziHzCnMAB0+qVB30
-	QVjmgi60xNc6epN2RjSukYpLUFuZj3srPTfRv6YScvptziFBQGYET0Ev
-X-Gm-Gg: ASbGncvWKv4yPZ3hX70yl6ebblrojp/g6d+vAnYqTG9drBF2B5Gv8nMQuODeM5wbALs
-	6QkYVLHltn2mDyPO141tCuTP7J2wekeK/35qWVRUTkXQljskpNzsm1qnUroihfiizfKXrFS2Wzw
-	ZTvHIh3adRWE+8FA/orfzanOKfhSsJpYdmEFYQOH8cTZ+/S2jGsU15gXK6i8uA4YPBVPGxb9Pzf
-	H5cHbdeRd5oXI4vAZ9CsuY2rhC/Mb7RprsfEaIQaapBmc3BEY0GiV8Z+nPSbEbHLku1RQwJSthF
-	FEe3vd3wgAZQLVIVOxPlf6ymfPqrCALyQ3R2xljP7ZwJvDivhaQS/MvPyt4lyPkiQqm9Z3z8Has
-	LNny8NDjDMsWfWLu6+syYZF68ErOIY3SuLAZtEjfwIw6Pk1LZGuYHUg==
-X-Google-Smtp-Source: AGHT+IELJXUiKm6KGXwaWiJUOPXk0c1EvlpOE0FOhZcoN6Z2MeI+X6ZgSi+Gg/tOSGKg3s7RZBPU3A==
-X-Received: by 2002:a17:902:e84e:b0:23f:9718:85f5 with SMTP id d9443c01a7336-24063d62911mr24916295ad.15.1753761087280;
-        Mon, 28 Jul 2025 20:51:27 -0700 (PDT)
-Received: from CQSWSUNAO.transsion.com ([107.155.12.245])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24025f5a3cesm34549145ad.72.2025.07.28.20.51.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 20:51:26 -0700 (PDT)
-From: Ao Sun <aosun718@gmail.com>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	matthias.bgg@gmail.com,
-	p.zabel@pengutronix.de
-Cc: linux-watchdog@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	geng.sun@transsion.com,
-	Ao Sun <aosun718@gmail.com>
-Subject: [PATCH] watchdog: mtk_wdt: Use NOIRQ_SYSTEM_SLEEP_PM_OPS()
-Date: Tue, 29 Jul 2025 11:51:17 +0800
-Message-Id: <20250729035117.3170-1-aosun718@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753761128; c=relaxed/simple;
+	bh=KvG7kkbZ3iXse0Fzh4VrJ1ay91aHsCKq34iQ+8zkVuM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bWqms8QNhApE5ZcuqhsvYtk0btyHtOmb1hERw/JLtTVBiagN4LBm9Hm0aS1tWJU/c2Vx4x/k3aN8HanrlemFB+lfK7JNeqNi5QcCJCeAbEnRZ4PuhlcCjv6N9V4YsTSLBq1ibhGcFYGfjg7f5nX6gSfMJg1bBAYD9AkfxrAZajw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=rzGUbzf1; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4brhHK40CNz9tYZ;
+	Tue, 29 Jul 2025 05:51:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1753761117;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/mrZr0k1CH1wBQQfdXAImWXil90dxRbLtJqXjKs7gYI=;
+	b=rzGUbzf1QNkYSJ+O4AXWqnJoWe1NR7WsIsgvkSGDKBDjZdp5NNId59nAGx4LYudZxAGHvu
+	VNvNUg+JH5jrGUFHDPaRLCVKCM3TLYMY3/FKkiAP6AZWlHWfsdZvKJRwLDakr1lI2vP+H9
+	nZy3pI5XAWLrd2ITilDowrcsMkuR1v4ggSZQQkRWuRkTs7aeqcGsiX6c2gaDpuPj5QjWEi
+	m+XD7FigCaIGUkhxH/CZ0jIKoJqGK5rCWFrjS6LQGN/H6bSOEnz5iy2qEKesb2J9PbOIYD
+	Y1AubsLwLpK3p7mI1Gh0hvsDTpojC6DGziC6S4CgO0wzn2YC4I//vKtomMgQBA==
+Message-ID: <d592e97a-fad2-4269-b854-d3e82d985035@mailbox.org>
+Date: Tue, 29 Jul 2025 05:51:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] mtd: spi-nor: winbond: Add support for W77Q51NW
+To: Michael Walle <mwalle@kernel.org>
+Cc: linux-mtd@lists.infradead.org, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Pratyush Yadav <pratyush@kernel.org>, Richard Weinberger <richard@nod.at>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Vignesh Raghavendra <vigneshr@ti.com>, linux-kernel@vger.kernel.org
+References: <20250721202257.83936-1-marek.vasut+renesas@mailbox.org>
+ <9eabfe619554cbdd493086dcffef8f44@kernel.org>
+ <62383ff7-0a14-4f15-818b-f5e5c56332c5@mailbox.org>
+ <DBJ86H8MDFNX.2Y6T55E0NH63R@kernel.org>
+ <0d0cd3cb-61e5-4ec6-958b-ec48b82429bf@mailbox.org>
+ <DBNH88949QTH.3I3MSOA019UJL@kernel.org>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <DBNH88949QTH.3I3MSOA019UJL@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-META: k9gc1ikgent8pos756noof5a6xn5qegr
+X-MBO-RS-ID: 9cb17900f721a6b5267
 
-During the device resume process, an interrupt storm occurs after
-interrupts are enabled, preventing the watchdog device from being
-awakened and functioning.
+On 7/28/25 8:32 AM, Michael Walle wrote:
+>>>> I have limited supply of these devices, so OTP is untested. The flash
+>>>> does have OTP registers, that's why the .otp entry is there. Why should
+>>>> I remove it if the OTP registers are in the chip ?
+>>>
+>>> We only add tested features. I'm just the messenger here :o. Anyway,
+>>> OTP is not really one-time-programmable here, you can write and
+>>> erase it again as long as you don't lock it, if that was your
+>>> concern.
+>>
+>> So how do I test the OTP without locking it ?
+> 
+> flash_otp_{write,info,dump,erase}, just don't use flash_otp_lock.
 
-To ensure that the watchdog is executed before interrupts are enabled,
-Use NOIRQ_SYSTEM_SLEEP_PM_OPS().
+Thanks. flash_otp_dump -u /dev/mtd0 returns zeroes, so I suspect the OTP 
+is not working. The chip does work even without this entry and the 
+content /sys/kernel/debug/spi-nor/spi0.0/capabilities and 
+/sys/kernel/debug/spi-nor/spi0.0/params did not change, so I think the 
+best way forward is to drop this patch, until I can figure out the OTP 
+on this chip ?
 
-Signed-off-by: Ao Sun <aosun718@gmail.com>
----
- drivers/watchdog/mtk_wdt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
-index d6a6393f609d..5f2179dabd67 100644
---- a/drivers/watchdog/mtk_wdt.c
-+++ b/drivers/watchdog/mtk_wdt.c
-@@ -327,7 +327,7 @@ static const struct of_device_id mtk_wdt_dt_ids[] = {
- MODULE_DEVICE_TABLE(of, mtk_wdt_dt_ids);
- 
- static const struct dev_pm_ops mtk_wdt_pm_ops = {
--	SET_SYSTEM_SLEEP_PM_OPS(mtk_wdt_suspend,
-+	 SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_wdt_suspend,
- 				mtk_wdt_resume)
- };
- 
 -- 
-2.34.1
-
+Best regards,
+Marek Vasut
 
