@@ -1,466 +1,205 @@
-Return-Path: <linux-kernel+bounces-749124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC800B14A68
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D596B14A62
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F4DC1AA085B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9044D4E234D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC0828641C;
-	Tue, 29 Jul 2025 08:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF74828540F;
+	Tue, 29 Jul 2025 08:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="FhSkqwt0"
-Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jfc/wren"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C242F281525
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C0E1B0413;
+	Tue, 29 Jul 2025 08:47:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753778901; cv=none; b=TZ5h3GnQ2Pdhas/5KBEIb8UQo1sDjyTCwfPE/LqLCJ4oRaKnum+mvPZZBEgxk5COV7p2+Elmlw9wbk1cA20Xm5SyCJYYiCV4eFafLOEFBKlGF66bNw/QVmka8nzgrNsEdJti8D2wue6OVvDOszBVn9SEjr8aJtfdVcaUvLKcMpk=
+	t=1753778829; cv=none; b=SOmE5WyA5abNplgcouBxfXJGaiOaRvutrbX6ZhJhKAAtXmfzwOyEy0/P1W6MUy72mR0cECSBM+e8o/jQ2FWjsQUempNjCJwk1khU9MUdYUXHKhYgTvKrSUVuGrmjbTR8Ix0Fvz2/L7x9hEEZOMF8cRlsuVD15BUujwyl6KLrtBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753778901; c=relaxed/simple;
-	bh=CzfVOeOWVqaknp53Rz/3Ro0C/F4X8MQKFsFvT1rYJ/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=byxxKaYXmx0x5FXI+9ryg1lMv1E+QJNbF6/ObEdIjUZD80sioN0OSX1gFDrdHY0Fe59hkUwLruRhIMqSfrV1fZOyP6Q0xyzYU0XJUDS/9CGrVXuA2sDBhBHJ1LwomU92hG1P3x2Es+3irjF50efynEpls5i+nmRx+X14l5K+80o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=FhSkqwt0; arc=none smtp.client-ip=54.206.16.166
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1753778838;
-	bh=VLq1PupNl4epQ/eqFgJeI/b4qy5mdRvi3g/owsVSuA0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=FhSkqwt0nnPtAqm4q6BL39Jc3uxBS83jgcblHf5g0aqL3IzQBIZAoJIo5hkgPPTH3
-	 Jh4twdN2KH0rIeM0/PXyxbIuucpH7yIUzewM7GzlAiAB7D1+vuCeHHtjDmjmjffgn2
-	 seym/xN47xtjMvsj1hIbtGmwP6xnRS03ulKDDPzE=
-X-QQ-mid: zesmtpip3t1753778825te45995f8
-X-QQ-Originating-IP: tSCf3VyPzUnUetiPvgXt758R68S3WC3VgNrI2JAXLJI=
-Received: from avenger-e500 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 29 Jul 2025 16:47:03 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 3458122844410139732
-EX-QQ-RecipientCnt: 12
-From: WangYuli <wangyuli@uniontech.com>
-To: akpm@linux-foundation.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	pfalcato@suse.de
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>,
-	Jun Zhan <zhanjun@uniontech.com>
-Subject: [PATCH] tools/testing/vma: Fix function parameter declarations for GCC 8.3 compatibility
-Date: Tue, 29 Jul 2025 16:47:00 +0800
-Message-ID: <EFCEBE7E301589DE+20250729084700.208767-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753778829; c=relaxed/simple;
+	bh=j5Nxp3sqxUzkjfdDiLe3WF5WObVWb43UAxAKH67Wjco=;
+	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
+	 In-Reply-To; b=BF7dTUakuyHsggCyU5eAi7D+Wcpemb6OVGpxmLwNpkF113UUFGcZjr4jYdrscdib62j0Pd5PEaeowwL9my6pRnhGiVxYiK6JmCFdsH691vsHXDK2bJRShVeFNtYotNwXpsg2V07lI3jbta8cNkXc3+ZRO9oT5ww/sQ4XrX599yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jfc/wren; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C66EC4CEF5;
+	Tue, 29 Jul 2025 08:47:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753778828;
+	bh=j5Nxp3sqxUzkjfdDiLe3WF5WObVWb43UAxAKH67Wjco=;
+	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
+	b=Jfc/wren1LJbaQtPGrfXlPuphqQNuJpRnfOQv1nnLazN+3tTSTJlF0b2eTDtdavR3
+	 annnAuru0Yah2c2M/xwoBtko0DeRnaCb7cLHwzhfdMc5RfxIRizs5KLMqvNH/PDL7n
+	 Ij6BiFlDmUbfiE1BEJRGkn0tGNkRyy592IvscC71gaWvyx4o+Va2AFxzkaUYjnoU7D
+	 tWKVhmZv5YpI68wZiGHGaICzY+ZOCeZTVu3zDDZW/r7qcor32qbHvC/WBl+hnyee88
+	 En7g/rQUrF3GK+fHCiVHKiZi6k6yL4X/K+XfXkE/yibdVX3B3Lk+TIgn5ZyfOZhQTL
+	 3/8Z1Co5COJlQ==
+Content-Type: multipart/signed;
+ boundary=2e705e879b310d7c093d9c723eda778d834dac574dec93290c67c2b07d74;
+ micalg=pgp-sha384; protocol="application/pgp-signature"
+Date: Tue, 29 Jul 2025 10:47:04 +0200
+Message-Id: <DBOEPHG2V5WY.Q47MW1V5ZJZE@kernel.org>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Matthias Schiffer" <matthias.schiffer@ew.tq-group.com>, "Andrew Lunn"
+ <andrew@lunn.ch>, "Nishanth Menon" <nm@ti.com>, "Vignesh Raghavendra"
+ <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>
+Subject: Re: [PATCH net-next] Revert "net: ethernet: ti: am65-cpsw: fixup
+ PHY mode for fixed RGMII TX delay"
+Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
+ Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Roger
+ Quadros" <rogerq@kernel.org>, "Simon Horman" <horms@kernel.org>, "Siddharth
+ Vadapalli" <s-vadapalli@ti.com>, "Maxime Chevallier"
+ <maxime.chevallier@bootlin.com>, <netdev@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux@ew.tq-group.com>
+X-Mailer: aerc 0.16.0
+References: <20250728064938.275304-1-mwalle@kernel.org>
+ <57823bd1-265c-4d01-92d9-9019a2635301@lunn.ch>
+ <DBOD5ICCVSL1.23R4QZPSFPVSM@kernel.org>
+ <d9b845498712e2372967e40e9e7b49ddb1f864c1.camel@ew.tq-group.com>
+In-Reply-To: <d9b845498712e2372967e40e9e7b49ddb1f864c1.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+
+--2e705e879b310d7c093d9c723eda778d834dac574dec93290c67c2b07d74
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NDxI9psdf3YV3rs/Uk6soLGD5nAjI0/HXoDZ1p+2PYOPR2S2BFwIibmh
-	CsHbRkqMIPPkdWlFG5rjNvMG3WCYiXfHAj/PRqmur0tduhq9srmvTgKSRkimY4t/YPdDPF0
-	aO1qB6b4KrJRZF3VethuVNe4VvoyAeugA+JOFpYXos+CpcOLNFXVz8+qCRX8bAEgPEqpeS1
-	5SsFOnFWklX6AqoV+n0yFFP4MNXFmOfe1ngHweLQq7nqEZUK+hHxxU1ros2mbMFg/ARRJ8x
-	7cVIbCkrkQYku9hU2+570PZUT0EYZ8SGWeFZEJEBOYtMK+N05OkIldnBdmrQ+bsMh1C8gMW
-	FUCiYN1YkMX/uKRj/c/gM6D4n8JiG+06b17Mzi7TGCeduD4kyZ5mMMycXglG3hayVz9QUOd
-	Ac2x1erNlzJdS6Zv3DkeuOHo6Wse6jzyKMBBg8M+j+kAr7KwQirVv0F0bzZulxcVVKa8YW9
-	uesQToaiRpufzuXV1bZpWQy6vx70y/OCNy9czIJLyOYl0566tsTryX3jb0zcntJM1KueyZv
-	isn0nPjvq9nUS/hfvEB7a8aQRFFSzkTl06Zrqe5UYNFC2fyQUehdiLH6KtVSkTOalofpxpG
-	iSNTvTcBduH+STk51QwuvgC/ml130x8CoDRbezdTcfqgfVl/5gCWBRat7oJcW12GZVpig+r
-	dr7SOkzrPU6+q7/xsnDkcpko6iApNNTChMCpMEhTO20HcXI79bqgXJromyaP6dxWQiNkYem
-	YthoLCIdKm0HPHOu2X4YDDvh7ZJVP8c5aFLiGPpGPFmsZLTqTI6SjpW++QhakaCd3X5GQCl
-	/9S+8vEbqhUTvpiuOG/08a8x5nrimNoaUKYgx308FKnAed4vjADTzglwlnab8WBLIJyFSTk
-	/NUFeB20u8mEQcsHpwQs083W8dvHfWHJImgKyV3SFGto/9Tyhj3UkSZe2rvytmRQKpsknwC
-	34o1i8rFPXvRb74CC5bLSdU0Jh693hznUYKdxyJoas1IS8uskbBxHFu01e4ulKybOI78+3Q
-	m6M9ZFdYkwzHg6UTgD
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
 
-The Linux kernel's minimum GCC version requirement has been bumped
-from 4.3 to 8.3, but this tool still fails to compile with GCC 8.3.
+Hi,
 
-Older compilers would fail if did not include parameter names in
-function declarations that contained parameter types; newer compilers
-are more lenient about this.
+> > > The patch being reverted says:
+> > >=20
+> > >    All am65-cpsw controllers have a fixed TX delay
+> > >=20
+> > > So we have some degree of contradiction here.
+> >=20
+> > I've digged through the old thread and Matthias just references the
+> > datasheet saying it is fixed. Matthias, could you actually try to
+> > set/read this bit? I'm not sure it is really read-only.
+>
+> I just referred to the datasheets of various K3 SoCs, I did not try modif=
+ying
+> the reserved bits.
 
-Fix many errors like this:
-  In file included from vma.c:10:
-  vma_internal.h: In function ‘arch_validate_flags’:
-  vma_internal.h:1218:40: error: parameter name omitted
-   static inline bool arch_validate_flags(unsigned long)
-                                        ^~~~~~~~~~~~~
-  vma.c: In function ‘dummy_close’:
-  vma.c:281:25: error: parameter name omitted
-   static void dummy_close(struct vm_area_struct *)
-                         ^~~~~~~~~~~~~~~~~~~~~~~
+So can you try to modify them?
 
-Reported-by: Jun Zhan <zhanjun@uniontech.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- tools/testing/vma/vma.c          |   2 +-
- tools/testing/vma/vma_internal.h | 110 +++++++++++++++----------------
- 2 files changed, 56 insertions(+), 56 deletions(-)
+> > > > The u-boot driver (net/ti/am65-cpsw-nuss.c) will configure the dela=
+y in
+> > > > am65_cpsw_gmii_sel_k3(). If the u-boot device tree uses rgmii-id th=
+is
+> > > > patch will break the transmit path because it will disable the PHY =
+delay
+> > > > on the transmit path, but the bootloader has already disabled the M=
+AC
+> > > > delay, hence there will be no delay at all.
+>
+> I have a patch that removes this piece of U-Boot code and had intended to=
+ submit
+> that soon to align the U-Boot driver with Linux again. I'll hold off unti=
+l we
+> know how the solution in Linux is going to look.
 
-diff --git a/tools/testing/vma/vma.c b/tools/testing/vma/vma.c
-index 2be7597a2ac2..390b6a711f97 100644
---- a/tools/testing/vma/vma.c
-+++ b/tools/testing/vma/vma.c
-@@ -278,7 +278,7 @@ static bool vma_write_started(struct vm_area_struct *vma)
- }
- 
- /* Helper function providing a dummy vm_ops->close() method.*/
--static void dummy_close(struct vm_area_struct *)
-+static void dummy_close(struct vm_area_struct *vma)
- {
- }
- 
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index 816e7e057585..4935460102e5 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -288,8 +288,8 @@ struct vm_area_desc {
- };
- 
- struct file_operations {
--	int (*mmap)(struct file *, struct vm_area_struct *);
--	int (*mmap_prepare)(struct vm_area_desc *);
-+	int (*mmap)(struct file *file, struct vm_area_struct *vma);
-+	int (*mmap_prepare)(struct vm_area_desc *desc);
- };
- 
- struct file {
-@@ -840,11 +840,11 @@ static inline unsigned long vma_pages(struct vm_area_struct *vma)
- 	return (vma->vm_end - vma->vm_start) >> PAGE_SHIFT;
- }
- 
--static inline void fput(struct file *)
-+static inline void fput(struct file *file)
- {
- }
- 
--static inline void mpol_put(struct mempolicy *)
-+static inline void mpol_put(struct mempolicy *policy)
- {
- }
- 
-@@ -852,15 +852,15 @@ static inline void lru_add_drain(void)
- {
- }
- 
--static inline void tlb_gather_mmu(struct mmu_gather *, struct mm_struct *)
-+static inline void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm)
- {
- }
- 
--static inline void update_hiwater_rss(struct mm_struct *)
-+static inline void update_hiwater_rss(struct mm_struct *mm)
- {
- }
- 
--static inline void update_hiwater_vm(struct mm_struct *)
-+static inline void update_hiwater_vm(struct mm_struct *mm)
- {
- }
- 
-@@ -890,15 +890,15 @@ static inline void free_pgtables(struct mmu_gather *tlb, struct ma_state *mas,
- 	(void)mm_wr_locked;
- }
- 
--static inline void mapping_unmap_writable(struct address_space *)
-+static inline void mapping_unmap_writable(struct address_space *mapping)
- {
- }
- 
--static inline void flush_dcache_mmap_lock(struct address_space *)
-+static inline void flush_dcache_mmap_lock(struct address_space *mapping)
- {
- }
- 
--static inline void tlb_finish_mmu(struct mmu_gather *)
-+static inline void tlb_finish_mmu(struct mmu_gather *tlb)
- {
- }
- 
-@@ -907,7 +907,7 @@ static inline struct file *get_file(struct file *f)
- 	return f;
- }
- 
--static inline int vma_dup_policy(struct vm_area_struct *, struct vm_area_struct *)
-+static inline int vma_dup_policy(struct vm_area_struct *dst, struct vm_area_struct *src)
- {
- 	return 0;
- }
-@@ -940,7 +940,7 @@ static inline void vma_adjust_trans_huge(struct vm_area_struct *vma,
- 	(void)next;
- }
- 
--static inline void hugetlb_split(struct vm_area_struct *, unsigned long) {}
-+static inline void hugetlb_split(struct vm_area_struct *vma, unsigned long addr) {}
- 
- static inline void vma_iter_free(struct vma_iterator *vmi)
- {
-@@ -957,31 +957,31 @@ static inline void vm_acct_memory(long pages)
- {
- }
- 
--static inline void vma_interval_tree_insert(struct vm_area_struct *,
--					    struct rb_root_cached *)
-+static inline void vma_interval_tree_insert(struct vm_area_struct *vma,
-+					    struct rb_root_cached *root)
- {
- }
- 
--static inline void vma_interval_tree_remove(struct vm_area_struct *,
--					    struct rb_root_cached *)
-+static inline void vma_interval_tree_remove(struct vm_area_struct *vma,
-+					    struct rb_root_cached *root)
- {
- }
- 
--static inline void flush_dcache_mmap_unlock(struct address_space *)
-+static inline void flush_dcache_mmap_unlock(struct address_space *mapping)
- {
- }
- 
--static inline void anon_vma_interval_tree_insert(struct anon_vma_chain*,
--						 struct rb_root_cached *)
-+static inline void anon_vma_interval_tree_insert(struct anon_vma_chain *avc,
-+						 struct rb_root_cached *root)
- {
- }
- 
--static inline void anon_vma_interval_tree_remove(struct anon_vma_chain*,
--						 struct rb_root_cached *)
-+static inline void anon_vma_interval_tree_remove(struct anon_vma_chain *avc,
-+						 struct rb_root_cached *root)
- {
- }
- 
--static inline void uprobe_mmap(struct vm_area_struct *)
-+static inline void uprobe_mmap(struct vm_area_struct *vma)
- {
- }
- 
-@@ -993,15 +993,15 @@ static inline void uprobe_munmap(struct vm_area_struct *vma,
- 	(void)end;
- }
- 
--static inline void i_mmap_lock_write(struct address_space *)
-+static inline void i_mmap_lock_write(struct address_space *mapping)
- {
- }
- 
--static inline void anon_vma_lock_write(struct anon_vma *)
-+static inline void anon_vma_lock_write(struct anon_vma *anon_vma)
- {
- }
- 
--static inline void vma_assert_write_locked(struct vm_area_struct *)
-+static inline void vma_assert_write_locked(struct vm_area_struct *vma)
- {
- }
- 
-@@ -1011,16 +1011,16 @@ static inline void unlink_anon_vmas(struct vm_area_struct *vma)
- 	vma->anon_vma->was_unlinked = true;
- }
- 
--static inline void anon_vma_unlock_write(struct anon_vma *)
-+static inline void anon_vma_unlock_write(struct anon_vma *anon_vma)
- {
- }
- 
--static inline void i_mmap_unlock_write(struct address_space *)
-+static inline void i_mmap_unlock_write(struct address_space *mapping)
- {
- }
- 
--static inline void anon_vma_merge(struct vm_area_struct *,
--				  struct vm_area_struct *)
-+static inline void anon_vma_merge(struct vm_area_struct *vma,
-+				  struct vm_area_struct *prev)
- {
- }
- 
-@@ -1037,19 +1037,19 @@ static inline int userfaultfd_unmap_prep(struct vm_area_struct *vma,
- 	return 0;
- }
- 
--static inline void mmap_write_downgrade(struct mm_struct *)
-+static inline void mmap_write_downgrade(struct mm_struct *mm)
- {
- }
- 
--static inline void mmap_read_unlock(struct mm_struct *)
-+static inline void mmap_read_unlock(struct mm_struct *mm)
- {
- }
- 
--static inline void mmap_write_unlock(struct mm_struct *)
-+static inline void mmap_write_unlock(struct mm_struct *mm)
- {
- }
- 
--static inline int mmap_write_lock_killable(struct mm_struct *)
-+static inline int mmap_write_lock_killable(struct mm_struct *mm)
- {
- 	return 0;
- }
-@@ -1074,11 +1074,11 @@ static inline void arch_unmap(struct mm_struct *mm,
- 	(void)end;
- }
- 
--static inline void mmap_assert_locked(struct mm_struct *)
-+static inline void mmap_assert_locked(struct mm_struct *mm)
- {
- }
- 
--static inline bool mpol_equal(struct mempolicy *, struct mempolicy *)
-+static inline bool mpol_equal(struct mempolicy *a, struct mempolicy *b)
- {
- 	return true;
- }
-@@ -1090,59 +1090,59 @@ static inline void khugepaged_enter_vma(struct vm_area_struct *vma,
- 	(void)vm_flags;
- }
- 
--static inline bool mapping_can_writeback(struct address_space *)
-+static inline bool mapping_can_writeback(struct address_space *mapping)
- {
- 	return true;
- }
- 
--static inline bool is_vm_hugetlb_page(struct vm_area_struct *)
-+static inline bool is_vm_hugetlb_page(struct vm_area_struct *vma)
- {
- 	return false;
- }
- 
--static inline bool vma_soft_dirty_enabled(struct vm_area_struct *)
-+static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
- {
- 	return false;
- }
- 
--static inline bool userfaultfd_wp(struct vm_area_struct *)
-+static inline bool userfaultfd_wp(struct vm_area_struct *vma)
- {
- 	return false;
- }
- 
--static inline void mmap_assert_write_locked(struct mm_struct *)
-+static inline void mmap_assert_write_locked(struct mm_struct *mm)
- {
- }
- 
--static inline void mutex_lock(struct mutex *)
-+static inline void mutex_lock(struct mutex *lock)
- {
- }
- 
--static inline void mutex_unlock(struct mutex *)
-+static inline void mutex_unlock(struct mutex *lock)
- {
- }
- 
--static inline bool mutex_is_locked(struct mutex *)
-+static inline bool mutex_is_locked(struct mutex *lock)
- {
- 	return true;
- }
- 
--static inline bool signal_pending(void *)
-+static inline bool signal_pending(void *task)
- {
- 	return false;
- }
- 
--static inline bool is_file_hugepages(struct file *)
-+static inline bool is_file_hugepages(struct file *file)
- {
- 	return false;
- }
- 
--static inline int security_vm_enough_memory_mm(struct mm_struct *, long)
-+static inline int security_vm_enough_memory_mm(struct mm_struct *mm, long pages)
- {
- 	return 0;
- }
- 
--static inline bool may_expand_vm(struct mm_struct *, vm_flags_t, unsigned long)
-+static inline bool may_expand_vm(struct mm_struct *mm, vm_flags_t flags, unsigned long npages)
- {
- 	return true;
- }
-@@ -1167,7 +1167,7 @@ static inline void vm_flags_clear(struct vm_area_struct *vma,
- 	vma->__vm_flags &= ~flags;
- }
- 
--static inline int shmem_zero_setup(struct vm_area_struct *)
-+static inline int shmem_zero_setup(struct vm_area_struct *vma)
- {
- 	return 0;
- }
-@@ -1177,20 +1177,20 @@ static inline void vma_set_anonymous(struct vm_area_struct *vma)
- 	vma->vm_ops = NULL;
- }
- 
--static inline void ksm_add_vma(struct vm_area_struct *)
-+static inline void ksm_add_vma(struct vm_area_struct *vma)
- {
- }
- 
--static inline void perf_event_mmap(struct vm_area_struct *)
-+static inline void perf_event_mmap(struct vm_area_struct *vma)
- {
- }
- 
--static inline bool vma_is_dax(struct vm_area_struct *)
-+static inline bool vma_is_dax(struct vm_area_struct *vma)
- {
- 	return false;
- }
- 
--static inline struct vm_area_struct *get_gate_vma(struct mm_struct *)
-+static inline struct vm_area_struct *get_gate_vma(struct mm_struct *mm)
- {
- 	return NULL;
- }
-@@ -1215,16 +1215,16 @@ static inline void vma_set_page_prot(struct vm_area_struct *vma)
- 	WRITE_ONCE(vma->vm_page_prot, vm_page_prot);
- }
- 
--static inline bool arch_validate_flags(unsigned long)
-+static inline bool arch_validate_flags(unsigned long flags)
- {
- 	return true;
- }
- 
--static inline void vma_close(struct vm_area_struct *)
-+static inline void vma_close(struct vm_area_struct *vma)
- {
- }
- 
--static inline int mmap_file(struct file *, struct vm_area_struct *)
-+static inline int mmap_file(struct file *file, struct vm_area_struct *vma)
- {
- 	return 0;
- }
--- 
-2.50.0
+That doesn't fix older bootloaders though. So in linux we still have
+to work around that.
 
+Although I don't get it why you want to remove that feature.
+
+> > > We have maybe 8 weeks to fix this, before it makes it into a released
+> > > kernel. So rather than revert, i would prefer to extend the patch to
+> > > make it work with all variants of the SoC.
+> > >=20
+> > > Is CTRL_MMR0_CFG0_ENET1_CTRL in the Ethernet address space?
+> >=20
+> > No, that register is part of the global configuration space (search
+> > for phy_gmii_sel in the k3-am62p-j722s-common-main.dtsi), but is
+> > modeled after a PHY (not a network PHY). And actually, I've just
+> > found out that the PHY driver for that will serve the rgmii_id bit
+> > if .features has PHY_GMII_SEL_RGMII_ID_MODE set. So there is already
+> > a whitelist (although it's wrong at the moment, because the J722S
+> > SoC is not listed as having it). As a side note, the j722s also
+> > doesn't have it's own SoC specific compatible it is reusing the
+> > am654-phy-gmii-sel compatible. That might or might not bite us now..
+> >=20
+> > I digress..
+> >=20
+> > > Would it be possible for the MAC driver to read it, and know if the d=
+elay has
+> > > been disabled? The switch statement can then be made conditional?
+> > >=20
+> > > If this register actually exists on all SoC variants, can we just
+> > > globally disable it, and remove the switch statement?
+>
+> If we just remove the switch statement, thus actually supporting all the
+> different delay modes, we're back at the point where there is no way for =
+the
+> driver to determine whether rgmii-rxid is supposed to be interpreted corr=
+ectly
+> or not (currently all Device Trees using this driver require the old/inco=
+rrect
+> interpretation for Ethernet to work).
+
+I can't follow you here. Are you assuming that the TX delay is
+fixed? For me, that's still the culprit. Is that a fair assumption?
+And only TI can tell us.
+
+> > Given that all the handling is in the PHY subsystem I don't know.
+> > You'd have to ask the PHY if it supports that, before patching the
+> > phy-interface-mode - before attaching the network PHY I guess?
+>
+> The previous generation of the CPSW IP handles this in
+> drivers/net/ethernet/ti/cpsw-phy-sel.c, which is just a custom platform d=
+evice
+> referenced by the MAC node. The code currently (partially) implements the
+> old/incorrect interpretation for phy-mode, enabling the delay on the MAC =
+side
+> for PHY_INTERFACE_MODE_RGMII.
+>
+> >=20
+> > If we want to just disable (and I assume with disable you mean
+> > disable the MAC delay) it: the PHY is optional, not sure every SoC
+> > will have one. And also, the reset default is exactly the opposite
+> > and TI says it's fixed to the opposite and there has to be a reason
+> > for that.
+>
+> My preference would be to unconditionally enable the MAC-side delay on Li=
+nux to
+> align with the reset default and what the datasheet claims is the only su=
+pported
+> mode, but let's hear what the TI folks think about this.
+
+Which goes against Andrew's "lets to all the delays in the PHY". We
+have rgmii-id in our AM67A based board and we've actually measured
+the signals with and without the MAC delay.
+
+Last week, I've also opened an e2e forum case, maybe we get some
+more insights. Funny enough, TI seem to have a different register
+description where this bit is described.
+https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1=
+544031/am67a-internal-rgmii-delay/
+
+-michael
+
+--2e705e879b310d7c093d9c723eda778d834dac574dec93290c67c2b07d74
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaIiKiBIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/hl+wF+ITZLpIYegyZ3XuZ+Vfhowbdn6UY2SnLB
+6Dpab1h4j0uWenCbmv+cOgrQ/C2B7KdnAYDUQ3PLU2QzJSdXWSCyORgpZufahSG8
+w45jv335Buy8k6rrY09HazY/SOWpKFQahHQ=
+=Pkql
+-----END PGP SIGNATURE-----
+
+--2e705e879b310d7c093d9c723eda778d834dac574dec93290c67c2b07d74--
 
