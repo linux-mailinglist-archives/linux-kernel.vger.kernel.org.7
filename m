@@ -1,149 +1,163 @@
-Return-Path: <linux-kernel+bounces-749093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C8EB149FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:20:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8EDFB14A00
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA132188EDB9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:21:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D3A33A037C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7308C27BF85;
-	Tue, 29 Jul 2025 08:20:41 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DAD27EC99;
+	Tue, 29 Jul 2025 08:21:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EhdgjGPv"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AED2AF1C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1482AF1C;
+	Tue, 29 Jul 2025 08:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753777241; cv=none; b=P/M45L4FEwqAqHCFK9/7Cj2pIaj8vjtXYn4yGxrG9Wk7z6FmKFUC7ZjiGybtgMEyWuVMJTwvj+MvUJU7Ur3NCgdNwyFAsck2rHt/J1TKNz//PytnvIhnG2Fb6TSrud4GoD8y3qE8wv74b3Rv6AWJ7Z73nHEztNpg6Oug+gvJS5s=
+	t=1753777301; cv=none; b=U6jdqcFxcfrKI0ctPWVvwfHT2sANdgaZkPG49UvNfOdHHmYsxpE7HZ0GNuvN7hG6GMgdrhFGaCWsrT8LzQuXuPdF9ZzRVhnRc2YyOUhYbj24VFxHUQhtYrNOLCpIslmqPyY3lP0s9Ieq7AHLSFXcJiJxrimNTcnPXW/gamZRUIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753777241; c=relaxed/simple;
-	bh=vsVLrvuPX8YMs03wPOJthPSOWct7ZHQUgKsDcPsHr20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UMd7fphT0ormIDZrQ1otxuJYXMP0EYMt0HEW5KGw93YDPjU/qtljHOnc4LxdQeC09bcOLyTUOoX9Xt9yqYQLm2+oS7nQWeVaKsPCA/tYZHqlQVgAoARTDDAKbJ6e1mwTQeKufVCWdf2FNmHp6RWH9K1gvHTa1dMJo0DBq+qvlRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1ugfZZ-0000cu-75; Tue, 29 Jul 2025 10:20:33 +0200
-Message-ID: <73a4fc1d-6852-4050-85c0-8c29b4165e4d@pengutronix.de>
-Date: Tue, 29 Jul 2025 10:20:32 +0200
+	s=arc-20240116; t=1753777301; c=relaxed/simple;
+	bh=3MadP4h48DIdERsGiQK9qL9UflRCokl2zYAzYujjKO8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OZ/hLSWok3ZplfuJTUP07ImfjiISRTGG2QrWbW9lz/y+cBjOlOxS1Nv+giV2toAXgoljgBVG6tAPxKkoMflyjkJn4FBsLqmbH6wOndzzS+tSRgz/5r+kZXzNOKOOr+3/8Vf8levTruzgcbV0iAjLLEcpyJUDxdCTbjoZg1c81hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EhdgjGPv; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b78315ff04so1843616f8f.0;
+        Tue, 29 Jul 2025 01:21:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753777298; x=1754382098; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tT0dGPVL2JwzDZcMhwQgYP1Gkj3ongsGTyx+y3Z3CrE=;
+        b=EhdgjGPvE5u6i088g2OPrnRSfuAlPv5/5qzVGzrcy9N7BqY+e51xNG3B/SUtneYc29
+         Xrw8y3juyYtZ59d5iQr63WpHne4Iutj7bPWr1z1k4PgjAGrujB/YWTPO7HTh0GfjRMku
+         4EkJBQPZDgmISraaSnuBwqFkqAGv0IBrdoh67/ua167E/60+GbDpEd8ETjw/9zs+SX3s
+         y0HEvHkwATCfgX7YhfboCMsFJ7xpXjSdbHht4Z0n9bk6GpOrJrvyiF6bqDzz3cQyahC9
+         nupl3ocHkveLKeYQWzFwxcbXy617qTVusUaHhvyy2DmemIIfxsioMXzZvoTd+RFacinF
+         rfuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753777298; x=1754382098;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tT0dGPVL2JwzDZcMhwQgYP1Gkj3ongsGTyx+y3Z3CrE=;
+        b=XIkFZE0ivHl7TERU6E/QuwDi1FhfZx0sRKc2Crxd9U6OmJ0uXzh/WodjYKJq+ixGi2
+         RvcprdyLAfp7mgB54mrAcwZpTJDNbKvEHho68XQMtEfglu9J6o/sRkbjPS4PhZNY5nz0
+         CDUMGda4cWaVtjI1gzRNXubZ+3uemki06zB9JDXvErVZRNZ5/BPD2qAmxpyZQFg/B8o3
+         aktQCBHDV0T/9T5EAjokkrGMY+x8jimTRv/84J8QrruIrkf0rlSZGvLR/gHkFhe5n7Jn
+         eJ+69ZTtXxiCUNnq+DgBbuZ3MaXTaVgoT7h0PA00FGW7MR3Dr6Fi5MWkY0Hi01/xxf4F
+         GOZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLrRXybHzp/Os4xHxq4cKYzBX+dCXjAgsLav6OU5jeqpofR/u4nUjZXH3Ftsx8JeiobvEUnKY5bVCJMKI=@vger.kernel.org, AJvYcCXbXrYIr5cQFBXMT1wjXaaJlaTcb5FjlfJQ4XVDGD+Q7iVQsGvxdtCn8HPxAHOmHqDc8QXOJYHw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxjfMiohdofm9Qdv2PV++lTrpL6vNyeXOcoZKt2pQOjmyE2vk9
+	zkAdgHLPEMVntxNkz2A46+1qTu/597v+HpyWcTmbKXUdPArpX6syrnyl
+X-Gm-Gg: ASbGncsFHid0nn47tlLivm1qxk19ewC/Ey2bYKFWfU0jiIjDkbC8Rd3XZXt0SY1x8Kn
+	Nw/AVfg3d6evIBsNTXjXRv2k9mAqLUsUCA4x2TvFXTFI8ijLvs5J7jAHRJtyze6xgS/WSSTWWLu
+	O7ErIwpcvDGjxPLOO8cF6bL3fELw9AInScSSMRa1bdnlWg6GFPvHWcHjM+WTFJmwpgbjki3VPHK
+	UMoayXR8+ce/NIGPWWyTdv/77hUt35e00neHcKVYKTQIGDjixTclTE8K4mfTYIzeHXjZeR8KSW/
+	/O/KtU6mM2afjJrXbXIYRsTdBN7VmKKvMSQO/qjblbRai1fumjOWYqlFQsbWmjK0opZBl3sQkJN
+	sD2vQfhUbUf7jUaGY8qHnccpwMVX86xnluHGs3Da7gHLCBuhVGWvERXvmAnqLt4rS5ih82tpWGU
+	Anhw==
+X-Google-Smtp-Source: AGHT+IE3SfkwZGuKiUVH9aKbgdBfmo7svBjLqSORlG/pClNgCFm7LSnPOXcJJ8FgGS2H6kv2vQVYvQ==
+X-Received: by 2002:a05:6000:2411:b0:3a4:bfda:1e9 with SMTP id ffacd0b85a97d-3b77678ba22mr11791862f8f.46.1753777297639;
+        Tue, 29 Jul 2025 01:21:37 -0700 (PDT)
+Received: from Ansuel-XPS24 (host-80-181-255-224.pool80181.interbusiness.it. [80.181.255.224])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b778eb27f8sm11472037f8f.16.2025.07.29.01.21.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 01:21:36 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+Subject: [net-next RFC PATCH] net: phylink: add .pcs_link_down PCS OP
+Date: Tue, 29 Jul 2025 10:21:23 +0200
+Message-ID: <20250729082126.2261-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/1] genirq/devres: Add dev_err_probe() in
- devm_request_threaded_irq() and devm_request_any_context_irq()
-To: Pan Chuang <panchuang@vivo.com>, tglx@linutronix.de,
- linux-kernel@vger.kernel.org
-Cc: miquel.raynal@bootlin.com, Jonathan.Cameron@Huawei.com,
- angeg.delregno@collabora.com, krzk@kernel.org, frank.li@vivo.com
-References: <20250729081434.497716-1-panchuang@vivo.com>
- <20250729081434.497716-2-panchuang@vivo.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20250729081434.497716-2-panchuang@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hi Pan,
+Permit for PCS driver to define specific operation to torn down the link
+between the MAC and the PCS.
 
-On 29.07.25 10:14, Pan Chuang wrote:
-> -int devm_request_any_context_irq(struct device *dev, unsigned int irq,
-> -			      irq_handler_t handler, unsigned long irqflags,
-> -			      const char *devname, void *dev_id)
-> +int devm_request_threaded_irq(struct device *dev, unsigned int irq,
-> +			      irq_handler_t handler, irq_handler_t thread_fn,
-> +			      unsigned long irqflags, const char *devname,
-> +			      void *dev_id)
-> +{
-> +	int rc = __devm_request_threaded_irq(dev, irq, handler, thread_fn,
-> +					     irqflags, devname, dev_id);
-> +	if (!rc)
-> +		return 0;
-> +
-> +	return dev_err_probe(dev, rc, "request_irq(%u) %pS %pS %s\n",
+This might be needed for some PCS that reset counter or require special
+reset to correctly work if the link needs to be restored later.
 
-Compared to %ps, %pS also prints offset and size relative to the symbol.
-This makes sense when you have an arbitrary program counter, but for
-merely printing a function symbol, I'd suggest %ps as it's less noisy.
+On phylink_link_down() call, the additional phylink_pcs_link_down() will
+be called before .mac_link_down to torn down the link.
 
-Cheers,
-Ahmad
+PCS driver will need to define .pcs_link_down to make use of this.
 
-> +			     irq, handler, thread_fn, devname ? : "");
-> +}
-> +EXPORT_SYMBOL(devm_request_threaded_irq);
-> +
-> +static int __devm_request_any_context_irq(struct device *dev, unsigned int irq,
-> +					  irq_handler_t handler,
-> +					  unsigned long irqflags,
-> +					  const char *devname, void *dev_id)
->  {
->  	struct irq_devres *dr;
->  	int rc;
-> @@ -124,6 +128,43 @@ int devm_request_any_context_irq(struct device *dev, unsigned int irq,
->  
->  	return rc;
->  }
-> +
-> +/**
-> + * devm_request_any_context_irq - allocate an interrupt line for a managed device with error logging
-> + * @dev:	Device to request interrupt for
-> + * @irq:	Interrupt line to allocate
-> + * @handler:	Function to be called when the IRQ occurs
-> + * @irqflags:	Interrupt type flags
-> + * @devname:	An ascii name for the claiming device, dev_name(dev) if NULL
-> + * @dev_id:	A cookie passed back to the handler function
-> + *
-> + * Except for the extra @dev argument, this function takes the same arguments
-> + * and performs the same function as request_any_context_irq().  IRQs requested
-> + * with this function will be automatically freed on driver detach.
-> + *
-> + * If an IRQ allocated with this function needs to be freed separately,
-> + * devm_free_irq() must be used.
-> + *
-> + * When the request fails, an error message is printed with contextual
-> + * information (device name, interrupt number, handler functions and
-> + * error code). Don't add extra error messages at the call sites.
-> + *
-> + * On failure, it returns a negative value. On success, it returns either
-> + * IRQC_IS_HARDIRQ or IRQC_IS_NESTED.
-> + */
-> +int devm_request_any_context_irq(struct device *dev, unsigned int irq,
-> +				 irq_handler_t handler, unsigned long irqflags,
-> +				 const char *devname, void *dev_id)
-> +{
-> +	int rc = __devm_request_any_context_irq(dev, irq, handler, irqflags,
-> +						devname, dev_id);
-> +	if (rc < 0) {
-> +		return dev_err_probe(dev, rc, "request_irq(%u) %pS %s\n",
-> +				     irq, handler, devname ? : "");
-> +	}
-> +
-> +	return rc;
-> +}
->  EXPORT_SYMBOL(devm_request_any_context_irq);
->  
->  /**
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ drivers/net/phy/phylink.c | 8 ++++++++
+ include/linux/phylink.h   | 2 ++
+ 2 files changed, 10 insertions(+)
 
-
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index c7f867b361dd..6605ee3670fb 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -927,6 +927,12 @@ static void phylink_pcs_link_up(struct phylink_pcs *pcs, unsigned int neg_mode,
+ 		pcs->ops->pcs_link_up(pcs, neg_mode, interface, speed, duplex);
+ }
+ 
++static void phylink_pcs_link_down(struct phylink_pcs *pcs)
++{
++	if (pcs && pcs->ops->pcs_link_down)
++		pcs->ops->pcs_link_down(pcs);
++}
++
+ static void phylink_pcs_disable_eee(struct phylink_pcs *pcs)
+ {
+ 	if (pcs && pcs->ops->pcs_disable_eee)
+@@ -1566,6 +1572,8 @@ static void phylink_link_down(struct phylink *pl)
+ 
+ 	phylink_deactivate_lpi(pl);
+ 
++	phylink_pcs_link_down(pl->pcs);
++
+ 	pl->mac_ops->mac_link_down(pl->config, pl->act_link_an_mode,
+ 				   pl->cur_interface);
+ 	phylink_info(pl, "Link is Down\n");
+diff --git a/include/linux/phylink.h b/include/linux/phylink.h
+index 30659b615fca..73172c398dd6 100644
+--- a/include/linux/phylink.h
++++ b/include/linux/phylink.h
+@@ -484,6 +484,7 @@ struct phylink_pcs {
+  * @pcs_an_restart: restart 802.3z BaseX autonegotiation.
+  * @pcs_link_up: program the PCS for the resolved link configuration
+  *               (where necessary).
++ * @pcs_link_down: torn down link between MAC and PCS.
+  * @pcs_disable_eee: optional notification to PCS that EEE has been disabled
+  *		     at the MAC.
+  * @pcs_enable_eee: optional notification to PCS that EEE will be enabled at
+@@ -511,6 +512,7 @@ struct phylink_pcs_ops {
+ 	void (*pcs_an_restart)(struct phylink_pcs *pcs);
+ 	void (*pcs_link_up)(struct phylink_pcs *pcs, unsigned int neg_mode,
+ 			    phy_interface_t interface, int speed, int duplex);
++	void (*pcs_link_down)(struct phylink_pcs *pcs);
+ 	void (*pcs_disable_eee)(struct phylink_pcs *pcs);
+ 	void (*pcs_enable_eee)(struct phylink_pcs *pcs);
+ 	int (*pcs_pre_init)(struct phylink_pcs *pcs);
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.50.0
+
 
