@@ -1,97 +1,135 @@
-Return-Path: <linux-kernel+bounces-748889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C666B14741
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:28:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F9D5B1473E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 887A71720EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DD53A7248
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5825222B594;
-	Tue, 29 Jul 2025 04:28:39 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D43122B8A6;
+	Tue, 29 Jul 2025 04:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+RVg8XH"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA8C227599
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AC82E3708
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753763319; cv=none; b=iCMPtOE18tmAVzM1VnSQN8e5Jy26pYXrtWge8QRNVujA2PSq6Fpu712G6/UaFCxT12J0HZ5jXxNxbhLnpdtTxAxBs8UPA5AmwPlYMGz13Aut6VRUA4tTxiuXdeSOXpaTHgUZ3jJKi8fFyVmGlgHI9iQQOQEo/07dxE7qYYiph+s=
+	t=1753763192; cv=none; b=RESan2v/MxjLmDXD0K1vqerY9Zqz/WmswTrh9fj8BS1Xg/bSN1ferSoYPatg9Ee8MPIlSytx0MMVPiZNVIw0sBsEBo4yNDbV3/awcZgKlkxY/Kh8pQruhcuxgUypyIcIcZWwiTZ+uwAnrEZqVTYaFsVhy821phg1ryJ2Y8dRq0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753763319; c=relaxed/simple;
-	bh=XUfz6v3G0/ICR/P+DTLZZ8lAl/8629T8wlbLA0ibjnM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Wttb8jx2En4RovtxsyzxM3NFeDEeHfVyWZ421x8v+30sZBgjgOfj7v70vH+tpWJAJNyuUTVRHbIibza85gJDPyHkCzogrGcwiupyB4QuJYUJkO+lGFdHCnUsXVqsiVPrbekTfuS8v6pV+ehmyQjIPMWPygH69rPb5ZgBBv4sxdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-05 (Coremail) with SMTP id zQCowADnPl_qTYhoFWLPBw--.59274S2;
-	Tue, 29 Jul 2025 12:28:26 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: marcus.folkesson@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
+	s=arc-20240116; t=1753763192; c=relaxed/simple;
+	bh=CvKeu58IXrAdvxQcD8lmzf7MZU2YYjTVYOF+YIPPfv4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hSgdpQVQpFBNzORVgOxdCcJPDDI6qFuXFRqHQnS+MqSAAKaW2ni894IhydJCNHDnkbGjnhTwI9Qz0tZJ1l/PLPJJ8VUjx0UUxIY30PfLGwPDQ1Pgg39I+FEaGIabaSajQq3rrSDOVGndCn1VB6ELETFff7RWlR546fQnGWQfk0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+RVg8XH; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-769b19eeb3fso280803b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:26:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753763191; x=1754367991; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ilKaDFR6OrZjzX6D5Zrq3NqUyxXJfxnBkaqIM4VqV4=;
+        b=m+RVg8XHHGK757Bc423bnu4gFOrBg4UiulyOpOZkxvgk7Qzuc4l54beRQQI5kOXR8S
+         chjpZnqW5WJ0C6dztPXjFnULO0SiOcJnyLP++Bw1aLpAFJweM07SABy6m15qMsi2kEq7
+         EKOozCNo+XPF3WGFAUQU7HUnCDPfOabFHHZblfGul+8cAzm2JMvzG9hKLmidyXNJ1HVs
+         eQVEWaP88SONLxJDcVOFwSniDRjCW3S8td0DudUFvGgwqPRyoxWRPG9SNo0sVXPenvsC
+         mTcVw1ayQQEMbz3TzKUy6Tq3WEGC3bWbHDon0ftP8N8flWJtt+ZvhUMlv7gjbi0ul18U
+         qN1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753763191; x=1754367991;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0ilKaDFR6OrZjzX6D5Zrq3NqUyxXJfxnBkaqIM4VqV4=;
+        b=Rj3VE78UGIbJ+9MhxSuOt5ENUeFWbJnibg0TcbKxKHpIkE6v/pQhQIl64JZxigIQVX
+         WcVPLIj7NVgKMM1wOpFa09pqUGNKxNDzC4Rpyh+nun2sI1zx3tcTYZI5PaeyO1jbTAi7
+         kooXVM7CYC0o+V/wjyHz3YRpg1AqbWmO7F4aeJIWmnz9Pn7Jmve1Ce350IhyWw2XdBNS
+         tFq6i4Y1k090kMyDY0F0D7rLCXahGiXtf6DGVkqXK3y9Ct5GUnAHDuShLrNj4Og0eC0d
+         N+hB2T9URfoMSN0rzOmnEetCV9KXR4+1BMZmj0KM/B2KBAPWh5LJgCkzel5XcxhNRZqK
+         EH6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXN3bmvjWHdmuMa9fQh0IL9uhOYUt11IP/9xbusYuDOqsbJ4fWeTszsONUXYTPQb3GIu2ejrbZ2k44hwTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxm5+tWoNmBMnnUJf4+pZtrMVz/iHoTm8pc0BEukDPwLfvorCDV
+	amoA8OR34iSHftxm0rqG6hxUPowugi19MDKs+9wO8rbjQeHvbKmdLq6P
+X-Gm-Gg: ASbGncsUL5daE0xmTN9P7udS097pNtGXTlINKkkRLFHmqIJ8y3bWjbikugObx644mnw
+	mOZNzrdV7O78XqHQhH+uAp+ECvv+AVLWooD2XkU8ZwMH9C/e8YhKTilH8kCyJckMYuTgtnxedEB
+	wXvC7cSd2gqV3EHULoPBnyHegW6iR3Z3Covmefq0KOofKiTrVe/ZxY3v9pLHTd+BFyn5JLiUV0M
+	pXJJO49Y6Q0GZmRqSZYvjShUdjD2ICwI1xqHAnIw09YDrMOYUYUwmhkgJtsV22RslUIXMBGSYcS
+	9CCdlTwJZ9NYkC0egpKSMCeM+lafF9loAjcNM00dEtQvwVda5CDpjYGncpaOOXzmVAu92GAICNn
+	BHfq+ci/CQIBsvlAIojIeJzXaGlwA5Q==
+X-Google-Smtp-Source: AGHT+IG1Wq72gaOcqPtisiStSjKio1cSFV42RF5HqkyXJmQ4IEvYZhzGHHenUOoI0rFgFuBCBhkGDw==
+X-Received: by 2002:aa7:8885:0:b0:749:93d:b098 with SMTP id d2e1a72fcca58-76339370d7dmr20500083b3a.22.1753763190556;
+        Mon, 28 Jul 2025 21:26:30 -0700 (PDT)
+Received: from archlinux ([38.188.108.234])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76419d84234sm6742570b3a.57.2025.07.28.21.26.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 21:26:30 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	darwi@linutronix.de,
+	sohil.mehta@intel.com,
+	peterz@infradead.org,
+	ravi.bangoria@amd.com
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] drm/sitronix/st7571-i2c: Remove unneeded semicolon
-Date: Tue, 29 Jul 2025 12:26:20 +0800
-Message-Id: <20250729042620.2057603-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH v2] x86/intel: Fix always false range check in x86_vfm model matching
+Date: Tue, 29 Jul 2025 09:56:21 +0530
+Message-ID: <20250729042621.6403-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADnPl_qTYhoFWLPBw--.59274S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DXFWDWF4kJFb_yoWfXwb_CF
-	WUWr9rZ3s8Cr9xtw13C3yfX3Z2van8Za1rW3WIgayrJry7Zw1UZ3s2vrWUXw1UXay8CF98
-	Gwn3u34xAanrWjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
-	jxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
-	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r1q
-	6r43MxkIecxEwVAFwVW8XwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
-	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
-	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
-	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
-	jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
-	ZFpf9x0JU-SdkUUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
-semantic patch at scripts/coccinelle/misc/semicolon.cocci.
+Fix a logic bug in early_init_intel() where a conditional range check:
+(c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE)
+was always false due to (PRESCOTT) being numerically greater than the
+upper bound (WILLAMETTE). This triggers:-Werror=logical-op: 
+logical ‘and’ of mutually exclusive tests is always false
+The fix corrects the constant ordering to ensure the range is valid:
+(c->x86_vfm >=  INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL)
 
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+Fixes: fadb6f569b10 ("x86/cpu/intel: Limit the non-architectural
+constant_tsc model checks")
+
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+
+Changes since v1:
+- Fix incorrect logic
 ---
- drivers/gpu/drm/sitronix/st7571-i2c.c | 2 +-
+ arch/x86/kernel/cpu/intel.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/sitronix/st7571-i2c.c b/drivers/gpu/drm/sitronix/st7571-i2c.c
-index 453eb7e045e5..35e0a86c7dc8 100644
---- a/drivers/gpu/drm/sitronix/st7571-i2c.c
-+++ b/drivers/gpu/drm/sitronix/st7571-i2c.c
-@@ -319,7 +319,7 @@ static void st7571_prepare_buffer_grayscale(struct st7571_device *st7571,
- 		size = (rect->x2 - rect->x1) * (rect->y2 - rect->y1) / 4;
- 		memcpy(st7571->hwbuf, vmap->vaddr, size);
- 		break;
--	};
-+	}
- }
- 
- static int st7571_fb_update_rect_monochrome(struct drm_framebuffer *fb, struct drm_rect *rect)
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 076eaa41b8c8..6f5bd5dbc249 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -262,7 +262,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
+ 	if (c->x86_power & (1 << 8)) {
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+ 		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
+-	} else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE) ||
++	} else if ((c->x86_vfm >=  INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL) ||
+ 		   (c->x86_vfm >= INTEL_CORE_YONAH  && c->x86_vfm <= INTEL_IVYBRIDGE)) {
+ 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+ 	}
 -- 
-2.25.1
+2.50.1
 
 
