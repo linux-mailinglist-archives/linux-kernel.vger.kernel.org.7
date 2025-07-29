@@ -1,139 +1,132 @@
-Return-Path: <linux-kernel+bounces-749454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58084B14E96
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:43:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA61B14E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC9693A9F07
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:42:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D949188A3AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A211A00F0;
-	Tue, 29 Jul 2025 13:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356561A23BE;
+	Tue, 29 Jul 2025 13:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KvF8erXJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UBgCXs1B"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2092200A3;
-	Tue, 29 Jul 2025 13:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6EC19644B;
+	Tue, 29 Jul 2025 13:44:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753796588; cv=none; b=WSvb0HYutC8bg/8Ez6zpJuCfPkh47T4vAaTFTHH+qXovFG2y3Ouqkbeai0ekO/uf2F3z1GvkbvXSSmLpDfInK+VK1WOVnH/q9EosycYSJi9hZEUddaBYHqWc6KnFF16gjbx60qhDj1YrSbBT7xXYnro0oh63osK/PLddKYEoZCU=
+	t=1753796645; cv=none; b=OgGCXDwDwavmDTBVYSmHMKRQ7OpxQmv8fRRbuVVpWeBKOAOeU9FzhX2bbVQJTPYC06e4lhulcGd/OBYDHNm5LK94LNNbkb6Div7/WsCMD2JFOe3d6RnTFjN7KO/+vDpjhf0Wo4VvTL3CLlsiuuIQesDVTaHWEW7zN8GMdG/VLVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753796588; c=relaxed/simple;
-	bh=8J8WsDaAXuGhIRqih5/Dp7Ehpdk4JivDt91FfVoN60k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mcfd5VlU+f9LXQ4XWJfx096drDUNXE18VIqqf+/77pQrKoS+9bGkxA0WqUEEaMO4xucW7PewJ6TZxJ3rmfay8wnQUrUttm9ANFUKsVVlo7utVqtEw1fYBTj47TnYAdLoY2QFAbEMI7h9XxSzUFqp6oP5RzYsjneVmQen8AQipns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KvF8erXJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCB20C4CEEF;
-	Tue, 29 Jul 2025 13:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753796587;
-	bh=8J8WsDaAXuGhIRqih5/Dp7Ehpdk4JivDt91FfVoN60k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KvF8erXJSXiyMsFzY2yB309WKNyJwtGoE8G+OZv/bP1xEY6CIkwLFx0XngSYK7bFI
-	 tURf/eOoq+792Gul8eJokb9PUQIzpLvpEqjJNqsL3vqU4RgeEmKzCIt1jThoSWqymE
-	 SSCVxpGEjHLE/MBaNWJD7faooOKQnLgVeBNDamaFwa5/Enk1eDe5nSJsHXrpmsp5i9
-	 b3DSzdk8VLhEu/sMpOOtB90J3QOhllvPW4UfC0LDoLaP0ZDn8WM8tV3J0HQajeN527
-	 nh4ywSYmUJGzhZQ4fABjD+Rpwt3A21MnRBXT5AqNs7HOgFp4mZxeUkS8Ls1ZRfQDgn
-	 M3pY+VS2mDAYg==
-Date: Tue, 29 Jul 2025 14:43:02 +0100
-From: Simon Horman <horms@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Rob Clark <rob.clark@oss.qualcomm.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	kernel@oss.qualcomm.com
-Subject: Re: [PATCH 1/7] arm64: dts: qcom: Rename sa8775p SoC to "lemans"
-Message-ID: <20250729134302.GF1877762@horms.kernel.org>
-References: <20250722144926.995064-1-wasim.nazir@oss.qualcomm.com>
- <20250722144926.995064-2-wasim.nazir@oss.qualcomm.com>
- <20250723-swinging-chirpy-hornet-eed2f2@kuoka>
- <159eb27b-fca8-4f7e-b604-ba19d6f9ada7@oss.qualcomm.com>
- <e718d0d8-87e7-435f-9174-7b376bf6fa2f@kernel.org>
- <CACSVV00jef8so-jqjCaqJehj-XN2OZ562_R+Dod64+C4-dmDhQ@mail.gmail.com>
- <20250726180451.GM1367887@horms.kernel.org>
- <keqfco2t254skl6zjxchfze65j5bc5yq4j4t3wzllca7djtybm@zb724ha6khyg>
+	s=arc-20240116; t=1753796645; c=relaxed/simple;
+	bh=zCI0H9uZE9yysxPFMADdtF2YkW6hK/FddsTqq4LFs6U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ibXopHAonDde6pCeUeriCmh9/aXrTGr5H55I2sZkEXQD9FbBnqkWJL7k7w6uf3oLUN3so5N2Taqfit9sxKl2D3zyE/CVf+RD4A65B2eVPPENAwzeNZvFWGhzvqmh2PZX1qq7JLOV9n6OoYfXGaJdhuLNrmuo5EfYKtmJMiRIJfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UBgCXs1B; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b78bca0890so1107088f8f.3;
+        Tue, 29 Jul 2025 06:44:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753796642; x=1754401442; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nFsz2UHtorJJsTYKHr5ZAg3v318PyN1bhW8UxJDcjho=;
+        b=UBgCXs1B1g+FJ4mKAM5+NyPVAC1tIqEhZJDcPfW4i0bqEtGxG23kfLRSz8z+poxPAR
+         GOmqpqxIxm9A88HchLCIjpfdjhynF6NSl7EVMyGz/Uaq8CUiCnaePO6F1g4j0X+FHuLA
+         tYvkEJHhLKQ0FySZK9qAdo/2bmNNmh46iqtZYXCGOOH9gW2/+HyaVYWTFvhfJpHZE/Ib
+         fXoIeUYZTPbnGs1AZRiBJjf2gm+CeC84qr7YzNhUajSFpPrEiWpdERJzZLDjGP2kr7Wb
+         4dthCYCuiIvH/FO4BVTIiUWSjKUN+A/QSwUvuOkvzIYo8hHlUAP2gwaHAwdn1stykus4
+         4rzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753796642; x=1754401442;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nFsz2UHtorJJsTYKHr5ZAg3v318PyN1bhW8UxJDcjho=;
+        b=jjunel7mFdEtXp2hsaMAVDOGu9LdUq+iqg5LOI4DmjvQN7t/M1Gcxi8kwpNyjr7iPw
+         7Gx9ACze6jcdllpsa2evbbNs9rRAJErxHNjhapWVqZVQlj5S2kaGXWBKT0QUkyzLDpts
+         My7oxzwPZcc7zCAdVeeD9Wxk0Fk1DxGCUXVAHzj37+7zeR2RZvBEQqsRatpCve4O1mQj
+         kAXNTOWUVekCCA+4eGalP/PdeLMceoCQe73EAz0+YM6fg2gpu594/0NOmRiWDXGoAD3y
+         VpBRWHadqurnr5SQQn5LgoTLDU2TCS4WpnpIJ11xW+N7rd4pl7mISCrWqL0ZpWlcl25E
+         h3jw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKzajI3h+x1sRmT2epPmISn3CEtQH3Mw2bMuTgiovmgfcgriX/Wh8yeThvXGAyucmu1y6Ab2gx+kp5aVU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ7lX7wQ/Enox8uxRXSSUcqRrza8aAoCC+cyflIvb0539Eygxq
+	rmn7PQkCg7CHEViMrnV6QYIjbjia/pwWUR13QOqGZDApeMgmmLATz7am
+X-Gm-Gg: ASbGncseY1R+z50UpEVuZZwttq59RlTBNYyuHaOv3BoUbvcsmBja0l3Oumkuz6tUacu
+	7txSTLikc1vWLNvzI7+vCF/SBGvb/LcTZQJ8G96bI+z/tyin+z77yiA9t6jP9jfk90a1S8GPVle
+	Ouffmm0q0Nr2JVgYFoLhrFtdJiAWbMcVQ1IOnwZDzTngjZTTnFGQk3J1irFXk0x4jajC7+Y8yLA
+	WFzBVM18XhbtarP7dXnYyEV3vue0Uy//rZCLZgFRp/xRH+dThFbk3aOJrCVq2oltoZSv9+VF3Zd
+	N9mQuT5vN+R5RteEZYVX8r83xstvqpbFqL4CzB1axu5PKsFnWBh2tm4gYnuOICouRrhJOimSMtM
+	TsgKWtcb24R9/JxvPH+6d
+X-Google-Smtp-Source: AGHT+IGUDDCTZFd6Nu6hjYHDPeBMUaySJz3sutucWDvbnC/FjKn0QB0RI5umqEZ11eOIoZstnOmNgQ==
+X-Received: by 2002:a05:6000:2503:b0:3a4:e844:745d with SMTP id ffacd0b85a97d-3b77678ec4dmr10246893f8f.56.1753796642230;
+        Tue, 29 Jul 2025 06:44:02 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778eb27besm12419531f8f.9.2025.07.29.06.44.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 06:44:01 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: David Woodhouse <dwmw2@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Artem Sadovnikov <a.sadovnikov@ispras.ru>,
+	linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] jffs2: Remove space before newline
+Date: Tue, 29 Jul 2025 14:43:27 +0100
+Message-ID: <20250729134327.1935856-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <keqfco2t254skl6zjxchfze65j5bc5yq4j4t3wzllca7djtybm@zb724ha6khyg>
 
-On Mon, Jul 28, 2025 at 09:36:42PM -0500, Bjorn Andersson wrote:
-> On Sat, Jul 26, 2025 at 07:04:51PM +0100, Simon Horman wrote:
-> > On Thu, Jul 24, 2025 at 08:59:38AM -0700, Rob Clark wrote:
-> > > On Thu, Jul 24, 2025 at 5:52 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >
-> > > > On 24/07/2025 14:47, Konrad Dybcio wrote:
-> > > > > On 7/23/25 10:29 AM, 'Krzysztof Kozlowski' via kernel wrote:
-> > > > >> On Tue, Jul 22, 2025 at 08:19:20PM +0530, Wasim Nazir wrote:
-> > > > >>> SA8775P, QCS9100 and QCS9075 are all variants of the same die,
-> > > > >>> collectively referred to as lemans. Most notably, the last of them
-> > > > >>> has the SAIL (Safety Island) fused off, but remains identical
-> > > > >>> otherwise.
-> > > > >>>
-> > > > >>> In an effort to streamline the codebase, rename the SoC DTSI, moving
-> > > > >>> away from less meaningful numerical model identifiers.
-> > > > >>>
-> > > > >>> Signed-off-by: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
-> > > > >>> ---
-> > > > >>>  arch/arm64/boot/dts/qcom/{sa8775p.dtsi => lemans.dtsi} | 0
-> > > > >>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi             | 2 +-
-> > > > >>
-> > > > >> No, stop with this rename.
-> > > > >>
-> > > > >> There is no policy of renaming existing files.
-> > > > >
-> > > > > There's no policy against renaming existing files either.
-> > > >
-> > > > There is, because you break all the users. All the distros, bootloaders
-> > > > using this DTS, people's scripts.
-> > > 
-> > > I think that is a valid argument against renaming the toplevel .dts
-> > > (and therefore .dtb), but renaming .dtsi should be a harmless internal
-> > > detail to the kernel.  And less confusing, IMHO, than
-> > > qsc9100-myboard.dts #including sa8775p.dtsi.
-> > > 
-> > > So wouldn't the sensible way forward be to rename .dtsi but not .dts?
-> > 
-> > FWIIW, and with the dual caveats that: I do not have the full context of
-> > this series; and SoCs are not somewhere where I am active these days:
-> > 
-> > I am also under the impression that, in general, renames to
-> > match product or other organisational changes are a non-starter.
-> > 
-> 
-> This is indeed a key reason for the new naming scheme. Until now we've
-> named things based on the "product number" and we're here facing the
-> introduction of the 3rd product name for the same die.
-> 
-> The purpose of this series is to detach from the product naming (and
-> introduce the EVK board).
+There are a couple of instances of an extraneous space before a
+newline in printk and debug messages. Remove the spaces.
 
-In general, something detached from product naming, and the whims thereof,
-does seem sensible to me.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/jffs2/erase.c   | 2 +-
+ fs/jffs2/summary.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> > But reading over this patchset, I also felt that renaming the .dsti files
-> > would improve things. And seems to have little scope to break things for
-> > users.
-> > 
-> > </2c>
-> 
+diff --git a/fs/jffs2/erase.c b/fs/jffs2/erase.c
+index fda9f4d6093f..5b7ddec4217c 100644
+--- a/fs/jffs2/erase.c
++++ b/fs/jffs2/erase.c
+@@ -252,7 +252,7 @@ static inline void jffs2_remove_node_refs_from_ino_list(struct jffs2_sb_info *c,
+ 	D2({
+ 		int i=0;
+ 		struct jffs2_raw_node_ref *this;
+-		printk(KERN_DEBUG "After remove_node_refs_from_ino_list: \n");
++		printk(KERN_DEBUG "After remove_node_refs_from_ino_list:\n");
+ 
+ 		this = ic->nodes;
+ 
+diff --git a/fs/jffs2/summary.c b/fs/jffs2/summary.c
+index d83372d3e1a0..a0c1e8b2a02f 100644
+--- a/fs/jffs2/summary.c
++++ b/fs/jffs2/summary.c
+@@ -615,7 +615,7 @@ int jffs2_sum_scan_sumnode(struct jffs2_sb_info *c, struct jffs2_eraseblock *jeb
+ 
+ 	if ( je32_to_cpu(summary->cln_mkr) ) {
+ 
+-		dbg_summary("Summary : CLEANMARKER node \n");
++		dbg_summary("Summary : CLEANMARKER node\n");
+ 
+ 		ret = jffs2_prealloc_raw_node_refs(c, jeb, 1);
+ 		if (ret)
+-- 
+2.50.0
+
 
