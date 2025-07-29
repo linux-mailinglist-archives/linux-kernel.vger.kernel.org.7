@@ -1,181 +1,325 @@
-Return-Path: <linux-kernel+bounces-749902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C90B15482
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:59:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B067B15474
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01BE618C00A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:59:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9D4018A717E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:55:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B7622343BE;
-	Tue, 29 Jul 2025 20:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F56D279917;
+	Tue, 29 Jul 2025 20:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ezKidRNI"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.166.231])
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="ShHf+ekc"
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447F927816B;
-	Tue, 29 Jul 2025 20:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.166.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C37932777EA;
+	Tue, 29 Jul 2025 20:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753822765; cv=none; b=HCN3x7iEIJjyfQ4IJNoaMhX1xxL8xJvui+uuXSySU1qo98vBRN3aKhutCKnluF7r8yTzf3cm2YrJvYWoiC3dkXSZa5JhLf9/bQXfRiwaMhkIPcvH3NfLTBbC1aQskB5H8QAuDthQMVzHXqloRmg7CMW7y5LkMyrtcuphEncQZNE=
+	t=1753822481; cv=none; b=nso9+MOP9Cv0yxMcqQJWht57EAJNeg5IQyIsZIhe1178fFpg/sIO9aVtyPs19DJFw1VQokfgNUXmqPKjDjVx1JxN26ggsLm3FfI5Z0435xG5EI83DGl/2yEmnWzlt/wsNLishQVZV4N2cTsFePRKqOQXgAURdRSi718vPw6r7F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753822765; c=relaxed/simple;
-	bh=zBLNmvKbrgqGs0Ax1UJG+EsEMkfc9OigzsQ9bQodKqw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DaBjoaEqT5KnbkyhwQtf5sJb5ubSYumgRso8FNDmJPnaKJmaHhPpW5kabh5Z6YJ295p5CTyN7a65hdnDK8xR35aaqb6NybYLtqGRS1zH7AXXc4jsZ4aY5wbhOm1ITruNy/64iirn/KS1aiFzh40fGi9AnoU/RFD7ZZJYcUuruWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ezKidRNI; arc=none smtp.client-ip=192.19.166.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 2EBCDC0000DE;
-	Tue, 29 Jul 2025 13:52:34 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 2EBCDC0000DE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1753822354;
-	bh=zBLNmvKbrgqGs0Ax1UJG+EsEMkfc9OigzsQ9bQodKqw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ezKidRNIXtoGCcD6clzhbrvdA/DJLghN+Expet6wd+5G3jO0PR0Ivj7vnJevuDqFo
-	 WuWIilnQBZN+ZRJRmcDjB49cxkbh+GnPmeFBByCGmvcX8UMbyZiHuQkySFxzNay3lZ
-	 VwXHpQqS38HuclrMNGiWPYFalG8k47LH3U6+9SL8=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 10C05180004FC;
-	Tue, 29 Jul 2025 13:52:34 -0700 (PDT)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-mips@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-kernel@vger.kernel.org (open list:MEMORY CONTROLLER DRIVERS),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-arm-kernel@lists.infradead.org (moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE)
-Subject: [PATCH 2/2] MIPS: BMIPS: Properly define memory controller compatible
-Date: Tue, 29 Jul 2025 13:52:13 -0700
-Message-ID: <20250729205213.3392481-3-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250729205213.3392481-1-florian.fainelli@broadcom.com>
-References: <20250729205213.3392481-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1753822481; c=relaxed/simple;
+	bh=xiSBce8M3qwbOSe7BecatNeL5QmxrnKF1dSV1338vfE=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:References:In-Reply-To:
+	 Content-Type:Subject; b=pe3ABQFUUX78bBIXw2/fe7/Y2DgIv6i+zmziZgltUToJHsNKHDWndv2jYilsRQerx/gaYM7spkjBz4hZ0CKAo3YLWifpUbVS2yvImc+tN30+eQFg9dCtYGHiNg/JZEgla4ElEM5+lf4DxoJPqBO7kJhBEM7myr7EfmWmKcm9oqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=ShHf+ekc; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:References:Cc:To:From:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=NNh1yThG7TvPWKpLvY5OC7tLgkYClB2Gxhne1Vp0HTw=; b=ShHf+ekceHcINuu8D0K30j3qUO
+	L9xqTvYP9Zh8bk//ApqFzejUahb6bACPQNlM5iV2A1IRyuDGPfzEQSqmXhx/bf9dL9cTxYDN4p1dO
+	50kSae/x3VuYLc4DSVcE7A32AkN9a8vnc7cWq76JX7ZFC29ItBPasnUx2PUIOypT5NvQJIqqQpb+A
+	hKS/mcRzJw9NmBzbYunfCu5/y6lbCyBnLxF5fuWkORd2HDquxo3R8hxzx9e/Jxu7yv1HNrpU9R5TP
+	HOqWZkyevVjQIYp4dmyfA+4gv+aeKblKfLpxMhglWKNR2gAcipr0qNsWYlfNjGHBFoQ3Nad1bjaCo
+	0fckrAUw==;
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <logang@deltatee.com>)
+	id 1ugrL8-009DTi-1i;
+	Tue, 29 Jul 2025 14:54:27 -0600
+Message-ID: <f332e2b9-151f-49ca-ac0c-8c9494c38027@deltatee.com>
+Date: Tue, 29 Jul 2025 14:54:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Logan Gunthorpe <logang@deltatee.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Leon Romanovsky <leon@kernel.org>, Christoph Hellwig <hch@lst.de>,
+ Alex Williamson <alex.williamson@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Bjorn Helgaas <bhelgaas@google.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
+ Jens Axboe <axboe@kernel.dk>, =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?=
+ <jglisse@redhat.com>, Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
+ linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mm@kvack.org, linux-pci@vger.kernel.org,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Robin Murphy <robin.murphy@arm.com>, Sumit Semwal <sumit.semwal@linaro.org>,
+ Vivek Kasireddy <vivek.kasireddy@intel.com>, Will Deacon <will@kernel.org>
+References: <cover.1753274085.git.leonro@nvidia.com>
+ <82e62eb59afcd39b68ae143573d5ed113a92344e.1753274085.git.leonro@nvidia.com>
+ <20250724080313.GA31887@lst.de> <20250724081321.GT402218@unreal>
+ <b32ae619-6c4a-46fc-a368-6ad4e245d581@deltatee.com>
+ <20250727190514.GG7551@nvidia.com>
+ <d69e0d74-285e-4cde-a2e4-a803accfa9e1@deltatee.com>
+ <20250728164136.GD402218@unreal>
+ <d3c8c573-f201-4450-9400-cc3ccafd2c04@deltatee.com>
+ <20250728231107.GE36037@nvidia.com>
+Content-Language: en-CA
+In-Reply-To: <20250728231107.GE36037@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: jgg@nvidia.com, leon@kernel.org, hch@lst.de, alex.williamson@redhat.com, akpm@linux-foundation.org, bhelgaas@google.com, christian.koenig@amd.com, dri-devel@lists.freedesktop.org, iommu@lists.linux.dev, axboe@kernel.dk, jglisse@redhat.com, joro@8bytes.org, kvm@vger.kernel.org, linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, linux-mm@kvack.org, linux-pci@vger.kernel.org, m.szyprowski@samsung.com, robin.murphy@arm.com, sumit.semwal@linaro.org, vivek.kasireddy@intel.com, will@kernel.org
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Level: 
+Subject: Re: [PATCH 05/10] PCI/P2PDMA: Export pci_p2pdma_map_type() function
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
-With the DT binding updated with 501be7cecec9 ("dt-bindings:
-memory-controller: Define fallback compatible") we need to define a
-proper compatible string for the memory controller node(s).
 
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- arch/mips/boot/dts/brcm/bcm7346.dtsi | 3 ++-
- arch/mips/boot/dts/brcm/bcm7360.dtsi | 3 ++-
- arch/mips/boot/dts/brcm/bcm7362.dtsi | 3 ++-
- arch/mips/boot/dts/brcm/bcm7425.dtsi | 6 ++++--
- arch/mips/boot/dts/brcm/bcm7435.dtsi | 6 ++++--
- 5 files changed, 14 insertions(+), 7 deletions(-)
 
-diff --git a/arch/mips/boot/dts/brcm/bcm7346.dtsi b/arch/mips/boot/dts/brcm/bcm7346.dtsi
-index 2afa0dada575..9d6f97e02ff9 100644
---- a/arch/mips/boot/dts/brcm/bcm7346.dtsi
-+++ b/arch/mips/boot/dts/brcm/bcm7346.dtsi
-@@ -531,7 +531,8 @@ memc-arb@1000 {
- 			};
- 
- 			memc-ddr@2000 {
--				compatible = "brcm,brcmstb-memc-ddr";
-+				compatible = "brcm,brcmstb-memc-ddr-rev-a.0.0",
-+					     "brcm,brcmstb-memc-ddr";
- 				reg = <0x2000 0x300>;
- 			};
- 
-diff --git a/arch/mips/boot/dts/brcm/bcm7360.dtsi b/arch/mips/boot/dts/brcm/bcm7360.dtsi
-index a57cacea91cf..a7f60f059e50 100644
---- a/arch/mips/boot/dts/brcm/bcm7360.dtsi
-+++ b/arch/mips/boot/dts/brcm/bcm7360.dtsi
-@@ -450,7 +450,8 @@ memc-arb@1000 {
- 			};
- 
- 			memc-ddr@2000 {
--				compatible = "brcm,brcmstb-memc-ddr";
-+				compatible = "brcm,brcmstb-memc-ddr-rev-a.0.0",
-+					     "brcm,brcmstb-memc-ddr";
- 				reg = <0x2000 0x300>;
- 			};
- 
-diff --git a/arch/mips/boot/dts/brcm/bcm7362.dtsi b/arch/mips/boot/dts/brcm/bcm7362.dtsi
-index 728b9e9f84b8..2d483cbf254f 100644
---- a/arch/mips/boot/dts/brcm/bcm7362.dtsi
-+++ b/arch/mips/boot/dts/brcm/bcm7362.dtsi
-@@ -446,7 +446,8 @@ memc-arb@1000 {
- 			};
- 
- 			memc-ddr@2000 {
--				compatible = "brcm,brcmstb-memc-ddr";
-+				compatible = "brcm,brcmstb-memc-ddr-rev-a.0.0",
-+					     "brcm,brcmstb-memc-ddr";
- 				reg = <0x2000 0x300>;
- 			};
- 
-diff --git a/arch/mips/boot/dts/brcm/bcm7425.dtsi b/arch/mips/boot/dts/brcm/bcm7425.dtsi
-index 62588c53d356..c3bb020ff2b5 100644
---- a/arch/mips/boot/dts/brcm/bcm7425.dtsi
-+++ b/arch/mips/boot/dts/brcm/bcm7425.dtsi
-@@ -542,7 +542,8 @@ memc-arb@1000 {
- 			};
- 
- 			memc-ddr@2000 {
--				compatible = "brcm,brcmstb-memc-ddr";
-+				compatible = "brcm,brcmstb-memc-ddr-rev-a.0.0",
-+					     "brcm,brcmstb-memc-ddr";
- 				reg = <0x2000 0x300>;
- 			};
- 
-@@ -569,7 +570,8 @@ memc-arb@1000 {
- 			};
- 
- 			memc-ddr@2000 {
--				compatible = "brcm,brcmstb-memc-ddr";
-+				compatible = "brcm,brcmstb-memc-ddr-rev-a.0.0",
-+					     "brcm,brcmstb-memc-ddr";
- 				reg = <0x2000 0x300>;
- 			};
- 
-diff --git a/arch/mips/boot/dts/brcm/bcm7435.dtsi b/arch/mips/boot/dts/brcm/bcm7435.dtsi
-index cfdf9804e126..60cfa4074cce 100644
---- a/arch/mips/boot/dts/brcm/bcm7435.dtsi
-+++ b/arch/mips/boot/dts/brcm/bcm7435.dtsi
-@@ -558,7 +558,8 @@ memc-arb@1000 {
- 			};
- 
- 			memc-ddr@2000 {
--				compatible = "brcm,brcmstb-memc-ddr";
-+				compatible = "brcm,brcmstb-memc-ddr-rev-a.0.0",
-+					     "brcm,brcmstb-memc-ddr";
- 				reg = <0x2000 0x300>;
- 			};
- 
-@@ -585,7 +586,8 @@ memc-arb@1000 {
- 			};
- 
- 			memc-ddr@2000 {
--				compatible = "brcm,brcmstb-memc-ddr";
-+				compatible = "brcm,brcmstb-memc-ddr-rev-a.0.0",
-+					     "brcm,brcmstb-memc-ddr";
- 				reg = <0x2000 0x300>;
- 			};
- 
--- 
-2.43.0
+On 2025-07-28 17:11, Jason Gunthorpe wrote:
+>> If the dma mapping for P2P memory doesn't need to create an iommu
+>> mapping then that's fine. But it should be the dma-iommu layer to decide
+>> that.
+> 
+> So above, we can't use dma-iommu.c, it might not be compiled into the
+> kernel but the dma_map_phys() path is still valid.
+
+This is an easily solved problem. I did a very rough sketch below to say
+it's really not that hard. (Note it has some rough edges that could be
+cleaned up and I based it off Leon's git repo which appears to not be
+the same as what was posted, but the core concept is sound).
+
+Logan
+
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 1853a969e197..da1a6003620a 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -1806,6 +1806,22 @@ bool dma_iova_try_alloc(struct device *dev,
+struct dma_iova_state *state,
+ }
+ EXPORT_SYMBOL_GPL(dma_iova_try_alloc);
+ +void dma_iova_try_alloc_p2p(struct p2pdma_provider *provider, struct
+device *dev,
++		struct dma_iova_state *state, phys_addr_t phys, size_t size)
++{
++	switch (pci_p2pdma_map_type(provider, dev)) {
++	case PCI_P2PDMA_MAP_THRU_HOST_BRIDGE:
++		dma_iova_try_alloc(dev, state, phys, size);
++		return;
++	case PCI_P2PDMA_MAP_BUS_ADDR:
++		state->bus_addr = true;
++		return;
++	default:
++		return;
++	}
++}
++EXPORT_SYMBOL_GPL(dma_iova_try_alloc_p2p);
++
+ /**
+  * dma_iova_free - Free an IOVA space
+  * @dev: Device to free the IOVA space for
+diff --git a/drivers/vfio/pci/vfio_pci_dmabuf.c
+b/drivers/vfio/pci/vfio_pci_dmabuf.c
+index 455541d21538..5749be3a9b58 100644
+--- a/drivers/vfio/pci/vfio_pci_dmabuf.c
++++ b/drivers/vfio/pci/vfio_pci_dmabuf.c
+@@ -30,25 +30,12 @@ static int vfio_pci_dma_buf_attach(struct dma_buf
+*dmabuf,
+ 	if (priv->revoked)
+ 		return -ENODEV;
+ -	switch (pci_p2pdma_map_type(priv->vdev->provider, attachment->dev)) {
+-	case PCI_P2PDMA_MAP_THRU_HOST_BRIDGE:
+-		break;
+-	case PCI_P2PDMA_MAP_BUS_ADDR:
+-		/*
+-		 * There is no need in IOVA at all for this flow.
+-		 * We rely on attachment->priv == NULL as a marker
+-		 * for this mode.
+-		 */
+-		return 0;
+-	default:
+-		return -EINVAL;
+-	}
+-
+ 	attachment->priv = kzalloc(sizeof(struct dma_iova_state), GFP_KERNEL);
+ 	if (!attachment->priv)
+ 		return -ENOMEM;
+ -	dma_iova_try_alloc(attachment->dev, attachment->priv, 0, priv->size);
++	dma_iova_try_alloc_p2p(priv->vdev->provider, attachment->dev,
++			       attachment->priv, 0, priv->size);
+ 	return 0;
+ }
+ @@ -98,26 +85,11 @@ vfio_pci_dma_buf_map(struct dma_buf_attachment
+*attachment,
+ 	sgl = sgt->sgl;
+  	for (i = 0; i < priv->nr_ranges; i++) {
+-		if (!state) {
+-			addr = pci_p2pdma_bus_addr_map(provider,
+-						       phys_vec[i].paddr);
+-		} else if (dma_use_iova(state)) {
+-			ret = dma_iova_link(attachment->dev, state,
+-					    phys_vec[i].paddr, 0,
+-					    phys_vec[i].len, dir, attrs);
+-			if (ret)
+-				goto err_unmap_dma;
+-
+-			mapped_len += phys_vec[i].len;
+-		} else {
+-			addr = dma_map_phys(attachment->dev, phys_vec[i].paddr,
+-					    phys_vec[i].len, dir, attrs);
+-			ret = dma_mapping_error(attachment->dev, addr);
+-			if (ret)
+-				goto err_unmap_dma;
+-		}
++		addr = dma_map_phys_prealloc(attachment->dev, phys_vec[i].paddr,
++					     phys_vec[i].len, dir, attrs, state,
++					     provider);
+ -		if (!state || !dma_use_iova(state)) {
++		if (addr != DMA_MAPPING_USE_IOVA) {
+ 			/*
+ 			 * In IOVA case, there is only one SG entry which spans
+ 			 * for whole IOVA address space. So there is no need
+@@ -128,7 +100,7 @@ vfio_pci_dma_buf_map(struct dma_buf_attachment
+*attachment,
+ 		}
+ 	}
+ -	if (state && dma_use_iova(state)) {
++	if (addr == DMA_MAPPING_USE_IOVA) {
+ 		WARN_ON_ONCE(mapped_len != priv->size);
+ 		ret = dma_iova_sync(attachment->dev, state, 0, mapped_len);
+ 		if (ret)
+@@ -139,7 +111,7 @@ vfio_pci_dma_buf_map(struct dma_buf_attachment
+*attachment,
+ 	return sgt;
+  err_unmap_dma:
+-	if (!i || !state)
++	if (!i || state->bus_addr)
+ 		; /* Do nothing */
+ 	else if (dma_use_iova(state))
+ 		dma_iova_destroy(attachment->dev, state, mapped_len, dir,
+@@ -164,7 +136,7 @@ static void vfio_pci_dma_buf_unmap(struct
+dma_buf_attachment *attachment,
+ 	struct scatterlist *sgl;
+ 	int i;
+ -	if (!state)
++	if (state->bus_addr)
+ 		; /* Do nothing */
+ 	else if (dma_use_iova(state))
+ 		dma_iova_destroy(attachment->dev, state, priv->size, dir,
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index ba54bbeca861..675e5ac13265 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -70,11 +70,14 @@
+  */
+ #define DMA_MAPPING_ERROR		(~(dma_addr_t)0)
+ +#define DMA_MAPPING_USE_IOVA		((dma_addr_t)-2)
++
+ #define DMA_BIT_MASK(n)	(((n) == 64) ? ~0ULL : ((1ULL<<(n))-1))
+  struct dma_iova_state {
+ 	dma_addr_t addr;
+ 	u64 __size;
++	bool bus_addr;
+ };
+  /*
+@@ -120,6 +123,12 @@ void dma_unmap_page_attrs(struct device *dev,
+dma_addr_t addr, size_t size,
+ 		enum dma_data_direction dir, unsigned long attrs);
+ dma_addr_t dma_map_phys(struct device *dev, phys_addr_t phys, size_t size,
+ 		enum dma_data_direction dir, unsigned long attrs);
++
++struct p2pdma_provider;
++dma_addr_t dma_map_phys_prealloc(struct device *dev, phys_addr_t phys,
+size_t size,
++		enum dma_data_direction dir, unsigned long attrs,
++		struct dma_iova_state *state, struct p2pdma_provider *provider);
++
+ void dma_unmap_phys(struct device *dev, dma_addr_t addr, size_t size,
+ 		enum dma_data_direction dir, unsigned long attrs);
+ unsigned int dma_map_sg_attrs(struct device *dev, struct scatterlist *sg,
+@@ -321,6 +330,8 @@ static inline bool dma_use_iova(struct
+dma_iova_state *state)
+  bool dma_iova_try_alloc(struct device *dev, struct dma_iova_state *state,
+ 		phys_addr_t phys, size_t size);
++void dma_iova_try_alloc_p2p(struct p2pdma_provider *provider, struct
+device *dev,
++		struct dma_iova_state *state, phys_addr_t phys, size_t size);
+ void dma_iova_free(struct device *dev, struct dma_iova_state *state);
+ void dma_iova_destroy(struct device *dev, struct dma_iova_state *state,
+ 		size_t mapped_len, enum dma_data_direction dir,
+@@ -343,6 +354,11 @@ static inline bool dma_iova_try_alloc(struct device
+*dev,
+ {
+ 	return false;
+ }
++static inline void dma_iova_try_alloc_p2p(struct p2pdma_provider *provider,
++		struct device *dev, struct dma_iova_state *state, phys_addr_t phys,
++		size_t size)
++{
++}
+ static inline void dma_iova_free(struct device *dev,
+ 		struct dma_iova_state *state)
+ {
+diff --git a/kernel/dma/mapping.c b/kernel/dma/mapping.c
+index e1586eb52ab3..b2110098a29b 100644
+--- a/kernel/dma/mapping.c
++++ b/kernel/dma/mapping.c
+@@ -13,6 +13,7 @@
+ #include <linux/iommu-dma.h>
+ #include <linux/kmsan.h>
+ #include <linux/of_device.h>
++#include <linux/pci-p2pdma.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
+ #include "debug.h"
+@@ -202,6 +203,27 @@ dma_addr_t dma_map_phys(struct device *dev,
+phys_addr_t phys, size_t size,
+ }
+ EXPORT_SYMBOL_GPL(dma_map_phys);
+ +dma_addr_t dma_map_phys_prealloc(struct device *dev, phys_addr_t phys,
+size_t size,
++		enum dma_data_direction dir, unsigned long attrs,
++		struct dma_iova_state *state, struct p2pdma_provider *provider)
++{
++	int ret;
++
++	if (state->bus_addr)
++		return pci_p2pdma_bus_addr_map(provider, phys);
++
++	if (dma_use_iova(state)) {
++		ret = dma_iova_link(dev, state, phys, 0, size, dir, attrs);
++		if (ret)
++			return DMA_MAPPING_ERROR;
++
++		return DMA_MAPPING_USE_IOVA;
++	}
++
++	return dma_map_phys(dev, phys, size, dir, attrs);
++}
++EXPORT_SYMBOL_GPL(dma_map_phys_prealloc);
++
+ dma_addr_t dma_map_page_attrs(struct device *dev, struct page *page,
+ 		size_t offset, size_t size, enum dma_data_direction dir,
+ 		unsigned long attrs)
+
 
 
