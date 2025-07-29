@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-748894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08878B14754
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D69EDB14759
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:53:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 508FE1AA0E53
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:51:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2601AA0EF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE9C2343BE;
-	Tue, 29 Jul 2025 04:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F923230D08;
+	Tue, 29 Jul 2025 04:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sL1OhUHt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mHler/Pm"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD5A4A01;
-	Tue, 29 Jul 2025 04:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616DB4A01;
+	Tue, 29 Jul 2025 04:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753764687; cv=none; b=L3v1Gbi1jRd+P58+gNsp7TQVanjTUSiAw7UT4UbgPiSIksoMkGts+pOB9/n9HJvNDV2ALmWPqRrE6gg20NT5Dljcs38FA6kkHqQTHqw5O8jmpXAsnUtfHgIYkMmiUh57TBVb1+ZSBQFLeFum+5qWk6vwPe7+Rb6JfEpvGf7GM2o=
+	t=1753764811; cv=none; b=tODbTXXdhAzjOwXb8iLz2G5i3F861cgjKvoNRKMxoagw6BZP9Lvm0iMskvW3C1ADe/zyUghdghMdRhEIOO0GB4WlZHaCEPqppFkMTljwpfgsLgi25lBertrWusJLdKdc59TbV/FAP+J3nVJ20iGKcWoRHhKeWt3lft5EzX37Cks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753764687; c=relaxed/simple;
-	bh=cjeqSra3b1A1vbJsnaMuLQ3Inhk8Ki1dNA21mebRY+0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mY5OLzHdCmZpV+490sqIlWNtWMkGlLBlUXgAArhyxyMW76MYZWWK08f5K4gDYJ0fd43MC1U5faGEGbC6CssZN+Uzqi9FEeNV33YGt+sn4pWVAV/B9v96WP/IL+6voN8yvUT+5/yVKdVnoPucrAQvXYpSp+YBKGVpFzjNk2cYSl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sL1OhUHt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6AC1EC4CEF8;
-	Tue, 29 Jul 2025 04:51:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753764687;
-	bh=cjeqSra3b1A1vbJsnaMuLQ3Inhk8Ki1dNA21mebRY+0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=sL1OhUHtaAZEj/r+LETSqxQ3Y6n+/AT5PSJgctuTf3aPMRov3B27iGLECJkNHo8bx
-	 J7BdN8N4PQOwlPlwncOgn+GWXxZuxkh5ZyfSIJwaRE74OYDtF7u1pmiF/VfiKXBs+w
-	 YW2X2A1eu1lRzR0UgTNz5Vz6uu8pmKWVGQC79xMaxQzmS2hqK0DR0tNJXtNFQWAZFf
-	 BJnte+kRBXP88ZPRb3cAHpw7tAPWJCwJmsbymoXmrKJNDjr7cuwGJY2+FOBOtE+1hh
-	 UQT2Tenc2CUCdqitXwl5ICf5448G7GgOYhipFExnpiGVkL21mDs/KihSRzmqn5BOIf
-	 ZHE8ODPkp6XqA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C96C87FCA;
-	Tue, 29 Jul 2025 04:51:27 +0000 (UTC)
-From: Fenglin Wu via B4 Relay <devnull+fenglin.wu.oss.qualcomm.com@kernel.org>
-Date: Tue, 29 Jul 2025 12:51:23 +0800
-Subject: [PATCH v2 2/2] leds: flash: leds-qcom-flash: add a separate
- register map for PMI8998
+	s=arc-20240116; t=1753764811; c=relaxed/simple;
+	bh=Fdyx/OimqGQoKVQbQs/ah6wsPuKUqNgsq7edekvUva4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ps09giPxXn45yZtZ3v6Gmc5n23lefslTY4cUreKt5svTHZVwahqlit8BT4UXqb9WBvMnfKOTrncEjKMfMp0iwAf2F6fXuosB9mDD5IFFrcgUy4FDMw4/1A8ceHjQA6qF4wWdOYnWt2VUui2TQEMQriWQ08zAJNuRv2zm/v1DzPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mHler/Pm; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Qi3htPNP2czm/a/W/z7KK1ldvUA9ttokkrJynE402W4=; b=mHler/PmoNoxEmo/FM+zuAP7Gk
+	2+1P3jjec8elpvHkwdF2SlvRNX9V0070TA1h7XxKUpolSrILzlCnb6UO8HMtgsRUgWC45JsNZeY9V
+	/CCaBlv64DMC5r3k2m1dHVObDbyIKTyHj2jbLhB9pIe2JegrDjMT3L2Fpf2Yl4UV/PCwqlwLmHquw
+	VWMRdqOvMiozzlW4d6chX+Ep+skdPcTXiUSbJ6gdvOfizUS16LwuVukRk4qiDV18CQCHgAhbqwBJL
+	sOjGBKcecyoGP2i33omUmvd5TfZlPEHBxrjhl7PBzE3HX6ucicA7jrFLoJ46BLSCe/Or5WG8fP6tR
+	lky2i2uQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ugcL5-0000000GyEi-1B8C;
+	Tue, 29 Jul 2025 04:53:23 +0000
+Date: Tue, 29 Jul 2025 05:53:23 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sj1557.seo@samsung.com,
+	syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] fat: Prevent the race of read/write the FAT16 and FAT32
+ entry
+Message-ID: <20250729045323.GE222315@ZenIV>
+References: <20250728163526.GD222315@ZenIV>
+ <tencent_3066496863AAE455D76CD76A06C6336B6305@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250729-fix-torch-clamp-issue-v2-2-9b83816437a3@oss.qualcomm.com>
-References: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
-In-Reply-To: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
-To: kernel@oss.qualcomm.com, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753764686; l=2384;
- i=fenglin.wu@oss.qualcomm.com; s=20240327; h=from:subject:message-id;
- bh=veBh7fJK3dHgrg1LPo1zZL/xU/qWzZ1meNlhvMaeZoo=;
- b=RdUWZ3ghKPMCnmxWq1BYbZyTm0Tt42RiAfPEZBXbyyd+BWxxM1zpVbV41Z5o6N9jxhFo7cIlR
- 5POYivvrf7HD8WauNaGHnXzcKyJ6NfJTI3cAZG57mR0ejlSrj6IUB15
-X-Developer-Key: i=fenglin.wu@oss.qualcomm.com; a=ed25519;
- pk=BF8SA4IVDk8/EBCwlBehKtn2hp6kipuuAuDAHh9s+K4=
-X-Endpoint-Received: by B4 Relay for fenglin.wu@oss.qualcomm.com/20240327
- with auth_id=406
-X-Original-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-Reply-To: fenglin.wu@oss.qualcomm.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <tencent_3066496863AAE455D76CD76A06C6336B6305@qq.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+On Tue, Jul 29, 2025 at 12:17:21PM +0800, Edward Adam Davis wrote:
+> > >
+> > > Could you be more specific?  "Incomplete" in which sense?
+> Because ent32_p and ent12_p are in the same union [1], their addresses are
+> the same, and they both have the "read/write race condition" problem, so I
+> used the same method as [2] to add a spinlock to solve it.
 
-The 3-channel flash module in PMI8998 has several registers different
-than the others, such as: torch_clamp. Add different register fields
-for it.
+What the hell?  ent32_p and ent12_p are _pointers_; whatever races there
+might be are about the objects they are pointing to.
 
-Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
----
- drivers/leds/flash/leds-qcom-flash.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+> > > Which race condition would that be?
+> data-race in fat32_ent_get / fat32_ent_put, detail: see [3]
 
-diff --git a/drivers/leds/flash/leds-qcom-flash.c b/drivers/leds/flash/leds-qcom-flash.c
-index db7c2c743adc755244f387febce663738bf3c0bd..b03a6833e3e3a076980bfcb46d5bbde4f4183a19 100644
---- a/drivers/leds/flash/leds-qcom-flash.c
-+++ b/drivers/leds/flash/leds-qcom-flash.c
-@@ -118,6 +118,22 @@ enum {
- 	REG_MAX_COUNT,
- };
- 
-+static const struct reg_field mvflash_3ch_pmi8998_regs[REG_MAX_COUNT] = {
-+	[REG_STATUS1]		= REG_FIELD(0x08, 0, 5),
-+	[REG_STATUS2]		= REG_FIELD(0x09, 0, 7),
-+	[REG_STATUS3]		= REG_FIELD(0x0a, 0, 7),
-+	[REG_CHAN_TIMER]	= REG_FIELD_ID(0x40, 0, 7, 3, 1),
-+	[REG_ITARGET]		= REG_FIELD_ID(0x43, 0, 6, 3, 1),
-+	[REG_MODULE_EN]		= REG_FIELD(0x46, 7, 7),
-+	[REG_IRESOLUTION]	= REG_FIELD(0x47, 0, 5),
-+	[REG_CHAN_STROBE]	= REG_FIELD_ID(0x49, 0, 2, 3, 1),
-+	[REG_CHAN_EN]		= REG_FIELD(0x4c, 0, 2),
-+	[REG_THERM_THRSH1]	= REG_FIELD(0x56, 0, 2),
-+	[REG_THERM_THRSH2]	= REG_FIELD(0x57, 0, 2),
-+	[REG_THERM_THRSH3]	= REG_FIELD(0x58, 0, 2),
-+	[REG_TORCH_CLAMP]	= REG_FIELD(0xea, 0, 6),
-+};
-+
- static const struct reg_field mvflash_3ch_regs[REG_MAX_COUNT] = {
- 	[REG_STATUS1]		= REG_FIELD(0x08, 0, 7),
- 	[REG_STATUS2]		= REG_FIELD(0x09, 0, 7),
-@@ -862,13 +878,20 @@ static int qcom_flash_led_probe(struct platform_device *pdev)
- 		return rc;
- 	}
- 
--	if (val == FLASH_SUBTYPE_3CH_PM8150_VAL || val == FLASH_SUBTYPE_3CH_PMI8998_VAL) {
-+	if (val == FLASH_SUBTYPE_3CH_PM8150_VAL) {
- 		flash_data->hw_type = QCOM_MVFLASH_3CH;
- 		flash_data->max_channels = 3;
- 		regs = devm_kmemdup(dev, mvflash_3ch_regs, sizeof(mvflash_3ch_regs),
- 				    GFP_KERNEL);
- 		if (!regs)
- 			return -ENOMEM;
-+	} else if (val == FLASH_SUBTYPE_3CH_PMI8998_VAL) {
-+		flash_data->hw_type = QCOM_MVFLASH_3CH;
-+		flash_data->max_channels = 3;
-+		regs = devm_kmemdup(dev, mvflash_3ch_pmi8998_regs,
-+				    sizeof(mvflash_3ch_pmi8998_regs), GFP_KERNEL);
-+		if (!regs)
-+			return -ENOMEM;
- 	} else if (val == FLASH_SUBTYPE_4CH_VAL) {
- 		flash_data->hw_type = QCOM_MVFLASH_4CH;
- 		flash_data->max_channels = 4;
+References to KCSAN output are worthless, unless you can explain what the
+actual problem is (no, "tool is not quiet" is *NOT* a problem; it might
+or might not be a symptom of one).
 
--- 
-2.34.1
+> > Note that FAT12 situation is really different - we not just have an inevitable
+> > read-modify-write for stores (half-byte access), we are not even guaranteed that
+> > byte and half-byte will be within the same cacheline, so cmpxchg is not an
+> > option; we have to use a spinlock there.
+> I think for FAT12 they are always in the same cacheline, the offset of the
+> member ent12_p in struct fat_entry is 4 bytes, and no matter x86-64 or arm64,
+> the regular 64-byte cacheline is enough to ensure that they are in the same
+> cacheline.
 
+Have you actually read what these functions are doing?  _Pointers_ are not
+problematic at all; neither ..._ent_get nor ..._ent_put are changing those,
+for crying out loud!
 
+If KCSAN is warning about those (which I sincerely doubt), you need to report
+a bug in KCSAN.  I would *really* recommend verifying that first.
+
+FAT12 problem is that FAT entries being accessed there are 12-bit, packed in
+pairs into an array of 3-byte values.  Have you actually read what the functions
+are doing?  There we *must* serialize the access to bytes that have 4 bits
+from one entry and 4 from another - there's no such thing as atomically
+update half a byte; it has to be read, modified and stored back.  If two
+threads try to do that to upper and lower halves of the same byte at the
+same time, the value will be corrupted.
+
+The same *might* happen to FAT16 on (sub)architectures we no longer support;
+there is  no way in hell we run into anything of that sort for (aligned) 32bit
+stores.  Never had been.  And neither aligned 16bit nor aligned 32bit ever
+had a problem with read seeing a state with only a part of value having
+been written.
 
