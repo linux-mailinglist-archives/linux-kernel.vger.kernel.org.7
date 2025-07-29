@@ -1,135 +1,146 @@
-Return-Path: <linux-kernel+bounces-748887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9D5B1473E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:26:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69214B14740
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:28:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4DD53A7248
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:26:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF16540786
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D43122B8A6;
-	Tue, 29 Jul 2025 04:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4205822C339;
+	Tue, 29 Jul 2025 04:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m+RVg8XH"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o9JGlKd6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AC82E3708
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF042E3708;
+	Tue, 29 Jul 2025 04:28:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753763192; cv=none; b=RESan2v/MxjLmDXD0K1vqerY9Zqz/WmswTrh9fj8BS1Xg/bSN1ferSoYPatg9Ee8MPIlSytx0MMVPiZNVIw0sBsEBo4yNDbV3/awcZgKlkxY/Kh8pQruhcuxgUypyIcIcZWwiTZ+uwAnrEZqVTYaFsVhy821phg1ryJ2Y8dRq0M=
+	t=1753763289; cv=none; b=LcsFd/5ClG2SDdP4SMvLyKIG8tFEGVN73WT4/cOof2BZaturP+nGV//NG7IlWjNvGUMSBpbb45bMyMfQzBIDeVt+ItFDHanHaEzzWf01H0LF/Xr2Ps3lQCpxINXzj6rpKsBetPKMcMzDNI6Yyg43kxYsfpFdxVYJF7prQtbRO7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753763192; c=relaxed/simple;
-	bh=CvKeu58IXrAdvxQcD8lmzf7MZU2YYjTVYOF+YIPPfv4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hSgdpQVQpFBNzORVgOxdCcJPDDI6qFuXFRqHQnS+MqSAAKaW2ni894IhydJCNHDnkbGjnhTwI9Qz0tZJ1l/PLPJJ8VUjx0UUxIY30PfLGwPDQ1Pgg39I+FEaGIabaSajQq3rrSDOVGndCn1VB6ELETFff7RWlR546fQnGWQfk0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m+RVg8XH; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-769b19eeb3fso280803b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 21:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753763191; x=1754367991; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ilKaDFR6OrZjzX6D5Zrq3NqUyxXJfxnBkaqIM4VqV4=;
-        b=m+RVg8XHHGK757Bc423bnu4gFOrBg4UiulyOpOZkxvgk7Qzuc4l54beRQQI5kOXR8S
-         chjpZnqW5WJ0C6dztPXjFnULO0SiOcJnyLP++Bw1aLpAFJweM07SABy6m15qMsi2kEq7
-         EKOozCNo+XPF3WGFAUQU7HUnCDPfOabFHHZblfGul+8cAzm2JMvzG9hKLmidyXNJ1HVs
-         eQVEWaP88SONLxJDcVOFwSniDRjCW3S8td0DudUFvGgwqPRyoxWRPG9SNo0sVXPenvsC
-         mTcVw1ayQQEMbz3TzKUy6Tq3WEGC3bWbHDon0ftP8N8flWJtt+ZvhUMlv7gjbi0ul18U
-         qN1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753763191; x=1754367991;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0ilKaDFR6OrZjzX6D5Zrq3NqUyxXJfxnBkaqIM4VqV4=;
-        b=Rj3VE78UGIbJ+9MhxSuOt5ENUeFWbJnibg0TcbKxKHpIkE6v/pQhQIl64JZxigIQVX
-         WcVPLIj7NVgKMM1wOpFa09pqUGNKxNDzC4Rpyh+nun2sI1zx3tcTYZI5PaeyO1jbTAi7
-         kooXVM7CYC0o+V/wjyHz3YRpg1AqbWmO7F4aeJIWmnz9Pn7Jmve1Ce350IhyWw2XdBNS
-         tFq6i4Y1k090kMyDY0F0D7rLCXahGiXtf6DGVkqXK3y9Ct5GUnAHDuShLrNj4Og0eC0d
-         N+hB2T9URfoMSN0rzOmnEetCV9KXR4+1BMZmj0KM/B2KBAPWh5LJgCkzel5XcxhNRZqK
-         EH6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXN3bmvjWHdmuMa9fQh0IL9uhOYUt11IP/9xbusYuDOqsbJ4fWeTszsONUXYTPQb3GIu2ejrbZ2k44hwTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm5+tWoNmBMnnUJf4+pZtrMVz/iHoTm8pc0BEukDPwLfvorCDV
-	amoA8OR34iSHftxm0rqG6hxUPowugi19MDKs+9wO8rbjQeHvbKmdLq6P
-X-Gm-Gg: ASbGncsUL5daE0xmTN9P7udS097pNtGXTlINKkkRLFHmqIJ8y3bWjbikugObx644mnw
-	mOZNzrdV7O78XqHQhH+uAp+ECvv+AVLWooD2XkU8ZwMH9C/e8YhKTilH8kCyJckMYuTgtnxedEB
-	wXvC7cSd2gqV3EHULoPBnyHegW6iR3Z3Covmefq0KOofKiTrVe/ZxY3v9pLHTd+BFyn5JLiUV0M
-	pXJJO49Y6Q0GZmRqSZYvjShUdjD2ICwI1xqHAnIw09YDrMOYUYUwmhkgJtsV22RslUIXMBGSYcS
-	9CCdlTwJZ9NYkC0egpKSMCeM+lafF9loAjcNM00dEtQvwVda5CDpjYGncpaOOXzmVAu92GAICNn
-	BHfq+ci/CQIBsvlAIojIeJzXaGlwA5Q==
-X-Google-Smtp-Source: AGHT+IG1Wq72gaOcqPtisiStSjKio1cSFV42RF5HqkyXJmQ4IEvYZhzGHHenUOoI0rFgFuBCBhkGDw==
-X-Received: by 2002:aa7:8885:0:b0:749:93d:b098 with SMTP id d2e1a72fcca58-76339370d7dmr20500083b3a.22.1753763190556;
-        Mon, 28 Jul 2025 21:26:30 -0700 (PDT)
-Received: from archlinux ([38.188.108.234])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76419d84234sm6742570b3a.57.2025.07.28.21.26.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 21:26:30 -0700 (PDT)
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-To: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	hpa@zytor.com,
-	darwi@linutronix.de,
-	sohil.mehta@intel.com,
-	peterz@infradead.org,
-	ravi.bangoria@amd.com
-Cc: skhan@linuxfoundation.org,
-	linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Subject: [PATCH v2] x86/intel: Fix always false range check in x86_vfm model matching
-Date: Tue, 29 Jul 2025 09:56:21 +0530
-Message-ID: <20250729042621.6403-1-suchitkarunakaran@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753763289; c=relaxed/simple;
+	bh=2ozTGxu0fPTHFlcMWVB3uzPseyVMI/povk3gNuCyEnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d/A3cJt79rSXSytb3+mqtOf3ASET9zIGX2dk+uS1THI1CnnLpcuhpHjRgnZPUQtZCQSjDJTU0DfKuNsV/jRHqYctNfZhq8j4pUC8ssGsdRWJy79KQmNAxa5STVKn2otyHqCthf5ez/EJC9KZi9g5jkq087sfIcfWp7TjSKL+rv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o9JGlKd6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2781DC4CEF5;
+	Tue, 29 Jul 2025 04:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753763289;
+	bh=2ozTGxu0fPTHFlcMWVB3uzPseyVMI/povk3gNuCyEnc=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=o9JGlKd6sw09kNcholhe2wvH8GeNtQYvTH7VqzwqQ1MwNLv6vQOUMJlTLMJKzQwZP
+	 SUCK78kXxHqg7Qf7mrOjM/nNajFByKP9ZKjMYVzxZ8M9qHP8CkdQWD3Jn0jQfSnzN5
+	 65ENnmcWOCNoAE+YHzx+OM1go5vI7fQmJ0TVS1hMsfN8b1uzznhQGE/mhPYlxRkb8O
+	 qZJBz4ef0MPPZrkl+fTBGLeFt77+Xrtw8SQXwbhRQ9uVTQlUJPNZxzgACRT8oGPtXj
+	 b/tbqryo0jMzgvKzjKwsJFBjZuZTNWfhcr3yeMPAsWR2DirrZRUGLr4tKRib6Ubn6A
+	 HyLIzx0sQ/7jg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id BA643CE0F52; Mon, 28 Jul 2025 21:28:08 -0700 (PDT)
+Date: Mon, 28 Jul 2025 21:28:08 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Subject: Re: linux-next: manual merge of the paulmck tree with the
+ mm-nonmm-unstable tree
+Message-ID: <e8191e3c-a3cf-4926-95cd-be3e3db4b86c@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250729104245.6be6957a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729104245.6be6957a@canb.auug.org.au>
 
-Fix a logic bug in early_init_intel() where a conditional range check:
-(c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE)
-was always false due to (PRESCOTT) being numerically greater than the
-upper bound (WILLAMETTE). This triggers:-Werror=logical-op: 
-logical ‘and’ of mutually exclusive tests is always false
-The fix corrects the constant ordering to ensure the range is valid:
-(c->x86_vfm >=  INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL)
+On Tue, Jul 29, 2025 at 10:42:45AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the paulmck tree got a conflict in:
+> 
+>   lib/Kconfig.debug
+> 
+> between commit:
+> 
+>   c2d288f7ab13 ("kho: add test for kexec handover")
+> 
+> from the mm-nonmm-unstable tree and commit:
+> 
+>   d19e9fa61f60 ("lib: Add trivial kunit test for ratelimit")
+> 
+> from the paulmck tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
 
-Fixes: fadb6f569b10 ("x86/cpu/intel: Limit the non-architectural
-constant_tsc model checks")
+Thank you, and this looks plausible to me.
 
-Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+There is an extra blank line, but worse things could happen.
 
-Changes since v1:
-- Fix incorrect logic
----
- arch/x86/kernel/cpu/intel.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+							Thanx, Paul
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 076eaa41b8c8..6f5bd5dbc249 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -262,7 +262,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- 	if (c->x86_power & (1 << 8)) {
- 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
- 		set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
--	} else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE) ||
-+	} else if ((c->x86_vfm >=  INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL) ||
- 		   (c->x86_vfm >= INTEL_CORE_YONAH  && c->x86_vfm <= INTEL_IVYBRIDGE)) {
- 		set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
- 	}
--- 
-2.50.1
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
+> diff --cc lib/Kconfig.debug
+> index 54f11c2713b9,d69d27f80834..000000000000
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@@ -3235,27 -3225,17 +3235,38 @@@ config TEST_OBJPOO
+>   
+>   	  If unsure, say N.
+>   
+>  +config TEST_KEXEC_HANDOVER
+>  +	bool "Test for Kexec HandOver"
+>  +	default n
+>  +	depends on KEXEC_HANDOVER
+>  +	help
+>  +	  This option enables test for Kexec HandOver (KHO).
+>  +	  The test consists of two parts: saving kernel data before kexec and
+>  +	  restoring the data after kexec and verifying that it was properly
+>  +	  handed over. This test module creates and saves data on the boot of
+>  +	  the first kernel and restores and verifies the data on the boot of
+>  +	  kexec'ed kernel.
+>  +
+>  +	  For detailed documentation about KHO, see Documentation/core-api/kho.
+>  +
+>  +	  To run the test run:
+>  +
+>  +	  tools/testing/selftests/kho/vmtest.sh -h
+>  +
+>  +	  If unsure, say N.
+>  +
+>  +
+> + config RATELIMIT_KUNIT_TEST
+> + 	tristate "KUnit Test for correctness and stress of ratelimit" if !KUNIT_ALL_TESTS
+> + 	depends on KUNIT
+> + 	default KUNIT_ALL_TESTS
+> + 	help
+> + 	  This builds the "test_ratelimit" module that should be used
+> + 	  for correctness verification and concurrent testings of rate
+> + 	  limiting.
+> + 
+> + 	  If unsure, say N.
+> + 
+>   config INT_POW_KUNIT_TEST
+>   	tristate "Integer exponentiation (int_pow) test" if !KUNIT_ALL_TESTS
+>   	depends on KUNIT
+
 
 
