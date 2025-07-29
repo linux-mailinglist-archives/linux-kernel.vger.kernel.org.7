@@ -1,146 +1,109 @@
-Return-Path: <linux-kernel+bounces-749758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF45B1528D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:17:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DEBB15294
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2095D547979
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11CB73BB3DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52BD9237163;
-	Tue, 29 Jul 2025 18:17:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B93123BCED;
+	Tue, 29 Jul 2025 18:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yrJG7Cdq"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="29NqCPrW";
+	dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b="ZeeVM3gM"
+Received: from e3i331.smtp2go.com (e3i331.smtp2go.com [158.120.85.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DFFBE4E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:17:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8735237180
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.120.85.75
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753813065; cv=none; b=GEXtTqOQwuu+AS414DCFa4QiqpknzopR4W5D0v9fZgC+CD1mkBmqy+s/hEMSIgdZYW0DBvba97qMnFjHNhm47o3E7zJg/D63MBdC74Lfl4/YcePxbekzC34QKO/Kj1xqCO4kqDiMF7W6ERhXVGfciXUdqa4Dg+nVAIZemkAuDas=
+	t=1753813186; cv=none; b=s96uyQu9FkUbqdeZ6obGnHpL39zimLHs73KGeus7kQX5vg4PJ8QWco7TQbIUtG7NobgxOWE3zNcLCedUaSkhEv+/kbUISl5v3w3Vx+5W/ozmXt1pCxtEgQuM1FhG+6etDPD88ajrnd4/+/uht9ewPyOegK2C0hVHmiZwUysAsOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753813065; c=relaxed/simple;
-	bh=90zZj2Wi/jSSStHprtwOYJEKOACLou5BBOJZbWY93Rc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ut+zzdZ7wSFVB6NPT57j0mq90nxxeWIqeZG5557XQnBHPekwqPA7J7FiR/vzH+68/62g2wd9lLs0iR5laRkLcBjBjR/poc/eJucm425WqsfWaxjskMThiruxA/GMaYd68XSZrb+Iy1ctZjMQ69qJnDoUsKlIkYXBEWDYnGsfKQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yrJG7Cdq; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24070ef9e2eso28475ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:17:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753813063; x=1754417863; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WrELFtAsQyNIYUQCqV5rIFM2vQCd45+6wkPo96+Xm4M=;
-        b=yrJG7CdqcQNaR4l81QKevCF+jrOAgwAlYklwQl7+TWhiNpRxitjMTbnmIx8pbVInbs
-         M+gt1KliRRCEtc8ekJc8ORdjjBm03q9Q3jxQ5WoyAwD291+GYEoKtmBvDZw5gfLzrrxV
-         LKJerj891HEjUvr7j+oL6yAL4n7z25LG1IFIHb9GL2IPdBv4hpluhYtkbqpWCZHoCrZJ
-         EE7AdqW2xBmvsaWaSYj2SM9t9LNKVS6tYKdsU9hTgRjLZC1ycpCQF6Eof7aeG5NMMoDq
-         pMwJH/9gLtbQoa0YxVMNf0Ipz/ApbZ/Cl0bE6HPDbxiZ0WvaEPUqV7TAbjrcz43PMXgm
-         al7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753813063; x=1754417863;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WrELFtAsQyNIYUQCqV5rIFM2vQCd45+6wkPo96+Xm4M=;
-        b=cedg07EqsTMbHXIHX8Llqlb6S38EwkwGdTqsCF4AV2TBphHJWmKOKvsjvdg0iaMDO7
-         CP9g6qLO9Qlo75EeP4ehxSQa2NkrqLtEoR3WU3vu8gt62wbPiKPOHhkQV9PU48R/rwpx
-         IMAf5N6sjU8tsh1AcB9AiIc61+H+r4dYMeoa1TqRacEYEyY8iqlQFvnMyeIEUwmMWzK1
-         4thQMfmJeJje0f/P49/+B1nY695ijWyORboZ5zTFC86usNFzZGGdZWGLSqKP57quOmKA
-         r+7+ssSpCbAhnb7EemF1rCBH9v2/ev3ux9qGhN3jBlKPaoyjxRSbBoJ/FAXSBEchwoFm
-         tPsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCxxFiSbq8Xj1AZ0XddPrvlkxAOyn4LPIDrlmFP/e9iwFRHznlTB0UQnNDTXO/nK2ngXHtW8/xZLzwtN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZWV5NW61wQUPgU2h/a8nqY1V7l34EZ//j5kYo9swxetrIVeUx
-	0Ymo+93g4nAhPN20NTg6pBRU08Ba1iY5VrbIFpXvPuZo/C/YCRmYQNsmMvZHhhKm0pWHbkaKejK
-	LnD5PzI2iPqF39MQgbtzsEwDXHigwdhABTEp1J7L/
-X-Gm-Gg: ASbGnctM9Fj/GJUIcOMfBGaBIVDKQySuv9JkXFyNOpkUpLPw7bcRpe88fDqSH3KNLOL
-	S1YJh3EJlhlvNvzrsoatnDJ1Lkdt2nJeS+TlEp5FxtqT9Tp/Yi+QsEkqGl27cRG+xs8d1c2Mokw
-	ySJ/qKOxIUgU//bOX7FS7mTq4KYz0d/3NkF/KhETy2Sahpq4Md4HD2AX/Mc+35GZH/gONRJBvgN
-	af3
-X-Google-Smtp-Source: AGHT+IH/JGiXh5XiKWwlu4CDnIGhqRo+jwrPA9qHfnd8CZIjwn6cTGQgk7e/thnN52vXlk8rPFqbbZX1d9enm1CVFgo=
-X-Received: by 2002:a17:902:e80d:b0:240:469a:7e23 with SMTP id
- d9443c01a7336-2409a044697mr269765ad.20.1753813063049; Tue, 29 Jul 2025
- 11:17:43 -0700 (PDT)
+	s=arc-20240116; t=1753813186; c=relaxed/simple;
+	bh=sA4RPjAxM05RQekn/x6/fjnGX99Zklg8NEEyvJ7D9tg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DaJej739FkU227VeDNQvq2ZXeFPBLSd9P3BFwHAc8h08JaRUpPgQkNM0JbpQdWLi6PaS8yLvxo5y7QzlVoQgYXUVHMKneKbLBJVRO5Fd4wnh+OcoskwMV/nodhk3Vw/c1XL5RkiJjjC20FXR6+68jglNP8QJ+4IHmra3p8JKxGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev; spf=pass smtp.mailfrom=em1255854.medip.dev; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=29NqCPrW; dkim=pass (2048-bit key) header.d=medip.dev header.i=@medip.dev header.b=ZeeVM3gM; arc=none smtp.client-ip=158.120.85.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=medip.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1255854.medip.dev
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=smtpservice.net;
+ i=@smtpservice.net; q=dns/txt; s=a1-4; t=1753813175; h=feedback-id :
+ x-smtpcorp-track : date : message-id : to : subject : from : reply-to
+ : sender : list-unsubscribe : list-unsubscribe-post;
+ bh=Qjq7ANPEafKeVIOcRRoL6S8s3iv7vnOx3qEiXVCnF9A=;
+ b=29NqCPrWifYx5HrOtZxAWWEFWGuydF6EaoQWWck61tRBoRsm1LZzomm3gupJdcVtbrqwD
+ XFyUFZjC9WwxBKKeykb2hQt0P5keSKFLgkQNkrtguf+H9PkyTVHi/0/Z60nfZmDr8uZ0Xky
+ xGU9xJv5/awFkitandRyZX+55o2zub6MfQ8fWb1dT8TC7CU7AcB4u8zCiywr/0XywisLaYm
+ 08LS2EgI1M2BH5TIC/fumeBgifgVmXLsHCioca6H0KicFNHSYaAW6yCBVCWyAxyKP5PoNtW
+ +mNW9LFCQ8hXDjzuGSxI4mkp1UDvFuM/COOb18yytFo5J57oZecV7ZxncuXg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=medip.dev;
+ i=@medip.dev; q=dns/txt; s=s1255854; t=1753813175; h=from : subject :
+ to : message-id : date;
+ bh=Qjq7ANPEafKeVIOcRRoL6S8s3iv7vnOx3qEiXVCnF9A=;
+ b=ZeeVM3gMWoejp9c8ica5/v3GQdLlbrDo4vm+uCP5bT+9EqEk2yrjaTXrFTKC+1/TVwPUI
+ b1P17c3A3b5AFxwW7i1snWmWcQrVD6p+sg5IG5oK6KanBdfPvPShTATZfxB/EVRt1mMXrGK
+ U1sQwJ8w5LE92xlsb2weEqpz+4dbC3oT9QTrMbS123aD55PtkBof4mWu3YQwtIifeUEN+l0
+ SM77ApzEVeVFl+eKR1N23QNrDzz5bZ5aAGmpDCKKzPsapC56qeOs3G6htfVkmO7hno4yUQx
+ Z3+mZzwKPjP/FCDvk3ZIcxRmnMaVmC43gDcooj9He2S/qb2ZDHOb2j2jtifA==
+Received: from [10.152.250.198] (helo=vilez)
+	by smtpcorp.com with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.98.1-S2G)
+	(envelope-from <edip@medip.dev>)
+	id 1ugov1-FnQW0hPr2KU-NS42;
+	Tue, 29 Jul 2025 18:19:22 +0000
+From: edip@medip.dev
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Edip Hazuri <edip@medip.dev>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] ALSA: hda/realtek - Fix mute LED for HP Victus 16-s0xxx
+Date: Tue, 29 Jul 2025 21:18:48 +0300
+Message-ID: <20250729181848.24432-2-edip@medip.dev>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728202656.559071-7-samitolvanen@google.com> <202507300122.RpqIKqFR-lkp@intel.com>
-In-Reply-To: <202507300122.RpqIKqFR-lkp@intel.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 29 Jul 2025 11:17:06 -0700
-X-Gm-Features: Ac12FXyTkIKUF3oE37TmSDCsrlZi0YemuCpY3RAC5JJl1HoxExctdyr3bgTjL2E
-Message-ID: <CABCJKudjiU8KZoBa+0k9ey5ccPp5E0JhUc5n-DRKbOamSO==VQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3 1/4] bpf: crypto: Use the correct destructor
- kfunc type
-To: kernel test robot <lkp@intel.com>
-Cc: bpf@vger.kernel.org, oe-kbuild-all@lists.linux.dev, 
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jamal Hadi Salim <jhs@mojatatu.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Report-Abuse: Please forward a copy of this message, including all headers, to <abuse-report@smtp2go.com>
+Feedback-ID: 1255854m:1255854ay30w_v:1255854s11F8cfyv-
+X-smtpcorp-track: gU6cqRkuioaa.Klq_Op_lI7dg.S40LQgRqo8q
 
-On Tue, Jul 29, 2025 at 10:54=E2=80=AFAM kernel test robot <lkp@intel.com> =
-wrote:
->
-> Hi Sami,
->
-> kernel test robot noticed the following build warnings:
->
-> [auto build test WARNING on 5b4c54ac49af7f486806d79e3233fc8a9363961c]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/Sami-Tolvanen/bpf-=
-crypto-Use-the-correct-destructor-kfunc-type/20250729-042936
-> base:   5b4c54ac49af7f486806d79e3233fc8a9363961c
-> patch link:    https://lore.kernel.org/r/20250728202656.559071-7-samitolv=
-anen%40google.com
-> patch subject: [PATCH bpf-next v3 1/4] bpf: crypto: Use the correct destr=
-uctor kfunc type
-> config: alpha-randconfig-r111-20250729 (https://download.01.org/0day-ci/a=
-rchive/20250730/202507300122.RpqIKqFR-lkp@intel.com/config)
-> compiler: alpha-linux-gcc (GCC) 8.5.0
-> reproduce: (https://download.01.org/0day-ci/archive/20250730/202507300122=
-.RpqIKqFR-lkp@intel.com/reproduce)
->
-> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
-ion of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202507300122.RpqIKqFR-lkp=
-@intel.com/
->
-> sparse warnings: (new ones prefixed by >>)
-> >> kernel/bpf/crypto.c:264:18: sparse: sparse: symbol 'bpf_crypto_ctx_rel=
-ease_dtor' was not declared. Should it be static?
->
-> vim +/bpf_crypto_ctx_release_dtor +264 kernel/bpf/crypto.c
->
->    263
->  > 264  __bpf_kfunc void bpf_crypto_ctx_release_dtor(void *ctx)
->    265  {
->    266          bpf_crypto_ctx_release(ctx);
->    267  }
->    268  CFI_NOSEAL(bpf_crypto_ctx_release_dtor);
->    269
+From: Edip Hazuri <edip@medip.dev>
 
-__bpf_kfunc_start_defs() disables -Wmissing-declarations here, but I
-assume sparse doesn't care about that. Is there something we can do to
-teach it about this?
+The mute led on this laptop is using ALC245 but requires a quirk to work
+This patch enables the existing quirk for the device.
 
-Sami
+Tested on Victus 16-S0063NT Laptop. The LED behaviour works
+as intended.
+
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Edip Hazuri <edip@medip.dev>
+---
+ sound/hda/codecs/realtek/alc269.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/sound/hda/codecs/realtek/alc269.c b/sound/hda/codecs/realtek/alc269.c
+index 05019fa732..77322ff8a6 100644
+--- a/sound/hda/codecs/realtek/alc269.c
++++ b/sound/hda/codecs/realtek/alc269.c
+@@ -6528,6 +6528,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8bbe, "HP Victus 16-r0xxx (MB 8BBE)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8bc8, "HP Victus 15-fa1xxx", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8bcd, "HP Omen 16-xd0xxx", ALC245_FIXUP_HP_MUTE_LED_V1_COEFBIT),
++	SND_PCI_QUIRK(0x103c, 0x8bd4, "HP Victus 16-s0xxx (MB 8BD4)", ALC245_FIXUP_HP_MUTE_LED_COEFBIT),
+ 	SND_PCI_QUIRK(0x103c, 0x8bdd, "HP Envy 17", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8bde, "HP Envy 17", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x103c, 0x8bdf, "HP Envy 15", ALC287_FIXUP_CS35L41_I2C_2),
+-- 
+2.50.1
+
 
