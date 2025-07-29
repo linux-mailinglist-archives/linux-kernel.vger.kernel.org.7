@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-749430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5A84B14E47
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:20:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C339B14E49
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED25F5456C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD3E3545861
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB941B0413;
-	Tue, 29 Jul 2025 13:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R4p0JICv"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8E21EF38F;
+	Tue, 29 Jul 2025 13:20:39 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43F44CA4B;
-	Tue, 29 Jul 2025 13:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7462CA4B;
+	Tue, 29 Jul 2025 13:20:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753795194; cv=none; b=fWdTIyamraPuga/NvxGILCTBKcYSo90nU2KMI3GCqftTWjNT9Wi3JZc4taX0IK15vwXQzpvkTjDSUkyl5h501kHCAq3f2zCvNaCiYVRSqHarYpBZ3u4ek4BUEMQV2CIjGNOhOUyWpH6V0ZPG/y4wteN/Jwo/cNHXpajz5uyHxuU=
+	t=1753795239; cv=none; b=WR4gDnfcY8n7E3ek30S25/2e1n41a8GtaEU50PM59hQDGbKWGzxUEMJcmACXkwBY/eHmIsjoA9FvdqbVMdVA/mVSw5os7Pjzm9fFxpRfqc/bo3iAc8+se6deHllIizLtAO5VeU7iXXPpPbsfhvY5CQ5zTmFsSZHnspQHDyPQICs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753795194; c=relaxed/simple;
-	bh=YM987/82foYTtFS7Ru1EkSgshFaDDES4SWlKS0fv0Ss=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ube+BBfFSe9iYuHD35aQWio+13Ntk7bmtXfCRDWBKht7xON157WBkx/LSzDmTDqPezMsfzTNxNjTsJ3jgiMWA3uxuwniDNI0WIRJX/fUbjcYkaZeL4x9WQT3T7xlgFg/jaeQQ6b8vJ5QaeJpwq84JXy3ACh4UpIHcu8SozajAy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R4p0JICv; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753795192; x=1785331192;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=YM987/82foYTtFS7Ru1EkSgshFaDDES4SWlKS0fv0Ss=;
-  b=R4p0JICvrGVTv7/zD6go+StFVAopqynyDcLPRlakQOpJl/OJeAYhhd2v
-   X3iSmacF/hPV8tCvba44K/fho/wKy1quApL1O1RNSnmIOCn39QJoI7wyf
-   pZrXBJ3o4GS8y2tAL3AMRrsJg9k3l6Ui9dCumjXyRaS8yhiBnVcuC+/+P
-   3yQJqWvdUtpMsh4qjjw4u+UnlwjeArxgG2NYaaMkuXPW6tMC/YWSXVlV/
-   XOWoEd3SWgbfVqi+K22/tQ0uxsVP+Gyw/K5CG2zXjKFc1fP/fbzmlEuPj
-   fptlb3TxwdX64eH6ovDTaZjY6UM8SvBcRYjWc0ODpqCq1LQjD3XPJG/y3
-   g==;
-X-CSE-ConnectionGUID: WdgHt8qWTXGsqNNbMHdzTg==
-X-CSE-MsgGUID: xIpO3TmXSqSs8jXc+O/dMg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="66628639"
-X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
-   d="scan'208";a="66628639"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 06:19:51 -0700
-X-CSE-ConnectionGUID: 1LjYHoaKTOSWMv7O/LMNVw==
-X-CSE-MsgGUID: AWTWK4uMQcqGahgEGQDp0A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
-   d="scan'208";a="161967838"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.22])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 06:19:49 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Akira Yokosawa <akiyks@gmail.com>, mchehab+huawei@kernel.org
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH 1/2] docs: kernel-doc: avoid script crash on ancient Python
-In-Reply-To: <8251d567-5218-4fa1-aed2-f38ec089989d@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <dc75423e817f92cc6b8369892ee79166c2fb5ecc.1753713955.git.mchehab+huawei@kernel.org>
- <8251d567-5218-4fa1-aed2-f38ec089989d@gmail.com>
-Date: Tue, 29 Jul 2025 16:19:45 +0300
-Message-ID: <e9cf21e5332616f2fb58a90fe8ba6f91359915b8@intel.com>
+	s=arc-20240116; t=1753795239; c=relaxed/simple;
+	bh=RBt46R+nnK3MToQskzWGJy+NEGwCjbFdTcAhpY3K/BM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gDsKjLaoqzjiEL8s8WmUyTtKLRqo9LtUgavxQaHRcU0cQuwvCzW65k0i/uZIhV5H2rpprAXn6WpuEFDre6bbmJi7KjZupg7I8Zzn5WplvC8jDKguOadevgT7wWeexw3xksmMnkm4BFTDHHJ/2YtBB2BlIq9lYQL91DwsTCNiEdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.213.139])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d9eb0240;
+	Tue, 29 Jul 2025 21:20:30 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jonas@kwiboo.se
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	ziyao@disroot.org
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add Radxa E24C
+Date: Tue, 29 Jul 2025 21:20:25 +0800
+Message-Id: <20250729132025.2359761-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <e2fd11db-543a-43eb-b118-9f246ff149b5@kwiboo.se>
+References: <e2fd11db-543a-43eb-b118-9f246ff149b5@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a9856577cae03a2kunm6ff7b3281d7629
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHkJOVhoZTh5PS0xLSxhMQ1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVKSEJZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSktLVU
+	pCS0tZBg++
 
-On Tue, 29 Jul 2025, Akira Yokosawa <akiyks@gmail.com> wrote:
-> Hi,
+Hi,
+
+> Both avddl_1v1 and avddh_3v3 are controlled by the same gpio, I do not
+> remember if using two regulators with same gpios is supported, can only
+> remember it being an issue in the past, so I opted to just describe it
+> as a single regulator and gave it a new name and added labels for the
+> name used in schematic.
 >
-> On Mon, 28 Jul 2025 16:54:28 +0200, Mauro Carvalho Chehab wrote:
->> While we do need at least 3.6 for kernel-doc to work, and at least
->> 3.7 for it to output functions and structs with parameters at the
->> right order, let the python binary be compatible with legacy
->                               code?
+> Would calling it vdd_8367 (after gpio_8367_en) be better or do you have
+> any other suggestion on how to describe these?
+
+Would it be better to just call it avddh_3v3 and add a comment?
+This makes it easier to find in the schematics and match phy-supply.
+
+> See above, I had issues using the reset-gpios of the switch, because the
+> switch was probed twice, once deferred by gmac, and by the second probe
+> failed with -BUSY because of the reset-gpios still being claimd by the
+> first probe.
 >
->> versions.
->> 
-> [...]
->> 
->> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
->> ---
->>  scripts/kernel-doc.py | 37 ++++++++++++++++++++++++++-----------
->>  1 file changed, 26 insertions(+), 11 deletions(-)
->> 
->> diff --git a/scripts/kernel-doc.py b/scripts/kernel-doc.py
->> index fc3d46ef519f..d4f9188d6a19 100755
->> --- a/scripts/kernel-doc.py
->> +++ b/scripts/kernel-doc.py
->> @@ -1,9 +1,19 @@
->> -#!/usr/bin/env python3
->> +#!/usr/bin/env python
->
-> This would conflict with my existing setup which has
-> /usr/bin/python3 only.
->
-> Please don't do this!
+> I can change to describe the reset pin in the switch, however that will
+> likely mean Ethernet is unusable until the issue in devres/gpiolib is
+> tracked down and fixed by someone.
 
-Agreed, this breaks more than it fixes.
+I don't think it's a devres/gpiolib issue.
+It looks like these two resets are competing:
 
-Python 2.7 reached end-of-life over five years ago. Do we really have to
-cater for ancient stuff? Which actual real world cases do not have
-Python 3+ available? Please just let it go, and see if anyone ever
-notices?
+  priv->reset_ctl = devm_reset_control_get_optional(dev, NULL);
+  priv->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_LOW);
 
-BR,
-Jani.
+reset-gpios works if reset-names is specified:
+
+-	priv->reset_ctl = devm_reset_control_get_optional(dev, NULL);
++	priv->reset_ctl = devm_reset_control_get_optional(dev, "switch");
+
+Or just remove the reset controller, I'm not sure if it's really needed:
+
+-	priv->reset_ctl = devm_reset_control_get_optional(dev, NULL);
+-	if (IS_ERR(priv->reset_ctl))
+-		return dev_err_cast_probe(dev, priv->reset_ctl,
+-					  "failed to get reset control\n");
+
+Thanks,
+Chukun
+
+--
+2.25.1
 
 
--- 
-Jani Nikula, Intel
 
