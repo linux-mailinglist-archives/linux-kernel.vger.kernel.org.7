@@ -1,134 +1,100 @@
-Return-Path: <linux-kernel+bounces-749924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4406BB154D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:50:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15239B154CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C674E4B99
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:49:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3840189CE01
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DEA277813;
-	Tue, 29 Jul 2025 21:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6E5253F2C;
+	Tue, 29 Jul 2025 21:45:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cerea.dev header.i=@cerea.dev header.b="IlUSMY4q"
-Received: from mail.cerea.dev (vps-88effe85.vps.ovh.net [51.89.23.142])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Yk5kOHIl"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297CD2737E2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.89.23.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5CD21E0B2;
+	Tue, 29 Jul 2025 21:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753825802; cv=none; b=aLR3G7CcZIQpH0C4FXZneG8314/a+MPGa1GluZnqS3K14y5roZ8bIuBANTf0gAPY88xDnfp5/LhqgVQOrnVm4xtqylVodFIioaY9dVtlWPQsHi9X6rO0JTMi4VwKJqsznjDsFU5adQV40lqBb2q8cpTWg1/ljBY+SskwSLitjxE=
+	t=1753825518; cv=none; b=WAklpPMgDcvHPJJS1RbgyTapPcQkVM9ZdtwxszE/sByG+4579A/rC5EE2nVrPJYVl2Ai68T9HYmmnxDYpu8xHGHsbTwJoCPI0DupyOUMCX3CWPgcZgxDOnOYxmyZVx3dj/8BWPCMvD/15PruMvIinkzUQQSX/iyekmm6eBBhx7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753825802; c=relaxed/simple;
-	bh=+1h87gPNPItRPxtA7CzC85HZrt1ZHnGmj651uJENtnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Pjqhen3+GiWqhdrjPm0x4pJPRzpmZPw3iTYy0Di/D1ADigevwckg+JVw79472M/CHQ1N37ziau08rTNNtV+RZ0Sh5qIy3Zov29h2LBNnOowCMQOg6yP9kic9mCbHYWIG4Mf862wEoc1vY6QV1xpfJ6BL5cxcwhwRJGNZgHTu34M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cerea.dev; spf=pass smtp.mailfrom=cerea.dev; dkim=pass (2048-bit key) header.d=cerea.dev header.i=@cerea.dev header.b=IlUSMY4q; arc=none smtp.client-ip=51.89.23.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cerea.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cerea.dev
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=cerea.dev; s=mail;
-	t=1753825481; bh=+1h87gPNPItRPxtA7CzC85HZrt1ZHnGmj651uJENtnU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IlUSMY4qLu9kRmsHWRgXAHgrWerP/xpOnlYsCsf7zZyoX904X86ZKYGKnZkNYGdH7
-	 eSy5fhPAEwkCOoPnyddx/hiwIQLHNzbNIvraXChJhRPDL2GBeqvWSmFkU9cDtq1RcI
-	 CmC7q3yAm9cKotJESMFqkQzsrY2mWz1r4vvyFoM1EUO5mnPQQ78xgQ282JWYl6vq84
-	 yli8GiEgwo7f7t+c6hb5GtineWH9NakLTlvhHJSJjgLPTV9aWn8Ix+L3D9i23A4SDl
-	 tQf4Ts9ILibAKObYMuAq7TbtHzAA/C1hpgijZnMP3XfgiTGdrPFlJUvARXbFDeVaR3
-	 TypiNNCknGyNQ==
-From: Samuele Cerea <samuele@cerea.dev>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	dave.hansen@linux.intel.com,
-	Samuele Cerea <samuele@cerea.dev>
-Subject: [PATCH] x86 Handle trap flag when instruction is emulated
-Date: Tue, 29 Jul 2025 23:44:33 +0200
-Message-ID: <20250729214433.734459-1-samuele@cerea.dev>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753825518; c=relaxed/simple;
+	bh=0eTWygk7sJUGmlzICVrrEKhs549JkRr4pu1uxSB1WmY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CL1g+/+idVWajA9BArTe2F0QCbbQxwvuGPeCR1+yj3TNg/ql++zZYO5yOAHmVibl2fJWrbZ+xF5EBP09z7THViMLM1nG6ILifjSd5Bl/xBlT5crOTZixTYrbY+ylOLzB+ysot3zth++UU1IPowA0PtelWT/FpUQjsdI5e95wDNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Yk5kOHIl; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Wf/0uZWB4TN7Fbn1MCE47FdY12dXgDlIhEUAvFCkfX8=; b=Yk5kOHIl0CLrboS9EJbYvPpeSc
+	k6mNYiPGw10mcTYl2R0LlVmtxGn6x5Ib1V3bCdw6TsAlDfC4vlv30lP1XUPv5+IrbZSfm14BCVv0b
+	TsgH1A5agj+hZV6Oymoe5FrNPRb1l0UkIbuoCJKR5oDNaOWZl0YLLio6sfkxKRAyJ1YY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1ugs82-003EPg-Ro; Tue, 29 Jul 2025 23:44:58 +0200
+Date: Tue, 29 Jul 2025 23:44:58 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Chukun Pan <amadeus@jmu.edu.cn>,
+	"alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"heiko@sntech.de" <heiko@sntech.de>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"olteanv@gmail.com" <olteanv@gmail.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"ziyao@disroot.org" <ziyao@disroot.org>
+Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add RTL8367RB-VB switch to
+ Radxa E24C
+Message-ID: <fdb2e6f0-3732-49ee-b11d-e82f9a9cb2e9@lunn.ch>
+References: <5bdd0009-589f-49bc-914f-62e5dc4469e9@kwiboo.se>
+ <20250729115009.2158019-1-amadeus@jmu.edu.cn>
+ <db1f42c3-c8bb-43ef-a605-12bfc8cd0d46@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <db1f42c3-c8bb-43ef-a605-12bfc8cd0d46@kwiboo.se>
 
-When the kernel emulates an instruction (for UIMP instruction emulation
-and iopl emulation) the trap flag (TF) is currently ignored. As a result no
-SIGTRAP event is delivered when the instruction is emulated successfully,
-breaking the expected behavior for signle-stepping in debuggers.
+> > I did a test today and the same problem occurred when running the new
+> > kernel on my rk3568 + rtl8367s board. This problem does not exist on
+> > older kernels (6.1 and 6.6). Not sure where the problem is.
+> 
+> I had only tested on a next-20250722 based kernel and on a vendor 6.1
+> based kernel. And similar to your findings, on 6.1 based kernel there
+> was no issue only on the newer kernel.
+> 
+> I will probably drop the use of "/delete-property/ snps,tso" and include
+> a note in commit message about the TSO and RX checksum issue for v2.
 
-This patch checks if the TF is set and sends the expected SIGTRAP signal
-to the user. Other exception take precedence over the trap flag the SIGTRAP
-signal is sent only if the emulation was successful.
+You are submitting a patch for todays kernel, not a historic
+kernel. If todays kernel needs this property to work, please include
+it.
 
-The bug can be reproduced by signle-stepping in this code:
-    nop
-    sldt rax
-    sldt rax
-    nop
-The two sldt instruction will be skipped an the debugger will step directly
-to the second nop instruction.
+You can always remove it when you have done a git bisect and find what
+changed, and submit a fix.
 
-Signed-off-by: Samuele Cerea <samuele@cerea.dev>
----
- arch/x86/kernel/traps.c |  9 +++++++++
- arch/x86/kernel/umip.c  | 10 ++++++++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-index 36354b470590..6e7d07a5f587 100644
---- a/arch/x86/kernel/traps.c
-+++ b/arch/x86/kernel/traps.c
-@@ -705,6 +705,15 @@ static bool fixup_iopl_exception(struct pt_regs *regs)
- 	}
- 
- 	regs->ip += 1;
-+
-+	/* If the instruction was emulated successfully, emulate trap flag */
-+	if (regs->flags & X86_EFLAGS_TF) {
-+		t->cr2 = regs->ip;
-+		t->trap_nr = X86_TRAP_DB;
-+		t->error_code = 0;
-+		force_sig_fault(SIGTRAP, TRAP_TRACE, (void __user *)regs->ip);
-+	}
-+
- 	return true;
- }
- 
-diff --git a/arch/x86/kernel/umip.c b/arch/x86/kernel/umip.c
-index 5a4b21389b1d..c4c462074f1d 100644
---- a/arch/x86/kernel/umip.c
-+++ b/arch/x86/kernel/umip.c
-@@ -342,6 +342,7 @@ bool fixup_umip_exception(struct pt_regs *regs)
- 	unsigned long *reg_addr;
- 	void __user *uaddr;
- 	struct insn insn;
-+	struct task_struct *tsk = current;
- 
- 	if (!regs)
- 		return false;
-@@ -407,5 +408,14 @@ bool fixup_umip_exception(struct pt_regs *regs)
- 
- 	/* increase IP to let the program keep going */
- 	regs->ip += insn.length;
-+
-+	/* If the instruction was emulated successfully, emulate trap flag */
-+	if (regs->flags & X86_EFLAGS_TF) {
-+		tsk->thread.cr2 = regs->ip;
-+		tsk->thread.trap_nr = X86_TRAP_DB;
-+		tsk->thread.error_code = 0;
-+		force_sig_fault(SIGTRAP, TRAP_TRACE, (void __user *)regs->ip);
-+	}
-+
- 	return true;
- }
--- 
-2.50.1
-
+	Andrew
 
