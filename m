@@ -1,47 +1,61 @@
-Return-Path: <linux-kernel+bounces-749804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53908B15314
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:47:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C7F8B1530D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FACC3BBDF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:44:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95A3418A5DEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AC7239E81;
-	Tue, 29 Jul 2025 18:42:34 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133852989AD;
+	Tue, 29 Jul 2025 18:43:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jncYX2xJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F90218E99
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:42:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD4E218E99;
+	Tue, 29 Jul 2025 18:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753814553; cv=none; b=r1u6h9yYF4puebyu7a9V1f30LfkeSeJ6+gfvFGeuLPGgIK5cyRPOUy/MGHUn4H9/t1hpMg6bum/co1DnsJunJdbl5NeYRfe9Tr+/J9+kVFBDJFHU04GvlT5y4i9ADTo2C4LaRBl1pxSC1Q/NXT6WNScfIzLnxRpOxF/tbA15n00=
+	t=1753814586; cv=none; b=H6ZKbEJW7pUBNgCtcFBzhsb5+0QowWtFKFMRs9iCTOYFEz/ru7C/MpWPFWYm1J1ApQGWbeCLfFRI1fKH5xEc4rwM+eH8/3e4rcA6XYuLDEoorhPnyaU9YTaG9ds3AqsVCv2b4DcvWDl5lv+HUUnUKSK4LoeMZQRZ4Xnp2UOKJTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753814553; c=relaxed/simple;
-	bh=u6YG3dQymVeOHnrNuFd1AeadKpjr/msDJ338fsWA69g=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VG2zMN/izWjd6fliAkQtijT/Daz5fnUaICJS8Ze2Bn6tJJbblwosHsEnSPPTxbXxQbzPJqbse5eP9xauo3Z6lj4CQ68B4Jlxw2q+pncM21ZUH/8B2ssjmJtecowhBhExtTMzJBBFLWpRPzg/LoeeCrSPUc9gYOI/ce3xGJCRHL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf02.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id BF7E01A01EE;
-	Tue, 29 Jul 2025 18:42:29 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf02.hostedemail.com (Postfix) with ESMTPA id E938B80009;
-	Tue, 29 Jul 2025 18:42:27 +0000 (UTC)
-Date: Tue, 29 Jul 2025 14:42:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Artem Sadovnikov
- <a.sadovnikov@ispras.ru>
-Subject: [GIT PULL] ftrace: Changes for v6.17
-Message-ID: <20250729144226.6b72dca7@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753814586; c=relaxed/simple;
+	bh=XMjv1/pcPe9I64tu4cNjJSZqAGbdSEIvHVL6rlw+Iz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UsI4hRQ0zjnI9CRLUTOK+eaNj9HLJQmvKWbnSse2u1qSKunkcZ4lVCtx6U3Ez+IAbdOk90LBhsWnaBHKarezbvqz/IKb0Eq8tgfPF4SODGRBoORhQDYMyiycCvktyJ/9wExbXQXG/U9suE6bO12oSs9UGvLmUAbBHfbXGDdNUSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jncYX2xJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D83DC4CEEF;
+	Tue, 29 Jul 2025 18:43:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753814585;
+	bh=XMjv1/pcPe9I64tu4cNjJSZqAGbdSEIvHVL6rlw+Iz0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jncYX2xJODV8pVtukBUGL+VrQamEHs0Bw7yZc4606raN7XR3JVohwrS+w4XJgPjOf
+	 keWcnwp1lsUmehOkz8qmAS5yywZQAnFXOP+Y5gezqKPPxpGQFxt69hFqIHpe094ziV
+	 9ZP19MxnLKZVwGZkuJHpm8gxfsP3KdWqobG1fq4FKfOv4hsiAkTneCeLmAOssWZOzw
+	 eP3P7jXLnXAo7xDxth9cPT/dmDuh5OS1z8COw4+V8g3iwUccGxibO909cyUyk0Xm9r
+	 eC7KcJpRZstAZCMJcm0Z3B/GOWbq3hRDTu40RqTgLzXOKM+aGcy/j7XLfTT/LMXw28
+	 31gMqvpQ/ndyA==
+Date: Tue, 29 Jul 2025 19:42:57 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] iio: adc: ad7124: do not require mclk
+Message-ID: <20250729194257.7bf2893c@jic23-huawei>
+In-Reply-To: <1c897cf7-dc31-4e39-84c1-f8ab4b3e0aa8@baylibre.com>
+References: <20250724-iio-adc-ad7124-proper-clock-support-v1-0-88f35db2fcaf@baylibre.com>
+	<20250724-iio-adc-ad7124-proper-clock-support-v1-2-88f35db2fcaf@baylibre.com>
+	<20250727132143.35a44547@jic23-huawei>
+	<1c897cf7-dc31-4e39-84c1-f8ab4b3e0aa8@baylibre.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,89 +64,96 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: E938B80009
-X-Stat-Signature: 3z7tytndufa4rp37qbt3p5piofx1s6dg
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+f4V9wZaOoC8iCWSz/I0ecu9RWNXlPS88=
-X-HE-Tag: 1753814547-968171
-X-HE-Meta: U2FsdGVkX1+McWbhDorYepp1+Z0chyumnDVNWzxrAjHc0WIu4fP38fimpPxoGYweo0pDYsEtCUNd0LrGMVq8/I89mY3U81Amyly4gHnfmya5ZYotEDFijRMds02b7JAS9LZT3X+pF60rle8Ob5cbNrMARNxA1EHHSr+ktm/B+g/nSh4PzEOW1b6NzZpxs5xpkb6WbY2c0T4Dxmxa8jbIUtUaibpAhuAnZkXeT1LaI5ol/rxbLtsclKi241G9u51Jq3rro+EHGOA0m5zv1JD41wTe+WF1feLRsBQbEYX1zUEUg53jFamgvEeBfHEpFYN5yHGcUQVX4BZF86G/NigymBSOEGzwm0OJ
 
+On Tue, 29 Jul 2025 11:08:29 -0500
+David Lechner <dlechner@baylibre.com> wrote:
 
-Linus,
+> On 7/27/25 7:21 AM, Jonathan Cameron wrote:
+> > On Thu, 24 Jul 2025 18:25:23 -0500
+> > David Lechner <dlechner@baylibre.com> wrote:
+> >   
+> 
+> ...
+> 
+> >> @@ -1111,21 +1112,49 @@ static int ad7124_parse_channel_config(struct iio_dev *indio_dev,
+> >>  static int ad7124_setup(struct ad7124_state *st)
+> >>  {
+> >>  	struct device *dev = &st->sd.spi->dev;
+> >> -	unsigned int fclk, power_mode;
+> >> +	unsigned int power_mode;
+> >> +	struct clk *mclk;
+> >>  	int i, ret;
+> >>  
+> >> -	fclk = clk_get_rate(st->mclk);
+> >> -	if (!fclk)
+> >> -		return dev_err_probe(dev, -EINVAL, "Failed to get mclk rate\n");
+> >> +	/*
+> >> +	 * Always use full power mode for max performance. If needed, the driver
+> >> +	 * could be adapted to use a dynamic power mode based on the requested
+> >> +	 * output data rate.
+> >> +	 */
+> >> +	power_mode = AD7124_ADC_CONTROL_POWER_MODE_FULL;
+> >>  
+> >> -	/* The power mode changes the master clock frequency */
+> >> -	power_mode = ad7124_find_closest_match(ad7124_master_clk_freq_hz,
+> >> -					ARRAY_SIZE(ad7124_master_clk_freq_hz),
+> >> -					fclk);
+> >> -	if (fclk != ad7124_master_clk_freq_hz[power_mode]) {
+> >> -		ret = clk_set_rate(st->mclk, fclk);
+> >> -		if (ret)
+> >> -			return dev_err_probe(dev, ret, "Failed to set mclk rate\n");
+> >> +	/*
+> >> +	 * HACK: This "mclk" business is needed for backwards compatibility with  
+> > 
+> > I'd drop the HACK bit of this. Whilst I understand the spirit of the comment
+> > that term tends to make people try to 'fix' things ;)
+> >   
+> >> +	 * old devicetrees that specified a fake clock named "mclk" to select
+> >> +	 * the power mode.
+> >> +	 */
+> >> +	mclk = devm_clk_get_optional_enabled(dev, "mclk");
+> >> +	if (IS_ERR(mclk))
+> >> +		return dev_err_probe(dev, PTR_ERR(mclk), "Failed to get mclk\n");
+> >> +
+> >> +	if (mclk) {
+> >> +		unsigned long mclk_hz;
+> >> +
+> >> +		mclk_hz = clk_get_rate(mclk);
+> >> +		if (!mclk_hz)
+> >> +			return dev_err_probe(dev, -EINVAL, "Failed to get mclk rate\n");
+> >> +
+> >> +		/*
+> >> +		 * This logic is a bit backwards, which is why it is considered
+> >> +		 * a hack and is only here for backwards compatibility. The
+> >> +		 * driver should be able to set the power mode as it sees fit
+> >> +		 * and the f_clk/mclk rate should be dynamic accordingly. But
+> >> +		 * here, we are selecting a fixed power mode based on the given
+> >> +		 * "mclk" rate.  
+> > 
+> > My assumption is that someone had a board with a fixed rate clock on this pin.
+> > So it might not be possible to have the driver do that adjustment.
+> > If anyone ever adds that support, we'll have to be careful about handling fixed
+> > clocks.  
+> 
+> In order to use an external clock, you have to program a register field to
+> allow that. Since the driver isn't doing that, we can be sure that even if
+> someone had an external clock, the driver was still using the internal clock.
+Ah. That indeed solves this!
 
-ftrace changes for v6.17:
+> 
+> > 
+> > This looks fine though.
+> >   
+> >> +		 */
+> >> +		power_mode = ad7124_find_closest_match(ad7124_master_clk_freq_hz,
+> >> +			ARRAY_SIZE(ad7124_master_clk_freq_hz), mclk_hz);
+> >> +
+> >> +		if (mclk_hz != ad7124_master_clk_freq_hz[power_mode]) {
+> >> +			ret = clk_set_rate(mclk, mclk_hz);
+> >> +			if (ret)
+> >> +				return dev_err_probe(dev, ret, "Failed to set mclk rate\n");
+> >> +		}
+> >>  	}  
+> 
 
-- Keep track of when fgraph_ops are registered or not
-
-  Keep accounting of when fgraph_ops are registered as if a fgraph_ops is
-  registered twice it can mess up the accounting and it will not work as
-  expected later. Trigger a warning if something registers it twice as to
-  catch bugs before they are found by things just not working as expected.
-
-- Make DYNAMIC_FTRACE always enabled for architectures that support it
-
-  As static ftrace (where all functions are always traced) is very expensive
-  and only exists to help architectures support ftrace, do not make it an
-  option. As soon as an architecture supports DYNAMIC_FTRACE make it use it.
-  This simplifies the code.
-
-- Remove redundant config HAVE_FTRACE_MCOUNT_RECORD
-
-  The CONFIG_HAVE_FTRACE_MCOUNT was added to help simplify the
-  DYNAMIC_FTRACE work, but now every architecture that implements
-  DYNAMIC_FTRACE also has HAVE_FTRACE_MCOUNT set too, making it redundant
-  with the HAVE_DYNAMIC_FTRACE.
-
-- Make pid_ptr string size match the comment
-
-  In print_graph_proc() the pid_ptr string is of size 11, but the comment says
-  /* sign + log10(MAX_INT) + '\0' */ which is actually 12.
-
-
-Please pull the latest ftrace-v6.17 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-ftrace-v6.17
-
-Tag SHA1: 58cc39c90ea0e6a1213b565a4859ed6f2a9a0b1a
-Head SHA1: 4d6d0a6263babf7c43faa55de4fa3c6637dec624
-
-
-Artem Sadovnikov (1):
-      fgraph: Make pid_str size match the comment
-
-Steven Rostedt (3):
-      fgraph: Keep track of when fgraph_ops are registered or not
-      ftrace: Make DYNAMIC_FTRACE always enabled for architectures that support it
-      tracing: Remove redundant config HAVE_FTRACE_MCOUNT_RECORD
-
-----
- Documentation/trace/ftrace-design.rst | 12 ++++--------
- arch/arm/Kconfig                      |  1 -
- arch/arm64/Kconfig                    |  1 -
- arch/csky/Kconfig                     |  1 -
- arch/loongarch/Kconfig                |  1 -
- arch/microblaze/Kconfig               |  1 -
- arch/mips/Kconfig                     |  1 -
- arch/parisc/Kconfig                   |  1 -
- arch/powerpc/Kconfig                  |  1 -
- arch/riscv/Kconfig                    |  1 -
- arch/s390/Kconfig                     |  1 -
- arch/sh/Kconfig                       |  1 -
- arch/sparc/Kconfig                    |  1 -
- arch/x86/Kconfig                      |  1 -
- include/asm-generic/vmlinux.lds.h     |  2 +-
- include/linux/ftrace.h                |  2 +-
- include/linux/kernel.h                |  6 +++---
- include/linux/module.h                |  2 +-
- kernel/module/main.c                  |  2 +-
- kernel/trace/Kconfig                  | 20 +++++---------------
- kernel/trace/fgraph.c                 | 16 +++++++++++++---
- kernel/trace/ftrace.c                 |  4 ----
- kernel/trace/trace_functions_graph.c  |  2 +-
- scripts/recordmcount.pl               |  2 +-
- 24 files changed, 31 insertions(+), 52 deletions(-)
----------------------------
 
