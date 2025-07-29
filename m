@@ -1,400 +1,475 @@
-Return-Path: <linux-kernel+bounces-749308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 780CAB14CAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:03:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFE4B14CBA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72E3918A34B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:03:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0DB33BD35F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5373728C00D;
-	Tue, 29 Jul 2025 11:02:58 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730A42882C3;
-	Tue, 29 Jul 2025 11:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9452728C027;
+	Tue, 29 Jul 2025 11:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="TejPBfbU"
+Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBAD28C00D;
+	Tue, 29 Jul 2025 11:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753786977; cv=none; b=d88k0BDhq+hxo4AGnQ7/ho8S+n3yqXP5nt2sWfLV7XNdQSo0D3EZjgVuh0LVJPXoG7jMZvEh7odhAS7JhZm+lffcgikXJf6aPfpVOS26bsO2BVtWE3rYfFVHZaJpxLPbaYeTSlJCMgNoZNYYICeFzLoOExIux+mO8axsHyYjatc=
+	t=1753787286; cv=none; b=sKZKz+f4gcoLWtrFYivrLq39dOyDbRwIhYJ1zIS6aacKY9eOie6XZLsiTXmZkxNKLImU5qpRuhn2pJOlzNfE3NvtUHrDr1WAnaQrxwFLb4mOkNOtSccnu6DGo6VlYaHGH0qZN8OusedxS3BD0EFF6ywf44iptuBb9DD6dDvPHa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753786977; c=relaxed/simple;
-	bh=SGDXxb6mZmT3ILuEcG0G3dGQ59DGmBBLAISNgGDrlJs=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=N3l59koOxWuLUJRneQ278zjhwOhtfibfJbGh51oiqnq28mVZGgJHpbBtDzGHuGyKwwLEx0/la1vjmuSM6C5idj4iD7zXb3dxVDa6I/nVqMzZMgBfdyqvgtNJ8iwRV3ZVlKoK/eb+jayvxo3/saAqGpob8Prx05B5YUMNB0j2VME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-53-6888aa58c3dd
-From: Byungchul Park <byungchul@sk.com>
-To: linux-mm@kvack.org,
-	netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel_team@skhynix.com,
-	harry.yoo@oracle.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	davem@davemloft.net,
-	kuba@kernel.org,
-	hawk@kernel.org,
-	john.fastabend@gmail.com,
-	sdf@fomichev.me,
-	saeedm@nvidia.com,
-	leon@kernel.org,
-	tariqt@nvidia.com,
-	mbloch@nvidia.com,
-	andrew+netdev@lunn.ch,
-	edumazet@google.com,
-	pabeni@redhat.com,
-	akpm@linux-foundation.org,
-	david@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	horms@kernel.org,
-	jackmanb@google.com,
-	hannes@cmpxchg.org,
-	ziy@nvidia.com,
-	ilias.apalodimas@linaro.org,
-	willy@infradead.org,
-	brauner@kernel.org,
-	kas@kernel.org,
-	yuzhao@google.com,
-	usamaarif642@gmail.com,
-	baolin.wang@linux.alibaba.com,
-	almasrymina@google.com,
-	toke@redhat.com,
-	asml.silence@gmail.com,
-	bpf@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	sfr@canb.auug.org.au
-Subject: [PATCH linux-next v3] mm, page_pool: introduce a new page type for page pool in page type
-Date: Tue, 29 Jul 2025 20:02:10 +0900
-Message-Id: <20250729110210.48313-1-byungchul@sk.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAAzXRe0hTcRQH8H67d/del4PLkrwZGAwiMVIrpRNG2B/CjYiEMKT+0Jm3ttIp
-	U6crhC2lqalJafiYtRRNp2Jt+cSJ75kmmWlMm89Qwle+Wr7CfOB/H873nO8/h8JENtyFkslj
-	OIVcEi4mBLhg3rHwTJAhWeo1U+QDuqoKAsrX4uHdeB0fdIYaBKvrP0jYNnciWGm3EDDbtoyg
-	6K0dA92XJBz+VG1gMNU5SUK58TqMlUzj0KitxWDyeRcB6UmbGJjXF0h4UlfKA51JTUJfTQYf
-	sjaKMahVj5PwrUFHwGjFNh+mW9Nx+JRXhsNidjsGYxl+0Kk/CvaeOQTtVbU8sKcVEDCY28CD
-	avMgCS/79QT8TBpD0N82iUP2VjIB+ZoMBJtrO5ULmat8yO8YJf1OsxqrlWDb5n5j7MeyIR5r
-	bermsfV5IySrN8ayplJ3NtXaj7FGQwrBGpdfkKzteyPBduVs4mz9xEW2vm6Fx6YnLhDs0tQw
-	HuB0W3ApjAuXKTmF5+UQgXRT4xBlCYzvMZqQGs34pyIHiqG9mUVzC37g5C0tuWuCPsVYrevY
-	rp1oL6Y0e3XHAgqjP5PMq+bEvaUjdCgz3TaNdo3TJ5neavXOnKKEtA9jG4nb7zzBlL9v3rtl
-	6AKKsaX8w/aDY0xLqRXPRIf16JABiWRyZYREFu7tIVXJZfEedyMjjGjn5yUJW3fq0HLfzVZE
-	U0jsKJSmaKUivkQZrYpoRQyFiZ2EUcVPpSJhmET1iFNEBitiw7noVnScwsXOwnP2uDARfV8S
-	wz3kuChOcZDyKAcXNVLOV7r1TJiuBv0NlLu+fnzhzazllzaEpx2Qnb/X7qM0Dy8JclUi2ZjI
-	9GDRdmsubdXPyd5hG7Ljnb5xbleE/YPBgii+c8KzpkClkBrOsjT6FvcEBX2YvzHs7Bm6kl6Y
-	UGR0Hij0yhypcPyaUxmiu5bgr+xu1mmUJfzeAFe+hxiPlkrOumOKaMl/uVc42+8CAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWRa0hTcRyG/e+cnXMcDg627HShy0oSKzPQ+nXBhG7/gi6Q0cUPOevURnPa
-	lssFxbylVtq6rLIWGKLpFi2m6SZOzJmXLCvDWjenhoNKltmynFJp0beH9315vrwMEdpAzmAU
-	qmO8WiVTSikRKdq2OnvJHnO+PLq8bzqYrHcosPzMgNu9diGYzDUI/KNvafjtbEHwrbmVgs+u
-	YQSlt0YIMD3NIeG7NUDAQEs/DRbbVvCUe0moz6sloP98GwWFOWMEOEd9NGTZKwRgqtLT4LrZ
-	LoRnNUVCuBwoI6BW30vDizoTBT13fgvB21RIQvv1ShKGjM0EeIrioaUkDEY6BhE0W2sFMHLu
-	JgXdxXUCuO/spuFSVwkFH3I8CLpc/SQYx/MpuJFZhGDs54TSZ/AL4cbDHjp+Mc50uynsGvxC
-	4OrK1wLsbngkwI7r72lcYkvHVRWR+Iy7i8A2cwGFbcMXafzuZT2F266NkdjRtxI77N8EuDDb
-	R+GvA2/IHVP3idYc5JUKLa9eGpckko9lBqe17srosFUhPfq04QwKZjg2hssfz6MnmWIXcm73
-	KDHJEjaaqzD6J1jEEOxjmrvSmP13NIVN5rwuL5pkkg3nntzXT+QMI2ZjuXfvj/9zzuEs9xoJ
-	A2JKUJAZSRQqbYpMoYyN0hyR61SKjKgDqSk2NPFq+cnxC3bkf7GpCbEMkoaI5QV58lChTKvR
-	pTQhjiGkEnFa2Wl5qPigTHeCV6fuV6creU0TmsmQ0mniLbv5pFD2sOwYf4Tn03j1/1bABM/Q
-	o/1Gnb0462Pqj4w4c1XpSevenYVJyy/NT269m7gx6GtMIMhPxCcaKh90rk1ICuz1DA3wc5+f
-	DZ4HUduw8BR/Yd3VmgV9kTna9c5VljiPL/esqqCzOnd3z2igU3IUvwopfRKRsEcQ0bHZER73
-	cHY7u2JRs4EN+3X00PaBWdLeLeZOKamRy5ZFEmqN7A+KYYIM0QIAAA==
-X-CFilter-Loop: Reflected
+	s=arc-20240116; t=1753787286; c=relaxed/simple;
+	bh=g6900Pmfgq+dODznFR/u4jTKkD6bQtRxrjUM4ARyuf8=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=nosTqvTVzFjuimevcIg7Fw1KXPu1iCgMSt3TCOPyhkVfy81NmMKYM91y0FC+QQ/+8FuCKMpmpudJgj/BhqWYiiqkhD3So9VBSw/qaPppQU+eyGJTKDD/zPPVJTBiRqk+sYHdad+NFsDzQ5Xy16JShAGpj/drZSuR+74VHBKOhzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=TejPBfbU; arc=none smtp.client-ip=180.181.231.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Subject:To:From:Date:Sender:Reply-To:Cc:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=EEDTtgBAu4uQ0oEVv4GxyYVrjL1O2VQyxhvLvK81yeU=; b=TejPBfbUXoFe+HD7AIs4i5JvZk
+	hOoO/4E20VRWRU7hxPRI9D5G1JwMRwCEjbwep3R+oE4nofNGLsaj002N9A7nByA6SpClpn4BVmmMn
+	eISWEWRZwbgdccINN74RQ1ogxIpTmNtj4rNysGDBaMdbwZjZQBupoBzqXKJOH+ThCP60x2U86y057
+	vpRXxZdzOFAmPDJO3wZ6DbC6cCFfayJrY1rCq/x362v7hHo4MOUoWrc5RVSQojLZSmd30o00RFQXq
+	SGqwpfrPI6lAfkJ0kx/7LVniFEZT5+Jt/XdI/LRk0wpMDjHsbmjJ1NQ1PKuRahTsqBZWlCzJunaUq
+	egW0Jpaw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1ughw2-00AUYx-2s;
+	Tue, 29 Jul 2025 19:07:52 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 29 Jul 2025 19:07:51 +0800
+Date: Tue, 29 Jul 2025 19:07:51 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
+Subject: [GIT PULL] Crypto Update for 6.17
+Message-ID: <aIirh_7k4SWzE-bF@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Changes from v2:
-	1. Rebase on linux-next as of Jul 29.
-	2. Skip 'niov->pp = NULL' when it's allocated using __GFP_ZERO.
-	3. Change trivial coding style. (feedbacked by Mina)
-	4. Add Co-developed-by, Acked-by, and Reviewed-by properly.
-	   Thanks to all.
+Hi Linus:
 
-Changes from v1:
-	1. Rebase on linux-next.
-	2. Initialize net_iov->pp = NULL when allocating net_iov in
-	   net_devmem_bind_dmabuf() and io_zcrx_create_area().
-	3. Use ->pp for net_iov to identify if it's pp rather than
-	   always consider net_iov as pp.
-	4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
+The following changes since commit 40a98e702b528c631094f2e524d309faf33dc774:
 
----8<---
-From 88bcb9907a0cef65a9c0adf35e144f9eb67e0542 Mon Sep 17 00:00:00 2001
-From: Byungchul Park <byungchul@sk.com>
-Date: Tue, 29 Jul 2025 19:49:44 +0900
-Subject: [PATCH linux-next v3] mm, page_pool: introduce a new page type for page pool in page type
+  crypto: hkdf - move to late_initcall (2025-06-11 10:59:45 +0800)
 
-->pp_magic field in struct page is current used to identify if a page
-belongs to a page pool.  However, ->pp_magic will be removed and page
-type bit in struct page e.i. PGTY_netpp can be used for that purpose.
+are available in the Git repository at:
 
-Introduce and use the page type APIs e.g. PageNetpp(), __SetPageNetpp(),
-and __ClearPageNetpp() instead, and remove the existing APIs accessing
-->pp_magic e.g. page_pool_page_is_pp(), netmem_or_pp_magic(), and
-netmem_clear_pp_magic().
+  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.17-p1
 
-For net_iov, use ->pp to identify if it's pp, with making sure that ->pp
-is NULL for non-pp net_iov.
+for you to fetch changes up to bf24d64268544379d9a9b5b8efc2bb03967703b3:
 
-This work was inspired by the following link:
+  crypto: keembay - Use min() to simplify ocs_create_linked_list_from_sg() (2025-07-27 22:41:45 +1000)
 
-[1] https://lore.kernel.org/all/582f41c0-2742-4400-9c81-0d46bf4e8314@gmail.com/
+----------------------------------------------------------------
+This update includes the following changes:
 
-While at it, move the sanity check for page pool to on free.
+API:
 
-Suggested-by: David Hildenbrand <david@redhat.com>
-Co-developed-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
-Signed-off-by: Byungchul Park <byungchul@sk.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Mina Almasry <almasrymina@google.com>
----
- .../net/ethernet/mellanox/mlx5/core/en/xdp.c  |  2 +-
- include/linux/mm.h                            | 27 +++----------------
- include/linux/page-flags.h                    |  6 +++++
- include/net/netmem.h                          |  2 +-
- io_uring/zcrx.c                               |  4 +++
- mm/page_alloc.c                               |  7 +++--
- net/core/devmem.c                             |  1 +
- net/core/netmem_priv.h                        | 23 +++++++---------
- net/core/page_pool.c                          | 10 +++++--
- 9 files changed, 37 insertions(+), 45 deletions(-)
+- Allow hash drivers without fallbacks (e.g., hardware key).
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-index 5d51600935a6..def274f5c1ca 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en/xdp.c
-@@ -707,7 +707,7 @@ static void mlx5e_free_xdpsq_desc(struct mlx5e_xdpsq *sq,
- 				xdpi = mlx5e_xdpi_fifo_pop(xdpi_fifo);
- 				page = xdpi.page.page;
- 
--				/* No need to check page_pool_page_is_pp() as we
-+				/* No need to check PageNetpp() as we
- 				 * know this is a page_pool page.
- 				 */
- 				page_pool_recycle_direct(pp_page_to_nmdesc(page)->pp,
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 0d4ee569aa6b..d01b296e7184 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4171,10 +4171,9 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
-  * DMA mapping IDs for page_pool
-  *
-  * When DMA-mapping a page, page_pool allocates an ID (from an xarray) and
-- * stashes it in the upper bits of page->pp_magic. We always want to be able to
-- * unambiguously identify page pool pages (using page_pool_page_is_pp()). Non-PP
-- * pages can have arbitrary kernel pointers stored in the same field as pp_magic
-- * (since it overlaps with page->lru.next), so we must ensure that we cannot
-+ * stashes it in the upper bits of page->pp_magic. Non-PP pages can have
-+ * arbitrary kernel pointers stored in the same field as pp_magic (since
-+ * it overlaps with page->lru.next), so we must ensure that we cannot
-  * mistake a valid kernel pointer with any of the values we write into this
-  * field.
-  *
-@@ -4205,26 +4204,6 @@ int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
- #define PP_DMA_INDEX_MASK GENMASK(PP_DMA_INDEX_BITS + PP_DMA_INDEX_SHIFT - 1, \
- 				  PP_DMA_INDEX_SHIFT)
- 
--/* Mask used for checking in page_pool_page_is_pp() below. page->pp_magic is
-- * OR'ed with PP_SIGNATURE after the allocation in order to preserve bit 0 for
-- * the head page of compound page and bit 1 for pfmemalloc page, as well as the
-- * bits used for the DMA index. page_is_pfmemalloc() is checked in
-- * __page_pool_put_page() to avoid recycling the pfmemalloc page.
-- */
--#define PP_MAGIC_MASK ~(PP_DMA_INDEX_MASK | 0x3UL)
--
--#ifdef CONFIG_PAGE_POOL
--static inline bool page_pool_page_is_pp(const struct page *page)
--{
--	return (page->pp_magic & PP_MAGIC_MASK) == PP_SIGNATURE;
--}
--#else
--static inline bool page_pool_page_is_pp(const struct page *page)
--{
--	return false;
--}
--#endif
--
- #define PAGE_SNAPSHOT_FAITHFUL (1 << 0)
- #define PAGE_SNAPSHOT_PG_BUDDY (1 << 1)
- #define PAGE_SNAPSHOT_PG_IDLE  (1 << 2)
-diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-index 8d3fa3a91ce4..84247e39e9e7 100644
---- a/include/linux/page-flags.h
-+++ b/include/linux/page-flags.h
-@@ -933,6 +933,7 @@ enum pagetype {
- 	PGTY_zsmalloc		= 0xf6,
- 	PGTY_unaccepted		= 0xf7,
- 	PGTY_large_kmalloc	= 0xf8,
-+	PGTY_netpp		= 0xf9,
- 
- 	PGTY_mapcount_underflow = 0xff
- };
-@@ -1077,6 +1078,11 @@ PAGE_TYPE_OPS(Zsmalloc, zsmalloc, zsmalloc)
- PAGE_TYPE_OPS(Unaccepted, unaccepted, unaccepted)
- FOLIO_TYPE_OPS(large_kmalloc, large_kmalloc)
- 
-+/*
-+ * Marks page_pool allocated pages.
-+ */
-+PAGE_TYPE_OPS(Netpp, netpp, netpp)
-+
- /**
-  * PageHuge - Determine if the page belongs to hugetlbfs
-  * @page: The page to test.
-diff --git a/include/net/netmem.h b/include/net/netmem.h
-index f7dacc9e75fd..3667334e16e7 100644
---- a/include/net/netmem.h
-+++ b/include/net/netmem.h
-@@ -298,7 +298,7 @@ static inline struct net_iov *__netmem_clear_lsb(netmem_ref netmem)
-  */
- #define pp_page_to_nmdesc(p)						\
- ({									\
--	DEBUG_NET_WARN_ON_ONCE(!page_pool_page_is_pp(p));		\
-+	DEBUG_NET_WARN_ON_ONCE(!PageNetpp(p));				\
- 	__pp_page_to_nmdesc(p);						\
- })
- 
-diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
-index e5ff49f3425e..f771bb3e756d 100644
---- a/io_uring/zcrx.c
-+++ b/io_uring/zcrx.c
-@@ -444,6 +444,10 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
- 		area->freelist[i] = i;
- 		atomic_set(&area->user_refs[i], 0);
- 		niov->type = NET_IOV_IOURING;
-+
-+		/* niov->pp is already initialized to NULL by
-+		 * kvmalloc_array(__GFP_ZERO).
-+		 */
- 	}
- 
- 	area->free_count = nr_iovs;
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index d1d037f97c5f..2f6a55fab942 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1042,7 +1042,6 @@ static inline bool page_expected_state(struct page *page,
- #ifdef CONFIG_MEMCG
- 			page->memcg_data |
- #endif
--			page_pool_page_is_pp(page) |
- 			(page->flags & check_flags)))
- 		return false;
- 
-@@ -1069,8 +1068,6 @@ static const char *page_bad_reason(struct page *page, unsigned long flags)
- 	if (unlikely(page->memcg_data))
- 		bad_reason = "page still charged to cgroup";
- #endif
--	if (unlikely(page_pool_page_is_pp(page)))
--		bad_reason = "page_pool leak";
- 	return bad_reason;
- }
- 
-@@ -1379,9 +1376,11 @@ __always_inline bool free_pages_prepare(struct page *page,
- 		mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
- 		folio->mapping = NULL;
- 	}
--	if (unlikely(page_has_type(page)))
-+	if (unlikely(page_has_type(page))) {
-+		WARN_ON_ONCE(PageNetpp(page));
- 		/* Reset the page_type (which overlays _mapcount) */
- 		page->page_type = UINT_MAX;
-+	}
- 
- 	if (is_check_pages_enabled()) {
- 		if (free_page_is_bad(page))
-diff --git a/net/core/devmem.c b/net/core/devmem.c
-index b3a62ca0df65..40e7a4ec9009 100644
---- a/net/core/devmem.c
-+++ b/net/core/devmem.c
-@@ -285,6 +285,7 @@ net_devmem_bind_dmabuf(struct net_device *dev,
- 			niov = &owner->area.niovs[i];
- 			niov->type = NET_IOV_DMABUF;
- 			niov->owner = &owner->area;
-+			niov->pp = NULL;
- 			page_pool_set_dma_addr_netmem(net_iov_to_netmem(niov),
- 						      net_devmem_get_dma_addr(niov));
- 			if (direction == DMA_TO_DEVICE)
-diff --git a/net/core/netmem_priv.h b/net/core/netmem_priv.h
-index cd95394399b4..4b90332d6c64 100644
---- a/net/core/netmem_priv.h
-+++ b/net/core/netmem_priv.h
-@@ -8,21 +8,18 @@ static inline unsigned long netmem_get_pp_magic(netmem_ref netmem)
- 	return __netmem_clear_lsb(netmem)->pp_magic & ~PP_DMA_INDEX_MASK;
- }
- 
--static inline void netmem_or_pp_magic(netmem_ref netmem, unsigned long pp_magic)
--{
--	__netmem_clear_lsb(netmem)->pp_magic |= pp_magic;
--}
--
--static inline void netmem_clear_pp_magic(netmem_ref netmem)
--{
--	WARN_ON_ONCE(__netmem_clear_lsb(netmem)->pp_magic & PP_DMA_INDEX_MASK);
--
--	__netmem_clear_lsb(netmem)->pp_magic = 0;
--}
--
- static inline bool netmem_is_pp(netmem_ref netmem)
- {
--	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
-+	/* Use ->pp for net_iov to identify if it's pp, which requires
-+	 * that non-pp net_iov should have ->pp NULL'd.
-+	 */
-+	if (netmem_is_net_iov(netmem))
-+		return !!__netmem_clear_lsb(netmem)->pp;
-+
-+	/* For system memory, page type bit in struct page can be used
-+	 * to identify if it's pp.
-+	 */
-+	return PageNetpp(__netmem_to_page(netmem));
- }
- 
- static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
-diff --git a/net/core/page_pool.c b/net/core/page_pool.c
-index 05e2e22a8f7c..37eeab76c41c 100644
---- a/net/core/page_pool.c
-+++ b/net/core/page_pool.c
-@@ -654,7 +654,6 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
- void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
- {
- 	netmem_set_pp(netmem, pool);
--	netmem_or_pp_magic(netmem, PP_SIGNATURE);
- 
- 	/* Ensuring all pages have been split into one fragment initially:
- 	 * page_pool_set_pp_info() is only called once for every page when it
-@@ -665,12 +664,19 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
- 	page_pool_fragment_netmem(netmem, 1);
- 	if (pool->has_init_callback)
- 		pool->slow.init_callback(netmem, pool->slow.init_arg);
-+
-+	/* If it's page-backed */
-+	if (!netmem_is_net_iov(netmem))
-+		__SetPageNetpp(__netmem_to_page(netmem));
- }
- 
- void page_pool_clear_pp_info(netmem_ref netmem)
- {
--	netmem_clear_pp_magic(netmem);
- 	netmem_set_pp(netmem, NULL);
-+
-+	/* If it's page-backed */
-+	if (!netmem_is_net_iov(netmem))
-+		__ClearPageNetpp(__netmem_to_page(netmem));
- }
- 
- static __always_inline void __page_pool_release_netmem_dma(struct page_pool *pool,
+Algorithms:
 
-base-commit: 54efec8782214652b331c50646013f8526570e8d
+- Add hmac hardware key support (phmac) on s390.
+- Re-enable sha384 in FIPS mode.
+- Disable sha1 in FIPS mode.
+- Convert zstd to acomp.
+
+Drivers:
+
+- Lower priority of qat skcipher and aead.
+- Convert aspeed to partial block API.
+- Add iMX8QXP support in caam.
+- Add rate limiting support for GEN6 devices in qat.
+- Enable telemetry for GEN6 devices in qat.
+- Implement full backlog mode for hisilicon/sec2.
+----------------------------------------------------------------
+
+Ahsan Atta (1):
+      crypto: qat - allow enabling VFs in the absence of IOMMU
+
+Alexey Kardashevskiy (1):
+      crypto: ccp - Fix locking on alloc failure handling
+
+Amit Singh Tomar (2):
+      crypto: octeontx2 - Rework how engine group number is obtained
+      crypto: octeontx2 - get engine group number for asymmetric engine
+
+Arnd Bergmann (2):
+      crypto: arm/aes-neonbs - work around gcc-15 warning
+      crypto: ccp - reduce stack usage in ccp_run_aes_gcm_cmd
+
+Ashish Kalra (2):
+      crypto: ccp - Fix dereferencing uninitialized error pointer
+      crypto: ccp - Fix SNP panic notifier unregistration
+
+Bairavi Alagappan (1):
+      crypto: qat - disable ZUC-256 capability for QAT GEN5
+
+Bharat Bhushan (4):
+      crypto: octeontx2 - add timeout for load_fvc completion poll
+      crypto: octeontx2 - Fix address alignment issue on ucode loading
+      crypto: octeontx2 - Fix address alignment on CN10K A0/A1 and OcteonTX2
+      crypto: octeontx2 - Fix address alignment on CN10KB and CN10KA-B0
+
+ChengZhenghan (1):
+      crypto: x86 - Fix build warnings about export.h
+
+Dr. David Alan Gilbert (1):
+      crypto: virtio - Remove unused virtcrypto functions
+
+Eric Biggers (4):
+      crypto: x86/aegis - Fix sleeping when disallowed on PREEMPT_RT
+      crypto: x86/aegis - Add missing error checks
+      crypto: acomp - Fix CFI failure due to type punning
+      crypto: krb5 - Fix memory leak in krb5_test_one_prf()
+
+George Abraham P (2):
+      crypto: qat - relocate power management debugfs helper APIs
+      crypto: qat - enable power management debugfs for GEN6 devices
+
+Giovanni Cabiddu (6):
+      crypto: qat - lower priority for skcipher and aead algorithms
+      crypto: qat - flush misc workqueue during device shutdown
+      crypto: qat - fix DMA direction for compression on GEN2 devices
+      crypto: qat - fix seq_file position update in adf_ring_next()
+      crypto: qat - refactor ring-related debug functions
+      crypto: qat - make adf_dev_autoreset() static
+
+Harald Freudenberger (5):
+      crypto: ahash - make hash walk functions from ahash.c public
+      crypto: s390 - New s390 specific protected key hash phmac
+      crypto: ahash - Add crypto_ahash_tested() helper function
+      crypto: s390 - Add selftest support for phmac
+      crypto: testmgr - Enable phmac selftest
+
+Herbert Xu (21):
+      crypto: ahash - Add support for drivers with no fallback
+      crypto: aspeed/hash - Remove purely software hmac implementation
+      crypto: aspeed/hash - Reorganise struct aspeed_sham_reqctx
+      crypto: aspeed/hash - Use init_tfm instead of cra_init
+      crypto: aspeed/hash - Provide rctx->buffer as argument to fill padding
+      crypto: aspeed/hash - Move sham_final call into sham_update
+      crypto: aspeed/hash - Move final padding into dma_prepare
+      crypto: aspeed/hash - Remove sha_iv
+      crypto: aspeed/hash - Use API partial block handling
+      crypto: aspeed/hash - Add fallback
+      crypto: aspeed/hash - Iterate on large hashes in dma_prepare
+      crypto: aspeed/hash - Fix potential overflow in dma_prepare_sg
+      crypto: marvell/cesa - Remove unnecessary state setting on final
+      crypto: marvell/cesa - Fix engine load inaccuracy
+      crypto: s390/hmac - Fix counter in export state
+      crypto: s390/sha3 - Use cpu byte-order when exporting
+      padata: Fix pd UAF once and for all
+      padata: Remove comment for reorder_work
+      crypto: ahash - Stop legacy tfms from using the set_virt fallback path
+      crypto: aspeed - Fix hash fallback path typo
+      Merge tag 'local-lock-for-net' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip into head
+
+Holger Dengler (1):
+      s390/crypto: Add protected key hmac subfunctions for KMAC
+
+Jeff Barnes (1):
+      crypto: testmgr - Restore sha384 and hmac_sha384 drbgs in FIPS mode
+
+John Ernberg (3):
+      crypto: caam - Prevent crash on suspend with iMX8QM / iMX8ULP
+      crypto: caam - Support iMX8QXP and variants thereof
+      dt-bindings: crypto: fsl,sec-v4.0: Add power domains for iMX8QM and iMX8QXP
+
+Lukas Bulwahn (1):
+      crypto: caam - avoid option aliasing with the CONFIG_CAAM_QI build option
+
+Mario Limonciello (1):
+      crypto: ccp - Add missing bootloader info reg for pspv6
+
+Markus Theil (1):
+      crypto: jitter - fix intermediary handling
+
+Małgorzata Mielnik (2):
+      crypto: qat - relocate bank state helper functions
+      crypto: qat - add live migration enablers for GEN6 devices
+
+Mengbiao Xiong (1):
+      crypto: ccp - Fix crash when rebind ccp device for ccp.ko
+
+Ovidiu Panait (6):
+      crypto: sun8i-ce - fix nents passed to dma_unmap_sg()
+      crypto: sun8i-ce - remove ivlen field of sun8i_cipher_req_ctx
+      crypto: sun8i-ce - use helpers to get hash block and digest sizes
+      hwrng: mtk - handle devm_pm_runtime_enable errors
+      crypto: engine - remove request batching support
+      crypto: engine - remove {prepare,unprepare}_crypt_hardware callbacks
+
+Rob Herring (Arm) (2):
+      dt-bindings: crypto: Convert ti,omap2-aes to DT schema
+      dt-bindings: crypto: Convert ti,omap4-des to DT schema
+
+Ruben Wauters (1):
+      crypto: jitter - replace ARRAY_SIZE definition with header include
+
+Ryan Wanner (5):
+      dt-bindings: crypto: add sama7d65 in Atmel AES
+      dt-bindings: crypto: add sama7d65 in Atmel SHA
+      dt-bindings: crypto: add sama7d65 in Atmel TDES
+      dt-bindings: rng: atmel,at91-trng: add sama7d65 TRNG
+      crypto: atmel - add support for AES and SHA IPs available on sama7d65 SoC
+
+Sakari Ailus (2):
+      hwrng: drivers - Remove redundant pm_runtime_mark_last_busy() calls
+      crypto: drivers - Remove redundant pm_runtime_mark_last_busy() calls
+
+Sebastian Andrzej Siewior (2):
+      local_lock: Move this_cpu_ptr() notation from internal to main header
+      crypto: cryptd - Use nested-BH locking for cryptd_cpu_queue
+
+Suman Kumar Chakraborty (19):
+      crypto: qat - use unmanaged allocation for dc_data
+      crypto: qat - add support for decompression service to GEN6 devices
+      Documentation: qat: update sysfs-driver-qat for GEN6 devices
+      crypto: zstd - convert to acomp
+      crypto: qat - remove duplicate masking for GEN6 devices
+      crypto: qat - restore ASYM service support for GEN6 devices
+      crypto: zstd - fix duplicate check warning
+      crypto: qat - use pr_fmt() in adf_gen4_hw_data.c
+      crypto: qat - replace CHECK_STAT macro with static inline function
+      crypto: qat - relocate and rename bank state structure definition
+      crypto: qat - fix virtual channel configuration for GEN6 devices
+      crypto: qat - validate service in rate limiting sysfs api
+      crypto: qat - add decompression service for rate limiting
+      crypto: qat - consolidate service enums
+      crypto: qat - relocate service related functions
+      crypto: qat - add adf_rl_get_num_svc_aes() in rate limiting
+      crypto: qat - add get_svc_slice_cnt() in device data structure
+      crypto: qat - add compression slice count for rate limiting
+      crypto: qat - enable rate limiting feature for GEN6 devices
+
+Svyatoslav Pankratov (1):
+      crypto: qat - fix state restore for banks with exceptions
+
+Thomas Fourier (3):
+      crypto: inside-secure - Fix `dma_unmap_sg()` nents value
+      crypto: keembay - Fix dma_unmap_sg() nents value
+      crypto: img-hash - Fix dma_unmap_sg() nents value
+
+Thomas Weißschuh (1):
+      crypto: ccree - Don't use %pK through printk
+
+Thorsten Blum (2):
+      crypto: zstd - replace zero-length array with flexible array member
+      crypto: keembay - Use min() to simplify ocs_create_linked_list_from_sg()
+
+Vegard Nossum (1):
+      crypto: testmgr - desupport SHA-1 for FIPS 140
+
+Vijay Sundar Selvamani (3):
+      crypto: qat - add decompression service to telemetry
+      crypto: qat - enable telemetry for GEN6 devices
+      Documentation: qat: update debugfs-driver-qat_telemetry for GEN6 devices
+
+Wenkai Lin (1):
+      crypto: hisilicon/sec2 - implement full backlog mode for sec
+
+Yury Norov (1):
+      padata: use cpumask_nth()
+
+Yury Norov [NVIDIA] (2):
+      crypto: pcrypt - Optimize pcrypt_aead_init_tfm()
+      crypto: caam - Fix opencoded cpumask_next_wrap() in caam_drv_ctx_init()
+
+Zenghui Yu (1):
+      crypto: hisilicon - Use fine grained DMA mapping direction
+
+Zhiqi Song (1):
+      crypto: hisilicon/hpre - fix dma unmap sequence
+
+ Documentation/ABI/testing/debugfs-driver-qat       |    2 +-
+ .../ABI/testing/debugfs-driver-qat_telemetry       |   10 +-
+ Documentation/ABI/testing/sysfs-driver-qat         |   50 +-
+ Documentation/ABI/testing/sysfs-driver-qat_rl      |   14 +-
+ Documentation/crypto/crypto_engine.rst             |    6 -
+ .../bindings/crypto/atmel,at91sam9g46-aes.yaml     |    4 +-
+ .../bindings/crypto/atmel,at91sam9g46-sha.yaml     |    4 +-
+ .../bindings/crypto/atmel,at91sam9g46-tdes.yaml    |    4 +-
+ .../devicetree/bindings/crypto/fsl,sec-v4.0.yaml   |   41 +-
+ .../devicetree/bindings/crypto/omap-aes.txt        |   31 -
+ .../devicetree/bindings/crypto/omap-des.txt        |   30 -
+ .../devicetree/bindings/crypto/ti,omap2-aes.yaml   |   58 ++
+ .../devicetree/bindings/crypto/ti,omap4-des.yaml   |   65 ++
+ .../devicetree/bindings/rng/atmel,at91-trng.yaml   |    1 +
+ arch/arm/crypto/aes-neonbs-glue.c                  |    2 +-
+ arch/s390/configs/debug_defconfig                  |    1 +
+ arch/s390/configs/defconfig                        |    1 +
+ arch/s390/crypto/Makefile                          |    1 +
+ arch/s390/crypto/hmac_s390.c                       |   12 +-
+ arch/s390/crypto/paes_s390.c                       |    2 +-
+ arch/s390/crypto/phmac_s390.c                      | 1048 ++++++++++++++++++++
+ arch/s390/crypto/sha.h                             |    3 +
+ arch/s390/crypto/sha3_256_s390.c                   |   22 +-
+ arch/s390/crypto/sha3_512_s390.c                   |   23 +-
+ arch/s390/include/asm/cpacf.h                      |    4 +
+ arch/x86/crypto/aegis128-aesni-glue.c              |   40 +-
+ arch/x86/crypto/aria_aesni_avx2_glue.c             |    1 +
+ arch/x86/crypto/aria_aesni_avx_glue.c              |    1 +
+ arch/x86/crypto/camellia_aesni_avx_glue.c          |    1 +
+ arch/x86/crypto/camellia_glue.c                    |    1 +
+ arch/x86/crypto/curve25519-x86_64.c                |    1 +
+ arch/x86/crypto/serpent_avx_glue.c                 |    1 +
+ arch/x86/crypto/sm4_aesni_avx_glue.c               |    1 +
+ arch/x86/crypto/twofish_glue.c                     |    1 +
+ arch/x86/crypto/twofish_glue_3way.c                |    1 +
+ crypto/ahash.c                                     |   39 +-
+ crypto/cryptd.c                                    |    6 +
+ crypto/crypto_engine.c                             |   55 +-
+ crypto/deflate.c                                   |    7 +-
+ crypto/jitterentropy-kcapi.c                       |    9 +-
+ crypto/jitterentropy.c                             |    2 +-
+ crypto/krb5/selftest.c                             |    1 +
+ crypto/pcrypt.c                                    |    7 +-
+ crypto/testmgr.c                                   |   39 +-
+ crypto/zstd.c                                      |  390 +++++---
+ drivers/char/hw_random/atmel-rng.c                 |    1 -
+ drivers/char/hw_random/cctrng.c                    |    1 -
+ drivers/char/hw_random/mtk-rng.c                   |    5 +-
+ drivers/char/hw_random/npcm-rng.c                  |    1 -
+ drivers/char/hw_random/omap3-rom-rng.c             |    1 -
+ drivers/char/hw_random/rockchip-rng.c              |    3 -
+ drivers/char/hw_random/stm32-rng.c                 |    1 -
+ drivers/crypto/Kconfig                             |   13 +
+ .../crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c    |   15 +-
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c  |    6 +-
+ drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h       |    2 -
+ drivers/crypto/aspeed/aspeed-hace-hash.c           |  802 ++++-----------
+ drivers/crypto/aspeed/aspeed-hace.h                |   28 +-
+ drivers/crypto/atmel-aes.c                         |    1 +
+ drivers/crypto/atmel-sha.c                         |    1 +
+ drivers/crypto/caam/Makefile                       |    4 -
+ drivers/crypto/caam/ctrl.c                         |   13 +-
+ drivers/crypto/caam/debugfs.c                      |    2 +-
+ drivers/crypto/caam/debugfs.h                      |    2 +-
+ drivers/crypto/caam/intern.h                       |    5 +-
+ drivers/crypto/caam/jr.c                           |    3 +-
+ drivers/crypto/caam/qi.c                           |    5 +-
+ drivers/crypto/ccp/ccp-debugfs.c                   |    3 +
+ drivers/crypto/ccp/ccp-ops.c                       |  163 +--
+ drivers/crypto/ccp/sev-dev.c                       |   26 +-
+ drivers/crypto/ccp/sp-pci.c                        |    1 +
+ drivers/crypto/ccree/cc_buffer_mgr.c               |   54 +-
+ drivers/crypto/ccree/cc_cipher.c                   |    4 +-
+ drivers/crypto/ccree/cc_hash.c                     |   30 +-
+ drivers/crypto/ccree/cc_pm.c                       |    1 -
+ drivers/crypto/hisilicon/hpre/hpre_crypto.c        |    8 +-
+ drivers/crypto/hisilicon/qm.c                      |    1 -
+ drivers/crypto/hisilicon/sec2/sec.h                |   63 +-
+ drivers/crypto/hisilicon/sec2/sec_crypto.c         |  595 +++++++----
+ drivers/crypto/hisilicon/sgl.c                     |   15 +-
+ drivers/crypto/hisilicon/zip/zip_crypto.c          |   13 +-
+ drivers/crypto/img-hash.c                          |    2 +-
+ drivers/crypto/inside-secure/safexcel_hash.c       |    8 +-
+ .../crypto/intel/keembay/keembay-ocs-hcu-core.c    |    8 +-
+ drivers/crypto/intel/keembay/ocs-aes.c             |    4 +-
+ .../crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c |   18 +-
+ .../crypto/intel/qat/qat_4xxx/adf_4xxx_hw_data.c   |   14 +-
+ .../crypto/intel/qat/qat_6xxx/adf_6xxx_hw_data.c   |  129 ++-
+ .../crypto/intel/qat/qat_6xxx/adf_6xxx_hw_data.h   |   22 +-
+ drivers/crypto/intel/qat/qat_common/Makefile       |    4 +
+ .../intel/qat/qat_common/adf_accel_devices.h       |   40 +-
+ drivers/crypto/intel/qat/qat_common/adf_aer.c      |    2 +-
+ .../crypto/intel/qat/qat_common/adf_bank_state.c   |  238 +++++
+ .../crypto/intel/qat/qat_common/adf_bank_state.h   |   49 +
+ .../crypto/intel/qat/qat_common/adf_cfg_common.h   |    1 +
+ .../crypto/intel/qat/qat_common/adf_cfg_services.c |   45 +-
+ .../crypto/intel/qat/qat_common/adf_cfg_services.h |   13 +-
+ .../crypto/intel/qat/qat_common/adf_cfg_strings.h  |    1 +
+ .../crypto/intel/qat/qat_common/adf_common_drv.h   |    2 +-
+ .../crypto/intel/qat/qat_common/adf_gen4_hw_data.c |  229 +----
+ .../crypto/intel/qat/qat_common/adf_gen4_hw_data.h |   10 +-
+ .../intel/qat/qat_common/adf_gen4_pm_debugfs.c     |  105 +-
+ .../crypto/intel/qat/qat_common/adf_gen4_vf_mig.c  |    7 +-
+ drivers/crypto/intel/qat/qat_common/adf_gen6_pm.h  |   24 +
+ .../intel/qat/qat_common/adf_gen6_pm_dbgfs.c       |  124 +++
+ .../crypto/intel/qat/qat_common/adf_gen6_shared.c  |    7 +
+ .../crypto/intel/qat/qat_common/adf_gen6_shared.h  |    2 +
+ drivers/crypto/intel/qat/qat_common/adf_gen6_tl.c  |  146 +++
+ drivers/crypto/intel/qat/qat_common/adf_gen6_tl.h  |  198 ++++
+ drivers/crypto/intel/qat/qat_common/adf_init.c     |    1 +
+ drivers/crypto/intel/qat/qat_common/adf_isr.c      |    5 +
+ .../intel/qat/qat_common/adf_pm_dbgfs_utils.c      |   52 +
+ .../intel/qat/qat_common/adf_pm_dbgfs_utils.h      |   36 +
+ drivers/crypto/intel/qat/qat_common/adf_rl.c       |   86 +-
+ drivers/crypto/intel/qat/qat_common/adf_rl.h       |   11 +-
+ drivers/crypto/intel/qat/qat_common/adf_rl_admin.c |    1 +
+ drivers/crypto/intel/qat/qat_common/adf_sriov.c    |    1 -
+ drivers/crypto/intel/qat/qat_common/adf_sysfs.c    |    2 +
+ drivers/crypto/intel/qat/qat_common/adf_sysfs_rl.c |   21 +-
+ .../crypto/intel/qat/qat_common/adf_tl_debugfs.c   |    3 +
+ .../intel/qat/qat_common/adf_transport_debug.c     |   21 +-
+ drivers/crypto/intel/qat/qat_common/qat_algs.c     |   12 +-
+ drivers/crypto/intel/qat/qat_common/qat_bl.c       |    6 +-
+ .../crypto/intel/qat/qat_common/qat_compression.c  |    8 +-
+ drivers/crypto/marvell/cesa/cipher.c               |    4 +-
+ drivers/crypto/marvell/cesa/hash.c                 |   10 +-
+ drivers/crypto/marvell/octeontx2/otx2_cpt_reqmgr.h |  128 ++-
+ drivers/crypto/marvell/octeontx2/otx2_cptlf.h      |    3 +-
+ .../crypto/marvell/octeontx2/otx2_cptpf_ucode.c    |   51 +-
+ drivers/crypto/marvell/octeontx2/otx2_cptvf_algs.c |    6 +-
+ drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c |   28 +-
+ drivers/crypto/marvell/octeontx2/otx2_cptvf_mbox.c |    7 +-
+ .../crypto/marvell/octeontx2/otx2_cptvf_reqmgr.c   |   14 +-
+ drivers/crypto/omap-aes-gcm.c                      |    1 -
+ drivers/crypto/omap-aes.c                          |    1 -
+ drivers/crypto/omap-des.c                          |    1 -
+ drivers/crypto/omap-sham.c                         |    1 -
+ drivers/crypto/stm32/stm32-cryp.c                  |    1 -
+ drivers/crypto/stm32/stm32-hash.c                  |    1 -
+ drivers/crypto/virtio/virtio_crypto_common.h       |    2 -
+ drivers/crypto/virtio/virtio_crypto_core.c         |    2 +-
+ drivers/crypto/virtio/virtio_crypto_mgr.c          |   36 -
+ include/crypto/engine.h                            |    1 -
+ include/crypto/internal/acompress.h                |    5 +-
+ include/crypto/internal/engine.h                   |   15 -
+ include/crypto/internal/hash.h                     |   36 +
+ include/linux/crypto.h                             |    3 +
+ include/linux/hisi_acc_qm.h                        |    4 +-
+ include/linux/local_lock.h                         |   20 +-
+ include/linux/local_lock_internal.h                |   30 +-
+ include/linux/padata.h                             |    4 -
+ kernel/padata.c                                    |  154 +--
+ 152 files changed, 4133 insertions(+), 2089 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/crypto/omap-aes.txt
+ delete mode 100644 Documentation/devicetree/bindings/crypto/omap-des.txt
+ create mode 100644 Documentation/devicetree/bindings/crypto/ti,omap2-aes.yaml
+ create mode 100644 Documentation/devicetree/bindings/crypto/ti,omap4-des.yaml
+ create mode 100644 arch/s390/crypto/phmac_s390.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_bank_state.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_bank_state.h
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen6_pm_dbgfs.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen6_tl.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen6_tl.h
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_utils.c
+ create mode 100644 drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_utils.h
+
+Thanks,
 -- 
-2.17.1
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
