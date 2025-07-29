@@ -1,140 +1,185 @@
-Return-Path: <linux-kernel+bounces-749562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8660EB15001
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:09:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D383B15007
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F37EC7A4224
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:07:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B8367A15D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E24A2857DE;
-	Tue, 29 Jul 2025 15:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1433928643F;
+	Tue, 29 Jul 2025 15:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Cs6YWwfl"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="ZQjgMv1Y"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BDD158DAC
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753801754; cv=none; b=Akm7/IXU0DerYytK/C9eWqSJEEHICKzedFxqeyjk0FzFpcotxctuXos1r13m6HZi6wgvzaUB95t9GvTwBCFakBy788gBUibneXsr315vvxZx3lcNnGi4FIUPqm6jiuovzwPC/aoxGYRsd45xcmi3J/Uekjpjodak881cALSyWeQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753801754; c=relaxed/simple;
-	bh=zuJNRAPFeyA6IJVZOGMjCV+D6yJpmh+V51glzUJ4TKA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FU4VIBjF7fyvpEtF2Vg+nXmi/7dWXjxyJtMDgqV3Cer0lre0Jko6i7XxN3231aP+Fdfw3/DSRWZo5G0iZFhe3TGJzQIZmx0BKyL62JFQExPOMdb15ODwEk5lrdJFFnZSfACRQEKGUeIuB80gg3vL2UzEiMCFiHt643FvPXA0p3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Cs6YWwfl; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e8e24765e5bso1201625276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1753801752; x=1754406552; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CLQbmTKfAtMP+r8dxThnkiPOrsvJMHhb7grP3nOtq1c=;
-        b=Cs6YWwflM0omrSYakT5gVNVt+FE85wPapuTN5N+IgXU+Hg9x2/nGj0VV7oSNBljndV
-         k7lPvhz5Zr0XI/XWgdBXvfvyod2un0VcGMTSK707WNSeWr63bu6Y3u4V1AbaoRAdgFkO
-         W4nal22sZafQPaoSehFU5S6qJwdFPE+ZtK/p3mGa7m8SvVD6kX97FFa0mHzi0mSF5Rnx
-         vMbccCZIPVRDi6Ls9GhdKL+IgYlj2n9AyR8JCMR9QjrW1DYrVETXw5gbMBwht2BuLLYz
-         IoO0fRy6jQc3hIkfLyCZveprKZzq96ZHOp9v5ZNfwwyZHLyu9H17ix12pWC18lIpbsnb
-         byeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753801752; x=1754406552;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CLQbmTKfAtMP+r8dxThnkiPOrsvJMHhb7grP3nOtq1c=;
-        b=TA4t9oLeCPHZ4f1xCgJYaEXyDZDdVJvsY5B/yw99XHsvt5rfkqZIfHxfZ8FhwzLehm
-         wCo9p8K/aDYHRmWl8mY79VAFeG5G7U4Ib+KdxSP8/QxH4e/S6cBOZHbWseVtRFQcMf7B
-         BmaRhld9ZrnuU9ejYrXWpD6bgJFq1/RVoNeIJn8tme5Jir1b2F1riqeFM+SoUHNC/eL0
-         gggOTCWulG2cMrFzfo5k+ifsjACEme0F+KWzKpOc3/S5OERcj658Z5bvDdrQwgj6Gtxf
-         KlEIFo/D6enM+iM3bG8sx9RYFQbTV7x2a0n7zNXlsjAza8nVZkekJRTsr4ZaVbh1f0+9
-         LlTA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYUNvD7sF2bD271ht82tCX3bAhTmiGDchpOa8nnzeQn1WiMPAVr8+0OLwRg98U5HreUg7+NbxlYVXv2pM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO3ynn6G99I+3pMnOmd6T8c1ClVc+I57nSxn1ztHscOfV8e8hv
-	5/w8ZRughmljYKTyNwjd4JTZoPrQ/4+CYCa2YAcapQZGaOiThMRrDIXDkYYzKAfa6CJKJIrbSH1
-	bHZG/0h/paxHyw+p0OU3MiOUKfJnjzVLtYWVTKvLf
-X-Gm-Gg: ASbGncsqfW/ByCbZharVno1nOyZt0ioyAnRvuhn/I3vPsmab6eAImUOCO6OWAKZzTF0
-	6NmZYoGrdY0VJDKB2z3uxifgTEPIeGERqOSbK8mj7AIZW8ukfnraSWpMMAyWSWuKslyOHqYAQQD
-	S7cqfOB0Z4umKhTiiPjDUVAL3GSFZPciopM4FRIZbvaq9ZugH7OgbiYq6gceH0Mf+V/cPLjaacu
-	yurVoU=
-X-Google-Smtp-Source: AGHT+IFxmfEJzdGddKG4BQPd2LIH0BpZp63Qdw1g0WUVb/kFvWaAZRnwZXLkZa6UnWULDrqC8BI1dP/sBW7JbavWfC0=
-X-Received: by 2002:a05:6902:4793:b0:e8e:187:c241 with SMTP id
- 3f1490d57ef6-e8e314a0160mr74298276.17.1753801751812; Tue, 29 Jul 2025
- 08:09:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5331A1F956;
+	Tue, 29 Jul 2025 15:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753801872; cv=pass; b=XIBIzOORRtRKmKo+MPIJH4P/3HH2qwrZNQ3ACqTrgHCJljyhBsCZlbh6PF6qqLDdK4cQDbVfR1UDnY8j+GkCy6tI7FecN63zFshL1IKsJ95BzHx+qeENW0+X1bD/I4kvYIyeMX6YIBK2x930U2Rav5n5+JyYgWMyCf9JGVzSzzM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753801872; c=relaxed/simple;
+	bh=oj965WD4gJFW9mmpVQHr3tVLnuvYpEzwswilmT8WN7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CHxee35A2D0onqyrzeeTCpJlSg1c8a+uMGejrEt9qolVIbd4w55C8es3ss2zqSMkbnELmlHo+Oj/T1eZUe+bHY3AKdWJNCRX7TN1dvpTvy6H4fjydnqJKgaa9b9GU7xXwoP0Hsgo5AzDSho9efXvHCDl/j4syzibumcwHJs0Fwc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=ZQjgMv1Y; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753801834; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=kQC7J9GanX8bXeG6wzmtZOl0/iZacsJi9WJmcmQUjXkRaC7zB7GNPP5qgqywT5fta6vpcd9zOx8NqV6oH8SN1bFWVPJ/IsKIY7Ld14jwVYFB9O37fvBzUk3ma8Zi7Eqok0rSyNSA5yZJLr9K9l6BUFb+DxnbfjfF5SYz1EKA45w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753801834; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=kylslLamo4bv/qyU/KRTsw98sD9Xqpc7zl8o58lklJo=; 
+	b=l06appq1KmReXO+dI/RskkckkrOOkA7L+yNV4qA8gH4igou9qfX3+Xn7P5lXHBYhFp1SkXBE0hp6LWSQcfHLt39Q6tK2dkNpJvNUe0NtwiZzdgNuLER+rSSshSp+L4z9YffDEWDEE/92M9IBDDLGUUsDu2UTiY/49kC3TExHh78=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753801834;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=kylslLamo4bv/qyU/KRTsw98sD9Xqpc7zl8o58lklJo=;
+	b=ZQjgMv1YElgegvAfb0lwHXidUeK2hfoAfNfuhKmRQz918pISIcmtUWLf1JCg2aS6
+	H/QvpVjxGYJL6zWSGU4gy0CVQ6ZbynJiA5KC3b6GaGASQdc3dwJlO03FTCJfkgK+kfe
+	8wuszfUpjHfh33diiZW8Vr1zqd+MnCTBB0fAWjEc=
+Received: by mx.zohomail.com with SMTPS id 1753801832283975.8602234119677;
+	Tue, 29 Jul 2025 08:10:32 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 069A0180F0B; Tue, 29 Jul 2025 17:10:27 +0200 (CEST)
+Date: Tue, 29 Jul 2025 17:10:26 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Andy Yan <andyshrk@163.com>
+Cc: dmitry.baryshkov@oss.qualcomm.com, heiko@sntech.de, hjc@rock-chips.com, 
+	mripard@kernel.org, naoki@radxa.com, stephen@radxa.com, 
+	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com, 
+	yubing.zhang@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, robh@kernel.org, 
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH v6 07/10] arm64: dts: rockchip: Add DP0 for rk3588
+Message-ID: <dnc7coqlkgkukfg5awzrjmr7oi22lcrpucf7kdr4rfabkymbjn@ax6gjebpymkt>
+References: <20250728082846.3811429-1-andyshrk@163.com>
+ <20250728082846.3811429-8-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com> <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
-In-Reply-To: <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 29 Jul 2025 11:09:00 -0400
-X-Gm-Features: Ac12FXwNBhPktJtJ0PzDLqsmh5A5sTlKa0vey67atCJTRczlsnGdTNEDK66IhgA
-Message-ID: <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
-Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="koxpk43i6ze3fl3a"
+Content-Disposition: inline
+In-Reply-To: <20250728082846.3811429-8-andyshrk@163.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/253.35.66
+X-ZohoMailClient: External
+
+
+--koxpk43i6ze3fl3a
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 07/10] arm64: dts: rockchip: Add DP0 for rk3588
+MIME-Version: 1.0
 
-On Tue, Jul 29, 2025 at 10:43=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
-> On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
-> > The implementation of function security_inode_copy_up_xattr can be
-> > simplified to directly call call_int_hook().
-> >
-> > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> > ---
-> >  security/security.c | 8 +-------
-> >  1 file changed, 1 insertion(+), 7 deletions(-)
-> >
-> > diff --git a/security/security.c b/security/security.c
-> > index 596d41818577..a5c2e5a8009f 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
-> >   */
-> >  int security_inode_copy_up_xattr(struct dentry *src, const char *name)
-> >  {
-> > -     int rc;
-> > -
-> > -     rc =3D call_int_hook(inode_copy_up_xattr, src, name);
-> > -     if (rc !=3D LSM_RET_DEFAULT(inode_copy_up_xattr))
-> > -             return rc;
-> > -
-> > -     return LSM_RET_DEFAULT(inode_copy_up_xattr);
-> > +     return call_int_hook(inode_copy_up_xattr, src, name);
->
-> Both the existing code and the proposed change are incorrect.
-> If two LSMs supply the hook, and the first does not recognize
-> the attribute, the second, which might recognize the attribute,
-> will not be called. As SELinux and EVM both supply this hook
-> there may be a real problem here.
+Hi,
 
-It appears that Smack also supplies a inode_copy_up_xattr() callback
-via smack_inode_copy_up_xattr().
+On Mon, Jul 28, 2025 at 04:28:32PM +0800, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+>=20
+> The DP0 is compliant with the DisplayPort Specification
+> Version 1.4, and share the USBDP combo PHY0 with USB 3.1
+> HOST0 controller.
+>=20
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> ---
 
-Someone should double check this logic, but looking at it very
-quickly, it would appear that LSM framework should run the individual
-LSM callbacks in order so long as they return -EOPNOTSUPP, if they do
-not return -EOPNOTSUPP, the return value should be returned to the
-caller without executing any further callbacks.  As a default return
-value, or if all of the LSM callbacks succeed with -EOPNOTSUPP, the
-hook should return -EOPNOTSUPP.
+The description matches the TRM:
 
-Tianjia Zhang, would you be able to develop and test a patch for this?
+Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
---=20
-paul-moore.com
+Greetings,
+
+-- Sebastian
+
+>=20
+> (no changes since v1)
+>=20
+>  arch/arm64/boot/dts/rockchip/rk3588-base.dtsi | 30 +++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi b/arch/arm64/b=
+oot/dts/rockchip/rk3588-base.dtsi
+> index 51f11b9c414aa..4a54389c89d75 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588-base.dtsi
+> @@ -1536,6 +1536,36 @@ dsi1_out: port@1 {
+>  		};
+>  	};
+> =20
+> +	dp0: dp@fde50000 {
+> +		compatible =3D "rockchip,rk3588-dp";
+> +		reg =3D <0x0 0xfde50000 0x0 0x4000>;
+> +		interrupts =3D <GIC_SPI 161 IRQ_TYPE_LEVEL_HIGH 0>;
+> +		clocks =3D <&cru PCLK_DP0>, <&cru CLK_AUX16M_0>,
+> +			 <&cru CLK_DP0>, <&cru MCLK_I2S4_8CH_TX>,
+> +			 <&cru MCLK_SPDIF2_DP0>;
+> +		clock-names =3D "apb", "aux", "hdcp", "i2s", "spdif";
+> +		assigned-clocks =3D <&cru CLK_AUX16M_0>;
+> +		assigned-clock-rates =3D <16000000>;
+> +		resets =3D <&cru SRST_DP0>;
+> +		phys =3D <&usbdp_phy0 PHY_TYPE_DP>;
+> +		power-domains =3D <&power RK3588_PD_VO0>;
+> +		#sound-dai-cells =3D <0>;
+> +		status =3D "disabled";
+> +
+> +		ports {
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <0>;
+> +
+> +			dp0_in: port@0 {
+> +				reg =3D <0>;
+> +			};
+> +
+> +			dp0_out: port@1 {
+> +				reg =3D <1>;
+> +			};
+> +		};
+> +	};
+> +
+>  	hdmi0: hdmi@fde80000 {
+>  		compatible =3D "rockchip,rk3588-dw-hdmi-qp";
+>  		reg =3D <0x0 0xfde80000 0x0 0x20000>;
+> --=20
+> 2.43.0
+>=20
+
+--koxpk43i6ze3fl3a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmiI5F8ACgkQ2O7X88g7
++prSdRAAg5kIsE9+nUZ/8nYgzYkMCOnRLL0//U80oop91T9hLmq/bCfIhgxycbFO
+fd58Vzp/EZrvhSTHXAoR2OBg8nDDRJLlk84WxGi9kaQHzuCWFRssoflRu3vWIzMV
+BqMZRW/pHHjOPeT7uO4fJKUl2KE8g/+02aMFod37ORkiTOyRGa1RpvagMMcsqzWZ
+ejlXba1ByMIKTVsPO78SOQ+1qXHdP4sMS4zKhWV90rHYLtSNWC2ZadexoZhz3FF5
+truZM1iakrpg4SnIF1ITQRMhX1n7robQ2AEbE4DOMETLjrohkYohNFgIEdS7X4tR
+DAKchs05AtnYXRZc5j9248UczdcffYOMqh9An1VgyrFOnhEVeFfrCdSd2X5Cpuq8
+ojtcrUeiBrQbljFCtefG01gGBWScR6w9SUW9jHA1h4QNHzEln/1n29+n//syePnb
+VoENqcEnsoJ1Xypv9GKVt8qSwktzBiYYOiD3+CtWBBBOVyHfD+b/reSwDMX5N8Js
+zTJaPqDdmD74h/xCClcuZczRFR+TlrYTB9XEGF6Sl7Dl7OY1prpqLzDLDKY4RRUd
+X1BD7+FwH45YCW83gdt2D72xblR7v01p81dcKs7xB1UoA0/J4H4yLAuwssoltWPs
+pVeWr2X5yluAh+8i/SbrfoxUufzzuXHDqI/VSvPFx2+/wBvh8Qo=
+=9EXr
+-----END PGP SIGNATURE-----
+
+--koxpk43i6ze3fl3a--
 
