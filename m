@@ -1,246 +1,284 @@
-Return-Path: <linux-kernel+bounces-749651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F98EB15105
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:13:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B38C7B15140
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:25:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71ED93A55B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:12:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAFD418A16C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB697298249;
-	Tue, 29 Jul 2025 16:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8D1298CC3;
+	Tue, 29 Jul 2025 16:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ihHaa3P/"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2072.outbound.protection.outlook.com [40.107.223.72])
+	dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="dFUnq/TV"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A94720ED;
-	Tue, 29 Jul 2025 16:12:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753805577; cv=fail; b=ayogGQ8mQTWSyVJ7lVWlAJFoIAGuKGuhcmUUba/FGg+vVMLBRUVWEQS3UrrclS2QJlR0YD/EsOq8iYTo0ieR5hU05o3N3s51t0MlcW93YfDANnvcV0i1oy2C8yMKBUCZ2MirAPH2tGp9hLL5KZEAJvKkO4xvVxQeJlq1iQ4nCLY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753805577; c=relaxed/simple;
-	bh=DUhKhgQNvKkWZaCh0yVASqoxH5l7Lpdx7PZC1FKINK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=VptC7aUgycmkEKNbnU6eePmANZen+bMdcNUiD1ohDO6UMTFWN0qFr/UR40qxq6VqUmFJc2HnnJal4YpQ6HsqBTCUH6QtsMUfAyvw6835tiEzy2NvtfZcJc/ZVdRbIzELQ45R0mJ7NFWngyNGSsWpkOBp9qJEv9Dzpr5wX8tLkQo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ihHaa3P/; arc=fail smtp.client-ip=40.107.223.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=swZtSoHu/DZyy3TVL8EtEQMBYhSYUYyUR7JGg6QIVho6OW3fh7L4XsR3R/Tlja7YXkjrzfnBx/KTvwY/+xtdJROjyhTkLwoaQzvO9UYU5hQX6epHl+bS4OT1sr0NSZIsTbXUks9z4Vxkh0FbXPxmFZLO6Sm99qsjjsgWR/0pMjX1QAJWINy33Amf0i2JBd+elNlHI2SOtzLiByoJ+84pirbaFeZPsPDbq/ssSXzi0ohYjt4mbXCwZrWzUmmFLBuNmML/7V6hD0RlzxzJ7FX5WhFjf8Vezrf7uQaBb5nIJ9wyMZYvgTfBAaNMSwj5rPxUpM8LpPz0yvtPgEFBoqnMBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=CDB8Cu6i5mcHLWeNfaYXlc/xrtOy9ZyuKX1scS7Ub3c=;
- b=MmyM2H0kwyKZtA4XA2jSsj6qpMEMxDupqkNUNAFePb/1clU5BG6hZfU5q2wDJ5y6oq9msMelHQURE8AWi+SRce6autJbibI7u0ybFhaJAv6ZV9tx4oy+XhSaaibHKk0NX5tfV7jAsfKWcy7iFnIKafgNNQ9eSCH3pGzqJxJ278RZdY7feHegnlIj8Pc5aLcN0mzC5LPqaskNqlBCdS/JMD88YOrNR2sCD5YqSTcs6v3sf/eajZCzld2qRX5XAn500E4FW3izyDG8RExRpFPubi8UdLYkDZsCccAc2tTIr3LtgKDcY38NlvgFVExBDPo4+QJ2d/f5c4KySxeaHlwG/w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CDB8Cu6i5mcHLWeNfaYXlc/xrtOy9ZyuKX1scS7Ub3c=;
- b=ihHaa3P/Kpm6yTd1e9H+2gdab4phSilppEL9c9751nHgYp8nJbbC8VYa6fopNPLKicYZPYjF/xsuvinmfJth4ziLePgse0lf9ZYNafnNVAWs64XhhsMsMnoqsHqO53v5i2ZIeSzqL2nHZ2K1l5ztuGJRgtzu5QIFicumBVexH29yO31AfFqzagb951zVkTaYgUHrdOx7EhLYPcqrEXFQWLRfhr8+vvlggpIRBB4TPIx1FWseTeC/NKWceZXn1ab2NlQx8jB4FiYvBz0q6LJT/9illBzC8uWJtIAFL9yILUJ8BFNx51cAz6GtB9WZKUo5fpHpcvgvsMEa28cE1NPKmw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SN7PR12MB7977.namprd12.prod.outlook.com (2603:10b6:806:340::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Tue, 29 Jul
- 2025 16:12:52 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8964.024; Tue, 29 Jul 2025
- 16:12:52 +0000
-Date: Tue, 29 Jul 2025 13:12:51 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Leon Romanovsky <leon@kernel.org>
-Cc: Alex Williamson <alex.williamson@redhat.com>,
-	Leon Romanovsky <leonro@nvidia.com>, Christoph Hellwig <hch@lst.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-	Jens Axboe <axboe@kernel.dk>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mm@kvack.org, linux-pci@vger.kernel.org,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 02/10] PCI/P2PDMA: Introduce p2pdma_provider structure
- for cleaner abstraction
-Message-ID: <20250729161251.GL36037@nvidia.com>
-References: <cover.1753274085.git.leonro@nvidia.com>
- <c2307cb4c3f1af46da138f3410738754691fbb3d.1753274085.git.leonro@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2307cb4c3f1af46da138f3410738754691fbb3d.1753274085.git.leonro@nvidia.com>
-X-ClientProxiedBy: YT1P288CA0014.CANP288.PROD.OUTLOOK.COM (2603:10b6:b01::27)
- To CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D078F298993
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753806312; cv=none; b=uvOj/GeQkUUhQm9W4JW1hVj+b8ty2vP9UUHQZmoP5whTkwOLIbK1v954mmAzWv1zNqNPoXfnVwFIbqMEC5hmpZPDZQOFNH4iM8oDparDb2P35gn6JLsMuHhlpRZACWYuR6ltcVDHPX5sZ9FnwmPYgY0cwTrWKvjgF4rgcPW6oWk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753806312; c=relaxed/simple;
+	bh=8WGW/u332m7iBIRo2+VYkware56X+PiBWChv1QdxcB0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=rll2z9nsJoNQajYOKvEB2E8WtEzovkS4q+X8f/p/Q69eMUsMR5I+APueX/mctO78CzgdNZANtdeaIIc8mcFDvaLGHXHU86XvCCYkkhXGbzU8lPKG5r4SfMRwuPywRwnLbzwzVcZ1eFoEXw/Qaxn1bU04psnVgU1jRjSXc4+Zt6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=pass (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=dFUnq/TV; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id 2UNKs8FjwTgmAkKy; Tue, 29 Jul 2025 12:13:43 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=bX58Gpj8MJieSZ3eNdrwAn/t64m13puMU7fg2+7Zx0w=;
+	h=Content-Transfer-Encoding:Content-Type:Subject:From:Cc:To:Content-Language:
+	MIME-Version:Date:Message-ID; b=dFUnq/TVl3t81JN7hElW3rtu4ATn5LgcQkSo54IovGShE
+	VME2N4n+4aU+Ypa0j/63IXbRAMyyEdpMUTnqUzmdNxXaUP2cY3mtLdIq7okzyy6cZuOLSSzWhRRnb
+	xHjTEPUnSIbHLMgtc9r04mTseGyHjjOOX65ZqgEyX0NubAkS4=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14113446; Tue, 29 Jul 2025 12:13:43 -0400
+Message-ID: <55deda1d-967d-4d68-a9ba-4d5139374a37@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Tue, 29 Jul 2025 12:13:42 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SN7PR12MB7977:EE_
-X-MS-Office365-Filtering-Correlation-Id: b5a94d1f-7f86-4c7f-0873-08ddcebac506
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?980W6JOc97jNYniLDhBP7BRQhORVxW4Fy+YYxrarxU/isCU/TkbACCbdZk5m?=
- =?us-ascii?Q?FXdFlqkJYh7brsgQVPBbG7P7CizQA23JJN5TdbhrIBny7UwfnXAHOD5JVF8m?=
- =?us-ascii?Q?xZFm6iofonMDdANAl/Ff8LhKmaGjR8sXqahjEJpwgq3R1Ja37tYTrUp8hyRH?=
- =?us-ascii?Q?1QycLYOBM8jQrpAcXcqh+RG9k5erFNr9e9RpslFhudSCXGLfcqRhclGtYY6z?=
- =?us-ascii?Q?K4nwlx8DybXyDmQ+43jo9RxfHlchMlmmbKDltBZsRTNsshFsVvc6Af5oYwFB?=
- =?us-ascii?Q?Q0OmdbLF+nrJVX51qZm8l59qLusc3h/THHWVywwCgaJNwViP9t9o9WoCjDuE?=
- =?us-ascii?Q?int/plB2xLoQvZJx8zCDBWmBBxM6Tryw/j9C0jvFz+Kwa7ow1SYb+1nS7Job?=
- =?us-ascii?Q?+pDO9rS093nOImuL+2k+N+nEN1NUxYVD933GcPEYZqFU6QIhMLWDYotxObRy?=
- =?us-ascii?Q?5Dcd1CrYUYKXomnvwNd4sKcLr1pbtY8vGbnqMMoz6UPJLpVmWF1XMgadERQs?=
- =?us-ascii?Q?QNAw31bFhgylf2mPwIqY4acInlb/Ep1GUyltXec4nDKmBzDQCHwLW3BrwhM9?=
- =?us-ascii?Q?MAxPf8uNyjFQ1Y11pSslen4GnMiAtpOBENBOSEBOHBN7/og4Xp7sD+WY6M83?=
- =?us-ascii?Q?wVXMqOsmxkW67haHvoMzS7DZ0ljjyIhNk9A3UA8AWenI2B70yREqbhpU220/?=
- =?us-ascii?Q?HqSc0gn70G7fpXkugyf/A95+c7gep4DrTBEqMitns4DNj4Ck/iZDfkG5LZjs?=
- =?us-ascii?Q?9Mnio/tQLUD5ei8vWZ8CHW9fhwu/nRjTriAqk+WB/0xiPBBrtsWqezieAH5y?=
- =?us-ascii?Q?M/cUPsE4DgVs0H40bz4BQmarfxF7+nl9vR03NpIxbxKEJ/pZ49r4NUXBnM+U?=
- =?us-ascii?Q?Qt58UlC9GRvrutgr59N/pVNSUOwaAfK0FW/O3a/cznBUWFjAZwtuAM7FyqQY?=
- =?us-ascii?Q?s2bPY1mWSA+IDhBcyxv/wNdZo87mr3NH8gdAjNk41wIvJsvKyUV/P0N3R0Sd?=
- =?us-ascii?Q?WY+l3XJ8ZsOY+QbdAF7Q9X7vz5E3GMm3U4Xc5gO6wx0XHv2vWqQehSPxtBcm?=
- =?us-ascii?Q?A8fiHIJvcluYkl1x+sZBgOElspWXy3Fc+qGg0bXwY5FRz0+y2Z1cQ+tDnnXw?=
- =?us-ascii?Q?m8ZnePmwKZGW1na1mZwLknvBAmFPfOEAGlf9Iy2hI1wms3I/ChLiQuYbS7j/?=
- =?us-ascii?Q?iFVjYipYoSGPniyeDl4ZdFrTZ009KRUDFgYLOKnB8ms9/id1zMzePg05Rv/D?=
- =?us-ascii?Q?uvsJTFuLntyEyEwZ90yAOdkr+bV/8g2SvP8QVOA7uiFlTUfL4BiSD9atonpA?=
- =?us-ascii?Q?MedfKi4sV1ik4hxXjOemW6BK9PcaaUe928zkb8hsOFnpZQOHP4Yvn4nDnihU?=
- =?us-ascii?Q?QUw2OEns3iGoomza1BTYO6wig9pbVSENo87Pfwq3xmxTf86vYSOSAcyhxNop?=
- =?us-ascii?Q?KSpWYx6K0fE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?rOySeF58KQ3bNi2EFjzNKTIyKZCWIRsliIg7GNLmVnDvitBNoIyqq6BFagOW?=
- =?us-ascii?Q?oan4lew/JO68XNAhFwGW4wm8mJWLriRBu4Kr+FdSM6OhkmdzT01ijRLEFCjT?=
- =?us-ascii?Q?KhgIG0iUY+7CJFIfsqDgzPZqbWu640WttZcvz+dTunInTic+H/PrB0jBjLwj?=
- =?us-ascii?Q?8AWjrO9r/kgtaaGfy+bMF5/9aoNR4mWWITq3HirOGjJX6Z4YVBzCrSeRhTUq?=
- =?us-ascii?Q?NZiHj3Q7cuKKhDrV/+zndhnsdpK7r1vyf20OHnlNndDYg8FeyawRUQfFMCxu?=
- =?us-ascii?Q?CdLGgmWwkM8yz4guAMel3NXmuMyPeD3fSr58Kun/0yvnigUwmQWj+9CbBTjz?=
- =?us-ascii?Q?K0qj7IidSDTX3x/NzgF/yI8Kxcmydo12r3EQeZQY9e896Z9wUzRm+vPYQBFb?=
- =?us-ascii?Q?gNDiYhohEy/xLJpXYCdo5qbUpFFWwzbJXZwt7ubGJjdgnP7Lm2tJLhgLM04H?=
- =?us-ascii?Q?sqJ4In4c//3ewywWQbmaTens5EhIMv7vpAXc6c8NLIaEU2piqnskAxNZOEkK?=
- =?us-ascii?Q?IHR/q18JeZCvmw5nnOaPm2KTknHc5ck8j6Ifwk9idE1GfUXM8aVnVpjxKTt/?=
- =?us-ascii?Q?um0eG3by6aaJKGEImcfoTpYRm2caaqk5TGwJnkzcYEFpxs+6fWUNzYo7jeWS?=
- =?us-ascii?Q?Y6orpaxuAqQAJqawXILM3Wp9P6uOjtwirzGR81b28rGMOqE1bF5lMYlwSXu0?=
- =?us-ascii?Q?HEkVLcWkT+TcuPAMACBtfHXvkq68fsNWkjSxNGnii9pctwXRXFtsKa6WsxFX?=
- =?us-ascii?Q?ccWt0Tl+iASfXUbM49X/ZAexWaQEEU7ADd+IZFr7i284hez0rx338nF6WM+s?=
- =?us-ascii?Q?Zbtr/mYMyosKi3gzihy3pci7Ma8i2GsKEGKOQIHlmxZdXVrQJ+aBzcpLsZxw?=
- =?us-ascii?Q?yDefRjwzjA9sreqLPrl8qKwwaj0SJ8E1JEvqoVYj0jxp/CxPY9hL9Tazu3DE?=
- =?us-ascii?Q?1ubZ3MzDZ3RjyyjfgptbLTYwTygsFXPL41htfAiEG6Ag8AsRpyVvJBMIplv8?=
- =?us-ascii?Q?AUI3Y3f2L5kOR1r2YToWc2M1dWsdf1tXu5UK0Kb+vWg6sDOW6KHzPBGAEhTu?=
- =?us-ascii?Q?IqKJmNoDoNOr07muOhSo28lFTpZ9OkjQPTfIRY2/q4C7w6fTQi0ThdYLppRk?=
- =?us-ascii?Q?nb+np7LoWmOj/7thte/zGQMkqMmI3IUKRDE8bm896gqb1CfUVpkdR7P4ak5t?=
- =?us-ascii?Q?4AVC4OBt80Q8oXCVo+SJRTxTtarQHt31muH0IV7vwRlJYVj9zf1MZjfj8pO2?=
- =?us-ascii?Q?ues1A+vMH7iSMhEGqK8YD2rjerQpEawY3Zhe0o4MLohwyp6FaTUuQxobqw1c?=
- =?us-ascii?Q?X//n823xisG3lzDJkp2UDYnjW30IYEHZE1nNd8jyay1CKM81Qx1GJ6PtaUTU?=
- =?us-ascii?Q?Cia+rtCUD9i7h9qX1HOwFys0ZU+Mxk9QaIfi41nrGd7AedEYSvD0L0xOx15w?=
- =?us-ascii?Q?3gzkZW6ggu45Psbl7AJoW3e5EHZ6yeMaefjYxk8WT6ZUD8HKyY9KRyLpaEQa?=
- =?us-ascii?Q?5MBKSKnaX/r/qu/RDm3c/Igqnf37iZMarkiE3fIjBi/P9DdpY4ctWDwIij9R?=
- =?us-ascii?Q?qeraHsQNdUkIrPVesWA=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b5a94d1f-7f86-4c7f-0873-08ddcebac506
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 16:12:52.2750
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: INHiNe1CsiwxAvNJqK3TLjyICYSqd8xRk6/6+o+ZiMC2himzXNGTTlc6Vmk+ybqv
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7977
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
+ Christian Brauner <brauner@kernel.org>, "Darrick J. Wong"
+ <djwong@kernel.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-raid@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Tony Battersby <tonyb@cybernetics.com>
+Subject: [PATCH 2/2] iomap: align writeback to RAID stripe boundaries
+Content-Type: text/plain; charset=UTF-8
+X-ASG-Orig-Subj: [PATCH 2/2] iomap: align writeback to RAID stripe boundaries
+Content-Transfer-Encoding: 7bit
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1753805623
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Barracuda-BRTS-Status: 1
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 7085
+X-ASG-Debug-ID: 1753805623-1cf43947df801f0001-xx1T2L
 
-On Wed, Jul 23, 2025 at 04:00:03PM +0300, Leon Romanovsky wrote:
-> From: Leon Romanovsky <leonro@nvidia.com>
-> 
-> Extract the core P2PDMA provider information (device owner and bus
-> offset) from the dev_pagemap into a dedicated p2pdma_provider structure.
-> This creates a cleaner separation between the memory management layer and
-> the P2PDMA functionality.
-> 
-> The new p2pdma_provider structure contains:
-> - owner: pointer to the providing device
-> - bus_offset: computed offset for non-host transactions
-> 
-> This refactoring simplifies the P2PDMA state management by removing
-> the need to access pgmap internals directly. The pci_p2pdma_map_state
-> now stores a pointer to the provider instead of the pgmap, making
-> the API more explicit and easier to understand.
+Improve writeback performance to RAID-4/5/6 by aligning writes to stripe
+boundaries.  This relies on io_opt being set to the stripe size (or
+a multiple) when BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE is set.
 
-Based on the conversation how about this as a commit message:
+Benchmark of sequential writing to a large file on XFS using
+io_uring with 8-disk md-raid6:
+Before:      601.0 MB/s
+After:       614.5 MB/s
+Improvement: +2.3%
 
-PCI/P2PDMA: Separate the mmap() support from the core logic
+Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+---
+ fs/iomap/buffered-io.c | 175 +++++++++++++++++++++++++----------------
+ 1 file changed, 106 insertions(+), 69 deletions(-)
 
-Currently the P2PDMA code requires a pgmap and a struct page to
-function. The was serving three important purposes:
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index fb4519158f3a..f9020f916268 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1685,81 +1685,118 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
+ 		struct inode *inode, loff_t pos, loff_t end_pos,
+ 		unsigned len)
+ {
+-	struct iomap_folio_state *ifs = folio->private;
+-	size_t poff = offset_in_folio(folio, pos);
+-	unsigned int ioend_flags = 0;
+-	int error;
+-
+-	if (wpc->iomap.type == IOMAP_UNWRITTEN)
+-		ioend_flags |= IOMAP_IOEND_UNWRITTEN;
+-	if (wpc->iomap.flags & IOMAP_F_SHARED)
+-		ioend_flags |= IOMAP_IOEND_SHARED;
+-	if (folio_test_dropbehind(folio))
+-		ioend_flags |= IOMAP_IOEND_DONTCACHE;
+-	if (pos == wpc->iomap.offset && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
+-		ioend_flags |= IOMAP_IOEND_BOUNDARY;
++	struct queue_limits *lim = bdev_limits(wpc->iomap.bdev);
++	unsigned int io_align =
++		(lim->features & BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE) ?
++		lim->io_opt >> SECTOR_SHIFT : 0;
+ 
+-	if (!wpc->ioend || !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
++	do {
++		struct iomap_folio_state *ifs = folio->private;
++		size_t poff = offset_in_folio(folio, pos);
++		unsigned int ioend_flags = 0;
++		unsigned int rem_len = 0;
++		int error;
++
++		if (wpc->iomap.type == IOMAP_UNWRITTEN)
++			ioend_flags |= IOMAP_IOEND_UNWRITTEN;
++		if (wpc->iomap.flags & IOMAP_F_SHARED)
++			ioend_flags |= IOMAP_IOEND_SHARED;
++		if (folio_test_dropbehind(folio))
++			ioend_flags |= IOMAP_IOEND_DONTCACHE;
++		if (pos == wpc->iomap.offset &&
++		    (wpc->iomap.flags & IOMAP_F_BOUNDARY))
++			ioend_flags |= IOMAP_IOEND_BOUNDARY;
++
++		if (!wpc->ioend ||
++		    !iomap_can_add_to_ioend(wpc, pos, ioend_flags)) {
+ new_ioend:
+-		error = iomap_submit_ioend(wpc, 0);
+-		if (error)
+-			return error;
+-		wpc->ioend = iomap_alloc_ioend(wpc, wbc, inode, pos,
+-				ioend_flags);
+-	}
++			error = iomap_submit_ioend(wpc, 0);
++			if (error)
++				return error;
++			wpc->ioend = iomap_alloc_ioend(wpc, wbc, inode, pos,
++					ioend_flags);
++		}
+ 
+-	if (!bio_add_folio(&wpc->ioend->io_bio, folio, len, poff))
+-		goto new_ioend;
++		/* Align writes to io_align if given. */
++		if (io_align && !(wpc->iomap.flags & IOMAP_F_ANON_WRITE)) {
++			sector_t lba = bio_end_sector(&wpc->ioend->io_bio);
++			unsigned int mod = lba % io_align;
++			unsigned int max_len;
+ 
+-	if (ifs)
+-		atomic_add(len, &ifs->write_bytes_pending);
++			/*
++			 * If the end sector is already aligned and the bio is
++			 * nonempty, then start a new bio for the remainder.
++			 */
++			if (!mod && wpc->ioend->io_bio.bi_iter.bi_size)
++				goto new_ioend;
+ 
+-	/*
+-	 * Clamp io_offset and io_size to the incore EOF so that ondisk
+-	 * file size updates in the ioend completion are byte-accurate.
+-	 * This avoids recovering files with zeroed tail regions when
+-	 * writeback races with appending writes:
+-	 *
+-	 *    Thread 1:                  Thread 2:
+-	 *    ------------               -----------
+-	 *    write [A, A+B]
+-	 *    update inode size to A+B
+-	 *    submit I/O [A, A+BS]
+-	 *                               write [A+B, A+B+C]
+-	 *                               update inode size to A+B+C
+-	 *    <I/O completes, updates disk size to min(A+B+C, A+BS)>
+-	 *    <power failure>
+-	 *
+-	 *  After reboot:
+-	 *    1) with A+B+C < A+BS, the file has zero padding in range
+-	 *       [A+B, A+B+C]
+-	 *
+-	 *    |<     Block Size (BS)   >|
+-	 *    |DDDDDDDDDDDD0000000000000|
+-	 *    ^           ^        ^
+-	 *    A          A+B     A+B+C
+-	 *                       (EOF)
+-	 *
+-	 *    2) with A+B+C > A+BS, the file has zero padding in range
+-	 *       [A+B, A+BS]
+-	 *
+-	 *    |<     Block Size (BS)   >|<     Block Size (BS)    >|
+-	 *    |DDDDDDDDDDDD0000000000000|00000000000000000000000000|
+-	 *    ^           ^             ^           ^
+-	 *    A          A+B           A+BS       A+B+C
+-	 *                             (EOF)
+-	 *
+-	 *    D = Valid Data
+-	 *    0 = Zero Padding
+-	 *
+-	 * Note that this defeats the ability to chain the ioends of
+-	 * appending writes.
+-	 */
+-	wpc->ioend->io_size += len;
+-	if (wpc->ioend->io_offset + wpc->ioend->io_size > end_pos)
+-		wpc->ioend->io_size = end_pos - wpc->ioend->io_offset;
++			/*
++			 * Clip the end of the bio to the alignment boundary.
++			 */
++			max_len = (io_align - mod) << SECTOR_SHIFT;
++			if (len > max_len) {
++				rem_len = len - max_len;
++				len = max_len;
++			}
++		}
++
++		if (!bio_add_folio(&wpc->ioend->io_bio, folio, len, poff))
++			goto new_ioend;
++
++		if (ifs)
++			atomic_add(len, &ifs->write_bytes_pending);
++
++		/*
++		 * Clamp io_offset and io_size to the incore EOF so that ondisk
++		 * file size updates in the ioend completion are byte-accurate.
++		 * This avoids recovering files with zeroed tail regions when
++		 * writeback races with appending writes:
++		 *
++		 *    Thread 1:                  Thread 2:
++		 *    ------------               -----------
++		 *    write [A, A+B]
++		 *    update inode size to A+B
++		 *    submit I/O [A, A+BS]
++		 *                               write [A+B, A+B+C]
++		 *                               update inode size to A+B+C
++		 *    <I/O completes, updates disk size to min(A+B+C, A+BS)>
++		 *    <power failure>
++		 *
++		 *  After reboot:
++		 *    1) with A+B+C < A+BS, the file has zero padding in range
++		 *       [A+B, A+B+C]
++		 *
++		 *    |<     Block Size (BS)   >|
++		 *    |DDDDDDDDDDDD0000000000000|
++		 *    ^           ^        ^
++		 *    A          A+B     A+B+C
++		 *                       (EOF)
++		 *
++		 *    2) with A+B+C > A+BS, the file has zero padding in range
++		 *       [A+B, A+BS]
++		 *
++		 *    |<     Block Size (BS)   >|<     Block Size (BS)    >|
++		 *    |DDDDDDDDDDDD0000000000000|00000000000000000000000000|
++		 *    ^           ^             ^           ^
++		 *    A          A+B           A+BS       A+B+C
++		 *                             (EOF)
++		 *
++		 *    D = Valid Data
++		 *    0 = Zero Padding
++		 *
++		 * Note that this defeats the ability to chain the ioends of
++		 * appending writes.
++		 */
++		wpc->ioend->io_size += len;
++		if (wpc->ioend->io_offset + wpc->ioend->io_size > end_pos)
++			wpc->ioend->io_size = end_pos - wpc->ioend->io_offset;
++
++		wbc_account_cgroup_owner(wbc, folio, len);
++
++		pos += len;
++		len = rem_len;
++	} while (len);
+ 
+-	wbc_account_cgroup_owner(wbc, folio, len);
+ 	return 0;
+ }
+ 
+-- 
+2.43.0
 
- - DMA API compatibility, where scatterlist required a struct page as
-   input
-
- - Life cycle management, the percpu_ref is used to prevent UAF during
-   device hot unplug
-
- - A way to get the P2P provider data through the pci_p2pdma_pagemap
-
-The DMA API now has a new flow, and has gained phys_addr_t support, so
-it no longer needs struct pages to perform P2P mapping.
-
-Lifecycle management can be delegated to the user, DMABUF for instance
-has a suitable invalidation protocol that does not require struct
-page.
-
-Finding the P2P provider data can also be managed by the caller
-without need to look it up from the phys_addr.
-
-Split the P2PDMA code into two layers. The optionl upper layer,
-effectively, provides a way to mmap() P2P memory into a VMA by
-providing struct page, pgmap, a genalloc and sysfs.
-
-The lower layer provides the actual P2P infrastructure and is wrapped
-up in a new struct p2pdma_provider. Rework the mmap layer to use new
-p2pdma_provider based APIs.
-
-Drivers that do not want to put P2P memory into VMA's can allocate a
-struct p2pdma_provider after probe() starts and free it before
-remove() completes. When DMA mapping the driver must convey the struct
-p2pdma_provider to the DMA mapping code along with a phys_addr of the
-MMIO BAR slice to map. The driver must ensure that no DMA mapping
-outlives the lifetime of the struct p2pdma_provider.
-
-The intended target of this new API layer is DMABUF. There is usually
-only a single p2pdma_provider for a DMABUF exporter. Most drivers can
-establish the p2pdma_provider during probe, access the single instance
-during DMABUF attach and use that to drive the DMA mapping.
-
-DMABUF provides an invalidation mechanism that can guarentee all DMA
-is halted and the DMA mappings are undone prior to destroying the
-struct p2pdma_provider. This ensures there is no UAF through DMABUFs
-that are lingering past driver removal.
-
-The new p2pdma_provider layer cannot be used to create P2P memory that
-can be mapped into VMA's, be used with pin_user_pages(), O_DIRECT, and
-so on. These use cases must still use the mmap() layer. The
-p2pdma_provider layer is principally for DMABUF-like use cases where
-DMABUF natively manages the life cycle and access instead of
-vmas/pin_user_pages()/struct page.
-
-Jason
 
