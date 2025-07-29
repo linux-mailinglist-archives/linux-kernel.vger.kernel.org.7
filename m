@@ -1,108 +1,136 @@
-Return-Path: <linux-kernel+bounces-749908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD108B1549B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:17:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0DA4B1549C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D78473AF9E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:17:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39CB47AAAFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:16:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6EA2561C5;
-	Tue, 29 Jul 2025 21:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LOQuYbzM";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7ZNr0A9N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D52A8279783;
+	Tue, 29 Jul 2025 21:18:00 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A6B1A23B1
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A991A23B1
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753823866; cv=none; b=Dunwg+kHUTYZyG020k3WEkWhS6Oxvsmt9Vfs22Ni6bgHx2QOVInBYYsgXVaCac3Dk1Dx+1xLarbYp/GyqqBA/iXTDFG/tGphmRnQlqJKfYYdWWrACAU3s21h6izq7TvgDpLFWKm3LS2fzZD7lLQmh+jFNkbPyvbcrCMYEFvnOG0=
+	t=1753823880; cv=none; b=HlVg/XlUN+B2hweMykXs04p6IJBB0vPS6BQKKWWE1BOT1p3g5ssPuSBuhfV8Wl3oNFYawIOXUan9cuXQJLEJrku0+KRe8XruI9JxyRilVT+wLgy1uoprMVMYm/vOyqK+XuRKybQES+FVDt9Xce1bE63VaDq43d7g0cju9TKQq7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753823866; c=relaxed/simple;
-	bh=im4zcgUfpSPq2ELFn2mVEfTTsSNRnAzpBvs7yc2Zxm0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=V2mvAv19orhtFEBMeNaHIeVCUk5ajFiZkaNVNaQHsiNdD3LUWRRT4TLmnJ3KphAMtbGQHLtENTXmRdb8ryuzBJyrviH3S8s79ZthQHPK8xN6LZbhwe5Sv91RA/qBN/ZadWggHJ9J0d2ugucIo/WCbv0EXhrPMnXT+88NiOYZnls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LOQuYbzM; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7ZNr0A9N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753823862;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q5hkoU4bTkfvIy0vP97V2ilntrsjj5Vy72aNaQmKN9o=;
-	b=LOQuYbzMQ0EAS03JkYFeR/B5Q+AaK13a/D03cUHvhFibt9ljm/49B6zavZRGU0pZrQUx7m
-	5kq3L1X69OOUjndXzKTzH1rJsB3MxRZhyyu5Z8H4s1bFOXe4HKTP6q9Mqw8aTyg8EGnDFV
-	5aIrN2kIDZ5m6bi8eBVTuzbYWzqme60/3AuI+DCDQQwAAwQBXas6BY2RcoeFPagX5/3TOr
-	4qE6ScCl0GU71x+TD5Wd2hWyPP98zZZ3CnymzTufWvsWEady9JZYXEShVjapNIAMGicnTa
-	EWD3utoB8TWxDWoSjM0GsJ88c9DWubKweOAaqOCXL0JKMZRifoyukSIEWmDc+Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753823862;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q5hkoU4bTkfvIy0vP97V2ilntrsjj5Vy72aNaQmKN9o=;
-	b=7ZNr0A9N5GbWlFkCpGP4zKMKbFLxZG6XOwuwL9/gdGLLpriFoS395oN8m6dkIxMxZDmAzR
-	kEwTJSQTxVIffyBQ==
-To: syzbot <syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com>,
- bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- linux-kernel@vger.kernel.org, mingo@redhat.com,
- syzkaller-bugs@googlegroups.com, x86@kernel.org, Kees Cook
- <kees@kernel.org>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>
-Subject: Re: [syzbot] upstream build error (23)
-In-Reply-To: <87cy9ikcwh.ffs@tglx>
-References: <6888d004.a00a0220.26d0e1.0004.GAE@google.com>
- <87cy9ikcwh.ffs@tglx>
-Date: Tue, 29 Jul 2025 23:17:41 +0200
-Message-ID: <874iuuk87e.ffs@tglx>
+	s=arc-20240116; t=1753823880; c=relaxed/simple;
+	bh=BGP7HmlGyiYAmngJcemPKytYkhpwG+Ms4C/EnPCQeKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bpealGS06IIc9h+oFk4eJ7+kGUx96Utumw5KBpBHCva8/IiVcJ3Ty7duauXLk50KnAo5pthaRfNM4eJXFmFqcfOQXMeKh/aLGyz90JtD3t8WgaD3AX+wgKFc3ox4GRcS7S+eTG2Aq/1atsO63fVy8AwaV94InfZnp9HpEXam+hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay08.hostedemail.com (Postfix) with ESMTP id B5F6E1401E6;
+	Tue, 29 Jul 2025 21:17:55 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 99EB520012;
+	Tue, 29 Jul 2025 21:17:53 +0000 (UTC)
+Date: Tue, 29 Jul 2025 17:18:08 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>, Tomas
+ Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
+ <williams@redhat.com>, John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH 0/5] tools/verification: Improvements to rv and rvgen
+Message-ID: <20250729171808.505c67c2@gandalf.local.home>
+In-Reply-To: <20250723161240.194860-1-gmonaco@redhat.com>
+References: <20250723161240.194860-1-gmonaco@redhat.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: qkf9jn5pxnfpfzhoyg13fzkys5wtx83j
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 99EB520012
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX197idenOXj/Buw9CB9FuzY42flk3R8yMwo=
+X-HE-Tag: 1753823873-862548
+X-HE-Meta: U2FsdGVkX1+9h+Af1sdi7iDxolgeIwnw0Nmi80YzLYLlRBLCHd/cwWhJEngfUhFo21cyV2T2f0UK+0lvYTlNFVOpN1eZG9VhhV2KFGZ8+3CN+NVxb7jwSczkJkI4pZ5RhD9WiKjX55I0IX8f3IyuaIIG4SucxvsmTcbRIiBtvYX2fF7voBO2P2a+NpO6xnr4o3dOvVKf40Tw7nsJ7z2rjJfc8UvPKA815wpUJqKHFTHU7DkDoulU34J3aVcC0TBnLdbT9e+b2NjqrTfWscny00dCdKmS4JBvvam1ThHAGrWBIqI9XqHXi2Fh/OAw6wf95ZwKkR2dIaOhdS4YsycuAHCVoPK9bHI61WBUz9Uq63g4sNCckWUnzzkiQ0OH4RBOhj0ijA7QCBXTnOIJXyseK0Bbv73eLNOY882903qBhHY=
 
-On Tue, Jul 29 2025 at 21:36, Thomas Gleixner wrote:
-> On Tue, Jul 29 2025 at 06:43, syzbot wrote:
-> and to keep the call for efi_init() as a symbol for the linker to
-> resolve, which obviously fails.
->
-> If I change the efi_enabled() stub to __always_inline, it's optimized
-> out.
 
-Kees has addressed similar problems in:
-
-8245d47cfaba ("x86: Handle KCOV __init vs inline mismatches")
-65c430906eff ("arm64: Handle KCOV __init vs inline mismatches")
-c64d6be1a6f8 ("s390: Handle KCOV __init vs inline mismatches")
-2424fe1cac4f ("arm: Handle KCOV __init vs inline mismatches")
-d01daf9d95c9 ("mips: Handle KCOV __init vs inline mismatch")
-
-> Disabling CONFIG_KCOV_INSTRUMENT_ALL makes it go away. So GCC confuses
-> the optimizer when CONFIG_KCOV_INSTRUMENT_ALL is on.
-
-Seems to be GCC 12 specific. GCC13 does not have that problem.
-
-> The kernel is full of such inline (not __always_inline) stub
-> conditionals which evaluate to a constant....
-
-And chasing all those stubs and convert them to __always_inline seems to
-be a whack-a-mole game.
-
-Can we just stop pretending that GCC12 is KCOV capable?
+BTW, please make sure that the cover letter is Cc'd to
+linux-trace-kernel@vger.kernel.org along with the patches. I use patchwork
+to see the cover letter, but it's not present when it's not Cc'd.
 
 Thanks,
 
-        tglx
+-- Steve
 
+
+On Wed, 23 Jul 2025 18:12:35 +0200
+Gabriele Monaco <gmonaco@redhat.com> wrote:
+
+> This series introduces various improvements to the rv/rvgen tools as
+> first posted in [1]. It also adapts generated kernel files accordingly.
+> 
+> Specifically:
+> 
+> Patch 1 fixes the behaviour of the rv tool with -s and idle tasks.
+> 
+> Patch 2 allows the rv tool to gracefully terminate with SIGTERM
+> 
+> Patch 3 adjusts dot2c not to create lines over 100 columns
+> 
+> Patch 4 properly orders nested monitors in the RV Kconfig file
+> 
+> Patch 5 returns the registration error in all DA monitor instead of 0
+> 
+> This series is based on the linux-next tree.
+> 
+> Changes since [1]:
+> * Cleanup python code to improve PEP8 compliance
+> * Fix condition for long line in dot2c
+> 
+> [1] - https://lore.kernel.org/lkml/20250721082325.71554-1-gmonaco@redhat.com
+> 
+> To: Steven Rostedt <rostedt@goodmis.org>
+> To: Nam Cao <namcao@linutronix.de>
+> Cc: Tomas Glozar <tglozar@redhat.com>
+> Cc: Juri Lelli <jlelli@redhat.com>
+> Cc: Clark Williams <williams@redhat.com>
+> Cc: John Kacur <jkacur@redhat.com>
+> 
+> Gabriele Monaco (5):
+>   tools/rv: Do not skip idle in trace
+>   tools/rv: Stop gracefully also on SIGTERM
+>   tools/dot2c: Fix generated files going over 100 column limit
+>   verification/rvgen: Organise Kconfig entries for nested monitors
+>   rv: Return init error when registering monitors
+> 
+>  kernel/trace/rv/Kconfig                       |  5 +++++
+>  kernel/trace/rv/monitors/sched/sched.c        |  3 +--
+>  kernel/trace/rv/monitors/sco/sco.c            |  3 +--
+>  kernel/trace/rv/monitors/scpd/scpd.c          |  3 +--
+>  kernel/trace/rv/monitors/sncid/sncid.c        |  3 +--
+>  kernel/trace/rv/monitors/snep/snep.c          |  3 +--
+>  kernel/trace/rv/monitors/snep/snep.h          | 14 +++++++++++--
+>  kernel/trace/rv/monitors/snroc/snroc.c        |  3 +--
+>  kernel/trace/rv/monitors/tss/tss.c            |  3 +--
+>  kernel/trace/rv/monitors/wip/wip.c            |  3 +--
+>  kernel/trace/rv/monitors/wwnr/wwnr.c          |  3 +--
+>  tools/verification/rv/src/in_kernel.c         |  4 ++--
+>  tools/verification/rv/src/rv.c                |  1 +
+>  tools/verification/rvgen/rvgen/container.py   | 10 ++++++++++
+>  tools/verification/rvgen/rvgen/dot2c.py       | 20 ++++++++++---------
+>  tools/verification/rvgen/rvgen/generator.py   | 16 ++++++++++-----
+>  .../rvgen/rvgen/templates/container/main.c    |  3 +--
+>  .../rvgen/rvgen/templates/dot2k/main.c        |  3 +--
+>  18 files changed, 63 insertions(+), 40 deletions(-)
+> 
+> 
+> base-commit: a933d3dc1968fcfb0ab72879ec304b1971ed1b9a
 
 
