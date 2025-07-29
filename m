@@ -1,569 +1,353 @@
-Return-Path: <linux-kernel+bounces-749324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C740B14CEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:20:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DAD8B14CF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7900543F6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:20:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A541189B061
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7C6828C2C9;
-	Tue, 29 Jul 2025 11:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7551828C865;
+	Tue, 29 Jul 2025 11:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zhK+w6M3"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZNkT/fc3"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949FC1DE891
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1722228C99
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753788030; cv=none; b=pDNeeYuvveyciPVtDeBvRZMYastJhVFklddpUOWPQaDfShNthmz5twFa6KHpPddd3jKJmmeWVueqLAUap92MJsvtzhoQUXrfWZ+u/hizybgDzasvEShbm+Yfb54xsmJIQ0OrtO3snzJcdrRN2paLbpVbyDUkm3rQYNadC3E5AjY=
+	t=1753788048; cv=none; b=LILwOQchFlUR88nEzd0Nre5af5DW4CPp1JyoZcsYQFzJBi43Isv6zqLp36ttHgq7lqTr4zTZkY43Xdp3wU97uoJcllnK4PK0u8PTe84CiE7epMe3jL+AcHeMTgMRucDIrLf9Um7LaPRmWkwIe+iFWRrYgpnPK9ATuEB3QTIhtG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753788030; c=relaxed/simple;
-	bh=s9hxsl0XPnm33Dayp9+EhrAstWkiOJquoauAqwuRT/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QEMj2W1xuOuNIHzLH11tTA+Q4tjweuZYxmnRFfL4aAbmrXLPupjF0ou1F2dHaieBTCTG4QaTHe3x6EA6+lKWDeQHp/MmmfUkKjlOhz10HW8FyQ+fb/QCkTuCkywacOqb183yU5mMl3Pmuj/h+cLQPwOnS8NYprYWiQGS5nMBZRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zhK+w6M3; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-32f1df5703aso43831121fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:20:28 -0700 (PDT)
+	s=arc-20240116; t=1753788048; c=relaxed/simple;
+	bh=C4fPQkVFdGOWiog9dE5DuAFtn2NtJRGfy4bn+yIT2FQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=p2ECC7RrJeOeIRo56ihFkhVqXWhJY/y1QeLDKb02yiMTFBSLHfnlwIair88VrkQ0XmVGp4/wvhn18JkE8mjln2gH0gZbQjDfyASUPaiVR7NMzAktn2OxPNDoip3YIgEHTGE+LY/XW9rKafyELqwfFOB6Fv3LNOaJQDU47OfJ7Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZNkT/fc3; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4555f89b236so43799585e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:20:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753788027; x=1754392827; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=U7a5Qfq8u0F7Zd+NXZdg2+TWeHkUTlUkzN/PPKJBQOE=;
-        b=zhK+w6M3lvxnIARLFaaaqcIi7GvlxT3Ts7XC6EcKJNtSMNdvnjqHXKqci40qcDhx+B
-         MFGqw9sr3jRc1SDzHmoIn6pcL575GpfLQ2dHhrzTXmBWv2DYSK6TFdj8nPEx6O8lbg88
-         CEhY+tG6lohH1BwJz+wyWbubHdl8mURuivy43ltoloyEt5x7eAkwwLKzrHhUZiBhYPMR
-         8i51UkHlIpm1lhh18Bw/0pWhaMFr0d7VZfCRjN5ekZNHlHuvTilv4qKYQ0p95VcEAi39
-         W4kIsJPoDEUmUDbW5Dv5OfGtFWTvby2O9q0Reh0b6gPaW/lyS6IsTYu3FWaDU/5dOp0b
-         iOiA==
+        d=linaro.org; s=google; t=1753788044; x=1754392844; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=C4fPQkVFdGOWiog9dE5DuAFtn2NtJRGfy4bn+yIT2FQ=;
+        b=ZNkT/fc3u5QAl5uGcYQ758be3v38acSN5sJXO5eIrxZ+5hvpOkncnhC3lvHgZCFNr7
+         /VOIKIK5M0KMzklTe4uG1z11zFtj39fiAAfbHaRoOTICJCiawTsIhvr/PFimgwfsytuw
+         v84Sfr/4c+sG9chQONqAkFFwcQJRHAQUGCpjjwR/Mv4W94Qb0mkE4yOuAe6QqwSdCLsy
+         pwczYYRCukauWjf5B0bfsXgRjzcEtTM2o8ZNeMNhLXKzQBThxrsPZiaTQkpac+/qWKN9
+         jV6hE77NkyUD9UMAuGaLGag7HzJIJj816jCS1EaX3KLSrm3a9ELmt1F/+6kfJf7nD8mz
+         dtSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753788027; x=1754392827;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=U7a5Qfq8u0F7Zd+NXZdg2+TWeHkUTlUkzN/PPKJBQOE=;
-        b=nVsWyGPj+w3Ajz4BMfGiv5oFwgvQhWOOykpmnC5TzErDvkVJ+6O1zVvp8pm8pc3BGV
-         rZvqoRzuIEfK6Bk/9c0DrbcNt3b4EaOI07K0HMkx3EGjhgnCJiKBdFr05rCaeXaL8YvV
-         cXVxbeB8sq+AGF1KQDYgarqUzx7ZiIi+6vwS5nIHw/1uKXJJn6du2JpwDK/4elVRGY3r
-         gTGh9p9O2RIpVVgp+CeWZWEd4PTfeipWkAKIsRNk5pc9cvd/bumbcryEkL6Fmo6Jqiu5
-         /Z+HjGyDnWUa/yM1vTbgUdrcgSnXHK3wGLv5irfzYEo+mrA+U5s9bjGXvL/P6UGtW0eZ
-         0SSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUSWV3qz9kGq7ruYttbk5npZWPEHiV2BhRjipV0/3xvdWgvRybW3Oo9RntHmZp+fAsgfT1o/k778MetYTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDhwaiDDqZhrnyYqOF7G3Q7W7+nf9meO4Gh/YlsIqeA5QzE4qN
-	X7/0bpzRGnYAPSy3f3ZUt2YS/av9XcuxSSqcKn4qqDyXuVrSUXoWChBYVIf8S9FZPVsEze0vFNZ
-	K801s4maljibRWyDqHSQS/dYOERM77ocsRTDFkry4
-X-Gm-Gg: ASbGncvHeUhri7+qMiF64ssWODllEP8krblxf60ahi86B1U/TrZh71uDZ+cJAIkeok0
-	pPQvS2HwFk0S2MRmpj/tzCYZfahyYWayw+2GfFIDUq8UzkHGfxUM1e+qjMfisNpECxuI9u5/qQB
-	Vxpr2Z/4RN1DO/8uVjgRs0HqpkgfIIqzMmicl3zWIfI6INDK+w5e4247cGgSESg+8j8fYhWSsC2
-	zMDgKd4zc3qz47JxxN8+gObW8acI+dqVnCsFw==
-X-Google-Smtp-Source: AGHT+IHOd0QFm5A7jnnv0HYdMu5cS3W+XKxqQTHP44au6KhMoF+U+n5OPScwVFDz6z5dyE+KYI9OdQ8kNxb+4Ar74aM=
-X-Received: by 2002:a2e:be11:0:b0:32b:3437:7e8d with SMTP id
- 38308e7fff4ca-331ee71f2b2mr38797181fa.15.1753788026564; Tue, 29 Jul 2025
- 04:20:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753788044; x=1754392844;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=C4fPQkVFdGOWiog9dE5DuAFtn2NtJRGfy4bn+yIT2FQ=;
+        b=dtjoCJyt42zjOKvrRL85JXO9sS9IxtssiwyJktW/2wC45S280ku7Vzv3B/+lJOc5/J
+         dsE7imJKpuYNcWbjsKCKOySFwuneKqlBKxA5j+/dX6agYu/Wmg/xOlRZ7HEYk2qQdctF
+         Y6IE8+kXoBMepMLtj2KEmxUZDMwfiVY7Apo4KxMlJmKIyXg25UXSKYxzUVzBGtaE6p2Z
+         Uwlby1v58eItJCszXdxX9G3qr3vA/+/ImdwJJRFWFgXdLwNWzMtlu1RGJXXEXN/OmQw6
+         AgXElz2WTslgOo/V2oWj3PPkxeTrO0W/Ja9MCq7uuHvdud/jAauPJYRv6iXcGHUKwWLn
+         rgKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVkOi5eD6ky7T61zYpES4fnM0CwMdaXiXubkY84U3gpcFVAj2OXMRwFF1oB49/pNoHS36Jei3XlDEf/dNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuALDjVOPG3Ow24yP1XxOF8BHQZQXK1EXfHzEm0w9DSk8YYmZX
+	ig4goBJ3fYXPmxQdGoMgTsojbbQCp/QhNeg6nlSHfWd4BDmeqzNUIHvO3+Fy8/MEOdM=
+X-Gm-Gg: ASbGncs4v9lX7ttDnzYJc/a5SkL20p7FZw3iNKavShOi8HJjJIV7vTJ7C1ZXJl4JSJM
+	6JhjWlAoRIYLBMYZkFhje8IAy3aVIc7RaT9hINyCqHoqRUY1bA9Zd3mwy8uUaF4zH8FV7SdXeaR
+	+7AT35PChPMveCDX5qforMYRFu79IfH50yRE+YKoRL1EV0pXbO/hKyaK2zkd5fH3GocjEZNv9FC
+	wjqVm0LiLUEC0kHcu4BkAaVsRGUweB8aD1EHi6w4Dr43JthNSItAuLnWK8jyqs+KkqFBwds44zp
+	Fbz33MY/430Fp6ePXs4yuy5lzbQd439zaxiZRGF0LUqV7+c+I/vsk5pH3xbEX1x1RyyTYTJM0Xp
+	lzOIIsA6s2SQIPg0HbE/XKR6Dwg==
+X-Google-Smtp-Source: AGHT+IFk+OnS+Fh1yhuS1Co2LjEXP9agGTB8Zam0x2oaocaH486rMH6uLs0eQzp8N1WkQaEjwYKZTw==
+X-Received: by 2002:a05:600c:6085:b0:450:d01f:de6f with SMTP id 5b1f17b1804b1-4587631c8f2mr135281405e9.15.1753788044090;
+        Tue, 29 Jul 2025 04:20:44 -0700 (PDT)
+Received: from [10.1.1.59] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4588d873f80sm19247525e9.0.2025.07.29.04.20.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 04:20:43 -0700 (PDT)
+Message-ID: <88d31a258feb36425ad73d0323077972f85f8341.camel@linaro.org>
+Subject: Re: [PATCH v2 2/2] scsi: ufs: core: move some irq handling back to
+ hardirq (with time limit)
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>, Bart Van Assche
+	 <bvanassche@acm.org>, Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman
+	 <avri.altman@wdc.com>, "James E.J. Bottomley"
+	 <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+	 <martin.petersen@oracle.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus	
+ <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+ Manivannan Sadhasivam	 <mani@kernel.org>, kernel-team@android.com,
+ linux-arm-msm@vger.kernel.org, 	linux-samsung-soc@vger.kernel.org,
+ linux-scsi@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Date: Tue, 29 Jul 2025 12:20:42 +0100
+In-Reply-To: <7192f729-8267-4beb-976a-97b2e51c07f0@linaro.org>
+References: <20250725-ufshcd-hardirq-v2-0-884c11e0b0df@linaro.org>
+	 <20250725-ufshcd-hardirq-v2-2-884c11e0b0df@linaro.org>
+	 <a008c613-58d6-4368-ae2f-55db4ac82a02@linaro.org>
+	 <76af97e49cb7f36c8dc6edc62c84e72d6bb4669c.camel@linaro.org>
+	 <c385f1c4-f27b-4dc7-b4a2-d35a9fc77a91@acm.org>
+	 <7192f729-8267-4beb-976a-97b2e51c07f0@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.56.1-1+build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728152548.3969143-1-glider@google.com> <20250728152548.3969143-10-glider@google.com>
-In-Reply-To: <20250728152548.3969143-10-glider@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 29 Jul 2025 13:20:14 +0200
-X-Gm-Features: Ac12FXxoKFsyI2LAq_zjKXTGWQpiTX5B6u3J6kcXFdWKj58bU12TFaRGu0CROPY
-Message-ID: <CACT4Y+Y6gkd23+cVEkTs_MDfvOskd=Z4=dVh-LL-F_Jbgf8xnA@mail.gmail.com>
-Subject: Re: [PATCH v3 09/10] kcov: selftests: add kcov_test
-To: Alexander Potapenko <glider@google.com>
-Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 28 Jul 2025 at 17:26, Alexander Potapenko <glider@google.com> wrote:
->
-> Implement test fixtures for testing different combinations of coverage
-> collection modes:
->  - unique and non-unique coverage;
->  - collecting PCs and comparison arguments;
->  - mapping the buffer as RO and RW.
->
-> To build:
->  $ make -C tools/testing/selftests/kcov kcov_test
->
-> Signed-off-by: Alexander Potapenko <glider@google.com>
-> ---
-> v3:
->  - Address comments by Dmitry Vyukov:
->    - add tools/testing/selftests/kcov/config
->    - add ifdefs to KCOV_UNIQUE_ENABLE and KCOV_RESET_TRACE
->  - Properly handle/reset the coverage buffer when collecting unique
->    coverage
->
-> Change-Id: I0793f1b91685873c77bcb222a03f64321244df8f
-> ---
->  MAINTAINERS                              |   1 +
->  tools/testing/selftests/kcov/Makefile    |   6 +
->  tools/testing/selftests/kcov/config      |   1 +
->  tools/testing/selftests/kcov/kcov_test.c | 401 +++++++++++++++++++++++
->  4 files changed, 409 insertions(+)
->  create mode 100644 tools/testing/selftests/kcov/Makefile
->  create mode 100644 tools/testing/selftests/kcov/config
->  create mode 100644 tools/testing/selftests/kcov/kcov_test.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 6906eb9d88dae..c1d64cef693b9 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -13018,6 +13018,7 @@ F:      include/linux/kcov_types.h
->  F:     include/uapi/linux/kcov.h
->  F:     kernel/kcov.c
->  F:     scripts/Makefile.kcov
-> +F:     tools/testing/selftests/kcov/
->
->  KCSAN
->  M:     Marco Elver <elver@google.com>
-> diff --git a/tools/testing/selftests/kcov/Makefile b/tools/testing/selftests/kcov/Makefile
-> new file mode 100644
-> index 0000000000000..08abf8b60bcf9
-> --- /dev/null
-> +++ b/tools/testing/selftests/kcov/Makefile
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +LDFLAGS += -static
-> +
-> +TEST_GEN_PROGS := kcov_test
-> +
-> +include ../lib.mk
-> diff --git a/tools/testing/selftests/kcov/config b/tools/testing/selftests/kcov/config
-> new file mode 100644
-> index 0000000000000..75726b2aa9979
-> --- /dev/null
-> +++ b/tools/testing/selftests/kcov/config
-> @@ -0,0 +1 @@
-> +CONFIG_KCOV=y
+T24gTW9uLCAyMDI1LTA3LTI4IGF0IDE4OjU1ICswMjAwLCBOZWlsIEFybXN0cm9uZyB3cm90ZToK
+PiBIaSwKPiAKPiBPbiAyOC8wNy8yMDI1IDE3OjE5LCBCYXJ0IFZhbiBBc3NjaGUgd3JvdGU6Cj4g
+PiBPbiA3LzI4LzI1IDc6NDkgQU0sIEFuZHLDqSBEcmFzemlrIHdyb3RlOgo+ID4gPiBCdHcsIG15
+IGNvbXBsZXRlIGNvbW1hbmQgd2FzIChzaG91bGQgcHJvYmFibHkgaGF2ZSBhZGRlZCB0aGF0Cj4g
+PiA+IHRvIHRoZSBjb21taXQgbWVzc2FnZSBpbiB0aGUgZmlyc3QgcGxhY2UpOgo+ID4gPiAKPiA+
+ID4gZm9yIHJ3IGluIHJlYWQgd3JpdGUgOyBkbwo+ID4gPiDCoMKgwqDCoCBlY2hvICJydzogJHty
+d30iCj4gPiA+IMKgwqDCoMKgIGZvciBqb2JzIGluIDEgOCA7IGRvCj4gPiA+IMKgwqDCoMKgwqDC
+oMKgwqAgZWNobyAiam9iczogJHtqb2JzfSIKPiA+ID4gwqDCoMKgwqDCoMKgwqDCoCBmb3IgaXQg
+aW4gJChzZXEgMSA1KSA7IGRvCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBmaW8gLS1u
+YW1lPXJhbmQke3J3fSAtLXJ3PXJhbmQke3J3fSBcCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIC0taW9lbmdpbmU9bGliYWlvIC0tZGlyZWN0PTEgXAo+ID4gPiDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAtLWJzPTRrIC0tbnVtam9icz0ke2pvYnN9IC0tc2l6
+ZT0zMm0gXAo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAtLXJ1bnRpbWU9
+MzAgLS10aW1lX2Jhc2VkIC0tZW5kX2ZzeW5jPTEgXAo+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAtLWdyb3VwX3JlcG9ydGluZyAtLWZpbGVuYW1lPS9mb28gXAo+ID4gPiDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCBncmVwIC1FICcoaW9wc3xzeXM9fFJFQUQ6fFdSSVRF
+OiknCj4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBzbGVlcCA1Cj4gPiA+IMKgwqDCoMKg
+wqDCoMKgwqAgZG9uZQo+ID4gPiDCoMKgwqDCoCBkb25lCj4gPiA+IGRvbmUKPiA+IAo+ID4gUGxl
+YXNlIHJ1biBwZXJmb3JtYW5jZSB0ZXN0cyBpbiByZWNvdmVyeSBtb2RlIGFnYWluc3QgYSBibG9j
+awo+ID4gZGV2aWNlICgvZGV2L2Jsb2NrL3NkLi4uKSBpbnN0ZWFkIG9mIHJ1bm5pbmcgcGVyZm9y
+bWFuY2UgdGVzdHMgb24KPiA+IHRvcCBvZiBhIGZpbGVzeXN0ZW0uIE9uZSBwb3NzaWJsZSBhcHBy
+b2FjaCBmb3IgcmV0cmlldmluZyB0aGUgYmxvY2sKPiA+IGRldmljZSBuYW1lIGlzIGFzIGZvbGxv
+d3M6Cj4gPiAKPiA+IGFkYiBzaGVsbCByZWFkbGluayAvZGV2L2Jsb2NrL2J5LW5hbWUvdXNlcmRh
+dGEKPiA+IAo+ID4gVGhlcmUgbWF5IGJlIG90aGVyIGFwcHJvYWNoZXMgZm9yIHJldHJpZXZpbmcg
+dGhlIG5hbWUgb2YgdGhlIGJsb2NrCj4gPiBkZXZpY2UgYXNzb2NpYXRlZCB3aXRoIC9kYXRhLiBB
+ZGRpdGlvbmFsbHksIHR1bmluZyBmb3IgbWF4aW11bQo+ID4gcGVyZm9ybWFuY2UgaXMgdXNlZnVs
+IGJlY2F1c2UgaXQgZWxpbWluYXRlcyBpbXBhY3QgZnJvbSB0aGUgcHJvY2Vzcwo+ID4gc2NoZWR1
+bGVyIG9uIGJsb2NrIGRldmljZSBwZXJmb3JtYW5jZSBtZWFzdXJlbWVudC4gQW4gZXh0cmFjdCBm
+cm9tIGEKPiA+IHNjcmlwIHRoYXQgSSB1c2UgbXlzZWxmIHRvIG1lYXN1cmUgYmxvY2sgZGV2aWNl
+IHBlcmZvcm1hbmNlIG9uIFBpeGVsCj4gPiBkZXZpY2VzIGlzIGF2YWlsYWJsZSBiZWxvdy4KPiAK
+PiBPZiBjb3Vyc2UsIEkgZGlkIGFsbCB0aGF0IGFuZCByYW4gb24gdGhlIFNNODY1MCBRUkQgJiBI
+REsgYm9hcmRzLCBvbmUgaGFzCj4gYW4gVUZTIDMuMSBkZXZpY2UgYW5kIHRoZSBvdGhlciBhbiBV
+RlMgNC4wIGRldmljZS4KPiAKPiBIZXJlJ3MgdGhlIHJhdyBkYXRhOgo+IAo+IEJvYXJkOiBzbTg2
+NTAtcXJkCj4gcmVhZCAvIDEgam9iCj4gwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCB2Ni4xNcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdjYuMTbCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdjYuMTYgKyB0aGlzIGNvbW1pdAo+IG1pbiBJT1BT
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAzLDk5Ni4wMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNSw5
+MjEuNjDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IDMsNDI0LjgwCj4gbWF4IElPUFPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDQsNzcyLjgwwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA2LDQ5MS4yMMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgNCw1NDEuMjAKPiBhdmcgSU9QU8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgNCw1MjYuMjXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDYsMjk1LjMxwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA0LDMyMC41OAo+IGNwdSAl
+IHVzcsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNC42MsKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAyLjk2wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIDQuNTAKPiBjcHUgJSBzeXPCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoCAyMS40NcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMTcuODjCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDIxLjYyCj4gYncg
+TUIvc8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAxOC41NMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAgMjUuNzjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIDE3LjY0Cj4gCj4gcmVhZCAvIDggam9iCj4gwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2Ni4xNcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgdjYuMTbCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdjYuMTYgKyB0
+aGlzIGNvbW1pdAo+IG1pbiBJT1BTwqDCoMKgwqDCoMKgwqDCoMKgwqAgNTEsODY3LjYwwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgNTEsNTc1LjQwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAgNDUsMjU3LjAwCj4gbWF4IElPUFPCoMKgwqDCoMKgwqDCoMKgwqDC
+oCA2Nyw1MTMuNjDCoMKgwqDCoMKgwqDCoMKgwqDCoCA2NCw0NTYuNDDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA1NiwzMzYuMDAKPiBhdmcgSU9QU8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgIDY0LDMxNC44MMKgwqDCoMKgwqDCoMKgwqDCoMKgIDYyLDEzNi43
+NsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDUyLDUw
+NS43Mgo+IGNwdSAlIHVzcsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMy45OMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAzLjcywqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDMuNTIKPiBjcHUgJSBzeXPCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCAxNi43MMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMTcuMTbC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IDE4Ljc0Cj4gYncgTUIvc8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMjYzLjYwwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqAgMjU0LjQwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMjE1LjAwCj4gCj4gd3JpdGUgLyAxIGpvYgo+IMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdjYuMTXCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIHY2LjE2wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+IHY2LjE2ICsgdGhpcyBjb21taXQKPiBtaW4gSU9QU8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNSw2
+NTQuODDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDgsMDYwLjAwwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA1LDczMC44MAo+IG1heCBJT1BTwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA2LDcyMC40MMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgOCw4NTIuMDDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDYsOTgx
+LjIwCj4gYXZnIElPUFPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDYsNTc2LjkxwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCA4LDU3OS44McKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqAgNiw3MjYuNTEKPiBjcHUgJSB1c3LCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIDcuNDjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMy43OcKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA4LjQ5Cj4g
+Y3B1ICUgc3lzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNDEuMDnCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIDIzLjI3wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCAzNC44Ngo+IGJ3IE1CL3PCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgMjYuOTbCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDM1LjE2wqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAyNy41Mgo+
+IAo+IHdyaXRlIC8gOCBqb2IKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHY2LjE1wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2Ni4xNsKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2Ni4xNiArIHRoaXMgY29tbWl0Cj4gbWluIElPUFPCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA4NCw2ODcuODDCoMKgwqDCoMKgwqDCoMKgwqDCoCA5NSwwNDMuNDDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA3NCw3OTku
+NjAKPiBtYXggSU9QU8KgwqDCoMKgwqDCoMKgwqDCoCAxMDcsNjIwLjgwwqDCoMKgwqDCoMKgwqDC
+oMKgIDExMyw1NzIuMDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCA5NiwzNzcuMjAKPiBhdmcgSU9QU8KgwqDCoMKgwqDCoMKgwqDCoMKgIDk3LDkxMC44
+NsKgwqDCoMKgwqDCoMKgwqDCoCAxMDUsOTI3LjM4wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgODcsMjM5LjA3Cj4gY3B1ICUgdXNywqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA1LjQzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDQuMzjC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAgMy43Mgo+IGNwdSAlIHN5c8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDIxLjczwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAyMC4yOcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMzAuOTcKPiBidyBNQi9zwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA0MDAuODDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA0MzMuODDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAz
+NTcuNDAKPiAKPiBCb2FyZDogc204NjUwLWhkawo+IHJlYWQgLyAxIGpvYgo+IMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdjYuMTXCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIHY2LjE2wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHY2LjE2ICsg
+dGhpcyBjb21taXQKPiBtaW4gSU9QU8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNCw4NjcuMjDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIDUsNTk2LjgwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA0LDI0Mi44MAo+IG1heCBJT1BTwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoCA1LDIxMS42MMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNSw5NzAuMDDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDQsNTQ4LjgwCj4gYXZn
+IElPUFPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDUsMTI2LjEywqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCA1LDg0Ny45M8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgNCwzNzAuMTQKPiBjcHUgJSB1c3LCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDMu
+ODPCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMi44McKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAyLjYyCj4gY3B1ICUgc3lz
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMTguMjnCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIDEzLjQ0wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCAxNi44OQo+IGJ3IE1CL3PCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+MjAuOTjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDE3Ljg4wqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAyMy45Ngo+IAo+IHJlYWQg
+LyA4IGpvYgo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgdjYuMTXC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHY2LjE2wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIHY2LjE2ICsgdGhpcyBjb21taXQKPiBtaW4gSU9QU8KgwqDCoMKgwqDCoMKg
+wqDCoMKgIDQ3LDU4My44MMKgwqDCoMKgwqDCoMKgwqDCoMKgIDQ2LDgzMS42MMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDQ3LDY3MS4yMAo+IG1heCBJ
+T1BTwqDCoMKgwqDCoMKgwqDCoMKgwqAgNTgsOTEzLjIwwqDCoMKgwqDCoMKgwqDCoMKgwqAgNTks
+NDQyLjgwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+NTYsMjgyLjgwCj4gYXZnIElPUFPCoMKgwqDCoMKgwqDCoMKgwqDCoCA1Myw2MDkuMDTCoMKgwqDC
+oMKgwqDCoMKgwqDCoCA0NCwzOTYuODjCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA1Myw2MjEuNDYKPiBjcHUgJSB1c3LCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIDMuNTfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMy4wNsKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAzLjEx
+Cj4gY3B1ICUgc3lzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMTUuMjPCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIDE5LjMxwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAxNS45MAo+IGJ3IE1CL3PCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIDIxOS40MMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDIxOS42MMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDIxMC44MAo+
+IAo+IHdyaXRlIC8gMSBqb2IKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgIHY2LjE1wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2Ni4xNsKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2Ni4xNiArIHRoaXMgY29tbWl0Cj4gbWluIElPUFPCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgIDYsNTI5LjQywqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA4LDM2Ny4y
+MMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNiw0
+OTIuODAKPiBtYXggSU9QU8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgNyw4NTYuOTLCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgIDksMjQ0LjQwwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoCA3LDE4NC44MAo+IGF2ZyBJT1BTwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCA3LDY3Ni4yMcKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgOCw5OTEuNjfCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDYsOTA0LjY3Cj4gY3B1ICUgdXNy
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMTAuMTfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAgNy45OMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAzLjY4Cj4gY3B1ICUgc3lzwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAg
+MzcuNTXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIDM0LjQxwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAyMy4wNwo+IGJ3IE1CL3PC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMzEuNDTCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgIDI4LjI4wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAzNi44NAo+IAo+IHdyaXRlIC8gOCBqb2IKPiDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHY2LjE1wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oCB2Ni4xNsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB2Ni4xNiArIHRoaXMg
+Y29tbWl0Cj4gbWluIElPUFPCoMKgwqDCoMKgwqDCoMKgwqDCoCA4NiwzMDQuNjDCoMKgwqDCoMKg
+wqDCoMKgwqDCoCA5NCwyODguODDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCA3OCw0MzMuNjAKPiBtYXggSU9QU8KgwqDCoMKgwqDCoMKgwqDCoCAxMDUs
+NjcwLjgwwqDCoMKgwqDCoMKgwqDCoMKgIDExMCwzNzMuNjDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA5NiwzMzAuODAKPiBhdmcgSU9QU8KgwqDCoMKg
+wqDCoMKgwqDCoMKgIDk3LDQxOC44McKgwqDCoMKgwqDCoMKgwqDCoCAxMDMsNzg5Ljc2wqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgODgsNDY4LjI3Cj4g
+Y3B1ICUgdXNywqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCA0Ljk4wqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgIDMuMjfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMy42Nwo+IGNwdSAlIHN5c8KgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgIDIxLjQ1wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAzMC44NcKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgMjAuMDgK
+PiBidyBNQi9zwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCAzOTkuMDDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoCAzNjIuNDDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoCA0MjUuMDAKPiAKPiBBc3Npc3RlZCBhbmFseXNpcyBnaXZlczoK
+PiAKPiBJT1BTIChJbnB1dC9PdXRwdXQgT3BlcmF0aW9ucyBQZXIgU2Vjb25kKToKPiBUaGUgdjYu
+MTYga2VybmVsIHNob3dzIGEgc2xpZ2h0IGluY3JlYXNlIGluIGF2ZXJhZ2UgSU9QUyBjb21wYXJl
+ZCB0byB2Ni4xNSAoNDMyNDUuNjkgdnMuIDQyMTQ0Ljg4KS4KPiBUaGUgdjYuMTYrZml4IGtlcm5l
+bCBzaWduaWZpY2FudGx5IHJlZHVjZXMgYXZlcmFnZSBJT1BTLCBkcm9wcGluZyB0byAzNjk0Ni4x
+Ny4KPiAKPiBCYW5kd2lkdGggKE1CL3MpOgo+IFRoZSB2Ni4xNiBrZXJuZWwgc2hvd3MgYW4gaW5j
+cmVhc2UgaW4gYXZlcmFnZSBiYW5kd2lkdGggY29tcGFyZWQgdG8gdjYuMTUgKDE4MC43MiBNQi9z
+IHZzLiAxNzIuNTkgTUIvcykuCj4gVGhlIHY2LjE2IHdpdGggdGhpcyBjb21taXQgc2lnbmlmaWNh
+bnRseSByZWR1Y2VzIGF2ZXJhZ2UgYmFuZHdpZHRoLCBkcm9wcGluZyB0byAxNTEuMzIgTUIvcy4K
+PiAKPiBEZXRhaWxlZCBBbmFseXNpczoKPiBJbXBhY3Qgb2YgdjYuMTYgS2VybmVsOgo+IFRoZSB2
+Ni4xNiBrZXJuZWwgaW50cm9kdWNlcyBhIG1pbm9yIGltcHJvdmVtZW50IGluIElPIHBlcmZvcm1h
+bmNlIGNvbXBhcmVkIHRvIHY2LjE1Lgo+IEJvdGggYXZlcmFnZSBJT1BTIGFuZCBhdmVyYWdlIGJh
+bmR3aWR0aCBzYXcgYSBzbWFsbCBpbmNyZWFzZS4gVGhpcyBzdWdnZXN0cyB0aGF0IHRoZSB2Ni4x
+Ngo+IGtlcm5lbCBtaWdodCBoYXZlIGludHJvZHVjZWQgc29tZSBvcHRpbWl6YXRpb25zIHRoYXQg
+c2xpZ2h0bHkgaW1wcm92ZWQgb3ZlcmFsbCBJTyBwZXJmb3JtYW5jZS4KPiAKPiBJbXBhY3Qgb2Yg
+dGhlIEZpeDoKPiBUaGUgcG90ZW50aWFsIGludHJvZHVjZWQgYXBwZWFycyB0byBoYXZlIGEgbmVn
+YXRpdmUgaW1wYWN0IG9uIGJvdGggSU9QUyBhbmQgYmFuZHdpZHRoLgo+IEJvdGggbWV0cmljcyBz
+aG93IGEgc3Vic3RhbnRpYWwgZGVjcmVhc2UgY29tcGFyZWQgdG8gYm90aCB2Ni4xNSBhbmQgdjYu
+MTYuCj4gVGhpcyBpbmRpY2F0ZXMgdGhhdCB0aGUgZml4IG1pZ2h0IGJlIGRldHJpbWVudGFsIHRv
+IElPIHBlcmZvcm1hbmNlLgo+IAo+IFRoZSB0aHJlYWRlZCBJUlEgY2hhbmdlIGRpZCBpbmNyZWFz
+ZSBJT1BTIGFuZCBCYW5kd2lkdGgsIGFuZCBzdG9wcGVkIHN0YXJ2aW5nIGludGVycnVwdHMuCj4g
+VGhpcyBjaGFuZ2UgZ2l2ZXMgd29yc2UgbnVtYmVycyB0aGFuIGJlZm9yZSB0aGUgdGhyZWFkZWQg
+SVJRLgoKVGhhbmtzIE5laWwgZm9yIHlvdXIgbnVtYmVycy4KClNvIHRoZXJlIG11c3QgYmUgbW9y
+ZSB0byBpdC4uLiBJIHdhcyBpbnRlcmVzdGVkIGluIG92ZXJhbGwgcGVyZm9ybWFuY2UKb3JpZ2lu
+YWxseSwgYW5kIHVzaW5nIGJsb2NrIGxheWVyIGFjY2VzcyBhbmQgZGlzYWJsaW5nIGFsbCBrZXJu
+ZWwgZGVidWcKb3B0aW9ucywgdGhlIGFic29sdXRlIG51bWJlcnMgb2YgY291cnNlIGNoYW5nZSBm
+b3IgbWUsIGJ1dCB0aGUgZ2VuZXJhbAp0cmVuZCBpcyBzdGlsbCB0aGUgc2FtZToKCmZpbyByZXN1
+bHRzIGZvciA0ayBibG9jayBzaXplIG9uIFBpeGVsIDYsIGFsbCB2YWx1ZXMgYmVpbmcgdGhlIGF2
+ZXJhZ2UKb2YgNSBydW5zIGVhY2g6CiAgICByZWFkIC8gMSBqb2IgICAgICBvcmlnaW5hbCAgICAg
+ICAgIGFmdGVyICAgICAgICAgICAgICAgIHRoaXMgY29tbWl0CiAgICAgIG1pbiBJT1BTICAgICAg
+ICA3LDc0MS42MCAgICAgNiw1MDAuMDAgKC0xNi4wNCUpICAgICA5LDE3NS42MCAoIDE4LjUyJSkK
+ICAgICAgbWF4IElPUFMgICAgICAgMTEsNTQ4LjgwICAgICA4LDIxNy42MCAoLTI4Ljg0JSkgICAg
+MTEsNDc2LjgwICgtIDAuNjIlKQogICAgICBhdmcgSU9QUyAgICAgICAxMCwzNTYuNjkgICAgIDcs
+MTQzLjIxICgtMzEuMDMlKSAgICAxMSwwOTguNjUgKCAgNy4xNiUpCiAgICAgIGNwdSAlIHVzciAg
+ICAgICAgICAgNC4zMSAgICAgICAgIDQuOTMgKCAxNC4zMyUpICAgICAgICAgMy4zNCAoLTIyLjYz
+JSkKICAgICAgY3B1ICUgc3lzICAgICAgICAgIDIyLjEyICAgICAgICAyNS4wOCAoIDEzLjQwJSkg
+ICAgICAgIDE4LjE0ICgtMTcuOTclKQogICAgICBidyBNQi9zICAgICAgICAgICAgNDAuNDYgICAg
+ICAgIDI3LjkyICgtMzAuOTklKSAgICAgICAgNDMuMzQgKCAgNy4xMiUpCgogICAgcmVhZCAvIDgg
+am9icyAgICAgb3JpZ2luYWwgICAgICAgICBhZnRlciAgICAgICAgICAgICAgICB0aGlzIGNvbW1p
+dAogICAgICBtaW4gSU9QUyAgICAgICA1Myw4MzQuMDAgICAgNDksMTQ1LjIwICgtIDguNzElKSAg
+ICA1MiwyMDIuNDAgKC0gMy4wMyUpCiAgICAgIG1heCBJT1BTICAgICAgIDYyLDQ4OS4yMCAgICA1
+NSwzNzguMDAgKC0xMS4zOCUpICAgIDYxLDIwNy4yMCAoLSAyLjA1JSkKICAgICAgYXZnIElPUFMg
+ICAgICAgNjAsNzMzLjk3ICAgIDUyLDMwNS44NSAoLTEzLjg4JSkgICAgNTgsNjE3LjQ1ICgtIDMu
+NDglKQogICAgICBjcHUgJSB1c3IgICAgICAgICAgIDUuNTkgICAgICAgICA0LjI0ICgtMjQuMjIl
+KSAgICAgICAgIDUuMzEgKC0gNC45NCUpCiAgICAgIGNwdSAlIHN5cyAgICAgICAgICAyOC4zMiAg
+ICAgICAgMjEuNTYgKC0yMy44NSUpICAgICAgICAyNy40NCAoLSAzLjA4JSkKICAgICAgYncgTUIv
+cyAgICAgICAgICAgMjM3LjQwICAgICAgIDIwNC40MCAoLTEzLjkwJSkgICAgICAgMjI4LjgwICgt
+IDMuNjIlKQoKICAgIHdyaXRlIC8gMSBqb2IgICAgIG9yaWdpbmFsICAgICAgICAgYWZ0ZXIgICAg
+ICAgICAgICAgICAgdGhpcyBjb21taXQKICAgICAgbWluIElPUFMgICAgICAgMTEsNDM4LjAwICAg
+IDEwLDE3My42MCAoLTExLjA1JSkgICAgMTYsNDE4LjQwICggNDMuNTQlKQogICAgICBtYXggSU9Q
+UyAgICAgICAxOSw3NTIuMDAgICAgMTMsMzY2LjgwICgtMzIuMzMlKSAgICAxOSw2NjYuMDAgKC0g
+MC40NCUpCiAgICAgIGF2ZyBJT1BTICAgICAgIDE4LDMyOS41NyAgICAxMSw2NTYuODMgKC0zNi40
+MCUpICAgIDE4LDY4NS44MyAoICAxLjk0JSkKICAgICAgY3B1ICUgdXNyICAgICAgICAgICA2LjQ2
+ICAgICAgICAgNi4zMCAoLSAyLjYwJSkgICAgICAgICA1LjczICgtMTEuMjklKQogICAgICBjcHUg
+JSBzeXMgICAgICAgICAgMzMuNzQgICAgICAgIDMxLjM0ICgtIDcuMTElKSAgICAgICAgMzAuODMg
+KC0gOC42MyUpCiAgICAgIGJ3IE1CL3MgICAgICAgICAgICA3MS42MCAgICAgICAgNDUuNTIgKC0z
+Ni40MiUpICAgICAgICA3My43MiAoICAyLjk2JSkKCiAgICB3cml0ZSAvIDggam9icyAgICBvcmln
+aW5hbCAgICAgICAgIGFmdGVyICAgICAgICAgICAgICAgIHRoaXMgY29tbWl0CiAgICAgIG1pbiBJ
+T1BTICAgICAgIDY4LDgyNC4yMCAgICA1OSwzOTcuMjAgKC0xMy43MCUpICAgIDYwLDY5OS42MCAo
+LTExLjgwJSkKICAgICAgbWF4IElPUFMgICAgICAgODksMzgyLjAwICAgIDY4LDMxOC42MCAoLTIz
+LjU3JSkgICAgOTAsMjQ3LjAwICggIDAuOTclKQogICAgICBhdmcgSU9QUyAgICAgICA3OSw1ODku
+NzYgICAgNjUsMDQ4LjQ1ICgtMTguMjclKSAgICA3NSwxMDAuMzggKC0gNS42NCUpCiAgICAgIGNw
+dSAlIHVzciAgICAgICAgICAgNi4yMyAgICAgICAgIDUuNzYgKC0gNy40OCUpICAgICAgICAgNS40
+OSAoLTExLjg5JSkKICAgICAgY3B1ICUgc3lzICAgICAgICAgIDMxLjc2ICAgICAgICAyNy45OSAo
+LTExLjg1JSkgICAgICAgIDI4LjI5ICgtMTAuOTMlKQogICAgICBidyBNQi9zICAgICAgICAgICAz
+MTEuMDAgICAgICAgMjUzLjgwICgtMTguMzklKSAgICAgICAyOTMuMjAgKC0gNS43MiUpCgonT3Jp
+Z2luYWwnIGlzIG5leHQtMjAyNTA3MDggd2l0aCB0aGUgY3VscHJpdCBjb21taXQgcmV2ZXJ0ZWQs
+ICdhZnRlcicKaXMgdW5tb2RpZmllZCBsaW51eC1uZXh0LgoKV2hpbGUgaW4gdGhlIG1lYW50aW1l
+IEkgZGlkIGNoYW5nZSAndGhpcyBjb21taXQnIHRvIHVzZSBrdGltZSByYXRoZXIgdGhhbgpqaWZm
+aWVzIGZvciB0aW1lIGxpbWl0IGNhbGN1bGF0aW9uLCB3ZSBjYW4gc3RpbGwgc2VlIHRoZSBodWdl
+IGVmZmVjdHMgb2YKdGhlIHR3byBjaGFuZ2VzLgoKQmFuZHdpZHRoIGFuZCBhdmcgSU9QUyBhcmUg
+ZG93biBiZXR3ZWVuIDEzXiBhbmQgMzYlIHdpdGggdGhlIGN1bHByaXQgY29tbWl0LgoKQ2hlZXJz
+LApBbmRyZScK
 
-Doesn't it also need CONFIG_KCOV_UNIQUE=y since it tests the unique
-mode as well?
-
-
-> diff --git a/tools/testing/selftests/kcov/kcov_test.c b/tools/testing/selftests/kcov/kcov_test.c
-> new file mode 100644
-> index 0000000000000..daf12aeb374b5
-> --- /dev/null
-> +++ b/tools/testing/selftests/kcov/kcov_test.c
-> @@ -0,0 +1,401 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Test the kernel coverage (/sys/kernel/debug/kcov).
-> + *
-> + * Copyright 2025 Google LLC.
-> + */
-> +#include <fcntl.h>
-> +#include <linux/kcov.h>
-> +#include <stdint.h>
-> +#include <stddef.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <sys/ioctl.h>
-> +#include <sys/mman.h>
-> +#include <sys/types.h>
-> +#include <unistd.h>
-> +
-> +#include "../kselftest_harness.h"
-> +
-> +/* Normally these defines should be provided by linux/kcov.h, but they aren't there yet. */
-> +#ifndef KCOV_UNIQUE_ENABLE
-> +#define KCOV_UNIQUE_ENABLE _IOW('c', 103, unsigned long)
-> +#endif
-> +#ifndef KCOV_RESET_TRACE
-> +#define KCOV_RESET_TRACE _IO('c', 104)
-> +#endif
-> +
-> +#define COVER_SIZE (64 << 10)
-> +#define BITMAP_SIZE (4 << 10)
-> +
-> +#define DEBUG_COVER_PCS 0
-> +
-> +FIXTURE(kcov)
-> +{
-> +       int fd;
-> +       unsigned long *mapping;
-> +       size_t mapping_size;
-> +};
-> +
-> +FIXTURE_VARIANT(kcov)
-> +{
-> +       int mode;
-> +       bool fast_reset;
-> +       bool map_readonly;
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(kcov, mode_trace_pc)
-> +{
-> +       /* clang-format on */
-> +       .mode = KCOV_TRACE_PC,
-> +       .fast_reset = true,
-> +       .map_readonly = false,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(kcov, mode_trace_cmp)
-> +{
-> +       /* clang-format on */
-> +       .mode = KCOV_TRACE_CMP,
-> +       .fast_reset = true,
-> +       .map_readonly = false,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(kcov, reset_ioctl_rw)
-> +{
-> +       /* clang-format on */
-> +       .mode = KCOV_TRACE_PC,
-> +       .fast_reset = false,
-> +       .map_readonly = false,
-> +};
-> +
-> +FIXTURE_VARIANT_ADD(kcov, reset_ioctl_ro)
-> +/* clang-format off */
-> +{
-> +       /* clang-format on */
-> +       .mode = KCOV_TRACE_PC,
-> +       .fast_reset = false,
-> +       .map_readonly = true,
-> +};
-> +
-> +int kcov_open_init(struct __test_metadata *_metadata, unsigned long size,
-> +                  int prot, unsigned long **out_mapping)
-> +{
-> +       unsigned long *mapping;
-> +
-> +       /* A single fd descriptor allows coverage collection on a single thread. */
-> +       int fd = open("/sys/kernel/debug/kcov", O_RDWR);
-> +
-> +       ASSERT_NE(fd, -1)
-> +       {
-> +               perror("open");
-> +       }
-> +
-> +       EXPECT_EQ(ioctl(fd, KCOV_INIT_TRACE, size), 0)
-> +       {
-> +               perror("ioctl KCOV_INIT_TRACE");
-> +               close(fd);
-> +       }
-> +
-> +       /* Mmap buffer shared between kernel- and user-space. */
-> +       mapping = (unsigned long *)mmap(NULL, size * sizeof(unsigned long),
-> +                                       prot, MAP_SHARED, fd, 0);
-> +       ASSERT_NE((void *)mapping, MAP_FAILED)
-> +       {
-> +               perror("mmap");
-> +               close(fd);
-> +       }
-> +       *out_mapping = mapping;
-> +
-> +       return fd;
-> +}
-> +
-> +FIXTURE_SETUP(kcov)
-> +{
-> +       int prot = variant->map_readonly ? PROT_READ : (PROT_READ | PROT_WRITE);
-> +
-> +       /* Read-only mapping is incompatible with fast reset. */
-> +       ASSERT_FALSE(variant->map_readonly && variant->fast_reset);
-> +
-> +       self->mapping_size = COVER_SIZE;
-> +       self->fd = kcov_open_init(_metadata, self->mapping_size, prot,
-> +                                 &(self->mapping));
-> +
-> +       /* Enable coverage collection on the current thread. */
-> +       EXPECT_EQ(ioctl(self->fd, KCOV_ENABLE, variant->mode), 0)
-> +       {
-> +               perror("ioctl KCOV_ENABLE");
-> +               /* Cleanup will be handled by FIXTURE_TEARDOWN. */
-> +               return;
-> +       }
-> +}
-> +
-> +void kcov_uninit_close(struct __test_metadata *_metadata, int fd,
-> +                      unsigned long *mapping, size_t size)
-> +{
-> +       /* Disable coverage collection for the current thread. */
-> +       EXPECT_EQ(ioctl(fd, KCOV_DISABLE, 0), 0)
-> +       {
-> +               perror("ioctl KCOV_DISABLE");
-> +       }
-> +
-> +       /* Free resources. */
-> +       EXPECT_EQ(munmap(mapping, size * sizeof(unsigned long)), 0)
-> +       {
-> +               perror("munmap");
-> +       }
-> +
-> +       EXPECT_EQ(close(fd), 0)
-> +       {
-> +               perror("close");
-> +       }
-> +}
-> +
-> +FIXTURE_TEARDOWN(kcov)
-> +{
-> +       kcov_uninit_close(_metadata, self->fd, self->mapping,
-> +                         self->mapping_size);
-> +}
-> +
-> +void dump_collected_pcs(struct __test_metadata *_metadata, unsigned long *cover,
-> +                       size_t start, size_t end)
-> +{
-> +       int i = 0;
-> +
-> +       TH_LOG("Collected %lu PCs", end - start);
-> +#if DEBUG_COVER_PCS
-> +       for (i = start; i < end; i++)
-> +               TH_LOG("0x%lx", cover[i + 1]);
-> +#endif
-> +}
-> +
-> +/* Coverage collection helper without assertions. */
-> +unsigned long collect_coverage_unchecked(struct __test_metadata *_metadata,
-> +                                        unsigned long *cover, bool dump)
-> +{
-> +       unsigned long before, after;
-> +
-> +       before = __atomic_load_n(&cover[0], __ATOMIC_RELAXED);
-> +       /*
-> +        * Call the target syscall call. Here we use read(-1, NULL, 0) as an example.
-> +        * This will likely return an error (-EFAULT or -EBADF), but the goal is to
-> +        * collect coverage for the syscall's entry/exit paths.
-> +        */
-> +       read(-1, NULL, 0);
-> +
-> +       after = __atomic_load_n(&cover[0], __ATOMIC_RELAXED);
-> +
-> +       if (dump)
-> +               dump_collected_pcs(_metadata, cover, before, after);
-> +       return after - before;
-> +}
-> +
-> +unsigned long collect_coverage_once(struct __test_metadata *_metadata,
-> +                                   unsigned long *cover)
-> +{
-> +       unsigned long collected =
-> +               collect_coverage_unchecked(_metadata, cover, /*dump*/ true);
-> +
-> +       /* Coverage must be non-zero. */
-> +       EXPECT_GT(collected, 0);
-> +       return collected;
-> +}
-> +
-> +void reset_coverage(struct __test_metadata *_metadata, bool fast, int fd,
-> +                   unsigned long *mapping)
-> +{
-> +       unsigned long count;
-> +
-> +       if (fast) {
-> +               __atomic_store_n(&mapping[0], 0, __ATOMIC_RELAXED);
-> +       } else {
-> +               EXPECT_EQ(ioctl(fd, KCOV_RESET_TRACE, 0), 0)
-> +               {
-> +                       perror("ioctl KCOV_RESET_TRACE");
-> +               }
-> +               count = __atomic_load_n(&mapping[0], __ATOMIC_RELAXED);
-> +               EXPECT_NE(count, 0);
-> +       }
-> +}
-> +
-> +TEST_F(kcov, kcov_basic_syscall_coverage)
-> +{
-> +       unsigned long first, second, before, after, i;
-> +
-> +       /* Reset coverage that may be left over from the fixture setup. */
-> +       reset_coverage(_metadata, variant->fast_reset, self->fd, self->mapping);
-> +
-> +       /* Collect the coverage for a single syscall two times in a row. */
-> +       first = collect_coverage_once(_metadata, self->mapping);
-> +       second = collect_coverage_once(_metadata, self->mapping);
-> +       /* Collected coverage should not differ too much. */
-> +       EXPECT_GT(first * 10, second);
-> +       EXPECT_GT(second * 10, first);
-> +
-> +       /* Now reset the buffer and collect the coverage again. */
-> +       reset_coverage(_metadata, variant->fast_reset, self->fd, self->mapping);
-> +       collect_coverage_once(_metadata, self->mapping);
-> +
-> +       /* Now try many times to fill up the buffer. */
-> +       reset_coverage(_metadata, variant->fast_reset, self->fd, self->mapping);
-> +       while (collect_coverage_unchecked(_metadata, self->mapping,
-> +                                         /*dump*/ false)) {
-> +               /* Do nothing. */
-> +       }
-> +       before = __atomic_load_n(&(self->mapping[0]), __ATOMIC_RELAXED);
-> +       /*
-> +        * Resetting with ioctl may still generate some coverage, but much less
-> +        * than there was before.
-> +        */
-> +       reset_coverage(_metadata, variant->fast_reset, self->fd, self->mapping);
-> +       after = __atomic_load_n(&(self->mapping[0]), __ATOMIC_RELAXED);
-> +       EXPECT_GT(before, after);
-> +       /* Collecting coverage after reset will now succeed. */
-> +       collect_coverage_once(_metadata, self->mapping);
-> +}
-> +
-> +FIXTURE(kcov_uniq)
-> +{
-> +       int fd;
-> +       unsigned long *mapping;
-> +       size_t mapping_size;
-> +       unsigned long *bitmap;
-> +       size_t bitmap_size;
-> +       unsigned long *cover;
-> +       size_t cover_size;
-> +};
-> +
-> +FIXTURE_VARIANT(kcov_uniq)
-> +{
-> +       bool fast_reset;
-> +       bool map_readonly;
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(kcov_uniq, fast_rw)
-> +{
-> +       /* clang-format on */
-> +       .fast_reset = true,
-> +       .map_readonly = false,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(kcov_uniq, slow_rw)
-> +{
-> +       /* clang-format on */
-> +       .fast_reset = false,
-> +       .map_readonly = false,
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(kcov_uniq, slow_ro)
-> +{
-> +       /* clang-format on */
-> +       .fast_reset = false,
-> +       .map_readonly = true,
-> +};
-> +
-> +FIXTURE_SETUP(kcov_uniq)
-> +{
-> +       int prot = variant->map_readonly ? PROT_READ : (PROT_READ | PROT_WRITE);
-> +
-> +       /* Read-only mapping is incompatible with fast reset. */
-> +       ASSERT_FALSE(variant->map_readonly && variant->fast_reset);
-> +
-> +       self->mapping_size = COVER_SIZE;
-> +       self->fd = kcov_open_init(_metadata, self->mapping_size, prot,
-> +                                 &(self->mapping));
-> +
-> +       self->bitmap = self->mapping;
-> +       self->bitmap_size = BITMAP_SIZE;
-> +       /*
-> +        * Enable unique coverage collection on the current thread. Carve out
-> +        * self->bitmap_size unsigned long's for the bitmap.
-> +        */
-> +       EXPECT_EQ(ioctl(self->fd, KCOV_UNIQUE_ENABLE, self->bitmap_size), 0)
-> +       {
-> +               perror("ioctl KCOV_ENABLE");
-> +               /* Cleanup will be handled by FIXTURE_TEARDOWN. */
-> +               return;
-> +       }
-> +       self->cover = self->mapping + BITMAP_SIZE;
-> +       self->cover_size = self->mapping_size - BITMAP_SIZE;
-> +}
-> +
-> +FIXTURE_TEARDOWN(kcov_uniq)
-> +{
-> +       kcov_uninit_close(_metadata, self->fd, self->mapping,
-> +                         self->mapping_size);
-> +}
-> +
-> +void reset_uniq_coverage(struct __test_metadata *_metadata, bool fast, int fd,
-> +                        unsigned long *bitmap, unsigned long *cover)
-> +{
-> +       unsigned long count;
-> +
-> +       if (fast) {
-> +               /*
-> +                * Resetting the buffer for unique coverage collection requires
-> +                * zeroing out the bitmap and cover[0]. We are assuming that
-> +                * the coverage buffer immediately follows the bitmap, as they
-> +                * belong to the same memory mapping.
-> +                */
-> +               if (cover > bitmap)
-> +                       memset(bitmap, 0, sizeof(unsigned long) * (cover - bitmap));
-> +               __atomic_store_n(&cover[0], 0, __ATOMIC_RELAXED);
-> +       } else {
-> +               EXPECT_EQ(ioctl(fd, KCOV_RESET_TRACE, 0), 0)
-> +               {
-> +                       perror("ioctl KCOV_RESET_TRACE");
-> +               }
-> +               count = __atomic_load_n(&cover[0], __ATOMIC_RELAXED);
-> +               EXPECT_NE(count, 0);
-> +       }
-> +}
-> +
-> +TEST_F(kcov_uniq, kcov_uniq_coverage)
-> +{
-> +       unsigned long first, second, before, after, i;
-> +
-> +       /* Reset coverage that may be left over from the fixture setup. */
-> +       reset_uniq_coverage(_metadata, variant->fast_reset, self->fd, self->bitmap, self->cover);
-> +
-> +       /*
-> +        * Collect the coverage for a single syscall two times in a row.
-> +        * Use collect_coverage_unchecked(), because it may return zero coverage.
-> +        */
-> +       first = collect_coverage_unchecked(_metadata, self->cover,
-> +                                          /*dump*/ true);
-> +       second = collect_coverage_unchecked(_metadata, self->cover,
-> +                                           /*dump*/ true);
-> +
-> +       /* Now reset the buffer and collect the coverage again. */
-> +       reset_uniq_coverage(_metadata, variant->fast_reset, self->fd, self->bitmap, self->cover);
-> +       collect_coverage_once(_metadata, self->cover);
-> +
-> +       /* Now try many times to saturate the unique coverage bitmap. */
-> +       reset_uniq_coverage(_metadata, variant->fast_reset, self->fd, self->bitmap, self->cover);
-> +       for (i = 0; i < 1000; i++)
-> +               collect_coverage_unchecked(_metadata, self->cover,
-> +                                          /*dump*/ false);
-> +
-> +       /* Another invocation of collect_coverage_unchecked() should not produce new coverage. */
-> +       EXPECT_EQ(collect_coverage_unchecked(_metadata, self->cover,
-> +                                            /*dump*/ false),
-> +                 0);
-> +
-> +       before = __atomic_load_n(&(self->cover[0]), __ATOMIC_RELAXED);
-> +       /*
-> +        * Resetting with ioctl may still generate some coverage, but much less
-> +        * than there was before.
-> +        */
-> +       reset_uniq_coverage(_metadata, variant->fast_reset, self->fd, self->bitmap, self->cover);
-> +       after = __atomic_load_n(&(self->cover[0]), __ATOMIC_RELAXED);
-> +       EXPECT_GT(before, after);
-> +       /* Collecting coverage after reset will now succeed. */
-> +       collect_coverage_once(_metadata, self->cover);
-> +}
-> +
-> +TEST_HARNESS_MAIN
-> --
-> 2.50.1.470.g6ba607880d-goog
->
 
