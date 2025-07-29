@@ -1,145 +1,121 @@
-Return-Path: <linux-kernel+bounces-748769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0899B145D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:35:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E77CB145D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AC73BAD5A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E5416E638
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:36:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055351F1317;
-	Tue, 29 Jul 2025 01:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5207B1F239B;
+	Tue, 29 Jul 2025 01:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfSDiTIB"
-Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ShKZ764R"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E59017578
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716D417578;
+	Tue, 29 Jul 2025 01:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753752915; cv=none; b=OmPsGTb03dqiC/znxWfVCIyNopuXfte/K9XROc7qZYiVEnlRgTS7MHzf5A5AbS159qpXCjkQFo2Z9Qxg3ZhNU3oXzB0AicAU+ISa1qf8HyvlfXcX8mcnGrWW4+UX+JmEndWeXw2BHNHmZl6IqJKqmTTfFzAy4yaGUeuNkbSvVpw=
+	t=1753752955; cv=none; b=KECkVvvROU7LvUAS+H7nVfpEX4Y/wC1Nl1wkSfN49qB+H7WBpzQiID7zlejzdWc5MYrWcjMg5rSErGTj1wpx4BkfV691Ba+wqNtQU46/Y/R8jPMsh4DBBQ9aaP84mWoVaL/bW+/yx/TgC9h5D53T/EMRvLtJF4Y/e6i16aZaoiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753752915; c=relaxed/simple;
-	bh=417s9K9vMJGYNSAt2caW8cTsx0O5xolM3LHhI3shnVA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AzwtvR1Z7XnY3CzUmTk2DtyzzrFB6Afj587iR6yRw1AvdIxC3O5K//oflr5jVPsWJXFhQ6vHiUD5GpuRTcvQ5lsWnxUnkgQAZH9gSt9XsRVWyG+E6J8GO/crNEk5UIatT/qm7/cUg4LpsBeOM0kO2jsftAU+8Cx3DAXXf9aK0po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfSDiTIB; arc=none smtp.client-ip=209.85.216.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-31ee880f7d2so1661044a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753752913; x=1754357713; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Rt9mX5Mb6s2byllZfTIS4H+QBzV029aCkfK2lwXebF8=;
-        b=RfSDiTIBnzzqc+yZrNIUWKnb408BUdpYu9DmZ6GjI2aYpuuNHTfAfbGY5pj2YJg9G+
-         RemaJdNujn0tAuYZ8gJdG5pBeRBSxlisL/EQe9ADGhhGr1WeDOx70QHlIG+JaBmF1skn
-         ePX01WJdzM7vZ1xjCeEmEuX5ggfiacdbd5W5Th6t+dUn9Ije1/W+X8Fq15NopIQXc83p
-         /eA9VD/uLfp9fcQbxN++VDgkByFOffQ8BfXZZBu9+7tx7w8DV4RxNWDUnR/4QMbGk3c+
-         HkEzXbojIrFlcTTnTGZkFXyuNa0qGMhnaSH8B8jIvnz3PVRW3PiUHVCf/fz9jphRxIMj
-         ISHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753752913; x=1754357713;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Rt9mX5Mb6s2byllZfTIS4H+QBzV029aCkfK2lwXebF8=;
-        b=kS5wPADcGqwUge/qQViyGo2taxyWfXuGZLM+VNvfTicXKvhibRMoODDfe+UAVp7l7N
-         BXBscHuSqTKVV3Gtz1Cd/FNOCdSMyMJkWNnTn3Pd8388VH7SiRmn73fFmxYiM2l/7PK7
-         IRk7+GvOSiCZ3ga/kCUTFafGEeDAN+7EHbTJYjaOKkf/A1Da4utAc7HpG4SMSMTR+QHz
-         juzrTrso+7IRmy4x8nPyEdzIqUWVMx9kSktnRcb+qfFZ2ag+8Ngbic//AhonvbIM/vbs
-         CTam2U2621PZvQ+VThF3GRoDcrH8kC2EkeKJ8HV8gDRBzcki8KBpwpXeJF85Rp4y8o1j
-         AQNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXrBBJ/T2Bv7tu+Znj6gNw3BiGc4A4toaCZaX46y2LLGY5e8bJktV520nW3+GhmOKqxfX7a+V/0qCjKYto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEOVyT9ELOYtAJ53hX1sVEvj+tQy4Knx1CY47QgJQdg20czjDD
-	jBSo5HNCakXlwDu+yqkIsSf2IFV1eDtNMokyetxtsa7n0TUyrdIKObaE
-X-Gm-Gg: ASbGncujW+QyANwQpdVEdWgSAiVYixDhaEOHYvmzqFpozW+E17jh8qXSXIZ8uasRHAv
-	a46LFpqmmusGPsnhWCzgS97v9yk4cMNL7TOO78JWSu90F9lQgGIM1zgVlKaTnV2Hhy+aCLt3jio
-	xmDQtNEWOcW0qCA5qmoHPaKwRnx28WOfMIp2Wg4iKRxrVPZ1phDsK6J6PxNQYKRW/uSjyCGWegl
-	gf+s1+8/Es3ifwML4Ek88wgHKv48qaeDD+wZQeg12FbsQR1MfhVEDtEwuZgrf3CBd3Y5qWB0GVR
-	2mnmZDu87OPUy0IXqe2RvgkLDpadwkbgtZzosjjdB32ge4MnyHnNBBR2U0yFoVOjKxsg+ib/QUt
-	SyoN9vzfEsdzHXs+4dpjCW75x+76Xfg==
-X-Google-Smtp-Source: AGHT+IEYkTal4nceQr+Hsq7FyOMvq/QX8UWdGciXifD+Vuh70D/a0Jat1uDfWwNb6vQzeZqki9OV8A==
-X-Received: by 2002:a17:90b:3bc4:b0:308:7270:d6ea with SMTP id 98e67ed59e1d1-31e77a2483fmr17407876a91.30.1753752913253;
-        Mon, 28 Jul 2025 18:35:13 -0700 (PDT)
-Received: from localhost.localdomain ([167.220.61.18])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b3d3d3csm6564895b3a.111.2025.07.28.18.35.12
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 28 Jul 2025 18:35:12 -0700 (PDT)
-From: Tian <27392025k@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: arnd@arndb.de,
-	linux-kernel@vger.kernel.org,
-	Tian Liu <27392025k@gmail.com>
-Subject: [PATCH misc v2] misc: cardreader: fix overwritten return value in RTS5260 driver
-Date: Mon, 28 Jul 2025 18:35:10 -0700
-Message-Id: <20250729013510.34358-1-27392025k@gmail.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1753752955; c=relaxed/simple;
+	bh=TBhH0XChIVMo2IjOaCYjQY6MI7eoAjXxiplja+1VcJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ocFNhdGKzmII/N3HTK8YB1PEZv3jU5nQo+opxeWwfy0ndkmyM3zi/LV3pJDo8X1VclNIVnJm8ycPweBmq/fH7Pbzk0FQjRQaNQ1WPEreRZsMBKrlOWBwHH6iW2byZNrzfytjAvI3q9rE6ndLigVwlkK2yzOyNNgtVHoxstznSls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ShKZ764R; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753752743;
+	bh=5pBS3qj7hAH4RQt8bdhJ3MOKUD//BRx+rTop/UWsJi8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ShKZ764Rexht1ZHrOTR8r2cV1jYv679Bx0hXQXkXML+0a5U0BE8Dr5rwloOAWFTlm
+	 S78f+RJlTBd1zWlLrjL93ldh/bkgV/aI/AU31fAS6UTxUyZWMmzYj1Bq0tZBS2qHJh
+	 PiAWlTOu325UOTSSShxr+4t6zSh99Rc70bE43XgHsyp5hW33d584ftapVek40J+xai
+	 3H9z0XZ4wJKkYRp4Nxa9ooLOYX/03VVm920Q1NOlN7oxOtopWfxudmtxnXaaVInsZI
+	 bQiX0yyWCz9mGW79Ue0raqNSoxU/LOQ6Sy0ssh7368DkGzCisM9S7Ko4srngff5Sm7
+	 8NqdJxHuLpXQw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brdBH0dcxz4wb0;
+	Tue, 29 Jul 2025 11:32:23 +1000 (AEST)
+Date: Tue, 29 Jul 2025 11:35:48 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Lee Jones <lee@kernel.org>
+Cc: Robert Marko <robert.marko@sartura.hr>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the mfd tree
+Message-ID: <20250729113548.4ad9ba1c@canb.auug.org.au>
+In-Reply-To: <20250724100314.GW11056@google.com>
+References: <20250724115409.030d0d08@canb.auug.org.au>
+	<20250724100314.GW11056@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/n2/vSPUOBzCI9B_g38cuPgh";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Tian Liu <27392025k@gmail.com>
+--Sig_/n2/vSPUOBzCI9B_g38cuPgh
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-In both rts5260.c and rtsx_pcr.c, a return value is assigned and then
-overwritten by a subsequent call, which causes the original result to be
-lost. This may result in silently ignoring errors from the first write.
+Hi Lee,
 
-This patch uses `err |=` to preserve earlier failure status.
+On Thu, 24 Jul 2025 11:03:14 +0100 Lee Jones <lee@kernel.org> wrote:
+>
+> On Thu, 24 Jul 2025, Stephen Rothwell wrote:
+>=20
+> > After merging the mfd tree, today's linux-next build (arm
+> > multi_v7_defconfig) produced this warning:
+> >=20
+> > WARNING: unmet direct dependencies detected for MFD_AT91_USART
+> >   Depends on [n]: HAS_IOMEM [=3Dy] && (ARCH_MICROCHIP || COMPILE_TEST [=
+=3Dn])
+> >   Selected by [y]:
+> >   - SERIAL_ATMEL [=3Dy] && TTY [=3Dy] && HAS_IOMEM [=3Dy] && COMMON_CLK=
+ [=3Dy] && (ARCH_AT91 [=3Dy] || ARCH_LAN969X || COMPILE_TEST [=3Dn])
+> >=20
+> > Probably introduced by commit
+> >=20
+> >   ef37a1e24857 ("mfd: at91-usart: Make it selectable for ARCH_MICROCHIP=
+") =20
+>=20
+> Thanks Stephen.
+>=20
+> I have reverted this now.
 
-This is an untested cleanup inspired by commit c55c7a85e02a ("um: ubd: Preserve earlier error value in ubd_user") which fixed similar error-handling logic. While this change has not been functionally tested on hardware, it is a mechanical fix and aligns with expected error-handling style.
+I am still (again?) getting this warning ...
 
-Fixes: bede03a579b3 ("misc: rtsx: Enable OCP for rts522a rts524a rts525a rts5260")
-Fixes: c0e5f4e73a71 ("misc: rtsx: Add support for RTS5261")
+--=20
+Cheers,
+Stephen Rothwell
 
-Signed-off-by: Tian Liu <27392025k@gmail.com>
+--Sig_/n2/vSPUOBzCI9B_g38cuPgh
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Changes in v2:
-- Use full name in Signed-off-by and From
-- Add Fixes: tag
-- Clarify that patch is untested, but reasoned from upstream style
-- Cc: appropriate public mailing list
+-----BEGIN PGP SIGNATURE-----
 
----
- drivers/misc/cardreader/rts5260.c  | 2 +-
- drivers/misc/cardreader/rtsx_pcr.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIJXUACgkQAVBC80lX
+0Gz6aAf/fzM24sTud166GyNmhYMzfLgUMQ3S83ZpTwRsESnEgcgly+779evtSwqA
+MgrbNA+JK4Rf2WglVjgBNmplsxUDBuyYMo9m2SgqhN/EnJOMA+MKXcjYFfgjOG2D
+ukHmzvFSN0HzojLfvjRYv58iSBQpIzstITSCuwsqdQTzSOwG9vjSrivJB4+ZeTgK
+aJFlMqaV7K9p3UzvAdw+P8WFtx3i1/Vsv5SsCIdOJ/hGcgjq2HwTatmQnnixT1PQ
+OKxHO+ngcFKlEawSoGpyuG/7mHKo2bZZjwieD0Fc41YGvzE0wx0qMDRFejjmwTtQ
+xlYTVCHo0UDBP2TfbZsTjZwjOs8UcQ==
+=0/57
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/misc/cardreader/rts5260.c b/drivers/misc/cardreader/rts5260.c
-index d2d3a6ccb8f7..ed8adaab54a8 100644
---- a/drivers/misc/cardreader/rts5260.c
-+++ b/drivers/misc/cardreader/rts5260.c
-@@ -269,7 +269,7 @@ static int rts5260_card_power_off(struct rtsx_pcr *pcr, int card)
- 	rts5260_card_before_power_off(pcr);
- 	err = rtsx_pci_write_register(pcr, LDO_VCC_CFG1,
- 			 LDO_POW_SDVDD1_MASK, LDO_POW_SDVDD1_OFF);
--	err = rtsx_pci_write_register(pcr, LDO_CONFIG2,
-+	err |= rtsx_pci_write_register(pcr, LDO_CONFIG2,
- 			 DV331812_POWERON, DV331812_POWEROFF);
- 	if (pcr->option.ocp_en)
- 		rtsx_pci_disable_ocp(pcr);
-diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
-index a7b066c48740..9fb22f2cedbd 100644
---- a/drivers/misc/cardreader/rtsx_pcr.c
-+++ b/drivers/misc/cardreader/rtsx_pcr.c
-@@ -1196,7 +1196,7 @@ static int rtsx_pci_init_hw(struct rtsx_pcr *pcr)
- 		/* Gating real mcu clock */
- 		err = rtsx_pci_write_register(pcr, RTS5261_FW_CFG1,
- 			RTS5261_MCU_CLOCK_GATING, 0);
--		err = rtsx_pci_write_register(pcr, RTS5261_REG_FPDCTL,
-+		err |= rtsx_pci_write_register(pcr, RTS5261_REG_FPDCTL,
- 			SSC_POWER_DOWN, 0);
- 	} else {
- 		err = rtsx_pci_write_register(pcr, FPDCTL, SSC_POWER_DOWN, 0);
--- 
-2.39.5 (Apple Git-154)
-
+--Sig_/n2/vSPUOBzCI9B_g38cuPgh--
 
