@@ -1,243 +1,149 @@
-Return-Path: <linux-kernel+bounces-749105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44DFB14A2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:34:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05084B14A30
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:36:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E685B17DECC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:34:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32CBF1AA0116
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF76128505C;
-	Tue, 29 Jul 2025 08:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPhKK73X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4145B28540B;
+	Tue, 29 Jul 2025 08:36:35 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D6D28504B;
-	Tue, 29 Jul 2025 08:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3861426AAB7
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753778037; cv=none; b=CRFReWE4OlITqRa518YfVLE7eYgGFpf6MbkavvHFZ0Gqn+ovKGzFAmVwIfy6m2i16Rjw/yGZFj1O+853vybRiGfvnMGWPJ8eQP8IKrmBcJjLwrJ+xtz/iRFX9Rw5YpSNgccTdPbnGU9DJ+1YZpoAWZ3V6piGwCqmeud/m6ssUQE=
+	t=1753778194; cv=none; b=SPbkGVPP1rLBka7uM9jeLXXM4U3ekJeGC+bGDxdRrXBQj3Ygx5kuHBZMHdzeJrmrbe0fYyLPNG5JCCSB4wXezJw2cwkbzeImcGE7xILB65+3daYCws1qm5J2baiJRHw94JKXS6TwqbH4hvJtn/+NM0AUZasTMk3P2ZrEM7S48rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753778037; c=relaxed/simple;
-	bh=mjOpsgFcshv7GmSpkMUvgmy1tViVtwM0LKLBEVbC6JA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PBMG6sV0z5LumMBDQ6dXeL6yiEQxdXKLmWUm4BWJnEgdmJG/ZLOnoujOUl1HHfHW09aS5y+xiFh4PUagrj27IxS1A4gaF1YRn8NH308oxXJp33WbGSqY4fEJSB1/JDscWgTNGOFwpqtlomb7dLnqGGFrCZOTtHrfnXmyMxYCtOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPhKK73X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A583BC4CEEF;
-	Tue, 29 Jul 2025 08:33:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753778035;
-	bh=mjOpsgFcshv7GmSpkMUvgmy1tViVtwM0LKLBEVbC6JA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=qPhKK73X3V5RlUteVB1eTZVdKVWy92va3B5+dthmy2Sz3WVOGcBEuHLuUypFjfEZC
-	 6P3rv8u1oaqAwwGIdlXeDKsah7/NP1S9gsV6C/X2+4geER6OjOwhoO4Umrt0NEbhv1
-	 SUrj65inxQH3A+IT7nQChoZtlfWa27IIQu12zLBV2oR23F4lEZFWW7Zx03l2LARzMx
-	 e50DACiFBlyVhYDyp20ROaJoSnhxBqgMCrUyNdJLQfY7RyybLQIaf7+DPF0qgQp5Lm
-	 puHspG7N10qWB/PqNKK/9zTc5G54MKCozEQ8HVT4xc7SzY3skNqVjtu3J4qu9Idpw2
-	 f1d3Z3Oo01oYw==
-Date: Tue, 29 Jul 2025 10:33:51 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.17-rc1
-Message-ID: <aIiHbx_RBSMZ9av7@shikoro>
+	s=arc-20240116; t=1753778194; c=relaxed/simple;
+	bh=uCrJ+Iqbg5bbX+oCl5/x8BkXkWH6MwITKwrKsxfuTA8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HZ7GaDNg4cjIf4hSMHy6Tp6vkIEYJBpj49rxp6TDLJkMbGqCjv2L5vhoYoY7bmbG84xILFSHgu0Vq45Vu2qy/9K9bE0P+peceeAncV6xASco3n2SBFxoLMlUrMMeV/A31ZJ3drbvIH9cW2kTu+u2rXn8CpclVUI7d8uNw8CuDtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3ddbec809acso62724785ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:36:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753778192; x=1754382992;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WzeBGpjHSeszF/CW4rczNpxcYtUulLTjlrinCLimUgo=;
+        b=Umy3lVBhreSXIxCMOBFzs5YcYV1TU215KiIE1+tY+6SL7F/Tgo7t7MLUoTgnE9scc2
+         p6woBmCTUiJBe9UtvVf3r5cMjm1gpGL2Vf+imu+sKsSBelqqafLM7PEQDsJKpR1+b4ew
+         8d63jtzAcJmaXdXTdEYw7tEH0sl3inscrKXgdgTEdyiNMiSF0Jbvt/Rc5WNbaN+uhDZT
+         kQ7an/KxUdpF/oLW/5WklYY3mA26SSv5oPyF3NsiswRnp9fRsDcUsWFxxvs5iKKPMtOW
+         oZVl4vFaHfKQfCMZmn57r5jWvabfYMLsdSt7UvFPwzKxbkkVgzzrzVStRlnmG4h6Fy84
+         LLuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVpGyE3qXgMD7jHCuoRslUeGkZoxJGsIOPbLouavJLSPPu1vUAkYcW/vFVY207BCd73iWoYbGldAWZKdVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdepzd91Nb1WrRoW+IarIYt569xweIy/JMGDL3yYp9GYA6DzS2
+	dXC5uS3YAbsOK8uqBqA9Jj8ZjlsD+T4bwJCKj6CPoV4kX6f945GwdpCvX/JVI8mabJv1aZ1taGi
+	ASuYe60I2irpRqKDke95dXBs87Z/eykYTtGY95u2nMEV/4H7gQf3nhGjMe78=
+X-Google-Smtp-Source: AGHT+IFhMAyYMoR3RdUP8l3Zi5v8mT3oE9q+69ki7bK73e+G54JA13PhrfXiFN/Ae6VgEeIlazaqNYY/dKIxqWUCL5kHonGwdr5W
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nfyn2+/kijfYDtfO"
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:1789:b0:3e3:d63c:3a35 with SMTP id
+ e9e14a558f8ab-3e3d63c3f36mr161172835ab.22.1753778192366; Tue, 29 Jul 2025
+ 01:36:32 -0700 (PDT)
+Date: Tue, 29 Jul 2025 01:36:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68888810.a00a0220.34d93b.0001.GAE@google.com>
+Subject: [syzbot] [wireless?] INFO: task hung in wiphy_register (2)
+From: syzbot <syzbot+e79f3349c93df8969402@syzkaller.appspotmail.com>
+To: johannes@sipsolutions.net, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    94ce1ac2c9b4 Merge tag 'pci-v6.16-fixes-4' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14127b82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
+dashboard link: https://syzkaller.appspot.com/bug?extid=e79f3349c93df8969402
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12127b82580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-94ce1ac2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2cc0fa87aefd/vmlinux-94ce1ac2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/48c3cfe50b21/bzImage-94ce1ac2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e79f3349c93df8969402@syzkaller.appspotmail.com
+
+INFO: task syz-executor:5486 blocked for more than 143 seconds.
+      Not tainted 6.16.0-rc7-syzkaller-00093-g94ce1ac2c9b4 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor    state:D stack:21640 pid:5486  tgid:5486  ppid:1      task_flags:0x400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5397 [inline]
+ __schedule+0x16fd/0x4cf0 kernel/sched/core.c:6786
+ __schedule_loop kernel/sched/core.c:6864 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6879
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6936
+ __mutex_lock_common kernel/locking/mutex.c:679 [inline]
+ __mutex_lock+0x724/0xe80 kernel/locking/mutex.c:747
+ wiphy_register+0x1980/0x26b0 net/wireless/core.c:1003
+ ieee80211_register_hw+0x33e1/0x4120 net/mac80211/main.c:1589
+ mac80211_hwsim_new_radio+0x2f0e/0x5340 drivers/net/wireless/virtual/mac80211_hwsim.c:5565
+ hwsim_new_radio_nl+0xea4/0x1b10 drivers/net/wireless/virtual/mac80211_hwsim.c:6249
+ genl_family_rcv_msg_doit+0x212/0x300 net/netlink/genetlink.c:1115
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0x60e/0x790 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x208/0x470 net/netlink/af_netlink.c:2552
+ genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1320 [inline]
+ netlink_unicast+0x759/0x8e0 net/netlink/af_netlink.c:1346
+ netlink_sendmsg+0x805/0xb30 net/netlink/af_netlink.c:1896
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x219/0x270 net/socket.c:727
+ __sys_sendto+0x3bd/0x520 net/socket.c:2180
+ __do_sys_sendto net/socket.c:2187 [inline]
+ __se_sys_sendto net/socket.c:2183 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2183
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7c09d9083c
 
 
---nfyn2+/kijfYDtfO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-are available in the Git repository at:
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.17-rc1
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-for you to fetch changes up to 1c24e5fc0c7096e00c202a6a3e0c342c1afb47c2:
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-  i2c: core: Fix double-free of fwnode in i2c_unregister_device() (2025-07-28 10:41:36 +0200)
-
-----------------------------------------------------------------
-i2c-for-6.17-rc1
-
-I2C Core:
-
-- prevent double-free of an fwnode if it is a software node
-- use recent helpers instead of custom ACPI or outdated OF ones
-- add a more elaborate description of a message flag
-
-I2C Host drivers, part 1:
-
-Cleanups and refactorings:
-- lpi2c, riic, st, stm32f7: general improvements
-- riic: support more flexible IRQ configurations
-- tegra: fix documentation
-
-Improvements:
-- lpi2c: improve register polling and add atomic transfer
-- imx: use guarded spinlocks
-
-New hardware support:
-- Samsung Exynos 2200
-- Renesas RZ/T2H (R9A09G077), RZ/N2H (R9A09G087)
-
-DT binding:
-- rk3x: enable power domains
-- nxp: support clock property
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      i2c: acpi: Replace custom code with device_match_acpi_handle()
-
-Emanuele Ghidoli (2):
-      i2c: lpi2c: use readl_poll_timeout() for register polling
-      i2c: lpi2c: implement xfer_atomic callback
-
-Frank Li (1):
-      dt-bindings: i2c: nxp,pnx-i2c: allow clocks property
-
-Hans Zhang (1):
-      i2c: tegra: Add missing kernel-doc for dma_dev member
-
-Hans de Goede (1):
-      i2c: core: Fix double-free of fwnode in i2c_unregister_device()
-
-I Viswanath (1):
-      i2c: Clarify behavior of I2C_M_RD flag
-
-Ivaylo Ivanov (1):
-      dt-bindings: i2c: exynos5: add samsung,exynos2200-hsi2c compatible
-
-Jiri Slaby (SUSE) (1):
-      i2c: mux: pca954x: Use dev_fwnode()
-
-Jonas Karlman (1):
-      dt-bindings: i2c: i2c-rk3x: Allow use of a power-domain
-
-Lad Prabhakar (5):
-      dt-bindings: i2c: renesas,riic: Move ref for i2c-controller.yaml to the end
-      dt-bindings: i2c: renesas,riic: Document RZ/T2H and RZ/N2H support
-      i2c: riic: Pass IRQ desc array as part of OF data
-      i2c: riic: Move generic compatible string to end of array
-      i2c: riic: Add support for RZ/T2H SoC
-
-Qianfeng Rong (1):
-      i2c: st: Use min() to improve code
-
-Troy Mitchell (1):
-      i2c: imx: use guard to take spinlock
-
-Wolfram Sang (1):
-      Merge tag 'i2c-host-6.17-pt1' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-mergewindow
-
-Yuesong Li (1):
-      i2c: lpi2c: convert to use secs_to_jiffies()
-
-Yumeng Fang (1):
-      i2c: stm32f7: Use str_on_off() helper
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andy Shevchenko (4):
-      (Rev.) i2c: core: Fix double-free of fwnode in i2c_unregister_device()
-      (Rev.) i2c: riic: Add support for RZ/T2H SoC
-      (Rev.) i2c: riic: Move generic compatible string to end of array
-      (Rev.) i2c: riic: Pass IRQ desc array as part of OF data
-
-Carlos Song (2):
-      (Rev.) i2c: lpi2c: implement xfer_atomic callback
-      (Rev.) i2c: lpi2c: use readl_poll_timeout() for register polling
-
-Frank Li (1):
-      (Rev.) i2c: imx: use guard to take spinlock
-
-Geert Uytterhoeven (6):
-      (Rev.) i2c: riic: Add support for RZ/T2H SoC
-      (Rev.) i2c: riic: Move generic compatible string to end of array
-      (Rev.) i2c: riic: Pass IRQ desc array as part of OF data
-      (Test) i2c: riic: Pass IRQ desc array as part of OF data
-      (Rev.) dt-bindings: i2c: renesas,riic: Document RZ/T2H and RZ/N2H support
-      (Rev.) dt-bindings: i2c: renesas,riic: Move ref for i2c-controller.yaml to the end
-
-Krzysztof Kozlowski (1):
-      (Rev.) dt-bindings: i2c: exynos5: add samsung,exynos2200-hsi2c compatible
-
-Patrice Chotard (1):
-      (Rev.) i2c: st: Use min() to improve code
-
-Primoz Fiser (2):
-      (Test) i2c: lpi2c: implement xfer_atomic callback
-      (Test) i2c: lpi2c: use readl_poll_timeout() for register polling
-
-Rob Herring (Arm) (1):
-      (Rev.) dt-bindings: i2c: i2c-rk3x: Allow use of a power-domain
-
-Vladimir Zapolskiy (1):
-      (Rev.) dt-bindings: i2c: nxp,pnx-i2c: allow clocks property
-
-Wolfram Sang (7):
-      (Rev.) i2c: riic: Add support for RZ/T2H SoC
-      (Test) i2c: riic: Add support for RZ/T2H SoC
-      (Rev.) i2c: riic: Move generic compatible string to end of array
-      (Test) i2c: riic: Move generic compatible string to end of array
-      (Rev.) i2c: riic: Pass IRQ desc array as part of OF data
-      (Test) i2c: riic: Pass IRQ desc array as part of OF data
-      (Rev.) dt-bindings: i2c: renesas,riic: Document RZ/T2H and RZ/N2H support
-
- .../devicetree/bindings/i2c/i2c-exynos5.yaml       |   1 +
- .../devicetree/bindings/i2c/i2c-rk3x.yaml          |   3 +
- .../devicetree/bindings/i2c/nxp,pnx-i2c.yaml       |   3 +
- .../devicetree/bindings/i2c/renesas,riic.yaml      | 105 ++++++---
- drivers/i2c/busses/i2c-imx-lpi2c.c                 | 256 ++++++++++++++-------
- drivers/i2c/busses/i2c-imx.c                       |  37 ++-
- drivers/i2c/busses/i2c-riic.c                      |  54 ++++-
- drivers/i2c/busses/i2c-st.c                        |  19 +-
- drivers/i2c/busses/i2c-stm32f7.c                   |   3 +-
- drivers/i2c/busses/i2c-tegra.c                     |   1 +
- drivers/i2c/i2c-core-acpi.c                        |   2 +-
- drivers/i2c/i2c-core-base.c                        |   8 +-
- drivers/i2c/muxes/i2c-mux-pca954x.c                |   3 +-
- include/uapi/linux/i2c.h                           |   3 +-
- 14 files changed, 333 insertions(+), 165 deletions(-)
-
---nfyn2+/kijfYDtfO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiIh28ACgkQFA3kzBSg
-Kbbz6g/+Lqhq8+mcBRnocS25U+iWI9RFCXcthJxwtCBIKY8ptrJUxDWa9WtrpeWT
-bUKct452qTsCXA7Q8epmJTdDqliIXxQtZzRWEVSSsb8d4hdcMPVpyoMZrjrvm4zC
-R6KqAf79bJtytNQxmdIHvdqC+TMAAipx4PmxFwmvMp+suJuggMuc229zIdnYAHes
-6xWPlOfRLBkGxrNQ4GkdynMrOb9oGSWOdAD4gATMrJ0Hw2GE4d7I4zVluN0+VnQQ
-3gwntsrRjv8kjBKN7MmmgzrlDafaFLmK5a6WaNw0LzXsxfHAnoUMpP8o42BN4a9T
-F94ZzhTB0zHRpoerZFpyKECVe+n3UZ1I93CC7+He3DUB7CviptRSUWaYV1ml2KvT
-7qumuArZaDTE0tWK5PzO7Ale40F7sI5yQRfZ9g3rAXW/UvpqMYg0m8qm7QbhuUeX
-58O4T8xTZDPNhvT1topLmEjx8a6f9so4MhuO0tkcqSEd4PXZoazJSa/uo8JqmA62
-OWa0iB81WogljaSQqgtpnVUFJwsdGO2hGnuypWS6kSu3ObdQaZ+t6SjHX5D810UP
-ry0YV6APe32BX7eEqkCETH3O/ezitFYLTKL3VBP0qz0z7X9uoSP7amQxQywg5K+m
-bEKWhfi+dA4aBM6RYOs4aS3o6QS4YaexlKrDwMYznD2SVkAgzeM=
-=QW6O
------END PGP SIGNATURE-----
-
---nfyn2+/kijfYDtfO--
+If you want to undo deduplication, reply with:
+#syz undup
 
