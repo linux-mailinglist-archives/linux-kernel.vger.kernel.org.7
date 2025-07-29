@@ -1,89 +1,154 @@
-Return-Path: <linux-kernel+bounces-749184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C340AB14B2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:23:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5992B14B2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:23:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB3E74E4C12
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:22:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E888D1750CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E03227FB3B;
-	Tue, 29 Jul 2025 09:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8054F2749E0;
+	Tue, 29 Jul 2025 09:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nUsR+dq8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h9xyRZeU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0291214F98;
-	Tue, 29 Jul 2025 09:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610672673B9;
+	Tue, 29 Jul 2025 09:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753781001; cv=none; b=PSSojUloDYWXbLim1lfBZapgt1/h8gsx37ODwhkiXhGy7oOaa/ol0f5B5PnJFn6hYCL355oIeRkqkbPJ9qI0PixWaao3YWpTspFncjz1d/qhkxsSD6aiJIDCg3osV86cpzKtcTlikG10M1ay87NsnUHOdSl8MWg/B8Ag/pWs99k=
+	t=1753781020; cv=none; b=Whb8GvNZv5yNVWIShDi3Qjykv5zILXfL6HE1yQTWuEEyXhZ0mFMylgXZm8ahIjobocepkumLpLwWaRqTI/rqwtSnskAOfMb079hhnfqJCLYYFghL+UMTnCeSrAs7CVLp2OWP/pe9aCK2Z5da/Ezr3rKXpq80H/Zcb1IdltLl4xI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753781001; c=relaxed/simple;
-	bh=DTeOnZdMC3MfXRHjclumebjcnfJJ1n0Hu2E8xtaiyFI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SaPshSJ1gyLzNTKncKifwoSPrlMRnhZ2epwRRnA3ZrjPEevwPqHlqLhjLunxjM7z/yMzGYfLTNfGRtZUyTMq9FhMeMxCybFSjSwZjpFKb/UE+cLBW3WFEcbiD2K+KBjW/bdchbtpYZSLi92BTg4JEZCWP9ieAmfWyBTB8Pyv6hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nUsR+dq8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7228BC4CEEF;
-	Tue, 29 Jul 2025 09:23:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753781000;
-	bh=DTeOnZdMC3MfXRHjclumebjcnfJJ1n0Hu2E8xtaiyFI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nUsR+dq8cm0MFVfSTKWuwUZBsDePzgL98fwFHgU1M4evFQ5cS8Fxul5QI1oZ7KxL6
-	 j/qKtHz+dWcsrBegHb/Qe53Syuuv6vRiz/hExL1MP2E0ngADZmfVFS3P6b1P3LrCfj
-	 9RoKTFUze6Xx/rZKOm7gtF4Z6lehp+T8VTeSWNAwCQRgGK/BETCnt63J+n2FZEbMF0
-	 qLsF0lZS2VVFZ45wyCHszBmIQAYaOtZ7EFlhfW/fpThXkIQpb15UQFXl0fRwKB0OOY
-	 H3Bv6K7PPI6HGYYTixYoQ7qIYUwWCasmRje/nSW7nRAHnnLmKXsCDZ9wBnH3Xc/BFX
-	 Or9D6MmsG9Zfg==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1uggYK-000000002ZZ-3d0o;
-	Tue, 29 Jul 2025 11:23:20 +0200
-Date: Tue, 29 Jul 2025 11:23:20 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH] usb: gadget: udc: renesas_usb3: drop unused module alias
-Message-ID: <aIiTCDy-_EjUt1zd@hovoldconsulting.com>
-References: <20250724092006.21216-1-johan@kernel.org>
- <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
+	s=arc-20240116; t=1753781020; c=relaxed/simple;
+	bh=kBrxVm2sOKsediQJYDDB5wk7S0hagRKEn+9PQekDd+U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tgN/wxU5zGC9Aee+t9qz7PrmOSDMIzy3vQEhvVP0UpYvlLpAYrz703SsorNHEEXnI+yshZwmn9DUIUcxHXybNbB6PVHIrBibB7SneCw8i6AHvzYJ/RGaOhLZecufWniuPJmLfol5QdOOFSe3oRn4Ptac5ZE1rXJknHEfdxzFea8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h9xyRZeU; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753781018; x=1785317018;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kBrxVm2sOKsediQJYDDB5wk7S0hagRKEn+9PQekDd+U=;
+  b=h9xyRZeUnXzo0YgIT8tuOUHPdAsrpEigq+QHi2QnkG+xRvIGzo0fGEba
+   D4WFcY/KvZKm3cQNrSfoCXMTZNY5UPvO850LoJdmdF4wwBud6h5Xn4mCK
+   X9rkneK0MSJoRWi7ld3elOg8nwdI2jEaasVBw5CzaPlNyHG9z3n+2TwxN
+   wiDPkUYdCBjxdrL4TRkY4YHKnx6mwA4k+Kq0FSQGbB/rabRZKpODPXRTT
+   v2LOpNHPdamklyNvOENaGtbKotcQU6wC2bwYaWuEXkbrUtqq7cSm+QEPE
+   1tJU7GtboQap+efy/lEjbNRS75AGCQoO9GMf3WEZp2/2xVu1PCXKGqGzV
+   Q==;
+X-CSE-ConnectionGUID: PkY9Js+qQU+qKPZDCfH11w==
+X-CSE-MsgGUID: 2DLso0lVTWqL3q0iVeXI7w==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="43649354"
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="43649354"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 02:23:38 -0700
+X-CSE-ConnectionGUID: +kMwkbTOR/+vSDJ2f816ZA==
+X-CSE-MsgGUID: GxINhn5dQRO5letcuTCI2w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="167954486"
+Received: from zhengwen-mobl3.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 02:23:34 -0700
+Message-ID: <db7043a4-f815-4178-8d81-2da1dda6236e@linux.intel.com>
+Date: Tue, 29 Jul 2025 17:23:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [perf] fuzzer triggers "BUG: kernel NULL pointer dereference"
+To: Vince Weaver <vincent.weaver@maine.edu>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>
+References: <5baea1f7-6edd-d6fa-27ce-04eddb7e5199@maine.edu>
+ <fdcdd5a7-76b5-6c52-63dc-95fadddf7772@maine.edu>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <fdcdd5a7-76b5-6c52-63dc-95fadddf7772@maine.edu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Geert,
+Hi Vince,
 
-On Mon, Jul 28, 2025 at 10:56:18AM +0200, Geert Uytterhoeven wrote:
+Could you please provide more information about this issue?  Like HW
+information, how long can the issue be produced and whether the issue can
+be seen in latest kernel (6.16)? Thanks.
 
-> On Thu, 24 Jul 2025 at 11:21, Johan Hovold <johan@kernel.org> wrote:
-> > Since commit f3323cd03e58 ("usb: gadget: udc: renesas_usb3: remove R-Car
-> > H3 ES1.* handling") the driver only supports OF probe so drop the unused
-> > platform module alias.
-> >
-> > Signed-off-by: Johan Hovold <johan@kernel.org>
-> 
-> While I don't debate the actual change, I would like to comment on
-> the patch description.  The driver only ever supported OF probe.
-> The call to soc_device_match() was just used to override the match
-> data for quirk handling.
+--
 
-The driver initially indeed only supported OF probe, but that changed
-with commit ca02a5af650c ("usb: gadget: udc: renesas_usb3: Use
-of_device_get_match_data() helper") after which the driver could at
-least theoretically also bind based on the platform device name.
+Dapeng Mi
 
-Johan
+On 7/22/2025 5:17 AM, Vince Weaver wrote:
+> I'm still tracking this fuzzer issue.  The fuzzer can reliably trigger the 
+> crash but only 32000 syscalls deep into a run and I am having a lot of 
+> trouble trying to gather a trace/testcase that can generate it.
+>
+> I was hoping the recent
+> 	[PATCH] perf/x86: Check if cpuc->events[*] pointer exists before accessing it
+> patch might fix things as the symptoms were vaguely similar but that 
+> particular patch does not fix the problem.
+>
+> Vince
+>
+> On Tue, 8 Jul 2025, Vince Weaver wrote:
+>
+>> Hello
+>>
+>> the perf_fuzzer can reliably trigger this on a 6.16-rc2 kernel.  It 
+>> doesn't look obviously perf related but since the perf_fuzzer triggered it 
+>> I thought I'd report it as a perf issue first.  I can work on a smaller 
+>> test case but that might take a bit especially as the machine locks up 
+>> super hard and requires being unplugged after it's triggered.
+>>
+>> let me know if there's any other info I can provide.  The dump below is 
+>> transcribed from a screenshot as I still haven't figured out a way to get 
+>> a serial console on this Raptorlake system.
+>>
+>> BUG: kernel NULL pointer dereference, address: 0000000000000008
+>> #PF: supervisor read access in kernel mode
+>> #PF: error_code(0x0000) - not-present page
+>> PGD 0 P4D 0
+>> Oops: Oops: 0000 [#1] SMP NOPTI
+>> CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 6.16.0-rc2+ #8 PREEMPT (voluntary)
+>> Hardware name: Dell Inc. Precision 3660/0VJ7G2
+>> RIP: 0010:rb_insert_color+0x18/0x130
+>> Code: 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 07
+>> RSP: 0018:ffffb5e5c01e3df8 EFLAGS: 00010046
+>> RAX: ffff93f1927f8168 .....
+>> ...
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 000000000000008 CR3: 00000000596824001 CR4: 000000000000f72ef0
+>> DR0: 00000000a000001 ....
+>> PKRU: 55555554
+>> Call Trace:
+>>  <TASK>
+>>  timerqueue_add+0x66/0xb0
+>>  hrtimer_start_range_ns+0x102/0x420
+>>  ? next_zone+0x42/0x70
+>>  tick_nohz_stop_tick+0xce/0x230
+>>  tick_nohz_idle_stop_tick+0x70/0xd0
+>>  do_idle+0x1d3/240
+>>  cpu_startup_entry+0x29/0x30
+>>  start_secondary+0x119/0x140
+>>  common_startup_64+0x13e/0x141
+>>  </TASK>
+>>
+>>
+>>
 
