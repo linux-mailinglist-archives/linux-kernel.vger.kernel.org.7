@@ -1,214 +1,215 @@
-Return-Path: <linux-kernel+bounces-748860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33930B146D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:27:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42F84B146DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC7A541611
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BF5217AD5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:27:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219E021D3DC;
-	Tue, 29 Jul 2025 03:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0B8721FF4B;
+	Tue, 29 Jul 2025 03:27:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ksx1KzpE"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LJbBhlPe"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD57B221704;
-	Tue, 29 Jul 2025 03:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6E1286A9;
+	Tue, 29 Jul 2025 03:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753759588; cv=none; b=dh3aZg7ji76A/5LD+9e7qTsHBvCBxJ+QvdE642uyPpjLZJouZZUa/wNtIDEnkRodGhPC2y2BUx52nlOWOUs8OVU3hRBHyI2TsFRV3P7ACRMiOTBexoNxfQjpPToqRpQQiartzIT2eKKtgf19fbIcQC0Ig3UdD1SjTClhleSub50=
+	t=1753759664; cv=none; b=Q2SzjOxecLSDpVSiJts8kq/46it2Qjg5beVekcQWSvhIp4B0CO9IRW+xNy9LYHgD7Z6r7FBnYlvu0if31NDXuZ+VbdaOFGqp+v9wj+2fhVj4QZzAiNPQNqW1YeIPfnQw8u73NZYAeNlk/SVZz6hTSMV2fw+NYo31xAUW4msDIyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753759588; c=relaxed/simple;
-	bh=vgYGedtd6MYvHM7mMWNHn+golN7U9Jf+B3AgNKwtOCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kx5HbGosmLJgpgKvyBRhnakN95cfDxnYO8bZ6PoqFv06wSpXDSNRjlxF9TkZfQySN9ClzGT9d5ZNj/a2ERk2YbV1aoyxgVNGHNAT0bqL7BLfaKDBfoLFbdDgE54futrO3+vWsmZOzzagkz02Gk53Bq3S/U6QiQ9RDLbLiLzr8nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ksx1KzpE; arc=none smtp.client-ip=209.85.160.177
+	s=arc-20240116; t=1753759664; c=relaxed/simple;
+	bh=ma6mrIr7hYesVEnM2BrZlz6dHOEYkb5jtF8bhuITlNU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s4zHpLE0pDo/OpGhZnHdJCakUac5b9oBXjimXudwwEdwtC3/OChRvth0vOeBqj6fr3NUm7TH7BAy1TfIjiLP4nLa/yeUanB3teMU6BBC/G5aOgUDkBkqUNopRAD48hL4oc3P3VlZgiN4y9HavRSKONZOXL6MXYKnTjzEkat1kv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LJbBhlPe; arc=none smtp.client-ip=209.85.210.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4ab39fb71dbso53413091cf.3;
-        Mon, 28 Jul 2025 20:26:26 -0700 (PDT)
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-74b27c1481bso3454760b3a.2;
+        Mon, 28 Jul 2025 20:27:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753759586; x=1754364386; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eQvdDiQnsqyrmek3KChLb2hBIpcbR+Huy8lPmt1fCtc=;
-        b=ksx1KzpE4GKV+z2XgbJBJxHvTgrMX6kARPDGbFrA0DZshdgFC5z8+C+zWVPjH9x7Ho
-         hPDtUUfaiHXc63gmNxybH1MYk99fBYgWuFT0hgRuHp48lExsoz3Ays8BFdVbKQJz69w0
-         1PzHhbqq7XloS8KACk1sYNtktfm3DWushd/nhnGjFWqFYklr/Ls/IBWOei5eHR+jskJk
-         FBd5PNO2M8U+9v9Zk0asemSkY+e9v5i2m2c7E2qmE9XfFx6dXI7Hu6C6d/0tIq711ZUE
-         K2R2S9kNBW3HwxLsEkDhP+dRxgLZ8CFL+iKiCj9GMSwrhYKXmn37mqkSAnkEMpytjDMc
-         P+dA==
+        d=gmail.com; s=20230601; t=1753759662; x=1754364462; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9RLwbjRlWBTlLAuayRgnH4uKjHckhuIXgvBO5QNJ9qg=;
+        b=LJbBhlPe6F2XBrk9gM4t7Ak0PBtB337ytrR+3/4W7+EMKwtrNcqLGaXhVfjsgn7OCM
+         3eMFAtIt3c2N1LKkaGXSQnqc0PBUem1nsaxWIaSPtzRtw//o7SUlWGBnitg+1T9IHr5p
+         XxP/SIaklKGP8nQMVAx508vexsS7YWzrBOkHY89zDDSzwum+ZhO3rqnEKOx9oxfkEYYQ
+         1vuXnlDQ2UTSKNQNUMEDooaGEo2Zk1r6nmuBYHFGS/kezTrouVkn/XVXyYtcG1QDN2pb
+         4h8e9GLFlQ9HYBtisgSP/PmNBeNojXinpdu64Dog5O5jQ0S/mLXAEbHQaVN827Dr9HLT
+         JQRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753759586; x=1754364386;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eQvdDiQnsqyrmek3KChLb2hBIpcbR+Huy8lPmt1fCtc=;
-        b=lW9rRB4RLV/R4BvGNGXlSLWJs7kfdxrGLb3KWTxOBvoFwl9PtTYguq1koC/rzDB76T
-         uwKfJD58+956Pms2dFcBcydZwECuU1n7zRfrwHZZtfuYx+Gi3ERTJUDkSFcY27pbnpEI
-         0nECOLa8fOG3+IMjZiKsjWnHw0/GmD8/sVRpKgHi7fAxRXDynNWQlOjNXR6ub+0j/o7Z
-         zlOO2b9DDp0GOa3hY9KnPmFjQyQWczNF0S4INdK6OZ1vkO4eRv7+OLvzaEqH6pajZH3U
-         8BgerZpj/CGeEw07pAz8cpKV/wAMXSasxT2fWEDU/F7bQJwlROokK5PcvXZIYc8Igwpq
-         LIWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUZLu3QZYQp1fpfL9zhpAlMKcmeZ1WzzPbwNwVSUfKQug4YRZIJUPDCxpSaZnmRyN9WVmWOM16cjMk=@vger.kernel.org, AJvYcCVjQP9rz7AuzYzD1RPI8Sod84Z3UBujmaqrNlr3Y+rSNRux1mKh0r77b55yOA8qaQmWR4vCIUOOMYJ9ys4N@vger.kernel.org, AJvYcCVr/OtRwsZ+MfLsb4m6hii4cyv3EAPzKNaanENL0PLpBlxgTHSeOGbAOHJQ8cBli9e7KR0tbW3jXOrNhmohuqt5rmJ5oA==@vger.kernel.org, AJvYcCX6oghJE1TfzOhdh1tA6QbW9GPeRvvYfeABNHQJrQ0dPqUFc9iQxdpIlJE3Wp4yrKXfYDjfTNyx66Aez3s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLxzzNl0HSfoNWs7qFArAuWXFBE7aCkc8uTQ5PmA19np97n/bI
-	jf4vh/2DnSljGU0zbNAa61sNrWk3T9FPZX+V/YITtydFEz070ybTxzn4zRd4aJjoqj8IVNs2xG4
-	6kU0WrVJHI3r61X/xBRVuKJqoPA4oT+M=
-X-Gm-Gg: ASbGncv9U9d9IpyELZtDr9n67KZmpmwIy/r9A3FfA6/w1jgAU/KNEoH/Y564hFGMus9
-	Pmid3mkQFaEoWWckSgCh+qCy56bkcAunMHIDr2j2uc4t6Xjc9hRn0kAHDmLFKnXu80a6VDiavGV
-	+yimo9NAbvYYPwy8aP81qar4NycvSmSmxR78Pndo5XyMzgLM3B2/YK0Q7hoRMr7wr/T3NOCWL/F
-	pnZAcA0YtDgW3W3eaw=
-X-Google-Smtp-Source: AGHT+IE/Ne0GanegMDZVtx6xi+TT5LItODDPJdzGGVmCcxKsUnYeJ5GQ+EGFc7/6vZhkjU83nc3Fy4ezLizbXA47hw8=
-X-Received: by 2002:a05:6214:e46:b0:705:c148:26a0 with SMTP id
- 6a1803df08f44-707205a8958mr215405996d6.31.1753759585534; Mon, 28 Jul 2025
- 20:26:25 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753759662; x=1754364462;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9RLwbjRlWBTlLAuayRgnH4uKjHckhuIXgvBO5QNJ9qg=;
+        b=sKQBRVEakkpNGW8DU4J2bANtxE8+Ez0CpzGEca0dKmEsr+ced43YvWqQG2WPqJQMFX
+         dPXYkBvHYNGeQoQoB5d1A9ZSskVb3fTgsmaQJeS2CidGVB76Qd8WBd2kowhwEgRyGTFb
+         FeAHl1e9/NgPBN6pFGeh2lCGjt1ggqkznx0p1KWISATriIGsSg75oR4WinDLrp1HiDva
+         oMa1hohbh/CZ4ZpbRgUgtGBRVLkXtuWymFfqJWmgH1PSjN2frHrqWLfNBGZBBgylFlcr
+         idtog5WT9tnXYEPlb+y1yL0s3ACEfJGS1CIjCbLvuaefVfkS7x10Zj3xL/tWk4afYNRL
+         NX9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4B+MCGdp6vOgUXBGKu+Nj2YWPYGaKMFBE40d7M6CauPiBkp6ZZNtJs5E+wOj9oFlbEnsTjLQBneWhHMdC@vger.kernel.org, AJvYcCUmZseU74dlFutlpKKkC631iV/FJbaO0BcMOxqMj0qijnkM0smyF3QgL9UDcef4GHkbeZiT6rvAmnFp@vger.kernel.org, AJvYcCVrTGc2TzuD+RiJ6Ll6N0wb4P2tvkJgVAVs+BwQgYYDKhFkD2E3kBZB1dwZSVv1RdkQAoCuO8DZ+Cv1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAOQI9RCydivIxSpTLkVVno1IYifyA1mxDjsLbCY0ERLw47x8X
+	+8hFWXLyPvqoyLxH3Fr+YREWC9welMI4KeiIazUB95eK1Duyhz3NE2Vj
+X-Gm-Gg: ASbGncta7WVF5q6YeRuTPEzoazmTTZvlxYdGZNw8miuGv70Sdn9LzwuxiKZMZAaPd6p
+	a2ImaMYLDfwyFKnNNMxHR2yTs+VBfzzvM87Al5XEbgo3szUHyvoj1Laf0FgUaC0o+J4TUYOgk4c
+	vRy0kVsynL4oE7iEkm91w6sbWLGfref5lJCr3Wk3HSHXWC9qpj0xfKQsLVufQ8cwi9/wtAjryQk
+	pVE/14uaALZ0D9uy5ov3h0rlKzQM+RCdzPrZafkk4vwGq3EKAaffGnVa7UN5OqQcJNuRHY8eheC
+	tue7fjVmMoFpvAr7IzyWefLGwZ8nRNsNpB69otaMLWG/j/yhLdaxm7wHmz2Q0SuESiBWWt4vD5C
+	zSVHrEcKUIwJqZA8k+ML5Jg==
+X-Google-Smtp-Source: AGHT+IEJP7yCAUgHeBgsjIkbYNm7LAfIpoKjZ23GfzsiIwC6gnNidAXEywMF+aE5WPqG+8Js/j5A+Q==
+X-Received: by 2002:a05:6a00:ad1:b0:757:51d:9dd9 with SMTP id d2e1a72fcca58-763345cd930mr17192773b3a.17.1753759661989;
+        Mon, 28 Jul 2025 20:27:41 -0700 (PDT)
+Received: from dixit ([2401:4900:1c7e:9464:4ee2:7e58:1508:18c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76408c0115csm6708828b3a.30.2025.07.28.20.27.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 20:27:39 -0700 (PDT)
+Date: Tue, 29 Jul 2025 08:57:30 +0530
+From: Dixit Parmar <dixitparmar19@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: magnetometer: add support for Infineon TLV493D
+ 3D Magentic sensor
+Message-ID: <aIg_ohWU7QICMbMy@dixit>
+References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
+ <20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
+ <141967ee-22f4-4b15-a8da-e8cef25828b4@baylibre.com>
+ <20250727133852.371111bc@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726204041.516440-1-derekjohn.clark@gmail.com>
- <20250726204041.516440-5-derekjohn.clark@gmail.com> <5e910391-5769-40dc-882d-90f79888c772@gmx.de>
-In-Reply-To: <5e910391-5769-40dc-882d-90f79888c772@gmx.de>
-From: Derek John Clark <derekjohn.clark@gmail.com>
-Date: Mon, 28 Jul 2025 20:26:14 -0700
-X-Gm-Features: Ac12FXzgN5WmqWfFO6HCb9h408sHwelxzUryqXtjkNigmT-pcUQBF9kPdrDn5cY
-Message-ID: <CAFqHKT=n-G-PaaF24A_S7BL3Pp_8gf=kznmX36_=_YKLx40YSg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] platform/x86: (ayn-ec) Add AYN EC Platform Documentation
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Hans de Goede <hansg@kernel.org>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Alok Tiwari <alok.a.tiwari@oracle.com>, David Box <david.e.box@linux.intel.com>, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250727133852.371111bc@jic23-huawei>
 
-On Sat, Jul 26, 2025 at 5:04=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
+On Sun, Jul 27, 2025 at 01:38:52PM +0100, Jonathan Cameron wrote:
+> On Sat, 26 Jul 2025 15:44:03 -0500
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+> > On 7/26/25 4:37 AM, Dixit Parmar wrote:
+> > > The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
+> > > applications includes joysticks, control elements (white goods,
+> > > multifunction knops), or electric meters (anti tampering) and any
+> > > other application that requires accurate angular measurements at
+> > > low power consumptions.
+> > > 
+> > > The Sensor is configured over I2C, and as part of Sensor measurement
+> > > data it provides 3-Axis magnetic fields and temperature core measurement.
+> > > 
+> > > The driver supports raw value read and buffered input via external trigger
+> > > to allow streaming values with the same sensing timestamp.
+> > > 
+> > > The device can be configured in to different operating modes by optional
+> > > device-tree "mode" property. Also, the temperature sensing part requires
+> > > raw offset captured at 25°C and that can be specified by "temp-offset"
+> > > optional device-tree property.
+> > > 
+> > > While sensor has interrupt pin multiplexed with I2C SCL pin. But for bus
+> > > configurations interrupt(INT) is not recommended, unless timing constraints
+> > > between I2C data transfers and interrupt pulses are monitored and aligned.
+> > > 
+> > > The Sensor's I2C register map and mode information is described in product
+> > > User Manual[1].
+> > > 
+> > > Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
+> > > [1] https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-UserManual-v01_03-EN.pdf
+> > > 
+> > > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+> 
+> > > +static const struct regmap_config tlv493d_regmap_config = {
+> > > +	.reg_bits = 8,
+> > > +	.val_bits = 8,
+> > > +	.max_register = TLV493D_RD_REG_RES3,
+> > > +	.volatile_table = &tlv493d_volatile_regs,
+> > > +};
+> > > +
+> > > +static int tlv493d_probe(struct i2c_client *client)
+> > > +{
+> > > +	struct device *dev = &client->dev;
+> > > +	struct iio_dev *indio_dev;
+> > > +	struct tlv493d_data *data;
+> > > +	int ret;
+> > > +
+> > > +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> > > +	if (!indio_dev)
+> > > +		return -ENOMEM;
+> > > +
+> > > +	data = iio_priv(indio_dev);
+> > > +	data->dev = dev;
+> > > +	data->client = client;
+> > > +	i2c_set_clientdata(client, indio_dev);  
+> > 
+> > There is not i2c_get_clientdata(), so I don't think we need this.
+> There's a dev_get_drvdata() that pairs with this in suspend and resume.
+> 
+> I kind of wish the bus specific accessor would go away but there
+> is too much history behind them :(
 >
-> Am 26.07.25 um 22:40 schrieb Derek J. Clark:
->
-> > Adds ABI documentation for the ayn-ec platform driver
-> >
-> > Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
-> > ---
-> >   .../ABI/testing/sysfs-platform-ayn-ec         | 59 ++++++++++++++++++=
-+
-> >   MAINTAINERS                                   |  1 +
-> >   2 files changed, 60 insertions(+)
-> >   create mode 100644 Documentation/ABI/testing/sysfs-platform-ayn-ec
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-platform-ayn-ec b/Document=
-ation/ABI/testing/sysfs-platform-ayn-ec
-> > new file mode 100644
-> > index 000000000000..32cb6f7ca2fc
-> > --- /dev/null
-> > +++ b/Documentation/ABI/testing/sysfs-platform-ayn-ec
-> > @@ -0,0 +1,59 @@
-> > +What:                /sys/class/hwmon/hwmon[0-9]/pwm1_enable
-> > +Date:                July 2025
-> > +KernelVersion:       6.17
->
-> I think that this driver will miss 6.17, better use 6.18 instead. Also yo=
-u do not have to
-> document standard hwmon sysfs attributes. For documenting the special PWM=
- mode i suggest that
-> you add some documentation under Documentation/hwmon/.
->
-> Additionally please add the new files to the MAINTAINERS entry of the ass=
-ociated driver.
->
-> Thanks,
-> Armin Wolf
->
-
-Can do, thanks.
-Derek
-
-> > +Contact:     "Derek J. Clark" <derekjohn.clark@gmail.com>
-> > +Description:
-> > +             This sets the PWM fan mode of operation. Valid values are=
- [0-3].
-> > +    Values [0-2] conform with standard hwmon operating modes. Value 3
-> > +    enables user defined fan curve settings.
-> > +
-> > +    Applies to AYN Loki and Tectoy Zeenix lines of handheld devices.
-> > +
-> > +What:                /sys/class/hwmon/hwmon[0-9]/pwm1_auto_point[1-5]_=
-pwm
-> > +Date:                July 2025
-> > +KernelVersion:       6.17
-> > +Contact:     "Derek J. Clark" <derekjohn.clark@gmail.com>
-> > +Description:
-> > +             This sets the PWM fan duty cycle for the given index of t=
-he fan curve.
-> > +    When the temperature reaches the corresponding pwm1_auto_point[1-5=
-]_temp,
-> > +    the EC will automatically increase the fan duty cycle to the given=
- value.
-> > +
-> > +    Values are [0-255]
-> > +
-> > +    Applies to AYN Loki and Tectoy Zeenix lines of handheld devices.
-> > +
-> > +What:                /sys/class/hwmon/hwmon[0-9]/pwm1_auto_point[1-5]_=
-temp
-> > +Date:                July 2025
-> > +KernelVersion:       6.17
-> > +Contact:     "Derek J. Clark" <derekjohn.clark@gmail.com>
-> > +Description:
-> > +             This sets the activation temperature for the given index =
-of the fan curve.
-> > +    When the temperature reaches the given value, the EC will automati=
-cally
-> > +    increase the fan duty cycle to the corresponding pwm1_auto_point[1=
--5]_pwm
-> > +    value.
-> > +
-> > +    Values are [0-100]
-> > +
-> > +    Applies to AYN Loki and Tectoy Zeenix lines of handheld devices.
-> > +
-> > +What:                /sys/class/leds/ayn:rgb:joystick_rings/effect
-> > +Date:                July 2025
-> > +KernelVersion:       6.17
-> > +Contact:     "Derek J. Clark" <derekjohn.clark@gmail.com>
-> > +Description:
-> > +             This controls the display effect of the RGB interface.
-> > +
-> > +    Values are monocolor or breathe.
-> > +
-> > +    Applies to AYN Loki and Tectoy Zeenix lines of handheld devices.
-> > +
-> > +What:                /sys/class/leds/ayn:rgb:joystick_rings/effect_ind=
-ex
-> > +Date:                July 2025
-> > +KernelVersion:       6.17
-> > +Contact:     "Derek J. Clark" <derekjohn.clark@gmail.com>
-> > +Description:
-> > +             This displays the available options for the effect attrib=
-ute.
-> > +
-> > +    Values are monocolor or breathe.
-> > +
-> > +    Applies to AYN Loki and Tectoy Zeenix lines of handheld devices.
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 5b816883fe7d..199bebbffa0d 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -4039,6 +4039,7 @@ AYN PLATFORM EC DRIVER
-> >   M:  Derek J. Clark <derekjohn.clark@gmail.com>
-> >   L:  platform-driver-x86@vger.kernel.org
-> >   S:  Maintained
-> > +F:   Documentation/ABI/testing/sysfs-platform-ayn-ec
-> >   F:  drivers/platform/x86/ayn-ec.c
-> >
-> >   AZ6007 DVB DRIVER
+Thank you for the confirmation. Will keep it.
+> > > +static int tlv493d_runtime_suspend(struct device *dev)
+> > > +{
+> > > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > > +	struct tlv493d_data *data = iio_priv(indio_dev);
+> > > +
+> > > +	return tlv493d_set_operating_mode(data, TLV493D_OP_MODE_POWERDOWN);
+> > > +}
+> > > +
+> > > +static int tlv493d_runtime_resume(struct device *dev)
+> > > +{
+> > > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > > +	struct tlv493d_data *data = iio_priv(indio_dev);
+> > > +
+> > > +	return tlv493d_set_operating_mode(data, data->mode);
+> > > +}
+> > > +
+> > > +static DEFINE_RUNTIME_DEV_PM_OPS(tlv493d_pm_ops,
+> > > +		tlv493d_runtime_suspend, tlv493d_runtime_resume, NULL);
+> > > +
+> > > +static const struct i2c_device_id tlv493d_id[] = {
+> > > +	{ "tlv493d" },
+> > > +	{ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(i2c, tlv493d_id);
+> > > +
+> > > +static const struct of_device_id tlv493d_of_match[] = {
+> > > +	{ .compatible = "infineon,tlv493d-a1b6", },
+> > > +	{ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, tlv493d_of_match);
+> > > +
+> > > +static struct i2c_driver tlv493d_driver = {
+> > > +	.driver = {
+> > > +		.name = "tlv493d",
+> > > +		.of_match_table = tlv493d_of_match,
+> > > +		.pm = pm_ptr(&tlv493d_pm_ops),
+> > > +	},
+> > > +	.probe = tlv493d_probe,
+> > > +	.id_table = tlv493d_id,
+> > > +};
+> > > +
+> > > +module_i2c_driver(tlv493d_driver);
+> > > +
+> > > +MODULE_LICENSE("GPL");
+> > > +MODULE_DESCRIPTION("Infineon TLV493D Low-Power 3D Magnetic Sensor");
+> > > +MODULE_AUTHOR("Dixit Parmar <dixitparmar19@gmail.com>");
+> > >   
+> > 
+> 
 
