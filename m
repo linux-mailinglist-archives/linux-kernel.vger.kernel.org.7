@@ -1,166 +1,252 @@
-Return-Path: <linux-kernel+bounces-749496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256F5B14F16
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:12:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B5AEB14F12
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:11:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028C55415F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:12:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C838A7A1CFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D941D5154;
-	Tue, 29 Jul 2025 14:12:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FC51D5141;
+	Tue, 29 Jul 2025 14:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cqbSe+AP";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CvsYWtmi"
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JmU3SvO5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B84C6D;
-	Tue, 29 Jul 2025 14:12:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 313854C6D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753798346; cv=none; b=pXuM6jq904e0/1HPIG2UZude9ZBVM8jdJ9N8XOdeq/Yf8Ep3O6n5OP1dU2H81KSrj37up8AeibghRlxTwly4hgkWd4MTBqpN+LCdB+TDd9YUHxX0GgNWsfl/KXFt8tWmN+ddp8wO4hfsx3yLKRuqwWFyFglD8r2+VGwvd/0xOiQ=
+	t=1753798300; cv=none; b=BlstVPYEH60sqov+zbZLky9VyR/i1sX54VxU+dA62d8laEz1OPslvw19ayNebFccXxrBXBwGLjbZOWrT1BUZlCbUG3fHF5VnQUXErBleGvng+uZ+q0UWOfoSqoEKEdRLZ+QUVN129+hyGBSTDh2XJoP8XKHmUasT+SWLleesytA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753798346; c=relaxed/simple;
-	bh=lIYDMtNMk2OTrfFA3d4aR7UcZNph1MLXV/AoeIDs2Ts=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=A8MlkuOAw8NaGBR23Qtnk+KYzFvFZFYMEnNuWNfw810shrl+3k/LCYj7bYPYZ8WyJLMPYMSlS8Y+6T7l5STnzl5tnK7lWCOKQns1eUnPg877tKJ8rPqVXkN22XtmhXTT6SXU/CMfz2Wi0Nyc4+5A5js121vebaLR8lZlBiS6Kpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cqbSe+AP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CvsYWtmi; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 44A631400429;
-	Tue, 29 Jul 2025 10:12:23 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Tue, 29 Jul 2025 10:12:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1753798343;
-	 x=1753884743; bh=lvTM6U3OpuAsCCBQIku+DT9FmGxTEa/60sJXAhmj4Hk=; b=
-	cqbSe+API5g2rlgsERAfDu2mY8ph4aIxDTxIHAPgTo2SbCKfJ4ph1gJWNAUjV5Qm
-	xUy6rg389Y/DTWs08OvdpMBp1DJGR8ZgiifZVixtQXWCJNn9Kht1SsUaFykWRJV+
-	tkPLPfiJvJ4pGZI+K5dlnwCKFkZ+zrxE3wThogcKn0gBiFk6G8UKG8QFzG7pJPVm
-	5t1qa69C6IgJspq2GwsGaz2rn7qJ4oM64yCmBs+a5GTALP/DPWmG5NNxj6jO2oN2
-	RjD/BJxbpGHfWjcKuJq8kZbLgX7YNbdUCqVqiFHiRHWuarfK7iK8HZNoVbj6Ow1r
-	+y4Rf/ODIoASbzCFypRLEA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1753798343; x=
-	1753884743; bh=lvTM6U3OpuAsCCBQIku+DT9FmGxTEa/60sJXAhmj4Hk=; b=C
-	vsYWtmi3B3g3+mzLPNaQwOlUQei7WcWveA/9We8Z3ImiB0eGgwN5TLAtmPQLxkHl
-	Tn4D1oA7zcX13/d7OHsgEwgkLKphv87Y8n9+vHaJSuXdz7bXZxGSIie4eTGRV3rX
-	h7MbeO3QnX4D6D40M+WNOQ89icrRKFauCw4RqZx9w5UqnNf/26ed69RoYMLRTyV+
-	qps+n2wK6Lykcc6wp7397Fvr3Z52gTcyWN+ywpMsfAuhLvoruZgW+gWFqFPt/sa8
-	6lj5fw0A58HHSQDm9bupRvEN0yxolTM7Bm7nVpYwphIWbqilMZiKZa0KtWZoFgNY
-	xFhmkBTJQRciP523OuLDA==
-X-ME-Sender: <xms:xdaIaLTPcHNLB3QXpFFd-z9ZeqATv-9BHA7AobcAzMkGwQtGwnnoCg>
-    <xme:xdaIaMxDiltG0UgVCVAKgfe0M39NKL9Q0cA2uA0Vyd7N9nPK3BxwbRc6IlK1VOSti
-    U7u9mwIbQKBhawPIXU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelhedviecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
-    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
-    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
-    hnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfeihfen
-    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghp
-    thhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhglhessghgug
-    gvvhdrphhlpdhrtghpthhtohepnhhikhholhgrohhsrdhprghsrghlohhukhhoshessghl
-    rghiiigvrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhrihgthhgrrhgusegsohhoth
-    hlihhnrdgtohhmpdhrtghpthhtohepkhhoihgthhhirhhordguvghnsegtrghnohhnihgt
-    rghlrdgtohhmpdhrtghpthhtohepughlrghnsehgvghnthhoohdrohhrghdprhgtphhtth
-    hopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheprghl
-    vgigrghnuggvrhdrshhvvghrughlihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplh
-    hkphesihhnthgvlhdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:xdaIaLiwD5Z-T_JjbUMhKMFhNUzADagw3kV4oUcTEFyOLxTP7ok_5w>
-    <xmx:xdaIaNitssFW8BiPoaGsNmQ9fZnFiK9q4kYs9DxguRjg7DTYFoRE7Q>
-    <xmx:xdaIaDasfvaG0hshiKJpbbYR24B7HiixMZth93V-eUD1tcMV_ZdaNQ>
-    <xmx:xdaIaGWWJvRoJsRiYVjEByxDJAmh3RedNq33vrUBYTtCyx1SEq4A3g>
-    <xmx:x9aIaNTr7MrDyvM0nA3TLVY29MRwVIe2F-S0vMzg9fpJdLqbSTCppvhP>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A5F0E700065; Tue, 29 Jul 2025 10:12:21 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1753798300; c=relaxed/simple;
+	bh=Okx9/ZRNuBrHKqJcoVM3t4DqefOZDV9kjoSf1LmlvjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pb704NuqCesX5/moxn0Gh8IaZRs7zWGH/Bx+o9Gwrabe5Ix8uJ3j6ktGXoF/ls2iyzTa0knK4treCGQ0UR0Wl3F5pWMD2aG/flVf6xPD8cpmnph4kSyawKEFUgHNs3BCqwlhfK4axGougfXG3If61IYh83yZ1CE9EoaB9B6PEqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JmU3SvO5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753798298;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=S1ElpNfWetAncubBW4nULK43vxREFUQ5PC14/2hrshU=;
+	b=JmU3SvO5DjLynfw6Dj/otMlYlkwV2EjggTnJf9BrykN+auDet0WHpTgmpVusymNvS115z+
+	gmTWqvPsb2mBONQBI5vxPEOEdatzU2jWizH/mDFJLd1iwB+EJvUetVNtV9A6ZofjzcoFTR
+	kdc5e7LqaGrkmabZ8Fgi4EL+dKgJVoQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-286-wFTlWwQ4Ml-RoN7t6HNrCQ-1; Tue, 29 Jul 2025 10:11:36 -0400
+X-MC-Unique: wFTlWwQ4Ml-RoN7t6HNrCQ-1
+X-Mimecast-MFC-AGG-ID: wFTlWwQ4Ml-RoN7t6HNrCQ_1753798295
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b782c29be3so2158874f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:11:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753798295; x=1754403095;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=S1ElpNfWetAncubBW4nULK43vxREFUQ5PC14/2hrshU=;
+        b=p82mGFrzkJdAuLZIEWCpAfXW2zVMm8V+4hzT5iGQJhwzMv8iQbFblR0vY71pKm8H6M
+         kPEY5HIr3CdTCt9nG9dmmYrbuT/d2YxNgRDktPRpxXwQi+fvD0Rxw5wPI17MRNxGlMVw
+         h7caZWa0gZ4YEffydZdxSpf3OJIyq7u2qVSO61Bo1xqBreuxJPTrBwKnCFa0otcEmFhZ
+         9kQZwqVtn6nEaGR0pseeS/ECROJd9/luXjxYG0c4sxkcEHgQE9hOM+42+LdYOHLkrLJS
+         nlG10lRdk7YyLby+8+WOgbh8zOofS6O9HDPM5u48RUa9/FzgghLRGOKAOejDlQB/gqsi
+         dvAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVB8BGcqwLLnT0R0inVSjfnCNYehiTtiPS6z379NwK3SmI35JsvGM3LCJYp/VTM6l7mCazEeE1BOU9HU4o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQpYffp+7Cz1ciHFsfOotiYQ/BjO4YWWglmvzCaLQ1cM602ioT
+	icVOm5EffElaQZ2HppNP+6EbFgL+Glmj2ScZ9AifFcZ1eMvMI2pUCRgs6qmBy603AtPYVe4i8Sm
+	y52Ho6w3W52gz2pCKhnjlj4FiPOhs3jpa7JVSPxF2/gnNraJ23kM1vYpSEvazvqUHgw==
+X-Gm-Gg: ASbGncv+fahL3SracdPBXfTWfrfoqQp1xY35kMNfH7GJIIIMPAVkmccyI/l5WfIBoB8
+	HXGsFq+hMMHeYoQ79sTbwTH0eBk/fVhlOSxGLiOiutLxOpgffwW3Pj2fCfV3ukT2DF52NrKXvd+
+	+ns14CykL00uawNeGLZJvrpmzKVFmAjAqZNEodnlrPkLha4EjD1l1s6bwB0i2pu+V0HwxKV9kpP
+	IpMlHPRRc4InV1mhsGNQtOIkx7obKh5yrNdrfVE9G34kSs8psEQ5jMfmYuB3mlbKd97C2fwE8AX
+	//mM4twpoM1WCZAucbdqTzvw3MIxa5mE4ss0EeEQ6rMTbZXvKR2KVRXvO3F8oPVLJLTLYrpO
+X-Received: by 2002:a5d:64c3:0:b0:3a5:298a:3207 with SMTP id ffacd0b85a97d-3b77678d462mr11705408f8f.48.1753798295089;
+        Tue, 29 Jul 2025 07:11:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErQBVNkKK40UX2bTpHjNrd42cFNcADA06bXXRBd040/9oIvyVblwFNee5lBXdHixIuozTVFg==
+X-Received: by 2002:a5d:64c3:0:b0:3a5:298a:3207 with SMTP id ffacd0b85a97d-3b77678d462mr11705387f8f.48.1753798294683;
+        Tue, 29 Jul 2025 07:11:34 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778f0c866sm12128869f8f.55.2025.07.29.07.11.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 07:11:33 -0700 (PDT)
+Message-ID: <0cb3d5a5-683b-4dba-90a8-b45ab83eec53@redhat.com>
+Date: Tue, 29 Jul 2025 16:11:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T15b001141a5b4202
-Date: Tue, 29 Jul 2025 16:11:22 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Geert Uytterhoeven" <geert@linux-m68k.org>
-Cc: "Arnd Bergmann" <arnd@kernel.org>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "kernel test robot" <lkp@intel.com>, "Peng Fan" <peng.fan@nxp.com>,
- "Koichiro Den" <koichiro.den@canonical.com>, "Lee Jones" <lee@kernel.org>,
- "Geert Uytterhoeven" <geert+renesas@glider.be>,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- "Niko Pasaloukos" <nikolaos.pasaloukos@blaize.com>,
- "Thomas Richard" <thomas.richard@bootlin.com>, "Yixun Lan" <dlan@gentoo.org>,
- "Lars-Peter Clausen" <lars@metafoo.de>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Message-Id: <476d821e-1f8a-44e3-a976-def1f435440e@app.fastmail.com>
-In-Reply-To: 
- <CAMuHMdUSsKeY-Uj1xA4SatDk+Mb0e4LJyOU=aS52YbA3DSMLrA@mail.gmail.com>
-References: <20250726211053.2226857-1-arnd@kernel.org>
- <CAMuHMdU6Akz0GC2hooAxn=C2F0WjagPkzRKcH1SJiW0CBeUOaw@mail.gmail.com>
- <f0a2a000-381e-40d8-a9ac-4d75dba332e9@app.fastmail.com>
- <CAMuHMdUSsKeY-Uj1xA4SatDk+Mb0e4LJyOU=aS52YbA3DSMLrA@mail.gmail.com>
-Subject: Re: [PATCH] gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] mm/damon: Add damos_stat support for vaddr
+To: Yueyang Pan <pyyjason@gmail.com>, SeongJae Park <sj@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Usama Arif <usamaarif642@gmail.com>
+Cc: damon@lists.linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <cover.1753794408.git.pyyjason@gmail.com>
+ <44a30f700fdcf4470318ef5cd248ba98c59b77a2.1753794408.git.pyyjason@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
+ 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
+ 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
+ OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
+ kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
+ GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
+ s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
+ Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
+ FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
+ OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
+ NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
+ Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
+ 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
+ /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
+ bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
+ RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
+ m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
+ CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
+ vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
+ WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <44a30f700fdcf4470318ef5cd248ba98c59b77a2.1753794408.git.pyyjason@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 29, 2025, at 14:12, Geert Uytterhoeven wrote:
-> On Tue, 29 Jul 2025 at 13:58, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Tue, Jul 29, 2025, at 12:47, Geert Uytterhoeven wrote:
->> Do you have an example config that shows this problem?
->> I've tried a couple of configurations on m68k now but are unable
->> to reproduce this, using 'defconfig' (without GPIOLIB) and
->> 'm5475evb_defconfig' (with GPIOLIB).
->>
->> The intention of this patch (in combination with the previous one)
->> was that the legacy interfaces would still behave exactly like
->> before, falling back to the stubs when GPIOLIB is disabled.
->
-> I haven't seen any actual failures.  When discovering
-> CONFIG_GPIOLIB_LEGACY=y in all m68k defconfigs, my initial worry
-> was that it would increase kernel size by needlessly including
-> gpiolib-legacy.o. When that didn't turn out to be true, I started
-> wondering how your commit would fix anything without including
-> gpiolib-legacy.o.  Looks like any users just uses the simple static
-> inlines...
-> Sorry for confusing you.
+On 29.07.25 15:53, Yueyang Pan wrote:
+> From: PanJason <pyyjason@gmail.com>
+> 
+> This patch adds support for damos_stat in virtual address space.
+> It leverages the walk_page_range to walk the page table and gets
+> the folio from page table. The last folio scanned is stored in
+> damos->last_applied to prevent double counting.
+> ---
+>   mm/damon/vaddr.c | 113 ++++++++++++++++++++++++++++++++++++++++++++++-
+>   1 file changed, 112 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index 87e825349bdf..3e319b51cfd4 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -890,6 +890,117 @@ static unsigned long damos_va_migrate(struct damon_target *target,
+>   	return applied * PAGE_SIZE;
+>   }
+>   
+> +struct damos_va_stat_private {
+> +	struct damos *scheme;
+> +	unsigned long *sz_filter_passed;
+> +};
+> +
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +static int damos_va_stat_pmd_entry(pmd_t *pmd, unsigned long addr,
+> +		unsigned long next, struct mm_walk *walk)
+> +{
+> +	struct damos_va_stat_private *priv = walk->private;
+> +	struct damos *s = priv->scheme;
+> +	unsigned long *sz_filter_passed = priv->sz_filter_passed;
+> +	struct folio *folio;
+> +	spinlock_t *ptl;
+> +	pmd_t pmde;
+> +
+> +	ptl = pmd_lock(walk->mm, pmd);
+> +	pmde = pmdp_get(pmd);
+> +
+> +	if (!pmd_present(pmde) || !pmd_trans_huge(pmde))
+> +		goto unlock;
+> +
+> +	/* Tell page walk code to not split the PMD */
+> +	walk->action = ACTION_CONTINUE;
+> +
+> +	folio = damon_get_folio(pmd_pfn(pmde));
+> +	if (!folio)
+> +		goto unlock;
+> +
+> +	if (damon_invalid_damos_folio(folio, s))
+> +		goto update_last_applied;
+> +
+> +	if (!damos_va_filter_out(s, folio, walk->vma, addr, NULL, pmd)){
+> +		*sz_filter_passed += folio_size(folio);
 
-No worries, thanks for paying attention to incoming changes!
+See my comment below regarding vm_normal_page and folio references.
 
-If you want to see what the actual plan is, have a look at
+But this split into two handlers is fairly odd. Usually we only have a 
+pmd_entry callback (see madvise_cold_or_pageout_pte_range as an 
+example), and handle !CONFIG_TRANSPARENT_HUGEPAGE in there.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=config-gpio-legacy
+Then, there is also no need to mess with ACTION_CONTINUE
 
-which ends with making GPIOLIB_LEGACY actually optional.
+> +	}
+> +
+> +	folio_put(folio);
+> +update_last_applied:
+> +	s->last_applied = folio;
+> +unlock:
+> +	spin_unlock(ptl);
+> +	return 0;
+> +}
+> +#else
+> +#define damon_va_stat_pmd_entry NULL
+> +#endif
+> +
+> +static int damos_va_stat_pte_entry(pte_t *pte, unsigned long addr,
+> +		unsigned long next, struct mm_walk *walk)
+> +{
+> +	struct damos_va_stat_private *priv = walk->private;
+> +	struct damos *s = priv->scheme;
+> +	unsigned long *sz_filter_passed = priv->sz_filter_passed;
+> +	struct folio *folio;
+> +	pte_t ptent;
+> +
+> +	ptent = ptep_get(pte);
+> +	if (pte_none(ptent) || !pte_present(ptent))
+> +		return 0;
+> +
+> +	folio = damon_get_folio(pte_pfn(ptent));
+> +	if (!folio)
+> +		return 0;
 
-Any driver that actually uses the legacy gpiolib interfaces
-at that point is already specific to one of the few platforms
-that still have legacy gpiochips (sh, sa1100, pxa, s3c64xx,
-orion5x, mv78xx0, coldfire, alchemy, txx9, bcm47xx, bcm63xx,
-rb532, olpc, and a few x86 atom boards), or it has an explicit
-dependency on GPIOLIB_LEGACY.
+We have vm_normal_folio() and friends for a reason -- so you don't have 
+to do pte_pfn() manually.
 
-The arm boards are already on their way out, but the others
-could probably use some help converting to gpio descriptors.
+... and now I am confused. We are holding the PTL, so why would you have 
+to grab+put a folio reference here *at all*.
 
-     Arnd
+-- 
+Cheers,
+
+David / dhildenb
+
 
