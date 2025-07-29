@@ -1,175 +1,84 @@
-Return-Path: <linux-kernel+bounces-749784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771A3B152E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:38:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96A4B152E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2FFB5A0185
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:37:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ADE518A68FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48619254876;
-	Tue, 29 Jul 2025 18:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAAD6246771;
+	Tue, 29 Jul 2025 18:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYFEMwMm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HujKt5/o"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A130825394A;
-	Tue, 29 Jul 2025 18:37:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB5B2512D8;
+	Tue, 29 Jul 2025 18:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753814252; cv=none; b=cB77IZjEKfrdzrK7GiSygLf3S3YA6OdCS+gZ46ptrjEfXMcn6EzQHBT4b47VadUmxNEjQp2BR75Sy50JmlSAUBgOkN4pZ12jm9TC21gyEkKR2Nb9yx3AR+zjHKl5Mhay2TR9iyyuVC07Nq7Ak0CKXJ9oNj6qcdQb7MReXTizcw8=
+	t=1753814307; cv=none; b=hzn7VgZHJf2G00sh9FQB3ZojcGwMvuXkwcxql9nsnq94JjQJjfjQMa2vnfO8TCKGLW5gEgsyQlgojO2o7foy+Rs1ORimU5J53t6q6cc+JPb+7vhaOk+cNlx7n6EbqA0paiIeS/xj/9gcUGFfOGRqYG3TtVkUVVMZQXMny9Eb4L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753814252; c=relaxed/simple;
-	bh=e/kMLxQK/nFx235KhbR4QiP5CRSJuobxUh+x8nD52uM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Xobec+IMHwOJUdLfeRjVzTYrTfVqbNUYr41umPnyLlx4Vqt0WlPs0st7tgVdxQKCL2hhdL9+CP3ICmlY4vKMCWh4HweQ0LpDBY1oyJvbn2/lnZ6RW9iHmm3i0sn7gxD01iANutHg+aSXn0uCUi+Fx/m2e0gIUz0e93oc2dnZnVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYFEMwMm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC5CBC4CEF6;
-	Tue, 29 Jul 2025 18:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753814252;
-	bh=e/kMLxQK/nFx235KhbR4QiP5CRSJuobxUh+x8nD52uM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QYFEMwMmqgwFqvyvF5VyDhLbjiSWHkf6C33ICaY7JC8F+y/O9ze39pGGszYuDru8i
-	 ujHr2wQoqKRQju2A2Ms4fEQmX+lwTWdzqjnJvFxQ/02b5fh+/FbEjmvs5Tjn9jtQ2f
-	 GabiVGlUjpokE3pvPZ7NCO5BnPlUlVBXOcWCMd/PPmA00eyCKRZ6GlG3H1OfDkUrqs
-	 9e/elFFYlySjPe1kqCCSPAOXwevgehUzKrifeI9sHHtiqYtaGR8XPcdvP1Jm6u21Sv
-	 M3dmta1hXt9zed7mwxncYBPWdF11/ZHzz7o59lm7bc/3YiwkivVTaAbBhN9nnvgQPL
-	 6y2qnQL8uyyJQ==
-Date: Tue, 29 Jul 2025 19:37:23 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, Andy Shevchenko
- <andy@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 6/7] hwmon: iio: Add min/max support
-Message-ID: <20250729193723.5f0d784e@jic23-huawei>
-In-Reply-To: <099a8ce2-0837-4d79-8e58-8f7af0a0ff7d@linux.dev>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
-	<20250715012023.2050178-7-sean.anderson@linux.dev>
-	<20250727173542.46680071@jic23-huawei>
-	<099a8ce2-0837-4d79-8e58-8f7af0a0ff7d@linux.dev>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753814307; c=relaxed/simple;
+	bh=zurAIv8QJCiY4sCrzsrfx3On7ABYVu1QaUaxnbJm7mk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=smNmssWX92dmAdaCmCPVNkBm+Hs/OmND9tdExkJh9lgaQVcE1LQ6WJPlyc1z2raUHDArLu9kUTIZNfx7YdZEePGxdYaBDEugX9B962XxK98VroHlNFTDVeajKZEzZaXKoqjEvvp/ZPLYgOqVoWcaMhr/GBswbV3x8qwKI01lBew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HujKt5/o; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rbTOQvtnp+cahdtxatioeM/MAABw3lsWvLX8gCzBEH4=; b=HujKt5/obGxAkpEGMebhaWNp8H
+	4WC30uPMs0xPxHl3aOvQF6mCLuxzG9cWsIkyjGNMk22jOnyOQN6P2QNE/5QNGHPWx1tfJw72AH4uA
+	bZKrLR2SaHv+Ndc3Ir9RS4TjkKXlBtc8pN9xV2igLOGvdgjD13UUvV7VNPKOcbg1HLPxPMX+D9L5e
+	Mp3H+zB14bKjwfzV0+NuxL4cqCRfYmcSK5h+481GrCdkBY5GsvS6qXoAiFZRW1cTpZTNdLANpZTbu
+	fVz9rtr9qaf6YViG8xaLQQ8QIahQ9p1434i8X2f9HuPkEuJUfLuBsmnFQGV7Oh3YHVYG3mMDf9a6J
+	NNiCgFtA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ugpDR-0000000GJKg-0L4w;
+	Tue, 29 Jul 2025 18:38:21 +0000
+Date: Tue, 29 Jul 2025 19:38:20 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Tony Battersby <tonyb@cybernetics.com>
+Cc: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
+	Christian Brauner <brauner@kernel.org>,
+	"Darrick J. Wong" <djwong@kernel.org>, linux-raid@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iomap: align writeback to RAID stripe boundaries
+Message-ID: <aIkVHBsC6M5ZHGzQ@casper.infradead.org>
+References: <55deda1d-967d-4d68-a9ba-4d5139374a37@cybernetics.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <55deda1d-967d-4d68-a9ba-4d5139374a37@cybernetics.com>
 
-On Mon, 28 Jul 2025 18:32:43 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+On Tue, Jul 29, 2025 at 12:13:42PM -0400, Tony Battersby wrote:
+> Improve writeback performance to RAID-4/5/6 by aligning writes to stripe
+> boundaries.  This relies on io_opt being set to the stripe size (or
+> a multiple) when BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE is set.
 
-> On 7/27/25 12:35, Jonathan Cameron wrote:
-> > On Mon, 14 Jul 2025 21:20:22 -0400
-> > Sean Anderson <sean.anderson@linux.dev> wrote:
-> >   
-> >> Add support for minimum/maximum attributes. Like the _input attribute,
-> >> we just need to call into the IIO API.
-> >> 
-> >> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>  
-> > 
-> > Similar comments to previous. I'm not keen on the blend of allocation of
-> > attributes and registration.  If we can break that link I think it will give
-> > cleaner code.
-> >  
-> >>  static int add_device_attr(struct device *dev, struct iio_hwmon_state *st,
-> >>  			   ssize_t (*show)(struct device *dev,
-> >>  					   struct device_attribute *attr,
-> >> @@ -123,6 +171,40 @@ static int add_device_attr(struct device *dev, struct iio_hwmon_state *st,
-> >>  	return 0;
-> >>  }
-> >>  
-> >> +static int add_event_attr(struct device *dev, struct iio_hwmon_state *st,
-> >> +			  int i, enum iio_event_direction dir,
-> >> +			  const char *fmt, ...)
-> >> +{
-> >> +	struct sensor_device_attribute_2 *a;
-> >> +	umode_t mode;
-> >> +	va_list ap;
-> >> +
-> >> +	mode = iio_event_mode(&st->channels[i], IIO_EV_TYPE_THRESH, dir,
-> >> +			      IIO_EV_INFO_VALUE);
-> >> +	if (!mode)
-> >> +		return 0;
-> >> +
-> >> +	a = devm_kzalloc(dev, sizeof(*a), GFP_KERNEL);
-> >> +	if (!a)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	sysfs_attr_init(&a->dev_attr.attr);
-> >> +	va_start(ap, fmt);
-> >> +	a->dev_attr.attr.name = devm_kvasprintf(dev, GFP_KERNEL, fmt, ap);
-> >> +	va_end(ap);
-> >> +	if (!a->dev_attr.attr.name)
-> >> +		return -ENOMEM;
-> >> +
-> >> +	a->dev_attr.show = iio_hwmon_read_event;
-> >> +	a->dev_attr.store = iio_hwmon_write_event;
-> >> +	a->dev_attr.attr.mode = mode;
-> >> +	a->index = i;
-> >> +	a->nr = dir;
-> >> +
-> >> +	st->attrs[st->num_attrs++] = &a->dev_attr.attr;  
-> > similar comment to the previous, though here I think we'd
-> > need to pass in the channel to an iio_hwmon_alloc_event_attr() as ideally we'd
-> > not be messing with st at all in here.  So maybe it doesn't work out.  
-> 
-> Well, I used to have
-> 
-> +               if (iio_read_channel_label(&st->channels[i], buf) >= 0) {
-> +                       st->attrs[attr] = create_attr(dev, iio_hwmon_read_label,
-> +                                                     NULL, 0444, i, 0, 0, 0,
-> +                                                     "%s%d_label", prefix, n);
-> +                       if (!st->attrs[attr++])
-pushing attr off the end is not a good idea even if we know we don't use it
-any more.
-> +                               return -ENOMEM;
-> +               }
-> 
-> but even with a shorter function name, all the parameters are starting
-> to get bunched up on the right side. And if we make it longer as you
-> propose it starts looking like
-Using a local variable
-			struct attribute *att;
+When you say "aligning writes to stripe boundaries", what you actually
+seem to be doing here is sending writes down once we hit a write stripe
+boundary, instead of accumulating writes that cross stripe boundaries.
+Do I understand correctly?
 
-			att = create_attr(dev, iio_hwmon_read_lanel,
-					 ...
-			if (!att)
-				return -ENOMEM;
+If so, the performance gain we see here is presumably from the DM/MD
+driver not having to split bios that cross boundaries?
 
-			st->attrs[attr++] = att;
-helps but still ugly.
-> 
-> 
-> +               if (iio_read_channel_label(&st->channels[i], buf) >= 0) {
-> +                       st->attrs[attr] =
-> +                               iio_hwmon_create_device_attr(dev,
-> +                                                            iio_hwmon_read_label,
-> +                                                            NULL, 0444, i, 0, 0,
-> +                                                            0, "%s%d_label",
-> +                                                            prefix, n);
-> +                       if (!st->attrs[attr++])
-> +                               return -ENOMEM;
-> +               }
-> 
-> which is IMO really terrible-looking.
-
-Fair enough. let's leave it as is.
-> 
-> Maybe we should just stick everything in an xarray and linearize it at
-> the end of probe...
-If it looks nicer - feel free!
-
-J
-> 
-> --Sean
+Further, wouldn't it be simpler to just put a new condition in
+iomap_can_add_to_ioend() rather than turning iomap_add_to_ioend()
+into a nested loop?
 
 
