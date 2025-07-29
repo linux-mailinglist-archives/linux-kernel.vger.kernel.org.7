@@ -1,249 +1,191 @@
-Return-Path: <linux-kernel+bounces-749319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6388B14CE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:17:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B025B14CE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3BB9546934
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:17:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DCA618A37CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:18:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70EA928982C;
-	Tue, 29 Jul 2025 11:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729E528D823;
+	Tue, 29 Jul 2025 11:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="JJvb/z67"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2bUBFlyi"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B2C1DE891
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F251A288C26
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753787868; cv=none; b=l1WZ0cwTDOgwd7ncNDHvb+ARJY9L1iql5tN2UKBkftnF2aY5ikdWN+a0+/DZirDym5DGka81J8duk2JX1uIf5gVYf3Ef0Ck2Wz2G9x+Nr2akvXMDU24Uz9h3q3YmEKM84zzPd1w9TAvwDyJwYuHDeSsUshbCiLOYg50T9VRumzE=
+	t=1753787876; cv=none; b=l82u6tMiD/U1PLAg0BOd8czDBRMEh1cZcqU4YR1BN6WmhjpnQmgiNxsb/w4keXYjyQOWFsi9/OpTw1YDhNI8iSC+yOQl4MbEhln9FXu1ILfq0yMe7vptr/M3n/My0GrChX2uU65LwOdFq29j6YSmWKdR5kpvUeEWb2BzngdTvJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753787868; c=relaxed/simple;
-	bh=w5fSSjhlZE4kaSUhjPO0bjn6UL+qxNFnllPhL6OPLvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Oxaa5op86JhxQfYOtzKFjDZyf0ZO1IIbJwgF8kHBGali4tuY0RLHJmOrPK1R3gWawJRpXTlIejrFxCwk6eSAoSGAcQATVBQqOqd2vGhxvGWALbVMuazFYhIumoi5RR8QXgXl94BNcDM0uMWrHS7DXrZLizTqDg+HwPEEs3Wix8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=JJvb/z67; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56T84tQn017481
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:17:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JYLypgdlK6xbRh65r51fMOTrMAj5xEpWl/0YTtrCvkg=; b=JJvb/z67ZXOEaE5K
-	/aMBVM25cxtou/PSxH4NgdnI3Qjd7ItDqfqjueg3qY+TeT2CytUhRTi9oFmqAp9F
-	hbsHYs0CBWl8TyDuEqXtmmpmiFAw2GWsILSYR6/pB2uSs8CZf4ZkOq5Uo7PKIqjj
-	Oi1ly92bAIK2WH0+o6VggFLza+JsAzvnjEdxUK5V9vMJ77EfaMzqIpnomTHsQU1G
-	QnLl/W61rlzE6UmWwIqeD3/cAbmB54pwkW018lDuLecB0KwH/VvyHQpEkNpkeOa2
-	pNchutBn14Chx763CGg7whjj3KKkLSUFjApxE/438YcuOrr+w576cO7nyGP9wnOa
-	lIsqlg==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484p1afunq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:17:45 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7073ec538e2so10812506d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:17:45 -0700 (PDT)
+	s=arc-20240116; t=1753787876; c=relaxed/simple;
+	bh=VavxcMit2RZ9iqKN8RuPlF7sbKrr+xf78GvYlaxU9zc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F7HRGo53szG5UNZuVs0fFiUKPJfbnVWA08lgm/28e/wBZRVzNNECLRWjXEqQBepnIHKuw2svwTGpRViceVW9CBvI034WHBCgHsfc7j+tX3CcW2Q3iTAbMK5yyxEctePvaVi3DiV9kqvXodAGtAbcdJvPdH5NcVENHiVLecxd9Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2bUBFlyi; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-32b7113ed6bso58739391fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:17:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753787873; x=1754392673; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ltMJxWBOHtolA4fHUO1dAMcF/j+HeyAumwrml6j94Dk=;
+        b=2bUBFlyi6FIVtOM2BU21iOrBUeoVKB0202lEZqkjS6dWLJUwcQPnjWXieDew+n43Bh
+         LGgHjkOXYt86C7nqsPXA5h03mQB/x4bKU5kW89VuCaFkcxrqR9myy5smfvytvSK+UGPP
+         PYOYBNP+JCpjNcz4X3vxdYrPWqQksqE2/rSmxxCmMgdC7UaHk9jhpzXbPQXHql9GJmVO
+         2LleOoD8TzUJPY+nRC80VeoEmTF/s9fCE9fFH7ItUu58AmFkcDwHvsaGIeuT+Qyf3skm
+         p9MemPBlC8YuiiuSab/4kpsFOgt1bHxA2Ghng7VNKmoI43T95UKrbmNUggJ9oI1fMtpA
+         lPuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753787865; x=1754392665;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JYLypgdlK6xbRh65r51fMOTrMAj5xEpWl/0YTtrCvkg=;
-        b=WDBrpwynm/06x3auG5ifjydPUUa79rcB+eeQ7mF9+5UFOpyA7WkjYUUZW7Cn8sl+Jj
-         d/UmbiJjp/fBpbQ0YjJYNXO874Hy7Si2mcCfdQnyM+6/vWilTSRiI0iE+Pd3UWFCdQ8t
-         JqXAwVvhNRfvuJzO3kUt/0GfLyIi/wmQ8UtczZhI7wr303XApsY+vTWoMK1JlUaC/mv+
-         1hY8Zlx6yZybI91/JQ0QU3BAC1sqUt+gzHzSlX8mcoO0Zzc96yuf6EMhuYhie2TT5eVB
-         IdhWqDfU4SOKSwSWRprrlxsjTUPB5PvGWlDPge2Me6koVtFyuql/JYJ6dEfCfmWLSBVK
-         /v1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWgkXIakS8eHYMnrzavAqAqA5JY/qEMv+n81SJrwcZf+wot1SHzZRJ3BWL6WZMvZagQ40leH0LPBhDRsfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzk6TQYIKha9tbdNcwd3cvZpBY8xhrWAUO7SZUx1k1SmQQ00jFR
-	IWyQbtb6UXqk+5aulecqqzOitM/1atIBJhn1wx9xxpLJeR1X3hXB2O8Do/01v6pXkGM5nCq4CXb
-	TZZ5g77ObIkzg2hlxfQP//MmumUOtD64XjtWXo1JDUNjQacKWDNIYQynjeR7ATOJwvDA=
-X-Gm-Gg: ASbGncuxB3kPI+lwqJuNX6uGt1N0nJoAsfhByP3pzyY/zY/wtIFZouWKKexqNlmxDxC
-	okC8Vs3SygI6epA/TIJJ6uzjYtiTUUAHdnp5C7v9J9MjXg9+IQMhYiMj2xkL/1aUd8TkOaUQ/Tv
-	pr6UMvOgtMSEY1AdY7squWXwUcSMr5A4kRoEJl7V5rlumA1c2r9jpB8H+0lQAiKB0q+yqH7kpl4
-	ystWaHQGvMkI2Yu2w/bHYL6IzFNZoSyc5AbJyM9GAKSZfHr2tH2Pwk5e8gmINf4kO4fJ7E0UaGM
-	mljIVJiWkK0Yj1LGWSQg0yeZ8s9zUqylwnrLn8mSHqDTTg3aM6ACyiPqHoNj1uBYfe18oQwMeFo
-	/TQIxQJ6mpK0psqeAWw==
-X-Received: by 2002:ad4:5f4c:0:b0:707:4dcc:4f56 with SMTP id 6a1803df08f44-7074dcc58e3mr33456906d6.8.1753787865064;
-        Tue, 29 Jul 2025 04:17:45 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFVL/ipLCTE3KQBvxK0+K5+RyTudhg4FnfX6zILSoy/F5vK3nKlWwkqe0t7Ugz+vuHVlx/Q5A==
-X-Received: by 2002:ad4:5f4c:0:b0:707:4dcc:4f56 with SMTP id 6a1803df08f44-7074dcc58e3mr33456586d6.8.1753787864544;
-        Tue, 29 Jul 2025 04:17:44 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a63116sm577931366b.90.2025.07.29.04.17.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 04:17:42 -0700 (PDT)
-Message-ID: <1f6fc7ce-5826-4f59-89d7-ac691a3ae785@oss.qualcomm.com>
-Date: Tue, 29 Jul 2025 13:17:39 +0200
+        d=1e100.net; s=20230601; t=1753787873; x=1754392673;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ltMJxWBOHtolA4fHUO1dAMcF/j+HeyAumwrml6j94Dk=;
+        b=WdR+VzdaMdEz6jLb7bCxXc8yLtljW0OtuUlW5qIzvIulPp4+ZrZVX0VnOD4ztAkCGu
+         NftxXXRwJMm2+9Uw7KOrngk9Yds7VTRUvqMVyUKDDQWf5m7KVnNR2Dvr0blXDI33WpXr
+         R4KOv5dJi0WEIfIF2/mgSHXNmDdXquMVTHSHJjHCIT3uVsapZtvD0PAsmiHmO7nD61cD
+         rYuh8Hp7RntkdD4Q/Hs2BLlhERQLoHKn8sUvEqGPj/9A1+Yr96yZzxIxi5j5Z8Smg/kx
+         i06H+DhsSqXdOC6YDekwdWxzQVKbWSolOVrc+AWW+SSY2ZL7ZA+CCIIppg5pSVe7xKb1
+         FATg==
+X-Forwarded-Encrypted: i=1; AJvYcCXWUn34kZqH+EKWgW31kq9hehOLZkZ2xsvAvRa6L4od7SuI/rw5a08gtQJz1NdCQA2o0JlWCFXnsVAKwL8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8xasOAAnKNQco/2m2GLatv0dq6XRcKXMY5ma0fPlePhmTqIyb
+	8CIto5+qF7J3pBgIs7Xl3s0OY1plz6fe9WEUWP6YEU/TBF/wrFlkjWPtZ2TpNsWvPnb9uK4hVcJ
+	jbahHHEo2QtBQ+F7YS95wynMO0gCAwZiYKKevNYO7
+X-Gm-Gg: ASbGncuMYM1B08saQKHEnHFthx5OPfyssObarCYtBvPSznFNyxRkf/oncIC93HqVKI4
+	xIpO3IDrLgcXXPzCuZeQfF9gEaBg0AcF5jHkpKGYF+D/hL1HreS4FfcVLwQUS1TZ6VblPBQkCkl
+	A33rm4kuK3z25GLWAT2bXN9I5O+4yGfDNG0of4OaMF3+kkEWz/l/BUTrPQ0TfACUd3g1ZRx5pxV
+	lDzMiC6CXmoMIK9ANc50Sf8JbXlshQRgGj2jk5T0m+Ys+Ml
+X-Google-Smtp-Source: AGHT+IE1lzpVUF119n4xxFLHaM0CJydh7lEzZgVU1OQ8ZpULUdA5KdGtvu67om6Lq5vZVPvpUmKVAV+SOFxzlEODR7k=
+X-Received: by 2002:a05:651c:3254:10b0:331:e6e3:5f9a with SMTP id
+ 38308e7fff4ca-331ee70ee1bmr36539531fa.3.1753787872852; Tue, 29 Jul 2025
+ 04:17:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] arm64: dts: qcom: Add display support for QCS615
-To: Fange Zhang <fange.zhang@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>,
-        Li Liu <quic_lliu6@quicinc.com>, Dmitry Baryshkov <lumag@kernel.org>
-References: <20250718-add-display-support-for-qcs615-platform-v5-0-8579788ea195@oss.qualcomm.com>
- <20250718-add-display-support-for-qcs615-platform-v5-1-8579788ea195@oss.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250718-add-display-support-for-qcs615-platform-v5-1-8579788ea195@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: AmRviw_E6_XGUcS-KPeeWSpXrVE9AfUA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDA4NyBTYWx0ZWRfX/poTD4qFHEDK
- pXG5Usi5fU4sTTwLgwlrJH4y1TZaxtz+2JGPrO3Z1VeKFTSPWmu0JTm1uYGI8jXmFlqOU9x/wSt
- eaAgEYnnWCZ+ZOdGCrse3TCXf3vyMGp9NWN8rlFZXsdOuI2tZ/Gb0PoZaDa7j3fJP2th+1aR6cK
- n2+eei9oooBPxDNv6LGEVib6BwMfYbRLcayRUqazI1+h0OykbS6mZ3kOLxkpWywM0rLJcoFz2d7
- fG8Ndb+PlT2OEGUXUHF3FuV5GwECXlBG9q8XeQLlt8Oyr8nJsKUrg8zk43ZWHEVt7taDX75ca1U
- hfnayUvRBXNz2Qio4avQ3wKZXbkmR7WSTPaJT3TJmZKDv7nt+bCKem9p7v6PSs/x3isy5rXmbnP
- oM70RmlnIxK9Qy38MF9WL/GytpdRiHLqD/VaZ4kR9jWCuC7gujxfXqLUi4wliNV5A0Pufx0f
-X-Proofpoint-GUID: AmRviw_E6_XGUcS-KPeeWSpXrVE9AfUA
-X-Authority-Analysis: v=2.4 cv=KtNN2XWN c=1 sm=1 tr=0 ts=6888add9 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8
- a=EUspDBNiAAAA:8 a=Frto0rYOkVf98Gw2rTwA:9 a=QEXdDO2ut3YA:10
- a=1HOtulTD9v-eNWfpl4qZ:22 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-29_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507290087
+References: <20250728152548.3969143-1-glider@google.com> <20250728152548.3969143-9-glider@google.com>
+In-Reply-To: <20250728152548.3969143-9-glider@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 29 Jul 2025 13:17:41 +0200
+X-Gm-Features: Ac12FXzvXT6ZDgqBgnzLORTrdzHWOr68Bbqui0G02Gy0qCyfBlS9fa_n-K2ksxM
+Message-ID: <CACT4Y+aEwxFAuKK4WSU8wuAvG01n3+Ch6qBiMSdGjPqNgwscag@mail.gmail.com>
+Subject: Re: [PATCH v3 08/10] kcov: add ioctl(KCOV_RESET_TRACE)
+To: Alexander Potapenko <glider@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/18/25 2:56 PM, Fange Zhang wrote:
-> From: Li Liu <quic_lliu6@quicinc.com>
-> 
-> Add display MDSS and DSI configuration for QCS615 platform.
-> QCS615 has a DP port, and DP support will be added in a later patch.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Li Liu <quic_lliu6@quicinc.com>
-> Signed-off-by: Fange Zhang <fange.zhang@oss.qualcomm.com>
+On Mon, 28 Jul 2025 at 17:26, Alexander Potapenko <glider@google.com> wrote:
+>
+> Provide a mechanism to reset the coverage for the current task
+> without writing directly to the coverage buffer.
+> This is slower, but allows the fuzzers to map the coverage buffer
+> as read-only, making it harder to corrupt.
+>
+> Signed-off-by: Alexander Potapenko <glider@google.com>
+
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+
+
+>
 > ---
-
-[...]
-
+> v2:
+>  - Update code to match the new description of struct kcov_state
+>
+> Change-Id: I8f9e6c179d93ccbfe0296b14764e88fa837cfffe
+> ---
+>  Documentation/dev-tools/kcov.rst | 26 ++++++++++++++++++++++++++
+>  include/uapi/linux/kcov.h        |  1 +
+>  kernel/kcov.c                    | 15 +++++++++++++++
+>  3 files changed, 42 insertions(+)
+>
+> diff --git a/Documentation/dev-tools/kcov.rst b/Documentation/dev-tools/kcov.rst
+> index 6446887cd1c92..e215c0651e16d 100644
+> --- a/Documentation/dev-tools/kcov.rst
+> +++ b/Documentation/dev-tools/kcov.rst
+> @@ -470,3 +470,29 @@ local tasks spawned by the process and the global task that handles USB bus #1:
+>                 perror("close"), exit(1);
+>         return 0;
+>      }
 > +
-> +			mdss_mdp: display-controller@ae01000 {
-> +				compatible = "qcom,sm6150-dpu";
-> +				reg = <0x0 0x0ae01000 0x0 0x8f000>,
-> +				      <0x0 0x0aeb0000 0x0 0x2008>;
-> +				reg-names = "mdp", "vbif";
 > +
-> +				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
-> +					 <&gcc GCC_DISP_HF_AXI_CLK>,
-> +					 <&dispcc DISP_CC_MDSS_MDP_CLK>,
-> +					 <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
-> +				clock-names = "iface", "bus", "core", "vsync";
-
-1 per line please, everywhere> +
-> +				assigned-clocks = <&dispcc DISP_CC_MDSS_VSYNC_CLK>;
-> +				assigned-clock-rates = <19200000>;
-
-Is this necessary?
-
+> +Resetting coverage with an KCOV_RESET_TRACE
+> +-------------------------------------------
 > +
-> +				operating-points-v2 = <&mdp_opp_table>;
-> +				power-domains = <&rpmhpd RPMHPD_CX>;
+> +The ``KCOV_RESET_TRACE`` ioctl provides a mechanism to clear collected coverage
+> +data for the current task. It resets the program counter (PC) trace and, if
+> +``KCOV_UNIQUE_ENABLE`` mode is active, also zeroes the associated bitmap.
 > +
-> +				interrupt-parent = <&mdss>;
-> +				interrupts = <0>;
-
-interrupts-extended
-
+> +The primary use case for this ioctl is to enhance safety during fuzzing.
+> +Normally, a user could map the kcov buffer with ``PROT_READ | PROT_WRITE`` and
+> +reset the trace from the user-space program. However, when fuzzing system calls,
+> +the kernel itself might inadvertently write to this shared buffer, corrupting
+> +the coverage data.
 > +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
+> +To prevent this, a fuzzer can map the buffer with ``PROT_READ`` and use
+> +``ioctl(fd, KCOV_RESET_TRACE, 0)`` to safely clear the buffer from the kernel
+> +side before each fuzzing iteration.
 > +
-> +					port@0 {
-> +						reg = <0>;
-
-Please keep a \n between properties and subnodes
-
-> +						dpu_intf0_out: endpoint {
-> +						};
-> +					};
+> +Note that:
 > +
-> +					port@1 {
-> +						reg = <1>;
-> +						dpu_intf1_out: endpoint {
-> +							remote-endpoint = <&mdss_dsi0_in>;
-> +						};
-> +					};
-> +				};
-> +
-> +				mdp_opp_table: opp-table {
-> +					compatible = "operating-points-v2";
-> +
-> +					opp-19200000 {
-> +						opp-hz = /bits/ 64 <19200000>;
-> +						required-opps = <&rpmhpd_opp_low_svs>;
-> +					};
-> +
-> +					opp-25600000 {
-> +						opp-hz = /bits/ 64 <25600000>;
-> +						required-opps = <&rpmhpd_opp_svs>;
-
-This and the above frequency are missing one zero (i.e. you
-have a 10x underclock)
-
-[...]
-
-> +			mdss_dsi0_phy: phy@ae94400 {
-> +				compatible = "qcom,sm6150-dsi-phy-14nm";
-> +				reg = <0x0 0x0ae94400 0x0 0x100>,
-> +				      <0x0 0x0ae94500 0x0 0x300>,
-> +				      <0x0 0x0ae94800 0x0 0x188>;
-
-sz = 0x124
-
-> +				reg-names = "dsi_phy",
-> +					    "dsi_phy_lane",
-> +					    "dsi_pll";
-> +
-> +				#clock-cells = <1>;
-> +				#phy-cells = <0>;
-> +
-> +				clocks = <&dispcc DISP_CC_MDSS_AHB_CLK>,
-> +					 <&rpmhcc RPMH_CXO_CLK>;
-> +				clock-names = "iface", "ref";
-> +
-> +				status = "disabled";
-> +			};
-> +		};
-> +
->  		dispcc: clock-controller@af00000 {
->  			compatible = "qcom,qcs615-dispcc";
->  			reg = <0 0x0af00000 0 0x20000>;
->  
->  			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> -				 <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>;
-> +				 <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
-> +				 <&mdss_dsi0_phy 0>,
-> +				 <&mdss_dsi0_phy 1>,
-
-#include <dt-bindings/clock/qcom,dsi-phy-28nm.h>
-
-Konrad
+> +* This ioctl is safer but slower than directly writing to the shared memory
+> +  buffer due to the overhead of a system call.
+> +* ``KCOV_RESET_TRACE`` is itself a system call, and its execution will be traced
+> +  by kcov. Consequently, immediately after the ioctl returns, cover[0] will be
+> +  greater than 0.
+> diff --git a/include/uapi/linux/kcov.h b/include/uapi/linux/kcov.h
+> index e743ee011eeca..8ab77cc3afa76 100644
+> --- a/include/uapi/linux/kcov.h
+> +++ b/include/uapi/linux/kcov.h
+> @@ -23,6 +23,7 @@ struct kcov_remote_arg {
+>  #define KCOV_DISABLE                   _IO('c', 101)
+>  #define KCOV_REMOTE_ENABLE             _IOW('c', 102, struct kcov_remote_arg)
+>  #define KCOV_UNIQUE_ENABLE             _IOW('c', 103, unsigned long)
+> +#define KCOV_RESET_TRACE               _IO('c', 104)
+>
+>  enum {
+>         /*
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index a92c848d17bce..82ed4c6150c54 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -740,6 +740,21 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+>                 return 0;
+>         case KCOV_UNIQUE_ENABLE:
+>                 return kcov_handle_unique_enable(kcov, arg);
+> +       case KCOV_RESET_TRACE:
+> +               unused = arg;
+> +               if (unused != 0 || current->kcov != kcov)
+> +                       return -EINVAL;
+> +               t = current;
+> +               if (WARN_ON(kcov->t != t))
+> +                       return -EINVAL;
+> +               mode = kcov->mode;
+> +               if (mode < KCOV_MODE_TRACE_PC)
+> +                       return -EINVAL;
+> +               if (kcov->state.bitmap)
+> +                       bitmap_zero(kcov->state.bitmap,
+> +                                   kcov->state.bitmap_size);
+> +               WRITE_ONCE(kcov->state.trace[0], 0);
+> +               return 0;
+>         case KCOV_DISABLE:
+>                 /* Disable coverage for the current task. */
+>                 unused = arg;
+> --
+> 2.50.1.470.g6ba607880d-goog
+>
 
