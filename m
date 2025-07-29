@@ -1,153 +1,110 @@
-Return-Path: <linux-kernel+bounces-748883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4EBDB1472A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:22:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743DAB1472F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B9073BD338
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:21:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 544DF7AE3C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB753234984;
-	Tue, 29 Jul 2025 04:21:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCBD8632B;
+	Tue, 29 Jul 2025 04:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="BhWVday4"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="crOwAMm1"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A392165E2;
-	Tue, 29 Jul 2025 04:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA47622D9E3;
+	Tue, 29 Jul 2025 04:22:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753762905; cv=none; b=t9H+2JM6IRvllzOhaAoTB+/EYOuDyWMwOAQQCw3DMmk2Fc3ih00GLlNwwF9H+P1CTUoiNe+0tPEXRxNa/l3IP5pzVHJa0kR//0bLAkiZNd3iA61f08w0+skxzjXLbDV7yun6RqJ3Dq6dUcgWfgvBS5rAFrDWn8X3qzAvVPIEznI=
+	t=1753762948; cv=none; b=rz/VetBp2IFDVnAleV5A8RFKGmwQiorIEdVBwRmmjfyCpJ/A6IoR5HRhDIc9Vm6+wt6iio4jr0S4bFUL0ilrKIFOW9SBIaWZaLUM8dU5bLe4kwaMJnU9YlNPL3ggk35hSx3SyJ/ac5R+E1QJlHFwzaCSFPox5x0ty+qOTbF1h9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753762905; c=relaxed/simple;
-	bh=DkySQ9C6S2kjZcTV+DRFTNGRLwaEe/YY6YKOlioQj/4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fmlc5vokqm/9SOdu42D4RBjzePQe3HgkxNJgX72sP+eg3hEItRilIBWmg7L6sMzVE+Lmdkf1vb9F8PrA0dIdqo0LQLBzwqxsnZUFbXy8CYB97nXl0HAjfYzjyWI0NneLAcgTW0AxcIyozI7Nl+INpFi/fR9S5yfbD2/c3gZd39Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=BhWVday4; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1753762892;
-	bh=x6e4i3YoKlDiQe2/JuPqV82fMICTL+9U6m2WYDkZjpo=; l=2264;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=BhWVday4Z0ed/aycNj5/iQ21AK3c4KAFp8MkmGru1SdB2gqoCtbsxV1khXEJKQPTA
-	 gj/nrt56VwTruY3TUPf05uB6u/JtyYcCgwyALfDkQNpw+H2eV4VrHNEawbsSE93xey
-	 N8S4eLkRoVQafaES+Vmg3TBj1OaT+q+MvDZmOt4OJWKs88OJ48h20mao2QnNNeA8iC
-	 uvzc6CLM2nih/oM0p/5IoDkLFw3/S7+RyLWrNF7h+SXjF45DO61l2qLaYQRY30HO0W
-	 k5g1QX9ZsdUY5v4UjOLXanZHAfshbbvZSsnOhCo+AuVgm7jSv0L1d226diZsEjcMcJ
-	 PVcCBkiYrIQ6w==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(244577:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 29 Jul 2025 12:21:18 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Jul
- 2025 12:21:18 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Tue, 29 Jul 2025 12:21:18 +0800
-From: <cy_huang@richtek.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-CC: Conor Dooley <conor+dt@kernel.org>, ChiYuan Huang <cy_huang@richtek.com>,
-	<devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] Documentation: power: rt9756: Document exported sysfs entries
-Date: Tue, 29 Jul 2025 12:21:56 +0800
-Message-ID: <0440825afccf3234997eded18b8a10f1f95638c0.1753759794.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1753759794.git.cy_huang@richtek.com>
-References: <cover.1753759794.git.cy_huang@richtek.com>
+	s=arc-20240116; t=1753762948; c=relaxed/simple;
+	bh=ol1UriP10WVoMhKOoE2Ub9lirBxAK6LDSTDvbvhG+K0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=u69WXUw+fnvkqc6Ze1a6Ng7tigIsYzyQxR0yDWamhI88+5c24ilwy+FlMLdF5AyGObgt3a/KtIHSpY2ChVb/YA35fdCH6amKft2+yg0ayY/MWd34UT1ynMmRgnSCKzyLUfiIAUliWyx0EILB8lUm3X/315pbYU3G1xVIScPQBRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=crOwAMm1; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753762732;
+	bh=b1pgfzOeL6zW7c/f+GSXABLpurJPDHjEPmQJcVaOv/Q=;
+	h=Date:From:To:Cc:Subject:From;
+	b=crOwAMm1WSUpvXwkSdRAhZb6WOAni3HJqe07kTD6CRMhwMvPdlaEnUbhcoA5v4frL
+	 MPoc2cONvA/mUGf1lbeEmV7owccLx6TPN80VPXBA4i0GgA/BaOmX+hmF4J6g9AfjwX
+	 +4VNxl+jdikwZpUvAdt/qhYIsDUXUQ1F/x1LzZt2stHVVUD3SG9xvDZh+lkWLONNsy
+	 FI3mIzhMMI0gpJ35NmotYzB8LQ+odakwuPLYvIl0aaW1v+lScSvDI8+FohjJaURyTm
+	 K7NUlf2OETgCok5GS+v8ETzWuK8y4C1KuiDGHBSOK7i3R5VNk2sZw5rbFjnkMqyPeM
+	 hDIlml249LeKQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brhtM4Wm0z4x43;
+	Tue, 29 Jul 2025 14:18:51 +1000 (AEST)
+Date: Tue, 29 Jul 2025 14:22:17 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christoffer Dall <cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the kvm-arm tree
+Message-ID: <20250729142217.0d4e64cd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="Sig_/KprrsJ8NBy9QldrZb_cea=W";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+--Sig_/KprrsJ8NBy9QldrZb_cea=W
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Document the settings exported by rt9756 charger driver through sysfs
-entries:
+Hi all,
 
-- watchdog_timer
-- battery_voltage
-- battery_current
-- operation_mode
+After merging the kvm-arm tree, today's linux-next build (htmldocs)
+failed like this:
 
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
----
- .../ABI/testing/sysfs-class-power-rt9756      | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-power-rt9756
+Using /home/sfr/kernels/next/next/scripts/kernel-doc.pl
 
-diff --git a/Documentation/ABI/testing/sysfs-class-power-rt9756 b/Documentation/ABI/testing/sysfs-class-power-rt9756
-new file mode 100644
-index 000000000000..2d0f7ef1b855
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-power-rt9756
-@@ -0,0 +1,52 @@
-+What:		/sys/class/power_supply/rt9756-*/watchdog_timer
-+Date:		Aug 2025
-+KernelVersion:	6.17
-+Contact:	ChiYuan Huang <cy_huang@richtek.com>
-+Description:
-+		This entry shows and sets the watchdog timer when rt9756 charger
-+		operates in charging mode. When the timer expires, the device
-+		will disable the charging. To prevent the timer expires, any
-+		host communication can make the timer restarted.
-+
-+		Access: Read, Write
-+
-+		Valid values:
-+		- 500, 1000, 5000, 30000, 40000, 80000, 128000 or 255000 (milliseconds),
-+		- 0: disabled
-+
-+What:		/sys/class/power_supply/rt9756-*/battery_voltage
-+Date:		Aug 2025
-+KernelVersion:	6.17
-+Contact:	ChiYuan Huang <cy_huang@richtek.com>
-+Description:
-+		Reports the current BAT voltage.
-+
-+		Access: Read-Only
-+
-+		Valid values: Represented in microvolts
-+
-+What:		/sys/class/power_supply/rt9756-*/battery_current
-+Date:		Aug 2025
-+KernelVersion:	6.17
-+Contact:	ChiYuan Huang <cy_huang@richtek.com>
-+Description:
-+		Reports the current BAT current.
-+
-+		Access: Read-Only
-+
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/rt9756-*/operation_mode
-+Date:		Aug 2025
-+KernelVersion:	6.17
-+Contact:	ChiYuan Huang <cy_huang@richtek.com>
-+Description:
-+		This entry shows and set the operation mode when rt9756 charger
-+		operates in charging phase. If 'bypass' mode is used, internal
-+		path will connect vbus directly to vbat. Else, default 'div2'
-+		mode for the switch-cap charging.
-+
-+		Access: Read, Write
-+
-+		Valid values:
-+		- 'bypass' or 'div2'
--- 
-2.34.1
+Sphinx parallel build error:
+docutils.utils.SystemMessage: Documentation/virt/kvm/devices/arm-vgic-v3.rs=
+t:128: (SEVERE/4) Unexpected section title or transition.
 
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Caused by commit
+
+  eed9b1420907 ("Documentation: KVM: arm64: Describe VGICv3 registers writa=
+ble pre-init")
+
+I have reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/KprrsJ8NBy9QldrZb_cea=W
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiITHkACgkQAVBC80lX
+0Gw8CggAjByaNZy0QUPZymea4xAijNsebWi4eYv7myXTyyXOOZXqYpj/R+0wKe/b
+Lde99dbXB41aVXhK2yznNdF32REp45LOZboUtquWI98OwOaY+SJI/fVKQFbYB8g1
+Qwnna55JRn3FMhJD/d+EI+iy5tuuq9grsMx+mItUf6h0q2VYRc7o5NW+1cNs6O9B
+nlcfRqpuMGZJ3DbbBFD2BXypusivsBddk1cITSwsuzYN3mS4RxSiHZV9fKS69sfk
+AQ5G/2DOae4fv7Ktduq9fevzfzr91Hy7+nn+bpsYfrLZZ7iAIz+UlEnSjHvzV6mx
+mQi6MSc7N08KDHmkKwYdMZG3YZFOlw==
+=aG6k
+-----END PGP SIGNATURE-----
+
+--Sig_/KprrsJ8NBy9QldrZb_cea=W--
 
