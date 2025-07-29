@@ -1,336 +1,181 @@
-Return-Path: <linux-kernel+bounces-749575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9AD0B15036
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:33:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA4D3B15038
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:34:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33B3518A305E
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 173ED3B4C40
 	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:34:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21680293C51;
-	Tue, 29 Jul 2025 15:33:45 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A84293C59;
+	Tue, 29 Jul 2025 15:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gm/UWWf2"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F44217A2F8;
-	Tue, 29 Jul 2025 15:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4DB293C4C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753803224; cv=none; b=DlSiiZtSjr/AaDYC10zyI6u4GbdwVhchlbRQptXKdx4dqzcpkspkdqNj21IvzyFn+s4TfLRdU6ycasybNq8Suj0z276rKe6G/5AXgT4A/Uw2/1vyv3Efj5zP8YkHPYzz1SiKX4bGUOPoNMr8oDq4zb9eIT9VN6NIKzcUcJwewQg=
+	t=1753803276; cv=none; b=cZLHrMijQPCRj6jsE+SssyyPmQmbFYQzrRHUv80K+nX+5zM5eyO0EdCZNt2a7W2TQYWhLaWuF7kvo2BMGaEDXrnKaBXCzyWBgHGCUKUMbfPWGE3GeI0ynM9N3X8CYsqST67VTsmwtMM08ZrCxEZiqZ5qM3SSwXvPxdap64SOcNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753803224; c=relaxed/simple;
-	bh=2IcOCGm1LA5lOY7AMsZ3YYDTTpnO0vRH8GvO6hA9Nls=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=K9Ginr2bokKQ/48/BosFxjFPzt9x8hsPYHyRMQqAblngHkD/NB9M0bhu5jd64YwP1PKb3FDV6P5G7KI8AfffeNw8dmzbA1UpmCm08n7RYHr/K7ras707eMd/T1YXbXnrHLpTBcIQApnv87Rryk88gdmt+J8O7YcjxEHTpDYQSqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf14.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id EEE45C0142;
-	Tue, 29 Jul 2025 15:33:38 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf14.hostedemail.com (Postfix) with ESMTPA id 8A38230;
-	Tue, 29 Jul 2025 15:33:35 +0000 (UTC)
-Date: Tue, 29 Jul 2025 11:33:35 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Namhyung Kim <namhyung@kernel.org>,
- Takaya Saeki <takayas@google.com>, Douglas Raillard
- <douglas.raillard@arm.com>, Tom Zanussi <zanussi@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ian
- Rogers <irogers@google.com>, aahringo@redhat.com
-Subject: [PATCH] tracing/probes: Allow use of BTF names to dereference
- pointers
-Message-ID: <20250729113335.2e4f087d@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753803276; c=relaxed/simple;
+	bh=i5h0os/YtNwZTZidzFNsIxF45bH5oA2E+VUtDTiVQnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RRsoTugE8fKAhuxN066Lp1+ODHs3x33zO8PS9QV0rkZyBRPUIXr9a6SOaxRC63MqAWbKotCrWFF2Zg+Sqs/pUu9+V3kwvea0Bwjy1ZhgEpKojAX/5u9Gk1JaSJ0apmwaOfZXSKHyyq+6ejhqM0545UusrXU/HCMBojIn1yCeTzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Gm/UWWf2; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2403ceef461so17500185ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:34:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753803274; x=1754408074; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=VMoqKFLALEq+ZmPG9wCyqAsQPACRG2hPVvh+rmUE0OA=;
+        b=Gm/UWWf2IRaDM1h5HLY13taz1WRy6vjT3b6QiDStPs9e+ceR2c+mV+FUvwPU1Bcf3N
+         BdxC7YeuFmxe0gVrhusU1UqUiH89LiTLcRI0qWR9lQIwN0e9zMe52bzDn+blQ3GL1pcP
+         BCaVvvAnuy8HJrdaR78BWALZcIABmqJmu4kCyyFLpCOCuWK+0kvIVNlDsKIcAQ22ffXe
+         vGh/QPX8xhkRzeV865xNWr+U5RDKJhB0FwoIM55QPXidin5cGr1rMIKj3IF+buP5kqNH
+         ItzRISFhOKXYBcMGxVlTiz1IQewavWwMP9zdCSRBXKcy07KTnBuAH4whI/sKkdQ0eRVT
+         wWNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753803274; x=1754408074;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VMoqKFLALEq+ZmPG9wCyqAsQPACRG2hPVvh+rmUE0OA=;
+        b=W/LQVOo1OaHJWxo9FXJN0eVRJTKvec85JspUthjj/8APOBUgh1501RKDFWyQuEccD0
+         aBhMZnHg3oBDSyoICLY8B+HE7N8BnbcQMLj7fsCKoW7IJ1q+KC8QKlnVQVUMCBlEt+PW
+         DB105uPxxjZIFeoyuECLaYF1wQJ+UKr+lDkFAVlhhi7qnEXb/AnwP5tT1EgenauOALVs
+         G2wNRWPqkHePOkCD0olsl9qexYuSyxxTeyZ4aFeOs0WfxxXFXXj6oP4jclCX5CbyRUVO
+         qPnPep63EvSy6ziDhtvdulDDd6M4LzukVY+Cf6/pW+OtN4QIHdoABDGED8Ch0bVnIdtH
+         T2Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCXtiCXZWB6aC78HRwxfUIxiOeLsTJSfMt+jCGylv7Mm2OHTDudJdlhKrWzYM4VASUF83agYg5E2YnXRJZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR9We4QQskvnz2zUogGS1W7Y1Y71SKIjusAfDxWfbRm1JzEFKg
+	fYRh0I7dYhBSV77x2GyFgKG0Azpkhd6rhX342fCqYrmtU2C0XaKs9CdpucufbLsK7hs=
+X-Gm-Gg: ASbGncsiMQ7dMM+veHk9KKAQe0i5876v88TR28Zvf5Q8UMrBDPGBwdRe8F1/NCNL5R7
+	bqXqygaqPV2uCMGvSkLnatUROO+Tvir4yFVAHtl5XSmtpf1VyISrndCFf+nqi5CimRIcYp7f+cW
+	uMWMejV/nhIVnvkP+rA48khlTbb58O+fZbsqs1xymZv+fbcOWyvqGYthLXe6t01nHepwMA9dLKA
+	pzMJHf36j4WO6WNUGLCu+WV1xybYHmo2p5CuyZsgprLkA5H9hODsFtaMqP/va+U2qVn7lSKO4mL
+	pMx/klhvVJfeMTFADXtPwuxLJrGBc2IDvrc2OSrdZAGIyUHTE5b8mPEyi4GDYjoBUwMfeF/Dvee
+	Y3pmWM1/k/t+dCWEq4fRfRLsZug==
+X-Google-Smtp-Source: AGHT+IHlEsBwMee/kywPI2/tvT1g4ScsliyDmtiDbB1WAnykD0Ma1gjgSCy2s0F1viosLS+e5Kxzqg==
+X-Received: by 2002:a17:903:2ec7:b0:240:5c38:756b with SMTP id d9443c01a7336-2405c3879e4mr62619735ad.14.1753803273589;
+        Tue, 29 Jul 2025 08:34:33 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:8920:ecd3:44e1:110b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24052e03863sm32464055ad.41.2025.07.29.08.34.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 08:34:32 -0700 (PDT)
+Date: Tue, 29 Jul 2025 09:34:30 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Beleswar Padhi <b-padhi@ti.com>
+Cc: andersson@kernel.org, afd@ti.com, hnagalla@ti.com, jm@ti.com,
+	jan.kiszka@siemens.com, christophe.jaillet@wanadoo.fr,
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	daniel.baluta@nxp.com, iuliana.prodan@nxp.com,
+	arnaud.pouliquen@foss.st.com, tanmay.shah@amd.com
+Subject: Re: [RFC PATCH] remoteproc: core: Do not process carveout and devmem
+ rsc in attach mode
+Message-ID: <aIjqBi3X4hWGsJLP@p14s>
+References: <20250724133144.3776839-1-b-padhi@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 8A38230
-X-Stat-Signature: f1o7q5n9fpkhzgrd7yw8anuq4xznz3xm
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18pA3cncbtVCHJGw40eqEaPE1HtKcX9AJ4=
-X-HE-Tag: 1753803215-75147
-X-HE-Meta: U2FsdGVkX1/fu05z8BG7HqWmUFiJrVsGyXz4rkF0zBMOzDL9D44Ld+OCPAUPwo5dO8jC68PI8e8pmtH3O3tqVH2+4zJcoIeeemv/Ha33zGORJEBCukIOpxY6Kvg3C4A4CWO/GjIHyZEwoVsOuxTX//vb1hh8hY6BMPUfFWnBBcBySrm67L7KJXlPFQuNsTbVi3aQO4OFsXnEBtJCAuinuVUJ+4s+xcZKIbhlkp0w5XZaeW3hQdALIledDpS1439SiQNQc6UXEjKecMgkH+xhO80G0ndFs7bYJR86NoPlMjJC60G22CNvlq7sZo6yC3x98ijmM0ksVmF7siB3FVXCzpaxu6CRpODEbYa+MvC/tUU0p/K7US7xAU6oDConLZS4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724133144.3776839-1-b-padhi@ti.com>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+Hi Beleswar,
 
-Add syntax to the FETCHARGS parsing of probes to allow the use of
-structure and member names to get the offsets to dereference pointers.
+On Thu, Jul 24, 2025 at 07:01:44PM +0530, Beleswar Padhi wrote:
+> When attaching to a remote processor, it is implied that the rproc was
+> booted by an external entity. Thus, it's carveout and devmem resources
+> would already have been processed by the external entity during boot.
+> 
+> Re-allocating the carveouts in Linux (without proper flags) would zero
+> out the memory regions used by the firmware and can lead to undefined
+> behaviour. And there is no need to re-map the memory regions for devmem
+> resources as well.
+> 
+> Therefore, do not process the carveout and devmem resources in attach
+> mode by not appending them to the rproc->carveouts and rproc->mappings
+> lists respectively.
+> 
 
-Currently, a dereference must be a number, where the user has to figure
-out manually the offset of a member of a structure that they want to
-reference. For example, to get the size of a kmem_cache that was passed to
-the function kmem_cache_alloc_noprof, one would need to do:
+I think what you are proposing is logical.  Arnaud, Daniel, Iuliana and Tanmay -
+please test this on your platforms.  I will also need another TB from someone at
+TI.
 
- # cd /sys/kernel/tracing
- # echo 'f:cache kmem_cache_alloc_noprof size=+0x18($arg1):u32' >> dynamic_events
+Regards,
+Mathieu
 
-This requires knowing that the offset of size is 0x18, which can be found
-with gdb:
-
-  (gdb) p &((struct kmem_cache *)0)->size
-  $1 = (unsigned int *) 0x18
-
-If BTF is in the kernel, it can be used to find this with names, where the
-user doesn't need to find the actual offset:
-
- # echo 'f:cache kmem_cache_alloc_noprof size=+kmem_cache.size($arg1):u32' >> dynamic_events
-
-Instead of the "+0x18", it would have "+kmem_cache.size" where the format is:
-
-  +STRUCT.MEMBER[.MEMBER[..]]
-
-The delimiter is '.' and the first item is the structure name. Then the
-member of the structure to get the offset of. If that member is an
-embedded structure, another '.MEMBER' may be added to get the offset of
-its members with respect to the original value.
-
-  "+kmem_cache.size($arg1)" is equivalent to:
-
-  (*(struct kmem_cache *)$arg1).size
-
-Anonymous structures are also handled:
-
-  # echo 'e:xmit net.net_dev_xmit +net_device.name(+sk_buff.dev($skbaddr)):string' >> dynamic_events
-
-Where "+net_device.name(+sk_buff.dev($skbaddr))" is equivalent to:
-
-  (*(struct net_device *)((*(struct sk_buff *)($skbaddr))->dev)->name)
-
-Note that "dev" of struct sk_buff is inside an anonymous structure:
-
-struct sk_buff {
-	union {
-		struct {
-			/* These two members must be first to match sk_buff_head. */
-			struct sk_buff		*next;
-			struct sk_buff		*prev;
-
-			union {
-				struct net_device	*dev;
-				[..]
-			};
-		};
-		[..]
-	};
-
-This will allow up to three deep of anonymous structures before it will
-fail to find a member.
-
-The above produces:
-
-    sshd-session-1080    [000] b..5.  1526.337161: xmit: (net.net_dev_xmit) arg1="enp7s0"
-
-And nested structures can be found by adding more members to the arg:
-
-  # echo 'f:read filemap_readahead.isra.0 file=+0(+dentry.d_name.name(+file.f_path.dentry($arg2))):string' >> dynamic_events
-
-The above is equivalent to:
-
-  *((*(struct dentry *)(*(struct file *)$arg2)->f_path.dentry)->d_name.name)
-
-And produces:
-
-       trace-cmd-1381    [002] ...1.  2082.676268: read: (filemap_readahead.isra.0+0x0/0x150) file="trace.dat"
-
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- Documentation/trace/kprobetrace.rst |   3 +
- kernel/trace/trace_btf.c            | 106 ++++++++++++++++++++++++++++
- kernel/trace/trace_btf.h            |  10 +++
- kernel/trace/trace_probe.c          |   7 +-
- 4 files changed, 124 insertions(+), 2 deletions(-)
-
-diff --git a/Documentation/trace/kprobetrace.rst b/Documentation/trace/kprobetrace.rst
-index 3b6791c17e9b..00273157100c 100644
---- a/Documentation/trace/kprobetrace.rst
-+++ b/Documentation/trace/kprobetrace.rst
-@@ -54,6 +54,8 @@ Synopsis of kprobe_events
-   $retval	: Fetch return value.(\*2)
-   $comm		: Fetch current task comm.
-   +|-[u]OFFS(FETCHARG) : Fetch memory at FETCHARG +|- OFFS address.(\*3)(\*4)
-+  +STRUCT.MEMBER[.MEMBER[..]](FETCHARG) : If BTF is supported, Fetch memory
-+		  at FETCHARG + the offset of MEMBER inside of STRUCT.(\*5)
-   \IMM		: Store an immediate value to the argument.
-   NAME=FETCHARG : Set NAME as the argument name of FETCHARG.
-   FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
-@@ -70,6 +72,7 @@ Synopsis of kprobe_events
-         accesses one register.
-   (\*3) this is useful for fetching a field of data structures.
-   (\*4) "u" means user-space dereference. See :ref:`user_mem_access`.
-+  (\*5) +STRUCT.MEMBER(FETCHARG) is equivalent to (*(struct STRUCT *)(FETCHARG)).MEMBER
- 
- Function arguments at kretprobe
- -------------------------------
-diff --git a/kernel/trace/trace_btf.c b/kernel/trace/trace_btf.c
-index 5bbdbcbbde3c..b69404451410 100644
---- a/kernel/trace/trace_btf.c
-+++ b/kernel/trace/trace_btf.c
-@@ -120,3 +120,109 @@ const struct btf_member *btf_find_struct_member(struct btf *btf,
- 	return member;
- }
- 
-+#define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
-+
-+static int find_member(const char *ptr, struct btf *btf,
-+		       const struct btf_type **type, int level)
-+{
-+	const struct btf_member *member;
-+	const struct btf_type *t = *type;
-+	int i;
-+
-+	/* Max of 3 depth of anonymous structures */
-+	if (level > 3)
-+		return -1;
-+
-+	for_each_member(i, t, member) {
-+		const char *tname = btf_name_by_offset(btf, member->name_off);
-+
-+		if (strcmp(ptr, tname) == 0) {
-+			*type = btf_type_by_id(btf, member->type);
-+			return BITS_ROUNDDOWN_BYTES(member->offset);
-+		}
-+
-+		/* Handle anonymous structures */
-+		if (strlen(tname))
-+			continue;
-+
-+		*type = btf_type_by_id(btf, member->type);
-+		if (btf_type_is_struct(*type)) {
-+			int offset = find_member(ptr, btf, type, level + 1);
-+
-+			if (offset < 0)
-+				continue;
-+
-+			return offset + BITS_ROUNDDOWN_BYTES(member->offset);
-+		}
-+	}
-+
-+	return -1;
-+}
-+
-+/**
-+ * btf_find_offset - Find an offset of a member for a structure
-+ * @arg: A structure name followed by one or more members
-+ * @offset_p: A pointer to where to store the offset
-+ *
-+ * Will parse @arg with the expected format of: struct.member[[.member]..]
-+ * It is delimited by '.'. The first item must be a structure type.
-+ * The next are its members. If the member is also of a structure type it
-+ * another member may follow ".member".
-+ *
-+ * Note, @arg is modified but will be put back to what it was on return.
-+ *
-+ * Returns: 0 on success and -EINVAL if no '.' is present
-+ *    or -ENXIO if the structure or member is not found.
-+ *    Returns -EINVAL if BTF is not defined.
-+ *  On success, @offset_p will contain the offset of the member specified
-+ *    by @arg.
-+ */
-+int btf_find_offset(char *arg, long *offset_p)
-+{
-+	const struct btf_type *t;
-+	struct btf *btf;
-+	long offset = 0;
-+	char *ptr;
-+	int ret;
-+	s32 id;
-+
-+	ptr = strchr(arg, '.');
-+	if (!ptr)
-+		return -EINVAL;
-+
-+	*ptr = '\0';
-+
-+	id = bpf_find_btf_id(arg, BTF_KIND_STRUCT, &btf);
-+	if (id < 0)
-+		goto error;
-+
-+	/* Get BTF_KIND_FUNC type */
-+	t = btf_type_by_id(btf, id);
-+
-+	/* May allow more than one member, as long as they are structures */
-+	do {
-+		if (!t || !btf_type_is_struct(t))
-+			goto error;
-+
-+		*ptr++ = '.';
-+		arg = ptr;
-+		ptr = strchr(ptr, '.');
-+		if (ptr)
-+			*ptr = '\0';
-+
-+		ret = find_member(arg, btf, &t, 0);
-+		if (ret < 0)
-+			goto error;
-+
-+		offset += ret;
-+
-+	} while (ptr);
-+
-+	*offset_p = offset;
-+	return 0;
-+
-+error:
-+	if (ptr)
-+		*ptr = '.';
-+	return -ENXIO;
-+}
-diff --git a/kernel/trace/trace_btf.h b/kernel/trace/trace_btf.h
-index 4bc44bc261e6..7b0797a6050b 100644
---- a/kernel/trace/trace_btf.h
-+++ b/kernel/trace/trace_btf.h
-@@ -9,3 +9,13 @@ const struct btf_member *btf_find_struct_member(struct btf *btf,
- 						const struct btf_type *type,
- 						const char *member_name,
- 						u32 *anon_offset);
-+
-+#ifdef CONFIG_PROBE_EVENTS_BTF_ARGS
-+/* Will modify arg, but will put it back before returning. */
-+int btf_find_offset(char *arg, long *offset);
-+#else
-+static inline int btf_find_offset(char *arg, long *offset)
-+{
-+	return -EINVAL;
-+}
-+#endif
-diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 424751cdf31f..4c13e51ea481 100644
---- a/kernel/trace/trace_probe.c
-+++ b/kernel/trace/trace_probe.c
-@@ -1137,7 +1137,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 
- 	case '+':	/* deref memory */
- 	case '-':
--		if (arg[1] == 'u') {
-+		if (arg[1] == 'u' && isdigit(arg[2])) {
- 			deref = FETCH_OP_UDEREF;
- 			arg[1] = arg[0];
- 			arg++;
-@@ -1150,7 +1150,10 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 			return -EINVAL;
- 		}
- 		*tmp = '\0';
--		ret = kstrtol(arg, 0, &offset);
-+		if (arg[0] != '-' && !isdigit(*arg))
-+			ret = btf_find_offset(arg, &offset);
-+		else
-+			ret = kstrtol(arg, 0, &offset);
- 		if (ret) {
- 			trace_probe_log_err(ctx->offset, BAD_DEREF_OFFS);
- 			break;
--- 
-2.47.2
-
+> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
+> ---
+> Testing:
+> 1. Tested IPC with remoteprocs in attach mode in TI platforms.
+> [However, TI K3 platforms do not use resource table for carveouts,
+> all the memory regions are reserved statically in Device Tree.]
+> 
+>  drivers/remoteproc/remoteproc_core.c | 30 ++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index 825672100528..ef709a5fa73c 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -640,6 +640,20 @@ static int rproc_handle_devmem(struct rproc *rproc, void *ptr,
+>  		return -EINVAL;
+>  	}
+>  
+> +	/*
+> +	 * When attaching to a remote processor, it is implied that the rproc
+> +	 * was booted by an external entity. Thus, it's devmem resources would
+> +	 * already have been mapped by the external entity during boot. There is
+> +	 * no need to re-map the memory regions here.
+> +	 *
+> +	 * Skip adding the devmem rsc to the mapping list and return without
+> +	 * complaining.
+> +	 */
+> +	if (rproc->state == RPROC_DETACHED) {
+> +		dev_info(dev, "skipping devmem rsc in attach mode\n");
+> +		return 0;
+> +	}
+> +
+>  	mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
+>  	if (!mapping)
+>  		return -ENOMEM;
+> @@ -839,6 +853,22 @@ static int rproc_handle_carveout(struct rproc *rproc,
+>  		return -EINVAL;
+>  	}
+>  
+> +	/*
+> +	 * When attaching to a remote processor, it is implied that the rproc
+> +	 * was booted by an external entity. Thus, it's carveout resources would
+> +	 * already have been allocated by the external entity during boot.
+> +	 * Re-allocating the carveouts here (without proper flags) would zero
+> +	 * out the memory regions used by the firmware and can lead to undefined
+> +	 * behaviour.
+> +	 *
+> +	 * Skip adding the carveouts to the alloc list and return without
+> +	 * complaining.
+> +	 */
+> +	if (rproc->state == RPROC_DETACHED) {
+> +		dev_info(dev, "skipping carveout allocation in attach mode\n");
+> +		return 0;
+> +	}
+> +
+>  	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
+>  		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
+>  
+> -- 
+> 2.34.1
+> 
 
