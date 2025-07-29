@@ -1,102 +1,208 @@
-Return-Path: <linux-kernel+bounces-749085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156CEB149E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:15:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B45CCB149E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:16:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 423C24E3EDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:15:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B396916AFB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEB9279DA1;
-	Tue, 29 Jul 2025 08:15:32 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id AD51729B0;
-	Tue, 29 Jul 2025 08:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0645275AE8;
+	Tue, 29 Jul 2025 08:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GJ0c3WD4";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="olujNJvS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="0intH50C";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0gyD29RH"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4ABA2638BA
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753776932; cv=none; b=afBHrYMCxXROf/vJcq5PFnTS3bqyw2A00V/0PCuC80nWY/URySbtS6GwMair/YFlQPsn9UvAEW1AqLXibt1+ZzThpZIITM//qsJaS1V0QzakEDi1ykWdy0k8UvzQhiJXj3K3wsAPlHfc6UsqIA2GhK0dD/kAiBsZHbLOVKW1HAA=
+	t=1753776969; cv=none; b=mXxAVtJLaIY7Nq6WuDMWPF7E0M3fIxpuxHb9dztSN4q8tYcTGam28nI0J1NFK/dmmpFRpyb4RVW2CP7aDCAzxmSjnnTUYCVqgMh3NRn4QRKpPI44RcDEoRc7oqhzHqt8I+GaYPOLoL4O7fydevMyGUr5PEft/o7KvWl7xoT9cXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753776932; c=relaxed/simple;
-	bh=Bs/X5R/GBALhH9VjVnGog552EPM5nbD0DNhgnYK7alc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MK9qVN2ynLzbIFYvposf7R6b26Nm4E4F4UR+LpvD0VjRdAp7XZgfEI8wys6HcTF+4Cw345RxmH8CkgJIu9gLubmuKZE4VftDsd4mUqyfKSGXgLgcchDVag5hKrp/DwUABV6UmwiWTpoTYyWxVYARw+mCZNXgOSDpTA1Rxegg+zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from liqiong-suma.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 72C7D6019D27D;
-	Tue, 29 Jul 2025 16:15:12 +0800 (CST)
-X-MD-Sfrom: liqiong@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Li Qiong <liqiong@nfschina.com>
-To: Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Li Qiong <liqiong@nfschina.com>
-Subject: [PATCH v3] mm: slub: avoid deref of free pointer in sanity checks if object is invalid
-Date: Tue, 29 Jul 2025 16:14:55 +0800
-Message-Id: <20250729081455.3311961-1-liqiong@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1753776969; c=relaxed/simple;
+	bh=5zBxt8BGt0kD4DcBU7V21ko4qu9JxivrvnZahvhx9+k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YJbIq5wHlLEk6py/PKVTl+tu6fYsyO8g2d1qzx4hCjjE58IcQGWCCBmyDg5mDO9HHkf2jFpIc/rcF5pwXjz9GI0NTuTzYBV/IB4aFWdj1N4+nYVhc7yPv7O6LQYCBdgMNDIa9T1fpQ4Sh907safDAhyr6URFj0i+WiCStvdtFBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GJ0c3WD4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=olujNJvS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=0intH50C; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0gyD29RH; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0C3081F80B;
+	Tue, 29 Jul 2025 08:16:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753776965; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kKf3Ld7GMpkyIUFZbTHgf11MFWoxhHkxt7VOXonGCy4=;
+	b=GJ0c3WD4kjLuIp2C32cnvYy6mc2r0HmUpXAFCsclXR0Nw0uHyFXZRPgP/YJ7RvII12oDHW
+	g2fQ6k8TZHOxlVap6cYYgZPATK6i4Ioc2kwTPaY26uiyPoFXa0LuJg7sky/PNikyC3GZcD
+	UzZO4MoPgZ8/hd8zm9xuVZkRFoZdKCA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753776965;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kKf3Ld7GMpkyIUFZbTHgf11MFWoxhHkxt7VOXonGCy4=;
+	b=olujNJvSHCBAEP88q7DrAIervIA4Ranlw/EzJJYWgigy7qG+ub8cBnyQIXpwxZBBIacQvD
+	Vwcpd+rwbFqpdSAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753776964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kKf3Ld7GMpkyIUFZbTHgf11MFWoxhHkxt7VOXonGCy4=;
+	b=0intH50C/KDxShfyGFUJh9wpBFKFW7iTucCxAf6wja7RCXAmR9XKLIndfz8gNDx3kYabQd
+	fMsos368oBLBzSDMuHkx0V7KwDSypuH69CCROo4Jn/SrTpL11PayW9jnzm6ua+HqO/Rp+R
+	zH+orCiuImHHx9hMvNN0/mN4+5OPn5c=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753776964;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kKf3Ld7GMpkyIUFZbTHgf11MFWoxhHkxt7VOXonGCy4=;
+	b=0gyD29RHT9Qr1JcIysSgnO/ifhMy2hcAt4uB183ZFZ6iDgR1phPROOkuPXw0o5AjgtvelO
+	gP2Z1IkstBjFHXCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2503A13876;
+	Tue, 29 Jul 2025 08:16:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sJhKCEODiGj7NgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 29 Jul 2025 08:16:03 +0000
+Message-ID: <7e18e224-ba9f-420d-ad2e-e349d25b58e0@suse.de>
+Date: Tue, 29 Jul 2025 10:16:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 3/4] nvme/host/tcp: set max record size in the tls context
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>, alistair.francis@wdc.com,
+ dlemoal@kernel.org, chuck.lever@oracle.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ donald.hunter@gmail.com, corbet@lwn.net, kbusch@kernel.org, axboe@kernel.dk,
+ hch@lst.de, sagi@grimberg.me, kch@nvidia.com, borisp@nvidia.com,
+ john.fastabend@gmail.com, jlayton@kernel.org, neil@brown.name,
+ okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+ anna@kernel.org, kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
+ Wilfred Mallawa <wilfred.mallawa@wdc.com>
+References: <20250729024150.222513-2-wilfred.opensource@gmail.com>
+ <20250729024150.222513-6-wilfred.opensource@gmail.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250729024150.222513-6-wilfred.opensource@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[32];
+	TAGGED_RCPT(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLh3g55kcpku8oef9ktzra4k57)];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com,wdc.com,kernel.org,oracle.com,davemloft.net,google.com,redhat.com,lwn.net,kernel.dk,lst.de,grimberg.me,nvidia.com,brown.name,talpey.com,lists.linux.dev,vger.kernel.org];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid,wdc.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-For debugging, object_err() prints free pointer of the object.
-However, if check_valid_pointer() returns false for a object,
-dereferncing `object + s->offset` can lead to a crash. Therefore,
-print the object's address in such cases.
+On 7/29/25 04:41, Wilfred Mallawa wrote:
+> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> 
+> During a tls handshake, a host may specify the tls record size limit
+> using the tls "record_size_limit" extension. Currently, the NVMe TCP
+> host driver does not specify this value to the tls layer.
+> 
+> This patch adds support for setting the tls record size limit into the
+> tls context, such that outgoing records may not exceed this limit
+> specified by the endpoint.
+> 
+> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> ---
+>   drivers/nvme/host/tcp.c | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+> index 65ceadb4ffed..84a55736f269 100644
+> --- a/drivers/nvme/host/tcp.c
+> +++ b/drivers/nvme/host/tcp.c
+> @@ -1677,6 +1677,7 @@ static void nvme_tcp_tls_done(void *data, int status, key_serial_t pskid,
+>   			      size_t tls_record_size_limit)
+>   {
+>   	struct nvme_tcp_queue *queue = data;
+> +	struct tls_context *tls_ctx = tls_get_ctx(queue->sock->sk);
+>   	struct nvme_tcp_ctrl *ctrl = queue->ctrl;
+>   	int qid = nvme_tcp_queue_id(queue);
+>   	struct key *tls_key;
+> @@ -1700,6 +1701,20 @@ static void nvme_tcp_tls_done(void *data, int status, key_serial_t pskid,
+>   			ctrl->ctrl.tls_pskid = key_serial(tls_key);
+>   		key_put(tls_key);
+>   		queue->tls_err = 0;
+> +
+> +		/* Endpoint has specified a maximum tls record size limit */
+> +		if (tls_record_size_limit > TLS_MAX_PAYLOAD_SIZE) {
+> +			dev_err(ctrl->ctrl.device,
+> +				"queue %d: invalid tls max record size limit: %zd\n",
+> +				nvme_tcp_queue_id(queue), tls_record_size_limit);
+> +			queue->tls_err = -EINVAL;
+> +			goto out_complete;
+> +		} else if (tls_record_size_limit > 0) {
+> +			tls_ctx->tls_record_size_limit = (u32)tls_record_size_limit;
+> +			dev_dbg(ctrl->ctrl.device,
+> +				"queue %d: target specified tls_record_size_limit %u\n",
+> +				nvme_tcp_queue_id(queue), tls_ctx->tls_record_size_limit);
+> +		}
+>   	}
+>   
+>   out_complete:
 
-Fixes: bb192ed9aa71 ("mm/slub: Convert most struct page to struct slab by spatch")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Li Qiong <liqiong@nfschina.com>
----
-v2:
-- rephrase the commit message, add comment for object_err().
-v3:
-- check object pointer in object_err().
----
- mm/slub.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Why do we need to do that?
+This value is never used in that driver, so why can't the TLS layer 
+handle it?
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 31e11ef256f9..d3abae5a2193 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1104,7 +1104,11 @@ static void object_err(struct kmem_cache *s, struct slab *slab,
- 		return;
- 
- 	slab_bug(s, reason);
--	print_trailer(s, slab, object);
-+	if (!check_valid_pointer(s, slab, object)) {
-+		print_slab_info(slab);
-+		pr_err("invalid object 0x%p\n", object);
-+	} else
-+		print_trailer(s, slab, object);
- 	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
- 
- 	WARN_ON(1);
-@@ -1587,7 +1591,7 @@ static inline int alloc_consistency_checks(struct kmem_cache *s,
- 		return 0;
- 
- 	if (!check_valid_pointer(s, slab, object)) {
--		object_err(s, slab, object, "Freelist Pointer check fails");
-+		slab_err(s, slab, "Freelist Pointer(0x%p) check fails", object);
- 		return 0;
- 	}
- 
+Cheers,
+
+Hannes
 -- 
-2.30.2
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
