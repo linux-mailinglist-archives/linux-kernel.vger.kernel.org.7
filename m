@@ -1,291 +1,194 @@
-Return-Path: <linux-kernel+bounces-748817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86475B14643
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:33:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1378FB1465C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A08E3AE4A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:32:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EACF87A4B8D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 205492045B6;
-	Tue, 29 Jul 2025 02:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fy7hg/7M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D31D214813;
+	Tue, 29 Jul 2025 02:39:23 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A2BD20B7FB;
-	Tue, 29 Jul 2025 02:32:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A5218C03F;
+	Tue, 29 Jul 2025 02:39:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753756348; cv=none; b=E5uqd0moinBrXfi5I2IfH5UpGNCSCWwDY+fSAArGfpICZniK8UX+/GLJVjkBIF61dAXxy8KfbWZDD/whaH/k0z5KG1AnyvoinJ5mpfKyoH+TaUC3eJb9k8KQaYIwCxv36PMCx1Gh1N+aex/NKyzMIUfmeotHnCzMoCbvzHC2kIM=
+	t=1753756763; cv=none; b=kf0eBZG56L8OiNd/UkYWEEuAQNWEt6W2UA/L+KNor2QVlCqeVpFnYJajkKBZlMy08WamTjqbG4hu2GIuldY8UD+AVKIJRhgltXSjBn8upr3JnT2v9EMbJJBlxp4JiiFPlxGHtwIC586IbgnA+zlVuoCMJvcScj3LrpcIlTLXnhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753756348; c=relaxed/simple;
-	bh=214Vu1ffBPktU4zJw5q/QLdFJzJeBpd2SMM/1kZ9pWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c4aFaZ0mZ2PXL7qV5AbxSVsMjLiPpHCdM/RCj8mkAd7SYZMfXddKR3xtSIc2m5ga744YO9ZWAubwX5DiBP//RLfhXWTg2pVMJSjeO6D4LKPbtxtx2JwOW7tGnXB7XJbFgP/S7vGiJ/ktsMAnlwVaWW28fpnjqqrNe8xa7KdqMwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fy7hg/7M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5158C4AF09;
-	Tue, 29 Jul 2025 02:32:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753756347;
-	bh=214Vu1ffBPktU4zJw5q/QLdFJzJeBpd2SMM/1kZ9pWQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=fy7hg/7Mm7/J/YtYfwuifdrBycJz/UpxBygCZf96Y4jheBIOERyB2ScM+kvwDbG8O
-	 33cJdivo4K7u1AF5p56STlkhgpPb3R44GDUpF5EtHzNjKDmnj486bXm1D589JxYyN2
-	 1x6ruENy3/6qFfewjAsQmqKsJ9yfzsggYfnCdxpzUXOTj9VWoJ75/hX7vQ6JcenEsN
-	 dMvxgcqPSX/F9kNTepcdQSzUXatveEQMwNQAu0i5r07bOvuFBAd3hzwFC/zA5gR3D/
-	 6DI8Ih5rZTNBTw36mZDgCZlt4iP7uQFEH0fGrx6tcPPDyfge1TBPxQxXGMs5FxSJyx
-	 gW/uuT5KK21kg==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-61564c06e0dso815161a12.3;
-        Mon, 28 Jul 2025 19:32:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWMpzVwGEfpCzgXhB2JD6olIAyIPU3wLP3naw6XjNT2+UdXBuEzzRPoMVRNmLZaiNouNOE=@vger.kernel.org, AJvYcCWXOGZ/iL/ZdzQV2JfvwbFTuVuhQz8bVdCsIMiHE2dPLI8LG1s6WQhr/rcQ3ybS8q3Bpl/B+uh30TlyUFQJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwTIRC3XDmA9CAIPDhahnly4XVQYu04ChSX1HAQefwTcmCMfks
-	WnKKmhKBQkbu7mByAyEuuBUXN+efY/9BkXEdKNEsknIew6lmKKLDkd0QkTqiEia0XXvK4EJNmDh
-	TCqkwNfzvcYIzhOqJL4YHEqCP8cYfVi8=
-X-Google-Smtp-Source: AGHT+IEyEgYXOlcJ/KxzsomCUTVUYXaylTxijnzLbrmtPgJGNNZcU+mGa2UAU09R42mZXbpSQUNxyFdtL6I7QjIU1ww=
-X-Received: by 2002:a05:6402:4602:20b0:608:f493:871c with SMTP id
- 4fb4d7f45d1cf-614f1d1feccmr9538648a12.14.1753756346458; Mon, 28 Jul 2025
- 19:32:26 -0700 (PDT)
+	s=arc-20240116; t=1753756763; c=relaxed/simple;
+	bh=vMpn0KpO3HW1qG8qAjCLX4pH1r8OTMr7DXuDbJ98nnA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HTTl3zc0eKt0oplHvGOvVwJMZkDPbqyplNWOTW6mw8/HGfOV88V9BsYQgEmLZkVGe15nTqK/fYeRzRlWzhjL9M7JwDDt94Z6tgPMYsN3gP6bcjs9yIf0rLitJ/2olguRMg8DlbXrEqP/KUUP9kBz2Bfa2lMOksOFtlwJYHDpJFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4brfgV3McSzKHMq8;
+	Tue, 29 Jul 2025 10:39:18 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4E6D51A10F2;
+	Tue, 29 Jul 2025 10:39:17 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgBn4hJRNIhoi8FZBw--.16996S4;
+	Tue, 29 Jul 2025 10:39:15 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: jack@suse.cz,
+	dlemoal@kernel.org,
+	axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com,
+	johnny.chenyi@huawei.com
+Subject: [PATCH v3] blk-ioc: don't hold queue_lock for ioc_lookup_icq()
+Date: Tue, 29 Jul 2025 10:32:29 +0800
+Message-Id: <20250729023229.2944898-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724141929.691853-1-duanchenghao@kylinos.cn>
- <20250724141929.691853-6-duanchenghao@kylinos.cn> <CAEyhmHQKBQbidX_SpUF1ZPv7vkkhSR_UuRvxznyb6y5GYQS3qw@mail.gmail.com>
- <20250728133418.GC1439240@chenghao-pc>
-In-Reply-To: <20250728133418.GC1439240@chenghao-pc>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 29 Jul 2025 10:32:13 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H40rAPvVRMMQTkxmOsT3yu6V+CL3MC2gi3jvsXZtOzdkw@mail.gmail.com>
-X-Gm-Features: Ac12FXy7VhLUHjowAVkwszWoXXaUHctXHhAGiZ_PSv1z0L7OmXLEW1lwXO_c9K4
-Message-ID: <CAAhV-H40rAPvVRMMQTkxmOsT3yu6V+CL3MC2gi3jvsXZtOzdkw@mail.gmail.com>
-Subject: Re: [PATCH v4 5/5] LoongArch: BPF: Add struct ops support for trampoline
-To: Chenghao Duan <duanchenghao@kylinos.cn>
-Cc: Hengqi Chen <hengqi.chen@gmail.com>, ast@kernel.org, daniel@iogearbox.net, 
-	andrii@kernel.org, yangtiezhu@loongson.cn, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
-	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
-	vincent.mc.li@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBn4hJRNIhoi8FZBw--.16996S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF15Jry8JrWkKrW3Xw1kXwb_yoWrJw4xpF
+	WaganIyr40gr17urykJ3W7ZF9ag3ZYkr47t39aqw4FkrWvyrnF9F10yFySqFWSvrZ7ArsF
+	vF4DKrWkAr1UZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Mon, Jul 28, 2025 at 9:34=E2=80=AFPM Chenghao Duan <duanchenghao@kylinos=
-.cn> wrote:
->
-> On Mon, Jul 28, 2025 at 06:55:52PM +0800, Hengqi Chen wrote:
-> > On Thu, Jul 24, 2025 at 10:22=E2=80=AFPM Chenghao Duan <duanchenghao@ky=
-linos.cn> wrote:
-> > >
-> > > From: Tiezhu Yang <yangtiezhu@loongson.cn>
-> > >
-> > > Use BPF_TRAMP_F_INDIRECT flag to detect struct ops and emit proper
-> > > prologue and epilogue for this case.
-> > >
-> > > With this patch, all of the struct_ops related testcases (except
-> > > struct_ops_multi_pages) passed on LoongArch.
-> > >
-> > > The testcase struct_ops_multi_pages failed is because the actual
-> > > image_pages_cnt is 40 which is bigger than MAX_TRAMP_IMAGE_PAGES.
-> > >
-> > > Before:
-> > >
-> > >   $ sudo ./test_progs -t struct_ops -d struct_ops_multi_pages
-> > >   ...
-> > >   WATCHDOG: test case struct_ops_module/struct_ops_load executes for =
-10 seconds...
-> > >
-> > > After:
-> > >
-> > >   $ sudo ./test_progs -t struct_ops -d struct_ops_multi_pages
-> > >   ...
-> > >   #15      bad_struct_ops:OK
-> > >   ...
-> > >   #399     struct_ops_autocreate:OK
-> > >   ...
-> > >   #400     struct_ops_kptr_return:OK
-> > >   ...
-> > >   #401     struct_ops_maybe_null:OK
-> > >   ...
-> > >   #402     struct_ops_module:OK
-> > >   ...
-> > >   #404     struct_ops_no_cfi:OK
-> > >   ...
-> > >   #405     struct_ops_private_stack:SKIP
-> > >   ...
-> > >   #406     struct_ops_refcounted:OK
-> > >   Summary: 8/25 PASSED, 3 SKIPPED, 0 FAILED
-> > >
-> > > Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
-> > > ---
-> > >  arch/loongarch/net/bpf_jit.c | 71 ++++++++++++++++++++++++----------=
---
-> > >  1 file changed, 47 insertions(+), 24 deletions(-)
-> > >
-> > > diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_ji=
-t.c
-> > > index ac5ce3a28..6a84fb104 100644
-> > > --- a/arch/loongarch/net/bpf_jit.c
-> > > +++ b/arch/loongarch/net/bpf_jit.c
-> > > @@ -1603,6 +1603,7 @@ static int __arch_prepare_bpf_trampoline(struct=
- jit_ctx *ctx, struct bpf_tramp_i
-> > >         struct bpf_tramp_links *fentry =3D &tlinks[BPF_TRAMP_FENTRY];
-> > >         struct bpf_tramp_links *fexit =3D &tlinks[BPF_TRAMP_FEXIT];
-> > >         struct bpf_tramp_links *fmod_ret =3D &tlinks[BPF_TRAMP_MODIFY=
-_RETURN];
-> > > +       bool is_struct_ops =3D flags & BPF_TRAMP_F_INDIRECT;
-> > >         int ret, save_ret;
-> > >         void *orig_call =3D func_addr;
-> > >         u32 **branches =3D NULL;
-> > > @@ -1678,18 +1679,31 @@ static int __arch_prepare_bpf_trampoline(stru=
-ct jit_ctx *ctx, struct bpf_tramp_i
-> > >
-> > >         stack_size =3D round_up(stack_size, 16);
-> > >
-> > > -       /* For the trampoline called from function entry */
-> > > -       /* RA and FP for parent function*/
-> > > -       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16=
-);
-> > > -       emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
-> > > -       emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
-> > > -       emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16)=
-;
-> > > -
-> > > -       /* RA and FP for traced function*/
-> > > -       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -st=
-ack_size);
-> > > -       emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack=
-_size - 8);
-> > > -       emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack=
-_size - 16);
-> > > -       emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, sta=
-ck_size);
-> > > +       if (!is_struct_ops) {
-> > > +               /*
-> > > +                * For the trampoline called from function entry,
-> > > +                * the frame of traced function and the frame of
-> > > +                * trampoline need to be considered.
-> > > +                */
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR=
-_SP, -16);
-> > > +               emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_S=
-P, 8);
-> > > +               emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_S=
-P, 0);
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR=
-_SP, 16);
-> > > +
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR=
-_SP, -stack_size);
-> > > +               emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_S=
-P, stack_size - 8);
-> > > +               emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_S=
-P, stack_size - 16);
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR=
-_SP, stack_size);
-> > > +       } else {
-> > > +               /*
-> > > +                * For the trampoline called directly, just handle
-> > > +                * the frame of trampoline.
-> > > +                */
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR=
-_SP, -stack_size);
-> > > +               emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_S=
-P, stack_size - 8);
-> > > +               emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_S=
-P, stack_size - 16);
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR=
-_SP, stack_size);
-> > > +       }
-> > >
-> >
-> > The diff removes code added in patch 4/5, this should be squashed to
-> > the trampoline patch if possible.
->
-> This patch was provided by Tiezhu Yang, and there was a discussion about
-> it at the time.
-> https://lore.kernel.org/all/cd190c8a-a7b9-53de-d363-c3d695fe3191@loongson=
-.cn/
-From my opinion I also prefer to squash.
+From: Yu Kuai <yukuai3@huawei.com>
 
-Huacai
+Currently issue io can grab queue_lock three times from bfq_bio_merge(),
+bfq_limit_depth() and bfq_prepare_request(), the queue_lock is not
+necessary if icq is already created because both queue and ioc can't be
+freed before io issuing is done, hence remove the unnecessary queue_lock
+and use rcu to protect radix tree lookup.
 
->
-> >
-> > >         /* callee saved register S1 to pass start time */
-> > >         emit_insn(ctx, std, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg=
-_off);
-> > > @@ -1779,21 +1793,30 @@ static int __arch_prepare_bpf_trampoline(stru=
-ct jit_ctx *ctx, struct bpf_tramp_i
-> > >
-> > >         emit_insn(ctx, ldd, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg=
-_off);
-> > >
-> > > -       /* trampoline called from function entry */
-> > > -       emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack=
-_size - 8);
-> > > -       emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack=
-_size - 16);
-> > > -       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, sta=
-ck_size);
-> > > +       if (!is_struct_ops) {
-> > > +               /* trampoline called from function entry */
-> > > +               emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_S=
-P, stack_size - 8);
-> > > +               emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_S=
-P, stack_size - 16);
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR=
-_SP, stack_size);
-> > > +
-> > > +               emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_S=
-P, 8);
-> > > +               emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_S=
-P, 0);
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR=
-_SP, 16);
-> > >
-> > > -       emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
-> > > -       emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
-> > > -       emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16)=
-;
-> > > +               if (flags & BPF_TRAMP_F_SKIP_FRAME)
-> > > +                       /* return to parent function */
-> > > +                       emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOON=
-GARCH_GPR_RA, 0);
-> > > +               else
-> > > +                       /* return to traced function */
-> > > +                       emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOON=
-GARCH_GPR_T0, 0);
-> > > +       } else {
-> > > +               /* trampoline called directly */
-> > > +               emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_S=
-P, stack_size - 8);
-> > > +               emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_S=
-P, stack_size - 16);
-> > > +               emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR=
-_SP, stack_size);
-> > >
-> > > -       if (flags & BPF_TRAMP_F_SKIP_FRAME)
-> > > -               /* return to parent function */
-> > >                 emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GP=
-R_RA, 0);
-> > > -       else
-> > > -               /* return to traced function */
-> > > -               emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GP=
-R_T0, 0);
-> > > +       }
-> > >
-> > >         ret =3D ctx->idx;
-> > >  out:
-> > > --
-> > > 2.25.1
-> > >
+Noted this is also a prep patch to support request batch dispatching[1].
+
+[1] https://lore.kernel.org/all/20250722072431.610354-1-yukuai1@huaweicloud.com/
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Jan Kara <jack@suse.cz>
+---
+changes from v2:
+ - update comments;
+ - add review tag from Jan and Damien;
+changes from v1:
+ - modify ioc_lookup_icq() directly to get rid of queue_lock;
+
+ block/bfq-iosched.c | 18 ++----------------
+ block/blk-ioc.c     | 16 ++++++----------
+ 2 files changed, 8 insertions(+), 26 deletions(-)
+
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index 0cb1e9873aab..f71ec0887733 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -454,17 +454,10 @@ static struct bfq_io_cq *icq_to_bic(struct io_cq *icq)
+  */
+ static struct bfq_io_cq *bfq_bic_lookup(struct request_queue *q)
+ {
+-	struct bfq_io_cq *icq;
+-	unsigned long flags;
+-
+ 	if (!current->io_context)
+ 		return NULL;
+ 
+-	spin_lock_irqsave(&q->queue_lock, flags);
+-	icq = icq_to_bic(ioc_lookup_icq(q));
+-	spin_unlock_irqrestore(&q->queue_lock, flags);
+-
+-	return icq;
++	return icq_to_bic(ioc_lookup_icq(q));
+ }
+ 
+ /*
+@@ -2457,15 +2450,8 @@ static bool bfq_bio_merge(struct request_queue *q, struct bio *bio,
+ 		unsigned int nr_segs)
+ {
+ 	struct bfq_data *bfqd = q->elevator->elevator_data;
+-	struct request *free = NULL;
+-	/*
+-	 * bfq_bic_lookup grabs the queue_lock: invoke it now and
+-	 * store its return value for later use, to avoid nesting
+-	 * queue_lock inside the bfqd->lock. We assume that the bic
+-	 * returned by bfq_bic_lookup does not go away before
+-	 * bfqd->lock is taken.
+-	 */
+ 	struct bfq_io_cq *bic = bfq_bic_lookup(q);
++	struct request *free = NULL;
+ 	bool ret;
+ 
+ 	spin_lock_irq(&bfqd->lock);
+diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+index ce82770c72ab..9fda3906e5f5 100644
+--- a/block/blk-ioc.c
++++ b/block/blk-ioc.c
+@@ -308,24 +308,23 @@ int __copy_io(unsigned long clone_flags, struct task_struct *tsk)
+ 
+ #ifdef CONFIG_BLK_ICQ
+ /**
+- * ioc_lookup_icq - lookup io_cq from ioc
++ * ioc_lookup_icq - lookup io_cq from ioc in io issue path
+  * @q: the associated request_queue
+  *
+  * Look up io_cq associated with @ioc - @q pair from @ioc.  Must be called
+- * with @q->queue_lock held.
++ * from io issue path, either return NULL if current issue io to @q for the
++ * first time, or return a valid icq.
+  */
+ struct io_cq *ioc_lookup_icq(struct request_queue *q)
+ {
+ 	struct io_context *ioc = current->io_context;
+ 	struct io_cq *icq;
+ 
+-	lockdep_assert_held(&q->queue_lock);
+-
+ 	/*
+ 	 * icq's are indexed from @ioc using radix tree and hint pointer,
+-	 * both of which are protected with RCU.  All removals are done
+-	 * holding both q and ioc locks, and we're holding q lock - if we
+-	 * find a icq which points to us, it's guaranteed to be valid.
++	 * both of which are protected with RCU, io issue path ensures that
++	 * both request_queue and current task are valid, the found icq
++	 * is guaranteed to be valid until the io is done.
+ 	 */
+ 	rcu_read_lock();
+ 	icq = rcu_dereference(ioc->icq_hint);
+@@ -419,10 +418,7 @@ struct io_cq *ioc_find_get_icq(struct request_queue *q)
+ 		task_unlock(current);
+ 	} else {
+ 		get_io_context(ioc);
+-
+-		spin_lock_irq(&q->queue_lock);
+ 		icq = ioc_lookup_icq(q);
+-		spin_unlock_irq(&q->queue_lock);
+ 	}
+ 
+ 	if (!icq) {
+-- 
+2.39.2
+
 
