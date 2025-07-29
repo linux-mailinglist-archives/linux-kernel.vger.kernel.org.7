@@ -1,110 +1,90 @@
-Return-Path: <linux-kernel+bounces-749248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FA15B14BF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:11:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99709B14BF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:12:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF8067AAF0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:09:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D419E174EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2A288C10;
-	Tue, 29 Jul 2025 10:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0302E288C04;
+	Tue, 29 Jul 2025 10:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbxPeDlZ"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="N/5cyCKu"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E021F7554;
-	Tue, 29 Jul 2025 10:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEED1F7554;
+	Tue, 29 Jul 2025 10:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753783874; cv=none; b=GJLg33qELnWIxTHcFVUcnQaCHdb0NEXbYqWU0XVoAdy9R7UaPG46FNCNBTxSJHK8VJef62h0ltAE8kcyaCabnLbLDJV9QSOtWt3kX0gQaAaLv1cIePetvEjK0lS00M+1zn1hPX2D8bm8UcOwh4XsrC0cvjXRQ+SzocFnULTXj9o=
+	t=1753783952; cv=none; b=aqbwzImOeb8WTpHERbUPqkZUpryNS9QfO7LlQ5j4tEBmCTDmSIZ6/6vXDeCB6JXqbjbvHyT/yUA0aFVFAt1VL+qfGRumkVb+fxjg06veXKdtk4MYzDJJx0Onl7Iq870PpuC11SQQ0b/v1mfEHoFmwzBn4HOgPvVGFojvd4apsRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753783874; c=relaxed/simple;
-	bh=snQFRP50p3EHBOmj1SKRfP+MI/4YY4DP1xiijUu2k0U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tXQJgOCppP4K9GgS64JiDhfWlSfn+bz/EobW/EaNZNVm1TCKNpqf9pML+SZVlAQMSgpLI2aOHNCtpIm3HW7fMxdWDhufh7HMjqeFeJXUbXUtKjbv1+UXgPh2bE82Gcp9aK4imAQBMWc374OwmrZZl0mozIjSXroyz/bLOw71wTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbxPeDlZ; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23fd901c4d2so3711925ad.0;
-        Tue, 29 Jul 2025 03:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753783872; x=1754388672; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=snQFRP50p3EHBOmj1SKRfP+MI/4YY4DP1xiijUu2k0U=;
-        b=HbxPeDlZjEC5bvbHtXAXDuOOU6Cs6ctFkBhdC8sQr0ui6E56XF9/+l5o4F6sZAXdeL
-         vLme1LgXV+AkEtVi5aPmYQ/EBgfBqy2yQVgvTv1YM/dOarY2ULkcXWF/4klg0PguPQcm
-         gzEzvTGgz/JBmp/YUiGs1Iv3MwTU/BNZjyCkYoZenwvjIzgiJJ8TUc3RwnOykmHbLSd6
-         3euQH/7xA3G5pUSIUOWhlmVdDfk3VURGuleC/FN+jCEbSatG8HHeGtfYxPJebyHTG+Ec
-         omv1Gz0qREwk7tGCJR23QP0QhVuuLAJrhH7rRUnU/8ERxOqARSUEZFWvoI2rDJVDJayd
-         cEuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753783872; x=1754388672;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=snQFRP50p3EHBOmj1SKRfP+MI/4YY4DP1xiijUu2k0U=;
-        b=holNG9wsLr77Y0JSvUW2Jx/IqGoDDQbzlQxGQofop26LUWHuiiKO+/3ncImoEMamXn
-         ns+zd5qryRSWnb+xzNPq96f1tfdge75UiLodiO3zMXd3NoDy0HPRdZzasP38dPHN4FRt
-         2rYShU8dC4LoG88Wnko4tBxWfiIun9bi9WjX9Jyb7gWIJFa2n4pLhbZjtENk2AWBFzVg
-         a/8yNYvDjIcYK14LEy65y2zNeg9wcaNwl9EosLpeFY/soYtIxXKeCPwVo3uRZnaoxRH/
-         uglR+tcPrPBZpHiVdvSCMSlG5ra513X15SgfwCJIL4Y9gVIH2fSDHmTHsNO4wB2C5q37
-         xJqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7kMUlDf5wAL76GBdrEN8mv9swH5ndaQEfwuQZJo0JVijBYQDd2YAYOFH1MXTJRkKeG/MBFMWSRTHcr+4=@vger.kernel.org, AJvYcCUkT1f/DERit/J/s0Y7x2CenbHtIkAvUTViofmLa9OgNmc5UjH3FG64aaLiJqvdJDHl+lSATN0ch9FeaXt086M=@vger.kernel.org, AJvYcCWtkOobMUmA3o9M6Dkys0KHGYNKOBlRijdbBgCXDRC+ejA1nWh/aMfAWONqU1eug9djh7o+p51cvzlh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwN41865PahKM+jGLMhRvbt4gZAl1OKRIdsboFwSB33XvAemNGl
-	4H1O8sXHEsDZEUCeNZapfhxNabgR2TNqvZ+OVZQO2tBYLcg4iKxJZ+zzPzJ1eitK3Vl7127+QLB
-	A9DS2YQCfk4Ka7HWPb2c2qgRa3DEq3APP/j9jeg8=
-X-Gm-Gg: ASbGncsBugQNrcsZtiwfxZ3TI2ake5sG8XQzDaOoz0io7P3tz00CKDz0sAiNN49cnzA
-	iWsI5lFcmPRXdaKfZ7M8QVLy9/MzN90Q+PuEj/mDoap9bmB7SiYs+uD7huF3QTwVB0rHD1WjVJB
-	4H9nupAWcOYZGwqjVuCp9wNk5jI4bKcZ65CkJU3pzo4T18UsUJmVB2xt+Q7LEYyTelqroJaqOnF
-	BmZ4BxL
-X-Google-Smtp-Source: AGHT+IHx0GUnofdiB57+6goXGATGo/R/vo6ovtijDe50tv9vBdJgiyyT/dJhFBzyBZgP2+LgoNqWp1Jp3n7lA8T8UZE=
-X-Received: by 2002:a17:90b:4b88:b0:31e:ffd4:ecdc with SMTP id
- 98e67ed59e1d1-31effd4edb9mr2998838a91.7.1753783872256; Tue, 29 Jul 2025
- 03:11:12 -0700 (PDT)
+	s=arc-20240116; t=1753783952; c=relaxed/simple;
+	bh=ga1JTtLUG7Q52MGzj+vkuRjsmvah356T2zKFS+YsXcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZETT+PLxji2vp/TJoBAU0xkmakcB/1ju45Xktxzs7c2bZZ5RTzm9vH5L3oTpsjw8IaZUXHXob0FJsWBHRWSM1eijvnlOdl+a1xnPq1tO4UenKNgN3aNqsWC/FSiCupRU6Rk0/4M9uEMFoov6SKEOkesNbZRavOkFxI3lV9ZV99c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=N/5cyCKu; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753783948;
+	bh=ga1JTtLUG7Q52MGzj+vkuRjsmvah356T2zKFS+YsXcE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=N/5cyCKubm8JTRiz0NaERogxpC26wBdILD44OYbuR3AyAWI2d4V2tKksMFHzjPQaY
+	 KXedWyGg99EDOZADwvUFIH+00PqZfJAhxSVmF5t35hBFA0w6HaslbJtfhKLd58Ihzc
+	 jdo59aEPgerez2WgwWAoKe1NF2qZlg9qwiCXwAoWiuE1rFWllIgYZ84jVcpGTQRkQ7
+	 0PEjqS64qpCOiWM+iQfC48TTL5dMgBTjocbslKIYcCBkz/V4Cmunwo76FDYje2/cQX
+	 rp812m3xIHZwy+4362adXy4sNGQKSpJqSG5peTqfIotZ1kIE73c6usUW9aEz5H7niS
+	 N+Cf+coo7+e8A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 380AF17E1284;
+	Tue, 29 Jul 2025 12:12:27 +0200 (CEST)
+Message-ID: <8fbe2710-df2a-463d-a6d0-3e3c1a2ba465@collabora.com>
+Date: Tue, 29 Jul 2025 12:12:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729002941.7643-1-abhinav.ogl@gmail.com> <DBOFY80IDMWJ.627ZOACP7KK5@kernel.org>
-In-Reply-To: <DBOFY80IDMWJ.627ZOACP7KK5@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 29 Jul 2025 12:10:59 +0200
-X-Gm-Features: Ac12FXyDvgR6WDLVoVoaas8ap-FjV1FrKXwGSr5NqDylxCmVF3795DEZpR3NP_U
-Message-ID: <CANiq72nRJhhM6W4ue0KR+En1nYDk5KVS1dSuJkkw55jkrh_P8Q@mail.gmail.com>
-Subject: Re: [PATCH] rust: pci: use c_* types via kernel prelude
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: herculoxz <abhinav.ogl@gmail.com>, bhelgaas@google.com, kwilczynski@kernel.org, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
-	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] arm64: defconfig: Enable UFS support for MediaTek
+ Genio 1200 EVK UFS board
+To: Macpaul Lin <macpaul.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sean Wang <sean.wang@mediatek.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Ramax Lo <ramax.lo@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+ MediaTek Chromebook Upstream
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>
+References: <20250729093506.273337-1-macpaul.lin@mediatek.com>
+ <20250729093506.273337-4-macpaul.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250729093506.273337-4-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 29, 2025 at 11:45=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> Something seems to be odd with the commit message, it seems some parts ar=
-e
-> missing.
+Il 29/07/25 11:35, Macpaul Lin ha scritto:
+> Enable the UFS related settings to support Genio 1200 EVK UFS board.
+> This board uses UFS as the boot device and also the main storage.
+> This includes support for:
+>   - CONFIG_SCSI_UFS_MEDIATEK
+> 
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 
-The "ensures ABI correctness when interfacing with C code" should also
-be changed -- it is true that we want to use the identifiers from the
-prelude, but the ABI was fine here, since it was already using
-`kernel::`.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-i.e. otherwise, it would have been a fix.
-
-Cheers,
-Miguel
 
