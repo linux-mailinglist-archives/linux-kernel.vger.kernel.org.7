@@ -1,141 +1,179 @@
-Return-Path: <linux-kernel+bounces-749840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2F4FB15380
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:36:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E717B1538A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:37:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA85D16D90C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:36:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8729317466C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456FA1F09A5;
-	Tue, 29 Jul 2025 19:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E9423F405;
+	Tue, 29 Jul 2025 19:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gzDn3xtY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gKaVkRm3"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TwXzGbcv"
+Received: from mail-qk1-f201.google.com (mail-qk1-f201.google.com [209.85.222.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0CFF507
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:36:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B9123F42A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753817780; cv=none; b=QMClDkbyqkd7Sor1HumStj+FIJNk5AkVLH2LdJVNp0NbqhgEFDSjNvhPKpZS5L1U8Os8T3GDxmWJqKhB6AOPeZe5V7kNXH/LCpqSZzAB0IWM0vz9Bf2tb1y/46GZucod9qv/OqqFK2iKhn6MkFrRXhxk0pJ16D8iyB18y0A3wHk=
+	t=1753817836; cv=none; b=kTQutzDywCTTinYQ582maiQkoT5SPrbUMCOe37cqwLQqtvZkhPRcWhz7wJvCDZ7VmjLw1Tl+FbhUKZu8G4oI5X/vY1+9ZgtuMUsNVOtwwcNzd7Y/K0h9Q4aslvwcVI62F8XVVNQIEc0Nz+N7OPWO87N5z3ZP0EulJwWsgKoX4ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753817780; c=relaxed/simple;
-	bh=W/6GpMRvp7r4zKqbYsAD5P54YdktEvwlmdqniXGtJ3s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=R+aISUiNlmPWVhJiqKnosYGBN7fMMiXy4rY5R2PPdjnSq7R/4Ax4+UTf8G1jWPwnap7UvBYxuIjAPTWq4koxLuFq/eGOBa7g90eNXpijqHoLj2Kcy8Ve8jJS0J66jSVUjMGtY07j+hywnxcMG5T9hJpVpEtuu1Rq3b5yZT3yKto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gzDn3xtY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gKaVkRm3; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753817776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c67dvKwqlAeEuJEgZ3sDHdX66s9mGP4J8q2TqKuwAnc=;
-	b=gzDn3xtY+Qz6e/FB9KJkbR0EvMT8AnYBRjiGJuabQQHX0cRb69iWX7ia3stMRNMSKWshJJ
-	e4wOaFosWUJ9QaxHj47JcGBs87zu4wbAE+XAa75H0RQrLVW90Px0sz8Ga4Wcyhoa1Kw3iN
-	ITf94mlO/kI5i4yUFE8w2LoQquu0i7F/YTR7fQUtM1PTCkWYfoPFK5NK/gBcS/HQz+FAGC
-	DO3OIvPsEUUHeUI3bv1KLbLhGZmibXW4vNr7VklWQM6MzN7gVmJsN16pu/Bwn6b/qX/KPV
-	77M/C13M8VrPCNyF5NMelI57Q1UKyvC8Bg4hgEZBhpI3kEM2L2YtoYd65F7nZw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753817776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c67dvKwqlAeEuJEgZ3sDHdX66s9mGP4J8q2TqKuwAnc=;
-	b=gKaVkRm3eE7eNxgYnSoeP692NrDCJHiM7FbmdiKh1/Kb+sP0s84iacxw/rfldmoPuxZn3w
-	dWuesLPak6Nof6CA==
-To: syzbot <syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com>,
- bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- linux-kernel@vger.kernel.org, mingo@redhat.com,
- syzkaller-bugs@googlegroups.com, x86@kernel.org
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>
-Subject: Re: [syzbot] upstream build error (23)
-In-Reply-To: <6888d004.a00a0220.26d0e1.0004.GAE@google.com>
-References: <6888d004.a00a0220.26d0e1.0004.GAE@google.com>
-Date: Tue, 29 Jul 2025 21:36:14 +0200
-Message-ID: <87cy9ikcwh.ffs@tglx>
+	s=arc-20240116; t=1753817836; c=relaxed/simple;
+	bh=KPwEzcGU4uNGF/h53KOqJ0tthPOjgGljSwmDo4IsG9Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=q36vzRkqg6ejoYriDRMYQdiIJtL/2EUq+etpZs1IkoKe0OYs+epBsMvH8PHSVfn5DRGTRQaJgPLibqUdTIg7XI7FXPWNIu3orWtSBac6JE87Sqao863yIRdVCfRpPRwLGwceCYh7ZH5PuBg3r9wIfdoGiaYs3S2ZTX91L6qhNgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TwXzGbcv; arc=none smtp.client-ip=209.85.222.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--marievic.bounces.google.com
+Received: by mail-qk1-f201.google.com with SMTP id af79cd13be357-7e1b84c9a3dso901424885a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753817833; x=1754422633; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iY//lVxLTeQ/wpFhoCwsWTSD0JOlrDoBeeghyQ/Upjs=;
+        b=TwXzGbcvGppzlHuDvlDA/z90hW0n2CgYUMTEQRDrQUE5isX3N17ty1U6z6/AOFLNLg
+         9gJ+PL+Ynvq2NS4UMjzYvzTlnD9Qm4Nx2QK1TOVvP+C5WfxNU6c+6uaTzfsKBXIWc/kI
+         5xUdRKTBA/DGMwneHA3vYxMLmzZqwvfFYNFFDKhGs5JM97lwRy85rDyGIliKXfc5QPl3
+         HdbPCRVqOnBtqT+4XBdTCcB1hQ9+ti8hqq0sZ84yxUPoBc6JxEVIWt64qI0zqFlYV0YW
+         a6KPBTMyLzTbPQf78N+TzTjPkrXDlx96knzNJs+g+w0AWlRzzXuHfcuYgQXrQlfyLThZ
+         bzMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753817833; x=1754422633;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iY//lVxLTeQ/wpFhoCwsWTSD0JOlrDoBeeghyQ/Upjs=;
+        b=hHZ5ch2vk47SitgiQ5nvLsg8NIIwz9MixnwRMH3p1ew+qMiFC0JYgiQX5WXQ71nRQW
+         RGedxq8zzvimYKyKB3GVPYm+rl4N1QBsL57rkD8ITaOvmZh/AuHLy47E+yxD7DJkxsxz
+         XnYMlV+n73kKMu5d+CWhmZD2y1QNzLX7KTRhdT9iJoc5GaeFWcGuMlNFdynSSb+ttaun
+         xbXdhG58RoXWrciY7ei5/1DCidy31cxydZsLeUOYNDO/AQwi3CD164rB+h0+KbUp2zPt
+         ns8AQgCDUZtvM69BPqobsX70c9dn9ZmF5+YyLAqcZcW46jO1eTx17ag5xJkbWFTZjCfJ
+         28GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6NAXuNcS40G35L4MYOTeNOytB4zcUk8CQUPLvidhesMm0RazHSr/gb7vKb88/dy22pjmck6jOzJXNpNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUGNBc8kqgeZOnTh4frfqR9HTJOYMZY2UWQgzBrdjbgdNW6xeK
+	fabuIhVXEwAhNKLkaXCjjKKANO4skFsYTaMuDYmD/txRaO9+Ep9xsiNWqSO52rQ1SA7HCGQK/Fi
+	dB6wFNb80kE48uA==
+X-Google-Smtp-Source: AGHT+IGn2AxD4SAxB/kWHZWeagJBNiPsMMNzOwk1sETIYxGHKzcBJDio12VD/zBRlWE/2YAZFEUedLapEWbiNA==
+X-Received: from qtbfc18.prod.google.com ([2002:a05:622a:4892:b0:4ab:b55c:cea3])
+ (user=marievic job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:620a:a10d:b0:7d4:4aa6:a509 with SMTP id af79cd13be357-7e66f39138amr112976185a.48.1753817833109;
+ Tue, 29 Jul 2025 12:37:13 -0700 (PDT)
+Date: Tue, 29 Jul 2025 19:36:38 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250729193647.3410634-1-marievic@google.com>
+Subject: [PATCH 0/9] kunit: Refactor and extend KUnit's
+From: Marie Zhussupova <marievic@google.com>
+To: rmoar@google.com, davidgow@google.com, shuah@kernel.org, 
+	brendan.higgins@linux.dev
+Cc: elver@google.com, dvyukov@google.com, lucas.demarchi@intel.com, 
+	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Marie Zhussupova <marievic@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 29 2025 at 06:43, syzbot wrote:
-> syzbot found the following issue on:
->
-> HEAD commit:    86aa72182095 Merge tag 'chrome-platform-v6.17' of git://gi..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=171674a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3816ffa0a2bab886
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5245cb609175fb6e8122
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com
->
-> arch/x86/kernel/setup.c:1251: undefined reference to `efi_mem_type'
-> ld: arch/x86/kernel/setup.c:987: undefined reference to `efi_init'
+Hello!
 
-Cute. So the code has:
+KUnit offers a parameterized testing framework, where tests can be
+run multiple times with different inputs.
 
-        if (efi_enabled(EFI_BOOT))
-                efi_init();
+Currently, the same `struct kunit` is used for each parameter
+execution. After each run, the test instance gets cleaned up.
+This creates the following limitations:
 
-in the CONFIG_EFI=n case:
+a. There is no way to store resources that are accessible across
+   the individual parameter test executions.
+b. It's not possible to pass additional context besides the
+   previous parameter to `generate_params()` to get the next
+   parameter.
+c. Test users are restricted to using pre-defined static arrays
+   of parameter objects or `generate_params()` to define their
+   parameters. There is no flexibility to pass a custom dynamic
+   array without using `generate_params()`, which can be complex
+   if generating the next parameter depends on more than just
+   the single previous parameter (e.g., two or more previous
+   parameters).
 
-static inline bool efi_enabled(int feature)
-{
-        return false;
-}
+This patch series resolves these limitations by:
 
-efi_init() has an unconditional forward declaration:
+1. [P 1] Giving each parameterized test execution its own
+   `struct kunit`. This aligns more with the definition of a
+   `struct kunit` as a running instance of a test. It will also
+   remove the need to manage state, such as resetting the
+   `test->priv` field or the `test->status_comment` after every
+   parameter run.
 
-extern void efi_init (void);
+2. [P 1] Introducing a parent pointer of type `struct kunit`.
+   Behind the scenes, a parent instance for the parameterized
+   tests will be created. It won't be used to execute any test
+   logic, but will instead be used as a context for shared
+   resources. Each individual running instance of a test will
+   now have a reference to that parent instance and thus, have
+   access to those resources.
 
-This has been the case forever and has been optimized out because
-efi_enabled() evaluates to a constant.
+3. [P 2] Introducing `param_init()` and `param_exit()` functions
+   that can set up and clean up the parent instance of the
+   parameterized tests. They will run once before and after the
+   parameterized series and provide a way for the user to
+   access the parent instance to add the parameter array or any
+   other resources to it, including custom ones to the
+   `test->parent->priv` field or to `test->parent->resources`
+   via the Resource API (link below).
 
-I haven't checked which sanitizer option causes GCC to compile this
-into:
+https://elixir.bootlin.com/linux/v6.16-rc7/source/include/kunit/resource.h
 
-00000000000000d0 <efi_enabled.constprop.0>:
-}
-extern void efi_find_mirror(void);
-#else
-static inline bool efi_enabled(int feature)
-{
-        return false;
-  d0:   e8 00 00 00 00          call   d5 <efi_enabled.constprop.0+0x5>
-}
-  d5:   31 c0                   xor    %eax,%eax
-  d7:   e9 00 00 00 00          jmp    dc <efi_enabled.constprop.0+0xc>
+4. [P 3, 4 & 5] Passing the parent `struct kunit` as an additional
+   parameter to `generate_params()`. This provides
+   `generate_params()` with more available context, making
+   parameter generation much more flexible. The
+   `generate_params()` implementations in the KCSAN and drm/xe
+   tests have been adapted to match the new function pointer
+   signature.
 
-and to keep the call for efi_init() as a symbol for the linker to
-resolve, which obviously fails.
+5. [P 6] Introducing a `params_data` field in `struct kunit`.
+   This will allow the parent instance of a test to have direct
+   storage of the parameter array, enabling features like using
+   dynamic parameter arrays or using context beyond just the
+   previous parameter.
 
-If I change the efi_enabled() stub to __always_inline, it's optimized
-out.
+Thank you!
+-Marie
 
-Disabling CONFIG_KCOV_INSTRUMENT_ALL makes it go away. So GCC confuses
-the optimizer when CONFIG_KCOV_INSTRUMENT_ALL is on.
+Marie Zhussupova (9):
+  kunit: Add parent kunit for parameterized test context
+  kunit: Introduce param_init/exit for parameterized test shared context
+    management
+  kunit: Pass additional context to generate_params for parameterized
+    testing
+  kcsan: test: Update parameter generator to new signature
+  drm/xe: Update parameter generator to new signature
+  kunit: Enable direct registration of parameter arrays to a KUnit test
+  kunit: Add example parameterized test with shared resources and direct
+    static parameter array setup
+  kunit: Add example parameterized test with direct dynamic parameter
+    array setup
+  Documentation: kunit: Document new parameterized test features
 
-The kernel is full of such inline (not __always_inline) stub
-conditionals which evaluate to a constant....
+ Documentation/dev-tools/kunit/usage.rst | 455 +++++++++++++++++++++++-
+ drivers/gpu/drm/xe/tests/xe_pci.c       |   2 +-
+ include/kunit/test.h                    |  98 ++++-
+ kernel/kcsan/kcsan_test.c               |   2 +-
+ lib/kunit/kunit-example-test.c          | 207 +++++++++++
+ lib/kunit/test.c                        |  82 ++++-
+ 6 files changed, 818 insertions(+), 28 deletions(-)
 
-Thanks,
-
-        tglx
-
-
-
+-- 
+2.50.1.552.g942d659e1b-goog
 
 
