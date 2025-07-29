@@ -1,343 +1,311 @@
-Return-Path: <linux-kernel+bounces-749819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90902B1533B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:05:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE38AB15344
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C77AD1891D18
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:05:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47B5C7A91C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:05:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0A124A049;
-	Tue, 29 Jul 2025 19:05:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6260A24DD13;
+	Tue, 29 Jul 2025 19:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I976hoEi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="cWaLt6IH";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="NJMjP+m2";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="xNdfUu/J"
+Received: from sender6.mail.selcloud.ru (sender6.mail.selcloud.ru [5.8.75.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B0F46447;
-	Tue, 29 Jul 2025 19:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3C646447;
+	Tue, 29 Jul 2025 19:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753815922; cv=none; b=TFGYK/HYiZGdld4rvcRmlm++g84VvbK+siLbkJDIIw6sC9TmUvaU87rSW3PbuYf8yoiHPxDS6oOgllNfqN1TW4p8LLLxjpa/gMYcaTskagaOp9CPjfEaPzY1VYOvsmg9BM2d28y+0vxexNfS/mwK8zaDQ7Tc27spGoP0MhFg5u8=
+	t=1753815992; cv=none; b=h94Yg1GLhlKOb8UKNBycszXmiYrj0dEW4/6V5XlkFfT91bnkMwP8ul2ETLetqCwb1u3ZumnmB1qMXsx4boSE1Xoeh2N9VL/fbfK5IooIu+i8mHvLEu33PBEQeoZ1POZjJBquM6k/ciq4Dvlo1bTZuZFYKcMT+zSnqmH+lZqqCvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753815922; c=relaxed/simple;
-	bh=yxH+FULZ86o67g8LSiDf9ZC187TQ4TjAq094yJ7LAXs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lFd73WW4P7g9qToQYZcPs2THv3Cp5n99P8Ji2JIQNjgJ2Soyjbi7XGxhs8rLEDfSjCW/2k6dsKe9UwB3EZHepFCRYJB4oIZ+M0BjMIWG+VW+hXdt77EwZcqHRUuwfEq856+CgwTzzKSBPfYjCt7plVosOk8UQguonr4QH2kXGpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I976hoEi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D74CC4CEEF;
-	Tue, 29 Jul 2025 19:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753815922;
-	bh=yxH+FULZ86o67g8LSiDf9ZC187TQ4TjAq094yJ7LAXs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I976hoEiVTNqqmojBTOTca/IRNa8rVO0DHreW6OvAWDJYt2uGQhpSaUCvwSLl/BIw
-	 +QP696300upZaM904rfXCj3POg8LowIXZvBjGf/HBnCHGsgheKEQmOXxnKbf4ZTgat
-	 uNRbl03uMlz4eW91+CsRILMoaVVGNdz3k8FhiHutGO9OFSyfm7xux+5Pvam7ChztMS
-	 OLpisAKiW16MZeY+wy7RqMY3VJzd+8oi3Qizcov2ORQb7sAlvupkQlth0K6vK9biuG
-	 4lq+FAnasEMYaXKJUPmVhyvxKKQqq13uVxKosAHnPC82VNk1fUBAF4Ot2qW2R+NNYF
-	 YoRwMElX/O6hQ==
-Date: Tue, 29 Jul 2025 20:05:13 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] iio: magnetometer: add support for Infineon TLV493D
- 3D Magentic sensor
-Message-ID: <20250729200513.275e0d98@jic23-huawei>
-In-Reply-To: <aIhE5zwrPljqHqGX@dixit>
-References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
-	<20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
-	<20250727140559.1f6c1668@jic23-huawei>
-	<aIhE5zwrPljqHqGX@dixit>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753815992; c=relaxed/simple;
+	bh=+GaupTqSCjbeFEvw5Jk6GGk1W1IENNrlN8kSLyAKUTo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fgD5qw8Ajqqlaf9pO6z8sSQi0fNKB2FzAFXgUfVyjxYCeNsXz14KmCKnATw2nzH/s4AJgu7GvhNMUe2I8NVpZmd8yf85oyUxsgAyhJAyz9J6G+dQNWZ0XxN4oO1P3SpETXnKeMPvN8l+PG4/dowIyY2cpGxzUdLLFtJp4AkuIU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=cWaLt6IH; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=NJMjP+m2; dkim=fail (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=xNdfUu/J reason="signature verification failed"; arc=none smtp.client-ip=5.8.75.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=fZLtxJxccotz6SHSOldtB6ck/NMsEGIi3fSCgwF03tY=; t=1753815988; x=1753988788;
+	 b=cWaLt6IHoaeTul5OXw0cv798u8I8B+psUnRw9T1ED+lS2IGQuFXRLdVqqFqvtq2r7vyuM7KuYL
+	vSXvp+0AUtXnP46oua651IPPM+wXWA1vRlC/2Z7JYAN6fpIogGfJRHDwggjzMpslAMYLaduGdMQIT
+	Aise0j0eVAMdUZkwpDPs=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
+	 s=selcloud; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Help:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=fZLtxJxccotz6SHSOldtB6ck/NMsEGIi3fSCgwF03tY=;
+	t=1753815988; x=1753988788; b=NJMjP+m2qWJtMPB5gDvOXanp2pSZasFJJ2a2+6YRZnCCWR5
+	EEze6pP47/FHXAxH7MyRWJ4Xz8tMbR0LUgeFYqTDhfrNlY+OctEwFHMHwBAPG8NPKTq6J9Kj+zfEL
+	NMlbXPqD7BrUa/VMSG9X1qT+iXgFy9lBt74rKOGG36AKYnc=;
+Precedence: bulk
+X-Issuen: 1118611
+X-User: 280060488
+X-Postmaster-Msgtype: 3849
+Feedback-ID: 1118611:15965:3849:samotpravil
+X-From: foxido.dev
+X-from-id: 15965
+X-MSG-TYPE: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-blist-id: 3849
+X-Gungo: 20250728.224157
+X-SMTPUID: mlgnr60
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxido.dev; s=dkim;
+	t=1753815973; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=ry9b4jvpXnBWI4/HJV5u1m2bDrfUO+pkxJci9GRZHCw=;
+	b=xNdfUu/Jf3bQFn6+GmMI1Z9Btt/+FwRyHrySPhqqbVE0DjRJEUWc5a2659YXp0ba/luIP8
+	MqljvPwrO/Mc+kqmgWgE7XBEOPEZYSHYwIdbo5nIhqRbsiAU3R2q0PZ7rr8vM9FLIA01Mo
+	Z0iOrrZhfgEXfupv4FzVBu0n6segBEn9SUAK+NJYq9NxrWpOMOIYhYDPlfhN2cV4lAbGBj
+	f5yawsmAtPhhZkzIxs1F2Cpok15yH3iBw/mk1dLlY/nFR+nCwvJ9pPesqN1kuwPa9kEyl4
+	xi3eBJxex1IIlWHL6O9ZJSfAUT5sQMqOF/RgmboWRzqXApLwlBQ7v69cy0i/lw==
+From: Gladyshev Ilya <foxido@foxido.dev>
+To: foxido@foxido.dev
+Cc: w_armin@gmx.de,
+	linux-input@vger.kernel.org,
+	nikita.nikita.krasnov@gmail.com,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v2] platform/x86: Add WMI driver for Redmibook keyboard.
+Date: Tue, 29 Jul 2025 22:05:21 +0300
+Message-ID: <20250729190528.8446-1-foxido@foxido.dev>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Last-TLS-Session-Version: TLSv1.3
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 29 Jul 2025 09:19:59 +0530
-Dixit Parmar <dixitparmar19@gmail.com> wrote:
+This driver implements support for various Fn keys (like Cut) and Xiaomi
+specific AI button.
 
-> On Sun, Jul 27, 2025 at 02:05:59PM +0100, Jonathan Cameron wrote:
-> > On Sat, 26 Jul 2025 15:07:01 +0530
-> > Dixit Parmar <dixitparmar19@gmail.com> wrote:
-> >=20
-> > Hi Dixit,
-> >=20
-> > Very clean driver for a v1. Nice.
-> >  =20
-> > > The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor =20
-> >=20
-> > Slightly odd wrap.  Aim for 75 chars for patch descriptions.
-> > =20
-> Okay, 75.
-> > > applications includes joysticks, control elements (white goods,
-> > > multifunction knops), or electric meters (anti tampering) and any
-> > > other application that requires accurate angular measurements at
-> > > low power consumptions.
-> > >=20
-> > > The Sensor is configured over I2C, and as part of Sensor measurement
-> > > data it provides 3-Axis magnetic fields and temperature core measurem=
-ent.
-> > >=20
-> > > The driver supports raw value read and buffered input via external tr=
-igger
-> > > to allow streaming values with the same sensing timestamp.
-> > >=20
-> > > The device can be configured in to different operating modes by optio=
-nal
-> > > device-tree "mode" property. Also, the temperature sensing part requi=
-res
-> > > raw offset captured at 25=C2=B0C and that can be specified by "temp-o=
-ffset"
-> > > optional device-tree property.
-> > >=20
-> > > While sensor has interrupt pin multiplexed with I2C SCL pin. But for =
-bus
-> > > configurations interrupt(INT) is not recommended, unless timing const=
-raints
-> > > between I2C data transfers and interrupt pulses are monitored and ali=
-gned.
-> > >=20
-> > > The Sensor's I2C register map and mode information is described in pr=
-oduct
-> > > User Manual[1].
-> > >=20
-> > > Datasheet: https://www.infineon.com/assets/row/public/documents/24/49=
-/infineon-tlv493d-a1b6-datasheet-en.pdf =20
-> > Tag, so in the tags block (no blank line to the SoB) =20
-> Sorry, didn't quite get it.
+Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
+---
 
-You should have it as Datasheet: <link>
-That will then be a formal 'tag' so belongs alongside the Signed-off-by: et=
-c with no blank
-lines in that block.
+Changes from v1:
+- Use sparse-keymap instead of manual matching
+- Fix GUID case so it actually autoloads
+- Other fixes from v1 review
 
-Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infin=
-eon-tlv493d-a1b6-datasheet-en.pdf=20
-Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-UserM=
-anual-v01_03-EN.pdf #1
-Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+Link to v1: https://lore.kernel.org/platform-driver-x86/20250727223516.29=
+244-1-foxido@foxido.dev/
 
-> > > [1] https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-U=
-serManual-v01_03-EN.pdf =20
-> > Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-U=
-serManual-v01_03-EN.pdf #1
-> >=20
-> > So make it a tag with a trailing comment to give the reference number.
-> >  =20
-> > >=20
-> > > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com> =20
+---
+ MAINTAINERS                      |   6 ++
+ drivers/platform/x86/Kconfig     |  11 +++
+ drivers/platform/x86/Makefile    |   1 +
+ drivers/platform/x86/redmi-wmi.c | 129 +++++++++++++++++++++++++++++++
+ 4 files changed, 147 insertions(+)
+ create mode 100644 drivers/platform/x86/redmi-wmi.c
 
-> > > +
-> > > +#define TLV493D_DATA_X_GET(b)	\
-> > > +	sign_extend32(FIELD_GET(TLV493D_VAL_MAG_X_AXIS_MSB, b[TLV493D_RD_RE=
-G_BX]) << 4 | \
-> > > +			(FIELD_GET(TLV493D_VAL_MAG_X_AXIS_LSB, b[TLV493D_RD_REG_BX2]) >> =
-4), 11) =20
-> >=20
-> > These are odd enough I'd make them c functions rather than macros. Burn=
- a few lines
-> > for better readability.=20
-> >  =20
-> I saw this kind of data retrival and formation from registers as macros s=
-o I sticked to
-> it. Having all these as function will also require a seperate function
-> for each channel coz the masks and the layout of the bits changes over
-> the register. Do you still recommend it as c functions?
-
-Is it more than 4 short functions?  I'd burn the few lines that costs.
-
-s32 tlv493d_data_y_get(u8 *buff)
-{
-	u16 val =3D FIELD_GET(TLV493D_VAL_MAG_Y_AXIS_MSB, b[TLV493D_RD_REG_BY]) <<=
- 4 |
-		  FIELD_GET(TLV493D_VAL_MAG_Y_AXIS_LSB, b[TLV493D_RD_REG_BX2]);
-
-	return sign_extend32(val, 11);
-}
-> > > +/*
-> > > + * The datasheet mentions the sensor supports only direct byte-strea=
-m write starting from
-> > > + * register address 0x0. So for any modification to be made to any w=
-rite registers, it must
-> > > + * be written starting from the register address 0x0.
-> > > + * I2C write operation should not contain register address in the I2=
-C frame, it should
-> > > + * contains only raw byte stream for the write registers. As below,
-> > > + * I2C Frame: |S|SlaveAddr Wr|Ack|Byte[0]|Ack|Byte[1]|Ack|.....|Sp|
-> > > + */
-> > > +static int tlv493d_write_all_regs(struct tlv493d_data *data)
-> > > +{
-> > > +	int ret;
-> > > +
-> > > +	if (!data || !data->client)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/*
-> > > +	 * As regmap does not provide raw write API which perform I2C write=
- without
-> > > +	 * specifying register address, direct i2c_master_send() API is use=
-d.
-> > > +	 */
-> > > +	ret =3D i2c_master_send(data->client, data->wr_regs, ARRAY_SIZE(dat=
-a->wr_regs)); =20
-> >=20
-> > Given we have to do this, I'm a bit doubtful about regmap usage in gene=
-ral in here.
-> > Maybe it's just not a good fit and we should stick to direct use of the=
- i2c stuff
-> > like here?
-> >  =20
-> Sorry, didn't get entirely? From what I understood, you meant we could
-> drop regmap from this driver entirely and use direct I2C APIs. I believe
-> that would be too much, coz of the frequency we perform operations and
-> regmap is easier and clean imo.
-
-The mixture is nasty though :(=20
-> Also, we could have used regmap_raw_write() API by specifying register
-> 0x0 as address and rest of the 3 bytes as data. regmap will perform raw
-> write of these byte stream over the I2C the same way sensor expects. But
-> the problem with that approach is we are not using it as per the API
-> convention. let me know your thoughts? Is it a good option, it'll look
-> like this:
-> regmap_raw_write(data->map, data->wr_regs[0], &data->wr_regs[1],
-> ARRAY_SIZE(data->wr_regs) - 1);
-
-I'm not keen on that either.
-
-If you really want to mix i2c and regmap then that's fine, I was just dubio=
-us
-whether we were getting value for money from regmap here.
-
-> > > +	if (ret < 0) {
-> > > +		dev_err(data->dev, "failed to write registers. error %d\n", ret);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +	*x =3D TLV493D_DATA_X_GET(buff);
-> > > +	*y =3D TLV493D_DATA_Y_GET(buff);
-> > > +	*z =3D TLV493D_DATA_Z_GET(buff);
-> > > +	*t =3D TLV493D_DATA_TEMP_GET(buff);
-> > > +
-> > > +out:
-> > > +	pm_runtime_mark_last_busy(data->dev); =20
-> >=20
-> > As below  This should get simpler.
-> >=20
-> > Not directly relevant to this patch:
-> >=20
-> > If this cycle is quiet I plan to propose some cleanup.h based handling =
-for runtime
-> > pm as it's annoying how often we need a goto for it.  The new ACQUIRE()=
-  / ACQUIRE_ERR()
-> > should work for this.=20
-> >  =20
-> Does this need any modifications with current codebase?
-
-Needs a bunch of work to show generality across many drivers and
-convincing Rafael (PM maintainer) it's a good idea.
-Don't try to do it in this series!
-
-> >  =20
-> > > +	pm_runtime_put_autosuspend(data->dev);
-> > > +	return ret;
-> > > +}
-> > > +
-> > > +static int tlv493d_init(struct tlv493d_data *data)
-> > > +{
-> > > +	int ret;
-> > > +	u8 buff[TLV493D_RD_REG_MAX];
-> > > +
-> > > +	if (!data)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/*
-> > > +	 * The sensor initialization requires below steps to be followed,
-> > > +	 * 1. Power-up sensor.
-> > > +	 * 2. Read and store read-registers map (0x0-0x9).
-> > > +	 * 3. Copy values from read reserved registers to write reserved fi=
-elds (0x0-0x3).
-> > > +	 * 4. Set operating mode.
-> > > +	 * 5. Write to all registers.
-> > > +	 */
-> > > +	ret =3D regmap_bulk_read(data->map, TLV493D_RD_REG_BX, buff, ARRAY_=
-SIZE(buff));
-> > > +	if (ret) {
-> > > +		dev_err(data->dev, "bulk read failed, error %d\n", ret);
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	data->wr_regs[0] =3D 0; /* Write register 0x0 is reserved. Does not=
- require to be updated.*/
-> > > +	data->wr_regs[1] =3D buff[TLV493D_RD_REG_RES1] & TLV493D_RD_REG_RES=
-1_WR_MASK;
-> > > +	data->wr_regs[2] =3D buff[TLV493D_RD_REG_RES2] & TLV493D_RD_REG_RES=
-2_WR_MASK;
-> > > +	data->wr_regs[3] =3D buff[TLV493D_RD_REG_RES3] & TLV493D_RD_REG_RES=
-3_WR_MASK;
-> > > +
-> > > +	ret =3D tlv493d_set_operating_mode(data, data->mode);
-> > > +	if (ret < 0) {
-> > > +		dev_err(data->dev, "failed to set operating mode\n");
-> > > +		return ret;
-> > > +	}
-> > > +
-> > > +	return ret; =20
-> > return 0? =20
-> Its the same though. ret from tlv493d_set_operating_mode is 0 on
-> success and -ve on failure.
-
-Then return 0 to make it explicit that if we get here we only return 0.
-That can be useful to compilers.
-
-Also check above as if (ret) is cleaner still.
-
-
-> > > +	if (ret)
-> > > +		val =3D 340;
-> > > +	/*
-> > > +	 * The above is a raw offset; however, IIO expects a single effecti=
-ve offset.
-> > > +	 * Since final temperature includes an additional fixed 25=C2=B0C (=
-i.e. 25000 m=C2=B0C),
-> > > +	 * we compute a combined offset using scale =3D 1100 (1.1 * 1000).
-> > > +	 */
-> > > +	data->temp_offset =3D -val + (s32)div_u64(25000, 1100);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int tlv493d_read_raw(struct iio_dev *indio_dev, const struct =
-iio_chan_spec *chan, =20
-> >=20
-> > wrap to keep this under 80.  Doesn't look like it will hurt readability.
-> >  =20
-> Ack. Is 80 standard for whole kernel or iio only?
-
-It's kind of the the 'old' standard.  Used to be a fairly hard limit, but
-over time there has been some relaxation.  So, if your code is nice and rea=
-dable
-you will rarely get anyone complaining if you stick to 80 chars.
-
->=20
-> Thank you for such detailed review. Appriciate it,
-You are welcome.
-
-J
-> Dixit
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c0b444e5fd5a..eb25fb10e751 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20965,6 +20965,12 @@ S:	Maintained
+ T:	git https://github.com/pkshih/rtw.git
+ F:	drivers/net/wireless/realtek/rtw89/
+=20
++REDMIBOOK WMI DRIVERS
++M:	Gladyshev Ilya <foxido@foxido.dev>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	drivers/platform/x86/redmi-wmi.c
++
+ REDPINE WIRELESS DRIVER
+ L:	linux-wireless@vger.kernel.org
+ S:	Orphan
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index e5cbd58a99f3..3c570cb398d3 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -109,6 +109,17 @@ config XIAOMI_WMI
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called xiaomi-wmi.
+=20
++config REDMI_WMI
++	tristate "Redmibook WMI key driver"
++	depends on ACPI_WMI
++	depends on INPUT
++	help
++	  Say Y here if you want support for WMI-based hotkey events on
++	  Xiaomi Redmibook devices.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called redmi-wmi.
++
+ config GIGABYTE_WMI
+ 	tristate "Gigabyte WMI temperature driver"
+ 	depends on ACPI_WMI
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefil=
+e
+index bea87a85ae75..406dd0807ba7 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_HUAWEI_WMI)		+=3D huawei-wmi.o
+ obj-$(CONFIG_MXM_WMI)			+=3D mxm-wmi.o
+ obj-$(CONFIG_NVIDIA_WMI_EC_BACKLIGHT)	+=3D nvidia-wmi-ec-backlight.o
+ obj-$(CONFIG_XIAOMI_WMI)		+=3D xiaomi-wmi.o
++obj-$(CONFIG_REDMI_WMI)			+=3D redmi-wmi.o
+ obj-$(CONFIG_GIGABYTE_WMI)		+=3D gigabyte-wmi.o
+=20
+ # Acer
+diff --git a/drivers/platform/x86/redmi-wmi.c b/drivers/platform/x86/redm=
+i-wmi.c
+new file mode 100644
+index 000000000000..732688fb94e0
+--- /dev/null
++++ b/drivers/platform/x86/redmi-wmi.c
+@@ -0,0 +1,129 @@
++// SPDX-License-Identifier: GPL-2.0
++/* WMI driver for Xiaomi Redmibooks */
++
++#include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/input.h>
++#include <linux/input/sparse-keymap.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/unaligned.h>
++#include <linux/wmi.h>
++
++#include <uapi/linux/input-event-codes.h>
++
++#define WMI_REDMIBOOK_KEYBOARD_EVENT_GUID "46C93E13-EE9B-4262-8488-563BC=
+A757FEF"
++
++#define AI_KEY_VALUE_MASK 0x00000100
++
++static const struct key_entry redmi_wmi_keymap[] =3D {
++	{KE_KEY, 0x00000201,	{KEY_SELECTIVE_SCREENSHOT}},
++	{KE_KEY, 0x00000301,	{KEY_ALL_APPLICATIONS}},
++	{KE_KEY, 0x00001b01,	{KEY_SETUP}},
++
++	/* AI button has code for each position */
++	{KE_KEY, 0x00011801,	{KEY_ASSISTANT}},
++	{KE_KEY, 0x00011901,	{KEY_ASSISTANT}},
++
++	/* Keyboard backlight */
++	{KE_IGNORE, 0x00000501, {}},
++	{KE_IGNORE, 0x00800501, {}},
++	{KE_IGNORE, 0x00050501, {}},
++	{KE_IGNORE, 0x000a0501, {}},
++
++	{KE_END}
++};
++
++struct redmi_wmi {
++	struct input_dev *input_dev;
++	/* Protects the key event sequence */
++	struct mutex key_lock;
++};
++
++static int redmi_wmi_probe(struct wmi_device *wdev, const void *context)
++{
++	struct redmi_wmi *data;
++	int err;
++
++	/* Init dev */
++	data =3D devm_kzalloc(&wdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	dev_set_drvdata(&wdev->dev, data);
++
++	err =3D devm_mutex_init(&wdev->dev, &data->key_lock);
++	if (err)
++		return err;
++
++	/* Setup input device */
++	data->input_dev =3D devm_input_allocate_device(&wdev->dev);
++	if (!data->input_dev)
++		return -ENOMEM;
++	data->input_dev->name =3D "Redmibook WMI keys";
++	data->input_dev->phys =3D "wmi/input0";
++
++	err =3D sparse_keymap_setup(data->input_dev, redmi_wmi_keymap, NULL);
++	if (err)
++		return err;
++
++	return input_register_device(data->input_dev);
++}
++
++static void redmi_wmi_notify(struct wmi_device *wdev, union acpi_object =
+*obj)
++{
++	struct redmi_wmi *data =3D dev_get_drvdata(&wdev->dev);
++	int value =3D 1;
++	bool autorelease =3D true;
++
++	if (obj->type !=3D ACPI_TYPE_BUFFER) {
++		dev_err(&wdev->dev, "Bad response type %u\n", obj->type);
++		return;
++	}
++
++	if (obj->buffer.length !=3D 32) {
++		dev_err(&wdev->dev, "Invalid buffer length %u\n", obj->buffer.length);
++		return;
++	}
++
++	/* For linearizability */
++	guard(mutex)(&data->key_lock);
++
++	u32 payload =3D get_unaligned_le32(obj->buffer.pointer);
++	struct key_entry *entry =3D sparse_keymap_entry_from_scancode(data->inp=
+ut_dev, payload);
++
++	if (!entry) {
++		dev_dbg(&wdev->dev, "Unknown WMI event with payload %u", payload);
++		return;
++	}
++
++	/* AI key quirk */
++	if (entry->keycode =3D=3D KEY_ASSISTANT) {
++		value =3D !(payload & AI_KEY_VALUE_MASK);
++		autorelease =3D false;
++	}
++
++	sparse_keymap_report_entry(data->input_dev, entry, value, autorelease);
++}
++
++static const struct wmi_device_id redmi_wmi_id_table[] =3D {
++	{ .guid_string =3D WMI_REDMIBOOK_KEYBOARD_EVENT_GUID },
++	{ }
++};
++
++static struct wmi_driver redmi_wmi_driver =3D {
++	.driver =3D {
++		.name =3D "redmi-wmi",
++		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS
++	},
++	.id_table =3D redmi_wmi_id_table,
++	.probe =3D redmi_wmi_probe,
++	.notify =3D redmi_wmi_notify,
++	.no_singleton =3D true,
++};
++module_wmi_driver(redmi_wmi_driver);
++
++MODULE_DEVICE_TABLE(wmi, redmi_wmi_id_table);
++MODULE_AUTHOR("Gladyshev Ilya <foxido@foxido.dev>");
++MODULE_DESCRIPTION("Redmibook WMI driver");
++MODULE_LICENSE("GPL");
+--=20
+2.50.0
 
 
