@@ -1,233 +1,218 @@
-Return-Path: <linux-kernel+bounces-748838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B254DB1468E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:03:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5B2FB14691
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:03:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC24017E826
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:03:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0C911681F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F0021A458;
-	Tue, 29 Jul 2025 03:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938C921A458;
+	Tue, 29 Jul 2025 03:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BeOOw+Nh"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nm3sBIS2"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3291B3925;
-	Tue, 29 Jul 2025 03:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCC31E521A;
+	Tue, 29 Jul 2025 03:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753758191; cv=none; b=E9i1psZUlvGJJxgDwvWrRlQXlsGLM/dN5scz/Jk0FzYNwQf+8flSpfI0OdRejY02aOz+24JbB59p4eh4gsw9rY4a8GsTrBMStAx+OaW0s6HwdNNkR/DGGIsYRSypDAOOEK8HSysqK/x3k5Hu3Q9JnyAcC8hdz3x+YSnKD7Lt4QQ=
+	t=1753758219; cv=none; b=th38JqbXnf3fFYgnjG6yNc7fsfvDybQBEXAD6kYeoBaOZu5g1U+qa+LB1wyIaP1dNU2EaBxn49GtyG+eb+b8RBkDdjRQ1ugRVxB1foG7CLAzhjUBthxossGBDpHoDnkm388B5SmSSxH3aN65Rm6CRvfsfcKrlOfG999mwkiUW/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753758191; c=relaxed/simple;
-	bh=sp7iLHloZjdg7rwEqiCwYlJKLtp/Z0ijU0agxJPsu24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oqi5jO3PU7+xKoOPG/HI8AikJNan4hOBLypHFbmCrG2bpQjN7b5W9ANezFReZuI44itQNMFC8VIaIuXBUWkBUXhj8RwpSjSe+NRpsin5RtkDfiGfvSSuMbM3s/TL/P4pCzq3vyZl/aX7vo7KQM/n8iBjrVDxiI/JXPPI/WlbFJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BeOOw+Nh; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SLGXGX027612;
-	Tue, 29 Jul 2025 03:02:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KNm0SjZMV0U4DCtXxFzwow3nn9+wL8wF7qiKjSXa9Q0=; b=BeOOw+Nhty0uz9Db
-	ojvT0tXuni8RhQJyHmNCMYvT0O/mQqJ9qmxbVeH9MtywOp1hQ8x+W0wffTvbmUB0
-	Cgxv/QgHpM9c3kCQL8AtI4zP7qgms0dSZ8BwjtwtI5zCw0dM5Vng7zqjClA8cOnb
-	z/w+iKHmM3wva2VBS3nDcSIc5BEtgRTdv95v018VCJAWKBIh5ztbZMM+KszwEapE
-	OObkdnr/cGjp8VGU+Evm8LBm+0FF4o0gBQiLQEKtv4tHDDh0l/lOme31mzw3wPCj
-	pNZCMJOf5QTRjErhW4rj3NLAd8exylXdSQeK6jr07QmblTX/yltYvFPz+MB9y6YF
-	oh+6HA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4860enusms-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 03:02:51 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56T32p6i010375
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 03:02:51 GMT
-Received: from [10.239.155.136] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Mon, 28 Jul
- 2025 20:02:46 -0700
-Message-ID: <673e1960-f911-451d-ab18-3dc30abddd79@quicinc.com>
-Date: Tue, 29 Jul 2025 11:02:43 +0800
+	s=arc-20240116; t=1753758219; c=relaxed/simple;
+	bh=LSV/pQdJC+fneSAPB5inQCEKAEeIukrh2KJW3iiP7qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hcc47ks4QY2hEimCIHcgZlVd5d6vvY0SVfwOP2nTLomcN/lxSwE6KperEoVmw26dBfpWPTOSqjKkSAf2+vYCQso+RunhFEr+Ix9PGPUYJV9t8Wl2sT2cJ7DwG2lu0EKQ1SdeDhNLAFAgb5HnU3hoo7LHDIaReF4Ja0/i4q4ppqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nm3sBIS2; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b3f80661991so391973a12.0;
+        Mon, 28 Jul 2025 20:03:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753758218; x=1754363018; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IXO12M/CDdwgzfu3NadcSVolSn34grMG/o4SmHRmEBo=;
+        b=Nm3sBIS2yb/M06Hffa6xIRd7B47o15Is9xz6LKkYQn/MrCcx0lxe651VS2AhAGl/b0
+         8xhKM29+fhZp7a+mBvJ2myUdZaVLvKOkgqqZsR7Hof/oaFdEFSSri35ctsRHSAqYX/Eo
+         MGSxG+kKEPNNjUmtUHZjPBR4LZQpvy/dGtBLLgI2tlaswLIVdm7ClWAkBpSTRpu0N/zC
+         s7wlYpFcskBQ47vyvV+tCIyoF+jsD+h0BGm4JlZa/MzoMG8r3IgAIS3dqZViIx4UmeeD
+         W7KKkZeivvaqXaxNMnZqbvBHFQ3pQF/BF338O+gTLLRLQcF4T48AYq2eF4gD0d0DSnig
+         HtGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753758218; x=1754363018;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IXO12M/CDdwgzfu3NadcSVolSn34grMG/o4SmHRmEBo=;
+        b=ahhPZ9pIs4CNYeKHTug+cfdHei0TjmxlXD3WPMDBfCm9Xiz73laApjaZIHi95BEwAw
+         SC1319IOu8y4EL5bCySkFPZNTCJ7hormQrCG5mXWulvNa7Bp5aS7hHDNH/AdD54hWBKH
+         TNYls2mppKSeX8DVHSynDFDgLn/fuOGgPjLIN2mHausJvHKB2T4Ok96vkRO/fA5ygFpy
+         FRZfawo+WnLCq0jO7J6uoTDcKJbSIOMQbWv9Rmf6v60s3QjHjEnIBrTBopauCa+OJQ74
+         ZmiXXZQ8MSof1XgCPz7UGu0U230PuWokFry3Cflij/SdcMfSL1xgIFmZDH6mm6UX0s8O
+         JeOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrlIV2xLZmtMSavsxZdKTdEoOOnmtHEwaPDg4xHV9sh94J0dCQNimhtHx/0mTcRxPWAh0p322AzEq6/c3a@vger.kernel.org, AJvYcCVPpEsAtIBU1SimBkgzn8FLlZbsvjG8HBEtIcvvagYP0zcyQrCSDTYUqq8AKgoLFsBiev2kxbP4Pslp@vger.kernel.org, AJvYcCXHANqvDJBx7rQiGnubH+2jz4EmwJL69QGj1wjB/Yc5letb4sQTI/PPtSewVJXlN8VosIxeC0n/OacU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxplkiXCrcFNGB3x2+j0YrzYcgoMHMAPQ9lCAxfpK3hdeJE2YWY
+	yWrLN89U06k/vQVe3rK3CVpRWAyUTkK0qjzEU1BiWEiGKwocHeAVjiWOPc6yLfSg
+X-Gm-Gg: ASbGncvXLciLcS+s7KBqldiaLs/Y/OyRS/MG8K+s9zivrSxaLa3/d2qOrku4zwrPuej
+	Y7QrvX9w8z0mEZAl6430snR3C/rXjg15M56uARR5g+WbXfT5s8j+u3Q2QMuhRcRiAVkqfxZIPsl
+	KMxcHLjNB+l8wSu9MjSevNVQZqR40+mEu4LdEhAa6T2lOZbcBgNBj8BYZGBAHP2Iq+Cws6+rRKw
+	tzDJponh7cRdSGhRlg+RCnzklWSbCmo6YSrxl0VjGDYzi1zAkUqSh1e1bE8q7xK9YnrKr5hKNYK
+	3l/RT09VapsY56POg4v+B4KEiPotCF6PSadtcLg4r/eVzHDdlsiCeTeM+nbUhHcUX0nXllhn3en
+	hio2YehHJMOMtJuDXiEq5cw==
+X-Google-Smtp-Source: AGHT+IEqOh9O6CEC2CimcyCWQJcx0A9whkEtqsd1I4BC5ZOa9k3+eaMNONrPVjoFtxLUrmQTLjsvdg==
+X-Received: by 2002:a17:90b:2d8e:b0:31e:934b:d00b with SMTP id 98e67ed59e1d1-31f28c920dfmr2367584a91.7.1753758217535;
+        Mon, 28 Jul 2025 20:03:37 -0700 (PDT)
+Received: from dixit ([2401:4900:1c7e:9464:4ee2:7e58:1508:18c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f328a0ac5sm273689a91.7.2025.07.28.20.03.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 20:03:36 -0700 (PDT)
+Date: Tue, 29 Jul 2025 08:33:27 +0530
+From: Dixit Parmar <dixitparmar19@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: iio: magnetometer: document Infineon
+ TLV493D 3D Magnetic sensor
+Message-ID: <aIg5_x4UMLjRk4dn@dixit>
+References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
+ <20250726-tlv493d-sensor-v6_16-rc5-v1-2-deac027e6f32@gmail.com>
+ <455141b2-e82f-45fd-b30f-5d9436aa861b@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] scsi: ufs: core: Don't perform UFS clkscale if host
- asyn scan in progress
-To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
-        "beanhuo@micron.com" <beanhuo@micron.com>,
-        "avri.altman@wdc.com"
-	<avri.altman@wdc.com>,
-        "neil.armstrong@linaro.org"
-	<neil.armstrong@linaro.org>,
-        "quic_cang@quicinc.com" <quic_cang@quicinc.com>,
-        "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
-        "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
-        "bvanassche@acm.org"
-	<bvanassche@acm.org>,
-        "luca.weiss@fairphone.com" <luca.weiss@fairphone.com>,
-        "konrad.dybcio@oss.qualcomm.com" <konrad.dybcio@oss.qualcomm.com>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "quic_rampraka@quicinc.com" <quic_rampraka@quicinc.com>,
-        "junwoo80.lee@samsung.com" <junwoo80.lee@samsung.com>,
-        "mani@kernel.org"
-	<mani@kernel.org>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        =?UTF-8?B?VHplLW5hbiBXdSAo5ZCz5r6k5Y2XKQ==?= <Tze-nan.Wu@mediatek.com>,
-        "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
-        "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-        "James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-References: <20250522081233.2358565-1-quic_ziqichen@quicinc.com>
- <5f3911ffd2c09b6d86300c3905e9c760698df069.camel@mediatek.com>
- <1989e794-6539-4875-9e87-518da0715083@acm.org>
- <10b41d77c287393d4f6e50e712c3713839cb6a8c.camel@mediatek.com>
-Content-Language: en-US
-From: Ziqi Chen <quic_ziqichen@quicinc.com>
-In-Reply-To: <10b41d77c287393d4f6e50e712c3713839cb6a8c.camel@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: STDA2jS3gUkIovD3RfH9BVov-SEhutH1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDAyMSBTYWx0ZWRfX+lysptxrXbyW
- fFVlq/IJ412xp85PYhekCv7qBzu7zjHfn8cp87KEMJ9ke0g67gNDbRzNz6djFQOULgB56LCKY9B
- P9vaEfG0nEWEkgkabBkU9Xbr3cb/U5kuXYsPuxy1LzI5m3kx+S8E3t9gLkw31xR9pQDCOXDD8nH
- 0M7EMiNYNw+vgJkcSns3LR0Cp1NiKTRlE73DkqdZbM2JFAntLM8vbVUQuVYYMRH1NN5d7b/KDEK
- QMsjrbYdSWU6YY+i+8DqScRe/KQzS3BnGoKoXH4J8oZNRsZoWIeb7pj9J4tinZNvlJ7M7HhqM6O
- PU1O+uihlRoCYOQHyByR6hMB0Dr3DLBe1aKRHG7Ur0GNo4696dQXdoA0C7euxuLRgX859DXTnpC
- JsuHe/edDCWaXcPChFr4k8hM9sMb7//qWhggJtqbQ4+OMeXcHYnrvxqqP0dt0cfGlerO5V2W
-X-Authority-Analysis: v=2.4 cv=DIWP4zNb c=1 sm=1 tr=0 ts=688839db cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=VnNF1IyMAAAA:8 a=20KFwNOVAAAA:8 a=I3z-T-4cxT6kGIpvpuIA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: STDA2jS3gUkIovD3RfH9BVov-SEhutH1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-28_05,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1011 bulkscore=0 mlxscore=0 mlxlogscore=843
- spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507290021
+In-Reply-To: <455141b2-e82f-45fd-b30f-5d9436aa861b@baylibre.com>
 
-
-On 7/28/2025 2:34 PM, Peter Wang (王信友) wrote:
-> On Fri, 2025-07-25 at 07:54 -0700, Bart Van Assche wrote:
->>
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> On 7/25/25 2:13 AM, Peter Wang (王信友) wrote:
->>> Could consider luns_avail instead mutex?
->>
->> That would be wrong. I think it is essential that scan_mutex is used
->> in
->> this patch. Additionally, the lock inversion is between devfreq->lock
->> and (c->notifiers)->rwsem so it seems unlikely to me that Ziqi's
->> patch
->> is the patch that introduced the reported lock inversion.
->>
->> Bart.
+On Sat, Jul 26, 2025 at 03:43:56PM -0500, David Lechner wrote:
+> On 7/26/25 4:37 AM, Dixit Parmar wrote:
+> > Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
+> > controlled by I2C interface. Main applications includes joysticks, control
+> > elements (white goods, multifunction knops), or electric meters (anti
+> > tampering).
+> > 
+> > The device can be configured in to different operating modes by optional
+> > device-tree "mode" property. Also, the temperature sensing part requires
+> > raw offset captured at 25�C and that can be specified by "temp-offset"
+> > optional device-tree property.
+> > 
+> > Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
+> > 
+> > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+> > ---
+> >  .../iio/magnetometer/infineon,tlv493d.yaml         | 57 ++++++++++++++++++++++
+> >  1 file changed, 57 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
+> > new file mode 100644
+> > index 000000000000..0442cf41503b
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
+> > @@ -0,0 +1,57 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/magnetometer/infineon,tlv493d.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Infineon Technologies TLV493D Low-Power 3D Magnetic Sensor
+> > +
+> > +maintainers:
+> > +  - Dixit Parmar <dixitparmar19@gmail.com>
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    pattern: '^magnetometer@[0-9a-f]+$'
+> > +
+> > +  compatible:
+> > +    const: infineon,tlv493d-a1b6
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply:
+> > +    description: 2.8V to 3.5V supply
 > 
+> The SDA pin can also be a /INT signal, so we need to have an
+> optional interrupts property as well.
+>
+Okay. Will add it.
+> > +
+> > +  mode:
+> > +    description: Sensor operating mode. Must be one of the defined enum values.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    enum:
+> > +      - 0 # Power Down Mode. No measurement.
+> > +      - 1 # Fast Mode
+> > +      - 2 # Low-Power Mode
+> > +      - 3 # Ultra Low-Power Mode
+> > +      - 4 # Master Controlled Mode
+> > +    default: 4
 > 
-> Hi Bart,
+> This is not the sort of thing that really belongs in a devicetree.
+> We should be describing here how the chip is wired up, and only
+> control how it works based on that.
 > 
-> This is a complex situation involving six locks, which may result in
-> a circular locking dependency.
-> Let me explain how a new circular locking dependency is formed:
+> If there are any wiring conditions that could affect this setting,
+> they could go here. For example, if the power supply doesn't have
+> enough current, then we can only operate in one of the low power
+> modes. Otherwise generally we just stick to the best performing
+> mode. And specifying the power down mode here really doesn't make
+> sense - you could never use the sensor!
 > 
-> CPU0: take &(c->notifiers)->rwsem#2, wait &devfreq->lock
-> CPU1: take &devfreq->lock, wait &shost->scan_mutex,  <= Lock introduced
-> by this patch
-> CPU2: take &shost->scan_mutex, wait &q->sysfs_lock
-> CPU3: take &q->sysfs_lock, wait cpu_hotplug_lock
-
-
-Hi Peter,
-
-I Don't think the dependence between CPU2 and CPU3 would happen.
-
-CPU2:
-__mutex_lock_common+0x1dc/0x371c  -> (Waiting &q->sysfs_lock)
-mutex_lock_nested+0x2c/0x38
-blk_mq_realloc_hw_ctxs+0x94/0x9cc
-blk_mq_init_allocated_queue+0x31c/0x1020
-blk_mq_alloc_queue+0x130/0x214
-scsi_alloc_sdev+0x708/0xad4
-scsi_probe_and_add_lun+0x20c/0x27b4
-
-CPU3:
-pus_read_lock+0x54/0x1e8 -> ( Waiting cpu_hotplug_lock)
-__cpuhp_state_add_instance+0x24/0x54
-blk_mq_alloc_and_init_hctx+0x940/0xbec
-blk_mq_realloc_hw_ctxs+0x290/0x9cc  -> (holding &q->sysfs_lock)
-blk_mq_init_allocated_queue+0x31c/0x1020
-__blk_mq_alloc_disk+0x138/0x2b0
-loop_add+0x2ac/0x840
-loop_init+0xe8/0x10c
-
-As my understanding, on single sdev , alloc_disk() and alloc_queue()
-is synchronous. On multi sdev , they hold different &q->sysfs_lock
-as they would be allocated different request_queue.
-
-In addition to above , if you check the latest version, the function
-blk_mq_realloc_hw_ctxs has been changed many times recently. It doesn't
-hold &q->sysfs_lock any longer.
-
-https://lore.kernel.org/all/20250304102551.2533767-5-nilay@linux.ibm.com/
-
--> use &q->elevator_lock instead of  &q->sysfs_lock.
-
-https://lore.kernel.org/all/20250403105402.1334206-1-ming.lei@redhat.com/
-
--> Don't use &q->elevator_lock in blk_mq_init_allocated_queue context.
-
-
-> CPU4: take cpu_hotplug_lock, wait subsys mutex#2  > CPU5: take subsys mutex#2, wait &(c->notifiers)->rwsem#2  <= Hold By
-> CPU0
+Got it. Will remove it.
+> > +
+> > +  temp-offset:
+> > +    description: Raw temperature offset at 25�C to apply before applying scale and correction.
+> > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > +    default: 340
 > 
-> ufshcd_add_lus triggers ufshcd_devfreq_init.
-> This means that clock scaling can be performed while scanning LUNs.
-> However, this patch adds another lock to prevent clock scaling
-> before the LUN scan is complete. This is a paradoxical situation.
-> If we cannnot do clock scaling before the LUN scan is complete,
-> then why we start clock scaling before it?
+> This is another one that likely doesn't belong in the devicetree.
+> There is a standard *_calibbias attribute that can be used for
+> such a calibration if needed.
 > 
-> If we don’t put it in luns_avail (start clock scaling after LUNs
-> scan complete), do you have a better suggestion
-> for where to initialize clock scaling (ufshcd_devfreq_init)?
-
-I have also considered this. you can see my old version of this patch
-(patch V2), I moved ufshcd_devfreq_init() out of ufshcd_add_lus().
-But due to ufshcd_add_lus() is async, even through move it out , we 
-still can not ensure clock scaling be triggered after all lUs probed.
-
-BRs
-Ziqi
-  >
-> Thanks.
-> Peter
+Its factory setting so I thought if there is any deviation from that
+than we can handle it like this but as you pointed out, its not the
+right way, so will stick to 340 default factory value as per the
+datasheet.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
 > 
-
+> Power supplies are usually required.
+> 
+Ack.
+> > +
+> > +additionalProperties: false
+> > +
+> > +example:
+> > +  - |
+> > +    i2c {
+> > +      #address-cells = <1>;
+> > +      #size-cells = <0>;
+> > +      magnetometer@5e {
+> > +        compatible = "infineon,tlv493d-a1b6";
+> > +        reg = <0x5e>;
+> > +        vdd = <&hall_vcc>;
+> > +      };
+> > +    };
+> > 
+> 
+Thanks for the review,
+Dixit
 
