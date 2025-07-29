@@ -1,67 +1,72 @@
-Return-Path: <linux-kernel+bounces-749701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887ABB151D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:09:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4BEB151D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D101318A4975
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC8FD4E2E84
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADB929826D;
-	Tue, 29 Jul 2025 17:08:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACC329898B;
+	Tue, 29 Jul 2025 17:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZMJ+m0Fc"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="flWQIz7d"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4935B227B83
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753808935; cv=none; b=tcmXs/kZSKQQb5NFWqfP/I/pnHgQq919PYmmg+wzzhd+XgM/DMxKvYD2iElvCWyP/4o4YLyOSQ/aq5ud6nYaNspF2sh6yGIQgVFN/PF8bcvZNZyWwuLJFZcz8x2ZWj7mlY3lr7YfIfmogb5iTXkwoanQWw8mEZgF3wnY7nUji7k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753808935; c=relaxed/simple;
-	bh=1/CKMx9GIWSUCPkym2GvUCJ8WAG7TrBGch+iVBi5p8E=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF47B27C162;
+	Tue, 29 Jul 2025 17:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753809028; cv=pass; b=IwoFc/i03CZoJIwNlER/3ogLJVC9XzYsgBEbqChHefyv6f8VSk8Tcsb3mtepK88HXsqOVRnoqvct2R3VbrUhvLPD5k8Ghvg7cuV7vNks0ztjrXWmtYjk+qAEu0GhPe2UEPUqePytbAxCHWSv1Y7swclCbr0F+LmsYoF3tM4+STk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753809028; c=relaxed/simple;
+	bh=UD1/bYDPnWjfX7urT9kC0AMo6BngmaJ+Ts3PKR/ZYII=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RsXcOSYLJEPLXhKdds5d+373RlFRPHAjuGZWSZthBo5HcyIEWZ92XEUyYWOB+K0fbo0uehBnOR5xbgidUff9Pm3uc6aGp46oKtxE0qGiyaqOuT7f0dIC23xnWbnJGC+fPe2YAMTt4xVy0VkhUG0xmANfRSDxRuqar/TaSlQTr6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZMJ+m0Fc; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=aM/2
-	muNO3YLCpDyzqzoOv6VbpMtuGVNgJceaDauVIOU=; b=ZMJ+m0FcN61eTjdcBdEz
-	isnaqjzdFrh4VEYv2ZUm1Dotvisb2mu3AQX5PzT1TA+IqsbefG5eCABPE264K1ZZ
-	pLZOa5w31LQmVGnzUTwYCalhsKdRX1Adk90/57ADFGlTFq9jCEqeRhZ1U6Ve7cln
-	adMtVtDg4r+IFKzq1zrEscFnkQOV3LxZJUpHuSOAl0jAF9IuThBY1oHKNhv3iT/M
-	JtsQSnPyFebypmcmDwwj5iW4uZWyWf7xcYjrCNYjKa9hGaQvfM3jdyzhtnGow0SZ
-	L9pk+WmD+hqP8Mj2nEXB7ZJFSjNCKk/vnXqpDoiGnw5J71BExUlmCZmjO3KTxiHs
-	BA==
-Received: (qmail 3879558 invoked from network); 29 Jul 2025 19:08:42 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jul 2025 19:08:42 +0200
-X-UD-Smtp-Session: l3s3148p1@weLVdRQ7hrYujntT
-Date: Tue, 29 Jul 2025 19:08:41 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v2 0/9] Add watchdog driver support for RZ/T2H and RZ/N2H
- SoCs
-Message-ID: <aIkAGUVGqLcFBoXo@shikoro>
-References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b+kS7lNT8g/KDEhbB1MCbsev0cKy8O5brksfH4LkivBSnDFJ/5MsODG7rdfzoMxgMjz+yymPvWiOAZma6Be8AKmy4JtQaGzTyXmGcShkxFjyWLvUIojpl3OQxqBCEo3j7pdG1TsmLrWAeNP87cmSdNoL7YEtL52czSG3TefFmqQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=flWQIz7d; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753808989; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=SfxG9oyq7Xh8cTqP4vj/WMBsAVKKyJGE+kgbDuj9GfiznmFzbYCU1RFKYuJ1+PkM/MHnJiWt4bUh+cZ2fl7/Vzrszw8deKQciSfQL+emFjSlk4R2wePdVXx+SvXdQqh6KibmQVXeJDS0iZE0ib3d/Ih697a0bi1Fvx8rFrqYn/c=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753808989; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=TxY+JKrWeGH0H6xo56T1MRsEGuU0255fEPWJ+EHkpqA=; 
+	b=jGKxLA38fK+Wa5kjzUZSZGRREuV//fN3TzV9QTPyK7DUAWUQgT6VVXQKS9RxRi1xfGvQ2nPhPkcOM1ujZdFRb3zSbmPCczj4CAWDz/5rbOyx00C8vaoSWqdio5MCz0mWu3WiC07ESQL7lgfcxqfgKmTNbSPCKhmfH7mUX6sDhOo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753808989;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=TxY+JKrWeGH0H6xo56T1MRsEGuU0255fEPWJ+EHkpqA=;
+	b=flWQIz7djxGg2eW+E94jqszUeQMWJ/YoZmfNOdOHpqLbst6uitu0W/kUVagoSK7D
+	ySTx3VwmZNGjMoVB7EmCXZZoBMqq3MB7PrJQ1vJ6JqZpBhPGWG9FF3zgSI7BX4aBwul
+	jr7++GN4QedV8dLVHczmIrWPdqIhoF3uLhSdL610=
+Received: by mx.zohomail.com with SMTPS id 1753808986669159.71490156758534;
+	Tue, 29 Jul 2025 10:09:46 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 669AE180F0B; Tue, 29 Jul 2025 19:09:41 +0200 (CEST)
+Date: Tue, 29 Jul 2025 19:09:41 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Andy Yan <andyshrk@163.com>
+Cc: dmitry.baryshkov@oss.qualcomm.com, heiko@sntech.de, hjc@rock-chips.com, 
+	mripard@kernel.org, naoki@radxa.com, stephen@radxa.com, 
+	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org, Laurent.pinchart@ideasonboard.com, 
+	yubing.zhang@rock-chips.com, krzk+dt@kernel.org, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, robh@kernel.org, 
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH v6 09/10] arm64: dts: rockchip: Enable DisplayPort for
+ rk3588s Cool Pi 4B
+Message-ID: <hbvwlucm5mnjpve6hb6h7dusgrokvdxzbpq5zrwib4yesrdakp@v77ofq7u2vv2>
+References: <20250728082846.3811429-1-andyshrk@163.com>
+ <20250728082846.3811429-10-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,52 +74,150 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="F4YqoSD805a1UQqF"
+	protocol="application/pgp-signature"; boundary="iihpr7ffgjlj4iks"
 Content-Disposition: inline
-In-Reply-To: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250728082846.3811429-10-andyshrk@163.com>
+X-Zoho-Virus-Status: 1
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.3/253.35.66
+X-ZohoMailClient: External
 
 
---F4YqoSD805a1UQqF
-Content-Type: text/plain; charset=us-ascii
+--iihpr7ffgjlj4iks
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 09/10] arm64: dts: rockchip: Enable DisplayPort for
+ rk3588s Cool Pi 4B
+MIME-Version: 1.0
 
 Hi,
 
->   dt-bindings: watchdog: renesas,wdt: Add support for RZ/T2H and RZ/N2H
->   watchdog: rzv2h_wdt: Obtain clock-divider ranges from OF match data
->   watchdog: rzv2h_wdt: Obtain CKS divider via OF data
->   watchdog: rzv2h_wdt: Make "oscclk" an optional clock
->   watchdog: rzv2h_wdt: Add support for configurable count clock source
->   watchdog: rzv2h_wdt: Make reset controller optional
->   watchdog: rzv2h: Set min_timeout based on max_hw_heartbeat_ms
->   watchdog: rzv2h: Add support for RZ/T2H
->   watchdog: rzv2h_wdt: Improve error strings and add newlines
+On Mon, Jul 28, 2025 at 04:28:34PM +0800, Andy Yan wrote:
+> From: Andy Yan <andy.yan@rock-chips.com>
+>=20
+> Enable the Mini DisplayPort on this board.
+> Note that ROCKCHIP_VOP2_EP_DP0 is defined as 10 in dt-binding header,
+> but it will trigger a dtc warning like "graph node unit address error,
+> expected "a"" if we use it directly after endpoint, so we use "a"
+> instead here.
+>=20
+> Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> ---
 
-Minor nit, but still: inconsistent prefix
+The graph currently looks like this:
 
-I'd suggest to use "rzv2h" instead of "rzv2h_wdt" but it is ultimately
-the WDT maintainers call...
+VOP <-> DP controller <-> DP Connector
 
+IIUIC this does not work for USB-C and needs to look like this,
+because the USBDP PHY handles the lane muxing and thus must be
+the thing connected to the USB-C controller/connector:
 
---F4YqoSD805a1UQqF
+VOP <-> DP controller <-> USBDP PHY <-> USB-C Connector
+
+I wonder if the simple case not involving USB-C should also have
+the USBDP PHY described in the graph as a transparent bridge?
+Note, that the USBDP PHY DT binding is currently not ready for
+this (this also affects the next patch, but should be enough to
+discuss this once :)).
+
+Greetings,
+
+-- Sebastian
+
+>=20
+> (no changes since v2)
+>=20
+> Changes in v2:
+> - Sort in alphabetical order
+>=20
+>  .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   | 37 +++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/ar=
+m64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+> index 8b717c4017a46..5393c6cc493c3 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
+> @@ -39,6 +39,18 @@ chosen {
+>  		stdout-path =3D "serial2:1500000n8";
+>  	};
+> =20
+> +	dp-con {
+> +		compatible =3D "dp-connector";
+> +		label =3D "DP OUT";
+> +		type =3D "mini";
+> +
+> +		port {
+> +			dp_con_in: endpoint {
+> +				remote-endpoint =3D <&dp0_out_con>;
+> +			};
+> +		};
+> +	};
+> +
+>  	hdmi-con {
+>  		compatible =3D "hdmi-connector";
+>  		type =3D "d";
+> @@ -215,6 +227,24 @@ &cpu_b2 {
+>  	cpu-supply =3D <&vdd_cpu_big1_s0>;
+>  };
+> =20
+> +&dp0 {
+> +	status =3D "okay";
+> +	pinctrl-0 =3D <&dp0m0_pins>;
+> +	pinctrl-names =3D "default";
+> +};
+> +
+> +&dp0_in {
+> +	dp0_in_vp2: endpoint {
+> +		remote-endpoint =3D <&vp2_out_dp0>;
+> +	};
+> +};
+> +
+> +&dp0_out {
+> +	dp0_out_con: endpoint {
+> +		remote-endpoint =3D <&dp_con_in>;
+> +	};
+> +};
+> +
+>  &gpu {
+>  	mali-supply =3D <&vdd_gpu_s0>;
+>  	status =3D "okay";
+> @@ -889,3 +919,10 @@ vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
+>  		remote-endpoint =3D <&hdmi0_in_vp0>;
+>  	};
+>  };
+> +
+> +&vp2 {
+> +	vp2_out_dp0: endpoint@a {
+> +		reg =3D <ROCKCHIP_VOP2_EP_DP0>;
+> +		remote-endpoint =3D <&dp0_in_vp2>;
+> +	};
+> +};
+> --=20
+> 2.43.0
+>=20
+
+--iihpr7ffgjlj4iks
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiJABUACgkQFA3kzBSg
-KbY44hAAsJk3aasd05N/Ty01a712YZby7tEwmy+NSUYdOOPYPE9HDRMTukcSIhQe
-sJ0PIUjVoQ6LEy+h8KYek0E8fnWq/drKTgkGEvhZemmv8AgoMwDSB7QiaaMN6KiX
-JJn7A7ZCzq7sWP8Vx6jtAq8f9tbod9E7ER8cKyJWZVozRpOnxOPMXrVrubY2JN8w
-e+CJEHli/0xDhHOE2eAaC1CklPO2duvm0+2Eqo5VQfJi0Wne758PGS3zTv/p4S8N
-WCjx3lwv3EmoCMFaV66i64K1GVhCnpAqsfTGJAIbpAip3C2dslPFeLM/Qk01aJ0g
-FzZt3OWEg+l14cDvRgun0PFjGaQw0qGP8tFM7yIEr4EhWMWxbZBVf1mz5yVAEWxj
-VOjJgM409JvNMV9pjE/JTTT2IG/ThTLlAVtGR/Gjg0p1bhkBMdkGCHbSwCDEx3pW
-mQLh62+NMyIkjt/4zf0avu05LbUcC/0E077Q75cLOm98erN9hu1puM4Z/4kgnxtJ
-wgcTAPQx04FNFh8ZOASZ5ofFHQcwURwAmySK1PHcr8f5WvYS53tjkHSjAWHFOM6H
-oMVUgilG37+Tr8PTOhaHrJCGK5JWtMI2mj/77RyxzpFAYLf6dnUcNrEX9RRDvuNP
-aZTd7eBKZTwO7cUHNaFOrPz+fYBXFZZxFTKV7ba4Rb/3e6f6KxA=
-=pb7N
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmiJAEsACgkQ2O7X88g7
++prNtg//bsKKMAA8eaI9O6lXTAxHpG5/NO6poWY5y1hlAapvyZeYfdlPRJFAPnV4
+vu3UUT2mwRQOeAE6SzjKI2DOvtKU3vDQJgf8a9OrHM3OuS3+ioutmpyhX2YyeANt
+GjC0tX7gfv7dOTzp9L3j2pEGN7bQNQLZh9doIjM1f+wdCBvgKB7pMbwDeoPoHzf0
+UwhUQ2eB4EgVZn7XNd5NnF5eL7/JosLDNrYkek0M/rfrgkV7Hfq6HmvPSTnd0w57
+sAl/zZ66VAAnEukJ2PDyZOR5vCM1qlEn4Bux919MB0ltGyHuHXBB8MLosIFVNRBA
+aesK52/wn7w4EhE4Jg+iEggmk6kqMu67wOEdWyfPZ8gL/xrFi7j7u1CYAWpaTI5R
+dBxq55fS9o/pcTQ41HDEyX4TfV+11c5TnxPGo+0NQlucZqDEO7UcddXl76IuVIUO
+pgqREMW9l9Y8+vozkUXmgTQrqk6wde/3R2i7kBSFnj1FAGsHWkO1rY9ESy+uyghZ
+PMu8pPQuNKTdX8vMI1ejrbPbbNawsMvpLhHVN1S72qK3sSy4U9BUnEjrHR5bjJor
+fmYq+pk3URBT3tsaubEmvV1TGNZnrs+8E6U8Ls6ewDEZ8OG1IezkiR2DHnj/oi4x
+I+c7X3YmyfDiEUX11MpjNVy3ROss+0q83O5mc6tmJAR7CaongWs=
+=0LrM
 -----END PGP SIGNATURE-----
 
---F4YqoSD805a1UQqF--
+--iihpr7ffgjlj4iks--
 
