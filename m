@@ -1,135 +1,150 @@
-Return-Path: <linux-kernel+bounces-748793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E70C8B1460E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:02:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9045DB14610
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:11:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9971AA06A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9DB01AA1960
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 964201F8725;
-	Tue, 29 Jul 2025 02:02:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C470D1FCFEE;
+	Tue, 29 Jul 2025 02:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SDptUyDB"
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="msgBhzu6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A99635;
-	Tue, 29 Jul 2025 02:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32881F7580;
+	Tue, 29 Jul 2025 02:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753754532; cv=none; b=abeWWd2JmcID/SmUt6DmORvYH/wTja/vcqMrQLrPizXBXWCB4RKtLOoAQp4qqIvciIsIree8XAt4Z1P5kvCrIDqAvn9S4Y1Z6rNKDtYpd+NdpzbD6tNr1QN926+lQeIDYJ5RZlMm/c0iaCgaeEDhdIyvFtG+5LzdekUHl2oXEew=
+	t=1753755074; cv=none; b=YCmtI5Ep/sMOTEn+daVf8oOszZulqg5GFOKpwFryAuJGTPII+0tHmdW8pruYyajHg8Xn7y8O11WEwR4aFZkCYZBvJWewO0hAcLl9d5/8JN424M70fM1a7COUmdE4UBJR/qJslMgjmdLT/UhkELk5WmLbHYRfl/llvhCIH94Tz1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753754532; c=relaxed/simple;
-	bh=1KslsYIC/pYPSmGPEi+/fwRyoMspqFb8uaNEbRRDJEQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XKoGBJDxmoy5iUNwp8Grn8uMkzErc7ZpMchhwLzAZBEQj7ogDln5xe6tGcFkvdMAb46S3NWMhCalwfU61wHyNwDFN2dpWZ+3M2szh4ZQzZlWtAHkU+9wLiUICbW6omBzd9EhuRI28D45dFpAjJ4Klaf67D9q3pfeuNTCd8y+BG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SDptUyDB; arc=none smtp.client-ip=209.85.160.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-2ffa1b10918so2866729fac.2;
-        Mon, 28 Jul 2025 19:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753754529; x=1754359329; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EEeZXXxE8pXnqG0YImoNpmvGHhhvN/xzySIEmSbgUno=;
-        b=SDptUyDB/ef8jGtWrPKYgKODnNVxDVkhnXBmIZn7vJOpkp7+sKxSxeaTgoWlZgoJ2c
-         63lDfwes01Iu/hrH5HmQpqq3m+gNsh0Aw8DuWgSqJMMnaS2bpZtb84UzdugY4iJhb/cU
-         stUhvesm0BEKJdFSDsW7oHSuINRtH5MCLBuIcYU6gMEgPn+EnfdSiE73oWLxBHQ+31Y3
-         huAWfYRIXOKx7tcODviRzW0DXSRpq+DX07pZUYx92dGngjaSudJnzqNnnEgaDK0Pr37X
-         GfapZtFdFu0Bv36cFFsQkTDhY4lqbqh1HNdPMKJ8VxZI8fnhBoigF8z2fWnxjIotTJRl
-         P/ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753754529; x=1754359329;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EEeZXXxE8pXnqG0YImoNpmvGHhhvN/xzySIEmSbgUno=;
-        b=sjhs7JkOEp3p+Dw+z3RCVLzY2ZmJ2gtcEPsoQVaHKS9kGrqIiXXbMpjx2cLI/fbctl
-         mDt+j1HfaGq4Fe/bQ2ydP/RmTlABQ7CCqcernITZ/PX3KLpMtMU9fdAr6vbxFZpInqqN
-         oeO29oAnwS/22WInMnmtSQbHRxFtBc0SirEXz6pwPv6PAPRNOejIdhV4Y4T57537YpzG
-         cvOfYuiaPl25iYJDhFfKyK59Pq7yT6Dcp4ZITNZG70NE6cyDB8bvvQRGlibARL0WU1mX
-         /VUZrpXJMsOxWSYAALbb6ZfnNFJMPq5si/puWm+pE7EICErRIXrFN3utJOsulbH2TeCk
-         eiUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCojKyd8lSiYvY3iq32jWn7B6t4xu5hb2pTmJ8yty5q0BJesXSR4B5RLC2/ADoNtKImbgq2ZR1nm10ifU=@vger.kernel.org, AJvYcCUoku8QYjAdbvz53bFHCyeJW+DRv90KiEW6to7myPeWYWqH3EcVhYJzVVD1gnlKmv7jG5TPVincAmcM3Ig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLkEvaxGf5upWxBTZWYRYko4WJb8I3tMG8lbbrcP1qQLqLL8AE
-	PoAteY19uH0dnEAPUEEAaY9mWlkBJK/d75ms1zQEpFO/7ty0LhCYAKkgkmt17yN0qmU=
-X-Gm-Gg: ASbGncvpgqVer71plruzTuhHGbAr3YTf7pfjIMY2wwQg49XvemsDyYPB8/UaYgHNN2b
-	rMI+46bCCI+9VI5caNulgywpkXfDkOgCjf6WV/EsKGTEShglWNLc7QPPNgFIr6LF5LH8khxLJIa
-	eqQFk0otS5mQweTeWWaCrPryJjIAaPBoJ1UvqZ+leR81a4jGm6p7c9eyPTGkHQ0oHnZ3mz2t7+G
-	2Z+2hEPGV1k0HrsWup4w5MRDCdI/V0ii37tbQYUWCFRB3HKNB/NAMN0jL0TKhY+04LwPdPi/9CT
-	jMaCC96gpV1+Fs4ppWf3V56Ux2D7uxJYlbpPpOgJvrLsvk591WXpcXTpFiNN0iAWDWZ4f5dig8D
-	yLLnTgNYG4iiVpG/lel5w0HBs
-X-Google-Smtp-Source: AGHT+IHOw30O5Z7jeXCpP/Gpsx4e0WuD5rBxHCXsw90edV57RFa6IsOd12KYHPXG7J73ZnyfU7myhA==
-X-Received: by 2002:a05:6870:1b83:b0:306:9f8e:6699 with SMTP id 586e51a60fabf-30701faa8b5mr9069467fac.30.1753754529402;
-        Mon, 28 Jul 2025 19:02:09 -0700 (PDT)
-Received: from s-machine2.. ([2806:2f0:5501:d07c:e094:d952:816c:c6a5])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-30713663c67sm2001746fac.31.2025.07.28.19.02.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 19:02:09 -0700 (PDT)
-From: Sergio Perez Gonzalez <sperezglz@gmail.com>
-To: olivier.moysan@foss.st.com,
-	arnaud.pouliquen@foss.st.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com
-Cc: Sergio Perez Gonzalez <sperezglz@gmail.com>,
-	linux-sound@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: stm: stm32_i2s: Fix calc_clk_div() error handling in determine_rate()
-Date: Mon, 28 Jul 2025 20:00:49 -0600
-Message-ID: <20250729020052.404617-1-sperezglz@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753755074; c=relaxed/simple;
+	bh=zC0nRcR6cty3AjQe02kjM9LHjo84K3+8o1Zpfqdf6SM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T2KVX5fY69nhXFrQ38SEXY4ajmOvN7hdp2uPONYRvwsEZnmwKwHB42Qeqw4PbYoVx68Mt2sndHMZmVXP3q0h7bM7Dxb9tAt6vcJPNkkwS8g+Ht2CJHuflBER5F7BxSSghjhZXH6d48WCsEVYsRYzk1GkIMqttn0htO5N4qTP+NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=msgBhzu6; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753755073; x=1785291073;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zC0nRcR6cty3AjQe02kjM9LHjo84K3+8o1Zpfqdf6SM=;
+  b=msgBhzu6JSo4ru3qONmzQlkkqYsxALBWGt6HPmAhP8yuiOOVURPIQj50
+   9EZ1H22t51rbzMMnU2Z0CsERoj1l7epidKb2dRindNRYX9Io0R6NXUHmE
+   AcerVyhNXOxBQIQcxTGJjkQ3YE6MX7zEh7bc4hfZL2U9fF5TvxOao2j+l
+   9dz6EmBqS+avbnPgUqxcvcdL/X3htfUU05Ds7wflSsbK1cl/cKePZZYGI
+   Wrt1WL5Q6Cad7A080y+L+OcahNUicYKBnLsnncpIHO0G7LGJkb4p8GnzN
+   OgaUX0xXGSoqAY0Moh88W0OQADtSGOlhyOojV7A/C1MFpDHqYtgW4fvxf
+   w==;
+X-CSE-ConnectionGUID: uZBxJ5CjRHK6YbhvVIyWXA==
+X-CSE-MsgGUID: u1I7EyXPQM+Klq/+BY+g3g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="81453523"
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="81453523"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 19:11:12 -0700
+X-CSE-ConnectionGUID: qp5D/NjOQaW+rJZ9uIvDKQ==
+X-CSE-MsgGUID: PM8nO3jzRBC7wsv6bJjHtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="162615706"
+Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 19:11:08 -0700
+Message-ID: <d3cd4427-58a3-417b-a409-81d31110faeb@linux.intel.com>
+Date: Tue, 29 Jul 2025 10:08:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/1] iommu/sva: Invalidate KVA range on kernel TLB
+ flush
+To: Yu Zhang <zhangyu1@linux.microsoft.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, Jason Gunthorpe <jgg@nvidia.com>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Jann Horn <jannh@google.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ Alistair Popple <apopple@nvidia.com>, Peter Zijlstra <peterz@infradead.org>,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>,
+ Andy Lutomirski <luto@kernel.org>, "Tested-by : Yi Lai" <yi1.lai@intel.com>,
+ iommu@lists.linux.dev, security@kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250709062800.651521-1-baolu.lu@linux.intel.com>
+ <ee7585bd-d87c-4f93-9c8e-b8c1d649cdfe@intel.com>
+ <228cd2c9-b781-4505-8b54-42dab03f3650@linux.intel.com>
+ <326c60aa-37f3-458d-a534-6e0106cc244b@intel.com>
+ <20250710132234.GL1599700@nvidia.com>
+ <62580eab-3e68-4132-981a-84167d130d9f@intel.com>
+ <6dn5n5cge7acmmfgb5zi7ctcbn5hiqyr2xhmgbdxohqydhgmtt@47nnr4tnzlnh>
+ <2a1ffe30-b0a6-45b3-8dcb-feaa285e1e5b@linux.intel.com>
+ <pk2b4xgxewxotp557osucliagmziv3erepsret4hbnxnvhff2n@p2gark4kdiqw>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <pk2b4xgxewxotp557osucliagmziv3erepsret4hbnxnvhff2n@p2gark4kdiqw>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-calc_clk_div() will only return a non-zero value (-EINVAL)
-in case of error. On the other hand, req->rate is an unsigned long.
-It seems quite odd that req->rate would be assigned a negative value,
-which is clearly not a rate, and success would be returned.
+On 7/29/25 01:36, Yu Zhang wrote:
+> On Thu, Jul 24, 2025 at 11:01:12AM +0800, Baolu Lu wrote:
+>> On 7/11/25 16:17, Yu Zhang wrote:
+>>> On Thu, Jul 10, 2025 at 08:26:06AM -0700, Dave Hansen wrote:
+>>>> On 7/10/25 06:22, Jason Gunthorpe wrote:
+>>>>>> Why does this matter? We flush the CPU TLB in a bunch of different ways,
+>>>>>> _especially_ when it's being done for kernel mappings. For example,
+>>>>>> __flush_tlb_all() is a non-ranged kernel flush which has a completely
+>>>>>> parallel implementation with flush_tlb_kernel_range(). Call sites that
+>>>>>> use_it_ are unaffected by the patch here.
+>>>>>>
+>>>>>> Basically, if we're only worried about vmalloc/vfree freeing page
+>>>>>> tables, then this patch is OK. If the problem is bigger than that, then
+>>>>>> we need a more comprehensive patch.
+>>>>> I think we are worried about any place that frees page tables.
+>>>> The two places that come to mind are the remove_memory() code and
+>>>> __change_page_attr().
+>>>>
+>>>> The remove_memory() gunk is in arch/x86/mm/init_64.c. It has a few sites
+>>>> that do flush_tlb_all(). Now that I'm looking at it, there look to be
+>>>> some races between freeing page tables pages and flushing the TLB. But,
+>>>> basically, if you stick to the sites in there that do flush_tlb_all()
+>>>> after free_pagetable(), you should be good.
+>>>>
+>>>> As for the __change_page_attr() code, I think the only spot you need to
+>>>> hit is cpa_collapse_large_pages() and maybe the one in
+>>>> __split_large_page() as well.
+>>>>
+>>>> This is all disturbingly ad-hoc, though. The remove_memory() code needs
+>>>> fixing and I'll probably go try to bring some order to the chaos in the
+>>>> process of fixing it up. But that's a separate problem than this IOMMU fun.
+>>>>
+>>> Could we consider to split the flush_tlb_kernel_range() into 2 different
+>>> versions:
+>>> - the one which only flushes the CPU TLB
+>>> - the one which flushes the CPU paging structure cache and then notifies
+>>>     IOMMU to do the same(e.g., in pud_free_pmd_page()/pmd_free_pte_page())?
+>>  From the perspective of an IOMMU, there is no need to split. IOMMU SVA
+>> only allows the device to access user-space memory with user
+>> permission. Access to kernel address space with privileged permission
+>> is not allowed. Therefore, the IOMMU subsystem only needs a callback to
+>> invalidate the paging structure cache.
+> Thanks Baolu.
+> 
+> Indeed. That's why I was wondering if we could split flush_tlb_kernel_range()
+> into 2 versions - one used only after a kernal virtual address range is
+> unmapped, and another one used after a kernel paging structure is freed.
+> Only the 2nd one needs to notify the IOMMU subsystem.
 
-Reinstate previous logic, which would just return error.
+Yeah! That sounds better.
 
-Fixes: afd529d74002 ("ASoC: stm: stm32_i2s: convert from round_rate() to determine_rate()")
-Link: https://scan7.scan.coverity.com/#/project-view/53936/11354?selectedIssue=1647702
-
-Signed-off-by: Sergio Perez Gonzalez <sperezglz@gmail.com>
----
- sound/soc/stm/stm32_i2s.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/stm/stm32_i2s.c b/sound/soc/stm/stm32_i2s.c
-index 0e489097d9c1..6ca21780f21d 100644
---- a/sound/soc/stm/stm32_i2s.c
-+++ b/sound/soc/stm/stm32_i2s.c
-@@ -469,11 +469,8 @@ static int stm32_i2smclk_determine_rate(struct clk_hw *hw,
- 	int ret;
- 
- 	ret = stm32_i2s_calc_clk_div(i2s, req->best_parent_rate, req->rate);
--	if (ret) {
--		req->rate = ret;
--
--		return 0;
--	}
-+	if (ret)
-+		return ret;
- 
- 	mclk->freq = req->best_parent_rate / i2s->divider;
- 
--- 
-2.43.0
-
+Thanks,
+baolu
 
