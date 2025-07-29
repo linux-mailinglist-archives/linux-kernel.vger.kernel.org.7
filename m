@@ -1,57 +1,63 @@
-Return-Path: <linux-kernel+bounces-749570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37782B15024
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:27:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CA4B15026
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:28:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A5C18A12E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:28:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBF9A544945
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:28:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D4D293B44;
-	Tue, 29 Jul 2025 15:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74EC0293B5C;
+	Tue, 29 Jul 2025 15:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aqIaPYvW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MzqCYFhp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1505101E6;
-	Tue, 29 Jul 2025 15:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ED1292B59;
+	Tue, 29 Jul 2025 15:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753802868; cv=none; b=tpbwVMqtnvmuKowDmiYb/7mshF7RnUyZxSPnvoeYgb879v+vEW/Jlo7qYzDarC9jgvPEVHgwW3Wlqc9sIDGfxe2+naY8v/Vf86QmdsrbCoMFh1sb6ESMJpohfBXcRu/WqtsXbuUAI5i0ugwYGbfqZfUqNlHgYF6jbImj5SRwvVM=
+	t=1753802889; cv=none; b=a3hYt+b8XcMwrNKKMetBVRIyYnCFP8AJsWJ9UAq4rpiKjjCkFlhWceWclvEgH9mkkdLZ6A7GzJ/glZkAPQLZftG4ufJTwtCz4bDx4T2epCZwK901sa2VI2QnezLp79H9dus8HHh/UXa/yI5y+9ZOkJISgdoFvhmzCxLqHivf4Mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753802868; c=relaxed/simple;
-	bh=vEjY0bc/ws416eC6PETkAarRcOMa4NCrT2KtYjseTzE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nPBxc/2ye9vPbjPetCFk9hqESCm4GPZrecyoVOi/EueF1kaHp030npMdXwd2A52U9oJlj2edK5T+PPrbd6znlVUHWWVJLto+Xvl8RuGdcedbSvfk6DQ1fNcpzYV2W/cAkYsZ1/Qy3ICMuDySF8DMQhVz55EPXrf/U/SIGZxw3gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aqIaPYvW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C685C4CEEF;
-	Tue, 29 Jul 2025 15:27:46 +0000 (UTC)
+	s=arc-20240116; t=1753802889; c=relaxed/simple;
+	bh=GbNLQ4X4Iz/xFhImyaXcbhr/EuKDVDV0rC2llqGvDAQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=THZUOILw4rClo9KsbHva+UTB9rrpgpweza1/HLunTz4PHmdrjptteMK55OZxl1mnTbDosou9kgdAn/jfJhsqDV4ABdJ4NtDR+uqBckwwI+qz6MOnm4vIwZ+8XmMuRcmx1YQWEakkAQRUGLpd+6LccYp94oHzsHtUEvuCjvTHfXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MzqCYFhp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 650C8C4CEEF;
+	Tue, 29 Jul 2025 15:28:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753802868;
-	bh=vEjY0bc/ws416eC6PETkAarRcOMa4NCrT2KtYjseTzE=;
+	s=k20201202; t=1753802889;
+	bh=GbNLQ4X4Iz/xFhImyaXcbhr/EuKDVDV0rC2llqGvDAQ=;
 	h=From:To:Cc:Subject:Date:From;
-	b=aqIaPYvW1S5tKXLSeKy3MYaODuAeqeXIuy75XCudeoobK9qDvJqJOH9T3kmAbim3G
-	 53by5l278qqQdKSRh7GL1h41O8kI0tfA3wHq3OaRotGcsGaiwcO5zIoMhwmZvPssNj
-	 zns9JfyMWiENT+qykypxcK5qth4irl1BKqcU7W7VblWzjvGnbZx1GCjxPXW6wSW2ZR
-	 pWMu8ov/dQPf4IYUyoRSshqxNHaPAX3nc+YRClsbQST2gk37i5mj9XpSZ63oo0bn+X
-	 QQgDuJ0c0SDUvD+iYG7eWkOrVt55zD2fivrk6aro8AEyonEBPviXKqj/sfMBqckZAP
-	 eYGLvB+y6mgAw==
+	b=MzqCYFhpn2kix7dUZAOH8Ax8J1+Hj/kYlFe8yHc7BG4uHiQbnjV/HZzXNBn4b3wzR
+	 W+lEAHSbxuJZh1DjIkr+w6w0M7viCIQH++mvvEo1OSwUoo6ubjGCu7+Nel4P05nKZE
+	 KpTgDb7ZUVCxiQpKFUoz8daiIH/0qB+jc6tq60SyfArMblUig6TMDy/uINp0xzvXWU
+	 NL5LaaX7R7MJN1Ge5PiZrM4pxRndIS56+PpfxG1xZwQxGw2fblQ3GjjmprOvSPwCiw
+	 Pfj5u+TrPzWrcjHJWEfW6hg4m5or6qTrzhMAkDfium6/H3YLg6jtAO5EQGIBI1UHVg
+	 GGlBHyvqmcm/w==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	Kiran K <kiran.k@intel.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Chandrashekar Devegowda <chandrashekar.devegowda@intel.com>
-Cc: Vijay Satija <vijay.satija@intel.com>,
-	linux-bluetooth@vger.kernel.org,
+To: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Cai Huoqing <cai.huoqing@linux.dev>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Dragan Simic <dsimic@manjaro.org>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	Daniel Golle <daniel@makrotopia.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Markus Mayer <mmayer@broadcom.com>,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	linux-crypto@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] Bluetooth: btintel_pcie: fix CONFIG_PM_SLEEP check
-Date: Tue, 29 Jul 2025 17:27:40 +0200
-Message-Id: <20250729152743.2394727-1-arnd@kernel.org>
+Subject: [PATCH] hwrng: nomadik: add ARM_AMBA dependency
+Date: Tue, 29 Jul 2025 17:28:00 +0200
+Message-Id: <20250729152804.2411621-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -63,44 +69,36 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-Using both pm_sleep_ptr() and an #ifdef around the definition is not
-valid:
+Compile-testing this driver is only possible when the AMBA bus driver is
+available in the kernel:
 
-In file included from include/linux/kernel.h:36,
-                 from drivers/bluetooth/btintel_pcie.c:9:
-drivers/bluetooth/btintel_pcie.c:2674:36: error: 'btintel_pcie_pm_ops' undeclared here (not in a function); did you mean 'btintel_pcie_in_op'?
- 2674 |         .driver.pm = pm_sleep_ptr(&btintel_pcie_pm_ops),
-      |                                    ^~~~~~~~~~~~~~~~~~~
+x86_64-linux-ld: drivers/char/hw_random/nomadik-rng.o: in function `nmk_rng_remove':
+nomadik-rng.c:(.text+0x67): undefined reference to `amba_release_regions'
+x86_64-linux-ld: drivers/char/hw_random/nomadik-rng.o: in function `nmk_rng_probe':
+nomadik-rng.c:(.text+0xee): undefined reference to `amba_request_regions'
+x86_64-linux-ld: nomadik-rng.c:(.text+0x18d): undefined reference to `amba_release_regions'
 
-Remove the #ifdef check to let the compiler's dead-code-elimination drop
-this as intended by pm_sleep_ptr().
+The was previously implied by the 'depends on ARCH_NOMADIK', but needs to be
+specified for the COMPILE_TEST case.
 
-Fixes: d1b3de23042b ("Bluetooth: btintel_pcie: Add support for _suspend() / _resume()")
+Fixes: d5e93b3374e4 ("hwrng: Kconfig - Add helper dependency on COMPILE_TEST")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/bluetooth/btintel_pcie.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/char/hw_random/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/bluetooth/btintel_pcie.c b/drivers/bluetooth/btintel_pcie.c
-index 8e65def192a9..aa47bc38d298 100644
---- a/drivers/bluetooth/btintel_pcie.c
-+++ b/drivers/bluetooth/btintel_pcie.c
-@@ -2574,7 +2574,6 @@ static void btintel_pcie_coredump(struct device *dev)
- }
- #endif
- 
--#ifdef CONFIG_PM_SLEEP
- static int btintel_pcie_suspend_late(struct device *dev, pm_message_t mesg)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
-@@ -2664,7 +2663,6 @@ static const struct dev_pm_ops btintel_pcie_pm_ops = {
- 	.poweroff = btintel_pcie_hibernate,
- 	.restore = btintel_pcie_resume,
- };
--#endif
- 
- static struct pci_driver btintel_pcie_driver = {
- 	.name = KBUILD_MODNAME,
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index 3227dcaa9111..aef4406973f3 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -312,6 +312,7 @@ config HW_RANDOM_INGENIC_TRNG
+ config HW_RANDOM_NOMADIK
+ 	tristate "ST-Ericsson Nomadik Random Number Generator support"
+ 	depends on ARCH_NOMADIK || COMPILE_TEST
++	depends on ARM_AMBA
+ 	default HW_RANDOM
+ 	help
+ 	  This driver provides kernel-side support for the Random Number
 -- 
 2.39.5
 
