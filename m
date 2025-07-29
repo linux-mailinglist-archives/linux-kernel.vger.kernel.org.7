@@ -1,233 +1,148 @@
-Return-Path: <linux-kernel+bounces-749020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0549B148F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:09:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D009B148F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59FB53BF777
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:08:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E14227A5238
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:08:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C645B264626;
-	Tue, 29 Jul 2025 07:08:35 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FBC25F97A;
+	Tue, 29 Jul 2025 07:08:47 +0000 (UTC)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E18525CC62
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDF3101F2
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:08:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753772915; cv=none; b=f0m0A9LwhkQSQBjcsmcUBE/u2C3217eWbi5FZJ7ewfSITkQm2f/1aSFdQ4BYsHu2tFCMoLKQMTSHTfocZvjlP1QGUSCnLeGN1X2do19Rh1SbjWPGy03fuJRuaO4/WZJQiAJ4AhtGK2Fn7uPx6NHPzzvb7FPyhQzcryXUTNuUGJE=
+	t=1753772927; cv=none; b=Utd0T/qWMWzHb46TYDxaBvO35tIJKEEQmZrrOP3k5UE8GNG5Jz44GvMe6MWeV/jQ18fK6MsNAfx7HR+WwFXHQ2H/uAdoS2wQEciGgd4UMLV8Mm5XtCe0WTxgXpNYUCuFH5U0JT+QCOLB3XxiwOtsMTSLarNtzlZRECcPbDYxfsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753772915; c=relaxed/simple;
-	bh=q4EqZKS4vflGMPdTxyUCd7wRr67+i0q4BSLKbuKvoQ0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hzfIxe3kEl5D7pLhlF1nlbd3knxRC2utM3EeGfPx89rTLVsJysALhP4zFCFQeT0qtGxuwQSMC9IVqDGtJh5W9ki91DANPJbC7KzBkcwQO2Y418gmhThdfh8jWiOAguoZBJIvu8DLQRFaiZUOw/o36hlnQ2wA5InmByK2YBXvkNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87c1d70dabdso587935739f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:08:33 -0700 (PDT)
+	s=arc-20240116; t=1753772927; c=relaxed/simple;
+	bh=qEOp4eAuXtjwqThRUtipER/RVG2D7gK9UTVt7qKgUs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iZGUNWpjAeRT1Y9vWoTVT+1vDyg0Qh7NLpFAMQ3bh8/H68ENjs8XCwNSYbO4fgo5oeGNj95Hqvk9ba5UwJ6nGwFwSGMSM7NFbOLjv5G2tU1Hm20T5PARaXw/oclZtjqU1KkxHdRRhU4ni482lmOoWhnmEjD0NRLWo2evU3lKYqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4f2fe63d51eso687919137.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:08:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753772912; x=1754377712;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=U3Hn0PoX/MSRr4uXBak/xLMFvhovrq8gZVYaYFNh0+o=;
-        b=e7yVarwprRqFKcslIMN0oFykgvIAJPSnXm8an1wvapsIJ8CEhDXzSFj5j7KB4WELYh
-         HpiIhLNHaHllA+aAM25BMWP8PNtFsNyOcuMNZK6LzA6zx2TeGfEnkmeyrFyjDAVlegKP
-         dLzsowEwNtzKt10GHyl03Yd/Vy6Hnsmm7c6JLm+0SDumsgVozkYOTxFpPLtvzQqm9p8S
-         jsDlowjws7I+/2t9oLSKZEoqAw9KP0uerM6nH3mrZE7DsYbDf6wWApFUhw0VLKXCWjhL
-         +1UvMjwfQIYEBPoJ+GhLZb4tRsCAZEIirr9eHqKVN/TmxSKTWwKB3YEq3dz82l0OhejG
-         9zSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFlgp6ytzhYM2+u3KRFdEiqLBn5mDHCxFeLNd7sia5e5rkJH4CvLhrWyRahRqDHKfIhZ1ChgFTXphgyhY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzt5VML8BL2ehfPiSJymjEFjlqZWoKTwBFu4xaB3cgQUglod76g
-	jsdy+GMMRTLya2qnwObF0vhDnIHoRKUmsvNeD+YhH02uloGvYq9qEmUnceJdvXLJPJvIIq00Por
-	iPiZ7awrSRfD2SM4xNIY0FMc9Otih7d1+N+use4oXQfVRAXWpPGl+KWTsw3Q=
-X-Google-Smtp-Source: AGHT+IEQMEwASTmAKGhiV5HnYf5vCPsUXfocQYM+cSFiV81sjCNm2Fh0jn2bnhEnAC6b8WeVrAOxzS7x2rJX3iGaQAKUB/RnlWyq
+        d=1e100.net; s=20230601; t=1753772924; x=1754377724;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y8YtcC/yIgCDEWMFfAtdpI0rgOgUJRQFp+eUsj2IWqc=;
+        b=WsoEKBbBbRfdrgpp/6T2xWipb4aORfRcs+F3yTZYDqnxrH6CnHly45Lt7qxarYeKyG
+         evVBJYCasonc4/Fuzp6VUtPIl2gn7xYs36anz+5JSWvN3wpp8AwxyXAj2VfJkvf18WMK
+         WCbWTly7pjE3OUJbp5pB31blOBkCZfwr6pBsiGjMIG06EYqFJx4Mw4pahwH4/6z6YOgS
+         6U0pKKcO9VLSOV4a5MgOQi0nFvPjsRNePQFS7IAujP9Bjkg1evgCX1NJTMoHQVKqgoef
+         MlCgrECT/eLT2WTP1sMqJdsCfr0t1B1k2dpWpux7ZVaLfXyZQCxVcPdCni9RGfrOZbon
+         BadQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+3eioubNKs4nNx5UYsI57g56wjkhFr/miWdZW1lGV4QMNZ6BpjvZilv8QNg2YRSoCjKRDTsMhU5tiCLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzevBZPgwjGM2PU9lfFcdNdHxgCwSRQ6gNki/T2QJQP8T0EP70u
+	ZePEE8Tj45ocAuW9Hd0EU4PytYvI0EBzCidtDtXeeLEKqsu8sMArnptMjIKhx+ct
+X-Gm-Gg: ASbGncs2WL5DQUT91iw0C97t3psG4Rj7IaxqVCLizATP+khPnYs4v9kWDsxezsbWUfg
+	HV+0yX6/W3f6A23g0GJ992lmaWmqAuWxucKvP7Ct/C+mC58sQWXQBP7F6+uNHCBKaRxvviefAer
+	uMdVGxYMQlqq7DyppYchEhIp85mTmYhsorRVjJOkXA10KPLX1F2Hcba7185wfW6o6DWFEylWeTO
+	zGcJceDmWcJrKR8X5Th+PBcjl0aOejtuzg2mcarVRKLzdYE5rXlHiuiBFqqU5YdrdHRBtzHh0I4
+	xbKxreDIyFJRZ++dvuJLxZ/bnwkuscezfTrDHsIW0JJ6Bd8W+CtBiHk/Id2f+G9ePHmBZIerTBw
+	UsEOvjs3TPI2rp0xHYKzYJXnk+8N/SJYmqvwreS5/7a4ZaZIPkSwhVqEICXGr
+X-Google-Smtp-Source: AGHT+IEsks1As/gJsDabYMkZtubh2e00/bL05lXckTjA8CXrq21q3vR7ANvYkQltyMGDQObLQ2tZ7g==
+X-Received: by 2002:a05:6102:950:b0:4e7:3d55:5212 with SMTP id ada2fe7eead31-4fa3fa91ecdmr5863721137.11.1753772923957;
+        Tue, 29 Jul 2025 00:08:43 -0700 (PDT)
+Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8d8c5d29sm1664603241.3.2025.07.29.00.08.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 00:08:43 -0700 (PDT)
+Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-8815049d0a8so1403374241.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:08:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXpI2y7qSp4h4a32TTuTRJlVLDLN1CVJdw+vTSBjSL9D4Tc2sh4nIm83gNWkoWYWCljfsy8JGAdeKvfAKk=@vger.kernel.org
+X-Received: by 2002:a05:6102:304e:b0:4fb:dcde:3f96 with SMTP id
+ ada2fe7eead31-4fbdcde4191mr324280137.8.1753772923410; Tue, 29 Jul 2025
+ 00:08:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:13d5:b0:876:b8a0:6a16 with SMTP id
- ca18e2360f4ac-880229dd81emr2744062239f.13.1753772912535; Tue, 29 Jul 2025
- 00:08:32 -0700 (PDT)
-Date: Tue, 29 Jul 2025 00:08:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68887370.a00a0220.b12ec.00cc.GAE@google.com>
-Subject: [syzbot] [net?] KASAN: use-after-free Read in __xfrm_state_insert
-From: syzbot <syzbot+409c1e76795047429447@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, herbert@gondor.apana.org.au, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com
+References: <20250728093412.48065-1-jogidishank503@gmail.com>
+In-Reply-To: <20250728093412.48065-1-jogidishank503@gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 Jul 2025 09:08:32 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUkJrsug-hKkM_f+0xxrPHBQfw_3WB2FhMM=yAYzRn1Eg@mail.gmail.com>
+X-Gm-Features: Ac12FXxAEbnb4l6V0uvEPoVTtKnza535a3ryL1k5c8rsxUEbVBR5-jZ6yXaKH1E
+Message-ID: <CAMuHMdUkJrsug-hKkM_f+0xxrPHBQfw_3WB2FhMM=yAYzRn1Eg@mail.gmail.com>
+Subject: Re: [PATCH] zorro: fix checkpatch error by avoiding assignment in if-statement.
+To: Dishank Jogi <jogidishank503@gmail.com>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+	darshanrathod475@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Hi Dishank,
 
-syzbot found the following issue on:
+On Mon, 28 Jul 2025 at 11:34, Dishank Jogi <jogidishank503@gmail.com> wrote:
+> These changes improve code readability and bring the file
+> in line with the Linux kernel coding style.
+>
+> No functional changes.
+>
+> Signed-off-by: Dishank Jogi <jogidishank503@gmail.com>
 
-HEAD commit:    9312ee76490d octeontx2-af: use unsigned int as iterator fo..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=150688a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4b71a7f00d74e4f3
-dashboard link: https://syzkaller.appspot.com/bug?extid=409c1e76795047429447
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+Thanks for your patch!
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> --- a/drivers/zorro/gen-devlist.c
+> +++ b/drivers/zorro/gen-devlist.c
+> @@ -44,7 +44,8 @@ main(void)
+>
+>         while (fgets(line, sizeof(line)-1, stdin)) {
+>                 lino++;
+> -               if ((c = strchr(line, '\n')))
+> +               c = strchr(line, '\n')
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b381ecf9ad30/disk-9312ee76.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ebd0e7846e92/vmlinux-9312ee76.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b9c68d721e9c/bzImage-9312ee76.xz
+As Christophe pointed out, this line lacks a semicolon.
+Please do not submit untested patches.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+409c1e76795047429447@syzkaller.appspotmail.com
+> +               if (c)
+>                         *c = 0;
+>                 if (!line[0] || line[0] == '#')
+>                         continue;
+> @@ -68,7 +69,8 @@ main(void)
+>                                         fprintf(devf, "\tPRODUCT(%s,%s,\"", manuf, line+1);
+>                                         pq(devf, c);
+>                                         fputs("\")\n", devf);
+> -                               } else goto err;
+> +                               } else
+> +                                       goto err;
 
-==================================================================
-BUG: KASAN: use-after-free in __xfrm_state_insert+0x8af/0x1450 net/xfrm/xfrm_state.c:1743
-Read of size 1 at addr ffff888056ba8bb0 by task syz.2.2485/14095
+This does not comply with Linux kernel coding style: please use braces
+in both branches.
 
-CPU: 0 UID: 0 PID: 14095 Comm: syz.2.2485 Not tainted 6.16.0-rc7-syzkaller-01904-g9312ee76490d #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0xca/0x230 mm/kasan/report.c:480
- kasan_report+0x118/0x150 mm/kasan/report.c:593
- __xfrm_state_insert+0x8af/0x1450 net/xfrm/xfrm_state.c:1743
- xfrm_state_insert+0x54/0x60 net/xfrm/xfrm_state.c:1795
- ipcomp6_tunnel_attach net/ipv6/ipcomp6.c:131 [inline]
- ipcomp6_init_state+0x655/0x900 net/ipv6/ipcomp6.c:163
- __xfrm_init_state+0xa73/0x13f0 net/xfrm/xfrm_state.c:3188
- xfrm_init_state+0x18/0xa0 net/xfrm/xfrm_state.c:3231
- pfkey_msg2xfrm_state net/key/af_key.c:1286 [inline]
- pfkey_add+0x1d38/0x2e00 net/key/af_key.c:1504
- pfkey_process net/key/af_key.c:2848 [inline]
- pfkey_sendmsg+0xbfe/0x1090 net/key/af_key.c:3699
- sock_sendmsg_nosec net/socket.c:714 [inline]
- __sock_sendmsg+0x21c/0x270 net/socket.c:729
- ____sys_sendmsg+0x505/0x830 net/socket.c:2614
- ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2668
- __sys_sendmsg net/socket.c:2700 [inline]
- __do_sys_sendmsg net/socket.c:2705 [inline]
- __se_sys_sendmsg net/socket.c:2703 [inline]
- __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2703
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f91e0d8e9a9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f91e1bc9038 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f91e0fb5fa0 RCX: 00007f91e0d8e9a9
-RDX: 0000000000000000 RSI: 00002000000001c0 RDI: 0000000000000004
-RBP: 00007f91e0e10d69 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f91e0fb5fa0 R15: 00007ffd4df147d8
- </TASK>
+However, in this case I'd rather invert the logic, remove the braces,
+and reduce indentation for the big block:
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff888056babc00 pfn:0x56ba8
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 ffffea0000c65608 ffffea0001b7c408 0000000000000000
-raw: ffff888056babc00 0000000000100000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as freed
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 13250, tgid 13248 (syz.1.2213), ts 301636788674, free_ts 323874401753
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x240/0x2a0 mm/page_alloc.c:1704
- prep_new_page mm/page_alloc.c:1712 [inline]
- get_page_from_freelist+0x21e4/0x22c0 mm/page_alloc.c:3669
- __alloc_frozen_pages_noprof+0x181/0x370 mm/page_alloc.c:4959
- alloc_pages_mpol+0x232/0x4a0 mm/mempolicy.c:2419
- alloc_slab_page mm/slub.c:2451 [inline]
- allocate_slab+0x8a/0x3b0 mm/slub.c:2619
- new_slab mm/slub.c:2673 [inline]
- ___slab_alloc+0xbfc/0x1480 mm/slub.c:3859
- __slab_alloc mm/slub.c:3949 [inline]
- __slab_alloc_node mm/slub.c:4024 [inline]
- slab_alloc_node mm/slub.c:4185 [inline]
- __do_kmalloc_node mm/slub.c:4327 [inline]
- __kmalloc_noprof+0x305/0x4f0 mm/slub.c:4340
- kmalloc_noprof include/linux/slab.h:909 [inline]
- kzalloc_noprof include/linux/slab.h:1039 [inline]
- copy_splice_read+0x143/0x9b0 fs/splice.c:337
- do_splice_read fs/splice.c:978 [inline]
- splice_direct_to_actor+0x4d0/0xcc0 fs/splice.c:1083
- do_splice_direct_actor fs/splice.c:1201 [inline]
- do_splice_direct+0x181/0x270 fs/splice.c:1227
- do_sendfile+0x4da/0x7e0 fs/read_write.c:1370
- __do_sys_sendfile64 fs/read_write.c:1431 [inline]
- __se_sys_sendfile64+0x13e/0x190 fs/read_write.c:1417
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5853 tgid 5853 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1248 [inline]
- __free_frozen_pages+0xc71/0xe70 mm/page_alloc.c:2706
- discard_slab mm/slub.c:2717 [inline]
- __put_partials+0x161/0x1c0 mm/slub.c:3186
- put_cpu_partial+0x17c/0x250 mm/slub.c:3261
- __slab_free+0x2f7/0x400 mm/slub.c:4513
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x97/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x148/0x160 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x22/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4148 [inline]
- slab_alloc_node mm/slub.c:4197 [inline]
- __do_kmalloc_node mm/slub.c:4327 [inline]
- __kmalloc_node_noprof+0x21b/0x4e0 mm/slub.c:4334
- kmalloc_node_noprof include/linux/slab.h:932 [inline]
- __vmalloc_area_node mm/vmalloc.c:3698 [inline]
- __vmalloc_node_range_noprof+0x5a9/0x12f0 mm/vmalloc.c:3893
- __vmalloc_node_noprof mm/vmalloc.c:3956 [inline]
- vzalloc_noprof+0xb2/0xf0 mm/vmalloc.c:4030
- alloc_counters+0xd3/0x6d0 net/ipv4/netfilter/ip_tables.c:799
- copy_entries_to_user net/ipv6/netfilter/ip6_tables.c:837 [inline]
- get_entries net/ipv6/netfilter/ip6_tables.c:1039 [inline]
- do_ip6t_get_ctl+0xa94/0x1180 net/ipv6/netfilter/ip6_tables.c:1677
- nf_getsockopt+0x26b/0x290 net/netfilter/nf_sockopt.c:116
- ipv6_getsockopt+0x1ed/0x290 net/ipv6/ipv6_sockglue.c:1469
- do_sock_getsockopt+0x36f/0x450 net/socket.c:2405
- __sys_getsockopt net/socket.c:2434 [inline]
- __do_sys_getsockopt net/socket.c:2441 [inline]
- __se_sys_getsockopt net/socket.c:2438 [inline]
- __x64_sys_getsockopt+0x1a5/0x250 net/socket.c:2438
+    if (strlen(line) <= 5 || line[5] != ' ')
+            goto err;
 
-Memory state around the buggy address:
- ffff888056ba8a80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888056ba8b00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
->ffff888056ba8b80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                                     ^
- ffff888056ba8c00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
- ffff888056ba8c80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
+    [...]
 
+>                                 break;
+>                         default:
+>                                 goto err;
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Gr{oetje,eeting}s,
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+                        Geert
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
