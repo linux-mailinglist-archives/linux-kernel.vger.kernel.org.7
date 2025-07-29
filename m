@@ -1,159 +1,195 @@
-Return-Path: <linux-kernel+bounces-749425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C11D9B14E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:11:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D78B14E21
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E8C54577E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:11:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D1C18A2869
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B45021884A;
-	Tue, 29 Jul 2025 13:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B37235064;
+	Tue, 29 Jul 2025 13:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LPrftPii"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mh0C4eIr"
+Received: from mail-lj1-f193.google.com (mail-lj1-f193.google.com [209.85.208.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9FA1624F7
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 13:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3032140855;
+	Tue, 29 Jul 2025 13:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753794664; cv=none; b=hkNoBuCRvJz4KTooS8sEOvZjMUV2KK6DUj87wYc+Lrs+R51AEd6PUkyPw621jYGEVRYJ6NvjFYsbB3pI8CxC808oZ8SvSgMcXTNmOWDjypPDVZ/aj88steIk9dh31+NFAk9czzrOt5komy1MnlUXN2eRTFNbXa4fGSJLyyVtCNY=
+	t=1753794621; cv=none; b=k2k870WjSnCaGiIqZmj4LogXWEiLvpCHCgvhLyjJbvGP/4NWKwIkm+aUkQ+DRfIOYGXRSwjtEYrd+Z9H0KOk8v+PdH0y0k+9OcCsQoiWDKEczmKeqqaWXZ6JBL+nmvCLow5SKR39uOMX76L9Lt1g7+5SndW4xckilcG1kZx0MbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753794664; c=relaxed/simple;
-	bh=xaWzu6g+ccgR00Y6GpZPkAW40xv/vfig59QiiS9kFrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YElMBfxcP/twzXtO1o7viywtPQ3dj0NGul+Wzj9caGE8NyyW0nU+ndlkCUJvwqiCJgZDdl+aPTCKw8uvMZVWAL+wB4O9Un0FmFCNlSL1rs5kZBA3QeFLQLc0rigxR0P3yFYA3Ck7/UxzjpNG8O6/PhaEhcg87+fJH0tOYcU2gK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LPrftPii; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753794662;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MQqNRXbyWnooUNuvo+Gq1oeZqGv2RnPfEdo++Sxi2sM=;
-	b=LPrftPiiGcZ+4xjzxwopKtw6uJMiKwULPm29dY8kHCx5wPObei2sIgG6SRlYjjDa07+TQ9
-	/c1bcksWzEoOouUlmE0PjXUjOJZPmUx38er3XBV69R9tAKMe2c11MGHkwOze8uq1Bjwt1T
-	3V44RpPnvInd5A54s7j/OgNm9UsFdWE=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-jngmDRu6O3mWunBjIPS5PQ-1; Tue,
- 29 Jul 2025 09:10:56 -0400
-X-MC-Unique: jngmDRu6O3mWunBjIPS5PQ-1
-X-Mimecast-MFC-AGG-ID: jngmDRu6O3mWunBjIPS5PQ_1753794654
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 028061800131;
-	Tue, 29 Jul 2025 13:10:54 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.19])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 393571800242;
-	Tue, 29 Jul 2025 13:10:45 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 29 Jul 2025 15:09:46 +0200 (CEST)
-Date: Tue, 29 Jul 2025 15:09:37 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
- pi_blocked_on is set
-Message-ID: <20250729130936.GB18541@redhat.com>
-References: <aGvTz5VaPFyj0pBV@uudg.org>
- <20250728201441.GA4690@redhat.com>
- <aIh5QajyaVT7MtVp@uudg.org>
- <20250729114702.GA18541@redhat.com>
- <aIjCYEkgNvVpMYCS@uudg.org>
+	s=arc-20240116; t=1753794621; c=relaxed/simple;
+	bh=zqwXG53TqX88OOIij8KVQ/Qra+rNQ2e4vYxubSYODL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ieBfc0YdU2NbxiQi0Z7sI4H/lO/EWDTXAkeXOt4/ZPWH3cpIc0aA0p3Cpc53hI37lprnSs+5KDioRSHGdRZyFHJqv9QaxK+z6bHDmApwRWQYSU8mEuPtRoKlmYc82REBngGwBQu3fTnmPoTohzbs/1eSPlMScjAfJyZqRSlujt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mh0C4eIr; arc=none smtp.client-ip=209.85.208.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f193.google.com with SMTP id 38308e7fff4ca-32b43846e8cso42701221fa.0;
+        Tue, 29 Jul 2025 06:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753794617; x=1754399417; darn=vger.kernel.org;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zqwXG53TqX88OOIij8KVQ/Qra+rNQ2e4vYxubSYODL4=;
+        b=Mh0C4eIrYWDXO8JIwEvqXgp9WZRSgqWkrtL9e5VnBw+kJL2UNombWh4Suzn7uYBqJc
+         Qe+SppsvfZ9TgbRienn+P1hGlMU6okGeYri3mrhS8aFk43MIAT3Hpuz3jJuyO8J0sCcA
+         5kqSRI+dui484zZ35iypIH85Md9cQGz7MDjEBK0eQoWo+f0Dx/rO7FjeaaRwGcqPrZ5M
+         aNzdU9N47puXTJiOOkpkkITE75l44sB9Ru9s57opw0tN00NPaLsIjpZKd+JjtEypCVas
+         Ic3pEvIqebR9X+9Xfak52eQ3SWW6REdz9q3M3aSq4fOTh9lQHCsdLq1VzuoEDlYFmIb1
+         g5JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753794617; x=1754399417;
+        h=in-reply-to:autocrypt:from:content-language:references:cc:to
+         :subject:user-agent:mime-version:date:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zqwXG53TqX88OOIij8KVQ/Qra+rNQ2e4vYxubSYODL4=;
+        b=Asj9sDIjbGqxPEOO3nodkADTbFITS3zl3Ej+vbI2KBsEprtkmITnWN5GmH1emXLbYf
+         so8I/S9G06pFizG9GCvSTWA5hGl1P3nbQCMTFwitvzWReDBAtC1Zjf6BgtnmxKN08n6T
+         FRo5NvTSOHbVVJIrNAdj6VWeEfHCtNx9VqyCC9fVci3Ufo58InMOzuDAH3v39d4cK5Hf
+         Vs3UrBAf+hOw+wpCVxOqGaT6uFLYm0gVMq4OjsRZr/tf7PF6tnLcCCwmEWZJFWZD+CLi
+         iMBC77ZgMGCZxj5145FuSteRC0UgnMyRSyv/9JVGEYSUTPfsg7g7R2fLw0J5+Z6XPdPF
+         Wd8w==
+X-Forwarded-Encrypted: i=1; AJvYcCUsUjLGT29zwRSjstQx5uxnM7W6JkVBS8vJ63Px5x7DCFaCJ8FN/HzqQdVyJ7bhUK9z9S7BCn99VOGm2g==@vger.kernel.org, AJvYcCWxOc253aIG5I2KPanAbR8UYN4BMZ2/o9t096ch5O3svF7A/3Q1g/+58Hi6q605Hkmyp7pbDJS/tWEL46lT@vger.kernel.org, AJvYcCX7STSTCDzlYx4Qvp86adyC1FxdTxiUsBGV9VBbUIM2WGNyx6paPWNGtewLcke9hZEEwVUZ9Cl3U7e+MicJ18Dnr1tCyg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoUGmEcEAVJddC3+gGXyd2TjTuCEMQYtPTjIQVqM2d102b5qpk
+	gB8WL9uziF8i/f4B3PaW5VNHVCjQu2CyxqEgvnmQXlsy5K1tao6+MYSl
+X-Gm-Gg: ASbGnctCxfC6dstAvPn3ttoizqOM4c7vceJVhx8+rtnJUl0r/shSeTYj9bZWolgv3pH
+	k2gGjfgBsj3qqBws7ZHz8IvffZ0XwuaCUKj/DVbSknYhTVNg1QTwmj5Mqd/ZHBcG5tMDnxQB+fe
+	nxjAdZidzgZ699E8LTj213jzOnuExGJokng28MAXPh96fj5C3WqdnYavXP5PePu3Gtb3WrwE+ZA
+	fIZL6vF9JhsXGyoEyNLNJMJbLV0VwcA4aaayZuBeSx3ZlvmJvvfX2U5WTUjud2lYbtKNq8vGj91
+	xAXhvElBV0PAtfBlFViOmMirsXGbEdczFpQJc1Arv9MlJlhigia4K8h12e/frIIZIcr2Tv167NG
+	GI/Qqnv/tji/HblRdFMpaofVagvxP/jHyIYsV9Q==
+X-Google-Smtp-Source: AGHT+IFZ/N3Wty39h0MbOGDUqu/LRsLW7/CkdOqmKEcvSIKIR9otNIxYvAmAhnZeMJgLicfFxAXP1Q==
+X-Received: by 2002:a05:651c:4ca:b0:32c:a502:8334 with SMTP id 38308e7fff4ca-331ee8889afmr47837211fa.36.1753794616229;
+        Tue, 29 Jul 2025 06:10:16 -0700 (PDT)
+Received: from [10.17.33.153] ([94.25.60.95])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-331f40a2970sm15766311fa.28.2025.07.29.06.10.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 06:10:15 -0700 (PDT)
+Message-ID: <38859d78-ee7e-4c9b-8e35-f87853d6d2e1@gmail.com>
+Date: Tue, 29 Jul 2025 16:10:14 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIjCYEkgNvVpMYCS@uudg.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] Add WMI driver for Redmibook keyboard.
+To: Armin Wolf <W_Armin@gmx.de>, Gladyshev Ilya <foxido@foxido.dev>
+Cc: Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>
+References: <20250727223516.29244-1-foxido@foxido.dev>
+ <2aa477f3-526e-4b06-826a-83f95633c040@gmx.de>
+Content-Language: en-US, ru
+From: Nikita Krasnov <nikita.nikita.krasnov@gmail.com>
+Autocrypt: addr=nikita.nikita.krasnov@gmail.com; keydata=
+ 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
+ sXwISql2dLWvF4EeopUcuqEmcKFKXR+Ifbxj7A==
+In-Reply-To: <2aa477f3-526e-4b06-826a-83f95633c040@gmx.de>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------aeGu5rzxPwO7yiq0M45COE0p"
 
-On 07/29, Luis Claudio R. Goncalves wrote:
->
-> On Tue, Jul 29, 2025 at 01:47:03PM +0200, Oleg Nesterov wrote:
-> > On 07/29, Luis Claudio R. Goncalves wrote:
-> > >
-> > > +	/* In !RT, it is always safe to call __put_task_struct(). */
-> > > +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> > > +		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
-> > > +
-> > > +		lock_map_acquire_try(&put_task_map);
-> > > +		__put_task_struct(t);
-> > > +		lock_map_release(&put_task_map);
-> > > +		return;
-> > > +	}
-> >
-> > FWIW:
-> >
-> > Acked-by: Oleg Nesterov <oleg@redhat.com>
-> >
-> >
-> > At the same time... I don't understand this DEFINE_WAIT_OVERRIDE_MAP().
-> > IIUC, we need to shut up lockdep when put_task_struct() is called under
-> > raw_spinlock_t and __put_task_struct() paths take spinlock_t, right?
-> > Perhaps this deserves a comment...
->
-> I reverted that code to the previous state, commit 893cdaaa3977 ("sched:
-> avoid false lockdep splat in put_task_struct()") and simplified the "if"
-> statement.
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------aeGu5rzxPwO7yiq0M45COE0p
+Content-Type: multipart/mixed; boundary="------------gmvRK0JGRBY12065Ty6N8ltg";
+ protected-headers="v1"
+From: Nikita Krasnov <nikita.nikita.krasnov@gmail.com>
+To: Armin Wolf <W_Armin@gmx.de>, Gladyshev Ilya <foxido@foxido.dev>
+Cc: Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>
+Message-ID: <38859d78-ee7e-4c9b-8e35-f87853d6d2e1@gmail.com>
+Subject: Re: [PATCH 1/1] Add WMI driver for Redmibook keyboard.
+References: <20250727223516.29244-1-foxido@foxido.dev>
+ <2aa477f3-526e-4b06-826a-83f95633c040@gmx.de>
+In-Reply-To: <2aa477f3-526e-4b06-826a-83f95633c040@gmx.de>
 
-Yes, yes, I see and I have already acked your patch.
+--------------gmvRK0JGRBY12065Ty6N8ltg
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-> In the original code, PREEMPT_RT could call __put_task_struct()
-> if the context was preemptible. But in the proposed code __put_task_struct()
-> is only called if PREEMPT_RT is disabled. In this case I believe we could
-> simply do:
->
-> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> +		__put_task_struct(t);
-> +		return;
-> +	}
->
-> Does that make sense?
+On Tue, Jul 29, 2025 at 12:47:57AM +0300 Armin Wolf wrote:
+> "Say Y here if you want support for WMI-based hotkey events on Xiaomi R=
+edmi devices."
 
-Hmm... But, again unless I am totally confused, we do need the
-DEFINE_WAIT_OVERRIDE_MAP() trick even if !PREEMPT_RT ?
+I think it should be "Xiaomi Redmibook" instead. "Xiaomi Redmi" is
+associated with mobiles devices. See Google Images for example of this:
+[1] and [2].
 
-Looking at lockdep_wait_type, I think that with
-CONFIG_PROVE_RAW_LOCK_NESTING=y lockdep enforces the PREEMPT_RT
-locking rules even if PREEMPT_RT is not set?
+[1]: https://www.google.com/search?q=3Dxiaomi+redmi&udm=3D2
+[2]: https://www.google.com/search?q=3Dxiaomi+redmibook&udm=3D2
 
-But:
+--=20
+Nikita Krasnov
 
-> > But if I am right, why LD_WAIT_SLEEP? LD_WAIT_CONFIG should equally work, no?
-> >
-> > LD_WAIT_SLEEP can fool lockdep more than we need, suppose that __put_task_struct()
-> > does mutex_lock(). Not really a problem, might_sleep/etc will complain in this
-> > case, but still.
+--------------gmvRK0JGRBY12065Ty6N8ltg--
 
-I still think LD_WAIT_CONFIG makes more sense.
+--------------aeGu5rzxPwO7yiq0M45COE0p
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
-Oleg.
+-----BEGIN PGP SIGNATURE-----
 
+wsF5BAABCAAjFiEEpkOhtFujpzRWyb0a4A5zBMF+d4YFAmiIyDYFAwAAAAAACgkQ4A5zBMF+d4bo
+3g/+OAx7qEd4bpF7KVYVRLWeYT6WO5v0eqa4Nu/7JrtEJMSp1uVTLRrhcEOTY72uYCXglYstZj3B
+j9uESHfsl8/h1PWh7jx0QaKwI4djBsPJIkPSlionqOwnX+n8/jPCjFxIx6OcnjdaYdIoJYGyKzLs
+pytfdXdFHu9cWfEJvmpzhpSntUSIPsLxFZ6KCTUV1zx8IKgkipvfCC/fxDuymA/jt64fU7llyl/1
+rzAboRqXQbKv+SNjNWfOS5coYc3Pl0IKv30QOUw608w39jI3t5ogaF83ufTJWdkapGJLDqwBlnbK
+Ox8nSdxFciIcK0p1XhEmgX24yF4D3Tk7A0pWmYgBrzeP7oJpTwt70csaDketg3e6gb1404+JyU0r
+7u9WlgIHqy38Gzr3gZmYDyuCrQUMHzcq8MtYGML7UdV+yycR+j5YxPqyjVlE5wePs85D0303rCqX
++1n6EXYNq+Q3mt+9TQjy+vesGVZUPPTjW/NuwDqtQC+qAGLezo59omvFUzT4Df8TNsRItCvfrG/K
+qW1V1OxLKLg/8W/NU5P4+zR14aL3wDN4t7XvUBBvc6Rrbt48N15vxJ5LCd8AExjnXyso4qqtVPaT
+nBmWuLnMAnewPwrupXaFpQAPAIr7/DsG2nhoYs836Cx6azwavFB+Y3Y601rH8KjYrYe8fJtb6c4M
+sBs=
+=HHx3
+-----END PGP SIGNATURE-----
+
+--------------aeGu5rzxPwO7yiq0M45COE0p--
 
