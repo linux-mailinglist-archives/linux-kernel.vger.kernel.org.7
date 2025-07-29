@@ -1,77 +1,115 @@
-Return-Path: <linux-kernel+bounces-749707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55CEEB151E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F309CB151EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C50B18A4796
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:12:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58A9018A2370
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F299E2989BA;
-	Tue, 29 Jul 2025 17:12:22 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3642A298990;
+	Tue, 29 Jul 2025 17:14:51 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2D5149C6F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:12:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F382220F4C;
+	Tue, 29 Jul 2025 17:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753809142; cv=none; b=b+yjN44UFqgdbirlcSq1u5MnxypIqb7jO0M2ViCUaTbUrvvq/TTatU0AvYxuwplZ19o/agNbuw2LjykyTlFhXI51fJTFAtjNoCHeIv1NunKMzGYQOY1poH0xzOpRJhsDVVNyTjaDDKWl9L9v9LP1SYMvc8tXrmoRfrGHbHjOMYg=
+	t=1753809290; cv=none; b=FKMbaw3u37QcRRGrWGHN8dafo2abuMHdRgjCq2/2AxmlyVxnOcZP3/aRXbq+LfPeUNWvlxlVEHHD/50ch0kKvYrGysURFf8KgiH4BvH9/zGlL+cXypcS5qv74piG2SDpacO5U/SRKniwlYc8GfPm8EOaOWwlWRsX602U1NpiXQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753809142; c=relaxed/simple;
-	bh=2yHCYFZ60mNvydP9a+/zK+DtK+zkr3E3n754wAlQeOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BpU6Aa3hu2vveinI4Ik1KDvMEco6o/lvndjzL/c0bPP98u/4yqN1kQIGnelK+LYw4b9A4a/MXpt8y31XhpdZ43HgOFEXwDm70BKOOLorJZ++w+fLqyj6MtCc3qerupeasNt/A/811RHhv2ygsEQypJLlnStr3NIdetFrh8ubQoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay03.hostedemail.com (Postfix) with ESMTP id 7CAAFB6D6E;
-	Tue, 29 Jul 2025 17:12:18 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 7A3A120024;
-	Tue, 29 Jul 2025 17:12:16 +0000 (UTC)
-Date: Tue, 29 Jul 2025 13:12:15 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Nam Cao <namcao@linutronix.de>, Tomas
- Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>, Clark Williams
- <williams@redhat.com>, John Kacur <jkacur@redhat.com>
-Subject: Re: [PATCH 0/5] tools/verification: Improvements to rv and rvgen
-Message-ID: <20250729131215.20fa9bf2@batman.local.home>
-In-Reply-To: <735d8530-f733-4973-8b0d-ac601d0a1799@redhat.com>
-References: <20250723161240.194860-1-gmonaco@redhat.com>
-	<20250724104011.7b4e11d9@batman.local.home>
-	<735d8530-f733-4973-8b0d-ac601d0a1799@redhat.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753809290; c=relaxed/simple;
+	bh=q5iOuIlBn4HB82Eph6+iP3/0eqWim6QWG2OmOiLsrzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZkEQiEzu5IfdcdRIXeypXjvpyZ0QUKiorQchMY47tz8Fiua2KegNgbAnIG6pBjnphn7fKDQFthJLCuLSdsjMSPWxMrNpMIdMIdvb49wC3yU5VGyqqPcjU2h70H+4tXraC6icLbdJjipymZURjqKkpXjfSqqlfRM1SPklgdK4rek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a02:8084:255b:aa00:d071:2bab:ab9:4510] (unknown [IPv6:2a02:8084:255b:aa00:d071:2bab:ab9:4510])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id D002F404CB;
+	Tue, 29 Jul 2025 17:14:46 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a02:8084:255b:aa00:d071:2bab:ab9:4510) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:d071:2bab:ab9:4510]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <c1666572-7a9b-4f25-a61a-08c96fad7a58@arnaud-lcm.com>
+Date: Tue, 29 Jul 2025 18:14:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] media: dvb-usbv2: ensure safe USB transfers on
+ disconnect in i2c_xfer
+To: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+0192952caa411a3be209@syzkaller.appspotmail.com,
+ skhan@linuxfoundation.org
+References: <20250421-ubsan-out-of-sub-v1-0-4fdeca76b906@arnaud-lcm.com>
+ <20250421-ubsan-out-of-sub-v1-2-4fdeca76b906@arnaud-lcm.com>
+Content-Language: en-US
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+In-Reply-To: <20250421-ubsan-out-of-sub-v1-2-4fdeca76b906@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ss3m3hyimg88md64c18rrpb7sh8ze917
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 7A3A120024
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+ssiWHF6Ex+Zh/n0fXUT0OEg/AmtPlS3g=
-X-HE-Tag: 1753809136-182708
-X-HE-Meta: U2FsdGVkX19HiauCXqDEfJKVpY8Qzq3uSIVyx4hcekD5AXFPStBahqr2XCi/o6LK5XoC2D5ivAAE7PumgSX/mHqUFU6eWO76gCLMZSaUVTtT6+r3KstA2PR2gEMIK/AujVNVSyLaphP4tnmzKXG4R8ANz99KJpfJYPXdyE/yn4T/2tKqSHZeCRe7Pz7F6/Ob8Z9CjSREqOqLfOUmwSvXHj6op0w0jaCOKWsJpYBnrnEgsRwU2GuguZmIurpnKPVIjC9/23xymfoMVif+n5gZ2SXammNMlCAwPPa8oXlU1DDr+lNF4EH8ZQKvJgp7gLnxWrTZkxp8+5wBYtg5mU3lL00u+tJzn+Nu
+X-PPP-Message-ID: <175380928730.26848.8544235230592985163@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-On Thu, 24 Jul 2025 18:07:35 +0000 (UTC)
-Gabriele Monaco <gmonaco@redhat.com> wrote:
+Hi Mauro, I am bumping this as you may didn't had the chance to have a look.
+Cheers,
+Arnaud
 
-> Alright, but I guess going forward I'll try to keep changes separated anyway, if possible.
-> 
-> Right, 4 is problematic here, it should apply cleanly on next though, maybe I should have rebased on your tree instead..
-> 
-> So do I submit together 4,5 and the kernel ones? Or again all together?
-
-If you haven't noticed, I already just took it ;-)
-
--- Steve
+On 21/04/2025 17:31, Arnaud Lecomte wrote:
+> Previously, there was a potential race condition where a USB transfer could
+> access inconsistent data if a disconnect occurred mid-transfer.
+> When this scenario happens (i.e when there is an USB disconnect during
+> the transfer), we would encounter an error related to the corruption of
+> st:
+> [   66.967387][T10787]  slab kmalloc-8k start ffff88804f5b4000 pointer offset 80 size 8192
+> [   66.968252][T10787] list_del corruption. prev->next should be ffffc9000d18f7e0, but was ffff88804f5b4050. (prev=ffff88804f5b4050)
+> [   66.969443][T10787] ------------[ cut here ]------------
+> [   66.969973][T10787] kernel BUG at lib/list_debug.c:64!
+> [   66.970491][T10787] Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+> [   66.971104][T10787] CPU: 0 UID: 0 PID: 10787 Comm: repro Not tainted 6.15.0-rc3-00004-gcd75cc176092-dirty #28 PREEMPT(full)
+> [   66.972204][T10787] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [   66.973236][T10787] RIP: 0010:__list_del_entry_valid_or_report+0x15c/0x190
+> [   66.973896][T10787] Code: ca da fb fc 42 80 3c 2b 00 74 08 4c 89 e7 e8 fb 29 1f fd 49 8b 14 24 48 c7 c7 a0 09 a2 8c 4c 89 fe 4c 89 e1 e8 55 43 18 fc 90 <0f> 0b 4c 89 f7 e8 9a da fb fc 42 80 3c 2b 00 74 08 4c 89 e7 e8 cb
+>
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+> ---
+>   drivers/media/usb/dvb-usb-v2/az6007.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c b/drivers/media/usb/dvb-usb-v2/az6007.c
+> index e8ee18010346..f6b8e29d19de 100644
+> --- a/drivers/media/usb/dvb-usb-v2/az6007.c
+> +++ b/drivers/media/usb/dvb-usb-v2/az6007.c
+> @@ -752,8 +752,13 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+>   	int length;
+>   	u8 req, addr;
+>   
+> -	if (mutex_lock_interruptible(&st->mutex) < 0)
+> +	if (!usb_trylock_device(d->udev))
+> +		return -EBUSY;
+> +
+> +	if (mutex_lock_interruptible(&st->mutex) < 0) {
+> +		usb_unlock_device(d->udev);
+>   		return -EAGAIN;
+> +	}
+>   
+>   	for (i = 0; i < num; i++) {
+>   		addr = msgs[i].addr << 1;
+> @@ -821,6 +826,7 @@ static int az6007_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
+>   	}
+>   err:
+>   	mutex_unlock(&st->mutex);
+> +	usb_unlock_device(d->udev);
+>   	if (ret < 0) {
+>   		pr_info("%s ERROR: %i\n", __func__, ret);
+>   		return ret;
+>
 
