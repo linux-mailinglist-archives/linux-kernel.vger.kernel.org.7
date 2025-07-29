@@ -1,445 +1,613 @@
-Return-Path: <linux-kernel+bounces-749881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF083B15432
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:14:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C11B15438
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7023B8B6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:14:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA2293B6C8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318652BDC2A;
-	Tue, 29 Jul 2025 20:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C56E2BDC03;
+	Tue, 29 Jul 2025 20:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AZKKkmk5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580F02BD5A3;
-	Tue, 29 Jul 2025 20:14:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SuaIjpp3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DFD41F956;
+	Tue, 29 Jul 2025 20:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753820053; cv=none; b=ks1KUR08Fgg++70m/H2+7er9EldHd5Gx2maU+mRNo+sRyJeJUsJwhJzBd9tNhDuyMpQTWmjQLWv8I5QHbUJ2gbDI8D3o7olLtTGQt2YgM81Zkhq7o0Ly1G9Iw9qOT8mcCM9a6cxkcqmf02Rvmo0u+Ub/fvzjLp0tBWlKT77adhY=
+	t=1753820083; cv=none; b=sKx3iFKfOh3ux1KaMt3E6iAivEZgHrniZUQrhk6j9fdNU9dBJ4f1zR0wROGi1kxrw6dcdZibNBuLMvqEvNgJlIfb4hIgmZAIR+D9+pS3YBS+ousgK/f4bcOVXSMhkFfVxBz6ugqgxS4eS0SJCD03UZB357jVH1uEAp3vldYW7GA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753820053; c=relaxed/simple;
-	bh=0zLo7GL7I9TCHbOoGwzlGjXmLj8z6HIirp6t8PA646M=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Doh6XRW1y39w+nOHsmOMvEzx/VJVIELzrXKv6vtkMUrQw2p79aP3/gq+DoTgeGEdaTUKFM+bUXFbyV+3qNtO3xzN7apsLD2q43qQ2DKOJqcbjMjZI/KV4ME8sgEMm/6meDczqIm3jo5OjCWRQjhF2Noen2cbLb7NtsS9caFMFNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AZKKkmk5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1204)
-	id D71B7211765A; Tue, 29 Jul 2025 13:14:10 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D71B7211765A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753820050;
-	bh=w82lBotzO3j4qBZjTpjjQRl5gaIsUvCtozgar8DJJBY=;
-	h=Date:From:To:Subject:From;
-	b=AZKKkmk5zeDxR6Vzmy5Q2aElEbkUdlIpviT4mLhNuGAX6LQ3EQxeuGboTK/yCHklG
-	 sKxyjfA82137a1NcRPkOSsOGiANMtdn8rzZwOJvPzTE+A5Kj3T2snGr2PbQvsTvfyx
-	 ioZjkkpo2Qp+cbSBiG8lo0TvAXyfXewHAZRsb/5o=
-Date: Tue, 29 Jul 2025 13:14:10 -0700
-From: Dipayaan Roy <dipayanroy@linux.microsoft.com>
-To: horms@kernel.org, kuba@kernel.org, kys@microsoft.com,
-	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	pabeni@redhat.com, longli@microsoft.com, kotaranov@microsoft.com,
-	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
-	john.fastabend@gmail.com, sdf@fomichev.me, lorenzo@kernel.org,
-	michal.kubiak@intel.com, ernis@linux.microsoft.com,
-	shradhagupta@linux.microsoft.com, shirazsaleem@microsoft.com,
-	rosenp@gmail.com, netdev@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ssengar@linux.microsoft.com, dipayanroy@microsoft.com
-Subject: [PATCH v3] net: mana: Use page pool fragments for RX buffers instead
- of full pages to improve memory efficiency.
-Message-ID: <20250729201410.GA4555@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+	s=arc-20240116; t=1753820083; c=relaxed/simple;
+	bh=IFOsmezLIBM5BO1ctidYAs3gV1RWnrpiSbaQ1Po2hbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pbKrkHiBOuAOgNZfcfBnMlFZDbhmBcf1RQSl8w3cBMAwGEoeiH964EXUSC7fxxxOybN2Q1//+HOEDjauGQqJ02CvUD62vI1LiRGaYqMWkmOvYV3TAdyVQ2vO6mWDl+e3k2rD0/aBZPjTxZqWWZ6/EBPLWIoj60LX5pGzuTKT49Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SuaIjpp3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEA04C4CEEF;
+	Tue, 29 Jul 2025 20:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753820083;
+	bh=IFOsmezLIBM5BO1ctidYAs3gV1RWnrpiSbaQ1Po2hbI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SuaIjpp3yFJ+Bwyd166z715gS/NmYnV/3Pf5OaJb4GpNvChrbdNrWxhoNZNw7+w4v
+	 vaUYAoLo+Ks15aOTlpwn2K4w/AF2WZ2MrAkkP75BbH3kEd0sLhle88NJU0wJwhRUOF
+	 pcyMu2bSrvOhctxQ/015UPW7YJ+VWZijp9Yr5YP+UTYQzJmOD87eTgMKKqyXFaqw/P
+	 hd7S98WmGLaaZVu7Sp4cqjx+WTA07X9Ve+GDhUYuRN8l3JsHSDudZ2+y2tVn0Rz8aW
+	 qh+H16xnPNeVEvVoiWOl0yRFhNCXusAbsyo7S9Q6lJUC8fQky9tLrj3Na2B0ma4pOP
+	 b/WozyGdLgLxQ==
+Date: Tue, 29 Jul 2025 15:14:41 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
+Subject: [GIT PULL] PCI changes for v6.17
+Message-ID: <20250729201441.GA3322910@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 
-This patch enhances RX buffer handling in the mana driver by allocating
-pages from a page pool and slicing them into MTU-sized fragments, rather
-than dedicating a full page per packet. This approach is especially
-beneficial on systems with large page sizes like 64KB.
+The following changes since commit 66db1d3cbdb0e89f8a3b5d06a8defb25d1c3f836:
 
-Key improvements:
+  PCI/pwrctrl: Add optional slot clock for PCI slots (2025-06-13 16:59:52 -0500)
 
-- Proper integration of page pool for RX buffer allocations.
-- MTU-sized buffer slicing to improve memory utilization.
-- Reduce overall per Rx queue memory footprint.
-- Automatic fallback to full-page buffers when:
-   * Jumbo frames are enabled (MTU > PAGE_SIZE / 2).
-   * The XDP path is active, to avoid complexities with fragment reuse.
+are available in the Git repository at:
 
-Testing on VMs with 64KB pages shows around 200% throughput improvement.
-Memory efficiency is significantly improved due to reduced wastage in page
-allocations. Example: We are now able to fit 35 rx buffers in a single 64kb
-page for MTU size of 1500, instead of 1 rx buffer per page previously.
+  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.17-changes
 
-Tested:
+for you to fetch changes up to e046b1731006b4c6c94bcb4ef1c6692a30014c43:
 
-- iperf3, iperf2, and nttcp benchmarks.
-- Jumbo frames with MTU 9000.
-- Native XDP programs (XDP_PASS, XDP_DROP, XDP_TX, XDP_REDIRECT) for
-  testing the XDP path in driver.
-- Memory leak detection (kmemleak).
-- Driver load/unload, reboot, and stress scenarios.
+  Merge branch 'pci/misc' (2025-07-29 13:08:12 -0500)
 
-Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+This is based on v6.16-rc1, but you have 66db1d3cbdb0 ("PCI/pwrctrl: Add
+optional slot clock for PCI slots") already via 0dc89a25468e ("Merge tag
+'renesas-dts-for-v6.17-tag1' of
+https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel into
+soc/dt")
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
----
-Changes in v3:
-  - Retained the pre-alloc rxbuf for driver reconfig paths
-    to better handle low memory scenario during reconfig.
+You should see a minor conflict in drivers/pci/pci.c between upstream
+commit:
 
-Changes in v2:
-  - Fixed mana_xdp_set() to return error code on failure instead of
-    always returning 0.
-  - Moved all local variable declarations to the start of functions
-    in mana_get_rxbuf_cfg.
-  - Removed unnecessary parentheses and wrapped lines to <= 80 chars.
-  - Use mana_xdp_get() for checking bpf_prog.
-  - Factored repeated page put/free logic into a static helper function.
----
- .../net/ethernet/microsoft/mana/mana_bpf.c    |  36 ++++-
- drivers/net/ethernet/microsoft/mana/mana_en.c | 147 ++++++++++++------
- include/net/mana/mana.h                       |   4 +
- 3 files changed, 137 insertions(+), 50 deletions(-)
+  907a7a2e5bf4 ("PCI/PM: Set up runtime PM even for devices without PCI PM")
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_bpf.c b/drivers/net/ethernet/microsoft/mana/mana_bpf.c
-index d30721d4516f..1cf470b25167 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_bpf.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_bpf.c
-@@ -174,6 +174,8 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
- 	struct mana_port_context *apc = netdev_priv(ndev);
- 	struct bpf_prog *old_prog;
- 	struct gdma_context *gc;
-+	int err = 0;
-+	bool dealloc_rxbufs_pre = false;
- 
- 	gc = apc->ac->gdma_dev->gdma_context;
- 
-@@ -198,15 +200,45 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
- 	if (old_prog)
- 		bpf_prog_put(old_prog);
- 
--	if (apc->port_is_up)
-+	if (apc->port_is_up) {
-+		/* Re-create rxq's after xdp prog was loaded or unloaded.
-+		 * Ex: re create rxq's to switch from full pages to smaller
-+		 * size page fragments when xdp prog is unloaded and vice-versa.
-+		 */
-+
-+		/* Pre-allocate buffers to prevent failure in mana_attach later */
-+		err = mana_pre_alloc_rxbufs(apc, ndev->mtu, apc->num_queues);
-+		if (err) {
-+			netdev_err(ndev,
-+				   "Insufficient memory for rx buf config change\n");
-+			goto out;
-+		}
-+		dealloc_rxbufs_pre = true;
-+
-+		err = mana_detach(ndev, false);
-+		if (err) {
-+			netdev_err(ndev, "mana_detach failed at xdp set: %d\n", err);
-+			goto out;
-+		}
-+
-+		err = mana_attach(ndev);
-+		if (err) {
-+			netdev_err(ndev, "mana_attach failed at xdp set: %d\n", err);
-+			goto out;
-+		}
-+
- 		mana_chn_setxdp(apc, prog);
-+	}
- 
- 	if (prog)
- 		ndev->max_mtu = MANA_XDP_MTU_MAX;
- 	else
- 		ndev->max_mtu = gc->adapter_mtu - ETH_HLEN;
- 
--	return 0;
-+out:
-+	if (dealloc_rxbufs_pre)
-+		mana_pre_dealloc_rxbufs(apc);
-+	return err;
- }
- 
- int mana_bpf(struct net_device *ndev, struct netdev_bpf *bpf)
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index a7973651ae51..591f3081d395 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -56,6 +56,14 @@ static bool mana_en_need_log(struct mana_port_context *apc, int err)
- 		return true;
- }
- 
-+static void mana_put_rx_page(struct mana_rxq *rxq, struct page *page, bool from_pool)
-+{
-+	if (from_pool)
-+		page_pool_put_full_page(rxq->page_pool, page, false);
-+	else
-+		put_page(page);
-+}
-+
- /* Microsoft Azure Network Adapter (MANA) functions */
- 
- static int mana_open(struct net_device *ndev)
-@@ -629,21 +637,40 @@ static void *mana_get_rxbuf_pre(struct mana_rxq *rxq, dma_addr_t *da)
- }
- 
- /* Get RX buffer's data size, alloc size, XDP headroom based on MTU */
--static void mana_get_rxbuf_cfg(int mtu, u32 *datasize, u32 *alloc_size,
--			       u32 *headroom)
-+static void mana_get_rxbuf_cfg(struct mana_port_context *apc,
-+			       int mtu, u32 *datasize, u32 *alloc_size,
-+			       u32 *headroom, u32 *frag_count)
- {
--	if (mtu > MANA_XDP_MTU_MAX)
--		*headroom = 0; /* no support for XDP */
--	else
--		*headroom = XDP_PACKET_HEADROOM;
-+	u32 len, buf_size;
- 
--	*alloc_size = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD + *headroom);
-+	/* Calculate datasize first (consistent across all cases) */
-+	*datasize = mtu + ETH_HLEN;
- 
--	/* Using page pool in this case, so alloc_size is PAGE_SIZE */
--	if (*alloc_size < PAGE_SIZE)
--		*alloc_size = PAGE_SIZE;
-+	/* For xdp and jumbo frames make sure only one packet fits per page */
-+	if (mtu + MANA_RXBUF_PAD > PAGE_SIZE / 2 || mana_xdp_get(apc)) {
-+		if (mana_xdp_get(apc)) {
-+			*headroom = XDP_PACKET_HEADROOM;
-+			*alloc_size = PAGE_SIZE;
-+		} else {
-+			*headroom = 0; /* no support for XDP */
-+			*alloc_size = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD +
-+						     *headroom);
-+		}
- 
--	*datasize = mtu + ETH_HLEN;
-+		*frag_count = 1;
-+		return;
-+	}
-+
-+	/* Standard MTU case - optimize for multiple packets per page */
-+	*headroom = 0;
-+
-+	/* Calculate base buffer size needed */
-+	len = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD + *headroom);
-+	buf_size = ALIGN(len, MANA_RX_FRAG_ALIGNMENT);
-+
-+	/* Calculate how many packets can fit in a page */
-+	*frag_count = PAGE_SIZE / buf_size;
-+	*alloc_size = buf_size;
- }
- 
- int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_queues)
-@@ -655,8 +682,9 @@ int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_qu
- 	void *va;
- 	int i;
- 
--	mana_get_rxbuf_cfg(new_mtu, &mpc->rxbpre_datasize,
--			   &mpc->rxbpre_alloc_size, &mpc->rxbpre_headroom);
-+	mana_get_rxbuf_cfg(mpc, new_mtu, &mpc->rxbpre_datasize,
-+			   &mpc->rxbpre_alloc_size, &mpc->rxbpre_headroom,
-+			   &mpc->rxbpre_frag_count);
- 
- 	dev = mpc->ac->gdma_dev->gdma_context->dev;
- 
-@@ -1841,8 +1869,11 @@ static void mana_rx_skb(void *buf_va, bool from_pool,
- 
- drop:
- 	if (from_pool) {
--		page_pool_recycle_direct(rxq->page_pool,
--					 virt_to_head_page(buf_va));
-+		if (rxq->frag_count == 1)
-+			page_pool_recycle_direct(rxq->page_pool,
-+						 virt_to_head_page(buf_va));
-+		else
-+			page_pool_free_va(rxq->page_pool, buf_va, true);
- 	} else {
- 		WARN_ON_ONCE(rxq->xdp_save_va);
- 		/* Save for reuse */
-@@ -1858,33 +1889,43 @@ static void *mana_get_rxfrag(struct mana_rxq *rxq, struct device *dev,
- 			     dma_addr_t *da, bool *from_pool)
- {
- 	struct page *page;
-+	u32 offset;
- 	void *va;
--
- 	*from_pool = false;
- 
--	/* Reuse XDP dropped page if available */
--	if (rxq->xdp_save_va) {
--		va = rxq->xdp_save_va;
--		rxq->xdp_save_va = NULL;
--	} else {
--		page = page_pool_dev_alloc_pages(rxq->page_pool);
--		if (!page)
-+	/* Don't use fragments for jumbo frames or XDP (i.e when fragment = 1 per page) */
-+	if (rxq->frag_count == 1) {
-+		/* Reuse XDP dropped page if available */
-+		if (rxq->xdp_save_va) {
-+			va = rxq->xdp_save_va;
-+			page = virt_to_head_page(va);
-+			rxq->xdp_save_va = NULL;
-+		} else {
-+			page = page_pool_dev_alloc_pages(rxq->page_pool);
-+			if (!page)
-+				return NULL;
-+
-+			*from_pool = true;
-+			va = page_to_virt(page);
-+		}
-+
-+		*da = dma_map_single(dev, va + rxq->headroom, rxq->datasize,
-+				     DMA_FROM_DEVICE);
-+		if (dma_mapping_error(dev, *da)) {
-+			mana_put_rx_page(rxq, page, *from_pool);
- 			return NULL;
-+		}
- 
--		*from_pool = true;
--		va = page_to_virt(page);
-+		return va;
- 	}
- 
--	*da = dma_map_single(dev, va + rxq->headroom, rxq->datasize,
--			     DMA_FROM_DEVICE);
--	if (dma_mapping_error(dev, *da)) {
--		if (*from_pool)
--			page_pool_put_full_page(rxq->page_pool, page, false);
--		else
--			put_page(virt_to_head_page(va));
--
-+	page =  page_pool_dev_alloc_frag(rxq->page_pool, &offset, rxq->alloc_size);
-+	if (!page)
- 		return NULL;
--	}
-+
-+	va  = page_to_virt(page) + offset;
-+	*da = page_pool_get_dma_addr(page) + offset + rxq->headroom;
-+	*from_pool = true;
- 
- 	return va;
- }
-@@ -1901,9 +1942,9 @@ static void mana_refill_rx_oob(struct device *dev, struct mana_rxq *rxq,
- 	va = mana_get_rxfrag(rxq, dev, &da, &from_pool);
- 	if (!va)
- 		return;
--
--	dma_unmap_single(dev, rxoob->sgl[0].address, rxq->datasize,
--			 DMA_FROM_DEVICE);
-+	if (!rxoob->from_pool || rxq->frag_count == 1)
-+		dma_unmap_single(dev, rxoob->sgl[0].address, rxq->datasize,
-+				 DMA_FROM_DEVICE);
- 	*old_buf = rxoob->buf_va;
- 	*old_fp = rxoob->from_pool;
- 
-@@ -2314,15 +2355,15 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
- 		if (!rx_oob->buf_va)
- 			continue;
- 
--		dma_unmap_single(dev, rx_oob->sgl[0].address,
--				 rx_oob->sgl[0].size, DMA_FROM_DEVICE);
--
- 		page = virt_to_head_page(rx_oob->buf_va);
- 
--		if (rx_oob->from_pool)
--			page_pool_put_full_page(rxq->page_pool, page, false);
--		else
--			put_page(page);
-+		if (rxq->frag_count == 1) {
-+			dma_unmap_single(dev, rx_oob->sgl[0].address, rx_oob->sgl[0].size,
-+					 DMA_FROM_DEVICE);
-+			mana_put_rx_page(rxq, page, rx_oob->from_pool);
-+		} else {
-+			page_pool_free_va(rxq->page_pool, rx_oob->buf_va, true);
-+		}
- 
- 		rx_oob->buf_va = NULL;
- 	}
-@@ -2428,11 +2469,22 @@ static int mana_create_page_pool(struct mana_rxq *rxq, struct gdma_context *gc)
- 	struct page_pool_params pprm = {};
- 	int ret;
- 
--	pprm.pool_size = mpc->rx_queue_size;
-+	pprm.pool_size = mpc->rx_queue_size / rxq->frag_count + 1;
- 	pprm.nid = gc->numa_node;
- 	pprm.napi = &rxq->rx_cq.napi;
- 	pprm.netdev = rxq->ndev;
- 	pprm.order = get_order(rxq->alloc_size);
-+	pprm.queue_idx = rxq->rxq_idx;
-+	pprm.dev = gc->dev;
-+
-+	/* Let the page pool do the dma map when page sharing with multiple fragments
-+	 * enabled for rx buffers.
-+	 */
-+	if (rxq->frag_count > 1) {
-+		pprm.flags =  PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
-+		pprm.max_len = PAGE_SIZE;
-+		pprm.dma_dir = DMA_FROM_DEVICE;
-+	}
- 
- 	rxq->page_pool = page_pool_create(&pprm);
- 
-@@ -2471,9 +2523,8 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
- 	rxq->rxq_idx = rxq_idx;
- 	rxq->rxobj = INVALID_MANA_HANDLE;
- 
--	mana_get_rxbuf_cfg(ndev->mtu, &rxq->datasize, &rxq->alloc_size,
--			   &rxq->headroom);
--
-+	mana_get_rxbuf_cfg(apc, ndev->mtu, &rxq->datasize, &rxq->alloc_size,
-+			   &rxq->headroom, &rxq->frag_count);
- 	/* Create page pool for RX queue */
- 	err = mana_create_page_pool(rxq, gc);
- 	if (err) {
-diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
-index e1030a7d2daa..0921485565c0 100644
---- a/include/net/mana/mana.h
-+++ b/include/net/mana/mana.h
-@@ -65,6 +65,8 @@ enum TRI_STATE {
- #define MANA_STATS_RX_COUNT 5
- #define MANA_STATS_TX_COUNT 11
- 
-+#define MANA_RX_FRAG_ALIGNMENT 64
-+
- struct mana_stats_rx {
- 	u64 packets;
- 	u64 bytes;
-@@ -328,6 +330,7 @@ struct mana_rxq {
- 	u32 datasize;
- 	u32 alloc_size;
- 	u32 headroom;
-+	u32 frag_count;
- 
- 	mana_handle_t rxobj;
- 
-@@ -510,6 +513,7 @@ struct mana_port_context {
- 	u32 rxbpre_datasize;
- 	u32 rxbpre_alloc_size;
- 	u32 rxbpre_headroom;
-+	u32 rxbpre_frag_count;
- 
- 	struct bpf_prog *bpf_prog;
- 
--- 
-2.43.0
+and this commit from the PCI tree:
 
+  5c0d0ee36f16 ("PCI: Support Immediate Readiness on devices without PM capabilities")
+
+My resolution (same as linux-next) is here:
+
+  https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/pci.c?id=da85729b8e34#n3157
+
+----------------------------------------------------------------
+
+Enumeration:
+
+  - Allow built-in drivers, not just modular drivers, to use async initial
+    probing (Lukas Wunner)
+
+  - Refactor capability search from __pci_find_next_cap_ttl() into
+    PCI_FIND_NEXT_CAP() and pci_find_next_ext_capability() into
+    PCI_FIND_NEXT_EXT_CAP().  Both accept function pointers to a config
+    read function to make them more generic (Hans Zhang)
+
+  - Support Immediate Readiness even on devices with no PM Capability (Sean
+    Christopherson)
+
+  - Consolidate definition of PCIE_RESET_CONFIG_WAIT_MS (100ms), the
+    required delay between a reset and sending config requests to a device
+    (Niklas Cassel)
+
+  - Add pci_is_display() to check for "Display" base class and use it in
+    ALSA hda, vfio, vga_switcheroo, vt-d (Mario Limonciello)
+
+  - Allow 'isolated PCI functions' (multi-function devices without a
+    function 0) for LoongArch, similar to s390 and jailhouse (Huacai Chen)
+
+Power control:
+
+  - Add ability to enable optional slot clock for cases where the PCIe host
+    controller and the slot are supplied by different clocks (Marek Vasut)
+
+PCIe native device hotplug:
+
+  - Fix runtime PM ref imbalance on Hot-Plug Capable ports caused by
+    misinterpreting a config read failure after a device has been removed
+    (Lukas Wunner)
+
+  - Avoid creating a useless PCIe port service device for pciehp if the
+    slot is handled by the ACPI hotplug driver (Lukas Wunner)
+
+  - Ignore ACPI hotplug slots when calculating depth of pciehp hotplug
+    ports (Lukas Wunner)
+
+Virtualization:
+
+  - Save VF resizable BAR state and restore it after reset (Michał
+    Winiarski)
+
+  - Allow IOV resources (VF BARs) to be resized (Michał Winiarski)
+
+  - Add pci_iov_vf_bar_set_size() so drivers can control VF BAR size
+    (Michał Winiarski)
+
+Endpoint framework:
+
+  - Add RC-to-EP doorbell support using platform MSI controller, including
+    a test case (Frank Li)
+
+  - Allow BAR assignment via configfs so platforms have flexibility in
+    determining BAR usage (Jerome Brunet)
+
+Native PCIe controller drivers:
+
+  - Convert amazon,al-alpine-v[23]-pcie, apm,xgene-pcie, axis,artpec6-pcie,
+    marvell,armada-3700-pcie, st,spear1340-pcie to DT schema format (Rob
+    Herring)
+
+  - Use dev_fwnode() instead of of_fwnode_handle() to remove OF dependency
+    in altera (fixes an unused variable), designware-host, mediatek,
+    mediatek-gen3, mobiveil, plda, xilinx, xilinx-dma, xilinx-nwl (Jiri
+    Slaby, Arnd Bergmann)
+
+  - Convert aardvark, altera, brcmstb, designware-host, iproc, mediatek,
+    mediatek-gen3, mobiveil, plda, rcar-host, vmd, xilinx, xilinx-dma,
+    xilinx-nwl from using pci_msi_create_irq_domain() to using
+    msi_create_parent_irq_domain() instead; this makes the interrupt
+    controller per-PCI device, allows dynamic allocation of vectors after
+    initialization, and allows support of IMS (Nam Cao)
+
+APM X-Gene PCIe controller driver:
+
+  - Rewrite MSI handling to MSI CPU affinity, drop useless CPU hotplug
+    bits, use device-managed memory allocations, and clean things up (Marc
+    Zyngier)
+
+  - Probe xgene-msi as a standard platform driver rather than a
+    subsys_initcall (Marc Zyngier)
+
+Broadcom STB PCIe controller driver:
+
+  - Add optional DT 'num-lanes' property and if present, use it to override
+    the Maximum Link Width advertised in Link Capabilities (Jim Quinlan)
+
+Cadence PCIe controller driver:
+
+  - Use PCIe Message routing types from the PCI core rather than defining
+    private ones (Hans Zhang)
+
+  - Use PCI_FIND_NEXT_CAP() and PCI_FIND_NEXT_EXT_CAP() with the
+    cdns_pcie_read_cfg() accessor to replace duplicated code (Hans Zhang)
+
+Freescale i.MX6 PCIe controller driver:
+
+  - Add IMX8MQ_EP third 64-bit BAR in epc_features (Richard Zhu)
+
+  - Add IMX8MM_EP and IMX8MP_EP fixed 256-byte BAR 4 in epc_features
+    (Richard Zhu)
+
+  - Configure LUT for MSI/IOMMU in Endpoint mode so Root Complex can
+    trigger doorbel on Endpoint (Frank Li)
+
+  - Remove apps_reset (LTSSM_EN) from
+    imx_pcie_{assert,deassert}_core_reset(), which fixes a hotplug
+    regression on i.MX8MM (Richard Zhu)
+
+  - Delay Endpoint link start until configfs 'start' written (Richard Zhu)
+
+Intel VMD host bridge driver:
+
+  - Add Intel Panther Lake (PTL)-H/P/U Vendor ID (George D Sworo)
+
+Qualcomm PCIe controller driver:
+
+  - Add DT binding and driver support for SA8255p, which supports ECAM for
+    Configuration Space access (Mayank Rana)
+
+  - Update DT binding and driver to describe PHYs and per-Root Port resets
+    in a Root Port stanza and deprecate describing them in the host bridge;
+    this makes it possible to support multiple Root Ports in the future
+    (Krishna Chaitanya Chundru)
+
+  - Add Qualcomm QCS615 to SM8150 DT binding (Ziyue Zhang)
+
+  - Add Qualcomm QCS8300 to SA8775p DT binding (Ziyue Zhang)
+
+  - Drop TBU and ref clocks from Qualcomm SM8150 and SC8180x DT bindings
+    (Konrad Dybcio)
+
+  - Document 'link_down' reset in Qualcomm SA8775P DT binding (Ziyue Zhang)
+
+  - Add required PCIE_RESET_CONFIG_WAIT_MS delay after Link up IRQ (Niklas
+    Cassel)
+
+Rockchip PCIe controller driver:
+
+  - Drop unused PCIe Message routing and code definitions (Hans Zhang)
+
+  - Remove several unused header includes (Hans Zhang)
+
+  - Use standard PCIe config register definitions instead of
+    rockchip-specific redefinitions (Geraldo Nascimento)
+
+  - Set Target Link Speed to 5.0 GT/s before retraining so we have a chance
+    to train at a higher speed (Geraldo Nascimento)
+
+Rockchip DesignWare PCIe controller driver:
+
+  - Prevent race between link training and register update via DBI by
+    inhibiting link training after hot reset and link down (Wilfred
+    Mallawa)
+
+  - Add required PCIE_RESET_CONFIG_WAIT_MS delay after Link up IRQ (Niklas
+    Cassel)
+
+Sophgo PCIe controller driver:
+
+  - Add DT binding and driver for Sophgo SG2044 PCIe controller driver in
+    Root Complex mode (Inochi Amaoto)
+
+Synopsys DesignWare PCIe controller driver:
+
+  - Use PCI_FIND_NEXT_CAP() and PCI_FIND_NEXT_EXT_CAP() with the
+    dw_pcie_read_cfg() accessor to replace duplicated code (Hans Zhang)
+
+  - Add required PCIE_RESET_CONFIG_WAIT_MS after waiting for Link up on
+    Ports that support > 5.0 GT/s.  Slower Ports still rely on the
+    not-quite-correct PCIE_LINK_WAIT_SLEEP_MS 90ms default delay while
+    waiting for the Link (Niklas Cassel)
+
+----------------------------------------------------------------
+Akshay Jindal (1):
+      PCI/AER: Add message when AER_MAX_MULTI_ERR_DEVICES limit is hit
+
+Bartosz Golaszewski (1):
+      PCI/pwrctrl: Fix the kerneldoc tag for private fields
+
+Bjorn Helgaas (29):
+      PCI: Fix typos
+      Merge branch 'pci/aer'
+      Merge branch 'pci/aspm'
+      Merge branch 'pci/boot-display'
+      Merge branch 'pci/enumeration'
+      Merge branch 'pci/hotplug'
+      Merge branch 'pci/iommu'
+      Merge branch 'pci/pwrctrl'
+      Merge branch 'pci/resources'
+      Merge branch 'pci/dt-bindings'
+      Merge branch 'pci/capability-search'
+      Merge branch 'pci/endpoint/core'
+      Merge branch 'pci/endpoint/doorbell'
+      Merge branch 'pci/endpoint/epf-vntb'
+      Merge branch 'pci/controller/msi-parent'
+      Merge branch 'pci/controller/linkup-fix'
+      Merge branch 'pci/controller/brcmstb'
+      Merge branch 'pci/controller/cadence'
+      Merge branch 'pci/controller/dwc'
+      Merge branch 'pci/controller/dw-rockchip'
+      Merge branch 'pci/controller/imx6'
+      Merge branch 'pci/controller/mvebu'
+      Merge branch 'pci/controller/qcom'
+      Merge branch 'pci/controller/rockchip'
+      Merge branch 'pci/controller/rockchip-host'
+      Merge branch 'pci/controller/sophgo'
+      Merge branch 'pci/controller/vmd'
+      Merge branch 'pci/controller/xgene'
+      Merge branch 'pci/misc'
+
+Damien Le Moal (2):
+      PCI: endpoint: Fix configfs group list head handling
+      PCI: endpoint: Fix configfs group removal on driver teardown
+
+Florian Fainelli (2):
+      MAINTAINERS: Drop Nicolas from maintaining pcie-brcmstb
+      PCI: brcmstb: Replace open coded value with PCIE_T_RRS_READY_MS
+
+Frank Li (8):
+      PCI: imx6: Add helper function imx_pcie_add_lut_by_rid()
+      PCI: imx6: Add LUT configuration for MSI/IOMMU in Endpoint mode
+      PCI: endpoint: Add RC-to-EP doorbell support using platform MSI controller
+      PCI: endpoint: pci-ep-msi: Add checks for MSI parent and mutability
+      PCI: endpoint: Add pci_epf_align_inbound_addr() helper for inbound address alignment
+      PCI: endpoint: pci-epf-test: Add doorbell test support
+      misc: pci_endpoint_test: Add doorbell test case
+      selftests: pci_endpoint: Add doorbell test case
+
+George D Sworo (1):
+      PCI: vmd: Add VMD Device ID Support for Panther Lake (PTL)-H/P/U
+
+Geraldo Nascimento (2):
+      PCI: rockchip: Use standard PCIe definitions
+      PCI: rockchip: Set Target Link Speed to 5.0 GT/s before retraining
+
+Guilherme Giacomo Simoes (1):
+      PCI: hotplug: Remove TODO about unused .get_power(), .hardware_test()
+
+Hans Zhang (17):
+      PCI: rockchip-host: Fix "Unexpected Completion" log message
+      PCI: rockchip-host: Correct non-fatal error log message
+      PCI: rockchip-host: Remove unused header includes
+      dt-bindings: PCI: pci-ep: Extend max-link-speed to PCIe Gen5/Gen6
+      PCI/ASPM: Use boolean type for aspm_disabled and aspm_force
+      PCI/ASPM: Consolidate variable declaration and initialization
+      PCI/AER: Use bool for AER disable state tracking
+      PCI: cadence: Replace private message routing enums with PCI core definitions
+      PCI: rockchip: Remove redundant PCIe message routing definitions
+      PCI: dwc: Simplify the return value of PTM debugfs functions returning bool
+      PCI: Add pci_bus_read_config() to do reads of any size
+      PCI: Clean up __pci_find_next_cap_ttl()
+      PCI: Refactor capability search into PCI_FIND_NEXT_CAP()
+      PCI: Refactor extended capability search into PCI_FIND_NEXT_EXT_CAP()
+      PCI: dwc: Use PCI core APIs to find capabilities
+      PCI: cadence: Use PCI core APIs to find capabilities
+      PCI: cadence: Use cdns_pcie_find_*capability() to avoid hardcoding offsets
+
+Huacai Chen (1):
+      PCI: Extend isolated function probing to LoongArch
+
+Inochi Amaoto (2):
+      dt-bindings: pci: Add Sophgo SG2044 PCIe host
+      PCI: dwc: Add Sophgo SG2044 PCIe controller driver in Root Complex mode
+
+Jerome Brunet (3):
+      PCI: endpoint: pci-epf-vntb: Return -ENOENT if pci_epc_get_next_free_bar() fails
+      PCI: endpoint: pci-epf-vntb: Align MW naming with config names
+      PCI: endpoint: pci-epf-vntb: Allow BAR assignment via configfs
+
+Jim Quinlan (2):
+      dt-bindings: PCI: brcm,stb-pcie: Add num-lanes property
+      PCI: brcmstb: Set MLW based on "num-lanes" DT property if present
+
+Jiri Slaby (SUSE) (1):
+      PCI: controller: Use dev_fwnode() instead of of_fwnode_handle()
+
+Jiwei Sun (2):
+      PCI: Fix link speed calculation on retrain failure
+      PCI: Adjust the position of reading the Link Control 2 register
+
+Konrad Dybcio (2):
+      dt-bindings: PCI: qcom,pcie-sc8180x: Drop unrelated clocks from PCIe hosts
+      dt-bindings: PCI: qcom,pcie-sm8150: Drop unrelated clocks from PCIe hosts
+
+Krishna Chaitanya Chundru (2):
+      dt-bindings: PCI: qcom: Move PHY & reset GPIO to Root Port node
+      PCI: qcom: Add support for parsing the new Root Port binding
+
+Lukas Wunner (5):
+      PCI: Allow built-in drivers to use async initial probing
+      PCI/ACPI: Fix runtime PM ref imbalance on Hot-Plug Capable ports
+      PCI/portdrv: Use is_pciehp instead of is_hotplug_bridge
+      PCI: pciehp: Use is_pciehp instead of is_hotplug_bridge
+      PCI: Move is_pciehp check out of pciehp_is_native()
+
+Manivannan Sadhasivam (2):
+      PCI: dwc: Make dw_pcie_ptm_ops static
+      PCI: endpoint: pci-epf-vntb: Fix the incorrect usage of __iomem attribute
+
+Marc Zyngier (13):
+      genirq: Teach handle_simple_irq() to resend an in-progress interrupt
+      PCI: xgene: Defer probing if the MSI widget driver hasn't probed yet
+      PCI: xgene: Drop useless conditional compilation
+      PCI: xgene: Drop XGENE_PCIE_IP_VER_UNKN
+      PCI: xgene-msi: Make per-CPU interrupt setup robust
+      PCI: xgene-msi: Drop superfluous fields from xgene_msi structure
+      PCI: xgene-msi: Use device-managed memory allocations
+      PCI: xgene-msi: Get rid of intermediate tracking structure
+      PCI: xgene-msi: Sanitise MSI allocation and affinity setting
+      PCI: xgene-msi: Resend an MSI racing with itself on a different CPU
+      PCI: xgene-msi: Probe as a standard platform driver
+      PCI: xgene-msi: Restructure handler setup/teardown
+      cpu/hotplug: Remove unused cpuhp_state CPUHP_PCI_XGENE_DEAD
+
+Mario Limonciello (5):
+      PCI: Add pci_is_display() to check if device is a display controller
+      vfio/pci: Use pci_is_display()
+      vga_switcheroo: Use pci_is_display()
+      iommu/vt-d: Use pci_is_display()
+      ALSA: hda: Use pci_is_display()
+
+Mayank Rana (4):
+      PCI: dwc: Export DWC MSI controller related APIs
+      PCI: host-generic: Rename and export gen_pci_init() for PCIe controller drivers
+      dt-bindings: PCI: qcom,pcie-sa8255p: Document ECAM compliant PCIe root complex
+      PCI: qcom: Add support for Qualcomm SA8255p based PCIe Root Complex
+
+Michał Winiarski (5):
+      PCI/IOV: Restore VF resizable BAR state after reset
+      PCI/IOV: Add pci_resource_num_to_vf_bar() to convert VF BAR number to/from IOV resource
+      PCI/IOV: Allow IOV resources to be resized in pci_resize_resource()
+      PCI/IOV: Check that VF BAR fits within the reservation
+      PCI/IOV: Allow drivers to control VF BAR size
+
+Nam Cao (15):
+      PCI: dwc: Switch to msi_create_parent_irq_domain()
+      PCI: mobiveil: Switch to msi_create_parent_irq_domain()
+      PCI: aardvark: Switch to msi_create_parent_irq_domain()
+      PCI: altera-msi: Switch to msi_create_parent_irq_domain()
+      PCI: brcmstb: Switch to msi_create_parent_irq_domain()
+      PCI: iproc: Switch to msi_create_parent_irq_domain()
+      PCI: mediatek-gen3: Switch to msi_create_parent_irq_domain()
+      PCI: mediatek: Switch to msi_create_parent_irq_domain()
+      PCI: rcar-host: Switch to msi_create_parent_irq_domain()
+      PCI: xilinx-xdma: Switch to msi_create_parent_irq_domain()
+      PCI: xilinx-nwl: Switch to msi_create_parent_irq_domain()
+      PCI: xilinx: Switch to msi_create_parent_irq_domain()
+      PCI: plda: Switch to msi_create_parent_irq_domain()
+      PCI: vmd: Convert to lock guards
+      PCI: vmd: Switch to msi_create_parent_irq_domain()
+
+Niklas Cassel (6):
+      PCI: Rename PCIE_RESET_CONFIG_DEVICE_WAIT_MS to PCIE_RESET_CONFIG_WAIT_MS
+      PCI: rockchip-host: Use macro PCIE_RESET_CONFIG_WAIT_MS
+      PCI: dw-rockchip: Wait PCIE_RESET_CONFIG_WAIT_MS after link-up IRQ
+      PCI: qcom: Wait PCIE_RESET_CONFIG_WAIT_MS after link-up IRQ
+      PCI: dwc: Ensure that dw_pcie_wait_for_link() waits 100 ms after link up
+      PCI: Move link up wait time and max retries macros to pci.h
+
+Richard Zhu (4):
+      PCI: imx6: Add IMX8MQ_EP third 64-bit BAR in epc_features
+      PCI: imx6: Add IMX8MM_EP and IMX8MP_EP fixed 256-byte BAR 4 in epc_features
+      PCI: imx6: Remove apps_reset toggling from imx_pcie_{assert/deassert}_core_reset
+      PCI: imx6: Delay link start until configfs 'start' written
+
+Rob Herring (Arm) (6):
+      dt-bindings: pci: Convert st,spear1340-pcie to DT schema
+      dt-bindings: PCI: Convert axis,artpec6-pcie to DT schema
+      dt-bindings: PCI: Convert apm,xgene-pcie to DT schema
+      dt-bindings: PCI: Convert marvell,armada-3700-pcie to DT schema
+      dt-bindings: PCI: Convert amazon,al-alpine-v[23]-pcie to DT schema
+      dt-bindings: PCI: Remove 83xx-512x-pci.txt
+
+Robin Murphy (1):
+      PCI: Fix driver_managed_dma check
+
+Salah Triki (1):
+      PCI: mvebu: Use devm_add_action_or_reset() instead of devm_add_action()
+
+Sean Christopherson (1):
+      PCI: Support Immediate Readiness on devices without PM capabilities
+
+Wilfred Mallawa (1):
+      PCI: dw-rockchip: Delay link training after hot reset in EP mode
+
+Ziyue Zhang (3):
+      dt-bindings: PCI: qcom,pcie-sm8150: Document QCS615
+      dt-bindings: PCI: qcom,pcie-sa8775p: Document QCS8300
+      dt-bindings: PCI: qcom,pcie-sa8775p: Document 'link_down' reset
+
+ Documentation/PCI/endpoint/pci-test-howto.rst      |  15 +
+ .../devicetree/bindings/pci/83xx-512x-pci.txt      |  39 --
+ .../devicetree/bindings/pci/aardvark-pci.txt       |  59 ---
+ .../bindings/pci/amazon,al-alpine-v3-pcie.yaml     |  71 ++++
+ .../devicetree/bindings/pci/apm,xgene-pcie.yaml    |  84 ++++
+ .../devicetree/bindings/pci/axis,artpec6-pcie.txt  |  50 ---
+ .../devicetree/bindings/pci/axis,artpec6-pcie.yaml | 118 ++++++
+ .../devicetree/bindings/pci/brcm,stb-pcie.yaml     |   4 +
+ .../bindings/pci/marvell,armada-3700-pcie.yaml     |  99 +++++
+ Documentation/devicetree/bindings/pci/pci-ep.yaml  |   2 +-
+ Documentation/devicetree/bindings/pci/pcie-al.txt  |  46 ---
+ .../devicetree/bindings/pci/qcom,pcie-common.yaml  |  32 +-
+ .../devicetree/bindings/pci/qcom,pcie-sa8255p.yaml | 122 ++++++
+ .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml |  18 +-
+ .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  |  16 +-
+ .../devicetree/bindings/pci/qcom,pcie-sc8180x.yaml |  14 +-
+ .../devicetree/bindings/pci/qcom,pcie-sm8150.yaml  |  21 +-
+ .../devicetree/bindings/pci/snps,dw-pcie.yaml      |   2 +-
+ .../bindings/pci/sophgo,sg2044-pcie.yaml           | 122 ++++++
+ .../devicetree/bindings/pci/spear13xx-pcie.txt     |  14 -
+ .../devicetree/bindings/pci/st,spear1340-pcie.yaml |  45 +++
+ .../devicetree/bindings/pci/xgene-pci.txt          |  50 ---
+ MAINTAINERS                                        |   7 +-
+ drivers/gpu/vga/vga_switcheroo.c                   |   2 +-
+ drivers/iommu/intel/iommu.c                        |   2 +-
+ drivers/misc/pci_endpoint_test.c                   |  83 ++++
+ drivers/pci/access.c                               |  15 +
+ drivers/pci/bus.c                                  |   5 +-
+ drivers/pci/controller/Kconfig                     |  11 +
+ drivers/pci/controller/cadence/pcie-cadence-ep.c   |  40 +-
+ drivers/pci/controller/cadence/pcie-cadence.c      |  30 ++
+ drivers/pci/controller/cadence/pcie-cadence.h      |  38 +-
+ drivers/pci/controller/dwc/Kconfig                 |  12 +
+ drivers/pci/controller/dwc/Makefile                |   1 +
+ drivers/pci/controller/dwc/pci-imx6.c              |  40 +-
+ .../pci/controller/dwc/pcie-designware-debugfs.c   |  16 +-
+ drivers/pci/controller/dwc/pcie-designware-host.c  | 103 ++---
+ drivers/pci/controller/dwc/pcie-designware.c       |  97 ++---
+ drivers/pci/controller/dwc/pcie-designware.h       |  19 +-
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c      |  16 +-
+ drivers/pci/controller/dwc/pcie-qcom.c             | 327 ++++++++++++++--
+ drivers/pci/controller/dwc/pcie-sophgo.c           | 257 +++++++++++++
+ drivers/pci/controller/mobiveil/Kconfig            |   1 +
+ .../pci/controller/mobiveil/pcie-mobiveil-host.c   |  48 +--
+ drivers/pci/controller/mobiveil/pcie-mobiveil.h    |   1 -
+ drivers/pci/controller/pci-aardvark.c              |  57 ++-
+ drivers/pci/controller/pci-host-common.c           |   5 +-
+ drivers/pci/controller/pci-host-common.h           |   2 +
+ drivers/pci/controller/pci-mvebu.c                 |   6 +-
+ drivers/pci/controller/pci-xgene-msi.c             | 426 ++++++++-------------
+ drivers/pci/controller/pci-xgene.c                 |  33 +-
+ drivers/pci/controller/pcie-altera-msi.c           |  43 +--
+ drivers/pci/controller/pcie-altera.c               |   3 +-
+ drivers/pci/controller/pcie-brcmstb.c              |  80 ++--
+ drivers/pci/controller/pcie-iproc-msi.c            |  44 +--
+ drivers/pci/controller/pcie-mediatek-gen3.c        |  64 ++--
+ drivers/pci/controller/pcie-mediatek.c             |  48 ++-
+ drivers/pci/controller/pcie-rcar-host.c            |  68 ++--
+ drivers/pci/controller/pcie-rockchip-ep.c          |   4 +-
+ drivers/pci/controller/pcie-rockchip-host.c        |  64 ++--
+ drivers/pci/controller/pcie-rockchip.h             |  26 +-
+ drivers/pci/controller/pcie-xilinx-dma-pl.c        |  47 +--
+ drivers/pci/controller/pcie-xilinx-nwl.c           |  44 +--
+ drivers/pci/controller/pcie-xilinx.c               |  54 +--
+ drivers/pci/controller/plda/Kconfig                |   1 +
+ drivers/pci/controller/plda/pcie-plda-host.c       |  43 +--
+ drivers/pci/controller/plda/pcie-plda.h            |   1 -
+ drivers/pci/controller/plda/pcie-starfive.c        |   2 +-
+ drivers/pci/controller/vmd.c                       | 249 ++++++------
+ drivers/pci/endpoint/Kconfig                       |   8 +
+ drivers/pci/endpoint/Makefile                      |   1 +
+ drivers/pci/endpoint/functions/pci-epf-test.c      | 130 +++++++
+ drivers/pci/endpoint/functions/pci-epf-vntb.c      | 144 ++++++-
+ drivers/pci/endpoint/pci-ep-cfs.c                  |   1 +
+ drivers/pci/endpoint/pci-ep-msi.c                  | 100 +++++
+ drivers/pci/endpoint/pci-epf-core.c                |  40 +-
+ drivers/pci/hotplug/TODO                           |   4 -
+ drivers/pci/hotplug/pciehp_hpc.c                   |   2 +-
+ drivers/pci/iov.c                                  | 153 +++++++-
+ drivers/pci/msi/msi.c                              |   2 +-
+ drivers/pci/pci-acpi.c                             |   7 +-
+ drivers/pci/pci-driver.c                           |   6 +-
+ drivers/pci/pci.c                                  | 106 ++---
+ drivers/pci/pci.h                                  | 171 ++++++++-
+ drivers/pci/pcie/aer.c                             |   7 +-
+ drivers/pci/pcie/aspm.c                            |  11 +-
+ drivers/pci/pcie/portdrv.c                         |   2 +-
+ drivers/pci/pcie/ptm.c                             |   2 +-
+ drivers/pci/probe.c                                |  12 +-
+ drivers/pci/quirks.c                               |   6 +-
+ drivers/pci/setup-bus.c                            |   3 +-
+ drivers/pci/setup-res.c                            |  35 +-
+ drivers/vfio/pci/vfio_pci_igd.c                    |   3 +-
+ include/linux/cpuhotplug.h                         |   1 -
+ include/linux/hypervisor.h                         |   3 +
+ include/linux/pci-ep-msi.h                         |  28 ++
+ include/linux/pci-epf.h                            |  18 +
+ include/linux/pci-pwrctrl.h                        |   2 +-
+ include/linux/pci.h                                |  27 ++
+ include/linux/pci_hotplug.h                        |   3 +-
+ include/uapi/linux/pci_regs.h                      |  12 +
+ include/uapi/linux/pcitest.h                       |   1 +
+ kernel/irq/chip.c                                  |   8 +-
+ sound/hda/hdac_i915.c                              |   2 +-
+ sound/pci/hda/hda_intel.c                          |   4 +-
+ .../selftests/pci_endpoint/pci_endpoint_test.c     |  28 ++
+ 106 files changed, 3192 insertions(+), 1529 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pci/83xx-512x-pci.txt
+ delete mode 100644 Documentation/devicetree/bindings/pci/aardvark-pci.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/amazon,al-alpine-v3-pcie.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/apm,xgene-pcie.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/axis,artpec6-pcie.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/marvell,armada-3700-pcie.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/pcie-al.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
+ create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/spear13xx-pcie.txt
+ create mode 100644 Documentation/devicetree/bindings/pci/st,spear1340-pcie.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pci/xgene-pci.txt
+ create mode 100644 drivers/pci/controller/dwc/pcie-sophgo.c
+ create mode 100644 drivers/pci/endpoint/pci-ep-msi.c
+ create mode 100644 include/linux/pci-ep-msi.h
 
