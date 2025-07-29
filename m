@@ -1,456 +1,108 @@
-Return-Path: <linux-kernel+bounces-749741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DE6B15259
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:48:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81297B1525B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E8BF17CFC3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:48:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B64613A2B34
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2229298CA5;
-	Tue, 29 Jul 2025 17:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4385B291C26;
+	Tue, 29 Jul 2025 17:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ekzyi19Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="WaeYMZnS"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35150204863
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 604EF1A2390
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753811319; cv=none; b=dTPNXnckv0Dcr0tLL9iRLDRuCa/GzubLIduixXGLu+dkMwDWGo5Q+/WrcLev0UlpnwrDt3xNuSFZPzsqj+ISugyZ7h+f9vzU0W+pJL8aa5+B4GkDN3OgNMi61OBvNCKNxW2gJFYzBnGi1Y2ShpZ85Yq2u3V6UwmglUnK81uwx70=
+	t=1753811388; cv=none; b=sPWitd5PEKsGCNO/P7O0cJmZyDknsoWSK+pGiaLwRaH9K30Yx4eirmJAIzXreLvYXmOqhBKSBfrUlv5f3KHGUt00rqW+7a7w0HaLXJbqcYMmnIbUCasJ1Hr68l4s6GrAr0ZyA/wuDyiyBCe0hxMZpyLqkwe7qAs6doAEhvz8unM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753811319; c=relaxed/simple;
-	bh=XSTavVUAEGKHomtUjYbWyQBl9DK2oYllmOWqXHwWw1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YS5hCZO4gehYxRTpLnaSsT7+7mPcjCRuyWiAqnY869gGNJJj2gGQWVWduqtsFNucYnRs4431+ApzvffsmlhLhZeAzeWGr4QvnKbAIJJYHar6PRL6S4c5Mlmkv30fZlVI6MqJzC5s6eMA38UrXmuwzl5QTLBPb6acw00GUQHYMtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ekzyi19Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753811315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GdHWjF09E8lNPFgfN+AMA/jUedy7gB/f42S7Lv2O8PQ=;
-	b=ekzyi19QkPVMkvfiUV5qU1V/ss1bATTcLyrPnxrp2/W4KaP8Gy1PDIDsplvVe3O11L20gu
-	E93hEtgZfZg9VogGln5JGEB37Ptrw+21/tsZ08QnLv7lnJQorLaNdDAND2gbCQlcXk7Vpn
-	2yOo1srnwYILc3hZOUQP+75Pg6WtHRA=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-683-QEAJPtHmN1-j2prtsvVgUA-1; Tue, 29 Jul 2025 13:48:33 -0400
-X-MC-Unique: QEAJPtHmN1-j2prtsvVgUA-1
-X-Mimecast-MFC-AGG-ID: QEAJPtHmN1-j2prtsvVgUA_1753811313
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-45611579300so40813045e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:48:33 -0700 (PDT)
+	s=arc-20240116; t=1753811388; c=relaxed/simple;
+	bh=mBhvRQ0nG5MZFbi8opUSecvTUvSr+F+OxUXM3WaSTw0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rxUvJ3cpY/aTsiWz9JOe+kY/HGXGROp25taYyqVbm/zFMvPgItoGn48Q6ceJW3Nxm5NP7aDNdzVzqpnUMJmO21+SwIWw+S6V68vg8wSBvp41yg1QEmCDbrU2wqDHFWtsE7SSRaM2e51zsNYUOMVxgI6SoCG+IyMwkJZyiwi7N70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=WaeYMZnS; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-747e41d5469so6417649b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brighamcampbell.com; s=google; t=1753811386; x=1754416186; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wgacyD7+JSAylz4eDUPZatAHSCWLxzjQWqg339FTf5g=;
+        b=WaeYMZnS6EHNp2/pSSzD6ELR8QYo1NJmk2aGOGfrHeT2Xdg5DPKMq8mA9UHwWpP4lD
+         DxHzLIc80EEE+yUiVbVHDccpMeAUPSnfyAVdlct4Ds+egeJZk2L/3kT9IoRAxtyASb1S
+         O/mWTBGrwzbEfchgMWGUdlElk/sJWN/GI+fCi+T2xlyC130cPdQGD7L/pgKKAvdsigf8
+         WS70oCCCkxt0q+eC4EUYBLgyZxddIoauqJjkdNA5RV30dmAg6Nw9ErIVQwG2T2ctm2YN
+         TQ+3qYxwQAuGLQ05Yuqe7U3LcTWvIFfQ1neIQS9afqJ6cyuXQ5D3bnYMv+ujyXMFze5w
+         4A0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753811312; x=1754416112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GdHWjF09E8lNPFgfN+AMA/jUedy7gB/f42S7Lv2O8PQ=;
-        b=HIyhtOwVSCL73vRytFUkE/v8uiusXh/Whr2riFVdB4w0FinHDeqm2pitKIOlXv7iS8
-         i6OXZlcn2/O/ikBLipiWop+VRPK3iR+8ZMhWLb7d68wexfhl28s3KfF5cqHUX9htzUih
-         PGIGeij8niGrmnSAQZMix+iRTZ74ZdvtpohAixIckBMD8tE/9I7x4e+CEJ6p6ZHbubFJ
-         8NhK50Jl9qH/0gg0cFxbesoDdrcgEM9dfmTP37Tt1iRxvSzeN+ZRDSYUGSWpDOLSC1zk
-         tXW3ZcKt0fUdvazxAT/8bxYqPmn9aiDikylNQnXatQiD2x8crqlZ4NErT0Jr4rdR2lCE
-         NUEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7/zo6OQ4/UIH/mYtumKCvSYcCVhwZErYixpQe8rCtE205fw96jEgv80l56I1ZATyTksLrWADzj2sSsJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfE8Pat4J1QcaEtHFujLG+bvWMwQ6qpCdXIdpKgxEGV5PTXhbO
-	aMXoYj4dOfRPahC/yioWTMiSP1cvVkmynm+gwjjsgKAWwHwsKIRL+LE8C2sLX8Rar1e2A2eUgRm
-	12dO6Z5Kw44cC1kBcdj2kIPeBiXnPC2k3XytUmjVcofecEu/daGqStN1Wnf50+YhcSiavwQHjE1
-	PluO/lCDuo5/rl5RTvEQY16aP3MAMtgMw00cjAe62hn4WLw0OR
-X-Gm-Gg: ASbGncvXT4qKKIiZAGVwQVgrlDHIQcGyJOK87tIm9ssPIi5KEiSML4wF6bXcCt1GIPM
-	SPXIo4kXjRSvBJavxJRNfVvBJDCsrdSh5jOVo8LRFUjw62EozQ2BkLCxKnwBLL9qdSG7QgpMgZE
-	7U8cj0ZaKUP62E7Kff0bsGeg==
-X-Received: by 2002:a05:600c:46d0:b0:456:28d4:ef1 with SMTP id 5b1f17b1804b1-45892bdff7bmr5738035e9.29.1753811312039;
-        Tue, 29 Jul 2025 10:48:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE/dbI6PC8okdFaCniCC9qiuNe+yrTulSjAAYEBGsbcVFrkrsSbuNLgb6g6LFMth/jnctvMCU0jFHttlBO3HoE=
-X-Received: by 2002:a05:600c:46d0:b0:456:28d4:ef1 with SMTP id
- 5b1f17b1804b1-45892bdff7bmr5737755e9.29.1753811311498; Tue, 29 Jul 2025
- 10:48:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753811386; x=1754416186;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=wgacyD7+JSAylz4eDUPZatAHSCWLxzjQWqg339FTf5g=;
+        b=ZdgZUPJVpjjIwouEIVhO5FOqF7yJ8guqioWiv0iFxDAJOOYs7dK3h6f+D11exwexMd
+         8Dp7yD54hoPUZgoKOsUkk5OHyxm02+KdcX11QJsjHzwUoMbGY2KD5UVVZ8FEwzlVuO4b
+         lWIctMvL0Z0PJJqPRGSbo2FkbcVU/Hh2oUvIsB6Ohzp3V1Gb0eTsplmc5d3d8Ud/4KKd
+         qs+A7FWQHBXprIOPTwtrQikxG3NXsCSpYOSrRewOBCHN593WGQnGf9BGIwBckzO27803
+         u920dSAhweInyKmq9iREK1ozUFLtDv3fyyoKIwPz2Ywo3uBjTSSDv61zh1Vs48UjK7hr
+         COsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXi1BtYkDS6XaRNfXxbItdK4VXMYnLnfsfdRm92SH4Jzw1BR/RPf3MtodC6CL1X5uo1j7E/dunMs8qfb+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7iq8KQXcwiwgZuAK2uFhV0h2x0h5hmNeC5oRC1iiOp51UO9Y1
+	NKpP63IKRi5En2ArnSBJXDlLAxjMZe1N5FpL8R9fdQ81VqiKWP8lwQRr4e4CQKcqq0g=
+X-Gm-Gg: ASbGncsLP7OLJ0sXUFFM1IkccNGOQYNfs3glfA68XP0dWfJiGGcZe5wifsN7qgpNHBb
+	qo/VAQRskZVJ8Gl7S60PrCQu7aqPzfVCSnVEMN7c+jpeao6OIz8wOmZ1Av0W6f6ywr+6XnfbmRc
+	bFb2kL6ymT947Wzc4GFTHih/w7m5nfy+5BKCm8Cn5YIsyNl40fwpvjZaqyHsB34ZECCeIcdNwsQ
+	VTFat+LkhDgzGyMhShgvSto9B+pplssBAaWz567D1UJXLDdss/40kDnLE1PFa3saxxXsOIluf3Y
+	Nm8vb4/gHPkGLKCSNUg3r50XY19TuF6smk0liEXBS7wGgggMiBV0V7TFp3GhhaWf95lFtxXWyvb
+	/UQekb9J6/7xbB11pigE=
+X-Google-Smtp-Source: AGHT+IE9oBm8nKprL5hGjNglF7y2WycqTKbCfeajSJ5D3OE2VH/J46MKc301lqcU83YSu4cRzCgpQA==
+X-Received: by 2002:a05:6a00:1991:b0:769:999c:eec0 with SMTP id d2e1a72fcca58-76ab1020b1dmr787520b3a.7.1753811386500;
+        Tue, 29 Jul 2025 10:49:46 -0700 (PDT)
+Received: from localhost ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f6af886sm7347239a12.52.2025.07.29.10.49.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 10:49:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <aIe-v1QP-VvaOONC@linux.dev> <CABgObfZZxW2seq+B9OdSPG71-SywbTkmUEw1xKONX73QLjDTjQ@mail.gmail.com>
- <aIkCQyKd7Ua0mNHX@linux.dev>
-In-Reply-To: <aIkCQyKd7Ua0mNHX@linux.dev>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Tue, 29 Jul 2025 19:48:19 +0200
-X-Gm-Features: Ac12FXyj7OyerCBG4UKRMB4zJEZlvRDtfkNkWqxoNZfdiu8Cf4kY2Ris7HeAw_4
-Message-ID: <CABgObfbu6=BrqkPL5xgXxTJ916_-_U-6ybQP+DKMOzZ0ZEXYvw@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM/arm64 changes for 6.17, round #1
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, kvm@vger.kernel.org, 
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 29 Jul 2025 11:49:44 -0600
+Message-Id: <DBOQ8Z69EQ52.36Q5O3T140OL2@brighamcampbell.com>
+Cc: <dianders@chromium.org>, <skhan@linuxfoundation.org>,
+ <linux-kernel-mentees@lists.linux.dev>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/3] drm/panel: novatek-nt35560: Fix bug and clean up
+From: "Brigham Campbell" <me@brighamcampbell.com>
+To: "Brigham Campbell" <me@brighamcampbell.com>,
+ <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+ <linus.walleij@linaro.org>, <neil.armstrong@linaro.org>,
+ <jessica.zhang@oss.qualcomm.com>, <sam@ravnborg.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250729054435.1209156-1-me@brighamcampbell.com>
+In-Reply-To: <20250729054435.1209156-1-me@brighamcampbell.com>
 
-On Tue, Jul 29, 2025 at 7:18=E2=80=AFPM Oliver Upton <oliver.upton@linux.de=
-v> wrote:
->
-> On Tue, Jul 29, 2025 at 07:12:07PM +0200, Paolo Bonzini wrote:
-> > On Mon, Jul 28, 2025 at 8:17=E2=80=AFPM Oliver Upton <oliver.upton@linu=
-x.dev> wrote:
-> > >
-> > > Hi Paolo,
-> > >
-> > > Here's the first round of changes for 6.17.
-> > >
-> > > A very unusual inclusion that you should know about is the GICv5 host=
- driver.
-> > > Thomas was OK with the driver going through the kvmarm tree [*] as th=
-ere aren't
-> > > any conflicts and Sascha's series adds some KVM support on top.
-> > >
-> > > Otherwise, we've got the usual mix (details in the tag) with some red=
-uction
-> > > of the NV v. non-NV feature gap.
-> >
-> > Pulled, thanks.
->
-> Thanks!
->
-> Can you apply this patch on top [*]? Mistake in documentation markup
-> that broke docs builds in -next.
+Oops! My apologies for forgetting to add the following changelog to the
+cover letter.
 
-No problem, done.
-
-Paolo
-
-> Otherwise I can send you another pull if you prefer.
->
-> [*]: https://lore.kernel.org/kvmarm/20250729152242.3232229-1-oliver.upton=
-@linux.dev/
->
-> Thanks,
-> Oliver
->
-> > > Please pull.
-> > >
-> > > Thanks,
-> > > Oliver
-> > >
-> > > [*]: https://lore.kernel.org/all/87y0slur4t.ffs@tglx/
-> > >
-> > > The following changes since commit 86731a2a651e58953fc949573895f2fa6d=
-456841:
-> > >
-> > >   Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
-> > >
-> > > are available in the Git repository at:
-> > >
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git/ =
-tags/kvmarm-6.17
-> > >
-> > > for you to fetch changes up to 18ec25dd0e97653cdb576bb1750c31acf2513e=
-a7:
-> > >
-> > >   KVM: arm64: selftests: Add FEAT_RAS EL2 registers to get-reg-list (=
-2025-07-28 08:28:05 -0700)
-> > >
-> > > ----------------------------------------------------------------
-> > > KVM/arm64 changes for 6.17, round #1
-> > >
-> > >  - Host driver for GICv5, the next generation interrupt controller fo=
-r
-> > >    arm64, including support for interrupt routing, MSIs, interrupt
-> > >    translation and wired interrupts.
-> > >
-> > >  - Use FEAT_GCIE_LEGACY on GICv5 systems to virtualize GICv3 VMs on
-> > >    GICv5 hardware, leveraging the legacy VGIC interface.
-> > >
-> > >  - Userspace control of the 'nASSGIcap' GICv3 feature, allowing
-> > >    userspace to disable support for SGIs w/o an active state on hardw=
-are
-> > >    that previously advertised it unconditionally.
-> > >
-> > >  - Map supporting endpoints with cacheable memory attributes on syste=
-ms
-> > >    with FEAT_S2FWB and DIC where KVM no longer needs to perform cache
-> > >    maintenance on the address range.
-> > >
-> > >  - Nested support for FEAT_RAS and FEAT_DoubleFault2, allowing the gu=
-est
-> > >    hypervisor to inject external aborts into an L2 VM and take traps =
-of
-> > >    masked external aborts to the hypervisor.
-> > >
-> > >  - Convert more system register sanitization to the config-driven
-> > >    implementation.
-> > >
-> > >  - Fixes to the visibility of EL2 registers, namely making VGICv3 sys=
-tem
-> > >    registers accessible through the VGIC device instead of the ONE_RE=
-G
-> > >    vCPU ioctls.
-> > >
-> > >  - Various cleanups and minor fixes.
-> > >
-> > > ----------------------------------------------------------------
-> > > Ankit Agrawal (5):
-> > >       KVM: arm64: Rename the device variable to s2_force_noncacheable
-> > >       KVM: arm64: Assume non-PFNMAP/MIXEDMAP VMAs can be mapped cache=
-able
-> > >       KVM: arm64: Block cacheable PFNMAP mapping
-> > >       KVM: arm64: Allow cacheable stage 2 mapping using VMA flags
-> > >       KVM: arm64: Expose new KVM cap for cacheable PFNMAP
-> > >
-> > > David Woodhouse (1):
-> > >       KVM: arm64: vgic-its: Return -ENXIO to invalid KVM_DEV_ARM_VGIC=
-_GRP_CTRL attrs
-> > >
-> > > Kuninori Morimoto (2):
-> > >       arm64: kvm: sys_regs: use string choices helper
-> > >       arm64: kvm: trace_handle_exit: use string choices helper
-> > >
-> > > Lorenzo Pieralisi (30):
-> > >       dt-bindings: interrupt-controller: Add Arm GICv5
-> > >       arm64/sysreg: Add GCIE field to ID_AA64PFR2_EL1
-> > >       arm64/sysreg: Add ICC_PPI_PRIORITY<n>_EL1
-> > >       arm64/sysreg: Add ICC_ICSR_EL1
-> > >       arm64/sysreg: Add ICC_PPI_HMR<n>_EL1
-> > >       arm64/sysreg: Add ICC_PPI_ENABLER<n>_EL1
-> > >       arm64/sysreg: Add ICC_PPI_{C/S}ACTIVER<n>_EL1
-> > >       arm64/sysreg: Add ICC_PPI_{C/S}PENDR<n>_EL1
-> > >       arm64/sysreg: Add ICC_CR0_EL1
-> > >       arm64/sysreg: Add ICC_PCR_EL1
-> > >       arm64/sysreg: Add ICC_IDR0_EL1
-> > >       arm64/sysreg: Add ICH_HFGRTR_EL2
-> > >       arm64/sysreg: Add ICH_HFGWTR_EL2
-> > >       arm64/sysreg: Add ICH_HFGITR_EL2
-> > >       arm64: Disable GICv5 read/write/instruction traps
-> > >       arm64: cpucaps: Rename GICv3 CPU interface capability
-> > >       arm64: cpucaps: Add GICv5 CPU interface (GCIE) capability
-> > >       arm64: Add support for GICv5 GSB barriers
-> > >       irqchip/gic-v5: Add GICv5 PPI support
-> > >       irqchip/gic-v5: Add GICv5 IRS/SPI support
-> > >       irqchip/gic-v5: Add GICv5 LPI/IPI support
-> > >       irqchip/gic-v5: Enable GICv5 SMP booting
-> > >       of/irq: Add of_msi_xlate() helper function
-> > >       PCI/MSI: Add pci_msi_map_rid_ctlr_node() helper function
-> > >       irqchip/gic-v3: Rename GICv3 ITS MSI parent
-> > >       irqchip/msi-lib: Add IRQ_DOMAIN_FLAG_FWNODE_PARENT handling
-> > >       irqchip/gic-v5: Add GICv5 ITS support
-> > >       irqchip/gic-v5: Add GICv5 IWB support
-> > >       docs: arm64: gic-v5: Document booting requirements for GICv5
-> > >       arm64: Kconfig: Enable GICv5
-> > >
-> > > Marc Zyngier (28):
-> > >       arm64: smp: Support non-SGIs for IPIs
-> > >       KVM: arm64: Add helper to identify a nested context
-> > >       arm64: smp: Fix pNMI setup after GICv5 rework
-> > >       KVM: arm64: Make RVBAR_EL2 accesses UNDEF
-> > >       KVM: arm64: Don't advertise ICH_*_EL2 registers through GET_ONE=
-_REG
-> > >       KVM: arm64: Define constant value for ICC_SRE_EL2
-> > >       KVM: arm64: Define helper for ICH_VTR_EL2
-> > >       KVM: arm64: Let GICv3 save/restore honor visibility attribute
-> > >       KVM: arm64: Expose GICv3 EL2 registers via KVM_DEV_ARM_VGIC_GRP=
-_CPU_SYSREGS
-> > >       KVM: arm64: Condition FGT registers on feature availability
-> > >       KVM: arm64: Advertise FGT2 registers to userspace
-> > >       KVM: arm64: selftests: get-reg-list: Simplify feature dependenc=
-y
-> > >       KVM: arm64: selftests: get-reg-list: Add base EL2 registers
-> > >       KVM: arm64: Document registers exposed via KVM_DEV_ARM_VGIC_GRP=
-_CPU_SYSREGS
-> > >       arm64: sysreg: Add THE/ASID2 controls to TCR2_ELx
-> > >       KVM: arm64: Convert TCR2_EL2 to config-driven sanitisation
-> > >       KVM: arm64: Convert SCTLR_EL1 to config-driven sanitisation
-> > >       KVM: arm64: Convert MDCR_EL2 to config-driven sanitisation
-> > >       KVM: arm64: Tighten the definition of FEAT_PMUv3p9
-> > >       KVM: arm64: Check for SYSREGS_ON_CPU before accessing the CPU s=
-tate
-> > >       KVM: arm64: Filter out HCR_EL2 bits when running in hypervisor =
-context
-> > >       KVM: arm64: Make RAS registers UNDEF when RAS isn't advertised
-> > >       KVM: arm64: Remove the wi->{e0,}poe vs wr->{p,u}ov confusion
-> > >       KVM: arm64: Follow specification when implementing WXN
-> > >       KVM: arm64: vgic-v3: Fix ordering of ICH_HCR_EL2
-> > >       KVM: arm64: Clarify the check for reset callback in check_sysre=
-g_table()
-> > >       KVM: arm64: Enforce the sorting of the GICv3 system register ta=
-ble
-> > >       KVM: arm64: selftest: vgic-v3: Add basic GICv3 sysreg userspace=
- access test
-> > >
-> > > Oliver Upton (42):
-> > >       arm64: Detect FEAT_SCTLR2
-> > >       arm64: Detect FEAT_DoubleFault2
-> > >       KVM: arm64: Treat vCPU with pending SError as runnable
-> > >       KVM: arm64: nv: Respect exception routing rules for SEAs
-> > >       KVM: arm64: nv: Honor SError exception routing / masking
-> > >       KVM: arm64: nv: Add FEAT_RAS vSError sys regs to table
-> > >       KVM: arm64: nv: Use guest hypervisor's vSError state
-> > >       KVM: arm64: nv: Advertise support for FEAT_RAS
-> > >       KVM: arm64: nv: Describe trap behavior of SCTLR2_EL1
-> > >       KVM: arm64: Wire up SCTLR2_ELx sysreg descriptors
-> > >       KVM: arm64: Context switch SCTLR2_ELx when advertised to the gu=
-est
-> > >       KVM: arm64: Enable SCTLR2 when advertised to the guest
-> > >       KVM: arm64: Describe SCTLR2_ELx RESx masks
-> > >       KVM: arm64: Factor out helper for selecting exception target EL
-> > >       KVM: arm64: nv: Ensure Address size faults affect correct ESR
-> > >       KVM: arm64: Route SEAs to the SError vector when EASE is set
-> > >       KVM: arm64: nv: Take "masked" aborts to EL2 when HCRX_EL2.TMEA =
-is set
-> > >       KVM: arm64: nv: Honor SError routing effects of SCTLR2_ELx.NMEA
-> > >       KVM: arm64: nv: Enable vSErrors when HCRX_EL2.TMEA is set
-> > >       KVM: arm64: Advertise support for FEAT_SCTLR2
-> > >       KVM: arm64: Advertise support for FEAT_DoubleFault2
-> > >       KVM: arm64: Don't retire MMIO instruction w/ pending (emulated)=
- SError
-> > >       KVM: arm64: selftests: Add basic SError injection test
-> > >       KVM: arm64: selftests: Test SEAs are taken to SError vector whe=
-n EASE=3D1
-> > >       KVM: arm64: selftests: Add SCTLR2_EL1 to get-reg-list
-> > >       KVM: arm64: selftests: Catch up set_id_regs with the kernel
-> > >       KVM: arm64: Populate ESR_ELx.EC for emulated SError injection
-> > >       KVM: arm64: selftests: Test ESR propagation for vSError injecti=
-on
-> > >       KVM: arm64: Commit exceptions from KVM_SET_VCPU_EVENTS immediat=
-ely
-> > >       KVM: arm64: Disambiguate support for vSGIs v. vLPIs
-> > >       KVM: arm64: vgic-v3: Consolidate MAINT_IRQ handling
-> > >       KVM: arm64: vgic-v3: Allow access to GICD_IIDR prior to initial=
-ization
-> > >       Documentation: KVM: arm64: Describe VGICv3 registers writable p=
-re-init
-> > >       Merge branch 'kvm-arm64/cacheable-pfnmap' into kvmarm/next
-> > >       Merge branch 'kvm-arm64/doublefault2' into kvmarm/next
-> > >       Merge tag 'irqchip-gic-v5-host' into kvmarm/next
-> > >       Merge branch 'kvm-arm64/gcie-legacy' into kvmarm/next
-> > >       Merge branch 'kvm-arm64/misc' into kvmarm/next
-> > >       Merge branch 'kvm-arm64/config-masks' into kvmarm/next
-> > >       Merge branch 'kvm-arm64/el2-reg-visibility' into kvmarm/next
-> > >       Merge branch 'kvm-arm64/vgic-v4-ctl' into kvmarm/next
-> > >       KVM: arm64: selftests: Add FEAT_RAS EL2 registers to get-reg-li=
-st
-> > >
-> > > Raghavendra Rao Ananta (2):
-> > >       KVM: arm64: vgic-v3: Allow userspace to write GICD_TYPER2.nASSG=
-Icap
-> > >       KVM: arm64: selftests: Add test for nASSGIcap attribute
-> > >
-> > > Sascha Bischoff (5):
-> > >       irqchip/gic-v5: Skip deactivate for forwarded PPI interrupts
-> > >       irqchip/gic-v5: Populate struct gic_kvm_info
-> > >       arm64/sysreg: Add ICH_VCTLR_EL2
-> > >       KVM: arm64: gic-v5: Support GICv3 compat
-> > >       KVM: arm64: gic-v5: Probe for GICv5
-> > >
-> > >  Documentation/arch/arm64/booting.rst               |   41 +
-> > >  .../interrupt-controller/arm,gic-v5-iwb.yaml       |   78 ++
-> > >  .../bindings/interrupt-controller/arm,gic-v5.yaml  |  267 +++++
-> > >  Documentation/virt/kvm/api.rst                     |   13 +-
-> > >  Documentation/virt/kvm/devices/arm-vgic-v3.rst     |   80 +-
-> > >  MAINTAINERS                                        |   10 +
-> > >  arch/arm64/Kconfig                                 |    1 +
-> > >  arch/arm64/include/asm/barrier.h                   |    3 +
-> > >  arch/arm64/include/asm/el2_setup.h                 |   45 +
-> > >  arch/arm64/include/asm/kvm_emulate.h               |   51 +-
-> > >  arch/arm64/include/asm/kvm_host.h                  |   36 +-
-> > >  arch/arm64/include/asm/kvm_mmu.h                   |   18 +
-> > >  arch/arm64/include/asm/kvm_nested.h                |    2 +
-> > >  arch/arm64/include/asm/smp.h                       |   24 +-
-> > >  arch/arm64/include/asm/sysreg.h                    |   71 +-
-> > >  arch/arm64/include/asm/vncr_mapping.h              |    2 +
-> > >  arch/arm64/kernel/cpufeature.c                     |   26 +-
-> > >  arch/arm64/kernel/smp.c                            |  142 ++-
-> > >  arch/arm64/kvm/Makefile                            |    3 +-
-> > >  arch/arm64/kvm/arch_timer.c                        |    2 +-
-> > >  arch/arm64/kvm/arm.c                               |   16 +-
-> > >  arch/arm64/kvm/at.c                                |   80 +-
-> > >  arch/arm64/kvm/config.c                            |  255 +++-
-> > >  arch/arm64/kvm/emulate-nested.c                    |   49 +-
-> > >  arch/arm64/kvm/guest.c                             |   62 +-
-> > >  arch/arm64/kvm/handle_exit.c                       |   24 +-
-> > >  arch/arm64/kvm/hyp/exception.c                     |   16 +-
-> > >  arch/arm64/kvm/hyp/include/hyp/switch.h            |   53 +-
-> > >  arch/arm64/kvm/hyp/include/hyp/sysreg-sr.h         |   49 +-
-> > >  arch/arm64/kvm/hyp/vgic-v3-sr.c                    |   53 +-
-> > >  arch/arm64/kvm/hyp/vhe/switch.c                    |   14 +-
-> > >  arch/arm64/kvm/hyp/vhe/sysreg-sr.c                 |    6 +
-> > >  arch/arm64/kvm/inject_fault.c                      |  235 ++--
-> > >  arch/arm64/kvm/mmio.c                              |   12 +-
-> > >  arch/arm64/kvm/mmu.c                               |  105 +-
-> > >  arch/arm64/kvm/nested.c                            |  109 +-
-> > >  arch/arm64/kvm/sys_regs.c                          |  207 +++-
-> > >  arch/arm64/kvm/sys_regs.h                          |    2 +-
-> > >  arch/arm64/kvm/trace_handle_exit.h                 |    2 +-
-> > >  arch/arm64/kvm/vgic-sys-reg-v3.c                   |  127 +-
-> > >  arch/arm64/kvm/vgic/vgic-init.c                    |   30 +-
-> > >  arch/arm64/kvm/vgic/vgic-its.c                     |    3 +
-> > >  arch/arm64/kvm/vgic/vgic-kvm-device.c              |   70 +-
-> > >  arch/arm64/kvm/vgic/vgic-mmio-v3.c                 |   33 +-
-> > >  arch/arm64/kvm/vgic/vgic-v3-nested.c               |    2 +-
-> > >  arch/arm64/kvm/vgic/vgic-v4.c                      |    4 +-
-> > >  arch/arm64/kvm/vgic/vgic-v5.c                      |   52 +
-> > >  arch/arm64/kvm/vgic/vgic.c                         |    4 +-
-> > >  arch/arm64/kvm/vgic/vgic.h                         |   48 +
-> > >  arch/arm64/tools/cpucaps                           |    4 +-
-> > >  arch/arm64/tools/sysreg                            |  514 +++++++-
-> > >  drivers/irqchip/Kconfig                            |   12 +
-> > >  drivers/irqchip/Makefile                           |    5 +-
-> > >  drivers/irqchip/irq-gic-common.h                   |    2 -
-> > >  ...3-its-msi-parent.c =3D> irq-gic-its-msi-parent.c} |  168 ++-
-> > >  drivers/irqchip/irq-gic-its-msi-parent.h           |   12 +
-> > >  drivers/irqchip/irq-gic-v3-its.c                   |    1 +
-> > >  drivers/irqchip/irq-gic-v5-irs.c                   |  822 ++++++++++=
-+++
-> > >  drivers/irqchip/irq-gic-v5-its.c                   | 1228 ++++++++++=
-++++++++++
-> > >  drivers/irqchip/irq-gic-v5-iwb.c                   |  284 +++++
-> > >  drivers/irqchip/irq-gic-v5.c                       | 1137 ++++++++++=
-++++++++
-> > >  drivers/irqchip/irq-gic.c                          |    2 +-
-> > >  drivers/irqchip/irq-msi-lib.c                      |    5 +-
-> > >  drivers/of/irq.c                                   |   22 +-
-> > >  drivers/pci/msi/irqdomain.c                        |   20 +
-> > >  include/asm-generic/msi.h                          |    1 +
-> > >  include/kvm/arm_vgic.h                             |    9 +-
-> > >  include/linux/irqchip/arm-gic-v5.h                 |  394 +++++++
-> > >  include/linux/irqchip/arm-vgic-info.h              |    4 +
-> > >  include/linux/irqdomain.h                          |    3 +
-> > >  include/linux/msi.h                                |    1 +
-> > >  include/linux/of_irq.h                             |    5 +
-> > >  include/uapi/linux/kvm.h                           |    1 +
-> > >  tools/testing/selftests/kvm/Makefile.kvm           |    2 +-
-> > >  .../testing/selftests/kvm/arm64/external_aborts.c  |  330 ++++++
-> > >  tools/testing/selftests/kvm/arm64/get-reg-list.c   |  203 +++-
-> > >  tools/testing/selftests/kvm/arm64/mmio_abort.c     |  159 ---
-> > >  tools/testing/selftests/kvm/arm64/set_id_regs.c    |   14 +-
-> > >  tools/testing/selftests/kvm/arm64/vgic_init.c      |  259 ++++-
-> > >  .../selftests/kvm/include/arm64/processor.h        |   10 +
-> > >  80 files changed, 7589 insertions(+), 681 deletions(-)
-> > >  create mode 100644 Documentation/devicetree/bindings/interrupt-contr=
-oller/arm,gic-v5-iwb.yaml
-> > >  create mode 100644 Documentation/devicetree/bindings/interrupt-contr=
-oller/arm,gic-v5.yaml
-> > >  create mode 100644 arch/arm64/kvm/vgic/vgic-v5.c
-> > >  rename drivers/irqchip/{irq-gic-v3-its-msi-parent.c =3D> irq-gic-its=
--msi-parent.c} (59%)
-> > >  create mode 100644 drivers/irqchip/irq-gic-its-msi-parent.h
-> > >  create mode 100644 drivers/irqchip/irq-gic-v5-irs.c
-> > >  create mode 100644 drivers/irqchip/irq-gic-v5-its.c
-> > >  create mode 100644 drivers/irqchip/irq-gic-v5-iwb.c
-> > >  create mode 100644 drivers/irqchip/irq-gic-v5.c
-> > >  create mode 100644 include/linux/irqchip/arm-gic-v5.h
-> > >  create mode 100644 tools/testing/selftests/kvm/arm64/external_aborts=
-.c
-> > >  delete mode 100644 tools/testing/selftests/kvm/arm64/mmio_abort.c
-> > >
-> >
->
+Changes to v2:
+ - Separate bug fix into its own commit for backporting
+ - Add var_seq_multi() variants of MIPI write macros for sending
+   non-static MIPI messages.
+ - Minor formatting improvements.
 
 
