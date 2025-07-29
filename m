@@ -1,241 +1,120 @@
-Return-Path: <linux-kernel+bounces-749231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA30B14BB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:54:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99901B14BBB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F6F4E6CF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D911B3A5416
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE28287269;
-	Tue, 29 Jul 2025 09:54:10 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01012877F9;
+	Tue, 29 Jul 2025 09:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dxa/6kmW"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6032321D001
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2151DED5C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753782850; cv=none; b=Jy6qEelL1Le2zeZiikJrQT92qTG6x4Tltdb2q9Fo4oSgxzJCguJk8/Wa6zcFpZE5383rox+zwTI3KIYgDgLw9xP/Rux8QA0QZTE7nRWKHK0zJHQwoSo9Hi/NJTcaEdQYAA1Q3zGYUWAcFtdQ2Sii2c9Ng/Vmorkv7tpcjP0//MA=
+	t=1753782961; cv=none; b=Bq+BNQn0gAmgyvDwe6ZQkCzYhowJ6C0qbY4CFGrHG5t6fZDoZ3aM0fUGMTrI8nVzhirYbVgY9bB7ezjig5e61/gcIr1l087rIwARQScuMgNGGAClO7BZf5r8otTivn+oGQabDA+ub7TXIht/PP5Dof/DWeYycA4ugCu3dapg55o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753782850; c=relaxed/simple;
-	bh=iX3pDa3hSaVL/QvQyONv94OP4od4OovyLuylwH+Dx2w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=Hljwy4GSIBv4LBxnVVWV9fZjftV4fv+9j8EVL+QIMcVX8IyRRUUa/zBSnL9Cyd8i2ZZSyWkCUDVOARjg3fYILytdgN4pvMenaUjMNU2ycLUZJ+VciXDNdCSVuLsKTuvWwWvZbl90GsNuCodBYpILCZcsJZGyV3YIC/dsk1rNoUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87c30329a56so1149746939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:54:08 -0700 (PDT)
+	s=arc-20240116; t=1753782961; c=relaxed/simple;
+	bh=6J6O8lIPO8lPF6L2zLsyMC1bVxdBOnAwKLyRubhILW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nFzlSbUWqXFUtJKA2+qwCTjpeTO3o4fraErm27+rAhe2KHUMe+ZS1YXslf2bY+58+fb0/RLFFCRa3DBszYqeGGT4oCTbFced9dyMecaDvURvVrSwkKsahwMnPE8cbim4SJbAW9tVWuBPtNtAnuZcO1PabQmHRfulu3eZDLf9H1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dxa/6kmW; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4562b2d98bcso29975e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:55:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753782958; x=1754387758; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y8BeCJxT0E9y6LqcrNbSOsYh4JRswSE7zt76fN7xljQ=;
+        b=dxa/6kmWhBe87WhpgTV3w72i1t8hRszGGqRL15yb+aCEkm7F7VCUtbO2sUkQE9FvWX
+         p5nofwXTUZHPm5KwjnpcRzzg56e8bYoQt3ovQyo3bcEzr4jin1Wd6GxuGjvGAB3Hti2B
+         ifxvz/p/PXjRRCAacbeV2mLzteDObkArriwFIA8HJ2rMnpDH1hGWCK37MJquYlLCCeiD
+         2h7a8iURs7/Y4P//nM/0YiGxyIkmZ2tc5OXjwxgSBXoTyojIo3b6uQ5p8WqyjpkL7JCs
+         HCGzOHv3haPQRuds71CRbKpYiuJA4gpFUpOhKoLVphfyYFfhe5TmZfF2Ow1a2EWZtV35
+         r1Kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753782847; x=1754387647;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cPlWQxFwNSi6z1SlxSyH5qFbb30wcJNU3TRYC2VIYZ0=;
-        b=r54Ol0T4mzaSPbke+ShnssqOuKZaUqly2ck0Cc/qei9+tDpSufQv+v8ALzSkAFmoXd
-         rWin+AjkwRR+ayr0H5fflGsteQbohZc/B8X/wmUw2U8y8L97qS1/PZGIeI/URee8Mcqz
-         8Ktvd7nhhx86rdKGj943IfnpQ43rExktn9HyrOmeV/lKZGf1EH5TL+KEaI80iW9KZ1L6
-         VM6QtZli6CKl1RJoZF1Dv+J2mT7QO6gOlGUJ5Zl01Vh/RGgdcNFt2FHo3OUMCFAg02ER
-         2sZxMk94pJs/1XE81JdNaH+olJWqoqfBgExeCgwXRokSGRT1HxpW4XlxlkqYBiRaBf+u
-         hs0g==
-X-Forwarded-Encrypted: i=1; AJvYcCWImuHh+QJkzsCOxuqC+YUac6lVTK+FBBFsMUP94BJ/TVJQt+566cB4dNTClSj14pMc5sdbOv9dPCY7LtI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeNJ+nHuW5WWGbp5U+rkaTZJ4ngOMvSIMpv4wX0QERHGBGlbmL
-	jhecsBXi50HVNt5H21QqKunlqRyk/XgnPqzGC/IwmnbOvSg9zm9rAyvOsi867h77Mc04dugCrZ0
-	qtBJ9+ldz0ZgWpQt9+XjNMZMSWj4bo2XFB/cKWaYqf49tM087QrigcniBovA=
-X-Google-Smtp-Source: AGHT+IHgv2pNuveMbTqKspkaQ6Iu952B7sfK8P1FIYOP3N+4LCFMtCAmMxTSH4njXT6GdEux51CBzARh9tZ39FHoXCvmIFlyaTi3
+        d=1e100.net; s=20230601; t=1753782958; x=1754387758;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y8BeCJxT0E9y6LqcrNbSOsYh4JRswSE7zt76fN7xljQ=;
+        b=K/7GlBFmDmuInqeYoUfxGxAbVWqtDYEpqcDGvRMTzZqCx5AfmAxUKPmzU49dWxQx5n
+         pSr/F4WvHBkkKMvg1B1hRusMqbxl3Xdu4+TQWzHSuTM8ydGIXNixQKH/ozkWNkPuakET
+         1vvYl2Dz68CYRnDcgdSvfGSWZEgjtaiK/W9V3z4kiFRKWi3MzaX28WMMnbd/9UuUR6B6
+         DcXU+NmrmQDMOHpr+vHOlaG3JQckVT9BY9uX2e5/Ey/8K7saPoudyCTnCYgKBvoM8S8O
+         Zr/V8FrnVjM8Q13chuVJ0+V/0fhuikTVknspauNQ4ppvNkd6dDd7dOB0EhQiVWXeyw0T
+         Zj4Q==
+X-Gm-Message-State: AOJu0YxkOcg0jW9QmGCeQ61NAW77GbBOiUyro69UvuinAjgnaJZpWXKj
+	IqrmYCAF/H8J+ogxkjjwSxc3TFFf0wxMJ6K8YaT/ivfD/ReKejfSk4K61lpjuKZMlL5IDYY0I8O
+	giO3duQ==
+X-Gm-Gg: ASbGncv/rEz693pfl7x86uNVNaEvI7M5H3O3DIH9o3ocSlhvnZI9gAW18uLPYRFUjRP
+	C9a+pUjuIMqYwEyd3WZc+DKqEAQgvODzJseJN6zwqFsFYQZDrSpq4Hm/x8yS2CntmM9GTHnBMIm
+	iRsSyFJlEHxhfRLicFOi2a68dauA0JoolvdfX5CEqMaxNzMPnE60+QnD3mpe1B7i5UL/LJk3y6C
+	OkrOHGA3eBnI9Z+GjHiSGdf82gQ8ARpEyxQ4AhTG1Fru38P8aHB7Oo5qvPwpaUx8d7Wtjz1NHtY
+	/kIcbLDx3otSgZpyS+HjDFBHacSa3JAcxybhQzLjEeQQBi49EahuBkwOIpBAloq7xqtQD0RAsdf
+	AzngJGs9Y5RVvvqFqnVnYM9UA3NPZw2LxkWu4jACkRpbcEN93lAhY12fJrmyk
+X-Google-Smtp-Source: AGHT+IGzES6hqfjR1ngn6YMh6m2QMnuLZqGDQbq8stqciYuYMIFTwvOmpG+4EtUrCFw2V/nQTG/heg==
+X-Received: by 2002:a05:600d:17:b0:453:6133:2e96 with SMTP id 5b1f17b1804b1-4588d58f585mr1058175e9.0.1753782957791;
+        Tue, 29 Jul 2025 02:55:57 -0700 (PDT)
+Received: from google.com (232.38.195.35.bc.googleusercontent.com. [35.195.38.232])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4588e33f8a2sm19702345e9.0.2025.07.29.02.55.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 02:55:57 -0700 (PDT)
+Date: Tue, 29 Jul 2025 09:55:53 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	jgg@ziepe.ca, mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v3 20/29] iommu/arm-smmu-v3-kvm: Setup command queue
+Message-ID: <aIiaqSVtSpX7hr8i@google.com>
+References: <20250728175316.3706196-1-smostafa@google.com>
+ <20250728175316.3706196-21-smostafa@google.com>
+ <c8da60f6-4083-4aac-b921-d57b767fa895@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:27d3:b0:864:a228:92b4 with SMTP id
- ca18e2360f4ac-8802297735fmr2406273439f.7.1753782847580; Tue, 29 Jul 2025
- 02:54:07 -0700 (PDT)
-Date: Tue, 29 Jul 2025 02:54:07 -0700
-In-Reply-To: <aIiaPZa_jHAiuATa@gauss3.secunet.de>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68889a3f.050a0220.f0410.0000.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (3)
-From: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>
-To: steffen.klassert@secunet.com
-Cc: steffen.klassert@secunet.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8da60f6-4083-4aac-b921-d57b767fa895@kernel.org>
 
-> On Tue, Jul 29, 2025 at 12:08:31AM -0700, syzbot wrote:
->> Hello,
->> 
->> syzbot found the following issue on:
->> 
->> HEAD commit:    038d61fd6422 Linux 6.16
->> git tree:       upstream
->> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b88cf0580000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=4066f1c76cfbc4fe
->> dashboard link: https://syzkaller.appspot.com/bug?extid=6641a61fe0e2e89ae8c5
->> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ca1782580000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140194a2580000
->> 
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/6505c612be11/disk-038d61fd.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/e466ef29c1ca/vmlinux-038d61fd.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/b6d3d8fc5cbb/bzImage-038d61fd.xz
->> 
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com
->
-> #syz test:
+On Tue, Jul 29, 2025 at 08:44:03AM +0200, Krzysztof Kozlowski wrote:
+> On 28/07/2025 19:53, Mostafa Saleh wrote:
+> > Map the command queue allocated by the host into the hypervisor address
+> > space. When the host mappings are finalized, the queue is unmapped from
+> > the host.
+> > 
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > Signed-off-by: Jean-Philippe Brucker <jean-philippe@linaro.org>
+> 
+> 
+> Your SoB must be the last one.
 
-want either no args or 2 args (repo, branch), got 4
+I see, thanks for pointing it out.
 
->
-> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
-> index f3014e4f54fc..91d52a380e37 100644
-> --- a/include/net/xfrm.h
-> +++ b/include/net/xfrm.h
-> @@ -915,7 +915,7 @@ static inline void xfrm_pols_put(struct xfrm_policy **pols, int npols)
->  		xfrm_pol_put(pols[i]);
->  }
->  
-> -void __xfrm_state_destroy(struct xfrm_state *);
-> +void __xfrm_state_destroy(struct xfrm_state *, bool);
->  
->  static inline void __xfrm_state_put(struct xfrm_state *x)
->  {
-> @@ -925,7 +925,13 @@ static inline void __xfrm_state_put(struct xfrm_state *x)
->  static inline void xfrm_state_put(struct xfrm_state *x)
->  {
->  	if (refcount_dec_and_test(&x->refcnt))
-> -		__xfrm_state_destroy(x);
-> +		__xfrm_state_destroy(x, false);
-> +}
-> +
-> +static inline void xfrm_state_put_sync(struct xfrm_state *x)
-> +{
-> +	if (refcount_dec_and_test(&x->refcnt))
-> +		__xfrm_state_destroy(x, true);
->  }
->  
->  static inline void xfrm_state_hold(struct xfrm_state *x)
-> @@ -1763,7 +1769,7 @@ struct xfrmk_spdinfo {
->  
->  struct xfrm_state *xfrm_find_acq_byseq(struct net *net, u32 mark, u32 seq, u32 pcpu_num);
->  int xfrm_state_delete(struct xfrm_state *x);
-> -int xfrm_state_flush(struct net *net, u8 proto, bool task_valid);
-> +int xfrm_state_flush(struct net *net, u8 proto, bool task_valid, bool sync);
->  int xfrm_dev_state_flush(struct net *net, struct net_device *dev, bool task_valid);
->  int xfrm_dev_policy_flush(struct net *net, struct net_device *dev,
->  			  bool task_valid);
-> diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
-> index 5120a763da0d..7fd8bc08e6eb 100644
-> --- a/net/ipv6/xfrm6_tunnel.c
-> +++ b/net/ipv6/xfrm6_tunnel.c
-> @@ -334,7 +334,7 @@ static void __net_exit xfrm6_tunnel_net_exit(struct net *net)
->  	struct xfrm6_tunnel_net *xfrm6_tn = xfrm6_tunnel_pernet(net);
->  	unsigned int i;
->  
-> -	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
-> +	xfrm_state_flush(net, 0, false, true);
->  	xfrm_flush_gc();
->  
->  	for (i = 0; i < XFRM6_TUNNEL_SPI_BYADDR_HSIZE; i++)
-> diff --git a/net/key/af_key.c b/net/key/af_key.c
-> index b5d761700776..efc2a91f4c48 100644
-> --- a/net/key/af_key.c
-> +++ b/net/key/af_key.c
-> @@ -1766,7 +1766,7 @@ static int pfkey_flush(struct sock *sk, struct sk_buff *skb, const struct sadb_m
->  	if (proto == 0)
->  		return -EINVAL;
->  
-> -	err = xfrm_state_flush(net, proto, true);
-> +	err = xfrm_state_flush(net, proto, true, false);
->  	err2 = unicast_flush_resp(sk, hdr);
->  	if (err || err2) {
->  		if (err == -ESRCH) /* empty table - go quietly */
-> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-> index 97ff756191ba..0ec7d22aaff3 100644
-> --- a/net/xfrm/xfrm_state.c
-> +++ b/net/xfrm/xfrm_state.c
-> @@ -592,7 +592,7 @@ void xfrm_state_free(struct xfrm_state *x)
->  }
->  EXPORT_SYMBOL(xfrm_state_free);
->  
-> -static void xfrm_state_gc_destroy(struct xfrm_state *x)
-> +static void ___xfrm_state_destroy(struct xfrm_state *x)
->  {
->  	if (x->mode_cbs && x->mode_cbs->destroy_state)
->  		x->mode_cbs->destroy_state(x);
-> @@ -631,7 +631,7 @@ static void xfrm_state_gc_task(struct work_struct *work)
->  	synchronize_rcu();
->  
->  	hlist_for_each_entry_safe(x, tmp, &gc_list, gclist)
-> -		xfrm_state_gc_destroy(x);
-> +		___xfrm_state_destroy(x);
->  }
->  
->  static enum hrtimer_restart xfrm_timer_handler(struct hrtimer *me)
-> @@ -795,14 +795,19 @@ void xfrm_dev_state_free(struct xfrm_state *x)
->  }
->  #endif
->  
-> -void __xfrm_state_destroy(struct xfrm_state *x)
-> +void __xfrm_state_destroy(struct xfrm_state *x, bool sync)
->  {
->  	WARN_ON(x->km.state != XFRM_STATE_DEAD);
->  
-> -	spin_lock_bh(&xfrm_state_gc_lock);
-> -	hlist_add_head(&x->gclist, &xfrm_state_gc_list);
-> -	spin_unlock_bh(&xfrm_state_gc_lock);
-> -	schedule_work(&xfrm_state_gc_work);
-> +	if (sync) {
-> +		synchronize_rcu();
-> +		___xfrm_state_destroy(x);
-> +	} else {
-> +		spin_lock_bh(&xfrm_state_gc_lock);
-> +		hlist_add_head(&x->gclist, &xfrm_state_gc_list);
-> +		spin_unlock_bh(&xfrm_state_gc_lock);
-> +		schedule_work(&xfrm_state_gc_work);
-> +	}
->  }
->  EXPORT_SYMBOL(__xfrm_state_destroy);
->  
-> @@ -917,7 +922,7 @@ xfrm_dev_state_flush_secctx_check(struct net *net, struct net_device *dev, bool
->  }
->  #endif
->  
-> -int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
-> +int xfrm_state_flush(struct net *net, u8 proto, bool task_valid, bool sync)
->  {
->  	int i, err = 0, cnt = 0;
->  
-> @@ -3278,7 +3283,7 @@ void xfrm_state_fini(struct net *net)
->  	unsigned int sz;
->  
->  	flush_work(&net->xfrm.state_hash_work);
-> -	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
-> +	xfrm_state_flush(net, 0, false, true);
->  	flush_work(&xfrm_state_gc_work);
->  
->  	WARN_ON(!list_empty(&net->xfrm.state_all));
-> diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
-> index 684239018bec..1db18f470f42 100644
-> --- a/net/xfrm/xfrm_user.c
-> +++ b/net/xfrm/xfrm_user.c
-> @@ -2635,7 +2635,7 @@ static int xfrm_flush_sa(struct sk_buff *skb, struct nlmsghdr *nlh,
->  	struct xfrm_usersa_flush *p = nlmsg_data(nlh);
->  	int err;
->  
-> -	err = xfrm_state_flush(net, p->proto, true);
-> +	err = xfrm_state_flush(net, p->proto, true, false);
->  	if (err) {
->  		if (err == -ESRCH) /* empty table */
->  			return 0;
-> -- 
-> 2.43.0
->
+Thanks,
+Mostafa
+
+> 
+> 
+> Best regards,
+> Krzysztof
 
