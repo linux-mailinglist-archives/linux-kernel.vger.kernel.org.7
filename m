@@ -1,294 +1,182 @@
-Return-Path: <linux-kernel+bounces-749728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AF8B1522C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:42:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF25B15230
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:42:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 255FD3AEE9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:41:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6189E7A48F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E516429898B;
-	Tue, 29 Jul 2025 17:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A276298CDE;
+	Tue, 29 Jul 2025 17:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a4c8foRT"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2085.outbound.protection.outlook.com [40.107.93.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XqoIF3wN"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894F21A2390
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753810931; cv=fail; b=ODQodhfnfs9jveM94GxZ1nKuteP3oZF38o9S6Z3XjCWUSCWEwWyNcAjZcJ4KnhSPGlSUbMEakk1Ji2aHGoma0xR/bmI4Sj79soxut2iD97DBAsipnOiavZWp7qYRD9XyOMl2FSj/XJqD1pX8FT5crCSQcN1mVZX/Yx2rUK385sI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753810931; c=relaxed/simple;
-	bh=gjVVujrndYFIILuqwslS0I3abNLVQbiwcmLSrUezsL0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MN/qiwWmbyDatr+FUeKEzCzkZ0Q4Kk/VtZHP91Nt/zoetfJPLZ46/1K9ubE4famtIP+PTUzLuCIQd7QTA2l8WKbMZtjFWYO3mPsdL6MtCJAJM9OWOOdf0g4mLrA3KqyTyobUAyeZd9B+HG9m+w9+9Bcc0IN02rGTaP1ldgfuAiw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a4c8foRT; arc=fail smtp.client-ip=40.107.93.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vU0Ctj5LKxT+X0t/CaRcheIBFv2opVXdtIvp5KxnPuHaEflFU+n+77wr5frH61HZTtCUaGIo2SnDpmhSYT+yIjFiLD64GUFshXy5iEZiDdz1QlmwTRDs09lLCXgrZwTYRILXF40T3uRKAguvbe8fbXswbEqsHqokneZ/540PKUWGpwei3HbJ5OK8Gv86Id7HOVVHxT23Wn/PjkJ/HUdMlKw/hPSHKP9yic4Xka5UIJQcvqeXxKpcwdNukgEoKTKEjNvtgmwOCPvOtx3sEAmOF0Q0CDCZPs2m1o/kadvONrkTJvfrO6c88Cv6ABMzXS7VpEpGANe0cmXP2jcrymZm0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=i7wFExnlurBv4xIuGi+QJBz228fRoSlehZKE4tL/G24=;
- b=iPGO0CoPcNjIQW9yTgMZE9LT/9y2E28Pe5vLPhGMhrFksl8UIkNXO7vwov++9/y4U9p1uhzM85s03PE9ik4hnK4AGH7Et+/siOBHPwELA5h+3vipMun0IbYxLg17HapzGhM7l5TRvKTV9WYzUWU1Rerm6IW1M1BebAmPo9Y5RSdeNVijrkldw0HrgWQVnX9hASNBOaI3B5go763eRrXjFkfvCr+2lPCqhAmQsU2kmKlJPJYLuxg2Sfn+f/WIlQj+VExPQj359Mxc2pGoaPGTlPXM/s2NCwP/jqwE3EsfqT68OVsJN3rvYwjRRDwXy/MbJnhk25RoIdRn2usA90SPOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=i7wFExnlurBv4xIuGi+QJBz228fRoSlehZKE4tL/G24=;
- b=a4c8foRT6lQzFzz8gV7TAKAeEnSUPkTN8hCk36QLmBkN+oi8OZLY+vHWwRm93Mwf+b7jEviX8ndDh0cLkuhlnK5NcSHNfL5iijNNuCk/b0Gc0sPAgHKVovZKF4csyj9qx7IV4CKfoqioln4um2X8/Knzb8JbGeigp5sWdXI9Qok=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS5PPFA3734E4BA.namprd12.prod.outlook.com
- (2603:10b6:f:fc00::65c) by CY1PR12MB9699.namprd12.prod.outlook.com
- (2603:10b6:930:108::5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Tue, 29 Jul
- 2025 17:42:07 +0000
-Received: from DS5PPFA3734E4BA.namprd12.prod.outlook.com
- ([fe80::1370:cd3b:4c30:5a57]) by DS5PPFA3734E4BA.namprd12.prod.outlook.com
- ([fe80::1370:cd3b:4c30:5a57%7]) with mapi id 15.20.8943.029; Tue, 29 Jul 2025
- 17:42:07 +0000
-Message-ID: <fd9d8b12-97b7-47eb-a26d-54a8148bc57f@amd.com>
-Date: Tue, 29 Jul 2025 12:42:05 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [Bug] x86/resctrl: unexpect mbm_local_bytes/mbm_total_bytes delta
- on AMD with multiple RMIDs in the same domain
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Hc Zheng <zhenghc00@gmail.com>, Fenghua Yu <fenghua.yu@intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- linux-kernel@vger.kernel.org
-References: <CAHCEFEyd0Y+wTrLWNMUNvwgJrCxAi66D17w3Zg-ikH5005k1-w@mail.gmail.com>
- <a148b764-0609-433e-b6e9-932493f6c1b1@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <a148b764-0609-433e-b6e9-932493f6c1b1@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA9PR13CA0142.namprd13.prod.outlook.com
- (2603:10b6:806:27::27) To DS5PPFA3734E4BA.namprd12.prod.outlook.com
- (2603:10b6:f:fc00::65c)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D9A28C01C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753810964; cv=none; b=OfJkxkpvrm1dkPXX35LIHOnRTE86bupMmf7nbNLBOG1gSXsQ29mynbMikosDtr7AqWDE5z89F8AmK6Ws5ZBt90Owt3nUp5iRIqUZvxyG3cZNVFxYbx3vm1dCGF1krIzmZumwitd/VTH/OeS9zKeAKDCln1eAUOFlB1t9OL1Pxhg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753810964; c=relaxed/simple;
+	bh=e7H65OUTTySjbVhc8bnRw+W3Xmwc3ESREGLczzyVkRw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=skNe0fI14EAs2FJxNtUs8y2A95XjnpN4dhma0IUE6egzCHpyFeJZll9JUmLNEq9/coQk3YEQ1FacqLFx4dwHjECpkiADeNbP9ZbPWF4xYt9s8EY5AgzCg4wIxkD46m00wS7eFiMzjVK7lEdGhKmwZ7zZhsujRqdidy/X+nc0JOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XqoIF3wN; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31332dc2b59so5766793a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:42:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753810961; x=1754415761; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=82FN5fIR/hwkzJS9jFM+jcYFsAggMEElUtfqK1j0Xxw=;
+        b=XqoIF3wNBNXflx66ataHWznDp2fURzByURZid/z1hQt5FuBQmx6cNCRiOcgAWDPzSO
+         R6/k0GVWZePqYmVc+pJeRZRDiVdAKoRQr7fgwX7olNm9tu2iLaNT/PHae5V1shBhiWeb
+         U3wflnnHUCN9BN+9DDfIblw2QIPtBRcmedDYBKadi2kwppStXrvhmEyeOTqVuZnkiw5x
+         3YU4aCCWMlsB1uTQ0HrombvUqmWl+IFpxraxqnYJd2VYyCFkeZqJCwcPkIsFD+bAkMbP
+         gjQ61f/iqhv9gk4OygRbmzT9K+fE9QJSvrvjUzkjvrg1Q2XaiND9wsbRIjml9A0lJ6Hj
+         Zkgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753810961; x=1754415761;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=82FN5fIR/hwkzJS9jFM+jcYFsAggMEElUtfqK1j0Xxw=;
+        b=aNI4Yk7CvMaDE8U0xCCIcZCTyLojjq/eqfaLI07WSLQBwhNQh2oFbXdQJjbJdT+KZR
+         wi+NUAzeSIGosoZd6IY48PXzBouGtJr6GlX1NK+PodANTE0YytwYaLc0KV+YYiG+B2es
+         DeayF/TSnSDjxGO51TgLn8jfglcqU8TelnS9fxIOT4tEf4azCrGc+cdHT0gB/PMVflI4
+         Q+NMFIZ7YqPfju5CcGTVV7ElohRkpD60Y2KrraEurZgaF0nyFDzrdksIZ4a0g+1fKlkF
+         BEWQ1dsMymLIFpudbDTxvaf1+39nhgj44sCx8qRBgBDkaB/RNbvv19DpNaegj+N2fYzT
+         gDWw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+ZBARZitqIDyIPS1H3ZwOd4jtHzRjBz/CPQ41T5D/ujA61O1+LIfx3cbHwOlq80lI/TBOwP6fcgKCspo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzBeTifEs8NfnGBeMvhy9f/vgCUrY9yrnqilQgsD8rdiwTnh2g
+	t0fi2fApXSK7uVTIkoimFYqBIF/b2EXR6sqXV50wRlBN+acw8DHLoDwseGR5x58fFhvhkviuPGo
+	O1V8fMw==
+X-Google-Smtp-Source: AGHT+IHL9uyOCJhKfXzpWPYdk2ktpEDltn10+YA1InNR0RiEZWVGuenP/JjoNtMCTI8JhTdD+YDYzrbjaOw=
+X-Received: from pjv8.prod.google.com ([2002:a17:90b:5648:b0:31f:37f:d381])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e706:b0:312:daf3:bac9
+ with SMTP id 98e67ed59e1d1-31f5de69a49mr434036a91.34.1753810961444; Tue, 29
+ Jul 2025 10:42:41 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 29 Jul 2025 10:42:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS5PPFA3734E4BA:EE_|CY1PR12MB9699:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0dbc9ca4-da38-49a1-a5ee-08ddcec73ccc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RFJqVXNveTdrdW9KMks3QnRnSGRPUkpMdE1Zd2M5bXN1RFdnMVNNLzlRdWFo?=
- =?utf-8?B?YW5XNjRzdDhETkJSay9HTE5mK1hiQVYzclZMYWtTelF5a2E3OGpQcGo5bTBu?=
- =?utf-8?B?VXA3THB2Lzg5R25LaWx6ckk4RUN3dThkK3BwbnRDQTRkdDlkRFhIWVRLZnVB?=
- =?utf-8?B?aTI2Q1VPVnFodlJFNUxHV1JLNWdvUmRkS0ptSEpUcmplVUxGMVRzdjI4VTdD?=
- =?utf-8?B?akYxbTRkNmtqTjdhQnBLVDdBS1lsSnIxWTdwTUdMN1ZtL083RFVJREs1TDlo?=
- =?utf-8?B?L2NHOGdpLzdmNHNaWEJwYXFsS00rNzhWRjdvUDR2VEpUbnNLREk5NUFQUnVH?=
- =?utf-8?B?eWxybzBWMkpVVXNCZ2g1NWZrTE5GRldWblVnRnNJTElueHk1aUVZTUhSUXNL?=
- =?utf-8?B?WUNVUjFpei9zK1MxTFNFSUxKQ0dIMUlvbUxQc2dKa2VnWUhsaEVraG5wV1o3?=
- =?utf-8?B?KzhYZVVkTkJOQXI0M2dnQ0VSMUdBTzZsRXlJNko4ZFZwSDZkcnRVU0VjcnBq?=
- =?utf-8?B?S3FtWUlTdjIzQzRZcCtlNUY2TkNVd21aU1JXVDYwVk1nRGthOC9QQjcwS01y?=
- =?utf-8?B?VEFvMTVkOXBhRm9jOXFuTmlpeTdoVFY3Sm5nblFuMzFpU2VRay9aSkovaHU4?=
- =?utf-8?B?Qk0xeVVhMzhjZWpWMmE0TWdacVZwbzBEcVRtamhuL3ZvdnhKeDBib2FpQith?=
- =?utf-8?B?aHJVRFN6K1REYWxEMzRZL3RZb0VNb0l2UE5rUXI0a2wrRDY5MkRrU3ppOVNO?=
- =?utf-8?B?QzJjYnJEb0pjSWpBSGhRajBYNitUYzBCNUN0YmxCdXJjNlNBcHVnTFRmRFFM?=
- =?utf-8?B?TURjWnFlNHA5RDRuYWFXaUJBUm0zNjVlaE1wSVZMR1BZNmU1MXNGVWY2Q2ti?=
- =?utf-8?B?R01ISmxHQU1TOVdqbHJSNHdpLyt6VXlzRzYrQlZxOXIzeThocTlpVWoyU0hy?=
- =?utf-8?B?dFo2R2k2YmZvbTAwMUorK2Z5N2h1ajN2Q2VYVkpZK3YveGs5WmFOVCtlNDBJ?=
- =?utf-8?B?SnMxR2dIWUI2TkFMWXc0VzUwdk1PakhibXRveHdBelNHalNrSTArUjhxYnFE?=
- =?utf-8?B?Z3hSYkpzRmR5ckxWbGpneHJ4U2JhcHpGeVNYbXRFR0VYdDJUTXcvQnJEWWFp?=
- =?utf-8?B?OTVRV0dRY0J2TFdWZmRITlU0UGM1TWJkaVJveGpDeVlFQUpRb1ZUaGRvZkpG?=
- =?utf-8?B?SFdEMWxvVnRSSjhFZjVLSkxjTjZQY1BNQkdWbG55UGpjQ2RRQ1UrU3E3d0tt?=
- =?utf-8?B?cjNNTmErV2svSUFFNnhFSVFvUGVFaGdpKzQ5TjEzdTJqVjN1Z29QWnF5TWdP?=
- =?utf-8?B?K0I0TmJGRXAvR0hDcUx4ZVZpb2IrVW9Wcnc4ek9DVVZ3QlhFOTEwODNCTXlH?=
- =?utf-8?B?Y1JvS0hFeGJ2c1dheGhOZUxVZ3J5UytCdHUzUUZaZHdBMWdDOElrZm5DaU9o?=
- =?utf-8?B?QWsxOW1SclM0QzVjRUU0SjU2V080eHFPQVp1R0g0dU5MMVduL3VjNHI3K2FM?=
- =?utf-8?B?VHNsQmFmUkg0ZVFjeGh3akg1b3IzM09sVCtrR1lOaWFkWjExcjQrUDljQnJH?=
- =?utf-8?B?QTZyUmZrREVDb2lMUEZhZlQ2RXhTOHR0NnFhR08yY0p2ODBtcTFRREwzaEFr?=
- =?utf-8?B?aEE1TDVrSjRsYlM2WkJZTWEvTWRkdEV6QVpJbnZSZGZUK3VEZjJlRkU2eVg5?=
- =?utf-8?B?clRuYndaNWhtTklCT1MyQlpDWU14d1lVQjAwT2d1dnhieGhhcm5uRDdKUFRF?=
- =?utf-8?B?aURSdmpXNGExMTlXODMvYVU2ckx1RW5scVFlR2pYUURSb2dwd1R3OTN3U2pz?=
- =?utf-8?B?UDU0SWdJMGpKcTU3c0lCcHZtbE9HT3FBNGYxbWV2d3FmdlU4aXJRSnJmNTlS?=
- =?utf-8?B?aWNiRHJreHc0OHhlTXovN0UrTElPL2VsWTBvMXk1Z0hYdFd3cDFnMFZhVlZv?=
- =?utf-8?Q?3EKh9kNiudM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS5PPFA3734E4BA.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UWxZano3bXJzcUF3RnIxcGd5RzdjN1BZbUpJRHdmT0QvdnBCdjF1SmpvZlFF?=
- =?utf-8?B?S3FYQnN4WHY1NUpvQjFpSUovNGsrQ1JscXhOMnVtNDh0Nnh5SXpYbGUvVTF4?=
- =?utf-8?B?Ym9BNEJYc0lNdHhueGNSOHFFazFxZmR6cFMxeW5MeUsyZ2hCcGVhME5zeHd5?=
- =?utf-8?B?aUpkU0JETC9HcWorWEN4S1EwRlR1aWErb0xlZW9YNTNNQzdScHFjUXh0OFR4?=
- =?utf-8?B?S0czNjVFU3ExcXpGVmNqMzFadVdSejk0WXQzNWhlY0NTMHZTLzBadkYzNHdZ?=
- =?utf-8?B?cEJzTXNWUWtUcWZWMmRvUWdkVUNBYThTZnRmSXh6elREVUkvSjBhbExCbkZ4?=
- =?utf-8?B?dlJhbEt2RlhTNU0rMS9zTE1NWXN1TTE2a25zRWs3U2FETHEyT3RpVzg4ekMy?=
- =?utf-8?B?UWZOcXJ4VmFvWG1mR2h4NkJ2SENBemEvMHhieTQyaEFMNENjSEFVUGRtbWhk?=
- =?utf-8?B?cmp0djAvR21zTTNsTGNCazhuQmRzUkZLWVJYbGNhNjB0aHNvY0Fra1VVVVNV?=
- =?utf-8?B?Ly9rSm9BTjl1QzI2dnpaRGVMelhzYWUvaExRdmNIejV5aDBobERNUFNCN0V3?=
- =?utf-8?B?WnByd2ozMGcrenlvdmFtQ0VucHJTZ05pbDBUY3BWNUIrSkxtdSs2OXVKaVlo?=
- =?utf-8?B?c1dkaXlDa3lpc2tHdTcrSUxwczBIQWhtT0Jjb01xbmxlK2xqTHNiNWpmczVt?=
- =?utf-8?B?MnY1MlRPNjhEKzNUQzNWMEVNWHplREh1UWJlWVhRR3J3TzE2bnFnazQ2VDR0?=
- =?utf-8?B?eVBoVjJxM3pIVVVGYmRoWmV1L1JpR3FRT2xzSGRtZHIxTXNaVklrTy81aldv?=
- =?utf-8?B?Ym1maWNodjFZb09XOG8yUE9WNHJuY2xYTTF2QVZrZW5ZeHl0WXFEQ0ZUdDJ2?=
- =?utf-8?B?QUk4djloR3N2MENhWjFnQmIyTTBOWTJERGFxVWZjZ3V0cTJyTEV5ZWFzZGJL?=
- =?utf-8?B?S3RlTFh0bTZmcTQ2b0hxRU5kN3NYMnlJclRXWTBGYkE1MGxKTVl5QTJJWnRt?=
- =?utf-8?B?U3dHd1BsSDNqbTI3alkvRnIvc0ZvN1BFekpPTVJJcUJ6cDZPcDhaamtaQTRB?=
- =?utf-8?B?K3o4OGt4QXk1eFZsZTNrbGR6alVQL3VZWkZSU0Q3ZlRhRlZYaS9hN2UzWlNE?=
- =?utf-8?B?bDJLSERPNHd2S3V5NnZhbS9iM1BURktsdVVLV0MxNUFIaTZxZTl6L3NzS3ls?=
- =?utf-8?B?akRnYlJCS3NiamNKZTBick13cUZYcHVLVzRZNEVIdkR1a21rYmdNandUODdN?=
- =?utf-8?B?enBsWnVRTnFLTXFlUDkvQlZ3Wmp3RFBPSGxMclI0b05yclN4a2crZFIxdmlW?=
- =?utf-8?B?QkVGYzc5ditNbmJKc1ZwMjRGSGJwRm1MM0RJRGpISjZmVHlIS3BmQ3JreEZp?=
- =?utf-8?B?R0YxVHRoQ2QxZ0N3YUc1Yk1TQms2SS9WZVcwU1JCOGV2aGVyczJqOGZ4R1dw?=
- =?utf-8?B?WW54eTN1cko2YXZITGtXbmIrSnI1T2VvajdHMlhWUXNXS25HNlpUZXNYdWVE?=
- =?utf-8?B?N2lRVVVpL2g1V0hPSEZ1enBSWlRReGllMGZycTRBRmp6VEdaQXFXZEtNcXF1?=
- =?utf-8?B?b2RBb1R3cHhsZTE0cTlxVVBBRWU2RWFJMUd6UWpOTS8yM0ZKbEtBa2V4Q1FO?=
- =?utf-8?B?SEJiNXRLMUdlNCtNQmw2QVhub2VsYlNnK1BrRUs3cjBrZVZQSmFLWnlwQ2Ra?=
- =?utf-8?B?ZnBCMkJnekcxb01pVzBHQ1U0MzNzVEdhVWZwRndKZjVYanY0dHRNcUVhZml6?=
- =?utf-8?B?SG5EWjdoZWd0blVvU0owZzRSOVpmKzViTCtmWEgwWXJkdGJjUzlVeUJRVjdU?=
- =?utf-8?B?aWlPTWJsRDVBWUdzZ1NURkVVd2RZV2ZrTVhxNzNJYXp2TThQeXlKV0oxZm94?=
- =?utf-8?B?V2RjV0VqWXUvbG5VVTh1eTBoUHVOY1UvMjZRcFdPTGx1S1V1bHlPZVlGWmdB?=
- =?utf-8?B?Q1BsZzV1N09MQ3NoUDg5bDdYdVpYOEcxT2M3cGlyN0F2YnZQUUlEdEFIY1NT?=
- =?utf-8?B?a29ZQm52MTdjM29qQTRaYUdISVBVeHAvZ3VkZzBNMHh6dlhoMDdJTndhS1Uw?=
- =?utf-8?B?cjRVN21oRXhaM3doNjNxSi9uNWlBQXJ2MGsrNEJwcDRHbXhwRzFIcWRhT09V?=
- =?utf-8?Q?NMxk=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dbc9ca4-da38-49a1-a5ee-08ddcec73ccc
-X-MS-Exchange-CrossTenant-AuthSource: DS5PPFA3734E4BA.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 17:42:07.1805
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wfuWkacxdnEwAhuWxaqyKDnH3j3YxY5JM/CwtB9pMxXAkhJBhtdbby34Pd2GBJ7a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR12MB9699
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250729174238.593070-1-seanjc@google.com>
+Subject: [PATCH 0/6] KVM: Export KVM-internal symbols for sub-modules only
+From: Sean Christopherson <seanjc@google.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Andy Lutomirski <luto@kernel.org>, Xin Li <xin@zytor.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, Vitaly Kuznetsov <vkuznets@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "Kirill A. Shutemov" <kas@kernel.org>, 
+	Tony Krowiak <akrowiak@linux.ibm.com>, Halil Pasic <pasic@linux.ibm.com>, 
+	Jason Herne <jjherne@linux.ibm.com>, Harald Freudenberger <freude@linux.ibm.com>, 
+	Holger Dengler <dengler@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-sgx@vger.kernel.org, x86@kernel.org, linux-coco@lists.linux.dev, 
+	linux-s390@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Hc Zheng,
+Use the newfangled EXPORT_SYMBOL_GPL_FOR_MODULES() along with some macro
+shenanigans to export KVM-internal symbols if and only if KVM has one or
+more sub-modules, and only for those sub-modules, e.g. x86's kvm-amd.ko
+and/or kvm-intel.ko.
 
-On 7/29/25 11:49, Reinette Chatre wrote:
-> +Babu
-> 
-> Hi Huaicheng Zheng,
-> 
-> On 7/29/25 12:53 AM, Hc Zheng wrote:
->> Hi All,
->>
->> We have enable resctrl on container platform. We notice some unexpect
->> behaviors when multiple containers running in the same L3 domain.
->> the  mbm_local_bytes/mbm_total_bytes for such mon_groups return
->> Unavailable or delta with two consecutive reads is out of normal range
->> (eg: 1000+GB/s)
->>
->> after reading the AMD pqos manual(), it says
->> """
->> Potential causes of the “U” bit being set include
->> (but are not limited to):
->>
->> • RMID is not currently tracked by the hardware.
->> • RMID was not tracked by the hardware at some time since it was last read.
->> • RMID has not been read since it started being tracked by the hardware.
->> """
->>
->> but no explanations for unexpect large delta between 2 reads of the
->> counters. After exam the kernel code, I suspect this would more likely
->> to be a hardware bugs
->>
->> here are the steps to reproduce it
->>
->> 1. create mon_groups
->>
->> $ for i in `seq 0 99`;do mkdir -p /sys/fs/resctrl/amdtest/mon_groups/test$i;done
+Patch 5 gives KVM x86 the full treatment.  If anyone wants to tackle PPC,
+it should be doable to restrict KVM PPC's exports as well.
 
-Looks like you are creating 99 new groups here.
+Patch 6 is essentially an RFC; it compiles and is tested, but it probably
+should be chunked into multiple patches.  The main reason I included it
+here is to get feedback on using kvm_types.h to define the "for KVM" macros.
+For KVM itself, kvm_types.h is a solid choice, but it feels a bit awkward
+for non-KVM usage, and including linux/kvm_types.h in non-KVM generic code,
+e.g. in kernel/, isn't viable at the moment because asm/kvm_types.h is only
+provided by architectures that actually support KVM.
 
-You can create more monitor groups,  but hardware cannot count more than
-32 RMIDs(or 16 in some old hardware) at a time.
+Based on kvm/queue.
+
+Sean Christopherson (6):
+  KVM: s390/vfio-ap: Use kvm_is_gpa_in_memslot() instead of open coded
+    equivalent
+  KVM: Export KVM-internal symbols for sub-modules only
+  KVM: x86: Move kvm_intr_is_single_vcpu() to lapic.c
+  KVM: x86: Drop pointless exports of kvm_arch_xxx() hooks
+  KVM: x86: Export KVM-internal symbols for sub-modules only
+  x86: Restrict KVM-induced symbol exports to KVM modules where
+    obvious/possible
+
+ arch/powerpc/include/asm/kvm_types.h |  15 ++
+ arch/s390/include/asm/kvm_host.h     |   2 +
+ arch/s390/kvm/priv.c                 |   8 +
+ arch/x86/entry/entry.S               |   7 +-
+ arch/x86/entry/entry_64_fred.S       |   3 +-
+ arch/x86/events/amd/core.c           |   5 +-
+ arch/x86/events/core.c               |   7 +-
+ arch/x86/events/intel/lbr.c          |   3 +-
+ arch/x86/events/intel/pt.c           |   7 +-
+ arch/x86/include/asm/kvm_host.h      |   3 -
+ arch/x86/include/asm/kvm_types.h     |  15 ++
+ arch/x86/kernel/apic/apic.c          |   3 +-
+ arch/x86/kernel/apic/apic_common.c   |   3 +-
+ arch/x86/kernel/cpu/amd.c            |   4 +-
+ arch/x86/kernel/cpu/bugs.c           |  17 +--
+ arch/x86/kernel/cpu/bus_lock.c       |   3 +-
+ arch/x86/kernel/cpu/common.c         |   7 +-
+ arch/x86/kernel/cpu/sgx/main.c       |   3 +-
+ arch/x86/kernel/cpu/sgx/virt.c       |   5 +-
+ arch/x86/kernel/e820.c               |   3 +-
+ arch/x86/kernel/fpu/core.c           |  21 +--
+ arch/x86/kernel/fpu/xstate.c         |   7 +-
+ arch/x86/kernel/hw_breakpoint.c      |   3 +-
+ arch/x86/kernel/irq.c                |   3 +-
+ arch/x86/kernel/kvm.c                |   5 +-
+ arch/x86/kernel/nmi.c                |   5 +-
+ arch/x86/kernel/process_64.c         |   5 +-
+ arch/x86/kernel/reboot.c             |   5 +-
+ arch/x86/kernel/tsc.c                |   1 +
+ arch/x86/kvm/cpuid.c                 |  10 +-
+ arch/x86/kvm/hyperv.c                |   4 +-
+ arch/x86/kvm/irq.c                   |  34 +----
+ arch/x86/kvm/kvm_onhyperv.c          |   6 +-
+ arch/x86/kvm/lapic.c                 |  70 ++++++---
+ arch/x86/kvm/lapic.h                 |   4 +-
+ arch/x86/kvm/mmu/mmu.c               |  36 ++---
+ arch/x86/kvm/mmu/spte.c              |  10 +-
+ arch/x86/kvm/mmu/tdp_mmu.c           |   2 +-
+ arch/x86/kvm/pmu.c                   |   8 +-
+ arch/x86/kvm/smm.c                   |   2 +-
+ arch/x86/kvm/x86.c                   | 211 +++++++++++++--------------
+ arch/x86/lib/cache-smp.c             |   9 +-
+ arch/x86/lib/msr.c                   |   5 +-
+ arch/x86/mm/pat/memtype.c            |   3 +-
+ arch/x86/mm/tlb.c                    |   5 +-
+ arch/x86/virt/vmx/tdx/tdx.c          |  65 +++++----
+ drivers/s390/crypto/vfio_ap_ops.c    |   2 +-
+ include/linux/kvm_types.h            |  39 ++++-
+ virt/kvm/eventfd.c                   |   2 +-
+ virt/kvm/guest_memfd.c               |   4 +-
+ virt/kvm/kvm_main.c                  | 126 ++++++++--------
+ 51 files changed, 457 insertions(+), 378 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/kvm_types.h
 
 
->>
->> 2. run stress command and assigned such pid to each mon_groups , (I
->> have run such test on AMD Genoa. cpu 16-23,208-215 is on CCD 8)
->>
->> $ cat stress.sh
->> nohup numactl -C 16-23,208-215 stress -m  1 --vm-hang 1 > /dev/null &
->> lastPid=$!
->> echo $lastPid > /sys/fs/resctrl/amdtest/tasks
->> echo $lastPid > /sys/fs/resctrl/amdtest/mon_groups/test$1/tasks
->> $ for i in `seq 0 99`;do bash stress.sh $i ;done
->>
->> 3. watch the resctrl counter every 10 seconds
->>
->> $ while true ;do cat
->> /sys/fs/resctrl/amdtest/mon_groups/test9/mon_data/mon_L3_08/mbm_local_bytes;sleep
->> 10;done
->>
->> ...
->> Unavailable
->> Unavailable
->> Unavailable
->> 61924495182825856
->> 64176294690029568
->> Unavailable
->> Unavailable
->> Unavailable
->> ...
->>
->> at some point the delta for 2 consecutive reads is out of normal
->> range,  (64176294690029568 - 61924495182825856) / 1024 / 1024 / 1024 /
->> 10 =  209715 Gb/s
->>
->> if I lower the concurrecy to like 59 or lower, the delta is in normal
->> range, and never return Unavailable. I have also tested on amd Rome
->> cpu, the problem still existed.
->> I have try this on intel platform, It does not have such problem, with
->> even over 200+ RMIDs concurrently being monitored.
->>
->> I can not find any documents about max RMID for AMD hardware can
->> concurrently holds, or a explanations for such problems.
->> I believe this could become even severe on AMD with more threads in
->> the future, as we will run more workloads on a single server
->>
->> Can some one help me to solve this problem, thanks
-> 
-> It looks to me as though you are encountering the issue that is addressed with AMD's
-> Assignable Bandwidth Monitoring Counters (ABMC) feature that Babu is currently enabling
-> in resctrl [1]. The feature itself is well documented in that series and includes links to
-> the AMD spec where you can learn more.
-> You show that the "Unavailable" is encountered when reading these counters from user
-> space and I deduce from that that resctrl's internal MBM overflow handler (it runs once
-> per second) likely encounters the same error with the consequence that overflows of the
-> counter are not handled correctly.
-
-Yea. The huge numbers are due to overflow problem. Kernel assumes there is
-an overflow and adds a big number to account for the overflow in a
-subsequent reads.
-
-Yes. We are trying to address in the new hardware which is mentioned in [1].
-> 
-> If you do have access to the AMD hardware with this feature, please do take a look at
-> the resctrl support for it and try it out. We would all appreciate your feedback to ensure
-> resctrl supports it well.
-> 
-> Reinette 
-> 
-> [1] https://lore.kernel.org/lkml/cover.1753467772.git.babu.moger@amd.com/
-> 
-> 
-
+base-commit: beafd7ecf2255e8b62a42dc04f54843033db3d24
 -- 
-Thanks
-Babu Moger
+2.50.1.552.g942d659e1b-goog
 
 
