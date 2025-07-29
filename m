@@ -1,119 +1,294 @@
-Return-Path: <linux-kernel+bounces-749888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DA0AB15454
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:28:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8CBB15457
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:29:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5901118A1BAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:29:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 258DD7A6E8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2180424BC09;
-	Tue, 29 Jul 2025 20:28:51 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AED0267F48;
+	Tue, 29 Jul 2025 20:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oEBbTxd3"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B6E1DDD1
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 20:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AFF1DDD1;
+	Tue, 29 Jul 2025 20:28:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753820930; cv=none; b=IBCtFYTYi35S+M/ldzIwv0XEsc6kj1aquCzRyd8bc4AJu2mDsF4sjAlfbudQTrQBz665bOi7AcatGi4IwqM/+ch1OgXKvtWkbLZxaPumKWg5pM+XJYS84/RkG23SqnuQ8+kngPtyKBVDhTR5b4mRMxT4jIixqb3zRkQSKmE2EkI=
+	t=1753820937; cv=none; b=YpvuDJx9nwkLnduQAkN1yw/p+CtfYxtttmPZkE3jf6fSuCQvw77FO8F2QlzHLYldh1LSHn9saILvHyM4mJ9wdZoQXX2WMy1cQmuH3EselSXyNZfPeImKd1F3R2vXDli69Xins93D5HVrEm8M9DeaebWNF0JclNy7P9lI0kw0a88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753820930; c=relaxed/simple;
-	bh=dSODrkydRElyB5/ET632bybIEaV6fXP2g3aeUgCOyRI=;
+	s=arc-20240116; t=1753820937; c=relaxed/simple;
+	bh=jZMrI5UUMbuZDiGnt8FkFQimvckPilm2MrcZRDKWVHc=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sXvuxt6MbWd896DyNMVex3AfiNaIv24lEWr2C5Z6v0xEZboyvnNNfCDArRi9wSOG6efhpVNUX86unaZM39GDcAeNPCRD/7qU8yMI26xmdFoVhQbRQglogNzSkLnmnwvkQvZPNz6sTTnKXi8Lyle9DcW3hGNT1d8N9Y7zjs0esWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com; spf=pass smtp.mailfrom=perches.com; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=perches.com
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 10FA1111A75;
-	Tue, 29 Jul 2025 20:28:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf06.hostedemail.com (Postfix) with ESMTPA id 32A302000F;
-	Tue, 29 Jul 2025 20:28:46 +0000 (UTC)
-Message-ID: <afe999de5fecdeabb291dad9da186073bed386b7.camel@perches.com>
-Subject: Re: [PATCH v4] checkpatch: warn about novice phrases in commit
- messages
-From: Joe Perches <joe@perches.com>
-To: Ignacio =?ISO-8859-1?Q?Pe=F1a?= <ignacio.pena87@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org
-Date: Tue, 29 Jul 2025 13:28:45 -0700
-In-Reply-To: <20250729140725.130842-1-ignacio.pena87@gmail.com>
-References: <ZqCu6xskqgLMQm8K@saruman>
-	 <20250729140725.130842-1-ignacio.pena87@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	 Content-Type:MIME-Version; b=TLLVyRcXToKfjbi8r2YnsuJvUKbU4787m+lQOFcpZf6ByJXIiBY9k7zgf1e3jTmCFLSaUU3BQTeWLoBBj/933wJ9CX8QqttjzsIzuBcvaPFX5t3aNaIo7jnhakhwBbgMy7CgN8sJ4s6y94AiYppAZZLm2aMHg1MlFv8Xgh7vUrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oEBbTxd3; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753820933;
+	bh=jZMrI5UUMbuZDiGnt8FkFQimvckPilm2MrcZRDKWVHc=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=oEBbTxd3KVDL4gP8qEqUcbEzbglIvu61cPRJma43SBVByqj19YVbfMq4GaSrlxzgl
+	 YVyAE/VV4kpMmv2P04eg/mDRALf2fX0X8o1szBF3Vf1XBhGvrs5IN07jymf/LCdNFK
+	 ifcTkLbhUAsMQVVHOgofnWErTrcXkDEwgeJkJuYExyu1vAZx1mATpR/Pzwmg11yjDP
+	 vXGQyXr796C/bsujGRrIwVUwih33Zsa9X9CtKfG4WcBEDXVjXhZ3EYZUzSEJfeQPj/
+	 zbrIlnJlWRRBfIbEu6ngEknbi3FCdm+vxeSj+HmAf1m8P8r5xI9bShZxy2BHGX/BOO
+	 REa+3g5DDqvbQ==
+Received: from [IPv6:2606:6d00:11:5a76::5ac] (unknown [IPv6:2606:6d00:11:5a76::5ac])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nicolas)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0451317E1293;
+	Tue, 29 Jul 2025 22:28:51 +0200 (CEST)
+Message-ID: <75434480affd424f3be4885acc3f18e57423b72e.camel@collabora.com>
+Subject: Re: [PATCH] media: rkvdec: Fix an error handling path in
+ rkvdec_probe()
+From: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Detlev Casanova	
+ <detlev.casanova@collabora.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>,  Heiko Stuebner	 <heiko@sntech.de>, Hans Verkuil
+ <hverkuil@kernel.org>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org
+Date: Tue, 29 Jul 2025 16:28:49 -0400
+In-Reply-To: <884293c1-f6f4-48b3-a5d9-9b41fa8614a5@wanadoo.fr>
+References: 
+	<b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
+	 <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
+	 <884293c1-f6f4-48b3-a5d9-9b41fa8614a5@wanadoo.fr>
+Autocrypt: addr=nicolas.dufresne@collabora.com; prefer-encrypt=mutual;
+ keydata=mQGiBEUQN0MRBACQYceNSezSdMjx7sx6gwKkMghrrODgl3B0eXBTgNp6c431IfOOEsdvk
+ oOh1kwoYcQgbg4MXw6beOltysX4e8fFWsiRkc2nvvRW9ir9kHDm49MkBLqaDjTqOkYKNMiurFW+go
+ zpr/lUW15QqT6v68RYe0zRdtwGZqeLzX2LVuukGwCg4AISzswrrYHNV7vQLcbaUhPgIl0D+gILYT9
+ TJgAEK4YHW+bFRcY+cgUFoLQqQayECMlctKoLOE69nIYOc/hDr9uih1wxrQ/yL0NJvQCohSPyoyLF
+ 9b2EuIGhQVp05XP7FzlTxhYvGO/DtO08ec85+bTfVBMV6eeY4MS3ZU+1z7ObD7Pf29YjyTehN2Dan
+ 6w1g2rBk5MoA/9nDocSlk4pbFpsYSFmVHsDiAOFje3+iY4ftVDKunKYWMhwRVBjAREOByBagmRau0
+ cLEcElpf4hX5f978GoxSGIsiKoDAlXX+ICDOWC1/EXhEEmBR1gL0QJgiVviNyLfGJlZWnPjw6xhhm
+ tHYWTDxBOP5peztyc2PqeKsLsLWzAr7QnTmljb2xhcyBEdWZyZXNuZSA8bmljb2xhc0BuZHVmcmVz
+ bmUuY2E+iGIEExECACIFAlXA3CACGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sB
+ qgcJngAnRDBTr8bhzuH0KQwFP1nEYtfgpKdAKCrQ/sJfuG/8zsd7J8wVl7y3e8ARbRDTmljb2xhcy
+ BEdWZyZXNuZSAoQi4gU2MuIEluZm9ybWF0aXF1ZSkgPG5pY29sYXMuZHVmcmVzbmVAZ21haWwuY29
+ tPohgBBMRAgAgBQJFlCyOAhsDBgsJCAcDAgQVAggDBBYCAwECHgECF4AACgkQcVMCLawGqBwhLQCg
+ zYlrLBj6KIAZ4gmsfjXD6ZtddT8AoIeGDicVq5WvMHNWign6ApQcZUihtElOaWNvbGFzIER1ZnJlc
+ 25lIChCLiBTYy4gSW5mb3JtYXRpcXVlKSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY28udW
+ s+iGIEExECACIFAkuzca8CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEHFTAi2sBqgcQX8
+ An2By6LDEeMxi4B9hUbpvRnzaaeNqAJ9Rox8rfqHZnSErw9bCHiBwvwJZ77QxTmljb2xhcyBEdWZy
+ ZXNuZSA8bmljb2xhcy5kdWZyZXNuZUBjb2xsYWJvcmEuY29tPohiBBMRAgAiBQJNzZzPAhsDBgsJC
+ AcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRBxUwItrAaoHLlxAKCYAGf4JL7DYDLs/188CPMGuwLypw
+ CfWKc9DorA9f5pyYlD5pQo6SgSoiC0R05pY29sYXMgRHVmcmVzbmUgKEIgU2MuIEluZm9ybWF0aXF
+ 1ZSkgPG5pY29sYXMuZHVmcmVzbmVAdXNoZXJicm9va2UuY2E+iGAEExECACAFAkUQN0MCGwMGCwkI
+ BwMCBBUCCAMEFgIDAQIeAQIXgAAKCRBxUwItrAaoHPTnAJ0WGgJJVspoctAvEcI00mtp5WAFGgCgr
+ +E7ItOqZEHAs+xabBgknYZIFPU=
+Organization: Collabora Canada
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-05BjQuggd1guXcSOOvaz"
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Stat-Signature: r7kxk8iyhsw7ry93cnpczw557i6nwo3u
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 32A302000F
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Session-ID: U2FsdGVkX1+gCBsPZhSZMYo0XmxG3W0VIdWJxBOhM9k=
-X-HE-Tag: 1753820926-167340
-X-HE-Meta: U2FsdGVkX190sD7ZEYwMEcWHH28j5l0a249HNW9JFdEyJ68iFdheZ4gUuzj/wDClmU4XCqcqz2yVr1NUYAHZpCvWeokELmW9KuAyCSfMafA+M19ihJDxfqec4d/GgPYy5yXqCYgRCR1mKyuxBdo1C1dKK3tidXb7peYEKZeMxC0UYaiqoyV+QO/lk8ktM/3pFqJeYkdfmsjFc6z+b0soj5tg4heD3bJxlZizOJEL7vGmYFUE6dsz3xSKvfcMuuQVCylFEplKnrhXNzY1AbSOIGJCLkioE99uveZAV+vJRYAaZI13AtGBgSvERF9xOE9JU/MglypxnrA8P0gJhuMwOJraozuNqNZksjYtnA7sUjw949GAnXg2YedZMD6MyxsK9ePQnpuMLjY=
 
-On Tue, 2025-07-29 at 10:07 -0400, Ignacio Pe=F1a wrote:
-> Add warnings for common phrases that indicate uncertainty or lack of
-> confidence in commit messages.
+
+--=-05BjQuggd1guXcSOOvaz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Le mardi 29 juillet 2025 =C3=A0 21:33 +0200, Christophe JAILLET a =C3=A9cri=
+t=C2=A0:
+> Le 29/07/2025 =C3=A0 00:50, Nicolas Dufresne a =C3=A9crit=C2=A0:
+> > Hi,
+> >=20
+> > Le dimanche 27 juillet 2025 =C3=A0 12:02 +0200, Christophe JAILLET a =
+=C3=A9crit=C2=A0:
+> > > If an error occurs after a successful iommu_paging_domain_alloc() cal=
+l, it
+> > > should be undone by a corresponding iommu_domain_free() call, as alre=
+ady
+> > > done in the remove function.
+> > >=20
+> > > Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on error=
+s")
+> > > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > > ---
+> > > Compile tested only
+> > > ---
+> > > =C2=A0=C2=A0drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++=
+++++---
+> > > =C2=A0=C2=A01 file changed, 8 insertions(+), 3 deletions(-)
+> > >=20
+> > > diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> > > b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> > > index d707088ec0dc..eb0d41f85d89 100644
+> > > --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> > > +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> > > @@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_devic=
+e *pdev)
+> > > =C2=A0=C2=A0	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK=
+(32));
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0	irq =3D platform_get_irq(pdev, 0);
+> > > -	if (irq <=3D 0)
+> > > -		return -ENXIO;
+> > > +	if (irq <=3D 0) {
+> > > +		ret =3D -ENXIO;
+> > > +		goto err_free_domain;
+> > > +	}
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0	ret =3D devm_request_threaded_irq(&pdev->dev, irq, NULL,
+> > > =C2=A0=C2=A0					rkvdec_irq_handler, IRQF_ONESHOT,
+> > > =C2=A0=C2=A0					dev_name(&pdev->dev), rkvdec);
+> > > =C2=A0=C2=A0	if (ret) {
+> > > =C2=A0=C2=A0		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
+> > > -		return ret;
+> > > +		goto err_free_domain;
+> > > =C2=A0=C2=A0	}
+> > > =C2=A0=20
+> > > =C2=A0=C2=A0	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
+> >=20
+> > Have you considered moving the allocation of the domain right above the=
+ above
+> > line instead ? The empty domain can't possibly be used unless the probe=
+ have
+> > fully completed.
 >=20
-> Signed-off-by: Ignacio Pe=F1a <ignacio.pena87@gmail.com>
-> ---
->  scripts/checkpatch.pl | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
+> That would not change things much. We still need to handle=20
+> rkvdec_v4l2_init() failure a few lines below.
+>=20
+> If it is correct to move it at the very end of the function, after=20
+> rkvdec_v4l2_init(), then the patch would be simpler.
+>=20
+>=20
+> Honestly, I'm not very confident with it. request_threaded_irq()=20
+> documentation states that "From the point this call is made your handler=
+=20
+> function may be invoked."
+> And rkvdec_irq_handler() may call rkvdec_iommu_restore() which uses=20
+> empty_domain.
 
--ENOCHANGELOG
 
-> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-[]
-> @@ -3430,6 +3430,24 @@ sub process {
->  			     "Use lore.kernel.org archive links when possible - see https://l=
-ore.kernel.org/lists.html\n" . $herecurr);
->  		}
-> =20
-> +# Check for novice phrases in commit messages
-> +		if ($in_commit_log && !$non_utf8_charset) {
-> +			my $novice_phrases =3D qr{(?:^|\s)(?i)(
-> +				I\s+think|
-> +				I\s+believe|
-> +				I\s+suppose|
-> +				probably|
-> +				maybe|
-> +				perhaps|
-> +				possibly|
-> +				hopefully
+This is a supposition in the doc. If you get familiar with codec, they eith=
+er
+have a firmware that needs to be booted, or it is trigger based, meaning if=
+ we
+don't trigger any work, there will not be any interrupt. This is not true f=
+or
+all kind of hardware though.
 
-definite nak.
-
-maybe is used way too often.
-
-Where did you get these word choices?
-
-What happened to the "my first kernel patch" phrases?
-
-And you have not ever answered why !$non_utf8_charset is useful.
-
-> +			)(?:\s|$)}x;
-> +			if ($line =3D~ /$novice_phrases/) {
-
-this should be
-			if ($line =3D~ /\b$novice_phrases\b/) {
-
-> +				WARN("NOVICE_PHRASE",
-> +				     "Avoid uncertainty phrases like '$1' in commit messages\n" . $h=
-erecurr);
-> +			}
-> +		}
+>=20
+> Not sure if I'm right and if this can happen, but the existing order=20
+> looks safer to me.
+>=20
+> That said, if it is fine for you, I can send a v2.
+>=20
+>=20
+> This would be:
+>=20
+> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c=20
+> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> index d707088ec0dc..6eae10e16c73 100644
+> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+> @@ -1159,13 +1159,6 @@ static int rkvdec_probe(struct platform_device *pd=
+ev)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 return ret;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>=20
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (iommu_get_domain_for_dev(&pdev-=
+>dev)) {
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 rkvdec->empty_domain =3D=20
+> iommu_paging_domain_alloc(rkvdec->dev);
+> -
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 if (!rkvdec->empty_domain)
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_warn(rkvde=
+c->dev, "cannot alloc new empty=20
+> domain\n");
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> -
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vb2_dma_contig_set_max_s=
+eg_size(&pdev->dev, DMA_BIT_MASK(32));
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 irq =3D platform_get_irq=
+(pdev, 0);
+> @@ -1188,6 +1181,13 @@ static int rkvdec_probe(struct platform_device *pd=
+ev)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 goto err_disable_runtime_pm;
+>=20
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (iommu_get_domain_for_dev(&pdev-=
+>dev)) {
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 rkvdec->empty_domain =3D=20
+> iommu_paging_domain_alloc(rkvdec->dev);
 > +
->  # Check for added, moved or deleted files
->  		if (!$reported_maintainer_file && !$in_commit_log &&
->  		    ($line =3D~ /^(?:new|deleted) file mode\s*\d+\s*$/ ||
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 if (!rkvdec->empty_domain)
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_warn(rkvde=
+c->dev, "cannot alloc new empty=20
+> domain\n");
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+> +
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
 
+For me this looks cleaner, but as you stated its a matter of taste more the=
+n
+anything. A better answer lives in cleanup.h, but I'm not going to ask to p=
+ort
+drivers just yet.
+
+So let me know, it can go like this too.
+
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+
+Nicolas
+
+>=20
+> =C2=A0 err_disable_runtime_pm:
+>=20
+>=20
+> CJ
+>=20
+> >=20
+> > Nicolas
+> >=20
+> > > @@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device =
+*pdev)
+> > > =C2=A0=C2=A0err_disable_runtime_pm:
+> > > =C2=A0=C2=A0	pm_runtime_dont_use_autosuspend(&pdev->dev);
+> > > =C2=A0=C2=A0	pm_runtime_disable(&pdev->dev);
+> > > +err_free_domain:
+> > > +	if (rkvdec->empty_domain)
+> > > +		iommu_domain_free(rkvdec->empty_domain);
+> > > =C2=A0=C2=A0	return ret;
+> > > =C2=A0=C2=A0}
+> > > =C2=A0=20
+
+--=-05BjQuggd1guXcSOOvaz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCaIkvAQAKCRBxUwItrAao
+HCNoAJ9ZUC8asKL6KZjVLXujVOUOEc8kLACaA03KI5fVnkU2EAe3rnQSnpDFQnk=
+=yQn/
+-----END PGP SIGNATURE-----
+
+--=-05BjQuggd1guXcSOOvaz--
 
