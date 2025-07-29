@@ -1,67 +1,63 @@
-Return-Path: <linux-kernel+bounces-749825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A831B1534B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:12:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E32C4B15351
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:16:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 918E1548319
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:12:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1306E543767
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6720124DD13;
-	Tue, 29 Jul 2025 19:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 274EA23ABB7;
+	Tue, 29 Jul 2025 19:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BE1XWnnN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="onGhTKcO"
+Received: from smtp.smtpout.orange.fr (smtp-82.smtpout.orange.fr [80.12.242.82])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21E02459F6
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC405290F;
+	Tue, 29 Jul 2025 19:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753816367; cv=none; b=KVJ9KVCgNdtf8jN2GXL5STmbBDwhUy2xSmPEZr8FcjY0mTWV2QoWvtmevPgE+tV8XUCoGyPtWpfpv+EQ5yEDGYFIu7Pcrdv7LBxyEcNKxAtJlMl/FcjDrZoaaT4jRvSUXm8eKZyP+gV1H8rvW/ULLV9j1yCOiLUSoO1uba/6tus=
+	t=1753816597; cv=none; b=g4oW/2puYHDz5MrBC2XkgJiqwWIHVLwDbocpq9aYQX0vehaaHOzM4FaM0iMSEfAzuU8CUcvHEu01ET6MzT+8luf2S630Ckw5McmDAgLtoNElAfgLl1PsX1T8xyN94Un+NyvuY90szvdw+sFuI1QD4BtmJmAoMoIh3BVm73Fxmdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753816367; c=relaxed/simple;
-	bh=nWkyEoWD+O65DryR7okkAH8RyZiQFLpO7VvrA6VDbwU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QltBXOTJZ2HBgQh6FfuvQz5b75cPR+CbH0XrAodjgAq1SQArMLaBkm6EzPjmj24mDTLqoEFqz6Zlg1/hFta9VhHNDAZAl0wSem5l/6jiVaX62nSlScnklkdMhoYSrhSzOGyDtNmKJJ5D1BByu68G/7G97lZTwO/i8EqgF/c9Pdg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BE1XWnnN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753816364;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=19MkkSvnHFzhz62Bahyu/jI4NnaLyRThc1mJfHz8ZyM=;
-	b=BE1XWnnNFzMgjZ6XRzJeqROqkTp9BpygvjleLqp0+le4DeD1735B/Iv7YTfZDX7ZrL5Kxk
-	RORzjv2/O6CAMZEDLwKZNN3w0EhTMrjfSdhUb+VBto/9EvIAMBVtzjhbPlJpPfrO/CoLxA
-	/Ci3+sPDnLrjceSATgizA9uxwe3CMpY=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-210-ufQHmRjPMzuHW5ZQYlwb2g-1; Tue,
- 29 Jul 2025 15:12:41 -0400
-X-MC-Unique: ufQHmRjPMzuHW5ZQYlwb2g-1
-X-Mimecast-MFC-AGG-ID: ufQHmRjPMzuHW5ZQYlwb2g_1753816360
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1F5E21800165;
-	Tue, 29 Jul 2025 19:12:40 +0000 (UTC)
-Received: from llong-thinkpadp16vgen1.westford.csb (unknown [10.22.90.9])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B005719560A2;
-	Tue, 29 Jul 2025 19:12:38 +0000 (UTC)
-From: Waiman Long <longman@redhat.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>
+	s=arc-20240116; t=1753816597; c=relaxed/simple;
+	bh=HWandojxEP88/Mvy6zHFKRv2PnW5dbqKLagPBjp2p2o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=U08ipH626riZwkVePEiccu8jv6eXHi8O++AgoEdXmxb0d03s0Z1nTc6PstJNlMY11FBvK6uft4i9wICUH6KvFKWEMj6jPfvotOwi7pRDdM8B69SjmEKkzP5wC/uMkKGgqKdTT0CjvECer5cStGXGyIQ//DH6QHtd81rxlqAa1nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=onGhTKcO; arc=none smtp.client-ip=80.12.242.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id gpnEuKAvXhl7agpnEuFs9u; Tue, 29 Jul 2025 21:15:21 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1753816521;
+	bh=kVABmX+BtOiePTH3OXz4BhV4vXGTNHgUqsYtS3wkQ18=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=onGhTKcOrJSWSwIPnznS3eEO+AmSUkC00oTjkU9zlOJwTqBTu8A7UKjcH5mM5pe3P
+	 sOG8fwX7Lkmaz+lKnCxrL+VSdnbEu9XP7QWduWI8tZZCnZ3/SC1UqIWOm6rxlJuDT+
+	 P+PzzWwWBe8UXHqcXp6cyz/bBQzoqitK1jC8thaRQxvIohwg36LEbL1RRCU/BaNGgg
+	 kF0WgYU+NKHAunp+YiUANnfGH6VcPromr0iBUL2aVJ3RNABFniCvrsgPiDb6Y7QHlZ
+	 pyi/EM85uDmDTDRPnSS/1VaXLVFkzUceeehEs7lIsprgrbPdlxYqN8E72cDnAPMmYv
+	 s1AS/CDYMvGCA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 29 Jul 2025 21:15:21 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Sudeep Holla <sudeep.holla@arm.com>,
+	Cristian Marussi <cristian.marussi@arm.com>
 Cc: linux-kernel@vger.kernel.org,
-	Waiman Long <longman@redhat.com>
-Subject: [PATCH] cpu: Remove obsolete comment from takedown_cpu()
-Date: Tue, 29 Jul 2025 15:12:32 -0400
-Message-ID: <20250729191232.664931-1-longman@redhat.com>
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	arm-scmi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 1/2] firmware: arm_scmi: Constify struct scmi_voltage_proto_ops
+Date: Tue, 29 Jul 2025 21:15:03 +0200
+Message-ID: <2091660c072dd2d5599897243a5d69e89d46ed4d.1753816459.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,43 +65,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-takedown_cpu() has a comment about "all preempt/rcu users must observe
-!cpu_active()" which is kind of meaningless in this function. This
-comment was originally introduced by commit 6acce3ef8452 ("sched: Remove
-get_online_cpus() usage") when _cpu_down() was setting cpu_active_mask
-and synchronize_rcu()/synchronize_sched() were added after that.
+'struct scmi_voltage_proto_ops' is not modified in this driver.
 
-Later commit 40190a78f85f ("sched/hotplug: Convert cpu_[in]active
-notifiers to state machine") added a new CPUHP_AP_ACTIVE hotplug
-state to set/clear cpu_active_mask. The following commit b2454caa8977
-("sched/hotplug: Move sync_rcu to be with set_cpu_active(false)")
-move the synchronize_*() calls to sched_cpu_deactivate() associated
-with the new hotplug state, but left the comment behind.
+Constifying this structure moves some data to a read-only section, so
+increases overall security, especially when the structure holds some
+function pointers.
 
-Remove this comment as it is no longer relevant in takedown_cpu().
+On a x86_64, with allmodconfig, as an example:
+Before:
+======
+   text	   data	    bss	    dec	    hex	filename
+  13142	   1808	      0	  14950	   3a66	drivers/firmware/arm_scmi/voltage.o
 
-Signed-off-by: Waiman Long <longman@redhat.com>
+After:
+=====
+   text	   data	    bss	    dec	    hex	filename
+  13238	   1712	      0	  14950	   3a66	drivers/firmware/arm_scmi/voltage.o
+
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- kernel/cpu.c | 3 ---
- 1 file changed, 3 deletions(-)
+Compile tested only
+---
+ drivers/firmware/arm_scmi/voltage.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index a59e009e0be4..2addcba38c1a 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -1308,9 +1308,6 @@ static int takedown_cpu(unsigned int cpu)
- 	 */
- 	irq_lock_sparse();
+diff --git a/drivers/firmware/arm_scmi/voltage.c b/drivers/firmware/arm_scmi/voltage.c
+index fda6a1573609..17127880e10a 100644
+--- a/drivers/firmware/arm_scmi/voltage.c
++++ b/drivers/firmware/arm_scmi/voltage.c
+@@ -393,7 +393,7 @@ static int scmi_voltage_domains_num_get(const struct scmi_protocol_handle *ph)
+ 	return vinfo->num_domains;
+ }
  
--	/*
--	 * So now all preempt/rcu users must observe !cpu_active().
--	 */
- 	err = stop_machine_cpuslocked(take_cpu_down, NULL, cpumask_of(cpu));
- 	if (err) {
- 		/* CPU refused to die */
+-static struct scmi_voltage_proto_ops voltage_proto_ops = {
++static const struct scmi_voltage_proto_ops voltage_proto_ops = {
+ 	.num_domains_get = scmi_voltage_domains_num_get,
+ 	.info_get = scmi_voltage_info_get,
+ 	.config_set = scmi_voltage_config_set,
 -- 
-2.50.0
+2.50.1
 
 
