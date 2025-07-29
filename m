@@ -1,215 +1,252 @@
-Return-Path: <linux-kernel+bounces-748976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D563B1484F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:34:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E7FB14853
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B2E73A8300
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8A43B1122
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58801259CAB;
-	Tue, 29 Jul 2025 06:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SnQwSh4x"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5B225BEE7;
+	Tue, 29 Jul 2025 06:35:30 +0000 (UTC)
+Received: from PNZPR01CU001.outbound.protection.outlook.com (mail-centralindiaazon11021089.outbound.protection.outlook.com [40.107.51.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0E7259CA5
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 06:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753770866; cv=none; b=XXPzuvzk6sJ+j1fxm7qjo9yVdOug7dw+97+KalevZ0B+8+7aHkMUw42S5KunWEmAVEwEKpRaZTtryJ4DHm3AfLbXNenraQEbRevQWsNZubjTNy3ds5yS+YnmZtaOgv8tlspvDsRDSXfZnMMHusxOrtLvS/0xtDrr3eodcItcbkU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753770866; c=relaxed/simple;
-	bh=DsSSixPFpacQb6ndKjAb6W1B+Y6D+l4BcUMKXYwMUtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZBNuho4zRmO25bLZv8yWQOXiqQEz12vha6AKSfRwy7lCzR0CzYbsz0hSqzYpQA0IFx5z24DrotvG7K2gSIf2wxjPVCxue63dlHS9H/Ul84fsuw+2+qcWfdGE8xMK9U5WMnhGx7ebJZ4jMVlw41bSnWTqurL28zW+3OFls2L93M0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SnQwSh4x; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-615622ed70fso1455623a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 23:34:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753770863; x=1754375663; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0wJ7p1KnoPTtuiUiUre3TQUdtSHj428TRzShsa/CgUA=;
-        b=SnQwSh4xLbzVXkBUaFnq94Epnq3ZNDiTi68ypeGyiEdUYKViwgRHNjnCaKvWpi7kMk
-         2QG5XmqRjPKvKwIcSkjRm2KOichadQAqaGNoIRee0kHVQFLPb2cT7t+8UKGaGMFM//w0
-         isO+M3+o3LyvguwMyNH/FTuhVItk1NUAKamR8Ppyksb5PzBvArQBLQKrp150r+eS3O/E
-         XnSXcpTJfNijidSSDb5e+lDXPzeDhrq2A1mAnbn3wL3sIvWx0O3xtjnkbu6eJVX7Qihb
-         vyBZc399hfjbck0sy2SL+6UdLKsnfgDu3PJv+4Hnu/c/29hupjDXHb2Jy/jTgE2Sz+FB
-         niTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753770863; x=1754375663;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0wJ7p1KnoPTtuiUiUre3TQUdtSHj428TRzShsa/CgUA=;
-        b=dygz3DGhKctse3WCl+irQqK1iLQnzWF8EhPDipKkqbia6ibD2eB/I5ixdhmN5o2PFr
-         DF0Qg/uJ+3xXjXcH8mi2k/pXYxSNVNJ0e/zBb9dmWuL3A2tp0m44x00G8t+uReikAzYH
-         gpzIDVOAHCSEyf9vLY/N0opwrLl8jGi6UEeikbFR9p+j4+OMGqhkbk9BEqZcAZvksooy
-         g2rL7QF5uFxC1V9Zc8vWtSE/mo8cDgsgLKCqN7CSaQ6jKuqfUxI52V6QMFTnB/AK7NV0
-         XY8UJ3qfrpOH6IvSeZ+gTSpgGJxUtuoIXG8WS9O90j//B2UKpAxQCtZaJtT5E9NoBxuG
-         icyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbJwzKSzvqVETVtihOkm2O/McfGlN4yneaMWLdYh0qu3vS1TrrVLxZcpN3Ei97CssqjVceSK2RYisXwvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiWXU2YU5n2zMd9EsH5bsAAdiit5j3ht3a1W7vI5TsRxcKMX/q
-	LCAKcLSOQwTWhhU35SSTO+cDj99JY+pW3JcQqSq3hYjbXUMMuWZzZJv0vYRDat7QI94=
-X-Gm-Gg: ASbGncta2ny/3xLswEWcXrTkb9Gwsrj8psifyWM22FoDRj+9ibZ5qisL8gMlu75Dlom
-	08F5fRHnkLaQ4N1vYM6hW13gR0G0aFviTXNCzRFCiHVJaN18SyI0jvPsHNHFoCFYZbcTmivvQar
-	rNVmnPz4WKwZaWd3V6uJvNIeq5o2At8fPQvUmvCqWIzSE+qcgEWttMahUsh2LwmGlarI+pRZac3
-	8LZF4cvO1tZ58aq55mMg3p32DRuTKAQQzgYdFhN/s6CH6avvMDdpoWtSrSJzhPAqjzd2sERzmuL
-	ChCBlERuB/WWAteUPe00G58gtNv6ATuyE9YMmXPUoxeic4m4J3bsnep44v/um6XGO7M53v7zLPa
-	Sxgho/pxbvXUrjqOzx9ZPLjLwbUOGkK9+CQ==
-X-Google-Smtp-Source: AGHT+IHwnRZ8V94I2dIRwpv7xzVyb90S3UZWn2P7FJ9P3VAU65PFBP1DY/UxTAXlXrCCU2xReoJaYw==
-X-Received: by 2002:a17:907:9686:b0:ae3:64e8:8c5c with SMTP id a640c23a62f3a-af61b5e8a5amr1548200866b.14.1753770862879;
-        Mon, 28 Jul 2025 23:34:22 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:a1a0:92bf:def8:453d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635aa32d2sm541086966b.100.2025.07.28.23.34.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 23:34:22 -0700 (PDT)
-Date: Tue, 29 Jul 2025 08:34:18 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Acayan <mailingradian@gmail.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH RFC 24/24] arm64: dts: qcom: x1e80100: Describe GPU_CC
- power plumbing requirements
-Message-ID: <aIhrav7GKpsbVpto@linaro.org>
-References: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
- <20250728-topic-gpucc_power_plumbing-v1-24-09c2480fe3e6@oss.qualcomm.com>
- <aIevIuMDA5R8igmi@linaro.org>
- <50868cd8-68a9-4bad-99f3-8cf542886fb6@oss.qualcomm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910A2204C0C;
+	Tue, 29 Jul 2025 06:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.51.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753770929; cv=fail; b=qY6+C86ME7bfjkKoFnVXsimcWHgOzN799IRqrbQyasxk41BkJGPqVUvnbGtHounTIeKOsDjoWG3bG5xK162ft7CY7JrZsKCrZ6Rhm8VnilWyBwC8Th2hCVe4hHOq5s0iLn1RKDUS0a2ZOW5qSGd8WXJNil278zCvgBXZxFJiXMw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753770929; c=relaxed/simple;
+	bh=2dyWw86dNm14IWZcs2WQQsXhjaC92z9B8M9jEkTnjBc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Q0uhbIJfISnkhncMs03uPInA1o18Clw3M5QYjIEvpQdwJ7WRbNXwiakQu5PzfyQ4ZEPxqh+4BKYB0khMxePS2d4GESvya/+spBFGJnI4HTSquBRtetwj/R5OTmQI9/jrRzMZDXPsskDSduHX9qzI1RzC4j1tbedgbv8AsUUC0dA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.51.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WQvokzMEIfqhbJ+QfuHlpajleRovpI3rtf9FcH4VoXivjXIvjJhHnNFVAWqLrKGUN+V+I7Sq6aDc1zY7z2BrUSAsVjog28j2/tuzImDtM/cyDUuEcbyMPZhb0SlBzpKQ5BZEAYDtnTek12Z+AY3sA+xyH5JmmD4WKJQ8GnVRNgux7xq9oR3owwg7FJcwqGXv9o50Mrftw1O3v5yxzbgbT5DUwbCGpVzzuisQXBl0nFNoz8hmRfSaYBg0v7mfMkjA7qKxt8GZ9KSp4oKKPzKuWUlOb+yY6aHaDVGaFQ+WKO4TbcqKuH1NuFtdrkxR8jAEeJFiiwiZmXCT7F6TAvfDvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2dyWw86dNm14IWZcs2WQQsXhjaC92z9B8M9jEkTnjBc=;
+ b=LVCc+B9LiQXdOE+tIKjgHimyDMQ5Ct+9WKYVgFs+clUP616nfmZrhBaUJmepoo/omSu0Il5Odjpxz+ZYaqaaC9RPX9phZ97gSP5+HoNy8kAvrAzUzTkhOLjqAKJTHjo74i+KyBAg8h933zmv3lDO6+8syn91gHq66cs1ESaMoTLcCCdKgdER/cprSJlnod8yVDKa1vUwmMbSk7C6an7fy3WEReMZ3dCYoCxeUH52VXO/SGfwwuooSms06WGA68G+sFbrToMBKfizmn/7GlEEX/RLTKhr8ID6+hSbzL5WahKa/V5gc6wfUXFuBil52mIwj0sjqeIpSD8vEoUkg/lhGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:229::21)
+ by PN0P287MB1508.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:17d::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Tue, 29 Jul
+ 2025 06:35:22 +0000
+Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418]) by PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+ ([fe80::5c9a:906e:318b:c418%6]) with mapi id 15.20.8989.010; Tue, 29 Jul 2025
+ 06:35:22 +0000
+From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+CC: "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>, Mauro Carvalho Chehab
+	<mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Hans Verkuil
+	<hverkuil@xs4all.nl>, Ricardo Ribalda <ribalda@chromium.org>, Bryan
+ O'Donoghue <bryan.odonoghue@linaro.org>, Hans de Goede <hansg@kernel.org>,
+	=?Windows-1252?Q?Andr=E9_Apitzsch?= <git@apitzsch.eu>, Benjamin Mugnier
+	<benjamin.mugnier@foss.st.com>, Matthias Fend <matthias.fend@emfend.at>,
+	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Sylvain Petinot
+	<sylvain.petinot@foss.st.com>, Dongcheng Yan <dongcheng.yan@intel.com>,
+	Jingjing Xiong <jingjing.xiong@intel.com>, Arnd Bergmann <arnd@arndb.de>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+Thread-Topic: [PATCH v5 2/2] media: i2c: add ov2735 image sensor driver
+Thread-Index: AQHb/Ih6djfjLciEYkK3gvcBpDSgELRBx44AgACQNVCABlTHug==
+Date: Tue, 29 Jul 2025 06:35:22 +0000
+Message-ID:
+ <PN3P287MB3519F7CC80D5B7B89853F95AFF25A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+References: <20250724104711.18764-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250724104711.18764-3-hardevsinh.palaniya@siliconsignals.io>
+ <aIKi1BkNzNvsf5Tr@smile.fi.intel.com>
+ <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To:
+ <PN3P287MB35190A4AEE4C8D98142E7B6AFF59A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3P287MB3519:EE_|PN0P287MB1508:EE_
+x-ms-office365-filtering-correlation-id: eba69b23-b78d-48b3-8462-08ddce6a1866
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?Windows-1252?Q?D+jlIKLQSIT+szw/yQ6yNrK1uKGZixLmkMgwbDGnMOscrIMCA1l7hd87?=
+ =?Windows-1252?Q?DWRik9wYgApHoF7wdEm+bhZDsR7jj8YagAO8aSWpjsIg2g7ueD4MJKQ3?=
+ =?Windows-1252?Q?9d8i9UIUcE3/N1JkAUbsp1EJ0xkzK3FDVCdWqC+DAvHf0sg2nqn4hxkc?=
+ =?Windows-1252?Q?pwRIlIDkTizd5QLGf0RmnT0X4wJJg9dn5jccibVF3gd4ll/t7gZXAfew?=
+ =?Windows-1252?Q?M0Mo94xDv9OdYwodgqW8FH87VbsoyR5jZ1L3zwBozl8OSBKU8/opDw+h?=
+ =?Windows-1252?Q?FcXLVEJ1W+3I+rYtvLS/HvoIMrIRJuU8FFjSLFxvvNyjC9zzi+f9f+mr?=
+ =?Windows-1252?Q?ORQJS2B2E51N4KrXSU5u1cVrK7jbNUYOuJmL4wYVnknMt2bSWnJ4D2Te?=
+ =?Windows-1252?Q?C+su48IujYP11troHZ+nHxG7B1Ko2d7Rw7wiVVLnhGV2f1N1e6YOcP68?=
+ =?Windows-1252?Q?kgjhe2vYy5yQh1JTXy7YPkNIGIVGUPpKFpqZr3U/R/X9Uucu00RYZ4WL?=
+ =?Windows-1252?Q?faMtJwqyvPl1Rp47KIewoKhT19BK9P6HebjXEPhQCg3LxbkncNZnDZru?=
+ =?Windows-1252?Q?B36TlDi1Ypx4/wz7s2URjvtZ3hChuEc+aEKgO4jQxpkFOtcUo0dCDwX7?=
+ =?Windows-1252?Q?MVw6aV69XAo0pelDIfOLhY7PH3lqkreu1dcsTSJlqvNds2fBJlfnoyrP?=
+ =?Windows-1252?Q?pwJghF/vS8cPdzy7GlqBCZ5dT2zLhUF827nJALhi6TUNAzkx87hIbvML?=
+ =?Windows-1252?Q?SOKz9+776fa0YzOyv/OZajgqHe0MlvXE0UaZiIBoTyFH3EISFoA0Jazi?=
+ =?Windows-1252?Q?eDQcb3xgMzV2x7WkokaSyPKsYJz0BMiE0Wx4Idw8BEaWBVdf6thchoeP?=
+ =?Windows-1252?Q?WjirGoh0C9GXTVNk6tMPAqszjD6dnC4mBb4IzjE1fjKxOa8WHK8rpdWN?=
+ =?Windows-1252?Q?zJ6jw7yD0tn+9f5MIKgJCwo68ozuqVO05RC7JLxDC/Sp2iur+qReO9FR?=
+ =?Windows-1252?Q?zCwGXALddAUNyMuST0xyRRt2g/PhwjLMekTIF0j6smklRQU/H4wWvqx1?=
+ =?Windows-1252?Q?81mtzgyg7Ut1ec24usF3QrXHXG54+qrKsG4xfPn5a0maTdDjKHzdusrI?=
+ =?Windows-1252?Q?Rfv71rW1Bq5iz9kH+Kmlwa2YUd1DbLpp5LwctjhWaDXo5ehVsAlCcNeI?=
+ =?Windows-1252?Q?sxeUWvv1YAU2AsyyQzy9TiszY9DUqWIIWHhBfaFGuhRTl31Lx2dBHWI2?=
+ =?Windows-1252?Q?JLGJggKeWFE1aDTJUzAJ0rYyAhH4Lg9p1AOdb/RCwTxZNj+mrQfdgxmB?=
+ =?Windows-1252?Q?L61Vg9Kzm5kI8q2cPJ8Wtal5SkQ63PJE2iMjlCJ5bd3gfse9KfZjQGLl?=
+ =?Windows-1252?Q?KHpGkDeLUFfvBaZRsDDqflZj0cD/3VcJS2jpGcm9tSd9dSgjZzZ1hmta?=
+ =?Windows-1252?Q?Xe+zMvdn6xv/K6sTNr0x6w7I/W75olTjTgdhK/G3Dd+BIUWNayttVLeT?=
+ =?Windows-1252?Q?7oQHAmhW3idefkFYx6xX4L3MLs55qnG365La8Vm+qFsFPAyzTESpH2kI?=
+ =?Windows-1252?Q?2nTcDlj62q6YSgRqIiHaxmXMFCdnjkW9I8KqjA=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB3519.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?Windows-1252?Q?AddfWyZ+7FkVbM96hF1WO4wguekWzQMWFcTPTHsdzPFm+cXnMENCT/7l?=
+ =?Windows-1252?Q?w3PgJL28Wi0bbU3S7yrBP1iD437Ya5tzGtSGOV9wz/vMFISqDEY6fQ+s?=
+ =?Windows-1252?Q?yyEyBC7k+F3eWDSi+qiTrv/rmLci2v3/FNx6JIzxhJ/d1zNnrcYy0/w/?=
+ =?Windows-1252?Q?HS4MEft+clbJ/d8i1YfiDZTYMtdy+DYzAkMxi0TIq191RcgWk2aZD06m?=
+ =?Windows-1252?Q?mCXfem+IfckdrdAFC8+KcdceB6QfcfUgTPCqp7+bN/BQls2sWob1ZckC?=
+ =?Windows-1252?Q?0eDxMs1TuqiI6nsfXO3jbEYJj4zvrDib9XMVHd072L9JhuGr6xtRk0nG?=
+ =?Windows-1252?Q?XjExUKY3ruZ4PlZoiryxEDiteCihTb2EHlwwaKJhYAsQ4JkaiTxcG/vm?=
+ =?Windows-1252?Q?q7P9o0aRN11BQXOVmW0TIypPoWT/5FdCNCNCjQGAyE15KdUt+iq9HpKQ?=
+ =?Windows-1252?Q?hZQ5EiNZBmcEvGJWYLAWxPb3bA3EilkFHmJRKy24/Npee0Cgtqy3QYPi?=
+ =?Windows-1252?Q?6O+8IF2BYAbdEkDpHVCoS441d38ZR5hd692+iQ8M2H3k1yyXiymrwst5?=
+ =?Windows-1252?Q?xf7PLKczdnevngbQ/0SiILcpZbB4MIvYdd49Mq0zTfavvGsphU5LesJZ?=
+ =?Windows-1252?Q?G5veedwuf3klJPXNMnBdsJ0q+/t/xBe7GC39bv1iU3qoN0JlnTi6kgO9?=
+ =?Windows-1252?Q?hNtq+AZc2dXhGKiBrJNy10oAbMKOfBOhoEeQOTa68xvk0lmAiw15R1Kg?=
+ =?Windows-1252?Q?uX//7nr7VDEGoSX6wftWVMjo0Lx3QRc/HA8Z7cXje4s4+L1NvmihjtqI?=
+ =?Windows-1252?Q?Nu9u3gBRXpmoOGIkGz9fqRWlHF97A7/47JoXzxeeRjMdiPiug+c6j0lR?=
+ =?Windows-1252?Q?jDhaP6luWwO5ZyZbThRV9NcVq6UpXnvfOA9QBUgoMPT9jioY17B3OB27?=
+ =?Windows-1252?Q?KwVFpCrK8R0jbjVRCWdkH3a+7A/8B4+N5XPxXcoiuHjxxQtes32wKWcG?=
+ =?Windows-1252?Q?iF5SAFQOdnZLC13wJtv9uAbHc1cjiDmX/SyMzbPwn3Igiqx98u6ZAC8B?=
+ =?Windows-1252?Q?EP/s3Dsv7xnp4utq6Jal3BW+Mua4R+7Q5/r0Oy7QAx2JTe3H5J5IRzkR?=
+ =?Windows-1252?Q?d3dAFBORR32jWO2usf2QS9xNYLtu5XSQdWU2hAIKf133IW7j/8MtciNO?=
+ =?Windows-1252?Q?JKm1vHTQWFXeOXefMEfOffNDsRYCVpN5at7q4Jp/mr2mRfdsv2I10pSg?=
+ =?Windows-1252?Q?Z6mUIKjLJJeXtSPaKXCUREByIPIu92l1aIGAYG1tqsmngqxGlnU+URD8?=
+ =?Windows-1252?Q?QDkroZONeJQ9jtE526pdjK8XLZkIJCfqi7OWCKSa4k2ZtCmQdPpjonHu?=
+ =?Windows-1252?Q?JacSijY+QJ62GGinAsDT1Gi3vMD3Z6lVfxXbMe3HH1eEeQ2T6dFBGj49?=
+ =?Windows-1252?Q?m5oRZVpKqLRs5d2i7IR40utth3+4pb7sksYcDKEJs2AToB8FTEPVB3u+?=
+ =?Windows-1252?Q?wDNrLOdUfRGil4goVGRaW0Iafuh3XvMXCBovDi1LrWXZVILDrkaC71OV?=
+ =?Windows-1252?Q?UGpTrbGKzzhp4Dk83TaftsboLdg+dNBtFQoKW6KeqeoeSYAyCLDqiI6I?=
+ =?Windows-1252?Q?fNDmNoNB9WoO0k0q2OCX/nPv15BY414ILSEK0bGPNhlyof8fAb5Q72aC?=
+ =?Windows-1252?Q?3Jd/yOVgbSMcQZWGHRHuFpkSQt5vhoJEkxCMg3Ewpc4KTuuqfFbwqg?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <50868cd8-68a9-4bad-99f3-8cf542886fb6@oss.qualcomm.com>
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: eba69b23-b78d-48b3-8462-08ddce6a1866
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2025 06:35:22.7589
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: T7QbE07epYDK8eFKAXcMZZR0wUYv7DyNFsDAN1KPweYN02KkEp3b5l7lRWdCD485sqWIa9sL16/dxy3vLXOY0M69dH706FawyUN/62RVhROMMSmRMleyJfj1d3e53+5l
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1508
 
-On Mon, Jul 28, 2025 at 11:31:10PM +0200, Konrad Dybcio wrote:
-> On 7/28/25 7:10 PM, Stephan Gerhold wrote:
-> > On Mon, Jul 28, 2025 at 06:16:24PM +0200, Konrad Dybcio wrote:
-> >> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>
-> >> A number of power rails must be powered on in order for GPU_CC to
-> >> function. Ensure that's conveyed to the OS.
-> >>
-> >> Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
-> >> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >> ---
-> >>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++++
-> >>  1 file changed, 6 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >> index 5e9a8fa3cf96468b12775f91192cbd779d5ce946..6620517fbb0f3ed715c4901ec53dcbc6235be88f 100644
-> >> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >> @@ -3928,6 +3928,12 @@ gpucc: clock-controller@3d90000 {
-> >>  			clocks = <&bi_tcxo_div2>,
-> >>  				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
-> >>  				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
-> >> +
-> >> +			power-domains = <&rpmhpd RPMHPD_CX>,
-> >> +					<&rpmhpd RPMHPD_MX>,
-> >> +					<&rpmhpd RPMHPD_GFX>,
-> >> +					<&rpmhpd RPMHPD_GMXC>;
-> >> +
-> >>  			#clock-cells = <1>;
-> >>  			#reset-cells = <1>;
-> >>  			#power-domain-cells = <1>;
-> >>
-> > 
-> > To repeat your own message from a couple of months back [1]:
-> > 
-> >> You shouldn't be messing with VDD_GFX on platforms with a GMU.
-> >>
-> >> Parts of the clock controller are backed by one of the MX rails,
-> >> with some logic depending on CX/GFX, but handling of the latter is
-> >> fully deferred to the GMU firmware.
-> >>
-> >> Konrad
-> > 
-> > Please describe somewhere in the cover letter or the individual patches
-> > how this relates to the responsibilities of the GMU. I searched for
-> > "GMU" in the patch series and couldn't find any note about this.
-> > 
-> > Also: How much is a plain "power on" votes (without a corresponding
-> > "required-opps") really worth nowadays? An arbitrary low voltage level
-> > on those rails won't be sufficient to make the GPU_CC actually
-> > "function". Do you need "required-opps" here? In the videocc/camcc case
-> > we have those.
-> 
-> Right, I failed to capture this.
-> 
-> The GFX rail should be powered on before unclamping the GX_GDSC (as
-> per the programming guide). The clock controller HPG however doesn't
-> seem to have a concept of RPMh, so it says something that amounts to
-> "tell the PMIC to supply power on this rail". In Linux, since Commit
-> e3e56c050ab6 ("soc: qcom: rpmhpd: Make power_on actually enable the
-> domain") we don't really need a defined level for this (perhaps it's
-> more ""portable"" across potential fuse-bins if we don't hardcode the
-> lowest level anyway?).
-
-Thanks, I forgot that we have this commit.
-
-> 
-> However after that happens, the level scaling is done by the GMU
-> firmware. This holds for allOf CX/MX/GFX. I'm not super sure if
-> both MX and (G)MXC need to both be captured together - downstream
-> seems to describe MXC as a child of MX (in socname-regulators.dtsi),
-> but I'm not really sure this is true in hardware.
-> 
-> The GPU driver currently first enables the GX_GDSC and only then
-> does it kickstart the GMU firmware. Downstream seems to do that as
-> well. So on a second thought, since we've not seen any errors so
-> far, it calls into question what role the GFX rail plays in the
-> GX_GDSC's powering up..
-> 
-
-It might play a role, but we wouldn't know since AFAICT we don't support
-enabling the GX_GDSC. Look at the beautiful gdsc_gx_do_nothing_enable()
-function, it basically just defers the entire task to the GMU. The GDSC
-just exists in Linux so we can turn it *off* during GMU crashes. :D
-
-I think we should identify precisely which votes we are missing, instead
-of making blanket votes for all the power rails somehow related to the
-GPU. In this case this means: Which rails do we need to vote for to make
-the GMU turn on? If there are no votes necessary after the GMU is on,
-it's better to have none IMO.
-
-Thanks,
-Stephan
+Hi Andy,=0A=
+=0A=
+I=92ve made all the corrections as per your comments; only one point is pen=
+ding. =0A=
+Please see below.=0A=
+=0A=
+> > On Thu, Jul 24, 2025 at 04:17:05PM +0530, Hardevsinh Palaniya wrote:=0A=
+> > > Add a v4l2 subdevice driver for the Omnivision OV2735 sensor.=0A=
+> > >=0A=
+> > > The Omnivision OV2735 is a 1/2.7-Inch CMOS image sensor with an=0A=
+> > > active array size of 1920 x 1080.=0A=
+> > >=0A=
+> > > The following features are supported:=0A=
+> > > - Manual exposure an gain control support=0A=
+> > > - vblank/hblank control support=0A=
+> > > - Test pattern support control=0A=
+> > > - Supported resolution: 1920 x 1080 @ 30fps (SGRBG10)=0A=
+> >=0A=
+> > ...=0A=
+> >=0A=
+> > >=A0 MAINTAINERS=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0=A0=
+=A0 9 +=0A=
+> >=0A=
+> > This should be started as part of patch 1 as in between you will have a=
+=0A=
+> > dangling file, which is not recorded in MAINTAINERS.=0A=
+> >=0A=
+> > ...=0A=
+> >=0A=
+> > > + * Inspired from ov8858, imx219, imx283 camera drivers=0A=
+> >=0A=
+> > Missing period at the end.=0A=
+> >=0A=
+> > ...=0A=
+> >=0A=
+> > > +#include <linux/array_size.h>=0A=
+> >=0A=
+> > + bitops.h=0A=
+> =0A=
+> Why??=0A=
+> =0A=
+> > > +#include <linux/clk.h>=0A=
+> > > +#include <linux/container_of.h>=0A=
+> > > +#include <linux/delay.h>=0A=
+> > > +#include <linux/device/devres.h>=0A=
+> > > +#include <linux/err.h>=0A=
+> > > +#include <linux/gpio/consumer.h>=0A=
+> > > +#include <linux/i2c.h>=0A=
+> > > +#include <linux/module.h>=0A=
+> > > +#include <linux/mutex.h>=0A=
+> > > +#include <linux/pm_runtime.h>=0A=
+> > > +#include <linux/property.h>=0A=
+> > > +#include <linux/regulator/consumer.h>=0A=
+> > > +#include <linux/units.h>=0A=
+> > > +#include <linux/types.h>=0A=
+> >=0A=
+> > > +#include <vdso/time64.h>=0A=
+> >=0A=
+> > We do not include vdso in the (regular) drivers. Use linux/time.h.=0A=
+> >=0A=
+> > ...=0A=
+> >=0A=
+> > > +struct ov2735 {=0A=
+> > > +=A0=A0=A0=A0 struct device *dev;=0A=
+> >=0A=
+> > Do you need this? Can't it be derived from regmap cci below?=0A=
+> =0A=
+> I prefer keeping the dev pointer directly in the struct for simplicity=0A=
+> and better readability. Using regmap_get_device(ov2735->cci) adds an=0A=
+> unnecessary level of indirection, especially since dev is frequently=0A=
+> used for logging, error handling, and regulator/device tree access.=0A=
+> I would prefer to retain it.=0A=
+=0A=
+Are you okay with this approach, or do you still prefer to remove it?=0A=
+=0A=
+Best Regards,=0A=
+Hardev=0A=
 
