@@ -1,129 +1,148 @@
-Return-Path: <linux-kernel+bounces-749432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E0F5B14E52
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:25:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8BDB14E54
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0F0A7A4963
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:23:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85BF154150F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022C4207A16;
-	Tue, 29 Jul 2025 13:25:18 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7381ACEDD;
+	Tue, 29 Jul 2025 13:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Id0gMo4b"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FAD215573A;
-	Tue, 29 Jul 2025 13:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A53A91F7554;
+	Tue, 29 Jul 2025 13:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753795517; cv=none; b=EZjhZdHiKebLvaeUepIKrbk79Tj/Rz5QnOHLzOesfytmGiBKD/szoA9YSrMCvrh2KOWYOcSnefvPbrotPFQ4z1lBrgvfnKtnOLEKDU06JemBmuwI2eM2Pa+u5c8UpFI3B/XbklbSEKNtDQ+pMuT8FmBAHjuBp2UM0jvBei7Ao9Q=
+	t=1753795543; cv=none; b=ioJIAAb+McfTagtdXt8vGjNXMBxQnUYqd2SXBhu3CqnFnOEe9j8tQH2IkqofDDQrSeuFy5CWcnyKTyG2N1WQK/Qdnce6ZVI9ph0zrUDli5y4Gz3pKVwsh3UZrDDdxkNNWm0GkLhTuOOPWURwiWfkkJEEU6kX8ylre3HU/WWWlwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753795517; c=relaxed/simple;
-	bh=p9RaGBMR8u66X2tUCyNn2rT4pC2/rbWDHQ6ujxVhM94=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lVpmVnQSsnUqfcsZkhTRWIThiCew4JNPlBnNCvtk8WulIA16ElmRKBs8s+bll3MbjNwKM7J8kIX+716iz5KI8nADJjmQ38Yl2iOy6Lg2uN//XXqdYoHdMS+hBIS+DjmPurjulFDAJ9GiGK6WZ3878nLl7UNoeiS7aapuqhk4o2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from pomiot (c144-141.icpnet.pl [85.221.144.141])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mgorny)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id F247D340D58;
-	Tue, 29 Jul 2025 13:25:12 +0000 (UTC)
-From: =?UTF-8?q?Micha=C5=82=20G=C3=B3rny?= <mgorny@gentoo.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Sam James <sam@gentoo.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Micha=C5=82=20G=C3=B3rny?= <mgorny@gentoo.org>
-Subject: [PATCH v4] kheaders: make it possible to override TAR
-Date: Tue, 29 Jul 2025 15:24:55 +0200
-Message-ID: <20250729132500.343778-1-mgorny@gentoo.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <CAK7LNATotYMHVgNHkQcT33qQK+fdZAjoQpdJqtKKWT18uJcPXg@mail.gmail.com>
-References: <CAK7LNATotYMHVgNHkQcT33qQK+fdZAjoQpdJqtKKWT18uJcPXg@mail.gmail.com>
+	s=arc-20240116; t=1753795543; c=relaxed/simple;
+	bh=4MaNWKs7TaCzthrdXDGRFTeWf8nejV3Z8R/aIGF+vAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tO5BP6yveCFh9lKCc/lk6UJD/mGiQwBfHxqTrG3hv+VINmvcDS+yxNsNTBZVXE4YoKboLn8ygRGZ/8/kf2sALhh+u+uNfZWod0GqaLY0To4hlOTaLrxyHfGJkAA1FBs3XepalFBXQRTmFMIMOggGGS2jrxMmKwbur4udvQLARbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Id0gMo4b; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8e21180c55so1318892276.3;
+        Tue, 29 Jul 2025 06:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753795540; x=1754400340; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=4MaNWKs7TaCzthrdXDGRFTeWf8nejV3Z8R/aIGF+vAk=;
+        b=Id0gMo4b9q6BdqrRlP9+cuTo9cAiplIUuqBX1Fc6oykIqTbOLcnFAX8vtcsCXd+COt
+         rFPI+KLPiyXjbEuEZzX1shyCS0W2PLOetrEYsDrhxrCT1fbsDEmsTFNjF/8Wu1KiPXFj
+         kx+qYVl0qkQZF2fUILdP6sqJXhwgmCqPUGPfPIgzTXwfAdOOai4oWirRYxBTF0nSr/gT
+         W/qWbETbzWM8MQsvFOXUdUHkJD0jCOMxiwpcVlnTt5OYPog6QrFO7anbqam6FLNZxDWk
+         2dCVEt0U1ykTp1rrFv0J/i1lEzpJXLv9waj4UWSZ6I1z0Mx3wZiqTekAqsOBqd3wgNqr
+         BKDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753795540; x=1754400340;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4MaNWKs7TaCzthrdXDGRFTeWf8nejV3Z8R/aIGF+vAk=;
+        b=QuGysrXdytMHIWyM1yKpdmYbBiYYC4qqzWSzofBe1R9bTN+kRpN5Ia4mACw8JT59fM
+         cjmOsBYuXVfv8TLY5aUE63b+qV8RQHRakuZQ0Of3EqdYPaldYpRARLpJBmueo1ea/FdS
+         Tii+pSw5PPITE4kCJ2WWnCJFvkysMhbr521TxF/1aF01vnbWSLetBdZFX0aBr5iggQIs
+         3GmldsRf+ciF/kFYT5QCaCBN6VU0VeOoD9r6YtMV7nA9kw3N6e0uQSBsg8jCAuYbnh5o
+         A0XsjlMnTS5JGpnU0W+T1wXz4Hk23PYmLWJMwMAbcgT6SGi1KNs6IIKBqqzaxbUMDDJf
+         RWGA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5ln/Y1OHRgoSzZcPTxstldPZUWRQa94FYI+IKkgRhlUMzfPPtp/z+FV0Tx2nQn21MR3FiD6D6TZwv@vger.kernel.org, AJvYcCWHr07RMjfJ8wPm8A/2fMd2oFzQFIxDm+92IicFXEdv6crxT0CWvFwKhKjfTdkW+0o000cn0KFcuJ0tssui@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLdNfFAXIbOgyBen09XoZUsAHcF4tg1EhryGaUPK8/xJtEwvpn
+	LAHkKmU870doKR0eY/Tn4DY+C5EEbv2X+BsK2/BbQCgTZdX+HpM4uvzawTLAriBDEbXyZSF+H4X
+	EodRE27ri7sHiSxtQl+NX9F0PfwxIZW4=
+X-Gm-Gg: ASbGncuCBNirTJgBuIaSb1vn+rFKHsq8KJulyh7OGy7JV4cB6y0p2/WuRWrEb0J7dx/
+	iV4GulCid8jeTIohlpRVI5b2jGVNHWjzWD0rW5fiBHaaqJu+9f0aqurFeotiXEu/tzcF/11/KJY
+	GwiGwTzJoTWFi4tlPaD/ML8TQLvlH2PxdqbkcXxzNHlxU21aStG2pXtrEGy74Bc0iNPIWB0I2Rh
+	f0zibnw
+X-Google-Smtp-Source: AGHT+IHL20IVMBOPEcWqdaoF2zTGYAx5AWr+HHlIlUbQ23WbctxapIVl9GiiFgzBb8rsi6tFDPZtaW3tcEhbVEYQMqE=
+X-Received: by 2002:a05:6902:18d2:b0:e8e:265a:c36b with SMTP id
+ 3f1490d57ef6-e8e265ae45bmr3085334276.7.1753795540205; Tue, 29 Jul 2025
+ 06:25:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250717135336.3974758-1-tmaimon77@gmail.com> <20250717135336.3974758-2-tmaimon77@gmail.com>
+ <db07c25c-4064-4330-8bdb-8a619b0b2915@linaro.org> <CAP6Zq1jDCfhOWj4JwORy22TDZRBr0fnuy5-=G4WO9DFRv7pTdQ@mail.gmail.com>
+ <61a0c875-89cd-4040-af15-79f57b53f377@linaro.org>
+In-Reply-To: <61a0c875-89cd-4040-af15-79f57b53f377@linaro.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Tue, 29 Jul 2025 16:25:29 +0300
+X-Gm-Features: Ac12FXzajzgJganh_OGaQ0PgxM_llQhwooXsnSSLuQX4GroBGdFGCQXd6d8NdSM
+Message-ID: <CAP6Zq1inUdfX5cmv7LHrgOBQ6LPYY_2t5o8LD0oW4rUO191_tw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] arm64: dts: nuvoton: npcm845: Add peripheral nodes
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	avifishman70@gmail.com, tali.perry1@gmail.com, joel@jms.id.au, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Commit 86cdd2fdc4e39c388d39c7ba2396d1a9dfd66226 ("kheaders: make headers
-archive reproducible") introduced a number of options specific to GNU
-tar to the `tar` invocation in `gen_kheaders.sh` script.  This causes
-the script to fail to work on systems where `tar` is not GNU tar.  This
-can occur e.g. on recent Gentoo Linux installations that support using
-bsdtar from libarchive instead.
+Hi Krzysztof,
 
-Add a `TAR` make variable to make it possible to override the tar
-executable used, e.g. by specifying:
+On Tue, 29 Jul 2025 at 09:21, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> On 28/07/2025 13:30, Tomer Maimon wrote:
+> > Hi Krzysztof
+> >
+> > Thanks for your comments
+> >
+> > On Thu, 17 Jul 2025 at 17:05, Krzysztof Kozlowski
+> > <krzysztof.kozlowski@linaro.org> wrote:
+> >>
+> >> On 17/07/2025 15:53, Tomer Maimon wrote:
+> >>> Enable peripheral support for the Nuvoton NPCM845 SoC by adding device
+> >>> nodes for Ethernet controllers, MMC controller, SPI controllers, USB
+> >>> device controllers, random number generator, ADC, PWM-FAN controller,
+> >>> and I2C controllers. Include pinmux configurations for relevant
+> >>> peripherals to support hardware operation. Add an OP-TEE firmware node
+> >>> for secure services.
+> >>> This patch enhances functionality for NPCM845-based platforms.
+> >>
+> >> Drop this sentence, redundant and not in style (see submitting patches).
+> >>>
+> >>> Depends-on: ARM: dts: nuvoton: npcm845: Add pinctrl groups
+> > Maybe it's an issue with our work mail server,
+> > https://patchwork.ozlabs.org/project/openbmc/patch/20250706153551.2180052-1-tmaimon77@gmail.com/
+> > I believe you didn't receive the patches below as well, since I didn't
+> > see any comments. Am I correct?
+>
+> How is it related?
+Not related, I will send the question in a separate email.
+>
+> > https://patchwork.ozlabs.org/project/openbmc/patch/20250706134207.2168184-2-tmaimon77@gmail.com/
+> > https://patchwork.ozlabs.org/project/openbmc/patch/20250706134207.2168184-3-tmaimon77@gmail.com/
+> >
+> >>
+> >> There is no such tag.
+>
+> Do you understand this?
+Sure, will use changelog or b4 dependencies next version
+>
+> >>
+> >> Use changelog for this purpose or b4 dependencies.
+>
+> Do you understand this?
+yes
+>
+>
+> Best regards,
+> Krzysztof
 
-  make TAR=gtar
+Thanks,
 
-Link: https://bugs.gentoo.org/884061
-Reported-by: Sam James <sam@gentoo.org>
-Tested-by: Sam James <sam@gentoo.org>
-Co-developed-by: Masahiro Yamada <masahiroy@kernel.org>
-Signed-off-by: Michał Górny <mgorny@gentoo.org>
-Signed-off-by: Sam James <sam@gentoo.org>
----
- Makefile               | 3 ++-
- kernel/gen_kheaders.sh | 6 +++---
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index ba0827a1fccd..081d494d037a 100644
---- a/Makefile
-+++ b/Makefile
-@@ -543,6 +543,7 @@ LZMA		= lzma
- LZ4		= lz4
- XZ		= xz
- ZSTD		= zstd
-+TAR		= tar
- 
- CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
- 		  -Wbitwise -Wno-return-void -Wno-unknown-attribute $(CF)
-@@ -622,7 +623,7 @@ export RUSTC RUSTDOC RUSTFMT RUSTC_OR_CLIPPY_QUIET RUSTC_OR_CLIPPY BINDGEN
- export HOSTRUSTC KBUILD_HOSTRUSTFLAGS
- export CPP AR NM STRIP OBJCOPY OBJDUMP READELF PAHOLE RESOLVE_BTFIDS LEX YACC AWK INSTALLKERNEL
- export PERL PYTHON3 CHECK CHECKFLAGS MAKE UTS_MACHINE HOSTCXX
--export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD
-+export KGZIP KBZIP2 KLZOP LZMA LZ4 XZ ZSTD TAR
- export KBUILD_HOSTCXXFLAGS KBUILD_HOSTLDFLAGS KBUILD_HOSTLDLIBS KBUILD_PROCMACROLDFLAGS LDFLAGS_MODULE
- export KBUILD_USERCFLAGS KBUILD_USERLDFLAGS
- 
-diff --git a/kernel/gen_kheaders.sh b/kernel/gen_kheaders.sh
-index c64e5a00a3d9..896a503dfb29 100755
---- a/kernel/gen_kheaders.sh
-+++ b/kernel/gen_kheaders.sh
-@@ -30,8 +30,8 @@ rm -rf "${tmpdir}"
- mkdir "${tmpdir}"
- 
- # shellcheck disable=SC2154 # srctree is passed as an env variable
--sed "s:^${srctree}/::" "${srclist}" | tar -c -f - -C "${srctree}" -T - | tar -xf - -C "${tmpdir}"
--tar -c -f - -T "${objlist}" | tar -xf - -C "${tmpdir}"
-+sed "s:^${srctree}/::" "${srclist}" | ${TAR} -c -f - -C "${srctree}" -T - | ${TAR} -xf - -C "${tmpdir}"
-+${TAR} -c -f - -T "${objlist}" | ${TAR} -xf - -C "${tmpdir}"
- 
- # Remove comments except SDPX lines
- # Use a temporary file to store directory contents to prevent find/xargs from
-@@ -43,7 +43,7 @@ xargs -0 -P8 -n1 \
- rm -f "${tmpdir}.contents.txt"
- 
- # Create archive and try to normalize metadata for reproducibility.
--tar "${timestamp:+--mtime=$timestamp}" \
-+${TAR} "${timestamp:+--mtime=$timestamp}" \
-     --owner=0 --group=0 --sort=name --numeric-owner --mode=u=rw,go=r,a+X \
-     -I "${XZ}" -cf "${tarfile}" -C "${tmpdir}/" . > /dev/null
- 
+Tomer
 
