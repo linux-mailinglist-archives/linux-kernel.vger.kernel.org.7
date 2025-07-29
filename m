@@ -1,154 +1,162 @@
-Return-Path: <linux-kernel+bounces-749185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5992B14B2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:23:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34FB7B14B34
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E888D1750CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:23:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530493A6B8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8054F2749E0;
-	Tue, 29 Jul 2025 09:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6127B286402;
+	Tue, 29 Jul 2025 09:24:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h9xyRZeU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="fEHAybb3"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610672673B9;
-	Tue, 29 Jul 2025 09:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4FB27FB3B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753781020; cv=none; b=Whb8GvNZv5yNVWIShDi3Qjykv5zILXfL6HE1yQTWuEEyXhZ0mFMylgXZm8ahIjobocepkumLpLwWaRqTI/rqwtSnskAOfMb079hhnfqJCLYYFghL+UMTnCeSrAs7CVLp2OWP/pe9aCK2Z5da/Ezr3rKXpq80H/Zcb1IdltLl4xI=
+	t=1753781049; cv=none; b=Gg0eHAKpKMadvV6poFrj/akvp6/h+2642WBLfvYdf+iXLgCYpn96LmchN4Gs5o91iwzrzaUgGo30BrCO3sj53HFfJYOklI09bOSAXT+xuyZWK+vzYHK7cG6GclfkPL2OQ11f1Fov5G8fBKDHIrIzlz43QfBVHc7QDYfY1zNORaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753781020; c=relaxed/simple;
-	bh=kBrxVm2sOKsediQJYDDB5wk7S0hagRKEn+9PQekDd+U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tgN/wxU5zGC9Aee+t9qz7PrmOSDMIzy3vQEhvVP0UpYvlLpAYrz703SsorNHEEXnI+yshZwmn9DUIUcxHXybNbB6PVHIrBibB7SneCw8i6AHvzYJ/RGaOhLZecufWniuPJmLfol5QdOOFSe3oRn4Ptac5ZE1rXJknHEfdxzFea8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h9xyRZeU; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753781018; x=1785317018;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kBrxVm2sOKsediQJYDDB5wk7S0hagRKEn+9PQekDd+U=;
-  b=h9xyRZeUnXzo0YgIT8tuOUHPdAsrpEigq+QHi2QnkG+xRvIGzo0fGEba
-   D4WFcY/KvZKm3cQNrSfoCXMTZNY5UPvO850LoJdmdF4wwBud6h5Xn4mCK
-   X9rkneK0MSJoRWi7ld3elOg8nwdI2jEaasVBw5CzaPlNyHG9z3n+2TwxN
-   wiDPkUYdCBjxdrL4TRkY4YHKnx6mwA4k+Kq0FSQGbB/rabRZKpODPXRTT
-   v2LOpNHPdamklyNvOENaGtbKotcQU6wC2bwYaWuEXkbrUtqq7cSm+QEPE
-   1tJU7GtboQap+efy/lEjbNRS75AGCQoO9GMf3WEZp2/2xVu1PCXKGqGzV
-   Q==;
-X-CSE-ConnectionGUID: PkY9Js+qQU+qKPZDCfH11w==
-X-CSE-MsgGUID: 2DLso0lVTWqL3q0iVeXI7w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="43649354"
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="43649354"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 02:23:38 -0700
-X-CSE-ConnectionGUID: +kMwkbTOR/+vSDJ2f816ZA==
-X-CSE-MsgGUID: GxINhn5dQRO5letcuTCI2w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="167954486"
-Received: from zhengwen-mobl3.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 02:23:34 -0700
-Message-ID: <db7043a4-f815-4178-8d81-2da1dda6236e@linux.intel.com>
-Date: Tue, 29 Jul 2025 17:23:32 +0800
+	s=arc-20240116; t=1753781049; c=relaxed/simple;
+	bh=1XbJXYOtfiKvD5ix8X5FxAD5vsw1x7eclqIkLeXimps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mW/8cS5lNWVRBYepbWxvk24Ghy0EumaR4q+jdhL0f1/mFpONWRsuPq5cnh47FJOGhbtHC6McyEQeYUjp87uZPnDQXNO8XQaTeVtwUQboBssbRN2jTPY9wCMfh1KV+D/bMZubBeDmiBWhGHxXm4BJYaedy1E5Tc9avdRkbZQ2/nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=fEHAybb3; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-55b72633aaeso1336770e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:24:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753781046; x=1754385846; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OvMriwwuRsxStr2YyKe5TWPbRI0lQN4j3ZQYt22kpLE=;
+        b=fEHAybb3OuY7x+gjbN/XKz8qEKAN0mQ9y4DGFfnXysVJzJwBu4iLULXuGicbjpx3D3
+         dtLhEKLl7J8VYDuc3D6tKDZw6iMkzJJpnTc+ZaATB+6uRKw/7SGeTrPwEd2pjTLLTdAB
+         igfmKdMOgFcyGEZqedATfYQOT0p2O/Ahkz/gXp6Q7OdnmD3OT7EitbbBE4oBtgTlryVM
+         gUMoQIS0sW4+bFi80TrW1fX+DN7lQwKQyzFSza/Jm+48xcga5AH2GdoWJUI2ga6zauQz
+         s7wrDKdw8RqIk9GQgQrBuyWmT9Z3xz4gZJo3u8T/aReQHNRczFczjzO2OXujQ7bZpSIK
+         X4zw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753781046; x=1754385846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OvMriwwuRsxStr2YyKe5TWPbRI0lQN4j3ZQYt22kpLE=;
+        b=Szysy84Z0yEUYnVj5b69E41beCcJVFlpmXoT0kWZp7L+znRjiuslPezRLTP86eSuUY
+         DWyaVOc2WD9O++BaMaomhIA/MWXcUNwuXQCQhHpq8KZgQ6TFOKXGkR9Ggo2lAxCrRsl7
+         TTq5DSAL9KqXra4EsQsbolebQGW1vrYhANicdLy8WOiV5/mxy9gL37KrifMcmGtYKvdN
+         YFOcvoHzK7N21r35leF9EAPnScJ5WP1VhEJ42MwGrYr1EAp+NnU8wyiq3RBCFEPq8di8
+         Uept56AJ6hUifi3f+xM1CwPsGCHAW2JqMFxuXeh8/HMYrsxvmfrCNDp9FTVDMCYGuvjn
+         NNzA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv/is44kwxccEkpC+lupM18g1kmAz/G9lUmfzN5ASBOqhNmVVtpwkqd/sL8R4GxLW3apICMfvPlJghzTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8veX3BgH8eSo504WBV6JAX+WONIlIlkKTryI4LswX9PEwCToN
+	z1eGPsvNcfRCD/z9s0y5JxN/Q+vV1XD0FXXNgHS7DjR+lZGcnUj1txaq9agdEsEDnPNc+o++JrY
+	BxUx/ShDzajAxX8mjc1hDY9U3Ete40T/fEPTQiisbBQ==
+X-Gm-Gg: ASbGncsV0L7fzTxLvA6gayjLl702Pzb2Bt8bTfXr+00kWTFiywPTqa9akac4BAAd3wi
+	0ypFlKumiXBEGHfWu52A9tr02MCkOHFenoSQb3WgWSViTGvOyf9Dwb9GokZozvIHWjo8V+EY9Y+
+	iTCCvyp3c7JX5h4qvyYBPElYGzHryRIIwgOhgqavZMS2IcJ3rKrtzAeZRYn77ISCDWSI/BvtQmz
+	kK73+0rmcX+7TdVJkwP9SUlaS4Wuq+4MZe54m231JbFN4Xx4w==
+X-Google-Smtp-Source: AGHT+IG4d8eX8f04SwumbDn+t8ORtzgwAVwNB5BHKdmUryIfl8eqxh2e3123W81layXfFQt1IEka9/bpWuzrKar7j3E=
+X-Received: by 2002:a05:6512:3a86:b0:553:d910:9334 with SMTP id
+ 2adb3069b0e04-55b5f4df595mr4041752e87.46.1753781045533; Tue, 29 Jul 2025
+ 02:24:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [perf] fuzzer triggers "BUG: kernel NULL pointer dereference"
-To: Vince Weaver <vincent.weaver@maine.edu>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>
-References: <5baea1f7-6edd-d6fa-27ce-04eddb7e5199@maine.edu>
- <fdcdd5a7-76b5-6c52-63dc-95fadddf7772@maine.edu>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <fdcdd5a7-76b5-6c52-63dc-95fadddf7772@maine.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org>
+ <20250724-pinctrl-gpio-pinfuncs-v3-8-af4db9302de4@linaro.org> <CAHp75VdMmfV=z75K9AmB7GsWV8C1bZPLGi33duTCt+CM79spJg@mail.gmail.com>
+In-Reply-To: <CAHp75VdMmfV=z75K9AmB7GsWV8C1bZPLGi33duTCt+CM79spJg@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Tue, 29 Jul 2025 11:23:54 +0200
+X-Gm-Features: Ac12FXwkqCsphx3p10ZENgy5ARM9FowTyJPFq-nwB_5x6uw2mPSH_J_dgheu8yg
+Message-ID: <CAMRc=MeEo6p=6Tp5kORi9y5tGNJKrzh0kq7tpe_E=5TasMjgbg@mail.gmail.com>
+Subject: Re: [PATCH v3 08/15] pinctrl: keembay: use a dedicated structure for
+ the pinfunction description
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
+	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
+	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
+	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Vince,
-
-Could you please provide more information about this issue?  Like HW
-information, how long can the issue be produced and whether the issue can
-be seen in latest kernel (6.16)? Thanks.
-
---
-
-Dapeng Mi
-
-On 7/22/2025 5:17 AM, Vince Weaver wrote:
-> I'm still tracking this fuzzer issue.  The fuzzer can reliably trigger the 
-> crash but only 32000 syscalls deep into a run and I am having a lot of 
-> trouble trying to gather a trace/testcase that can generate it.
+On Thu, Jul 24, 2025 at 1:11=E2=80=AFPM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 >
-> I was hoping the recent
-> 	[PATCH] perf/x86: Check if cpuc->events[*] pointer exists before accessing it
-> patch might fix things as the symptoms were vaguely similar but that 
-> particular patch does not fix the problem.
+> On Thu, Jul 24, 2025 at 11:25=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.=
+pl> wrote:
+> >
+> > struct function_desc is a wrapper around struct pinfunction with an
+> > additional void *data pointer. We're working towards reducing the usage
+> > of struct function_desc in pinctrl drivers - they should only be create=
+d
+> > by pinmux core and accessed by drivers using
+> > pinmux_generic_get_function().
 >
-> Vince
+> Any link to the discussion and perhaps an updated in-kernel
+> documentation and/or TODO?
 >
-> On Tue, 8 Jul 2025, Vince Weaver wrote:
+
+The discussions happened under v1 and v2 of this series. The "reducing
+the usage ..." part refers to the need to avoid memory duplication of
+struct pinfunction really but it's a prerequisite.
+
+> > This driver uses the data pointer so in
+> > order to stop using struct function_desc, we need to provide an
+> > alternative that also wraps the mux mode which is passed to pinctrl cor=
+e
+> > as user data.
 >
->> Hello
->>
->> the perf_fuzzer can reliably trigger this on a 6.16-rc2 kernel.  It 
->> doesn't look obviously perf related but since the perf_fuzzer triggered it 
->> I thought I'd report it as a perf issue first.  I can work on a smaller 
->> test case but that might take a bit especially as the machine locks up 
->> super hard and requires being unplugged after it's triggered.
->>
->> let me know if there's any other info I can provide.  The dump below is 
->> transcribed from a screenshot as I still haven't figured out a way to get 
->> a serial console on this Raptorlake system.
->>
->> BUG: kernel NULL pointer dereference, address: 0000000000000008
->> #PF: supervisor read access in kernel mode
->> #PF: error_code(0x0000) - not-present page
->> PGD 0 P4D 0
->> Oops: Oops: 0000 [#1] SMP NOPTI
->> CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 6.16.0-rc2+ #8 PREEMPT (voluntary)
->> Hardware name: Dell Inc. Precision 3660/0VJ7G2
->> RIP: 0010:rb_insert_color+0x18/0x130
->> Code: 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 07
->> RSP: 0018:ffffb5e5c01e3df8 EFLAGS: 00010046
->> RAX: ffff93f1927f8168 .....
->> ...
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 000000000000008 CR3: 00000000596824001 CR4: 000000000000f72ef0
->> DR0: 00000000a000001 ....
->> PKRU: 55555554
->> Call Trace:
->>  <TASK>
->>  timerqueue_add+0x66/0xb0
->>  hrtimer_start_range_ns+0x102/0x420
->>  ? next_zone+0x42/0x70
->>  tick_nohz_stop_tick+0xce/0x230
->>  tick_nohz_idle_stop_tick+0x70/0xd0
->>  do_idle+0x1d3/240
->>  cpu_startup_entry+0x29/0x30
->>  start_secondary+0x119/0x140
->>  common_startup_64+0x13e/0x141
->>  </TASK>
->>
->>
->>
+> ...
+>
+> > +struct keembay_pinfunction {
+> > +       struct pinfunction func;
+> > +       u8 mux_mode;
+> > +};
+>
+> My gut's feeling that this type of construction will be in tons of the
+> drivers, perhaps better to provide an alternative like
+> struct pinfunction_with_mode {
+>   ...
+
+Nah, literally only this one so far. And I bet we could rework it to
+avoid it altogether. Your proposal is too specific IMO. Let's cross
+that bridge when (if) we get there.
+
+> };
+>
+> Or even with variadic arguments... (just saying)
+>
+
+Oh please no. :)
+
+Bartosz
 
