@@ -1,105 +1,243 @@
-Return-Path: <linux-kernel+bounces-749104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4B6B14A27
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:32:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B44DFB14A2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:34:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F21D18A2E6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:32:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E685B17DECC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:34:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6425328504A;
-	Tue, 29 Jul 2025 08:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF76128505C;
+	Tue, 29 Jul 2025 08:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Sf+9n6uc"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPhKK73X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5630D188006;
-	Tue, 29 Jul 2025 08:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D6D28504B;
+	Tue, 29 Jul 2025 08:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753777938; cv=none; b=qYZocBt4VADj29KGsPjQO2Jys6gm2JqPV7xwov1+wH1Od5RYlJOy8AuIEs7edpAhCPs1YesUmAbfeHtKfspVj8z9q/YnQ2SD8LtKSCkVyaA+MKJWwavPKBQdbPKpqNn774GnfsJq805dK7lM5gc4wNcVpzpQKtaWlJl9Iv4ZnOA=
+	t=1753778037; cv=none; b=CRFReWE4OlITqRa518YfVLE7eYgGFpf6MbkavvHFZ0Gqn+ovKGzFAmVwIfy6m2i16Rjw/yGZFj1O+853vybRiGfvnMGWPJ8eQP8IKrmBcJjLwrJ+xtz/iRFX9Rw5YpSNgccTdPbnGU9DJ+1YZpoAWZ3V6piGwCqmeud/m6ssUQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753777938; c=relaxed/simple;
-	bh=+XABJZ1Y+l4x9gpWb/ZBne0JFnnqqRxCjQW8cw5+ybk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jCjSfIr80oFRTV1vohmfsUpAExvj/XAOjn07gafYR3DThtoWPG5jHnuyEnfydxjjFwTAWnPTClgrKL2ZeYZ/W5p2LfxbF1z8qVpkkTQrF1CyaP473hvKUeygKaSnwSawCwnso6pTKRTi2QcSDPqPP7Pl7CZuQMn9GKH10HXDYbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Sf+9n6uc; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=Ny6TTgLU/SMwi1VgsRmQeRrVFh08FienZHwG6QcdxfU=; b=Sf+9n6ucYRkz2uSDSDBZF8BxDS
-	guhE72SQVW+BZV1de/8bXrTpgFKrpGF0+y91PVKs/QQXe4hLbl3bCKOdCmjRMSlxtYrRJz/J098xs
-	+eHk0Q2Bt5eoH6kSXSE/SVC1/kLm/LIfIiGbjEwnPbw+e+MeMYM15bqOe6YqryxU5CRP2Wx6lWYia
-	xyfQM3BhKqlLuKeddSYad4uuUDm9NbjpeoV9nBJfXHzQu/3xYHGn3McXhWJyVyj5xgqQb/ogD6q6R
-	S1twO3QfWRK5Mh3D0i/NVD2BtvbtQglFV6h4zwk3dFNKbJ4n2vEBxU+bGdmlxXH8zw0JZ7Z9nczkk
-	wltECnBQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ugfks-0000000GGM8-0wb6;
-	Tue, 29 Jul 2025 08:32:14 +0000
-Message-ID: <b6c481bb-e854-405e-a428-90301789fe20@infradead.org>
-Date: Tue, 29 Jul 2025 01:32:13 -0700
+	s=arc-20240116; t=1753778037; c=relaxed/simple;
+	bh=mjOpsgFcshv7GmSpkMUvgmy1tViVtwM0LKLBEVbC6JA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PBMG6sV0z5LumMBDQ6dXeL6yiEQxdXKLmWUm4BWJnEgdmJG/ZLOnoujOUl1HHfHW09aS5y+xiFh4PUagrj27IxS1A4gaF1YRn8NH308oxXJp33WbGSqY4fEJSB1/JDscWgTNGOFwpqtlomb7dLnqGGFrCZOTtHrfnXmyMxYCtOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPhKK73X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A583BC4CEEF;
+	Tue, 29 Jul 2025 08:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753778035;
+	bh=mjOpsgFcshv7GmSpkMUvgmy1tViVtwM0LKLBEVbC6JA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qPhKK73X3V5RlUteVB1eTZVdKVWy92va3B5+dthmy2Sz3WVOGcBEuHLuUypFjfEZC
+	 6P3rv8u1oaqAwwGIdlXeDKsah7/NP1S9gsV6C/X2+4geER6OjOwhoO4Umrt0NEbhv1
+	 SUrj65inxQH3A+IT7nQChoZtlfWa27IIQu12zLBV2oR23F4lEZFWW7Zx03l2LARzMx
+	 e50DACiFBlyVhYDyp20ROaJoSnhxBqgMCrUyNdJLQfY7RyybLQIaf7+DPF0qgQp5Lm
+	 puHspG7N10qWB/PqNKK/9zTc5G54MKCozEQ8HVT4xc7SzY3skNqVjtu3J4qu9Idpw2
+	 f1d3Z3Oo01oYw==
+Date: Tue, 29 Jul 2025 10:33:51 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.17-rc1
+Message-ID: <aIiHbx_RBSMZ9av7@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for Jul 29 (BACKLIGHT_KTD2801)
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
- Linux DRI Development <dri-devel@lists.freedesktop.org>,
- linux-leds@vger.kernel.org
-References: <20250729153510.3781ac91@canb.auug.org.au>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250729153510.3781ac91@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nfyn2+/kijfYDtfO"
+Content-Disposition: inline
 
 
+--nfyn2+/kijfYDtfO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/28/25 10:35 PM, Stephen Rothwell wrote:
-> Hi all,
-> 
-> Changes since 20250728:
-> 
+The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
 
-on ARCH=um SUBARCH=i386, when
-# CONFIG_GPIOLIB is not set
+  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
 
-WARNING: unmet direct dependencies detected for LEDS_EXPRESSWIRE
-  Depends on [n]: GPIOLIB [=n] || NEW_LEDS [=y] && GPIOLIB [=n]
-  Selected by [y]:
-  - BACKLIGHT_KTD2801 [=y] && HAS_IOMEM [=y] && BACKLIGHT_CLASS_DEVICE [=y]
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-6.17-rc1
+
+for you to fetch changes up to 1c24e5fc0c7096e00c202a6a3e0c342c1afb47c2:
+
+  i2c: core: Fix double-free of fwnode in i2c_unregister_device() (2025-07-28 10:41:36 +0200)
+
+----------------------------------------------------------------
+i2c-for-6.17-rc1
+
+I2C Core:
+
+- prevent double-free of an fwnode if it is a software node
+- use recent helpers instead of custom ACPI or outdated OF ones
+- add a more elaborate description of a message flag
+
+I2C Host drivers, part 1:
+
+Cleanups and refactorings:
+- lpi2c, riic, st, stm32f7: general improvements
+- riic: support more flexible IRQ configurations
+- tegra: fix documentation
+
+Improvements:
+- lpi2c: improve register polling and add atomic transfer
+- imx: use guarded spinlocks
+
+New hardware support:
+- Samsung Exynos 2200
+- Renesas RZ/T2H (R9A09G077), RZ/N2H (R9A09G087)
+
+DT binding:
+- rk3x: enable power domains
+- nxp: support clock property
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      i2c: acpi: Replace custom code with device_match_acpi_handle()
+
+Emanuele Ghidoli (2):
+      i2c: lpi2c: use readl_poll_timeout() for register polling
+      i2c: lpi2c: implement xfer_atomic callback
+
+Frank Li (1):
+      dt-bindings: i2c: nxp,pnx-i2c: allow clocks property
+
+Hans Zhang (1):
+      i2c: tegra: Add missing kernel-doc for dma_dev member
+
+Hans de Goede (1):
+      i2c: core: Fix double-free of fwnode in i2c_unregister_device()
+
+I Viswanath (1):
+      i2c: Clarify behavior of I2C_M_RD flag
+
+Ivaylo Ivanov (1):
+      dt-bindings: i2c: exynos5: add samsung,exynos2200-hsi2c compatible
+
+Jiri Slaby (SUSE) (1):
+      i2c: mux: pca954x: Use dev_fwnode()
+
+Jonas Karlman (1):
+      dt-bindings: i2c: i2c-rk3x: Allow use of a power-domain
+
+Lad Prabhakar (5):
+      dt-bindings: i2c: renesas,riic: Move ref for i2c-controller.yaml to the end
+      dt-bindings: i2c: renesas,riic: Document RZ/T2H and RZ/N2H support
+      i2c: riic: Pass IRQ desc array as part of OF data
+      i2c: riic: Move generic compatible string to end of array
+      i2c: riic: Add support for RZ/T2H SoC
+
+Qianfeng Rong (1):
+      i2c: st: Use min() to improve code
+
+Troy Mitchell (1):
+      i2c: imx: use guard to take spinlock
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-6.17-pt1' of git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux into i2c/for-mergewindow
+
+Yuesong Li (1):
+      i2c: lpi2c: convert to use secs_to_jiffies()
+
+Yumeng Fang (1):
+      i2c: stm32f7: Use str_on_off() helper
 
 
-so BACKLIGHT_KTD2801 should:
-	depends on GPIOLIB
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Andy Shevchenko (4):
+      (Rev.) i2c: core: Fix double-free of fwnode in i2c_unregister_device()
+      (Rev.) i2c: riic: Add support for RZ/T2H SoC
+      (Rev.) i2c: riic: Move generic compatible string to end of array
+      (Rev.) i2c: riic: Pass IRQ desc array as part of OF data
 
-Also, in drivers/leds/Kconfig, does it need duplicate entries for this?
-Can't the second entry be removed?
-(asking since Duje made both entries)
+Carlos Song (2):
+      (Rev.) i2c: lpi2c: implement xfer_atomic callback
+      (Rev.) i2c: lpi2c: use readl_poll_timeout() for register polling
 
-config LEDS_EXPRESSWIRE
-	bool
-	depends on GPIOLIB
+Frank Li (1):
+      (Rev.) i2c: imx: use guard to take spinlock
 
+Geert Uytterhoeven (6):
+      (Rev.) i2c: riic: Add support for RZ/T2H SoC
+      (Rev.) i2c: riic: Move generic compatible string to end of array
+      (Rev.) i2c: riic: Pass IRQ desc array as part of OF data
+      (Test) i2c: riic: Pass IRQ desc array as part of OF data
+      (Rev.) dt-bindings: i2c: renesas,riic: Document RZ/T2H and RZ/N2H support
+      (Rev.) dt-bindings: i2c: renesas,riic: Move ref for i2c-controller.yaml to the end
 
-Thanks.
+Krzysztof Kozlowski (1):
+      (Rev.) dt-bindings: i2c: exynos5: add samsung,exynos2200-hsi2c compatible
 
+Patrice Chotard (1):
+      (Rev.) i2c: st: Use min() to improve code
 
--- 
-~Randy
+Primoz Fiser (2):
+      (Test) i2c: lpi2c: implement xfer_atomic callback
+      (Test) i2c: lpi2c: use readl_poll_timeout() for register polling
 
+Rob Herring (Arm) (1):
+      (Rev.) dt-bindings: i2c: i2c-rk3x: Allow use of a power-domain
+
+Vladimir Zapolskiy (1):
+      (Rev.) dt-bindings: i2c: nxp,pnx-i2c: allow clocks property
+
+Wolfram Sang (7):
+      (Rev.) i2c: riic: Add support for RZ/T2H SoC
+      (Test) i2c: riic: Add support for RZ/T2H SoC
+      (Rev.) i2c: riic: Move generic compatible string to end of array
+      (Test) i2c: riic: Move generic compatible string to end of array
+      (Rev.) i2c: riic: Pass IRQ desc array as part of OF data
+      (Test) i2c: riic: Pass IRQ desc array as part of OF data
+      (Rev.) dt-bindings: i2c: renesas,riic: Document RZ/T2H and RZ/N2H support
+
+ .../devicetree/bindings/i2c/i2c-exynos5.yaml       |   1 +
+ .../devicetree/bindings/i2c/i2c-rk3x.yaml          |   3 +
+ .../devicetree/bindings/i2c/nxp,pnx-i2c.yaml       |   3 +
+ .../devicetree/bindings/i2c/renesas,riic.yaml      | 105 ++++++---
+ drivers/i2c/busses/i2c-imx-lpi2c.c                 | 256 ++++++++++++++-------
+ drivers/i2c/busses/i2c-imx.c                       |  37 ++-
+ drivers/i2c/busses/i2c-riic.c                      |  54 ++++-
+ drivers/i2c/busses/i2c-st.c                        |  19 +-
+ drivers/i2c/busses/i2c-stm32f7.c                   |   3 +-
+ drivers/i2c/busses/i2c-tegra.c                     |   1 +
+ drivers/i2c/i2c-core-acpi.c                        |   2 +-
+ drivers/i2c/i2c-core-base.c                        |   8 +-
+ drivers/i2c/muxes/i2c-mux-pca954x.c                |   3 +-
+ include/uapi/linux/i2c.h                           |   3 +-
+ 14 files changed, 333 insertions(+), 165 deletions(-)
+
+--nfyn2+/kijfYDtfO
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiIh28ACgkQFA3kzBSg
+Kbbz6g/+Lqhq8+mcBRnocS25U+iWI9RFCXcthJxwtCBIKY8ptrJUxDWa9WtrpeWT
+bUKct452qTsCXA7Q8epmJTdDqliIXxQtZzRWEVSSsb8d4hdcMPVpyoMZrjrvm4zC
+R6KqAf79bJtytNQxmdIHvdqC+TMAAipx4PmxFwmvMp+suJuggMuc229zIdnYAHes
+6xWPlOfRLBkGxrNQ4GkdynMrOb9oGSWOdAD4gATMrJ0Hw2GE4d7I4zVluN0+VnQQ
+3gwntsrRjv8kjBKN7MmmgzrlDafaFLmK5a6WaNw0LzXsxfHAnoUMpP8o42BN4a9T
+F94ZzhTB0zHRpoerZFpyKECVe+n3UZ1I93CC7+He3DUB7CviptRSUWaYV1ml2KvT
+7qumuArZaDTE0tWK5PzO7Ale40F7sI5yQRfZ9g3rAXW/UvpqMYg0m8qm7QbhuUeX
+58O4T8xTZDPNhvT1topLmEjx8a6f9so4MhuO0tkcqSEd4PXZoazJSa/uo8JqmA62
+OWa0iB81WogljaSQqgtpnVUFJwsdGO2hGnuypWS6kSu3ObdQaZ+t6SjHX5D810UP
+ry0YV6APe32BX7eEqkCETH3O/ezitFYLTKL3VBP0qz0z7X9uoSP7amQxQywg5K+m
+bEKWhfi+dA4aBM6RYOs4aS3o6QS4YaexlKrDwMYznD2SVkAgzeM=
+=QW6O
+-----END PGP SIGNATURE-----
+
+--nfyn2+/kijfYDtfO--
 
