@@ -1,184 +1,191 @@
-Return-Path: <linux-kernel+bounces-749379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01206B14D94
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:23:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C8B2B14D99
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:24:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30374E1644
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:22:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D32718A15CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:24:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0F5290DB5;
-	Tue, 29 Jul 2025 12:22:54 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210F4290DAC;
+	Tue, 29 Jul 2025 12:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oy9VzxSF"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBE9290BA2;
-	Tue, 29 Jul 2025 12:22:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA3502A1CF;
+	Tue, 29 Jul 2025 12:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753791774; cv=none; b=qP7F1tatDAtBtY3KMga48wwfP/3D+mj2XvaejbFVJVaWKF2tTlTUuiR+nt7BQK8H9IJqY/m34THwb+hIarucXiUUyJibaZ7IiNOdJg6nQZ1qRngZy9ERpK4yOmbQSNs9X4N/TnDw19eeCszzs7dEPz+jmw1sxt2JmBMYWQiwqQY=
+	t=1753791874; cv=none; b=GeoDRaObTzbQ5KbZoVhN6IT5mKHxWmMOxIEHIBwmY1a2qJObzKyscOxtvwBMQw8MPKzxex84M+NGb7pNMOTJfQIpPeXba1GaS4ZIlFK2sx8CdVghbCrWbE1SCMvHWOjnL8m/a/73OghA7F7GawmAutt3yFUyJa6fW/0pwXnD8rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753791774; c=relaxed/simple;
-	bh=FV6g1EBRL1RK/tzC+xm4c6xHhJTIID14Yplsrt/zSew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gLvracdg7l60bGslcAsuv35kkGjf4HMG8TbUV1QgLHDaAyXQljls0uG3TysxP8/MULP6eLzEgHilBjqUWbbxtMfS7Xa6PSfY+FVGNwmzBNasQASTeEYmzqp2uUujYikcmNfhdudjnT9Rpo5wg8khoAlUavelRr2/TNHIuZconTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4brvdy1KH4z27j3b;
-	Tue, 29 Jul 2025 20:23:50 +0800 (CST)
-Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
-	by mail.maildlp.com (Postfix) with ESMTPS id D13A81400D2;
-	Tue, 29 Jul 2025 20:22:48 +0800 (CST)
-Received: from [10.174.176.70] (10.174.176.70) by
- dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 29 Jul 2025 20:22:47 +0800
-Message-ID: <17042f3d-ce75-4be4-a53e-3d57907488e8@huawei.com>
-Date: Tue, 29 Jul 2025 20:22:46 +0800
+	s=arc-20240116; t=1753791874; c=relaxed/simple;
+	bh=nASNEneDc2vUmkSpKiTTFWlA4LwOZopVuKeuvQmuZrs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SCYFocTIMpBeBjm9XysKWqWiSd7Y/3FJfd/RN/wLbXChiFYm54fj2HsYUZNzLDLsK8SfO4wICz7Wke33FK94rGbDq3h+Vb3QewcL5xhg8NgnZdxuF0gEBIl5SzuAZMv9YzRWqrBY2FDCpmp6woit4c32+X/EsoQh0wf7IopS2SI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oy9VzxSF; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b790dbb112so393718f8f.3;
+        Tue, 29 Jul 2025 05:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753791871; x=1754396671; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5oCMcTRmSVA0zf+uyjFHlTMcPakXnRfN5JlQ9Uq8wo0=;
+        b=Oy9VzxSFofmPd80gV0W9F9MaG1cpWLmZ6hg7qxZrbH2lNI1zVdQNq9YV2fdpQ1wp/K
+         piziN5DMEeEein8XfW8apn23HP4g8gMeGyD8g6mFbDG2vZQk59NF+uBSG9QXFhcOzM0A
+         bIT5yMkjbxnOsCLe4h3Pzd6FI6yA1gwuIFhjPoiS9HmbwgY0pqFBgrUQI46clO1nBnCz
+         55XoyIHyEa8LkyWCpRS8s2enSPdipxoxJS+/5U+88oNAXe9NJpB3uRp6L3+pQ7gqGlDr
+         ODqpySBf7mV0F6rOY6M1n953elOXFrqZaJ9Um+YXQp7J2QDBJ4Uo7/51zgiRpoi6QUuD
+         BWUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753791871; x=1754396671;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5oCMcTRmSVA0zf+uyjFHlTMcPakXnRfN5JlQ9Uq8wo0=;
+        b=D9X8VGI6Tvzdie+df46nqSdyX148FmUM4adzg5FIY94VY1Mb0kclDoxthXS+neFokP
+         IGV1LFJirx6lHv0Pid8uc/j0R9AdQdF34ayOEMlw7pXz/+0aDpJ4ZeiJB+0XCwfrHRAG
+         wCBjmfZyoyIyOX+2pRMgFkhd7ToasT/2DJp3DYLhFBZqTuE7ZDuvdlXI/BQYPXwCaxcp
+         TTtsRWY15zIrf+g8YnXVHHyUbpZe8AVBXfJMu27RMvkss5dDAgbyACCvA3YW3xtr/9Aq
+         ugFFFEG+gGHBM9OYRvfVFl+ZSwbzl3Z0aKt0O+Gg3z2Y8r15BDFSa08wTT8gSUKUxK1U
+         xrWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUK4kRztmPbTgCB1vUpGV9WpvbQAOMag478SVP/QbGeAaeK/L/8DovUgtq7FlboClkReXPnbjYWau5JN4o=@vger.kernel.org, AJvYcCV/xMz/A89vKtoAmuDKSbswCoJ0SNIVB5ObmfNfizM32rAWMkL8QLmaQaKt3JVfZBDTZYY2U3r9SBlxhHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVEjVR/sSn5gA67jlTGvpMQRFmGfaN6WUxb1/JiD2Ynvp1c7eH
+	h4GbYwWetmts0dBdZW1xw2nKBgEfsqDHysrxvm65V3Kd50stjuy7rkFv
+X-Gm-Gg: ASbGncuX/hIuN1UNrPL8TjkOcw52bUceAzSs8P2SoxeETPofTQmp3JAUniDO6yhh10R
+	ky8wX5nn9ILhOSUhnbq0h9w9aXlhoEGHUGXVeaWn5WL0M2rNh62iyj35+JitYgFZQIhz2J0Z0x1
+	dOsHdHOU5gxETihpFPCD8SzFV4yResdHoJXPC27SrUZH182kpD2+WJGuDF+z7eT7g+keZKCEoX8
+	/8lzufEtA0PVGgeoLAfECjJqZld0Vo+mplt+c29CmSsUalvKqzANLO50mBMDJGYZKP6e6WTc0OV
+	XE6ec2o1z9FNZCgtWMIYMhYaNvI9av/xViYrAY7o+KT3FN/rYQK/WF+XCzY7MYcnjLwxbsr4swQ
+	lWHe6OAc08+LzQkg8gYAaSozDQ0mRZOI5uE8oCDgQcQ0qDO+XAxKY3ClDDdqSL2/V4xE+P1C0rY
+	AtAvSTD8nI
+X-Google-Smtp-Source: AGHT+IHR50aIpq5zzNNibOCb1m449Ln3Ht/rLZE8jAjfCT7HhLynq8ThYUyqNNscWPQitSOsXie/hQ==
+X-Received: by 2002:a05:6000:2c04:b0:3a6:d7ec:c701 with SMTP id ffacd0b85a97d-3b77664199emr10509916f8f.30.1753791870783;
+        Tue, 29 Jul 2025 05:24:30 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778eb27f8sm12254125f8f.16.2025.07.29.05.24.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 05:24:28 -0700 (PDT)
+Date: Tue, 29 Jul 2025 14:24:27 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rob Herring (Arm)" <robh@kernel.org>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] firmware: tegra: bpmp: Use
+ of_reserved_mem_region_to_resource() for "memory-region"
+Message-ID: <yxxk4cffjm7rx2pbndibrp7a6txmi4urnrt5bipr24z7dlstk7@sybqp3gp6gqi>
+References: <20250703183434.2073375-1-robh@kernel.org>
+ <550bcad5-4de6-46fe-9f2d-f77ccbd582c6@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: check the minimum value of gso size in
- virtio_net_hdr_to_skb()
-To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
-	<netdev@vger.kernel.org>, <virtualization@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <mst@redhat.com>, <jasowang@redhat.com>,
-	<eperezma@redhat.com>, <pabeni@redhat.com>, <davem@davemloft.net>,
-	<willemb@google.com>, <atenart@kernel.org>
-References: <20250724083005.3918375-1-wangliang74@huawei.com>
- <1753433749.959542-1-xuanzhuo@linux.alibaba.com>
-From: Wang Liang <wangliang74@huawei.com>
-In-Reply-To: <1753433749.959542-1-xuanzhuo@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- dggpemf500016.china.huawei.com (7.185.36.197)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qxhhnnhnzy5x3ccd"
+Content-Disposition: inline
+In-Reply-To: <550bcad5-4de6-46fe-9f2d-f77ccbd582c6@nvidia.com>
 
 
-在 2025/7/25 16:55, Xuan Zhuo 写道:
-> On Thu, 24 Jul 2025 16:30:05 +0800, Wang Liang <wangliang74@huawei.com> wrote:
->> When sending a packet with virtio_net_hdr to tun device, if the gso_type
->> in virtio_net_hdr is SKB_GSO_UDP and the gso_size is less than udphdr
->> size, below crash may happen.
->>
->>    ------------[ cut here ]------------
->>    kernel BUG at net/core/skbuff.c:4572!
->>    Oops: invalid opcode: 0000 [#1] SMP NOPTI
->>    CPU: 0 UID: 0 PID: 62 Comm: mytest Not tainted 6.16.0-rc7 #203 PREEMPT(voluntary)
->>    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
->>    RIP: 0010:skb_pull_rcsum+0x8e/0xa0
->>    Code: 00 00 5b c3 cc cc cc cc 8b 93 88 00 00 00 f7 da e8 37 44 38 00 f7 d8 89 83 88 00 00 00 48 8b 83 c8 00 00 00 5b c3 cc cc cc cc <0f> 0b 0f 0b 66 66 2e 0f 1f 84 00 000
->>    RSP: 0018:ffffc900001fba38 EFLAGS: 00000297
->>    RAX: 0000000000000004 RBX: ffff8880040c1000 RCX: ffffc900001fb948
->>    RDX: ffff888003e6d700 RSI: 0000000000000008 RDI: ffff88800411a062
->>    RBP: ffff8880040c1000 R08: 0000000000000000 R09: 0000000000000001
->>    R10: ffff888003606c00 R11: 0000000000000001 R12: 0000000000000000
->>    R13: ffff888004060900 R14: ffff888004050000 R15: ffff888004060900
->>    FS:  000000002406d3c0(0000) GS:ffff888084a19000(0000) knlGS:0000000000000000
->>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>    CR2: 0000000020000040 CR3: 0000000004007000 CR4: 00000000000006f0
->>    Call Trace:
->>     <TASK>
->>     udp_queue_rcv_one_skb+0x176/0x4b0 net/ipv4/udp.c:2445
->>     udp_queue_rcv_skb+0x155/0x1f0 net/ipv4/udp.c:2475
->>     udp_unicast_rcv_skb+0x71/0x90 net/ipv4/udp.c:2626
->>     __udp4_lib_rcv+0x433/0xb00 net/ipv4/udp.c:2690
->>     ip_protocol_deliver_rcu+0xa6/0x160 net/ipv4/ip_input.c:205
->>     ip_local_deliver_finish+0x72/0x90 net/ipv4/ip_input.c:233
->>     ip_sublist_rcv_finish+0x5f/0x70 net/ipv4/ip_input.c:579
->>     ip_sublist_rcv+0x122/0x1b0 net/ipv4/ip_input.c:636
->>     ip_list_rcv+0xf7/0x130 net/ipv4/ip_input.c:670
->>     __netif_receive_skb_list_core+0x21d/0x240 net/core/dev.c:6067
->>     netif_receive_skb_list_internal+0x186/0x2b0 net/core/dev.c:6210
->>     napi_complete_done+0x78/0x180 net/core/dev.c:6580
->>     tun_get_user+0xa63/0x1120 drivers/net/tun.c:1909
->>     tun_chr_write_iter+0x65/0xb0 drivers/net/tun.c:1984
->>     vfs_write+0x300/0x420 fs/read_write.c:593
->>     ksys_write+0x60/0xd0 fs/read_write.c:686
->>     do_syscall_64+0x50/0x1c0 arch/x86/entry/syscall_64.c:63
->>     </TASK>
->>
->> To trigger gso segment in udp_queue_rcv_skb(), we should also set option
->> UDP_ENCAP_ESPINUDP to enable udp_sk(sk)->encap_rcv. When the encap_rcv
->> hook return 1 in udp_queue_rcv_one_skb(), udp_csum_pull_header() will try
->> to pull udphdr, but the skb size has been segmented to gso size, which
->> leads to this crash.
-> Is it correct to access the checksum of a segmented skb?
->
->> Only udp has this probloem. Add check for the minimum value of gso size in
->> virtio_net_hdr_to_skb().
-> Why tcp has not this problem?
->
->
->> Fixes: cf329aa42b66 ("udp: cope with UDP GRO packet misdirection")
->> Fixes: 3d010c8031e3 ("udp: do not accept non-tunnel GSO skbs landing in a tunnel")
->> Signed-off-by: Wang Liang <wangliang74@huawei.com>
->> ---
->>   include/linux/virtio_net.h | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
->> index 02a9f4dc594d..0533101642bd 100644
->> --- a/include/linux/virtio_net.h
->> +++ b/include/linux/virtio_net.h
->> @@ -157,11 +157,13 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
->>   		u16 gso_size = __virtio16_to_cpu(little_endian, hdr->gso_size);
->>   		unsigned int nh_off = p_off;
->>   		struct skb_shared_info *shinfo = skb_shinfo(skb);
->> +		u16 min_gso_size = 0;
->>
->>   		switch (gso_type & ~SKB_GSO_TCP_ECN) {
->>   		case SKB_GSO_UDP:
->>   			/* UFO may not include transport header in gso_size. */
->>   			nh_off -= thlen;
->> +			min_gso_size = sizeof(struct udphdr) + 1;
->>   			break;
->>   		case SKB_GSO_UDP_L4:
->>   			if (!(hdr->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM))
->> @@ -172,6 +174,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
->>   				return -EINVAL;
->>   			if (gso_type != SKB_GSO_UDP_L4)
->>   				return -EINVAL;
->> +			min_gso_size = sizeof(struct udphdr) + 1;
-> why +1?
->
-> Thanks.
+--qxhhnnhnzy5x3ccd
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] firmware: tegra: bpmp: Use
+ of_reserved_mem_region_to_resource() for "memory-region"
+MIME-Version: 1.0
 
+On Mon, Jul 28, 2025 at 03:17:11PM +0100, Jon Hunter wrote:
+> Hi Rob, Thierry,
+>=20
+> On 03/07/2025 19:34, Rob Herring (Arm) wrote:
+> > Use the newly added of_reserved_mem_region_to_resource() function to
+> > handle "memory-region" properties.
+> >=20
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> >   drivers/firmware/tegra/bpmp-tegra186.c | 9 ++-------
+> >   1 file changed, 2 insertions(+), 7 deletions(-)
+> >=20
+> > diff --git a/drivers/firmware/tegra/bpmp-tegra186.c b/drivers/firmware/=
+tegra/bpmp-tegra186.c
+> > index 6f0d0511b486..7cfc5fdfa49d 100644
+> > --- a/drivers/firmware/tegra/bpmp-tegra186.c
+> > +++ b/drivers/firmware/tegra/bpmp-tegra186.c
+> > @@ -6,7 +6,7 @@
+> >   #include <linux/genalloc.h>
+> >   #include <linux/io.h>
+> >   #include <linux/mailbox_client.h>
+> > -#include <linux/of_address.h>
+> > +#include <linux/of_reserved_mem.h>
+> >   #include <linux/platform_device.h>
+> >   #include <soc/tegra/bpmp.h>
+> > @@ -192,16 +192,11 @@ static void tegra186_bpmp_teardown_channels(struc=
+t tegra_bpmp *bpmp)
+> >   static int tegra186_bpmp_dram_init(struct tegra_bpmp *bpmp)
+> >   {
+> >   	struct tegra186_bpmp *priv =3D bpmp->priv;
+> > -	struct device_node *np;
+> >   	struct resource res;
+> >   	size_t size;
+> >   	int err;
+> > -	np =3D of_parse_phandle(bpmp->dev->of_node, "memory-region", 0);
+> > -	if (!np)
+> > -		return -ENODEV;
+> > -
+> > -	err =3D of_address_to_resource(np, 0, &res);
+> > +	err =3D of_reserved_mem_region_to_resource(bpmp->dev->of_node, 0, &re=
+s);
+> >   	if (err < 0) {
+> >   		dev_warn(bpmp->dev, "failed to parse memory region: %d\n", err);
+> >   		return err;
+>=20
+>=20
+> This change is now causing the following warning to be observed on Tegra1=
+94
+> Jetson AGX Xavier platform ...
+>=20
+>  WARNING KERN tegra-bpmp bpmp: failed to parse memory region: -19
+>=20
+> Looking at the binding only one of 'memory-region' or 'shmem' is required
+> and for Tegra194 we are using shmem. So I am not sure if it is worth maki=
+ng
+> this change for this driver.
 
-Hi! Sorry for replying so late.
+I guess the change still makes sense for merging both calls into one but
+we now need to check for -ENODEV and not warn about it for this to
+remain really equivalent.
 
-The first patch should add RFC, because I am not sure it is the best fix
-method. Set 'min_gso_size = sizeof(struct udphdr) + 1;' to ensure at least
-one byte in payload.
+I can patch it up.
 
-After discussions in mail list, I send a v2 patch, please check it:
-https://lore.kernel.org/netdev/20250729123907.3318425-1-wangliang74@huawei.com/T/#u
+Thierry
 
-Thanks.
+--qxhhnnhnzy5x3ccd
+Content-Type: application/pgp-signature; name="signature.asc"
 
->>   			break;
->>   		case SKB_GSO_TCPV4:
->>   		case SKB_GSO_TCPV6:
->> @@ -182,7 +185,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
->>   		}
->>
->>   		/* Kernel has a special handling for GSO_BY_FRAGS. */
->> -		if (gso_size == GSO_BY_FRAGS)
->> +		if ((gso_size == GSO_BY_FRAGS) || (gso_size < min_gso_size))
->>   			return -EINVAL;
->>
->>   		/* Too small packets are not really GSO ones. */
->> --
->> 2.34.1
->>
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiIvXcACgkQ3SOs138+
+s6HOjg//cTf5d2FIw8Xf/Z7sBWgu91puvfblYo2HDMeYcmy/CuO6qCDxOSTB4cSz
+mHFAY6DBtfooqyOhcaD4fyHfeiLXoV9dSV1BT8GcmjNiozzNHy/suy2Y1rzeETs0
+3F3M5ULkOpqvFISQ36rATTDPaTdTo/d/3yiCkLTkF4+9/PoFuko42assXPs68tvA
+RXWaoqEIY88tXIJf1ts8eh4Bwq+Pbm+1kVhajyF92WkYnifzNFrrV+abLCITSvTU
+RyW670mKbNUVlvolm8Uz3lEv/x4YM3jVds/HEHb5GfdDK/TcQrq2yOKahNJf9TWH
+1F9qz1ybKxHAMgLqF45q/FvNXRyHvvtBx0strug76yB/qBd4p02VVA7VMAmwt1u8
++Z6lH0gMmMPBST5fPR3YRZBT+8Jg8j3mDbcnRn0hvxb8KOHlKGjtSH1+MS0viGnM
+i58UJIAofuhYpM7h8lRL0mP0S6viwMBpJ6Re+5Lt0zGA5ziNyup9waX5gkty2neO
+/Hvh9DcTZg9c9vKn54FXM0hnZjBFiGyQLHTNKaECYS15xDIYJgqdg/O7TEKuQcR1
+6lc8Vsu/DufQYlBB3THiCVit/J4P/GnyeEjesEJc/pToAFDOIhwhy4jJ4obMSEA6
+PpkXmX4J++enQiGvIkBQosBnT5AWOsE+DcsT4wwUNpviCNAdWv0=
+=y6sp
+-----END PGP SIGNATURE-----
+
+--qxhhnnhnzy5x3ccd--
 
