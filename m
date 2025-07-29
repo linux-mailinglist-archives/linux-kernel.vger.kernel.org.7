@@ -1,197 +1,164 @@
-Return-Path: <linux-kernel+bounces-749780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6B00B152DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6D7B152E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:35:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D118C1891791
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:34:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F07F4E2940
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:34:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6BD23E35B;
-	Tue, 29 Jul 2025 18:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A031F238D54;
+	Tue, 29 Jul 2025 18:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iw6z2d5o"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqcTBmrz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788BD220F20;
-	Tue, 29 Jul 2025 18:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B92A1DE4C3;
+	Tue, 29 Jul 2025 18:35:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753814035; cv=none; b=hpN+XigVon+YmH4CSb0H5xJ97BMA74LIxNFbRRbRCbd0qUeuJNpOFmvA568X6YGXYdVuRLZSOEgTCyP5vX+Ac6a9YOnwim6jz1bby2q5fI8dWdypTXIv29WPfEluvhh5pkpnTF0+ZM6TzqywhIhdrVm0L0fJHFyP6NUiE2IWlQM=
+	t=1753814103; cv=none; b=DQ61uqbYs/tWZ+3Sq0bC7FQQYIU9YFFshmznt7ajbYA8N0ahnTCWws7gFYG6F/QMksRcuDrCEIkGBH3EJyxIfNnqQrDja016kCxOxBgvIW/sCV4bwxW5B+HHNs++uj/v1E8WK8fa2AJd7EI4UZSygjCaNObb6oPpjz1i7+AsN1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753814035; c=relaxed/simple;
-	bh=FfmG+/ox5q3uqtSfboKBXxhfHoGl1QfrJVQn9mXO/I4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HY9PdbW694C9Ad2r7CuZlBTc+DMJ3VV9F7egE/youBJclOouhG0GDRglflmQuuNDv31NOuSV/Nue2OMQDiEoB5WjKBKz53jK8aNb6qfaW0JuKJZzIziG8ERsB2N8u0YUeTxriDaJabCVfNN464HrcjZURyEAyuuisiNXERCbUq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iw6z2d5o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30FA8C4CEEF;
-	Tue, 29 Jul 2025 18:33:50 +0000 (UTC)
+	s=arc-20240116; t=1753814103; c=relaxed/simple;
+	bh=Ad+h/78ZxwD6mSt4jRq861L+6lQvlmuf+yPcWZOe2h0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hQK0IuIC9VGsabggSKLcOvLr5DyMLdQR0fKODt8V0F6WGISnVLKnShFiH1Yzqy+y/clahYY+ezeiZyfnt/UnoyofJsVrp8plERXxyc5xyHM+f85Dt3+tbf00Sq5qC2AazJ1J+yxMJj/DoXcZ3NNpUd1UZiHp/WKi/ks2lpd2sYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqcTBmrz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 694C4C4CEEF;
+	Tue, 29 Jul 2025 18:35:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753814034;
-	bh=FfmG+/ox5q3uqtSfboKBXxhfHoGl1QfrJVQn9mXO/I4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iw6z2d5oU6rdL5tcs/PfBXXX9FT4iaGpl4YKixnbC0sjs82rMM6FMS2771h1yudf4
-	 HTy5DkTTULqGxSyHOiVCQ73j+P2Cc0QeBKaisYZYLTzMG33EsnSmNzWokN/F7ocO66
-	 jTbQV84lSw6uIwLLqLwywyH/Qo+2PHuUBPQIh2l24BxX+klhwETvJW82LqTICW6CFC
-	 BquhsNtTiOQvZsoCDdZs8mkd37JMHXAkWNJWk023nnddNqqoEHLYWHVYC/79D5LHua
-	 +f8/cvE05YQIeVFOjECio9BBOsLwiuLApmKDj35OTvrlYkBz2dGjil5hFUphQk82J/
-	 48WwhRpweWDkg==
-Date: Tue, 29 Jul 2025 19:33:46 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>, Jean Delvare
- <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
- linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, Andy Shevchenko
- <andy@kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 3/7] iio: Add in-kernel API for events
-Message-ID: <20250729193346.39791223@jic23-huawei>
-In-Reply-To: <0ccf7735-6a2c-473a-ab67-ae0c5ff9a335@linux.dev>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
-	<20250715012023.2050178-4-sean.anderson@linux.dev>
-	<d8e5c8fbeaee42e9e0708460c47bd68053cd8710.camel@gmail.com>
-	<9b187e7f-a116-4aea-a9a6-b9222562868d@linux.dev>
-	<20250727172126.35d0a477@jic23-huawei>
-	<0ccf7735-6a2c-473a-ab67-ae0c5ff9a335@linux.dev>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1753814102;
+	bh=Ad+h/78ZxwD6mSt4jRq861L+6lQvlmuf+yPcWZOe2h0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FqcTBmrzzYZcUzhXReID4UeShTvo4pQhNy/0QoDsD0t0I9owoNH47SutX7xO4TQn3
+	 xUA++PYUb9hFYYVcJbmoYsyZfUYHHV+3mcsCsmErI8quymCd2i1YBnTDJLXh31bQ00
+	 jUgJ1Cfr8ediO95VkPThcZuMZqH4AXiLGhLDFpiixssuvvgyobJTVaHyXDbdqvCXnc
+	 suyTMmswiUIK7mOFQIHWdGjqQE4nSg8/UqxEDozjioML+egMuP4RcD8a6Tol937srf
+	 HPVkLnKrYfxrCXtJPW2nPUS4FAIVj2EftUpWV7YrS5o49txRN6QV4fqLd4kkv34BOA
+	 oe8uRgVLTPutA==
+From: SeongJae Park <sj@kernel.org>
+To: Yueyang Pan <pyyjason@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Usama Arif <usamaarif642@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 0/2] mm/damon: Add damos_stat support for vaddr
+Date: Tue, 29 Jul 2025 11:34:59 -0700
+Message-Id: <20250729183459.56512-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <cover.1753794408.git.pyyjason@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Jul 2025 18:44:30 -0400
-Sean Anderson <sean.anderson@linux.dev> wrote:
+Hello Pan (Or, should I call you Yueyang or Jason?  Please let me know your
+preferrence if you have),
 
-> On 7/27/25 12:21, Jonathan Cameron wrote:
-> > On Tue, 15 Jul 2025 12:52:19 -0400
-> > Sean Anderson <sean.anderson@linux.dev> wrote:
-> >  =20
-> >> On 7/15/25 07:09, Nuno S=C3=A1 wrote: =20
-> >> > On Mon, 2025-07-14 at 21:20 -0400, Sean Anderson wrote:   =20
-> >> >> Add an API to notify consumers about events. Events still need to be
-> >> >> enabled using the iio_read_event/iio_write_event functions. Of cour=
-se,
-> >> >> userspace can also manipulate the enabled events. I don't think thi=
-s is
-> >> >> too much of an issue, since userspace can also manipulate the event
-> >> >> thresholds. But enabling events may cause existing programs to be
-> >> >> surprised when they get something unexpected. Maybe we should set t=
-he
-> >> >> interface as busy when there are any in-kernel listeners?
-> >> >>    =20
-> >> >=20
-> >> > Sensible question. I'm not that familiar with events but I suspect i=
-s not
-> >> > trivial (if doable) to do a similar approach as with buffers? With b=
-uffers, an
-> >> > inkernal consumer get's it's own buffer object (that goes into a lis=
-t of active
-> >> > buffers in the iio device) with all channels enabled and then we dem=
-ux the
-> >> > appropriate channels for each consumer.   =20
-> >>=20
-> >> For in-kernel consumers I think it's reasonable to expect them to hand=
-le
-> >> events they didn't explicitly enable. I'm not sure about userspace
-> >> consumers. =20
-> >=20
-> > This already happens because we don't have a demux equivalent (what we =
-do
-> > for buffered data flow) so if a device only has a single enable bit tha=
-t covers
-> > multiple events (annoyingly common for accelerometers for example) then
-> > userspace will get events it didn't ask for.   We 'could' fix that,
-> > but it's never really been worth the effort.
-> >=20
-> > Events tend to be low data rate so an occasionally extra is rather diff=
-erent
-> > to having to have much larger data buffers to handle a range of channel=
-s you
-> > never asked for.
-> >=20
-> > Lets be careful to document this behaviour as 'may enable extra events'
-> > as then if we decide later to do demux type stuff we won't be breaking =
-ABI.
-> > No one will mind getting fewer spurious events due to a core improvemen=
-t. =20
->=20
-> Where would this get documented?
+On Tue, 29 Jul 2025 06:53:28 -0700 Yueyang Pan <pyyjason@gmail.com> wrote:
 
-Starting point will be in the docs for the ABI that asks for any events at =
-all.
+> From: PanJason <pyyjason@gmail.com>
+> 
+> Previously damos_stat only supoort paddr. This patch set adds support 
+> for damos_stat for vaddr. Also all different types of filters are 
+> supported. 
+> 
+> Functionality Test
+> ==================
+> I wrote a small test program which allocates 10GB of DRAM, use 
+> madvise(MADV_HUGEPAGE) to convert the base pages to 2MB huge pages
+> Then my program does the following things in order:
+> 1. Write sequentially to the whole 10GB region
+> 2. Read the first 5GB region sequentially for 10 times
+> 3. Sleep 5s
+> 4. Read the second 5GB region sequentially for 10 times
+> 
+> With a proper damon setting, we are expected to see df-passed to be 10GB
+> and hot region move around with the read
+> 
+> $ # Start damon record
+> $sudo ./damo/damo record "./my_test/test" --monitoring_intervals 100000\
+> 1000000 2000000
 
-Also useful to add some thing to Documentation/IIO though there are lots of
-other things those docs don't yet cover :(
+You can use 'start' instead of 'record' for this test purpose.
 
->=20
-> >>  =20
-> >> > Independent of the above, we can argue that having both inkernel and=
- userspace
-> >> > changing thresholds is ok (I mean, there's nothing stopping two user=
-space apps
-> >> > doing that) but we should likely be careful with enabling/disabling.=
- If multiple
-> >> > consumers enable the same event, one of them disabling it should not=
- disable it
-> >> > for all the consumers, right?   =20
-> >>=20
-> >> Right now the HWMON consumer never permanently disable events to avoid=
- this
-> >> issue. It does toggle the enable to determine if an alarm should stay
-> >> enabled:
-> >>              ________
-> >> condition __/        \________
-> >>           _____    ____    ___
-> >> enable         \__/    \__/
-> >>=20
-> >> event       |     |
-> >>              __    ____
-> >> alarm     __/  \__/    \_____
-> >>=20
-> >> read           1       1    0
-> >>=20
-> >> I suppose this could also be done by comparing the raw threshold to the
-> >> channel. =20
-> >=20
-> > I wonder if we should add the option to do a 'get_exclusive' or similar
-> > to block the IIO user interfaces if something critical is using the dev=
-ice.
-> >=20
-> > If we were for instance to use this to block the IOCTL to get the events
-> > fd then any built in driver etc will almost certainly load before anyone
-> > can call the ioctl so it will fairly cleanly block things. =20
->=20
-> This is how it currently works for userspace. Only one process can create
-> the event fd, and everyone else gets -EBUSY.
->=20
-> Of course, it would be pretty surprising to have an IIO device where
-> some channels were used by userspace and others were used by hwmon and
-> then have your daemon stop working after you update your kernel because
-> now the hwmon driver takes exclusive event access.
+--monitoring_intervals receive more human-friendly format, so you can do
+'--monitoring_intervals 100ms 1s 2s'.
 
-True.  I wonder how many boards we don't know about are using the iio-hwmon
-bridge. We can check the ones in kernel for whether they grab all the
-channels (which would rule this out).
+> 
+> $ # damon report
+> $sudo ./damo/damo report access --snapshot_damos_filter reject none \
+> hugepage_size 2MiB 2MiB
 
-Another things we could do is have an opt in from the IIO driver.
-That way only 'new' drivers would have this behaviour.  Not nice though.
+The --snapshot_damos_filter option means you want to make folios that not
+having size 2 MiB not passed by the filter.  You can ask same thing in more
+intuitive way, like below.
 
->=20
-> I originally had kernel users read from the kfifo just like userspace,
-> but I was concerned about the above scenario.
->=20
+    --snapshot_damos_filter allow hugepage_size 2MiB 2MiB
 
-yeah, always a problem to retrofit policy.
+> heatmap:
+> # min/max temperatures: -900,000,000, 100,002,000, column size: 136.564 MiB
 
-> --Sean
->=20
+checkpatch.pl gives me below warning:
 
+    WARNING: Commit log lines starting with '#' are dropped by git as comments
+
+I'd suggest adding four spaces prefix to quoted command outputs like this.
+
+> intervals: sample 100 ms aggr 1 s (max access hz 10)
+> # damos filters (df): reject none hugepage_size [2.000 MiB, 2.000 MiB]
+> df-pass:
+> # min/max temperatures: -663,075,528, 100,002,000, column size: 128.037 MiB
+> 0   addr 86.082 TiB   size 682.039 MiB access 0 hz   age 9 s           df-passed 0 B
+> 1   addr 127.225 TiB  size 466.039 MiB access 1.000 hz age 0 ns          df-passed 468.000 MiB
+[...]
+> memory bw estimate: 3.615 GiB per second  df-passed: 3.615 GiB per second
+> total size: 10.669 GiB  df-passed 10.000 GiB
+> record DAMON intervals: sample 100 ms, aggr 1 s
+> 
+> $ # damon report again
+> $sudo ./damo/damo report access --snapshot_damos_filter reject none \
+> hugepage_size 2MiB 2MiB
+> heatmap:
+> # min/max temperatures: -1,100,000,000, 300,001,000, column size: 136.564 MiB
+> intervals: sample 100 ms aggr 1 s (max access hz 10)
+> # damos filters (df): reject none hugepage_size [2.000 MiB, 2.000 MiB]
+> df-pass:
+> # min/max temperatures: -800,000,000, 300,001,000, column size: 128.037 MiB
+> 0   addr 86.082 TiB   size 682.039 MiB access 0 hz   age 11 s          df-passed 0 B
+> 1   addr 127.225 TiB  size 10.355 MiB  access 1.000 hz age 0 ns          df-passed 12.000 MiB
+> 2   addr 127.225 TiB  size 93.207 MiB  access 1.000 hz age 0 ns          df-passed 92.000 MiB
+> 3   addr 127.225 TiB  size 414.262 MiB access 1.000 hz age 0 ns          df-passed 414.000 MiB
+> 4   addr 127.225 TiB  size 706.695 MiB access 1.000 hz age 3 s           df-passed 708.000 MiB
+> 5   addr 127.226 TiB  size 78.523 MiB  access 1.000 hz age 3 s           df-passed 78.000 MiB
+[...]
+> total size: 10.669 GiB  df-passed 10.000 GiB
+> record DAMON intervals: sample 100 ms, aggr 1 s
+> 
+> As you can see the total df-passed region is 10GiB and the hot region
+> moves as the seq read keeps going
+> 
+> PanJason (2):
+>   mm/damon: Move invalid folio and has filter to ops-common
+>   mm/damon: Add damos_stat support for vaddr
+
+The changes look good overall, though I left a few comments for formatting and
+unnecessary folio references that inherited from my original sin.  Looking
+forward to more discussions and next version of this great patch series!
+
+
+Thanks,
+SJ
+
+[...]
 
