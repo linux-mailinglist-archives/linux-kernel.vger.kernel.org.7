@@ -1,167 +1,138 @@
-Return-Path: <linux-kernel+bounces-749065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B53FBB14993
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:55:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865CFB14990
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:55:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B1EF543321
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:55:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF15017F9B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C142526C3B7;
-	Tue, 29 Jul 2025 07:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0E926B759;
+	Tue, 29 Jul 2025 07:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="anK58dm1"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Co27IN4D"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830E426C398
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329FA265CAB;
+	Tue, 29 Jul 2025 07:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753775623; cv=none; b=EBZXtIhZbNTo2xg2dXXk4ZaF/NFJ79khc5Cy+F1mOv+C0dBhfmxNdq8R4OzfK7Pm5ROFQSmBvDR18OGparbJu5tKlxqkaOvirpztRnrZ8LY/QhVUtk6s/Y6q7Ba5OK3h4ksrZ7gFkR7KNGe2F4dDWp4yOSCggw3Aqyl8IlLgMIo=
+	t=1753775617; cv=none; b=afMSuwVHQfoOH+IvFhtBUKAx/+hI1iBEF/slSjb6j88UYfYW+5Qo9YTS7rlNLJeLQYqnbsGOAqfxK3EtD2no/nVRQJHqFkrIcHe5O5TVJFzZw8oztBnkh4Tuc+36JLjdbN7gOErtQENSamw9OM5P3g5Suwgvg8Juj8E/tLfGnd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753775623; c=relaxed/simple;
-	bh=Fx+6+/3ebhX7na2SapQkosd7KuiR593pWXSDAlCspHQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=TCQ6FMNewQwYS8uvWFP7SRGfV02Q2KPST0NeBwXGQTbcRjyCOUIcOnXN/a2Wrd9To1Xtue0i6u+VFpEwyCmxOtiETZyVa2K7OW/2bgp5VJ6SozutrMKegsPZS9fkyLMxDPE+xYsbAKTu9w4TWjWWqyVKyub+9dgKptOMHVOZam8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=anK58dm1; arc=none smtp.client-ip=209.85.208.43
+	s=arc-20240116; t=1753775617; c=relaxed/simple;
+	bh=aes4PlrG7u8ZTpHznRKhnbdzYLwksa7kjjCc3G53RK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N8Pbw7tzAEij3QxkC29GwjiYtw9GRT9RJqW0FrPjqV+u+rZ38Y39C4dmGunuhK7S88N0TAnP+pVjfG4FddFExWtuGdK1SWVevyto5p32O30wkDV9YauBTSqPgmV5XkOcsGe76QG4TVNQ7gSp+J3q83xbfnTJ/MrzsId8bdWoed8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Co27IN4D; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6f6so2068031a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:53:41 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6152faff57eso3378209a12.1;
+        Tue, 29 Jul 2025 00:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753775620; x=1754380420; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YhTRbONBVEDwqIp4cqr1/Ni86jGhaCN3kr7k05fYib4=;
-        b=anK58dm1BnqW/Fl1wWpcnTz9oNk5TG//Bn+jcvI7GjJDrCcA6V9saK3TTJ7jxryHMc
-         vcvNwDaptWt9y5Xn3452a/wJ5VsyhEsrvjAIOHXpYHNY04sEIDL5t6FDAGDG4+RcQU2K
-         7G9ecjYzpw3vjUyIJeKgO54zbVZ4Lj2ew5htbuhpSAr8REPpEazhqdFIoD95AdndHDDC
-         2b17hbOyJYnWzOJLKbdqFgTbc/whGdrxvLklGOUAKpzgCCJmBAdG3KWgRxXbM6GVqYTK
-         9XqakkC3oiDZFbBU/9WlbZIrRfED5QU93JakSt2i2igQqPkVnr3nB2+Xf764tpG5qsIZ
-         kzsg==
+        d=gmail.com; s=20230601; t=1753775614; x=1754380414; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xsVo12V6n1cHZPjfQGvjTgS28eByrDkHggKW6JJVbsg=;
+        b=Co27IN4DYslceBDIRO0O2CQizu2QrH6p9i9ZtacEvjsWfxQdCUjNgwUhS3y24wuZzd
+         q3AtQwbx7oyimNBH2Rg+hZ9Ksjttg/r9MAnfuu5xqd7Z32+gc7Hnnfn7sQx3zxajNAbb
+         IO30X+vzr58BMiKPtUzkX0gLbmDqBcMKNj9wXTP0/0HO3mITg9D/5EIbLWyNBchtDrVl
+         cGWwa1a4KjwvfDe3ukQZDJJPsoUTLq54SuVDjzLvaVh40g4IK+3ZkA5WFQHK16ZehllA
+         xDQUqllyoDFD8qMAZwMFEy9lmEERKE9R4yWGCCV2e6IX7eMukuG7MGPFAizP7g9L3QRh
+         D/Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753775620; x=1754380420;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YhTRbONBVEDwqIp4cqr1/Ni86jGhaCN3kr7k05fYib4=;
-        b=TWpo96SyEYH0dgqd4Ge9pM+7FJXqimn+iry3L9Kj1prLV/uT+q/x63+YjULK4v9EKY
-         hS+jCPg6FDfLzsP0PRSnWJcBVOK7N0dxB0VwOyT5QtJ9DnhEZnbgR4R3e4lhPkE5ekCP
-         4EFJgQLq0uSmZqwkeUd3s029n56Lf0S8KfWsuysNqql6s3PO0NW5UnAOl1Vx+VV/+9w1
-         kOwAgnQpG4PbMVinGBu13z6Y65mCLsgPnN6Y80dX2IwcUL2qHiU08hHKU9COonVI9E8H
-         0gitdTIdJP8blyD43EG5KdWpIaTkGurA+gO7lb8KMYaBLiZD2HZVNtlmHDFnFO2Rdfts
-         8NLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3McGjX/WvAoshYARTcN1JyvZcQJrv9SCm+BMMnXVOTtLoUddOBNkcKxKU72UWqan70MHkHXSxsbNuVkM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyPg8las6Shu2Nkn+rieBzLstYf0GO+90uVbTc30bplaQKxOFF
-	Wc7gwxp7eBns5mUYfwCdDyOLdERi/8q1vjP1qN9iiV9JB29RB5PEJXOGnmmDdlDNJV0G/Y9isvE
-	D6z63G2XkMJ4DKWwRl+6yLI5VvXhtARA=
-X-Gm-Gg: ASbGncvBuhVm3me7q9HKpI0hJJqpivwYs/tvgl/PKtEgAuJf1Hkxf2m9rLfCJC9is9X
-	LNV1eK5ZII+B4rDqpk+YPUjdKOI6efT4BgMkeEHU15OAp26XQV1Se/fU4uAMx4ACbRdUj/uvF44
-	rA8d6HwHqxzD2tz/UdbmtKadgS9J3Q4mZ+rUFDZWk5En+23tROzcudW1aCPc3999zIZLRmXmCl8
-	ccmgjyF
-X-Google-Smtp-Source: AGHT+IFZJqIczhmVZAxwwEHOO2otFASvzj5BJWOQ0R6afxrR8aT5PD1q+XV59JiVraZp9NiXKgjN4CoiUWOJVp6blek=
-X-Received: by 2002:a17:907:8691:b0:ae3:7113:d6f1 with SMTP id
- a640c23a62f3a-af61cf9830fmr1710160966b.25.1753775619591; Tue, 29 Jul 2025
- 00:53:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753775614; x=1754380414;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xsVo12V6n1cHZPjfQGvjTgS28eByrDkHggKW6JJVbsg=;
+        b=VU+u5/PyVP+AT9i2GLqpdpu/KXY8HQA//4/LH5KiVPvoQHkEKHrEpmPv48yFOBWOl4
+         EuIWN3Hz0kTbKGTc1XsIsXdHMSij0voyEC/ST23nGXccyWdzjzRCFeyqWf+5dHNYg5ch
+         5ECTyi4WYvZzc0lletgxn4HtHn0MZzSkN2j+UksZlcnNibj4SaI+KwM4rlUUStZt1eth
+         ugGfuADDtmXNqUsENUo6H01ul8Zk/CNU8SmH2CDWoHqu11koiZ2RfMWNs/rUjqS9jdPM
+         o5sjpisxt5vnh6MSq2HSVqJmapqi+vC1zJwyWKSq01EchVlsgmQPa2TXg7txI8GQfxuG
+         Y12A==
+X-Forwarded-Encrypted: i=1; AJvYcCWEyxVyxDUWAWz3DNDA9DA+pNACfzsFSlDeRmPwbO1rA3nv0TR4jcX9QEz+I941WqgAS2AgVa5KM/RQ6MxO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7KmAG00HVqqJiTMWUiITMF7PdNU7PTrUrxTeTXe7Ai11XmbXa
+	MA2dWeiEnwetceL5/kPqWX2zx7Kel/R7MdnJaDeTEYPvbGUo558bAtG2
+X-Gm-Gg: ASbGncsLibWYy7HA8JjzuQOIOUMJQK9csM7C2D7zJ+ms6+Hg0N/LEDIEOD173qoFpP+
+	YbXXWW0gnU7fJVdZtz6xjWrHYz7Q5kKMGxQoC34K/g4kFLR/3TDQ9zstSoKJo6FL72nIc01CLnl
+	ShwupM2Jz4fqw+k/6DuxxnZLJOyyKkg5deII1rOCQFSxDEoVRk8Unf4EtNfjQ9+t5FvVve6fbZv
+	rV88o9j/jFEG7Wy5lVqLxzCpPSaBmSgVJuqM7WJfAJCMCdmPzwgHxV4T9pwe4QBTy+65/8TET9Z
+	mdUhXG2fGJ2fOqfyM1AA2wTlYLjQc/05Zrwp2yArNdCb0lfZGO8lnaYwkNzCiVqJf2uzzhatnY+
+	V3WPAfkVFJGY2ftn4rFrZ2g==
+X-Google-Smtp-Source: AGHT+IGAnknk8rhP20f+2sNuwxA4iW0E1pa7hcWsSRXI9dwJsSvI+o2WMSlmcCRhgf1zJ9FE5orwQQ==
+X-Received: by 2002:a05:6402:2789:b0:615:4655:c74c with SMTP id 4fb4d7f45d1cf-6154655ca5emr5234235a12.31.1753775614152;
+        Tue, 29 Jul 2025 00:53:34 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61556326ee7sm1444188a12.55.2025.07.29.00.53.33
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Jul 2025 00:53:33 -0700 (PDT)
+Date: Tue, 29 Jul 2025 07:53:33 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	xen-devel@lists.xenproject.org, linux-fsdevel@vger.kernel.org,
+	nvdimm@lists.linux.dev, Andrew Morton <akpm@linux-foundation.org>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Nico Pache <npache@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+	Dev Jain <dev.jain@arm.com>, Barry Song <baohua@kernel.org>,
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+	Hugh Dickins <hughd@google.com>, Oscar Salvador <osalvador@suse.de>,
+	Lance Yang <lance.yang@linux.dev>,
+	David Vrabel <david.vrabel@citrix.com>
+Subject: Re: [PATCH v2 9/9] mm: rename vm_ops->find_special_page() to
+ vm_ops->find_normal_page()
+Message-ID: <20250729075333.47jnxp7fly5wfx6n@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250717115212.1825089-1-david@redhat.com>
+ <20250717115212.1825089-10-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Hc Zheng <zhenghc00@gmail.com>
-Date: Tue, 29 Jul 2025 15:53:27 +0800
-X-Gm-Features: Ac12FXzaciMe-Iw_TIepYd9hkH6uYf5V1l3OPNXFSvNWzuYl8Okv5Vuslc8CRnI
-Message-ID: <CAHCEFEyd0Y+wTrLWNMUNvwgJrCxAi66D17w3Zg-ikH5005k1-w@mail.gmail.com>
-Subject: [Bug] x86/resctrl: unexpect mbm_local_bytes/mbm_total_bytes delta on
- AMD with multiple RMIDs in the same domain
-To: Fenghua Yu <fenghua.yu@intel.com>, Reinette Chatre <reinette.chatre@intel.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717115212.1825089-10-david@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Hi All,
+On Thu, Jul 17, 2025 at 01:52:12PM +0200, David Hildenbrand wrote:
+>... and hide it behind a kconfig option. There is really no need for
+>any !xen code to perform this check.
+>
+>The naming is a bit off: we want to find the "normal" page when a PTE
+>was marked "special". So it's really not "finding a special" page.
+>
+>Improve the documentation, and add a comment in the code where XEN ends
+>up performing the pte_mkspecial() through a hypercall. More details can
+>be found in commit 923b2919e2c3 ("xen/gntdev: mark userspace PTEs as
+>special on x86 PV guests").
+>
+>Cc: David Vrabel <david.vrabel@citrix.com>
+>Reviewed-by: Oscar Salvador <osalvador@suse.de>
+>Signed-off-by: David Hildenbrand <david@redhat.com>
 
-We have enable resctrl on container platform. We notice some unexpect
-behaviors when multiple containers running in the same L3 domain.
-the  mbm_local_bytes/mbm_total_bytes for such mon_groups return
-Unavailable or delta with two consecutive reads is out of normal range
-(eg: 1000+GB/s)
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-after reading the AMD pqos manual(), it says
-"""
-Potential causes of the =E2=80=9CU=E2=80=9D bit being set include
-(but are not limited to):
-
-=E2=80=A2 RMID is not currently tracked by the hardware.
-=E2=80=A2 RMID was not tracked by the hardware at some time since it was la=
-st read.
-=E2=80=A2 RMID has not been read since it started being tracked by the hard=
-ware.
-"""
-
-but no explanations for unexpect large delta between 2 reads of the
-counters. After exam the kernel code, I suspect this would more likely
-to be a hardware bugs
-
-here are the steps to reproduce it
-
-1. create mon_groups
-
-$ for i in `seq 0 99`;do mkdir -p /sys/fs/resctrl/amdtest/mon_groups/test$i=
-;done
-
-2. run stress command and assigned such pid to each mon_groups , (I
-have run such test on AMD Genoa. cpu 16-23,208-215 is on CCD 8)
-
-$ cat stress.sh
-nohup numactl -C 16-23,208-215 stress -m  1 --vm-hang 1 > /dev/null &
-lastPid=3D$!
-echo $lastPid > /sys/fs/resctrl/amdtest/tasks
-echo $lastPid > /sys/fs/resctrl/amdtest/mon_groups/test$1/tasks
-$ for i in `seq 0 99`;do bash stress.sh $i ;done
-
-3. watch the resctrl counter every 10 seconds
-
-$ while true ;do cat
-/sys/fs/resctrl/amdtest/mon_groups/test9/mon_data/mon_L3_08/mbm_local_bytes=
-;sleep
-10;done
-
-...
-Unavailable
-Unavailable
-Unavailable
-61924495182825856
-64176294690029568
-Unavailable
-Unavailable
-Unavailable
-...
-
-at some point the delta for 2 consecutive reads is out of normal
-range,  (64176294690029568 - 61924495182825856) / 1024 / 1024 / 1024 /
-10 =3D  209715 Gb/s
-
-if I lower the concurrecy to like 59 or lower, the delta is in normal
-range, and never return Unavailable. I have also tested on amd Rome
-cpu, the problem still existed.
-I have try this on intel platform, It does not have such problem, with
-even over 200+ RMIDs concurrently being monitored.
-
-I can not find any documents about max RMID for AMD hardware can
-concurrently holds, or a explanations for such problems.
-I believe this could become even severe on AMD with more threads in
-the future, as we will run more workloads on a single server
-
-Can some one help me to solve this problem, thanks
-
-
-Best Regards
-Huaicheng Zheng
+-- 
+Wei Yang
+Help you, Help me
 
