@@ -1,175 +1,210 @@
-Return-Path: <linux-kernel+bounces-749662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8270FB15130
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C4217B15079
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3D8188C7F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:21:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC63418A3A11
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC8F2253AB;
-	Tue, 29 Jul 2025 16:20:41 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773F5207A0C;
-	Tue, 29 Jul 2025 16:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F066296160;
+	Tue, 29 Jul 2025 15:50:29 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79A4B2951AC;
+	Tue, 29 Jul 2025 15:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753806041; cv=none; b=ET8ZKP9MMInwjBXRFwpaYd2F6Coz/gsA7w5GLnORRS705l7cVdOCHqlVyEcRedweuUHpDRgVV5QomL/Rf5omj8EAq032y04j2lRVMlI3rhnphuaAVajSsYyE1GLSAaKLm+ZcK4SODO/rpMf6C0Tekl/+jQanCwTF/QflcCucuWU=
+	t=1753804229; cv=none; b=lP56x6Ud5yIimX1QdYmGr6jVYoBHuF9L1P2VKmxTIaGYSWmiXUwswoebYtkqk9ncAmKOtANSDhRTmj8x/Dt476Ykg1veylC3dWkfdS9DPgdZ7NZu5xln0TwbEl/ArmB1tbb4EDsf5CwgjdZ6x19dJcFfOFrfZG1078ZVzcgFHXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753806041; c=relaxed/simple;
-	bh=i43610tvqBJuvGx7T80zPvL2glQBBrIB6lDokAxQyhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z48GamdVQOx04IkCXNSHAVNuQG7o5FCi3ZKh3fZP1Eya7RmrAkzDT0J2ozYI5LzJW2VHk6mftNxo8KUmu5Iv+0BrWHQ1m3Ey045WDhFfZP5zJRWXfsPs6ca7H0bXe5eqNr06YIl1faBjk8Q6mdnqwj1pcd27IuXB/4yBD1cH2VY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bs0Cs1GQKz9tCB;
-	Tue, 29 Jul 2025 17:50:01 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id QjRJn_Dc9ZzD; Tue, 29 Jul 2025 17:50:01 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bs0Cs0JmCz9tC6;
-	Tue, 29 Jul 2025 17:50:01 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id F2C4D8B76C;
-	Tue, 29 Jul 2025 17:50:00 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id OVsTyMLIJHK4; Tue, 29 Jul 2025 17:50:00 +0200 (CEST)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 608B28B763;
-	Tue, 29 Jul 2025 17:50:00 +0200 (CEST)
-Message-ID: <9e4e4a84-d929-4317-b920-d11f4bee60df@csgroup.eu>
-Date: Tue, 29 Jul 2025 17:50:00 +0200
+	s=arc-20240116; t=1753804229; c=relaxed/simple;
+	bh=wHypNep/AelK9Q9u/VXzH9QeoHr0mcMmzF8OY7GSz6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xy9zvsodI/ubb3sgwnu7paQ/tHV2H8vQguwb+fWbtcJEz8fjTatcWDeU2XQMOuQATSryZ0d1XNavaJi3xwIidpey0V3vhkJaUkppaDZJ3xWN+kb9g2qqCrIDf6V6gX76HeaeYUqNbjYiJgYIUl6WkNVXVQwU69hdXScJ/hS4iAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id BF15A80196;
+	Tue, 29 Jul 2025 15:50:24 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 7EC8432;
+	Tue, 29 Jul 2025 15:50:22 +0000 (UTC)
+Date: Tue, 29 Jul 2025 11:50:21 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Randy Dunlap <rdunlap@infradead.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Namhyung Kim
+ <namhyung@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] Documentation: tracing: Add documentation about eprobes
+Message-ID: <20250729115021.135bca64@batman.local.home>
+In-Reply-To: <f6cd51e6-c025-4182-8df8-a621379af6bf@infradead.org>
+References: <20250728171522.7d54e116@batman.local.home>
+	<f6cd51e6-c025-4182-8df8-a621379af6bf@infradead.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/Kconfig: Enable HUGETLBFS only if
- ARCH_SUPPORTS_HUGETLBFS
-To: Andrew Morton <akpm@linux-foundation.org>, Borislav Petkov <bp@alien8.de>
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>, linux-mm@kvack.org,
- "David S. Miller" <davem@davemloft.net>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
- sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org
-References: <20250711102934.2399533-1-anshuman.khandual@arm.com>
- <20250712161549.499ec62de664904bd86ffa90@linux-foundation.org>
- <f86c9ec6-d82d-4d0c-80b2-504f7c6da22e@arm.com>
- <20250714094909.GBaHTSlW8nkuINON9p@fat_crate.local>
- <20250714173109.265d1fbfa9884cd22c3a6975@linux-foundation.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <20250714173109.265d1fbfa9884cd22c3a6975@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: i37xcmmif8zwc1f88xqrpiffppysfi6t
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 7EC8432
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/qmwqhQLsniCEAGDaMLNIiDcNTspjaYIA=
+X-HE-Tag: 1753804222-608836
+X-HE-Meta: U2FsdGVkX185POT3YrZC8hmBCVLW2j99FeE2Z6DOM0fqvQjjwnJMZBbHpXvb7JYlLyx5Bqb8GfV3yLwRjdhyj0wvT/LXdiapu7c3fbsII2Rf8N6ZedXlxwFDuDZSiHZ16LeZNctFz7aHVhukYl9Kd1X9M9bn4GBvXu7wpjC2JCGO48i1qvjkN1Dr7xt5q7PfFCnHwWdKn13pRjv5dfWpcfdc3yJN52g/7sImhRl3Lht0n/KFKhEBwIyv/nmjTsEW6z9EO8MB1GQ9vmD4N/MtUWP2isHFFtibDRHV5olBoMJnvmApQCyBXDM+uG+5GmhyU+6v5wJ+Ir5fVTn/G7vPNUrmyQPBGkSHboBZVQfspQYWBgYKv8Pd+yQeMTgm1O+/
 
-
-
-Le 15/07/2025 à 02:31, Andrew Morton a écrit :
-> On Mon, 14 Jul 2025 11:49:09 +0200 Borislav Petkov <bp@alien8.de> wrote:
+On Mon, 28 Jul 2025 18:02:37 -0700
+Randy Dunlap <rdunlap@infradead.org> wrote:
+> > +Overview
+> > +========
+> > +
+> > +Eprobes are dynamic events that are placed on existing events to eiter  
 > 
->> On Mon, Jul 14, 2025 at 08:05:31AM +0530, Anshuman Khandual wrote:
->>> The original first commit had added 'BROKEN', although currently there
->>> are no explanations about it in the tree.
->>
->> commit c0dde7404aff064bff46ae1d5f1584d38e30c3bf
->> Author: Linus Torvalds <torvalds@home.osdl.org>
->> Date:   Sun Aug 17 21:23:57 2003 -0700
->>
->>      Add CONFIG_BROKEN (default 'n') to hide known-broken drivers.
+>                                                                     either
 > 
-> Thanks.  That was unkind of someone.  How's this?
+> > +dereference a field that is a pointer, or simply to limit what fields get  
 > 
+>                                                        (preference:)     are
 > 
-> From: Andrew Morton <akpm@linux-foundation.org>
-> Subject: init/Kconfig: restore CONFIG_BROKEN help text
-> Date: Mon Jul 14 05:20:02 PM PDT 2025
+> > +recorded in the trace event.
+> > +
+> > +Eprobes depend on kprobe events so to enable this feature, build your kernel  
 > 
-> Linus added it in 2003, it later was removed.  Put it back.
+>                                                          s/,/;/
 
-Was removed by:
-
-commit 3be71ba84f17f39131900f44e8ef513c696a5b11
-Author: Linus Torvalds <torvalds@home.osdl.org>
-Date:   Mon Sep 1 21:30:14 2003 -0700
-
-     Instead of asking for "broken drivers", ask for a "clean compile".
-
-     This makes "allyesconfig" do a better job.
-
-diff --git a/init/Kconfig b/init/Kconfig
-index 3b6e6d580e1d..c296f6bee03c 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -32,16 +32,19 @@ config EXPERIMENTAL
-  	  you say Y here, you will be offered the choice of using features or
-  	  drivers that are currently considered to be in the alpha-test phase.
-
--config BROKEN
--	bool "Prompt for old and known-broken drivers"
--	depends on EXPERIMENTAL
--	default n
-+config CLEAN_COMPILE
-+	bool "Don't select drivers known to be broken" if EXPERIMENTAL
-+	default y
-  	help
--	  This option allows you to choose whether you want to try to
--	  compile (and fix) old drivers that haven't been updated to
--	  new infrastructure.
-+	  Select this option if you don't even want to see the option
-+	  to configure known-broken drivers.
-
--	  If unsure, say N.
-+	  If unsure, say Y
-+
-+config BROKEN
-+	bool
-+	depends on !CLEAN_COMPILE
-+	default y
-
-  config BROKEN_ON_SMP
-  	bool
+OK.
 
 
+> > +  FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
+> > +		  (u8/u16/u32/u64/s8/s16/s32/s64), hexadecimal types
+> > +		  (x8/x16/x32/x64), VFS layer common type(%pd/%pD), "char",
+> > +                  "string", "ustring", "symbol", "symstr" and bitfield are  
+> 
+> 		Should bitfield be quoted?
+
+Hmm, probably. And we should fix kprobetrace.rst as that's where I copied it from.
+
+> > +
+> > +Attaching to dynamic events
+> > +---------------------------
+> > +
+> > +Note that eprobes may attach to dynamic events as well as to normal events. It  
+> 
+> Don't need "Note that".
+
+OK.
 
 > 
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Borislav Betkov <bp@alien8.de>
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Thomas Gleinxer <tglx@linutronix.de>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> ---
+> > +may attach to a kprobe event, a synthetic event or a fprobe event. This is  
 > 
->   init/Kconfig |    4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> --- a/init/Kconfig~a
-> +++ a/init/Kconfig
-> @@ -169,6 +169,10 @@ menu "General setup"
->   
->   config BROKEN
->   	bool
-> +	help
-> +	  This option allows you to choose whether you want to try to
-> +	  compile (and fix) old drivers that haven't been updated to
-> +	  new infrastructure.
->   
->   config BROKEN_ON_SMP
->   	bool
-> _
-> 
+>                                       I would say:    an fprobe event.
 > 
 
+OK.
+
+
+> > +
+> > +Example 2
+> > +---------
+> > +
+> > +If syscall events are not enabled but the raw syscall are (systemcall  
+> 
+>                                                  syscalls are (system call
+> 
+> > +events are not normal events, but are created from the raw_syscall events
+> > +within the kernel). In order to trace the openat system call, one can create  
+> 
+>                     ^^ not a complete sentence.
+
+Ah, I'm thinking that "This example is for the case that syscall events
+are not enabled..."
+
+But it came out as the above. Will fix.
+
+> 
+> 
+> > +an event probe on top of the raw_syscall event:
+> > +::
+> > +
+> > + # cd /sys/kernel/tracing
+> > + # cat events/raw_syscalls/sys_enter/format
+> > + name: sys_enter
+> > + ID: 395
+> > + format:
+> > +	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+> > +	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+> > +	field:unsigned char common_preempt_count;	offset:3;	size:1;	signed:0;
+> > +	field:int common_pid;	offset:4;	size:4;	signed:1;
+> > +
+> > +	field:long id;	offset:8;	size:8;	signed:1;
+> > +	field:unsigned long args[6];	offset:16;	size:48;	signed:0;
+> > +
+> > + print fmt: "NR %ld (%lx, %lx, %lx, %lx, %lx, %lx)", REC->id, REC->args[0], REC->args[1], REC->args[2], REC->args[3], REC->args[4], REC->args[5]
+> > +
+> > +From the source code, the sys_openat() has:
+> > +::
+> > +
+> > + int sys_openat(int dirfd, const char *path, int flags, mode_t mode)
+> > + {
+> > +	return my_syscall4(__NR_openat, dirfd, path, flags, mode);
+> > + }
+> > +
+> > +The path is the second parameter, and that is what is wanted.  
+> 
+> s/wanted/want/
+
+Really? That sounds funny to me:
+
+   The path is the second parameter and that is what is want.
+
+??
+
+
+> 
+> > +::
+> > +
+> > + # echo 'e:openat raw_syscalls.sys_enter nr=$id filename=+8($args):ustring' >> dynamic_events
+> > +
+> > +This is being run on x86_64 where the word size is 8 bytes and the openat
+> > +systemcall __NR_openat is set at 257.  
+> 
+>    system call
+
+OK.
+
+
+> > +The filename shows "(fault)". This is likely because the filename has not been
+> > +pulled into memory yet and currently trace events cannot fault in memory that
+> > +is not present. When a eprobe tries to read memory that has not been faulted  
+> 
+>                         an eprobe
+
+OK.
+
+
+> > +Now that the address of the filename has been passed to the end of the
+> > +systemcall, create another eprobe to attach to the exit event to show the  
+> 
+>    system call,
+
+OK.
+
+> 
+> Thanks for the new documentation.
+> 
+
+It was a long time coming :-p
+
+-- Steve
 
