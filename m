@@ -1,142 +1,145 @@
-Return-Path: <linux-kernel+bounces-749214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889EEB14B84
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:42:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5753DB14B8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF660188A537
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:43:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C8416E7A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:43:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CEBF2882B4;
-	Tue, 29 Jul 2025 09:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4CA2882D3;
+	Tue, 29 Jul 2025 09:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cxiBp5yc"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jj0eAbY2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57572877F9
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CA41B0413;
+	Tue, 29 Jul 2025 09:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753782157; cv=none; b=nLaU/fdlKNTl7VtZlRmQ+jGvMhhynSjGDAFy5G2MiN3uihGnFwI9enjacSQ7sC9ZrnHog/eXcBqVToqcs7ztE+z9ja4g6NkYHizezOlMhfqfi6GY8xLjjDNJLlA13tiLS+CahLju8GVIWZS/+wa1blKHXjCO5Hboj2r0JInWnW4=
+	t=1753782219; cv=none; b=ds9UcKba19Ss2r7SkQG4yFGijHqHIsB0IdcpQswY6/kxkpQj/6NNnqu9epMXNGxwOu+EHEcK5CDi+7jMpbZDmVO76M9QWiosOn274rw8vCMxk9ckq8YRzEwe/hGZN99OzucvG+cO+Gkxy0IDnTpsiV/bu4JWhpqal2D7r3UC0jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753782157; c=relaxed/simple;
-	bh=qt58Gnd/lzcr1Ku8NCqo7aCR8cm6ZUzHGC/tvVv9LuM=;
+	s=arc-20240116; t=1753782219; c=relaxed/simple;
+	bh=O2QizMi4IT96Tg0rnQsooP1SY7Nrm6qwGNuOhl1eOB8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aYkzcrx21BEhVYXvPYzm3arHCk4d+TMbOIWDUKjFbAYK2Tt519j+JfiPkBs975WU1nlKz62RF0lLnD8Rwy3WAEa+m5ox0ZCQW1p9pzia5NC5np++VFy3lhS9q8504mUp7gPYaWym3ti5rukoMB24cnjX+q0Wt5b3IGCWEqHrYzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cxiBp5yc; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-454f428038eso46523815e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:42:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1753782153; x=1754386953; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Ef5rgY2lnt4OvcvoVg9/XVQwH6qXB6/1hQPiF6E+H4=;
-        b=cxiBp5ycthmtNXiDAHXWr08AXMTXNGnBTJ5hVu18xDKcA2bskvXWQDC28uc0IG3f4e
-         j0pWxNOmu2VqDE/WJsUc5eAIASvyjYFySoSDZsU332c5mdotNPT0cGfm73DQfh3WGCjs
-         T7YpaWBWim3TEn9mEXQFIJ/4JBkPZbsKoMfc2oJkTm3/XOCbjF+Fiwy0oONrc/3iWW3J
-         pdjCxyOyToPRCE9NUI4yMfPmE6viRqvjFzc+Iv0PHfwlKg8HIX89ju0WeA9ar7X9YXfG
-         nU3/UCgf815scX8085W+FqrFVA6S29ofaRruBGTlsWeFosSyqXv6hxOV/klLFQi4a67q
-         TPQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753782153; x=1754386953;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Ef5rgY2lnt4OvcvoVg9/XVQwH6qXB6/1hQPiF6E+H4=;
-        b=I2uyiiR7Miv8/IWARqEMkx9aIhbJViACmsA6Kel5rW905aDKsVVhEJB+5eGn4r2QXm
-         MMck+hAEeng0McgsFaQSMkP+Qr2FAHqBkgRsKSYjG/ePf3+fZJbgfcKtd3tO+N9YvnUB
-         mr/MmtY86LOnIcQomXLyK8M4NUhDLbax+u7zhrBuE/STfVFiAVUMxXYtHhDH9OAsRyIk
-         XljP8sLRd9LV1U6XWYiTwuecy3+pIqFInPiAnXfB/6drMaPu1/SksrdxiHXwJpwdP4np
-         Y22YpV34chf492PSVMz0F3OeYCMqxEzmnqYgq0WVj+9nD05jlQWqePTVD/dBcKzc7HUW
-         kCpg==
-X-Forwarded-Encrypted: i=1; AJvYcCWC9YwwRJ3nyhVr3+ipUzouvdv7CsnpQsV41oywB0XdX8SvGQu3TYGHQFW8c+D7MidmpLJ2zYFkoNJl/0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoG+BaSa7ueG3+9414Q9JAthNzqgmtEWth5FUng6RqZVmC0hAz
-	rWiS2DC1e8kOr7J9qKlwiz0X0Fvwmbyg3MXjCNtQIE8tm39rOeWZ1JyXxPJyBQJCfpk=
-X-Gm-Gg: ASbGncv9Mc7kNKu4o2H9Z+TUOMHC3Wcab7R+awC7D98YUhok4XkxGhhDb5k5SoEnjgF
-	y30rmaVcJ0HOevdSXwdQmo0coMhef1MI9mNAlUxCJWDVywMogUW6Lvfo0ZN9MmMajq38BWjl5lC
-	bYidSA5Mbe7p/Nmmsf7uGjDPP3uBBp2Gu0ziXO1USq4jqyoeKNKMXTBD5Hk9FLwMY4BbxTNVduB
-	KeiJSpO2OLKZYMA8MmHUTnNUGprmdzWAwLpnysua9+9fXXYTqduI2pGyKm8xrWXiLsh3xiZsebI
-	4r6D9tNsDEIHarcHEXZ7+10yrzpZ1O51iUrf7aEK1TuyIZgNfRPIY1RImV+x4InFq2O9Gbgmayo
-	UlNYb8EQyJ5q6Q+NdYRooVA/k1AAsa0TG2SUP9CgwyA==
-X-Google-Smtp-Source: AGHT+IEg3FocgRMXUTosfo8Ye9Llf6PkHfOrGNXyUlE+u8EhOKaN0vlka4uim4KCJebnGYemr/ns7Q==
-X-Received: by 2002:a05:600c:1992:b0:455:fc16:9ed8 with SMTP id 5b1f17b1804b1-45876651bfamr145394865e9.30.1753782153141;
-        Tue, 29 Jul 2025 02:42:33 -0700 (PDT)
-Received: from blackdock.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458705bcb96sm196404755e9.21.2025.07.29.02.42.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 02:42:32 -0700 (PDT)
-Date: Tue, 29 Jul 2025 11:42:30 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: JP Kobryn <inwardvessel@gmail.com>
-Cc: tj@kernel.org, shakeel.butt@linux.dev, yosryahmed@google.com, 
-	hannes@cmpxchg.org, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	cgroups@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH 0/5 cgroup/for-6.16-fixes] harden css_create() for safe
- placement of call to css_rstat_init()
-Message-ID: <lvfxjlx6gok6lhwvf2h3reiizfztjfsyuspa7avzog6fbuozsq@bqpqe5g4fj5j>
-References: <20250722014030.297537-1-inwardvessel@gmail.com>
- <cughucmlrkwe3unwwmtx3yrqyrqwsedrbh2ck5feqs6cr36j3z@fhrnw6nfnyte>
- <e8156c36-48f3-4983-8a2e-5a5a4444a473@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pSI9iaWH+hyxqeHl2+f3IDU2LAA7EyUoxR53j05pPJbgfUJ/O4VpO+V4BPAd/6qIqB/n9hfu8DGnLFH3p2wk/nsGt+rHM+N5fldtuxLya3AzkRsrLw9SeJkV9HTukY6gZ/G7sqAO27QCXDIhFXOBKTDYf5u/sz84lS/xmXq7Aqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jj0eAbY2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B41C4CEEF;
+	Tue, 29 Jul 2025 09:43:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753782216;
+	bh=O2QizMi4IT96Tg0rnQsooP1SY7Nrm6qwGNuOhl1eOB8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jj0eAbY2UR7k6rKdvojX+jcKAtQ6eU7cTN/Pwn2XZ1TYJ2k5Pifv/nvpNXhCL8Wkq
+	 o6KAwfX6/t5Ks1GbQSGD5ShXyNaWUMS/nzO2BBGNK4k4E1le2Mkz4um+yvv1+PcWWj
+	 aZtF5Oe5RxV5vHnyIkR54gLovPsJShiNRZ1hOe2JzErmFHD+yMXwRS4yZXYxpx5ltf
+	 OmQyXDp4Ixh26FWKPB3Snyd8Ybt/c4FsWzNZX++Zo/7l2YGQZ9hDSOrtGO1j4dGgmK
+	 3lFjZyev8CpyRSQ8lXSEPf3YtB/yfp5c7NpiIuLADIfWK+lTlKLm4kdYxEYwDIZsBn
+	 0XYIq0SIGnrOA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1uggrw-000000002yZ-1HyL;
+	Tue, 29 Jul 2025 11:43:37 +0200
+Date: Tue, 29 Jul 2025 11:43:36 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	david@ixit.cz
+Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
+Message-ID: <aIiXyEuPmWU00hFf@hovoldconsulting.com>
+References: <20250204135842.3703751-1-clabbe@baylibre.com>
+ <20250204135842.3703751-2-clabbe@baylibre.com>
+ <aCHHfY2FkVW2j0ML@hovoldconsulting.com>
+ <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
+ <aINXS813fmWNJh3A@hovoldconsulting.com>
+ <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="yc5dur3zyh2gvpsd"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e8156c36-48f3-4983-8a2e-5a5a4444a473@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
 
+On Sat, Jul 26, 2025 at 04:54:17PM +0200, Martin Blumenstingl wrote:
+> On Fri, Jul 25, 2025 at 12:07 PM Johan Hovold <johan@kernel.org> wrote:
 
---yc5dur3zyh2gvpsd
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 0/5 cgroup/for-6.16-fixes] harden css_create() for safe
- placement of call to css_rstat_init()
-MIME-Version: 1.0
+> > No, the vendor driver tracks THRE per port
+> > (ttyport[portnum].write_empty) and allows writing to more than one port
+> > in parallel (e.g. releases the device write_lock while waiting for the
+> > transfer to complete).
+> >
+> > I thought the problem was that you could not submit another urb for the
+> > *same* port until the device buffer for that port had been emptied?
+> >
+> > This seems to be what the vendor driver is preventing.
 
-On Mon, Jul 28, 2025 at 11:04:56AM -0700, JP Kobryn <inwardvessel@gmail.com> wrote:
-> I did consider adding an "initialized" flag to the css but since there can
-> be multiple css's per
-> cgroup it felt like it would be adding overhead. So I went the path of
-> getting the call
-> sequence right. I'm open to feedback on this, though.
+> I managed to get it to work now without any unnecessary waiting.
+> When I switched to just waiting for per-port THRE I accidentally
+> re-used the same URB (along with its buffer) for all ports. This of
+> course "corrupts" data, but it's my fault instead of the chip/firmware
+> causing it.
+> That's why I was referring to data corruption earlier.
+> Thanks for your persistence and for making me look at my code again
+> with a fresh mind.
 
-An implicit flag that builds upon the assumption that css_rstat_init()
-must only succeed after it allocates ->rstat_cpu (didn't check gotchas
-of this approach with !CONFIG_SMP)
+Glad to hear you got it working. Did you confirm that you really need to
+wait for THRE before submitting the next URB too? I don't see why the
+vendor driver would be doing this otherwise, but perhaps it only affects
+older, broken firmware, or something.
 
---- a/kernel/cgroup/rstat.c
-+++ b/kernel/cgroup/rstat.c
-@@ -488,6 +488,10 @@ void css_rstat_exit(struct cgroup_subsys_state *css)
-        if (!css_uses_rstat(css))
-                return;
+> > > > You should implement dtr_rts() as well.
+> >
+> > > This will be the first time we need the "package type" information as
+> > > CH348Q only supports CTS/RTS on the first four ports, for the last
+> > > four the signals aren't routed outside the package.
+> > > I need to see if I have other hardware with CTS/RTS pins to test this.
+> >
+> > Just connect a multimeter to the DTR and RTS pins and verify that they
+> > are asserted on open and deasserted on close after issuing those control
+> > requests (see ch9344_port_dtr_rts()).
 
-+       /* Incomplete css whose css_rstat_init failed */
-+       if (!css->rstat_cpu)
-+               return;
-+
-        css_rstat_flush(css);
+> Do I need to set anything special in termios for this to work?
 
-        /* sanity check */
+The TTY layer will assert DTR/RTS on open() and deassert on close() as
+long as HUPCL is set. If you implement tiocmset() you can use that to
+toggle the lines as well.
 
---yc5dur3zyh2gvpsd
-Content-Type: application/pgp-signature; name="signature.asc"
+> The datasheet has a special note about DTR/TNOW (on page 8 for the CFG pin):
+> > Unified configuration: During power-on, if the CFG pin is
+> > at a high level or not connected, all DTRx/ TNOWx pins
+> > are configured to function as TNOW. CFG pin is low, all
+> > DTRx/ TNOWx pins are configured for DTR function.
 
------BEGIN PGP SIGNATURE-----
+Got a link to the datasheet? Not sure what they refer to as TNOW.
 
-iHUEABYKAB0WIQRCE24Fn/AcRjnLivR+PQLnlNv4CAUCaIiXhAAKCRB+PQLnlNv4
-CLYZAQCNoqPVQ+80PlkqExKestU8doSIpaQsFTe+9sM3bMirGgEAlP9HHPLTU5lU
-ooXDiqP+bfhMUnoLW5mj85Pa0BKKNAY=
-=QcPV
------END PGP SIGNATURE-----
+> On my test board the CFG pin is HIGH. From how I understand you, RTS
+> should at least change (even if DTR is in TNOW mode).
+> No matter what I do: both pins are always LOW (right after modprobe,
+> after opening the console, closing the console again, ...).
+> I even set up the vendor driver to test this: it's the same situation there.
 
---yc5dur3zyh2gvpsd--
+I don't think the console code will assert DTR/RTS, you need to open the
+port as a regular tty.
+
+> If we need to make the DTR and RTS output something then the only way
+> I know of right now is to switch them to GPIO mode (I have code for
+> this but it's another ~300 lines patch on top of this).
+
+That should not be needed. It looked like the vendor driver had some
+variant of the usual request to control the modem lines. That should be
+all that is needed.
+
+Look at the vendor driver implementation of ch9344_tty_tiocmset() and
+ch9344_port_dtr_rts().
+
+Johan
 
