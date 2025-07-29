@@ -1,129 +1,78 @@
-Return-Path: <linux-kernel+bounces-750019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F74DB155FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 124CAB155FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64CC8188B869
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668321893F58
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 275BE281358;
-	Tue, 29 Jul 2025 23:29:13 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD45128540B;
+	Tue, 29 Jul 2025 23:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CpRjJ937"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B237246BD7
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:29:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CBE21D001;
+	Tue, 29 Jul 2025 23:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753831752; cv=none; b=KEpPYiC0agZyJ2fI4cDbKWZs0IEXagbtV69BsiMSTxhUNznOuHDgxSDy1pBxFL+KxPHPplbpWxM7oIddZE6lb0vHcayfmBQyMBPXkL5k98jICYKSulmla4eqDewwEMfNaBnar2bWSadIC3aMS/FTyyBbLheq7usilMISqRYHquk=
+	t=1753831784; cv=none; b=T091KIKD7aKdwBVFatA2EHcxcgn5Yy/noDFbCh0uphwHDS5YecB1i3DEYlEDdVLfrLlB36Xa78hWw8SykFnP3tEUAfoFKINaK60td311dGuiQYUixrq+6fWRmTyKRCGslpIlibY7qcn5vjMmMNeyvoKP5Wp/MmsF/nAlG8e2J1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753831752; c=relaxed/simple;
-	bh=7+57hzZY2qD/qkumBUkirJlpj83Sx9X+jWtVez/+Rac=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=m3BKXK3nFdriXwcriJwXZ96/p/9zkQITETqmw/lkiU8xSygonc1KX/3k5AyFZztvCxedprfJGY2KqGuMgAuV2cvzeGXP5ZHISsTcJbu9my2m0I1xBIVohY3MAn+98Rzmj/y2f8sOBTvnsBwayyDLXE6JKC32eU9sL0FNiIowkjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf17.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 282131A027F;
-	Tue, 29 Jul 2025 23:29:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf17.hostedemail.com (Postfix) with ESMTPA id 6430F1A;
-	Tue, 29 Jul 2025 23:29:07 +0000 (UTC)
-Date: Tue, 29 Jul 2025 19:29:22 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: [GIT PULL] tracing: Remove or hide some unused tracepoints for 6.17
-Message-ID: <20250729192922.37db57dc@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753831784; c=relaxed/simple;
+	bh=fqH7Seg4htMeGwd1dAQ9V0+v0+ut4Ff/vxsKXxrKxXs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=U1n48rDbzWofBocvOFIwdvM+4DEdskB1ez6bzsql39P4PUcHzV0E1XajMjMsNforMRfHFgVR06Q8IeBpTSbdkok74N311UzKOEZFt/XbdDtskrG+tjya3SF7gBz9kHHRlskwMU4Q1o9EJl2gNpTQHsHJ4GmybkPxR4fiulr6fPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CpRjJ937; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F53C4CEEF;
+	Tue, 29 Jul 2025 23:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753831784;
+	bh=fqH7Seg4htMeGwd1dAQ9V0+v0+ut4Ff/vxsKXxrKxXs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=CpRjJ937jZ7GMk29kvX4zxxzbS1LpUnCwDxKqNjhguSP7sLTZ4/5yFrnOXHahOXUB
+	 MlfXSIgkwKdXWIuMUw0YYLHVW30zY2I9HSqrKB0S0RtrRlWjTbdDvhMmNbc7bB07n3
+	 pJjlH46l/Jm0phYLhe0OFB4w+stQywFzDfZXX2fxQnuSUlgvtEX5MV0z70rCBXqTf1
+	 yo7MAT9DMek4v5o2YxWFQaI2Y7YI5IpxEjmT2tg5oz/e8xm3kwn0kV9rBo0DHq+WKc
+	 L8kSKo3ghMVUKF8vYz+WsatM7I/ljTaM3Kb/H9M59igZB0hgdrUNKYaxtKCsOhaK3G
+	 LmRBJO0fowukw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 721A1383BF5F;
+	Tue, 29 Jul 2025 23:30:01 +0000 (UTC)
+Subject: Re: [GIT PULL] LKMM changes for v6.17
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <788e1aaa-73f5-4e04-a7f4-bab4f1075c46@paulmck-laptop>
+References: <788e1aaa-73f5-4e04-a7f4-bab4f1075c46@paulmck-laptop>
+X-PR-Tracked-List-Id: <lkmm.lists.linux.dev>
+X-PR-Tracked-Message-Id: <788e1aaa-73f5-4e04-a7f4-bab4f1075c46@paulmck-laptop>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/lkmm.2025.07.23a
+X-PR-Tracked-Commit-Id: 88172700423c27c0123fdb05b8c4a62444cfcba2
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 93942645c44f1ed4e834d162ae5ad9fb7ef07213
+Message-Id: <175383180000.1684090.18219611364933929789.pr-tracker-bot@kernel.org>
+Date: Tue, 29 Jul 2025 23:30:00 +0000
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, lkmm@lists.linux.dev, kernel-team@meta.com, haakon.bugge@oracle.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Server: rspamout04
-X-Rspamd-Queue-Id: 6430F1A
-X-Stat-Signature: a857hbxrrkrs1h4dnm5yrz3bg3ngwfzw
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/f56BxiH4+1VtluhC4bQo9j3q/qfdO/C0=
-X-HE-Tag: 1753831747-543705
-X-HE-Meta: U2FsdGVkX1+10eS9DxeXZR0PNqMzThSxdftYGadf1gz7xFTEA95rV32S8N8rZcas8VHmMFyOFq+wJntGYKddrvVjr+kxavmPBTeuRFq2GxUM8mHKQWNuoYcpNIFRdu9gkdOmF2eULFQaijZ1NCO45AzrSGvOLiuC+l5dmB8iJEqq3ac6jQzhD3vduSV2W3gpEDNfuVKMG1DYaxDTNaa1c50Wfy9uaIRqfRF8FMm0EFcXb87CMBqrPE3PlLVJiKKbXG5L6JtfBP+E0S0XVBqeSAxX1gF0WFMr9TBbdlASBmb9P2bF+rxerEsxcwZeDZbR5/XgqglR3AmEWDFpL+pEYDokrasu0FA5
 
+The pull request you sent on Fri, 25 Jul 2025 16:56:22 -0700:
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git tags/lkmm.2025.07.23a
 
-Linus,
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/93942645c44f1ed4e834d162ae5ad9fb7ef07213
 
-Remove or hide unused tracepoints
+Thank you!
 
-Tracepoints take up memory (around 5K per tracepoint) even when they are
-unused. Changes are being made to detect when a tracepoint is defined but
-unused and a warning is shown at build. But those changes are not yet
-ready for inclusion.
-
-- Fix some of the unused tracepoints that it detected
-
-  Some tracepoints were removed and others were hidden by config settings
-  to match the config settings of where they are instantiated. Some
-  tracepoints were moved into architecture specific code as only one
-  architecture used them.
-
-- Call the ftrace_test_filter tracepoint in an unreachable if statement
-
-  The ftrace_test_filter tracepoint which is defined when ftrace selftests
-  are configured and is used to test the filter logic, but the tracepoint is
-  not actually called. It is put into an if statement to not have it get
-  compiled out, but also not warn for not being used.
-
-
-Please pull the latest trace-unused-v6.17 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-unused-v6.17
-
-Tag SHA1: 71bbc6de907c84ee983687aea4522604a42c820e
-Head SHA1: c2dbaf0af05193fa69f267c37d1f825c1c3a59ab
-
-
-Steven Rostedt (11):
-      tracing, AER: Hide PCIe AER event when PCIEAER is not configured
-      alarmtimer: Hide alarmtimer_suspend event when RTC_CLASS is not configured
-      PM: cpufreq: powernv/tracing: Move powernv_throttle trace event
-      PM: tracing: Hide psci_domain_idle events under ARM_PSCI_CPUIDLE
-      PM: tracing: Hide device_pm_callback events under PM_SLEEP
-      PM: tracing: Hide power_domain_target event under ARCH_OMAP2PLUS
-      binder: Remove unused binder lock events
-      tracing: arm: arm64: Hide trace events ipi_raise, ipi_entry and ipi_exit
-      tracing: Call trace_ftrace_test_filter() for the event
-      powerpc/thp: tracing: Hide hugepage events under CONFIG_PPC_BOOK3S_64
-      tracing: sched: Hide numa events under CONFIG_NUMA_BALANCING
-
-----
- arch/arm/Kconfig                   |  1 +
- arch/arm64/Kconfig                 |  1 +
- drivers/android/binder_trace.h     | 21 --------------
- drivers/cpufreq/Makefile           |  1 +
- drivers/cpufreq/powernv-cpufreq.c  |  4 ++-
- drivers/cpufreq/powernv-trace.h    | 44 +++++++++++++++++++++++++++++
- include/ras/ras_event.h            |  2 ++
- include/trace/events/alarmtimer.h  |  2 ++
- include/trace/events/ipi.h         | 58 ++++++++++++++++++++------------------
- include/trace/events/power.h       | 28 ++++--------------
- include/trace/events/sched.h       |  2 +-
- include/trace/events/thp.h         |  2 ++
- kernel/trace/Kconfig               |  6 ++++
- kernel/trace/power-traces.c        |  1 -
- kernel/trace/trace_events_filter.c |  4 +++
- 15 files changed, 103 insertions(+), 74 deletions(-)
- create mode 100644 drivers/cpufreq/powernv-trace.h
----------------------------
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
