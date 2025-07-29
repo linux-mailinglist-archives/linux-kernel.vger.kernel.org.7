@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-749590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B97FB1504C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:41:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A7D2B15054
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AFE34E769B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE2D7189A911
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:42:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139EA298261;
-	Tue, 29 Jul 2025 15:40:24 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561BA881E;
+	Tue, 29 Jul 2025 15:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Am9Y7coD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3792980AA;
-	Tue, 29 Jul 2025 15:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DC4ECA4B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:41:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753803623; cv=none; b=F/fq3SQtl/ADIN22BDmCk2zmBDBi8sQ7kPXinjB/3nja/LLGgjf0voAro2hqGLTIn7I+akCm9WNO6CMe7t1flzjzwYEAteAqM6LWmxAQK68WlDU8CcKphQOnSadtqdxijVjf06db2xVkks+NCIGPLiqeX5DxySm2e2XxJ8WRL6A=
+	t=1753803712; cv=none; b=NN4a7rmseOpP08F+EjK7euxSInSI3432xWGJd3TBIATOfjluyDsy7JJmDkwpWOt2w3OBX/W2KOuGEWf1QPlLX+Ab97QIh99whFGYBDlxasqgEbNg+roizO0rtaQB1NWXwF/7oa3tzIAXuK7n7znhmmbwlWQsiQ9YPhlQvBAk0Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753803623; c=relaxed/simple;
-	bh=OlRedFDxrkWC3m2IN07auHwrhh2BPsnAqUm1Ne3uE0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=meBEiGf9P56drt3oe9BzWY2zvDC/1beds4O09ku3NMlhBiS8TPFgmjQ0CRjy3ulJ0Arne2JOeYWwtkvhuM1MJPyXP3yQsBTn0KQE/y50uAqyBSSphkWcAYrMZSvjYpV/8KgrPtGQQnBmTshmalmbc3OU19Ann/iinRrEtqUkSvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf08.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 18C94801A9;
-	Tue, 29 Jul 2025 15:40:19 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf08.hostedemail.com (Postfix) with ESMTPA id D2B8220028;
-	Tue, 29 Jul 2025 15:40:15 +0000 (UTC)
-Date: Tue, 29 Jul 2025 11:40:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
- Peter Zijlstra <peterz@infradead.org>, Namhyung Kim <namhyung@kernel.org>,
- Takaya Saeki <takayas@google.com>, Douglas Raillard
- <douglas.raillard@arm.com>, Tom Zanussi <zanussi@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ian
- Rogers <irogers@google.com>, aahringo@redhat.com
-Subject: Re: [PATCH] tracing/probes: Allow use of BTF names to dereference
- pointers
-Message-ID: <20250729114014.22bf17c8@batman.local.home>
-In-Reply-To: <20250729113335.2e4f087d@batman.local.home>
-References: <20250729113335.2e4f087d@batman.local.home>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753803712; c=relaxed/simple;
+	bh=vISfz5sdL11RdnhGuLlTC8sk7lElm/m3E0L3DESxM/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cxNzirz2BRSAX+BanNtO3MHbHZ8eRXgNz6KoK5yKOSmokxujCGMJfe3BKfQfYs0At1PxjA+ARX/wMNRJkTHLCJHAO208v0P8N6h2hDQvpoWxFiakWiyhM27hpyvODSzuzRQ1nM4odtb2VUoKowGi8tWcwlDvVG3MG5BzCSYTjYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Am9Y7coD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753803710;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y1J7AmMn/wOMGDOuHEtuhBMnA2xG0K8EqVBM4GAg58o=;
+	b=Am9Y7coDjwbLeMB/OpALD9IinfXdwb0gsl2JjcKpc08V/O321pFTIMga38gWPyspPbTDqX
+	5pIpbaat12jyZTYM1mYrs5dqY3ieqT288PW/Zzksd4WKNwZzfWI897qJNc/QTL0V3C3bGt
+	I54Tx3I02v7korAEkHJe6+jZhVYsBrM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-597-HS0o7SEVN9WA6ti8LWAS5g-1; Tue,
+ 29 Jul 2025 11:41:44 -0400
+X-MC-Unique: HS0o7SEVN9WA6ti8LWAS5g-1
+X-Mimecast-MFC-AGG-ID: HS0o7SEVN9WA6ti8LWAS5g_1753803702
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79D1D19560B1;
+	Tue, 29 Jul 2025 15:41:41 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.19])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 924701800288;
+	Tue, 29 Jul 2025 15:41:34 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 29 Jul 2025 17:40:33 +0200 (CEST)
+Date: Tue, 29 Jul 2025 17:40:26 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: fan.yu9@zte.com.cn
+Cc: tglx@linutronix.de, frederic@kernel.org, peterz@infradead.org,
+	brauner@kernel.org, iro@zeniv.linux.org.uk,
+	joel.granados@kernel.org, lorenzo.stoakes@oracle.com,
+	akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+	xu.xin16@zte.com.cn, yang.yang29@zte.com.cn
+Subject: Re: [PATCH linux-next v2] signal: clarify __send_signal_locked
+ comment in do_notify_parent
+Message-ID: <20250729154025.GC18541@redhat.com>
+References: <20250729152759994n3YKgjxLglCCPkOtYtU2U@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: q6zgjy7nn1jg6bj3g7b74oqsemuc4oo8
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: D2B8220028
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX186VMlIHneOuF/AgDag7l28Zac1Ill4rOU=
-X-HE-Tag: 1753803615-805169
-X-HE-Meta: U2FsdGVkX18Ow2xrPCJGOeQK7rQx+7+poyxBDd9bSNtdYHYpRa3MVczA9S65ndXqbb3GA+6mzA6r+qkbWevrB5tE+F1PvOEtM057N/MyPBmnzUOxPmBh9HPy2cSP2fnCdxnAMputoO/rxWgKhPpkrUYL4RwVOEaH1N8HfS6c5QlSk86/CKou/mT9a7uxU8wXUShTy/jdZzkNTb6b61R6BFfO9TMRNH57k62hKk2+lk/zT2lf3PCp+35rxrEDTfIsL7JUJgbMcLgxH1qLDOG2LP/gMnEZeD3okATbqhLTajifi8xglTGXG08dMYlgA35fvTWbpBuj07aaRFsjJZXHzzIAoeTbMlgVwfJUt9qUL/LlZfQCmNlsgPIy23K8lSXK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729152759994n3YKgjxLglCCPkOtYtU2U@zte.com.cn>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, 29 Jul 2025 11:33:35 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On 07/29, fan.yu9@zte.com.cn wrote:
+>
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2252,8 +2252,10 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+>  			sig = 0;
+>  	}
+>  	/*
+> -	 * Send with __send_signal as si_pid and si_uid are in the
+> -	 * parent's namespaces.
+> +	 * Use __send_signal_locked() instead of send_signal_locked()
+> +	 * because si_pid and si_uid are already in the parent's
+> +	 * namespace. send_signal_locked() would incorrectly modify
+> +	 * them when crossing PID/user namespaces.
+>  	 */
 
-> Anonymous structures are also handled:
-> 
->   # echo 'e:xmit net.net_dev_xmit +net_device.name(+sk_buff.dev($skbaddr)):string' >> dynamic_events
-> 
-> Where "+net_device.name(+sk_buff.dev($skbaddr))" is equivalent to:
-> 
->   (*(struct net_device *)((*(struct sk_buff *)($skbaddr))->dev)->name)
+Somehow I'd still prefer the previous version which simply kills this comment,
+but as I said I won't argue.
 
-The above in wrong. It is equivalent to:
+However. It seems to me that the new comment adds another confusion. I'll try
+to recheck tomorrow, I am very busy today.
 
-  (*(struct net_device *)((*(struct sk_buff *)($skbaddr)).dev).name)
+Oleg.
 
-I purposely tried to not use "->" but then failed to do so :-p
-
-> 
-> And nested structures can be found by adding more members to the arg:
-> 
->   # echo 'f:read filemap_readahead.isra.0 file=+0(+dentry.d_name.name(+file.f_path.dentry($arg2))):string' >> dynamic_events
-> 
-> The above is equivalent to:
-> 
->   *((*(struct dentry *)(*(struct file *)$arg2)->f_path.dentry)->d_name.name)
-
-And this is supposed to be:
-
-   *((*(struct dentry *)(*(struct file *)$arg2).f_path.dentry).d_name.name)
-
--- Steve
 
