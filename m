@@ -1,205 +1,198 @@
-Return-Path: <linux-kernel+bounces-749760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5E3B15291
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:19:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F30BB1529B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41AC5545689
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:19:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EA1547A4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46EA23A997;
-	Tue, 29 Jul 2025 18:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E47D239E66;
+	Tue, 29 Jul 2025 18:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kzdKmxk8"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Q2TITawp"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D50D236A7C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FB5239E7A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753813186; cv=none; b=amI8RmJEuHG6U4MZJsfs3PV47tUoicLTFYyF1hPXy0Vj7xQBWpTUl+b28GVkJ1QKoAyJTJBEC+6EeQrnIfe6HYmmEnrDsDmFzpX16Zl71D4qGGVc90GAmHKTGImX/DoHocdneufx5zMfxsCqYiSy0Bh/7m+y/0Y+5355nUKVnuE=
+	t=1753813205; cv=none; b=SgUyOB8EVlchcDm9ComM4/WegU7vy82wUSJUQdoElKl78m+JtikjYz8DxwMNoSVDt/+IAbqZBDILb3Q3Vv9uHNuH7+CLqAjhdcnbjjBwiNZyQG2312GfbOs7BVgEnAI0SbYdFV6JsQm09sHMQRKK2JdfPP8hvUTRSzqUUVolMhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753813186; c=relaxed/simple;
-	bh=Zl7KLWafk74sQL+8j6ytR4kxPDeV/QUPEgtH+rTuR6I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eiLoQBrtz5QXbE6nsjrOpYFPzB9ecgnOO9uOnPdkO1dXUHKI0C9geXtJzhvuJnqZxM9rNgEypfni2xx+6hnv5TDTeK9IHNDSxf4Mskhtrzvbf2EEQeGOZVfg04PWOkFXSQyvg3obhoLovL1PVLMy4gUcKzRzzRSpH8Bdn5LtAy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kzdKmxk8; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b00e4358a34so4054406a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:19:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753813184; x=1754417984; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wn3gJxWA3uJgeB3JDV1mVkQm4z7b+VZjhC6w+XYIxiA=;
-        b=kzdKmxk8tSA7DBr9QUp/GkWWJL22OhWDEbKgyO60D2RBtMCy6KBcc4JgvmuZcpWQTj
-         jElkLmcmdz1OHKrX4x6AbvSXBAnvRhK+fVFi82KWd2sxZxcAm/qqq+ITXmt0M/xljV33
-         D0woaLvIqpz6rWSzw5h4oIAO5DQ2mI9mPrfaCwHB1Fz1hDjkY+W9UOMK0DmIKHdsld3e
-         9wCL9B023KbAGN+NbUvR4mg/7ly3+RDx3+wgYKa+IkDZJCiYZFa2/RHY1IFa8LcKoAEI
-         EgDHcEuL02952wLtduOBOh6Bcl7JGZVKCTyMBBZHs5shNvQZIp7GIjt1tZPwV1/OuvhK
-         QOpw==
+	s=arc-20240116; t=1753813205; c=relaxed/simple;
+	bh=VDE+uz8ZRjuzdabyq1FdVvOSD94+IkhP09IItTR59+g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MM5u7odXA1j6eZwT3nIrs80//UiOPqDHVmf87sYKxdHwxMZlpPB5s7Xr2IE8oAN8iFoCGSKeB02B2W9/QVFV06u2iJHXv69IJQ5k6cYpDVCgBU9Ru85dZhy0mMHp/Ousgxru8r/L6UFIYjU3E7y1IO9w5b834Sl7Qt5uTdbNFUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Q2TITawp; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56T9djwR006594
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:20:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lcsta1yjIbei4fuovlusUPalhkFx/bRo2Mx3CVdJirA=; b=Q2TITawp04pzzAhu
+	xgbOv/S3s9a9GWetJyEZIkSGmrKEpvOPuMlD7Izf4baGmdaurpXRt9l+ANFsEoWu
+	w73V3gK+5KM5/kVy9RKGiziNE18pFPqGNZWLvJsTjQcopKW5Tj/kb6/8OXuBN5CB
+	L7NUd+ZIKA8UdLD5hblJYL170pAh0Uow/7/7cveYRpNmfzURSX2MvJaL1VE98tys
+	v/8jgbJ7/PaJq0mPYXyYPx7SmFX+mlgm3Xl/WcOZiJbSJD8FySltSjB/Y+gE8jjC
+	84SlWIWs7NzpLOUN5rCISI1Dt0XWXK128LqYaozH+l8WFR/OPo34NSIP0nz2WtPF
+	AHn/Lg==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcr9ams-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:20:02 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2400cbd4241so29698105ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:20:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753813184; x=1754417984;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wn3gJxWA3uJgeB3JDV1mVkQm4z7b+VZjhC6w+XYIxiA=;
-        b=mr8+oU2WzGKvZYWrTD+KRWka5K3wGpkyxotcBzjdtNaja1F+SK0Zph7/hUkZzLOUwL
-         OGJtVPezSzh/YPoRPrFDJrGrhORC6VWf+4+ceGFY5vOFpL+70d6r/fhWdcWUm1fpKcvk
-         inmD0R/Pid2Bm2vbdc+ljFpOQ9nisq4l62PNbWo/r2E5sOTj+B66Z/MC1mOyGewoHaTm
-         7emXBWYyLrL3/M/OiOVW/h3uj7C1PsUMklaROMNreH5w0tYaX2vMuR9y+2G0kkBVw2I1
-         OssYKrLGH8+4makMcYzsHKnEV11Lhbrx2V4bb3pkU5FhpPZ+rACclkQhr8j8LkuDSPiy
-         p6MA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3H/exQao60VsYmfx7BrroI5HPeX2Kyq15Vbh6vXUx5t1wHbNL0a2n79Mi2tjcTBpjjWC1De84L91jqkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDDo9yrUBdyPVdoWzm7CNwnDXmw9wNYK8u5+ssZmbuAl00pQY0
-	kts+1Cj6e3hpbs5UG3d+kcqWCA3Iv6188NWIqCc8TK5mqTFqvI9f6T/htltHQTKlKTmhRBFJBxq
-	uSnYX5A==
-X-Google-Smtp-Source: AGHT+IHEpLXvt767w0GL4NtfNvD307U11Z/kcZVZLSuSK0JImdMWtTujcBTE1fUybj6KQU1bt7BHRbDk8u4=
-X-Received: from pjxx5.prod.google.com ([2002:a17:90b:58c5:b0:312:15b:e5d1])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e7d2:b0:311:c1ec:7d0a
- with SMTP id 98e67ed59e1d1-31f5de47ef7mr544335a91.25.1753813183765; Tue, 29
- Jul 2025 11:19:43 -0700 (PDT)
-Date: Tue, 29 Jul 2025 11:19:42 -0700
-In-Reply-To: <aIgZjW2PZEdR/DYr@intel.com>
+        d=1e100.net; s=20230601; t=1753813201; x=1754418001;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lcsta1yjIbei4fuovlusUPalhkFx/bRo2Mx3CVdJirA=;
+        b=BWsRYxQMwZRp+Um46sqrJ34UwtNrYzK450/k645FDe66D65th+MaySy3XwC4Wy/EdD
+         Kl6JbMQzjbUzW71v13QaihTvymXuB6aJq46EPQVMQaZw3JJQMu5aZWm2hQTBiKmNWDEC
+         gNLXCTDEsfZVVeovqtED3DfTKoNdQpjoKKcClQ4ESWB/Hct8/sUwQQ/epccnLqjMIPvM
+         FcWY0je0nYslmLiMyHFfHlQ+CbPFcFdGJwtgiqExRyj1HAfuEHUS4yN2aHMRJkxqlj/9
+         6CsiMA66bE+ezMOAp5Cj4MfQJQdY/6zN0cbKNQW2zt/NnBcOPhHgeM/0idr+ru8bcDyA
+         TjIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXM0WdicBpsDLy7gGU2MPIfhFfWe0lRIm7F/mvimQGp8RZzVvjR/cqeD9E2qavESBt6YEQ0fOn8/R0x6hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzklAhj+SYl9ji31QTfzhPrMqsMCYzzCGvUpHmPpyQPV7UUDdQ
+	2OLnYpayQ+GN5N8kH2j1v7MoidUjg982IUIogV8/eV2IHgxxpfHMjKEarWu4noi5mWaAJaP84TT
+	p4Mzx6VU7hYqzNKMcPi0M52/DG8yW6ISSy/Z/F7GkrFx1GpBfUbQrDbrmW5mjTrOAyfdS5Etlzb
+	w=
+X-Gm-Gg: ASbGncvLNduoXtK6tIEI2xG/0skaxfZOHFCYwXexCXxW1U5Xt9nDKr8u4xpmDY8JPqh
+	oh2/kSG9C0iK94eOaBtD7UJJPfA82wf4Z1MQnTtwh6xVFelPGINRC3AuoVViacn0AeFrzBzthBg
+	cvH5vywn6QXVCUKkP/LxK6Wjb3KRwDULThHmo7UipgyoyGrC3lglaxeXKnqHZMXOUUyg/CIxHU9
+	OZ8aeM0kwHGRao7r4ABTi/eb6PQI1HCDfg3YErReIzwQnTXxBXtDKvD9Y5UF+IDkgGceIqkmRDr
+	ARHCm9uCLSQAZND2QEsryfsw0uJQrwwEoFCBXdQT6zstqne0CAX8vrA0aGmTdKMS
+X-Received: by 2002:a17:902:d4cc:b0:240:6406:c471 with SMTP id d9443c01a7336-24096a4f7e5mr4814345ad.10.1753813200870;
+        Tue, 29 Jul 2025 11:20:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGa6BasIaRExFV/BwNT4qsayfxOvO5gmjUpfnYyJ28K3IONSoxFXWJUahLqssfmGes+zOsqug==
+X-Received: by 2002:a17:902:d4cc:b0:240:6406:c471 with SMTP id d9443c01a7336-24096a4f7e5mr4814125ad.10.1753813200416;
+        Tue, 29 Jul 2025 11:20:00 -0700 (PDT)
+Received: from [192.168.1.6] ([106.222.231.177])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23ff1dbec8esm68679145ad.194.2025.07.29.11.19.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 11:20:00 -0700 (PDT)
+Message-ID: <c44eb0a7-3656-412e-8b21-fdc52866c0a4@oss.qualcomm.com>
+Date: Tue, 29 Jul 2025 23:49:54 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250704085027.182163-1-chao.gao@intel.com> <20250704085027.182163-2-chao.gao@intel.com>
- <5591ecc4-2383-4804-b3f0-0dcef692e8f6@zytor.com> <aIgZjW2PZEdR/DYr@intel.com>
-Message-ID: <aIkQvhGhRKisonmh@google.com>
-Subject: Re: [PATCH v11 01/23] KVM: x86: Rename kvm_{g,s}et_msr()* to show
- that they emulate guest accesses
-From: Sean Christopherson <seanjc@google.com>
-To: Chao Gao <chao.gao@intel.com>
-Cc: Xin Li <xin@zytor.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	x86@kernel.org, pbonzini@redhat.com, dave.hansen@intel.com, 
-	rick.p.edgecombe@intel.com, mlevitsk@redhat.com, john.allen@amd.com, 
-	weijiang.yang@intel.com, minipli@grsecurity.net, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 16/17] drm/msm/a6xx: Enable IFPC on Adreno X1-85
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-16-9347aa5bcbd6@oss.qualcomm.com>
+ <cfbad162-e629-45c9-8436-74bb6fc416f2@linaro.org>
+From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <cfbad162-e629-45c9-8436-74bb6fc416f2@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDE0MCBTYWx0ZWRfX+FcY8UQl5rIy
+ tG144ekoTdzTbBsuXqv89sMYI/2yOpOB4pbu8QfZkWFWVUcwEgjE3WjWEzcKm4x29Zr1fQCvP4V
+ UQn/oL48+ZyfuRfx6ASYcTCUhHU2yZ2hcGr/7Eol/RtgCba92Lmz/JEtMAeF+CYBmZlk4mN2V+6
+ 5xUcChrDxc5OfMkkTWjEX/8VL6ODM0DMb2z11Yb+rOSLM91lJLdbJ0FAtNKQ2yA6hR+jAMS5vE2
+ s5gxKkpTFiHz2WQKTd77niulOh7CRnVE4jabKzAZ2aOwuwejnKmwytsUA/1lKNAcOcexAa5j98s
+ +uihVHYDnOQbLWlWqy9BL5bYsQ9QtdGdaMWl/5Qml6+Odwe0calrzH0ozkqaTW2YEBILIVnppd7
+ KFyxhm6eLPdSrcN2xq9K+fewPFeZalEY2tCnNK3Cj6LuN2gky8/qTKmYvmWr2LnLPlpp7oIz
+X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=688910d2 cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=9XpMM9ZEX5jLuhR58p3+Fw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
+ a=oxwwQDlBbdW4oIJT5RMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=GvdueXVYPmCkWapjIL-Q:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: 6UJDYCQ3wVxkhHn505wHUxdSeCAn--Oy
+X-Proofpoint-ORIG-GUID: 6UJDYCQ3wVxkhHn505wHUxdSeCAn--Oy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-29_03,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=960 clxscore=1015
+ spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507290140
 
-On Tue, Jul 29, 2025, Chao Gao wrote:
-> On Mon, Jul 28, 2025 at 03:31:41PM -0700, Xin Li wrote:
-> >>   	/* Set L1 segment info according to Intel SDM
-> >>   	    27.5.2 Loading Host Segment and Descriptor-Table Registers */
-> >> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> >> index 7543dac7ae70..11d84075cd14 100644
-> >> --- a/arch/x86/kvm/x86.c
-> >> +++ b/arch/x86/kvm/x86.c
-> >> @@ -1929,33 +1929,35 @@ static int kvm_get_msr_ignored_check(struct kvm_vcpu *vcpu,
-> >>   				 __kvm_get_msr);
-> >>   }
-> >> -int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data)
-> >> +int kvm_emulate_msr_read_with_filter(struct kvm_vcpu *vcpu, u32 index,
-> >> +				     u64 *data)
-> >
-> >I think the extra new line doesn't improve readability, but it's the
-> >maintainer's call.
-> >
+On 7/29/2025 7:36 PM, neil.armstrong@linaro.org wrote:
+> On 20/07/2025 14:16, Akhil P Oommen wrote:
+>> Add the IFPC restore register list and enable IFPC support on Adreno
+>> X1-85 gpu.
+>>
+>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>> ---
+>>   drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 67 +++++++++++++++++++++
+>> +++++++++-
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 15 +++++--
+>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
+>>   3 files changed, 78 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/
+>> drm/msm/adreno/a6xx_catalog.c
+>> index
+>> 70f7ad806c34076352d84f32d62c2833422b6e5e..07fcabed472c3b9ca47faf1a8b3f7cf580801981 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+>> @@ -1343,6 +1343,69 @@ static const uint32_t a7xx_pwrup_reglist_regs[]
+>> = {
+>>   
 > 
-> Sure. Seems "let it poke out" is Sean's preference. I saw he made similar
-> requests several times. e.g.,
+> <snip>
+> 
+>> +
+>>   static const struct adreno_info a7xx_gpus[] = {
+>>       {
+>>           .chip_ids = ADRENO_CHIP_IDS(0x07000200),
+>> @@ -1432,12 +1495,13 @@ static const struct adreno_info a7xx_gpus[] = {
+>>           .inactive_period = DRM_MSM_INACTIVE_PERIOD,
+>>           .quirks = ADRENO_QUIRK_HAS_CACHED_COHERENT |
+>>                 ADRENO_QUIRK_HAS_HW_APRIV |
+>> -              ADRENO_QUIRK_PREEMPTION,
+>> +              ADRENO_QUIRK_PREEMPTION | ADRENO_QUIRK_IFPC,
+>>           .init = a6xx_gpu_init,
+>>           .a6xx = &(const struct a6xx_info) {
+>>               .hwcg = a740_hwcg,
+>>               .protect = &a730_protect,
+>>               .pwrup_reglist = &a7xx_pwrup_reglist,
+>> +            .ifpc_reglist = &a750_ifpc_reglist,
+>>               .gmu_chipid = 0x7050001,
+>>               .gmu_cgc_mode = 0x00020202,
+>>           },
+>> @@ -1459,6 +1523,7 @@ static const struct adreno_info a7xx_gpus[] = {
+>>           .a6xx = &(const struct a6xx_info) {
+>>               .protect = &a730_protect,
+>>               .pwrup_reglist = &a7xx_pwrup_reglist,
+>> +            .ifpc_reglist = &a750_ifpc_reglist,
+> 
+> So far it's stable on a750 so I think can safely add ADRENO_QUIRK_IFPC
+> here aswell.
 
-Depends on the situation.  I'd probably mentally flip a coin in this case.
+Thanks for testing. I will enable it for a750 in the next revision.
 
-But what I'd actually do here is choose names that are (a) less verbose and (b)
-capture the relationship between the APIs.  Instead of:
+-Akhil
 
-  int kvm_emulate_msr_read_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data);
-  int kvm_emulate_msr_write_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 data);
-  int kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data);
-  int kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data);
+> 
+> Neil
+> 
+> <snip>
+> 
 
-rename to:
-
-  int kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data);
-  int kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data);
-  int __kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data);
-  int __kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data);
-
-And then we can do a follow-up patch to solidify the relationship:
-
---
-From: Sean Christopherson <seanjc@google.com>
-Date: Tue, 29 Jul 2025 11:13:48 -0700
-Subject: [PATCH] KVM: x86: Use double-underscore read/write MSR helpers as
- appropriate
-
-Use the double-underscore helpers for emulating MSR reads and writes in
-he no-underscore versions to better capture the relationship between the
-two sets of APIs (the double-underscore versions don't honor userspace MSR
-filters).
-
-No functional change intended.
-
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/x86.c | 29 ++++++++++++++++-------------
- 1 file changed, 16 insertions(+), 13 deletions(-)
-
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 09b106a5afdf..65c787bcfe8b 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -1932,11 +1932,24 @@ static int kvm_get_msr_ignored_check(struct kvm_vcpu *vcpu,
- 				 __kvm_get_msr);
- }
- 
-+int __kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data)
-+{
-+	return kvm_get_msr_ignored_check(vcpu, index, data, false);
-+}
-+EXPORT_SYMBOL_GPL(__kvm_emulate_msr_read);
-+
-+int __kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data)
-+{
-+	return kvm_set_msr_ignored_check(vcpu, index, data, false);
-+}
-+EXPORT_SYMBOL_GPL(__kvm_emulate_msr_write);
-+
- int kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data)
- {
- 	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_READ))
- 		return KVM_MSR_RET_FILTERED;
--	return kvm_get_msr_ignored_check(vcpu, index, data, false);
-+
-+	return __kvm_emulate_msr_read(vcpu, index, data);
- }
- EXPORT_SYMBOL_GPL(kvm_emulate_msr_read);
- 
-@@ -1944,21 +1957,11 @@ int kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data)
- {
- 	if (!kvm_msr_allowed(vcpu, index, KVM_MSR_FILTER_WRITE))
- 		return KVM_MSR_RET_FILTERED;
--	return kvm_set_msr_ignored_check(vcpu, index, data, false);
-+
-+	return __kvm_emulate_msr_write(vcpu, index, data);
- }
- EXPORT_SYMBOL_GPL(kvm_emulate_msr_write);
- 
--int __kvm_emulate_msr_read(struct kvm_vcpu *vcpu, u32 index, u64 *data)
--{
--	return kvm_get_msr_ignored_check(vcpu, index, data, false);
--}
--EXPORT_SYMBOL_GPL(__kvm_emulate_msr_read);
--
--int __kvm_emulate_msr_write(struct kvm_vcpu *vcpu, u32 index, u64 data)
--{
--	return kvm_set_msr_ignored_check(vcpu, index, data, false);
--}
--EXPORT_SYMBOL_GPL(__kvm_emulate_msr_write);
- 
- static void complete_userspace_rdmsr(struct kvm_vcpu *vcpu)
- {
-
-base-commit: 1877e7b0749cbaa2d2ba4056eeda93adb373f7d4
---
 
