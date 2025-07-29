@@ -1,119 +1,167 @@
-Return-Path: <linux-kernel+bounces-749031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72302B1491B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:28:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E46B1491C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF88B163AB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:28:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D0EC3AD651
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:28:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46097263F59;
-	Tue, 29 Jul 2025 07:28:25 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6E8263F4A;
+	Tue, 29 Jul 2025 07:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kXydCDBD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n3tsvFqV";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="kXydCDBD";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="n3tsvFqV"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8FF263F40
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:28:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D1B14A82
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753774104; cv=none; b=moitbXWzljWA/oCxiZjHox0oR3Jj8u+obBhxUp+/RR+y2cn9xh4gy/wH8CuoMPs9qfity+ukQ++NFsOZ/B7OiYlqtWqZfeEq+Q5BpiFDxQ8js36cEJvs91FDnCllHDtTLOd8BuXKkUOlZ+BZT5H5qk8QcUUXflXvWrff5yPHejs=
+	t=1753774139; cv=none; b=CgliibxY0DQlpFKlqmlUGGcScTLQECKRNtrsZBpHIUCw5kAiJo40BwMlP++qo0EegmSMSHG6eGm8PjZ+b7uzWLPSazdd1bxw4/uIN1jSVnbXMHngYKSttDIQSPKrE2lkL+hiDOQ/D36uxd2FqjmBaLiChncXi4IazHa+lCn9txM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753774104; c=relaxed/simple;
-	bh=YXTXRZSqeVN5r8aC8osaO20V+asJOktil2K1doQXx18=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=BNQ32aOiLaESNKkC017uNYSyRDzzDBcxbNQowAK9Itbf3AfGgUWk3icV90vKLahEs7dKAfhIBIK8y8wVhCVYfvJ6OOMS8o6b24wcY97NcM8U4f1CRQa2nwBE54BrZ9jhdYalwJkC7F+ejnkxni4PWEhmQereWQOhOy39PObUjNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	s=arc-20240116; t=1753774139; c=relaxed/simple;
+	bh=3g+YBipnYUL1sc2oVcsnEM7sFGgk63MRJ/8jMrhMLww=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XbxBYmDP8Vm/SipMkkrSMXXDysYC+mVjU/GCf+baJ0/RvgNVEcATVyCjlvFBaJTCQ7p7ZuAIB3BxTThkzFuQ0aujd19jHp61BKLiTz6TxLEMuLUIGAFCuGKhoy5WS6dS3LqRbnWlpawvKXUZUrrcb/e62EZbKs6t9o3YY7TLF7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kXydCDBD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n3tsvFqV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=kXydCDBD; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=n3tsvFqV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4brn4s2xnwz8Xs6y;
-	Tue, 29 Jul 2025 15:28:13 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 56T7RwRS004639;
-	Tue, 29 Jul 2025 15:27:58 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 29 Jul 2025 15:27:59 +0800 (CST)
-Date: Tue, 29 Jul 2025 15:27:59 +0800 (CST)
-X-Zmail-TransId: 2af9688877ff44c-9e5bb
-X-Mailer: Zmail v1.0
-Message-ID: <20250729152759994n3YKgjxLglCCPkOtYtU2U@zte.com.cn>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 286461F798;
+	Tue, 29 Jul 2025 07:28:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753774130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S+dFkNP9dnDsUlvIlgqceGQ/GQ5/Gu0UWl4aKJjd8ak=;
+	b=kXydCDBD36oI7KLwmHsAq2MNzHiSN/2UBRC39MDcgstsTEEUTxDVPRh0u3ttaKG+awh7hc
+	6MGQMFr4Z1tbpJn7LRNYHvB68Wp0KtgGa4fT7F2SYL2/Abc1QByUubLqFyFUvv12Ck3qkP
+	Yh5IvsPIzlTvI1S08mBOPiLUF4Okplk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753774130;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S+dFkNP9dnDsUlvIlgqceGQ/GQ5/Gu0UWl4aKJjd8ak=;
+	b=n3tsvFqVmGNsjFXEOtzB8UPN6J+POWmS72WBRd0sy8curMSugyKp0Q76CeY9GWY+/gBVJI
+	qQSVL8vSl1iFhXDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753774130; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S+dFkNP9dnDsUlvIlgqceGQ/GQ5/Gu0UWl4aKJjd8ak=;
+	b=kXydCDBD36oI7KLwmHsAq2MNzHiSN/2UBRC39MDcgstsTEEUTxDVPRh0u3ttaKG+awh7hc
+	6MGQMFr4Z1tbpJn7LRNYHvB68Wp0KtgGa4fT7F2SYL2/Abc1QByUubLqFyFUvv12Ck3qkP
+	Yh5IvsPIzlTvI1S08mBOPiLUF4Okplk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753774130;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S+dFkNP9dnDsUlvIlgqceGQ/GQ5/Gu0UWl4aKJjd8ak=;
+	b=n3tsvFqVmGNsjFXEOtzB8UPN6J+POWmS72WBRd0sy8curMSugyKp0Q76CeY9GWY+/gBVJI
+	qQSVL8vSl1iFhXDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9EF3113A73;
+	Tue, 29 Jul 2025 07:28:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zN0mJDF4iGjXJgAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 29 Jul 2025 07:28:49 +0000
+Message-ID: <2d3a9693-cbaa-46b8-9c66-d4aaf04429b4@suse.de>
+Date: Tue, 29 Jul 2025 09:28:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <tglx@linutronix.de>, <frederic@kernel.org>, <peterz@infradead.org>,
-        <oleg@redhat.com>, <brauner@kernel.org>, <iro@zeniv.linux.org.uk>,
-        <joel.granados@kernel.org>, <lorenzo.stoakes@oracle.com>,
-        <akpm@linux-foundation.org>
-Cc: <linux-kernel@vger.kernel.org>, <xu.xin16@zte.com.cn>,
-        <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjJdIHNpZ25hbDogY2xhcmlmeSBfX3NlbmRfc2lnbmFsX2xvY2tlZCBjb21tZW50IGluIGRvX25vdGlmeV9wYXJlbnQ=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 56T7RwRS004639
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Tue, 29 Jul 2025 15:28:13 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 6888780D.002/4brn4s2xnwz8Xs6y
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvmet: Initialize discovery subsys after debugfs is
+ initialized
+To: Mohamed Khalfella <mkhalfella@purestorage.com>,
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+ Chaitanya Kulkarni <kch@nvidia.com>, Keith Busch <kbusch@kernel.org>
+Cc: Hannes Reinecke <hare@kernel.org>, Daniel Wagner <dwagner@suse.de>,
+ Randy Jennings <randyj@purestorage.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250725205005.1983426-1-mkhalfella@purestorage.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250725205005.1983426-1-mkhalfella@purestorage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-From: Fan Yu <fan.yu9@zte.com.cn>
+On 7/25/25 22:50, Mohamed Khalfella wrote:
+> During nvme target initialization discovery subsystem is initialized
+> before "nvmet" debugfs directory is created. This results in discovery
+> subsystem debugfs directory to be created in debugfs root directory.
+> 
+> nvmet_init() ->
+>    nvmet_init_discovery() ->
+>      nvmet_subsys_alloc() ->
+>        nvmet_debugfs_subsys_setup()
+> 
+> In other words, the codepath above is exeucted before nvmet_debugfs is
+> created. We get /sys/kernel/debug/nqn.2014-08.org.nvmexpress.discovery
+> instead of /sys/kernel/debug/nvmet/nqn.2014-08.org.nvmexpress.discovery.
+> Move nvmet_init_discovery() call after nvmet_init_debugfs() to fix it.
+> 
+> Fixes: 649fd41420a8 ("nvmet: add debugfs support")
+> Signed-off-by: Mohamed Khalfella <mkhalfella@purestorage.com>
+> ---
+>   drivers/nvme/target/core.c | 12 ++++++------
+>   1 file changed, 6 insertions(+), 6 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@kernel.org>
 
-The original comment (introduced in commit 61e713bdca36 ("signal: Avoid
-corrupting si_pid and si_uid in do_notify_parent")) stated that
-__send_signal should be used because si_pid/si_uid are in the parent's
-namespace, but it did not explain why send_signal_locked() is unsafe here.
+Cheers,
 
-This became more ambiguous after
-  commit 157cc18122b4 ("signal: Rename send_signal send_signal_locked")
-without updating the comment.
-
-Explicitly clarify that:
-1. send_signal_locked() may incorrectly modify si_pid/si_uid when crossing
-   PID/user namespaces (e.g., reset si_pid to 0 or translate si_uid).
-2. __send_signal_locked() preserves the original siginfo values, which is
-   critical since they are already in the parent's namespace.
-
-Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
----
-Changes in V2:
-- Some fixes according to
-https://lore.kernel.org/all/878qk8pdkd.ffs@tglx/
-https://lore.kernel.org/all/20250728155815.GB25567@redhat.com/
-- Clarify why __send_signal_locked must be used
-
- kernel/signal.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/signal.c b/kernel/signal.c
-index e2c928de7d2c..047b22837a36 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -2252,8 +2252,10 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
- 			sig = 0;
- 	}
- 	/*
--	 * Send with __send_signal as si_pid and si_uid are in the
--	 * parent's namespaces.
-+	 * Use __send_signal_locked() instead of send_signal_locked()
-+	 * because si_pid and si_uid are already in the parent's
-+	 * namespace. send_signal_locked() would incorrectly modify
-+	 * them when crossing PID/user namespaces.
- 	 */
- 	if (valid_signal(sig) && sig)
- 		__send_signal_locked(sig, &info, tsk->parent, PIDTYPE_TGID, false);
+Hannes
 -- 
-2.25.1
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
