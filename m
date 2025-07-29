@@ -1,154 +1,199 @@
-Return-Path: <linux-kernel+bounces-750031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6443DB1561B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8085B1561C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:41:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B3025482DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AB06548399
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D04B128935F;
-	Tue, 29 Jul 2025 23:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675C52882AC;
+	Tue, 29 Jul 2025 23:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPCN/2y4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uAtgj7kI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC82288C88;
-	Tue, 29 Jul 2025 23:40:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B018028642F;
+	Tue, 29 Jul 2025 23:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753832437; cv=none; b=H2ekRfmrusbuuetKGr/WJUSdi86PcIHAYj2tpKhJlehSgmTMOr9Bu7XVZB0zIMhfD3Hz/rBJmuJj9X8Ggm4J6MQtsBxE0iSq+Bf7NWXF+63FymtoCgv9ZTQ0xKYbn0cSV6uquqQfjKvs/7oYXd7u3cfgVqlU0MihPPPApob2GF0=
+	t=1753832462; cv=none; b=MLX5JMS2nFWLsG5j0eyoXKPwJ4xddhuFdFbbz1h0hkj99Cm7XvAcizkckJ9TkzET4/c1nToNm2CfL8VQu+AuOlbsfl43Sk1jwmKrKDHP+WzFq51FJEpz7l0e8FSoqgOPid8QvdXSrN/rIaJ30MWzr9P3QsP3asH4gs3D+3BTDoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753832437; c=relaxed/simple;
-	bh=Onxew007SZxEwm3mYe7uDFdevyTwUP0S6WlLwSP1G00=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=q6GDbRfnUz5JmggJY6xARIcm4wiNLrdEm2LxnNkeGZLxJDx0i+Qdg9Nh9yHia6bjrll40qubD0yyDGZ97TdNKhOmvpNZgN+W1v8gn/VSeTh203AP6lArrPa4yxCCqiMHQ1PrziWNC563/y8DwkKDws84vS5mn3FBpeFIhBXTlkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPCN/2y4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC9DC4CEEF;
-	Tue, 29 Jul 2025 23:40:36 +0000 (UTC)
+	s=arc-20240116; t=1753832462; c=relaxed/simple;
+	bh=ryAdDvZAKJEIZ/KqORsHe8k9AivcQjbtBA3ELYPMeUk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RYt7JGByANcwzAFNxfztmg9BsZB3eoaPeMeUGLcoMddRX0qlwh4kPm3e2+4iMSM3zOI8utmKOHSJftT2gdWm7qTz3fSe9doxxT6/m2B4Y3Z4MdpDKUIvLg14bzJ15xF3Z/NvCWRVsrLQFh990YmrLwD7KgOEbYTjfTugDPQe3/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uAtgj7kI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 372B1C4CEEF;
+	Tue, 29 Jul 2025 23:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753832436;
-	bh=Onxew007SZxEwm3mYe7uDFdevyTwUP0S6WlLwSP1G00=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=BPCN/2y45Tf7ZzQoV0G99b2LDNKF1UY3JLOym5aXgCUKpKpBpQ9SKYzM+F2v2de2d
-	 tu7L/korytsrOJJYTK26C82HnK/QC7Z/DV5xubtCZuKKt3HFqnGCCM4IK2h+6JHgG8
-	 282UUIUs6Fmh0PK9RPttcPp25ntkjKxQl0X6e87yhcWB1LXQan5H25aijBcVeOAka0
-	 ru4pPvXTvCKpnwrNkQbsOB0AjbOBdcEeIZ55WkaYsg/4RkZEDcNaIEapbxnd3mcgWG
-	 VF9cG7kizJAxzcxPDmIsRaR8iBarmD223oDjT+Ml0/NQWTx8Xi2F/kNlUZHTU4GU3v
-	 xdORvD5SxnyEQ==
-Date: Tue, 29 Jul 2025 18:40:36 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1753832462;
+	bh=ryAdDvZAKJEIZ/KqORsHe8k9AivcQjbtBA3ELYPMeUk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uAtgj7kI9PQrMHqwvdleiKmnk53FyvUKY8oMczuzsbRwzrb+5JEEY9nm/Y1hlaxlb
+	 DKdScVmMzSRMAArMZMnI6tyvxzoA2AP/+I1HhCEqTvOZZacBBe18eF2j/QwwpVFNdC
+	 mYzmM/2NElrNX1zM40zkq6t86+/mVYaGG+VPwyKj8IRTHZfV+y1AZQ1Br+79jw66YS
+	 SEB5nNjc8lgl3LsZbPLcIZsWTlMa28B7IedopBbpxyGZUDkDknpjmK2LzNva6tyMis
+	 nRWLndN5ZHiPMtgYGECNDsUr6QijWXIKQUp6LBKKXwz7kYM4Smuj+F2hRtor461O+n
+	 Ih4Z0DZrqJMcQ==
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Kees Cook <kees@kernel.org>,
+	kernel test robot <lkp@intel.com>,
+	syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Hou Wenlong <houwenlong.hwl@antgroup.com>,
+	"Kirill A . Shutemov" <kas@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Wei Yang <richard.weiyang@gmail.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Marc Herbert <Marc.Herbert@linux.intel.com>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2] compiler_types: Provide __no_kstack_erase to disable coverage only on Clang
+Date: Tue, 29 Jul 2025 16:41:00 -0700
+Message-Id: <20250729234055.it.233-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-To: Violet <violet@atl.tools>
-In-Reply-To: <20250729120331.287245-1-violet@atl.tools>
-References: <20250729120331.287245-1-violet@atl.tools>
-Message-Id: <175383135924.1119194.9883230096530969975.robh@kernel.org>
-Subject: Re: [PATCH v7 0/2] arm64: dts: qcom: add initial support for
- Samsung Galaxy S22
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4361; i=kees@kernel.org; h=from:subject:message-id; bh=ryAdDvZAKJEIZ/KqORsHe8k9AivcQjbtBA3ELYPMeUk=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmdMTxa05uOZhvknZwpZOKpeO64waS+e4ZZ+31m9q5s+ jJ7/bQ3HaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABPRr2X4wx0zde1q5VLFmc4r Nn597XXmwt7c0Grb0+5ZvQdzJR2/X2Jk2Du7oit173QvExUG39Zb868JXA8rrb1qtoGf99jLkE/ S7AA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+In order to support Clang's stack depth tracking (for Linux's kstack_erase
+feature), the coverage sanitizer needed to be disabled for __init (and
+__head) section code. Doing this universally (i.e. for GCC too) created
+a number of unexpected problems, ranging from changes to inlining logic
+to failures to DCE code on earlier GCC versions.
 
-On Tue, 29 Jul 2025 12:03:29 +0000, Violet wrote:
-> Changes in v7:
-> - Document the reserved GPIO pins, remove pin 50 as it does not
->  need to be reserved
-> - Clarify the phone isn't limited to USB 2.0 but rather USB 3.0
->  isn't implemented yet
-> - Add a newline before every 'status' node
-> 
-> Changes in v6:
-> - Remove debug features (bootargs, etc) that slipped in the v5 DTS
-> - Format and organize nodes correctly based on existing DTS,
->  move "status = "okay";" to the bottom always
-> - Solve "ddr_device_type" and "qcom,rmtfs-mem" warnings, the rest are
->  from existing SoC .dtsi
-> - Disable buttons, ufs and other features for later revision
-> 
-> Changes in v5:
-> - Properly format the thread
-> 
-> Changes in v4:
-> - Try to properly format the thread
-> 
-> Changes in v3:
-> - Removed unnecessary initrd start and end addresses
-> - Make sure r0q is in right order on Makefile
-> - Properly format memory addresses
-> - Set r0q to the correct, alphabetical order in documents
-> 
-> Changes in v2:
-> - Attempt to format the patchset thread correctly
-> 
-> Signed-off-by: Violet <violet@atl.tools>
-> 
-> Violet (2):
->   dt-bindings: arm: qcom: document r0q board binding
->   arm64: dts: qcom: add initial support for Samsung Galaxy S22
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |   1 +
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../boot/dts/qcom/sm8450-samsung-r0q.dts      | 147 ++++++++++++++++++
->  3 files changed, 149 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dts
-> 
-> --
-> 2.50.1
-> 
-> 
-> 
+Since this change is only needed for Clang, specialize it so that GCC
+doesn't see the change as it isn't needed there (the GCC implementation
+of kstack_erase uses a GCC plugin that removes stack depth tracking
+instrumentation from __init sections during a late pass in the IR).
 
+Successfully build and boot tested with GCC 12 and Clang 22.
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Fixes: 381a38ea53d2 ("init.h: Disable sanitizer coverage for __init and __head")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202507270258.neWuiXLd-lkp@intel.com/
+Reported-by: syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/6888d004.a00a0220.26d0e1.0004.GAE@google.com/
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+ v2: correctly split compiler-specific stuff out of compiler_types.h (Miguel)
+ v1: https://lore.kernel.org/all/20250729224325.work.019-kees@kernel.org/
+Cc: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: <x86@kernel.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Hou Wenlong <houwenlong.hwl@antgroup.com>
+Cc: Kirill A. Shutemov <kas@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>
+Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wei Yang <richard.weiyang@gmail.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+ arch/x86/include/asm/init.h    | 2 +-
+ include/linux/compiler-clang.h | 3 +++
+ include/linux/compiler_types.h | 4 ++++
+ include/linux/init.h           | 2 +-
+ 4 files changed, 9 insertions(+), 2 deletions(-)
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-This patch series was applied (using b4) to base:
- Base: attempting to guess base-commit...
- Base: tags/next-20250729 (best guess, 1/2 blobs matched)
-
-If this is not the correct base, please add 'base-commit' tag
-(or use b4 which does this automatically)
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250729120331.287245-1-violet@atl.tools:
-
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): power-domains: [[98, 6]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): required-opps: [[55]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@aaf0000 (qcom,sm8450-videocc): Unevaluated properties are not allowed ('power-domains', 'required-opps' were unexpected)
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-videocc.yaml#
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@ade0000 (qcom,sm8450-camcc): power-domains: [[98, 6]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
-arch/arm64/boot/dts/qcom/sm8450-samsung-r0q.dtb: clock-controller@ade0000 (qcom,sm8450-camcc): required-opps: [[55]] is too short
-	from schema $id: http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
-
-
-
-
+diff --git a/arch/x86/include/asm/init.h b/arch/x86/include/asm/init.h
+index 6bfdaeddbae8..5a68e9db6518 100644
+--- a/arch/x86/include/asm/init.h
++++ b/arch/x86/include/asm/init.h
+@@ -5,7 +5,7 @@
+ #if defined(CONFIG_CC_IS_CLANG) && CONFIG_CLANG_VERSION < 170000
+ #define __head	__section(".head.text") __no_sanitize_undefined __no_stack_protector
+ #else
+-#define __head	__section(".head.text") __no_sanitize_undefined __no_sanitize_coverage
++#define __head	__section(".head.text") __no_sanitize_undefined __no_kstack_erase
+ #endif
+ 
+ struct x86_mapping_info {
+diff --git a/include/linux/compiler-clang.h b/include/linux/compiler-clang.h
+index 4fc8e26914ad..fa4ffe037bc7 100644
+--- a/include/linux/compiler-clang.h
++++ b/include/linux/compiler-clang.h
+@@ -89,6 +89,9 @@
+ #define __no_sanitize_coverage
+ #endif
+ 
++/* Only Clang needs to disable the coverage sanitizer for kstack_erase. */
++#define __no_kstack_erase	__no_sanitize_coverage
++
+ #if __has_feature(shadow_call_stack)
+ # define __noscs	__attribute__((__no_sanitize__("shadow-call-stack")))
+ #endif
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 2b77d12e07b2..16755431fc11 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -424,6 +424,10 @@ struct ftrace_likely_data {
+ # define randomized_struct_fields_end
+ #endif
+ 
++#ifndef __no_kstack_erase
++# define __no_kstack_erase
++#endif
++
+ #ifndef __noscs
+ # define __noscs
+ #endif
+diff --git a/include/linux/init.h b/include/linux/init.h
+index c65a050d52a7..a60d32d227ee 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -51,7 +51,7 @@
+    discard it in modules) */
+ #define __init		__section(".init.text") __cold __latent_entropy	\
+ 						__noinitretpoline	\
+-						__no_sanitize_coverage
++						__no_kstack_erase
+ #define __initdata	__section(".init.data")
+ #define __initconst	__section(".init.rodata")
+ #define __exitdata	__section(".exit.data")
+-- 
+2.34.1
 
 
