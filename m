@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-749097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9C6B14A0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:25:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC5EB14A10
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BA623A98FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:25:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3D31671F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BB627FB2B;
-	Tue, 29 Jul 2025 08:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF6727FB32;
+	Tue, 29 Jul 2025 08:27:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgFv3EQl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRK9eF/F"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F3F2139C9;
-	Tue, 29 Jul 2025 08:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2442027A11E;
+	Tue, 29 Jul 2025 08:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753777539; cv=none; b=R3zr/OHpeLjiS8Dx/4aZrWkP9q22d2I/RlJvIVjDxV3qYWHrh6tgo3JP5hqeIH9/cWM4kZVg1X0gnFMp4SsPvk8fOlcnM7XisKd+uADsWpVqHLUT6swKavrXZTn5DMAeSHAIs8m4w8kcXVy3xSWs3a9hN8DPgkeWa2MebHt8SoQ=
+	t=1753777668; cv=none; b=aDez2NhjvIrYlzguh0LyHDDqTg/DfQM6+pT+O21DJWdYkiH4jwyRlvMDiXd5lk7D4M8ZoGq67+u9y0fUWTrXo3bluu7tlnlbemSzCxSJ+pA8yIfYMQqQRg4JQKX2g1UFIDnc+3JKJzGt0oOFXTvLJXvpS/IrDiM6wWOZBGE8k7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753777539; c=relaxed/simple;
-	bh=trWv/O9N9LVzYZbp1eqr0+k5qTUNtSEiwyb6DFcx67E=;
+	s=arc-20240116; t=1753777668; c=relaxed/simple;
+	bh=4HFDpDAKjo6FuyobbreMH/fIg2s9uow5bgfayZ9Nj7g=;
 	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=XR3F07RjRG1/AvgOB/LeAkbnfu77g/y8xzkakAWMTlSggvwfKp7ulfnWLhzHkjnoJ64XFAkjJjU+HYb+P1b2uA2vUDQsWEp0tpjDMXbXp20D9t7krBr09Zffi/RJL1lxnFmZ95V1cUQTi6zp7DBQwozPg0yIGnU9rXZ/tOiu+pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgFv3EQl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6E6FC4CEEF;
-	Tue, 29 Jul 2025 08:25:34 +0000 (UTC)
+	 References:In-Reply-To; b=XH8HBy/rbL2ramwxMqMLMcF98W+GF8lmiN2VTeBYKNOexjxKolmzzqdup40SdNP19cCg72bcHKP+dDnUWH3LUgFXNFDFptw7sshIOOAu6ASWx0KBghOZJD0qkZM5wMX0An65FghXQTqCFgjoOogBi7OnbeHKoXGtkbvlpf3zTiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRK9eF/F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A571DC4CEEF;
+	Tue, 29 Jul 2025 08:27:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753777537;
-	bh=trWv/O9N9LVzYZbp1eqr0+k5qTUNtSEiwyb6DFcx67E=;
+	s=k20201202; t=1753777667;
+	bh=4HFDpDAKjo6FuyobbreMH/fIg2s9uow5bgfayZ9Nj7g=;
 	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=fgFv3EQlY2wrAjec/GhEM4fnwhqVwAKfjahNRyiU935vDwY3emdOPuRrk9X9AKLSg
-	 s3Rn1wg4oPcHkCeIfvw6M6G6S+5q8eMJfhPVoISggyYqYc28O/G2vFvdiope7kGL0c
-	 bVF9rKCTQfZkCWeRz1tJqijdXfI3pJ6VlsGvv3ItNyu2dxhll0drtkRGjoJ6/d+NEY
-	 mb1Ucmy5cwiYT9XWxoXLKkiuDzvjXqJ4tjms0Frm4orwZyRTsGRLwJuI4u1vwB+/Lh
-	 IPssxQRMSYVGTJ1O0vLgpotwkf90l5gSsFUKhbYwMPoBW3GxOVNKbBdP2FxA/hu5Qs
-	 DpQZZ96LN58WA==
+	b=NRK9eF/F05BQxKAd4WhDO21TK1RD5zSVwwud0GYwy9YPGd9MHbAHCycO6dd9y8HBT
+	 5mbRlOzR3tU4bovs0Mbwc7wuZUjFbGrYkgNK1ijS2NyeKuVFm1YjUp52ygcookUOsu
+	 NCxmGDxXoI7fqTMpSthTZ3Q/JJPImTjDIQynpKwdTWP9p+2/4aOyQ3wGICv96O/Y3K
+	 A6lrNRiL89xHvZpRvHVMB2BOg6nLX97QhcZkzHYaqD9mHBaN+YjP1EVXMj+7nK5dMT
+	 7021RzrNNuWgCf29lB10V+bBxbzvrcUKZP8Jqera7lcfbRxXoBezhVW9QDQ4FJacr/
+	 aW/dIPiN5SCfg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,108 +48,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Jul 2025 10:25:33 +0200
-Message-Id: <DBOE907J16WH.1IOU3M11RX5SH@kernel.org>
-Cc: <linux-mm@kvack.org>, <akpm@linux-foundation.org>,
- <linux-kernel@vger.kernel.org>, "Uladzislau Rezki" <urezki@gmail.com>,
- "Alice Ryhl" <aliceryhl@google.com>, "Vlastimil Babka" <vbabka@suse.cz>,
- <rust-for-linux@vger.kernel.org>, "Lorenzo Stoakes"
- <lorenzo.stoakes@oracle.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Kent Overstreet" <kent.overstreet@linux.dev>,
- <linux-bcachefs@vger.kernel.org>, <bpf@vger.kernel.org>, "Herbert Xu"
- <herbert@gondor.apana.org.au>, "Jann Horn" <jannh@google.com>, "Pedro
- Falcato" <pfalcato@suse.de>
-To: "Vitaly Wool" <vitaly.wool@konsulko.se>
+Date: Tue, 29 Jul 2025 10:27:41 +0200
+Message-Id: <DBOEANDMX1OU.2B47D7G6EQ38O@kernel.org>
+Cc: "Alex Gaynor" <alex.gaynor@gmail.com>, "Brendan Higgins"
+ <brendan.higgins@linux.dev>, "David Gow" <davidgow@google.com>, "Masahiro
+ Yamada" <masahiroy@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary
+ Guo" <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, <rust-for-linux@vger.kernel.org>, "Rae
+ Moar" <rmoar@google.com>, <linux-kselftest@vger.kernel.org>,
+ <kunit-dev@googlegroups.com>, "Nathan Chancellor" <nathan@kernel.org>,
+ "Nicolas Schier" <nicolas@fjasle.eu>, <linux-kbuild@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <patches@lists.linux.dev>
+To: "Miguel Ojeda" <ojeda@kernel.org>
 From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v13 3/4] rust: add support for NUMA ids in allocations
-References: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
- <20250715135827.2230267-1-vitaly.wool@konsulko.se>
-In-Reply-To: <20250715135827.2230267-1-vitaly.wool@konsulko.se>
+Subject: Re: [PATCH] rust: kernel: remove support for unused host `#[test]`s
+References: <20250726180750.2735836-1-ojeda@kernel.org>
+In-Reply-To: <20250726180750.2735836-1-ojeda@kernel.org>
 
-On Tue Jul 15, 2025 at 3:58 PM CEST, Vitaly Wool wrote:
->  pub unsafe trait Allocator {
-> -    /// Allocate memory based on `layout` and `flags`.
-> +    /// Allocate memory based on `layout`, `flags` and `nid`.
->      ///
->      /// On success, returns a buffer represented as `NonNull<[u8]>` that=
- satisfies the layout
->      /// constraints (i.e. minimum size and alignment as specified by `la=
-yout`).
-> @@ -153,13 +180,21 @@ pub unsafe trait Allocator {
->      ///
->      /// Additionally, `Flags` are honored as documented in
->      /// <https://docs.kernel.org/core-api/mm-api.html#mm-api-gfp-flags>.
-> -    fn alloc(layout: Layout, flags: Flags) -> Result<NonNull<[u8]>, Allo=
-cError> {
-> +    fn alloc(layout: Layout, flags: Flags, nid: NumaNode) -> Result<NonN=
-ull<[u8]>, AllocError> {
->          // SAFETY: Passing `None` to `realloc` is valid by its safety re=
-quirements and asks for a
->          // new memory allocation.
-> -        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags)=
- }
-> +        unsafe { Self::realloc(None, layout, Layout::new::<()>(), flags,=
- nid) }
->      }
-> =20
-> -    /// Re-allocate an existing memory allocation to satisfy the request=
-ed `layout`.
-> +    /// Re-allocate an existing memory allocation to satisfy the request=
-ed `layout` and
-> +    /// a specific NUMA node request to allocate the memory for.
-> +    ///
-> +    /// Systems employing a Non Uniform Memory Access (NUMA) architectur=
-e contain collections of
-> +    /// hardware resources including processors, memory, and I/O buses, =
-that comprise what is
-> +    /// commonly known as a NUMA node.
-> +    ///
-> +    /// `nid` stands for NUMA id, i. e. NUMA node identifier, which is a=
- non-negative integer
-> +    /// if a node needs to be specified, or [`NumaNode::NO_NODE`] if the=
- caller doesn't care.
->      ///
->      /// If the requested size is zero, `realloc` behaves equivalent to `=
-free`.
->      ///
-> @@ -196,6 +231,7 @@ unsafe fn realloc(
->          layout: Layout,
->          old_layout: Layout,
->          flags: Flags,
-> +        nid: NumaNode,
->      ) -> Result<NonNull<[u8]>, AllocError>;
-> =20
->      /// Free an existing memory allocation.
-> @@ -211,7 +247,15 @@ unsafe fn free(ptr: NonNull<u8>, layout: Layout) {
->          // SAFETY: The caller guarantees that `ptr` points at a valid al=
-location created by this
->          // allocator. We are passing a `Layout` with the smallest possib=
-le alignment, so it is
->          // smaller than or equal to the alignment previously used with t=
-his allocation.
-> -        let _ =3D unsafe { Self::realloc(Some(ptr), Layout::new::<()>(),=
- layout, Flags(0)) };
-> +        let _ =3D unsafe {
-> +            Self::realloc(
-> +                Some(ptr),
-> +                Layout::new::<()>(),
-> +                layout,
-> +                Flags(0),
-> +                NumaNode::NO_NODE,
-> +            )
-> +        };
->      }
->  }
+On Sat Jul 26, 2025 at 8:07 PM CEST, Miguel Ojeda wrote:
+> Since commit 028df914e546 ("rust: str: convert `rusttest` tests into
+> KUnit"), we do not have anymore host `#[test]`s that run in the host.
+>
+> Moreover, we do not plan to add any new ones -- tests should generally
+> run within KUnit, since there they are built the same way the kernel
+> does. While we may want to have some way to define tests that can also
+> be run outside the kernel, we still want to test within the kernel too
+> [1], and thus would likely use a custom syntax anyway to define them.
+>
+> Thus simplify the `rusttest` target by removing support for host
+> `#[test]`s for the `kernel` crate.
+>
+> This still maintains the support for the `macros` crate, even though we
+> do not have any such tests there.
+>
+> Link: https://lore.kernel.org/rust-for-linux/CABVgOS=3DAKHSfifp0S68K3jgNZ=
+AkALBr=3D7iFb=3DniryG5WDxjSrg@mail.gmail.com/ [1]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-Regarding the change in the Allocator trait, we also have to consider
-the Cmalloc allocator in rust/kernel/alloc/allocator_test.rs, which is ther=
-e to
-support userspace tests.
+Nice! This should also allow us to remove the Cmalloc allocator subsequentl=
+y.
 
-While we're planning to remove this (see also [1]), we still have to consid=
-er
-it for now.
-
-[1] https://lore.kernel.org/rust-for-linux/20250726180750.2735836-1-ojeda@k=
-ernel.org/
+Reviewed-by: Danilo Krummrich <dakr@kernel.org>
 
