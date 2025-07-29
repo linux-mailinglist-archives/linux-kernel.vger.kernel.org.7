@@ -1,102 +1,110 @@
-Return-Path: <linux-kernel+bounces-749247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4CBB14BF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA15B14BF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:11:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 993F17A9035
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:07:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF8067AAF0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36BC9287244;
-	Tue, 29 Jul 2025 10:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2A288C10;
+	Tue, 29 Jul 2025 10:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pbhPnC5U"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HbxPeDlZ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B16C19F135;
-	Tue, 29 Jul 2025 10:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E021F7554;
+	Tue, 29 Jul 2025 10:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753783705; cv=none; b=AtDE6mp7Awi22xDEAF3XRW4QqryWw5GZuSNs5yjiMqHHmdhWNhhh4WElxCfxyBCavxso6bHSppy/sxYfyGIjhi9ahJScLgsSwsa+f58LZgb+K6fZxmTgbxVFpG3CJAMxGJZEZDaROLK8bLBLGlc2YjG6htCB6yUbW51EcWPm90Y=
+	t=1753783874; cv=none; b=GJLg33qELnWIxTHcFVUcnQaCHdb0NEXbYqWU0XVoAdy9R7UaPG46FNCNBTxSJHK8VJef62h0ltAE8kcyaCabnLbLDJV9QSOtWt3kX0gQaAaLv1cIePetvEjK0lS00M+1zn1hPX2D8bm8UcOwh4XsrC0cvjXRQ+SzocFnULTXj9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753783705; c=relaxed/simple;
-	bh=5fNC/UPaGkwV99491pG0EBYdapDegM5tvoJS3Iagj/w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OsNlbZ8iFIh7DWxEL9mpVhh0CgPkReCegF+iliZRvM4DBkXkpicHULKtF84twZc8UG6X4PFH93wk2VL6e1/IHcFXwgNwWdnVCqiLJS4RwkkM82eUBa1Wm4pAEBB64YkUqOpb9xPX4o/Q7U77onmA3TwWr39jmDKWhHZKm940J0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pbhPnC5U; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 50B46205AE;
-	Tue, 29 Jul 2025 10:08:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753783701;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UAkGJnZnTYflyNKOv3fSpVH6Z6Frd5MXsw6XzHEQa6A=;
-	b=pbhPnC5USrbXG7BF+V7WvyN5eJZ2bULD1ZVdXMmN5dWYIACXw3JNLgTqiEr09bK+mtJR+Z
-	TnxHNfWanm3F/Medalz0TKVM0njQY918RcmW9FbklvAc1U8FO0YEG70gilx2U9dedVOa8j
-	HQxQ8ikHA2pWZzCTU8n9y2gZ6+YqcwXyX+vj5rxCNSLchvGc2SK2NlV5FiNMIy1HNWttck
-	qOuJJz2XSw+2MDsCPLQIjA4dhg1o/ZAxNvvaTt6ioE+lHovl1KrkXT5Y+pWHEE3Dqjahb/
-	XOSH2gwGFO1uZpyIAVvRcmUS8sN+Oum32HqaDyUzCs+ccKqzy/EO6C49TtY+4g==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>,  Boris Brezillon
- <boris.brezillon@collabora.com>,  Gabor Juhos <j4g8y7@gmail.com>,  Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>,  Linux Next Mailing
- List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the spi tree with the nand tree
-In-Reply-To: <20250729103816.5354a528@canb.auug.org.au> (Stephen Rothwell's
-	message of "Tue, 29 Jul 2025 10:38:16 +1000")
-References: <20250729103816.5354a528@canb.auug.org.au>
-User-Agent: mu4e 1.12.7; emacs 30.1
-Date: Tue, 29 Jul 2025 12:08:20 +0200
-Message-ID: <87bjp3pawb.fsf@bootlin.com>
+	s=arc-20240116; t=1753783874; c=relaxed/simple;
+	bh=snQFRP50p3EHBOmj1SKRfP+MI/4YY4DP1xiijUu2k0U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tXQJgOCppP4K9GgS64JiDhfWlSfn+bz/EobW/EaNZNVm1TCKNpqf9pML+SZVlAQMSgpLI2aOHNCtpIm3HW7fMxdWDhufh7HMjqeFeJXUbXUtKjbv1+UXgPh2bE82Gcp9aK4imAQBMWc374OwmrZZl0mozIjSXroyz/bLOw71wTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HbxPeDlZ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23fd901c4d2so3711925ad.0;
+        Tue, 29 Jul 2025 03:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753783872; x=1754388672; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=snQFRP50p3EHBOmj1SKRfP+MI/4YY4DP1xiijUu2k0U=;
+        b=HbxPeDlZjEC5bvbHtXAXDuOOU6Cs6ctFkBhdC8sQr0ui6E56XF9/+l5o4F6sZAXdeL
+         vLme1LgXV+AkEtVi5aPmYQ/EBgfBqy2yQVgvTv1YM/dOarY2ULkcXWF/4klg0PguPQcm
+         gzEzvTGgz/JBmp/YUiGs1Iv3MwTU/BNZjyCkYoZenwvjIzgiJJ8TUc3RwnOykmHbLSd6
+         3euQH/7xA3G5pUSIUOWhlmVdDfk3VURGuleC/FN+jCEbSatG8HHeGtfYxPJebyHTG+Ec
+         omv1Gz0qREwk7tGCJR23QP0QhVuuLAJrhH7rRUnU/8ERxOqARSUEZFWvoI2rDJVDJayd
+         cEuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753783872; x=1754388672;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=snQFRP50p3EHBOmj1SKRfP+MI/4YY4DP1xiijUu2k0U=;
+        b=holNG9wsLr77Y0JSvUW2Jx/IqGoDDQbzlQxGQofop26LUWHuiiKO+/3ncImoEMamXn
+         ns+zd5qryRSWnb+xzNPq96f1tfdge75UiLodiO3zMXd3NoDy0HPRdZzasP38dPHN4FRt
+         2rYShU8dC4LoG88Wnko4tBxWfiIun9bi9WjX9Jyb7gWIJFa2n4pLhbZjtENk2AWBFzVg
+         a/8yNYvDjIcYK14LEy65y2zNeg9wcaNwl9EosLpeFY/soYtIxXKeCPwVo3uRZnaoxRH/
+         uglR+tcPrPBZpHiVdvSCMSlG5ra513X15SgfwCJIL4Y9gVIH2fSDHmTHsNO4wB2C5q37
+         xJqw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7kMUlDf5wAL76GBdrEN8mv9swH5ndaQEfwuQZJo0JVijBYQDd2YAYOFH1MXTJRkKeG/MBFMWSRTHcr+4=@vger.kernel.org, AJvYcCUkT1f/DERit/J/s0Y7x2CenbHtIkAvUTViofmLa9OgNmc5UjH3FG64aaLiJqvdJDHl+lSATN0ch9FeaXt086M=@vger.kernel.org, AJvYcCWtkOobMUmA3o9M6Dkys0KHGYNKOBlRijdbBgCXDRC+ejA1nWh/aMfAWONqU1eug9djh7o+p51cvzlh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN41865PahKM+jGLMhRvbt4gZAl1OKRIdsboFwSB33XvAemNGl
+	4H1O8sXHEsDZEUCeNZapfhxNabgR2TNqvZ+OVZQO2tBYLcg4iKxJZ+zzPzJ1eitK3Vl7127+QLB
+	A9DS2YQCfk4Ka7HWPb2c2qgRa3DEq3APP/j9jeg8=
+X-Gm-Gg: ASbGncsBugQNrcsZtiwfxZ3TI2ake5sG8XQzDaOoz0io7P3tz00CKDz0sAiNN49cnzA
+	iWsI5lFcmPRXdaKfZ7M8QVLy9/MzN90Q+PuEj/mDoap9bmB7SiYs+uD7huF3QTwVB0rHD1WjVJB
+	4H9nupAWcOYZGwqjVuCp9wNk5jI4bKcZ65CkJU3pzo4T18UsUJmVB2xt+Q7LEYyTelqroJaqOnF
+	BmZ4BxL
+X-Google-Smtp-Source: AGHT+IHx0GUnofdiB57+6goXGATGo/R/vo6ovtijDe50tv9vBdJgiyyT/dJhFBzyBZgP2+LgoNqWp1Jp3n7lA8T8UZE=
+X-Received: by 2002:a17:90b:4b88:b0:31e:ffd4:ecdc with SMTP id
+ 98e67ed59e1d1-31effd4edb9mr2998838a91.7.1753783872256; Tue, 29 Jul 2025
+ 03:11:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250729002941.7643-1-abhinav.ogl@gmail.com> <DBOFY80IDMWJ.627ZOACP7KK5@kernel.org>
+In-Reply-To: <DBOFY80IDMWJ.627ZOACP7KK5@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 29 Jul 2025 12:10:59 +0200
+X-Gm-Features: Ac12FXyDvgR6WDLVoVoaas8ap-FjV1FrKXwGSr5NqDylxCmVF3795DEZpR3NP_U
+Message-ID: <CANiq72nRJhhM6W4ue0KR+En1nYDk5KVS1dSuJkkw55jkrh_P8Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: pci: use c_* types via kernel prelude
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: herculoxz <abhinav.ogl@gmail.com>, bhelgaas@google.com, kwilczynski@kernel.org, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, lossin@kernel.org, 
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, 
+	linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelgeejjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefujghffgffkfggtgfgsehtqhertddtreejnecuhfhrohhmpefoihhquhgvlhcutfgrhihnrghluceomhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepffeghfejtdefieeguddukedujeektdeihfelleeuieeuveehkedvleduheeivdefnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepiedprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegsohhrihhsrdgsrhgviihilhhlohhnsegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohepjhegghekhiejsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgp
- dhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: miquel.raynal@bootlin.com
 
-Hello,
+On Tue, Jul 29, 2025 at 11:45=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> Something seems to be odd with the commit message, it seems some parts ar=
+e
+> missing.
 
-On 29/07/2025 at 10:38:16 +10, Stephen Rothwell <sfr@canb.auug.org.au> wrot=
-e:
+The "ensures ABI correctness when interfacing with C code" should also
+be changed -- it is true that we want to use the identifiers from the
+prelude, but the ABI was fine here, since it was already using
+`kernel::`.
 
-> Hi all,
->
-> Today's linux-next merge of the spi tree got a conflict in:
->
->   include/linux/mtd/nand-qpic-common.h
->
-> between commit:
->
->   8e37aaf97153 ("mtd: nand: qpic-common: remove a bunch of unused defines=
-")
->
-> from the nand tree and commit:
->
->   0dc7e656ddd5 ("mtd: nand: qpic-common: add defines for ECC_MODE values")
->
-> from the spi tree.
+i.e. otherwise, it would have been a fix.
 
-Indeed, I forgot about this change which conflicts. I'll drop the patch
-from my tree, it is not urgent anyway. Gabor, please resend after a
-rebase at -rc1, sorry for the extra work..
-
-Thanks,
-Miqu=C3=A8l
+Cheers,
+Miguel
 
