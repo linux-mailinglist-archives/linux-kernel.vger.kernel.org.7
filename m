@@ -1,103 +1,114 @@
-Return-Path: <linux-kernel+bounces-749557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 421A8B14FF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:05:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C129B14FFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03E917A11B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D9A3BECB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A612B2690E7;
-	Tue, 29 Jul 2025 15:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1ACF287253;
+	Tue, 29 Jul 2025 15:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYO6xcbl"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="MKJFsGf/"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36E1746E;
-	Tue, 29 Jul 2025 15:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D53727702D;
+	Tue, 29 Jul 2025 15:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753801493; cv=none; b=ApMf/HNMwwik4CnPYDHb4ocIwjHIrAnEJpBClbBMN+wClNvgoA5125r7reG8NAZa+CKE5Pt2NmWlD9ZEm2cbpewOoY0HXzMtQmGTdn2PIgSirhdjgwfTr15mdjvWiDqIBbJQwDJJTFHNkv3soq/OJ3PPPnIVOurkJi5l9s8gpcU=
+	t=1753801685; cv=none; b=GyBFLYyIA7MjZ2UwMff5O3eCX6G6iTj8Ww1WbCe21c4s68V7W7KJg7UbM26MkL8pnOZwB2WDYHA/j5+41uxa+mD3nl4ZLpNkvt9xgjNqcKLVWcedrt2rexTNgzIy+d04TDiVoxUpLdyAnQVwDiuJwKjkrFF9B7SL0o9bl+t2DOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753801493; c=relaxed/simple;
-	bh=aQ+43kvtdWDOizoWPKmefgnCVdEt6FTWqKjZuLuJgJE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=pvFUh+WsctIbk5IeQZXgXDXvpSC68hr+I8yRxI8N1j8Hu1OMy9IKmUUYBITyXli+Ukk64P2/0g7iOxYqVezgxC9+VIOXKDmPxET4uhIktTNbCYJOxMDlWxFm+AAEhOM49GBmjdLwVeD2kLVaTEECF+nh4g1rT148pjKqiZlOAU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYO6xcbl; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753801492; x=1785337492;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=aQ+43kvtdWDOizoWPKmefgnCVdEt6FTWqKjZuLuJgJE=;
-  b=JYO6xcblofdX7BBxR8qZmn314BRp+n6E7bRNSP7z2f50lMkiF2d6Ns8V
-   Ec0hn+sI7PrSsb3FLy9zB1uMg37HOnvuzrI7U1AWS4l8DJbHyTsIpu34m
-   /seqY2ZiqBsgQkHf2RoguB9O1BzaJSa0hkRCN8rT4Gb9+j/4xeCN7w/l4
-   xv0PRXvesMZ5L4ihHYz73Vy6tcS1USdIY2HpFp46t9gb3B9BfMATjEQ6+
-   uI22+vl01iMzjeL4PX/YN1r9BIsqQgF45K+KlSI6UUpmf0/ef71nQI09V
-   EHcIORLOPDGsUU0KtNzS9dDk/Rgq/X+3OyONGaCSkXvrxoBMPihMEvPTB
-   w==;
-X-CSE-ConnectionGUID: FNXFaidbSb6hLAcJJ9S8+w==
-X-CSE-MsgGUID: VQDKQ9w1TNWaIuZaDT1xlg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="67512504"
-X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
-   d="scan'208";a="67512504"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 08:04:52 -0700
-X-CSE-ConnectionGUID: n0T4/5DqR+SRBpjQDi3s5A==
-X-CSE-MsgGUID: zq7TZndwTJeEH5eSED3chA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
-   d="scan'208";a="167215188"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.22])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 08:04:48 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Linux Doc Mailing List
- <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
-In-Reply-To: <20250729154437.6cbd2788@sal.lan>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <cover.1752307866.git.mchehab+huawei@kernel.org>
- <58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
- <20250712163155.GA22640@pendragon.ideasonboard.com>
- <20250713002517.7f52b0e9@foz.lan> <875xfhabv0.fsf@trenco.lwn.net>
- <20250724194306.27b98194@foz.lan>
- <83d12d5293e23c622ae390204fed8fd4453014b1@intel.com>
- <20250728173306.2ab1409a@sal.lan>
- <fd1372a9fb57a1372db5b3c0992a929f90183f83@intel.com>
- <20250729154437.6cbd2788@sal.lan>
-Date: Tue, 29 Jul 2025 18:04:45 +0300
-Message-ID: <9dc14f4a5adda5a8a40220404648457d56212cca@intel.com>
+	s=arc-20240116; t=1753801685; c=relaxed/simple;
+	bh=PBOkQyQ2DhJSvlZwtpvSMJYClY321RSVjLSe8tXXnZw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=L6tAFQ8KpJuOgs9yCG/cSIZ2gPt6RhnM0hJbHOt3XjgjG7fvT7gBlJonJC/ACKYqNHRrBknHn/N+7iRt946I4DwVPIr6bx9QHjIyrotk7+LpAJfC9nbrkH56i9v6mTqzmgtNBQEUAl4prN0pUYDLYJsgPHNiK0R4pxOWJJmUuCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=MKJFsGf/; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56TCpPUJ031980;
+	Tue, 29 Jul 2025 17:07:38 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	rxNeNoGx1mH4GH0w94NI93U/kEXE+lSVdRaFrGTDI0g=; b=MKJFsGf/y754Tnvr
+	xLdfD2hsDaNECBNZBmwKrazssfYyHo9DBQ4DdKdsN13xS5PgKmEbmoBLTAjq5s5E
+	v3ee1pbRlyhjybenzVv6IpWfpM2LeWqmZlsEdD82pfYmXEt/uTJfL/xTj5mzz2eL
+	euCEtL895eMzGzW9sCNXyqlw/cEEx5yjok5wH724M83/XgT3JmaLoH78eBlGZjRi
+	ZDKRdC763CR4ysxOXrUsrNHxNUsPB7GEWk2L3FhzR3VS+XwT6F+thDHNSwq9XCEU
+	ycCwSJG9uoYj+fy+vzJP7mVRbfKOJNc4FNNgIUUNYYKbMPu5lsfIJ631pbzkjFET
+	4YtQmg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4859ynjf35-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Jul 2025 17:07:38 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CEAB44002D;
+	Tue, 29 Jul 2025 17:06:26 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8C5FA763987;
+	Tue, 29 Jul 2025 17:05:40 +0200 (CEST)
+Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Jul
+ 2025 17:05:39 +0200
+Message-ID: <b25eff85-73fd-45b3-b92f-5cc0a86011c7@foss.st.com>
+Date: Tue, 29 Jul 2025 17:05:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 0/2] net: stmmac: allow generation of flexible
+ PPS relative to MAC time
+To: Jakub Kicinski <kuba@kernel.org>
+CC: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Paolo Abeni
+	<pabeni@redhat.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>,
+        Richard Cochran
+	<richardcochran@gmail.com>, <netdev@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20250724-relative_flex_pps-v1-0-37ca65773369@foss.st.com>
+ <20250725172547.13d550a4@kernel.org>
+ <424f8bbd-10b2-468c-aac8-edc71296dabb@foss.st.com>
+ <20250728085818.5c7a1e45@kernel.org>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <20250728085818.5c7a1e45@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-29_03,2025-07-28_01,2025-03-28_01
 
-On Tue, 29 Jul 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> I don't think we should do much effort to support Python 2, but it comes
-> almost for free: only shebang needs to be different, and, if the comments
-> inside the doc contains non-utf8 chars, an encoding line.
-
-As said in the other thread, changing the shebang is not a trivial
-thing. I don't have 'python' installed, haven't had for years, just
-'python3'.
-
-BR,
-Jani.
 
 
--- 
-Jani Nikula, Intel
+On 7/28/25 17:58, Jakub Kicinski wrote:
+> On Mon, 28 Jul 2025 10:15:07 +0200 Gatien CHEVALLIER wrote:
+>> Maybe we could compare the time to the current MAC system
+>> time and, if the start time is in the past, consider the
+>> value to be an offset. Therefore, any value set in the past
+>> would be considered as an offset. I see some implementations
+>> doing either that or replacing any value set in the past to
+>> a safe start + a fixed offset.
+> 
+> Let's try this.
+
+Ok, I sent a V2 with a proposal implementing this behavior.
+Thank you.
 
