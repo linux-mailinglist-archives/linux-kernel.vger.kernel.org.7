@@ -1,66 +1,56 @@
-Return-Path: <linux-kernel+bounces-749484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8184CB14EEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:58:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0789DB14EED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:59:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46DCF7AEA6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:57:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1546543343
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D4E1D5174;
-	Tue, 29 Jul 2025 13:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A261C4A13;
+	Tue, 29 Jul 2025 13:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSKgRMIq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INg87RHD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC96433D9;
-	Tue, 29 Jul 2025 13:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FDCA1B85F8;
+	Tue, 29 Jul 2025 13:58:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753797506; cv=none; b=EGG90g/9zA6G+sISkGJa4kSNqk52jz6+sD+C2B3uZy9Jpto7P5Yy5gXwIwQsHyMIOawvyz9l/kPiIIjiBoyMsTfRwN8EexhfJnGtxsC8KwgK9wYsgvas1JERlMJuwxIKTQsRoZcdQlRIoPB07kf244L5+s8MM0CzzprexJyKr4g=
+	t=1753797520; cv=none; b=uFKLNEuAkarZ108EBdZgnayf0t82V2aLZoyiU5Y9bi33edCa8sy2o0VyNJ2TQW0QFD2r2SpGHdmYuqzfsJwSnhmAiRDWAg5ezvfUf/NRSQXgnQsouReYgDjBo4SjNUQz8ukEhxeZs9DrwR/QZ9f+JKAwhhakY4YxojLmexXNEw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753797506; c=relaxed/simple;
-	bh=vPvAtP/sZ8lnXkjd3m445006NQb0CN8eBY920jsV5KY=;
+	s=arc-20240116; t=1753797520; c=relaxed/simple;
+	bh=Vmk0X4v9TuzKQs2y29LDBHbFF70S0TrKZzabTsmH0/U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FxcosvmnlFuoxfQ5pVOMDhxySPZZTbF+NNDyo4DC528fb2UrB5NMBCcV1p9nc08aiRdDFMRzL/g2p5DL3VTGvFq/JtqrWRs7rBI6+om17NnjLcOdGT2eIByMASg9QM0+lm4kZlrW5VUlaiMnogCNEoyvojuBf/QyUlPYfvUfXRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSKgRMIq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C175AC4CEF4;
-	Tue, 29 Jul 2025 13:58:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ih8hL10EHUgI9zkCxhmA69yXLDfFzeVNc3fjIDH9fduYzGivTC7gyv2Ddm7FRESyeCL1LIrHcuJJFcjsA5sYcdyQ2r3s8jEi9dU4o2OSKlXlDWtQUdRDzGUVqiKK1EfbXTaNEyV/1wOIvIrvW4Qfmu2msIbZZ3DcTz5X1fi2//4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INg87RHD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F24EC4CEF5;
+	Tue, 29 Jul 2025 13:58:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753797506;
-	bh=vPvAtP/sZ8lnXkjd3m445006NQb0CN8eBY920jsV5KY=;
+	s=k20201202; t=1753797520;
+	bh=Vmk0X4v9TuzKQs2y29LDBHbFF70S0TrKZzabTsmH0/U=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=bSKgRMIqPhZpMa+TAhyEKbmJdGD0Q13iQOyqMDLVyQjVkUqaUlJO6uYI41jHqmNr5
-	 x3j4Wl8r3ymygUJXzbbAIYz4JHcZusIey0IeyA6IA19eJzZREB6ov9cHySRSv1fjbM
-	 WocQF6C2ZlcTnHSvXyOTeA3DqMOh68IR9lSUUOKqck7+7CAjBPN5B2Oysn+LKr+lww
-	 H26qMroub8PwBjn5QHNKvLvRtqfPo/VNMqehD1wa5oSbnbgcis6EeHarZA6FoEXD3J
-	 bQ4GCYhMARlcYh/6+qas/FmHcZqoVKNjfuy4TY3IG7swiJdYYFfiXlNPADO1OcWovI
-	 PKmhCDOB9PEJw==
+	b=INg87RHDonV2H5zzjYfmn2iHil0d8rBFqQ0y6cX0L2RfyiCrort0+vmFKqUr4hzp7
+	 vA3hX6RLt2QP4q+ZhS/QjfOstWQfSlds6hJzJsfGSf+E54cQ9bad3FLtjCTUT/Ej5h
+	 UbmjMgV9sTkQ0i4jtsoNb3mFkJHzc+gyWnge+VEazRe3heZMZP6/t3XYgpksIPMBOv
+	 FOjM2T9dSP+zpmbcNIqGYwuQYOv4NGeVFSXtCs//kvpFETKTFdSqPTTVTRkG2zOAh6
+	 AbXvst04uUg36qPN4Lh76ozGjsA6CU+k+yK+BGJl5v+S0rVc40Ci9klB67H0fN5oiS
+	 TtHc/wPTcXuKA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>, 
- Bard Liao <yung-chuan.liao@linux.intel.com>, 
- Ranjani Sridharan <ranjani.sridharan@linux.intel.com>, 
- Daniel Baluta <daniel.baluta@nxp.com>, 
- Kai Vehmanen <kai.vehmanen@linux.intel.com>, 
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
- Vijendar Mukunda <Vijendar.Mukunda@amd.com>, 
- Ajit Kumar Pandey <AjitKumar.Pandey@amd.com>, 
- Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc: kernel@collabora.com, stable@vger.kernel.org, 
- Bard Liao <bard.liao@intel.com>, sound-open-firmware@alsa-project.org, 
- linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250725190254.1081184-1-usama.anjum@collabora.com>
-References: <20250725190254.1081184-1-usama.anjum@collabora.com>
-Subject: Re: [PATCH v1] ASoC: SOF: amd: acp-loader: Use GFP_KERNEL for DMA
- allocations in resume context
-Message-Id: <175379750250.39357.9621820715781114394.b4-ty@kernel.org>
-Date: Tue, 29 Jul 2025 14:58:22 +0100
+To: Jakub Czapiga <czapiga@google.com>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
+ Konrad Adamczyk <konrada@google.com>, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250717152851.3709744-1-czapiga@google.com>
+References: <20250717152851.3709744-1-czapiga@google.com>
+Subject: Re: [PATCH v2] spi: intel: Allow writeable MTD partition with
+ module param
+Message-Id: <175379751917.39520.16059284404442886769.b4-ty@kernel.org>
+Date: Tue, 29 Jul 2025 14:58:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,26 +61,25 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Sat, 26 Jul 2025 00:02:54 +0500, Muhammad Usama Anjum wrote:
-> Replace GFP_ATOMIC with GFP_KERNEL for dma_alloc_coherent() calls. This
-> change improves memory allocation reliability during firmware loading,
-> particularly during system resume when memory pressure is high. Because
-> of using GFP_KERNEL, reclaim can happen which can reduce the probability
-> of failure.
+On Thu, 17 Jul 2025 15:28:51 +0000, Jakub Czapiga wrote:
+> The MTD device is blocked from writing to the SPI-NOR chip if any region
+> of it is write-protected, even if "writeable=1" module parameter is set.
 > 
-> Fixes memory allocation failures observed during system resume with
-> fragmented memory conditions.
+> Add ability to bypass this behaviour by introducing new module parameter
+> "ignore_protestion_status" which allows to rely on the write protection
+> mechanism of SPI-NOR chip itself, which most modern chips (since
+> the 1990'+) have already implemented.
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] ASoC: SOF: amd: acp-loader: Use GFP_KERNEL for DMA allocations in resume context
-      commit: eb3bb145280b6c857a748731a229698e4a7cf37b
+[1/1] spi: intel: Allow writeable MTD partition with module param
+      commit: 87aa3c8d8c4aa2e2567fe04126d14eb9fde815e5
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
