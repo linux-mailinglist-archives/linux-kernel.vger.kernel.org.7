@@ -1,226 +1,103 @@
-Return-Path: <linux-kernel+bounces-749023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41C4B148FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:16:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549C2B148FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E54473AA7B7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:15:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AE951882E50
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCA1261593;
-	Tue, 29 Jul 2025 07:16:13 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F74125FA2C;
+	Tue, 29 Jul 2025 07:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="axvlOlce"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845381E5B94;
-	Tue, 29 Jul 2025 07:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F2F36124
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753773373; cv=none; b=W6wq6HcoaAQgUwVcMy79FM2BWHqS3SUesEROhbl+a+t75dO0fwJWvOcp95tqGEwyguyB2axdpdpdtUmQBDpmwo971WTWiHJNNkwNFqn3HBR1zu7Ekb7uJh89H4VNTBX6u5LpOJwXv8bGKCvUgszHFL3MzXommB2cnNVpXIHRWF8=
+	t=1753773139; cv=none; b=os1Rwq+3Wx0vXlg2dl178/gsDhW8rur0gqif9rpVRU6tBW8f8I43y1OnwFCSthflyBcy+BCunuWiK5YZnP5qs+6BVP3gMGv95geAFzLH9370e7IA9Psv0g/A0KBPOLF3q8VG7LklUN6MVqSW/WL8ewV7QtNab+cprUKamsyvU+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753773373; c=relaxed/simple;
-	bh=YwIIX28t6zg6jgTGVFbAVEXjIe+ZB2IG9sTN09C154E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eoRZI55iK8M2UfB4z1tjGwsCwEEJrjh3kRPVooLJDEi5w7FGWKRssHSz9/lYpClSlk30mZodQW4dJk2epQYay28dI+Qg08ExtfP9v/5xnHmKIpfrAByI4QPC7lFGm4V1ZcZHNBbxjWAVQfWkcCDw4QBLliYAC/GU3l8VF4ot0h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4brmps73z6zYQtdv;
-	Tue, 29 Jul 2025 15:16:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A8DE01A133C;
-	Tue, 29 Jul 2025 15:16:04 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDHjxAwdYhogZ5vBw--.21003S4;
-	Tue, 29 Jul 2025 15:16:02 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: hch@lst.de,
-	axboe@kernel.dk
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH] brd: use page reference to protect page lifetime
-Date: Tue, 29 Jul 2025 15:09:15 +0800
-Message-Id: <20250729070915.487189-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1753773139; c=relaxed/simple;
+	bh=vf4mFVXlMOq0Wh1BYmvW7YGdr+Elk/7fJ6J9GPeUiHc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KZj6uxRo1mclzUIQuOpwT3SSXPP7mVxRtgCd1a1RRNDY82f1fMJ7zjQeVbjd/NW1C9L6Ox+/k8XaXNzlUUbbAY2Y3M4WuOUJevgix7ecnMEvje4kJbxf7notCD2HY3bov2Wr8IgPctITe9yX7obd8UDj2jfu/6i4UbjyZtqo0kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=axvlOlce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C85C4CEEF;
+	Tue, 29 Jul 2025 07:12:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753773138;
+	bh=vf4mFVXlMOq0Wh1BYmvW7YGdr+Elk/7fJ6J9GPeUiHc=;
+	h=Date:From:To:Cc:Subject:From;
+	b=axvlOlceNNhBSE+AKQ5BwkJVNCwyXTQxgGY06Wk3b/yhkNCZr1dAL1i3CjoVrfQCL
+	 FbRE79JTx16YfFuh73NPMswNPEsnbRpwBiogFT2AkZXomWIWONUfag7+X6UY3VA+mJ
+	 e4A3dM51yvTWcSboH0+32X53z9mO6bIKMmR1EtCE+DFGMCCJDMdfHwzfb+O5dOhy02
+	 KRfhHRQC7nrYVUpKoaEwOdWf78FZq1IOH2+0Ty4v85NDOclCahTAi2aF7kgEiOkiau
+	 hD1BSi75s0Ohl7G/LYZSUBCFIx+QteWcsqusmHhqDjJAK1eoEba1yNMw64furQa3Bc
+	 Xm/KP1HrclTFw==
+Date: Tue, 29 Jul 2025 09:12:14 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>,
+	"Chang S. Bae" <chang.seok.bae@intel.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: [GIT PULL] x86/fpu updates for v6.17
+Message-ID: <aIh0TvRcSPfV0ULC@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHjxAwdYhogZ5vBw--.21003S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZr43Cw4kKw18tF13XFy7Wrg_yoWrXFWkpF
-	WUtF92y3y5Gr4ak3W7Xwn8Cr15KryIgayxKa4fJw4Skr4fCr9Fy3WIy34Fqa45GrW8CrWD
-	AFsxtF1UCrs5X3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUonmRUU
-	UUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-From: Yu Kuai <yukuai3@huawei.com>
+Linus,
 
-As discussed [1], hold rcu for copying data from/to page is too heavy.
-it's better to protect page with rcu around for page lookup and then
-grab a reference to prevent page to be freed by discard.
+Please pull the latest x86/fpu Git tree from:
 
-[1] https://lore.kernel.org/all/eb41cab3-5946-4fe3-a1be-843dd6fca159@kernel.dk/
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-fpu-2025-07-29
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/block/brd.c | 56 +++++++++++++++++++++++----------------------
- 1 file changed, 29 insertions(+), 27 deletions(-)
+   # HEAD: 1cec9ac2d071cfd2da562241aab0ef701355762a x86/fpu: Delay instruction pointer fixup until after warning
 
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index 0c2eabe14af3..ce311d054cab 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -44,45 +44,55 @@ struct brd_device {
- };
- 
- /*
-- * Look up and return a brd's page for a given sector.
-+ * Look up and return a brd's page with reference grabbed for a given sector.
-  */
- static struct page *brd_lookup_page(struct brd_device *brd, sector_t sector)
- {
--	return xa_load(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
-+	struct page *page;
-+
-+	rcu_read_lock();
-+	page = xa_load(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT);
-+	if (page)
-+		get_page(page);
-+	rcu_read_unlock();
-+
-+	return page;
- }
- 
- /*
-  * Insert a new page for a given sector, if one does not already exist.
-+ * The returned page will grab reference.
-  */
- static struct page *brd_insert_page(struct brd_device *brd, sector_t sector,
- 		blk_opf_t opf)
--	__releases(rcu)
--	__acquires(rcu)
- {
- 	gfp_t gfp = (opf & REQ_NOWAIT) ? GFP_NOWAIT : GFP_NOIO;
- 	struct page *page, *ret;
- 
--	rcu_read_unlock();
- 	page = alloc_page(gfp | __GFP_ZERO | __GFP_HIGHMEM);
--	if (!page) {
--		rcu_read_lock();
-+	if (!page)
- 		return ERR_PTR(-ENOMEM);
--	}
- 
- 	xa_lock(&brd->brd_pages);
- 	ret = __xa_cmpxchg(&brd->brd_pages, sector >> PAGE_SECTORS_SHIFT, NULL,
- 			page, gfp);
--	rcu_read_lock();
--	if (ret) {
-+	if (!ret) {
-+		brd->brd_nr_pages++;
-+		get_page(page);
- 		xa_unlock(&brd->brd_pages);
--		__free_page(page);
--		if (xa_is_err(ret))
--			return ERR_PTR(xa_err(ret));
-+		return page;
-+	}
-+
-+	if (!xa_is_err(ret)) {
-+		get_page(ret);
-+		xa_unlock(&brd->brd_pages);
-+		put_page(page);
- 		return ret;
- 	}
--	brd->brd_nr_pages++;
-+
- 	xa_unlock(&brd->brd_pages);
--	return page;
-+	put_page(page);
-+	return ERR_PTR(xa_err(ret));
- }
- 
- /*
-@@ -95,7 +105,7 @@ static void brd_free_pages(struct brd_device *brd)
- 	pgoff_t idx;
- 
- 	xa_for_each(&brd->brd_pages, idx, page) {
--		__free_page(page);
-+		put_page(page);
- 		cond_resched();
- 	}
- 
-@@ -117,7 +127,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
- 
- 	bv.bv_len = min_t(u32, bv.bv_len, PAGE_SIZE - offset);
- 
--	rcu_read_lock();
- 	page = brd_lookup_page(brd, sector);
- 	if (!page && op_is_write(opf)) {
- 		page = brd_insert_page(brd, sector, opf);
-@@ -135,13 +144,13 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
- 			memset(kaddr, 0, bv.bv_len);
- 	}
- 	kunmap_local(kaddr);
--	rcu_read_unlock();
- 
- 	bio_advance_iter_single(bio, &bio->bi_iter, bv.bv_len);
-+	if (page)
-+		put_page(page);
- 	return true;
- 
- out_error:
--	rcu_read_unlock();
- 	if (PTR_ERR(page) == -ENOMEM && (opf & REQ_NOWAIT))
- 		bio_wouldblock_error(bio);
- 	else
-@@ -149,13 +158,6 @@ static bool brd_rw_bvec(struct brd_device *brd, struct bio *bio)
- 	return false;
- }
- 
--static void brd_free_one_page(struct rcu_head *head)
--{
--	struct page *page = container_of(head, struct page, rcu_head);
--
--	__free_page(page);
--}
--
- static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
- {
- 	sector_t aligned_sector = round_up(sector, PAGE_SECTORS);
-@@ -170,7 +172,7 @@ static void brd_do_discard(struct brd_device *brd, sector_t sector, u32 size)
- 	while (aligned_sector < aligned_end && aligned_sector < rd_size * 2) {
- 		page = __xa_erase(&brd->brd_pages, aligned_sector >> PAGE_SECTORS_SHIFT);
- 		if (page) {
--			call_rcu(&page->rcu_head, brd_free_one_page);
-+			put_page(page);
- 			brd->brd_nr_pages--;
- 		}
- 		aligned_sector += PAGE_SECTORS;
--- 
-2.39.2
+x86 FPU changes for v6.17:
 
+ - Most of the changes are related to the implementation of
+   CET supervisor state support for guests, and its preparatory
+   changes. (Chao Gao)
+
+ - Improve/fix the debug output for unexpected FPU exceptions
+   (Dave Hansen)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Chao Gao (4):
+      x86/fpu/xstate: Differentiate default features for host and guest FPUs
+      x86/fpu: Initialize guest FPU permissions from guest defaults
+      x86/fpu: Initialize guest fpstate and FPU pseudo container from guest defaults
+      x86/fpu: Remove xfd argument from __fpstate_reset()
+
+Dave Hansen (1):
+      x86/fpu: Delay instruction pointer fixup until after warning
+
+Yang Weijiang (2):
+      x86/fpu/xstate: Introduce "guest-only" supervisor xfeature set
+      x86/fpu/xstate: Add CET supervisor xfeature support as a guest-only feature
+
+
+ arch/x86/include/asm/fpu/types.h  | 49 +++++++++++++++++++++++++++++++-----
+ arch/x86/include/asm/fpu/xstate.h |  9 ++++---
+ arch/x86/kernel/fpu/core.c        | 53 ++++++++++++++++++++++++++++-----------
+ arch/x86/kernel/fpu/init.c        |  1 +
+ arch/x86/kernel/fpu/xstate.c      | 40 +++++++++++++++++++++++------
+ arch/x86/mm/extable.c             |  5 ++--
+ 6 files changed, 124 insertions(+), 33 deletions(-)
 
