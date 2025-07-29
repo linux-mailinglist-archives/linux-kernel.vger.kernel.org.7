@@ -1,214 +1,219 @@
-Return-Path: <linux-kernel+bounces-749895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76471B15464
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:45:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8702DB15469
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:48:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73B8B18A53A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:46:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92DDA1617CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9C327816B;
-	Tue, 29 Jul 2025 20:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1165F277CA3;
+	Tue, 29 Jul 2025 20:48:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="U0jFwEdX"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QXTPLXnp"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2082.outbound.protection.outlook.com [40.107.244.82])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5FB277CA9;
-	Tue, 29 Jul 2025 20:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753821935; cv=none; b=ZA/1a7XqZkml2FmISXPoNd/rCQdp0RhvqvBizijsMLlPD8p0f0JndpyipZ0c2VMw3G9xylRb00j/xUaARNaPHSIOT1rdrN1o9rzsZPoFp2NJxQbj03bp66UONna9mbHDIcDH1MDUnmIHrp8rSjyX9vzu0J+tJgE0d98SCj3gfgY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753821935; c=relaxed/simple;
-	bh=1MZvJiloFFQ+CPWljU5EgKKLdOjnv6o7TaEMtS98VQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VphGaOFz9OgrXLtjt59WbcdcOJT0C/qXkSVLezACoz+/gxTTvL1xVy/LRvNXkP3OIISlaKH6YU/MlZAM/MVB9CJ7+U5nvdWM1fdOOcTi6ZXnDV2EVrGUnKhwKJkK3W/0Tjoh/eiQGpp6TyXIu/yWGMBpfqSzEDoJsAqiWhR+J40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=U0jFwEdX; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2402bbb4bf3so32906775ad.2;
-        Tue, 29 Jul 2025 13:45:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1753821932; x=1754426732; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1MZvJiloFFQ+CPWljU5EgKKLdOjnv6o7TaEMtS98VQA=;
-        b=U0jFwEdXiVGQfNsiiOW/4fdsqf6Uo0xExCLkzx886Fk0IpAKxWfqo0iOM739HLRjg9
-         WHL8KIkm/mIUCO/NAN7eRAmvLNL//e853aSQsokbeHigyYt+Pkz5PSzVKxY0rvJmJgk4
-         wNkAZkD9JygUCThHIDqMgZAPnm/5rmVLIcwmiA94dozqNQeCRo8/bdjJpzkf8jWj++ZA
-         V/i0szuV6eYNixLyMFIh4O0lCgbB8I1BFXgiOfxXjo4HtjSjXhVHGmzgJeU5zuK+Zw0U
-         U2h/MYeyHcz+wjse5baQHmmAuDyCulWclHwqETGNbKP2q62hII+TzDzN6bfsuTLiHhEh
-         3yYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753821932; x=1754426732;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1MZvJiloFFQ+CPWljU5EgKKLdOjnv6o7TaEMtS98VQA=;
-        b=wHZ1NXLJGxa9SpEI7PiUjV10B7RV0m21nzLXpT1GV84GUX5XVfSg4RdcpK9/LH1jdI
-         xXSMD5Mrf8ocwnYfxQLx6pxIGhAoeK/J2DtNYx3cIR67UIkFuCpzL+GMT7kdO2gg6/zb
-         0iEHOpWuB3ycSUKIUuAu5MtX4KYf8pSUtsNJejfWyDfuAyiiuqloodzhI0x6jiIIdRtg
-         ynRJKLqB3BfStqiKMAxl63cgdtLsZTRVyrGvQRcenfupVHdzVhq+FhiidZI8JQgzXFuw
-         xhOcxfsEEg+Fn9gN4mn382/3YFnsuqPH0+FPEsKW3oszxmnwDjQmftK79nRX0fDMU1ax
-         NK2g==
-X-Forwarded-Encrypted: i=1; AJvYcCX4HmGU9l456xBagyZDG2YsGwV4PfytWXFqa9Njlab4ZICGIvHLjSeMqw+svZL5jfnpVh7Y2sjH4iR+FBk=@vger.kernel.org, AJvYcCXvjqvC9Zkt7M7a5g58ff8c5Y4gqwtS+7/0kwget4JQnK21788pJGyODjIC+MQ3KEfEw/e2p57Tao8B@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdYnXKoHnCzkz9fvk6s6hrnbm1nWLAmlWq60P8sn7mkI40yyN4
-	LhUY9LQNmWnoJwYXbCJhz8gzauWAE6VcayzJx7Md5sWzGfGtQvbLn7EdPf85w2yuFZydvFEVGpY
-	i8TrRCdBwmsfsJf9jHl8O0eaU3MrrgPo=
-X-Gm-Gg: ASbGncuJCiKQl2J0D/7CMJ3LBQ4MBcnlfUCs7Or6YgAOZRTzCMxA6YG5v3sRpTnyPuG
-	Knwtcs/WG0alMggenzKq7BfW+PhJ4FQxImnGegTYD+xx+eyucVWja74GZ4ItwahuV2rj1datWvG
-	OvypGtI8IFr/hI++yCu399Swdg2KT0aMsRggFAJNrDrH264wSDm/6NOfi4cSNasyzjLioW//F1M
-	9FPBz5mBtee+jLejhxJMtnssse2q6UOwj04AUKI
-X-Google-Smtp-Source: AGHT+IGjb6IRhO7HyqgTLquzXL94sa1b3YkGBfr0fC0Hd0gl3JvHRk+3WsfH7Ip+nenYzJ+DqEy8pWRVi0DtWd648iU=
-X-Received: by 2002:a17:902:ea11:b0:240:b46:120b with SMTP id
- d9443c01a7336-24096b4c51amr9660505ad.24.1753821931860; Tue, 29 Jul 2025
- 13:45:31 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B080C136348;
+	Tue, 29 Jul 2025 20:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.82
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753822097; cv=fail; b=ajI8TJd1+Uef2E5b0SdZroL/1m8aN+HZ/NlMkiDQELr0icSLms+GuidCTt/N2Spv62mMRoZGa9qjII/PRTiQYUOst8zAk4ZExGhzpbqiCD0niycRRNpGKwoGMHrdjmZM3DRwM74QJfkcg+A62fAEHeJ/H0jEYlQKxG6FNPxHLlU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753822097; c=relaxed/simple;
+	bh=UNaOAE6n26Vd68kuSWSQN5BvdTKGS9dBIoyeEeZs7qo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KxUJtilhUZjoekKC8M35L6fZVVaU5qZbow0UUXeIBhOsfYGef80YLBtL9ITlXSxk+PY9nVw/JRfmw40E5UxYTZ+/IFa6Gnp1CM+ga9apts8ulGXywrQK0L4QEbivqU2xfW0jgG6+fePsnSVwZtZiuVYgsRDhLoaqiwuQh+CRjlQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QXTPLXnp; arc=fail smtp.client-ip=40.107.244.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=t0NBRs4Qsi7vJ9wZvav/95cX6ZdWnkCmDDGUlKZaZX+jfdVaKospnaQbFdYb0mQ7+CDf0VNNCBbcNeBS6Xj0H9YI2trPxd5PTsAA6QqXEu5LkUbyEELi4mnoxJQ7k2HHo5QaHkl8UvGibZRRAIvu9Jy3Kd7AoKz2E+nEPKaP0UBRhieDVcgXfCWwR2ZVWgFJo4W8UgRbypDBdhYQVgHqRUljqQkR80Jc4WcFkWC0lRj+lujEEqRTbMZY9e9t0KVaa+bMEhOYS129CRGNCjbhNcBpf8L5RTmeLig0y2Fp6OglwamI+Hrl73bMValfinA4ClpVzJ0tdDPoKq6AxQb4cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LD8kZRaU8G0eZ+7XEw4F7PlHHcoYWs5oYGA0aS/4yVs=;
+ b=SpBRc+GW3s70iS9YspCEQMQWcq+9xxhgYHR5VcelQWI5lm3AKNsVLNYpqILaIW7DvtQ/Qdn6WfqC2OPZ3uHIEEFWYRj5Bf8ruasP9NF+zWRosmRu18OSMJm0XYEqod0LWO0nV2CUNcF4xaK+erWJ2dQBi7aPyzUFv1TOhB4t57Xwc9RwvXARsevEFF4+/tcMEDYNxCy8by9MsrYcDwTeTcLQ4Oghv3JA/yDRP6PCA8eQejrt5mGopPHGXzYC3TOI2FRn7XEiewLEyLV3sZgxlUuhVDkVhR+Hpk/K4GTsRwT6MVM2avABUX8eAX6DSrSzjVwczAE2V/Cn1y9TPCLhsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LD8kZRaU8G0eZ+7XEw4F7PlHHcoYWs5oYGA0aS/4yVs=;
+ b=QXTPLXnp6rc2u6bnPMTP+/vpYJaX89BkAlXuESMxE7i8NcccQlUIfYjO9rnAME/ZT8MUNEVWSaE8G9GiRn0BazZV+MvxeAMA1LZppojca622f00iD6kNw2G7isc85V4N2W8fwKA5Bs4dEN2TyTgEFsJ0KDtNzwdzXVT9a3uZdrQ=
+Received: from DSZP220CA0005.NAMP220.PROD.OUTLOOK.COM (2603:10b6:5:280::12) by
+ PH8PR12MB6914.namprd12.prod.outlook.com (2603:10b6:510:1cb::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Tue, 29 Jul
+ 2025 20:48:08 +0000
+Received: from CY4PEPF0000E9CF.namprd03.prod.outlook.com
+ (2603:10b6:5:280:cafe::81) by DSZP220CA0005.outlook.office365.com
+ (2603:10b6:5:280::12) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.11 via Frontend Transport; Tue,
+ 29 Jul 2025 20:48:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000E9CF.mail.protection.outlook.com (10.167.241.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8989.10 via Frontend Transport; Tue, 29 Jul 2025 20:48:07 +0000
+Received: from titanite-d354host.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 29 Jul 2025 15:48:06 -0500
+From: Avadhut Naik <avadhut.naik@amd.com>
+To: <x86@kernel.org>, <linux-edac@vger.kernel.org>
+CC: <bp@alien8.de>, <tony.luck@intel.com>, <yazen.ghannam@amd.com>,
+	<linux-kernel@vger.kernel.org>, <avadhut.naik@amd.com>
+Subject: [PATCH] x86/mce: Add support for PHYSADDRV and PHYSADDRVALIDSUPPORTED bits
+Date: Tue, 29 Jul 2025 20:46:57 +0000
+Message-ID: <20250729204801.1044100-1-avadhut.naik@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204135842.3703751-1-clabbe@baylibre.com> <20250204135842.3703751-2-clabbe@baylibre.com>
- <aCHHfY2FkVW2j0ML@hovoldconsulting.com> <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
- <aINXS813fmWNJh3A@hovoldconsulting.com> <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
- <aIiXyEuPmWU00hFf@hovoldconsulting.com>
-In-Reply-To: <aIiXyEuPmWU00hFf@hovoldconsulting.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Tue, 29 Jul 2025 22:45:20 +0200
-X-Gm-Features: Ac12FXzip049c0je0JQVgwsiqE18SpBlfnzTyFeJrW4-V_R6WGqnHM07_1OfeB0
-Message-ID: <CAFBinCBZhjs7DGEgxhz54Dg8aW3NX9_LdnoZeUZpm5ohaT_-oQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
-To: Johan Hovold <johan@kernel.org>
-Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, david@ixit.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9CF:EE_|PH8PR12MB6914:EE_
+X-MS-Office365-Filtering-Correlation-Id: d615fda6-7a9b-436f-a4e4-08ddcee1393c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?dl892H3yT7+wEX/ScgjuQ6GmQkiQZn8rJg/+hpc2X+hfIv75zoX4sWGrnt4M?=
+ =?us-ascii?Q?3kpD9SaLjhJ2dsRnNNEJlvauX/+RMXUbqeOlyLdjGZOmTwMA0aRtdOmpBTuC?=
+ =?us-ascii?Q?Srb+mQgBkVwq3d7jZ1D8WD7eSRmL/afuf91VE+f+R3Giq4Mjp3FZQIsaf8Wm?=
+ =?us-ascii?Q?Z0nPLF5HWS4NHKvk49XRwJLQBDoNq2mlXrBP0q0iY70/8J/QHMUH78RmjVi5?=
+ =?us-ascii?Q?zw9QSNe1ofMzokvZbNXkKgMsTKvBKyulrKEMukw5d8/p4/eruxDO9eGpWSo8?=
+ =?us-ascii?Q?ezMg3sGW+F2XPCotFe5n8yWVZiZ+YZnDMRjKm0ycg9odBGkUorXZ4PhtgqjC?=
+ =?us-ascii?Q?sZwStlPZZCHPYpmV0hQoI4FqBffcI2YzJ9zCR/VpQF8CEfx8BSbo5Sjgh8i5?=
+ =?us-ascii?Q?he1R1vmXENKdD2fi9zx+mv4/iv+4EeaTb15os1K22Yx92KK9CuZyI70h+VtM?=
+ =?us-ascii?Q?HBbPv2Po7HLezOEBFhUc20wpBHRqvmFCxURWCGxuB4pgSKH5ffOf83QQfSVL?=
+ =?us-ascii?Q?FupOa2Sa/y+Q/8lvAmiOEhUE1zVPAIuk0/hRJPPK/FynStIz9bqWkHQWNjzc?=
+ =?us-ascii?Q?mtXc4gVPVkeyDXtzqcG+HXW/k3R0D3/dvT9/Nzh9j63QfIuireQ+FxCTkpQT?=
+ =?us-ascii?Q?ooorO3Fmv6oYaKrQo7ZbAZju7UP/F75/VtVGCP7EyD2dUdly0QiTGBRh7CWZ?=
+ =?us-ascii?Q?HEo03kvmnkq2ismU1J8VK6lQCynYqCKRzLU4rcEABZqFqsbVfvIz9D5k4SML?=
+ =?us-ascii?Q?YRvdwYPlx5aE7apd9lgzYXWhpSK3dLxCjOkIRiNUxSXIpsWw1uttNrLGn2YB?=
+ =?us-ascii?Q?4Wc9Srwb5tLIPBEHv2MDVJ0yZkhBedIYF2W+miYDTaiXa1tR0p0PY4RxD4NG?=
+ =?us-ascii?Q?9TbkJrGjJmtzvImVxlH6LPYVDwgUore64D2AhTNfR1yKQOZtmbKkWuQlRmzB?=
+ =?us-ascii?Q?rI4LdSgmbz74D1RComheWgy5VJIUjzfAN/BAtULdd2OQ54BkT5CWul2XP8v3?=
+ =?us-ascii?Q?w5JMuT0K9SDDtxwW7FvchCwbq5wEjIu1mizadtYFanNTMlAhv/dz8+i5xrbr?=
+ =?us-ascii?Q?SC5Kk8BunYS6u1A8YnMpvg5Ho2gcChPg6g7Kp2TVLraFAW2OPzqx9txfBptf?=
+ =?us-ascii?Q?l3H/+8OjRC7q+YleNYhZ+2SRWAe3K7Pfg3+aST5LiOuCRVUoBAxYLJrQOgLg?=
+ =?us-ascii?Q?MvpgZuuR0bseHOEl8EgAV0CibMI5AdCIma3MSakuNV0Jvqky7/2z8QvSDSh3?=
+ =?us-ascii?Q?3cHIh5YyROZiEA02jdBxMWk4xvvi3ENPqXJ9qoEiBpjR8Jzdvxdwr7Smm8Up?=
+ =?us-ascii?Q?GfPA38Y9eWyoPJxGnMm3kpmR8ubPuvyHQoNhkfHiSeV1QxxiAbFql5gGkx5q?=
+ =?us-ascii?Q?2FMwVME3ILi1HPRoK7ks5syhsR07gSz54WpwRWdVSkWTHW12PuEUZHXSOUnA?=
+ =?us-ascii?Q?XBwFm4n7w0xUTPzrxjz9KRMulasT19rcs+9uuoM4NI/QhEf67ZuiS4WDk0y+?=
+ =?us-ascii?Q?Z6/z4jbvVw10Kkonj6cHFVNZGvdQ/oypwIU/?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 20:48:07.8840
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d615fda6-7a9b-436f-a4e4-08ddcee1393c
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9CF.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB6914
 
-Hi Johan,
+Starting with Zen6, AMD's Scalable MCA systems will incorporate two new
+bits in MCA_STATUS and MCA_CONFIG MSRs. These bits will indicate if a
+valid System Physical Address (SPA) is present in MCA_ADDR.
 
-On Tue, Jul 29, 2025 at 11:43=E2=80=AFAM Johan Hovold <johan@kernel.org> wr=
-ote:
->
-> On Sat, Jul 26, 2025 at 04:54:17PM +0200, Martin Blumenstingl wrote:
-> > On Fri, Jul 25, 2025 at 12:07=E2=80=AFPM Johan Hovold <johan@kernel.org=
-> wrote:
->
-> > > No, the vendor driver tracks THRE per port
-> > > (ttyport[portnum].write_empty) and allows writing to more than one po=
-rt
-> > > in parallel (e.g. releases the device write_lock while waiting for th=
-e
-> > > transfer to complete).
-> > >
-> > > I thought the problem was that you could not submit another urb for t=
-he
-> > > *same* port until the device buffer for that port had been emptied?
-> > >
-> > > This seems to be what the vendor driver is preventing.
->
-> > I managed to get it to work now without any unnecessary waiting.
-> > When I switched to just waiting for per-port THRE I accidentally
-> > re-used the same URB (along with its buffer) for all ports. This of
-> > course "corrupts" data, but it's my fault instead of the chip/firmware
-> > causing it.
-> > That's why I was referring to data corruption earlier.
-> > Thanks for your persistence and for making me look at my code again
-> > with a fresh mind.
->
-> Glad to hear you got it working. Did you confirm that you really need to
-> wait for THRE before submitting the next URB too? I don't see why the
-> vendor driver would be doing this otherwise, but perhaps it only affects
-> older, broken firmware, or something.
-I'm using Corentin's test script [0] for sending data and by
-connecting RX6 to TX7 and TX6 to RX7.
+PhysAddrValidSupported bit (MCA_CONFIG[11]) serves as the architectural
+indicator and states if PhysAddrV bit (MCA_STATUS[54]) is Reserved or
+if it indicates validity of SPA in MCA_ADDR.
 
-For a 1024 byte buffer:
-[ 3029.068311] ch348 ttyUSB6: submitted 509 bytes for urb 0
-[ 3029.068827] ch348 ttyUSB6: submitted 509 bytes for urb 1
-[ 3029.069363] ch348 ttyUSB7: submitted 5 bytes for urb 0
-[ 3029.069902] ch348 ttyUSB7: UART_IIR_THRI - unknown byte: 0x00
-[ 3029.215272] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-[ 3029.215908] ch348 ttyUSB6: submitted 6 bytes for urb 0
-[ 3029.233628] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
--> data is received without corruption
+PhysAddrV bit (MCA_STATUS[54]) advertises if MCA_ADDR contains valid
+SPA or if it is implementation specific.
 
-With a 2048 byte buffer the general flow seems fine:
-[ 3031.073101] ch348 ttyUSB6: submitted 509 bytes for urb 0
-[ 3031.073777] ch348 ttyUSB6: submitted 509 bytes for urb 1
-[ 3031.220068] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-[ 3031.220697] ch348 ttyUSB6: submitted 509 bytes for urb 0
-[ 3031.221342] ch348 ttyUSB6: submitted 509 bytes for urb 1
-[ 3031.512113] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-[ 3031.512795] ch348 ttyUSB6: submitted 12 bytes for urb 0
-[ 3031.513359] ch348 ttyUSB7: submitted 5 bytes for urb 0
-[ 3031.513859] ch348 ttyUSB7: UART_IIR_THRI - unknown byte: 0x00
-[ 3031.530476] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-However, the receiving end sees different data (at around byte 513-518
-in my tests) than we wanted to send.
+Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+---
+ arch/x86/include/asm/mce.h    |  2 ++
+ arch/x86/kernel/cpu/mce/amd.c | 16 +++++++++++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
 
-My general flow is:
-- check if we have received THRE - if not: don't transmit more data on this=
- port
-- submit up to two URBs with up to 512 - 3 (CH348_TX_HDRSIZE) bytes to
-not exceed the HW TX FIFO size of 1024 bytes (page 1 in the datasheet)
-if the kfifo has enough data
+diff --git a/arch/x86/include/asm/mce.h b/arch/x86/include/asm/mce.h
+index 6c77c03139f7..387cf250525f 100644
+--- a/arch/x86/include/asm/mce.h
++++ b/arch/x86/include/asm/mce.h
+@@ -48,6 +48,7 @@
+ 
+ /* AMD-specific bits */
+ #define MCI_STATUS_TCC		BIT_ULL(55)  /* Task context corrupt */
++#define MCI_STATUS_PADDRVAL	BIT_ULL(54)  /* Valid System Physical Address */
+ #define MCI_STATUS_SYNDV	BIT_ULL(53)  /* synd reg. valid */
+ #define MCI_STATUS_DEFERRED	BIT_ULL(44)  /* uncorrected error, deferred exception */
+ #define MCI_STATUS_POISON	BIT_ULL(43)  /* access poisonous data */
+@@ -62,6 +63,7 @@
+  */
+ #define MCI_CONFIG_MCAX		0x1
+ #define MCI_CONFIG_FRUTEXT	BIT_ULL(9)
++#define MCI_CONFIG_PAVALID	BIT_ULL(11)
+ #define MCI_IPID_MCATYPE	0xFFFF0000
+ #define MCI_IPID_HWID		0xFFF
+ 
+diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
+index 5c4eb28c3ac9..6ac222aec28d 100644
+--- a/arch/x86/kernel/cpu/mce/amd.c
++++ b/arch/x86/kernel/cpu/mce/amd.c
+@@ -748,9 +748,9 @@ bool amd_mce_is_memory_error(struct mce *m)
+ }
+ 
+ /*
+- * AMD systems do not have an explicit indicator that the value in MCA_ADDR is
+- * a system physical address. Therefore, individual cases need to be detected.
+- * Future cases and checks will be added as needed.
++ * Some AMD systems have an explicit indicator that the value in MCA_ADDR is a
++ * system physical address. Individual cases though, need to be detected for
++ * other systems. Future cases will be added as needed.
+  *
+  * 1) General case
+  *	a) Assume address is not usable.
+@@ -764,11 +764,21 @@ bool amd_mce_is_memory_error(struct mce *m)
+  *	a) Reported in legacy bank 4 with extended error code (XEC) 8.
+  *	b) MCA_STATUS[43] is *not* defined as poison in legacy bank 4. Therefore,
+  *	   this bit should not be checked.
++ * 4) MCI_STATUS_PADDRVAL is set
++ *	a)Will provide a valid system physical address.
+  *
+  * NOTE: SMCA UMC memory errors fall into case #1.
+  */
+ bool amd_mce_usable_address(struct mce *m)
+ {
++	u64 smca_config;
++
++	rdmsrl(MSR_AMD64_SMCA_MCx_CONFIG(m->bank), smca_config);
++	if (smca_config & MCI_CONFIG_PAVALID) {
++		if(m->status & MCI_STATUS_PADDRVAL)
++			return true;
++		return false;
++	}
+ 	/* Check special northbridge case 3) first. */
+ 	if (!mce_flags.smca) {
+ 		if (legacy_mce_is_memory_error(m))
 
-If you want me to test something else then please let me know and I'll try =
-it.
-Otherwise I'll not dig much deeper, given the fact that I don't know
-how the firmware works (e.g. in which order they send the status to
-the host and what kind of state they hold internally) and we can still
-optimize this later.
+base-commit: d69139008b6dcd9c18483e956f61d187b0c214a2
+-- 
+2.43.0
 
-[...]
-> > The datasheet has a special note about DTR/TNOW (on page 8 for the CFG =
-pin):
-> > > Unified configuration: During power-on, if the CFG pin is
-> > > at a high level or not connected, all DTRx/ TNOWx pins
-> > > are configured to function as TNOW. CFG pin is low, all
-> > > DTRx/ TNOWx pins are configured for DTR function.
->
-> Got a link to the datasheet? Not sure what they refer to as TNOW.
-Sure, try the direct link [1] - and if it doesn't work try [2].
-It doesn't document any registers, so it's a high-level datasheet -
-nor a programmers handbook.
-
-> > On my test board the CFG pin is HIGH. From how I understand you, RTS
-> > should at least change (even if DTR is in TNOW mode).
-> > No matter what I do: both pins are always LOW (right after modprobe,
-> > after opening the console, closing the console again, ...).
-> > I even set up the vendor driver to test this: it's the same situation t=
-here.
->
-> I don't think the console code will assert DTR/RTS, you need to open the
-> port as a regular tty.
->
-> > If we need to make the DTR and RTS output something then the only way
-> > I know of right now is to switch them to GPIO mode (I have code for
-> > this but it's another ~300 lines patch on top of this).
->
-> That should not be needed. It looked like the vendor driver had some
-> variant of the usual request to control the modem lines. That should be
-> all that is needed.
->
-> Look at the vendor driver implementation of ch9344_tty_tiocmset() and
-> ch9344_port_dtr_rts().
-Thank you for the pointers. For today I -ETIMEDOUT, I'll take a look
-at these in the next few days.
-
-
-Best regards,
-Martin
-
-
-[0] https://github.com/montjoie/lava-tests/blob/5d4d83f2f71c37432dcdcc55ce3=
-e31e74d133737/test2a2.py
-[1] https://www.wch-ic.com/download/file?id=3D300
-[2] https://www.wch-ic.com/downloads/CH348DS1_PDF.html
 
