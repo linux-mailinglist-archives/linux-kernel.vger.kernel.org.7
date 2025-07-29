@@ -1,166 +1,136 @@
-Return-Path: <linux-kernel+bounces-748738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99A6B1457D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:57:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E87B1457E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:59:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE96F7A9797
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:55:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E5CA7A1A47
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:57:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564DF18A93F;
-	Tue, 29 Jul 2025 00:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309DC17CA17;
+	Tue, 29 Jul 2025 00:58:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ml6H2AT/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="xrwEEQVv"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A511017578;
-	Tue, 29 Jul 2025 00:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88F4A36D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753750624; cv=none; b=BXKEKiXfUpIVv3WVGV/bZVs1TC+hbEtbOnHSnAYfGtaSNHW4XGFumjTVa9oaMciSv+OuWtyVGIi3siMrs44rdGi2fOwaNq61ZQ79p+BtDgDEOp6C1KWNIwb7AHpUkLSALFXKRq3KduHHwYkxlYl11VzBHtvjGz3Q8EiUZVyRmTI=
+	t=1753750738; cv=none; b=V1XvSRnFTv2g6ZbMYQQJB5NCqSjbtHfXbXUDv0cDtod06aH2Pnx8qCZHL+/G3M+sfXUU0zLtBQ1WvwPd282mW7zcLDkXKOREoPEoZyITzZhZ7cWbIXOR54Xdh6eGn0FljtvakMiATGrafJV4y1DYXD88Is/FGKWDdrNiGa1tvCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753750624; c=relaxed/simple;
-	bh=sJxnHfWid00MWirjyyDq3Z9di88XPxdkYWN6cNbvApA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aLMUrYJVbNXedMRLpTMYcV96AkPzZrqDuBvD8XbFP4omePKn3cuXY05cKsAWwYQlM7iRKjslbmYYs/Hh1fQSQgQq/6/xGmxHBvaCg+yXYdYPJwHXqqrS9GdR4yGO0czAsgSCqSJKgMmx0FmLN+nBPOEoFe7WmpDaFM6jBQVmZhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ml6H2AT/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753750411;
-	bh=dnHlYLNAI+FO7+dy0eBPh4s4qLNT6XzxZ3vk2H16Vdo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ml6H2AT/J9tgZhW02LJKNzKeDFQI5VPxn9DYhfL0PedmXPw9HS1nymzPi75ZJDEGP
-	 tSK7JPOSqscZf/p46qTVVoC3AeDdOTZR/ESrkwL+chZdOXYU0v2tKHo5IuakYul2ps
-	 LOT1HG7DuzcY9l4h8LJXMwacLHNUTM5k06y3Vtg+/VXaJm3uKDz9dMFO88jbtHl9Dz
-	 wm4gVkE8zrxh4ETX96cHLu3i0e/wdywFUurTFmBIJ/vDxAux4Z4pCqIes3Ikr/0rVN
-	 xugy8LCckpVDHXsFXfPD36jA14UmuSqboawy1l9TcO4PYx3dENprNlAxZfWIm4Elr5
-	 ClMcK9VZQhBaw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brcKP2SBsz4w2S;
-	Tue, 29 Jul 2025 10:53:29 +1000 (AEST)
-Date: Tue, 29 Jul 2025 10:56:55 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Christian Borntraeger <borntraeger@de.ibm.com>, Janosch Frank
- <frankja@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>
-Cc: Andrew Donnellan <ajd@linux.ibm.com>, Jinjie Ruan
- <ruanjinjie@huawei.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Subject: linux-next: manual merge of the kvms390 tree with the tip tree
-Message-ID: <20250729105655.286c0496@canb.auug.org.au>
+	s=arc-20240116; t=1753750738; c=relaxed/simple;
+	bh=iRKluoG0ORmSSDqjWR4ijvki4535P/pxscuVsTiBCVk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ZevEo7WdUdtPaL81whOiTcJKLZL92sxcoXIRXnoP6QhWzne/oDvZZ8bqxFCGuGoxbinCJdOWgtsV5u6GgWnSg+rtqFK0KuXj/huLlE9ECLiiZ7nuXXZES7/Vp2IGxbVH/G/hagw7NNyh2uO5GO0i8MYoCOfAeAdXAeWMg/w+/o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=xrwEEQVv; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753750733; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=8sHiU/z1+EfhzcvKq8hAl8DbAdb9A/SIystch4PdxfY=;
+	b=xrwEEQVve1hdA7jvf2x78zvLftnNc7oSXsyb08K9sz45qxTk2ofcEPWhyoPpJeDrT+N44ncLGhT+xbJp5jShxIgeFj3RViQ4oE8x4y+rebetnn2ZvgGsKDWVOP49ReOwi5MxMNJioIqkUD/gJRN6JAmvNxfF8/GMjbKdPu/8zfM=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WkNec9L_1753750730 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 29 Jul 2025 08:58:50 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  David Hildenbrand
+ <david@redhat.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Zi Yan
+ <ziy@nvidia.com>,  Matthew Brost <matthew.brost@intel.com>,  Rakie Kim
+ <rakie.kim@sk.com>,  Byungchul Park <byungchul@sk.com>,  Gregory Price
+ <gourry@gourry.net>,  Alistair Popple <apopple@nvidia.com>,
+  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  kernel-team@meta.com,
+ Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH] mempolicy: Clarify what RECLAIM_ZONE means
+In-Reply-To: <20250728145109.1524733-1-joshua.hahnjy@gmail.com> (Joshua Hahn's
+	message of "Mon, 28 Jul 2025 07:51:07 -0700")
+References: <20250728145109.1524733-1-joshua.hahnjy@gmail.com>
+Date: Tue, 29 Jul 2025 08:58:49 +0800
+Message-ID: <87tt2v24om.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gGq5Ha+JLfCAcA+77HlDgu/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=ascii
 
---Sig_/gGq5Ha+JLfCAcA+77HlDgu/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Joshua Hahn <joshua.hahnjy@gmail.com> writes:
 
-Hi all,
+> On Mon, 28 Jul 2025 09:44:06 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
+>
+>> Hi, Joshua,
+>> 
+>> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+>> 
+>> > The zone_reclaim_mode API controls reclaim behavior when a node runs out of
+>> > memory. Contrary to its user-facing name, it is internally referred to as
+>> > "node_reclaim_mode". This is slightly confusing but there is not much we can
+>> > do given that it has already been exposed to userspace (since at least 2.6).
+>> >
+>> > However, what we can do is to make sure the internal description of what the
+>> > bits inside zone_reclaim_mode aligns with what it does in practice.
+>> > Setting RECLAIM_ZONE does indeed run shrink_inactive_list, but a more holistic
+>> > description would be to explain that zone reclaim modulates whether page
+>> > allocation (and khugepaged collapsing) prefers reclaiming & attempting to
+>> > allocate locally or should fall back to the next node in the zonelist.
+>> >
+>> > Change the description to clarify what zone reclaim entails.
+>> >
+>> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+>> > ---
+>> >  include/uapi/linux/mempolicy.h | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+>> > index 1f9bb10d1a47..24083809d920 100644
+>> > --- a/include/uapi/linux/mempolicy.h
+>> > +++ b/include/uapi/linux/mempolicy.h
+>> > @@ -69,7 +69,7 @@ enum {
+>> >   * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+>> >   * ABI.  New bits are OK, but existing bits can never change.
+>> >   */
+>> > -#define RECLAIM_ZONE	(1<<0)	/* Run shrink_inactive_list on the zone */
+>> > +#define RECLAIM_ZONE	(1<<0)	/* Prefer reclaiming & allocating locally */
+>> >  #define RECLAIM_WRITE	(1<<1)	/* Writeout pages during reclaim */
+>> >  #define RECLAIM_UNMAP	(1<<2)	/* Unmap pages during reclaim */
+>> >  
+>> >
+>> > base-commit: 25fae0b93d1d7ddb25958bcb90c3c0e5e0e202bd
+>
+> Hi Ying, thanks for your review, as always!
+>
+>> Please consider the document of zone_reclaim_mode in
+>> Documentation/admin-guide/sysctl/vm.rst too.
+>
+> Yes, will do. Along with SJ's comment, I think that the information in the
+> admin-guide should be sufficient enough to explain what these bits do, so
+> I think my patch is not very necessary.
+>
+>> And, IIUC, RECLAIM_ZONE doesn't mean "locally" exactly.  It's legal to
+>> bind to some node other than "local node".
+>
+> You are correct, it seems you can also reclaim on non-local nodes once you
+> go further down in the zonelist. I think my intent with the new comment was just
+> to indicate a preference to reclaim and allocate on the *current* node, as
+> opposed to falling back to the next node in the zonelist.
+>
+> With that said, I think your comment along with SJ's feedback have gotten me
+> to understand that we proably don't need this change : -) 
 
-Today's linux-next merge of the kvms390 tree got a conflict in:
+TBH, I think that it's good to make some change to the comments.
+Because IMHO, the original comments are bound to some specific
+implementation details.  Some more general words may be better for the
+user space API description.
 
-  include/linux/entry-common.h
-
-between commit:
-
-  a70e9f647f50 ("entry: Split generic entry into generic exception and sysc=
-all entry")
-
-from the tip tree and commit:
-
-  ee4a2e08c101 ("entry: Add arch_in_rcu_eqs()")
-
-from the kvms390 tree.
-
-I fixed it up (I used the former version of this file and applied the
-following merge fix patch) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Tue, 29 Jul 2025 10:49:47 +1000
-Subject: [PATCH] fix up for "entry: Add arch_in_rcu_eqs()"
-
-interacting with "entry: Split generic entry into generic exception and
-syscall entry" from the tip tree.
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- include/linux/irq-entry-common.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
-
-diff --git a/include/linux/irq-entry-common.h b/include/linux/irq-entry-com=
-mon.h
-index 0cd828b4a444..d643c7c87822 100644
---- a/include/linux/irq-entry-common.h
-+++ b/include/linux/irq-entry-common.h
-@@ -49,6 +49,22 @@ static __always_inline void arch_enter_from_user_mode(st=
-ruct pt_regs *regs);
- static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs=
-) {}
- #endif
-=20
-+/**
-+ * arch_in_rcu_eqs - Architecture specific check for RCU extended quiescent
-+ * states.
-+ *
-+ * Returns: true if the CPU is potentially in an RCU EQS, false otherwise.
-+ *
-+ * Architectures only need to define this if threads other than the idle t=
-hread
-+ * may have an interruptible EQS. This does not need to handle idle thread=
-s. It
-+ * is safe to over-estimate at the cost of redundant RCU management work.
-+ *
-+ * Invoked from irqentry_enter()
-+ */
-+#ifndef arch_in_rcu_eqs
-+static __always_inline bool arch_in_rcu_eqs(void) { return false; }
-+#endif
-+
- /**
-  * enter_from_user_mode - Establish state when coming from user mode
-  *
---=20
-2.50.1
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gGq5Ha+JLfCAcA+77HlDgu/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIHFcACgkQAVBC80lX
-0GxYMAgAo5KjWiLR3I9lVyZsZzL+hpVUNg1Fu9DsGGXv8xDWVQQkbIKyn8B5sERQ
-/RPooFJEY7QLVvuBJb81ja7lgQlk6rNDMBmCpIs6MIbSvkaoLtd78jUOSYuWzFtx
-qh1iitfeLrGZWK+qMOddLvJ39IvaX6kRUNsfZ952tCbosNgCAJp6X5Pda1EZgyIi
-vYN8zPJVwRC6H/pwP+ELBta+FmgjenfUfZTo18kqVwuIupBVUAbYzA5HlAC7qZqH
-7xj9HM4JHf6jQQQc4WGWwr8v4rVG5W6nmlYRsMoTSBAqG/qIG7q3qCS79awHtx9k
-/ceWS4z4YVAPxd1EZN2YHdYpx6wMNw==
-=hXE/
------END PGP SIGNATURE-----
-
---Sig_/gGq5Ha+JLfCAcA+77HlDgu/--
+Best Regards,
+Huang, Ying
 
