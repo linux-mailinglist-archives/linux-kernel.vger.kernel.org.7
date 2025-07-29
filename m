@@ -1,199 +1,128 @@
-Return-Path: <linux-kernel+bounces-749915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AFCAB154B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:36:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1CDB154BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:38:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D20D189E88D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:36:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9331649AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E04724676D;
-	Tue, 29 Jul 2025 21:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3739A24676D;
+	Tue, 29 Jul 2025 21:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="LolU6kF2"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qW5ruKUE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A40221554
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7C81581EE;
+	Tue, 29 Jul 2025 21:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753824963; cv=none; b=kTqzSlBRMX8PxTvGgedNKS+DDgQFOCizGgO0qZx/mXwyIbszAlK4p0nCQ9f1r/ZYEuugI99k7OAQMYfB5JOw8X6DGoN2Qxd9/MFs/n9rlAUnaoKTeeeZg7idtNP8eaWuZMmA7BdsJBZ4rWqOMnLKPJKVhvt3stV6ExQamf4ingo=
+	t=1753825099; cv=none; b=j/TBFUm+Oe1LHkcy6foLrMCvynG+EzJahaQSeZoGBluQJKOf7glgJS7n0fcA2ju5RkfQhKUOel4TzT3m+fspFo9AUFsgzYzl9BwBEXfINmDmKn7rrfr2vIrqpIWlWJSS8KB5/ZipE+Kdl7+8IZZkUhrnNLaWHhAeA5hlhLPXF94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753824963; c=relaxed/simple;
-	bh=TrgIz2OT4qDkw7/yxDSJfKcyMf8vlrlfJceE81V2yjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gu0NHjkz0rXuY9s97zD3tDyKZxeOhk04JHM3cT/mwEru984WdjqEguzNrkYdpgiEsnQZkvCFQCZxfH8JqYAxY5chBAVi2SteB4y7w4foYdSz7dpmssn+wK3+hzs1fo6lcWBqbdpDqCrwyJCIBEOBHLE/BVFPaDdkp7h46tSGV5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=LolU6kF2; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-879c737bcebso12117139f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753824959; x=1754429759; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T6TTijnB+mf1Tx70AUpgzd27gcsp61CTxKy/bu5Mf0k=;
-        b=LolU6kF2PVWI0kgEhS5mW5462kJx3eljcqMhAbCGLyX1BpiwDeEG+I1Q9KytT0iJJ3
-         jduKHPyfeqArddaLQiis1m7CkEBR3LfkaB8a8EVhCN04792Rtkmyn5MJ76A+bG3rcp7E
-         +vKWSK8VWEdos6YZIIbrvU+AHL0girNTzqwTLYseRvG70FlULzMpibFRvcP73IXG7mKl
-         6kLriF/4PIO+2cCzA4IzU6c1tf9hT522KhKqmMrTnI5SZE+g6q51W86L8r5SZZZ2aXmb
-         Q0zwqj+nMiGc7aj80SjHVuJ7IZ0QMQBCocf1ePZUkuiBOh9ZjxGs31qzDCx2Tm2JC+/h
-         35qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753824959; x=1754429759;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T6TTijnB+mf1Tx70AUpgzd27gcsp61CTxKy/bu5Mf0k=;
-        b=k6a6MGF9vACdbBpkCC72FnJcFNY2Q9aAGqjXscKxuhcuSwOsYWXFMRb0azP90O7ZIr
-         CFK2uR6iIQtRo/GIPdfgvOhl4AqunpYpFcDt8L+ROtsQzMp8gA61+/kt/S2gobDPw1Hw
-         VKn9wZ9cyF6CpG7oCoLSrW7mAxoa2/1EtL/6VGjfUyLyB+VvmrSfnrsjTSF1lGL0nucH
-         YwJN2L6fxPhnBh8Z+B0VecHZpB9K04radgMzv+pd1iG+CVfnkkoBDQMovIh0UtIKsRFo
-         sVUZAnLtC5tfODkkW2bLCS/2yiC14Z8WAhc93u1h0EvVUlGZlrIJFBuM1c4Zdp716m2b
-         SUCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWqwdK29ouXc39/fSKMlnVw0xvi8sMxuu59WsCJIfRPXAyHf70F4D3iKYUUo4RtSAcFHxtSNSKRBkSbRQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJ+QugC6f6wD/6kf/sgpj/8yYI3af1UCs26sLp3Hu+/4Mele+Q
-	f0q7aPlB9vxVDxqtQQ8h4h0c+D5Ngafz1Hm26MxqgHnfbTwEOSQos+JN1N0HBJWvyaI=
-X-Gm-Gg: ASbGncurUvzwLUc6ocCXGIdekeqwCYZRk4R2B/OOVIFOidETw5NYDJT10LwdwBfLCDC
-	HZ+cxS3+PduxQFZhxtG4RBBZEXARKyDfH0aE7dMh4h6UL9s5AteLNHX8uy4PS/ElfqmoGkt1oDZ
-	wAAkt6fRxPIPfICto+YHGGEb3w350hI7kMnwVS5BrJpwmaHmltV67jUOaXiGKkG9EAFHY73nEbn
-	qtkMOuOsEIteibbqqep6E7Agx/1/0oHgPDQ1FTZBK1YcweG22YVQF2oX6t+nweY7Ll0qTQar0MK
-	/sCUdt4Xt1KeeSUsc0sJ49Q7HFrWmU/FfuEElmf4qjiOCsbzfLdJVX6jkhy4yi5567WYKaK7xv2
-	7zLUg56rUyKaar3dDj2MwvtUin9UkGsiOZaclewAJfQuQafZ6ICTgE72dedEupQ==
-X-Google-Smtp-Source: AGHT+IH9yMoT3SyI/T66ZtxcPnZNldk6FIOoyhUi5kHT3q4ZE7dn1hQwAMIQq+oM/1pZl9ARWn7tQA==
-X-Received: by 2002:a92:db50:0:b0:3e3:b3d0:26cf with SMTP id e9e14a558f8ab-3e3e97254b5mr53179065ab.10.1753824959544;
-        Tue, 29 Jul 2025 14:35:59 -0700 (PDT)
-Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-508c9343739sm2781465173.69.2025.07.29.14.35.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 14:35:59 -0700 (PDT)
-Message-ID: <79fde2dc-2370-4ec8-94eb-57715cfc2806@riscstar.com>
-Date: Tue, 29 Jul 2025 16:35:57 -0500
+	s=arc-20240116; t=1753825099; c=relaxed/simple;
+	bh=RbiX5C9ZNSVgqywJgaDdT3SU5ZxrC7DIKMkAgMjIHqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kGbgx5Q7mGw55U0dK2mEEtItXZZIdrbnjLbbduWF57bhUwsg/tU1ujhhDdxkItOFtIMa5Jy69lQ0JJF3eXMobZX6kZBAf4irRTfNsUqBCPLlVDA6VMTE8Tp1LBxyi5lwFcIWoJy9K7s+MBYVStCqoDJSK9s4kXtotxL1KKv4F0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qW5ruKUE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A2FEC4CEF8;
+	Tue, 29 Jul 2025 21:38:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753825099;
+	bh=RbiX5C9ZNSVgqywJgaDdT3SU5ZxrC7DIKMkAgMjIHqM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qW5ruKUEVp1+6NVwIxqqua6H+75nhw53XjZF2b+D4+Y4ulEiX4Y+9oykKNozGyW7A
+	 ED7Or2wprVZxFf00cp486qOXJuu1LvYw3yfa3/A3riRvSi0KKehyVLr0FBm9VFyvml
+	 xNRF13XdK/RX6UeWx6metByEufKtswSAVa6jbzIYd1i5N2C3Sf1nWnZV12b5zMQaj+
+	 T8XOJo4ebvSNaCNiPesKmK6vbny5LUvnAwIs8JYoQ2vIn7Go8kcsirGv1EQKlKfY5E
+	 M+gqIIipH/qhyZeCHbOPg/Q5pQ17qRdi4qzs+iekH63QRdYmBepGutZO+xpre3ZmAt
+	 sTp/+YwHvqZTA==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-6152faff57eso492143a12.1;
+        Tue, 29 Jul 2025 14:38:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUx4E/+uqMDRJ4aiY1BCAgycKSBsyxqpExOlcEtWgToIubnuJdmFogK8boQpos2pGGqUng+Sji/LEp03YOa@vger.kernel.org, AJvYcCWEc14+OJKfaB9aWZVipB3p7XOBUgqQahHANaLVfEGgfaT/zidHbgWesy/OvI5J1N+epUzMHexLcUHq@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0bRv9FuJTWl1jEOwGscLHVrAtHYHm2286mxWeZMzlBFybG+GT
+	LfPH2jfbOtaQYLT8vbDtkd5nItCcGeRQbUEZ3IL4ua4MBHohhI7rTJgiHkE1od/oFyv38mcU3Xo
+	PnsqcgY2hmn7lAMFEpXMUK/BU/wFqLg==
+X-Google-Smtp-Source: AGHT+IGvBZ0btfZgJFG9HmTwKXOD3/MSQXfb+Qs2Tts90trK7pL2qm2BE0USLaxZ5PIPuS6byX7/Tet5ZaY65/Y+43k=
+X-Received: by 2002:a17:907:9802:b0:af2:4a7e:ad64 with SMTP id
+ a640c23a62f3a-af8fd6e5f65mr111254066b.2.1753825097587; Tue, 29 Jul 2025
+ 14:38:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: serial: 8250: allow "main" and "uart" as
- clock names
-To: Conor Dooley <conor@kernel.org>
-Cc: Yixun Lan <dlan@gentoo.org>, gregkh@linuxfoundation.org,
- jirislaby@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, lkundrak@v3.sk,
- devicetree@vger.kernel.org, linux-serial@vger.kernel.org,
- spacemit@lists.linux.dev, linux-mediatek@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20250728220002.599554-1-elder@riscstar.com>
- <20250728225319-GYA900803@gentoo>
- <20250729-reshuffle-contented-e6def76b540b@spud>
- <5c3f9f10-6a9d-45b4-80c0-09402b35bf47@riscstar.com>
- <20250729-clench-hastily-b80f11f73336@spud>
-Content-Language: en-US
-From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250729-clench-hastily-b80f11f73336@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250727180100.15961-1-kjw1627@gmail.com>
+In-Reply-To: <20250727180100.15961-1-kjw1627@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 29 Jul 2025 16:38:04 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+J+6gxOzsXe9t9==GGJ721jrbNhaGMHZyfCTxkM8B0eA@mail.gmail.com>
+X-Gm-Features: Ac12FXy8QPjafdy9u2G_MjJ36oKb7qYl68BAVkZFJ4Q8P3yCBh8fAC5XN8o-02g
+Message-ID: <CAL_Jsq+J+6gxOzsXe9t9==GGJ721jrbNhaGMHZyfCTxkM8B0eA@mail.gmail.com>
+Subject: Re: [PATCH] of: address: Fix bug to get the highest cpu address of
+ subtrees for dma
+To: Joonwon Kang <kjw1627@gmail.com>
+Cc: saravanak@google.com, nsaenzjulienne@suse.de, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 7/29/25 4:08 PM, Conor Dooley wrote:
-> On Tue, Jul 29, 2025 at 04:04:05PM -0500, Alex Elder wrote:
->> On 7/29/25 12:54 PM, Conor Dooley wrote:
->>> On Tue, Jul 29, 2025 at 06:53:19AM +0800, Yixun Lan wrote:
->>>> Hi Alex,
->>>>
->>>> On 17:00 Mon 28 Jul     , Alex Elder wrote:
->>>>> There are two compatible strings defined in "8250.yaml" that require
->>>>> two clocks to be specified, along with their names:
->>>>>     - "spacemit,k1-uart", used in "spacemit/k1.dtsi"
->>>>>     - "nxp,lpc1850-uart", used in "lpc/lpc18xx.dtsi"
->>>>>
->>>>> When only one clock is used, the name is not required.  However there
->>>>> are two places that do specify a name:
->>>>>     - In "mediatek/mt7623.dtsi", the clock for the "mediatek,mtk-btif"
->>>>>       compatible serial device is named "main"
->>>>>     - In "qca/ar9132.dtsi", the clock for the "ns8250" compatible
->>>>>       serial device is named "uart"
->>>>>
->>>>> In commit d2db0d7815444 ("dt-bindings: serial: 8250: allow clock 'uartclk'
->>>>> and 'reg' for nxp,lpc1850-uart"), Frank Li added the restriction that two
->>>>> named clocks be used for the NXP platform mentioned above.  Extend that
->>>>> so that the two named clocks used by the SpacemiT platform are similarly
->>>>> restricted.
->>>>>
->>>>> Add "main" and "uart" as allowed names when a single clock is specified.
->>>>>
->>>>> Fixes: 2c0594f9f0629 ("dt-bindings: serial: 8250: support an optional second clock")
->>>>> Reported-by: kernel test robot <lkp@intel.com>
->>>>> Closes: https://lore.kernel.org/oe-kbuild-all/202507160314.wrC51lXX-lkp@intel.com/
->>>>> Signed-off-by: Alex Elder <elder@riscstar.com>
->>>>> ---
->>>>>    .../devicetree/bindings/serial/8250.yaml      | 19 ++++++++++++++-----
->>>>>    1 file changed, 14 insertions(+), 5 deletions(-)
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/serial/8250.yaml b/Documentation/devicetree/bindings/serial/8250.yaml
->>>>> index e46bee8d25bf0..cef52ebd8f7da 100644
->>>>> --- a/Documentation/devicetree/bindings/serial/8250.yaml
->>>>> +++ b/Documentation/devicetree/bindings/serial/8250.yaml
->>>>> @@ -61,11 +61,17 @@ allOf:
->>>>>                - const: uartclk
->>>>>                - const: reg
->>>> ..
->>>>>        else:
->>>> would it be better to drop this 'else', and moving following 'if' block
->>>> to the same level with "nxp,lpc1850-uart"?
->>>>
->>>> the reason here would avoid too many indentions if add more constraint in
->>>> the future if other SoC uart need different clock-names..
->>>
->>> I agree, it's more typical to do it that way I think to boot.
->>>
->>> Also, why is there a k1/lpc conditional bit that is not part of the
->>> allOf in addition to the bits in the allOf? Can that get merged with the
->>> allOf please?
->>
->> Are you talking about the blank line here?
-> 
-> No, I'm talking about what's down around line 270 in the binding.
+On Sun, Jul 27, 2025 at 1:01=E2=80=AFPM Joonwon Kang <kjw1627@gmail.com> wr=
+ote:
+>
+> The function of_dma_get_max_cpu_address() for a device node should choose
+> the highest cpu address among the ones that nodes can access.
+> However, there was a bug of choosing the lowest cpu address and this
+> commit is to fix it.
 
-Oh wow that's in a weird spot, and it might be redundant?
+Please provide a test case in the DT unittests or at least details on
+the DT that is affected by the bug.
 
-Anyway I'll work on getting that fixed too before I send
-my next version.
-
-					-Alex
-
->>
->>      then:
->>        oneOf:
->>          - required: [ clock-frequency ]
->>          - required: [ clocks ]
->>                             <------ this blank line
->>    - if:
->>        properties:
->>          compatible:
->>            contains:
->>              const: nxp,lpc1850-uart
->>      then:
->>
->> I didn't notice that before.  It got inserted with commit
->> d2db0d7815444 ("dt-bindings: serial: 8250: allow clock
->> 'uartclk' and 'reg' for nxp,lpc1850-uart").
->>
->> If so, yes I'll remove that as well when I update the patch to
->> get rid of the else as Yixun suggests.
->>
->> Greg won't take this for a couple weeks so I'll hold off sending
->> v2 for a while.
->>
->> 					-Alex
->>
-
+> Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+> ---
+>  drivers/of/address.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index f0f8f0dd191c..5e984e0d372b 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -969,6 +969,7 @@ phys_addr_t __init of_dma_get_max_cpu_address(struct =
+device_node *np)
+>  {
+>         phys_addr_t max_cpu_addr =3D PHYS_ADDR_MAX;
+>         struct of_range_parser parser;
+> +       phys_addr_t max_subtree_max_addr =3D PHYS_ADDR_MAX;
+>         phys_addr_t subtree_max_addr;
+>         struct device_node *child;
+>         struct of_range range;
+> @@ -992,10 +993,17 @@ phys_addr_t __init of_dma_get_max_cpu_address(struc=
+t device_node *np)
+>
+>         for_each_available_child_of_node(np, child) {
+>                 subtree_max_addr =3D of_dma_get_max_cpu_address(child);
+> -               if (max_cpu_addr > subtree_max_addr)
+> -                       max_cpu_addr =3D subtree_max_addr;
+> +               if (subtree_max_addr =3D=3D PHYS_ADDR_MAX)
+> +                       continue;
+> +
+> +               if (max_subtree_max_addr =3D=3D PHYS_ADDR_MAX)
+> +                       max_subtree_max_addr =3D subtree_max_addr;
+> +               else
+> +                       max_subtree_max_addr =3D max(max_subtree_max_addr=
+, subtree_max_addr);
+>         }
+>
+> +       max_cpu_addr =3D min(max_cpu_addr, max_subtree_max_addr);
+> +
+>         return max_cpu_addr;
+>  }
+>
+> --
+> 2.46.0
+>
 
