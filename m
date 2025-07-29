@@ -1,591 +1,898 @@
-Return-Path: <linux-kernel+bounces-748855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D44AB146CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:25:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 329ADB146D4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:26:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4474117AAE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:25:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2263D1AA0D27
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:27:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76BC821E091;
-	Tue, 29 Jul 2025 03:25:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7946A220F32;
+	Tue, 29 Jul 2025 03:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nEUZkaO7"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AXeAqdHo"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C788217648;
-	Tue, 29 Jul 2025 03:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930CC21D3F0;
+	Tue, 29 Jul 2025 03:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753759538; cv=none; b=l8mP1UrDOju/UaxBzZ3brYAEdUIiu4jrqt0z8fUa+G/j9oAJSrN2XZamBMo+LQL25oSkHa8O0hRwfoDiQMl+JA8brApuxkNr5NeZ36AfMi5GayFZqVYcydnfjhPoRT5gm5UJwJQfRQolKbw3EKhN7ZlURz+JMjOvTA39mkNOVXw=
+	t=1753759573; cv=none; b=igR09afgIf7SkG0Vedv02IaNMCA2LsAvwAIJHaavvbO24Jb18pBJl2L1c3lTDp/zdoB0ZNUAXbX1eXdk6yAZWVHQ9jBRzySA+SpbcUdrR9hTRXqQOvnWQ5VxJqKu9PqqhCLcDjouD+4i+PWH1hCsU7Z04BUxjJceeSisUh+gz1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753759538; c=relaxed/simple;
-	bh=OFla0Mlmsh3wjN+tGt5cYV/GIFOp7KH80aIZduegpO0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NgfU8ITmgtM06PmWi1HfNnA8B3Cp+anruFwlfpZbjFkEROb5HbtRNy98w8iXWGResKTU07fizgM7j1PtOIzxuzn4pVlM5bG2zvuxb8FCiiTawy2qxR/6UGdi4cb7nbqlZ4Oy55T+uT7xAMIP4m3SolfN1W/UQTnellAE3Y27iKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nEUZkaO7; arc=none smtp.client-ip=209.85.219.48
+	s=arc-20240116; t=1753759573; c=relaxed/simple;
+	bh=FWp2RCuYNClRdyW/L3DeYd4iVb7SgekzHHKLTkVEoYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=slC2Ucte1d3lF4df4Ir+1mIyof6Wub2NS78bqCQSfLhEl8ELRI+O8isbznzoecuu7yKPhFcENT9QpfFTqIDMzOZU9WbAUQi84ps66aBBKBpqSyV5rueeho0ycotBNAx4dD19TeVwwJWmWLkKnnLYq0Ps0LVdyMZM2lqcKIkpXZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AXeAqdHo; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70736b2ea12so12065686d6.1;
-        Mon, 28 Jul 2025 20:25:35 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b350704f506so478097a12.0;
+        Mon, 28 Jul 2025 20:26:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753759535; x=1754364335; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GbIlBRAqip9v9VzvrBRfzRMelfLWLyATzgaHfrw2TLY=;
-        b=nEUZkaO7N4iAieoZ3gkiINarC8pw7PVnHbRfKLENj4YR9Df6IkIwUyS/Rk3Qv825Dt
-         D3U9iXptdguyNfx9jErQ3WmCAmiZETm1qs27O5iHtJS44jemIX/FLBxlar4O/ZY9jiO/
-         htT0e/xKrTcptYhY3JElEfk9RPHMbd1VO1I84EL0IEiU9rkf1JEgdkfGQoDblzu0hUi5
-         rBQqYyjVeu7qGOkzNpcsSA12ALbJgjfmV6oYeR3WPSTUh7qhy/ZUMZJ6KdWTXOL1amYy
-         +HJsFdwOfUABCJYyFFYZPccdLd1GgHDm/RWax+Ll7Vh7vzMZ67xrYEX41E+JEp/2Ja7f
-         fOkA==
+        d=gmail.com; s=20230601; t=1753759571; x=1754364371; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=fJhDGMY3+SHgK+DsqFkqtVChty3WL6CRvwpNWxOavcU=;
+        b=AXeAqdHoMlXXEvPdboKSoMKNYO6wkxSwUV+2JXUsIG6SdEK9t0NtXGrMo/mU0AI7Qz
+         6RG8uHkXvIMjJl9tHMCBraAH9VV3zHTTb/9dsMbRW5anp0JOMWcIQttiWd+NNeMJ1V/Z
+         OIYod7fXQLq945cxIlyV+JW6BiAi5YWjmt7XwYjFXdbsNPa3UxhXK1WhUe+FxVmZ844A
+         r+4JdE9OBHh4PpP63gA4z0BXuu9BBX+jsM7XBjaSxvl5u2JhLYqxvVU+JLJcwKhBKmEQ
+         K2T/IYQFxtI4FmaBOu8a/uT2NDcgzyOX3FNSgLJn3t0QYGx4BP5LQ/+tUpN0EepRV68h
+         k6Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753759535; x=1754364335;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GbIlBRAqip9v9VzvrBRfzRMelfLWLyATzgaHfrw2TLY=;
-        b=vWQ/IvGsZevBTWkafz7yEAyDRbDcQIOR1wqPQDH8kUaAMu9k73AQPDfgsYfjr6OoJP
-         aRimKF8WPn0wGBr9XS9F/90hk+Bjh3Lk3FTRRBhnzcvItR62SNJKXxIzMJYSQWgX986H
-         jkBnj+/upJVJBMOQDBpz0kh2V5kyusdItLb+0Zz9AUAuq7LQNqx5YAZVEf2DxPhbD88D
-         QeVDS0IOxL7vgG7RsVwYpTTYKeZfYNhOwF53btx8XbiWZvu2p3IXKoEKZLtVa2zXy1F8
-         Y/3PhAJv4fYaxpDdTeChFvV7nY+J0jpNR0WdgiUnBJQvuj9jVNeUccHH//LiSHzhSWPT
-         kJ+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUdWR5ta1eg5wvsE/E/cz1DPCG4WkNYYP6z+S8AVf51ikIqhMsU0GlmsyWCA8fPplJtVaMm8QYtvTflFENtUdfvBZ8Gag==@vger.kernel.org, AJvYcCVPms3eBQRCRVZjn5ZhX5lVyzA00licYDf5F88QqDMFSweZa/GORYw36swwmTsJuePmcw7hNmMc0+Y=@vger.kernel.org, AJvYcCWTTU/ziuO2NDEjAC7GHCRP858YSdyFFAk33yOiraGOzjcJ/QyiNSIjtD6YwDG+OIAZKcltDrOkc4llpg==@vger.kernel.org, AJvYcCXYUPITPhKbJZQvpq67JuAIBRiuHtndAYAAG2lno0ydUQQWu6kZGOw/TtAAfZ1ZqNLiWzixVKIYgaqPt18=@vger.kernel.org, AJvYcCXwnzqFafSgd1LaZKViNROuabsiLGCbHZhWA9GIhJTN1jHq2x6qrzdKUhLNxcE8whxJOJ5cvIag0CL/uKxj@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlJ3Exusk07lHmv8GtqZRVck4DIH/ugubFLmmBSzYkDdCc7kiy
-	1U/6kfFUWxyPc+Ke0twp/4iWrJ3n2IpUa9700Jn+yBP00l++cHQ9x+r9pA9DowKD3SUMO3QsOUf
-	ehs4jZJ4L8PENDqdS/Od4brp46Ul70pw=
-X-Gm-Gg: ASbGncvogzeHY6N9aux5X9t+2902g7/uWl4VMJiyOFq6oWI+nAa16vWeYnwSruqfeH2
-	9hyvgBnQFy7B3HQhczrGa/l+t1FxGMOCmLyJRG+DrUVRPsBXJXJ/RUq5fGpU55a4o4fYLeLu5yg
-	i8tAI81erYk4SqXoTyXv3nJ+lzqX6ctwJB0dEGOfW/ybYxyHXCwGvsf8xHzO827a93bIp2JTF0v
-	DdL2B3s
-X-Google-Smtp-Source: AGHT+IF28oeQ5EC3SvmeQ7s1YAG7oH88F359RBBpmvHYa3VzX/vX7Yx4sGBcoGJaQf2PjB2Wy+U/fwyC5xN5sNZpO/E=
-X-Received: by 2002:a05:6214:2a45:b0:704:f94e:b5d8 with SMTP id
- 6a1803df08f44-707205ec6famr173957776d6.48.1753759534954; Mon, 28 Jul 2025
- 20:25:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753759571; x=1754364371;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fJhDGMY3+SHgK+DsqFkqtVChty3WL6CRvwpNWxOavcU=;
+        b=atrbwrsCHFIk+qlGXdewtXpjoPg21zMSxgPvootIjYIEPL0KdlMgkM091njZTfbsP2
+         ZSzEJ3i7hTK0otM74FXhZDXYGMmj9jXE4QwlbafROpLY54AoWmOFgXKDF3LvyS0yzrye
+         kqj4KcsnqhWk1NISeecHXPP4qQxEDVFpz93zSTZ+MPnsnLaot28k3K9AQ6YcWzz5qoNR
+         E3gdwXvS1yAoh1K/bhIJcPjO0/HmSNRjGVO1TkyJj4B1qtXXSHAe/P6MRRGo/Bk0uF6R
+         Uf8w29epKv64cbYAS/KbYHAI6swK5ylgrTrfZpG+XgPuCdS+xL3Z3L4mGMDYyplZVv0J
+         vRCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0mPTvz0LLYjF/0YRFWtPS0NWiw9C5ZJbHCr5KxyPZBaw1qPjXU2PamIuBve6/6HYiEQNUbJaoJPwj@vger.kernel.org, AJvYcCWWvfxWmpzyNmlkbF5n5rcWsdZZGoM0BtmiLcVyFA5HK6bddZVbMztfkBh46aduKAkV+eC3g1PFHCjA@vger.kernel.org, AJvYcCWXCke2ifwk6NQo1xjRZ2nFpZ381FJDt/LbxPDYz7ab9LW0+WJbuS8S/KIFyzc3T7pwyjE+8KesHlvy42l+@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVceGWPZw9iJtCu7pkXyLsEK10ntqz6ORpYzXBy/8GbXXdS3CJ
+	sGMm+Go+2/xUuvp+ZqsHpQJUmfetndoxjr7NKDvoToi7O5jeNgqx4rEI
+X-Gm-Gg: ASbGncsxwF9xd9SrthtNMNhBppp4WIgT+DehTdW0WfyemG9AMHfJINwhX1CCsgDk+G3
+	t6PkA8htDmgR1V3imPe9l2ph0RteoC9CAaev+UB1FH4SgV+WKBhdk1GY3qi+HYReswVJ63znbyv
+	LtM8SHD8AQQij2kpK02HvWza5ThbkcwcRnSCf9rvzhE7dM46u6laAmWPJ53aZ2x6CcimUf0RPlD
+	08VFyQqHLcTL7ssuLItN0QXjErnh70/l1nKLvYOH5G9cCCEiEbLLcTANh2aXDtjiSZDF4Rkixsy
+	l9Rz9zoiq7Shi5gx2ecRllFv/DnqGpFj210Vz47jmor1Tti8wEjwluG4JqJXZMbQZgXCzT6mf1R
+	khYEPCHV6HfZgDPseDoHlJg==
+X-Google-Smtp-Source: AGHT+IGPtt8vz8+sB4B0sjlHkFl/f9zuH3Bem/2i8GmRwffEhpiaTTu29z3USetDrG+I326nzRO+cA==
+X-Received: by 2002:a17:902:f64f:b0:234:1e11:95a3 with SMTP id d9443c01a7336-24063d61ddamr27674815ad.13.1753759570583;
+        Mon, 28 Jul 2025 20:26:10 -0700 (PDT)
+Received: from dixit ([2401:4900:1c7e:9464:4ee2:7e58:1508:18c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2401f3ef888sm35464435ad.106.2025.07.28.20.26.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 20:26:09 -0700 (PDT)
+Date: Tue, 29 Jul 2025 08:56:00 +0530
+From: Dixit Parmar <dixitparmar19@gmail.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] iio: magnetometer: add support for Infineon TLV493D
+ 3D Magentic sensor
+Message-ID: <aIg_SClXq0pO69iH@dixit>
+References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
+ <20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
+ <141967ee-22f4-4b15-a8da-e8cef25828b4@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726204041.516440-1-derekjohn.clark@gmail.com>
- <20250726204041.516440-4-derekjohn.clark@gmail.com> <eac46383-c54c-419e-b63e-c2fd003f2b6c@gmx.de>
-In-Reply-To: <eac46383-c54c-419e-b63e-c2fd003f2b6c@gmx.de>
-From: Derek John Clark <derekjohn.clark@gmail.com>
-Date: Mon, 28 Jul 2025 20:25:24 -0700
-X-Gm-Features: Ac12FXzRGm2dkGImgF6tRhAvDMmxDasHtizaX7JrYqNNj37mTsJda3JLX7_LgR0
-Message-ID: <CAFqHKT=YRoSsThEbqXLPHR_1M3=zRHw9f758JKm++7TfN8ZWKA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] platform/x86: (ayn-ec) Add RGB Interface
-To: Armin Wolf <W_Armin@gmx.de>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Hans de Goede <hansg@kernel.org>, Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Alok Tiwari <alok.a.tiwari@oracle.com>, David Box <david.e.box@linux.intel.com>, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>, pavel@kernel.org, linux-leds@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <141967ee-22f4-4b15-a8da-e8cef25828b4@baylibre.com>
 
-On Sat, Jul 26, 2025 at 4:59=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrote:
->
-> Am 26.07.25 um 22:40 schrieb Derek J. Clark:
->
-> > Adds an EC controlled LED Multicolor Class Device for controlling the
-> > RGB rings around the joysticks.
-> >
-> > The EC provides a single register for each of the colors red, green, an=
-d
-> > blue, as well as a mode switching register. The EC accepts values
-> > [0-255] for all colors. There are two available effects: breathe, which=
- is
-> > the default when the device is started, and monocolor. When resuming fr=
-om
-> > sleep the user selected effect will be overwritten by the EC, so the
-> > driver retains the last setting and resets on resume. When setting a
-> > color, each color register is set before a final "write" code is sent t=
-o
-> > the device. The EC may briefly reflect the "write" code when writing, b=
-ut
-> > quickly changes to the "monocolor" value once complete. The driver
-> > interprets both of these values as "monocolor" in _show to simplify the
-> > sysfs exposed to the user.
-> >
-> > Two custom attributes are added to the standard LED parent device:
-> > effect, a RW file descriptor used to set the effect, and effect_index,
-> > which enumerates the available valid options.
-> >
-> > Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
+On Sat, Jul 26, 2025 at 03:44:03PM -0500, David Lechner wrote:
+> On 7/26/25 4:37 AM, Dixit Parmar wrote:
+> > The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
+> > applications includes joysticks, control elements (white goods,
+> > multifunction knops), or electric meters (anti tampering) and any
+> > other application that requires accurate angular measurements at
+> > low power consumptions.
+> > 
+> > The Sensor is configured over I2C, and as part of Sensor measurement
+> > data it provides 3-Axis magnetic fields and temperature core measurement.
+> > 
+> > The driver supports raw value read and buffered input via external trigger
+> > to allow streaming values with the same sensing timestamp.
+> > 
+> > The device can be configured in to different operating modes by optional
+> > device-tree "mode" property. Also, the temperature sensing part requires
+> > raw offset captured at 25°C and that can be specified by "temp-offset"
+> > optional device-tree property.
+> > 
+> > While sensor has interrupt pin multiplexed with I2C SCL pin. But for bus
+> > configurations interrupt(INT) is not recommended, unless timing constraints
+> > between I2C data transfers and interrupt pulses are monitored and aligned.
+> > 
+> > The Sensor's I2C register map and mode information is described in product
+> > User Manual[1].
+> > 
+> > Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
+> > [1] https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-UserManual-v01_03-EN.pdf
+> > 
+> > Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
 > > ---
-> >   drivers/platform/x86/Kconfig  |   3 +
-> >   drivers/platform/x86/ayn-ec.c | 285 +++++++++++++++++++++++++++++++++=
-+
-> >   2 files changed, 288 insertions(+)
-> >
-> > diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfi=
-g
-> > index 4819bfcffb6b..85dfb88cca6f 100644
-> > --- a/drivers/platform/x86/Kconfig
-> > +++ b/drivers/platform/x86/Kconfig
-> > @@ -308,6 +308,9 @@ config AYN_EC
-> >       tristate "AYN x86 devices EC platform control"
-> >       depends on ACPI
-> >       depends on HWMON
-> > +     depends on NEW_LEDS
-> > +     select LEDS_CLASS
-> > +     select LEDS_CLASS_MULTICOLOR
-> >       help
-> >         This is a driver for AYN and Tectoy x86 handheld devices. It pr=
-ovides
-> >         temperature monitoring, manual fan speed control, fan curve con=
-trol,
-> > diff --git a/drivers/platform/x86/ayn-ec.c b/drivers/platform/x86/ayn-e=
-c.c
-> > index 466cc33adcb0..25f748d7db18 100644
-> > --- a/drivers/platform/x86/ayn-ec.c
-> > +++ b/drivers/platform/x86/ayn-ec.c
-> > @@ -28,6 +28,8 @@
-> >   #include <linux/hwmon.h>
-> >   #include <linux/init.h>
-> >   #include <linux/kernel.h>
-> > +#include <linux/led-class-multicolor.h>
-> > +#include <linux/leds.h>
-> >   #include <linux/module.h>
-> >   #include <linux/platform_device.h>
-> >   #include <linux/sysfs.h>
-> > @@ -68,6 +70,16 @@
-> >   #define AYN_SENSOR_PROC_TEMP_REG    0x09 /* CPU Core */
-> >   #define AYN_SENSOR_VCORE_TEMP_REG   0x08 /* vCore */
-> >
-> > +/* EC Controlled RGB registers */
-> > +#define AYN_LED_MC_RED_REG   0xB0 /* Range 0x00-0xFF */
-> > +#define AYN_LED_MC_GREEN_REG 0xB1 /* Range 0x00-0xFF */
-> > +#define AYN_LED_MC_BLUE_REG  0xB2 /* Range 0x00-0xFF */
-> > +#define AYN_RGB_EFFECT_REG   0xB3
+> >  drivers/iio/magnetometer/Kconfig   |  14 +
+> >  drivers/iio/magnetometer/Makefile  |   2 +
+> >  drivers/iio/magnetometer/tlv493d.c | 606 +++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 622 insertions(+)
+> > 
+> > diff --git a/drivers/iio/magnetometer/Kconfig b/drivers/iio/magnetometer/Kconfig
+> > index 3debf1320ad1..e0070dccc751 100644
+> > --- a/drivers/iio/magnetometer/Kconfig
+> > +++ b/drivers/iio/magnetometer/Kconfig
+> > @@ -246,6 +246,20 @@ config SI7210
+> >  	  To compile this driver as a module, choose M here: the module
+> >  	  will be called si7210.
+> >  
+> > +config TLV493D
+> > +	tristate "Infineon TLV493D Low-Power 3D Magnetic Sensor"
+> > +	depends on I2C
+> > +	select REGMAP_I2C
+> > +	select IIO_BUFFER
+> > +	select IIO_TRIGGERED_BUFFER
+> > +	help
+> > +	  Say Y here to add support for the Infineon TLV493D-A1B6 Low-
+> > +	  Power 3D Megnetic Sensor.
 > > +
-> > +/* RGB effect modes */
-> > +#define AYN_RGB_EFFECT_BREATHE               0x00
-> > +#define AYN_RGB_EFFECT_MONOCOLOR     0x55
-> > +#define AYN_RGB_EFFECT_WRITE         0xAA
-> >
-> >   /* Handle ACPI lock mechanism */
-> >   #define ACPI_LOCK_DELAY_MS 500
-> > @@ -86,7 +98,9 @@ int ayn_pwm_curve_registers[10] =3D {
-> >   };
-> >
-> >   struct ayn_device {
-> > +     struct led_classdev *led_cdev;
-> >       u32 ayn_lock; /* ACPI EC Lock */
-> > +     u8 rgb_effect;
-> >   } drvdata;
-> >
-> >   struct thermal_sensor {
-> > @@ -103,6 +117,33 @@ static struct thermal_sensor thermal_sensors[] =3D=
- {
-> >       {}
-> >   };
-> >
-> > +#define DEVICE_ATTR_RW_NAMED(_name, _attrname)               \
-> > +     struct device_attribute dev_attr_##_name =3D {         \
-> > +             .attr =3D { .name =3D _attrname, .mode =3D 0644 }, \
-> > +             .show =3D _name##_show,                        \
-> > +             .store =3D _name##_store,                      \
-> > +     }
+> > +	  This driver can also be compiled as a module.
+> > +	  To compile this driver as a module, choose M here: the module
+> > +	  will be called tlv493d.
 > > +
-> > +#define DEVICE_ATTR_RO_NAMED(_name, _attrname)               \
-> > +     struct device_attribute dev_attr_##_name =3D {         \
-> > +             .attr =3D { .name =3D _attrname, .mode =3D 0444 }, \
-> > +             .show =3D _name##_show,                        \
-> > +     }
+> >  config TI_TMAG5273
+> >  	tristate "TI TMAG5273 Low-Power Linear 3D Hall-Effect Sensor"
+> >  	depends on I2C
+> > diff --git a/drivers/iio/magnetometer/Makefile b/drivers/iio/magnetometer/Makefile
+> > index 9297723a97d8..39c62dd06db8 100644
+> > --- a/drivers/iio/magnetometer/Makefile
+> > +++ b/drivers/iio/magnetometer/Makefile
+> > @@ -35,4 +35,6 @@ obj-$(CONFIG_SI7210)			+= si7210.o
+> >  
+> >  obj-$(CONFIG_TI_TMAG5273)		+= tmag5273.o
+> >  
+> > +obj-$(CONFIG_TLV493D)	+= tlv493d.o
+> 
+> We try to keep these in alphabetical order.
 >
-> Please use DEVICE_ATTR_RW()/DEVICE_ATTR_RO() directly.
->
+Ofcourse, I considered TI_TMAG5273 as whole. Will move it above that.
 > > +
-> > +/* Handle ACPI lock mechanism */
-> > +#define ACPI_LOCK_DELAY_MS 500
->
-> You already defined ACPI_LOCK_DELAY_MS earlier, please remove.
->
-> > +
-> > +/* RGB effect values */
-> > +enum RGB_EFFECT_OPTION {
-> > +     BREATHE,
-> > +     MONOCOLOR,
-> > +};
-> > +
-> > +static const char *const RGB_EFFECT_TEXT[] =3D {
-> > +     [BREATHE] =3D "breathe",
-> > +     [MONOCOLOR] =3D "monocolor",
-> > +};
->
-> No capslock for variables please.
->
-> > +
-> >   static bool lock_global_acpi_lock(void)
-> >   {
-> >       return ACPI_SUCCESS(acpi_acquire_global_lock(ACPI_LOCK_DELAY_MS,
-> > @@ -528,10 +569,253 @@ static struct attribute *ayn_sensors_attrs[] =3D=
- {
-> >
-> >   ATTRIBUTE_GROUPS(ayn_sensors);
-> >
+> >  obj-$(CONFIG_YAMAHA_YAS530)		+= yamaha-yas530.o
+> > diff --git a/drivers/iio/magnetometer/tlv493d.c b/drivers/iio/magnetometer/tlv493d.c
+> > new file mode 100644
+> > index 000000000000..f230d6409a4b
+> > --- /dev/null
+> > +++ b/drivers/iio/magnetometer/tlv493d.c
+> > @@ -0,0 +1,606 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
 > > +/**
-> > + * rgb_effect_write() - Set the RGB effect stored in drvdata.rgb_effec=
-t.
+> > + * Driver for the Infineon TLV493D Low-Power 3D Magnetic Sensor
+> > + *
+> > + * Copyright (C) 2025 Dixit Parmar <dixitparmar19@gmail.com>
+> > + *
 > > + */
-> > +static int rgb_effect_write(void)
-> > +{
-> > +     return write_to_ec(AYN_RGB_EFFECT_REG, drvdata.rgb_effect);
+> > +
+> > +#include <linux/bits.h>
+> > +#include <linux/bitfield.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/i2c.h>
+> > +#include <linux/module.h>
+> > +#include <linux/pm_runtime.h>
+> > +#include <linux/regmap.h>
+> > +#include <linux/regulator/consumer.h>
+> > +#include <linux/types.h>
+> > +#include <linux/units.h>
+> > +
+> > +#include <linux/iio/buffer.h>
+> > +#include <linux/iio/iio.h>
+> > +#include <linux/iio/trigger_consumer.h>
+> > +#include <linux/iio/triggered_buffer.h>
+> > +
+> > +#define TLV493D_RD_REG_BX	0x00
+> > +#define TLV493D_RD_REG_BY	0x01
+> > +#define TLV493D_RD_REG_BZ	0x02
+> > +#define TLV493D_RD_REG_TEMP	0x03
+> > +#define TLV493D_RD_REG_BX2	0x04
+> > +#define TLV493D_RD_REG_BZ2	0x05
+> > +#define TLV493D_RD_REG_TEMP2	0x06
+> > +#define TLV493D_RD_REG_RES1	0x07
+> > +#define TLV493D_RD_REG_RES2	0x08
+> > +#define TLV493D_RD_REG_RES3	0x09
+> > +#define TLV493D_RD_REG_MAX	0x0a
+> > +#define TLV493D_WR_REG_RES	0x00
+> > +#define TLV493D_WR_REG_MODE1	0x01
+> > +#define TLV493D_WR_REG_RES2	0x02
+> > +#define TLV493D_WR_REG_MODE2	0x03
+> > +#define TLV493D_WR_REG_MAX	0x04
+> > +#define TLV493D_VAL_MAG_X_AXIS_MSB	GENMASK(7, 0)
+> > +#define TLV493D_VAL_MAG_X_AXIS_LSB	GENMASK(7, 4)
+> > +#define TLV493D_VAL_MAG_Y_AXIS_MSB	GENMASK(7, 0)
+> > +#define TLV493D_VAL_MAG_Y_AXIS_LSB	GENMASK(3, 0)
+> > +#define TLV493D_VAL_MAG_Z_AXIS_MSB	GENMASK(7, 0)
+> > +#define TLV493D_VAL_MAG_Z_AXIS_LSB	GENMASK(3, 0)
+> > +#define TLV493D_VAL_TEMP_MSB		GENMASK(7, 4)
+> > +#define TLV493D_VAL_TEMP_LSB		GENMASK(7, 0)
+> > +#define TLV493D_VAL_FRAME_COUNTER	GENMASK(3, 2)
+> > +#define TLV493D_VAL_CHANNEL	GENMASK(1, 0)
+> > +#define TLV493D_VAL_PD_FLAG	BIT(4)
+> > +#define TLV493D_RD_REG_RES1_WR_MASK	GENMASK(4, 3)
+> > +#define TLV493D_RD_REG_RES2_WR_MASK	GENMASK(7, 0)
+> > +#define TLV493D_RD_REG_RES3_WR_MASK	GENMASK(4, 0)
+> > +#define TLV493D_MODE1_MOD_FAST	BIT(1)
+> > +#define TLV493D_MODE1_MOD_LOW	BIT(0)
+> > +#define TLV493D_MODE2_TEMP_CTRL	BIT(7)
+> > +#define TLV493D_MODE2_LP_PERIOD	BIT(6)
+> > +#define TLV493D_MODE2_PARITY_CTRL	BIT(5)
+> > +
+> > +#define SET_BIT(b, bit)	(b |= bit)
+> > +#define CLR_BIT(b, bit)	(b &= ~bit)
+> 
+> I think most readers of the code would fare better without these macros.
+> 
+> And it could simplify things to make a
+> 
+> #define TLV493D_MODE1_MOD	GENMASK(1, 0)
+> 
+> and use FIELD_PREP() instead of 
+> 
+Ack.
+> > +
+> > +#define TLV493D_DATA_X_GET(b)	\
+> > +	sign_extend32(FIELD_GET(TLV493D_VAL_MAG_X_AXIS_MSB, b[TLV493D_RD_REG_BX]) << 4 | \
+> > +			(FIELD_GET(TLV493D_VAL_MAG_X_AXIS_LSB, b[TLV493D_RD_REG_BX2]) >> 4), 11)
+> > +#define TLV493D_DATA_Y_GET(b)	\
+> > +	sign_extend32(FIELD_GET(TLV493D_VAL_MAG_Y_AXIS_MSB, b[TLV493D_RD_REG_BY]) << 4 | \
+> > +			FIELD_GET(TLV493D_VAL_MAG_Y_AXIS_LSB, b[TLV493D_RD_REG_BX2]), 11)
+> > +#define TLV493D_DATA_Z_GET(b)	\
+> > +	sign_extend32(FIELD_GET(TLV493D_VAL_MAG_Z_AXIS_MSB, b[TLV493D_RD_REG_BZ]) << 4 | \
+> > +			FIELD_GET(TLV493D_VAL_MAG_Z_AXIS_LSB, b[TLV493D_RD_REG_BZ2]), 11)
+> > +#define TLV493D_DATA_TEMP_GET(b)	\
+> > +	sign_extend32(FIELD_GET(TLV493D_VAL_TEMP_MSB, b[TLV493D_RD_REG_TEMP]) << 8 | \
+> > +			FIELD_GET(TLV493D_VAL_TEMP_LSB, b[TLV493D_RD_REG_TEMP2]), 11)
+> > +
+> > +enum tlv493d_channels {
+> > +	AXIS_X = 0,
+> > +	AXIS_Y,
+> > +	AXIS_Z,
+> > +	TEMPERATURE,
+> 
+> These are very generic names. Please add TLV493D_ prefix.
+> 
+Indeed.
 > > +};
 > > +
-> > +/**
-> > + * rgb_effect_read() - Read the RGB effect and store it in drvdata.rgb=
-_effect.
+> > +enum tlv493d_op_mode {
+> > +	TLV493D_OP_MODE_POWERDOWN = 0,
+> > +	TLV493D_OP_MODE_FAST,
+> > +	TLV493D_OP_MODE_LOWPOWER,
+> > +	TLV493D_OP_MODE_ULTRA_LOWPOWER,
+> > +	TLV493D_OP_MODE_MASTERCONTROLLED,
+> > +	TLV493D_OP_MODE_MAX,
+> > +};
+> > +
+> > +struct tlv493d_mode {
+> > +	u8 m;
+> > +	u32 sleep_us;
+> > +};
+> > +
+> > +struct tlv493d_data {
+> > +	struct device *dev;
+> > +	struct i2c_client *client;
+> > +	struct mutex lock;
+> 
+> Lock needs a comment describing what it is supposed to protect.
+> 
+Ack.
+> > +	struct regmap *map;
+> > +	u8 mode;
+> > +	u8 wr_regs[TLV493D_WR_REG_MAX];
+> > +	s32 temp_offset;
+> > +};
+> > +
+> > +/*
+> > + * Different mode has different measurement cycle time, this time is
+> > + * used in deriving the sleep and timemout while reading the data from
+> > + * sensor in polling.
+> > + * Power-down mode: No measurement.
+> > + * Fast mode: Freq:3.3 KHz. Measurement time:305 usec.
+> > + * Low-power mode: Freq:100 Hz. Measurement time:10 msec.
+> > + * Ultra low-power mode: Freq:10 Hz. Measurement time:100 msec.
+> > + * Master controlled mode: Freq:3.3 Khz. Measurement time:305 usec.
 > > + */
-> > +static int rgb_effect_read(void)
+> > +static struct tlv493d_mode modes[TLV493D_OP_MODE_MAX] = {
+> 
+> Let's add the tlv493d_ prefix to modes.
+> 
+Will rename is to tlv493d_modes_info.
+> > +	{.m = TLV493D_OP_MODE_POWERDOWN, .sleep_us = 0 },
+> > +	{.m = TLV493D_OP_MODE_FAST, .sleep_us = 305 },
+> > +	{.m = TLV493D_OP_MODE_LOWPOWER, .sleep_us = 10 * USEC_PER_MSEC },
+> > +	{.m = TLV493D_OP_MODE_ULTRA_LOWPOWER, .sleep_us = 100 * USEC_PER_MSEC },
+> > +	{.m = TLV493D_OP_MODE_MASTERCONTROLLED, .sleep_us = 305 },
+> > +};
+> > +
+> > +/*
+> > + * The datasheet mentions the sensor supports only direct byte-stream write starting from
+> > + * register address 0x0. So for any modification to be made to any write registers, it must
+> > + * be written starting from the register address 0x0.
+> > + * I2C write operation should not contain register address in the I2C frame, it should
+> > + * contains only raw byte stream for the write registers. As below,
+> > + * I2C Frame: |S|SlaveAddr Wr|Ack|Byte[0]|Ack|Byte[1]|Ack|.....|Sp|
+> > + */
+> > +static int tlv493d_write_all_regs(struct tlv493d_data *data)
 > > +{
-> > +     int ret;
-> > +     long effect;
+> > +	int ret;
 > > +
-> > +     ret =3D read_from_ec(AYN_RGB_EFFECT_REG, 1, &effect);
-> > +     if (ret)
-> > +             return ret;
+> > +	if (!data || !data->client)
+> > +		return -EINVAL;
 > > +
-> > +     switch (effect) {
-> > +     case AYN_RGB_EFFECT_WRITE:
-> > +     case AYN_RGB_EFFECT_MONOCOLOR:
-> > +             drvdata.rgb_effect =3D AYN_RGB_EFFECT_WRITE;
-> > +             break;
-> > +     default:
-> > +             drvdata.rgb_effect =3D AYN_RGB_EFFECT_BREATHE;
->
-> You will need some locking around rgb_effect.
->
-> > +     }
+> > +	/*
+> > +	 * As regmap does not provide raw write API which perform I2C write without
+> > +	 * specifying register address, direct i2c_master_send() API is used.
+> > +	 */
+> > +	ret = i2c_master_send(data->client, data->wr_regs, ARRAY_SIZE(data->wr_regs));
+> > +	if (ret < 0) {
+> > +		dev_err(data->dev, "failed to write registers. error %d\n", ret);
+> > +		return ret;
+> > +	}
 > > +
-> > +     return 0;
+> > +	return 0;
 > > +}
 > > +
-> > +/**
-> > + * rgb_effect_store() - Store the given RGB effect and set it.
-> > + *
-> > + * @dev: parent device of the given attribute.
-> > + * @attr: The attribute to write to.
-> > + * @buf: Input value string from sysfs write.
-> > + * @count: The number of bytes written.
-> > + *
-> > + * Return: The number of bytes written, or an error.
-> > + */
-> > +static ssize_t rgb_effect_store(struct device *dev,
-> > +                             struct device_attribute *attr, const char=
- *buf,
-> > +                             size_t count)
+> > +static int tlv493d_set_operating_mode(struct tlv493d_data *data, u8 mode)
 > > +{
-> > +     int ret;
+> > +	if (!data)
+> > +		return -EINVAL;
 > > +
-> > +     ret =3D sysfs_match_string(RGB_EFFECT_TEXT, buf);
-> > +     if (ret < 0)
-> > +             return ret;
+> > +	u8 *reg_mode1 = &data->wr_regs[TLV493D_WR_REG_MODE1];
+> > +	u8 *reg_mode2 = &data->wr_regs[TLV493D_WR_REG_MODE2];
 > > +
-> > +     if (ret)
-> > +             drvdata.rgb_effect =3D AYN_RGB_EFFECT_WRITE;
-> > +     else
-> > +             drvdata.rgb_effect =3D AYN_RGB_EFFECT_BREATHE;
+> > +	switch (mode) {
+> > +	case TLV493D_OP_MODE_POWERDOWN:
+> > +		CLR_BIT(*reg_mode1, TLV493D_MODE1_MOD_FAST);
+> > +		CLR_BIT(*reg_mode1, TLV493D_MODE1_MOD_LOW);
+> > +		break;
 > > +
-> > +     ret =3D rgb_effect_write();
-> > +     if (ret)
-> > +             return ret;
+> > +	case TLV493D_OP_MODE_FAST:
+> > +		SET_BIT(*reg_mode1, TLV493D_MODE1_MOD_FAST);
+> > +		CLR_BIT(*reg_mode1, TLV493D_MODE1_MOD_LOW);
+> > +		break;
 > > +
-> > +     return count;
-> > +};
+> > +	case TLV493D_OP_MODE_LOWPOWER:
+> > +		CLR_BIT(*reg_mode1, TLV493D_MODE1_MOD_FAST);
+> > +		SET_BIT(*reg_mode1, TLV493D_MODE1_MOD_LOW);
+> > +		SET_BIT(*reg_mode2, TLV493D_MODE2_LP_PERIOD);
+> > +		break;
 > > +
-> > +/**
-> > + * rgb_effect_show() - Read the current RGB effect.
-> > + *
-> > + * @dev: parent device of the given attribute.
-> > + * @attr: The attribute to read.
-> > + * @buf: Buffer to read to.
-> > + *
-> > + * Return: The number of bytes read, or an error.
-> > + */
-> > +static ssize_t rgb_effect_show(struct device *dev,
-> > +                            struct device_attribute *attr, char *buf)
-> > +{
-> > +     int ret, i;
+> > +	case TLV493D_OP_MODE_ULTRA_LOWPOWER:
+> > +		CLR_BIT(*reg_mode1, TLV493D_MODE1_MOD_FAST);
+> > +		SET_BIT(*reg_mode1, TLV493D_MODE1_MOD_LOW);
+> > +		CLR_BIT(*reg_mode2, TLV493D_MODE2_LP_PERIOD);
+> > +		break;
 > > +
-> > +     ret =3D rgb_effect_read();
-> > +     if (ret)
-> > +             return ret;
+> > +	case TLV493D_OP_MODE_MASTERCONTROLLED:
+> > +		SET_BIT(*reg_mode1, TLV493D_MODE1_MOD_FAST);
+> > +		SET_BIT(*reg_mode1, TLV493D_MODE1_MOD_LOW);
+> > +		break;
 > > +
-> > +     switch (drvdata.rgb_effect) {
-> > +     case AYN_RGB_EFFECT_WRITE:
-> > +     case AYN_RGB_EFFECT_MONOCOLOR:
-> > +             i =3D MONOCOLOR;
-> > +             break;
-> > +     default:
-> > +             i =3D BREATHE;
-> > +             break;
-> > +     }
+> > +	default:
+> > +		dev_err(data->dev, "invalid mode configuration\n");
+> > +		return -EINVAL;
+> > +	}
 > > +
-> > +     return sysfs_emit(buf, "%s\n", RGB_EFFECT_TEXT[i]);
-> > +};
-> > +
-> > +static DEVICE_ATTR_RW_NAMED(rgb_effect, "effect");
-> > +
-> > +/**
-> > + * rgb_effect_show() - Display the RGB effects available.
-> > + *
-> > + * @dev: parent device of the given attribute.
-> > + * @attr: The attribute to read.
-> > + * @buf: Buffer to read to.
-> > + *
-> > + * Return: The number of bytes read, or an error.
-> > + */
-> > +static ssize_t rgb_effect_index_show(struct device *dev,
-> > +                                  struct device_attribute *attr, char =
-*buf)
-> > +{
-> > +     size_t count =3D 0;
-> > +     unsigned int i;
-> > +
-> > +     for (i =3D 0; i < ARRAY_SIZE(RGB_EFFECT_TEXT); i++)
-> > +             count +=3D sysfs_emit_at(buf, count, "%s ", RGB_EFFECT_TE=
-XT[i]);
-> > +
-> > +     buf[count - 1] =3D '\n';
-> > +
-> > +     return count;
+> > +	return tlv493d_write_all_regs(data);
 > > +}
 > > +
-> > +static DEVICE_ATTR_RO_NAMED(rgb_effect_index, "effect_index");
->
-> We might need to coordinate this with the LED subsystem maintainer. I CCe=
-d him so that he can
-> voice his opinion about those sysfs attributes. Personally i would move t=
-hose attributes below
-> the platform device.
->
-
-The main reason I added them to the LED interface is to make writing
-udev rules more intuitive. Quite a few folks using the DKMS version of
-this driver just want to set a specific color on boot (usually off).
-IMO it makes logical sense that all the settings related to the LEDs
-would be on the LED device. I'll wait for the response from your CC
-before sending a v4.
-
-> > +
-> > +/**
-> > + * ayn_led_mc_brightness_set() - Write the brightness for the RGB LED.
-> > + *
-> > + * @led_cdev: Parent LED device for the led_classdev_mc.
-> > + * @brightness: Brightness value to write [0-255].
-> > + */
-> > +static void ayn_led_mc_brightness_set(struct led_classdev *led_cdev,
-> > +                                   enum led_brightness brightness)
+> > +static int tlv493d_get_measurements(struct tlv493d_data *data, s16 *x, s16 *y,
+> > +				s16 *z, s16 *t)
 > > +{
-> > +     struct led_classdev_mc *led_cdev_mc =3D lcdev_to_mccdev(led_cdev)=
-;
-> > +     struct mc_subled s_led;
-> > +     int i, ret, val;
+> > +	u8 buff[7] = {0};
+> > +	int err, ret;
+> > +	struct tlv493d_mode *mode;
 > > +
-> > +     switch (drvdata.rgb_effect) {
-> > +     case AYN_RGB_EFFECT_WRITE:
-> > +     case AYN_RGB_EFFECT_MONOCOLOR:
-> > +             break;
-> > +     case AYN_RGB_EFFECT_BREATHE:
-> > +             return;
-> > +     }
->
-> This might confuse uses when they switch back to monocolor mode. I sugges=
-t that
-> you write the RGB values regardless of the currently selected effect.
->
-
-I'll test if this interferes with breathe mode. I wrote this driver a
-couple years ago as a DKMS module so I don't remember immediately if I
-had to add this mitigation to prevent switching to monocolor if the
-multi_index or brightness was written to. If that does turn out to be
-the case, should I cache the latest write until monocolor is set?
-
+> > +	if (!data)
+> > +		return -EINVAL;
 > > +
-> > +     led_cdev->brightness =3D brightness;
-> > +     for (i =3D 0; i < led_cdev_mc->num_colors; i++) {
-> > +             s_led =3D led_cdev_mc->subled_info[i];
-> > +             val =3D brightness * s_led.intensity / led_cdev->max_brig=
-htness;
->
-> Please check if you can use led_mc_calc_color_components() instead.
->
-> > +             ret =3D write_to_ec(s_led.channel, val);
-> > +             if (ret) {
-> > +                     dev_err(led_cdev->dev,
-> > +                             "Error setting brightness:  %d\n", ret);
-> > +                     return;
-> > +             }
-> > +     }
+> > +	guard(mutex)(&data->lock);
 > > +
-> > +     /* Must write mode again to change to set color */
-> > +     write_to_ec(AYN_RGB_EFFECT_REG, AYN_RGB_EFFECT_WRITE);
-> > +};
+> > +	ret = pm_runtime_resume_and_get(data->dev);
+> > +	if (ret < 0)
+> > +		return ret;
 > > +
-> > +/**
-> > + * ayn_led_mc_brightness_get() - Get the brightness for the RGB LED.
-> > + *
-> > + * @led_cdev: Parent LED device for the led_classdev_mc.
-> > + *
-> > + * Return: Current brightness.
-> > + */
-> > +static enum led_brightness ayn_led_mc_brightness_get(struct led_classd=
-ev *led_cdev)
-> > +{
-> > +     return led_cdev->brightness;
-> > +};
->
-> This looks strange, are you sure that you have to provide this callback?
-
-Hmm, maybe not.
-
+> > +	mode = &modes[data->mode];
 > > +
-> > +static struct attribute *ayn_led_mc_attrs[] =3D {
-> > +     &dev_attr_rgb_effect.attr,
-> > +     &dev_attr_rgb_effect_index.attr,
-> > +     NULL,
-> > +};
+> > +	/*
+> > +	 * Poll until data is valid,
+> > +	 * For a valid data TLV493D_VAL_CHANNEL bit of TLV493D_RD_REG_TEMP should be set to 0.
+> > +	 * The sampling time depends on the sensor mode. poll 3x the time of the sampling time.
+> > +	 */
+> > +	ret = read_poll_timeout(regmap_bulk_read, err, err ||
+> 
+> Why not regmap_read_poll_timeout()?
+> 
+We want to read all 7 register in single operation to make sure that we
+read it from the same measurement cycle. out of those 7 registers
+TLV493d_RD_REG_TEMP has a bit field TLV493D_VAL_CHANNEL which stats if
+the measurement cycle was complete or not. Per my understanding
+regmap_read_poll_timeout() does not support bulk/multi register read so,
+read_poll_timeout is used with regmap_bulk_read().
+> > +			FIELD_GET(TLV493D_VAL_CHANNEL, buff[TLV493D_RD_REG_TEMP]) == 0,
+> > +			mode->sleep_us, (3 * mode->sleep_us), false, data->map, TLV493D_RD_REG_BX,
+> > +			buff, ARRAY_SIZE(buff));
+> > +	if (ret) {
+> > +		dev_err(data->dev, "read poll timeout, error:%d", ret);
+> > +		goto out;
+> > +	}
+> > +	if (err) {
+> > +		dev_err(data->dev, "read data failed, error:%d\n", ret);
+> > +		ret = err;
+> > +		goto out;
+> > +	}
 > > +
-> > +static struct attribute_group ayn_led_mc_group =3D {
-> > +     .attrs =3D ayn_led_mc_attrs,
-> > +};
+> > +	*x = TLV493D_DATA_X_GET(buff);
+> > +	*y = TLV493D_DATA_Y_GET(buff);
+> > +	*z = TLV493D_DATA_Z_GET(buff);
+> > +	*t = TLV493D_DATA_TEMP_GET(buff);
 > > +
-> > +struct mc_subled ayn_led_mc_subled_info[] =3D {
-> > +     {
-> > +             .color_index =3D LED_COLOR_ID_RED,
-> > +             .brightness =3D 0,
-> > +             .intensity =3D 0,
-> > +             .channel =3D AYN_LED_MC_RED_REG,
-> > +     },
-> > +     {
-> > +             .color_index =3D LED_COLOR_ID_GREEN,
-> > +             .brightness =3D 0,
-> > +             .intensity =3D 0,
-> > +             .channel =3D AYN_LED_MC_GREEN_REG,
-> > +     },
-> > +     {
-> > +             .color_index =3D LED_COLOR_ID_BLUE,
-> > +             .brightness =3D 0,
-> > +             .intensity =3D 0,
-> > +             .channel =3D AYN_LED_MC_BLUE_REG,
-> > +     },
-> > +};
->
-> Please initialize the intensity fields with the current RGB register valu=
-es
-> during probe. Also please declare the array as static.
->
-
-Good idea, thanks.
-
-> > +
-> > +struct led_classdev_mc ayn_led_mc =3D {
-> > +     .led_cdev =3D {
-> > +             .name =3D "ayn:rgb:joystick_rings",
-> > +             .brightness =3D 0,
->
-> Does the EC support some kind of "RGB off" state? If not then please init=
-ialize the brightness field
-> with 0 if the RGB value during probe is not 0x000000 and 255 otherwise. A=
-lso please declare the LED device
-> as static.
->
-
-Off is done by setting all color registers to 0. Simple enough to add.
-I'm thinking something like:
-
-if (red || green || blue)
-        led_cdev.brightness =3D 255;
-else
-        led_cdev.brightness =3D 0;
-
-> > +             .max_brightness =3D 255,
-> > +             .brightness_set =3D ayn_led_mc_brightness_set,
-> > +             .brightness_get =3D ayn_led_mc_brightness_get,
-> > +             .color =3D LED_COLOR_ID_RGB,
-> > +     },
-> > +     .num_colors =3D ARRAY_SIZE(ayn_led_mc_subled_info),
-> > +     .subled_info =3D ayn_led_mc_subled_info,
-> > +};
->
-> Should the LED be disabled during suspend? If yes then please set the LED=
-_CORE_SUSPENDRESUME flag on the LED device.
->
-
-The EC takes over during suspend and switches back to breathe mode.
-Resume exists to return to user settings.
-
-> > +
-> > +static int ayn_ec_resume(struct platform_device *pdev)
-> > +{
-> > +     struct led_classdev *led_cdev =3D drvdata.led_cdev;
-> > +     int ret;
-> > +
-> > +     ret =3D rgb_effect_write();
-> > +     if (ret)
-> > +             return ret;
-> > +
-> > +     ayn_led_mc_brightness_set(led_cdev, led_cdev->brightness);
-> > +
-> > +     return 0;
+> > +out:
+> > +	pm_runtime_mark_last_busy(data->dev);
+> > +	pm_runtime_put_autosuspend(data->dev);
+> > +	return ret;
 > > +}
->
-> Using regmap would make this much easier.
->
 > > +
-> >   static int ayn_ec_probe(struct platform_device *pdev)
-> >   {
-> >       struct device *dev =3D &pdev->dev;
-> >       struct device *hwdev;
-> > +     int ret;
+> > +static int tlv493d_init(struct tlv493d_data *data)
+> > +{
+> > +	int ret;
+> > +	u8 buff[TLV493D_RD_REG_MAX];
 > > +
-> > +     ret =3D devm_led_classdev_multicolor_register(dev, &ayn_led_mc);
-> > +     if (ret)
-> > +             return ret;
+> > +	if (!data)
+> > +		return -EINVAL;
 > > +
-> > +     ret =3D devm_device_add_group(ayn_led_mc.led_cdev.dev, &ayn_led_m=
-c_group);
-> > +     if (ret)
-> > +             return ret;
+> > +	/*
+> > +	 * The sensor initialization requires below steps to be followed,
+> > +	 * 1. Power-up sensor.
+> > +	 * 2. Read and store read-registers map (0x0-0x9).
+> > +	 * 3. Copy values from read reserved registers to write reserved fields (0x0-0x3).
+> > +	 * 4. Set operating mode.
+> > +	 * 5. Write to all registers.
+> > +	 */
+> > +	ret = regmap_bulk_read(data->map, TLV493D_RD_REG_BX, buff, ARRAY_SIZE(buff));
+> > +	if (ret) {
+> > +		dev_err(data->dev, "bulk read failed, error %d\n", ret);
+> > +		return ret;
+> > +	}
 > > +
-> > +     drvdata.led_cdev =3D &ayn_led_mc.led_cdev;
-> > +     ret =3D rgb_effect_read();
-> > +     if (ret)
-> > +             return ret;
-> >
-> >       hwdev =3D devm_hwmon_device_register_with_info(dev, "aynec", NULL=
-,
-> >                                                    &ayn_ec_chip_info,
-> > @@ -544,6 +828,7 @@ static struct platform_driver ayn_ec_driver =3D {
-> >               .name =3D "ayn-ec",
-> >       },
-> >       .probe =3D ayn_ec_probe,
-> > +     .resume =3D ayn_ec_resume,
->
-> Please do not use the legacy PM callback, instead use DEFINE_SIMPLE_DEV_P=
-M_OPS() and the driver.pm field.
->
-
-Okay, I wasn't aware of the newer callbacks. I'll look them up.
-
-Thanks,
-Derek
-
-> Thanks,
-> Armin Wolf
->
-> >   };
-> >
-> >   static struct platform_device *ayn_ec_device;
+> > +	data->wr_regs[0] = 0; /* Write register 0x0 is reserved. Does not require to be updated.*/
+> > +	data->wr_regs[1] = buff[TLV493D_RD_REG_RES1] & TLV493D_RD_REG_RES1_WR_MASK;
+> > +	data->wr_regs[2] = buff[TLV493D_RD_REG_RES2] & TLV493D_RD_REG_RES2_WR_MASK;
+> > +	data->wr_regs[3] = buff[TLV493D_RD_REG_RES3] & TLV493D_RD_REG_RES3_WR_MASK;
+> > +
+> > +	ret = tlv493d_set_operating_mode(data, data->mode);
+> > +	if (ret < 0) {
+> > +		dev_err(data->dev, "failed to set operating mode\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static int tlv493d_parse_dt(struct tlv493d_data *data)
+> > +{
+> > +	struct device_node *node;
+> > +	u32 val = 0;
+> > +	int ret;
+> > +
+> > +	if (!data)
+> > +		return -EINVAL;
+> > +
+> > +	node = data->dev->of_node;
+> > +
+> > +	/* Optional 'mode' property to set sensor operation mode */
+> > +	ret = of_property_read_u32(node, "mode", &val);
+> > +	if (ret < 0 || val >= TLV493D_OP_MODE_MAX) {
+> > +		/* Fallback to default mode if property is missing or invalid */
+> > +		data->mode = TLV493D_OP_MODE_MASTERCONTROLLED;
+> > +	} else {
+> > +		data->mode = val;
+> > +	}
+> 
+> As mentioned in the dt-bindings review, we already control this paritially
+> with the power management runtime, so having devicetree specify a power mode
+> doesn't really make sense.
+> 
+> In fact, since the mode determines the sample rate, if we ever implemented
+> handling the interrupt pin, it would make sense for the sampling_freqency
+> to control mode rather than hard-coding it.
+> 
+Agreed, will drop the mode and temp-offset setting in DT.
+> > +
+> > +	/*
+> > +	 * Read temperature offset (raw value at 25°C). If not specified,
+> > +	 * default to 340.
+> > +	 */
+> > +	ret = of_property_read_u32(node, "temp-offset", &val);
+> > +	if (ret)
+> > +		val = 340;
+> 
+> As mentioned in the dt-bindings review, this sounds like a calibbias rather
+> than something that should be hard-coded in a devicetree.
+> 
+Agreed, will drop it.
+> > +	/*
+> > +	 * The above is a raw offset; however, IIO expects a single effective offset.
+> > +	 * Since final temperature includes an additional fixed 25°C (i.e. 25000 m°C),
+> > +	 * we compute a combined offset using scale = 1100 (1.1 * 1000).
+> > +	 */
+> > +	data->temp_offset = -val + (s32)div_u64(25000, 1100);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int tlv493d_read_raw(struct iio_dev *indio_dev, const struct iio_chan_spec *chan,
+> > +		int *val, int *val2, long mask)
+> > +{
+> > +	struct tlv493d_data *data = iio_priv(indio_dev);
+> > +	s16 x, y, z, t;
+> > +	int ret;
+> > +
+> > +	switch (mask) {
+> > +	case IIO_CHAN_INFO_PROCESSED:
+> 
+> Processed is not the same as raw. Just drop it.
+> 
+Ack.
+> > +	case IIO_CHAN_INFO_RAW:
+> > +		ret = tlv493d_get_measurements(data, &x, &y, &z, &t);
+> > +		if (ret) {
+> > +			dev_err(data->dev, "failed to read sensor data\n");
+> 
+> The error gets returned to usespace, so we don't need to log errors here.
+> 
+Ack.
+> > +			return ret;
+> > +		}
+> > +		/* Return raw values for requested channel */
+> > +		switch (chan->address) {
+> > +		case AXIS_X:
+> > +			*val = x;
+> > +			return IIO_VAL_INT;
+> > +		case AXIS_Y:
+> > +			*val = y;
+> > +			return IIO_VAL_INT;
+> > +		case AXIS_Z:
+> > +			*val = z;
+> > +			return IIO_VAL_INT;
+> > +		case TEMPERATURE:
+> > +			*val = t;
+> > +			return IIO_VAL_INT;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	case IIO_CHAN_INFO_SCALE:
+> > +		switch (chan->type) {
+> > +		case IIO_MAGN:
+> > +			/*
+> > +			 * Magnetic field scale: 0.0098 mTesla (i.e. 9.8 µT)
+> > +			 * Expressed as fractional: 98/10 = 9.8 µT.
+> > +			 */
+> > +			*val = 98;
+> > +			*val2 = 10;
+> 
+> We use SI units, so this needs to be gauss, not tesela.
+> 
+Sure, Is there any documentation/reference this details are mentioned?
+> > +			return IIO_VAL_FRACTIONAL;
+> > +		case IIO_TEMP:
+> > +			/*
+> > +			 * Temperature scale: 1.1 °C per LSB, expressed as 1100 m°C
+> > +			 * Returned as integer for IIO core to apply:
+> > +			 * temp = (raw + offset) * scale
+> > +			 */
+> > +			*val = 1.1 * MILLI;
+> 
+> I guess this works since it is a constant, but we usually don't
+> have floating point in the kernel. I would probably just write this
+> as 1100. It doesn't have too many zeros that we can't easily see
+> how many there are.
+> 
+Ack. Will make it 1100.
+> > +			return IIO_VAL_INT;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +	case IIO_CHAN_INFO_OFFSET:
+> > +		switch (chan->type) {
+> > +		case IIO_TEMP:
+> > +			/*
+> > +			 * Temperature offset includes sensor-specific raw offset
+> > +			 * plus compensation for +25°C bias in formula.
+> > +			 * This value is precomputed during probe/init:
+> > +			 * offset = -raw_offset + (25000 / scale)
+> > +			 */
+> > +			*val = data->temp_offset;
+> > +			return IIO_VAL_INT;
+> > +		default:
+> > +			return -EINVAL;
+> > +		}
+> > +
+> > +	default:
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	return 0;
+> 
+> There is no break; so this is unreachable and can be removed.
+> 
+Ack.
+> > +}
+> > +
+> > +static irqreturn_t tlv493d_trigger_handler(int irq, void *ptr)
+> > +{
+> > +	struct iio_poll_func *pf = ptr;
+> > +	struct iio_dev *indio_dev = pf->indio_dev;
+> > +	struct tlv493d_data *data = iio_priv(indio_dev);
+> > +
+> > +	struct {
+> > +		s16 channels[3];
+> > +		s16 temperature;
+> > +		aligned_s64 timestamp;
+> > +	} scan;
+> 
+> 	} scan = { };
+> 
+> Technically not needed here since we assign all values and there shuold
+> not be any holes in the struct, but good to have for when others copy this
+> and modify it in a new driver.
+> 
+Okay.
+> > +
+> > +	s16 x, y, z, t;
+> > +	int ret;
+> > +
+> > +	ret = tlv493d_get_measurements(data, &x, &y, &z, &t);
+> > +	if (ret) {
+> > +		dev_err(data->dev, "failed to read sensor data\n");
+> > +		goto trig_out;
+> > +	}
+> > +
+> > +	scan.channels[0] = x;
+> > +	scan.channels[1] = y;
+> > +	scan.channels[2] = z;
+> > +	scan.temperature = t;
+> 
+> Why not just pass these directly to tlv493d_get_measurements() and avoid this
+> assigment and extra local variables?
+> 
+Bcoz the same measurement function is used from raw_read where the
+individiual channels values are needed. hence kept as independed args
+based for each channel.
+> > +
+> > +	iio_push_to_buffers_with_ts(indio_dev, &scan, sizeof(scan), pf->timestamp);
+> > +
+> > +trig_out:
+> > +	iio_trigger_notify_done(indio_dev->trig);
+> > +
+> > +	return IRQ_HANDLED;
+> > +}
+> > +
+> > +#define TLV493D_AXIS_CHANNEL(axis, index)			\
+> > +	{							\
+> > +		.type = IIO_MAGN,				\
+> > +		.modified = 1,					\
+> > +		.channel2 = IIO_MOD_##axis,			\
+> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |	\
+> > +				BIT(IIO_CHAN_INFO_SCALE),	\
+> > +		.address = index,				\
+> 
+> Setting address the same as scan_index is redundant. We can just
+> use scan_index everywhere.
+> 
+we can, I hope this does not break anything on userspace iiolib's side.
+> > +		.scan_index = index,				\
+> > +		.scan_type = {					\
+> > +			.sign = 's',				\
+> > +			.realbits = 12,				\
+> > +			.storagebits = 16,			\
+> > +			.endianness = IIO_CPU,			\
+> > +		},						\
+> > +	}
+> > +
+> > +static const struct iio_chan_spec tlv493d_channels[] = {
+> > +	TLV493D_AXIS_CHANNEL(X, AXIS_X),
+> > +	TLV493D_AXIS_CHANNEL(Y, AXIS_Y),
+> > +	TLV493D_AXIS_CHANNEL(Z, AXIS_Z),
+> > +	{
+> > +		.type = IIO_TEMP,
+> > +		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
+> > +				BIT(IIO_CHAN_INFO_SCALE) |
+> > +				BIT(IIO_CHAN_INFO_OFFSET),
+> > +		.address = TEMPERATURE,
+> > +		.scan_index = TEMPERATURE,
+> > +		.scan_type = {
+> > +			.sign = 's',
+> > +			.realbits = 12,
+> > +			.storagebits = 16,
+> > +			.endianness = IIO_CPU,
+> > +		},
+> > +	},
+> > +	IIO_CHAN_SOFT_TIMESTAMP(4),
+> > +};
+> > +
+> > +static const struct regmap_range tlv493d_volatile_reg_ranges[] = {
+> > +	regmap_reg_range(TLV493D_RD_REG_BX, TLV493D_RD_REG_RES3),
+> > +};
+> > +
+> > +static const struct regmap_access_table tlv493d_volatile_regs = {
+> > +	.yes_ranges = tlv493d_volatile_reg_ranges,
+> > +	.n_yes_ranges = ARRAY_SIZE(tlv493d_volatile_reg_ranges),
+> > +};
+> 
+> Would make sense to have these closer to tlv493d_regmap_config.
+> 
+Ack.
+> > +
+> > +static const struct iio_info tlv493d_info = {
+> > +	.read_raw = tlv493d_read_raw,
+> > +};
+> > +
+> > +static const struct iio_buffer_setup_ops tlv493d_setup_ops = {};
+> 
+> Just pass NULL if there are no ops.
+> 
+Ack.
+> > +
+> > +static const unsigned long tlv493d_scan_masks[] = { GENMASK(3, 0), 0 };
+> > +
+> > +static const struct regmap_config tlv493d_regmap_config = {
+> > +	.reg_bits = 8,
+> > +	.val_bits = 8,
+> > +	.max_register = TLV493D_RD_REG_RES3,
+> > +	.volatile_table = &tlv493d_volatile_regs,
+> > +};
+> > +
+> > +static int tlv493d_probe(struct i2c_client *client)
+> > +{
+> > +	struct device *dev = &client->dev;
+> > +	struct iio_dev *indio_dev;
+> > +	struct tlv493d_data *data;
+> > +	int ret;
+> > +
+> > +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+> > +	if (!indio_dev)
+> > +		return -ENOMEM;
+> > +
+> > +	data = iio_priv(indio_dev);
+> > +	data->dev = dev;
+> > +	data->client = client;
+> > +	i2c_set_clientdata(client, indio_dev);
+> 
+> There is not i2c_get_clientdata(), so I don't think we need this.
+> 
+Correct, will remove it.
+> > +
+> > +	ret = devm_mutex_init(dev, &data->lock);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	data->map = devm_regmap_init_i2c(client, &tlv493d_regmap_config);
+> > +	if (IS_ERR(data->map))
+> > +		return dev_err_probe(dev, PTR_ERR(data->map), "failed to allocate register map\n");
+> > +
+> > +	ret = devm_regulator_get_enable(dev, "vdd");
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "failed to enable regulator\n");
+> > +
+> > +	ret = tlv493d_parse_dt(data);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "failed to parse device-tree\n");
+> > +
+> > +	ret = tlv493d_init(data);
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "failed to initialized\n");
+> > +
+> > +	indio_dev->info = &tlv493d_info;
+> > +	indio_dev->modes = INDIO_DIRECT_MODE;
+> > +	indio_dev->name = client->name;
+> > +	indio_dev->channels = tlv493d_channels;
+> > +	indio_dev->num_channels = ARRAY_SIZE(tlv493d_channels);
+> > +	indio_dev->available_scan_masks = tlv493d_scan_masks;
+> > +
+> > +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+> > +			iio_pollfunc_store_time, tlv493d_trigger_handler,
+> > +			&tlv493d_setup_ops);
+> > +	if (ret < 0)
+> > +		return dev_err_probe(dev, ret, "iio triggered buffer setup failed\n");
+> > +
+> > +	ret = pm_runtime_set_active(dev);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	ret = devm_pm_runtime_enable(dev);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	pm_runtime_get_noresume(dev);
+> > +	pm_runtime_set_autosuspend_delay(dev, 500);
+> > +	pm_runtime_use_autosuspend(dev);
+> > +
+> > +	pm_runtime_mark_last_busy(dev);
+> > +	pm_runtime_put_autosuspend(dev);
+> > +
+> > +	ret =  devm_iio_device_register(dev, indio_dev);
+> 
+> random extra space
+> 
+Ack.
+> > +	if (ret)
+> > +		return dev_err_probe(dev, ret, "iio device register failed\n");
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int tlv493d_runtime_suspend(struct device *dev)
+> > +{
+> > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > +	struct tlv493d_data *data = iio_priv(indio_dev);
+> > +
+> > +	return tlv493d_set_operating_mode(data, TLV493D_OP_MODE_POWERDOWN);
+> > +}
+> > +
+> > +static int tlv493d_runtime_resume(struct device *dev)
+> > +{
+> > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > +	struct tlv493d_data *data = iio_priv(indio_dev);
+> > +
+> > +	return tlv493d_set_operating_mode(data, data->mode);
+> > +}
+> > +
+> > +static DEFINE_RUNTIME_DEV_PM_OPS(tlv493d_pm_ops,
+> > +		tlv493d_runtime_suspend, tlv493d_runtime_resume, NULL);
+> > +
+> > +static const struct i2c_device_id tlv493d_id[] = {
+> > +	{ "tlv493d" },
+> > +	{ }
+> > +};
+> > +MODULE_DEVICE_TABLE(i2c, tlv493d_id);
+> > +
+> > +static const struct of_device_id tlv493d_of_match[] = {
+> > +	{ .compatible = "infineon,tlv493d-a1b6", },
+> > +	{ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, tlv493d_of_match);
+> > +
+> > +static struct i2c_driver tlv493d_driver = {
+> > +	.driver = {
+> > +		.name = "tlv493d",
+> > +		.of_match_table = tlv493d_of_match,
+> > +		.pm = pm_ptr(&tlv493d_pm_ops),
+> > +	},
+> > +	.probe = tlv493d_probe,
+> > +	.id_table = tlv493d_id,
+> > +};
+> > +
+> > +module_i2c_driver(tlv493d_driver);
+> > +
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_DESCRIPTION("Infineon TLV493D Low-Power 3D Magnetic Sensor");
+> > +MODULE_AUTHOR("Dixit Parmar <dixitparmar19@gmail.com>");
+> > 
+> 
+Thank you for the review,
+Dixit
 
