@@ -1,145 +1,135 @@
-Return-Path: <linux-kernel+bounces-749216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5753DB14B8A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:43:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A11CB14B8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:45:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2C8416E7A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27B19189B9AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:45:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4CA2882D3;
-	Tue, 29 Jul 2025 09:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 611D0288525;
+	Tue, 29 Jul 2025 09:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jj0eAbY2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="b+ta6P8G"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CA41B0413;
-	Tue, 29 Jul 2025 09:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2122322DA15;
+	Tue, 29 Jul 2025 09:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753782219; cv=none; b=ds9UcKba19Ss2r7SkQG4yFGijHqHIsB0IdcpQswY6/kxkpQj/6NNnqu9epMXNGxwOu+EHEcK5CDi+7jMpbZDmVO76M9QWiosOn274rw8vCMxk9ckq8YRzEwe/hGZN99OzucvG+cO+Gkxy0IDnTpsiV/bu4JWhpqal2D7r3UC0jk=
+	t=1753782293; cv=none; b=EihAKqqgpIMpbK+TeM51gpi2YBCwFFHM0QVuNGfNmxdpDIW6xHau8SdbYVZlSprW+iEw+3Vamo1W6PvBf4tN3oiMnIKENv1VqKXgrInjskgew5ZHUOz38Pe4q8JOlnL4zemV5g9OHK6YcjyDRjQUEv/c3EAqsjP117TacWyONkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753782219; c=relaxed/simple;
-	bh=O2QizMi4IT96Tg0rnQsooP1SY7Nrm6qwGNuOhl1eOB8=;
+	s=arc-20240116; t=1753782293; c=relaxed/simple;
+	bh=wwhfdEjKk3TD0g/+LXfOKPPQJZrSqxYsRtEHez2gGEs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pSI9iaWH+hyxqeHl2+f3IDU2LAA7EyUoxR53j05pPJbgfUJ/O4VpO+V4BPAd/6qIqB/n9hfu8DGnLFH3p2wk/nsGt+rHM+N5fldtuxLya3AzkRsrLw9SeJkV9HTukY6gZ/G7sqAO27QCXDIhFXOBKTDYf5u/sz84lS/xmXq7Aqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jj0eAbY2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B41C4CEEF;
-	Tue, 29 Jul 2025 09:43:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753782216;
-	bh=O2QizMi4IT96Tg0rnQsooP1SY7Nrm6qwGNuOhl1eOB8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jj0eAbY2UR7k6rKdvojX+jcKAtQ6eU7cTN/Pwn2XZ1TYJ2k5Pifv/nvpNXhCL8Wkq
-	 o6KAwfX6/t5Ks1GbQSGD5ShXyNaWUMS/nzO2BBGNK4k4E1le2Mkz4um+yvv1+PcWWj
-	 aZtF5Oe5RxV5vHnyIkR54gLovPsJShiNRZ1hOe2JzErmFHD+yMXwRS4yZXYxpx5ltf
-	 OmQyXDp4Ixh26FWKPB3Snyd8Ybt/c4FsWzNZX++Zo/7l2YGQZ9hDSOrtGO1j4dGgmK
-	 3lFjZyev8CpyRSQ8lXSEPf3YtB/yfp5c7NpiIuLADIfWK+lTlKLm4kdYxEYwDIZsBn
-	 0XYIq0SIGnrOA==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1uggrw-000000002yZ-1HyL;
-	Tue, 29 Jul 2025 11:43:37 +0200
-Date: Tue, 29 Jul 2025 11:43:36 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	david@ixit.cz
-Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
-Message-ID: <aIiXyEuPmWU00hFf@hovoldconsulting.com>
-References: <20250204135842.3703751-1-clabbe@baylibre.com>
- <20250204135842.3703751-2-clabbe@baylibre.com>
- <aCHHfY2FkVW2j0ML@hovoldconsulting.com>
- <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
- <aINXS813fmWNJh3A@hovoldconsulting.com>
- <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OJga7czfAdAUHwqEJqifQx8cRokHyn0aNnn1WvyFw6EgWlcKfex06CW8HGGk1IatDW9DRHDZsadx95JyeWttTfYTgTxhE76JurT2kCpFYEv6VQTb3KdvxQZ8/45ZQiLuCGnGWfjmrN2/vp7fVuvPUFdG7zWW26kXtT1F5Lx3CQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=b+ta6P8G; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id AB7BE22E3A;
+	Tue, 29 Jul 2025 11:44:50 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id VG1y5xU0OrVJ; Tue, 29 Jul 2025 11:44:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1753782289; bh=wwhfdEjKk3TD0g/+LXfOKPPQJZrSqxYsRtEHez2gGEs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=b+ta6P8GfdeL2XpBmv4IbvF6ca52Tkf9nYHzCEKOcEZ6dxiQC87AOb7dmQjNI0kW+
+	 dTmcsSrR8iTyN4+UCJ6j+A7yJAppQu/CXkc4pasuuAOjgPgWYt+9b9X1RD74kJDDpj
+	 RDYBe8llF+zGEvpP5UnCvPWjMzh3GiB6jUItGfm0MnZ5agxWAWKXOXxjI30y+K/lDo
+	 mJ5W+SDybRsXe3znDYxeRfwjVe1zYkiTpA9+kJSO6rIX3bwyizEtYpQKXe9/lTXJMe
+	 2wDyg7Hue6mL32UTbdQJMQktsth6Jj9Mt8UUzZOHzQSOKslVwfguWhlPTYh3+K1LRD
+	 HYMUPj1/I7W1w==
+Date: Tue, 29 Jul 2025 09:44:37 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Ze Huang <huangze@whut.edu.cn>, Ze Huang <huang.ze@linux.dev>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v7 1/2] dt-bindings: usb: dwc3: add support for SpacemiT
+ K1
+Message-ID: <aIiYBaEMNWg20f8-@pie>
+References: <20250729-dwc3_generic-v7-0-5c791bba826f@linux.dev>
+ <20250729-dwc3_generic-v7-1-5c791bba826f@linux.dev>
+ <aIgmrQ7afSO5sjB_@pie>
+ <aIhi9JKZvuYh2Rz_@cse-cd03-lnx.ap.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
+In-Reply-To: <aIhi9JKZvuYh2Rz_@cse-cd03-lnx.ap.qualcomm.com>
 
-On Sat, Jul 26, 2025 at 04:54:17PM +0200, Martin Blumenstingl wrote:
-> On Fri, Jul 25, 2025 at 12:07 PM Johan Hovold <johan@kernel.org> wrote:
+On Tue, Jul 29, 2025 at 01:58:12PM +0800, Ze Huang wrote:
+> On Tue, Jul 29, 2025 at 01:41:01AM +0000, Yao Zi wrote:
+> > On Tue, Jul 29, 2025 at 12:33:55AM +0800, Ze Huang wrote:
+> > > Add support for the USB 3.0 Dual-Role Device (DRD) controller embedded
+> > > in the SpacemiT K1 SoC. The controller is based on the Synopsys
+> > > DesignWare Core USB 3 (DWC3) IP, supporting USB3.0 host mode and USB 2.0
+> > > DRD mode.
+> > > 
+> > > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > Signed-off-by: Ze Huang <huang.ze@linux.dev>
+> > > ---
+> > >  .../devicetree/bindings/usb/spacemit,k1-dwc3.yaml  | 124 +++++++++++++++++++++
+> > >  1 file changed, 124 insertions(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml b/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml
+> > > new file mode 100644
+> > > index 0000000000000000000000000000000000000000..7007e2bd42016ae0e50c4007e75d26bada34d983
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml
+> > > @@ -0,0 +1,124 @@
+> > 
+> > ...
+> > 
+> > > +  resets:
+> > > +    items:
+> > > +      - description: USB3.0 AHB reset
+> > > +      - description: USB3.0 VCC reset
+> > > +      - description: USB3.0 PHY reset
+> > > +      - description: PCIE0 global reset (for combo phy)
+> > 
+> > Why should the USB driver takes care of the PCIe stuff? This sounds
+> > strange to me.
+> > 
+> 
+> On K1, PHY depends on the clocks and resets it shares with the controller,
+> and the controller driver is guarantees that any needed clocks are enabled,
+> and any resets that affect the PHY are de-asserted before using the PHY.
 
-> > No, the vendor driver tracks THRE per port
-> > (ttyport[portnum].write_empty) and allows writing to more than one port
-> > in parallel (e.g. releases the device write_lock while waiting for the
-> > transfer to complete).
-> >
-> > I thought the problem was that you could not submit another urb for the
-> > *same* port until the device buffer for that port had been emptied?
-> >
-> > This seems to be what the vendor driver is preventing.
+So does the "PCIe0 global reset" make effects to both USB3 and PCIe
+**controllers**? If not, this is something wrong in the devicetree side.
 
-> I managed to get it to work now without any unnecessary waiting.
-> When I switched to just waiting for per-port THRE I accidentally
-> re-used the same URB (along with its buffer) for all ports. This of
-> course "corrupts" data, but it's my fault instead of the chip/firmware
-> causing it.
-> That's why I was referring to data corruption earlier.
-> Thanks for your persistence and for making me look at my code again
-> with a fresh mind.
+> RESET_PCIE0_GLOBAL reset is necessary during, and only, the calibration stage
+> of combo phy.
 
-Glad to hear you got it working. Did you confirm that you really need to
-wait for THRE before submitting the next URB too? I don't see why the
-vendor driver would be doing this otherwise, but perhaps it only affects
-older, broken firmware, or something.
+If it's only used by PHY, why couldn't it be a property of the PHY?
+Sorry, but I still cannot get the point.
 
-> > > > You should implement dtr_rts() as well.
-> >
-> > > This will be the first time we need the "package type" information as
-> > > CH348Q only supports CTS/RTS on the first four ports, for the last
-> > > four the signals aren't routed outside the package.
-> > > I need to see if I have other hardware with CTS/RTS pins to test this.
-> >
-> > Just connect a multimeter to the DTR and RTS pins and verify that they
-> > are asserted on open and deasserted on close after issuing those control
-> > requests (see ch9344_port_dtr_rts()).
+Regards,
+Yao Zi
 
-> Do I need to set anything special in termios for this to work?
-
-The TTY layer will assert DTR/RTS on open() and deassert on close() as
-long as HUPCL is set. If you implement tiocmset() you can use that to
-toggle the lines as well.
-
-> The datasheet has a special note about DTR/TNOW (on page 8 for the CFG pin):
-> > Unified configuration: During power-on, if the CFG pin is
-> > at a high level or not connected, all DTRx/ TNOWx pins
-> > are configured to function as TNOW. CFG pin is low, all
-> > DTRx/ TNOWx pins are configured for DTR function.
-
-Got a link to the datasheet? Not sure what they refer to as TNOW.
-
-> On my test board the CFG pin is HIGH. From how I understand you, RTS
-> should at least change (even if DTR is in TNOW mode).
-> No matter what I do: both pins are always LOW (right after modprobe,
-> after opening the console, closing the console again, ...).
-> I even set up the vendor driver to test this: it's the same situation there.
-
-I don't think the console code will assert DTR/RTS, you need to open the
-port as a regular tty.
-
-> If we need to make the DTR and RTS output something then the only way
-> I know of right now is to switch them to GPIO mode (I have code for
-> this but it's another ~300 lines patch on top of this).
-
-That should not be needed. It looked like the vendor driver had some
-variant of the usual request to control the modem lines. That should be
-all that is needed.
-
-Look at the vendor driver implementation of ch9344_tty_tiocmset() and
-ch9344_port_dtr_rts().
-
-Johan
+> To simplify both the driver architecture and the device tree files,
+> RESET_PCIE0_GLOBAL (and some other clk/reset) are now managed by the
+> relevant controller driver (either USB3 or PCIe0) instead of PHY driver.
+> 
+> Only one of USB3.0 SuperSpeed and PCIe-0 will be activated in a boot.
+> PCIe-0 will not be affected when it's working.
 
