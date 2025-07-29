@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-748971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2DCB1483B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:29:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CAE1B1483F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F4021AA0DC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C000917DEF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D3A2571D7;
-	Tue, 29 Jul 2025 06:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C752586DA;
+	Tue, 29 Jul 2025 06:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEeXbwRk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jq+Joc2Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF98262BE;
-	Tue, 29 Jul 2025 06:29:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69122247288;
+	Tue, 29 Jul 2025 06:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753770558; cv=none; b=tDUZXX71KqNYPhEfcZ3SQXUmKwAQotaDi2kxVd5S0svc15rYJBaz0QYGaonqmKtGmyTvK5yAcYE6kHB1b0I8NJek6pV8w+9Jytbc7XMcfNNHhqc+WnxdoutMN38zsE2EHdvWz6/YD9IKYC7McxTBQJDWdIZgr7sZySonJo/JFN4=
+	t=1753770581; cv=none; b=EZzPAyirF9ce/m81PYtdKrt4hYzxeBmWNkV8uM2OsP6D8OAc5vg4mUfETg68zONAVstwF5u+4xVfOtzRH/BhHarTPI6R1UPG8u8Csz99xITLz6GZamzmKD0B8Vdo2vICQ2MdW+9cUt8bxn4229YIjCAtHRk81ief9ugJMys2xwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753770558; c=relaxed/simple;
-	bh=n+db6YrL88Lv4Jy6f6rkSpvvXemtpXuvCiKryEBfnFg=;
+	s=arc-20240116; t=1753770581; c=relaxed/simple;
+	bh=lFu4mgQyTwROcXALgL7ks13DuBgIYMQnM+xWv5o5jjI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=idrqpmqq1VY2bhcfCXVKLWV94zlsiPbR2xPF+Z3tdDhDRmq/Y8YWMibSFZt230aFnEww/EX6EK4sjmnHPeNLQnUa/GqcQCBZjJQy96CHFeHYlV/dv5/j0dmoUIGqrijkNDND6JoITJu/Jj4pX7Y4TIe68FUdzTJ5hXC8FBcrL9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEeXbwRk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF23FC4CEEF;
-	Tue, 29 Jul 2025 06:29:15 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=OUoTYZtYakp6YYqVM/2qdHZnkiioBCf0K8Sk8+8bw7lb0J9BZLYQe1B36iDsX5Hwx5pflvcTZg036C7uTlTy4zW6yKQJRXqdFmk2NiQUHIuYqB/M37G6ChmeP1K/acRDijbIftDNh9hcZ+ae0hJx64CR43VL+JQsF1zH9Is4y7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jq+Joc2Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55417C4CEEF;
+	Tue, 29 Jul 2025 06:29:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753770558;
-	bh=n+db6YrL88Lv4Jy6f6rkSpvvXemtpXuvCiKryEBfnFg=;
+	s=k20201202; t=1753770581;
+	bh=lFu4mgQyTwROcXALgL7ks13DuBgIYMQnM+xWv5o5jjI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hEeXbwRk3+jxwpcKOiDEMk3OAHxk4F0Aj0x101+8Z/Az1CfL3/KmSEQCjwtwlrLGi
-	 EEr4HrT7nO8kzpigesfUcxkAvUgTEIH0P3/eH+j+qb+ZxesLI+ZYZvA1vC/QtGGSMo
-	 qIcBP3KaiMnpHedncIJx0QE6qN8NcF/5mEZhHZ7btMJJjzK257+LgNDm57KM1BQMe2
-	 lnnDiRI8k+nOA88dyVyj+ChGsdkLDhgRbNrKBRQ7d2OJYWlIL9wZrj+hB9xY5CC22m
-	 +NsyyE/ieMYRD/WRxd0jCD4S9l5IYqqcnI1YmxakRTO9wWb4gslipGtHhmzF1klWK4
-	 ZNgaqnYPYH4Og==
-Message-ID: <a6103665-466b-421a-8181-5110354bafdf@kernel.org>
-Date: Tue, 29 Jul 2025 08:29:14 +0200
+	b=jq+Joc2YGfkhKPhuseHDkwYij/iNbx/+NcsvTd2G3AfSZySSH8rwTQRCeqW/ep1b7
+	 d+5KNq60BdSMyfiE+D2eHt8gC970/iFBeScrHb2A5S+93TDUH3hKdo+Zxv9oYt6mKH
+	 e15pUalQ4NDpJh3WV0pSucFiko0ewaMg9UDGxkjEjaAavIEnQrgkjtiybMhg8R7+9O
+	 IVwUY08iGNtM5bcRsgffiFA9Sc1pn2TilGfcRz1bq7de7q9Gl9Ep17EmzsXBwLvDHp
+	 FneOtksZrJpzbw49jW9W9KNb3Xqs8p14EUj6yaNkvKwTCXV1j6xtTO/gWpQ4yKIleT
+	 UQs5i0KENOF9g==
+Message-ID: <371e104c-2708-47c3-8d32-0724bbe754d1@kernel.org>
+Date: Tue, 29 Jul 2025 08:29:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,15 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/5] dt-bindings: misc: Move amd,sbrmi.yaml from hwmon
- to misc
+Subject: Re: [PATCH v1 4/5] dt-bindings: misc: Update the "$id:" to misc path
 To: Akshay Gupta <akshay.gupta@amd.com>, linux-kernel@vger.kernel.org,
  linux-hwmon@vger.kernel.org
 Cc: gregkh@linuxfoundation.org, arnd@arndb.de, linux@roeck-us.net,
  Anand.Umarji@amd.com,
  Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
 References: <20250728061033.1604169-1-akshay.gupta@amd.com>
- <20250728061033.1604169-3-akshay.gupta@amd.com>
+ <20250728061033.1604169-4-akshay.gupta@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -103,48 +102,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250728061033.1604169-3-akshay.gupta@amd.com>
+In-Reply-To: <20250728061033.1604169-4-akshay.gupta@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28/07/2025 08:10, Akshay Gupta wrote:
-> - AMD SB-RMI patches are moved from drivers/hwmon to
->   drivers/misc to support additional functionality.
->   Move the related bindings documentation files to misc.
+> - Modify the "$id" path as file moves from hwmon to misc
 > 
 > Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
-
-Really? What was reviewed here exactly? Poor style of commit msg or that
-rename actually does rename?
-
 > Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
 > ---
->  Documentation/devicetree/bindings/{hwmon => misc}/amd,sbrmi.yaml | 0
 
-We don't put bindings into MISC.
+So you broke everything in previous patch, introduced bugs, but code was
+reviewed?
 
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-
-
+NAK
 
 Best regards,
 Krzysztof
