@@ -1,119 +1,99 @@
-Return-Path: <linux-kernel+bounces-749948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A87B15554
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:36:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54041B15557
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A880918A5B48
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8C1117DF88
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0843285404;
-	Tue, 29 Jul 2025 22:36:10 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9ADC28540B;
+	Tue, 29 Jul 2025 22:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQj/4/lg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3529D19066D;
-	Tue, 29 Jul 2025 22:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB30EEBD;
+	Tue, 29 Jul 2025 22:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753828570; cv=none; b=rQm81iq8kk1/F7TNCZj4p33afJ8MhBMk1w0ZwJKBDGoQol57rO8HCkWFvMA3s+LPpv4iICxfSaDdMGRi/vCFVtNcf1WHVcIPks0KvTwD4168wZIVyBCMlT3vPf6N1cRyyhwIutBPOYW1+AaF0XSHDpbbJvryacsH8GmS+T3XXOI=
+	t=1753828814; cv=none; b=B06LMOHlAH9nvXxwf4h2R4Gc42X/ZgfiuBifXDS3kCfyTwNOEw6Rg49rHOpD3dwOm9si7voCH1zitF2oOQ5NSEf9k6MRdAveG9m2hrfd8TpbHxMI6dMYi5xwH/A9VMHr1PHQv7BwQc7bBfVWd1HUWM14j00nli0uAfGU0CDs+ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753828570; c=relaxed/simple;
-	bh=g8GPfvhrR7jlhmr1UZtFief6T+T27wiLMRn9jVtYyR8=;
+	s=arc-20240116; t=1753828814; c=relaxed/simple;
+	bh=jOb4Sdi1sdezTxme6oMaC1Z0bg39zMY/ScYy43NqNgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=axcJwzO0uEEkH3BXXkMl75rQgpS30qbhfeUvJChTAJ1DUPRUtAr+3jVCQvjLM8vJEOhrN58Nqb8lsW71HKaLjvx9v7itOfzbr5noDq31MSXg2XcsKnLx1O6wIPB2wLGyN9qecRyoo+VuJxZ6JvoSFSEyU0/91fXhduSTqWWLUgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id DDF7580144;
-	Tue, 29 Jul 2025 22:35:59 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 0B5B020026;
-	Tue, 29 Jul 2025 22:35:33 +0000 (UTC)
-Date: Tue, 29 Jul 2025 18:35:48 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Pasha Tatashin
- <pasha.tatashin@soleen.com>, pratyush@kernel.org, jasonmiu@google.com,
- graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
- dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
- rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
- kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
- masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
- yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
- chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
- jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
- dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org,
- anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
- linux@weissschuh.net, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
- bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
- myungjoo.ham@samsung.com, yesanishhere@gmail.com,
- Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
- aleksander.lobakin@intel.com, ira.weiny@intel.com,
- andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
- bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
- stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
- brauner@kernel.org, linux-api@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, ajayachandra@nvidia.com,
- parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
-Subject: Re: [PATCH v2 31/32] libluo: introduce luoctl
-Message-ID: <20250729183548.49d6c2dc@gandalf.local.home>
-In-Reply-To: <20250729222157.GT36037@nvidia.com>
-References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
-	<20250723144649.1696299-32-pasha.tatashin@soleen.com>
-	<20250729161450.GM36037@nvidia.com>
-	<877bzqkc38.ffs@tglx>
-	<20250729222157.GT36037@nvidia.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=dGtjdFanPIWtd2ydlbDHi5Tq6oVrKxbLubxlXE8VZ0zdZdRfpG2KQsTW9nhHxPODw3gZ3D6BczJaXE4+Pg8lxhpIrs+5hzD7qO0pVvISryqTSc0VdqxkXpVWQmoV1028iOyfhmaLqpGG09nQxuB6yA038QUxJb+yvTinhNIHc6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQj/4/lg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00290C4CEEF;
+	Tue, 29 Jul 2025 22:40:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753828813;
+	bh=jOb4Sdi1sdezTxme6oMaC1Z0bg39zMY/ScYy43NqNgM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EQj/4/lga5L/o4AivgawUq2S3Y9fzGDdrEG2ttFcUbNP2/yzgPOMovCgxsO+mSzEe
+	 7skS0ZsH1AXoGRr/ZBVHCHZECE5PCeY+OCQe1jzTVWL4N9kJxTQB0HT8he2BEfyC6c
+	 1UtZN5Xx5HFcSbqvhtWWGjDqJQrwlr72x9QIEbX/R0WuO85iNAZlBu3KvDtX+QAMxf
+	 c1giWffl5kfd1Kn34pD1nuqcJlBJkvUxVJqoeoUNi2FNLjRCvX8lDIfUaalUNyepdR
+	 qxDgia8ejX8UoGW+vbdI8xrUgtMX5fedvr7KXzydBI4JaPnLxW8VMeBmXtY8izD7mI
+	 OtsV/zpI6Ka9Q==
+Date: Tue, 29 Jul 2025 15:40:12 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Carolina Jubran <cjubran@nvidia.com>
+Cc: Tariq Toukan <tariqt@nvidia.com>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Saeed Mahameed
+ <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>, Mark Bloch
+ <mbloch@nvidia.com>, Richard Cochran <richardcochran@gmail.com>,
+ netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] Support exposing raw cycle counters in PTP
+ and mlx5
+Message-ID: <20250729154012.5d540144@kernel.org>
+In-Reply-To: <0c1cea33-6676-4590-8c7c-9fe1a3d88f0b@nvidia.com>
+References: <1752556533-39218-1-git-send-email-tariqt@nvidia.com>
+	<20250721170916.490ce57e@kernel.org>
+	<0c1cea33-6676-4590-8c7c-9fe1a3d88f0b@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: mbmeeobytwf41p4yzc1dpzpwpxe8yucf
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 0B5B020026
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+oxtVU63xhP93/SX7bTvd4Dc8QYczFFgk=
-X-HE-Tag: 1753828533-748000
-X-HE-Meta: U2FsdGVkX1+SVp31L1zEXDG37UVtXoqm70naJW/igIWLrqvmCMEotY5CNRw8dlWDmbUGblNWLe3J9LSKx3hR7L2bQHS5MLhDZ3emhsQZAH8j7he0OBxdHTorWq/tTuIqRvjhOa/pfZhAhrck9wMmroKYmqPDxhcpTqRWDwl3ysMHv7F9H46Msn44g621nxUht5mjN6sz+uKsXXe5sPbrM8NTysSEAUlypv2dGg+JNutKu9XUZ3I+Gxf2ECBE3SxAmB4Vt+rW88Ro0YDc/TOQ3u/BFhWkbWO5mlIrZN6SFp3smVSeUdWdFCHFOoEqQ490+r4zBLenTW7Tcba5bSWwe799mBO+144r
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 29 Jul 2025 19:21:57 -0300
-Jason Gunthorpe <jgg@nvidia.com> wrote:
+On Tue, 29 Jul 2025 09:57:13 +0300 Carolina Jubran wrote:
+> One concrete use case is monitoring the frequency stability of the=20
+> device clock in FreeRunning mode. User space can periodically sample the=
+=20
+> (cycle, time) pairs returned by the new ioctl to estimate the clock=E2=80=
+=99s=20
+> frequency and detect anomalies, for example, drift caused by temperature=
+=20
+> changes. This is especially useful in holdover scenarios.
 
-> > As this is an evolving mechanism, having the corresponding library in
-> > the kernel similar to what we do with perf and other things makes a lot
-> > of sense.  
-> 
-> If we did this everywhere we'd have hundreds of libraries in the
-> kernel tree and I would feel bad for all the distros that have to deal
-> with packaging such a thing :(
-> 
-> It is great for development but I'm not sure mono-repo directions are
-> so good for the overall ecosystem.
+Because the servo running on the host doesn't know the stability?
+Seems like your real use case is the one below.
 
-I have to agree here. When libtraceevent was in the kernel, it was a pain
-to orchestrate releases with distros. When it was moved out of the kernel,
-it made it much easier to manage.
+> Another practical case is with DPDK. When the hardware is in FreeRunning=
+=20
+> mode, the CQE contains raw cycle counter values. DPDK returns these=20
+> values directly to user space without converting them. The new ioctl=20
+> provides a generic and consistent way to translate those raw values to=20
+> host time.
+>=20
+> As for XDP, you=E2=80=99re right that it doesn=E2=80=99t expose raw cycle=
+s today. The=20
+> point here is more future-looking: if drivers ever choose to emit raw=20
+> cycles into metadata for performance, this API gives user space a clean=20
+> way to interpret those timestamps.
 
-The main issue was versioning numbers. I know the kernel versioning is
-simply just "hey we added more stuff" and the numbers are meaningless.
+Got it, I can see how DPDK / kernel bypass may need this.
 
-But a library usually has a different cycle than the kernel. If it doesn't
-have any changes from one kernel release to the next, the distros will make
-a new version anyway, as each kernel release means a new library release.
-
-This luoctl.c isn't even a library, as it has a "main()" and looks to me
-like an application. So my question is, why is it in tools/lib?
-
--- Steve
+Please include this justification in the commit message for v2=20
+and let's see if anyone merges it.
 
