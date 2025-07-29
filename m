@@ -1,122 +1,88 @@
-Return-Path: <linux-kernel+bounces-750008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66FDAB155D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:17:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10280B155D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AFEE560B22
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:17:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3F43B7781
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A36A28540B;
-	Tue, 29 Jul 2025 23:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C1A285418;
+	Tue, 29 Jul 2025 23:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jxiaJ71q"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rIQvXo2P"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2742905;
-	Tue, 29 Jul 2025 23:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC7E2905;
+	Tue, 29 Jul 2025 23:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753831054; cv=none; b=q5W9eBRcpiy4o6IS92EO2JEomBRAFOU6DGY5YLF3yg2UkLKY7m00gnUUyH1U0J4eptJoYiUNOkuBFe+ON5MMbZVyPnpSWsai2k/A6uG/aivazS8VnCwM8MNDXmGCAcXm3UNo9KZqQVA6T35bOt4rAuQoZFZAm3gKageVEB2gmA4=
+	t=1753831106; cv=none; b=pw7tjNOeYWx9ssilKNg6BAE3Y8brucIsrQ7xhJ9A9lsVDHLWkFm5jPAeyJPknxYFLtVnjFlxMuNiJbvr7w4bD4CILYEzTiQNlqOHncsX6W6Xz0gqa6X3T31/4+7RA7kkPimYjVf6mHUpIO60SeR4v+Ptqtoqai9osJ6YCiH30f8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753831054; c=relaxed/simple;
-	bh=Mu9mHskU7ZW9p+bBmWaxHhowEXIMrWxTcX4EPT6523Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wz20jpJ8UJksRKOJYTAdDnHdW0hLoTEDDrm7qhIPc8JcvsKBtYEmZfaPzvLqoRiRZK111dZhqupTphJsE3BwQ5bUmHpnmvIWkpiTTl9hWE93SP3gE++vrplAtURb36uNB4QHkY70HEICLYBVW28BuPA2PCicaGJYRfnoNF3xdBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jxiaJ71q; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753830836;
-	bh=Dawg1OG80cS3bwzcEkZDEaug1zPi1A+LSM7b4WH3x/8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jxiaJ71qJKq3E6+mUbuTepc354gNdwoDSMB6BJfxvTABXmpeOuzyJIX85InKTfwxv
-	 /dXLv0Gu6P9hNxYfaqOTeb/D/Q+mBlfKP9SbI1HtJ035kVkZsViQDWaOxb69bUJ5/W
-	 HqYbZ5dlt8NeUmgOKm0lBkW5q6ohRf/SdbIMQXXKe7/PthuSJo42H/LtbEzz3+irpZ
-	 sfsHtXrnQfqrvJuA3RsglPYAL2fZQS+qPYAqM9EsDSlsa7yil6kPiwgjaCRNw32KCD
-	 8OoCB80Rfb+pkc+BVbICpq9foYiFY4B6evoNkzBRzJAtw9XM2zYI8wgv7aWFL4/xuf
-	 5/ylQ5zdJVPDA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsB440qycz4w2N;
-	Wed, 30 Jul 2025 09:13:56 +1000 (AEST)
-Date: Wed, 30 Jul 2025 09:17:29 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lee Jones <lee@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>
-Subject: Re: linux-next: manual merge of the mfd tree with the input tree
-Message-ID: <20250730091729.1154b5ee@canb.auug.org.au>
-In-Reply-To: <20250703140155.1e118ece@canb.auug.org.au>
-References: <20250703140155.1e118ece@canb.auug.org.au>
+	s=arc-20240116; t=1753831106; c=relaxed/simple;
+	bh=kHibng5QQzPxPxIVLy8D5Syie53OoQVsjHdm5Mk3nn4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=h1jRhr2eprBUnp+Ca3nUPRZe+KvFf6LpDGNxSVn3ODMwArQPpjKh2X96qZLTz8dRlvUAj/bJh/0hURCFnpeRBLylETHx4hEP/4WO5hh9X9POBRC8TKHifoqO50uCi3+Sr4GJxcSIhOBQPqHYbn1/5cRQCS2Bbs28ftHNEoeczSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rIQvXo2P; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F098C4CEEF;
+	Tue, 29 Jul 2025 23:18:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753831106;
+	bh=kHibng5QQzPxPxIVLy8D5Syie53OoQVsjHdm5Mk3nn4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rIQvXo2PpxZ4GAsiOsNugJHh9lUkb0/vBcPp3TQP+tkIpIySa0v1hzA7qPJMXTX5b
+	 GVFBivXhf/RHq6J5pcy9XAkxX0jA68G44h/0MBd7t69rLjVAEOrCP0u/PUYHNnW7st
+	 QTeDNFC6zqD99Kht8fBdpXAAmcD9Fd7q4ImE2TNeYn1n8wrQT318IxCGUhNlnlndvm
+	 mMf5dp9EO2n50KRtRisOSmn+7IY1BRu4HeUCKjit90rrc6NveYT/2HDgMy2bu1g1PY
+	 ARuYwlHVW0Me5sXQf8JjfSmIgmXIC1+DRQQR4fQ5N1DWzEKWA7c/Wb9wDo/8wc3yz0
+	 yZx7zIQx/oH1g==
+From: Kees Cook <kees@kernel.org>
+To: linux-hardening@vger.kernel.org
+Cc: Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fortify: Fix incorrect reporting of read buffer size
+Date: Tue, 29 Jul 2025 16:18:25 -0700
+Message-Id: <20250729231817.work.023-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/0CJwmDI0YrOTZkT2baBjAE4";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1040; i=kees@kernel.org; h=from:subject:message-id; bh=kHibng5QQzPxPxIVLy8D5Syie53OoQVsjHdm5Mk3nn4=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmdYQcCbPbsPNjWdNTGw36GnnX0XqEeC2bRg5NVp1y6t 5Jrl/qejlIWBjEuBlkxRZYgO/c4F4+37eHucxVh5rAygQxh4OIUgIm8SWJkODNbw5KxWdDvmftq BqlTYbLfjwp2Vnfw3ftprWbqXn2shuGv2Mb35v4zCg9ffCpVmT71LvdtO+tJ7NeLDVe92GlwbqI yCwA=
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
---Sig_/0CJwmDI0YrOTZkT2baBjAE4
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When FORTIFY_SOURCE reports about a run-time buffer overread, the wrong
+buffer size was being shown in the error message. (The bounds checking
+was correct.)
 
-Hi all,
+Fixes: 3d965b33e40d ("fortify: Improve buffer overflow reporting")
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+Cc: <linux-hardening@vger.kernel.org>
+---
+ include/linux/fortify-string.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Thu, 3 Jul 2025 14:01:55 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
->
-> Today's linux-next merge of the mfd tree got a conflict in:
->=20
->   drivers/input/keyboard/adp5589-keys.c
->=20
-> between commit:
->=20
->   43a8440f3969 ("Input: adp5589 - use new GPIO line value setter callback=
-s")
->=20
-> from the input tree and commit:
->=20
->   3bdbd0858df6 ("Input: adp5589: remove the driver")
->=20
-> from the mfd tree.
->=20
-> I fixed it up (I just removed the file) and can carry the fix as
-> necessary. This is now fixed as far as linux-next is concerned, but any
-> non trivial conflicts should be mentioned to your upstream maintainer
-> when your tree is submitted for merging.  You may also want to consider
-> cooperating with the maintainer of the conflicting tree to minimise any
-> particularly complex conflicts.
+diff --git a/include/linux/fortify-string.h b/include/linux/fortify-string.h
+index e4ce1cae03bf..b3b53f8c1b28 100644
+--- a/include/linux/fortify-string.h
++++ b/include/linux/fortify-string.h
+@@ -596,7 +596,7 @@ __FORTIFY_INLINE bool fortify_memcpy_chk(__kernel_size_t size,
+ 	if (p_size != SIZE_MAX && p_size < size)
+ 		fortify_panic(func, FORTIFY_WRITE, p_size, size, true);
+ 	else if (q_size != SIZE_MAX && q_size < size)
+-		fortify_panic(func, FORTIFY_READ, p_size, size, true);
++		fortify_panic(func, FORTIFY_READ, q_size, size, true);
+ 
+ 	/*
+ 	 * Warn when writing beyond destination field size.
+-- 
+2.34.1
 
-This is now a conflict between the input tree and Linus' tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/0CJwmDI0YrOTZkT2baBjAE4
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiJVokACgkQAVBC80lX
-0Gyg5Qf/YDS+amemm63Al9DPMf6uutOeAS3pf6m1IrS8FLUSXMgW7UbXGcp2GsWA
-U9/HIF3UsFTJ4jb8LSSlTfDCrGUZ/bMIf+4JBTQhZgj1JEsxt2DGjtciPVUCTVbm
-3n4/fEZR5e7DpdobX49nK1Fzu5tQcxHR4vfySmNHwbfHoxTRnxenU4TFfaWlbz8A
-vWQZnRKrXK8cxAJJ6xUHQh4lllDvxB44MAdmJTpWaN6UjKYm102wUoLuSnjTp1V+
-/+8ijiGBNKcHU47+oZOtULSNag8CICfLIMqA13q8IKs0UacEi0geFyj6mpR4T2xg
-7ytsKGnsFSI/HoBEMe/nzsnWJqJvRA==
-=fsRm
------END PGP SIGNATURE-----
-
---Sig_/0CJwmDI0YrOTZkT2baBjAE4--
 
