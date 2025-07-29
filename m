@@ -1,200 +1,213 @@
-Return-Path: <linux-kernel+bounces-749049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 584A6B14957
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:45:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 076B8B1495C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 944E93A5F46
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A838189F347
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773B5266B6F;
-	Tue, 29 Jul 2025 07:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F4926529E;
+	Tue, 29 Jul 2025 07:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b="GlxFpxZb"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XmVnedWM"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F376224898
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDEE266561
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753775147; cv=none; b=AVKyQd0pwC9rrA+lJHEKfVvXpT8T9SHi99wNEElZurtryStCf9vvhsrxEOnj2gImlAWd7wfkNRrwxPlye2UIW95Fj+O9ylKDdeWaJbGK5twm9/dv3TKhTR1bJh9aXi5ZYM2y0NJKGmMyJ82zkPq2iTxvRARt2eYeq9V5ILdPNbE=
+	t=1753775215; cv=none; b=PeUfHhyJ17diasFAkvgr2AjBcAG7/Ngn04H+hrM8fG4OMl2Lp1u5H6r2V5TK2l8ijBG0bYCsLz3ejbzl+FvmgIU8rL2HR9kp7l6oQjkxpZ4f1r8zJppoeW7u9DQm4Utp86fHRK/kjCK6l5LAg64xgcYUkwsOot1e7a4PDVoRl/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753775147; c=relaxed/simple;
-	bh=cFticMHp5jFLRVtZav4MT7bGjKaA7x1ww0DkFagI4YM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0nBAAtEeVXnURLMjzwO0GTNQCJXo70RI7/ZQg6f4ZtbpWIfxDsXj27oYKW7pC99f2iqH0czP0UtwpbLBUH+BrYLuiV/BeeomXF/kN8YViHuHGzJHqxcI6QkpvVpCXAa63R7chEtbKLg+tti+D417H1DG20I0oOeHutrT7tn+aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com; spf=pass smtp.mailfrom=kerneltoast.com; dkim=pass (2048-bit key) header.d=kerneltoast.com header.i=@kerneltoast.com header.b=GlxFpxZb; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kerneltoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kerneltoast.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b3bcb168fd5so4592690a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:45:45 -0700 (PDT)
+	s=arc-20240116; t=1753775215; c=relaxed/simple;
+	bh=Oww8ViXRQ636yvHdcqFWK/5H+wDq2ImqznhVbDNXEXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RTlQCQAbv5u2qHTqAban6HMiPm+oEm2SdfXkevYLTuHyFWC1CcE0f7kvgqHV0g/LlR0b6vH89QkhZdm3sl7lOXuMIevjX7kSaJl27nsU8E514KPj7elsGtVT6qGoAwNhBRdACGZkQLdQoNRr4K7FKHALwYw+mCltbu+ybS/BQuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XmVnedWM; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae0dffaa8b2so1049958066b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:46:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kerneltoast.com; s=google; t=1753775145; x=1754379945; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tGm54EbCHZoz70giSmTC6+R0IC8NxL6CQ8fr0Y7M3pg=;
-        b=GlxFpxZbxlB3hOoRgnu2ACUl0GrhxoIXttXAIF4j2ltuQD78Sv+8fKFpiffK2JGPFW
-         OeLrYMKhNcjvD4565X9yuk+lSsYOL7tTJ8pMPNLMzeQ6foHX0D6tYWh1yAGbCXv2chWK
-         C7sJJn80YhorX0vMVbdbZTtdQFV7LZsz7adqOBxDA3bW6ytvOfIrW4BI/aLT6DT+T5OO
-         WRVzADJwQsWPe8sx+k9fbX+UYmEnsc7HKnea2bswBz4VyhJlZ9Q44s6pUqpbTsC+IpR3
-         xO0O+oK+YjNIaMC1gV68c2fe/Rg0NKrxSlxZr4y/70DnrrVE03E3maVcRcNkjqJI0JnV
-         33Iw==
+        d=suse.com; s=google; t=1753775211; x=1754380011; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=+fS6oEzgF13BnkxuzsJYDS2RLzpOsZm7wAMzXRWyMbw=;
+        b=XmVnedWMmT7cnan/myNcOoBPw69XFC1pt2JNBAsoRLBZG4QPraHdxBir1/5JP8xmI/
+         JyXOCs7NJ6WlNWkQJ05F7As8E72CcQ8JBwWQE47iSsAGKwO4QOZVjhsgPfQZZYDoSvcE
+         u18VRz4fhYjtK/Kb9xTUeWFUxpX11tDF0EZTAueQ5Ibqko61sJvQ894qPrSiKvfzO7/7
+         nRGbxaRcEgX/7W+NRmp0tlDHHEKdjsStEfgE822qx3pr08u9j3sE/fcDLhiIIdF3RfUi
+         TyF8jHogXIR1tYYyKdwDRZjD0l3mnCc3foxFHnUK1705OErlgBSUJuOHPlMbmVtszTAb
+         tmwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753775145; x=1754379945;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=tGm54EbCHZoz70giSmTC6+R0IC8NxL6CQ8fr0Y7M3pg=;
-        b=UjpsjRRjWRrU0+B3J4AjQHn3NLew1UQbroM02KN0/dqP3YDSNBfnChJxLdkDtfL01X
-         wJn8m1AtHpBh0mUaVD4bRl95P9wBmAcIhvmiSXEBiONHsXZLCvJpYLhdlk4bhhETOvL/
-         kFvIWwhLUOCfRMYIIME4OjJMh0MQoj+tVfMJ09sbiDprTBhtXJuKRIbySFYPXVvAFeOT
-         64xDC3XZXTP/NfAdUhklBcczi9tngbHpwQAcTeRMYXOOWk2TqwQAgenJc1KxlR8RnDyx
-         6+t1MtfByygM8VeU4c3MJjO0DX8aZXFX4lPU+RhR4eq16K8MLnyLOtmc0Hk8c1wnWwb2
-         bi3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVZG4BgXr5W4cnSiqM5mvobm0CTF7snnFacvCbr3Z0Mv3rEHbyH6F894c+GaVQwHed/BeCMLy6X5FXRX3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBNDAsfcdfp4hp8eOnAVc2kpZH1S9zWdi4mCwmhwbLlSwlXbQs
-	WAIKCR1qU55n5GeXDTwT/H2tq1IAdB/qrARChNoTCOX+ORspgYNXi13GhF+0fRG/Gee9
-X-Gm-Gg: ASbGncs2y7JwXKMsCRoSko1l+Jf9CHSOaLLnD70/x6O4bgkJ91AbulvBamwro/A71lH
-	8k615DDB5IYvnK9Xf6KNcX/AzQ3Ia3+SpS5/COUU4Joh2FxEC5TsDi+hfvXKilRwuWBc+BLVCVP
-	g8pdH/Y15Ju8V9qNYVfflEeMjyJMKUKqF11yZle/Mz54fme8lpbtZKXcs/MCH7EkZ8z6dWg1F5l
-	QN0r8VcSIht2Ui9x9zQmzPDfV+wfM3Ndbg4fyhhMoka7Gq1VUejFZdxU7z/bXj+ZoOJ0b/uTtxn
-	a6UxB2RBFsXIvgOeg2I/pmQpqBA8GnsR5GXzoY+qAVB1cV6wZsWiblvm1vlbPwMYW9OwhOHY6/V
-	jUY0KR/hRlpW4xZEdSsMTWORK
-X-Google-Smtp-Source: AGHT+IGI8hwRjhPfWqqIfaH8WcvqvlbosGRJ6/9MKvGJPM2PYwCDd8KBUuiB5+aT0Qw0lrKMA+MWtA==
-X-Received: by 2002:a17:902:dac9:b0:240:418c:b9f6 with SMTP id d9443c01a7336-240418cbaccmr82148825ad.49.1753775144566;
-        Tue, 29 Jul 2025 00:45:44 -0700 (PDT)
-Received: from sultan-box ([79.127.217.54])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fbe533b1esm70833165ad.158.2025.07.29.00.45.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 00:45:44 -0700 (PDT)
-Date: Tue, 29 Jul 2025 00:45:40 -0700
-From: Sultan Alsawaf <sultan@kerneltoast.com>
-To: "Du, Bin" <bin.du@amd.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
-	laurent.pinchart+renesas@ideasonboard.com,
-	bryan.odonoghue@linaro.org, sakari.ailus@linux.intel.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
-	gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com,
-	Dominic.Antony@amd.com
-Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
-Message-ID: <aIh8JPTv9Z5lphRQ@sultan-box>
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <aIEmJXNpNN0QF233@sultan-box>
- <12fb4d09-6b94-4f54-86b8-8a3ac0949151@amd.com>
- <aIVXVpg_9XxRXUAH@sultan-box>
- <b02d0749-6ecb-4e69-818a-6268f894464d@amd.com>
- <aIh7WB0TGNU15Zm1@sultan-box>
+        d=1e100.net; s=20230601; t=1753775211; x=1754380011;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+fS6oEzgF13BnkxuzsJYDS2RLzpOsZm7wAMzXRWyMbw=;
+        b=pseeWUCUfldXiGUsFlF3Cb6KvLO4s6NyQTUjxSrB2ShpkSqLGUhiVERjCA7B/GYQaD
+         xwX+WK22a1i0PQJdSvuXl4JtjmBVEnRntXX5K6oHtL+RVJTDMd8jlBynfpRCK1ebt5Iu
+         iI5t0PlnH8rqURmwehoWLNhHwUH1Md6SIxJ1WMZxZNCe9/kYPHaX+fqIEUQuVS+NAK96
+         koZrZ6o1laWLrPnIgA9xeMfwzZq1U1wuT3YJzoQielMaXUNrqDejRYGdk4pAgSPKGOMD
+         a05yIIMHhsw+Wi/KAmxIJBGqYWvaxIJgjXHqPri2NfqEitHNx6FCJZy1pgACGLpqLcWF
+         pkxw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPFvHt0fsud2Ds02VZjh0nZZc6tTG5rmjVN5WevcSsSlrVkA8knXFkNAVi7bkmpnudaV1zut5C5pTKWJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtyyYjkmSlT1arWbRsyVVYFFq13lCslV/i30zelUS55v2bpcul
+	pTxsphLYPkO36E0hRnFwSMSCksGFc0qmqlvfEDQ5We0l4B4H8nQmVu0ElfBXe5Bef74=
+X-Gm-Gg: ASbGncv0pnGAGxIOo2zAgXUfaXoUul9HNeJ/pgw3hHYMN0l6Q1Ti9IwLQEbMffDYdjm
+	nuLb0mQ/yr2aUjRgQs3RC1NQI51MFAUWb/wR+RGGqKoVlf/xWWZOLrGVMeXZSXG7y4LsJePgRYp
+	6HeYH+JI9ZWpm1G2/LEWQ2Zkqcdmm0jNAE34mTmHi23ivFnQq6VGJw22wt7ALjsu8pWx1V3QPx2
+	dG3IG+vkjqfP2jigtFvcljg4wsOgCItWohhBL+hU1B3i/L0bzu7cxJwkFsENS3E26QFpHBcDE4+
+	W9MCBtzaZ1c29xIc3AUxUSdtRrwu1R7weUMRlj1Fz3J6gA9aSE+rqLd5Xxk4/4sxdplqH5Imx6b
+	4VWspVz05DRNu2n0Zzhw3YrQo3w==
+X-Google-Smtp-Source: AGHT+IH6jfjNc8UNw32/lozuCfWnAMkVoj//1p/pBWOd6QeQxm4eBhWeUohg5sRFiRJWz3K/TFNAHA==
+X-Received: by 2002:a17:907:2da3:b0:ae9:c47f:1bda with SMTP id a640c23a62f3a-af619c0ca6cmr1436573566b.59.1753775211380;
+        Tue, 29 Jul 2025 00:46:51 -0700 (PDT)
+Received: from [10.20.4.146] ([149.62.209.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61558c0779fsm1398957a12.27.2025.07.29.00.46.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 00:46:51 -0700 (PDT)
+Message-ID: <c2754ac3-28d0-4c6c-bd2d-0dcc9ca66b77@suse.com>
+Date: Tue, 29 Jul 2025 10:46:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIh7WB0TGNU15Zm1@sultan-box>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] lockdown/kunit: Introduce kunit tests
+To: kernel test robot <lkp@intel.com>, linux-security-module@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ linux-kernel@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com,
+ jmorris@namei.org, dan.j.williams@intel.com
+References: <20250728111517.134116-3-nik.borisov@suse.com>
+ <202507290540.9IANrMED-lkp@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+Autocrypt: addr=nik.borisov@suse.com; keydata=
+ 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
+In-Reply-To: <202507290540.9IANrMED-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29, 2025 at 12:42:16AM -0700, Sultan Alsawaf wrote:
-> On Tue, Jul 29, 2025 at 11:32:23AM +0800, Du, Bin wrote:
-> > Thanks Sultan, please see my comments
-> > 
-> > On 7/27/2025 6:31 AM, Sultan Alsawaf wrote:
-> > > On Fri, Jul 25, 2025 at 06:22:03PM +0800, Du, Bin wrote:
-> > > > > I have the Ryzen AI MAX+ 395 SKU of the HP ZBook Ultra G1a 14.
-> > > > > 
-> > > > > I cannot for the life of me get the webcam working under Linux. The webcam works
-> > > > > under Windows so it's not a hardware issue.
-> > > > > 
-> > > > > With this patchset and all of the patches you link here applied to 6.15, I get
-> > > > > the following errors:
-> > > > >     [   11.970038] amd_isp_i2c_designware amd_isp_i2c_designware: Unknown Synopsys component type: 0xffffffff
-> > > > >     [   11.973162] amd_isp_i2c_designware amd_isp_i2c_designware: error -19: i2c_dw_probe failed
-> > > > > 
-> > > > > With the old ispkernel code from February [1] applied on 6.15, the webcam
-> > > > > indicator LED lights up but there's no image. I see these messages at boot:
-> > > > >     [    9.449005] amd_isp_capture amd_isp_capture.1.auto: amdgpu: AMD ISP v4l2 device registered
-> > > > >     [    9.489005] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: The OV05 sensor device is added to the ISP I2C bus
-> > > > >     [    9.529012] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
-> > > > >     [    9.554046] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
-> > > > >     [    9.554174] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
-> > > > >     [    9.580022] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
-> > > > > 
-> > > > > And then the kernel crashes due to the same use-after-free issues I pointed out
-> > > > > in my other email [2].
-> > > > > 
-> > > > > Any idea what's going on?
-> > > > > 
-> > > > > [1] https://github.com/amd/Linux_ISP_Kernel/commit/c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4
-> > > > > [2] https://lore.kernel.org/r/aIEiJL83pOYO8lUJ@sultan-box
-> > > > Hi Sultan,
-> > > > 
-> > > > [1] is for kernel 6.8, believe it can't be applied to 6.15. We didn't verify
-> > > > on 6.15 but we are really glad to help, would you please provide some info,
-> > > > 1. Suppose you are using Ubuntu, right? What's the version?
-> > > > 2. 6.15, do you mean https://github.com/torvalds/linux/tree/v6.15 ?
-> > > > 
-> > > > After your confirmation, we'll see what we can do to enable your camera
-> > > > quickly and easily
-> > > > 
-> > > > Regards,
-> > > > Bin
-> > > 
-> > > Thank you, Bin!
-> > > 
-> > > 1. I'm using Arch Linux with the ISP4-patched libcamera [1].
-> > > 2. Yes, here is my kernel source [2].
-> > > 
-> > > I have some more findings:
-> > > 
-> > > Currently, the first blocking issue is that the I2C adapter fails to initialize.
-> > > This is because the ISP tile isn't powered on.
-> > > 
-> > > I noticed that in the old version of amd_isp_i2c_designware [3], there were
-> > > calls to isp_power_set(), which is available in the old ISP4 sources [4].
-> > > Without isp_power_set(), the I2C adapter always fails to initialize for me.
-> > > 
-> > > How is the ISP tile supposed to get powered on in the current ISP4 code?
-> > > 
-> > You are correct, yes, i believe the I2C adapter failure is caused by ISP not
-> > being powered up. Currently in latest code, isp_power_set is no longer
-> > available, instead, we implemented genPD for ISP in amdgpu
-> > https://lore.kernel.org/all/20250618221923.3944751-1-pratap.nirujogi@amd.com/
-> > Both amd_isp_i2c and amd_isp_capture are in the power domain and use the
-> > standard runtime PM API to do the power control
-> 
-> Thanks for that link, I found it along with another patch on the list to make
-> the fwnode work ("drm/amd/amdgpu: Initialize swnode for ISP MFD device").
-> 
-> > > Also, I noticed that the driver init ordering matters between all of the drivers
-> > > needed for the ISP4 camera. In particular, amd_isp_i2c_designware and amd_isp4
-> > > must be initialized before amd_capture, otherwise amd_capture will fail to find
-> > > the fwnode properties for the OV05C10 device attached to the I2C bus.
-> > > 
-> > > But there is no driver init ordering enforced, which also caused some issues for
-> > > me until I figured it out. Maybe probe deferral (-EPROBE_DEFER) should be used
-> > > to ensure each driver waits for its dependencies to init first?
-> > > 
-> > amd_isp_capture only has dependency on amd_isp4 which is the ACPI platform
-> > driver, it is init before amd_isp_catpure.
-> > Do you see in your side the amd_capture probe failure caused by failing to
-> > read fwnode properties? If that's the case please help to check if amd_isp4
-> > is loaded successfully
-> 
-> I got much further now: there aren't any driver initialization errors, but when
-> I open the camera, there's no image. The camera LED turns on so it's active.
-> 
-> And then shortly afterwards, amdgpu dies and the entire system freezes.
-> 
-> I've attached my full dmesg, please let me know what you think. Thanks!
 
-I almost forgot, here is my current kernel tree:
-https://github.com/kerneltoast/kernel_x86_laptop/tree/v6.16-sultan-isp4
 
-Sultan
+On 29.07.25 г. 1:04 ч., kernel test robot wrote:
+> Hi Nikolay,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v6.16 next-20250728]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Nikolay-Borisov/lockdown-Switch-implementation-to-using-bitmap/20250728-191807
+> base:   linus/master
+> patch link:    https://lore.kernel.org/r/20250728111517.134116-3-nik.borisov%40suse.com
+> patch subject: [PATCH v2 2/3] lockdown/kunit: Introduce kunit tests
+> config: arm-randconfig-004-20250729 (https://download.01.org/0day-ci/archive/20250729/202507290540.9IANrMED-lkp@intel.com/config)
+> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 1b4db78d2eaa070b3f364a2d2b2b826a5439b892)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250729/202507290540.9IANrMED-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507290540.9IANrMED-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>>> security/lockdown/lockdown.c:31:5: warning: no previous prototype for function 'lock_kernel_down' [-Wmissing-prototypes]
+>        31 | int lock_kernel_down(const char *where, enum lockdown_reason level)
+>           |     ^
+>     security/lockdown/lockdown.c:31:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+>        31 | int lock_kernel_down(const char *where, enum lockdown_reason level)
+>           | ^
+>           | static
+>     1 warning generated.
+
+
+That's a false positive, since the function is exported only for KUNIT 
+case, what's the correct way to make testbot ignore it ?
+> 
+> 
+> vim +/lock_kernel_down +31 security/lockdown/lockdown.c
+> 
+>      20	
+>      21	static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+>      22							 LOCKDOWN_INTEGRITY_MAX,
+>      23							 LOCKDOWN_CONFIDENTIALITY_MAX};
+>      24	
+>      25	/*
+>      26	 * Put the kernel into lock-down mode.
+>      27	 */
+>      28	#if !IS_ENABLED(CONFIG_KUNIT)
+>      29	static
+>      30	#endif
+>    > 31	int lock_kernel_down(const char *where, enum lockdown_reason level)
+>      32	{
+>      33	
+>      34		if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
+>      35			return -EINVAL;
+>      36	
+>      37		if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
+>      38			bitmap_set(kernel_locked_down, 1, level);
+>      39		else
+>      40			bitmap_set(kernel_locked_down, level, 1);
+>      41	
+>      42		pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
+>      43			  where);
+>      44		return 0;
+>      45	}
+>      46	
+> 
 
