@@ -1,322 +1,110 @@
-Return-Path: <linux-kernel+bounces-749838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EE95B1537E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:35:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5925B1537F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:35:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54087188EAFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:35:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116974E736B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7222229AAEC;
-	Tue, 29 Jul 2025 19:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70732522A7;
+	Tue, 29 Jul 2025 19:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JXE87pYp"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DtcwUy1B"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F43255F5C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798EB13B298;
+	Tue, 29 Jul 2025 19:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753817637; cv=none; b=dECnlawVLgLqns+aBqPq8YKA4MlnMcZp88dbW2Knj9KF0XCX/CPRHaDFuBmUYkaJp0SWX3JBBuzAezqY6oAZAMhF5mmxIwgSrmX3ZGRUGP2wf9kcUOh2xcS77U5l7/ubnJsRAlmPH5OMI89ckdfG2WlYjcEh6XRU0BnnaWmk8mM=
+	t=1753817721; cv=none; b=i0pJTL0vNoahfrU0yRwiL2Kaz6euDVDoi5HRTBpzzzYEI0vseeC54tuMHj2kf4LdAEXzEgvxA2Sw5Qp5guwBEqbCilmVBF01waU+l+csPn5ygTS34sIVmS+Xkt+sF8tkjSdedUaE1oIOz7tB8piGEwC6c/m9Vp+vKyFnxz8zWck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753817637; c=relaxed/simple;
-	bh=GezEG6D+dGW2ASk1t1mkWRtt3ji/dNz8mwQjkZHk1gk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=WSEKsgLBFfU1PtzXhoPPUXFCnDYFOxOtBK9fbmrblio2E1u3ygozhKTbgCJKSrI83UL35a0Dry8QYHohdVqjU6NTaJI0YOUTT+Io2KGM3vw/FH8MBPpt097KOivDapIQa6kXeFFXGxaYqgSI/whufI2WjZE0/MrhehfuYtBCJiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JXE87pYp; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31ed2a7d475so2822276a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:33:55 -0700 (PDT)
+	s=arc-20240116; t=1753817721; c=relaxed/simple;
+	bh=vxbkeRBX+ImlPpBqkPXf62JLUx5qg7K42WUjUczOu+g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tQIUSEmyScByaj8pTaC7yQFlhbu5aroFiLU0Xv7UOqcqtCGbEe/S2x2cOp9RpLIXB9fFPwy+kAB7o82wbxgSWuzlxQhwarTp+cn7ujwYvLu65qx58es2viUKtUUBiK137GL5J1fW29rCgx3zCIODaSXFG9EY5i3OQ7uWaUFTrDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DtcwUy1B; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-24050da1b9eso2773995ad.3;
+        Tue, 29 Jul 2025 12:35:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753817635; x=1754422435; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=LRgTVb6HxivGsODMp4kE86IHTk8ygg+wPbdHcPP2xOg=;
-        b=JXE87pYphuTyhvNjf1jT2DbiwheL7uzaf7PQ1fnD0sQZ27L0EVodT+iOz7M+5njpZr
-         aqTOfS7al0xe4aph6tcM7+bIF2lB7k5i9PvI7Z993z6m7s2yL13ghoejYGtTngonEPew
-         xUpSPTtzv93Xph8wEtVeLRC9GvBXeWY02Cp4kzQTj+bkdx2EjfDPWHqD7iCco2BP+L86
-         48/lzoXXGopOD23gc8veDndoiG9b56WS4fsbPO2eoUnrACMhpkiwjQtnEnZSpb8PFqvo
-         lSbnSVCDKj6VIXRKGzg10Tjj0KpnTwh7fT1Km0gwrU+Jg/vSx3fc1bi0Ffz142QbZizF
-         0WCw==
+        d=gmail.com; s=20230601; t=1753817719; x=1754422519; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vxbkeRBX+ImlPpBqkPXf62JLUx5qg7K42WUjUczOu+g=;
+        b=DtcwUy1B7KYACtb+Enzlj7UUAtz/dQY8uDJZ6+y+tLRsQpNhDEUPbk5lEhEVRM2aFy
+         rNLMBEJ/dEkXO4l8TT6fnIMZBjISdyq7TxxM0oSlUJNwBsfxrU+GUEFjfoM8zKmfWcxI
+         3MJImY6eMUtQzqdGyL3l2DJM+/BrHU2HdsPXwF5nEqmAJfFYf+dgnzHZr9sgInuBIdrp
+         c83Yp1JcMD/BCXMxLMJjdY7KcIREs41jArDzb1amK84FpgEZhcohVMh6oUsnbb7UayZf
+         hb42FC12aUlXdgdcyk7cByAzTPVgiOHZLgGnfIGIV3pQseZ6d2LEKAtSYpt2j1p5Pmh7
+         R2Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753817635; x=1754422435;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LRgTVb6HxivGsODMp4kE86IHTk8ygg+wPbdHcPP2xOg=;
-        b=PI+26FMIjFuzzkE9Un7w6GP1ZOfSZ0mVQPdyl/tSowEsqQQ6w7WQ4675bxV2ocBjf0
-         11PHtL0o9umTXa+bZtw0FDpP/R85sREcAajV6p8JXjOI9flBLuVw1Eu6wtDIdleLekiV
-         0G0298gyrJplJ0tI3/dcnUNTFXVjwGPqDdcRoLRlDRAp/tzulIJTQUh+adoRlC1Zmo2l
-         6ik3vlSw+uqTUksiXpa1GhAQ8NqWN0N6tpN+mxOVzYwSzEIgH+0lteOXZ2Yzer3FT9bP
-         8jQdusQAfkmoT44FhJzoNa8/DhPvteIqe4XIgog68D2WNamSI4PCZtUMi4+wgWKEvqc4
-         a2bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5jkA+HWhfJawLd+Rq+ToOl6rgOgKYQi01vriu5k+Su1yc7q76qNaOzCqpZByUspMPhTBNKRfAQ72VaQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzppZdERBGNxLuwm8fGp83+cbk4T1XTxWVu6K+rb29wzbQFz2tk
-	xijEeBZVuuTpZARJFaP6khW0KOk/Sf91BTwecdWP6yZvRaV7m/jxLhBwukEftgYJ+u/2atAqLXd
-	MopM67g==
-X-Google-Smtp-Source: AGHT+IG/gL3d24hNw5SUEuxjxjut5eSNrEkkhi5cedOb5e+QFzIszFgoNw0OLcITFvyVJnRdvLf93b3+R4g=
-X-Received: from pjqo23.prod.google.com ([2002:a17:90a:ac17:b0:31f:f3:f8c3])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5285:b0:312:f650:c795
- with SMTP id 98e67ed59e1d1-31f5de54b6dmr784023a91.21.1753817635200; Tue, 29
- Jul 2025 12:33:55 -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Tue, 29 Jul 2025 12:33:40 -0700
-In-Reply-To: <20250729193341.621487-1-seanjc@google.com>
+        d=1e100.net; s=20230601; t=1753817719; x=1754422519;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vxbkeRBX+ImlPpBqkPXf62JLUx5qg7K42WUjUczOu+g=;
+        b=aqo38+FBkheQZsjzWC0D+93pgzQeynTIQrBGLPrQwmi6U2SVKbQb0T9hQ303c6vEun
+         u5Hs/TXWZraP/qyFEVBsjXWtfKIb6VmBeA8PTLgBv7YQAPRIFupKkIEim5N57DvJ2FBp
+         bKVngZ8l6vU/teISTIM49nEvxQcDzzeLU3AxEe5TmENVBvwTIU5D3UPOCjifQYdIhUHt
+         Clkg/LoEKdXTF0+IPe7xyeIynMUg394GPyB7XW7f5MGF+0S4/HFdgYGKEVVt/GQT0wzh
+         mnS/lBNbZJBjcZ1B+dltsW6GBZsgHJQFxwA0AEzDv0ZXUZnGip2RoNaCRxFg6DTHv67/
+         nUtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmYDlulsI3UfYlt4cednIjTGJl2nnen+QdEoP/KiGrRUgG9kwOkn6MtOByyAjb/ynYP5sTtzyTBejaKj0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx00tRBH11dT/4vjrAQv2QxxGieQbftbfRy5Y7E7d4+gbs42tNp
+	3qK09sSDHS+OptTTKc13VCm/J6OCSDKE20xQ1chnFb5B9rmU5XFPTaeAtKvzIp6UCgbUEcVRk5f
+	XzHwBkAbo4+vtkmm8ObkZMvcDRKiYgCU=
+X-Gm-Gg: ASbGncsK9cpC2jRqOQvpQ3tdS/Yne5f1xd7ftTCj64LhweMkzq6IfaicZQTcicwZ18Q
+	LgsklDD1oe8ZTML3Eu5jfa+6crEUCn5SYTGNU3YxjxslttuEpKex9PS9kSRwKtWRYJVW9w39K+I
+	4oQYtD69IIzxvnXjGx3ZbD2aPFc9l681D/e5vGwzsauynNUUNdC5qZ+R+gSIGN2bgbIfbLwTt3D
+	9s5buNyigHjWapkHjA=
+X-Google-Smtp-Source: AGHT+IEsqf7OwfdvD2m3jUs2IP0Dm+ZPhdFGRYYYRk+2nstuMBM2XQ/ZzLKXv7t+cYSzpVaSafPepxjENgriDB1Apt4=
+X-Received: by 2002:a17:902:e94d:b0:240:71db:fd0 with SMTP id
+ d9443c01a7336-24096adbc8amr3397135ad.8.1753817718702; Tue, 29 Jul 2025
+ 12:35:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250729193341.621487-1-seanjc@google.com>
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250729193341.621487-6-seanjc@google.com>
-Subject: [PATCH 5/5] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
-From: Sean Christopherson <seanjc@google.com>
-To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Adrian Hunter <adrian.hunter@intel.com>, Vishal Annapurve <vannapurve@google.com>, 
-	Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Nikolay Borisov <nik.borisov@suse.com>
+MIME-Version: 1.0
+References: <20250729143600.5305-1-work@onurozkan.dev>
+In-Reply-To: <20250729143600.5305-1-work@onurozkan.dev>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 29 Jul 2025 21:35:06 +0200
+X-Gm-Features: Ac12FXxmdasWkDr2HQ-YZk0lBgzoUYfM6aDTQroAJE0v81DfVPJayI4sw9VIeTM
+Message-ID: <CANiq72=L_ov+Dc5S=adPdson9gq6wGp4xp=iCZLBnz+YC1_vgw@mail.gmail.com>
+Subject: Re: [PATCH v1] rust: update `error.rs` documentation
+To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, dakr@kernel.org, me@kloenk.dev, felipe_life@live.com, 
+	abdiel.janulgue@gmail.com, dirk.behme@de.bosch.com, daniel@sedlak.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add sub-ioctl KVM_TDX_TERMINATE_VM to release the HKID prior to shutdown,
-which enables more efficient reclaim of private memory.
+On Tue, Jul 29, 2025 at 4:36=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.dev=
+> wrote:
+>
+> Replaces the outdated (e.g., `ENOIOCTLCMD` is in the
+> `srctree/include/linux/errno.h` file) and overly specific
+> description referring to a single C header with a more generic
+> one.
 
-Private memory is removed from MMU/TDP when guest_memfds are closed.  If
-the HKID has not been released, the TDX VM is still in the RUNNABLE state,
-and so pages must be removed using "Dynamic Page Removal" procedure (refer
-to the TDX Module Base spec) which involves a number of steps:
-	Block further address translation
-	Exit each VCPU
-	Clear Secure EPT entry
-	Flush/write-back/invalidate relevant caches
+Yeah, we should have the other headers there, but I would avoid
+removing the links entirely (the links are meant to be there as a
+reference and get converted to actual links on render).
 
-However, when the HKID is released, the TDX VM moves to TD_TEARDOWN state,
-where all TDX VM pages are effectively unmapped, so pages can be reclaimed
-directly.
+Thanks!
 
-Reclaiming TD Pages in TD_TEARDOWN State was seen to decrease the total
-reclaim time.  For example:
-
-  VCPUs    Size (GB)    Before (secs)    After (secs)
-      4           18		   72              24
-     32          107		  517             134
-     64          400		 5539             467
-
-Add kvm_tdx_capabilities.supported_caps along with KVM_TDX_CAP_TERMINATE_VM
-to advertise support to userspace.  Use a new field in kvm_tdx_capabilities
-instead of adding yet another generic KVM_CAP to avoid bleeding TDX details
-into common code (and #ifdefs), and so that userspace can query TDX
-capabilities in one shot.  Enumerating capabilities as a mask of bits does
-limit supported_caps to 64 capabilities, but in the unlikely event KVM
-needs to enumerate more than 64 TDX capabilities, there are another 249
-u64 entries reserved for future expansion.
-
-To preserve the KVM_BUG_ON() sanity check that deals with HKID assignment,
-track if a TD is terminated and assert that, when an S-EPT entry is
-removed, either the TD has an assigned HKID or the TD was explicitly
-terminated.
-
-Link: https://lore.kernel.org/r/Z-V0qyTn2bXdrPF7@google.com
-Link: https://lore.kernel.org/r/aAL4dT1pWG5dDDeo@google.com
-Co-developed-by: Adrian Hunter <adrian.hunter@intel.com>
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Acked-by: Vishal Annapurve <vannapurve@google.com>
-Tested-by: Vishal Annapurve <vannapurve@google.com>
-Tested-by: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Nikolay Borisov <nik.borisov@suse.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- Documentation/virt/kvm/x86/intel-tdx.rst | 22 +++++++++++++-
- arch/x86/include/uapi/asm/kvm.h          |  7 ++++-
- arch/x86/kvm/vmx/tdx.c                   | 37 +++++++++++++++++++-----
- arch/x86/kvm/vmx/tdx.h                   |  1 +
- 4 files changed, 57 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/virt/kvm/x86/intel-tdx.rst b/Documentation/virt/kvm/x86/intel-tdx.rst
-index 5efac62c92c7..bcfa97e0c9e7 100644
---- a/Documentation/virt/kvm/x86/intel-tdx.rst
-+++ b/Documentation/virt/kvm/x86/intel-tdx.rst
-@@ -38,6 +38,7 @@ ioctl with TDX specific sub-ioctl() commands.
-           KVM_TDX_INIT_MEM_REGION,
-           KVM_TDX_FINALIZE_VM,
-           KVM_TDX_GET_CPUID,
-+          KVM_TDX_TERMINATE_VM,
- 
-           KVM_TDX_CMD_NR_MAX,
-   };
-@@ -92,7 +93,10 @@ to be configured to the TDX guest.
-         __u64 kernel_tdvmcallinfo_1_r12;
-         __u64 user_tdvmcallinfo_1_r12;
- 
--        __u64 reserved[250];
-+        /* Misc capabilities enumerated via the KVM_TDX_CAP_* namespace. */
-+        __u64 supported_caps;
-+
-+        __u64 reserved[249];
- 
-         /* Configurable CPUID bits for userspace */
-         struct kvm_cpuid2 cpuid;
-@@ -227,6 +231,22 @@ struct kvm_cpuid2.
- 	  __u32 padding[3];
-   };
- 
-+KVM_TDX_TERMINATE_VM
-+--------------------
-+:Capability: KVM_TDX_CAP_TERMINATE_VM
-+:Type: vm ioctl
-+:Returns: 0 on success, <0 on error
-+
-+Release Host Key ID (HKID) to allow more efficient reclaim of private memory.
-+After this, the TD is no longer in a runnable state.
-+
-+Using KVM_TDX_TERMINATE_VM is optional.
-+
-+- id: KVM_TDX_TERMINATE_VM
-+- flags: must be 0
-+- data: must be 0
-+- hw_error: must be 0
-+
- KVM TDX creation flow
- =====================
- In addition to the standard KVM flow, new TDX ioctls need to be called.  The
-diff --git a/arch/x86/include/uapi/asm/kvm.h b/arch/x86/include/uapi/asm/kvm.h
-index 0f15d683817d..e019111e2150 100644
---- a/arch/x86/include/uapi/asm/kvm.h
-+++ b/arch/x86/include/uapi/asm/kvm.h
-@@ -940,6 +940,7 @@ enum kvm_tdx_cmd_id {
- 	KVM_TDX_INIT_MEM_REGION,
- 	KVM_TDX_FINALIZE_VM,
- 	KVM_TDX_GET_CPUID,
-+	KVM_TDX_TERMINATE_VM,
- 
- 	KVM_TDX_CMD_NR_MAX,
- };
-@@ -962,6 +963,8 @@ struct kvm_tdx_cmd {
- 	__u64 hw_error;
- };
- 
-+#define KVM_TDX_CAP_TERMINATE_VM       _BITULL(0)
-+
- struct kvm_tdx_capabilities {
- 	__u64 supported_attrs;
- 	__u64 supported_xfam;
-@@ -971,7 +974,9 @@ struct kvm_tdx_capabilities {
- 	__u64 kernel_tdvmcallinfo_1_r12;
- 	__u64 user_tdvmcallinfo_1_r12;
- 
--	__u64 reserved[250];
-+	__u64 supported_caps;
-+
-+	__u64 reserved[249];
- 
- 	/* Configurable CPUID bits for userspace */
- 	struct kvm_cpuid2 cpuid;
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index c2ef03f39c32..ae059daf1a20 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -188,6 +188,8 @@ static int init_kvm_tdx_caps(const struct tdx_sys_info_td_conf *td_conf,
- 	if (!caps->supported_xfam)
- 		return -EIO;
- 
-+	caps->supported_caps = KVM_TDX_CAP_TERMINATE_VM;
-+
- 	caps->cpuid.nent = td_conf->num_cpuid_config;
- 
- 	caps->user_tdvmcallinfo_1_r11 =
-@@ -520,6 +522,7 @@ void tdx_mmu_release_hkid(struct kvm *kvm)
- 		goto out;
- 	}
- 
-+	write_lock(&kvm->mmu_lock);
- 	for_each_online_cpu(i) {
- 		if (packages_allocated &&
- 		    cpumask_test_and_set_cpu(topology_physical_package_id(i),
-@@ -544,7 +547,7 @@ void tdx_mmu_release_hkid(struct kvm *kvm)
- 	} else {
- 		tdx_hkid_free(kvm_tdx);
- 	}
--
-+	write_unlock(&kvm->mmu_lock);
- out:
- 	mutex_unlock(&tdx_lock);
- 	cpus_read_unlock();
-@@ -1884,13 +1887,13 @@ static int tdx_sept_remove_private_spte(struct kvm *kvm, gfn_t gfn,
- 	struct page *page = pfn_to_page(pfn);
- 	int ret;
- 
--	/*
--	 * HKID is released after all private pages have been removed, and set
--	 * before any might be populated. Warn if zapping is attempted when
--	 * there can't be anything populated in the private EPT.
--	 */
--	if (KVM_BUG_ON(!is_hkid_assigned(to_kvm_tdx(kvm)), kvm))
--		return -EINVAL;
-+	if (!is_hkid_assigned(to_kvm_tdx(kvm))) {
-+		KVM_BUG_ON(!to_kvm_tdx(kvm)->vm_terminated, kvm);
-+		ret = tdx_reclaim_page(page);
-+		if (!ret)
-+			tdx_unpin(kvm, page);
-+		return ret;
-+	}
- 
- 	ret = tdx_sept_zap_private_spte(kvm, gfn, level, page);
- 	if (ret <= 0)
-@@ -2884,6 +2887,21 @@ static int tdx_td_finalize(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
- 	return 0;
- }
- 
-+static int tdx_terminate_vm(struct kvm *kvm)
-+{
-+	if (kvm_trylock_all_vcpus(kvm))
-+		return -EBUSY;
-+
-+	kvm_vm_dead(kvm);
-+	to_kvm_tdx(kvm)->vm_terminated = true;
-+
-+	kvm_unlock_all_vcpus(kvm);
-+
-+	tdx_mmu_release_hkid(kvm);
-+
-+	return 0;
-+}
-+
- int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
- {
- 	struct kvm_tdx_cmd tdx_cmd;
-@@ -2911,6 +2929,9 @@ int tdx_vm_ioctl(struct kvm *kvm, void __user *argp)
- 	case KVM_TDX_FINALIZE_VM:
- 		r = tdx_td_finalize(kvm, &tdx_cmd);
- 		break;
-+	case KVM_TDX_TERMINATE_VM:
-+		r = tdx_terminate_vm(kvm);
-+		break;
- 	default:
- 		r = -EINVAL;
- 		goto out;
-diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
-index ca39a9391db1..0abe70aa1644 100644
---- a/arch/x86/kvm/vmx/tdx.h
-+++ b/arch/x86/kvm/vmx/tdx.h
-@@ -45,6 +45,7 @@ struct kvm_tdx {
- 	 * Set/unset is protected with kvm->mmu_lock.
- 	 */
- 	bool wait_for_sept_zap;
-+	bool vm_terminated;
- };
- 
- /* TDX module vCPU states */
--- 
-2.50.1.552.g942d659e1b-goog
-
+Cheers,
+Miguel
 
