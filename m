@@ -1,171 +1,123 @@
-Return-Path: <linux-kernel+bounces-749103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA17B14A23
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:31:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23033B14A32
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:37:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E1FB7A8662
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:30:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625C117E807
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC8428504B;
-	Tue, 29 Jul 2025 08:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDDA28506C;
+	Tue, 29 Jul 2025 08:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fARHZ0s7"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="Q80s3a/t"
+Received: from mail-m3285.qiye.163.com (mail-m3285.qiye.163.com [220.197.32.85])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3A8188006;
-	Tue, 29 Jul 2025 08:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C555026AAB7;
+	Tue, 29 Jul 2025 08:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753777897; cv=none; b=dIIHMZcdGvrCwMtC7JCTo+SJQYNhsXWYkYD6YwYqOY1OBtmlABTsY60Znt8zCJFHllKuzmP9sDj28+j/bQg6I6OtNIOJsCz3laZCa5Bxv1lf7F6byOxq/Uj2+84fZXqrqQc96/ue7ALKd33H5XqhdKJXUCUmBn+4j7h74UU7lGU=
+	t=1753778211; cv=none; b=t5NXoKxAnC7qwiZS0e4zxSdwEIr37Q2P9buCL6/662Zh17GZuRcsuyaj4xfiZj1Zi88Wis03D9v9nqQqAbfX+JwHEwMhbJGjqfLMSK9ISZSca2A8PG9vRHfdAjC7JGbgHN26R85nGkVkqg/cDu1xuzyZ9jVGxyQhV93zSFrCSUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753777897; c=relaxed/simple;
-	bh=3RI8jIoJyDmrLUwJoPWxZREhJPgeAMp3caffnQq7nBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QoUN7pUgVrUwZOVdHgXQFtu64uDaLiGv4QBTBCKpMepbooR5V9lgRkH+hb9XPN0aAUd/OR0Mnt3f2bXDPmGOFZ8U+2UrzWCc8dmlLMj+ftENoiVS2Um/FUxQjQHK9wfpH1pHq8KLAMdZyVwvUKpxb+SiwT5CnxPuO9E0mjn/oBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fARHZ0s7; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b34c068faf8so5347604a12.2;
-        Tue, 29 Jul 2025 01:31:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753777895; x=1754382695; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V3tQDpY9kmcpxqJo02gP5nd31GjHYrw3D1aQf8x0gRc=;
-        b=fARHZ0s7EX77uRrW2RiEQN++INK1xDQG4S6jgaFARyGMibLn0zqbgybszR8vfMtpni
-         h6V2MtMK0Z8DfqG2yDIIKONOyWxzfwGN6HOpbaMxZGmMvDSqVViWDxpv3b2VAsrEtRgw
-         48CJ8gYVBfsHuogzPxUYG3dGUI7h37iomIa8/78piI7p3jmCQO+cYZGgB305+8sAwmJL
-         ydHNl12VyklMxuNBWgbgVhAoXHUs73VuJFnjBQ16Ag0qj6HVq0fd/JAz7fcZwze5MG7T
-         67NNVHjhmfNG7iCwFE3Xzj5EjKQOFVnFDIolGMj/h7qK27DknQyOHIXkCvh+2FPmMYyB
-         d80g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753777895; x=1754382695;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V3tQDpY9kmcpxqJo02gP5nd31GjHYrw3D1aQf8x0gRc=;
-        b=hXGeceQ3GuAQQP5YvKQ2/W4Gntry4cG8UZ8dQdE5Z2j0tYfN0fNRS9C7COZy72wI2k
-         OxxFRwz82s+0e/jidpjDf9tLXAQ9HhqzP4TKJ3lHQz92OSbN87ElXPzB1XctRyRKUInf
-         fbhaPXNcXw11TfG3t6Yz6u90WSpl2hwa/XN/9JJhXn18vcDQepsB2nI9EgyyZ/yNgyR/
-         uDzA4iCPFbqXFOFKLCcwqi9ewwQkbDHZvAG+57TMTvNMvH4mwX2rVCxKJWL8pmoMi8S8
-         qEYVzHnQZu5NyZtJNz4k8wbehKesArXuduMm4qFtG3ciAZLln4fwzPMKnwc8j6WuZIwz
-         YLOw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2HAXiZ3JcExMg6AyZd0KfHbxzD79729jFQ0lplmG/Vgs1hCmDVHxcD5WWKiePK52fo+F3vn2hFlw1sB9z@vger.kernel.org, AJvYcCWxLmFa4iwoM1XFW80dqWXsh5t0fZz2bat+Wnw76Xh5gpX2R2UJvUFDjYd7tW86d1/NaXGdoJKrXSdf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwaH/XR9+J8nTjHXBEwlm9v7hCXD0SENekBU6Vnf2ymG2t53Rc6
-	R7QbOVXjJxr1eN/AdC0m90S+IU9QDe+SW0likyRB84Tp+Wztv7mFgL8n
-X-Gm-Gg: ASbGncuFIb8yTVvbHbU1dgvyYMmECKSUY07nXDmEKdFoq8FfEpK2Pa05IMUsEgB8vn9
-	lZxHwPeiccS3B+su0O6glY+n2o/kNMtHK7EBT/HYitAqKAKeazOxAnHv94FoNTMx/NuyE/dOiRw
-	2uUHoCMXcVFjrj2KU4ylnN4NoyhQLTuHx3zQNyzsUautScBspSv+8s0rUg95Qm8WQBBH2oIyo6A
-	VdTLDfbZ96Vnz2YWn4RmvY9NOgM/XBr3VED/2he9JrxXw/KBWhWdC0MsBld7VwJG6oCmWEtPnK5
-	OvzYBu4aOn+pokDoEk2Sln7cnO09xQFmS812oXAMH5xEP2v2EoOyDs5aEEHRvD5TOLYINSDwLVL
-	eOOW/ZXopv2NGHj0U2dgCf4wC1fiQlvYV
-X-Google-Smtp-Source: AGHT+IH3/A1CboxM+y3QmvNziehjws3MkOhzin8JJlZv9QPmsMuudb9IbcMH6qSkoi3W9mg9v6j4HQ==
-X-Received: by 2002:a17:90a:da8c:b0:312:1ae9:152b with SMTP id 98e67ed59e1d1-31e77a027b8mr18810110a91.23.1753777894979;
-        Tue, 29 Jul 2025 01:31:34 -0700 (PDT)
-Received: from localhost ([2001:19f0:ac00:4eb8:5400:5ff:fe30:7df3])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-31ec91fbf4csm5462503a91.12.2025.07.29.01.31.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 01:31:34 -0700 (PDT)
-Date: Tue, 29 Jul 2025 16:31:01 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Junhui Liu <junhui.liu@pigmoral.tech>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for
- Sophgo CV1800B SoC
-Message-ID: <jcpr5tg7jyyyqmaujegeuq5j3dqz4rrgxfz73rl55l3jibtq63@3w7bzux2b2je>
-References: <20250728-cv1800-rproc-v2-0-5bbee4abe9dc@pigmoral.tech>
- <20250728-cv1800-rproc-v2-1-5bbee4abe9dc@pigmoral.tech>
+	s=arc-20240116; t=1753778211; c=relaxed/simple;
+	bh=g206Alu73JgT5QWpvgVCLllZq5IsX/DhoDyib6ET+ug=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=eVpbBW8EEB/XmCvrHLp6OzTzWtHrZ1hztj/965cewrd/vYuAOZ7xGiKxzdk9Q9+muFBb7AiLO4HvcI2a/mV3siZUXkQdQ/OMBedQlFbG1p1D7xa41V0gV42ayOSiAe6LPjfo/Bhb75JwDUL8l//Fgi8eZwyJS/4W3o+nCb++J/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=Q80s3a/t; arc=none smtp.client-ip=220.197.32.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1d9827a9b;
+	Tue, 29 Jul 2025 16:31:28 +0800 (GMT+08:00)
+Message-ID: <7445b3d4-0e88-40e5-bcbd-8ea60c35d5bb@rock-chips.com>
+Date: Tue, 29 Jul 2025 16:31:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728-cv1800-rproc-v2-1-5bbee4abe9dc@pigmoral.tech>
+User-Agent: Mozilla Thunderbird
+From: Damon Ding <damon.ding@rock-chips.com>
+Subject: Re: [PATCH v3 04/14] drm/bridge: analogix_dp: Add
+ &analogix_dp_plat_data.bridge
+To: Maxime Ripard <mripard@kernel.org>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
+ kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
+ hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
+ dmitry.baryshkov@oss.qualcomm.com, l.stach@pengutronix.de,
+ dianders@chromium.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
+ <20250724080304.3572457-5-damon.ding@rock-chips.com>
+ <20250729-wooden-opalescent-baboon-f24fa2@houat>
+Content-Language: en-US
+In-Reply-To: <20250729-wooden-opalescent-baboon-f24fa2@houat>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Tid: 0a98554edd1703a3kunma08ba3a841d6e7
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQkNMGlYaGh1JSElDSR5MTBhWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
+	hVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=Q80s3a/tV4F2URBBklVXAzRfnVtfBo4yEdM/EZTEwDhDT0yBlKMCM/g4YkEMUHGcQZuzRB36AwgHJagRlvr2/emhFxN1gxf3dbNEzpE1/e+oHBfC3qFnlFMNZKoKPzivDTWL1SsMk8EJefvVkEZjqfv+ae5P4YR/7x2BVNQkl2g=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=hy5UWCAEJ8QpZLBQjuKhMArV1bapCPsMjvUUWG3LcSY=;
+	h=date:mime-version:subject:message-id:from;
 
-On Mon, Jul 28, 2025 at 07:03:23PM +0800, Junhui Liu wrote:
-> Add C906L remote processor for CV1800B SoC, which is an asymmetric
-> processor typically running RTOS.
+Hi Maxime,
+
+On 2025/7/29 15:30, Maxime Ripard wrote:
+> Hi,
 > 
-> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
-> ---
->  .../bindings/remoteproc/sophgo,cv1800b-c906l.yaml  | 79 ++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
+> On Thu, Jul 24, 2025 at 04:02:54PM +0800, Damon Ding wrote:
+>> In order to move the parnel/bridge parsing and attachmenet to the
+>> Analogix side, add component struct drm_bridge *bridge to platform
+>> data struct analogix_dp_plat_data.
+>>
+>> The movemenet makes sense because the panel/bridge should logically
+>> be positioned behind the Analogix bridge in the display pipeline.
+>>
+>> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
+>> ---
+>>   include/drm/bridge/analogix_dp.h | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analogix_dp.h
+>> index cf17646c1310..15cb6b706e9f 100644
+>> --- a/include/drm/bridge/analogix_dp.h
+>> +++ b/include/drm/bridge/analogix_dp.h
+>> @@ -27,6 +27,7 @@ static inline bool is_rockchip(enum analogix_dp_devtype type)
+>>   struct analogix_dp_plat_data {
+>>   	enum analogix_dp_devtype dev_type;
+>>   	struct drm_panel *panel;
+>> +	struct drm_bridge *bridge;
+>>   	struct drm_encoder *encoder;
+>>   	struct drm_connector *connector;
+>>   	bool skip_connector;
 > 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.yaml b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..2061c2fd6ba343c09b1a91700ea4a695d2b57f81
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.yaml
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/remoteproc/sophgo,cv1800b-c906l.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sophgo C906L remote processor controller for CV1800B SoC
-> +
-> +maintainers:
-> +  - Junhui Liu <junhui.liu@pigmoral.tech>
-> +
-> +description:
-> +  Document the bindings for the C906L remoteproc component that loads and boots
-> +  firmwares on the CV1800B SoC.
-> +
-> +properties:
-> +  compatible:
-> +    const: sophgo,cv1800b-c906l
-> +
-> +  firmware-name:
-> +    maxItems: 1
-> +
-> +  mbox-names:
-> +    items:
-> +      - const: tx
-> +      - const: rx
-> +
-> +  mboxes:
-> +    description:
-> +      This property is required only if the rpmsg/virtio functionality is used.
-> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
-> +    items:
-> +      - description: mailbox channel to send data to C906L
-> +      - description: mailbox channel to receive data from C906L
-> +
-> +  memory-region:
-> +    description:
-> +      List of phandles to reserved memory regions used by the remote processor.
-> +      The first region is required and provides the firmware region for the
-> +      remote processor. The following regions (vdev buffer, vrings) are optional
-> +      and are only required if rpmsg/virtio functionality is used.
-> +    minItems: 1
-> +    items:
-> +      - description: firmware region
-> +      - description: vdev buffer
-> +      - description: vring0
-> +      - description: vring1
-> +    additionalItems: true
-> +
+> So it's not the analogix_dp bridge, but the bridge after that if any?
+> 
+> You should probably change it to next_bridge to avoid any confusion.
+> 
 
-Why not allocating these region dynamicly? I do not think firware is
-always avaible before staring. Allowing dynamic firmware give us max
-flexiblity.
+Yes, &analogix_dp_plat_data.bridge is intended to be the next bridge 
+after analogix_dp bridge.
 
-Regards,
-Inochi
+I will rename it to &analogix_dp_plat_data.next_bridge as suggested and 
+update it in the next version.
+
+Best regards,
+Damon
+
 
