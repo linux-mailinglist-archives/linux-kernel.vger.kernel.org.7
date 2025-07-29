@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-749700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 292C2B151C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:58:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 887ABB151D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4B43A8498
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:58:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D101318A4975
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E77C2980A4;
-	Tue, 29 Jul 2025 16:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADB929826D;
+	Tue, 29 Jul 2025 17:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlPT85UP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZMJ+m0Fc"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A440934CF5;
-	Tue, 29 Jul 2025 16:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4935B227B83
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753808300; cv=none; b=gsUYRTGPsfi5HYXpvsxuTxdpMM2cU1CedzTmqxG876qokUrKBjVvjDiQHRU05G7KpTyYMwUp1k1dD7sV8JkUX76QIKpAawh5EhwpTDtHnrEiyD2aAAFA78JpLrFoCtZwyO5dmOAoNGuR9mepb9WGQXppAe69bD3o9AeB1Z9OOh8=
+	t=1753808935; cv=none; b=tcmXs/kZSKQQb5NFWqfP/I/pnHgQq919PYmmg+wzzhd+XgM/DMxKvYD2iElvCWyP/4o4YLyOSQ/aq5ud6nYaNspF2sh6yGIQgVFN/PF8bcvZNZyWwuLJFZcz8x2ZWj7mlY3lr7YfIfmogb5iTXkwoanQWw8mEZgF3wnY7nUji7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753808300; c=relaxed/simple;
-	bh=Hb9smdHf0g56CpF8sBWDOF38RasuaUJ0puvOlmqvOjY=;
+	s=arc-20240116; t=1753808935; c=relaxed/simple;
+	bh=1/CKMx9GIWSUCPkym2GvUCJ8WAG7TrBGch+iVBi5p8E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=er+5L2nDPiY9Fiyz6XYKYSuc1tBDDs2MEzKbk2E5oc2WOJ51C5s6qxdsHFGAfoePLV9ccl2ezr2ZsJPZpdEkM1o4A6bwu3RJ/+VcmO0VeDzgiUNS/uPhW30dlpSEBSi83EZ98OY6u/B+g001MfyVDxyNIiwlgtt2Sr9k5cpgl+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlPT85UP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A35EC4CEF5;
-	Tue, 29 Jul 2025 16:58:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753808296;
-	bh=Hb9smdHf0g56CpF8sBWDOF38RasuaUJ0puvOlmqvOjY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KlPT85UP6HQLETFTi6OtUJx9aRuyZBcfrc4BG0gLSetfvPPGD3huNlBLFo0yL5k22
-	 Mtx9Bqa1YmgYyOQeni00rZcMrLD1xMmj+A/AcO7/p2AZGoUM57od4OFqJgUlcbZPy1
-	 vwoHTTPkVS1J/e0Wea9moLyTMgW5hPt3gOmatUFpd7vYVdHguB+8uTPSslkTw2M+Nd
-	 AQ9lmMqb8djPioT5MzVN22+r099MIJTq6z508uKiDs1wcvKL++f6Yh4T1g5d9/PNTn
-	 kMtkM/iz68Sx+YMXAHzvOowhlMKSqVIczcTgLwLbXL7BKChTSMwB2V7Xl1e7J3sn/D
-	 v2qe7PZzt4j6A==
-Date: Tue, 29 Jul 2025 17:58:10 +0100
-From: Simon Horman <horms@kernel.org>
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Rob Herring <robh@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=RsXcOSYLJEPLXhKdds5d+373RlFRPHAjuGZWSZthBo5HcyIEWZ92XEUyYWOB+K0fbo0uehBnOR5xbgidUff9Pm3uc6aGp46oKtxE0qGiyaqOuT7f0dIC23xnWbnJGC+fPe2YAMTt4xVy0VkhUG0xmANfRSDxRuqar/TaSlQTr6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZMJ+m0Fc; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=aM/2
+	muNO3YLCpDyzqzoOv6VbpMtuGVNgJceaDauVIOU=; b=ZMJ+m0FcN61eTjdcBdEz
+	isnaqjzdFrh4VEYv2ZUm1Dotvisb2mu3AQX5PzT1TA+IqsbefG5eCABPE264K1ZZ
+	pLZOa5w31LQmVGnzUTwYCalhsKdRX1Adk90/57ADFGlTFq9jCEqeRhZ1U6Ve7cln
+	adMtVtDg4r+IFKzq1zrEscFnkQOV3LxZJUpHuSOAl0jAF9IuThBY1oHKNhv3iT/M
+	JtsQSnPyFebypmcmDwwj5iW4uZWyWf7xcYjrCNYjKa9hGaQvfM3jdyzhtnGow0SZ
+	L9pk+WmD+hqP8Mj2nEXB7ZJFSjNCKk/vnXqpDoiGnw5J71BExUlmCZmjO3KTxiHs
+	BA==
+Received: (qmail 3879558 invoked from network); 29 Jul 2025 19:08:42 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 29 Jul 2025 19:08:42 +0200
+X-UD-Smtp-Session: l3s3148p1@weLVdRQ7hrYujntT
+Date: Tue, 29 Jul 2025 19:08:41 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next v2 1/2] drivers: net: stmmac: handle start time
- set in the past for flexible PPS
-Message-ID: <20250729165810.GG1877762@horms.kernel.org>
-References: <20250729-relative_flex_pps-v2-0-3e5f03525c45@foss.st.com>
- <20250729-relative_flex_pps-v2-1-3e5f03525c45@foss.st.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 0/9] Add watchdog driver support for RZ/T2H and RZ/N2H
+ SoCs
+Message-ID: <aIkAGUVGqLcFBoXo@shikoro>
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="F4YqoSD805a1UQqF"
+Content-Disposition: inline
+In-Reply-To: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+
+--F4YqoSD805a1UQqF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250729-relative_flex_pps-v2-1-3e5f03525c45@foss.st.com>
 
-On Tue, Jul 29, 2025 at 04:52:00PM +0200, Gatien Chevallier wrote:
-> In case the time arguments used for flexible PPS signal generation are in
-> the past, consider the arguments to be a time offset relative to the MAC
-> system time.
-> 
-> This way, past time use case is handled and it avoids the tedious work
-> of passing an absolute time value for the flexible PPS signal generation
-> while not breaking existing scripts that may rely on this behavior.
-> 
-> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
-> ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c | 31 ++++++++++++++++++++++++
->  1 file changed, 31 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
-> index 3767ba495e78d210b0529ee1754e5331f2dd0a47..5c712b33851081b5ae1dbf2a0988919ae647a9e2 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
-> @@ -10,6 +10,8 @@
->  #include "stmmac.h"
->  #include "stmmac_ptp.h"
->  
-> +#define PTP_SAFE_TIME_OFFSET_NS	500000
-> +
->  /**
->   * stmmac_adjust_freq
->   *
-> @@ -172,6 +174,10 @@ static int stmmac_enable(struct ptp_clock_info *ptp,
->  
->  	switch (rq->type) {
->  	case PTP_CLK_REQ_PEROUT:
-> +		struct timespec64 curr_time;
-> +		u64 target_ns = 0;
-> +		u64 ns = 0;
-> +
+Hi,
 
-I think you need to wrap this case in {}, as is already done for the following
-case.
+>   dt-bindings: watchdog: renesas,wdt: Add support for RZ/T2H and RZ/N2H
+>   watchdog: rzv2h_wdt: Obtain clock-divider ranges from OF match data
+>   watchdog: rzv2h_wdt: Obtain CKS divider via OF data
+>   watchdog: rzv2h_wdt: Make "oscclk" an optional clock
+>   watchdog: rzv2h_wdt: Add support for configurable count clock source
+>   watchdog: rzv2h_wdt: Make reset controller optional
+>   watchdog: rzv2h: Set min_timeout based on max_hw_heartbeat_ms
+>   watchdog: rzv2h: Add support for RZ/T2H
+>   watchdog: rzv2h_wdt: Improve error strings and add newlines
 
-Clang 20.1.8 W=1 build warn about the current arrangement as follows.
+Minor nit, but still: inconsistent prefix
 
-  .../stmmac_ptp.c:177:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-    177 |                 struct timespec64 curr_time;
-        |                 ^
-  1 warning generated.
+I'd suggest to use "rzv2h" instead of "rzv2h_wdt" but it is ultimately
+the WDT maintainers call...
 
-GCC 8.5.0 (but not 15.1.0) also flags this problem.
 
-Also, please note:
+--F4YqoSD805a1UQqF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-## Form letter - net-next-closed
+-----BEGIN PGP SIGNATURE-----
 
-The merge window for v6.17 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations. We are
-currently accepting bug fixes only.
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiJABUACgkQFA3kzBSg
+KbY44hAAsJk3aasd05N/Ty01a712YZby7tEwmy+NSUYdOOPYPE9HDRMTukcSIhQe
+sJ0PIUjVoQ6LEy+h8KYek0E8fnWq/drKTgkGEvhZemmv8AgoMwDSB7QiaaMN6KiX
+JJn7A7ZCzq7sWP8Vx6jtAq8f9tbod9E7ER8cKyJWZVozRpOnxOPMXrVrubY2JN8w
+e+CJEHli/0xDhHOE2eAaC1CklPO2duvm0+2Eqo5VQfJi0Wne758PGS3zTv/p4S8N
+WCjx3lwv3EmoCMFaV66i64K1GVhCnpAqsfTGJAIbpAip3C2dslPFeLM/Qk01aJ0g
+FzZt3OWEg+l14cDvRgun0PFjGaQw0qGP8tFM7yIEr4EhWMWxbZBVf1mz5yVAEWxj
+VOjJgM409JvNMV9pjE/JTTT2IG/ThTLlAVtGR/Gjg0p1bhkBMdkGCHbSwCDEx3pW
+mQLh62+NMyIkjt/4zf0avu05LbUcC/0E077Q75cLOm98erN9hu1puM4Z/4kgnxtJ
+wgcTAPQx04FNFh8ZOASZ5ofFHQcwURwAmySK1PHcr8f5WvYS53tjkHSjAWHFOM6H
+oMVUgilG37+Tr8PTOhaHrJCGK5JWtMI2mj/77RyxzpFAYLf6dnUcNrEX9RRDvuNP
+aZTd7eBKZTwO7cUHNaFOrPz+fYBXFZZxFTKV7ba4Rb/3e6f6KxA=
+=pb7N
+-----END PGP SIGNATURE-----
 
-Please repost when net-next reopens after 11th August.
-
-RFC patches sent for review only are obviously welcome at any time.
-
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
-
--- 
-pw-bot: defer
+--F4YqoSD805a1UQqF--
 
