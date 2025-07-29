@@ -1,124 +1,240 @@
-Return-Path: <linux-kernel+bounces-749220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EFB3B14B94
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:46:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F1FEB14B98
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:48:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F354F189BE9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940043B6C09
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B751824BD04;
-	Tue, 29 Jul 2025 09:46:13 +0000 (UTC)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEA3266F15;
+	Tue, 29 Jul 2025 09:47:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mw/RjNVM"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869461E7C27;
-	Tue, 29 Jul 2025 09:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF00230D35;
+	Tue, 29 Jul 2025 09:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753782373; cv=none; b=jh9T5MRb4qe+u92j/eZjOEJFIpCW+mNHOpBW/WdKMAlDsTerOQ37xCmsSiyqbdSQ/KJcaKPEfttvJ+oIz5+Soq6CroU1u9GubtQSf7NibHN3HbkRGNCDY1f8Tror0Uv33mXiopAyxok8Myxjtq/J/EHVic1tpydDP9aMrB/uGi4=
+	t=1753782473; cv=none; b=q85aMdmIQ2zs6QxV/aMvz2kTIY/CEe2xRXCUbYR1kRmOldkVugVHCLwvG9CyifAV4NG01iX+sRZzGsaX5JXIX4fH5A9IGrDW11N+lyC5f6s1IBiFqc71IpITgBMdQIBDm8nHB3EpULtqdE5mYiELePugXTpkmZVmOAdytvAIp5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753782373; c=relaxed/simple;
-	bh=QTphEvzFOn/c7NWtOZU9iHWKZcCbV3W6dWi3ZrNCRJ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S++6ci0ZrCaWEGaFrmomh32xXP/3/y3G6kXZa/X++aPyqlvFVwZJGWbgIYo7PeFdgDJz/aNrWUKcATjwnaqlGbghEGOfE5RhApRhdjNIbttLnLQTlVGrI9WbydwUjpyCd8ywqfGiZB1SN3pn+dVAIu7TXBmXuBH5IGRYMzrT8GQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-531acaddd5eso1350197e0c.2;
-        Tue, 29 Jul 2025 02:46:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753782369; x=1754387169;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VP9TyEmohsmpq0wEVjcGoMjrsBeaXcuG++k6Esdzloc=;
-        b=XlRHLWgCqlk4LKrvnO3hekfksN4KZpleeMRqApvx3bHL5m9iO2avCyjLZpGSUDqUbH
-         UM2/XngtWfLv1keQW+s9fHtNgs/9pptfmpuwUYAZrVX0vCvi/iB8Jtg3GfbCqfjKOYiH
-         0k3yNFmKbLB7VovaeeHiCz8mCWrI0VamUIaTo9/SZrDGwKrz+kdTrm33G/q/AH3wHFFv
-         2xvP4S36Bl51+at1kdf68PQQVDzccI5JgxlGnE2k8F6JMbhDGLflh5tI+VQr1Byl6J/V
-         jxhnVmZTlnvbFOerCr0nJqBb4VH3NdsPZ9BzYWyxyShTlXmBeerIO8elwreoY8OTieXm
-         SgcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlK6seUL7jCUsakUmZ082Hr521p4/bysc3vpp9XYsA9kDdTeXGsPGgLlCn79Tj+uWqkRzV3wQUVVfJ@vger.kernel.org, AJvYcCUsZqDv4a8ok8K8ygmTbYH6dE/WJGgLvyebaQd6bmkGNS+kyQJfAjLKSM7k2Wrtf/xICOC4nvu62ckm5+ylXv/mU9I=@vger.kernel.org, AJvYcCV0Wk60pfet2pMQiMbW1X86O1bb3Zod7hLMeIGx4xiPehKs23N13ye/CQmeuQyBI7zQaNYneQLR8Bf0gkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCpFa+BNoBcRMu2cUI3jAQjuk0czArgzdvPXarKniYqHA/dgD0
-	m+2yvh7FNN/GZyzB1jZ052HmHdokzSM3paO0EjNnBvb38UqxOKxDTs9hv4tuO5XG
-X-Gm-Gg: ASbGncsT6x6Pq+vmJNkBhmz1ng70W7QwEKLbtisOTL70DXOsFIcyXbqjavSWJ8l7VRi
-	43y75fWbOPzjR9eqQJ5c2a1CIS1Lh7xuu4KEQu3wNF/ontZkwmKSQVHhAsJ+KUf8lkJ6BxJF2KN
-	Usu2O9ussRInGDV2axDaXdoJL9wpDXAvAbxYX07x6V+ODtZDonjScvZPrY/RAVPgK1bwc0sB0NR
-	zqXi1Kxd5LyDsi8PkTkHhqJ1YrvFMuNcEFOg3D5F3eNroBYMzH+W/sQ6/vj4lcp726wMhoprtuR
-	jHC/Aib9tI+uxkcrBxdjPzDKsnzqyjJwSjJE8zrRaXZAd1Izgget/wGzMPMrLmhqPVXSJ7U5V+B
-	Xac1PAP0doqtBUV0k/vx42lQRCgsuAsDo4I3dFDKhT7uf1xYS6tIV/0RxSzSb
-X-Google-Smtp-Source: AGHT+IHx6ulGU3MZJqFFzDZbJ/v/XglXufzos8t1DuZHRwCbDjFfCp+5096Azp4BY4/183m3UX4qcA==
-X-Received: by 2002:a05:6102:2b88:b0:4e2:c6e4:ab1e with SMTP id ada2fe7eead31-4fa3fa713f6mr6131977137.7.1753782369134;
-        Tue, 29 Jul 2025 02:46:09 -0700 (PDT)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88baa12baa4sm978875241.6.2025.07.29.02.46.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 02:46:08 -0700 (PDT)
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4e8135adfccso1740328137.1;
-        Tue, 29 Jul 2025 02:46:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUl1oME93dHENxVLUBMRJDE374g4vz2dkAjR6CqALCOqbsCcEr3RxS0riwA9w+vA2b21NrwChZf5kXd@vger.kernel.org, AJvYcCUv7k0C/w8SjBura88dqofwOUUO7H+Nu9dEByDrToelorUlVXAKTKXoRX+K6BxWQ1SkmaqMILEKGCyuvfBQh2Yr1LM=@vger.kernel.org, AJvYcCX2EadI5FO531Ek2BFAr1EANZD5ABvfZbS6H8ARcZibK2x1Fu05IHa+FKc2NOy7RSqmaY5C+xDUfZy5R2U=@vger.kernel.org
-X-Received: by 2002:a05:6102:40d6:20b0:4fb:142:f4d3 with SMTP id
- ada2fe7eead31-4fb0142f850mr568305137.25.1753782368602; Tue, 29 Jul 2025
- 02:46:08 -0700 (PDT)
+	s=arc-20240116; t=1753782473; c=relaxed/simple;
+	bh=kiAVxOybSUMykd1nOkBhLdpaX405dvJtvP0kD4q0ZUY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UCZDNHU85gMM67RLfx/hGQik82oRMYg0E8zlPxVe1ZCZ4bUJo3Tyc/vyngaxJoo8eyOgHtZBlcfrk8gnFUO0czka6mpN3LjQfSSKXfuVbVNL0QBzDBhcbpWBrkDPj0Xj/ee60A3bT/fSFgaAqeRXs4WsdsUuY2dWHva3PEMxRAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mw/RjNVM; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56T9kaku2518997;
+	Tue, 29 Jul 2025 04:46:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753782396;
+	bh=rW2guRXzVdSnP3kefofJSWnAepPy1N5zFafQ9pBYRpE=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=mw/RjNVMo6aBuUR2RkpjfrSTMPitgl+f7aFpDFUxKhzsrVssKPY2b1hL+Ynt41I6K
+	 AN9uVNpjfRShIoAdvJqECtMXtvknjRxYvDjg1szUFgPr2GmtyofClCn0HatJKKs24K
+	 FkXziYWTbOakABGqOHO5lf2V9OSQHmjMjKJWTnfE=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56T9kZQe2365503
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Tue, 29 Jul 2025 04:46:35 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 29
+ Jul 2025 04:46:35 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Tue, 29 Jul 2025 04:46:35 -0500
+Received: from [172.24.231.152] (danish-tpc.dhcp.ti.com [172.24.231.152])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56T9kTTA3221409;
+	Tue, 29 Jul 2025 04:46:30 -0500
+Message-ID: <66377d5d-b967-451f-99d9-8aea5f8875d3@ti.com>
+Date: Tue, 29 Jul 2025 15:16:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724092006.21216-1-johan@kernel.org> <CAMuHMdU0E_d3XMj6sDeJy8P_UL7ua-_6CnTYqvf2-TD-WXiR3Q@mail.gmail.com>
- <aIiTCDy-_EjUt1zd@hovoldconsulting.com>
-In-Reply-To: <aIiTCDy-_EjUt1zd@hovoldconsulting.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Jul 2025 11:45:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWvusnNfnfhFVrTR4mF7PeBwXBz9a02KeOw_wfz1_sdOg@mail.gmail.com>
-X-Gm-Features: Ac12FXwEGZ5rpHSGvvCAIwf9-TOMpclPXbnNiCmKjH3Mnx0nrSrJE1qeaajfegk
-Message-ID: <CAMuHMdWvusnNfnfhFVrTR4mF7PeBwXBz9a02KeOw_wfz1_sdOg@mail.gmail.com>
-Subject: Re: [PATCH] usb: gadget: udc: renesas_usb3: drop unused module alias
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 2/5] net: rpmsg-eth: Add basic rpmsg skeleton
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        Mengyuan Lou <mengyuanlou@net-swift.com>,
+        Michael
+ Ellerman <mpe@ellerman.id.au>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Fan
+ Gong <gongfan1@huawei.com>, Lee Trager <lee@trager.us>,
+        Lorenzo Bianconi
+	<lorenzo@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Lukas
+ Bulwahn <lukas.bulwahn@redhat.com>,
+        Parthiban Veerasooran
+	<Parthiban.Veerasooran@microchip.com>
+CC: <netdev@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250723080322.3047826-1-danishanwar@ti.com>
+ <20250723080322.3047826-3-danishanwar@ti.com>
+ <296d6846-6a28-4e53-9e62-3439ac57d9c1@kernel.org>
+ <5f4e1f99-ff71-443f-ba34-39396946e5b4@ti.com>
+ <cabacd59-7cbf-403a-938f-371026980cc7@kernel.org>
+Content-Language: en-US
+From: MD Danish Anwar <danishanwar@ti.com>
+In-Reply-To: <cabacd59-7cbf-403a-938f-371026980cc7@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Johan,
 
-On Tue, 29 Jul 2025 at 11:23, Johan Hovold <johan@kernel.org> wrote:
-> On Mon, Jul 28, 2025 at 10:56:18AM +0200, Geert Uytterhoeven wrote:
-> > On Thu, 24 Jul 2025 at 11:21, Johan Hovold <johan@kernel.org> wrote:
-> > > Since commit f3323cd03e58 ("usb: gadget: udc: renesas_usb3: remove R-Car
-> > > H3 ES1.* handling") the driver only supports OF probe so drop the unused
-> > > platform module alias.
-> > >
-> > > Signed-off-by: Johan Hovold <johan@kernel.org>
-> >
-> > While I don't debate the actual change, I would like to comment on
-> > the patch description.  The driver only ever supported OF probe.
-> > The call to soc_device_match() was just used to override the match
-> > data for quirk handling.
->
-> The driver initially indeed only supported OF probe, but that changed
-> with commit ca02a5af650c ("usb: gadget: udc: renesas_usb3: Use
-> of_device_get_match_data() helper") after which the driver could at
-> least theoretically also bind based on the platform device name.
 
-Oh right, now I see what you meant.
-Yes, in theory the driver could bind before on a legacy platform device,
-but it would crash on a NULL-pointer dereference when running on
-anything but R-Car H3 ES1.0x ;-)
+On 28/07/25 6:10 pm, Krzysztof Kozlowski wrote:
+> On 28/07/2025 10:10, MD Danish Anwar wrote:
+>> Hi Krzysztof,
+>>
+>> On 25/07/25 12:48 am, Krzysztof Kozlowski wrote:
+>>> On 23/07/2025 10:03, MD Danish Anwar wrote:
+>>>> This patch introduces a basic RPMSG Ethernet driver skeleton. It adds
+>>>
+>>> Please do not use "This commit/patch/change", but imperative mood. See
+>>> longer explanation here:
+>>> https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+>>>
+>>
+>> Sure. I will fix this in v2.
+>>
+>>>> support for creating virtual Ethernet devices over RPMSG channels,
+>>>> allowing user-space programs to send and receive messages using a
+>>>> standard Ethernet protocol. The driver includes message handling,
+>>>> probe, and remove functions, along with necessary data structures.
+>>>>
+>>>
+>>>
+>>> ...
+>>>
+>>>> +
+>>>> +/**
+>>>> + * rpmsg_eth_get_shm_info - Get shared memory info from device tree
+>>>> + * @common: Pointer to rpmsg_eth_common structure
+>>>> + *
+>>>> + * Return: 0 on success, negative error code on failure
+>>>> + */
+>>>> +static int rpmsg_eth_get_shm_info(struct rpmsg_eth_common *common)
+>>>> +{
+>>>> +	struct device_node *peer;
+>>>> +	const __be32 *reg;
+>>>> +	u64 start_address;
+>>>> +	int prop_size;
+>>>> +	int reg_len;
+>>>> +	u64 size;
+>>>> +
+>>>> +	peer = of_find_node_by_name(NULL, "virtual-eth-shm");
+>>>
+>>>
+>>> This is new ABI and I do not see earlier patch documenting it.
+>>>
+>>> You cannot add undocumented ABI... but even if you documented it, I am
+>>> sorry, but I am pretty sure it is wrong. Why are you choosing random
+>>> nodes just because their name by pure coincidence is "virtual-eth-shm"?
+>>> I cannot name my ethernet like that?
+>>>
+>>
+>> This series adds a new virtual ethernet driver. The tx / rx happens in a
+>> shared memory block. I need to have a way for the driver to know what is
+>> the address / size of this block. This driver can be used by any
+>> vendors. The vendors can create a new node in their dt and specify the
+>> base address / size of the shared memory block.
+>>
+>> I wanted to keep the name of the node constant so that the driver can
+>> just look for this name and then grab the address and size.
+> 
+> You should not.
+> 
+>>
+>> I can create a new binding file for this but I didn't create thinking
+>> it's a virtual device not a physical and I wasn't sure if bindings can
+>> be created for virtual devices.
+> 
+> So you added undocumented ABI intentionally, sorry, that's a no go.
+> 
+>>
+>> In my use case, I am reserving this shared memory and during reserving I
+>> named the node "virtual-eth-shm". The memory is reserved by the
+>> ti_k3_r5_remoteproc.c driver. The DT change is not part of this series
+>> but can be found
+>> https://gist.github.com/danish-ti/cdd10525ad834fdb20871ab411ff94fb
+>>
+>> The idea is any vendor who want to use this driver, should name their dt
+>> node as "virtual-eth-shm" (if they also need to reserve the memory) so
+>> that the driver can take the address from DT and use it for tx / rx.
+>>
+>> If this is not the correct way, can you please let me know of some other
+>> way to handle this.
+>>
+>> One idea I had was to create a new binding for this node, and use
+>> compatible string to access the node in driver. But the device is
+>> virtual and not physical so I thought that might not be the way to go so
+>> I went with the current approach.
+> 
+> virtual devices do not go to DTS anyway. How do you imagine this works?
+> You add it to DTS but you do not add bindings and you expect checks to
+> succeed?
+> 
+> Provide details how you checked your DTS compliance.
+> 
+> 
 
-Gr{oetje,eeting}s,
+This is my device tree patch [1]. I ran these two commands before and
+after applying the patch and checked the diff.
 
-                        Geert
+	make dt_binding_check
+	make dtbs_check
+
+I didn't see any new error / warning getting introduced due to the patch
+
+After applying the patch I also ran,
+
+	make CHECK_DTBS=y ti/k3-am642-evm.dtb
+
+I still don't see any warnings / error.
+
+
+If you look at the DT patch, you'll see I am adding a new node in the
+`reserved-memory`. I am not creating a completely new undocumented node.
+Instead I am creating a new node under reserved-memory as the shared
+memory used by rpmsg-eth driver needs to be reserved first. This memory
+is reserved by the ti_k3_r5_remoteproc driver by k3_reserved_mem_init().
+
+It's just that I am naming this node as "virtual-eth-shm@a0400000" and
+then using the same name in driver to get the base_address and size
+mentioned in this node.
+
+
+> 
+> Best regards,
+> Krzysztof
+
+
+[1]
+https://gist.githubusercontent.com/danish-ti/fd3e630227ae5b165e12eabd91b0dc9d/raw/67d7c15cd1c47a29c0cfd3674d7cd6233ef1bea5/0001-arch-arm64-dts-k3-am64-Add-shared-memory-node.patch
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Thanks and Regards,
+Danish
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
