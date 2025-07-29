@@ -1,158 +1,124 @@
-Return-Path: <linux-kernel+bounces-749942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5923B1553C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:23:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C518CB15543
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E902718A389D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:23:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2446C18A2DEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAD5283C9F;
-	Tue, 29 Jul 2025 22:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91BD28469A;
+	Tue, 29 Jul 2025 22:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Ak65rxZ1"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bi33vuRE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEEB15533F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 22:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2483B247288
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 22:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753827784; cv=none; b=WGWdi9Hjc6G3sL0JAhBQSA2CzuRroN42eScAtvNiPFGCFHacFBW4iU8FchCENn+fSJcZft5lbYoTlDemUQsRE0e8KPJ/a3id8QSWhB5u6ru81hkIgJ4MSXTQa6IDrHmlrQ4uLH539KP7HjzW4NdNzVtlZlIXP0ESjEEFIhFpxOE=
+	t=1753828029; cv=none; b=ttO/QmGDQgPFpjxIJRuGBZD/CDLxzDTxQ9whBQIPKPci0TJdh4Ll2ZmKeUr72VPUnSRQJ7+2i+/oQp15zrZfXdgyACi/oNcFafXrNHDND+IskBVkdVcbf5ueYm8/bjmQCIuoYofpAq4oiTpqWGAxvr7WBTi8RoaFMKcTTi/kF5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753827784; c=relaxed/simple;
-	bh=4GdSigWwwldL0RA27kr53J6NXPAwPI5dHAa5/mhdiiY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cXM/ICZBy8F6ZT7u2VrGyKiYtlq2D58Q3q+e2BaW22ryFNHoqGf4rgMpihDkVTCK8NMT+9zHwnIlEmLLni9NiWWuJsit2FIaYvEOKjE7B5QlbUMIWzppasxLuYdrtSMwPdaHjjClEKlcouJ6f/I90/mXfiNIykyXvAw/iCw8caw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=Ak65rxZ1; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-7074bad03ceso22345336d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753827781; x=1754432581; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=+LE/N4dZraGWQ3jyiAjJdQylOUBI0lucdkrBEItExm0=;
-        b=Ak65rxZ18Q2+Rco20xgkNdYHD89Bc8vwu9d91z4mxyo5iEs7s6kEecLtbh3TUgdytQ
-         EqnRW82TGtgSNDN492Sn9glRrXE6gkzq7U2VC388MGLhY74ladY4/xcC/Q5NZjgAkNb2
-         Xbb6CevsFfa0ssns15kR6tokMzFysZvjG9wrs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753827781; x=1754432581;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LE/N4dZraGWQ3jyiAjJdQylOUBI0lucdkrBEItExm0=;
-        b=dKSlqoDFOHbH/w0L7+5Md98bZWm2QnLDuqxwxCrx4CGEtVhsvkQ2FrzIWAZ/NIlJBb
-         yaKyq+y3AhUnHhX5HnWJfNgrceqYqFoSQ0kAnUw1LDOIQV6hpJ7FH2COsHwsj39ngi5v
-         F/efPY+2ERREnzKxPpp2GCQH0r3+9YG3zRNvFr1D18fKDnk5SnYVd7wIsYJ+87pLBZuR
-         0TqVNULOmAqinn8PJMiad/GQzHlzvlKOvrukBS7otQe1RTaAk7R4k4psrfMfUzri6n3j
-         1tqdEC74AYr7W8wsPuVJvAvxPWvlr6qZkLSfJJeqt1MWrRiGST3puZ0xcWQSdaDtA8nS
-         IQbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUustALYDPFe4NCbsRSy9cOipqNsDRC4eXMWEkibL2gQde0lLft4k+B4FDnn/MWK9ICOlGFTraTWVVj5SU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0RMPgJ8ryV+T/DKw/e1UJnZZmIxqmAeC6y7wTYr7q6Un/Xq1B
-	7VpqFeeIccikz5b90J2nIbBtdjbYkeOkB9tlZEdbkOY6mCjst/qGpGxdORBhh7Zbjw==
-X-Gm-Gg: ASbGncumRePqAXqCUmSc23yFkdzFvRaszuszFiMjV6peimko5EXwz0PEwiyOeY9YiSp
-	6gAETZOqnB7yzI8D5cZ3MarR/w0gpkD5eXtV/Dwo9eYAURYQqb7wuk03K4Hb571shlISf4ap7xS
-	XCeyXAWMc+yxBbbinN12QoO9PWxuputKajxwKst3V/QElCHgCrvuZ3sgI9J4hKuYT69hN5pSj7L
-	xzKtxdgsrHDo8N9azkIQWhVQOXL/17YergHbRT9bVXDn6dZFJjOMu6ZiztAj+MV0PCVZ6Mg6Mvq
-	t2CIBmbDZ7v6/+Ge7rtgvkBSnoWsacQEdq/HG/4EwoqKN6ONrd4322EIS8ROow6KGrQSj8AC18B
-	eeHAwpLSK0tyGU4sNY5s2eOpOtzPqpkCP9HV/G0aUIJIrjLuCb6jE8erH0E71WQ==
-X-Google-Smtp-Source: AGHT+IHAjKz6peco8RflxNDLQgMoSAlltIZ8BdUBJwYDjKEQKjRs3sP5vNW8dYdyT4heNCxJmiO1Rw==
-X-Received: by 2002:a05:6214:ccd:b0:6ff:7678:bd0e with SMTP id 6a1803df08f44-70766d508c3mr14274536d6.8.1753827781429;
-        Tue, 29 Jul 2025 15:23:01 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70752597db1sm23424126d6.26.2025.07.29.15.22.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 15:23:00 -0700 (PDT)
-Message-ID: <9c10c78b-3818-4b97-8d10-bc038ec97947@broadcom.com>
-Date: Tue, 29 Jul 2025 15:22:57 -0700
+	s=arc-20240116; t=1753828029; c=relaxed/simple;
+	bh=C+FynPwMIQI8qtWQyP8PljG+aPRklSvv3uH+DVM1oSc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGQLGnoCPLzun4/h3Mwmae/wwQC8WQCodk9GsuMLdntTsYbU1im8+mABXTykPTtjIQSAhXxqUAnQqIVbPULn3JHmVlbTDxftstqQ0wFsiavUdKJ+hYdqVMm4CJVOl98UABm83YSE6KeuHbZckilabJDwOgjcrQ1j02PeBJ34/kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bi33vuRE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFF2AC4CEEF;
+	Tue, 29 Jul 2025 22:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753828028;
+	bh=C+FynPwMIQI8qtWQyP8PljG+aPRklSvv3uH+DVM1oSc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bi33vuRE3ut/6p9EKIHgvvwv2RuTklixv+ldizftjrbw8wys7ulIQImV1CebNjSzK
+	 aSyfje4KE+mktJS7ttC8N09qD1QJts/lUUR0GlPqITSDRPNeMGofO5vpVNiLq1Si+G
+	 d/HQD5iG4G15/Fo2t2zlcs0OoI5x7ehkUPyRXQjNrGB5B7dPkewMjSeBQF7ivdVOfY
+	 dxAtP3HIWDcBTqAEaylnYS3xClKwCbMeBlzBPioUfpCtau+O/+SDEWJ8Fl6B5rQf6l
+	 VYjI3vdBoARr1k7DcD0EDuVsm5ge71hSZq1foTSfVxCQ+06Rq016lSrmloHkLjs0N9
+	 K0uf+RR6in1Ow==
+Date: Tue, 29 Jul 2025 15:27:08 -0700
+From: Kees Cook <kees@kernel.org>
+To: Linus Torvalds <torvalds@linuxfoundation.org>
+Cc: Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>,
+	syzbot <syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com>,
+	dave.hansen@linux.intel.com, hpa@zytor.com,
+	linux-kernel@vger.kernel.org, mingo@redhat.com,
+	syzkaller-bugs@googlegroups.com, x86@kernel.org
+Subject: Re: [syzbot] upstream build error (23)
+Message-ID: <202507291524.BA4DC7E1B9@keescook>
+References: <6888d004.a00a0220.26d0e1.0004.GAE@google.com>
+ <87cy9ikcwh.ffs@tglx>
+ <874iuuk87e.ffs@tglx>
+ <CAHk-=wirbb_FxAMsb+LFimsMF+nLg4UYsrHvjF1F9tF1xOm2UA@mail.gmail.com>
+ <20250729215228.GEaIlCnHzcYmGpiBrQ@fat_crate.local>
+ <CAHk-=whfrTfVMDjgM2fzPjUJpP7y27OsBssZSSCSR7V-=cd1eA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: mdio: mdio-bcm-unimac: Correct rate fallback
- logic
-To: Andrew Lunn <andrew@lunn.ch>,
- Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Jacob Keller <jacob.e.keller@intel.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <20250729213148.3403882-1-florian.fainelli@broadcom.com>
- <11482de4-2a37-48b5-a98e-ba8a51a355cd@lunn.ch>
-Content-Language: en-US
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <11482de4-2a37-48b5-a98e-ba8a51a355cd@lunn.ch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=whfrTfVMDjgM2fzPjUJpP7y27OsBssZSSCSR7V-=cd1eA@mail.gmail.com>
 
-On 7/29/25 15:20, Andrew Lunn wrote:
-> On Tue, Jul 29, 2025 at 02:31:48PM -0700, Florian Fainelli wrote:
->> In case the rate for the parent clock is zero,
-> 
-> Is there a legitimate reason the parent clock would be zero?
+On Tue, Jul 29, 2025 at 03:11:50PM -0700, Linus Torvalds wrote:
+> Which is supposed to _lessen_ the sanitizer coverage by adding the
+> __attribute__((no_sanitize("coverage"))), but it's clearly causing
+> more problems and making gcc just do crazy things.
 
-Yes there is, the parent clock might be a gated clock that aggregates 
-multiple sub-clocks and therefore has multiple "parents" technically. 
-Because it has multiple parents, we can't really return a particular 
-rate (clock provider is SCMI/firmware).
+Since this change was only made for Clang's stack depth coverage
+analysis, let's drop it from GCC builds? I'm testing this currently:
 
-> 
-> I can understand an optional clock being missing, but it seems odd
-> that a clock is available, but it is ticking at 0Hz?
-> 
-> Maybe for this case, a warning should be issued to indicate something
-> odd is going on?
-> 
-> 	Andrew
-> 
+diff --git a/arch/x86/include/asm/init.h b/arch/x86/include/asm/init.h
+index 6bfdaeddbae8..5a68e9db6518 100644
+--- a/arch/x86/include/asm/init.h
++++ b/arch/x86/include/asm/init.h
+@@ -5,7 +5,7 @@
+ #if defined(CONFIG_CC_IS_CLANG) && CONFIG_CLANG_VERSION < 170000
+ #define __head	__section(".head.text") __no_sanitize_undefined __no_stack_protector
+ #else
+-#define __head	__section(".head.text") __no_sanitize_undefined __no_sanitize_coverage
++#define __head	__section(".head.text") __no_sanitize_undefined __no_kstack_erase
+ #endif
+ 
+ struct x86_mapping_info {
+diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
+index 2b77d12e07b2..89e2c01fc8b1 100644
+--- a/include/linux/compiler_types.h
++++ b/include/linux/compiler_types.h
+@@ -378,6 +378,13 @@ struct ftrace_likely_data {
+ # define __signed_wrap
+ #endif
+ 
++/* GCC does not like splitting sanitizer coverage across section inlines */
++#ifdef CC_IS_CLANG
++#define __no_kstack_erase	__no_sanitize_coverage
++#else
++#define __no_kstack_erase
++#endif
++
+ /* Section for code which can't be instrumented at all */
+ #define __noinstr_section(section)					\
+ 	noinline notrace __attribute((__section__(section)))		\
+diff --git a/include/linux/init.h b/include/linux/init.h
+index c65a050d52a7..a60d32d227ee 100644
+--- a/include/linux/init.h
++++ b/include/linux/init.h
+@@ -51,7 +51,7 @@
+    discard it in modules) */
+ #define __init		__section(".init.text") __cold __latent_entropy	\
+ 						__noinitretpoline	\
+-						__no_sanitize_coverage
++						__no_kstack_erase
+ #define __initdata	__section(".init.data")
+ #define __initconst	__section(".init.rodata")
+ #define __exitdata	__section(".exit.data")
 
 -- 
-Florian
-
+Kees Cook
 
