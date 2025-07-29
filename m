@@ -1,68 +1,65 @@
-Return-Path: <linux-kernel+bounces-749736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16096B1524C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:45:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAEADB1524F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096083BB05A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:44:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 257ED188FEC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3988299AAB;
-	Tue, 29 Jul 2025 17:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329E5236A88;
+	Tue, 29 Jul 2025 17:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dR+CXQy2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpYz6p89"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3683D2253A4;
-	Tue, 29 Jul 2025 17:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4A820101F;
+	Tue, 29 Jul 2025 17:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753811030; cv=none; b=QiyRqtCxjioBld+UNf7YUgbmfhIH7zfNMZPDJ/RdYPDwimgHopUUmfUZCA8ncyPp+/P65mv7bvjVgZ6yE6CDZj5PkOcl0WxOhA47bJ0GMPd1NerDZpZspE0JG8UzuWDCzi35s+1vsGZcPYDbBn6wVAXABPHJVszfHG7SRhv9MjU=
+	t=1753811127; cv=none; b=LI42hmlmWlsVP2xPduhEjlB289xCODKdQeV2ZvNLoWtzwXFtxdT1O9nrSMAilvcz4tIJfPCs65/z2KWvVv6a6E1NsyCevrMUYkgi/7BYMTQ3GgFQqdAgS1Esy08KKOk7DxWzN20KUAdArw3ODwqvLnSsbO1r6m1XipfT1Wlg0F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753811030; c=relaxed/simple;
-	bh=/l0RfM32IYqNTyOacg15yW0ba6BjISJEK6fBJdD4dNc=;
+	s=arc-20240116; t=1753811127; c=relaxed/simple;
+	bh=x3HNOWZw5hkcyGSQgmqXfoEJ+ny9/ZCvslOQJp7MB2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B0EQhYOMY1BRandk31oTXzQyd5JcuPG1mrJVl/57AzmpWnWSRt+/ElgZ5jAAK4+TukRpNt9fkc06Gmv7tTnVxze8625FESlHidz77rd9N67xQUkL3rkZVBF9CWFEJtR9qhEXsDFE8ycJNSn7Wxblzp8HbbVDgx/DSIYcRV7zHXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dR+CXQy2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67A72C4CEF4;
-	Tue, 29 Jul 2025 17:43:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JQIz1K7dV87UNLpihrCvzTlfbrR/86FR9CS6EiZfB4A/T4IFIkPeHPEI/Ozxllx6Jm7n69qaciF6gddL7gWphWayK+OAmCWbV4/20XefbICrL/TUjR/qlNeTEznuT/0tP8Gwt9RZDUXcTN1YefrH1LdymFKZQyVukD9yktHE4DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpYz6p89; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07791C4CEF4;
+	Tue, 29 Jul 2025 17:45:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753811029;
-	bh=/l0RfM32IYqNTyOacg15yW0ba6BjISJEK6fBJdD4dNc=;
+	s=k20201202; t=1753811127;
+	bh=x3HNOWZw5hkcyGSQgmqXfoEJ+ny9/ZCvslOQJp7MB2E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dR+CXQy2bNMOjZG/aIMfPdIyqxlqxyxLczcZUheXTXI4zDTc0Mlqui7Hwcwd1MyRK
-	 pEsSNLS20jY6cX0FN8x7YkwRHq1UIaE9P7+nDNJ0qS7PaPlRiCmyfTjfVFa6XrQQco
-	 UIfJBNyFj9O+A4G1CWum4EgSNyJ70zz2PtbSNxjoWnap8EZ3yaDo9p7lyxcTil50rP
-	 /cizQHxnZKkeMDHyTXwZWWfMFxavaKd0Xc/lEpfYsYCCbpNcNiDx3XpykDv8d+matB
-	 F/iGay/UesKo9Mlysa6vMtCme2trqgLR4Zp5MIyeX40XZ9xca1KZeBtq1UxyLut+VX
-	 ElELx7L/IDPlg==
-Date: Tue, 29 Jul 2025 18:43:42 +0100
+	b=KpYz6p89DzVpv//o/gFNgWEc5Gm98fYQHRh53L/XAWVBwKf6VN4selbeF3gdwwEvg
+	 u98KjXQ+5iE3qf+0PljVq+7U6G0i+8g8/g9PlFz68kwZDKNgUlgQjigkgP9A1YfC6B
+	 9X8Ms26uAs+GCTr1uCtrFAuSHuRLHW1z2YDRJsI5z3Nf70z4vA/bBChgiwI2YG2OEe
+	 naZZVD+u9g8sLV6R4EQMlhKSJ7f/5V8LlkT4e+czD5gn/DRl/Y4EvNof/bpqSNfdpw
+	 p+dlMs7GS/CXFDGcJ3/fWfe2l8DGD5l4E2fAVzl/R2WObcVvwyyop5zZBqcVz2NVQ6
+	 VnYBAwpJko4pw==
+Date: Tue, 29 Jul 2025 18:45:21 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+To: Huayu Zong <huayu.zong@mediatek.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 1/3] dt-bindings: net: thead,th1520-gmac: Describe
- APB interface clock
-Message-ID: <20250729-canal-stimuli-492b4550108c@spud>
-References: <20250729093734.40132-1-ziyao@disroot.org>
- <20250729093734.40132-2-ziyao@disroot.org>
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Tinghan Shen <tinghan.shen@mediatek.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH 1/3] dt-bindings: remoteproc: mediatek: Add binding for
+ mt8189 scp
+Message-ID: <20250729-flask-applaud-7af817ef7a94@spud>
+References: <20250729023125.9036-1-huayu.zong@mediatek.com>
+ <20250729023125.9036-2-huayu.zong@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,85 +67,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8Ed6Kl6zSmD8JUqy"
+	protocol="application/pgp-signature"; boundary="kD2euniIewJpEG2U"
 Content-Disposition: inline
-In-Reply-To: <20250729093734.40132-2-ziyao@disroot.org>
+In-Reply-To: <20250729023125.9036-2-huayu.zong@mediatek.com>
 
 
---8Ed6Kl6zSmD8JUqy
+--kD2euniIewJpEG2U
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2025 at 09:37:32AM +0000, Yao Zi wrote:
-> Besides ones for GMAC core and peripheral registers, the TH1520 GMAC
-> requires one more clock for configuring APB glue registers. Describe
-> it in the binding.
+On Tue, Jul 29, 2025 at 10:31:11AM +0800, Huayu Zong wrote:
+> Add the compatible for mt8189 SCP to the binding.
 >=20
-> Though the clock is essential for operation, it's not marked as required
-> for now to avoid introducing new dt-binding warnings to existing dts.
+> Signed-off-by: Huayu Zong <huayu.zong@mediatek.com>
 
-Nah, introduce the warnings. If the clock is required for operation, it
-should be marked as such. You've made it optional in the driver, which
-is the important part (backwards compatible) and you've got the dts
-patch in the series.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
->=20
-> Fixes: f920ce04c399 ("dt-bindings: net: Add T-HEAD dwmac support")
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> ---
->  .../devicetree/bindings/net/thead,th1520-gmac.yaml        | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml=
- b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-> index 6d9de3303762..fea9fbc1d006 100644
-> --- a/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-> +++ b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-> @@ -59,14 +59,18 @@ properties:
->        - const: apb
-> =20
->    clocks:
-> +    minItems: 2
->      items:
->        - description: GMAC main clock
->        - description: Peripheral registers interface clock
-> +      - description: APB glue registers interface clock
-> =20
->    clock-names:
-> +    minItems: 2
->      items:
->        - const: stmmaceth
->        - const: pclk
-> +      - const: apb
-> =20
->    interrupts:
->      items:
-> @@ -88,8 +92,8 @@ examples:
->          compatible =3D "thead,th1520-gmac", "snps,dwmac-3.70a";
->          reg =3D <0xe7070000 0x2000>, <0xec003000 0x1000>;
->          reg-names =3D "dwmac", "apb";
-> -        clocks =3D <&clk 1>, <&clk 2>;
-> -        clock-names =3D "stmmaceth", "pclk";
-> +        clocks =3D <&clk 1>, <&clk 2>, <&clk 3>;
-> +        clock-names =3D "stmmaceth", "pclk", "apb";
->          interrupts =3D <66>;
->          interrupt-names =3D "macirq";
->          phy-mode =3D "rgmii-id";
-> --=20
-> 2.50.1
->=20
-
---8Ed6Kl6zSmD8JUqy
+--kD2euniIewJpEG2U
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaIkITgAKCRB4tDGHoIJi
-0s21AQDDnogQVz1heV93wFEUee+EeHPjK4d6lAcPQOYd21HVkAD+M13qwek9DiWx
-oGRpnMWXsj9s2GrbkbTgiGGiHXOYWQk=
-=EOvL
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCaIkIsQAKCRB4tDGHoIJi
+0pwmAQDF9XgoLzRZN2+HymZe6A7A4abQRqFlzcGxlUnimpt8xQD7BQ2lbwb8Iw7n
+KyWPgmI4hfaZEK9QDBPIsnCbJOyAaQk=
+=qcBV
 -----END PGP SIGNATURE-----
 
---8Ed6Kl6zSmD8JUqy--
+--kD2euniIewJpEG2U--
 
