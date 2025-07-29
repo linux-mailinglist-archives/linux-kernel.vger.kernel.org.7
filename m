@@ -1,201 +1,127 @@
-Return-Path: <linux-kernel+bounces-749832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B2FB15371
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:33:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69F14B15373
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10BC87B0C81
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:32:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0DFA7A8AA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:32:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D619D2512DE;
-	Tue, 29 Jul 2025 19:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0B62566D3;
+	Tue, 29 Jul 2025 19:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="p8PaVsrZ"
-Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RTCJuEL9"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4198324886F;
-	Tue, 29 Jul 2025 19:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657CC24C66F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753817619; cv=none; b=BE1QNLD6tT1GkOYF63x3FpHalUYKXOzFqM/XdaJUVLBnqUgsRXWAySuK2FiheHsCxS7R1ocku9hDTCIKW7k2YO7Lkx9BHcinta7uwUkBYOF6VLZ+3LNwlKNhT/Uylp5bR9qP8mhlCLWDIZPN0uqmHnC+5+MdDoA6hVoRvXbz4Z4=
+	t=1753817628; cv=none; b=P5nXm0XDzS4T+2PWJQXUfpoamiBsw+k1ZN0yKi577C4sq9zQORMTIKLQqi/F4ufcvtWsmk90IGbO8BLKIgpNP7OvlcCcf6a3uwJpT1s1umexftcdcqws67XCCZwNum3CuYt3/z4tClmKk1qWwluUrItqCdX0lrgwr3lUwg1y8PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753817619; c=relaxed/simple;
-	bh=Pn/4wU3FWzPANPeulCS77bi1iXkwqEjETvGQ2NElXbU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U/rWCADIUdlOuAXZBu5PtZZCkz+jRLgjMSrao4V2B+wRsB9fEqf7LjSycBRfOga0rs6XHFROj418laqxAe1TJ2hCgoBYZXDxG5AQSk7nPSBu8xA65nGOl1h0PeLOVweUWFniJTHoozjH/ZfBZCm+JpvuvJkAS5T5ibk8h/O/Gho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=p8PaVsrZ; arc=none smtp.client-ip=80.12.242.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id gq4ru80ArUD3Ugq4ru4oqm; Tue, 29 Jul 2025 21:33:34 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1753817614;
-	bh=z+SRRL3rRltS4sAuSdLWbFetbEgJEuFio4WE2T9Xyb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=p8PaVsrZqWeFVlslirJenx5xHw0FCGjNcLzugJozH3WTmqHGn5fi/qsz9EKnhlDK9
-	 8JnMXrCM24Qd8qHpbd0v82eiHrGWsWvz67yHCkwUIeW/kpFRRXZesPKDtGtsm0o9HR
-	 XPKiEtHRSaO5ZA/9LCOSS/bpEo60rz9OyhO5hbNKUR3Dw3vnDrf0x3hfIOjB5y66dj
-	 3uLSIJutYRHOBiP3Og5JMCsFgPFW7+jrjnxXIKOAiXhIwVrClRFn9ueI1gApEyuyfq
-	 bL9Nf8wuWKX293f2HmS2HmQAFpz10J0/bwqDv7uI1lCkcz61PMaOxB04RQek127Hfo
-	 ZsoBmEp7pBInA==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 29 Jul 2025 21:33:34 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <884293c1-f6f4-48b3-a5d9-9b41fa8614a5@wanadoo.fr>
-Date: Tue, 29 Jul 2025 21:33:32 +0200
+	s=arc-20240116; t=1753817628; c=relaxed/simple;
+	bh=uRUA1Dw0gwf9VF6IMVv4hpWTJUqHYnh2F1froOP8Hrc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=TfkJ/8qOa2bGKZ1GSTdV8SKUJAbdXTKd9iTCw6JRvJBEcTof4DaGq8yVVm6/J6xAe7eQt0FIOdvkN+auZ2gDwx+sNbWxUy4xBWXxl7lBnVSYDy1qAADin9ZX+Q+9ek0NSVmw6eojtRgZNBfpS/gMfVT4DH/t0s3Uk7mazu1bycM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RTCJuEL9; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f3cfdd3d3so820701a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:33:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753817627; x=1754422427; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vr2NEPUlMUbu3MZ3j1bjKONtMkJFv/DS/JUFQy2VOuc=;
+        b=RTCJuEL9f+92rDm2buaQuHMMJ67iHkIYX+w7AUGtBtZnpXIRTQXEmhmlHg2l+M5X1J
+         Caud07uDbRM+9403SQKh5ScunyRzi9+72T1P6LtpdH91A3Wmi4nmWW2CVYBg8qyzahr8
+         Y7VqdUq+lY/E4ptgLNH9mEPWuMy22+gW5QCL8CJmP0q3zl3reMryInccmb2zZMWwzqrZ
+         Mui7+DyifxTDhDDXnMZVhc71Ef2H67S/30nECuxkHQg2DiGw1eSDS+mcn56v08uu2kiF
+         PNbunFKg/SlQUUc+3Mu7eJB/4S9e25+BcakkgKUDHEvwXvCbGzSBhx4XN9l5Da/1yAgc
+         5RGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753817627; x=1754422427;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vr2NEPUlMUbu3MZ3j1bjKONtMkJFv/DS/JUFQy2VOuc=;
+        b=gqMUd8p/l8tqc6tfBNYqJUPY69GY7OvgqOBhPPfIE3NXSViRMEDm8jdBPByEIUyvrE
+         S2Wth7Lzy+GwWfyPvqz7r7SaBD7l/qiGmWPmekM/dtnNGcuuqKHP2Dgd3JjcSlE0aFwg
+         RJXjweG3bziVsQX08ADuI/T69vpjamFxUJgOt3e5eKRSkni3z/B7bALeWy+uFmaEPCdJ
+         KiQhDateqpTtt1tKFKHMeNK8XZp5gXXvsPHv+JjwcMTjGGkLlNDIReguVFistEpvZbqK
+         QvpHHhjC7GQfoheXi8pbvfbw0/Vfzf38pRpYsRT++7qmcVwGOGjfRjLsgGzNw3Ivq+X1
+         NNSA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7yjp3ckBdL6/OmWA7andoQm5r+GS2bKSnj5i0HBaly5DJ/U9E2GQSkHtDXTiventrj7YXX5WzIknxgps=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1um1ZjTHqoOqDb0A1y7IidHkuc3gW3XDiKsvwFaKq6Je6a2Sv
+	QgM1qXNSxtSWUotVufZxj1/YMm6K1o3dRUtaYxD9K43zGcSdSsSAsMWadaxw59RlRikJHEfIEaL
+	kFqIMng==
+X-Google-Smtp-Source: AGHT+IEpCUyIaefYP0YL7w8y1faaEZii0WVM++l9+v+mc/1ojeZtttZMEz40RX0OKzEWa3Hqy78BV9878sU=
+X-Received: from pja11.prod.google.com ([2002:a17:90b:548b:b0:313:17cf:434f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:562b:b0:31e:d9f0:9b96
+ with SMTP id 98e67ed59e1d1-31f5ddb6641mr902917a91.14.1753817626768; Tue, 29
+ Jul 2025 12:33:46 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Tue, 29 Jul 2025 12:33:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: rkvdec: Fix an error handling path in
- rkvdec_probe()
-To: Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Detlev Casanova <detlev.casanova@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Hans Verkuil <hverkuil@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-media@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org
-References: <b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr>
- <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <0a8391cb368653b91ea73a51e2c0dee35cceb128.camel@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250729193341.621487-1-seanjc@google.com>
+Subject: [PATCH 0/5] KVM: Drop vm_dead, pivot on vm_bugged for -EIO
+From: Sean Christopherson <seanjc@google.com>
+To: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Adrian Hunter <adrian.hunter@intel.com>, Vishal Annapurve <vannapurve@google.com>, 
+	Xiaoyao Li <xiaoyao.li@intel.com>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Nikolay Borisov <nik.borisov@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Le 29/07/2025 à 00:50, Nicolas Dufresne a écrit :
-> Hi,
-> 
-> Le dimanche 27 juillet 2025 à 12:02 +0200, Christophe JAILLET a écrit :
->> If an error occurs after a successful iommu_paging_domain_alloc() call, it
->> should be undone by a corresponding iommu_domain_free() call, as already
->> done in the remove function.
->>
->> Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
->> ---
->> Compile tested only
->> ---
->>   drivers/media/platform/rockchip/rkvdec/rkvdec.c | 11 ++++++++---
->>   1 file changed, 8 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> index d707088ec0dc..eb0d41f85d89 100644
->> --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
->> @@ -1169,15 +1169,17 @@ static int rkvdec_probe(struct platform_device *pdev)
->>   	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
->>   
->>   	irq = platform_get_irq(pdev, 0);
->> -	if (irq <= 0)
->> -		return -ENXIO;
->> +	if (irq <= 0) {
->> +		ret = -ENXIO;
->> +		goto err_free_domain;
->> +	}
->>   
->>   	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
->>   					rkvdec_irq_handler, IRQF_ONESHOT,
->>   					dev_name(&pdev->dev), rkvdec);
->>   	if (ret) {
->>   		dev_err(&pdev->dev, "Could not request vdec IRQ\n");
->> -		return ret;
->> +		goto err_free_domain;
->>   	}
->>   
->>   	pm_runtime_set_autosuspend_delay(&pdev->dev, 100);
-> 
-> Have you considered moving the allocation of the domain right above the above
-> line instead ? The empty domain can't possibly be used unless the probe have
-> fully completed.
+Drop vm_dead and instead reject ioctls based only on vm_bugged.  Checking
+vm_dead (or vm_bugged) is inherently racy due as it's not protected by any
+locks.  For vm_bugged, imperfection is a-ok as the goal is purely to limit
+the damage done by a kernel/hardware bug.  But rejecting ioclts based on
+vm_dead is dangerous as it gives us a false sense of security, e.g. see the
+race found by syzbot in commit ecf371f8b02d ("KVM: SVM: Reject SEV{-ES}
+intra host migration if vCPU creation is in-flight").
 
-That would not change things much. We still need to handle 
-rkvdec_v4l2_init() failure a few lines below.
+This series was motivated by the last patch, a.k.a. KVM_TDX_TERMINATE_VM.
+I applied a slightly different version of that patch for 6.17[*], but I'm
+reposting it with the vm_dead changes due to Paolo's question about whether
+or not we should have a generic KVM_TERMINATE_VM; dropping vm_dead doesn't
+make much sense if we want to add KVM_TERMINATE_VM.
 
-If it is correct to move it at the very end of the function, after 
-rkvdec_v4l2_init(), then the patch would be simpler.
+[*] https://lore.kernel.org/all/20250725220713.264711-13-seanjc@google.com
+
+Sean Christopherson (5):
+  KVM: Never clear KVM_REQ_VM_DEAD from a vCPU's requests
+  KVM: TDX: Exit with MEMORY_FAULT on unexpected pending S-EPT Violation
+  KVM: Reject ioctls only if the VM is bugged, not simply marked dead
+  KVM: selftests: Use for-loop to handle all successful SEV migrations
+  KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+
+ Documentation/virt/kvm/x86/intel-tdx.rst      | 22 ++++++++-
+ arch/arm64/kvm/arm.c                          |  2 +-
+ arch/arm64/kvm/vgic/vgic-init.c               |  2 +-
+ arch/x86/include/uapi/asm/kvm.h               |  7 ++-
+ arch/x86/kvm/mmu/mmu.c                        |  2 +-
+ arch/x86/kvm/vmx/tdx.c                        | 45 +++++++++++++------
+ arch/x86/kvm/vmx/tdx.h                        |  1 +
+ arch/x86/kvm/x86.c                            |  2 +-
+ include/linux/kvm_host.h                      | 11 +++--
+ .../selftests/kvm/x86/sev_migrate_tests.c     | 34 ++++++--------
+ virt/kvm/kvm_main.c                           | 10 ++---
+ 11 files changed, 90 insertions(+), 48 deletions(-)
 
 
-Honestly, I'm not very confident with it. request_threaded_irq() 
-documentation states that "From the point this call is made your handler 
-function may be invoked."
-And rkvdec_irq_handler() may call rkvdec_iommu_restore() which uses 
-empty_domain.
-
-Not sure if I'm right and if this can happen, but the existing order 
-looks safer to me.
-
-
-That said, if it is fine for you, I can send a v2.
-
-
-This would be:
-
-diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c 
-b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-index d707088ec0dc..6eae10e16c73 100644
---- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-+++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-@@ -1159,13 +1159,6 @@ static int rkvdec_probe(struct platform_device *pdev)
-                 return ret;
-         }
-
--       if (iommu_get_domain_for_dev(&pdev->dev)) {
--               rkvdec->empty_domain = 
-iommu_paging_domain_alloc(rkvdec->dev);
--
--               if (!rkvdec->empty_domain)
--                       dev_warn(rkvdec->dev, "cannot alloc new empty 
-domain\n");
--       }
--
-         vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
-
-         irq = platform_get_irq(pdev, 0);
-@@ -1188,6 +1181,13 @@ static int rkvdec_probe(struct platform_device *pdev)
-         if (ret)
-                 goto err_disable_runtime_pm;
-
-+       if (iommu_get_domain_for_dev(&pdev->dev)) {
-+               rkvdec->empty_domain = 
-iommu_paging_domain_alloc(rkvdec->dev);
-+
-+               if (!rkvdec->empty_domain)
-+                       dev_warn(rkvdec->dev, "cannot alloc new empty 
-domain\n");
-+       }
-+
-         return 0;
-
-  err_disable_runtime_pm:
-
-
-CJ
-
-> 
-> Nicolas
-> 
->> @@ -1193,6 +1195,9 @@ static int rkvdec_probe(struct platform_device *pdev)
->>   err_disable_runtime_pm:
->>   	pm_runtime_dont_use_autosuspend(&pdev->dev);
->>   	pm_runtime_disable(&pdev->dev);
->> +err_free_domain:
->> +	if (rkvdec->empty_domain)
->> +		iommu_domain_free(rkvdec->empty_domain);
->>   	return ret;
->>   }
->>   
+base-commit: beafd7ecf2255e8b62a42dc04f54843033db3d24
+-- 
+2.50.1.552.g942d659e1b-goog
 
 
