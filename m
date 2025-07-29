@@ -1,475 +1,550 @@
-Return-Path: <linux-kernel+bounces-749309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBFE4B14CBA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAADB14CBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0DB33BD35F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:07:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EF4C3BD4A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9452728C027;
-	Tue, 29 Jul 2025 11:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D1B28C028;
+	Tue, 29 Jul 2025 11:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="TejPBfbU"
-Received: from abb.hmeau.com (abb.hmeau.com [180.181.231.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tNuAc7tx"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFBAD28C00D;
-	Tue, 29 Jul 2025 11:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.181.231.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F0B5227EA8
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753787286; cv=none; b=sKZKz+f4gcoLWtrFYivrLq39dOyDbRwIhYJ1zIS6aacKY9eOie6XZLsiTXmZkxNKLImU5qpRuhn2pJOlzNfE3NvtUHrDr1WAnaQrxwFLb4mOkNOtSccnu6DGo6VlYaHGH0qZN8OusedxS3BD0EFF6ywf44iptuBb9DD6dDvPHa0=
+	t=1753787362; cv=none; b=c2HX/kPGrAiJa/jofmVgEb7isC1gVc6W8lowMy22MPrUBVCJjP/Btu5dGaqUSOiLIYKkTXphcoOfzIzigJ6D8zlDcbxsoqVuwoCU42frZLXX8PEKFIjH/H/eVG1/zL7GsQaJ14uO0wA+yw/fJgeqcQgJuAyOM/UkDz8BkClLQvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753787286; c=relaxed/simple;
-	bh=g6900Pmfgq+dODznFR/u4jTKkD6bQtRxrjUM4ARyuf8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nosTqvTVzFjuimevcIg7Fw1KXPu1iCgMSt3TCOPyhkVfy81NmMKYM91y0FC+QQ/+8FuCKMpmpudJgj/BhqWYiiqkhD3So9VBSw/qaPppQU+eyGJTKDD/zPPVJTBiRqk+sYHdad+NFsDzQ5Xy16JShAGpj/drZSuR+74VHBKOhzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=TejPBfbU; arc=none smtp.client-ip=180.181.231.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Subject:To:From:Date:Sender:Reply-To:Cc:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=EEDTtgBAu4uQ0oEVv4GxyYVrjL1O2VQyxhvLvK81yeU=; b=TejPBfbUXoFe+HD7AIs4i5JvZk
-	hOoO/4E20VRWRU7hxPRI9D5G1JwMRwCEjbwep3R+oE4nofNGLsaj002N9A7nByA6SpClpn4BVmmMn
-	eISWEWRZwbgdccINN74RQ1ogxIpTmNtj4rNysGDBaMdbwZjZQBupoBzqXKJOH+ThCP60x2U86y057
-	vpRXxZdzOFAmPDJO3wZ6DbC6cCFfayJrY1rCq/x362v7hHo4MOUoWrc5RVSQojLZSmd30o00RFQXq
-	SGqwpfrPI6lAfkJ0kx/7LVniFEZT5+Jt/XdI/LRk0wpMDjHsbmjJ1NQ1PKuRahTsqBZWlCzJunaUq
-	egW0Jpaw==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1ughw2-00AUYx-2s;
-	Tue, 29 Jul 2025 19:07:52 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 29 Jul 2025 19:07:51 +0800
-Date: Tue, 29 Jul 2025 19:07:51 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>
-Subject: [GIT PULL] Crypto Update for 6.17
-Message-ID: <aIirh_7k4SWzE-bF@gondor.apana.org.au>
+	s=arc-20240116; t=1753787362; c=relaxed/simple;
+	bh=c4hy/FSbAOkOycRo7rhh+waozQ8RI57INgP0tk2ylCA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p9snA2Cn1jJRftsrfNtYtrlpN4Ix3j6AYowGCYXwk8F9dSCIuM2DuePj5812p+FB6D5PD//xoPDgGnTLNok6rQ0JpTGHkCUILTq+PyFfYK3WuWylQcyyKq/k1mZu+se/vae4X03NJSk4h/rskSlJFb8dyBxkQyKW0phwp+GS/CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tNuAc7tx; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-32b7cf56cacso54087701fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:09:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753787357; x=1754392157; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=m1Ngu8YHQrtXHt/o2iZDBt2xiRJgE6ESwrQcRS4m+Ho=;
+        b=tNuAc7txIJXVV+YMj4Bi1seWLm4ISOoXBDA71jYh5msRxa2eF2izFgn9IJxkF+QOtr
+         n931RpdeojuHyNwfpYCH1feTSx7GhyHIQ/Uldj3R1QfCANkoS1m00xao0cOdF+W2OHJH
+         wKSKfCICLpt97to4mhft3YSgh2czQ0l6A3h59PFi9dQ7wzNdSLZojVeUKV2uSxExcI3E
+         /O+kEO0fPSIi9qaKPY2Ir/R/g5YdRWGx6ltC40rQKSGWcg3vxCRrqBtytnJ8jGCSCoRm
+         w2rCoSSryem3+VGnxH73E7Kg0aLJPW0bYwRB6Wwi0HvOYBlegFdizGdbDYsQAavw+DaQ
+         QuFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753787357; x=1754392157;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=m1Ngu8YHQrtXHt/o2iZDBt2xiRJgE6ESwrQcRS4m+Ho=;
+        b=IYM4qVUfCINWF+Q0/4/+qSPT7V3EkUsKhLs7F0PsZjXExZWkJU870f32l3tCBAj0T0
+         WLm5rVX31gaiU46tOw40x5K5ZQar1gyxCARk+yKfugnNLdOGL6q2xOzECNZR5ILOudE9
+         ZMxmBb5HeJqwWort1NoX9G9F1XBFwTU0qLX6037a8x7/dYEqSZAHEKECy05CDP1WF/ur
+         bHY5zRwwKMitpslHt9wA6cC5A6BLylGX32bo8r5s55ZbkJyZ+J1QEl85mffjDF/HepAU
+         QWvurZXRy5Be3+Ksx3YlieBkPca02Wg+zlEDm9Kt1lsJP2gxs56kM4nTlzp9drsXnLjg
+         1Pcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWPPLIetKP/c0mmduRMW/mvLkz/gcf3DFCLcoLeaUZchwJ2Bs+7WvbAnaPC6MOBcTRzchwBH1ejXmmikU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZER+og2BhKj/c0odScXHnlpnKAaYTVoph8BsUd7Fy6rldgWuG
+	irDUqdH9ny+HNoAUHQQ77tan39bpe8jn/W0pydq1AoORaCkYrADiw92J3rp/TZN/CAvIjqZ2FrJ
+	xx+3YP5e1oS03NB6v2iu5ELCvtP88JHfsJjPMDyt29cN7U3BiVMVR0gCx
+X-Gm-Gg: ASbGncvD8VDgvmNPRpwnDZJYeHI0fN0QJc3IkqDnoH3Gq2tag2ucG/TOLOfLJl7XvOK
+	n+vbS7PP86TRDGYF4bZiH9nnLsvZva5Q8pPZqDMkwrU5aclh69Yoj5h7goFnRdXEu0h1F2xks5Z
+	xkzeEP2/YykghjFuzt80IYXDxQU/0yQJ1lCvpsoFfO9kOI6DOPJPev/hZ5oldjjglA9hTNi918F
+	MDjsXrUMA1PnwIaMKoVF+zCal3/P31WTMzX5w==
+X-Google-Smtp-Source: AGHT+IHujwev3Np33pm/UmHPH19CsRufJyZeBJFCJEWni5xFgn+31/NdVY6co9twNbI6KuiuWlWynnoYLrKljG3QqrY=
+X-Received: by 2002:a2e:bea5:0:b0:32a:66e6:9ffe with SMTP id
+ 38308e7fff4ca-331ee7d3804mr47485341fa.21.1753787356936; Tue, 29 Jul 2025
+ 04:09:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20250728152548.3969143-1-glider@google.com> <20250728152548.3969143-4-glider@google.com>
+In-Reply-To: <20250728152548.3969143-4-glider@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 29 Jul 2025 13:09:05 +0200
+X-Gm-Features: Ac12FXzCmhc07C6QzxlrscE4np9DutG_RGPHH85CmK1kWrz6rOLnHVAWcLgXiB4
+Message-ID: <CACT4Y+bAp2YLh8hXwnDiVuq9HqoKEU9wFJSDZe5-kWYnnKk=qA@mail.gmail.com>
+Subject: Re: [PATCH v3 03/10] kcov: factor out struct kcov_state
+To: Alexander Potapenko <glider@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus:
+On Mon, 28 Jul 2025 at 17:26, Alexander Potapenko <glider@google.com> wrote:
+>
+> Group several kcov-related fields (area, size, sequence) that are
+> stored in various structures, into `struct kcov_state`, so that
+> these fields can be easily passed around and manipulated.
+> Note that now the spinlock in struct kcov applies to every member
+> of struct kcov_state, including the sequence number.
+>
+> This prepares us for the upcoming change that will introduce more
+> kcov state.
+>
+> Also update the MAINTAINERS entry: add include/linux/kcov_types.h,
+> add myself as kcov reviewer.
+>
+> Signed-off-by: Alexander Potapenko <glider@google.com>
 
-The following changes since commit 40a98e702b528c631094f2e524d309faf33dc774:
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 
-  crypto: hkdf - move to late_initcall (2025-06-11 10:59:45 +0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git tags/v6.17-p1
-
-for you to fetch changes up to bf24d64268544379d9a9b5b8efc2bb03967703b3:
-
-  crypto: keembay - Use min() to simplify ocs_create_linked_list_from_sg() (2025-07-27 22:41:45 +1000)
-
-----------------------------------------------------------------
-This update includes the following changes:
-
-API:
-
-- Allow hash drivers without fallbacks (e.g., hardware key).
-
-Algorithms:
-
-- Add hmac hardware key support (phmac) on s390.
-- Re-enable sha384 in FIPS mode.
-- Disable sha1 in FIPS mode.
-- Convert zstd to acomp.
-
-Drivers:
-
-- Lower priority of qat skcipher and aead.
-- Convert aspeed to partial block API.
-- Add iMX8QXP support in caam.
-- Add rate limiting support for GEN6 devices in qat.
-- Enable telemetry for GEN6 devices in qat.
-- Implement full backlog mode for hisilicon/sec2.
-----------------------------------------------------------------
-
-Ahsan Atta (1):
-      crypto: qat - allow enabling VFs in the absence of IOMMU
-
-Alexey Kardashevskiy (1):
-      crypto: ccp - Fix locking on alloc failure handling
-
-Amit Singh Tomar (2):
-      crypto: octeontx2 - Rework how engine group number is obtained
-      crypto: octeontx2 - get engine group number for asymmetric engine
-
-Arnd Bergmann (2):
-      crypto: arm/aes-neonbs - work around gcc-15 warning
-      crypto: ccp - reduce stack usage in ccp_run_aes_gcm_cmd
-
-Ashish Kalra (2):
-      crypto: ccp - Fix dereferencing uninitialized error pointer
-      crypto: ccp - Fix SNP panic notifier unregistration
-
-Bairavi Alagappan (1):
-      crypto: qat - disable ZUC-256 capability for QAT GEN5
-
-Bharat Bhushan (4):
-      crypto: octeontx2 - add timeout for load_fvc completion poll
-      crypto: octeontx2 - Fix address alignment issue on ucode loading
-      crypto: octeontx2 - Fix address alignment on CN10K A0/A1 and OcteonTX2
-      crypto: octeontx2 - Fix address alignment on CN10KB and CN10KA-B0
-
-ChengZhenghan (1):
-      crypto: x86 - Fix build warnings about export.h
-
-Dr. David Alan Gilbert (1):
-      crypto: virtio - Remove unused virtcrypto functions
-
-Eric Biggers (4):
-      crypto: x86/aegis - Fix sleeping when disallowed on PREEMPT_RT
-      crypto: x86/aegis - Add missing error checks
-      crypto: acomp - Fix CFI failure due to type punning
-      crypto: krb5 - Fix memory leak in krb5_test_one_prf()
-
-George Abraham P (2):
-      crypto: qat - relocate power management debugfs helper APIs
-      crypto: qat - enable power management debugfs for GEN6 devices
-
-Giovanni Cabiddu (6):
-      crypto: qat - lower priority for skcipher and aead algorithms
-      crypto: qat - flush misc workqueue during device shutdown
-      crypto: qat - fix DMA direction for compression on GEN2 devices
-      crypto: qat - fix seq_file position update in adf_ring_next()
-      crypto: qat - refactor ring-related debug functions
-      crypto: qat - make adf_dev_autoreset() static
-
-Harald Freudenberger (5):
-      crypto: ahash - make hash walk functions from ahash.c public
-      crypto: s390 - New s390 specific protected key hash phmac
-      crypto: ahash - Add crypto_ahash_tested() helper function
-      crypto: s390 - Add selftest support for phmac
-      crypto: testmgr - Enable phmac selftest
-
-Herbert Xu (21):
-      crypto: ahash - Add support for drivers with no fallback
-      crypto: aspeed/hash - Remove purely software hmac implementation
-      crypto: aspeed/hash - Reorganise struct aspeed_sham_reqctx
-      crypto: aspeed/hash - Use init_tfm instead of cra_init
-      crypto: aspeed/hash - Provide rctx->buffer as argument to fill padding
-      crypto: aspeed/hash - Move sham_final call into sham_update
-      crypto: aspeed/hash - Move final padding into dma_prepare
-      crypto: aspeed/hash - Remove sha_iv
-      crypto: aspeed/hash - Use API partial block handling
-      crypto: aspeed/hash - Add fallback
-      crypto: aspeed/hash - Iterate on large hashes in dma_prepare
-      crypto: aspeed/hash - Fix potential overflow in dma_prepare_sg
-      crypto: marvell/cesa - Remove unnecessary state setting on final
-      crypto: marvell/cesa - Fix engine load inaccuracy
-      crypto: s390/hmac - Fix counter in export state
-      crypto: s390/sha3 - Use cpu byte-order when exporting
-      padata: Fix pd UAF once and for all
-      padata: Remove comment for reorder_work
-      crypto: ahash - Stop legacy tfms from using the set_virt fallback path
-      crypto: aspeed - Fix hash fallback path typo
-      Merge tag 'local-lock-for-net' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip into head
-
-Holger Dengler (1):
-      s390/crypto: Add protected key hmac subfunctions for KMAC
-
-Jeff Barnes (1):
-      crypto: testmgr - Restore sha384 and hmac_sha384 drbgs in FIPS mode
-
-John Ernberg (3):
-      crypto: caam - Prevent crash on suspend with iMX8QM / iMX8ULP
-      crypto: caam - Support iMX8QXP and variants thereof
-      dt-bindings: crypto: fsl,sec-v4.0: Add power domains for iMX8QM and iMX8QXP
-
-Lukas Bulwahn (1):
-      crypto: caam - avoid option aliasing with the CONFIG_CAAM_QI build option
-
-Mario Limonciello (1):
-      crypto: ccp - Add missing bootloader info reg for pspv6
-
-Markus Theil (1):
-      crypto: jitter - fix intermediary handling
-
-Małgorzata Mielnik (2):
-      crypto: qat - relocate bank state helper functions
-      crypto: qat - add live migration enablers for GEN6 devices
-
-Mengbiao Xiong (1):
-      crypto: ccp - Fix crash when rebind ccp device for ccp.ko
-
-Ovidiu Panait (6):
-      crypto: sun8i-ce - fix nents passed to dma_unmap_sg()
-      crypto: sun8i-ce - remove ivlen field of sun8i_cipher_req_ctx
-      crypto: sun8i-ce - use helpers to get hash block and digest sizes
-      hwrng: mtk - handle devm_pm_runtime_enable errors
-      crypto: engine - remove request batching support
-      crypto: engine - remove {prepare,unprepare}_crypt_hardware callbacks
-
-Rob Herring (Arm) (2):
-      dt-bindings: crypto: Convert ti,omap2-aes to DT schema
-      dt-bindings: crypto: Convert ti,omap4-des to DT schema
-
-Ruben Wauters (1):
-      crypto: jitter - replace ARRAY_SIZE definition with header include
-
-Ryan Wanner (5):
-      dt-bindings: crypto: add sama7d65 in Atmel AES
-      dt-bindings: crypto: add sama7d65 in Atmel SHA
-      dt-bindings: crypto: add sama7d65 in Atmel TDES
-      dt-bindings: rng: atmel,at91-trng: add sama7d65 TRNG
-      crypto: atmel - add support for AES and SHA IPs available on sama7d65 SoC
-
-Sakari Ailus (2):
-      hwrng: drivers - Remove redundant pm_runtime_mark_last_busy() calls
-      crypto: drivers - Remove redundant pm_runtime_mark_last_busy() calls
-
-Sebastian Andrzej Siewior (2):
-      local_lock: Move this_cpu_ptr() notation from internal to main header
-      crypto: cryptd - Use nested-BH locking for cryptd_cpu_queue
-
-Suman Kumar Chakraborty (19):
-      crypto: qat - use unmanaged allocation for dc_data
-      crypto: qat - add support for decompression service to GEN6 devices
-      Documentation: qat: update sysfs-driver-qat for GEN6 devices
-      crypto: zstd - convert to acomp
-      crypto: qat - remove duplicate masking for GEN6 devices
-      crypto: qat - restore ASYM service support for GEN6 devices
-      crypto: zstd - fix duplicate check warning
-      crypto: qat - use pr_fmt() in adf_gen4_hw_data.c
-      crypto: qat - replace CHECK_STAT macro with static inline function
-      crypto: qat - relocate and rename bank state structure definition
-      crypto: qat - fix virtual channel configuration for GEN6 devices
-      crypto: qat - validate service in rate limiting sysfs api
-      crypto: qat - add decompression service for rate limiting
-      crypto: qat - consolidate service enums
-      crypto: qat - relocate service related functions
-      crypto: qat - add adf_rl_get_num_svc_aes() in rate limiting
-      crypto: qat - add get_svc_slice_cnt() in device data structure
-      crypto: qat - add compression slice count for rate limiting
-      crypto: qat - enable rate limiting feature for GEN6 devices
-
-Svyatoslav Pankratov (1):
-      crypto: qat - fix state restore for banks with exceptions
-
-Thomas Fourier (3):
-      crypto: inside-secure - Fix `dma_unmap_sg()` nents value
-      crypto: keembay - Fix dma_unmap_sg() nents value
-      crypto: img-hash - Fix dma_unmap_sg() nents value
-
-Thomas Weißschuh (1):
-      crypto: ccree - Don't use %pK through printk
-
-Thorsten Blum (2):
-      crypto: zstd - replace zero-length array with flexible array member
-      crypto: keembay - Use min() to simplify ocs_create_linked_list_from_sg()
-
-Vegard Nossum (1):
-      crypto: testmgr - desupport SHA-1 for FIPS 140
-
-Vijay Sundar Selvamani (3):
-      crypto: qat - add decompression service to telemetry
-      crypto: qat - enable telemetry for GEN6 devices
-      Documentation: qat: update debugfs-driver-qat_telemetry for GEN6 devices
-
-Wenkai Lin (1):
-      crypto: hisilicon/sec2 - implement full backlog mode for sec
-
-Yury Norov (1):
-      padata: use cpumask_nth()
-
-Yury Norov [NVIDIA] (2):
-      crypto: pcrypt - Optimize pcrypt_aead_init_tfm()
-      crypto: caam - Fix opencoded cpumask_next_wrap() in caam_drv_ctx_init()
-
-Zenghui Yu (1):
-      crypto: hisilicon - Use fine grained DMA mapping direction
-
-Zhiqi Song (1):
-      crypto: hisilicon/hpre - fix dma unmap sequence
-
- Documentation/ABI/testing/debugfs-driver-qat       |    2 +-
- .../ABI/testing/debugfs-driver-qat_telemetry       |   10 +-
- Documentation/ABI/testing/sysfs-driver-qat         |   50 +-
- Documentation/ABI/testing/sysfs-driver-qat_rl      |   14 +-
- Documentation/crypto/crypto_engine.rst             |    6 -
- .../bindings/crypto/atmel,at91sam9g46-aes.yaml     |    4 +-
- .../bindings/crypto/atmel,at91sam9g46-sha.yaml     |    4 +-
- .../bindings/crypto/atmel,at91sam9g46-tdes.yaml    |    4 +-
- .../devicetree/bindings/crypto/fsl,sec-v4.0.yaml   |   41 +-
- .../devicetree/bindings/crypto/omap-aes.txt        |   31 -
- .../devicetree/bindings/crypto/omap-des.txt        |   30 -
- .../devicetree/bindings/crypto/ti,omap2-aes.yaml   |   58 ++
- .../devicetree/bindings/crypto/ti,omap4-des.yaml   |   65 ++
- .../devicetree/bindings/rng/atmel,at91-trng.yaml   |    1 +
- arch/arm/crypto/aes-neonbs-glue.c                  |    2 +-
- arch/s390/configs/debug_defconfig                  |    1 +
- arch/s390/configs/defconfig                        |    1 +
- arch/s390/crypto/Makefile                          |    1 +
- arch/s390/crypto/hmac_s390.c                       |   12 +-
- arch/s390/crypto/paes_s390.c                       |    2 +-
- arch/s390/crypto/phmac_s390.c                      | 1048 ++++++++++++++++++++
- arch/s390/crypto/sha.h                             |    3 +
- arch/s390/crypto/sha3_256_s390.c                   |   22 +-
- arch/s390/crypto/sha3_512_s390.c                   |   23 +-
- arch/s390/include/asm/cpacf.h                      |    4 +
- arch/x86/crypto/aegis128-aesni-glue.c              |   40 +-
- arch/x86/crypto/aria_aesni_avx2_glue.c             |    1 +
- arch/x86/crypto/aria_aesni_avx_glue.c              |    1 +
- arch/x86/crypto/camellia_aesni_avx_glue.c          |    1 +
- arch/x86/crypto/camellia_glue.c                    |    1 +
- arch/x86/crypto/curve25519-x86_64.c                |    1 +
- arch/x86/crypto/serpent_avx_glue.c                 |    1 +
- arch/x86/crypto/sm4_aesni_avx_glue.c               |    1 +
- arch/x86/crypto/twofish_glue.c                     |    1 +
- arch/x86/crypto/twofish_glue_3way.c                |    1 +
- crypto/ahash.c                                     |   39 +-
- crypto/cryptd.c                                    |    6 +
- crypto/crypto_engine.c                             |   55 +-
- crypto/deflate.c                                   |    7 +-
- crypto/jitterentropy-kcapi.c                       |    9 +-
- crypto/jitterentropy.c                             |    2 +-
- crypto/krb5/selftest.c                             |    1 +
- crypto/pcrypt.c                                    |    7 +-
- crypto/testmgr.c                                   |   39 +-
- crypto/zstd.c                                      |  390 +++++---
- drivers/char/hw_random/atmel-rng.c                 |    1 -
- drivers/char/hw_random/cctrng.c                    |    1 -
- drivers/char/hw_random/mtk-rng.c                   |    5 +-
- drivers/char/hw_random/npcm-rng.c                  |    1 -
- drivers/char/hw_random/omap3-rom-rng.c             |    1 -
- drivers/char/hw_random/rockchip-rng.c              |    3 -
- drivers/char/hw_random/stm32-rng.c                 |    1 -
- drivers/crypto/Kconfig                             |   13 +
- .../crypto/allwinner/sun8i-ce/sun8i-ce-cipher.c    |   15 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce-hash.c  |    6 +-
- drivers/crypto/allwinner/sun8i-ce/sun8i-ce.h       |    2 -
- drivers/crypto/aspeed/aspeed-hace-hash.c           |  802 ++++-----------
- drivers/crypto/aspeed/aspeed-hace.h                |   28 +-
- drivers/crypto/atmel-aes.c                         |    1 +
- drivers/crypto/atmel-sha.c                         |    1 +
- drivers/crypto/caam/Makefile                       |    4 -
- drivers/crypto/caam/ctrl.c                         |   13 +-
- drivers/crypto/caam/debugfs.c                      |    2 +-
- drivers/crypto/caam/debugfs.h                      |    2 +-
- drivers/crypto/caam/intern.h                       |    5 +-
- drivers/crypto/caam/jr.c                           |    3 +-
- drivers/crypto/caam/qi.c                           |    5 +-
- drivers/crypto/ccp/ccp-debugfs.c                   |    3 +
- drivers/crypto/ccp/ccp-ops.c                       |  163 +--
- drivers/crypto/ccp/sev-dev.c                       |   26 +-
- drivers/crypto/ccp/sp-pci.c                        |    1 +
- drivers/crypto/ccree/cc_buffer_mgr.c               |   54 +-
- drivers/crypto/ccree/cc_cipher.c                   |    4 +-
- drivers/crypto/ccree/cc_hash.c                     |   30 +-
- drivers/crypto/ccree/cc_pm.c                       |    1 -
- drivers/crypto/hisilicon/hpre/hpre_crypto.c        |    8 +-
- drivers/crypto/hisilicon/qm.c                      |    1 -
- drivers/crypto/hisilicon/sec2/sec.h                |   63 +-
- drivers/crypto/hisilicon/sec2/sec_crypto.c         |  595 +++++++----
- drivers/crypto/hisilicon/sgl.c                     |   15 +-
- drivers/crypto/hisilicon/zip/zip_crypto.c          |   13 +-
- drivers/crypto/img-hash.c                          |    2 +-
- drivers/crypto/inside-secure/safexcel_hash.c       |    8 +-
- .../crypto/intel/keembay/keembay-ocs-hcu-core.c    |    8 +-
- drivers/crypto/intel/keembay/ocs-aes.c             |    4 +-
- .../crypto/intel/qat/qat_420xx/adf_420xx_hw_data.c |   18 +-
- .../crypto/intel/qat/qat_4xxx/adf_4xxx_hw_data.c   |   14 +-
- .../crypto/intel/qat/qat_6xxx/adf_6xxx_hw_data.c   |  129 ++-
- .../crypto/intel/qat/qat_6xxx/adf_6xxx_hw_data.h   |   22 +-
- drivers/crypto/intel/qat/qat_common/Makefile       |    4 +
- .../intel/qat/qat_common/adf_accel_devices.h       |   40 +-
- drivers/crypto/intel/qat/qat_common/adf_aer.c      |    2 +-
- .../crypto/intel/qat/qat_common/adf_bank_state.c   |  238 +++++
- .../crypto/intel/qat/qat_common/adf_bank_state.h   |   49 +
- .../crypto/intel/qat/qat_common/adf_cfg_common.h   |    1 +
- .../crypto/intel/qat/qat_common/adf_cfg_services.c |   45 +-
- .../crypto/intel/qat/qat_common/adf_cfg_services.h |   13 +-
- .../crypto/intel/qat/qat_common/adf_cfg_strings.h  |    1 +
- .../crypto/intel/qat/qat_common/adf_common_drv.h   |    2 +-
- .../crypto/intel/qat/qat_common/adf_gen4_hw_data.c |  229 +----
- .../crypto/intel/qat/qat_common/adf_gen4_hw_data.h |   10 +-
- .../intel/qat/qat_common/adf_gen4_pm_debugfs.c     |  105 +-
- .../crypto/intel/qat/qat_common/adf_gen4_vf_mig.c  |    7 +-
- drivers/crypto/intel/qat/qat_common/adf_gen6_pm.h  |   24 +
- .../intel/qat/qat_common/adf_gen6_pm_dbgfs.c       |  124 +++
- .../crypto/intel/qat/qat_common/adf_gen6_shared.c  |    7 +
- .../crypto/intel/qat/qat_common/adf_gen6_shared.h  |    2 +
- drivers/crypto/intel/qat/qat_common/adf_gen6_tl.c  |  146 +++
- drivers/crypto/intel/qat/qat_common/adf_gen6_tl.h  |  198 ++++
- drivers/crypto/intel/qat/qat_common/adf_init.c     |    1 +
- drivers/crypto/intel/qat/qat_common/adf_isr.c      |    5 +
- .../intel/qat/qat_common/adf_pm_dbgfs_utils.c      |   52 +
- .../intel/qat/qat_common/adf_pm_dbgfs_utils.h      |   36 +
- drivers/crypto/intel/qat/qat_common/adf_rl.c       |   86 +-
- drivers/crypto/intel/qat/qat_common/adf_rl.h       |   11 +-
- drivers/crypto/intel/qat/qat_common/adf_rl_admin.c |    1 +
- drivers/crypto/intel/qat/qat_common/adf_sriov.c    |    1 -
- drivers/crypto/intel/qat/qat_common/adf_sysfs.c    |    2 +
- drivers/crypto/intel/qat/qat_common/adf_sysfs_rl.c |   21 +-
- .../crypto/intel/qat/qat_common/adf_tl_debugfs.c   |    3 +
- .../intel/qat/qat_common/adf_transport_debug.c     |   21 +-
- drivers/crypto/intel/qat/qat_common/qat_algs.c     |   12 +-
- drivers/crypto/intel/qat/qat_common/qat_bl.c       |    6 +-
- .../crypto/intel/qat/qat_common/qat_compression.c  |    8 +-
- drivers/crypto/marvell/cesa/cipher.c               |    4 +-
- drivers/crypto/marvell/cesa/hash.c                 |   10 +-
- drivers/crypto/marvell/octeontx2/otx2_cpt_reqmgr.h |  128 ++-
- drivers/crypto/marvell/octeontx2/otx2_cptlf.h      |    3 +-
- .../crypto/marvell/octeontx2/otx2_cptpf_ucode.c    |   51 +-
- drivers/crypto/marvell/octeontx2/otx2_cptvf_algs.c |    6 +-
- drivers/crypto/marvell/octeontx2/otx2_cptvf_main.c |   28 +-
- drivers/crypto/marvell/octeontx2/otx2_cptvf_mbox.c |    7 +-
- .../crypto/marvell/octeontx2/otx2_cptvf_reqmgr.c   |   14 +-
- drivers/crypto/omap-aes-gcm.c                      |    1 -
- drivers/crypto/omap-aes.c                          |    1 -
- drivers/crypto/omap-des.c                          |    1 -
- drivers/crypto/omap-sham.c                         |    1 -
- drivers/crypto/stm32/stm32-cryp.c                  |    1 -
- drivers/crypto/stm32/stm32-hash.c                  |    1 -
- drivers/crypto/virtio/virtio_crypto_common.h       |    2 -
- drivers/crypto/virtio/virtio_crypto_core.c         |    2 +-
- drivers/crypto/virtio/virtio_crypto_mgr.c          |   36 -
- include/crypto/engine.h                            |    1 -
- include/crypto/internal/acompress.h                |    5 +-
- include/crypto/internal/engine.h                   |   15 -
- include/crypto/internal/hash.h                     |   36 +
- include/linux/crypto.h                             |    3 +
- include/linux/hisi_acc_qm.h                        |    4 +-
- include/linux/local_lock.h                         |   20 +-
- include/linux/local_lock_internal.h                |   30 +-
- include/linux/padata.h                             |    4 -
- kernel/padata.c                                    |  154 +--
- 152 files changed, 4133 insertions(+), 2089 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/crypto/omap-aes.txt
- delete mode 100644 Documentation/devicetree/bindings/crypto/omap-des.txt
- create mode 100644 Documentation/devicetree/bindings/crypto/ti,omap2-aes.yaml
- create mode 100644 Documentation/devicetree/bindings/crypto/ti,omap4-des.yaml
- create mode 100644 arch/s390/crypto/phmac_s390.c
- create mode 100644 drivers/crypto/intel/qat/qat_common/adf_bank_state.c
- create mode 100644 drivers/crypto/intel/qat/qat_common/adf_bank_state.h
- create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen6_pm_dbgfs.c
- create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen6_tl.c
- create mode 100644 drivers/crypto/intel/qat/qat_common/adf_gen6_tl.h
- create mode 100644 drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_utils.c
- create mode 100644 drivers/crypto/intel/qat/qat_common/adf_pm_dbgfs_utils.h
-
-Thanks,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+> ---
+> v3:
+>  - fix comments by Dmitry Vyukov:
+>    - adjust a comment in sched.h
+>    - fix incorrect parameters passed to kcov_start()
+>
+> v2:
+>  - add myself to kcov MAINTAINERS
+>  - rename kcov-state.h to kcov_types.h
+>  - update the description
+>  - do not move mode into struct kcov_state
+>  - use '{ }' instead of '{ 0 }'
+>
+> Change-Id: If225682ea2f6e91245381b3270de16e7ea40df39
+> ---
+>  MAINTAINERS                |   2 +
+>  include/linux/kcov.h       |   2 +-
+>  include/linux/kcov_types.h |  22 ++++++++
+>  include/linux/sched.h      |  13 +----
+>  kernel/kcov.c              | 112 ++++++++++++++++---------------------
+>  5 files changed, 77 insertions(+), 74 deletions(-)
+>  create mode 100644 include/linux/kcov_types.h
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index c0b444e5fd5ad..6906eb9d88dae 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13008,11 +13008,13 @@ F:    include/linux/kcore.h
+>  KCOV
+>  R:     Dmitry Vyukov <dvyukov@google.com>
+>  R:     Andrey Konovalov <andreyknvl@gmail.com>
+> +R:     Alexander Potapenko <glider@google.com>
+>  L:     kasan-dev@googlegroups.com
+>  S:     Maintained
+>  B:     https://bugzilla.kernel.org/buglist.cgi?component=Sanitizers&product=Memory%20Management
+>  F:     Documentation/dev-tools/kcov.rst
+>  F:     include/linux/kcov.h
+> +F:     include/linux/kcov_types.h
+>  F:     include/uapi/linux/kcov.h
+>  F:     kernel/kcov.c
+>  F:     scripts/Makefile.kcov
+> diff --git a/include/linux/kcov.h b/include/linux/kcov.h
+> index 75a2fb8b16c32..2b3655c0f2278 100644
+> --- a/include/linux/kcov.h
+> +++ b/include/linux/kcov.h
+> @@ -2,7 +2,7 @@
+>  #ifndef _LINUX_KCOV_H
+>  #define _LINUX_KCOV_H
+>
+> -#include <linux/sched.h>
+> +#include <linux/kcov_types.h>
+>  #include <uapi/linux/kcov.h>
+>
+>  struct task_struct;
+> diff --git a/include/linux/kcov_types.h b/include/linux/kcov_types.h
+> new file mode 100644
+> index 0000000000000..53b25b6f0addd
+> --- /dev/null
+> +++ b/include/linux/kcov_types.h
+> @@ -0,0 +1,22 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_KCOV_STATE_H
+> +#define _LINUX_KCOV_STATE_H
+> +
+> +#ifdef CONFIG_KCOV
+> +/* See kernel/kcov.c for more details. */
+> +struct kcov_state {
+> +       /* Size of the area (in long's). */
+> +       unsigned int size;
+> +
+> +       /* Buffer for coverage collection, shared with the userspace. */
+> +       void *area;
+> +
+> +       /*
+> +        * KCOV sequence number: incremented each time kcov is reenabled, used
+> +        * by kcov_remote_stop(), see the comment there.
+> +        */
+> +       int sequence;
+> +};
+> +#endif /* CONFIG_KCOV */
+> +
+> +#endif /* _LINUX_KCOV_STATE_H */
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index aa9c5be7a6325..7901fece5aba3 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -42,6 +42,7 @@
+>  #include <linux/restart_block.h>
+>  #include <uapi/linux/rseq.h>
+>  #include <linux/seqlock_types.h>
+> +#include <linux/kcov_types.h>
+>  #include <linux/kcsan.h>
+>  #include <linux/rv.h>
+>  #include <linux/uidgid_types.h>
+> @@ -1516,16 +1517,11 @@ struct task_struct {
+>  #endif /* CONFIG_TRACING */
+>
+>  #ifdef CONFIG_KCOV
+> -       /* See kernel/kcov.c for more details. */
+> -
+>         /* Coverage collection mode enabled for this task (0 if disabled): */
+>         unsigned int                    kcov_mode;
+>
+> -       /* Size of the kcov_area: */
+> -       unsigned int                    kcov_size;
+> -
+> -       /* Buffer for coverage collection: */
+> -       void                            *kcov_area;
+> +       /* KCOV buffer state for this task. */
+> +       struct kcov_state               kcov_state;
+>
+>         /* KCOV descriptor wired with this task or NULL: */
+>         struct kcov                     *kcov;
+> @@ -1533,9 +1529,6 @@ struct task_struct {
+>         /* KCOV common handle for remote coverage collection: */
+>         u64                             kcov_handle;
+>
+> -       /* KCOV sequence number: */
+> -       int                             kcov_sequence;
+> -
+>         /* Collect coverage from softirq context: */
+>         unsigned int                    kcov_softirq;
+>  #endif
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index 187ba1b80bda1..5170f367c8a1b 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/debugfs.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/kcov.h>
+> +#include <linux/kcov_types.h>
+>  #include <linux/refcount.h>
+>  #include <linux/log2.h>
+>  #include <asm/setup.h>
+> @@ -53,24 +54,17 @@ struct kcov {
+>          *  - each code section for remote coverage collection
+>          */
+>         refcount_t              refcount;
+> -       /* The lock protects mode, size, area and t. */
+> +       /* The lock protects mode, state and t. */
+>         spinlock_t              lock;
+>         enum kcov_mode          mode;
+> -       /* Size of arena (in long's). */
+> -       unsigned int            size;
+> -       /* Coverage buffer shared with user space. */
+> -       void                    *area;
+> +       struct kcov_state       state;
+> +
+>         /* Task for which we collect coverage, or NULL. */
+>         struct task_struct      *t;
+>         /* Collecting coverage from remote (background) threads. */
+>         bool                    remote;
+>         /* Size of remote area (in long's). */
+>         unsigned int            remote_size;
+> -       /*
+> -        * Sequence is incremented each time kcov is reenabled, used by
+> -        * kcov_remote_stop(), see the comment there.
+> -        */
+> -       int                     sequence;
+>  };
+>
+>  struct kcov_remote_area {
+> @@ -92,11 +86,9 @@ struct kcov_percpu_data {
+>         void                    *irq_area;
+>         local_lock_t            lock;
+>
+> -       unsigned int            saved_mode;
+> -       unsigned int            saved_size;
+> -       void                    *saved_area;
+> +       enum kcov_mode          saved_mode;
+>         struct kcov             *saved_kcov;
+> -       int                     saved_sequence;
+> +       struct kcov_state       saved_state;
+>  };
+>
+>  static DEFINE_PER_CPU(struct kcov_percpu_data, kcov_percpu_data) = {
+> @@ -217,10 +209,10 @@ void notrace __sanitizer_cov_trace_pc(void)
+>         if (!check_kcov_mode(KCOV_MODE_TRACE_PC, t))
+>                 return;
+>
+> -       area = t->kcov_area;
+> +       area = t->kcov_state.area;
+>         /* The first 64-bit word is the number of subsequent PCs. */
+>         pos = READ_ONCE(area[0]) + 1;
+> -       if (likely(pos < t->kcov_size)) {
+> +       if (likely(pos < t->kcov_state.size)) {
+>                 /* Previously we write pc before updating pos. However, some
+>                  * early interrupt code could bypass check_kcov_mode() check
+>                  * and invoke __sanitizer_cov_trace_pc(). If such interrupt is
+> @@ -250,10 +242,10 @@ static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+>
+>         /*
+>          * We write all comparison arguments and types as u64.
+> -        * The buffer was allocated for t->kcov_size unsigned longs.
+> +        * The buffer was allocated for t->kcov_state.size unsigned longs.
+>          */
+> -       area = (u64 *)t->kcov_area;
+> -       max_pos = t->kcov_size * sizeof(unsigned long);
+> +       area = (u64 *)t->kcov_state.area;
+> +       max_pos = t->kcov_state.size * sizeof(unsigned long);
+>
+>         count = READ_ONCE(area[0]);
+>
+> @@ -354,15 +346,13 @@ EXPORT_SYMBOL(__sanitizer_cov_trace_switch);
+>  #endif /* ifdef CONFIG_KCOV_ENABLE_COMPARISONS */
+>
+>  static void kcov_start(struct task_struct *t, struct kcov *kcov,
+> -                       unsigned int size, void *area, enum kcov_mode mode,
+> -                       int sequence)
+> +                      enum kcov_mode mode, struct kcov_state *state)
+>  {
+> -       kcov_debug("t = %px, size = %u, area = %px\n", t, size, area);
+> +       kcov_debug("t = %px, size = %u, area = %px\n", t, state->size,
+> +                  state->area);
+>         t->kcov = kcov;
+>         /* Cache in task struct for performance. */
+> -       t->kcov_size = size;
+> -       t->kcov_area = area;
+> -       t->kcov_sequence = sequence;
+> +       t->kcov_state = *state;
+>         /* See comment in check_kcov_mode(). */
+>         barrier();
+>         WRITE_ONCE(t->kcov_mode, mode);
+> @@ -373,14 +363,14 @@ static void kcov_stop(struct task_struct *t)
+>         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+>         barrier();
+>         t->kcov = NULL;
+> -       t->kcov_size = 0;
+> -       t->kcov_area = NULL;
+> +       t->kcov_state.size = 0;
+> +       t->kcov_state.area = NULL;
+>  }
+>
+>  static void kcov_task_reset(struct task_struct *t)
+>  {
+>         kcov_stop(t);
+> -       t->kcov_sequence = 0;
+> +       t->kcov_state.sequence = 0;
+>         t->kcov_handle = 0;
+>  }
+>
+> @@ -396,7 +386,7 @@ static void kcov_reset(struct kcov *kcov)
+>         kcov->mode = KCOV_MODE_INIT;
+>         kcov->remote = false;
+>         kcov->remote_size = 0;
+> -       kcov->sequence++;
+> +       kcov->state.sequence++;
+>  }
+>
+>  static void kcov_remote_reset(struct kcov *kcov)
+> @@ -436,7 +426,7 @@ static void kcov_put(struct kcov *kcov)
+>  {
+>         if (refcount_dec_and_test(&kcov->refcount)) {
+>                 kcov_remote_reset(kcov);
+> -               vfree(kcov->area);
+> +               vfree(kcov->state.area);
+>                 kfree(kcov);
+>         }
+>  }
+> @@ -493,8 +483,8 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+>         unsigned long flags;
+>
+>         spin_lock_irqsave(&kcov->lock, flags);
+> -       size = kcov->size * sizeof(unsigned long);
+> -       if (kcov->area == NULL || vma->vm_pgoff != 0 ||
+> +       size = kcov->state.size * sizeof(unsigned long);
+> +       if (kcov->state.area == NULL || vma->vm_pgoff != 0 ||
+>             vma->vm_end - vma->vm_start != size) {
+>                 res = -EINVAL;
+>                 goto exit;
+> @@ -502,7 +492,7 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+>         spin_unlock_irqrestore(&kcov->lock, flags);
+>         vm_flags_set(vma, VM_DONTEXPAND);
+>         for (off = 0; off < size; off += PAGE_SIZE) {
+> -               page = vmalloc_to_page(kcov->area + off);
+> +               page = vmalloc_to_page(kcov->state.area + off);
+>                 res = vm_insert_page(vma, vma->vm_start + off, page);
+>                 if (res) {
+>                         pr_warn_once("kcov: vm_insert_page() failed\n");
+> @@ -523,7 +513,7 @@ static int kcov_open(struct inode *inode, struct file *filep)
+>         if (!kcov)
+>                 return -ENOMEM;
+>         kcov->mode = KCOV_MODE_DISABLED;
+> -       kcov->sequence = 1;
+> +       kcov->state.sequence = 1;
+>         refcount_set(&kcov->refcount, 1);
+>         spin_lock_init(&kcov->lock);
+>         filep->private_data = kcov;
+> @@ -558,10 +548,10 @@ static int kcov_get_mode(unsigned long arg)
+>  static void kcov_fault_in_area(struct kcov *kcov)
+>  {
+>         unsigned long stride = PAGE_SIZE / sizeof(unsigned long);
+> -       unsigned long *area = kcov->area;
+> +       unsigned long *area = kcov->state.area;
+>         unsigned long offset;
+>
+> -       for (offset = 0; offset < kcov->size; offset += stride)
+> +       for (offset = 0; offset < kcov->state.size; offset += stride)
+>                 READ_ONCE(area[offset]);
+>  }
+>
+> @@ -600,7 +590,7 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+>                  * at task exit or voluntary by KCOV_DISABLE. After that it can
+>                  * be enabled for another task.
+>                  */
+> -               if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
+> +               if (kcov->mode != KCOV_MODE_INIT || !kcov->state.area)
+>                         return -EINVAL;
+>                 t = current;
+>                 if (kcov->t != NULL || t->kcov != NULL)
+> @@ -610,8 +600,7 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+>                         return mode;
+>                 kcov_fault_in_area(kcov);
+>                 kcov->mode = mode;
+> -               kcov_start(t, kcov, kcov->size, kcov->area, kcov->mode,
+> -                               kcov->sequence);
+> +               kcov_start(t, kcov, mode, &kcov->state);
+>                 kcov->t = t;
+>                 /* Put either in kcov_task_exit() or in KCOV_DISABLE. */
+>                 kcov_get(kcov);
+> @@ -628,7 +617,7 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+>                 kcov_put(kcov);
+>                 return 0;
+>         case KCOV_REMOTE_ENABLE:
+> -               if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
+> +               if (kcov->mode != KCOV_MODE_INIT || !kcov->state.area)
+>                         return -EINVAL;
+>                 t = current;
+>                 if (kcov->t != NULL || t->kcov != NULL)
+> @@ -722,8 +711,8 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>                         vfree(area);
+>                         return -EBUSY;
+>                 }
+> -               kcov->area = area;
+> -               kcov->size = size;
+> +               kcov->state.area = area;
+> +               kcov->state.size = size;
+>                 kcov->mode = KCOV_MODE_INIT;
+>                 spin_unlock_irqrestore(&kcov->lock, flags);
+>                 return 0;
+> @@ -821,10 +810,8 @@ static void kcov_remote_softirq_start(struct task_struct *t)
+>         mode = READ_ONCE(t->kcov_mode);
+>         barrier();
+>         if (kcov_mode_enabled(mode)) {
+> +               data->saved_state = t->kcov_state;
+>                 data->saved_mode = mode;
+> -               data->saved_size = t->kcov_size;
+> -               data->saved_area = t->kcov_area;
+> -               data->saved_sequence = t->kcov_sequence;
+>                 data->saved_kcov = t->kcov;
+>                 kcov_stop(t);
+>         }
+> @@ -835,13 +822,9 @@ static void kcov_remote_softirq_stop(struct task_struct *t)
+>         struct kcov_percpu_data *data = this_cpu_ptr(&kcov_percpu_data);
+>
+>         if (data->saved_kcov) {
+> -               kcov_start(t, data->saved_kcov, data->saved_size,
+> -                               data->saved_area, data->saved_mode,
+> -                               data->saved_sequence);
+> -               data->saved_mode = 0;
+> -               data->saved_size = 0;
+> -               data->saved_area = NULL;
+> -               data->saved_sequence = 0;
+> +               kcov_start(t, data->saved_kcov, data->saved_mode,
+> +                          &data->saved_state);
+> +               data->saved_state = (struct kcov_state){};
+>                 data->saved_kcov = NULL;
+>         }
+>  }
+> @@ -850,12 +833,12 @@ void kcov_remote_start(u64 handle)
+>  {
+>         struct task_struct *t = current;
+>         struct kcov_remote *remote;
+> +       struct kcov_state state;
+> +       enum kcov_mode mode;
+> +       unsigned long flags;
+> +       unsigned int size;
+>         struct kcov *kcov;
+> -       unsigned int mode;
+>         void *area;
+> -       unsigned int size;
+> -       int sequence;
+> -       unsigned long flags;
+>
+>         if (WARN_ON(!kcov_check_handle(handle, true, true, true)))
+>                 return;
+> @@ -900,7 +883,7 @@ void kcov_remote_start(u64 handle)
+>          * KCOV_DISABLE / kcov_remote_reset().
+>          */
+>         mode = kcov->mode;
+> -       sequence = kcov->sequence;
+> +       state.sequence = kcov->state.sequence;
+>         if (in_task()) {
+>                 size = kcov->remote_size;
+>                 area = kcov_remote_area_get(size);
+> @@ -923,12 +906,14 @@ void kcov_remote_start(u64 handle)
+>
+>         /* Reset coverage size. */
+>         *(u64 *)area = 0;
+> +       state.area = area;
+> +       state.size = size;
+>
+>         if (in_serving_softirq()) {
+>                 kcov_remote_softirq_start(t);
+>                 t->kcov_softirq = 1;
+>         }
+> -       kcov_start(t, kcov, size, area, mode, sequence);
+> +       kcov_start(t, kcov, mode, &state);
+>
+>         local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+>
+> @@ -1027,9 +1012,9 @@ void kcov_remote_stop(void)
+>         }
+>
+>         kcov = t->kcov;
+> -       area = t->kcov_area;
+> -       size = t->kcov_size;
+> -       sequence = t->kcov_sequence;
+> +       area = t->kcov_state.area;
+> +       size = t->kcov_state.size;
+> +       sequence = t->kcov_state.sequence;
+>
+>         kcov_stop(t);
+>         if (in_serving_softirq()) {
+> @@ -1042,8 +1027,9 @@ void kcov_remote_stop(void)
+>          * KCOV_DISABLE could have been called between kcov_remote_start()
+>          * and kcov_remote_stop(), hence the sequence check.
+>          */
+> -       if (sequence == kcov->sequence && kcov->remote)
+> -               kcov_move_area(kcov->mode, kcov->area, kcov->size, area);
+> +       if (sequence == kcov->state.sequence && kcov->remote)
+> +               kcov_move_area(kcov->mode, kcov->state.area, kcov->state.size,
+> +                              area);
+>         spin_unlock(&kcov->lock);
+>
+>         if (in_task()) {
+> --
+> 2.50.1.470.g6ba607880d-goog
+>
 
