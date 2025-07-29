@@ -1,160 +1,222 @@
-Return-Path: <linux-kernel+bounces-749878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E43D6B1541B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:10:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B99B15423
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:12:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 389BF18A6F00
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A3343B6F3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD2522BD5B0;
-	Tue, 29 Jul 2025 20:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D94FF2BDC13;
+	Tue, 29 Jul 2025 20:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="vb/LdmXC"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="bfWYl46t"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2012BD5B2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 20:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0B32BD593
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 20:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753819833; cv=none; b=o/7E7LVInECr1j2hr6Bc2bGcXM25oyrj5KKhRqkdCGNnoXRjvOy+LvlRWpvnCs3GFQY4c9vxqJ26q7gHgxg5Iesij4rC8a5UIhh+mIrAZR2cUekgD8FRC0ulgPIPTYbo+PznR9P2LmMEcpWJPSWl4hhxktuYoHUtQjVa79HSAP4=
+	t=1753819958; cv=none; b=LbCYp+Im0+wLUghJRfmnF+EDHR5zk0UO/i29iEkSgyBT+2rF1iz0N2mCTAyoLpWGwjhL+XCWbrPXXpxHF0nHELd12PxpEglsmZay2L+bpfgOfegexHhRuisIxNTwlx4qRXRRtnhunt3NHbyhIz2Y1BZ0Dam6+Nal9f/yDSVBPZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753819833; c=relaxed/simple;
-	bh=Ctw7qUs9O5onW4mQa6HCTkye1kUtXx0cLhBA9PrYEHI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ER2lXuILWRcFWLT66L5vWWqechc3z9LO23heq0FmfZL/iHa0KT99wqIVLE/UGnVAOu+A2MiRXmGdraQvuhoMQeSZuWzki+DpcyCavI2WqcHGbs6HA6YjC56sKdnDUXEAWU3WtZqLciW8SXY+OEinw2QeW9H2EjfnM2lhqmOXbtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=vb/LdmXC; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-615622ed677so2275863a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 13:10:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1753819829; x=1754424629; darn=vger.kernel.org;
-        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FKuOQIUzxLcHTK7W3h1Rqt2SBeSCsDHUPMu2l8U3bnA=;
-        b=vb/LdmXCl5o6ChG/pD4fqcc+xsxdzk5s01ySHw/5Gp/O8RPRfO9RQBr/Xeq6eX5HKE
-         U4dDir0EW+ueyc80mIBO4o6bAXDL/g7E+2n+RJ6/dcfnkfDaouudPMV3BmcynXCdyP+J
-         zLQ58uMz7fLOTEkQ71weOvE0D73fJ/oBi9c2mldzWem/bpEdK9ypTyG0vZAkQ48LCVuZ
-         y4HUkD8R24b2rk+073iFICVwNqA/jhyP00o3+97pyV30N3zqs+9hfBBEOGq9T5hvq94G
-         ltUcar4CEr1PmdJxt0Iocz7cLzCQk958xSIJQyLKjwyoYO9nxHgqN1wfl9/zWEetS02/
-         AFjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753819829; x=1754424629;
-        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FKuOQIUzxLcHTK7W3h1Rqt2SBeSCsDHUPMu2l8U3bnA=;
-        b=KQZhdm3M4q4Bho4G/NtZgsetLJ9uc5Ur4VjsqxVMP4CTUnl7vc5OvX0S84t2DFFvQ5
-         SXSKjYeyzfjRd+E3RuZ/6e9eo9KNIoFofw5uT1y3CkSMuIlVFcOvUzqIbvrwJmKSdTJ1
-         j2lrxTriwM2SLvtMzooqM/ggTovebXDOR6WA79/kf7iE/XFWehZtf5C0aJ5EH42fZ91P
-         gtHaPihLVQrjpJ6+Ux2gqUOXgKWt4G8GfHZCaVtE4TUpq1b+T8eEXGUwJll0vfsfk6pr
-         htqfckE+BqfDjxQoRxLCAkgfm4ALcY0EvE8i31Fs81ouA2+Gu0KEJsz4hhn8phKV54lR
-         kIIw==
-X-Forwarded-Encrypted: i=1; AJvYcCU5GgC3P7Pd5YiVIgqRxZ9gGdMx+Y//iRVYbh3k4D+37lTDwwLRm3Lu8LPLfoar1jYkyOco3UNUxLg41bc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTTyQEIuiuBUmdb7rMqQccKFy0dN0Yrecuc74xPRFc9fh2XU9f
-	pWVYrMIdmpA4jrOzm59Ld+9v5KcCp6VE7q3/R0ba3Oo1KHW/xfHEtsamG8+hYrGZZIA=
-X-Gm-Gg: ASbGncvboMatTdfm0cifFCO/ASqARUVbe1P/0xlAf/h9opxHoNDdHoOu6q6PykgK8DC
-	Y3qGDm0NvgOiSZQ2VjLGOSr1c+rK4CYDiIZlTZVxniKFpio3OG6vVifvWbFv2PNHy66tEbdTLFz
-	3myDLRwKEq+N4cTlX+DE+D23Mm2q+puzU9Xs2XonMyyDyNT1kWbt9De55AF6ZEN9+mO8HrsP2rb
-	GW0LKtGvSn62ZesF3XIuCaqDqdJvZBjTY3mTHyx3OnoVhyQJv8mSbooWVio/ZW+j0E33S4nIxVT
-	Kg1rIWA2n8YKILHHl1HZn5zor8HD6UDzPYfQdBfExEV2pi4Tnh92tDQun6rNbKNk/wwez1dqGO1
-	IYtHtIDddMQp4XlouiSDP6UjtvejEYQUqyelid1mbOSe4yBKO+kfAv0NImCKw8fk=
-X-Google-Smtp-Source: AGHT+IHOcV6g/UKdaeOksJAZv8oqi/ykcVNEIP0+IbKecU0CG+YVXXzJt1mG7mOgdrjHD5QqgjsYNA==
-X-Received: by 2002:a17:906:f59c:b0:ae9:8cb4:2fe8 with SMTP id a640c23a62f3a-af8fd97327fmr77327966b.37.1753819828620;
-        Tue, 29 Jul 2025 13:10:28 -0700 (PDT)
-Received: from somecomputer (85-127-105-52.dsl.dynamic.surfer.at. [85.127.105.52])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a65fffsm622702966b.76.2025.07.29.13.10.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 13:10:28 -0700 (PDT)
-From: Richard Weinberger <richard@sigma-star.at>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mtd <linux-mtd@lists.infradead.org>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] UBI and UBIFS changes for v6.17-rc1
-Date: Tue, 29 Jul 2025 22:10:26 +0200
-Message-ID: <7787490.DFzTOozpa1@nailgun>
+	s=arc-20240116; t=1753819958; c=relaxed/simple;
+	bh=TLqZ3K3G8pT3V00OXKgBt+8XJkZHle7uIDj7ge3vXRc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WApiyMnoov4TFj28bptkXtwAC8yJkY8HIaREg34DsiG2bcu0ullV0I1jMxr4n2UXowkm9gW7w7wLc1adAwh1uJSzBq8QMOmmNDY/kbQbg7iG9k1zovDdv4GGB6NOF9Md0hafEnLpmsIxf960GRXbsSPGBEEfPpcEQfpBAUVgrfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=bfWYl46t reason="signature verification failed"; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id HMboJofUymKmKC7Y; Tue, 29 Jul 2025 16:12:35 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=RQCFIUWU5fd0elOWoWAsjEllXgLsRj/FlWICOM44UoM=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=bfWYl46t5/A3oqn5HGcK
+	7jdIOuv+1TwgSlFR4Bm+Otw6fqlNY0E7NkL+bbApE969ogcbIQ8JzEJJMxSGvOf5DwWw2Si1NSoiU
+	40/OUGOv27nKo+16r7oKF5z2v1/75N6dK6NuFXyQLc8uCkuDKglZ1+kDgQMSNMqy3RsTfiyXn4=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14114145; Tue, 29 Jul 2025 16:12:35 -0400
+Message-ID: <c5f853ad-9675-454a-9838-125304ae94ef@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Tue, 29 Jul 2025 16:12:34 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart8201394.atp6XCIr46";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] iomap: align writeback to RAID stripe boundaries
+Content-Language: en-US
+X-ASG-Orig-Subj: Re: [PATCH 2/2] iomap: align writeback to RAID stripe boundaries
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Song Liu <song@kernel.org>, Yu Kuai <yukuai3@huawei.com>,
+ Christian Brauner <brauner@kernel.org>, "Darrick J. Wong"
+ <djwong@kernel.org>, linux-raid@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <55deda1d-967d-4d68-a9ba-4d5139374a37@cybernetics.com>
+ <aIkVHBsC6M5ZHGzQ@casper.infradead.org>
+ <17323677-08b1-46c3-90a8-5418d0bde9fe@cybernetics.com>
+ <aIkeMTMJbdvNxjqf@casper.infradead.org>
+From: Tony Battersby <tonyb@cybernetics.com>
+In-Reply-To: <aIkeMTMJbdvNxjqf@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1753819955
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 4232
+X-Barracuda-BRTS-Status: 1
+Content-Transfer-Encoding: quoted-printable
+X-ASG-Debug-ID: 1753819955-1cf43947df829b0001-xx1T2L
 
---nextPart8201394.atp6XCIr46
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Richard Weinberger <richard@sigma-star.at>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [GIT PULL] UBI and UBIFS changes for v6.17-rc1
-Date: Tue, 29 Jul 2025 22:10:17 +0200
-Message-ID: <7787490.DFzTOozpa1@nailgun>
-MIME-Version: 1.0
-
-Linus,
-
-This time I'm sending from my business account because Google still hates
-my mail setup at nod.at.
-
-The following changes since commit 347e9f5043c89695b01e66b3ed111755afcf1911:
-
-  Linux 6.16-rc6 (2025-07-13 14:25:58 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/ubifs-for-linus-6.17-rc1
-
-for you to fetch changes up to 99dbb2a1bd661418be33b1ff1462c09b7d2221cf:
-
-  ubifs: stop using write_cache_pages (2025-07-24 22:23:14 +0200)
-
-----------------------------------------------------------------
-This pull request contains the following changes for UBI and UBIFS:
-
-UBIFS:
-	- No longer use write_cache_pages()
-
-UBI:
-	- Removal of an unused function
-
-----------------------------------------------------------------
-Christoph Hellwig (1):
-      ubifs: stop using write_cache_pages
-
-Dr. David Alan Gilbert (1):
-      mtd: ubi: Remove unused ubi_flush
-
- drivers/mtd/ubi/kapi.c  | 27 ---------------------------
- fs/ubifs/file.c         | 10 +++++++---
- include/linux/mtd/ubi.h |  1 -
- 3 files changed, 7 insertions(+), 31 deletions(-)
---nextPart8201394.atp6XCIr46
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEdgfidid8lnn52cLTZvlZhesYu8EFAmiJKqkACgkQZvlZhesY
-u8HUMg/8CFqSNVKYHdzD7cewEieFJ0YNPN+DD0MkgLGoDKfahWzLFN8owTKjEvXV
-ScyrVG6gSXuyGkYDIarmmupKnD8YXyNfoLLlVoYDh/LvdJhJNvcYo46jPZoBTmjK
-r6oiI1pDdWV60BT1Vx10SJqA+J/xkbyrxlmtVgEeLbhH6SuzzqOxrfrmargK1q6h
-TIsbzhK57x1o6DxTB8oFpVSPqmeegNEsuaCZhZ/RwrVUUgADnfImFkjhFafSS41w
-IBmTY7NBnEKQVBgCjLBDWAIt0mqxcZsptFaNPe7UJtUk841Ts5kEMIt9B5mlupnC
-qQmRGDjDUX8JS/MeMbISqBlp+0JgJLN826lRtD9sli/RFMUhO+d2ONYvGJ1XADl1
-zfkITxx2SWQHSmBwe6QUY/OpsgM1eqr2N4PVbPwTDV0266XSrr2CB/uFawbpKWTC
-RGCv+8/yxXfI1+yxjpT0HVVT/5YfbMM4Z8nWDK5PAYqJ1GTL+WcYfShE/xke1sos
-tKtjIip/zk1MDbCNo0GwVl0wlOJpL5jhwVWdf3HbbDoTRdAuNSov6batWzY9L+EA
-aBnrqkK1dgOwnikGLnTACrYsOqYGUEhuLtokFFBQdWSTq3XZP43YRUKmG9umj9bZ
-VSYbKZxs6WwUCdRyfIYzF2+OCE3L6C7p6cJcU+TYdqhACSiRJzs=
-=3YD8
------END PGP SIGNATURE-----
-
---nextPart8201394.atp6XCIr46--
+On 7/29/25 15:17, Matthew Wilcox wrote:
+> Hm.  Maybe something like this would be more clear?
+>
+> (contents and indeed name of iomap_should_split_ioend() very much TBD)
+>
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 9f541c05103b..429890fb7763 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -1684,6 +1684,7 @@ static int iomap_add_to_ioend(struct iomap_writep=
+age_ctx *wpc,
+>  	struct iomap_folio_state *ifs =3D folio->private;
+>  	size_t poff =3D offset_in_folio(folio, pos);
+>  	unsigned int ioend_flags =3D 0;
+> +	unsigned thislen;
+>  	int error;
+> =20
+>  	if (wpc->iomap.type =3D=3D IOMAP_UNWRITTEN)
+> @@ -1704,8 +1705,16 @@ static int iomap_add_to_ioend(struct iomap_write=
+page_ctx *wpc,
+>  				ioend_flags);
+>  	}
+> =20
+> -	if (!bio_add_folio(&wpc->ioend->io_bio, folio, len, poff))
+> +	thislen =3D iomap_should_split_ioend(wpc, pos, len);
+> +
+> +	if (!bio_add_folio(&wpc->ioend->io_bio, folio, thislen, poff))
+> +		goto new_ioend;
+> +	if (thislen < len) {
+> +		pos +=3D thislen;
+> +		len -=3D thislen;
+> +		wbc_account_cgroup_owner(wbc, folio, thislen);
+>  		goto new_ioend;
+> +	}
+> =20
+>  	if (ifs)
+>  		atomic_add(len, &ifs->write_bytes_pending);
 
 
+How is this?=C2=A0 Does ioend_flags need to be recomputed (particularly
+IOMAP_IOEND_BOUNDARY) when processing the remainder of the folio?
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index fb4519158f3a..0967e6fd62a1 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1669,6 +1669,39 @@ static bool iomap_can_add_to_ioend(struct iomap_wr=
+itepage_ctx *wpc, loff_t pos,
+ 	return true;
+ }
+=20
++static unsigned int iomap_should_split_ioend(struct iomap_writepage_ctx =
+*wpc,
++		loff_t pos, unsigned int len)
++{
++	struct queue_limits *lim =3D bdev_limits(wpc->iomap.bdev);
++
++	if ((lim->features & BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE) &&
++	    !(wpc->iomap.flags & IOMAP_F_ANON_WRITE)) {
++		unsigned int io_align =3D lim->io_opt >> SECTOR_SHIFT;
++
++		/* Split sequential writes along io_align boundaries. */
++		if (io_align) {
++			sector_t lba =3D bio_end_sector(&wpc->ioend->io_bio);
++			unsigned int mod =3D lba % io_align;
++			unsigned int max_len;
++
++			/*
++			 * If the end sector is already aligned and the bio is
++			 * nonempty, then start a new bio for the remainder.
++			 */
++			if (!mod && wpc->ioend->io_bio.bi_iter.bi_size)
++				return 0;
++
++			/*
++			 * Clip the end of the bio to the alignment boundary.
++			 */
++			max_len =3D (io_align - mod) << SECTOR_SHIFT;
++			if (len > max_len)
++				len =3D max_len;
++		}
++	}
++	return len;
++}
++
+ /*
+  * Test to see if we have an existing ioend structure that we could appe=
+nd to
+  * first; otherwise finish off the current ioend and start another.
+@@ -1688,6 +1721,7 @@ static int iomap_add_to_ioend(struct iomap_writepag=
+e_ctx *wpc,
+ 	struct iomap_folio_state *ifs =3D folio->private;
+ 	size_t poff =3D offset_in_folio(folio, pos);
+ 	unsigned int ioend_flags =3D 0;
++	unsigned int thislen;
+ 	int error;
+=20
+ 	if (wpc->iomap.type =3D=3D IOMAP_UNWRITTEN)
+@@ -1708,11 +1742,14 @@ static int iomap_add_to_ioend(struct iomap_writep=
+age_ctx *wpc,
+ 				ioend_flags);
+ 	}
+=20
+-	if (!bio_add_folio(&wpc->ioend->io_bio, folio, len, poff))
++	thislen =3D iomap_should_split_ioend(wpc, pos, len);
++	if (!thislen)
++		goto new_ioend;
++	if (!bio_add_folio(&wpc->ioend->io_bio, folio, thislen, poff))
+ 		goto new_ioend;
+=20
+ 	if (ifs)
+-		atomic_add(len, &ifs->write_bytes_pending);
++		atomic_add(thislen, &ifs->write_bytes_pending);
+=20
+ 	/*
+ 	 * Clamp io_offset and io_size to the incore EOF so that ondisk
+@@ -1755,11 +1792,18 @@ static int iomap_add_to_ioend(struct iomap_writep=
+age_ctx *wpc,
+ 	 * Note that this defeats the ability to chain the ioends of
+ 	 * appending writes.
+ 	 */
+-	wpc->ioend->io_size +=3D len;
++	wpc->ioend->io_size +=3D thislen;
+ 	if (wpc->ioend->io_offset + wpc->ioend->io_size > end_pos)
+ 		wpc->ioend->io_size =3D end_pos - wpc->ioend->io_offset;
+=20
+-	wbc_account_cgroup_owner(wbc, folio, len);
++	wbc_account_cgroup_owner(wbc, folio, thislen);
++
++	if (thislen < len) {
++		pos +=3D thislen;
++		len -=3D thislen;
++		goto new_ioend;
++	}
++
+ 	return 0;
+ }
+=20
+
+--=20
+2.43.0
 
 
