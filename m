@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-749173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5143B14AF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:15:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF89AB14AF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68287542DD6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:15:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08C431AA3D76
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:15:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D30C287244;
-	Tue, 29 Jul 2025 09:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CA1021D5B0;
+	Tue, 29 Jul 2025 09:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="16dUWIn0";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fmLx/C+Z"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j8eldOIx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="plzSfjVs"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965E5233158
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8131AC88A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753780498; cv=none; b=Aow6uHwDgAgwvvUs4NngwymI8/Z1bHQoSP1hNlbN5W+l7g+2Nylv0S3yCnTNQf8rEqSWuAjC5/0Nhq24QUQuKiGRelh8FyTFjFHxnCmM/Wk9l61LvHneAEFioMHbaebapPRgkZQFm6Cj0LmEJBJD9DXj8+Hd9IKuB+9qQJtobGg=
+	t=1753780521; cv=none; b=gWAPX6A8qp17YXodd0+rupJ8SJIjZUEQjQe4AYHVUgtTAl9yxkc+DHt3WU1RegdywuGkOoICn3NKLRohnCF6zS8GtJx6Y1o8dGN4v6nJ7Lqt7kcfEdQIlnfooww4pcc9Xedap2wKkArkCTlW8zjYi86lVI3wIyCrjR2aI0IVuac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753780498; c=relaxed/simple;
-	bh=5BcNcSVV5b07LpMS5GGy2SVNJ6gHy2wvVc5fjFa18LU=;
+	s=arc-20240116; t=1753780521; c=relaxed/simple;
+	bh=aOBZ/tM1Qg2qhkWSPpZFdTdC9lpg4jmKd7J7zCISI44=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=loTD7D8HvCpxeIFBs+SLwCFpZrMM00Sadro3k07hFXxmLXs1A1NZ7muCuCzho7L837Sm0VK1DatZMiCUaVJmPKNLlR13LStv+j+5HvKP5N6j8BheqNKv5bxbuWVbjEjl5k8frtyvH/ec/STOtHHIdDCCMms/n2PfTpG/Q8EXVmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=16dUWIn0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fmLx/C+Z; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=PkyHxwRjQxroBwxNVOw3oJfTjTEw7gdQRpO1IEcQU3qKItLkQTmyKUgjJPrnFJptG6G2HQSgwd6otcfVSNU5agyNGTTgB6iCv8YAzPmymie2BMdncXg8JCr7cOm7lsSTau8QmcZzOMOLjQHqqsc/IUHO3oHRKLenSSbdUvFb3Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j8eldOIx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=plzSfjVs; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753780494;
+	s=2020; t=1753780515;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=trM5M5tOoOKl3e5FmQaiUAiXWpFZdWg29BBzIEOGG8g=;
-	b=16dUWIn0nyi7DXUU5MwGT8H41rW25+N+ktw1AjN7Zai/FXaHMPw1I4RYzS3QpSRm1PZ5Ry
-	0qYJUxo6xpu7QWR1y82mY7uo1OxLBqHg0a9JurVwzZg4q4kXzDasdmxIVS8oF5zHj6YpV/
-	jKVDqnM5WhIDFPjJWlmybr7uwMsmxTw2lI4v1VPQqAaN7IzDuX/HaCrrzWlQmsxBtjsvud
-	5+w+Ldcvx5MTPhXIV/j6Rt5Vm6oqvHSHJgcCP0xVGa1cw0wKF+vVChOC46KVNpBavt39Q8
-	g5uMwQxKXLQ71FMsGWxTPnrJSoqeUOxGbjTZ2LbLeX/haJ8dqa3p3AgYOTvZcw==
+	bh=b2n5khdBGN4b+rE4+61xpylnCTZ6TU4RaOoD1tcNfbM=;
+	b=j8eldOIxLrtnwJ3NNknKIoL1NjG95KDsIJCFIGJbrcmdgR7vNIYhPcE9zQgZ2sxroFqEan
+	mEG19emzNNgCxGSO03UiBDU8Hto2cgwCevKfYJzzi5y4lbCSlLCg3M+qy+lslYYOIQaj0s
+	S/7RAGBJ7B2Q3UMzKs8G88nx7kPO21AhKJvappLq2dyJ3IbNeGR2y2uAutuLC2jCGi6j1a
+	iBlSjxAy/mfBPpg3JehjItzSlmXbvIKdnNQUGM6dRz2Kp0EE2E3aw0pwSJ6SWtt8tWXMIx
+	hrbyAouSdT9AHRzF/7aMJvlSb/xaWj8oRo1Arjbs8cK1uQxgdMiTGlf1IR0iEA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753780494;
+	s=2020e; t=1753780515;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=trM5M5tOoOKl3e5FmQaiUAiXWpFZdWg29BBzIEOGG8g=;
-	b=fmLx/C+ZDf63kiJmp8gevlwAbu1EtTzJPXVWDCili3SoTv2HHZN9tdlLZH1J4ggJGxK9us
-	lLXZWkPwW51zkvBw==
-To: Pan Chuang <panchuang@vivo.com>, linux-kernel@vger.kernel.org
+	bh=b2n5khdBGN4b+rE4+61xpylnCTZ6TU4RaOoD1tcNfbM=;
+	b=plzSfjVsOH4tki0fTO60zHnMFJGjehOx81yiZm4/WDz1jy8qx1PcwsUEvGHGfPEU0PQze9
+	+iskM/X/V3/kosCg==
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>, Pan Chuang <panchuang@vivo.com>,
+ linux-kernel@vger.kernel.org
 Cc: miquel.raynal@bootlin.com, Jonathan.Cameron@Huawei.com,
- u.kleine-koenig@pengutronix.de, angeg.delregno@collabora.com,
- krzk@kernel.org, a.fatoum@pengutronix.de, frank.li@vivo.com, Pan Chuang
- <panchuang@vivo.com>
+ angeg.delregno@collabora.com, krzk@kernel.org, frank.li@vivo.com
 Subject: Re: [PATCH v8 1/1] genirq/devres: Add dev_err_probe() in
  devm_request_threaded_irq() and devm_request_any_context_irq()
-In-Reply-To: <20250729081434.497716-2-panchuang@vivo.com>
+In-Reply-To: <73a4fc1d-6852-4050-85c0-8c29b4165e4d@pengutronix.de>
 References: <20250729081434.497716-1-panchuang@vivo.com>
  <20250729081434.497716-2-panchuang@vivo.com>
-Date: Tue, 29 Jul 2025 11:14:54 +0200
-Message-ID: <87qzxzjr3l.ffs@tglx>
+ <73a4fc1d-6852-4050-85c0-8c29b4165e4d@pengutronix.de>
+Date: Tue, 29 Jul 2025 11:15:14 +0200
+Message-ID: <87o6t3jr31.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,66 +71,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Tue, Jul 29 2025 at 16:14, Pan Chuang wrote:
-
-> The devm_request_threaded_irq() and devm_request_any_context_irq() functions
-
-devm_request_threaded_irq() and devm_request_any_context_irq() ....
-
-The '()' notation already makes it clear that these are functions, so no
-'The ... functions' is redundant.
-
-> currently don't print any error when interrupt registration fails. This forces
-> each driver to implement redundant error logging - over 2,000 lines of error
-> messages exist across drivers. Additionally, when upper-layer functions
-> propagate these errors without logging, critical debugging information is lost.
+On Tue, Jul 29 2025 at 10:20, Ahmad Fatoum wrote:
+> On 29.07.25 10:14, Pan Chuang wrote:
+>> +	return dev_err_probe(dev, rc, "request_irq(%u) %pS %pS %s\n",
 >
-> Add automatic error logging to these functions via dev_err_probe(), printing
-> device name, IRQ number, handler addresses, and error code on failure.
+> Compared to %ps, %pS also prints offset and size relative to the symbol.
+> This makes sense when you have an arbitrary program counter, but for
+> merely printing a function symbol, I'd suggest %ps as it's less noisy.
 
-Again: %pS (or %ps) does NOT print the handler address. It prints the
-symbol name. Feel free to ignore my review comments, but then accept
-that I ignore your patches too.
-
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Signed-off-by: Pan Chuang <panchuang@vivo.com>
-
-This SOB chain is still incorrect. Again:
-
- https://www.kernel.org/doc/html/latest/process/submitting-patches.html#when-to-use-acked-by-cc-and-co-developed-by
-
-If anything is unclear, then please ask.
-
-> +/**
-> + * devm_request_any_context_irq - allocate an interrupt line for a managed device with error logging
-> + * @dev:	Device to request interrupt for
-> + * @irq:	Interrupt line to allocate
-> + * @handler:	Function to be called when the IRQ occurs
-> + * @irqflags:	Interrupt type flags
-> + * @devname:	An ascii name for the claiming device, dev_name(dev) if NULL
-> + * @dev_id:	A cookie passed back to the handler function
-> + *
-> + * Except for the extra @dev argument, this function takes the same arguments
-> + * and performs the same function as request_any_context_irq().  IRQs requested
-> + * with this function will be automatically freed on driver detach.
-> + *
-> + * If an IRQ allocated with this function needs to be freed separately,
-> + * devm_free_irq() must be used.
-> + *
-> + * When the request fails, an error message is printed with contextual
-> + * information (device name, interrupt number, handler functions and
-> + * error code). Don't add extra error messages at the call sites.
-> + *
-> + * On failure, it returns a negative value. On success, it returns either
-> + * IRQC_IS_HARDIRQ or IRQC_IS_NESTED.
-
-As you touch this, can you please convert this to the proper
-
-   Returns:
-
-formatting?
-
-Thanks,
-
-        tglx
+Good point
 
