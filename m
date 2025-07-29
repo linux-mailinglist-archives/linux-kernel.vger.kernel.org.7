@@ -1,144 +1,136 @@
-Return-Path: <linux-kernel+bounces-749340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9276B14D23
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:44:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BA5B14D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B443AAC1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:43:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF8C189B05D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E821728ECD8;
-	Tue, 29 Jul 2025 11:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F39A21B8E7;
+	Tue, 29 Jul 2025 11:45:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Co9Q53D7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lw6QR0Xz"
+Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42B7288C27
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:44:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0FD1E2606
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753789458; cv=none; b=Ra3NpAG9shAZz+ZS5KOrr0c43KXk5K+BHX4nS1cDtBaoQeVKUu4eiSweh5JuZ2b6jkGvZT8QTgg617C1ulPfa6ISG98+ZAZoT+ys17lRLpMBPNhCMGcbfbROkyyve1FmlEl11lmu/zW+rYj4bzETVF0yOKYcKYnRHq95E1WsJ5M=
+	t=1753789515; cv=none; b=gohLjapq7bSctL56iTL07Hx7tQqTs+oBpu/AE3F3uwawpYkPbUQKDrNLg3+wweY5GauyTUM/gDN/vb8QmarKwx3e8c+a4IbH/2OphUz8267/xUSf17uFPW42LwwVQeoeLUR8yF7nZHo+8U2Jhz9ifeIeMFyhAtM5fcaSYuqPCzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753789458; c=relaxed/simple;
-	bh=PnKL3Pyqyhz+bbQWojdZWWJxBLSJXrYz7i/hv3mYuu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WLLPBy6Y5J/qxRbTlPSJXCctCWBz7VCR0n2bdWnIBuzNEJtcFluPC2nAJnzUx7nMhCvUZEJPtIb5ny8f40R/428ooFipyj7mp5/O+yVnXHOEyrcy66Rg3hbLk2bCEIw64MKwpEahYhiH60vxwnQsVow7QBuSIHgLnaAwKZYd6I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Co9Q53D7; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753789456; x=1785325456;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PnKL3Pyqyhz+bbQWojdZWWJxBLSJXrYz7i/hv3mYuu8=;
-  b=Co9Q53D7VKN32E8S2zNnd16d8JzkL1rnJyylWSOKPM5D8+8PrGFe9sCX
-   Zw76gHVB6brocdj0pgBH2SzYe5ROtNd/wYFTfBaSab+P7w09eVCUdQNr7
-   7OHvhdVPdYYT2+SVQys466MR8HQCQpi6xDQBZ1pjsoSIneC4AiaH1lLZ7
-   Elny8IDN8mXxAwPNZewCG5tlAIsrYRKi0i//Qv2e4CD3peLVszN6MYK9N
-   MMNBqvyEnBLyhuAk/FFP/AiCvaOUZG8L9Pipaav9I8VIPA/Ipk/z9vrfz
-   J4sCAkb06QwyMeAKtA3m7unIaZ+ooruE3MfseYcehFN6MpI/5+M0bZiEc
-   w==;
-X-CSE-ConnectionGUID: Ta7taZhbTJS++L50Cp7gdA==
-X-CSE-MsgGUID: OolT8EI6QiatPBzcLF5jyQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="56201179"
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="56201179"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 04:44:15 -0700
-X-CSE-ConnectionGUID: 4+hpF88NTZyzNYZafdPOGg==
-X-CSE-MsgGUID: TN+w/QwzRluX085lDlwpLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="163126446"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 29 Jul 2025 04:44:12 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ugikc-0001FH-1Q;
-	Tue, 29 Jul 2025 11:44:10 +0000
-Date: Tue, 29 Jul 2025 19:43:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alexander Potapenko <glider@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, quic_jiangenj@quicinc.com,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Aleksandr Nogikh <nogikh@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 04/10] mm/kasan: define __asan_before_dynamic_init,
- __asan_after_dynamic_init
-Message-ID: <202507291913.UMbUQv95-lkp@intel.com>
-References: <20250728152548.3969143-5-glider@google.com>
+	s=arc-20240116; t=1753789515; c=relaxed/simple;
+	bh=CwqCF9KkaIWYMXKQ2dUMouAu7sXBqSPywjtOjPo7Rpc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V8e6QPsaxaUsdphLAdY00cCa/Tfdyqc9jb6ct13EXEQUaiONtfFRBrvzDd6iqdPfWJhEgvV4cWCF7dfnL1WCY3nmJgEbnvqEyF2HdSE1l45q0JSS0+mV6vfuks2o+JbVX+aHrwx3oFpZG7E26PIhODEX7nUAWrj+pzZ9wvgRRvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lw6QR0Xz; arc=none smtp.client-ip=209.85.160.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-2ea58f008e9so4018088fac.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:45:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753789513; x=1754394313; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=54GN9RZCdtZRrIIoQCXnrksy4ko/oLl8VdGeEOdkMU8=;
+        b=lw6QR0Xz1tV72mLu3ZiBSCqQCXjqqwtKT4AxicjfLI5kAF+2TgEKOoFthQdskAchf6
+         hs0RzYAUhLHds8qL5PXh24oE/7ErMAGtRfAZ4tQNycHBh/0Y0IJ7k+yQfNDRuB94bV+r
+         +pevmlNW0P3lcogdXAHIezeMRZdY6ZNUcF4Gj0detRDihr3vhLHHHDBVC5QsY7h+82St
+         38A5jtjPJim5AGoidaZnywCpX7+Rd5BaOD8S7XPo/xB1T1MJ0sCYKmv95PP4FpX0AQRc
+         GE3j1RDjD6GPLG0lOFnDwwTqM/6RmhcACiK0ZnVdE8d2eGktK0WxRJR7KbUisH3qpWnI
+         YRXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753789513; x=1754394313;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=54GN9RZCdtZRrIIoQCXnrksy4ko/oLl8VdGeEOdkMU8=;
+        b=EWaGZi+tSJjS/srWiYzEklcOn1qatQFy4iBb4b5epolCfN8lVEO7vBa8kkl5Enp7Ca
+         S68cv2LminGFb9BvHkytHjFmHnTM5tC2f6znynCmD5/CZ1UKGUVwQgcxAHnXu55+EjE7
+         IwJH2YwoFw1GRLSgrQ7bCFnKha1GWlxBMMF8lmtnBFnZqAsJXq2NCc2LNGss6Yt6S5gM
+         tjaqozu9cAUvrbJJ5VQ70mP87ONVfFuJB7d5zv53PA88qpcT4t1actTHDYWQcLY/tRN8
+         gBDtU1DQ7UBTkA7QFo+/igRVwEUkgDJSi2MwgAR0YZaK7J3+JV6Wf4jF1pEYraX0D8QR
+         RVTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl4yj9SdEx0TZ+tdqNxjappnMhQfDeWhx/vwh+PqOVm9mmyMyG7FsuGSJDhZove6J0nEvVWnBL01klkSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXFmYDVZgH/u+EC1qqFUL1Mq+5v6m4UgMEf/lrG+H7w6tm1DGa
+	JWsaCTaBF14rQ4/jTXBZhsPAio1AB4VSOJiZD/5MW4jkH/HYW/nHAml6pNLJi4QvHqz2xmBgaNs
+	wmNj20xNUP4l3+P+PqCt79mTRFhDuFLE=
+X-Gm-Gg: ASbGncvyGPHu4MrsMLmUJKYo8D3205PQVtQYZidVTkf0YogSTP2JeJZ3F+WmWssgtUF
+	p6I3yTneJNkGaKvxoUqARgr1G2OOljsJv5hb0IJe+umxrV19DBWRxndvgGoXxBnC475L2TpI1/O
+	f73qhEyyKxkaqKP+me0rE5ZsX8ACHTQu6J9tKbZay3+MHymFwKJwFzamSuF7UNX/12kQbIE3ysg
+	gHqDCRV
+X-Google-Smtp-Source: AGHT+IF2VoFtEHdUx8olCgcz5kNZJoRqhVc9zCXSwVNqqUEXR6iKIoAe/QSJEdIbOw0bojrHy/bqKCA89eJ36HEwMsE=
+X-Received: by 2002:a05:6871:e604:b0:2ff:8bc7:44a0 with SMTP id
+ 586e51a60fabf-30701ac679dmr9014878fac.22.1753789512861; Tue, 29 Jul 2025
+ 04:45:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728152548.3969143-5-glider@google.com>
+References: <20250727125044.101779-1-suchitkarunakaran@gmail.com> <61958a3cca40fc9a42b951c68c75f138cab9212e.camel@perches.com>
+In-Reply-To: <61958a3cca40fc9a42b951c68c75f138cab9212e.camel@perches.com>
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Date: Tue, 29 Jul 2025 17:15:01 +0530
+X-Gm-Features: Ac12FXxiNwEvOzCx9tNPZ0SRAhaKaDMzzgk3wtnJmBlGhi8OfuHQjhh1fBGgmJ4
+Message-ID: <CAO9wTFhCb7gDEo+q2SAZcn2KdUyVe-fG1E4bR_+US9k2J9DOnw@mail.gmail.com>
+Subject: Re: [PATCH v2] checkpatch: suppress strscpy warnings for userspace tools
+To: Joe Perches <joe@perches.com>
+Cc: apw@canonical.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alexander,
+On Tue, 29 Jul 2025 at 15:54, Joe Perches <joe@perches.com> wrote:
+>
+> On Sun, 2025-07-27 at 18:20 +0530, Suchit Karunakaran wrote:
+> > The checkpatch.pl script currently warns against the use of strcpy,
+> > strlcpy, and strncpy, recommending strscpy as a safer alternative.
+> > However, these warnings are also triggered for code under tools/ and
+> > scripts/, which are userspace utilities where strscpy is not available.
+> > This patch suppresses these warnings for files in tools/ and scripts/.
+> >
+> > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> >
+> > Changes since v1:
+> > - Create is_userspace function to check if the file is in userspace
+> >   directories
+>
+> the changelog bit should go below the --- line
+>
+> > ---
+>
+> This
 
-kernel test robot noticed the following build warnings:
+Sorry I will change it in the next version.
 
-[auto build test WARNING on tip/x86/core]
-[also build test WARNING on akpm-mm/mm-everything shuah-kselftest/next shuah-kselftest/fixes linus/master v6.16 next-20250729]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >  scripts/checkpatch.pl | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> []
+> > @@ -7019,20 +7019,24 @@ sub process {
+> >  #                    }
+> >  #            }
+> >
+> > +        sub is_userspace {
+> > +            my ($file) = @_;
+> > +            return ($file =~ m@\btools/@ || $file =~ m@\bscripts/@);
+>
+> All other sub uses start in without indentation.
+> Please move this next to other sub blocks.
+>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Potapenko/x86-kcov-disable-instrumentation-of-arch-x86-kernel-tsc-c/20250728-232935
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/20250728152548.3969143-5-glider%40google.com
-patch subject: [PATCH v3 04/10] mm/kasan: define __asan_before_dynamic_init, __asan_after_dynamic_init
-config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20250729/202507291913.UMbUQv95-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 15.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250729/202507291913.UMbUQv95-lkp@intel.com/reproduce)
+Yup will do it.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507291913.UMbUQv95-lkp@intel.com/
+> Please do a git ls-files -- '*tools/' and see if too many other
+> files are matched, especially the Documentation/ ones.
+>
 
-All warnings (new ones prefixed by >>):
-
-   In file included from mm/kasan/kasan_test_c.c:32:
->> mm/kasan/kasan.h:585:6: warning: conflicting types for built-in function '__asan_before_dynamic_init'; expected 'void(const void *)' [-Wbuiltin-declaration-mismatch]
-     585 | void __asan_before_dynamic_init(const char *module_name);
-         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +585 mm/kasan/kasan.h
-
-   577	
-   578	/*
-   579	 * Exported functions for interfaces called from assembly or from generated
-   580	 * code. Declared here to avoid warnings about missing declarations.
-   581	 */
-   582	
-   583	void __asan_register_globals(void *globals, ssize_t size);
-   584	void __asan_unregister_globals(void *globals, ssize_t size);
- > 585	void __asan_before_dynamic_init(const char *module_name);
-   586	void __asan_after_dynamic_init(void);
-   587	void __asan_handle_no_return(void);
-   588	void __asan_alloca_poison(void *, ssize_t size);
-   589	void __asan_allocas_unpoison(void *stack_top, ssize_t stack_bottom);
-   590	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I didn't quite understand this. Could you please elaborate?
 
