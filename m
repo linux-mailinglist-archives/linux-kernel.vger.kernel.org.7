@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-749801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7339B1530F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:47:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADFB7B15313
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A6005A4640
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:43:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8655A53F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7C62512C3;
-	Tue, 29 Jul 2025 18:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28F429B213;
+	Tue, 29 Jul 2025 18:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="inRvrZCY"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhf5H2tN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECBB288CB7
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:41:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33914220680;
+	Tue, 29 Jul 2025 18:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753814500; cv=none; b=pvzuzEyjT+StQA7GjFnOeX+208H43YFd3GR5JLnY6UTGNgN1nqwjuYZPzDqTMhLWTx4gWYKyhsn+/9AjY8THQt8kxqTakn27YZhLt+yar2f0kW7ftPCOuHQLItzZwNwoIc3B5cdpb6HbSFWTAzYWPNWYgapw8u2NY0ZSarQV3/U=
+	t=1753814523; cv=none; b=mOGGcTCIRjt9BxeS2tYXFrvC+V0E51MoGPvvv6RwH0y3bXo2OG0IJ2ZsavKPrW1oyb90UL8N11KLd8KzJsmIsAxJ/jEdAOU62U8R/vINGGq2C8KPksV5gBF7VFDgSuoZYSBUtJde0jYeTWKEmgqBCFDstFsU7n4UTieZWvjMOl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753814500; c=relaxed/simple;
-	bh=K8FwAuXl2tAaeaXZjzJyZSNvcAqWgNpGAXne/KMns2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JFU8Zn6Ukbeq3kyfGQK4MzcgtaE3+qJ1wmCUqiXSPJfVdQ5VD1ZB460PnnyVHltoAtmtEaH/7F3wl4LcEVDwtdqRy+eETWS/+AzyOV3iCrClz8CNI6nBq8S292hDpdBSx/WHILqkthvizyC34b/ulZtyZeOTC8EyXBNLCzNRQsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=inRvrZCY; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7490acf57b9so4041291b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:41:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753814498; x=1754419298; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VfUIrVpEQOM0T5tWbNj1GsfFx23vEuxov+ArCEUUrNA=;
-        b=inRvrZCYhi5xgDbOx7f1F9K7P1JFMkejuqHheIO/nW/bPhYKBJ/RuWca/h5iRbfaBt
-         tUSP/onVXkRvZH5TkFe8F6UlU/xDDbEYJkfh/qVa7NqtrPhQhhrLpFDQgxvE0JWNoVWS
-         TU7MdhlUapcNTppKKpQs/mIVQPg3szpfxrDkgjUFafI2YRd8peYstwlQzIOOWFLVsoz+
-         lCR8B99y7ZD1hRWrR/NstgCiX17vTzzJ/CN/TC+vovjbYUf2bOJjTCesmBNvI7mvgSjH
-         kLpsMcg4HlGPVJ3w/7OJbfugUv1D5B7kWIS42oDjhhQ7pC1kWX9OBdN6nFVFc/lvDJ83
-         sOvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753814498; x=1754419298;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VfUIrVpEQOM0T5tWbNj1GsfFx23vEuxov+ArCEUUrNA=;
-        b=Kc3jj+fmXlYPeguohzJ76Es4XSor43M9q8EKWu1vS75lb2dOUG34YPGgI47YB/zJfo
-         Ewkj5M7BmpSMrk6c4FEfP3xvIvoGR//Zs6vbJfoDzwSTRR2V9OOTPDEH5GEwALXAyJp8
-         31kbuNtRJ8G8JzIb+0f1Caae0YkeMsOAGoL0m8DyFsJNMGfa0tU1Jbfh+NZpmnDNHZ/l
-         22f5kU2D9ZOz45c8825mve1i5gZ1AI5+wSsaYLrThrNKuEqWM5qB8hoaI1MGIPNlLPa/
-         3vBHvua+CB3Vtm5aE+W1Rw8Pj4Qa5lzWVPd2aaYzZg6W8LvSNmfwnm5uSZjeVuZRNk32
-         MJTA==
-X-Gm-Message-State: AOJu0YzPPLw6REs1ZDKGZyhKdcnxHyRh9CsZ1E6/9rgFsUHIy7YV0ea9
-	V7kcDG+1W1yCBOcl6PjFN7DmlJX3zpH17eFbR/UqDYguHv8t3jK3k3pTCLmgDA==
-X-Gm-Gg: ASbGncvrrI+TbKXIdWtiGh5gWde3cMGJnRrTtmwnoiGXWjbQqFWfzbOueoTcMAxa1nq
-	EFZ70WQDRqNrKQIoM/mQ9JkWu1Pm+uW/MD6DUjVEedfWXK13c13cU6BVNkEX0dgdhNuGcLBYLHz
-	zhYQBgOXS+jfknTmpv5zCzxVMlKzeYRU8hMeW6tgofve9y4qxxYoWZBFhBRdWmslYOUL9mtk3hM
-	n/JZz6Dm05p6X+6DJnlJRPUJqm1F/hOvJC373iviMVu6z2D7Ov3Hj+HLE4C4objzRDDfcAayF7P
-	FLomsn8a7nzpT2bd7AiLFgh3Wwvao34nc1k0vRm00PQKQ6D+Yr5sKGZj4dFaPOPQChqkSVlNwP+
-	0j/dvRK+MD4w5p3aPLGkUtg==
-X-Google-Smtp-Source: AGHT+IEZixwDu/PXPpZff2F9/gWDJVgxf6CBCAA1yUvJQsBpUgCxgXCF+lOF8gx0DnWxkz0xEnl5Rg==
-X-Received: by 2002:a05:6a21:9999:b0:234:c6a0:8a0f with SMTP id adf61e73a8af0-23dc10a608cmr551341637.41.1753814497892;
-        Tue, 29 Jul 2025 11:41:37 -0700 (PDT)
-Received: from fedora ([200.111.160.26])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640adfbfc2sm8712490b3a.90.2025.07.29.11.41.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 11:41:37 -0700 (PDT)
-From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: Ignacio Pena <ignacio.pena87@gmail.com>
-Subject: [PATCH] fs/dlm: Fix typo 'definate' -> 'definite'
-Date: Tue, 29 Jul 2025 14:41:36 -0400
-Message-ID: <20250729184136.160577-1-ignacio.pena87@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753814523; c=relaxed/simple;
+	bh=V6Dcqa0TG7W5slu9uXHtRB+QqM48OfTcq9W5IaelKrU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mD6tSPbfQnH5UxidPaBVV+Dxcwo4BQOIn8NLHUrjxMigrhp/tVczJzLX2LhijeoDn0KWFb/D9cSKhssN5aSMR4Swv7obqBuAb2H/xuK8QSRSiw/UyVoNM4l9UkxlkD68Cvd9X4UU8fLsvXFE/OJKZx+gM7aClQHtfjqFWt1ZtI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhf5H2tN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FA4BC4CEEF;
+	Tue, 29 Jul 2025 18:41:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753814523;
+	bh=V6Dcqa0TG7W5slu9uXHtRB+QqM48OfTcq9W5IaelKrU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=bhf5H2tN9kMMxWl2WeZhvWPmpxfLH67XYeFVV/Xl0v3LAO5IKnbHUGx6cetAw8r0E
+	 NelH/JRUL7KPtddjW2mY7kr7uscHlx82JXR8M/D7wnaN/BSVWG5YRbG2PwoySQDHVr
+	 3FVSj7MEg1Sl4KKhtpobSnWImVZdjcdhMRfUBodtAxJ6oJYmzJ5W+HcvXMSM0TePYS
+	 GqoloI3NFa22QSdSkQmso8fHGjMcWucCv9CBXLvVP//8Y3Q7ejE2jXgXsNFuQjlqWe
+	 mvY6mquSuCyIyS4jxoOsNUCMvkQ/frlVHDw5PWcbWiVDFJYaMn7pdUYUtI991hiIgd
+	 I1roqP1SAbJyQ==
+Date: Tue, 29 Jul 2025 19:41:50 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, sboyd@kernel.org,
+ dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
+ gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
+ kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
+ u.kleine-koenig@baylibre.com, linux-arm-msm@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
+ kernel@collabora.com, wenst@chromium.org, casey.connolly@linaro.org
+Subject: Re: [PATCH v2 1/7] spmi: Implement spmi_subdevice_alloc_and_add()
+ and devm variant
+Message-ID: <20250729194150.1985404b@jic23-huawei>
+In-Reply-To: <6ea0495e-21d8-41a8-b1b0-1c99c2929de5@collabora.com>
+References: <20250722101317.76729-1-angelogioacchino.delregno@collabora.com>
+	<20250722101317.76729-2-angelogioacchino.delregno@collabora.com>
+	<20250722150930.00000a2f@huawei.com>
+	<6ea0495e-21d8-41a8-b1b0-1c99c2929de5@collabora.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Fix spelling mistake.
 
-No functional change.
+> >> +/**
+> >> + * struct spmi_subdevice - Basic representation of an SPMI sub-device
+> >> + * @sdev:	Sub-device representation of an SPMI device
+> >> + * @devid:	Platform Device ID of an SPMI sub-device
+> >> + */
+> >> +struct spmi_subdevice {
+> >> +	struct spmi_device	sdev;  
+> > 
+> > Having something called a subdevice containing an instance of a device
+> > does seem a little odd.  Maybe the spmi_device naming is inappropriate after
+> > this patch?
+> >   
+> 
+> A SPMI Sub-Device is a SPMI Device on its own, but one that is child of a device.
+> 
+> Controller -> Device -> Sub-Device
+> 
+> Before this version, I initially added devid to spmi_device, but that felt wrong
+> because:
+>   1. Sub-devices are children of devices (though, still also devices themselves)
+>   2. The devid field would be useless in "main" SPMI devices (struct spmi_device)
+>      and would not only waste (a very small amount of) memory for each device but,
+>      more importantly, would confuse people with an unused field there.
+> 
+> So, this defines a SPMI Sub-Device as an extension of a SPMI Device, where:
+>   - Device has controller-device numbers
+>   - Sub-device has controller-device.subdev_id numbers.
+> 
+> I don't really see any cleaner way of defining this, but I am completely open to
+> any idea :-)
+I was thinking it was a specialization at the same level as the old spmi_device
+(not it's child). As a child this is fine.
 
-Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
----
- fs/dlm/lock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Just showing my complete lack of knowledge of the SPMI code :)
 
-diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
-index 6dd3a524c..d5fa498c3 100644
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -2305,7 +2305,7 @@ static int _can_be_granted(struct dlm_rsb *r, struct dlm_lkb *lkb, int now,
- 	 * 6-5: But the default algorithm for deciding whether to grant or
- 	 * queue conversion requests does not by itself guarantee that such
- 	 * requests are serviced on a "first come first serve" basis.  This, in
--	 * turn, can lead to a phenomenon known as "indefinate postponement".
-+	 * turn, can lead to a phenomenon known as "indefinite postponement".
- 	 *
- 	 * 6-7: This issue is dealt with by using the optional QUECVT flag with
- 	 * the system service employed to request a lock conversion.  This flag
--- 
-2.50.1
+Jonathan
+
+> 
+> Cheers,
+> Angelo
+> 
+> 
 
 
