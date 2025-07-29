@@ -1,166 +1,135 @@
-Return-Path: <linux-kernel+bounces-749403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFF0CB14DD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 449AAB14DDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:46:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F30AA543C4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:45:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD615543E57
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1971758B;
-	Tue, 29 Jul 2025 12:45:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A12A8182D0;
+	Tue, 29 Jul 2025 12:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ampO6lTa"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jzb2elDO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 613E73208
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0FA96FC5;
+	Tue, 29 Jul 2025 12:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753793136; cv=none; b=Ws6MsE5MTCmWSbfvA/wZeVlT2sz0EDu8IPhPCUW3jjpCdiN3Y4O0cnK2t+r1ob2k4IyNm9QEKv98WT/C2owz1BIB8Uz6PBWhisJCM0qVJ17Fg/FcfLEl86+rqpxS2EaBG+wVesBqNrZ0lYjU8wE9E4pkFJ9/lIjWpoOxt++yb40=
+	t=1753793177; cv=none; b=gB8CLYLj3Sofd101E7i1+DOcYfR6H27/y9ZpHhedwBhGTV/n5zrKQhPcb6feTlZuG/24O2GSlh3hM4mqO+oMkKQ9xFa2tHMs2EatGDjDSAc+OxcsVRUH5rDBpUvp+SQOkNuBmszeF63GVEF8UTqw8eJyjXpyHcxMPcNzc3Xe/bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753793136; c=relaxed/simple;
-	bh=NziYxp8UZj0YwVyFDa8KouGzs7K2NLOULSeXFdio+RU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NzbvqlU/6ZAobFs5Cl7eE284YUTTS5lzM/3erkWZ/U7dgMSHjguivQD86lmsy+vooH9dJnv6cUHhtJvDWdplkUjzMMxHjhf0xlqqDejm0kYmyNZh3ic7w2D0cqakM1TCekiKrrWPLp/nB4M70VFjAhm1JWqPSADkvN4ixtgNo6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ampO6lTa; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753793134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=auUgmZpYgSPBn8OUHhACc16TOd027tjyQY/sDVVda2Y=;
-	b=ampO6lTaVI6hJ1TjpcaiJeQH96mR5GfINGIPpUC9riI7MDoA/dW9geCL3754+h0IVbnqwZ
-	vPXqNkxrQ6VQ8OGwN3QGvJ4MnOsO+TFHXePJ35ge2RIrbYshJCwlx+4uCySOfprX5JgDJg
-	VaTC/P/gVYKUAfM2ko5BUByeOKEjnYw=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-158-d1QdbzoROAOQLWT_FxPThg-1; Tue,
- 29 Jul 2025 08:45:28 -0400
-X-MC-Unique: d1QdbzoROAOQLWT_FxPThg-1
-X-Mimecast-MFC-AGG-ID: d1QdbzoROAOQLWT_FxPThg_1753793124
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A509219560AD;
-	Tue, 29 Jul 2025 12:45:23 +0000 (UTC)
-Received: from localhost (unknown [10.22.88.125])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0164718001DD;
-	Tue, 29 Jul 2025 12:45:21 +0000 (UTC)
-Date: Tue, 29 Jul 2025 09:45:20 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
- pi_blocked_on is set
-Message-ID: <aIjCYEkgNvVpMYCS@uudg.org>
-References: <aGvTz5VaPFyj0pBV@uudg.org>
- <20250728201441.GA4690@redhat.com>
- <aIh5QajyaVT7MtVp@uudg.org>
- <20250729114702.GA18541@redhat.com>
+	s=arc-20240116; t=1753793177; c=relaxed/simple;
+	bh=3FiKmgyBfPSctVNUPnnNPqwAszKf1wXTxNmsvtqBL3E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qm9SRx0oT6/6kNzeHYet/DBjRLEwiHNbMIvTFadxgPtYLIVxnzSkfuYMpSrykhkTfmI5pGN89l19ZIofTPPqpyecm79ZD+rO+DnMTKE8U2kfDv274xko0yb2EJnRUztTXcjK1rtC04mTocO/KebNB2zkJmDbbirltUoA+j/TBI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jzb2elDO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31A22C4CEF4;
+	Tue, 29 Jul 2025 12:46:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753793174;
+	bh=3FiKmgyBfPSctVNUPnnNPqwAszKf1wXTxNmsvtqBL3E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jzb2elDOahGgR3ElnFNBybxDPyjq412+a+8Eg//EmCXY9TXD1P2L3KY7cghE5z0Wj
+	 d4EtrpKiVxdkrc+qIF/snyMPAfI95ab8WYWS06wOJKtoKlZiK8Bj/Z4MNSm2xqYhka
+	 rMl/pkSOLItTpu+8WRSQEqq9z7T3NGhe0o9irNGjkE32XbYMfcBJbAJ9GbOgmrUwMO
+	 g4uzITMBl+mesolE9EpmWfsJD0I8WLG9EtxrPlpUP43qxt9jCxw9klRLYYshNI13xH
+	 Yw07Pl5R65Btk4e2U+WIxAAQUInet/9zT0bPA/qxFlApYwkTe8P/0pCuCCpm6kOke2
+	 pj4I3AyVIUvDg==
+Message-ID: <c90da4f4-a402-43db-8375-575801ac2714@kernel.org>
+Date: Tue, 29 Jul 2025 14:46:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729114702.GA18541@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] spi: Handle spi bus extension
+To: Ayush Singh <ayush@beagleboard.org>, Mark Brown <broonie@kernel.org>,
+ herve.codina@bootlin.com, luca.ceresoli@bootlin.com, conor+dt@kernel.org,
+ Jason Kridner <jkridner@beagleboard.org>,
+ Deepak Khatri <lorforlinux@beagleboard.org>, Dhruva Gole <d-gole@ti.com>,
+ Robert Nelson <robertcnelson@beagleboard.org>, Andrew Davis <afd@ti.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250729-spi-bus-extension-v1-0-b20c73f2161a@beagleboard.org>
+ <20250729-spi-bus-extension-v1-3-b20c73f2161a@beagleboard.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250729-spi-bus-extension-v1-3-b20c73f2161a@beagleboard.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 29, 2025 at 01:47:03PM +0200, Oleg Nesterov wrote:
-> On 07/29, Luis Claudio R. Goncalves wrote:
-> >
-> > From: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-> > Subject: sched: restore the behavior of put_task_struct() for non-rt
-> >
-> > Commit 8671bad873eb ("sched: Do not call __put_task_struct() on rt
-> > if pi_blocked_on is set") changed the behavior of put_task_struct()
-> > unconditionally, even when PREEMPT_RT was not enabled, in clear mismatch
-> > with the commit description.
-> >
-> > Restore the previous behavior of put_task_struct() for the PREEMPT_RT
-> > disabled case.
-> >
-> > Fixes: 8671bad873eb ("sched: Do not call __put_task_struct() on rt if pi_blocked_on is set")
-> > Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
-> > ---
-> > diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-> > index ea41795a352b..51678a541477 100644
-> > --- a/include/linux/sched/task.h
-> > +++ b/include/linux/sched/task.h
-> > @@ -130,6 +133,16 @@ static inline void put_task_struct(struct task_struct *t)
-> >  	if (!refcount_dec_and_test(&t->usage))
-> >  		return;
-> >
-> > +	/* In !RT, it is always safe to call __put_task_struct(). */
-> > +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> > +		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
-> > +
-> > +		lock_map_acquire_try(&put_task_map);
-> > +		__put_task_struct(t);
-> > +		lock_map_release(&put_task_map);
-> > +		return;
-> > +	}
-> 
-> FWIW:
-> 
-> Acked-by: Oleg Nesterov <oleg@redhat.com>
-> 
-> 
-> At the same time... I don't understand this DEFINE_WAIT_OVERRIDE_MAP().
-> IIUC, we need to shut up lockdep when put_task_struct() is called under
-> raw_spinlock_t and __put_task_struct() paths take spinlock_t, right?
-> Perhaps this deserves a comment...
+On 29/07/2025 11:51, Ayush Singh wrote:
+>  	for_each_available_child_of_node(node, nc) {
+> +		/* Filter out extension node */
+> +		if (of_node_name_eq(nc, "spi-bus-extension"))
+> +			continue;
+> +
+>  		if (of_node_test_and_set_flag(nc, OF_POPULATED))
+>  			continue;
+>  
+> @@ -2541,6 +2549,23 @@ static void of_register_spi_children(struct spi_controller *ctlr,
+>  			of_node_clear_flag(nc, OF_POPULATED);
+>  		}
+>  	}
+> +
+> +	/* Look at extensions */
+> +	for_each_available_child_of_node(node, nc) {
+> +		if (!of_node_name_eq(nc, "spi-bus-extension"))
 
-I reverted that code to the previous state, commit 893cdaaa3977 ("sched:
-avoid false lockdep splat in put_task_struct()") and simplified the "if"
-statement. In the original code, PREEMPT_RT could call __put_task_struct()
-if the context was preemptible. But in the proposed code __put_task_struct()
-is only called if PREEMPT_RT is disabled. In this case I believe we could
-simply do:
+Where did you document the new ABI? There is no DT bindings patch with it.
 
-+	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-+		__put_task_struct(t);
-+		return;
-+	}
 
-Does that make sense?
-
-Luis
- 
-> But if I am right, why LD_WAIT_SLEEP? LD_WAIT_CONFIG should equally work, no?
-> 
-> LD_WAIT_SLEEP can fool lockdep more than we need, suppose that __put_task_struct()
-> does mutex_lock(). Not really a problem, might_sleep/etc will complain in this
-> case, but still.
-> 
-> Or I am totally confused?
-> 
-> Oleg.
-> 
----end quoted text---
-
+Best regards,
+Krzysztof
 
