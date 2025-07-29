@@ -1,168 +1,96 @@
-Return-Path: <linux-kernel+bounces-749635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 397BDB150CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:04:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163A4B150D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FDF518A4E7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:04:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B5823A4208
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09F6222584;
-	Tue, 29 Jul 2025 16:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 914DA286897;
+	Tue, 29 Jul 2025 16:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kZNFbdlS"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="p8ulU+Nf"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A3820ED;
-	Tue, 29 Jul 2025 16:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4B7810E9;
+	Tue, 29 Jul 2025 16:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753805040; cv=none; b=HokXS2cS4ewS+/5Q4qj6br/qjyfdUXK70HbTf0bJ4DTeaq3g12Lrzm46j+fQPLBQlkwj8nC9e7tOdfvdPzf7fe2U0MzjpaxDnYE1KHELNYUckr68QnDbLME4b7iImj/4EDQwYKxNockFyUMXrqHBPviOEYnDOOnWi+9iiOxPxqw=
+	t=1753805164; cv=none; b=QWnBd0ppu4Vc9KRiBqls1LcVjD7nscULxSRLZm9VCXCyUbrw+QwsL2uBTC6OPL5Jh2gB7kKTROcXRnFommMRuft5dfHEA8bvauuvbwsBRM63KN2Hx46OqYUSy7VIE+/EE8yjVPyNndjhG5Fn+wMmLKVEOCE4OegnpkYHDmEtcTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753805040; c=relaxed/simple;
-	bh=HsIXvtWbidHvuyE9TiKJIVJMf2j46HhLSf4zlRs9mno=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=epMxud82gbPYUgNrltwk42rycJmXE8KqGFDV8Kka4+lP1dqJ74FIb4fC6zfzgYLeYOhAXasaUTg+W25m48hVRdyzaqaH5bsYTvK0aN9SPxnYEiYKMXuvdr8aV1B7mdHwAWyuv0dHFQaD23jD34mMb8fZVEYBEsO+gPQtw8lFbO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kZNFbdlS; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-24049d1643aso14281135ad.3;
-        Tue, 29 Jul 2025 09:03:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753805038; x=1754409838; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ji8gqgnwKvApP60qqe4UQjw37JMxLmNrj4jvz+/nEPs=;
-        b=kZNFbdlSuxR43TA7kQ6or1n3KnMO6yl+pNiRi/lSUGEH5j1QkejGNbvhnZZUp/CPBx
-         b1sToR27U/Mkjkje8uyhvyik3IwgGRoFBu/ACmW5EXfWgn1ObtVoQ23jRi603c8+3QqE
-         MRznqKjnoPJ9PUl5mRpoBDPZTFUayUPQpiH5XM6iTXIqM2CbVgPvP5qm4xXpLf41jQXk
-         Z0irVvrHpTxYNAfHIHE8guIh2JxcDmuxtFXxdpUG+i6Iv1CuBy+qIiI/1/OlvKT/0IRY
-         blGrj7/f0rkVOrbLq5TDYL+jU+/qaSBAOzS/pWOJvwqP7L8vaqp4u1953mK/He8iEJCS
-         DpXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753805038; x=1754409838;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ji8gqgnwKvApP60qqe4UQjw37JMxLmNrj4jvz+/nEPs=;
-        b=XHulpl1wqzNEvSLSPKjgFFGPRWzkybcwr/U/G5BJr7U9YWZcgZZZwPLZflWQ/EG6KS
-         KqqH4/mDZV8nRl1vgrYpUU3pNmc4nDPlknIXZWDJ6b1ksYK+UsecA7AGwuL2GDIvjxzX
-         eiYAJCq5CNxOwSoi9rrxg+j/BPNOYSwBl3wuHnbJFYypdgOzqFH3PeWrsVHl3Dc4TsSo
-         GoZ3uUFJ7jMRLp8AqCgv78NZhdm/U/zUtOPZw/3L+T64eT/u/vtD+jXrLpOtO7wHU7s3
-         9EY7lHwsX9vWgeGj7JR8HFdiKPFyZOTnb8HE7v24GJ4czDHrtunbZRk3QcY/OULbrfeM
-         iIrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVE4z1BcllAbx2o4HUEu5WzuZ73EuGgqG3GLbXrz6bTNDvhzUUY2WhhYy9RXFDQHTukIlV1xt6rWI8cQv0=@vger.kernel.org, AJvYcCVHsRt4K5rBa0XMjzPNjxis2LFBf84c8SYYkggkl3Hd42rE4Ni0P74hvcUVtPL+1nRYgr0E2vup+x8icw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLNqTvVQL+peRBv0cHCThH7R3BqyYsC++XT16mj4CUM9CEQ512
-	swEqhXSFFaPQgIZtClwjPkjkAZxcyFyxTgMoYjl6PXDxQVXDR0RIg2BF
-X-Gm-Gg: ASbGncvzLKNH9AyzgQZM3Q/hWXZjbLz+2IDMAtKeP60+qUv85KLjPwYB7Z4yLhLBoPW
-	HMaduJn7qaeua+mgQvyGtFJk2hRTim1mkkyAoLfdKJ3ju87yzKXO0syjcp7OlKOQbQtwMqhqdGZ
-	8TMupxIraHe6fGFweFcsE4eFMtqa1GxFge+ipX/5XJfStSGx846d6vS3jG0onSDeyagFw+tasXl
-	l14wl84eHzQ4LWqITq3zpIEnvqqx3teGJjzgcZ8HGUAmPEZ2EepPEp7YlDJseD4Y0or0s6j5Efr
-	cUDU6N2dVQXHmGNzFluj1HS8uX7r62BRhu/NK6c7h29Ikpi6NHsD9u6rxFqlqFmU98Cs8Jml7+2
-	CyWikk9tAbN1azU5dQUX5gBP5XyXPnDwwIbWvvui4TSUiU25B9LlniE5sNsrFEaGK
-X-Google-Smtp-Source: AGHT+IF2YF2QDEglhuLMoAr96j5ir2UTPTBBPs1aaoRRyIFfSuC6c0BXof1vMXReChNuvBDBfeQLKg==
-X-Received: by 2002:a17:903:2a8e:b0:23f:adc0:8cc2 with SMTP id d9443c01a7336-23fb30b2f8cmr228342725ad.27.1753805038042;
-        Tue, 29 Jul 2025 09:03:58 -0700 (PDT)
-Received: from bj-kjy-standalone-gaoxiang17.mioffice.cn ([43.224.245.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24025f5a3ecsm51173795ad.136.2025.07.29.09.03.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 09:03:57 -0700 (PDT)
-From: Xiang Gao <gxxa03070307@gmail.com>
-To: James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	jaegeuk@kernel.org,
-	chao@kernel.org
-Cc: alim.akhtar@samsung.com,
-	avri.altman@wdc.com,
-	bvanassche@acm.org,
-	peter.wang@mediatek.com,
-	beanhuo@micron.com,
-	mani@kernel.org,
-	quic_nguyenb@quicinc.com,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	gaoxiang17 <gaoxiang17@xiaomi.com>
-Subject: [PATCH] fs: export some tracepoints for iotrace
-Date: Wed, 30 Jul 2025 00:03:45 +0800
-Message-Id: <20250729160345.3420908-1-gxxa03070307@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753805164; c=relaxed/simple;
+	bh=CpB8GERMfYRs0+4ZAgyTxuIfXpQluNdMs0VJWf7CkzM=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=kV/TKacs3Oo3FIZfzUtmikGd5W4puyyD6ralS3YVos9JIm9l49fwtQFHKedzkl7xJ9wQChUrMVJkuvbwp8ICOWLaW+ivwUEzZxBlOJdPIWJXsNMh/5bRQ/RI86/u5MYQwVuU4f7i37OuazJVxZmWcgpPUcP4KOAU9gm7Mvm3SpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=p8ulU+Nf; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=Vj2Y5Htk0TdwQIPD29EKrTANnYA57kMQx2/+EiD5PZA=; b=p8ulU+Nfn7Z+lRd63HWUpZDRGu
+	3clUC0Bin8TVQ+eSuOwAVxh0/ug/HmZXpgolSMwzSQWgEO6xUFB0TEI5zTcAI5LCX2NDMn5Ck2JV9
+	p27oo3x2F8BM8zfzMD9+X15imt5minFPXuIBDyd1h0dbj+Rv/89ICAqkibrH+qblBRmrfRhlYfMSW
+	1DpcywvrUhRCZfj5rXtPqX4xOMx5KzefKZ7a3g3iNFWKa/0tHKcnRr9cYNdamQqJGcm//a664JS/5
+	vsuqTgysPb4stxN6Q5UY9epYGFcW7uIJOiq3AccMZhVDF/MEeVTehuzyVKzL1qxgNn/JkEodzvOOi
+	lXc7ihjA==;
+Received: from [50.53.25.54] (helo=[127.0.0.1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ugmpv-0000000CefU-29Dl;
+	Tue, 29 Jul 2025 16:05:56 +0000
+Date: Tue, 29 Jul 2025 09:05:52 -0700
+From: Randy Dunlap <rdunlap@infradead.org>
+To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux DRI Development <dri-devel@lists.freedesktop.org>,
+ linux-leds@vger.kernel.org
+Subject: Re: linux-next: Tree for Jul 29 (BACKLIGHT_KTD2801)
+User-Agent: K-9 Mail for Android
+In-Reply-To: <5002743.GXAFRqVoOG@radijator>
+References: <20250729153510.3781ac91@canb.auug.org.au> <b6c481bb-e854-405e-a428-90301789fe20@infradead.org> <5002743.GXAFRqVoOG@radijator>
+Message-ID: <B2E29C08-674C-4D8A-B187-7F6A6B5DC76F@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: gaoxiang17 <gaoxiang17@xiaomi.com>
+On July 29, 2025 2:18:16 AM PDT, "Duje Mihanovi=C4=87" <duje@dujemihanovic=
+=2Exyz> wrote:
+>On Tuesday, 29 July 2025 10:32:13 Central European Summer Time Randy Dunl=
+ap=20
+>wrote:
+>> so BACKLIGHT_KTD2801 should:
+>> 	depends on GPIOLIB
+>
+>Sounds good to me=2E
+>
+>> Also, in drivers/leds/Kconfig, does it need duplicate entries for this?
+>> Can't the second entry be removed?
+>> (asking since Duje made both entries)
+>
+>That's an oversight on my end, and as such the second one (the one inside=
+ the=20
+>"if NEW_LEDS" block) should be removed=2E
+>
+>Would you like me to send a patch to fix these?
 
-Signed-off-by: gaoxiang17 <gaoxiang17@xiaomi.com>
----
- drivers/ufs/core/ufshcd.c | 2 ++
- fs/f2fs/checkpoint.c      | 2 ++
- fs/f2fs/file.c            | 3 +++
- fs/f2fs/gc.c              | 3 +++
- 4 files changed, 10 insertions(+)
+Yes, please=2E=20
+Thanks=2E=20
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 50adfb8b335b..4035b958057e 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -41,6 +41,8 @@
- #define CREATE_TRACE_POINTS
- #include "ufs_trace.h"
- 
-+EXPORT_TRACEPOINT_SYMBOL_GPL(ufshcd_command);
-+
- #define UFSHCD_ENABLE_INTRS	(UTP_TRANSFER_REQ_COMPL |\
- 				 UTP_TASK_REQ_COMPL |\
- 				 UFSHCD_ERROR_MASK)
-diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index f149ec28aefd..83982977e9ec 100644
---- a/fs/f2fs/checkpoint.c
-+++ b/fs/f2fs/checkpoint.c
-@@ -21,6 +21,8 @@
- #include "iostat.h"
- #include <trace/events/f2fs.h>
- 
-+EXPORT_TRACEPOINT_SYMBOL_GPL(f2fs_write_checkpoint);
-+
- #define DEFAULT_CHECKPOINT_IOPRIO (IOPRIO_PRIO_VALUE(IOPRIO_CLASS_RT, 3))
- 
- static struct kmem_cache *ino_entry_slab;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index c677230699fd..44e1294a3e69 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -35,6 +35,9 @@
- #include <trace/events/f2fs.h>
- #include <uapi/linux/f2fs.h>
- 
-+EXPORT_TRACEPOINT_SYMBOL_GPL(f2fs_sync_file_enter);
-+EXPORT_TRACEPOINT_SYMBOL_GPL(f2fs_sync_file_exit);
-+
- static void f2fs_zero_post_eof_page(struct inode *inode, loff_t new_size)
- {
- 	loff_t old_size = i_size_read(inode);
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index 3cb5242f4ddf..ae153b41058d 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -23,6 +23,9 @@
- #include "iostat.h"
- #include <trace/events/f2fs.h>
- 
-+EXPORT_TRACEPOINT_SYMBOL_GPL(f2fs_gc_begin);
-+EXPORT_TRACEPOINT_SYMBOL_GPL(f2fs_gc_end);
-+
- static struct kmem_cache *victim_entry_slab;
- 
- static unsigned int count_bits(const unsigned long *addr,
--- 
-2.34.1
 
+
+~Randy
 
