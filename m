@@ -1,118 +1,126 @@
-Return-Path: <linux-kernel+bounces-749611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1184DB15083
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:54:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1D14B15085
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5A037A55DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:53:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FD0C541531
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A20295DBD;
-	Tue, 29 Jul 2025 15:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYavHetW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564C9296163;
+	Tue, 29 Jul 2025 15:54:53 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A0F287266;
-	Tue, 29 Jul 2025 15:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2523A287266;
+	Tue, 29 Jul 2025 15:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753804479; cv=none; b=WfjUxyp0o4f8nDLNIvo/02FXfDwMdRUkIWpgBcUjmN2IntvowtEKz1LhqZ64ttraqd554Lug3ut6OSkI3cvy17B8v1tzIknHqhJK8wbTeDglrNjdE30a8cBJDORSmrN/DGXdPw6bWe+R/cRXIqtJJp0KlSi4bb9RkDzrdT+oUtc=
+	t=1753804493; cv=none; b=i/dNPv+eg0JGtUeMILZQx+Fkp/xxDBracOYIUXtmQCtkF5CjWNoioehKTWd943gh/S7t2C3ShHC5KVfoFywLaup+rtMXJOKeSu1mobWU7fhooqK4yvQxEq+MF8ICiCZwocHnPppmy9Wu7xM7t6/oMi81eGd4ozDDdAcrlTJHqT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753804479; c=relaxed/simple;
-	bh=n3Jk+CPILaJYaCx7aTV41IfzLXf10369ycUvb31MdKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mFVFHhuwYUiiAFEanROPQYS7pSlxScALvP9fTSHAqNjsRcAY2UNocAp7iS+wh2jlXPPboEQnmBxyLxwmsiiALtnBcSPqahEt2QcG665Z/P6hQQHf1px8nSb2N4mMYwS55WHmWJvGtt7IFdqR3+gWKuK82NqbVe6Xrna/MVw8D/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SYavHetW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B7B0C4CEEF;
-	Tue, 29 Jul 2025 15:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753804479;
-	bh=n3Jk+CPILaJYaCx7aTV41IfzLXf10369ycUvb31MdKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SYavHetWDdRQrwYVwiIDQu/+5/kxpO6SdrYzb559IzsmNAvSyIhnYpjdQdEORxUT+
-	 JelpcInB+0Tstp+5et8taFYA9aj2ng6IwTqOAzuDl/W/2+E368U9x+PuMVvzinefWE
-	 KP+0J9bv/rtIoyV+GlZdej6VomTyj9k3DpF+DchtUYOoTfK0f6jFls4XjKOrIY+GwF
-	 YW0KXfdCSMyZyzm511WjZDHjph8iFbYapkgcTPuKMxYjAKJcx5GM/C7d6ncBJAcm69
-	 KIZqUly7CdiGPjfP9Ve9PUZLbwVJWvp5IsjOt/XPAz1LGXmEq5JdLAybekNIO47nVN
-	 +puzQQug3keTg==
-Date: Tue, 29 Jul 2025 16:54:33 +0100
-From: Will Deacon <will@kernel.org>
-To: perlarsen@google.com
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, ahomescu@google.com,
-	armellel@google.com, arve@android.com, ayrton@google.com,
-	qperret@google.com, sebastianene@google.com, qwandor@google.com
-Subject: Re: [PATCH v8 7/7] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
- host handler
-Message-ID: <aIjuuTf2az25A7jW@willie-the-truck>
-References: <20250719-virtio-msg-ffa-v8-0-03e8e8dbe856@google.com>
- <20250719-virtio-msg-ffa-v8-7-03e8e8dbe856@google.com>
+	s=arc-20240116; t=1753804493; c=relaxed/simple;
+	bh=VzWYU+ByVgQ1LT0LRRQp9faaHAyx15cReublwXhGACw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZQxuiyFfaXTqT98NezCutp4UHGDZEQNSUIXeud6DEgOYdnZje5ia5DTeCehhOq8+qF34hxGLONFMamLNuA/F9xnb4a2FF/f04hrgjMJkCTQDWrYq74yuWE4Womj84JVMziDxe3hv4g576dzdNbZXsNlfZ7CjNVjLf5Q8zBWj2+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 6AEE356364;
+	Tue, 29 Jul 2025 15:54:49 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 2B12A30;
+	Tue, 29 Jul 2025 15:54:47 +0000 (UTC)
+Date: Tue, 29 Jul 2025 11:54:46 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, linux-doc@vger.kernel.org, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland
+ <mark.rutland@arm.com>, Andrew Morton <akpm@linux-foundation.org>, Namhyung
+ Kim <namhyung@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] Documentation: tracing: Add documentation about eprobes
+Message-ID: <20250729115446.06aa72e4@batman.local.home>
+In-Reply-To: <20250729102636.b7cce553e7cc263722b12365@kernel.org>
+References: <20250728171522.7d54e116@batman.local.home>
+	<20250729102636.b7cce553e7cc263722b12365@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250719-virtio-msg-ffa-v8-7-03e8e8dbe856@google.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 2B12A30
+X-Stat-Signature: g98medgmg944wwns496mtu6cwxes6y9o
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18v9kyW3pn/R4pjNUE7UK8AZqyei/LPwUo=
+X-HE-Tag: 1753804487-96631
+X-HE-Meta: U2FsdGVkX195b9jnsLnPpRI91bN+toQccvf56IaqYRj54b2j/OazQrLhZppIt9WkQvN1b3TZoPzK3OAX0mGuUi7MsZEJmQarXs0QD1WhTkl6dBTE5LWwmvLgj8RR9bNhDrZY6Dk5k+UIZNvddBu9lqlUVyQyZ7/XuZ+SToxC8bWy0ayCLRtWr5Ru6A1Q3gGhqknlAI+XMb/cx1W5Yinszu1iMZ1TWUfOZObU8Y5vlyh1dfnMFHrbfeFuPC+9sq+kdm/L67W9c6JzPlOS7poB29wTiSy3su5rMb7iVZOkY4S83Pj+4xA0Kf0b7QsekFjZK8kOidz+zVu59wYEwEGpEQsvZVn+kxD7yEGCykVDV4aOPw+CztJnRy8a9wuSRGFfKEoSpWebXSAG/NkjjZmHwQ==
 
-On Sat, Jul 19, 2025 at 02:11:29AM +0000, Per Larsen via B4 Relay wrote:
-> From: Per Larsen <perlarsen@google.com>
-> 
-> FF-A 1.2 adds the DIRECT_REQ2 messaging interface which is similar to
-> the existing FFA_MSG_SEND_DIRECT_{REQ,RESP} functions except that it
-> uses the SMC calling convention v1.2 which allows calls to use x4-x17 as
-> argument and return registers. Add support for FFA_MSG_SEND_DIRECT_REQ2
-> in the host ffa handler.
-> 
-> Signed-off-by: Per Larsen <perlarsen@google.com>
-> ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index f6d964df53c3e21ba85984f35cc7b6859012d1b0..363374408b354a5d65861b9cf140974d8914ff40 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -851,6 +851,15 @@ static void do_ffa_part_get(struct arm_smccc_1_2_regs *res,
->  	hyp_spin_unlock(&host_buffers.lock);
->  }
->  
-> +static void do_ffa_direct_msg2(struct arm_smccc_1_2_regs *regs,
-> +			       struct kvm_cpu_context *ctxt,
-> +			       u64 vm_handle)
-> +{
-> +	struct arm_smccc_1_2_regs *args = (void *)&ctxt->regs.regs[0];
-> +
-> +	arm_smccc_1_2_smc(args, regs);
-> +}
-> +
->  bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
->  {
->  	struct arm_smccc_1_2_regs res;
-> @@ -909,11 +918,18 @@ bool kvm_host_ffa_handler(struct kvm_cpu_context *host_ctxt, u32 func_id)
->  	case FFA_PARTITION_INFO_GET:
->  		do_ffa_part_get(&res, host_ctxt);
->  		goto out_handled;
-> +	case FFA_MSG_SEND_DIRECT_REQ2:
-> +		if (hyp_ffa_version >= FFA_VERSION_1_2) {
-> +			do_ffa_direct_msg2(&res, host_ctxt, HOST_FFA_ID);
-> +			goto out_handled;
+On Tue, 29 Jul 2025 10:26:36 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-I think it would be cleaner if ffa_call_supported() returned false for
-this when the FFA version is < 1.2
+> > diff --git a/Documentation/trace/eprobes.rst b/Documentation/trace/eprobes.rst
+> > new file mode 100644
+> > index 000000000000..c7aa7c867e9e
+> > --- /dev/null
+> > +++ b/Documentation/trace/eprobes.rst  
+> 
+> BTW, can't you rename it as 'eprobetrace.rst' as same as others?
+> I usually name the doc of "a probe feature which provides only in-kernel
+> APIs" as '*probe.rst' and the doc of "a probe *event* feature which can
+> controlled via tracefs interface" as '*probetrace.rst'.
 
-Will
+Sure, no problem. Will update.
+
+> 
+> > @@ -0,0 +1,268 @@
+> > +.. SPDX-License-Identifier: GPL-2.0
+> > +
+> > +=====================
+> > +Eprobe - Event probes  
+> 
+> What about below title?
+> 
+>  Eprobe - Event-based Probe Tracing
+
+OK.
+
+> 
+> > +=====================
+> > +
+> > +:Author: Steven Rostedt <rostedt@goodmis.org>
+> > +
+> > +- Written for v6.17
+> > +
+> > +Overview
+> > +========
+> > +
+> > +Eprobes are dynamic events that are placed on existing events to eiter
+> > +dereference a field that is a pointer, or simply to limit what fields get
+> > +recorded in the trace event.
+> > +
+> > +Eprobes depend on kprobe events so to enable this feature, build your kernel
+> > +with CONFIG_KPROBE_EVENTS=y.  
+> 
+> Is this correct? It seems that eprobe event only depends on event trigger
+> (by implementation. Actually we should fix the kernel/trace/Kconfig.)
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git/tree/kernel/trace/trace_eprobe.c?h=trace-v6.16-rc5#n576
+
+I noticed there was no config that selected it, and it only gets
+selected by CONFIG_PROBE_EVENTS which requires something else to select
+it. I guess adding an EPROBE config would be useful too. Let me do that
+too.
+
+Thanks for the review.
+
+-- Steve
+
 
