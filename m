@@ -1,92 +1,191 @@
-Return-Path: <linux-kernel+bounces-749155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87FEBB14AC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:07:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D19CB14AC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 799093BBAB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:07:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB00F7ABC5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D432701CC;
-	Tue, 29 Jul 2025 09:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45626285C94;
+	Tue, 29 Jul 2025 09:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YORoDGAX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8/hMouJd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dk0ulIqS"
+Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B74276052
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B6327CCE7;
+	Tue, 29 Jul 2025 09:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753780059; cv=none; b=rbvCM5Dvg86YAODfTeZ1lQGKges1MJ6R87PUU3UcdgWD0IgBFWx3/xLk250wPaMx6KujNOV2vb08nNJSufX2a+9Id08Nnvv1iZWaqjcjrGtlgEWSMoGr7y/kok5zOKyWJj4cr8lOoBXZz9z+Vha9g4wmBS18dA3IZOQm5n1IcJo=
+	t=1753780082; cv=none; b=aQtrV3XpkYNJge9pSijV2Ui4EnGHo+BbiFmrcvo/WEVu3h1j3A+ipxxcIG43fNFoqy5vOzpeFxdpx3XrOpjxnkfugHeSAw5H+jmNpJLgsB5v/ic+OYovkYmM1weDPViK1uE3D/Pb6YKNOvhswod/MeMly4dnFqFIQALAuRTzStM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753780059; c=relaxed/simple;
-	bh=Nl8ln2eCBJS5oiYFIPEJi2mU+E0EJOwTmvdGZnkh9/w=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LwAcncseMDfqjT2cbrYOkMXGCPQkTBOf/vMS0Be90Mi3FELDEEHtN0UdSnjxiNLWIKQVS+ysM9kgOCfYnrMrvDLpa3CVzZSjs8lksmeVhbKing8IaSr29NXBL1Dm/nhDKN7wwI+RT2q1Ax+X6XwVWWH3D5r5ENX5Ppgl6SOEExo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YORoDGAX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8/hMouJd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753780056;
+	s=arc-20240116; t=1753780082; c=relaxed/simple;
+	bh=qZvpEj9mSasixgT6/SZwxPkP76fTud+WJTEaupMLNso=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mYHshSCCGBDt1KBCuMzG5QL4M14qQheaFBPPv7FC8Azo7Ibmp8KAyvJFcx08U1+EETEnoKREy0ZLxcVoEXQKYxE8R40eeXeHpCK4b6Zv5trgjtV88RVU1/MAyzig75mQo5RzXVERj2kA/PfYk0zRAUHqnwprdwKH9wUTv8Z9I40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dk0ulIqS; arc=none smtp.client-ip=217.70.178.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B6F3C43187;
+	Tue, 29 Jul 2025 09:07:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753780072;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=nkgTKMvB/xlfRGzNZ5qvkBvqEL2+fswEpbc/LMc9HWM=;
-	b=YORoDGAXk7xgipZR9Doo7++D3KHkjeXly4mo9fMp9eurzpp6Ef+FlKt2gqbJXlGkyWNzKm
-	T0Qhqd7LLzZXZhowU1+kOETcVr1n2bTuoxYRpxl1b4xL/5UoAxvcz/JaIxxyf3pp928sBe
-	HjJ0qVxZ3X9t/6BNNY9FXicEc0tJJSTfGzd+RKEL7YwLYt21hAMZ7NtQLwz82odvAy1+Hb
-	GfG+x1Q/xAK3NO54uZNc3tGNC9WUgbDAkfXqVXIYBEu4gayqV0QZtKLrD1KLCT16YbdGmp
-	RPBfEKFQe+58OGqVSpk1J0sggRrtcA5bNQ8PyAtY+3ToNLodD0qFBr+ZpckukA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753780056;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nkgTKMvB/xlfRGzNZ5qvkBvqEL2+fswEpbc/LMc9HWM=;
-	b=8/hMouJds24ynvR/sxb9E+F/O2BNwRjnOKlgKW/rOQedOp1b7KVCIUmn0qn2eKDpejfYUQ
-	kcroxjeFlHl7zNCA==
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: Re: [GIT pull] core/entry for v6.17-rc1
-In-Reply-To: <175377875455.620102.9417697212609201411.tglx@xen13.tec.linutronix.de>
-References: <175377875455.620102.9417697212609201411.tglx@xen13.tec.linutronix.de>
-Date: Tue, 29 Jul 2025 11:07:35 +0200
-Message-ID: <87tt2vjrfs.ffs@tglx>
+	bh=k4a5SsI/nvjVItbd+WYqIPRNobzyb8741BFwCKTc04s=;
+	b=Dk0ulIqSW+91Z5TdH6BU6Z06+8ne9mgoNOkyrk9tEjugwze0HitFHDlKWB1uuT9PAiwHOO
+	9Iuezv3g2grTO5uXLNQ/pNQypAcEXjITE07oN5bGSp54EA5xcpULTd2SgWnWGIClYfOvLo
+	YqmOK42eh+hI6Mv4YPNv/WAwsbeG5WbihsnTAgxbnc5bG/RGreOK5e5c5paJ+Et/4DdLiP
+	BFuWJjHT6IwVE15A+oPxcGFZvsYMeYzBdf0SbyYCSbnRUUJZhDh2mPgn0cjXW4eml0np5M
+	wb6dSWY1xwQ5EO+oa42aPIfqQ1m+ce0ePR3bRYTAW5VtUxauZlp9ptLG4WpVtg==
+From: Romain Gantois <romain.gantois@bootlin.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jon Hunter <jonathanh@nvidia.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ linux-kernel@vger.kernel.org,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject:
+ Re: [PATCH v2] regulator: core: repeat voltage setting request for stepped
+ regulators
+Date: Tue, 29 Jul 2025 11:07:46 +0200
+Message-ID: <3560762.QJadu78ljV@fw-rgant>
+In-Reply-To: <e9100dbf-524e-4edd-aba3-71e28fbc07d0@nvidia.com>
+References:
+ <20250718-regulator-stepping-v2-1-e28c9ac5d54a@bootlin.com>
+ <e9100dbf-524e-4edd-aba3-71e28fbc07d0@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="nextPart1932750.CQOukoFCf9";
+ micalg="pgp-sha512"; protocol="application/pgp-signature"
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelgeeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtt
+ hhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhg
 
-On Tue, Jul 29 2025 at 10:46, Thomas Gleixner wrote:
-> Linus,
->
-> please pull the latest core/entry branch from:
->
->    git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-entry-2025-07-29
->
-> up to:  5173ac2dc8c0: Merge tag 'entry-split-for-arm' into core/entry
->
->
-> Updates for the generic entry code:
->
->   - Split the code into syscall and exception/interrupt parts to ease the
->     conversion of ARM[64] to the generic entry infrastructure
+--nextPart1932750.CQOukoFCf9
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Tue, 29 Jul 2025 11:07:46 +0200
+Message-ID: <3560762.QJadu78ljV@fw-rgant>
+In-Reply-To: <e9100dbf-524e-4edd-aba3-71e28fbc07d0@nvidia.com>
+MIME-Version: 1.0
 
-FYI. This causes a merge conflict vs. the kvms390 tree as Stephen
-pointed out earlier today:
+Hi Jon,
 
-  https://lore.kernel.org/all/20250729105655.286c0496@canb.auug.org.au/
+On Tuesday, 29 July 2025 10:28:17 CEST Jon Hunter wrote:
+> Hi Romain,
+> 
+...
+> Looking at better closer at the issue, I noticed that it is the
+> 'tps62361-vout' regulator that change is causing problem for. On boot
+> I see regulator_set_voltage_unlocked() called for this regulator and
+> min/max voltage requested is ...
+> 
+>   regulator regulator.5: min_uV 1000000 max_uV 1350000
+> 
+> The min delta is 300000, but in this case the delta never reaches 0
+> and in fact never converges at all and so remains at 300000.
+> 
+> Looking at the above, if the delta never changes, then we get stuck
+> in the above loop forever because 'new_delta - delta' is always 0
+> and this is never greater than 'rdev->constraints->max_uV_step'.
+> 
+> There are two things that is not clear to me in the above change ...
+> 
+> 1. Why do we 'new_delta - delta' instead of 'delta - new_delta'?
+>     Assuming that we should converge, then I would expect that
+>     'new_delta' should be getting smaller as we converge.
 
-Thanks,
+Indeed it should. "new_delta - delta" is equal to the increase of voltage
+"error". So if this value is positive, it's bad because it means we're
+getting further away from the target voltage. Also, if it's negative but
+too large, then it means that we're slowly crawling to the target voltage,
+which is bad. Currently we do:
 
-        tglx
+```
+if (new_delta - delta > max_uV_step)
+	give up and return -EWOULDBLOCK
+```
+
+but we should be doing:
+
+```
+if (new_delta - delta > -max_uV_step)
+	give up and return -EWOULDBLOCK
+```
+
+which is equivalent to:
+
+```
+if (delta - new_delta < max_uV_step)
+	give up and return -EWOULDBLOCK
+```
+
+> 2. If difference in the delta is greater than then 'max_uV_step'
+>     doesn't this imply that we are converging quickly?
+> 
+
+Yes, the current logic is indeed flawed.
+
+> I am wondering if we need something like ...
+> 
+> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+> index 8ed9b96518cf..554d83c4af0c 100644
+> --- a/drivers/regulator/core.c
+> +++ b/drivers/regulator/core.c
+> @@ -3884,7 +3884,7 @@ static int regulator_set_voltage_unlocked(struct
+> regulator *regulator, new_delta = ret;
+> 
+>                          /* check that voltage is converging quickly enough */
+>  -                       if (new_delta - delta > rdev->constraints->max_uV_step) {
+> +                       if (delta - new_delta < rdev->constraints->max_uV_step) {
+
+Yes, that would be correct. Do you want to send the fix yourself, or should I
+do it and include your "Suggested-by"?
+
+Thanks for reporting the issue and sorry for the trouble.
+
+Best Regards,
+
+-- 
+Romain Gantois, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--nextPart1932750.CQOukoFCf9
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmiIj2IACgkQKCYAIARz
+eA6Taw//flYEbe3Y5ymsW6mxAcxLwb8/mzucOzf5mVCazki5ZFkEc2lPzAjXZvxL
+QSmYX/syvJOr4S7irwlUUFyna2+/yWSlfxso9JnuKYiboCVETmnJvghd4WrnMOGw
+D0roJ8S+b0b0zkEG2qFYjXN/xeGtYwTY94ns8RSW3fpEWV3ZtoGxpS4GmculwiWc
+UHmScwdTNeFMBxi7mgJZK2VrWKIVuTIGcN/zQHNNupH6jGB5gnV3kxpDTN8ntHQb
+vGCbNqVYXv4WRTyfNhP3+yFvBEseC6uSqYjue98RVUq64kBpeYJAWUb7xXQ9q1PA
+zWJl9+7j7Q0zSHpQvUvLtUEIVJFv/920KMLhFsM4FJeBDU5qw003MVLgX3x6pET0
+UA0kEe4PKF0ffx9ZRcwBz1wEUHqeFaIOpxQ6vfz4XWTFAwc2uvn8N19bLH8avXUD
+I/WMPSFVTdEGu22p6hTBDB3npN3EehlcgtmctCCLZm8nxx7oSOXO2DO47oMH9xRA
+kwcJfKqXG3FMec38e5A3OIx4Bon2qRw5B69TFlPWD4qyhXVci60pdpOAY5LkZ4GZ
+AFycRCxv9BnT2qou6NTjem4GpPWueE47LqwgiQkeE4PuShzV9DsJcb4h/7YHRZCd
+qO0M/7bWBBJXrrQqNCX6hHvZmS4Rsnf7Mp5mf+U1gloCBPRoOTM=
+=lsGa
+-----END PGP SIGNATURE-----
+
+--nextPart1932750.CQOukoFCf9--
+
+
+
 
