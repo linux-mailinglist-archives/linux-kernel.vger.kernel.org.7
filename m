@@ -1,127 +1,116 @@
-Return-Path: <linux-kernel+bounces-748719-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2BBB1454A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:19:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B716B1454B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:20:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91256542661
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:19:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFB5D188D7AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848E411187;
-	Tue, 29 Jul 2025 00:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DCFBA33;
+	Tue, 29 Jul 2025 00:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dn9MkEoV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IuZCEYh4"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB814611E;
-	Tue, 29 Jul 2025 00:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2D110E9
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753748329; cv=none; b=J8jNoG1R7lyU0uz4Dx17xz8ropLTh5egq8V4sbwdwqVU877UB6Ftyjoa+pR43/0iVFelk1atpVuc96PcdcDvmZmsBPFFxZBaH4ipxvUnwHIgQ7TGiwmIwD2M+AXd6GGPIwda+ow3O/DLVa8QoWU2BkkvlFJQ/qL+SZtSDFN0IL4=
+	t=1753748396; cv=none; b=Rc22WOld/U1h/fXg2pHN0VMO9jZy8aEtruCPmxgUVUwXokRTF3gNXMwdewRBMZf1avI2/wZ/JtCPc6xQKCPUkpmjpfb9qnLoxnVys6o2UW7EaGbW+fB1RXAiWMvbA2PT+QrrWDuWa1jCcpmBq+wOBulwI9pUhRF6Vvoyr+IyAu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753748329; c=relaxed/simple;
-	bh=x8tvYZmVKuAqtiJu5GxhyqKrIDYiII9xZx6ML2eDwMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p2AhnnQGLXj0OhoEznDs2EG4MUriDyurVol+QRW9WLxX4R+vmbVHgR2F5F3hXxdvtPzlewKi35E7X+rcZBhiizvsj5DF5AomEjGCujVRDmZTGcj2vKRqX0EVUF/0qGe8HYcSCa2eQUSpd/LmWazVH2RmapicTlywTRvsaqoKgnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dn9MkEoV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB72C4CEE7;
-	Tue, 29 Jul 2025 00:18:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753748328;
-	bh=x8tvYZmVKuAqtiJu5GxhyqKrIDYiII9xZx6ML2eDwMc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dn9MkEoVLb/pxXOYjFx3bYRpBjPYE39I1kyUPxf8iy3LlDMZ77CzGOYRUYBW31jqz
-	 /GKurD/wOivcwcwAZQtZxc+Gz38xX3nC7jl3+PlZcO/UNH3eGJZYITPVAgYKelFSPi
-	 dG4EECGYBgntcIo1TIExojC5t7stumHoqrBTr/W2yC+JBebQwwSbJNhG7l3lOoUzWl
-	 da+mtyfZfif8c5SQ/OHnmZLHXbPjFt1LgQZoZNT6ovTvmPZJthWBqJNR6flms3B5Yw
-	 1BZd/ecCuQbMTGRrpT5OxjQUEKIrmLMYKfrIQfExbeQD/ICoZ+BCFhxBK6CYKyrI/0
-	 wMMQEn61J5ciQ==
-Date: Tue, 29 Jul 2025 02:18:42 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: <dan.j.williams@intel.com>, Jakub Kicinski <kuba@kernel.org>, Sasha
- Levin <sashal@kernel.org>, <workflows@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <kees@kernel.org>, <konstantin@linuxfoundation.org>, <corbet@lwn.net>,
- <josh@joshtriplett.org>
-Subject: Re: [RFC 0/2] Add AI coding assistant configuration to Linux kernel
-Message-ID: <20250729021842.521c757f@foz.lan>
-In-Reply-To: <20250729001233.4dead173@foz.lan>
-References: <20250725175358.1989323-1-sashal@kernel.org>
-	<20250725114114.3b13e7b1@kernel.org>
-	<20250725150046.3adb556c@gandalf.local.home>
-	<20250725125906.1db40a7f@kernel.org>
-	<6883ea58b5685_134cc71006e@dwillia2-xfh.jf.intel.com.notmuch>
-	<20250728134653.635a9dc5@batman.local.home>
-	<20250729001233.4dead173@foz.lan>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1753748396; c=relaxed/simple;
+	bh=Ltl2zX+6d4jn4+SNiecloXuOhL+aAakR77QdlUu2/4s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LmvvYb7WEhco5fgXMsHR3SswBfsBFgMgyGvuGaKbOyQzpn576KdeY9tDrYo3C7o26kQbXhfv0ZaI7Zr8p++OaVCh6MyF3wv4Vbgyt/7lEB7TwWlBiAwtv5cbeTKjIiAM9QDD9Vw38ImgcnRCCwI+Q3E1UQ++GipW1ZSshhkI6QY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IuZCEYh4; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e8e19112e1cso1209111276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 17:19:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753748394; x=1754353194; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ns+jOKj3ePiSkamR9ZiPL6yGBf8VxECwOfrYabjb7vc=;
+        b=IuZCEYh4JmSzUhRGmC+gSNIrkVFuH0mlDkGAyRs7zN9XLMzQ5co3C47/IqF+7Z31kn
+         maInCrLEz5bVXCkbMrlkMJENXqpsa2UCj0QdWRBLYl8B1/mrVJU2gS4a8ROpAjAAqr80
+         fF1x8dxuG/D5eWgdIGveHzoJQRhhiGiFavZZLjfwWLAjjj1+lqobbBkPEO7yawAQFaKk
+         RQIcrttW63cJe1GeJJBnov3ko+tfIKxbCaDUqNqilHntth5nmzZY+PwSlEbBuf/P948L
+         8irT085cgYSeZ5bkDdibsKznsOJEexlSI0vKPJmAR0GhwdmxDlWOW4IcX4R0LpsHjnrq
+         v/PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753748394; x=1754353194;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ns+jOKj3ePiSkamR9ZiPL6yGBf8VxECwOfrYabjb7vc=;
+        b=KDlTrAYBsU9EIqxbwehw7BXVfp2O1LlDlgBzjMpBhEZasTqYJgxRlEaRaP7li+9MUD
+         CAyhp67Hn/IUrOKqv8K1WIY/IlWRN4xzsUswMyNfnF5UGSCEXFdZa1Cd2n/JMN+xLXPB
+         8XoTskBJcZpxI/PsKg/F3tN/whvWoTSSJ4MIQSq8dfZ6KdQgr0gUIwMTmgRBsg/y8whC
+         MisFJXC6gjC6ShUFAG7xTz/wzxpXjtfTAg5PO/IiLhiutXalMCFaN3/qWbROqfHVELrI
+         65I2Irb514pdqO+YM5jhOz78S31WHJk5E3y44QBuHWabADfk5I1seCld+EYh/fOw62Hf
+         9OvA==
+X-Forwarded-Encrypted: i=1; AJvYcCUymQod1CFdLpGi150EItS96+sTVrL90ifDQixERi+JPomWQURHKBOKLIUWEaAroSUdERt0gHHjXy4iW+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNTxnhQC5y5gjsx7ZtYLC6Ms0sPI8t6FgJTaF6HgCN/WWgaD9Q
+	vmq8x+XumvMfonFFd17XeQXD/oeCHYXbptmVG5CsB8hck2XFiQnFBZMp7GmU4WRpLm9mEX4lR3/
+	T/al9THvJ3JVzaLtdxQozmR/DB09NWMmUxPEezGl9
+X-Gm-Gg: ASbGncuaA5t6M3nloaeUaEF3djwlu8oiJAtEzXL/Zx6GnTCiL3HMw12tX9JLCxDtsUo
+	x8/+ZLctXLJh3H6tRdIZLNLlUrKrK7X/funb38hAhUN2YiXGervbwFGONiZgxNhbSy/peNiI6CA
+	g5AqVXhfkb0G5dYw1sEqS7pzoqkPVVwdu1dgM3sruWWPdlwO4Qtt+af9+Vu+YFOCOslWNSrvWtB
+	JAKPKtv1hOutYksFH2VQ9YPdrLZfgWDbtsnm1H8YY5UXfA=
+X-Google-Smtp-Source: AGHT+IHDe49xBiWLPDxPkbcKw2j/I2J1CIgJv9DX7+7Uv+/UcTlFKQNOgZ23ID3H2fDDlmmr5qGtav5j0AieL029dvQ=
+X-Received: by 2002:a05:6902:1403:b0:e8d:b7be:b7ea with SMTP id
+ 3f1490d57ef6-e8df1159084mr13244312276.7.1753748394110; Mon, 28 Jul 2025
+ 17:19:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250707224720.4016504-1-jthoughton@google.com> <aIFJsLFjyngleQ7S@google.com>
+In-Reply-To: <aIFJsLFjyngleQ7S@google.com>
+From: James Houghton <jthoughton@google.com>
+Date: Mon, 28 Jul 2025 17:19:18 -0700
+X-Gm-Features: Ac12FXyd-D-Pmm0BbCyXt9t5LLwdGCSUomWA7gqCsnVCIueVkqUlXtePHYs3SwU
+Message-ID: <CADrL8HUB9Nhtqu+b1HhfG33Wt6wkp3LYkxSa7Nv1GbX5+Vj=vQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] KVM: x86/mmu: Run TDP MMU NX huge page recovery
+ under MMU read lock
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Vipin Sharma <vipinsh@google.com>, 
+	David Matlack <dmatlack@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Em Tue, 29 Jul 2025 00:12:33 +0200
-Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
+On Wed, Jul 23, 2025 at 1:44=E2=80=AFPM Sean Christopherson <seanjc@google.=
+com> wrote:
+>
+> On Mon, Jul 07, 2025, James Houghton wrote:
+> > David Matlack (1):
+> >   KVM: selftests: Introduce a selftest to measure execution performance
+> >
+> > James Houghton (3):
+> >   KVM: x86/mmu: Only grab RCU lock for nx hugepage recovery for TDP MMU
+> >   KVM: selftests: Provide extra mmap flags in vm_mem_add()
+> >   KVM: selftests: Add an NX huge pages jitter test
+> >
+> > Vipin Sharma (3):
+> >   KVM: x86/mmu: Track TDP MMU NX huge pages separately
+> >   KVM: x86/mmu: Rename kvm_tdp_mmu_zap_sp() to better indicate its
+> >     purpose
+> >   KVM: x86/mmu: Recover TDP MMU NX huge pages using MMU read lock
+>
+> The KVM changes look good, no need for a v5 on that front (I'll do minor =
+fixup
+> when applying, which will be a few weeks from now, after 6.17-rc1) .  Sti=
+ll
+> working through the selftests.
 
-> Em Mon, 28 Jul 2025 13:46:53 -0400
-> Steven Rostedt <rostedt@goodmis.org> escreveu:
-> 
-> > On Fri, 25 Jul 2025 13:34:32 -0700
-> > <dan.j.williams@intel.com> wrote:
-> >   
-> > > > This touches on explainability of AI. Perhaps the metadata would be
-> > > > interesting for XAI research... not sure that's enough to be lugging
-> > > > those tags in git history.      
-> > > 
-> > > Agree. The "who to blame" is "Author:". They signed DCO they are
-> > > responsible for debugging what went wrong in any stage of the
-> > > development of a patch per usual. We have a long history of debugging
-> > > tool problems without tracking tool versions in git history.    
-> > 
-> > My point of the "who to blame" was not about the author of said code,
-> > but if two or more developers are using the same AI agent and then some
-> > patter of bugs appears that is only with that AI agent, then we know
-> > that the AI agent is likely the culprit and to look for code by other
-> > developers that used that same AI agent.
-> > 
-> > It's a way to track down a bug in a tool that is creating code, not
-> > about moving blame from a developer to the agent itself.  
-> 
-> I don't think you shall blame the tool, as much as you you cannot 
-> blame gcc for a badly written code. Also, the same way a kernel
-> maintainer needs to know how to produce a good code, someone using
-> AI also must learn how to properly use the tool.
-> 
-> After all, at least at the current stage, AI is not intelligent. 
-
-Heh, after re-reading my post, I realized that I could have been too
-technical, specially for people not familiar with electrical engineering
-and systems control theory(*).
-
-What I'm trying to say is that, while AI is a great tool, it is just
-another tool that tries to guess something. If you get enough luck,
-you'll get decent results, but one should never trust on its result,
-as it is based on statistics: it will guess an answer that will likely
-be the right one, but could also be completely off.
-
-(*) systems control theory is a field that studies a system stability.
-    It can be used, for instance, to ensure that an electrical motor
-    can be properly controlled and provide precise movements. It is
-    not limited to mechanics, though. It can used to explain other
-    systems that have any sort of feedbacks. at the light of the 
-    control theory, an AI training would be mapped as a feedback.
-
-Regards,
-Mauro
-
-Thanks,
-Mauro
+Thanks!
 
