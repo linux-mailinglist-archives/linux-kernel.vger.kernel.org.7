@@ -1,249 +1,84 @@
-Return-Path: <linux-kernel+bounces-749596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9BAB15064
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:45:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50DE2B15065
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE064E6F9E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:44:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E4BC7A4505
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B8E295DBD;
-	Tue, 29 Jul 2025 15:45:13 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF2982951C9;
+	Tue, 29 Jul 2025 15:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YhtoCGBa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D29295537;
-	Tue, 29 Jul 2025 15:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44544F507;
+	Tue, 29 Jul 2025 15:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753803913; cv=none; b=rjnVLzFueUNwPxK8V5uShp80yS7HfmDl/vLx0WSQ7utd01W7+01qvnD1HT8BKf5H71Zuz4XhNqLKkdMpVpg8UvZwlIittaQw6Wa4oFrvVErlPJZcxoEBoGWlv0Uk1HcbLR4M8NOrb9O7yKi2u/aMDBiSUVlI01wRLseuUJvwsqQ=
+	t=1753803963; cv=none; b=rRJWTJj9uDYb0F6GGqaB3q2nYcnyFILaZrBFpM5SGgaJlSiTqt3T3hCR6W6KLAjfRNNnyKqKb6bnkUIIflTWGV3MMTZliihRYTdlNaGlCAsfqMIozUrecLb239VUFrCSqf2SIDWkiNdD4HxZwj2mpf1VRuLUwJUB+6O7vmLypzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753803913; c=relaxed/simple;
-	bh=mUET2hrlkYFUUNugZUgBdMHpUYwzeILIBgsoNlq+e3A=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QTwnb7VVygdccpZMoLwtMqZPFMENjSIxX939okBv+v8EtH2H+tj0foQcGbg0TdEMluuHi/fH+2cK9aQ8hi56BwpLAdbaMH+Hyl3bSbRlmiy5etD8Tw8E/z1PvR6IXjF5/b1FHI5YWStA7BqwNdh4qs57wLK/qGY1BSUxk9PYAXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bs0416yxfz6K5Xn;
-	Tue, 29 Jul 2025 23:43:13 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id E271B1402FB;
-	Tue, 29 Jul 2025 23:45:06 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Jul
- 2025 17:45:06 +0200
-Date: Tue, 29 Jul 2025 16:45:04 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Dan Williams <dan.j.williams@intel.com>
-CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Yilun Xu
-	<yilun.xu@linux.intel.com>
-Subject: Re: [PATCH v4 07/10] PCI/IDE: Add IDE establishment helpers
-Message-ID: <20250729164504.00000ec2@huawei.com>
-In-Reply-To: <20250717183358.1332417-8-dan.j.williams@intel.com>
-References: <20250717183358.1332417-1-dan.j.williams@intel.com>
-	<20250717183358.1332417-8-dan.j.williams@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753803963; c=relaxed/simple;
+	bh=4YBP7bjTmcEyufPY9qHcuguK4GFCavlwRWIMbl06Fws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEY5iKapK5q/GeSwlmY/9MkLLY66Ry6MS4cw7YHMLbFp4jrgGw9Izc0NABfURdN3t8narUgzN+Ak9z3lO41pj/GaYsrxqwhhSncDW+2ciOC8THQ549XMAjwZMyiL86y7IwQzdnRoHtoXZvaRaqtUU0Sq8boZCedqnNPVtITRt3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YhtoCGBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8581C4CEEF;
+	Tue, 29 Jul 2025 15:45:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753803962;
+	bh=4YBP7bjTmcEyufPY9qHcuguK4GFCavlwRWIMbl06Fws=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YhtoCGBap7n8cNG4zP6qLlRI20uQk5TgWxoGGHrnY5t4jncdHWAnQhas2rIbNv2fI
+	 /qTDwZWbw7Y1C22F4eJX8mx1Zl6dGXY3TbCEy4cNgEkrsQIztDR/tUdHt4bGyfhXWp
+	 oS3DhCkMamKECE3hWtgNzznDphfwhoFls/h+BOeeO/lptpwkx8nTjJzqJ7uIiqNWec
+	 E5CssrhjQeOLeBS8p+HApEEZ4nutWdGXIiUgpAduDD/m0xIMJ1yp0LR2RqccN2rgye
+	 tJh7IGVHqcTfs5soP4Gb9Sp/HyMLfWF4nvpWgfs9/RfRrEHn06XvZdDnC/MN5kGjnJ
+	 MITaUJ7vPj0OQ==
+Date: Tue, 29 Jul 2025 16:45:56 +0100
+From: Will Deacon <will@kernel.org>
+To: perlarsen@google.com
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, arve@android.com, ayrton@google.com,
+	qperret@google.com, sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v8 4/7] KVM: arm64: Mark optional FF-A 1.2 interfaces as
+ unsupported
+Message-ID: <aIjstHFfEoSqEy0F@willie-the-truck>
+References: <20250719-virtio-msg-ffa-v8-0-03e8e8dbe856@google.com>
+ <20250719-virtio-msg-ffa-v8-4-03e8e8dbe856@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719-virtio-msg-ffa-v8-4-03e8e8dbe856@google.com>
 
-On Thu, 17 Jul 2025 11:33:55 -0700
-Dan Williams <dan.j.williams@intel.com> wrote:
-
-> There are two components to establishing an encrypted link, provisioning
-> the stream in Partner Port config-space, and programming the keys into
-> the link layer via IDE_KM (IDE Key Management). This new library,
-> drivers/pci/ide.c, enables the former. IDE_KM, via a TSM low-level
-> driver, is saved for later.
+On Sat, Jul 19, 2025 at 02:11:26AM +0000, Per Larsen via B4 Relay wrote:
+> From: Per Larsen <perlarsen@google.com>
 > 
-> With the platform TSM implementations of SEV-TIO and TDX Connect in mind
-> this library abstracts small differences in those implementations. For
-> example, TDX Connect handles Root Port register setup while SEV-TIO
-> expects System Software to update the Root Port registers. This is the
-> rationale for fine-grained 'setup' + 'enable' verbs.
-> 
-> The other design detail for TSM-coordinated IDE establishment is that
-> the TSM may manage allocation of Stream IDs, this is why the Stream ID
-> value is passed in to pci_ide_stream_setup().
-> 
-> The flow is:
-> 
-> pci_ide_stream_alloc()
->   Allocate a Selective IDE Stream Register Block in each Partner Port
->   (Endpoint + Root Port), and reserve a host bridge / platform stream
->   slot. Gather Partner Port specific stream settings like Requester ID.
-> pci_ide_stream_register()
->   Publish the stream in sysfs after allocating a Stream ID. In the TSM
->   case the TSM allocates the Stream ID for the Partner Port pair.
-> pci_ide_stream_setup()
->   Program the stream settings to a Partner Port. Caller is responsible
->   for optionally calling this for the Root Port as well if the TSM
->   implementation requires it.
-> pci_ide_stream_enable()
->   Try to run the stream after IDE_KM.
-> 
-> In support of system administrators auditing where platform, Root Port,
-> and Endpoint IDE stream resources are being spent, the allocated stream
-> is reflected as a symlink from the host bridge to the endpoint with the
-> name:
-> 
->     stream%d.%d.%d
-> 
-> Where the tuple of integers reflects the allocated platform, Root Port,
-> and Endpoint stream index (Selective IDE Stream Register Block) values.
-> 
-> Thanks to Wu Hao for a draft implementation of this infrastructure.
-> 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Lukas Wunner <lukas@wunner.de>
-> Cc: Samuel Ortiz <sameo@rivosinc.com>
-> Co-developed-by: Alexey Kardashevskiy <aik@amd.com>
-> Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
-> Co-developed-by: Yilun Xu <yilun.xu@linux.intel.com>
-> Signed-off-by: Yilun Xu <yilun.xu@linux.intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> Update ffa_call_supported to mark FF-A 1.2 interfaces as unsupported
+> lest they get forwarded. FFA_MSG_SEND_DIRECT_REQ2 is not marked as
+> unsupported because a later patch in this series adds support.
 
-A few minor things inline.
+Please add it as unsupported as well. Then the subsequent patch which
+adds support can remove it again, that way the series is bisectable and
+if (for some reason) only this patch gets backported then it won't
+cause any problems.
 
-> diff --git a/drivers/pci/ide.c b/drivers/pci/ide.c
-> index e15937cdb2a4..cdc773a8b381 100644
-> --- a/drivers/pci/ide.c
-> +++ b/drivers/pci/ide.c
-> @@ -5,6 +5,8 @@
->  
-
-
-> +/**
-> + * pci_ide_stream_enable() - try to enable a Selective IDE Stream
-> + * @pdev: PCIe device object for either a Root Port or Endpoint Partner Port
-> + * @ide: registered and setup IDE settings descriptor
-> + *
-> + * Activate the stream by writing to the Selective IDE Stream Control
-> + * Register, report whether the state successfully transitioned to
-> + * secure mode.
-and report
-
-> ... Note that the state may go "insecure" at any point after
-> + * this check, but that is handled via asynchronous error reporting.
-> + */
-> +int pci_ide_stream_enable(struct pci_dev *pdev, struct pci_ide *ide)
-> +{
-> +	struct pci_ide_partner *settings = pci_ide_to_settings(pdev, ide);
-> +	int pos;
-> +	u32 val;
-> +
-> +	if (!settings)
-> +		return -ENXIO;
-> +
-> +	pos = sel_ide_offset(pdev, settings);
-> +
-> +	set_ide_sel_ctl(pdev, ide, pos, true);
-> +
-> +	pci_read_config_dword(pdev, pos + PCI_IDE_SEL_STS, &val);
-> +	if (FIELD_GET(PCI_IDE_SEL_STS_STATE_MASK, val) !=
-> +	    PCI_IDE_SEL_STS_STATE_SECURE) {
-> +		set_ide_sel_ctl(pdev, ide, pos, false);
-> +		return -ENXIO;
-> +	}
-> +
-> +	settings->enable = 1;
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pci_ide_stream_enable);
-
-> diff --git a/include/linux/pci-ide.h b/include/linux/pci-ide.h
-> new file mode 100644
-> index 000000000000..89c1ef0de841
-> --- /dev/null
-> +++ b/include/linux/pci-ide.h
-> @@ -0,0 +1,70 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright(c) 2024 Intel Corporation. All rights reserved. */
-...
-
-> +/**
-> + * struct pci_ide_partner - Per port pair Selective IDE Stream settings
-> + * @rid_start: Partner Port Requester ID range start
-> + * @rid_start: Partner Port Requester ID range end
-> + * @stream_index: Selective IDE Stream Register Block selection
-> + * @setup: flag to track whether to run pci_ide_stream_teardown for this parnter slot
-
-partner.
-
-> + * @enable: flag whether to run pci_ide_stream_disable for this parnter slot
-
-same again.
-
-> + */
-> +struct pci_ide_partner {
-> +	u16 rid_start;
-> +	u16 rid_end;
-> +	u8 stream_index;
-> +	unsigned int setup:1;
-> +	unsigned int enable:1;
-> +};
-> +
-> +/**
-> + * struct pci_ide - PCIe Selective IDE Stream descriptor
-> + * @pdev: PCIe Endpoint in the pci_ide_partner pair
-> + * @partner: Per-partner settings
-per-partner maybe?  Capitalization seems a little random
-as mostly you have used them for spec terms, but Per-partner probably
-isn't one?
-
-> + * @host_bridge_stream: track platform Stream ID
-> + * @stream_id: unique Stream ID (within Partner Port pairing)
-> + * @name: name of the established Selective IDE Stream in sysfs
-> + *
-> + * Negative @stream_id values indicate "uninitialized" on the
-> + * expectation that with TSM established IDE the TSM owns the stream_id
-> + * allocation.
-> + */
-> +struct pci_ide {
-> +	struct pci_dev *pdev;
-> +	struct pci_ide_partner partner[PCI_IDE_PARTNER_MAX];
-> +	u8 host_bridge_stream;
-> +	int stream_id;
-> +	const char *name;
-> +};
-
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index a7353df51fea..cc83ae274601 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -538,6 +538,8 @@ struct pci_dev {
->  	u16		ide_cap;	/* Link Integrity & Data Encryption */
->  	u8		nr_ide_mem;	/* Address association resources for streams */
->  	u8		nr_link_ide;	/* Link Stream count (Selective Stream offset) */
-> +	u8		nr_sel_ide;	/* Selective Stream count (register block allocator) */
-> +	DECLARE_BITMAP(ide_stream_map, CONFIG_PCI_IDE_STREAM_MAX);
->  	unsigned int	ide_cfg:1;	/* Config cycles over IDE */
->  	unsigned int	ide_tee_limit:1; /* Disallow T=0 traffic over IDE */
->  #endif
-> @@ -607,6 +609,10 @@ struct pci_host_bridge {
->  	int		domain_nr;
->  	struct list_head windows;	/* resource_entry */
->  	struct list_head dma_ranges;	/* dma ranges resource list */
-> +#ifdef CONFIG_PCI_IDE
-> +	u8 nr_ide_streams;		/* Track available vs in-use streams */
-
-Which does it do?  Confusing comment.
-
-> +	DECLARE_BITMAP(ide_stream_map, CONFIG_PCI_IDE_STREAM_MAX);
-> +#endif
+Will
 
