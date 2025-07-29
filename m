@@ -1,222 +1,161 @@
-Return-Path: <linux-kernel+bounces-749088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 818CCB149EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E049B149F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8777018A31FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:17:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 622B218999AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53EB27B4E5;
-	Tue, 29 Jul 2025 08:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3466427A92B;
+	Tue, 29 Jul 2025 08:17:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ENbrR8y0";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r8qxkebH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="iTaV1cmq";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4+Bzf8c4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="djWFjSgT"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552E226CE28
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071F627A11E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:17:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753777019; cv=none; b=lkfDV0JLPyZc6tdJqVp4ogAcpjmztbvCY5WDnXmd0AInZVw5GZSVrqV8589dz471vl2+8rjrhEqMrwlPOldJM75iGlsLCnY+0JKMiav4gjHddz5SIi1DEutSXogyK/JyJ6QUt2zoQ8cvWaCYv5EzBXqsnZQHoMfyc36YRY5kS/k=
+	t=1753777035; cv=none; b=FGlc7ZGTT3jzATB4z+cAuQCAq6dcVaDUUXwbamZ7I+nnRWTc9IXfG3688L3WB0euvcdhdSWeYlQYq8eq/UcfwFOoMK9j7tRf07vsYRbIyU4JoktkVo5JU/d/UjhL+FIuG9ibuarGKBb69eOp4+kp1CjuTsiTw52aOZog9ujqFqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753777019; c=relaxed/simple;
-	bh=xEMJxaJq2XYIcXrL4NNIaY5wH7OkEvW+t3Rn+DQhA4g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ii5rxuGx+B+Oy0koHAl1uun95pCjZ7eCPgA+TKRTEVBB4Nk1TEr83wamuyT19NJVEcOUx3VMXja9HF+z49pSrwv8B2QvsWdoX0sfy8yhFbZiEE38+GS9EiVKbW5uLLXVpt426qm0MI0uO5QO9LldmKZZo5znWe9VSqaMuq3OvQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ENbrR8y0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r8qxkebH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=iTaV1cmq; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4+Bzf8c4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id F3F17219EE;
-	Tue, 29 Jul 2025 08:16:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753777010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DwdTTHdeOVI0z++8NUCczywVnQjEIDhs65XxyQb9Kfc=;
-	b=ENbrR8y0h9sYQ9VqCDBKwiY+mwKM4c9w5COpbioJtplUI+4cGemJvvVj/9muB4CulQiF3i
-	BGJnajQxSRvlfjO2kd0LfezZN7Vn3iiyd395694j9lP6Ifh5UawBWhqZ6OZYw2UqvxoLNH
-	zmvUUQKnZkkFUT7zK8e7oDF1JfRJBMg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753777010;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DwdTTHdeOVI0z++8NUCczywVnQjEIDhs65XxyQb9Kfc=;
-	b=r8qxkebHUBSbmI/LyFKMwOeB7QlHIAM8pA+/l55u5AeTFIExFe9Wnz/vd62cpB9vgjHW+e
-	o4KA/rY5jOvrQsBQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=iTaV1cmq;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4+Bzf8c4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753777009; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DwdTTHdeOVI0z++8NUCczywVnQjEIDhs65XxyQb9Kfc=;
-	b=iTaV1cmqqBGDrMYnlAI1K3KQa47nelnskJQ2pHt0cGSPGd8bjuLUEMan7BTBuJWopIlEQM
-	ocyneezXYvP1lFDYKzHtspkcxYKqU4UtKt2LovCEWIZ4rp4FweeRCsBwIG+jQvHOpuV5Dq
-	ExdcozV81Blcnh/LBidfzKzwjhPdXfo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753777009;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DwdTTHdeOVI0z++8NUCczywVnQjEIDhs65XxyQb9Kfc=;
-	b=4+Bzf8c4476+e9thuIX+OaX5NFXgGffWpsXoU+yjkXaK5qYtkoexCTbDp3LWN1vIW+3bxH
-	tz6dgX9UkwnqYYBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 51F9113876;
-	Tue, 29 Jul 2025 08:16:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AmvkEnCDiGhKNwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 29 Jul 2025 08:16:48 +0000
-Message-ID: <3339e2d0-02ac-470a-9511-0e60ed1d0598@suse.de>
-Date: Tue, 29 Jul 2025 10:16:48 +0200
+	s=arc-20240116; t=1753777035; c=relaxed/simple;
+	bh=s1cI9+7C2OYK16bCxJ+aP05wRZKrzMS8qNt6g/O1Esc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HDj8Xm3qS4b8YK90whOa+SPyfY/yO4VAt1fOkAvlow40CzCwsxe2VGGu06i8ZGlV62xJOc701fHLrGYEwULQiwlMlegTYSHnBNDEuk1ss7DJ+auJH/CNAi5f2ASWCXXscfSO5e6IGR3z3JXCczcgCvXVVxMcl+TlRmxjdN7HlH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=djWFjSgT; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id 2379F240029
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:17:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
+	s=1984.ea087b; t=1753777025;
+	bh=ZceV9lTb5x0zeijbqghaE+NKc2Tl2gM8GVa9ckfsj/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:From;
+	b=djWFjSgTrv8LcPjd/1XxhMTsTf9t+T0XXS8TYr6hYDjZtK5EQ06el+f/L29vSykBg
+	 xb9yeDetgSi/SfbyWhUlAObq3yqy3nJuMZ0lGDSQAbtt+tHP7TtmNg0B0rhH4TZKku
+	 UHTVhWsgauAH1xOEIAVESCIAO/vNZaSx0iohAmkFFbPpm+0tM8YkN6f/3alJKGbEbB
+	 lz84i3cH4C07i1Miw56xI6zz08AAyNDE05zipG/I7wSqlelIQ+z5FEjCtxJP2BaAV7
+	 CHHLaJTNprNVIA6ZoKX53D7Nw7uOCnLlOYRFX3+C9bh4m8gyshGF6KKJyqpkvXDDOj
+	 7jjrNulVpPO6Uc6IqsS5wbox/PXq46jJXa7G3i3wH795Fv7Wn3Rpp3lkKQ8Tr9f5l/
+	 VrsghlpmRob0x55ChMsSz6lE/15+7uxOGNWveCcTFdSnaDZA+KgVZHJVXddxppYq5L
+	 qCSzFqhwEgUJkHrQZLZZTNjLlJQnjWWqYpTrkg/VHBYTrhWBeA0
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4brp9D2n43z6tvy;
+	Tue, 29 Jul 2025 10:17:04 +0200 (CEST)
+Date: Tue, 29 Jul 2025 08:17:04 +0000
+From: Wilken Gottwalt <wilken.gottwalt@posteo.net>
+To: linux-kernel@vger.kernel.org
+Cc: linux-serial@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: [PATCH] tty: serial: 8250: exar: fix kernel warning in default_setup
+ function
+Message-ID: <aIiDf31HzRBGuMN2@monster.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 4/4] nvme/target/tcp: set max record size in the tls context
-To: Wilfred Mallawa <wilfred.opensource@gmail.com>, alistair.francis@wdc.com,
- dlemoal@kernel.org, chuck.lever@oracle.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- donald.hunter@gmail.com, corbet@lwn.net, kbusch@kernel.org, axboe@kernel.dk,
- hch@lst.de, sagi@grimberg.me, kch@nvidia.com, borisp@nvidia.com,
- john.fastabend@gmail.com, jlayton@kernel.org, neil@brown.name,
- okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
- anna@kernel.org, kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
- Wilfred Mallawa <wilfred.mallawa@wdc.com>
-References: <20250729024150.222513-2-wilfred.opensource@gmail.com>
- <20250729024150.222513-7-wilfred.opensource@gmail.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250729024150.222513-7-wilfred.opensource@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com,wdc.com,kernel.org,oracle.com,davemloft.net,google.com,redhat.com,lwn.net,kernel.dk,lst.de,grimberg.me,nvidia.com,brown.name,talpey.com,lists.linux.dev,vger.kernel.org];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[32];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLhu34id7c3duw89qhx7eswje4)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email,wdc.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: F3F17219EE
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 7/29/25 04:41, Wilfred Mallawa wrote:
-> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-> 
-> During a tls handshake, a host may specify the tls record size limit
-> using the tls "record_size_limit" extension. Currently, the NVMe target
-> driver does not specify this value to the tls layer.
-> 
-> This patch adds support for setting the tls record size limit into the
-> tls context, such that outgoing records may not exceed this limit
-> specified by the endpoint.
-> 
-> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
-> ---
->   drivers/nvme/target/tcp.c | 13 +++++++++++++
->   1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/nvme/target/tcp.c b/drivers/nvme/target/tcp.c
-> index 60e308401a54..f2ab473ea5de 100644
-> --- a/drivers/nvme/target/tcp.c
-> +++ b/drivers/nvme/target/tcp.c
-> @@ -1784,6 +1784,7 @@ static void nvmet_tcp_tls_handshake_done(void *data, int status,
->   					size_t tls_record_size_limit)
->   {
->   	struct nvmet_tcp_queue *queue = data;
-> +	struct tls_context *tls_ctx = tls_get_ctx(queue->sock->sk);
->   
->   	pr_debug("queue %d: TLS handshake done, key %x, status %d\n",
->   		 queue->idx, peerid, status);
-> @@ -1795,6 +1796,17 @@ static void nvmet_tcp_tls_handshake_done(void *data, int status,
->   	if (!status) {
->   		queue->tls_pskid = peerid;
->   		queue->state = NVMET_TCP_Q_CONNECTING;
-> +
-> +		/* Endpoint has specified a maximum tls record size limit */
-> +		if (tls_record_size_limit > TLS_MAX_PAYLOAD_SIZE) {
-> +			pr_err("queue %d: invalid tls max record size limit: %zu\n",
-> +			       queue->idx, tls_record_size_limit);
-> +			queue->state = NVMET_TCP_Q_FAILED;
-> +		} else if (tls_record_size_limit > 0) {
-> +			tls_ctx->tls_record_size_limit = (u32)tls_record_size_limit;
-> +			pr_debug("queue %d: host specified tls max record size %u\n",
-> +				 queue->idx, tls_ctx->tls_record_size_limit);
-> +		}
->   	} else
->   		queue->state = NVMET_TCP_Q_FAILED;
->   	spin_unlock_bh(&queue->state_lock);
-> @@ -1808,6 +1820,7 @@ static void nvmet_tcp_tls_handshake_done(void *data, int status,
->   		nvmet_tcp_schedule_release_queue(queue);
->   	else
->   		nvmet_tcp_set_queue_sock(queue);
-> +
->   	kref_put(&queue->kref, nvmet_tcp_release_queue);
->   }
->   
-Again, why?
+Fixes:
 
-I'd rather have the TLS layer handling that internally.
+[    2.601213] WARNING: CPU: 3 PID: 1 at pcim_iomap.part.0+0xbc/0xc0
+[    2.601224] Modules linked in:
+[    2.601230] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.38-vanilla-standard #1
+[    2.601237] Hardware name: Default string Default string/CXC-BT-JERO, BIOS S1.61.1.0# 09/17/2018
+[    2.601241] RIP: 0010:pcim_iomap.part.0+0xbc/0xc0
+[    2.601248] Code: 31 ed e8 07 a5 14 00 4c 89 e8 5b 41 5c 41 5d 41 5e 5d c3 cc cc cc cc 45 31 ed 5b 41 5c 4c 89 e8 41 5d 41 5e 5d c3 cc cc cc cc <0f> 0b eb a0 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f
+[    2.601253] RSP: 0000:ffffa7444001f830 EFLAGS: 00010286
+[    2.601259] RAX: ffffa066c1321f28 RBX: 0000000000000000 RCX: ffffa066c1215330
+[    2.601264] RDX: 0000000000000001 RSI: 0000000000000286 RDI: ffffa066c121532c
+[    2.601268] RBP: ffffa7444001f850 R08: 0000000000000000 R09: 0000000000000286
+[    2.601272] R10: 0000000000000000 R11: 000ffffffffff000 R12: ffffa066c1215000
+[    2.601275] R13: ffffa744403b0000 R14: ffffa066c1310208 R15: ffffa066c12150c8
+[    2.601279] FS:  0000000000000000(0000) GS:ffffa067d7d80000(0000) knlGS:0000000000000000
+[    2.601284] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.601288] CR2: 0000000000000000 CR3: 000000005f22a000 CR4: 00000000001006f0
+[    2.601292] Call Trace:
+[    2.601296]  <TASK>
+[    2.601301]  pcim_iomap+0x1a/0x20
+[    2.601308]  serial8250_pci_setup_port+0xea/0x190
+[    2.601337]  default_setup.constprop.0+0x27/0x90
+[    2.601347]  pci_xr17v35x_setup+0xd0/0x190
+[    2.601355]  exar_pci_probe+0x297/0x400
+[    2.601365]  ? __pfx_generic_rs485_config+0x10/0x10
+[    2.601383]  local_pci_probe+0x4b/0xb0
+[    2.601390]  pci_device_probe+0xc5/0x200
+[    2.601397]  really_probe+0xe5/0x390
+[    2.601405]  __driver_probe_device+0x7e/0x160
+[    2.601412]  driver_probe_device+0x23/0xa0
+[    2.601418]  __driver_attach+0xe4/0x1e0
+[    2.601424]  ? __pfx___driver_attach+0x10/0x10
+[    2.601431]  bus_for_each_dev+0x7d/0xd0
+[    2.601438]  driver_attach+0x1e/0x30
+[    2.601444]  bus_add_driver+0x114/0x240
+[    2.601450]  driver_register+0x64/0x130
+[    2.601457]  ? __pfx_exar_pci_driver_init+0x10/0x10
+[    2.601466]  __pci_register_driver+0x61/0x70
+[    2.601471]  exar_pci_driver_init+0x1e/0x30
+[    2.601479]  do_one_initcall+0x49/0x310
+[    2.601487]  kernel_init_freeable+0x1aa/0x2e0
+[    2.601495]  ? __pfx_kernel_init+0x10/0x10
+[    2.601503]  kernel_init+0x1a/0x1c0
+[    2.601510]  ret_from_fork+0x3c/0x60
+[    2.601516]  ? __pfx_kernel_init+0x10/0x10
+[    2.601523]  ret_from_fork_asm+0x1a/0x30
+[    2.601531]  </TASK>
 
-Cheers,
+From kernel 6.8 to 6.9 the default_setup function was changed to use the
+more generic serial8250_pci_setup_port function to setup the serial
+ports, but that results in this kernel warning.
 
-Hannes
+The serial8250_pci_setup_port function internally relies on the
+pcim_iomap function. The way this function works was changed from kernel
+6.10 to 6.11 and now clearly states in the description "This SHOULD only
+be used once per BAR". And this is the issue. Basically all the hardware
+handled by the 8250_exar driver are multi-port cards, which have
+multiple ports on one PCI bar. The serial8250_pci_setup_port/pcim_iomap
+functions can not be used with that driver anymore. Reverting the code
+back to the older pci_resource_start approach fixes this issue.
+
+Signed-off-by: Wilken Gottwalt <wilken.gottwalt@posteo.net>
+---
+ drivers/tty/serial/8250/8250_exar.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+index 04a0cbab02c2..5660bb897803 100644
+--- a/drivers/tty/serial/8250/8250_exar.c
++++ b/drivers/tty/serial/8250/8250_exar.c
+@@ -500,12 +500,13 @@ static int default_setup(struct exar8250 *priv, struct pci_dev *pcidev,
+ 			 struct uart_8250_port *port)
+ {
+ 	const struct exar8250_board *board = priv->board;
++	unsigned int bar = 0;
+ 	unsigned char status;
+-	int err;
+ 
+-	err = serial8250_pci_setup_port(pcidev, port, 0, offset, board->reg_shift);
+-	if (err)
+-		return err;
++	port->port.iotype = UPIO_MEM;
++	port->port.mapbase = pci_resource_start(pcidev, bar) + offset;
++	port->port.membase = priv->virt + offset;
++	port->port.regshift = board->reg_shift;
+ 
+ 	/*
+ 	 * XR17V35x UARTs have an extra divisor register, DLD that gets enabled
 -- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+2.50.1
+
 
