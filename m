@@ -1,135 +1,102 @@
-Return-Path: <linux-kernel+bounces-749009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7BAB148D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C01B148CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FE1B178336
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:59:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A1183B7B3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F5D0262FD0;
-	Tue, 29 Jul 2025 06:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D19325D1F5;
+	Tue, 29 Jul 2025 06:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="f/Wfvghx"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qbZ67u7w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754C825FA10
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 06:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEBB25C838
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 06:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753772341; cv=none; b=Mzw2eBImZFoAhR8V+GftPKeZVEcKNtlbgCwya2ZkOQ7QeNHAd7kc8mohV0tks5fUEb5U4MaiMxWl7unLietZ4+nkU8kmrTG9EbzVd2vQd2ofm26Xw6dUIS2GmfvlsQHftT+cszcZH7Y8H646SiXbeBx69bqNBhFOpJIvc7YXT30=
+	t=1753772331; cv=none; b=IAgT6yCRGuEUk9pEZtrD+du6Ifoaid6ox7FeWEJHvF2aUmQDSdaUsEAaOz0Di8F1CJOP9STpVBgEDp/E6QyzWypdImStddiq71YytMjulFgrHNE/iXLlaOtiExhNGXE0f5jEEU4OaOAYaMKxWHcWmXlDinqVJV9JeLr2krOy+kM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753772341; c=relaxed/simple;
-	bh=HecQWwK2lk4Yt12acj8ntIBVFy8o7ykyEZNOkui4Hgg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j2V45XN+SDekURVRUsO2OzPbQnZAXzBLFpZnjgbmyfYCkldjEvHvU6wuuukzD9x5A7AJJnb5wwSpf6t/PjFT+/Ru3ExJvZH6PmPVINKjYD0pWfXzZRU9ETKvsR0P+Ms6JpXSCbpj55OUPv+NRn1ukB0F83p17MLNtH0NiNtFk3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=f/Wfvghx; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55b733911b3so943318e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 23:58:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753772336; x=1754377136; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ahIXy3jx1Vd5imYAa/Lklqvxq/h0MS9MQimCSeG56MI=;
-        b=f/WfvghxP1MTHai4S+4N3rjaghjvRNU+wG9Y4MdRgbeSot4KMvulv30T/8FAFjGOSc
-         i5+t2aqcc1WZ71TUjp1pWhqp1K9MI18balng945XNR/9bmxQWuBmEySjU1zXeCNlQuCk
-         EQEkkIxoLkQ/MD6ozNfJjVQeN9K+OI2LH96rwtpc0LXsqUfZZJXxH/3wd2yBO6poNHzU
-         dCw5A1wwjV+jv9hwQKNBe+x17JxVj5TzEPWzRw8Xvc7ih1Nq0UB4JsNCdPueLc0kw+bc
-         i+jGKC3IQJTfINqWKC+mGZaT0kcFOPKxP4M3LjyM5M07TSVXfYbyoOgzM6pah6V+22Vp
-         Vk4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753772336; x=1754377136;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ahIXy3jx1Vd5imYAa/Lklqvxq/h0MS9MQimCSeG56MI=;
-        b=O27WOSk/c9nlx+P/sZwaGObME2M7a2YEe6Q69mVgJ/etuF5jZZYuBP9D2CHhNjH6mU
-         udNR+Le9s9Yj2w7BNx/76+kgcLTCOOTJ7uJ+OCgFA9JqUapUa7E6KtrXQhL/jjZ36eOE
-         wbdE7eRNVj/p6F6sAHzsA7VQR2BSTbuqu6Qbqz8ZXb5di0+WF9OC+gSQECs17G82NOZP
-         Fxhol8H31n09JZUsRaS/Ew12OaTdpRK4ohZlfHqevfCQyI6FmzqZ5PjSk/h15XRJQQT2
-         O1Scr16Nt0bEHF2xXSZswcxMu/MduGZzwSQnYUfruaGs6LtgrHCVOJ1LoNW5nKPoLWgD
-         NBuw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmwHxfRO0MJ6cvMk2k5GUxZtNCWjhfxzqhlX/349IJQ+K0TsRNBt3GcTq7+MnJW4CvnWCGmMa8qnu39EQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvvH3nuTFNhBn4ACSZoavAKSFQil0SmnTI168u6k2XHEuv5bbI
-	nttsygjAn3tWhtGOkUKjn/d6y4A/Ay0Yvz3behc8h+l5PA5zKQKPxYPyoO/Pso2eVhYu3ByoGmo
-	p44iLY4ivfA0gbU46ULeo7ZfTZICh13qVnfwprY+0mg==
-X-Gm-Gg: ASbGncuaVxkLQsbhZooHnF9yFNgeM+ckCUWjGXnQ3fwXTXWhxuaQNyKQn8dpeSjP6EZ
-	V8U+OTHMeGky23fnWsYnUxCkQLoVEmGJwze9+7BhnVniCyQi1+ymzDHFnrHpNdwQEfeOebi8Iif
-	73jLUQQcmunKLXnGR1k+hPr/0lhDn/ybdDaLspKSgKAf65NAhnmwEviPHeliYLm80UFqL6TdIWz
-	kBwN7VIkSYBc6dDoHXDo53qzJnIy5AqQFlM5ONUsBJy6xVLGg==
-X-Google-Smtp-Source: AGHT+IENVZ731scRx/lLYmbmtQcdUo8605prxvqB7h/pEY85JwEbG2W5RCWyvPQoFrwxMXfKgXYDqs+v3ox0eCh2a4A=
-X-Received: by 2002:ac2:4e14:0:b0:55b:5c62:c7d2 with SMTP id
- 2adb3069b0e04-55b5f498ccbmr3209400e87.39.1753772336369; Mon, 28 Jul 2025
- 23:58:56 -0700 (PDT)
+	s=arc-20240116; t=1753772331; c=relaxed/simple;
+	bh=TEpkmPt+78Akb2ER3PDQVoBkG5txIWqz0oEew5FQkIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VTlMegZnlLLQsThloTcGugYXqu1b0jnbzgVPHQJMexUibyX0T1gy8inZDSyDMmlvZKUj0pB8w4oIo8rrlgYs8z/S+Q0Ohadt/p+GfZ1UFEGcz1DDYMcuEm5WeFe9gmA0tMbHFpd0WZLIDWbwQzDvzjlsmP3GOiZliYf3r01Pl+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qbZ67u7w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97D1DC4CEEF;
+	Tue, 29 Jul 2025 06:58:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753772331;
+	bh=TEpkmPt+78Akb2ER3PDQVoBkG5txIWqz0oEew5FQkIE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=qbZ67u7wXDl91/j/n9G1CNOqwUqz7Ik5kxzKDJQc6OmlAX6MW0h4XqxVFG9zwP3ui
+	 0qybYh1NB+Jjyfa3kYO29ZVe7G4iMtmskrIIDOXqACu7BmfGH+ZKdLow3O1yQLPx1W
+	 Kh6g1U23tsO608xv337tx+TdzTBaLxKg+ZR83d9zUZj9wC1iXK9smtNjGSQrfhNxih
+	 BVWBbLL/nZ5EyZVqhydOLJFwbVV1ARgrNcQJ7JXs2Tz/Kz0Z9y7T0Fit5fywN8d+Ct
+	 BGRVBq7UStfb1YzcxEB2n5l0jhmQWhzkIY0O3GFqjYBDiUhyZXszUh9kGUVHuibUvM
+	 8oQYPLK8wj+jQ==
+Date: Tue, 29 Jul 2025 08:58:47 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [GIT PULL] x86/boot updates for v6.17
+Message-ID: <aIhxJ5-wj2mbJBvm@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728144619.29894-1-davthompson@nvidia.com>
-In-Reply-To: <20250728144619.29894-1-davthompson@nvidia.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 29 Jul 2025 08:58:44 +0200
-X-Gm-Features: Ac12FXxWS275bOEU-c1wViyF7-V1oyzkM7lyHBoN6z--DlyIBO3HrfLxY5YRGkk
-Message-ID: <CAMRc=Mc1cQL+fcFOPA1NBSHh+foVyT1mxFt+R7f73PEB=Pjuyw@mail.gmail.com>
-Subject: Re: [PATCH v4] gpio-mlxbf2: use platform_get_irq_optional()
-To: David Thompson <davthompson@nvidia.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linus.walleij@linaro.org, davem@davemloft.net, asmaa@nvidia.com, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Shravan Kumar Ramani <shravankr@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Jul 28, 2025 at 4:46=E2=80=AFPM David Thompson <davthompson@nvidia.=
-com> wrote:
->
-> The gpio-mlxbf2 driver interfaces with four GPIO controllers,
-> device instances 0-3. There are two IRQ resources shared between
-> the four controllers, and they are found in the ACPI table for
-> instances 0 and 3. The driver should not use platform_get_irq(),
-> otherwise this error is logged when probing instances 1 and 2:
->   mlxbf2_gpio MLNXBF22:01: error -ENXIO: IRQ index 0 not found
->
-> Fixes: 2b725265cb08 ("gpio: mlxbf2: Introduce IRQ support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: David Thompson <davthompson@nvidia.com>
-> Reviewed-by: Shravan Kumar Ramani <shravankr@nvidia.com>
-> ---
-> v4: updated logic to simply use platform_get_irq_optional()
-> v3: added version history
-> v2: added tag "Cc: stable@vger.kernel.org"
->
->  drivers/gpio/gpio-mlxbf2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpio/gpio-mlxbf2.c b/drivers/gpio/gpio-mlxbf2.c
-> index 6f3dda6b635f..390f2e74a9d8 100644
-> --- a/drivers/gpio/gpio-mlxbf2.c
-> +++ b/drivers/gpio/gpio-mlxbf2.c
-> @@ -397,7 +397,7 @@ mlxbf2_gpio_probe(struct platform_device *pdev)
->         gc->ngpio =3D npins;
->         gc->owner =3D THIS_MODULE;
->
-> -       irq =3D platform_get_irq(pdev, 0);
-> +       irq =3D platform_get_irq_optional(pdev, 0);
->         if (irq >=3D 0) {
->                 girq =3D &gs->gc.irq;
->                 gpio_irq_chip_set_chip(girq, &mlxbf2_gpio_irq_chip);
-> --
-> 2.43.2
->
+Linus,
 
-Cc'ed Andy and Mika for review.
+Please pull the latest x86/boot Git tree from:
 
-Bartosz
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-boot-2025-07-29
+
+   # HEAD: 61b57d35396a4b4bcca9944644b24fc6015976b5 x86/efi: Implement support for embedding SBAT data for x86
+
+x86/boot changes for v6.17:
+
+ - Implement support for embedding EFI SBAT data (Secure Boot
+   Advanced Targeting: a secure boot image revocation facility)
+   on x86. (Vitaly Kuznetsov)
+
+ - Move the efi_enter_virtual_mode() initialization call
+   from the generic init code to x86 init code.
+   (Alexander Shishkin)
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Alexander Shishkin (1):
+      x86/efi: Move runtime service initialization to arch/x86
+
+Vitaly Kuznetsov (1):
+      x86/efi: Implement support for embedding SBAT data for x86
+
+
+ arch/x86/boot/Makefile                 |  2 +-
+ arch/x86/boot/compressed/Makefile      |  5 +++++
+ arch/x86/boot/compressed/sbat.S        |  7 +++++++
+ arch/x86/boot/compressed/vmlinux.lds.S |  8 ++++++++
+ arch/x86/boot/header.S                 | 31 ++++++++++++++++++++++---------
+ arch/x86/kernel/cpu/common.c           |  7 +++++++
+ drivers/firmware/efi/Kconfig           |  2 +-
+ init/main.c                            |  5 -----
+ 8 files changed, 51 insertions(+), 16 deletions(-)
+ create mode 100644 arch/x86/boot/compressed/sbat.S
 
