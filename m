@@ -1,140 +1,128 @@
-Return-Path: <linux-kernel+bounces-749276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B991CB14C3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:32:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E763DB14C37
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E37C1891FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC144E6068
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B2428A73C;
-	Tue, 29 Jul 2025 10:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B4328A1E4;
+	Tue, 29 Jul 2025 10:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKY4T4MM"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qx8BZDMK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397D8228C99;
-	Tue, 29 Jul 2025 10:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE3568633F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753785028; cv=none; b=X+Ausyt2XTKijbb6246FRJJsAZUT8Nzqw21JKi0LvWMCnT7zhw51DGxAMMBd+h9kly+398kKLMmEQ/6d6ofzYqrOQiD6Dk5uGQKyD6y9D1NvdI424Q6ozynMKBUZPQTlUQkZS9uD+ksL7pQhg3vsvHIb0W0ONutrfwpPkYK4WAw=
+	t=1753785009; cv=none; b=D+XD0waK6Ypd8w3TUfIqePoHXnTekKeHEKY+xHvpNok0EfZAmtUPNKzQOJXcdzmOtgtycT6pwJPF3/INNYp2wLd0d1UMPlNN/C1NUdhwbmuo8I+mTOqrPgzj0Mdt1l5iK66iPg5I0WG4zW7wR8D/ltpIsJ4LeqzFbEXZzlmdT58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753785028; c=relaxed/simple;
-	bh=GDS2DivCVTjsuqAbeiYBAP4HfVuf2+VQktNWQjuhZqg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LlrWf5obLJg9LcrLpd3WIb2i9Bv6rgXQn+NEO43kuIT67IzRbeNjdE+cT0c3IpH68ietudzTrXB1uMqnos8TQ6OkUjt5TQ+uuYujyOWYAp9HUB1o2XAmL98Y5dX8iqk4/Z0yDfvHYmVg/FE2eyXJLxk53mrzS+Uc/Jgmy7FPe7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKY4T4MM; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76a3818eb9bso174417b3a.3;
-        Tue, 29 Jul 2025 03:30:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753785026; x=1754389826; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k7VKvcC3HHzJrLAxDozGlxN+FIhSWHQP7yIiLAufEHE=;
-        b=dKY4T4MMIHr4Akv8NQ0ypgkHFnewdRph75FEALs5MsAq7t4FNdbGUJVW4vjB4ha0Go
-         n8OlK+aVLCJTmc224UDpYA1lk6v+6Ush1htZyVV41dRlXBhLKjISFBwD6CKgnI6Bq6YO
-         LrlKHnj6uuRLX7zjzdBh2bGbXTXw4bWbjwkBoMOv2/LCauuP28+xEAlTxqGLlPiHTbun
-         0sK2y7HXfMF/PY8I08enxzf7rZLZhX51zuRHrFBwByFwh+Z/RIJ8/bOe6kQVXooKsRUw
-         SzlN1AMiLPK86p1lb+rS6R6vQ7VC89fFWTbEnYaHKrbbe+H6HPY5xVUcEXEbA2kwVhLb
-         rJSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753785026; x=1754389826;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k7VKvcC3HHzJrLAxDozGlxN+FIhSWHQP7yIiLAufEHE=;
-        b=a7nxn1jIhErZDON/E5Vi/0MElPyE+ZCVSs88S1M+M3FMtT0XGXSGlZPU4OPWtlyUAH
-         sOV0B5AKbcWZBtn8pxqdQAztiSK/Ejg+xDfHvg2Tc5rGnVEycR3b5BfzGV81jNNGtNPd
-         J3LddXotnGtFOezhtlWiO/PxblWhgsoJlQg+q31SgeZQePAdHNQU1NW9G2JWAkAYiZYD
-         IeGPpkG2mdGw2Ut1Gr6EMXGv6ra52JSDtNk+5lW6vUg94ulEN8cMfhwdYaQGN0CCGWdP
-         vXsMJfkebqcDxyq8dIUj92gXtXIBVU6nULaHsY5WLvWUTBQIlerLNhMN4NCSs4PCQy71
-         KCfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWTk2pfoTLT+tkcZAejvwgi+NI86cPzHVoXT9yX+qNuBZbDqfWYv1EHcO+PUPscqhw4o1MYv2KiCa7NZfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHrPzxYN05wvkj7Lx8Kj743XOBwZ0TwPK70U7TU6wk1e8Uq0h6
-	X87A+Cd7pVhhKG4l7rVR2TokpzP9NtLeXg82Ye2YIsJ4xux+aJFIySWnzUmoqUs0
-X-Gm-Gg: ASbGncuuHQahVqBY5fwKO49aUkcOHJC/ECwmihzevRZdLpSk12u1QW+3AtX6tGoy6ld
-	/Jykuy6SZY7PmTBNAEgbeJU2AofY8iAiKw7wDcn7A7GzJa+UhoDe7kGy7G0EgX+AraKN7uIO1SB
-	2AGZw2YJjx8iGuT6LhJCBGQbavhx72lDtalex0pGJocT/MPMZUyJ4dLXk0iFUHsDWFEmcUUDZSn
-	H005nW4hkYaB6ZGwTwVJCUVRPLIBbuN93Boghao1dvwZMp5rjGSDoF7rotdkMQNE4sR6tboBnan
-	CiS7x/TkB/4PwmhwH8fDt0+lKJuM8o7VBAQnpANnPbSfA3XG7i9uhayyKbqnOl7knNPDxmcBaHw
-	ZnqYMpwf8Un35J3f9hTuIUEDb
-X-Google-Smtp-Source: AGHT+IFVd5vS3sqBz9mldXBBud0gro+383l7Zj3chGaPhaiisuezyFdfYPfF5WFWo3rfTZsLqYszCA==
-X-Received: by 2002:a05:6a20:7488:b0:215:eafc:abd9 with SMTP id adf61e73a8af0-23d700e9754mr26792263637.14.1753785026070;
-        Tue, 29 Jul 2025 03:30:26 -0700 (PDT)
-Received: from pop-os.. ([2401:4900:1c96:2e3e:1600:4d4c:911f:a526])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-767979350b3sm4895419b3a.122.2025.07.29.03.30.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 03:30:25 -0700 (PDT)
-From: herculoxz <abhinav.ogl@gmail.com>
-To: linux-pci@vger.kernel.org
-Cc: rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dakr@kernel.org,
-	bhelgaas@google.com,
-	kwilczynski@kernel.org,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	Abhinav Ananthu <abhinav.ogl@gmail.com>
-Subject: [PATCH v2] rust: pci: Use explicit types in FFI callbacks
-Date: Tue, 29 Jul 2025 15:59:53 +0530
-Message-Id: <20250729102953.141412-1-abhinav.ogl@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753785009; c=relaxed/simple;
+	bh=RHKBe9feYBm7P2xs18cmwRFRksTsCYDPPsP7rqksKP8=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=u+arh+KrabIm9VQfP3kYRIyJBzD5JbCk5ktM7heT/aPc+YHakHO8Sjccrztsk6luxojhoCbnE83TuVyCGYYQv3dfnCHcdkkFrg9aW1VK0akzaexLMw0/KGZah3JjNBvuU/XpKzGJirxpMsuqar+T7bpFdKfaPkpCVX/h4J/mZu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qx8BZDMK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13481C4CEF5;
+	Tue, 29 Jul 2025 10:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753785009;
+	bh=RHKBe9feYBm7P2xs18cmwRFRksTsCYDPPsP7rqksKP8=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Qx8BZDMKFyQpW76c1ByBoJLHhagNV+33jTstSRWRj++VVmAdrtNQ3/cyTEdjr/25e
+	 ttV/HC+kMzXJbA/0+FIkm6FylCKTZEujnocduyOMcKaZ+JJxWRWWrXtNlUrB6zJn2A
+	 82UaGXdSNczdega3RukL22nVUWFjsYt1HIWVabrxedsvXHB54hFu3Vlnrr8d2JirDJ
+	 7jGBs7IKujk3lhYv9wSYUC3/sv3vGnY2Bu5u1XliyK2JBeawHs3Ge+bl23qXAziw75
+	 oMoEFYZFsAe0+DzWgnqGNoI35koAtIUSvUjNzirAYlREQOOIVbzsP2qqk5w/lcQtBp
+	 39DKdzIE1ernA==
+Date: Tue, 29 Jul 2025 19:30:05 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Masami Hiramatsu (Google) <mhiramat@kernel.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ linux-kernel@vger.kernel.org
+Subject: [GIT PULL] probes: Fixes for v6.16
+Message-Id: <20250729193005.348d7df8206d3e9ac438fd57@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Abhinav Ananthu <abhinav.ogl@gmail.com>
+Hi Linus,
 
-Update PCI FFI callback signatures to use `c_int` from the prelude,
-instead of accessing it via `kernel::ffi::c_int`.
+Probes fixes for v6.16:
 
-This follows Rust-for-Linux coding guidelines and improves ABI
-correctness when interfacing with C code.
+ - Fix a potential infinite recursion in fprobe by using preempt_*_notrace().
 
-Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
----
- rust/kernel/pci.rs | 4 ++--
+
+Please pull the latest probes-fixes-v6.16 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+probes-fixes-v6.16
+
+Tag SHA1: 1d7c77d4dfae320b756b5d0bcd04ecce5a38fbeb
+Head SHA1: a3e892ab0fc287389176eabdcd74234508f6e52d
+
+
+Masami Hiramatsu (Google) (1):
+      tracing: fprobe: Fix infinite recursion using preempt_*_notrace()
+
+----
+ kernel/trace/fprobe.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
+---------------------------
+commit a3e892ab0fc287389176eabdcd74234508f6e52d
+Author: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Date:   Tue Jul 29 08:47:03 2025 +0900
 
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 5ce07999168e..fbeeaec4e044 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -61,7 +61,7 @@ impl<T: Driver + 'static> Adapter<T> {
-     extern "C" fn probe_callback(
-         pdev: *mut bindings::pci_dev,
-         id: *const bindings::pci_device_id,
--    ) -> kernel::ffi::c_int {
-+    ) -> c_int {
-         // SAFETY: The PCI bus only ever calls the probe callback with a valid pointer to a
-         // `struct pci_dev`.
-         //
-@@ -333,7 +333,7 @@ unsafe fn do_release(pdev: &Device, ioptr: usize, num: i32) {
-         // `ioptr` is valid by the safety requirements.
-         // `num` is valid by the safety requirements.
-         unsafe {
--            bindings::pci_iounmap(pdev.as_raw(), ioptr as *mut kernel::ffi::c_void);
-+            bindings::pci_iounmap(pdev.as_raw(), ioptr as *mut c_void);
-             bindings::pci_release_region(pdev.as_raw(), num);
-         }
-     }
+    tracing: fprobe: Fix infinite recursion using preempt_*_notrace()
+    
+    Since preempt_count_add/del() are tracable functions, it is not allowed
+    to use preempt_disable/enable() in ftrace handlers. Without this fix,
+    probing on `preempt_count_add%return` will cause an infinite recursion
+    of fprobes.
+    
+    To fix this problem, use preempt_disable/enable_notrace() in
+    fprobe_return().
+    
+    Link: https://lore.kernel.org/all/175374642359.1471729.1054175011228386560.stgit@mhiramat.tok.corp.google.com/
+    
+    Fixes: 4346ba160409 ("fprobe: Rewrite fprobe on function-graph tracer")
+    Cc: stable@vger.kernel.org
+    Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+index ba7ff14f5339..f9b3aa9afb17 100644
+--- a/kernel/trace/fprobe.c
++++ b/kernel/trace/fprobe.c
+@@ -352,7 +352,7 @@ static void fprobe_return(struct ftrace_graph_ret *trace,
+ 	size_words = SIZE_IN_LONG(size);
+ 	ret_ip = ftrace_regs_get_instruction_pointer(fregs);
+ 
+-	preempt_disable();
++	preempt_disable_notrace();
+ 
+ 	curr = 0;
+ 	while (size_words > curr) {
+@@ -368,7 +368,7 @@ static void fprobe_return(struct ftrace_graph_ret *trace,
+ 		}
+ 		curr += size;
+ 	}
+-	preempt_enable();
++	preempt_enable_notrace();
+ }
+ NOKPROBE_SYMBOL(fprobe_return);
+ 
 -- 
-2.34.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
