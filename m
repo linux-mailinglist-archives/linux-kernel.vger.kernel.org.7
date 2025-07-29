@@ -1,81 +1,120 @@
-Return-Path: <linux-kernel+bounces-749627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568A0B150BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:02:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27043B150BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BAF718A1EA6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:02:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25E393B0CE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD3E298CB0;
-	Tue, 29 Jul 2025 16:00:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7A0299924;
+	Tue, 29 Jul 2025 16:00:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpefm7uy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hIJesd67"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4174B2980B8;
-	Tue, 29 Jul 2025 16:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE88F298CC7
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753804838; cv=none; b=SDjaN6HWFblqItxP9TNJU8mPwvVZTRPYZht+xeP4yvFE2ybcexxiNxGJOta91/6rUqVubLzQM77uL8V8rpkhgh8+M4KIk3Fc9EvQWwsJz8ox6+V+/BVXHQoI/ZaZOalD85BEQsDwNHU57Q7hFavA/hFJqNOJLS+5Z7SfKzRSQmg=
+	t=1753804843; cv=none; b=JA9KuT5O1KOGc0wlDseXEEqQufANQ2p7MKqWzbfPv27mDub1wqxPDQiMPjq6sY88B4CuO8Tm8o2E3ciWI1hLlF5aNVX8FJvR55KP41GurD5b0nQaIqWB1rC1xyW6RJRhxpxba1gM0Me8Rc4b1qYYihhPB572iUbyz0Z3xAgCKRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753804838; c=relaxed/simple;
-	bh=iYjQ08ZF98Az5gb3IAXe3bu00COVrd7SkiMkd5cwLFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N+eZJRntOLkDKKVIA/XenVSwDuIS0wq0wahR8wfFNhcDMgnbC8kOFHKS1lKd9cw+sks3J1VBhEqkn9nQtNzxDAmN1V99Vr9T3lUP3LJoSoyRU4r5yHygmWwjkOSxbfnBFQcZSNNg6z+ZQ8nEQds11/AbR+6RxCf8MLEfDsYd+8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpefm7uy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F51AC4CEF5;
-	Tue, 29 Jul 2025 16:00:36 +0000 (UTC)
+	s=arc-20240116; t=1753804843; c=relaxed/simple;
+	bh=MynkkNnX7n81DqGA7Gs9Ht5g36Hw0zCI7XejOz8DkcY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=GRmHpE1cEwcpSyhtALWhifj38GNdk06zCOaQ/PKSIgQ+FoSaWkpR97dY8wGrajmV7zWzBdUotsQpJ3UWEw5CIHlmh/LetMbMFsbTw7iankdznrv/WI3Kr1+YERcPBytm29EsHROvH/Kr4qYUCRyezUe/ZXwpADgfM6gTfo8HMu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hIJesd67; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C0E2C4CEFA;
+	Tue, 29 Jul 2025 16:00:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753804836;
-	bh=iYjQ08ZF98Az5gb3IAXe3bu00COVrd7SkiMkd5cwLFU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dpefm7uykbqc9y7TVargxu/e++HZJInb6BzhsoQWK/FU3f1BthWHfcSVxL/9skwWC
-	 aupAJUO/kiOpu8qezqBzZ6Lk3M1ZGYRo+Z2r0JoemTRCkplzQftrlvY7P4Oryp2c74
-	 Kzqtc2HmMcsx8G+W8a02JhlB5asA8d4ZnFg/2+mWF054wprvRQOTlBv5zrjOZRrxCz
-	 xm7SocZJvqiuBGio4byhbxw+SHJRotBg+26DbRB4Cn5icNESe+wso8HDEkJEiHuUko
-	 rb8DLeEXxWvOyBhOz2e4GGfoMunXcDCIbaiTbhH0DQVnAG0xBIueO/ETo+frkdabjC
-	 aDV9o2PoF5zfQ==
-Date: Tue, 29 Jul 2025 11:00:35 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/8] dt-bindings: power: qcom-rpmpd: sort out entries
-Message-ID: <175380483538.477299.11633010175758794104.robh@kernel.org>
-References: <20250718-rework-rpmhpd-rpmpd-v1-0-eedca108e540@oss.qualcomm.com>
- <20250718-rework-rpmhpd-rpmpd-v1-2-eedca108e540@oss.qualcomm.com>
+	s=k20201202; t=1753804842;
+	bh=MynkkNnX7n81DqGA7Gs9Ht5g36Hw0zCI7XejOz8DkcY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hIJesd67JtJTn/cAO+m3xZHvvr468cN1mDNQoti3X/566nHXoKZX1+1xHG2TlUBnE
+	 GAPP772e9eoCLupnjg7NkEQ7sC8w7WtKWS5amvTxEzYGpk9/DcuXgKHmzcUZEY90rj
+	 CrSCVkzfOFkoSph+nO7S92MUOayOM7abDi/beWUpPIVDDJTznkRQXmb5a+c3fItcu/
+	 mCojwI+Pvt4ajfc+PUmC5+hPH1+P8p2bys06T3Zg0Es/6Gc8cHKoXLvXdg1W8vdNkh
+	 XQDifEen+cdVO8kptG8YE9n+GN2KgCdx25pPLUAgeLArE8TJ6h/pjihJx5GyubjCJn
+	 /gV+tPWcU2EQw==
+Date: Wed, 30 Jul 2025 01:00:38 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Ben Hutchings
+ <benh@debian.org>, Bhaskar Chowdhury <unixbhaskar@gmail.com>, Steven
+ Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bootconfig: Updates for v6.16
+Message-Id: <20250730010038.4673096e2e7b227405de67f9@kernel.org>
+In-Reply-To: <20250730001421.dd070b79c120e9f6e9bd6b27@kernel.org>
+References: <20250730001421.dd070b79c120e9f6e9bd6b27@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250718-rework-rpmhpd-rpmpd-v1-2-eedca108e540@oss.qualcomm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Wed, 30 Jul 2025 00:14:21 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-On Fri, 18 Jul 2025 19:13:40 +0300, Dmitry Baryshkov wrote:
-> After removing RPMh PD indices, it becomes obvious that several entries
-> don't follow the alphabetic sorting order. Move them in order to keep
-> the file sorted.
+> Linus,
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->  include/dt-bindings/power/qcom-rpmpd.h | 42 +++++++++++++++++-----------------
->  1 file changed, 21 insertions(+), 21 deletions(-)
+> Bootconfig updates for v6.16:
+
+Oops, this should be v6.17. Let me update it.
+
+Thanks,
+
 > 
+>  - tools/bootconfig:
+>    - Fix unaligned access when building footer to avoid SIGBUS
+>    - Cleanup bootconfig footer size calculations
+> 
+>  - test scripts:
+>    - Fix to add shebang for a test script
+>    - Improve script portability using portable commands
+>    - Improve script portability using printf instead of echo
+>    - Enclose regex with quotes for syntax highlighter
+> 
+> 
+> Please pull the latest bootconfig-v6.16-2 tree, which can be found at:
+> 
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+> bootconfig-v6.16-2
+> 
+> Tag SHA1: bf716884a5d3afcc0be679239ae07a1ae7cee4a2
+> Head SHA1: 6ed5e20466c79e3b3350bae39f678f73cf564b4e
+> 
+> 
+> Ben Hutchings (1):
+>       bootconfig: Fix unaligned access when building footer
+> 
+> Bhaskar Chowdhury (2):
+>       tools: bootconfig: Regex enclosed with quotes to make syntax highlight proper
+>       tools/bootconfig: scripts/ftrace.sh was missing the shebang line, so added it
+> 
+> Masami Hiramatsu (Google) (3):
+>       tools/bootconfig: Improve portability
+>       tools/bootconfig: Replace some echo with printf for more portability
+>       tools/bootconfig: Cleanup bootconfig footer size calculations
+> 
+> ----
+>  tools/bootconfig/main.c             | 43 +++++++++++++++++++++----------------
+>  tools/bootconfig/scripts/ftrace.sh  |  1 +
+>  tools/bootconfig/test-bootconfig.sh | 37 +++++++++++++++----------------
+>  3 files changed, 44 insertions(+), 37 deletions(-)
+> 
+> -- 
+> Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
