@@ -1,205 +1,118 @@
-Return-Path: <linux-kernel+bounces-749121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D596B14A62
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:47:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C916B14A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9044D4E234D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:46:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 329FC160E8F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF74828540F;
-	Tue, 29 Jul 2025 08:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3532857EC;
+	Tue, 29 Jul 2025 08:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jfc/wren"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d5soMQEd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C0E1B0413;
-	Tue, 29 Jul 2025 08:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C01283121
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753778829; cv=none; b=SOmE5WyA5abNplgcouBxfXJGaiOaRvutrbX6ZhJhKAAtXmfzwOyEy0/P1W6MUy72mR0cECSBM+e8o/jQ2FWjsQUempNjCJwk1khU9MUdYUXHKhYgTvKrSUVuGrmjbTR8Ix0Fvz2/L7x9hEEZOMF8cRlsuVD15BUujwyl6KLrtBc=
+	t=1753778899; cv=none; b=fz/RCjTQL9dG/KP1pcfk/JYqiqZmxuKu+Ry2aoja3jehZgPxDTRtRLIAGPvr7SNldVQtRCpPU0fnpNn9CVVdvzeRLMjRHe+4g4AN34LsLe7Aa3XhagCMhPUZj+sSRYtQBKiBcQ1D0iizNRVB5HVygklyG9j824TWx4zUYzbHiew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753778829; c=relaxed/simple;
-	bh=j5Nxp3sqxUzkjfdDiLe3WF5WObVWb43UAxAKH67Wjco=;
+	s=arc-20240116; t=1753778899; c=relaxed/simple;
+	bh=v/kpOVMVL0VbZRPfgljdXv2bn6Gc6hW9fXhN63RQtSM=;
 	h=Content-Type:Date:Message-Id:From:To:Subject:Cc:References:
-	 In-Reply-To; b=BF7dTUakuyHsggCyU5eAi7D+Wcpemb6OVGpxmLwNpkF113UUFGcZjr4jYdrscdib62j0Pd5PEaeowwL9my6pRnhGiVxYiK6JmCFdsH691vsHXDK2bJRShVeFNtYotNwXpsg2V07lI3jbta8cNkXc3+ZRO9oT5ww/sQ4XrX599yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jfc/wren; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C66EC4CEF5;
-	Tue, 29 Jul 2025 08:47:08 +0000 (UTC)
+	 In-Reply-To; b=eO3U2YEjldcFoISVbrjDHRvRvm+LwcNt+mAK+1hjRQlKHhUgHo73ps05T3KWhgUFn98I1P12se16yRPzlsYbRVpIS3BAF6k6yIO0g3DBSgKruuOJ1z/HxKf+bTEBXT4FgZShcGRad0jHHwUZN9cPbfQfa0T145bOVtPQ6+wzMso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d5soMQEd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 018BAC4CEF5;
+	Tue, 29 Jul 2025 08:48:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753778828;
-	bh=j5Nxp3sqxUzkjfdDiLe3WF5WObVWb43UAxAKH67Wjco=;
+	s=k20201202; t=1753778899;
+	bh=v/kpOVMVL0VbZRPfgljdXv2bn6Gc6hW9fXhN63RQtSM=;
 	h=Date:From:To:Subject:Cc:References:In-Reply-To:From;
-	b=Jfc/wren1LJbaQtPGrfXlPuphqQNuJpRnfOQv1nnLazN+3tTSTJlF0b2eTDtdavR3
-	 annnAuru0Yah2c2M/xwoBtko0DeRnaCb7cLHwzhfdMc5RfxIRizs5KLMqvNH/PDL7n
-	 Ij6BiFlDmUbfiE1BEJRGkn0tGNkRyy592IvscC71gaWvyx4o+Va2AFxzkaUYjnoU7D
-	 tWKVhmZv5YpI68wZiGHGaICzY+ZOCeZTVu3zDDZW/r7qcor32qbHvC/WBl+hnyee88
-	 En7g/rQUrF3GK+fHCiVHKiZi6k6yL4X/K+XfXkE/yibdVX3B3Lk+TIgn5ZyfOZhQTL
-	 3/8Z1Co5COJlQ==
+	b=d5soMQEduk1cxpl222qHqtta+r7E8SYfc1QU9usEcnPhZv35AaX5pimLRT/GG6PIp
+	 9EPwXZpv2KqcCiA5fzMv7IvXkQqm9TweGZfhoW5M6HTczBg6Z4cfvnicSePwgrCIN9
+	 JwshVQemLNK+vm6arLlSrXhdK4iP3gYVb7NFMTQeutIDaBTvBm5+KsO+OPzl/XExVU
+	 x7pU5wzI4+FGTfP37itq8zTKCIUNSsZvMhh1tGKdyJ7abgy/FwU2dh/SuKGCD+wOyy
+	 Dx0Z0Oy5sabvs3pbZGO27Etqsb90h0lVRxaxeoFqHhdM1PeJRSsUI/BmiIPilc1GPW
+	 Eu5TizYdJuURA==
 Content-Type: multipart/signed;
- boundary=2e705e879b310d7c093d9c723eda778d834dac574dec93290c67c2b07d74;
+ boundary=20717ec1f244d1b8495b8ac4321eba2428d3341753c744a573ed0c316169;
  micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Tue, 29 Jul 2025 10:47:04 +0200
-Message-Id: <DBOEPHG2V5WY.Q47MW1V5ZJZE@kernel.org>
+Date: Tue, 29 Jul 2025 10:48:15 +0200
+Message-Id: <DBOEQE01XFID.21SA81RTH4OOX@kernel.org>
 From: "Michael Walle" <mwalle@kernel.org>
-To: "Matthias Schiffer" <matthias.schiffer@ew.tq-group.com>, "Andrew Lunn"
- <andrew@lunn.ch>, "Nishanth Menon" <nm@ti.com>, "Vignesh Raghavendra"
- <vigneshr@ti.com>, "Tero Kristo" <kristo@kernel.org>
-Subject: Re: [PATCH net-next] Revert "net: ethernet: ti: am65-cpsw: fixup
- PHY mode for fixed RGMII TX delay"
-Cc: "Andrew Lunn" <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Roger
- Quadros" <rogerq@kernel.org>, "Simon Horman" <horms@kernel.org>, "Siddharth
- Vadapalli" <s-vadapalli@ti.com>, "Maxime Chevallier"
- <maxime.chevallier@bootlin.com>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux@ew.tq-group.com>
+To: "Marek Vasut" <marek.vasut@mailbox.org>
+Subject: Re: [PATCH v2] mtd: spi-nor: winbond: Add support for W77Q51NW
+Cc: <linux-mtd@lists.infradead.org>, "Miquel Raynal"
+ <miquel.raynal@bootlin.com>, "Pratyush Yadav" <pratyush@kernel.org>,
+ "Richard Weinberger" <richard@nod.at>, "Tudor Ambarus"
+ <tudor.ambarus@linaro.org>, "Vignesh Raghavendra" <vigneshr@ti.com>,
+ <linux-kernel@vger.kernel.org>
 X-Mailer: aerc 0.16.0
-References: <20250728064938.275304-1-mwalle@kernel.org>
- <57823bd1-265c-4d01-92d9-9019a2635301@lunn.ch>
- <DBOD5ICCVSL1.23R4QZPSFPVSM@kernel.org>
- <d9b845498712e2372967e40e9e7b49ddb1f864c1.camel@ew.tq-group.com>
-In-Reply-To: <d9b845498712e2372967e40e9e7b49ddb1f864c1.camel@ew.tq-group.com>
+References: <20250721202257.83936-1-marek.vasut+renesas@mailbox.org>
+ <9eabfe619554cbdd493086dcffef8f44@kernel.org>
+ <62383ff7-0a14-4f15-818b-f5e5c56332c5@mailbox.org>
+ <DBJ86H8MDFNX.2Y6T55E0NH63R@kernel.org>
+ <0d0cd3cb-61e5-4ec6-958b-ec48b82429bf@mailbox.org>
+ <DBNH88949QTH.3I3MSOA019UJL@kernel.org>
+ <d592e97a-fad2-4269-b854-d3e82d985035@mailbox.org>
+In-Reply-To: <d592e97a-fad2-4269-b854-d3e82d985035@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
---2e705e879b310d7c093d9c723eda778d834dac574dec93290c67c2b07d74
+--20717ec1f244d1b8495b8ac4321eba2428d3341753c744a573ed0c316169
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
 
-Hi,
-
-> > > The patch being reverted says:
-> > >=20
-> > >    All am65-cpsw controllers have a fixed TX delay
-> > >=20
-> > > So we have some degree of contradiction here.
+On Tue Jul 29, 2025 at 5:51 AM CEST, Marek Vasut wrote:
+> On 7/28/25 8:32 AM, Michael Walle wrote:
+> >>>> I have limited supply of these devices, so OTP is untested. The flas=
+h
+> >>>> does have OTP registers, that's why the .otp entry is there. Why sho=
+uld
+> >>>> I remove it if the OTP registers are in the chip ?
+> >>>
+> >>> We only add tested features. I'm just the messenger here :o. Anyway,
+> >>> OTP is not really one-time-programmable here, you can write and
+> >>> erase it again as long as you don't lock it, if that was your
+> >>> concern.
+> >>
+> >> So how do I test the OTP without locking it ?
 > >=20
-> > I've digged through the old thread and Matthias just references the
-> > datasheet saying it is fixed. Matthias, could you actually try to
-> > set/read this bit? I'm not sure it is really read-only.
+> > flash_otp_{write,info,dump,erase}, just don't use flash_otp_lock.
 >
-> I just referred to the datasheets of various K3 SoCs, I did not try modif=
-ying
-> the reserved bits.
+> Thanks. flash_otp_dump -u /dev/mtd0 returns zeroes, so I suspect the OTP=
+=20
+> is not working. The chip does work even without this entry and the=20
+> content /sys/kernel/debug/spi-nor/spi0.0/capabilities and=20
+> /sys/kernel/debug/spi-nor/spi0.0/params did not change, so I think the=20
+> best way forward is to drop this patch, until I can figure out the OTP=20
+> on this chip ?
 
-So can you try to modify them?
-
-> > > > The u-boot driver (net/ti/am65-cpsw-nuss.c) will configure the dela=
-y in
-> > > > am65_cpsw_gmii_sel_k3(). If the u-boot device tree uses rgmii-id th=
-is
-> > > > patch will break the transmit path because it will disable the PHY =
-delay
-> > > > on the transmit path, but the bootloader has already disabled the M=
-AC
-> > > > delay, hence there will be no delay at all.
->
-> I have a patch that removes this piece of U-Boot code and had intended to=
- submit
-> that soon to align the U-Boot driver with Linux again. I'll hold off unti=
-l we
-> know how the solution in Linux is going to look.
-
-That doesn't fix older bootloaders though. So in linux we still have
-to work around that.
-
-Although I don't get it why you want to remove that feature.
-
-> > > We have maybe 8 weeks to fix this, before it makes it into a released
-> > > kernel. So rather than revert, i would prefer to extend the patch to
-> > > make it work with all variants of the SoC.
-> > >=20
-> > > Is CTRL_MMR0_CFG0_ENET1_CTRL in the Ethernet address space?
-> >=20
-> > No, that register is part of the global configuration space (search
-> > for phy_gmii_sel in the k3-am62p-j722s-common-main.dtsi), but is
-> > modeled after a PHY (not a network PHY). And actually, I've just
-> > found out that the PHY driver for that will serve the rgmii_id bit
-> > if .features has PHY_GMII_SEL_RGMII_ID_MODE set. So there is already
-> > a whitelist (although it's wrong at the moment, because the J722S
-> > SoC is not listed as having it). As a side note, the j722s also
-> > doesn't have it's own SoC specific compatible it is reusing the
-> > am654-phy-gmii-sel compatible. That might or might not bite us now..
-> >=20
-> > I digress..
-> >=20
-> > > Would it be possible for the MAC driver to read it, and know if the d=
-elay has
-> > > been disabled? The switch statement can then be made conditional?
-> > >=20
-> > > If this register actually exists on all SoC variants, can we just
-> > > globally disable it, and remove the switch statement?
->
-> If we just remove the switch statement, thus actually supporting all the
-> different delay modes, we're back at the point where there is no way for =
-the
-> driver to determine whether rgmii-rxid is supposed to be interpreted corr=
-ectly
-> or not (currently all Device Trees using this driver require the old/inco=
-rrect
-> interpretation for Ethernet to work).
-
-I can't follow you here. Are you assuming that the TX delay is
-fixed? For me, that's still the culprit. Is that a fair assumption?
-And only TI can tell us.
-
-> > Given that all the handling is in the PHY subsystem I don't know.
-> > You'd have to ask the PHY if it supports that, before patching the
-> > phy-interface-mode - before attaching the network PHY I guess?
->
-> The previous generation of the CPSW IP handles this in
-> drivers/net/ethernet/ti/cpsw-phy-sel.c, which is just a custom platform d=
-evice
-> referenced by the MAC node. The code currently (partially) implements the
-> old/incorrect interpretation for phy-mode, enabling the delay on the MAC =
-side
-> for PHY_INTERFACE_MODE_RGMII.
->
-> >=20
-> > If we want to just disable (and I assume with disable you mean
-> > disable the MAC delay) it: the PHY is optional, not sure every SoC
-> > will have one. And also, the reset default is exactly the opposite
-> > and TI says it's fixed to the opposite and there has to be a reason
-> > for that.
->
-> My preference would be to unconditionally enable the MAC-side delay on Li=
-nux to
-> align with the reset default and what the datasheet claims is the only su=
-pported
-> mode, but let's hear what the TI folks think about this.
-
-Which goes against Andrew's "lets to all the delays in the PHY". We
-have rgmii-id in our AM67A based board and we've actually measured
-the signals with and without the MAC delay.
-
-Last week, I've also opened an e2e forum case, maybe we get some
-more insights. Funny enough, TI seem to have a different register
-description where this bit is described.
-https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1=
-544031/am67a-internal-rgmii-delay/
+Probably. Good to know that the flash is working for you.
 
 -michael
 
---2e705e879b310d7c093d9c723eda778d834dac574dec93290c67c2b07d74
+--20717ec1f244d1b8495b8ac4321eba2428d3341753c744a573ed0c316169
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaIiKiBIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/hl+wF+ITZLpIYegyZ3XuZ+Vfhowbdn6UY2SnLB
-6Dpab1h4j0uWenCbmv+cOgrQ/C2B7KdnAYDUQ3PLU2QzJSdXWSCyORgpZufahSG8
-w45jv335Buy8k6rrY09HazY/SOWpKFQahHQ=
-=Pkql
+iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaIiKzxIcbXdhbGxlQGtl
+cm5lbC5vcmcACgkQEic87j4CH/jb/QGAhc+gsKxCknmtQPaaJ/FTrerEZic21gys
+8Tbc7+kOt1qxnZgCX56A6Nxab3UmzitDAYDN4qFM0IG70A1EM4VIcSz+wKAf0Kgd
+AfAUJKmvZPgzv5xKMIaK572Gb6FYTnlPYn8=
+=0Gkt
 -----END PGP SIGNATURE-----
 
---2e705e879b310d7c093d9c723eda778d834dac574dec93290c67c2b07d74--
+--20717ec1f244d1b8495b8ac4321eba2428d3341753c744a573ed0c316169--
 
