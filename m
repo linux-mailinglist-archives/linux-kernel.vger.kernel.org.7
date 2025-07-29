@@ -1,358 +1,241 @@
-Return-Path: <linux-kernel+bounces-749230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D366FB14BAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:53:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFA30B14BB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11ED4545AF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:53:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F6F4E6CF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CAB287264;
-	Tue, 29 Jul 2025 09:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="WMsLcgXZ"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012004.outbound.protection.outlook.com [40.107.75.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE28287269;
+	Tue, 29 Jul 2025 09:54:10 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6156D2777E4
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.4
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753782795; cv=fail; b=tol9CetJ/mb4Za+/Z10t3PB2TLZ61H6whbA7rXEGBoZuW9RVdyR95Rc2QW/3tKWlWFSwE32GVW7LFd2otCQCpWXMRqs/2nwZhRj11hF/K17R6/WOvMZjdZQaSKRTSshoHjYj6EWjzcI6SrSAeDtHCYVqe59DvtK0BlrbUWiw0qY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753782795; c=relaxed/simple;
-	bh=Qd7h2tL1tSCvTqqF0/sS9AjYKG/g0fDtNQnY3P+cjlY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=mwHesGCgm7Slliurp5naCVOeGU/LtjJmsxwfRDNmsDQ/R4chsdSPp9ZlelCSvmIpraCiavf7ZFc/ZDOKcY/dql8XT6KW9z310EKEJPcF+vQGreWeUkbDy0o1CX23XAnj1GqsIVGtBc1LvZYyMNAPdkcxcV/+sD4JsoRYadIpPS8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=WMsLcgXZ; arc=fail smtp.client-ip=40.107.75.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K7paTYpvAXRlDIOYOMq6pIzfPr/aMEmOSgR85LpYIK+vuepL97232e8r9a8CWNdXZixUo2djboAKHs4OJveZHZKTFKg6zB6DfjzbjdcALNl6G2wD3ObKjljTSoH3NBqn7GZM/Mwhwmt6BAHRRZhBhSB7BdVffMGQ8ij0smGJrJYt0B+EgPDnu4eoGcPQG5LmbKh8x8cpQELLx5iT4ahfvNVJBJnRq76cXOMZRKDhniY0FLTYbeWz+vxRHzA5DINzG1XdnOCfCGXgr/EI4Sb7t7yzHYl5OmEzN8G8Tgii+sh9lKuNl0oCJIljYKN9vQUQ4fBhFqqB0T5Z/iIu+6H4OQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Z1g4/8c3bkbXCaxKakvoQfrWpeMMIot2cUxGxTuXCI0=;
- b=A9pa8aFh9f0Y5wYxyvn4BJriBc85AXCCBnAEIPLs1BAQnF0vQEIIVAWO36rb80BezvyPnp6BZpzbswG5pQyVoUV6EHsh5WpKKymYQw651uK0Bh5GO9SY0d4kZGZ9DN0Gh0VyVC2QGO5gtKX0MZipbfPIgWVuRSDt1Zkf2wPbt1TJg+VELt7kdd1VaQy07r7kDazJHnGbn9P8K+fItJTLD9wxitrt2AOeZGdTteP61GZxYOJOmsvLZVMPASAmWk41/CbUPK7GkrbR1xFth0PILcYYIgQA74ZHsPWJs12KppkWPNZWe/R/mvZVXRKY++wXMhHs7gh506I0N/xBDQF4ew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Z1g4/8c3bkbXCaxKakvoQfrWpeMMIot2cUxGxTuXCI0=;
- b=WMsLcgXZ6iZ3pvi8oZBOh3K+GxXLdBIOYL47YE5VhAFMmMg4gUXV3LzyM/nIkRfn3u/OX3ZHwtZpBiSNOnVcwMg+eyDfq30GPXn2ttcFnAadl/9KC4E26+nZGVNHwMWAL5MVOHfjXoJBiHFZdy8NaMtHAYpvZLWoh7/m05nZoLnoYcH7Eb/FmOAGME+3ObZMkzrGK1aa37/DTmtYpa3GQffDOUIJV0YbKcRpuZSRKQpJQEv9i3z7v6uajFC63dYQsOj/n9X91PbxeJh8QXr8bDZSGK+2B/xhdgwrN1gieAY3LDAu06zMb6ooZw2yShm+tj47/+McEnPIRchkp4QPhw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TY1PPF33E28B4E6.apcprd06.prod.outlook.com (2603:1096:408::90e)
- by SEZPR06MB7089.apcprd06.prod.outlook.com (2603:1096:101:237::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Tue, 29 Jul
- 2025 09:53:09 +0000
-Received: from TY1PPF33E28B4E6.apcprd06.prod.outlook.com
- ([fe80::6beb:51d8:f9a4:d4ed]) by TY1PPF33E28B4E6.apcprd06.prod.outlook.com
- ([fe80::6beb:51d8:f9a4:d4ed%6]) with mapi id 15.20.8964.023; Tue, 29 Jul 2025
- 09:53:09 +0000
-From: Chunhai Guo <guochunhai@vivo.com>
-To: chao@kernel.org,
-	jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Chunhai Guo <guochunhai@vivo.com>
-Subject: [PATCH] f2fs: add reserved nodes for privileged users
-Date: Tue, 29 Jul 2025 17:52:38 +0800
-Message-Id: <20250729095238.607433-1-guochunhai@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SI2PR04CA0013.apcprd04.prod.outlook.com
- (2603:1096:4:197::6) To TY1PPF33E28B4E6.apcprd06.prod.outlook.com
- (2603:1096:408::90e)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6032321D001
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753782850; cv=none; b=Jy6qEelL1Le2zeZiikJrQT92qTG6x4Tltdb2q9Fo4oSgxzJCguJk8/Wa6zcFpZE5383rox+zwTI3KIYgDgLw9xP/Rux8QA0QZTE7nRWKHK0zJHQwoSo9Hi/NJTcaEdQYAA1Q3zGYUWAcFtdQ2Sii2c9Ng/Vmorkv7tpcjP0//MA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753782850; c=relaxed/simple;
+	bh=iX3pDa3hSaVL/QvQyONv94OP4od4OovyLuylwH+Dx2w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=Hljwy4GSIBv4LBxnVVWV9fZjftV4fv+9j8EVL+QIMcVX8IyRRUUa/zBSnL9Cyd8i2ZZSyWkCUDVOARjg3fYILytdgN4pvMenaUjMNU2ycLUZJ+VciXDNdCSVuLsKTuvWwWvZbl90GsNuCodBYpILCZcsJZGyV3YIC/dsk1rNoUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87c30329a56so1149746939f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:54:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753782847; x=1754387647;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPlWQxFwNSi6z1SlxSyH5qFbb30wcJNU3TRYC2VIYZ0=;
+        b=r54Ol0T4mzaSPbke+ShnssqOuKZaUqly2ck0Cc/qei9+tDpSufQv+v8ALzSkAFmoXd
+         rWin+AjkwRR+ayr0H5fflGsteQbohZc/B8X/wmUw2U8y8L97qS1/PZGIeI/URee8Mcqz
+         8Ktvd7nhhx86rdKGj943IfnpQ43rExktn9HyrOmeV/lKZGf1EH5TL+KEaI80iW9KZ1L6
+         VM6QtZli6CKl1RJoZF1Dv+J2mT7QO6gOlGUJ5Zl01Vh/RGgdcNFt2FHo3OUMCFAg02ER
+         2sZxMk94pJs/1XE81JdNaH+olJWqoqfBgExeCgwXRokSGRT1HxpW4XlxlkqYBiRaBf+u
+         hs0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWImuHh+QJkzsCOxuqC+YUac6lVTK+FBBFsMUP94BJ/TVJQt+566cB4dNTClSj14pMc5sdbOv9dPCY7LtI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyeNJ+nHuW5WWGbp5U+rkaTZJ4ngOMvSIMpv4wX0QERHGBGlbmL
+	jhecsBXi50HVNt5H21QqKunlqRyk/XgnPqzGC/IwmnbOvSg9zm9rAyvOsi867h77Mc04dugCrZ0
+	qtBJ9+ldz0ZgWpQt9+XjNMZMSWj4bo2XFB/cKWaYqf49tM087QrigcniBovA=
+X-Google-Smtp-Source: AGHT+IHgv2pNuveMbTqKspkaQ6Iu952B7sfK8P1FIYOP3N+4LCFMtCAmMxTSH4njXT6GdEux51CBzARh9tZ39FHoXCvmIFlyaTi3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TY1PPF33E28B4E6:EE_|SEZPR06MB7089:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b4e0428-a1ee-4213-3ab0-08ddce85b990
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?V+qrXq3Zro16Qnrb/gLNQmCLnb1QsLj+AWtQvX6jyx5B8HvhmB8hIoOfCrES?=
- =?us-ascii?Q?dQ5fzUKZ7WrEYz9dhTZxrKLzfModin3wX2EuZ2QnWnNpO6/uw1HNfdfTzV6y?=
- =?us-ascii?Q?NF11A46QGXVrHGL4kXz4+98yIDJEJFZ6T/hYZVd2iOfyioQXuynxfD4vSzIl?=
- =?us-ascii?Q?eLydRlNwpKCS9/we0uHnVc+9didNfd0n5j6ubRvpM8Du14ItbkKAq1BmvzAk?=
- =?us-ascii?Q?zZ1IkDlmbfTknANsmsqqPGqqTasIIaj2wdSBrgWE9cr3AjgYC2vcZKdxudEZ?=
- =?us-ascii?Q?nslYzSzNp6Uba8soCLyxF5UX7xYDqjL+3fF58LR06C79FjXsQ4gq1n45femN?=
- =?us-ascii?Q?XoWUrhBM6oi1fxWKC+7P3XeMbcOimBXiTY7LgUsZaxxa/AqDG/52op6SF2ZS?=
- =?us-ascii?Q?DBYEp+4tVBy3xHRiQHdFbSgFEF5i4s2O1/549Kx4/2v94GkBesEPsO10zriJ?=
- =?us-ascii?Q?6KqnjyrY++anB0fVKavG2wHGzS64xB8/XkLd8LmMoPuj8EdmjdRv3cAeyx5h?=
- =?us-ascii?Q?Gpd/RZZzHs3GOdDCNSHI7oxHFl0iW/7DVQUCiIcKZzxjjMoM5DEXojEpr4SH?=
- =?us-ascii?Q?yn5OuiKwLV733/83NigR0O5b3Y/CFSa1OcvwY+9rh3TEz1m3j3yuUC50sfak?=
- =?us-ascii?Q?CaRTlSr4h9o9bnZQr+oK9FINrgDdcq9zIcoV6h4dPRa9iHRV4SqPPMDDS9eK?=
- =?us-ascii?Q?+AZjjgeT5Ma6csphqfZW5yqajqjYoBBahZnhOSheTcAVbeXq/OQm6o2qUoho?=
- =?us-ascii?Q?Pbn/ypefBL+18XamQNu6cY1cepSmK8wPX2IXAMuaUtwKaeAnqGljWy4Qli4u?=
- =?us-ascii?Q?PTtt19PQmXn3alWK9v43jYdr1LjfSEy5GfC7xUyWINXs43LDcdiuKWV72628?=
- =?us-ascii?Q?3PGN7husIDzB8h+G2zsOL/jcGE9IgzchDUhhFx6eSMKYGsy8rJ6L3G0WlZBq?=
- =?us-ascii?Q?39cVHutEufbGx05e7Lbi1297mRY128FP4MBtjcwIbfmNsjCmb8F5n8e0/6YC?=
- =?us-ascii?Q?djL643UcA2y+qDmtZNtGHAajAO811yjPzEfb7xbS2m16OLQLQ5uEfeikANkc?=
- =?us-ascii?Q?BmVnOQ4TfzOaMeQvaCFYhtyiRVH64M3+VET3VLpwC/eXhDPuSuLHYSN3dxbR?=
- =?us-ascii?Q?LRkgCG+/i7OqqSVZhl0b70Jh38hV1DiTPN6US+mXn98DfemBSA4Mvv0H/312?=
- =?us-ascii?Q?FYjVr9BNsc3xBK7URwWq2XOhFloThwq6z+av8/XJ84x+dWTFqDof8INsYWzJ?=
- =?us-ascii?Q?UR+XWKO2k1u+5wCAc+e9OlURT/6oRS1IqJPN2k5EsZj0m9Rv2CCvBZjYjjx6?=
- =?us-ascii?Q?X6Ql7Gn4eU1uobliaTFwBVnd3gy/xIYCk2uiQ9kjKcRYXkIy2pkoP8S8NxeR?=
- =?us-ascii?Q?EUw00ZhD53rjuFf6l7urItqoGmenmPoNtb0KtuHtFm0/NOCO52gxqxRkJ825?=
- =?us-ascii?Q?S88UjP+eRkJxnPrEeZkUCahRtIKa60E7F8fupaIBYgVThoC7e/KOAg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY1PPF33E28B4E6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?md+PDCjKhcnLWuI0+atLSf03p/tB3nLUBWAAVhuZf7M1wRohWgRPntrZGzVO?=
- =?us-ascii?Q?99L9XxuQNjCRUBacpMACYZ7IJEsao2XE4ySl0QEeQ7X1Ks9Yzd51dcpTHNAG?=
- =?us-ascii?Q?eUTug3T0lofpMA9J2R4Nn0VdPz6z2J2PNOTdm3MYOrbVoHPrggdkqSEsAwH5?=
- =?us-ascii?Q?7pQ35iwRFIgIlfUb0eshwv3vsC/zp3FXSXGvgM6sfQkcuihhcmbKH17JU255?=
- =?us-ascii?Q?g+sbxO23rD8mC2gDLLrpVNPeEFUOb18UI0Y+ekuBWD4qzcF7mTiK15FubnYs?=
- =?us-ascii?Q?2uagYvP3aG17YJmgLTxBvSenN7ubglB9FoXqZ8729thVLEWNmNJqA4hq4ZRZ?=
- =?us-ascii?Q?by47w1qQ6QGHiezWM2m+r/amIWkkZBgKuQzB/GDd+mGkPT/GNr+G2RudCiia?=
- =?us-ascii?Q?2v7EQpm2KTvbNHwz2VowLFBNcLwDF4YuEg+nsg7dPydQkp+VGpu6vNf9A+9+?=
- =?us-ascii?Q?I4qjYF7Fudewq/yWtWWER+XYlN2snHXT4Q0ufahzozg2tdE0ZAQauliotsE+?=
- =?us-ascii?Q?dkA3NeYcpgy+zSFVKajMbrfmmd1U/mUUEGnKSJe1sGXPT0CjI74LVuGG7EPA?=
- =?us-ascii?Q?4S7LmtfSK9+Lc2Xi3yoHRHP2jMWCvFWETbpLRb0Wb5Hv5le7Nnkup6gYJnbA?=
- =?us-ascii?Q?8EwFqu3YYBtIklbdFHp124F7RUrTxT60/GXj6lNIt97B5PMnJyjOdCnKDU1J?=
- =?us-ascii?Q?A5JD0XBdZhKpu/y0zwZv65NlJo2iQlSa0n/4f4dcBH6Eo9L2xGIR9WaFLYEQ?=
- =?us-ascii?Q?zlAslq6npyutUWMOH+HFge2SM7Gys4f9QFGsIv4vFL4JNpa4Jl3aiQe+/I/e?=
- =?us-ascii?Q?irxPOI24JIYWFV6LE1Q18lMAAFuqpeSIWlcsAfAEbPxrrS2OHROMVi2TTobC?=
- =?us-ascii?Q?z0vslLhBy3wrqq9sTAM3hW+Nvei1Hv3GHDOy0z7trCRcQjNFLTKwOIYdkkPk?=
- =?us-ascii?Q?F9JWjenFi6K7V6YZtBQo33vWkdGGNwIO4DUSizQpNqgw1iLtHlhp6k5HWV9C?=
- =?us-ascii?Q?QuZOLSHFY5lwOLhg3LvAyLCB5UYSD9RFSWhZVx/IqaBqXsBFUJTM/pJxl9WG?=
- =?us-ascii?Q?WwMM01Mr7IFtebhUvsjBfwjQanYa+tB4bkSJ0KyChwi74YxupoqAl2fXqp4g?=
- =?us-ascii?Q?QioyY3BvPtDxAa1maNYK+Rb5Ap3q3w4uohDF7rqA8TkaMHYS4SQ34In9XxyV?=
- =?us-ascii?Q?PPZ5F4qYdzOxeuPPi7FOCWcCZFe1aV5AQpzv4dqIYKbQ5tlipLp3C6K9wOLi?=
- =?us-ascii?Q?g4s31vLnsn24tnLyJ23zKc47uWwcgiUNtbpp318lS9NZIQlszrj0l/gA2ymb?=
- =?us-ascii?Q?U8Ec9ujnJ+vuo3CbyQicPSAxd1XbtNIlpRiHpTjsLCoqCmaGZWDFK6UjO5Zl?=
- =?us-ascii?Q?LbC1d/c/WeyiOr5cRBVa5ZOE9Ml9bi47dPlcsX5+xBqq1kw6JY3xVQARg1dg?=
- =?us-ascii?Q?aDmgyG46dijUCS2Ohfnz6Y6ptOJ5MdRhegyzZsDMFDB+TrziiaC4yKpEhJUB?=
- =?us-ascii?Q?yRzQKNFBgensDdPIi742rA8OENyhPWGzeQYntgy4tL81QI5q1ZPXmV2JrrAj?=
- =?us-ascii?Q?W/epjjcSbZz1eKsxaTiQcVaE8peeZOeT4zxPLvgt?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b4e0428-a1ee-4213-3ab0-08ddce85b990
-X-MS-Exchange-CrossTenant-AuthSource: TY1PPF33E28B4E6.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 09:53:09.8255
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: scUEpaNlBeFDrb4/aOYrXZYBR0i+doyVX/SsFil707XL+cUQZbiLsQzepK4LA8DHDnrz2biHFNCXFH0iwJXMHg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB7089
+X-Received: by 2002:a05:6602:27d3:b0:864:a228:92b4 with SMTP id
+ ca18e2360f4ac-8802297735fmr2406273439f.7.1753782847580; Tue, 29 Jul 2025
+ 02:54:07 -0700 (PDT)
+Date: Tue, 29 Jul 2025 02:54:07 -0700
+In-Reply-To: <aIiaPZa_jHAiuATa@gauss3.secunet.de>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68889a3f.050a0220.f0410.0000.GAE@google.com>
+Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (3)
+From: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>
+To: steffen.klassert@secunet.com
+Cc: steffen.klassert@secunet.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-This patch allows privileged users to reserve nodes via the
-'reserve_node' mount option, which is similar to the existing
-'reserve_root' option.
+> On Tue, Jul 29, 2025 at 12:08:31AM -0700, syzbot wrote:
+>> Hello,
+>> 
+>> syzbot found the following issue on:
+>> 
+>> HEAD commit:    038d61fd6422 Linux 6.16
+>> git tree:       upstream
+>> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b88cf0580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=4066f1c76cfbc4fe
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=6641a61fe0e2e89ae8c5
+>> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ca1782580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140194a2580000
+>> 
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/6505c612be11/disk-038d61fd.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/e466ef29c1ca/vmlinux-038d61fd.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/b6d3d8fc5cbb/bzImage-038d61fd.xz
+>> 
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com
+>
+> #syz test:
 
-"-o reserve_node=<N>" means <N> nodes are reserved for privileged
-users only.
+want either no args or 2 args (repo, branch), got 4
 
-Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
----
- Documentation/filesystems/f2fs.rst |  9 ++++++---
- fs/f2fs/f2fs.h                     | 15 +++++++++------
- fs/f2fs/super.c                    | 30 +++++++++++++++++++++++++++++-
- 3 files changed, 44 insertions(+), 10 deletions(-)
- mode change 100644 => 100755 Documentation/filesystems/f2fs.rst
-
-diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
-old mode 100644
-new mode 100755
-index 03b1efa6d3b2..95dbcd7ac9a8
---- a/Documentation/filesystems/f2fs.rst
-+++ b/Documentation/filesystems/f2fs.rst
-@@ -173,9 +173,12 @@ data_flush		 Enable data flushing before checkpoint in order to
- 			 persist data of regular and symlink.
- reserve_root=%d		 Support configuring reserved space which is used for
- 			 allocation from a privileged user with specified uid or
--			 gid, unit: 4KB, the default limit is 0.2% of user blocks.
--resuid=%d		 The user ID which may use the reserved blocks.
--resgid=%d		 The group ID which may use the reserved blocks.
-+			 gid, unit: 4KB, the default limit is 12.5% of user blocks.
-+reserve_node=%d		 Support configuring reserved nodes which are used for
-+			 allocation from a privileged user with specified uid or
-+			 gid, the default limit is 12.5% of all nodes.
-+resuid=%d		 The user ID which may use the reserved blocks and nodes.
-+resgid=%d		 The group ID which may use the reserved blocks and nodes.
- fault_injection=%d	 Enable fault injection in all supported types with
- 			 specified injection rate.
- fault_type=%d		 Support configuring fault injection type, should be
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 97c1a2a3fbd7..f4c4ea115465 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -131,6 +131,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
-  * string rather than using the MS_LAZYTIME flag, so this must remain.
-  */
- #define F2FS_MOUNT_LAZYTIME		0x40000000
-+#define F2FS_MOUNT_RESERVE_NODE		0x80000000
- 
- #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
- #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
-@@ -171,6 +172,7 @@ struct f2fs_rwsem {
- 
- struct f2fs_mount_info {
- 	unsigned int opt;
-+	unsigned int root_reserved_nodes; /* root reserved nodes */
- 	block_t root_reserved_blocks;	/* root reserved blocks */
- 	kuid_t s_resuid;		/* reserved blocks for uid */
- 	kgid_t s_resgid;		/* reserved blocks for gid */
-@@ -2355,13 +2357,11 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
- 	return ofs == XATTR_NODE_OFFSET;
- }
- 
--static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
-+static inline bool __allow_reserved_root(struct f2fs_sb_info *sbi,
- 					struct inode *inode, bool cap)
- {
- 	if (!inode)
- 		return true;
--	if (!test_opt(sbi, RESERVE_ROOT))
--		return false;
- 	if (IS_NOQUOTA(inode))
- 		return true;
- 	if (uid_eq(F2FS_OPTION(sbi).s_resuid, current_fsuid()))
-@@ -2382,7 +2382,7 @@ static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
- 	avail_user_block_count = sbi->user_block_count -
- 					sbi->current_reserved_blocks;
- 
--	if (!__allow_reserved_blocks(sbi, inode, cap))
-+	if (!__allow_reserved_root(sbi, inode, cap))
- 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
- 
- 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
-@@ -2740,7 +2740,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 					struct inode *inode, bool is_inode)
- {
- 	block_t	valid_block_count;
--	unsigned int valid_node_count;
-+	unsigned int valid_node_count, avail_user_node_count;
- 	unsigned int avail_user_block_count;
- 	int err;
- 
-@@ -2769,8 +2769,11 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
- 		goto enospc;
- 	}
- 
-+	avail_user_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
-+	if (!__allow_reserved_root(sbi, inode, false))
-+		avail_user_node_count -= F2FS_OPTION(sbi).root_reserved_nodes;
- 	valid_node_count = sbi->total_valid_node_count + 1;
--	if (unlikely(valid_node_count > sbi->total_node_count)) {
-+	if (unlikely(valid_node_count > avail_user_node_count)) {
- 		spin_unlock(&sbi->stat_lock);
- 		goto enospc;
- 	}
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 30c038413040..c58992be52a1 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -143,6 +143,7 @@ enum {
- 	Opt_extent_cache,
- 	Opt_data_flush,
- 	Opt_reserve_root,
-+	Opt_reserve_node,
- 	Opt_resgid,
- 	Opt_resuid,
- 	Opt_mode,
-@@ -265,6 +266,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
- 	fsparam_flag_no("extent_cache", Opt_extent_cache),
- 	fsparam_flag("data_flush", Opt_data_flush),
- 	fsparam_u32("reserve_root", Opt_reserve_root),
-+	fsparam_u32("reserve_node", Opt_reserve_node),
- 	fsparam_gid("resgid", Opt_resgid),
- 	fsparam_uid("resuid", Opt_resuid),
- 	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
-@@ -336,6 +338,7 @@ static match_table_t f2fs_checkpoint_tokens = {
- #define F2FS_SPEC_discard_unit			(1 << 21)
- #define F2FS_SPEC_memory_mode			(1 << 22)
- #define F2FS_SPEC_errors			(1 << 23)
-+#define F2FS_SPEC_reserve_node			(1 << 24)
- 
- struct f2fs_fs_context {
- 	struct f2fs_mount_info info;
-@@ -439,6 +442,7 @@ static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
- {
- 	block_t limit = min((sbi->user_block_count >> 3),
- 			sbi->user_block_count - sbi->reserved_blocks);
-+	unsigned int node_limit = sbi->total_node_count >> 3;
- 
- 	/* limit is 12.5% */
- 	if (test_opt(sbi, RESERVE_ROOT) &&
-@@ -447,6 +451,12 @@ static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
- 		f2fs_info(sbi, "Reduce reserved blocks for root = %u",
- 			  F2FS_OPTION(sbi).root_reserved_blocks);
- 	}
-+	if (test_opt(sbi, RESERVE_NODE) &&
-+			F2FS_OPTION(sbi).root_reserved_nodes > node_limit) {
-+		F2FS_OPTION(sbi).root_reserved_nodes = node_limit;
-+		f2fs_info(sbi, "Reduce reserved nodes for root = %u",
-+			  F2FS_OPTION(sbi).root_reserved_nodes);
-+	}
- 	if (!test_opt(sbi, RESERVE_ROOT) &&
- 		(!uid_eq(F2FS_OPTION(sbi).s_resuid,
- 				make_kuid(&init_user_ns, F2FS_DEF_RESUID)) ||
-@@ -841,6 +851,11 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 		F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
- 		ctx->spec_mask |= F2FS_SPEC_reserve_root;
- 		break;
-+	case Opt_reserve_node:
-+		ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
-+		F2FS_CTX_INFO(ctx).root_reserved_nodes = result.uint_32;
-+		ctx->spec_mask |= F2FS_SPEC_reserve_node;
-+		break;
- 	case Opt_resuid:
- 		F2FS_CTX_INFO(ctx).s_resuid = result.uid;
- 		ctx->spec_mask |= F2FS_SPEC_resuid;
-@@ -1424,6 +1439,14 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
- 		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
- 		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_ROOT;
- 	}
-+	if (test_opt(sbi, RESERVE_NODE) &&
-+			(ctx->opt_mask & F2FS_MOUNT_RESERVE_NODE) &&
-+			ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_NODE)) {
-+		f2fs_info(sbi, "Preserve previous reserve_node=%u",
-+			F2FS_OPTION(sbi).root_reserved_nodes);
-+		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
-+		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_NODE;
-+	}
- 
- 	err = f2fs_check_test_dummy_encryption(fc, sb);
- 	if (err)
-@@ -1623,6 +1646,9 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
- 	if (ctx->spec_mask & F2FS_SPEC_reserve_root)
- 		F2FS_OPTION(sbi).root_reserved_blocks =
- 					F2FS_CTX_INFO(ctx).root_reserved_blocks;
-+	if (ctx->spec_mask & F2FS_SPEC_reserve_node)
-+		F2FS_OPTION(sbi).root_reserved_nodes =
-+					F2FS_CTX_INFO(ctx).root_reserved_nodes;
- 	if (ctx->spec_mask & F2FS_SPEC_resgid)
- 		F2FS_OPTION(sbi).s_resgid = F2FS_CTX_INFO(ctx).s_resgid;
- 	if (ctx->spec_mask & F2FS_SPEC_resuid)
-@@ -2343,8 +2369,10 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_puts(seq, "fragment:block");
- 	seq_printf(seq, ",active_logs=%u", F2FS_OPTION(sbi).active_logs);
- 	if (test_opt(sbi, RESERVE_ROOT))
--		seq_printf(seq, ",reserve_root=%u,resuid=%u,resgid=%u",
-+		seq_printf(seq, ",reserve_root=%u,reserve_node=%u,resuid=%u,"
-+				"resgid=%u",
- 				F2FS_OPTION(sbi).root_reserved_blocks,
-+				F2FS_OPTION(sbi).root_reserved_nodes,
- 				from_kuid_munged(&init_user_ns,
- 					F2FS_OPTION(sbi).s_resuid),
- 				from_kgid_munged(&init_user_ns,
--- 
-2.34.1
-
+>
+> diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+> index f3014e4f54fc..91d52a380e37 100644
+> --- a/include/net/xfrm.h
+> +++ b/include/net/xfrm.h
+> @@ -915,7 +915,7 @@ static inline void xfrm_pols_put(struct xfrm_policy **pols, int npols)
+>  		xfrm_pol_put(pols[i]);
+>  }
+>  
+> -void __xfrm_state_destroy(struct xfrm_state *);
+> +void __xfrm_state_destroy(struct xfrm_state *, bool);
+>  
+>  static inline void __xfrm_state_put(struct xfrm_state *x)
+>  {
+> @@ -925,7 +925,13 @@ static inline void __xfrm_state_put(struct xfrm_state *x)
+>  static inline void xfrm_state_put(struct xfrm_state *x)
+>  {
+>  	if (refcount_dec_and_test(&x->refcnt))
+> -		__xfrm_state_destroy(x);
+> +		__xfrm_state_destroy(x, false);
+> +}
+> +
+> +static inline void xfrm_state_put_sync(struct xfrm_state *x)
+> +{
+> +	if (refcount_dec_and_test(&x->refcnt))
+> +		__xfrm_state_destroy(x, true);
+>  }
+>  
+>  static inline void xfrm_state_hold(struct xfrm_state *x)
+> @@ -1763,7 +1769,7 @@ struct xfrmk_spdinfo {
+>  
+>  struct xfrm_state *xfrm_find_acq_byseq(struct net *net, u32 mark, u32 seq, u32 pcpu_num);
+>  int xfrm_state_delete(struct xfrm_state *x);
+> -int xfrm_state_flush(struct net *net, u8 proto, bool task_valid);
+> +int xfrm_state_flush(struct net *net, u8 proto, bool task_valid, bool sync);
+>  int xfrm_dev_state_flush(struct net *net, struct net_device *dev, bool task_valid);
+>  int xfrm_dev_policy_flush(struct net *net, struct net_device *dev,
+>  			  bool task_valid);
+> diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+> index 5120a763da0d..7fd8bc08e6eb 100644
+> --- a/net/ipv6/xfrm6_tunnel.c
+> +++ b/net/ipv6/xfrm6_tunnel.c
+> @@ -334,7 +334,7 @@ static void __net_exit xfrm6_tunnel_net_exit(struct net *net)
+>  	struct xfrm6_tunnel_net *xfrm6_tn = xfrm6_tunnel_pernet(net);
+>  	unsigned int i;
+>  
+> -	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
+> +	xfrm_state_flush(net, 0, false, true);
+>  	xfrm_flush_gc();
+>  
+>  	for (i = 0; i < XFRM6_TUNNEL_SPI_BYADDR_HSIZE; i++)
+> diff --git a/net/key/af_key.c b/net/key/af_key.c
+> index b5d761700776..efc2a91f4c48 100644
+> --- a/net/key/af_key.c
+> +++ b/net/key/af_key.c
+> @@ -1766,7 +1766,7 @@ static int pfkey_flush(struct sock *sk, struct sk_buff *skb, const struct sadb_m
+>  	if (proto == 0)
+>  		return -EINVAL;
+>  
+> -	err = xfrm_state_flush(net, proto, true);
+> +	err = xfrm_state_flush(net, proto, true, false);
+>  	err2 = unicast_flush_resp(sk, hdr);
+>  	if (err || err2) {
+>  		if (err == -ESRCH) /* empty table - go quietly */
+> diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+> index 97ff756191ba..0ec7d22aaff3 100644
+> --- a/net/xfrm/xfrm_state.c
+> +++ b/net/xfrm/xfrm_state.c
+> @@ -592,7 +592,7 @@ void xfrm_state_free(struct xfrm_state *x)
+>  }
+>  EXPORT_SYMBOL(xfrm_state_free);
+>  
+> -static void xfrm_state_gc_destroy(struct xfrm_state *x)
+> +static void ___xfrm_state_destroy(struct xfrm_state *x)
+>  {
+>  	if (x->mode_cbs && x->mode_cbs->destroy_state)
+>  		x->mode_cbs->destroy_state(x);
+> @@ -631,7 +631,7 @@ static void xfrm_state_gc_task(struct work_struct *work)
+>  	synchronize_rcu();
+>  
+>  	hlist_for_each_entry_safe(x, tmp, &gc_list, gclist)
+> -		xfrm_state_gc_destroy(x);
+> +		___xfrm_state_destroy(x);
+>  }
+>  
+>  static enum hrtimer_restart xfrm_timer_handler(struct hrtimer *me)
+> @@ -795,14 +795,19 @@ void xfrm_dev_state_free(struct xfrm_state *x)
+>  }
+>  #endif
+>  
+> -void __xfrm_state_destroy(struct xfrm_state *x)
+> +void __xfrm_state_destroy(struct xfrm_state *x, bool sync)
+>  {
+>  	WARN_ON(x->km.state != XFRM_STATE_DEAD);
+>  
+> -	spin_lock_bh(&xfrm_state_gc_lock);
+> -	hlist_add_head(&x->gclist, &xfrm_state_gc_list);
+> -	spin_unlock_bh(&xfrm_state_gc_lock);
+> -	schedule_work(&xfrm_state_gc_work);
+> +	if (sync) {
+> +		synchronize_rcu();
+> +		___xfrm_state_destroy(x);
+> +	} else {
+> +		spin_lock_bh(&xfrm_state_gc_lock);
+> +		hlist_add_head(&x->gclist, &xfrm_state_gc_list);
+> +		spin_unlock_bh(&xfrm_state_gc_lock);
+> +		schedule_work(&xfrm_state_gc_work);
+> +	}
+>  }
+>  EXPORT_SYMBOL(__xfrm_state_destroy);
+>  
+> @@ -917,7 +922,7 @@ xfrm_dev_state_flush_secctx_check(struct net *net, struct net_device *dev, bool
+>  }
+>  #endif
+>  
+> -int xfrm_state_flush(struct net *net, u8 proto, bool task_valid)
+> +int xfrm_state_flush(struct net *net, u8 proto, bool task_valid, bool sync)
+>  {
+>  	int i, err = 0, cnt = 0;
+>  
+> @@ -3278,7 +3283,7 @@ void xfrm_state_fini(struct net *net)
+>  	unsigned int sz;
+>  
+>  	flush_work(&net->xfrm.state_hash_work);
+> -	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
+> +	xfrm_state_flush(net, 0, false, true);
+>  	flush_work(&xfrm_state_gc_work);
+>  
+>  	WARN_ON(!list_empty(&net->xfrm.state_all));
+> diff --git a/net/xfrm/xfrm_user.c b/net/xfrm/xfrm_user.c
+> index 684239018bec..1db18f470f42 100644
+> --- a/net/xfrm/xfrm_user.c
+> +++ b/net/xfrm/xfrm_user.c
+> @@ -2635,7 +2635,7 @@ static int xfrm_flush_sa(struct sk_buff *skb, struct nlmsghdr *nlh,
+>  	struct xfrm_usersa_flush *p = nlmsg_data(nlh);
+>  	int err;
+>  
+> -	err = xfrm_state_flush(net, p->proto, true);
+> +	err = xfrm_state_flush(net, p->proto, true, false);
+>  	if (err) {
+>  		if (err == -ESRCH) /* empty table */
+>  			return 0;
+> -- 
+> 2.43.0
+>
 
