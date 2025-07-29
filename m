@@ -1,131 +1,140 @@
-Return-Path: <linux-kernel+bounces-749560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1A0DB14FF7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:07:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8660EB15001
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1558016D5FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:07:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F37EC7A4224
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B7F1E25F8;
-	Tue, 29 Jul 2025 15:07:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E24A2857DE;
+	Tue, 29 Jul 2025 15:09:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTvkfjvu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Cs6YWwfl"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7CF207E1D
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BDD158DAC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:09:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753801637; cv=none; b=HZWsPdtx/VyyR64sihRkl1rTJPX652n82f6NmRB8+FlE9tZwLMkinUzXee2pTmZzJc1Vzf4KJHCz2enOzwOkQEg3WEw2GAP6YALjKB1O0m+dZxKUmvnedoARz3lYOekSUrVF/KTAfCYRTVuPJIYVKTQaVGQV1hDtoHtcGx69C4g=
+	t=1753801754; cv=none; b=Akm7/IXU0DerYytK/C9eWqSJEEHICKzedFxqeyjk0FzFpcotxctuXos1r13m6HZi6wgvzaUB95t9GvTwBCFakBy788gBUibneXsr315vvxZx3lcNnGi4FIUPqm6jiuovzwPC/aoxGYRsd45xcmi3J/Uekjpjodak881cALSyWeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753801637; c=relaxed/simple;
-	bh=Ei4j61++xYai4BK5l+E6lE08w0YyBTZsWiZjNGGayh8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zxuny+q0YvuO97n5DRwOXuGe3KPXq9xSoLPe/l2hIva6h5Y2AU9ATgH5vmFGbp6lWZ10rWQkvj70pQSIgU7ivxlW615XrnOaSu6X0Gsgh/86dI6paODRCP+00pobRr0AdqrBnSO13+FL5MwKQTFgGH5rQBuX+XXdJeEvqwzIB0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTvkfjvu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870E2C4CEEF;
-	Tue, 29 Jul 2025 15:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753801634;
-	bh=Ei4j61++xYai4BK5l+E6lE08w0YyBTZsWiZjNGGayh8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bTvkfjvuOt5QmZsgVZ+bICfYaIzVvCjhGSn8i2tm85TnsqOxHiBHQi2MR8EcUznT3
-	 CS8IQnRLsh++3pzI6RblJg7URscFMAAi8FTV1DG17RcYbGvURxKegnmBReglCfsRHq
-	 MYl4dxfFLz3KYKdKIZab2j/TwbaR65LMdpgEjXrZ577NTI3t7I/CSb+qZNIikVhSX/
-	 Y3woxHSyi230GmgAv3Z3rosdhuEnGlOAIgriYBgM9AW+Vh0s4kvA9Ethmt8j+WPBzF
-	 OS/oR946RLUkZh4USq/4ZOGF2jr90KQajlaDnjRca976/dGV7nQOU8bRgfV5uQw1CL
-	 C5PgcrUdIq4Mg==
-Date: Tue, 29 Jul 2025 15:07:12 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-	Jan Prusakowski <jprusakowski@google.com>
-Subject: Re: [PATCH] f2fs: dump more information when checkpoint was blocked
- for long time
-Message-ID: <aIjjoBJqYjdNv63m@google.com>
-References: <20250729063326.435167-1-chao@kernel.org>
+	s=arc-20240116; t=1753801754; c=relaxed/simple;
+	bh=zuJNRAPFeyA6IJVZOGMjCV+D6yJpmh+V51glzUJ4TKA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FU4VIBjF7fyvpEtF2Vg+nXmi/7dWXjxyJtMDgqV3Cer0lre0Jko6i7XxN3231aP+Fdfw3/DSRWZo5G0iZFhe3TGJzQIZmx0BKyL62JFQExPOMdb15ODwEk5lrdJFFnZSfACRQEKGUeIuB80gg3vL2UzEiMCFiHt643FvPXA0p3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Cs6YWwfl; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e8e24765e5bso1201625276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:09:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1753801752; x=1754406552; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CLQbmTKfAtMP+r8dxThnkiPOrsvJMHhb7grP3nOtq1c=;
+        b=Cs6YWwflM0omrSYakT5gVNVt+FE85wPapuTN5N+IgXU+Hg9x2/nGj0VV7oSNBljndV
+         k7lPvhz5Zr0XI/XWgdBXvfvyod2un0VcGMTSK707WNSeWr63bu6Y3u4V1AbaoRAdgFkO
+         W4nal22sZafQPaoSehFU5S6qJwdFPE+ZtK/p3mGa7m8SvVD6kX97FFa0mHzi0mSF5Rnx
+         vMbccCZIPVRDi6Ls9GhdKL+IgYlj2n9AyR8JCMR9QjrW1DYrVETXw5gbMBwht2BuLLYz
+         IoO0fRy6jQc3hIkfLyCZveprKZzq96ZHOp9v5ZNfwwyZHLyu9H17ix12pWC18lIpbsnb
+         byeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753801752; x=1754406552;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CLQbmTKfAtMP+r8dxThnkiPOrsvJMHhb7grP3nOtq1c=;
+        b=TA4t9oLeCPHZ4f1xCgJYaEXyDZDdVJvsY5B/yw99XHsvt5rfkqZIfHxfZ8FhwzLehm
+         wCo9p8K/aDYHRmWl8mY79VAFeG5G7U4Ib+KdxSP8/QxH4e/S6cBOZHbWseVtRFQcMf7B
+         BmaRhld9ZrnuU9ejYrXWpD6bgJFq1/RVoNeIJn8tme5Jir1b2F1riqeFM+SoUHNC/eL0
+         gggOTCWulG2cMrFzfo5k+ifsjACEme0F+KWzKpOc3/S5OERcj658Z5bvDdrQwgj6Gtxf
+         KlEIFo/D6enM+iM3bG8sx9RYFQbTV7x2a0n7zNXlsjAza8nVZkekJRTsr4ZaVbh1f0+9
+         LlTA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYUNvD7sF2bD271ht82tCX3bAhTmiGDchpOa8nnzeQn1WiMPAVr8+0OLwRg98U5HreUg7+NbxlYVXv2pM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO3ynn6G99I+3pMnOmd6T8c1ClVc+I57nSxn1ztHscOfV8e8hv
+	5/w8ZRughmljYKTyNwjd4JTZoPrQ/4+CYCa2YAcapQZGaOiThMRrDIXDkYYzKAfa6CJKJIrbSH1
+	bHZG/0h/paxHyw+p0OU3MiOUKfJnjzVLtYWVTKvLf
+X-Gm-Gg: ASbGncsqfW/ByCbZharVno1nOyZt0ioyAnRvuhn/I3vPsmab6eAImUOCO6OWAKZzTF0
+	6NmZYoGrdY0VJDKB2z3uxifgTEPIeGERqOSbK8mj7AIZW8ukfnraSWpMMAyWSWuKslyOHqYAQQD
+	S7cqfOB0Z4umKhTiiPjDUVAL3GSFZPciopM4FRIZbvaq9ZugH7OgbiYq6gceH0Mf+V/cPLjaacu
+	yurVoU=
+X-Google-Smtp-Source: AGHT+IFxmfEJzdGddKG4BQPd2LIH0BpZp63Qdw1g0WUVb/kFvWaAZRnwZXLkZa6UnWULDrqC8BI1dP/sBW7JbavWfC0=
+X-Received: by 2002:a05:6902:4793:b0:e8e:187:c241 with SMTP id
+ 3f1490d57ef6-e8e314a0160mr74298276.17.1753801751812; Tue, 29 Jul 2025
+ 08:09:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729063326.435167-1-chao@kernel.org>
+References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com> <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
+In-Reply-To: <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 29 Jul 2025 11:09:00 -0400
+X-Gm-Features: Ac12FXwNBhPktJtJ0PzDLqsmh5A5sTlKa0vey67atCJTRczlsnGdTNEDK66IhgA
+Message-ID: <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
+Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 07/29, Chao Yu wrote:
-> generic/299 w/ mode=lfs will cause long time latency, let's dump more
-> information once we hit case.
-> 
-> CP merge:
->   - Queued :    0
->   - Issued :    1
->   - Total :    1
->   - Cur time : 7565(ms)
->   - Peak time : 7565(ms)
-> 
-> F2FS-fs (vdc): checkpoint was blocked for 7565 ms, affecting 1 tasks
-> CPU: 8 UID: 0 PID: 1614 Comm: f2fs_ckpt-253:3 Tainted: G           O        6.16.0-rc3+ #406 PREEMPT(voluntary)
-> Tainted: [O]=OOT_MODULE
-> Call Trace:
->  dump_stack_lvl+0x6e/0xa0
->  __checkpoint_and_complete_reqs+0x1a6/0x1d0
->  issue_checkpoint_thread+0x4b/0x140
->  kthread+0x10d/0x250
->  ret_from_fork+0x164/0x190
->  ret_from_fork_asm+0x1a/0x30
+On Tue, Jul 29, 2025 at 10:43=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
+> > The implementation of function security_inode_copy_up_xattr can be
+> > simplified to directly call call_int_hook().
+> >
+> > Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+> > ---
+> >  security/security.c | 8 +-------
+> >  1 file changed, 1 insertion(+), 7 deletions(-)
+> >
+> > diff --git a/security/security.c b/security/security.c
+> > index 596d41818577..a5c2e5a8009f 100644
+> > --- a/security/security.c
+> > +++ b/security/security.c
+> > @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
+> >   */
+> >  int security_inode_copy_up_xattr(struct dentry *src, const char *name)
+> >  {
+> > -     int rc;
+> > -
+> > -     rc =3D call_int_hook(inode_copy_up_xattr, src, name);
+> > -     if (rc !=3D LSM_RET_DEFAULT(inode_copy_up_xattr))
+> > -             return rc;
+> > -
+> > -     return LSM_RET_DEFAULT(inode_copy_up_xattr);
+> > +     return call_int_hook(inode_copy_up_xattr, src, name);
+>
+> Both the existing code and the proposed change are incorrect.
+> If two LSMs supply the hook, and the first does not recognize
+> the attribute, the second, which might recognize the attribute,
+> will not be called. As SELinux and EVM both supply this hook
+> there may be a real problem here.
 
-Can we add more information for debugging this?
+It appears that Smack also supplies a inode_copy_up_xattr() callback
+via smack_inode_copy_up_xattr().
 
-> 
-> Cc: Jan Prusakowski <jprusakowski@google.com>
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/checkpoint.c | 9 ++++++++-
->  fs/f2fs/f2fs.h       | 3 +++
->  2 files changed, 11 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index db3831f7f2f5..b0dcaa8dc40d 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -1788,8 +1788,15 @@ static void __checkpoint_and_complete_reqs(struct f2fs_sb_info *sbi)
->  
->  	spin_lock(&cprc->stat_lock);
->  	cprc->cur_time = (unsigned int)div64_u64(sum_diff, count);
-> -	if (cprc->peak_time < cprc->cur_time)
-> +	if (cprc->peak_time < cprc->cur_time) {
->  		cprc->peak_time = cprc->cur_time;
-> +
-> +		if (unlikely(cprc->peak_time >= CP_LONG_LATENCY_THRESHOLD)) {
-> +			f2fs_warn_ratelimited(sbi, "checkpoint was blocked for %u ms, affecting %llu tasks",
-> +					cprc->peak_time, count);
-> +			dump_stack();
-> +		}
-> +	}
->  	spin_unlock(&cprc->stat_lock);
->  }
->  
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 46d23c2c086c..3130ca6a4770 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -350,6 +350,9 @@ struct ckpt_req_control {
->  	unsigned int peak_time;		/* peak wait time in msec until now */
->  };
->  
-> +/* a time threshold that checkpoint was blocked for, unit: ms */
-> +#define CP_LONG_LATENCY_THRESHOLD	5000
-> +
->  /* for the bitmap indicate blocks to be discarded */
->  struct discard_entry {
->  	struct list_head list;	/* list head */
-> -- 
-> 2.49.0
+Someone should double check this logic, but looking at it very
+quickly, it would appear that LSM framework should run the individual
+LSM callbacks in order so long as they return -EOPNOTSUPP, if they do
+not return -EOPNOTSUPP, the return value should be returned to the
+caller without executing any further callbacks.  As a default return
+value, or if all of the LSM callbacks succeed with -EOPNOTSUPP, the
+hook should return -EOPNOTSUPP.
+
+Tianjia Zhang, would you be able to develop and test a patch for this?
+
+--=20
+paul-moore.com
 
