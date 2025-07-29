@@ -1,149 +1,157 @@
-Return-Path: <linux-kernel+bounces-749718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBD67B1520B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:23:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12706B1520C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29A0918A4A00
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:24:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45ED94E50D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3D412980B8;
-	Tue, 29 Jul 2025 17:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF58220F35;
+	Tue, 29 Jul 2025 17:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tnKalwO0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BltOUalR"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ECC5145FE8;
-	Tue, 29 Jul 2025 17:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBA91E3DF2
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753809820; cv=none; b=MsYRh8CZnKZfVzjrS89pzAjBV+/nCPrCWv0PySubR+8D7mIYtxrcwaYIQ871RypeQADgFPa7S8DcZ6Xp0m/l7tvWkh1f5aWfGry5f3U9IXePm4KQt81kbxNN26Gjrsdd/W24NkSGbHehaMQjK9VWbYokQZ0ajKS1w5sfKc5TKl4=
+	t=1753809889; cv=none; b=GzY5BR1nalNqV68BdexGcixU5eIJVvK8ae/nkBfk9awaq9DKHJDDuEOiC7+k1gkFqzkjxYRQbLu/4wPXHEdQNNYuQpvtEwBqYM5tjayzJiyEXjsgQglDi4qw/aZ6n9LZpeOAHquG/esIveN9o5PJxGhFHJBQ14Y8P8L9wXAdAcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753809820; c=relaxed/simple;
-	bh=RdnueLexH2FWGlzkqJvbcyOP3kHmcNSYoqI5v55wuyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cl8U1J3VaV5K/cIxp+2///RPbhMb8grgNKirr6qYuTFT/UFWkx8tgAteY4bgTl/KVFqvSofgadarQvkT8RbKZvxFk02h9mRniQFmNy4th30GPDQldvSVMCFs1wmtqI+ZPISzL8HTbaI7yb4Ur/zGGz8nYY3dkRpgd4jAcjJBfFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tnKalwO0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA3D7C4CEEF;
-	Tue, 29 Jul 2025 17:23:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753809820;
-	bh=RdnueLexH2FWGlzkqJvbcyOP3kHmcNSYoqI5v55wuyc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tnKalwO0SpNZbZBasQ61Bes2ZbgrwjUOOmNKBnwL6re1RB+l7utnbA4Pi03si3Xtn
-	 yE8Ae8wySL+UHVDoyJt809XYOBIS2zIMXPh603uCA4TnxojANbEtdRelf4/3+tSQG9
-	 Yg47ku1oLjujLNpnol2kWxNDC2o7vE431Tdhr7yzJP/R4zhifh3ehCk/lUiyczI6zS
-	 utEE9U8Nkjpx9tyt9+s/OPP/PfOn6Z3fARGCY+2yUEPFWgdA2m8kwL7u/lcSv1t3sY
-	 H7aJOfvxcixRnHLhJku0qgkvFLTFuGhRl4VA5+2AVhOyOCTQjUK7cUzlcVFcHR3o+r
-	 kZXxL77nV5N3A==
-Message-ID: <1e8439d3-1467-4029-a808-731e11b29c7a@kernel.org>
-Date: Tue, 29 Jul 2025 11:23:24 -0600
+	s=arc-20240116; t=1753809889; c=relaxed/simple;
+	bh=8tUVEOHCd6vgZOjmZ6wGCyZD35jdxuSt3593rFQJiRw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G/S9K/zSc08bO7b+Az4zb9n+irW7CLtUeZJDWEsOJphfdCuvqbPpzPoD9iGV0YAmJOulen0KQrPD8faFjRmItQM5KIkPze3vDAgVHUCbS3wDRtPlx4see8+jcnEOP10dphCskgkh/1zyH5vINfFOHEOhmjz2ubzA1vJ6nIGoiA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BltOUalR; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31ed9a17f1fso2256714a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753809887; x=1754414687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zjnd6OOtdW9yy47zlEw4IHguBzP7Muvi9jj9yhTRBOE=;
+        b=BltOUalR86KPfYLq6oW44+c5qJ0ZEwmls6LVAHPs+OSztUWF71j+OM0tACRjWFxeG3
+         tAv66pReN57VgWNMib6dG63oqwlRV061yFegIYiZ0lJ5VJVkYMvTPLqdjYrVrqJZHUwD
+         oVvwPv+R23uZY1lPLiGczRzAckGmGBiTdoJqt5DdJgWeNjO7O9JrLAFNEAiooXMVyW8J
+         ypKZX45/mRq8brR9FXfScnfoo7UuutvzIobolaOHecxsVC54v3JiE090CqJ2fkLHU8ox
+         sVELCtbXu79DGoH8+WvV+mxurveArirXrLpWdoN8LM45waoEybLjkYxOtlPybefs7sAM
+         kPnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753809887; x=1754414687;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zjnd6OOtdW9yy47zlEw4IHguBzP7Muvi9jj9yhTRBOE=;
+        b=EP8E2jBwMLr58xJN1GZRhh3ha3XOlS1o3pE3/alrRkZ7Rmunfg/AIu6B/FRhXyakXc
+         AxKF/7l1dxg2rVfQTkzjAJAw5u0TTqn9dOIdsHeRX/aE/XCpsdV2fH2RIO6/eq5qYjx2
+         UiYdmQN0jWLy0DQgAv7oGI7jMVeSUzrckHdRhqroQLOLnkoRkwu6HIsSE/EINK9ng7FN
+         fcYWqWFYc7QwhZFucpJ/aAbYwlkaclQoGzbP8zSbNPQuMKgENxIOzBdRFiTEdu2lhvfg
+         gkn4bw3AeNS5aLx8qKEdHh29/lEQA2PxFBY1s1oJnGO85Tu0DKUYq8sgH6H3xgqwZ15I
+         ZhAg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhcNSC1CnCSLnkQ7hPIuXFwrufU8mAA2Jcbg3OX6YbzIF79zWxPmRtM9eu/F7j9tlETyRp1ALMLggIkLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/vfgKh1FWOhl88E3xs9wbcFGm3xJqGYPLP8Wuk0Kax/qQ/DjU
+	qXUnohhMguZvMYaPNX5Ki13Ea+qY+ECzJQ12aDcQdCsY5YZmC0TssQcX
+X-Gm-Gg: ASbGnctcq+C82UIF1YuaEz8P8Pi2NzV0406IAv+ShIyFnMJqcMyzNqIdzQqCLKCGu8q
+	Dhik4FJ86N+Llzn4/ARq//qiXsHCvEtecJoRXKySHbgyw1BDX9FjbR9SOPCYnG28DD5xw/WV06Y
+	ElnSv0j6RM/ykqjM7nJfHvqIyY5v2DA7H/qpQrnXTRRn2ShyXK53jfobjrUlgxKgET1LAYCbAhM
+	tDHIwvm7bFVnwjsK+DSs2hsPaDCCJ+imtV+MT2D9pDLMqPDgHawvyPg2hndZ4u1hjmqBmzohQ63
+	goshgrAL0mPrHTpvypXmQ5BqCgqm48NO7evvQlBbFuZSW/QXHHrVfaRQXEswS9qdv/jGX4JTc5o
+	DYI2EE+vQbbSH58r6MHMm6eB4O5M+rME44OKWZuJI
+X-Google-Smtp-Source: AGHT+IHxPVPNDARsw8xQ1vd23cug8FXnncAeKpA8e5jflbCVh7R1NkJvOBgRNA2botuGJ9l+BQYYaQ==
+X-Received: by 2002:a17:90b:1d88:b0:31f:346:c670 with SMTP id 98e67ed59e1d1-31f5de5562fmr372362a91.30.1753809887062;
+        Tue, 29 Jul 2025 10:24:47 -0700 (PDT)
+Received: from archlinux ([205.254.163.42])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f328dd8a1sm2110943a91.26.2025.07.29.10.24.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 10:24:46 -0700 (PDT)
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+To: apw@canonical.com,
+	joe@perches.com,
+	dwaipayanray1@gmail.com,
+	lukas.bulwahn@gmail.com
+Cc: skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Subject: [PATCH v3] checkpatch: suppress strscpy warnings for userspace tools
+Date: Tue, 29 Jul 2025 22:54:37 +0530
+Message-ID: <20250729172437.19925-1-suchitkarunakaran@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Sasha Levin is halucinating, non human entity, has no ethics and
- no memory
-To: Pavel Machek <pavel@ucw.cz>, Shuah <shuah@kernel.org>
-Cc: sashal@kernel.org, stable@vger.kernel.org,
- kernel list <linux-kernel@vger.kernel.org>, conduct@kernel.org,
- ebiederm@xmission.com
-References: <aG2B6UDvk2WB7RWx@duo.ucw.cz>
- <46f581c6-bb61-4163-91a5-27b90838dca8@kernel.org>
- <aIXsgI1n68Dy3l7+@duo.ucw.cz>
-Content-Language: en-US
-From: Shuah <shuah@kernel.org>
-In-Reply-To: <aIXsgI1n68Dy3l7+@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/27/25 03:08, Pavel Machek wrote:
-> Hi!
-> 
-> On Wed 2025-07-09 15:14:38, Shuah wrote:
->> On 7/8/25 14:39, Pavel Machek wrote:
->>> Hi!
->>>
->>> So... I'm afraid subject is pretty accurate. I assume there's actual
->>> human being called "Sasha Levin" somewhere, but I interact with him
->>> via email, and while some interactions may be by human, some are
->>> written by LLM but not clearly marked as such.
->>>
->>> And that's not okay -- because LLMs lie, have no ethics, and no
->>> memory, so there's no point arguing with them. Its just wasting
->>> everyone's time. People are not very thrilled by 'Markus Elfring' on
->>> the lists, as he seems to ignore feedback, but at least that's actual
->>> human, not a damn LLM that interacts as human but then ignores
->>> everything.
->>>
->>
->> You aren't talking to an LLM - My understanding is that Sasha is sending
->> these patches (generated with LLM assist) and discussing them on mailing
->> lists.
-> 
+The checkpatch.pl script currently warns against the use of strcpy,
+strlcpy, and strncpy, recommending strscpy as a safer alternative.
+However, these warnings are also triggered for code under tools/ and
+scripts/, which are userspace utilities where strscpy is not available.
+This patch suppresses these warnings for files in tools/ and scripts/.
 
-> At this point, I'd like to know (a) what steps (if any) were taken to
-> prevent LLM hallucinations from reaching the lists, and (b) what steps
-> (if any) were taken to make sure patches Signed-off by developer were
-> actually reviewed by said developer, and not applied simply due to
-> said hallucinations.
+Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+---
 
-> 
-> Confusion caused LLM hallucinations can be seen for example in thread
-> "[PATCH AUTOSEL 6.15 6/8] PM: Restrict swap use to later in the
-> suspend sequence", it includes as great stuff as fake http links.
-> 
-> I have seen solution proposed for (a), but have not seen any solution
-> proposed for (b) and that's actually more serious problem.
-> 
-> One solution would be to use separate email address "Autosel bot <>"
-> for both From and Signed-off, so there's no confusion between content
-> generated by developer and content generated by LLM.
+Changes since v1:
+- Create is_userspace function to check if the file is in userspace
+  directories
 
-I am going to repeat what I said in my response to the conversation
-about the code of conduct violation.
+Changes since v2:
+- Change regex pattern to match top level directories only
 
-https://lore.kernel.org/lkml/f145b475-5b61-4565-8406-98894e706077@linuxfoundation.org/
+ scripts/checkpatch.pl | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-The use of LLMs in the development process and rules about such use
-including how to clearly state if LLMs are used in the process is a
-timely and important topic. It can be confusing when a developer
-doesn't clearly state the LLM use.
+diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+index e722dd6fa8ef..fe580b0810f9 100755
+--- a/scripts/checkpatch.pl
++++ b/scripts/checkpatch.pl
+@@ -2636,6 +2636,11 @@ sub exclude_global_initialisers {
+ 		$realfile =~ m@/bpf/.*\.bpf\.c$@;
+ }
+ 
++sub is_userspace {
++    my ($realfile) = @_;
++    return ($realfile =~ m@^tools/@ || $realfile =~ m@^scripts/@);
++}
++
+ sub process {
+ 	my $filename = shift;
+ 
+@@ -7018,21 +7023,20 @@ sub process {
+ #				}
+ #			}
+ #		}
+-
+ # strcpy uses that should likely be strscpy
+-		if ($line =~ /\bstrcpy\s*\(/) {
++		if ($line =~ /\bstrcpy\s*\(/ && !is_userspace($realfile)) {
+ 			WARN("STRCPY",
+ 			     "Prefer strscpy over strcpy - see: https://github.com/KSPP/linux/issues/88\n" . $herecurr);
+ 		}
+ 
+ # strlcpy uses that should likely be strscpy
+-		if ($line =~ /\bstrlcpy\s*\(/) {
++		if ($line =~ /\bstrlcpy\s*\(/ && !is_userspace($realfile)) {
+ 			WARN("STRLCPY",
+ 			     "Prefer strscpy over strlcpy - see: https://github.com/KSPP/linux/issues/89\n" . $herecurr);
+ 		}
+ 
+ # strncpy uses that should likely be strscpy or strscpy_pad
+-		if ($line =~ /\bstrncpy\s*\(/) {
++		if ($line =~ /\bstrncpy\s*\(/ && !is_userspace($realfile)) {
+ 			WARN("STRNCPY",
+ 			     "Prefer strscpy, strscpy_pad, or __nonstring over strncpy - see: https://github.com/KSPP/linux/issues/90\n" . $herecurr);
+ 		}
+-- 
+2.50.1
 
-However, as you acknowledged here that you couldn't tell if these
-patches originated from the developer or not. In which case, there
-are several constructive ways to move forward to clear up the confusion.
-
-1. Send response to the patch and hold a constructive discussion about
-    the confusion.
-      
-2. Start a separate thread to talk to the developer privately or publicly
-    in a respectful and constructive way.
-
-3. Start a Tech board conversation with the TAB.
-
-You didn't take any of the above constructive approaches. Instead your
-responses included personal attacks which are visible to community and
-others to see.
-
-The Code of Conduct Committee has determined these are personal attacks.
-These are a clear violation of the agreed upon code of conduct which can
-be easily remedied with an apology.
-
-- https://docs.kernel.org/process/code-of-conduct.html
-- https://docs.kernel.org/process/code-of-conduct-interpretation.html#code-of-conduct-interpretation
-
-Assume you are speaking to a fellow developer and ask them to give details
-on the nature of LLM use in the patch. It will result in a constructive
-conversation for these important topics at hand.
-
-thanks,
--- Shuah (On behalf of the Code of Conduct Committee)
 
