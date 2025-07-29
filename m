@@ -1,84 +1,158 @@
-Return-Path: <linux-kernel+bounces-749481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8048B14EE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:58:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E526B14EE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3B4A540F6F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:58:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E965718A06CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:58:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4E01B0F0A;
-	Tue, 29 Jul 2025 13:57:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBC31D7E54;
+	Tue, 29 Jul 2025 13:57:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="agzKqtps"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnNxdQG0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5337259C;
-	Tue, 29 Jul 2025 13:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490A2259C;
+	Tue, 29 Jul 2025 13:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753797475; cv=none; b=dnbgi4yRPlcy8MdGqFR/NRTZmCy70NPLI5OKeCz6TSb8/AAcoFBKmIqq3pEvzlvU252d7X8RO0G90h31oH3tzHFnzmkiVO8cva4boS/YsblU2sHarM8ALlANtHkqRiRnuS7ssQ93NhMYypzM7TOz0QSUuqRx7I3LY+YfiiBI3/w=
+	t=1753797478; cv=none; b=F9rMrPQVJADt1CjALWOeAwm/yB7/Z+tTG4JHbaGOEMVns4b+2TUmdVfK8+gvL4F309L+XbLfR5VxUQcVc91F8K+FLktAdy0xm48z9PqBVHXfOMjM2i41HQr5tLkwro31zu7yF6dqMPzcJ8aeIuBJVSdQs41MWuo11ah5bbcjhNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753797475; c=relaxed/simple;
-	bh=ks1nAjoBz1pTfGiqLmJwm3OBBNFYD0LExEEmMDMcA7I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ssFekKoXOER2NY22lFMobN7FuZb9ZFse0w3MZfLBlYLKguE97jqdw+JWmb5heFM+21+ZF3tZF1FCernQPA9fD/r1UXAbAIWDhlptuEX02qIKuTHjXtg01wOBVhLE/vTfz3oYzS1T/Db3QXgFftiXYGY8i1aiSVwQlayKlJIK+wU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=agzKqtps; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 7324C40AD3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1753797467; bh=P8wsXs03gozA4VY3hwxn1i6SkHAYJMbpQyS0M+mlC30=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=agzKqtps3DPQ2rq1fSHQAiAjOVVjyS4HzWaWEj2qW/e553VKCB8QNut3ieR3VjHhj
-	 35BA2VIqNEJgHCQO4D/agsAb34Ekdl/m+73N0obZjtTBn6cfvwYisGcBa0SXMXq4ap
-	 nW0oi3yAj8Ma3tSyZCSP17CaGDGXE2M4H523MdnaHgUDHhuXU2pvKgBj61n9qkCqhV
-	 UxCKKtZT8Ed/TaxXB1Ivt6wfEkqmAP9CZlr4M62wJ+NmppuFffipQWImCHCeN6I3X2
-	 h/q+LwiOAThJNWXQFbCycSwPxMTy9Yg4PNtrvrm4kBq18fkLwi/LMSIxPuRoytAD8/
-	 Un2T1jJKCml3w==
-Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 7324C40AD3;
-	Tue, 29 Jul 2025 13:57:47 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Jani Nikula <jani.nikula@linux.intel.com>, Akira Yokosawa
- <akiyks@gmail.com>, mchehab+huawei@kernel.org
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 1/2] docs: kernel-doc: avoid script crash on ancient Python
-In-Reply-To: <e9cf21e5332616f2fb58a90fe8ba6f91359915b8@intel.com>
-References: <dc75423e817f92cc6b8369892ee79166c2fb5ecc.1753713955.git.mchehab+huawei@kernel.org>
- <8251d567-5218-4fa1-aed2-f38ec089989d@gmail.com>
- <e9cf21e5332616f2fb58a90fe8ba6f91359915b8@intel.com>
-Date: Tue, 29 Jul 2025 07:57:46 -0600
-Message-ID: <877bzrxfol.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1753797478; c=relaxed/simple;
+	bh=AX7eZDNmkJrEgW0Z7fDJWxMDlVgr1LZpviDEOOeKIL4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XKFgmDzjLflD8PJ9rS2JXkvyBmqapxN+AyU51tTvCKM5pBY2xbo4s6DUT3A1XezRhwxSGfcmB0sxsC0QI/o8ht/gdXLPq9d9dZuzSgIdMy7GSHaaOoD5s8cSNPfzNyG7lrdVsbdM9oLbaekR8fDCbwYQl3zzANEqA7n+Z2agBeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnNxdQG0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1644C4CEF4;
+	Tue, 29 Jul 2025 13:57:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753797477;
+	bh=AX7eZDNmkJrEgW0Z7fDJWxMDlVgr1LZpviDEOOeKIL4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gnNxdQG0DNWnJg+YHdQbXI0C3jbbNqOqJANMAHS0QZmb21lenjqAXFtqtc26lZ8t3
+	 BItM+qaMYFlrtcv8Ad7md1GdJa0vlvcXw7+JO8Z0NtHqajm4EsHO0EetPlD2guvQ6O
+	 3YKxFenQxcWTkErACwte5tqYEOWO4RIpJJfWdSK2nfwYr68XCvQADIsPmS4ouAnbv/
+	 t66m5hucPd29Xdvp78iGK5WQDli5e1W7IEvK7Ajw4tci1yksrRi5o5o5WbHRH7IeMU
+	 CGMIFCtkcgkPk0v2hbNYfJLaEmCNkkH/+4tA4Ej2uDg3Q94MaY3W+s8lvZDrf0tVZi
+	 cnb7UKdSpQEqA==
+Message-ID: <5029ba6e-fa5f-41a5-a1df-bb9117973bd8@kernel.org>
+Date: Tue, 29 Jul 2025 15:57:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/10] dt-bindings: clock: ipq9574: Rename NSS CC
+ source clocks to drop rate
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Luo Jie <quic_luoj@quicinc.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Georgi Djakov <djakov@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Anusha Rao <quic_anusha@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
+ quic_linchen@quicinc.com, quic_leiwei@quicinc.com, quic_pavir@quicinc.com,
+ quic_suruchia@quicinc.com
+References: <20250710-qcom_ipq5424_nsscc-v3-0-f149dc461212@quicinc.com>
+ <20250710-qcom_ipq5424_nsscc-v3-5-f149dc461212@quicinc.com>
+ <20250710225412.GA25762-robh@kernel.org>
+ <93082ccd-40d2-4a6b-a526-c118c1730a45@oss.qualcomm.com>
+ <2f37c7e7-b07b-47c7-904b-5756c4cf5887@quicinc.com>
+ <a383041e-7b70-4ffd-ae15-2412b2f83770@oss.qualcomm.com>
+ <830f3989-d1ac-4b7c-8888-397452fe0abe@quicinc.com>
+ <c67d7d8c-ae39-420f-b48b-d7454deb1fc9@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <c67d7d8c-ae39-420f-b48b-d7454deb1fc9@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Jani Nikula <jani.nikula@linux.intel.com> writes:
+On 29/07/2025 15:53, Konrad Dybcio wrote:
+>>
+>> We had adopted this proposal in version 2 previously, but as noted in
+>> the discussion linked below, Krzysztof had suggested to avoid using the
+>> clock rate in the clock names when defining the constraints for them.
+>> However I do agree that we should keep the interface for IPQ9574
+>> unchanged and instead use a generic clock name to support the newer
+>> SoCs.
+>>
+>> https://lore.kernel.org/all/20250701-optimistic-esoteric-swallow-d93fc6@krzk-bin/
+>>
+>> Request Krzysztof to provide his comments as well, on whether we can
+>> follow your suggested approach to avoid breaking ABI for IPQ9574.
+> 
+> Krzysztof, should the bindings be improved-through-breaking, or should
 
-> Agreed, this breaks more than it fixes.
->
-> Python 2.7 reached end-of-life over five years ago. Do we really have to
-> cater for ancient stuff? Which actual real world cases do not have
-> Python 3+ available? Please just let it go, and see if anyone ever
-> notices?
 
-I kind of have to agree.  The only real Python 2 user I know about is
-OpenOffice.org, which promises to get off any year now.  Meanwhile, as I
-recall, the advice from the Python project is to say "python3" and not
-count on bare "python" being available.
+Unfortunately not, you should not change them for such reason.
 
-jon
+> there simply be a new YAML with un-suffixed entries, where new platforms
+> would be added down the line?
+
+
+Either new binding file or here with allOf:if:then differences per
+variant. Depends on readability.
+
+
+Best regards,
+Krzysztof
 
