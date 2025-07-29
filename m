@@ -1,111 +1,274 @@
-Return-Path: <linux-kernel+bounces-749754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AE47B15281
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:12:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 947BBB15286
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41D923AB040
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:11:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11303AB2F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6A329993A;
-	Tue, 29 Jul 2025 18:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C197236A7C;
+	Tue, 29 Jul 2025 18:15:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMrVZJMH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H4vtOIB5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D833C2AE90;
-	Tue, 29 Jul 2025 18:11:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FEABE4E;
+	Tue, 29 Jul 2025 18:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753812713; cv=none; b=txOA2MOCqX1XUINdvHfhU2vr1RQiMn6vwjZwADo6UDXugBZNoP7mOc68wmDYPRSNHmN7B8xyoruQ4WW1xFX+n2Cqlam+71rj3OoFJYw+umPG/5VkFl3A4qReabQSpqHZp89OR6hxmoa2E49U5TCZatTltde9EIB5d6UwSxlqrds=
+	t=1753812914; cv=none; b=Z+XAgnjcDfQY7KG3ws/uVyvJBBMnZ4QT+tV8zUMCODVQqjjnSBDVNPob0RHfTVRHrWDpqDnEzBmuhbuGvj09vm3sleT8WEzpGavZAcj1M+dvoS0ZzcNysLhy1txIbXj1iywLBUMctmmI7fM8CXeeDaQiTPaM0Yj3/SW7QZdEyZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753812713; c=relaxed/simple;
-	bh=Kp4/gvOCoF4j3IVDGkFHzTtSG45DUv0mvG8JEJIXRms=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcejsFvnCLYLyrkomb4WHQNyXAHTF14h4rpj3e40jKL3pdfEzPc+wnGQb7gBVN9GHSX0W//v8v0SrzTG20BDGLPWFRKsB26XJfw6rxwXBhuWhjjwbe7YY4cm3WLXPYZnfBgN2nX3aaJFgHZ8RD2A8C29OS2FoFKB9vvWDiPv1us=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pMrVZJMH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 410CDC4CEEF;
-	Tue, 29 Jul 2025 18:11:52 +0000 (UTC)
+	s=arc-20240116; t=1753812914; c=relaxed/simple;
+	bh=TZBXNASe2pDArkZUxLGfDiu3sHbEqjRKTJxrS5ouBFc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J8Lkdq9p+aGGg+rIT0VXXyCn/wlGmVvnkKsI6lf3flyV9v8eW3gLwSuZrRLcKDNEHMz/zQLiXpyMEAMI2YEKX7Ll6fDo2A9uBV88AE8HFKIJbxrYNgxwxqejHrbsaf/f3GUfD0c+rQSGWl9fzIfQi1BNjjkzg+6IUmFHsHB4USQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H4vtOIB5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00DF3C4CEEF;
+	Tue, 29 Jul 2025 18:15:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753812712;
-	bh=Kp4/gvOCoF4j3IVDGkFHzTtSG45DUv0mvG8JEJIXRms=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pMrVZJMHglSkP2KaUUVuDJgQNM6nyfHH7e8kAtn1Ns6BWW3CK72lNvEYZQZO5FkaH
-	 qpWAE3/G6DactS67jtMhx64NbD/1fiQlscwmeLNJwgdn5KNm9BKSc1h1k0Ma3MTx/N
-	 qdbAfLGVvO5jkvIzfCnQ79VwOvy0NTaKCVq0dqULFI/2PbCabhHkGneGiP6614L6CN
-	 UWtQLnVeNmI3kjLYJS2Tffblp31stui3fYtHWLy0TbewtPCjfb+iA4874uuZJK9vZJ
-	 zag/d5Mbw/SCbv20juyZN9sar7lhUI9A4JsRcNy832a+fJ6oaFg/0fB/to2vhG47aV
-	 Ido0K7u1KyU/Q==
-Date: Tue, 29 Jul 2025 13:11:51 -0500
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 1/6] dt-bindings: gpio: snps,dw-apb: Add support for
- Renesas RZ/N1
-Message-ID: <20250729181151.GA530390-robh@kernel.org>
-References: <20250725152618.32886-1-herve.codina@bootlin.com>
- <20250725152618.32886-2-herve.codina@bootlin.com>
+	s=k20201202; t=1753812914;
+	bh=TZBXNASe2pDArkZUxLGfDiu3sHbEqjRKTJxrS5ouBFc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=H4vtOIB5goB0G2wlEpeI5Fr7i+EoWJ8c2jyBLUs/g4xSJrX7T5EDUNm/GeORWt8lN
+	 O6QZ1bzxPmee+Kyx0SCq6Yn0fCBdqimJL99tm9FG+TIqWijEPg4N5yNIOdabvM/RkR
+	 8Mg40E7YPj8cMkto4MLdbB7oWrJfKbGekJwUPEp38Zkxly9g8mOb094yEdGTy3B+ef
+	 F0HmC4djkXyrHOfqFbZtrv3Rv2qCHtlcTC1YVlzlP3B505aWU49bxMMuYJ2mZfORBn
+	 yBPv4yLzzCnQjtUl4sOr78vy2soY3fdtb2MgdJKYxBzGdxiGhEl4laSs7DOZrUEBXr
+	 pw7CGR7wAtTYw==
+From: SeongJae Park <sj@kernel.org>
+To: Yueyang Pan <pyyjason@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Usama Arif <usamaarif642@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] mm/damon: Add damos_stat support for vaddr
+Date: Tue, 29 Jul 2025 11:15:10 -0700
+Message-Id: <20250729181510.56035-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <44a30f700fdcf4470318ef5cd248ba98c59b77a2.1753794408.git.pyyjason@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725152618.32886-2-herve.codina@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 25, 2025 at 05:26:10PM +0200, Herve Codina wrote:
-> The RZ/N1 SoCs uses the Synopsys DesignWare IP to handle GPIO blocks.
+On Tue, 29 Jul 2025 06:53:30 -0700 Yueyang Pan <pyyjason@gmail.com> wrote:
+
+> From: PanJason <pyyjason@gmail.com>
 > 
-> Add RZ/N1 SoC and family compatible strings.
+> This patch adds support for damos_stat in virtual address space.
+> It leverages the walk_page_range to walk the page table and gets
+> the folio from page table. The last folio scanned is stored in
+> damos->last_applied to prevent double counting.
 
-Why? Yes, that's policy, but so far we avoided it on this IP. Perhaps 
-because it is simple enough. So what's different here?
+Thank you for this patch, Pan!  I left a few comments below.  I think those are
+mostly insignificant change requests, though.
 
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 > ---
->  .../devicetree/bindings/gpio/snps,dw-apb-gpio.yaml        | 8 +++++++-
->  1 file changed, 7 insertions(+), 1 deletion(-)
+>  mm/damon/vaddr.c | 113 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 112 insertions(+), 1 deletion(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml b/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml
-> index ab2afc0e4153..ceb71b5ac688 100644
-> --- a/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/snps,dw-apb-gpio.yaml
-> @@ -20,7 +20,13 @@ properties:
->      pattern: "^gpio@[0-9a-f]+$"
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index 87e825349bdf..3e319b51cfd4 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -890,6 +890,117 @@ static unsigned long damos_va_migrate(struct damon_target *target,
+>  	return applied * PAGE_SIZE;
+>  }
 >  
->    compatible:
-> -    const: snps,dw-apb-gpio
-> +    oneOf:
-> +      - const: snps,dw-apb-gpio
-> +      - items:
-> +          - enum:
-> +              - renesas,r9a06g032-gpio
-> +          - const: renesas,rzn1-gpio
-> +          - const: snps,dw-apb-gpio
->  
->    "#address-cells":
->      const: 1
+> +struct damos_va_stat_private {
+> +	struct damos *scheme;
+> +	unsigned long *sz_filter_passed;
+> +};
+> +
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +static int damos_va_stat_pmd_entry(pmd_t *pmd, unsigned long addr,
+> +		unsigned long next, struct mm_walk *walk)
+> +{
+> +	struct damos_va_stat_private *priv = walk->private;
+> +	struct damos *s = priv->scheme;
+> +	unsigned long *sz_filter_passed = priv->sz_filter_passed;
+> +	struct folio *folio;
+> +	spinlock_t *ptl;
+> +	pmd_t pmde;
+> +
+> +	ptl = pmd_lock(walk->mm, pmd);
+> +	pmde = pmdp_get(pmd);
+> +
+> +	if (!pmd_present(pmde) || !pmd_trans_huge(pmde))
+> +		goto unlock;
+> +
+> +	/* Tell page walk code to not split the PMD */
+> +	walk->action = ACTION_CONTINUE;
+
+As David suggested, let's unify this with pte handler following the pattern of
+madvise_cold_or_pageout_pte_range() and drop above ACTION_CONTINUE code, unless
+you have different opinions.
+
+> +
+> +	folio = damon_get_folio(pmd_pfn(pmde));
+
+As also David suggested, let's use vm_normal_folio_pmd() instead, and drop
+unnecessary folio_put().
+
+> +	if (!folio)
+> +		goto unlock;
+
+damon_invalid_damos_folio() returns true if folio is NULL, so I think above
+check is unnecessary.
+
+> +
+> +	if (damon_invalid_damos_folio(folio, s))
+> +		goto update_last_applied;
+
+Because we didn't really apply the DAMOS action, I think it is more proper to
+goto 'unlock' directly.
+
+Oh, and I now realize damon_invalid_damos_folio() puts the folio for none-NULL
+invalid folio...
+
+Because the code is simple, let's implement and use 'va' version
+invalid_damos_folio(), say, damon_va_invalid_damos_folio(), which doesn't put
+the folio.
+
+> +
+> +	if (!damos_va_filter_out(s, folio, walk->vma, addr, NULL, pmd)){
+> +		*sz_filter_passed += folio_size(folio);
+> +	}
+
+Let's remove braces for single statement, as suggested[1] by the coding style.
+
+> +
+> +	folio_put(folio);
+> +update_last_applied:
+> +	s->last_applied = folio;
+> +unlock:
+> +	spin_unlock(ptl);
+> +	return 0;
+> +}
+> +#else
+> +#define damon_va_stat_pmd_entry NULL
+> +#endif
+> +
+> +static int damos_va_stat_pte_entry(pte_t *pte, unsigned long addr,
+> +		unsigned long next, struct mm_walk *walk)
+> +{
+> +	struct damos_va_stat_private *priv = walk->private;
+> +	struct damos *s = priv->scheme;
+> +	unsigned long *sz_filter_passed = priv->sz_filter_passed;
+> +	struct folio *folio;
+> +	pte_t ptent;
+> +
+> +	ptent = ptep_get(pte);
+> +	if (pte_none(ptent) || !pte_present(ptent))
+> +		return 0;
+> +
+> +	folio = damon_get_folio(pte_pfn(ptent));
+
+As David suggested, let's use vm_normal_folio() here, and remove below
+folio_put().
+
+> +	if (!folio)
+> +		return 0;
+
+As also mentioned above, let's drop above NULL case check, in favor of that in
+damon_va_invalid_damos_folio().
+
+> +
+> +	if (damon_invalid_damos_folio(folio, s))
+> +		goto update_last_applied;
+
+Again, I don't think we need to update s->last_applied in this case.  Let's
+do only necessary cleanups and return.
+
+> +
+> +	if (!damos_va_filter_out(s, folio, walk->vma, addr, pte, NULL)){
+> +		*sz_filter_passed += folio_size(folio);
+> +	}
+
+Let's drop braces for single statement[1].
+
+> +
+> +	folio_put(folio);
+> +
+> +update_last_applied:
+> +	s->last_applied = folio;
+> +	return 0;
+> +}
+> +
+> +static unsigned long damos_va_stat(struct damon_target *target,
+> +		struct damon_region *r, struct damos *s,
+> +		unsigned long *sz_filter_passed)
+> +{
+> +
+
+Let's remove this unnecessary blank line.
+
+> +	struct damos_va_stat_private priv;
+> +	struct mm_struct *mm;
+> +	struct mm_walk_ops walk_ops = {
+> +		.pmd_entry = damos_va_stat_pmd_entry,
+> +		.pte_entry = damos_va_stat_pte_entry,
+> +		.walk_lock = PGWALK_RDLOCK,
+> +	};
+> +
+> +	priv.scheme = s;
+> +	priv.sz_filter_passed = sz_filter_passed;
+> +
+> +	if (!damon_scheme_has_filter(s)){
+> +		return 0;
+> +	}
+
+Let's remove braces for single statement[1].
+
+> +
+> +	mm = damon_get_mm(target);
+> +	if (!mm)
+> +		return 0;
+> +
+> +	mmap_read_lock(mm);
+> +	walk_page_range(mm, r->ar.start, r->ar.end, &walk_ops, &priv);
+> +	mmap_read_unlock(mm);
+> +	mmput(mm);
+> +	pr_debug("Call va_stat: %lu\n", *sz_filter_passed);
+
+I don't think we really need this debug log.  Can we remove?
+
+> +	return 0;
+> +
+
+Yet another unnecessary blank line.  Let's remove.
+
+> +}
+> +
+>  static unsigned long damon_va_apply_scheme(struct damon_ctx *ctx,
+>  		struct damon_target *t, struct damon_region *r,
+>  		struct damos *scheme, unsigned long *sz_filter_passed)
+> @@ -916,7 +1027,7 @@ static unsigned long damon_va_apply_scheme(struct damon_ctx *ctx,
+>  	case DAMOS_MIGRATE_COLD:
+>  		return damos_va_migrate(t, r, scheme, sz_filter_passed);
+>  	case DAMOS_STAT:
+> -		return 0;
+> +		return damos_va_stat(t, r, scheme, sz_filter_passed);
+>  	default:
+>  		/*
+>  		 * DAMOS actions that are not yet supported by 'vaddr'.
 > -- 
-> 2.50.1
-> 
+> 2.47.3
+
+[1] https://docs.kernel.org/process/coding-style.html
+
+
+Thanks,
+SJ
 
