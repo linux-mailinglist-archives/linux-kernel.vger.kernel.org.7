@@ -1,170 +1,116 @@
-Return-Path: <linux-kernel+bounces-748968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB5AB14830
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:28:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F30B14837
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAE81AA0D69
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:28:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A32B16C0E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:28:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76309257AF3;
-	Tue, 29 Jul 2025 06:28:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFA2257AFE;
+	Tue, 29 Jul 2025 06:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9wjyNFq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="QtPASg5G"
+Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB63F262BE;
-	Tue, 29 Jul 2025 06:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F12C262BE;
+	Tue, 29 Jul 2025 06:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753770480; cv=none; b=eVhYQVR6pmoV+tfj0lfNfwCUyZHazAAnPWNg5ZZMkl/O3kaZwcV5X30c4UU3WP2W7xPgwA76FSgjYPbzHXtIG1djhdnNlVdlf6bGwj9lCf4aKbyPhaVIfEu1XXSfhz0aItypdEKhrVJsMSz725+ZzDHpLUyXbyUEDSxlNWq5Ng0=
+	t=1753770525; cv=none; b=CMpcByN+ZmpTIB+uY8zE3UpIi4BKeSoK1uiQLnt3nMe29t2Inkp7W30lG9RtJzD5YAnSWRw6vJAL3jaC1ONM/K8dsb8FncsXCtwYp1iB9JIVdrC1ONQaeRulXVW6P2pIOQ4uqMWSzbPQ8jYCJRs2H/P9QWZyUu2RGjqQvJd4iIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753770480; c=relaxed/simple;
-	bh=h2wtlypehd5qSOqophm6kVznrIreQIBZea/Obo1g670=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=recloag0Nz3q1joAzLK2UdUh4NKWv92BFuxwR2U6+jff7J4KD/QGxlDNvYXrGWnMcYAEeeJjnH0Qoz1AsPmhPpbdKmMZxdl+tsa0pdMe7PwJ4Vil0237zEBjEAdab/2ypsfTA/c8VFlZdH6VVe2OLkxyR70iqEFIlBAPwaPYigo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9wjyNFq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE0EC4CEEF;
-	Tue, 29 Jul 2025 06:27:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753770480;
-	bh=h2wtlypehd5qSOqophm6kVznrIreQIBZea/Obo1g670=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D9wjyNFqSSxtaBea0a2Ym1hDdepeD0XA/E3qQbfa0/w3RIQwK9NxysOsyxQ79Je/m
-	 7y24CrmMy/U/aB2E4bTLMpTTK79eowAvOARhZv+xjvSeTwLPPEngEFpRHqMeIz5TyH
-	 S6Ll4ZIqYMSqBJssQVt63eENT87W7rzjoIlPTahbjryyzq6usmz00sKxENtUK2UEMx
-	 8aaA7t5amb7/nyB3+HCXsHSzrMkMU1iJNmXgUKy6GuEd3FQ0NAox5NC2zebSUjUbUJ
-	 o7+DO4SEop7SfMrSCN+jd2rzjJNhzFSUH+PQVkpAFUDfiYT6InisUgGD9S0MvXHLtn
-	 gz6LWFlxlk7Ow==
-Message-ID: <f1b90b0f-f7a7-4117-9d36-046c4ca9c19a@kernel.org>
-Date: Tue, 29 Jul 2025 08:27:53 +0200
+	s=arc-20240116; t=1753770525; c=relaxed/simple;
+	bh=5oeepojmBcNgggJVtg0k5VSLGo5qe1E2+hYtB3Eyj34=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MHU/rsWF8D+ZLkf1Mp2iMpLh9Z5icn3e92jN2xi6x4pwH65pAJNfdTt8H6bVZRG7mcQK+ViVgtBRbW3Xw/A6LsdR4w5EVbXAojqDo6Yja45lgU0MFL6RKvDoEErJ6MK/229XHNk9PkG3UEEJWVCvpshmLYu7eqI6M7iUPOxLXIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=QtPASg5G; arc=none smtp.client-ip=220.130.44.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
+X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
+	s=richtek; t=1753770520;
+	bh=nFc7sXSxrxXrn9CbhO94nNCIuL9JOjq3fHd1XbxNFLE=; l=1888;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=QtPASg5GKLatfiUJEo0skbsAVzrjyorfIiueVnTXFGUWymHYvoQGv00mIl5BMntvK
+	 rBjpJHGKV5JoSyaiRA1IKF8OlLLk7nwlUElpbKb9xmrLQcvin8F5LQBNVwMa7oOo/x
+	 vSO2nqDoAV/fgkF6TfvyN5olaw41Z8ZR9qeKJbozuY17LPcGURrx8rMKvxX098dzcK
+	 Xr6VxGzFNgnS7eE6OS1absY6cDuNyTuzso825VrIA0hJitBQpRhHcs8P6frs5HdjxA
+	 5KX23WSWXiNWNCuXav7+54qAlVoduk9c2ohZIRLXt6wVsg/xSNrbBMTBgSepwTMijq
+	 TE5gZt61g3mKA==
+Received: from 192.168.10.47
+	by mg.richtek.com with MailGates ESMTPS Server V6.0(244589:0:AUTH_RELAY)
+	(envelope-from <cy_huang@richtek.com>)
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 29 Jul 2025 14:28:32 +0800 (CST)
+Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Jul
+ 2025 14:28:32 +0800
+Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
+ (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
+ Transport; Tue, 29 Jul 2025 14:28:32 +0800
+From: <cy_huang@richtek.com>
+To: Sebastian Reichel <sre@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, ChiYuan Huang
+	<cy_huang@richtek.com>
+Subject: [PATCH RESEND] power: supply: rt9467: Add properties for VBUS and IBUS reading
+Date: Tue, 29 Jul 2025 14:29:03 +0800
+Message-ID: <54fd32fc23fd959da8aa6508d572ee96de5f6eec.1753770294.git.cy_huang@richtek.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for
- Sophgo CV1800B SoC
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
- Bjorn Andersson <andersson@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
- Inochi Amaoto <inochiama@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>
-Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
- sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <185679960f220550.906528684e28f712.ba6c1f3fdd9df549@Mac>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <185679960f220550.906528684e28f712.ba6c1f3fdd9df549@Mac>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 28/07/2025 19:13, Junhui Liu wrote:
->>
->>> +    description:
->>> +      This property is required only if the rpmsg/virtio functionality is used.
->>> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
->>> +    items:
->>> +      - description: mailbox channel to send data to C906L
->>> +      - description: mailbox channel to receive data from C906L
->>> +
->>> +  memory-region:
->>> +    description:
->>> +      List of phandles to reserved memory regions used by the remote processor.
->>> +      The first region is required and provides the firmware region for the
->>> +      remote processor. The following regions (vdev buffer, vrings) are optional
->>> +      and are only required if rpmsg/virtio functionality is used.
->>> +    minItems: 1
->>
->> Why isn't this constrained?
-> 
-> Do you mean a maxItems should be added here?
-> >>
->>> +    items:
->>> +      - description: firmware region
->>> +      - description: vdev buffer
->>> +      - description: vring0
->>> +      - description: vring1
->>> +    additionalItems: true
->>
->> No, drop. This needs to be constrained.
-> 
-> My intention is that RPMsg/OpenAMP is not the only use case for
+From: ChiYuan Huang <cy_huang@richtek.com>
 
-We don't allow such syntax, that's not negotiable. Why 322 redundant
-memory regions are fine now?
+Since there's the existing ADC function, add properties 'VOLTAGE_NOW'
+and 'CURRENT_NOW' to report the current VBUS and IBUS value, respectively.
 
-> remoteproc. There are scenarios where the remoteproc is just used for
-> booting the remote processor without any communication with Linux. In
-> such case, only the firmware region is needed, and the other regions may
-> not be necessary.
-> 
-> Additionally, the remote processor might reserve extra memory for custom
-> buffers or other firmware-specific purposes beyond virtio/rpmsg.
-> Therefore, I think only the firmware region should be required and
-> constrained, while allowing flexibility for additional/custom memory
-> regions as needed.
+Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
+---
+ drivers/power/supply/rt9467-charger.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-So how does this work exactly without the rest? Remote processor boots
-and works fine? How do you communicate with it?
+diff --git a/drivers/power/supply/rt9467-charger.c b/drivers/power/supply/rt9467-charger.c
+index e9aba9ad393c..998b56e81cd7 100644
+--- a/drivers/power/supply/rt9467-charger.c
++++ b/drivers/power/supply/rt9467-charger.c
+@@ -633,7 +633,9 @@ static int rt9467_psy_set_ieoc(struct rt9467_chg_data *data, int microamp)
+ static const enum power_supply_property rt9467_chg_properties[] = {
+ 	POWER_SUPPLY_PROP_STATUS,
+ 	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+ 	POWER_SUPPLY_PROP_CURRENT_MAX,
++	POWER_SUPPLY_PROP_CURRENT_NOW,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT_MAX,
+ 	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+@@ -656,6 +658,8 @@ static int rt9467_psy_get_property(struct power_supply *psy,
+ 		return rt9467_psy_get_status(data, &val->intval);
+ 	case POWER_SUPPLY_PROP_ONLINE:
+ 		return regmap_field_read(data->rm_field[F_PWR_RDY], &val->intval);
++	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
++		return rt9467_get_adc(data, RT9467_ADC_VBUS_DIV5, &val->intval);
+ 	case POWER_SUPPLY_PROP_CURRENT_MAX:
+ 		mutex_lock(&data->attach_lock);
+ 		if (data->psy_usb_type == POWER_SUPPLY_USB_TYPE_UNKNOWN ||
+@@ -665,6 +669,8 @@ static int rt9467_psy_get_property(struct power_supply *psy,
+ 			val->intval = 1500000;
+ 		mutex_unlock(&data->attach_lock);
+ 		return 0;
++	case POWER_SUPPLY_PROP_CURRENT_NOW:
++		return rt9467_get_adc(data, RT9467_ADC_IBUS, &val->intval);
+ 	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
+ 		mutex_lock(&data->ichg_ieoc_lock);
+ 		val->intval = data->ichg_ua;
+-- 
+2.34.1
 
-Please describe exactly the usecase.
-
-
-Best regards,
-Krzysztof
 
