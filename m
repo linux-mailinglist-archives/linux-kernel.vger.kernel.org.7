@@ -1,139 +1,283 @@
-Return-Path: <linux-kernel+bounces-749315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8570BB14CCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF6CB14CCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:12:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A478D7AFAC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:10:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C40315466CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:12:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCF028C5AB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1520628C2C1;
 	Tue, 29 Jul 2025 11:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NJLK6YAH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sZwjETJm"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7040C288502;
-	Tue, 29 Jul 2025 11:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6472428B7EA
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753787535; cv=none; b=r9cEI9bKlLn22uU/pEvwVRCbmbHuY+E8eOmegmX1kdI/k5aBLV7//RdqtX7cpn9d92JUBbVFpGNhb9CMllWygBgY/fbs/BU59Fb+/VgcB25qTysz4IFRVjrmeKYRoDY0xt2eiUS2d9rUBa9dy3O8vrqX6yi+VKm6yV50MbSnBEs=
+	t=1753787534; cv=none; b=rfuOMkXK5XC3Q88Aj1d3+592/tHgLBV4QNU2VuaQUvzNiQHkH4eY11mLD1ASMf1/B+EH3MqMwcDFTrHpcqQOH5sJGmgXVVU7yOXDbN54LMy3JHC8kMi1+edgr+RqMajpPVyHZi6lPcDnbO5k5stCcReYrQMV2Z3uiFu764N4rbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753787535; c=relaxed/simple;
-	bh=9/J0BHd+fuqkNFinG3p1UvN7xRkDJF3VXrbJKKrrPA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLExAX0EhN4noEJB96fNuSRQ9aB9UnfAt2erxiSGenu1EjnZb+t9KbNl3sl2TyO5fCP9vGPqUPZVqhys5Aj0nlCdm/cltZpuHe760tCYeIo05fVUEfWEFBN209EsSYDqrXF/FXALU75A8hpnQP9kLafnwyJsD5eMBEDbUPTIAwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NJLK6YAH; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753787534; x=1785323534;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9/J0BHd+fuqkNFinG3p1UvN7xRkDJF3VXrbJKKrrPA8=;
-  b=NJLK6YAHkmcvH39dItg28s9exiqzdO7C5b+1+73Soi/fszl5gORyOfBP
-   XybY4035aUxNfe4rbaBMpuUu/tqc2L6TEWh67gYYotcwIpoturAs7CY78
-   NjO58GEuXw2kwxz2nXezhRb5JjI/tIL9bFGd7/ipzm3Vbz/egdnRPC5M6
-   TSyZHKhL1yqlgBQG5mKF0WlE7PeK2jAjaqZ9ebmOTJccBWoKd146yOHjV
-   WoAgQ6EeSWUoW5phD6mYnrCi6kHDpUHeuDYB9KsMkxNCoq4m2sKpDWTyU
-   3qdXo4W6FGXUo39ubZeLVorO/vWWdD3JryjPQc82BDZQt9rJqcj0i62/A
-   A==;
-X-CSE-ConnectionGUID: M269EpkkTcOvna7l5c6VBg==
-X-CSE-MsgGUID: cQbALhAfTGGjPuh1pC/Jtw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="58677110"
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="58677110"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 04:12:13 -0700
-X-CSE-ConnectionGUID: 9h1TUjEISHO75Q1oFt4DCg==
-X-CSE-MsgGUID: 7H97cNIyQnStcprWNIE7SA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="163451637"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Jul 2025 04:12:08 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ugiFa-0001Dv-2z;
-	Tue, 29 Jul 2025 11:12:06 +0000
-Date: Tue, 29 Jul 2025 19:11:34 +0800
-From: kernel test robot <lkp@intel.com>
-To: Junhui Liu <junhui.liu@pigmoral.tech>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>
-Cc: oe-kbuild-all@lists.linux.dev, linux-remoteproc@vger.kernel.org,
-	devicetree@vger.kernel.org, sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] drivers: remoteproc: Add C906L controller for
- Sophgo CV1800B SoC
-Message-ID: <202507291829.aB1UgzrA-lkp@intel.com>
-References: <20250728-cv1800-rproc-v2-2-5bbee4abe9dc@pigmoral.tech>
+	s=arc-20240116; t=1753787534; c=relaxed/simple;
+	bh=BVEnoilCFCG1f6yMCo064vRBjQwVBfWkMyhEmTCA+/8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HCu0bw7abG7tQMFiIJItWnhPkLR+oufgxPUNQgk83i29Vkj0V+zmuCcqAdmj4ptbPFrh6ZwRxA+oReM7xVk1iAGcDMKisSZEYvinoY3+gST2PSYN53CP2oV3E7BsJ7geaqV/ONP2HK3I7n9xXMl2AUW7r2f4ktu4SOF8nRZQmGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sZwjETJm; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-32e14cf205cso53835321fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753787530; x=1754392330; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5LXLgdNoFY7nm3djrI3De1oD1rZPUM1dBdXIbzK2TE=;
+        b=sZwjETJmd2U1oIby0H6jGLzHVTMPmCiHrUlzb54DB5Caid9TmChd/WSRRcCwtlAcLn
+         nYwxXe4lwD1lVUqYTR+h5U2Jnr5tdSWoZIKv6Q1ljK+mc9t2sZQMGMgwLdk4BI68u58G
+         7leHRV4AtyKbWSdrL08YmJx/Oo57tr0o18mAq+05wwWAF7KKf2CXYD12x0vcra00WoOM
+         02I3qzjwTphaw+L76vMClqsQu4KH+MKLfp0VZ86+m1B9CpTkVZFw79f0pqGogRqN8OW5
+         XViqpREbfdk8MUpOH6IakDmIpvy9IBDek1/hz9ZINOnukLdoOs1fwAiV4nlokJG/IP85
+         2Mpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753787530; x=1754392330;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/5LXLgdNoFY7nm3djrI3De1oD1rZPUM1dBdXIbzK2TE=;
+        b=N9ft8NYPFpF4sFPVtu0P4612p2yt/TP5+Rcer7KYVUrpEeYxbP5qIVviOZuyZwnkQa
+         CkdvoXqRTZ7FY4Jrg2fM5OSprKmsNcV0BYCbAu50kIoT9sLyE+BjGd0AOfDWHNVJQHQJ
+         rsGsS3NpWVAHCFKgwQB6+tIEzH0d3ygDworO8PJtyX4I8raP/shuB4L6+7aH76Oz1jlI
+         E3zjIyLLeMXpbQLCCRa0TqutE2U5DmxnU45oDMgavPhDiR0yiHx/Jm4Uq8vc267xBQig
+         2+x30VyqbK0xInoWTKLjozD8VqTy71YOrhq05NNPfbd2Cs9Ybb7a7we7fQKiturAHx88
+         z+3w==
+X-Forwarded-Encrypted: i=1; AJvYcCX1FGYxm6z49uobNagPQV56m5dJ0Nnh4qQnm8sel7XQA3aR4e8d0K6y6bqRgJrMZbo3G5xSwBcMjpAFgEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyETN/qg9/dI1MpDR+imMsdUYy5SOivV05w7W6I0FB+izzR0ovH
+	8YomZfe/YMbUfLJjOvpBGlv9S16iyHzVGwD5U+///XmiyNL/1XAGgum1DFTwblNmLZO+vWs8K9g
+	R66gis1GKRZNysjpdYN0cLsaJh79plQJfPv0O1B4d
+X-Gm-Gg: ASbGncvUZEvliYQ1jrq4XCh4PgRK5Dp+K/mLWqW+4TsquRJCqV3peWCsV92gpLIfSfl
+	i5MtkTs89ssw3lcIPMX2ame2rTAj/Ntv+N4BdH2iGIufJxsLhVVO1utAXknJzmm5qolMW4Vhdwi
+	S22L6CS22PKyAkpHRCCNEoeCoSMzr6A603hE7zxjFmFlo0rkV55JBWyQrNqvUb+ecbHbPSI3RfQ
+	bxkZ96gt76TZ1uMDU5DhuwweNOFKN3dMiC/Xg==
+X-Google-Smtp-Source: AGHT+IFp8j2hP56kQeHT0eONPfgXOmvNM+NIK9dYb+CST/EeQjHd0br5xtEoYO6t0zCdfUOUElG2RUzckBvMCeI44nQ=
+X-Received: by 2002:a05:651c:1107:20b0:32c:a006:29d3 with SMTP id
+ 38308e7fff4ca-331ee66d357mr27919651fa.10.1753787530153; Tue, 29 Jul 2025
+ 04:12:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728-cv1800-rproc-v2-2-5bbee4abe9dc@pigmoral.tech>
+References: <20250728152548.3969143-1-glider@google.com> <20250728152548.3969143-7-glider@google.com>
+In-Reply-To: <20250728152548.3969143-7-glider@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 29 Jul 2025 13:11:58 +0200
+X-Gm-Features: Ac12FXywcPyU53mFZ7Bl6gOazcF0D4j2xnZWgO3CWGRVf7fcxWsyg-cMguQJbC4
+Message-ID: <CACT4Y+Ymd=7zQ-AYhEx93DpBZ89jVbdUM0pbN+2vPaiwKg-sdA@mail.gmail.com>
+Subject: Re: [PATCH v3 06/10] kcov: add trace and trace_size to struct kcov_state
+To: Alexander Potapenko <glider@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Junhui,
+On Mon, 28 Jul 2025 at 17:26, Alexander Potapenko <glider@google.com> wrote:
+>
+> Keep kcov_state.area as the pointer to the memory buffer used by
+> kcov and shared with the userspace. Store the pointer to the trace
+> (part of the buffer holding sequential events) separately, as we will
+> be splitting that buffer in multiple parts.
+> No functional changes so far.
+>
+> Signed-off-by: Alexander Potapenko <glider@google.com>
 
-kernel test robot noticed the following build warnings:
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 
-[auto build test WARNING on 038d61fd642278bab63ee8ef722c50d10ab01e8f]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Junhui-Liu/dt-bindings-remoteproc-Add-C906L-rproc-for-Sophgo-CV1800B-SoC/20250728-190847
-base:   038d61fd642278bab63ee8ef722c50d10ab01e8f
-patch link:    https://lore.kernel.org/r/20250728-cv1800-rproc-v2-2-5bbee4abe9dc%40pigmoral.tech
-patch subject: [PATCH v2 2/2] drivers: remoteproc: Add C906L controller for Sophgo CV1800B SoC
-config: parisc-randconfig-r123-20250729 (https://download.01.org/0day-ci/archive/20250729/202507291829.aB1UgzrA-lkp@intel.com/config)
-compiler: hppa-linux-gcc (GCC) 8.5.0
-reproduce: (https://download.01.org/0day-ci/archive/20250729/202507291829.aB1UgzrA-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507291829.aB1UgzrA-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/remoteproc/sophgo_cv1800b_c906l.c:47:20: sparse: sparse: cast removes address space '__iomem' of expression
-
-vim +/__iomem +47 drivers/remoteproc/sophgo_cv1800b_c906l.c
-
-    36	
-    37	static int cv1800b_c906l_mem_alloc(struct rproc *rproc,
-    38					   struct rproc_mem_entry *mem)
-    39	{
-    40		void __iomem *va;
-    41	
-    42		va = ioremap_wc(mem->dma, mem->len);
-    43		if (!va)
-    44			return -ENOMEM;
-    45	
-    46		/* Update memory entry va */
-  > 47		mem->va = (void *)va;
-    48	
-    49		return 0;
-    50	}
-    51	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+> v3:
+>  - Fix a warning detected by the kernel test robot <lkp@intel.com>
+>  - Address comments by Dmitry Vyukov:
+>    - s/kcov/KCOV/
+>    - fix struct initialization style
+>
+> v2:
+>  - Address comments by Dmitry Vyukov:
+>    - tweak commit description
+>  - Address comments by Marco Elver:
+>    - rename sanitizer_cov_write_subsequent() to kcov_append_to_buffer()
+>  - Update code to match the new description of struct kcov_state
+>
+> Change-Id: I50b5589ef0e0b6726aa0579334093c648f76790a
+> ---
+>  include/linux/kcov_types.h |  9 ++++++-
+>  kernel/kcov.c              | 48 +++++++++++++++++++++-----------------
+>  2 files changed, 35 insertions(+), 22 deletions(-)
+>
+> diff --git a/include/linux/kcov_types.h b/include/linux/kcov_types.h
+> index 53b25b6f0addd..9d38a2020b099 100644
+> --- a/include/linux/kcov_types.h
+> +++ b/include/linux/kcov_types.h
+> @@ -7,9 +7,16 @@
+>  struct kcov_state {
+>         /* Size of the area (in long's). */
+>         unsigned int size;
+> +       /*
+> +        * Pointer to user-provided memory used by KCOV. This memory may
+> +        * contain multiple buffers.
+> +        */
+> +       void *area;
+>
+> +       /* Size of the trace (in long's). */
+> +       unsigned int trace_size;
+>         /* Buffer for coverage collection, shared with the userspace. */
+> -       void *area;
+> +       unsigned long *trace;
+>
+>         /*
+>          * KCOV sequence number: incremented each time kcov is reenabled, used
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index 8154ac1c1622e..2005fc7f578ee 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -194,11 +194,11 @@ static notrace unsigned long canonicalize_ip(unsigned long ip)
+>         return ip;
+>  }
+>
+> -static notrace void kcov_append_to_buffer(unsigned long *area, int size,
+> +static notrace void kcov_append_to_buffer(unsigned long *trace, int size,
+>                                           unsigned long ip)
+>  {
+>         /* The first 64-bit word is the number of subsequent PCs. */
+> -       unsigned long pos = READ_ONCE(area[0]) + 1;
+> +       unsigned long pos = READ_ONCE(trace[0]) + 1;
+>
+>         if (likely(pos < size)) {
+>                 /*
+> @@ -208,9 +208,9 @@ static notrace void kcov_append_to_buffer(unsigned long *area, int size,
+>                  * overitten by the recursive __sanitizer_cov_trace_pc().
+>                  * Update pos before writing pc to avoid such interleaving.
+>                  */
+> -               WRITE_ONCE(area[0], pos);
+> +               WRITE_ONCE(trace[0], pos);
+>                 barrier();
+> -               area[pos] = ip;
+> +               trace[pos] = ip;
+>         }
+>  }
+>
+> @@ -224,8 +224,8 @@ void notrace __sanitizer_cov_trace_pc_guard(u32 *guard)
+>         if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
+>                 return;
+>
+> -       kcov_append_to_buffer(current->kcov_state.area,
+> -                             current->kcov_state.size,
+> +       kcov_append_to_buffer(current->kcov_state.trace,
+> +                             current->kcov_state.trace_size,
+>                               canonicalize_ip(_RET_IP_));
+>  }
+>  EXPORT_SYMBOL(__sanitizer_cov_trace_pc_guard);
+> @@ -241,8 +241,8 @@ void notrace __sanitizer_cov_trace_pc(void)
+>         if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
+>                 return;
+>
+> -       kcov_append_to_buffer(current->kcov_state.area,
+> -                             current->kcov_state.size,
+> +       kcov_append_to_buffer(current->kcov_state.trace,
+> +                             current->kcov_state.trace_size,
+>                               canonicalize_ip(_RET_IP_));
+>  }
+>  EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
+> @@ -251,9 +251,9 @@ EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
+>  #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
+>  static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+>  {
+> -       struct task_struct *t;
+> -       u64 *area;
+>         u64 count, start_index, end_pos, max_pos;
+> +       struct task_struct *t;
+> +       u64 *trace;
+>
+>         t = current;
+>         if (!check_kcov_mode(KCOV_MODE_TRACE_CMP, t))
+> @@ -265,22 +265,22 @@ static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+>          * We write all comparison arguments and types as u64.
+>          * The buffer was allocated for t->kcov_state.size unsigned longs.
+>          */
+> -       area = (u64 *)t->kcov_state.area;
+> +       trace = (u64 *)t->kcov_state.trace;
+>         max_pos = t->kcov_state.size * sizeof(unsigned long);
+>
+> -       count = READ_ONCE(area[0]);
+> +       count = READ_ONCE(trace[0]);
+>
+>         /* Every record is KCOV_WORDS_PER_CMP 64-bit words. */
+>         start_index = 1 + count * KCOV_WORDS_PER_CMP;
+>         end_pos = (start_index + KCOV_WORDS_PER_CMP) * sizeof(u64);
+>         if (likely(end_pos <= max_pos)) {
+>                 /* See comment in kcov_append_to_buffer(). */
+> -               WRITE_ONCE(area[0], count + 1);
+> +               WRITE_ONCE(trace[0], count + 1);
+>                 barrier();
+> -               area[start_index] = type;
+> -               area[start_index + 1] = arg1;
+> -               area[start_index + 2] = arg2;
+> -               area[start_index + 3] = ip;
+> +               trace[start_index] = type;
+> +               trace[start_index + 1] = arg1;
+> +               trace[start_index + 2] = arg2;
+> +               trace[start_index + 3] = ip;
+>         }
+>  }
+>
+> @@ -381,11 +381,13 @@ static void kcov_start(struct task_struct *t, struct kcov *kcov,
+>
+>  static void kcov_stop(struct task_struct *t)
+>  {
+> +       int saved_sequence = t->kcov_state.sequence;
+> +
+>         WRITE_ONCE(t->kcov_mode, KCOV_MODE_DISABLED);
+>         barrier();
+>         t->kcov = NULL;
+> -       t->kcov_state.size = 0;
+> -       t->kcov_state.area = NULL;
+> +       t->kcov_state = (typeof(t->kcov_state)){};
+> +       t->kcov_state.sequence = saved_sequence;
+>  }
+>
+>  static void kcov_task_reset(struct task_struct *t)
+> @@ -734,6 +736,8 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>                 }
+>                 kcov->state.area = area;
+>                 kcov->state.size = size;
+> +               kcov->state.trace = area;
+> +               kcov->state.trace_size = size;
+>                 kcov->mode = KCOV_MODE_INIT;
+>                 spin_unlock_irqrestore(&kcov->lock, flags);
+>                 return 0;
+> @@ -925,10 +929,12 @@ void kcov_remote_start(u64 handle)
+>                 local_lock_irqsave(&kcov_percpu_data.lock, flags);
+>         }
+>
+> -       /* Reset coverage size. */
+> -       *(u64 *)area = 0;
+>         state.area = area;
+>         state.size = size;
+> +       state.trace = area;
+> +       state.trace_size = size;
+> +       /* Reset coverage size. */
+> +       state.trace[0] = 0;
+>
+>         if (in_serving_softirq()) {
+>                 kcov_remote_softirq_start(t);
+> --
+> 2.50.1.470.g6ba607880d-goog
+>
 
