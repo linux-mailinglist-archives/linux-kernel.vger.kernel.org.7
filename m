@@ -1,150 +1,131 @@
-Return-Path: <linux-kernel+bounces-749559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAF3B14FF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A0DB14FF7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:07:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DD7517792B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1558016D5FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAFE285C86;
-	Tue, 29 Jul 2025 15:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B7F1E25F8;
+	Tue, 29 Jul 2025 15:07:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Oz3cgp4P"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bTvkfjvu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4816A207E1D;
-	Tue, 29 Jul 2025 15:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7CF207E1D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753801590; cv=none; b=dYCrK3TlCOMdkFATfoiNUqHAcRHG8FiIdti0B9/Cipf089kl6DEyux+dy73USiZQcsxdcFg8oY/gkqhg+31/LrA+plmaiIOM3yeWXSvP+KNRhUNEX/MfUIrNC2t80xuRGhFtn45kMnoziz0Wt0s/qpM/8z/6hkZdk2Z1zu01MCo=
+	t=1753801637; cv=none; b=HZWsPdtx/VyyR64sihRkl1rTJPX652n82f6NmRB8+FlE9tZwLMkinUzXee2pTmZzJc1Vzf4KJHCz2enOzwOkQEg3WEw2GAP6YALjKB1O0m+dZxKUmvnedoARz3lYOekSUrVF/KTAfCYRTVuPJIYVKTQaVGQV1hDtoHtcGx69C4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753801590; c=relaxed/simple;
-	bh=PvbI4Mz0pcXa1WZQDU4y4yYv4ip/qg1s3TKzZSqga9s=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XjccxVZmOqoIRL19pkjuonv1Zw+zS1mHmzVRoMHmULXNYFk8/1Gw7daNBXNmdhZBd4qtYzT3VFPpAYpalvvGV46PEISxGyGi/8hYq7fOTKF+i090sp6b5NH2TcYbPXNbtP9RQxsCBv7vunowslW7ElxKpZT7gjgUAhogUBgxWjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Oz3cgp4P; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753801571; x=1754406371; i=markus.elfring@web.de;
-	bh=PvbI4Mz0pcXa1WZQDU4y4yYv4ip/qg1s3TKzZSqga9s=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Oz3cgp4Pz8CKuLShAAL/UK1Ff6PgqEcaEC9R12rzkLqZjApLckVLR6Jggn4lO3Fw
-	 kCt06Vzde2YlpjEOEVTmdzdvu7ViwxxD2N2H5bWI69vMTnq/E9VfDnTncIbL1Iyar
-	 vAlWD/D7ml6iVA9GulV5g18Zypa5PmlQ1O0WUQBNPqKPMBzOzsLs+mosspLN2qzd9
-	 CSpteFt8cG9Chk5c3OdY86sFsUcrWc0hINkj7TKzWy9GaTlkkCOF3hsYSveN2fu3m
-	 ODMAgpHp4i49PYLeS2aOBq0mAcxSZkKPk6lob5A10yo/F2UjVqli0sjAuUMBN4EVc
-	 iKqyxRP5DToaxejl4A==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.201]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N9cLf-1udWj81NRN-00weSj; Tue, 29
- Jul 2025 17:06:11 +0200
-Message-ID: <6b7f5179-66c7-46ae-b1a9-af9be97baafe@web.de>
-Date: Tue, 29 Jul 2025 17:06:08 +0200
+	s=arc-20240116; t=1753801637; c=relaxed/simple;
+	bh=Ei4j61++xYai4BK5l+E6lE08w0YyBTZsWiZjNGGayh8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zxuny+q0YvuO97n5DRwOXuGe3KPXq9xSoLPe/l2hIva6h5Y2AU9ATgH5vmFGbp6lWZ10rWQkvj70pQSIgU7ivxlW615XrnOaSu6X0Gsgh/86dI6paODRCP+00pobRr0AdqrBnSO13+FL5MwKQTFgGH5rQBuX+XXdJeEvqwzIB0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bTvkfjvu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 870E2C4CEEF;
+	Tue, 29 Jul 2025 15:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753801634;
+	bh=Ei4j61++xYai4BK5l+E6lE08w0YyBTZsWiZjNGGayh8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bTvkfjvuOt5QmZsgVZ+bICfYaIzVvCjhGSn8i2tm85TnsqOxHiBHQi2MR8EcUznT3
+	 CS8IQnRLsh++3pzI6RblJg7URscFMAAi8FTV1DG17RcYbGvURxKegnmBReglCfsRHq
+	 MYl4dxfFLz3KYKdKIZab2j/TwbaR65LMdpgEjXrZ577NTI3t7I/CSb+qZNIikVhSX/
+	 Y3woxHSyi230GmgAv3Z3rosdhuEnGlOAIgriYBgM9AW+Vh0s4kvA9Ethmt8j+WPBzF
+	 OS/oR946RLUkZh4USq/4ZOGF2jr90KQajlaDnjRca976/dGV7nQOU8bRgfV5uQw1CL
+	 C5PgcrUdIq4Mg==
+Date: Tue, 29 Jul 2025 15:07:12 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	Jan Prusakowski <jprusakowski@google.com>
+Subject: Re: [PATCH] f2fs: dump more information when checkpoint was blocked
+ for long time
+Message-ID: <aIjjoBJqYjdNv63m@google.com>
+References: <20250729063326.435167-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Tian Liu <27392025k@gmail.com>, netdev@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Igor Russkikh <irusskikh@marvell.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>
-References: <20250729005853.33130-1-27392025k@gmail.com>
-Subject: Re: [PATCH net v2] net: atlantic: fix overwritten return value in
- Aquantia driver
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250729005853.33130-1-27392025k@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:39wbgMK7BtJ4ap8lsna6Ki8ZmJqrAY3pigrKmLxfDJmIBObyz4l
- hSIXg6exPgJ2ydQMUFh0XNYQT3S3oeY16l+TILY4aH5XBmzQYRIPQTsqNsIupLt5j4T2DT1
- E7yNjK+H1dJxPLcsJ1EfrxBo+ou4X0HyOxpKl9CtUxViWAdp654jUFxLEQHmKRJAV+eBXjS
- hrs6W1i5Y1bzYZntUQFcw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4uo2xk/iK18=;11vwohP2PEjC0GVXDZ8QLY0HcQG
- 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
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729063326.435167-1-chao@kernel.org>
 
-=E2=80=A6
-> This patch uses =E2=80=A6
+On 07/29, Chao Yu wrote:
+> generic/299 w/ mode=lfs will cause long time latency, let's dump more
+> information once we hit case.
+> 
+> CP merge:
+>   - Queued :    0
+>   - Issued :    1
+>   - Total :    1
+>   - Cur time : 7565(ms)
+>   - Peak time : 7565(ms)
+> 
+> F2FS-fs (vdc): checkpoint was blocked for 7565 ms, affecting 1 tasks
+> CPU: 8 UID: 0 PID: 1614 Comm: f2fs_ckpt-253:3 Tainted: G           O        6.16.0-rc3+ #406 PREEMPT(voluntary)
+> Tainted: [O]=OOT_MODULE
+> Call Trace:
+>  dump_stack_lvl+0x6e/0xa0
+>  __checkpoint_and_complete_reqs+0x1a6/0x1d0
+>  issue_checkpoint_thread+0x4b/0x140
+>  kthread+0x10d/0x250
+>  ret_from_fork+0x164/0x190
+>  ret_from_fork_asm+0x1a/0x30
 
-See also:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16#n94
+Can we add more information for debugging this?
 
-
-=E2=80=A6
-> Signed-off-by: Tian Liu <27392025k@gmail.com>
->=20
-> Changes in v2:
-=E2=80=A6
+> 
+> Cc: Jan Prusakowski <jprusakowski@google.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
 > ---
-
-Please move the marker line.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16#n784
-
-Regards,
-Markus
+>  fs/f2fs/checkpoint.c | 9 ++++++++-
+>  fs/f2fs/f2fs.h       | 3 +++
+>  2 files changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index db3831f7f2f5..b0dcaa8dc40d 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1788,8 +1788,15 @@ static void __checkpoint_and_complete_reqs(struct f2fs_sb_info *sbi)
+>  
+>  	spin_lock(&cprc->stat_lock);
+>  	cprc->cur_time = (unsigned int)div64_u64(sum_diff, count);
+> -	if (cprc->peak_time < cprc->cur_time)
+> +	if (cprc->peak_time < cprc->cur_time) {
+>  		cprc->peak_time = cprc->cur_time;
+> +
+> +		if (unlikely(cprc->peak_time >= CP_LONG_LATENCY_THRESHOLD)) {
+> +			f2fs_warn_ratelimited(sbi, "checkpoint was blocked for %u ms, affecting %llu tasks",
+> +					cprc->peak_time, count);
+> +			dump_stack();
+> +		}
+> +	}
+>  	spin_unlock(&cprc->stat_lock);
+>  }
+>  
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 46d23c2c086c..3130ca6a4770 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -350,6 +350,9 @@ struct ckpt_req_control {
+>  	unsigned int peak_time;		/* peak wait time in msec until now */
+>  };
+>  
+> +/* a time threshold that checkpoint was blocked for, unit: ms */
+> +#define CP_LONG_LATENCY_THRESHOLD	5000
+> +
+>  /* for the bitmap indicate blocks to be discarded */
+>  struct discard_entry {
+>  	struct list_head list;	/* list head */
+> -- 
+> 2.49.0
 
