@@ -1,126 +1,95 @@
-Return-Path: <linux-kernel+bounces-749528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00FBBB14F7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:45:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DA96B14F7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:46:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BF0D54549D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:45:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C95918A3F78
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BECA1EFFA6;
-	Tue, 29 Jul 2025 14:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6611EF387;
+	Tue, 29 Jul 2025 14:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwk+hC9D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHP7pPCa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78FE91E492;
-	Tue, 29 Jul 2025 14:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717B21E885A;
+	Tue, 29 Jul 2025 14:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753800327; cv=none; b=IW2O1wbFxrbZZcOCKfF6DMYcsysESh5jDMyH59TzrKFiVGS+JoyVoJmn+BQfwmD7vCXvpPwrYEhbGOu2ETubdq/iRnWtMJIbV6jjln001QWfs2dlL13q9FtkJM4cLffdxV1Q8nsNQ7RzBA1AkZYNHecLgXWJC7FAKwDlB3OwYgc=
+	t=1753800355; cv=none; b=c+Bwn1Gg5rLcKeFv7qQXWf8aE2K7UkBdS2rbpKlZ2k2MsutFt7oqyaB0YUYD6K7YSWR+BP2MPRPoZhCEiTMvBh9i1oLsVBJ8Y/VcRQ0Cf0zsD3uKgBsfP/0VFmUHAfZto18qvTxKaSzaMNWFrMO+nWPIMDBah88T9ND8PTZ2BR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753800327; c=relaxed/simple;
-	bh=F/Bh+Ko7ppvbg/wnZKDwtyoTD+8mKkxRf3M7eQV81Rc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aQSGH4AyDtqHklkl0tGiPe8BorZLbQBQHa1hXdGNKECaezXc34huLYOpbhtsLHQQqLCtv/s9rVmpo+NlcpkvFyp8Zm+rW0Up5pMboMIaVemGKfpNaYHJTcjfqoYklNzdsG07NNo4jpV6HCBrNKHQoy5Sfz40WjGld4AVYzgrgek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwk+hC9D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0354FC4CEF4;
-	Tue, 29 Jul 2025 14:45:26 +0000 (UTC)
+	s=arc-20240116; t=1753800355; c=relaxed/simple;
+	bh=VRe02SlbUxzFL+D1eWiHYgvNlUzOCAiZ1RiAPc6Icps=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=LxmEs2N9mn1O8YfmuAmHZfpvTg9WSQ5v+830qnUW2S/UGSUDs3tU6G/tO0iwPiKNXeDT5wqOK57zfwakMoYE1ocSygpz+bb9uS2njBcQBmR/N/DRMzgqEdSj+dFki3eGFt9JMPkIPGNnJxchOe2t0UEaQMHmG1J7T45C8uH6q14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHP7pPCa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB0E9C4CEF4;
+	Tue, 29 Jul 2025 14:45:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753800327;
-	bh=F/Bh+Ko7ppvbg/wnZKDwtyoTD+8mKkxRf3M7eQV81Rc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uwk+hC9DrAJEjata9Hgdy5oewaZG9KXV8YmIkeUonkXlDl9Mo/ZaRNNAAFHmLlXIm
-	 KLHSpkAK72Q0nnZKayxuc8nOidM4LctrisYowwCVXZ0GcqvgP6CwEc2BrW49MlMhII
-	 QffzsvQNO4ow09OKUf8X1rnNUinMUPXjz63ccvCaoZRxTXxjy2neZm4rMNokYZhfSW
-	 2bPa/99E7L7WnnOlI1tOfD+ALfreLAq4WKutVmwVgktgg7u+4/vPIHsWJL/PYiNt9i
-	 c0OmBB5PYJXqf/iRUoposDzCl13gxxlfMU5R744HRzpyscXfbxBADBajxAfGIKc1j3
-	 NtG88owBSUi/A==
-Date: Tue, 29 Jul 2025 07:45:26 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: John Garry <john.g.garry@oracle.com>, Zorro Lang <zlang@redhat.com>,
-	fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	tytso@mit.edu, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
- crc check verifier
-Message-ID: <20250729144526.GB2672049@frogsfrogsfrogs>
-References: <7fc0f04e-dcec-47a4-b522-eb5a8b90637c@oracle.com>
- <aIDozETJ8aLparYV@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <9b9ed959-bda5-4a92-90c7-a621ffe58240@oracle.com>
- <aIMjrunlU04jI2lF@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <0af205d9-6093-4931-abe9-f236acae8d44@oracle.com>
- <aIccCgrCuQ4Wf1OH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <2ae4bb04-fbf7-4a53-b498-ea6361cdab3e@oracle.com>
- <aId8oZGXSg5DW48X@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <3a4854ac-75ad-4783-acbd-048fe7c7fdb0@oracle.com>
- <aIhmG-l4nWOAzz2I@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=k20201202; t=1753800355;
+	bh=VRe02SlbUxzFL+D1eWiHYgvNlUzOCAiZ1RiAPc6Icps=;
+	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
+	b=hHP7pPCa5zggfP/Ea+wRT/ozNG1fGgcXeXqLCs4RDCT9ktEORmHOSKgGE4PiH6KZ5
+	 gd036sU/rM8UF60RTuQS/L1Qvd3v7rFBxFPoodU30xbsVicWZo/6O1rBrKddGsOHv3
+	 sd4X2MpA5ePhVyO93Pncnz1aZ1cJH8CUfOcJFKrePwbdWG/mAbTFuvyWGtciiABF9w
+	 TL6B4XG85XbZw+vjYlj2ln07rtDxMJXP3oC6nTtDDvIVtCghSwxkfMd+0EaefDMCO3
+	 r6rWJ2Lsl0Gzk07YrTKdnCsWFrSl7MMfBJOUvX6r21MbH95uY67XCYSw26uEwdirxi
+	 NM1lAQFU9hq+A==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIhmG-l4nWOAzz2I@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 29 Jul 2025 16:45:50 +0200
+Message-Id: <DBOMC68QGS76.2MYEXRE1I34VV@kernel.org>
+Cc: "herculoxz" <abhinav.ogl@gmail.com>, <linux-pci@vger.kernel.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <bhelgaas@google.com>, <kwilczynski@kernel.org>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+From: "Danilo Krummrich" <dakr@kernel.org>
+Subject: Re: [PATCH v2] rust: pci: Use explicit types in FFI callbacks
+References: <20250729102953.141412-1-abhinav.ogl@gmail.com>
+ <CANiq72kRu5Wd-3Tk7px=2Y5kU5Tq2fQch=+f3ExYSrJa2+tSSg@mail.gmail.com>
+In-Reply-To: <CANiq72kRu5Wd-3Tk7px=2Y5kU5Tq2fQch=+f3ExYSrJa2+tSSg@mail.gmail.com>
 
-On Tue, Jul 29, 2025 at 11:41:39AM +0530, Ojaswin Mujoo wrote:
-> On Mon, Jul 28, 2025 at 03:00:40PM +0100, John Garry wrote:
-> > On 28/07/2025 14:35, Ojaswin Mujoo wrote:
-> > > > We guarantee that the write is committed all-or-nothing, but do rely on
-> > > > userspace not issuing racing atomic writes or racing regular writes.
-> > > > 
-> > > > I can easily change this, as I mentioned, but I am not convinced that it is
-> > > > a must.
-> > > Purely from a design point of view, I feel we are breaking atomicity and
-> > > hence we should serialize or just stop userspace from doing this (which
-> > > is a bit extreme).
-> > 
-> > If you check the man page description of RWF_ATOMIC, it does not mention
-> > serialization. The user should conclude that usual direct IO rules apply,
-> > i.e. userspace is responsible for serializing.
-> 
-> My mental model of serialization in context of atomic writes is that if
-> user does 64k atomic write A followed by a parallel overlapping 64kb
-> atomic write B then the user might see complete A or complete B (we
-> don't guarantee) but not a mix of A and B.
+On Tue Jul 29, 2025 at 12:52 PM CEST, Miguel Ojeda wrote:
+> On Tue, Jul 29, 2025 at 12:30=E2=80=AFPM herculoxz <abhinav.ogl@gmail.com=
+> wrote:
+>>
+>> and improves ABI
+>> correctness when interfacing with C code.
+>
+> I think this still sounds like it is fixing an ABI issue -- I would
+> probably just remove that second sentence.
 
-Heh, here comes that feature naming confusing again.  This is my
-definition:
+I agree, the types exported via prelude are the ones from kernel::ffi.
 
-RWF_ATOMIC means the system won't introduce new tearing when persisting
-file writes.  The application is allowed to introduce tearing by writing
-to overlapping ranges at the same time.  The system does not isolate
-overlapping reads from writes.
+> (But no need for a v3 -- I think it can be fixed on apply unless
+> Danilo wants it).
 
---D
+Yeah, I can fix it up when applying the patch.
 
-> > 
-> > > 
-> > > I know userspace should ideally not do overwriting atomic writes but if
-> > > it is something we are allowing (which we do) then it is
-> > > kernel's responsibility to ensure atomicity. Sure we can penalize them
-> > > by serializing the writes but not by tearing it.
-> > > 
-> > > With that reasoning, I don't think the test should accomodate for this
-> > > particular scenario.
-> > 
-> > I can send a patch to the community for xfs (to provide serialization), like
-> > I showed earlier, to get opinion.
-> 
-> Thanks, that would be great.
-> 
-> Regards,
-> John
-> > 
-> > Thanks,
-> > John
-> > 
-> 
+I also think the subject from v1, i.e. "use c_* types via kernel prelude", =
+was
+better. This one is a bit misleading, the types in the FFI callbacks are al=
+ready
+explicit.
+
+Unless I hear otherwise, I will also revert the subject to the one of v1 wh=
+en I
+apply the patch.
+
+Thanks,
+Danilo
 
