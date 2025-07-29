@@ -1,125 +1,121 @@
-Return-Path: <linux-kernel+bounces-749486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DF0B14EF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:00:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657C9B14EF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:01:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD8CE16690C
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4914E00EB
 	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:00:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D5D17A303;
-	Tue, 29 Jul 2025 14:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2085E18DB27;
+	Tue, 29 Jul 2025 14:01:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="moL0hcfB"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V8R0hUQz"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3902E36E2;
-	Tue, 29 Jul 2025 14:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D057944E;
+	Tue, 29 Jul 2025 14:01:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753797642; cv=none; b=V4n1qCQzsrnBnDaIxQP6fYlUEuWEc6oir7jnP7L7yjWbruv+xP2To15vYlQo3H6Zw69EwXyxX0RH3Ep7teRs29W0/78tUaW9qAaBtLvuJ5tOhgJBFo1tP9QmYfSghK+K6Ala7DK9P7SIXk83/ZjvbHmD4fo94hIxa8Hg/GQTRy4=
+	t=1753797672; cv=none; b=I5LJmRAm0Lt7FfkUE9wDiKNq6R2Gy0l9EYbpBgo/ZzUQa7eGnf0dHsxgLnd0QIKQio5Wu0SgpI3aMR8bwVFIJx5EQy3WS7G04FK9k92pgPF78RaDGe4JyoCKyyShQbNYUMFvcVeAiqCDTngwR1iYxOuvr9i3kEbIR5YnCGJpqYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753797642; c=relaxed/simple;
-	bh=sOxtkDYdkQGd7k6eC0OIl3338t3jmSISjmThtXeV0Kw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mShRKmr92UDvzoAbcVHNIgnodHEGr0nAF9oNiHwfoXvLEH3kwCz5QVXmCX3AvXtCrTUUcrRSEobDrSQgU2OkNSB921AvZx6juTsOKtGcHVl5jawLqJeaJIaN0H7A9FUrAvzg/D+1XJH3nyEtSM8CKk4Wo5SnN+l0jO0CixUsMb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=moL0hcfB; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1753797672; c=relaxed/simple;
+	bh=r3HIC7Boxoc8WBzaUCJ1hQaQWM78N1Woz+Lqyxl0MTU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u7Nv8P43YULM2L1fkMyJ/CR9Dw5p4VM23oZ01rDGCIuvPjg4njw1Gric7EJuA/kSOJ1GOk9bB8vHEmzI64KhtiwKJ8IFndyI8cUeqBjlnyh+mwS75H2yJ4AQtPptiogW6fAOYBPUpDZOIkTMpZGrZvKcBhu7WqIKnH9uFN4NuPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V8R0hUQz; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-74b50c71b0aso3292203b3a.0;
-        Tue, 29 Jul 2025 07:00:40 -0700 (PDT)
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-31f3b54da19so332231a91.1;
+        Tue, 29 Jul 2025 07:01:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753797640; x=1754402440; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HZ3Q4vacdASfiKmYfor37WZJr9osSzqsT23+mekRAPw=;
-        b=moL0hcfB8SqXeF61fpn1h/AaE2Ci+My4fIOw++91ZHKIBeaQ0IlmFxNNzStO+sWeJ6
-         tsk6rOUWX6DYYvVxT3UfPk2Qt0s9mn8kNK8Q8rVl+Iizm3kHsRVPwNlK7M/JTJbscjf8
-         cZUkdqX7dER/Wm90RRL4J1EeaHBmECSFZIRZgET+AqNI1QJWmgZjn4GPa2i3FVtKkOqc
-         amVc+s3PXRMcUo0KBNzzsjEqCkinMe4vf5LmJUVZxyi40fAvUxa4D/FLXZEAQ6eyxqhg
-         7cfvU94sxo6Tn14nEFmYEeOHEsOQJx/uoPLRuuxpqlRMjuJC2luD+eIUPctS+kZqScvH
-         4SaA==
+        d=gmail.com; s=20230601; t=1753797670; x=1754402470; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q5L+zwK3WhJ2pLBcL0OsL1prz9X5dOPsX+0ffaqpEcI=;
+        b=V8R0hUQz0LNC1stDr8D0N0TlKML1s6HoGZ8r27jMnS2hClkzKwNAPBvNI7w0W8tKN1
+         kbRkjYnRa6Pfuwz+1HUZYM89NjmoX6oIm0tb2tYWVHIQFWkP+LjFrzaIcWUg4SM5ytyP
+         esftwR/8e39YFc1jQzrUjnimsr41Q+v/oCpdyrdkJmvVI5ExwWh4QG/5IXEhpf8QehBN
+         f5/EZbh7ps0wj0Mlbp7XxEGRSl5cBPaGCHXVvQ7E7M3ib8CqmTqcckgn4qd8UIVv8QhW
+         RAd6fUAtU8nKVZdncDXbj+/27EIQhYz15IygBS1o0YlhwpCyHow2InGCnvMhdYf8Z870
+         omyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753797640; x=1754402440;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753797670; x=1754402470;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HZ3Q4vacdASfiKmYfor37WZJr9osSzqsT23+mekRAPw=;
-        b=nIhFQdKXEiMenwy860E0VSK9rKaUdIiJsjQpGW7zmFE34oQDyD3BjQzG8ImlhO4aTm
-         tXVo0nU8xT8eU7yDg4y9Jqbd5yNhbkL2XOjnvXKqLaTKmCn1EP+v/t90QVkUpWSCJMWF
-         8qBsx0QG+Orqf4EZOLA3A2FBbnkl+yIHb4kbQF4B0Z4v4hLROG04FwBe8TDNIe6FAWnU
-         0LDT77EFVez1MOtzwmpbFmyd1z/c1pLENxFYBh2sQiZAdcO5g8yzaPDx4H2Du76BCoVK
-         OxUrUUcGl5Jvva9Y42ucPWlM4izGZLe0906CCk78qo5N+6sRmADCiejLZsk1FQ/V8p7d
-         TqOw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3hbEH3jSsB4o5LvqbpaXY5gT4GRqmBjTk6Ssj8Q+EZEphp3nzrGUzlJz0pbF4kyq2myjWTQQ0B+1WTDo=@vger.kernel.org, AJvYcCXkiOZoGgJYl3lN8VtPa5E4Eg2Qebj+w8eN5j7wYi7X2UNXHuXhuHSETAuPeRN6vXirZupRH9TeQXu/RqCf7FE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwULa0Qtc++/m1QsDXLW8k6V/2QcP9c7UFctlwT8XqUI2kso133
-	Uo4zVWFB+jFSoi5ic0yZeuwuFU452ily9NVX/C7zqxyxGQc4PhHICxX/2B0HBw==
-X-Gm-Gg: ASbGncsZvuFAUVZPGS1X7AqsYulVSTeTndU8ZoznNdD5R35n6NNWd6I36mBIwbEE8yB
-	rzVOOF9uKacIgkuJcsjq2skYrwG7gGvxwB2wZ9IAQ1fXyckm8/92yEg59AAFIKJG1qIL5psjQ5x
-	llkrJdSJAUsg2+61CPXQnqN3+Y38WSKLEnwVmfKC4xgNoVq1woNE/qjGBPWfaTL4Y5qeB9IbA2D
-	uWdkGcVG91aEbKrAZt0qv8Gz8dgO4bT4sMrT+/8bBjQ2CWsNR4BZxJUzyDz/xULhn4mpuoAR+Zi
-	lepJ8Fs5bzugdCGiuxpn0SJTlNGQitD4c2YhZq3r0LUjhf6hcFIWJbJ8KNUrf/tTlZpq65b77wi
-	Xaoc+6HBVGNY7oYcc/K17e/WEJC5MKViOy/w=
-X-Google-Smtp-Source: AGHT+IFXGaCEVs7xY7OEH0Rh57cbQdgev16rb7LJALK0hoS/2THeoTBzdzd2hGNISOcI5cbGug0+vQ==
-X-Received: by 2002:a05:6a00:8d1:b0:736:d297:164 with SMTP id d2e1a72fcca58-7633227ed77mr17122565b3a.1.1753797638427;
-        Tue, 29 Jul 2025 07:00:38 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b2de3dbsm8211262b3a.113.2025.07.29.07.00.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 07:00:36 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 29 Jul 2025 07:00:35 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Ao Sun <aosun718@gmail.com>
-Cc: wim@linux-watchdog.org, matthias.bgg@gmail.com, p.zabel@pengutronix.de,
-	linux-watchdog@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-	geng.sun@transsion.com
-Subject: Re: [PATCH] watchdog: mtk_wdt: Use NOIRQ_SYSTEM_SLEEP_PM_OPS()
-Message-ID: <2bf292d6-0f51-473c-bd44-f129a0b2a7ab@roeck-us.net>
-References: <20250729035117.3170-1-aosun718@gmail.com>
+        bh=Q5L+zwK3WhJ2pLBcL0OsL1prz9X5dOPsX+0ffaqpEcI=;
+        b=T5jdgmOxxLOC6sKhCrSio161Xcle3PPRfVCAunYxj0dhIJHKI/7MxYIZejBVlHIH2m
+         DQzNwhen6AeGuhh+FE6TNkKW/iOBh0ItQ65XBE4Q668eiyNd4dr9+X/+tOlUd16WwVcR
+         /SaDJunAh/0C6JQE7OjN6ha/4ctMSMAZt+S1TZHgb11Jxo/wdnVg7ZGd37q1zWeeazXJ
+         mcN5lVd4Cub2DbLwsCd0wI8gIv1aIzk46kuNjAxw3Hm3MuNyCd9Ad+J/Xh4UU9DV/+/n
+         IMu0/MhPIhCgDE9jbNpMtTAIqr81cHFasWBf4OPoFU8527fxTeeSWy/2x85Ky+BeZ5Lx
+         nS/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUZlEBensAx/0x2s265SutHZtq5X9k6cMQashLTjfkjV/G/47SNmj/6JSc0BIaAm/tFz9Wh9TbWMA==@vger.kernel.org, AJvYcCUmQY0LlRWd2LR2f+O38zkFp6syKkCSkH75iaVH4AQaiRSssIu53w97PxBm0lspfhkdF9iWjnEE+3xFvoA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUS1mcgPqbCAPKolMQkVzrKmZTm28OhavdJ6A4qLeCXzyoBSop
+	1A6/bqsdGhEYrkZVfrFQrP8S1mO2EDIIFqKFqrd2BDnWJzkQSWlSigo0Nep1HAAktRtdAAk4tiC
+	VvBvuN60Hm0Xw9BCQrW+jtGpUiGzhRrU=
+X-Gm-Gg: ASbGncs3tprryzyhS9FkUpXP3cWmjI3zSHtS2F/YWyOQJUOCt6OxsXwy5NGxF5KnbGa
+	E3KJpAn4KRttltqB8OLfcr9mPGb+J/bRYa9RLgfxB3W9XTFmw4uB5+trWPf/ODsYaw9e1F3SifU
+	Wy7B1C7RTdR8mmXvjUQk89lVhwsj7jO9puXjyr3b2/X2+6O+eoslQkv44Q7SzeQmE2YYphyA+qh
+	g5iBvA=
+X-Google-Smtp-Source: AGHT+IFW67L0lIMnI0+TrOex8d1GtwXQs7A9sNYwHJSYPTF2kRQ+LFfk0BstVUYBAFrEzrDIf7dvCFONgIbz05Um7uc=
+X-Received: by 2002:a17:90b:3906:b0:312:e76f:5213 with SMTP id
+ 98e67ed59e1d1-31e77b0ede5mr21684773a91.28.1753797661341; Tue, 29 Jul 2025
+ 07:01:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729035117.3170-1-aosun718@gmail.com>
+References: <20250729091044.95411-1-tianjia.zhang@linux.alibaba.com>
+In-Reply-To: <20250729091044.95411-1-tianjia.zhang@linux.alibaba.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Tue, 29 Jul 2025 10:00:50 -0400
+X-Gm-Features: Ac12FXzD51pX5c-mQ16et67ewj8uzEI4xq6_UENn8a3U_oH5rQu6qNt1ntOGbYI
+Message-ID: <CAEjxPJ6bPApxKRYt8KTcPcKez=2=mDV+f8xNF_UfO_jHawi8KQ@mail.gmail.com>
+Subject: Re: [PATCH] selinux: use a consistent method to get full socket from skb
+To: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Cc: Paul Moore <paul@paul-moore.com>, Ondrej Mosnacek <omosnace@redhat.com>, selinux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2025 at 11:51:17AM +0800, Ao Sun wrote:
-> During the device resume process, an interrupt storm occurs after
-> interrupts are enabled, preventing the watchdog device from being
-> awakened and functioning.
-> 
-> To ensure that the watchdog is executed before interrupts are enabled,
-> Use NOIRQ_SYSTEM_SLEEP_PM_OPS().
-> 
-> Signed-off-by: Ao Sun <aosun718@gmail.com>
+On Tue, Jul 29, 2025 at 5:10=E2=80=AFAM Tianjia Zhang
+<tianjia.zhang@linux.alibaba.com> wrote:
+>
+> In order to maintain code consistency and readability,
+> skb_to_full_sk() is used to get full socket from skb.
+>
+> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+
+Acked-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+
 > ---
->  drivers/watchdog/mtk_wdt.c | 2 +-
+>  security/selinux/hooks.c | 2 +-
 >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/watchdog/mtk_wdt.c b/drivers/watchdog/mtk_wdt.c
-> index d6a6393f609d..5f2179dabd67 100644
-> --- a/drivers/watchdog/mtk_wdt.c
-> +++ b/drivers/watchdog/mtk_wdt.c
-> @@ -327,7 +327,7 @@ static const struct of_device_id mtk_wdt_dt_ids[] = {
->  MODULE_DEVICE_TABLE(of, mtk_wdt_dt_ids);
->  
->  static const struct dev_pm_ops mtk_wdt_pm_ops = {
-> -	SET_SYSTEM_SLEEP_PM_OPS(mtk_wdt_suspend,
-> +	 SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(mtk_wdt_suspend,
->  				mtk_wdt_resume)
-
-Extra space added at beginning of line, and bad multi-line alignment.
-
-Guenter
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 595ceb314aeb..362f92b2fafb 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -5861,7 +5861,7 @@ static unsigned int selinux_ip_output(void *priv, s=
+truct sk_buff *skb,
+>         /* we do this in the LOCAL_OUT path and not the POST_ROUTING path
+>          * because we want to make sure we apply the necessary labeling
+>          * before IPsec is applied so we can leverage AH protection */
+> -       sk =3D sk_to_full_sk(skb->sk);
+> +       sk =3D skb_to_full_sk(skb);
+>         if (sk) {
+>                 struct sk_security_struct *sksec;
+>
+> --
+> 2.39.5 (Apple Git-154)
+>
 
