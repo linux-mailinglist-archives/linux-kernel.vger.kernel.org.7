@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-749044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0A7B14946
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:39:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AF2AB14947
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:41:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 779C55451B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:39:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB3A316FCC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FD726658F;
-	Tue, 29 Jul 2025 07:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D6926529A;
+	Tue, 29 Jul 2025 07:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PTaYC16P"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HH45wtQm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25403264A74
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A04264638
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:41:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753774779; cv=none; b=TyA6cIRfqoUgG4cUI9lIclmOl8BFT+SxUO0nVCBKU2Ypc0osv4PMAy7fRgJYGg7Abyyq7vJqnORbf+skNxCWXyiRbyerkxwBLMXn3Qpq1P4TqcACMV3pOJWWV/Q4WhelltXxNUZJztBl/VtvYLVLkqh8+rMTyzicqN8UHU4jJZU=
+	t=1753774914; cv=none; b=KJ2l3TyMdhf8rVw0+FboR6UxNQaPj2WwvF6BQu8Ofc0gMrZ1IkpHlbnlgJMAP+D7crc6hKra+zbFAipoywzSblIB/umWaD+JKk7D+hX/FFzJkz1+5L5ped8LtUC5Oo5m8PpQy0w/JzKBL2fpsU0QZJSQ8ob4SazPMsrfuZqjJBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753774779; c=relaxed/simple;
-	bh=+Ysl3if1SXWQNZXdxFII6Dm8CGdVoYzAanR1NGAweUc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rIaO1XqIkhcnWKESI1LhQUonGG4HnMOg4Iav5R3vkh8P8HyDl3XchqzrtRlmdBg3eoyt3NCY+r1uJs5VQ24vuUsIpetkyH2JxkPPyBDulruztLFD1bxoaOjolHOwzTGZoP3vHBVhOSEHjHmlXc5yhrYjV4Z8qijs9Fipb+onyyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PTaYC16P; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753774776;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=nlhCSY/x94o/wsdtYQRoNxvT9uh4LXdBuYPdAR6ApYw=;
-	b=PTaYC16Pyu/mvr6sw/7kguG07IN7sjb0OYnKU4HTa4rDfwhKrYvdx8BsxY2TnxrGpwX/3A
-	d/P/5wwZTVYuLJN1foV5+7iRe+iM/NvQpA0D6XENn1qVIesVULSXKAUUEEv13Rt2cWfGpY
-	0DKIqZWkyUxh4Uu2iFzFOOwj1wuPw+g=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-259-f6heyX8hODe7jUb8lZsN3w-1; Tue,
- 29 Jul 2025 03:39:29 -0400
-X-MC-Unique: f6heyX8hODe7jUb8lZsN3w-1
-X-Mimecast-MFC-AGG-ID: f6heyX8hODe7jUb8lZsN3w_1753774766
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 851AB19560AE;
-	Tue, 29 Jul 2025 07:39:25 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.72.112.89])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 10DD41800285;
-	Tue, 29 Jul 2025 07:39:19 +0000 (UTC)
-From: Jason Wang <jasowang@redhat.com>
-To: mst@redhat.com,
-	jasowang@redhat.com,
-	eperezma@redhat.com
-Cc: kvm@vger.kernel.org,
-	virtualization@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sgarzare@redhat.com,
-	will@kernel.org,
-	JAEHOON KIM <jhkim@linux.ibm.com>,
-	Breno Leitao <leitao@debian.org>
-Subject: [PATCH] vhost: initialize vq->nheads properly
-Date: Tue, 29 Jul 2025 15:39:16 +0800
-Message-ID: <20250729073916.80647-1-jasowang@redhat.com>
+	s=arc-20240116; t=1753774914; c=relaxed/simple;
+	bh=3jWFEykPi3v2GxNSP51NIqa1ECI538IFlc/9BBcvZ28=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OIP1j5S79QvVfZTiTOMYE26vUcgTGA1Dwvh+IUz3HBd1WUYVrGb0skKMxZJJAqggYFm76hAVAoDqhWNdNq0NKbqtQT0prLckz5rTRspOgrcCoch6P4RqUV/DR1ltirD5wBPQLoInuMwaNMjRB+B4kNmbmOotNSCcSB4AZcchvOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HH45wtQm; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753774913; x=1785310913;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=3jWFEykPi3v2GxNSP51NIqa1ECI538IFlc/9BBcvZ28=;
+  b=HH45wtQmVOLCbv9X3kncx/hwlDb5Z1/x60O8ZfOXyIyS67hx3tLF90Y5
+   fm9muB76eJLtqfEtXI6NQs72HAVN9mr5b/22yT1bxVXWP7JA8nAbLSyU3
+   lGiQhxJFrLPqbVLNNNEd4SU1BY02XcTKkQEZTGB+MVSNmy//zQHs48tn0
+   iPo7G56kf15tBFS78kuV7hzUhxLXBLa/SMfpue8KyIU0yZ8joGj/tYoHT
+   4GHSPIcTYb/83bw7v7vOBoLhr0nfCCvxdpV23747qWAuDree7Ca3I7rBW
+   2Zep2fePLHGXiNuNvtbFiab0bojhUZk0rk7uWZcu+dOD8ZAFBGT1T+DLR
+   Q==;
+X-CSE-ConnectionGUID: UO/cm2O5QdmbnYGcrMiT3A==
+X-CSE-MsgGUID: MZMhjmZdRHC3t3dfcwZQ1g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="67472303"
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="67472303"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 00:41:52 -0700
+X-CSE-ConnectionGUID: ozPYgMW+SXuIRebLw73UKA==
+X-CSE-MsgGUID: maAKCDCZQWuoxcuw8oS8HQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="166807026"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 29 Jul 2025 00:41:51 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ugey4-000167-29;
+	Tue, 29 Jul 2025 07:41:48 +0000
+Date: Tue, 29 Jul 2025 15:41:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Caleb James DeLisle <cjd@cjdns.fr>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Subject: kismet: WARNING: unmet direct dependencies detected for
+ SERIAL_OF_PLATFORM when selected by ECONET
+Message-ID: <202507291515.5EiVPN6M-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Commit 7918bb2d19c9 ("vhost: basic in order support") introduces
-vq->nheads to store the number of batched used buffers per used elem
-but it forgets to initialize the vq->nheads to NULL in
-vhost_dev_init() this will cause kfree() that would try to free it
-without be allocated if SET_OWNER is not called.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   86aa721820952b793a12fc6e5a01734186c0c238
+commit: 35fb26f94dfa1b291086b84b2421f957214824d1 mips: Add EcoNet MIPS platform support
+date:   2 months ago
+config: mips-kismet-CONFIG_SERIAL_OF_PLATFORM-CONFIG_ECONET-0-0 (https://download.01.org/0day-ci/archive/20250729/202507291515.5EiVPN6M-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250729/202507291515.5EiVPN6M-lkp@intel.com/reproduce)
 
-Reported-by: JAEHOON KIM <jhkim@linux.ibm.com>
-Reported-by: Breno Leitao <leitao@debian.org>
-Fixes: 7918bb2d19c9 ("vhost: basic in order support")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
----
- drivers/vhost/vhost.c | 1 +
- 1 file changed, 1 insertion(+)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507291515.5EiVPN6M-lkp@intel.com/
 
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index a4873d116df1..b4dfe38c7008 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -615,6 +615,7 @@ void vhost_dev_init(struct vhost_dev *dev,
- 		vq->log = NULL;
- 		vq->indirect = NULL;
- 		vq->heads = NULL;
-+		vq->nheads = NULL;
- 		vq->dev = dev;
- 		mutex_init(&vq->mutex);
- 		vhost_vq_reset(dev, vq);
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for SERIAL_OF_PLATFORM when selected by ECONET
+   WARNING: unmet direct dependencies detected for SERIAL_OF_PLATFORM
+     Depends on [n]: TTY [=n] && HAS_IOMEM [=y] && SERIAL_8250 [=n] && OF [=y]
+     Selected by [y]:
+     - ECONET [=y]
+
 -- 
-2.39.5
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
