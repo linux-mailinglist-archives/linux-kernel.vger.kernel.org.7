@@ -1,150 +1,101 @@
-Return-Path: <linux-kernel+bounces-749680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD4C7B1517B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:37:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72190B15139
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:25:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D7C73AC503
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:37:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B19A8541740
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DED2980AC;
-	Tue, 29 Jul 2025 16:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C346293C58;
+	Tue, 29 Jul 2025 16:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ra0usx3K"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="PzMyn007"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E272264D3;
-	Tue, 29 Jul 2025 16:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A269226CEB;
+	Tue, 29 Jul 2025 16:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753807047; cv=none; b=QgBYUFbXnNcXqwKhfGV71IqkfCU1Gpr/irolFjxCnr05le7j9PILFIvvAPvp7JF+sIOT7KZV8orPMEf6P0TTcN+w4IbDtp9ecCaN3d7bJ1YuYAcLIGrHVmgc9Sn+g303Kyj8m5NXSY1R7ampBzki4YAfROYFHWy/s44slRmNPRY=
+	t=1753806304; cv=none; b=DOoLd+1OmFs/vfq6YJku1F+idPadD3yD560g5U32ZoFvKL6rM45/A6Y/ccyK0JoYSACEsDHtI+usVQR9YzbpvpR/5vdUe88rZHh9ug/Y0NWHL+R+FNuv6XYUk1tCaJurHJ0dROQsPMujKzcIcpYAtls3whWNSsViFZ1O2zkHZ3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753807047; c=relaxed/simple;
-	bh=hYy6sxijyS2b/WJms3vVbD+SH5wQt5JHpfZtAvgSiwA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e0eXEdzOLYjiEB/ZVQmJDOB/4knYrTAzYrndJEukxHlC3acl6AjGg/NIGKuhwHBXnBgQGOAJMB1shqYRXLaWXSKashr71OcmAbjUrzGorIKU3azrahreFUBfNq4Rjr9OgQCygjKFBbAalVTzvsEriaAps3Zynb8gkG/gCQg2Qvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ra0usx3K; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56TGNdFC2561302;
-	Tue, 29 Jul 2025 11:23:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753806219;
-	bh=P3a8N7GGRYeSHSllhgnuhQKsscziar9Xg6190x1fyKo=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=ra0usx3KRW+fLu8oZYORUDkvuKkHaa+Sdu14m3BzyQM67DiV4QMTAW7AO6DHTdBYW
-	 ayR5EffXTF+qK1vl1Pf0L94NCHnIuVbsylUdhSbh1ALBfJ82HauMnp+LLODItFacqu
-	 Khta69na9dF2jI2AEaLASntQ3HH9UId24X3vcv04=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56TGNdTX1239402
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 29 Jul 2025 11:23:39 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 29
- Jul 2025 11:23:38 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 29 Jul 2025 11:23:38 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56TGNc6U3708765;
-	Tue, 29 Jul 2025 11:23:38 -0500
-Date: Tue, 29 Jul 2025 11:23:38 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Jan Kiszka <jan.kiszka@siemens.com>
-CC: <huaqian.li@siemens.com>, <lkp@intel.com>, <baocheng.su@siemens.com>,
-        <bhelgaas@google.com>, <christophe.jaillet@wanadoo.fr>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <diogo.ivo@siemens.com>, <helgaas@kernel.org>, <kristo@kernel.org>,
-        <krzk+dt@kernel.org>, <kw@linux.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <lpieralisi@kernel.org>,
-        <oe-kbuild-all@lists.linux.dev>, <robh@kernel.org>,
-        <s-vadapalli@ti.com>, <ssantosh@kernel.org>, <vigneshr@ti.com>
-Subject: Re: [PATCH v12 3/7] soc: ti: Add IOMMU-like PVU driver
-Message-ID: <20250729162338.so7evngndnysg4ui@cinnamon>
-References: <20250728023701.116963-1-huaqian.li@siemens.com>
- <20250728023701.116963-4-huaqian.li@siemens.com>
- <20250729122246.o7upnxvqnp7nltdo@harmonize>
- <bdb5a5e2-3a7e-4050-bf25-c95dfa05138a@siemens.com>
+	s=arc-20240116; t=1753806304; c=relaxed/simple;
+	bh=SyCSftqdPl8NtlGZzifCpu53xzr59hPAihDgHQzj5iA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=caXJPGwBsCvqVirC6f0H+AwuLa2CQtmDVnBsYMT2lQkXuum46m043qoCoI552oYlD53o7sRz+YMmHmIaDopA4nYisUEmtmREzEdXgzf4EG8VyJKFDXzZhzMK6T5MgVLhDjPZf6bko4qYihkqdqPiV7yDl0bmk5TIQlKApT+RTpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=PzMyn007; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bs10G3bMRzm174J;
+	Tue, 29 Jul 2025 16:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1753806299; x=1756398300; bh=SyCSftqdPl8NtlGZzifCpu53
+	xzr59hPAihDgHQzj5iA=; b=PzMyn007yVTXvL5CjYqqh5vmGc64b7t5+J+zJdXc
+	CoAwALZs9xOrqMc/bhHsJ1hjP1WFyBJo4LVU62yTRxJ16t6+4/1cRnNhEThncEks
+	WL2+PWIA9L0iciot3eafstkSMpYPG+7Lew7CK/CAM1XnIAUyeZefY9DxsQeQzlhk
+	rMbNhrLSJecQG/ocyXwyUvvGx2T/C+mx8rWsb9gnpZemp2TpVM+cyyCXPfRhl4nN
+	eprQ89d/BxfcGzFZEfES4jTtlwyx2IPQ63ISodgZ9JUck4d8iaEHjy7ilV2/qUAK
+	wfAK7XqIDo8vlHYSWaqx95v9O3RUF5m3TYLZfGiGfLEYFQ==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 1QUm-vRmba9L; Tue, 29 Jul 2025 16:24:59 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bs1014X18zm1745;
+	Tue, 29 Jul 2025 16:24:48 +0000 (UTC)
+Message-ID: <0fd86741-f72e-4a52-9d2c-2388c4a26115@acm.org>
+Date: Tue, 29 Jul 2025 09:24:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <bdb5a5e2-3a7e-4050-bf25-c95dfa05138a@siemens.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1] ufs: core: Fix interrupt handling for MCQ Mode in
+ ufshcd_intr
+To: Nitin Rawat <quic_nitirawa@quicinc.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ huobean@gmail.com, mani@kernel.org, martin.petersen@oracle.com,
+ beanhuo@micron.com, peter.wang@mediatek.com, andre.draszik@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Palash Kambar <quic_pkambar@quicinc.com>
+References: <20250728225711.29273-1-quic_nitirawa@quicinc.com>
+ <a7cfe930-44b6-41dc-a84b-00f5ba314946@acm.org>
+ <1b418968-2a53-443e-8766-9d280447bb2d@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <1b418968-2a53-443e-8766-9d280447bb2d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-On 18:11-20250729, Jan Kiszka wrote:
-> On 29.07.25 14:22, Nishanth Menon wrote:
-> > On 10:36-20250728, huaqian.li@siemens.com wrote:
-> >> From: Jan Kiszka <jan.kiszka@siemens.com>
-> >>
-> >> The TI Peripheral Virtualization Unit (PVU) permits to define a limited
-> >> set of mappings for DMA requests on the system memory. Unlike with an
-> >> IOMMU, there is no fallback to a memory-backed page table, only a fixed
-> >> set of register-backed TLBs. Emulating an IOMMU behavior appears to be
-> >> the more fragile the more fragmentation of pending requests occur.
-> >>
-> >> Therefore, this driver does not expose the PVU as an IOMMU. It rather
-> >> introduces a simple, static interface to devices that are under
-> >> restricted-dma-pool constraints. They can register their pools with the
-> >> PVUs, enabling only those pools to work for DMA. As also MSI is issued
-> >> as DMA, the PVU already register the related translator region of the
-> >> AM654 as valid DMA target.
-> >>
-> >> This driver is the essential building block for limiting DMA from
-> >> untrusted devices to clearly defined memory regions in the absence of a
-> >> real IOMMU (SMMU).
-> >>
-> >> Co-developed-by: Diogo Ivo <diogo.ivo@siemens.com>
-> >> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
-> >> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> >> Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
-> >> ---
-> >>  drivers/soc/ti/Kconfig  |   4 +
-> >>  drivers/soc/ti/Makefile |   1 +
-> >>  drivers/soc/ti/ti-pvu.c | 500 ++++++++++++++++++++++++++++++++++++++++
-> >>  include/linux/ti-pvu.h  |  32 +++
-> >>  4 files changed, 537 insertions(+)
-> >>  create mode 100644 drivers/soc/ti/ti-pvu.c
-> >>  create mode 100644 include/linux/ti-pvu.h
-> >>
-> >> diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-> >> index 1a93001c9e36..af7173ad84de 100644
-> >> --- a/drivers/soc/ti/Kconfig
-> >> +++ b/drivers/soc/ti/Kconfig
-> >> @@ -82,6 +82,10 @@ config TI_PRUSS
-> >>  	  processors on various TI SoCs. It's safe to say N here if you're
-> >>  	  not interested in the PRU or if you are unsure.
-> >>  
-> >> +config TI_PVU
-> >> +	bool "TI Peripheral Virtualization Unit driver"
-> > 
-> > tristate please? Prefer to make this as a module.
-> > 
-> > 
-> 
-> PCI_KEYSTONE is bool and needs this (if enabled). So this won't be a
-> module in practice.
-> 
+On 7/29/25 7:37 AM, Nitin Rawat wrote:
+> I reviewed your patch and test it locally=E2=80=94it resolves the issue=
+.
 
-Something of the form of
-https://lore.kernel.org/all/20250307103128.3287497-1-s-vadapalli@ti.com/
-will need to be done then.
+Thanks!
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+> The patch looks good. Since this path handles only UIC, TM, and error=20
+> conditions with no IO for MCQ, we still check for outstanding_reqs and=20
+> UTP_TRANSFER_REQ_COMPL for the error case within ufshcd_threaded_intr i=
+n=20
+> the patch. In my opinion, we can skip these additional checks.
+
+We can only skip the outstanding_reqs check if MCQ is enabled. Andr=C3=A9
+Draszik is working on a patch that will cause ufshcd_intr() to be called
+again for legacy mode so I prefer to keep the outstanding_reqs check.
+
+Bart.
 
