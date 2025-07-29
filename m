@@ -1,169 +1,166 @@
-Return-Path: <linux-kernel+bounces-749711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6A8AB151F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:15:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B9E6B151F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:15:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 339087AFFAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:14:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69B2B4E1BA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CC912989A2;
-	Tue, 29 Jul 2025 17:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16F328C2B5;
+	Tue, 29 Jul 2025 17:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWkAaDv8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BV4IAbeY"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F054240855;
-	Tue, 29 Jul 2025 17:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE4B340855
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753809322; cv=none; b=cNlcqPcHyaAp6Pb8oT6Y64LWeEqEsPEtG4nQZWjd1+8e6fKzJK8CVLPaDic/Vgm+Niyp9agzIl6nxFh2GQBVchM0yRyaCFa60hkt5ma8IRqqOGmBwPKvsdYv0S1UBD5dUVh+V8Qs/qvpaxC6OpDUZ6MdX2oHdoNfcU8dtrMVOqo=
+	t=1753809343; cv=none; b=e4HRi8acylXInjc5B/z+awmJUi75byi+6yqPxUahxQwrR2UvGPfcNNNhk5e5F9TgdZWLZEyTefRLTvyz5vOl/tblC3I6L8pBmpKweMypueQ5g7foFtdkodh/hwNxEWMYhTJIg3sFpySrDScmeGzfrGyG1MONI82S+FquphtRce0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753809322; c=relaxed/simple;
-	bh=L3yWx4eIiQDDCgO+iiALtwlgnG78iDzbDvkegULmXnw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=ZcXgIy7hU7Pd3WaK55gYyXFzcDd9ZyoUbTUHiewl6TBRrO0Sp/3020iJ/cCfggWdxVby3KXUlKaiHgLb+QlyPKweyLA/Y0jRA0jDsDBivVG58PrnzfTngXpfjzNLmJHsLgLd/nABvAzGfgwG25uXTW16jO/+0LN2xvWQiIxo6x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWkAaDv8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8177DC4CEF4;
-	Tue, 29 Jul 2025 17:15:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753809321;
-	bh=L3yWx4eIiQDDCgO+iiALtwlgnG78iDzbDvkegULmXnw=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=kWkAaDv8OuHqQvAyIykqhE3jcdDS22MnNR5z/k6oN2KETfRCTJZiEo5DNHQFAq1Qq
-	 EB/TNfB1CA6EI4bL5hY6QemFcyHC3tEsTtDGxgjtgJWxNUk57/zSBdxhcIxS+vEPpS
-	 zXZ5+eF9UdIoohXHoul1uazn3zR/4B8dTBemOhkH77cDT4MKyZrP6Eo5KY7hZ9xoL9
-	 j56vFV5P84Bjlsr3BrjaaFSUdB6GXBeHwnj8hMMXBLS/HqjBIPNtI9YTYi2pSTU3Uz
-	 7WbK14TlV3wRYJJXVJx7eMbacM+ZdGlEhfnCH6ue0gan0+tWBZe5XWbZGe44lFJoxZ
-	 wMAfaolc9laNg==
+	s=arc-20240116; t=1753809343; c=relaxed/simple;
+	bh=5dB0snzfm4ymOez8CHuvvgTkTx8tPHDF/A4QjoSuiGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LFOon5nrpbjNuIE+jJvxgu42UKNrldppMcwQ782mk/wpZWIN8qPUGDKXxDefNSU7vwkkqASxdjYkDOPDjWwgp1xqnuajVl942J4A+txOPniUr8p2WWdykQMncPW6g6+qfQJCl/QV5tN6/29cDBSnDFo0ZDnoTgc/B0SOdwF36M8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BV4IAbeY; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-87faacc4b8fso350579639f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1753809340; x=1754414140; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V2EqrBxQEvmex3RN0wG//hFRAOGyrRJo4Acf1BP8zXY=;
+        b=BV4IAbeYaTP2IjJ+VdhJKVN6OkY6ezijME8jais4HarCMdR/0EPyen3+AGv/9AwLym
+         EPcJ9QoLr1K02D5Y9IcAqG9szgh/u9USUVRsv+lR+b4LqORs9sbs9ggftam+68VOfs8m
+         hiDrW0PFYlWrsSDWJSDi3DRIQ6gKeQxCK5hX8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753809340; x=1754414140;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V2EqrBxQEvmex3RN0wG//hFRAOGyrRJo4Acf1BP8zXY=;
+        b=RRj2LapqBzhqKaYT4WnQfVdLJ1z5gB0C9XzRiSxhX7vVVaxyFh5gm/DKUfGxNhQWAZ
+         p3C963KviPrczDhgD81STy3yy3UslxUOxuoncKbCPAgTQkU3H+H718Y71NvgfhYg2III
+         lbk3RRIPci3J/Pu6dMrJto7DUz07GAIkMHLHZFtradwjo1tHL0riyDSG6FSwZ2o3gYxX
+         MAAS4kLNj9xDsjWt/YFKGdH7ekkUhlKsFPQw5ToqqGUucUTLca3T8PD4zr5hb+vtoxhh
+         4coimUsM665OUtCLnT5c26zOCxLbSrUAye785bftHKxAk5RgkWD0GBlP6zBnbbfwssrD
+         5PIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMnVn2euQpiqMg2jhW7IEyTbERmxNvEMPOtjeyXSCR1k9Yh4LSJ38G7pZj8RK1TflaKox/5V7KAVKzKis=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0T/JLd4ohc6yfmKiSAcrx4+r+stav/GlNIEeqxHPQF4VDRItB
+	fV9j+WYck2UBnvhDAZ0Ry3HRB22fIfAeJrj2z7+pDj05KZsYuuaadzVnV9V+8U7vt9A=
+X-Gm-Gg: ASbGncuVkHkUlqmr8SyrRJYM1CL9dafZJgQCkNPjrPMVF/iVfgNYk4kSQhYH9FM5u8X
+	Dhq4cFOCq4UGZvKwMOaicsYfwmwRJBDLY3O4U2Dj9lbhM6pV1zqu9rn95n67WkyxBWlHYdXnw7o
+	GKYQEsSYKb45Hr6qzZP7mti8XYFd94iqmjcoZOydT34Mc8ooJUQtmUvd0ixuw3KZ41smmU2JPCi
+	adT3vx6s55ts31hIN/SBi8JfK2mlKrCx7MyeFLMu6ggdmDQ9tNBZICoK3xjOkrtGgKvD/ATyBGc
+	K180qxx4tKOYXilcbrRQiWdAmSLabaH/q7ua3yJDWGCBiWQncTiVPo56tqvCgazDSaQ+uMnOP0w
+	kgDtwA2OJgvk93AhOpOdDpRmnT8jYUK/k/A==
+X-Google-Smtp-Source: AGHT+IFzgzeXQgtRqxHd8/6oDNF9NfVYk14qO7b93cmcGgQ5Th8u+vmcYVIp1yT2rMO4Q7lu3z3Qdg==
+X-Received: by 2002:a05:6602:29d2:b0:87c:4412:dad1 with SMTP id ca18e2360f4ac-88138140d6emr52509239f.9.1753809337720;
+        Tue, 29 Jul 2025 10:15:37 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-508c91cb68csm2704148173.9.2025.07.29.10.15.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 10:15:37 -0700 (PDT)
+Message-ID: <f145b475-5b61-4565-8406-98894e706077@linuxfoundation.org>
+Date: Tue, 29 Jul 2025 11:15:36 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Jul 2025 19:15:12 +0200
-Message-Id: <DBOPIJHY9NZ7.2CU5XP7UY7ES3@kernel.org>
-Cc: <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
- <gary@garyguo.net>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
- <tmgross@umich.edu>, <dakr@kernel.org>, <peterz@infradead.org>,
- <mingo@redhat.com>, <will@kernel.org>, <longman@redhat.com>,
- <felipe_life@live.com>, <daniel@sedlak.dev>, <bjorn3_gh@protonmail.com>,
- "Lyude" <thatslyude@gmail.com>
-Subject: Re: [PATCH v5 0/3] rust: add `ww_mutex` support
-From: "Benno Lossin" <lossin@kernel.org>
-To: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250724165351.509cff53@nimda.home>
-In-Reply-To: <20250724165351.509cff53@nimda.home>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: Code of Conduct violation complaint
+To: Pavel Machek <pavel@ucw.cz>
+Cc: "conduct@kernel.org" <conduct@kernel.org>,
+ kernel list <linux-kernel@vger.kernel.org>
+References: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
+ <aHanGu9nOGOegUg2@duo.ucw.cz>
+ <878ca180-c54b-44cf-aa14-cf6028723167@linuxfoundation.org>
+ <ed6f49c8-d47c-4cf9-889a-76f6886e1a86@linuxfoundation.org>
+ <aIXsYh9afmTxiqXF@duo.ucw.cz>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <aIXsYh9afmTxiqXF@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu Jul 24, 2025 at 3:53 PM CEST, Onur =C3=96zkan wrote:
-> Hi again,
->
-> Just finished going over the C-side use of `ww_mutex` today and I
-> wanted to share some notes and thoughts based on that.
+On 7/27/25 03:07, Pavel Machek wrote:
+> On Thu 2025-07-24 13:18:16, Shuah Khan wrote:
+>> On 7/17/25 10:32, Shuah Khan wrote:
+>>> Hi Pavel,
+>>>
+>>> The Code of Conduct Committee holds these conversation privately
+>>> with the people involved. Looks like you cc'ed the mailing list.
+>>> Respecting your choice, we can continue this conversation publicly.
+>>>
+>>> Chose one or all of these threads to apologize to the developer
+>>> directly.
+>>
+>> If you haven't already done so, chose one or all of these
+>> threads to apologize to the developer and cc code of conduct list.
+>>
+>>>
+>>> https://lore.kernel.org/all/aG2B6UDvk2WB7RWx@duo.ucw.cz/
+>>> https://lore.kernel.org/all/aG2ClcspT5ESNPGk@duo.ucw.cz/
+>>> https://lore.kernel.org/all/aG2BjYoCUYUaLGsJ@duo.ucw.cz/
+>>>
+> 
+> Please clearly state what committee believes I did wrong and what
+> should I apologize about.
+> 
+> There are clearly multiple actors behind Sasha Levin email address,
+> and one of them is clearly LLM, sending hallucinations to the list.
+> 
+> Unfortunately, LLM and the human identify them in the same way, as
+> "Sasha Levin". I am willing to apologize for the confusion, clearly
+> human is human and has ethics, but I'm not the one who caused the
+> confusion.
 
-Thanks!
+The use of LLMs in the development process and rules about such use
+including how to clearly state if LLMs are used in the process is a
+timely and important topic. It can be confusing when a developer
+doesn't clearly state the LLM use.
 
-> To get the full context, you might want to take a look at this thread
-> [1].
->
-> - The first note I took is that we shouldn't allow locking without
-> `WwAcquireCtx` (which is currently possible in v5). As explained in
-> ww_mutex documentation [2], this basically turns it into a regular
-> mutex and you don't get benefits of `ww_mutex`.
->
->  From what I have seen on the C side, there is no real use-case for
->  this. It doesn't make much sense to use `ww_mutex` just for
->  single-locking scenarios. Unless a specific use-case comes up, I think
->  we shouldn't support using it that way. I am planning to move the
->  `lock*` functions under `impl WwAcquireCtx` (as we discussed in [1]),
->  which will make `WwAcquireCtx` required by design and also simplify
->  the implementation a lot.
+However, as you acknowledged here that you couldn't tell if these
+patches originated from the developer or not. In which case, there
+are several constructive ways to move forward to clear up the confusion.
 
-Sounds good to me. Although [2] states that:
+1. Send response to the patch and hold a constructive discussion about
+    the confusion.
+      
+2. Start a separate thread to talk to the developer privately or publicly
+    in a respectful and constructive way.
 
-    * Functions to only acquire a single w/w mutex, which results in the ex=
-act same
-      semantics as a normal mutex. This is done by calling ww_mutex_lock wi=
-th a NULL
-      context.
-   =20
-      Again this is not strictly required. But often you only want to acqui=
-re a
-      single lock in which case it's pointless to set up an acquire context=
- (and so
-      better to avoid grabbing a deadlock avoidance ticket).
+3. Start a Tech board conversation with the TAB.
 
-So maybe it is needed? Would need some use-cases to determine this.
+You didn't take any of the above constructive approaches. Instead your
+responses included personal attacks which are visible to community and
+others to see.
 
-> - The second note is about how EDEADLK is handled. On the C side, it
-> looks like some code paths may not release all the previously locked
-> mutexes or have a special/custom logic when locking returns EDEADLK
-> (see [3]). So, handling EDEADLK automatically (pointed
-> in [1]) can be quite useful for most cases, but that could also be a
-> limitation in certain scenarios.
->
->  I was thinking we could provide an alternative version of each `lock*`
->  function that accepts a closure which is called on the EDEADLK error.
->  This way, we can support both auto-release locks and custom logic for
->  handling EDEADLK scenarios.
->
->  Something like this (just a dummy code for demonstration):
->
->     ctx.lock_and_handle_edeadlk(|active_locks| {
->         // user-defined handling here
->     });
+The Code of Conduct Committee has determined these are personal attacks.
+These are a clear violation of the agreed upon code of conduct which can
+be easily remedied with an apology.
 
-But this function wouldn't be locking any additional locks, right?
+- https://docs.kernel.org/process/code-of-conduct.html
+- https://docs.kernel.org/process/code-of-conduct-interpretation.html#code-of-conduct-interpretation
 
-I think the closure makes sense to give as a way to allow custom code.
-But we definitely should try to get the common use-cases closure-free
-(except of course they run completely custom code to their specific
-use-case).
+> 
+> Please explain how to refer to the human being between "Sasha Levin"
+> email address.
 
-We can also try to invent a custom return type that is used instead of
-`Result`. So for example:
+Assume you are speaking to a fellow developer and ask them to give details
+on the nature of LLM use in the patch. It will result in a constructive
+conversation for these important topics at hand.
 
-    let a: WwMutex<'_, A>;
-    let b: WwMutex<'_, B>;
-    let ctx: WwAcquireCtx<'_>;
-
-    ctx.enter()             // EnteredContext<'_, ()>
-        .lock(a)            // LockAttempt<'_, A, ()>
-        .or_err(a)?         // EnteredContext<'_, (A,)>
-        .lock(b)            // LockAttempt<'_, B, (A,)>
-        .or_lock_slow(a, b) // Result<EnteredContext<'_, (A, B,)>>
-        ?.finish()          // (WwMutexGuard<'_, A>, WwMutexGuard<'_, B>)
-
-But no idea if this is actually useful...
-
-
-
-What I think would be a good way forward would be to convert some
-existing C uses of `WwMutex` to the intended Rust API and see how it
-looks. Best to cover several different kinds of uses.
-
-I quickly checked [2] and saw use-case with a dynamic number of locks
-(all stored in a linked list). This isn't supported by the
-`EnteredContext<'_, ()>` & tuple extenstion idea I had, so we need
-something new for handling lists, graphs and other datastructures.
-
-The example with the list also is a bit problematic from a guard point
-of view, since we need a dynamic number of guards, which means we would
-need to allocate...
-
-[2]: https://www.kernel.org/doc/Documentation/locking/ww-mutex-design.txt
-
----
-Cheers,
-Benno
+thanks,
+-- Shuah (On behalf of the Code of Conduct Committee)
 
