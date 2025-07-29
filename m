@@ -1,188 +1,92 @@
-Return-Path: <linux-kernel+bounces-749670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC95EB15151
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:30:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C08B15155
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:31:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76F853A8B97
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:29:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F12697A1CC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879BE2980A4;
-	Tue, 29 Jul 2025 16:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A93A2226D16;
+	Tue, 29 Jul 2025 16:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="D+a5l1fO"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xt4z40PF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5AE022687C;
-	Tue, 29 Jul 2025 16:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB9A42056;
+	Tue, 29 Jul 2025 16:31:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753806600; cv=none; b=BUFrFkdkQ+KQpRyFFfcSLZWtQ3W/Kkr3OL1IYtWwK9ZqSjlgzv4NHqxccW9OhPEIKC1dhDpJAILHJXTNCPbhvkZOwuCuNXmjKDl6v06oqUTKKGefyLup/2UD0iBMJAzCsP3cS864adTPQ4y0ThQ/el34RKrwE5wAYktX3SiwNic=
+	t=1753806695; cv=none; b=m66A/ZbscCd1I+3llyOcYOcMEX8QDM1qOyLnw26X0/mBcX00mK7MXpUi2j79EzcqdZVLVjdyUZ/8NgscmKRmoenQMDZbVPnKf41eY7cJQpwV1nuA7+3pGOf44OjyJkwdjWFfNTIxAO5NhI9IYcztD3cSp+lnFD8TqMGRIwcy3DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753806600; c=relaxed/simple;
-	bh=cYPpvp6/LktGFqLRabjLYkW/Jo8p7bCXx5XWj6nAHfQ=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=Q30/LcoQIMzLCG71c0hroxgvovNpI+zXsbHJrAHBIbMXEL2TMhX1abdhYkKBVSWiMf35s5AalFvoYlIM70nHFUTNt46th/bsCJkBSt1ArUMpOkmX/7eOkGG+K1ggCtC6FZAocqQmeGJcP9ccDiI8u97Tdl4p52BYeGEf0FYOUlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=D+a5l1fO; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 8EC6520F84;
-	Tue, 29 Jul 2025 18:29:56 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id kh5I-_ur6aEA; Tue, 29 Jul 2025 18:29:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1753806592; bh=cYPpvp6/LktGFqLRabjLYkW/Jo8p7bCXx5XWj6nAHfQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References;
-	b=D+a5l1fOvhebePXJUchw4Yhtzye0Fw7YkC6+MLurTq8XGuJcueOGpRM2zSobYf8iU
-	 j5+5ljLOrkjG28uiSPb3IWE8Iu7t6iJ2eU6h2VULRj3V5QCNQuuOcbrsSlJUdyPPGO
-	 6D2mPPUf0GUCzKVoXw+efXTzlgiO1k0OeLH+LGe5ZR5uOkVxcbnbtjgZfcOA2Dtt+k
-	 +EMxwuPvc+w094r40OWw9k4Iu0Ej+pJAZ5istvxlAHAsAfQXySN6/VKbIAuAQvG8uv
-	 ia+cztb0FemhJ98IKUv+ZaGAP4jhyc15v+zAWJohyFvZ2SjEoR+aSBNPTgeyPCQEZr
-	 cRGAiEqMf+rhg==
+	s=arc-20240116; t=1753806695; c=relaxed/simple;
+	bh=sPWerXoTnJdupEJFgfzlBFo08Ou/toO0osnBkMyj3F8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=obsLTyO+qP1CjIlVpDQBSzfflulpJcRIjTpDl8SVhTEEwHkVyPpZZcxqX2YAsyWhOs18U6RcvZ7iLd/Uoq2eyNogxUWbLtef32pYH7W2wga6XQLiWTMb9lStBJq42OOgGHIokkhrgkOANYD0T1JZwU5a0AMpw6ANRUFH4ROxYrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xt4z40PF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76977C4CEF4;
+	Tue, 29 Jul 2025 16:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753806693;
+	bh=sPWerXoTnJdupEJFgfzlBFo08Ou/toO0osnBkMyj3F8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xt4z40PFrTNRm+gchkzSFN8IZ7lR97MmgUmhmW7xTh+MJkUc9okSXr9V5mM4Mw2i4
+	 7xketuGtMIVNB85UWt6kb4nKjtJGf/mf5a/0SF8E5QqCk4jWVsby/FjJ0W4If9YWSw
+	 n3UQTfIab46FGLkOee3bgXACTsvM3uFdjuTJmKwt8azfPGnQ5u3/oo64BG0175yQjU
+	 MKj++96I31z25cIz+ITK6gTWF8osNPZ1SGjzNaR+FGqBWhoLRWOEqo9Qs1jZOk+W/a
+	 7NFkAYgEBUzlgqe6Bh7Sa7wA1Co9bMX2SK0n8RIFVkpGjymWU4b2feO4sAQlPqee6S
+	 6iexWo6KdPe/A==
+Date: Tue, 29 Jul 2025 11:31:32 -0500
+From: Rob Herring <robh@kernel.org>
+To: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+Cc: Yannick Fertre <yannick.fertre@foss.st.com>,
+	Philippe Cornu <philippe.cornu@foss.st.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/12] dt-bindings: display: st,stm32mp25-lvds: add
+ access-controllers property
+Message-ID: <20250729163132.GA507560-robh@kernel.org>
+References: <20250725-drm-misc-next-v1-0-a59848e62cf9@foss.st.com>
+ <20250725-drm-misc-next-v1-3-a59848e62cf9@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 29 Jul 2025 16:29:52 +0000
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
-To: Inki Dae <daeinki@gmail.com>
-Cc: Jagan Teki <jagan@amarulasolutions.com>, Marek Szyprowski
- <m.szyprowski@samsung.com>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil
- Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park
- <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Alim
- Akhtar <alim.akhtar@samsung.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 10/13] drm/bridge: samsung-dsim: add ability to define
- clock names for every variant
-In-Reply-To: <CAAQKjZNfb6LkShtCvan__ew=H7CaquTqn5DLcP1agtkG6B5mSw@mail.gmail.com>
-References: <20250706-exynos7870-dsim-v3-0-9879fb9a644d@disroot.org>
- <20250706-exynos7870-dsim-v3-10-9879fb9a644d@disroot.org>
- <CAAQKjZNfb6LkShtCvan__ew=H7CaquTqn5DLcP1agtkG6B5mSw@mail.gmail.com>
-Message-ID: <080f567245829dba8572be649a46cc93@disroot.org>
-X-Sender: kauschluss@disroot.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725-drm-misc-next-v1-3-a59848e62cf9@foss.st.com>
 
-On 2025-07-29 07:02, Inki Dae wrote:
-> 2025년 7월 7일 (월) 오전 3:28, Kaustabh Chakraborty 
-> <kauschluss@disroot.org>님이 작성:
->> 
->> -       dsi->clks = devm_kcalloc(dev, dsi->driver_data->num_clks,
->> -                                sizeof(*dsi->clks), GFP_KERNEL);
->> -       if (!dsi->clks)
->> -               return -ENOMEM;
->> -
->> -       for (i = 0; i < dsi->driver_data->num_clks; i++) {
->> -               dsi->clks[i] = devm_clk_get(dev, clk_names[i]);
->> -               if (IS_ERR(dsi->clks[i])) {
->> -                       if (strcmp(clk_names[i], "sclk_mipi") == 0) {
->> -                               dsi->clks[i] = devm_clk_get(dev, 
->> OLD_SCLK_MIPI_CLK_NAME);
->> -                               if (!IS_ERR(dsi->clks[i]))
->> -                                       continue;
->> -                       }
->> -
->> -                       dev_info(dev, "failed to get the clock: %s\n", 
->> clk_names[i]);
->> -                       return PTR_ERR(dsi->clks[i]);
->> -               }
->> +       ret = devm_clk_bulk_get(dev, dsi->driver_data->num_clks,
->> +                               dsi->driver_data->clk_data);
->> +       if (ret) {
->> +               dev_err(dev, "failed to get clocks in bulk (%d)\n", 
->> ret);
->> +               return ret;
+On Fri, Jul 25, 2025 at 12:03:55PM +0200, Raphael Gallais-Pou wrote:
+> access-controllers is an optional property that allows a peripheral to
+> refer to one or more domain access controller(s).
 > 
-> Above change modifies the existing behavior.
+> This property is added when the peripheral is under the STM32 firewall
+> controller.  It allows an accurate representation of the hardware, where
+> the peripheral is connected to a firewall bus.  The firewall can then
+> check the peripheral accesses before allowing its device to probe.
 > 
-> Previously, when devm_clk_get() failed and the clock name was
-> "sclk_mipi", the code included a fallback mechanism to try "pll_clk"
-> instead. This fallback logic has been removed in the current patch.
-> 
-> While changing this behavior may raise concerns, the benefits of
-> refactoring—specifically, defining clock names per SoC and adopting
-> the clk_bulk_* API for improved maintainability—appear to outweigh the
-> potential downsides.
+> Signed-off-by: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>
+> ---
+>  Documentation/devicetree/bindings/display/st,stm32mp25-lvds.yaml | 3 +++
+>  1 file changed, 3 insertions(+)
 
-I have checked all devices which use this driver.
-
-Here is a mapping of all compatible -> clock names in the driver:
-- fsl,imx8mm-mipi-dsim: bus_clk, sclk_mipi
-- fsl,imx8mp-mipi-dsim: bus_clk, sclk_mipi
-- samsung,exynos3250-mipi-dsi: bus_clk, pll_clk
-- samsung,exynos4210-mipi-dsi: bus_clk, sclk_mipi
-- samsung,exynos5410-mipi-dsi: bus_clk, pll_clk
-- samsung,exynos5422-mipi-dsi: bus_clk, pll_clk
-- samsung,exynos5433-mipi-dsi: bus_clk, sclk_mipi,
-                                phyclk_mipidphy0_bitclkdiv8,
-                                phyclk_mipidphy0_rxclkesc0,
-                                sclk_rgb_vclk_to_dsim0
-
-And here is what I found by grep-ing all devicetrees:
-
-arm/boot/dts/nxp/imx/imx7s.dtsi
-     compatible = "fsl,imx7d-mipi-dsim", "fsl,imx8mm-mipi-dsim";
-     (uses bus_clk, sclk_mipi)
-
-arm/boot/dts/samsung/exynos3250.dtsi
-     compatible = "samsung,exynos3250-mipi-dsi";
-     (uses bus_clk, pll_clk)
-
-arm/boot/dts/samsung/exynos4.dtsi
-     compatible = "samsung,exynos4210-mipi-dsi";
-     (uses bus_clk, sclk_mipi)
-
-arm/boot/dts/samsung/exynos5420.dtsi
-     compatible = "samsung,exynos5410-mipi-dsi";
-     (uses bus_clk, pll_clk)
-
-arm/boot/dts/samsung/exynos5800.dtsi
-     compatible = "samsung,exynos5422-mipi-dsi";
-     (uses bus_clk, pll_clk - uses node from exynos5420.dtsi)
-
-arm64/boot/dts/exynos/exynos5433.dtsi
-     compatible = "samsung,exynos5433-mipi-dsi";
-     (uses bus_clk, sclk_mipi, and 3 others as mentioned above)
-
-arm64/boot/dts/freescale/imx8mm.dtsi
-     compatible = "fsl,imx8mm-mipi-dsim";
-     (uses bus_clk, sclk_mipi)
-
-arm64/boot/dts/freescale/imx8mn.dtsi
-     compatible = "fsl,imx8mn-mipi-dsim", "fsl,imx8mm-mipi-dsim";
-     (uses bus_clk, sclk_mipi)
-
-arm64/boot/dts/freescale/imx8mp.dtsi
-     compatible = "fsl,imx8mp-mipi-dsim";
-     (uses bus_clk, sclk_mipi)
-
-So, there shouldn't be any regressions.
-
-> 
-> Unless there are objections from other reviewers, I intend to proceed
-> with merging this patch.
-> If anyone has concerns or sees potential issues with this change,
-> please share your thoughts.
-> 
-> Thanks,
-> Inki Dae
-> 
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
