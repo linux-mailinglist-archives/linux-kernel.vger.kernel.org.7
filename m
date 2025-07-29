@@ -1,116 +1,112 @@
-Return-Path: <linux-kernel+bounces-749803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADFB7B15313
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:47:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BED5B15309
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C8655A53F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0421B188CC98
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28F429B213;
-	Tue, 29 Jul 2025 18:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06E1A294A1B;
+	Tue, 29 Jul 2025 18:41:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhf5H2tN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="liRajZk4"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33914220680;
-	Tue, 29 Jul 2025 18:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD99220680
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753814523; cv=none; b=mOGGcTCIRjt9BxeS2tYXFrvC+V0E51MoGPvvv6RwH0y3bXo2OG0IJ2ZsavKPrW1oyb90UL8N11KLd8KzJsmIsAxJ/jEdAOU62U8R/vINGGq2C8KPksV5gBF7VFDgSuoZYSBUtJde0jYeTWKEmgqBCFDstFsU7n4UTieZWvjMOl8=
+	t=1753814515; cv=none; b=PC0+DxR2dvcF180zhVpgnAFxtc7rHqkiqbMgaaRMwzBXSp6On0u7hYP1y7Pb7H4hAYvH/Q18GSVnPhV+AVAalLAmlF/q9oeGdkRwzxinNtlYz3L4/R6ahSvq2mdRN8zxvWcGXaMgUOrw2N6fj8UKOlH8NK3NnWMW+TCDZhvSURM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753814523; c=relaxed/simple;
-	bh=V6Dcqa0TG7W5slu9uXHtRB+QqM48OfTcq9W5IaelKrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mD6tSPbfQnH5UxidPaBVV+Dxcwo4BQOIn8NLHUrjxMigrhp/tVczJzLX2LhijeoDn0KWFb/D9cSKhssN5aSMR4Swv7obqBuAb2H/xuK8QSRSiw/UyVoNM4l9UkxlkD68Cvd9X4UU8fLsvXFE/OJKZx+gM7aClQHtfjqFWt1ZtI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhf5H2tN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FA4BC4CEEF;
-	Tue, 29 Jul 2025 18:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753814523;
-	bh=V6Dcqa0TG7W5slu9uXHtRB+QqM48OfTcq9W5IaelKrU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=bhf5H2tN9kMMxWl2WeZhvWPmpxfLH67XYeFVV/Xl0v3LAO5IKnbHUGx6cetAw8r0E
-	 NelH/JRUL7KPtddjW2mY7kr7uscHlx82JXR8M/D7wnaN/BSVWG5YRbG2PwoySQDHVr
-	 3FVSj7MEg1Sl4KKhtpobSnWImVZdjcdhMRfUBodtAxJ6oJYmzJ5W+HcvXMSM0TePYS
-	 GqoloI3NFa22QSdSkQmso8fHGjMcWucCv9CBXLvVP//8Y3Q7ejE2jXgXsNFuQjlqWe
-	 mvY6mquSuCyIyS4jxoOsNUCMvkQ/frlVHDw5PWcbWiVDFJYaMn7pdUYUtI991hiIgd
-	 I1roqP1SAbJyQ==
-Date: Tue, 29 Jul 2025 19:41:50 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>, sboyd@kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
- gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
- kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
- u.kleine-koenig@baylibre.com, linux-arm-msm@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-pm@vger.kernel.org,
- kernel@collabora.com, wenst@chromium.org, casey.connolly@linaro.org
-Subject: Re: [PATCH v2 1/7] spmi: Implement spmi_subdevice_alloc_and_add()
- and devm variant
-Message-ID: <20250729194150.1985404b@jic23-huawei>
-In-Reply-To: <6ea0495e-21d8-41a8-b1b0-1c99c2929de5@collabora.com>
-References: <20250722101317.76729-1-angelogioacchino.delregno@collabora.com>
-	<20250722101317.76729-2-angelogioacchino.delregno@collabora.com>
-	<20250722150930.00000a2f@huawei.com>
-	<6ea0495e-21d8-41a8-b1b0-1c99c2929de5@collabora.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753814515; c=relaxed/simple;
+	bh=OLJu0tRgWMGogDhx5yC+Z6XY4CaNTHBb2w9jkEQIuFo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fz/OuBODvpSQzliY7XklwAmhSO5+2oowOW4eVI+GE1Mx0fnTgPsSqKG8zYfCPaUr5aEWqYfo8uvO5BXjXZ1w/6/aW5ewUODMb7wzW97jLsmg/W8j6HC9XBUyErO21cB3sLJqecBPUmEnWRnYISQWD/lbJDFgegg1KanNBPozX8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=liRajZk4; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-24009eeb2a7so25155555ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753814513; x=1754419313; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oyUmaoOW/TeUnouFmP1gQf8eJnWKJIICpRMN4U7cKns=;
+        b=liRajZk4TFcRw3JuCiWQhss+LUlNSCZJslT3GonYwY3A3ioscCMP8SdkLfiqCcgg4E
+         fK/GJvoP6Lwf827eqjBbPH+UunOPzlXgvkSI9kXEu5gJBtUIRJ77hC6vCoufDuIFWhPy
+         zFc17M0Cu371FuHtO6BxAA8S6ldhBcglcDdQa35K3XrGtqLesWEofsXKHyBURcmPZzKC
+         q2mO6ayp2DXVXhrA0oo5F9c/ArQXe7fCV98pvmrDgn+Clsj2hkn5e+qGnErmaZ+CYWJt
+         0w5Gk3Y1yHRuvqeChhP+VBlckfAtyeowMe7qJ52lou4eigAbph3fGFDbBReF9roxsozQ
+         DSyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753814513; x=1754419313;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oyUmaoOW/TeUnouFmP1gQf8eJnWKJIICpRMN4U7cKns=;
+        b=vQBGKX0r2f4aTLGCywVtGQ8GdulnwUcN1Dxgz2+xNG7p7BvE0GmM2pQwMEU8pZOYam
+         U8NCWnF4sLISClm/WKldDtF1nfRHn9c/vBEaLs4Oc3zFS7gPH5McK6q6inuuoWHvVbrP
+         8N3ZiLbLucMasyz7pXnSRIK6LLvXWBtsImDzi1y8bhWQgM2In2Nfm6E0yg1l6wSoCWXK
+         KC1Xgc3xDKx1ZxDnOO5n7qKVRQlvN54kXxXcsiDxhaYX0y1eK+vAhcO5w3nYlE2WqW2w
+         L94ovECrpq6oV+WlVHAh3CsO4+yrssgID2Ro4J/sSt+F+0bOaVXoG7x1Y4PuGuQC12w8
+         8JRA==
+X-Gm-Message-State: AOJu0YyCXFv8nveU9QhCXVD2Dy2Xda3C5eNibIt1iGUVWxhhGZKx0kaE
+	59/wPZkS75H3GZHT9MpgAZEgp0pODGzCImrL7Qg3zoge/MCGbDZoBgF2o8Mieg==
+X-Gm-Gg: ASbGncuUyocjieoa910lcTStL0dJMNFo0bDSR1d/ptc9CTyjNgwTK7ICn6Tpy809t6x
+	BM6idqOtDSLUjZEi/u91LhIU1iQMTu8pws9SLuySnZdZeydQyzbY4jKuvKz2n8xyIV3bdrrB63Q
+	ejRwq68OzhEOA0dvpBCWJ4iGszRT0gzehR96nUGfGeSH7PWSYgtmqA2LBhjdXV6HHNDSlFyIrac
+	VFZT1dYTImsH/hVpS+YA2sBqptjL8eXgyODoZdChsJ/qJp9zgXesX7I3MyaNJv4Kps477ws4fmm
+	MSKk8NxorptVdSUsFrTAudifbGxbHQUq7lB7wzcKT7O8sdTC10QjNeV0PsMRLLxc8DYqNvmy9WC
+	OVJz7hvtNorVbJRk/YjX+0Q==
+X-Google-Smtp-Source: AGHT+IHZGIxLTjq9IkuLEfyrAPTn2VpTvnpuFp5z4Cus9PUVpQUwXdP65wYaYgPoZ4rh8sHe++MWog==
+X-Received: by 2002:a17:903:a8b:b0:23f:cd4d:a91a with SMTP id d9443c01a7336-24096b03d9amr4580845ad.30.1753814513183;
+        Tue, 29 Jul 2025 11:41:53 -0700 (PDT)
+Received: from fedora ([200.111.160.26])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24058561dc6sm32658925ad.108.2025.07.29.11.41.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 11:41:52 -0700 (PDT)
+From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: Ignacio Pena <ignacio.pena87@gmail.com>
+Subject: [PATCH] drivers/misc/sgi-gru: Fix typo 'tranfer' -> 'transfer'
+Date: Tue, 29 Jul 2025 14:41:52 -0400
+Message-ID: <20250729184152.160693-1-ignacio.pena87@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Fix spelling mistake.
 
-> >> +/**
-> >> + * struct spmi_subdevice - Basic representation of an SPMI sub-device
-> >> + * @sdev:	Sub-device representation of an SPMI device
-> >> + * @devid:	Platform Device ID of an SPMI sub-device
-> >> + */
-> >> +struct spmi_subdevice {
-> >> +	struct spmi_device	sdev;  
-> > 
-> > Having something called a subdevice containing an instance of a device
-> > does seem a little odd.  Maybe the spmi_device naming is inappropriate after
-> > this patch?
-> >   
-> 
-> A SPMI Sub-Device is a SPMI Device on its own, but one that is child of a device.
-> 
-> Controller -> Device -> Sub-Device
-> 
-> Before this version, I initially added devid to spmi_device, but that felt wrong
-> because:
->   1. Sub-devices are children of devices (though, still also devices themselves)
->   2. The devid field would be useless in "main" SPMI devices (struct spmi_device)
->      and would not only waste (a very small amount of) memory for each device but,
->      more importantly, would confuse people with an unused field there.
-> 
-> So, this defines a SPMI Sub-Device as an extension of a SPMI Device, where:
->   - Device has controller-device numbers
->   - Sub-device has controller-device.subdev_id numbers.
-> 
-> I don't really see any cleaner way of defining this, but I am completely open to
-> any idea :-)
-I was thinking it was a specialization at the same level as the old spmi_device
-(not it's child). As a child this is fine.
+No functional change.
 
-Just showing my complete lack of knowledge of the SPMI code :)
+Signed-off-by: Ignacio Pena <ignacio.pena87@gmail.com>
+---
+ drivers/misc/sgi-gru/grufault.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Jonathan
-
-> 
-> Cheers,
-> Angelo
-> 
-> 
+diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+index 3557d78ee..e9b4e9336 100644
+--- a/drivers/misc/sgi-gru/grufault.c
++++ b/drivers/misc/sgi-gru/grufault.c
+@@ -304,7 +304,7 @@ static void gru_flush_cache_cbe(struct gru_control_block_extended *cbe)
+ /*
+  * Preload the TLB with entries that may be required. Currently, preloading
+  * is implemented only for BCOPY. Preload  <tlb_preload_count> pages OR to
+- * the end of the bcopy tranfer, whichever is smaller.
++ * the end of the bcopy transfer, whichever is smaller.
+  */
+ static void gru_preload_tlb(struct gru_state *gru,
+ 			struct gru_thread_state *gts, int atomic,
+-- 
+2.50.1
 
 
