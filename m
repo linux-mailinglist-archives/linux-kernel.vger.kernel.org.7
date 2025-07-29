@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-749253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F339B14BFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:14:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AA1CB14C03
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:15:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93D818A0045
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F28F4E6D1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA6B288C10;
-	Tue, 29 Jul 2025 10:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38D3289346;
+	Tue, 29 Jul 2025 10:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QsA8zBkm"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dZRm++n9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB173253925;
-	Tue, 29 Jul 2025 10:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157131D54F7;
+	Tue, 29 Jul 2025 10:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753784042; cv=none; b=iy28bpLl8cH9S/BlDFqIdSaKRHrKky4ocFZ8oHAYdy/1bF7YqqlosvCQOd0+UBRrc8eiIOcCk+XT79JbSp9R/NXeOfa82ho75d8NzGFF2suf3/JaBZil+WeXw26SPVJw3td8kddjuUT9MfhK3O/jEBObMTpAJAzbteApjPSPKN0=
+	t=1753784134; cv=none; b=eeePFRnDLWZHxkAlSNz9Au7hp1xmAEACyaKPEfZ69oVsLHLTFd7Cw9IsqSFpzgDFU0AZAqw6OXb/jehNzCdLzsmMJ8arcxmiFFbcwnHkFyNvrxvw1nwCiPe9nwO90V/tuKMubjH6K6iDwW0z2BqXtzWlhePqxiW3MpVNsBcThXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753784042; c=relaxed/simple;
-	bh=KCqBt2nHHSyKsCR7eaoD8lFqx1EfG6Nptsv2HTAspbo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UktmQJGg/uAqsHAWQaDhvW1NZQ43XZkkloPcXR8+I9ZtjtO38xgSYoXTlBU3MXQDkvagtIi7a2yPozVz0r5ioNyEGUUNDNS8hm0hDzvSrr/xLuVolM/n3UyEM04HWSnT8pqL43V0/GxgmaIvXo3E+ONMtvWFRzpQiLx/sEvybks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QsA8zBkm; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753784039;
-	bh=KCqBt2nHHSyKsCR7eaoD8lFqx1EfG6Nptsv2HTAspbo=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=QsA8zBkmIBtA+Dt3J9nOwuC2s9aRQgBIqGyC5pNtGOTwUW1KeSY5kX+nrcLGjrh4d
-	 UJ+3a/0fViXI7igUTedYX1gYRivwI/aaMx7xvs5i4xMBHMRmElf+nYyT3HCTgjMf0s
-	 TGkNv0MhLxgfbTI+4QcpOQlhuIJy29zzxBiJenyGqynRwVuctK+scZiJ5YyY+Klve9
-	 x+sLLv3jzTH5mguySM7ik6o4icAdIF3ghBF9mrKXzcF0NAclHbpeBMOp12J323gxn+
-	 Iik5ya1qJvOaibOh5IKqUJk/oENeFdgId900NV+rEtNNemOcAmGm7rGqisQdMdr0mk
-	 2RPys0on3yVgw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id BBCA617E1284;
-	Tue, 29 Jul 2025 12:13:58 +0200 (CEST)
-Message-ID: <e6246af6-eadf-4bee-9e1c-c17adb86b496@collabora.com>
-Date: Tue, 29 Jul 2025 12:13:58 +0200
+	s=arc-20240116; t=1753784134; c=relaxed/simple;
+	bh=L0YRy8jHpIrww9oOg8kDytmNf+kzFY60V1Yp5wcWr1I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=DboqiMvOfNP3nWHJwoBs8bix1EtlzpTixEF1f4e25vhubGv0OhZX3CbA3K+hMnoB5s0lmbuO6fL1F+NU6+QuosNoHdKkEeERzmQFfNGT4D+QWyrBtgt2vEsC5lhG3NAzxTr4fIMcJYmZPc9D8z9dG+7ioNGhzL3tiikfOjbqzBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dZRm++n9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 786CEC4CEEF;
+	Tue, 29 Jul 2025 10:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753784133;
+	bh=L0YRy8jHpIrww9oOg8kDytmNf+kzFY60V1Yp5wcWr1I=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=dZRm++n9Fi5uX9c5qiSa4x2loGBo+6goCRce5nsaedbyru1d8dM2SMyGi2CXDFvCE
+	 0DWrvBNcuEES423fwtoKdlslyJoABgKbTGsiuHam/5PvDYc4Gk5VLKh5wkpMzDmEq/
+	 Fqj/6HGJADYch8mYm7bVPwf1TdnegTn0eELBk1dq9zirM6iUt3/EqYtCj1pVZs00tA
+	 C52Fdo597Z2C9/Y42E6FJYPm4CFAnTJ4irxXCpVMHakmgx0u9vWBAMQGYXGxrxkX42
+	 414PLsirOO2/so/nfBOFDFEGbA/1Ah7XGKSdv+dur/wMFsAXDWg++KgxY0TTSgUhwM
+	 EMTc0/0iR9rkA==
+Message-ID: <73add9b2-2155-4c4f-92bb-8166138b226b@kernel.org>
+Date: Tue, 29 Jul 2025 12:15:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,66 +49,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] arm64: dts: mediatek: mt7986-bpi-r3: Change fan PWM
- value for mid speed
-To: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org,
- Frank Wunderlich <frank-w@public-files.de>
-References: <B06376CB-BE3F-4645-8A4D-A9C67CDCA3EC@public-files.de>
- <20250729075608.1651898-1-mikhail.kshevetskiy@iopsys.eu>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH v2] net: mana: Use page pool fragments for RX buffers
+ instead of full pages to improve memory efficiency.
+To: Dipayaan Roy <dipayanroy@linux.microsoft.com>, horms@kernel.org,
+ kuba@kernel.org, kys@microsoft.com, haiyangz@microsoft.com,
+ wei.liu@kernel.org, decui@microsoft.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+ longli@microsoft.com, kotaranov@microsoft.com, ast@kernel.org,
+ daniel@iogearbox.net, john.fastabend@gmail.com, sdf@fomichev.me,
+ lorenzo@kernel.org, michal.kubiak@intel.com, ernis@linux.microsoft.com,
+ shradhagupta@linux.microsoft.com, shirazsaleem@microsoft.com,
+ rosenp@gmail.com, netdev@vger.kernel.org, linux-hyperv@vger.kernel.org,
+ linux-rdma@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, ssengar@linux.microsoft.com,
+ dipayanroy@microsoft.com
+References: <20250723190706.GA5291@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 Content-Language: en-US
-In-Reply-To: <20250729075608.1651898-1-mikhail.kshevetskiy@iopsys.eu>
+Cc: Chris Arges <carges@cloudflare.com>,
+ kernel-team <kernel-team@cloudflare.com>, Tariq Toukan <tariqt@nvidia.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Dragos Tatulea <dtatulea@nvidia.com>,
+ Yunsheng Lin <linyunsheng@huawei.com>
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <20250723190706.GA5291@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Il 29/07/25 09:56, Mikhail Kshevetskiy ha scritto:
-> Popular cheap PWM fans for this machine, like the ones coming in
-> heatsink+fan combos will not work properly at the currently defined
-> medium speed. Trying different pwm setting using a command
-> 
->    echo $value > /sys/devices/platform/pwm-fan/hwmon/hwmon1/pwm1
-> 
-> I found:
-> 
->    pwm1 value     fan rotation speed   cpu temperature     notes
->    -----------------------------------------------------------------
->      0            maximal              31.5 Celsius        too noisy
->     40            optimal              35.2 Celsius        no noise hearable
->     95            minimal
->     above 95      does not rotate      55.5 Celsius
->    -----------------------------------------------------------------
-> 
-> Thus only cpu-active-high and cpu-active-low modes are usable.
-> I think this is wrong.
-> 
-> This patch fixes cpu-active-medium settings for bpi-r3 board.
-> 
-> I know, the patch is not ideal as it can break pwm fan for some users.
-> Likely this is the only official mt7986-bpi-r3 heatsink+fan solution
-> available on the market.
-> 
-> This patch may not be enough. Users may wants to tweak their thermal_zone0
-> trip points, thus tuning fan rotation speed depending on cpu temperature.
-> That can be done on the base of the following example:
-> 
->    === example =========
->    # cpu temperature below 25 Celsius degrees, no rotation
->    echo 25000 > /sys/class/thermal/thermal_zone0/trip_point_4_temp
->    # cpu temperature in [25..32] Celsius degrees, normal rotation speed
->    echo 32000 > /sys/class/thermal/thermal_zone0/trip_point_3_temp
->    # cpu temperature above 50 Celsius degrees, max rotation speed
->    echo 50000 > /sys/class/thermal/thermal_zone0/trip_point_2_temp
->    =====================
-> 
-> Signed-off-by: Mikhail Kshevetskiy <mikhail.kshevetskiy@iopsys.eu>
-> Acked-by: Frank Wunderlich <frank-w@public-files.de>
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
+On 23/07/2025 21.07, Dipayaan Roy wrote:
+> This patch enhances RX buffer handling in the mana driver by allocating
+> pages from a page pool and slicing them into MTU-sized fragments, rather
+> than dedicating a full page per packet. This approach is especially
+> beneficial on systems with large page sizes like 64KB.
+> 
+> Key improvements:
+> 
+> - Proper integration of page pool for RX buffer allocations.
+> - MTU-sized buffer slicing to improve memory utilization.
+> - Reduce overall per Rx queue memory footprint.
+> - Automatic fallback to full-page buffers when:
+>     * Jumbo frames are enabled (MTU > PAGE_SIZE / 2).
+>     * The XDP path is active, to avoid complexities with fragment reuse.
+> - Removal of redundant pre-allocated RX buffers used in scenarios like MTU
+>    changes, ensuring consistency in RX buffer allocation.
+> 
+> Testing on VMs with 64KB pages shows around 200% throughput improvement.
+> Memory efficiency is significantly improved due to reduced wastage in page
+> allocations. Example: We are now able to fit 35 rx buffers in a single 64kb
+> page for MTU size of 1500, instead of 1 rx buffer per page previously.
+> 
+> Tested:
+> 
+> - iperf3, iperf2, and nttcp benchmarks.
+> - Jumbo frames with MTU 9000.
+> - Native XDP programs (XDP_PASS, XDP_DROP, XDP_TX, XDP_REDIRECT) for
+>    testing the XDP path in driver.
+> - Page leak detection (kmemleak).
+> - Driver load/unload, reboot, and stress scenarios.
+
+Chris (Cc) discovered a crash/bug[1] with page pool fragments used from 
+the mlx5 driver.
+He put together a BPF program that reproduces the issue here:
+- [2] https://github.com/arges/xdp-redirector
+
+Can I ask you to test that your driver against this reproducer?
+
+
+[1] https://lore.kernel.org/all/aIEuZy6fUj_4wtQ6@861G6M3/
+
+--Jesper
 
 
