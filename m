@@ -1,109 +1,149 @@
-Return-Path: <linux-kernel+bounces-749351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19604B14D3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F954B14D29
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:48:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9123B136E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:55:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C18F3BDCA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B18D28F930;
-	Tue, 29 Jul 2025 11:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 389F028EA4B;
+	Tue, 29 Jul 2025 11:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atl.tools header.i=@atl.tools header.b="Iu6mW30P"
-Received: from mail.atl.tools (mail.atl.tools [49.12.87.235])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y09jg9cT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30FF239E62;
-	Tue, 29 Jul 2025 11:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.87.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139895479B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753790172; cv=none; b=nkXHTBlU1gikAyMJWAG69ISNOBWz0kVparyFmS1fImi/1G8PJjYFptHYJAKuFGqrmpcsOw+V4o6ZzsnbkRG3dHtKpvdxAWPdu4ir4GMTTnSFFszCJdKcDkDVX8TWbZb6FYi9OkyZISzcBQAuIft/bgIiWOJnXCRzzwdYvFsQ3NA=
+	t=1753789718; cv=none; b=nxUb0ikpBMgqiNZ8xtfW5LRGBbFRSiDrB+8stkZhu2BIe/2oyk/dGoQSYauqZ2wdEJ5Vu2x4mfItNRIa4iTjm/+I/QVCwX/Gm35Xs3JNQTlkuiJ6Ez6Rz6+axeMQoQMW1Q8CB9CGJOjZ/UosfkMNpXaWDmf0unxsc+A6i15fRrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753790172; c=relaxed/simple;
-	bh=5I8dskIAWO6Qn9h2UFvt3u0In0c8qrDVN4C57QAqN+w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gaA9tPOeUhvVrmwrYR11hn+T28CDw8r34rkYx5WuyF57SjMphP+A2YG2HxfDdxNmVx0jbkpE7TsbD2VmGUcJNEkW1nCx4OuHsKfhalewn/GeSn3+lfnyHxFlSFVQNrBoH3Ai5fLkfMYeGx36DBA196woKaXjOysWsyTdUrb7dDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=atl.tools; spf=pass smtp.mailfrom=atl.tools; dkim=pass (2048-bit key) header.d=atl.tools header.i=@atl.tools header.b=Iu6mW30P; arc=none smtp.client-ip=49.12.87.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=atl.tools
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atl.tools
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 128E5299B8;
-	Tue, 29 Jul 2025 11:46:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=atl.tools; s=dkim;
-	t=1753789571; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:content-language:in-reply-to:references;
-	bh=m1S8mDT7uN0ZA9A1JPkt54nsJiQufYiFmXjtDUqFtLA=;
-	b=Iu6mW30P9u3mi6UEkXPS2LSQIVlgDDRzPCkLrYLrZHlhpkpBOAzPqMcJX4NDe64uqwA1nX
-	mwcx0+kriZItTykAYIy2V/B/vT4g27JUCIK78VR67BHL4NisLBAmh+5m/6LQCwEtekzICg
-	+ja89Opr7S7aalig8fGD3okyOjM1SoLczC416OkiaULqtAZhHqcOmCWo18YZTk7c6NcPWA
-	h40NcGssk6rIRTNTq8a+IZCANejSeB7XZ+V30UeQBD9Yby98ESBk8lV7D1F46Ihi9mmNl8
-	4F7lV08Pf9ujWndH2i/qFuvohbyNPwzMnCm6MO5yVvsCGdJkAhVZ2TI9IHyWYw==
-Message-ID: <9d13d012-8b10-4094-bea0-b85e799ff0c5@atl.tools>
-Date: Tue, 29 Jul 2025 11:46:00 +0000
+	s=arc-20240116; t=1753789718; c=relaxed/simple;
+	bh=3XEferhsEMHAhTNCVVg/lW95/LYKaoyywrPabs/mAsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n9DJFdgEWpvSmPCDciDnv6ABF3v0BBGa1AKTrcKo25tdg0pSjTc9UU9k0ujs8ouaP4woehr0BbZHyPqWCEavvCL8z11iRAzjmVxkD9OuvcFIpxz/awYyPJqsec3p1uMpRCeqXe1MojXy7wfvg/QZruOGKrVORUq9uqvT5r9j098=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y09jg9cT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753789713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DHhBE2etiwERNACXev54KrLIkaeEriXEB12xk62PpE4=;
+	b=Y09jg9cTz8DnENkVqatSJz+keYAVYXxUSi95WnAG9p5uZyRsJN6uUvLjSe7i1Sw25XFFEJ
+	scmHZfTeTZfECJVRddiMdN+JnqIkQOfYKdFt48ucl+z4dmeJzhcscoJVf12eQ8i4Mrq33C
+	Mpx4fJvlA9YYDK+3jmHI9GEKl/muAKQ=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-608-YKc8odR7OtK9g1wEYQ6a1w-1; Tue,
+ 29 Jul 2025 07:48:30 -0400
+X-MC-Unique: YKc8odR7OtK9g1wEYQ6a1w-1
+X-Mimecast-MFC-AGG-ID: YKc8odR7OtK9g1wEYQ6a1w_1753789701
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A964F18003FC;
+	Tue, 29 Jul 2025 11:48:20 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.19])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5AE741800242;
+	Tue, 29 Jul 2025 11:48:12 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 29 Jul 2025 13:47:12 +0200 (CEST)
+Date: Tue, 29 Jul 2025 13:47:03 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
+	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
+	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wander Lairson Costa <wander@redhat.com>
+Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
+ pi_blocked_on is set
+Message-ID: <20250729114702.GA18541@redhat.com>
+References: <aGvTz5VaPFyj0pBV@uudg.org>
+ <20250728201441.GA4690@redhat.com>
+ <aIh5QajyaVT7MtVp@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] arm64: dts: qcom: add initial support for Samsung
- Galaxy S22
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250716231710.99983-1-violet@atl.tools>
- <20250716231710.99983-3-violet@atl.tools>
- <1ca25402-8f57-468c-b4d5-7b52f526ab28@oss.qualcomm.com>
-Content-Language: en-US
-From: Violet <violet@atl.tools>
-In-Reply-To: <1ca25402-8f57-468c-b4d5-7b52f526ab28@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIh5QajyaVT7MtVp@uudg.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 7/17/25 20:19, Konrad Dybcio wrote:
+On 07/29, Luis Claudio R. Goncalves wrote:
+>
+> From: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> Subject: sched: restore the behavior of put_task_struct() for non-rt
+>
+> Commit 8671bad873eb ("sched: Do not call __put_task_struct() on rt
+> if pi_blocked_on is set") changed the behavior of put_task_struct()
+> unconditionally, even when PREEMPT_RT was not enabled, in clear mismatch
+> with the commit description.
+>
+> Restore the previous behavior of put_task_struct() for the PREEMPT_RT
+> disabled case.
+>
+> Fixes: 8671bad873eb ("sched: Do not call __put_task_struct() on rt if pi_blocked_on is set")
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> ---
+> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+> index ea41795a352b..51678a541477 100644
+> --- a/include/linux/sched/task.h
+> +++ b/include/linux/sched/task.h
+> @@ -130,6 +133,16 @@ static inline void put_task_struct(struct task_struct *t)
+>  	if (!refcount_dec_and_test(&t->usage))
+>  		return;
+>
+> +	/* In !RT, it is always safe to call __put_task_struct(). */
+> +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+> +		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
+> +
+> +		lock_map_acquire_try(&put_task_map);
+> +		__put_task_struct(t);
+> +		lock_map_release(&put_task_map);
+> +		return;
+> +	}
 
-> On 7/17/25 1:17 AM, Violet wrote:
->> Add new device support for the Samsung Galaxy S22 (SM-S901E) phone
->>
->> What works:
->> - SimpleFB
->> - USB
->>
->> Signed-off-by: Violet <violet@atl.tools>
->> ---
-> [...]
->
->> +&tlmm {
->> +	gpio-reserved-ranges = <36 4>, <50 1>;
-> Do you know what these are connected to?
->
-> We tend to document it, see e.g. x1-crd.dtsi
->
->> +};
->> +
->> +&usb_1 {
->> +	/* USB 2.0 only */
->> +	qcom,select-utmi-as-pipe-clk;
-> Is that a hardware limitation? I thought these phones had the necessary
-> pins connected (for DeX)..
->
->> +	status = "okay";
-> A newline before 'status' is good practice, file-wide
->
-> Konrad
+FWIW:
 
-Thank you, I'll fix these issues on the next patchset. Indeed it is not a
+Acked-by: Oleg Nesterov <oleg@redhat.com>
 
-hardware limitation, I just kept it USB 2.0 for now to avoid any
 
-potential issues with 3.0.
+At the same time... I don't understand this DEFINE_WAIT_OVERRIDE_MAP().
+IIUC, we need to shut up lockdep when put_task_struct() is called under
+raw_spinlock_t and __put_task_struct() paths take spinlock_t, right?
+Perhaps this deserves a comment...
+
+But if I am right, why LD_WAIT_SLEEP? LD_WAIT_CONFIG should equally work, no?
+
+LD_WAIT_SLEEP can fool lockdep more than we need, suppose that __put_task_struct()
+does mutex_lock(). Not really a problem, might_sleep/etc will complain in this
+case, but still.
+
+Or I am totally confused?
+
+Oleg.
 
 
