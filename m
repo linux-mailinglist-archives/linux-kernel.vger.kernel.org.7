@@ -1,81 +1,153 @@
-Return-Path: <linux-kernel+bounces-749963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F9EB1556A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 859DEB1556D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D6F518A7738
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:47:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9BE618A78F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C2E292B5C;
-	Tue, 29 Jul 2025 22:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3717127FD52;
+	Tue, 29 Jul 2025 22:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSUgOiro"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CoHV7Dx/"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B54A28C87D
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 22:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3924422A4F4
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 22:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753829143; cv=none; b=tvYkx9zGGS5kVoWSGNjJiaUTSNcKAdVWl/Mo/yXRK/TcdfJLsRS7qaPFL8tvvGCpDZNzEg1zMXEQ7h/YK6MNLW/V6wvMWkT5PPvufx+OADr67KHo/g7v0hgl06/acU2LgmttNUXP4R62Kj4+htdc8TDUmA/6f3bghMHDwNl5z8E=
+	t=1753829411; cv=none; b=EpwtelddwfnWgyHUDk+qijcR7U6RGgHQO0ECdVWbq7GAsNOCYlgRtdwwGez22+dK2Y9eMbw0nS9LF17JgW5Hjnt1zAAc3PTBoX8pf9ulILOvg3VdYjb15OVlbp6KB88sp7BzMc5VUj/7/x/GdWJu+IZNKvxYKmL0vGyzh4yVMjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753829143; c=relaxed/simple;
-	bh=f5p4amVoVlhJ+TaOlfsmYWqFcmkd3qQQVLFsh8foHJY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=WRWfKPjVZOjRJRxeRd8BxtBFkSY21CtP96/P804eTeg9JBsdNglCSvTUBadItSv1wap5kDq8RXoayQECl//HSNS6ieGBUm2xocBUWrX0e230m1dtE1pvUyz3b0zJVUnKKCP7CXHOOX+9VvEen4Iaan2/ciSS57JLth9UeXD+rWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSUgOiro; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED7EEC4CEF7;
-	Tue, 29 Jul 2025 22:45:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753829142;
-	bh=f5p4amVoVlhJ+TaOlfsmYWqFcmkd3qQQVLFsh8foHJY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=aSUgOiro9Caf50AMnmHw3i72Qjae/DduhicWVgCTkZNGPjsDTNauK6zNE87dbxMFM
-	 LtFFipZ6iLfyoKJQFsU/BQ+6/xWytcoCYublmXXWAX38cmegiIBfPhaKpwKcq2fnnp
-	 EDMs/6L2vV51SBipK8Lfzgi2DV3u6UjiGy5xZnn90P5nJkys7nrXCwjEw60aK1qvLn
-	 O/4sj/vcMLUseTDmHpBZhtNwDdIYeD4z8Fimi9h/98xZyrATYgFOi08cz64O3BpKYx
-	 qY4/Qw/KN8FU61prh/diSZsFquxAtPE4LwsCLtfdIW+hcXBG4mdum/n7auPlBH/wuL
-	 KmjMzfdImYtJA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70B7A383BF5F;
-	Tue, 29 Jul 2025 22:45:59 +0000 (UTC)
-Subject: Re: [GIT pull] core/entry for v6.17-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: 
- <175377875455.620102.9417697212609201411.tglx@xen13.tec.linutronix.de>
-References: 
- <175377875455.620102.9417697212609201411.tglx@xen13.tec.linutronix.de>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: 
- <175377875455.620102.9417697212609201411.tglx@xen13.tec.linutronix.de>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-entry-2025-07-29
-X-PR-Tracked-Commit-Id: 5173ac2dc8c09361bdb7787c70a25b5b4d61b454
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 78bb43e51b94828b333ab296eabf893d5b439fc2
-Message-Id: <175382915805.1670422.16867954889669501785.pr-tracker-bot@kernel.org>
-Date: Tue, 29 Jul 2025 22:45:58 +0000
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, x86@kernel.org
+	s=arc-20240116; t=1753829411; c=relaxed/simple;
+	bh=5Oag2AcCVjPkzeOGGI4/I3ST02oJJLJcTeMruEDNa08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EYjyx9BzJMXKfvS/xVayKIRJCGsYG1RlPYt64SWLqsVBMwlPvkMIm2qxETtzuVlNmA0nG9DK/ppM0JF6PrB39ziRq+PWrDnLhzxRxokciUc7RZbWc21qKWwz/ZRTPr/6T5uCb2V+tu+XfZBtXXJ4PTMcigrRmWEkIBJKJEE8r6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=CoHV7Dx/; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab3802455eso75554601cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:50:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1753829409; x=1754434209; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=T9Rx1n2VPjWEd5IieDrbsmiYNsbFkiLS70sRs9a6cAM=;
+        b=CoHV7Dx/FeYqva7jmgXH+KGuZQhVwAm7GeVpCjmpL6sTglBUoTyRvdI45an7Q/Jca0
+         i+d+kJY219x0ggWOkCBTLckX+6B3TAVgoVGcqX+5zWZ66mMo968cikNMUer/dxeFytlZ
+         AQeGp8nz9zci7b1Enx4Z0NtadoREBXR2yZ7wc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753829409; x=1754434209;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T9Rx1n2VPjWEd5IieDrbsmiYNsbFkiLS70sRs9a6cAM=;
+        b=eNUFicwZ6xT1l4zUDtdLp51PBJZqVhR2ULmL/hZYDwkTrW6RfJJR4qC8GVWmD4ExQL
+         n5SZHypCUiPfVzQGVez1l5HTzOjoLzKfd90n9LUC1uemdxdO8vlTWOXiTCGsmopMxS8K
+         b7b4YAjrBwIxc6xhUqg57n30H0tN91sKB7Qfe8FOWKGOYoQwcU68aVkrIhY6VErX0sf4
+         YM2fQXPuHET9eobFVK8qQ1+N7d0YmySyopDr54xWfcmpo1mmFmzV2eZbk8vmSCYGmq/n
+         q46RLsbX+zuuEWx6CIc+fc6XbtYA/byT/5crA4aKMTg2RhzCw6x7Am7uYbeLrHDQrXRg
+         6VaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWUX2lSLcyC+OtzrPMQPLixz+s+9ly4wV1T3mRyusvjWyZ2FyG/JjWqiOGbgXj/Ks02jcXqFeWgQURAkhE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0IpsEEvRwW0+6642VVH5M87AdU9aeGuKZS3Zo4SuSkpjgjmG9
+	liZ2yiBe3TpXrST9G8DEdVmgEzL4HUUmtW8dt9mwI2WEctXTEpjvMGVIql78vaz8PQ==
+X-Gm-Gg: ASbGncuHYzfKpKu07Y2XWEkIRcds32THJ4roig83KqvCNndUGCXP9mzmY4HcUfbeK1j
+	bd1atfdXofTTU4m4aZEQVtVQ0OrP55I11pegDxFBsmazoG8NuQDgzZMVMkhGC4exi+jyqAySxUQ
+	ZmRkeudQsbsSFjpASwvC0JxfHz4PJWZEZonVhVy0zxDzkSR0JyiGNr0yOxFIOCLJgAFAkP2WXzg
+	c7EAGnz0UmPj1az0wecfc7Dv72/b7lozq4k5Lac/1qj6HhGRlJ7YJ7nAYVASYG3WCZelaSAtK5A
+	wtyOVPN2UEsSBxp7j7DVPIouzBqX8hPXUztsXG8upiaHr41kU07Zc8D8VGOOjF7dgFEAIktLupZ
+	On9Vah1twxKnKZ+Axg55A0/mTE2xcOfoXngP00Gz4fNpyVEL4vjqCKtVge0FuLg==
+X-Google-Smtp-Source: AGHT+IF2wx21LXiuL01GtnF+7h1KfKCmUDdkpqqReZvm+ZkOom6O8hWfC+d1EYVqQKfzAfhxJW4UZQ==
+X-Received: by 2002:a05:622a:118e:b0:4ab:651b:5f17 with SMTP id d75a77b69052e-4aedb99c9a0mr24608101cf.18.1753829409039;
+        Tue, 29 Jul 2025 15:50:09 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aea7d724d0sm44488141cf.23.2025.07.29.15.50.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 15:50:08 -0700 (PDT)
+Message-ID: <c2e08821-c9e4-4b35-bc09-94dc38fb6012@broadcom.com>
+Date: Tue, 29 Jul 2025 15:50:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: mdio: mdio-bcm-unimac: Correct rate fallback
+ logic
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Jacob Keller <jacob.e.keller@intel.com>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20250729213148.3403882-1-florian.fainelli@broadcom.com>
+ <11482de4-2a37-48b5-a98e-ba8a51a355cd@lunn.ch>
+ <9c10c78b-3818-4b97-8d10-bc038ec97947@broadcom.com>
+ <775f7ae3-9705-4003-a7e8-aac3c418e48f@lunn.ch>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <775f7ae3-9705-4003-a7e8-aac3c418e48f@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Tue, 29 Jul 2025 10:46:05 +0200 (CEST):
+On 7/29/25 15:44, Andrew Lunn wrote:
+> On Tue, Jul 29, 2025 at 03:22:57PM -0700, Florian Fainelli wrote:
+>> On 7/29/25 15:20, Andrew Lunn wrote:
+>>> On Tue, Jul 29, 2025 at 02:31:48PM -0700, Florian Fainelli wrote:
+>>>> In case the rate for the parent clock is zero,
+>>>
+>>> Is there a legitimate reason the parent clock would be zero?
+>>
+>> Yes there is, the parent clock might be a gated clock that aggregates
+>> multiple sub-clocks and therefore has multiple "parents" technically.
+>> Because it has multiple parents, we can't really return a particular rate
+>> (clock provider is SCMI/firmware).
+> 
+> O.K. Maybe add this to the commit message?
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git core-entry-2025-07-29
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/78bb43e51b94828b333ab296eabf893d5b439fc2
-
-Thank you!
-
+That makes sense, v2 tomorrow, thanks!
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Florian
 
