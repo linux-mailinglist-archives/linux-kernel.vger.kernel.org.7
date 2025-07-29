@@ -1,134 +1,102 @@
-Return-Path: <linux-kernel+bounces-749176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF939B14B01
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:17:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39690B14B10
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:20:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F350D1AA28CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:18:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CB941887E0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6669922FDFA;
-	Tue, 29 Jul 2025 09:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D466F267B19;
+	Tue, 29 Jul 2025 09:20:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WM3R40ET"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="sNATE1mm"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200C9213E66;
-	Tue, 29 Jul 2025 09:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4586022538F;
+	Tue, 29 Jul 2025 09:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753780662; cv=none; b=nXivYwl8cYnp9uHs5msFpXG6TWqtNXi0y6T6PY0DBEzFNhrB8j9bMQ4viei5OB9G/Tb8RZZzE3jmHAPYh00vqBNnR7KlmhIzdD77N6ydU0RlXpsj6T2PSCmjcOy5I6EWupupP25FkF6xRl6v8eCqpJnhpAeqJkgL7Ww1v+TSKU8=
+	t=1753780802; cv=none; b=XJKl9wlryHMBXVBAY/WMbnIbFp+qM+XyOqgijfi75haRGZrGFJnd5TJznF/kBRQZWIQAFr48Hu38sjJ5uGIJBWsr7ygaGY2l485J2JZYlFitmL6IxAAdjfoj1cH3WAHUigufWbj0C6gSO7NObgMXXlqsHxNROUwlCtoQoa0yGmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753780662; c=relaxed/simple;
-	bh=WeLGtTB9ar+BFGQpy4yU7poIY2hEMrxYQX6hMxIuhwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qIzNnApQ0KLy6tQMQQDNY7vyZpLNjhVDOmen8C1OOf3ojjp+3ptySfWJWGTRxhBql5MujvHnzDuS3oeyNGyWWN/mpoQwK9uBQ9h1q3nh+F5sX1uHlMhKeOMzpSUbSDGOYdA/dVUhq24DDZLZdlQZWHh9k+mZf6nwY7EP+QPVWm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WM3R40ET; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3321296a8cfso8761441fa.0;
-        Tue, 29 Jul 2025 02:17:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753780659; x=1754385459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7MNtzty7rFJgUySAkQlJV2O9frQXPFb7bbFYFWr20zY=;
-        b=WM3R40ETp41Ez6M7Iy4pjJPeeiagPA1iDLQ8aov1L6wqRPX9LO1A3/NmrMqoZmarYO
-         zXNF78qyguhLFHN6eyjGjasSyj4VGNhuHqp2wnaHjCtcwKhuir73FqsHTv6Rs5VNd6Oz
-         OMxO2Rf00qq36aI71y93qSSPFX39egpUexscUbnPAsn7LD7Dpp/riCJ58NQkShZvdblK
-         S9+wbEQZIyP/XShLsbyok5iDbcMbaghhgkr88fiCXYHNT4RGczRYsKy9VTV1troCIlhB
-         wx/9KUVJDs4+I3hCu4dwDb9nZ/DZinyXcKUJGlLVFTzQcNQBEu7CnbQBl1rI1aOur7uw
-         g0SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753780659; x=1754385459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7MNtzty7rFJgUySAkQlJV2O9frQXPFb7bbFYFWr20zY=;
-        b=Q0k3M9S1FeRI7Zofd8fa5WtcYjELrmUN2+nNyDLWL8pky9tVO+9XRofb9JjoSa5lIh
-         xb8J34hZ8quoiDqroonJPqt6vRlUsEJ7WiMXEpILEuveG+6H+dewjmXzy7mq7cP3+mgT
-         Ba4PWktMBkDd1kANmU8yLmqoi1XuECiUNs/A439V9VyIwwgxxwgLS9DL1Q3UE95zSxX9
-         akYrYt2kEaYDjR8hZGx2e/8K3bS8i89aLxwHVMKN/wAxoxshxUtR6aEEZ84j69bzOCRQ
-         o2EVQI4IKcxcjOvZKC2s9HDFkJiH2DhHjgZpMa98DyBR/MhYtWxxDWXG2zVmY2CcuWJD
-         a47Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUJpmuwFO8u5GDEuf2Rf3w2qc/ewSCkqdcRO8opYKvV/hkBN/dl4AE+miBeSvlz+nqb2RxzQPDD94bpTLSF@vger.kernel.org, AJvYcCVsI4EePX2l0ODlVYVb/StG4BHCPbFpOk0RGOWWbWIxCJ+q5zZzIXG3+C2Hh/a5pvzTK/WODxZkRvQIQ2M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3YGb+PFKPVzFluJJSvBuLTWydg8GD1No1Qo8UWqrADutfeVKg
-	9izr2v7NI1luibsN4STFq19J+3edkbc7ZS6YQjNkNui/ztDjKquKW63fB+cibXM1UwTREfLHJmw
-	4KdBmrNGx4PiWnQApWVziEDkBuHSeBx1uAA==
-X-Gm-Gg: ASbGncukjNuKlIL1wm+N1xWnKq+Xdjpwc+K1pM+qjH8BE3xArLDpSxLp//1ByJUJAFT
-	rzLbHU0tjfEdMzD72yfTRCPocqdP3RV+O3ZeHO1k7caR5mDMsoemKhgwSlfGfOVL76taV9Mb25P
-	ewzp1oToeuIwv+Lg1qTQlWNr3yopgtlfk70/hvAeNw9LPflXgUXAvSLdm9q+1K/2Sn0XKT5Mgaz
-	sDw37venBxw8b9mQmAJV7pTs9WPH4v9mU2AFo2BSg==
-X-Google-Smtp-Source: AGHT+IGvbJZAYxRsjQOkwEVXEYQywo57A1btn+K9lLr1jxhzGNtgg07v1w1L3IEbQ5Apyb52E4PdbuNWX7sIR3uM1sE=
-X-Received: by 2002:a05:651c:1108:10b0:32b:4932:d5ad with SMTP id
- 38308e7fff4ca-33215441211mr4929531fa.10.1753780658895; Tue, 29 Jul 2025
- 02:17:38 -0700 (PDT)
+	s=arc-20240116; t=1753780802; c=relaxed/simple;
+	bh=nWxrqj2kUyxmcv6mdjkaK20IW4Wz6SYRTXTZnZ3Px6I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q72W+lUIyROWkd0ceDfhEZKowcH3fJthQNnr2orW+lr/UpKjYxqiI7oQstnnYXOY8Ecuh4MRhfTgWwosKvGi+NyXjjOtrcRV8vsYvBYFTDtLAb3Y3VsozJVX35H1CWjdtReaFCJQGJtN7HQECHcuI4XbfdnVeW3EPen/hKqrEFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=sNATE1mm; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=0FX94LO7FBG853z0deALFB9wglwXmVAtfiI/k+zwf+c=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1753780697; v=1; x=1754212697;
+ b=sNATE1mmnB27c7gYFPLV3+i36LbmX0ue9FYHXt+9JHE+vmdbMjukkICF2pWl+KBxGIGGZGqH
+ 9BSdoRf07MgTcGVz6sGv4Lrt5RxWVV8DZwwBKwYzzPHxVN2aQOxo6M1PIiKemN/X2o2MsmOsZuI
+ jLNtltSf55f8YX1iLssgQqb4Jb7NOTOk0Ht/wr1aFStUJO6za5v0NmQP3GBPprwhNsrmwaysbGP
+ R4mKd/nW0OLZBJTR+0dDg4Z6/TgeIYXI86YndlDnB/g8E8i88b1EKLb+cqq2hk+eiJK4vsaZRPR
+ gJeH5ckWotsXmqXCdH9YcHu+qcDo5aMFn48TE9pehy/Aw==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 5e0832d2; Tue, 29 Jul 2025 11:18:17 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Randy Dunlap <rdunlap@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux DRI Development <dri-devel@lists.freedesktop.org>,
+ linux-leds@vger.kernel.org
+Subject: Re: linux-next: Tree for Jul 29 (BACKLIGHT_KTD2801)
+Date: Tue, 29 Jul 2025 11:18:16 +0200
+Message-ID: <5002743.GXAFRqVoOG@radijator>
+In-Reply-To: <b6c481bb-e854-405e-a428-90301789fe20@infradead.org>
+References:
+ <20250729153510.3781ac91@canb.auug.org.au>
+ <b6c481bb-e854-405e-a428-90301789fe20@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250706092522.9298-1-pranav.tyagi03@gmail.com>
- <yq1bjp9rqh5.fsf@ca-mkp.ca.oracle.com> <CAH4c4jKgPv-Mb1=WvOW+jvGMABXcEgaDMxV0Wit32LPgJitekQ@mail.gmail.com>
- <yq1ms8nn2g8.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq1ms8nn2g8.fsf@ca-mkp.ca.oracle.com>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Tue, 29 Jul 2025 14:47:27 +0530
-X-Gm-Features: Ac12FXyXbTfsF4-xJHUYe8uTZLOfsxIie85dgr712UYsyAkEnOXJkJFEnqYZ7zs
-Message-ID: <CAH4c4jJ+BjGyhapXbHqM5HBmSm1ZNzgsYWS-mNQjbc0XpMns4w@mail.gmail.com>
-Subject: Re: [PATCH] target/core: replace strncpy with strscpy
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, target-devel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Autocrypt: addr=duje@dujemihanovic.xyz;
+ keydata=
+ mDMEZokhzhYJKwYBBAHaRw8BAQdAWJZ0hsI/ytTqHGFV8x6tzd5sB596cTeeDB4CQsTf+wC0KER
+ 1amUgTWloYW5vdmnEhyA8ZHVqZUBkdWplbWloYW5vdmljLnh5ej6ImQQTFgoAQRYhBG3/QdYN8x
+ S1t2umMK0xk1JFj60DBQJmiSHOAhsDBQkJZgGABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAA
+ AoJEK0xk1JFj60D1GABAJVSorZdMOlrp/oQtCSH/G53NE56x/JHA8VX+ZQBd/H3AP4/EcUf6eef
+ DUxVMh2bdkmuQKsVZGgOGiXpMksrVntWBrQpRHVqZSBNaWhhbm92acSHIDxkdWplLm1paGFub3Z
+ pY0Bza29sZS5ocj6ImQQTFgoAQRYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSH/AhsDBQkJZg
+ GABQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEK0xk1JFj60Dlw8A/i4lPOL7NaYoYePDq
+ l8MaJaR9qoUi+D+HtD3t0Koi7ztAQCdizXbuqP3AVNxy5Gpb1ozgp9Xqh2MRcNmJCHA1YhWAbg4
+ BGaJIc4SCisGAQQBl1UBBQEBB0DEc9JeA55OlZfWKgvmRgw6a/EpBQ8mDl6nQTBmnd1XHAMBCAe
+ IfgQYFgoAJhYhBG3/QdYN8xS1t2umMK0xk1JFj60DBQJmiSHOAhsMBQkJZgGAAAoJEK0xk1JFj6
+ 0DG5MA/iuo4l2GDEZ1Zf+XaS//8FwdXDO9nHkfbV2MHjF4NZXwAQDroMzBdMcqVvc8GABFlTTgG
+ j7KrRDz2HwWNyF8ZeprAQ==
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Jul 29, 2025 at 8:39=E2=80=AFAM Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
->
-> Hi Pranav!
->
-> > As far as I looked, I could only find the following 4 instances of
-> > strncpy() for the file target_core_transport.c:
-> >
-> > target_core_transport.c:1115:           strncpy(p_buf, buf, p_buf_len);
-> > target_core_transport.c:1165:           strncpy(p_buf, buf, p_buf_len);
-> > target_core_transport.c:1225:           strncpy(p_buf, buf, p_buf_len);
-> > target_core_transport.c:1279:           strncpy(p_buf, buf, p_buf_len);
-> >
-> > And I have changed all of them in my patch. Kindly point me out to
-> > other instances, if I am missing any.
->
-> Sorry, I guess I didn't read far enough. I was focused on the VPD
-> identifier dump function and whether it could overrun the static buffer.
->
-> > Also, I intended this to be a cleanup patch for the deprecated
-> > strncpy() function and wanted to replace it with strscpy() which is
-> > encouraged. No functional changes were intended.
->
-> In our experience cleanup patches come with a very high risk of
-> introducing regressions. Regressions in the I/O stack could potentially
-> lead to issues such as systems failing to boot or people losing their
-> data. So we generally only merge patches if it can be demonstrated that
-> they fix an actual problem.
->
-> --
-> Martin K. Petersen
+On Tuesday, 29 July 2025 10:32:13 Central European Summer Time Randy Dunlap 
+wrote:
+> so BACKLIGHT_KTD2801 should:
+> 	depends on GPIOLIB
 
-Hi Martin,
+Sounds good to me.
 
-I did not know about the risks involved with cleanup patches for the
-I/O stack. I understand that this could lead to regressions and it is best
-to drop this patch. Thank you for reviewing it.
+> Also, in drivers/leds/Kconfig, does it need duplicate entries for this?
+> Can't the second entry be removed?
+> (asking since Duje made both entries)
 
-Regards
-Pranav Tyagi
+That's an oversight on my end, and as such the second one (the one inside the 
+"if NEW_LEDS" block) should be removed.
+
+Would you like me to send a patch to fix these?
+
+Regards,
+-- 
+Duje
+
+
 
