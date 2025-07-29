@@ -1,176 +1,125 @@
-Return-Path: <linux-kernel+bounces-749081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E45BB149DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:14:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4636B149D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C02165C16
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:14:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24F0F7AC72C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C115327F183;
-	Tue, 29 Jul 2025 08:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A20277800;
+	Tue, 29 Jul 2025 08:13:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LDFxErFO"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TCUlRsbw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CC627A928
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A546F27603C;
+	Tue, 29 Jul 2025 08:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753776802; cv=none; b=H8j82r1JvyXUAKvU2V2VoNGZ0Fy1kGgpHXzlhl88leHsbdq0jWTwZ2GBlv9Lh8CUXMnKN4z3F4Fe/vmlPUkxJLP0w+2ACunT7E2p4dxe18yeITJNDPRKSo32dIgNRMB78mHVpUzQ0Et1kUF7zkG3fkxwfua2/jSYynwJSUTHQlk=
+	t=1753776793; cv=none; b=J3yZ2TAxX8MtyP8v2SQ7dyb8+hv4xYoQ6xNaynr/hyW/cBwXJCsLsEAL6DX+ysYi94A6XKNmaeSjjYNBXhyxNqxBSNILQtWvEt8twt2KqxvBcbvnm/M+4eN7tvy+lS3GYK8SXiFOr/ZiEBtb9AaCuGoWUWrs/K+9U4EQaFxXwxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753776802; c=relaxed/simple;
-	bh=71gbI6OjDsDmEknBgmdcYUx3bHKLr6/JDNXFwhVg5xw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=PXGrfUzz/6nwluHSuL7HMrPEll5OJAuObejECm6cdqJGLAgZlTiISREwLeE6zrLPHTRF46Dkp/X2eebGv8Axs5+WnhCGOxem0/okta9jejSr4rTJuBXCr+W4cLlgxlYQ15k+rXGIm2QokSWvAFqGBxqyD0i03NKF1ZetCTyEbqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LDFxErFO; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b34abbcdcf3so4059555a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:13:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753776800; x=1754381600; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Pppra4qoUIASFj11vi7hdy6H5kU0GOjurpfaQQiON1E=;
-        b=LDFxErFOuHwrAncmaLwtHbes4xPbjsjnlvjUHgFZB341VYtf2eDNWNlCbGadsl91sS
-         utEC4I94hswOW/2z9e4w7/hJlwegij1gxKdNiacSWM7nHv22ObHpN2ibeQbo85y1cYV+
-         Tp7t30AOPleQ/Rwh5LK3NJYMx0PU5ahqTbDhBQNBhAvs4jFwm7Pu7hT3Bey9MoYCgP6Y
-         meBmwWqwC70tus9NM/LDWYLtfTeiqi63WPk73cdRaDRVAeT6+6p49xvoj51nNbG1WTv2
-         /os/vkLQ/cFClBjaKKrW8PpCT4PkeDp5qPYH35VrbGLAj/yelXl3r+Y26GQ5QYUpCqtm
-         4epw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753776800; x=1754381600;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pppra4qoUIASFj11vi7hdy6H5kU0GOjurpfaQQiON1E=;
-        b=YMMNUPO1jIMamwAZDs2CcUso/yW/VApr6I8DD2LnJaNBKbrZYPIIhyDDlwQRrVrR9b
-         fN4mAIadfp8+ksJa//G6p3a0zaaoErOUtNdBGQ2gjBuHBmJSE7iHoo8mdV/WZMsbXTtf
-         S4N+PdKH3RSwmmUVRfeaVzK/6UcYggrtUhnHobczAIWpwYqKXkNQI+n24PlsDWsAfSVv
-         uGIe0CxtK9dzzQkGz5TO80xtEN28XymeIqHYhw+r8UiwzS+ELk84RU5y3vdXC0uwI5Kh
-         9v8Pq1vThFgQzvFJEwGTIcCIvd980LsSTakBSmVDcFxtdi3cIs1/GapdRL5UXEDO9/eX
-         fkHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNnYVxpDEscdLIcyIeFeUHvJfAkMh+Pjh87yNIy14EW7UdEDgWncyMOpNydWSuLfyuEEqk4y1YJcl0sio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGcUSpnGu4qxppOKX1rTMFhSufiuWve1r+GB/ny5szFdJJVcbw
-	HdVP5E2Tumi6pgBRVWrcJd2U0aag2dS7LqcgXdVy5e9TeVhMMOnaUtdJuud7lahKOUEDTKe5uN0
-	GY7eTlw==
-X-Google-Smtp-Source: AGHT+IEfcbCRh+gitWFUzwBX0TsCAZa6VaftFKxPs2lYtcqrCg750iVws+VPQQvAfHwiipfHwgOZPPrL9vU=
-X-Received: from pfbfh5.prod.google.com ([2002:a05:6a00:3905:b0:749:d28:4ca2])
- (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:3d1a:b0:21f:4ecc:11ab
- with SMTP id adf61e73a8af0-23d6ffdc7bemr23243429637.9.1753776800054; Tue, 29
- Jul 2025 01:13:20 -0700 (PDT)
-Date: Tue, 29 Jul 2025 01:12:56 -0700
-In-Reply-To: <20250729081256.3433892-1-yuzhuo@google.com>
+	s=arc-20240116; t=1753776793; c=relaxed/simple;
+	bh=iau6CFRPvo+1rErnYbUShzPk5E8wZpMfdzXyHGYM0go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dira94SeUxvbfxW7bfGv2WxDyyX80W+dTbWvwPMWvm4y/9dE8XsfvaKeH0ccCUWMr0ecG2Q5yqy0Z49QF6av+y6E+XCAsG+ARKpOmhNU7sbHPrEakFF7L00bTeDMILipLc4iDoKxH0EKCbUHF6QWqvDuTM8bHp0kiw7CGP+cZmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TCUlRsbw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4287C4CEEF;
+	Tue, 29 Jul 2025 08:13:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753776793;
+	bh=iau6CFRPvo+1rErnYbUShzPk5E8wZpMfdzXyHGYM0go=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TCUlRsbw4eKHsMvwqqMw0QZp5VHfQ1kjTeMRX270ZFQs7lZR0DACV5S2YM21RYIw6
+	 D5ZAYt74Qv7QNAHQjNoe8zrC+B1dpE8tzyAbn6hTCnx0TFaJK7FYvrUNhpBrs8RRvU
+	 nsc0c3zSvuS3MANsYjJX2X/QxQwNa5zuqLLs6lIEbFjFHGi6k1h6Cb/W1hH815Fqx4
+	 ZYKfp2VbzN0toadJ7p3gvmOnUpA8orp5eVtqUc3CHyTpX5W/IBimOkLaBSUswjlIER
+	 yPJRM7FY5MxuiKYcdpcwAAG3Bs0UtRij6a4BCXV+6Q+dfS9wmoj63b+JF84L/8Yshk
+	 q7lYQ9pkvbx8g==
+Message-ID: <8ce2c9ce-9636-4888-8d63-2169441addcb@kernel.org>
+Date: Tue, 29 Jul 2025 17:13:07 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250729081256.3433892-1-yuzhuo@google.com>
-X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
-Message-ID: <20250729081256.3433892-4-yuzhuo@google.com>
-Subject: [PATCH v1 3/3] perf bench: Add 'bench sync ticket' subcommand
-From: Yuzhuo Jing <yuzhuo@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Liang Kan <kan.liang@linux.intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Alexandre Ghiti <alex@ghiti.fr>, Yuzhuo Jing <yzj@umich.edu>, Yuzhuo Jing <yuzhuo@google.com>, 
-	Guo Ren <guoren@kernel.org>, Andrea Parri <parri.andrea@gmail.com>, 
-	Leonardo Bras <leobras@redhat.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 2/4] net/tls/tls_sw: use the record size limit specified
+To: Wilfred Mallawa <wilfred.opensource@gmail.com>, alistair.francis@wdc.com,
+ chuck.lever@oracle.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+ donald.hunter@gmail.com, corbet@lwn.net, kbusch@kernel.org, axboe@kernel.dk,
+ hch@lst.de, sagi@grimberg.me, kch@nvidia.com, borisp@nvidia.com,
+ john.fastabend@gmail.com, jlayton@kernel.org, neil@brown.name,
+ okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org,
+ anna@kernel.org, kernel-tls-handshake@lists.linux.dev, netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-nvme@lists.infradead.org, linux-nfs@vger.kernel.org,
+ Wilfred Mallawa <wilfred.mallawa@wdc.com>
+References: <20250729024150.222513-2-wilfred.opensource@gmail.com>
+ <20250729024150.222513-5-wilfred.opensource@gmail.com>
+Content-Language: en-US
+From: Damien Le Moal <dlemoal@kernel.org>
+Organization: Western Digital Research
+In-Reply-To: <20250729024150.222513-5-wilfred.opensource@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Benchmark kernel ticket spinlock implementation in user space.
+On 7/29/25 11:41, Wilfred Mallawa wrote:
+> From: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+> 
+> Currently, for tls_sw, the kernel uses the default 16K
+> TLS_MAX_PAYLOAD_SIZE for records. However, if an endpoint has specified
+> a record size much lower than that, it is currently not respected.
 
-In resolution of arch_spin_* redefinition conflicts due to importing
-qspinlock and ticket spinlock together, the sync.c defines
-__no_arch_spinlock_redefine, following the usage in
-arch/riscv/include/asm/spinlock.h.
+Remove "much". Lower is lower and we have to respect it, even if it is 1B.
 
-Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
----
- tools/perf/bench/bench.h   |  1 +
- tools/perf/bench/sync.c    | 17 +++++++++++++++++
- tools/perf/builtin-bench.c |  1 +
- 3 files changed, 19 insertions(+)
+> This patch adds support to using the record size limit specified by an
+> endpoint if it has been set.
 
-diff --git a/tools/perf/bench/bench.h b/tools/perf/bench/bench.h
-index dd6c8b6126d3..42c0696b05fb 100644
---- a/tools/perf/bench/bench.h
-+++ b/tools/perf/bench/bench.h
-@@ -23,6 +23,7 @@ int bench_sched_messaging(int argc, const char **argv);
- int bench_sched_pipe(int argc, const char **argv);
- int bench_sched_seccomp_notify(int argc, const char **argv);
- int bench_sync_qspinlock(int argc, const char **argv);
-+int bench_sync_ticket(int argc, const char **argv);
- int bench_syscall_basic(int argc, const char **argv);
- int bench_syscall_getpgid(int argc, const char **argv);
- int bench_syscall_fork(int argc, const char **argv);
-diff --git a/tools/perf/bench/sync.c b/tools/perf/bench/sync.c
-index c85e9853c72a..581835451e5f 100644
---- a/tools/perf/bench/sync.c
-+++ b/tools/perf/bench/sync.c
-@@ -17,7 +17,9 @@
- #include "bench.h"
- #include "../util/tsc.h"
- 
-+#define __no_arch_spinlock_redefine
- #include "include/qspinlock.h"
-+#include "include/ticket_spinlock.h"
- 
- #define NS 1000000000ull
- #define CACHELINE_SIZE 64
-@@ -67,6 +69,7 @@ static const struct option options[] = {
- 
- static const char *const bench_sync_usage[] = {
- 	"perf bench sync qspinlock <options>",
-+	"perf bench sync ticket <options>",
- 	NULL
- };
- 
-@@ -106,6 +109,20 @@ int bench_sync_qspinlock(int argc, const char **argv)
- 	return bench_sync_lock_generic(&ops, argc, argv);
- }
- 
-+/*
-+ * Benchmark of linux kernel ticket spinlock in user land.
-+ */
-+int bench_sync_ticket(int argc, const char **argv)
-+{
-+	arch_spinlock_t lock = __ARCH_SPIN_LOCK_UNLOCKED;
-+	struct lock_ops ops = {
-+		.lock = (lock_fn)ticket_spin_lock,
-+		.unlock = (lock_fn)ticket_spin_unlock,
-+		.data = &lock,
-+	};
-+	return bench_sync_lock_generic(&ops, argc, argv);
-+}
-+
- /*
-  * A busy loop to acquire and release the given lock N times.
-  */
-diff --git a/tools/perf/builtin-bench.c b/tools/perf/builtin-bench.c
-index cfe6f6dc6ed4..8d945b846321 100644
---- a/tools/perf/builtin-bench.c
-+++ b/tools/perf/builtin-bench.c
-@@ -54,6 +54,7 @@ static struct bench sched_benchmarks[] = {
- 
- static struct bench sync_benchmarks[] = {
- 	{ "qspinlock",	"Benchmark for queued spinlock",		bench_sync_qspinlock	},
-+	{ "ticket",	"Benchmark for ticket spinlock",		bench_sync_ticket	},
- 	{ "all",	"Run all synchronization benchmarks",		NULL			},
- 	{ NULL,		NULL,						NULL			}
- };
+s/to using/for using
+
+> 
+> Signed-off-by: Wilfred Mallawa <wilfred.mallawa@wdc.com>
+
+> @@ -1045,6 +1046,13 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+>  		}
+>  	}
+>  
+> +	if (tls_ctx->tls_record_size_limit > 0) {
+> +		tls_record_size_limit = min(tls_ctx->tls_record_size_limit,
+> +					    TLS_MAX_PAYLOAD_SIZE);
+> +	} else {
+> +		tls_record_size_limit = TLS_MAX_PAYLOAD_SIZE;
+> +	}
+
+You can simplify this with:
+
+	tls_record_size_limit =
+		min_not_zero(tls_ctx->tls_record_size_limit,
+			     TLS_MAX_PAYLOAD_SIZE);
+
+> +
+>  	while (msg_data_left(msg)) {
+>  		if (sk->sk_err) {
+>  			ret = -sk->sk_err;
+> @@ -1066,7 +1074,7 @@ static int tls_sw_sendmsg_locked(struct sock *sk, struct msghdr *msg,
+>  		orig_size = msg_pl->sg.size;
+>  		full_record = false;
+>  		try_to_copy = msg_data_left(msg);
+> -		record_room = TLS_MAX_PAYLOAD_SIZE - msg_pl->sg.size;
+> +		record_room = tls_record_size_limit - msg_pl->sg.size;
+>  		if (try_to_copy >= record_room) {
+>  			try_to_copy = record_room;
+>  			full_record = true;
+
+
 -- 
-2.50.1.487.gc89ff58d15-goog
-
+Damien Le Moal
+Western Digital Research
 
