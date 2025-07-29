@@ -1,138 +1,112 @@
-Return-Path: <linux-kernel+bounces-748779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 060BFB145F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:43:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2841B145EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7A50543629
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B4427A2290
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8AC91F91C8;
-	Tue, 29 Jul 2025 01:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4989F1F463E;
+	Tue, 29 Jul 2025 01:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e1QL0QPV"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRD04GHS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C5B61F1317;
-	Tue, 29 Jul 2025 01:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E061F237A;
+	Tue, 29 Jul 2025 01:42:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753753383; cv=none; b=omgQ1aQuda5jTCbRWZrT/jXMWKWibQI4LrgSBPK/17O0Ddg551No0Y7wlWVzesuArPzF/qckoCfOSDtD1/6kXo4p2Gr67SdXyLpN0+Yo4qNFGjoGimEYB2nckQdbj+bIRU8T8+YoTlHgE2coyHxSrAF7BWrNDlIW51nhrktwnXA=
+	t=1753753377; cv=none; b=k1hQil1iJaJWFzmF0pGPW/s1eYPXxnscf8ZfKmPsx0XDVmKceS/+U+1qzAmLpjfqr2hSm1DCBzDJZsuxEZuRYLxU/WVV/sYuFRi7mWxjzi8vQwUBeCdGRs5/CJV17iJ3DYC03vIa/1nC+c5DdwUaxtNPVbsAdYnZAt3SoryjeVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753753383; c=relaxed/simple;
-	bh=DDWt1divItWHtE5C+t6yjBAZh3dCoBFC9gI8wQS29rg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M6+vOsjZXTp9NegU3/dAiaXxCW6noEUwK1uioDKFRylynCRu/WFHK3ypyTjLMdz4Uyu0BjLZbH0V0eBULAqALmwYpYy+c+DJYfWuK/jVxGd9nTKOBw2SELPreAUE4gWlp/J/LKlcxvbBpZVh4Z2WoSkY5dkvVNZ1FNleVBrmweI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=e1QL0QPV; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753753167;
-	bh=HAFrszZcLHiyykr0JLCLAKIRgFg9YnfBffD/rfx2r9I=;
+	s=arc-20240116; t=1753753377; c=relaxed/simple;
+	bh=3g5GSCZ8bX42LsW/E2GOnhRkur95yaR7z21LAmkOLGs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=cWekOgGkTCnZQvejfv0C9S+1YqMcH8SCi+k8jJn/guPmz5rMjMlMB9FxEWLIX2OeUcQMG0NBgquF79GmzFnI60umnWLlSW8OQNza8cK3C+mHuRnJfTTo8vUrFBkkJYzVj/GBSAkeGFft5d9I2yzz54zF0CD30aeFlzJPKQHFAgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRD04GHS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E85D4C4CEE7;
+	Tue, 29 Jul 2025 01:42:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753753377;
+	bh=3g5GSCZ8bX42LsW/E2GOnhRkur95yaR7z21LAmkOLGs=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e1QL0QPV3PjW4RC1ZEKhDpizmJEqKtffMLQMPpswyyOzo7nDn0133whIcAoxJGFk3
-	 Y/rDn8LgTD6TfGFkYcFemWMrOfGz7h1Tk3+k/HdPeLCp1QDMuhsABW7uTqhntW8RYP
-	 UowRS5jsd5QzAGWYkKrxo3ckFylEC1sSKGjICl1vsweqGRQiE0SH1arRT0a758hjnv
-	 K5qLOu4tZAl69l3Nc3RU9kI3OgqpSlk1AdLvpcJdwGowYl8oWW/OIUkFWm7JpVfmvH
-	 NgpOg8i3cbfoIsqv462jI1y8ALVnzEs9DXmV3zc9sDlbZ6zKWhBH0sHnfGDR5K8PrR
-	 QM3NklbVo060g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brdLQ2ZDxz4w2J;
-	Tue, 29 Jul 2025 11:39:23 +1000 (AEST)
-Date: Tue, 29 Jul 2025 11:42:49 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, wangzijie <wangzijie1@honor.com>
-Subject: Re: linux-next: manual merge of the vfs tree with the mm-unstable
- tree
-Message-ID: <20250729114249.2d2f4002@canb.auug.org.au>
-In-Reply-To: <20250616105846.45af3a7b@canb.auug.org.au>
-References: <20250616105846.45af3a7b@canb.auug.org.au>
+	b=DRD04GHSOGvW1QJ6BvYPIDL1ETlt92y/qD/ALuIR9jFHTdLIkz+VclMFMSejp6Bry
+	 kc/+M8L+hb1A7qwExi5ejuQo+QJUzfIO2yyqYau2mEy3dmbMaZ0yk7S261XaZ0e9E/
+	 8X3NMGNLZMQTVlT9aT2HCouedrElyNFRd+SDqPiUdFlva7GDGCFUZrcV+3bWdpEjXH
+	 wkkoUWQRMC6jmPdQbeYU5BBxZyEnocjlUL3lf0bhP4cJpzN5Hc6lYrRxH4BM7OZfpm
+	 vQgqKe/aMRrPPt6POcPxvkWJaykI+FuJFb4DX7iSnu6x8wddkiF4hceN1Xjb8uMJlo
+	 mf79qyyxxikOQ==
+Date: Tue, 29 Jul 2025 10:42:54 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: alexei.starovoitov@gmail.com, rostedt@goodmis.org,
+ mathieu.desnoyers@efficios.com, hca@linux.ibm.com, revest@chromium.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+Subject: Re: [PATCH RFC bpf-next v2 1/4] fprobe: use rhltable for
+ fprobe_ip_table
+Message-Id: <20250729104254.560beac056de20d6aebe1d55@kernel.org>
+In-Reply-To: <20250728072637.1035818-2-dongml2@chinatelecom.cn>
+References: <20250728072637.1035818-1-dongml2@chinatelecom.cn>
+	<20250728072637.1035818-2-dongml2@chinatelecom.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/_vYPl1C+mMc5w=2Uai.OP+l";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/_vYPl1C+mMc5w=2Uai.OP+l
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+Hi,
 
-On Mon, 16 Jun 2025 10:58:46 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the fs-next tree got a conflict in:
->=20
->   include/linux/proc_fs.h
->=20
-> between commit:
->=20
->   e4cbb84d3ce3 ("proc: use the same treatment to check proc_lseek as ones=
- for proc_read_iter et.al")
->=20
-> from the mm-unstable tree and commit:
->=20
->   5943c611c47c ("procfs: kill ->proc_dops")
->=20
-> from the fs-next tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc include/linux/proc_fs.h
-> index 703d0c76cc9a,de1d24f19f76..000000000000
-> --- a/include/linux/proc_fs.h
-> +++ b/include/linux/proc_fs.h
-> @@@ -27,7 -27,8 +27,9 @@@ enum=20
->  =20
->   	PROC_ENTRY_proc_read_iter	=3D 1U << 1,
->   	PROC_ENTRY_proc_compat_ioctl	=3D 1U << 2,
->  +	PROC_ENTRY_proc_lseek		=3D 1U << 3,
-> +=20
-> + 	PROC_ENTRY_FORCE_LOOKUP		=3D 1U << 7,
->   };
->  =20
->   struct proc_ops {
+I'll check it deeper, but 2 nits I found.
 
-This is now a conflict between the mm-stable tree and Linus' tree.
+On Mon, 28 Jul 2025 15:22:50 +0800
+Menglong Dong <menglong8.dong@gmail.com> wrote:
 
---=20
-Cheers,
-Stephen Rothwell
+> diff --git a/kernel/trace/fprobe.c b/kernel/trace/fprobe.c
+> index ba7ff14f5339..640a0c47fc76 100644
+> --- a/kernel/trace/fprobe.c
+> +++ b/kernel/trace/fprobe.c
+> @@ -12,6 +12,7 @@
+>  #include <linux/mutex.h>
+>  #include <linux/slab.h>
+>  #include <linux/sort.h>
+> +#include <linux/rhashtable.h>
 
---Sig_/_vYPl1C+mMc5w=2Uai.OP+l
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+nit: Can you sort this alphabetically?
 
------BEGIN PGP SIGNATURE-----
+[...]
+> @@ -249,9 +251,10 @@ static inline int __fprobe_kprobe_handler(unsigned long ip, unsigned long parent
+>  static int fprobe_entry(struct ftrace_graph_ent *trace, struct fgraph_ops *gops,
+>  			struct ftrace_regs *fregs)
+>  {
+> -	struct fprobe_hlist_node *node, *first;
+> +	struct fprobe_hlist_node *node;
+>  	unsigned long *fgraph_data = NULL;
+>  	unsigned long func = trace->func;
+> +	struct rhlist_head *head, *pos;
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIJxkACgkQAVBC80lX
-0GxTcQgAmIBaemn5Ktu5ihiYAVRhM3/BQt7XrOuc/roSaYVIphIOWIxlc24jHrKY
-Ug2f1gqpC5s8U5SZ80My+Nem7kXfMTeNuhaxEWrJNAGuVeCVTP2DDk5Qv6K8Z0HT
-VDTFwpnOqFL/AMEw8GbntfbMettDuTop/ezn5dkx8xIsrOqG9O8Yzy8tb2ZXkW78
-sD+sHyS7/AiZ0Bg42V6yJs2C4qXz6AePu8HelWkJqB87uQuhKnNfERI3gaDbW2ji
-yC7PKOnDWgeT/2cUrrRFcleHRUgzhc4g0tMl4NCXYk9npbjzdcVEVulkNEH881pa
-/30LOseZHjL3Go8TaXX581tBmY1i9Q==
-=cBWx
------END PGP SIGNATURE-----
+nit: Can you sort this as reverse Christmas tree? (like as below)
 
---Sig_/_vYPl1C+mMc5w=2Uai.OP+l--
+>  	unsigned long *fgraph_data = NULL;
+>  	unsigned long func = trace->func;
+> +	struct fprobe_hlist_node *node;
+> +	struct rhlist_head *head, *pos;
+
+
+>  	unsigned long ret_ip;
+>  	int reserved_words;
+>  	struct fprobe *fp;
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
