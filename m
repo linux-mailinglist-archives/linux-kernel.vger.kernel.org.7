@@ -1,63 +1,56 @@
-Return-Path: <linux-kernel+bounces-748733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30556B1456D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:46:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBC6B14572
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:51:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 660E23B8BA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:46:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B5A1AA0816
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838C51632DD;
-	Tue, 29 Jul 2025 00:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0eNBzxh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D408E2E36F1;
-	Tue, 29 Jul 2025 00:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0BE417A2EA;
+	Tue, 29 Jul 2025 00:51:19 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AA9382;
+	Tue, 29 Jul 2025 00:51:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753750009; cv=none; b=acFqCXMGVuVFlTRNNYQ+T8nbBMFEaMjfKQXliiUSYDrjPUg5K5Ex0BNNUg9C1T929XMGuMeLDBWpgeokKXzIh7nN1E53Wg8tiTiou/lFexGuWVa4kebZhwCOkcgmI1hzTukhkMDq5lKjq6c0assqA1rWNCZJx25+i6qtie2QlHw=
+	t=1753750279; cv=none; b=eCQ3gBgMIRDqowM0W5odrZZ+apRc5TFOnl5NRhRuk2Gpsukbn5UyfposQMelO7Eby/wOmq5BH7hjS3cQryKqEC4yPL1PWJJCYMBbENPSHwLs09enf3wB91p64yiruqaqQNzP71+EVqu8MHknKxsVz4bXR5A3Dh2Yod58os/5Wcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753750009; c=relaxed/simple;
-	bh=bf2RqIM7mDDlK0HjMycdmFAJchzK94V9wrFA7aCHun4=;
+	s=arc-20240116; t=1753750279; c=relaxed/simple;
+	bh=AMCqaIGiL6plGruravax33DNh3vkktxzRI1hEALZIGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fMDc5svjEE4SX06IFCTdUBUi8NLFiHTGs/akM65NJA1ZAzJpwQ8ADC2SrYKFRM0qgGyMXPo8BB1TkFTbNurURzkluMKGMk2LfzzAlvjN7Sp8ca33BzTN6nNKexEBL6mXyb/NZguXJi3bRGdgXWd3aDNJD4wU9q+oc8jkORSb1ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0eNBzxh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C767C4CEE7;
-	Tue, 29 Jul 2025 00:46:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753750008;
-	bh=bf2RqIM7mDDlK0HjMycdmFAJchzK94V9wrFA7aCHun4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u0eNBzxhf6u+q2DiutlhwrYKjQQsYsH2s+8rqUsYxrcsthzG+tEf4HVgYKnnGNLaE
-	 V6AWlSauqKBBpSVY7BapmpAsWqQvvp7DpRuaMU+09fe9Z6sLgA3Ag/hFujnFAS+K+0
-	 suz4gWnxUrZdbsIkEQFkwyEmTHjGNQUncPWDREsVzdgTF9LAoNsadEN+DCxmQPhwEp
-	 1ETX9k63El46k8kGOZw1JYYPNwvkOCnKW25zhmhMFxanIThPYyT2EyCcCJGxHYvr4c
-	 9gjedV9h6iSB1E+9vaBujYIWNVv85ahgG3RY86/rkNVUDsQgEBnEYzOinB67J83hq+
-	 kobiV9AUIo/mQ==
-Date: Mon, 28 Jul 2025 17:46:47 -0700
-From: Kees Cook <kees@kernel.org>
-To: Hans de Goede <hansg@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	zepta <z3ptaa@gmail.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Abraham Samuel Adekunle <abrahamadekunle50@gmail.com>,
-	Thomas Andreatta <thomasandreatta2000@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] staging: media: atomisp: Fix stack buffer overflow in
- gmin_get_var_int()
-Message-ID: <202507281745.0D675898@keescook>
-References: <20250724080756.work.741-kees@kernel.org>
- <0b284755-1ae7-4f5f-8338-836dfcb1db59@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgzq18Z8x4SdKhZsPMkDF2wNCcAQjsltYuIsUZfiTEtt8jV4Aw+/E0PXmNtfAiQO/wPBsM9hA0x60vVAUMYGeCAZ7loHK5NRsKqK6/x0gWElG97nhPSDHHNVAorvG3pyhHsEAslXSs4SxpUbeKc2bV0gixe2AObIV2JpH2AgPfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-681ff7000002311f-77-68881afed51a
+Date: Tue, 29 Jul 2025 09:51:05 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Pavel Begunkov <asml.silence@gmail.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+	akpm@linux-foundation.org, david@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+	almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
+	linux-rdma@vger.kernel.org
+Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page
+ pool in page type
+Message-ID: <20250729005105.GA56089@system.software.com>
+References: <20250728052742.81294-1-byungchul@sk.com>
+ <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,66 +59,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0b284755-1ae7-4f5f-8338-836dfcb1db59@kernel.org>
+In-Reply-To: <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SWUwTYRDH/Xa3u0ulyVo8PuHFFAwRFbwzxiO+mOwL8XzwiNEiG9twppxF
+	JChVjnAUBZVSIkigHCaYghQQUMuphkAgYAGFgmKCVpBTLkULMfr2y39mfjMPw5LSCpEzqwwM
+	FVSBcn8ZLabE3xwf71x2TlDs6tWuBX3ZExpK5yLBYK0Sgb6kEsH0fD8Dy3XNCKYaW2j42jCJ
+	ID9vlgR9u4aCmbIFEkaahxkoNXrDYOFnCmrjTSQMp7XSkKJZJKFufoyBW1VFBOjLYxnoqEwV
+	QcZCAQmmWCsDXTV6GgaeLIvgszmFgte6Ygq+ZzaSMJh6DJpzN8LsWxuCxjITAbPJOTR0Z9UQ
+	cK8zl4aPmkEEnQ3DFGQuJdCQfTMVweLcH9uYdloE2U0DzDEPvsE2TvIVxb0Eb6l/Q/DVug8M
+	n2sM48uLPPgkSyfJG0sSad44eZfh3/fU0nzrw0WKrx46yFdXTRF8StwYzU+M9FH8eH03fdLp
+	gviwr+CvDBdUXkeviBVv6q1UcJZj5PKXIRSLMh2SEMtibh9uWwhNQg4rWKDJIO1McVtx04iG
+	sjPNuWOLZX4lX89tx1/fmZkkJGZJ7j6D48tqabvHibuEn744ZO+RcIC7DDkiO0s5BS5q16LV
+	fB1+nfVpxUlyHtjya5Swj5KcCzb8Yu2xA3cEtz3PW1m1gXPFLytbiNXTrCzu6d+6ypvxqyIL
+	pUWc7j+r7j+r7p81F5ElSKoMDA+QK/33eSrUgcpIz6tBAUb055cKbyxdrEKTHWfMiGORzFGi
+	SIxXSEXy8BB1gBlhlpStlwQX3FFIJb5ydZSgCrqsCvMXQszIhaVkmyR7ZiN8pdw1eajgJwjB
+	gupvlWAdnGORwXb+PBOdPuR+xHDdR277xiYfX0yPOps+E6euCbNVux2nYiYePe4a/HS7zmQ2
+	O/5Mizn1KPFOzOFGv5nuBzbvUXXEWJe7Ibsvf82w64G5oCZl51LbgLLDkLAl8cQz63jE6YfR
+	ph/pUfvhwKvygaVt1lP1XtsrNMEF59xiOrQ79vrIqBCFfLcHqQqR/wbFFJJgRwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+d3ffbk2uM2VFw2i9UIlSyo6YkVI0CUogogoqLzVrQ0fyZai
+	UWA52rQ0S41cM+zhe2Vs5aNMazPLQgztsR7OR6k9RMvMZprmjMj/PnzP+XzPP4fFyguUP6uN
+	PSzpYsVoNS0jZZvDU5aM+5s0yz4aV4Gl3EpDmScRijqqKLCUViAYGnnLwMS9BgTf6x/R8MU5
+	iODq5WEMlmYDCT/Kf2HobuhioMy2CdoLe0ioMVZi6DrzmIZ0wyiGeyP9DJyoKibAYk9mwJnX
+	SMGzigwKsn8VYKhM7mCg9Y6FBrd1goIeRzoJjeYSEr7m1GNoz1gHDfmzYfhpH4L68koChk/n
+	0fAi9w4BWS35NLw3tCNocXaRkDNmouHi8QwEo57Jtv7MIQouPnQz64IFZ98AFm6VvCYEV+0T
+	Qqg2tzFCvi1esBcHCWmuFizYSlNpwTZ4jhHevayhhccXRkmhujNMqK76TgjpKf208K37DSkM
+	1L6gt6h2ylbvl6K1CZJu6dpImeZJbQcZlytPnPjciZJRjk8a8mF5bgVfYMjGXia5hfzDbgPp
+	ZZpbzLtcI1O5igvmv7xyMGlIxmLuPMMby2voNMSyvtwu/mZduHdHwQHfWpRHeVnJafji5kz0
+	N5/JN+Z+mOrEXBDvGv9EeFXMBfBF46w39uHW8E13L0+dmsXN5+9XPCIykcI8zTZPs83/7XyE
+	S5FKG5sQI2qjV4boozRJsdrEkH2HYmxo8l8Kj42drUJDrRsciGORWq7QpBo1SkpM0CfFOBDP
+	YrVKEVdwUqNU7BeTjki6Q3t08dGS3oECWFLtp9i4XYpUcgfFw1KUJMVJun9TgvXxT0Ylvnut
+	t0X/+02B38qiPNkmye/pcP/gghM9iwIfrDbtyQpydi/HfqGiSTarrbbOE3n0dpTBbf+91fDR
+	fqPvEhUxZ82O8KYZoePb3EsLeuW01t77MzXu5d2w3dmjVve1611LfL8GH5hnnDP0XN7hlEc0
+	h1kDT3nUc7PK1qtagxdciVeTeo0YGoR1evEPOG9m1isDAAA=
+X-CFilter-Loop: Reflected
 
-On Sat, Jul 26, 2025 at 02:24:51PM +0200, Hans de Goede wrote:
-> Hi Kees,
+On Mon, Jul 28, 2025 at 07:36:54PM +0100, Pavel Begunkov wrote:
+> On 7/28/25 06:27, Byungchul Park wrote:
+> > Changes from v1:
+> >       1. Rebase on linux-next.
 > 
-> On 24-Jul-25 10:08 AM, Kees Cook wrote:
-> > When gmin_get_config_var() calls efi.get_variable() and the EFI variable
-> > is larger than the expected buffer size, two behaviors combine to create
-> > a stack buffer overflow:
-> > 
-> > 1. gmin_get_config_var() does not return the proper error code when
-> >    efi.get_variable() fails. It returns the stale 'ret' value from
-> >    earlier operations instead of indicating the EFI failure.
-> > 
-> > 2. When efi.get_variable() returns EFI_BUFFER_TOO_SMALL, it updates
-> >    *out_len to the required buffer size but writes no data to the output
-> >    buffer. However, due to bug #1, gmin_get_var_int() believes the call
-> >    succeeded.
-> > 
-> > The caller gmin_get_var_int() then performs:
-> > - Allocates val[CFG_VAR_NAME_MAX + 1] (65 bytes) on stack
-> > - Calls gmin_get_config_var(dev, is_gmin, var, val, &len) with len=64
-> > - If EFI variable is >64 bytes, efi.get_variable() sets len=required_size
-> > - Due to bug #1, thinks call succeeded with len=required_size
-> > - Executes val[len] = 0, writing past end of 65-byte stack buffer
-> > 
-> > This creates a stack buffer overflow when EFI variables are larger than
-> > 64 bytes. Since EFI variables can be controlled by firmware or system
-> > configuration, this could potentially be exploited for code execution.
-> > 
-> > Fix the bug by returning proper error codes from gmin_get_config_var()
-> > based on EFI status instead of stale 'ret' value.
-> > 
-> > The gmin_get_var_int() function is called during device initialization
-> > for camera sensor configuration on Intel Bay Trail and Cherry Trail
-> > platforms using the atomisp camera stack.
-> > 
-> > Reported-by: zepta <z3ptaa@gmail.com>
-> > Closes: https://lore.kernel.org/all/CAPBS6KoQyM7FMdPwOuXteXsOe44X4H3F8Fw+y_qWq6E+OdmxQA@mail.gmail.com
-> > Fixes: 38d4f74bc148 ("media: atomisp_gmin_platform: stop abusing efivar API")
-> > Signed-off-by: Kees Cook <kees@kernel.org>
+> net-next is closed, looks like until August 11.
 > 
-> Thanks, patch looks good to me:
+> >       2. Initialize net_iov->pp = NULL when allocating net_iov in
+> >          net_devmem_bind_dmabuf() and io_zcrx_create_area().
+> >       3. Use ->pp for net_iov to identify if it's pp rather than
+> >          always consider net_iov as pp.
+> >       4. Add Suggested-by: David Hildenbrand <david@redhat.com>.
 > 
-> Reviewed-by: Hans de Goede <hansg@kernel.org>
-> 
-> I've already send an atomisp pull-request for 6.17 out
-> and this is already in media-committers/next now and
-> the media subsystem is typically not good in merging
-> fixes just before the merge window.
-> 
-> Kees, the file touched here is unchanged in
-> media-committers/next vs Linus' latest master, can you
-> send this fix to Linus yourself ?
+> Oops, looks you killed my suggested-by tag now. Since it's still
+> pretty much my diff spliced with David's suggestions, maybe
+> Co-developed-by sounds more appropriate. Even more so goes for
+> the second patch getting rid of __netmem_clear_lsb().
 
-I apologize; this slipped through the cracks. Shall I take it for -rc2,
-or do you want to snag it?
+Sure.  I will.
 
--Kees
+	Byungchul
 
--- 
-Kees Cook
+> Looks fine, just one comment below.
+> 
+> ...> diff --git a/io_uring/zcrx.c b/io_uring/zcrx.c
+> > index 100b75ab1e64..34634552cf74 100644
+> > --- a/io_uring/zcrx.c
+> > +++ b/io_uring/zcrx.c
+> > @@ -444,6 +444,7 @@ static int io_zcrx_create_area(struct io_zcrx_ifq *ifq,
+> >               area->freelist[i] = i;
+> >               atomic_set(&area->user_refs[i], 0);
+> >               niov->type = NET_IOV_IOURING;
+> > +             niov->pp = NULL;
+> 
+> It's zero initialised, you don't need it.
+> 
+> And a friendly reminder, please never send patches modifying a
+> subsystem without CC'ing it, especially kept in another tree.
+> Sure, you CC'ed me, but it's easy to lose.
+> 
+> --
+> Pavel Begunkov
+> 
 
