@@ -1,63 +1,61 @@
-Return-Path: <linux-kernel+bounces-749051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CF1B1495E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:48:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11319B1495F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43E4C3A9473
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F5017EE78
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541D826772C;
-	Tue, 29 Jul 2025 07:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD8425D535;
+	Tue, 29 Jul 2025 07:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MHVFnAQS"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4ynd7AoZ"
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 629AC1FECCD;
-	Tue, 29 Jul 2025 07:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9F82676E9;
+	Tue, 29 Jul 2025 07:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753775288; cv=none; b=H4DKui6aLRjZfGHuzy53uUMOeimMP0/+t6xtzZF61ADrmrl6enjqVaBZvOT3EegoRZPXLHR1GE712NJwfiqf2UkU5UWgPUZBZFD1V9I2BaOG3eMhY6ZN9L8EoWLf3fyhbQGXwH3Tj9N2AJP2W2qoDNQ5XD9ON+Ae1adrFHZ3wdk=
+	t=1753775374; cv=none; b=PLs5G8vXOjvg8B7IaKmAVQg3nlmvgKrpKPdS9/v3Zj4BMPCIengplSt0ZX3DIfh+OcbU8sGCOL9MwMggdgxcsi9qqZORGarYTHrgYdWl8jrIoq4Us4wG9eCQw7NC43tAYWRMBXim3CmpXUFE9I/eBbaTL+kcMJ1E+lqS39PWiDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753775288; c=relaxed/simple;
-	bh=OEftoGeWv/7Clau6/zwUQDUlYKCGqEVE4h73ol2RA2Y=;
+	s=arc-20240116; t=1753775374; c=relaxed/simple;
+	bh=8MopCd+/1CVSX7O9y88Cy1c3eogeYBhKqoqibKK0H6M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gj/bHKYcrnRjFa8BcfbhEKRFF+I/eAL/YwQ4Ei4rqg7GqMmI8DdgzKBLfnLcqEkfpmFDpXrvRmgI5wdRbI69NquEXfqWMb2PeCvznaRPiDNizhLKaJgtsj5a8iNk8twFEgrdSSQETakZcJW0LSk5eaQYTTb2hUUrp2LTyOvDiXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MHVFnAQS; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yskwh7d2lgYFotFdw6jnOVO3RVLseLsfzQMS/kIbkUgMY0ffCX27awl5yB9FTOPawots3EvcAQZ9HNuCArkpi26HHtFG85s2Poip0OXu6KwU/RDrXazD09aaVu9jkA8+7AyU/c8s1lXhkC6F4ecLzc70iE55Gp60fXFHayazjbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4ynd7AoZ; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=A6Ej71VhVRiIXOgA/NCbJsh4TP05G5FYsAH+lXr1MnQ=; b=MHVFnAQSNIhahSotUi5/S41dEv
-	nLSP53xpt5ahjfvhaOARtXqd4rXKlW6NGIYIJS5O7Wala2K3mDfLyz9Z/cdTsJYaawDPzxSjYdzuE
-	FXsFJkPYSEZXY0ZYHFxEyWpLzIYglxUJI+0GBw7tXH1nW44a/J+jRinvw5Os3UhI985x8cxQKSJyH
-	tJnj6NRVKsSGVQjHi8xErR+pKfmsgr/8MNi7yvuAws7p5LoLSaU/wNTvGnGpxovW00RapXDzm4vKx
-	HErsUAmSj0rkNnPsi72afJJVPfbXMOOqaDVTRoc6VdlNtuCVrgGJF3xtwFINkp2X2DTSplx8Ug+gD
-	jTbGEBrA==;
+	bh=64I4+SRz8Jb242tJ39NgDchbi8xfo9+9jvViHgrhKzo=; b=4ynd7AoZtY+/opRC/c2n7tkFdn
+	x8aqXftqXV6cwXql0bIFJKTMVYgtL0AnTdsoAeELy5Jd7Gtm+FnSqsiPHLpNVcGOyLoT3C/Fh+4bC
+	Cq9BBzn8Pfs+NI5xBxIqApgjT93BKpiGqSseLCKqlLKGBAPiyVuL5Sf7TkXbidmWxyFLELEZE2FmU
+	SMZNpt8TYlgD7SynMQnRICjrEEn+K7xifuCJwe5Ixs5H0NkzQfnYaJ9b0u/AgDnVB2+LIzSFvG6wN
+	mK4sI8qPvnFnjSbYEvK1drgYKAKqo86Ty1T2+CS6UUvmrQFKT4jIfCWk6kU1l3NW5WHtQ1xpIdHIZ
+	b4XaDFew==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ugf49-0000000GAQi-2n0f;
-	Tue, 29 Jul 2025 07:48:05 +0000
-Date: Tue, 29 Jul 2025 00:48:05 -0700
+	id 1ugf5V-0000000GAWk-3BjG;
+	Tue, 29 Jul 2025 07:49:29 +0000
+Date: Tue, 29 Jul 2025 00:49:29 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Chuck Lever <chuck.lever@oracle.com>
-Cc: NeilBrown <neil@brown.name>, Christoph Hellwig <hch@infradead.org>,
-	Sergey Bashirov <sergeybashirov@gmail.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] NFSD: Rework encoding and decoding of nfsd4_deviceid
-Message-ID: <aIh8tQWEO9OQiWZe@infradead.org>
-References: <>
- <05e851b2-a569-4311-b95b-e1ac94d4db5c@oracle.com>
- <175323408768.2234665.8262591875626168370@noble.neil.brown.name>
- <81f534a7-8763-492d-bbcc-bc49b22d07e8@oracle.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Hugh Dickins <hughd@google.com>, Christian Brauner <brauner@kernel.org>,
+	Klara Modin <klarasmodin@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
+	Anuj Gupta <anuj20.g@samsung.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL 11/14 for v6.17] vfs integrity
+Message-ID: <aIh9CSzK6Dl1mAfb@infradead.org>
+References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
+ <20250725-vfs-integrity-d16cb92bb424@brauner>
+ <0f40571c-11a2-50f0-1eba-78ab9d52e455@google.com>
+ <CAHk-=wg2-ShOw7JO2XJ6_SKg5Q0AWYBtxkVzq6oPnodhF9w4=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,26 +64,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <81f534a7-8763-492d-bbcc-bc49b22d07e8@oracle.com>
+In-Reply-To: <CAHk-=wg2-ShOw7JO2XJ6_SKg5Q0AWYBtxkVzq6oPnodhF9w4=A@mail.gmail.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Jul 23, 2025 at 10:35:29AM -0400, Chuck Lever wrote:
-> > We could document it in the code with __no_randomize_layout after the
-> > structure definition.
+On Mon, Jul 28, 2025 at 03:21:21PM -0700, Linus Torvalds wrote:
+> Bah. I *hate* this "call blk_get_meta_cap() first" approach. There is
+> absolutely *NO* way it is valid for that strange specialized ioctl to
+> override any proper traditional ioctl numbers, so calling that code
+> first and relying on magic error numbers is simply not acceptable.
 > 
-> We might also want __attribute__((packed)) or even
-> __attribute__((packed, aligned(4))).
+> I'm going to fix this in my merge by just putting the call to
+> blk_get_meta_cap() inside the "default:" case for *after* the other
+> ioctl numbers have been checked.
+> 
+> Please don't introduce new "magic error number" logic in the ioctl
+> path. The fact that the traditional case of "I don't support this" is
+> ENOTTY should damn well tell everybody that we have about SIX DECADES
+> of problems in this area. Don't repeat that mistake.
+> 
+> And don't let new random unimportant ioctls *EVER* override the normal
+> default ones.
 
-Absolute not.  packed causes horrible code generation, and
-__attribute__((packed, aligned(4))) will probably break things
-that didn't properly pad (although they really should).
-
-> That still leaves undocumented the fact that the fields in the structure
-> are treated as both endian types. In most other XDR functions we have
-> been careful to write source code that shows where endianness changes
-> or, conversely, where endianness is not consequential.
-
-I'm not arguing against doing XDR things in XDR code.  But the rest of
-the kernel works very different.
+I don't think overrides are intentional here.  The problem is that
+Christian asked for the flexible size growing decoding here, which
+makes it impossible to use the simple and proven ioctl dispatch by
+just using another case statement in the switch.
 
 
