@@ -1,128 +1,122 @@
-Return-Path: <linux-kernel+bounces-749704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169BEB151DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:11:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0094B151DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:11:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2F34E3614
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C98D18A4785
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:11:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B20298992;
-	Tue, 29 Jul 2025 17:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06A2C298992;
+	Tue, 29 Jul 2025 17:11:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="MVY3Xv0N"
-Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UzCoOhxb"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE69286897;
-	Tue, 29 Jul 2025 17:10:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68F2294A02;
+	Tue, 29 Jul 2025 17:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753809059; cv=none; b=e6QB3zMr1cWYP2OTXvPVz5CvRjwDzSxYe0ek2mlQN1/ZSu5MyOIH9xmy3kiv/Fo+Qc5n8/ELqtWtO7ngS6+eH4LcMSP+h9xf01z7ul7YePkV1z7CRreHhzyOwxDX8gDh//EoeYPKoUjgz03FPcTDQU77uHybps5pZxA+feZF+/g=
+	t=1753809084; cv=none; b=Qw4v0S62kLojAh0nt7mXcbYp9LgWxt6365WzlkfZIE8TLVZaKHhRBtploNIrrgMMur4UwiGMACbMYePKQZ5wxXZ4F7Sfhi65QxNEW9qz3+2JRDw9UsYCjcp2qPEb10dl9m/DEWyAQpUiV6ej4eXamBV8tpsuVL0zrDy7UYqF+eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753809059; c=relaxed/simple;
-	bh=lpj8yln12s6tF/HAtx1l3MJ0jfxZCiy7T6r3KTDjbuM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V50qWfQD4AQxuZoke56eyWIX241tHGeN4K6hqBigj1S42RAiekh5vJYn2Mxb+yYFMbbJBqxAMZtIcPg7YgAdV226jJL2kbVuVaBkl9MusYHINK8FrXrvG1pD+8+cmayRRAdIHEa1vCn30sMKpHRE/MEGlIDIVx+zp+8pN4DxVQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=MVY3Xv0N; arc=none smtp.client-ip=119.8.177.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=ubaFSY6OLb5tYu8oo6HDrctpmXTKZt8bDey8GhnaWek=;
-	b=MVY3Xv0NauhEezwk1r2T9VQzMDQ7pkmVixQ/JOOeOw5Zzyd0g3xXLZuddEZ7yRlsM3ZNpih7m
-	X5aOmOOUxJNWlcttNNzZPLxAb4z6Y1z5eoZPe0itmovSwBegyj+ToZR889anwjAQunD44Ew5EXM
-	DrVcSW/X+bN6DbixPJ0znF4=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.37])
-	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4bs1zY05KHz1P6lF;
-	Wed, 30 Jul 2025 01:09:28 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bs1wG0DdBz6L4yZ;
-	Wed, 30 Jul 2025 01:06:38 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9685F1402EA;
-	Wed, 30 Jul 2025 01:10:48 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Jul
- 2025 19:10:47 +0200
-Date: Tue, 29 Jul 2025 18:10:45 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
- Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm
- platform device
-Message-ID: <20250729181045.0000100b@huawei.com>
-In-Reply-To: <20250728135216.48084-12-aneesh.kumar@kernel.org>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
-	<20250728135216.48084-12-aneesh.kumar@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753809084; c=relaxed/simple;
+	bh=p9rc1oOh9mm37WaFrFxx1IcalYyMV1uXikDiay6fcng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oUxBTm009I8yS6ygtSpWIh40Qf0j93JUsnV/FsRUcP9b/5zykOxURDdY/nx8dK1F4GIAKs2q+TsG9JXHmRFijGGbahok08HGyYeFPBndqT1Z5SD7ywDClqsiPDhjN1iXbm8U7Ube/iakKUPizel66zaZ21Bw5dqHSemfyQc5n6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UzCoOhxb; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-455b00339c8so37141775e9.3;
+        Tue, 29 Jul 2025 10:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753809079; x=1754413879; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZANuYZ6czBvWFRoCbDeJ8Q3EHHGA34Yc3WGmzpGe3JQ=;
+        b=UzCoOhxbTo5/cKBhNalH3mVl3cUUDFjC8Fj8sB3AvPe5eB0OWLAIapDtJ9yzRokwRG
+         A9VSz6JV5VC6SXLP7MTNKvTZy2TavjOy78mY7q1NTboWmn1hgJ02Lc5JPRZXoeYFG49z
+         mICXPph7W1h4fnVgs06c68ZvPvDa/13wUXtFiDpbuA3oKuFXxYb8XYOm1LaJOA8DDdoY
+         XU2rBaFbC7bxqxCxzu4QiinXIIvaGLpYZdXI5p9DCsI0Y3L11iaaklyyBri3x+3sD38f
+         P6ZtuS1SWoytZojVFEhpoxK71HveAK48pUwjWTEik0juj7qzT7KPAOAPzee+so7Y2HIo
+         Y9CQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753809079; x=1754413879;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZANuYZ6czBvWFRoCbDeJ8Q3EHHGA34Yc3WGmzpGe3JQ=;
+        b=izM4V4GLpYJm3XxUg8E0AsppDSDbGMmVod0szgmrjx7GCIgHAS4ZtndIj1kN57tFwl
+         uJWlNATM3JK5+2RUICCjo8QMPupskgvxaIMBZ/qV+w4PthvRXxya9KoSAPfgyiFTajMr
+         LW7xocJh5ON1DIw/K/ohnHnBU3ub2b+Xp8YnGJhDLJ2Is7HSQffDC6MxSgqVwIei72A9
+         f4fC0sDvO8H9oxhZ372oIX3NZYQqPYfLsqnWD4Eiv625yln+y6vfAtLYHg18eECWc9ZS
+         l/MNFau6nEjSZn+/rQU33biUtodKom1U5Q7gMx+8dvcSFMM41QLQOBFfGnfRqgxyARie
+         FS9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUjpEHYKbKJeTuW5afXR3k+fBZWNrau2JJ5rckzNsmCC9pXqRBWzuX+a9PezB+qNtmaHbrKhlFQIw+QhYEG6bk=@vger.kernel.org, AJvYcCUpkymGyOz8QLkFPzxUutWv0ZsHmM3d76pMetZNWVDhnu8kgoJR1e53rmgWYNLoaGrThQE9NWYqX8/IrZL3R60eP58=@vger.kernel.org, AJvYcCVmLW1IPO6xRxzyskIT4wrfrELGQ7Wy6IwKMV7onmex2fmWxrh4uP42ILvPl60hZJit4cCtZqRz1+Nl@vger.kernel.org, AJvYcCWcUu/GE7aI7QQtdl8zn06cP6ZZQfYXUT7WYhtQFkreT6BaTw70mkYezsNnrZe7BOx8EnIQ9UMOBQf94fcp@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq63drYHe35d+TTufHEMsr+FbOekvAwNigJuJjT3+tWcjGJTNp
+	N5iKzC1Rlbh44IieDnjlxDKkjZZmcsXy3QYSzTTjLPfVkIHSMprytmCzdMCSC+BSbJ83Qm++tje
+	0W6CUYxYfZluh+SfAmTQigaw3dhzWyfM=
+X-Gm-Gg: ASbGncszKvqW9BkLzqM8SiR4oIY9W5h5HzCUGEmx8EkGhKj/RRhcsGWi1f7U/zcV6VX
+	71sJYVILg6W3+HVWvpCNOGYTLr7NZRwoXSojcw2wAsSZpZeJIzlNVgcVLl4WCVRTrQGf+lobkgC
+	2tcO7gZ70dc0Q4fGK39XRPAHY5H86a5lEs2GJ2CiWqj+DEtqOcvmk049anlmsFCfOjvrlORFnoB
+	HabK1tv
+X-Google-Smtp-Source: AGHT+IF/DfK3nshDycMq33UF1s2J2fEP5HrKgoG4dERgRLP7hoScT2etRMMBfljpNxxXyX06f2h9MJRRvgEXxtQNjU4=
+X-Received: by 2002:a05:600c:3e0b:b0:456:1e5a:8879 with SMTP id
+ 5b1f17b1804b1-45892b9c21fmr6418005e9.9.1753809078771; Tue, 29 Jul 2025
+ 10:11:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <aIkAGUVGqLcFBoXo@shikoro>
+In-Reply-To: <aIkAGUVGqLcFBoXo@shikoro>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 29 Jul 2025 18:10:52 +0100
+X-Gm-Features: Ac12FXyEa0ifnr6d9GCkDPZ_PB-bEzB-WPz4FXCllKXUqrJbsHiXRLT3SSzwN2A
+Message-ID: <CA+V-a8s_3hv9z0HFKiUQ76d7FVJ+-vrLahhFVEafZbS3oO8iJw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/9] Add watchdog driver support for RZ/T2H and RZ/N2H SoCs
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Jul 2025 19:21:48 +0530
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+Hi Wolfram,
 
-> Register a platform device if the CCA DA feature is supported.
-> A driver for this platform device will further drive the CCA DA workflow.
-> 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-Few trivial things
+On Tue, Jul 29, 2025 at 6:08=E2=80=AFPM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> Hi,
+>
+> >   dt-bindings: watchdog: renesas,wdt: Add support for RZ/T2H and RZ/N2H
+> >   watchdog: rzv2h_wdt: Obtain clock-divider ranges from OF match data
+> >   watchdog: rzv2h_wdt: Obtain CKS divider via OF data
+> >   watchdog: rzv2h_wdt: Make "oscclk" an optional clock
+> >   watchdog: rzv2h_wdt: Add support for configurable count clock source
+> >   watchdog: rzv2h_wdt: Make reset controller optional
+> >   watchdog: rzv2h: Set min_timeout based on max_hw_heartbeat_ms
+> >   watchdog: rzv2h: Add support for RZ/T2H
+> >   watchdog: rzv2h_wdt: Improve error strings and add newlines
+>
+> Minor nit, but still: inconsistent prefix
+>
+> I'd suggest to use "rzv2h" instead of "rzv2h_wdt" but it is ultimately
+> the WDT maintainers call...
+>
+I agree, I will switch to using "rzv2h".
 
-> diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-> index ec8093ec2da3..d1c147aba2ed 100644
-> --- a/arch/arm64/kvm/rme.c
-> +++ b/arch/arm64/kvm/rme.c
-> @@ -4,6 +4,7 @@
->   */
->  
->  #include <linux/kvm_host.h>
-> +#include <linux/platform_device.h>
->  
->  #include <asm/kvm_emulate.h>
->  #include <asm/kvm_mmu.h>
-> @@ -1724,6 +1725,18 @@ int kvm_init_realm_vm(struct kvm *kvm)
->  	return 0;
->  }
->  
-> +static struct platform_device cca_host_dev = {
-Hmm. Greg is getting increasingly (and correctly in my view) grumpy with
-platform devices being registered with no underlying resources etc as glue
-layers.  Maybe some of that will come later. 
-> +	.name = RMI_DEV_NAME,
-> +	.id = PLATFORM_DEVID_NONE
-
-Add trailing comma. More than possible something else will be added after this.
-
-> +};
-> +
-> +static void rmm_tsm_init(void)
-> +{
-> +	if (!platform_device_register(&cca_host_dev))
-> +		pr_info("CCA host DA platform device initialized.\n");
-
-Noisy as we should be able to tell that in a bunch of other ways.
-
-> +
-Excess blank line.
-> +}
-
+Cheers,
+Prabhakar
 
