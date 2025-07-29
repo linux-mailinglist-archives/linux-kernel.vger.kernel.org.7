@@ -1,45 +1,79 @@
-Return-Path: <linux-kernel+bounces-748832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E28CAB1467C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:47:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5300B1467E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07DE3AA034
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E56B3AA163
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BE519006B;
-	Tue, 29 Jul 2025 02:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C96B1940A1;
+	Tue, 29 Jul 2025 02:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fcEWcfCH"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YSQmAXP4"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3EDD515;
-	Tue, 29 Jul 2025 02:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA49D515
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753757227; cv=none; b=JE1usKCDvlV8PSpaiKwew34pCxnHdo5VCcFOk2nS6vqb6NgDcbje6EFnWzcPsY0Hk0TgexvHcawTs+TtIJZbyMPzXgAQV4q5mViokvwtKRQyPVj7A31mwbANFlIEZyzewdVWpBLPKgseKSHREEdx/8i+v+PGzDiWTrw9jX7E0ks=
+	t=1753757371; cv=none; b=t8RgrR/KyvpKOPCwVtUdzqkmevkFnuAQUBL3kAWEOTvkZxB/Cxu1nvNLQ93eQYGRmsV3r1JHrVGUuwXRotuUYI1oSiFlZH+i6WPAi09yE9YIb5O0awz4ZyDriih4fS/5X0M92BBPN8RupKpG2ogdY5XNNhT162NkcEX8MgpqmJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753757227; c=relaxed/simple;
-	bh=D+FPW+QkNajT2Hthv8hkM6Z2omoy+iWP2Sa1NNuV25k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t/qdgA44yBwx/CxKdCGiYyuIipngYgHL13VeblT78OyV3jTK2wsw32ZDvKa1etK9XfDEle87AnuLWigrG/RCj+GKxQAtK/ZcBVyKII5klPehojsG+BjK9fQpCCGHofwReIMv6NLbQw7qcSPYPSQp0cdx48kuHhUkLFVNg2TkHTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fcEWcfCH; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753757221; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=rA02awKbGjsGq3aeI30pzRYAQiz1OmWefwu2Wzw9Xts=;
-	b=fcEWcfCHuPATyHcJLc29d2QcI4MOXe+IYEW0eWAWcTupSfHdtmFX7lRLBti9B4fkS0oDrO5WX1QAF7DNNP8tFZEaXGpcRfR8PznKj2m5g9ss0J58+K52mN0kEv7uIEFXKituH5tbA3IpnIkMwd6gA5rAmxVGxuxdzDFuFZ7FJP0=
-Received: from 30.246.181.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WkOG0kL_1753757219 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 29 Jul 2025 10:47:00 +0800
-Message-ID: <2ee448d2-76b2-446c-9368-8b90ec087419@linux.alibaba.com>
-Date: Tue, 29 Jul 2025 10:46:59 +0800
+	s=arc-20240116; t=1753757371; c=relaxed/simple;
+	bh=EbS/LwvZVQiiDF6pAoZYJ2TE6d8LLnTIP8ICVu4SnnU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=D8YcqvSFfMHXSGSOR7P7m43IP3KMrNG8cum80ZNQjTiU3jGVvsqFvgPXHOK9KbYiqKU5/lTc15LLRLPN7RMqQFIOMN85wHv/SvMu4swMWxVEFXMgSz/YfBgJt8F8KWRKd0LEC72u1C0CHFmY13820Qu/Pu0e9U/oMUlj78cdQiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YSQmAXP4; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SFnm8o009413;
+	Tue, 29 Jul 2025 02:48:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=vWKLNb6FQtBBtLEIfC2eYQrv/RDm
+	tgX7d8f2vIajXtA=; b=YSQmAXP41ICG637zqoGHxGr5NeGb4UVgJ4yQSdnyjcVh
+	Eyzsk9sbft8OUhbPIMwkilj1r21m08CR44KyqFtmZEsQpwTuMySmxow4gfpSrSQq
+	Vv7I1ZGg60WfnMd9FhXXav65XIW1AJF6Z96c/erB+P1/58Q7A6w2KMedbyRETUfP
+	FMbRkYxbOuLx+yRSbn5fnjMh8F+N47K0NCt8wnzkN3K85V41Hwb/2ebRkaVbRjRT
+	N5GBKF6v9saW/Q41KxRtFOe6YjhEU2anzZG6c84Gfbabex022/QGsaBA0QMMS3YU
+	tCnpN+FIbt6dMlwGDJyqbe+fGg1VC7w2nz7uTdLLXg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6hj9ac-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Jul 2025 02:48:55 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56T2m8l3027061;
+	Tue, 29 Jul 2025 02:48:55 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6hj9a7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Jul 2025 02:48:55 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56T012hB015940;
+	Tue, 29 Jul 2025 02:48:54 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485aumgdmu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Jul 2025 02:48:54 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56T2mqIc25625202
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Jul 2025 02:48:52 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A4AA558055;
+	Tue, 29 Jul 2025 02:48:52 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 81B0E58043;
+	Tue, 29 Jul 2025 02:48:47 +0000 (GMT)
+Received: from [9.124.208.135] (unknown [9.124.208.135])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 29 Jul 2025 02:48:47 +0000 (GMT)
+Message-ID: <dc911086-ea2d-477f-8f07-7df19e37e61d@linux.ibm.com>
+Date: Tue, 29 Jul 2025 08:18:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,290 +81,177 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] dmaengine: idxd: Fix refcount underflow on module
- unload
-To: Yi Sun <yi.sun@intel.com>
-Cc: Fenghua Yu <fenghuay@nvidia.com>, vinicius.gomes@intel.com,
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
- dave.jiang@intel.com, gordon.jin@intel.com
-References: <20250617102712.727333-1-yi.sun@intel.com>
- <20250617102712.727333-3-yi.sun@intel.com>
- <39398407-009e-4afe-acb6-e3de931627d7@nvidia.com>
- <aIXuYVtGSV0OHHps@ysun46-mobl.ccr.corp.intel.com>
- <316cd6b2-3519-4353-8c53-06997096b216@linux.alibaba.com>
- <aIdiTlIU03stIdqe@ysun46-mobl.ccr.corp.intel.com>
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-In-Reply-To: <aIdiTlIU03stIdqe@ysun46-mobl.ccr.corp.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: ajd@linux.ibm.com, ankitchauhan2065@gmail.com, christophe.leroy@csgroup.eu,
+        donettom@linux.ibm.com, fourier.thomas@gmail.com, gautam@linux.ibm.com,
+        haren@linux.ibm.com, johan.korsnes@gmail.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        paulus@ozlabs.org, segher@kernel.crashing.org, sshegde@linux.ibm.com,
+        ssrish@linux.ibm.com, thomas.weissschuh@linutronix.de,
+        thuth@redhat.com, vineethr@linux.ibm.com,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.17-1 tag
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: mjx-f_ZmbdbYm3_OVSKMvo3m6tPF0N6q
+X-Authority-Analysis: v=2.4 cv=Mbtsu4/f c=1 sm=1 tr=0 ts=68883697 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=HZ94RT62inKFrRbv3m0A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: wT0u4m6gSRpaWXp7AAYYBPXg8C4bA14p
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDAxOSBTYWx0ZWRfX6ex9DC2442+g
+ jL1XEa6fyyhnQsgmqL7CSFQSAvjq//phYBg29STfzq4CUUbrvC584i+y0zxTx+DqUj7hGOFEdPN
+ YyOoxH+dtYoPsmRJGL5YinOEwVrwCdu/Ig/565y/KBQlZnZYAzdofzZzolhO6SXkPpSNHcA9sdU
+ 9gAu5vy0p8nitrwHf8HCbrFvgDQ9cvOxjHZcJ1fUQIwExcnxQvLS9uosUmza1iuEOgy83mnhKw2
+ 6EB0mk+4lLzk4OUN6ODx5rZi5lBavcGVv+sJqQsfeeFbM95k0QFO73HD8G4O5c/jQ4xIGQyWXoG
+ 83TnP04li54D2rW9j5LnEC/QP68/y8QfPXcBSCTZolrKqDUYpASK337tX+QKO+EXmcLUM0YgIM7
+ d5dAUQMSSGjRbs9T43ofL1qCEDyD+m1apLSMAD6RDgvkHqGw+Jt5TB1Leq+35QhxdJ2rP3E+
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_05,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 adultscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 impostorscore=0 phishscore=0 mlxlogscore=881
+ lowpriorityscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507290019
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Hi Linus,
+
+Please pull powerpc updates for 6.17:
+
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
+
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.17-1
+
+for you to fetch changes up to da30705c4621fc82d68483f114f5a395a5f472d2:
+
+  arch/powerpc: Remove .interp section in vmlinux (2025-07-22 14:21:19 +0530)
+
+- ------------------------------------------------------------------
+powerpc updates for 6.17
+
+ - CONFIG_HZ changes to move the base_slice from 10ms to 1ms
+
+ - Patchset to move some of the mutex handling to lock guard
+
+ - Expose secvars relevant to the key management mode
+
+ - Misc cleanups and fixes
+
+Thanks to: Ankit Chauhan, Christophe Leroy, Donet Tom, Gautam Menghani, Haren
+Myneni, Johan Korsnes, Madadi Vineeth Reddy, Paul Mackerras, Shrikanth Hegde,
+Srish Srinivasan, Thomas Fourier, Thomas Huth, Thomas Weißschuh, Souradeep,
+Amit Machhiwal, R Nageswara Sastry, Venkat Rao Bagalkote, Andrew Donnellan,
+Greg Kroah-Hartman, Mimi Zohar, Mukesh Kumar Chaurasiya, Nayna Jain, Ritesh
+Harjani (IBM), Sourabh Jain, Srikar Dronamraju, Stefan Berger, Tyrel Datwyler,
+Kowshik Jois
+
+- ------------------------------------------------------------------
+Ankit Chauhan (1):
+      misc: ocxl: Replace scnprintf() with sysfs_emit() in sysfs show functions
+
+Christophe Leroy (1):
+      arch/powerpc: Remove .interp section in vmlinux
+
+Donet Tom (2):
+      book3s64/radix : Handle error conditions properly in radix_vmemmap_populate
+      book3s64/radix : Optimize vmemmap start alignment
+
+Gautam Menghani (1):
+      KVM: PPC: Book3S HV: Add H_VIRT mapping for tracing exits
+
+Haren Myneni (1):
+      powerpc/pseries/dlpar: Search DRC index from ibm,drc-indexes for IO add
+
+Johan Korsnes (1):
+      arch: powerpc: defconfig: Drop obsolete CONFIG_NET_CLS_TCINDEX
+
+Madadi Vineeth Reddy (1):
+      powerpc/defconfigs: Set HZ=1000 on ppc64 and powernv defconfigs
+
+Madhavan Srinivasan (1):
+      powerpc/configs/64s: Enable CONFIG_KALLSYMS_ALL
+
+Paul Mackerras (1):
+      powerpc/microwatt: Correct ISA version number in device tree
+
+Shrikanth Hegde (6):
+      powerpc: eeh: use lock guard for mutex
+      powerpc: rtas: use lock guard for mutex
+      powerpc: fadump: use lock guard for mutex
+      powerpc: book3s: vas: use lock guard for mutex
+      powerpc: powernv: ocxl: use lock guard for mutex
+      powerpc: sysdev: use lock guard for mutex
+
+Srish Srinivasan (3):
+      powerpc/pseries: Correct secvar format representation for static key management
+      powerpc/secvar: Expose secvars relevant to the key management mode
+      integrity/platform_certs: Allow loading of keys in the static key management mode
+
+Thomas Fourier (2):
+      powerpc: floppy: Add missing checks after DMA map
+      (powerpc/512) Fix possible `dma_unmap_single()` on uninitialized pointer
+
+Thomas Huth (1):
+      powerpc: Drop GPL boilerplate text with obsolete FSF address
+
+Thomas Weißschuh (1):
+      powerpc: Don't use %pK through printk
 
 
+ Documentation/ABI/testing/sysfs-secvar           |  17 +++-
+ arch/powerpc/Makefile                            |   2 +-
+ arch/powerpc/boot/dts/microwatt.dts              |   2 +-
+ arch/powerpc/configs/powernv_defconfig           |   3 +-
+ arch/powerpc/configs/ppc64_defconfig             |   3 +-
+ arch/powerpc/configs/ppc6xx_defconfig            |   1 -
+ arch/powerpc/include/asm/floppy.h                |   5 +-
+ arch/powerpc/include/uapi/asm/eeh.h              |  13 ---
+ arch/powerpc/include/uapi/asm/kvm.h              |  13 ---
+ arch/powerpc/include/uapi/asm/kvm_para.h         |  13 ---
+ arch/powerpc/include/uapi/asm/ps3fb.h            |  13 ---
+ arch/powerpc/kernel/eeh.c                        |  20 ++--
+ arch/powerpc/kernel/eeh_driver.c                 |   2 +-
+ arch/powerpc/kernel/fadump.c                     |  11 +--
+ arch/powerpc/kernel/rtas_flash.c                 |  64 ++++--------
+ arch/powerpc/kvm/trace_book3s.h                  |   1 +
+ arch/powerpc/mm/book3s64/radix_pgtable.c         |  31 +++---
+ arch/powerpc/perf/hv-24x7.c                      |   8 +-
+ arch/powerpc/platforms/512x/mpc512x_lpbfifo.c    |   6 +-
+ arch/powerpc/platforms/book3s/vas-api.c          |  32 +++---
+ arch/powerpc/platforms/powernv/ocxl.c            |  12 +--
+ arch/powerpc/platforms/pseries/dlpar.c           |  52 +++++++++-
+ arch/powerpc/platforms/pseries/plpks-secvar.c    | 104 +++++++++++++-------
+ arch/powerpc/sysdev/fsl_mpic_timer_wakeup.c      |  14 +--
+ drivers/misc/ocxl/sysfs.c                        |  12 +--
+ security/integrity/platform_certs/load_powerpc.c |   5 +-
+ 26 files changed, 230 insertions(+), 229 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-在 2025/7/28 19:43, Yi Sun 写道:
-> On 28.07.2025 16:40, Shuai Xue wrote:
->> Hi, Yi Sun, Fenghua Yu,
->>
->> 在 2025/7/27 17:16, Yi Sun 写道:
->>> On 17.06.2025 14:58, Fenghua Yu wrote:
->>>> Hi, Yi,
->>>>
->>>> On 6/17/25 03:27, Yi Sun wrote:
->>>>> A recent refactor introduced a misplaced put_device() call, leading to a
->>>>> reference count underflow during module unload.
->>>>>
->>>>> There is no need to add additional put_device() calls for idxd groups,
->>>>> engines, or workqueues. Although commit a409e919ca3 claims:"Note, this
->>>>> also fixes the missing put_device() for idxd groups, engines, and wqs."
->>>>> It appears no such omission existed. The required cleanup is already
->>>>> handled by the call chain:
->>>>>
->>>>>
->>>>> Extend idxd_cleanup() to perform the necessary cleanup, and remove
->>>>> idxd_cleanup_internals() which was not originally part of the driver
->>>>> unload path and introduced unintended reference count underflow.
->>>>>
->>>>> Fixes: a409e919ca32 ("dmaengine: idxd: Refactor remove call with idxd_cleanup() helper")
->>>>> Signed-off-by: Yi Sun <yi.sun@intel.com>
->>>>>
->>>>> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
->>>>> index 40cc9c070081..40f4bf446763 100644
->>>>> --- a/drivers/dma/idxd/init.c
->>>>> +++ b/drivers/dma/idxd/init.c
->>>>> @@ -1292,7 +1292,10 @@ static void idxd_remove(struct pci_dev *pdev)
->>>>>     device_unregister(idxd_confdev(idxd));
->>>>>     idxd_shutdown(pdev);
->>>>>     idxd_device_remove_debugfs(idxd);
->>>>> -    idxd_cleanup(idxd);
->>>>> +    perfmon_pmu_remove(idxd);
->>>>> +    idxd_cleanup_interrupts(idxd);
->>>>> +    if (device_pasid_enabled(idxd))
->>>>> +        idxd_disable_system_pasid(idxd);
->>>>>
->>>> This will hit memory leak issue.
->>>>
->>>> idxd_remove_internals() does not only put_device() but also free allocated memory for wqs, engines, groups. Without calling idxd_remove_internals(), the allocated memory is leaked.
->>>>
->>>> I think a right fix is to remove the put_device() in idxd_cleanup_wqs/engines/groups() because:
->>>>
->>>> 1. idxd_setup_wqs/engines/groups() does not call get_device(). Their counterpart idxd_cleanup_wqs/engines/groups() shouldn't call put_device().
->>>>
->>>> 2. Fix the issue mentioned in this patch while there is no memory leak issue.
->>>>
->>>>>     pci_iounmap(pdev, idxd->reg_base);
->>>>>     put_device(idxd_confdev(idxd));
->>>>>     pci_disable_device(pdev);
->>>>
->>>> Thanks.
->>>>
->>>> -Fenghua
->>>>
->>>
->>> Hi Fenghua,
->>>
->>> As with the comments on the previous patch, the function
->>> idxd_conf_device_release already covers part of what is done in
->>> idxd_remove_internals, including:
->>>     kfree(idxd->groups);
->>>     kfree(idxd->wqs);
->>>     kfree(idxd->engines);
->>>     kfree(idxd);
->>>
->>> We need to redesign idxd_remove_internals to clearly identify what
->>> truely result in memory leaks and should be handled there.
->>> Then, we'll need another patch to fix the idxd_remove_internals and call
->>> it here.
->>>
->>> Let's prioritize addressing the two critical issues we've encountered here,
->>> and then revisit the memory leak discussion afterward.
->>>
->>> Thanks
->>>   --Sun, Yi
->>
->> The root cause is simliar to Patch 1, the idxd_conf_device_release()
->> function already handles part of the cleanup that
->> idxd_cleanup_internals() attempts to do, e.g.
->>
->>    idxd->wqs
->>    idxd->einges
->>    idxd->groups
->>
->> As a result, it causes user-after-free issue.
->>
->>    ------------[ cut here ]------------
->>    WARNING: CPU: 190 PID: 13854 at lib/refcount.c:28 refcount_warn_saturate+0xbe/0x110
->>    refcount_t: underflow; use-after-free.
->>    drm_client_lib(E) i2c_algo_bit(E) drm_shmem_helper(E) drm_kms_helper(E) nvme(E) mlx5_core(E) mlxfw(E) nvme_core(E) pci_hyperv_intf(E) psample(E) drm(E) wmi(E) pinctrl_emmitsburg(E) sd_mod(E) sg(E) ahci(E) libahci(E) libata(E) fuse(E)
->>    Modules linked in: binfmt_misc(E) bonding(E) tls(E) intel_rapl_msr(E) intel_rapl_common(E) intel_uncore_frequency(E) intel_uncore_frequency_common(E) i10nm_edac(E) skx_edac_common(E) nfit(E) x86_pkg_temp_thermal(E) intel_powerclamp(E) coretemp(E) kvm_intel(E) snd_hda_intel(E) kvm(E) snd_intel_dspcfg(E) snd_hda_codec(E) mlx5_ib(E) irqbypass(E) qat_4xxx(E) snd_hda_core(E) dax_hmem(E) ghash_clmulni_intel(E) intel_qat(E) cxl_acpi(E) snd_hwdep(E) rapl(E) snd_pcm(E) cxl_port(E) iTCO_wdt(E) intel_cstate(E) iTCO_vendor_support(E) snd_timer(E) ib_uverbs(E) pmt_telemetry(E) cxl_core(E) rfkill(E) tun(E) dh_generic(E) pmt_class(E) intel_uncore(E) einj(E) pcspkr(E) isst_if_mbox_pci(E) joydev(E) isst_if_mmio(E) idxd(E-) crc8(E) ib_core(E) isst_if_common(E) authenc(E) intel_vsec(E) idxd_bus(E) snd(E) i2c_i801(E) mei_me(E) soundcore(E) i2c_smbus(E) i2c_ismt(E) mei(E) nf_tables(E) nfnetlink(E) ipmi_ssif(E) acpi_power_meter(E) ipmi_si(E) acpi_ipmi(E) ipmi_devintf(E) ipmi_msghandle
->>    CPU: 190 UID: 0 PID: 13854 Comm: rmmod Kdump: loaded Tainted: G S          E       6.16.0-rc6+ #116 PREEMPT(none)
->>    Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
->>    Hardware name: Inspur AliServer-Xuanwu2.0-02-1UCG42PF/AS2111TG5, BIOS 3.0.ES.AL.P.090.01 02/22/2024
->>    RIP: 0010:refcount_warn_saturate+0xbe/0x110
->>    RSP: 0018:ff7078d2df957db8 EFLAGS: 00010282
->>    RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000000
->>    RBP: ff2b10355b055000 R08: 0000000000000000 R09: ff7078d2df957c68
->>    RDX: ff2b10b33fdaa3c0 RSI: 0000000000000001 RDI: ff2b10b33fd9c440
->>    R10: ff7078d2df957c60 R11: ffffffffbe761d68 R12: ff2b1035a00db400
->>    R13: ff2b10355670b148 R14: ff2b103555097c80 R15: ffffffffc0a88938
->>    FS:  00007fb5f8f3b740(0000) GS:ff2b10b380bb9000(0000) knlGS:0000000000000000
->>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>    CR2: 00005560a898c2d8 CR3: 00000080f9def005 CR4: 0000000000f73ef0
->>    PKRU: 55555554
->>    Code: 01 01 e8 35 9b 9a ff 0f 0b c3 cc cc cc cc 80 3d 05 4c f5 01 00 75 85 48 c7 c7 30 21 75 bd c6 05 f5 4b f5 01 01 e8 12 9b 9a ff <0f> 0b c3 cc cc cc cc 80 3d e0 4b f5 01 00 0f 85 5e ff ff ff 48 c7
->>    Call Trace:
->>    idxd_cleanup+0x6b/0x100 [idxd]
->>    <TASK>
->>    idxd_remove+0x46/0x70 [idxd]
->>    pci_device_remove+0x3f/0xb0
->>    driver_detach+0x48/0x90
->>    device_release_driver_internal+0x197/0x200
->>    bus_remove_driver+0x6d/0xf0
->>    idxd_exit_module+0x34/0x6c0 [idxd]
->>    __do_sys_delete_module.constprop.0+0x174/0x310
->>    do_syscall_64+0x5f/0x2d0
->>    pci_unregister_driver+0x2e/0xb0
->>    entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>    RIP: 0033:0x7fb5f8a620cb
->>    Code: 73 01 c3 48 8b 0d a5 6d 19 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 75 6d 19 00 f7 d8 64 89 01 48
->>    RSP: 002b:00007ffeed6101c8 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
->>    RAX: ffffffffffffffda RBX: 00005560a8981790 RCX: 00007fb5f8a620cb
->>    RDX: 000000000000000a RSI: 0000000000000800 RDI: 00005560a89817f8
->>    R13: 00007ffeed612352 R14: 00005560a89812a0 R15: 00005560a8981790
->>    R10: 00007fb5f8baaac0 R11: 0000000000000206 R12: 00007ffeed6103f0
->>    </TASK>
->>    ---[ end trace 0000000000000000 ]---
->>
->> With this patch applied, the user-after-free issue is fixed.
->>
->> But, there is still memory leaks in
->>
->>    idxd->wqs[i]
->>    idxd->einges[i]
->>    idxd->groups[i]
->>
->> I agree with Vinicius that we should cleanup in idxd_conf_device_release().
->>
->> Thanks.
->> Shuai
-> 
-> Appreciate Shuai's clarification. Yes, it would be better if fixing the memory
-> leak issue in idxd_conf_device_release() in a separate patch.
-> 
-> @Shuai, please feel free to proceed if you'd like to cook a patch for it.
-> 
-> Thanks
->     --Sun, Yi
-
-Hi, Sun, Yi,
-
-I need to correct my previous analysis. After further investigation, I
-believe there is no memory leak in the current code. The device
-reference counting and memory management are properly handled through
-the Linux device model. Each component is freed at the conf_dev
-destruction time:
-
-
-     idxd->wqs[i] is freed by idxd_conf_wq_release()
-     idxd->einges[i] is freed by idxd_conf_engine_release()
-     idxd->groups[i] is freed by idxd_conf_group_release()
-
-
-Adding additional cleanup in idxd_conf_device_release() would actually
-cause double-free issues. I can reproduce this with KASAN:
-
-[kernel][err]BUG: KASAN: slab-use-after-free in idxd_clean_groups+0x137/0x250 [idxd]
-[kernel][err]==================================================================
-[kernel][err]Read of size 4 at addr ff1100822ff89038 by task rmmod/13956
-[kernel][err]
-[kernel][err]CPU: 185 UID: 0 PID: 13956 Comm: rmmod Kdump: loaded Tainted: G S          E       6.16.0-rc6+ #117 PREEMPT(none)
-[kernel][err]Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
-[kernel][err]Hardware name: Inspur AliServer-Xuanwu2.0-02-1UCG42PF/AS2111TG5, BIOS 3.0.ES.AL.P.090.01 02/22/2024
-[kernel][err]Call Trace:
-[kernel][err]<TASK>
-[kernel][err]dump_stack_lvl+0x55/0x70
-[kernel][err]print_address_description.constprop.0+0x27/0x2e0
-[kernel][err]? idxd_clean_groups+0x137/0x250 [idxd]
-[kernel][err]print_report+0x3e/0x70
-[kernel][err]kasan_report+0xb8/0xf0
-[kernel][err]? idxd_clean_groups+0x137/0x250 [idxd]
-[kernel][err]kasan_check_range+0x39/0x1b0
-[kernel][err]idxd_clean_groups+0x137/0x250 [idxd]
-[kernel][err]idxd_cleanup_internals+0x1f/0x1b0 [idxd]
-[kernel][err]idxd_conf_device_release+0xe2/0x2b0 [idxd]
-[kernel][err]device_release+0x9c/0x210
-[kernel][err]kobject_cleanup+0x101/0x360
-[kernel][err]pci_device_remove+0xab/0x1e0
-[kernel][err]idxd_remove+0x93/0xb0 [idxd]
-[kernel][err]device_release_driver_internal+0x369/0x530
-[kernel][err]driver_detach+0xbf/0x180
-[kernel][err]bus_remove_driver+0x11b/0x2a0
-[kernel][err]pci_unregister_driver+0x2a/0x250
-[kernel][err]? kobject_put+0x55/0xe0
-[kernel][err]idxd_exit_module+0x34/0x40 [idxd]
-[kernel][err]__do_sys_delete_module.constprop.0+0x2ee/0x580
-[kernel][err]? fput_close_sync+0xdd/0x190
-[kernel][err]? __pfx___do_sys_delete_module.constprop.0+0x10/0x10
-[kernel][err]do_syscall_64+0x5d/0x2d0
-[kernel][err]? __pfx_fput_close_sync+0x10/0x10
-[kernel][err]entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[kernel][err]RIP: 0033:0x7f2ac20620cb
-[kernel][err]Code: 73 01 c3 48 8b 0d a5 6d 19 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 b0 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 75 6d 19 00 f7 d8 64 89 01 48
-[kernel][err]RSP: 002b:00007ffdfec0a598 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-[kernel][err]RDX: 000000000000000a RSI: 0000000000000800 RDI: 0000560bd6bd77f8
-[kernel][err]RAX: ffffffffffffffda RBX: 0000560bd6bd7790 RCX: 00007f2ac20620cb
-[kernel][err]R10: 00007f2ac21aaac0 R11: 0000000000000206 R12: 00007ffdfec0a7c0
-[kernel][err]RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-[kernel][err]</TASK>
-[kernel][err]R13: 00007ffdfec0b352 R14: 0000560bd6bd72a0 R15: 0000560bd6bd7790
-[kernel][err]Allocated by task 1445:
-[kernel][err]
-[kernel][warning]kasan_save_stack+0x24/0x50
-[kernel][warning]kasan_save_track+0x14/0x30
-[kernel][warning]__kasan_kmalloc+0xaa/0xb0
-[kernel][warning]idxd_setup_groups+0x2b5/0x7a0 [idxd]
-[kernel][warning]idxd_setup_internals+0xd1/0x6e0 [idxd]
-[kernel][warning]idxd_probe+0x93/0x310 [idxd]
-[kernel][warning]idxd_pci_probe_alloc+0x3f3/0x6e0 [idxd]
-[kernel][warning]local_pci_probe+0xe5/0x1a0
-[kernel][warning]work_for_cpu_fn+0x52/0xa0
-[kernel][warning]process_one_work+0x652/0x1080
-[kernel][warning]worker_thread+0x652/0xc70
-[kernel][warning]ret_from_fork+0x253/0x2e0
-[kernel][warning]kthread+0x34a/0x450
-[kernel][warning]ret_from_fork_asm+0x1a/0x30
-[kernel][err]
-[kernel][err]Freed by task 13956:
-[kernel][warning]kasan_save_stack+0x24/0x50
-[kernel][warning]kasan_save_track+0x14/0x30
-[kernel][warning]kasan_save_free_info+0x3a/0x60
-[kernel][warning]__kasan_slab_free+0x54/0x70
-[kernel][warning]kfree+0x12e/0x430
-[kernel][warning]device_release+0x9c/0x210
-[kernel][warning]kobject_cleanup+0x101/0x360
-[kernel][warning]idxd_unregister_devices+0x22d/0x320 [idxd]
-[kernel][warning]pci_device_remove+0xab/0x1e0
-[kernel][warning]idxd_remove+0x3c/0xb0 [idxd]
-[kernel][warning]driver_detach+0xbf/0x180
-[kernel][warning]device_release_driver_internal+0x369/0x530
-[kernel][warning]bus_remove_driver+0x11b/0x2a0
-[kernel][warning]pci_unregister_driver+0x2a/0x250
-[kernel][warning]idxd_exit_module+0x34/0x40 [idxd]
-[kernel][warning]do_syscall_64+0x5d/0x2d0
-[kernel][warning]__do_sys_delete_module.constprop.0+0x2ee/0x580
-[kernel][err]
-[kernel][err]The buggy address belongs to the object at ff1100822ff89000
-
-The issue shows memory being freed during device_release(), then
-accessed again in idxd_conf_device_release().
-
-Your original approach is correct - the kernel's device model handles
-the memory management properly, and we should not interfere with it.
-
-Feel free to add:
-
-Tested-by: Shuai Xue <xueshuai@linux.alibaba.com>
-
-Sorry for the confusion in my earlier analysis.
-
-Best Regards,
-Shuai
+iQIzBAEBCgAdFiEEqX2DNAOgU8sBX3pRpnEsdPSHZJQFAmiINg0ACgkQpnEsdPSH
+ZJT5Ow//Vv3gnGYHRyk9MIWedwChpkaI4iiW7MUCVFMs/Ek/lKp3Mtz/4g4Syh3b
+5HZ8/NAzYRcj09Ovrgrdqs3p5I68kDZ1CpJKGJLmd++MVRukeSDQJ3YLTxpVsHvx
+ZlJ7oL55I6y8sxftomVPY12qFxtGWScF6VR7920r1fcwiZaEat/ZOQIZs2edtmaE
+1yZa8MJ6kO/W7X1sHCdZmaQXnx5ecqlyh42NqUTDzM2tkPlMgJW6YDgP50N9jmK9
+HZwfcl01qahvkDYvnA8aaqgqSFMaCLazlEdDm78+uLsV2FSMX/7Gtq/SPHdRoRg8
+AUnIF97iNK76FL/qAto5sPnYFjBZkUtFyXXQ32lSHV0/v1o4nRWkDC4uOoXr7T/v
+1s6EopsQj/jGe58bN/uYs2S97lEnlKw+Hbk4HBFfvmewxvlnyy27tJ27Zdi8XA+N
+r/a2OmRwhFM1MrVzjo5LJfswgVwz46Ks6lfpGJKXoJ1lgLkclNwB3qt/XmjJBg40
+j9r3PPSIZOAvWL9AC3vnX/rM6d4ANSHqpG0yFQih+LRcU67yyEs7ZWBztRcjzTHM
+D3/RzcLdFGkNygFSLqQOzTgp0y64HOGbN2lkiZ0xMkgQl3RnpEnsPIAc/Bbf0c9W
+nsgLtGfhm5N0W1LCJh77dzHuHs1fVkZt4a1XUJFDFxnE9Lorwm4=
+=+bvZ
+-----END PGP SIGNATURE-----
 
