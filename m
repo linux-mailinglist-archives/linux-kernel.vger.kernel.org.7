@@ -1,135 +1,161 @@
-Return-Path: <linux-kernel+bounces-749813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B73F5B15325
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:52:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99ADB1532C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:53:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65C547A6F77
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF02F3B8C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7087A24A043;
-	Tue, 29 Jul 2025 18:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0299237180;
+	Tue, 29 Jul 2025 18:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="eWoWvQgG"
-Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com [209.85.167.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j57oc76U"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07CE24DD17
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B192459E1
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753815112; cv=none; b=dWbg2nJSkE3wIwiKjpzMw6cZstXBEWgw64ibimlIS/j/8Q4HXJ2HNkb0+iQ+7Ak6MJL72+P3rpihYQRXxeT/+tCkQ0FpHcyLCs8DbF4HwF0EtDMUNc6mmrB5IGhWuTHnhHUEU7636E5bmzGSZUcYVYmheSJtKufk3I1PNmpKGAc=
+	t=1753815204; cv=none; b=JuSevEQSDQMGVfmS+h+ghwzGGcPVp6Aw+sGqmUsZMbqajISiTXtxlUpUUcUhCaWKaYoGtxl4/V8kUINhqRFngq19RPP0colNpnJ2Z10julCXbAlIBalqT5985HLjTnr4zkZqH3zUqLu/s+3ehPtGGuWHjIjjHtWC5pHLigl6k3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753815112; c=relaxed/simple;
-	bh=tkYPqG6hSoExZpavosByUWQQZFauHqgD4v+3OLU6+vA=;
+	s=arc-20240116; t=1753815204; c=relaxed/simple;
+	bh=vHiAZEJQ636SOevFTzB+2khGGZwRDs3zeAMpvxkeliQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RczZEdrA26Cb2t2lwPxoHIV/R2dB+0sm8uPUQmV/tHQXiK6+yH5mBeO8zxBXd3I8ce63Xr5UJUc2Ai02pcg3MdAnaYko0KH1z/dDhARB5lwkiiKlwJSLFJgZEUefzlaoSlEOvjR2ZmnaeUYCwOOX4+TFIkqqKjezKhWxzK0PGg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=eWoWvQgG; arc=none smtp.client-ip=209.85.167.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-41b8e837427so1670800b6e.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:51:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753815109; x=1754419909; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nW9OX3dqh3cJ18q/aTepV16/WtzibItMr8FPMWEaO5Q=;
-        b=eWoWvQgGmSw/LedIqS0RAsjf2f96H6SXm2qrV1E3YImdwNYrC4KL+OaFYJ/ORBlB4Z
-         vXJAfpn/Hy6wUJS1fhjg8oziAM1n66uvow67qTii0vibNkggNBug/8UvyZyrOiOZTIsC
-         nz3YqjR2hZ+Nm8j3kfpHI4uJw7uJKj1TW1oLIQ5619ERq81Qib8qP/XWUEcVe0GkZ5E7
-         s/WUN9SqY5lShafbzTNvaq0vaiUu3aovD9qUnbDe8g/asgURbbYFTa6mDmidKakmnacJ
-         PWnH7g9H0PzYBsxihcwfyscBJkiPCHWepWio2ETipmp5ZVaLO1RZZ46bc9SezrH3MEIs
-         i9RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753815109; x=1754419909;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nW9OX3dqh3cJ18q/aTepV16/WtzibItMr8FPMWEaO5Q=;
-        b=D3ECI+tv8uHlkTWitX50tQTahtA/A7cGd7uSvF1Z/wuy2fsp6hBJ/EWq9ELRZR/VVJ
-         MqSCUsQ5H+TpTEl6vP3f0yAiSiULDCplRGjn8ERjcFWDeCBKoqZMigKAnZ50Kg555eN0
-         XMzoHocVqAqxxFaB7LZ7fo0pInoveTLttOXW59akomdE+v6iKwl7ZJwSBUPNK2VObxhu
-         msfyRSIpddnd7U5uhKbBCGOlkSz+YHC61tNSfK9N4qSavRr1RBKrL+OBfjUdNxDbyUtV
-         iWV/5yD4fT1q8RWHQEtAh5zY/U8+oCEZLWK6aYySX1S40uE4+7usgroIHV5jS0hJ1+0w
-         tA/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWY1y3jCq2YqGfTlt4EuBC/JPbeWYeG0eKwpZ1SASkzn9TshTJyr+jmrhKS1O7leixr3o69KbQwDjA3g+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGiku5t4oZkGvTda7BiGFsLy8RFsV0ScJo4CSrDP1/QA08pzr6
-	uxZRODkihqvCafuVINWsp4r7m5GFf/s8S8yvXE41sLrAo2e4durRd5Zvqa0DJdpfbcM=
-X-Gm-Gg: ASbGnctOEfcifHNMlTVLmZaUx4QDUYuN7tcrQ9Ppvvhyp1Q0EEyPxmWjvPzXLlMKrpn
-	9p7yEfd8IAFowbR4ADqEVWHErer2dR/Y/unJ4ISo7ILX011pPKSlHRo/JDIa1pDlMvQ1WmHHZrv
-	9khx0FwH0Z6DHZhGY209cbOf41tl7VIljgg8u1SDCGzyVifPhuibcBJrXr9kHLM94IXr0Hn6t3u
-	qlMhwrowtBsHjU2u8dtThAfUt//RzTqEhR1pcyvuPIULH+n3fNHhbpJBPyXTzar+9y/2hm2reg0
-	Kl3TPRD4UbOu0kFvbxmTQp3fa+z7kt6gafutnmWh+VTDNieQR2Drd4GL0wPW7klZodVRvVjy6Hl
-	+VUkBkl4U5Whvew6/Xtnw+V0OjjgFRPzFO0V6HiwG/FUs9FUg/emDL2cmIz/rpwVXgVs18zwE2S
-	8=
-X-Google-Smtp-Source: AGHT+IEk1VUBACKAVfd3nk/GnuDKx7Ws203xpDX0qSmk0ah3tw52EhxFHTI+yXJat0ciadah+dzUgQ==
-X-Received: by 2002:a05:6808:2393:b0:40b:3530:98bb with SMTP id 5614622812f47-43199d7a01cmr506635b6e.9.1753815109508;
-        Tue, 29 Jul 2025 11:51:49 -0700 (PDT)
-Received: from ?IPV6:2600:8803:e7e4:1d00:c7d5:61e1:68d6:dd54? ([2600:8803:e7e4:1d00:c7d5:61e1:68d6:dd54])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-42c7b843b74sm1634782b6e.16.2025.07.29.11.51.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 11:51:49 -0700 (PDT)
-Message-ID: <f5b46109-ad53-4d03-937e-ac4fc868755f@baylibre.com>
-Date: Tue, 29 Jul 2025 13:51:48 -0500
+	 In-Reply-To:Content-Type; b=qr65RbnhppxBrJOjxCayEnNGD5qYRplUscPMkTzQ/we50G0EwkSBrujzMEWckYtE3Mvy/WfuY3h8yD2a3gMp/QfS750oA2bqiFa6wnCTzL9x0bA/Z+f+C/XDncaZrh082e60APpDYCMBaLYqPuSVPXo+GlIplpxxGHYmBaIBwJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j57oc76U; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8fad6c00-9c15-4315-a8c5-b8eac4281757@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753815189;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m8uizJieSyqW56uosfxUJeKEVQ0kVEbrA+dUYFoOGRs=;
+	b=j57oc76UIhZL5Xpcfh4U0tWr8C6enCpVQGbo2hG9G/0MM06fuiCJ8Y9RkLcRYz1x4orT97
+	JobdnhYCZ2iemZAIgxqDkCvYrqbLu0Qm1apgcZEDuQd2TzZ6hTyq50I2Vd3GHzTBw1Z8r+
+	6U+OU1uUSU0PwvKHE1NHrhjo/vcQR1Y=
+Date: Tue, 29 Jul 2025 20:53:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] iio: magnetometer: add support for Infineon TLV493D
- 3D Magentic sensor
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
- <20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
- <141967ee-22f4-4b15-a8da-e8cef25828b4@baylibre.com> <aIg_SClXq0pO69iH@dixit>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <aIg_SClXq0pO69iH@dixit>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] RDMA/siw: Fix the sendmsg byte count in
+ siw_tcp_sendpages
+To: Pedro Falcato <pfalcato@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Leon Romanovsky <leon@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
+Cc: Jakub Kicinski <kuba@kernel.org>, David Howells <dhowells@redhat.com>,
+ Tom Talpey <tom@talpey.com>, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ torvalds@linux-foundation.org, stable@vger.kernel.org,
+ kernel test robot <oliver.sang@intel.com>
+References: <20250729120348.495568-1-pfalcato@suse.de>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Bernard Metzler <bernard.metzler@linux.dev>
+In-Reply-To: <20250729120348.495568-1-pfalcato@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 7/28/25 10:26 PM, Dixit Parmar wrote:
+On 29.07.2025 14:03, Pedro Falcato wrote:
+> Ever since commit c2ff29e99a76 ("siw: Inline do_tcp_sendpages()"),
+> we have been doing this:
+>
+> static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
+>                               size_t size)
+> [...]
+>          /* Calculate the number of bytes we need to push, for this page
+>           * specifically */
+>          size_t bytes = min_t(size_t, PAGE_SIZE - offset, size);
+>          /* If we can't splice it, then copy it in, as normal */
+>          if (!sendpage_ok(page[i]))
+>                  msg.msg_flags &= ~MSG_SPLICE_PAGES;
+>          /* Set the bvec pointing to the page, with len $bytes */
+>          bvec_set_page(&bvec, page[i], bytes, offset);
+>          /* Set the iter to $size, aka the size of the whole sendpages (!!!) */
+>          iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
+> try_page_again:
+>          lock_sock(sk);
+>          /* Sendmsg with $size size (!!!) */
+>          rv = tcp_sendmsg_locked(sk, &msg, size);
+>
+> This means we've been sending oversized iov_iters and tcp_sendmsg calls
+> for a while. This has a been a benign bug because sendpage_ok() always
+> returned true. With the recent slab allocator changes being slowly
+> introduced into next (that disallow sendpage on large kmalloc
+> allocations), we have recently hit out-of-bounds crashes, due to slight
+> differences in iov_iter behavior between the MSG_SPLICE_PAGES and
+> "regular" copy paths:
+>
+> (MSG_SPLICE_PAGES)
+> skb_splice_from_iter
+>    iov_iter_extract_pages
+>      iov_iter_extract_bvec_pages
+>        uses i->nr_segs to correctly stop in its tracks before OoB'ing everywhere
+>    skb_splice_from_iter gets a "short" read
+>
+> (!MSG_SPLICE_PAGES)
+> skb_copy_to_page_nocache copy=iov_iter_count
+>   [...]
+>     copy_from_iter
+>          /* this doesn't help */
+>          if (unlikely(iter->count < len))
+>                  len = iter->count;
+>            iterate_bvec
+>              ... and we run off the bvecs
+>
+> Fix this by properly setting the iov_iter's byte count, plus sending the
+> correct byte count to tcp_sendmsg_locked.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: c2ff29e99a76 ("siw: Inline do_tcp_sendpages()")
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: https://lore.kernel.org/oe-lkp/202507220801.50a7210-lkp@intel.com
+> Reviewed-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Pedro Falcato <pfalcato@suse.de>
+> ---
+>
+> v2:
+>   - Add David Howells's Rb on the original patch
+>   - Remove the offset increment, since it's dead code
+>
+>   drivers/infiniband/sw/siw/siw_qp_tx.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
+> index 3a08f57d2211..f7dd32c6e5ba 100644
+> --- a/drivers/infiniband/sw/siw/siw_qp_tx.c
+> +++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
+> @@ -340,18 +340,17 @@ static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
+>   		if (!sendpage_ok(page[i]))
+>   			msg.msg_flags &= ~MSG_SPLICE_PAGES;
+>   		bvec_set_page(&bvec, page[i], bytes, offset);
+> -		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
+> +		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, bytes);
+>   
+>   try_page_again:
+>   		lock_sock(sk);
+> -		rv = tcp_sendmsg_locked(sk, &msg, size);
+> +		rv = tcp_sendmsg_locked(sk, &msg, bytes)
+>   		release_sock(sk);
+>   
+>   		if (rv > 0) {
+>   			size -= rv;
+>   			sent += rv;
+>   			if (rv != bytes) {
+> -				offset += rv;
+>   				bytes -= rv;
+>   				goto try_page_again;
+>   			}
 
-...
+Acked-by: Bernard Metzler <bernard.metzler@linux.dev>
 
->>> +	case IIO_CHAN_INFO_SCALE:
->>> +		switch (chan->type) {
->>> +		case IIO_MAGN:
->>> +			/*
->>> +			 * Magnetic field scale: 0.0098 mTesla (i.e. 9.8 µT)
->>> +			 * Expressed as fractional: 98/10 = 9.8 µT.
->>> +			 */
->>> +			*val = 98;
->>> +			*val2 = 10;
->> We use SI units, so this needs to be gauss, not tesela.
->>
-> Sure, Is there any documentation/reference this details are mentioned?
->>> +			return IIO_VAL_FRACTIONAL;
-
-
-Most of the sysfs attribute documentation is in 
-Documentation/ABI/testing/sysfs-bus-iio. Specifically for this
-case, it says:
-
-
-What:		/sys/bus/iio/devices/iio:deviceX/in_magn_x_raw
-What:		/sys/bus/iio/devices/iio:deviceX/in_magn_y_raw
-What:		/sys/bus/iio/devices/iio:deviceX/in_magn_z_raw
-KernelVersion:	2.6.35
-Contact:	linux-iio@vger.kernel.org
-Description:
-		Magnetic field along axis x, y or z (may be arbitrarily
-		assigned).  Data converted by application of offset
-		then scale to Gauss.
 
