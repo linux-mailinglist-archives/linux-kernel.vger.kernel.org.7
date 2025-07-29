@@ -1,90 +1,93 @@
-Return-Path: <linux-kernel+bounces-749349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A43FB14D37
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:52:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2FFB14D3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:55:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B6E3B12E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:52:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9064D544EDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559CF28EA72;
-	Tue, 29 Jul 2025 11:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79B0D28F51D;
+	Tue, 29 Jul 2025 11:55:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ie/sTbnb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="emGrZc00"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F1F201034;
-	Tue, 29 Jul 2025 11:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C26E239E62;
+	Tue, 29 Jul 2025 11:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753789946; cv=none; b=R1qzOtuIMsqs6twlq/tu4m+/dCVvFpN/VpN5ptsZn/Fr7aAvuWKORwqAyuxm1/RqdEMLV51bErfoUulJGT7MJ7r9byyLLmzcRn9ZjQXM8neUR8nWS5sffxjo4S6zsYbBgAb5Kwh0QdYyKnOJ3tg/1hdGAAoOFlsQW8wVz8jdpv0=
+	t=1753790118; cv=none; b=C9I1SgXOmxJj0Ep8hxVhqbAyEstQKbjofnAz7Fyy/atTPhigfTbk2HTuubMOtHLzoNNJDbSeAcnrJ4WEnTlTog/OLgUEE41Q2O+Kth067WkJZGu2GsRfcvbCRhtf9NbJN3ZNjWMis22XvgGspYI19OABgIrssqYCMRdC9L42D0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753789946; c=relaxed/simple;
-	bh=iIvWnm6k3tgXTEe1jKMPT9SSwm4LxNun9kBcLV/m+dE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ut+4t+ID4RZjHNs/yPpUPTlr1CXGmUrfdhmsSDiy0iYOYF9jAXgwNA0LdWnrLj07ZBVKCWtBXHXszt6pSS50TszVE0nV/kCPWAQuxryTzrcU6rChf3RkJW8DEA+NsJzQRpon1kM3dbg8fFWw9vHnI9fEAJD/GHBCRArDQVMt/zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ie/sTbnb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92504C4CEF5;
-	Tue, 29 Jul 2025 11:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753789946;
-	bh=iIvWnm6k3tgXTEe1jKMPT9SSwm4LxNun9kBcLV/m+dE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ie/sTbnbTM9/MDi7lfi5VK/Cg8CTNGngkAMUj0uhF72Pe/hzDhxSFuG4RZCRqpQHt
-	 Udkip3YHULpKXZMB4K+zFlVmLvbr86Eh4NK0TSYbTzAdm9yuA08pd+JnL66JWfFCPb
-	 C37V1BHJA1DRgE4QYKzHuP4+QdCK2b3pgp1PLfO304YyBmidhI4E1hrIMllddcDfpU
-	 P6EGGgt0lSkEQknjTLwzrlVHRe5RcfhHxw8Hn/FI1wb/Z+rDPymqVdpbNrzRhMMMs7
-	 vFp8l1/ZsCpQSO31CZ1GBvCPjgLTZptZOvDN6g6SorYfQPyjX+LbfpVOe6Hm8QbZnD
-	 GD+DXkFNmRreA==
-Message-ID: <3c5ff789-9a90-4233-8a91-4b3535d4d29e@kernel.org>
-Date: Tue, 29 Jul 2025 06:52:23 -0500
+	s=arc-20240116; t=1753790118; c=relaxed/simple;
+	bh=0dGAnNg2UXVYDpvGLnTKAdA/H53faaIz+tELnHOHvOc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tGnbkjCq/HL+73iGX0ZdpZHF3d234pqKC9DYaVDJxWTfjz/BBcHvlhwKYzQTyr1mUJuyA+e2eV3xjpUQiEuLRTUCNOIv/oc7lEXljw7tHqvB+poREhpPUH7VxRJC2XYH46nykfEdhwV+OEpQVRMI2B3lOWmspqAzg+T1hApKyWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=emGrZc00; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 487811C008E; Tue, 29 Jul 2025 13:55:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1753790106;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=37eDtzrvLLDSDFVXQndXsows899L9rLYzxx5sKRYaq8=;
+	b=emGrZc00AWqlPVsCcBuyL0oaNou0bIo63s4od92HeoH2ncTtRWB4nwzvtaep91APEzgfnr
+	SARVhrhu90QbeqiDIJICyrt8idXKl0jNU3niiOZ36WDSBObDULtrQjU6hhAhCJKjjbic9B
+	9WKrurumaa28k8CIG8oC7I3sbl2jAp4=
+Date: Tue, 29 Jul 2025 13:55:05 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Erick Karanja <karanja99erick@gmail.com>
+Cc: perex@perex.cz, tiwai@suse.com, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, julia.lawall@inria.fr
+Subject: Re: [PATCH] staging: sound: Adjust mutex unlock order
+Message-ID: <aIi2mfHOksrr5RNB@duo.ucw.cz>
+References: <20250716062331.375090-1-karanja99erick@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -resend] edac: Use dev_fwnode()
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, bp@alien8.de
-Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de,
- Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Robert Richter
- <rric@kernel.org>, linux-edac@vger.kernel.org
-References: <20250723062631.1830757-1-jirislaby@kernel.org>
-Content-Language: en-US
-From: Dinh Nguyen <dinguyen@kernel.org>
-In-Reply-To: <20250723062631.1830757-1-jirislaby@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="PZUGyl5t52Dd9iQE"
+Content-Disposition: inline
+In-Reply-To: <20250716062331.375090-1-karanja99erick@gmail.com>
 
-On 7/23/25 01:26, Jiri Slaby (SUSE) wrote:
-> irq_domain_create_simple() takes fwnode as the first argument. It can be
-> extracted from the struct device using dev_fwnode() helper instead of
-> using of_node with of_fwnode_handle().
-> 
-> So use the dev_fwnode() helper.
-> 
-> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-> Cc: Dinh Nguyen <dinguyen@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Tony Luck <tony.luck@intel.com>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Robert Richter <rric@kernel.org>
-> Link: https://lore.kernel.org/all/4bc0e1ca-a523-424a-8759-59e353317fba@kernel.org/
-> 
-> ---
-> Cc: linux-edac@vger.kernel.org
-> ---
->   drivers/edac/altera_edac.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+--PZUGyl5t52Dd9iQE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed 2025-07-16 09:23:30, Erick Karanja wrote:
+> The mutexes qdev_mutex and chip->mutex are acquired in that order
+> throughout the driver. To preserve proper lock hierarchy and avoid
+> potential deadlocks, they must be released in the reverse order
+> of acquisition.
+
+Please explain how the deadlock would happen.
+
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
+
+--PZUGyl5t52Dd9iQE
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaIi2mQAKCRAw5/Bqldv6
+8rbfAJ0R9dtUL/puuFcny3upcaaUpdYw1QCgnyEc31T76dn0r6CqLmLh9uH25Mg=
+=nK0I
+-----END PGP SIGNATURE-----
+
+--PZUGyl5t52Dd9iQE--
 
