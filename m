@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-749561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C129B14FFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:08:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E599B14FF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:06:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6D9A3BECB0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:07:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADBA7188FAE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1ACF287253;
-	Tue, 29 Jul 2025 15:08:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD29E2690E7;
+	Tue, 29 Jul 2025 15:06:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="MKJFsGf/"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IJF2DKsz"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D53727702D;
-	Tue, 29 Jul 2025 15:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4A21DC994;
+	Tue, 29 Jul 2025 15:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753801685; cv=none; b=GyBFLYyIA7MjZ2UwMff5O3eCX6G6iTj8Ww1WbCe21c4s68V7W7KJg7UbM26MkL8pnOZwB2WDYHA/j5+41uxa+mD3nl4ZLpNkvt9xgjNqcKLVWcedrt2rexTNgzIy+d04TDiVoxUpLdyAnQVwDiuJwKjkrFF9B7SL0o9bl+t2DOM=
+	t=1753801580; cv=none; b=EPY7ac2Q8eNsOQJEH7ylDJ8SSBYbCVIyLGg9UNnbvlzTLDuJTLaGBoXip5DwadVXCu2u4UvGTo7UkmeemZffHRay56OhA10XvNb9FueUJx1GyA4DpGIwYtmDSjl3TbjYrIfqtFUEYyPiZxzHZAsebzSdi6SOU5A4tJWd9uA2WVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753801685; c=relaxed/simple;
-	bh=PBOkQyQ2DhJSvlZwtpvSMJYClY321RSVjLSe8tXXnZw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=L6tAFQ8KpJuOgs9yCG/cSIZ2gPt6RhnM0hJbHOt3XjgjG7fvT7gBlJonJC/ACKYqNHRrBknHn/N+7iRt946I4DwVPIr6bx9QHjIyrotk7+LpAJfC9nbrkH56i9v6mTqzmgtNBQEUAl4prN0pUYDLYJsgPHNiK0R4pxOWJJmUuCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=MKJFsGf/; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56TCpPUJ031980;
-	Tue, 29 Jul 2025 17:07:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	rxNeNoGx1mH4GH0w94NI93U/kEXE+lSVdRaFrGTDI0g=; b=MKJFsGf/y754Tnvr
-	xLdfD2hsDaNECBNZBmwKrazssfYyHo9DBQ4DdKdsN13xS5PgKmEbmoBLTAjq5s5E
-	v3ee1pbRlyhjybenzVv6IpWfpM2LeWqmZlsEdD82pfYmXEt/uTJfL/xTj5mzz2eL
-	euCEtL895eMzGzW9sCNXyqlw/cEEx5yjok5wH724M83/XgT3JmaLoH78eBlGZjRi
-	ZDKRdC763CR4ysxOXrUsrNHxNUsPB7GEWk2L3FhzR3VS+XwT6F+thDHNSwq9XCEU
-	ycCwSJG9uoYj+fy+vzJP7mVRbfKOJNc4FNNgIUUNYYKbMPu5lsfIJ631pbzkjFET
-	4YtQmg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4859ynjf35-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 17:07:38 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CEAB44002D;
-	Tue, 29 Jul 2025 17:06:26 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8C5FA763987;
-	Tue, 29 Jul 2025 17:05:40 +0200 (CEST)
-Received: from [10.48.87.141] (10.48.87.141) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Jul
- 2025 17:05:39 +0200
-Message-ID: <b25eff85-73fd-45b3-b92f-5cc0a86011c7@foss.st.com>
-Date: Tue, 29 Jul 2025 17:05:39 +0200
+	s=arc-20240116; t=1753801580; c=relaxed/simple;
+	bh=hT7JoW/RThSzja2MVDnh4LyrBgsrXZ5kkkFBiqx5WKo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tAJPnkWb0DmC9WSF5CEVzT4FaandoP8WzdVUJpvtZJo4d9hEI8SjHL8dNbXanWMf86xgphJat33W/SPG2u2aN4gYD8iQFnmxdppHypbhJeMwzSREqT2fCEsHCTSmKXUNW/DsWKvlaHAcpoKj11pxCN8c2t4LvIv0iORfpDwt08w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IJF2DKsz; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753801578; x=1785337578;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hT7JoW/RThSzja2MVDnh4LyrBgsrXZ5kkkFBiqx5WKo=;
+  b=IJF2DKszkmIA0chLkm+AIm6oqnW8xazIQA4pgfz5o/QlbEyJfbtEL4pB
+   2BdEhbn/gGqwBDmrQxBa03N8MXuA84ensPke+WdiOFgeChq2DbBYDZpBl
+   yXsN9QqTirol8CIjKe5SOEUDXvNOWf29G6OUwqf51lhBiJXonj2ydZx6E
+   NeRJMo9yDmY9/eHI7Q9mOTYyHPsIkO59hv8sbZ0a5w/xvbeuqJm1U0nIy
+   ESd9pxlsXXJID5Ni53QTvztBiejEvjCypP0IhYWlsTpmDP8hKvtl39DOw
+   CWk8xu8/Wy5d3cr2qFd9bfjZBqsYOvZJXlCeq//dFlyEP+9voguhzsvt9
+   w==;
+X-CSE-ConnectionGUID: 0b1q9vP3Q4aFEqpGNNy7zA==
+X-CSE-MsgGUID: QvmPVT9wSMa0ItqtmpIZbg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="73527091"
+X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
+   d="scan'208";a="73527091"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 08:06:16 -0700
+X-CSE-ConnectionGUID: wieQOfoGTC2Gjc4xOuad5w==
+X-CSE-MsgGUID: WzhqFanBSYmUMMdYA7yshA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
+   d="scan'208";a="161999292"
+Received: from bvivekan-mobl2.gar.corp.intel.com (HELO [10.247.118.247]) ([10.247.118.247])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 08:06:11 -0700
+Message-ID: <9b1b3405-26a2-4a30-b212-983568deccce@intel.com>
+Date: Tue, 29 Jul 2025 08:06:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,49 +66,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 0/2] net: stmmac: allow generation of flexible
- PPS relative to MAC time
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>,
-        Richard Cochran
-	<richardcochran@gmail.com>, <netdev@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250724-relative_flex_pps-v1-0-37ca65773369@foss.st.com>
- <20250725172547.13d550a4@kernel.org>
- <424f8bbd-10b2-468c-aac8-edc71296dabb@foss.st.com>
- <20250728085818.5c7a1e45@kernel.org>
+Subject: Re: [PATCH RESEND v3 0/2] dmaengine: idxd: Fix refcount and cleanup
+ issues on module unload
+To: Yi Sun <yi.sun@intel.com>, vinicius.gomes@intel.com, vkoul@kernel.org,
+ fenghuay@nvidia.com, xueshuai@linux.alibaba.com
+Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gordon.jin@intel.com
+References: <20250729150313.1934101-1-yi.sun@intel.com>
 Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <20250728085818.5c7a1e45@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <20250729150313.1934101-1-yi.sun@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-29_03,2025-07-28_01,2025-03-28_01
 
 
 
-On 7/28/25 17:58, Jakub Kicinski wrote:
-> On Mon, 28 Jul 2025 10:15:07 +0200 Gatien CHEVALLIER wrote:
->> Maybe we could compare the time to the current MAC system
->> time and, if the start time is in the past, consider the
->> value to be an offset. Therefore, any value set in the past
->> would be considered as an offset. I see some implementations
->> doing either that or replacing any value set in the past to
->> a safe start + a fixed offset.
+On 7/29/25 8:03 AM, Yi Sun wrote:
+> This patch series addresses two issues related to the device reference
+> counting and cleanup path in the idxd driver.
 > 
-> Let's try this.
+> Recent changes introduced improper put_device() calls and duplicated
+> cleanup logic, leading to refcount underflow and potential use-after-free
+> during module unload.
+> 
+> Patch 1 removes an unnecessary call to idxd_free(), which could result in a
+> use-after-free, because the function idxd_conf_device_release already
+> covers everything done in idxd_free. The newly added idxd_free in commit
+> 90022b3 doesn't resolve any memory leaks, but introduces several duplicated
+> cleanup.
+> 
+> Patch 2 refactors the cleanup to avoid redundant put_device() calls
+> introduced in commit a409e919ca3. The existing idxd_unregister_devices()
+> already handles proper device reference release.
+> 
+> Both patches have been verified on hardware platform.
+> 
+> Both patches have been run through `checkpatch.pl`. Patch 2 gets 1 error
+> and 1 warning. But these appear to be limitations in the checkpatch script
+> itself, not reflect issues with the patches.
 
-Ok, I sent a V2 with a proposal implementing this behavior.
-Thank you.
+Reviewed-by: Dave Jiang <dave.jiang@intel.com>
+
+for the series
+
+> 
+> ---
+> Changes in V3:
+> - Removed function idxd_disable_sva which got removed recently (Vinicius)
+> Changes in v2:
+> - Reworded commit messages supplementing the call traces (Vinicius)
+> - Explain why the put_device are unnecessary. (Vinicius)
+> 
+> Yi Sun (2):
+>   dmaengine: idxd: Remove improper idxd_free
+>   dmaengine: idxd: Fix refcount underflow on module unload
+> 
+>  drivers/dma/idxd/init.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+
 
