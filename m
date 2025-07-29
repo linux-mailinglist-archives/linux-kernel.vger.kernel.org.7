@@ -1,74 +1,100 @@
-Return-Path: <linux-kernel+bounces-749506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F7BCB14F35
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:25:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D57B8B14F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96BB554324F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:25:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D23B189D010
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E0E1D8E01;
-	Tue, 29 Jul 2025 14:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675321C5D57;
+	Tue, 29 Jul 2025 14:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Eb+Ot/KP"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="jwPlEigt"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DF6CA4B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F5A19C560
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753799139; cv=none; b=nla99OUfg/QTzSvJ2bV3cZUu3MaZkLIEMKXOxZ4Wn3zpq4pZzg0i246xkSqn0OZ2j286LQ6oJ++OnJvifps7Dh5+6OMUGumUxqD/r6SqRv9P70kYp+zIfIQFIHpr3DtKWAvuPQsZZRniuSt5XPEPVHs71zWVIPhHhbDEFjP3HZg=
+	t=1753799361; cv=none; b=X7aEQiAG2Ym/DOxT97SD3sz1L6S1LZFD6oRyEeS56CpkxrWGxa+ppotEguzl/V+Npt16wyEsHBYpaDnnuUXh8o/VGoAEBuiJ0E0A3J+G1YbZbST7LHzZ8qgcliPMgJt1zgV7s2BuWe+PlrMShIsIvjvavpDtMiUaJDXW1G6EETI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753799139; c=relaxed/simple;
-	bh=nGOllIpb/iXQ5xYyy7wrj7wdhGK+r8rwyMOp0T0TWRI=;
+	s=arc-20240116; t=1753799361; c=relaxed/simple;
+	bh=xOGcPk1h5mkQlFHPfT4qZPTUZq5yx18xGEjyCFHAQpM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ku1Xr+VCRpBrA9Gc1i29VeVozuMyUYIsnr0UZ9NMvmkmDrEzks9P1St5flNUMLzBbGrnOmOb63B2CuQlyZZVZQfniHn1gLHjhpiXvqr2d8DVmryVifk1owZVn+LZN8TfAGI5cx/Wp7woM0bTUaeibw2Zt1kn7CXQdufYYZj9MhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Eb+Ot/KP; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5C4A740E0206;
-	Tue, 29 Jul 2025 14:25:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 2yeJrjBUzY-G; Tue, 29 Jul 2025 14:25:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1753799127; bh=GTv0rgrw4/cVjUnmUx7TH0+Y77P3eaPZFzJeHx/KFuw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Eb+Ot/KPM4W/H6i+sVE/bnCAwhMcLFH8EPGUF1wqS097Gezl91/v8pWztBjVqDicf
-	 9iVDVMi3IJwvL3MzRi7KpRmZ94IINu1IW6iDHAOv4qbs98VrqEkUe/Pp1fvstuDP2u
-	 ZK5j9bPaPJvkDcUvnKodzs15rJSHcWiiek5tJZzaqKPjtabJpyOAGSCkaJx1bD8lad
-	 eX6z1AL82a9pdCeb0sX7buLYJxId4IC4Namuhk0/q3AXbNlRQuHOLkDf58tbDpOScw
-	 QbNCQgKRto6F2INHw/nPmxU6KQ2hEjxDgENiCBmoawUv3dKd0kgx1Ry+kA+Rtui8+q
-	 03eZSbNGNqJ3x+QEP9/gm2gJFFRtUyCbNRSdHIcbdkBTTtkQzGA9HtEH2JOoe2byhM
-	 HtpwQEBnCDxYN0q6Wznxv9X76Fpv+l35VyGiCj++Pt5dkGWRD8mputs4LsYLc0Bj0O
-	 VawkHNcngylbwyWn1RiBCUrhTRC5Yx6cuKUrZr79ulqTIPY1b5eplfC3AvvVtVyCKc
-	 2Ay4EWNyU3sELFkXyeNjA6cQ5DHvJr1J05mkKgP6HsHjoY0UBdXwhzMr22CPKSoWFT
-	 g15o3+apHstiAjij25eELUdRSVi+GiI47kI3wY3oWFUEbGD+KWlR8NoS46UzkJpqjq
-	 fUi90NkCyCQXwQhehT05vSL4=
-Received: from zn.tnic (pd953092e.dip0.t-ipconnect.de [217.83.9.46])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 90DF840E01FD;
-	Tue, 29 Jul 2025 14:25:18 +0000 (UTC)
-Date: Tue, 29 Jul 2025 16:25:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: syzbot <syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>
-Cc: dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-kernel@vger.kernel.org, mingo@redhat.com,
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Subject: Re: [syzbot] upstream build error (23)
-Message-ID: <20250729142512.GBaIjZyNHliBrvMFlo@fat_crate.local>
-References: <6888d004.a00a0220.26d0e1.0004.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CvcyNoCb/pW1Ho3EgoQ/PB6FNxqWmwMm3JbNw5tDcniujmHwdHVxJCxW3tvlBlLPhrP6NHAQVl+nIh/ei5dQuqOc5o9WmFJmaC52q0X4lagAdMuHuHucDV+NTvKEexeFQljXgmsYhbMVgufCwMzkh/zB2sdgFbkeemd1sR+lDOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=jwPlEigt; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7e346ab52e9so713502985a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1753799359; x=1754404159; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Qz67H2QziopzvIbpAdOwNF/pBaaQ95fyoFVZsRKl+KE=;
+        b=jwPlEigt//r2d3gQdsBkbsY+yHq0n3yoJfUccwhFYje9huE5DTUDak7lolZPef31E6
+         dYrLaaNGzFtk1opOKFbUb5rUWJe4F/dJzjy3ltOp3/u8T68di154kyqZMsopWYxQbtHT
+         /g3ablFTd6tCDlQy9bI9+uZodFTy6oWdB9jE28SRQpDHpjEqYez9jpg07OZX4VNPqV1U
+         6T3r17JaW7WJphJuNzj+Kfo4oVm+aHZTo/YY1wVPTLMUoH7JDjm9wj50OT0I9akf9/yW
+         KPwaY7+Z6CKrD2lCMUbtfFbaq/Xib6EyQYLvCrA2Mj8nqIyIIurQboTY5Icz+QmqUjby
+         UruA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753799359; x=1754404159;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qz67H2QziopzvIbpAdOwNF/pBaaQ95fyoFVZsRKl+KE=;
+        b=bW+cFevt4ATrM8wZ8TXyc89UnwBbRA1dUZHfcGk5F8tOWVpUOiTdqGSGTzOB9OtQbr
+         u/0pQN6Tdaw0wB819KdYW1W9LU37wFQepRl5WQyzvIihV7IXezDmYMrmvrFCPOrMnDpl
+         bioiFnMlpcpQfVDklGeaMnca6xq0PhUzEFQ2YUsVpOyywPy9Z0v7vklFFdYZqBUCkiU6
+         Mwc7k9r3FXdFT85gujAAu5mNNQX8XN0kqIxcnapO9DRaGnJ/7HwD08e8O+FqZBl1g58A
+         n5B6a9beosupXWBN5t3vx9FI1/CXm1vmgylxeKWdMdsjrlDj9Db9jNfSNo24iG+JNIM0
+         M/2g==
+X-Forwarded-Encrypted: i=1; AJvYcCXQe0OsLKGd84KWLMgE4Ut4ui1gT9JK4gdUE+T+adDWubWvTiMV/Dp0FcYCD2Pt9q/ikemf2Rv3ozRaKQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzfQEzg1ypXoMZtpvy4ufN8KYrSV3aB/LiBLXZZq1Pk5ZCbC9a
+	8DkLqm/1yoFkiHoku+oh4wfvcH0KZQd3HyTEvGLEFT83S2fKBeM/SftOvQkpK4kVFdg=
+X-Gm-Gg: ASbGncvOoIJlMa1f875GhkgIuk3s7+q5NMAzA45oNtYYf8Z1u/Z9u6n6envvYg7qZ0L
+	HjLIwVF89YdTRQPObyfi+tpVYDNrH4q76qbFHY0v8mQBXxT6GJzhkh5YcAoY37iZFe0kuP2yBlP
+	PPkZTzqTIjewm6de5qLU4XJ/UZodInwrdAtHvsvb1sEyYHPE9mcCH5kp9UFoXkfGCj8YMZbxLzH
+	H+T4EvYaR86FvulTopylciw1JiUlnCEg1qvEvXRFFXgpuYSIETkrIiMICDzGIbChMSoxZPdYIsb
+	Vf6jryLFJT9G0/GPwrG6615wOyNqpqDLVu4ExmHAOufR4MvrHmB0XG6t0hUNf/J4X3CCvKBv7T8
+	SBqqZPcVLjR+FXGnGY71G2YT/NuavcrDhZziD3mUC6Tgb1b8fiaGOvsC5IGviAOlbta4H
+X-Google-Smtp-Source: AGHT+IHYkw6eFpxfaIRVF1srsJ9FJ19UlQqBR6yhpID34uYqJijJ/A3tTeVFt7I+4cQKncFmezcccg==
+X-Received: by 2002:a05:620a:8386:b0:7e6:65ce:2bb5 with SMTP id af79cd13be357-7e665ce2c46mr224992185a.47.1753799358715;
+        Tue, 29 Jul 2025 07:29:18 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e643897b24sm431209085a.75.2025.07.29.07.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 07:29:18 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uglKP-00000000JGf-22cn;
+	Tue, 29 Jul 2025 11:29:17 -0300
+Date: Tue, 29 Jul 2025 11:29:17 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 06/38] iommufd: Add and option to request for bar
+ mapping with IORESOURCE_EXCLUSIVE
+Message-ID: <20250729142917.GF26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-7-aneesh.kumar@kernel.org>
+ <20250728140841.GA26511@ziepe.ca>
+ <yq5a34afbdtl.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,42 +103,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6888d004.a00a0220.26d0e1.0004.GAE@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <yq5a34afbdtl.fsf@kernel.org>
 
-+ Ard.
-
-On Tue, Jul 29, 2025 at 06:43:32AM -0700, syzbot wrote:
-> Hello,
+On Tue, Jul 29, 2025 at 01:58:54PM +0530, Aneesh Kumar K.V wrote:
+> Jason Gunthorpe <jgg@ziepe.ca> writes:
 > 
-> syzbot found the following issue on:
+> > On Mon, Jul 28, 2025 at 07:21:43PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> >> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> >
+> > Why would we need this?
+> >
+> > I can sort of understand why Intel would need it due to their issues
+> > with MCE, but ARM shouldn't care either way, should it?
+> >
+> > But also why is it an iommufd option? That doesn't seem right..
+> >
+> > Jason
 > 
-> HEAD commit:    86aa72182095 Merge tag 'chrome-platform-v6.17' of git://gi..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=171674a2580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3816ffa0a2bab886
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5245cb609175fb6e8122
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com
-> 
-> arch/x86/kernel/setup.c:1251: undefined reference to `efi_mem_type'
-> ld: arch/x86/kernel/setup.c:987: undefined reference to `efi_init'
-> ld: arch/x86/kernel/setup.c:971: undefined reference to `efi_memblock_x86_reserve_range'
-> arch/x86/kernel/cpu/mshyperv.c:496: undefined reference to `isolation_type_tdx'
-> ld: arch/x86/kernel/cpu/mshyperv.c:494: undefined reference to `isolation_type_snp'
-> arch/x86/kernel/kvm.c:600: undefined reference to `efi'
-> ld: arch/x86/kernel/kvm.c:600: undefined reference to `efi'
-> drivers/acpi/osl.c:210: undefined reference to `efi'
-> ld: drivers/acpi/osl.c:210: undefined reference to `efi'
+> This is based on our previous discussion https://lore.kernel.org/all/20250606120919.GH19710@nvidia.com
 
-# CONFIG_EFI is not set
+I suggested a global option, this is a per-device option, and that
+especially seems wrong for iommufd. If it is per-device that is vfio,
+if it is global then vfio can pick it up during the early phases of
+opening the device.
 
-If that's a random config, why do we care?
+> IIUC, we intend to request the resource in exclusive mode for secure
+> guests—regardless of whether the platform is Intel or ARM. Could you
+> help clarify the MCE issue observed on Intel platforms in this context?
 
--- 
-Regards/Gruss,
-    Boris.
+As I understand it Intel MCEs if the non-secure side ever reads from
+secure'd address space. So there is alot of emphasis there to ensure
+there are no CPU mappings.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+Jason
 
