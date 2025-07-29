@@ -1,182 +1,148 @@
-Return-Path: <linux-kernel+bounces-749382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5500B14D9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:26:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F622B14DA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1588618A2EB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8B718A3037
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F074290DB1;
-	Tue, 29 Jul 2025 12:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAACC291C03;
+	Tue, 29 Jul 2025 12:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fGw06QsE"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rZMzeYqw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40400262FF0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 12:26:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04708290BBD;
+	Tue, 29 Jul 2025 12:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753791964; cv=none; b=uoXjj+tMfRm8120eOh1pQHsCX4Hcb/ZxNi1dJ3OPr34/S9LO1eEemKVKtgYUtaW6aN/y/zOKkSsXX3hcFfG4YXzNSez9xKQ+Wrmvdnl/KWDruwc6+G5Kn5fsypz3IvTinyVFNdpHefB+qk3R+USkBuOMbhf52T28DwXvaRfc3rg=
+	t=1753791980; cv=none; b=EB7eqlTIzi1LjbhP3/rXKKYUjvqsVrROLlKeGNKwBdE9V8gU65RBVRRJq0Lor8QsDEIjBizBshYDHcw/m4x/tBISbIXtKvIC/mau8gQaiUDUtMELm7GfQHVYdWBDY519QaJlZr+Zghtz0K5s1tZJY3q0w3rn8wobT+sjMq6K//c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753791964; c=relaxed/simple;
-	bh=Sa0+7pkvbvKnzUBV/+DKIeFT3oZOcJAjMjz/TTYldSI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hxG2HmwvVWeTSN8euHMBpbDKQ2CzuIPsbGmKPavFqZfbir+OQVTCipXRRYRO0bZ1DfN+AOScnki1nlEo4I2x5Xbzo/tLF15W3grC2+3Aux/o3slK9hS2uhM1FLP9umhfp1NDAs+u89peDoHRDVDwuhKDEbs8OZMSoovH3IQIAew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fGw06QsE; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso8844436a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 05:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1753791960; x=1754396760; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ePWiaVAU8uB+7gZPcArmwtlemoHV5AVhlPG7UbOq0OQ=;
-        b=fGw06QsEJiNENHplR5B6J726zioFOh7DVSlDbazeDm4jYyG9UAa0hPUJrjyFiXjH2y
-         YDv7AvVlXyBZcvs8OPnJLffWD6W9bpbphZ6bkjx1GofzSdFPhbHlV9sINTlPeePYz8ua
-         4300ElGFOdpAodUkbRZ+n8MYvTpivUKPOGC888JED8ynx/CkQ1ti4CDRAHkhYa8Jm2/M
-         lGkWIFWrGVc9fCzyqqKvu0RcQNf7xkgmXWPu4YoK8FXYp0nM3yCgHDA8tLtggUxNh8nb
-         3BAp/gFZcECkRMG46F0mq4fhN8nI+sTEI8nm8gs7yPUA/ygnvhofZqIHNmXpufpTpRmg
-         lsow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753791960; x=1754396760;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ePWiaVAU8uB+7gZPcArmwtlemoHV5AVhlPG7UbOq0OQ=;
-        b=qa9QJGIM9dxoegjpx6kgd2FbOH0EGsJZiVN4M5LJvPIOiGLGm4TB+jS0wtLKZKGS54
-         /Dws0B8iDKWDlSt9Z81lcuo0l7yjJtGBvwP0EIW8wtdtTGf6fFF7Bn2rc9Y2M8ikCx5m
-         sTcam+XXBoKHvIVQjfjXwvQeTcF4jMB8fuJgZDhCnfAqH9zqOy/hnkjplELRwxhvbgzi
-         w61zlOyXGnn4wLckbK7rclBfacTWZ1kIDypYecGdE9WnLRM55KS6JiXwP0y2ZYh4luM7
-         j4LiS97SiGQ9S56g8WV0Y9Y74lz37R8t7ynyl9rMq0Tn+12fJoQFJuIovCvWMPfIdgap
-         OMUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6yMgVp+EY1VyDl1M3gH2kOgoEP/HCQ7DHNMEQQSRUDp/zqPkLuR7AbJpE3/P45i0beWM5+3o9cmpzedQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywn5ZrDmUr/UEsqkYLwjJzAn3iBagqBES3aUQDY5/VRrRlAeOO/
-	qf8Qai3AsQedxn0FFqciBuB+rYSty7aYGFQF50Q9RAMv6xf5QcoI4kIDr/BtmrM96sg=
-X-Gm-Gg: ASbGncsXXS3OQqqRrExwPGeq3TqEDqOL3I/Vy/oNRoB8vaU5BGdJFfw/pWMEQxJ0Hxz
-	ODmN1HgCAyzoUbedVDoO/ygLPIiuYKuyQCzkIpyC4BJ7Sf4ooVi5OFeUAHJOgq1lkkD5PbnG5A0
-	Onjqg0Fml03UwWazYtCYFwJsDyKIcaI50HYozRpSWUKzdXH9TxId68kclbJJIoS7iZ6NDSvGrde
-	ikUKoqQiyqJEYe4MJJZGGCjUuMV1VGIFM0Rh7D11PGpiQCETzsHaEOY5CmTDAMa/IwQtMb80QBN
-	U4elpZ68zSBoR2GgO7VIwm/rhvRva+m7KRWX0bsU7daBitPfi1Gd1dfppVzCp6Veggl+jdpoKV2
-	3RGl8rkpOq2cac3QfB3uCTNWxDWehZmz+Yrr2
-X-Google-Smtp-Source: AGHT+IEbL9Glao9a0iC/Zrseyqg2ADGMfqJYmHiqZmrd0fzTrffzSC1ITDlHHAq/xFq0xAY7VlV21w==
-X-Received: by 2002:a05:6402:210e:b0:615:546a:932f with SMTP id 4fb4d7f45d1cf-615546a93e7mr5485770a12.18.1753791960574;
-        Tue, 29 Jul 2025 05:26:00 -0700 (PDT)
-Received: from [10.20.4.146] ([149.62.209.144])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6153a7a3a10sm2724359a12.56.2025.07.29.05.25.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 05:26:00 -0700 (PDT)
-Message-ID: <9b6fd06e-5438-4539-821c-6f3d5fa6b7d1@suse.com>
-Date: Tue, 29 Jul 2025 15:25:58 +0300
+	s=arc-20240116; t=1753791980; c=relaxed/simple;
+	bh=nquTTUMIrwc+nEkVUf/cLkSfGQBgHYB50kSvfwd2NeA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=owxc6ZLVsV6ybqQ2UZJ4SKetWD98VLq/R32YItKcoJvTY3yBVWOKw7ZunkoAR6jNb7Iw1YpX9jljoh/gvVf2tlX1uVNoOFuZ0cMnIsdIwuBQtvw/rWze6aZZKaUinFDBa3RyRvMX3w41Ghzzb7alSMqp7qwBMT1aAQVzfsNYqug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rZMzeYqw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AA31C4CEF4;
+	Tue, 29 Jul 2025 12:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753791979;
+	bh=nquTTUMIrwc+nEkVUf/cLkSfGQBgHYB50kSvfwd2NeA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rZMzeYqwaOItoGjqO2pD+ucnzn3PyfgDywLUjx7mqsjiXyT8Ptb5Mjmk3iYWo8a0a
+	 A9FDgu8TnyEM/PlcWjON1/nm56nbgMMPVpyp/Z6dVPIwjXq/pGp3te/L3LwUTy7buC
+	 TnURpsEg/Cblwro7tDY/a7uiWj77N11X77G/YFel1HaSh7P0ryrI7YRwyAC4yQcOE9
+	 p7zTIPK20EaLCOBY3Re0sYUq+vDGarEChL2NLMZam38WAJN8BJ0xWQ1+hXeqJuZd5C
+	 yHHpAOua18ye6VTQmVXlLm8jLNSI+wPrwdZLLbhjRgNPR4xgUWT33o049vjCb95oH9
+	 HT7H8xFvxF9Og==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Simon Horman <horms@verge.net.au>,
+	Julian Anastasov <ja@ssi.bg>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	netdev@vger.kernel.org,
+	lvs-devel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org
+Subject: [PATCH v2 net] ipvs: Fix estimator kthreads preferred affinity
+Date: Tue, 29 Jul 2025 14:26:11 +0200
+Message-ID: <20250729122611.247368-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Allow individual features to be locked down
-To: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- paul@paul-moore.com, serge@hallyn.com, jmorris@namei.org,
- dan.j.williams@intel.com
-References: <20250728111517.134116-1-nik.borisov@suse.com>
- <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-Autocrypt: addr=nik.borisov@suse.com; keydata=
- xsFNBGcrpvIBEAD5cAR5+qu30GnmPrK9veWX5RVzzbgtkk9C/EESHy9Yz0+HWgCVRoNyRQsZ
- 7DW7vE1KhioDLXjDmeu8/0A8u5nFMqv6d1Gt1lb7XzSAYw7uSWXLPEjFBtz9+fBJJLgbYU7G
- OpTKy6gRr6GaItZze+r04PGWjeyVUuHZuncTO7B2huxcwIk9tFtRX21gVSOOC96HcxSVVA7X
- N/LLM2EOL7kg4/yDWEhAdLQDChswhmdpHkp5g6ytj9TM8bNlq9I41hl/3cBEeAkxtb/eS5YR
- 88LBb/2FkcGnhxkGJPNB+4Siku7K8Mk2Y6elnkOctJcDvk29DajYbQnnW4nhfelZuLNupb1O
- M0912EvzOVI0dIVgR+xtosp66bYTOpX4Xb0fylED9kYGiuEAeoQZaDQ2eICDcHPiaLzh+6cc
- pkVTB0sXkWHUsPamtPum6/PgWLE9vGI5s+FaqBaqBYDKyvtJfLK4BdZng0Uc3ijycPs3bpbQ
- bOnK9LD8TYmYaeTenoNILQ7Ut54CCEXkP446skUMKrEo/HabvkykyWqWiIE/UlAYAx9+Ckho
- TT1d2QsmsAiYYWwjU8igXBecIbC0uRtF/cTfelNGrQwbICUT6kJjcOTpQDaVyIgRSlUMrlNZ
- XPVEQ6Zq3/aENA8ObhFxE5PLJPizJH6SC89BMKF3zg6SKx0qzQARAQABzSZOaWtvbGF5IEJv
- cmlzb3YgPG5pay5ib3Jpc292QHN1c2UuY29tPsLBkQQTAQoAOxYhBDuWB8EJLBUZCPjT3SRn
- XZEnyhfsBQJnK6byAhsDBQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJECRnXZEnyhfs
- XbIQAJxuUnelGdXbSbtovBNm+HF3LtT0XnZ0+DoR0DemUGuA1bZAlaOXGr5mvVbTgaoGUQIJ
- 3Ejx3UBEG7ZSJcfJobB34w1qHEDO0pN9orGIFT9Bic3lqhawD2r85QMcWwjsZH5FhyRx7P2o
- DTuUClLMO95GuHYQngBF2rHHl8QMJPVKsR18w4IWAhALpEApxa3luyV7pAAqKllfCNt7tmed
- uKmclf/Sz6qoP75CvEtRbfAOqYgG1Uk9A62C51iAPe35neMre3WGLsdgyMj4/15jPYi+tOUX
- Tc7AAWgc95LXyPJo8069MOU73htZmgH4OYy+S7f+ArXD7h8lTLT1niff2bCPi6eiAQq6b5CJ
- Ka4/27IiZo8tm1XjLYmoBmaCovqx5y5Xt2koibIWG3ZGD2I+qRwZ0UohKRH6kKVHGcrmCv0J
- YO8yIprxgoYmA7gq21BpTqw3D4+8xujn/6LgndLKmGESM1FuY3ymXgj5983eqaxicKpT9iq8
- /a1j31tms4azR7+6Dt8H4SagfN6VbJ0luPzobrrNFxUgpjR4ZyQQ++G7oSRdwjfIh1wuCF6/
- mDUNcb6/kA0JS9otiC3omfht47yQnvod+MxFk1lTNUu3hePJUwg1vT1te3vO5oln8lkUo9BU
- knlYpQ7QA2rDEKs+YWqUstr4pDtHzwQ6mo0rqP+zzsFNBGcrpvIBEADGYTFkNVttZkt6e7yA
- LNkv3Q39zQCt8qe7qkPdlj3CqygVXfw+h7GlcT9fuc4kd7YxFys4/Wd9icj9ZatGMwffONmi
- LnUotIq2N7+xvc4Xu76wv+QJpiuGEfCDB+VdZOmOzUPlmMkcJc/EDSH4qGogIYRu72uweKEq
- VfBI43PZIGpGJ7TjS3THX5WVI2YNSmuwqxnQF/iVqDtD2N72ObkBwIf9GnrOgxEyJ/SQq2R0
- g7hd6IYk7SOKt1a8ZGCN6hXXKzmM6gHRC8fyWeTqJcK4BKSdX8PzEuYmAJjSfx4w6DoxdK5/
- 9sVrNzaVgDHS0ThH/5kNkZ65KNR7K2nk45LT5Crjbg7w5/kKDY6/XiXDx7v/BOR/a+Ryo+lM
- MffN3XSnAex8cmIhNINl5Z8CAvDLUtItLcbDOv7hdXt6DSyb65CdyY8JwOt6CWno1tdjyDEG
- 5ANwVPYY878IFkOJLRTJuUd5ltybaSWjKIwjYJfIXuoyzE7OL63856MC/Os8PcLfY7vYY2LB
- cvKH1qOcs+an86DWX17+dkcKD/YLrpzwvRMur5+kTgVfXcC0TAl39N4YtaCKM/3ugAaVS1Mw
- MrbyGnGqVMqlCpjnpYREzapSk8XxbO2kYRsZQd8J9ei98OSqgPf8xM7NCULd/xaZLJUydql1
- JdSREId2C15jut21aQARAQABwsF2BBgBCgAgFiEEO5YHwQksFRkI+NPdJGddkSfKF+wFAmcr
- pvICGwwACgkQJGddkSfKF+xuuxAA4F9iQc61wvAOAidktv4Rztn4QKy8TAyGN3M8zYf/A5Zx
- VcGgX4J4MhRUoPQNrzmVlrrtE2KILHxQZx5eQyPgixPXri42oG5ePEXZoLU5GFRYSPjjTYmP
- ypyTPN7uoWLfw4TxJqWCGRLsjnkwvyN3R4161Dty4Uhzqp1IkNhl3ifTDYEvbnmHaNvlvvna
- 7+9jjEBDEFYDMuO/CA8UtoVQXjy5gtOhZZkEsptfwQYc+E9U99yxGofDul7xH41VdXGpIhUj
- 4wjd3IbgaCiHxxj/M9eM99ybu5asvHyMo3EFPkyWxZsBlUN/riFXGspG4sT0cwOUhG2ZnExv
- XXhOGKs/y3VGhjZeCDWZ+0ZQHPCL3HUebLxW49wwLxvXU6sLNfYnTJxdqn58Aq4sBXW5Un0Q
- vfbd9VFV/bKFfvUscYk2UKPi9vgn1hY38IfmsnoS8b0uwDq75IBvup9pYFyNyPf5SutxhFfP
- JDjakbdjBoYDWVoaPbp5KAQ2VQRiR54lir/inyqGX+dwzPX/F4OHfB5RTiAFLJliCxniKFsM
- d8eHe88jWjm6/ilx4IlLl9/MdVUGjLpBi18X7ejLz3U2quYD8DBAGzCjy49wJ4Di4qQjblb2
- pTXoEyM2L6E604NbDu0VDvHg7EXh1WwmijEu28c/hEB6DwtzslLpBSsJV0s1/jE=
-In-Reply-To: <kl4rvgnupxnz4zrwlofrawdfy23tj2ylp5s3wovnsjxkr6tbrt@x5s3avqo2e7t>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+The estimator kthreads' affinity are defined by sysctl overwritten
+preferences and applied through a plain call to the scheduler's affinity
+API.
 
+However since the introduction of managed kthreads preferred affinity,
+such a practice shortcuts the kthreads core code which eventually
+overwrites the target to the default unbound affinity.
 
-On 29.07.25 г. 15:16 ч., Nicolas Bouchinet wrote:
-> Hi Nikolay,
-> 
-> Thanks for you patch.
-> 
-> Quoting Kees [1], Lockdown is "about creating a bright line between
-> uid-0 and ring-0".
-> 
-> Having a bitmap enabled Lockdown would mean that Lockdown reasons could
-> be activated independently. I fear this would lead to a false sense of
-> security, locking one reason alone often permits Lockdown restrictions
-> bypass. i.e enforcing kernel module signature verification but not
-> blocking accesses to `/dev/{k,}mem` or authorizing gkdb which can be
-> used to disable the module signature enforcement.
-> 
-> If one wants to restrict accesses to `/dev/mem`,
-> `security_locked_down(LOCKDOWN_DEV_MEM)` should be sufficient.
-> 
-> My understanding of your problem is that this locks too much for your
-> usecase and you want to restrict reasons of Lockdown independently in
-> case it has not been enabled in "integrity" mode by default ?
-> 
-> Can you elaborate more on the usecases for COCO ?
+Fix this with using the appropriate kthread's API.
 
-Initially this patchset was supposed to allow us selectively disable 
-/dev/iomem access in a CoCo context [0]. As evident from Dan's initial 
-response that point pretty much became moot as the issue was fixed in a 
-different way. However, later [1] he came back and said that actually 
-this patch could be useful in a similar context. So This v2 is 
-essentially following up on that.
+Fixes: d1a89197589c ("kthread: Default affine kthread to its preferred NUMA node")
+Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+---
+ include/net/ip_vs.h            | 13 +++++++++++++
+ kernel/kthread.c               |  1 +
+ net/netfilter/ipvs/ip_vs_est.c |  3 ++-
+ 3 files changed, 16 insertions(+), 1 deletion(-)
 
+diff --git a/include/net/ip_vs.h b/include/net/ip_vs.h
+index ff406ef4fd4a..29a36709e7f3 100644
+--- a/include/net/ip_vs.h
++++ b/include/net/ip_vs.h
+@@ -1163,6 +1163,14 @@ static inline const struct cpumask *sysctl_est_cpulist(struct netns_ipvs *ipvs)
+ 		return housekeeping_cpumask(HK_TYPE_KTHREAD);
+ }
+ 
++static inline const struct cpumask *sysctl_est_preferred_cpulist(struct netns_ipvs *ipvs)
++{
++	if (ipvs->est_cpulist_valid)
++		return ipvs->sysctl_est_cpulist;
++	else
++		return NULL;
++}
++
+ static inline int sysctl_est_nice(struct netns_ipvs *ipvs)
+ {
+ 	return ipvs->sysctl_est_nice;
+@@ -1270,6 +1278,11 @@ static inline const struct cpumask *sysctl_est_cpulist(struct netns_ipvs *ipvs)
+ 	return housekeeping_cpumask(HK_TYPE_KTHREAD);
+ }
+ 
++static inline const struct cpumask *sysctl_est_preferred_cpulist(struct netns_ipvs *ipvs)
++{
++	return NULL;
++}
++
+ static inline int sysctl_est_nice(struct netns_ipvs *ipvs)
+ {
+ 	return IPVS_EST_NICE;
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index 85e29b250107..adf06196b844 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -899,6 +899,7 @@ int kthread_affine_preferred(struct task_struct *p, const struct cpumask *mask)
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL_GPL(kthread_affine_preferred);
+ 
+ static int kthreads_update_affinity(bool force)
+ {
+diff --git a/net/netfilter/ipvs/ip_vs_est.c b/net/netfilter/ipvs/ip_vs_est.c
+index f821ad2e19b3..15049b826732 100644
+--- a/net/netfilter/ipvs/ip_vs_est.c
++++ b/net/netfilter/ipvs/ip_vs_est.c
+@@ -265,7 +265,8 @@ int ip_vs_est_kthread_start(struct netns_ipvs *ipvs,
+ 	}
+ 
+ 	set_user_nice(kd->task, sysctl_est_nice(ipvs));
+-	set_cpus_allowed_ptr(kd->task, sysctl_est_cpulist(ipvs));
++	if (sysctl_est_preferred_cpulist(ipvs))
++		kthread_affine_preferred(kd->task, sysctl_est_preferred_cpulist(ipvs));
+ 
+ 	pr_info("starting estimator thread %d...\n", kd->id);
+ 	wake_up_process(kd->task);
+-- 
+2.48.1
 
-[0] 
-https://lore.kernel.org/all/67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch/
-
-[1] 
-https://lore.kernel.org/all/68226ad551afd_29032945b@dwillia2-xfh.jf.intel.com.notmuch/
-
-<snip>
 
