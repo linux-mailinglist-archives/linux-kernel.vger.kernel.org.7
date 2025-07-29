@@ -1,168 +1,221 @@
-Return-Path: <linux-kernel+bounces-749201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1067B14B63
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:37:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6159FB14B65
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04B76546188
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0993546375
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 941672877EF;
-	Tue, 29 Jul 2025 09:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012C2288511;
+	Tue, 29 Jul 2025 09:36:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qn4eAzuD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UZGjITMI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m+TqFMyY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UZGjITMI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m+TqFMyY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17362877D7
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907FF2882DF
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753781791; cv=none; b=CTNCdIGZIlbFERZUAajgH971oosyeL6qyc3efkP0FOnjJAO8SQxB2a4PGyVMLTQ8CrIjG+u7OszSg9Te6R/YgOT7XERmhw429bjZjtobskvmiR7N6l5okkAmrzFHcCbANbyu8TK4oyiXR05XaB/6yoUQtJnOnHz0wnNVpryfWyk=
+	t=1753781804; cv=none; b=jJZcZdV0SOluRjMRvOWyenuXBDTZ/UB6UFSTI89bQZQ5OZ2oXqux3Neiwi9aBEtwnpdzG0QkusygP1qGlGKCyRxb1eNz69FC9sup2JCHO3vAtOC/Mak3/DMfGHWSU8apoT+/lZcHT/w7Jz85FYYN8P4KQh+Vmo8g28wLqcAKp4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753781791; c=relaxed/simple;
-	bh=SumI6ifV9bN2IONcOom9DaFBJ6Czq1E74gswRu0Vkzo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=TYBBJCi6mS7y72DwT99XR1qPPpbx29ZN+/VwGmC7SFD1bNhS9q5WGHLUZX7F2t+Th5pkQS6HNL5jCJyh8+OuxWTCryvPtRqrtDRlGT1jhMzxfzjwoqiY0m+d/rD9NVCe94l66iEntbtW8WJv8BwAqD1dsj+J4Kt4hIgBbdXR9HQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qn4eAzuD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E562C4CEF5;
-	Tue, 29 Jul 2025 09:36:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753781790;
-	bh=SumI6ifV9bN2IONcOom9DaFBJ6Czq1E74gswRu0Vkzo=;
-	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
-	b=qn4eAzuD4R5VU5yT3lxneDPxt8QXKfSOPIHpxkfif9iB7NTVrHktXmGpHWhSOgcC5
-	 kTIJLNuGecgysA6kDxiE80qOWDJ6xRE4YXjWD0kdk7zdudAq6VPpM3PiBnHuN0VOY1
-	 EMpFjq+OFkv9wmGHaEN5wbJ6jYGs/B5EAIpCLJp83Kqvt4sIvUG6y+s2r8BwtFmTzJ
-	 QO3vsPgo8PXz+/Ju5qyN9H8taghBK9vCKhTOedWktEAeWHtwxPzHg4hzySxZ7opRNe
-	 c52uTZffIhIpxUFPCLDuD12iYGEijO49/Zu8zvL0qxWSZzje7iWyPlNWVBWSKeVWQM
-	 mvS1a4nCW1Mug==
+	s=arc-20240116; t=1753781804; c=relaxed/simple;
+	bh=DuAbRRv9kc3Deu0AUF7znCphoC717RIQ8RRgw2z/PlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FPVMCmSN/3HSnd1sW5KSL7pZm9D4zm1nEoJ9eeqb2AaV3uIA0mInWeLIx0+eh1f/2dt6WlPRhJ6XVDdt2F2K45K2pK25Lo/z4TF8Uw6P86A3u5X0Z5mvm9R1vRKEGNHNekCRreg9BRvTfC2dn0uO+RQsbEi0HpAlBRTv4gctmzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UZGjITMI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m+TqFMyY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UZGjITMI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m+TqFMyY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BCD681F80D;
+	Tue, 29 Jul 2025 09:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753781800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEUEQVt1tsWkPcOhFfI8Q7ebr0VCJyXIT5oiKANCDJs=;
+	b=UZGjITMISS6w9wHqdddQ83ZRmaMhLHDeryPT3QG41bbrUacYYn+wKc6Bo1TC0/B0iXXV2S
+	AIWj5iJVh19DSIGaKnKhIxNp0dFBHD8MP76Nv1OK5yhFGATCXCXj9QQ9AsRfnjNp7C9jtG
+	2fx/+5jUn5ZhkY1ViC4ZSdS8JJr5PyU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753781800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEUEQVt1tsWkPcOhFfI8Q7ebr0VCJyXIT5oiKANCDJs=;
+	b=m+TqFMyYehf1xQNLh1BE98ep9xbvDjCX5VHbr3uScqC/5YDitkDW2CxGxpkn/5V7R0gRL5
+	ZK6EqWjrFyvbbgBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753781800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEUEQVt1tsWkPcOhFfI8Q7ebr0VCJyXIT5oiKANCDJs=;
+	b=UZGjITMISS6w9wHqdddQ83ZRmaMhLHDeryPT3QG41bbrUacYYn+wKc6Bo1TC0/B0iXXV2S
+	AIWj5iJVh19DSIGaKnKhIxNp0dFBHD8MP76Nv1OK5yhFGATCXCXj9QQ9AsRfnjNp7C9jtG
+	2fx/+5jUn5ZhkY1ViC4ZSdS8JJr5PyU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753781800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEUEQVt1tsWkPcOhFfI8Q7ebr0VCJyXIT5oiKANCDJs=;
+	b=m+TqFMyYehf1xQNLh1BE98ep9xbvDjCX5VHbr3uScqC/5YDitkDW2CxGxpkn/5V7R0gRL5
+	ZK6EqWjrFyvbbgBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE24813876;
+	Tue, 29 Jul 2025 09:36:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nPd/KiiWiGiNUgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 29 Jul 2025 09:36:40 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 32571A09DE; Tue, 29 Jul 2025 11:36:40 +0200 (CEST)
+Date: Tue, 29 Jul 2025 11:36:40 +0200
+From: Jan Kara <jack@suse.cz>
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: jack@suse.cz, axboe@kernel.dk, akpm@linux-foundation.org, 
+	yang.yang@vivo.com, dlemoal@kernel.org, ming.lei@redhat.com, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, yukuai3@huawei.com, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+Subject: Re: [PATCH v2 2/2] lib/sbitmap: make sbitmap_get_shallow() static
+Message-ID: <44uujjsiacvtswckacusnt3blcbmfvyrzzuu77lejmua5nulrx@lmovehtaw6hb>
+References: <20250729031906.3615228-1-yukuai1@huaweicloud.com>
+ <20250729031906.3615228-3-yukuai1@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Jul 2025 11:36:27 +0200
-Message-Id: <DBOFRAMQXK27.2EFPC1T807C2F@kernel.org>
-Subject: Re: [PATCH] auxiliary: Automatically generate id
-Cc: "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Leon Romanovsky"
- <leon@kernel.org>, "Ira Weiny" <ira.weiny@intel.com>,
- <linux-kernel@vger.kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- "Dave Ertman" <david.m.ertman@intel.com>
-To: "Sean Anderson" <sean.anderson@linux.dev>
-From: "Danilo Krummrich" <dakr@kernel.org>
-References: <20250728211022.9165-1-sean.anderson@linux.dev>
-In-Reply-To: <20250728211022.9165-1-sean.anderson@linux.dev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729031906.3615228-3-yukuai1@huaweicloud.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-On Mon Jul 28, 2025 at 11:10 PM CEST, Sean Anderson wrote:
-> As it turns out, ids are not allowed to have semantic meaning. Their
-> only purpose is to prevent sysfs collisions. To simplify things, just
-> generate a unique id for each auxiliary device. Remove all references to
-> filling in the id member of the device.
->
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+On Tue 29-07-25 11:19:06, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Because it is only used in sbitmap.c
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+
+Indeed. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->
->  drivers/base/auxiliary.c      | 32 +++++++++++++++++++++++---------
->  include/linux/auxiliary_bus.h | 26 ++++++++------------------
->  2 files changed, 31 insertions(+), 27 deletions(-)
->
-> diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
-> index dba7c8e13a53..f66067df03ad 100644
-> --- a/drivers/base/auxiliary.c
-> +++ b/drivers/base/auxiliary.c
-> @@ -264,6 +264,8 @@ static const struct bus_type auxiliary_bus_type =3D {
->  	.pm =3D &auxiliary_dev_pm_ops,
->  };
-> =20
-> +static DEFINE_IDA(auxiliary_id);
-
-I think this is the correct thing to do, even though the per device IDA dri=
-vers
-typically went for so far produces IDs that are easier to handle when debug=
-ging
-things.
-
-> +
+>  include/linux/sbitmap.h | 17 -----------------
+>  lib/sbitmap.c           | 18 ++++++++++++++++--
+>  2 files changed, 16 insertions(+), 19 deletions(-)
+> 
+> diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
+> index 4adf4b364fcd..ffb9907c7070 100644
+> --- a/include/linux/sbitmap.h
+> +++ b/include/linux/sbitmap.h
+> @@ -209,23 +209,6 @@ void sbitmap_resize(struct sbitmap *sb, unsigned int depth);
+>   */
+>  int sbitmap_get(struct sbitmap *sb);
+>  
+> -/**
+> - * sbitmap_get_shallow() - Try to allocate a free bit from a &struct sbitmap,
+> - * limiting the depth used from each word.
+> - * @sb: Bitmap to allocate from.
+> - * @shallow_depth: The maximum number of bits to allocate from the bitmap.
+> - *
+> - * This rather specific operation allows for having multiple users with
+> - * different allocation limits. E.g., there can be a high-priority class that
+> - * uses sbitmap_get() and a low-priority class that uses sbitmap_get_shallow()
+> - * with a @shallow_depth of (sb->depth >> 1). Then, the low-priority
+> - * class can only allocate half of the total bits in the bitmap, preventing it
+> - * from starving out the high-priority class.
+> - *
+> - * Return: Non-negative allocated bit number if successful, -1 otherwise.
+> - */
+> -int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth);
+> -
 >  /**
->   * auxiliary_device_init - check auxiliary_device and initialize
->   * @auxdev: auxiliary device struct
-> @@ -331,20 +333,37 @@ int __auxiliary_device_add(struct auxiliary_device =
-*auxdev, const char *modname)
->  		return -EINVAL;
->  	}
-> =20
-> +	ret =3D ida_alloc(&auxiliary_id, GFP_KERNEL);
-> +	if (ret < 0) {
-> +		dev_err(dev, "auxiliary device id_alloc fauiled: %d\n", ret);
-> +		return ret;
-> +	}
-> +	auxdev->id =3D ret;
-
-This overwrites the ID number set by various drivers that (still) use the
-auxiliary_device_init() and auxiliary_device_add() pair.
-
-While I agree with the general intent, I think it's a very bad idea to just
-perform this change silently leaving drivers with their IDA instances not
-knowing that the set ID numbers do not have an effect anymore.
-
-I think this should be multiple steps:
-
-  (1) Remove the id parameter and force an internal ID only for
-      auxiliary_device_create().
-
-  (2) Convert applicable drivers (and the Rust abstraction) to use
-      auxiliary_device_create() rather than auxiliary_device_init() and
-      auxiliary_device_add().
-
-  (3) Treewide change to force an internal ID for all auxiliary devices
-      considering this change in all affected drivers.
-
-> +
->  	ret =3D dev_set_name(dev, "%s.%s.%d", modname, auxdev->name, auxdev->id=
-);
->  	if (ret) {
->  		dev_err(dev, "auxiliary device dev_set_name failed: %d\n", ret);
-> +		ida_free(&auxiliary_id, auxdev->id);
->  		return ret;
->  	}
-> =20
->  	ret =3D device_add(dev);
-> -	if (ret)
-> +	if (ret) {
->  		dev_err(dev, "adding auxiliary device failed!: %d\n", ret);
-> +		ida_free(&auxiliary_id, auxdev->id);
-> +	}
-> =20
->  	return ret;
+>   * sbitmap_any_bit_set() - Check for a set bit in a &struct sbitmap.
+>   * @sb: Bitmap to check.
+> diff --git a/lib/sbitmap.c b/lib/sbitmap.c
+> index f2e90ac6b56e..5e3c35086253 100644
+> --- a/lib/sbitmap.c
+> +++ b/lib/sbitmap.c
+> @@ -306,7 +306,22 @@ static int __sbitmap_get_shallow(struct sbitmap *sb,
+>  	return sbitmap_find_bit(sb, shallow_depth, index, alloc_hint, true);
 >  }
->  EXPORT_SYMBOL_GPL(__auxiliary_device_add);
-> =20
-> +void auxiliary_device_delete(struct auxiliary_device *auxdev)
-> +{
-> +	ida_free(&auxiliary_id, auxdev->id);
-
-Hm...I wonder if we should call this from the device's release callback ins=
-tead.
-
-The above ensures that we never have duplicate IDs in sysfs, but we can sti=
-ll
-end up with two auxiliary devices that have the same ID.
-
-If we want the ID to be *always* unique, we need to introduce our own auxil=
-iary
-device release callback, such that we have a hook for the
-auxiliary_device_init() and auxiliary_device_add() pair. Since so far drive=
-rs
-are controlling the underlying device's release callback.
-
-> +	device_del(&auxdev->dev);
-> +}
-> +EXPORT_SYMBOL_GPL(auxiliary_device_delete);
+>  
+> -int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth)
+> +/**
+> + * sbitmap_get_shallow() - Try to allocate a free bit from a &struct sbitmap,
+> + * limiting the depth used from each word.
+> + * @sb: Bitmap to allocate from.
+> + * @shallow_depth: The maximum number of bits to allocate from the bitmap.
+> + *
+> + * This rather specific operation allows for having multiple users with
+> + * different allocation limits. E.g., there can be a high-priority class that
+> + * uses sbitmap_get() and a low-priority class that uses sbitmap_get_shallow()
+> + * with a @shallow_depth of (sb->depth >> 1). Then, the low-priority
+> + * class can only allocate half of the total bits in the bitmap, preventing it
+> + * from starving out the high-priority class.
+> + *
+> + * Return: Non-negative allocated bit number if successful, -1 otherwise.
+> + */
+> +static int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth)
+>  {
+>  	int nr;
+>  	unsigned int hint, depth;
+> @@ -321,7 +336,6 @@ int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth)
+>  
+>  	return nr;
+>  }
+> -EXPORT_SYMBOL_GPL(sbitmap_get_shallow);
+>  
+>  bool sbitmap_any_bit_set(const struct sbitmap *sb)
+>  {
+> -- 
+> 2.39.2
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
