@@ -1,103 +1,88 @@
-Return-Path: <linux-kernel+bounces-748898-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A386B1475D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:00:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C31B14767
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:04:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D78717DBF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:00:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A78E27AAE06
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:02:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449A3224AF2;
-	Tue, 29 Jul 2025 05:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7115D233158;
+	Tue, 29 Jul 2025 05:04:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ao3vXmdY"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uZIUutkv"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6F51581EE;
-	Tue, 29 Jul 2025 05:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81F01F181F;
+	Tue, 29 Jul 2025 05:04:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753765249; cv=none; b=S86yO+8eUuZZ8p9YO+trIp1fP7YHC7hmLcWBrnWpSff7cE6n/rvq9aApnC3P9hCHjG6L3YrYipaPvvMwZFBVy7AqG+tVTk0hANRZvIFdHpoDdZ8IJajKO3oAtvPURp50IOOuJbGYGEm2rj+kCWaSMl9LiDf1iq3Oceq/Wi6bZf0=
+	t=1753765458; cv=none; b=Om9A1JBfb3NjpYR2/vxxTz7+fKYleE/9r/ljPA3cv61V8aM/cq5X6jQPjEvAYXlxjlkKMjBT8OYM52FwPNq4UpUQY2W94+Uom3XJ20LEuv8qGW+nRkzlMbSyPgFr0301jDnoyWbkeR7GBqCoX4Q2d16vHjkq0QCDeTjgSePaxQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753765249; c=relaxed/simple;
-	bh=TTpfk4KsF3m9PG/TlGd3walgX8f8MA59W5qQ9NM9FBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DIUqouwKBTYwmX/h6OhPhEGjrSxpw6Ib5evg1Obmg2vQuV/upOcWwAPSn8ieY+gtN5KMbfjxUhols7Mw9Fk0LaQQ3S7SwgZmzg1kLwn6Q8HWHJ9RaYwY96tQ2qB6X9wA1MLijMosdQUUuyD9HAGFJfFvnY8DAC8S1L1lBGakayo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ao3vXmdY; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753765035;
-	bh=wSCXxiSq/vIcRqnR23+raiaYERqVjtsS2EZrtY0sDsc=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ao3vXmdYNfIUJixve+8j2HmGlWXH0AfRHm+wkvtLUH0mzl4XWli/BJHLX2sX+H6Ug
-	 j1eY7An2sjKgkIudxrs8Zmz7wH+DNffP1Eez8ES8p+CXM0CXhY/DJy50XCVmc7TCxD
-	 6FgCyY2365ez8QWIQ6SaRHgPP4u7rHotjAnJCiagpMqwwNaGd9d37JflT7PDkVpqc2
-	 7WDVwn+z6k8bs60GehJrXbs0NB6F3g0YWNh0xE4GHVZqg8MTG7X/pqIxN9x5+U8EnA
-	 ww8UGsbPZWNC/EDx24gJxNKPAYEIbvJOZtBhS3u0gxGJbdYUcCX8geydQNkyx4Y7m5
-	 2UE57Fz9ftH0w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brjkg3mt0z4wbd;
-	Tue, 29 Jul 2025 14:57:15 +1000 (AEST)
-Date: Tue, 29 Jul 2025 15:00:42 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Mike Rapoport (Microsoft)" <rppt@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the mm-nonmm-unstable tree
-Message-ID: <20250729150042.77832045@canb.auug.org.au>
+	s=arc-20240116; t=1753765458; c=relaxed/simple;
+	bh=ROR30oxXQP8SyjpFaU2BEVXdL1p0y4nDMKbh5C+9hvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jzmK4AQXysMT1BdDFoKr4B/hYLwPrDIWcucJQ4pEw7gioMsd1a2fl38y+8WaDWr1vAG2xdAxMU/0/O6dDQROMFvtmFYAAiLm0pNhOfq+BkQ+zP6MZOlWuKjTgs/CTTycQGW6+acQkky5Zy0QJHleJVH6hGe2xWrwZQcejyDC3Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uZIUutkv; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ohsgeF+Zcb1Y+PgOJKt/GHASL2ZENfidzd2SCnAOx+A=; b=uZIUutkvyYzIBEwPUl1rFVEHVS
+	VJ85jNCA8z0jYEDsEEBfM4nS74aDNHx6tIA1QUHJauepB3qFornGnLsXYLSOMTQLhC+BfCCaRiigD
+	86r0ldrqRuL/0MniBNTjml1U5OCMseTn0n7CmcVPkhwib7/PhRMoyxkgxnFJBPg54GjgNoS8eAfMN
+	mjMGTHVdR8P3QflevIDbqMiaLkFaJhCdzPpIkzM/TnfHdz7MvL2tnlOUotyZ+4lDLqyyyt18SOwQS
+	J1Dzl2Vy417Lg8bfrQ8hAUgkxAGH9SrkieifICC+eJOiCCTUEcfLEZJrCMkS1QwiwhKm8iIm0cGrK
+	t8Y7SSlw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ugcVZ-0000000H3U3-2yo3;
+	Tue, 29 Jul 2025 05:04:13 +0000
+Date: Tue, 29 Jul 2025 06:04:13 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	sj1557.seo@samsung.com,
+	syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH] fat: Prevent the race of read/write the FAT16 and FAT32
+ entry
+Message-ID: <20250729050413.GF222315@ZenIV>
+References: <20250728163526.GD222315@ZenIV>
+ <tencent_3066496863AAE455D76CD76A06C6336B6305@qq.com>
+ <20250729045323.GE222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/m4M2kWq1RvIn2Wymz=oPA9K";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729045323.GE222315@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
---Sig_/m4M2kWq1RvIn2Wymz=oPA9K
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Tue, Jul 29, 2025 at 05:53:23AM +0100, Al Viro wrote:
 
-Hi all,
+> FAT12 problem is that FAT entries being accessed there are 12-bit, packed in
+> pairs into an array of 3-byte values.
 
-After merging the mm-nonmm-unstable tree, today's linux-next build
-(x86_64 allmodconfig) produced this warning:
+PS: they most definitely can cross the cacheline boundaries - cacheline size
+is not going to be a multiple of 3 on anything realistic.  Hell, they can
+cross *block* boundaries (which is why for FAT12 that code is using two
+separate pointers - most of the time they point to adjacent bytes, but
+if one byte is in one block and the next one is in another...; that's
+what that if in fat12_ent_set_ptr() is doing)...
 
-WARNING: modpost: vmlinux: section mismatch in reference: kho_test_restore+=
-0x16c (section: .text.unlikely) -> kho_test_restore_data.isra.0 (section: .=
-init.text)
+We could map the entire array contiguously (and it might simplify some of
+the logics there), but it's not going to avoid the problem with a single
+entry occupying a byte in one cacheline and half of a byte in another.
 
-Introduced by commit
-
-  c2d288f7ab13 ("kho: add test for kexec handover")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/m4M2kWq1RvIn2Wymz=oPA9K
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIVXoACgkQAVBC80lX
-0GyS+QgApmoBM+z5h+OwB/PKI0BOrtfzWW9YpJyMWAqhpr6EYXL0OcHSqIqwwk6L
-zZ5ywQbWo5XSsY3KuNxgnLvrb3aGM1pVHzsVoQJu29Evt4rLgrMjVVV0ATIs/1QN
-pxu42oWMwIJQZ7HoIxTgh07OecKhWwqiJ1Dmhv3gP2QccESVsTLSJ+lAvCGGd30S
-YZ+SzdslqtL9UCf64e1iTpCCtWAlO8hVx3+l81JS6/8wegJLpIROpbiMS+9/El33
-/Kg4TrziUxoUUHzdpIxPLPHmGPkPRpKfM0lW4OFtQdnF4o14kB7UOkyTW8H9GBeM
-fQ1bcLz9ge+uNgGfWNwHz31LuMHEbQ==
-=LIrx
------END PGP SIGNATURE-----
-
---Sig_/m4M2kWq1RvIn2Wymz=oPA9K--
+So nothing like cmpxchg would suffice - we need a spinlock for FAT12 case.
 
