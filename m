@@ -1,78 +1,119 @@
-Return-Path: <linux-kernel+bounces-749946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61772B1554D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A87B15554
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A7B18A3E51
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:33:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A880918A5B48
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E28A280330;
-	Tue, 29 Jul 2025 22:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EG8CkcAZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0843285404;
+	Tue, 29 Jul 2025 22:36:10 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B17D125B2;
-	Tue, 29 Jul 2025 22:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3529D19066D;
+	Tue, 29 Jul 2025 22:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753828382; cv=none; b=XTUYr507ok5DKoPWfwQjCktmNHXsRAXA9cItSkyIhjnqW8OqR5s5X/fPMQzBVpCs64zS8wLuApXR+Ey6y/YDS6jwQUzH+if/YqeS0A7Y5AHK3J1ezbP7MoCG8i66/1cESalga8Pu8q9jPpLQsC19LKnRTzZEyOYnXo0ue6D9Dx0=
+	t=1753828570; cv=none; b=rQm81iq8kk1/F7TNCZj4p33afJ8MhBMk1w0ZwJKBDGoQol57rO8HCkWFvMA3s+LPpv4iICxfSaDdMGRi/vCFVtNcf1WHVcIPks0KvTwD4168wZIVyBCMlT3vPf6N1cRyyhwIutBPOYW1+AaF0XSHDpbbJvryacsH8GmS+T3XXOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753828382; c=relaxed/simple;
-	bh=WaeVTukSS1L5gqdvUBuqMfwo95AwKoyLXHK6FYRKhEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aAAu0MKUJ1luGsqicHydEjh3r0MVfIxYQitXmItzDHYOQ+w0pB2qz5I75JZR3X6hPR+zBOuINNXs3u81WdFU7nUM7Im9/EcNiyNlvccojIl0SyMOcbedxRb+7cygP3Jc9QQlP9xLEoSndFaIzOsjslktkb0HZGfx2aL1xImTSR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EG8CkcAZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F63CC4CEEF;
-	Tue, 29 Jul 2025 22:33:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753828382;
-	bh=WaeVTukSS1L5gqdvUBuqMfwo95AwKoyLXHK6FYRKhEE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EG8CkcAZflQ5UKTilOC3qgbe/N63nlo3M389nB5QMS/j7q4BMHPnJQNK6+7IaeopX
-	 oGFhvfp61MkSoJFMASRgeSPU8tPkZZVWJiaY3hkWqcHa7HIMLAY3AECuGWZKqMNAAa
-	 /euTcHEIQD52ExFBCRjYXW2DKzhr0EI1QApCFuarJ67jR4Qtyx/rTmTeXbVZDx0dPY
-	 g98HOkM4FTMfRxnwHDaNDc0IoquI0H/u/SGvyKWljortgOIXUokRRHJgn/+Ydw2DqK
-	 VEAQNB9TIo0R0yXFn9AoCs+tws9gfYyQvS01UX1wSF9/dRb/jIAvEvM1YXILgDNYoK
-	 SoleSr5s11OcA==
-Date: Wed, 30 Jul 2025 00:32:57 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	Neal Gompa <neal@gompa.dev>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sven Peter <sven@kernel.org>, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/9] dt-bindings: i2c: apple,i2c: Document Apple
- A7-A11, T2 compatibles
-Message-ID: <4dbhhssnqe4wh5h2n5k5y5bweb3hhdv2tn6ejmw35gvvdo76zv@lgmwb74hb5wo>
-References: <20250610-i2c-no-t2-v2-0-a5a71080fba9@gmail.com>
- <20250610-i2c-no-t2-v2-1-a5a71080fba9@gmail.com>
+	s=arc-20240116; t=1753828570; c=relaxed/simple;
+	bh=g8GPfvhrR7jlhmr1UZtFief6T+T27wiLMRn9jVtYyR8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=axcJwzO0uEEkH3BXXkMl75rQgpS30qbhfeUvJChTAJ1DUPRUtAr+3jVCQvjLM8vJEOhrN58Nqb8lsW71HKaLjvx9v7itOfzbr5noDq31MSXg2XcsKnLx1O6wIPB2wLGyN9qecRyoo+VuJxZ6JvoSFSEyU0/91fXhduSTqWWLUgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf19.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id DDF7580144;
+	Tue, 29 Jul 2025 22:35:59 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf19.hostedemail.com (Postfix) with ESMTPA id 0B5B020026;
+	Tue, 29 Jul 2025 22:35:33 +0000 (UTC)
+Date: Tue, 29 Jul 2025 18:35:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Pasha Tatashin
+ <pasha.tatashin@soleen.com>, pratyush@kernel.org, jasonmiu@google.com,
+ graf@amazon.com, changyuanl@google.com, rppt@kernel.org,
+ dmatlack@google.com, rientjes@google.com, corbet@lwn.net,
+ rdunlap@infradead.org, ilpo.jarvinen@linux.intel.com,
+ kanie@linux.alibaba.com, ojeda@kernel.org, aliceryhl@google.com,
+ masahiroy@kernel.org, akpm@linux-foundation.org, tj@kernel.org,
+ yoann.congal@smile.fr, mmaurer@google.com, roman.gushchin@linux.dev,
+ chenridong@huawei.com, axboe@kernel.dk, mark.rutland@arm.com,
+ jannh@google.com, vincent.guittot@linaro.org, hannes@cmpxchg.org,
+ dan.j.williams@intel.com, david@redhat.com, joel.granados@kernel.org,
+ anna.schumaker@oracle.com, song@kernel.org, zhangguopeng@kylinos.cn,
+ linux@weissschuh.net, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-mm@kvack.org, gregkh@linuxfoundation.org,
+ mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, rafael@kernel.org, dakr@kernel.org,
+ bartosz.golaszewski@linaro.org, cw00.choi@samsung.com,
+ myungjoo.ham@samsung.com, yesanishhere@gmail.com,
+ Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com,
+ aleksander.lobakin@intel.com, ira.weiny@intel.com,
+ andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de,
+ bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com,
+ stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net,
+ brauner@kernel.org, linux-api@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, saeedm@nvidia.com, ajayachandra@nvidia.com,
+ parav@nvidia.com, leonro@nvidia.com, witu@nvidia.com
+Subject: Re: [PATCH v2 31/32] libluo: introduce luoctl
+Message-ID: <20250729183548.49d6c2dc@gandalf.local.home>
+In-Reply-To: <20250729222157.GT36037@nvidia.com>
+References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
+	<20250723144649.1696299-32-pasha.tatashin@soleen.com>
+	<20250729161450.GM36037@nvidia.com>
+	<877bzqkc38.ffs@tglx>
+	<20250729222157.GT36037@nvidia.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250610-i2c-no-t2-v2-1-a5a71080fba9@gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: mbmeeobytwf41p4yzc1dpzpwpxe8yucf
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 0B5B020026
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+oxtVU63xhP93/SX7bTvd4Dc8QYczFFgk=
+X-HE-Tag: 1753828533-748000
+X-HE-Meta: U2FsdGVkX1+SVp31L1zEXDG37UVtXoqm70naJW/igIWLrqvmCMEotY5CNRw8dlWDmbUGblNWLe3J9LSKx3hR7L2bQHS5MLhDZ3emhsQZAH8j7he0OBxdHTorWq/tTuIqRvjhOa/pfZhAhrck9wMmroKYmqPDxhcpTqRWDwl3ysMHv7F9H46Msn44g621nxUht5mjN6sz+uKsXXe5sPbrM8NTysSEAUlypv2dGg+JNutKu9XUZ3I+Gxf2ECBE3SxAmB4Vt+rW88Ro0YDc/TOQ3u/BFhWkbWO5mlIrZN6SFp3smVSeUdWdFCHFOoEqQ490+r4zBLenTW7Tcba5bSWwe799mBO+144r
 
-Hi Nick,
+On Tue, 29 Jul 2025 19:21:57 -0300
+Jason Gunthorpe <jgg@nvidia.com> wrote:
 
-On Tue, Jun 10, 2025 at 09:45:20PM +0800, Nick Chan wrote:
-> The I2C controllers found on Apple A7-A11, T2 SoCs are compatible with
-> the existing driver so add their per-SoC compatibles.
+> > As this is an evolving mechanism, having the corresponding library in
+> > the kernel similar to what we do with perf and other things makes a lot
+> > of sense.  
 > 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> If we did this everywhere we'd have hundreds of libraries in the
+> kernel tree and I would feel bad for all the distros that have to deal
+> with packaging such a thing :(
+> 
+> It is great for development but I'm not sure mono-repo directions are
+> so good for the overall ecosystem.
 
-Just this one, merged to i2c/i2c-host.
+I have to agree here. When libtraceevent was in the kernel, it was a pain
+to orchestrate releases with distros. When it was moved out of the kernel,
+it made it much easier to manage.
 
-Thanks,
-Andi
+The main issue was versioning numbers. I know the kernel versioning is
+simply just "hey we added more stuff" and the numbers are meaningless.
+
+But a library usually has a different cycle than the kernel. If it doesn't
+have any changes from one kernel release to the next, the distros will make
+a new version anyway, as each kernel release means a new library release.
+
+This luoctl.c isn't even a library, as it has a "main()" and looks to me
+like an application. So my question is, why is it in tools/lib?
+
+-- Steve
 
