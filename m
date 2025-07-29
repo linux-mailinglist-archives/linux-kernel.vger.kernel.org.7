@@ -1,238 +1,249 @@
-Return-Path: <linux-kernel+bounces-749595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CA22B15060
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:44:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9BAB15064
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E7A33A8BA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DE064E6F9E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:44:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5450229550F;
-	Tue, 29 Jul 2025 15:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sOyPiMQb"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B8E295DBD;
+	Tue, 29 Jul 2025 15:45:13 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493A02951A2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:44:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93D29295537;
+	Tue, 29 Jul 2025 15:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753803867; cv=none; b=Qk/EVvUGBk37OPVEaFHfpaPpZ3hUtSdaMCZUR73EuH2siBrTN1ep2HVBjkfFacCqyhCpmnmTIQlreAyB7bB1FQ+jmXet1QkOE3tdV/P5QYco3kA0jIvtdNW/Wo4bsu6XF40+A7eWwi5+gfGeB1shn/Dt3RVLKp1Nz1TGkDT/n6o=
+	t=1753803913; cv=none; b=rjnVLzFueUNwPxK8V5uShp80yS7HfmDl/vLx0WSQ7utd01W7+01qvnD1HT8BKf5H71Zuz4XhNqLKkdMpVpg8UvZwlIittaQw6Wa4oFrvVErlPJZcxoEBoGWlv0Uk1HcbLR4M8NOrb9O7yKi2u/aMDBiSUVlI01wRLseuUJvwsqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753803867; c=relaxed/simple;
-	bh=gTKUAoQOVNfDwrKXIlmuLwCfGQF/GjTu9mg9ZtnCU4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0lvCa2aPTwiNATvkmyZfHHE7rhOqWFexyhxmk5VGuBMpP3V//+LU0nW+KcyV7ZY9DYrVfyHfh2aae8iQVi8lER+jsoXUtZtWVrMPZiIKULCLHnCN1ZB0MV666POjySPxzLXZExOzB53h0jeQCFkbv6QX7ft3DS5QLE5b30u3LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sOyPiMQb; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6150be62be4so5088417a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:44:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753803863; x=1754408663; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LN18dTJK3bUZCImiyE0FuNTJ8LDUzXGgTCqf/lUFg3U=;
-        b=sOyPiMQbFbwAU1KXWqOcUWZdn5zUoGvE7JeWbvckjDCECR3gQCuHb2H3Y7CoYrCfPL
-         nwBXLA3rXeiALkieOxZmUrQsRuMCwCGy2WJYZbUOrCSExr7TnNNyR6gF2/MEZGh5Emo3
-         GKcaQoBsZYDWUVPet4ixy8X+v+L+YE1IYd7R8bACHQanvDjKjg5WAceXvKUr87YnYHke
-         bl84LwuJ5dgwWefB0qTrz11gihk0GcWmAiFvRvm1BGrrsZ0Cwo0CwJaZGnoTG45BffkJ
-         CkTVXglWtK9T7aiPtR1G+vW64S9Dnf/SQI4ed00qsYzARio03t8GguNgtoAeGGTaEx9/
-         0wdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753803863; x=1754408663;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LN18dTJK3bUZCImiyE0FuNTJ8LDUzXGgTCqf/lUFg3U=;
-        b=HjH77eqrpSFM8zhHZaLes4aD2cpff7m7vqM4KpgYnDo55VFrrQyZrSy3u+a7l4tztz
-         ipZJeooU/P/GAra/m+5H11EnkDVX+ByCkOLapdZy3Y6a33l3VeI0Nj24l512wK4s/omk
-         IqQfe/afBkcGd+ibYvHTwcSyyD7hXJacILI5v61QBfnOBaV+ci2jhCFBdWaHNoxufMlO
-         yC6UXRK6Xqm5LQRdqY4gCyD2p27QfLOnbQbh/qp7dhcVmJJVkxrN2v3sSy3gJURLTL9q
-         3TCC64s4neQetvbuwiHTiZ2JpwOYBY92LoZXCs2JWwp6tYTgqGJi/tXqpmuBQvi49vMp
-         iUBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYXaMTxxTrC6ofBtNjH67X1YcRSx4PQIP0O79Th5D2leJiDMr/OcaE9STxAcbPh1sjkD9g98eRPsIt+UA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbpsKR1sjm3O65QvdcnaMt5riz69cIVkELOmab7AdaG5cYh5Vw
-	UWnbGHvKbn5FhMhe5woZYmI+0KGiNiWDR9b2BiJ6WGSgltzR323AoPd6KhztfyiTeVQ=
-X-Gm-Gg: ASbGncvGtg6AYv0PZ8S77xvxCShBwNgAK/vLeW+fvPnovV7+MXPWHg/VWkED/lrBxsg
-	c+MTjulpzXHpkDQRMiuSoidahU3satGTv4NQnhKCzB83bu4cMUJhILf1brkBNBw6ucdeZ32s0ii
-	l0PrqqnPRbwKC8jTCP/YFvqtsU8oSmMvkpc6BOROxAQerHXz/bTtQ7J+NX3S+UmwbyskvxsO5Vf
-	60I+/Gz7XumNFrutlQvduKJLcbdfsH8TgB7ItAdDkiYRuV1hJc09+Za8K5Wbu1FDuAn2jpfCW5i
-	DSH/ljwIrYmZn3ZLLTa+lvpG5r6vjccOOha9iSdDxaiDsn3g4wJHbnOPSA6odqWMDXjtW8bpbii
-	9o91TpFpSnUCTNUr06EhvfjAqdkG59yAu/Q==
-X-Google-Smtp-Source: AGHT+IGq9wI3/lWh7E230ug5OoIqR7fJXimGz2+ajBqUWxDLFS2ckclMt/arQALpxqYLTlDmX5irhg==
-X-Received: by 2002:a05:6402:2756:b0:609:d491:8d7c with SMTP id 4fb4d7f45d1cf-614f1f66f87mr15096225a12.33.1753803862494;
-        Tue, 29 Jul 2025 08:44:22 -0700 (PDT)
-Received: from linaro.org ([2a02:2454:ff21:ef30:dd5d:6e13:d8d2:7f2f])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6154f4fac5fsm2166412a12.22.2025.07.29.08.44.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 08:44:22 -0700 (PDT)
-Date: Tue, 29 Jul 2025 17:44:17 +0200
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Taniya Das <taniya.das@oss.qualcomm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Dmitry Baryshkov <lumag@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Douglas Anderson <dianders@chromium.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Acayan <mailingradian@gmail.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH RFC 24/24] arm64: dts: qcom: x1e80100: Describe GPU_CC
- power plumbing requirements
-Message-ID: <aIjsTgA7O7UqS-Oz@linaro.org>
-References: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
- <20250728-topic-gpucc_power_plumbing-v1-24-09c2480fe3e6@oss.qualcomm.com>
- <aIevIuMDA5R8igmi@linaro.org>
- <50868cd8-68a9-4bad-99f3-8cf542886fb6@oss.qualcomm.com>
- <aIhrav7GKpsbVpto@linaro.org>
- <6b903628-9abf-4b9e-971e-e9338308d693@oss.qualcomm.com>
- <0a1337d7-ee3e-47de-a401-b25586e813e4@oss.qualcomm.com>
+	s=arc-20240116; t=1753803913; c=relaxed/simple;
+	bh=mUET2hrlkYFUUNugZUgBdMHpUYwzeILIBgsoNlq+e3A=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QTwnb7VVygdccpZMoLwtMqZPFMENjSIxX939okBv+v8EtH2H+tj0foQcGbg0TdEMluuHi/fH+2cK9aQ8hi56BwpLAdbaMH+Hyl3bSbRlmiy5etD8Tw8E/z1PvR6IXjF5/b1FHI5YWStA7BqwNdh4qs57wLK/qGY1BSUxk9PYAXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bs0416yxfz6K5Xn;
+	Tue, 29 Jul 2025 23:43:13 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E271B1402FB;
+	Tue, 29 Jul 2025 23:45:06 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Jul
+ 2025 17:45:06 +0200
+Date: Tue, 29 Jul 2025 16:45:04 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Dan Williams <dan.j.williams@intel.com>
+CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Yilun Xu
+	<yilun.xu@linux.intel.com>
+Subject: Re: [PATCH v4 07/10] PCI/IDE: Add IDE establishment helpers
+Message-ID: <20250729164504.00000ec2@huawei.com>
+In-Reply-To: <20250717183358.1332417-8-dan.j.williams@intel.com>
+References: <20250717183358.1332417-1-dan.j.williams@intel.com>
+	<20250717183358.1332417-8-dan.j.williams@intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0a1337d7-ee3e-47de-a401-b25586e813e4@oss.qualcomm.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Jul 29, 2025 at 03:28:55PM +0200, Konrad Dybcio wrote:
-> On 7/29/25 10:23 AM, Konrad Dybcio wrote:
-> > On 7/29/25 8:34 AM, Stephan Gerhold wrote:
-> >> On Mon, Jul 28, 2025 at 11:31:10PM +0200, Konrad Dybcio wrote:
-> >>> On 7/28/25 7:10 PM, Stephan Gerhold wrote:
-> >>>> On Mon, Jul 28, 2025 at 06:16:24PM +0200, Konrad Dybcio wrote:
-> >>>>> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>>>>
-> >>>>> A number of power rails must be powered on in order for GPU_CC to
-> >>>>> function. Ensure that's conveyed to the OS.
-> >>>>>
-> >>>>> Fixes: 721e38301b79 ("arm64: dts: qcom: x1e80100: Add gpu support")
-> >>>>> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> >>>>> ---
-> >>>>>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++++
-> >>>>>  1 file changed, 6 insertions(+)
-> >>>>>
-> >>>>> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >>>>> index 5e9a8fa3cf96468b12775f91192cbd779d5ce946..6620517fbb0f3ed715c4901ec53dcbc6235be88f 100644
-> >>>>> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >>>>> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> >>>>> @@ -3928,6 +3928,12 @@ gpucc: clock-controller@3d90000 {
-> >>>>>  			clocks = <&bi_tcxo_div2>,
-> >>>>>  				 <&gcc GCC_GPU_GPLL0_CPH_CLK_SRC>,
-> >>>>>  				 <&gcc GCC_GPU_GPLL0_DIV_CPH_CLK_SRC>;
-> >>>>> +
-> >>>>> +			power-domains = <&rpmhpd RPMHPD_CX>,
-> >>>>> +					<&rpmhpd RPMHPD_MX>,
-> >>>>> +					<&rpmhpd RPMHPD_GFX>,
-> >>>>> +					<&rpmhpd RPMHPD_GMXC>;
-> >>>>> +
-> >>>>>  			#clock-cells = <1>;
-> >>>>>  			#reset-cells = <1>;
-> >>>>>  			#power-domain-cells = <1>;
-> >>>>>
-> >>>>
-> >>>> To repeat your own message from a couple of months back [1]:
-> >>>>
-> >>>>> You shouldn't be messing with VDD_GFX on platforms with a GMU.
-> >>>>>
-> >>>>> Parts of the clock controller are backed by one of the MX rails,
-> >>>>> with some logic depending on CX/GFX, but handling of the latter is
-> >>>>> fully deferred to the GMU firmware.
-> >>>>>
-> >>>>> Konrad
-> >>>>
-> >>>> Please describe somewhere in the cover letter or the individual patches
-> >>>> how this relates to the responsibilities of the GMU. I searched for
-> >>>> "GMU" in the patch series and couldn't find any note about this.
-> >>>>
-> >>>> Also: How much is a plain "power on" votes (without a corresponding
-> >>>> "required-opps") really worth nowadays? An arbitrary low voltage level
-> >>>> on those rails won't be sufficient to make the GPU_CC actually
-> >>>> "function". Do you need "required-opps" here? In the videocc/camcc case
-> >>>> we have those.
-> >>>
-> >>> Right, I failed to capture this.
-> >>>
-> >>> The GFX rail should be powered on before unclamping the GX_GDSC (as
-> >>> per the programming guide). The clock controller HPG however doesn't
-> >>> seem to have a concept of RPMh, so it says something that amounts to
-> >>> "tell the PMIC to supply power on this rail". In Linux, since Commit
-> >>> e3e56c050ab6 ("soc: qcom: rpmhpd: Make power_on actually enable the
-> >>> domain") we don't really need a defined level for this (perhaps it's
-> >>> more ""portable"" across potential fuse-bins if we don't hardcode the
-> >>> lowest level anyway?).
-> >>
-> >> Thanks, I forgot that we have this commit.
-> >>
-> >>>
-> >>> However after that happens, the level scaling is done by the GMU
-> >>> firmware. This holds for allOf CX/MX/GFX. I'm not super sure if
-> >>> both MX and (G)MXC need to both be captured together - downstream
-> >>> seems to describe MXC as a child of MX (in socname-regulators.dtsi),
-> >>> but I'm not really sure this is true in hardware.
-> >>>
-> >>> The GPU driver currently first enables the GX_GDSC and only then
-> >>> does it kickstart the GMU firmware. Downstream seems to do that as
-> >>> well. So on a second thought, since we've not seen any errors so
-> >>> far, it calls into question what role the GFX rail plays in the
-> >>> GX_GDSC's powering up..
-> >>>
-> >>
-> >> It might play a role, but we wouldn't know since AFAICT we don't support
-> >> enabling the GX_GDSC. Look at the beautiful gdsc_gx_do_nothing_enable()
-> >> function, it basically just defers the entire task to the GMU. The GDSC
-> >> just exists in Linux so we can turn it *off* during GMU crashes. :D
-> > 
-> > OHHHHH snap! I, on the other hand, forgot we have *that* commit..
-> > 
-> >> I think we should identify precisely which votes we are missing, instead
-> >> of making blanket votes for all the power rails somehow related to the
-> >> GPU. In this case this means: Which rails do we need to vote for to make
-> >> the GMU turn on? If there are no votes necessary after the GMU is on,
-> >> it's better to have none IMO.
-> > 
-> > The GMU pokes at RPMh directly (see a6xx_hfi.c), so we indeed just
-> > need to make sure that it can turn on.. Which in short means the
-> > *C*X_GDSC must be able to power up, which doesn't have any special
-> > requirements. The only question that's left is basically whether
-> > MX_C must be on. I'll try testing that in practice.
+On Thu, 17 Jul 2025 11:33:55 -0700
+Dan Williams <dan.j.williams@intel.com> wrote:
+
+> There are two components to establishing an encrypted link, provisioning
+> the stream in Partner Port config-space, and programming the keys into
+> the link layer via IDE_KM (IDE Key Management). This new library,
+> drivers/pci/ide.c, enables the former. IDE_KM, via a TSM low-level
+> driver, is saved for later.
 > 
-> So this is apparently difficult, at least on SC8280XP, where something
-> seems to be voting on MXC and it only seems to shut down when entering
-> CXPC. I would imagine/hope this is not the case on newer platforms, but
-> I don't have a way to fully confirm this at the moment..
+> With the platform TSM implementations of SEV-TIO and TDX Connect in mind
+> this library abstracts small differences in those implementations. For
+> example, TDX Connect handles Root Port register setup while SEV-TIO
+> expects System Software to update the Root Port registers. This is the
+> rationale for fine-grained 'setup' + 'enable' verbs.
 > 
+> The other design detail for TSM-coordinated IDE establishment is that
+> the TSM may manage allocation of Stream IDs, this is why the Stream ID
+> value is passed in to pci_ide_stream_setup().
+> 
+> The flow is:
+> 
+> pci_ide_stream_alloc()
+>   Allocate a Selective IDE Stream Register Block in each Partner Port
+>   (Endpoint + Root Port), and reserve a host bridge / platform stream
+>   slot. Gather Partner Port specific stream settings like Requester ID.
+> pci_ide_stream_register()
+>   Publish the stream in sysfs after allocating a Stream ID. In the TSM
+>   case the TSM allocates the Stream ID for the Partner Port pair.
+> pci_ide_stream_setup()
+>   Program the stream settings to a Partner Port. Caller is responsible
+>   for optionally calling this for the Root Port as well if the TSM
+>   implementation requires it.
+> pci_ide_stream_enable()
+>   Try to run the stream after IDE_KM.
+> 
+> In support of system administrators auditing where platform, Root Port,
+> and Endpoint IDE stream resources are being spent, the allocated stream
+> is reflected as a symlink from the host bridge to the endpoint with the
+> name:
+> 
+>     stream%d.%d.%d
+> 
+> Where the tuple of integers reflects the allocated platform, Root Port,
+> and Endpoint stream index (Selective IDE Stream Register Block) values.
+> 
+> Thanks to Wu Hao for a draft implementation of this infrastructure.
+> 
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Lukas Wunner <lukas@wunner.de>
+> Cc: Samuel Ortiz <sameo@rivosinc.com>
+> Co-developed-by: Alexey Kardashevskiy <aik@amd.com>
+> Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
+> Co-developed-by: Yilun Xu <yilun.xu@linux.intel.com>
+> Signed-off-by: Yilun Xu <yilun.xu@linux.intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 
-If in doubt, I would suggest to leave everything as-is for now until
-someone actually runs into an issue caused by this (if this is even
-possible). There are plenty other actual gaps to address. ;)
+A few minor things inline.
 
-Stephan
+> diff --git a/drivers/pci/ide.c b/drivers/pci/ide.c
+> index e15937cdb2a4..cdc773a8b381 100644
+> --- a/drivers/pci/ide.c
+> +++ b/drivers/pci/ide.c
+> @@ -5,6 +5,8 @@
+>  
+
+
+> +/**
+> + * pci_ide_stream_enable() - try to enable a Selective IDE Stream
+> + * @pdev: PCIe device object for either a Root Port or Endpoint Partner Port
+> + * @ide: registered and setup IDE settings descriptor
+> + *
+> + * Activate the stream by writing to the Selective IDE Stream Control
+> + * Register, report whether the state successfully transitioned to
+> + * secure mode.
+and report
+
+> ... Note that the state may go "insecure" at any point after
+> + * this check, but that is handled via asynchronous error reporting.
+> + */
+> +int pci_ide_stream_enable(struct pci_dev *pdev, struct pci_ide *ide)
+> +{
+> +	struct pci_ide_partner *settings = pci_ide_to_settings(pdev, ide);
+> +	int pos;
+> +	u32 val;
+> +
+> +	if (!settings)
+> +		return -ENXIO;
+> +
+> +	pos = sel_ide_offset(pdev, settings);
+> +
+> +	set_ide_sel_ctl(pdev, ide, pos, true);
+> +
+> +	pci_read_config_dword(pdev, pos + PCI_IDE_SEL_STS, &val);
+> +	if (FIELD_GET(PCI_IDE_SEL_STS_STATE_MASK, val) !=
+> +	    PCI_IDE_SEL_STS_STATE_SECURE) {
+> +		set_ide_sel_ctl(pdev, ide, pos, false);
+> +		return -ENXIO;
+> +	}
+> +
+> +	settings->enable = 1;
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(pci_ide_stream_enable);
+
+> diff --git a/include/linux/pci-ide.h b/include/linux/pci-ide.h
+> new file mode 100644
+> index 000000000000..89c1ef0de841
+> --- /dev/null
+> +++ b/include/linux/pci-ide.h
+> @@ -0,0 +1,70 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/* Copyright(c) 2024 Intel Corporation. All rights reserved. */
+...
+
+> +/**
+> + * struct pci_ide_partner - Per port pair Selective IDE Stream settings
+> + * @rid_start: Partner Port Requester ID range start
+> + * @rid_start: Partner Port Requester ID range end
+> + * @stream_index: Selective IDE Stream Register Block selection
+> + * @setup: flag to track whether to run pci_ide_stream_teardown for this parnter slot
+
+partner.
+
+> + * @enable: flag whether to run pci_ide_stream_disable for this parnter slot
+
+same again.
+
+> + */
+> +struct pci_ide_partner {
+> +	u16 rid_start;
+> +	u16 rid_end;
+> +	u8 stream_index;
+> +	unsigned int setup:1;
+> +	unsigned int enable:1;
+> +};
+> +
+> +/**
+> + * struct pci_ide - PCIe Selective IDE Stream descriptor
+> + * @pdev: PCIe Endpoint in the pci_ide_partner pair
+> + * @partner: Per-partner settings
+per-partner maybe?  Capitalization seems a little random
+as mostly you have used them for spec terms, but Per-partner probably
+isn't one?
+
+> + * @host_bridge_stream: track platform Stream ID
+> + * @stream_id: unique Stream ID (within Partner Port pairing)
+> + * @name: name of the established Selective IDE Stream in sysfs
+> + *
+> + * Negative @stream_id values indicate "uninitialized" on the
+> + * expectation that with TSM established IDE the TSM owns the stream_id
+> + * allocation.
+> + */
+> +struct pci_ide {
+> +	struct pci_dev *pdev;
+> +	struct pci_ide_partner partner[PCI_IDE_PARTNER_MAX];
+> +	u8 host_bridge_stream;
+> +	int stream_id;
+> +	const char *name;
+> +};
+
+> diff --git a/include/linux/pci.h b/include/linux/pci.h
+> index a7353df51fea..cc83ae274601 100644
+> --- a/include/linux/pci.h
+> +++ b/include/linux/pci.h
+> @@ -538,6 +538,8 @@ struct pci_dev {
+>  	u16		ide_cap;	/* Link Integrity & Data Encryption */
+>  	u8		nr_ide_mem;	/* Address association resources for streams */
+>  	u8		nr_link_ide;	/* Link Stream count (Selective Stream offset) */
+> +	u8		nr_sel_ide;	/* Selective Stream count (register block allocator) */
+> +	DECLARE_BITMAP(ide_stream_map, CONFIG_PCI_IDE_STREAM_MAX);
+>  	unsigned int	ide_cfg:1;	/* Config cycles over IDE */
+>  	unsigned int	ide_tee_limit:1; /* Disallow T=0 traffic over IDE */
+>  #endif
+> @@ -607,6 +609,10 @@ struct pci_host_bridge {
+>  	int		domain_nr;
+>  	struct list_head windows;	/* resource_entry */
+>  	struct list_head dma_ranges;	/* dma ranges resource list */
+> +#ifdef CONFIG_PCI_IDE
+> +	u8 nr_ide_streams;		/* Track available vs in-use streams */
+
+Which does it do?  Confusing comment.
+
+> +	DECLARE_BITMAP(ide_stream_map, CONFIG_PCI_IDE_STREAM_MAX);
+> +#endif
 
