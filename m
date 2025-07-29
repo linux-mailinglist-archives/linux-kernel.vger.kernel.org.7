@@ -1,330 +1,170 @@
-Return-Path: <linux-kernel+bounces-748969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B90B14833
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:28:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEB5AB14830
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:28:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23A10177D68
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:28:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDAE81AA0D69
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F2E25A2C3;
-	Tue, 29 Jul 2025 06:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76309257AF3;
+	Tue, 29 Jul 2025 06:28:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Re+gf0Af"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9wjyNFq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195FE247288
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 06:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB63F262BE;
+	Tue, 29 Jul 2025 06:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753770489; cv=none; b=nvqfa/CVJpqB0Ir8/ACEgYUaCnyylujc/y0LJdKEaGgZsOLmN6z7fGHLDBw0XVLUytrK245vvvWg/ryT+O7kyYPB8Tw+xh4DBHYXVu7PU6K3zPIXoFNxS7kGmqy1vizHepGZqG649HCCzKlmJAfFmFdb11yBcmbjh0Pvd2Cqkds=
+	t=1753770480; cv=none; b=eVhYQVR6pmoV+tfj0lfNfwCUyZHazAAnPWNg5ZZMkl/O3kaZwcV5X30c4UU3WP2W7xPgwA76FSgjYPbzHXtIG1djhdnNlVdlf6bGwj9lCf4aKbyPhaVIfEu1XXSfhz0aItypdEKhrVJsMSz725+ZzDHpLUyXbyUEDSxlNWq5Ng0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753770489; c=relaxed/simple;
-	bh=CkNurzAHKWtUmAuXpaPnudHXKHNvmDRMU3r9AwUzAyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UiDk7BSgtQE+KlhgoqnfLJPOykZ5rU8yt5Nq2c0fMIZl/x4QyocuyyrXCyKCZ+ruF1ohx4HUwsntBHWPptDyAfMnOCK4eHDsMuowqok+viH8Hglpru5H7k9rwNYWY/JI+H7TbZLXF0On8BJpBki0e7oncDHeWMJdMGyunwShX7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Re+gf0Af; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6facf4d8e9eso33984356d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 23:28:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753770486; x=1754375286; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LeE9H97PFJZ1yzNuNGsMn82JLMma7Cu0uToFAC6AjYw=;
-        b=Re+gf0Af8xOouKK4DNsh/cDBWaJiJlNhFaeJT6w032wd7VD4tdpNg+Znd5R6Gn1GJ/
-         94ZUuuU1eSDLw3FVG2Czyu0PvTZlbQs2wXs74wbS/t06FwFhTNBgzX5ZTLWKUQAaYbbe
-         i5/hB97yB7VhvTN3TX7XnABFTPk/WLTKRmgz7EdOoQYK8CprJdKYkhCoeMxr9HW8h0pm
-         W1A22j887PYw88X6jm3YQv+PB+fp3ynG+opv+kpyw+isldtb1nncD7odQCFQE+j1/PbC
-         p2lCGoHul/gnmKeHC4k+r2cRRNEsKoj6n6BtX2ZidnUqy842uEKuCakSsv5EzusYeDC+
-         Js5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753770486; x=1754375286;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LeE9H97PFJZ1yzNuNGsMn82JLMma7Cu0uToFAC6AjYw=;
-        b=XnXT76FkFWQXRePC23/yUeB94WJ1Rp1lzc6sftbcxEZ+aPJfBbYOCV3FQDU/kmwDFa
-         5mCr7lQWlMjH7ouUmOs1MpL9EEDGkN6g688l5wY6O2Gjtl54u8PfKtM3iWnZVIB45qE9
-         2f7qyubZthJ/99ijs4pvX7rmQJnE1JNIAR9ShsIpoaRoKrI+cPfSh+pIPf/2isnVYDx/
-         ar86FaXsHW71DkRHlGP3A//qwrjhWhwSUuwRUKkCrgUksXVu+LnurrVWhRfPcDJ2n6DW
-         puR4SCH2jYd2He98xymg6Y5aYnopPCeyFFOxnOipJtawsKgVoW2uGtozCws1fh1PbFNn
-         NosA==
-X-Forwarded-Encrypted: i=1; AJvYcCW34ll8yL1FWIN/m7KKWz5fOehCw3sEB1Dy4BtkV0yDjqYPieT7WvtyOiYaeNehZDyJbE1fyVsXpuXBngA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybcUdgs9tnyZ0H/EokQ8t9o6bJCgp5TI8YH5EAAs3erX1BtnSS
-	0yeXIMgDooM3iGfNxZeANVvAEEU21opL55updZDhy2o03K5TOF96h3b4/MC/sWJrDZUjib7KD4L
-	q/iq1GJnrkXsHfN9RKvvSeYJPhnwTNkYcrezwCc71
-X-Gm-Gg: ASbGncuJtmB5eM2ktIsjPRQEDZbJkdcwxchBoUHytCEgA8dYPPvtV7sKQlqMptp0rqm
-	xmx9Y2+H2FFHm/94uSKKMOLO54Pt7f3CB3CHNi0sc6cfBW0DkJ6Hb+sMzTTvH2sRfTX/YwR6uUx
-	QKbhRA/EeDZYLEycxQ8r3qVbedjAI0KcoZic5u9NMzd7W/Odwn2Efg3VXHmNzi3pdKghpDI9dtN
-	QIhTT7F
-X-Google-Smtp-Source: AGHT+IHkDhVjlDXkKoJPb/zHwvWemtrgFQf/cvbjZ0Qeqopxn8IxnwgPvo9tYHg/4/LMrdSDc8NIhSduX3ei955YgTQ=
-X-Received: by 2002:a05:6214:3901:b0:707:23ea:2991 with SMTP id
- 6a1803df08f44-70723ea2b8bmr212058476d6.35.1753770485569; Mon, 28 Jul 2025
- 23:28:05 -0700 (PDT)
+	s=arc-20240116; t=1753770480; c=relaxed/simple;
+	bh=h2wtlypehd5qSOqophm6kVznrIreQIBZea/Obo1g670=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=recloag0Nz3q1joAzLK2UdUh4NKWv92BFuxwR2U6+jff7J4KD/QGxlDNvYXrGWnMcYAEeeJjnH0Qoz1AsPmhPpbdKmMZxdl+tsa0pdMe7PwJ4Vil0237zEBjEAdab/2ypsfTA/c8VFlZdH6VVe2OLkxyR70iqEFIlBAPwaPYigo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9wjyNFq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE0EC4CEEF;
+	Tue, 29 Jul 2025 06:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753770480;
+	bh=h2wtlypehd5qSOqophm6kVznrIreQIBZea/Obo1g670=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=D9wjyNFqSSxtaBea0a2Ym1hDdepeD0XA/E3qQbfa0/w3RIQwK9NxysOsyxQ79Je/m
+	 7y24CrmMy/U/aB2E4bTLMpTTK79eowAvOARhZv+xjvSeTwLPPEngEFpRHqMeIz5TyH
+	 S6Ll4ZIqYMSqBJssQVt63eENT87W7rzjoIlPTahbjryyzq6usmz00sKxENtUK2UEMx
+	 8aaA7t5amb7/nyB3+HCXsHSzrMkMU1iJNmXgUKy6GuEd3FQ0NAox5NC2zebSUjUbUJ
+	 o7+DO4SEop7SfMrSCN+jd2rzjJNhzFSUH+PQVkpAFUDfiYT6InisUgGD9S0MvXHLtn
+	 gz6LWFlxlk7Ow==
+Message-ID: <f1b90b0f-f7a7-4117-9d36-046c4ca9c19a@kernel.org>
+Date: Tue, 29 Jul 2025 08:27:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726180750.2735836-1-ojeda@kernel.org>
-In-Reply-To: <20250726180750.2735836-1-ojeda@kernel.org>
-From: David Gow <davidgow@google.com>
-Date: Tue, 29 Jul 2025 14:27:53 +0800
-X-Gm-Features: Ac12FXyeK1EodX0LEMaLg05WtgxULgHDYJkotq5O5IK4MGpaLU1MSLHZ5XzohVI
-Message-ID: <CABVgOS=BPZYrJ8NLbVHj4S5CBpPd3xovBFCn8rhZmSuYq0rWSQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: kernel: remove support for unused host `#[test]`s
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Danilo Krummrich <dakr@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	Rae Moar <rmoar@google.com>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000dc1864063b0b829f"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for
+ Sophgo CV1800B SoC
+To: Junhui Liu <junhui.liu@pigmoral.tech>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Mathieu Poirier <mathieu.poirier@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen Wang <unicorn_wang@outlook.com>,
+ Inochi Amaoto <inochiama@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>
+Cc: linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+ sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org
+References: <185679960f220550.906528684e28f712.ba6c1f3fdd9df549@Mac>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <185679960f220550.906528684e28f712.ba6c1f3fdd9df549@Mac>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---000000000000dc1864063b0b829f
-Content-Type: text/plain; charset="UTF-8"
+On 28/07/2025 19:13, Junhui Liu wrote:
+>>
+>>> +    description:
+>>> +      This property is required only if the rpmsg/virtio functionality is used.
+>>> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
+>>> +    items:
+>>> +      - description: mailbox channel to send data to C906L
+>>> +      - description: mailbox channel to receive data from C906L
+>>> +
+>>> +  memory-region:
+>>> +    description:
+>>> +      List of phandles to reserved memory regions used by the remote processor.
+>>> +      The first region is required and provides the firmware region for the
+>>> +      remote processor. The following regions (vdev buffer, vrings) are optional
+>>> +      and are only required if rpmsg/virtio functionality is used.
+>>> +    minItems: 1
+>>
+>> Why isn't this constrained?
+> 
+> Do you mean a maxItems should be added here?
+> >>
+>>> +    items:
+>>> +      - description: firmware region
+>>> +      - description: vdev buffer
+>>> +      - description: vring0
+>>> +      - description: vring1
+>>> +    additionalItems: true
+>>
+>> No, drop. This needs to be constrained.
+> 
+> My intention is that RPMsg/OpenAMP is not the only use case for
 
-On Sun, 27 Jul 2025 at 02:08, Miguel Ojeda <ojeda@kernel.org> wrote:
->
-> Since commit 028df914e546 ("rust: str: convert `rusttest` tests into
-> KUnit"), we do not have anymore host `#[test]`s that run in the host.
->
-> Moreover, we do not plan to add any new ones -- tests should generally
-> run within KUnit, since there they are built the same way the kernel
-> does. While we may want to have some way to define tests that can also
-> be run outside the kernel, we still want to test within the kernel too
-> [1], and thus would likely use a custom syntax anyway to define them.
->
-> Thus simplify the `rusttest` target by removing support for host
-> `#[test]`s for the `kernel` crate.
->
-> This still maintains the support for the `macros` crate, even though we
-> do not have any such tests there.
->
-> Link: https://lore.kernel.org/rust-for-linux/CABVgOS=AKHSfifp0S68K3jgNZAkALBr=7iFb=niryG5WDxjSrg@mail.gmail.com/ [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
+We don't allow such syntax, that's not negotiable. Why 322 redundant
+memory regions are fine now?
 
-With my (biased) KUnit hat on, this looks good to me.
+> remoteproc. There are scenarios where the remoteproc is just used for
+> booting the remote processor without any communication with Linux. In
+> such case, only the firmware region is needed, and the other regions may
+> not be necessary.
+> 
+> Additionally, the remote processor might reserve extra memory for custom
+> buffers or other firmware-specific purposes beyond virtio/rpmsg.
+> Therefore, I think only the firmware region should be required and
+> constrained, while allowing flexibility for additional/custom memory
+> regions as needed.
 
-_Maybe_ it's worth updating Documentation/rust/testing.rst, though it
-already says these are "mostly used for testing the macros crate's
-examples".
+So how does this work exactly without the rest? Remote processor boots
+and works fine? How do you communicate with it?
 
-Reviewed-by: David Gow <davidgow@google.com>
+Please describe exactly the usecase.
 
-Cheers,
--- David
 
->  rust/Makefile        | 9 +--------
->  rust/kernel/alloc.rs | 6 +++---
->  rust/kernel/error.rs | 4 ++--
->  rust/kernel/lib.rs   | 2 +-
->  4 files changed, 7 insertions(+), 14 deletions(-)
->
-> diff --git a/rust/Makefile b/rust/Makefile
-> index 115b63b7d1e3..5290b37868dd 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
-> @@ -235,7 +235,7 @@ quiet_cmd_rustc_test = $(RUSTC_OR_CLIPPY_QUIET) T  $<
->         $(objtree)/$(obj)/test/$(subst rusttest-,,$@) $(rust_test_quiet) \
->                 $(rustc_test_run_flags)
->
-> -rusttest: rusttest-macros rusttest-kernel
-> +rusttest: rusttest-macros
->
->  rusttest-macros: private rustc_target_flags = --extern proc_macro \
->         --extern macros --extern kernel --extern pin_init
-> @@ -245,13 +245,6 @@ rusttest-macros: $(src)/macros/lib.rs \
->         +$(call if_changed,rustc_test)
->         +$(call if_changed,rustdoc_test)
->
-> -rusttest-kernel: private rustc_target_flags = --extern ffi --extern pin_init \
-> -    --extern build_error --extern macros --extern bindings --extern uapi
-> -rusttest-kernel: $(src)/kernel/lib.rs rusttestlib-ffi rusttestlib-kernel \
-> -    rusttestlib-build_error rusttestlib-macros rusttestlib-bindings \
-> -    rusttestlib-uapi rusttestlib-pin_init FORCE
-> -       +$(call if_changed,rustc_test)
-> -
->  ifdef CONFIG_CC_IS_CLANG
->  bindgen_c_flags = $(c_flags)
->  else
-> diff --git a/rust/kernel/alloc.rs b/rust/kernel/alloc.rs
-> index a2c49e5494d3..335ae3271fa8 100644
-> --- a/rust/kernel/alloc.rs
-> +++ b/rust/kernel/alloc.rs
-> @@ -2,16 +2,16 @@
->
->  //! Implementation of the kernel's memory allocation infrastructure.
->
-> -#[cfg(not(any(test, testlib)))]
-> +#[cfg(not(testlib))]
->  pub mod allocator;
->  pub mod kbox;
->  pub mod kvec;
->  pub mod layout;
->
-> -#[cfg(any(test, testlib))]
-> +#[cfg(testlib)]
->  pub mod allocator_test;
->
-> -#[cfg(any(test, testlib))]
-> +#[cfg(testlib)]
->  pub use self::allocator_test as allocator;
->
->  pub use self::kbox::Box;
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index 3dee3139fcd4..7812aca1b6ef 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -157,7 +157,7 @@ pub fn to_ptr<T>(self) -> *mut T {
->      }
->
->      /// Returns a string representing the error, if one exists.
-> -    #[cfg(not(any(test, testlib)))]
-> +    #[cfg(not(testlib))]
->      pub fn name(&self) -> Option<&'static CStr> {
->          // SAFETY: Just an FFI call, there are no extra safety requirements.
->          let ptr = unsafe { bindings::errname(-self.0.get()) };
-> @@ -174,7 +174,7 @@ pub fn name(&self) -> Option<&'static CStr> {
->      /// When `testlib` is configured, this always returns `None` to avoid the dependency on a
->      /// kernel function so that tests that use this (e.g., by calling [`Result::unwrap`]) can still
->      /// run in userspace.
-> -    #[cfg(any(test, testlib))]
-> +    #[cfg(testlib)]
->      pub fn name(&self) -> Option<&'static CStr> {
->          None
->      }
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index e13d6ed88fa6..8a0153f61732 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -197,7 +197,7 @@ pub const fn as_ptr(&self) -> *mut bindings::module {
->      }
->  }
->
-> -#[cfg(not(any(testlib, test)))]
-> +#[cfg(not(testlib))]
->  #[panic_handler]
->  fn panic(info: &core::panic::PanicInfo<'_>) -> ! {
->      pr_emerg!("{}\n", info);
->
-> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
-> --
-> 2.50.1
->
-
---000000000000dc1864063b0b829f
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
-4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
-mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
-KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
-VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
-ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
-vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
-BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
-OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
-1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
-ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
-BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
-18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
-bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
-AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
-BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
-A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
-MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
-jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
-0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
-jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
-jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
-C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
-NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
-zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
-A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
-hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
-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
-jmkLAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
-/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFBp5bTxrTm/d
-WMmRETO8lNkA4c7fMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
-BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
-MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
-LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
-FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
-c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQBF
-tO3/N2l9hTaij/K0xCpLwIlrqpNo0nMAvvG5LPQQjSeHnTh06tWTgsPCOJ65GX+bqWRDwGTu8WTq
-c5ihCNOikBs25j82yeLkfdbeN/tzRGUb2RD+8n9I3CnyMSG49U2s0ZdncsrIVFh47KW2TpHTF7R8
-N1dri01wPg8hw4u0+XoczR2TiBrBOISKmAlkAi+P9ivT31gSHdbopoL4x0V2Ow9IOp0chrQQUZtP
-KBytLhzUzd9wIsE0QMNDbw6jeG8+a4sd17zpXSbBywIGw7sEvPtnBjMaf5ib3kznlOne6tuDVx4y
-QFExTCSrP3OTMUkNbpIdgzg2CHQ2aB8i8YsTZ8Q8Q8ztPJ+xDNsqBUeYxILLjTjxQQovToqipB3f
-6IMyk+lWCdDS+iCLYZULV1BTHSdwp1NM3t4jZ8TMlV+JzAyRqz4lzSl8ptkFhKBJ7w2tDrZ3BEXB
-8ASUByRxeh+pC1Z5/HhqfiWMVPjaWmlRRJVlRk+ObKIv2CblwxMYlo2Mn8rrbEDyfum1RTMW55Z6
-Vumvw5QTHe29TYxSiusovM6OD5y0I+4zaIaYDx/AtF0mMOFXb1MDyynf1CDxhtkgnrBUseHSOU2e
-MYs7IqzRap5xsgpJS+t7cp/P8fdlCNvsXss9zZa279tKwaxR0U2IzGxRGsWKGxDysn1HT6pqMDGC
-Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
-BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAUXA7LnOuRz2DvkWTeMc
-0TANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQg3qTPfxcg0yB9ntH92dWAvRNT4uHM
-wLSwI1soKRthdIMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-NzI5MDYyODA2WjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
-YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
-AQEBBQAEggEAf38aLZVLVJFVzEME1SrJpA+ZsfC3zUZzd9ws/CHRcW+4584m1wP3XUwAtnWqqRKJ
-M1R0yXhN2NuK8aGLc39shI/Ljh3PAo6eGo7cw6WqzJMCAfhZf76xGKHYELrZvj6qYU+pXS19nH4V
-7MEFP3btpW2++W6I1jn63IIKCexYtaFc6ijpnAse+8ZbRurTkFXMnfVUnd+oGLsdV02seI/gNEt6
-vaToxywysGsnVbhmfrMc4BWxFmocOsdwsTNu53j52U4etsmBIp1npO3V7Oy7YiadiulLXrUM/eYa
-hOVOPvwEumWSrxECB0zLJPptFhtQGuWE23jwyGxwf0LzCZtQ/w==
---000000000000dc1864063b0b829f--
+Best regards,
+Krzysztof
 
