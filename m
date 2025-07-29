@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-749079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52BF5B149D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:14:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E03FB149DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5018F16E8F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:13:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C80AB4E14BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 772B6279331;
-	Tue, 29 Jul 2025 08:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C1E275AE8;
+	Tue, 29 Jul 2025 08:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NEInnB2j"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AQRAHV2D"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BCA8277CA3
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E43278E77
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753776796; cv=none; b=mSO/nZBIN344vkoNSGyNjVmBswSpYLUlp8tBBo4nJ4K84Fkx24hDZJwG83Wkr/d4qNNdUh4QfqDUJ7TYgItHUpi5mdfyqscogkncNu3Js4DuUdIFk2jzj/MI3C0T+vKsf1C2ZYTA3H9d/lSODaSlq37znqYjdjard9KuV+hecs4=
+	t=1753776799; cv=none; b=fCwKm5gTfVUmT00vhXl/ptHlCVcAi2iQp5ZkPCRIdu1blTFnZTzofXPiafZvP/YkSPDt2TktVShVJXYeFNhEnk9rurYg48M6JKXeAJ08TVggNg7zCR5jVRGszy16lSpwFR0Z1E3bZf1aws0dvZBR7L4k8bNNprLBeYXuF5mIhFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753776796; c=relaxed/simple;
-	bh=ITt4zRZg9IR1k9jx1o0n2GJmxcmqNAOjXa4NYAkkW/g=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=W0HbfI9gQok/YqIx7zjwnTDDjpFAo7SMijJNqtTR7ZfDQzp54mUt5UBgaJ6poF2Fh2Yh0JFxm5AFjtUYjTdGUPYxpS9R3RPUBHzKjrnPbMd3tfpxWRjpP3aMOwQi4+MD9G5n7nquSZfbzu0WpIypzDV8cGkEvmrL19v741Q1vjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NEInnB2j; arc=none smtp.client-ip=209.85.215.202
+	s=arc-20240116; t=1753776799; c=relaxed/simple;
+	bh=G9Y0WTqgPEP/0PUyf6rRBrHpWFUxSCuG/ZYeAAHbSBU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Content-Type; b=BOg3eKoettm2U4aCHv0wfTrBp8VvHXQ3Ima1z3fo2c+rKjCfioGxaMjmlx0KwZh0iiUqIJrzLPTZKMzCezP0y2AZ5z9jEutpL9yPZfMJCL8QsZNGJWev9JJQ8EE9SoHGZbjeWEHS2en3g+2aTsTb1amQDIBVomAOAAY2nPY1eXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AQRAHV2D; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b38fc4d8dbaso6687728a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:13:15 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-754f57d3259so8660540b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:13:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753776795; x=1754381595; darn=vger.kernel.org;
-        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=wUMFq1wPKC/c4Wk+DwUN8ZuZ12Mj3tTGq8HNHYgHImA=;
-        b=NEInnB2j4nildYgtZsJaeV9+bcbZ2CJaYUEOiHkP9vLgNEh1ZrsiI1cFmDc+sDA0Yi
-         hmYYjG90BHWrE3QEOUQ1b7y7Z96Y8L/0Eux2dxI47cicH9CEk52OQSDdF3BsTANG4WQA
-         cvLlRodH1U2dEBWRgK1kqz18S7LBiwkNLk300ZthUFEkiQrXbtydIIa89JttqX0znTHk
-         LAJBdOFstl0IvZp/lwPdsyNvRXqjXV5Ba8kE6Y9mHCaN9LeBk5p+rwAu4Q65VPtQ97m/
-         HqkPVQXW8i+l6SsiKnTZYq7WkbuIYAZwTRL/fqNuYZ4zDZyuE1PpaJUqNFFosacqkkbh
-         1zhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753776795; x=1754381595;
-        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=google.com; s=20230601; t=1753776797; x=1754381597; darn=vger.kernel.org;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=wUMFq1wPKC/c4Wk+DwUN8ZuZ12Mj3tTGq8HNHYgHImA=;
-        b=X2pAgazrkdk5U7uWe1IQW4dCVPlfw7bDfng+1eVcc2yS4U7NeRZTaXyBT4BTo0LlQM
-         fFdR2ojLnQJVrn7PHD6TmnvZfoCjJulj77hXLDtWYM8DXBnIfpwNTAsXqAtFgJA/u7mC
-         bPNXrCcwu0kJwXDnj8SZbqHc0h/JUhOJ3s2ggmBYq9TpkouMB4sxvyWIFLWZYZN2GITa
-         jlE7hopsVrSZ7CF1H34x6XM0cZRI+SVfouLV8FOBwHaYWLaZG8c4rxPnjFkaKvFuIoUm
-         wGUVXCUAjWEAAcZi0+Z/9Ti2ot6+hRZjYBsAOdgiCpRSiFvl/dn+QWCKOfNIhmjcLu5I
-         FcOg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJDE0tgQbvbO/tAQv29tRt1c8bkA/eQe7TDQDMW7gnq1Ad/KQtPcILt7UUotl43eIr4uD5icu+miqfKJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+W5gWJzDZf9LH7kkvFmuiP0m2IfpVc7WFljRFKgnqGrhdKY3U
-	eTzw8D68nGvD73yZeLgidn6xh5faD3jaFWLqS9zlKIuD/ceiFMd1FQFpmOS4y2dswKwFJHFAJlg
-	7sUpNWw==
-X-Google-Smtp-Source: AGHT+IH2FBcENjqFcvbmmWBOGmaCHiMG9XtA360Jm7sdXYiLYxjwC52n8n6Sc9K/m5hpE1sc0zxCwEOoNwI=
-X-Received: from plgc18.prod.google.com ([2002:a17:902:d492:b0:240:770f:72cb])
- (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:22c7:b0:240:4683:90a7
- with SMTP id d9443c01a7336-24046839be0mr58409105ad.20.1753776794561; Tue, 29
- Jul 2025 01:13:14 -0700 (PDT)
-Date: Tue, 29 Jul 2025 01:12:53 -0700
+        bh=7yGmakvlGT634aR11Csz05fa+gmD+2vIJ9rH8M6yTyo=;
+        b=AQRAHV2D7RbT6K8xnj5a8KCOP/QNMGheY0jUjHRDJmDOx48g5lUUEwbNEW8jb9B4PL
+         HTJ/8ib5HhsceVWIF+FDXQe36ZS9mkOSykjbBAmxzw/TwqePZvfJsYX27JZS4r9eeemp
+         zZ5MBcYvb4ZJcYvKOstS5rVxZm0Eja6XUzb0/nl9Dqptwcz8fbNbdyvBqGQF4ZH/Lphg
+         jeQUee7mGkbyKEVmNo01oN1Yovg3b98s+JMx79YjjpzxrCxRj8SUIA3UhfoRtEh6ZOiZ
+         9TLeznp8115p06wXnsBL9OFy00r06U5aFtTQ2GBoFhVsYa4hZPpuwR4xtaWZMD1/AYqb
+         mDwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753776797; x=1754381597;
+        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7yGmakvlGT634aR11Csz05fa+gmD+2vIJ9rH8M6yTyo=;
+        b=qAH+RzhHplY41q7hA01zbY0CRMSrBTzfD/omfn0uxP5PxI55I0hN4GdZmXYyCOgeRj
+         tFx3F4HLZ9p6ZiosXj036rbjJzz7E2ITsKRBeCb+z969HIqcDf5jxYVV02IVnF5QMmKd
+         vgH+DR0TvaqFfoCQrHQSMcgv7YsdjVV3kwgRF61mGWScqSF3DuagM9Cr/8ckN5iC9EqY
+         VxLGVDXmIFSHUbi+OetNibHkflpVtMXYp93ucY+oLLDPY7U7YVuhxs+YNX9LNWe4ZLoF
+         sG7+IxyBvM4wxolRHAzsZkwqdWvCjIrWicBGs41gscU6SEb+3Zd47pqdk5TgyAUae1lM
+         M4Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVJjdQZylDq4EBKrD3z5B+K60ZzfnwB4mZG/TS48OZdBT6IhB28xzloc1OKllQGrCgTNAvOxG6YjhThUy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeEiUJIoIWvby5k1OL4bcLIR9d7drZgV0UZMz3kCPLayguUR1i
+	g8OrWn7QD5jjAlvtGqKfRdt7erlvf1qFdNZv4tMgDsbI5lSLal6Jxjau+ODG6Th2btqfeNo77rr
+	gSa6jiQ==
+X-Google-Smtp-Source: AGHT+IFNuMReO/chIStJlUvvk+LkUMhF7qnFNrzRzITSnP2mlhqW0sOsowPwW0OTBaOmH6EkTjLF3fwLlmk=
+X-Received: from pfmm16.prod.google.com ([2002:a05:6a00:2490:b0:746:3185:144e])
+ (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:c96:b0:749:464a:a77b
+ with SMTP id d2e1a72fcca58-763349b95e7mr20176257b3a.18.1753776796333; Tue, 29
+ Jul 2025 01:13:16 -0700 (PDT)
+Date: Tue, 29 Jul 2025 01:12:54 -0700
+In-Reply-To: <20250729081256.3433892-1-yuzhuo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250729081256.3433892-1-yuzhuo@google.com>
 X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
-Message-ID: <20250729081256.3433892-1-yuzhuo@google.com>
-Subject: [PATCH v1 0/3] perf bench: Add ticket spinlock benchmark
+Message-ID: <20250729081256.3433892-2-yuzhuo@google.com>
+Subject: [PATCH v1 1/3] tools: Import atomic_fetch_{and,add,sub}
 From: Yuzhuo Jing <yuzhuo@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -86,53 +89,148 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-This patch series adds benchmark for the kernel's ticket spinlock
-implementation.
+Import necessary function (atomic_fetch_add) for ticket spinlock
+Implementation.  In addition, also import those that pair with the
+imported ones (atomic_fetch_sub, atomic_fetch_and).
 
-This series depends on a preceding patch series that introduces the
-'perf bench sync' benchmark infrastructure.
-Link: https://lore.kernel.org/lkml/20250729022640.3134066-1-yuzhuo@google.com/
+Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
+---
+ tools/arch/x86/include/asm/atomic.h    | 17 +++++++++
+ tools/arch/x86/include/asm/cmpxchg.h   | 11 ++++++
+ tools/include/asm-generic/atomic-gcc.h | 51 ++++++++++++++++++++++++++
+ 3 files changed, 79 insertions(+)
 
-In a quick test, on a 48C 96T x86 VM, ticket spinlock performs better on
-2-6 threads, and qspinlock performs better on 1 thread or >=8 threads.
-
-$ # set 't' variable, and then
-$ ./perf bench sync qspinlock -t$t; sleep 1; ./perf bench sync ticket -t$t
-
-'sync/qspinlock' benchmarks:
-Lock-unlock latency of 1 threads: 8.5779 ns.
-Lock-unlock latency of 2 threads: 187.1022 ns.
-...
-Lock-unlock latency of 6 threads: 1202.8312 ns.
-...
-Lock-unlock latency of 8 threads: 1541.566 ns.
-Lock-unlock latency of 96 threads: 44140.8765 ns.
-
-'sync/ticket' benchmarks:
-Lock-unlock latency of 1 threads: 12.1888 ns.
-Lock-unlock latency of 2 threads: 168.1132 ns.
-...
-Lock-unlock latency of 6 threads: 1033.2760 ns.
-....
-Lock-unlock latency of 8 threads: 1667.1647 ns.
-Lock-unlock latency of 96 threads: 66915.8949 ns.
-
-Yuzhuo Jing (3):
-  tools: Import atomic_fetch_{and,add,sub}
-  perf bench: Import ticket_spinlock from kerne
-  perf bench: Add 'bench sync ticket' subcommand
-
- tools/arch/x86/include/asm/atomic.h        |  17 ++++
- tools/arch/x86/include/asm/cmpxchg.h       |  11 +++
- tools/include/asm-generic/atomic-gcc.h     |  51 ++++++++++
- tools/perf/bench/bench.h                   |   1 +
- tools/perf/bench/include/ticket_spinlock.h | 107 +++++++++++++++++++++
- tools/perf/bench/sync.c                    |  17 ++++
- tools/perf/builtin-bench.c                 |   1 +
- tools/perf/check-headers.sh                |   3 +
- 8 files changed, 208 insertions(+)
- create mode 100644 tools/perf/bench/include/ticket_spinlock.h
-
+diff --git a/tools/arch/x86/include/asm/atomic.h b/tools/arch/x86/include/asm/atomic.h
+index a55ffd4eb5f1..1fb7711ebbd7 100644
+--- a/tools/arch/x86/include/asm/atomic.h
++++ b/tools/arch/x86/include/asm/atomic.h
+@@ -66,6 +66,14 @@ static inline int atomic_dec_and_test(atomic_t *v)
+ 	GEN_UNARY_RMWcc(LOCK_PREFIX "decl", v->counter, "%0", "e");
+ }
+ 
++static __always_inline int atomic_fetch_add(int i, atomic_t *v)
++{
++	return xadd(&v->counter, i);
++}
++#define atomic_fetch_add atomic_fetch_add
++
++#define atomic_fetch_sub(i, v) atomic_fetch_add(-(i), v)
++
+ static __always_inline int atomic_cmpxchg(atomic_t *v, int old, int new)
+ {
+ 	return cmpxchg(&v->counter, old, new);
+@@ -85,6 +93,15 @@ static __always_inline int atomic_fetch_or(int i, atomic_t *v)
+ 	return val;
+ }
+ 
++static __always_inline int atomic_fetch_and(int i, atomic_t *v)
++{
++	int val = atomic_read(v);
++
++	do { } while (!atomic_try_cmpxchg(v, &val, val & i));
++
++	return val;
++}
++
+ static inline int test_and_set_bit(long nr, unsigned long *addr)
+ {
+ 	GEN_BINARY_RMWcc(LOCK_PREFIX __ASM_SIZE(bts), *addr, "Ir", nr, "%0", "c");
+diff --git a/tools/arch/x86/include/asm/cmpxchg.h b/tools/arch/x86/include/asm/cmpxchg.h
+index 5372da8b27fc..2d89f150badf 100644
+--- a/tools/arch/x86/include/asm/cmpxchg.h
++++ b/tools/arch/x86/include/asm/cmpxchg.h
+@@ -12,6 +12,8 @@ extern void __xchg_wrong_size(void)
+ 	__compiletime_error("Bad argument size for xchg");
+ extern void __cmpxchg_wrong_size(void)
+ 	__compiletime_error("Bad argument size for cmpxchg");
++extern void __xadd_wrong_size(void)
++	__compiletime_error("Bad argument size for xadd");
+ 
+ /*
+  * Constants for operation sizes. On 32-bit, the 64-bit size it set to
+@@ -200,4 +202,13 @@ extern void __cmpxchg_wrong_size(void)
+ #define try_cmpxchg(ptr, pold, new) 				\
+ 	__try_cmpxchg((ptr), (pold), (new), sizeof(*(ptr)))
+ 
++/*
++ * xadd() adds "inc" to "*ptr" and atomically returns the previous
++ * value of "*ptr".
++ *
++ * xadd() is locked when multiple CPUs are online
++ */
++#define __xadd(ptr, inc, lock)	__xchg_op((ptr), (inc), xadd, lock)
++#define xadd(ptr, inc)		__xadd((ptr), (inc), LOCK_PREFIX)
++
+ #endif	/* TOOLS_ASM_X86_CMPXCHG_H */
+diff --git a/tools/include/asm-generic/atomic-gcc.h b/tools/include/asm-generic/atomic-gcc.h
+index 08b7b3b36873..cc146b82bb34 100644
+--- a/tools/include/asm-generic/atomic-gcc.h
++++ b/tools/include/asm-generic/atomic-gcc.h
+@@ -100,6 +100,23 @@ atomic_try_cmpxchg(atomic_t *v, int *old, int new)
+ 	return likely(r == o);
+ }
+ 
++/**
++ * atomic_fetch_and() - atomic bitwise AND with full ordering
++ * @i: int value
++ * @v: pointer to atomic_t
++ *
++ * Atomically updates @v to (@v & @i) with full ordering.
++ *
++ * Unsafe to use in noinstr code; use raw_atomic_fetch_and() there.
++ *
++ * Return: The original value of @v.
++ */
++static __always_inline int
++atomic_fetch_and(int i, atomic_t *v)
++{
++	return __sync_fetch_and_and(&v->counter, i);
++}
++
+ /**
+  * atomic_fetch_or() - atomic bitwise OR with full ordering
+  * @i: int value
+@@ -117,6 +134,40 @@ atomic_fetch_or(int i, atomic_t *v)
+ 	return __sync_fetch_and_or(&v->counter, i);
+ }
+ 
++/**
++ * atomic_fetch_add() - atomic add with full ordering
++ * @i: int value to add
++ * @v: pointer to atomic_t
++ *
++ * Atomically updates @v to (@v + @i) with full ordering.
++ *
++ * Unsafe to use in noinstr code; use raw_atomic_fetch_add() there.
++ *
++ * Return: The original value of @v.
++ */
++static __always_inline int
++atomic_fetch_add(int i, atomic_t *v)
++{
++	return __sync_fetch_and_add(&v->counter, i);
++}
++
++/**
++ * atomic_fetch_sub() - atomic subtract with full ordering
++ * @i: int value to subtract
++ * @v: pointer to atomic_t
++ *
++ * Atomically updates @v to (@v - @i) with full ordering.
++ *
++ * Unsafe to use in noinstr code; use raw_atomic_fetch_sub() there.
++ *
++ * Return: The original value of @v.
++ */
++static __always_inline int
++atomic_fetch_sub(int i, atomic_t *v)
++{
++	return __sync_fetch_and_sub(&v->counter, i);
++}
++
+ static inline int test_and_set_bit(long nr, unsigned long *addr)
+ {
+ 	unsigned long mask = BIT_MASK(nr);
 -- 
 2.50.1.487.gc89ff58d15-goog
 
