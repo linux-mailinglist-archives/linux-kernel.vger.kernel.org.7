@@ -1,117 +1,116 @@
-Return-Path: <linux-kernel+bounces-749333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB17B14D09
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:31:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81926B14D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C94A4E648F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:31:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38EF168759
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CE1128DF01;
-	Tue, 29 Jul 2025 11:31:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9CD28EBE5;
+	Tue, 29 Jul 2025 11:32:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gh4BWWnN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MchwqjiZ"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE7F6227EA8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E67D254841;
+	Tue, 29 Jul 2025 11:32:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753788701; cv=none; b=iFBw0gu+c99Abp0tJoaxlx8+rVpfrt0sASODlsBdFnFXBhz9cLQ4PL+YTphz41pv4zacQkqNzNB/uO0PtJz1y0FpKv+oNF0L5k5GiY16wn8zy45sck19cLR/p0xgBmpWRFORvKjmmRyIF92EdHJeQdLuJ+m1wfO1GF0NpdKHzKk=
+	t=1753788745; cv=none; b=VnHDcrR1dksnBFmuD7gPnam2NsXxD/WH6ruoFqlHECoA9qf7WeVsOOwcA5btR6LgJn00Xw9bAZRL/aAtVhg4t6jwSAWtqBbXavTZvfd/Kk+bqS5KkHZm/MDfVYgQvObagVkjo2VXk6Pac/BRl2oti/20a0HETQIkTKxfPZlpBxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753788701; c=relaxed/simple;
-	bh=y4vGbQPemKBalKQIjXvDv5t7GDCaowzVXc0y68AGVhg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UaYkdfDylXsU2l+6q2SP/YRUVr1iUOGo0GRc0a+WMK0Rz5ixcpSFzNkYy7VAkpDxHRkv7rXLkaFnekXiWduYXEUYhS95KF4J659tvt8fJ+1ls/EATSC8WKmM2J3+IMkODFBD3NNkgTbyezACmfQbCKhILXsg2waAElZwci6LetY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gh4BWWnN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35CF3C4CEF5;
-	Tue, 29 Jul 2025 11:31:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753788700;
-	bh=y4vGbQPemKBalKQIjXvDv5t7GDCaowzVXc0y68AGVhg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gh4BWWnN1B38M5qEC5SU5f91E5va0e5qOxwTmr43pxSnjArVIFXNwbgy/YdjU6yig
-	 ow7GVuylhQ1CzlsFSq214lJLqgA+T4NuZQvOi3IsTQVUx/7Jk5+6iaPZ5In8AkV1kK
-	 ppnAx+AbdjGFbkn9u5Ql+bivqgNJy83iCUI0WNy6q7n5tEuKkng9SxuwtFNhTnVf0U
-	 x5doAH37MXCTMyeLuzs2IMta58XcC/kccyOvuMNR9V3dVEd9SmVYY7B1mXv+pPfWxo
-	 oNTZOakA515YdJQoEtw06lv6cPD/RFiqwLG5igj5KPh0xLwozlfJ4MN0qdMfVxNqXc
-	 pS/yI3Wsby/fw==
-Date: Tue, 29 Jul 2025 12:31:35 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Leo Yan <leo.yan@arm.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1753788745; c=relaxed/simple;
+	bh=jAP66d+bFvajVfpxRmWAmBn6ZIQZfvgt/qSDxYS9R1s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qtUmB2/4+0V1YfHbpwAKDCY9CCunuA0Y9jzosbHvv48M45h29oI5vXVzJHq1pQdYBJ61aGPpq2ZtRpBUk+2avgY8/KCYBRSfFA61iQLgPep9YVNOlbXIH5uUSE9rbO+1lCcJcExGonnCGUaXUg+sYyqALlS5n7Ywix/RWR8wYRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MchwqjiZ; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b78315ff04so1966793f8f.0;
+        Tue, 29 Jul 2025 04:32:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753788742; x=1754393542; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I7lkZ8BtZL4dbxHeN6ZdjsvNo+WdudiW+KTRbnPFCrM=;
+        b=MchwqjiZ9rUwxo3p8jttEVuC3Ou2aM+zhulNTI7HzZyWktulgLcgNuWzckrJpDvOoW
+         uwFQ9XntWGeL+er/54XIxCOJ5bppgjau7hKfw6E0NCcMpIsIr7brwkzoMpPPJfvjb3bK
+         ahaHc+57Fy/VgcLaezdVWwtPFkrStz4XOxMzfYwtCU84/wOMQGj8el6Xs4cNjG4LsSNW
+         jSkaQhR1oqdnPWnLZK6mh95nzLklIbmtkF7gfxYgYzs7Z40lu+hzC+JNT1LwXgB+gzvE
+         xiJVN+1mzBGjyc0A8x0Sc0D1ExPgNbK4q9Ee9PueKSooEWu1jBCKLahyn3KC0jlqHIum
+         q1yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753788742; x=1754393542;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I7lkZ8BtZL4dbxHeN6ZdjsvNo+WdudiW+KTRbnPFCrM=;
+        b=LqFalNq/EqyTuhtil6ziKqndAicfaG4WT5HQAHaI0Q5AviNYX6fP3ziQy67MFH1ao4
+         Gyr0UQZP871pkOoK43c4cdyjEbmmc+Y1yxfRA4Gp+MRTqmt1pKvtmpc/EnsOH/784ASy
+         FVUOKVg2sE05VzitByOeu9PJt8LXXeMYZdeK9YXJCkM6PKfJPGWC0QLtXkT8C6aNEyeR
+         Jwzgw/NEXf+5CmFITq6312Gz8xolwXPELDZRZPSlYE3bR24jrgkwILE6v+S6vftyn6mU
+         qtPKmy2tOUoseDAM6w/PFDJEAVPnK/mB5e0CNUZ2nuI0gIgT1R7OgZqppJv/zmAz0/VW
+         Tb1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUlDRNHci3emoacO6bSWW+N2w9BVqGwfEt1LsIQzjvOiEPEZgsZi5Rs4U+3hFxyPUYw4g5Sws4so3cfGQ==@vger.kernel.org, AJvYcCVKZZ9YeCwjR8V6UB5HCBLpgXfqbP1d47+58/ZJ9HpH12MINAc4D4w+ShMHe9n43E+X6y5QPmCERs1CVzQw@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdzliUBs8mq2pM5BCDPufvrkMeP6qXfuE/CmlryAWK/HRqxK/O
+	KBqXm9vrlm334K6Ql21GzAji+iLyOI9bbeMxE08eU6NKMToUBzQfoTPTishEyrBOOIg=
+X-Gm-Gg: ASbGncsdPHeIFHsDKtrj9sftjKSdkKeXznjAuW0cVyyb15o6OEIWkvxifpxZIGZj3ed
+	DXt/dlefltolJZf+dhnu0Axw5yDnKs/67xcStbBsvtCVHpjkKLn5/tFYGd1PT7A4gul7Se1gSTS
+	UO/LKTUdoSyil9/8D8Su2pPss231SjZe+WC++yOhIuUJ45IIGHC9wMttHdVeog8rexVGt7F3tIM
+	gFqN8qOcIy080EDt1Wjqouv/Soy6lhrkhTHpWuX5SpB2/HBFjCGw/AiQ7hSqj3a4l32bzRhIHCk
+	z/rnBvSRs7iswOU7TVMpCDnmsfNk0pSS/LFTsGfBVvs15KNxin76ti+ZgFHVzS2RCJvs2p15Nq+
+	iLgMXBkLw5Kt371MMPIwZZdk16P6Zzys=
+X-Google-Smtp-Source: AGHT+IGEPv6HfbmoI0tLk/cGrFzIyOEWrW2EH2KOPx6k3fp2+Mdx9BgB4IXFtDyTgUMZkZ2xVJS5rw==
+X-Received: by 2002:a05:6000:2289:b0:3b6:13a1:8861 with SMTP id ffacd0b85a97d-3b776777071mr11992020f8f.38.1753788741741;
+        Tue, 29 Jul 2025 04:32:21 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4587272b405sm171162925e9.19.2025.07.29.04.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 04:32:21 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-input@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 04/10] coresight: Appropriately disable programming
- clocks
-Message-ID: <f9fb2174-5bc5-4c7b-b74b-8542b4f7cbe0@sirena.org.uk>
-References: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
- <20250724-arm_cs_fix_clock_v4-v5-4-63f648dae021@arm.com>
- <b3782b8f-8c09-4fb8-bec6-186102cc66a8@sirena.org.uk>
+Subject: [PATCH][next] Input: lm8323: Remove space before newline
+Date: Tue, 29 Jul 2025 12:31:47 +0100
+Message-ID: <20250729113147.1924862-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QMmVRuHtuPBSW/9q"
-Content-Disposition: inline
-In-Reply-To: <b3782b8f-8c09-4fb8-bec6-186102cc66a8@sirena.org.uk>
-X-Cookie: Short people get rained on last.
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+There is an extraneous space before a newline in a dev_err message.
+Remove it
 
---QMmVRuHtuPBSW/9q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/input/keyboard/lm8323.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, Jul 28, 2025 at 05:45:04PM +0100, Mark Brown wrote:
-> On Thu, Jul 24, 2025 at 04:22:34PM +0100, Leo Yan wrote:
->=20
-> Previously we would return NULL for any error (which isn't super great
-> for deferred probe but never mind).
->=20
-> > +	pclk =3D devm_clk_get_enabled(dev, "apb_pclk");
-> > +	if (IS_ERR(pclk))
-> > +		pclk =3D devm_clk_get_enabled(dev, "apb");
->=20
-> ...
->=20
-> >  	return pclk;
-> >  }
->=20
-> Now we pass errors back to the caller, making missing clocks fatal.
+diff --git a/drivers/input/keyboard/lm8323.c b/drivers/input/keyboard/lm8323.c
+index e19442c6f80f..d9df10484755 100644
+--- a/drivers/input/keyboard/lm8323.c
++++ b/drivers/input/keyboard/lm8323.c
+@@ -259,7 +259,7 @@ static void process_keys(struct lm8323_chip *lm)
+ 	ret = lm8323_read(lm, LM8323_CMD_READ_FIFO, key_fifo, LM8323_FIFO_LEN);
+ 
+ 	if (ret < 0) {
+-		dev_err(&lm->client->dev, "Failed reading fifo \n");
++		dev_err(&lm->client->dev, "Failed reading fifo\n");
+ 		return;
+ 	}
+ 	key_fifo[ret] = 0;
+-- 
+2.50.0
 
-Thinking about this some more I think for compatiblity these clocks need
-to be treated as optional - that's what the original code was
-effectively doing, and I can imagine this isn't the only SoC which has
-(hopefully) always on clocks and didn't wire things up in DT.
-
---QMmVRuHtuPBSW/9q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiIsRYACgkQJNaLcl1U
-h9CP7gf/a6QGIQvui9I8RFs1artw7Ym1nwZpYTmbZEe1GpG3O3wU/Xrwqci8/bIm
-+xr5ymPxS+a+Po2e4bJZ1suPpFq/wp15/HzEF6DpEGWdgjvokn7JkteNO3UohWNw
-3o67pP6Il9kvUL6W2tRk4GQqqUGITGMlaiHX4Qqc2CuhJTHcNMNYXm3FpXQBeNBL
-xXUy04CjKL9I8kqWu/6bnAB5mSjj1MwDtWhQcWi/Xt83VwfeXIHTgMFDdIR3c62S
-xZ4KU5uHpxSLqY6dns5JbM6Ibqm3EKmVX1O0ZOTyPD7QgYusdNsQ+zaXqYVhPXAg
-yOtwcnHJpB/euhvB9Fui1K+ORnlDEg==
-=PiH5
------END PGP SIGNATURE-----
-
---QMmVRuHtuPBSW/9q--
 
