@@ -1,160 +1,206 @@
-Return-Path: <linux-kernel+bounces-749242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A792B14BE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:05:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBC41B14BDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:03:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85139188EE4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:05:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0163A179EAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF50C2882AB;
-	Tue, 29 Jul 2025 10:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D64A288525;
+	Tue, 29 Jul 2025 10:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="E8+j30Pj"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hdD1cNLC"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CB018C928
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:05:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F76A1799F;
+	Tue, 29 Jul 2025 10:03:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753783508; cv=none; b=NNldmwVMK8ubFWZVOwtzDhExBiMT8o+WvKm6aseZn64XzmokxW7EA0qLo60WV9eyBNX1mLvaDEvgwGGRM9vLt5RdH0WTJnng4HvcQ+q6fWa4wXpV/gN3flCExcTteiR9cuJ7AYy8PYBg+85VSv2SvT1BNywbSuvkjZgLBuV1G90=
+	t=1753783424; cv=none; b=MAWFnJSilv2g2Q7DLWpkAaFflAgYzZ+kkwbTmUhYmSFbjAX6phSz2HxaI93XkD/qtpWS7pITCGnG5unEJTJV4nicUKeAJO0Nnt7PtgR3pL35fb4RC5NveBZ3NMd/XuubOsBZouo01mXhDmdFQ6qpHXCq4lZ1GHHFYsYv+ekBQZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753783508; c=relaxed/simple;
-	bh=sNc5UgbaCQY4kyCdLAh94PLZHXNQcWqA/zpsT4dVWKk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=reYnucEKyyJq9jrCH2CsjMeqIP6FtIXOYNb8zlJ5/S0qzrcK/lhwuN6tl0sO4ml1Na2j4hWkfxR0lORVjcDKf581gDfx/mSoG1Phtvpq9/eMQzpX052Jqn+MeNxwZ7cggO04VeL8MOvUHgitUU3l+iL69y2VH1+MYTbW6XGNeig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=E8+j30Pj; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-To:Resent-Cc:
-	Resent-Message-ID:In-Reply-To:References;
-	bh=egSGjMlFbH3dU8UYE7+I38neCytKIOjPn2LRtM5SThY=; t=1753783506; x=1754993106; 
-	b=E8+j30PjlzZs5lE2gVou5BCmb4FoQyH7qejqnJONdxwVqV3YrIgrPCmashDn+QZFFC/xrkMYKBJ
-	GPPSqNZI1QkIb/XDv3t5U09cfNwR6fMpvYgAnig9HKp0cNStT2/DF92ZT64lxOqQx8qNotRWwWbHP
-	Jvwaaix3FH5fsQq9nePzlXr+R3wpBAKU6Pbrg1QGraL+P4gthmj7YLmyJTik4bCqJONNYWoA3oWQL
-	swhMy8kTP4ftd4V4lGm+9jIOqPoKm9GzpdHLw+elGFiVfFFGvTI2rp7KJPV4eOInwwf3AT1FzfhgL
-	kV182uTz2kt6iwb/tOCGP2ggwhBuRTZWdnaw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98.2)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1ughCh-0000000ENqf-0sAD;
-	Tue, 29 Jul 2025 12:05:03 +0200
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Subject: [GIT PULL] uml 6.17-rc1
-Date: Tue, 29 Jul 2025 12:02:03 +0200
-Message-ID: <20250729100457.14550-3-johannes@sipsolutions.net>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753783424; c=relaxed/simple;
+	bh=D+MVLwJmF7zcQQs5GBiAvtVf89SV7MV1UDodoYOOKcM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=eoB9jWxqJf9wTWDGJNkSDwnnhpNBcYxVO5kMw9pIgn027WhJQewetmXQG+jDEbY0wkSuVVdZh8B694ldpaHwhITOsSiUK2aulFZgu9sl7zl/hbM2cv7YyIbZgcdxGBq/OudmoysKXU73jsmktVJmGaqx7XyBNOWNGdjxkxYgsXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hdD1cNLC; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae0e0271d82so1018227066b.3;
+        Tue, 29 Jul 2025 03:03:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753783420; x=1754388220; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=D+MVLwJmF7zcQQs5GBiAvtVf89SV7MV1UDodoYOOKcM=;
+        b=hdD1cNLCLOaUQOhH02Eo9SiEDi9PAfbacB8CTYOm6FgGea6Z1Ll0gHt6IktIKTS4ZO
+         fM0zL6lOZ8dgD1PtClg2bbp09fW6Sn4mMwUCcgKBloyJvmGRxq0Hhw/GE6Uvkge4vvFQ
+         rJ78iJsV7sqBeJYapjJnkzv5sAPG0nLNVLSovWDagp4WYqWekPyveVr5RVfvBjRTX56r
+         vUiGgLDlQwyM48WcSuIVMkWwzMJNEX6kbQ91opJcXknfFiAJ/65qVYCED6ItHsHiMsQO
+         mP4oPVE2RUu/VDzmVfY8I7Lg+zK7yW1UhahqiC9EGCZ6NFXVpfqkEoCwoDMbhrXqbyL0
+         H5LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753783420; x=1754388220;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D+MVLwJmF7zcQQs5GBiAvtVf89SV7MV1UDodoYOOKcM=;
+        b=IaOiw2tMM9gozbD4eSiAaHv8qluEp8s8rx6COQsvt0gsLOjaDtK3NkMcqhVml5H8Tl
+         dtwADRd9IrsMYYBQwPudZFJCbI8XxVj0GH/ZicoS0UFiEz0uWAgcsmhKow16Hfdownuw
+         +9mWOHlrp2Rp9QG6F7Obls2jzPMVabd90OiIREw43Uzvs8F6upEXyeHO7KLDbfhdyQGE
+         3Fs6j8uoDLQ2yp17iZiC3/rylOebkQyCHzeH8KUCXIDcUkreg4830Nj1dTjef6xmYe2x
+         EP4+ov5+XSl4kQQIDsf1sW9mdpLdiSO63rO2dULBDESkQdsTGqKgSWtuZNa7PEOTUu8b
+         6uJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUB+h44IIGlBOr/b5d6kBI8dFNa0tLtc3T44F4Mw93SscXCIIMdVYZCuGh6Wxi86XEPqx3f5mxeR6RR@vger.kernel.org, AJvYcCWphGGtv210NoOtiwnMqTXROF3QN57Qy94MIL10tkV9LZtY5sXOYHK71T0+DoQmBPhL2hX5cOl/jRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTlwC6bpEG/9u8mUgGYhg1K9QdP3Sk1Y+YEfYXduuLP9gdgsQi
+	MpTZ+81E7x1n1CvHHu9EuuaLQskHf7uCyaW0ESDFxldu4byMNTLHfZa2RenI6K7y0MClXR/ddK9
+	x0jABPcAqUSUDQVqSg/BtJzaHpHn3iwe5FmcpkOA=
+X-Gm-Gg: ASbGncv/qmmBJuvW0AaQm1x5uhlrT/GpkfrAkDhWpf/XJ+2+BYz/Wfqd0/dIOi3YZ+X
+	TOLj2JTPAFbGrzC8166wZsXX1zCExS1VYgAw99851wvEwNMVQ3PoTCJ3hzRYdSg+FOpQ5JpJsxx
+	XxzvOBTNIVEfNy8LRAGusy76XC4bHbTSXePCnmh2//CyJBj7UrBvasSFjwbjLc2Qoo5lSF7hEZa
+	KEpE7zu
+X-Google-Smtp-Source: AGHT+IFR5NqoKoHtBXiwuzultk2/wcc4NDM8ArexVgiStAANSbiLZ+rEDOZQAChRg5bGXQycZF4dSKht6k9SVrysExk=
+X-Received: by 2002:a17:907:6d18:b0:add:f2c8:7d3f with SMTP id
+ a640c23a62f3a-af618f02439mr1594000566b.33.1753783419635; Tue, 29 Jul 2025
+ 03:03:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-malware-bazaar: not-scanned
+From: Andy Mindful <andy.mindful@gmail.com>
+Date: Tue, 29 Jul 2025 13:03:27 +0300
+X-Gm-Features: Ac12FXwT2AD8p3BCcLoITIH5kuPJ0_AKKpOAxOhi7hBOjcX8afUCURN2eTIOkdw
+Message-ID: <CACTEcX6oXBot1VBApOyKVMVXsAN9BsvQMLa8J0iKpNeB-eLttQ@mail.gmail.com>
+Subject: [REGRESSION] tty lockup and WWAN loss after hibernate/suspend in 6.8+
+ on ThinkPad X1 Carbon Gen 10
+To: linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
+	linux-pm@vger.kernel.org
+Cc: intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-acpi@vger.kernel.org, rafael@kernel.org, jani.nikula@intel.com, 
+	ville.syrjala@linux.intel.com, tglx@linutronix.de
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Kernel-version: 6.8+ (confirmed in Fedora kernel 6.8.4-200.fc38.x86_64
+and above)
+Regression-from: 6.7.11 (working) to 6.8.4+ (regressed)
+Affected-hardware: Lenovo ThinkPad X1 Carbon Gen 10 (Intel Alder Lake platform)
+Affected-subsystems: TTY/Console, Power Management, WWAN Modem (Intel
+XMM7560, iosm driver), Kernel DRM/i915 stack
 
-There's really not much for UML for 6.17-rc1, mostly
-cleanups and two small new features as noted in the
-tag message below.
+Description:
+We are reporting a significant regression introduced in Linux kernel
+version 6.8 (specifically confirmed in Fedora kernel
+6.8.4-200.fc38.x86_64 and subsequent versions), affecting Lenovo
+ThinkPad X1 Carbon Gen 10 laptops. This regression manifests primarily
+as tty lockups and complete loss of WWAN modem functionality after
+hibernate cycle.
 
-We're still discussing how best to do NOMMU and SMP
-(currently have a partial patchset, only kernel-space
-is really doing SMP) but neither is ready yet.
+Problematic Behavior:
+1. TTY/Console: After a hibernate cycle, the console input becomes
+unresponsive. In some cases, after suspend, pressing `SysRq+R` (unraw)
+can temporarily restore keyboard functionality, but this is not
+consistent, especially after hibernation.
+2. Power Management: While S3 suspend works correctly when "Linux
+only" is set in BIOS, `suspend` causes the system to freeze upon
+resume if "Windows + Linux" mode (which implies `s2idle`) is active in
+BIOS settings.
+3. WWAN Modem (Intel XMM7560, `iosm` driver): The modem fails to
+reinitialize after hibernation, consistently showing "msg timeout"
+errors in logs. The modem works correctly after a cold boot but
+completely fails to recover after resuming from hibernate. Rescanning
+PCI devices or reloading the `iosm` module does not resolve the issue.
+Attempts to manually remove the device via
+`/sys/bus/pci/devices/.../remove` result in a system hang.
+4. Kernel DRM/i915 stack: Although GuC and HuC firmware (versions
+70.44.1 / 7.9.3) are confirmed to load correctly, logs indicate
+potential graphics driver reinitialization issues in affected kernel
+versions. This might contribute to the TTY unresponsiveness.
 
-Please pull and let us know if there's any problem.
+System Specifications:
+- Laptop: Lenovo ThinkPad X1 Carbon Gen 10
+- CPU: Intel Core i7-1260P (Alder Lake)
+- GPU: Intel iGPU (ADL GT2) - i915
+- WWAN: Intel XMM7560 (iosm driver)
+- Wi-Fi/Bluetooth: Intel AX201
+- Operating Systems tested:
+- Fedora 38 (most stable with 6.7.11)
+- Fedora 39/40/42 (exhibit regression)
+- Ubuntu 22.04, 24.10 (exhibit regression)
+- EndeavourOS_Mercury-Neo-2025.03.19 (exhibits regression)
+- Display manager: GDM/Wayland (also tested LightDM + Xfce and
+runlevel 3, problem persists).
+- Mesa Stack: Mesa 24.3.4 built with LLVM 16.0.6 (confirmed functional
+with working kernels). Vulkan, GBM, EGL, GLX render correctly with
+`iris` and `intel` drivers. Custom Mesa 24.3.4 build showed no impact
+on the hibernate issue.
 
-Thanks,
-johannes
+Behavior Matrix:
+| Kernel Version | Hibernate Status | Resume Status | TTY
+Functionality | WWAN Functionality | Notes |
+|----------------|------------------|---------------|-------------------|--------------------|-------|
+| 6.2.9 | OK | Not tested | OK | Not Tested | Working baseline |
+| 6.3.12 | OK | Not tested | OK | Not Tested | Working baseline |
+| 6.7.11 | OK | OK(S3)/Fail(S2idle) | OK | FAIL | WWAN regression
+starts here, but hibernate/tty still OK |
+| **6.8.4+** | FAIL | OK(S3)/Fail(S2idle) | FAIL | FAIL | Major
+regression point, affects hibernate/tty/WWAN |
+| 6.14+ | FAIL | OK(S3)/Fail(S2idle) | FAIL | FAIL | Problem persists
+in newer kernels |
 
+Additional Details:
+- Hibernation issues:
+- Initial `mem_sleep` was `[s2idle]` in BIOS "Windows + Linux" mode.
+- Switching BIOS to "Linux only" enabled proper S3 suspend, changing
+`/sys/power/mem_sleep` to `[s2idle] deep`. However, the hibernation
+issue (TTY lockup, WWAN loss) persists even with S3 enabled for
+suspend.
+- `Alt + SysRq + R` sometimes revives console after suspend but
+*never* after hibernate.
+- TTY related errors observed in logs are, dmesg:
+`tty_flip_buffer_push: called while buffer locked`, systemd-logind:
+`New session created but VT is not initial VT, ignoring`, GDM:
+`GdmLocalDisplayFactory: active VT is not initial VT` on kernels 6.8+.
+- WWAN issues:
+- The `iosm` driver appears loaded, and the device is visible via
+`lspci`, but the modem is not visible to `mmcli` after resume from
+hibernate.
+- The WWAN modem (iosm) only works after a cold boot.
+- Rescanning PCI or reloading `iosm` module (e.g., `modprobe -r iosm
+&& modprobe iosm`) does not resolve the issue.
+- Manual removal via `/sys/bus/pci/devices/.../remove` leads to a
+system hang, indicating a deeper issue with device state or driver
+interaction post-resume.
 
+Tested Alternatives & Current Stability:
+- Hibernate works reliably only up to kernel 6.7.11.
+- Fedora 38 with kernel 6.7.11 + GNOME 44.10 is currently the most
+stable configuration for this hardware, despite the WWAN issue already
+present there (but not the tty lockup/hibernate issue).
+- Kali Linux with 6.6.9 - hibernation works.
+- Newer distributions (e.g., Fedora 42, Ubuntu 25.04, EndeavourOS)
+inherit the same problems due to their newer kernel versions.
 
-The following changes since commit d0b3b7b22dfa1f4b515fd3a295b3fd958f9e81af:
+Expected Behavior:
+The system should resume from hibernate and suspend without TTY
+lockups, and the WWAN modem should reinitialize correctly and be fully
+functional.
 
-  Linux 6.16-rc4 (2025-06-29 13:09:04 -0700)
+Steps to Reproduce:
+1. Ensure system is running a kernel version 6.8.4 or newer (e.g.,
+Fedora 38 with `6.8.4-200.fc38.x86_64`).
+2. Perform a `systemctl hibernate` or `systemctl suspend`.
+3. Resume the system.
+4. Observe TTY console unresponsiveness(only in runlevel 3) and check
+WWAN modem status using `mmcli -L`.
 
-are available in the Git repository at:
+Please let me know if any further information or testing is required.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.17-rc1
+Thank you.
 
-for you to fetch changes up to fc9ed2f6589dc2c11f05883e5c323be5f39fd241:
-
-  um: Replace __ASSEMBLY__ with __ASSEMBLER__ in the usermode headers (2025-07-22 17:12:45 +0200)
-
-----------------------------------------------------------------
-Mostly cleanups, except:
- - dynamic addition of vfio passthrough devices
- - implementation of HAVE_SYSCALL_TRACEPOINTS
-
-----------------------------------------------------------------
-Johannes Berg (1):
-      um: simplify syscall header files
-
-Nam Cao (1):
-      um: virt-pci: Switch to msi_create_parent_irq_domain()
-
-Thomas Huth (1):
-      um: Replace __ASSEMBLY__ with __ASSEMBLER__ in the usermode headers
-
-Thomas Weißschuh (3):
-      um/x86: Add system call table to header file
-      um/ptrace: Implement HAVE_SYSCALL_TRACEPOINTS
-      um: Re-evaluate thread flags repeatedly
-
-Tiwei Bie (9):
-      um: virtio_pcidev: Rename UM_PCI_STAT_WAITING
-      um: Make unscheduled_userspace_iterations static
-      um: Make mm_list and mm_list_lock static
-      um: Avoid redefining ARCH_HAS_CACHE_LINE_SIZE
-      um: rtc: Avoid shadowing err in uml_rtc_start()
-      um: vfio: Support adding devices via mconsole
-      um: Use err consistently in userspace()
-      um: Remove the pid parameter of handle_trap()
-      um: Stop tracking stub's PID via userspace_pid[]
-
- arch/um/Kconfig                         |  5 ++-
- arch/um/drivers/Kconfig                 |  1 +
- arch/um/drivers/rtc_user.c              |  2 +-
- arch/um/drivers/vfio_kern.c             | 62 ++++++++++++++++++++++++++++++---
- arch/um/drivers/virt-pci.c              | 43 +++++++++++------------
- arch/um/drivers/virtio_pcidev.c         |  8 ++---
- arch/um/include/asm/cpufeature.h        |  4 +--
- arch/um/include/asm/current.h           |  4 +--
- arch/um/include/asm/mmu_context.h       |  9 +----
- arch/um/include/asm/page.h              |  4 +--
- arch/um/include/asm/ptrace-generic.h    |  2 +-
- arch/um/include/asm/thread_info.h       |  8 ++++-
- arch/um/include/shared/as-layout.h      |  2 +-
- arch/um/include/shared/skas/mm_id.h     |  2 --
- arch/um/include/shared/skas/skas.h      |  1 -
- arch/um/kernel/exec.c                   |  2 --
- arch/um/kernel/process.c                | 18 ++++++----
- arch/um/kernel/ptrace.c                 |  9 +++++
- arch/um/kernel/skas/mmu.c               |  4 +--
- arch/um/kernel/skas/process.c           |  2 --
- arch/um/kernel/skas/syscall.c           | 11 ++++--
- arch/um/os-Linux/skas/process.c         | 35 ++++++++-----------
- arch/x86/um/asm/syscall.h               |  2 ++
- arch/x86/um/shared/sysdep/ptrace.h      | 12 -------
- arch/x86/um/shared/sysdep/syscalls.h    |  6 ----
- arch/x86/um/shared/sysdep/syscalls_32.h | 14 --------
- arch/x86/um/shared/sysdep/syscalls_64.h | 28 ---------------
- arch/x86/um/tls_32.c                    |  2 +-
- 28 files changed, 151 insertions(+), 151 deletions(-)
- delete mode 100644 arch/x86/um/shared/sysdep/syscalls.h
- delete mode 100644 arch/x86/um/shared/sysdep/syscalls_32.h
- delete mode 100644 arch/x86/um/shared/sysdep/syscalls_64.h
+Best regards,
+Andriy
 
