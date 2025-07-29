@@ -1,101 +1,119 @@
-Return-Path: <linux-kernel+bounces-749030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 165CEB14916
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:28:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72302B1491B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:28:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 684C2189C72F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:28:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF88B163AB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:28:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68124263F4E;
-	Tue, 29 Jul 2025 07:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eK4w4i7l";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8P2C9jOT"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46097263F59;
+	Tue, 29 Jul 2025 07:28:25 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49177259CAB
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8FF263F40
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753774080; cv=none; b=a/3LI2LEQZFTeJXw2r8DPMW8WNGwcZR2/Mfy1Jfaik/pXk9wuZzmTasB24j+F3hYC4SJQLD+xUNUt1pPVi4+DxF1EvvoBSHzpM6dC+DGQbqWzc4N5Yo5PcR5I7YljKPTyAGmQltYk8/12FCHJhE6izNhJVU0PGdPg3jXTo49uQU=
+	t=1753774104; cv=none; b=moitbXWzljWA/oCxiZjHox0oR3Jj8u+obBhxUp+/RR+y2cn9xh4gy/wH8CuoMPs9qfity+ukQ++NFsOZ/B7OiYlqtWqZfeEq+Q5BpiFDxQ8js36cEJvs91FDnCllHDtTLOd8BuXKkUOlZ+BZT5H5qk8QcUUXflXvWrff5yPHejs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753774080; c=relaxed/simple;
-	bh=cjMbHXuWdh0ckiTqMrJMeOkJfSlpMF+5IDejF4OdABs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ZttLWOYEoYVUkrB1MidhKdd/GjsFgL+csoWvzYCZa5Kr5XpN3NM+Z0Zahb4f0TcNN3S/Uyjw5ntES8dKBrlHsLzs9Kz0tYPFi2q3AHFnbgQKXdJMgq+PDYJOpYNNKf4aXDGqckBs6iX7bh7Tt1pn0pFttSEx07VnNJQPwsYdbpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eK4w4i7l; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8P2C9jOT; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753774077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8bBYSTZpcRwKvIkblTZvAnTSurmf8yAiPann+WMyjBQ=;
-	b=eK4w4i7lYj7DJFTnZu+4u/xtfibAeUVwOCGmq28M6sv/FW7HGnKxpF0hv3K1NhBMU5JGO8
-	yd6Bni0OIPp+rssxWbW6f8aEPOKLfQw9xomuwPvK+5fU3fItddhPKJQVMhOEdSMvtSWRfg
-	V3VamnBKS9UxD7I2ejvhfuj5jXwmdsX2XnSnyz6j9WairOFbJM3BoAkCB/6WLXrUROM4aK
-	QgtjFS8cQI3auT/EBLlOHx7iy45BKHBxxu0IwSEgrurubfawpexT1Sk3Lp20R6qvjs8OaV
-	8LmVxZ5Azpl1uBJCELw0h0kjfkSvyNpWWitpc3UTx1/Qvgq/L/zIBAff6LL4BA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753774077;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8bBYSTZpcRwKvIkblTZvAnTSurmf8yAiPann+WMyjBQ=;
-	b=8P2C9jOTMPv3/SiXxbOC2HqnDfEuJZYCBPU5j0I5WryKLddPUv4BpvbMwSrbtQDpDb6WG2
-	mUr6nKY0LXmtDzBA==
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, oe-lkp@lists.linux.dev,
- lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
- ltp@lists.linux.it, oliver.sang@intel.com
-Subject: Re: [tip:locking/futex] [futex]  56180dd20c:
- BUG:sleeping_function_called_from_invalid_context_at_kernel/nsproxy.c
-In-Reply-To: <aIgUUhKWesDpM0BJ@xsang-OptiPlex-9020>
-References: <202507231021.dcf24373-lkp@intel.com> <87a54usty4.ffs@tglx>
- <aINKAQt3qcj2s38N@xsang-OptiPlex-9020> <87seikp94v.ffs@tglx>
- <aIgUUhKWesDpM0BJ@xsang-OptiPlex-9020>
-Date: Tue, 29 Jul 2025 09:27:56 +0200
-Message-ID: <87wm7ro3r7.ffs@tglx>
+	s=arc-20240116; t=1753774104; c=relaxed/simple;
+	bh=YXTXRZSqeVN5r8aC8osaO20V+asJOktil2K1doQXx18=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=BNQ32aOiLaESNKkC017uNYSyRDzzDBcxbNQowAK9Itbf3AfGgUWk3icV90vKLahEs7dKAfhIBIK8y8wVhCVYfvJ6OOMS8o6b24wcY97NcM8U4f1CRQa2nwBE54BrZ9jhdYalwJkC7F+ejnkxni4PWEhmQereWQOhOy39PObUjNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4brn4s2xnwz8Xs6y;
+	Tue, 29 Jul 2025 15:28:13 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 56T7RwRS004639;
+	Tue, 29 Jul 2025 15:27:58 +0800 (+08)
+	(envelope-from fan.yu9@zte.com.cn)
+Received: from mapi (xaxapp01[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Tue, 29 Jul 2025 15:27:59 +0800 (CST)
+Date: Tue, 29 Jul 2025 15:27:59 +0800 (CST)
+X-Zmail-TransId: 2af9688877ff44c-9e5bb
+X-Mailer: Zmail v1.0
+Message-ID: <20250729152759994n3YKgjxLglCCPkOtYtU2U@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+From: <fan.yu9@zte.com.cn>
+To: <tglx@linutronix.de>, <frederic@kernel.org>, <peterz@infradead.org>,
+        <oleg@redhat.com>, <brauner@kernel.org>, <iro@zeniv.linux.org.uk>,
+        <joel.granados@kernel.org>, <lorenzo.stoakes@oracle.com>,
+        <akpm@linux-foundation.org>
+Cc: <linux-kernel@vger.kernel.org>, <xu.xin16@zte.com.cn>,
+        <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjJdIHNpZ25hbDogY2xhcmlmeSBfX3NlbmRfc2lnbmFsX2xvY2tlZCBjb21tZW50IGluIGRvX25vdGlmeV9wYXJlbnQ=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 56T7RwRS004639
+X-TLS: YES
+X-SPF-DOMAIN: zte.com.cn
+X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
+X-SPF: None
+X-SOURCE-IP: 10.5.228.133 unknown Tue, 29 Jul 2025 15:28:13 +0800
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6888780D.002/4brn4s2xnwz8Xs6y
 
-Oliver!
+From: Fan Yu <fan.yu9@zte.com.cn>
 
-On Tue, Jul 29 2025 at 08:22, Oliver Sang wrote:
-> On Fri, Jul 25, 2025 at 05:45:04PM +0200, Thomas Gleixner wrote:
->> Can you please enable CONFIG_PREEMPT_TRACER and add
->> 
->> 'trace_event=preemptirq:preempt_disable,preemptirq:preempt_enable ftrace_dump_on_oops'
->> 
->> to the kernel command line. The latter will dump the recorded
->> preempt_enable/disable events and we can pinpoint the function which is
->> responsible for that.
->
-> the config with CONFIG_PREEMPT_TRACER enabled is attached as
-> config-6.16.0-rc5-00002-g56180dd20c19
->
-> by this config, we still see random
-> WARNING:at_kernel/sched/core.c:#preempt_count_sub
-...
-> but bot seems not be able to capture other new dmesg stats.
+The original comment (introduced in commit 61e713bdca36 ("signal: Avoid
+corrupting si_pid and si_uid in do_notify_parent")) stated that
+__send_signal should be used because si_pid/si_uid are in the parent's
+namespace, but it did not explain why send_signal_locked() is unsafe here.
 
-Ah. The tracer does not dump on warnings by default. You need
-'panic_on_warn' on the command line as well. Forgot about that earlier.
+This became more ambiguous after
+  commit 157cc18122b4 ("signal: Rename send_signal send_signal_locked")
+without updating the comment.
 
-Thanks,
+Explicitly clarify that:
+1. send_signal_locked() may incorrectly modify si_pid/si_uid when crossing
+   PID/user namespaces (e.g., reset si_pid to 0 or translate si_uid).
+2. __send_signal_locked() preserves the original siginfo values, which is
+   critical since they are already in the parent's namespace.
 
-        tglx
+Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
+---
+Changes in V2:
+- Some fixes according to
+https://lore.kernel.org/all/878qk8pdkd.ffs@tglx/
+https://lore.kernel.org/all/20250728155815.GB25567@redhat.com/
+- Clarify why __send_signal_locked must be used
+
+ kernel/signal.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/signal.c b/kernel/signal.c
+index e2c928de7d2c..047b22837a36 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2252,8 +2252,10 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+ 			sig = 0;
+ 	}
+ 	/*
+-	 * Send with __send_signal as si_pid and si_uid are in the
+-	 * parent's namespaces.
++	 * Use __send_signal_locked() instead of send_signal_locked()
++	 * because si_pid and si_uid are already in the parent's
++	 * namespace. send_signal_locked() would incorrectly modify
++	 * them when crossing PID/user namespaces.
+ 	 */
+ 	if (valid_signal(sig) && sig)
+ 		__send_signal_locked(sig, &info, tsk->parent, PIDTYPE_TGID, false);
+-- 
+2.25.1
 
