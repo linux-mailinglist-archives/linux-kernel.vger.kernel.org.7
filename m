@@ -1,121 +1,99 @@
-Return-Path: <linux-kernel+bounces-748770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E77CB145D8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:36:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA5B2B145DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E5416E638
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:36:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF75217C68F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5207B1F239B;
-	Tue, 29 Jul 2025 01:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ShKZ764R"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16BB1F3D58;
+	Tue, 29 Jul 2025 01:39:14 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 716D417578;
-	Tue, 29 Jul 2025 01:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E95A7FBA1;
+	Tue, 29 Jul 2025 01:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753752955; cv=none; b=KECkVvvROU7LvUAS+H7nVfpEX4Y/wC1Nl1wkSfN49qB+H7WBpzQiID7zlejzdWc5MYrWcjMg5rSErGTj1wpx4BkfV691Ba+wqNtQU46/Y/R8jPMsh4DBBQ9aaP84mWoVaL/bW+/yx/TgC9h5D53T/EMRvLtJF4Y/e6i16aZaoiU=
+	t=1753753154; cv=none; b=RcZWRnw+L/7e+tpeDsX5QNi7fgoxFWBR72b0xDk9jrQ395hnv8ZBVEu7pLlxn1fy9/pXib9TZ7C7p7fkhZHC31R/oFYJSWYhFmrkTUYq7Z/2b7J2rbkAu6Kca4l3K7UHjbUSJQTfELo7VcanMtL2tjB09NmWYp27t9oOXnndYpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753752955; c=relaxed/simple;
-	bh=TBhH0XChIVMo2IjOaCYjQY6MI7eoAjXxiplja+1VcJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ocFNhdGKzmII/N3HTK8YB1PEZv3jU5nQo+opxeWwfy0ndkmyM3zi/LV3pJDo8X1VclNIVnJm8ycPweBmq/fH7Pbzk0FQjRQaNQ1WPEreRZsMBKrlOWBwHH6iW2byZNrzfytjAvI3q9rE6ndLigVwlkK2yzOyNNgtVHoxstznSls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ShKZ764R; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753752743;
-	bh=5pBS3qj7hAH4RQt8bdhJ3MOKUD//BRx+rTop/UWsJi8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ShKZ764Rexht1ZHrOTR8r2cV1jYv679Bx0hXQXkXML+0a5U0BE8Dr5rwloOAWFTlm
-	 S78f+RJlTBd1zWlLrjL93ldh/bkgV/aI/AU31fAS6UTxUyZWMmzYj1Bq0tZBS2qHJh
-	 PiAWlTOu325UOTSSShxr+4t6zSh99Rc70bE43XgHsyp5hW33d584ftapVek40J+xai
-	 3H9z0XZ4wJKkYRp4Nxa9ooLOYX/03VVm920Q1NOlN7oxOtopWfxudmtxnXaaVInsZI
-	 bQiX0yyWCz9mGW79Ue0raqNSoxU/LOQ6Sy0ssh7368DkGzCisM9S7Ko4srngff5Sm7
-	 8NqdJxHuLpXQw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brdBH0dcxz4wb0;
-	Tue, 29 Jul 2025 11:32:23 +1000 (AEST)
-Date: Tue, 29 Jul 2025 11:35:48 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Lee Jones <lee@kernel.org>
-Cc: Robert Marko <robert.marko@sartura.hr>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the mfd tree
-Message-ID: <20250729113548.4ad9ba1c@canb.auug.org.au>
-In-Reply-To: <20250724100314.GW11056@google.com>
-References: <20250724115409.030d0d08@canb.auug.org.au>
-	<20250724100314.GW11056@google.com>
+	s=arc-20240116; t=1753753154; c=relaxed/simple;
+	bh=YerietG5fqamTEKIpWTDCkzpBEJHMsVaRP1qKczDb4I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZXr1RKmK+RIvQLV5/tYb88xwup9OFr82IY8gZUtt+naqKiGZv4JgwWBKivAiD+95OBTTMsoC2mA9MUdZG3VYgNYkN9+AN+dzpB5hFSdV9pESWxMFYGglqiqIHV0wkga/Nu6wxpLPgwrejGA6VoF5LpNwwkek/NmjWjqy7E6gtsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-01 (Coremail) with SMTP id qwCowACn06c0Joho8RnRBw--.63454S2;
+	Tue, 29 Jul 2025 09:39:00 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: kent.overstreet@linux.dev,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] bcachefs: Convert comma to semicolon
+Date: Tue, 29 Jul 2025 09:36:41 +0800
+Message-Id: <20250729013641.1229554-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/n2/vSPUOBzCI9B_g38cuPgh";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowACn06c0Joho8RnRBw--.63454S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Gr4rCw4kuw4kuw1xGrW3ZFb_yoWDWrX_WF
+	n5XFs7uF4Sqr12qr45urn0ga90g34Uur1xXa1Iya90kay7Ja17Wrnxur4xJ345tr40kr13
+	KrZ8t3yFkF97CjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbs8FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26F4UJV
+	W0owAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUAVWUtwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCY02Avz4vE14v_KwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43
+	ZEXa7VUjFfO5UUUUU==
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
---Sig_/n2/vSPUOBzCI9B_g38cuPgh
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Replace comma between expressions with semicolons.
 
-Hi Lee,
+Using a ',' in place of a ';' can have unintended side effects.
+Although that is not the case here, it is seems best to use ';'
+unless ',' is intended.
 
-On Thu, 24 Jul 2025 11:03:14 +0100 Lee Jones <lee@kernel.org> wrote:
->
-> On Thu, 24 Jul 2025, Stephen Rothwell wrote:
->=20
-> > After merging the mfd tree, today's linux-next build (arm
-> > multi_v7_defconfig) produced this warning:
-> >=20
-> > WARNING: unmet direct dependencies detected for MFD_AT91_USART
-> >   Depends on [n]: HAS_IOMEM [=3Dy] && (ARCH_MICROCHIP || COMPILE_TEST [=
-=3Dn])
-> >   Selected by [y]:
-> >   - SERIAL_ATMEL [=3Dy] && TTY [=3Dy] && HAS_IOMEM [=3Dy] && COMMON_CLK=
- [=3Dy] && (ARCH_AT91 [=3Dy] || ARCH_LAN969X || COMPILE_TEST [=3Dn])
-> >=20
-> > Probably introduced by commit
-> >=20
-> >   ef37a1e24857 ("mfd: at91-usart: Make it selectable for ARCH_MICROCHIP=
-") =20
->=20
-> Thanks Stephen.
->=20
-> I have reverted this now.
+Found by inspection.
+No functional change intended.
+Compile tested only.
 
-I am still (again?) getting this warning ...
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ fs/bcachefs/btree_node_scan.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/fs/bcachefs/btree_node_scan.c b/fs/bcachefs/btree_node_scan.c
+index 4b7b5ca74ba1..ca289d60aebe 100644
+--- a/fs/bcachefs/btree_node_scan.c
++++ b/fs/bcachefs/btree_node_scan.c
+@@ -193,7 +193,7 @@ static void try_read_btree_node(struct find_btree_nodes *f, struct bch_dev *ca,
+ 		 * any bset; read_done sorts down to a single set and picks the
+ 		 * max journal_seq
+ 		 */
+-		n.journal_seq		= le64_to_cpu(bn->keys.journal_seq),
++		n.journal_seq		= le64_to_cpu(bn->keys.journal_seq);
+ 		n.sectors_written	= b->written;
+ 
+ 		guard(mutex)(&f->lock);
+-- 
+2.25.1
 
---Sig_/n2/vSPUOBzCI9B_g38cuPgh
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIJXUACgkQAVBC80lX
-0Gz6aAf/fzM24sTud166GyNmhYMzfLgUMQ3S83ZpTwRsESnEgcgly+779evtSwqA
-MgrbNA+JK4Rf2WglVjgBNmplsxUDBuyYMo9m2SgqhN/EnJOMA+MKXcjYFfgjOG2D
-ukHmzvFSN0HzojLfvjRYv58iSBQpIzstITSCuwsqdQTzSOwG9vjSrivJB4+ZeTgK
-aJFlMqaV7K9p3UzvAdw+P8WFtx3i1/Vsv5SsCIdOJ/hGcgjq2HwTatmQnnixT1PQ
-OKxHO+ngcFKlEawSoGpyuG/7mHKo2bZZjwieD0Fc41YGvzE0wx0qMDRFejjmwTtQ
-xlYTVCHo0UDBP2TfbZsTjZwjOs8UcQ==
-=0/57
------END PGP SIGNATURE-----
-
---Sig_/n2/vSPUOBzCI9B_g38cuPgh--
 
