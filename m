@@ -1,100 +1,111 @@
-Return-Path: <linux-kernel+bounces-749922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15239B154CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:45:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B52F0B154D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3840189CE01
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:45:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6A6F17E67E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6E5253F2C;
-	Tue, 29 Jul 2025 21:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04FD27816B;
+	Tue, 29 Jul 2025 21:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Yk5kOHIl"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b="Xv9tbmhk"
+Received: from mail.cybernetics.com (mail.cybernetics.com [72.215.153.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5CD21E0B2;
-	Tue, 29 Jul 2025 21:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8EE22333D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.215.153.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753825518; cv=none; b=WAklpPMgDcvHPJJS1RbgyTapPcQkVM9ZdtwxszE/sByG+4579A/rC5EE2nVrPJYVl2Ai68T9HYmmnxDYpu8xHGHsbTwJoCPI0DupyOUMCX3CWPgcZgxDOnOYxmyZVx3dj/8BWPCMvD/15PruMvIinkzUQQSX/iyekmm6eBBhx7k=
+	t=1753825751; cv=none; b=eVJXBYx2KsBqZs6LhIy9ALT1N8kqI8MWIvLFVyJYqp6fGwkF5C9FdD13Ht4lmo8hrWI4SFMwG7/tUEpXjZDHoC4TIZ6uUAVIK4Y+iZxtfW1jvn1WCQCziwC/9AqttQ8h4nCgvlWiMV25L8UwmDcEYVTBaAiSJIvnFX5nTwK+68g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753825518; c=relaxed/simple;
-	bh=0eTWygk7sJUGmlzICVrrEKhs549JkRr4pu1uxSB1WmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CL1g+/+idVWajA9BArTe2F0QCbbQxwvuGPeCR1+yj3TNg/ql++zZYO5yOAHmVibl2fJWrbZ+xF5EBP09z7THViMLM1nG6ILifjSd5Bl/xBlT5crOTZixTYrbY+ylOLzB+ysot3zth++UU1IPowA0PtelWT/FpUQjsdI5e95wDNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Yk5kOHIl; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Wf/0uZWB4TN7Fbn1MCE47FdY12dXgDlIhEUAvFCkfX8=; b=Yk5kOHIl0CLrboS9EJbYvPpeSc
-	k6mNYiPGw10mcTYl2R0LlVmtxGn6x5Ib1V3bCdw6TsAlDfC4vlv30lP1XUPv5+IrbZSfm14BCVv0b
-	TsgH1A5agj+hZV6Oymoe5FrNPRb1l0UkIbuoCJKR5oDNaOWZl0YLLio6sfkxKRAyJ1YY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ugs82-003EPg-Ro; Tue, 29 Jul 2025 23:44:58 +0200
-Date: Tue, 29 Jul 2025 23:44:58 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>,
-	"alsi@bang-olufsen.dk" <alsi@bang-olufsen.dk>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"heiko@sntech.de" <heiko@sntech.de>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	"linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"olteanv@gmail.com" <olteanv@gmail.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"ziyao@disroot.org" <ziyao@disroot.org>
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add RTL8367RB-VB switch to
- Radxa E24C
-Message-ID: <fdb2e6f0-3732-49ee-b11d-e82f9a9cb2e9@lunn.ch>
-References: <5bdd0009-589f-49bc-914f-62e5dc4469e9@kwiboo.se>
- <20250729115009.2158019-1-amadeus@jmu.edu.cn>
- <db1f42c3-c8bb-43ef-a605-12bfc8cd0d46@kwiboo.se>
+	s=arc-20240116; t=1753825751; c=relaxed/simple;
+	bh=geL9Ftjhdqd9egcM/lHhi25CiP49eRIwJI76CvTYyZk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bwYGkDXQnslE/LvWICoWLOFPCdVw6E031R7qe/vS/9HVGX1FqwvPdb9MNTdHDY0jW778eOmaAUN0mLOYaOhyXxfeTgg9opURPyW944Y6zTE8D7v59fTS5kcMZzU18turQUBZTARvGm9uZvOFxDbxmM+QttOWinuFsjJrOAysSDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com; spf=pass smtp.mailfrom=cybernetics.com; dkim=fail (1024-bit key) header.d=cybernetics.com header.i=@cybernetics.com header.b=Xv9tbmhk reason="signature verification failed"; arc=none smtp.client-ip=72.215.153.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cybernetics.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cybernetics.com
+Received: from cybernetics.com ([10.10.4.126]) by mail.cybernetics.com with ESMTP id fs1NZj9U34EIeUGl; Tue, 29 Jul 2025 17:49:07 -0400 (EDT)
+X-Barracuda-Envelope-From: tonyb@cybernetics.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.10.4.126
+X-ASG-Whitelist: Client
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cybernetics.com; s=mail;
+	bh=AYKmDyN4bYXhwJrjzg9T8Cn2Ox5lAXwONinxtJCgb5o=;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:Cc:To:
+	Content-Language:Subject:MIME-Version:Date:Message-ID; b=Xv9tbmhk6jhNYTtkhXLz
+	q+Wh6k31x8gi5fM2VMM/Suipsu8NeuQBqISUezcnE21Cc1s9YNYjmURHVVjptPaecy9ux8KZsupPt
+	KtPJbI6wrCr3lgQC9MK75+uZCsm56sG7Yw8rHFmaMlPw18qlggJz+67jrzvUZmBfbyLl7PTPS0=
+Received: from [10.157.2.224] (HELO [192.168.200.1])
+  by cybernetics.com (CommuniGate SPEC SMTP 8.0.5)
+  with ESMTPS id 14114358; Tue, 29 Jul 2025 17:49:07 -0400
+Message-ID: <b6af511e-9128-4775-8994-9bbaef3465a2@cybernetics.com>
+X-Barracuda-RBL-Trusted-Forwarder: 10.157.2.224
+Date: Tue, 29 Jul 2025 17:49:07 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <db1f42c3-c8bb-43ef-a605-12bfc8cd0d46@kwiboo.se>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] md/raid0,raid4,raid5,raid6,raid10: fix bogus io_opt
+ value
+Content-Language: en-US
+X-ASG-Orig-Subj: Re: [PATCH 1/2] md/raid0,raid4,raid5,raid6,raid10: fix bogus io_opt
+ value
+To: yukuai@kernel.org, Song Liu <song@kernel.org>,
+ Yu Kuai <yukuai3@huawei.com>, Christian Brauner <brauner@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-raid@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <b122fa8c-f6a0-4dee-b998-bde65d212c11@cybernetics.com>
+ <3660751f-e230-498c-b857-99d61fe442e6@kernel.org>
+From: Tony Battersby <tonyb@cybernetics.com>
+In-Reply-To: <3660751f-e230-498c-b857-99d61fe442e6@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+X-Barracuda-Connect: UNKNOWN[10.10.4.126]
+X-Barracuda-Start-Time: 1753825747
+X-Barracuda-URL: https://10.10.4.122:443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at cybernetics.com
+X-Barracuda-Scan-Msg-Size: 1280
+X-Barracuda-BRTS-Status: 1
+Content-Transfer-Encoding: quoted-printable
+X-ASG-Debug-ID: 1753825747-1cf43947df83540001-xx1T2L
 
-> > I did a test today and the same problem occurred when running the new
-> > kernel on my rk3568 + rtl8367s board. This problem does not exist on
-> > older kernels (6.1 and 6.6). Not sure where the problem is.
-> 
-> I had only tested on a next-20250722 based kernel and on a vendor 6.1
-> based kernel. And similar to your findings, on 6.1 based kernel there
-> was no issue only on the newer kernel.
-> 
-> I will probably drop the use of "/delete-property/ snps,tso" and include
-> a note in commit message about the TSO and RX checksum issue for v2.
+On 7/29/25 12:56, Yu Kuai wrote:
+> Hi,
+>
+> =E5=9C=A8 2025/7/30 0:12, Tony Battersby =E5=86=99=E9=81=93:
+>> md-raid currently sets io_min and io_opt to the RAID chunk and stripe
+>> sizes and then calls queue_limits_stack_bdev() to combine the io_min a=
+nd
+>> io_opt values with those of the component devices.  The io_opt size is
+>> notably combined using the least common multiple (lcm), which does not
+>> work well in practice for some drives (1), resulting in overflow or
+>> unreasonable values.
+>>
+>> dm-raid, on the other hand, sets io_min and io_opt through the
+>> raid_io_hints() function, which is called after stacking all the queue
+>> limits of the component drives, so the RAID chunk and stripe sizes
+>> override the values of the stacking.
+>>
+>> Change md-raid to be more like dm-raid by setting io_min and io_opt to
+>> the RAID chunk and stripe sizes after stacking the queue limits of the
+>> component devies.  This fixes /sys/block/md0/queue/optimal_io_size fro=
+m
+>> being a bogus value like 3221127168 to being the correct RAID stripe
+>> size.
+> This is already discussed, and mtp3sas should fix this strange value.
 
-You are submitting a patch for todays kernel, not a historic
-kernel. If todays kernel needs this property to work, please include
-it.
+Thanks, I will follow that ongoing discussion.
 
-You can always remove it when you have done a git bisect and find what
-changed, and submit a fix.
+https://lore.kernel.org/all/ywsfp3lqnijgig6yrlv2ztxram6ohf5z4yfeebswjkvp2=
+dzisd@f5ikoyo3sfq5/
 
-	Andrew
 
