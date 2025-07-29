@@ -1,143 +1,139 @@
-Return-Path: <linux-kernel+bounces-748862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A688B146DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A58B146E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:29:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D182E1AA0CF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:29:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A7B61AA062E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:29:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04F4421D3F2;
-	Tue, 29 Jul 2025 03:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2382C221543;
+	Tue, 29 Jul 2025 03:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGUqyt9M"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HKki5wkZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8AC286A9;
-	Tue, 29 Jul 2025 03:28:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0502045B6;
+	Tue, 29 Jul 2025 03:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753759729; cv=none; b=KBA3XAiJGpvOMS1D3Iq/ZRAVKZidy8pomBTTnrlIwZQpJvt6KkJYAAEGcu+CZsHlbOpl4zCEqSd8zlLWa5aiTVVWI0+EXs3nURXfQPKKSn2XGE4rAQq83uQnMDmUVLfMWG8LfORDcLm6KIYerFBh+M/0k/3lQIm+BjBlIu417ZY=
+	t=1753759765; cv=none; b=uxtMbjDzUxFi2S729uHfxCDxS5UouiG3gpfn+X6UPqNi7qjxOgV1ycxX4I/GLrCK00Clfxclg8dZ89NOw2NSmwb7xK35yVpCcHcbsZpH2XEjIdIvat2WL40A+al0RAgVJvfHA0DlBHLvY7FZhyCt538aXzo2Pxml7EQc2KQGkkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753759729; c=relaxed/simple;
-	bh=Vc3F7fDUjuWyPhA8XgrLeIZNqq3fcTYNnOGGK8lz3ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z0ljsMjOSIGP4lBzgaY1LJN0PKr15WhGyHDRMIvW6gIZ59VOfEE7DquvdlKAtlINBzeVxOsSVguxiZqpzqmxTUOG5f6lJxpzBzjpWA6fX5PICosmSGg02W79zJq0Y9YhODUe0XSn6yd9MOdEBJDVr8knw0C/Gr9DTVdEAtE1F10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGUqyt9M; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2400f746440so17881145ad.2;
-        Mon, 28 Jul 2025 20:28:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753759727; x=1754364527; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=eWkHODXRSaBpp1kJFSHZeySC9LLfUVXK4KXQxUtXKco=;
-        b=MGUqyt9M78PsMfc717a7IpFMMWat++IXzlEu4C3fZZEZwryC/Jkllb0eJwCMA1wcB2
-         QaNdq1ifgAw5fiNOYIrX+hs3dAuR/S0YLh7AH+GXfnEmS9V2BN6R4Zl1Nq8pPfiVWera
-         rm4fyUpB5ueNUQN5/+LyPC6W8tXJdHbJsXUvSPevhPPNZHfJgfXR9zmPz2FDIC0RIbbC
-         I9K/mqpGiDbTITQQqLYvMNkDn93XZAQVWMmSDaddQURIO1lYOpj2oNWhXECo5G/+wzkY
-         ZQ17wFfXartMzo5FO5VEkGRTGHQSU1pZcNjBUVtdFKerrEVkapoqrfR1cmFMGpFNJmtX
-         KZ5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753759727; x=1754364527;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWkHODXRSaBpp1kJFSHZeySC9LLfUVXK4KXQxUtXKco=;
-        b=eA2fprInun2DOY2Jd0N+riVOdBsuCEorpDiZkGWn79f2/PvKyLMNa19E9+I3TxXV0R
-         FnkYKcJQG9MarTHIIzCuXQjkBPBbSRbAr7243UA05Yo8SsOhS2Xn/x1806caAidpOqkw
-         mGwaWTPSgz8T5dv2t8KR7VIRa4RjzSy8c56gd5Jdx1BsLJa+MMGanGkww9l/Xo7ake1c
-         Dbpc1zixAoD6AnXqvLijeP+sjW2RjWI3ArDl7WwdAZ8wsFIOI6yI0QW5I4uQ87UT8C9m
-         gn/hS0XQVBL3bjRnqfXWVOb1Evg11l0KeFaMBDooXbQRsYDF8OIsIGRXgGG6Ux+V2SIK
-         ffyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVP98ez1m3SkeQHnqXNXHpKxeEOTPvElAb15P3eAvVBqpcUrF3B1EBFuVlxP8Pzi3PEr/A/2BlFr/Qa@vger.kernel.org, AJvYcCVaSBv72SjLJt2QZcJQO1TVH9ZsMDMbGu7R5KjIUNTdXrl1zY7XTVzvrzVCY5XtD8LkHnPdhGdleiV/@vger.kernel.org, AJvYcCVwxV6K4Lrb8TckQn7ZpyTN/eBFzVF4gWBYpqC4/npvibmEOe9vHjux0JfzlYvS5KIU+rMPdjJ2hen3Eb6f@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIF4pktZGaLtTNTItG6PYK+SoJY9Gszx7jvAs8srsasdfx251J
-	O0OPKDzGsbN/oMAo3lwBjQs98rNCT7dvY9ZIhKcHrmAhbFRnVKGdJTDu
-X-Gm-Gg: ASbGncvTBn3nKJOvdxHFs8UHtccq/zetI6/oe6yGsqmv52pSi80N9kgD9n9ekmxVJ2u
-	j4WTXOyna2rK+qfBSCqm/QwEWmskym6FVFza4LkK1yKa6UgmFsaQTb3/oI+K+Yi1hQKKeetHhES
-	eqbVfVT7X2eqEQrNyr/SZtoivtLgeP9iMtZ1jpkQC5mqGEMw8+99hwdtx+brT7JPE1FHzEUy19l
-	UI+AHC1D7bRPHseU5XCVeouQUBUwshKJhvGOSwhetpnLKQqhqPgT3++sh9c4yOu3LEYpUDXvjdS
-	rYgDXHPRoRwXBTawpB5UQjMUdPiPq5N4/cqheUE0HmyiWUh6dvpsol2E+Rm6ydepRZMZ+eOqp/L
-	Cvq1efIFwTI2m+k7ypIoBL2CSFBC2kqWM
-X-Google-Smtp-Source: AGHT+IEhpVDiU2dSTjW3VtpkX52jrLcBwf8jQCpX7NcFEJMWBMCgOxfH8/cTIT8xJwSE9sKYI5CoqA==
-X-Received: by 2002:a17:903:2ac3:b0:235:15f3:ef16 with SMTP id d9443c01a7336-23fb2ffc4a3mr189077795ad.13.1753759727338;
-        Mon, 28 Jul 2025 20:28:47 -0700 (PDT)
-Received: from dixit ([2401:4900:1c7e:9464:4ee2:7e58:1508:18c])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f6b3a62sm5721966a12.55.2025.07.28.20.28.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 20:28:46 -0700 (PDT)
-Date: Tue, 29 Jul 2025 08:58:37 +0530
-From: Dixit Parmar <dixitparmar19@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: andy@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-	dlechner@baylibre.com, jic23@kernel.org, krzk+dt@kernel.org,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nuno.sa@analog.com, robh@kernel.org
-Subject: Re: [PATCH 1/2] iio: magnetometer: add support for Infineon TLV493D
- 3D Magentic sensor
-Message-ID: <aIg_5S_Wq6jmhUKV@dixit>
-References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
- <20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
- <cc69ced8-7a20-49a5-a550-64050cf04e7f@wanadoo.fr>
+	s=arc-20240116; t=1753759765; c=relaxed/simple;
+	bh=ANZkbK817MFJd1tmvTvtQznG5aURBb6fkvguPdy8/Rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FHqfvUIrE98eRPAoCS18VhhxiuE7YPCTnlrFKxnZTNoOCDrjSpnrpFKZORm7o0sso0lcJX1VohJyV70lIyqn4u/RQ82uxE8tLdr9/0qiHZ1T6JAJ8pcv1n2SgB9azeYJrOBix0UPkWknDlMLEVObbRXe0D+GFRmPIh6rJM3u3NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HKki5wkZ; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753759764; x=1785295764;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ANZkbK817MFJd1tmvTvtQznG5aURBb6fkvguPdy8/Rk=;
+  b=HKki5wkZU9EjhOGwr9/HgpdZ9L8MEyWhhIWXGhqj/0uDR+VjMTogN45k
+   KV2Wsqz0YHM8zAkNBzvqE2xvysg8PZItlaTfCGgJdl9+R/f/IErv6a7AB
+   tE3Aeq3vKYTbE2YYY/UY4nTDuuHbrDM3IyOsyb4BO2ZWKqaXVQXqsKhfN
+   4lbKtRNvD4HnGJABsvHheUgaQqfUUwddgUdjwvu+B3UPDoRkehuzFj7IM
+   mr/8F5dMfWkwuQFxzDDh0YAp7cr9wLxoFfLKExp1qGRpE2UvvH4sGJzu7
+   mz3/t8rw/tXflDcak56in5UA+kB7SPYLzQcbzvweDx1i7OAjYUvR4ByQT
+   Q==;
+X-CSE-ConnectionGUID: k7lGRyVnShKiR6+RJvZB3Q==
+X-CSE-MsgGUID: A6i+33SaSriJtrQH7aVXVQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="66291914"
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="66291914"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 20:29:23 -0700
+X-CSE-ConnectionGUID: dmmLKCIFQpqYNDG5hHfwEw==
+X-CSE-MsgGUID: 2RK1eSy1Q3a6Klp6VpNCRw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="193570153"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.240.106]) ([10.124.240.106])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 20:29:17 -0700
+Message-ID: <7dc97db7-5eea-4b65-aed3-4fc2846e13a6@linux.intel.com>
+Date: Tue, 29 Jul 2025 11:29:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cc69ced8-7a20-49a5-a550-64050cf04e7f@wanadoo.fr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 20/38] KVM: x86/pmu: Check if mediated vPMU can
+ intercept rdpmc
+To: Sean Christopherson <seanjc@google.com>,
+ Sandipan Das <sandipan.das@amd.com>
+Cc: Mingwei Zhang <mizhang@google.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com,
+ Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Yongwei Ma <yongwei.ma@intel.com>,
+ Xiong Zhang <xiong.y.zhang@linux.intel.com>,
+ Jim Mattson <jmattson@google.com>, Zide Chen <zide.chen@intel.com>,
+ Eranian Stephane <eranian@google.com>, Shukla Manali
+ <Manali.Shukla@amd.com>, Nikunj Dadhania <nikunj.dadhania@amd.com>
+References: <20250324173121.1275209-1-mizhang@google.com>
+ <20250324173121.1275209-21-mizhang@google.com>
+ <a700ab4c-0e8d-499d-be71-f24c4a6439cf@amd.com> <aG6QeTXrd7Can8PK@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aG6QeTXrd7Can8PK@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jul 27, 2025 at 12:03:59AM +0200, Christophe JAILLET wrote:
-> Le 26/07/2025 à 11:37, Dixit Parmar a écrit :
-> > The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> > applications includes joysticks, control elements (white goods,
-> > multifunction knops), or electric meters (anti tampering) and any
-> > other application that requires accurate angular measurements at
-> > low power consumptions.
-> 
-> Hi,
-> 
-> > +	ret = read_poll_timeout(regmap_bulk_read, err, err ||
-> > +			FIELD_GET(TLV493D_VAL_CHANNEL, buff[TLV493D_RD_REG_TEMP]) == 0,
-> > +			mode->sleep_us, (3 * mode->sleep_us), false, data->map, TLV493D_RD_REG_BX,
-> > +			buff, ARRAY_SIZE(buff));
-> > +	if (ret) {
-> > +		dev_err(data->dev, "read poll timeout, error:%d", ret);
-> 
-> Nitpick: missing trailing \n
+
+On 7/9/2025 11:53 PM, Sean Christopherson wrote:
+> On Mon, May 26, 2025, Sandipan Das wrote:
+>>> @@ -212,6 +212,18 @@ static void amd_pmu_refresh(struct kvm_vcpu *vcpu)
+>>>  	bitmap_set(pmu->all_valid_pmc_idx, 0, pmu->nr_arch_gp_counters);
+>>>  }
+>>>  
+>>> +static void amd_pmu_refresh(struct kvm_vcpu *vcpu)
+>>> +{
+>>> +	struct vcpu_svm *svm = to_svm(vcpu);
+>>> +
+>>> +	__amd_pmu_refresh(vcpu);
+>>> +
+>>> +	if (kvm_rdpmc_in_guest(vcpu))
+>>> +		svm_clr_intercept(svm, INTERCEPT_RDPMC);
+>>> +	else
+>>> +		svm_set_intercept(svm, INTERCEPT_RDPMC);
+>>> +}
+>>> +
+>> After putting kprobes on kvm_pmu_rdpmc(), I noticed that RDPMC instructions were
+>> getting intercepted for the secondary vCPUs. This happens because when secondary
+>> vCPUs come up, kvm_vcpu_reset() gets called after guest CPUID has been updated.
+>> While RDPMC interception is initially disabled in the kvm_pmu_refresh() path, it
+>> gets re-enabled in the kvm_vcpu_reset() path as svm_vcpu_reset() calls init_vmcb().
+>> We should consider adding the following change to avoid that.
+> Revisiting this code after the MSR interception rework, I think we should go for
+> a more complete, big-hammer solution.  Rather than manipulate intercepts during
+> kvm_pmu_refresh(), do the updates as part of the "common" recalc intercepts flow.
+> And then to trigger recalc on PERF_CAPABILITIES writes, turn KVM_REQ_MSR_FILTER_CHANGED
+> into a generic KVM_REQ_RECALC_INTERCEPTS.
 >
-Ack.
-> > +		goto out;
-> > +	}
-> > +	if (err) {
-> > +		dev_err(data->dev, "read data failed, error:%d\n", ret);
-> > +		ret = err;
-> > +		goto out;
-> > +	}
-> 
-> ...
-> 
-> > +	ret = tlv493d_init(data);
-> > +	if (ret)
-> > +		return dev_err_probe(dev, ret, "failed to initialized\n");
-> 
-> Nitpick: to initialize (without a d)
-> 
-Ack.
-> > +
-> > +	indio_dev->info = &tlv493d_info;
-> > +	indio_dev->modes = INDIO_DIRECT_MODE;
-> 
-> ...
-> 
-> CJ
+> That way there's one path for calculating dynamic intercepts, which should make it
+> much more difficult for us to screw up things like reacting to MSR filter changes.
+> And providing a single path avoids needing to have a series of back-and-forth calls
+> between common x86 code, PMU code, and vendor code.
+
+Sounds good to me.
+
+BTW, Sean, may I know your plan about the mediated vPMU v5 patch set? Thanks.
+
+
 
