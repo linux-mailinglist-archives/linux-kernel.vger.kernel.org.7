@@ -1,224 +1,445 @@
-Return-Path: <linux-kernel+bounces-749880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D579B1542E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:14:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF083B15432
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 366DD179D81
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:14:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7023B8B6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C774C2BDC2A;
-	Tue, 29 Jul 2025 20:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 318652BDC2A;
+	Tue, 29 Jul 2025 20:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EDU3OhL8"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2074.outbound.protection.outlook.com [40.107.101.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1351F956;
-	Tue, 29 Jul 2025 20:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753820037; cv=fail; b=pKMruV/IX4occSdM7XjDbR0x51hxho8rw/ZzMz359xix7m/TTPGB6tVIKGOB3ZlJuVHZAUsQaiPuzd2bhWYg9SVhh6suZG+wBpEGTiarld7428F03SCpR8bzkcy2w1lEsov0QYPwQ47UMsqFweSlYwpnw7X+TQw9lX4zQR1NOXw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753820037; c=relaxed/simple;
-	bh=pdpWG6I6TIMroFV7kgKu4Ptkskn+vh5rvIkAfXnnLZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=t5p995tPoeONx7LHAFqURca33EeAhcLaT48jFKXs1WPXLxlDs+5TOlAi91UvVmXsd/4ddn62So6jJn3t5cqXJMGY00lLLqCIvK09/dlSGRBZ+aeV8nFlBbY7NUo6l5IrUXmbQSKKpp8943GKnUerixZ5scaKHgBbGuk/dslKo5w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EDU3OhL8; arc=fail smtp.client-ip=40.107.101.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tramFC/OL+oYCppWW3kAgqgJkHjIXLWFHHE1TsUDcDzVupMvMcFU48YVFaa4XpEMcDWag+/XcXtwnF2YSjwM8p/a2y67XcFcQ+rxIDfCB8yV9rWz8mkiM1Z791b+5AwCcKgnoAqrj820WqgidusN10MfYAFNGjZv2b/vBqldiVl9x+SdbgI3fZ+s2lEb3BHZcfaoVEiGGiFddzQQrJey8ylcQldLbH9LSCFTvyFz3C6Z+MkWRw8Vi84EfifV4a2s2IBm9bYT+iLIO/DhHPn9izDdmFjGyowAlpTOSOszHgkt2PVaTJI54NuBp+wHLohBg6KoErVrwl2LzsepPuUQfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q7vuiFpU2nPlxsusQCMZdYV/HJy8gelk99LSQtjeaOA=;
- b=u5jlr0J0lD8rlHjqks/2u3Ez50hp8CaveUf6kYjowOWCr5dPmrsU7RzpLEwBMvSGf/Pvr8zFAJhcypNYC2Ny8yFJnqkWfjqjsF220H1JLW6c+BwEkMHYCeW/e0k/w2tfbgmCIl7hEdLoEPOgyejN2OTuFCu5DxIF2MYYVNqcKzFUKFRX4fwJku4yT9sn0szgCrr1AlXvYdlnD3C7gqmjdP0bjbtSDZlYOxQAseH1bU7TxhG9Z5Uscp6nTG+P/sgn8XlyCXPu+iFmmZhx9G57un6JWFKpWFw2eKUa8nmnRv+qLRyLqv1XvNKi9ybegbO1hbT3Gb5m1CA5XWkbkNCeJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q7vuiFpU2nPlxsusQCMZdYV/HJy8gelk99LSQtjeaOA=;
- b=EDU3OhL8pjTyWF34J1N/GvZ/2gdy4ThE9h4a5osI+yrQtt10/sMXopQ0IybOH5Y6A6c0L/GNsJ7Vb6TmcEJKL0+T67HNksanJE/HyIxu8LqYGKwGqpiZuQmZTe7Le3c/P/MuSDsmLTpuLvoR5/AwrRxjDE5E3KPEXRLufdqMWx8LJhCCl5udx00rGykVWoGj3H/mAYh6HpjBeNQ/Ilq/RKAjsGsXSuFH5OEJJ5p8+vzIOPzfDuWI0T4EPVui0WsKGRAXGV7x0F3MBx38LttR5zAvBJSP2v4GwibkN1mpVWyxKhe7Fx2rUENtOt7MyKZIAQsuKHSy2jBzi61G8FTjzw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by DS5PPFDB3A23D1A.namprd12.prod.outlook.com (2603:10b6:f:fc00::663) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8943.25; Tue, 29 Jul
- 2025 20:13:52 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8964.024; Tue, 29 Jul 2025
- 20:13:52 +0000
-Date: Tue, 29 Jul 2025 17:13:51 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Leon Romanovsky <leon@kernel.org>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Leon Romanovsky <leonro@nvidia.com>, Christoph Hellwig <hch@lst.de>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-	Jens Axboe <axboe@kernel.dk>,
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mm@kvack.org, linux-pci@vger.kernel.org,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 10/10] vfio/pci: Add dma-buf export support for MMIO
- regions
-Message-ID: <20250729201351.GA82395@nvidia.com>
-References: <cover.1753274085.git.leonro@nvidia.com>
- <aea452cc27ca9e5169f7279d7b524190c39e7260.1753274085.git.leonro@nvidia.com>
- <8f912671-f1d9-4f73-9c1d-e39938bfc09f@arm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8f912671-f1d9-4f73-9c1d-e39938bfc09f@arm.com>
-X-ClientProxiedBy: YT3PR01CA0058.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:82::7) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AZKKkmk5"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580F02BD5A3;
+	Tue, 29 Jul 2025 20:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753820053; cv=none; b=ks1KUR08Fgg++70m/H2+7er9EldHd5Gx2maU+mRNo+sRyJeJUsJwhJzBd9tNhDuyMpQTWmjQLWv8I5QHbUJ2gbDI8D3o7olLtTGQt2YgM81Zkhq7o0Ly1G9Iw9qOT8mcCM9a6cxkcqmf02Rvmo0u+Ub/fvzjLp0tBWlKT77adhY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753820053; c=relaxed/simple;
+	bh=0zLo7GL7I9TCHbOoGwzlGjXmLj8z6HIirp6t8PA646M=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Doh6XRW1y39w+nOHsmOMvEzx/VJVIELzrXKv6vtkMUrQw2p79aP3/gq+DoTgeGEdaTUKFM+bUXFbyV+3qNtO3xzN7apsLD2q43qQ2DKOJqcbjMjZI/KV4ME8sgEMm/6meDczqIm3jo5OjCWRQjhF2Noen2cbLb7NtsS9caFMFNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AZKKkmk5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1204)
+	id D71B7211765A; Tue, 29 Jul 2025 13:14:10 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D71B7211765A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753820050;
+	bh=w82lBotzO3j4qBZjTpjjQRl5gaIsUvCtozgar8DJJBY=;
+	h=Date:From:To:Subject:From;
+	b=AZKKkmk5zeDxR6Vzmy5Q2aElEbkUdlIpviT4mLhNuGAX6LQ3EQxeuGboTK/yCHklG
+	 sKxyjfA82137a1NcRPkOSsOGiANMtdn8rzZwOJvPzTE+A5Kj3T2snGr2PbQvsTvfyx
+	 ioZjkkpo2Qp+cbSBiG8lo0TvAXyfXewHAZRsb/5o=
+Date: Tue, 29 Jul 2025 13:14:10 -0700
+From: Dipayaan Roy <dipayanroy@linux.microsoft.com>
+To: horms@kernel.org, kuba@kernel.org, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, decui@microsoft.com,
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+	pabeni@redhat.com, longli@microsoft.com, kotaranov@microsoft.com,
+	ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org,
+	john.fastabend@gmail.com, sdf@fomichev.me, lorenzo@kernel.org,
+	michal.kubiak@intel.com, ernis@linux.microsoft.com,
+	shradhagupta@linux.microsoft.com, shirazsaleem@microsoft.com,
+	rosenp@gmail.com, netdev@vger.kernel.org,
+	linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ssengar@linux.microsoft.com, dipayanroy@microsoft.com
+Subject: [PATCH v3] net: mana: Use page pool fragments for RX buffers instead
+ of full pages to improve memory efficiency.
+Message-ID: <20250729201410.GA4555@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS5PPFDB3A23D1A:EE_
-X-MS-Office365-Filtering-Correlation-Id: e18af587-585b-4bcd-0efd-08ddcedc6fcf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bkXJciCWyei9fNzRl68RjmW+hQwIatuDwiprnOZWe+TdUHVCHg+gitVGY7O9?=
- =?us-ascii?Q?axa0zbm6pMMAnZC9nBAhSfZT0vce9IFH0Q2EiaW5kMaRk2JZ/gtLP89kPYL0?=
- =?us-ascii?Q?fm3hCCQZQtHJGmBtMuZ1PoJw/WPEqc6kzqkl7OtleVNg5dZPcPI5rOtCIZXP?=
- =?us-ascii?Q?TGF/m6K5eHYpUDIyoRqvamREu5TWHCh9imFlsO+fcfJVybDEoIrk9viKWQWu?=
- =?us-ascii?Q?SiMwINOrUkJv6d8fLaY7icN69i7JzJnQf682d5ueU0luIT8ShIGpqdeGAvd0?=
- =?us-ascii?Q?n3TvOQYOb4TRISigfBK8g3H7fY1br+SRix58GasP/9UEh7HM3l9j0vPRHKRk?=
- =?us-ascii?Q?TC6MJnSEOlMQPtK+xIM+YvNpGHGhkDgMjXPCI1IbNl7XAblAEWmqSRNbXhGN?=
- =?us-ascii?Q?8Kq18oz3wShGBEOeKWkJIEK2mJN7Pl3Hq+mCmESUfS3CRAHKn+l1I9+sAkxf?=
- =?us-ascii?Q?9K3Uy0LOz1BEtpzqwiGPspnculOfYa+0HbSTt63QByxF7aELJjMc6Patex3e?=
- =?us-ascii?Q?7RfCRWtXTeS1G5mXwFzCeYPsK6Px00JPhnUm57Qm5/4a7VWVmzouNEIeMloB?=
- =?us-ascii?Q?cGzWn6HiwDY38Bhc/dBHoC6R63shfayQEMUPPnAESuCZ0Y/w0shRlmvAkVQr?=
- =?us-ascii?Q?x8s6Dv4rl3ms+GSj5EI4zb2A7qJLvThm84eqWWvjWGn56dsAP+mNM4FTuebs?=
- =?us-ascii?Q?506dEDihfxO4VWHhTTlMev6l9XGVevvGYLhwfBVVtyi76Kryg0pT8iNf4rBP?=
- =?us-ascii?Q?MLQ7Z7D03tnlFmqf90PzJFQPd5TayxQ08wSiQtxDGPKiLsim8rADaksUTn3K?=
- =?us-ascii?Q?pW08dblmm+Fil6UH+wrQGDNrOE4usop/Qeq+zUHrk5XhRFvI+9zq6NdZ2eNu?=
- =?us-ascii?Q?C0t0MpmhENMBhVOJaDI5jRJJCyfTpp9CsFZHYF2XbJzMJGWv2EbvTWe0LeFH?=
- =?us-ascii?Q?B5eVRyEhQisnoaBaW9KSI3TJQ5n8VGwfJs67OowjASV64N2iS10naSp0cxuh?=
- =?us-ascii?Q?AX51MLuics4lXQ2qWb4b34IJAQYwJOiAP+vrqPUBko7oHZCHgWPR3G43+rhG?=
- =?us-ascii?Q?jnRcszmqIPfToYtGBAvXyNnMN00IvyJFIGl72QFCuxzczgFH3ybA8kdoPlmv?=
- =?us-ascii?Q?VGGdY6J01ZIvyZ4yl4Iu3R816NFghmlGAojS9D05aoFljWg8+S58GJin7ejV?=
- =?us-ascii?Q?QMPcWKYskR8uFqoTPSsx4TYL+yBa9yRlmJOdzfvfeGV5WAc55XBnNhniXhfY?=
- =?us-ascii?Q?wm/u4ULw6k1cIfbR68TQMpmQeiGkijq08VpUfTftYkzEzGTcZCApS80gXnUF?=
- =?us-ascii?Q?K4QVDCZp/0CMvG2IXs8OIJVVwXtRrEpPOOEADppIiDySmZ8HyD/nVBzPd6zJ?=
- =?us-ascii?Q?NfK5lNtJn4vmF7mSTz66qRARborfFL331bVeZtEFCmkvx30ONa6Q9STGub21?=
- =?us-ascii?Q?XqclvQ7C8nE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?bj1p8qsMr/ajXJmglGGGPl0TRWuHpahBE1P6hV3y7H3Zbz1A1Dvr8U4MD6mN?=
- =?us-ascii?Q?4NeRCsiltckRovk4cH/tFc8HwuzJj3BO7bDBbkrROOHcXYM/ptbj4EDtsya3?=
- =?us-ascii?Q?LC5P5PFOuaERGT8IDsFZwI8e2g1SsX67UTEs3L6GduOKb4gpHy3ehPz42ffo?=
- =?us-ascii?Q?NykcMTO06W28GlZqzE/YJvENemIPcz38P/rVMxBoyGAvkpNbsEHC4zQMMgdw?=
- =?us-ascii?Q?6rs7YCN/ZzDG3peGDBY5rHexqqiysf9ZSQy6Kna1g3iGR+0w3eovRcl9i5rS?=
- =?us-ascii?Q?F85s7Zp+V7UpkSEMkRdGcDFX9ysMsFeAV725tNrWWHeYDGyGNa+6KumDsdK8?=
- =?us-ascii?Q?sCaPU6vTTjoHRPjv/oabdI3I2fIwgICeEuxetosN9/GoqiDDACrmoiLOXUsE?=
- =?us-ascii?Q?Arh74ugTofVg41qktslDV/3avm572Ls77GtQ4kb0gyQzUuGgtbTR6THEzI3q?=
- =?us-ascii?Q?p8qXsoAl+sskKWIbkuN9ya0949LZHMT3yYW2HTDNHxsWkPppdYMBkfNM3qON?=
- =?us-ascii?Q?NBKH6iwEuK85Zjkth8+z28u4mZPQYCJTant14gFPmo7puFUXyl/Fdm6+LbQT?=
- =?us-ascii?Q?psyTrf+fJkyGCUAZlMBuTJosL9iVczx8H8cuy3in/n1Si30czww4ok+t3dKD?=
- =?us-ascii?Q?HA2HJS7/3t89f4hGsDqYuwrT+Gu+YstxXcu1BCm0W4/kIS6GeO3zdRnzjx9s?=
- =?us-ascii?Q?y1L2uRCXIBddHjLu3wK6XaBPs9w3sNL6+OzYkVmxbKr1WnXVzp+BAS6nYWZX?=
- =?us-ascii?Q?dXF1AOwnQ6Nk7ZMk0L8WG0QDBAvFHJywADGTbfw1g2P23/JlBjoF9BjrzZgz?=
- =?us-ascii?Q?kCS8Mm5cztIZZcH9WGe7v5Ak7m2p4eQyf/2LcYk6cic4iNvXU3VXNndGWG85?=
- =?us-ascii?Q?vQ/1Z7pdyRM3bV2y/IkSa+7X4KXstRnskvYziOUf1TEIfQKj4hakSbl/e/lD?=
- =?us-ascii?Q?jDJA4sEHoLvEEL1q05EOiVFMuE3mDN+tmwfFurU6bgZJYLDBAjtkC/kf+2KH?=
- =?us-ascii?Q?PCfQgcQyfK3iRtZRBkrv5VYh0yX0MMgDNeRe/HZl7KSlAL0Go/x+WCf7bWWa?=
- =?us-ascii?Q?BnYBEKoDOyIdODnpDnNb658du9nFXmVZ/IfkivEUwdXxaU9IXds70VYahfkl?=
- =?us-ascii?Q?8Ma5olMP3Zac+mK/3NkFIxvDpXysvj6wv4u8vIIJoE+I5SpA9TA6SzV2/R5E?=
- =?us-ascii?Q?j2f9YlXtoF/95mgoSZdBj74vlVGF9NCKA3axz6Ns/6KieSFjYhGhC31AeUt9?=
- =?us-ascii?Q?NKaoaMA8FMDYucXjegfre/2rkXYO8JByB5LJl/jpaP25tuNyKhBVQYc0mgn3?=
- =?us-ascii?Q?g5Q+PaZLlp6eLxTvw030wsBckIPKaKd2Sdnie+pE0aSVfNIf6r89R5Skq/d3?=
- =?us-ascii?Q?FqplykYPg/xqUBhSgsjIV5s9Cdoocd2Rl4IfDKxph1dN8ELQ/yIVdfBgZqRh?=
- =?us-ascii?Q?/rq10rVVp0AAXvY+hdBnPzEBx2+X69FcU4h3H7MrO8K6iuMrPDktdKm+oTE8?=
- =?us-ascii?Q?Wy2pALz0WeinADVleNF9wEDSzQWXaSr/VZYpr4pZ546QZB8xQFFZnCMOy3+3?=
- =?us-ascii?Q?ww0t9j6/gkn9w0A3xZk=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e18af587-585b-4bcd-0efd-08ddcedc6fcf
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 20:13:52.2045
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vUxTpo/zHIlJAHDHH3TnwZkVdtExbipYoaNW5mR6DmYFt30ySRqTjN7Y+dZZapxZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPFDB3A23D1A
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Tue, Jul 29, 2025 at 08:44:21PM +0100, Robin Murphy wrote:
+This patch enhances RX buffer handling in the mana driver by allocating
+pages from a page pool and slicing them into MTU-sized fragments, rather
+than dedicating a full page per packet. This approach is especially
+beneficial on systems with large page sizes like 64KB.
 
-> In this case with just one single
-> contiguous mapping, it is clearly objectively worse to have to bounce in and
-> out of the IOMMU layer 3 separate times and store a dma_map_state,
+Key improvements:
 
-The non-contiguous mappings are comming back, it was in earlier drafts
-of this. Regardless, the point is to show how to use the general API
-that we would want to bring into the DRM drivers that don't have
-contiguity even though VFIO is a bit special.
+- Proper integration of page pool for RX buffer allocations.
+- MTU-sized buffer slicing to improve memory utilization.
+- Reduce overall per Rx queue memory footprint.
+- Automatic fallback to full-page buffers when:
+   * Jumbo frames are enabled (MTU > PAGE_SIZE / 2).
+   * The XDP path is active, to avoid complexities with fragment reuse.
 
-> Oh yeah, and mapping MMIO with regular memory attributes (IOMMU_CACHE)
-> rather than appropriate ones (IOMMU_MMIO), as this will end up doing, isn't
-> guaranteed not to end badly either (e.g. if the system interconnect ends up
-> merging consecutive write bursts and exceeding the target root port's MPS.)
+Testing on VMs with 64KB pages shows around 200% throughput improvement.
+Memory efficiency is significantly improved due to reduced wastage in page
+allocations. Example: We are now able to fit 35 rx buffers in a single 64kb
+page for MTU size of 1500, instead of 1 rx buffer per page previously.
 
-Yes, I recently noticed this too, it should be fixed..
+Tested:
 
-But so we are all on the same page, alot of the PCI P2P systems are
-setup so P2P does not transit through the iommu. It either takes the
-ACS path through a switch or it uses ATS and takes a different ACS
-path through a switch. It only transits through the iommu in
-misconfigured systems or in the rarer case of P2P between root ports.
+- iperf3, iperf2, and nttcp benchmarks.
+- Jumbo frames with MTU 9000.
+- Native XDP programs (XDP_PASS, XDP_DROP, XDP_TX, XDP_REDIRECT) for
+  testing the XDP path in driver.
+- Memory leak detection (kmemleak).
+- Driver load/unload, reboot, and stress scenarios.
 
-> And again, if the IOMMU is in bypass (the idea of P2P with vfio-noiommu simply
-> isn't worth entertaining) 
+Signed-off-by: Dipayaan Roy <dipayanroy@linux.microsoft.com>
 
-Not quite. DMABUF is sort of upside down.
+Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
+---
+Changes in v3:
+  - Retained the pre-alloc rxbuf for driver reconfig paths
+    to better handle low memory scenario during reconfig.
 
-For example if we are exporting a DMABUF from VFIO and importing it to
-RDMA then RDMA will call VFIO to make an attachment and the above VFIO
-code will perform the DMA map to the RDMA struct device. DMABUF
-returns a dma mapped scatterlist back to the RDMA driver.
+Changes in v2:
+  - Fixed mana_xdp_set() to return error code on failure instead of
+    always returning 0.
+  - Moved all local variable declarations to the start of functions
+    in mana_get_rxbuf_cfg.
+  - Removed unnecessary parentheses and wrapped lines to <= 80 chars.
+  - Use mana_xdp_get() for checking bpf_prog.
+  - Factored repeated page put/free logic into a static helper function.
+---
+ .../net/ethernet/microsoft/mana/mana_bpf.c    |  36 ++++-
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 147 ++++++++++++------
+ include/net/mana/mana.h                       |   4 +
+ 3 files changed, 137 insertions(+), 50 deletions(-)
 
-The above dma_map_phys(rdma_dev,...) can be in bypass because the rdma
-device can legitimately be in bypass, or not have a iommu, or
-whatever.
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_bpf.c b/drivers/net/ethernet/microsoft/mana/mana_bpf.c
+index d30721d4516f..1cf470b25167 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_bpf.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_bpf.c
+@@ -174,6 +174,8 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
+ 	struct mana_port_context *apc = netdev_priv(ndev);
+ 	struct bpf_prog *old_prog;
+ 	struct gdma_context *gc;
++	int err = 0;
++	bool dealloc_rxbufs_pre = false;
+ 
+ 	gc = apc->ac->gdma_dev->gdma_context;
+ 
+@@ -198,15 +200,45 @@ static int mana_xdp_set(struct net_device *ndev, struct bpf_prog *prog,
+ 	if (old_prog)
+ 		bpf_prog_put(old_prog);
+ 
+-	if (apc->port_is_up)
++	if (apc->port_is_up) {
++		/* Re-create rxq's after xdp prog was loaded or unloaded.
++		 * Ex: re create rxq's to switch from full pages to smaller
++		 * size page fragments when xdp prog is unloaded and vice-versa.
++		 */
++
++		/* Pre-allocate buffers to prevent failure in mana_attach later */
++		err = mana_pre_alloc_rxbufs(apc, ndev->mtu, apc->num_queues);
++		if (err) {
++			netdev_err(ndev,
++				   "Insufficient memory for rx buf config change\n");
++			goto out;
++		}
++		dealloc_rxbufs_pre = true;
++
++		err = mana_detach(ndev, false);
++		if (err) {
++			netdev_err(ndev, "mana_detach failed at xdp set: %d\n", err);
++			goto out;
++		}
++
++		err = mana_attach(ndev);
++		if (err) {
++			netdev_err(ndev, "mana_attach failed at xdp set: %d\n", err);
++			goto out;
++		}
++
+ 		mana_chn_setxdp(apc, prog);
++	}
+ 
+ 	if (prog)
+ 		ndev->max_mtu = MANA_XDP_MTU_MAX;
+ 	else
+ 		ndev->max_mtu = gc->adapter_mtu - ETH_HLEN;
+ 
+-	return 0;
++out:
++	if (dealloc_rxbufs_pre)
++		mana_pre_dealloc_rxbufs(apc);
++	return err;
+ }
+ 
+ int mana_bpf(struct net_device *ndev, struct netdev_bpf *bpf)
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index a7973651ae51..591f3081d395 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -56,6 +56,14 @@ static bool mana_en_need_log(struct mana_port_context *apc, int err)
+ 		return true;
+ }
+ 
++static void mana_put_rx_page(struct mana_rxq *rxq, struct page *page, bool from_pool)
++{
++	if (from_pool)
++		page_pool_put_full_page(rxq->page_pool, page, false);
++	else
++		put_page(page);
++}
++
+ /* Microsoft Azure Network Adapter (MANA) functions */
+ 
+ static int mana_open(struct net_device *ndev)
+@@ -629,21 +637,40 @@ static void *mana_get_rxbuf_pre(struct mana_rxq *rxq, dma_addr_t *da)
+ }
+ 
+ /* Get RX buffer's data size, alloc size, XDP headroom based on MTU */
+-static void mana_get_rxbuf_cfg(int mtu, u32 *datasize, u32 *alloc_size,
+-			       u32 *headroom)
++static void mana_get_rxbuf_cfg(struct mana_port_context *apc,
++			       int mtu, u32 *datasize, u32 *alloc_size,
++			       u32 *headroom, u32 *frag_count)
+ {
+-	if (mtu > MANA_XDP_MTU_MAX)
+-		*headroom = 0; /* no support for XDP */
+-	else
+-		*headroom = XDP_PACKET_HEADROOM;
++	u32 len, buf_size;
+ 
+-	*alloc_size = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD + *headroom);
++	/* Calculate datasize first (consistent across all cases) */
++	*datasize = mtu + ETH_HLEN;
+ 
+-	/* Using page pool in this case, so alloc_size is PAGE_SIZE */
+-	if (*alloc_size < PAGE_SIZE)
+-		*alloc_size = PAGE_SIZE;
++	/* For xdp and jumbo frames make sure only one packet fits per page */
++	if (mtu + MANA_RXBUF_PAD > PAGE_SIZE / 2 || mana_xdp_get(apc)) {
++		if (mana_xdp_get(apc)) {
++			*headroom = XDP_PACKET_HEADROOM;
++			*alloc_size = PAGE_SIZE;
++		} else {
++			*headroom = 0; /* no support for XDP */
++			*alloc_size = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD +
++						     *headroom);
++		}
+ 
+-	*datasize = mtu + ETH_HLEN;
++		*frag_count = 1;
++		return;
++	}
++
++	/* Standard MTU case - optimize for multiple packets per page */
++	*headroom = 0;
++
++	/* Calculate base buffer size needed */
++	len = SKB_DATA_ALIGN(mtu + MANA_RXBUF_PAD + *headroom);
++	buf_size = ALIGN(len, MANA_RX_FRAG_ALIGNMENT);
++
++	/* Calculate how many packets can fit in a page */
++	*frag_count = PAGE_SIZE / buf_size;
++	*alloc_size = buf_size;
+ }
+ 
+ int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_queues)
+@@ -655,8 +682,9 @@ int mana_pre_alloc_rxbufs(struct mana_port_context *mpc, int new_mtu, int num_qu
+ 	void *va;
+ 	int i;
+ 
+-	mana_get_rxbuf_cfg(new_mtu, &mpc->rxbpre_datasize,
+-			   &mpc->rxbpre_alloc_size, &mpc->rxbpre_headroom);
++	mana_get_rxbuf_cfg(mpc, new_mtu, &mpc->rxbpre_datasize,
++			   &mpc->rxbpre_alloc_size, &mpc->rxbpre_headroom,
++			   &mpc->rxbpre_frag_count);
+ 
+ 	dev = mpc->ac->gdma_dev->gdma_context->dev;
+ 
+@@ -1841,8 +1869,11 @@ static void mana_rx_skb(void *buf_va, bool from_pool,
+ 
+ drop:
+ 	if (from_pool) {
+-		page_pool_recycle_direct(rxq->page_pool,
+-					 virt_to_head_page(buf_va));
++		if (rxq->frag_count == 1)
++			page_pool_recycle_direct(rxq->page_pool,
++						 virt_to_head_page(buf_va));
++		else
++			page_pool_free_va(rxq->page_pool, buf_va, true);
+ 	} else {
+ 		WARN_ON_ONCE(rxq->xdp_save_va);
+ 		/* Save for reuse */
+@@ -1858,33 +1889,43 @@ static void *mana_get_rxfrag(struct mana_rxq *rxq, struct device *dev,
+ 			     dma_addr_t *da, bool *from_pool)
+ {
+ 	struct page *page;
++	u32 offset;
+ 	void *va;
+-
+ 	*from_pool = false;
+ 
+-	/* Reuse XDP dropped page if available */
+-	if (rxq->xdp_save_va) {
+-		va = rxq->xdp_save_va;
+-		rxq->xdp_save_va = NULL;
+-	} else {
+-		page = page_pool_dev_alloc_pages(rxq->page_pool);
+-		if (!page)
++	/* Don't use fragments for jumbo frames or XDP (i.e when fragment = 1 per page) */
++	if (rxq->frag_count == 1) {
++		/* Reuse XDP dropped page if available */
++		if (rxq->xdp_save_va) {
++			va = rxq->xdp_save_va;
++			page = virt_to_head_page(va);
++			rxq->xdp_save_va = NULL;
++		} else {
++			page = page_pool_dev_alloc_pages(rxq->page_pool);
++			if (!page)
++				return NULL;
++
++			*from_pool = true;
++			va = page_to_virt(page);
++		}
++
++		*da = dma_map_single(dev, va + rxq->headroom, rxq->datasize,
++				     DMA_FROM_DEVICE);
++		if (dma_mapping_error(dev, *da)) {
++			mana_put_rx_page(rxq, page, *from_pool);
+ 			return NULL;
++		}
+ 
+-		*from_pool = true;
+-		va = page_to_virt(page);
++		return va;
+ 	}
+ 
+-	*da = dma_map_single(dev, va + rxq->headroom, rxq->datasize,
+-			     DMA_FROM_DEVICE);
+-	if (dma_mapping_error(dev, *da)) {
+-		if (*from_pool)
+-			page_pool_put_full_page(rxq->page_pool, page, false);
+-		else
+-			put_page(virt_to_head_page(va));
+-
++	page =  page_pool_dev_alloc_frag(rxq->page_pool, &offset, rxq->alloc_size);
++	if (!page)
+ 		return NULL;
+-	}
++
++	va  = page_to_virt(page) + offset;
++	*da = page_pool_get_dma_addr(page) + offset + rxq->headroom;
++	*from_pool = true;
+ 
+ 	return va;
+ }
+@@ -1901,9 +1942,9 @@ static void mana_refill_rx_oob(struct device *dev, struct mana_rxq *rxq,
+ 	va = mana_get_rxfrag(rxq, dev, &da, &from_pool);
+ 	if (!va)
+ 		return;
+-
+-	dma_unmap_single(dev, rxoob->sgl[0].address, rxq->datasize,
+-			 DMA_FROM_DEVICE);
++	if (!rxoob->from_pool || rxq->frag_count == 1)
++		dma_unmap_single(dev, rxoob->sgl[0].address, rxq->datasize,
++				 DMA_FROM_DEVICE);
+ 	*old_buf = rxoob->buf_va;
+ 	*old_fp = rxoob->from_pool;
+ 
+@@ -2314,15 +2355,15 @@ static void mana_destroy_rxq(struct mana_port_context *apc,
+ 		if (!rx_oob->buf_va)
+ 			continue;
+ 
+-		dma_unmap_single(dev, rx_oob->sgl[0].address,
+-				 rx_oob->sgl[0].size, DMA_FROM_DEVICE);
+-
+ 		page = virt_to_head_page(rx_oob->buf_va);
+ 
+-		if (rx_oob->from_pool)
+-			page_pool_put_full_page(rxq->page_pool, page, false);
+-		else
+-			put_page(page);
++		if (rxq->frag_count == 1) {
++			dma_unmap_single(dev, rx_oob->sgl[0].address, rx_oob->sgl[0].size,
++					 DMA_FROM_DEVICE);
++			mana_put_rx_page(rxq, page, rx_oob->from_pool);
++		} else {
++			page_pool_free_va(rxq->page_pool, rx_oob->buf_va, true);
++		}
+ 
+ 		rx_oob->buf_va = NULL;
+ 	}
+@@ -2428,11 +2469,22 @@ static int mana_create_page_pool(struct mana_rxq *rxq, struct gdma_context *gc)
+ 	struct page_pool_params pprm = {};
+ 	int ret;
+ 
+-	pprm.pool_size = mpc->rx_queue_size;
++	pprm.pool_size = mpc->rx_queue_size / rxq->frag_count + 1;
+ 	pprm.nid = gc->numa_node;
+ 	pprm.napi = &rxq->rx_cq.napi;
+ 	pprm.netdev = rxq->ndev;
+ 	pprm.order = get_order(rxq->alloc_size);
++	pprm.queue_idx = rxq->rxq_idx;
++	pprm.dev = gc->dev;
++
++	/* Let the page pool do the dma map when page sharing with multiple fragments
++	 * enabled for rx buffers.
++	 */
++	if (rxq->frag_count > 1) {
++		pprm.flags =  PP_FLAG_DMA_MAP | PP_FLAG_DMA_SYNC_DEV;
++		pprm.max_len = PAGE_SIZE;
++		pprm.dma_dir = DMA_FROM_DEVICE;
++	}
+ 
+ 	rxq->page_pool = page_pool_create(&pprm);
+ 
+@@ -2471,9 +2523,8 @@ static struct mana_rxq *mana_create_rxq(struct mana_port_context *apc,
+ 	rxq->rxq_idx = rxq_idx;
+ 	rxq->rxobj = INVALID_MANA_HANDLE;
+ 
+-	mana_get_rxbuf_cfg(ndev->mtu, &rxq->datasize, &rxq->alloc_size,
+-			   &rxq->headroom);
+-
++	mana_get_rxbuf_cfg(apc, ndev->mtu, &rxq->datasize, &rxq->alloc_size,
++			   &rxq->headroom, &rxq->frag_count);
+ 	/* Create page pool for RX queue */
+ 	err = mana_create_page_pool(rxq, gc);
+ 	if (err) {
+diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+index e1030a7d2daa..0921485565c0 100644
+--- a/include/net/mana/mana.h
++++ b/include/net/mana/mana.h
+@@ -65,6 +65,8 @@ enum TRI_STATE {
+ #define MANA_STATS_RX_COUNT 5
+ #define MANA_STATS_TX_COUNT 11
+ 
++#define MANA_RX_FRAG_ALIGNMENT 64
++
+ struct mana_stats_rx {
+ 	u64 packets;
+ 	u64 bytes;
+@@ -328,6 +330,7 @@ struct mana_rxq {
+ 	u32 datasize;
+ 	u32 alloc_size;
+ 	u32 headroom;
++	u32 frag_count;
+ 
+ 	mana_handle_t rxobj;
+ 
+@@ -510,6 +513,7 @@ struct mana_port_context {
+ 	u32 rxbpre_datasize;
+ 	u32 rxbpre_alloc_size;
+ 	u32 rxbpre_headroom;
++	u32 rxbpre_frag_count;
+ 
+ 	struct bpf_prog *bpf_prog;
+ 
+-- 
+2.43.0
 
-> AFAICS you're *depending* on this call being an effective no-op, and thus
-> only demonstrating that the dma_map_phys() idea is still entirely
-> unnecessary.
-
-It should not be a full no-op, and it should be closer to
-dma map resource to avoid the mmio issues.
-
-It should be failing for cases where it is not supported (ie
-swiotlb=force), it should still be calling the legacy dma_ops, and it
-should be undoing any CC mangling with the address. (also the
-pci_p2pdma_bus_addr_map() needs to deal with any CC issues too)
-
-Jason
 
