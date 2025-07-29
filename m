@@ -1,119 +1,83 @@
-Return-Path: <linux-kernel+bounces-749017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 320D5B148E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:07:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7505DB148DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D77F3AA6F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:07:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4267A7AA56E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848ED25D8F0;
-	Tue, 29 Jul 2025 07:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149CF236A8B;
+	Tue, 29 Jul 2025 07:01:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="NJOwyYUm"
-Received: from forward501d.mail.yandex.net (forward501d.mail.yandex.net [178.154.239.209])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RedLhj72"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF04C1F874F;
-	Tue, 29 Jul 2025 07:07:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BD0290F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753772843; cv=none; b=azZ5cJcWcQZAYGDLpVGAjJ8uiU7QfYU4OXzj0Cnblg9Laubo3Ao1/nDOHqNKAZKOtWrgmevQSb0HXcpN9OCp6a6niqa1kHZX44Xamtwp8ESNarEbVsZuZf+1qjOqhvedyjwIXoCcFkikSrP4J/68tGfZC/6x4bU0yH6agT6Z3Ds=
+	t=1753772471; cv=none; b=ECnZk/8ZWVhGASNGOBRdIYABJUh5nLbDUSRa8drAzvPsNkHlkdd3c4EUDntmnRXXDTV45YKFV+CUzr3ukBa+v9EnFj+SRHBEEiAx54z2xSF3lb+E4jikmUQYW36nSV8eKhmcAR9moQBIqm7YEFOY6Cs4+rvhpMvn2Sf0i0B5iCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753772843; c=relaxed/simple;
-	bh=1TfdvzGT+nwpn2cSdU76FR+epNvzw84ISJiVRYDwLGU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vF4BKvCxXXpVgYnu8xr3EBMrBcySyyjvhjZU5AdUPPXvG+S8BsOIrj0lRuRZ+ddH/r4Ro5grkxS4gEbnpZuOYGUrVvB9Iqg2q6AJlqcN40L0+5pdqwgguL54ZnLVTMy7CLaqj3UZrdyx+UjA8Een6s48cmY0gKAlE/9ijsWMV8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=NJOwyYUm; arc=none smtp.client-ip=178.154.239.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
-Received: from mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net [IPv6:2a02:6b8:c43:16c5:0:640:b9af:0])
-	by forward501d.mail.yandex.net (Yandex) with ESMTPS id E774781C12;
-	Tue, 29 Jul 2025 10:00:53 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id p0TZYSMIm0U0-yBcThmRl;
-	Tue, 29 Jul 2025 10:00:53 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
-	t=1753772453; bh=nvCU/Cru1rShKUWctXKkh21j8jRPqnuBB6hEKKhcS1M=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=NJOwyYUmzeLh+Z4QPdedyXiPN139pwgkoPGUdlyJOQstv5OR82QuCvMTZTUT0kA7g
-	 gYz8LkLNhl3UJljfeWmjAUV8GImBGbHAs4lof/ZsA/BHro3ZP7kYADcvCfqrOntxss
-	 XN3kbueGmUqnjxrTO6W4KScmf7tYLSniP4xQr+Pw=
-Authentication-Results: mail-nwsmtp-smtp-production-main-94.klg.yp-c.yandex.net; dkim=pass header.i=@0upti.me
-Message-ID: <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
-Date: Tue, 29 Jul 2025 10:00:50 +0300
+	s=arc-20240116; t=1753772471; c=relaxed/simple;
+	bh=3tBTHRalWy/QO8wxn1gZNiMb5JUUhOUpuNqt8uMFEBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=daNX++xhJVQFv7+ItwVihFEZWpLCPAp5EuJB7lT0jSbzQemc2/BN47ECRux6tjm7LUycBiLqHgtp5J8rb/DmZR0D6uSJI4VpVM1tbbmEwj6wlbW3F0FMSw+e5Y1Gvj/32t8/HOkMebp1NP68Xv3Kd8oxrdhMFzYpqyIpAI836Yc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RedLhj72; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16E8DC4CEEF;
+	Tue, 29 Jul 2025 07:01:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753772471;
+	bh=3tBTHRalWy/QO8wxn1gZNiMb5JUUhOUpuNqt8uMFEBk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=RedLhj725kgdZ7cYaQmmAZp2ov428YNTXkrZ6G/0rl605w2lGyMVlPsROi4ODADyp
+	 kKxV4uTWcyYU/ylcQd2vM31lPVPgxealiW2EXIxs3SoHcKBbNWF9zhEozhbK1IGuL7
+	 RqcFfDcYY8961toiT0W+e+12IFpTO0Qp/dp4CQX5L8s/rMHqjt+yqtxhKlWir+WyRD
+	 n3C6NE+LayZ+mD7UuqSuO1XTYDGefh5zirBe7ok9dXPbZwnsjcu4oEYB9sGTKB1JI6
+	 NTUqDYazqVN7SW+PtmBDNawZN6TXCsyeKvrBywlGTc6gX35Icafo9VLTRH88wIBLol
+	 M0U3vNZf3zDYg==
+Date: Tue, 29 Jul 2025 09:01:07 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
+Subject: [GIT PULL] x86/cleanups for v6.17
+Message-ID: <aIhxs-6YQFywxr5k@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
-To: Armin Wolf <W_Armin@gmx.de>, rafael@kernel.org, lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729062038.303734-1-W_Armin@gmx.de>
-Content-Language: en-US
-From: Ilya K <me@0upti.me>
-In-Reply-To: <20250729062038.303734-1-W_Armin@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2025-07-29 09:20, Armin Wolf wrote:
-> It turns out that the ECDT table inside the ThinkBook 14 G7 IML
-> contains a valid EC description but an invalid ID string
-> ("_SB.PC00.LPCB.EC0"). Ignoring this ECDT based on the invalid
-> ID string prevents the kernel from detecting the built-in touchpad,
-> so relax the sanity check of the ID string and only reject ECDTs
-> with empty ID strings.
-> 
-> Compile-tested only.
-> 
-> Reported-by: Ilya K <me@0upti.me>
-> Fixes: 7a0d59f6a913 ("ACPI: EC: Ignore ECDT tables with an invalid ID string")
-> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
-> ---
->  drivers/acpi/ec.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
+Linus,
 
-Thanks, this works!
+Please pull the latest x86/cleanups Git tree from:
 
-Tested-by: Ilya K <me@0upti.me>
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-cleanups-2025-07-29
 
-> diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
-> index 75c7db8b156a..7855bbf752b1 100644
-> --- a/drivers/acpi/ec.c
-> +++ b/drivers/acpi/ec.c
-> @@ -2033,7 +2033,7 @@ void __init acpi_ec_ecdt_probe(void)
->  		goto out;
->  	}
->  
-> -	if (!strstarts(ecdt_ptr->id, "\\")) {
-> +	if (!strlen(ecdt_ptr->id)) {
->  		/*
->  		 * The ECDT table on some MSI notebooks contains invalid data, together
->  		 * with an empty ID string ("").
-> @@ -2042,9 +2042,13 @@ void __init acpi_ec_ecdt_probe(void)
->  		 * a "fully qualified reference to the (...) embedded controller device",
->  		 * so this string always has to start with a backslash.
->  		 *
-> -		 * By verifying this we can avoid such faulty ECDT tables in a safe way.
-> +		 * However some ThinkBook machines have a ECDT table with a valid EC
-> +		 * description but an invalid ID string ("_SB.PC00.LPCB.EC0").
-> +		 *
-> +		 * Because of this we only check if the ID string is empty in order to
-> +		 * avoid the obvious cases.
->  		 */
-> -		pr_err(FW_BUG "Ignoring ECDT due to invalid ID string \"%s\"\n", ecdt_ptr->id);
-> +		pr_err(FW_BUG "Ignoring ECDT due to empty ID string\n");
->  		goto out;
->  	}
->  
+   # HEAD: 7f2b41ac3f29f682cde113f1d0b4b43d261902fe x86/apic: Move apic_update_irq_cfg() call to apic_update_vector()
 
-Would it maybe make sense to also log a warning for the old case? Maybe a vendor will notice it and fix the firmware...
-(yeah yeah fat chance)
+Miscellaneous x86 cleanups.
+
+ Thanks,
+
+	Ingo
+
+------------------>
+Neeraj Upadhyay (1):
+      x86/apic: Move apic_update_irq_cfg() call to apic_update_vector()
+
+Nikolay Borisov (1):
+      x86/mm: Remove duplicated __PAGE_KERNEL(_EXEC) definitions
+
+
+ arch/x86/include/asm/pgtable_types.h | 3 ---
+ arch/x86/kernel/apic/vector.c        | 4 ++--
+ 2 files changed, 2 insertions(+), 5 deletions(-)
 
