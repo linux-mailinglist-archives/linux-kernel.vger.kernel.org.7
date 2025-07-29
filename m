@@ -1,227 +1,95 @@
-Return-Path: <linux-kernel+bounces-748905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E96C6B14774
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A077B14775
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3548B3BDC1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:09:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE7E33BE9BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521CF233735;
-	Tue, 29 Jul 2025 05:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2730231C91;
+	Tue, 29 Jul 2025 05:10:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="CXVfl0BH"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334DB231C91;
-	Tue, 29 Jul 2025 05:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QwvyPm5T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D6A672634;
+	Tue, 29 Jul 2025 05:10:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753765795; cv=none; b=PeUL4ktp2eO3JaiOV+ni74f7ExA5TmnR4E+ZHPivdZsW44mIz5nZ+0KIEbD19OXFqWhETZDvwUDfSSWmQW8KI1yKmUrvVvHy/8Kyuys6NhdkA8cT429KhF0XyTmXUl4BEZGlztqJBpRzKaLYo4/cXK7/9LGiXWItRpfdBt2+Okc=
+	t=1753765831; cv=none; b=uQi25OYRL5ODGvH8LTJaGj8Csb3J1ucG236KQQJLj8x97Y/HasFu5mkrIJCidLfWQJZGApTC4MlGIbHcK6rJfq0q9mCed/Q2Us8zeMXe1vKkGhqTemedr/IqSd5uYHBn96gcSG97b3EafaGZZvvHm/XYls29E51r7d/mPhXHujo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753765795; c=relaxed/simple;
-	bh=/Uf+Pxz21IzDt0yntLmrEa/esebmzlSCFWhcb6GbOUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Afa4bIvBtCxdFR6XGD7TOmtWWW3YjIKay2ItA1DTw4R0hsZLCEf1m66ppkkYqmgMr5f0n41WLtsSukcDf+ff6Gnzra8XawA+jMMpYieP36DOTwNha+c5ULdz4UN2esHWAFkZwgvo03KEKIAvD7PLX/ZMYWJ96ZVRX7I6XWaMNjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=CXVfl0BH; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.161.187] (unknown [4.194.122.136])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 39B9F2116DD5;
-	Mon, 28 Jul 2025 22:09:49 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 39B9F2116DD5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753765793;
-	bh=SBrdiyjvaPw73d4co86gOHCd9t5BOIS2mb3SAsHzhxY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CXVfl0BHjY25Cq7SrhAQXqtzKtixCOYK+4nX9U0Pb0ep5u8ajOO0pWkoyKfWUZvRN
-	 1Zxrd6z7BieT14IVlLQW0L8zM3onQ7nZ2CKOMIjI5QyLeFwN+/DNMrWMtA0M2GngZu
-	 wVDPczOzfmc92INYGUyceQ9BC4kcBDvSPJqYWT7Q=
-Message-ID: <6a6e50da-43e8-4fb1-a010-13f43b062adc@linux.microsoft.com>
-Date: Tue, 29 Jul 2025 10:39:46 +0530
+	s=arc-20240116; t=1753765831; c=relaxed/simple;
+	bh=Z0ZzA396novqGTVhi+5o3sVuNn3H9kjNqsdd+VDTuL4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vCvq4bXMtwRtRgt8VS+ZjV3xg9HMymBckKyx5DtyM5I4MszNGkhNgOpUN4bZTIqGJul5s5MDUClHVq0jphIYJVRk37Uhu3hEV2rF7dxCEFAuRMSnchQNByyy24cNxNM/FnKJWIgwicQPEz/Ea7Fg7nSBvqXDhduDLU0x/U6oH5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QwvyPm5T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B64C4CEEF;
+	Tue, 29 Jul 2025 05:10:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753765829;
+	bh=Z0ZzA396novqGTVhi+5o3sVuNn3H9kjNqsdd+VDTuL4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QwvyPm5TFn8hBKNxKZJOF47ftryrqf/tmw4AF06HLJMBjkIRIDST6lrC7yANDpWOT
+	 ZGrJZJkP3wOpRWUh3GuzJXcyR1KP2Ku2ToCSJaoT/7aG8wVtPp9vKOAsIHdX8FZePy
+	 IL34imedWidPnlRwYLB7Jk2FCuccJHZ0KwHB5wH7nozOu0s7b/G3LRvpSd83/yBYo9
+	 +fI/G9TpC/saYGEGoJFoUU7JAo+3fZwxZ5S1TyFUc7sQZpoY8rCyrl8+tUei+FPjYV
+	 Sf96ULaiIJb+ARvJhcyvA+wlk2dQgRW/DVTRLKHPpGwt3wHebNgOGfq2nUXrdVQ3d1
+	 Klu2HKSqeazmA==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v5 0/1] tracing: Fix an event field filter issue
+Date: Tue, 29 Jul 2025 14:10:26 +0900
+Message-ID:  <175376582586.1688759.2122686728240441891.stgit@mhiramat.tok.corp.google.com>
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/2] Drivers: hv: Introduce mshv_vtl driver
-To: Michael Kelley <mhklinux@outlook.com>,
- "K . Y . Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Anirudh Rayabharam <anrayabh@linux.microsoft.com>,
- Saurabh Sengar <ssengar@linux.microsoft.com>,
- Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>,
- Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- ALOK TIWARI <alok.a.tiwari@oracle.com>,
- Markus Elfring <Markus.Elfring@web.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-References: <20250724082547.195235-1-namjain@linux.microsoft.com>
- <20250724082547.195235-3-namjain@linux.microsoft.com>
- <SN6PR02MB4157495A60189FB3D9A7C5CAD458A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157495A60189FB3D9A7C5CAD458A@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+
+Hi,
+
+Here is the 5th version of series to fix the tracing event filter
+because of __attribute__.
+
+The previous version is here;
+https://lore.kernel.org/all/175333238644.2267214.1835493691667067597.stgit@mhiramat.tok.corp.google.com/
+
+This version fixes some code according to Steve's comments.
+Especially, to avoid strstr(), run sanitize_field_type() first. This
+also, simplifies the error handling. If failed to allocate memory,
+return immediately, but if there is any wrong string etc, it just
+skips the field.
+
+This removes the __attribute__ from the event format type string,
+which can cause issues with parsing (detecting the string type).
+
+Thank you,
 
 
+---
 
-On 7/27/2025 5:20 AM, Michael Kelley wrote:
-> From: Naman Jain <namjain@linux.microsoft.com> Sent: Thursday, July 24, 2025 1:26 AM
->>
->> Provide an interface for Virtual Machine Monitor like OpenVMM and its
->> use as OpenHCL paravisor to control VTL0 (Virtual trust Level).
->> Expose devices and support IOCTLs for features like VTL creation,
->> VTL0 memory management, context switch, making hypercalls,
->> mapping VTL0 address space to VTL2 userspace, getting new VMBus
->> messages and channel events in VTL2 etc.
->>
->> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
->> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
->> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
->> Reviewed-by: Alok Tiwari <alok.a.tiwari@oracle.com>
->> Message-ID: <20250512140432.2387503-3-namjain@linux.microsoft.com>
->> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
->> Reviewed-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
->> ---
->>   drivers/hv/Kconfig          |   22 +
->>   drivers/hv/Makefile         |    7 +-
->>   drivers/hv/mshv_vtl.h       |   52 ++
->>   drivers/hv/mshv_vtl_main.c  | 1508 +++++++++++++++++++++++++++++++++++
->>   include/hyperv/hvgdk_mini.h |  106 +++
->>   include/uapi/linux/mshv.h   |   80 ++
->>   6 files changed, 1774 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/hv/mshv_vtl.h
->>   create mode 100644 drivers/hv/mshv_vtl_main.c
->>
-> 
-> [snip]
-> 
->> +
->> +static int mshv_vtl_set_reg(struct hv_register_assoc *regs)
->> +{
->> +	u64 reg64;
->> +	enum hv_register_name gpr_name;
->> +	int i;
->> +
->> +	gpr_name = regs->name;
->> +	reg64 = regs->value.reg64;
->> +
->> +	/* Search for the register in the table */
->> +	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
->> +		if (reg_table[i].reg_name == gpr_name) {
->> +			if (reg_table[i].debug_reg_num != -1) {
->> +				/* Handle debug registers */
->> +				if (gpr_name == HV_X64_REGISTER_DR6 &&
->> +				    !mshv_vsm_capabilities.dr6_shared)
->> +					goto hypercall;
->> +				native_set_debugreg(reg_table[i].debug_reg_num, reg64);
->> +			} else {
->> +				/* Handle MSRs */
->> +				wrmsrl(reg_table[i].msr_addr, reg64);
->> +			}
->> +			return 0;
->> +		}
->> +	}
->> +
->> +hypercall:
->> +	return 1;
->> +}
->> +
->> +static int mshv_vtl_get_reg(struct hv_register_assoc *regs)
->> +{
->> +	u64 *reg64;
->> +	enum hv_register_name gpr_name;
->> +	int i;
->> +
->> +	gpr_name = regs->name;
->> +	reg64 = (u64 *)&regs->value.reg64;
->> +
->> +	/* Search for the register in the table */
->> +	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
->> +		if (reg_table[i].reg_name == gpr_name) {
->> +			if (reg_table[i].debug_reg_num != -1) {
->> +				/* Handle debug registers */
->> +				if (gpr_name == HV_X64_REGISTER_DR6 &&
->> +				    !mshv_vsm_capabilities.dr6_shared)
->> +					goto hypercall;
->> +				*reg64 = native_get_debugreg(reg_table[i].debug_reg_num);
->> +			} else {
->> +				/* Handle MSRs */
->> +				rdmsrl(reg_table[i].msr_addr, *reg64);
->> +			}
->> +			return 0;
->> +		}
->> +	}
->> +
->> +hypercall:
->> +	return 1;
->> +}
->> +
-> 
-> One more comment on this patch. What do you think about
-> combining mshv_vtl_set_reg() and mshv_vtl_get_reg() into a single
-> function? The two functions have a lot code duplication that could be
-> avoided. Here's my untested version (not even compile tested):
-> 
-> +static int mshv_vtl_get_set_reg(struct hv_register_assoc *regs, bool set)
-> +{
-> +	u64 *reg64;
-> +	enum hv_register_name gpr_name;
-> +	int i;
-> +
-> +	gpr_name = regs->name;
-> +	reg64 = &regs->value.reg64;
-> +
-> +	/* Search for the register in the table */
-> +	for (i = 0; i < ARRAY_SIZE(reg_table); i++) {
-> +		if (reg_table[i].reg_name != gpr_name)
-> +			continue;
-> +		if (reg_table[i].debug_reg_num != -1) {
-> +			/* Handle debug registers */
-> +			if (gpr_name == HV_X64_REGISTER_DR6 &&
-> +			    !mshv_vsm_capabilities.dr6_shared)
-> +				goto hypercall;
-> +			if (set)
-> +				native_set_debugreg(reg_table[i].debug_reg_num, *reg64);
-> +			else
-> +				*reg64 = native_get_debugreg(reg_table[i].debug_reg_num);
-> +		} else {
-> +			/* Handle MSRs */
-> +			if (set)
-> +				wrmsrl(reg_table[i].msr_addr, *reg64);
-> +			else
-> +				rdmsrl(reg_table[i].msr_addr, *reg64);
-> +		}
-> +		return 0;
-> +	}
-> +
-> +hypercall:
-> +	return 1;
-> +}
-> +
-> 
-> Two call sites would need to be updated to pass "true" and "false",
-> respectively, for the "set" parameter.
-> 
-> I changed the gpr_name matching to do "continue" on a mismatch
-> just to avoid a level of indentation. It's functionally the same as your
-> code.
-> 
-> Michael
+Masami Hiramatsu (Google) (1):
+      tracing: Remove "__attribute__()" from the type field of event format
 
-Acked, looks good. Thanks for sharing the improvements. Sending v7 now.
 
-Regards,
-Naman
+ kernel/trace/trace.c        |   28 ++++++---
+ kernel/trace/trace.h        |    4 +
+ kernel/trace/trace_events.c |  128 ++++++++++++++++++++++++++++++++++++-------
+ 3 files changed, 127 insertions(+), 33 deletions(-)
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
