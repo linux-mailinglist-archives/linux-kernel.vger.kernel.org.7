@@ -1,191 +1,115 @@
-Return-Path: <linux-kernel+bounces-749321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B025B14CE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:18:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9335B14CE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:19:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DCA618A37CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:18:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8AC4E2B44
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729E528D823;
-	Tue, 29 Jul 2025 11:17:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEFB828C03C;
+	Tue, 29 Jul 2025 11:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2bUBFlyi"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZiwMX1Tf"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F251A288C26
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B611C1DE891;
+	Tue, 29 Jul 2025 11:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753787876; cv=none; b=l82u6tMiD/U1PLAg0BOd8czDBRMEh1cZcqU4YR1BN6WmhjpnQmgiNxsb/w4keXYjyQOWFsi9/OpTw1YDhNI8iSC+yOQl4MbEhln9FXu1ILfq0yMe7vptr/M3n/My0GrChX2uU65LwOdFq29j6YSmWKdR5kpvUeEWb2BzngdTvJo=
+	t=1753787961; cv=none; b=DM+h8Su4wuacUm37fays2yQMkJ5Lbo7G/gdKJjvC6JF/P6BAnbBYcscX3YIQpWSqJ5mTcr1sDzCl5UTzlg4by2TUZGUJjW0YRhjZedGuYaxT7ptrARGCzYG1kPdS3kb8MNPQHhhZPMxwYueKWGhTZ/9n/pNqFXzhXjcWoOOlsdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753787876; c=relaxed/simple;
-	bh=VavxcMit2RZ9iqKN8RuPlF7sbKrr+xf78GvYlaxU9zc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F7HRGo53szG5UNZuVs0fFiUKPJfbnVWA08lgm/28e/wBZRVzNNECLRWjXEqQBepnIHKuw2svwTGpRViceVW9CBvI034WHBCgHsfc7j+tX3CcW2Q3iTAbMK5yyxEctePvaVi3DiV9kqvXodAGtAbcdJvPdH5NcVENHiVLecxd9Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2bUBFlyi; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-32b7113ed6bso58739391fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:17:54 -0700 (PDT)
+	s=arc-20240116; t=1753787961; c=relaxed/simple;
+	bh=+QMx8Xn5JU0mDdXdjTkiz+qzWbSdOkh8BEG6GfWt590=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kwhLNDk6VKUAf6VDRi4fwtLg45Zyw63PwpYBSorbmWTvGGIDciI1jeCkVm973c/T4UoX6dyibp3exqSnInp5wfVQbXXnNiVxDjCp2l6L7EvOsDwCRL0DVnIuRFb7UV/XdoCOS4hKu0KOroZNvgXxn2nEmanjA7vVoXatq0wnYfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZiwMX1Tf; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4561ed868b5so35571585e9.0;
+        Tue, 29 Jul 2025 04:19:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753787873; x=1754392673; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ltMJxWBOHtolA4fHUO1dAMcF/j+HeyAumwrml6j94Dk=;
-        b=2bUBFlyi6FIVtOM2BU21iOrBUeoVKB0202lEZqkjS6dWLJUwcQPnjWXieDew+n43Bh
-         LGgHjkOXYt86C7nqsPXA5h03mQB/x4bKU5kW89VuCaFkcxrqR9myy5smfvytvSK+UGPP
-         PYOYBNP+JCpjNcz4X3vxdYrPWqQksqE2/rSmxxCmMgdC7UaHk9jhpzXbPQXHql9GJmVO
-         2LleOoD8TzUJPY+nRC80VeoEmTF/s9fCE9fFH7ItUu58AmFkcDwHvsaGIeuT+Qyf3skm
-         p9MemPBlC8YuiiuSab/4kpsFOgt1bHxA2Ghng7VNKmoI43T95UKrbmNUggJ9oI1fMtpA
-         lPuw==
+        d=gmail.com; s=20230601; t=1753787957; x=1754392757; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=g7iuRz92HCVIT1exQjMnG0/dtwvtLcUKiQwnTs/Nc7g=;
+        b=ZiwMX1TfBvoB5Q1iu6HqZ4TcziMRXieE/K+CVY2/ZGAbG/6pWFcGUOuJ3Ya4CSHSuw
+         hTJJsuVANIgF87ujHn6YgxKqwTqP+eYEM9oVp8/suc2y/nqVKPRec4nYQDmPnRf0eaA8
+         WgQzy7Jn6Tud2Hh1WxGgDq4Qupzdptb7iRI3akQv82KipFgd9q3Bl8ZgZxKKB1zB6fje
+         4wyt6vbrKw7JSFmQbHymhqJa4jTW5o1izHQ46DAPAo7VM541es5NBsct9KIAir+zUPUX
+         y3uU13SP2TB4Vvq/os3zyQ5fDerkxqIum64IfxiX0clpKPjjitvLYO8ejvLiK9NuiGIx
+         obPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753787873; x=1754392673;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753787957; x=1754392757;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ltMJxWBOHtolA4fHUO1dAMcF/j+HeyAumwrml6j94Dk=;
-        b=WdR+VzdaMdEz6jLb7bCxXc8yLtljW0OtuUlW5qIzvIulPp4+ZrZVX0VnOD4ztAkCGu
-         NftxXXRwJMm2+9Uw7KOrngk9Yds7VTRUvqMVyUKDDQWf5m7KVnNR2Dvr0blXDI33WpXr
-         R4KOv5dJi0WEIfIF2/mgSHXNmDdXquMVTHSHJjHCIT3uVsapZtvD0PAsmiHmO7nD61cD
-         rYuh8Hp7RntkdD4Q/Hs2BLlhERQLoHKn8sUvEqGPj/9A1+Yr96yZzxIxi5j5Z8Smg/kx
-         i06H+DhsSqXdOC6YDekwdWxzQVKbWSolOVrc+AWW+SSY2ZL7ZA+CCIIppg5pSVe7xKb1
-         FATg==
-X-Forwarded-Encrypted: i=1; AJvYcCXWUn34kZqH+EKWgW31kq9hehOLZkZ2xsvAvRa6L4od7SuI/rw5a08gtQJz1NdCQA2o0JlWCFXnsVAKwL8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8xasOAAnKNQco/2m2GLatv0dq6XRcKXMY5ma0fPlePhmTqIyb
-	8CIto5+qF7J3pBgIs7Xl3s0OY1plz6fe9WEUWP6YEU/TBF/wrFlkjWPtZ2TpNsWvPnb9uK4hVcJ
-	jbahHHEo2QtBQ+F7YS95wynMO0gCAwZiYKKevNYO7
-X-Gm-Gg: ASbGncuMYM1B08saQKHEnHFthx5OPfyssObarCYtBvPSznFNyxRkf/oncIC93HqVKI4
-	xIpO3IDrLgcXXPzCuZeQfF9gEaBg0AcF5jHkpKGYF+D/hL1HreS4FfcVLwQUS1TZ6VblPBQkCkl
-	A33rm4kuK3z25GLWAT2bXN9I5O+4yGfDNG0of4OaMF3+kkEWz/l/BUTrPQ0TfACUd3g1ZRx5pxV
-	lDzMiC6CXmoMIK9ANc50Sf8JbXlshQRgGj2jk5T0m+Ys+Ml
-X-Google-Smtp-Source: AGHT+IE1lzpVUF119n4xxFLHaM0CJydh7lEzZgVU1OQ8ZpULUdA5KdGtvu67om6Lq5vZVPvpUmKVAV+SOFxzlEODR7k=
-X-Received: by 2002:a05:651c:3254:10b0:331:e6e3:5f9a with SMTP id
- 38308e7fff4ca-331ee70ee1bmr36539531fa.3.1753787872852; Tue, 29 Jul 2025
- 04:17:52 -0700 (PDT)
+        bh=g7iuRz92HCVIT1exQjMnG0/dtwvtLcUKiQwnTs/Nc7g=;
+        b=HAwDNAK9HWUmUNQ+qRXk/G2rKNo8ep/zEMipTOK4jumSAD9p0HUmrjh1+i/vfr7Fo+
+         mCUkL9Zq9wq5hvCh60TH22TrG9HxzhHO1aooIT8A71oPUEbFpiKslmVOaGI5tMepAvPR
+         ruADVal/ElCSI0EgyIrmc5PehCgnAA5m9rMd8vp8lFMAl+6FXXgQw435bkq1BTDKmI+n
+         u5hL4fiFjMrudOtBSL9HlcSe6wQARIW4xAdbyZD0paD8Zaol1eLCxavvj0RAgBiD22ZF
+         krhOyU1Od3gpBdCVeDPtidFSaA+4T5T+rF4orOY1FGzgSBJy0yeXpVsus/YGSs3DVafk
+         LsAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+3hqXvrou0ftglWp5avzy92MEnj68LVNY+4jJTcyuwOhTylOpaUhBb2O1d8k6068mjrrQL/uroPX+yoQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVZScmVUuSk1s+S9KZ2A2P0uhLqEaMwpOYpN81izJrip1l2KPV
+	lCWXEEfZMjTOYbxbODJk91vpP4HWUmsMalfc0ugeAwulSLHZaNrYRGR8
+X-Gm-Gg: ASbGncuWzm6LbAFD7rMIrhd0hw0lFJL8ionT9OinZz7Rxf8xXkiCDBpKFy/X2XinqJB
+	hpjIwIKBaOkmdQU7iZvaEvP5EUnekzfTrXPIK7ohklWYc8cCulv8KC508WViPEMkbs/LNtSs+8z
+	86ZuwF5TisFBwg28S7HeZU8sVxpcSrWeVlgL/KynPt2fgi4Mm1inkkuWiZeiusbTlRgH4RiIVci
+	p+hMo623wM2kq6EFk3Kf+hy8CKmkJmZ1E66s6ikzlJG1y1TJKFRYzqIJ03raYPgWiyWLmEVXUcL
+	XQuawYtpqcDxo8A+JAC8nC4gHvyUUGeSMf2sEyBapmgQNZiFAHlEUAgw59qYo/y+ogM9F16HU2k
+	uJSDkAHJZ3rjh7h+G66zKrMIJR6rYTao=
+X-Google-Smtp-Source: AGHT+IEn8baAKkdjQiKjD+OkAvGRUrXrS2YdK0Poq0GfjeJLzaXTkGoyXCAUov55fzv/FaoSuH9ICg==
+X-Received: by 2002:a05:600c:c173:b0:456:18f3:b951 with SMTP id 5b1f17b1804b1-458788a2116mr129642095e9.15.1753787956726;
+        Tue, 29 Jul 2025 04:19:16 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4588e5c2232sm23268075e9.13.2025.07.29.04.19.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 04:19:16 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Russell King <linux@armlinux.org.uk>,
+	linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: mach-sa1100: Remove space before newline
+Date: Tue, 29 Jul 2025 12:18:42 +0100
+Message-ID: <20250729111842.1923915-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728152548.3969143-1-glider@google.com> <20250728152548.3969143-9-glider@google.com>
-In-Reply-To: <20250728152548.3969143-9-glider@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Tue, 29 Jul 2025 13:17:41 +0200
-X-Gm-Features: Ac12FXzvXT6ZDgqBgnzLORTrdzHWOr68Bbqui0G02Gy0qCyfBlS9fa_n-K2ksxM
-Message-ID: <CACT4Y+aEwxFAuKK4WSU8wuAvG01n3+Ch6qBiMSdGjPqNgwscag@mail.gmail.com>
-Subject: Re: [PATCH v3 08/10] kcov: add ioctl(KCOV_RESET_TRACE)
-To: Alexander Potapenko <glider@google.com>
-Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
-	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Jul 2025 at 17:26, Alexander Potapenko <glider@google.com> wrote:
->
-> Provide a mechanism to reset the coverage for the current task
-> without writing directly to the coverage buffer.
-> This is slower, but allows the fuzzers to map the coverage buffer
-> as read-only, making it harder to corrupt.
->
-> Signed-off-by: Alexander Potapenko <glider@google.com>
+There is an extraneous space before a newline in a warning message.
+Remove it.
 
-Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ arch/arm/mach-sa1100/jornada720_ssp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/arch/arm/mach-sa1100/jornada720_ssp.c b/arch/arm/mach-sa1100/jornada720_ssp.c
+index d94810217095..983988395488 100644
+--- a/arch/arm/mach-sa1100/jornada720_ssp.c
++++ b/arch/arm/mach-sa1100/jornada720_ssp.c
+@@ -144,7 +144,7 @@ static int jornada_ssp_probe(struct platform_device *dev)
+ 		return ret;
+ 	}
+ 
+-	printk(KERN_WARNING "SSP: initialization failed, trying non-irq solution \n");
++	printk(KERN_WARNING "SSP: initialization failed, trying non-irq solution\n");
+ 
+ 	/* init of Serial 4 port */
+ 	Ser4MCCR0 = 0;
+-- 
+2.50.0
 
->
-> ---
-> v2:
->  - Update code to match the new description of struct kcov_state
->
-> Change-Id: I8f9e6c179d93ccbfe0296b14764e88fa837cfffe
-> ---
->  Documentation/dev-tools/kcov.rst | 26 ++++++++++++++++++++++++++
->  include/uapi/linux/kcov.h        |  1 +
->  kernel/kcov.c                    | 15 +++++++++++++++
->  3 files changed, 42 insertions(+)
->
-> diff --git a/Documentation/dev-tools/kcov.rst b/Documentation/dev-tools/kcov.rst
-> index 6446887cd1c92..e215c0651e16d 100644
-> --- a/Documentation/dev-tools/kcov.rst
-> +++ b/Documentation/dev-tools/kcov.rst
-> @@ -470,3 +470,29 @@ local tasks spawned by the process and the global task that handles USB bus #1:
->                 perror("close"), exit(1);
->         return 0;
->      }
-> +
-> +
-> +Resetting coverage with an KCOV_RESET_TRACE
-> +-------------------------------------------
-> +
-> +The ``KCOV_RESET_TRACE`` ioctl provides a mechanism to clear collected coverage
-> +data for the current task. It resets the program counter (PC) trace and, if
-> +``KCOV_UNIQUE_ENABLE`` mode is active, also zeroes the associated bitmap.
-> +
-> +The primary use case for this ioctl is to enhance safety during fuzzing.
-> +Normally, a user could map the kcov buffer with ``PROT_READ | PROT_WRITE`` and
-> +reset the trace from the user-space program. However, when fuzzing system calls,
-> +the kernel itself might inadvertently write to this shared buffer, corrupting
-> +the coverage data.
-> +
-> +To prevent this, a fuzzer can map the buffer with ``PROT_READ`` and use
-> +``ioctl(fd, KCOV_RESET_TRACE, 0)`` to safely clear the buffer from the kernel
-> +side before each fuzzing iteration.
-> +
-> +Note that:
-> +
-> +* This ioctl is safer but slower than directly writing to the shared memory
-> +  buffer due to the overhead of a system call.
-> +* ``KCOV_RESET_TRACE`` is itself a system call, and its execution will be traced
-> +  by kcov. Consequently, immediately after the ioctl returns, cover[0] will be
-> +  greater than 0.
-> diff --git a/include/uapi/linux/kcov.h b/include/uapi/linux/kcov.h
-> index e743ee011eeca..8ab77cc3afa76 100644
-> --- a/include/uapi/linux/kcov.h
-> +++ b/include/uapi/linux/kcov.h
-> @@ -23,6 +23,7 @@ struct kcov_remote_arg {
->  #define KCOV_DISABLE                   _IO('c', 101)
->  #define KCOV_REMOTE_ENABLE             _IOW('c', 102, struct kcov_remote_arg)
->  #define KCOV_UNIQUE_ENABLE             _IOW('c', 103, unsigned long)
-> +#define KCOV_RESET_TRACE               _IO('c', 104)
->
->  enum {
->         /*
-> diff --git a/kernel/kcov.c b/kernel/kcov.c
-> index a92c848d17bce..82ed4c6150c54 100644
-> --- a/kernel/kcov.c
-> +++ b/kernel/kcov.c
-> @@ -740,6 +740,21 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
->                 return 0;
->         case KCOV_UNIQUE_ENABLE:
->                 return kcov_handle_unique_enable(kcov, arg);
-> +       case KCOV_RESET_TRACE:
-> +               unused = arg;
-> +               if (unused != 0 || current->kcov != kcov)
-> +                       return -EINVAL;
-> +               t = current;
-> +               if (WARN_ON(kcov->t != t))
-> +                       return -EINVAL;
-> +               mode = kcov->mode;
-> +               if (mode < KCOV_MODE_TRACE_PC)
-> +                       return -EINVAL;
-> +               if (kcov->state.bitmap)
-> +                       bitmap_zero(kcov->state.bitmap,
-> +                                   kcov->state.bitmap_size);
-> +               WRITE_ONCE(kcov->state.trace[0], 0);
-> +               return 0;
->         case KCOV_DISABLE:
->                 /* Disable coverage for the current task. */
->                 unused = arg;
-> --
-> 2.50.1.470.g6ba607880d-goog
->
 
