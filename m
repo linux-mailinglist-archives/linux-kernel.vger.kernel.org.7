@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-748972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CAE1B1483F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:29:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A968B14844
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C000917DEF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:29:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 416C83A83C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14C752586DA;
-	Tue, 29 Jul 2025 06:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51928259CAB;
+	Tue, 29 Jul 2025 06:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jq+Joc2Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkPl4yLP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69122247288;
-	Tue, 29 Jul 2025 06:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D59E204C0C;
+	Tue, 29 Jul 2025 06:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753770581; cv=none; b=EZzPAyirF9ce/m81PYtdKrt4hYzxeBmWNkV8uM2OsP6D8OAc5vg4mUfETg68zONAVstwF5u+4xVfOtzRH/BhHarTPI6R1UPG8u8Csz99xITLz6GZamzmKD0B8Vdo2vICQ2MdW+9cUt8bxn4229YIjCAtHRk81ief9ugJMys2xwA=
+	t=1753770708; cv=none; b=D1Mc/TP90AuB3r2phWQ6W2xBs8zBNZb533NJIAzkKEaddhIUntZ55xmI16npVp2dE8m6k/mJdJ6xv4oQkLK0ujblCXDgKNht5iHtkp0GrohoGLt6q/KTh+G3W5WemTyizPdRU83CtO56vbthh0jIpAgL216lSZdd06pLBcGoTis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753770581; c=relaxed/simple;
-	bh=lFu4mgQyTwROcXALgL7ks13DuBgIYMQnM+xWv5o5jjI=;
+	s=arc-20240116; t=1753770708; c=relaxed/simple;
+	bh=xAfwh6wgqze8HrtArGsHCkx82E6hstOtlosrB8BG9f4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OUoTYZtYakp6YYqVM/2qdHZnkiioBCf0K8Sk8+8bw7lb0J9BZLYQe1B36iDsX5Hwx5pflvcTZg036C7uTlTy4zW6yKQJRXqdFmk2NiQUHIuYqB/M37G6ChmeP1K/acRDijbIftDNh9hcZ+ae0hJx64CR43VL+JQsF1zH9Is4y7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jq+Joc2Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55417C4CEEF;
-	Tue, 29 Jul 2025 06:29:39 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=b5uqcI93Ai9/gKgJTTY01cjZkb1XceLojh74XSZu4TywwKQMbyBvfAKFfGyikwgkTDDnfFEfg+tthq2fcDDitreHpgEJQpybOUFgRrfV8qH1B38474UhY1MpADN8EEFY41G3hm2tZHHfFP4KnnHelVdI/wYBKPEmKQLomdEVtWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkPl4yLP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24810C4CEEF;
+	Tue, 29 Jul 2025 06:31:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753770581;
-	bh=lFu4mgQyTwROcXALgL7ks13DuBgIYMQnM+xWv5o5jjI=;
+	s=k20201202; t=1753770708;
+	bh=xAfwh6wgqze8HrtArGsHCkx82E6hstOtlosrB8BG9f4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jq+Joc2YGfkhKPhuseHDkwYij/iNbx/+NcsvTd2G3AfSZySSH8rwTQRCeqW/ep1b7
-	 d+5KNq60BdSMyfiE+D2eHt8gC970/iFBeScrHb2A5S+93TDUH3hKdo+Zxv9oYt6mKH
-	 e15pUalQ4NDpJh3WV0pSucFiko0ewaMg9UDGxkjEjaAavIEnQrgkjtiybMhg8R7+9O
-	 IVwUY08iGNtM5bcRsgffiFA9Sc1pn2TilGfcRz1bq7de7q9Gl9Ep17EmzsXBwLvDHp
-	 FneOtksZrJpzbw49jW9W9KNb3Xqs8p14EUj6yaNkvKwTCXV1j6xtTO/gWpQ4yKIleT
-	 UQs5i0KENOF9g==
-Message-ID: <371e104c-2708-47c3-8d32-0724bbe754d1@kernel.org>
-Date: Tue, 29 Jul 2025 08:29:37 +0200
+	b=SkPl4yLPw+2X4ckxsOazOSKTMl5VNEaZCyChjoXb7XNvESprG/DJO/YR+OKLw95xj
+	 GlhXDE6sYsSG/kgkubB5fZQReGRCdT6oec1CgXMUgmDtMufWzIN5qRczETGCTPC8OA
+	 X0m6Go7RaeH8MTm/Rer72wdb/FxXGgWRjr7jxJDU3kNWgQmqXHef8FzLqkGbKjYq3B
+	 opwxIK8r624YFy7IZTdFKI99M7Cr3N7poeZ6vATs5LGaI4PZz3dW+AngY7k5gRZoUS
+	 MMM/xVOP2UHepXdew6AAv6aWjKfMNlKtgrI4/AZEygXZX1FbRCKTGsVoHaQSbrCq5Z
+	 JUomL6giH0bGA==
+Message-ID: <c09da948-6e31-454d-acca-99c226c18c61@kernel.org>
+Date: Tue, 29 Jul 2025 08:31:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/5] dt-bindings: misc: Update the "$id:" to misc path
+Subject: Re: [PATCH v1 5/5] dt-bindings: misc: Add binding document for SB-RMI
+ I3C
 To: Akshay Gupta <akshay.gupta@amd.com>, linux-kernel@vger.kernel.org,
  linux-hwmon@vger.kernel.org
 Cc: gregkh@linuxfoundation.org, arnd@arndb.de, linux@roeck-us.net,
  Anand.Umarji@amd.com,
  Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
 References: <20250728061033.1604169-1-akshay.gupta@amd.com>
- <20250728061033.1604169-4-akshay.gupta@amd.com>
+ <20250728061033.1604169-5-akshay.gupta@amd.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,21 +103,98 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250728061033.1604169-4-akshay.gupta@amd.com>
+In-Reply-To: <20250728061033.1604169-5-akshay.gupta@amd.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28/07/2025 08:10, Akshay Gupta wrote:
-> - Modify the "$id" path as file moves from hwmon to misc
+> - Document the dt-binding for AMD SB-RMI
+
+Why every commit is a one-item list?
+
 > 
 > Reviewed-by: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>
+
+I don't believe these reviews. Code was obviously buggy, but still reviewed.
+
 > Signed-off-by: Akshay Gupta <akshay.gupta@amd.com>
 > ---
+>  .../bindings/misc/amd,sbrmi-i3c.yaml          | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/misc/amd,sbrmi-i3c.yaml
 
-So you broke everything in previous patch, introduced bugs, but code was
-reviewed?
+Your previous patches make no sense with this...
 
-NAK
+> 
+> diff --git a/Documentation/devicetree/bindings/misc/amd,sbrmi-i3c.yaml b/Documentation/devicetree/bindings/misc/amd,sbrmi-i3c.yaml
+> new file mode 100644
+> index 000000000000..1d19571c2095
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/misc/amd,sbrmi-i3c.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/misc/amd,sbrmi-i3c.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: >
+
+From where did you take such syntax of title?
+
+> +  Sideband Remote Management Interface (SB-RMI) compliant
+> +  AMD SoC.
+> +
+> +maintainers:
+> +  - Akshay Gupta <Akshay.Gupta@amd.com>
+> +
+> +description: |
+> +  SB Remote Management Interface (SB-RMI) is an SMBus compatible
+> +  interface that reports AMD SoC's Power (normalized Power) using,
+> +  Mailbox Service Request over I3C interface to BMC.
+> +  The power attributes in hwmon reports power in microwatts.
+> +
+> +properties:
+> +  reg:
+> +    - description: |
+> +        Encodes the static I2C address.
+> +      Socket 0: 0x3c
+> +      Socket 1: 0x38
+> +    - description: |
+> +        First half of the Provisioned ID (following the PID
+> +        definition provided by the I3C specification).
+> +        Contains the manufacturer ID left-shifted by 1 (0x224).
+> +    - description: |
+> +        Second half of the Provisioned ID (following the PID
+> +        definition provided by the I3C specification).
+> +        Contains the ORing of the part ID left-shifted by 16,
+> +        the instance ID left-shifted by 12 and extra information (0x00000002).
+> +
+
+And this entire patch is just noop. Makes no difference, makes no impact.
+
+Drop it and write proper bindings with proper description of problem you
+are solving.
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
 
 Best regards,
 Krzysztof
