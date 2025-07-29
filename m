@@ -1,183 +1,209 @@
-Return-Path: <linux-kernel+bounces-749697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34466B151BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:56:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00ABAB151B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:56:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B2E737B0773
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:55:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D2118A3E1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CAF298CB1;
-	Tue, 29 Jul 2025 16:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23584298981;
+	Tue, 29 Jul 2025 16:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ltwG4CV4"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgWjM5w3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63773265CC8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680F128DF27;
+	Tue, 29 Jul 2025 16:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753808187; cv=none; b=Vb8A/Tfw5E/4XlmlL9Vckk4Gdg6iciNv4iE8pk5ebvFWZkT4l5o8PDfyT0YxMK3UiRCew9lV21t9U7DbLiGjotSzMC3j41eGX6Giw9oM8sCC8srNCnytgTCxCMIXyQTpgmulmMfCriiTF3PkokpNrMh2xDmt/z4zC3Mxy7V5Bzc=
+	t=1753808185; cv=none; b=Jt58lbkQ5gBhC8PrXZxZPC+KQfEsojxAfSTgGBevhJlbSn2XIkndT0oRv1qdfXeqIqBM1r9Cre51vxQPEG8IUGlnCNUs2sz8JClVO9pEhm/vj3+v5y6KaZRcLF9USMD3tRobFaJoQu+OdV55HrtqYPU40MmUafUiRxGWzrYdlg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753808187; c=relaxed/simple;
-	bh=kON6HUGmUgYLxRRJ0S8Z3HHLshtp9BfTE/UxoH0kH1s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L3nrW6N7omDtw6mM2FBfVSji2h81qnTaOy/qlcd+mO2Hwaa4H/55YoJf2+Wx2CBMRkToQTXLxugQtoiQzhPfTI/mDlfugRugEKKw5d28o3NkNxsqvaNniDBVfMPmY5jpHlwnOSyhc1JKy5A22ZYGQo9bsKGVQlEmPQQHUBfuQRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ltwG4CV4; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4aaf43cbbdcso5561cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:56:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753808184; x=1754412984; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1/uIe95x5lZqYdBnQQKG7OEQU1TEeF9VXSEERIroTJo=;
-        b=ltwG4CV4REFf5s6g4nXD46D74/avWCGXU6B3Kbe9vEjCdwi+dENRWhkuS7bXP4mJX6
-         g977X8ueRO8JLUDe2sxZWacp2aEs5Gs1JdSWrCicuaoHhgp5n65H/jhOSq6Qr9qt3mya
-         CU8CrcFUQyJSyPhC6/7HDUMsn/OeBjXOzoxaEoi/D7Lc89KO+5b8ivFdEL+tph1DOVxN
-         /Yy9eFXP0QgeClh0mGcpwsYqSFyop1+Z0SA2QPcKRUlfOhzQNgDn/e8RqBDD6e5EJ2JE
-         rXUC/053YjAGAqylQeS0FKv/TOYZAdkxeTIoILaZ1MnW9sgQFxqqy9AdP+alFokNHWXv
-         BIgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753808184; x=1754412984;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1/uIe95x5lZqYdBnQQKG7OEQU1TEeF9VXSEERIroTJo=;
-        b=q++66CDqmyd2LCXO7kHV1xzmO8jtDuUOeb3r4wErlU7z4G25f7SXiLYINc5Qcp891S
-         5/PxRjj6UYan8OQeN4SA1wZLPCxfal/D3butnGQnX5HZOgk1OpXia3ckJ2O2G9lghj0k
-         2ZgaAOuJ24ligk3jJkpHm28XqAdULOecLjZWQNt45RHvhOOiOnl1mZhaTVKl4pxLxgbI
-         xuWgh7HI6fXQAx/fd+oB41m9Ct0SlJ4+OHvjSaSOfoMaUkrzzrt1KbQBwBhpYDONJTEx
-         7Ypwi4Cd9WG/AmCff10/tBPePnORp+FjOUl/JcKqL/nBdkUqn6VKU50cwnzoD2mt8it/
-         OWMw==
-X-Forwarded-Encrypted: i=1; AJvYcCUG94Iz3kbKAaYYMmIKBhcYhqMwhokm1xocDVcRufFgB4K94Aj7L2Za+X4FYXCyUzeQ2V2n1s3ekuIfYz4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrfKL0ACVsO8qndzH93U/990501+DlxuCuO/dUcs9m8wrJXAwo
-	xtZFeF86QrPGrFmkq6/iMa6aEO9xEPWdMBr2wAoL72CQMffAw+DjhCDlLs0lL8Bq+i4GK6i9p/i
-	PQejnexF7jkNjeXZE3eiGPz/GHXORXXSAI/Gb80yv
-X-Gm-Gg: ASbGncuI7+gtYTiXf6rRr39y6+/9GDrXqF8ILdEBoisgwTWMU/GSI30LUcqT380Lxyg
-	9TcV9+nvRjdNd05awCx3CEZ3cMg+Q0Q+xV80NbtIpzp2VYPfZv70trzK+k5XiGWn76vjwPyMthi
-	QPUpoI9iWngpJCND8grWXoYp8zAbsUYGbBXfq95eNnJ07C3TTZ5hX5FhZ0Ru1Itnkd6Ufs9keA9
-	xXZEhw=
-X-Google-Smtp-Source: AGHT+IG8U03UpiLYKbtFizbKfv9yB5x8yYCq7RDDBBmKtZwiOn8gG/X4U3tVssvjQCIruMENSE23SwYyH5DXYbZYSsw=
-X-Received: by 2002:a05:622a:1884:b0:4a9:e34a:58a1 with SMTP id
- d75a77b69052e-4aecf9d1b90mr4112341cf.21.1753808183683; Tue, 29 Jul 2025
- 09:56:23 -0700 (PDT)
+	s=arc-20240116; t=1753808185; c=relaxed/simple;
+	bh=JU9cJLhUxADwV8B7lb61J9Qm/bJ63FqgVTEZ8cqZAHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FN/brVwA7iEq/XFufXMnp2HVvr4yyTJKvMW1F94kSoWCqDUpV7wHEGjLP5GvGbgIKoGxZmohZg3Esi4qzB6GKdzstQwN/yzf9bTnxs0bdz5XsgywxZMoZXTVBxsJ3fS0dgyxuSMdPXpLYiLqZPtGGNKd+0AbWuchz/0AB0xg2Yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OgWjM5w3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F4ADC4CEEF;
+	Tue, 29 Jul 2025 16:56:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753808184;
+	bh=JU9cJLhUxADwV8B7lb61J9Qm/bJ63FqgVTEZ8cqZAHw=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OgWjM5w3N6KIsRtvgWsvYUuf4D8Y3EV44Uu+PvFJN9k9jRpc4UZZYKcEGi0kemWqs
+	 gFSMfWGHjzvu1pQvW3BMJ3NH5HqpWPNhPCK+EG82TGF6ZXrD9jEQ6lSwjEMDjxHGpN
+	 OUZ9XToJPwO98mUdakK6eO1jBdSbd5X+RUaLw5AlE867umn/qvPCuKgkOzC5KXdmd3
+	 ZXoAXi8jjaAyixZmiyd2VEMnJwJQ8aMQK/o7uRvU1Ea4c6OYgBnpg/apHLpDga381p
+	 Uw1QxvQYohfVS37CinS705ETFmIvx6YfxnzVqXhnqn9RYtIOoXNnFh97pkNi4ZBlu2
+	 //fdxjD9mj7Lw==
+Message-ID: <3660751f-e230-498c-b857-99d61fe442e6@kernel.org>
+Date: Wed, 30 Jul 2025 00:56:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728223710.129440-1-rananta@google.com> <aIjcmquPNOdE5l4K@linux.dev>
-In-Reply-To: <aIjcmquPNOdE5l4K@linux.dev>
-From: Raghavendra Rao Ananta <rananta@google.com>
-Date: Tue, 29 Jul 2025 09:56:12 -0700
-X-Gm-Features: Ac12FXzGVONWVZtJXMRcendx58YZR793CWu4R9YnCYvWGKAJQzZFsbX55XCdkxs
-Message-ID: <CAJHc60xPKgVn96azWhP1NbfKioEZj68APQPf=zKRMuHB7-goqA@mail.gmail.com>
-Subject: Re: [PATCH] KVM: arm64: Set/unset vGIC v4 forwarding if direct IRQs
- are supported
-To: Oliver Upton <oliver.upton@linux.dev>
-Cc: Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Reply-To: yukuai@kernel.org
+Subject: Re: [PATCH 1/2] md/raid0,raid4,raid5,raid6,raid10: fix bogus io_opt
+ value
+To: Tony Battersby <tonyb@cybernetics.com>, Song Liu <song@kernel.org>,
+ Yu Kuai <yukuai3@huawei.com>, Christian Brauner <brauner@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: linux-raid@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <b122fa8c-f6a0-4dee-b998-bde65d212c11@cybernetics.com>
+Content-Language: en-US
+From: Yu Kuai <yukuai@kernel.org>
+In-Reply-To: <b122fa8c-f6a0-4dee-b998-bde65d212c11@cybernetics.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29, 2025 at 7:37=E2=80=AFAM Oliver Upton <oliver.upton@linux.de=
-v> wrote:
->
-> Hi Raghu,
->
-> Thanks for reporting this so quickly :)
->
-> On Mon, Jul 28, 2025 at 10:37:10PM +0000, Raghavendra Rao Ananta wrote:
-> > diff --git a/arch/arm64/kvm/vgic/vgic-v4.c b/arch/arm64/kvm/vgic/vgic-v=
-4.c
-> > index e7e284d47a77..873a190bcff7 100644
-> > --- a/arch/arm64/kvm/vgic/vgic-v4.c
-> > +++ b/arch/arm64/kvm/vgic/vgic-v4.c
-> > @@ -433,7 +433,7 @@ int kvm_vgic_v4_set_forwarding(struct kvm *kvm, int=
- virq,
-> >       unsigned long flags;
-> >       int ret =3D 0;
-> >
-> > -     if (!vgic_supports_direct_msis(kvm))
-> > +     if (!vgic_supports_direct_irqs(kvm))
-> >               return 0;
-> >
-> >       /*
-> > @@ -533,7 +533,7 @@ int kvm_vgic_v4_unset_forwarding(struct kvm *kvm, i=
-nt host_irq)
-> >       unsigned long flags;
-> >       int ret =3D 0;
-> >
-> > -     if (!vgic_supports_direct_msis(kvm))
-> > +     if (!vgic_supports_direct_irqs(kvm))
-> >               return 0;
->
-> I'm not sure this is what we want, since a precondition of actually
-> doing vLPI injection is the guest having an ITS. Could you try the
-> following?
->
-> Thanks,
-> Oliver
->
-> diff --git a/arch/arm64/kvm/vgic/vgic-mmio-v3.c b/arch/arm64/kvm/vgic/vgi=
-c-mmio-v3.c
-> index a3ef185209e9..70d50c77e5dc 100644
-> --- a/arch/arm64/kvm/vgic/vgic-mmio-v3.c
-> +++ b/arch/arm64/kvm/vgic/vgic-mmio-v3.c
-> @@ -50,6 +50,14 @@ bool vgic_has_its(struct kvm *kvm)
->
->  bool vgic_supports_direct_msis(struct kvm *kvm)
->  {
-> +       /*
-> +        * Deliberately conflate vLPI and vSGI support on GICv4.1 hardwar=
-e,
-> +        * indirectly allowing userspace to control whether or not vPEs a=
-re
-> +        * allocated for the VM.
-> +        */
-> +       if (system_supports_direct_sgis() && !vgic_supports_direct_sgis(k=
-vm))
-> +               return false;
-> +
->         return kvm_vgic_global_state.has_gicv4 && vgic_has_its(kvm);
->  }
->
-> diff --git a/arch/arm64/kvm/vgic/vgic.h b/arch/arm64/kvm/vgic/vgic.h
-> index 1384a04c0784..de1c1d3261c3 100644
-> --- a/arch/arm64/kvm/vgic/vgic.h
-> +++ b/arch/arm64/kvm/vgic/vgic.h
-> @@ -396,15 +396,7 @@ bool vgic_supports_direct_sgis(struct kvm *kvm);
->
->  static inline bool vgic_supports_direct_irqs(struct kvm *kvm)
->  {
-> -       /*
-> -        * Deliberately conflate vLPI and vSGI support on GICv4.1 hardwar=
-e,
-> -        * indirectly allowing userspace to control whether or not vPEs a=
-re
-> -        * allocated for the VM.
-> -        */
-> -       if (system_supports_direct_sgis())
-> -               return vgic_supports_direct_sgis(kvm);
-> -
-> -       return vgic_supports_direct_msis(kvm);
-> +       return vgic_supports_direct_msis(kvm) || vgic_supports_direct_sgi=
-s(kvm);
->  }
->
->  int vgic_v4_init(struct kvm *kvm);
+Hi,
 
-Yes, the diff seems fine (tested as well). Would you be pushing a v2
-or do you want me to (on your behalf)?
+在 2025/7/30 0:12, Tony Battersby 写道:
+> md-raid currently sets io_min and io_opt to the RAID chunk and stripe
+> sizes and then calls queue_limits_stack_bdev() to combine the io_min and
+> io_opt values with those of the component devices.  The io_opt size is
+> notably combined using the least common multiple (lcm), which does not
+> work well in practice for some drives (1), resulting in overflow or
+> unreasonable values.
+>
+> dm-raid, on the other hand, sets io_min and io_opt through the
+> raid_io_hints() function, which is called after stacking all the queue
+> limits of the component drives, so the RAID chunk and stripe sizes
+> override the values of the stacking.
+>
+> Change md-raid to be more like dm-raid by setting io_min and io_opt to
+> the RAID chunk and stripe sizes after stacking the queue limits of the
+> component devies.  This fixes /sys/block/md0/queue/optimal_io_size from
+> being a bogus value like 3221127168 to being the correct RAID stripe
+> size.
+This is already discussed, and mtp3sas should fix this strange value.
+>
+> (1) SATA disks attached to mpt3sas report io_opt = 16776704, or
+> 2^24 - 512.  See also commit 9c0ba14828d6 ("blk-settings: round down
+> io_opt to physical_block_size").
+>
+> Signed-off-by: Tony Battersby <tonyb@cybernetics.com>
+> ---
+>   drivers/md/md.c     | 15 +++++++++++++++
+>   drivers/md/raid0.c  |  4 ++--
+>   drivers/md/raid10.c |  4 ++--
+>   drivers/md/raid5.c  |  4 ++--
+>   4 files changed, 21 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 0f03b21e66e4..decf593d3bd7 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -5837,11 +5837,15 @@ EXPORT_SYMBOL_GPL(mddev_stack_rdev_limits);
+>   int mddev_stack_new_rdev(struct mddev *mddev, struct md_rdev *rdev)
+>   {
+>   	struct queue_limits lim;
+> +	unsigned int io_min;
+> +	unsigned int io_opt;
+>   
+>   	if (mddev_is_dm(mddev))
+>   		return 0;
+>   
+>   	lim = queue_limits_start_update(mddev->gendisk->queue);
+> +	io_min = lim.io_min;
+> +	io_opt = lim.io_opt;
+>   	queue_limits_stack_bdev(&lim, rdev->bdev, rdev->data_offset,
+>   				mddev->gendisk->disk_name);
+>   
+> @@ -5851,6 +5855,17 @@ int mddev_stack_new_rdev(struct mddev *mddev, struct md_rdev *rdev)
+>   		queue_limits_cancel_update(mddev->gendisk->queue);
+>   		return -ENXIO;
+>   	}
+> +	switch (mddev->level) {
+> +	case 0:
+> +	case 4:
+> +	case 5:
+> +	case 6:
+> +	case 10:
+> +		/* Preserve original chunk size and stripe size. */
+> +		lim.io_min = io_min;
+> +		lim.io_opt = io_opt;
+> +		break;
+> +	}
+>   
+>   	return queue_limits_commit_update(mddev->gendisk->queue, &lim);
+>   }
+> diff --git a/drivers/md/raid0.c b/drivers/md/raid0.c
+> index d8f639f4ae12..657e66e92e14 100644
+> --- a/drivers/md/raid0.c
+> +++ b/drivers/md/raid0.c
+> @@ -382,12 +382,12 @@ static int raid0_set_limits(struct mddev *mddev)
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_hw_sectors = mddev->chunk_sectors;
+>   	lim.max_write_zeroes_sectors = mddev->chunk_sectors;
+> -	lim.io_min = mddev->chunk_sectors << 9;
+> -	lim.io_opt = lim.io_min * mddev->raid_disks;
+>   	lim.features |= BLK_FEAT_ATOMIC_WRITES;
+>   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>   	if (err)
+>   		return err;
+> +	lim.io_min = mddev->chunk_sectors << 9;
+> +	lim.io_opt = lim.io_min * mddev->raid_disks;
+This is too hacky, and I'm sure will break existing users, at least this 
+will be a
+mess to build raid array on the top of another array.
 
-Thank you.
-Raghavendra
+Thanks,
+Kuai
+>   	return queue_limits_set(mddev->gendisk->queue, &lim);
+>   }
+>   
+> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
+> index c9bd2005bfd0..ea5147531ceb 100644
+> --- a/drivers/md/raid10.c
+> +++ b/drivers/md/raid10.c
+> @@ -4011,12 +4011,12 @@ static int raid10_set_queue_limits(struct mddev *mddev)
+>   
+>   	md_init_stacking_limits(&lim);
+>   	lim.max_write_zeroes_sectors = 0;
+> -	lim.io_min = mddev->chunk_sectors << 9;
+> -	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
+>   	lim.features |= BLK_FEAT_ATOMIC_WRITES;
+>   	err = mddev_stack_rdev_limits(mddev, &lim, MDDEV_STACK_INTEGRITY);
+>   	if (err)
+>   		return err;
+> +	lim.io_min = mddev->chunk_sectors << 9;
+> +	lim.io_opt = lim.io_min * raid10_nr_stripes(conf);
+>   	return queue_limits_set(mddev->gendisk->queue, &lim);
+>   }
+>   
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index ca5b0e8ba707..bba647c38cff 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -7727,8 +7727,6 @@ static int raid5_set_limits(struct mddev *mddev)
+>   	stripe = roundup_pow_of_two(data_disks * (mddev->chunk_sectors << 9));
+>   
+>   	md_init_stacking_limits(&lim);
+> -	lim.io_min = mddev->chunk_sectors << 9;
+> -	lim.io_opt = lim.io_min * (conf->raid_disks - conf->max_degraded);
+>   	lim.features |= BLK_FEAT_RAID_PARTIAL_STRIPES_EXPENSIVE;
+>   	lim.discard_granularity = stripe;
+>   	lim.max_write_zeroes_sectors = 0;
+> @@ -7736,6 +7734,8 @@ static int raid5_set_limits(struct mddev *mddev)
+>   	rdev_for_each(rdev, mddev)
+>   		queue_limits_stack_bdev(&lim, rdev->bdev, rdev->new_data_offset,
+>   				mddev->gendisk->disk_name);
+> +	lim.io_min = mddev->chunk_sectors << 9;
+> +	lim.io_opt = lim.io_min * (conf->raid_disks - conf->max_degraded);
+>   
+>   	/*
+>   	 * Zeroing is required for discard, otherwise data could be lost.
+>
+> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+
 
