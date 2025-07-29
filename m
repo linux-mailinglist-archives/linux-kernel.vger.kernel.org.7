@@ -1,134 +1,166 @@
-Return-Path: <linux-kernel+bounces-749493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03632B14F0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:07:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256F5B14F16
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23DA63A91FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 028C55415F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0CF1C5F06;
-	Tue, 29 Jul 2025 14:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D941D5154;
+	Tue, 29 Jul 2025 14:12:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ss7eyJgL"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cqbSe+AP";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CvsYWtmi"
+Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436AECA4B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 356B84C6D;
+	Tue, 29 Jul 2025 14:12:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753798046; cv=none; b=A2HlruP4wdWnPoN0FzDshVB/HgJEr8/c0Bk3nWwWqUW69jjlgoVYel7aNN0lOE7f9ZEpsYRrTDu/NOOVngT4EmN1P6xAX/TH3ZQ7w93AUP2js9PM9unS9uHHtKcyBnwWoDVLyJQyn9tT4gSWgzCfF0/NWyMwwMZ2wCeB6xEB4U8=
+	t=1753798346; cv=none; b=pXuM6jq904e0/1HPIG2UZude9ZBVM8jdJ9N8XOdeq/Yf8Ep3O6n5OP1dU2H81KSrj37up8AeibghRlxTwly4hgkWd4MTBqpN+LCdB+TDd9YUHxX0GgNWsfl/KXFt8tWmN+ddp8wO4hfsx3yLKRuqwWFyFglD8r2+VGwvd/0xOiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753798046; c=relaxed/simple;
-	bh=rhVc+Nyd4c2zvpnB/KdoPHZ6dbya9u3vmE75vJ3uoTs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T2Emk8CPmTos2qBaRIbNx0ksmewjdli4sVpbjvnw5xOul5gd5e8jBYi8qotzxAypJhYYYs7QMPSvg3K78qnHen4Ll5E06XSb95I+KDj7cuCsRy+uviDDTFJ7gJ3DpC7fyxYjH0PivFaxZxZ3xwk7zZD1oxW7DOCE1YdBtDkPCK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ss7eyJgL; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-b31f0ef5f7aso3052561a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:07:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753798044; x=1754402844; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJvCmo1GMIN6PBxEyuljRYFWQLePXvKN812kyTCAGso=;
-        b=Ss7eyJgL1l2sJgUhbNJ93MdYyZPjRAty1kntsymabkshcQ9pffJ2Bsr6w9i/MUFhIc
-         ELNIYXFgKROZFQakipstz1HNFfKR6luBzNhtJQO/5960O+/RKdefxhYxUChV8MactKIi
-         fSZKV7DLu4GT9cktCcE7DnmVCNClg5UDSAXBDLXFkKEQbC9bWGYE25QHiaZDjyhQFc8l
-         CJ/HiJaaXzq84hlxgBKRYD3xIruSPGjJvW2ExMRvce4KwSgeHLgwOuz63NHx5qu8bjB5
-         zMic3G6vPphQeL/yhXh1cHqtoh9T9tpbwgCzZL7swHA2pbr7V2NfHXO54gUgBILcLl5Q
-         yWAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753798044; x=1754402844;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hJvCmo1GMIN6PBxEyuljRYFWQLePXvKN812kyTCAGso=;
-        b=AQhGqO0tg4xCFOgkw+P0zDE+2FOwOmlHCteCkncAAaqSJPfvbbyOuD3yWj77q9FABV
-         kSYFpkJNMjQIM121kzMsFzEShJlGxCUO/5fsNF0ZPaZIdkTMpFJuixv+2WOosK1Qd8mY
-         ckXhbWtyqh8axWcefmeZzW8oU5tKgEoI3UgHqIUUpmRz0HYyE2eI5ZaFEviTshgGUXGU
-         PK924pZx6UpWMmGFOYnDJdVA0/cvuo6B8yVBvJWtmodIlLNcD5v1IvTM1DlBe4t8QfFh
-         y0MQQBQsKYF1RHxzVzGjAiTpU/pLzmm3fgv2IIkD/oFSLCD0y6WxFOzwXrSmbAOY9Fi0
-         pzWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWvXBROjXN1Di8zX8jU7OkR/ZhI8cRJxpCKTLDrq1ehFl1TIaOqEan4t86x8hE/IY6et0A0czpZbCKnD+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRgAg7IduSSyjj0ji3OMa/W/sV+FnYTS10R1cBs84Zy61REuyG
-	tSA0vaxAWlNYRMwmVVjWcVjtuwlWN38pas0i/vGrYfHHfe1SUrxDjiWo
-X-Gm-Gg: ASbGncs6Nk7OkSq4RFR54aAop3kq3Ylj86iGsypW07EwIn6LfMPgq2n2o4Ghy9dd4Xx
-	VBh6gO5nYnpD/O1RVDxlpyeJ1NHLtvCxNSgO8/I8BS7+D8apFOk5kmbhy4G23vjHw05MWxZwjRK
-	TI8BnoEaEvmUK4BvA2ql/7X9iz7glQFVmZICxaPrhvrZRnerQgQaBcdtS6+H5W9yWgD8Eq+5XOq
-	Vdvrvdrhuon3M+T1+gYEjZjpFV9S/86h1zy7Cn/HnZU0eJRr+KIhtgNnH7Vfrgiim0WA/q7TVWR
-	SklEuo3dzyPyg6UOHbFAeIL9hYP3V5p3JQWOKdvuyPPURLT1zhHhWu22Kw5n3c9/ZzPQe3Vdi+m
-	7r6mQq6F6ztcnCH3zqOOAOg==
-X-Google-Smtp-Source: AGHT+IGrEJoA5tk5T75MgA86AfqARR+AviOM/jK2OcPTpnsSkNLfrz/LSU41o3HahZIkErQQ4PIYvA==
-X-Received: by 2002:a17:902:e80d:b0:240:5c38:7555 with SMTP id d9443c01a7336-2405c387a2emr79722765ad.5.1753798043810;
-        Tue, 29 Jul 2025 07:07:23 -0700 (PDT)
-Received: from fedora ([200.111.160.26])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24052f80931sm30327955ad.95.2025.07.29.07.07.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 07:07:23 -0700 (PDT)
-From: =?UTF-8?q?Ignacio=20Pe=C3=B1a?= <ignacio.pena87@gmail.com>
-To: Joe Perches <joe@perches.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4] checkpatch: warn about novice phrases in commit messages
-Date: Tue, 29 Jul 2025 10:07:25 -0400
-Message-ID: <20250729140725.130842-1-ignacio.pena87@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <ZqCu6xskqgLMQm8K@saruman>
-References: <ZqCu6xskqgLMQm8K@saruman>
+	s=arc-20240116; t=1753798346; c=relaxed/simple;
+	bh=lIYDMtNMk2OTrfFA3d4aR7UcZNph1MLXV/AoeIDs2Ts=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=A8MlkuOAw8NaGBR23Qtnk+KYzFvFZFYMEnNuWNfw810shrl+3k/LCYj7bYPYZ8WyJLMPYMSlS8Y+6T7l5STnzl5tnK7lWCOKQns1eUnPg877tKJ8rPqVXkN22XtmhXTT6SXU/CMfz2Wi0Nyc4+5A5js121vebaLR8lZlBiS6Kpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cqbSe+AP; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CvsYWtmi; arc=none smtp.client-ip=103.168.172.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 44A631400429;
+	Tue, 29 Jul 2025 10:12:23 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Tue, 29 Jul 2025 10:12:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753798343;
+	 x=1753884743; bh=lvTM6U3OpuAsCCBQIku+DT9FmGxTEa/60sJXAhmj4Hk=; b=
+	cqbSe+API5g2rlgsERAfDu2mY8ph4aIxDTxIHAPgTo2SbCKfJ4ph1gJWNAUjV5Qm
+	xUy6rg389Y/DTWs08OvdpMBp1DJGR8ZgiifZVixtQXWCJNn9Kht1SsUaFykWRJV+
+	tkPLPfiJvJ4pGZI+K5dlnwCKFkZ+zrxE3wThogcKn0gBiFk6G8UKG8QFzG7pJPVm
+	5t1qa69C6IgJspq2GwsGaz2rn7qJ4oM64yCmBs+a5GTALP/DPWmG5NNxj6jO2oN2
+	RjD/BJxbpGHfWjcKuJq8kZbLgX7YNbdUCqVqiFHiRHWuarfK7iK8HZNoVbj6Ow1r
+	+y4Rf/ODIoASbzCFypRLEA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1753798343; x=
+	1753884743; bh=lvTM6U3OpuAsCCBQIku+DT9FmGxTEa/60sJXAhmj4Hk=; b=C
+	vsYWtmi3B3g3+mzLPNaQwOlUQei7WcWveA/9We8Z3ImiB0eGgwN5TLAtmPQLxkHl
+	Tn4D1oA7zcX13/d7OHsgEwgkLKphv87Y8n9+vHaJSuXdz7bXZxGSIie4eTGRV3rX
+	h7MbeO3QnX4D6D40M+WNOQ89icrRKFauCw4RqZx9w5UqnNf/26ed69RoYMLRTyV+
+	qps+n2wK6Lykcc6wp7397Fvr3Z52gTcyWN+ywpMsfAuhLvoruZgW+gWFqFPt/sa8
+	6lj5fw0A58HHSQDm9bupRvEN0yxolTM7Bm7nVpYwphIWbqilMZiKZa0KtWZoFgNY
+	xFhmkBTJQRciP523OuLDA==
+X-ME-Sender: <xms:xdaIaLTPcHNLB3QXpFFd-z9ZeqATv-9BHA7AobcAzMkGwQtGwnnoCg>
+    <xme:xdaIaMxDiltG0UgVCVAKgfe0M39NKL9Q0cA2uA0Vyd7N9nPK3BxwbRc6IlK1VOSti
+    U7u9mwIbQKBhawPIXU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelhedviecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthejredtredttdenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpeefhfehteffuddvgfeigefhjeetvdekteekjeefkeekleffjeetvedvgefhhfeihfen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghp
+    thhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegsrhhglhessghgug
+    gvvhdrphhlpdhrtghpthhtohepnhhikhholhgrohhsrdhprghsrghlohhukhhoshessghl
+    rghiiigvrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhrihgthhgrrhgusegsohhoth
+    hlihhnrdgtohhmpdhrtghpthhtohepkhhoihgthhhirhhordguvghnsegtrghnohhnihgt
+    rghlrdgtohhmpdhrtghpthhtohepughlrghnsehgvghnthhoohdrohhrghdprhgtphhtth
+    hopehgvggvrhhtodhrvghnvghsrghssehglhhiuggvrhdrsggvpdhrtghpthhtoheprghl
+    vgigrghnuggvrhdrshhvvghrughlihhnsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplh
+    hkphesihhnthgvlhdrtghomhdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:xdaIaLiwD5Z-T_JjbUMhKMFhNUzADagw3kV4oUcTEFyOLxTP7ok_5w>
+    <xmx:xdaIaNitssFW8BiPoaGsNmQ9fZnFiK9q4kYs9DxguRjg7DTYFoRE7Q>
+    <xmx:xdaIaDasfvaG0hshiKJpbbYR24B7HiixMZth93V-eUD1tcMV_ZdaNQ>
+    <xmx:xdaIaGWWJvRoJsRiYVjEByxDJAmh3RedNq33vrUBYTtCyx1SEq4A3g>
+    <xmx:x9aIaNTr7MrDyvM0nA3TLVY29MRwVIe2F-S0vMzg9fpJdLqbSTCppvhP>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id A5F0E700065; Tue, 29 Jul 2025 10:12:21 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T15b001141a5b4202
+Date: Tue, 29 Jul 2025 16:11:22 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Geert Uytterhoeven" <geert@linux-m68k.org>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+ "Linus Walleij" <linus.walleij@linaro.org>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
+ "kernel test robot" <lkp@intel.com>, "Peng Fan" <peng.fan@nxp.com>,
+ "Koichiro Den" <koichiro.den@canonical.com>, "Lee Jones" <lee@kernel.org>,
+ "Geert Uytterhoeven" <geert+renesas@glider.be>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ "Niko Pasaloukos" <nikolaos.pasaloukos@blaize.com>,
+ "Thomas Richard" <thomas.richard@bootlin.com>, "Yixun Lan" <dlan@gentoo.org>,
+ "Lars-Peter Clausen" <lars@metafoo.de>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ linux-kernel@vger.kernel.org
+Message-Id: <476d821e-1f8a-44e3-a976-def1f435440e@app.fastmail.com>
+In-Reply-To: 
+ <CAMuHMdUSsKeY-Uj1xA4SatDk+Mb0e4LJyOU=aS52YbA3DSMLrA@mail.gmail.com>
+References: <20250726211053.2226857-1-arnd@kernel.org>
+ <CAMuHMdU6Akz0GC2hooAxn=C2F0WjagPkzRKcH1SJiW0CBeUOaw@mail.gmail.com>
+ <f0a2a000-381e-40d8-a9ac-4d75dba332e9@app.fastmail.com>
+ <CAMuHMdUSsKeY-Uj1xA4SatDk+Mb0e4LJyOU=aS52YbA3DSMLrA@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Add warnings for common phrases that indicate uncertainty or lack of
-confidence in commit messages.
+On Tue, Jul 29, 2025, at 14:12, Geert Uytterhoeven wrote:
+> On Tue, 29 Jul 2025 at 13:58, Arnd Bergmann <arnd@arndb.de> wrote:
+>> On Tue, Jul 29, 2025, at 12:47, Geert Uytterhoeven wrote:
+>> Do you have an example config that shows this problem?
+>> I've tried a couple of configurations on m68k now but are unable
+>> to reproduce this, using 'defconfig' (without GPIOLIB) and
+>> 'm5475evb_defconfig' (with GPIOLIB).
+>>
+>> The intention of this patch (in combination with the previous one)
+>> was that the legacy interfaces would still behave exactly like
+>> before, falling back to the stubs when GPIOLIB is disabled.
+>
+> I haven't seen any actual failures.  When discovering
+> CONFIG_GPIOLIB_LEGACY=y in all m68k defconfigs, my initial worry
+> was that it would increase kernel size by needlessly including
+> gpiolib-legacy.o. When that didn't turn out to be true, I started
+> wondering how your commit would fix anything without including
+> gpiolib-legacy.o.  Looks like any users just uses the simple static
+> inlines...
+> Sorry for confusing you.
 
-Signed-off-by: Ignacio Peña <ignacio.pena87@gmail.com>
----
- scripts/checkpatch.pl | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+No worries, thanks for paying attention to incoming changes!
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index ac270f35b..f79a525a7 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -3430,6 +3430,24 @@ sub process {
- 			     "Use lore.kernel.org archive links when possible - see https://lore.kernel.org/lists.html\n" . $herecurr);
- 		}
- 
-+# Check for novice phrases in commit messages
-+		if ($in_commit_log && !$non_utf8_charset) {
-+			my $novice_phrases = qr{(?:^|\s)(?i)(
-+				I\s+think|
-+				I\s+believe|
-+				I\s+suppose|
-+				probably|
-+				maybe|
-+				perhaps|
-+				possibly|
-+				hopefully
-+			)(?:\s|$)}x;
-+			if ($line =~ /$novice_phrases/) {
-+				WARN("NOVICE_PHRASE",
-+				     "Avoid uncertainty phrases like '$1' in commit messages\n" . $herecurr);
-+			}
-+		}
-+
- # Check for added, moved or deleted files
- 		if (!$reported_maintainer_file && !$in_commit_log &&
- 		    ($line =~ /^(?:new|deleted) file mode\s*\d+\s*$/ ||
--- 
-2.50.1
+If you want to see what the actual plan is, have a look at
 
+https://git.kernel.org/pub/scm/linux/kernel/git/arnd/playground.git/log/?h=config-gpio-legacy
+
+which ends with making GPIOLIB_LEGACY actually optional.
+
+Any driver that actually uses the legacy gpiolib interfaces
+at that point is already specific to one of the few platforms
+that still have legacy gpiochips (sh, sa1100, pxa, s3c64xx,
+orion5x, mv78xx0, coldfire, alchemy, txx9, bcm47xx, bcm63xx,
+rb532, olpc, and a few x86 atom boards), or it has an explicit
+dependency on GPIOLIB_LEGACY.
+
+The arm boards are already on their way out, but the others
+could probably use some help converting to gpio descriptors.
+
+     Arnd
 
