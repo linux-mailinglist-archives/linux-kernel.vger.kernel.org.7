@@ -1,183 +1,145 @@
-Return-Path: <linux-kernel+bounces-748768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75092B145D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:34:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0899B145D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:35:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6FB618846C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:34:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15AC73BAD5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:34:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 376131F4180;
-	Tue, 29 Jul 2025 01:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 055351F1317;
+	Tue, 29 Jul 2025 01:35:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J6RyUvUh"
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfSDiTIB"
+Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EBF1F37C5;
-	Tue, 29 Jul 2025 01:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E59017578
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753752818; cv=none; b=C7NDsxCO8m7MrPE9oEEOy/STbCQVLUB+uiyOHymhMs+0X+HJF2lruwDe+G8lPtDUz5okdEy3Lq2KIrT6a+bSL2OOe5yR9KVOZdbUD3Zy4+6IHMS7ncQzxqh5X8kvsYyLX2Tdzt/xjC2e9H6GRh6RICZ/8d9PKTWzf5XBkKoaFLo=
+	t=1753752915; cv=none; b=OmPsGTb03dqiC/znxWfVCIyNopuXfte/K9XROc7qZYiVEnlRgTS7MHzf5A5AbS159qpXCjkQFo2Z9Qxg3ZhNU3oXzB0AicAU+ISa1qf8HyvlfXcX8mcnGrWW4+UX+JmEndWeXw2BHNHmZl6IqJKqmTTfFzAy4yaGUeuNkbSvVpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753752818; c=relaxed/simple;
-	bh=/TqJuizcbbo/0YNA3onz15Bhq23txZ18oISRfzO54go=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RNlHDifQTd7nUcHnHGy87J1YJwZBlzq1b60X+fXD5dN//3ygNV7hGudClICfMpasvOOj04qdaenMsSuNE4/hGj5tOU7d0XfLkkCD0UvC6XxKpHra9Q2dKw702LucjdqevFsy5uRJUBPfo9x1J26fIA61OvDv+Ow96yyATPMHLb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J6RyUvUh; arc=none smtp.client-ip=209.85.166.49
+	s=arc-20240116; t=1753752915; c=relaxed/simple;
+	bh=417s9K9vMJGYNSAt2caW8cTsx0O5xolM3LHhI3shnVA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AzwtvR1Z7XnY3CzUmTk2DtyzzrFB6Afj587iR6yRw1AvdIxC3O5K//oflr5jVPsWJXFhQ6vHiUD5GpuRTcvQ5lsWnxUnkgQAZH9gSt9XsRVWyG+E6J8GO/crNEk5UIatT/qm7/cUg4LpsBeOM0kO2jsftAU+8Cx3DAXXf9aK0po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfSDiTIB; arc=none smtp.client-ip=209.85.216.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-87c0bb1ee4eso101258939f.2;
-        Mon, 28 Jul 2025 18:33:36 -0700 (PDT)
+Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-31ee880f7d2so1661044a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 18:35:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753752816; x=1754357616; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S23qOVMAAKB7qgLVeWulkQC0C/F5u4i6UjQVVe6TXAI=;
-        b=J6RyUvUhHKKOidtwnNPwkRsDWGweBho2hsmjbc5ZolSlb6d7rcMLpdYypqDZ1plrWR
-         ZrUHbAretw1a75YegA+wbv4pDop32BC4PFk/Re8kIvRozQ/ZFrgB1+V2Qr7szqVwtbzN
-         82wb9XGa4irw9Wkc1JZQx2MbS1tIli7dPYDXGD65RjjRbRCn56ieqnpupYw7Wpe1neLg
-         T3ouebgmEZUjHzfOQ+IPCfTrCmOQUKM/7aNaP+jXD6Hv7rD/ZIEBsdBtKJoa3/Gq785a
-         87/BGXo/hX3ZZBd/VMXd/CdHh2Apl/Mmr++mo8suR/6PpYcxfV2NLHH9msnsWfPbljeY
-         qRbA==
+        d=gmail.com; s=20230601; t=1753752913; x=1754357713; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rt9mX5Mb6s2byllZfTIS4H+QBzV029aCkfK2lwXebF8=;
+        b=RfSDiTIBnzzqc+yZrNIUWKnb408BUdpYu9DmZ6GjI2aYpuuNHTfAfbGY5pj2YJg9G+
+         RemaJdNujn0tAuYZ8gJdG5pBeRBSxlisL/EQe9ADGhhGr1WeDOx70QHlIG+JaBmF1skn
+         ePX01WJdzM7vZ1xjCeEmEuX5ggfiacdbd5W5Th6t+dUn9Ije1/W+X8Fq15NopIQXc83p
+         /eA9VD/uLfp9fcQbxN++VDgkByFOffQ8BfXZZBu9+7tx7w8DV4RxNWDUnR/4QMbGk3c+
+         HkEzXbojIrFlcTTnTGZkFXyuNa0qGMhnaSH8B8jIvnz3PVRW3PiUHVCf/fz9jphRxIMj
+         ISHg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753752816; x=1754357616;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S23qOVMAAKB7qgLVeWulkQC0C/F5u4i6UjQVVe6TXAI=;
-        b=GicjVqTL0W7k6bzsymt55+zqY3+jqQ1MhMvYQzJpVY3x4jho6739eV4R25Ofy1MC0w
-         dbHsRkbMmv/1cnGWgf8R8JmeWbWaRME5wXE89kt7D3j3HXn4zKJkf2XJ+A9mxjg4abNL
-         OerjuRz0Dv8x0PRzuAQveXoMIvA39oKJysFH1bFdCE05nDTznMa7UWiYADmjPXEsIZgR
-         eH/eq006/5qNW6mFs+zDJpksTpJWARjpz8he/1tpEffpNFDJt0DRZC+CjIt6toAtXb3p
-         aNSbro/6gCkn0DpcyAbuCdndaEK0GDR5LwiKFzknwkQsAWGbE3nKMoJZwLQ9/Thnzi15
-         3dhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2/+BLM8TX7COvfJpDWTiebhpJAF864UECGBZ5OxsXYTlWAj+tbs0jmIlBnr8n2E2x4hBV3/aQ6itgAIx1fRCXIA==@vger.kernel.org, AJvYcCXSkwesH5+4PCyizuVGmczDk+tw6p9F8tg8oV/OWKqL+aM8RWz+yIF16pBn2iwddWXUCAfnUi3ypoZgEU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgXopH66H+ir+Kv8YSiypWhxJXUt1m0AV0Lpyg0UBNqj0ikMeX
-	3HY2PxAszYyANaQD2vRlAj6vLO05evhu5IY+h759vo+PJQqFtVvtYoDACZdKFHrJA8dnGVme4EK
-	ExhFukWyBNtFTIcYTWzN4ZI9H7PExXL8=
-X-Gm-Gg: ASbGncsTHYe8zi8YfPmYmrxmpAZhOLOM38+Ez56mUouC39sEZMIqXdJMjEV71uHBBwT
-	VEj2TmF13XoB5Up/dd1uOOiQygJ5yqYm7JrVC3qS3iAVhycTAE6PnFD0bJ2YmBPYRFrbssHI7ZH
-	Cjyg8d60xNYL0dvhxpMoqHz0oDACFrwyfHAjHUaWfuYs7kBvDxwoOFj1viC9Oy7qG+N1UyVrQay
-	cAsC3o=
-X-Google-Smtp-Source: AGHT+IEr/DTMtrde4B2O2jQtp73B0jXdt56IWjZMklggeu9+9ek06vbQzMnKQzsISgrp5QqOpsqfLGJJJJuLC3iPRHo=
-X-Received: by 2002:a92:cd82:0:b0:3e2:c350:2e61 with SMTP id
- e9e14a558f8ab-3e3c5312d49mr225067155ab.20.1753752815891; Mon, 28 Jul 2025
- 18:33:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753752913; x=1754357713;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rt9mX5Mb6s2byllZfTIS4H+QBzV029aCkfK2lwXebF8=;
+        b=kS5wPADcGqwUge/qQViyGo2taxyWfXuGZLM+VNvfTicXKvhibRMoODDfe+UAVp7l7N
+         BXBscHuSqTKVV3Gtz1Cd/FNOCdSMyMJkWNnTn3Pd8388VH7SiRmn73fFmxYiM2l/7PK7
+         IRk7+GvOSiCZ3ga/kCUTFafGEeDAN+7EHbTJYjaOKkf/A1Da4utAc7HpG4SMSMTR+QHz
+         juzrTrso+7IRmy4x8nPyEdzIqUWVMx9kSktnRcb+qfFZ2ag+8Ngbic//AhonvbIM/vbs
+         CTam2U2621PZvQ+VThF3GRoDcrH8kC2EkeKJ8HV8gDRBzcki8KBpwpXeJF85Rp4y8o1j
+         AQNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXrBBJ/T2Bv7tu+Znj6gNw3BiGc4A4toaCZaX46y2LLGY5e8bJktV520nW3+GhmOKqxfX7a+V/0qCjKYto=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEOVyT9ELOYtAJ53hX1sVEvj+tQy4Knx1CY47QgJQdg20czjDD
+	jBSo5HNCakXlwDu+yqkIsSf2IFV1eDtNMokyetxtsa7n0TUyrdIKObaE
+X-Gm-Gg: ASbGncujW+QyANwQpdVEdWgSAiVYixDhaEOHYvmzqFpozW+E17jh8qXSXIZ8uasRHAv
+	a46LFpqmmusGPsnhWCzgS97v9yk4cMNL7TOO78JWSu90F9lQgGIM1zgVlKaTnV2Hhy+aCLt3jio
+	xmDQtNEWOcW0qCA5qmoHPaKwRnx28WOfMIp2Wg4iKRxrVPZ1phDsK6J6PxNQYKRW/uSjyCGWegl
+	gf+s1+8/Es3ifwML4Ek88wgHKv48qaeDD+wZQeg12FbsQR1MfhVEDtEwuZgrf3CBd3Y5qWB0GVR
+	2mnmZDu87OPUy0IXqe2RvgkLDpadwkbgtZzosjjdB32ge4MnyHnNBBR2U0yFoVOjKxsg+ib/QUt
+	SyoN9vzfEsdzHXs+4dpjCW75x+76Xfg==
+X-Google-Smtp-Source: AGHT+IEYkTal4nceQr+Hsq7FyOMvq/QX8UWdGciXifD+Vuh70D/a0Jat1uDfWwNb6vQzeZqki9OV8A==
+X-Received: by 2002:a17:90b:3bc4:b0:308:7270:d6ea with SMTP id 98e67ed59e1d1-31e77a2483fmr17407876a91.30.1753752913253;
+        Mon, 28 Jul 2025 18:35:13 -0700 (PDT)
+Received: from localhost.localdomain ([167.220.61.18])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b3d3d3csm6564895b3a.111.2025.07.28.18.35.12
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 28 Jul 2025 18:35:12 -0700 (PDT)
+From: Tian <27392025k@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: arnd@arndb.de,
+	linux-kernel@vger.kernel.org,
+	Tian Liu <27392025k@gmail.com>
+Subject: [PATCH misc v2] misc: cardreader: fix overwritten return value in RTS5260 driver
+Date: Mon, 28 Jul 2025 18:35:10 -0700
+Message-Id: <20250729013510.34358-1-27392025k@gmail.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722075225.544319-1-shengjiu.wang@nxp.com>
- <CAEnQRZBc2X6Yn0X+RbJ9-OSxovnHvoqJ3NXsJKBkuH82GNSAHA@mail.gmail.com>
- <aIeFqVUp2C6fh4PT@p14s> <12184ce7-e74b-48eb-abee-25f8a10a2423@nxp.com>
-In-Reply-To: <12184ce7-e74b-48eb-abee-25f8a10a2423@nxp.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Tue, 29 Jul 2025 09:33:17 +0800
-X-Gm-Features: Ac12FXyQrZyIVbOJ3pLjAv_HaREeHglGrD0Wy22HTBcGicbPxb4TlW_nT6cra8A
-Message-ID: <CAA+D8AMpF9Te1+V=o6WQCzHTkKpKvrhP+76fpCZoswOhPiKDjQ@mail.gmail.com>
-Subject: Re: [PATCH v3] remoteproc: imx_dsp_rproc: Add support of recovery and
- coredump process
-To: Iuliana Prodan <iuliana.prodan@nxp.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, 
-	Daniel Baluta <daniel.baluta@gmail.com>, andersson@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	linux-remoteproc@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	jassisinghbrar@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 28, 2025 at 11:09=E2=80=AFPM Iuliana Prodan <iuliana.prodan@nxp=
-.com> wrote:
->
-> On 7/28/2025 5:14 PM, Mathieu Poirier wrote:
-> > On Mon, Jul 28, 2025 at 01:39:38PM +0300, Daniel Baluta wrote:
-> >> On Tue, Jul 22, 2025 at 11:16=E2=80=AFAM Shengjiu Wang <shengjiu.wang@=
-nxp.com> wrote:
-> >>>
-> >>> When enabled FW recovery, but is broken because software reset is mis=
-sed
-> >>> in this recovery flow. So move software reset from
-> >>> imx_dsp_runtime_resume() to .load() and clear memory before loading
-> >>> firmware to make recovery work.
-> >>>
-> >>> Add call rproc_coredump_set_elf_info() to initialize the elf info for
-> >>> coredump, otherwise coredump will report error "ELF class is not set"=
-.
-> >>>
-> >>> Fixes: ec0e5549f358 ("remoteproc: imx_dsp_rproc: Add remoteproc drive=
-r for DSP on i.MX")
-> >>> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> >>
-> >> Changes looks good to me:
->
-> I agree, but this is not enough.
->
-> >>
-> >> Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
-> >>
-> >> I've tested it with Zephyr synchronization samples inducing a crash
-> >> via debugfs interface. App
-> >> can recover correctly.
->
->
-> The synchronization sample does not utilize the Messaging Unit (MU) for
-> communication between the two cores, its behavior is similar to the
-> basic hello_world example (no fw_ready reply is expected by host).
->
-> I=E2=80=99ve tested this patch with both the synchronization and hello_wo=
-rld
-> samples, as well as with the default firmware specified in the device
-> tree (imx/dsp/hifi4.bin), and everything works as expected.
->
-> However, when testing with the openamp_rsc_table sample from Zephyr [1],
-> I encountered the following issue:
-> ```
-> [ 1500.964232] remoteproc remoteproc0: crash detected in imx-dsp-rproc:
-> type watchdog
-> [ 1500.964595] remoteproc remoteproc0: handling crash #1 in imx-dsp-rproc
-> [ 1500.964608] remoteproc remoteproc0: recovering imx-dsp-rproc
-> [ 1500.965959] remoteproc remoteproc0: stopped remote processor
-> imx-dsp-rproc
-> [ 1501.251897] remoteproc remoteproc0: can't start rproc imx-dsp-rproc: -=
-110
-> ```
-> Upon debugging, I discovered that the issue stems from the imx-mailbox
-> driver not clearing the General Purpose Interrupt (GPI) bits. This leads
-> to the remote processor failing to restart properly.
->
-> To ensure compatibility across all firmware variants, including those
-> using OpenAMP, the attached patch is required. Both the recovery and
-> mailbox patches have been successfully tested on the following
-> platforms: i.MX8MP, i.MX8ULP, i.MX8QM and i.MX8QXP.
->
-> Shengjiu, do you want to send a new version with both patches?
+From: Tian Liu <27392025k@gmail.com>
 
-No.  it is a different issue.
-You can send it to the mailbox maintainer for review.
+In both rts5260.c and rtsx_pcr.c, a return value is assigned and then
+overwritten by a subsequent call, which causes the original result to be
+lost. This may result in silently ignoring errors from the first write.
 
-Best regards
-Shengjiu Wang
+This patch uses `err |=` to preserve earlier failure status.
 
->
-> Thanks,
-> Iulia
->
-> >
-> > Very good - I will merge this around 6.17-rc2 when I get back from vaca=
-tion.
-> >
-> > Mathieu
-> >
->
-> [1]
-> https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/subsys/ipc=
-/openamp_rsc_table
+This is an untested cleanup inspired by commit c55c7a85e02a ("um: ubd: Preserve earlier error value in ubd_user") which fixed similar error-handling logic. While this change has not been functionally tested on hardware, it is a mechanical fix and aligns with expected error-handling style.
+
+Fixes: bede03a579b3 ("misc: rtsx: Enable OCP for rts522a rts524a rts525a rts5260")
+Fixes: c0e5f4e73a71 ("misc: rtsx: Add support for RTS5261")
+
+Signed-off-by: Tian Liu <27392025k@gmail.com>
+
+Changes in v2:
+- Use full name in Signed-off-by and From
+- Add Fixes: tag
+- Clarify that patch is untested, but reasoned from upstream style
+- Cc: appropriate public mailing list
+
+---
+ drivers/misc/cardreader/rts5260.c  | 2 +-
+ drivers/misc/cardreader/rtsx_pcr.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/cardreader/rts5260.c b/drivers/misc/cardreader/rts5260.c
+index d2d3a6ccb8f7..ed8adaab54a8 100644
+--- a/drivers/misc/cardreader/rts5260.c
++++ b/drivers/misc/cardreader/rts5260.c
+@@ -269,7 +269,7 @@ static int rts5260_card_power_off(struct rtsx_pcr *pcr, int card)
+ 	rts5260_card_before_power_off(pcr);
+ 	err = rtsx_pci_write_register(pcr, LDO_VCC_CFG1,
+ 			 LDO_POW_SDVDD1_MASK, LDO_POW_SDVDD1_OFF);
+-	err = rtsx_pci_write_register(pcr, LDO_CONFIG2,
++	err |= rtsx_pci_write_register(pcr, LDO_CONFIG2,
+ 			 DV331812_POWERON, DV331812_POWEROFF);
+ 	if (pcr->option.ocp_en)
+ 		rtsx_pci_disable_ocp(pcr);
+diff --git a/drivers/misc/cardreader/rtsx_pcr.c b/drivers/misc/cardreader/rtsx_pcr.c
+index a7b066c48740..9fb22f2cedbd 100644
+--- a/drivers/misc/cardreader/rtsx_pcr.c
++++ b/drivers/misc/cardreader/rtsx_pcr.c
+@@ -1196,7 +1196,7 @@ static int rtsx_pci_init_hw(struct rtsx_pcr *pcr)
+ 		/* Gating real mcu clock */
+ 		err = rtsx_pci_write_register(pcr, RTS5261_FW_CFG1,
+ 			RTS5261_MCU_CLOCK_GATING, 0);
+-		err = rtsx_pci_write_register(pcr, RTS5261_REG_FPDCTL,
++		err |= rtsx_pci_write_register(pcr, RTS5261_REG_FPDCTL,
+ 			SSC_POWER_DOWN, 0);
+ 	} else {
+ 		err = rtsx_pci_write_register(pcr, FPDCTL, SSC_POWER_DOWN, 0);
+-- 
+2.39.5 (Apple Git-154)
+
 
