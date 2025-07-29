@@ -1,80 +1,100 @@
-Return-Path: <linux-kernel+bounces-750010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF47B155DC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:19:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00200B155DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462AA1685CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:19:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2055316DBE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:20:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A133028541C;
-	Tue, 29 Jul 2025 23:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31251111A8;
+	Tue, 29 Jul 2025 23:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbHBejxl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="bgyG2fbP"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0963111A8;
-	Tue, 29 Jul 2025 23:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 172DF21D001
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753831162; cv=none; b=oj8bCS1fTu1fnbKDkgCvbi9Uj5+Xz85bMs9GXqleZ9AZbyw5HLyy43Z18ZAzqAxDNmDBsofySUYEzjpSIbgiB+PY29eflIi+NNFm+NvDhWdt+xNconxDLiRQXfqk4WqgB+n+r0xeSzlyTOY9YbUvnQG+a1doAQkVua5mnGzge/g=
+	t=1753831192; cv=none; b=ZcrRJr+/h9AL50jmMM98eg4gAJat+NInyP/kQ+QYd1F128OQE4EFSfT8jc07aSvcYI7OeBa4iEhoZXaRY/Ss1iUj/DgsYoj53d4DnozXxXgRzChuuTnjzhCFCsnZ3Js4kbLIAuHRzUasWSb51Q899iLmPanme+27lGNeTpncAY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753831162; c=relaxed/simple;
-	bh=6wOezsch67WwQVNo5tzv6Hbsz/dH8RKG8/l141P3N0M=;
+	s=arc-20240116; t=1753831192; c=relaxed/simple;
+	bh=c+qevVRK65+YEsONllF903kUYgjJYX41JiZtG9/l2tM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H4Is1yhjirkUPX1w/04tU1VviKTG3Jw0O3yUs1Lx721K69sYUdfRReGTJLb2qhtflyvp0957S0UGy5L/OIcMHGL40LguAYmQkX9sVnR6Jl5G/2rR39pVe7n5V5SBB4v9cU3FDcJXO1a2SaIS5xczeR1k4CZUwokgi8bYAOm9dGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbHBejxl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D628C4CEEF;
-	Tue, 29 Jul 2025 23:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753831160;
-	bh=6wOezsch67WwQVNo5tzv6Hbsz/dH8RKG8/l141P3N0M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lbHBejxlHeq5firbzsiMgx5MLnMxXrDyNQxM07GuE9/ZGMLcFqnh+Z+XAeNSPtm0q
-	 8QmJsncEDQnBOmRqFiXzYZkDYLh/Ja7F0HZ6tAXpShAD/XN+5dP+bKIiKTcXnICqJx
-	 j2D0/tpxlylHe/3m2Cox9AtecdBCVVOrbDRh91Qypvjx575Twu3SZFB/vYHhtMVPaC
-	 pUsKLpA+L7JcSQwqcnnxMY8cenK/jWmpKSp24PnPiQsDVDFqHuRibrGEUxnLnod//4
-	 whSxK1jHf1CIamTSZt+oW6UZ2HPlJPe/sSyQRR5fTrm4ZPup4F2BbV/A8/GJK/fR8b
-	 ihYwaOgv4Rcfg==
-Date: Tue, 29 Jul 2025 16:19:20 -0700
-From: Kees Cook <kees@kernel.org>
-To: Marco Elver <elver@google.com>
-Cc: Linus Torvalds <torvalds@linuxfoundation.org>,
-	kernel test robot <lkp@intel.com>,
-	syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	"Kirill A . Shutemov" <kas@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Marc Herbert <Marc.Herbert@linux.intel.com>,
-	Yafang Shao <laoar.shao@gmail.com>, Uros Bizjak <ubizjak@gmail.com>,
-	Jan Hendrik Farr <kernel@jfarr.cc>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] compiler_types: Provide __no_kstack_erase to disable
- coverage only on Clang
-Message-ID: <202507291618.8B04B08@keescook>
-References: <20250729224325.work.019-kees@kernel.org>
- <CANpmjNNkYE9dvyR-YH3U18+g4bG4tpgD1pv99xG6xhdRuQYUQA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s/6WltczSsZiNVjNomRJOaeYvTISgWKI/DxmfibtsKUVkr3jxqNUsOXVfXEypeoF89vpfKNrbkr5yi+p6CyplfnqGyqGYioRk1I42ekFGJTXmknmy02kP3r1/b6FiXAsg3+wcoJn+cGxxhYG+4uQozs++ZsmVCaR1B0L/DZhe+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=bgyG2fbP; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4ab5e2ae630so77377451cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:19:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1753831190; x=1754435990; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMNPBYRiksp7mCFMd1azqDvewT0I1SAEyDTPXzSObOQ=;
+        b=bgyG2fbP8UneckHcYn6Lfe2rUB9Sqfg4qgh5hRz96mzojxOR0PWZQjRn9nUdpI+u9u
+         x2EqqkIpMmNbl8NT/7hYMK4UR4g3ZYoD/xoxcabpu9fA2dsuwdlSANYWZGwP2Ttuyg66
+         T0PB2Y5zdcm66JuIgiX4hPDBkobJmz7VdyAAglvkNcmHAe1Of3s+7tk90PAcRaIEGP+u
+         PP8/r6DIiT9P8tWduRvd+z0YpU6/PvXNExebiSr4EmppwMel908KgM2L/kxC6SAftigx
+         L7FckIy67EpqCk694Cp2TCnTC2JUE+S/kC1zO3glPrNbVgwuUaNeAu6ScBV+3yCI0eIw
+         dMxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753831190; x=1754435990;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AMNPBYRiksp7mCFMd1azqDvewT0I1SAEyDTPXzSObOQ=;
+        b=iXegkhHVT1I4MnmYYTr9HSDPHaV4DTtdlvBpCQfdR+vYmR854p5olcicfS+bHHfryw
+         TR99Iuvo1NAKGday8rQ1uOXiJb+KA2Ff7r2BWLEv9W34OVzIjvDDAe5Ar+JzDr70NWT9
+         oJg2y51PiSFPE4YUCAl2YjQ65KSVgJq5WjUwe6PAyiZt1ashlx5mk8yOjHWcq3gCgOqp
+         dF0aiizpuuec86GZ2YWl83lBbOAMCFpVECni8UlCSHOhqVo5b/YU46FA13gFexo+hYtG
+         ruw+xTAZd3YEonlAipmg823IWS62L4ODiI0PGtTUYIylKRnowPqsJaOIGADgDyGoXA2A
+         Zx/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWhg/HaekDO1RvZN5z04PtKcavEXkVdij0IFoVNxUAYuhS1axbQvHrYAXb9u7yE+UfbIAxVV3cLtdL/TpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN+vtmzYjYzP3chlyrdG8h9oKGHFymxudfD+VDFy1cEZWj9BdP
+	AsRpOUU4D29pS/a0qRAQYQIQXDIWtNhe8h4qO1zZY7+r2hDLmmQrPGn44QRBexsospY=
+X-Gm-Gg: ASbGncv9azz7gut92l7quu2pvgzewd1J0AXoGd2JTsUcYuaTFOyjwPqbEckayOhYhC0
+	S2Pcj5j3LEvzb0fXrgrRIp8GHsLjBQOSn4VmewtDTd5pr/7yFm8C+p0P9j/NI0qb5jD51X+ORSY
+	cF87ZOa954YZEYsE48NENhY70k8pygzlLUjkH+VkhWNpovr60dcpjDPQmHuNM9/re45ju4EqJrg
+	VGUxg812u6CfPMvbYKDoUFmwVIYHsM90+x/sK7/HnQ2PohIQsUOU/vjHUuKk8pqZIujYKscwprL
+	U2rT/yucNvA+KKARvl994TnSFn5lroudzl4PJVBsjv23S2YUNi7p7iNTNsj2LFAO6A4oULIdlcV
+	O/b7O09xHihaGcJtrPEmmxv4rGp62kyVS43PJL8jvoo9SpIth343KVe2ThyOSrqjfVOlsCxqTRW
+	WP1EQ=
+X-Google-Smtp-Source: AGHT+IEYB+v/aC52I3ETJqWCtvUpxpSoF5Ed5PqfVqNjoX+1qc9FE31iT0mWajpl0SB8iOsRrvOo2g==
+X-Received: by 2002:a05:622a:351:b0:4a9:a90a:7233 with SMTP id d75a77b69052e-4aedb97af80mr26047401cf.12.1753831189896;
+        Tue, 29 Jul 2025 16:19:49 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae9963ba4bsm54605101cf.31.2025.07.29.16.19.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 16:19:49 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1ugtbo-00000000Mhy-3zTQ;
+	Tue, 29 Jul 2025 20:19:48 -0300
+Date: Tue, 29 Jul 2025 20:19:48 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
+ device
+Message-ID: <20250729231948.GJ26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-12-aneesh.kumar@kernel.org>
+ <20250729181045.0000100b@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,94 +103,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANpmjNNkYE9dvyR-YH3U18+g4bG4tpgD1pv99xG6xhdRuQYUQA@mail.gmail.com>
+In-Reply-To: <20250729181045.0000100b@huawei.com>
 
-On Wed, Jul 30, 2025 at 01:00:39AM +0200, Marco Elver wrote:
-> On Wed, 30 Jul 2025 at 00:43, Kees Cook <kees@kernel.org> wrote:
-> >
-> > In order to support Clang's stack depth tracking (for Linux's kstack_erase
-> > feature), the coverage sanitizer needed to be disabled for __init (and
-> > __head) section code. Doing this universally (i.e. for GCC too), created
-> > a number of unexpected problems, ranging from changes to inlining logic
-> > to failures to DCE code on earlier GCC versions.
-> >
-> > Since this change is only needed for Clang, specialize it so that GCC
-> > doesn't see the change as it isn't needed there (the GCC implementation
-> > of kstack_erase uses a GCC plugin that removes stack depth tracking
-> > instrumentation from __init sections during a late pass in the IR).
-> >
-> > Successful build and boot tested with GCC 12 and Clang 22.
-> >
-> > Fixes: 381a38ea53d2 ("init.h: Disable sanitizer coverage for __init and __head")
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202507270258.neWuiXLd-lkp@intel.com/
-> > Reported-by: syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com
-> > Closes: https://lore.kernel.org/all/6888d004.a00a0220.26d0e1.0004.GAE@google.com/
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: Linus Torvalds <torvalds@linuxfoundation.org>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: <x86@kernel.org>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Ard Biesheuvel <ardb@kernel.org>
-> > Cc: Marco Elver <elver@google.com>
-> > Cc: Hou Wenlong <houwenlong.hwl@antgroup.com>
-> > Cc: Kirill A. Shutemov <kas@kernel.org>
-> > Cc: Miguel Ojeda <ojeda@kernel.org>
-> > Cc: Nathan Chancellor <nathan@kernel.org>
-> > Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-> > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > Cc: Masahiro Yamada <masahiroy@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Wei Yang <richard.weiyang@gmail.com>
-> > Cc: Sami Tolvanen <samitolvanen@google.com>
-> > Cc: Arnd Bergmann <arnd@arndb.de>
-> > Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> > ---
-> >  arch/x86/include/asm/init.h    | 2 +-
-> >  include/linux/compiler_types.h | 7 +++++++
-> >  include/linux/init.h           | 2 +-
-> >  3 files changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/init.h b/arch/x86/include/asm/init.h
-> > index 6bfdaeddbae8..5a68e9db6518 100644
-> > --- a/arch/x86/include/asm/init.h
-> > +++ b/arch/x86/include/asm/init.h
-> > @@ -5,7 +5,7 @@
-> >  #if defined(CONFIG_CC_IS_CLANG) && CONFIG_CLANG_VERSION < 170000
-> >  #define __head __section(".head.text") __no_sanitize_undefined __no_stack_protector
-> >  #else
-> > -#define __head __section(".head.text") __no_sanitize_undefined __no_sanitize_coverage
-> > +#define __head __section(".head.text") __no_sanitize_undefined __no_kstack_erase
-> >  #endif
-> >
-> >  struct x86_mapping_info {
-> > diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> > index 2b77d12e07b2..89e2c01fc8b1 100644
-> > --- a/include/linux/compiler_types.h
-> > +++ b/include/linux/compiler_types.h
-> > @@ -378,6 +378,13 @@ struct ftrace_likely_data {
-> >  # define __signed_wrap
-> >  #endif
-> >
-> > +/* GCC does not like splitting sanitizer coverage across section inlines */
-> > +#ifdef CC_IS_CLANG
-> > +#define __no_kstack_erase      __no_sanitize_coverage
-> > +#else
-> > +#define __no_kstack_erase
-> > +#endif
-> 
-> I think this belongs into compiler-clang.h, we've typically refrained
-> from ifdef CC_IS_CLANG/GCC in the generic headers.
-> See __nocfi for an example, where compiler_types.h provides a default
-> empty definition, and compiler-clang.h provides a non-empty
-> definition.
+On Tue, Jul 29, 2025 at 06:10:45PM +0100, Jonathan Cameron wrote:
 
-Oh, good point. I will rearrange this to use the #ifndef style handling!
+> > +static struct platform_device cca_host_dev = {
+> Hmm. Greg is getting increasingly (and correctly in my view) grumpy with
+> platform devices being registered with no underlying resources etc as glue
+> layers.  Maybe some of that will come later.
 
--- 
-Kees Cook
+Is faux_device a better choice? I admit to not knowing entirely what
+it is for..
+
+But alternatively, why do we need a dummy "hw" struct device at all?
+Typically a subsystem like TSM should be structured to create its own
+struct devices..
+
+I would expect this to just call 'register tsm' ?
+
+Jason
 
