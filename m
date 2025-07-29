@@ -1,201 +1,209 @@
-Return-Path: <linux-kernel+bounces-749193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFB8DB14B4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:32:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A39EB14B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E54D545842
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1CA71AA423D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7342877D0;
-	Tue, 29 Jul 2025 09:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A562877D0;
+	Tue, 29 Jul 2025 09:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="BGK8Zo34"
-Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nCPWu8FI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LvD8E65l";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nCPWu8FI";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LvD8E65l"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AFA285C8A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34898F6E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753781550; cv=none; b=G1UnW5C+D6FBYeBNGsJHqzZp5hb7dHgXO/RfZp+f7Q3y57E2/M4Izngamp39tumCz0KChGorocKxfShPmFzL9jTfqm9ZoWkXZipAw9hwnDCXvci8ZTOuiKUE7U4+/VvAcgHeZnTjsPwFj90uF/DsOgP46hGRah/RuuRYiCVxz+Q=
+	t=1753781642; cv=none; b=ox7VaLt7Ud2JDpAgoendsOxqp04CJBnluA+1y76qjVvhUfAYE6U2hyaPHrmSYFeCd8X2LGcGGcg+OPKVN9xoYQMhL/VkaQPMUw6F2PvJtiiaLzfyVmfWXsDabtxn7P2yIkNb+yl49b374t78yALB4OCYu7VHzUygFFVX5OjB2qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753781550; c=relaxed/simple;
-	bh=W4M9f/pAgKW1v4aP63Rk+5y/35YhjNbCTzW68Tgcb60=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uQY34+P7hUCDRE/ltt7jzMzeb0IFqugae1qp/VJKKaTSw4DRMPnWbA4NLwJjnRPubVRi+F39EPIHzWl7qGE9BygV1DhTUzJhhj8rB2Kdtb37OwAvD9qpg5PK8eWkroxW40eyjR6P9cHdD5WrDdwzBGYMaUrUweT0roC2LY7JcyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=BGK8Zo34; arc=none smtp.client-ip=185.67.36.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
-Received: from submission (posteo.de [185.67.36.169]) 
-	by mout01.posteo.de (Postfix) with ESMTPS id 8C4BC240027
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:32:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
-	s=1984.ea087b; t=1753781545;
-	bh=GOyucIi0Gnh1gFmksRXxoXhE6Uol44TKHp9akm/XXPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:From;
-	b=BGK8Zo34u8K6QznvkLYzloCigsbs7VBdIs+GGfZy5kJn2zogdaqIyx9BC59Ahn97g
-	 Iht5E9BTyqvuWa5SozuNXZq8UO7a0rjW/TyV6mDmywC93seRBVD7/oDs+QC055FAkM
-	 lYh5WyMIBHuB8d1pDWtkKA3CrC861RhvhvbKCFw4aNFxHrrtLcvew/WNR8CjKoHtRJ
-	 iI3Y9OlIwBTS8qz6pnByz4rNUHfYSVv6b/Nz8MJjVsG4Pnnk8/1fGNP425mTdoo0Fc
-	 025gaa+OUICowqSg6pWd74KoIWlYUOun8QKChIkcdmo0Xu8hdQe9mVv0i9+pRLDUsI
-	 SyMUCgm3f450pbJnVGzHsmSgO3BQ1eXUvYIywCm5KX0oF/1Ngp461ux98rvP8UU0dd
-	 yje3vqoiZ+7XxiF5+gD1PB+Cp2XlBNkVvungA+B1wY3IAYrf/dNGhXEj2g8GDL5w4d
-	 l8QqHy2Jv5cYyjSofvR/EDaUec4Uv2Iy1/lxVOJHmSpeLFtQQEH
-Received: from customer (localhost [127.0.0.1])
-	by submission (posteo.de) with ESMTPSA id 4brqr855MVz9rxK;
-	Tue, 29 Jul 2025 11:32:24 +0200 (CEST)
-Date: Tue, 29 Jul 2025 09:32:25 +0000
-From: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Jiri Slaby
- <jirislaby@kernel.org>
-Subject: Re: [PATCH] tty: serial: 8250: exar: fix kernel warning in
- default_setup function
-Message-ID: <20250729113223.65d02539@posteo.net>
-In-Reply-To: <2025072929-distant-hardener-0e75@gregkh>
-References: <aIiDf31HzRBGuMN2@monster.localdomain>
-	<2025072929-distant-hardener-0e75@gregkh>
+	s=arc-20240116; t=1753781642; c=relaxed/simple;
+	bh=3yq5puzXs8S1PNbw2FX+acubrZNFWbyDyGp2L0ew7mg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U1tmBggwkiQIfrkS/KQuZsgDUiNgE8PdXy0q84KQ+LM7o+QkheAtSGmj2pPRDSmns8cpziA5lrL9xpByj1Xrr3zLi+CISDhTqA8NBMZ1mxa4MPtZeQFibL/sD10lsCsBuFm7XX0z0k7/MBE9HZ6g7OPRWaWPVIFWaiQfK8iWFiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nCPWu8FI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LvD8E65l; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nCPWu8FI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LvD8E65l; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 22EFB219EE;
+	Tue, 29 Jul 2025 09:33:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753781639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b1Ol3IOwokV2gFS2XNvt3TlezxClZn1L3WQLcEZeGBs=;
+	b=nCPWu8FIoK/1/ulsLh86lMUXeFjGShnQcs45DiGutK5briCI1SSWpthEy+NSaCxUNQsgXY
+	bPc99kzVGYtkKkB/K92ZA5cb8xFukx8KBMZiC70nyVNw0dxKTGtq+V0xk6907fea04KGGR
+	Pm07rSAuuyhV053I4AKaTzzA6ZUVNlc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753781639;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b1Ol3IOwokV2gFS2XNvt3TlezxClZn1L3WQLcEZeGBs=;
+	b=LvD8E65lVyOAqmbwPDDWWKDL6hqYBrTDC2eio/p8MMfPSoDFu9DSatiUIKmXCG53nzVhr/
+	/KyzMOHSXfUlnnAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=nCPWu8FI;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=LvD8E65l
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753781639; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b1Ol3IOwokV2gFS2XNvt3TlezxClZn1L3WQLcEZeGBs=;
+	b=nCPWu8FIoK/1/ulsLh86lMUXeFjGShnQcs45DiGutK5briCI1SSWpthEy+NSaCxUNQsgXY
+	bPc99kzVGYtkKkB/K92ZA5cb8xFukx8KBMZiC70nyVNw0dxKTGtq+V0xk6907fea04KGGR
+	Pm07rSAuuyhV053I4AKaTzzA6ZUVNlc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753781639;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b1Ol3IOwokV2gFS2XNvt3TlezxClZn1L3WQLcEZeGBs=;
+	b=LvD8E65lVyOAqmbwPDDWWKDL6hqYBrTDC2eio/p8MMfPSoDFu9DSatiUIKmXCG53nzVhr/
+	/KyzMOHSXfUlnnAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0C41E13876;
+	Tue, 29 Jul 2025 09:33:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NYCLAoeViGizUQAAD6G6ig
+	(envelope-from <hare@suse.de>); Tue, 29 Jul 2025 09:33:59 +0000
+Message-ID: <41526d97-b3bc-423b-87f4-7e0ec6cd8292@suse.de>
+Date: Tue, 29 Jul 2025 11:33:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] Disable auto_movable_ratio for selfhosted memmap
+To: Michal Hocko <mhocko@suse.com>
+Cc: David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Hannes Reinecke <hare@kernel.org>
+References: <aIcxs2nk3RNWWbD6@localhost.localdomain>
+ <aIc5XxgkbAwF6wqE@tiehlicka>
+ <2f24e725-cddb-41c5-ba87-783930efb2aa@redhat.com>
+ <aIc9DQ1PwsbiOQwc@tiehlicka>
+ <79919ace-9cd2-4600-9615-6dc26ba19e19@redhat.com>
+ <f859e5c3-7c96-4d97-a447-75070813450c@suse.de> <aId16W4EaqjANtKR@tiehlicka>
+ <3e88642f-3914-42b0-b864-4ad374b659b5@redhat.com>
+ <ac7add36-808d-4883-a09e-ef1bf6fd6834@suse.de> <aIiSEpQhWqPsvaST@tiehlicka>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <aIiSEpQhWqPsvaST@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 22EFB219EE
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Score: -4.51
 
-On Tue, 29 Jul 2025 10:48:17 +0200
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> On Tue, Jul 29, 2025 at 08:17:04AM +0000, Wilken Gottwalt wrote:
-> > Fixes:
+On 7/29/25 11:19, Michal Hocko wrote:
+> On Tue 29-07-25 09:24:37, Hannes Reinecke wrote:
+>> On 7/28/25 15:08, David Hildenbrand wrote:
+>>> On 28.07.25 15:06, Michal Hocko wrote:
+>>>> On Mon 28-07-25 11:37:46, Hannes Reinecke wrote:
+>>>>> On 7/28/25 11:10, David Hildenbrand wrote:
+>>>>> And to make matters worse, we have two competing user-space programs:
+>>>>> - udev
+>>>>> - daxctl
+>>>>> neither of which is (or can be made) aware of each other.
+>>>>> This leads to races and/or inconsistencies.
+>>>>
+>>>> Would it help if generic udev memory hotplug rule exclude anything that
+>>>> is dax backed? Is there a way to check for that? Sorry if this is a
+>>>> stupid question.
+>>> Parsing /proc/iomem, it's indicated as "System RAM (kmem)".
+>>>
+>> I would rather do it the other way round, and make daxctl aware of
+>> udev. In the end, even 'daxctl' uses the sysfs interface to online
+>> memory, which really is the territory of udev and can easily be
+>> done via udev rules (for static configuration).
 > 
-> But no "Fixes:" tag in the commit?  No cc: stable added?
-
-It is a long time I ago I did a fixes patch, argh. Hmm, it was a line like this
-Fixes: 123456789012 ("bla: bla: aaaahhh"), right? I will fix that. Though, I'm
-not sure if I should refer the pcim_iomap change here, or the change in the exar
-drivers default_setup. The point is, the first change, the default_setup one was
-fine until the later pcim_iomap change was done. The later change basically
-affects hundrets of drivers, while the default_setup change is limited to the
-8250 exar driver only. I will not touch pcim_iomap. What do you think about
-this?
-
-> > 
-> > [    2.601213] WARNING: CPU: 3 PID: 1 at pcim_iomap.part.0+0xbc/0xc0
-> > [    2.601224] Modules linked in:
-> > [    2.601230] CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.38-vanilla-standard #1
-> > [    2.601237] Hardware name: Default string Default string/CXC-BT-JERO, BIOS S1.61.1.0#
-> > 09/17/2018 [    2.601241] RIP: 0010:pcim_iomap.part.0+0xbc/0xc0
-> > [    2.601248] Code: 31 ed e8 07 a5 14 00 4c 89 e8 5b 41 5c 41 5d 41 5e 5d c3 cc cc cc cc 45 31
-> > ed 5b 41 5c 4c 89 e8 41 5d 41 5e 5d c3 cc cc cc cc <0f> 0b eb a0 90 90 90 90 90 90 90 90 90 90
-> > 90 90 90 90 90 90 0f 1f [    2.601253] RSP: 0000:ffffa7444001f830 EFLAGS: 00010286 [
-> > 2.601259] RAX: ffffa066c1321f28 RBX: 0000000000000000 RCX: ffffa066c1215330 [    2.601264] RDX:
-> > 0000000000000001 RSI: 0000000000000286 RDI: ffffa066c121532c [    2.601268] RBP:
-> > ffffa7444001f850 R08: 0000000000000000 R09: 0000000000000286 [    2.601272] R10:
-> > 0000000000000000 R11: 000ffffffffff000 R12: ffffa066c1215000 [    2.601275] R13:
-> > ffffa744403b0000 R14: ffffa066c1310208 R15: ffffa066c12150c8 [    2.601279] FS:
-> > 0000000000000000(0000) GS:ffffa067d7d80000(0000) knlGS:0000000000000000 [    2.601284] CS:
-> > 0010 DS: 0000 ES: 0000 CR0: 0000000080050033 [    2.601288] CR2: 0000000000000000 CR3:
-> > 000000005f22a000 CR4: 00000000001006f0 [    2.601292] Call Trace:
-> > [    2.601296]  <TASK>
-> > [    2.601301]  pcim_iomap+0x1a/0x20
-> > [    2.601308]  serial8250_pci_setup_port+0xea/0x190
-> > [    2.601337]  default_setup.constprop.0+0x27/0x90
-> > [    2.601347]  pci_xr17v35x_setup+0xd0/0x190
-> > [    2.601355]  exar_pci_probe+0x297/0x400
-> > [    2.601365]  ? __pfx_generic_rs485_config+0x10/0x10
-> > [    2.601383]  local_pci_probe+0x4b/0xb0
-> > [    2.601390]  pci_device_probe+0xc5/0x200
-> > [    2.601397]  really_probe+0xe5/0x390
-> > [    2.601405]  __driver_probe_device+0x7e/0x160
-> > [    2.601412]  driver_probe_device+0x23/0xa0
-> > [    2.601418]  __driver_attach+0xe4/0x1e0
-> > [    2.601424]  ? __pfx___driver_attach+0x10/0x10
-> > [    2.601431]  bus_for_each_dev+0x7d/0xd0
-> > [    2.601438]  driver_attach+0x1e/0x30
-> > [    2.601444]  bus_add_driver+0x114/0x240
-> > [    2.601450]  driver_register+0x64/0x130
-> > [    2.601457]  ? __pfx_exar_pci_driver_init+0x10/0x10
-> > [    2.601466]  __pci_register_driver+0x61/0x70
-> > [    2.601471]  exar_pci_driver_init+0x1e/0x30
-> > [    2.601479]  do_one_initcall+0x49/0x310
-> > [    2.601487]  kernel_init_freeable+0x1aa/0x2e0
-> > [    2.601495]  ? __pfx_kernel_init+0x10/0x10
-> > [    2.601503]  kernel_init+0x1a/0x1c0
-> > [    2.601510]  ret_from_fork+0x3c/0x60
-> > [    2.601516]  ? __pfx_kernel_init+0x10/0x10
-> > [    2.601523]  ret_from_fork_asm+0x1a/0x30
-> > [    2.601531]  </TASK>
-> > 
-> > >From kernel 6.8 to 6.9 the default_setup function was changed to use the
-> > more generic serial8250_pci_setup_port function to setup the serial
-> > ports, but that results in this kernel warning.
-> > 
-> > The serial8250_pci_setup_port function internally relies on the
-> > pcim_iomap function. The way this function works was changed from kernel
-> > 6.10 to 6.11 and now clearly states in the description "This SHOULD only
-> > be used once per BAR". And this is the issue. Basically all the hardware
-> > handled by the 8250_exar driver are multi-port cards, which have
-> > multiple ports on one PCI bar. The serial8250_pci_setup_port/pcim_iomap
-> > functions can not be used with that driver anymore. Reverting the code
-> > back to the older pci_resource_start approach fixes this issue.
+> udev doesn't really have any context what user space wants to do with
+> the memory and therefore how to online it. Therefore we have (arguably)
+> ugly hacks like auto onlining and movable_ration etc. daxctl can take
+> information from the admin directly and therfore it can do what is
+> needed without further hacks.
 > 
-> These two paragraphs should be above the warning splat.
+Huh?
+I thought udev was _all_ about userspace preferences...
+We can easily have udev rules onlining memory with whatever policy
+the user want; the whole point of udev rules is that they are dynamic
+and can include policy decisions.
 
-Yeah, I wasn't sure about this. Will fix this.
-
-> > 
-> > Signed-off-by: Wilken Gottwalt <wilken.gottwalt@posteo.net>
-> > ---
-> >  drivers/tty/serial/8250/8250_exar.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
-> > index 04a0cbab02c2..5660bb897803 100644
-> > --- a/drivers/tty/serial/8250/8250_exar.c
-> > +++ b/drivers/tty/serial/8250/8250_exar.c
-> > @@ -500,12 +500,13 @@ static int default_setup(struct exar8250 *priv, struct pci_dev *pcidev,
-> >  			 struct uart_8250_port *port)
-> >  {
-> >  	const struct exar8250_board *board = priv->board;
-> > +	unsigned int bar = 0;
+>> Note, we do a similar thing on s/390; the configuration tool there
+>> just spits out udev rules.
 > 
-> Why is this needed?
+> Those were easy times when you just need to online memory without any
+> more requirements where it should land.
 
-It was the original code, I just reverted it. The idea was to go back to code,
-which was there for several kernel generations and worked flawlessly. But yes,
-that can be optimized. I can change this.
- 
-> >  	unsigned char status;
-> > -	int err;
-> >  
-> > -	err = serial8250_pci_setup_port(pcidev, port, 0, offset, board->reg_shift);
-> > -	if (err)
-> > -		return err;
-> > +	port->port.iotype = UPIO_MEM;
-> > +	port->port.mapbase = pci_resource_start(pcidev, bar) + offset;
-> > +	port->port.membase = priv->virt + offset;
-> > +	port->port.regshift = board->reg_shift;
-> 
-> And so now serial8250_pci_setup_port() is never called?  Are you sure
-> that's ok?
+Sorry, I don't get that.
+udev rules can easily parse any user-space policy, and you can have a
+policy as detailed as you want.
+And each installation can have its own udev rules.
+Why wouldn't that work?
 
-Not by this exar driver, but other serial port drivers (8250_pci1xxxx, 8250_pci)
-use it, just like it was before the change in kernel 6.9.
+(Excluding main memory, obviously. We need memory to execute userspace
+processes after all).
 
-> thanks,
-> 
-> greg k-h
+I do think we're talking past each other...
 
-Thanks for the feedback.
+Cheers,
 
-greetings,
-Wilken
-
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
