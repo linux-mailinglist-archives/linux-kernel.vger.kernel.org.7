@@ -1,178 +1,111 @@
-Return-Path: <linux-kernel+bounces-749076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F40AB149CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:11:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3892B149DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:14:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 043077AC014
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:09:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 619EF188C22B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2C6276050;
-	Tue, 29 Jul 2025 08:11:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A35275AE2;
+	Tue, 29 Jul 2025 08:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+W04S5x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="Zs5d4WG/"
+Received: from mail3-165.sinamail.sina.com.cn (mail3-165.sinamail.sina.com.cn [202.108.3.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6ED263F40;
-	Tue, 29 Jul 2025 08:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B883027587C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 08:13:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753776672; cv=none; b=UhPDVSQ7LnohOrK7B1YzRbX5pZM4I29itNGr+Dfh801NimR6u5eSJ3kUexrERuU4yLy3z44aqp/Z3yeBBXgmCbKBEUks52mIg/eDxjCEEN1bdk25PYaiBgaJTtMGg5rOe9MtvRYpNo0DrQ9u9qNvaZAcLAuJStScAXuO+ZEosBE=
+	t=1753776830; cv=none; b=b5j+AZy/jl06xsKuLU1jACJMCCjWcR+WAQgZS5QetTVLydEYpKnBfaE7p4HOHMbYRQ2g5N7xpi9UMUvv29dxKTyYrkOM70uDLO1DKGz4BrSoX/p576v3hSqffWvkmZFHvVFXJWGukdwe8VKC+j6wSwiNFP9vj0oAGHE0yEHOQcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753776672; c=relaxed/simple;
-	bh=cWVIex8ZD7iLHUiFYdl7hALOOKwBmGPA9Eu9Lq5/ve4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Pmiqh4vKeniJcfgXOXAwYoVO6GQcySw2yVNYTwjbe7Yaku8/g6TpDOXBbJRXdZ4g8H05+UbTsNoHXdgT8TQwCaC4nrviajMHyrdPLGrkfLV2HCXAWtbr3E155nvKeYRtqXyC3ytO4pOUYvX7Wd/0Q/2rgE/BuuOHGuotRDLZHCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+W04S5x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46400C4CEEF;
-	Tue, 29 Jul 2025 08:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753776671;
-	bh=cWVIex8ZD7iLHUiFYdl7hALOOKwBmGPA9Eu9Lq5/ve4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F+W04S5xBBcVSjTJ0lwCukWF0CUJoPlRJ5apOHIjcIp4Ir2h0WEtBfOZPNq9j6UIw
-	 6fZP5IdfM5f5vLEjByzE5d1D4q0ntoXIKt1ZlaptYaMMJ/RbpgOJ4vi8j7m1REK/WE
-	 cJzV6oM57CeEOUeuFXbdpRKe9ommavUNv3horhLZRAO6muGJhtumt9y36tBBk8z1p0
-	 RcW8XEWXTvj+vpzKEBs29ORzEbWanrDmwe68O6LcUhBYBhNbsg7nJAYdHkL7mym1rZ
-	 WuxIc0wxhAbBVU5BUD51GFHFqvaCN7R5JBhhYX7ZtWmQVYAe4Cx4MWw9LPH9S4UYr+
-	 4hpI//0VngcyA==
-Date: Tue, 29 Jul 2025 09:10:55 +0100
-From: Will Deacon <will@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Gavin Shan <gshan@redhat.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	James Morse <james.morse@arm.com>,
-	Oza Pawandeep <quic_poza@quicinc.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Mike Rapoport <rppt@kernel.org>,
-	Vitaly Kuznetsov <vkuznets@redhat.com>,
-	Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hansg@kernel.org>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
-	Michal Wilczynski <michal.wilczynski@intel.com>,
-	Juergen Gross <jgross@suse.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	Roger Pau Monne <roger.pau@citrix.com>,
-	David Woodhouse <dwmw@amazon.co.uk>,
-	Usama Arif <usama.arif@bytedance.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Thomas Huth <thuth@redhat.com>, Brian Gerst <brgerst@gmail.com>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Andy Lutomirski <luto@kernel.org>, Baoquan He <bhe@redhat.com>,
-	Alexander Graf <graf@amazon.com>,
-	Changyuan Lyu <changyuanl@google.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jan Beulich <jbeulich@suse.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Bibo Mao <maobibo@loongson.cn>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, kvm@vger.kernel.org,
-	ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-mm@kvack.org, kasan-dev@googlegroups.com,
-	linux-kbuild@vger.kernel.org, linux-hardening@vger.kernel.org,
-	kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH v4 1/4] arm64: Handle KCOV __init vs inline mismatches
-Message-ID: <aIiCD5V1MaI3ORqA@willie-the-truck>
-References: <20250724054419.it.405-kees@kernel.org>
- <20250724055029.3623499-1-kees@kernel.org>
+	s=arc-20240116; t=1753776830; c=relaxed/simple;
+	bh=bTVis9kXI9NJ5AMMPQl/m/DgBVEW4i+Dn9IbG5ShGhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=svZ7OPBjg6wrToJIDjLN4XgZpG/gXD1k9Qs3hjDk9p8wrG+XyaxQlK/PuQRGX2d9yKwJcNB8uImBUBXmeYVImGzgwPeXANuLam6pfzzhRxxyiQF7w+IpffA67hP/HYm1vAmqu027M3ygX2ZRVOxaCeSRfSDVU0n2lUVVS+Ik2Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=Zs5d4WG/; arc=none smtp.client-ip=202.108.3.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753776826;
+	bh=SWvW986VIfCgOeED+XUhYOqhmJAH1RayIrmKf7opFuE=;
+	h=From:Subject:Date:Message-ID;
+	b=Zs5d4WG/JtxDtkfWU39QtPhXZgsx+c5VnblyJA3iyOEv1K7LhJBprXoBQNcJQKumI
+	 utrHPvJd64XuxzZWXFj/yGsAGZgcNv0aZERqIX9rA7IPKeSbfx10pYdyIetvkZbTs4
+	 bt7idGP5ciagqHktqKAaqFONPU/VVjU7uMRFovnc=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 6888822500004B64; Tue, 29 Jul 2025 16:11:19 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3795496685557
+X-SMAIL-UIID: 50290A6A4FB8409E8B6A8661B93DCF47-20250729-161119-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (3)
+Date: Tue, 29 Jul 2025 16:11:08 +0800
+Message-ID: <20250729081109.3381-1-hdanton@sina.com>
+In-Reply-To: <6888736f.a00a0220.b12ec.00ca.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250724055029.3623499-1-kees@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 23, 2025 at 10:50:25PM -0700, Kees Cook wrote:
-> GCC appears to have kind of fragile inlining heuristics, in the
-> sense that it can change whether or not it inlines something based on
-> optimizations. It looks like the kcov instrumentation being added (or in
-> this case, removed) from a function changes the optimization results,
-> and some functions marked "inline" are _not_ inlined. In that case,
-> we end up with __init code calling a function not marked __init, and we
-> get the build warnings I'm trying to eliminate in the coming patch that
-> adds __no_sanitize_coverage to __init functions:
+> Date: Tue, 29 Jul 2025 00:08:31 -0700	[thread overview]
+> Hello,
 > 
-> WARNING: modpost: vmlinux: section mismatch in reference: acpi_get_enable_method+0x1c (section: .text.unlikely) -> acpi_psci_present (section: .init.text)
+> syzbot found the following issue on:
 > 
-> This problem is somewhat fragile (though using either __always_inline
-> or __init will deterministically solve it), but we've tripped over
-> this before with GCC and the solution has usually been to just use
-> __always_inline and move on.
-> 
-> For arm64 this requires forcing one ACPI function to be inlined with
-> __always_inline.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Cc: Gavin Shan <gshan@redhat.com>
-> Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Oza Pawandeep <quic_poza@quicinc.com>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: <linux-arm-kernel@lists.infradead.org>
-> ---
->  arch/arm64/include/asm/acpi.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
-> index a407f9cd549e..c07a58b96329 100644
-> --- a/arch/arm64/include/asm/acpi.h
-> +++ b/arch/arm64/include/asm/acpi.h
-> @@ -150,7 +150,7 @@ acpi_set_mailbox_entry(int cpu, struct acpi_madt_generic_interrupt *processor)
->  {}
->  #endif
->  
-> -static inline const char *acpi_get_enable_method(int cpu)
-> +static __always_inline const char *acpi_get_enable_method(int cpu)
->  {
->  	if (acpi_psci_present())
->  		return "psci";
+> HEAD commit:    038d61fd6422 Linux 6.16
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b88cf0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4066f1c76cfbc4fe
+> dashboard link: https://syzkaller.appspot.com/bug?extid=6641a61fe0e2e89ae8c5
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ca1782580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140194a2580000
 
-Thanks for improving the commit message:
+#syz test
 
-Acked-by: Will Deacon <will@kernel.org>
-
-Will
+--- x/net/xfrm/xfrm_state.c
++++ y/net/xfrm/xfrm_state.c
+@@ -615,6 +615,15 @@ static void xfrm_state_gc_destroy(struct
+ 		put_page(x->xfrag.page);
+ 	xfrm_dev_state_free(x);
+ 	security_xfrm_state_free(x);
++	spin_lock_bh(&x->lock);
++	do {
++		struct net *net = xs_net(x);
++
++		spin_lock(&net->xfrm.xfrm_state_lock);
++		list_del_init(&x->km.all);
++		spin_unlock(&net->xfrm.xfrm_state_lock);
++	} while (0);
++	spin_unlock_bh(&x->lock);
+ 	xfrm_state_free(x);
+ }
+ 
+@@ -816,7 +825,7 @@ int __xfrm_state_delete(struct xfrm_stat
+ 		x->km.state = XFRM_STATE_DEAD;
+ 
+ 		spin_lock(&net->xfrm.xfrm_state_lock);
+-		list_del(&x->km.all);
++		list_del_init(&x->km.all);
+ 		hlist_del_rcu(&x->bydst);
+ 		hlist_del_rcu(&x->bysrc);
+ 		if (x->km.seq)
+--
 
