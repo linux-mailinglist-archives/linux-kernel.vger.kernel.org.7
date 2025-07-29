@@ -1,229 +1,232 @@
-Return-Path: <linux-kernel+bounces-748781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D63B145F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8661AB145F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17C95166376
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:47:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6F71540EFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE0951E51F6;
-	Tue, 29 Jul 2025 01:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 859DA1F4295;
+	Tue, 29 Jul 2025 01:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="s/byBlcg"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B2jv1SWX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8987410957;
-	Tue, 29 Jul 2025 01:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CDC10957;
+	Tue, 29 Jul 2025 01:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753753626; cv=none; b=YPThF61ulXuZLeOdH+X8Oc2oxqPs7p8xeYN39VB7XSyXSLNfiPMY/MfkwcAjZbYMatBhNw3o3zvFkLcZ+AsSENy9PNGJj5fcV1p5dI1ggUNUPip48EPHbe1XAWHds2kmLogbQ0O672x0RurPOdIpameshd+EC0Awx8CtUKMNkrk=
+	t=1753753849; cv=none; b=nLVDEMFEd/EDeGozpyrym0iiXiS3tl2qR5PUI6DVbywRwCivW8BUgL9T7asYhw445HSrFkwAgo+aq1Sh3Tq4hIWgQvqicSGr3EbZONc0zxXrkSobxqAfbuX6dAAf51tDWXN00iSkITqqE6Ylb0DP0SBIg+G32PSG+rLOL8Vt4aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753753626; c=relaxed/simple;
-	bh=yd8/gdTxsg7BCwN+XzjlvHSBn4P6HGDR2eLSqO5OIZ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=grYiiJ7YD+ro5mo83aPN5XeXeVt8LFBo0gJJgpHVpVqEZRvojH1vQFVxVKV8r+hm46FUyeM9a4eiqMmHbctp6FC0QqROElNxTsXFjPmNrCQMls+4UXzpHRTI2jYH0cnlyK7ZWyD2AAxSO89QMhuM1IlP5EyJSO+mBRi3wacq3EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=s/byBlcg; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753753414;
-	bh=dVnieHhvtec+/x+mN6pUJkkUaZjGr5IZABNNXjP2Q6g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s/byBlcgX1NmJ7xgnFcvAwSA/5wLX1Ul41FhZ1XBRAHkOKABoksksRjCpgcQhWIFp
-	 U+7gIz2Hx6+AcyTdnllALz6mpt528Yr8vHj7JMPIlKsN3H9BYTkK/niHo9zWEjlCwq
-	 LZQ8ldnZYV7nZO4OJ2DCyeqtafXucQ+uO3sDyvqrcPg3RbZK6Z8orxyQdHwvVgPEFT
-	 3ghiYCmh4lkZ0u9lmgGr5kKdsICgROk4k/iYmM+i+lgkH5xAIPEDIYrxEmOVs/+WKu
-	 RJCFAHfJ/trf4c+B8a4n8Id4ZLnKrRvChBF7rTmnjwpiQX/adkgdrx7kaReZoqpwWu
-	 4RLqIqVS3tJ/w==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brdR940y7z4w2N;
-	Tue, 29 Jul 2025 11:43:32 +1000 (AEST)
-Date: Tue, 29 Jul 2025 11:46:58 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: Jens Axboe <axboe@kernel.dk>, Bagas Sanjaya <bagasdotme@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the block tree with the jc_docs
- tree
-Message-ID: <20250729114658.110c8353@canb.auug.org.au>
-In-Reply-To: <20250716150234.52ec0d5f@canb.auug.org.au>
-References: <20250716150234.52ec0d5f@canb.auug.org.au>
+	s=arc-20240116; t=1753753849; c=relaxed/simple;
+	bh=ZJHFmzIPr8ML5NGJayIIymS18ptTL0fxQguqCZMVGR4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gVDZYhdorjvVtJ6x5lRxFxR+A+h0TROxcGxR0opceXM+FISbr6edz5gzA03bRtSOiXkuU60h8i3zTS1QAO2XoTvh1chDbkCNQOy/poZL1/j7fzCY1vTrpcPyrHMeekf9+U2XXmeAZrbd6iYHUlXlovjh9QXgnrXYuCdhP7kq5UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B2jv1SWX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B974C4CEE7;
+	Tue, 29 Jul 2025 01:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753753849;
+	bh=ZJHFmzIPr8ML5NGJayIIymS18ptTL0fxQguqCZMVGR4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=B2jv1SWXMFVKYdow0z6X+R3YMQl0l+mo1si6bJPUAYs8EMc6pQo0M5YJMTU1A+Ivb
+	 ED4C2XVRkyQvOEOmyxPIUc0p4CAWraqAxQqrZ24MuN9FX+zJjaGQH/6lrLyw0+tgxD
+	 NurkqN8AmsoWY4ATiMxo0s/ZwRYpwXh4EhryfzLFKVSVmgS+h5I09IhhxpqmUtqFy8
+	 xW46CzE+iAfdtO91iYrYiv00uWC6d2El6scbhq1/joQscOsbeaQKzi2elXwPhf4UjT
+	 uXHbI3vaAZNYNVi6UOuw7nEnVTsWa4g/tBjqcZNMiUKAI267tAawqUlnLgp56JpmYW
+	 Q9dkzKsLNZ++A==
+Date: Mon, 28 Jul 2025 20:50:48 -0500
+From: Rob Herring <robh@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [GIT PULL] Devicetree updates for v6.17
+Message-ID: <20250729015048.GA235874-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Pglx31VE10ziz=QB9P=mM/O";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
---Sig_/Pglx31VE10ziz=QB9P=mM/O
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Linus,
 
-Hi all,
+Please pull DT updates for 6.17. There's a couple of trivial conflicts 
+with GPIO and MFD trees in trivial-devices.yaml and MAINTAINERS. 
 
-On Wed, 16 Jul 2025 15:02:34 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> Today's linux-next merge of the block tree got a conflict in:
->=20
->   Documentation/userspace-api/ioctl/ioctl-number.rst
->=20
-> between commit:
->=20
->   15afd5def819 ("Documentation: ioctl-number: Extend "Include File" colum=
-n width")
->=20
-> from the jc_docs tree and commit:
->=20
->   1cea5180f2f8 ("block: remove pktcdvd driver")
->=20
-> from the block tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
->=20
-> diff --cc Documentation/userspace-api/ioctl/ioctl-number.rst
-> index 677456c31228,4f1532a251d2..000000000000
-> --- a/Documentation/userspace-api/ioctl/ioctl-number.rst
-> +++ b/Documentation/userspace-api/ioctl/ioctl-number.rst
-> @@@ -223,32 -219,31 +223,31 @@@ Code  Seq#    Include Fil
->                fs/xfs/linux-2.6/xfs_ioctl32.h,
->                include/linux/falloc.h,
->                linux/fs.h,
->  -'X'   all    fs/ocfs2/ocfs_fs.h                                      co=
-nflict!
->  +'X'   all    fs/ocfs2/ocfs_fs.h                                        =
-conflict!
-> - 'X'   01     linux/pktcdvd.h                                           =
-conflict!
->   'Z'   14-15  drivers/message/fusion/mptctl.h
->  -'['   00-3F  linux/usb/tmc.h                                         US=
-B Test and Measurement Devices
->  -                                                                     <m=
-ailto:gregkh@linuxfoundation.org>
->  -'a'   all    linux/atm*.h, linux/sonet.h                             AT=
-M on linux
->  -                                                                     <h=
-ttp://lrcwww.epfl.ch/>
->  -'a'   00-0F  drivers/crypto/qat/qat_common/adf_cfg_common.h          co=
-nflict! qat driver
->  -'b'   00-FF                                                          co=
-nflict! bit3 vme host bridge
->  -                                                                     <m=
-ailto:natalia@nikhefk.nikhef.nl>
->  -'b'   00-0F  linux/dma-buf.h                                         co=
-nflict!
->  -'c'   00-7F  linux/comstats.h                                        co=
-nflict!
->  -'c'   00-7F  linux/coda.h                                            co=
-nflict!
->  -'c'   00-1F  linux/chio.h                                            co=
-nflict!
->  -'c'   80-9F  arch/s390/include/asm/chsc.h                            co=
-nflict!
->  +'['   00-3F  linux/usb/tmc.h                                           =
-USB Test and Measurement Devices
->  +                                                                       =
-<mailto:gregkh@linuxfoundation.org>
->  +'a'   all    linux/atm*.h, linux/sonet.h                               =
-ATM on linux
->  +                                                                       =
-<http://lrcwww.epfl.ch/>
->  +'a'   00-0F  drivers/crypto/qat/qat_common/adf_cfg_common.h            =
-conflict! qat driver
->  +'b'   00-FF                                                            =
-conflict! bit3 vme host bridge
->  +                                                                       =
-<mailto:natalia@nikhefk.nikhef.nl>
->  +'b'   00-0F  linux/dma-buf.h                                           =
-conflict!
->  +'c'   00-7F  linux/comstats.h                                          =
-conflict!
->  +'c'   00-7F  linux/coda.h                                              =
-conflict!
->  +'c'   00-1F  linux/chio.h                                              =
-conflict!
->  +'c'   80-9F  arch/s390/include/asm/chsc.h                              =
-conflict!
->   'c'   A0-AF  arch/x86/include/asm/msr.h conflict!
->  -'d'   00-FF  linux/char/drm/drm.h                                    co=
-nflict!
->  -'d'   02-40  pcmcia/ds.h                                             co=
-nflict!
->  +'d'   00-FF  linux/char/drm/drm.h                                      =
-conflict!
->  +'d'   02-40  pcmcia/ds.h                                               =
-conflict!
->   'd'   F0-FF  linux/digi1.h
->  -'e'   all    linux/digi1.h                                           co=
-nflict!
->  -'f'   00-1F  linux/ext2_fs.h                                         co=
-nflict!
->  -'f'   00-1F  linux/ext3_fs.h                                         co=
-nflict!
->  -'f'   00-0F  fs/jfs/jfs_dinode.h                                     co=
-nflict!
->  -'f'   00-0F  fs/ext4/ext4.h                                          co=
-nflict!
->  -'f'   00-0F  linux/fs.h                                              co=
-nflict!
->  -'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                     co=
-nflict!
->  +'e'   all    linux/digi1.h                                             =
-conflict!
->  +'f'   00-1F  linux/ext2_fs.h                                           =
-conflict!
->  +'f'   00-1F  linux/ext3_fs.h                                           =
-conflict!
->  +'f'   00-0F  fs/jfs/jfs_dinode.h                                       =
-conflict!
->  +'f'   00-0F  fs/ext4/ext4.h                                            =
-conflict!
->  +'f'   00-0F  linux/fs.h                                                =
-conflict!
->  +'f'   00-0F  fs/ocfs2/ocfs2_fs.h                                       =
-conflict!
->   'f'   13-27  linux/fscrypt.h
->   'f'   81-8F  linux/fsverity.h
->   'g'   00-0F  linux/usb/gadgetfs.h
+Rob
 
-This is now a conflict between the jd_docs tree and Linus' tree.
 
---=20
-Cheers,
-Stephen Rothwell
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
---Sig_/Pglx31VE10ziz=QB9P=mM/O
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
 
------BEGIN PGP SIGNATURE-----
+are available in the Git repository at:
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIKBIACgkQAVBC80lX
-0Gye9Qf9FQrH/+V7xuILJ7bjlxNH1JsPcuzC5SVoF6Nie/jLqAxw7X4rm0iHCGJc
-tQggTjCeGjGWvyRCR1cFNVDhCgpV5335h3xcIQgREtMNdw/teIb9N7rVv/pbEnhK
-qA2a857kVvkT/1qVum9MuvPPTSGszH9QVMJplyrlFsb1Yprh/4QziqG/W3IVRYc3
-mzexfEXFca+pGKjyyXFyLQWhULc/jdhoYoLPBd4KM7Nc6yqSs0DrjH9XOfha3L6V
-v0herJ/vuFPfTA5C4Fi25dYtcEepd9wG6/CfgDeTIyvTFhl5CcM266O7A4bwu0mq
-lp8PwPBEAwnWMWU05s4TCwmam0DADg==
-=+pNl
------END PGP SIGNATURE-----
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-for-6.17
 
---Sig_/Pglx31VE10ziz=QB9P=mM/O--
+for you to fetch changes up to 0121898ec05fa4c1f566fc05c7e8b3caf0998f97:
+
+  dt-bindings: Correct indentation and style in DTS example (2025-07-28 19:56:29 -0500)
+
+----------------------------------------------------------------
+Devicetree updates for 6.17:
+
+- Add bindings for arm,armv7m-nvic, fsl,icoll, fsl,imx23-digctl, Xilinx
+  INTC, Analog Devices ADT7411, and a bunch of trivial hwmon devices
+
+- Convert fsl,vf610-mscm-ir, fsl,dsu, via,vt8500-timer, nxp,isp1301,
+  Marvell Armada NETA and BM, apm,xgene1-msi, fsl,mpic-msi,
+  himax,hx8357d, and sitronix,st7586 bindings to DT schema format
+
+- Fixes for some display bindings
+
+- More indentation clean-ups in examples
+
+- Add more guidelines and clarifications on writing bindings
+
+----------------------------------------------------------------
+Alexey Charkov (1):
+      dt-bindings: timer: via,vt8500-timer: Convert to YAML
+
+AngeloGioacchino Del Regno (1):
+      dt-bindings: display: mediatek,dp: Allow DisplayPort AUX bus
+
+David Lechner (1):
+      dt-bindings: display: convert sitronix,st7586 to YAML
+
+Frank Li (9):
+      dt-bindings: soc: Add fsl,imx23-digctl.yaml for i.MX23 and i.MX28
+      dt-bindings: lcdif: add lcd panel related property for imx28
+      dt-bindings: display: arm,pl11x: Allow resets property
+      dt-bindings: display: convert himax,hx8357d.txt to yaml format
+      dt-bindings: trivial-devices: add compatible string nxp,isp1301 from isp1301.txt
+      dt-bindings: interrupt-controller: Add arm,armv7m-nvic and fix #interrupt-cells
+      dt-bindings: display: imx: convert fsl,dcu.txt to yaml format
+      dt-bindings: interrupt-controller: Add fsl,icoll.yaml
+      dt-bindings: fsl: convert fsl,vf610-mscm-ir.txt to yaml format
+
+J. Neuschäfer (1):
+      dt-bindings: interrupt-controller: Convert fsl,mpic-msi to YAML
+
+Krzysztof Kozlowski (10):
+      docs: dt: writing-bindings: Rephrase typical fallback (superset) usage
+      docs: dt: writing-bindings: Express better expectations of "specific"
+      docs: dt: writing-bindings: Consistently use single-whitespace
+      docs: dt: submitting-patches: Avoid 'YAML' in the subject and add an example
+      docs: dt: writing-bindings: Document compatible and filename naming
+      docs: dt: writing-bindings: Document discouraged instance IDs
+      docs: dt: writing-schema: Document preferred order of properties
+      dt-bindings: display: sprd,sharkl3-dpu: Fix missing clocks constraints
+      dt-bindings: display: sprd,sharkl3-dsi-host: Fix missing clocks constraints
+      dt-bindings: Correct indentation and style in DTS example
+
+Lukas Bulwahn (1):
+      MAINTAINERS: adjust file entry in INTEL STRATIX10 FIRMWARE DRIVERS
+
+Meng Li (1):
+      dt-bindings: watchdog: fsl-imx-wdt: add compatible string fsl,ls1046a-wdt
+
+Michal Simek (1):
+      dt-bindings: interrupt-controller: Add missing Xilinx INTC binding
+
+Mikhail Kalashnikov (1):
+      dt-bindings: gpu: mali-bifrost: Add Allwinner A523 compatible
+
+Rob Herring (Arm) (3):
+      dt-bindings: interrupt-controller: Convert apm,xgene1-msi to DT schema
+      dt-bindings: trivial-devices: Add undocumented hwmon devices
+      dt-bindings: net: Convert Marvell Armada NETA and BM to DT schema
+
+Wolfram Sang (1):
+      dt-bindings: trivial-devices: Add Analog Devices ADT7411
+
+ .../bindings/arm/arm,trace-buffer-extension.yaml   |  10 +-
+ .../bindings/arm/freescale/fsl,vf610-mscm-ir.txt   |  30 ----
+ .../devicetree/bindings/arm/stm32/st,mlahb.yaml    |  20 +--
+ .../devicetree/bindings/display/arm,pl11x.yaml     |   3 +
+ .../devicetree/bindings/display/fsl,dcu.txt        |  34 ----
+ .../devicetree/bindings/display/fsl,lcdif.yaml     |  19 +-
+ .../bindings/display/fsl,ls1021a-dcu.yaml          |  71 ++++++++
+ .../devicetree/bindings/display/himax,hx8357.yaml  |  78 ++++++++
+ .../devicetree/bindings/display/himax,hx8357d.txt  |  26 ---
+ .../bindings/display/mediatek/mediatek,dp.yaml     |   3 +
+ .../bindings/display/sitronix,st7586.txt           |  22 ---
+ .../bindings/display/sitronix,st7586.yaml          |  61 +++++++
+ .../bindings/display/sprd/sprd,sharkl3-dpu.yaml    |   2 +-
+ .../display/sprd/sprd,sharkl3-dsi-host.yaml        |   2 +-
+ .../bindings/dsp/mediatek,mt8195-dsp.yaml          |  42 ++---
+ .../intel,ixp4xx-network-processing-engine.yaml    |  52 +++---
+ .../devicetree/bindings/fpga/xlnx,versal-fpga.yaml |   2 +-
+ .../devicetree/bindings/gpu/arm,mali-bifrost.yaml  |   1 +
+ .../interrupt-controller/apm,xgene1-msi.yaml       |  54 ++++++
+ .../bindings/interrupt-controller/arm,nvic.yaml    |   3 +-
+ .../bindings/interrupt-controller/fsl,icoll.yaml   |  45 +++++
+ .../interrupt-controller/fsl,mpic-msi.yaml         | 161 +++++++++++++++++
+ .../interrupt-controller/fsl,vf610-mscm-ir.yaml    |  63 +++++++
+ .../bindings/interrupt-controller/xlnx,intc.yaml   |  82 +++++++++
+ .../devicetree/bindings/iommu/riscv,iommu.yaml     |   6 +-
+ .../devicetree/bindings/leds/leds-mt6360.yaml      | 199 ++++++++++-----------
+ .../devicetree/bindings/mips/brcm/soc.yaml         |  50 +++---
+ .../misc/intel,ixp4xx-ahb-queue-manager.yaml       |   6 +-
+ .../devicetree/bindings/mmc/renesas,sdhi.yaml      |  76 ++++----
+ .../devicetree/bindings/mtd/technologic,nand.yaml  |   2 +-
+ .../bindings/net/marvell,armada-370-neta.yaml      |  79 ++++++++
+ .../bindings/net/marvell,armada-380-neta-bm.yaml   |  60 +++++++
+ .../bindings/net/marvell-armada-370-neta.txt       |  50 ------
+ .../devicetree/bindings/net/marvell-neta-bm.txt    |  47 -----
+ .../bindings/nvmem/amlogic,meson6-efuse.yaml       |   2 +-
+ .../devicetree/bindings/pci/ti,j721e-pci-ep.yaml   |  34 ++--
+ .../devicetree/bindings/pci/xgene-pci-msi.txt      |  68 -------
+ .../devicetree/bindings/power/reset/qcom,pon.yaml  |  72 ++++----
+ .../devicetree/bindings/powerpc/fsl/msi-pic.txt    | 111 ------------
+ .../nvidia,tegra264-bpmp-shmem.yaml                |  15 +-
+ .../devicetree/bindings/rtc/renesas,rzn1-rtc.yaml  |  22 +--
+ .../soc/amlogic/amlogic,meson-gx-hhi-sysctrl.yaml  |  28 +--
+ .../bindings/soc/fsl/fsl,imx23-digctl.yaml         |  53 ++++++
+ .../devicetree/bindings/soc/qcom/qcom,eud.yaml     |  38 ++--
+ .../devicetree/bindings/soc/ti/wkup-m3-ipc.yaml    |  32 ++--
+ .../devicetree/bindings/submitting-patches.rst     |  12 +-
+ .../devicetree/bindings/timer/via,vt8500-timer.txt |  15 --
+ .../bindings/timer/via,vt8500-timer.yaml           |  51 ++++++
+ .../devicetree/bindings/trivial-devices.yaml       |  54 ++++++
+ Documentation/devicetree/bindings/usb/isp1301.txt  |  24 ---
+ .../devicetree/bindings/vendor-prefixes.yaml       |   1 +
+ .../devicetree/bindings/watchdog/fsl-imx-wdt.yaml  |   2 +
+ .../devicetree/bindings/writing-bindings.rst       |  42 ++++-
+ .../devicetree/bindings/writing-schema.rst         |   3 +
+ MAINTAINERS                                        |  11 +-
+ 55 files changed, 1353 insertions(+), 798 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/arm/freescale/fsl,vf610-mscm-ir.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/fsl,dcu.txt
+ create mode 100644 Documentation/devicetree/bindings/display/fsl,ls1021a-dcu.yaml
+ create mode 100644 Documentation/devicetree/bindings/display/himax,hx8357.yaml
+ delete mode 100644 Documentation/devicetree/bindings/display/himax,hx8357d.txt
+ delete mode 100644 Documentation/devicetree/bindings/display/sitronix,st7586.txt
+ create mode 100644 Documentation/devicetree/bindings/display/sitronix,st7586.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/apm,xgene1-msi.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,icoll.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,mpic-msi.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,vf610-mscm-ir.yaml
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/xlnx,intc.yaml
+ create mode 100644 Documentation/devicetree/bindings/net/marvell,armada-370-neta.yaml
+ create mode 100644 Documentation/devicetree/bindings/net/marvell,armada-380-neta-bm.yaml
+ delete mode 100644 Documentation/devicetree/bindings/net/marvell-armada-370-neta.txt
+ delete mode 100644 Documentation/devicetree/bindings/net/marvell-neta-bm.txt
+ delete mode 100644 Documentation/devicetree/bindings/pci/xgene-pci-msi.txt
+ delete mode 100644 Documentation/devicetree/bindings/powerpc/fsl/msi-pic.txt
+ create mode 100644 Documentation/devicetree/bindings/soc/fsl/fsl,imx23-digctl.yaml
+ delete mode 100644 Documentation/devicetree/bindings/timer/via,vt8500-timer.txt
+ create mode 100644 Documentation/devicetree/bindings/timer/via,vt8500-timer.yaml
+ delete mode 100644 Documentation/devicetree/bindings/usb/isp1301.txt
 
