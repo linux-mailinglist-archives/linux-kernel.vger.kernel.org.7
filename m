@@ -1,191 +1,89 @@
-Return-Path: <linux-kernel+bounces-749156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D19CB14AC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:08:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7C2B14ACA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB00F7ABC5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D47C8164352
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45626285C94;
-	Tue, 29 Jul 2025 09:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296BB285CAD;
+	Tue, 29 Jul 2025 09:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Dk0ulIqS"
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="FOGWaqqY"
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B6327CCE7;
-	Tue, 29 Jul 2025 09:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A77415A8;
+	Tue, 29 Jul 2025 09:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753780082; cv=none; b=aQtrV3XpkYNJge9pSijV2Ui4EnGHo+BbiFmrcvo/WEVu3h1j3A+ipxxcIG43fNFoqy5vOzpeFxdpx3XrOpjxnkfugHeSAw5H+jmNpJLgsB5v/ic+OYovkYmM1weDPViK1uE3D/Pb6YKNOvhswod/MeMly4dnFqFIQALAuRTzStM=
+	t=1753780187; cv=none; b=QZ9FOC8o/DyRqnjNhJmmYMSczq+pTTab8zFHuA7Uyi/aoZVPLtq1qAGbNKFf9VBtGp77JyoBUSvAYh/ia6yrCVRCW6c8SwF6TKBUJ5J85wN8Li51TxZDIs8tnZGS5unwg4gki6rrKHn1iJxI18W7m22HLuCk6FWHNXerSIJ/QL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753780082; c=relaxed/simple;
-	bh=qZvpEj9mSasixgT6/SZwxPkP76fTud+WJTEaupMLNso=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mYHshSCCGBDt1KBCuMzG5QL4M14qQheaFBPPv7FC8Azo7Ibmp8KAyvJFcx08U1+EETEnoKREy0ZLxcVoEXQKYxE8R40eeXeHpCK4b6Zv5trgjtV88RVU1/MAyzig75mQo5RzXVERj2kA/PfYk0zRAUHqnwprdwKH9wUTv8Z9I40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Dk0ulIqS; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B6F3C43187;
-	Tue, 29 Jul 2025 09:07:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753780072;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k4a5SsI/nvjVItbd+WYqIPRNobzyb8741BFwCKTc04s=;
-	b=Dk0ulIqSW+91Z5TdH6BU6Z06+8ne9mgoNOkyrk9tEjugwze0HitFHDlKWB1uuT9PAiwHOO
-	9Iuezv3g2grTO5uXLNQ/pNQypAcEXjITE07oN5bGSp54EA5xcpULTd2SgWnWGIClYfOvLo
-	YqmOK42eh+hI6Mv4YPNv/WAwsbeG5WbihsnTAgxbnc5bG/RGreOK5e5c5paJ+Et/4DdLiP
-	BFuWJjHT6IwVE15A+oPxcGFZvsYMeYzBdf0SbyYCSbnRUUJZhDh2mPgn0cjXW4eml0np5M
-	wb6dSWY1xwQ5EO+oa42aPIfqQ1m+ce0ePR3bRYTAW5VtUxauZlp9ptLG4WpVtg==
-From: Romain Gantois <romain.gantois@bootlin.com>
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Jon Hunter <jonathanh@nvidia.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- linux-kernel@vger.kernel.org,
- "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject:
- Re: [PATCH v2] regulator: core: repeat voltage setting request for stepped
- regulators
-Date: Tue, 29 Jul 2025 11:07:46 +0200
-Message-ID: <3560762.QJadu78ljV@fw-rgant>
-In-Reply-To: <e9100dbf-524e-4edd-aba3-71e28fbc07d0@nvidia.com>
-References:
- <20250718-regulator-stepping-v2-1-e28c9ac5d54a@bootlin.com>
- <e9100dbf-524e-4edd-aba3-71e28fbc07d0@nvidia.com>
+	s=arc-20240116; t=1753780187; c=relaxed/simple;
+	bh=DW5aO2WkVqkdAYdyp4EwCSKfFo6OF+HWNk557USvI3A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=H8nncV0DxLcEwMfMfBpSg7vxf5r0dVDfP+ChdGHd28LVQwppeBel8I0qR8CZvTGJ3adktRbnVVJnswrAebPTuIga5zvMXhFz9VqER1cNZD1KPdETSYtx5Rm5l8r5c+OLl3JOuZxMcEApikMlp5Z81SHszORyPlRrcm8kOBO/bUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=FOGWaqqY; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753780176; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=qbzRbm/1jyacBHJjAXitMRMfMoRh9hLlAQIMYXnu/dg=;
+	b=FOGWaqqYx97Zma0xuHVr9q/CeKovfbzgU9fEUuaqh7Ocq+5x84ugXMgprAcrhWTjLN3XYsmC3naSsGfvuQsXtkTmSOJXhyLY489pjYLp5dTb/7SQfSk3JC8PAGFfrLQBq0f9R2tSNO1UKEa0DAb90NEqhVdYGRbmVOZaJmrkTCU=
+Received: from localhost(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0WkPYu9q_1753780175 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 29 Jul 2025 17:09:35 +0800
+From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Subject: [PATCH] lsm: simplify security_inode_copy_up_xattr()
+Date: Tue, 29 Jul 2025 17:09:33 +0800
+Message-Id: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1932750.CQOukoFCf9";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelgeeihecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkjghfgggtsehgtderredttdejnecuhfhrohhmpeftohhmrghinhcuifgrnhhtohhishcuoehrohhmrghinhdrghgrnhhtohhishessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhephfdvleekvefgieejtdduieehfeffjefhleegudeuhfelteduiedukedtieehlefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehffidqrhhgrghnthdrlhhotggrlhhnvghtpdhmrghilhhfrhhomheprhhomhgrihhnrdhgrghnthhoihhssegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeeipdhrtghpthhtoheplhhgihhrugifohhougesghhmrghilhdrtghomhdprhgtphhtthhopegsrhhoohhnihgvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohhnrghthhgrnhhhsehnvhhiughirgdrtghomhdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtt
- hhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhtvghgrhgrsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+Content-Transfer-Encoding: 8bit
 
---nextPart1932750.CQOukoFCf9
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Tue, 29 Jul 2025 11:07:46 +0200
-Message-ID: <3560762.QJadu78ljV@fw-rgant>
-In-Reply-To: <e9100dbf-524e-4edd-aba3-71e28fbc07d0@nvidia.com>
-MIME-Version: 1.0
+The implementation of function security_inode_copy_up_xattr can be
+simplified to directly call call_int_hook().
 
-Hi Jon,
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+---
+ security/security.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-On Tuesday, 29 July 2025 10:28:17 CEST Jon Hunter wrote:
-> Hi Romain,
-> 
-...
-> Looking at better closer at the issue, I noticed that it is the
-> 'tps62361-vout' regulator that change is causing problem for. On boot
-> I see regulator_set_voltage_unlocked() called for this regulator and
-> min/max voltage requested is ...
-> 
->   regulator regulator.5: min_uV 1000000 max_uV 1350000
-> 
-> The min delta is 300000, but in this case the delta never reaches 0
-> and in fact never converges at all and so remains at 300000.
-> 
-> Looking at the above, if the delta never changes, then we get stuck
-> in the above loop forever because 'new_delta - delta' is always 0
-> and this is never greater than 'rdev->constraints->max_uV_step'.
-> 
-> There are two things that is not clear to me in the above change ...
-> 
-> 1. Why do we 'new_delta - delta' instead of 'delta - new_delta'?
->     Assuming that we should converge, then I would expect that
->     'new_delta' should be getting smaller as we converge.
-
-Indeed it should. "new_delta - delta" is equal to the increase of voltage
-"error". So if this value is positive, it's bad because it means we're
-getting further away from the target voltage. Also, if it's negative but
-too large, then it means that we're slowly crawling to the target voltage,
-which is bad. Currently we do:
-
-```
-if (new_delta - delta > max_uV_step)
-	give up and return -EWOULDBLOCK
-```
-
-but we should be doing:
-
-```
-if (new_delta - delta > -max_uV_step)
-	give up and return -EWOULDBLOCK
-```
-
-which is equivalent to:
-
-```
-if (delta - new_delta < max_uV_step)
-	give up and return -EWOULDBLOCK
-```
-
-> 2. If difference in the delta is greater than then 'max_uV_step'
->     doesn't this imply that we are converging quickly?
-> 
-
-Yes, the current logic is indeed flawed.
-
-> I am wondering if we need something like ...
-> 
-> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-> index 8ed9b96518cf..554d83c4af0c 100644
-> --- a/drivers/regulator/core.c
-> +++ b/drivers/regulator/core.c
-> @@ -3884,7 +3884,7 @@ static int regulator_set_voltage_unlocked(struct
-> regulator *regulator, new_delta = ret;
-> 
->                          /* check that voltage is converging quickly enough */
->  -                       if (new_delta - delta > rdev->constraints->max_uV_step) {
-> +                       if (delta - new_delta < rdev->constraints->max_uV_step) {
-
-Yes, that would be correct. Do you want to send the fix yourself, or should I
-do it and include your "Suggested-by"?
-
-Thanks for reporting the issue and sorry for the trouble.
-
-Best Regards,
-
+diff --git a/security/security.c b/security/security.c
+index 596d41818577..a5c2e5a8009f 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
+  */
+ int security_inode_copy_up_xattr(struct dentry *src, const char *name)
+ {
+-	int rc;
+-
+-	rc = call_int_hook(inode_copy_up_xattr, src, name);
+-	if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
+-		return rc;
+-
+-	return LSM_RET_DEFAULT(inode_copy_up_xattr);
++	return call_int_hook(inode_copy_up_xattr, src, name);
+ }
+ EXPORT_SYMBOL(security_inode_copy_up_xattr);
+ 
 -- 
-Romain Gantois, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---nextPart1932750.CQOukoFCf9
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEIcCsAScRrtr7W0x0KCYAIARzeA4FAmiIj2IACgkQKCYAIARz
-eA6Taw//flYEbe3Y5ymsW6mxAcxLwb8/mzucOzf5mVCazki5ZFkEc2lPzAjXZvxL
-QSmYX/syvJOr4S7irwlUUFyna2+/yWSlfxso9JnuKYiboCVETmnJvghd4WrnMOGw
-D0roJ8S+b0b0zkEG2qFYjXN/xeGtYwTY94ns8RSW3fpEWV3ZtoGxpS4GmculwiWc
-UHmScwdTNeFMBxi7mgJZK2VrWKIVuTIGcN/zQHNNupH6jGB5gnV3kxpDTN8ntHQb
-vGCbNqVYXv4WRTyfNhP3+yFvBEseC6uSqYjue98RVUq64kBpeYJAWUb7xXQ9q1PA
-zWJl9+7j7Q0zSHpQvUvLtUEIVJFv/920KMLhFsM4FJeBDU5qw003MVLgX3x6pET0
-UA0kEe4PKF0ffx9ZRcwBz1wEUHqeFaIOpxQ6vfz4XWTFAwc2uvn8N19bLH8avXUD
-I/WMPSFVTdEGu22p6hTBDB3npN3EehlcgtmctCCLZm8nxx7oSOXO2DO47oMH9xRA
-kwcJfKqXG3FMec38e5A3OIx4Bon2qRw5B69TFlPWD4qyhXVci60pdpOAY5LkZ4GZ
-AFycRCxv9BnT2qou6NTjem4GpPWueE47LqwgiQkeE4PuShzV9DsJcb4h/7YHRZCd
-qO0M/7bWBBJXrrQqNCX6hHvZmS4Rsnf7Mp5mf+U1gloCBPRoOTM=
-=lsGa
------END PGP SIGNATURE-----
-
---nextPart1932750.CQOukoFCf9--
-
-
+2.39.5 (Apple Git-154)
 
 
