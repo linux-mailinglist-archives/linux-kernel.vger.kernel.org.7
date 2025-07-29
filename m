@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-748751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59EEBB145A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:12:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14287B145AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39D417AEE0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:11:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EB68543469
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F731D7E54;
-	Tue, 29 Jul 2025 01:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B1341DE2BC;
+	Tue, 29 Jul 2025 01:12:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cki3toNA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AO0HD63c"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17DA21D5AC0;
-	Tue, 29 Jul 2025 01:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963B81DC9A3;
+	Tue, 29 Jul 2025 01:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753751525; cv=none; b=KYavRFJ0sH8AsCwCBUtYRw0DY3buHMa/K1oXEM/pJdIcZyQk1cZzyGrCjbBCco8AEjq5PHMHOQ2Z0Hw8+LIQGRhQ8nt82zKXkq7+g8pcLwT4WIpBdd7wC8FmTMRdPSRdOJTwa/T1FlOCXe/t9t3QMUq73RgFGEO9Oxp58kF2pkg=
+	t=1753751526; cv=none; b=qzH7FzXw/5EybjD+r5DWfhKID/Fl7iwQQZvVYCuR3Tsc6Jxx/5bdjrE4W7HfQEQITe1T+Y2fuOohZ2psWYXiJY4dU2XUWKl0yScY+ICg3n+OB7QzIlVgIPVNEfQGYO+VAIpf+TWqBaVrmzRukNzevuJ6fhX2jnJQOxmIB1Q5H4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753751525; c=relaxed/simple;
-	bh=DhGVEgSZfVQ1SKNqb/j8EeNOhU9QfW8HBugQpTav9PE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=cpjMc51TlzK/PTSly4b66q/q9zUINeKr9T2JklivsoPp0tII04aUBsyT5rR9SP9fe6GRypl3pPSJBEEmFWV4miqMPymcYhcKGS1EBMIKNQSdKrOTsdXr8hgXXyZ1k7Wt+ZW8NUuy7DK10PAwxs2HwzoCl5H/03bvDp6rzIaq+a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cki3toNA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACF52C4CEE7;
-	Tue, 29 Jul 2025 01:12:04 +0000 (UTC)
+	s=arc-20240116; t=1753751526; c=relaxed/simple;
+	bh=gmUh9Sh0j0jgMr/SCvJje9JyCl+B9L8wg8DRgndPBHI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YNHH42MrSWvX82ToLtwB3Er/nvnYXcaVpwfuMC1NBlPRnL7kRy7G6i4TQSnRTlsp4cdlLKZLdjchATaQ31mGDdVx9L8JhXoy6xXGAkkQ6U3nWLkWD6FS0tVITw05cpyLEQeH8i/gczw9RQKmKHYYsLK1j4JoIej51QFLbYGRJuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AO0HD63c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35342C4CEF8;
+	Tue, 29 Jul 2025 01:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753751524;
-	bh=DhGVEgSZfVQ1SKNqb/j8EeNOhU9QfW8HBugQpTav9PE=;
+	s=k20201202; t=1753751526;
+	bh=gmUh9Sh0j0jgMr/SCvJje9JyCl+B9L8wg8DRgndPBHI=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=cki3toNACexcUkogDUgs9OtWOW0lzylA8cAD2yExS7q8GLNg2kX41wHhw5G4qbQWy
-	 rpqZK9N1Xqbq0kV2IcnJ/vObNKOau3EPDXNOjU1WyA0BvGn4UGNDYDLYT1gggsAsQ2
-	 VurwI6gL4YKEv1htdn8EFB64+do/dk0yrWrQo93325ITPBVYWODs/YAVCEV6YU5h2J
-	 Bn5lOuoByDWAbnL/88CwFsee2y2XCKyX8Ors5fgwbM9KbQfIcgFYdHnd5Z/5/YSIwU
-	 1iArBMNBjH4B0jp3rPur+UKxHWcPIAP5Q8bGLPfISNnsOqyijwBUeBglAZCj6jF9h5
-	 Vxj8zaJ4qpY5A==
+	b=AO0HD63czUVCPA3q7bImGWndVQsPIMJNH87zW9b0ss3uxomjKNQuJRbgUSEImtm8e
+	 iagTv9DzztMUAGzMtwpF+8q/G1fJFWDQ2wz+XHAGWRWLB9QM1o9ygyX2YqxoRvtfnt
+	 357ibN5oFNb5QxjTETa7BTdW0W78JbsuYkR+Hz1/s53jaOUb9LcVsrMyTaQ5eql8uc
+	 iYdkEPub+wfmezqyHMWO2JLfD3/Akm95Ed8HG4eZ+LN0S07YiAcAe3lTdP/fmEzKjt
+	 T3f0nXWp2ge/gCHgFD6zxNxLZqao4uUi35FQFcocBohcfrvsEndCIF99Jx+SniZn50
+	 6p7pCzVIGgkhA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70BE1383BF5F;
-	Tue, 29 Jul 2025 01:12:22 +0000 (UTC)
-Subject: Re: [GIT PULL] Crypto library tests for 6.17
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD14383BF5F;
+	Tue, 29 Jul 2025 01:12:23 +0000 (UTC)
+Subject: Re: [GIT PULL] fscrypt updates for 6.17
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250727234727.GD1261@sol>
-References: <20250727234727.GD1261@sol>
+In-Reply-To: <20250727234936.GE1261@sol>
+References: <20250727234936.GE1261@sol>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250727234727.GD1261@sol>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-tests-for-linus
-X-PR-Tracked-Commit-Id: 8cd876e7833758f8a924db2e39530d2a9afd2703
+X-PR-Tracked-Message-Id: <20250727234936.GE1261@sol>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
+X-PR-Tracked-Commit-Id: fa65058063cbaba6e519b5291a7e2e9e0fa24ae3
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f2f573ebd42d659111bc71279cc16e5e78e56ae7
-Message-Id: <175375154089.918485.2702091025415289613.pr-tracker-bot@kernel.org>
-Date: Tue, 29 Jul 2025 01:12:20 +0000
+X-PR-Merge-Commit-Id: 283564a43383d6f26a55546fe9ae345b5fa95e66
+Message-Id: <175375154263.918485.6243720015057369298.pr-tracker-bot@kernel.org>
+Date: Tue, 29 Jul 2025 01:12:22 +0000
 To: Eric Biggers <ebiggers@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jaegeuk Kim <jaegeuk@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Yuwen Chen <ywen.chen@foxmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Sun, 27 Jul 2025 16:47:27 -0700:
+The pull request you sent on Sun, 27 Jul 2025 16:49:36 -0700:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git tags/libcrypto-tests-for-linus
+> https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f2f573ebd42d659111bc71279cc16e5e78e56ae7
+https://git.kernel.org/torvalds/c/283564a43383d6f26a55546fe9ae345b5fa95e66
 
 Thank you!
 
