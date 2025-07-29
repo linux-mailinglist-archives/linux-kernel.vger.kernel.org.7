@@ -1,651 +1,159 @@
-Return-Path: <linux-kernel+bounces-749300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C34DB14C8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:51:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA2FFB14C95
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:53:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB65F7A5A1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:50:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1811B18A3403
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A1D28B417;
-	Tue, 29 Jul 2025 10:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XOC2RLBN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3852B28B407;
+	Tue, 29 Jul 2025 10:53:41 +0000 (UTC)
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B2122D79F;
-	Tue, 29 Jul 2025 10:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8EAC227EA8;
+	Tue, 29 Jul 2025 10:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753786304; cv=none; b=kEKJI2kVUZYsRNeVZ/Cw/nNgVKWADFlXeoP4U7L3P9tD08qHZPhW5JDEVlz1Be0zOVxTMzrFWEwJiCsLwxfRtyKH1BFvYUNQof2l4F2zvP5gEDAD6EzU4yeXXy8wvRQsqVQ4t++YKi2DJ9tAETsZzYD3enGERtJGTwzgliSH/0M=
+	t=1753786420; cv=none; b=Bjcf89LiPi6WNBXo5sIziLcYlyFis1dsjarrWAOtjMOSrv/v47xWSm1X4+CVUTtLb4vksjyJcGbGFvzc/89oKSf0YoZ1G6vwYwAQQaJ/t+hytf5u5PkwnfaB5sY5grFL/QFBjB1B3KQ2D4TvfHcrp56k6s8TgnAGg5ujxuFgUCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753786304; c=relaxed/simple;
-	bh=euClTFKCjc/gTjOTvgcnP1lCy9vOs0inJmAec9++6sg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fCj/3I6UQP1A1pISdniRvKTCITMm39Bjjhu/D+GhtQIpe4sCnF6GZJDJLZ/HQGhDQ1kjC0oekR2np8e9JFMeIYQb+K9uO+32dmaYciD/JBbvlASBaH9yN3OWEjzG+l5FhLjMqcvgBLOcQorKbIsrOoBWyTDMAMNAuiLkVD4oKr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XOC2RLBN; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753786302; x=1785322302;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=euClTFKCjc/gTjOTvgcnP1lCy9vOs0inJmAec9++6sg=;
-  b=XOC2RLBN8CTU5G3bZbQFTCsMIvvzVE7giRUSJA2k4wTNJn87pzc6dfDP
-   nMmvEPQ+He0feI5CPKE0FCVxwUOwbkd5NJ9XWjoKDrjjyjNUKndmY6vW1
-   o6dytGV9FZ8zeFtFM+Glpq6ozTyoK3XMd1bB8TyYS8TE2aW0SZATIoehT
-   oU0PTaTpRa/92u8yKPqTErhwrf8cwSOS59QxPs+uIcvA7ugqj+ejJborV
-   ssDP4qiGrT5vFKY5+YKdutStW+QpGtnJt0V1y/+FfRK0dFmBhStX5hArh
-   nHNphljO3IMoEdFNpfU/iwdWgg4kbY+hNJtC+ZcXJroWWcFGhNo2eoesj
-   g==;
-X-CSE-ConnectionGUID: 4h1/D0tmSnSlUs61/Qtpkg==
-X-CSE-MsgGUID: ycGsIBsnSrGr1aofJoGFYQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="81489685"
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="81489685"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 03:51:41 -0700
-X-CSE-ConnectionGUID: kYntZhajTqiABR1+/vn+ag==
-X-CSE-MsgGUID: pDbrRPPuSOi1Ds4GE1AkOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="163014339"
-Received: from amlin-018-114.igk.intel.com ([10.102.18.114])
-  by fmviesa009.fm.intel.com with ESMTP; 29 Jul 2025 03:51:37 -0700
-From: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-To: anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	sdf@fomichev.me,
-	almasrymina@google.com,
-	asml.silence@gmail.com,
-	leitao@debian.org,
-	kuniyu@google.com
-Cc: linux-kernel@vger.kernel.org,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Subject: [RFC PATCH] net: add net-device TX clock source selection framework
-Date: Tue, 29 Jul 2025 12:45:28 +0200
-Message-Id: <20250729104528.1984928-1-arkadiusz.kubalewski@intel.com>
-X-Mailer: git-send-email 2.38.1
+	s=arc-20240116; t=1753786420; c=relaxed/simple;
+	bh=+d1oFlygtYnY3YQHRCn/CocY7GrTw53GXvhZM4duu7E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jFvj4UvkIKasQ4XPEtSD+if4SfR/2a+q7GiffexPXvGuEfIiPK8Ej9VV8zAPhL6+t2HaqOdArLSbdEepCZLfprv/N0Z2x7pEig2w39yXHOT6bqzNt5vlLhBTeAjJ/irc8Z75tI/4dYOLipiQKDxy5i+qBkZrAaEGjpvEfLIAf94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-42a56f2e953so2421356b6e.2;
+        Tue, 29 Jul 2025 03:53:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753786415; x=1754391215;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y4bZ2YSDz9PcLt/y/YxbDypRm6SdmfKZh/m8NCUvhnc=;
+        b=WeiNJzcLc1sUsuzmRNT7+H11miN6reS8q8iy5+3nMQctlvIu4OPgYRM1gIw1B+7ig+
+         jPLjgHfYCYZRIdAyP880cbpstg9sjrE8MEQhVSAAocpPHsITUVHkwMvy9XeOCr8nvdQK
+         Nyj5ZCoRZyaxQ1l0LecZghMId/zRn5nnR8idrLkgWU13Jko2ZfqnK/mYWi0e9tW0IR2V
+         DhH1xCeZbvFLGgU2/k+WCvptKtWBcZYPi1EF1xlY9K28OUVwJfR50ORkQ0ZugZdJYNJO
+         3v6pFdl0ec4kHbTw4ye6IUofO4DzjmL3yp9qumCaE1n4aIJzhV46eZ2W3HkJUCfTh7mc
+         Mnyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdp4dfGciqTm30ktB6FMybpdXQC9NcAWN3nKEwXbkn+39oAKajyrhjc0Vdjtwt69Y2EfH6zgW6tsxKKgQ4@vger.kernel.org, AJvYcCWmUyonxzlHvOIBrn81FlaOtYCS6cMYW7PAjcR/eoIZ2IScngvnQ80UEHzzhF5IrwU1U6Hi2eKN1E5R@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt1aDZrlEaN28L8wBQsWqdvFk8dWzqbC9NQ1pGh6oopHm+h0uo
+	GPZ72RDkvFp4O60+TtQLxu0iND3Xq/Mdynup33E/sgzax4OJF7Okw7cok+1nVLx9
+X-Gm-Gg: ASbGncsWDe+gRHcGq1COe6n34XIXjFf3esz+4lY3gkE9l+wj/1ROqqELN6u053VJPZf
+	YwwP+eRzF0jYEs9SGnwySBnUSXD9YiZKQF77/TRRfsdO6hhVNaeVqEZSyXUEe8fnxJvXMoFaJZ+
+	W6FklcBlvdd8t7IujQEd3zlvg3CXdMSJJHw6fb9aKwdViHso5yKkO5WKkC8z9rbtLgmVjy9ersB
+	MC4ppoPoxZT/9bGpI3rMnFQly4RAurgFNZucGgjDy9315rdWtj2j3xBvkBusfgwL3boKTkMU7Xl
+	xWw69Sa6n6sImzdlTl325/xrcwUHQjlh0jmQjSA2HaBexdLa88MLLY48HrkWqvAzcq0WygVeUk/
+	hhN/Trnidd5+nINvAsZXxXQyNXr5YguXDHNeg7reX7nn4zo3MQ0DBcf7xarOz
+X-Google-Smtp-Source: AGHT+IHVBbqi8eag3by7f0Eu4hp+7d+6vfn4crgefLmRJZTxxglCx0m+quEyXXDLqD7+YguUo8xgkQ==
+X-Received: by 2002:a05:6808:21a1:b0:406:67b7:8b62 with SMTP id 5614622812f47-42bb9ff4a2dmr8822768b6e.38.1753786414619;
+        Tue, 29 Jul 2025 03:53:34 -0700 (PDT)
+Received: from mail-oo1-f52.google.com (mail-oo1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-42c7daaa9c4sm1490033b6e.35.2025.07.29.03.53.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 03:53:34 -0700 (PDT)
+Received: by mail-oo1-f52.google.com with SMTP id 006d021491bc7-615ed9a4f38so2475313eaf.0;
+        Tue, 29 Jul 2025 03:53:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW3L/AXcptint1iHw8qcewkBKnHprg7jOm63tToatQvyuyRuif0eqqRvcU8gkMjSM+zpPoCAMtgdDUAgGUI@vger.kernel.org, AJvYcCWkRRlSrKy2GK5dj/RHMKVBtK/F/hj+choWCo3zh3TF1Hvr23j7dpZmjTPC1cdkPCjk3G72UwGBISqq@vger.kernel.org
+X-Received: by 2002:a05:6102:4246:b0:4f9:69aa:60f with SMTP id
+ ada2fe7eead31-4fa3ff027ccmr6928627137.26.1753786050206; Tue, 29 Jul 2025
+ 03:47:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250726211053.2226857-1-arnd@kernel.org>
+In-Reply-To: <20250726211053.2226857-1-arnd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 Jul 2025 12:47:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU6Akz0GC2hooAxn=C2F0WjagPkzRKcH1SJiW0CBeUOaw@mail.gmail.com>
+X-Gm-Features: Ac12FXyj-OpHRoejRi6VLyYEX-xLeBjx5FaeTUCLN5Csigg1GPqNt4MZlMB_WOQ
+Message-ID: <CAMuHMdU6Akz0GC2hooAxn=C2F0WjagPkzRKcH1SJiW0CBeUOaw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Arnd Bergmann <arnd@arndb.de>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
+	kernel test robot <lkp@intel.com>, Peng Fan <peng.fan@nxp.com>, 
+	Koichiro Den <koichiro.den@canonical.com>, Lee Jones <lee@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	Nikolaos Pasaloukos <nikolaos.pasaloukos@blaize.com>, 
+	Thomas Richard <thomas.richard@bootlin.com>, Yixun Lan <dlan@gentoo.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add support for user-space control over network device transmit clock
-sources through a new sysfs interface.
-A network device may support multiple TX clock sources (OCXO, SyncE
-reference, external reference clocks) which are critical for
-time-sensitive networking applications and synchronization protocols.
+Hi Arnd,
 
-This patch introduces:
+On Sat, 26 Jul 2025 at 23:11, Arnd Bergmann <arnd@kernel.org> wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> A few drivers that use the legacy GPIOLIB interfaces can be enabled
+> even when GPIOLIB is disabled entirely. With my previous patch this
+> now causes build failures like:
+>
+>    drivers/nfc/s3fwrn5/uart.c: In function 's3fwrn82_uart_parse_dt':
+>         drivers/nfc/s3fwrn5/uart.c:100:14: error: implicit declaration of function 'gpio_is_valid'; did you mean 'uuid_is_valid'? [-Werror=implicit-function-declaration]
+>
+> These did not show up in my randconfig tests because randconfig almost
+> always has GPIOLIB selected by some other driver, and I did most
+> of the testing with follow-up patches that address the failures
+> properly.
+>
+> Move the symbol outside of the 'if CONFIG_GPIOLIB' block for the moment
+> to avoid the build failures. It can be moved back and turned off by
+> default once all the driver specific changes are merged.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202507261934.yIHeUuEQ-lkp@intel.com/
+> Fixes: 678bae2eaa81 ("gpiolib: make legacy interfaces optional")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-1. Core TX clock framework (net/core/tx_clk.c):
-- per net-device clock source registration and management
-- sysfs interface under /sys/class/net/<device>/tx_clk/
-- thread-safe clock switching by using mutex locking
+Thanks for your patch, which is now commit a86240a37d43fc22 ("gpiolib:
+enable CONFIG_GPIOLIB_LEGACY even for !GPIOLIB") in linus/master
 
-2. Generic netdev integration:
-- new netdev_tx_clk_ops structure for driver callbacks
-- TX clock list and kobject directory in struct net_device
-- registration/cleanup functions for driver use
+> --- a/drivers/gpio/Kconfig
+> +++ b/drivers/gpio/Kconfig
+> @@ -12,11 +12,11 @@ menuconfig GPIOLIB
+>
+>           If unsure, say N.
+>
+> -if GPIOLIB
+> -
+>  config GPIOLIB_LEGACY
+>         def_bool y
+>
+> +if GPIOLIB
+> +
+>  config GPIOLIB_FASTPATH_LIMIT
+>         int "Maximum number of GPIOs for fast path"
+>         range 32 512
 
-3. Intel ICE driver implementation:
-- support for E825 series network cards
-- three clock sources: OCXO (default), SyncE_ref, ext_ref
-- per-PF clock state management
+This won't work for everything.
+While I now get CONFIG_GPIOLIB_LEGACY=y in all m68k defconfigs, and
+simple inline functions like gpio_is_valid() are now available, more
+complex functions will still fail, as drivers/gpio/gpiolib-legacy.c
+is not built.
 
-4. Kconfig option NET_TX_CLK:
-- optional feature + user documentation
+drivers/Makefile:
 
-User interface:
-- Read /sys/class/net/<device>/tx_clk/<clock_name> to get status (0/1)
-- Write "1" to switch to that clock source
-- Writing "0" is not supported (one clock must always be active)
+    obj-$(CONFIG_GPIOLIB)           += gpio/
 
-Example usage:
-  # Check current clock status
-  $ cat /sys/class/net/eth0/tx_clk/*
+Gr{oetje,eeting}s,
 
-  # Switch to external reference clock
-  $ echo 1 > /sys/class/net/eth0/tx_clk/ext_ref
+                        Geert
 
-Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
----
- drivers/net/ethernet/intel/ice/Makefile     |   1 +
- drivers/net/ethernet/intel/ice/ice.h        |   5 +
- drivers/net/ethernet/intel/ice/ice_lib.c    |   6 +
- drivers/net/ethernet/intel/ice/ice_main.c   |   6 +
- drivers/net/ethernet/intel/ice/ice_tx_clk.c | 113 +++++++++++++++
- drivers/net/ethernet/intel/ice/ice_tx_clk.h |  17 +++
- include/linux/netdev_tx_clk.h               |  43 ++++++
- include/linux/netdevice.h                   |   6 +
- net/Kconfig                                 |  21 +++
- net/Makefile                                |   1 +
- net/core/Makefile                           |   1 +
- net/core/tx_clk.c                           | 150 ++++++++++++++++++++
- 12 files changed, 370 insertions(+)
- create mode 100644 drivers/net/ethernet/intel/ice/ice_tx_clk.c
- create mode 100644 drivers/net/ethernet/intel/ice/ice_tx_clk.h
- create mode 100644 include/linux/netdev_tx_clk.h
- create mode 100644 net/core/tx_clk.c
-
-diff --git a/drivers/net/ethernet/intel/ice/Makefile b/drivers/net/ethernet/intel/ice/Makefile
-index d0f9c9492363..31f0dc580900 100644
---- a/drivers/net/ethernet/intel/ice/Makefile
-+++ b/drivers/net/ethernet/intel/ice/Makefile
-@@ -60,3 +60,4 @@ ice-$(CONFIG_XDP_SOCKETS) += ice_xsk.o
- ice-$(CONFIG_ICE_SWITCHDEV) += ice_eswitch.o ice_eswitch_br.o
- ice-$(CONFIG_GNSS) += ice_gnss.o
- ice-$(CONFIG_ICE_HWMON) += ice_hwmon.o
-+ice-$(CONFIG_NET_TX_CLK) += ice_tx_clk.o
-diff --git a/drivers/net/ethernet/intel/ice/ice.h b/drivers/net/ethernet/intel/ice/ice.h
-index 2098f00b3cd3..116c8668f504 100644
---- a/drivers/net/ethernet/intel/ice/ice.h
-+++ b/drivers/net/ethernet/intel/ice/ice.h
-@@ -204,6 +204,7 @@ enum ice_feature {
- 	ICE_F_ROCE_LAG,
- 	ICE_F_SRIOV_LAG,
- 	ICE_F_MBX_LIMIT,
-+	ICE_F_TX_CLK,
- 	ICE_F_MAX
- };
- 
-@@ -661,6 +662,10 @@ struct ice_pf {
- 	struct device *hwmon_dev;
- 	struct ice_health health_reporters;
- 	struct iidc_rdma_core_dev_info *cdev_info;
-+#ifdef CONFIG_NET_TX_CLK
-+	void *tx_clk_data;  /* Private clock data */
-+	u8 tx_clk_active;   /* Currently active TX clock ID */
-+#endif
- 
- 	u8 num_quanta_prof_used;
- };
-diff --git a/drivers/net/ethernet/intel/ice/ice_lib.c b/drivers/net/ethernet/intel/ice/ice_lib.c
-index a439b5a61a56..34efba93a450 100644
---- a/drivers/net/ethernet/intel/ice/ice_lib.c
-+++ b/drivers/net/ethernet/intel/ice/ice_lib.c
-@@ -3943,6 +3943,12 @@ void ice_init_feature_support(struct ice_pf *pf)
- 		if (ice_gnss_is_module_present(&pf->hw))
- 			ice_set_feature_support(pf, ICE_F_GNSS);
- 		break;
-+	case ICE_DEV_ID_E825C_BACKPLANE:
-+	case ICE_DEV_ID_E825C_QSFP:
-+	case ICE_DEV_ID_E825C_SFP:
-+	case ICE_DEV_ID_E825C_SGMII:
-+		ice_set_feature_support(pf, ICE_F_TX_CLK);
-+		break;
- 	default:
- 		break;
- 	}
-diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
-index 8e0b06c1e02b..80ed03d7b02e 100644
---- a/drivers/net/ethernet/intel/ice/ice_main.c
-+++ b/drivers/net/ethernet/intel/ice/ice_main.c
-@@ -27,6 +27,7 @@
- #include "ice_tc_lib.h"
- #include "ice_vsi_vlan_ops.h"
- #include <net/xdp_sock_drv.h>
-+#include "ice_tx_clk.h"
- 
- #define DRV_SUMMARY	"Intel(R) Ethernet Connection E800 Series Linux Driver"
- static const char ice_driver_string[] = DRV_SUMMARY;
-@@ -4854,6 +4855,9 @@ static void ice_init_features(struct ice_pf *pf)
- 	if (ice_init_lag(pf))
- 		dev_warn(dev, "Failed to init link aggregation support\n");
- 
-+	if (ice_is_feature_supported(pf, ICE_F_TX_CLK))
-+		ice_tx_clk_init(pf);
-+
- 	ice_hwmon_init(pf);
- }
- 
-@@ -4874,6 +4878,8 @@ static void ice_deinit_features(struct ice_pf *pf)
- 		ice_dpll_deinit(pf);
- 	if (pf->eswitch_mode == DEVLINK_ESWITCH_MODE_SWITCHDEV)
- 		xa_destroy(&pf->eswitch.reprs);
-+	if (ice_is_feature_supported(pf, ICE_F_TX_CLK))
-+		ice_tx_clk_deinit(pf);
- }
- 
- static void ice_init_wakeup(struct ice_pf *pf)
-diff --git a/drivers/net/ethernet/intel/ice/ice_tx_clk.c b/drivers/net/ethernet/intel/ice/ice_tx_clk.c
-new file mode 100644
-index 000000000000..121e9fa0c146
---- /dev/null
-+++ b/drivers/net/ethernet/intel/ice/ice_tx_clk.c
-@@ -0,0 +1,113 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/* Copyright (C) 2025, Intel Corporation. */
-+
-+#include <linux/netdev_tx_clk.h>
-+#include "ice_tx_clk.h"
-+
-+enum ice_clk_type {
-+	ICE_TX_CLK_OCXO = 0,
-+	ICE_TX_CLK_SYNCE_REF,
-+	ICE_TX_CLK_EXT_REF,
-+
-+	ICE_TX_CLK_COUNT /* always last */
-+};
-+
-+static const char *ice_clk_names[ICE_TX_CLK_COUNT] = {
-+	"ocxo",
-+	"SyncE_ref",
-+	"ext_ref"
-+};
-+
-+struct ice_tx_clk_data {
-+	struct ice_pf *pf;
-+	u8 clk_id;
-+};
-+
-+static const struct netdev_tx_clk_ops ice_tx_clk_ops;
-+
-+static int ice_tx_clk_enable(void *priv_data)
-+{
-+	struct ice_tx_clk_data *clk_data = priv_data;
-+	struct ice_pf *pf = clk_data->pf;
-+	u8 clk_id = clk_data->clk_id;
-+
-+	if (clk_id >= ICE_TX_CLK_COUNT) {
-+		dev_err(ice_pf_to_dev(pf), "Invalid clock ID: %d\n", clk_id);
-+		return -EINVAL;
-+	}
-+
-+	if (pf->tx_clk_active != clk_id) {
-+		dev_dbg(ice_pf_to_dev(pf), "PF%d switching from %s to %s clock\n",
-+			pf->hw.pf_id, ice_clk_names[pf->tx_clk_active],
-+			ice_clk_names[clk_id]);
-+
-+		pf->tx_clk_active = clk_id;
-+		/* TODO: add TX clock switching logic */
-+	}
-+
-+	return 0;
-+}
-+
-+static int ice_tx_clk_is_enabled(void *priv_data)
-+{
-+	struct ice_tx_clk_data *clk_data = priv_data;
-+	struct ice_pf *pf = clk_data->pf;
-+	u8 clk_id = clk_data->clk_id;
-+
-+	return (pf->tx_clk_active == clk_id) ? 1 : 0;
-+}
-+
-+static const struct netdev_tx_clk_ops ice_tx_clk_ops = {
-+	.enable = ice_tx_clk_enable,
-+	.is_enabled = ice_tx_clk_is_enabled,
-+};
-+
-+void ice_tx_clk_init(struct ice_pf *pf)
-+{
-+	struct ice_vsi *vsi = ice_get_main_vsi(pf);
-+	struct ice_tx_clk_data *clk_data[ICE_TX_CLK_COUNT];
-+	int i, ret;
-+
-+	if (!vsi || !vsi->netdev)
-+		return;
-+
-+	for (i = 0; i < ICE_TX_CLK_COUNT; i++) {
-+		clk_data[i] = kzalloc(sizeof(*clk_data[i]), GFP_KERNEL);
-+		if (!clk_data[i]) {
-+			while (--i >= 0)
-+				kfree(clk_data[i]);
-+			return;
-+		}
-+
-+		clk_data[i]->pf = pf;
-+		clk_data[i]->clk_id = i;
-+	}
-+
-+	pf->tx_clk_active = ICE_TX_CLK_OCXO;
-+
-+	for (i = 0; i < ICE_TX_CLK_COUNT; i++) {
-+		ret = netdev_tx_clk_register(vsi->netdev, ice_clk_names[i],
-+					     &ice_tx_clk_ops, clk_data[i]);
-+		if (ret) {
-+			dev_err(ice_pf_to_dev(pf),
-+				"Failed to register %s clock: %d\n",
-+				ice_clk_names[i], ret);
-+		}
-+	}
-+
-+	dev_dbg(ice_pf_to_dev(pf), "ICE TX clocks initialized for PF%d (default: %s)\n",
-+		pf->hw.pf_id, ice_clk_names[ICE_TX_CLK_OCXO]);
-+}
-+
-+void ice_tx_clk_deinit(struct ice_pf *pf)
-+{
-+	struct ice_vsi *vsi = ice_get_main_vsi(pf);
-+
-+	if (!vsi || !vsi->netdev)
-+		return;
-+
-+	netdev_tx_clk_cleanup(vsi->netdev);
-+
-+	dev_dbg(ice_pf_to_dev(pf), "ICE TX clocks deinitialized for PF%d\n",
-+		pf->hw.pf_id);
-+}
-diff --git a/drivers/net/ethernet/intel/ice/ice_tx_clk.h b/drivers/net/ethernet/intel/ice/ice_tx_clk.h
-new file mode 100644
-index 000000000000..02ede41dfefa
---- /dev/null
-+++ b/drivers/net/ethernet/intel/ice/ice_tx_clk.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* Copyright (C) 2025, Intel Corporation. */
-+
-+#ifndef _ICE_TX_CLK_H_
-+#define _ICE_TX_CLK_H_
-+
-+#include "ice.h"
-+
-+#if IS_ENABLED(CONFIG_NET_TX_CLK)
-+void ice_tx_clk_init(struct ice_pf *pf);
-+void ice_tx_clk_deinit(struct ice_pf *pf);
-+#else
-+static inline void ice_tx_clk_init(struct ice_pf *pf) { }
-+static inline void ice_tx_clk_deinit(struct ice_pf *pf) { }
-+#endif
-+
-+#endif /* _ICE_TX_CLK_H_ */
-diff --git a/include/linux/netdev_tx_clk.h b/include/linux/netdev_tx_clk.h
-new file mode 100644
-index 000000000000..3ba820b40fed
---- /dev/null
-+++ b/include/linux/netdev_tx_clk.h
-@@ -0,0 +1,43 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/*
-+ * netdev_tx_clk.h - allow net_device TX clock control
-+ * Author: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-+ */
-+
-+#ifndef __NETDEV_TX_CLK_H
-+#define __NETDEV_TX_CLK_H
-+
-+#include <linux/netdevice.h>
-+
-+/**
-+ * struct netdev_tx_clk_ops - TX clock operations
-+ * @enable: switch to this clock (called when user writes "1" to sysfs)
-+ * @is_enabled: check if this clock is currently active
-+ *
-+ * Note: one clock must always be active, writing "0" to disable is not
-+ * supported.
-+ */
-+struct netdev_tx_clk_ops {
-+	int (*enable)(void *priv_data);
-+	int (*is_enabled)(void *priv_data);
-+};
-+#if IS_ENABLED(CONFIG_NET_TX_CLK)
-+
-+int netdev_tx_clk_register(struct net_device *ndev, const char *clk_name,
-+			   const struct netdev_tx_clk_ops *ops,
-+			   void *priv_data);
-+
-+void netdev_tx_clk_cleanup(struct net_device *ndev);
-+#else
-+
-+static inline int netdev_tx_clk_register(struct net_device *ndev, const char *clk_name,
-+					 const struct netdev_tx_clk_ops *ops,
-+					 void *priv_data)
-+{
-+	return 0;
-+}
-+
-+static inline void netdev_tx_clk_cleanup(struct net_device *ndev) { }
-+#endif
-+
-+#endif /* __NETDEV_TX_CLK_H */
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index 5e5de4b0a433..b09a1eff4d4d 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -23,6 +23,7 @@
- 
- #include <linux/timer.h>
- #include <linux/bug.h>
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/atomic.h>
- #include <linux/prefetch.h>
-@@ -2552,6 +2553,11 @@ struct net_device {
- 
- 	struct hwtstamp_provider __rcu	*hwprov;
- 
-+#if IS_ENABLED(CONFIG_NET_TX_CLK)
-+	struct list_head	tx_clk_list;
-+	struct kobject		*tx_clk_dir;
-+
-+#endif
- 	u8			priv[] ____cacheline_aligned
- 				       __counted_by(priv_len);
- } ____cacheline_aligned;
-diff --git a/net/Kconfig b/net/Kconfig
-index d5865cf19799..b0c7ce6ce046 100644
---- a/net/Kconfig
-+++ b/net/Kconfig
-@@ -541,4 +541,25 @@ config NET_TEST
- 
- 	  If unsure, say N.
- 
-+config NET_TX_CLK
-+	bool "Control over source of TX clock per network device"
-+	depends on COMMON_CLK && NET
-+	default n
-+	help
-+	  This feature enables per-device control over TX clock sources in
-+	  networking hardware. Network devices may support multiple transmit
-+	  clock sources such as different oscillators, OCXOs, PLLs, or
-+	  external clock signals provided via onboard pins.
-+
-+	  When enabled, supported network devices will create a tx_clk
-+	  directory under their sysfs entry (/sys/class/net/<device>/tx_clk/).
-+	  Users can select an available clock source by writing '1' to the
-+	  corresponding file in this directory. The status of each clock
-+	  source can be checked by reading the file (0 = disabled, 1 = enabled).
-+
-+	  This is useful for applications requiring precise timing control,
-+	  such as time-sensitive networking (TSN) or synchronization protocols.
-+
-+	  If unsure, say N.
-+
- endif   # if NET
-diff --git a/net/Makefile b/net/Makefile
-index aac960c41db6..f78f46444efa 100644
---- a/net/Makefile
-+++ b/net/Makefile
-@@ -79,3 +79,4 @@ obj-$(CONFIG_MPTCP)		+= mptcp/
- obj-$(CONFIG_MCTP)		+= mctp/
- obj-$(CONFIG_NET_HANDSHAKE)	+= handshake/
- obj-$(CONFIG_NET_SHAPER)	+= shaper/
-+obj-$(CONFIG_PHY_CLK_USER)	+= phy_clk/
-diff --git a/net/core/Makefile b/net/core/Makefile
-index b2a76ce33932..7e4031813b18 100644
---- a/net/core/Makefile
-+++ b/net/core/Makefile
-@@ -47,3 +47,4 @@ obj-$(CONFIG_NET_TEST) += net_test.o
- obj-$(CONFIG_NET_DEVMEM) += devmem.o
- obj-$(CONFIG_DEBUG_NET) += lock_debug.o
- obj-$(CONFIG_FAIL_SKB_REALLOC) += skb_fault_injection.o
-+obj-$(CONFIG_NET_TX_CLK) += tx_clk.o
-diff --git a/net/core/tx_clk.c b/net/core/tx_clk.c
-new file mode 100644
-index 000000000000..fbbc6497e563
---- /dev/null
-+++ b/net/core/tx_clk.c
-@@ -0,0 +1,150 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Network device TX clock control framework
-+ * Simple sysfs interface for userspace TX clock management
-+ * Author: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-+ */
-+
-+#include <linux/netdevice.h>
-+#include <linux/netdev_tx_clk.h>
-+#include <linux/sysfs.h>
-+#include <linux/kobject.h>
-+#include <linux/mutex.h>
-+#include <linux/slab.h>
-+
-+/* Simple clock entry structure */
-+struct tx_clk_entry {
-+	char name[32];
-+	const struct netdev_tx_clk_ops *ops;
-+	void *priv_data;
-+	struct kobj_attribute attr;
-+	struct list_head list;
-+};
-+
-+static DEFINE_MUTEX(tx_clk_mutex);
-+
-+static ssize_t tx_clk_show(struct kobject *kobj, struct kobj_attribute *attr,
-+			   char *buf)
-+{
-+	struct tx_clk_entry *entry = container_of(attr, struct tx_clk_entry,
-+						  attr);
-+	int ret = entry->ops->is_enabled(entry->priv_data);
-+
-+	if (ret != 0 && ret != 1)
-+		return ret;
-+
-+	return sprintf(buf, "%d\n", ret);
-+}
-+
-+static ssize_t tx_clk_store(struct kobject *kobj, struct kobj_attribute *attr,
-+			    const char *buf, size_t count)
-+{
-+	struct tx_clk_entry *entry = container_of(attr, struct tx_clk_entry,
-+						  attr);
-+	int val, ret;
-+
-+	ret = kstrtoint(buf, 10, &val);
-+	if (ret)
-+		return ret;
-+
-+	/* Cannot disable - one clock must always be active */
-+	if (val != 1)
-+		return -EINVAL;
-+
-+	mutex_lock(&tx_clk_mutex);
-+	ret = entry->ops->enable(entry->priv_data);
-+	mutex_unlock(&tx_clk_mutex);
-+
-+	return ret ? ret : count;
-+}
-+
-+/**
-+ * netdev_tx_clk_register - register a TX clock for a network device
-+ * @ndev: network device
-+ * @clk_name: clock name (visible in sysfs)
-+ * @ops: clock operations
-+ * @priv_data: private data for callbacks
-+ *
-+ * Returns 0 on success, negative error code on failure
-+ */
-+int netdev_tx_clk_register(struct net_device *ndev, const char *clk_name,
-+			   const struct netdev_tx_clk_ops *ops,
-+			   void *priv_data)
-+{
-+	struct tx_clk_entry *entry;
-+	int ret;
-+
-+	if (WARN_ON(!ndev || !clk_name || !ops))
-+		return -EINVAL;
-+
-+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+	if (!entry)
-+		return -ENOMEM;
-+
-+	strscpy(entry->name, clk_name, sizeof(entry->name) - 1);
-+	entry->ops = ops;
-+	entry->priv_data = priv_data;
-+	INIT_LIST_HEAD(&entry->list);
-+
-+	/* Setup sysfs attribute */
-+	entry->attr.attr.name = entry->name;
-+	entry->attr.attr.mode = 0644;
-+	entry->attr.show = tx_clk_show;
-+	entry->attr.store = tx_clk_store;
-+
-+	mutex_lock(&tx_clk_mutex);
-+
-+	if (!ndev->tx_clk_dir) {
-+		INIT_LIST_HEAD(&ndev->tx_clk_list);
-+		ndev->tx_clk_dir = kobject_create_and_add("tx_clk", &ndev->dev.kobj);
-+		if (!ndev->tx_clk_dir) {
-+			kfree(entry);
-+			mutex_unlock(&tx_clk_mutex);
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	/* Add to device's clock list */
-+	list_add_tail(&entry->list, &ndev->tx_clk_list);
-+
-+	/* Create sysfs file */
-+	ret = sysfs_create_file(ndev->tx_clk_dir, &entry->attr.attr);
-+	if (ret) {
-+		list_del(&entry->list);
-+		kfree(entry);
-+		mutex_unlock(&tx_clk_mutex);
-+		return ret;
-+	}
-+
-+	mutex_unlock(&tx_clk_mutex);
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(netdev_tx_clk_register);
-+
-+/**
-+ * netdev_tx_clk_cleanup - cleanup all TX clocks for a network device
-+ * @ndev: network device
-+ */
-+void netdev_tx_clk_cleanup(struct net_device *ndev)
-+{
-+	struct tx_clk_entry *entry, *tmp;
-+
-+	if (!ndev)
-+		return;
-+
-+	mutex_lock(&tx_clk_mutex);
-+
-+	list_for_each_entry_safe(entry, tmp, &ndev->tx_clk_list, list) {
-+		sysfs_remove_file(ndev->tx_clk_dir, &entry->attr.attr);
-+		list_del(&entry->list);
-+		kfree(entry);
-+	}
-+
-+	if (ndev->tx_clk_dir) {
-+		kobject_put(ndev->tx_clk_dir);
-+		ndev->tx_clk_dir = NULL;
-+	}
-+
-+	mutex_unlock(&tx_clk_mutex);
-+}
-+EXPORT_SYMBOL_GPL(netdev_tx_clk_cleanup);
-
-base-commit: fa582ca7e187a15e772e6a72fe035f649b387a60
 -- 
-2.38.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
