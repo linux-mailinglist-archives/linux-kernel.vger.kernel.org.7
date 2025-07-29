@@ -1,147 +1,112 @@
-Return-Path: <linux-kernel+bounces-749602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14AEB15070
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:49:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1048EB15073
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F127918A1FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:49:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEAAD18834FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5A3296153;
-	Tue, 29 Jul 2025 15:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A629F298998;
+	Tue, 29 Jul 2025 15:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ai7G92Bu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="X9z8Bcm6";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Ai7G92Bu";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="X9z8Bcm6"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeboxoC0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F72329552F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 107C4295DBD;
+	Tue, 29 Jul 2025 15:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753804153; cv=none; b=JneMNitscrigMO/oPVerfoAb6da1gIWn1kxUiAPokfafN9NUNyuCAkoedzNRuhYQ3gmSmGidvzKMgPwiq+PiysvJ4jkoLFX48Qi+lWq2yTnb4WjZdBuqCJNGcKv5KYnQBQZeMezmdAigaoeg5WOZKe0v8nrdnz34lBzuIHIuQ40=
+	t=1753804163; cv=none; b=I/qd7aEVAor/unN1I/dkfHbH7ovXHJCQMhaHHDTcYjmFB0F3Fz5bS+SZ39Vt9KffOoAfRwRKPq3PUpLogzhkwKKBRMqKuEZy6FQawyRcEeJBAwr4qSHuHbqmJ25z0KT5beV2TAmuAmP6+9zcMpiIGl5VXHNOvmg74ljRxzF5BJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753804153; c=relaxed/simple;
-	bh=IVNy6v9HGzm94qke8swRbmLaY42nxP91LpFEJqAQ4l0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B2rzvhWpkUDrwps7HB7q0YYYvg6/H1UW5OwYvrNahouJs+WfLwMx/+PQqC4n9Y4zGiBwltpWKpZLoI6sT9KiKia1Ky9Bzav9lcFOF7EQi2C3uueqxOJS9UQt8gGVKdsqSWn2M8WJuKFXpMwIDuk2Q5bGVkwdx9VF2/qNwZs+lUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ai7G92Bu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=X9z8Bcm6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Ai7G92Bu; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=X9z8Bcm6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 64DF11F397;
-	Tue, 29 Jul 2025 15:49:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753804148; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpUU701DImrDdhgMT8J+8eS3XOnIAyB/YwvE+FSAL4M=;
-	b=Ai7G92BuqFGZXtbhwbN0/wqybH13lSuUBzlkavMBR8p6xsTzs+EMVYyX+2wLSdB9aOguoe
-	+uQ1ONwfJ2VVLIjaihWnmch3vfWuKjKSgblxbS12FBOxwQu9RPD2Fcv/2QqYJ4Tu6Al8hQ
-	bIp77nrgNthZ3vEnh9qnVHkv71ydB4A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753804148;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpUU701DImrDdhgMT8J+8eS3XOnIAyB/YwvE+FSAL4M=;
-	b=X9z8Bcm6sYXYHh1OFKCmWnsi2eeutNHmilCSnz6pg36gXXONGiKNFnKV8+hCDI3RRR3YeE
-	dLhHhedtkxWYChBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753804148; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpUU701DImrDdhgMT8J+8eS3XOnIAyB/YwvE+FSAL4M=;
-	b=Ai7G92BuqFGZXtbhwbN0/wqybH13lSuUBzlkavMBR8p6xsTzs+EMVYyX+2wLSdB9aOguoe
-	+uQ1ONwfJ2VVLIjaihWnmch3vfWuKjKSgblxbS12FBOxwQu9RPD2Fcv/2QqYJ4Tu6Al8hQ
-	bIp77nrgNthZ3vEnh9qnVHkv71ydB4A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753804148;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cpUU701DImrDdhgMT8J+8eS3XOnIAyB/YwvE+FSAL4M=;
-	b=X9z8Bcm6sYXYHh1OFKCmWnsi2eeutNHmilCSnz6pg36gXXONGiKNFnKV8+hCDI3RRR3YeE
-	dLhHhedtkxWYChBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 273EF13A73;
-	Tue, 29 Jul 2025 15:49:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OXfrB3TtiGjMUQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 29 Jul 2025 15:49:08 +0000
-Date: Tue, 29 Jul 2025 17:49:07 +0200
-Message-ID: <877bzrt2to.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Baojun Xu <baojun.xu@ti.com>
-Cc: <broonie@kernel.org>,
-	<andriy.shevchenko@linux.intel.com>,
-	<alsa-devel@alsa-project.org>,
-	<shenghao-ding@ti.com>,
-	<13916275206@139.com>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ALSA: hda: Fix the wrong register was used for DVC of TAS2770
-In-Reply-To: <20250729145849.55057-1-baojun.xu@ti.com>
-References: <20250729145849.55057-1-baojun.xu@ti.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1753804163; c=relaxed/simple;
+	bh=zGmD3167+YxqSnrktPvUpd/I+LwF4Gpt9JasfT/czbI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ozf0ycrQykltt60rVjW0eCBrg+BdJEIiDnS6aiDj+3nW/ATQ6XLrr63jKGw5XHWflgkQtC8SekqTMdTzqQ7wER4zdN7bvXMr9fiXJAe/TNTfYDyYOAlM0EgSXQeoOWgVtC1vUV8iU/t/FAO16OLCXZ4qnZqkB7hDiLa0GNjK8JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeboxoC0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B592C4CEF7;
+	Tue, 29 Jul 2025 15:49:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753804162;
+	bh=zGmD3167+YxqSnrktPvUpd/I+LwF4Gpt9JasfT/czbI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UeboxoC0XEFnibrKKHSRwegzcAX9Gg+RhiCj6Haa0TJjlD1BVMkwgmXfrJBtEBnxP
+	 zDTnwzuZwLG67Fj/v5t8/XGCpeIf06lg2vk99rSoWwwpeX8S+r8HDkZZ3Rh4m/2s4w
+	 vnr5MfuqN1p3Mim9m8fWyeSoioEDjSFx8rIe9TRitumdSkzjdSrxjys1arowqP8Pzg
+	 igl4jAsxDXNrViv5axls2jFY+F2z9YU7DEsVUJaHSzRAqzR7Pyg8pWvz9WFyFPMZZ5
+	 cr/07hivBzg8aIMLB0v8GMf77IgZNTMw0/5jcKYsW7/UVKOaynIDfBZhvrZ96j805G
+	 nmrlQmXPYUZpA==
+Date: Tue, 29 Jul 2025 16:49:16 +0100
+From: Will Deacon <will@kernel.org>
+To: perlarsen@google.com
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, ahomescu@google.com,
+	armellel@google.com, arve@android.com, ayrton@google.com,
+	qperret@google.com, sebastianene@google.com, qwandor@google.com
+Subject: Re: [PATCH v8 6/7] KVM: arm64: Bump the supported version of FF-A to
+ 1.2
+Message-ID: <aIjtfPY2db0LOwe4@willie-the-truck>
+References: <20250719-virtio-msg-ffa-v8-0-03e8e8dbe856@google.com>
+ <20250719-virtio-msg-ffa-v8-6-03e8e8dbe856@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[139.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FREEMAIL_CC(0.00)[kernel.org,linux.intel.com,alsa-project.org,ti.com,139.com,vger.kernel.org];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[ti.com:email,suse.de:mid]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250719-virtio-msg-ffa-v8-6-03e8e8dbe856@google.com>
 
-On Tue, 29 Jul 2025 16:58:49 +0200,
-Baojun Xu wrote:
+On Sat, Jul 19, 2025 at 02:11:28AM +0000, Per Larsen via B4 Relay wrote:
+> From: Per Larsen <perlarsen@google.com>
 > 
-> The wrong register was used for digital volume control of TAS2770,
-> The definition was changed, and usage was also updated.
+> FF-A version 1.2 introduces the DIRECT_REQ2 ABI. Bump the FF-A version
+> preferred by the hypervisor as a precursor to implementing the 1.2-only
+> FFA_MSG_SEND_DIRECT_REQ2 and FFA_MSG_SEND_RESP2 messaging interfaces.
 > 
-> Fixes: ab29b3460c5c ("ALSA: hda: Add TAS2770 support")
+> Co-developed-by: Ayrton Munoz <ayrton@google.com>
+> Signed-off-by: Ayrton Munoz <ayrton@google.com>
+> Signed-off-by: Per Larsen <perlarsen@google.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 2cbecc9af5d27a9e7c8497001cf9b0987c72bdb4..f6d964df53c3e21ba85984f35cc7b6859012d1b0 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -930,7 +930,7 @@ int hyp_ffa_init(void *pages)
+>  
+>  	arm_smccc_1_2_smc(&(struct arm_smccc_1_2_regs) {
+>  		.a0 = FFA_VERSION,
+> -		.a1 = FFA_VERSION_1_1,
+> +		.a1 = FFA_VERSION_1_2,
+>  	}, &res);
+>  	if (res.a0 == FFA_RET_NOT_SUPPORTED)
+>  		return 0;
+> @@ -951,10 +951,10 @@ int hyp_ffa_init(void *pages)
+>  	if (FFA_MAJOR_VERSION(res.a0) != 1)
+>  		return -EOPNOTSUPP;
+>  
+> -	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_1))
+> +	if (FFA_MINOR_VERSION(res.a0) < FFA_MINOR_VERSION(FFA_VERSION_1_2))
+>  		hyp_ffa_version = res.a0;
+>  	else
+> -		hyp_ffa_version = FFA_VERSION_1_1;
+> +		hyp_ffa_version = FFA_VERSION_1_2;
 
-Applied now.  Thanks.
+Acked-by: Will Deacon <will@kernel.org>
 
-
-Takashi
+Will
 
