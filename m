@@ -1,117 +1,144 @@
-Return-Path: <linux-kernel+bounces-749339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1955CB14D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:42:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9276B14D23
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D3D418A218A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:42:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8B443AAC1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909EC28EC1C;
-	Tue, 29 Jul 2025 11:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E821728ECD8;
+	Tue, 29 Jul 2025 11:44:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M/M0g+vz"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Co9Q53D7"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6738821ADAE;
-	Tue, 29 Jul 2025 11:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42B7288C27
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753789329; cv=none; b=DhhhIyE9Zjf5RP0CY8m5OpQ36QTJAjlYaySsAiwVdm9vnPE8y6PHr6/+FkEYQ/KZ9FP9Xyb4VMHqoTUGlWOVhbGhzZqDCWkIoareJJAFDqpcYL3RLwNWr50HyF77Ho675mI0GirxhVfPv50YK51P76AH+8yRkYRTNFLNcRUuMew=
+	t=1753789458; cv=none; b=Ra3NpAG9shAZz+ZS5KOrr0c43KXk5K+BHX4nS1cDtBaoQeVKUu4eiSweh5JuZ2b6jkGvZT8QTgg617C1ulPfa6ISG98+ZAZoT+ys17lRLpMBPNhCMGcbfbROkyyve1FmlEl11lmu/zW+rYj4bzETVF0yOKYcKYnRHq95E1WsJ5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753789329; c=relaxed/simple;
-	bh=o8XI6Qww8Kx2zax/zwUEYzHQzQWFjOFhte4WwN8IaU8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Y8Atcc7vYC8vom48Sq9Yfi6gOA10whl3qbd3xhmZsjrxlFhrHekcLS7rdaiRjrUT5hzVknrA45vGLEFo5VDDGV+V6n1NVRQ95CneqOzakeDFUj00fbeaH1R7frqT/rCqpxb0bymtdOvjMcMFmz5DK07Sz3SwlJqG1CVycJt0dYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M/M0g+vz; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4537edf2c3cso56465385e9.3;
-        Tue, 29 Jul 2025 04:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753789326; x=1754394126; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aL4YbNzCG29DBkIuw7Hb1YlrFbRw4MJIPtbPF3ye9w0=;
-        b=M/M0g+vzYGJBMr1c4XIJyEoe9Va7rydtih64a6IhSpSpXWtL6n+8WnXo9iOkj5Dx3F
-         CRzTGy2zaCsLeC0PGgIDySXSnkUVcfSG5TW3NEPgKBzBgAyY/lMHk4TZhaTk1rLravPA
-         ufjBMy3s28l7oah+7cAihon0Yx5U6h4/pDI2DuQASPNYsrW+nP7NaBbgk8d0gBbF8S+K
-         DflfG5iZhlITZ1j4qy8IJQZu8f7jIzvOi49LaAqoitHvbAA/QBNzXiIDYSQfHsoRX8IK
-         yEr/agvlHBoZsBF2tf5WGmvi9OHsGRvZDXPlTSgeq89VHdcLZi1LlZRX711ZtQ/Yu5QY
-         HUTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753789326; x=1754394126;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aL4YbNzCG29DBkIuw7Hb1YlrFbRw4MJIPtbPF3ye9w0=;
-        b=bH5VdSktaQ8CbhsPNvIMb4NNTDOOI1BGl1DOjHJDym6CXDLdz0Aq0TDi5ddwmLqRr+
-         l22aXyGcmKsjx+qUuPM56TYXeXuXOcqRQd+15941Gp2Yc1yQqgEKeovKPmxJ2S7nWz58
-         uPhAsLJwO6xwHypUh0gIhklN5otu/fG8cChDY9uDez58/sbJEGc9UwZD2cMFKoaYYacq
-         xPH3vyQ88z8+QLkoewB7cqVf9P9QXUBOb6rv/FGpN73yGWF8y7XL+FUmsYOYxBDmOb78
-         sGcAUwT9JfwZ76l7wzYVjYdv8XlbCI759NOcgDFtbsbyt9tWOXVoJyFtlOA7pjehtoIX
-         ToMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwRut/EHKOqy7fliaEd7nytAo/FzsJ3//GlzdYgTo+7NjHua+q8aSakoBwz9cRgw/iamV5LIMz++BWA6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX5/TkGcqShMAbwtAbiUm083AUdJNK+7CFaKkdrsQnQiHVq1Rf
-	JnnXIKJyx4aUXfxR9uInhkj7RBXO8W0y4pqnVyT98DmYDiLqToe12dwp
-X-Gm-Gg: ASbGnct8XWbmYT+dgkK9d4E7D1vhkqJPRiXiTk/MAhMNllgnKlG3Cf8WR+enMNJ2oLk
-	Jw2WHEmahQ7nmFeqoQpJo21ngzFtZa9J6Jr6QHIs7fedp53r4u1RY3QYkzall1+k1pgvdTEKZDe
-	wTp4mZRpaE+XXKjK6UiF5iAvt8NPhcHxM9AmpxbbFRYdMzpOOLFyGS7q1YNmJNeUSzefwS2XSfK
-	T3yaCqz1vEJM3j0wpl8txAVLkF4Hx3KiWPx4Zw270zAzgRzPYAe3CzTtkKB9Jbb5SEt9sH6SQRR
-	dCZEU6uLR2unMWIPAhiEkoG0PVQW3MTuTrpxPrzdKeqc02anss/N28/zBnZ5uEBvySZwonIDetN
-	VzW8CViqZV3pr9fsOZR6n
-X-Google-Smtp-Source: AGHT+IGyRgnokjH/fRnTW0dxtgVYaUoiWxnU49me+vMz+eafgwnRz6toTk9ITVF7/sWl1VO7Y+XW9A==
-X-Received: by 2002:a05:600c:810c:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-458765475bcmr135316915e9.18.1753789325702;
-        Tue, 29 Jul 2025 04:42:05 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4588dda22afsm15545125e9.2.2025.07.29.04.42.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 04:42:05 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>,
-	ocfs2-devel@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ocfs2: Remove space before newline
-Date: Tue, 29 Jul 2025 12:41:31 +0100
-Message-ID: <20250729114131.1925586-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753789458; c=relaxed/simple;
+	bh=PnKL3Pyqyhz+bbQWojdZWWJxBLSJXrYz7i/hv3mYuu8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WLLPBy6Y5J/qxRbTlPSJXCctCWBz7VCR0n2bdWnIBuzNEJtcFluPC2nAJnzUx7nMhCvUZEJPtIb5ny8f40R/428ooFipyj7mp5/O+yVnXHOEyrcy66Rg3hbLk2bCEIw64MKwpEahYhiH60vxwnQsVow7QBuSIHgLnaAwKZYd6I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Co9Q53D7; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753789456; x=1785325456;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PnKL3Pyqyhz+bbQWojdZWWJxBLSJXrYz7i/hv3mYuu8=;
+  b=Co9Q53D7VKN32E8S2zNnd16d8JzkL1rnJyylWSOKPM5D8+8PrGFe9sCX
+   Zw76gHVB6brocdj0pgBH2SzYe5ROtNd/wYFTfBaSab+P7w09eVCUdQNr7
+   7OHvhdVPdYYT2+SVQys466MR8HQCQpi6xDQBZ1pjsoSIneC4AiaH1lLZ7
+   Elny8IDN8mXxAwPNZewCG5tlAIsrYRKi0i//Qv2e4CD3peLVszN6MYK9N
+   MMNBqvyEnBLyhuAk/FFP/AiCvaOUZG8L9Pipaav9I8VIPA/Ipk/z9vrfz
+   J4sCAkb06QwyMeAKtA3m7unIaZ+ooruE3MfseYcehFN6MpI/5+M0bZiEc
+   w==;
+X-CSE-ConnectionGUID: Ta7taZhbTJS++L50Cp7gdA==
+X-CSE-MsgGUID: OolT8EI6QiatPBzcLF5jyQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="56201179"
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="56201179"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 04:44:15 -0700
+X-CSE-ConnectionGUID: 4+hpF88NTZyzNYZafdPOGg==
+X-CSE-MsgGUID: TN+w/QwzRluX085lDlwpLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="163126446"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 29 Jul 2025 04:44:12 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ugikc-0001FH-1Q;
+	Tue, 29 Jul 2025 11:44:10 +0000
+Date: Tue, 29 Jul 2025 19:43:11 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alexander Potapenko <glider@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, quic_jiangenj@quicinc.com,
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Aleksandr Nogikh <nogikh@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Marco Elver <elver@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 04/10] mm/kasan: define __asan_before_dynamic_init,
+ __asan_after_dynamic_init
+Message-ID: <202507291913.UMbUQv95-lkp@intel.com>
+References: <20250728152548.3969143-5-glider@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728152548.3969143-5-glider@google.com>
 
-There is an extraneous space before a newline in a mlog error message.
-Remove it
+Hi Alexander,
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- fs/ocfs2/super.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/fs/ocfs2/super.c b/fs/ocfs2/super.c
-index a4f5a868bec1..4b3ea721395c 100644
---- a/fs/ocfs2/super.c
-+++ b/fs/ocfs2/super.c
-@@ -2108,7 +2108,7 @@ static int ocfs2_initialize_super(struct super_block *sb,
- 		if (strlen(osb->osb_cluster_stack) != OCFS2_STACK_LABEL_LEN) {
- 			mlog(ML_ERROR,
- 			     "couldn't mount because of an invalid "
--			     "cluster stack label (%s) \n",
-+			     "cluster stack label (%s)\n",
- 			     osb->osb_cluster_stack);
- 			status = -EINVAL;
- 			goto out_orphan_wipes;
+[auto build test WARNING on tip/x86/core]
+[also build test WARNING on akpm-mm/mm-everything shuah-kselftest/next shuah-kselftest/fixes linus/master v6.16 next-20250729]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Alexander-Potapenko/x86-kcov-disable-instrumentation-of-arch-x86-kernel-tsc-c/20250728-232935
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20250728152548.3969143-5-glider%40google.com
+patch subject: [PATCH v3 04/10] mm/kasan: define __asan_before_dynamic_init, __asan_after_dynamic_init
+config: powerpc-allmodconfig (https://download.01.org/0day-ci/archive/20250729/202507291913.UMbUQv95-lkp@intel.com/config)
+compiler: powerpc64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250729/202507291913.UMbUQv95-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507291913.UMbUQv95-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from mm/kasan/kasan_test_c.c:32:
+>> mm/kasan/kasan.h:585:6: warning: conflicting types for built-in function '__asan_before_dynamic_init'; expected 'void(const void *)' [-Wbuiltin-declaration-mismatch]
+     585 | void __asan_before_dynamic_init(const char *module_name);
+         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +585 mm/kasan/kasan.h
+
+   577	
+   578	/*
+   579	 * Exported functions for interfaces called from assembly or from generated
+   580	 * code. Declared here to avoid warnings about missing declarations.
+   581	 */
+   582	
+   583	void __asan_register_globals(void *globals, ssize_t size);
+   584	void __asan_unregister_globals(void *globals, ssize_t size);
+ > 585	void __asan_before_dynamic_init(const char *module_name);
+   586	void __asan_after_dynamic_init(void);
+   587	void __asan_handle_no_return(void);
+   588	void __asan_alloca_poison(void *, ssize_t size);
+   589	void __asan_allocas_unpoison(void *stack_top, ssize_t stack_bottom);
+   590	
+
 -- 
-2.50.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
