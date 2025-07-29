@@ -1,149 +1,170 @@
-Return-Path: <linux-kernel+bounces-749305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD1CB14C9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:01:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BF60B14CA4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6AB3BD938
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:01:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9F33A58F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:01:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A045528B7DC;
-	Tue, 29 Jul 2025 11:01:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E5F28C02F;
+	Tue, 29 Jul 2025 11:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="RyLp+qwD"
-Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Xrw44Sfh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39D41E5710;
-	Tue, 29 Jul 2025 11:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5872328BA89
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753786896; cv=none; b=auwBIcWbQuVEh6O7AyjrG2XMvAWHSTFOhZrFb32986TMxzdam0/ZRexGjmWmX5IAwhh/+JMVzBmXa1jDsQL607h5z4eVcXU82lDMJwi8rmhYYwF63qqE1a1lbgeF1ZP8oEmWfZaYzmRKGaJvBthicoiHCUDHsviQzi9k0uB4Bpg=
+	t=1753786898; cv=none; b=aZxUYyZ/EU1fjnoXejRdCPJXUtggi98faBY4x4Pg+Gu/6XBgmxfN1Zd5epV+Z4owMuIBCdEjogMW+VS3AaVLWlz3PZhdXrBhYlpyKyz30lIPUYyvcIf2/Riv3PM5DlNTF6x9iHmKnxccdG2gzDXpAIgpMD+0QEZmjBTlow5UrGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753786896; c=relaxed/simple;
-	bh=JR86FCUM4EyNLcyNhnv5iGvt6uDxYbqpghhr4dFQgbs=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPmVmB0DpUMwKxfsF5wKIx+Bz2Fet3WYB1pI7ee6SaFA0Y9u/R97MMx3qiYfZaZi7E3ASHn93Rhr1NT2OZ58Bk3ipimmvhsbYeNv71UmKrkKX5SutusSfX9rbdyTX3teeHJVbx1hMYOLrY+H2VIxX7jYJyJAdZd5JIaw49swqIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=RyLp+qwD; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Received: from localhost (localhost [127.0.0.1])
-	by mx1.secunet.com (Postfix) with ESMTP id D99F82083E;
-	Tue, 29 Jul 2025 13:01:24 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from mx1.secunet.com ([127.0.0.1])
- by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id 2a1P92NkRZdc; Tue, 29 Jul 2025 13:01:23 +0200 (CEST)
-Received: from EXCH-01.secunet.de (unknown [10.32.0.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.secunet.com (Postfix) with ESMTPS id D5FDF2074B;
-	Tue, 29 Jul 2025 13:01:23 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com D5FDF2074B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1753786883;
-	bh=vbXXfjZq4B6R95kv8IPd1mcDO6vGP7fNAHLDuahRjqw=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To:From;
-	b=RyLp+qwDoDlyTWA+8iCE9lRR+Hz1ZRENuH2dxuCKyBW5SCJurt2oUZjYRhE01mO1s
-	 H5H0y4JXKXZJOP21FeDQLbcCwvuE8bJ3+aRqxzuwR+G2mNnPK5fFJYbx5sw2jCemif
-	 4cUHFPXJHg4TLECYYIBD+tZA0zdY2gegFqgRYlylhyvm/NA2muO6NI2+KvCRnXu10q
-	 bDEx4cLwNplFpIAdpwUjqpK9DkSc51t3Z+ck4q6qpcmp/DaTNjvyZC8llaZHy1w2In
-	 i80yzgEpDq2h9Bhy8MeEhFkKjZy0Fode6/AwXgB33bB0ynOGbgBn5SUqi+0ONAt5mC
-	 mR/hyokT6hAjw==
-Received: from gauss2.secunet.de (10.182.7.193) by EXCH-01.secunet.de
- (10.32.0.171) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Tue, 29 Jul
- 2025 13:01:23 +0200
-Received: by gauss2.secunet.de (Postfix, from userid 1000)
-	id E783931802B0; Tue, 29 Jul 2025 13:01:22 +0200 (CEST)
-Date: Tue, 29 Jul 2025 13:01:22 +0200
-From: Steffen Klassert <steffen.klassert@secunet.com>
-To: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>, Sabrina
- Dubroca <sd@queasysnail.net>
-CC: <davem@davemloft.net>, <edumazet@google.com>,
-	<herbert@gondor.apana.org.au>, <horms@kernel.org>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (3)
-Message-ID: <aIiqAjZzjl7uNeSb@gauss3.secunet.de>
-References: <6888736f.a00a0220.b12ec.00ca.GAE@google.com>
+	s=arc-20240116; t=1753786898; c=relaxed/simple;
+	bh=8f2SEo4XBdgTs1jpjDIkot8A+fWIBeuKn/IbDGluHN0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RWa03kh21zq2/f/x4US54FHBc8JiHzmR8IfDn48NzCseoVFPyGJbyier9iKH7zRD7UcjY1C6dYrCsrljfhxVHLV39XG2IhZ+rQdv1wFEX7X/UW6W9wLzMDE4ZTyO5ziOYLFJqTI2UAn6HJ9vPnRuc/Jx/ajLQxFeCR2Raz72RHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Xrw44Sfh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56T8b77H014622
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:01:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	K96z8vUYHVZ1BnPPZ4P6DoWPT/UnQ3ldWwK7PWSLHpk=; b=Xrw44SfhSillDu7X
+	wSrJyJrHDfoJeggTAMaAacR/4bLMaqQ7vGDjsnfVX7zeCSOUFQzVnSEOH0MGm/ft
+	UT5TNEftv5qp+w2lQ3NkzZ168uu9Os4QvCwmNFs1kP28X16Cr5dHFH9hRTwQNCFX
+	e1S7eKuUWfjMHRhti+QGmzYy+zuq76UBrhPy6tlSSN580JU7ELaD4fUTW+oC/jK/
+	Qr/sRQ0QvIpVvhCr1kuk2npFLPa7TlmZ/ElK/2ixGoWbh90M028vTxKFazasS8KJ
+	Rec0/pTJwKs01B91VqK3oiRnOCVKLYCWxMOY6Bq2F41zfOdjRmPNv0KOiQ6xNMhS
+	c2PBXw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484q3xqt10-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:01:35 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7deca3ef277so108417285a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:01:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753786895; x=1754391695;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K96z8vUYHVZ1BnPPZ4P6DoWPT/UnQ3ldWwK7PWSLHpk=;
+        b=Oc4qv6IX59r4b6fukxdzm1WHS/U/e3KVwGfPmd8nptTtH7IGmbe7TWSjMQ9Y7onfN+
+         IYzwNdMTXyQhPI5Y/MqVlFqSqigC6bs//7cJG1TcU59XpDGZY9wul0D9MTX1PQz0mHhm
+         6wgRQHTAvHqQXK24GCwJbKPRb75F7+Xup9hJVAZFFt9hsbg24DCD3A1zb8sM+U61Ku5i
+         kwzzgBKpYgCRKdTCP7XVgrDhr1S7mca9KwDQ/eLBJjPkso3JwNIG4juXFs6GvicoM+pF
+         maZKJhS2fe3BcqBhKq6uDmk9N4kNmGFrb4qZua2LG+fNR7YmHE+JZl7hoBRg/uGz4sNx
+         h8LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxpNL1ux1ryJ2FqfXhZVZdsS2J9wSaj74iYdo03kT2Ax/UjdnpuwlHqDp+3ozWH4Y7XQ8RIdRQaNP4vr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywf0qgl8ecOICQaKB4jAbWaJC2NSWeuW64coDZ8ThzYjrbbPPCA
+	DX1ImAxfWsgOnc1ZN3oyXb7ZCSNDB95hvHksvEZ3cMLAjAjDznA13MP/CFj64r7iBI2rYMyd/3l
+	WFUQPXBHDptc1yQWjbZyuTHBkF/tuT41rm7/PmKra8h9gnmWVh0LLOJJjMyQAKc1YwPA=
+X-Gm-Gg: ASbGncv68a3XrEvgQy4h6ldPoKiEmC7QjPT7e9EEgoQxEHw79FUhetuSo18D3B8QpiW
+	vIzvxahZJpZV9o3ZCJ6RCr4eSb/ZxyP1WEKRygoV6tbVULDnyEUaJRtLxJRHYHggflULu/sFBU0
+	VqYXskt/GnI4j5VVae9yn45Mjsq+00Rkv6zQdpdZvBurGKo+R1kq/ntZO/sTbrzswbAZD4o1nLZ
+	kLIQtWbX8mHV/w7NZrtSVD0qx/HCblhKaOzsVjMH5gLgJUqlcBaVgvsHCeVwn0wZ9NzXxaHYNlY
+	NM/l7t6BR8ETSn6FM7xWuFJWQ8qPkTTYnA767yAOUyvgJg1LTHKx+I5D4ZL8HDciJCZO2uTcal2
+	7rpjnFHAkm2B/kagK7Q==
+X-Received: by 2002:a05:620a:199a:b0:7e3:2c3a:aac5 with SMTP id af79cd13be357-7e63bfb2a75mr936547785a.12.1753786895050;
+        Tue, 29 Jul 2025 04:01:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG5hkbGdP9yGcQW8bBmtcA+DatoS6/Sk05o9vp3Pm8uMRRyc9F2uLjItN9/JUxZOI4zhhcinQ==
+X-Received: by 2002:a05:620a:199a:b0:7e3:2c3a:aac5 with SMTP id af79cd13be357-7e63bfb2a75mr936544385a.12.1753786894421;
+        Tue, 29 Jul 2025 04:01:34 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615226558d3sm3534384a12.45.2025.07.29.04.01.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 04:01:33 -0700 (PDT)
+Message-ID: <f3c004a9-dba9-48b5-9930-979053d0a32c@oss.qualcomm.com>
+Date: Tue, 29 Jul 2025 13:01:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <6888736f.a00a0220.b12ec.00ca.GAE@google.com>
-X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
- EXCH-01.secunet.de (10.32.0.171)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] leds: flash: leds-qcom-flash: update torch current
+ clamp setting
+To: fenglin.wu@oss.qualcomm.com, kernel@oss.qualcomm.com,
+        Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
+ <20250729-fix-torch-clamp-issue-v2-1-9b83816437a3@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250729-fix-torch-clamp-issue-v2-1-9b83816437a3@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=JovxrN4C c=1 sm=1 tr=0 ts=6888aa10 cx=c_pps
+ a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=m2s_gCkc1pbH6IbsRzcA:9
+ a=QEXdDO2ut3YA:10 a=PEH46H7Ffwr30OY-TuGO:22
+X-Proofpoint-ORIG-GUID: 3gelE3MuOA4UgdIl6wcVE5ksXls-rqSm
+X-Proofpoint-GUID: 3gelE3MuOA4UgdIl6wcVE5ksXls-rqSm
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDA4NSBTYWx0ZWRfXxlrd2yVR4A6p
+ vF65h08Eu7+3dhIGMVeo7K+ZW5I/4pcm9AhHe7Nd2M/g9gp54E2dZpT7TffCBAlhnyVH+3wcp6t
+ S6qp7zSqB/HxOGrynx/UZWxqNF2srFYwegkthnU2WG64Y6i281RyMhQvIN8+S22RMCH+tLy4pnu
+ JafkF3u+q9hd9MroNk23dBuSHwFkG3D88iY0MyXVf/qOZRNXv1TEOf3CG83aeqGUG4TeZt5kez0
+ ZXjKBidr9KD16t6n8okP4Sf48EyVlSnvZSMnHHjO3nsi7QJ5qI8kuVLQcvQsGeuH9lQznN+OkXO
+ y8jhOoYBySMExCu9ejVqPi9rfwqo4K4v8VJ+QteP/RLCjKvn1lQ8FJE2ChzNaOEGLGT5P80kTxf
+ cVU2NO2+u4NQmsCWC8SiWbohgV5pOwweSM0opIZS3hgFlMqUaozX7b8R4v1unbuqadAj5CS/
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-29_03,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 clxscore=1015 priorityscore=1501 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
+ mlxscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507290085
 
-On Tue, Jul 29, 2025 at 12:08:31AM -0700, syzbot wrote:
-> Hello,
+On 7/29/25 6:51 AM, Fenglin Wu via B4 Relay wrote:
+> From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
 > 
-> syzbot found the following issue on:
+> There is a register to clamp the flash current per LED channel when
+> safety timer is disabled. It needs to be updated according to the
+> maximum torch LED current setting to ensure the torch current won't
+> be clamped unexpectedly.
 > 
-> HEAD commit:    038d61fd6422 Linux 6.16
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b88cf0580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4066f1c76cfbc4fe
-> dashboard link: https://syzkaller.appspot.com/bug?extid=6641a61fe0e2e89ae8c5
-> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ca1782580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140194a2580000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/6505c612be11/disk-038d61fd.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/e466ef29c1ca/vmlinux-038d61fd.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/b6d3d8fc5cbb/bzImage-038d61fd.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com
-> 
-> ------------[ cut here ]------------
-> WARNING: CPU: 1 PID: 36 at net/xfrm/xfrm_state.c:3284 xfrm_state_fini+0x270/0x2f0 net/xfrm/xfrm_state.c:3284
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted 6.16.0-syzkaller #0 PREEMPT(full) 
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> Workqueue: netns cleanup_net
-> RIP: 0010:xfrm_state_fini+0x270/0x2f0 net/xfrm/xfrm_state.c:3284
-> Code: c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 68 fa 0b f8 48 8b 3b 5b 41 5c 41 5d 41 5e 41 5f 5d e9 56 c8 ec f7 e8 51 e8 a9 f7 90 <0f> 0b 90 e9 fd fd ff ff e8 43 e8 a9 f7 90 0f 0b 90 e9 60 fe ff ff
-> RSP: 0018:ffffc90000ac7898 EFLAGS: 00010293
-> RAX: ffffffff8a163e8f RBX: ffff888034008000 RCX: ffff888143299e00
-> RDX: 0000000000000000 RSI: ffffffff8db8419f RDI: ffff888143299e00
-> RBP: ffffc90000ac79b0 R08: ffffffff8f6196e7 R09: 1ffffffff1ec32dc
-> R10: dffffc0000000000 R11: fffffbfff1ec32dd R12: ffffffff8f617760
-> R13: 1ffff92000158f40 R14: ffff8880340094c0 R15: dffffc0000000000
-> FS:  0000000000000000(0000) GS:ffff888125d23000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007fbd9e960960 CR3: 00000000316d3000 CR4: 0000000000350ef0
-> Call Trace:
->  <TASK>
->  xfrm_net_exit+0x2d/0x70 net/xfrm/xfrm_policy.c:4348
->  ops_exit_list net/core/net_namespace.c:200 [inline]
->  ops_undo_list+0x49a/0x990 net/core/net_namespace.c:253
->  cleanup_net+0x4c5/0x800 net/core/net_namespace.c:686
->  process_one_work kernel/workqueue.c:3238 [inline]
->  process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
->  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
->  kthread+0x711/0x8a0 kernel/kthread.c:464
->  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
->  </TASK>
+> Fixes: 96a2e242a5dc ("leds: flash: Add driver to support flash LED module in QCOM PMICs")
+> Signed-off-by: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+> ---
 
-Hi Sabrina, your recent ipcomp patches seem to trigger this issue.
-At least reverting them make it go away. Can you please look
-into this?
+I'd prefer the regfield change was done in a separate commit,
+but it's not groundbreaking so I don't mind that much
 
-Please note that
+[...]
 
-CONFIG_INET_DIAG_DESTROY=y
+>  struct qcom_flash_led {
+> @@ -702,6 +706,7 @@ static int qcom_flash_register_led_device(struct device *dev,
+>  	u32 current_ua, timeout_us;
+>  	u32 channels[4];
+>  	int i, rc, count;
+> +	u8 torch_clamp;
+>  
+>  	count = fwnode_property_count_u32(node, "led-sources");
+>  	if (count <= 0) {
+> @@ -751,6 +756,12 @@ static int qcom_flash_register_led_device(struct device *dev,
+>  	current_ua = min_t(u32, current_ua, TORCH_CURRENT_MAX_UA * led->chan_count);
+>  	led->max_torch_current_ma = current_ua / UA_PER_MA;
+>  
+> +	torch_clamp = (current_ua / led->chan_count) / TORCH_IRES_UA;
+> +	if (torch_clamp != 0)
+> +		torch_clamp--;
+> +
+> +	flash_data->torch_clamp = max_t(u8, flash_data->torch_clamp, torch_clamp);
 
-has to be set to trigger the warining.
+Please confirm if I understand correctly, we may have N flash LEDs 
+connected, and this additional safety hardware can only compare any
+individual LED's current draw against a single maximum value, which
+we're setting here
 
-Thanks!
+Konrad
 
