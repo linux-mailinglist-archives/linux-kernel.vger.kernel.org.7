@@ -1,127 +1,108 @@
-Return-Path: <linux-kernel+bounces-749648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8951AB150F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:11:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 874D8B150F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7486B547EB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:10:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E84021631E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F4F293469;
-	Tue, 29 Jul 2025 16:10:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E510223DE7;
+	Tue, 29 Jul 2025 16:11:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTA0aK9U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="onxcyQH4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E25222597;
-	Tue, 29 Jul 2025 16:10:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49031DFDAB
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753805423; cv=none; b=CU7zao/E8uRqto8SkVROOzLOwvcW0o463K8U1SVNlqRJFaBZTmwIRHh8ASz4N7vDftFJJ8fHVF1TLY34OpKX2K2b5X17tGQa1KL92rb7NRwxqPkfsEgAgz8yhe5bdCr36y85ZfAi1q3s/AWsBNIE7O0ZnvfJI1DitRVGGcqi/3I=
+	t=1753805468; cv=none; b=Rmgr0VaQeMANZkR/GYqRkF9PhOu6RjISPT1r4YDNXJ2lnaofryYNC6OjlZzWgb9UjmVGU0rBBFAho0IFDA7/TNkN05mX96mlD6TMuhb1vC3wOpKKJ13ZUe7k6vt4tjM6yS/9PsCvSFa/l8vZxbtZIABN5I003pPJYFl6fIFrJAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753805423; c=relaxed/simple;
-	bh=8PqRrJ4T1GIZlo9A5K1NFm+LtDjYC1pJgTCd4O4aAMI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N5UC06zx5G0MWYfwMWIKOPQ+insDWcyBdUdoW8bVNEEdYq7aNvTagCBkt9jFqGQI5Xs+aQ/cFdU5XDQDjq8dGUUPtDz38U7YGr37OzDoAtkuMG/Wwngjjbfxnun/lyDe8XJkU4PKB4ZANKEZZp3Wdwry3gMOohILgpL8d34MlHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTA0aK9U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CF4C4CEEF;
-	Tue, 29 Jul 2025 16:10:22 +0000 (UTC)
+	s=arc-20240116; t=1753805468; c=relaxed/simple;
+	bh=+odpmbjGumK+zOi7X451s1t1S4s9h7ADurfQ/6v/9Xo=;
+	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=t2sKxrXfbBbp9yxifHbkToprYRdQzUBYJv1m+khgOjXiphFUjWWu2nuW/VsrlwAU1Vzrc6pLNS7N76BxOcnGcK9oze58jvuVIK2rvI5uNQwwjCVkT4YWwml/5Opw6wetwEFCYtNVsDHpeFNIZEsUUqfWxWsAEPOZjJU3SI0GqOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=onxcyQH4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CF74C4CEEF;
+	Tue, 29 Jul 2025 16:11:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753805422;
-	bh=8PqRrJ4T1GIZlo9A5K1NFm+LtDjYC1pJgTCd4O4aAMI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FTA0aK9UOoK2ym/J1kozYqDufRATC87ozTu2dcOE8R9riGJty2rKAH0ZFwyS5etFG
-	 znwiee/8xiGhtqzLxLAi79OYj5gGqeevHhw+dEXpY5Z1McQ8cWJ42pGi815NRBDhJK
-	 7jl+GMCchEUyoMkK6m7dCQhEnMwF85xdwQuNP2uKWNYnfGCNqyTmdz4g58FmeTzjF+
-	 9C12Q0PBu3+TUV9aaeZURd1EwZr4KPRCF1231dnTIeMXWjOIEQKw05WY515GP0SkGC
-	 h8ZTqThxhxX9t0UB2tMyv5XoDA1BR2AIU4NuJTltnXXKRSpRWOVziBbvNsMnUI5UgW
-	 WdEgRH/dnRJuw==
-Date: Tue, 29 Jul 2025 18:10:20 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	linux-pwm@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pwm: imx-tpm: reset counter if CMOD is 0
-Message-ID: <ylg2wadbfbyg6ncvoxxz5zthxokphs52lgzscus4qwqgn7q3vy@xzljjzukbtle>
-References: <20250728194144.22884-1-laurentiumihalcea111@gmail.com>
+	s=k20201202; t=1753805468;
+	bh=+odpmbjGumK+zOi7X451s1t1S4s9h7ADurfQ/6v/9Xo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=onxcyQH4mq+l6pY59zVwpJGVFaEpKCY239VT/c6zLglJNPSuvsXMe0ihP3A/8JuQZ
+	 rl3drsy99atvomzkSyGNNsbZ/drDZRuAUGPax3A3OAKkY/puEW+fSN+K5cCsCMc7IH
+	 r9s6oxvEqjp3jp6oksIRT9EKTjpbfdiDL38mdUybV9qH2GwhcudpY0RqH0nfrN2NWW
+	 t+WLEURG1lqpxhztAgN8CIpgbvlXds2PaDyTmqxUsvqKha9Rzpd4pf2t/TS0Fmwu3Y
+	 LoHnVz/qV/b2VsekHBHeEogVJtSgnwnGvB8DCUTgJtPJlzZohSGTeJyWMSyGlaSWa2
+	 uclJvtFqutaiQ==
+Date: Wed, 30 Jul 2025 01:11:04 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ben Hutchings <benh@debian.org>, Bhaskar Chowdhury
+ <unixbhaskar@gmail.com>, Masami Hiramatsu (Google) <mhiramat@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bootconfig: Updates for v6.17
+Message-Id: <20250730011104.e9dad219ecde50fc42522562@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lcvyewca57ejyx32"
-Content-Disposition: inline
-In-Reply-To: <20250728194144.22884-1-laurentiumihalcea111@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+Linus,
+
+Sorry for the confusing, this is correct update tag for v6.17.
+
+Bootconfig updates for v6.17:
+
+ - tools/bootconfig:
+   - Fix unaligned access when building footer to avoid SIGBUS
+   - Cleanup bootconfig footer size calculations
+
+ - test scripts:
+   - Fix to add shebang for a test script
+   - Improve script portability using portable commands
+   - Improve script portability using printf instead of echo
+   - Enclose regex with quotes for syntax highlighter
 
 
---lcvyewca57ejyx32
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3] pwm: imx-tpm: reset counter if CMOD is 0
-MIME-Version: 1.0
+Please pull the latest bootconfig-v6.17 tree, which can be found at:
 
-Hello Laurentiu,
 
-On Mon, Jul 28, 2025 at 03:41:44PM -0400, Laurentiu Mihalcea wrote:
-> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->=20
-> As per the i.MX93 TRM, section 67.3.2.1 "MOD register update", the value
-> of the TPM counter does NOT get updated when writing MOD.MOD unless
-> SC.CMOD !=3D 0. Therefore, with the current code, assuming the following
-> sequence:
->=20
-> 	1) pwm_disable()
-> 	2) pwm_apply_might_sleep() /* period is changed here */
-> 	3) pwm_enable()
->=20
-> and assuming only one channel is active, if CNT.COUNT is higher than the
-> MOD.MOD value written during the pwm_apply_might_sleep() call then, when
-> re-enabling the PWM during pwm_enable(), the counter will end up resetting
-> after UINT32_MAX - CNT.COUNT + MOD.MOD cycles instead of MOD.MOD cycles as
-> normally expected.
->=20
-> Fix this problem by forcing a reset of the TPM counter before MOD.MOD is
-> written.
->=20
-> Fixes: 738a1cfec2ed ("pwm: Add i.MX TPM PWM driver support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+bootconfig-v6.17
 
-Thanks for the respin, looks good now. For consistency I capitalized
-"Reset" in the Subject.
+Tag SHA1: cf85f3b378433d53ead58f8502169cb989be2efd
+Head SHA1: 6ed5e20466c79e3b3350bae39f678f73cf564b4e
 
-Applied to
-https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/fixes
 
-=2E I'll give that a day or two in next and then send it to Linus for
-6.17-rc1.
+Ben Hutchings (1):
+      bootconfig: Fix unaligned access when building footer
 
-Thanks
-Uwe
+Bhaskar Chowdhury (2):
+      tools: bootconfig: Regex enclosed with quotes to make syntax highlight proper
+      tools/bootconfig: scripts/ftrace.sh was missing the shebang line, so added it
 
---lcvyewca57ejyx32
-Content-Type: application/pgp-signature; name="signature.asc"
+Masami Hiramatsu (Google) (3):
+      tools/bootconfig: Improve portability
+      tools/bootconfig: Replace some echo with printf for more portability
+      tools/bootconfig: Cleanup bootconfig footer size calculations
 
------BEGIN PGP SIGNATURE-----
+----
+ tools/bootconfig/main.c             | 43 +++++++++++++++++++++----------------
+ tools/bootconfig/scripts/ftrace.sh  |  1 +
+ tools/bootconfig/test-bootconfig.sh | 37 +++++++++++++++----------------
+ 3 files changed, 44 insertions(+), 37 deletions(-)
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiI8mgACgkQj4D7WH0S
-/k79agf+LH57UR0G6y7RA0SZ7VTuCOOu8rGs7cN4IkwsVO/fpcWnZvidGDVERCL7
-HCk0IuDvQJIk1zCIv54AgJkHcMk3HtWfWf/lYM5QhVZxHbHQSKEDQgMM6J2pAEBJ
-uE0PJ+4fvdYrPY0YPQhSIICwuKS+rhUyFi5ksRbeKetgMRtuiBEFETkt1MmfWOWd
-cGDljyV724kVk3uD6PpuK1OMdWb9Rx09ZMCxwER+HllGGks2Esiia0F3NLIXQm8R
-8p1a9CRVSq/zNO+/vS83imY/XAmwkOJ2ucS/oH+zFhu3EJQysY3FSzXsen+ywl7V
-YKCb1/VjVFk7SX7puGqqE2Viv9oXJA==
-=N9cL
------END PGP SIGNATURE-----
-
---lcvyewca57ejyx32--
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
