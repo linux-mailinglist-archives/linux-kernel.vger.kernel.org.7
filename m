@@ -1,887 +1,648 @@
-Return-Path: <linux-kernel+bounces-748875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24CCAB1470F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:10:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9874EB1471A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C83C1897451
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7D343BCE27
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:17:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017CD229B15;
-	Tue, 29 Jul 2025 04:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C56A233133;
+	Tue, 29 Jul 2025 04:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="VgXO0uB8"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="eCKLlBSB"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE2678F5E;
-	Tue, 29 Jul 2025 04:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E49126F0A;
+	Tue, 29 Jul 2025 04:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753762225; cv=none; b=DjPvG3lMBVZTWDypek3kSSXBYVBchT5Ij3GTOQdUFGJ8RB/P1X8bsZWkDPN8S0PKuCd62YDF4+2hHH3LnYRIjR8M2/ebyV9rvsymRfBwm8khXg0LfYXOwAN0Dtyd+mSkftSPJkKwvfIvfXs6XwwGCEZW6skXiF32LBhO8Ykk0fk=
+	t=1753762665; cv=none; b=n4zno0dN/MZxuIGd19EFsUe0bqr2myfY9HzArbJtf+L6i+tGgeVFQExF7BCvxKB15urBZDnSVSRxiO6jmOAojAYCAI1gf4ZYFhmBTZFuSjEBR7wvjbHsjLflxZb0m1zvGu7fpwG3k8HI30eAJZBM46ed98zh6mJeQWEVm/DeQRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753762225; c=relaxed/simple;
-	bh=PYscKghsNjZdPufHkqzvMjxJhvBK5RlHYRLL0XFCQ+4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mGHT8ImWNh1+q29Jd9/18hWG7pVPemn1yOACfiip8RweZVelfQNJDgFij1sPkFcq4PPHKKb9+iHepz8SEuCmqJmmnv4OOf3y+i4oxiwVt3mAe4Q40mjc0jLehtDBBzg4rn8ZAxQi3OXLB/tPySdVz4imfQwT0+SLhIP9iKRJY6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=VgXO0uB8; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1753762196; x=1754366996; i=w_armin@gmx.de;
-	bh=jiAAPIqhqBH3ei7+LEJPI34WYEDASc70cyZuO5C0z5w=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=VgXO0uB8Livi5Vw7JxbLoUhnsJohike7X0oAapMsSPiNCzqSecKD9AWGJgdpuRBB
-	 QJFd/HJq5tjjbRdbo/6DUKErBj7Z6x/AwrBr6nauHdD2pSzYG3rXAyQYAI3vTCtzm
-	 WgtRahqaa2q0E8Lm00/MfcM+0fIaplkp4vKV8bmZ/1NbyAwzpflC+HpskbPUIPQYl
-	 u5PUFk9IPy5DjdPK1CkCwRitY8bZtOvoqhmvQ6aYNJ8WXt91z1SrwN+3MbtnB2llC
-	 B000YOdz+EfJtTk7fJTWqXU+V7AuijObtmdemFNXu+wpd7l5kbMuOzYo93rpHKJpK
-	 sdxyXfsZd0Zp+0+UMA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MOiDd-1v2H8t1lmB-00SSs7; Tue, 29
- Jul 2025 06:09:56 +0200
-Message-ID: <404b9bfd-66c7-4524-a7ec-34fa9eb046eb@gmx.de>
-Date: Tue, 29 Jul 2025 06:09:53 +0200
+	s=arc-20240116; t=1753762665; c=relaxed/simple;
+	bh=7tDgtFJR8cyaykCgjJwGJxSs9d0nX1Uds0jJrgq1/tg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qXV3vrZKNotsjzm6gdwlMQicHg9SzWr08nv3ifVTXqgsiHi0lwU+MoVvgCAjdZHIgBjnyyqUHgbgNwigUD4NnrJgCvpC6ssDZRUpamP+3y7hPl+ltVe7Rs6RejlHNl5qCcDYTcteqCmw+ArsKBtd7pepHLjG0/07fiT0H8H7AE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=eCKLlBSB; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SNUboE016510;
+	Mon, 28 Jul 2025 21:17:00 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pfpt0220; bh=Gvi7s92rUntYoojpXac9T2xE/
+	ZfXd4PWAkMHrgNru74=; b=eCKLlBSBdNvrwbdD4O3LJ3mCzkFJFS+6lYNVNI2n7
+	MYFTeEhAd93ZbgDMmXej5X5wsnjQGb1zH7f8nvx/TUJHmfN44/yHNuic0vT026kx
+	x5+BO1u0FgZKQeMIZgke3rMcr/0VIpNpcSUP47WDcec2Av4Tu55HkmS+mPCFapOc
+	YEWIYrbqrKLvQsEKN0VriNSEKHkJa6ACDeNJ1Lgj3dIkw237mtidvA5lt5i8CtQv
+	Vtnr8dUn/xLAfB2IWA+3H+4DFIUE2mIFZq2+2bx97jL6yDXF0by5qDcDvNnLYAUP
+	aOYFkyqG98M+G29hG8AgujzsKfPYNRR3Jkj0eSkR+7eAg==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 486jxk0es1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 21:17:00 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 28 Jul 2025 21:17:00 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 28 Jul 2025 21:17:00 -0700
+Received: from opensource (unknown [10.29.20.14])
+	by maili.marvell.com (Postfix) with SMTP id C8E983F707C;
+	Mon, 28 Jul 2025 21:16:54 -0700 (PDT)
+Date: Tue, 29 Jul 2025 04:16:53 +0000
+From: Subbaraya Sundeep <sbhatta@marvell.com>
+To: Sean Anderson <sean.anderson@linux.dev>
+CC: Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+        Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>,
+        Michal Simek <michal.simek@amd.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Leon Romanovsky <leon@kernel.org>
+Subject: Re: [PATCH net-next v3 7/7] net: axienet: Split into MAC and MDIO
+ drivers
+Message-ID: <aIhLNUMENeh_Ayq2@opensource>
+References: <20250728221823.11968-1-sean.anderson@linux.dev>
+ <20250728221823.11968-8-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/4] platform/x86: (ayn-ec) Add PWM Fan HWMON Interface
-To: Derek John Clark <derekjohn.clark@gmail.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Hans de Goede <hansg@kernel.org>, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Alok Tiwari <alok.a.tiwari@oracle.com>,
- David Box <david.e.box@linux.intel.com>,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20250726204041.516440-1-derekjohn.clark@gmail.com>
- <20250726204041.516440-2-derekjohn.clark@gmail.com>
- <5b061220-e04a-48b5-ba2c-92ccf240798e@gmx.de>
- <CAFqHKTnkPLEbMk+NeLaSridSJBGU+P4P5PFF7VmiQbcfv7CAkg@mail.gmail.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <CAFqHKTnkPLEbMk+NeLaSridSJBGU+P4P5PFF7VmiQbcfv7CAkg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YlA8f12kuMsiRgcyjU2EPiPQ1/V+hJJIuJ/6TUABSnfcYnuVjRc
- 6NZazd+QVQP2Pv3jxOSLAT5jm2qk5WD3g0+aDf76IiQO0peg27dULv7j+8LtI5nisYZM6IK
- 1pEE9kokd7k0HMBksoneiDIslSYvr78kLCKWT7pCbUkFkYZi6AAR4B69KIzPorTKOb1zQwV
- Aqg/AgShkOHloRpU7QNIw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:FL30TT1hLAM=;RGWIHaOF0O5KSq4h/6ds4zECz9/
- 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
- cPhFn7HEpOdIzE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250728221823.11968-8-sean.anderson@linux.dev>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDAyOSBTYWx0ZWRfXwJS0De+2k5oR OavDbQZ69pXmUhOvOk+H2nhm8PK1HliJV5WNxBojr3splPK5N/IlToQkfQ5hBj/XTZXyw70rXVh 3R2YJri5waw+hOHxXKGf41I3zgSlEBAfGn9uG/2qqFnm5EhVuxaBFZf2f+mplTCkdQI65Z/M62Y
+ Mutoz3R1srugICIfrJkmJ4CjWMbf9sH9oousZ8ThQW5P5nmCHyLSjmV3qjQPNCZYd5mr/4fiM6a jWjnFhrnfvA1slTUDrCoIQzXrDzF9I+8KVx2keBqlcabLrx9bbZgDnLYqNBey425zS1Y+9tSOv0 AoVL/K9MYJ+PUR9xp8b5IrWnvZi7jky8QobRd3EBEGWzGdJw4+Iw1Tw2/Gd25qaZKMJ8K/+OVHX
+ LLV/ThMrQL8llJJe8tkOF4LVy2lpaqy0Cob0imWaP7dVPO68r6XW/9rKAqdvxjQyqfV0Uzf/
+X-Proofpoint-GUID: 8EZwDNfMYH-bFI54Dd0liSLBQgKX62w8
+X-Proofpoint-ORIG-GUID: 8EZwDNfMYH-bFI54Dd0liSLBQgKX62w8
+X-Authority-Analysis: v=2.4 cv=dduA3WXe c=1 sm=1 tr=0 ts=68884b3c cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=IUMJal29XTB9L78AV0wA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-29_01,2025-07-28_01,2025-03-28_01
 
-Am 29.07.25 um 04:58 schrieb Derek John Clark:
-
-> On Sat, Jul 26, 2025 at 4:32=E2=80=AFPM Armin Wolf <W_Armin@gmx.de> wrot=
-e:
->> Am 26.07.25 um 22:40 schrieb Derek J. Clark:
->>
->>> Adds platform driver for AYN Loki and Tectoy Zeenix lines of handheld
->>> devices. This patch implements a hwmon interface for EC provided manua=
-l
->>> PWM fan control and user defined fan curves. A global ACPI lock is use=
-d
->>> when reading or writing from the EC.
->>>
->>> There are 4 fan modes implemented in this patch. Modes 0-3 act in
->>> accordance with the standard hwmon logic where 0 is 100% fan speed, 1 =
-is
->>> manual control, and 2 is automatic control. As the EC only provides 3
->>> modes by default, mode 0 is implemented by setting the device to manua=
-l
->>> and then setting fan speed to 100% directly. In mode 1 the PWM duty cy=
-cle
->>> is set in sysfs with values [0-255], which are then scaled to the EC m=
-ax
->>> of 128. Mode 4 is an automatic mode where the fan curve is user define=
-d.
->>> There are 5 total set points and each set point takes a temperature in
->>> Celsius [0-100] and a PWM duty cycle [0-255]. When the CPU temperature
->>> reaches a given set point, the corresponding duty cycle is automatical=
-ly
->>> set by the EC.
->>>
->>> Signed-off-by: Derek J. Clark <derekjohn.clark@gmail.com>
->>>
->>> space
->> Interesting, do you have access to such a device? If yes then i would b=
-e very interested
->> in looking at the ACPI tables shipped with said device.
-> Hi Armin,
->
-> I have a Loki Max, and know someone with a Loki Zero. Do you want
-> plain text acpidump or a decoded DSDT.dat attached?
-
-I would prefer the plain text acpidump, as the SSDT tables often contain i=
-mportant data.
-
->>> ---
->>>    MAINTAINERS                   |   6 +
->>>    drivers/platform/x86/Kconfig  |  12 +
->>>    drivers/platform/x86/Makefile |   3 +
->>>    drivers/platform/x86/ayn-ec.c | 520 +++++++++++++++++++++++++++++++=
-+++
->>>    4 files changed, 541 insertions(+)
->>>    create mode 100644 drivers/platform/x86/ayn-ec.c
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index d61b004005fd..5b816883fe7d 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -4035,6 +4035,12 @@ W:     https://ez.analog.com/linux-software-dri=
-vers
->>>    F:  Documentation/devicetree/bindings/pwm/adi,axi-pwmgen.yaml
->>>    F:  drivers/pwm/pwm-axi-pwmgen.c
->>>
->>> +AYN PLATFORM EC DRIVER
->>> +M:   Derek J. Clark <derekjohn.clark@gmail.com>
->>> +L:   platform-driver-x86@vger.kernel.org
->>> +S:   Maintained
->>> +F:   drivers/platform/x86/ayn-ec.c
->>> +
->>>    AZ6007 DVB DRIVER
->>>    M:  Mauro Carvalho Chehab <mchehab@kernel.org>
->>>    L:  linux-media@vger.kernel.org
->>> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconf=
-ig
->>> index 6d238e120dce..4819bfcffb6b 100644
->>> --- a/drivers/platform/x86/Kconfig
->>> +++ b/drivers/platform/x86/Kconfig
->>> @@ -304,6 +304,18 @@ config ASUS_TF103C_DOCK
->>>          If you have an Asus TF103C tablet say Y or M here, for a gene=
-ric x86
->>>          distro config say M here.
->>>
->>> +config AYN_EC
->>> +     tristate "AYN x86 devices EC platform control"
->>> +     depends on ACPI
->>> +     depends on HWMON
->>> +     help
->>> +       This is a driver for AYN and Tectoy x86 handheld devices. It p=
-rovides
->>> +       temperature monitoring, manual fan speed control, fan curve co=
-ntrol,
->>> +       and chassis RGB settings.
->>> +
->>> +       If you have an x86 AYN or Tectoy handheld device say M here. T=
-he module
->>> +       will be called ayn-platform.
->>> +
->>>    config MERAKI_MX100
->>>        tristate "Cisco Meraki MX100 Platform Driver"
->>>        depends on GPIOLIB
->>> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Make=
-file
->>> index a0c5848513e3..d32504b89365 100644
->>> --- a/drivers/platform/x86/Makefile
->>> +++ b/drivers/platform/x86/Makefile
->>> @@ -38,6 +38,9 @@ obj-$(CONFIG_ASUS_TF103C_DOCK)      +=3D asus-tf103c=
--dock.o
->>>    obj-$(CONFIG_EEEPC_LAPTOP)  +=3D eeepc-laptop.o
->>>    obj-$(CONFIG_EEEPC_WMI)             +=3D eeepc-wmi.o
->>>
->>> +# Ayn
->>> +obj-$(CONFIG_AYN_EC) +=3D ayn-ec.o
->>> +
->>>    # Cisco/Meraki
->>>    obj-$(CONFIG_MERAKI_MX100)  +=3D meraki-mx100.o
->>>
->>> diff --git a/drivers/platform/x86/ayn-ec.c b/drivers/platform/x86/ayn-=
-ec.c
->>> new file mode 100644
->>> index 000000000000..8bd3ed1c69eb
->>> --- /dev/null
->>> +++ b/drivers/platform/x86/ayn-ec.c
->>> @@ -0,0 +1,520 @@
->>> +// SPDX-License-Identifier: GPL-2.0-or-later
->>> +/*
->>> + * Platform driver for AYN x86 Handhelds.
->>> + *
->>> + * Implements multiple attributes provided by the EC. Fan reading and=
- control,
->>> + * as well as temperature sensor readings are exposed via hwmon sysfs=
-. EC RGB
->>> + * control is exposed via an led-class-multicolor interface.
->>> + *
->>> + * Fan control is provided via a pwm interface in the range [0-255]. =
-AYN use
->>> + * [0-128] as the range in the EC, the written value is scaled to acc=
-ommodate.
->>> + * The EC also provides a configurable fan curve with five set points=
- that
->>> + * associate a temperature in Celcius [0-100] with a fan speed [0-128=
-]. The
->>> + * auto_point fan speeds are also scaled from the range [0-255]. Temp=
-erature
->>> + * readings are scaled from degrees to millidegrees when read.
->>> + *
->>> + * RGB control is provided using 4 registers. One each for the colors=
- red,
->>> + * green, and blue are [0-255]. There is also a effect register that =
-takes
->>> + * switches between an EC controlled breathing that cycles through al=
-l colors
->>> + * and fades in/out, and manual, which enables setting a user defined=
- color.
->>> + *
->>> + * Copyright (C) 2025 Derek J. Clark <derekjohn.clark@gmail.com>
->>> + */
->>> +
->>> +#include <linux/acpi.h>
->>> +#include <linux/device.h>
->>> +#include <linux/dmi.h>
->>> +#include <linux/hwmon-sysfs.h>
->>> +#include <linux/hwmon.h>
->>> +#include <linux/init.h>
->>> +#include <linux/kernel.h>
->>> +#include <linux/module.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/sysfs.h>
->>> +#include <linux/types.h>
->>> +
->>> +/* Fan speed and PWM registers */
->>> +#define AYN_SENSOR_PWM_FAN_ENABLE_REG        0x10 /* PWM operating mo=
-de */
->>> +#define AYN_SENSOR_PWM_FAN_SET_REG   0x11 /* PWM duty cycle */
->>> +#define AYN_SENSOR_PWM_FAN_SPEED_REG 0x20 /* Fan speed */
->>> +
->>> +/* EC controlled fan curve registers */
->>> +#define AYN_SENSOR_PWM_FAN_SPEED_1_REG       0x12
->>> +#define AYN_SENSOR_PWM_FAN_SPEED_2_REG       0x14
->>> +#define AYN_SENSOR_PWM_FAN_SPEED_3_REG       0x16
->>> +#define AYN_SENSOR_PWM_FAN_SPEED_4_REG       0x18
->>> +#define AYN_SENSOR_PWM_FAN_SPEED_5_REG       0x1A
->>> +#define AYN_SENSOR_PWM_FAN_TEMP_1_REG        0x13
->>> +#define AYN_SENSOR_PWM_FAN_TEMP_2_REG        0x15
->>> +#define AYN_SENSOR_PWM_FAN_TEMP_3_REG        0x17
->>> +#define AYN_SENSOR_PWM_FAN_TEMP_4_REG        0x19
->>> +#define AYN_SENSOR_PWM_FAN_TEMP_5_REG        0x1B
->>> +
->>> +/* AYN EC PWM Fan modes */
->>> +#define AYN_PWM_FAN_MODE_MANUAL      0x00
->>> +#define AYN_PWM_FAN_MODE_AUTO                0x01
->>> +#define AYN_PWM_FAN_MODE_EC_CURVE    0x02
->>> +
->>> +/* hwmon fan modes */
->>> +#define HWMON_PWM_FAN_MODE_FULL      0x00
->>> +#define HWMON_PWM_FAN_MODE_MANUAL    0x01
->>> +#define HWMON_PWM_FAN_MODE_AUTO      0x02
->>> +#define HWMON_PWM_FAN_MODE_EC_CURVE  0x03
->>> +
->>> +/* Handle ACPI lock mechanism */
->>> +#define ACPI_LOCK_DELAY_MS 500
->>> +
->>> +int ayn_pwm_curve_registers[10] =3D {
->> Please declare this array as static const.
->>
->>> +     AYN_SENSOR_PWM_FAN_SPEED_1_REG,
->>> +     AYN_SENSOR_PWM_FAN_SPEED_2_REG,
->>> +     AYN_SENSOR_PWM_FAN_SPEED_3_REG,
->>> +     AYN_SENSOR_PWM_FAN_SPEED_4_REG,
->>> +     AYN_SENSOR_PWM_FAN_SPEED_5_REG,
->>> +     AYN_SENSOR_PWM_FAN_TEMP_1_REG,
->>> +     AYN_SENSOR_PWM_FAN_TEMP_2_REG,
->>> +     AYN_SENSOR_PWM_FAN_TEMP_3_REG,
->>> +     AYN_SENSOR_PWM_FAN_TEMP_4_REG,
->>> +     AYN_SENSOR_PWM_FAN_TEMP_5_REG,
->>> +};
->>> +
->>> +struct ayn_device {
->>> +     u32 ayn_lock; /* ACPI EC Lock */
->>> +} drvdata;
->> Please declare drvdata as static.
->>
->>> +
->>> +/* Handle ACPI lock mechanism */
->>> +#define ACPI_LOCK_DELAY_MS 500
->>> +
->>> +static bool lock_global_acpi_lock(void)
->>> +{
->>> +     return ACPI_SUCCESS(acpi_acquire_global_lock(ACPI_LOCK_DELAY_MS,
->>> +                                                  &drvdata.ayn_lock))=
-;
->>> +}
->>> +
->>> +static bool unlock_global_acpi_lock(void)
->>> +{
->>> +     return ACPI_SUCCESS(acpi_release_global_lock(drvdata.ayn_lock));
->>> +}
->>> +
->>> +/**
->>> + * read_from_ec() - Reads a value from the embedded controller.
->>> + *
->>> + * @reg: The register to start the read from.
->>> + * @size: The number of sequential registers the data is contained in=
-.
->>> + * @val: Pointer to return the data with.
->>> + *
->>> + * Return: 0, or an error.
->>> + */
->>> +static int read_from_ec(u8 reg, int size, long *val)
->>> +{
->>> +     int ret, i;
->>> +     u8 buf;
->>> +
->>> +     if (!lock_global_acpi_lock())
->>> +             return -EBUSY;
->>> +
->>> +     *val =3D 0;
->>> +     for (i =3D 0; i < size; i++) {
->>> +             ret =3D ec_read(reg + i, &buf);
->>> +             if (ret)
->>> +                     return ret;
->>> +             *val <<=3D i * 8;
->>> +             *val +=3D buf;
->> Could it be that "i * 8" should have been just "8"?-
-> Seems to work as is. This should bitshift the stored value by 0 (none)
-> for the first register (MSB) and 8 for the second register (LSB). Not
-> sure how well it would work for 3 or more registers but everything is
-> either 1 or 2.
-
-The thing is that this limitation is not documented anywhere. People might=
- assume that
-that this function can read more than 2 registers when they extend the dri=
-ver in the future.
-
-I suggest that you either:
-
-1. Fix or at least document this limitation.
-
-2. Use regmap and regmap_read_bulk() instead.
-
->>> +     }
->>> +
->>> +     if (!unlock_global_acpi_lock())
->>> +             return -EBUSY;
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +/**
->>> + * write_to_ec() - Writes a value to the embedded controller.
->>> + *
->>> + * @reg: The register to write to.
->>> + * @val: Value to write
->>> + *
->>> + * Return: 0, or an error.
->>> + */
->>> +static int write_to_ec(u8 reg, u8 val)
->>> +{
->>> +     int ret;
->>> +
->>> +     if (!lock_global_acpi_lock())
->>> +             return -EBUSY;
->>> +
->>> +     pr_info("Writing EC value %d to register %u\n", val, reg);
->>> +     ret =3D ec_write(reg, val);
->>> +
->>> +     if (!unlock_global_acpi_lock())
->>> +             return -EBUSY;
->>> +
->>> +     return ret;
->>> +}
->> Why not using regmap for that?
->>
->>> +/**
->>> + * ayn_pwm_manual() - Enable manual control of the fan.
->>> + */
->>> +static int ayn_pwm_manual(void)
->>> +{
->>> +     return write_to_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 0x00);
->>> +}
->>> +
->>> +/**
->>> + * ayn_pwm_full() - Set fan to 100% speed.
->>> + */
->>> +static int ayn_pwm_full(void)
->>> +{
->>> +     int ret;
->>> +
->>> +     ret =3D write_to_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 0x00);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     return write_to_ec(AYN_SENSOR_PWM_FAN_SET_REG, 128);
->>> +}
->>> +
->>> +/**
->>> + * ayn_pwm_auto() - Enable automatic EC control of the fan.
->>> + */
->>> +static int ayn_pwm_auto(void)
->>> +{
->>> +     return write_to_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 0x01);
->>> +}
->>> +
->>> +/**
->>> + * ayn_pwm_ec_curve() - Enable manually setting the fan curve for aut=
-omatic
->>> + * EC control of the fan.
->>> + */
->>> +static int ayn_pwm_ec_curve(void)
->>> +{
->>> +     return write_to_ec(AYN_SENSOR_PWM_FAN_ENABLE_REG, 0x02);
->>> +}
->>> +
->>> +/**
->>> + * ayn_ec_hwmon_is_visible() - Determines RO or RW for hwmon attribut=
-e sysfs.
->>> + *
->>> + * @drvdata: Unused void pointer to context data.
->>> + * @type: The hwmon_sensor_types type.
->>> + * @attr: The attribute to set RO/RW on.
->>> + * @channel: HWMON subsystem usage flags for the attribute.
->>> + *
->>> + * Return: Permission level.
->>> + */
->>> +static umode_t ayn_ec_hwmon_is_visible(const void *drvdata,
->>> +                                    enum hwmon_sensor_types type, u32=
- attr,
->>> +                                    int channel)
->>> +{
->>> +     switch (type) {
->>> +     case hwmon_fan:
->>> +             return 0444;
->>> +     case hwmon_pwm:
->>> +             return 0644;
->>> +     default:
->>> +             return 0;
->>> +     }
->>> +}
->>> +
->>> +/**
->>> + * ayn_pwm_fan_read() - Read from a hwmon pwm or fan attribute.
->>> + *
->>> + * @dev: parent device of the given attribute.
->>> + * @type: The hwmon_sensor_types type.
->>> + * @attr: The attribute to read from.
->>> + * @channel: HWMON subsystem usage flags for the attribute.
->>> + * @val: Pointer to return the read value from.
->>> + *
->>> + * Return: 0, or an error.
->>> + */
->>> +static int ayn_pwm_fan_read(struct device *dev, enum hwmon_sensor_typ=
-es type,
->>> +                         u32 attr, int channel, long *val)
->>> +{
->>> +     int ret;
->>> +
->>> +     switch (type) {
->>> +     case hwmon_fan:
->>> +             switch (attr) {
->>> +             case hwmon_fan_input:
->>> +                     return read_from_ec(AYN_SENSOR_PWM_FAN_SPEED_REG=
-, 2,
->>> +                                         val);
->>> +             default:
->>> +                     break;
->>> +             }
->>> +             break;
->>> +     case hwmon_pwm:
->>> +             switch (attr) {
->>> +             case hwmon_pwm_enable:
->>> +                     ret =3D read_from_ec(AYN_SENSOR_PWM_FAN_ENABLE_R=
-EG, 1,
->>> +                                        val);
->>> +                     if (ret)
->>> +                             return ret;
->>> +
->>> +                     /* EC uses 0 for manual, 1 for automatic, 2 for =
-user
->>> +                      * fan curve. Reflect hwmon usage instead.
->>> +                      */
->>> +                     if (*val =3D=3D 1) {
->>> +                             *val =3D 2;
->>> +                             return 0;
->>> +                     }
->>> +
->>> +                     if (*val =3D=3D 2) {
->>> +                             *val =3D 3;
->>> +                             return 0;
->>> +                     }
->>> +
->>> +                     /* Return 0 when fan at max, otherwise 1 for man=
-ual. */
->>> +                     ret =3D read_from_ec(AYN_SENSOR_PWM_FAN_SET_REG,=
- 1, val);
->>> +                     if (ret)
->>> +                             return ret;
->> This might confuse userspace fan control software that might not expect=
- the value of pwm1_enable
->> to suddenly change when setting pwm1 to 255. Maybe it would be better t=
-o not support pwm mode 0 as the
->> underlying EC seems to not provide a separate fan mode for setting the =
-fan to full speed.
->>
-> I have no strong feelings either way. We did this for the oxp-ec
-> driver so I was just looking to be consistent.
-
-Maybe Guenter Roeck can give us some guidance here?
+On 2025-07-28 at 22:18:23, Sean Anderson (sean.anderson@linux.dev) wrote:
+> Returning EPROBE_DEFER after probing a bus may result in an infinite
+> probe loop if the EPROBE_DEFER error is never resolved. There are two
+> mutually-exclusive scenarios (that can both occur in the same system).
+> First, the PCS can be attached to our own MDIO bus:
+> 
+> MAC
+>  |
+>  +->MDIO
+>      |
+>      +->PCS
+>      +->PHY (etc)
+> 
+> In this scenario, we have to probe the MDIO bus before we can look up
+> the PCS, since otherwise the PCS will always be missing when we look for
+> it. But if we do things in the right order then we can't get
+> EPROBE_DEFER, and so there's no risk of a probe loop.
+> 
+> Second, the PCS can be attached to some other MDIO bus:
+> 
+> MAC              MDIO
+>  |                 |
+>  +->MDIO           +->PCS
+>       |
+>       +->PHY (etc)
+> 
+> In this scenario, the MDIO bus might not be present for whatever reason
+> (module not loaded, error in probe, etc.) and we have the possibility of
+> an EPROBE_DEFER error. If that happens, we will end up in a probe loop
+> because the PHY on our own MDIO bus incremented deferred_trigger_count
+> when it probed successfully:
+> 
+> deferred_probe_work_func()
+>   driver_probe_device(MAC)
+>     axienet_probe(MAC)
+>       mdiobus_register(MDIO)
+>         device_add(PHY)
+>           (probe successful)
+>           driver_bound(PHY)
+>             driver_deferred_probe_trigger()
+>       return -EPROBE_DEFER
+>     driver_deferred_probe_add(MAC)
+>     // deferred_trigger_count changed, so...
+>     driver_deferred_probe_trigger()
+> 
+> As I see it, this problem could be solved in the following four ways:
+> 
+> - Modify the driver core to detect and mitigate this sort of scenario
+>   (NACKed by Greg).
+> - Split the driver into MAC and MDIO parts (this commit).
+> - Modify phylink to allow connecting a PCS after phylink_create but
+>   before phylink_start. This is tricky because the PCS can affect the
+>   supported phy interfaces, and phy interfaces are validated in
+>   phylink_create.
+> - Defer phylink_create to ndo_open. This means that all the
+>   netdev/ethtool ops that use phylink now need to check ip the netdev is
+>   open and fall back to some other implementation. I don't think we can
+>   just return -EINVAL or whatever because using ethtool on a down device
+>   has historically worked. I am wary of breaking userspace because some
+>   tool assumes it can get_ksettings while the netdev is down.
+> 
+> Aside from the first option, the second one (this commit) has the best
+> UX. With the latter two, you could have a netdev that never comes up and
+> the user may not have very good insight as to why. For example, it may
+> not be obvious that the user should try to bring the netdev up again
+> after the PCS is probed. By waiting to create the netdev until after we
+> successfully probe the PCS we show up in devices_deferred and the netdev
+> can be brought up as usual.
+> 
+> Per the second bullet point above, split the MAC and MDIO functionality
+> into separate auxiliary devices. If the MAC fails with EPROBE_DEFER,
+> then the MDIO bus will remain bound, preventing a probe loop.
+> 
+> Fixes: 1a02556086fc ("net: axienet: Properly handle PCS/PMA PHY for 1000BaseX mode")
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
+> 
+> Changes in v3:
+> - Rework to use a separate axienet_common structure, as netdevs cannot
+>   be reused once registered.
+> - Use ida_alloc for aux id
+> 
+> Changes in v2:
+> - Fix building as a module
+> - Expand commit message with much more info on the problem and possible
+>   solutions
+> 
+>  drivers/net/ethernet/xilinx/Kconfig           |   1 +
+>  drivers/net/ethernet/xilinx/xilinx_axienet.h  |  10 +-
+>  .../net/ethernet/xilinx/xilinx_axienet_main.c | 168 ++++++++++++++----
+>  .../net/ethernet/xilinx/xilinx_axienet_mdio.c |  59 +++---
+>  4 files changed, 169 insertions(+), 69 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/xilinx/Kconfig b/drivers/net/ethernet/xilinx/Kconfig
+> index 7502214cc7d5..3b940d2d3115 100644
+> --- a/drivers/net/ethernet/xilinx/Kconfig
+> +++ b/drivers/net/ethernet/xilinx/Kconfig
+> @@ -27,6 +27,7 @@ config XILINX_AXI_EMAC
+>  	tristate "Xilinx 10/100/1000 AXI Ethernet support"
+>  	depends on HAS_IOMEM
+>  	depends on XILINX_DMA
+> +	select AUXILIARY_BUS
+>  	select PHYLINK
+>  	select DIMLIB
+>  	help
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet.h b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> index d7215dd92ce9..69665c7f264a 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet.h
+> @@ -470,6 +470,7 @@ struct skbuf_dma_descriptor {
+>  /**
+>   * struct axienet_common - axienet private common data
+>   * @pdev: Pointer to common platform device structure
+> + * @mac: Pointer to MAC (netdev parent) device structure
+>   * @axi_clk: AXI4-Lite bus clock
+>   * @reset_lock: Lock held while resetting the device to prevent register access
+>   * @mii_bus: Pointer to MII bus structure
+> @@ -479,11 +480,12 @@ struct skbuf_dma_descriptor {
+>   */
+>  struct axienet_common {
+>  	struct platform_device *pdev;
+> +	struct auxiliary_device mac;
+>  
+>  	struct clk *axi_clk;
+>  
+>  	struct mutex reset_lock;
+> -	struct mii_bus *mii_bus;
+> +	struct auxiliary_device mii_bus;
+>  	u8 mii_clk_div;
+>  
+>  	void __iomem *regs;
+> @@ -493,7 +495,7 @@ struct axienet_common {
+>  /**
+>   * struct axienet_local - axienet private per device data
+>   * @ndev:	Pointer for net_device to which it will be attached.
+> - * @dev:	Pointer to device structure
+> + * @dev:	Pointer to parent device structure for DMA access
+>   * @phylink:	Pointer to phylink instance
+>   * @phylink_config: phylink configuration settings
+>   * @pcs_phy:	Reference to PCS/PMA PHY if used
+> @@ -752,8 +754,6 @@ static inline void axienet_dma_out_addr(struct axienet_local *lp, off_t reg,
+>  
+>  #endif /* CONFIG_64BIT */
+>  
+> -/* Function prototypes visible in xilinx_axienet_mdio.c for other files */
+> -int axienet_mdio_setup(struct axienet_common *lp);
+> -void axienet_mdio_teardown(struct axienet_common *lp);
+> +extern struct auxiliary_driver xilinx_axienet_mdio;
+>  
+>  #endif /* XILINX_AXI_ENET_H */
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> index f235ef15187c..23e5c8090d45 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> @@ -22,6 +22,7 @@
+>   *  - Add support for extended VLAN support.
+>   */
+>  
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+>  #include <linux/etherdevice.h>
+> @@ -1907,8 +1908,11 @@ static const struct net_device_ops axienet_netdev_dmaengine_ops = {
+>  static void axienet_ethtools_get_drvinfo(struct net_device *ndev,
+>  					 struct ethtool_drvinfo *ed)
+>  {
+> +	struct axienet_local *lp = netdev_priv(ndev);
+> +
+>  	strscpy(ed->driver, DRIVER_NAME, sizeof(ed->driver));
+>  	strscpy(ed->version, DRIVER_VERSION, sizeof(ed->version));
+> +	strscpy(ed->bus_info, dev_name(lp->dev), sizeof(ed->bus_info));
+>  }
+>  
+>  /**
+> @@ -2749,10 +2753,12 @@ static void axienet_disable_misc(void *clocks)
+>  	clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, clocks);
+>  }
+>  
+> -static int axienet_mac_probe(struct axienet_common *cp)
+> +static int axienet_mac_probe(struct auxiliary_device *auxdev,
+> +			     const struct auxiliary_device_id *id)
+>  {
+> +	struct axienet_common *cp = auxdev->dev.platform_data;
+>  	struct platform_device *pdev = cp->pdev;
+> -	struct device *dev = &pdev->dev;
+> +	struct device *dev = &auxdev->dev;
+>  	struct axienet_local *lp;
+>  	struct net_device *ndev;
+>  	struct device_node *np;
+> @@ -2765,7 +2771,7 @@ static int axienet_mac_probe(struct axienet_common *cp)
+>  	if (!ndev)
+>  		return -ENOMEM;
+>  
+> -	platform_set_drvdata(pdev, ndev);
+> +	auxiliary_set_drvdata(auxdev, ndev);
+>  
+>  	SET_NETDEV_DEV(ndev, dev);
+>  	ndev->features = NETIF_F_SG;
+> @@ -2777,7 +2783,7 @@ static int axienet_mac_probe(struct axienet_common *cp)
+>  
+>  	lp = netdev_priv(ndev);
+>  	lp->ndev = ndev;
+> -	lp->dev = dev;
+> +	lp->dev = &pdev->dev;
+>  	lp->cp = cp;
+>  	lp->regs = cp->regs;
+>  	lp->options = XAE_OPTION_DEFAULTS;
+> @@ -2909,8 +2915,11 @@ static int axienet_mac_probe(struct axienet_common *cp)
+>  			of_node_put(np);
+>  			lp->eth_irq = platform_get_irq_optional(pdev, 0);
+>  		} else {
+> +			struct resource *dmares;
+> +
+>  			/* Check for these resources directly on the Ethernet node. */
+> -			lp->dma_regs = devm_platform_get_and_ioremap_resource(pdev, 1, NULL);
+> +			dmares = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +			lp->dma_regs = devm_ioremap_resource(dev, dmares);
+>  			lp->rx_irq = platform_get_irq(pdev, 1);
+>  			lp->tx_irq = platform_get_irq(pdev, 0);
+>  			lp->eth_irq = platform_get_irq_optional(pdev, 2);
+> @@ -2925,7 +2934,9 @@ static int axienet_mac_probe(struct axienet_common *cp)
+>  		}
+>  
+>  		/* Reset core now that clocks are enabled, prior to accessing MDIO */
+> +		axienet_lock_mii(lp);
+>  		ret = __axienet_device_reset(lp);
+> +		axienet_unlock_mii(lp);
+>  		if (ret)
+>  			return ret;
+>  
+> @@ -2957,7 +2968,8 @@ static int axienet_mac_probe(struct axienet_common *cp)
+>  			return -EINVAL;
+>  		}
+>  
+> -		ret = dma_set_mask_and_coherent(dev, DMA_BIT_MASK(addr_width));
+> +		ret = dma_set_mask_and_coherent(lp->dev,
+> +						DMA_BIT_MASK(addr_width));
+>  		if (ret) {
+>  			dev_err(dev, "No suitable DMA available\n");
+>  			return ret;
+> @@ -3055,7 +3067,7 @@ static int axienet_mac_probe(struct axienet_common *cp)
+>  			  lp->phylink_config.supported_interfaces);
+>  	}
+>  
+> -	lp->phylink = phylink_create(&lp->phylink_config, dev->fwnode,
+> +	lp->phylink = phylink_create(&lp->phylink_config, dev_fwnode(dev),
+>  				     lp->phy_mode,
+>  				     &axienet_phylink_ops);
+>  	if (IS_ERR(lp->phylink)) {
+> @@ -3080,9 +3092,9 @@ static int axienet_mac_probe(struct axienet_common *cp)
+>  	return ret;
+>  }
+>  
+> -static void axienet_mac_remove(struct platform_device *pdev)
+> +static void axienet_mac_remove(struct auxiliary_device *auxdev)
+>  {
+> -	struct net_device *ndev = platform_get_drvdata(pdev);
+> +	struct net_device *ndev = auxiliary_get_drvdata(auxdev);
+>  	struct axienet_local *lp = netdev_priv(ndev);
+>  
+>  	unregister_netdev(ndev);
+> @@ -3091,9 +3103,9 @@ static void axienet_mac_remove(struct platform_device *pdev)
+>  		put_device(&lp->pcs_phy->dev);
+>  }
+>  
+> -static void axienet_mac_shutdown(struct platform_device *pdev)
+> +static void axienet_mac_shutdown(struct auxiliary_device *auxdev)
+>  {
+> -	struct net_device *ndev = platform_get_drvdata(pdev);
+> +	struct net_device *ndev = auxiliary_get_drvdata(auxdev);
+>  
+>  	rtnl_lock();
+>  	netif_device_detach(ndev);
+> @@ -3139,12 +3151,78 @@ static int axienet_resume(struct device *dev)
+>  static DEFINE_SIMPLE_DEV_PM_OPS(axienet_pm_ops,
+>  				axienet_suspend, axienet_resume);
+>  
+> +static const struct auxiliary_device_id xilinx_axienet_mac_id_table[] = {
+> +	{ .name = KBUILD_MODNAME ".mac", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(auxiliary, xilinx_axienet_mac_id_table);
+> +
+> +static struct auxiliary_driver xilinx_axienet_mac = {
+> +	.name = "mac",
+> +	.id_table = xilinx_axienet_mac_id_table,
+> +	.probe = axienet_mac_probe,
+> +	.remove = axienet_mac_remove,
+> +	.shutdown = axienet_mac_shutdown,
+> +	.driver = {
+> +		.pm = &axienet_pm_ops,
+> +	},
+> +};
+> +
+> +static DEFINE_IDA(axienet_id);
+> +
+> +static void axienet_id_free(void *data)
+> +{
+> +	int id = (intptr_t)data;
+> +
+> +	ida_free(&axienet_id, id);
+> +}
+> +
+> +static void auxenet_aux_release(struct device *dev) { }
+> +
+> +static void axienet_aux_destroy(void *data)
+> +{
+> +	struct auxiliary_device *auxdev = data;
+> +
+> +	auxiliary_device_delete(auxdev);
+> +	auxiliary_device_uninit(auxdev);
+> +	fwnode_handle_put(auxdev->dev.fwnode);
+> +}
+> +
+> +static int axienet_aux_create(struct axienet_common *cp,
+> +			      struct auxiliary_device *auxdev, const char *name,
+> +			      int id, struct fwnode_handle *fwnode)
+> +{
+> +	struct device *dev = &cp->pdev->dev;
+> +	int ret;
+> +
+> +	auxdev->name = name;
+> +	auxdev->id = id;
+> +	auxdev->dev.parent = dev;
+> +	auxdev->dev.platform_data = cp;
+> +	auxdev->dev.release = auxenet_aux_release;
+> +	device_set_node(&auxdev->dev, fwnode);
+> +	ret = auxiliary_device_init(auxdev);
+> +	if (ret) {
+> +		fwnode_handle_put(fwnode);
+> +		return ret;
+> +	}
+> +
+> +	ret = auxiliary_device_add(auxdev);
+> +	if (ret) {
+> +		fwnode_handle_put(fwnode);
+> +		auxiliary_device_uninit(auxdev);
+> +		return ret;
+> +	}
+> +
+> +	return devm_add_action_or_reset(dev, axienet_aux_destroy, auxdev);
+> +}
+> +
+>  static int axienet_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+>  	struct axienet_common *cp;
+>  	struct resource *ethres;
+> -	int ret;
+> +	int ret, id;
+>  
+>  	cp = devm_kzalloc(dev, sizeof(*cp), GFP_KERNEL);
+>  	if (!cp)
+> @@ -3170,33 +3248,31 @@ static int axienet_probe(struct platform_device *pdev)
+>  		return PTR_ERR(cp->regs);
+>  	cp->regs_start = ethres->start;
+>  
+> -	ret = axienet_mdio_setup(cp);
+> -	if (ret)
+> -		dev_warn(dev, "error registering MDIO bus: %d\n", ret);
+> +	id = ida_alloc(&axienet_id, GFP_KERNEL);
+> +	if (id < 0)
+> +		return dev_err_probe(dev, id, "could not allocate id\n");
+>  
+> -	ret = axienet_mac_probe(cp);
+> -	if (!ret)
+> -		return 0;
+> +	ret = devm_add_action_or_reset(dev, axienet_id_free,
+> +				       (void *)(intptr_t)id);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret,
+> +				     "could not register id free action\n");
+>  
+> -	if (cp->mii_bus)
+> -		axienet_mdio_teardown(cp);
+> -	return ret;
+> -}
+> +	ret = axienet_aux_create(cp, &cp->mii_bus, "mdio", id,
+> +				 device_get_named_child_node(dev, "mdio"));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "could not create mdio bus\n");
+>  
+> -static void axienet_remove(struct platform_device *pdev)
+> -{
+> -	struct net_device *ndev = platform_get_drvdata(pdev);
+> -	struct axienet_local *lp = netdev_priv(ndev);
+> +	ret = axienet_aux_create(cp, &cp->mac, "mac", id,
+> +				 fwnode_handle_get(dev_fwnode(dev)));
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "could not create MAC\n");
+>  
+> -	axienet_mac_remove(pdev);
+> -	if (lp->mii_bus)
+> -		axienet_mdio_teardown(lp->cp);
+> +	return 0;
+>  }
+>  
+>  static struct platform_driver axienet_driver = {
+>  	.probe = axienet_probe,
+> -	.remove = axienet_remove,
+> -	.shutdown = axienet_mac_shutdown,
+>  	.driver = {
+>  		 .name = "xilinx_axienet",
+>  		 .pm = &axienet_pm_ops,
+> @@ -3204,7 +3280,35 @@ static struct platform_driver axienet_driver = {
+>  	},
+>  };
+>  
+> -module_platform_driver(axienet_driver);
+> +static int __init axienet_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = auxiliary_driver_register(&xilinx_axienet_mdio);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = auxiliary_driver_register(&xilinx_axienet_mac);
+> +	if (ret)
+> +		goto unregister_mdio;
+> +
+> +	ret = platform_driver_register(&axienet_driver);
+> +	if (ret) {
+> +		auxiliary_driver_unregister(&xilinx_axienet_mac);
+> +unregister_mdio:
+> +		auxiliary_driver_unregister(&xilinx_axienet_mdio);
+> +	}
+> +	return ret;
+> +}
+> +module_init(axienet_init);
+> +
+> +static void __exit axienet_exit(void)
+> +{
+> +	platform_driver_register(&axienet_driver);
+platform_driver_unregister
 
 Thanks,
-Armin Wolf
+Sundeep
 
->>> +
->>> +                     if (*val =3D=3D 128)
->>> +                             *val =3D 0;
->>> +                     else
->>> +                             *val =3D 1;
->>> +
->>> +                     return ret;
->>> +             case hwmon_pwm_input:
->>> +                     ret =3D read_from_ec(AYN_SENSOR_PWM_FAN_SET_REG,=
- 1, val);
->>> +                     if (ret)
->>> +                             return ret;
->>> +
->>> +                     *val =3D *val << 1; /* Max value is 128, scale t=
-o 255 */
->>> +
->>> +                     return 0;
->>> +             default:
->>> +                     break;
->>> +             }
->>> +             break;
->>> +     default:
->>> +             break;
->>> +     }
->>> +     return -EOPNOTSUPP;
->>> +}
->>> +
->>> +/**
->>> + * ayn_pwm_fan_write() - Write to a hwmon pwm attribute.
->>> + *
->>> + * @dev: parent device of the given attribute.
->>> + * @type: The hwmon_sensor_types type.
->>> + * @attr: The attribute to write to.
->>> + * @channel: HWMON subsystem usage flags for the attribute.
->>> + * @val: Value to write.
->>> + *
->>> + * Return: 0, or an error.
->>> + */
->>> +static int ayn_pwm_fan_write(struct device *dev, enum hwmon_sensor_ty=
-pes type,
->>> +                          u32 attr, int channel, long val)
->>> +{
->>> +     if (type !=3D hwmon_pwm)
->>> +             return -EOPNOTSUPP;
->>> +     switch (attr) {
->>> +     case hwmon_pwm_enable:
->>> +             switch (val) {
->>> +             case HWMON_PWM_FAN_MODE_FULL:
->>> +                     return ayn_pwm_full();
->>> +             case HWMON_PWM_FAN_MODE_MANUAL:
->>> +                     return ayn_pwm_manual();
->>> +             case HWMON_PWM_FAN_MODE_AUTO:
->>> +                     return ayn_pwm_auto();
->>> +             case HWMON_PWM_FAN_MODE_EC_CURVE:
->>> +                     return ayn_pwm_ec_curve();
->>> +             default:
->>> +                     return -EINVAL;
->>> +             }
->>> +     case hwmon_pwm_input:
->>> +             if (val < 0 || val > 255)
->>> +                     return -EINVAL;
->>> +
->>> +             val =3D val >> 1; /* Max value is 128, scale from 255 */
->>> +
->>> +             return write_to_ec(AYN_SENSOR_PWM_FAN_SET_REG, val);
->>> +     default:
->>> +             return -EOPNOTSUPP;
->>> +     }
->>> +}
->>> +
->>> +static const struct hwmon_channel_info *ayn_ec_sensors[] =3D {
->>> +     HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT),
->>> +     HWMON_CHANNEL_INFO(pwm, HWMON_PWM_INPUT | HWMON_PWM_ENABLE),
->>> +     NULL,
->>> +};
->>> +
->>> +static const struct hwmon_ops ayn_ec_hwmon_ops =3D {
->>> +     .is_visible =3D ayn_ec_hwmon_is_visible,
->>> +     .read =3D ayn_pwm_fan_read,
->>> +     .write =3D ayn_pwm_fan_write,
->>> +};
->>> +
->>> +static const struct hwmon_chip_info ayn_ec_chip_info =3D {
->>> +     .ops =3D &ayn_ec_hwmon_ops,
->>> +     .info =3D ayn_ec_sensors,
->>> +};
->>> +
->>> +/**
->>> + * pwm_curve_store() - Write a fan curve speed or temperature value.
->>> + *
->>> + * @dev: The attribute's parent device.
->>> + * @attr: The attribute to read.
->>> + * @buf: Input value string from sysfs write.
->>> + *
->>> + * Return: Number of bytes read, or an error.
->>> + */
->>> +static ssize_t pwm_curve_store(struct device *dev,
->>> +                            struct device_attribute *attr, const char=
- *buf,
->>> +                            size_t count)
->>> +{
->>> +     int i =3D to_sensor_dev_attr(attr)->index;
->>> +     int ret, val;
->>> +     u8 reg;
->>> +
->>> +     ret =3D kstrtoint(buf, 0, &val);
->> Please use "10" for the second argument of kstrtoint() instead of "0".
->>
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     if (i < 5) {
->>> +             if (val < 0 || val > 255)
->>> +                     return -EINVAL;
->>> +             val =3D val >> 1; /* Max EC value is 128, scale from 255=
- */
->>> +     } else
->>> +             if (val < 0 || val > 100)
->>> +                     return -EINVAL;
->> Please keep in mind that temperature values are submitted in milidegree=
-s celsius, so you need
->> to perform some scaling here.
->>
-> Small oversight, thanks for pointing that out.
->
->>> +
->>> +     reg =3D ayn_pwm_curve_registers[i];
->>> +
->>> +     ret =3D write_to_ec(reg, val);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     return count;
->>> +}
->>> +
->>> +/**
->>> + * pwm_curve_show() - Read a fan curve speed or temperature value.
->>> + *
->>> + * @dev: The attribute's parent device.
->>> + * @attr: The attribute to read.
->>> + * @buf: Output buffer.
->>> + *
->>> + * Return: Number of bytes read, or an error.
->>> + */
->>> +static ssize_t pwm_curve_show(struct device *dev, struct device_attri=
-bute *attr,
->>> +                           char *buf)
->>> +{
->>> +     int i =3D to_sensor_dev_attr(attr)->index;
->>> +     long val;
->>> +     int ret;
->>> +     u8 reg;
->>> +
->>> +     reg =3D ayn_pwm_curve_registers[i];
->>> +
->>> +     ret =3D read_from_ec(reg, 1, &val);
->>> +     if (ret)
->>> +             return ret;
->>> +
->>> +     if (i < 5)
->>> +             val =3D val << 1; /* Max EC value is 128, scale to 255 *=
-/
->> Please convert the temperature values to milidegrees celsius here.
->>
->>> +
->>> +     return sysfs_emit(buf, "%ld\n", val);
->>> +}
->>> +
->>> +/* Fan curve attributes */
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point1_pwm, pwm_curve, 0);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_pwm, pwm_curve, 1);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_pwm, pwm_curve, 2);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_pwm, pwm_curve, 3);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_pwm, pwm_curve, 4);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point1_temp, pwm_curve, 5);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point2_temp, pwm_curve, 6);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point3_temp, pwm_curve, 7);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point4_temp, pwm_curve, 8);
->>> +static SENSOR_DEVICE_ATTR_RW(pwm1_auto_point5_temp, pwm_curve, 9);
->>> +
->>> +static struct attribute *ayn_sensors_attrs[] =3D {
->>> +     &sensor_dev_attr_pwm1_auto_point1_pwm.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point1_temp.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point2_pwm.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point2_temp.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point3_pwm.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point3_temp.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point4_pwm.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point4_temp.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point5_pwm.dev_attr.attr,
->>> +     &sensor_dev_attr_pwm1_auto_point5_temp.dev_attr.attr,
->>> +     NULL,
->>> +};
->>> +
->>> +ATTRIBUTE_GROUPS(ayn_sensors);
->>> +
->>> +static int ayn_ec_probe(struct platform_device *pdev)
->>> +{
->>> +     struct device *dev =3D &pdev->dev;
->>> +     struct device *hwdev;
->>> +
->>> +     hwdev =3D devm_hwmon_device_register_with_info(dev, "aynec", NUL=
-L,
->>> +                                                  &ayn_ec_chip_info,
->>> +                                                  ayn_sensors_groups)=
-;
->>> +     return PTR_ERR_OR_ZERO(hwdev);
->>> +}
->>> +
->>> +static struct platform_driver ayn_ec_driver =3D {
->>> +     .driver =3D {
->>> +             .name =3D "ayn-ec",
->>> +     },
->>> +     .probe =3D ayn_ec_probe,
->>> +};
->> How do you restore the fan curve settings when resuming from suspend? I=
- suggest that you
->> convert this driver to use the regmap mechanism as doing so would also =
-give you:
->>
->> - caching of register values
->> - restoring cached register values during resume
->>
->> You can the a look at the sch5627 driver on how to implement suspend us=
-ing regmap. You can also
->> take some inspirations from drivers/hwmon/sch56xx-common.c on how to im=
-plement your own regmap
->> backend.
-> Okay, I'll take a look at it.
->
->>> +
->>> +static struct platform_device *ayn_ec_device;
->>> +
->>> +static int __init ayn_ec_init(void)
->>> +{
->>> +     ayn_ec_device =3D platform_create_bundle(&ayn_ec_driver, ayn_ec_=
-probe,
->>> +                                            NULL, 0, NULL, 0);
->>> +
->>> +     return PTR_ERR_OR_ZERO(ayn_ec_device);
->>> +}
->>> +
->>> +static void __exit ayn_ec_exit(void)
->>> +{
->>> +     platform_device_unregister(ayn_ec_device);
->>> +     platform_driver_unregister(&ayn_ec_driver);
->>> +}
->>> +
->>> +static const struct dmi_system_id ayn_dmi_table[] =3D {
->>> +     {
->>> +             .ident =3D "AYN Loki Max",
->>> +             .matches =3D {
->>> +                     DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ayn"),
->>> +                     DMI_EXACT_MATCH(DMI_BOARD_NAME, "Loki Max"),
->>> +             },
->>> +     },
->>> +     {
->>> +             .ident =3D "AYN Loki MiniPro",
->>> +             .matches =3D {
->>> +                     DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ayn"),
->>> +                     DMI_EXACT_MATCH(DMI_BOARD_NAME, "Loki MiniPro"),
->>> +             },
->>> +     },
->>> +     {
->>> +             .ident =3D "AYN Loki Zero",
->>> +             .matches =3D {
->>> +                     DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "ayn"),
->>> +                     DMI_EXACT_MATCH(DMI_BOARD_NAME, "Loki Zero"),
->>> +             },
->>> +     },
->>> +     {
->>> +             .ident =3D "Tectoy Zeenix Lite",
->>> +             .matches =3D {
->>> +                     DMI_EXACT_MATCH(DMI_BOARD_VENDOR, "Tectoy"),
->>> +                     DMI_EXACT_MATCH(DMI_BOARD_NAME, "Zeenix Lite"),
->>> +             },
->>> +     },
->>> +     {},
->>> +};
->> Please declare the DMI table as being __initconst, as doing so will fre=
-e some memory after the driver
->> has been loaded. Additionally please check this DMI table inside ayn_ec=
-_init() using dmi_first_match()
->> just in case someone configures this module as builtin.
-> Makes sense.
->
-> Thanks,
-> Derek
->
->> Thanks,
->> Armin Wolf
->>
->>> +
->>> +MODULE_DEVICE_TABLE(dmi, ayn_dmi_table);
->>> +
->>> +module_init(ayn_ec_init);
->>> +module_exit(ayn_ec_exit);
->>> +
->>> +MODULE_AUTHOR("Derek J. Clark <derekjohn.clark@gmail.com>");
->>> +MODULE_DESCRIPTION("Platform driver that handles EC sensors of AYN x8=
-6 devices");
->>> +MODULE_LICENSE("GPL");
+> +	auxiliary_driver_unregister(&xilinx_axienet_mac);
+> +	auxiliary_driver_unregister(&xilinx_axienet_mdio);
+> +}
+> +module_exit(axienet_exit);
+>  
+>  MODULE_DESCRIPTION("Xilinx Axi Ethernet driver");
+>  MODULE_AUTHOR("Xilinx");
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
+> index d428ce6da639..cc8a2a70271b 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_mdio.c
+> @@ -9,10 +9,10 @@
+>   * Copyright (c) 2010 - 2012 Xilinx, Inc. All rights reserved.
+>   */
+>  
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/clk.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_mdio.h>
+> -#include <linux/platform_device.h>
+>  #include <linux/jiffies.h>
+>  #include <linux/iopoll.h>
+>  
+> @@ -271,19 +271,10 @@ static int axienet_mdio_enable(struct mii_bus *bus, struct device_node *np)
+>  	return ret;
+>  }
+>  
+> -/**
+> - * axienet_mdio_setup - MDIO setup function
+> - * @lp:		Pointer to axienet common data structure.
+> - *
+> - * Return:	0 on success, -ETIMEDOUT on a timeout, -EOVERFLOW on a clock
+> - *		divisor overflow, -ENOMEM when mdiobus_alloc (to allocate
+> - *		memory for mii bus structure) fails.
+> - *
+> - * Sets up the MDIO interface by initializing the MDIO clock.
+> - * Register the MDIO interface.
+> - **/
+> -int axienet_mdio_setup(struct axienet_common *lp)
+> +static int axienet_mdio_probe(struct auxiliary_device *auxdev,
+> +			      const struct auxiliary_device_id *id)
+>  {
+> +	struct axienet_common *lp = auxdev->dev.platform_data;
+>  	struct device_node *mdio_node;
+>  	struct mii_bus *bus;
+>  	int ret;
+> @@ -299,36 +290,40 @@ int axienet_mdio_setup(struct axienet_common *lp)
+>  	bus->name = "Xilinx Axi Ethernet MDIO";
+>  	bus->read = axienet_mdio_read;
+>  	bus->write = axienet_mdio_write;
+> -	bus->parent = &lp->pdev->dev;
+> -	lp->mii_bus = bus;
+> +	bus->parent = &auxdev->dev;
+> +	auxiliary_set_drvdata(auxdev, bus);
+>  
+> -	mdio_node = of_get_child_by_name(lp->pdev->dev.of_node, "mdio");
+> -	scoped_guard(mutex, &lp->reset_lock)
+> -		ret = axienet_mdio_enable(bus, mdio_node);
+> +	mdio_node = dev_of_node(&auxdev->dev);
+> +	ret = axienet_mdio_enable(bus, mdio_node);
+>  	if (ret < 0)
+>  		goto unregister;
+>  
+>  	ret = of_mdiobus_register(bus, mdio_node);
+> -	of_node_put(mdio_node);
+>  	scoped_guard(mutex, &lp->reset_lock)
+>  		axienet_mdio_mdc_disable(lp);
+> -	if (ret) {
+> +	if (ret)
+>  unregister:
+>  		mdiobus_free(bus);
+> -		lp->mii_bus = NULL;
+> -	}
+>  	return ret;
+>  }
+>  
+> -/**
+> - * axienet_mdio_teardown - MDIO remove function
+> - * @lp:		Pointer to axienet common data structure.
+> - *
+> - * Unregisters the MDIO and frees any associate memory for mii bus.
+> - */
+> -void axienet_mdio_teardown(struct axienet_common *lp)
+> +static void axienet_mdio_remove(struct auxiliary_device *auxdev)
+>  {
+> -	mdiobus_unregister(lp->mii_bus);
+> -	mdiobus_free(lp->mii_bus);
+> -	lp->mii_bus = NULL;
+> +	struct mii_bus *mii_bus = auxiliary_get_drvdata(auxdev);
+> +
+> +	mdiobus_unregister(mii_bus);
+> +	mdiobus_free(mii_bus);
+>  }
+> +
+> +static const struct auxiliary_device_id xilinx_axienet_mdio_id_table[] = {
+> +	{ .name = KBUILD_MODNAME ".mdio", },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(auxiliary, xilinx_axienet_mdio_id_table);
+> +
+> +struct auxiliary_driver xilinx_axienet_mdio = {
+> +	.name = "mdio",
+> +	.id_table = xilinx_axienet_mdio_id_table,
+> +	.probe = axienet_mdio_probe,
+> +	.remove = axienet_mdio_remove,
+> +};
+> -- 
+> 2.35.1.1320.gc452695387.dirty
+> 
 
