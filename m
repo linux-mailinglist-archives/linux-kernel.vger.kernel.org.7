@@ -1,128 +1,117 @@
-Return-Path: <linux-kernel+bounces-748775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8D6B145E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:41:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07F1B145EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3BEC541F3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:41:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9A04543534
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEBDF1F542E;
-	Tue, 29 Jul 2025 01:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF361F8ACA;
+	Tue, 29 Jul 2025 01:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MMwIAU8P"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="B9KloKMh"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3E711C861F;
-	Tue, 29 Jul 2025 01:40:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589F71F37C5;
+	Tue, 29 Jul 2025 01:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753753254; cv=none; b=rZ7ME0iz0WEPGTAzRJiXwzGcifu9h9719+9KpubWHGLvIv+scs7hO/4GcJ6mIwA9lVI776mql/KG2OW4k767bResN/SFTFdnZBIddwEY01fI+yvVvj0PoVmgP6rTZr5rvxThgYFQ496poxQPGvZj3YnFDx4wV5WMVNkwE9mEKKc=
+	t=1753753288; cv=none; b=aqqKhnVidR/V4eChmH8R2voTyQlSPzM30SmNddMm7r36+3bACgwQHqiEZquD4fjfkerqDaW6hhRPy96dVTYqdoCxv+V+es57Ax3p/fd09w5Q/L8GH7W4R2L4eYQcMidFnP5qsWmCDG6bjsZFmLcqClGA2hR/89nItZgz3ovJIu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753753254; c=relaxed/simple;
-	bh=jo3ijy+JTGr03KTDI0usXnbpLcxXkxyM0nshqrU9Le0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jt1WyjJWmU6EIMfmmfgCK0i8dJvndTPPTd0Aqc7GXKHR/3GBT+80OG2Ah1sWZ056isAHq/OIVlpZ6yD9JY+sfJhn1XJqgrmNAzLzNQhjJ3VDR1VHboyOUWnjZJXYALBBcfMZ/FWw0ZgzV6qperf1Zvhg7BEl55ut7Zf1P0P/1WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MMwIAU8P; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=YD3CmDSfJU1ULhXx89mEK0BRfVdB034fXGaNnPcOSpc=; b=MMwIAU8PAolD/byoGQvhYyiHJS
-	FRj6Gix9yJyCSk53z4uZ1ezhbLsqhdD2SF3EqsxEUWo3wiNWfaESOuLT3T6huRV2E1Mi03w1Kadoy
-	d5Vbia8FoXJqlEToMOB5/iPCUqVn2YntG3W01h9XDMJey99DXQTOeSoStQmO0ER8R6Hr/KD7xh5k5
-	tg50ZXdPuD8xDANeR5CxyybE2MGY3GiYhHa1mvdYMlWpjA5fryVKv9vzJfiRlQPj/zhm3bfgK5tcG
-	S5Qdv3JDCzIK/9aOMo1ai3Vjtze+KbA/wohCho4bQ+B8fMRJRNVm0C8O0Wvgjb2Zq1Y66qzuGiBtX
-	kR7enR6w==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ugZKl-0000000FiMq-2NMk;
-	Tue, 29 Jul 2025 01:40:51 +0000
-Message-ID: <742afa67-600e-4a9e-ae7d-f67de31eb603@infradead.org>
-Date: Mon, 28 Jul 2025 18:40:50 -0700
+	s=arc-20240116; t=1753753288; c=relaxed/simple;
+	bh=7jL0NE4cF4xqYnGuVecwCuQthPBG5AwQZhJM7XTG5Ek=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Prmy/GL+LEDh92MBcrcaCpJ63B4bx3JPc85AX8cu4LcKhBJe+q6q+ntvfiOrvuHnhC+ZVpuYXTjQMlckIbr6vJ8EsI1pk5iHxFui+kgFb5VECTL8z7rxlHjlrHB7y2WXXsNm/rc6H5Mi/ltnH2pOdG46mD6eB3oxkyrGGKCvR+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=B9KloKMh; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 4A82325D07;
+	Tue, 29 Jul 2025 03:41:23 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id Ckl6WRtZjqNd; Tue, 29 Jul 2025 03:41:22 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1753753282; bh=7jL0NE4cF4xqYnGuVecwCuQthPBG5AwQZhJM7XTG5Ek=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=B9KloKMhlJyyRh81m9m/G3F+TnYK+unb5HmSIcZYXv9skznThsPV7h/WJffNlxaJj
+	 GgelXZd6oZyPw3DHn2h5K07c7MdBLXmnkcXFhOCDK/lbxmgM2JtehkiPcayyUeZLPA
+	 CxOt4PLcDLpw7MfjzJ569Yu1jHgXTqSh42zh47HsACMyiVQg/6sJJZnjh1TTSjYhfZ
+	 AFWr+MskYiXsSrZT2kLjXuenqSzj67q532Gvy79Xvk/YwuvxoUDyTLwAXRg6ZCfZEk
+	 KOov8Z0BmgN26+ZXXUU1EY2M2Go+57hXmXtLODAkruVnsjzMIf4llmKPDmKGsCh0Pb
+	 Sn3Y0xyX8GMMw==
+Date: Tue, 29 Jul 2025 01:41:01 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Ze Huang <huang.ze@linux.dev>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yixun Lan <dlan@gentoo.org>,
+	Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v7 1/2] dt-bindings: usb: dwc3: add support for SpacemiT
+ K1
+Message-ID: <aIgmrQ7afSO5sjB_@pie>
+References: <20250729-dwc3_generic-v7-0-5c791bba826f@linux.dev>
+ <20250729-dwc3_generic-v7-1-5c791bba826f@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Fixed commit: Fixes Sphinx warnings about duplicate
- reference labels in Documentation/filesystems/ext4/atomic_writes.rst.
-To: Andre Luiz da Nobrega <andreluizrodriguescastro@gmail.com>, tytso@mit.edu
-Cc: adilger.kernel@dilger.ca, corbet@lwn.net, linux-ext4@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org
-References: <20250729013200.84919-1-andreluizrodriguescastro@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250729013200.84919-1-andreluizrodriguescastro@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729-dwc3_generic-v7-1-5c791bba826f@linux.dev>
 
-Andre,
-
-The warnings should be part of the patch description, not in the patch itself.
-
-Still missing the actual ext4 change.
-
-More below.
-
-
-On 7/28/25 6:32 PM, Andre Luiz da Nobrega wrote:
-> Specifically, the label '.. _atomic_write_bdev_support:' was renamed to
-> '.. _atomic_write_bdev_support_section:' to ensure label uniqueness
-> within the document.
+On Tue, Jul 29, 2025 at 12:33:55AM +0800, Ze Huang wrote:
+> Add support for the USB 3.0 Dual-Role Device (DRD) controller embedded
+> in the SpacemiT K1 SoC. The controller is based on the Synopsys
+> DesignWare Core USB 3 (DWC3) IP, supporting USB3.0 host mode and USB 2.0
+> DRD mode.
 > 
-> Signed-off-by: Andre Luiz da Nobrega <andreluizrodriguescastro@gmail.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Ze Huang <huang.ze@linux.dev>
 > ---
->  Documentation/filesystems/ext4/atomic_writes.rst |  2 +-
->  warn_output.txt                                  | 12 ++++++++++++
->  2 files changed, 13 insertions(+), 1 deletion(-)
->  create mode 100644 warn_output.txt
+>  .../devicetree/bindings/usb/spacemit,k1-dwc3.yaml  | 124 +++++++++++++++++++++
+>  1 file changed, 124 insertions(+)
 > 
-> diff --git a/Documentation/filesystems/ext4/atomic_writes.rst b/Documentation/filesystems/ext4/atomic_writes.rst
-> index 80f83112d24d..e8cf983049b4 100644
-> --- a/Documentation/filesystems/ext4/atomic_writes.rst
-> +++ b/Documentation/filesystems/ext4/atomic_writes.rst
-> @@ -204,7 +204,7 @@ writes are supported.
->  .. _atomic_write_bdev_support_section:
->  
->  Hardware Support
-> -----------------
-> +-----------------
-
-Unneeded change?
-
->  
->  The underlying storage device must support atomic write operations.
->  Modern NVMe and SCSI devices often provide this capability.
-> diff --git a/warn_output.txt b/warn_output.txt
+> diff --git a/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml b/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml
 > new file mode 100644
-> index 000000000000..593c6fa5b65d
+> index 0000000000000000000000000000000000000000..7007e2bd42016ae0e50c4007e75d26bada34d983
 > --- /dev/null
-> +++ b/warn_output.txt
-> @@ -0,0 +1,12 @@
-> +Using alabaster theme
-> +[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/filesystems/ext4/atomic_writes.rst:5: WARNING: duplicate label atomic_writes, other instance in /home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/filesystems/ext4/atomic_writes.rst[39;49;00m
-> +[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/filesystems/ext4/atomic_writes.rst:207: WARNING: duplicate label atomic_write_bdev_support, other instance in /home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/filesystems/ext4/atomic_writes.rst[39;49;00m
-> +[91mWARNING: ./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:1068 struct member 'mcm' not described in 'mpc_funcs'[39;49;00m
-> +[91mWARNING: ./drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h:1068 struct member 'rmcm' not described in 'mpc_funcs'[39;49;00m
-> +[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/gpu/drm-kms:360: ./drivers/gpu/drm/drm_fourcc.c:362: WARNING: Duplicate C declaration, also defined at gpu/drm-kms:35.
-> +Declaration is '.. c:function:: const struct drm_format_info * drm_format_info (u32 format)'.[39;49;00m
-> +[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/gpu/drm-kms:476: ./drivers/gpu/drm/drm_modeset_lock.c:375: WARNING: Duplicate C declaration, also defined at gpu/drm-kms:49.
-> +Declaration is '.. c:function:: int drm_modeset_lock (struct drm_modeset_lock *lock, struct drm_modeset_acquire_ctx *ctx)'.[39;49;00m
-> +[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/gpu/drm-uapi:557: ./drivers/gpu/drm/drm_ioctl.c:915: WARNING: Duplicate C declaration, also defined at gpu/drm-uapi:70.
-> +Declaration is '.. c:function:: bool drm_ioctl_flags (unsigned int nr, unsigned int *flags)'.[39;49;00m
-> +[91m/home/alkaleus/Documentos/PESSOAL/LFX_dev/linus_tree/Documentation/arch/powerpc/htm.rst: WARNING: document isn't included in any toctree[39;49;00m
+> +++ b/Documentation/devicetree/bindings/usb/spacemit,k1-dwc3.yaml
+> @@ -0,0 +1,124 @@
 
--- 
-~Randy
+...
 
+> +  resets:
+> +    items:
+> +      - description: USB3.0 AHB reset
+> +      - description: USB3.0 VCC reset
+> +      - description: USB3.0 PHY reset
+> +      - description: PCIE0 global reset (for combo phy)
+
+Why should the USB driver takes care of the PCIe stuff? This sounds
+strange to me.
+
+> +  reset-names:
+> +    items:
+> +      - const: ahb
+> +      - const: vcc
+> +      - const: phy
+> +      - const: pcie0
+
+Best regards,
+Yao Zi
 
