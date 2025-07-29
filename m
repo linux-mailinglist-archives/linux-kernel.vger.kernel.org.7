@@ -1,90 +1,94 @@
-Return-Path: <linux-kernel+bounces-749024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC00DB14901
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:16:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4DCB14907
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 307F93AB150
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:16:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AE0F3BFFBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:22:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BB21261586;
-	Tue, 29 Jul 2025 07:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VON8cTXr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD56262FF1;
+	Tue, 29 Jul 2025 07:22:47 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6555121CA0C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ACD1EEBD;
+	Tue, 29 Jul 2025 07:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753773396; cv=none; b=tewTu2ium1VqMvRpX5FZyHqXl6JJs+EhUxGdvE5cUw5xKxyCkavFadzih5E/5FrBF97eP3a8jbzrteoz7iGqPaTZC53YZodKPDa7/HaXFjke+oBvMzbPbbwKaSzoCak/fICLjZTzsLYVjzjrdVTPmHSCR+/K6+uh32hbvieF9fo=
+	t=1753773767; cv=none; b=RNt6A/ixNLmsEMLHeFqlPhfGaraYY4xdS7/TYWGKQ0gphA35eNMtjj61M+cqjpaTQY36Is16ohdHW2yL+fRHrVjzYOVdPiYM/25uJoYnZBKMk1Kyo5GoyAnsKiEnwH6EOQsOsIVTQ0+z0aGSG0S3hFFQW6PYv/wdcPvKbJ2PyPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753773396; c=relaxed/simple;
-	bh=3Ztp8YVllXJki+zlS86d8YKpLzJo+yhrr9eH5X7xVLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pPLFvJn3Fqq4rpapAjSJo3CnWnirIstVIRcx2ouxr3vXl9awL9Ul2BsbDgWGHwNC+W6u26I3a26olrDc5qu5io8RV+aaQtvwCIwsdVoIk4VB4OeeElq9eYcOLz0y0tEFE8GBBswT0R32LBfbSPSf8j/OJlun3m8ORudl5vtONmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VON8cTXr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 971A3C4CEEF;
-	Tue, 29 Jul 2025 07:16:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753773395;
-	bh=3Ztp8YVllXJki+zlS86d8YKpLzJo+yhrr9eH5X7xVLY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VON8cTXrDcvRKlkBLQmOPrN+pUYzYsmTksxF+Dzu0EniaPk61wnuw04OuapnRjhJ3
-	 q0Kl6J6HOzVh3MeXYbxMtLnTKNHAUyLiMMjbU8AJgoaAqcqj99Wtuk/TVnPgcvxZfa
-	 ngZPflgcqplPBw1uuPo1yL9RCKxsMkj/AqR9Y+UHbDIPHkqNhFcLrlur3roON+d0bU
-	 KB8kQtHp0I3xC2Lxi4gTAl+5cCJ2eYIexk/42LLgj9+2quxxUz+5YVmq8GO8EkIF0p
-	 7lOYY8DmKH+ni9OyLkeWy8RFCJ+GysuNIXdBuB521CYKaTfAEo3Ln6tpQ8di/JhA+E
-	 gJj8X8PLAhmKA==
-Date: Tue, 29 Jul 2025 09:16:32 +0200
-From: Ingo Molnar <mingo@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, the arch/x86 maintainers <x86@kernel.org>
-Subject: [GIT PULL] x86/kconfig changes for v6.17
-Message-ID: <aIh1UCUUn5vcb1Pj@gmail.com>
+	s=arc-20240116; t=1753773767; c=relaxed/simple;
+	bh=GwFSsAnn5e/gFzfmxnEwurhex/jDUSBm0oFAOSEuKvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AUkXasv04pv7C1aZbdvJHWVUTr177fP0MunZOmNNQCJKG1c9HfEWjDB8TwecKWUM4O87PKLfzNqvl13ltMezNhP7iA+sUnQGlKsTEosvW+n6hFFJQOgRaIKDWwp6w933WK4Cri8G1o4zrgwpbqJM0+ecFwiuBut/vI+/i2C3Xno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from arnaudlcm-X570-UD.. (unknown [IPv6:2a02:8084:255b:aa00:b0f6:f50b:6492:2c39])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id B81F940B15;
+	Tue, 29 Jul 2025 07:22:40 +0000 (UTC)
+Authentication-Results: Plesk;
+	spf=pass (sender IP is 2a02:8084:255b:aa00:b0f6:f50b:6492:2c39) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=arnaudlcm-X570-UD..
+Received-SPF: pass (Plesk: connection is authenticated)
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: syztest
+Date: Tue, 29 Jul 2025 08:22:34 +0100
+Message-ID: <20250729072234.90576-1-contact@arnaud-lcm.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <688809c1.a00a0220.b12ec.00b7.GAE@google.com>
+References: <688809c1.a00a0220.b12ec.00b7.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175377376123.12091.12839028667260881757@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-Linus,
+#syz test
 
-Please pull the latest x86/kconfig Git tree from:
+--- a/kernel/bpf/stackmap.c
++++ b/kernel/bpf/stackmap.c
+@@ -230,7 +230,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ 	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+ 	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+ 	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+-	u32 hash, id, trace_nr, trace_len, i;
++	u32 hash, id, trace_nr, trace_len, i, max_depth;
+ 	bool user = flags & BPF_F_USER_STACK;
+ 	u64 *ips;
+ 	bool hash_matches;
+@@ -241,6 +241,19 @@ static long __bpf_get_stackid(struct bpf_map *map,
+ 
+ 	trace_nr = trace->nr - skip;
+ 	trace_len = trace_nr * sizeof(u64);
++
++	/* Clamp the trace to max allowed depth */
++	if (stack_map_use_build_id(map))
++		max_depth = smap->map.value_size / sizeof(struct bpf_stack_build_id);
++	else
++		max_depth = smap->map.value_size / sizeof(u64);
++
++	if (trace_nr > max_depth)
++		trace_nr = max_depth;
++
++ 	ips = trace->ip + skip;
++
++
+ 	ips = trace->ip + skip;
+ 	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+ 	id = hash & (smap->n_buckets - 1);
+-- 
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86-kconfig-2025-07-29
-
-   # HEAD: 9df5e79bf1a30b94dc068ab2ed2279e40f430b88 x86/tools: insn_sanity.c: Emit standard build success messages
-
-x86/kconfig changes for v6.17:
-
- - Emit standard build success messages in insn_sanity.c
-   and insn_decoder_test.c. (Ingo Molnar)
-
- - Refresh the x86-[64|32] defconfigs mechanically (Ingo Molnar)
-
- Thanks,
-
-	Ingo
-
------------------->
-Ingo Molnar (4):
-      x86/kconfig/64: Refresh defconfig
-      x86/kconfig/32: Refresh defconfig
-      x86/tools: insn_decoder_test.c: Emit standard build success messages
-      x86/tools: insn_sanity.c: Emit standard build success messages
-
-
- arch/x86/configs/i386_defconfig    | 19 +++----------------
- arch/x86/configs/x86_64_defconfig  |  9 +--------
- arch/x86/tools/insn_decoder_test.c |  2 +-
- arch/x86/tools/insn_sanity.c       |  4 ++--
- 4 files changed, 7 insertions(+), 27 deletions(-)
 
