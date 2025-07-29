@@ -1,128 +1,153 @@
-Return-Path: <linux-kernel+bounces-749525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BD7B14F74
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57A30B14F77
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:44:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7533E18A3000
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:44:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4E4218A298C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9891E5205;
-	Tue, 29 Jul 2025 14:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F4BA1A238A;
+	Tue, 29 Jul 2025 14:44:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="XBwJIDh+"
-Received: from sonic.asd.mail.yahoo.com (sonic316-26.consmr.mail.ne1.yahoo.com [66.163.187.152])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRTdT4uw"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74731C2335
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2EF1428E7
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753800232; cv=none; b=NbZT69ZVwsCpJLOMm1F9e7hHK+DcqUNDH2EyzjqCCO+2u0sC2kt4xgSYLaet7KnbD8zWjcuV2gD6FnJsFDaPrH1+jd+QU1H11ptpsX+GxDwFzl5fMvB9CDg2jlv7GT5ZK2EiBb/P/x3H/Bebsc4rEDzq3dnyN3e4k/A1GJqukgg=
+	t=1753800283; cv=none; b=EelT25AP9tHsI7D59JRQIGHEwOZ1XqF6rEb939zhXX3g4lVRLdJqZEurCIrvH2HNDLV+1y2a/O/xuVcuMPsgbKXhgoRGeC63siA0lXajKOGjExR0wQKT+JRK9vrosSiCT2DJf4WZrObqBwUi6Wd1Q22Qk+MWXjzU3F9pc02mkrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753800232; c=relaxed/simple;
-	bh=iTo3KXrECATeW+Q/tMWgpI1FyGPKBHEfmLF2GIQul9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=J5Tu6JdIHQ9/ZPcuInhEGpxAszaCLiTEjELLfjzM5Ipp99dLz4fw4KVg3YRZYXTuReaAhtJf/cpA8MdEnxPaAvOvNG/81jcPZ/DkQO7cfKFIVqQjGNUy8midBO5zSDM85OVbDfbCHqAXgtHGeMi8AODkKMJpqM20yZAbJGzonz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=XBwJIDh+; arc=none smtp.client-ip=66.163.187.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753800224; bh=R+2Hb5QQsnwPYs+LSLMuPwc9rRMNcwquBS+dy2JrL00=; h=Date:Subject:To:References:From:In-Reply-To:From:Subject:Reply-To; b=XBwJIDh+zu3iBZRIC7p9/e9NXjaA8wR/YHG8d9P3KC02bLdRoYkL3vDPEKU0+cZzjr2DZ6zwMX61wurb/AClLH9lByhZKwDXd7NTTSvcjA+GhNe+A88pyVqteFJCA9DefHYqNA6N4Hxugg9gkzarLQT5FLlOnPLy4vw+bu3UEenewIJqbCebhoTCDLUqv1WP6MZTfy7pEpthL76fw+yuceOyoSk1PuNngEjrM5Lzs2x72pbeDHpz0dogav/UzhDpgdC5Mvi2UrkXovKKnyt+6i7p59UgRfTM6EJkSiYTR1MHZ/HqblEA5N9riOlYsSWUPeL1PIlRWYKCin6dKk4T/A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753800224; bh=/Mc7dM4J4NbYVSN/DiTkw6Ajc3J6/OvU8taCh7sYFAY=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=YVnpf9Rl5CPwX88ETN1sZN3PciH0tNBBQTEx5brwkMEu+4t0vJYEgoZaJw998y63f7NqV0pL88YRFLOzpUUsB1+j9gtXIlWflFTIqZbW9nOTF4XSKyd/Vs7qYI81/J0g9L2tyNzP12G4n0Owv1FpDBE+4OXNDpDWh+RDh0giD/3Cd1ZzmXycc4KVi8kY1XmI5xm5P/LzHSYd+dKsFu+RFzJmtkiEtw63EIVrRLKlHmsC4Lj5Swcq9N2JkcTOGlc+sHkhrld0SaX7+sdaHQQhLm9S/PkYo+0J1zMyHAwArWNl1rW7aLEFh42MaUY9WCAy7TivmJmBLDL79rLQlh3j/Q==
-X-YMail-OSG: _7M..HIVM1nRoUZrg0GnVWy32sCZw5_XMxIcMq4qqeUHXS0a1IgzWvQo_6xdcQk
- hjiAuLB57cYrQsq15o9YAK5DjKQdqVvn8Dq2rEioqDc4OuhdESQpjTGjusycvPjFuneJBBc3FsPG
- ah87q_RlWjtUYAeXg0203wc9r87T0NQK6nA30IBosfRE1DzbVdzJv1.McXtdWnR56YiiR78NGsS8
- kh5.JQ7EHTo_UYYqDBeM5J_t_elncnxuXo7ygb5IPPDohUl7SR_6ZTEFmgezHciPaQqTX.6QtwWd
- nvpLD9mAcFe4SpXJ5cPWhWLzpsVUHZLjNW8l1mInewBvz9qd8qG1r_PkgN4qUvAupo125lw9IPuj
- shf1BDk3MzOqe_9DBRI.7m46RsponjbRzMcaZjRDuDP1cyVNMgG9xs0SjHV30ISJLKCYzb0y1jRQ
- gEs71JhHloMg_lpIMuOX65GWEF_w1k0iki06_ugrZMG3jq9XIhvecjpa39YZpNA5OdNahGuqOvE4
- myzrncIouiJs4xLsPDXRf._IOZ72F1JVzRxePLuiL7qdgyx5NzzaiCCJ4cXJSsUGr45.Xdi9eEcq
- 0nK0mng6B5Xy45cW2jp3AafY_ZqV1tHTBHay2Fe58X96yEzOa8bfWkUfOLYpDjjLk1FGthF.fEHJ
- zYPfAhVj9OavrcIxWSW4OPuwQ3Zazk4uK.RXNxqCkFM0ar_IOmeTGbawIpKWx_IAlFAMBCFCaWNs
- 0InnJzhJWp12WD3Il4XSGeiDrww1p5nQ9TIqNpBnTCP61jS253ZDCYLLRF3dQKcpZppGkT5FRT6v
- GyIZL8Atg57qo1RwqWIfI4aDJ.XG46b76ewjttuMQsjrtx_XksDWWTYmdEF4d4hljIEsjeiCi0gw
- wL8Exe7O..oNztUPAI33vdYssUYShcqDHi_6ZDxCHBuFTmgl_sLwRXgzsbBCWhYQKhcFIFlyz3VU
- e6iafCy8mSfmQXQ8ejMvzXfNESyQAg7fUc3XIP_Hnhgv2PsG3FSa9wn3D.L2H25NPOComsGlmtjg
- V4yQNw_bFaXERMytcWcGcmhXCQjvxM6EuAY5VTfNvdrl_N3Z1YdPCjcJuCwwWOKDu9U7JbDQfCsu
- 61kDjPrRVcgBISt_d26L0Ea8ffePBipBq2nGBLhWDhV92uk9OFUIHYNm2bI9115JKc6cwudm5qGy
- v9REZ5HDuZ4Knv_vuRwCyphuA6wWb0bvUcBunR.m_CR3MPphS9H0kj._cVHK0c8LDSDRqg_0b1bp
- 4Vi6k0pDHXAg3XgsqteGaWrt8ljnorr6H9x8dGS4YHPNw8T8TZmMbT3hQBffVGN0vldsJKKMupcQ
- aCjXdXSd9wSaodsVrYizvdDpjPqrN8mvqZc.1Eu_WhmQu5P9UkFFneVjF54PfWIT2gCsUcQqtGig
- IJAK3ckeTSMyzThVDpBmb4xSc3ZzZz.uhmyhSsX1SP45pEos4NOcNTv.pAmcCb5.9bqd_rnXILHt
- HCum_vLx5M2AWRpUf8AD.0E1ZDqf5gzVHcxjuF2cMX2kEltjekEWpPfzrHkpMsgeeiDEDpe6nf0S
- K4GZn5AB1e4Dsbcb1XkAvVq88Kh9bXsNN7kvJ8fvDGXQ9bi4zQ8JV2aqUjbGcqOrdxGy7X6hbJgJ
- zoad4v_5WZIfVxOMVboYib2SzoEo.yffz5USPbc6VWMfcsTKhYQA.Fj0Blsb0kSbk66dgfmXEjUt
- GnO8OGCMUYC6k.3eEX1dbyX6nn6hbdsrfvdOos5DhT.XGitZE5JLVjMB2.5vYhXplVYgW9T8y4Sp
- vjQWOCcKd26B34hedAjG5wY1cQo6YLqHqOL6oMuQ5skxAiZo8AJWhnu_BB.p1IJy5QhvWms97Hvr
- 7l377UyMCnAHBwQJJPmVlTNeOk6Dr3EEoDnWYEwzbIiYLQXSRBjYDMbTswZ5dU1A7ntSOCxpdYIk
- LGoH3dKJKsqdU7rle.2R8M50o0sWMpysCbSJmC08VdmB3UZtSxKdqVGWtbVoYg9kyS.iBVZFWcil
- W_lxe8wRlOU5P5pb7Ej8cYpmG3U5eWKRPf0AgHZJ8qkKBYChkK3UWW4oyo5tw6ceA_S0s2P4Szcf
- A1cQgEbIA8wxGP3Is3Du9WOwAczWAdEoql3tYg.y4z2nWzb4hyc9FojhsHkRTW6O3d.9I.qOxfu1
- klxRXiFmOr6poOF1qaXMqEOG2y4yDnLOv5tH7NQWzCRJ9PYtnqx4j7oDQv757qyG18vIhiasRaPJ
- r63TkRPulsaJNOvXXMXBdMRGDoTDo6x7Jc_OVfeQ-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 7f4dfe97-1ef5-4ac3-950b-5115209fa6b4
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic316.consmr.mail.ne1.yahoo.com with HTTP; Tue, 29 Jul 2025 14:43:44 +0000
-Received: by hermes--production-gq1-74d64bb7d7-tqd77 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ba259b99096dcdb2c98c654fbdf1947a;
-          Tue, 29 Jul 2025 14:43:41 +0000 (UTC)
-Message-ID: <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
-Date: Tue, 29 Jul 2025 07:43:39 -0700
+	s=arc-20240116; t=1753800283; c=relaxed/simple;
+	bh=fMjKw8fJE6/DYyPVFlL4viEYITAF/89CcAe+AzMPyE8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=skNK6iHk+TBmngl0tfs/9ERH9lvDJeKZ530B7Ib1O8V9vp4ZeLUMKvzBsntXZ7FbVEySPveX8FMrGgGVy1bTVjktxixW1z2YT/kv/+RwAXP5PG+SxxHf3rh3Qzw24VguuDEtdSpk95yX0hoJRFCP5mZsl5QiPuw/Z7WBWJedW9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRTdT4uw; arc=none smtp.client-ip=209.85.161.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-61922872dbdso1464352eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:44:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753800281; x=1754405081; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=e58Oz7oUEhQLUk8T4Mqsd2AZ8HqT3w/u9Zdk0j5kkxw=;
+        b=PRTdT4uwBtV3Q8SrEpxa+8BGlfzk3RWGeUfJvNGKCzBBpstvoYc4MjK8xEyLAkEu4K
+         YU2Dg4YmnR/JKda3yN9GRlhHpe+OqxDZrQA6619uLRLyy/Tldno+kaZ1KGIjTFAJ0T3h
+         kU/rTFLYYzy8IsoxYXfwz7z7+cEG12DjyH4aqLo22ROTjDu2fh6hKxnXgoSo+lgAI+Tl
+         hOtARheMzNhndn8uBvIQTlv1DiKLz5rVQ5Sni6ui9r4VFgY2KoKpS2VA2Ypc+qnmLcmD
+         bUzox75sjp6TIpvX5y69tCKz6RB70lohLEGC4LDbpD0untrLRvJxilTVQT9+abNxpOUw
+         3omA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753800281; x=1754405081;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e58Oz7oUEhQLUk8T4Mqsd2AZ8HqT3w/u9Zdk0j5kkxw=;
+        b=JAd/Bwx4dBX2E8TqHSuaLrdKC2TO/lmg++lcyRByn0S3OFVEFqtYzD4xeuLOMgguLE
+         MCCUrOrhWLx5ONBDzAI+FJ6sAv7gHNmiMk7Asv+MXBGdlnJ/zMWTmBO/dA3iGfAKGGso
+         HOcWcJ6CTL4qKJ/eSK3sj7j6egiAqd7QAfVBX9MZVSaxqGAp1lAel7yWhsD0Wq23QZt6
+         giCZAM9d7BdWa5zIGdd7nvXXHMbuxMvCgA+bAGojieQ1+VW7w8oJETQOITWINpC4WztZ
+         Q7ep6fjcXqbitSTB2h0ttHoLzXKS6H+IkJH+Sn3DQoK5Bf8Uj/4MylhOXoIGqvBux/DV
+         gonQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVqLCkcU8RxM8PbOA/25PYYnVQen4x+A+1ekPWI+04l496AURjvUtWtcYY18MI+PJMR6FxqA521erKm08A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbAefyhQT9AIdAiNv56LjbXQ6bES/bE+GTqpPICPsp6JL7sfwf
+	TU5tL5QV9Nw0d/X1ghbufgiLDPQhgxsQZNS1BF4woR/mo9kieMHre/GEXzRY/RSRcDlHZlWqx/5
+	12nYxvBS3LW5c2ioFJPp6W1ciAfY3KUaTaKtgN5A=
+X-Gm-Gg: ASbGncthzNzs9Mv2zp1tr2F31zCyfaCel4gbGQas5mdxU6oU3XL1BSVHiEdxNjut//C
+	tWw9rUPsxD1mz4pFERNaqzEmbHTwlONamGAqESSS+r79t+hwmYqx8g0LfHz8owKZmV5ZGwUCO8a
+	OGTWKy2kDx+MjkZVYV2ed+uODk1YajkktoGB1T4M2u+Yq9jJhLFMqoHfLplNjn3m6U12p9qO83J
+	eGWmDBM
+X-Google-Smtp-Source: AGHT+IGpZ1p6KnGy9noX018eYoSIQZ7nbMhop24dOULZsTAevFcYoUJSfW6pitPb5UB0Nbo/Dw2gvFvXCh80lYOFdfg=
+X-Received: by 2002:a05:6871:cca0:b0:2fc:2b74:7b79 with SMTP id
+ 586e51a60fabf-30701ef8394mr9974973fac.20.1753800281088; Tue, 29 Jul 2025
+ 07:44:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
-To: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.24187 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20250727125044.101779-1-suchitkarunakaran@gmail.com>
+ <61958a3cca40fc9a42b951c68c75f138cab9212e.camel@perches.com>
+ <CAO9wTFhCb7gDEo+q2SAZcn2KdUyVe-fG1E4bR_+US9k2J9DOnw@mail.gmail.com> <2a2bb7879e22208205fbb8f9bc56fb3c882bc307.camel@perches.com>
+In-Reply-To: <2a2bb7879e22208205fbb8f9bc56fb3c882bc307.camel@perches.com>
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Date: Tue, 29 Jul 2025 20:14:30 +0530
+X-Gm-Features: Ac12FXy3fK67xSnSanQZzpriiQ5R6tCVBHHq-_iW5iFbtcF2Hd5yuVnENBkTDco
+Message-ID: <CAO9wTFjd3MfL1yPTbcPp8_oKtQwNiMHCiZs8Y9oha7m8g8BiUQ@mail.gmail.com>
+Subject: Re: [PATCH v2] checkpatch: suppress strscpy warnings for userspace tools
+To: Joe Perches <joe@perches.com>
+Cc: apw@canonical.com, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
-> The implementation of function security_inode_copy_up_xattr can be
-> simplified to directly call call_int_hook().
+On Tue, 29 Jul 2025 at 19:14, Joe Perches <joe@perches.com> wrote:
 >
-> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
-> ---
->  security/security.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
+> On Tue, 2025-07-29 at 17:15 +0530, Suchit Karunakaran wrote:
+> > On Tue, 29 Jul 2025 at 15:54, Joe Perches <joe@perches.com> wrote:
+> > >
+> > > On Sun, 2025-07-27 at 18:20 +0530, Suchit Karunakaran wrote:
+> > > > The checkpatch.pl script currently warns against the use of strcpy,
+> > > > strlcpy, and strncpy, recommending strscpy as a safer alternative.
+> > > > However, these warnings are also triggered for code under tools/ and
+> > > > scripts/, which are userspace utilities where strscpy is not available.
+> > > > This patch suppresses these warnings for files in tools/ and scripts/.
+> > > >
+> > > > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+> > > >
+> > > > Changes since v1:
+> > > > - Create is_userspace function to check if the file is in userspace
+> > > >   directories
+> > >
+> > > the changelog bit should go below the --- line
+> > >
+> > > > ---
+> > >
+> > > This
+> >
+> > Sorry I will change it in the next version.
+> >
+> > > >  scripts/checkpatch.pl | 10 +++++++---
+> > > >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > > >
+> > > > diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> > > []
+> > > > @@ -7019,20 +7019,24 @@ sub process {
+> > > >  #                    }
+> > > >  #            }
+> > > >
+> > > > +        sub is_userspace {
+> > > > +            my ($file) = @_;
+> > > > +            return ($file =~ m@\btools/@ || $file =~ m@\bscripts/@);
+> > >
+> > > All other sub uses start in without indentation.
+> > > Please move this next to other sub blocks.
+> > >
+> >
+> > Yup will do it.
+> >
+> > > Please do a git ls-files -- '*tools/' and see if too many other
+> > > files are matched, especially the Documentation/ ones.
+> > >
+> >
+> > I didn't quite understand this. Could you please elaborate?
 >
-> diff --git a/security/security.c b/security/security.c
-> index 596d41818577..a5c2e5a8009f 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
->   */
->  int security_inode_copy_up_xattr(struct dentry *src, const char *name)
->  {
-> -	int rc;
-> -
-> -	rc = call_int_hook(inode_copy_up_xattr, src, name);
-> -	if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
-> -		return rc;
-> -
-> -	return LSM_RET_DEFAULT(inode_copy_up_xattr);
-> +	return call_int_hook(inode_copy_up_xattr, src, name);
+> The search pattern m@\btools/@ matches files other than the
+> first level tools/ directory.
+>
+> It also matches Documentation/tools/
+>
+> Perhaps using m@^tools/@ to match only the first level tools
+> and change $file to $realfile to make it clear it's not
+> a/tools or b/tools like the diff filenames.
+>
 
-Both the existing code and the proposed change are incorrect.
-If two LSMs supply the hook, and the first does not recognize
-the attribute, the second, which might recognize the attribute,
-will not be called. As SELinux and EVM both supply this hook
-there may be a real problem here.
-
->  }
->  EXPORT_SYMBOL(security_inode_copy_up_xattr);
->  
+Apologies, I missed that part. Will fix it in the next version. Thanks!
 
