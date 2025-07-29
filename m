@@ -1,115 +1,78 @@
-Return-Path: <linux-kernel+bounces-749633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC906B150CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:03:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0488B150CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:05:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BB8F4E15B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:03:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 378C4163213
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:03:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49948298CC7;
-	Tue, 29 Jul 2025 16:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2nc+heFU"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C485186295
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:02:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B104D220F20;
+	Tue, 29 Jul 2025 16:03:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D40101E6
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753804961; cv=none; b=clHykYCzAFo1kCMTID1pJ+QhIDda3v2KDb+4qt3vQIH+ghBhMqr0x1uNm7H3mEIjqKk+eFkhklTn3BLt9lykCgnkWGRQSNsWbGKreXPdtSdogI3hjuN/cwEdktGNpCHs7i5o5v2P9CrW3tDyBrNfzWRAOPv7pdB49dR1VjiJZ/g=
+	t=1753805024; cv=none; b=T4gzKo3O578fTYexVyjT0wyr97XqU+6X6abuslTYuwcw9UlIJkFRq7uyjpglxoyLdoEV1jC3gdu1d4ftzMLH+D/eEUZSIOYeb7gZgJNtwFhTibGbgq1TSeQ5nw5MVQ6n97u2BvYTJPW+N39FJSymwkt+etMcZgjfrQZ5cudqPIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753804961; c=relaxed/simple;
-	bh=ztVlmoHg/WR34918FmaRTygu0KaZzKfql6qzplA3G18=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cIyBHbtEY/8NoPWSi1NEn5AlhAM3tz13OgJGhthM/VEio5/GyJH1xaagfPZabhwC83gAyEitm21CNL5OTpb/JuU8/5FrMPVCHSdgac4KzFxRu5zwU/tEBEYNfqwbgfu8LA0o7p9fs7Idzc3kDnf2PVgP3Derwvaic6+BjzYvuMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2nc+heFU; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-73e88bc3891so3146072a34.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:02:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753804959; x=1754409759; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ztVlmoHg/WR34918FmaRTygu0KaZzKfql6qzplA3G18=;
-        b=2nc+heFUMcoNHRZGcohiLf1gnzy2ehJnLR1TWF5twwNx9zBu4sri7qf7oAQwCYzkvL
-         AI4P5xKLjQPGIsjJhmgPhchjMS9djHkn/Wc4W2ppD9CbM+J1Rm4FuWl922YTbYjDuDBO
-         mOsHmy0o9nmGCi3OGdNqXmbdQO3U+SjkDtYRPP7ctJ2zZIkuAAzu302u+/dYnv65DjKe
-         1p+Qt6Z7Egwo4YUGQBPpu3CiIuwgPK6Y9/dOfH8xnNzu1nc3Zl4DgriZ0AAOBYVHHhiw
-         5X8wpgw3c8ORvq76Z5Y/AFTSsjHaT9/K3kLFUpilVNRZQBIZV6DJqycmIktdBaXvogmb
-         HXtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753804959; x=1754409759;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ztVlmoHg/WR34918FmaRTygu0KaZzKfql6qzplA3G18=;
-        b=wba8rL5ZiDYcszuvrZai8xGiPLyELoSzaQVPjtFCDbtgz6eq1XqF/INBWWFUAdXJtz
-         0pXdZblD/VvFs6N5BAWomN04R/QKVHf2ZHEqyBmhG6uNC+WplQP6nJaGvbuao1ZvNkqw
-         tR/Olw9EPzX8zkSLaUUcDYHbPMVF5WLheiOkuvgZt/QTsqmCxFLwMM71VIs/UpA5YhO0
-         wQIVFeXWs25AjLdyBl2rvkTYxAU6UPObMHnrsTlmeY+XCGJnT5AWMeFMqt1dEmcTQQl5
-         k4aV5/fINl+79h79C4ZKHXDza1oF+Skt6LnYyMD6j/rPgOU/EgVTHrBINQAsSfcCqA2M
-         k6Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUc3ubVHgfyF6obvdUdECT9873j9blyLoyaaGyQc6kz/6BXB5UAl9cXABplzoXFM2tIGfgWhFvyj5wKElw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyinHKBXBIPm7EeOMbRR8dEi/Vi7Gxjw7UiKe7f01YiZKQ4HBfe
-	4FrYFf0ORXIbHHIIBbiCRecimBEg4dsf59PjFui//KVcsN6hCA6VGhZqA0DwG3U17fPfWnJc1ZU
-	XthUrCKrHsHcSveQaJJQjUq3fs+Br0SAypBg2gnkv
-X-Gm-Gg: ASbGncvz2njVhuaPEysQ+hsvx5t04mI7gc+y+bm2DR5YkNLFBFqWBFL6Gh1IczG5ZsQ
-	LeV1jWEC4+/xxHEHyK8onj/QE98ftYMA51rwC0NTW2plPKRSbd7B8rUuX824rCHQlRNm6jMw9gH
-	qQkY2sjpSyPqC5KUPmro2ghV93+lekud3MwG3lCwvPHs6To1Y7K2ceKSOCUas7S3jqNULDOwnYc
-	Wtcaw==
-X-Google-Smtp-Source: AGHT+IFtDaagUGc57GHBurJ0UGpZR3EwjNZqGule8Cnk2sgfeLM0OC6t6k4vR+xjhntyTC578HmcKgNJF9PLaUrfbsE=
-X-Received: by 2002:a05:6830:6506:b0:73e:5def:537 with SMTP id
- 46e09a7af769-74177cfee78mr255833a34.21.1753804958964; Tue, 29 Jul 2025
- 09:02:38 -0700 (PDT)
+	s=arc-20240116; t=1753805024; c=relaxed/simple;
+	bh=JALDSuCHo6yW/v3LgSW8wFxn0wXqBjCTPFZyDX9BKUE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=p8UE+ENyOObvPR8NpabfKjmfA4wNXej5UrEugbb+meOJMg6tzJeC+j5b42tuCVhNRNsjpMuM9Ds2DUedmG1zvMe1Lwm+rYkQN/NQx0YehMo+9F/wagzBsFNyFaJXBYlMJphR7ArztTxnwieEf5sN1JCOv8+/IprPrJXotNGf4Nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D541A113E;
+	Tue, 29 Jul 2025 09:03:31 -0700 (PDT)
+Received: from [10.57.69.185] (unknown [10.57.69.185])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3222E3F5A1;
+	Tue, 29 Jul 2025 09:03:38 -0700 (PDT)
+Message-ID: <0b8111c6-1b14-41dc-a674-14a6361992b3@arm.com>
+Date: Tue, 29 Jul 2025 17:03:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFQ-Uc_5nAo6ymVkCda5+_y+bT=GngFibankmfdL8_Mu-4cqfQ@mail.gmail.com>
-In-Reply-To: <CAFQ-Uc_5nAo6ymVkCda5+_y+bT=GngFibankmfdL8_Mu-4cqfQ@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Tue, 29 Jul 2025 09:02:27 -0700
-X-Gm-Features: Ac12FXxuKmliLvuMm-O1HFYoHQCpE86vZdzri5w96Q7QVoJYt6RQh4GzE_NbA_0
-Message-ID: <CANn89iJNKR8uBNrRCdqs-M6RspvgSK9+vxzfvXe3xUvDT538Lw@mail.gmail.com>
-Subject: Re: [PATCH v2 net] net/sched: mqprio: fix stack out-of-bounds write
- in tc entry parsing
-To: maher azz <maherazz04@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, jiri@resnulli.us, 
-	davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	Simon Horman <horms@kernel.org>, Ferenc Fejes <fejes@inf.elte.hu>, 
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Tejun Heo <tj@kernel.org>, void@manifault.com, arighi@nvidia.com
+Cc: sched-ext@lists.linux.dev,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>
+From: Christian Loehle <christian.loehle@arm.com>
+Subject: [PATCH] sched_ext: Mark scx_bpf_cpu_rq as NULL returnable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 29, 2025 at 8:36=E2=80=AFAM maher azz <maherazz04@gmail.com> wr=
-ote:
->
-> From: Maher Azzouzi <maherazz04@gmail.com>
->
-> TCA_MQPRIO_TC_ENTRY_INDEX is validated using
-> NLA_POLICY_MAX(NLA_U32, TC_QOPT_MAX_QUEUE), which allows the value
-> TC_QOPT_MAX_QUEUE (16). This leads to a 4-byte out-of-bounds stack write =
-in
-> the fp[] array, which only has room for 16 elements (0=E2=80=9315).
->
-> Fix this by changing the policy to allow only up to TC_QOPT_MAX_QUEUE - 1=
-.
->
-> Fixes: f62af20bed2d ("net/sched: mqprio: allow per-TC user input of FP ad=
-minStatus")
->
-> Signed-off-by: Maher Azzouzi <maherazz04@gmail.com>
->
+scx_bpf_cpu_rq() obviously returns NULL on invalid cpu.
+Mark it as such.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Cc: stable@vger.kernel.org
+Fixes: 6203ef73fa5c ("sched/ext: Add BPF function to fetch rq")
+Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+---
+ kernel/sched/ext.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 7dd5cbcb7a06..b734f55f3318 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -7599,7 +7599,7 @@ BTF_ID_FLAGS(func, scx_bpf_get_online_cpumask, KF_ACQUIRE)
+ BTF_ID_FLAGS(func, scx_bpf_put_cpumask, KF_RELEASE)
+ BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
+ BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
+-BTF_ID_FLAGS(func, scx_bpf_cpu_rq)
++BTF_ID_FLAGS(func, scx_bpf_cpu_rq, KF_RET_NULL)
+ #ifdef CONFIG_CGROUP_SCHED
+ BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
+ #endif
+-- 
+2.34.1
 
