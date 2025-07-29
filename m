@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-748809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A792DB1462B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:28:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3124B1462A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:28:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A89E53ADDE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:27:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1983F542992
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:28:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F5EA221558;
-	Tue, 29 Jul 2025 02:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC7E2202F79;
+	Tue, 29 Jul 2025 02:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q50HViec"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WReMhAPy"
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF304A23
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64ACE220F20
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753756017; cv=none; b=RCIh6OeQRvYPwnnksl7Ppu3f4wYDonI2sVPAlc90OD5hbhAnWKWpUYlilTkdjNGkMn4eX62Rnpq/aGVnwH0Z99zqyfbMhS9eb66PeKDkj9mGExvKWy9mxqs3sB6q/pG/CjTqQaFyxgh0nQwmmSBPZ2WLeDc71iyqXGO0tnu2lhI=
+	t=1753756019; cv=none; b=Isqy2CoXAw2d/j9LI4xhdaYS4ZHkimwLX01bS2/yJAWCu4GnVUQmQWLquOc2cdqw48IbIUVP9enAJf0V5SoKAQ5IvX8RILwQxl2JxqrsQUVv0a/df9+NoFPhw+SKNRPY+k2yWBUgTwRGmsIthFFNckB+uVvV/+Tpk09yH9+qGCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753756017; c=relaxed/simple;
-	bh=SR0yGjMpjNaiXRA6AQUdbwzU/jeOGsnKSCSE5b9t9Xs=;
+	s=arc-20240116; t=1753756019; c=relaxed/simple;
+	bh=78XwSvfsUo5qjFzpcoZ2YE5qIEQTQanZ2gjLZQMR2U4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=WCyRtGrA65XFPUZy9HndXDoHLHmlcGsxowBXRO2KifGx1Ou9q3FqCqIY28xuP2vgh4fWgXO3414GCWGnxAENtoDD5HUVAgMMpj6h8kSv98d34YLTnmpFmDxgc4+/Ja6ZsXkkln35TkjW3bf+HQqsBsTA1wi3jSy88YkdfRgwQDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q50HViec; arc=none smtp.client-ip=209.85.215.202
+	 To:Content-Type; b=QDroAM+ixLl0dVPnpDCbfQwP/56irc/Nu9JNmKpo6P6eiFiDYXtXswOyWzdj3ntErsT6ovAKeUXDV/7aWu0Y9hkxxPt7I6sTMkEyZ1V7Y390Z+NM8kirBrpGsd98givyrWHvOL0uV9ehtDbZwjkoNcvpha3GNq83QS/Vc86yRPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WReMhAPy; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b3beafa8d60so7375229a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 19:26:55 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-75e28bcec3bso8113041b3a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 19:26:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753756015; x=1754360815; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753756017; x=1754360817; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=0IpzWh1GSupEuJD1HvbYqpGAkZZZklj4Nj25KDP0OIM=;
-        b=Q50HVieceozS3MZgef+Un34PxDeRPeZyBZF1xECtyPTTuoPt3fZWWs0OvySCTVhFR+
-         E3ZMW10uyE//oXoWOR9GkQ3I3u98Fh4SXxaVaGvTKoC8t7pT0BRjMdQBxTMqSi+a7xo1
-         kuaRjVPcOsxAXjoVfcGUbzj1Eh65l+k4EAE0Rb9dD+iEFodkQ2o9DS0fmcIx9pKCVAFx
-         0oRhkSUU/IgrzCuPyG3COQt2KFxCBWbux5NBZ7HM/ACNgmrHsiNZmvN1k0ParqMeesB2
-         4Ou1AYYpPCejuJSecmcgGWiBvxz7zD8/3hXiaMTwOt6b2ygIJULJcfS+7eKFs+THX+yA
-         zbCw==
+        bh=lpJZQW2XhZpV9woIMXPe23IdtVvXCXsSMOWR9kV9OUE=;
+        b=WReMhAPyKngyzGyRBpodM2hg4ltB+BKpDYYCyPo9/W66DPi539LagpZ4OU15ZH0N81
+         hqu+6b/GXf/c8d+7xCq+xYV7XEHxPkvdUvZHHB58Ua1PGC5/s1YGro0KVvunPfenY21H
+         yPcw3mA3P4g5cfgbZH0T85XfwPBPaYx9ybV7MBMpL1sD7DkJKfWKl2BBnG5XSGW8B2DC
+         yBkwSL2AVi9iLCfWjBhzos6j/Oigkw7AFcqZmV5rDK0N12Jz/pXlYSxrlG8jWFvDdHpv
+         bHKTnNfqixNRP14+Ftrc7CrVvYMHn1Ust7wSWIwXo0boERAwURlABFPXGaUa9eJMFMy3
+         ncLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753756015; x=1754360815;
+        d=1e100.net; s=20230601; t=1753756017; x=1754360817;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0IpzWh1GSupEuJD1HvbYqpGAkZZZklj4Nj25KDP0OIM=;
-        b=uwp67svhhHYTNgXFykUC4dEhd/Y9OBh4vlg8RrrhajAfybwtAKugR+/SVcoBwl04By
-         S9sgTUfLKg+AHClhlUD53ewGWqyq/k/9ueYb4IvzMGNY6bwh4N+qHhUxizlA1lRIKWNW
-         OHs2/OG60uUHfrhCa0LB3TdnVAtHWaPX+90YsyhMUA7qZTLUh3AC60j1LytJk8mvkAER
-         oRVuKXZx2IQG5OAglWYcjH1cVfEtNLnnypqQ76g97zGvuKoifzqzMaMn2M4ep2LzQQjg
-         87WuOFS1KnhA0AbHcDoszGvVrx0L57yB1luT4VXn9xd5omQac2zNpVH/gmv9GJBzW/NB
-         oawA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHQbMZ7lMa6dLu07IEIlx7okdeL5CBHLZuNZu8QAzyz0r26maL0WAoFQZaluS2Wc/lSQelD5bA8zUtRcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywop7kxpvFFneTpJWaVIYqwtakETAst3k8cSBupd+P0oExnwxwP
-	SsKoa7d3VMFn7LcIY3oM6iubZAeOopRcLRn19siusmQrQhEsZ09NDF8WAdOfWHPYLbAAN1bUnAe
-	7VDiK5Q==
-X-Google-Smtp-Source: AGHT+IHvM7XsglD+A2nSBVKJqo9GO6rSg0j3vR/q3GCnbggYdamThZ8mgI+B95CYlCTxKhmLXmIRcKjQl5Y=
-X-Received: from pfbki17.prod.google.com ([2002:a05:6a00:9491:b0:746:2840:68a6])
- (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:4310:b0:23d:33ce:bc7a
- with SMTP id adf61e73a8af0-23d70171e0emr21607108637.23.1753756015101; Mon, 28
- Jul 2025 19:26:55 -0700 (PDT)
-Date: Mon, 28 Jul 2025 19:26:39 -0700
+        bh=lpJZQW2XhZpV9woIMXPe23IdtVvXCXsSMOWR9kV9OUE=;
+        b=nmLG6Ahrc7SbW+7KE/tj5trSo/6QoSOseyKI1Wrb+AOljc+jcIJreWM4opeOIKH9L+
+         sX8eIDc08SR+LyIyUNWs+jMQAn9BaMeAzp8dc482yaALLui7IFQW0gQgtCQdYRef2TQc
+         wEO4KzC5Yrdxqysy+/qFEPOJr49tY1Qb9EG6Gyzp/RtCuvbkLI2Kx0V6mELz5X1o7NEh
+         W14b2OO8qLlJWUC7nXxeAwL9+6XDqP45efbcWdHuspEXCrNV91MC+5RbZzZPHc8ubOaR
+         8rSB5oZvRCFcufwxOFVyUgiiVRtW6uAp69evVxfwTMjGpyovTxXlNgexf8xkUQENGeSf
+         92LA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoa94O5pkoexPsG14L1HA9LZd9YKlCB6dUuRcdOVWFxcnF3wOjKFOMLEiSUHrwMiEMPFAz58EVEFDaRdY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5v63CU8EW8zCBkbv99H19jlRbOYuoMCdJ9GmuAp0ShXtYZBpX
+	oDlegn7IG4AXizVRNAkD9uLyhH4SuVNRjc0ECGffZRaWscfdttaZKNnwEHEE7nXbPaEgPHXjENK
+	LMqaCMw==
+X-Google-Smtp-Source: AGHT+IF3BgulVEdztgtpO3hFWLE1HkY5w4Qq15DrebDHOcpen7DayFyYTAX+bxT3j4xX+6CCPymj3m5uGog=
+X-Received: from pfoo28.prod.google.com ([2002:a05:6a00:1a1c:b0:748:f16c:14c5])
+ (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:10cb:b0:748:f750:14c6
+ with SMTP id d2e1a72fcca58-76336f1bcb7mr20458767b3a.14.1753756016683; Mon, 28
+ Jul 2025 19:26:56 -0700 (PDT)
+Date: Mon, 28 Jul 2025 19:26:40 -0700
 In-Reply-To: <20250729022640.3134066-1-yuzhuo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250729022640.3134066-1-yuzhuo@google.com>
 X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
-Message-ID: <20250729022640.3134066-7-yuzhuo@google.com>
-Subject: [PATCH v1 6/7] perf bench: Add 'bench sync qspinlock' subcommand
+Message-ID: <20250729022640.3134066-8-yuzhuo@google.com>
+Subject: [PATCH v1 7/7] perf bench sync: Add latency histogram functionality
 From: Yuzhuo Jing <yuzhuo@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,308 +90,179 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Benchmark kernel queued spinlock implementation in user space.  Support
-settings of the number of threads and the number of acquire/releases.
+Add an option to print the histogram of lock acquire latencies (unit in
+TSCs).
 
 Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
 ---
- tools/perf/bench/Build     |   2 +
- tools/perf/bench/bench.h   |   1 +
- tools/perf/bench/sync.c    | 234 +++++++++++++++++++++++++++++++++++++
- tools/perf/builtin-bench.c |   7 ++
- 4 files changed, 244 insertions(+)
- create mode 100644 tools/perf/bench/sync.c
+ tools/perf/bench/sync.c | 97 ++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 96 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/bench/Build b/tools/perf/bench/Build
-index b558ab98719f..13558279fa0e 100644
---- a/tools/perf/bench/Build
-+++ b/tools/perf/bench/Build
-@@ -19,6 +19,8 @@ perf-bench-y += evlist-open-close.o
- perf-bench-y += breakpoint.o
- perf-bench-y += pmu-scan.o
- perf-bench-y += uprobe.o
-+perf-bench-y += sync.o
-+perf-bench-y += qspinlock.o
- 
- perf-bench-$(CONFIG_X86_64) += mem-memcpy-x86-64-asm.o
- perf-bench-$(CONFIG_X86_64) += mem-memset-x86-64-asm.o
-diff --git a/tools/perf/bench/bench.h b/tools/perf/bench/bench.h
-index 9f736423af53..dd6c8b6126d3 100644
---- a/tools/perf/bench/bench.h
-+++ b/tools/perf/bench/bench.h
-@@ -22,6 +22,7 @@ int bench_numa(int argc, const char **argv);
- int bench_sched_messaging(int argc, const char **argv);
- int bench_sched_pipe(int argc, const char **argv);
- int bench_sched_seccomp_notify(int argc, const char **argv);
-+int bench_sync_qspinlock(int argc, const char **argv);
- int bench_syscall_basic(int argc, const char **argv);
- int bench_syscall_getpgid(int argc, const char **argv);
- int bench_syscall_fork(int argc, const char **argv);
 diff --git a/tools/perf/bench/sync.c b/tools/perf/bench/sync.c
-new file mode 100644
-index 000000000000..2685cb66584c
---- /dev/null
+index 2685cb66584c..c85e9853c72a 100644
+--- a/tools/perf/bench/sync.c
 +++ b/tools/perf/bench/sync.c
-@@ -0,0 +1,234 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Synchronization benchmark.
-+ *
-+ * 2025  Yuzhuo Jing <yuzhuo@google.com>
-+ */
-+#include <bits/time.h>
-+#include <err.h>
-+#include <inttypes.h>
-+#include <perf/cpumap.h>
-+#include <pthread.h>
-+#include <stdbool.h>
-+#include <string.h>
-+#include <subcmd/parse-options.h>
-+#include <sys/cdefs.h>
+@@ -15,14 +15,19 @@
+ #include <sys/cdefs.h>
+ 
+ #include "bench.h"
++#include "../util/tsc.h"
+ 
+ #include "include/qspinlock.h"
+ 
+ #define NS 1000000000ull
+ #define CACHELINE_SIZE 64
+ 
++#define DEFAULT_HIST_INTERVAL 1000
 +
-+#include "bench.h"
-+
-+#include "include/qspinlock.h"
-+
-+#define NS 1000000000ull
-+#define CACHELINE_SIZE 64
-+
-+static unsigned int nthreads;
-+static unsigned long nspins = 10000ul;
-+
-+struct barrier_t;
-+
-+typedef void(*lock_fn)(void *);
-+
-+/*
-+ * Lock operation definition to support multiple implmentations of locks.
-+ *
-+ * The lock and unlock functions only take one variable, the data pointer.
-+ */
-+struct lock_ops {
-+	lock_fn lock;
-+	lock_fn unlock;
-+	void *data;
-+};
-+
-+struct worker {
-+	pthread_t thd;
-+	unsigned int tid;
-+	struct lock_ops *ops;
-+	struct barrier_t *barrier;
-+	u64 runtime;		// in nanoseconds
-+};
-+
-+static const struct option options[] = {
-+	OPT_UINTEGER('t',	"threads",	&nthreads,
-+		"Specify number of threads (default: number of CPUs)."),
-+	OPT_ULONG('n',		"spins",	&nspins,
-+		"Number of lock acquire operations per thread (default: 10,000 times)."),
-+	OPT_END()
-+};
-+
-+static const char *const bench_sync_usage[] = {
-+	"perf bench sync qspinlock <options>",
-+	NULL
-+};
-+
-+/*
-+ * A atomic-based barrier.  Expect to have lower latency than pthread barrier
-+ * that sleeps the thread.
-+ */
-+struct barrier_t {
-+	unsigned int count __aligned(CACHELINE_SIZE);
-+};
-+
-+/*
-+ * A atomic-based barrier.  Expect to have lower latency than pthread barrier
-+ * that sleeps the thread.
-+ */
-+__always_inline void wait_barrier(struct barrier_t *b)
-+{
-+	if (__atomic_sub_fetch(&b->count, 1, __ATOMIC_RELAXED) == 0)
-+		return;
-+	while (__atomic_load_n(&b->count, __ATOMIC_RELAXED))
-+		;
-+}
-+
-+static int bench_sync_lock_generic(struct lock_ops *ops, int argc, const char **argv);
-+
-+/*
-+ * Benchmark of linux kernel queued spinlock in user land.
-+ */
-+int bench_sync_qspinlock(int argc, const char **argv)
-+{
-+	struct qspinlock lock = __ARCH_SPIN_LOCK_UNLOCKED;
-+	struct lock_ops ops = {
-+		.lock = (lock_fn)queued_spin_lock,
-+		.unlock = (lock_fn)queued_spin_unlock,
-+		.data = &lock,
-+	};
-+	return bench_sync_lock_generic(&ops, argc, argv);
-+}
-+
-+/*
-+ * A busy loop to acquire and release the given lock N times.
-+ */
-+static void lock_loop(const struct lock_ops *ops, unsigned long n)
-+{
-+	unsigned long i;
-+
-+	for (i = 0; i < n; ++i) {
-+		ops->lock(ops->data);
-+		ops->unlock(ops->data);
-+	}
-+}
-+
-+/*
-+ * Thread worker function.  Runs lock loop for N/5 times before and after
-+ * the main timed loop.
-+ */
-+static void *sync_workerfn(void *args)
-+{
-+	struct worker *worker = (struct worker *)args;
-+	struct timespec starttime, endtime;
-+
-+	set_this_cpu_id(worker->tid);
-+
-+	/* Barrier to let all threads start together */
-+	wait_barrier(worker->barrier);
-+
-+	/* Warmup loop (not counted) to keep the below loop contended. */
-+	lock_loop(worker->ops, nspins / 5);
-+
-+	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &starttime);
-+	lock_loop(worker->ops, nspins);
-+	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endtime);
-+
-+	/* Tail loop (not counted) to keep the above loop contended. */
-+	lock_loop(worker->ops, nspins / 5);
-+
-+	worker->runtime = (endtime.tv_sec - starttime.tv_sec) * NS
-+		+ endtime.tv_nsec - starttime.tv_nsec;
-+
-+	return NULL;
-+}
-+
-+/*
-+ * Generic lock synchronization benchmark function.  Sets up threads and
-+ * thread affinities.
-+ */
-+static int bench_sync_lock_generic(struct lock_ops *ops, int argc, const char **argv)
-+{
-+	struct perf_cpu_map *online_cpus;
-+	unsigned int online_cpus_nr;
-+	struct worker *workers;
-+	u64 totaltime = 0, total_spins, avg_ns, avg_ns_dot;
-+	struct barrier_t barrier;
-+	cpu_set_t *cpuset;
-+	size_t cpuset_size;
-+
-+	argc = parse_options(argc, argv, options, bench_sync_usage, 0);
-+	if (argc) {
-+		usage_with_options(bench_sync_usage, options);
-+		exit(EXIT_FAILURE);
-+	}
-+
-+	/* CPU count setup. */
-+	online_cpus = perf_cpu_map__new_online_cpus();
-+	if (!online_cpus)
-+		err(EXIT_FAILURE, "No online CPUs available");
-+	online_cpus_nr = perf_cpu_map__nr(online_cpus);
-+
-+	if (!nthreads) /* default to the number of CPUs */
-+		nthreads = online_cpus_nr;
-+
-+	workers = calloc(nthreads, sizeof(*workers));
-+	if (!workers)
-+		err(EXIT_FAILURE, "calloc");
-+
-+	barrier.count = nthreads;
-+
-+	printf("Running with %u threads.\n", nthreads);
-+
-+	cpuset = CPU_ALLOC(online_cpus_nr);
-+	if (!cpuset)
-+		err(EXIT_FAILURE, "Cannot allocate cpuset.");
-+	cpuset_size = CPU_ALLOC_SIZE(online_cpus_nr);
-+
-+	/* Create worker data structures, set CPU affinity, and create   */
-+	for (unsigned int i = 0; i < nthreads; ++i) {
-+		pthread_attr_t thread_attr;
-+		int ret;
-+
-+		/* Basic worker thread information */
-+		workers[i].tid = i;
-+		workers[i].barrier = &barrier;
-+		workers[i].ops = ops;
-+
-+		/* Set CPU affinity */
-+		pthread_attr_init(&thread_attr);
-+		CPU_ZERO_S(cpuset_size, cpuset);
-+		CPU_SET_S(perf_cpu_map__cpu(online_cpus, i % online_cpus_nr).cpu,
-+			cpuset_size, cpuset);
-+
-+		if (pthread_attr_setaffinity_np(&thread_attr, cpuset_size, cpuset))
-+			err(EXIT_FAILURE, "Pthread set affinity failed");
-+
-+		/* Create and block thread */
-+		ret = pthread_create(&workers[i].thd, &thread_attr, sync_workerfn, &workers[i]);
-+		if (ret != 0)
-+			err(EXIT_FAILURE, "Error creating thread: %s", strerror(ret));
-+
-+		pthread_attr_destroy(&thread_attr);
-+	}
-+
-+	CPU_FREE(cpuset);
-+
-+	for (unsigned int i = 0; i < nthreads; ++i) {
-+		int ret = pthread_join(workers[i].thd, NULL);
-+
-+		if (ret)
-+			err(EXIT_FAILURE, "pthread_join");
-+	}
-+
-+	/* Calculate overall average latency. */
-+	for (unsigned int i = 0; i < nthreads; ++i)
-+		totaltime += workers[i].runtime;
-+
-+	total_spins = (u64)nthreads * nspins;
-+	avg_ns = totaltime / total_spins;
-+	avg_ns_dot = (totaltime % total_spins) * 10000 / total_spins;
-+
-+	printf("Lock-unlock latency of %u threads: %"PRIu64".%"PRIu64" ns.\n",
-+			nthreads, avg_ns, avg_ns_dot);
-+
-+	free(workers);
-+
-+	return 0;
-+}
-diff --git a/tools/perf/builtin-bench.c b/tools/perf/builtin-bench.c
-index 2c1a9f3d847a..cfe6f6dc6ed4 100644
---- a/tools/perf/builtin-bench.c
-+++ b/tools/perf/builtin-bench.c
-@@ -52,6 +52,12 @@ static struct bench sched_benchmarks[] = {
- 	{ NULL,		NULL,						NULL			}
+ static unsigned int nthreads;
+ static unsigned long nspins = 10000ul;
++static bool do_hist;
++static u64 hist_interval = DEFAULT_HIST_INTERVAL;
+ 
+ struct barrier_t;
+ 
+@@ -45,6 +50,7 @@ struct worker {
+ 	struct lock_ops *ops;
+ 	struct barrier_t *barrier;
+ 	u64 runtime;		// in nanoseconds
++	u64 *lock_latency;	// in TSCs
  };
  
-+static struct bench sync_benchmarks[] = {
-+	{ "qspinlock",	"Benchmark for queued spinlock",		bench_sync_qspinlock	},
-+	{ "all",	"Run all synchronization benchmarks",		NULL			},
-+	{ NULL,		NULL,						NULL			}
-+};
-+
- static struct bench syscall_benchmarks[] = {
- 	{ "basic",	"Benchmark for basic getppid(2) calls",		bench_syscall_basic	},
- 	{ "getpgid",	"Benchmark for getpgid(2) calls",		bench_syscall_getpgid	},
-@@ -122,6 +128,7 @@ struct collection {
+ static const struct option options[] = {
+@@ -52,6 +58,10 @@ static const struct option options[] = {
+ 		"Specify number of threads (default: number of CPUs)."),
+ 	OPT_ULONG('n',		"spins",	&nspins,
+ 		"Number of lock acquire operations per thread (default: 10,000 times)."),
++	OPT_BOOLEAN(0,		"hist",		&do_hist,
++		"Print a histogram of lock acquire TSCs."),
++	OPT_U64(0,	"hist-interval",	&hist_interval,
++		"Histogram bucket size (default 1,000 TSCs)."),
+ 	OPT_END()
+ };
  
- static struct collection collections[] = {
- 	{ "sched",	"Scheduler and IPC benchmarks",			sched_benchmarks	},
-+	{ "sync",	"Synchronization benchmarks",			sync_benchmarks		},
- 	{ "syscall",	"System call benchmarks",			syscall_benchmarks	},
- 	{ "mem",	"Memory access benchmarks",			mem_benchmarks		},
- #ifdef HAVE_LIBNUMA_SUPPORT
+@@ -109,6 +119,25 @@ static void lock_loop(const struct lock_ops *ops, unsigned long n)
+ 	}
+ }
+ 
++/*
++ * A busy loop to acquire and release the given lock N times, and also collect
++ * all acquire latencies, for histogram use.  Note that the TSC operations
++ * latency itself is also included.
++ */
++static void lock_loop_timing(const struct lock_ops *ops, unsigned long n, u64 *sample_buffer)
++{
++	unsigned long i;
++	u64 t1, t2;
++
++	for (i = 0; i < n; ++i) {
++		t1 = rdtsc();
++		ops->lock(ops->data);
++		t2 = rdtsc();
++		ops->unlock(ops->data);
++		sample_buffer[i] = t2 - t1;
++	}
++}
++
+ /*
+  * Thread worker function.  Runs lock loop for N/5 times before and after
+  * the main timed loop.
+@@ -127,7 +156,10 @@ static void *sync_workerfn(void *args)
+ 	lock_loop(worker->ops, nspins / 5);
+ 
+ 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &starttime);
+-	lock_loop(worker->ops, nspins);
++	if (worker->lock_latency)
++		lock_loop_timing(worker->ops, nspins, worker->lock_latency);
++	else
++		lock_loop(worker->ops, nspins);
+ 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endtime);
+ 
+ 	/* Tail loop (not counted) to keep the above loop contended. */
+@@ -139,6 +171,57 @@ static void *sync_workerfn(void *args)
+ 	return NULL;
+ }
+ 
++/*
++ * Calculate and print a histogram.
++ */
++static void print_histogram(struct worker *workers)
++{
++	u64 tsc_max = 0;
++	u64 *buckets;
++	unsigned long nbuckets;
++
++	if (hist_interval == 0)
++		hist_interval = DEFAULT_HIST_INTERVAL;
++
++	printf("Lock acquire histogram:\n");
++
++	/* Calculate the max TSC value to get the number of buckets needed. */
++	for (unsigned int i = 0; i < nthreads; ++i) {
++		struct worker *w = workers + i;
++
++		for (unsigned long j = 0; j < nspins; ++j)
++			tsc_max = max(w->lock_latency[j], tsc_max);
++	}
++	nbuckets = (tsc_max + hist_interval - 1) / hist_interval;
++
++	/* Allocate the actual bucket.  The bucket definition may be optimized
++	 * if it is sparse.
++	 */
++	buckets = calloc(nbuckets, sizeof(*buckets));
++	if (!buckets)
++		err(EXIT_FAILURE, "calloc");
++
++	/* Iterate through all latencies again to fill the buckets. */
++	for (unsigned int i = 0; i < nthreads; ++i) {
++		struct worker *w = workers + i;
++
++		for (unsigned long j = 0; j < nspins; ++j) {
++			u64 latency = w->lock_latency[j];
++			++buckets[latency / hist_interval];
++		}
++	}
++
++	/* Print the histogram as a table. */
++	printf("Bucket, Count\n");
++	for (unsigned long i = 0; i < nbuckets; ++i) {
++		if (buckets[i] == 0)
++			continue;
++		printf("%"PRIu64", %"PRIu64"\n", hist_interval * (i + 1), buckets[i]);
++	}
++
++	free(buckets);
++}
++
+ /*
+  * Generic lock synchronization benchmark function.  Sets up threads and
+  * thread affinities.
+@@ -191,6 +274,12 @@ static int bench_sync_lock_generic(struct lock_ops *ops, int argc, const char **
+ 		workers[i].barrier = &barrier;
+ 		workers[i].ops = ops;
+ 
++		if (do_hist) {
++			workers[i].lock_latency = calloc(nspins, sizeof(*workers[i].lock_latency));
++			if (!workers[i].lock_latency)
++				err(EXIT_FAILURE, "calloc");
++		}
++
+ 		/* Set CPU affinity */
+ 		pthread_attr_init(&thread_attr);
+ 		CPU_ZERO_S(cpuset_size, cpuset);
+@@ -228,6 +317,12 @@ static int bench_sync_lock_generic(struct lock_ops *ops, int argc, const char **
+ 	printf("Lock-unlock latency of %u threads: %"PRIu64".%"PRIu64" ns.\n",
+ 			nthreads, avg_ns, avg_ns_dot);
+ 
++	/* Print histogram if requested. */
++	if (do_hist)
++		print_histogram(workers);
++
++	for (unsigned int i = 0; i < nthreads; ++i)
++		free(workers[i].lock_latency);
+ 	free(workers);
+ 
+ 	return 0;
 -- 
 2.50.1.487.gc89ff58d15-goog
 
