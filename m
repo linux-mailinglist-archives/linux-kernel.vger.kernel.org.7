@@ -1,108 +1,223 @@
-Return-Path: <linux-kernel+bounces-748848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7194BB146B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:15:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303A7B146AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6B93BF5BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:14:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DCF13BEDB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:13:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BC4221545;
-	Tue, 29 Jul 2025 03:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BEC21CC4F;
+	Tue, 29 Jul 2025 03:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="AP/adSjE"
-Received: from mail-m15599.qiye.163.com (mail-m15599.qiye.163.com [101.71.155.99])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aOaBV+L8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCAD21CA16;
-	Tue, 29 Jul 2025 03:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AAF286A9;
+	Tue, 29 Jul 2025 03:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753758910; cv=none; b=MkF04sUgAiO9OMjZHpFpIygNWGixGjCitJOWocTDm25h+r5T5sfPFGg+Ewh+0MvUM46AeEvR3l/rJxNHl1ciYLFl3MiDE2stCNyi72vQN82gXCKO8+vDd9OjFwvE54Wi0AMZHl+ptuK0230/rL/vVnBRtyEoaSbMEvAqJG+pRGQ=
+	t=1753758802; cv=none; b=d7RbBRAmzk0HyLMov5YqNGbAvsUGipNm+kG8KuzBPLhpVCezA4bth1t/6hqphKzPt5RlxVFs15ZOLn/IoTLWHsqxsMBRC9Ksk/ghcgX9v7X4wg2GN+F29fOVOLE1WmTTnUSQ5p7evZQT0Xt/qwNpc6opOuNRVetvFCLRfFCn4pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753758910; c=relaxed/simple;
-	bh=LYhzwTIYOeQNR80Hz2FmJ6HcMYezrteLU3sB5z2U8XI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AkLQVyhe7+DmjF5Yfc8FzNY82VFcD1IOJ3H+DR63FhwmIdvM9jdajBwe94zbt00yIHvypII8Yh3qhUJNRnot83D6s9gRhs2eeVJX9/2NoZJBF+5deHHovWRvJVGHKgJxtq2/jJ2X2D08OjRrKgH9tsNF7PwzgjFLmxmsxJ2vpmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=AP/adSjE; arc=none smtp.client-ip=101.71.155.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.26] (unknown [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1d8d749f6;
-	Tue, 29 Jul 2025 11:09:47 +0800 (GMT+08:00)
-Message-ID: <54ca1b36-fe13-4c2c-8e88-6e8e3c5d418f@rock-chips.com>
-Date: Tue, 29 Jul 2025 11:09:46 +0800
+	s=arc-20240116; t=1753758802; c=relaxed/simple;
+	bh=iJMJCFZc9HDo/baFqJSNhgJVvq2qX3JgMKKPxj8XRlA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CylNLLqjf1izDdOjptzX+bZF2KSlZuJE9h8HVkQQbXnrsYSse9r9AhZl+LpApmy3omoknMqrucyH1OODQ/yUJl3LZ5mUY7yLDxnoLl7zpGriOb8wxThqaHDxok5lDzQo9iMVzy01iF0FvTFtd7PczJh4a7jsARvFzhv27xyT1Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aOaBV+L8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56SLrFkh006723;
+	Tue, 29 Jul 2025 03:13:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=UbAkIX7/pZTGIlDBMkI7Lk
+	J039dLexJgFoVOnC4Gd5A=; b=aOaBV+L8MZISVf9z1ETI3K0m2ONrkrKrgYF/iE
+	uzhHfFO1wVGjtlB74OSVHtbYjqJhZnPQO04otg0JM7O5ejEsC34541hc9Lr4GkQL
+	t+HOiz5YLgSN6CjAbHd4gjP5/ht+rhSLBabVo4yXXjaDWHC6xZmwSbXfXGooCRsx
+	nmsdzM2BnmpYBVMRcOpaygMu/wBQdl2ueUh/tHXOYEdtJcA8ymDtVHAoO5BxraFR
+	ZetEtjIP+rNx5NwN5j8immYo7SZ61Xqg8seAoB0kukUwmRBcLqXailczXVDC7eVI
+	1G7/NttRLkB5yla2nvqWj5LD/7Wuz+QlR+waBpmSlH8EbIwA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484nytxt33-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Jul 2025 03:13:18 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56T3DHAl025579
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Jul 2025 03:13:17 GMT
+Received: from hu-lxu5-sha.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 28 Jul 2025 20:13:14 -0700
+From: Ling Xu <quic_lxu5@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <quic_kuiw@quicinc.com>, <ekansh.gupta@oss.qualcomm.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ling Xu <quic_lxu5@quicinc.com>
+Subject: [PATCH v3] arm64: dts: qcom: sm6150: Add ADSP and CDSP fastrpc nodes
+Date: Tue, 29 Jul 2025 08:42:59 +0530
+Message-ID: <20250729031259.4190916-1-quic_lxu5@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/14] drm/bridge: analogix_dp: Add support to find
- panel or bridge
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com,
- kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com,
- hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com,
- l.stach@pengutronix.de, dianders@chromium.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
- <20250724080304.3572457-10-damon.ding@rock-chips.com>
- <kulhumudepz3lqm6c36wbqtc4gv35pyqki7el63bovnvxcsjkk@nbxijrujm2vz>
-Content-Language: en-US
-From: Damon Ding <damon.ding@rock-chips.com>
-In-Reply-To: <kulhumudepz3lqm6c36wbqtc4gv35pyqki7el63bovnvxcsjkk@nbxijrujm2vz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-HM-Tid: 0a98542859c103a3kunm87893e013b06b7
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGR9NTVZDQh4aTUwdTU9NTEtWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSU9PT0
-	hVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=AP/adSjE3FdRXEHhFfV/nKCal90lkpwjWfjHLGPfb4HSlsT7RWL53R0WCZtREraRkEqn6gfcUTrUm51n3M5e5MMoOWYJUUOAs6NGxMBIpzInGnbOZ4/XyxxOyPlF6netaBfMyjQw5ZBBydxKrervYTunuA0YKVAyinTn+SJDwPs=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=rUdqYX6T9QuWjeM9cJHzQiY8rQSOQ+4zW99e7T7EF00=;
-	h=date:mime-version:subject:message-id:from;
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fyLGjDUOt0W-3g-XAsCUJiEbfP9fzHQS
+X-Proofpoint-ORIG-GUID: fyLGjDUOt0W-3g-XAsCUJiEbfP9fzHQS
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDAyMSBTYWx0ZWRfXyMnFMz7jnFw+
+ nfftZpKMFSF323YSuriKNPguW1ghlb+xHX3Hdfjn93QmKVbXNuVGLOpMI/b5+UBj9TXAwk9KEvp
+ chynVCeCHvk1jsjYuXsuyS4LgCzS7xiW/xzZz2euu8ZcnMIxYLRjlOHzT1CG6u2l8rtMaAxja4V
+ zL6Bqp++KAekg1s2Mf0bTqvubp1DCkUDRpZE3rhEAeqUODL23W3y62/apAJGf8ix0flOUrBiTiv
+ FYsM4niYtRuPFB22w7+ZKvULtYEbwjLGieR7Mnv9gCFXuYJOrlp30cMydMygeeOnnB55LwlgSVp
+ r9Bg+E3T8ScbsY5ZfM44LZ5j/8EQ2fw4zYkzvQRYXHh6Coc11k8TzXKd+zF6lpbPd6H9h+lolav
+ Eakg7lBa3mLsLIxi5djfE5c++xTmKS0q/akxm7UAXL2rpkJN68/vATHHpC3wKmIZM+0lBOkp
+X-Authority-Analysis: v=2.4 cv=CLoqXQrD c=1 sm=1 tr=0 ts=68883c4e cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=YnpQG1V86MJULNi4tNkA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_05,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=565 spamscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507290021
 
-Hi Dmitry,
+Add ADSP and CDSP fastrpc nodes for SM6150 platform.
 
-On 2025/7/26 20:03, Dmitry Baryshkov wrote:
-> On Thu, Jul 24, 2025 at 04:02:59PM +0800, Damon Ding wrote:
->> Since the panel/bridge should logically be positioned behind the
->> Analogix bridge in the display pipeline, it makes sense to handle
->> the panel/bridge parsing on the Analogix side.
->>
->> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
->> ---
->>   .../drm/bridge/analogix/analogix_dp_core.c    | 48 +++++++++++++++++++
->>   include/drm/bridge/analogix_dp.h              |  2 +
->>   2 files changed, 50 insertions(+)
->>
->> +int analogix_dp_find_panel_or_bridge(struct analogix_dp_device *dp)
-> 
-> Nit: the API does more than just finding the panel or bridge. Also the
-> drivers use it in a more of 'analogix_dp_finish_probe()' manner.
-> 
->>
-> 
+Signed-off-by: Ling Xu <quic_lxu5@quicinc.com>
+---
+V2 -> v3:
+  - Add nsessions.
+patch [v2]: https://lore.kernel.org/linux-arm-msm/20250703055532.2199477-1-quic_lxu5@quicinc.com/
+v1 -> v2:
+  - resend patch.
+Patch [v1]: https://lore.kernel.org/linux-arm-msm/20250523103853.1538813-1-quic_lxu5@quicinc.com/
+---
+ arch/arm64/boot/dts/qcom/sm6150.dtsi | 87 ++++++++++++++++++++++++++++
+ 1 file changed, 87 insertions(+)
 
-Yes, since the new API also includes component_add(), it would be better 
-to rename it.
-
-And the commit message will be expanded in the next version.
-
-Best regards,
-Damon
+diff --git a/arch/arm64/boot/dts/qcom/sm6150.dtsi b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+index e033b53f0f0f..b01a7511b71a 100644
+--- a/arch/arm64/boot/dts/qcom/sm6150.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm6150.dtsi
+@@ -3172,6 +3172,56 @@ glink-edge {
+ 				mboxes = <&apss_shared 4>;
+ 				label = "cdsp";
+ 				qcom,remote-pid = <5>;
++
++				fastrpc {
++					compatible = "qcom,fastrpc";
++					qcom,glink-channels = "fastrpcglink-apps-dsp";
++					label = "cdsp";
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					compute-cb@1 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <1>;
++						iommus = <&apps_smmu 0x1081 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@2 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <2>;
++						iommus = <&apps_smmu 0x1082 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@3 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <3>;
++						iommus = <&apps_smmu 0x1083 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@4 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <4>;
++						iommus = <&apps_smmu 0x1084 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@5 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <5>;
++						iommus = <&apps_smmu 0x1085 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@6 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <6>;
++						iommus = <&apps_smmu 0x1086 0x0>;
++						dma-coherent;
++					};
++				};
+ 			};
+ 		};
+ 
+@@ -3844,6 +3894,43 @@ glink_edge: glink-edge {
+ 				mboxes = <&apss_shared 24>;
+ 				label = "lpass";
+ 				qcom,remote-pid = <2>;
++
++				fastrpc {
++					compatible = "qcom,fastrpc";
++					qcom,glink-channels = "fastrpcglink-apps-dsp";
++					label = "adsp";
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					compute-cb@3 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <3>;
++						iommus = <&apps_smmu 0x1723 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@4 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <4>;
++						iommus = <&apps_smmu 0x1724 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@5 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <5>;
++						iommus = <&apps_smmu 0x1725 0x0>;
++						dma-coherent;
++					};
++
++					compute-cb@6 {
++						compatible = "qcom,fastrpc-compute-cb";
++						reg = <6>;
++						iommus = <&apps_smmu 0x1726 0x0>;
++						qcom,nsessions = <5>;
++						dma-coherent;
++					};
++				};
+ 			};
+ 		};
+ 	};
+-- 
+2.34.1
 
 
