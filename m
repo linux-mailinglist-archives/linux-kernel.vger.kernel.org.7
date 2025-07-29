@@ -1,137 +1,184 @@
-Return-Path: <linux-kernel+bounces-749380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64285B14D97
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:23:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01206B14D94
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1FE918A2B70
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:23:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C30374E1644
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D9C729186F;
-	Tue, 29 Jul 2025 12:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DWuZ/1XI"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0F5290DB5;
+	Tue, 29 Jul 2025 12:22:54 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A757C262FF5;
-	Tue, 29 Jul 2025 12:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DBE9290BA2;
+	Tue, 29 Jul 2025 12:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753791802; cv=none; b=an0uk6ufOt3wy65KcWBTxJs6YZsv9u25q6+lUnEpkcapJHnKQbnA4U48qsCvC/vKOB00wbVJWIBUpwJHJHA5tYE3IKQ8kCmYEEF+Jhx39fP10Mx7WobHDVtpAZ9yPbx8U3kJPFwXyJu8PzxnA3NpaKAGTcsWmupk1IPZ646GRNA=
+	t=1753791774; cv=none; b=qP7F1tatDAtBtY3KMga48wwfP/3D+mj2XvaejbFVJVaWKF2tTlTUuiR+nt7BQK8H9IJqY/m34THwb+hIarucXiUUyJibaZ7IiNOdJg6nQZ1qRngZy9ERpK4yOmbQSNs9X4N/TnDw19eeCszzs7dEPz+jmw1sxt2JmBMYWQiwqQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753791802; c=relaxed/simple;
-	bh=c5ql2LwbSyC1j3Y9FvlSg+2VJwZHQ/nuHeE6q7BYeUA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/4zX9Ljp+DUpwu/+liGsU9ye6g6A9Pyos1QHuuE5mMSymcypSTRHLrhBLyH0UFb5zBHl80pvImGWnLkh2s9cRL8uvntR3y4NCPQREuwwzu/5xGMmxEEZrPuIk58EBtWKPLrTz5WA2NM/2yJ96X1K5nQYkDaaGofagQoal1Fcxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DWuZ/1XI; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56TCMl4J2961788;
-	Tue, 29 Jul 2025 07:22:47 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753791767;
-	bh=e3nvlVKCBTyX8mAmnTYnSsQqdWgC+ufyRK3D5Obt8JY=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=DWuZ/1XIfjmPZlUOl94+pdKxZ5J8e0VklOebRtp4dV9VdOR1CGD05BddmBEALqrkE
-	 lYjxNdc2sCoVe0VPs287oEBFNlm/3G0VgwRR3CtGHiRA8yvSUGmipwLOtn2M8Y7W/7
-	 DsiYjKClx2INZc4J7KZLZZQ1DSL/Pn4L3hhU1ZXA=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56TCMlRP1804735
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Tue, 29 Jul 2025 07:22:47 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Tue, 29
- Jul 2025 07:22:46 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Tue, 29 Jul 2025 07:22:46 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56TCMkDw3701653;
-	Tue, 29 Jul 2025 07:22:46 -0500
-Date: Tue, 29 Jul 2025 07:22:46 -0500
-From: Nishanth Menon <nm@ti.com>
-To: <huaqian.li@siemens.com>
-CC: <lkp@intel.com>, <baocheng.su@siemens.com>, <bhelgaas@google.com>,
-        <christophe.jaillet@wanadoo.fr>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <diogo.ivo@siemens.com>,
-        <helgaas@kernel.org>, <jan.kiszka@siemens.com>, <kristo@kernel.org>,
-        <krzk+dt@kernel.org>, <kw@linux.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <lpieralisi@kernel.org>,
-        <oe-kbuild-all@lists.linux.dev>, <robh@kernel.org>,
-        <s-vadapalli@ti.com>, <ssantosh@kernel.org>, <vigneshr@ti.com>
-Subject: Re: [PATCH v12 3/7] soc: ti: Add IOMMU-like PVU driver
-Message-ID: <20250729122246.o7upnxvqnp7nltdo@harmonize>
-References: <20250728023701.116963-1-huaqian.li@siemens.com>
- <20250728023701.116963-4-huaqian.li@siemens.com>
+	s=arc-20240116; t=1753791774; c=relaxed/simple;
+	bh=FV6g1EBRL1RK/tzC+xm4c6xHhJTIID14Yplsrt/zSew=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gLvracdg7l60bGslcAsuv35kkGjf4HMG8TbUV1QgLHDaAyXQljls0uG3TysxP8/MULP6eLzEgHilBjqUWbbxtMfS7Xa6PSfY+FVGNwmzBNasQASTeEYmzqp2uUujYikcmNfhdudjnT9Rpo5wg8khoAlUavelRr2/TNHIuZconTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4brvdy1KH4z27j3b;
+	Tue, 29 Jul 2025 20:23:50 +0800 (CST)
+Received: from dggpemf500016.china.huawei.com (unknown [7.185.36.197])
+	by mail.maildlp.com (Postfix) with ESMTPS id D13A81400D2;
+	Tue, 29 Jul 2025 20:22:48 +0800 (CST)
+Received: from [10.174.176.70] (10.174.176.70) by
+ dggpemf500016.china.huawei.com (7.185.36.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 29 Jul 2025 20:22:47 +0800
+Message-ID: <17042f3d-ce75-4be4-a53e-3d57907488e8@huawei.com>
+Date: Tue, 29 Jul 2025 20:22:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250728023701.116963-4-huaqian.li@siemens.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
-
-On 10:36-20250728, huaqian.li@siemens.com wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
-> 
-> The TI Peripheral Virtualization Unit (PVU) permits to define a limited
-> set of mappings for DMA requests on the system memory. Unlike with an
-> IOMMU, there is no fallback to a memory-backed page table, only a fixed
-> set of register-backed TLBs. Emulating an IOMMU behavior appears to be
-> the more fragile the more fragmentation of pending requests occur.
-> 
-> Therefore, this driver does not expose the PVU as an IOMMU. It rather
-> introduces a simple, static interface to devices that are under
-> restricted-dma-pool constraints. They can register their pools with the
-> PVUs, enabling only those pools to work for DMA. As also MSI is issued
-> as DMA, the PVU already register the related translator region of the
-> AM654 as valid DMA target.
-> 
-> This driver is the essential building block for limiting DMA from
-> untrusted devices to clearly defined memory regions in the absence of a
-> real IOMMU (SMMU).
-> 
-> Co-developed-by: Diogo Ivo <diogo.ivo@siemens.com>
-> Signed-off-by: Diogo Ivo <diogo.ivo@siemens.com>
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Signed-off-by: Li Hua Qian <huaqian.li@siemens.com>
-> ---
->  drivers/soc/ti/Kconfig  |   4 +
->  drivers/soc/ti/Makefile |   1 +
->  drivers/soc/ti/ti-pvu.c | 500 ++++++++++++++++++++++++++++++++++++++++
->  include/linux/ti-pvu.h  |  32 +++
->  4 files changed, 537 insertions(+)
->  create mode 100644 drivers/soc/ti/ti-pvu.c
->  create mode 100644 include/linux/ti-pvu.h
-> 
-> diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-> index 1a93001c9e36..af7173ad84de 100644
-> --- a/drivers/soc/ti/Kconfig
-> +++ b/drivers/soc/ti/Kconfig
-> @@ -82,6 +82,10 @@ config TI_PRUSS
->  	  processors on various TI SoCs. It's safe to say N here if you're
->  	  not interested in the PRU or if you are unsure.
->  
-> +config TI_PVU
-> +	bool "TI Peripheral Virtualization Unit driver"
-
-tristate please? Prefer to make this as a module.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: check the minimum value of gso size in
+ virtio_net_hdr_to_skb()
+To: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+CC: <yuehaibing@huawei.com>, <zhangchangzhong@huawei.com>,
+	<netdev@vger.kernel.org>, <virtualization@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, <mst@redhat.com>, <jasowang@redhat.com>,
+	<eperezma@redhat.com>, <pabeni@redhat.com>, <davem@davemloft.net>,
+	<willemb@google.com>, <atenart@kernel.org>
+References: <20250724083005.3918375-1-wangliang74@huawei.com>
+ <1753433749.959542-1-xuanzhuo@linux.alibaba.com>
+From: Wang Liang <wangliang74@huawei.com>
+In-Reply-To: <1753433749.959542-1-xuanzhuo@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ dggpemf500016.china.huawei.com (7.185.36.197)
 
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
-https://ti.com/opensource
+在 2025/7/25 16:55, Xuan Zhuo 写道:
+> On Thu, 24 Jul 2025 16:30:05 +0800, Wang Liang <wangliang74@huawei.com> wrote:
+>> When sending a packet with virtio_net_hdr to tun device, if the gso_type
+>> in virtio_net_hdr is SKB_GSO_UDP and the gso_size is less than udphdr
+>> size, below crash may happen.
+>>
+>>    ------------[ cut here ]------------
+>>    kernel BUG at net/core/skbuff.c:4572!
+>>    Oops: invalid opcode: 0000 [#1] SMP NOPTI
+>>    CPU: 0 UID: 0 PID: 62 Comm: mytest Not tainted 6.16.0-rc7 #203 PREEMPT(voluntary)
+>>    Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+>>    RIP: 0010:skb_pull_rcsum+0x8e/0xa0
+>>    Code: 00 00 5b c3 cc cc cc cc 8b 93 88 00 00 00 f7 da e8 37 44 38 00 f7 d8 89 83 88 00 00 00 48 8b 83 c8 00 00 00 5b c3 cc cc cc cc <0f> 0b 0f 0b 66 66 2e 0f 1f 84 00 000
+>>    RSP: 0018:ffffc900001fba38 EFLAGS: 00000297
+>>    RAX: 0000000000000004 RBX: ffff8880040c1000 RCX: ffffc900001fb948
+>>    RDX: ffff888003e6d700 RSI: 0000000000000008 RDI: ffff88800411a062
+>>    RBP: ffff8880040c1000 R08: 0000000000000000 R09: 0000000000000001
+>>    R10: ffff888003606c00 R11: 0000000000000001 R12: 0000000000000000
+>>    R13: ffff888004060900 R14: ffff888004050000 R15: ffff888004060900
+>>    FS:  000000002406d3c0(0000) GS:ffff888084a19000(0000) knlGS:0000000000000000
+>>    CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>    CR2: 0000000020000040 CR3: 0000000004007000 CR4: 00000000000006f0
+>>    Call Trace:
+>>     <TASK>
+>>     udp_queue_rcv_one_skb+0x176/0x4b0 net/ipv4/udp.c:2445
+>>     udp_queue_rcv_skb+0x155/0x1f0 net/ipv4/udp.c:2475
+>>     udp_unicast_rcv_skb+0x71/0x90 net/ipv4/udp.c:2626
+>>     __udp4_lib_rcv+0x433/0xb00 net/ipv4/udp.c:2690
+>>     ip_protocol_deliver_rcu+0xa6/0x160 net/ipv4/ip_input.c:205
+>>     ip_local_deliver_finish+0x72/0x90 net/ipv4/ip_input.c:233
+>>     ip_sublist_rcv_finish+0x5f/0x70 net/ipv4/ip_input.c:579
+>>     ip_sublist_rcv+0x122/0x1b0 net/ipv4/ip_input.c:636
+>>     ip_list_rcv+0xf7/0x130 net/ipv4/ip_input.c:670
+>>     __netif_receive_skb_list_core+0x21d/0x240 net/core/dev.c:6067
+>>     netif_receive_skb_list_internal+0x186/0x2b0 net/core/dev.c:6210
+>>     napi_complete_done+0x78/0x180 net/core/dev.c:6580
+>>     tun_get_user+0xa63/0x1120 drivers/net/tun.c:1909
+>>     tun_chr_write_iter+0x65/0xb0 drivers/net/tun.c:1984
+>>     vfs_write+0x300/0x420 fs/read_write.c:593
+>>     ksys_write+0x60/0xd0 fs/read_write.c:686
+>>     do_syscall_64+0x50/0x1c0 arch/x86/entry/syscall_64.c:63
+>>     </TASK>
+>>
+>> To trigger gso segment in udp_queue_rcv_skb(), we should also set option
+>> UDP_ENCAP_ESPINUDP to enable udp_sk(sk)->encap_rcv. When the encap_rcv
+>> hook return 1 in udp_queue_rcv_one_skb(), udp_csum_pull_header() will try
+>> to pull udphdr, but the skb size has been segmented to gso size, which
+>> leads to this crash.
+> Is it correct to access the checksum of a segmented skb?
+>
+>> Only udp has this probloem. Add check for the minimum value of gso size in
+>> virtio_net_hdr_to_skb().
+> Why tcp has not this problem?
+>
+>
+>> Fixes: cf329aa42b66 ("udp: cope with UDP GRO packet misdirection")
+>> Fixes: 3d010c8031e3 ("udp: do not accept non-tunnel GSO skbs landing in a tunnel")
+>> Signed-off-by: Wang Liang <wangliang74@huawei.com>
+>> ---
+>>   include/linux/virtio_net.h | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
+>> index 02a9f4dc594d..0533101642bd 100644
+>> --- a/include/linux/virtio_net.h
+>> +++ b/include/linux/virtio_net.h
+>> @@ -157,11 +157,13 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+>>   		u16 gso_size = __virtio16_to_cpu(little_endian, hdr->gso_size);
+>>   		unsigned int nh_off = p_off;
+>>   		struct skb_shared_info *shinfo = skb_shinfo(skb);
+>> +		u16 min_gso_size = 0;
+>>
+>>   		switch (gso_type & ~SKB_GSO_TCP_ECN) {
+>>   		case SKB_GSO_UDP:
+>>   			/* UFO may not include transport header in gso_size. */
+>>   			nh_off -= thlen;
+>> +			min_gso_size = sizeof(struct udphdr) + 1;
+>>   			break;
+>>   		case SKB_GSO_UDP_L4:
+>>   			if (!(hdr->flags & VIRTIO_NET_HDR_F_NEEDS_CSUM))
+>> @@ -172,6 +174,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+>>   				return -EINVAL;
+>>   			if (gso_type != SKB_GSO_UDP_L4)
+>>   				return -EINVAL;
+>> +			min_gso_size = sizeof(struct udphdr) + 1;
+> why +1?
+>
+> Thanks.
+
+
+Hi! Sorry for replying so late.
+
+The first patch should add RFC, because I am not sure it is the best fix
+method. Set 'min_gso_size = sizeof(struct udphdr) + 1;' to ensure at least
+one byte in payload.
+
+After discussions in mail list, I send a v2 patch, please check it:
+https://lore.kernel.org/netdev/20250729123907.3318425-1-wangliang74@huawei.com/T/#u
+
+Thanks.
+
+>>   			break;
+>>   		case SKB_GSO_TCPV4:
+>>   		case SKB_GSO_TCPV6:
+>> @@ -182,7 +185,7 @@ static inline int virtio_net_hdr_to_skb(struct sk_buff *skb,
+>>   		}
+>>
+>>   		/* Kernel has a special handling for GSO_BY_FRAGS. */
+>> -		if (gso_size == GSO_BY_FRAGS)
+>> +		if ((gso_size == GSO_BY_FRAGS) || (gso_size < min_gso_size))
+>>   			return -EINVAL;
+>>
+>>   		/* Too small packets are not really GSO ones. */
+>> --
+>> 2.34.1
+>>
 
