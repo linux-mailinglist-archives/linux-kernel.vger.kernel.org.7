@@ -1,61 +1,81 @@
-Return-Path: <linux-kernel+bounces-748897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69EDB14759
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:53:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E66B1476A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:05:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A2601AA0EF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B3B91AA17DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F923230D08;
-	Tue, 29 Jul 2025 04:53:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50FE0233735;
+	Tue, 29 Jul 2025 05:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mHler/Pm"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jEC8rh+u"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616DB4A01;
-	Tue, 29 Jul 2025 04:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E025224AF2;
+	Tue, 29 Jul 2025 05:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753764811; cv=none; b=tODbTXXdhAzjOwXb8iLz2G5i3F861cgjKvoNRKMxoagw6BZP9Lvm0iMskvW3C1ADe/zyUghdghMdRhEIOO0GB4WlZHaCEPqppFkMTljwpfgsLgi25lBertrWusJLdKdc59TbV/FAP+J3nVJ20iGKcWoRHhKeWt3lft5EzX37Cks=
+	t=1753765513; cv=none; b=bxa/CaISuHRQTSteqd6JLuzqdmTrE2+NyiZjxuMLKh7NmOBkkxRiWxful2PjnSPhFULV9K5sutrPFxMDU2/rtlXlMBNjtk0XCReek+pc1dq1baUsgPj31Y66k4faN1A99IZUv+1KFoaOi1njTP4x5nEYF4X6lXOOcdYCsRoEZr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753764811; c=relaxed/simple;
-	bh=Fdyx/OimqGQoKVQbQs/ah6wsPuKUqNgsq7edekvUva4=;
+	s=arc-20240116; t=1753765513; c=relaxed/simple;
+	bh=5egcKgD4FYDc9odofRDQJ94rLDaE5PJqwRcIkar3lGo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ps09giPxXn45yZtZ3v6Gmc5n23lefslTY4cUreKt5svTHZVwahqlit8BT4UXqb9WBvMnfKOTrncEjKMfMp0iwAf2F6fXuosB9mDD5IFFrcgUy4FDMw4/1A8ceHjQA6qF4wWdOYnWt2VUui2TQEMQriWQ08zAJNuRv2zm/v1DzPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mHler/Pm; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Qi3htPNP2czm/a/W/z7KK1ldvUA9ttokkrJynE402W4=; b=mHler/PmoNoxEmo/FM+zuAP7Gk
-	2+1P3jjec8elpvHkwdF2SlvRNX9V0070TA1h7XxKUpolSrILzlCnb6UO8HMtgsRUgWC45JsNZeY9V
-	/CCaBlv64DMC5r3k2m1dHVObDbyIKTyHj2jbLhB9pIe2JegrDjMT3L2Fpf2Yl4UV/PCwqlwLmHquw
-	VWMRdqOvMiozzlW4d6chX+Ep+skdPcTXiUSbJ6gdvOfizUS16LwuVukRk4qiDV18CQCHgAhbqwBJL
-	sOjGBKcecyoGP2i33omUmvd5TfZlPEHBxrjhl7PBzE3HX6ucicA7jrFLoJ46BLSCe/Or5WG8fP6tR
-	lky2i2uQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ugcL5-0000000GyEi-1B8C;
-	Tue, 29 Jul 2025 04:53:23 +0000
-Date: Tue, 29 Jul 2025 05:53:23 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: hirofumi@mail.parknet.co.jp, linkinjeon@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	sj1557.seo@samsung.com,
-	syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fat: Prevent the race of read/write the FAT16 and FAT32
- entry
-Message-ID: <20250729045323.GE222315@ZenIV>
-References: <20250728163526.GD222315@ZenIV>
- <tencent_3066496863AAE455D76CD76A06C6336B6305@qq.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=apIn3ZKNIka7XFZYLatVPgk3nHlve8EKd0odVgwi9DVsqLzupqpkqrsfEk22pnuJrOHtaH/+qIPBxxAP51sMO64AA3AVbTzoOYnGtMF79f4toonrfyarz7lPYQRv3gL6DpQCLuuUCEfPqs3rnbu0IpJ+jovtlHnSKoxH0rkufis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jEC8rh+u; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753765512; x=1785301512;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5egcKgD4FYDc9odofRDQJ94rLDaE5PJqwRcIkar3lGo=;
+  b=jEC8rh+uj5kSZgFbvwlnzjVx+n7L50vIpMUAlFIJCizlHoakH52GR1cN
+   VJ/WVVJ+lDKUhuseKemjFlxp5evxVvRU0eADliJwcYcWDB48aWhnRwbhz
+   WnTDSnRnwrVa7oq/XAOP04/G7/eWP5nCWpBH1+dbcTWERk5xIml9JnJ1G
+   lzb3OmtZbxM7HNLX5hIUmo52jl3DLjqefAzS8KwCaeIS1XDZkiKLCu5+2
+   Q1Qi3UwhMyYPPvMJma3MF09GkXwWgRmL36u8QCZeraFDrSvhmT+pYM1aJ
+   qqM2bW4LfQw9oxUIUXAuKhpRvwS6DO2R+AHiGFL7dOEAARo57OpcHMtcO
+   w==;
+X-CSE-ConnectionGUID: YHc11TtWRTKLEUlT46UY9g==
+X-CSE-MsgGUID: PYjPUCX4R2uo8LzxQa1ASg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="59671659"
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="59671659"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Jul 2025 22:05:11 -0700
+X-CSE-ConnectionGUID: NtU2Nli6Ro2azAlZ/UeGhA==
+X-CSE-MsgGUID: WWnmbXg2QjKOC6qN3TIygg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
+   d="scan'208";a="162172796"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa007.fm.intel.com with ESMTP; 28 Jul 2025 22:05:06 -0700
+Date: Tue, 29 Jul 2025 12:55:51 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-coco@lists.linux.dev, x86@kernel.org, kvm@vger.kernel.org,
+	seanjc@google.com, pbonzini@redhat.com, eddie.dong@intel.com,
+	kirill.shutemov@intel.com, dave.hansen@intel.com,
+	dan.j.williams@intel.com, kai.huang@intel.com,
+	isaku.yamahata@intel.com, elena.reshetova@intel.com,
+	rick.p.edgecombe@intel.com, Farrah Chen <farrah.chen@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 07/20] x86/virt/tdx: Expose SEAMLDR information via
+ sysfs
+Message-ID: <aIhUVyJVQ+rhRB4r@yilunxu-OptiPlex-7050>
+References: <20250523095322.88774-1-chao.gao@intel.com>
+ <20250523095322.88774-8-chao.gao@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,53 +84,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <tencent_3066496863AAE455D76CD76A06C6336B6305@qq.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250523095322.88774-8-chao.gao@intel.com>
 
-On Tue, Jul 29, 2025 at 12:17:21PM +0800, Edward Adam Davis wrote:
-> > >
-> > > Could you be more specific?  "Incomplete" in which sense?
-> Because ent32_p and ent12_p are in the same union [1], their addresses are
-> the same, and they both have the "read/write race condition" problem, so I
-> used the same method as [2] to add a spinlock to solve it.
+> +static const struct attribute_group *tdx_subsys_groups[] = {
+> +	SEAMLDR_GROUP,
+> +	NULL,
+> +};
+> +
+>  static void tdx_subsys_init(void)
+>  {
+>  	struct tdx_tsm *tdx_tsm;
+>  	int err;
+>  
+> +	err = get_seamldr_info();
+> +	if (err) {
+> +		pr_err("failed to get seamldr info %d\n", err);
+> +		return;
+> +	}
+> +
+>  	/* Establish subsystem for global TDX module attributes */
+> -	err = subsys_virtual_register(&tdx_subsys, NULL);
+> +	err = subsys_virtual_register(&tdx_subsys, tdx_subsys_groups);
+>  	if (err) {
+>  		pr_err("failed to register tdx_subsys %d\n", err);
+>  		return;
 
-What the hell?  ent32_p and ent12_p are _pointers_; whatever races there
-might be are about the objects they are pointing to.
+As mentioned, TDX Connect also uses this virtual TSM device. And I tend
+to extend it to TDX guest, also make the guest TSM management run on
+the virtual device which represents the TDG calls and TDG_VP_VM calls.
 
-> > > Which race condition would that be?
-> data-race in fat32_ent_get / fat32_ent_put, detail: see [3]
+So I'm considering extract the common part of tdx_subsys_init() out of
+TDX host and into a separate file, e.g.
 
-References to KCSAN output are worthless, unless you can explain what the
-actual problem is (no, "tool is not quiet" is *NOT* a problem; it might
-or might not be a symptom of one).
+---
 
-> > Note that FAT12 situation is really different - we not just have an inevitable
-> > read-modify-write for stores (half-byte access), we are not even guaranteed that
-> > byte and half-byte will be within the same cacheline, so cmpxchg is not an
-> > option; we have to use a spinlock there.
-> I think for FAT12 they are always in the same cacheline, the offset of the
-> member ent12_p in struct fat_entry is 4 bytes, and no matter x86-64 or arm64,
-> the regular 64-byte cacheline is enough to ensure that they are in the same
-> cacheline.
++source "drivers/virt/coco/tdx-tsm/Kconfig"
++
+ config TSM
+        bool
+diff --git a/drivers/virt/coco/Makefile b/drivers/virt/coco/Makefile
+index c0c3733be165..a54d3cb5b4e9 100644
+--- a/drivers/virt/coco/Makefile
++++ b/drivers/virt/coco/Makefile
+@@ -10,3 +10,4 @@ obj-$(CONFIG_INTEL_TDX_GUEST) += tdx-guest/
+ obj-$(CONFIG_ARM_CCA_GUEST)    += arm-cca-guest/
+ obj-$(CONFIG_TSM)              += tsm-core.o
+ obj-$(CONFIG_TSM_GUEST)                += guest/
++obj-y                          += tdx-tsm/
+diff --git a/drivers/virt/coco/tdx-tsm/Kconfig b/drivers/virt/coco/tdx-tsm/Kconfig
+new file mode 100644
+index 000000000000..768175f8bb2c
+--- /dev/null
++++ b/drivers/virt/coco/tdx-tsm/Kconfig
+@@ -0,0 +1,2 @@
++config TDX_TSM_BUS
++       bool
+diff --git a/drivers/virt/coco/tdx-tsm/Makefile b/drivers/virt/coco/tdx-tsm/Makefile
+new file mode 100644
+index 000000000000..09f0ac08988a
+--- /dev/null
++++ b/drivers/virt/coco/tdx-tsm/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_TDX_TSM_BUS) += tdx-tsm-bus.o
 
-Have you actually read what these functions are doing?  _Pointers_ are not
-problematic at all; neither ..._ent_get nor ..._ent_put are changing those,
-for crying out loud!
+---
 
-If KCSAN is warning about those (which I sincerely doubt), you need to report
-a bug in KCSAN.  I would *really* recommend verifying that first.
+And put the tdx_subsys_init() in tdx-tsm-bus.c. We need to move host
+specific initializations out of tdx_subsys_init(), e.g. seamldr_group &
+seamldr fw upload.
 
-FAT12 problem is that FAT entries being accessed there are 12-bit, packed in
-pairs into an array of 3-byte values.  Have you actually read what the functions
-are doing?  There we *must* serialize the access to bytes that have 4 bits
-from one entry and 4 from another - there's no such thing as atomically
-update half a byte; it has to be read, modified and stored back.  If two
-threads try to do that to upper and lower halves of the same byte at the
-same time, the value will be corrupted.
-
-The same *might* happen to FAT16 on (sub)architectures we no longer support;
-there is  no way in hell we run into anything of that sort for (aligned) 32bit
-stores.  Never had been.  And neither aligned 16bit nor aligned 32bit ever
-had a problem with read seeing a state with only a part of value having
-been written.
+Thanks,
+Yilun
 
