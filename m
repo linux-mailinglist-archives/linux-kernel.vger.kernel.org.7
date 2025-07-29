@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-748806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7436FB14628
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:27:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6D45B14629
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B45B91AA14D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:27:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C081C3AF8C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86E21FCFEE;
-	Tue, 29 Jul 2025 02:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE99E21CC4F;
+	Tue, 29 Jul 2025 02:26:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sNxNF3r+"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Een4VQzq"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A343520C48A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E81E2147E5
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753756012; cv=none; b=bP26xkXG5tlyEuv1yNum3nobyN0OemLhlGc5eZkJHoAPcKurzUZMQtwNHrn81+M7eegTZYJ/5l4PaewgHw1zuoXAdS3YuiEeENhcpdt3V19jIprXdgBG/E0hesXO+NmDdcdeAnk0ioeT4LiM7BlxL6oP23U8lfe87KJD2KWtHMM=
+	t=1753756014; cv=none; b=feLxyRtQSmfuCNyp+nGC8X+Znxd+HQco4LVres0Ed2zbk15IzrdiXRy7l4Yf2RthV04Wre86srTmN3VLDBzHb1g2zMVpsO+aWd4NYsMVW091ZZiqfHGUsBsIDEgGHF0PU+uHF0xwacX0uy7NwGLMNhJk7qsKTrxMa+jUESrtg/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753756012; c=relaxed/simple;
-	bh=bpPKQzVvF2Y3jUpkSIAzRUU7htVMnv8MWQb3f1guygM=;
+	s=arc-20240116; t=1753756014; c=relaxed/simple;
+	bh=5uumQFEakBzCNefgnK5KQH0r1rdGvF5P6NYOneXfUyE=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=D3FYGif7m2UX/jYWAcybD5M9rvblbcT5PEKHsM7ppGHOFJU9WXKA+g2DYr1BsyCpX005qrXRADxvwUGRfDRxaDfiYNx284zPw675xHIqudNkLx9bRrhUeMcnJc6xCDLy1TxLTTDEptxs46j9qu9hQErEWr6pPKjX8i1FEDfUS+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sNxNF3r+; arc=none smtp.client-ip=209.85.214.201
+	 To:Content-Type; b=M8Az6Dv2b+8ImXD/fDIx/T6GdxW5YZT0gCkvYp7v6+IXg3OydLtXfL8rr/mxHG6n3gd/E9ZMbP5TVNmTQwnZayXm1cSiuFJEYwCE++w9qqKURBwgEWFrCnoHrJFwD5jxaxd75X245yaLdErzoBTJwQPKl7B1cEmZZGVX5lmfJ/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Een4VQzq; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2369dd58602so52165935ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 19:26:50 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b41f56fdab3so1593889a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 19:26:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753756010; x=1754360810; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753756012; x=1754360812; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NPDuevloimGKVsWil7Slcd/Yj9vleIb69P9iimghSK4=;
-        b=sNxNF3r+5VVjyrbiG1R8TKESohNemm/A6syHOxVpFiwYedSwnM1lIeV4GjuvB07F3v
-         j4x3nmF3YQSfP98uJT/cQBi37gIc4J30k1Mv0GZGJaIqvmi1xQk0YiTpeVW05fteCMyz
-         S6P/JUyVu5bkqHs6gfGhdgIxPCQPPa9J4qEpa0cj8CgFb0Kz9YJhJJImkXTlnOelslb3
-         OU99M/O3epFnAjMqAvClXaXPvS2FbGS7JiU5iYGmJaM9VTlzuBK3O8FiYU33tzMQfZ0T
-         DEQqeV38AiF2dUa7vkd4S31D390cA9pqdATadBP76pxmPLiuYW75vKhUHjAIq8XqUYsB
-         5SeQ==
+        bh=nR+qnYIXhky/aP885u9agL4XJhjaPZr+Fl5Gin8Crt0=;
+        b=Een4VQzqbZ7JY+H+sBZhtsSbJZNoRQuxZyHaJGHoFW7XQ90mp6N/X3Ijibf7Bdtrrz
+         Sb2aP0LLU2J8Ada6Xxjhir5kInaJyO+CqxKbnnPQ00oFe15jbyDOYG0BXnP7Jnh/uR3u
+         fJsfJ1x5Fn94qiPSVyb2JaUeUeP6qasSbz5Mbqk7ncGB+oRU97z/rSoI6WFi/rtfQRks
+         KMK139+peZ21r2X+uTDYyV4Y/gQcLmx0LAgENqRFLas6/KrcZM2dbYGt0da8bq2uXhQG
+         ivlt536Tx3sIeLPzBc5ViVyToQQpCJ8ZjoxM5z02y/b9UX+v9WAz0A0d2XwLJSqEUyng
+         enRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753756010; x=1754360810;
+        d=1e100.net; s=20230601; t=1753756012; x=1754360812;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NPDuevloimGKVsWil7Slcd/Yj9vleIb69P9iimghSK4=;
-        b=KuyuJ4+8SJnswNq9HTDFXRTI/UCuM6iv98jsPpK1lUGi5YXBi6/9QYda81xWp2kyaB
-         1SPUcACit+jvKgcwM4xxzVTa0KtAQ/+FbuHbHaVGjRCE98yzTqTDoghbewvh6PN9Y3kt
-         rJlbMO//1/sNreROLF6iqKKZHLRm9i/FG/cfHnWTu+v9/EAgLlNtoYhwq2WjcpBGVldw
-         zspgVjPXS0fbR4fBt+xKpgJWP2bOfXvMpewrGmgY75xJj1/vnknSr8Bq7M08w2/9iTbq
-         RfGa7TA6oNQrwhjg4O+dd4ZZbwNKXjsPq2BNY1Ujj2rCcygnlzJ6fogP0W6EKZUaA/za
-         Dvmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEFJaSuIGFydbhH+qgUF2kdoTd6zA6eQmXTDbAE88y59rO9rK5PV1J/Gxs4gST0/i9xFhhcXpqoCxnbiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxDkwEIXGB2PC13y/GySfiC+2ymZhjjicxGCmxTLOogZ4gELPU
-	vIcU5ZoG3lOR7lq8FqShfLsVdaMmNzUb0Zn3GGwiUgQIj77F12emk6rxezNkrleAxiJCgyHZrM0
-	WI8WMLg==
-X-Google-Smtp-Source: AGHT+IGyyM3fDnm9QBVau2QFKbJOjQeX2Y82KWdawzVLWv6ahiPgYmXl8LvmKTgkRHyMXJzIeDPEu2d5dAI=
-X-Received: from pjbsn7.prod.google.com ([2002:a17:90b:2e87:b0:313:2d44:397b])
- (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:228e:b0:240:1f19:d35c
- with SMTP id d9443c01a7336-2401f19d5acmr92061085ad.39.1753756009846; Mon, 28
- Jul 2025 19:26:49 -0700 (PDT)
-Date: Mon, 28 Jul 2025 19:26:36 -0700
+        bh=nR+qnYIXhky/aP885u9agL4XJhjaPZr+Fl5Gin8Crt0=;
+        b=Qk+UPUuo8e3yI4AQ4gLrWKOAs+7wUHK7TgSYdCu1T0YSfkAMwv6fgtBAjgB3ryhqdx
+         Cw74HF6C7hEFO5pO0dHxQHm9aSsR+DhVPRZLOJHgkU+VFCp5C5MtJWOMmDFHsBaG9poy
+         rxGDgqaENQkLc3MLl9ut+G2tnSpNPx53qZdnYZgXAU1KJA1JC2M847RkDECvkKaj4cBF
+         hq1+hRGA7IB6dUgfXnjJq/NWx3ke/z8o4oTNAn4t8O5JuWUMkbPL5GLbU49AMrXWr5pQ
+         mG4E7O21aFuWRz6VW7MmAOz0r8WS6h+FEhAHOH6BC1E+OfWsp9Da2U434L3VV0pcFVUD
+         XO5g==
+X-Forwarded-Encrypted: i=1; AJvYcCU1kukt9yV2l0SYYLUxQvNnRcDSmlXkLbpPKrmZI9mW+80HWb/djlpssjRtlvsSnDZ9wI0rSFKgjA4Yy/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqruHVCMuGOzsi6qm0PzfAgI6Fx/+Zzhnrh6aMfUHBJ+SkY2Im
+	TeFVH57h6jcwTijl5l19aB74vup4imaG2hUPZg/e3lyxZHOOhOu/LE+TLYYcmwR4fGZGMQkhG6V
+	Wf4J0uQ==
+X-Google-Smtp-Source: AGHT+IGaz+zt9fkjFW/IQ8BgR/CTX8RaQPImDuqvY7R9r+tO/y2WcXT503K699hl7CqHOeIz+AfKnHSrNZE=
+X-Received: from pfjj11.prod.google.com ([2002:a05:6a00:234b:b0:746:30f0:9b33])
+ (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:938c:b0:220:33e9:15da
+ with SMTP id adf61e73a8af0-23d6ffe49aamr22500947637.2.1753756011644; Mon, 28
+ Jul 2025 19:26:51 -0700 (PDT)
+Date: Mon, 28 Jul 2025 19:26:37 -0700
 In-Reply-To: <20250729022640.3134066-1-yuzhuo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250729022640.3134066-1-yuzhuo@google.com>
 X-Mailer: git-send-email 2.50.1.487.gc89ff58d15-goog
-Message-ID: <20250729022640.3134066-4-yuzhuo@google.com>
-Subject: [PATCH v1 3/7] tools: Partial import of prefetch.h
+Message-ID: <20250729022640.3134066-5-yuzhuo@google.com>
+Subject: [PATCH v1 4/7] tools: Implement userspace per-cpu
 From: Yuzhuo Jing <yuzhuo@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,62 +90,172 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Import only prefetch and prefetchw but not page and range related
-methods.
+Implement userspace per-cpu for imported kernel code.  Compared with
+simple thread-local definition, the kernel per-cpu provides 1) a
+guarantee of static lifetime even when thread exits, and 2) the ability
+to access other CPU's per-cpu data.
+
+This patch adds an alternative implementation and interface for
+userspace per-cpu.  The kernel implementation uses special ELF sections
+and offset calculation.  For simplicity, this version defines a
+PERCPU_MAX length global array for each per-cpu data, and uses a
+thread-local cpu id for indexing.
 
 Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
 ---
- tools/include/linux/prefetch.h | 41 ++++++++++++++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 tools/include/linux/prefetch.h
+ tools/include/linux/compiler_types.h  |   3 +
+ tools/include/linux/percpu-simulate.h | 128 ++++++++++++++++++++++++++
+ 2 files changed, 131 insertions(+)
+ create mode 100644 tools/include/linux/percpu-simulate.h
 
-diff --git a/tools/include/linux/prefetch.h b/tools/include/linux/prefetch.h
+diff --git a/tools/include/linux/compiler_types.h b/tools/include/linux/compiler_types.h
+index 9a2a2f8d7b6c..46550c500b8c 100644
+--- a/tools/include/linux/compiler_types.h
++++ b/tools/include/linux/compiler_types.h
+@@ -31,6 +31,9 @@
+ # define __cond_lock(x,c) (c)
+ #endif /* __CHECKER__ */
+ 
++/* Per-cpu checker flag does not use address space attribute in userspace */
++#define __percpu
++
+ /*
+  * __unqual_scalar_typeof(x) - Declare an unqualified scalar type, leaving
+  *			       non-scalar types unchanged.
+diff --git a/tools/include/linux/percpu-simulate.h b/tools/include/linux/percpu-simulate.h
 new file mode 100644
-index 000000000000..1ed8678f4824
+index 000000000000..a6af2f2211eb
 --- /dev/null
-+++ b/tools/include/linux/prefetch.h
-@@ -0,0 +1,41 @@
++++ b/tools/include/linux/percpu-simulate.h
+@@ -0,0 +1,128 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ *  Generic cache management functions. Everything is arch-specific,  
-+ *  but this header exists to make sure the defines/functions can be
-+ *  used in a generic way.
++ * Userspace implementation of per_cpu_ptr for adapted kernel code.
 + *
-+ *  2000-11-13  Arjan van de Ven   <arjan@fenrus.demon.nl>
++ * Userspace code does not have and does not need a per-cpu concept, but
++ * instead can declare variables as thread-local.  However, the kernel per-cpu
++ * further provides 1) the guarantee of static lifetime when thread exits, and
++ * 2) the ability to access other CPU's per-cpu data.  This file provides a
++ * simple implementation of such functionality, but with slightly different
++ * APIs and without linker script changes.
 + *
++ * 2025  Yuzhuo Jing <yuzhuo@google.com>
 + */
++#ifndef __PERCPU_SIMULATE_H__
++#define __PERCPU_SIMULATE_H__
 +
-+#ifndef _LINUX_PREFETCH_H
-+#define _LINUX_PREFETCH_H
++#include <assert.h>
++
++#include <linux/compiler.h>
++#include <linux/types.h>
 +
 +/*
-+	prefetch(x) attempts to pre-emptively get the memory pointed to
-+	by address "x" into the CPU L1 cache. 
-+	prefetch(x) should not cause any kind of exception, prefetch(0) is
-+	specifically ok.
++ * The maximum supported number of CPUs.  Per-cpu variables are defined as a
++ * PERCPU_MAX length array, indexed by a thread-local cpu id.
++ */
++#define PERCPU_MAX 4096
 +
-+	prefetch() should be defined by the architecture, if not, the 
-+	#define below provides a no-op define.	
-+	
-+	There are 2 prefetch() macros:
-+	
-+	prefetch(x)  	- prefetches the cacheline at "x" for read
-+	prefetchw(x)	- prefetches the cacheline at "x" for write
-+	
-+	there is also PREFETCH_STRIDE which is the architecure-preferred 
-+	"lookahead" size for prefetching streamed operations.
-+	
-+*/
-+
-+#ifndef ARCH_HAS_PREFETCH
-+#define prefetch(x) __builtin_prefetch(x)
++#ifdef ASSERT_PERCPU
++#define __check_cpu_id(cpu)						\
++({									\
++	u32 cpuid = (cpu);						\
++	assert(cpuid < PERCPU_MAX);					\
++	cpuid;								\
++})
++#else
++#define __check_cpu_id(cpu)	(cpu)
 +#endif
 +
-+#ifndef ARCH_HAS_PREFETCHW
-+#define prefetchw(x) __builtin_prefetch(x,1)
-+#endif
++/*
++ * Use weak symbol: only define __thread_per_cpu_id variable if any perf tool
++ * includes this header file.
++ */
++_Thread_local u32 __thread_per_cpu_id __weak;
 +
-+#endif
++static inline u32 get_this_cpu_id(void)
++{
++	return __thread_per_cpu_id;
++}
++
++/*
++ * The user code must call this function inside of each thread that uses
++ * per-cpu data structures.  The user code can choose an id of their choice,
++ * but must ensure each thread uses a different id.
++ *
++ * Safety: asserts CPU id smaller than PERCPU_MAX if ASSERT_PERCPU is defined.
++ */
++static inline void set_this_cpu_id(u32 id)
++{
++	__thread_per_cpu_id = __check_cpu_id(id);
++}
++
++/*
++ * Declare a per-cpu data structure.  This only declares the data type and
++ * array length. Different per-cpu data are differentiated by a key (identifer).
++ *
++ * Different from the kernel version, this API must be called before the actual
++ * definition (i.e. DEFINE_PER_CPU_ALIGNED).
++ *
++ * Note that this implementation does not support prepending static qualifier,
++ * or appending assignment expressions.
++ */
++#define DECLARE_PER_CPU_ALIGNED(key, type, data) \
++	extern struct __percpu_type_##key { \
++		type data; \
++	} __percpu_data_##key[PERCPU_MAX]
++
++/*
++ * Define the per-cpu data storage for a given key.  This uses a previously
++ * defined data type in DECLARE_PER_CPU_ALIGNED.
++ *
++ * Different from the kernel version, this API only accepts a key name.
++ */
++#define DEFINE_PER_CPU_ALIGNED(key) \
++	struct __percpu_type_##key __percpu_data_##key[PERCPU_MAX]
++
++#define __raw_per_cpu_value(key, field, cpu) \
++	(__percpu_data_##key[cpu].field)
++
++/*
++ * Get a pointer of per-cpu data for a given key.
++ *
++ * Different from the kernel version, users of this API don't need to pass the
++ * address of the base variable (through `&varname').
++ *
++ * Safety: asserts CPU id smaller than PERCPU_MAX if ASSERT_PERCPU is defined.
++ */
++#define per_cpu_ptr(key, field, cpu) (&per_cpu_value(key, field, cpu))
++#define this_cpu_ptr(key, field) (&this_cpu_value(key, field))
++
++/*
++ * Additional APIs for direct value access.  Effectively, `*per_cpu_ptr(...)'.
++ *
++ * Safety: asserts CPU id smaller than PERCPU_MAX if ASSERT_PERCPU is defined.
++ */
++#define per_cpu_value(key, field, cpu) \
++	(__raw_per_cpu_value(key, field, __check_cpu_id(cpu)))
++#define this_cpu_value(key, field) \
++	(__raw_per_cpu_value(key, field, __thread_per_cpu_id))
++
++/*
++ * Helper functions of simple per-cpu operations.
++ *
++ * The kernel version differentiates __this_cpu_* from this_cpu_* for
++ * preemption/interrupt-safe contexts, but the userspace version defines them
++ * as the same.
++ */
++
++#define __this_cpu_add(key, field, val)	(this_cpu_value(key, field) += (val))
++#define __this_cpu_sub(key, field, val)	(this_cpu_value(key, field) -= (val))
++#define __this_cpu_inc(key, field)	(++this_cpu_value(key, field))
++#define __this_cpu_dec(key, field)	(--this_cpu_value(key, field))
++
++#define this_cpu_add	__this_cpu_add
++#define this_cpu_sub	__this_cpu_sub
++#define this_cpu_inc	__this_cpu_inc
++#define this_cpu_dec	__this_cpu_dec
++
++#endif /* __PERCPU_SIMULATE_H__ */
 -- 
 2.50.1.487.gc89ff58d15-goog
 
