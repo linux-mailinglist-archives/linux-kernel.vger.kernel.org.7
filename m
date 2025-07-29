@@ -1,319 +1,160 @@
-Return-Path: <linux-kernel+bounces-749566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B519B15013
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:17:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27195B15018
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:20:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C203A470A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:16:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123C33A4B71
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:20:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6928F291C3B;
-	Tue, 29 Jul 2025 15:16:53 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 796F8292B5C;
+	Tue, 29 Jul 2025 15:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iyMJ1Nmh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4E0101E6;
-	Tue, 29 Jul 2025 15:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8BF292B2D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 15:20:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753802212; cv=none; b=myv5kM198BgOE/s6WgCM9ul9jYGz9Chunn9fK1C/xuTbFNULibNWvkLGSszKJ7ZONG6a7AaBEkuJ2FjTZT7IaRZYe+RW/P7Kp9tVxsFnB2SXXcPILYJ/IZANMqbjlgYpm9BrwKdPOEAZloLRzn8BNPt47hS4CopiRKvhmmNm+xs=
+	t=1753802425; cv=none; b=ADvPNQ+3NzW08vKo71//0kLGzejbL5WWN609M18ArL0bpCejeu3BUXu9EZAZ6qTi7f3bZtwGxxdMKRu/oi7Wdm3C+L0s+ECsq6jnh585T/YCueXRsPzqxPkAwdbBy/OJ/z+JbQt+3YGlaFZixeZ2bo51W/iZKbuVXNMZdww02EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753802212; c=relaxed/simple;
-	bh=V2owKkmxso8ky64gkK84N96b5AuZo8LdM/hJidy3RL4=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DVHaGpoVCu0eKjZPHCvDhsf/KoLLMZSvXxuzFiqSb3YRmgEOh/Ux2qwUctpN2Fbrfm052QePCQtF18RTuxmUHPOqqxms+2uhKXO5GqmDiVW82mR6pMKCXjIsUvuAic8MebRg6jOx0qqqumXfXrSV0MEYqdGkGWypAVvW4JTH4tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4brzRg5JyCz6H8f2;
-	Tue, 29 Jul 2025 23:15:11 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 60379140372;
-	Tue, 29 Jul 2025 23:16:46 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Jul
- 2025 17:16:45 +0200
-Date: Tue, 29 Jul 2025 16:16:43 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Dan Williams <dan.j.williams@intel.com>
-CC: <linux-coco@lists.linux.dev>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <bhelgaas@google.com>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>
-Subject: Re: [PATCH v4 05/10] samples/devsec: Introduce a PCI
- device-security bus + endpoint sample
-Message-ID: <20250729161643.000023e7@huawei.com>
-In-Reply-To: <20250717183358.1332417-6-dan.j.williams@intel.com>
-References: <20250717183358.1332417-1-dan.j.williams@intel.com>
-	<20250717183358.1332417-6-dan.j.williams@intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753802425; c=relaxed/simple;
+	bh=WvGZqKnX9XxPdLw/AbNtfIFikRg12kKOYJZxboaUNJY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bbAncp2OsxzKZHbvosraltPQssGaEghbNl4hB+aJiysrrBZfdu5oKUGIsUTKmkzE+jUu7cB1YFclMmRuFsbL6lvgt6tNiG4okZxbb6xehwIeYdPvg43C8Tjlf5LtqKK7dPNxabUOkZYSWsq5riYwGPheMs3kXAJbJxV/ycKO8Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iyMJ1Nmh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753802422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FO/1vKVqO9RBP4Rk0YFJ1qonOTPK/AJG6R01vpmqPYY=;
+	b=iyMJ1NmhB77vMAbveCrqETzgqClMxUas0KqGaIDkf2L8kIGPjSsoGeFOHHukUprRBiyZZ4
+	Lfdz0vIerLLoLD1f3b98yUan73XGEUMCr1+Yn2y420LqdC1siH8VsJ+anmKTCJxpBII2MU
+	q6OsN/xb86SQgbIThOyOhkp1Hmbzpl4=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-643-4uMyyuLxOOqg1ELrBMf1Hw-1; Tue,
+ 29 Jul 2025 11:20:18 -0400
+X-MC-Unique: 4uMyyuLxOOqg1ELrBMf1Hw-1
+X-Mimecast-MFC-AGG-ID: 4uMyyuLxOOqg1ELrBMf1Hw_1753802416
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 996D21956094;
+	Tue, 29 Jul 2025 15:20:15 +0000 (UTC)
+Received: from [10.45.225.137] (unknown [10.45.225.137])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 46A6C18003FC;
+	Tue, 29 Jul 2025 15:20:11 +0000 (UTC)
+Message-ID: <5f2aaa88-d3fb-46ae-b325-603fda5e8851@redhat.com>
+Date: Tue, 29 Jul 2025 17:20:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 3/5] dpll: zl3073x: Add firmware loading
+ functionality
+To: Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, Jiri Pirko <jiri@resnulli.us>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Prathosh Satish <Prathosh.Satish@microchip.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michal Schmidt <mschmidt@redhat.com>,
+ Petr Oros <poros@redhat.com>
+References: <20250725154136.1008132-1-ivecera@redhat.com>
+ <20250725154136.1008132-4-ivecera@redhat.com>
+ <20250726203351.GP1367887@horms.kernel.org>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20250726203351.GP1367887@horms.kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Thu, 17 Jul 2025 11:33:53 -0700
-Dan Williams <dan.j.williams@intel.com> wrote:
-
-> Establish just enough emulated PCI infrastructure to register a sample
-> TSM (platform security manager) driver and have it discover an IDE + TEE
-> (link encryption + device-interface security protocol (TDISP)) capable
-> device.
+On 26. 07. 25 10:33 odp., Simon Horman wrote:
+> On Fri, Jul 25, 2025 at 05:41:34PM +0200, Ivan Vecera wrote:
+>> Add functionality for loading firmware files provided by the vendor
+>> to be flashed into the device's internal flash memory. The firmware
+>> consists of several components, such as the firmware executable itself,
+>> chip-specific customizations, and configuration files.
+>>
+>> The firmware file contains at least a flash utility, which is executed
+>> on the device side, and one or more flashable components. Each component
+>> has its own specific properties, such as the address where it should be
+>> loaded during flashing, one or more destination flash pages, and
+>> the flashing method that should be used.
+>>
+>> Signed-off-by: Ivan Vecera <ivecera@redhat.com>
 > 
-> Use the existing a CONFIG_PCI_BRIDGE_EMUL to emulate an IDE capable root
-> port, and open code the emulation of an endpoint device via simulated
-> configuration cycle responses.
+> Hi Ivan,
 > 
-> The devsec_tsm driver responds to the PCI core TSM operations as if it
-> successfully exercised the given interface security protocol message.
+> Some minor feedback from my side.
 > 
-> The devsec_bus and devsec_tsm drivers can be loaded in either order to
-> reflect cases like SEV-TIO where the TSM is PCI-device firmware, and
-> cases like TDX Connect where the TSM is a software agent running on the
-> host CPU.
+> ...
 > 
-> Follow-on patches add common code for TSM managed IDE establishment. For
-> now, just successfully complete setup and teardown of the DSM (device
-> security manager) context as a building block for management of TDI
-> (trusted device interface) instances.
+>> diff --git a/drivers/dpll/zl3073x/fw.c b/drivers/dpll/zl3073x/fw.c
 > 
->  # modprobe devsec_bus
->     devsec_bus devsec_bus: PCI host bridge to bus 10000:00
->     pci_bus 10000:00: root bus resource [bus 00-01]
->     pci_bus 10000:00: root bus resource [mem 0xf000000000-0xffffffffff 64bit]
->     pci 10000:00:00.0: [8086:7075] type 01 class 0x060400 PCIe Root Port
->     pci 10000:00:00.0: PCI bridge to [bus 00]
->     pci 10000:00:00.0:   bridge window [io  0x0000-0x0fff]
->     pci 10000:00:00.0:   bridge window [mem 0x00000000-0x000fffff]
->     pci 10000:00:00.0:   bridge window [mem 0x00000000-0x000fffff 64bit pref]
->     pci 10000:00:00.0: bridge configuration invalid ([bus 00-00]), reconfiguring
->     pci 10000:01:00.0: [8086:ffff] type 00 class 0x000000 PCIe Endpoint
->     pci 10000:01:00.0: BAR 0 [mem 0xf000000000-0xf0001fffff 64bit pref]
->     pci_doe_abort: pci 10000:01:00.0: DOE: [100] Issuing Abort
->     pci_doe_cache_protocols: pci 10000:01:00.0: DOE: [100] Found protocol 0 vid: 1 prot: 1
->     pci 10000:01:00.0: disabling ASPM on pre-1.1 PCIe device.  You can enable it with 'pcie_aspm=force'
->     pci 10000:00:00.0: PCI bridge to [bus 01]
->     pci_bus 10000:01: busn_res: [bus 01] end is updated to 01
->  # modprobe devsec_tsm
->     devsec_tsm_pci_probe: pci 10000:01:00.0: devsec: tsm enabled
->     __pci_tsm_init: pci 10000:01:00.0: TSM: Device security capabilities detected ( ide tee ), TSM attach
+> ...
+
+Hi Simon,
+
 > 
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Lukas Wunner <lukas@wunner.de>
-> Cc: Samuel Ortiz <sameo@rivosinc.com>
-> Cc: Alexey Kardashevskiy <aik@amd.com>
-> Cc: Xu Yilun <yilun.xu@linux.intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> +/* Santity check */
+> 
+> Sanity
 
-A fairly superficial review.  Too much staring at code today
-to check the emulation was right and have any chance of spotting bugs!
+Will fix in v2.
 
-> diff --git a/samples/devsec/bus.c b/samples/devsec/bus.c
-> new file mode 100644
-> index 000000000000..675e185fcf79
-> --- /dev/null
-> +++ b/samples/devsec/bus.c
-> @@ -0,0 +1,708 @@
+>> +static_assert(ARRAY_SIZE(component_info) == ZL_FW_NUM_COMPONENTS);
+> 
+> ...
+> 
+>> +int zl3073x_fw_flash(struct zl3073x_dev *zldev, struct zl3073x_fw *zlfw,
+>> +		     struct netlink_ext_ack *extack)
+>> +{
+>> +	int i, rc;
+>> +
+>> +	for (i = 0; i < ZL_FW_NUM_COMPONENTS; i++) {
+>> +		if (!zlfw->component[i])
+>> +			continue; /* Component is not present */
+>> +
+>> +		rc = zl3073x_fw_component_flash(zldev, zlfw->component[i],
+>> +						extack);
+>> +		if (rc)
+>> +			break;
+>> +	}
+> 
+> Perhaps it cannot happen in practice.
+> But Smatch warns that rc may be used uninitialised below.
+> And that does seem theoretically possible if all
+> iterations of the loop above hit the "continue" path.
 
-> +static int alloc_devs(struct devsec *devsec)
-> +{
-> +	struct device *dev = devsec->dev;
+Yes, it should not happen as at least one component has to be present
+but for sure I will init rc in the next iteration.
 
-Similar to below.  Maybe use it inline.
+Thanks for review,
+Ivan
 
-> +
-> +	for (int i = 0; i < ARRAY_SIZE(devsec->devsec_devs); i++) {
-> +		struct devsec_dev *devsec_dev = devsec_dev_alloc(devsec);
-> +		int rc;
-> +
-> +		if (IS_ERR(devsec_dev))
-> +			return PTR_ERR(devsec_dev);
-> +		rc = devm_add_action_or_reset(dev, destroy_devsec_dev,
-> +					      devsec_dev);
-> +		if (rc)
-> +			return rc;
-> +		devsec->devsec_devs[i] = devsec_dev;
-> +	}
-> +
-> +	return 0;
-> +}
-
-
-> +static int init_port(struct devsec_port *devsec_port)
-> +{
-> +	struct pci_bridge_emul *bridge = &devsec_port->bridge;
-> +
-> +	*bridge = (struct pci_bridge_emul) {
-> +		.conf = {
-> +			.vendor = cpu_to_le16(0x8086),
-> +			.device = cpu_to_le16(0x7075),
-
-Emulating something real?  If not maybe we should get an ID from another space
-(or reserve this one ;)
-
-> +			.class_revision = cpu_to_le32(0x1),
-> +			.pref_mem_base = cpu_to_le16(PCI_PREF_RANGE_TYPE_64),
-> +			.pref_mem_limit = cpu_to_le16(PCI_PREF_RANGE_TYPE_64),
-> +		},
-
-
-> +{
-> +	struct device *dev = devsec->dev;
-
-Only used once. I'd move it down there.
-
-> +
-> +	for (int i = 0; i < ARRAY_SIZE(devsec->devsec_ports); i++) {
-> +		struct devsec_port *devsec_port = devsec_port_alloc();
-> +		int rc;
-> +
-> +		if (IS_ERR(devsec_port))
-> +			return PTR_ERR(devsec_port);
-> +		rc = devm_add_action_or_reset(dev, destroy_port, devsec_port);
-> +		if (rc)
-> +			return rc;
-> +		devsec->devsec_ports[i] = devsec_port;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init devsec_bus_probe(struct platform_device *pdev)
-> +{
-> +	int rc;
-> +	struct devsec *devsec;
-> +	u64 mmio_size = SZ_64G;
-> +	struct devsec_sysdata *sd;
-> +	struct pci_host_bridge *hb;
-> +	struct device *dev = &pdev->dev;
-> +	u64 mmio_start = iomem_resource.end + 1 - SZ_64G;
-> +
-> +	hb = devm_pci_alloc_host_bridge(
-> +		dev, sizeof(*devsec) - sizeof(struct pci_host_bridge));
-
-I'd move dev up a line.
-
-> +	if (!hb)
-> +		return -ENOMEM;
-
-
-
-> diff --git a/samples/devsec/tsm.c b/samples/devsec/tsm.c
-> new file mode 100644
-> index 000000000000..a4705212a7e4
-> --- /dev/null
-> +++ b/samples/devsec/tsm.c
-> @@ -0,0 +1,173 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright(c) 2024 - 2025 Intel Corporation. All rights reserved. */
-
-> +
-> +static const struct pci_tsm_ops *__devsec_pci_ops;
-> +
-> +static struct pci_tsm *devsec_tsm_pf0_probe(struct pci_dev *pdev)
-> +{
-> +	int rc;
-> +
-> +	struct devsec_tsm_pf0 *devsec_tsm __free(kfree) =
-> +		kzalloc(sizeof(*devsec_tsm), GFP_KERNEL);
-> +	if (!devsec_tsm)
-> +		return NULL;
-> +
-> +	rc = pci_tsm_pf0_constructor(pdev, &devsec_tsm->pci, __devsec_pci_ops);
-
-As below. I'm not seeing why we can't use &devsec_pci_ops directly here.
-
-> +	if (rc)
-> +		return NULL;
-> +
-> +	pci_dbg(pdev, "tsm enabled\n");
-> +	return &no_free_ptr(devsec_tsm)->pci.tsm;
-> +}
-> +
-> +static struct pci_tsm *devsec_tsm_fn_probe(struct pci_dev *pdev)
-> +{
-> +	int rc;
-> +
-> +	struct devsec_tsm_fn *devsec_tsm __free(kfree) =
-> +		kzalloc(sizeof(*devsec_tsm), GFP_KERNEL);
-> +	if (!devsec_tsm)
-> +		return NULL;
-> +
-> +	rc = pci_tsm_constructor(pdev, &devsec_tsm->pci, __devsec_pci_ops);
-
-here as well.
-
-> +	if (rc)
-> +		return NULL;
-> +
-> +	pci_dbg(pdev, "tsm (sub-function) enabled\n");
-> +	return &no_free_ptr(devsec_tsm)->pci;
-> +}
-
-> +static struct pci_tsm_ops devsec_pci_ops = {
-> +	.probe = devsec_tsm_pci_probe,
-> +	.remove = devsec_tsm_pci_remove,
-> +	.connect = devsec_tsm_connect,
-> +	.disconnect = devsec_tsm_disconnect,
-> +};
-> +
-> +static void devsec_tsm_remove(void *tsm_dev)
-> +{
-> +	tsm_unregister(tsm_dev);
-> +}
-> +
-> +static int devsec_tsm_probe(struct faux_device *fdev)
-> +{
-> +	struct tsm_dev *tsm_dev;
-> +
-> +	tsm_dev = tsm_register(&fdev->dev, NULL, &devsec_pci_ops);
-> +	if (IS_ERR(tsm_dev))
-> +		return PTR_ERR(tsm_dev);
-> +
-> +	return devm_add_action_or_reset(&fdev->dev, devsec_tsm_remove,
-> +					tsm_dev);
-> +}
-> +
-> +static struct faux_device *devsec_tsm;
-> +
-> +static const struct faux_device_ops devsec_device_ops = {
-> +	.probe = devsec_tsm_probe,
-> +};
-> +
-> +static int __init devsec_tsm_init(void)
-> +{
-> +	__devsec_pci_ops = &devsec_pci_ops;
-
-I'm not immediately grasping why this global is needed.
-You never check if it's set, so why not just move definition of devsec_pci_ops
-early enough that can be directly used everywhere.
-
-
-> +	devsec_tsm = faux_device_create("devsec_tsm", NULL, &devsec_device_ops);
-> +	if (!devsec_tsm)
-> +		return -ENOMEM;
-> +	return 0;
-> +}
-> +module_init(devsec_tsm_init);
-> +
-> +static void __exit devsec_tsm_exit(void)
-> +{
-> +	faux_device_destroy(devsec_tsm);
-> +}
-> +module_exit(devsec_tsm_exit);
-> +
-> +MODULE_LICENSE("GPL");
-> +MODULE_DESCRIPTION("Device Security Sample Infrastructure: Platform TSM Driver");
+> 
+>> +
+>> +	return rc;
+>> +}
+> 
+> ...
+> 
 
 
