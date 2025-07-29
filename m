@@ -1,646 +1,136 @@
-Return-Path: <linux-kernel+bounces-749917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42E0FB154BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:38:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0782DB154C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:39:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED12018C0864
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5CF54E49BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:38:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9021627A46E;
-	Tue, 29 Jul 2025 21:38:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEEB279359;
+	Tue, 29 Jul 2025 21:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bgHAhUcT"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PKTpEZGM"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E64D22539D;
-	Tue, 29 Jul 2025 21:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562381A23BE
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753825124; cv=none; b=qYjUgzTzqfvnB/bIHVETYHFxObCJc7eNZA/iSt3FE5WKL801C63KtzMIeTM8Gey3b3CQRbZuDMtjHVl0OJrMCBsRkWYlQq39UY6TTu4rTpWVEhMfkhsiAsxgNSih+IydUZD3rgjXO9xit8RqvzMr7OffUr/bvpSsCxnYTKmbIds=
+	t=1753825153; cv=none; b=N3MrfO9Ej6/BB8v5R4nUyGqtO0V/kzW95Ckb931+Hh+3cbUIMcJX0gGUurZHrdBR5LhnWUO6BR4tBBK3ppMG+jXzPaWLudnYFeVRz3ilLEIZYcrr/LeRBQnLy43BlVu3bzNPx3DeB+1dCZdjtNuaH3Gf+jVMcgk7FxBnFsEnYnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753825124; c=relaxed/simple;
-	bh=hkgFerIj31qu/oTbEuKkpneIl53TRD91N1DIuth7LfQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IQCMXjOT5PSEqYq8MOoan2GM4McLmLsZQIJBdsM9RzVfTLrc1wQHb6ir+ofTmT5F3HK0SCApr5tACr52oGFDau3wqQkeHvTCC2JpIS3b+hX2sfckJD7g+GlKKcmXOMIMmgBcTAar8xN79B4iltG9XvghyMoSWWM/MEDtei1rpuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bgHAhUcT; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753825119;
-	bh=hkgFerIj31qu/oTbEuKkpneIl53TRD91N1DIuth7LfQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=bgHAhUcTAvTZWkevTN0KbvPNXTdDke32ZKNwOI9Vxi6zBxhYRCGY416BhH3JDRBlg
-	 vFb0hxv3f/MXZszjRpHrOKi8p8jDJJJbUaYtObIhde4b75M2E8Dq/lLGj4Js2XYdS1
-	 bwW0tHtgzvOxSPSCBKnUsiQfP+ZeujydeX4YYfXStUgzsX2RIl4dTMws0+y4guJ9Kj
-	 g3+eBu8k/Ph+ecE9gvi24epqOmY8Q8paLpRdMyCWKCxNM6Rgvcl7ohoTwDeyFTe9jE
-	 AQvavjiAU65RX9Z14Wv5NjMhgTgF/lbystF/5+7Jw6T98ZOU2ceQJx5NcDScKwkhuE
-	 I3pO7JAn+U0dg==
-Received: from [192.168.0.7] (unknown [IPv6:2804:14d:72b4:82f6:67c:16ff:fe57:b5a3])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dwlsalmeida)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0A85817E0F66;
-	Tue, 29 Jul 2025 23:38:35 +0200 (CEST)
-From: Daniel Almeida <daniel.almeida@collabora.com>
-Date: Tue, 29 Jul 2025 18:38:19 -0300
-Subject: [PATCH] rust: clk: use the type-state pattern
+	s=arc-20240116; t=1753825153; c=relaxed/simple;
+	bh=nMf33Ay1oR8fxN0LquXTHJbvCEdbApXg7FcZ37lB/ps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZBk+PmlQ5sJ/kAfJ0Vu1dhfgQjYHhB/4faVeaEMdFCKzOS2oE4JNLuYqsc8sRx3GbkgeL0YOv8kOwZ8Lr54iITkN7fzHb/KNrLhOdoU2FksAM7c453FaeJuiURdBkWmxL3ZjZEIqnDZXAijGCCdbRoGVcjcgBGHIS8HXsUZvFpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PKTpEZGM; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-60c9d8a169bso9781353a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:39:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1753825149; x=1754429949; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qIAPXLlYxgN//jDg8+gKgeqJEzrcFa/1FFiqGoCr0lc=;
+        b=PKTpEZGMDoRhKCS79A7Sle5g8Zzmd+i+83VOJwv9rvx8+MD3w4Wz3mzSs1vK2hm0sg
+         CoQRRqyqRtn4Z218+nVqq+0+Ljo04pmmLjI0FJXNn4yaj6bVLadwwE5LZrjU9bpSV75B
+         wMK5Xj6W4PIkiDkXsR3lMHhA9Le3uGFulkTxk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753825149; x=1754429949;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qIAPXLlYxgN//jDg8+gKgeqJEzrcFa/1FFiqGoCr0lc=;
+        b=YotY8UGwZzgpUpz+n6akWD9yTGuKkjQkYTsVNUFf0tuR+lugi6vdgvyEwRd2mg9GKw
+         vUscaK0G+n3YPIqOjqzSljT9ZDnuBO1G93WbVTRPBeOeuOB6lLEe2jWqoJHVdveyZ/il
+         wYXIqZLKrYD7pEKaCI6F+NruKpz4LwqJ74I8vqzDWxugUMrabVpcGwmbCedQppxGW/Uh
+         /YPjBr6FwxZtDMlaAjpGGkhICsKVytIOvbhcTQN2JPl1sc+3RqHMufsr8wnxTFzTiFUQ
+         xvs3DuOOXfvWECu9HdOO7/X3F6sFkFj65Uk30jDGvooecCr8yMcP4AolJ9MkIWBWJTjc
+         +y+w==
+X-Forwarded-Encrypted: i=1; AJvYcCX0QaYV8OM74+DaZ2XP66mfgR4gQNRSXiXzMZbCscD9gixhjWgs5l1r/hwwhmgALIUlYJGaRjCE0oK7aDg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCj7PCyr4KLLR5IvuFMdpQg3+jeKBojYx6fmS1GOQhaDcl+80V
+	/THFERMIA3spVsE4h6iDh9aQUjlHY0Gne5P4e2ArVEZs1H7VwEWEy+DgU4xfxksyFDK/cmZb+Wy
+	r8kCB8nM=
+X-Gm-Gg: ASbGncvXsgCAd0hP63ZwQH9LEu2neNR/nfd3DU8GY69Etdysi8+Kp/cS+3Sjq75bdL6
+	zgn0e30VuU7vXfSCGh5Uh/hBj5BfDN5ZXyixc/twUzPX8SgQJa01DlisqV3DyJLK3kFhY3ZmPMZ
+	lNZR/HOo2brwbkYJANZHb4eaukADpCQbTRfP0DY7jUeYnT04MAqiaqDbH/zrz0FAulksz+tbkfV
+	YmnLeXyagvZMUCoUqs6A5v0OjWUd8RcMHELaUuaF543ufQ4DUHhZ7BmhJf+I1EFTUP0V/Dk6Dn8
+	MxvBm0JIYeVsDPA/BRQblu0zDW8kj9rEfiYbXU2luXSXNxFHkCV6vP4oLBZK0KC8K8OVotK9JXe
+	T4sTKfjpcYuLKW3ljfZyxmO6n82KRXDNn4tpzmrLFbzdQKe59bxvI4O4ZN3mIx4AArHEIi2s=
+X-Google-Smtp-Source: AGHT+IHQyjGXUyAJ5hG4SHWNtBon/rQqPUeZjdw0MrEuKlbuZLieOlSXWAjnz5YXhP8mMOh8/M4lWg==
+X-Received: by 2002:aa7:d90c:0:b0:615:546a:932f with SMTP id 4fb4d7f45d1cf-615871e552amr913385a12.18.1753825149261;
+        Tue, 29 Jul 2025 14:39:09 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6156591feaasm1606128a12.54.2025.07.29.14.39.07
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 14:39:08 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6b7so2717843a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:39:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAqBEqnDSSTwliW39SdtviKKWNx51CMw+AlzAzZR9vGvGTx81jM73TDnm3HvaSfJSz3lL5cvzSn81FhXw=@vger.kernel.org
+X-Received: by 2002:aa7:d5d5:0:b0:615:481c:7e03 with SMTP id
+ 4fb4d7f45d1cf-615871e685cmr759090a12.21.1753825147322; Tue, 29 Jul 2025
+ 14:39:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
-X-B4-Tracking: v=1; b=H4sIAEo/iWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDcyNL3eScbN2SyoJU3eKSxJJUXcM0SwuL1GRjCxPjRCWgpoKi1LTMCrC
- B0bG1tQDNIwwRYAAAAA==
-X-Change-ID: 20250729-clk-type-state-1f988ec3843a
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
- Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, linux-clk@vger.kernel.org, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pm@vger.kernel.org, Daniel Almeida <daniel.almeida@collabora.com>
-X-Mailer: b4 0.14.2
+References: <6888d004.a00a0220.26d0e1.0004.GAE@google.com> <87cy9ikcwh.ffs@tglx>
+ <874iuuk87e.ffs@tglx>
+In-Reply-To: <874iuuk87e.ffs@tglx>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Tue, 29 Jul 2025 14:38:50 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wirbb_FxAMsb+LFimsMF+nLg4UYsrHvjF1F9tF1xOm2UA@mail.gmail.com>
+X-Gm-Features: Ac12FXxFLJlMVjm0MqbAy5ZJWsGb56UtJ6k91GLb3_eKAfxq_bjE5fjZ214A1Lk
+Message-ID: <CAHk-=wirbb_FxAMsb+LFimsMF+nLg4UYsrHvjF1F9tF1xOm2UA@mail.gmail.com>
+Subject: Re: [syzbot] upstream build error (23)
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: syzbot <syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com>, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org, 
+	mingo@redhat.com, syzkaller-bugs@googlegroups.com, x86@kernel.org, 
+	Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-The current Clk abstraction can still be improved on the following issues:
+On Tue, 29 Jul 2025 at 14:17, Thomas Gleixner <tglx@linutronix.de> wrote:
+>
+> Can we just stop pretending that GCC12 is KCOV capable?
 
-a) It only keeps track of a count to clk_get(), which means that users have
-to manually call disable() and unprepare(), or a variation of those, like
-disable_unprepare().
+Yeah, that does seem to be the right thing to do. KCOV just isn't
+important enough to
 
-b) It allows repeated calls to prepare() or enable(), but it keeps no track
-of how often these were called, i.e., it's currently legal to write the
-following:
+ (a) play constant whack-a-mole with
 
-clk.prepare();
-clk.prepare();
-clk.enable();
-clk.enable();
+ (b) pretend we support broken compilers for
 
-And nothing gets undone on drop().
+and people who want KCOV can damn well get a fixed compiler.
 
-c) It adds a OptionalClk type that is probably not needed. There is no
-"struct optional_clk" in C and we should probably not add one.
+We already have *some* amount of compiler dependency there, since KCOV has this:
 
-d) It does not let a user express the state of the clk through the
-type system. For example, there is currently no way to encode that a Clk is
-enabled via the type system alone.
+        depends on !ARCH_WANTS_NO_INSTR || HAVE_NOINSTR_HACK || \
+                   GCC_VERSION >= 120000 || CC_IS_CLANG
 
-In light of the Regulator abstraction that was recently merged, switch this
-abstraction to use the type-state pattern instead. It solves both a) and b)
-by establishing a number of states and the valid ways to transition between
-them. It also automatically undoes any call to clk_get(), clk_prepare() and
-clk_enable() as applicable on drop(), so users do not have to do anything
-special before Clk goes out of scope.
+but clearly that allows for gcc-12 - and allows for other versions too
+for that NOINSTR thing.
 
-It solves c) by removing the OptionalClk type, which is now simply encoded
-as a Clk whose inner pointer is NULL.
+And x86 sets "HAVE_NOINSTR_HACK" because of some argument that objtool
+fixes whatever problems there were.
 
-It solves d) by directly encoding the state of the Clk into the type, e.g.:
-Clk<Enabled> is now known to be a Clk that is enabled.
+So it's not just about changing that GCC_VERSION number - there's some
+interaction with other crazy KCOV hacks, in particular I think the
+whole NOINSTR hack is about 0f1441b44e82 ("objtool: Fix noinstr vs
+KCOV")
 
-The INVARIANTS section for Clk is expanded to highlight the relationship
-between the states and the respective reference counts that are owned by
-each of them.
+I'd personally be perfectly happy just saying "gcc-13 is required" and
+presumably that allows just removing the NOINSTR_HACK thing too.
 
-The examples are expanded to highlight how a user can transition between
-states, as well as highlight some of the shortcuts built into the API.
+But I would want somebody to test that and verify that gcc-13 really does do ok.
 
-The current implementation is also more flexible, in the sense that it
-allows for more states to be added in the future. This lets us implement
-different strategies for handling clocks, including one that mimics the
-current API, allowing for multiple calls to prepare() and enable().
-
-The users (cpufreq.rs/ rcpufreq_dt.rs) were updated by this patch (and not
-a separate one) to reflect the new changes. This is needed, because
-otherwise this patch would break the build.
-
-Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
----
-Hi Michael, Stephen, Viresh and others. I believe that we should get this
-change in before more drivers start depending on clocks. It uses the same
-rationale as Regulator<T>, and that was the result of some extensive
-discussion, so I really believe that it is a good fit for clocks as well,
-in the sense that it correctly tracks all refcounts, decrement them on drop
-as needed and also provides a guarantee on the underlying state of the
-clock via the type system. For instance, it is now possible to express via
-the type system that a Clk is enabled, i.e.: Clk<Enabled>.
-
-On top of that, it can constrain operations to a given state. For instance,
-the current patch only offers get_rate() and set_rate() for the
-Clk<Enabled> state. We can also offer it to all states, or a subset of
-states as appropriate.
----
- drivers/cpufreq/rcpufreq_dt.rs |   2 +-
- rust/kernel/clk.rs             | 358 ++++++++++++++++++++++++++---------------
- rust/kernel/cpufreq.rs         |   8 +-
- 3 files changed, 232 insertions(+), 136 deletions(-)
-
-diff --git a/drivers/cpufreq/rcpufreq_dt.rs b/drivers/cpufreq/rcpufreq_dt.rs
-index 94ed81644fe1c3f8a0240dede2299102a2118e73..f5dee7aba95c5c150fe75d6e2ffc2adf61c41c60 100644
---- a/drivers/cpufreq/rcpufreq_dt.rs
-+++ b/drivers/cpufreq/rcpufreq_dt.rs
-@@ -45,7 +45,7 @@ struct CPUFreqDTDevice {
-     freq_table: opp::FreqTable,
-     _mask: CpumaskVar,
-     _token: Option<opp::ConfigToken>,
--    _clk: Clk,
-+    _clk: Clk<kernel::clk::Unprepared>,
- }
- 
- #[derive(Default)]
-diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
-index fbcea31dbccadc29ae1db12cd77beda67a5665ee..6c8edb665c608386a36f28a2c9ec39604b5bc20d 100644
---- a/rust/kernel/clk.rs
-+++ b/rust/kernel/clk.rs
-@@ -85,12 +85,73 @@ mod common_clk {
-         prelude::*,
-     };
- 
--    use core::{ops::Deref, ptr};
-+    use core::{marker::PhantomData, mem::ManuallyDrop, ptr};
-+
-+    mod private {
-+        pub trait Sealed {}
-+
-+        impl Sealed for super::Unprepared {}
-+        impl Sealed for super::Prepared {}
-+        impl Sealed for super::Enabled {}
-+    }
-+
-+    /// A trait representing the different states that a [`Clk`] can be in.
-+    pub trait ClkState: private::Sealed {
-+        /// Whether the clock should be disabled when dropped.
-+        const DISABLE_ON_DROP: bool;
-+
-+        /// Whether the clock should be unprepared when dropped.
-+        const UNPREPARE_ON_DROP: bool;
-+    }
-+
-+    /// A state where the [`Clk`] is not prepared and not enabled.
-+    pub struct Unprepared;
-+
-+    /// A state where the [`Clk`] is prepared but not enabled.
-+    pub struct Prepared;
-+
-+    /// A state where the [`Clk`] is both prepared and enabled.
-+    pub struct Enabled;
-+
-+    impl ClkState for Unprepared {
-+        const DISABLE_ON_DROP: bool = false;
-+        const UNPREPARE_ON_DROP: bool = false;
-+    }
-+
-+    impl ClkState for Prepared {
-+        const DISABLE_ON_DROP: bool = false;
-+        const UNPREPARE_ON_DROP: bool = true;
-+    }
-+
-+    impl ClkState for Enabled {
-+        const DISABLE_ON_DROP: bool = true;
-+        const UNPREPARE_ON_DROP: bool = true;
-+    }
-+
-+    /// An error that can occur when trying to convert a [`Clk`] between states.
-+    pub struct Error<State: ClkState> {
-+        /// The error that occurred.
-+        pub error: kernel::error::Error,
-+
-+        /// The [`Clk`] that caused the error, so that the operation may be
-+        /// retried.
-+        pub clk: Clk<State>,
-+    }
- 
-     /// A reference-counted clock.
-     ///
-     /// Rust abstraction for the C [`struct clk`].
-     ///
-+    /// A [`Clk`] instance represents a clock that can be in one of several
-+    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
-+    ///
-+    /// No action needs to be taken when a [`Clk`] is dropped. The calls to
-+    /// `clk_unprepare()` and `clk_disable()` will be placed as applicable.
-+    ///
-+    /// An optional [`Clk`] is treated just like a regular [`Clk`], but its
-+    /// inner `struct clk` pointer is `NULL`. This interfaces correctly with the
-+    /// C API and also exposes all the methods of a regular [`Clk`] to users.
-+    ///
-     /// # Invariants
-     ///
-     /// A [`Clk`] instance holds either a pointer to a valid [`struct clk`] created by the C
-@@ -99,20 +160,39 @@ mod common_clk {
-     /// Instances of this type are reference-counted. Calling [`Clk::get`] ensures that the
-     /// allocation remains valid for the lifetime of the [`Clk`].
-     ///
--    /// ## Examples
-+    /// The [`Prepared`] state is associated with a single count of
-+    /// `clk_prepare()`, and the [`Enabled`] state is associated with a single
-+    /// count of `clk_enable()`, and the [`Enabled`] state is associated with a
-+    /// single count of `clk_prepare` and `clk_enable()`.
-+    ///
-+    /// All states are associated with a single count of `clk_get()`.
-+    ///
-+    /// # Examples
-     ///
-     /// The following example demonstrates how to obtain and configure a clock for a device.
-     ///
-     /// ```
-     /// use kernel::c_str;
--    /// use kernel::clk::{Clk, Hertz};
-+    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, Prepared};
-     /// use kernel::device::Device;
-     /// use kernel::error::Result;
-     ///
-     /// fn configure_clk(dev: &Device) -> Result {
--    ///     let clk = Clk::get(dev, Some(c_str!("apb_clk")))?;
-+    ///     // The fastest way is to use a version of `Clk::get` for the desired
-+    ///     // state, i.e.:
-+    ///     let clk: Clk<Enabled> = Clk::<Enabled>::get(dev, Some(c_str!("apb_clk")))?;
-     ///
--    ///     clk.prepare_enable()?;
-+    ///     // Any other state is also possible, e.g.:
-+    ///     let clk: Clk<Prepared> = Clk::<Prepared>::get(dev, Some(c_str!("apb_clk")))?;
-+    ///
-+    ///     // Later:
-+    ///     let clk: Clk<Enabled> = clk.enable().map_err(|error| {
-+    ///         error.error
-+    ///     })?;
-+    ///
-+    ///     // Note that error.clk is the original `clk` if the operation
-+    ///     // failed. It is provided as a convenience so that the operation may be
-+    ///     // retried in case of errors.
-     ///
-     ///     let expected_rate = Hertz::from_ghz(1);
-     ///
-@@ -120,104 +200,172 @@ mod common_clk {
-     ///         clk.set_rate(expected_rate)?;
-     ///     }
-     ///
--    ///     clk.disable_unprepare();
-+    ///     // Nothing is needed here. The drop implementation will undo any
-+    ///     // operations as appropriate.
-+    ///     Ok(())
-+    /// }
-+    ///
-+    /// fn shutdown(dev: &Device, clk: Clk<Enabled>) -> Result {
-+    ///     // The states can be traversed "in the reverse order" as well:
-+    ///     let clk: Clk<Prepared> = clk.disable().map_err(|error| {
-+    ///         error.error
-+    ///     })?;
-+    ///
-+    ///     let clk: Clk<Unprepared> = clk.unprepare();
-+    ///
-     ///     Ok(())
-     /// }
-     /// ```
-     ///
-     /// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
-     #[repr(transparent)]
--    pub struct Clk(*mut bindings::clk);
-+    pub struct Clk<T: ClkState> {
-+        inner: *mut bindings::clk,
-+        _phantom: core::marker::PhantomData<T>,
-+    }
- 
--    impl Clk {
-+    impl Clk<Unprepared> {
-         /// Gets [`Clk`] corresponding to a [`Device`] and a connection id.
-         ///
-         /// Equivalent to the kernel's [`clk_get`] API.
-         ///
-         /// [`clk_get`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_get
--        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-+        #[inline]
-+        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Clk<Unprepared>> {
-             let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
- 
-             // SAFETY: It is safe to call [`clk_get`] for a valid device pointer.
--            //
-+            let inner = from_err_ptr(unsafe { bindings::clk_get(dev.as_raw(), con_id) })?;
-+
-             // INVARIANT: The reference-count is decremented when [`Clk`] goes out of scope.
--            Ok(Self(from_err_ptr(unsafe {
--                bindings::clk_get(dev.as_raw(), con_id)
--            })?))
-+            Ok(Self {
-+                inner,
-+                _phantom: PhantomData,
-+            })
-         }
- 
--        /// Obtain the raw [`struct clk`] pointer.
-+        /// Behaves the same as [`Self::get`], except when there is no clock
-+        /// producer. In this case, instead of returning [`ENOENT`], it returns
-+        /// a dummy [`Clk`].
-         #[inline]
--        pub fn as_raw(&self) -> *mut bindings::clk {
--            self.0
-+        pub fn get_optional(dev: &Device, name: Option<&CStr>) -> Result<Clk<Unprepared>> {
-+            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
-+
-+            // SAFETY: It is safe to call [`clk_get`] for a valid device pointer.
-+            let inner = from_err_ptr(unsafe { bindings::clk_get_optional(dev.as_raw(), con_id) })?;
-+
-+            // INVARIANT: The reference-count is decremented when [`Clk`] goes out of scope.
-+            Ok(Self {
-+                inner,
-+                _phantom: PhantomData,
-+            })
-         }
- 
--        /// Enable the clock.
-+        /// Attempts to convert the [`Clk`] to a [`Prepared`] state.
-         ///
--        /// Equivalent to the kernel's [`clk_enable`] API.
-+        /// Equivalent to the kernel's [`clk_prepare`] API.
-         ///
--        /// [`clk_enable`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_enable
-+        /// [`clk_prepare`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_prepare
-         #[inline]
--        pub fn enable(&self) -> Result {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_enable`].
--            to_result(unsafe { bindings::clk_enable(self.as_raw()) })
-+        pub fn prepare(self) -> Result<Clk<Prepared>, Error<Unprepared>> {
-+            // We will be transferring the ownership of our `clk_get()` count to
-+            // `Clk<Prepared>`.
-+            let clk = ManuallyDrop::new(self);
-+
-+            // SAFETY: By the type invariants, self.0 is a valid argument for [`clk_prepare`].
-+            to_result(unsafe { bindings::clk_prepare(clk.as_raw()) })
-+                .map(|()| Clk {
-+                    inner: clk.inner,
-+                    _phantom: PhantomData,
-+                })
-+                .map_err(|error| Error {
-+                    error,
-+                    clk: ManuallyDrop::into_inner(clk),
-+                })
-         }
-+    }
- 
--        /// Disable the clock.
--        ///
--        /// Equivalent to the kernel's [`clk_disable`] API.
-+    impl Clk<Prepared> {
-+        /// Obtains a [`Clk`] from a [`Device`] and a connection id and prepares it.
-         ///
--        /// [`clk_disable`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_disable
-+        /// Equivalent to calling [`Clk::get`], followed by [`Clk::prepare`],
-         #[inline]
--        pub fn disable(&self) {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_disable`].
--            unsafe { bindings::clk_disable(self.as_raw()) };
-+        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Clk<Prepared>> {
-+            Clk::<Unprepared>::get(dev, name)?
-+                .prepare()
-+                .map_err(|error| error.error)
-         }
- 
--        /// Prepare the clock.
-+        /// Attempts to convert the [`Clk`] to an [`Unprepared`] state.
-         ///
--        /// Equivalent to the kernel's [`clk_prepare`] API.
--        ///
--        /// [`clk_prepare`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_prepare
-+        /// Equivalent to the kernel's [`clk_unprepare`] API.
-         #[inline]
--        pub fn prepare(&self) -> Result {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_prepare`].
--            to_result(unsafe { bindings::clk_prepare(self.as_raw()) })
-+        pub fn unprepare(self) -> Clk<Unprepared> {
-+            // We will be transferring the ownership of our `clk_get()` count to
-+            // `Clk<Unprepared>`.
-+            let clk = ManuallyDrop::new(self);
-+
-+            // SAFETY: By the type invariants, self.0 is a valid argument for [`clk_unprepare`].
-+            unsafe { bindings::clk_unprepare(clk.as_raw()) }
-+
-+            Clk {
-+                inner: clk.inner,
-+                _phantom: PhantomData,
-+            }
-         }
- 
--        /// Unprepare the clock.
-+        /// Attempts to convert the [`Clk`] to an [`Enabled`] state.
-         ///
--        /// Equivalent to the kernel's [`clk_unprepare`] API.
-+        /// Equivalent to the kernel's [`clk_enable`] API.
-         ///
--        /// [`clk_unprepare`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_unprepare
-+        /// [`clk_enable`]: https://docs.kernel.org/core-api/kernel-api.html#c.clk_enable
-         #[inline]
--        pub fn unprepare(&self) {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_unprepare`].
--            unsafe { bindings::clk_unprepare(self.as_raw()) };
-+        pub fn enable(self) -> Result<Clk<Enabled>, Error<Prepared>> {
-+            // We will be transferring the ownership of our `clk_get()` and
-+            // `clk_prepare()` counts to `Clk<Enabled>`.
-+            let clk = ManuallyDrop::new(self);
-+
-+            // SAFETY: By the type invariants, self.0 is a valid argument for [`clk_enable`].
-+            to_result(unsafe { bindings::clk_enable(clk.as_raw()) })
-+                .map(|()| Clk {
-+                    inner: clk.inner,
-+                    _phantom: PhantomData,
-+                })
-+                .map_err(|error| Error {
-+                    error,
-+                    clk: ManuallyDrop::into_inner(clk),
-+                })
-         }
-+    }
- 
--        /// Prepare and enable the clock.
-+    impl Clk<Enabled> {
-+        /// Gets [`Clk`] corresponding to a [`Device`] and a connection id and
-+        /// then prepares and enables it.
-         ///
--        /// Equivalent to calling [`Clk::prepare`] followed by [`Clk::enable`].
-+        /// Equivalent to calling [`Clk::get`], followed by [`Clk::prepare`],
-+        /// followed by [`Clk::enable`].
-         #[inline]
--        pub fn prepare_enable(&self) -> Result {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_prepare_enable`].
--            to_result(unsafe { bindings::clk_prepare_enable(self.as_raw()) })
-+        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Clk<Enabled>> {
-+            Clk::<Prepared>::get(dev, name)?
-+                .enable()
-+                .map_err(|error| error.error)
-         }
- 
--        /// Disable and unprepare the clock.
--        ///
--        /// Equivalent to calling [`Clk::disable`] followed by [`Clk::unprepare`].
-         #[inline]
--        pub fn disable_unprepare(&self) {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for
--            // [`clk_disable_unprepare`].
--            unsafe { bindings::clk_disable_unprepare(self.as_raw()) };
-+        /// Attempts to disable the [`Clk`] and convert it to the [`Prepared`]
-+        /// state.
-+        pub fn disable(self) -> Result<Clk<Prepared>, Error<Enabled>> {
-+            // We will be transferring the ownership of our `clk_get()` and
-+            // `clk_enable()` counts to `Clk<Prepared>`.
-+            let clk = ManuallyDrop::new(self);
-+
-+            // SAFETY: By the type invariants, self.0 is a valid argument for [`clk_disable`].
-+            unsafe { bindings::clk_disable(clk.as_raw()) };
-+
-+            Ok(Clk {
-+                inner: clk.inner,
-+                _phantom: PhantomData,
-+            })
-         }
- 
-         /// Get clock's rate.
-@@ -245,83 +393,27 @@ pub fn set_rate(&self, rate: Hertz) -> Result {
-         }
-     }
- 
--    impl Drop for Clk {
--        fn drop(&mut self) {
--            // SAFETY: By the type invariants, self.as_raw() is a valid argument for [`clk_put`].
--            unsafe { bindings::clk_put(self.as_raw()) };
--        }
--    }
--
--    /// A reference-counted optional clock.
--    ///
--    /// A lightweight wrapper around an optional [`Clk`]. An [`OptionalClk`] represents a [`Clk`]
--    /// that a driver can function without but may improve performance or enable additional
--    /// features when available.
--    ///
--    /// # Invariants
--    ///
--    /// An [`OptionalClk`] instance encapsulates a [`Clk`] with either a valid [`struct clk`] or
--    /// `NULL` pointer.
--    ///
--    /// Instances of this type are reference-counted. Calling [`OptionalClk::get`] ensures that the
--    /// allocation remains valid for the lifetime of the [`OptionalClk`].
--    ///
--    /// ## Examples
--    ///
--    /// The following example demonstrates how to obtain and configure an optional clock for a
--    /// device. The code functions correctly whether or not the clock is available.
--    ///
--    /// ```
--    /// use kernel::c_str;
--    /// use kernel::clk::{OptionalClk, Hertz};
--    /// use kernel::device::Device;
--    /// use kernel::error::Result;
--    ///
--    /// fn configure_clk(dev: &Device) -> Result {
--    ///     let clk = OptionalClk::get(dev, Some(c_str!("apb_clk")))?;
--    ///
--    ///     clk.prepare_enable()?;
--    ///
--    ///     let expected_rate = Hertz::from_ghz(1);
--    ///
--    ///     if clk.rate() != expected_rate {
--    ///         clk.set_rate(expected_rate)?;
--    ///     }
--    ///
--    ///     clk.disable_unprepare();
--    ///     Ok(())
--    /// }
--    /// ```
--    ///
--    /// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
--    pub struct OptionalClk(Clk);
--
--    impl OptionalClk {
--        /// Gets [`OptionalClk`] corresponding to a [`Device`] and a connection id.
--        ///
--        /// Equivalent to the kernel's [`clk_get_optional`] API.
--        ///
--        /// [`clk_get_optional`]:
--        /// https://docs.kernel.org/core-api/kernel-api.html#c.clk_get_optional
--        pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
--            let con_id = name.map_or(ptr::null(), |n| n.as_ptr());
--
--            // SAFETY: It is safe to call [`clk_get_optional`] for a valid device pointer.
--            //
--            // INVARIANT: The reference-count is decremented when [`OptionalClk`] goes out of
--            // scope.
--            Ok(Self(Clk(from_err_ptr(unsafe {
--                bindings::clk_get_optional(dev.as_raw(), con_id)
--            })?)))
-+    impl<T: ClkState> Clk<T> {
-+        /// Obtain the raw [`struct clk`] pointer.
-+        #[inline]
-+        pub fn as_raw(&self) -> *mut bindings::clk {
-+            self.inner
-         }
-     }
- 
--    // Make [`OptionalClk`] behave like [`Clk`].
--    impl Deref for OptionalClk {
--        type Target = Clk;
--
--        fn deref(&self) -> &Clk {
--            &self.0
-+    impl<T: ClkState> Drop for Clk<T> {
-+        fn drop(&mut self) {
-+            if T::DISABLE_ON_DROP {
-+                // SAFETY: By the type invariants, self.as_raw() is a valid argument for
-+                // [`clk_disable`].
-+                unsafe { bindings::clk_disable(self.as_raw()) };
-+            }
-+
-+            if T::UNPREPARE_ON_DROP {
-+                // SAFETY: By the type invariants, self.as_raw() is a valid argument for
-+                // [`clk_unprepare`].
-+                unsafe { bindings::clk_unprepare(self.as_raw()) };
-+            }
-         }
-     }
- }
-diff --git a/rust/kernel/cpufreq.rs b/rust/kernel/cpufreq.rs
-index b0a9c6182aec6027f85d65a492595e8f815ae6b9..8eef0ffeb60276951737726af3c43c04d7f8dff3 100644
---- a/rust/kernel/cpufreq.rs
-+++ b/rust/kernel/cpufreq.rs
-@@ -551,8 +551,12 @@ pub fn cpus(&mut self) -> &mut cpumask::Cpumask {
-     /// The caller must guarantee that the returned [`Clk`] is not dropped while it is getting used
-     /// by the C code.
-     #[cfg(CONFIG_COMMON_CLK)]
--    pub unsafe fn set_clk(&mut self, dev: &Device, name: Option<&CStr>) -> Result<Clk> {
--        let clk = Clk::get(dev, name)?;
-+    pub unsafe fn set_clk(
-+        &mut self,
-+        dev: &Device,
-+        name: Option<&CStr>,
-+    ) -> Result<Clk<crate::clk::Unprepared>> {
-+        let clk = Clk::<crate::clk::Unprepared>::get(dev, name)?;
-         self.as_mut_ref().clk = clk.as_raw();
-         Ok(clk)
-     }
-
----
-base-commit: bc27a30feb4932493af841a14fe80d752e049f95
-change-id: 20250729-clk-type-state-1f988ec3843a
-
-Best regards,
--- 
-Daniel Almeida <daniel.almeida@collabora.com>
-
+              Linus
 
