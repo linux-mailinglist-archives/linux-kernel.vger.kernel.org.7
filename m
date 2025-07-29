@@ -1,161 +1,138 @@
-Return-Path: <linux-kernel+bounces-749815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D99ADB1532C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:53:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F292B1532F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 20:56:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF02F3B8C5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:52:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5334316568A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0299237180;
-	Tue, 29 Jul 2025 18:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214B224DD13;
+	Tue, 29 Jul 2025 18:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j57oc76U"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="v9dQ92DX"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B192459E1
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276A31F4CB6;
+	Tue, 29 Jul 2025 18:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753815204; cv=none; b=JuSevEQSDQMGVfmS+h+ghwzGGcPVp6Aw+sGqmUsZMbqajISiTXtxlUpUUcUhCaWKaYoGtxl4/V8kUINhqRFngq19RPP0colNpnJ2Z10julCXbAlIBalqT5985HLjTnr4zkZqH3zUqLu/s+3ehPtGGuWHjIjjHtWC5pHLigl6k3c=
+	t=1753815383; cv=none; b=gssGV7GHZehBAKueHtZLF2Id0FS2cRIOX4O+A3zTab5tvwH6jgOhDV0Hmb0CCVGVB/wLhPEkXfVoG3KfvpOkEbS4G7sMIEwFakhNDt7X5FyVMzNUiI/6DcV7nkrUhnRinClj+UhRqNf97cjNgsQHSxnDuUvHf3DwfPqNfvhNXbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753815204; c=relaxed/simple;
-	bh=vHiAZEJQ636SOevFTzB+2khGGZwRDs3zeAMpvxkeliQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qr65RbnhppxBrJOjxCayEnNGD5qYRplUscPMkTzQ/we50G0EwkSBrujzMEWckYtE3Mvy/WfuY3h8yD2a3gMp/QfS750oA2bqiFa6wnCTzL9x0bA/Z+f+C/XDncaZrh082e60APpDYCMBaLYqPuSVPXo+GlIplpxxGHYmBaIBwJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j57oc76U; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <8fad6c00-9c15-4315-a8c5-b8eac4281757@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753815189;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m8uizJieSyqW56uosfxUJeKEVQ0kVEbrA+dUYFoOGRs=;
-	b=j57oc76UIhZL5Xpcfh4U0tWr8C6enCpVQGbo2hG9G/0MM06fuiCJ8Y9RkLcRYz1x4orT97
-	JobdnhYCZ2iemZAIgxqDkCvYrqbLu0Qm1apgcZEDuQd2TzZ6hTyq50I2Vd3GHzTBw1Z8r+
-	6U+OU1uUSU0PwvKHE1NHrhjo/vcQR1Y=
-Date: Tue, 29 Jul 2025 20:53:02 +0200
+	s=arc-20240116; t=1753815383; c=relaxed/simple;
+	bh=G31hp13BsxqK0L6P1wGsiaKyxFaG31iYQbcTnBP6pNo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=nd9QbMyMTQehiQeGJnPVQEi7WImmjti28w70HbLDIEz6fzipQttbAFx+OV6XFjQuynbeuAaYCv3exAJMADQ04d8IP3NVltqKMVDkSz0BClkzlCc2g1AUkWtnuSkuf5kTptwI8hZ28uZWtk+KjA3XqZ8X5BYX0O7l9k8g04Uy+AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=v9dQ92DX; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753815373; x=1754420173; i=markus.elfring@web.de;
+	bh=G31hp13BsxqK0L6P1wGsiaKyxFaG31iYQbcTnBP6pNo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=v9dQ92DXwDh8OsS2uSqUIj2UOPk0r4PUJB2qvZfQK/Nj5MstHq6RoXTQ+arVIOAV
+	 GM0jEOnxVmwwVNBwZRK6bPBxwOOCXNNgv7Xma4ULgHa3WxGjysQeIBdcxJm3+xiJ3
+	 qhDawyEajmum4UTHzEyb9KuvkCzse/6JrdAW+tbDj1TZo38v/EMU9fuOtST4vfKJH
+	 5clKN+UE7wmqKj7VGMcwx2vvRLFmDMGE6OtiK61fWYoqloT2GIIppzQgjiI/E8SgP
+	 8Epi0sF6wtt2kwYqU6mJkmBMF9kz8ZlfKDn1eUdQCl7JHJFEzHLCjExlDYP+pEODe
+	 5xsi7EpimayzCvSqCg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.201]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQPZj-1v2bTY22t7-00WVTI; Tue, 29
+ Jul 2025 20:56:13 +0200
+Message-ID: <27916016-674b-476e-99c4-a5f7d53632a6@web.de>
+Date: Tue, 29 Jul 2025 20:56:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] RDMA/siw: Fix the sendmsg byte count in
- siw_tcp_sendpages
-To: Pedro Falcato <pfalcato@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- Leon Romanovsky <leon@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
-Cc: Jakub Kicinski <kuba@kernel.org>, David Howells <dhowells@redhat.com>,
- Tom Talpey <tom@talpey.com>, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- torvalds@linux-foundation.org, stable@vger.kernel.org,
- kernel test robot <oliver.sang@intel.com>
-References: <20250729120348.495568-1-pfalcato@suse.de>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Bernard Metzler <bernard.metzler@linux.dev>
-In-Reply-To: <20250729120348.495568-1-pfalcato@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+To: Elad Nachman <enachman@marvell.com>, linux-i2c@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Gregory Clement <gregory.clement@bootlin.com>
+References: <20250729084523.3220002-1-enachman@marvell.com>
+Subject: Re: [PATCH] i2c: mv64xxx: prevent illegal pointer access
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250729084523.3220002-1-enachman@marvell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RNUH8dQXIPKPyusYeJ2aSfmoeL42Al2k8PjYD6dQyQBN6MWyome
+ hJX297uyTLUMj9Sx7qZlIVJGxu4NKFVoE+2bUcI2wgMiafe1byyD/H/FyYae/6zOLrmKHQX
+ VYh9Xz4ItwMebFV+k0T+HvINkmnaun2l7BvqxFxVee+RU+1BCGkac9f6naOyqiGR+Fg3KcC
+ fUqQXs//dpgZRP16Ks8/A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:joHjxbsb4Io=;mcvbweLmtp8Ewfv+iRIin4Kh2rs
+ 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
+ Qg==
 
-On 29.07.2025 14:03, Pedro Falcato wrote:
-> Ever since commit c2ff29e99a76 ("siw: Inline do_tcp_sendpages()"),
-> we have been doing this:
->
-> static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
->                               size_t size)
-> [...]
->          /* Calculate the number of bytes we need to push, for this page
->           * specifically */
->          size_t bytes = min_t(size_t, PAGE_SIZE - offset, size);
->          /* If we can't splice it, then copy it in, as normal */
->          if (!sendpage_ok(page[i]))
->                  msg.msg_flags &= ~MSG_SPLICE_PAGES;
->          /* Set the bvec pointing to the page, with len $bytes */
->          bvec_set_page(&bvec, page[i], bytes, offset);
->          /* Set the iter to $size, aka the size of the whole sendpages (!!!) */
->          iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-> try_page_again:
->          lock_sock(sk);
->          /* Sendmsg with $size size (!!!) */
->          rv = tcp_sendmsg_locked(sk, &msg, size);
->
-> This means we've been sending oversized iov_iters and tcp_sendmsg calls
-> for a while. This has a been a benign bug because sendpage_ok() always
-> returned true. With the recent slab allocator changes being slowly
-> introduced into next (that disallow sendpage on large kmalloc
-> allocations), we have recently hit out-of-bounds crashes, due to slight
-> differences in iov_iter behavior between the MSG_SPLICE_PAGES and
-> "regular" copy paths:
->
-> (MSG_SPLICE_PAGES)
-> skb_splice_from_iter
->    iov_iter_extract_pages
->      iov_iter_extract_bvec_pages
->        uses i->nr_segs to correctly stop in its tracks before OoB'ing everywhere
->    skb_splice_from_iter gets a "short" read
->
-> (!MSG_SPLICE_PAGES)
-> skb_copy_to_page_nocache copy=iov_iter_count
->   [...]
->     copy_from_iter
->          /* this doesn't help */
->          if (unlikely(iter->count < len))
->                  len = iter->count;
->            iterate_bvec
->              ... and we run off the bvecs
->
-> Fix this by properly setting the iov_iter's byte count, plus sending the
-> correct byte count to tcp_sendmsg_locked.
->
-> Cc: stable@vger.kernel.org
-> Fixes: c2ff29e99a76 ("siw: Inline do_tcp_sendpages()")
-> Reported-by: kernel test robot <oliver.sang@intel.com>
-> Closes: https://lore.kernel.org/oe-lkp/202507220801.50a7210-lkp@intel.com
-> Reviewed-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Pedro Falcato <pfalcato@suse.de>
-> ---
->
-> v2:
->   - Add David Howells's Rb on the original patch
->   - Remove the offset increment, since it's dead code
->
->   drivers/infiniband/sw/siw/siw_qp_tx.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
-> index 3a08f57d2211..f7dd32c6e5ba 100644
-> --- a/drivers/infiniband/sw/siw/siw_qp_tx.c
-> +++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
-> @@ -340,18 +340,17 @@ static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
->   		if (!sendpage_ok(page[i]))
->   			msg.msg_flags &= ~MSG_SPLICE_PAGES;
->   		bvec_set_page(&bvec, page[i], bytes, offset);
-> -		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-> +		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, bytes);
->   
->   try_page_again:
->   		lock_sock(sk);
-> -		rv = tcp_sendmsg_locked(sk, &msg, size);
-> +		rv = tcp_sendmsg_locked(sk, &msg, bytes)
->   		release_sock(sk);
->   
->   		if (rv > 0) {
->   			size -= rv;
->   			sent += rv;
->   			if (rv != bytes) {
-> -				offset += rv;
->   				bytes -= rv;
->   				goto try_page_again;
->   			}
+=E2=80=A6
+> Add check to verify buffer pointer is not NULL before
+> reading or writing the buffer for additional TX or RX
+> operations.
 
-Acked-by: Bernard Metzler <bernard.metzler@linux.dev>
+You may occasionally put more than 53 characters into text lines
+of such a change description.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16#n658
 
+Regards,
+Markus
 
