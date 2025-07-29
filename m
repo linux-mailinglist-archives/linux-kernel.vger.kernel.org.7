@@ -1,212 +1,434 @@
-Return-Path: <linux-kernel+bounces-749311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DDAAB14CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:10:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27041B14CC5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:11:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1C633BFAA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:09:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 577CD18A35A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F38828C2AA;
-	Tue, 29 Jul 2025 11:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9E728C02E;
+	Tue, 29 Jul 2025 11:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="MY7wuA95";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="E7esAgUo"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="usmABHuK"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D42C287253;
-	Tue, 29 Jul 2025 11:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C82D227EA8
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753787406; cv=none; b=QD1bZ/26Np6KpVBAekrFe4sIkSkHq6vnOXLCfRZeOuL0rzgAOyoLDlmYo48toEkqJl14BklokiYgsTmN3JrZLGtqB8Y93dqc3eiYba9Nrc65tZpiV1QO9NzDWcFlLFotNTZsx6ARgURmjjwoCD0A/Ia43DWLkoKI7XQKSJ6Y9HM=
+	t=1753787494; cv=none; b=N5zW+fM/fVOR7SYRiMZJuJ187vBWjk6qDYTEDmwFbLZkF8Hxu6LiK9aLkIbUJINimhCOkZTVfrfzQpSkfR2opRvtLiua/FB5fJybivOvziu3ZT1v9pAqR6ZqS3oIGIVqJNQujdVTk1tQa5NUhn13ZQC/mbyYjdlfSah+DQBW+G8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753787406; c=relaxed/simple;
-	bh=VtdVGvJ9BpFvpMHfJpxSNwbeYEVqnCV3pZEcvFFOXs0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XwU5/xnrW6vJcEfoy5TzaAIScurpH/6RYvQKPxZ7DsWHgPa+ULbzVyEy+tqDEw7ZT9FE++lT/0gkRmwDXwkMf37TZT7UgT03hJhbs0tjZMBz1Yewa+Ex4ubgwf9Vr6MWfPPZdLkSG1PapvaSURwJKXxYCd69ZWI0kzim2LMiBpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=MY7wuA95; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=E7esAgUo; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 031F77A0E27;
-	Tue, 29 Jul 2025 07:10:00 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Tue, 29 Jul 2025 07:10:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1753787400; x=
-	1753873800; bh=uz0hvXnxo0mJnDw9VTTIJ+27i/mSuwNaILzlSKmygME=; b=M
-	Y7wuA95NZAqcOsg41cWptFhlKUPDdmP7oQYKQc0HGpftAccxbEyvxh/g8SJGv8MJ
-	JeEiQXMmR4PLjSktRyBNKJax8D2nY6yMCblgVTNzNH/1BdF7v8cv+DBAExFJhm5v
-	H+oSjP6FyurmaBQJ8wHaHZluZWVRb1nQnFCkHFU0pYIHH5EGOEVGKw/bXgdlEM6e
-	Iyf1+PZDyIim7MuLA7ssb+gFAGUz0e06SW2cSSR+C+WY4zwve8Piyo58fMV+JMq0
-	zvNYeK/pgMBVxLP0BhzBjbasraWpc0E9YEHcMZu+bOvQar3Zm8jdzut+qyYZ1xVg
-	W7cKzsbKV4ds5QQi/+UyA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1753787400; x=1753873800; bh=uz0hvXnxo0mJnDw9VTTIJ+27i/mSuwNaILz
-	lSKmygME=; b=E7esAgUob6iWYtH7AVVD7+VvPN6BEshcXlT6eA1ncDy6PK/dznI
-	4Y7EzklnULs/fI5eaG8XVVgstrSYrLvMVZ6vU+zuEJJkJADGoD4qqYvAweWgisOd
-	1j6SIPbfMF+dOsUfGFoHP7ORVzm6Xh6QOB76LLUIxe0+TO2WDwvk2ERd24SjPfiR
-	dw6JkJ4HdhxGiP8/vCWrBxRrYEeSMsgtBbrBORZJRoMJxbpOfFWxiBVcMIKq1X1G
-	19fImqUrRqtD0Oxwd/WJu0akhYsKOJTvUr/jqyOooOEtIE1ECgDI7T7aQ0jAdxfg
-	KEVw/zG32Y1Bq0lfsmot/6g1u/uKM1pzvgQ==
-X-ME-Sender: <xms:B6yIaF2I5XW3bufjSKGEsFDV-8G_y-A9MJT8D_wRGU6kxU5gW9Qj5Q>
-    <xme:B6yIaBk0hQ1oLpQOQ8D1NkjXbEWeAmgtr4t6zAGYMlk_O1LdpcPCJDAteUk-rzvU2
-    ZUZLWhaLQsvik9NJpE>
-X-ME-Received: <xmr:B6yIaE92kE7af3oLLAmaicbk-DkGnrfdyQLbt-z1jkjni8tyQXJPEUpiPjC1>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelgeeltdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuuh
-    hsphgvtghtffhomhgrihhnucdlgeelmdenucfjughrpeffhffvvefukfhfgggtuggjseht
-    tdertddttdejnecuhfhrohhmpefurggsrhhinhgrucffuhgsrhhotggruceoshgusehquh
-    gvrghshihsnhgrihhlrdhnvghtqeenucggtffrrghtthgvrhhnpeevkefhgfdtvdevjeev
-    vdfgffeffeettdefhfdtgfeuteegveeuffdtfffhudehvdenucffohhmrghinhepshihii
-    hkrghllhgvrhdrrghpphhsphhothdrtghomhdpghhoohhglhgvrghpihhsrdgtohhmnecu
-    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepshgusehquh
-    gvrghshihsnhgrihhlrdhnvghtpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhht
-    phhouhhtpdhrtghpthhtohepshhtvghffhgvnhdrkhhlrghsshgvrhhtsehsvggtuhhnvg
-    htrdgtohhmpdhrtghpthhtohepshihiigsohhtodeiieegudgriedufhgvtdgvvdgvkeel
-    rggvkegtheesshihiihkrghllhgvrhdrrghpphhsphhothhmrghilhdrtghomhdprhgtph
-    htthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhm
-    rgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehhvghrsggvrhhtsehgohhnug
-    horhdrrghprghnrgdrohhrghdrrghupdhrtghpthhtohephhhorhhmsheskhgvrhhnvghl
-    rdhorhhgpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthho
-    pehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:B6yIaHJnOpqlNpRNpbq8sn62fTxdr-oDXQgxgr5uqigfVY3eeFN4NQ>
-    <xmx:B6yIaBj2UK-j61KSmzNV1gKF7sck7P9DR054tA1Mda4gfWnIMKJBdw>
-    <xmx:B6yIaL95oo0pr_D_4LSwqoWliFWwqmQ5bVE2EAvu21VnzDegvE0kSA>
-    <xmx:B6yIaOMPEYvcSdbJzeG01J_1gVci0o8EI0DTlGBAi4O2ktnPLQDSGA>
-    <xmx:CKyIaM7yBZZbMVp8YNgsWJxzA4wvtTvTLJQxk7WluVQcr7jnhI3wl66q>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Jul 2025 07:09:59 -0400 (EDT)
-Date: Tue, 29 Jul 2025 13:09:57 +0200
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>,
-	davem@davemloft.net, edumazet@google.com,
-	herbert@gondor.apana.org.au, horms@kernel.org, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (3)
-Message-ID: <aIisBdRAM2vZ_VCW@krikkit>
-References: <6888736f.a00a0220.b12ec.00ca.GAE@google.com>
- <aIiqAjZzjl7uNeSb@gauss3.secunet.de>
+	s=arc-20240116; t=1753787494; c=relaxed/simple;
+	bh=cjKkd+dqRxeXddhvtS7Da5KWwdcK/S8t4q9XeZzLXs0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QFNxf7kDuT3jmPl9xj/S+xuTOCJ0H5Orp9vqnYT+91RfV70RhvuPxhr2OWOVkTv881Ts83033y6k2rf4Ac9rYxBbqyy2v/avhA/lKwz03g4JM6ub97LUJ4Kq8lE633zXItljlkWxH+W8NA11ZNq2caTjg3KZgrsV+QDE3CsrruU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=usmABHuK; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-32b561a861fso46173041fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:11:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753787491; x=1754392291; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=geMEPUiSmJiNkIaRsYiTOZ0Li48P2NhVSHcF23entUk=;
+        b=usmABHuK9K87cfeqf3tnb7wTu77/77KKvZ/Gtu6YAC9b9lQQAzfYDSaTmIE4Zez26p
+         Tb6DsUqzF9BHxD+3zyTXrDJfP0ueACteLLehPRgjuh/LORkUM3cng1p93lwwvlBQRItX
+         WUWZ8cjGwR+61Ng5I08vSFXJmY3QLegbbwWWf/TgRboKYgtEQQ3Y9MtI6cybh9AtojAu
+         8EmOosL2pRnTWqVmUpQ18ZF5t7oi5iUkp7ZD3Nnq6oTudMVBZS5Is0T/tIjQpAo3XzIm
+         e6Oy9pQt6gPB1F6m3T80xJLkEf28sqbVduCme466eSV2DI42zAd9MtZOv9vRxJOtJO8s
+         JBLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753787491; x=1754392291;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=geMEPUiSmJiNkIaRsYiTOZ0Li48P2NhVSHcF23entUk=;
+        b=E06Uu0R2fYakkev1ww76GTM5MXtZww9SKcll/eUHGmD1TJspLu6deSXDetEfC9VFCL
+         k5FjtEimwXB1T/j2sA1ROJNVusUaMSDtsKrQ89SJcH8nuadvuXLO5FObldSUNB+PlXFT
+         bC7IOdon8YqBSpC0FArdXaf+kPVfJaPTCmUDLOi9FCuQXHHjsMUh/tTt1Fyh/7cP/lrT
+         YuyqaVVtPzydOorPp+NpvIBUi52/sbR1cdoE07TT2TJzcWJ9eUrt6A1mSGBarlMCiqwc
+         4bNGiocDxRmWxOiw4rzlG18nXlF8Lwf6+Jcxd0d74xiBTePsypRnempTJOnL2zEkoocB
+         mzkg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeK/fUHoaosTr7c7Tcm8u2ZmEqDxVD6qrfB4Dik1hLk/bRO9TjJmN1mDBbE3C+Km6iQRtlWeLqZoBEvJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+A4ePlrpDGJnFYuEpVcV6STYz4cWxo1Z2xJoC5C0u5Ux9AajU
+	gS4t7/PPdLIG3aeBxKQRkg5p61EjRnuhsBLvw+uIU6cygo5PQu6WAIXrJel2dA7fu8kvQh8L/HI
+	OA4cMAsoTzmlEG4njYSMOK20V0a4vvcs4G/1oYERy
+X-Gm-Gg: ASbGncv/eTAu5NIVlG6I75jJNJCemnOmJHWR0mBvOVrOCu874O1jGHR/QHWP59pDldK
+	5PGuLE9Jit9VOIuqxO0w6deNdB4OaCAz1HtIWnD5x1uoV8fXZsZKSRpeOICvas8An7cKacefNF2
+	k6sZbjBqpXmKD6P2S5O9XnGb05vfp1QnuNPNZMpbrvlw3Isl+VmtsSDzA5tTqX8/sUiyLGfuToS
+	DZJX2/J2O3mVTHyuAexeCMiAwseu1Zag4ywgDuaJmoAqjR2
+X-Google-Smtp-Source: AGHT+IEyY/Qpf0t6eiH1KOYt7ck0cilU1VF/+T5bj5P0WHxZVNNSDGDebwV9oLijqfEGZtDLy48rExTu+Bag8m8laRk=
+X-Received: by 2002:a2e:bea5:0:b0:32a:66e6:9ffe with SMTP id
+ 38308e7fff4ca-331ee7d3804mr47508031fa.21.1753787490459; Tue, 29 Jul 2025
+ 04:11:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aIiqAjZzjl7uNeSb@gauss3.secunet.de>
+References: <20250728152548.3969143-1-glider@google.com> <20250728152548.3969143-6-glider@google.com>
+In-Reply-To: <20250728152548.3969143-6-glider@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Tue, 29 Jul 2025 13:11:16 +0200
+X-Gm-Features: Ac12FXyE_yOxvtIZ9BhHw-sxSVPKEVbpNzROyHI24hsB_aKzQ2JBO_NoNNA7L-8
+Message-ID: <CACT4Y+a5ZLpHEwd5LDK7oc8g9HgjsTbo6XgvEBTDBdqU8zCj8g@mail.gmail.com>
+Subject: Re: [PATCH v3 05/10] kcov: x86: introduce CONFIG_KCOV_UNIQUE
+To: Alexander Potapenko <glider@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, x86@kernel.org, 
+	Aleksandr Nogikh <nogikh@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Steffen,
+On Mon, 28 Jul 2025 at 17:26, Alexander Potapenko <glider@google.com> wrote:
+>
+> The new config switches coverage instrumentation to using
+>   __sanitizer_cov_trace_pc_guard(u32 *guard)
+> instead of
+>   __sanitizer_cov_trace_pc(void)
+>
+> This relies on Clang's -fsanitize-coverage=trace-pc-guard flag [1].
+>
+> Each callback receives a unique 32-bit guard variable residing in .bss.
+> Those guards can be used by kcov to deduplicate the coverage on the fly.
+>
+> As a first step, we make the new instrumentation mode 1:1 compatible
+> with the old one.
+>
+> [1] https://clang.llvm.org/docs/SanitizerCoverage.html#tracing-pcs-with-guards
+>
+> Cc: x86@kernel.org
+> Signed-off-by: Alexander Potapenko <glider@google.com>
 
-2025-07-29, 13:01:22 +0200, Steffen Klassert wrote:
-> On Tue, Jul 29, 2025 at 12:08:31AM -0700, syzbot wrote:
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    038d61fd6422 Linux 6.16
-> > git tree:       upstream
-> > console+strace: https://syzkaller.appspot.com/x/log.txt?x=11b88cf0580000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=4066f1c76cfbc4fe
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=6641a61fe0e2e89ae8c5
-> > compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ca1782580000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140194a2580000
-> > 
-> > Downloadable assets:
-> > disk image: https://storage.googleapis.com/syzbot-assets/6505c612be11/disk-038d61fd.raw.xz
-> > vmlinux: https://storage.googleapis.com/syzbot-assets/e466ef29c1ca/vmlinux-038d61fd.xz
-> > kernel image: https://storage.googleapis.com/syzbot-assets/b6d3d8fc5cbb/bzImage-038d61fd.xz
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com
-> > 
-> > ------------[ cut here ]------------
-> > WARNING: CPU: 1 PID: 36 at net/xfrm/xfrm_state.c:3284 xfrm_state_fini+0x270/0x2f0 net/xfrm/xfrm_state.c:3284
-> > Modules linked in:
-> > CPU: 1 UID: 0 PID: 36 Comm: kworker/u8:2 Not tainted 6.16.0-syzkaller #0 PREEMPT(full) 
-> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> > Workqueue: netns cleanup_net
-> > RIP: 0010:xfrm_state_fini+0x270/0x2f0 net/xfrm/xfrm_state.c:3284
-> > Code: c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 68 fa 0b f8 48 8b 3b 5b 41 5c 41 5d 41 5e 41 5f 5d e9 56 c8 ec f7 e8 51 e8 a9 f7 90 <0f> 0b 90 e9 fd fd ff ff e8 43 e8 a9 f7 90 0f 0b 90 e9 60 fe ff ff
-> > RSP: 0018:ffffc90000ac7898 EFLAGS: 00010293
-> > RAX: ffffffff8a163e8f RBX: ffff888034008000 RCX: ffff888143299e00
-> > RDX: 0000000000000000 RSI: ffffffff8db8419f RDI: ffff888143299e00
-> > RBP: ffffc90000ac79b0 R08: ffffffff8f6196e7 R09: 1ffffffff1ec32dc
-> > R10: dffffc0000000000 R11: fffffbfff1ec32dd R12: ffffffff8f617760
-> > R13: 1ffff92000158f40 R14: ffff8880340094c0 R15: dffffc0000000000
-> > FS:  0000000000000000(0000) GS:ffff888125d23000(0000) knlGS:0000000000000000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007fbd9e960960 CR3: 00000000316d3000 CR4: 0000000000350ef0
-> > Call Trace:
-> >  <TASK>
-> >  xfrm_net_exit+0x2d/0x70 net/xfrm/xfrm_policy.c:4348
-> >  ops_exit_list net/core/net_namespace.c:200 [inline]
-> >  ops_undo_list+0x49a/0x990 net/core/net_namespace.c:253
-> >  cleanup_net+0x4c5/0x800 net/core/net_namespace.c:686
-> >  process_one_work kernel/workqueue.c:3238 [inline]
-> >  process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3321
-> >  worker_thread+0x8a0/0xda0 kernel/workqueue.c:3402
-> >  kthread+0x711/0x8a0 kernel/kthread.c:464
-> >  ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
-> >  </TASK>
-> 
-> Hi Sabrina, your recent ipcomp patches seem to trigger this issue.
-> At least reverting them make it go away. Can you please look
-> into this?
-
-I haven't looked at the other reports yet, but this one seems to be a
-stupid mistake in my revert patch. With these changes, the syzbot
-repro stops splatting here:
+Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
 
 
-#syz test
-
-diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
-index 5120a763da0d..0a0eeaed0591 100644
---- a/net/ipv6/xfrm6_tunnel.c
-+++ b/net/ipv6/xfrm6_tunnel.c
-@@ -334,7 +334,7 @@ static void __net_exit xfrm6_tunnel_net_exit(struct net *net)
- 	struct xfrm6_tunnel_net *xfrm6_tn = xfrm6_tunnel_pernet(net);
- 	unsigned int i;
- 
--	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
-+	xfrm_state_flush(net, 0, false);
- 	xfrm_flush_gc();
- 
- 	for (i = 0; i < XFRM6_TUNNEL_SPI_BYADDR_HSIZE; i++)
-diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
-index 97ff756191ba..5f1da305eea8 100644
---- a/net/xfrm/xfrm_state.c
-+++ b/net/xfrm/xfrm_state.c
-@@ -3278,7 +3278,7 @@ void xfrm_state_fini(struct net *net)
- 	unsigned int sz;
- 
- 	flush_work(&net->xfrm.state_hash_work);
--	xfrm_state_flush(net, IPSEC_PROTO_ANY, false);
-+	xfrm_state_flush(net, 0, false);
- 	flush_work(&xfrm_state_gc_work);
- 
- 	WARN_ON(!list_empty(&net->xfrm.state_all));
-
-
--- 
-Sabrina
+>
+> ---
+> v3:
+>  - per Dmitry Vyukov's request, add better comments in
+>    scripts/module.lds.S and lib/Kconfig.debug
+>  - add -sanitizer-coverage-drop-ctors to scripts/Makefile.kcov
+>    to drop the unwanted constructors emitting unsupported relocations
+>  - merge the __sancov_guards section into .bss
+>
+> v2:
+>  - Address comments by Dmitry Vyukov
+>    - rename CONFIG_KCOV_ENABLE_GUARDS to CONFIG_KCOV_UNIQUE
+>    - update commit description and config description
+>  - Address comments by Marco Elver
+>    - rename sanitizer_cov_write_subsequent() to kcov_append_to_buffer()
+>    - make config depend on X86_64 (via ARCH_HAS_KCOV_UNIQUE)
+>    - swap #ifdef branches
+>    - tweak config description
+>    - remove redundant check for CONFIG_CC_HAS_SANCOV_TRACE_PC_GUARD
+>
+> Change-Id: Iacb1e71fd061a82c2acadf2347bba4863b9aec39
+> ---
+>  arch/x86/Kconfig                  |  1 +
+>  arch/x86/kernel/vmlinux.lds.S     |  1 +
+>  include/asm-generic/vmlinux.lds.h | 13 ++++++-
+>  include/linux/kcov.h              |  2 +
+>  kernel/kcov.c                     | 61 +++++++++++++++++++++----------
+>  lib/Kconfig.debug                 | 26 +++++++++++++
+>  scripts/Makefile.kcov             |  7 ++++
+>  scripts/module.lds.S              | 35 ++++++++++++++++++
+>  tools/objtool/check.c             |  1 +
+>  9 files changed, 126 insertions(+), 21 deletions(-)
+>
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 8bed9030ad473..0533070d24fe7 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -94,6 +94,7 @@ config X86
+>         select ARCH_HAS_FORTIFY_SOURCE
+>         select ARCH_HAS_GCOV_PROFILE_ALL
+>         select ARCH_HAS_KCOV                    if X86_64
+> +       select ARCH_HAS_KCOV_UNIQUE             if X86_64
+>         select ARCH_HAS_KERNEL_FPU_SUPPORT
+>         select ARCH_HAS_MEM_ENCRYPT
+>         select ARCH_HAS_MEMBARRIER_SYNC_CORE
+> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+> index 4fa0be732af10..52fe6539b9c91 100644
+> --- a/arch/x86/kernel/vmlinux.lds.S
+> +++ b/arch/x86/kernel/vmlinux.lds.S
+> @@ -372,6 +372,7 @@ SECTIONS
+>                 . = ALIGN(PAGE_SIZE);
+>                 *(BSS_MAIN)
+>                 BSS_DECRYPTED
+> +               BSS_SANCOV_GUARDS
+>                 . = ALIGN(PAGE_SIZE);
+>                 __bss_stop = .;
+>         }
+> diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+> index fa5f19b8d53a0..ee78328eecade 100644
+> --- a/include/asm-generic/vmlinux.lds.h
+> +++ b/include/asm-generic/vmlinux.lds.h
+> @@ -102,7 +102,8 @@
+>   * sections to be brought in with rodata.
+>   */
+>  #if defined(CONFIG_LD_DEAD_CODE_DATA_ELIMINATION) || defined(CONFIG_LTO_CLANG) || \
+> -defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+> +       defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG) || \
+> +       defined(CONFIG_KCOV_UNIQUE)
+>  #define TEXT_MAIN .text .text.[0-9a-zA-Z_]*
+>  #else
+>  #define TEXT_MAIN .text
+> @@ -121,6 +122,16 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+>  #define SBSS_MAIN .sbss
+>  #endif
+>
+> +#if defined(CONFIG_KCOV_UNIQUE)
+> +/* BSS_SANCOV_GUARDS must be part of the .bss section so that it is zero-initialized. */
+> +#define BSS_SANCOV_GUARDS                      \
+> +       __start___sancov_guards = .;            \
+> +       *(__sancov_guards);                     \
+> +       __stop___sancov_guards = .;
+> +#else
+> +#define BSS_SANCOV_GUARDS
+> +#endif
+> +
+>  /*
+>   * GCC 4.5 and later have a 32 bytes section alignment for structures.
+>   * Except GCC 4.9, that feels the need to align on 64 bytes.
+> diff --git a/include/linux/kcov.h b/include/linux/kcov.h
+> index 2b3655c0f2278..2acccfa5ae9af 100644
+> --- a/include/linux/kcov.h
+> +++ b/include/linux/kcov.h
+> @@ -107,6 +107,8 @@ typedef unsigned long long kcov_u64;
+>  #endif
+>
+>  void __sanitizer_cov_trace_pc(void);
+> +void __sanitizer_cov_trace_pc_guard(u32 *guard);
+> +void __sanitizer_cov_trace_pc_guard_init(uint32_t *start, uint32_t *stop);
+>  void __sanitizer_cov_trace_cmp1(u8 arg1, u8 arg2);
+>  void __sanitizer_cov_trace_cmp2(u16 arg1, u16 arg2);
+>  void __sanitizer_cov_trace_cmp4(u32 arg1, u32 arg2);
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index 5170f367c8a1b..8154ac1c1622e 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -194,27 +194,15 @@ static notrace unsigned long canonicalize_ip(unsigned long ip)
+>         return ip;
+>  }
+>
+> -/*
+> - * Entry point from instrumented code.
+> - * This is called once per basic-block/edge.
+> - */
+> -void notrace __sanitizer_cov_trace_pc(void)
+> +static notrace void kcov_append_to_buffer(unsigned long *area, int size,
+> +                                         unsigned long ip)
+>  {
+> -       struct task_struct *t;
+> -       unsigned long *area;
+> -       unsigned long ip = canonicalize_ip(_RET_IP_);
+> -       unsigned long pos;
+> -
+> -       t = current;
+> -       if (!check_kcov_mode(KCOV_MODE_TRACE_PC, t))
+> -               return;
+> -
+> -       area = t->kcov_state.area;
+>         /* The first 64-bit word is the number of subsequent PCs. */
+> -       pos = READ_ONCE(area[0]) + 1;
+> -       if (likely(pos < t->kcov_state.size)) {
+> -               /* Previously we write pc before updating pos. However, some
+> -                * early interrupt code could bypass check_kcov_mode() check
+> +       unsigned long pos = READ_ONCE(area[0]) + 1;
+> +
+> +       if (likely(pos < size)) {
+> +               /*
+> +                * Some early interrupt code could bypass check_kcov_mode() check
+>                  * and invoke __sanitizer_cov_trace_pc(). If such interrupt is
+>                  * raised between writing pc and updating pos, the pc could be
+>                  * overitten by the recursive __sanitizer_cov_trace_pc().
+> @@ -225,7 +213,40 @@ void notrace __sanitizer_cov_trace_pc(void)
+>                 area[pos] = ip;
+>         }
+>  }
+> +
+> +/*
+> + * Entry point from instrumented code.
+> + * This is called once per basic-block/edge.
+> + */
+> +#ifdef CONFIG_KCOV_UNIQUE
+> +void notrace __sanitizer_cov_trace_pc_guard(u32 *guard)
+> +{
+> +       if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
+> +               return;
+> +
+> +       kcov_append_to_buffer(current->kcov_state.area,
+> +                             current->kcov_state.size,
+> +                             canonicalize_ip(_RET_IP_));
+> +}
+> +EXPORT_SYMBOL(__sanitizer_cov_trace_pc_guard);
+> +
+> +void notrace __sanitizer_cov_trace_pc_guard_init(uint32_t *start,
+> +                                                uint32_t *stop)
+> +{
+> +}
+> +EXPORT_SYMBOL(__sanitizer_cov_trace_pc_guard_init);
+> +#else /* !CONFIG_KCOV_UNIQUE */
+> +void notrace __sanitizer_cov_trace_pc(void)
+> +{
+> +       if (!check_kcov_mode(KCOV_MODE_TRACE_PC, current))
+> +               return;
+> +
+> +       kcov_append_to_buffer(current->kcov_state.area,
+> +                             current->kcov_state.size,
+> +                             canonicalize_ip(_RET_IP_));
+> +}
+>  EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
+> +#endif
+>
+>  #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
+>  static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+> @@ -253,7 +274,7 @@ static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+>         start_index = 1 + count * KCOV_WORDS_PER_CMP;
+>         end_pos = (start_index + KCOV_WORDS_PER_CMP) * sizeof(u64);
+>         if (likely(end_pos <= max_pos)) {
+> -               /* See comment in __sanitizer_cov_trace_pc(). */
+> +               /* See comment in kcov_append_to_buffer(). */
+>                 WRITE_ONCE(area[0], count + 1);
+>                 barrier();
+>                 area[start_index] = type;
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index ebe33181b6e6e..a7441f89465f3 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -2153,6 +2153,12 @@ config ARCH_HAS_KCOV
+>           build and run with CONFIG_KCOV. This typically requires
+>           disabling instrumentation for some early boot code.
+>
+> +config CC_HAS_SANCOV_TRACE_PC
+> +       def_bool $(cc-option,-fsanitize-coverage=trace-pc)
+> +
+> +config CC_HAS_SANCOV_TRACE_PC_GUARD
+> +       def_bool $(cc-option,-fsanitize-coverage=trace-pc-guard)
+> +
+>  config KCOV
+>         bool "Code coverage for fuzzing"
+>         depends on ARCH_HAS_KCOV
+> @@ -2166,6 +2172,26 @@ config KCOV
+>
+>           For more details, see Documentation/dev-tools/kcov.rst.
+>
+> +config ARCH_HAS_KCOV_UNIQUE
+> +       bool
+> +       help
+> +         An architecture should select this when it can successfully
+> +         build and run with CONFIG_KCOV_UNIQUE.
+> +
+> +config KCOV_UNIQUE
+> +       depends on KCOV
+> +       depends on CC_HAS_SANCOV_TRACE_PC_GUARD && ARCH_HAS_KCOV_UNIQUE
+> +       bool "Enable unique program counter collection mode for KCOV"
+> +       help
+> +         This option enables KCOV's unique program counter (PC) collection mode,
+> +         which deduplicates PCs on the fly when the KCOV_UNIQUE_ENABLE ioctl is
+> +         used.
+> +
+> +         This significantly reduces the memory footprint for coverage data
+> +         collection compared to trace mode, as it prevents the kernel from
+> +         storing the same PC multiple times.
+> +         Enabling this mode incurs a slight increase in kernel binary size.
+> +
+>  config KCOV_ENABLE_COMPARISONS
+>         bool "Enable comparison operands collection by KCOV"
+>         depends on KCOV
+> diff --git a/scripts/Makefile.kcov b/scripts/Makefile.kcov
+> index 78305a84ba9d2..c3ad5504f5600 100644
+> --- a/scripts/Makefile.kcov
+> +++ b/scripts/Makefile.kcov
+> @@ -1,5 +1,12 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> +ifeq ($(CONFIG_KCOV_UNIQUE),y)
+> +kcov-flags-y                                   += -fsanitize-coverage=trace-pc-guard
+> +# Drop per-file constructors that -fsanitize-coverage=trace-pc-guard inserts by default.
+> +# Kernel does not need them, and they may produce unknown relocations.
+> +kcov-flags-y                                   += -mllvm -sanitizer-coverage-drop-ctors
+> +else
+>  kcov-flags-y                                   += -fsanitize-coverage=trace-pc
+> +endif
+>  kcov-flags-$(CONFIG_KCOV_ENABLE_COMPARISONS)   += -fsanitize-coverage=trace-cmp
+>
+>  kcov-rflags-y                                  += -Cpasses=sancov-module
+> diff --git a/scripts/module.lds.S b/scripts/module.lds.S
+> index 450f1088d5fd3..17f36d5112c5d 100644
+> --- a/scripts/module.lds.S
+> +++ b/scripts/module.lds.S
+> @@ -47,6 +47,7 @@ SECTIONS {
+>         .bss : {
+>                 *(.bss .bss.[0-9a-zA-Z_]*)
+>                 *(.bss..L*)
+> +               *(__sancov_guards)
+>         }
+>
+>         .data : {
+> @@ -64,6 +65,40 @@ SECTIONS {
+>                 MOD_CODETAG_SECTIONS()
+>         }
+>  #endif
+> +
+> +#ifdef CONFIG_KCOV_UNIQUE
+> +       /*
+> +        * CONFIG_KCOV_UNIQUE creates COMDAT groups for instrumented functions,
+> +        * which has the following consequences in the presence of
+> +        * -ffunction-sections:
+> +        *  - Separate .init.text and .exit.text sections in the modules are not
+> +        *    merged together, which results in errors trying to create
+> +        *    duplicate entries in /sys/module/MODNAME/sections/ at module load
+> +        *    time.
+> +        *  - Each function is placed in a separate .text.funcname section, so
+> +        *    there is no .text section anymore. Collecting them together here
+> +        *    has mostly aesthetic purpose, although some tools may be expecting
+> +        *    it to be present.
+> +        */
+> +       .text : {
+> +               *(.text .text.[0-9a-zA-Z_]*)
+> +               *(.text..L*)
+> +       }
+> +       .init.text : {
+> +               *(.init.text .init.text.[0-9a-zA-Z_]*)
+> +               *(.init.text..L*)
+> +       }
+> +       .exit.text : {
+> +               *(.exit.text .exit.text.[0-9a-zA-Z_]*)
+> +               *(.exit.text..L*)
+> +       }
+> +       .bss : {
+> +               *(.bss .bss.[0-9a-zA-Z_]*)
+> +               *(.bss..L*)
+> +               *(__sancov_guards)
+> +       }
+> +#endif
+> +
+>         MOD_SEPARATE_CODETAG_SECTIONS()
+>  }
+>
+> diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+> index 67d76f3a1dce5..60eb5faa27d28 100644
+> --- a/tools/objtool/check.c
+> +++ b/tools/objtool/check.c
+> @@ -1156,6 +1156,7 @@ static const char *uaccess_safe_builtin[] = {
+>         "write_comp_data",
+>         "check_kcov_mode",
+>         "__sanitizer_cov_trace_pc",
+> +       "__sanitizer_cov_trace_pc_guard",
+>         "__sanitizer_cov_trace_const_cmp1",
+>         "__sanitizer_cov_trace_const_cmp2",
+>         "__sanitizer_cov_trace_const_cmp4",
+> --
+> 2.50.1.470.g6ba607880d-goog
+>
 
