@@ -1,171 +1,133 @@
-Return-Path: <linux-kernel+bounces-749516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C28B14F62
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:39:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D184B14F5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F68E18A23BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:39:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61BD73BCE42
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:38:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC3B1E5205;
-	Tue, 29 Jul 2025 14:39:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E42511DE8A4;
+	Tue, 29 Jul 2025 14:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UJRrIw/3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Zgi45/50"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 204D71C3BFC;
-	Tue, 29 Jul 2025 14:39:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40422482F2;
+	Tue, 29 Jul 2025 14:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753799971; cv=none; b=BXNBt06bxBsVtYGZDrbRdT80DITqJZi/4P3z0yDSg6vLKc3PAxh8qiobuXYyVtckF6v1YdXI1+Eam2tojCjakwSKCM+aFVPFrjVGqUhtzYi77w9uZgKHmeuNtjyjFFqA2Vih7H2PwUN8UbDxhBHM37kWP10KqZFnEZ8KFVEVgLo=
+	t=1753799905; cv=none; b=oUlI5SsqxFbbKvBmuNrWe68ncSjdsLO6bl3GzQ8rdTIlybqXr4omlIgqgNVldfa0Okjk5e1yel5mvOG0XlExUfqOlhidisLJd7layCJSD+/ZYr7GErkqjxQfQEBBoEgYHZqKIPRKvdFsHZKWIORZq0aYzvR/x1t/u3jcZqAzr08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753799971; c=relaxed/simple;
-	bh=pMU2OSNH3+7WmAmc4OQkGAuEXy2akRIsfAbl+PqskoM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y7xEPECDWeG8cAjgEaY9sfvh7ffkjCDoujledsMbdbjAE7FrC54Mz/XPQWSYM8XwRZwFCPNc6EaLd4yaqemZc3afu0tVGZFZwWyfg39ZxRJTnRr8QXqaS8C8bORpsMYdBUmgUpZHz75ZPFCsY22eV64qPUavgb+eTbnTDqA3AcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UJRrIw/3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56T9qdaF019418;
-	Tue, 29 Jul 2025 14:39:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZSqa+8jf1mRhHxk5cDfpJZjqT/nDDTt36/8KgHlImIA=; b=UJRrIw/3iIQx2+/g
-	OEUbiqQyvMvLVJegf9MGsi2xC6vP6ytWnC2RyJFh2jnHJMQwPsAWdfzu+Uz810Z3
-	6J4nQ2zr2kJdxg3RDcj6/Npl0Z3W5PSfUwq4IqJt5vJFMb6uAbfTnEasQJpQgujn
-	PIhodxBFxrAp4eVniAiCAjhQBI1KPjk+VoK/3/7WACAQ27h70/h7Mb/SpYcfftgQ
-	gqMcKZdy3n4+ytxPvT92K/4V2VXF8nhNIzyqWU1Ag9/TOjUCBWwhSzqAS1wZA1dg
-	z3XG+N55K7l3BMz3O5CvF4EI5unA2J8S2ZXWLbsh4DRfqyQzd91LNNipFsRdYQRu
-	JjdvlA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484pm2gbyt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 14:39:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56TEd0mU012782
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 14:39:00 GMT
-Received: from [10.218.7.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Tue, 29 Jul
- 2025 07:38:56 -0700
-Message-ID: <1b418968-2a53-443e-8766-9d280447bb2d@quicinc.com>
-Date: Tue, 29 Jul 2025 20:07:33 +0530
+	s=arc-20240116; t=1753799905; c=relaxed/simple;
+	bh=brEQh0+evrmthE0np2XfgOVUvf7P/zR1bQigJp8ONEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ub1MyOQqEzs5jqDKSeHlECQURdgMJgdKR8DQ4oxgy0bp2mGol47TnCKS1JbAeI7UD4x6cQWVr9+izGMcrSHA4W7iWq7yyzY1y09kiNDF49FCQRTik4uTGlmdwUxdfqIlkFgmu8jMoPmqXk4wofvlRe2ZXpK8r0kYfSfCVkM6J2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Zgi45/50; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FFB0C4CEEF;
+	Tue, 29 Jul 2025 14:38:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753799904;
+	bh=brEQh0+evrmthE0np2XfgOVUvf7P/zR1bQigJp8ONEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zgi45/50BFoUX4wmAUvho2E5b5M6t7N3J2Qpaw9au8vMffxLODnrlkB8wncNbgSB3
+	 IUy5LCjny8Tddle7pDuU7PhuFLBOpcCYwD7osYo7QNe5JvNnbJmrsFpvXpPPlxCfv0
+	 ICpPYhtuHdVS7oMg+jKD/0BFFPUwnc9/vJD2NXYw=
+Date: Tue, 29 Jul 2025 16:38:17 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Zhivich, Michael" <mzhivich@akamai.com>
+Cc: Borislav Petkov <bp@alien8.de>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] x86/bugs: Fix use of possibly uninit value in
+ amd_check_tsa_microcode()
+Message-ID: <2025072906-poking-basket-93dc@gregkh>
+References: <20250722122844.2199661-1-mzhivich@akamai.com>
+ <20250722142254.GAaH-evk-BqchvvIaZ@renoirsky.local>
+ <2025072219-mulberry-shallow-da0d@gregkh>
+ <PH0PR17MB4639467A94DEC056F2F46519B95FA@PH0PR17MB4639.namprd17.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] ufs: core: Fix interrupt handling for MCQ Mode in
- ufshcd_intr
-To: Bart Van Assche <bvanassche@acm.org>, <alim.akhtar@samsung.com>,
-        <avri.altman@wdc.com>, <James.Bottomley@HansenPartnership.com>,
-        <huobean@gmail.com>, <mani@kernel.org>, <martin.petersen@oracle.com>,
-        <beanhuo@micron.com>, <peter.wang@mediatek.com>,
-        <andre.draszik@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Palash Kambar <quic_pkambar@quicinc.com>
-References: <20250728225711.29273-1-quic_nitirawa@quicinc.com>
- <a7cfe930-44b6-41dc-a84b-00f5ba314946@acm.org>
-Content-Language: en-US
-From: Nitin Rawat <quic_nitirawa@quicinc.com>
-In-Reply-To: <a7cfe930-44b6-41dc-a84b-00f5ba314946@acm.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: zPQjVRaClD9MVTJ-ioqRd9_YUinhhsVe
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDExMiBTYWx0ZWRfX/8cqitGdm+dP
- LDsn6aUjT9k4v7+lecGVERIlS2ZHUAQfr+0S94thQ6+a1LMt6CT/nvX7/ZvY7AtlXNUZzZEmM+t
- sTSOkm/tUz9htpN0fUTtUzK9SQDr7eHfk6K1C5a6OC+2pn/ZTnBXDNAoT+kjCKczvA3KfvQaaK1
- o+GTpQVz8j2BYQ7yH0b2czgdEj/h9ynYEBEldwoQJ0uBHB1251Qu6B3zh07YsV/X98C1txh468L
- Qv85+PHZfdnT9R9ikLw7x838UGmkQ9BofyiSZoDlNwvNgoGnu4pMKUiGJiJsqnpwkvEOEhesJK1
- fB+6aElm5rkUnVtFlnhi8I96jBWCjvdBnlqonHcgnTOYYJ6gSpful3gZes5QnwZ5FkW3GXMRSaW
- 1dTOjGQOz4YihM4FHFBRA5hK285T6Egvv8eG0jPHEfOQU0z4nqXMbV6Cpv7w3GSJKmOwTYo5
-X-Authority-Analysis: v=2.4 cv=HfYUTjE8 c=1 sm=1 tr=0 ts=6888dd05 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
- a=N54-gffFAAAA:8 a=ihll0qYU2PzsKsSyJ9QA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: zPQjVRaClD9MVTJ-ioqRd9_YUinhhsVe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-29_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 clxscore=1015 bulkscore=0 suspectscore=0 impostorscore=0
- spamscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=999 phishscore=0
- priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507290112
+In-Reply-To: <PH0PR17MB4639467A94DEC056F2F46519B95FA@PH0PR17MB4639.namprd17.prod.outlook.com>
 
-
-
-On 7/29/2025 5:11 AM, Bart Van Assche wrote:
-> On 7/28/25 3:57 PM, Nitin Rawat wrote:
->> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
->> index fd8015ed36a4..5413464d63c8 100644
->> --- a/drivers/ufs/core/ufshcd.c
->> +++ b/drivers/ufs/core/ufshcd.c
->> @@ -7145,14 +7145,19 @@ static irqreturn_t ufshcd_threaded_intr(int 
->> irq, void *__hba)
->>   static irqreturn_t ufshcd_intr(int irq, void *__hba)
->>   {
->>       struct ufs_hba *hba = __hba;
->> +    u32 intr_status, enabled_intr_status;
->>
->>       /* Move interrupt handling to thread when MCQ & ESI are not 
->> enabled */
->>       if (!hba->mcq_enabled || !hba->mcq_esi_enabled)
->>           return IRQ_WAKE_THREAD;
->>
->> +    intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
->> +    enabled_intr_status = intr_status & ufshcd_readl(hba, 
->> REG_INTERRUPT_ENABLE);
->> +
->> +    ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
->> +
->>       /* Directly handle interrupts since MCQ ESI handlers does the 
->> hard job */
->> -    return ufshcd_sl_intr(hba, ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
->> -                   ufshcd_readl(hba, REG_INTERRUPT_ENABLE));
->> +    return ufshcd_sl_intr(hba, enabled_intr_status);
->>   }
+On Wed, Jul 23, 2025 at 01:47:58PM +0000, Zhivich, Michael wrote:
 > 
-> Hi Nitin,
+> On 7/22/25, 12:56, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org> wrote:
 > 
-> Thank you for having published this patch. It seems like we both have 
-> been working on a fix independently and without knowing about each 
-> other's efforts. Can you please take a look at this patch and let me
-> know which version you prefer?
-
-Hi Bart,
-
-I reviewed your patch and test it locally—it resolves the issue.
-
-The patch looks good. Since this path handles only UIC, TM, and error 
-conditions with no IO for MCQ, we still check for outstanding_reqs and 
-UTP_TRANSFER_REQ_COMPL for the error case within ufshcd_threaded_intr in 
-the patch. In my opinion, we can skip these additional checks.
-
-Thanks,
-Nitin
-
+> !-------------------------------------------------------------------|
+>   This Message Is From an External Sender
+>   This message came from outside your organization.
+> |-------------------------------------------------------------------!
 > 
-> https://lore.kernel.org/linux-scsi/20250728212731.899429-1- 
-> bvanassche@acm.org/
+> On Tue, Jul 22, 2025 at 04:22:54PM +0200, Borislav Petkov wrote:
+> > On Tue, Jul 22, 2025 at 08:28:44AM -0400, Michael Zhivich wrote:
+> > > For kernels compiled with CONFIG_INIT_STACK_NONE=y, the value of __reserved
+> > > field in zen_patch_rev union on the stack may be garbage.  If so, it will
+> > > prevent correct microcode check when consulting p.ucode_rev, resulting in
+> > > incorrect mitigation selection.
+> >
+> > "This is a stable-only fix." so that the AI is happy. :-P
+> >
+> > > Cc: <stable@vger.kernel.org>
+> > > Signed-off-by:  Michael Zhivich <mzhivich@akamai.com>
+> >
+> > Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+> >
+> > > Fixes: 7a0395f6607a5 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+> >
+> > That commit in Fixes: is the 6.12 stable one.
+> >
+> > The 6.6 one is:
+> >
+> > Fixes: 90293047df18 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+> >
+> > The 6.1 is:
+> >
+> > Fixes: d12145e8454f ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+> >
+> > The 5.15 one:
+> >
+> > Fixes: f2b75f1368af ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+> >
+> > and the 5.10 one is
+> >
+> > Fixes: 78192f511f40 ("x86/bugs: Add a Transient Scheduler Attacks mitigation")
+> >
+> > and since all stable kernels above have INIT_STACK_NONE, that same
+> > one-liner should be applied to all of them.
+> >
+> > Greg, I'm thinking this one-liner should apply to all of the above with
+> > some fuzz. Can you simply add it to each stable version with a different
+> > Fixes: tag each?
+> >
+> > Or do you prefer separate submissions?
 > 
-> Thanks,
+> Ideally, separate submissions, otherwise I have to do this all by hand
+> :(
 > 
-> Bart.
+> thanks
+> 
+> greg k-h
+> 
+> Apologies for the barrage of e-mails; I managed to mess up the subject line on a couple, so I’ve resent them with correct subject lines.
+> There’s now a submission per stable branch with appropriate patch and fixes tags.
 
+Ok, I think I got them all figured out, thanks!
+
+greg k-h
 
