@@ -1,177 +1,127 @@
-Return-Path: <linux-kernel+bounces-749647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66922B150F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:10:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8951AB150F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:11:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8189B3A8212
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:09:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7486B547EB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624CD294A02;
-	Tue, 29 Jul 2025 16:09:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F4F293469;
+	Tue, 29 Jul 2025 16:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="fNJ3hYsH"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11olkn2081.outbound.protection.outlook.com [40.92.20.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTA0aK9U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE1E722127B;
-	Tue, 29 Jul 2025 16:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.20.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753805365; cv=fail; b=TJtGqNMik8yzbNjRGCCLB/N5gBdmokbGmQBxrHtCUUrpZBVtAQ7m4zfbhM7NoXtqQXFIb/uGRN89MGBgyO+CiXVcmIeOgC/+jbFVrYUtkzVDNK2FE2i2cu2cdebyrMROtMKX1OsEIA0GRVgdtUPTDuBIjcs9uNrBOesYsopx+Go=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753805365; c=relaxed/simple;
-	bh=0YWcgyRYUUksclKv9ZeltfOrycobD0ccS3j07ACYKX4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=D0gbJL1B4uVqxD4mFo0k2EJdplNvp7qfQRa9NbFwlIo9YXH/o+ynjN9+j6wa/i5Hkg8z0SQlWkrUYDqjv9rHDn775ItWRqhy5Qb8WHz5jYUtCuhTO1MBtd1KJ+roRVzG6RIPsr7QhbLHJ897kCN496j85cWYYGW6F9Ln8cM2jCw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=fNJ3hYsH; arc=fail smtp.client-ip=40.92.20.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NWXadiEBesZflEBYz8fbporH4OMXlYdASl8fz4IXNyd4qcAFWaYrOQBcWWojnjwhKNTEKRQQIfTV8E8Y3BPlht2+LXTnjQ6Ze/bsIPjG6zA/qKjULgZsfuwxUyOvPIbtrbhCp8vgxTZODX1g9tp4zz0DQp4MP1TrrWWhwPH/hm1ejNUyt42zyOVusLqOkR9DTIYIj9UPREjuni/+KTMbcYOO0WMQFIjRViZdCH+qLIWqQ+yVCxaS3t/XDY+1XMoQpg9WKXdIgGzE7p0qf+Q53tOmsfAS176qTqxmr/1K94a7vComcGp2zCoU/bpCg4/e+jAkIS4TAsENZe4ibvPptA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6jGyH5c6VjnaHiZPDTYCc3tuKhwoNWSu7qc7AbHeqGA=;
- b=rmD8c6mavOv53K4bIUkYtUaOWMLUQkrBXxutc+ycQtJWdPzAVtwoLFWZ/C1EhTICSgwBEPV5JtpTSyseROJ9ObwY8lzBVJXNg3bzNiDXMy0QaUOM7VlLuM/4sSFJTCeysxnR3rCJhQV8z/4h8iFYUYbcvr3nxXvm4v1skAUwYDkGZs1jKSqg75In+O2Myp+VUlgMhPtLOHTnFcmi4CuwG3yfZMXRN1wexNzv7MD3fKXZLkSGRK18fbQ8x3DbfeC5I7oo6uVH/mWjp54dOEdnQFKI1TvBl+Hr/lJU9Bq+Y7b72K5Py4I8Tysvjeofnw+kStOsFjR7Pr2P8Sh9LAMnQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6jGyH5c6VjnaHiZPDTYCc3tuKhwoNWSu7qc7AbHeqGA=;
- b=fNJ3hYsHGjCy7To3YZRJOCVhmTtDExpJ18SqpiPnpVEQ5Fd/UYkR3s9FPc6qO0kuOle4qDJhc+KGbWdnt09X1q8/DivjQ5uLCQLJba53+W7kHH5GBu7eCFZWowGAUNv9kkNzj4OLzFqKUrUt3hkD+7FJOMIDv8LlUa9QeZXM8cpw8ngMv0KTa9nCA/ZkS1RQ5uqMw/LUkaqgzSRbaalJ89a+94vm/mj+Bn/bUrXRpJpgvmhvCsTe67/9TewcdUoOIfprtgqmNqrtb4pylVOBhwyeRu44HhJ1URANolyPPQChGVZQSOU+wfKfMBgnohAFM67ze3yUc+7yrbmU4lbEsA==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by PH0PR02MB7606.namprd02.prod.outlook.com (2603:10b6:510:5c::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Tue, 29 Jul
- 2025 16:09:21 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8989.010; Tue, 29 Jul 2025
- 16:09:21 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Naman Jain <namjain@linux.microsoft.com>, "K . Y . Srinivasan"
-	<kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
-	<wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-CC: Roman Kisel <romank@linux.microsoft.com>, Anirudh Rayabharam
-	<anrayabh@linux.microsoft.com>, Saurabh Sengar <ssengar@linux.microsoft.com>,
-	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>, Nuno Das Neves
-	<nunodasneves@linux.microsoft.com>, ALOK TIWARI <alok.a.tiwari@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>
-Subject: RE: [PATCH v7 1/2] Drivers: hv: Export some symbols for mshv_vtl
-Thread-Topic: [PATCH v7 1/2] Drivers: hv: Export some symbols for mshv_vtl
-Thread-Index: AQHcAEe3+OKx7ga0hkKUwbQOt2WbmrRJRWAg
-Date: Tue, 29 Jul 2025 16:09:20 +0000
-Message-ID:
- <SN6PR02MB4157ABF89421EF7C7BDA6023D425A@SN6PR02MB4157.namprd02.prod.outlook.com>
-References: <20250729051436.190703-1-namjain@linux.microsoft.com>
- <20250729051436.190703-2-namjain@linux.microsoft.com>
-In-Reply-To: <20250729051436.190703-2-namjain@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB7606:EE_
-x-ms-office365-filtering-correlation-id: 8a05093b-ca94-4cca-7e7b-08ddceba4729
-x-microsoft-antispam:
- BCL:0;ARA:14566002|19110799012|8060799015|8062599012|461199028|15080799012|440099028|40105399003|3412199025|4302099013|10035399007|102099032|1602099012;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?SC287n4+KRTc9di56E99j/TjKsWLqvNOidYiMCyBONhZ23/BwT0+q7iawuHm?=
- =?us-ascii?Q?q7QrkxW+WaH5jrnS4hu/zazHlsS123geb9gzmtqFTvk5KE8/72KBlHbJS0QV?=
- =?us-ascii?Q?pVy4ra1R8ELC3VizazzxbdfFgthSDkD+hrM5SQiRXntkt+cf3vLwi7fltI0T?=
- =?us-ascii?Q?VfV99xnF0HaEwJ/Mk7PxggUS2JFLSrv8MvdfdrgD3ZcBqd4IdWb6tmsazayb?=
- =?us-ascii?Q?s5GrIDci3dVj6ygjacD5JGCDxof/9f1T0Iv0UBMmaN6I0U+3JktosX4auW3J?=
- =?us-ascii?Q?C0FRs2e5Pb3LDBIiGC7SlXL6m3M4ocg7j8h1dTuLv9ehWiXPK6XUGqfPdzfV?=
- =?us-ascii?Q?TAb72TeGP/HkugVYEYIjveNj6auisdnr2cQ43VIIUdGGl4LbMde9fBrQ4AS9?=
- =?us-ascii?Q?Y80hMoFcEx/tLPv4ue5LhdbRpfMm6grZB4ZtGTjGbELFYUQ3L6MFD2jOJ07Y?=
- =?us-ascii?Q?HB1QEu815s92cUlPGq/xiREsQkja4mWuFr4kCE/At/Zm7uYlORvnqDpKZPCR?=
- =?us-ascii?Q?bNm6401aL0iNZEd+XKCp5g+pITGIc/ejs8xVcObrU8yArc0in67xI4H0OlLF?=
- =?us-ascii?Q?aRD5Z3Wznx6Ea2+nh3mspQDkPu3xJfTZiuG9Q25s9P/OkbL9bEZ/nrqI+BaW?=
- =?us-ascii?Q?W+9GXd9Vv+IRPddNUp+9qvW6Qx/Gct3V4AILM8MKm7evT/tPK5lsacDV0E8j?=
- =?us-ascii?Q?DDRSqZkgYRCfAxYNXjfD5Je85oVIeq0jigWOyNzrUDKJMF16gYzmNVFyJN0p?=
- =?us-ascii?Q?1S7/dniUlKKVMtCdqjE4xvopGW859irxMIjr2rz9+ITAEs3wf52QRNWPKeJq?=
- =?us-ascii?Q?yahP5mpVgswVey1DovBvVWpk//5nbQ1zPgv51q8wHMPTLgBy9HB/x+iPkxcp?=
- =?us-ascii?Q?p8TYlB/La0Xahxvt5XMqHXviuZJMj2Z+H0fNjVm7rrMpym2LeV3iqze1IIgz?=
- =?us-ascii?Q?0Jss5I0sf/D7uhwJ5lpmKJyHRAMH79XSpnGQo9GBcXrsyFeYsuwGXjWT2lpH?=
- =?us-ascii?Q?VNNgMLWJpwIpEpNSDcTKOoo5e3mzOJ46L8h0PCZPjlwj8FQBiYhdUNmUHIb2?=
- =?us-ascii?Q?GZULRcW1mfyz2iywXIlIrue250Oeg7UOiya4mu7uDsdDiR5wLkXeUnojouC9?=
- =?us-ascii?Q?Ls7eha3S8y3EsLWDGhwbQuytO9erI25mwfplIYnYR8rcZdayaVm/j+VaqBGR?=
- =?us-ascii?Q?dAnTvycdPJYICJeKbBylTaig1fvuwyvIZKfVWxg5eUymAqc3yBRAubHeTtse?=
- =?us-ascii?Q?3gyPbF26lUNYqyhLvk/0?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?EoiYRaKrv3I2rT+A0mEDFDsiAkldPZZ0Dn8KhSIz7ELOTwsCP2PXGztxoHDi?=
- =?us-ascii?Q?iuthLk+evhmoIgnsOUxx96DFP/xf4P84Q4ASs5IMMOggvtA1QUkl8X0+q0j7?=
- =?us-ascii?Q?mLQXuc5bMTgrTgYijPhp36Nl07l5y8kqrtGdWgiBkb3LmbX8cpfUVgIhdk3/?=
- =?us-ascii?Q?5aKNL7s6EWa2JfhjZs4lB2i2xXBB8+1H0bI+4gtcxQx+AAoeOGvI6fRRWgLF?=
- =?us-ascii?Q?QrVWP14WTQr6Z3KlUsQxMeyNRRcKAGRa/vPf8m86wJkWwJ0xYI0mm/A1JqDq?=
- =?us-ascii?Q?I45o3OYYueNLY7HjhMS8valSqUjlNR2fAdu2AMXvvwfO6SWOgu70TEropuFA?=
- =?us-ascii?Q?UQVP4OiBuZemxQM2tPVUeNZ1KcZAbvZE42QsKMfaZ8AL1XGePHvqpTEzASq7?=
- =?us-ascii?Q?Y1bU33BFBoRGsFnwqXGF1k9LVC6snJiXGBIipTAMyEofd0ysGkbCQIa5bHr3?=
- =?us-ascii?Q?pkDagy48IR9QMCvKearATxJ3DzxJbqPwkCZcHrn+IQ9N8tT9vvgW9rarFLFp?=
- =?us-ascii?Q?JdloExTlgoxZMvT4nxQN2FxxHqQAEJFzSXNZgw39p9skEuQ24+EWsmzK98ZM?=
- =?us-ascii?Q?HLp5ATWYJxG+JXeqPoJjGo85cUGd6xeVgQWUN48QkS9BLZ0ygC5zU8rWXu6U?=
- =?us-ascii?Q?8knoZycVKTtPzFeKaQAcecZVh2s3vvg9f0BNnL+bNt1nZZcYp7PnktCcYn9w?=
- =?us-ascii?Q?dVhmyHhFHcYdQ6LhOjismEAFaIGlnXUioqVig1kj/Ibu6RBmMi2bfj94fQv9?=
- =?us-ascii?Q?0alZZHev1MXLgodNWHvV3Iq5cDPCZlqVQ5kEvcgKw0a54qbRzTg5AAmEHsVn?=
- =?us-ascii?Q?p7+qpfRRFJ+qLf6AT7JY48A+J8didfw/1l/Qxrd+Ni/e0TRoA1jv5UA8Om39?=
- =?us-ascii?Q?edpRLEvScKZ0hRJGwVMqX3xGfmEKpnSUboot4BBFVOHhyvMHURQ1PU7lbhjI?=
- =?us-ascii?Q?NcW+rBZA8Wke94eFQ60l65TfPVS9p5CEwHP9gMNZ36v0AecF/oLJb+Zp36Hb?=
- =?us-ascii?Q?Rqc6elaJwCCyWvWPzCvwU3Zbuw2i/l+rDjTiJjuUs2TPCyBSDi7P82G+RRl7?=
- =?us-ascii?Q?tWjkzsqprQEDBY6ZsljzNDlgYlPEw1kWuYFbmrdcimHPaBae/45G/+h1zDYp?=
- =?us-ascii?Q?1d2wC0E8Z3QghkcDz8Ydm63gHRVMkWQn0PTRrWTWCnrO6wMwv/6uebbucybN?=
- =?us-ascii?Q?3qjnFNP3JFlx/WkTik7bVO/JLtbyDn9RMAbpzd8J0Z40KnMT9ObNsd1SxNw?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E25222597;
+	Tue, 29 Jul 2025 16:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753805423; cv=none; b=CU7zao/E8uRqto8SkVROOzLOwvcW0o463K8U1SVNlqRJFaBZTmwIRHh8ASz4N7vDftFJJ8fHVF1TLY34OpKX2K2b5X17tGQa1KL92rb7NRwxqPkfsEgAgz8yhe5bdCr36y85ZfAi1q3s/AWsBNIE7O0ZnvfJI1DitRVGGcqi/3I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753805423; c=relaxed/simple;
+	bh=8PqRrJ4T1GIZlo9A5K1NFm+LtDjYC1pJgTCd4O4aAMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N5UC06zx5G0MWYfwMWIKOPQ+insDWcyBdUdoW8bVNEEdYq7aNvTagCBkt9jFqGQI5Xs+aQ/cFdU5XDQDjq8dGUUPtDz38U7YGr37OzDoAtkuMG/Wwngjjbfxnun/lyDe8XJkU4PKB4ZANKEZZp3Wdwry3gMOohILgpL8d34MlHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTA0aK9U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CF4C4CEEF;
+	Tue, 29 Jul 2025 16:10:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753805422;
+	bh=8PqRrJ4T1GIZlo9A5K1NFm+LtDjYC1pJgTCd4O4aAMI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FTA0aK9UOoK2ym/J1kozYqDufRATC87ozTu2dcOE8R9riGJty2rKAH0ZFwyS5etFG
+	 znwiee/8xiGhtqzLxLAi79OYj5gGqeevHhw+dEXpY5Z1McQ8cWJ42pGi815NRBDhJK
+	 7jl+GMCchEUyoMkK6m7dCQhEnMwF85xdwQuNP2uKWNYnfGCNqyTmdz4g58FmeTzjF+
+	 9C12Q0PBu3+TUV9aaeZURd1EwZr4KPRCF1231dnTIeMXWjOIEQKw05WY515GP0SkGC
+	 h8ZTqThxhxX9t0UB2tMyv5XoDA1BR2AIU4NuJTltnXXKRSpRWOVziBbvNsMnUI5UgW
+	 WdEgRH/dnRJuw==
+Date: Tue, 29 Jul 2025 18:10:20 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	linux-pwm@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] pwm: imx-tpm: reset counter if CMOD is 0
+Message-ID: <ylg2wadbfbyg6ncvoxxz5zthxokphs52lgzscus4qwqgn7q3vy@xzljjzukbtle>
+References: <20250728194144.22884-1-laurentiumihalcea111@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a05093b-ca94-4cca-7e7b-08ddceba4729
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2025 16:09:20.9545
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7606
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lcvyewca57ejyx32"
+Content-Disposition: inline
+In-Reply-To: <20250728194144.22884-1-laurentiumihalcea111@gmail.com>
 
-From: Naman Jain <namjain@linux.microsoft.com> Sent: Monday, July 28, 2025 =
-10:15 PM
->=20
-> MSHV_VTL driver is going to be introduced, which is supposed to
-> provide interface for Virtual Machine Monitors (VMMs) to control
-> Virtual Trust Level (VTL). Export the symbols needed
-> to make it work (vmbus_isr, hv_context and hv_post_message).
->=20
-> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
-> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
-> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202506110544.q0NDMQVc-lkp@i=
-ntel.com/
-> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
-> ---
->  drivers/hv/hv.c           | 3 +++
->  drivers/hv/hyperv_vmbus.h | 1 +
->  drivers/hv/vmbus_drv.c    | 4 +++-
->  3 files changed, 7 insertions(+), 1 deletion(-)
->=20
 
-Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+--lcvyewca57ejyx32
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3] pwm: imx-tpm: reset counter if CMOD is 0
+MIME-Version: 1.0
+
+Hello Laurentiu,
+
+On Mon, Jul 28, 2025 at 03:41:44PM -0400, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>=20
+> As per the i.MX93 TRM, section 67.3.2.1 "MOD register update", the value
+> of the TPM counter does NOT get updated when writing MOD.MOD unless
+> SC.CMOD !=3D 0. Therefore, with the current code, assuming the following
+> sequence:
+>=20
+> 	1) pwm_disable()
+> 	2) pwm_apply_might_sleep() /* period is changed here */
+> 	3) pwm_enable()
+>=20
+> and assuming only one channel is active, if CNT.COUNT is higher than the
+> MOD.MOD value written during the pwm_apply_might_sleep() call then, when
+> re-enabling the PWM during pwm_enable(), the counter will end up resetting
+> after UINT32_MAX - CNT.COUNT + MOD.MOD cycles instead of MOD.MOD cycles as
+> normally expected.
+>=20
+> Fix this problem by forcing a reset of the TPM counter before MOD.MOD is
+> written.
+>=20
+> Fixes: 738a1cfec2ed ("pwm: Add i.MX TPM PWM driver support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+
+Thanks for the respin, looks good now. For consistency I capitalized
+"Reset" in the Subject.
+
+Applied to
+https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/fixes
+
+=2E I'll give that a day or two in next and then send it to Linus for
+6.17-rc1.
+
+Thanks
+Uwe
+
+--lcvyewca57ejyx32
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiI8mgACgkQj4D7WH0S
+/k79agf+LH57UR0G6y7RA0SZ7VTuCOOu8rGs7cN4IkwsVO/fpcWnZvidGDVERCL7
+HCk0IuDvQJIk1zCIv54AgJkHcMk3HtWfWf/lYM5QhVZxHbHQSKEDQgMM6J2pAEBJ
+uE0PJ+4fvdYrPY0YPQhSIICwuKS+rhUyFi5ksRbeKetgMRtuiBEFETkt1MmfWOWd
+cGDljyV724kVk3uD6PpuK1OMdWb9Rx09ZMCxwER+HllGGks2Esiia0F3NLIXQm8R
+8p1a9CRVSq/zNO+/vS83imY/XAmwkOJ2ucS/oH+zFhu3EJQysY3FSzXsen+ywl7V
+YKCb1/VjVFk7SX7puGqqE2Viv9oXJA==
+=N9cL
+-----END PGP SIGNATURE-----
+
+--lcvyewca57ejyx32--
 
