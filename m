@@ -1,175 +1,141 @@
-Return-Path: <linux-kernel+bounces-750000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FEAB155BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:12:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C161B155C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901741751F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1214118A7BCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:12:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C375285053;
-	Tue, 29 Jul 2025 23:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC5E287518;
+	Tue, 29 Jul 2025 23:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCizDE+T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rmue8AbG"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B44280CCE
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9779027FD52;
+	Tue, 29 Jul 2025 23:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753830719; cv=none; b=NqDzH585wVgo9C6bQB7zNfMy699TAFh6NOnH12al8Nx7fcXxFFUORMmR6ixGHsIX+RgFmmIWeo2FLT2bt+H3hf6QoMcAyMADetCaLolxBOsVaGDgPXREoCR9Jl9aoEY9h6DfW82ABlUHktluwvTtrBwo7Yoyz0s75TNMRGo6MUI=
+	t=1753830725; cv=none; b=ajnLgZ3lPk4Ojlz174BjKdH+9PKanYmcCX1AVJnV7UzCeZRRU2trzpQEkrenbrFuMaCKX+rT4N9n1qo6+55fD0RxKDsT0Xrn+vL0F4XdKHZJEoG7Y1SUAJVAdCe0gH/91Q7AataxEhFZnNlbw9CcDxRwd87u76Mejmh8dTmAJZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753830719; c=relaxed/simple;
-	bh=7yBjII2EI2XOmeKdK/UJCjNS0Mlw9nVTvAqVEvTZ4TM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=h5plo1Za2pXleKfDi2kTShsVycST7MPUFT+LjvG6lM0OMIuz/cHja1p+uE0Jo6DwHHBhA3kP1mIlLXbxiy6tu9BbE0ti5luTqLx6Ih8x5oxEm706k/pg2aj2Z/TwH+v9dUCHJohmP5Mn82X+9zxJZ/mnX0xVz8OK6uhUhnunQPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uCizDE+T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CB03C4CEEF;
-	Tue, 29 Jul 2025 23:11:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753830718;
-	bh=7yBjII2EI2XOmeKdK/UJCjNS0Mlw9nVTvAqVEvTZ4TM=;
-	h=Date:From:To:Cc:Subject:References:From;
-	b=uCizDE+TO5An0GT4ZA+FAJYn5UmgKGHMkDQaIptDn0oeKcf0iSc9Fl+Rg0dNWShUI
-	 0FyK8f3piNZbC87GqXypZIZAUz9cqvNDMfuKXc1CrfBroQqHHnK+9uWe/dH5ZvcGMt
-	 7/C9mD9OWCKKEsK0faO/8LevOgQbJ6kW66HO28mghSS1EGh1vr2lO493wG1w+5HaF8
-	 w/iTBGlwoj9rLZHTvaBSN2Se2q11iByaY894JP8SRH2zZ4DEU6s8aTeMFrZ6wbcpmw
-	 1AJVCbAo8EdnFJRX7mmYt38JIbxoMxDzeBuHqcsD+5ZhWEVqk+1qX8YfFI7NU5ySrZ
-	 42WrHzL6h1Lrw==
-Received: from rostedt by gandalf with local (Exim 4.98.2)
-	(envelope-from <rostedt@kernel.org>)
-	id 1ugtUT-00000005K9F-2eo7;
-	Tue, 29 Jul 2025 19:12:13 -0400
-Message-ID: <20250729231213.489236527@kernel.org>
-User-Agent: quilt/0.68
-Date: Tue, 29 Jul 2025 19:11:58 -0400
-From: Steven Rostedt <rostedt@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Tomas Glozar <tglozar@redhat.com>,
- John Kacur <jkacur@redhat.com>,
- Luis Goncalves <lgoncalv@redhat.com>,
- Chang Yin <cyin@redhat.com>,
- Costa Shulyupin <costa.shul@redhat.com>
-Subject: [for-next][PATCH 1/2] rtla/tests: Add grep checks for base test cases
-References: <20250729231157.059587961@kernel.org>
+	s=arc-20240116; t=1753830725; c=relaxed/simple;
+	bh=ExKIGyOAaYu2fhdOgYjmbXe2QZbOtR/+j5Tt238G2WM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lF+R+hGSpRJq4w4Tiy+TiHHrvOQWRaBY4PlyZian7SSs2JkWnYc0GEl9y6yJaFCgAiU0WGN+xxya0ikAXz48H1rRknEBbpvpQkPUecvQr7+AGAQpgiYhHBCGGZX1oxx783jXkKpK7aX2RyCdLpfCtU3Wd2rrBY/9RYuQpIvo4JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rmue8AbG; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753830507;
+	bh=QCGeb5SCsWH59RmtLD1llcE0yDjcZDPCM2fjGexHk1I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rmue8AbGn0z8SlsKZ10TMgF6eFcKBJT0R592/SGrSO1jmJy1ePfI41WzHpRuxGM4P
+	 kaQF/HW5pB+JOM02WvC23+EZQjKRxGftWfxHPzLS3iKcCVVnqPcaF7cGuGMvSUOOBU
+	 hvJHevEOjcVx4Pg585vEL0h9YU7G3DFMJQqpKwiLBHx2ckvjtP/8eXYqvYt+4a9dqF
+	 JNzPpi4k5eOW98C7T7SftprGc+qMKoP1Skejvz8dTGmzv/yX8wgX5XY6RmQMGVMFbc
+	 paB2W3g9AZdzRWVALw84MC+u+CAYFGYsGuW0EZPyPveRXDv9x/XfknE9CkCIC+Q2bx
+	 5nr//97tDty+w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bs9xk3TyGz4w2R;
+	Wed, 30 Jul 2025 09:08:26 +1000 (AEST)
+Date: Wed, 30 Jul 2025 09:11:59 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, Vinod Koul
+ <vkoul@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Xose Vazquez Perez <xose.vazquez@gmail.com>
+Subject: Re: linux-next: manual merge of the phy-next tree with the jc_docs
+ tree
+Message-ID: <20250730091159.6bdf168c@canb.auug.org.au>
+In-Reply-To: <20250702153836.146165af@canb.auug.org.au>
+References: <20250702153836.146165af@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; boundary="Sig_/xbP40ywo2w1_nFu=QRlfJt/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Tomas Glozar <tglozar@redhat.com>
+--Sig_/xbP40ywo2w1_nFu=QRlfJt/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Checking for patterns in rtla output with grep was added to test rtla
-actions. Add grep checks also for base tests where applicable.
+Hi all,
 
-Also fix trace event histogram trigger check to use the correct syntax
-for the command-line option so that the test passes with the grep check.
+On Wed, 2 Jul 2025 15:38:36 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>=20
+> Today's linux-next merge of the phy-next tree got a conflict in:
+>=20
+>   MAINTAINERS
+>=20
+> between commit:
+>=20
+>   739ca710a777 ("MAINTAINERS: replace git protocol for github")
+>=20
+> from the jc_docs tree and commit:
+>=20
+>   3ed7be12756d ("dt-bindings: phy: Convert qca,ar7100-usb-phy to DT schem=
+a")
+>=20
+> from the phy-next tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc MAINTAINERS
+> index ea884d4e18f3,04cda64989c5..000000000000
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@@ -3833,8 -3822,8 +3833,8 @@@ ATHEROS 71XX/9XXX USB PHY DRIVE
+>   M:	Alban Bedel <albeu@free.fr>
+>   S:	Maintained
+>   W:	https://github.com/AlbanBedel/linux
+>  -T:	git git://github.com/AlbanBedel/linux
+>  +T:	git https://github.com/AlbanBedel/linux.git
+> - F:	Documentation/devicetree/bindings/phy/phy-ath79-usb.txt
+> + F:	Documentation/devicetree/bindings/phy/qca,ar7100-usb-phy.yaml
+>   F:	drivers/phy/qualcomm/phy-ath79-usb.c
+>  =20
+>   ATHEROS ATH GENERIC UTILITIES
 
-Cc: John Kacur <jkacur@redhat.com>
-Cc: Luis Goncalves <lgoncalv@redhat.com>
-Cc: Chang Yin <cyin@redhat.com>
-Cc: Costa Shulyupin <costa.shul@redhat.com>
-Link: https://lore.kernel.org/20250725133817.59237-2-tglozar@redhat.com
-Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- tools/tracing/rtla/tests/hwnoise.t  | 11 ++++++-----
- tools/tracing/rtla/tests/osnoise.t  |  6 +++---
- tools/tracing/rtla/tests/timerlat.t | 12 +++++++-----
- 3 files changed, 16 insertions(+), 13 deletions(-)
+This is now a conflict between the jc_docs tree and Linus' tree.
 
-diff --git a/tools/tracing/rtla/tests/hwnoise.t b/tools/tracing/rtla/tests/hwnoise.t
-index 448877564b8d..23ce250a6852 100644
---- a/tools/tracing/rtla/tests/hwnoise.t
-+++ b/tools/tracing/rtla/tests/hwnoise.t
-@@ -6,16 +6,17 @@ test_begin
- set_timeout 2m
- 
- check "verify help page" \
--	"hwnoise --help"
-+	"hwnoise --help" 0 "summary of hardware-related noise"
- check "detect noise higher than one microsecond" \
--	"hwnoise -c 0 -T 1 -d 5s -q"
-+	"hwnoise -c 0 -T 1 -d 5s -q" 0
- check "set the automatic trace mode" \
--	"hwnoise -a 5 -d 10s" 2
-+	"hwnoise -a 5 -d 10s" 2 "osnoise hit stop tracing"
- check "set scheduling param to the osnoise tracer threads" \
- 	"hwnoise -P F:1 -c 0 -r 900000 -d 10s -q"
- check "stop the trace if a single sample is higher than 1 us" \
--	"hwnoise -s 1 -T 1 -t -d 10s" 2
-+	"hwnoise -s 1 -T 1 -t -d 10s" 2 "Saving trace to osnoise_trace.txt"
- check "enable a trace event trigger" \
--	"hwnoise -t -e osnoise:irq_noise trigger=\"hist:key=desc,duration:sort=desc,duration:vals=hitcount\" -d 10s"
-+	"hwnoise -t -e osnoise:irq_noise --trigger=\"hist:key=desc,duration:sort=desc,duration:vals=hitcount\" -d 10s" \
-+	0 "Saving event osnoise:irq_noise hist to osnoise_irq_noise_hist.txt"
- 
- test_end
-diff --git a/tools/tracing/rtla/tests/osnoise.t b/tools/tracing/rtla/tests/osnoise.t
-index 6a4dfa31dc55..7574ec6a5a53 100644
---- a/tools/tracing/rtla/tests/osnoise.t
-+++ b/tools/tracing/rtla/tests/osnoise.t
-@@ -6,13 +6,13 @@ test_begin
- set_timeout 2m
- 
- check "verify help page" \
--	"osnoise --help"
-+	"osnoise --help" 0 "osnoise version"
- check "verify the --priority/-P param" \
- 	"osnoise top -P F:1 -c 0 -r 900000 -d 10s -q"
- check "verify the --stop/-s param" \
--	"osnoise top -s 30 -T 1 -t" 2
-+	"osnoise top -s 30 -T 1" 2 "osnoise hit stop tracing"
- check "verify the  --trace param" \
--	"osnoise hist -s 30 -T 1 -t" 2
-+	"osnoise hist -s 30 -T 1 -t" 2 "Saving trace to osnoise_trace.txt"
- check "verify the --entries/-E param" \
- 	"osnoise hist -P F:1 -c 0 -r 900000 -d 10s -b 10 -E 25"
- 
-diff --git a/tools/tracing/rtla/tests/timerlat.t b/tools/tracing/rtla/tests/timerlat.t
-index 2d59ee199c4d..db263dc90a2d 100644
---- a/tools/tracing/rtla/tests/timerlat.t
-+++ b/tools/tracing/rtla/tests/timerlat.t
-@@ -21,15 +21,17 @@ export RTLA_NO_BPF=$option
- 
- # Basic tests
- check "verify help page" \
--	"timerlat --help"
-+	"timerlat --help" 0 "timerlat version"
- check "verify -s/--stack" \
--	"timerlat top -s 3 -T 10 -t" 2
-+	"timerlat top -s 3 -T 10 -t" 2 "Blocking thread stack trace"
- check "verify -P/--priority" \
- 	"timerlat top -P F:1 -c 0 -d 10s -q"
- check "test in nanoseconds" \
--	"timerlat top -i 2 -c 0 -n -d 10s" 2
-+	"timerlat top -i 2 -c 0 -n -d 10s" 2 "ns"
- check "set the automatic trace mode" \
--	"timerlat top -a 5 --dump-tasks" 2
-+	"timerlat top -a 5" 2 "analyzing it"
-+check "dump tasks" \
-+	"timerlat top -a 5 --dump-tasks" 2 "Printing CPU tasks"
- check "print the auto-analysis if hits the stop tracing condition" \
- 	"timerlat top --aa-only 5" 2
- check "disable auto-analysis" \
-@@ -37,7 +39,7 @@ check "disable auto-analysis" \
- check "verify -c/--cpus" \
- 	"timerlat hist -c 0 -d 10s"
- check "hist test in nanoseconds" \
--	"timerlat hist -i 2 -c 0 -n -d 10s" 2
-+	"timerlat hist -i 2 -c 0 -n -d 10s" 2 "ns"
- 
- # Actions tests
- check "trace output through -t" \
--- 
-2.47.2
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/xbP40ywo2w1_nFu=QRlfJt/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiJVT8ACgkQAVBC80lX
+0GybLwgAh0odtWfY/SHsfrmo1AwTPH3t/z6xDCSdIoFaJ9E1+RTIDBrFforb8M5K
+IZlaaVN9hYZ9smxYmzCQR0QkmFrzCTGIUQz3fIURD7BI1ePEwK5WyUg9hNqZ77pc
+kTBv06VxO3LsTpQi3PINDgd/aL1wW/qwRJMfeZQwb6wLVIuXD5Ggt4tnkTwcFOeX
+v4QAbl1fpj/5FTnOOn1sID3WpBxuyJTzrgJiXSKCeuAVCEtqnEEJXVZX4XJcC8fz
+uQ95p9lVRJVGmeFRRnxI0il10YMK9zasooEXsKNDHtca8vSVLp2Jjt0JdXm8bitn
+BT4l2M9m37LBk+t6K9yud9QyySviZQ==
+=J3fF
+-----END PGP SIGNATURE-----
+
+--Sig_/xbP40ywo2w1_nFu=QRlfJt/--
 
