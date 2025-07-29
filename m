@@ -1,402 +1,100 @@
-Return-Path: <linux-kernel+bounces-748907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 014DAB14776
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:10:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C46CB14779
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:14:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B4E6543475
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:10:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8582F1893591
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1C6F234964;
-	Tue, 29 Jul 2025 05:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F88D23496F;
+	Tue, 29 Jul 2025 05:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YsXdrFEv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="owd3tfBo"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0BA72634;
-	Tue, 29 Jul 2025 05:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB3672634;
+	Tue, 29 Jul 2025 05:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753765838; cv=none; b=CQMivFns7bGQb0C9lmQAbESYkbRBFstkd0j9atfWaVnpcu5AVboWiBDymXLXvn0XJn062AJWSBhjfRINWKupIoKPJxMXyGiU8yGaiB1NOhaiwvAbXE2tx6K1Gj7fPVcMBOoxWgsuWaSRoXPR195HJLk6VlMD6ohGkqkb1jaym0o=
+	t=1753766052; cv=none; b=bKePTcLLcaaoveDxhtsk4GxyoJo5o0+0Hxb2lhVvXLTZ/GFPojnQaNKoBOfQb0aB4hz+3U54UJUXEPDCWzIYYIAuzlu9OP8wCWajqmO2zUf/w+kVMsTZyoWlQDCuhIzUQEZL/67PCwEFIbFxv+n656zCgIv6AaQkEAagf17wmxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753765838; c=relaxed/simple;
-	bh=dLFCLzCQoLKMIXrIRtIQKOk27HbnKl9yUAAwBqKblyk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iZ0c0dsagfFf8KRTh/IZ32hcbsj8W7kgefKvb+/qHNuKCwjcfNtj4NIEbcS4984Q8L1bwNZjoCaJkvYe9h0tSETuk6roan8B7VlQf/MLNVES35roklsv/3eFNd41Eh/El5bH80/DdEZFvqpJQwEtLA8ZSc8S0h/D1jAegy+ZdBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YsXdrFEv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A82DAC4CEEF;
-	Tue, 29 Jul 2025 05:10:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753765837;
-	bh=dLFCLzCQoLKMIXrIRtIQKOk27HbnKl9yUAAwBqKblyk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YsXdrFEvvwq+K8KnE5PFUmwcd2x7kPysbmXmV2rcYAJ41pCHXisyAiNX47DIG4RNV
-	 LUElk3PAQkxdjXWLi8F4hSJGx1obcwKpgODVmJHsSzE43KloUGO/9emkvIsPqbULnI
-	 V2iB8PpOgcaB5BEM1VAm/13Hyfg8VQzWdPME+tLigbjiXciE24N3H3HEix6NXQV42t
-	 cxivFywwH4zdZhxrgRAixgO7YQSM0G/JvaNt6/ZMMSitZY5gxP+XANUUfdcDjkimvR
-	 YM2eRKoT234IFvekTBpu/mjDPHO/HLSGih4Zr21TqQ+MycJ91jDLgeqZpEbRuolsix
-	 SdjSmZwdXdLtA==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v5 1/1] tracing: Remove "__attribute__()" from the type field of event format
-Date: Tue, 29 Jul 2025 14:10:35 +0900
-Message-ID:  <175376583493.1688759.12333973498014733551.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-In-Reply-To:  <175376582586.1688759.2122686728240441891.stgit@mhiramat.tok.corp.google.com>
-References:  <175376582586.1688759.2122686728240441891.stgit@mhiramat.tok.corp.google.com>
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1753766052; c=relaxed/simple;
+	bh=n461d5t1P7XW1CSReTClXz5tQ1bUZojLDBVZjkZL3G4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=rpCfVTvZJbcipT7RNCVjF+MJ5YhtzidXzaFu6L5LnwWFGcNaFoMoMCJCDNcHKix5bztD/bT0JnnJwpx6Bqri8xw0Vk3jtt7uydvMoLoMeh+OwdzUHaqXDoQpqyYqCcVuBMNgN0b1gvpiaT4a3U8zazIQFNrQkoR3QZ2SfKdD/+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=owd3tfBo; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753765838;
+	bh=n461d5t1P7XW1CSReTClXz5tQ1bUZojLDBVZjkZL3G4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=owd3tfBocJgwc5+O9mzIMa4VjgpFcv5ZQ/VLdcZF5WaE6hwr1oVyqjKv6ukNpnofW
+	 G+Pgenxq9PyRJBAFGBtTIZ/wKMCp8PuiwxV6HGnjRbbuuZD8NB6b6FZUk/8cj4MjuT
+	 LH/hKULzYX9gHpK7knBacalmJyCtWLXr5rGLc5BcWXIve8QB694lx14qQ5l7/flUa4
+	 rQBjJWfnB4u+41pOY01zNMzjSTG9/xbLSEGrMW/RE548X3pkWpjNF2u6GIv6e5rQvV
+	 6Cc+a5Ht+SazKQhiN743YnWwA1DnTIHQMChYOUHTAYEPQ1NPL/qGcV0lYMCl+S73ZZ
+	 cKJ32If8yKKEg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brk260pBDz4w2Q;
+	Tue, 29 Jul 2025 15:10:37 +1000 (AEST)
+Date: Tue, 29 Jul 2025 15:14:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tty tree
+Message-ID: <20250729151404.03ac580e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/7IfLMYGIBd/txKexgBQuIrP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+--Sig_/7IfLMYGIBd/txKexgBQuIrP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-With CONFIG_DEBUG_INFO_BTF=y and PAHOLE_HAS_BTF_TAG=y, `__user` is
-converted to `__attribute__((btf_type_tag("user")))`. In this case,
-some syscall events have it for __user data, like below;
+Hi all,
 
-/sys/kernel/tracing # cat events/syscalls/sys_enter_openat/format
-name: sys_enter_openat
-ID: 720
-format:
-        field:unsigned short common_type;       offset:0;       size:2; signed:0;
-        field:unsigned char common_flags;       offset:2;       size:1; signed:0;
-        field:unsigned char common_preempt_count;       offset:3;       size:1; signed:0;
-        field:int common_pid;   offset:4;       size:4; signed:1;
+After merging the tty tree, today's linux-next build (x86_64
+modules_install) failed like this:
 
-        field:int __syscall_nr; offset:8;       size:4; signed:1;
-        field:int dfd;  offset:16;      size:8; signed:0;
-        field:const char __attribute__((btf_type_tag("user"))) * filename;      offset:24;      size:8; signed:0;
-        field:int flags;        offset:32;      size:8; signed:0;
-        field:umode_t mode;     offset:40;      size:8; signed:0;
+depmod: ERROR: Cycle detected: 8250 -> 8250_base -> 8250
+depmod: ERROR: Found 2 modules in dependency cycles!
 
+I can't see what would have caused this (it actually appeared yesterday).
+I am not even sure it is something in the tty tree.
 
-Then the trace event filter fails to set the string acceptable flag
-(FILTER_PTR_STRING) to the field and rejects setting string filter;
+--=20
+Cheers,
+Stephen Rothwell
 
- # echo 'filename.ustring ~ "*ftracetest-dir.wbx24v*"' \
-    >> events/syscalls/sys_enter_openat/filter
- sh: write error: Invalid argument
- # cat error_log
- [  723.743637] event filter parse error: error: Expecting numeric field
-   Command: filename.ustring ~ "*ftracetest-dir.wbx24v*"
+--Sig_/7IfLMYGIBd/txKexgBQuIrP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-Since this __attribute__ makes format parsing complicated and not
-needed, remove the __attribute__(.*) from the type string.
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
-Changes in v5:
- - Simplify the btf_type_tag check.
- - Include '(' to ATTRIBUTE_STR so that we can skip the first '('.
- - Run sanitize_field_type() first to avoid strstr() check and remove
-   need_sanitize flag.
- - Also, simplify error handling. If failed to allocate memory, return
-   immediately, but if there is any wrong string etc, it just skips the
-   field.
-Changes in v4:
- - Run sanitizer only if btf_type_tag() attribute is defined.
-Changes in v3:
- - Sanitize field in update_event_field() to avoid boottime performance
-   overhead.
- - Change the function names because those are not always require eval
-   maps.
- - Remove unneeded alloc_type flag.
-Changes in v2:
- - Add memory allocation check flag.
- - Check the flag in update_event_fields() to avoid memory leak.
- - Fix 'static const int ... strlen()' issue.
- - Fix to find 2nd __attribute__ correctly. (adjust next after strcpy)
----
- kernel/trace/trace.c        |   28 ++++++---
- kernel/trace/trace.h        |    4 +
- kernel/trace/trace_events.c |  128 ++++++++++++++++++++++++++++++++++++-------
- 3 files changed, 127 insertions(+), 33 deletions(-)
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIWJ0ACgkQAVBC80lX
+0GwqHAgApLK2uOhoBDv1LLEIwTonJgfG2KrYswDeWi/hbCfNI4gvez0uheT07jzi
+Tx/6/FgZBGTKuWg6OfdU8r7L2jKs4cKhzE36vmFQbgG+1x7D1hgbrAuRtEoA1z/T
+ka+UMgiFsPyRLDeEAiWNhxPtFIQ55dE3uOOGfA/hJphpzlwd6Hk0cffxAvSiitiK
+4NEi0faJzOlZkHP/wtUV3AsRO0ZIBfsOQ5y88XH7eJ0Sv2PuIr2FcIxlLMy6gX1I
+nS0Gm+3hyA89x7k7yBXd3ZqHwZkMnaERmCKzV0x01k2RsfpcMOzO3mpFWT3dYgDu
+k8XOWA487L0Ptjt+cAgas04cBtHOhg==
+=kbFh
+-----END PGP SIGNATURE-----
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 95ae7c4e5835..e992a9ba8281 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -5937,17 +5937,27 @@ static inline void trace_insert_eval_map_file(struct module *mod,
- 			      struct trace_eval_map **start, int len) { }
- #endif /* !CONFIG_TRACE_EVAL_MAP_FILE */
- 
--static void trace_insert_eval_map(struct module *mod,
--				  struct trace_eval_map **start, int len)
-+static void
-+trace_event_update_with_eval_map(struct module *mod,
-+				 struct trace_eval_map **start,
-+				 int len)
- {
- 	struct trace_eval_map **map;
- 
--	if (len <= 0)
--		return;
-+	/* Always run sanitizer only if btf_type_tag attr exists. */
-+	if (len <= 0) {
-+		if (!(IS_ENABLED(CONFIG_DEBUG_INFO_BTF) &&
-+		      IS_ENABLED(CONFIG_PAHOLE_HAS_BTF_TAG) &&
-+		      __has_attribute(btf_type_tag)))
-+			return;
-+	}
- 
- 	map = start;
- 
--	trace_event_eval_update(map, len);
-+	trace_event_update_all(map, len);
-+
-+	if (len <= 0)
-+		return;
- 
- 	trace_insert_eval_map_file(mod, start, len);
- }
-@@ -10335,7 +10345,7 @@ static void __init eval_map_work_func(struct work_struct *work)
- 	int len;
- 
- 	len = __stop_ftrace_eval_maps - __start_ftrace_eval_maps;
--	trace_insert_eval_map(NULL, __start_ftrace_eval_maps, len);
-+	trace_event_update_with_eval_map(NULL, __start_ftrace_eval_maps, len);
- }
- 
- static int __init trace_eval_init(void)
-@@ -10388,9 +10398,6 @@ bool module_exists(const char *module)
- 
- static void trace_module_add_evals(struct module *mod)
- {
--	if (!mod->num_trace_evals)
--		return;
--
- 	/*
- 	 * Modules with bad taint do not have events created, do
- 	 * not bother with enums either.
-@@ -10398,7 +10405,8 @@ static void trace_module_add_evals(struct module *mod)
- 	if (trace_module_has_bad_taint(mod))
- 		return;
- 
--	trace_insert_eval_map(mod, mod->trace_evals, mod->num_trace_evals);
-+	/* Even if no trace_evals, this need to sanitize field types. */
-+	trace_event_update_with_eval_map(mod, mod->trace_evals, mod->num_trace_evals);
- }
- 
- #ifdef CONFIG_TRACE_EVAL_MAP_FILE
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index bd084953a98b..1dbf1d3cf2f1 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -2125,13 +2125,13 @@ static inline const char *get_syscall_name(int syscall)
- 
- #ifdef CONFIG_EVENT_TRACING
- void trace_event_init(void);
--void trace_event_eval_update(struct trace_eval_map **map, int len);
-+void trace_event_update_all(struct trace_eval_map **map, int len);
- /* Used from boot time tracer */
- extern int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set);
- extern int trigger_process_regex(struct trace_event_file *file, char *buff);
- #else
- static inline void __init trace_event_init(void) { }
--static inline void trace_event_eval_update(struct trace_eval_map **map, int len) { }
-+static inline void trace_event_update_all(struct trace_eval_map **map, int len) { }
- #endif
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 120531268abf..a47869f8650e 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -3264,43 +3264,120 @@ static void add_str_to_module(struct module *module, char *str)
- 	list_add(&modstr->next, &module_strings);
- }
- 
-+#define ATTRIBUTE_STR "__attribute__("
-+#define ATTRIBUTE_STR_LEN (sizeof(ATTRIBUTE_STR) - 1)
-+
-+/* Remove all __attribute__() from @type. Return allocated string or @type. */
-+static char *sanitize_field_type(const char *type)
-+{
-+	char *attr, *tmp, *next, *ret = (char *)type;
-+	int depth;
-+
-+	next = (char *)type;
-+	while ((attr = strstr(next, ATTRIBUTE_STR))) {
-+		/* Retry if "__attribute__(" is a part of another word. */
-+		if (attr != next && !isspace(attr[-1])) {
-+			next = attr + ATTRIBUTE_STR_LEN;
-+			continue;
-+		}
-+
-+		if (ret == type) {
-+			ret = kstrdup(type, GFP_KERNEL);
-+			if (WARN_ON_ONCE(!ret))
-+				return NULL;
-+			attr = ret + (attr - type);
-+		}
-+
-+		/* the ATTRIBUTE_STR already has the first '(' */
-+		depth = 1;
-+		next = attr + ATTRIBUTE_STR_LEN;
-+		do {
-+			tmp = strpbrk(next, "()");
-+			/* There is unbalanced parentheses */
-+			if (WARN_ON_ONCE(!tmp)) {
-+				kfree(ret);
-+				return (char *)type;
-+			}
-+
-+			if (*tmp == '(')
-+				depth++;
-+			else
-+				depth--;
-+			next = tmp + 1;
-+		} while (depth > 0);
-+		next = skip_spaces(next);
-+		strcpy(attr, next);
-+		next = attr;
-+	}
-+	return ret;
-+}
-+
-+static char *find_replacable_eval(const char *type, const char *eval_string,
-+				  int len)
-+{
-+	char *ptr;
-+
-+	if (!eval_string)
-+		return NULL;
-+
-+	ptr = strchr(type, '[');
-+	if (!ptr)
-+		return NULL;
-+	ptr++;
-+
-+	if (!isalpha(*ptr) && *ptr != '_')
-+		return NULL;
-+
-+	if (strncmp(eval_string, ptr, len) != 0)
-+		return NULL;
-+
-+	return ptr;
-+}
-+
- static void update_event_fields(struct trace_event_call *call,
- 				struct trace_eval_map *map)
- {
- 	struct ftrace_event_field *field;
-+	const char *eval_string = NULL;
- 	struct list_head *head;
-+	int len = 0;
- 	char *ptr;
- 	char *str;
--	int len = strlen(map->eval_string);
- 
- 	/* Dynamic events should never have field maps */
--	if (WARN_ON_ONCE(call->flags & TRACE_EVENT_FL_DYNAMIC))
-+	if (call->flags & TRACE_EVENT_FL_DYNAMIC)
- 		return;
- 
-+	if (map) {
-+		eval_string = map->eval_string;
-+		len = strlen(map->eval_string);
-+	}
-+
- 	head = trace_get_fields(call);
- 	list_for_each_entry(field, head, link) {
--		ptr = strchr(field->type, '[');
--		if (!ptr)
--			continue;
--		ptr++;
--
--		if (!isalpha(*ptr) && *ptr != '_')
--			continue;
-+		str = sanitize_field_type(field->type);
-+		if (!str)
-+			return;
- 
--		if (strncmp(map->eval_string, ptr, len) != 0)
--			continue;
-+		ptr = find_replacable_eval(str, eval_string, len);
-+		if (ptr) {
-+			if (str == field->type) {
-+				str = kstrdup(field->type, GFP_KERNEL);
-+				if (WARN_ON_ONCE(!str))
-+					return;
-+				ptr = str + (ptr - field->type);
-+			}
- 
--		str = kstrdup(field->type, GFP_KERNEL);
--		if (WARN_ON_ONCE(!str))
--			return;
--		ptr = str + (ptr - field->type);
--		ptr = eval_replace(ptr, map, len);
--		/* enum/sizeof string smaller than value */
--		if (WARN_ON_ONCE(!ptr)) {
--			kfree(str);
--			continue;
-+			ptr = eval_replace(ptr, map, len);
-+			/* enum/sizeof string smaller than value */
-+			if (WARN_ON_ONCE(!ptr)) {
-+				kfree(str);
-+				continue;
-+			}
- 		}
- 
-+		if (str == field->type)
-+			continue;
- 		/*
- 		 * If the event is part of a module, then we need to free the string
- 		 * when the module is removed. Otherwise, it will stay allocated
-@@ -3310,14 +3387,18 @@ static void update_event_fields(struct trace_event_call *call,
- 			add_str_to_module(call->module, str);
- 
- 		field->type = str;
-+		if (field->filter_type == FILTER_OTHER)
-+			field->filter_type = filter_assign_type(field->type);
- 	}
- }
- 
--void trace_event_eval_update(struct trace_eval_map **map, int len)
-+/* Update all events for replacing eval and sanitizing */
-+void trace_event_update_all(struct trace_eval_map **map, int len)
- {
- 	struct trace_event_call *call, *p;
- 	const char *last_system = NULL;
- 	bool first = false;
-+	bool updated;
- 	int last_i;
- 	int i;
- 
-@@ -3330,6 +3411,7 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
- 			last_system = call->class->system;
- 		}
- 
-+		updated = false;
- 		/*
- 		 * Since calls are grouped by systems, the likelihood that the
- 		 * next call in the iteration belongs to the same system as the
-@@ -3349,8 +3431,12 @@ void trace_event_eval_update(struct trace_eval_map **map, int len)
- 				}
- 				update_event_printk(call, map[i]);
- 				update_event_fields(call, map[i]);
-+				updated = true;
- 			}
- 		}
-+		/* If not updated yet, update field for sanitizing. */
-+		if (!updated)
-+			update_event_fields(call, NULL);
- 		cond_resched();
- 	}
- 	up_write(&trace_event_sem);
-
+--Sig_/7IfLMYGIBd/txKexgBQuIrP--
 
