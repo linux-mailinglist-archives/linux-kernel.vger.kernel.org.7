@@ -1,244 +1,356 @@
-Return-Path: <linux-kernel+bounces-749920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBD5B154C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:40:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60879B154C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:43:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5EC94E3138
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80262188967D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F209237180;
-	Tue, 29 Jul 2025 21:40:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="pLhoMbso"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22BB92797BE;
+	Tue, 29 Jul 2025 21:43:30 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFAF227E95
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE3522539D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:43:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753825239; cv=none; b=ILe2Ne23+XAwNavbkI+BoV753BWyWrZf7HnBy6+rv7VbgqfBjA10Nq0lDQs9DBn0mV9xZa8aWxL+C0e5u5ksf3ALRAVifZlWGSnYdgXHma7NJ8YFjjKOQe590cUXGaUbOum1gcrIkmqCmehsex4pe1+H6JUB702iS8Do6yrj+eU=
+	t=1753825409; cv=none; b=BR1DGYrBguSZVy+LhXKbGVtHLyt8g32fwK29ml5V02p/gxNt13jfZuCpO7emxUel88SIEFEPkABYKET98wT5WGHTSzTzrw5f5pSLbk39G4J8BFSY0ZOa4FuxOEsKueaMtO5L0GB46dDE9NumXnn69MEG2XJ6xcHR/EE0jQImeXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753825239; c=relaxed/simple;
-	bh=1s2C5NLMm5STpMWhuT2DRE7VuG+76Zwd6y7eFrgoy64=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WooE5Vmtu7lSOWjWZXFRnTJZ5uagGTPZRM19UfDUwWpEAJxVde0+jtJYR3n8jcFHzQBjEsBS54DOza40qRhjnM2WGwQQmVECJn8rOOegzTQK7+HpBi92rlK9YsjNjBfDuY2YocCyDMVFCT95HkuGcye1OXeVSq+Z5taqE3hppSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=pLhoMbso; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56TK73fd016216
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:40:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nQGazUCFnz3W6AC4AtQi0R1LPe8Tk7TrQs4pGUNhc7A=; b=pLhoMbsoPVixRGYP
-	8Wa8bAGjawrMAcfh6cS/s2ykrjgZcXj+Pq2hclywNWd+ZEgQ0xHWIiiVsCNVS9Vg
-	Q8dZ0FzCrDbrnKuju2BLNMAUP5BQ4nOntq2EgEuePwSGgymJadSCxSXVhNuYhHHo
-	04EfL2W7Xf8uAEd/G8D49tLF0Z6t02N46AqlyJWpt3jES+PaZSmFvt+ZFIpuGpMo
-	NyseJGlXraM70KobOgp6DpY/5SusLNjK305f26RtlpN47nlFnvQ6ZNG2QnGnj22Z
-	zdRu+nSx4Tw8F6vBAtPeUG3j38m8TAm8/+HeY7wQD1ZTUl5bIkB4y76PlzHMtOPY
-	CIHp9g==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 486v6y1xxh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:40:31 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b31f112c90aso226626a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 14:40:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753825230; x=1754430030;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nQGazUCFnz3W6AC4AtQi0R1LPe8Tk7TrQs4pGUNhc7A=;
-        b=gMbr1m5igDv9dIze1nscnF+NSFTD0n5+hPtpCvAxwSYelKAbaRuZrQqdaku2T0oryP
-         C4Lf/cakcja54L1oWCMQko/E/nIkf70P6TusW7VAclYJtRXKMJU6eyXEADBMgZ4YILAe
-         lHGRwwQIet9AWGk1YBAofR9zsDJOUua8ef8Fk4ha4CgUFSm1udBONs9n5tWMW45O/p7d
-         nUe/SieDOBHBYoZfFHQ9ts9fwfk6XZIwAAcZVFpnnlT5EqgaWXj0fgPl4iS/mdWfdXYG
-         5bnB3kNZagChxIQA47WFSqIX2c1oox68EI4DB6BoAti2lUz4e5BDeGvL0t2zlL7rdWFM
-         jw4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVB1KZUMcIns9p4odsGDwWtQ5MAfZt4J3X6JhTQ5/QvQzx8ZttQIykmjmIrKBcaJ8fmcoXMUgSCXkOSJf4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzyxpHelTU3nmyZ9s58Yg9Dzn/8zVRikM8FbtWmqGe9cj3dscul
-	8L1AECyMco4jn7XlqI5pIC2e+Xid0u3KKozeNY6PnjYvrsUdx8NL8JycxIVOdxsKM65Qnwvn20C
-	HaKHGoY5Lz3cZ01Tn6eknFLUzHaVuRubjf2Gs2e/AZl//TYhjGoV00tpZz6zKYNCGJe4=
-X-Gm-Gg: ASbGnct843LJ2Xw4Fp5cZo9nGLVMr9BITx01IlbvtwLcuYB7R3ZX9mO3qcth+c9SXTQ
-	37MEBkfeRIMrjXvf8SkC/+l8kjn7+B+J8VSkwqtJi0pDj0Soijm62cmmM3JofIOGaAHtUfbbLf+
-	VvBdjT4h6bFuilv/8xnwwbLaOJXSbIEfHMDQuvanAKwCOX3tXNjjy9Cbx51/k6fGs8zxEBcM1Zu
-	uUL9JJ4H+0HYEb86wCpJDL2FKAhNWyFsZrs2ouXVHZfGI3/J0F9VT7imv5FmOOGFAtZBls56BLw
-	Djz3grEdIVRK4TEMtMrowHuuvLP2ZOLjgVaZZHW4xCBCGmOS9ZgQB2WXpvv8kDmF
-X-Received: by 2002:a05:6a21:3e04:b0:220:1843:3b7b with SMTP id adf61e73a8af0-23dc37f92d3mr324705637.4.1753825230234;
-        Tue, 29 Jul 2025 14:40:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFWVlgY3u4zexg+eEceCSWMsg/EHdyVJS0PVYhJEmiMBniSzidqzlG0GWYEezlewSXjjY5DuQ==
-X-Received: by 2002:a05:6a21:3e04:b0:220:1843:3b7b with SMTP id adf61e73a8af0-23dc37f92d3mr324667637.4.1753825229723;
-        Tue, 29 Jul 2025 14:40:29 -0700 (PDT)
-Received: from [192.168.1.6] ([106.222.231.177])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b420df76dd8sm2262382a12.19.2025.07.29.14.40.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 14:40:29 -0700 (PDT)
-Message-ID: <bd6076a5-f888-4044-8a5d-ea6e6fea28e8@oss.qualcomm.com>
-Date: Wed, 30 Jul 2025 03:10:23 +0530
+	s=arc-20240116; t=1753825409; c=relaxed/simple;
+	bh=CL/fsgsK6+/fEWHFkGUXEJnhZNeeGFFAmoLaV1R2ifQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=AAjKhMBv8QTGPb5ZwD++Gs1LOikPU73lNfxLGKcbI1dVObhy5UAw1VguHvDnKPr0xQskL9ynRAUt0bC8diSbaWrJ827eam1KZ1YBK+G53m9hv7lugbRWWbT52qJj6VEMtDpgFk1uYGuhSV90GQJC40WBsDLigQwWa0KrmB4tZEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay06.hostedemail.com (Postfix) with ESMTP id 60888113184;
+	Tue, 29 Jul 2025 21:43:19 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 9AEB820011;
+	Tue, 29 Jul 2025 21:43:17 +0000 (UTC)
+Date: Tue, 29 Jul 2025 17:43:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Gabriele Monaco
+ <gmonaco@redhat.com>, Nam Cao <namcao@linutronix.de>, John Kacur
+ <jkacur@redhat.com>, Tomas Glozar <tglozar@redhat.com>
+Subject: [GIT PULL] runtime verification: Updates for 6.17
+Message-ID: <20250729174332.3acd1a86@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/17] drm/msm/adreno: Add fenced regwrite support
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
- <20250720-ifpc-support-v1-7-9347aa5bcbd6@oss.qualcomm.com>
- <tyjkwrdmsj7k7tkqqxdd65l5v5jxugr5me3ivg5onn3hbffkwp@7uhsbzolqiyd>
- <30442713-2990-490a-b076-93c3cfc3901d@oss.qualcomm.com>
- <d696e7df-7f11-4491-89ff-ba71274ae101@oss.qualcomm.com>
- <1d320aac-e928-4fd0-812c-268a3a943575@oss.qualcomm.com>
- <3f58451a-9b5f-4697-9679-d549104e8312@oss.qualcomm.com>
- <9e48ea8e-b59b-4620-9781-211cc1f7cc07@oss.qualcomm.com>
-From: Akhil P Oommen <akhilpo@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <9e48ea8e-b59b-4620-9781-211cc1f7cc07@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDE2NyBTYWx0ZWRfXymOv0YS0VjCJ
- o6pm4+icktC/z/ybYIUtlP4w06pQ9JvGn3gC05cQ7AlsaNS7RzXdHbeWPnCJh2SzdkVAHjDksvk
- 0v1AGaM9OGs3/PAC+abBsyzkHHXILqv28PecrkgAvank3OdwEqWzWEAu/WbJXP8kN4fHJ3r6BXP
- xJpvz3gt1yMLOstwayquXJR2yqo8h/SyUD/F285cn6bSlFHhkIlFPbMXlBLSER0F9cBsTajaybQ
- 0U/NCW8Qvk+E1AX7/7e1KK1QTJ+ygy46Fg8l7Sxgam9wVhSI3jOmN/JqLD3VzdaRjuecCcrYiEv
- sGzubqWMSlEWQEmLIv1ucnEzrlC5NiUFB/qppfBfFDypie3SSRdbPkFfLuXwyCU7zsAq7DNuQf9
- s699k2ApClp4Z+P513VxtpDZ31vWzH3tsnYFM5sWsq4GfGVMTaTRyozbWmSZcr69iRbGFtrL
-X-Proofpoint-GUID: 6jOhaHWFZz-1bYQoEZPBvvLRXo-FTi0e
-X-Proofpoint-ORIG-GUID: 6jOhaHWFZz-1bYQoEZPBvvLRXo-FTi0e
-X-Authority-Analysis: v=2.4 cv=QYlmvtbv c=1 sm=1 tr=0 ts=68893fcf cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=9XpMM9ZEX5jLuhR58p3+Fw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=UL6EBj8_IJHJ2Owmy10A:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-29_04,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 phishscore=0 clxscore=1015 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 bulkscore=0 impostorscore=0 adultscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507290167
+X-Stat-Signature: u6zchandicifgt5y5krkgse6ddkofrcx
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 9AEB820011
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18ON4qOlSlcpwo//qtLB9Emszes1Vt6NNg=
+X-HE-Tag: 1753825397-580515
+X-HE-Meta: U2FsdGVkX19Y+GSb/KTFPmIrsT2Jab6kYZNzgvtlP+y719In9tB11pfLPQIo8p5rTdzHUGxdMT3mVjXpK3Rx2+kHQM2n1di/xpAE2RbXHyk8e6A46qQfj8Sc9v/3FmzYtBb0seQZ7W5UQtc48/cjVl4fTIKaPM0WQSpo6/YsUaV/MCbMJuBYfPqKJV6sJbjWa7myWgp01gYyMdGKeeL38x1ImQpG6vXfeMK8GsWRhJ2o8hmY6/HuIcHsJVkqX1fCV3C4/vaAlIZKrGOidus7C0UsfpTvsevSzeiwxTpAG7xQQmZTSBerdaEw7WikCPEk8OkC8iuei3pWQQeecQBiNLQhOp2jQL5ihK9BAm7fnfPmKS2TubHMkQ==
 
-On 7/29/2025 6:31 PM, Konrad Dybcio wrote:
-> On 7/24/25 6:54 PM, Akhil P Oommen wrote:
->> On 7/24/2025 5:16 PM, Konrad Dybcio wrote:
->>> On 7/23/25 11:06 PM, Akhil P Oommen wrote:
->>>> On 7/22/2025 8:22 PM, Konrad Dybcio wrote:
->>>>> On 7/22/25 3:39 PM, Dmitry Baryshkov wrote:
->>>>>> On Sun, Jul 20, 2025 at 05:46:08PM +0530, Akhil P Oommen wrote:
->>>>>>> There are some special registers which are accessible even when GX power
->>>>>>> domain is collapsed during an IFPC sleep. Accessing these registers
->>>>>>> wakes up GPU from power collapse and allow programming these registers
->>>>>>> without additional handshake with GMU. This patch adds support for this
->>>>>>> special register write sequence.
->>>>>>>
->>>>>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
->>>>>>> ---
->>>>>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 63 ++++++++++++++++++++++++++++++-
->>>>>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
->>>>>>>  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 20 +++++-----
->>>>>>>  3 files changed, 73 insertions(+), 11 deletions(-)
->>>>>>>
->>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>>>>> index 491fde0083a202bec7c6b3bca88d0e5a717a6560..8c004fc3abd2896d467a9728b34e99e4ed944dc4 100644
->>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
->>>>>>> @@ -16,6 +16,67 @@
->>>>>>>  
->>>>>>>  #define GPU_PAS_ID 13
->>>>>>>  
->>>>>>> +static bool fence_status_check(struct msm_gpu *gpu, u32 offset, u32 value, u32 status, u32 mask)
->>>>>>> +{
->>>>>>> +	/* Success if !writedropped0/1 */
->>>>>>> +	if (!(status & mask))
->>>>>>> +		return true;
->>>>>>> +
->>>>>>> +	udelay(10);
->>>>>>
->>>>>> Why do we need udelay() here? Why can't we use interval setting inside
->>>>>> gmu_poll_timeout()?
->>>>>
->>>>> Similarly here:
->>>>>
->>>>> [...]
->>>>>
->>>>>>> +	if (!gmu_poll_timeout(gmu, REG_A6XX_GMU_AHB_FENCE_STATUS, status,
->>>>>>> +			fence_status_check(gpu, offset, value, status, mask), 0, 1000))
->>>>>>> +		return 0;
->>>>>>> +
->>>>>>> +	dev_err_ratelimited(gmu->dev, "delay in fenced register write (0x%x)\n",
->>>>>>> +			offset);
 
-This print should be after the 2nd polling. Otherwise the delay due to
-this may allow GPU to go back to IFPC.
+Linus,
 
->>>>>>> +
->>>>>>> +	/* Try again for another 1ms before failing */
->>>>>>> +	gpu_write(gpu, offset, value);
->>>>>>> +	if (!gmu_poll_timeout(gmu, REG_A6XX_GMU_AHB_FENCE_STATUS, status,
->>>>>>> +			fence_status_check(gpu, offset, value, status, mask), 0, 1000))
->>>>>>> +		return 0;
->>>>>>> +
->>>>>>> +	dev_err_ratelimited(gmu->dev, "fenced register write (0x%x) fail\n",
->>>>>>> +			offset);
->>>>>
->>>>> We may want to combine the two, so as not to worry the user too much..
->>>>>
->>>>> If it's going to fail, I would assume it's going to fail both checks
->>>>> (unless e.g. the bus is so congested a single write can't go through
->>>>> to a sleepy GPU across 2 miliseconds, but that's another issue)
->>>>
->>>> In case of success, we cannot be sure if the first write went through.
->>>> So we should poll separately.
->>>
->>> You're writing to it 2 (outside fence_status_check) + 2*1000/10 (inside)
->>> == 202 times, it really better go through..
->>
->> For the following sequence:
->> 1. write reg1 <- suppose this is dropped
->> 2. write reg2 <- and this went through
->> 3. Check fence status <- This will show success
-> 
-> What I'm saying is that fence_status_check() does the same write you
-> execute inbetween the polling calls
+Runtime verification changes for 6.17
 
-On a second thought I think it is simpler to just use a single polling
-of 2ms and measure the time taken using ktime to print a warning if it
-took more that 1ms.
+- Added Linear temporal logic monitors for RT application
 
--Akhil.
+  Real-time applications may have design flaws causing them to have
+  unexpected latency. For example, the applications may raise page faults, or
+  may be blocked trying to take a mutex without priority inheritance.
 
-> 
-> Konrad
->>
->>>
->>> If it's just about the write reaching the GPU, you can write it once and
->>> read back the register you've written to, this way you're sure that the
->>> GPU can observe the write
->>
->> This is a very unique hw behavior. We can't do posted write.
->>
->> -Akhil
->>
->>>
->>> Konrad
->>
+  However, while attempting to implement DA monitors for these real-time
+  rules, deterministic automaton is found to be inappropriate as the
+  specification language. The automaton is complicated, hard to understand,
+  and error-prone.
 
+  For these cases, linear temporal logic is found to be more suitable. The
+  LTL is more concise and intuitive.
+
+- Make printk_deferred() public
+
+  The new monitors needed access to printk_deferred(). Make them visible for
+  the entire kernel.
+
+- Add a vpanic() to allow for va_list to be passed to panic.
+
+- Add rtapp container monitor.
+
+  A collection of monitors that check for common problems with real-time
+  applications that cause unexpected latency.
+
+- Add page fault tracepoints to risc-v
+
+  These tracepoints are necessary to for the RV monitor to run on risc-v.
+
+- Fix the behaviour of the rv tool with -s and idle tasks.
+
+- Allow the rv tool to gracefully terminate with SIGTERM
+
+- Adjusts dot2c not to create lines over 100 columns
+
+- Properly order nested monitors in the RV Kconfig file
+
+- Return the registration error in all DA monitor instead of 0
+
+- Update and add new sched collection monitors
+
+  Replace tss and sncid monitors with more complete sts:
+  Not only prove that switches occur in scheduling context and scheduling
+  needs interrupt disabled but also that each call to the scheduler
+  disables interrupts to (optionally) switch.
+
+  New monitor: nrp
+   Preemption requires need resched which is cleared by any switch
+   (includes a non optimal workaround for /nested/ preemptions)
+
+  New monitor: sssw
+   suspension requires setting the task to sleepable and, after the
+   switch occurs, the task requires a wakeup to come back to runnable
+
+  New monitor: opid
+   waking and need-resched operations occur with interrupts and
+   preemption disabled or in IRQ without explicitly disabling preemption
+
+
+Please pull the latest trace-rv-6.17 tree, which can be found at:
+
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace-rv-6.17
+
+Tag SHA1: 70f4131d758600306632a4263c3b3c592a726f22
+Head SHA1: 614384533dfe99293a7ff1bce3d4389adadbb759
+
+
+Gabriele Monaco (14):
+      tools/rv: Do not skip idle in trace
+      tools/rv: Stop gracefully also on SIGTERM
+      tools/dot2c: Fix generated files going over 100 column limit
+      verification/rvgen: Organise Kconfig entries for nested monitors
+      rv: Return init error when registering monitors
+      rv: Add da_handle_start_run_event_ to per-task monitors
+      rv: Remove trailing whitespace from tracepoint string
+      rv: Use strings in da monitors tracepoints
+      rv: Adjust monitor dependencies
+      rv: Retry when da monitor detects race conditions
+      sched: Adapt sched tracepoints for RV task model
+      rv: Replace tss and sncid monitors with more complete sts
+      rv: Add nrp and sssw per-task monitors
+      rv: Add opid per-cpu monitor
+
+Nam Cao (34):
+      rv: Add #undef TRACE_INCLUDE_FILE
+      printk: Make vprintk_deferred() public
+      panic: Add vpanic()
+      rv: Let the reactors take care of buffers
+      rv: rename CONFIG_DA_MON_EVENTS to CONFIG_RV_MON_EVENTS
+      rv: Add support for LTL monitors
+      rv: Add rtapp container monitor
+      riscv: mm: Add page fault trace points
+      rv: Add rtapp_pagefault monitor
+      rv: Add rtapp_sleep monitor
+      rv: Add documentation for rtapp monitor
+      rv: Allow to configure the number of per-task monitor
+      objtool: Add vpanic() to the noreturn list
+      panic: Fix up description of vpanic()
+      rv/ltl: Do not execute the Buchi automaton twice on start condition
+      verification/dot2k: Make a separate dot2k_templates/Kconfig_container
+      verification/dot2k: Remove __buff_to_string()
+      verification/dot2k: Replace is_container() hack with subparsers
+      verification/dot2k: Prepare the frontend for LTL inclusion
+      Documentation/rv: Prepare monitor synthesis document for LTL inclusion
+      verification/rvgen: Restructure the templates files
+      verification/rvgen: Restructure the classes to prepare for LTL inclusion
+      verification/rvgen: Add support for linear temporal logic
+      Documentation/rv: Add documentation for linear temporal logic monitors
+      verification/rvgen: Support the 'next' operator
+      verification/rvgen: Generate each variable definition only once
+      verification/rvgen: Do not generate unused variables
+      rv: Remove unused field in struct rv_monitor_def
+      rv: Merge struct rv_monitor_def into struct rv_monitor
+      rv: Merge struct rv_reactor_def into struct rv_reactor
+      rv: Remove rv_reactor's reference counter
+      rv: Remove struct rv_monitor::reacting
+      rv: Fix wrong type cast in monitors_show()
+      rv: Fix wrong type cast in reactors_show() and monitor_reactor_show()
+
+----
+ Documentation/trace/rv/da_monitor_synthesis.rst    | 147 ------
+ Documentation/trace/rv/index.rst                   |   4 +-
+ Documentation/trace/rv/linear_temporal_logic.rst   | 134 +++++
+ Documentation/trace/rv/monitor_rtapp.rst           | 133 +++++
+ Documentation/trace/rv/monitor_sched.rst           | 307 +++++++++--
+ Documentation/trace/rv/monitor_synthesis.rst       | 271 ++++++++++
+ arch/riscv/mm/fault.c                              |   8 +
+ include/linux/panic.h                              |   3 +
+ include/linux/printk.h                             |   7 +
+ include/linux/rv.h                                 |  86 +++-
+ include/linux/sched.h                              |  15 +-
+ include/rv/da_monitor.h                            | 172 +++----
+ include/rv/ltl_monitor.h                           | 186 +++++++
+ include/trace/events/sched.h                       |  12 +-
+ kernel/fork.c                                      |   5 +-
+ kernel/panic.c                                     |  18 +-
+ kernel/printk/internal.h                           |   1 -
+ kernel/sched/core.c                                |  13 +-
+ kernel/trace/rv/Kconfig                            |  43 +-
+ kernel/trace/rv/Makefile                           |   9 +-
+ kernel/trace/rv/monitors/{tss => nrp}/Kconfig      |  12 +-
+ kernel/trace/rv/monitors/nrp/nrp.c                 | 138 +++++
+ kernel/trace/rv/monitors/nrp/nrp.h                 |  75 +++
+ kernel/trace/rv/monitors/nrp/nrp_trace.h           |  15 +
+ kernel/trace/rv/monitors/opid/Kconfig              |  19 +
+ kernel/trace/rv/monitors/opid/opid.c               | 168 ++++++
+ kernel/trace/rv/monitors/opid/opid.h               | 104 ++++
+ .../{sncid/sncid_trace.h => opid/opid_trace.h}     |   8 +-
+ kernel/trace/rv/monitors/pagefault/Kconfig         |  20 +
+ kernel/trace/rv/monitors/pagefault/pagefault.c     |  88 ++++
+ kernel/trace/rv/monitors/pagefault/pagefault.h     |  64 +++
+ .../trace/rv/monitors/pagefault/pagefault_trace.h  |  14 +
+ kernel/trace/rv/monitors/rtapp/Kconfig             |  11 +
+ kernel/trace/rv/monitors/rtapp/rtapp.c             |  33 ++
+ kernel/trace/rv/monitors/rtapp/rtapp.h             |   3 +
+ kernel/trace/rv/monitors/sched/Kconfig             |   1 +
+ kernel/trace/rv/monitors/sched/sched.c             |   3 +-
+ kernel/trace/rv/monitors/sco/sco.c                 |   7 +-
+ kernel/trace/rv/monitors/scpd/Kconfig              |   2 +-
+ kernel/trace/rv/monitors/scpd/scpd.c               |   7 +-
+ kernel/trace/rv/monitors/sleep/Kconfig             |  22 +
+ kernel/trace/rv/monitors/sleep/sleep.c             | 237 +++++++++
+ kernel/trace/rv/monitors/sleep/sleep.h             | 257 ++++++++++
+ kernel/trace/rv/monitors/sleep/sleep_trace.h       |  14 +
+ kernel/trace/rv/monitors/sncid/sncid.c             |  96 ----
+ kernel/trace/rv/monitors/sncid/sncid.h             |  49 --
+ kernel/trace/rv/monitors/snep/Kconfig              |   2 +-
+ kernel/trace/rv/monitors/snep/snep.c               |   7 +-
+ kernel/trace/rv/monitors/snep/snep.h               |  14 +-
+ kernel/trace/rv/monitors/snroc/snroc.c             |   3 +-
+ kernel/trace/rv/monitors/{sncid => sssw}/Kconfig   |  10 +-
+ kernel/trace/rv/monitors/sssw/sssw.c               | 116 +++++
+ kernel/trace/rv/monitors/sssw/sssw.h               | 105 ++++
+ kernel/trace/rv/monitors/sssw/sssw_trace.h         |  15 +
+ kernel/trace/rv/monitors/sts/Kconfig               |  19 +
+ kernel/trace/rv/monitors/sts/sts.c                 | 156 ++++++
+ kernel/trace/rv/monitors/sts/sts.h                 | 117 +++++
+ .../monitors/{tss/tss_trace.h => sts/sts_trace.h}  |   8 +-
+ kernel/trace/rv/monitors/tss/tss.c                 |  91 ----
+ kernel/trace/rv/monitors/tss/tss.h                 |  47 --
+ kernel/trace/rv/monitors/wip/Kconfig               |   2 +-
+ kernel/trace/rv/monitors/wip/wip.c                 |   3 +-
+ kernel/trace/rv/monitors/wwnr/wwnr.c               |   3 +-
+ kernel/trace/rv/reactor_panic.c                    |   8 +-
+ kernel/trace/rv/reactor_printk.c                   |   8 +-
+ kernel/trace/rv/rv.c                               | 220 ++++----
+ kernel/trace/rv/rv.h                               |  39 +-
+ kernel/trace/rv/rv_reactors.c                      | 138 ++---
+ kernel/trace/rv/rv_trace.h                         | 166 ++++--
+ tools/objtool/noreturns.h                          |   1 +
+ tools/verification/dot2/Makefile                   |  26 -
+ tools/verification/dot2/dot2k                      |  53 --
+ tools/verification/models/rtapp/pagefault.ltl      |   1 +
+ tools/verification/models/rtapp/sleep.ltl          |  22 +
+ tools/verification/models/sched/nrp.dot            |  29 ++
+ tools/verification/models/sched/opid.dot           |  35 ++
+ tools/verification/models/sched/sncid.dot          |  18 -
+ tools/verification/models/sched/sssw.dot           |  30 ++
+ tools/verification/models/sched/sts.dot            |  38 ++
+ tools/verification/models/sched/tss.dot            |  18 -
+ tools/verification/rv/src/in_kernel.c              |   4 +-
+ tools/verification/rv/src/rv.c                     |   1 +
+ tools/verification/rvgen/.gitignore                |   3 +
+ tools/verification/rvgen/Makefile                  |  27 +
+ tools/verification/rvgen/__main__.py               |  67 +++
+ tools/verification/{dot2 => rvgen}/dot2c           |   2 +-
+ .../verification/{dot2 => rvgen/rvgen}/automata.py |   0
+ tools/verification/rvgen/rvgen/container.py        |  32 ++
+ tools/verification/{dot2 => rvgen/rvgen}/dot2c.py  |  22 +-
+ tools/verification/rvgen/rvgen/dot2k.py            | 129 +++++
+ .../{dot2/dot2k.py => rvgen/rvgen/generator.py}    | 265 +++-------
+ tools/verification/rvgen/rvgen/ltl2ba.py           | 566 +++++++++++++++++++++
+ tools/verification/rvgen/rvgen/ltl2k.py            | 271 ++++++++++
+ .../rvgen/templates}/Kconfig                       |   0
+ .../rvgen/rvgen/templates/container/Kconfig        |   5 +
+ .../rvgen/templates/container/main.c}              |   3 +-
+ .../rvgen/templates/container/main.h}              |   0
+ .../rvgen/templates/dot2k}/main.c                  |   3 +-
+ .../rvgen/templates/dot2k}/trace.h                 |   0
+ .../rvgen/rvgen/templates/ltl2k/main.c             | 102 ++++
+ .../rvgen/rvgen/templates/ltl2k/trace.h            |  14 +
+ 101 files changed, 4860 insertions(+), 1265 deletions(-)
+ delete mode 100644 Documentation/trace/rv/da_monitor_synthesis.rst
+ create mode 100644 Documentation/trace/rv/linear_temporal_logic.rst
+ create mode 100644 Documentation/trace/rv/monitor_rtapp.rst
+ create mode 100644 Documentation/trace/rv/monitor_synthesis.rst
+ create mode 100644 include/rv/ltl_monitor.h
+ rename kernel/trace/rv/monitors/{tss => nrp}/Kconfig (51%)
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.c
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp.h
+ create mode 100644 kernel/trace/rv/monitors/nrp/nrp_trace.h
+ create mode 100644 kernel/trace/rv/monitors/opid/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.c
+ create mode 100644 kernel/trace/rv/monitors/opid/opid.h
+ rename kernel/trace/rv/monitors/{sncid/sncid_trace.h => opid/opid_trace.h} (66%)
+ create mode 100644 kernel/trace/rv/monitors/pagefault/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault.c
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault.h
+ create mode 100644 kernel/trace/rv/monitors/pagefault/pagefault_trace.h
+ create mode 100644 kernel/trace/rv/monitors/rtapp/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/rtapp/rtapp.c
+ create mode 100644 kernel/trace/rv/monitors/rtapp/rtapp.h
+ create mode 100644 kernel/trace/rv/monitors/sleep/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep.c
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep.h
+ create mode 100644 kernel/trace/rv/monitors/sleep/sleep_trace.h
+ delete mode 100644 kernel/trace/rv/monitors/sncid/sncid.c
+ delete mode 100644 kernel/trace/rv/monitors/sncid/sncid.h
+ rename kernel/trace/rv/monitors/{sncid => sssw}/Kconfig (58%)
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.c
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw.h
+ create mode 100644 kernel/trace/rv/monitors/sssw/sssw_trace.h
+ create mode 100644 kernel/trace/rv/monitors/sts/Kconfig
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.c
+ create mode 100644 kernel/trace/rv/monitors/sts/sts.h
+ rename kernel/trace/rv/monitors/{tss/tss_trace.h => sts/sts_trace.h} (67%)
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.c
+ delete mode 100644 kernel/trace/rv/monitors/tss/tss.h
+ delete mode 100644 tools/verification/dot2/Makefile
+ delete mode 100644 tools/verification/dot2/dot2k
+ create mode 100644 tools/verification/models/rtapp/pagefault.ltl
+ create mode 100644 tools/verification/models/rtapp/sleep.ltl
+ create mode 100644 tools/verification/models/sched/nrp.dot
+ create mode 100644 tools/verification/models/sched/opid.dot
+ delete mode 100644 tools/verification/models/sched/sncid.dot
+ create mode 100644 tools/verification/models/sched/sssw.dot
+ create mode 100644 tools/verification/models/sched/sts.dot
+ delete mode 100644 tools/verification/models/sched/tss.dot
+ create mode 100644 tools/verification/rvgen/.gitignore
+ create mode 100644 tools/verification/rvgen/Makefile
+ create mode 100644 tools/verification/rvgen/__main__.py
+ rename tools/verification/{dot2 => rvgen}/dot2c (97%)
+ rename tools/verification/{dot2 => rvgen/rvgen}/automata.py (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/container.py
+ rename tools/verification/{dot2 => rvgen/rvgen}/dot2c.py (92%)
+ create mode 100644 tools/verification/rvgen/rvgen/dot2k.py
+ rename tools/verification/{dot2/dot2k.py => rvgen/rvgen/generator.py} (51%)
+ create mode 100644 tools/verification/rvgen/rvgen/ltl2ba.py
+ create mode 100644 tools/verification/rvgen/rvgen/ltl2k.py
+ rename tools/verification/{dot2/dot2k_templates => rvgen/rvgen/templates}/Kconfig (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/templates/container/Kconfig
+ rename tools/verification/{dot2/dot2k_templates/main_container.c => rvgen/rvgen/templates/container/main.c} (92%)
+ rename tools/verification/{dot2/dot2k_templates/main_container.h => rvgen/rvgen/templates/container/main.h} (100%)
+ rename tools/verification/{dot2/dot2k_templates => rvgen/rvgen/templates/dot2k}/main.c (96%)
+ rename tools/verification/{dot2/dot2k_templates => rvgen/rvgen/templates/dot2k}/trace.h (100%)
+ create mode 100644 tools/verification/rvgen/rvgen/templates/ltl2k/main.c
+ create mode 100644 tools/verification/rvgen/rvgen/templates/ltl2k/trace.h
+---------------------------
 
