@@ -1,93 +1,149 @@
-Return-Path: <linux-kernel+bounces-749052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11319B1495F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:49:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EE06B14963
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:50:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F5017EE78
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:49:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ED4754617D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD8425D535;
-	Tue, 29 Jul 2025 07:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EF2326AAB7;
+	Tue, 29 Jul 2025 07:50:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="4ynd7AoZ"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+/SCYTC"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9F82676E9;
-	Tue, 29 Jul 2025 07:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40076246BDE;
+	Tue, 29 Jul 2025 07:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753775374; cv=none; b=PLs5G8vXOjvg8B7IaKmAVQg3nlmvgKrpKPdS9/v3Zj4BMPCIengplSt0ZX3DIfh+OcbU8sGCOL9MwMggdgxcsi9qqZORGarYTHrgYdWl8jrIoq4Us4wG9eCQw7NC43tAYWRMBXim3CmpXUFE9I/eBbaTL+kcMJ1E+lqS39PWiDQ=
+	t=1753775426; cv=none; b=rEENDb+L6dbW2PROfJy9+4e4CSvLs45RLREf9sEDR9jifK9O2BaAs+hHk3P8HNEj3s64dxTLplfF32DkPrdnYw85k/dzQYhbC60Vx1dxvlrLSnFJ7x2itJ9/u4nYhpYqJuzDULpv/niJpPKQpjbdXqdSUtsL0LBTHMfrKfHjWa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753775374; c=relaxed/simple;
-	bh=8MopCd+/1CVSX7O9y88Cy1c3eogeYBhKqoqibKK0H6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yskwh7d2lgYFotFdw6jnOVO3RVLseLsfzQMS/kIbkUgMY0ffCX27awl5yB9FTOPawots3EvcAQZ9HNuCArkpi26HHtFG85s2Poip0OXu6KwU/RDrXazD09aaVu9jkA8+7AyU/c8s1lXhkC6F4ecLzc70iE55Gp60fXFHayazjbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=4ynd7AoZ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=64I4+SRz8Jb242tJ39NgDchbi8xfo9+9jvViHgrhKzo=; b=4ynd7AoZtY+/opRC/c2n7tkFdn
-	x8aqXftqXV6cwXql0bIFJKTMVYgtL0AnTdsoAeELy5Jd7Gtm+FnSqsiPHLpNVcGOyLoT3C/Fh+4bC
-	Cq9BBzn8Pfs+NI5xBxIqApgjT93BKpiGqSseLCKqlLKGBAPiyVuL5Sf7TkXbidmWxyFLELEZE2FmU
-	SMZNpt8TYlgD7SynMQnRICjrEEn+K7xifuCJwe5Ixs5H0NkzQfnYaJ9b0u/AgDnVB2+LIzSFvG6wN
-	mK4sI8qPvnFnjSbYEvK1drgYKAKqo86Ty1T2+CS6UUvmrQFKT4jIfCWk6kU1l3NW5WHtQ1xpIdHIZ
-	b4XaDFew==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1ugf5V-0000000GAWk-3BjG;
-	Tue, 29 Jul 2025 07:49:29 +0000
-Date: Tue, 29 Jul 2025 00:49:29 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Hugh Dickins <hughd@google.com>, Christian Brauner <brauner@kernel.org>,
-	Klara Modin <klarasmodin@gmail.com>, Arnd Bergmann <arnd@arndb.de>,
-	Anuj Gupta <anuj20.g@samsung.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 11/14 for v6.17] vfs integrity
-Message-ID: <aIh9CSzK6Dl1mAfb@infradead.org>
-References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
- <20250725-vfs-integrity-d16cb92bb424@brauner>
- <0f40571c-11a2-50f0-1eba-78ab9d52e455@google.com>
- <CAHk-=wg2-ShOw7JO2XJ6_SKg5Q0AWYBtxkVzq6oPnodhF9w4=A@mail.gmail.com>
+	s=arc-20240116; t=1753775426; c=relaxed/simple;
+	bh=CQl8LE8k+1s7Eg5bM1UKtsJ+iIs1rvwCqfLfLIPptGc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CuI6O792cjfc53t3yPoknXNQe7HmjjWJApzUrO3Pt6Int5udqegJibLKYwKIENFYWmQoapOSqOh6+tjRQdXG3rcYCmqYb+pBLgFrF9V6+nSAdVqL6SuetyWwUvR52FkFcCIVEphmrMlfrMxspBzpvvgryR32Kmi3kl7hBIlQMKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+/SCYTC; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ae0d758c3a2so869157266b.2;
+        Tue, 29 Jul 2025 00:50:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753775422; x=1754380222; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J2nY/YyGeNEbnKCTGYkjHDIFCHZRSI0DGKQEZxmy2WM=;
+        b=g+/SCYTCzYibO+ASrc1vclArICbe/r2xpLsjG0KrCUaImuH3YzqDuRGjD1jxT2YEFT
+         +zbkr5Hhfevf6HMHj3wT0ZX1bKceg50la4MluYCkBcDbXVmt4+mGvhLzr2IWXEXV3iF3
+         Ina+TaLVQrXE2pITTZG2cQzORGaCO+BGHcOXR7NposKJrtzV5n0P/R5+I5X1/ttl1YKC
+         9OPI6/AGXcyoOj12sYMx8tP01rbcQ2csyBQvBV8sRjYd6t15kX3XxB33jS0FSXl+wcgz
+         esYWsvGdzCWKz7seUdGJ9pOa60cyWDwhzjp5ED9aO3j2ATpFjAnvo3GZfboU4gy+0HNK
+         dnCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753775422; x=1754380222;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J2nY/YyGeNEbnKCTGYkjHDIFCHZRSI0DGKQEZxmy2WM=;
+        b=LjwlJxB7UMc7Mqa/P1599V/VV53muVFPRhl+KNFtbOX6vhstt9qGAfbcKSsXObczzl
+         Xul2iZ0AoVzcr1cisK+zdmoqYEvxsfcfypdy1H4/XbOi1oJ32ttNBtA486FgZsd7h1SD
+         SksKaWRJTCanGJWi+vTlaFFpk9uXXcMmZURHCzcRcw8eHSvL1PZtNEKAWQqi06mIFfdr
+         0fU0v06muTmiJztlyKsIs0hSBzzoGFp2xqzYVsSXWae7YyCmydEDmFcHP6o/bhWwLyUn
+         ILzpmYk20RyzsjOwv4Oi/TOtyk+B9VuOuaCqt9D6N4IkvV8L1Ngf7WlcyavUGjkL/JGv
+         QliA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEk9KcuFrw9WUi0O/8QvP85Mkn/2hHdfg9Ot3c55jZIOdVZ27HanYEUk9kBeIUMHDSyAfxkOb1m7sf@vger.kernel.org, AJvYcCUZjjovyUUq1nCVcFYhir77FlC1rwYtEwI/lt56rW2wcQHMA6OKBsIewsX5ynzWeMeQkAMuzNedA3zJCyra@vger.kernel.org, AJvYcCVI+3yEi0QYkHauFvKoU76KqMvSzbaLeuTvQg9++hY2xP4gjBhQhN+exCPSoFwqMNmekOO2plIil2PK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGFmSSLJW5+M0UjpOftqcEbto/sCOr4UamgdV5tGgXxIbLkdPE
+	Pg8MMuKO/rwHQzVGmPYwYBbEC4KdDB1vX4/p3gqJVbjABcnQM3N/K361wcp6Xt2n5q6GEUx0aFJ
+	LxVXpl0iEVkkeV2fHw4oulQYD1Oh/oysG42YDDDyeOw==
+X-Gm-Gg: ASbGncs8SN4UGj6SXBLmFCFTqfK3/cKwQ+8/K4FDVfoPPfYCCOj/UVEx33rZhfE3SmQ
+	w8ACtI6MLKC5jZF3xSnSCdDQd1jVtirgWT9+79FZjlfczxhaZ+pHu3AN+NoWTGFC15b4GbjBYAm
+	h9CGQto4lc4q5n1XLqPBBpcmbszLov1AIFxDcaZNaGEzNIwfLB30LsxiOe6MHPN9wMwS0Jkbj82
+	48LUYgwqSSkmwAfrLzE
+X-Google-Smtp-Source: AGHT+IHVPk71QMTo4e6QHVVCfKybd5aV+PwQ9jyHs2FMw1sQjYgz58n+0UzqcRBuq9NtNO+Nzy6lskNswg4vO625AqU=
+X-Received: by 2002:a17:907:7245:b0:ae3:6d27:5246 with SMTP id
+ a640c23a62f3a-af619c0d676mr1677656766b.48.1753775422338; Tue, 29 Jul 2025
+ 00:50:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wg2-ShOw7JO2XJ6_SKg5Q0AWYBtxkVzq6oPnodhF9w4=A@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20250726-tlv493d-sensor-v6_16-rc5-v1-0-deac027e6f32@gmail.com>
+ <20250726-tlv493d-sensor-v6_16-rc5-v1-1-deac027e6f32@gmail.com>
+ <141967ee-22f4-4b15-a8da-e8cef25828b4@baylibre.com> <aIg_SClXq0pO69iH@dixit>
+In-Reply-To: <aIg_SClXq0pO69iH@dixit>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 29 Jul 2025 09:49:45 +0200
+X-Gm-Features: Ac12FXxSD3PkDtLt2p5OvZu4apDEYIKrXmJ20tEHXkOFCwp6KsHRgzKY6jCUGE8
+Message-ID: <CAHp75Vf8nj7xg5xadCTXQhaXzaCL0y5T5qsUHK_dcoQ3hozDXw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] iio: magnetometer: add support for Infineon TLV493D
+ 3D Magentic sensor
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 28, 2025 at 03:21:21PM -0700, Linus Torvalds wrote:
-> Bah. I *hate* this "call blk_get_meta_cap() first" approach. There is
-> absolutely *NO* way it is valid for that strange specialized ioctl to
-> override any proper traditional ioctl numbers, so calling that code
-> first and relying on magic error numbers is simply not acceptable.
-> 
-> I'm going to fix this in my merge by just putting the call to
-> blk_get_meta_cap() inside the "default:" case for *after* the other
-> ioctl numbers have been checked.
-> 
-> Please don't introduce new "magic error number" logic in the ioctl
-> path. The fact that the traditional case of "I don't support this" is
-> ENOTTY should damn well tell everybody that we have about SIX DECADES
-> of problems in this area. Don't repeat that mistake.
-> 
-> And don't let new random unimportant ioctls *EVER* override the normal
-> default ones.
+On Tue, Jul 29, 2025 at 5:26=E2=80=AFAM Dixit Parmar <dixitparmar19@gmail.c=
+om> wrote:
+> On Sat, Jul 26, 2025 at 03:44:03PM -0500, David Lechner wrote:
+> > On 7/26/25 4:37 AM, Dixit Parmar wrote:
 
-I don't think overrides are intentional here.  The problem is that
-Christian asked for the flexible size growing decoding here, which
-makes it impossible to use the simple and proven ioctl dispatch by
-just using another case statement in the switch.
+...
 
+> > >   config SI7210
+> > >       To compile this driver as a module, choose M here: the module
+> > >       will be called si7210.
+> > >
+> > > +config TLV493D
+> > > +   tristate "Infineon TLV493D Low-Power 3D Magnetic Sensor"
+> > > +   depends on I2C
+> > > +   select REGMAP_I2C
+> > > +   select IIO_BUFFER
+> > > +   select IIO_TRIGGERED_BUFFER
+> > > +   help
+> > > +     Say Y here to add support for the Infineon TLV493D-A1B6 Low-
+> > > +     Power 3D Megnetic Sensor.
+> > > +
+> > > +     This driver can also be compiled as a module.
+> > > +     To compile this driver as a module, choose M here: the module
+> > > +     will be called tlv493d.
+> > > +
+> > >  config TI_TMAG5273
+> > >     tristate "TI TMAG5273 Low-Power Linear 3D Hall-Effect Sensor"
+> > >     depends on I2C
+
+...
+
+> > > @@ -35,4 +35,6 @@ obj-$(CONFIG_SI7210)                      +=3D si72=
+10.o
+> > >
+> > >  obj-$(CONFIG_TI_TMAG5273)          +=3D tmag5273.o
+> > >
+> > > +obj-$(CONFIG_TLV493D)      +=3D tlv493d.o
+> >
+> > We try to keep these in alphabetical order.
+> >
+> Ofcourse, I considered TI_TMAG5273 as whole. Will move it above that.
+
+David, Jonathan, I remember I have asked Jonathan once already about
+these cases and unfortunately I forgot what was the conclusion about
+this. The filename has no vendor prefix, and  I think we prefer the
+order done by filename.
+
+> > >  obj-$(CONFIG_YAMAHA_YAS530)                +=3D yamaha-yas530.o
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
