@@ -1,129 +1,84 @@
-Return-Path: <linux-kernel+bounces-749034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E7DB14925
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:31:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D688B14929
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41201189D526
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0982B5447BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2463235046;
-	Tue, 29 Jul 2025 07:30:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66422248BF;
+	Tue, 29 Jul 2025 07:32:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hn+DvuJy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rwCNUScz"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D7A2248BF;
-	Tue, 29 Jul 2025 07:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1642C18A;
+	Tue, 29 Jul 2025 07:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753774245; cv=none; b=dLCxBopneP8a9m34g/CIFLurIv479Mp2cLY2aBa1Qhkrg3yGBnSBBFFphRxc6RmBCxXspDUc7HTCKWzGuPfEY17woxHsdpItB4v2+90SYIykGnO+RcfIj8UnY9ZnNAUzSc7w6YHctL5ZlPmfpnDEJO1gEBWcbvoa8FAPRHdw9JU=
+	t=1753774325; cv=none; b=ssC25Aj2rePFfUz00BjaBWaOmjALCMFpHVnmT3F+qUJ7+YaiPZlAO4/hh6CmC3UE9+OXWLU1ulnSWzxGqaj+6bMivQN+XvlZqYEoGOgMSVdswVOq6VhVDNm/iQaUc1PMa0q3QTnBsF0FxjbQ3RWIQ9z59fGbIbDogIo+KR6EAyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753774245; c=relaxed/simple;
-	bh=coKTsMLVDBf6r0VF8A4W9McCs0iZm5oFPtW97NBjROg=;
+	s=arc-20240116; t=1753774325; c=relaxed/simple;
+	bh=mXawYNblOKHI8Qe1OGM3cwRbMY2bG+jXMmmwUkywnmo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oyfJugyXsoCCxgWLiQv3oZzbYDNU0CFtAWu27OYqiIs5c+N1kuj6oCCvuJW1/3aw5p3/RGwg0w+hzJUpih0UW34mZt/cExIwB8voMgSp9ABOmwb5VPDErUYtqrNcfUftypKfJda5Vw/6phtR/rODEL7OZJmdTZvxe8xFOPVP+o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hn+DvuJy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F4FEC4CEF5;
-	Tue, 29 Jul 2025 07:30:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753774244;
-	bh=coKTsMLVDBf6r0VF8A4W9McCs0iZm5oFPtW97NBjROg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hn+DvuJy941T5WWhLwdlgRzqUOzSLP9y1hoWzClJzJ5vVihcN4mAJ/fDyXYHjI/EM
-	 ht9c+CGHWAofkr9umRMI3SCH5yrzYfr3SU5OTs1MZLiNkFu3gLShgdDjHKBohYn3X3
-	 1brGoebiG7IwHSs1sCsh0KjiPQ/4q8cTf6bjbvK6gQUiVx1C0zw7tXMKJVyc/FtYCd
-	 bS4XOIOpcq2rVSvaWSYwA13aZnPRnxrKCPwvN2ta1SbuAaDubmbDMtvSogLtT4e+w/
-	 zjaLgc6oMH6pwaCByx64pQrnRVGEBkRh+AcvIR7Q9iHvpu4ZoQUWp+OmtsjYB3MnO5
-	 aT0k8AE/UEYkA==
-Date: Tue, 29 Jul 2025 09:30:42 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Damon Ding <damon.ding@rock-chips.com>
-Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
-	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	jingoohan1@gmail.com, inki.dae@samsung.com, sw0312.kim@samsung.com, 
-	kyungmin.park@samsung.com, krzk@kernel.org, alim.akhtar@samsung.com, hjc@rock-chips.com, 
-	heiko@sntech.de, andy.yan@rock-chips.com, dmitry.baryshkov@oss.qualcomm.com, 
-	l.stach@pengutronix.de, dianders@chromium.org, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 04/14] drm/bridge: analogix_dp: Add
- &analogix_dp_plat_data.bridge
-Message-ID: <20250729-wooden-opalescent-baboon-f24fa2@houat>
-References: <20250724080304.3572457-1-damon.ding@rock-chips.com>
- <20250724080304.3572457-5-damon.ding@rock-chips.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ae6iAaT2wiDZ9Ol/Uu+rNKpJVoy/cUm0jXl/th0FW1cmvKL9BuTV6V+pqfcRKn8Ti/opGkYDeqkH0teVD7N7KpsJJplI96slMPbiMXLEvqQdO9druQIpNNNvi9XrFvU6SzjaMZ4rZopKCTtHcOGfWL80KtNa5qF1ZRtLZGTy9oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rwCNUScz; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=C7K39Q4zkz0EcQTxtEs8Hc0N30C7j7wtFgFSP9Y6lZ8=; b=rwCNUSczo8Voc9WrXJJ7gMvSoM
+	KUFMSnYlokEaYwzMKBTAqnqJsnsUMMrs6bCHoGIxB0T3YXACWhBF5JxV7TneFtaGb73NXkKYMEyrS
+	IRJEQyQVbSrnT+u+oLeGoyEDqpgg+aBenBQr6ubYSPatBBKNZ5CkeoxGtqIqOvh48XA+mCJLX8/r7
+	eURBFAfy2Kx0IYU3/iByRID1WoEC+3xnYdRG0U7CvEItJlxdWH4rfQxYAozkUpAvSXjrL+eUrWQu6
+	4cuj+WUi6AYwYKnSwN8XOhT24BdecOMm5TT4Bk1xuQ9rqNzyoXB3zrgUgjHNDDmqSNHURpDK0cC/C
+	/Z9y1gsQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ugeoW-0000000G7s2-4B6C;
+	Tue, 29 Jul 2025 07:31:57 +0000
+Date: Tue, 29 Jul 2025 00:31:56 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: brauner@kernel.org, anuj20.g@samsung.com, arnd@kernel.org,
+	martin.petersen@oracle.com, joshi.k@samsung.com, hch@infradead.org,
+	arnd@arndb.de, naresh.kamboju@linaro.org, anders.roxell@linaro.org,
+	axboe@kernel.dk, kbusch@kernel.org, csander@purestorage.com,
+	asml.silence@gmail.com, adobriyan@gmail.com, djwong@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: change blk_get_meta_cap() stub return -ENOIOCTLCMD
+Message-ID: <aIh47Ncx5lY1vc9F@infradead.org>
+References: <20250725164334.9606-1-klarasmodin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="oafxeh4vinfkct5o"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724080304.3572457-5-damon.ding@rock-chips.com>
+In-Reply-To: <20250725164334.9606-1-klarasmodin@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Fri, Jul 25, 2025 at 06:43:34PM +0200, Klara Modin wrote:
+> When introduced in commit 9eb22f7fedfc ("fs: add ioctl to query metadata
+> and protection info capabilities") the stub of blk_get_meta_cap() for
+> !BLK_DEV_INTEGRITY always returns -EOPNOTSUPP. The motivation was that
+> while the command was unsupported in that configuration it was still
+> recognized.
+> 
+> A later change instead assumed -ENOIOCTLCMD as is required for unknown
+> ioctl commands per Documentation/driver-api/ioctl.rst. The result being
+> that on !BLK_DEV_INTEGRITY configs, any ioctl which reaches
+> blkdev_common_ioctl() will return -EOPNOTSUPP.
 
---oafxeh4vinfkct5o
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 04/14] drm/bridge: analogix_dp: Add
- &analogix_dp_plat_data.bridge
-MIME-Version: 1.0
+FYI, I still think we should not fail the command for
+!BLK_DEV_INTEGRITY, but just report no capabilities.
 
-Hi,
-
-On Thu, Jul 24, 2025 at 04:02:54PM +0800, Damon Ding wrote:
-> In order to move the parnel/bridge parsing and attachmenet to the
-> Analogix side, add component struct drm_bridge *bridge to platform
-> data struct analogix_dp_plat_data.
->=20
-> The movemenet makes sense because the panel/bridge should logically
-> be positioned behind the Analogix bridge in the display pipeline.
->=20
-> Signed-off-by: Damon Ding <damon.ding@rock-chips.com>
-> ---
->  include/drm/bridge/analogix_dp.h | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/include/drm/bridge/analogix_dp.h b/include/drm/bridge/analog=
-ix_dp.h
-> index cf17646c1310..15cb6b706e9f 100644
-> --- a/include/drm/bridge/analogix_dp.h
-> +++ b/include/drm/bridge/analogix_dp.h
-> @@ -27,6 +27,7 @@ static inline bool is_rockchip(enum analogix_dp_devtype=
- type)
->  struct analogix_dp_plat_data {
->  	enum analogix_dp_devtype dev_type;
->  	struct drm_panel *panel;
-> +	struct drm_bridge *bridge;
->  	struct drm_encoder *encoder;
->  	struct drm_connector *connector;
->  	bool skip_connector;
-
-So it's not the analogix_dp bridge, but the bridge after that if any?
-
-You should probably change it to next_bridge to avoid any confusion.
-
-Maxime
-
---oafxeh4vinfkct5o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaIh4oQAKCRAnX84Zoj2+
-dny6AX4lOggIEb8lQNPrxNej+S0dVv7qskx+vSl0C36fU5HUiF0+6CBKZiz3el7U
-6s5d/OkBfjGyQ7uwq5vKT0ASCi71FHRzNGynDjVQB1ShScAr+kp4qhm/0+swkWfl
-/Qwui0BIPw==
-=5MI3
------END PGP SIGNATURE-----
-
---oafxeh4vinfkct5o--
 
