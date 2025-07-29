@@ -1,85 +1,114 @@
-Return-Path: <linux-kernel+bounces-749679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9739B15172
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:36:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF1BBB15194
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:44:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE6C63B1358
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 462CB179C51
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:44:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E580B298261;
-	Tue, 29 Jul 2025 16:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 191EB2989B3;
+	Tue, 29 Jul 2025 16:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jg3qzVaC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rcXuhf+/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 489F621767A;
-	Tue, 29 Jul 2025 16:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738D52980C4;
+	Tue, 29 Jul 2025 16:44:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753806962; cv=none; b=dx8Qf3Jy9UEmQ9H6372wFndQWKbFmaArWfINVk6/YlAZ6Q5FCT1jhP+MASl/wTHq/OiM2xEPjf13jCgv4n7DiRNv99zXNettekIADgsSuFXYfZfDP2eRlafysTXoVt83pds8AAI8LAaXxK15mQM8hO5ERXF1DmpFhVWcdVSazjo=
+	t=1753807445; cv=none; b=nRuYTahDl6Z22CNfG0watNMKwJ1Ye3Bop5zwd7IrbaGrkdIkPD2aVqdETjyjcFg9ECW59zcuQppt2Y5wF3HwQJ9+TuBVS0tlkdByiw87zXCkqJcaCXlRpGFEcS3wlheqsGCAPpkL7UNqWd3HcgbMYPbiqkAkJGG+90523qumS2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753806962; c=relaxed/simple;
-	bh=O+r4SjkFSBxoj37YP4ikCrlULrTJ/NWAQrOlcqCn/js=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=OD6DSjVVH9eBEG/z8uuQSbuGDzbsi1j+lby9m8Iacy1GxpkE/8KhSxQaQ7x72uB7H+LRMQOUQKW4BEnOeHVR9vRardEGjtD9rZZiDo0tAnc+JYL+Ys7GoqSRWm6PYWwO0HuK577JQSN1xhyyJA5AVru3ZNpfk7NDYFhUutItrzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jg3qzVaC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EFBBC4CEF4;
-	Tue, 29 Jul 2025 16:35:57 +0000 (UTC)
+	s=arc-20240116; t=1753807445; c=relaxed/simple;
+	bh=ZnxXmZRWsS/uKbUuoGgQ3H2tPqexH5/pzA5JKQMi1do=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5aiaVX8/gZB4rm55iWei9/ASOnG+B5ySEdYaW7xHALXTsJGmkzJF1Wu5kd4qaUs0P7rsbm5Yz0yA4OHbQieN8gVaHo0LNP5TtZ7qixQ6AmBQK/RwIh1yLk5Dk3Fn985cE6hbcYgEQOUqQn7ifb/jCIn7tfQSHtLm2XvKDe6vXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rcXuhf+/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C866C4CEFA;
+	Tue, 29 Jul 2025 16:44:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753806961;
-	bh=O+r4SjkFSBxoj37YP4ikCrlULrTJ/NWAQrOlcqCn/js=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=Jg3qzVaCPZV7/wy/lndN1g8gcj4o0GVY3IBFUi1rBEIrcFpFteY4Cj/PYD5FToege
-	 dP3CyHreo/bv2M+JIpc7yPW5ZqSVJlcro5IP77PFcP+ZvglRlmbuABljukBwBE3Pks
-	 vAf+mz0ZNUBmpqdqGT9zxninxpeNA6nAn+XDGZQXIlickluz85OlvuIf7xZdT18hsD
-	 tPyhA1w9lbfx3iSTZuw+bDcbY33J5Enss9mRkaCFGk6u4jQXSUvS2YEQPhsrmKwCpC
-	 IhooDzuN86bJ5gMNHPCSgoGTY4wNy2lfwXjVeCGAxbJcLIVDaVUUu74SbRDjBUcq+u
-	 cninRYZemMl/A==
+	s=k20201202; t=1753807445;
+	bh=ZnxXmZRWsS/uKbUuoGgQ3H2tPqexH5/pzA5JKQMi1do=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rcXuhf+/NiWoXW08oJAjPOuU+1k/I0Cl0ZBKcquoeVsqVRROaUAoEj3RE7C5/awLp
+	 eCXL03ejE0D+ejGPxVn/Hp8op7gm6+JupcoHF3m3az/IGJ6aRRA+sgaMBYJuxqeT1d
+	 acv+0SPGUG8yU21oZr0jUJWSpRJpCG6C3hMN6wpwmuiOrwcpUEuY8qBfcEcirQqmcv
+	 wL/dlKGphKTz0+VYaF4zGTR0L7PYZQB22zhjhG2A9S51cvckKqyBpEhlfe7Fqdvbe+
+	 CktV6Z6eEUYo/ILdOn2sqgGZqcRNwCUWab1Ns2Wbp9lK9JU4Q3x/YrMVBNFpA7Kv4H
+	 opSoify/sAk8g==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.2)
+	(envelope-from <mchehab@kernel.org>)
+	id 1ugnQo-00000000Lit-1U7e;
+	Tue, 29 Jul 2025 18:44:02 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Akira Yokosawa <akiyks@gmail.com>,
+	workflows@vger.kernel.org
+Subject: [PATCH v2 0/2] Better handle and document Python needs for Kernel build
+Date: Tue, 29 Jul 2025 18:43:02 +0200
+Message-ID: <cover.1753806485.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Jul 2025 18:35:54 +0200
-Message-Id: <DBOOOGFNK5YV.1B67YLP2GBD2A@kernel.org>
-Cc: <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <dakr@kernel.org>, <bhelgaas@google.com>, <kwilczynski@kernel.org>,
- <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
- <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>
-Subject: Re: [PATCH v2] rust: pci: Use explicit types in FFI callbacks
-From: "Benno Lossin" <lossin@kernel.org>
-To: "herculoxz" <abhinav.ogl@gmail.com>, <linux-pci@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250729102953.141412-1-abhinav.ogl@gmail.com>
-In-Reply-To: <20250729102953.141412-1-abhinav.ogl@gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab@kernel.org>
 
-On Tue Jul 29, 2025 at 12:29 PM CEST, herculoxz wrote:
-> From: Abhinav Ananthu <abhinav.ogl@gmail.com>
->
-> Update PCI FFI callback signatures to use `c_int` from the prelude,
-> instead of accessing it via `kernel::ffi::c_int`.
->
-> This follows Rust-for-Linux coding guidelines and improves ABI
-> correctness when interfacing with C code.
->
-> Signed-off-by: Abhinav Ananthu <abhinav.ogl@gmail.com>
+Hi Jon,
 
-Reviewed-by: Benno Lossin <lossin@kernel.org>
+It follows the second version of this small series. It contains
+missing patches from the python backward-compatibility series.
+
+I dropped support for 2.7 and did some changes at changes.rst
+per Akira's request.
+
+They're not urgent, IMO it should be OK to have them merged for 6.17.
+
+The first patch ensures that kernel-doc won't crash with version
+3.2 (tested on 3.4, as 3.2 is like an unicorn: docker containers v1
+don't run anymore on Fedora, building is broken since at least
+Fedora 32, Anaconda doesn't have it anymore).
+
+With this change, on elder versions, it would emit a warning and
+do nothing, as the actual code depends on features at 3.6 (f-strings)
+and 3.7 (ordered dict).
+
+The second patch changes process/changes.rst. Currently, it makes
+one  think that Python is optional. While not having python may
+work on some cases, it breaks on arm/arm64 with defconfigs.
+It also breaks with allyesconfig/almodconfig (at least on x86/x86_64),
+with clang (on some archs) and apparently on some other
+subsystems that I didn't care enough to identify, as for me,
+breaking on arm/arm64 with defconfigs, and on x86/x86_64
+with allyesconfig/allmodconfig is enough evidence that this
+is mandatory nowadays.
+
+So, remove optional from Python and add a quick description
+about where it is required, leaving it open to one's imagination
+that it could break with other configs we didn't map.
 
 ---
-Cheers,
-Benno
+v2: drop support for 2.7, updated a comment and updated changes.rst.
 
-> ---
->  rust/kernel/pci.rs | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Mauro Carvalho Chehab (2):
+  docs: kernel-doc: avoid script crash on ancient Python
+  docs: changes: better document Python needs
+
+ Documentation/process/changes.rst |  9 +++++++-
+ scripts/kernel-doc.py             | 34 ++++++++++++++++++++++---------
+ 2 files changed, 32 insertions(+), 11 deletions(-)
+
+-- 
+2.49.0
+
+
 
