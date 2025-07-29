@@ -1,76 +1,44 @@
-Return-Path: <linux-kernel+bounces-748874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76EF4B1470B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:09:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95340B14705
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 557517A2354
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:08:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBB161AA1618
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 04:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B04F226D16;
-	Tue, 29 Jul 2025 04:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Yy9m5/aJ"
-Received: from out162-62-57-137.mail.qq.com (out162-62-57-137.mail.qq.com [162.62.57.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898FC225760;
+	Tue, 29 Jul 2025 04:01:45 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D92B225409;
-	Tue, 29 Jul 2025 04:09:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9973178F5E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753762165; cv=none; b=duYGHqXHeRck+vA0BvQIgZsAiu6vHLJ+iBfdLw9IOrNLaK/UaTTMaK0uUhOPm/oi7RzPMEYD3EDLmduclAN8Rc9ACtJ9pg+bCaJ2JgGTJ+2E7N3kOwTVVUi9AVSO3eXezxniGotThOr+CO64Vmte1S8Mb0yKwxN29sWM4d3XOZI=
+	t=1753761705; cv=none; b=O5BHxCj5cbTEAPUmV00c/IVrP+oLxZE/jod8BZAPDXYmnpuyAloP8ozcLaU4kh/FiAl+CHy2pHXBHp+hZp+8YDXP6TrUCrugjPYvKI1meOmrOn38HJmwQtmtHvOs/wbSGFxTd71C4pEB2UDEDdYj8sEf0GJHf8xrASUYQHSsD/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753762165; c=relaxed/simple;
-	bh=MQcuIRRSI+fhUD5roPsQOCWYo2wjitel6FaYSvPvvhc=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=J26ZjhSGR75W4mtYOxam6m2lSkX1KIiIuX2sNO85j6owlAki687KmCBFs0feAsB02wUpyM53/pKCSi97Z+siF97LWNZt7vWR+BlxeEzHXEyoeABdlIXDptSg1878IV+yaC9qZOwFX4HxYg4em9TtZhhcYY1s4pyxY76k7yEhM7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Yy9m5/aJ; arc=none smtp.client-ip=162.62.57.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1753761856; bh=MN9qYG9A3Q1uisz+RpMCGISS9SNPTgLcZHxwlFMi77s=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Yy9m5/aJNsAp4Mr/Mv+Vqag4vRJ59ArDnBhi/ChnSi7T7LHwLYe8NIaj+A6g+bA2+
-	 6S9CFya84k5nfmkGg1+wChDEXhCAzE8GA5FDGb8hBLvbTdve1M/cwtYh5h74rgo3ii
-	 2PlpUgmgZH1f+I0V8nNMdOojAsoE5+BkPhxPPCjg=
-Received: from pek-lxu-l1.corp.ad.wrs.com ([111.198.231.14])
-	by newxmesmtplogicsvrsza36-0.qq.com (NewEsmtp) with SMTP
-	id E741D8F7; Tue, 29 Jul 2025 11:57:52 +0800
-X-QQ-mid: xmsmtpt1753761472t5cslwxsa
-Message-ID: <tencent_524B841B402545BA78BB4733689E021BA908@qq.com>
-X-QQ-XMAILINFO: NTsk71aSumYvklPohUFvjIQbhvUCrlTo0i46gm/1huLtPI0sTLgb0MdlO3oThu
-	 zusFyyHQmmF1SLfJ7rn7A/VDa81hiswl/VgHetN9MXvjpxFbW2tsQH8y+2nMM6J7swhwjT5ejNZa
-	 ExDSCdh5dhjBS+7XtSI7pIGJhBGYLTynvdgPIzQpdvrfgqpD/KPibqkI9CPz2+DgFq3dpvvNKjgW
-	 gM+HYFviO9oQN/uPSfbzWuWs12HXqgPaBrjhK4l4NlbJhNBbeVabzrfagm98zisshlG1CSSoorfR
-	 Wg5t+z3Um4lRQtr1WcnJ8GTqSuSXBJZJCclNe9+HuMz6m1nRZOzD/znoLQ5MO5x6wgl56oCvsFzT
-	 Ezkecw2KANuCBqD4mxYMhsfXsaCR3o8ePWT38/UB3zVLuzRti8MwNCReb7f/TTqM7CpD7GylCnKl
-	 G/TI2d36UWXX5yBS1pF6lsQUFhP5mC1hGXXs0HNhLwOhyK7U2SwqniIU6oiCWSzu1Qiemy/2yhpw
-	 i2vGuerx5ImrsZTiYm0BISrKA8euAHIf3kxMnTfsdSdWMPIbkBv0g+4Xma7nanyJ1RojCwz19Zkj
-	 997gr9EB8sI+9KrflGvqr9s6LpABP/nyUlEyqV2bM4VWOWATldKka0iumWo2w66zCgg4b2YIhdKB
-	 npeoAKArkp/FY5/PW5Gz6jrKQZbtni5J+h12iCylAChV2JU+orGuwx3KDI/HyLlbeRCbK0VCmfMJ
-	 sSWTvCoblm2oc6Iw/tAbNOL3o3LrA4pSrrkhZYimHp/fa5xiRSYo88rqXl2yHXdSlLQTCb71W30x
-	 AM7xxYg50as3DOYuQAxgYjzkynGKF6jR4WKz/6w3c1+qXsO+x9HNU+wU3l0UfdL4ZQVLW++YJxbC
-	 B/i1qgHhePHjLn/jHxVnY3Z5kzJ3ZwKLDnXE6VzZlRgjrv5yr2pCQiSi0GaPUWFZxm1lZBCtrq1T
-	 TIS9ziG4ABfFxtUZPBue1lwRTXUCdR
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: hirofumi@mail.parknet.co.jp
-Cc: eadavis@qq.com,
-	linkinjeon@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sj1557.seo@samsung.com,
-	syzbot+d3c29ed63db6ddf8406e@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH] fat: Prevent the race of read/write the FAT16 and FAT32 entry
-Date: Tue, 29 Jul 2025 11:57:53 +0800
-X-OQ-MSGID: <20250729035752.2495729-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <874iuwxsew.fsf@mail.parknet.co.jp>
-References: <874iuwxsew.fsf@mail.parknet.co.jp>
+	s=arc-20240116; t=1753761705; c=relaxed/simple;
+	bh=fCVQW2oU71n8RwIXwCAb+vtSST06warG6ccYt/cCBTU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jStcqsqBoMiF+XEx0w587fa9U2WpvKOGavVLewRf4Gi2CAQX/Hj32QxaYEZG1vvlok22wVUSdWrQGtjo4z23TFfIwJQY2cenWmq+URRQpscLSqSHj8kL7yxZnwow6ZxbHU7r4LRnsLnaE1It8n8LmDGj/CeadeT7NijifcuffDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost (unknown [124.16.138.129])
+	by APP-05 (Coremail) with SMTP id zQCowABn_FyiR4hor3TNBw--.62141S2;
+	Tue, 29 Jul 2025 12:01:38 +0800 (CST)
+From: Chen Ni <nichen@iscas.ac.cn>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Chen Ni <nichen@iscas.ac.cn>
+Subject: [PATCH] regulator: tps6594-regulator: Remove unneeded semicolon
+Date: Tue, 29 Jul 2025 12:00:44 +0800
+Message-Id: <20250729040044.1851988-1-nichen@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,42 +46,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABn_FyiR4hor3TNBw--.62141S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrZFWDuF4rXw4DWw47CFWfKrg_yoW3Wrg_Cw
+	17Za1xWr4kZF4Ykr1UJa1qyF90vwnFva1Igr4qgFZxJ3y2v3WDJa4fWry7C398Aw4UJrnx
+	WwsxWr45Cr1SgjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbsxFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xII
+	jxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr
+	1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r12
+	6r1DMxkIecxEwVAFwVW8XwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_JF0_Jw1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2
+	jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0x
+	ZFpf9x0JUbzVUUUUUU=
+X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
 
-On Tue, 29 Jul 2025 00:10:31 +0900, OGAWA Hirofumi wrote:
->> The writer and reader access FAT32 entry without any lock, so the data
->> obtained by the reader is incomplete.
->>
->> Add spin lock to solve the race condition that occurs when accessing
->> FAT32 entry.
->>
->> FAT16 entry has the same issue and is handled together.
->
->What is the real issue? Counting free entries doesn't care whether EOF
->(0xffffff) or allocate (0x000068), so it should be same result on both
->case.
->
->We may want to use READ_ONCE/WRITE_ONCE though, I can't see the reason
->to add spin_lock.
-Because ent32_p and ent12_p are in the same union [1], their addresses
-are the same, and they both have the "read/write race condition" problem,
-so I used the same method as [2] to add a spinlock to solve it.
+Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
+semantic patch at scripts/coccinelle/misc/semicolon.cocci.
 
-[1]
-345 struct fat_entry {
-  1         int entry;
-  2         union {
-  3                 u8 *ent12_p[2];
-  4                 __le16 *ent16_p;
-  5                 __le32 *ent32_p;
-  6         } u;
-  7         int nr_bhs;
-  8         struct buffer_head *bhs[2];
-  9         struct inode *fat_inode;
- 10 };
+Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+---
+ drivers/regulator/tps6594-regulator.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-[2] 98283bb49c6c ("fat: Fix the race of read/write the FAT12 entry")
-
-BR,
-Edward
+diff --git a/drivers/regulator/tps6594-regulator.c b/drivers/regulator/tps6594-regulator.c
+index ab882daec7c5..645e83462c64 100644
+--- a/drivers/regulator/tps6594-regulator.c
++++ b/drivers/regulator/tps6594-regulator.c
+@@ -647,7 +647,7 @@ static int tps6594_regulator_probe(struct platform_device *pdev)
+ 	default:
+ 		dev_err(tps->dev, "unknown chip_id %lu\n", tps->chip_id);
+ 		return -EINVAL;
+-	};
++	}
+ 
+ 	enum {
+ 		MULTI_BUCK12,
+-- 
+2.25.1
 
 
