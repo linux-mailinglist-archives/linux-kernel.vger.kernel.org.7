@@ -1,265 +1,174 @@
-Return-Path: <linux-kernel+bounces-749676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1737DB15167
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:35:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F1DB1516F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 18:36:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1D518A0CE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:35:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A349543CEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B1A295DB8;
-	Tue, 29 Jul 2025 16:35:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B45F298990;
+	Tue, 29 Jul 2025 16:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="yZ2dsgwS"
-Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tgpbh1hA"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3581E3DCD;
-	Tue, 29 Jul 2025 16:35:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E6E226D0D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 16:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753806912; cv=none; b=Oho2rrDiVlQCXkphuGyNMsUbHmZPj6i5jhpMfSeGfpJUAf1YOvfMBYDXBdx69ZFcAWLATaRo+Kn1NFvdY2hLS8q8zGDRH17jO3EKwbozlHHTElBKkMT00qaFyLLZVATsa/0QD1LBjE6/Fl1x6pCaTCi368WUhp6Ltbf/7/WPFss=
+	t=1753806944; cv=none; b=VltaqA4gy18QxfeCZxr4rDEiltU9x92l+IMQ2NtzQKRo4Z5bJr72/c0mUe79++Gcr/6K0wBTwW567Sf5uC7e8cAdIcHUWuGY4mCHS0TjFtXXbwo3TqDCDHjqb4zDDE8Ar3EtPIFlHJ+RPuiBW1xPYf6EICKMF/f/1SPifnruWbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753806912; c=relaxed/simple;
-	bh=uhXRJ6IyDLMP9Z15gFI0h8PKRse3tik+B8zWV9ZKNHw=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fj7zNHros/IAraLuCXtdeBGKRkAcuuINrp1Zus8H6NyQbXJZRcXBaKypaJvTPa5PUzqxRxyOw/Sdwzw2EB8TcE1IZw6Du5JCEQnEntfDWISYAciV7waVaAQXaqqHhSw9sVMAR/yp3CM0HBHT1M2GmgAvzRdxS+t+QpKxLBzOYVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=yZ2dsgwS; arc=none smtp.client-ip=119.8.177.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=0AwX89Bu5mpaJMQMiFuogUCn3kOvmWY/Sf9by/FSvZk=;
-	b=yZ2dsgwSQzdVfrKvac0jXQyCx6cWRxb36GlCmRC5CDajRPqusjAOezpAtVaURzqbQKRdENCTW
-	POB+MKR2i0/5I6t0fozearkXnLIgUgzakVuCdPhCDTfP/VyKigKs1J4J1WUgpQoYDayBH3Ziz6N
-	0bYY7+nSvClAxdEe+62rXw0=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.37])
-	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4bs1BF3Vs8z1P7K4;
-	Wed, 30 Jul 2025 00:33:41 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bs16y3n42z67QqC;
-	Wed, 30 Jul 2025 00:30:50 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D1411402EA;
-	Wed, 30 Jul 2025 00:35:01 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Jul
- 2025 18:35:00 +0200
-Date: Tue, 29 Jul 2025 17:34:58 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	<linux-pci@vger.kernel.org>
-CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <aik@amd.com>, <lukas@wunner.de>, Samuel
- Ortiz <sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>, Jason
- Gunthorpe <jgg@ziepe.ca>, Suzuki K Poulose <Suzuki.Poulose@arm.com>, Steven
- Price <steven.price@arm.com>, Catalin Marinas <catalin.marinas@arm.com>,
-	"Marc Zyngier" <maz@kernel.org>, Will Deacon <will@kernel.org>, Oliver Upton
-	<oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 08/38] iommufd/tsm: Add tsm_op iommufd ioctls
-Message-ID: <20250729173458.00003ca5@huawei.com>
-In-Reply-To: <20250728135216.48084-9-aneesh.kumar@kernel.org>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
-	<20250728135216.48084-9-aneesh.kumar@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753806944; c=relaxed/simple;
+	bh=SrD+ELxtKF/irqOE/vB9xss3CyguaXFR7lrG2Tt5ODc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TbmySfHDdhOM9/wU6YoL5tbDs4b9yPQ1O2PVBYpIaQbPdaL6CN2r+NXvvGiu0wk55YMjIKME7VMFDU9QFY2zTH/g0a5YtokBD19lFEdwqF7lLbKSe37ZSW+MRjshZn0+Yg3oDxuVa7xjkqlbtCdGHzyu48aPSk+y+T8lfDV+KFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tgpbh1hA; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso12698a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:35:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753806940; x=1754411740; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lv40Dlr5B9TIJUCPEQGZxzFejkaL+qCdmU+tMwtTk64=;
+        b=tgpbh1hAlfLthYLDGF0qJihCB7mBcr+jkVC76FnHnGK21PUULDgA9iYcqi3KTf1KWC
+         rIQuR3aF6wSc0xUGNq5KaIcBRb6gIdavfi9RVE5HlBZARYPpMTYNnZLBdg1Cn1cYA/mO
+         A4kuebii8h3z5HTYNonS7kHUu3iUZbW3N9bkSCLGKPWr7DDWVp7YwIpZ7LajMbKxSJGA
+         livWMC452LLc3WF5Xz0oAho+OJ0e8ACxwJTIpQFtnaleYfx1ogbpYpgRRqlYJwsjYZy0
+         EBoelEn67CeLpPJxZ1BIijqwW4OATYz+FGmE0rxLoaQqW4cGgtn0W3cHtwbOxJhevKv0
+         CwTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753806940; x=1754411740;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lv40Dlr5B9TIJUCPEQGZxzFejkaL+qCdmU+tMwtTk64=;
+        b=LqDpSEKQ+iRjRdHvm3nyIVeSlTcQrvs3k1g4niC/dwQeIzq6yrY858ytrLX/XD54Gl
+         Mof3wtFPjKlEUvOdt7VTED/MmdsY0nbRg2R6GSW+8JS0/uFJmZjHrsTGL0DbW9mQU6kq
+         vN8V6CaqQEM9IwidrrmknPck+d8G6oWQxeYXqGjhYRaD4Ouwb3PUyy73c3PuXhNduVtE
+         Eqi2SDRUOJvaPhbqgzm0RD3bacdtsABs6b5wV4LQXnl1fu6M5B/whmnfoDVKCu0BUK11
+         Kxh4lmAz3E3SCgCrwL0Gw2TVEGXGEIOI27VRXThOGsioCg3OLurvVdRQ9q5WeiLkv0YG
+         9gVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUi1eLK5ncQ3uN7fMI7tqc2wxtE9UbeJ2Ju3fiGO+W1q1Es0H8LIiNhDAoeRObGsbH7Q5YSLtQqnd8Rj+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY1Adj1bUAUAsxDSqHV1BCLX6xGl8pdeb73r/K52ban2+HsxO7
+	IyNip1y5nMS96XpjbRAAj32DHGAiBxOWqIeLFCAwDo01t+Z476EySPyK2Wth/s4HBEM6FHiqGyu
+	o3oY29il/4zsJA6vJYe419X4RrOYFG1efwKasZ6RK
+X-Gm-Gg: ASbGncse3+Ez1eTyv/sPOm4AnUZZJELRTlpHU5FOXCXwD1SWsX8HpdKsOYAzw65o9Yw
+	cd/0pduurjKurpDNL5/jrXsjfHLZ5JDREC+R3XTAsOuTZq0y+/zmNRwnUklFseggEQC6ISFUQUK
+	6LrjoIYrtbQJZodZZ/GziK076y4TSFHvGPELR3/0eSr7f1iS4BSvwCTeGUapifHHkkv5T7M9tro
+	Yr8MPa/EjZn1uwEnPSKaslgdbFTxIQBakBPtloqqossEw==
+X-Google-Smtp-Source: AGHT+IFKv7YMKivBIj1BCg5i5urE/qc2uvAwLaB9UK66R72frDrbfA5Hbtvm74CaGOUjlmywh+U1wO9wezcqBXBbsmA=
+X-Received: by 2002:a50:8a97:0:b0:612:ce4f:3c5 with SMTP id
+ 4fb4d7f45d1cf-6156680c26cmr111335a12.0.1753806939698; Tue, 29 Jul 2025
+ 09:35:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <20250728-kasan-tsbrcu-noquarantine-test-v1-1-fa24d9ab7f41@google.com>
+ <6aeb9c5d-7c3f-4c0c-989f-df309267ffbe@suse.cz>
+In-Reply-To: <6aeb9c5d-7c3f-4c0c-989f-df309267ffbe@suse.cz>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 29 Jul 2025 18:35:03 +0200
+X-Gm-Features: Ac12FXw25dvpS-KcFMgDsvvBnkOQEQZAMrlZ9kHerHD3IUA1WAAg7ptbMtRjVbY
+Message-ID: <CAG48ez2O4OvhKjdy=Y6fzuK0Qf79JQXCXV=uQV2ED08fS1RNpA@mail.gmail.com>
+Subject: Re: [PATCH] kasan: add test for SLAB_TYPESAFE_BY_RCU quarantine skipping
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Alexander Potapenko <glider@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Dmitry Vyukov <dvyukov@google.com>, 
+	Vincenzo Frascino <vincenzo.frascino@arm.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	kasan-dev@googlegroups.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Jul 2025 19:21:45 +0530
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+On Tue, Jul 29, 2025 at 6:14=E2=80=AFPM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+> On 7/28/25 17:25, Jann Horn wrote:
+> > Verify that KASAN does not quarantine objects in SLAB_TYPESAFE_BY_RCU s=
+labs
+> > if CONFIG_SLUB_RCU_DEBUG is off.
+> >
+> > Suggested-by: Andrey Konovalov <andreyknvl@gmail.com>
+> > Signed-off-by: Jann Horn <jannh@google.com>
+> > ---
+> > Feel free to either take this as a separate commit or squash it into th=
+e
+> > preceding "[PATCH] kasan: skip quarantine if object is still accessible
+> > under RCU".
+> >
+> > I tested this by running KASAN kunit tests for x86-64 with KASAN
+> > and tracing manually enabled; there are two failing tests but those
+> > seem unrelated (kasan_memchr is unexpectedly not detecting some
+> > accesses, and kasan_strings is also failing).
+> > ---
+> >  mm/kasan/kasan_test_c.c | 36 ++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 36 insertions(+)
+> >
+> > diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+> > index 5f922dd38ffa..15d3d82041bf 100644
+> > --- a/mm/kasan/kasan_test_c.c
+> > +++ b/mm/kasan/kasan_test_c.c
+> > @@ -1073,6 +1073,41 @@ static void kmem_cache_rcu_uaf(struct kunit *tes=
+t)
+> >       kmem_cache_destroy(cache);
+> >  }
+> >
+> > +/*
+> > + * Check that SLAB_TYPESAFE_BY_RCU objects are immediately reused when
+> > + * CONFIG_SLUB_RCU_DEBUG is off, and stay at the same address.
+> > + */
+> > +static void kmem_cache_rcu_reuse(struct kunit *test)
+> > +{
+> > +     char *p, *p2;
+> > +     struct kmem_cache *cache;
+> > +
+> > +     KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_SLUB_RCU_DEBUG);
+> > +
+> > +     cache =3D kmem_cache_create("test_cache", 16, 0, SLAB_TYPESAFE_BY=
+_RCU,
+> > +                               NULL);
+> > +     KUNIT_ASSERT_NOT_ERR_OR_NULL(test, cache);
+>
+> Hmm is there anything inherent in kunit that keeps the test pinned to the
+> same cpu? Otherwise I think you'll need here
+>
+> migrate_disable();
 
-> Add operations bind and unbind used to bind a TDI to the secure guest.
-> 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+Oops, right, good point.
 
-Hi Aneesh,
+> > +     p =3D kmem_cache_alloc(cache, GFP_KERNEL);
+> > +     if (!p) {
+> > +             kunit_err(test, "Allocation failed: %s\n", __func__);
+> > +             kmem_cache_destroy(cache);
+> > +             return;
+> > +     }
+> > +
+> > +     kmem_cache_free(cache, p);
+> > +     p2 =3D kmem_cache_alloc(cache, GFP_KERNEL);
+>
+> and here (or later)
+>
+> migrate_enable();
+>
+> > +     if (!p2) {
+> > +             kunit_err(test, "Allocation failed: %s\n", __func__);
+> > +             kmem_cache_destroy(cache);
+> > +             return;
+> > +     }
+> > +     KUNIT_ASSERT_PTR_EQ(test, p, p2);
+>
+> Otherwise the cpu slab caching of SLUB and a migration could mean this wo=
+n't
+> hold as you'll get object from another slab.
 
-I'm mostly reading this to get head around it rather than fully review
-at this point.
-
-A few things inline though that I noticed whilst doing so.
-
-Jonathan
-
-> ---
->  drivers/iommu/iommufd/iommufd_private.h |  1 +
->  drivers/iommu/iommufd/main.c            |  3 ++
->  drivers/iommu/iommufd/viommu.c          | 50 +++++++++++++++++++++++++
->  drivers/vfio/pci/vfio_pci_core.c        | 10 +++++
->  include/uapi/linux/iommufd.h            | 18 +++++++++
->  5 files changed, 82 insertions(+)
-> 
-> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-> index fce68714c80f..e08186f1d102 100644
-> --- a/drivers/iommu/iommufd/iommufd_private.h
-> +++ b/drivers/iommu/iommufd/iommufd_private.h
-> @@ -697,6 +697,7 @@ void iommufd_vdevice_destroy(struct iommufd_object *obj);
->  void iommufd_vdevice_abort(struct iommufd_object *obj);
->  int iommufd_hw_queue_alloc_ioctl(struct iommufd_ucmd *ucmd);
->  void iommufd_hw_queue_destroy(struct iommufd_object *obj);
-> +int iommufd_vdevice_tsm_op_ioctl(struct iommufd_ucmd *ucmd);
->  
->  static inline struct iommufd_vdevice *
->  iommufd_get_vdevice(struct iommufd_ctx *ictx, u32 id)
-
-> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-> index 59f1e1176f7f..c934312e5397 100644
-> --- a/drivers/iommu/iommufd/viommu.c
-> +++ b/drivers/iommu/iommufd/viommu.c
-> @@ -162,6 +162,9 @@ void iommufd_vdevice_abort(struct iommufd_object *obj)
->  
->  	lockdep_assert_held(&idev->igroup->lock);
->  
-> +#ifdef CONFIG_TSM
-Can we use stubs for some of this stuff so we don't need ifdefs in as many
-places.
-
-> +	tsm_unbind(idev->dev);
-> +#endif
->  	if (vdev->destroy)
->  		vdev->destroy(vdev);
->  	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
-> @@ -471,3 +474,50 @@ int iommufd_hw_queue_alloc_ioctl(struct iommufd_ucmd *ucmd)
->  	iommufd_put_object(ucmd->ictx, &viommu->obj);
->  	return rc;
->  }
-> +
-> +#ifdef CONFIG_TSM
-> +int iommufd_vdevice_tsm_op_ioctl(struct iommufd_ucmd *ucmd)
-
-Might want to split this out to a separate c file and use stubs in a header to
-keep the code clean here.
-
-> +{
-> +	struct iommu_vdevice_tsm_op *cmd = ucmd->cmd;
-> +	struct iommufd_vdevice *vdev;
-> +	struct kvm *kvm;
-> +	int rc = -ENODEV;
-> +
-> +	if (cmd->flags)
-> +		return -EOPNOTSUPP;
-> +
-> +	vdev = container_of(iommufd_get_object(ucmd->ictx, cmd->vdevice_id,
-> +					       IOMMUFD_OBJ_VDEVICE),
-> +			    struct iommufd_vdevice, obj);
-> +	if (IS_ERR(vdev))
-> +		return PTR_ERR(vdev);
-> +
-> +	kvm = vdev->viommu->kvm_filp->private_data;
-> +	if (kvm) {
-> +		/*
-> +		 * tsm layer will make take care of parallel calls to tsm_bind/unbind
-
-Wrap comment to say under 80 chars. Or if file goes higher, use a single line
-comment.
-
-		  tsm layer will take care ...
-
-(stray 'make')
-
-> +		 */
-> +		if (cmd->op == IOMMU_VDEICE_TSM_BIND)
-> +			rc = tsm_bind(vdev->idev->dev, kvm, vdev->virt_id);
-> +		else if (cmd->op == IOMMU_VDEICE_TSM_UNBIND)
-> +			rc = tsm_unbind(vdev->idev->dev);
-> +
-> +		if (rc) {
-> +			rc = -ENODEV;
-
-If we want to eat an error code coming from elsewhere, maybe a comment on why?
-
-> +			goto out_put_vdev;
-> +		}
-> +	} else {
-> +		goto out_put_vdev;
-
-If this always skips the next line, does that imply that line should
-have been under if (kvm)?  Maybe this makes more sense in
-later patches - if so ignore this comment.
-
-> +	}
-> +	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
-> +
-> +out_put_vdev:
-> +	iommufd_put_object(ucmd->ictx, &vdev->obj);
-> +	return rc;
-> +}
-> +#else /* !CONFIG_TSM */
-> +int iommufd_vdevice_tsm_op_ioctl(struct iommufd_ucmd *ucmd)
-> +{
-> +	return -ENODEV;
-> +}
-> +#endif
-> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pci_core.c
-> index bee3cf3226e9..afdb39c6aefd 100644
-> --- a/drivers/vfio/pci/vfio_pci_core.c
-> +++ b/drivers/vfio/pci/vfio_pci_core.c
-> @@ -694,6 +694,16 @@ void vfio_pci_core_close_device(struct vfio_device *core_vdev)
->  #if IS_ENABLED(CONFIG_EEH)
->  	eeh_dev_release(vdev->pdev);
->  #endif
-> +
-> +#if 0
-
-If you really need to do this, add a comment on why if 0
-
-> +	/*
-> +	 * destroy vdevice which involves tsm unbind before we disable pci disable
-> +	 * A MSE/BME clear will transition the device to error state.
-> +	 */
-> +	if (core_vdev->iommufd_device)
-> +		iommufd_device_tombstone_vdevice(core_vdev->iommufd_device);
-> +#endif
-> +
->  	vfio_pci_core_disable(vdev);
->  
->  	mutex_lock(&vdev->igate);
-> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
-> index 9014c61a97d4..8b1fbf1ef25c 100644
-> --- a/include/uapi/linux/iommufd.h
-> +++ b/include/uapi/linux/iommufd.h
-> @@ -57,6 +57,7 @@ enum {
-
->  /**
-> @@ -1127,6 +1128,23 @@ enum iommu_veventq_flag {
->  	IOMMU_VEVENTQ_FLAG_LOST_EVENTS = (1U << 0),
->  };
->  
-> +/**
-> + * struct iommu_vdevice_tsm_OP - ioctl(IOMMU_VDEVICE_TSM_OP)
-> + * @size: sizeof(struct iommu_vdevice_tsm_OP)
-
-_op I guess?
-
-> + * @op: Either TSM_BIND or TSM_UNBIMD
-> + * @flags: Must be 0
-> + * @vdevice_id: Object handle for the vDevice. Returned from IOMMU_VDEVICE_ALLOC
-> + */
-> +struct iommu_vdevice_tsm_op {
-> +	__u32 size;
-> +	__u32 op;
-> +	__u32 flags;
-> +	__u32 vdevice_id;
-> +};
-> +#define IOMMU_VDEVICE_TSM_OP	_IO(IOMMUFD_TYPE, IOMMUFD_CMD_VDEVICE_TSM_OP)
-> +#define IOMMU_VDEICE_TSM_BIND		0x1
-> +#define IOMMU_VDEICE_TSM_UNBIND		0x2
-> +
->  /**
->   * struct iommufd_vevent_header - Virtual Event Header for a vEVENTQ Status
->   * @flags: Combination of enum iommu_veventq_flag
-
+Yeah...
 
