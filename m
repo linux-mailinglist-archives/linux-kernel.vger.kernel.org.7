@@ -1,138 +1,106 @@
-Return-Path: <linux-kernel+bounces-749467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6547AB14EBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:50:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7898B14EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:51:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B23E31885AF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:50:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DC187A457D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11AD219EED3;
-	Tue, 29 Jul 2025 13:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBlMnCIW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A492519D8A2;
+	Tue, 29 Jul 2025 13:51:18 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF1D79C0;
-	Tue, 29 Jul 2025 13:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2826714C588
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 13:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753797006; cv=none; b=kbdY9kzKOfa6Z2O2hKC1//WRFlecZjHDIKkad8nQvDAtYytPbD1CkbYu+PEKZaiLDCkAeWka74PBjeZyIZ4MzGurvg+MJW5OZPOBCmyVRNayovJPtKzaaGIvKj9RK2PvVsdGZ2if28rwb142syhIqtfWPOx6by23XZg6w0yuJl0=
+	t=1753797078; cv=none; b=pPbYupADq1+SXoHTQ1Vl4kFBXAF8woeRIc/mp4YOf9JKSL0y5TkAcWjOk6sKwhImhOxqUGAx8V/ytMjEgRL7S9ZvJIt5Wjbp3Kl7WLAGG5IiwbzIdIkc/7oGVJsfhB+4EkGDumMrG0MQyMf9Z1QrZLwcDZqbSVYQpN7otunObDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753797006; c=relaxed/simple;
-	bh=iPhIiVg9TwoB9JPWKjtvQ8Onj5JAyRBB6ONeNCdp8T0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z0t5an4ajlFl18ZtuTXCbJwOohxITowhR6MlmHIQeMh800eMnUgnzbuLMJMR8ApdiJQj25BOwX9PlN5oNng4Z5lmjR8Vsl9I7V+XbD3JLywHoXhzKuULv76O4nLrQNAIFXtL8iZXlJp7x0jaK6AFm++ir8o578ystMmcS4bD4N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBlMnCIW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ED1BC4AF09;
-	Tue, 29 Jul 2025 13:50:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753797006;
-	bh=iPhIiVg9TwoB9JPWKjtvQ8Onj5JAyRBB6ONeNCdp8T0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=VBlMnCIWzG4oyZMsxFuXDul5/UlDkFlPEPxUv6u18BRWK1GH3fhkvR5jv+AdGihAA
-	 KZyiIAErnkNbb1t4bDf45Z1QhSCyVf/rLlbJvPghyIpt84e2Xr7afrW3NaIcfbUxuD
-	 mXb8IOXK6vptPHAaXjUvQl7vsnjQPqpxOhuTsvzOav25pzA4reCuyPzJm8FZ7E5Yr3
-	 Lg3NMQN1CdxrwkPeauZyf9srMArUBqbZ+UD05uvYyAmCLGgQbkeNtKgnFqiQivzI5i
-	 /gYl7mU7iajlN10w4ISwxcBPnKDytJUf9IhWHIZ4PNi5qNIAIIWV9LUtAz2bOiedRe
-	 b3NOzSQC3ZGlw==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-32f1df5703aso45039071fa.3;
-        Tue, 29 Jul 2025 06:50:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDvrfdQ1S7d/UtnzCJ6idE8ROTyZyswMR5L2ANHJc/S+MJZrvmNM5i49G4riwM/iIO0OIlkGDB@vger.kernel.org, AJvYcCVlMxI8v8dsEXkwbuSPF6jcfjpnmAriBLCat2Z3/fZ/BmfEJImJGTC30oAOZ/NplfAOhaMNI/h0wUDm+kY=@vger.kernel.org, AJvYcCXSpHWd+lTpVQwQWGvRtug4zw6PH1W228L8eiwAH58wQVRtHqqrIKvuPHHz9kCp1sCa8273YQauUQHOJ2bp@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9wtSp+irKjt+9BpCWWpoEhbwwoSSywgngWudNpzj/vbtqc3Pc
-	bdxS2vyfZQmLhSil3ie+C7BSjfj69sbdGlZlCkQWldygLL+UGY1/cH+ldks5I5UGPHQzIfzRbfu
-	YHmsD7mFuP02MRTMaFNaHmuTdlHshUy4=
-X-Google-Smtp-Source: AGHT+IHjTXjlLubqpmiu3gm5ussQn49mEbKaEv9t5hEtggHscM2SjIL8pWTxka5L+Ekn5Hu6OgaSCp9uUWiv1iaFzDY=
-X-Received: by 2002:a05:6512:acc:b0:55a:3335:b5fd with SMTP id
- 2adb3069b0e04-55b5f429891mr3923787e87.18.1753797004777; Tue, 29 Jul 2025
- 06:50:04 -0700 (PDT)
+	s=arc-20240116; t=1753797078; c=relaxed/simple;
+	bh=+57F15aLBaalKE+XctSDfEtEf6goucZpK/er4s0Lvpk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W2MCjhuoKXMHggmv9Fgb/DigFyUIJYNJ0UhZ2C1p3/78kO4L/y9a6SKs/cw1SPqGHCO6jEhaXDx1moYbPy59nOt5LtxfeHlyk0VArMnbMsoljho8eBWR7FerI/ItiHfZdU7Sp7Smtongh7+yZtR4jVMP+5kEwF/H2u/yB7rLSaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4brxWc1rH3z1R8qK;
+	Tue, 29 Jul 2025 21:48:28 +0800 (CST)
+Received: from dggpemf500012.china.huawei.com (unknown [7.185.36.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 88B371400D2;
+	Tue, 29 Jul 2025 21:51:11 +0800 (CST)
+Received: from huawei.com (10.175.124.71) by dggpemf500012.china.huawei.com
+ (7.185.36.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Jul
+ 2025 21:51:10 +0800
+From: Zhang Qilong <zhangqilong3@huawei.com>
+To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<wangkefeng.wang@huawei.com>, <zhangqilong3@huawei.com>,
+	<sunnanyong@huawei.com>
+Subject: [PATCH] /dev/zero: try to align PMD_SIZE for private mapping
+Date: Tue, 29 Jul 2025 21:49:41 +0800
+Message-ID: <20250729134942.900517-1-zhangqilong3@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728-userprogs-clang-gnu-ld-v2-1-58464d681407@linutronix.de>
-In-Reply-To: <20250728-userprogs-clang-gnu-ld-v2-1-58464d681407@linutronix.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 29 Jul 2025 22:49:28 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATXk1xKrCXmdV1jEgtgxGxPvTRr8V=pWczKD++da3N+3g@mail.gmail.com>
-X-Gm-Features: Ac12FXwn4YCixa6nQPNSdyepsEY-6I2sE5MwSNSasTN_EsyPsDUJnZulyfXkyec
-Message-ID: <CAK7LNATXk1xKrCXmdV1jEgtgxGxPvTRr8V=pWczKD++da3N+3g@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: userprogs: use correct linker when mixing
- clang and GNU ld
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500012.china.huawei.com (7.185.36.8)
 
-On Mon, Jul 28, 2025 at 10:50=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> The userprogs infrastructure does not expect clang being used with GNU ld
-> and in that case uses /usr/bin/ld for linking, not the configured $(LD).
-> This fallback is problematic as it will break when cross-compiling.
-> Mixing clang and GNU ld is used for example when building for SPARC64,
-> as ld.lld is not sufficient; see Documentation/kbuild/llvm.rst.
->
-> Relax the check around --ld-path so it gets used for all linkers.
->
-> Fixes: dfc1b168a8c4 ("kbuild: userprogs: use correct lld when linking thr=
-ough clang")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
-> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
-> ---
+By default, THP are usually enabled. Mapping /dev/zero with a size
+larger than 2MB could achieve performance gains by allocating aligned
+address. The mprot_tw4m in libMicro average execution time on arm64:
+  - Test case:        mprot_tw4m
+  - Before the patch:   22 us
+  - After the patch:    17 us
 
-Applied to linux-kbuild.
-Thanks.
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+---
+ drivers/char/mem.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index 48839958b0b1..c57327ca9dd6 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -515,10 +515,12 @@ static int mmap_zero(struct file *file, struct vm_area_struct *vma)
+ static unsigned long get_unmapped_area_zero(struct file *file,
+ 				unsigned long addr, unsigned long len,
+ 				unsigned long pgoff, unsigned long flags)
+ {
+ #ifdef CONFIG_MMU
++	unsigned long ret;
++
+ 	if (flags & MAP_SHARED) {
+ 		/*
+ 		 * mmap_zero() will call shmem_zero_setup() to create a file,
+ 		 * so use shmem's get_unmapped_area in case it can be huge;
+ 		 * and pass NULL for file as in mmap.c's get_unmapped_area(),
+@@ -526,10 +528,13 @@ static unsigned long get_unmapped_area_zero(struct file *file,
+ 		 */
+ 		return shmem_get_unmapped_area(NULL, addr, len, pgoff, flags);
+ 	}
+ 
+ 	/* Otherwise flags & MAP_PRIVATE: with no shmem object beneath it */
++	ret = thp_get_unmapped_area(file, addr, len, pgoff, flags);
++	if (ret)
++		return ret;
+ 	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
+ #else
+ 	return -ENOSYS;
+ #endif
+ }
+-- 
+2.43.0
 
-> Changes in v2:
-> - Use plain ifdef instead of ifneq
-> - Rebase onto v6.16
-> - Pick up review tag from Nathan
-> - Link to v1: https://lore.kernel.org/r/20250724-userprogs-clang-gnu-ld-v=
-1-1-3d3d071e53a7@linutronix.de
-> ---
->  Makefile | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index 478f2004602da03c9039044e3288f24a13833cc7..7d24245d118c0e903119263b8=
-71d2e5c2759f48a 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1134,7 +1134,7 @@ KBUILD_USERCFLAGS  +=3D $(filter -m32 -m64 --target=
-=3D%, $(KBUILD_CPPFLAGS) $(KBUILD
->  KBUILD_USERLDFLAGS +=3D $(filter -m32 -m64 --target=3D%, $(KBUILD_CPPFLA=
-GS) $(KBUILD_CFLAGS))
->
->  # userspace programs are linked via the compiler, use the correct linker
-> -ifeq ($(CONFIG_CC_IS_CLANG)$(CONFIG_LD_IS_LLD),yy)
-> +ifdef CONFIG_CC_IS_CLANG
->  KBUILD_USERLDFLAGS +=3D --ld-path=3D$(LD)
->  endif
->
->
-> ---
-> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> change-id: 20250723-userprogs-clang-gnu-ld-7a1c16fc852d
->
-> Best regards,
-> --
-> Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
