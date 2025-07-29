@@ -1,156 +1,110 @@
-Return-Path: <linux-kernel+bounces-749301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EDEDB14C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:52:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9DFB14C93
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:53:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A391B3AB30D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:51:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7B05469BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80EF28B7F9;
-	Tue, 29 Jul 2025 10:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF4D28B41D;
+	Tue, 29 Jul 2025 10:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vf6idapY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CH2QOCrF"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5560028B7DB
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0D5227EA8;
+	Tue, 29 Jul 2025 10:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753786307; cv=none; b=S0rM+mdBvnZWoK+MCcbNODJUV+fBPi087wzbdDwcj+YeSB2YtP9oGEkg9n19pHiBlxDdOOt14IljzBNTUtOX2iemRPJrs90Eh+9ihJZpFUrJeWmZdg5JLhZBf1suxo+7QkehwFboZLjQxtzYUxboncdp+1zK88ZtHb6bhmgWweQ=
+	t=1753786382; cv=none; b=czqUTkbq5BAMYlDOgUFRCapXulgXDvIoaXGdDfH//3puf/9kAAtkeulLWRv6rqXH9svN0ApCmVydoQ376qMrmSARmAzlkhcH4kMMEDt/XEzSSkHY5HKcyhv/hcpUe+jJmPMV31vjXH2ztOn+ESITO0XF1VyHWW0QVbUSu+IpQWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753786307; c=relaxed/simple;
-	bh=7+juqtOXpL1Gd1u2gp2HFGDof2wKe6EUUDxj9qDimCs=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=PaLYlszwGK+/o05d2Lq6ptywJ5XcnQfEHWy3r+zycmamSGG1/WqVLDPNU/rZ3yUy1zs72w/djPCDWBNmDMEnD+IPA9WEdv7auOwrYP6iLctwsJMblwU8sGp4iDqjA47Ih+bL68E8wPDziG6CsHagSobVlAoxke2Z+gmxxugjAtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vf6idapY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 661C2C4CEEF;
-	Tue, 29 Jul 2025 10:51:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753786305;
-	bh=7+juqtOXpL1Gd1u2gp2HFGDof2wKe6EUUDxj9qDimCs=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=Vf6idapYZdlWakSDJj8q/5uVFHI/KEqxUrVuhtkZ1p8rUTapb53kHAJmsbyuVrq0Z
-	 xGQ8VLZS7gcWk7KkrV8QzOoC1qXgRTP5nU96dIh/SjrC/4GQ/JmKioerliWHMWVvxg
-	 dswVhkwILIOcK0eOSoyt4iPjNm8QwDKOtLosKVlQcdZwK/ZfY+vxFFjO+ZdOuU0hvE
-	 xOWiqSBI/bY3UnLhXgbVAgVFMCBbjroMDSE+ay4mVXDaqNp4ldoxJtN/D8apfFThz1
-	 CP3qKNlx97jqsQQ6sJsq0w6NFY1VUyF/8lznfcklNgevnPvV9T7zEQv+sUEOMySoOF
-	 A7lOo8VjmdPIA==
+	s=arc-20240116; t=1753786382; c=relaxed/simple;
+	bh=0jwI4ByPSh17ya/A6DhJ8GdK70BSnqVwxGNcDMcnexM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gfJ1xJ5Z0rEPnMYqBAjhQz0r/KSykVjRz7gD2TSpusvIgUQp7xGO4J58jhmCtVwPpmSCR3qvXIE2dYlOJvIeh1ouSqIdArlEeUb3gMYvTgjcpYRFdafRu3+nShXZ9c9YdT7uICHk70pde59r2xznQyYd/9zGEEj7lKtayRnXH20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CH2QOCrF; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b3510c22173so364048a12.0;
+        Tue, 29 Jul 2025 03:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753786380; x=1754391180; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0jwI4ByPSh17ya/A6DhJ8GdK70BSnqVwxGNcDMcnexM=;
+        b=CH2QOCrF5TrELMbSVza1fvRrN7CEHFd8vX/ZSpvlqS1tdWoNf1zpEsc6uJmhIwgLsP
+         kpd2ksNRkYALxn8R4/1aueBg3ZuNwjEsVzCoJDX8YqOTAYhDkErI3IWhmmeBqLHtOgMi
+         zeQ/mo/QWSxY3TFCEsP/dAuiNjhJoQv+1d+3IeLAAkW9xys0P1YLU9g1mA+MRimPmhEP
+         KkTFgZut3oTDa51pUREUlJWRxlZFtuxJ8nX6kdWK1+vXn2SkJopOEPrtnyic8dGxvaHr
+         2sdrBcwLIVhFCeB+b5CZjBH5bJmAfWA7GTt63gxaXWp9KmLXsumUDJmAsNoXuyNdv6ec
+         WjeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753786380; x=1754391180;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0jwI4ByPSh17ya/A6DhJ8GdK70BSnqVwxGNcDMcnexM=;
+        b=H2PJzoXMO0AnHnDQCc6fFNBvGG7XduhcEyytZPdC//GJ6Oebj3JujE91XncKb7tXNm
+         5uF6gcGlJRl9IHlhvTklnVC1LFuiD0zTdJuhjINj+F0+Hy3yAxOkYbPq1Vep16/fQ9oI
+         lDdLzVVNLpK38+inWcrVkj/Tr7aUGzaf8R6uVQMO/HKPydFcRdMQebeuIZRS1JOrRGV/
+         XOdxoIIh0jQniUuSVMkL0YtLwnJl5zjwMjHokumRd1Rw0N8hGK8+FjZrcei5pgjPAIgM
+         S7G65kS/b/GQ9OAhk9Zgp6rsC8dfpHt8X7XlR8y+T2RUAHsfxoIzzpKmcQrg1Uku3Tnd
+         OY0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBFha8AkwVoMAjKyluS6+RSQwtt1CHp3sGbgaPz16WBnI9Y3/+A6fS01YZXCxfT0H2u2OeftonpsYhx7Y3vZQ=@vger.kernel.org, AJvYcCVsWGhZJvPArdICrJQleXi8cZoRW/ct/E0VMFxAYW7OS6G+fyR92AVXvCxp05J1gI6oAfjzK+Qq8nYkuio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmiVcW34uFHYGSSff8EHKJiGWLcA1oNjEES9dbBfJqT4FsGlTG
+	1zlmCn8suUB1c6UCHnnjaj7qSSUq+h4D+NKMc0xkLI2CrWqDnqtkgRTwTo+2loIsC18bYdXox2m
+	VOkn/w6G6sVR2Ng8GgJtRF5kbV96tl1g=
+X-Gm-Gg: ASbGnctQKSih6hnu2C5l7RGSubqwpeNTC4aErGe6hNP0ixnIaRMBWR2h0Z2AsSdF4F7
+	poH6DrZI5zcaz3l+OckHLF+6kLAnOInYkXckOpxVBDQzYWi0NX+pLYeWYXmTKOwckoulzb7iqyg
+	kJpgvH3toxFiyc+/LmsC1To0Jt/eZ/LL01AiOJ+pwE91YhtJmWqMV8v2SrllCXah5yzI9qb/czo
+	clRqsMV
+X-Google-Smtp-Source: AGHT+IEfjaf1m/ZMQWtF/x4P/O0T08k13vTbYIwHz0IZ4fY/ozodeLiWojLdWd4z7laSinmlyN3duBduURp/W2lne8w=
+X-Received: by 2002:a17:90b:1643:b0:31e:ff94:3fae with SMTP id
+ 98e67ed59e1d1-31eff94428emr3596891a91.4.1753786380120; Tue, 29 Jul 2025
+ 03:53:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20250729102953.141412-1-abhinav.ogl@gmail.com>
+In-Reply-To: <20250729102953.141412-1-abhinav.ogl@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 29 Jul 2025 12:52:46 +0200
+X-Gm-Features: Ac12FXyLitR_GXACAyRoN1xW0OYYTZ2y3N-eS3Di47C532EEWgv7pHq2BTa1TiA
+Message-ID: <CANiq72kRu5Wd-3Tk7px=2Y5kU5Tq2fQch=+f3ExYSrJa2+tSSg@mail.gmail.com>
+Subject: Re: [PATCH v2] rust: pci: Use explicit types in FFI callbacks
+To: herculoxz <abhinav.ogl@gmail.com>
+Cc: linux-pci@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dakr@kernel.org, bhelgaas@google.com, 
+	kwilczynski@kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Jul 2025 12:51:42 +0200
-Message-Id: <DBOHCWV2QIAT.EEGEBRGQ60LX@kernel.org>
-Cc: "Sean Anderson" <sean.anderson@linux.dev>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Ira Weiny" <ira.weiny@intel.com>,
- <linux-kernel@vger.kernel.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- "Dave Ertman" <david.m.ertman@intel.com>
-To: "Leon Romanovsky" <leon@kernel.org>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH] auxiliary: Automatically generate id
-References: <20250728211022.9165-1-sean.anderson@linux.dev>
- <DBOFRAMQXK27.2EFPC1T807C2F@kernel.org> <20250729100132.GH402218@unreal>
-In-Reply-To: <20250729100132.GH402218@unreal>
 
-On Tue Jul 29, 2025 at 12:01 PM CEST, Leon Romanovsky wrote:
-> On Tue, Jul 29, 2025 at 11:36:27AM +0200, Danilo Krummrich wrote:
->> On Mon Jul 28, 2025 at 11:10 PM CEST, Sean Anderson wrote:
->> > As it turns out, ids are not allowed to have semantic meaning. Their
->> > only purpose is to prevent sysfs collisions. To simplify things, just
->> > generate a unique id for each auxiliary device. Remove all references =
-to
->> > filling in the id member of the device.
->> >
->> > Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
->> > ---
->> >
->> >  drivers/base/auxiliary.c      | 32 +++++++++++++++++++++++---------
->> >  include/linux/auxiliary_bus.h | 26 ++++++++------------------
->> >  2 files changed, 31 insertions(+), 27 deletions(-)
->> >
->> > diff --git a/drivers/base/auxiliary.c b/drivers/base/auxiliary.c
->> > index dba7c8e13a53..f66067df03ad 100644
->> > --- a/drivers/base/auxiliary.c
->> > +++ b/drivers/base/auxiliary.c
->> > @@ -264,6 +264,8 @@ static const struct bus_type auxiliary_bus_type =
-=3D {
->> >  	.pm =3D &auxiliary_dev_pm_ops,
->> >  };
->> > =20
->> > +static DEFINE_IDA(auxiliary_id);
->>=20
->> I think this is the correct thing to do, even though the per device IDA =
-drivers
->> typically went for so far produces IDs that are easier to handle when de=
-bugging
->> things.
->>=20
->> > +
->> >  /**
->> >   * auxiliary_device_init - check auxiliary_device and initialize
->> >   * @auxdev: auxiliary device struct
->> > @@ -331,20 +333,37 @@ int __auxiliary_device_add(struct auxiliary_devi=
-ce *auxdev, const char *modname)
->> >  		return -EINVAL;
->> >  	}
->> > =20
->> > +	ret =3D ida_alloc(&auxiliary_id, GFP_KERNEL);
->> > +	if (ret < 0) {
->> > +		dev_err(dev, "auxiliary device id_alloc fauiled: %d\n", ret);
->> > +		return ret;
->> > +	}
->> > +	auxdev->id =3D ret;
->>=20
->> This overwrites the ID number set by various drivers that (still) use th=
-e
->> auxiliary_device_init() and auxiliary_device_add() pair.
->>=20
->> While I agree with the general intent, I think it's a very bad idea to j=
-ust
->> perform this change silently leaving drivers with their IDA instances no=
-t
->> knowing that the set ID numbers do not have an effect anymore.
->>=20
->> I think this should be multiple steps:
->>=20
->>   (1) Remove the id parameter and force an internal ID only for
->>       auxiliary_device_create().
->>=20
->>   (2) Convert applicable drivers (and the Rust abstraction) to use
->>       auxiliary_device_create() rather than auxiliary_device_init() and
->>       auxiliary_device_add().
->>=20
->>   (3) Treewide change to force an internal ID for all auxiliary devices
->>       considering this change in all affected drivers.
+On Tue, Jul 29, 2025 at 12:30=E2=80=AFPM herculoxz <abhinav.ogl@gmail.com> =
+wrote:
 >
-> I would suggest easier approach.
-> 1. Add to the proposal patch, the sed generated line which removes auxdev=
-->id
-> assignment in the drivers.
-> Something like this from mlx5:
->  - sf_dev->adev.id =3D id;
->
-> 2. Add standalone patches to remove not used ida_alloc/ida_free calls
-> from the drivers.
+> and improves ABI
+> correctness when interfacing with C code.
 
-I assume you suggest this as an alternative to (3) above? If so, that's wha=
-t I
-meant in (3), I should have written "treewide series" instead of "treewide
-change".
+I think this still sounds like it is fixing an ABI issue -- I would
+probably just remove that second sentence.
 
-Technically (2) is orthogonal, yet I think it's a bit better to do the desi=
-red
-change right away. Otherwise we end up converting all applicable drivers to
-implement the auxiliary device release callback (which we need for a common
-ida_free()) first, just to remove it later on when we convert to
-auxiliary_device_create().
+(But no need for a v3 -- I think it can be fixed on apply unless
+Danilo wants it).
+
+Thanks!
+
+Cheers,
+Miguel
 
