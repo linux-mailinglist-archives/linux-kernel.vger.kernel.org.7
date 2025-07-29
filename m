@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-749227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2A5B14BAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:52:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87D66B14BA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54313A2F0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:51:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAFB3544230
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C887728935C;
-	Tue, 29 Jul 2025 09:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DD628981A;
+	Tue, 29 Jul 2025 09:51:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="xbdUqbIA"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b="yQK5Hc9G"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D01289350
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:51:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD6C28937C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753782685; cv=none; b=GKRV2ZTRzpuuf7MQsbvtSmqlJyjVyvxE8OT5VpgzNGDx98aRV3fBu68xQrz64pJ/iPu1eNqQluGoDVqn4d9ImeNYjonI81O0MQPLWOJvuKk6yJNSK3HWWZImbNgaI5mknFkGOHjbJweva/ySmjsXR+t/ge34HvGeWGUrbj1tPjE=
+	t=1753782690; cv=none; b=LClujUAc37wEaPYRrzFYBwtAp5BMWf+MwVS7+9z2pwf/p2ggNa2ptjKbx6zSE2DCnPu8X0uMWLd8oAR3CBrVKttGRT4An4r6PUuc/AgzT6zqeqCWEIQkObw6UjGNy6MydQF/4TMMT7dlW5ycZF7HmcnC+YY5gd1hRhzGGCZ4QMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753782685; c=relaxed/simple;
-	bh=ZJleRO/tmglmwyTY49Sq9b3ot5hWCGqXz2SxgsKeHM0=;
+	s=arc-20240116; t=1753782690; c=relaxed/simple;
+	bh=ESeXGOrQ7Jk3sJKdX7eSWtreA2ap3wRm9L80hcxvyls=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=N7E78/yqZKhaRYbBxtkz8VauPxYuW4QhxThKMK2z37Jg4oT+bvYONar9UKRBz74ONiAaEaW4tsRlwlv8uz+fUmQR3OzFGBxd5zNivtZE7vn5GmsZs1sJww3SRedg1wErdov3jOlRj2FAZJ+VaglpFT/OpQOgZR4fmksfl/Spgwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=xbdUqbIA; arc=none smtp.client-ip=209.85.210.181
+	 In-Reply-To:To:Cc; b=gax1SBJ1NYPyWP7hEpdafHcpKdze1bI4WAgw2AWQdMUeCdTEYnN0qVBOYzM2CFlCR4ZDdLBiMXpt3Rx5AX3fdDXmMRCVh6qq5NcQ6JF5WdSSeCa9vSmkESlgds3W+CfDbGxuHlxGD7fgxPq4jrb0u0cazxIlX3k2T2FqByHqI24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org; spf=fail smtp.mailfrom=beagleboard.org; dkim=pass (2048-bit key) header.d=beagleboard-org.20230601.gappssmtp.com header.i=@beagleboard-org.20230601.gappssmtp.com header.b=yQK5Hc9G; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=beagleboard.org
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=beagleboard.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7494999de5cso3700850b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:51:23 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-748e81d37a7so3563597b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 02:51:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1753782683; x=1754387483; darn=vger.kernel.org;
+        d=beagleboard-org.20230601.gappssmtp.com; s=20230601; t=1753782688; x=1754387488; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=raxziZYeCxjaEOuosKAOJnUNwj1BxHTM8ZCk+kqmL9w=;
-        b=xbdUqbIAaQbF13zZPVNCJmcAok0d0UpeKNKK74+70f6F/cDUhZ15iVzht62vg5XNBG
-         xtE4Sw2e5DltFg/GdIITkyCBC7+vjgDoLYZNqNEZ+VBFDA4F9jLT9aKFLGoLStiO7idw
-         j1ts+3hbPjKTOPuGt+et0Kx12r3tELo9to0yVnKQoVFydOlszGIyXMCWAr+nJ1Yc1zQ1
-         NDVMGrXgpCL9tWV7hQO4akrorSyNqEp3Nyct9Vx7Cn7q6lvNdDcHlxKype4jM2A4VQET
-         nQwNK+QwkXjSLF3qmfSalV2qGQqNSWH50NvXyZcZsBo77aCV1HuPtU9pUqfa0iGzIRot
-         SpCg==
+        bh=pbCvGrb5aAa9O95i6t5AjrtpUVmty9ze9Q5MhiAUKr0=;
+        b=yQK5Hc9GZKlz+CqHlOTuW4ntE2Z0q/xO7JbFe1Tr0Q0EwK3S1X0CFyhJMXK+NyCtyR
+         e0Xnv0dVNRIQPw6xgE+c9cEjeTsiHHDK1lMq3xaqRtuJzNqOmqPg3EV0Zremx9SkZEZ9
+         DImF1yMrEBKU1uKFSYFYQa5vYtpOZju5lCTy+4m/K5TceiH85mkVwNEc9QHOnVrhFfWZ
+         GjrgBuLu/gO60hc+Ly8d6HYfS/1/0SehykblzMFtHmVVqB8JyHs6skxuY02ZuNNP3YjN
+         WDZCt6CpcFO86K9+54tcCCqwnoxuWpVD6nZskhbEMUBXpra2Swe4oQqeW5SF2vymOZAX
+         NIaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753782683; x=1754387483;
+        d=1e100.net; s=20230601; t=1753782688; x=1754387488;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=raxziZYeCxjaEOuosKAOJnUNwj1BxHTM8ZCk+kqmL9w=;
-        b=qJC2rqmTib0/zXGj8VdPZ1wnFyRhKaNfvys8Q0StXAVhTbyXRFX700q7do/UKhq2Z7
-         SfA+OAz1Fpg5iOYY66QSB/l2ctBfxxkxAA4ebLII9uad8vScNJqjvJdtBT0nnCEXawzf
-         oEYjbUAbnaP3kNNkBIUQs2sMkSx6gaFTQ5ycnWAa9KbtNuRsAtdp/ljKJIjSIciPrbIW
-         lXgUEOBsbCCG/pyeNsKf77tLOgwgA/nKeszxHVG70yMxq0a5PEk5wMtqUx8shpNddfEH
-         mdCmzc52jSCjn37tS0+n3fBtY6g0GZKSDPUdDx0H4dBrSF+mZE9UQAECS4TnB8xdnRV5
-         OIkA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqvkkIoOY3UlpvTGeUWNm+nzcJssj1n5UGPRN4UNHVI/OXu0z4JaiXt6K1Ydi2smbgnjDx6/EQO2QBKvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3KUn1YBasfDRYX1sK1uxqv4s7vpiE5exIQUJJgGuCgzbdz+9H
-	tAQN+GKGDCq1b882svM9JC940DCnInM4jGBDl0SrKzEFkXv3RAN8K/JA2f1hTIQn8w==
-X-Gm-Gg: ASbGncugRS/QdbCUDrkz+ZYp3IBf+ua6dA+LBUlDmAoN713c4D57fGQoo+4373Gmsq+
-	Vv9dYlw5+gNr+1PXqdwl2CGFatSOy7RpKQMmDndnO1wSKfJcH/6qNIRHT854tjIwQ0Q2MIxbbUQ
-	oAogu6eRFoNl14UjE7op7EP9WaO5w3umT348vTGYGSJxl2jip8kCsXZl1q8lwlmFHE/1/Yah87K
-	NTMjcbijm8QBxfFzED7NY+tY7K3cwYJySZ0ieqRndrqk0r1Iu1derr0y5j10wF9cfKsUJINYAIr
-	uSdeRtVX8BxotcXxlMkqzhPKcbuwNb1+w+3KVIQtbRkFIR09CcjrVaDe+nB3cfSOtAyDekFa6Q6
-	d/yHGtpntlm8RJQ3hB3BLEW7f4j6wbcQ=
-X-Google-Smtp-Source: AGHT+IE2RNQrcZCxXmokA9dyXQMFoBXEA0vRnDeOHhDng0bNoTGMD2776/VKoUU8/Hl6rSF49pdk3g==
-X-Received: by 2002:a05:6a00:1305:b0:748:fb7c:bbe0 with SMTP id d2e1a72fcca58-7633965f00emr22424727b3a.24.1753782682881;
-        Tue, 29 Jul 2025 02:51:22 -0700 (PDT)
+        bh=pbCvGrb5aAa9O95i6t5AjrtpUVmty9ze9Q5MhiAUKr0=;
+        b=uMsv6IjNaAP3/ENRzxzDNqm4jukVFvo5CNStuN7Fz9vUnBehoWHsu245BgVc0uVqFp
+         dMnK/aIyohYbYvGF+MbJdoEHRBnhaiYiIDGOWRXddMX/EkHOVPH4aI8Md7MvtF8lS6wQ
+         w30O0xqOc+raOLhGG2UItMkphQ6KSgyBTiMgttsreNM5aO2PQddTPpVdCAmF4JSN2mAl
+         dNJOex3T3G0UihjS04efAvF2i9++12EDy/6LrtY46gh9i3P2aLCf2f9HW9ZxhddnGed2
+         7L2fxbgqfVDtsj227j9djwWDZv0yAdKZRP+SUcj/0lFp/D7bzJ6nqOjwAxGTPUVi/AJk
+         VFVA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0w4tKWBy1Sij0yaNBhtHzpiyLfm7t6qahOjwaJmPdX5InzD5wyQ9xqDIMOBsd9rELP7i+QRB/k5DMRIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHWBP3oKSbYidABFMQxaynJfOlZOGXME0kxVs5PM5rvxEqDUIa
+	W72ndTgD4M7g3Yt0JcbFKpN0a1ULRJ/UtEPNPg1u/+kP+UWL5y2LWR2ppGfm7NocrA==
+X-Gm-Gg: ASbGnctWJlmr1TQSVJ3+QE4sBmQPsrBUDSFpP6So8mUUHrKFuxiIQppLvitaazlxPTT
+	d2mAz6UZXaFPBAIv/IoQRIBoJW8OQFohvEauOATyoDkGSRHkOlzvJjv0+yl5Gypy2hi3Axjy3qo
+	4aOxbPWXLm6Q3sYfo8mtNj/FSQs3l//iTANPeSZFmXbrRMazAF1ENhZoaq/4WceC6VhWuuJxeHD
+	1L1rTCrZJ9GRUokH1DxycbBQHy3Ac7yISCsTx84183zO4aeXMSAH7vQl0vtaId6r2mlZ5GE0tgW
+	yQx1oRaLB4G1Q/Zj7JniqPxkzThk9Ear57gWxRVDaI/TeWT7gShVeKUDzZSW8IxfMNBTHJQXtCf
+	+KxkPTl4We2D6VGJdc3hjgmyE5gmShFs2pTSgChzrsA==
+X-Google-Smtp-Source: AGHT+IEW3vS6So5bdp5dCCtaao+ndsslJgUa1t4xRenMl39WnvL/VyQ3oTaO1ewKOatupavABkMs4Q==
+X-Received: by 2002:a05:6a00:1483:b0:749:1c27:bcc5 with SMTP id d2e1a72fcca58-7633907b3b1mr23335028b3a.22.1753782687705;
+        Tue, 29 Jul 2025 02:51:27 -0700 (PDT)
 Received: from [192.168.1.6] ([2401:4900:8899:25fe:4fe5:6353:8b2b:942c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b4c8762sm7614498b3a.117.2025.07.29.02.51.18
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b4c8762sm7614498b3a.117.2025.07.29.02.51.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 02:51:22 -0700 (PDT)
+        Tue, 29 Jul 2025 02:51:27 -0700 (PDT)
 From: Ayush Singh <ayush@beagleboard.org>
-Date: Tue, 29 Jul 2025 15:21:02 +0530
-Subject: [PATCH 3/4] spi: Handle spi bus extension
+Date: Tue, 29 Jul 2025 15:21:03 +0530
+Subject: [PATCH 4/4] devicetree: bindings: spi: Introduce SPI bus
+ extensions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250729-spi-bus-extension-v1-3-b20c73f2161a@beagleboard.org>
+Message-Id: <20250729-spi-bus-extension-v1-4-b20c73f2161a@beagleboard.org>
 References: <20250729-spi-bus-extension-v1-0-b20c73f2161a@beagleboard.org>
 In-Reply-To: <20250729-spi-bus-extension-v1-0-b20c73f2161a@beagleboard.org>
 To: Mark Brown <broonie@kernel.org>, herve.codina@bootlin.com, 
@@ -95,138 +96,216 @@ To: Mark Brown <broonie@kernel.org>, herve.codina@bootlin.com,
 Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
  devicetree@vger.kernel.org, Ayush Singh <ayush@beagleboard.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3211; i=ayush@beagleboard.org;
- h=from:subject:message-id; bh=ZJleRO/tmglmwyTY49Sq9b3ot5hWCGqXz2SxgsKeHM0=;
- b=owEBbQKS/ZANAwAKAQXO9ceJ5Vp0AcsmYgBoiJmHEyTSX0+657ez+U7jHg14AHd1oQdKmCcKJ
- 2DJCbkRHsKJAjMEAAEKAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCaIiZhwAKCRAFzvXHieVa
- dL2JD/9w08i6TbVyoTBn8FP0rTkWX1zJK1RaCp4Aj7s+B5GLVwvaaJ+SiTvw6dlA7kycMTwk2BZ
- Eq0tAmrseYxoEbhu8agaodyi90eNjmDL0kto+R14YpH2biXEgK79z7GlSaDbyp4jL+8y9G0DMBv
- 5rwpfo0UXUilXMTzJi9tgDsYsl8cYZKdWHPCq/v3qiJkYfTNVkVWEr6CUeaiaoLrykxNyw9vhvQ
- AwPdyRbuc/M47eVgKf8Yl1qzTAhTsynZy/vkyacpFsaOcPFre8lmyjUme0DozfQcCvaNs+xQ02e
- mE/jyyS/VtQ8onzYkFjRP7YdQBxjJdLhk6EKra1bQDWtA6c3wFAakuHZzaPY5FEOBdAQukON2j4
- 2Me4XZguAoyPsJqiZMFFVdDQI9kYltaWawOYAI7w75ONzc0g9fcvfvX057IKVsWpBCYEkPFp+Vw
- jX6jDWL2qgnYlXo1jlzVJb1t+qa1CYjDaniF/doeWThz7rCsOTbHnFH9ujUM0oj38b/LIdBLOfA
- y70TW3DeobvIWUcjVkM8H++d9MqEM+XVB77emED1Y/ze74iD6J7pTNwrekAKjFiZ4zI7yV09qkJ
- 2J3wP11fGNm0Rqfot3wMvx+xT+R7REoU3ozXNRDM9S+uDhn8VAeektMTklQkOppxTt51+NCZ3aM
- KccXA+vx7DnidJg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5762; i=ayush@beagleboard.org;
+ h=from:subject:message-id; bh=ESeXGOrQ7Jk3sJKdX7eSWtreA2ap3wRm9L80hcxvyls=;
+ b=owEBbQKS/ZANAwAKAQXO9ceJ5Vp0AcsmYgBoiJmHMynii/fNqaV5wb0NWLzugrDvlxTwshzWO
+ ZBPPNl3g5GJAjMEAAEKAB0WIQTfzBMe8k8tZW+lBNYFzvXHieVadAUCaIiZhwAKCRAFzvXHieVa
+ dAsCEACvuSrQzIHlXfE/7XtmaJyN+QnePqW744FsEhg0roKKvQoQro9gAFzaAn4H9EO8WS0C3zO
+ BLfkQT8sRkSaAQiWG3VlrNz2Ws4bbxSULKUfV90N3IKdANHUG03l8fobBayJ1NvGVhXf/CBQwkh
+ PEDkoWutEH2jI9OIo4u0gQ/1FVD8L+izgrHsnpgRLm9Zq8r2TeUBheqHFw83McMHMFtA7z/mtuw
+ +WP9RyVCWMbVteuPH6kyEzLNlDt7c/XggWfWtOX8OP8AwFs5vw/VtI3DNk7UoPtdkLY6TxPaJNt
+ UFgG+yQVPc6NPBCPKMhFgdNiBeU2I/wI5BuA6L+EDW2k4YbDWIHwcEO6+L9GyK5ZPOswV8gAspz
+ NiogB3QSgLrBh8FZp2/jOyZsUZNrwBLbE8Q5BhO6LXQk1+OHv5PDjsbiOvA22G53XlFthFyAXcw
+ GV5tGcyGqZJ/XkHYdxALgNf4HfydgOh1Uf9MC3NeKbdaVCP5d++rrLo11Q647Z44CsHdiLjnFEG
+ 8XVFMsXe8Zk6xJ7010xfNP/glSUTKsIqv8t9Oikfx9xv1IMr+pDsvhECx9GbjtLo4QWj/+eMkYf
+ uj8yu3dCs/8eS4yixdM9FAvVub0Il9dd20WsHrhiOM2QstfckuB9Pq3uwks8jxkNIkGVyjXEwjC
+ hJo0L0KtV06rBMw==
 X-Developer-Key: i=ayush@beagleboard.org; a=openpgp;
  fpr=DFCC131EF24F2D656FA504D605CEF5C789E55A74
 
-spi bus extensions were introduced to decouple spi busses when they are
-wired to connectors. Combined with devicetree overlays, they introduce
-an additional level of indirection, which is needed to decouple the
-overlay (describing the hardware available on addon baord) and the base
-tree (describing resources provided to the addon board).
+An SPI bus can be wired to the connector and allows an add-on board to
+connect additional SPI devices to this bus.
 
-For instance, the following devicetree fragment, available once
-overlays are applied, is legit:
+Those additional SPI devices could be described as sub-nodes of the SPI
+bus controller node however for hotplug connectors described via device
+tree overlays there is additional level of indirection, which is needed
+to decouple the overlay and the base tree:
 
-```
-spi1: spi@abcd0000 {
-    compatible = "xyz,spi-ctrl";
-    spi-bus-extension@0 {
-        reg = <0>;
-        spi-bus = <&spi-ctrl>;
-    };
-    ...
-};
+  --- base device tree ---
 
-connector {
-    spi-ctrl {
-        spi-parent = <&spi1>;
-        #address-cells = <1>;
-        #size-cells = <0>;
+  spi1: spi@abcd0000 {
+      compatible = "xyz,foo";
+      spi-bus-extension@0 {
+          spi-bus = <&spi_ctrl>;
+      };
+      ...
+  };
 
-        spi-bus-extension@0 {
-            reg = <0>;
-            spi-bus = <&spi-other-connector>;
-        };
+  spi5: spi@cafe0000 {
+      compatible = "xyz,bar";
+      spi-bus-extension@0 {
+          spi-bus = <&spi_sensors>;
+      };
+      ...
+  };
 
-        device@1 {
-            compatible = "xyz,foo";
-            reg = <1>;
-        };
-    };
+  connector {
+      spi_ctrl: spi-ctrl {
+          spi-parent = <&spi1>;
+          #address-cells = <1>;
+          #size-cells = <0>;
+      };
 
-    devices {
-        other-connector {
-            spi-at-other-connector {
-                spi-parent = <&spi-ctrl>;
-                #address-cells = <1>;
-                #size-cells = <0>;
+      spi_sensors: spi-sensors {
+          spi-parent = <&spi5>;
+          #address-cells = <1>;
+          #size-cells = <0>;
+      };
+  };
 
-                device@2 {
-                   compatible = "xyz,bar";
-                   reg = <2>;
-                };
-            };
-        };
-    };
-};
-```
+  --- device tree overlay ---
 
-Current processing done when a spi adapter is registered registers
-spi clients described at the adapter node level.
+  ...
+  // This node will overlay on the spi-ctrl node of the base tree
+  spi-ctrl {
+      eeprom@50 { compatible = "atmel,24c64"; ... };
+  };
+  ...
 
-With spi bus extensions, the process needs to look also at
-extensions to register devices described in those extensions and so
-connected to the adapter.
+  --- resulting device tree ---
 
-Extend of_spi_register_children() to look recursively at those
-spi bus extensions.
+  spi1: spi@abcd0000 {
+      compatible = "xyz,foo";
+      spi-bus-extension@0 {
+          spi-bus = <&spi_ctrl>;
+      };
+      ...
+  };
+
+  spi5: spi@cafe0000 {
+      compatible = "xyz,bar";
+      spi-bus-extension@0 {
+          spi-bus = <&spi_sensors>;
+      };
+      ...
+  };
+
+  connector {
+      spi_ctrl: spi-ctrl {
+          spi-parent = <&spi1>;
+          #address-cells = <1>;
+          #size-cells = <0>;
+
+          device@1 { compatible = "xyz,foo"; ... };
+      };
+
+      spi_sensors: spi-sensors {
+          spi-parent = <&spi5>;
+          #address-cells = <1>;
+          #size-cells = <0>;
+      };
+  };
+
+Here spi-ctrl (same goes for spi-sensors) represent the part of SPI bus
+that is on the hot-pluggable add-on. On hot-plugging it will physically
+connect to the SPI adapter on the base board. Let's call the 'spi-ctrl'
+node an "extension node".
+
+In order to decouple the overlay from the base tree, the SPI adapter
+(spi@abcd0000) and the extension node (spi-ctrl) are separate nodes.
+
+The extension node is linked to the SPI bus controller in two ways. The
+first one with the spi-bus-extension available in SPI controller
+sub-node and the second one with the spi-parent property available in
+the extension node itself.
+
+The purpose of those two links is to provide the link in both direction
+from the SPI controller to the SPI extension and from the SPI extension
+to the SPI controller.
 
 Signed-off-by: Ayush Singh <ayush@beagleboard.org>
 ---
- drivers/spi/spi.c | 27 ++++++++++++++++++++++++++-
- 1 file changed, 26 insertions(+), 1 deletion(-)
+ .../devicetree/bindings/spi/spi-controller.yaml    | 66 +++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index ea271e37c72d3dc099c5147ec404050ee0bbf046..015f86c6f3228a8746dc517112d466051b50e3db 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -2528,9 +2528,17 @@ static void of_register_spi_children(struct spi_controller *ctlr,
- 				     struct device_node *node)
- {
- 	struct spi_device *spi;
--	struct device_node *nc;
-+	struct device_node *nc, *extension;
+diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/Documentation/devicetree/bindings/spi/spi-controller.yaml
+index 82d051f7bd6e09dab9809c85ff13475d2b118efd..9b44ce4542f9552c94cb0658ffe3f6d3f29bc434 100644
+--- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
++++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
+@@ -25,6 +25,13 @@ properties:
+   "#size-cells":
+     const: 0
  
-+	/*
-+	 * Register device directly described in this bus node before looking
-+	 * at extensions.
-+	 */
- 	for_each_available_child_of_node(node, nc) {
-+		/* Filter out extension node */
-+		if (of_node_name_eq(nc, "spi-bus-extension"))
-+			continue;
++  spi-parent:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      In case of an SPI bus extension, reference to the SPI bus controller
++      this extension is connected to. In other word, reference the SPI bus
++      controller on the fixed side that drives the bus extension.
 +
- 		if (of_node_test_and_set_flag(nc, OF_POPULATED))
- 			continue;
+   cs-gpios:
+     description: |
+       GPIOs used as chip selects.
+@@ -111,7 +118,26 @@ properties:
+       - compatible
  
-@@ -2541,6 +2549,23 @@ static void of_register_spi_children(struct spi_controller *ctlr,
- 			of_node_clear_flag(nc, OF_POPULATED);
- 		}
- 	}
+ patternProperties:
+-  "^.*@[0-9a-f]+$":
++  'spi-bus-extension@[0-9a-f]+$':
++    type: object
++    description:
++      An SPI bus extension connected to an SPI bus. Those extensions allow to
++      decouple SPI busses when they are wired to connectors.
 +
-+	/* Look at extensions */
-+	for_each_available_child_of_node(node, nc) {
-+		if (!of_node_name_eq(nc, "spi-bus-extension"))
-+			continue;
++    properties:
++      reg:
++        maxItems: 1
 +
-+		extension = of_parse_phandle(nc, "spi-bus", 0);
-+		if (!extension)
-+			continue;
++      spi-bus:
++        $ref: /schemas/types.yaml#/definitions/phandle
++        description:
++          Reference to the extension bus.
 +
-+		/*
-+		 * Register children available at this extension possibly
-+		 * walking other chained extensions.
-+		 */
-+		of_register_spi_children(ctlr, extension);
-+		of_node_put(extension);
-+	}
- }
- 
- /**
++    required:
++      - reg
++      - spi-bus
++
++  "^(?!spi-bus-extension@).*@[0-9a-f]+$":
+     type: object
+     $ref: spi-peripheral-props.yaml
+     additionalProperties: true
+@@ -214,3 +240,41 @@ examples:
+             spi-cs-high;
+         };
+     };
++
++  # SPI bus extension example involving an SPI bus controller and a connector.
++  #
++  #  +--------------+     +-------------+     +-------------+
++  #  | spi@abcd0000 |     |  Connector  |     | Addon board |
++  #  |    (spi1)    +-----+ (spi-addon) +-----+ (device@10) |
++  #  |              |     |             |     |             |
++  #  +--------------+     +-------------+     +-------------+
++  #
++  # The spi1 SPI bus is wired from a SPI controller to a connector. It is
++  # identified at connector level as spi-addon bus.
++  # An addon board can be connected to this connector and connects a device
++  # (device@10) to this spi-addon extension bus.
++  - |
++    spi1: spi@abcd0000 {
++        compatible = "brcm,bcm2835-spi";
++        reg = <0xabcd0000 0x100>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        spi-bus-extension@0 {
++            reg = <0>;
++            spi-bus = <&spi_addon>;
++        };
++    };
++
++    connector {
++        spi_addon: spi-addon {
++            spi-parent = <&spi1>;
++            #address-cells = <1>;
++            #size-cells = <0>;
++
++            device@2 {
++                compatible = "xyz,foo";
++                reg = <0x02>;
++            };
++        };
++    };
 
 -- 
 2.50.1
