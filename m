@@ -1,95 +1,217 @@
-Return-Path: <linux-kernel+bounces-749529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA96B14F7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:46:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3071EB14F82
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 16:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C95918A3F78
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D19618A3F49
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 14:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6611EF387;
-	Tue, 29 Jul 2025 14:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B403A1E9B2D;
+	Tue, 29 Jul 2025 14:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hHP7pPCa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="IA1tDcfx"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717B21E885A;
-	Tue, 29 Jul 2025 14:45:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE1492AF07;
+	Tue, 29 Jul 2025 14:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753800355; cv=none; b=c+Bwn1Gg5rLcKeFv7qQXWf8aE2K7UkBdS2rbpKlZ2k2MsutFt7oqyaB0YUYD6K7YSWR+BP2MPRPoZhCEiTMvBh9i1oLsVBJ8Y/VcRQ0Cf0zsD3uKgBsfP/0VFmUHAfZto18qvTxKaSzaMNWFrMO+nWPIMDBah88T9ND8PTZ2BR0=
+	t=1753800494; cv=none; b=uS89Hp8J19baDEd5aNsnYyY0l6wOb7fi8EHzLhfXwE2SeHq7BOISrnAZDnWLNAHYcbDn/NSC799Mh+hPBiFLbdvhdnQG1j/hBAfot5lCmZMCEd4+4OmpAd5Djm2Nbg7qubHI9FXOS9B/HwxLCprqceQR/w3kii8jNLUzRM3Aik8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753800355; c=relaxed/simple;
-	bh=VRe02SlbUxzFL+D1eWiHYgvNlUzOCAiZ1RiAPc6Icps=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=LxmEs2N9mn1O8YfmuAmHZfpvTg9WSQ5v+830qnUW2S/UGSUDs3tU6G/tO0iwPiKNXeDT5wqOK57zfwakMoYE1ocSygpz+bb9uS2njBcQBmR/N/DRMzgqEdSj+dFki3eGFt9JMPkIPGNnJxchOe2t0UEaQMHmG1J7T45C8uH6q14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hHP7pPCa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB0E9C4CEF4;
-	Tue, 29 Jul 2025 14:45:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753800355;
-	bh=VRe02SlbUxzFL+D1eWiHYgvNlUzOCAiZ1RiAPc6Icps=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=hHP7pPCa5zggfP/Ea+wRT/ozNG1fGgcXeXqLCs4RDCT9ktEORmHOSKgGE4PiH6KZ5
-	 gd036sU/rM8UF60RTuQS/L1Qvd3v7rFBxFPoodU30xbsVicWZo/6O1rBrKddGsOHv3
-	 sd4X2MpA5ePhVyO93Pncnz1aZ1cJH8CUfOcJFKrePwbdWG/mAbTFuvyWGtciiABF9w
-	 TL6B4XG85XbZw+vjYlj2ln07rtDxMJXP3oC6nTtDDvIVtCghSwxkfMd+0EaefDMCO3
-	 r6rWJ2Lsl0Gzk07YrTKdnCsWFrSl7MMfBJOUvX6r21MbH95uY67XCYSw26uEwdirxi
-	 NM1lAQFU9hq+A==
+	s=arc-20240116; t=1753800494; c=relaxed/simple;
+	bh=Wmhz4bmTCfiLTIDvzMgycuE08DUM8az+85WjYYNDaEU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tQAGOTnV0wVeQPyTzhWkK9+107Itz1nYRb93naIv3pi9Sgm79GH/ctVfdXBwShCjKpBN3eH2QekR3lxjqBtqToLvj7iJVTKhbjig+nvXgQImcmOKKKBjcS9HvGzkGA2s7g2Qqu2BXPfJ4oHmbrQ5+W/WECdZsI68gvU/DqCfhmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=IA1tDcfx; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=8N2iGBpWtDT0Y82ZNtFRtYqz7gU84Rzee3g2KG3Goa0=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1753800479; v=1; x=1754232479;
+ b=IA1tDcfxQzQhQKvJckCZENQh5pwucNIivjvQkMTgt+LKUzfSwqGJHC0/EZW8MmmoPDSD1O8f
+ WzUmNU4aUHEonH1X6rUFcuRcvAVJcE7PVn6ABn0KVCSuHpjSeXN5FqTQMFB0vYY9hVtgQruUk/k
+ jEB9H1YdYE3kjaggjh+eLVUrrKVgpo4xcT3/jyIjNBag1bSNaB25AdXx/+tY3u/CXzyEV+gtv8y
+ Z+aFwCtSJRiRBUzVeLuuAcuLzLnagyCtKbWo5s8gm8HHmw4jvyIzw6dKvBJkWlDeEOjZBEEb7oX
+ VlfwYJSKqx1yBIxubnKcLt+zT42FMgV8hO5etlwWCjHNg==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id efe1b5b4; Tue, 29 Jul 2025 16:47:59 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Robert Jarzmik <robert.jarzmik@free.fr>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Peng Fan <peng.fan@nxp.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev, Karel Balej <balejk@matfyz.cz>
+Subject:
+ Re: [REGRESSION] samsung,coreprimevelte oops and lockup while probing SM5504
+Date: Tue, 29 Jul 2025 16:47:58 +0200
+Message-ID: <13840884.uLZWGnKmhe@radijator>
+In-Reply-To: <3367665.aeNJFYEL58@radijator>
+References: <3367665.aeNJFYEL58@radijator>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Jul 2025 16:45:50 +0200
-Message-Id: <DBOMC68QGS76.2MYEXRE1I34VV@kernel.org>
-Cc: "herculoxz" <abhinav.ogl@gmail.com>, <linux-pci@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <bhelgaas@google.com>, <kwilczynski@kernel.org>, <ojeda@kernel.org>,
- <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <lossin@kernel.org>, <a.hindborg@kernel.org>,
- <aliceryhl@google.com>, <tmgross@umich.edu>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v2] rust: pci: Use explicit types in FFI callbacks
-References: <20250729102953.141412-1-abhinav.ogl@gmail.com>
- <CANiq72kRu5Wd-3Tk7px=2Y5kU5Tq2fQch=+f3ExYSrJa2+tSSg@mail.gmail.com>
-In-Reply-To: <CANiq72kRu5Wd-3Tk7px=2Y5kU5Tq2fQch=+f3ExYSrJa2+tSSg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-On Tue Jul 29, 2025 at 12:52 PM CEST, Miguel Ojeda wrote:
-> On Tue, Jul 29, 2025 at 12:30=E2=80=AFPM herculoxz <abhinav.ogl@gmail.com=
-> wrote:
->>
->> and improves ABI
->> correctness when interfacing with C code.
->
-> I think this still sounds like it is fixing an ABI issue -- I would
-> probably just remove that second sentence.
+Hello,
 
-I agree, the types exported via prelude are the ones from kernel::ffi.
+Friendly ping on this issue. The issue still occurs on v6.16 and is still 
+fixed by reverting commit 20117cf426b6. I have found that the root cause seems 
+to be a bad pointer in gpio_chip->gpio_device.owner, but was not able to 
+figure out why this happens nor why this only happens when the IRQ chip is 
+immutable. Is there anything else I can do to try and get this resolved?
 
-> (But no need for a v3 -- I think it can be fixed on apply unless
-> Danilo wants it).
+Regards,
+--
+Duje
 
-Yeah, I can fix it up when applying the patch.
+> Hi,
+> 
+> After rebasing my samsung,coreprimevelte patchset to v6.16-rc5 (from v6.14), 
+I
+> found that the board would not successfully boot. Through serial I managed 
+to
+> extract this oops (stack trace decoded):
+> 
+> [    1.281921] Unable to handle kernel paging request at virtual address
+> 00676e6965657246
+> [    1.281927] Mem abort info:
+> [    1.281930]   ESR = 0x0000000096000004
+> [    1.281933]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [    1.281938]   SET = 0, FnV = 0
+> [    1.281941]   EA = 0, S1PTW = 0
+> [    1.281944]   FSC = 0x04: level 0 translation fault
+> [    1.281948] Data abort info:
+> [    1.281950]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+> [    1.281953]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [    1.281957]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [    1.281961] [00676e6965657246] address between user and kernel address
+> ranges
+> [    1.281968] Internal error: Oops: 0000000096000004 [#1]  SMP
+> [    1.281974] Modules linked in:
+> [    1.281995] Tainted: [S]=CPU_OUT_OF_SPEC
+> [    1.281998] Hardware name: Samsung Galaxy Core Prime VE LTE (DT)
+> [    1.282003] Workqueue: events_unbound deferred_probe_work_func
+> [    1.282018] pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS 
+BTYPE=--)
+> [    1.282025] pc : try_module_get (kernel/module/main.c:883 (discriminator
+> 2))
+> [    1.282035] lr : gpiochip_irq_reqres (drivers/gpio/gpiolib.c:4131
+> (discriminator 1) drivers/gpio/gpiolib.c:1929 (discriminator 1))
+> [    1.282044] sp : ffff8000811d3280
+> [    1.282047] x29: ffff8000811d3280 x28: 000000000000001c x27:
+> 0000000000000002
+> [    1.282057] x26: ffff800080ce3c50 x25: ffff800080700e08 x24:
+> ffff00000341f800
+> [    1.282068] x23: ffff000002ea6c00 x22: 000000000000001c x21:
+> 0000000000000000
+> [    1.282077] x20: 0000000000000000 x19: ffff000002f03880 x18:
+> 0000000000000000
+> [    1.282087] x17: 0000000000000000 x16: 000000009e839b88 x15:
+> ffff0000025ec490
+> [    1.282097] x14: ffff800080f6ae78 x13: 0000000000000001 x12:
+> 000000004c68655d
+> [    1.282107] x11: 0000000000000180 x10: 0000000000000a70 x9 :
+> ffff8000805a6fd4
+> [    1.282116] x8 : ffff0000025eced0 x7 : ffff0000025ec400 x6 :
+> 00000000cbc1e127
+> [    1.282126] x5 : ffff000002c5b328 x4 : 0000000000000000 x3 :
+> 0000000000000000
+> [    1.282136] x2 : ffff0000025ec400 x1 : 20676e6965657246 x0 :
+> 20676e6965657246
+> [    1.282146] Call trace:
+> [    1.282150] try_module_get (kernel/module/main.c:883 (discriminator 2)) 
+(P)
+> [    1.282159] gpiochip_irq_reqres (drivers/gpio/gpiolib.c:4131
+> (discriminator 1) drivers/gpio/gpiolib.c:1929 (discriminator 1))
+> [    1.282167] __setup_irq (kernel/irq/manage.c:1341 (discriminator 1) 
+kernel/
+> irq/manage.c:1529 (discriminator 1))
+> [    1.282177] request_threaded_irq (kernel/irq/manage.c:2126)
+> [    1.282186] regmap_add_irq_chip_fwnode (drivers/base/regmap/regmap-
+> irq.c:923)
+> [    1.282197] devm_regmap_add_irq_chip_fwnode (drivers/base/regmap/regmap-
+> irq.c:1085)
+> [    1.282206] devm_regmap_add_irq_chip (drivers/base/regmap/regmap-
+> irq.c:1123)
+> [    1.282215] sm5022_muic_i2c_probe (drivers/extcon/extcon-sm5502.c:714)
+> [    1.282225] i2c_device_probe (drivers/i2c/i2c-core-base.c:591)
+> [    1.282235] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:657)
+> [    1.282243] __driver_probe_device (drivers/base/dd.c:799)
+> [    1.282252] driver_probe_device (drivers/base/dd.c:829)
+> [    1.282260] __device_attach_driver (drivers/base/dd.c:958)
+> [    1.282269] bus_for_each_drv (drivers/base/bus.c:462)
+> [    1.282277] __device_attach (drivers/base/dd.c:1031)
+> [    1.282285] device_initial_probe (drivers/base/dd.c:1079)
+> [    1.282294] bus_probe_device (drivers/base/bus.c:537)
+> [    1.282301] device_add (drivers/base/core.c:3699)
+> [    1.282308] device_register (drivers/base/core.c:3775)
+> [    1.282316] i2c_new_client_device (drivers/i2c/i2c-core-base.c:1022)
+> [    1.282325] of_i2c_register_device (drivers/i2c/i2c-core-of.c:77)
+> [    1.282332] of_i2c_register_devices (drivers/i2c/i2c-core-of.c:104
+> (discriminator 1))
+> [    1.282339] i2c_register_adapter (drivers/i2c/i2c-core-base.c:1594)
+> [    1.282347] i2c_add_adapter (drivers/i2c/i2c-core-base.c:1670 drivers/
+i2c/
+> i2c-core-base.c:1650)
+> [    1.282356] i2c_add_numbered_adapter (drivers/i2c/i2c-core-base.c:1703)
+> [    1.282366] __i2c_bit_add_bus (drivers/i2c/algos/i2c-algo-bit.c:659)
+> [    1.282373] i2c_bit_add_numbered_bus (drivers/i2c/algos/i2c-algo-
+bit.c:683)
+> [    1.282380] i2c_gpio_probe (drivers/i2c/busses/i2c-gpio.c:432)
+> [    1.282387] platform_probe (drivers/base/platform.c:1405)
+> [    1.282397] really_probe (drivers/base/dd.c:579 drivers/base/dd.c:657)
+> [    1.282405] __driver_probe_device (drivers/base/dd.c:799)
+> [    1.282413] driver_probe_device (drivers/base/dd.c:829)
+> [    1.282422] __device_attach_driver (drivers/base/dd.c:958)
+> [    1.282430] bus_for_each_drv (drivers/base/bus.c:462)
+> [    1.282438] __device_attach (drivers/base/dd.c:1031)
+> [    1.282446] device_initial_probe (drivers/base/dd.c:1079)
+> [    1.282455] bus_probe_device (drivers/base/bus.c:537)
+> [    1.282462] deferred_probe_work_func (drivers/base/dd.c:124)
+> [    1.282471] process_one_work (arch/arm64/include/asm/jump_label.h:36
+> include/trace/events/workqueue.h:110 kernel/workqueue.c:3243)
+> [    1.282479] worker_thread (kernel/workqueue.c:3315 (discriminator 2)
+> kernel/workqueue.c:3402 (discriminator 2))
+> [    1.282487] kthread (kernel/kthread.c:464)
+> [    1.282494] ret_from_fork (arch/arm64/kernel/entry.S:863)
+> [ 1.282506] Code: a9bd7bfd 910003fd b4000260 aa0003e1 (b9400000)
+> (disassembly omitted since the script treated it as x86 for some reason)
+> [    1.282512] ---[ end trace 0000000000000000 ]---
+> [    1.298926] mmc0: new HS200 MMC card at address 0001
+> [    1.331699] mmc2: SDHCI controller on d4280800.mmc [d4280800.mmc] using
+> ADMA
+> [    1.333834] mmcblk0: mmc0:0001 QN1SMB 7.28 GiB
+> [    1.368613] mmc2: new high speed SDIO card at address 0001
+> [    1.373418]  mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9 p10 p11 p12 p13 p14 p15
+> p16 p17 p18 p19
+> [    1.688785] mmcblk0boot0: mmc0:0001 QN1SMB 4.00 MiB
+> [    1.693415] mmcblk0boot1: mmc0:0001 QN1SMB 4.00 MiB
+> [    1.697474] mmcblk0rpmb: mmc0:0001 QN1SMB 512 KiB, chardev (248:0)
+> (dmesg ends here, display freezes, no further signs of life)
+> 
+> I went through recent commits to sm5502, gpiolib and finally gpio-pxa to 
+check
+> whether any of them could be causing issues. Eventually I stumbled upon
+> 20117cf426b6 ("gpio: pxa: Make irq_chip immutable") and reverted it locally,
+> after which the board started booting again.
+> 
+> #regzbot introduced: 20117cf426b6
+> 
+> Regards,
+> --
+> Duje
 
-I also think the subject from v1, i.e. "use c_* types via kernel prelude", =
-was
-better. This one is a bit misleading, the types in the FFI callbacks are al=
-ready
-explicit.
 
-Unless I hear otherwise, I will also revert the subject to the one of v1 wh=
-en I
-apply the patch.
 
-Thanks,
-Danilo
+
 
