@@ -1,148 +1,143 @@
-Return-Path: <linux-kernel+bounces-749067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44BF4B1499A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:57:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6537AB149A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 797D53A99A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:56:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9590E3BFEDE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DDC726B74E;
-	Tue, 29 Jul 2025 07:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028B626B0B6;
+	Tue, 29 Jul 2025 07:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RklG3KhH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VEvEmy/p"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891312192FC;
-	Tue, 29 Jul 2025 07:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 950B82192FC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 07:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753775819; cv=none; b=cUwjye6DvcYiou/A8sE6jpEtY2HT6nDaHSE5V8sX5GeQLyZtOJV+m55ltEhj5YFDf6ASjTxYCckp7cCU0iQ+DllylU8c5g9w7e9vzsWUj6WKSrDRSv1xsMEeQ5jqBmVcpC/SCRHHoKVTBg8DWZq9sQhy82H7L7/A+3sOKutVQyU=
+	t=1753775892; cv=none; b=DHQ0St2BV4uaBWskitFjMerQx2HUPG2cHbUKuf2JbQZgY3DzZEVqgJy1AbMpv+weJCOvUNT97K1WtaT857f+jGP3HNcqmEogbLljqKJehOFwU/eChDz0vV2xmLN3jKTiwxPbU6G0oTKqKMfS+wvGDOSnJ2qXKO/u4oTHy29mDmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753775819; c=relaxed/simple;
-	bh=npIOaJvSmi4YJZFOcIiWmLWYcrUrACiFT+JLNhShhpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6NYA8k4Qp0pHBZi3pjQLzhGvw36krsN7a7xyOaV2GcABsbx1hHXYKvG65Bu4SecZ5dfeuvMbwt/x5o7LywwI5qNBXUBcAvyYk7oNy6T2AuI2jXif1mym/NLYogVPi/qB2Ym2iucy3KMzHNItrPhml6Yya3+P+IIp81i9ox335E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RklG3KhH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92C6C4CEF5;
-	Tue, 29 Jul 2025 07:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753775819;
-	bh=npIOaJvSmi4YJZFOcIiWmLWYcrUrACiFT+JLNhShhpw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RklG3KhHZTFCqLPorPMDBul+T2GPoK2u43fN5gzfOTSc22B9B8/vI42ZNkL1HFlqF
-	 VoaEsrys3tmcjbpEGjxCH7r5IjW3ajpus39uXx+wibBoMRLPfequjLP3MWgpbAZSem
-	 cOamrINbM28sFSRepzSLoFDLFtr5KYRydGD2KPgA=
-Date: Tue, 29 Jul 2025 09:56:56 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	dave.hansen@linux.intel.com, hpa@zytor.com, darwi@linutronix.de,
-	sohil.mehta@intel.com, peterz@infradead.org, ravi.bangoria@amd.com,
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] x86/intel: Fix always false range check in x86_vfm
- model matching
-Message-ID: <2025072931-recount-stifling-73e8@gregkh>
-References: <20250729042621.6403-1-suchitkarunakaran@gmail.com>
- <2025072925-lint-agreement-77e8@gregkh>
- <CAO9wTFg_jCUZ+DxXVDM11_715r6ALJ=HyRXkcBxhGrBUo4iVUg@mail.gmail.com>
+	s=arc-20240116; t=1753775892; c=relaxed/simple;
+	bh=AbTOM347spOloDSOG4nl3ZHZIS1SePcI8qYC399qLTI=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AH9NlXyMazxdWhEnYwGcXMJ/RgNeXIBw/fatP6xqpp7GxV1HKkgepIjgnClbALtJLmahbn19So5dCNfjmyjz8YpKA/ilLZLuiJNlDXnzjANMeaFuC6Q43AhVM/2IW7IZzsCATH8Wsb0Ml10f9ZW8JjRgZM+0eHcWPiaoXvNof18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VEvEmy/p; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b77b8750acso458057f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 00:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753775889; x=1754380689; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9nSRUdmOtFwIfWjaocj7a2xYBLBsc7tk6nknvXHnmLE=;
+        b=VEvEmy/pto9TLgswrHw+6VJkbLFNG4DC6gr4wyHNlv267zdIM/vEXO6gwYlFNei0Qu
+         PSV8SfKtWWn12zobO0JB5uYhDOLHOOJvPUnyVAjIg5EDHkK4LwFjrVpIcalC87aIp1Dz
+         yuocFYgKs11Fjz/gS8LY4jFp6h36u7rcj4p7z4QPTs5PPJT1pbyed2Kaei+7p6xVAZ+T
+         29OrebzNMW+XIxQiutChcMtIOChdmG8zRE2rxeaYRyzrhKfW5VE+keU88PoDfCZcZqUo
+         4F3vh7tewsc6HQpQDqx503ZvTpoduDyh69uu6Q4FvsUL6sIFSs+rHY9soPoW/QLHMgf9
+         9arA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753775889; x=1754380689;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9nSRUdmOtFwIfWjaocj7a2xYBLBsc7tk6nknvXHnmLE=;
+        b=XwYKzsjv6XMSQZCXAnb1PnzFVFfAvLE0ju8SsL08wqPJc3mNBC65fsbjGbciUGkvud
+         g902w/eHIXJAP8n6VarSjiop1F5fNKhwdwExs4ytjI38cMM1e0YnpMH1v+lNjlxNqQq0
+         Gg4OyU8V8EgUJ49J7Ci/xyXLAbuqFpGAaOtZXF1/fD30TFOUOuNQcv64m1ECv/4KPzhv
+         oiNLAo5/8Shexvreeukj7soe/aLl/OgEO5PYQ5QmLK0mtF342sqfxt+QP8uUsXbMmZ/P
+         GG/B5/Gk4PDCb7QQje4y3B2vKfYyJ5thb6Du1CzoQNfIcfDwFGb40vcR5tVw6Pd39tnd
+         COBg==
+X-Gm-Message-State: AOJu0Yw78kz8G4j6mdpZfenqBYzRfXoT24b/G1sA8ziGypJGYc8OuwGg
+	aJDFCKmzR07s21LDRUHc6XLy+5gfdfcJnv2k49KSkC3+/yAVbVRdo3jmsId0+OUIs2g=
+X-Gm-Gg: ASbGncv9ssSzyhuxR8Y/lVp7EnOW8IkzOiRW3+1DQbnGa1p3+IPztsBP0JqjXz9cLit
+	yWYBO0c+TtrfPIAgctdkMsVppJshvR0vYONOpO4k6m5gjzp4g1WTD/H8ctp9876aaMP4fv8ylBh
+	4K+B/M0XpKMm1cpac0MBQpxjry1q/ZvqccIaZgOXXsdD0aPhRnLcUbnXDP37yVsQHi28aDo/Nec
+	wkow1q4KOT25mWoePSxWuCgJbJPU8fmNhFnjaLhYzpMRHXOgGQ2YZ5iOEvqoz1QqamBgsS/Bl9n
+	ZVu60SgwEorTrNQBVYQcY7BbzRbXlmPZcgY/7ls0VBWNWMfFo7ffpqCdwIzRBtpaS3uie/5Si6y
+	DyCII5sLnTejlHDGYIqLCs6/Bm/HHuS+5Mr8Uashqm0w07qmxaJIYXod2mDHyKw==
+X-Google-Smtp-Source: AGHT+IGhmQCAt8Nrwl6CzOv7wPCcFH8G36gaFS3yKtLiEMiKywzAOyCeXI3zYJATdeJPcC3SqG6aYA==
+X-Received: by 2002:a05:6000:3104:b0:3b7:828a:47df with SMTP id ffacd0b85a97d-3b78e3dd9a6mr1545125f8f.4.1753775888693;
+        Tue, 29 Jul 2025 00:58:08 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b789a31c4asm4888771f8f.17.2025.07.29.00.58.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 00:58:08 -0700 (PDT)
+Message-ID: <162ef225-51d5-48f5-bc00-36e00e905023@linaro.org>
+Date: Tue, 29 Jul 2025 09:58:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [tip: timers/clocksource] clocksource/drivers/exynos_mct: Don't
+ register as a sched_clock on arm64
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ linux-tip-commits@vger.kernel.org, Donghoon Yu <hoony.yu@samsung.com>,
+ Youngmin Nam <youngmin.nam@samsung.com>, John Stultz <jstultz@google.com>,
+ Will McVicker <willmcvicker@google.com>, x86@kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Arnd Bergmann <arnd@kernel.org>
+References: <20250620181719.1399856-3-willmcvicker@google.com>
+ <175325504976.1420.2666973232153470630.tip-bot2@tip-bot2>
+ <aIHBnFESZwjpXzjr@gmail.com>
+ <a5628c87-0dcd-4992-a59a-15550a017766@linaro.org>
+ <aINdu_hrz6zJnBGb@gmail.com>
+ <8a0662b7-2801-47a2-9c91-4eb0e7ef307b@linaro.org>
+Content-Language: en-US
+In-Reply-To: <8a0662b7-2801-47a2-9c91-4eb0e7ef307b@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAO9wTFg_jCUZ+DxXVDM11_715r6ALJ=HyRXkcBxhGrBUo4iVUg@mail.gmail.com>
 
-On Tue, Jul 29, 2025 at 12:23:27PM +0530, Suchit Karunakaran wrote:
-> On Tue, 29 Jul 2025 at 10:58, Greg KH <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Tue, Jul 29, 2025 at 09:56:21AM +0530, Suchit Karunakaran wrote:
-> > > Fix a logic bug in early_init_intel() where a conditional range check:
-> > > (c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE)
-> > > was always false due to (PRESCOTT) being numerically greater than the
-> > > upper bound (WILLAMETTE). This triggers:-Werror=logical-op:
-> > > logical ‘and’ of mutually exclusive tests is always false
-> > > The fix corrects the constant ordering to ensure the range is valid:
-> > > (c->x86_vfm >=  INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL)
-> > >
-> > > Fixes: fadb6f569b10 ("x86/cpu/intel: Limit the non-architectural
-> > > constant_tsc model checks")
-> > >
-> > > Signed-off-by: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-> > >
-> > > Changes since v1:
-> > > - Fix incorrect logic
-> > > ---
-> > >  arch/x86/kernel/cpu/intel.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-> > > index 076eaa41b8c8..6f5bd5dbc249 100644
-> > > --- a/arch/x86/kernel/cpu/intel.c
-> > > +++ b/arch/x86/kernel/cpu/intel.c
-> > > @@ -262,7 +262,7 @@ static void early_init_intel(struct cpuinfo_x86 *c)
-> > >       if (c->x86_power & (1 << 8)) {
-> > >               set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
-> > >               set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC);
-> > > -     } else if ((c->x86_vfm >= INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_WILLAMETTE) ||
-> > > +     } else if ((c->x86_vfm >=  INTEL_P4_PRESCOTT && c->x86_vfm <= INTEL_P4_CEDARMILL) ||
-> > >                  (c->x86_vfm >= INTEL_CORE_YONAH  && c->x86_vfm <= INTEL_IVYBRIDGE)) {
-> > >               set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
-> > >       }
-> > > --
-> > > 2.50.1
-> > >
-> > >
-> >
-> > Hi,
-> >
-> > This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-> > a patch that has triggered this response.  He used to manually respond
-> > to these common problems, but in order to save his sanity (he kept
-> > writing the same thing over and over, yet to different people), I was
-> > created.  Hopefully you will not take offence and will fix the problem
-> > in your patch and resubmit it so that it can be accepted into the Linux
-> > kernel tree.
-> >
-> > You are receiving this message because of the following common error(s)
-> > as indicated below:
-> >
-> > - You have marked a patch with a "Fixes:" tag for a commit that is in an
-> >   older released kernel, yet you do not have a cc: stable line in the
-> >   signed-off-by area at all, which means that the patch will not be
-> >   applied to any older kernel releases.  To properly fix this, please
-> >   follow the documented rules in the
-> >   Documentation/process/stable-kernel-rules.rst file for how to resolve
-> >   this.
-> >
-> > If you wish to discuss this problem further, or you have questions about
-> > how to resolve this issue, please feel free to respond to this email and
-> > Greg will reply once he has dug out from the pending patches received
-> > from other developers.
-> >
-> > thanks,
-> >
-> > greg k-h's patch email bot
+
+Hi Ingo,
+
+just a gentle ping for the question below about dropping the two patches.
+
+
+On 25/07/2025 15:15, Daniel Lezcano wrote:
+
+[ ... ]
+
+>> So I got no answer for this question, but I suppose my assumption is
+>> correct - so I've rebased the tip:timers/clocksource commits to fix the
+>> misattribution and a number of other problems, and also fixed various
+>> typos, spelling mistakes and inconsistencies in the changelogs while at
+>> it. Let me know if I got something wrong.
 > 
-> Hi Greg,
-> I've a question regarding backporting this fix. Can this fix be
-> backported to stable kernel version 6.15.8? Also, should I send the
-> backport patch only after the initial patch has been merged in
-> mainline or linux-next?
+> If the rebase is possible, I suggest to take the opportunity to remove 
+> the following patches:
+> 
+> commit 5d86e479193b - clocksource/drivers/exynos_mct: Add module support
+> commit 7e477e9c4eb4 - clocksource/drivers/exynos_mct: Fix section 
+> mismatch from the module conversion
+> 
+> Because of:
+> 
+> [1] https://lore.kernel.org/all/20250725090349.87730-2- 
+> krzysztof.kozlowski@linaro.org/
+> 
+> [2] https://lore.kernel.org/all/bccb77b9-7cdc-4965- 
+> aa05-05836466f81f@app.fastmail.com/
 
-Did you read the document that my bot linked to above?  It should answer
-those questions :)
+[ ... ]
 
-thanks,
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-greg k-h
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
