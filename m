@@ -1,161 +1,204 @@
-Return-Path: <linux-kernel+bounces-749188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826C2B14B3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:24:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5491B14B3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:25:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DEBB1AA3E62
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:25:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE7EB546089
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 09:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D9E27A92E;
-	Tue, 29 Jul 2025 09:24:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997552857C9;
+	Tue, 29 Jul 2025 09:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/poAGPm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RzYNewqu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ox00Llmc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12601A76BB
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 09:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46ED522538F;
+	Tue, 29 Jul 2025 09:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753781084; cv=none; b=SFp5j+e0lyfM0ynNW/IVSpuJmEgMIGw1jnM8gxBwPWtAZH2AkA1mvBnJ1ezFm2iIy3v2RqKyWY97SFqfV5ITos9x7JycnJz2T0HuZaVDsyugKhbtHlSxJc9DhsD7LChahr0NBAHk5JXsEViOBl1B3h2NviSM1xGK2TQJMgZ+gAU=
+	t=1753781116; cv=none; b=es+U4gw6+hhq4qIjie3tSFj+dxgjo7zLvvoOZAVWupNcUc07zKIeu+avTVBmvpkejIMB2cVcLayggHPHyT+Ju92XQ8XW3p4LmnfOoYPl5Zwe4sb4civPXfmv3AodwazDOkmc2GRMHVACcyQHfcdZWhDq1in2tuYEAqDmEQTtNn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753781084; c=relaxed/simple;
-	bh=NfmoRL5vOFPtWo+IZ5Ea7PCg7mu0e/0Soot/YyO332k=;
+	s=arc-20240116; t=1753781116; c=relaxed/simple;
+	bh=zsIlyDbe/9vp13CYcPjW2VGpNqvobZLaPhl8J1jLrXk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PMGsvT5dkxs0m5YAnLTFrGdtGMdrVVKf2c/p//4cFXLnSs0TA8u6cSfbQYQUV5d9phiKxBeSw94w9ewtAzNEk3+mRAQZzhgiT0s+50y3kkV/SXChlOunMUv+fhp5xVag4GdUj5tuWc9RS1eD315K2A0zrc6Ab/bg/pWliJR1fWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/poAGPm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B17C4CEEF;
-	Tue, 29 Jul 2025 09:24:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753781083;
-	bh=NfmoRL5vOFPtWo+IZ5Ea7PCg7mu0e/0Soot/YyO332k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q/poAGPmaOf25zQvClduhiOBFWoLhNeepuPofbBc/VrC9Hox8cSXGwoHYywZ4K1oz
-	 QHEMALeA7NI9K9FU9yWjiaqyMGQAywk7jhgS4Z5XH9PbIrdGnHmgxzwiOxoCd6Lkma
-	 juxgzoW3ung/PmLsTFkB4KhyZ9D1xihFmDj29HcsWnHHN5oVf/f7o4jbvzeVKAYfiC
-	 9X00YKIWOmAdZcYSWeAs1U2Ec/bMIf9dCJMD4OxLZffz5UacTkm2qg71pyqnT3r6CS
-	 FsBrB38SICqvOlD1PN96zY/g0toDtBbVLQ18lSXTX0cCa4BZklsGzcOj2ZLZNgLxvQ
-	 3pTQq+fpefZwg==
-Date: Tue, 29 Jul 2025 14:54:37 +0530
-From: Sumit Garg <sumit.garg@kernel.org>
-To: Pei Xiao <xiaopei01@kylinos.cn>
-Cc: jens.wiklander@linaro.org, larper@axis.com,
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tee: fix NULL pointer dereference in tee_shm_put
-Message-ID: <aIiTVdJib4DLgYnC@sumit-X1>
-References: <fabd3d7560119e52dd83f4a19ad1f8087862993f.1753236468.git.xiaopei01@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwhoWNi+6bxDoKCCoQdwmSnuh3UWwVaIc7808X75DyrdQNoR5AgcTA24Lrn6+V+S2g4oT47bH0jdnx3AfHGmJNuedueztejoF8YXhnaEGf3/jCiLBGI2njkSvoAIZN8InHpZz2G1iivFVsheJziiPYiqR5esKxZuh5ey7LcuJoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RzYNewqu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ox00Llmc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 29 Jul 2025 11:25:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753781112;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pt8oWGslc5ihVf6NvVfPmMDljgiRVVmqqeymCbsYuJM=;
+	b=RzYNewqu+V5/ClRv/NytaF+VuyjZE2vnP+sbqfsVry9qulHzM6XdJ7/ol32t5jvNi3Ns2h
+	0nkWN8mV4Tf2cJGxBPHIp/8/myp/EeMmj3t+qu9dJ/4l7Jk1Egrv3Br3uzfGJ5vul2Krwl
+	Vd2sIfCSBVTikGk4ZPPaP6J7NXOK0I9+dS7BjeCobfnG8aPh9XwA0mMORAHYoHww0ez0f2
+	xlO2NZZh6E7sCyHgxskaolV9+4ZKhVciG7WEDaSxM0IxtYJPmtSkw9xHkcya04UT96QmQg
+	Qkwk0YpKuwgEk7BFNeqEUe5Srobg6SrLkQU7ZjyS0WQmK6AKpfe6xg0p1YbNzw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753781112;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Pt8oWGslc5ihVf6NvVfPmMDljgiRVVmqqeymCbsYuJM=;
+	b=Ox00Llmc1oIQKjdRolyam144mAMl4pqgbFSX52S+koJsFhOFqrChF+PqVUtojhVY6PVpVL
+	bzy5g1wZd/O1kuCQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v5 7/9] rv: Replace tss and sncid monitors with more
+ complete sts
+Message-ID: <20250729092510._Hq3RWF_@linutronix.de>
+References: <20250728135022.255578-1-gmonaco@redhat.com>
+ <20250728135022.255578-8-gmonaco@redhat.com>
+ <20250728155332.sbkepHj7@linutronix.de>
+ <76d7e572aae2ccd1699a461aded7a6146f6d8215.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/mixed; boundary="daT6BlFr6QFIQYUW"
 Content-Disposition: inline
-In-Reply-To: <fabd3d7560119e52dd83f4a19ad1f8087862993f.1753236468.git.xiaopei01@kylinos.cn>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <76d7e572aae2ccd1699a461aded7a6146f6d8215.camel@redhat.com>
 
-On Wed, Jul 23, 2025 at 10:09:07AM +0800, Pei Xiao wrote:
-> tee_shm_put have NULL pointer dereference:
-> 
-> __optee_disable_shm_cache -->
-> 	shm = reg_pair_to_ptr(...);//shm maybe return NULL
->         tee_shm_free(shm); -->
-> 		tee_shm_put(shm);//crash
-> 
-> Add check in tee_shm_put to fix it.
-> 
-> panic log:
-> Unable to handle kernel paging request at virtual address 0000000000100cca
-> Mem abort info:
-> ESR = 0x0000000096000004
-> EC = 0x25: DABT (current EL), IL = 32 bits
-> SET = 0, FnV = 0
-> EA = 0, S1PTW = 0
-> FSC = 0x04: level 0 translation fault
-> Data abort info:
-> ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> user pgtable: 4k pages, 48-bit VAs, pgdp=0000002049d07000
-> [0000000000100cca] pgd=0000000000000000, p4d=0000000000000000
-> Internal error: Oops: 0000000096000004 [#1] SMP
-> CPU: 2 PID: 14442 Comm: systemd-sleep Tainted: P OE ------- ----
-> 6.6.0-39-generic #38
-> Source Version: 938b255f6cb8817c95b0dd5c8c2944acfce94b07
-> Hardware name: greatwall GW-001Y1A-FTH, BIOS Great Wall BIOS V3.0
-> 10/26/2022
-> pstate: 80000005 (Nzcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : tee_shm_put+0x24/0x188
-> lr : tee_shm_free+0x14/0x28
-> sp : ffff001f98f9faf0
-> x29: ffff001f98f9faf0 x28: ffff0020df543cc0 x27: 0000000000000000
-> x26: ffff001f811344a0 x25: ffff8000818dac00 x24: ffff800082d8d048
-> x23: ffff001f850fcd18 x22: 0000000000000001 x21: ffff001f98f9fb88
-> x20: ffff001f83e76218 x19: ffff001f83e761e0 x18: 000000000000ffff
-> x17: 303a30303a303030 x16: 0000000000000000 x15: 0000000000000003
-> x14: 0000000000000001 x13: 0000000000000000 x12: 0101010101010101
-> x11: 0000000000000001 x10: 0000000000000001 x9 : ffff800080e08d0c
-> x8 : ffff001f98f9fb88 x7 : 0000000000000000 x6 : 0000000000000000
-> x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> x2 : ffff001f83e761e0 x1 : 00000000ffff001f x0 : 0000000000100cca
-> Call trace:
-> tee_shm_put+0x24/0x188
-> tee_shm_free+0x14/0x28
-> __optee_disable_shm_cache+0xa8/0x108
-> optee_shutdown+0x28/0x38
-> platform_shutdown+0x28/0x40
-> device_shutdown+0x144/0x2b0
-> kernel_power_off+0x3c/0x80
-> hibernate+0x35c/0x388
-> state_store+0x64/0x80
-> kobj_attr_store+0x14/0x28
-> sysfs_kf_write+0x48/0x60
-> kernfs_fop_write_iter+0x128/0x1c0
-> vfs_write+0x270/0x370
-> ksys_write+0x6c/0x100
-> __arm64_sys_write+0x20/0x30
-> invoke_syscall+0x4c/0x120
-> el0_svc_common.constprop.0+0x44/0xf0
-> do_el0_svc+0x24/0x38
-> el0_svc+0x24/0x88
-> el0t_64_sync_handler+0x134/0x150
-> el0t_64_sync+0x14c/0x15
-> 
-> Fixes: dfd0743f1d9e ("tee: handle lookup of shm with reference count 0")
-> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> ---
->  drivers/tee/tee_shm.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
 
-Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+--daT6BlFr6QFIQYUW
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
--Sumit
+On Tue, Jul 29, 2025 at 10:46:51AM +0200, Gabriele Monaco wrote:
+> On Mon, 2025-07-28 at 17:53 +0200, Nam Cao wrote:
+> > I gave this a try on riscv64 and observed some errors:
+> > 
+> > [  620.696055] rv: monitor sts does not allow event sched_switch on
+> > state enable_to_exit
+> > [  621.047705] rv: monitor sts does not allow event sched_switch on
+> > state enable_to_exit
+> > [  642.440209] rv: monitor sts does not allow event sched_switch on
+> > state enable_to_exit
+> > 
+> > I tested with two user programs:
+> > 
+> >     int main() { asm ("unimp"); }
+> >     int main() { asm ("ebreak"); }
+> > 
+> > The two programs are repeatedly executed:
+> > 
+> >     #!/bin/bash
+> >     ./test1 &
+> >     ./test2 &
+> >     # ... repeat lots of time
+> > 
+> > Any idea?
+> 
+> Mmh I see what you're doing here..
+> Those instructions are supposed to raise some sort of exception in the
+> CPU which apparently disables and enables interrupts without raising an
+> interrupt handler tracepoint (the discriminator for this monitor).
+> This lets the monitor believe we passed the time a switch is possible
+> and complain when it actually sees one.
+> 
+> I still couldn't reproduce it on my VM, yet I find the timing a bit
+> strange: it's alright we handle the illegal instruction like this, but
+> do we really end up doing that while scheduling although it doesn't
+> look like an interrupt?!
+> 
+> Could you share a bit more about your riscv setup? It might some
+> configuration/hardware specific thing.
 
-> 
-> diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> index daf6e5cfd59a..915239b033f5 100644
-> --- a/drivers/tee/tee_shm.c
-> +++ b/drivers/tee/tee_shm.c
-> @@ -560,9 +560,13 @@ EXPORT_SYMBOL_GPL(tee_shm_get_from_id);
->   */
->  void tee_shm_put(struct tee_shm *shm)
->  {
-> -	struct tee_device *teedev = shm->ctx->teedev;
-> +	struct tee_device *teedev;
->  	bool do_release = false;
->  
-> +	if (!shm || !shm->ctx || !shm->ctx->teedev)
-> +		return;
-> +
-> +	teedev = shm->ctx->teedev;
->  	mutex_lock(&teedev->mutex);
->  	if (refcount_dec_and_test(&shm->refcount)) {
->  		/*
-> -- 
-> 2.25.1
-> 
+Kernel:
+  - base: ftrace/for-next
+  - config: defconfig + mod2noconfig + PREEMPT_RT + monitors
+
+Hardware:
+	qemu-system-riscv64 -machine virt \
+	-kernel ../linux/arch/riscv/boot/Image \
+	-append "console=ttyS0 root=/dev/vda rw" \
+	-nographic \
+	-drive if=virtio,format=raw,file=riscv64.img \
+	-smp 4 -m 4G
+
+	riscv64.img is a Debian trixie image from debootstrap
+
+Test:
+	echo 0 > /proc/sys/debug/exception-trace
+	./testall # see attached
+
+--daT6BlFr6QFIQYUW
+Content-Type: application/x-sh
+Content-Disposition: attachment; filename="test.sh"
+Content-Transfer-Encoding: quoted-printable
+
+#!/bin/bash=0A./illegal &=0A./unimp &=0A./illegal &=0A./unimp &=0A./illegal=
+ &=0A./unimp &=0A./illegal &=0A./unimp &=0A./illegal &=0A./unimp &=0A./ille=
+gal &=0A./unimp &=0A./illegal &=0A./unimp &=0A./illegal &=0A./unimp &=0A./i=
+llegal &=0A./unimp &=0A./illegal &=0A./unimp &=0A./illegal &=0A./unimp &=0A=
+=2E/illegal &=0A./unimp &=0A./illegal &=0A./unimp &=0A./illegal &=0A./unimp=
+ &=0A./illegal &=0A./unimp &=0A
+--daT6BlFr6QFIQYUW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=testall
+
+#!/bin/bash
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+./test.sh &
+
+--daT6BlFr6QFIQYUW--
 
