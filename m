@@ -1,237 +1,78 @@
-Return-Path: <linux-kernel+bounces-749868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99324B153F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:52:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9B6B153EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6380318A800F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03B73B7A19
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EEC423C512;
-	Tue, 29 Jul 2025 19:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 494D424676D;
+	Tue, 29 Jul 2025 19:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNaHMVAV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1hm72Ge"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA33425DB1A;
-	Tue, 29 Jul 2025 19:51:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A785E1F956;
+	Tue, 29 Jul 2025 19:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753818699; cv=none; b=CA4SaSd8Iv1VD+NskvM1Rj1MsPH0j9RDOXT5Wr6xRPm/dV0X0FxA7qWoYgpg/Y5sE+LgrE8Tj9/C/rWqKb1+QczRaKlF9HDppFFmsDZPWjuJ94LQJ7fxRBYg1CeLaw3oW9Vf2QbyKpdtu3OCpSbIIVWDxUsWTk4VAb28YsOfdRQ=
+	t=1753818694; cv=none; b=g66pdA3rvk8bHRWXIol7MR3P1mvv1Z1Csh8AvwpGf73h7uFxQEQsptr8i5GVVea99+0b2B42xdB4ClJiFure0K12d6AsldldLMB9q2yOSf6JjQWTMkBnKaGmOUZT/PQrGRsYnuPrBagJ3WWviwD425rzFCPieCzJ81vI2IWaAz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753818699; c=relaxed/simple;
-	bh=Ob6i4k+YDgHAyTugHatfau/eU2T8TXnMxmhtcURXq9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V7dcQq3ssYTX9DdeYZZewGP/XZr/4o6amiuIinwn1shYVbI9XHv1IjhnEH0E2g+Ypd7q5Q6LIAjZY5LINIwwh3fzrLMtZ+ACGH1vW+TnQuZUXRYcJlxVXHr63N218I/XFEwtSXM0Qfe9344RaEMzqf5vQYJa7B4sTDrK7K5cX2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TNaHMVAV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D1C9C4CEEF;
-	Tue, 29 Jul 2025 19:51:38 +0000 (UTC)
+	s=arc-20240116; t=1753818694; c=relaxed/simple;
+	bh=XNfxzmmDIpYeiYraiW29b1GdQiwaVUmIfGwURLuLshQ=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Wz6xt3Ob+LQ0tOdyQhyYEtxV+WhHGeRzIL1iATcS9G0coYrGA7EBywYMuFOgwTcb/ADuOp5EWLmSvN1o1Zljk7Adfqwx9xmXXBiy47pRJe2vERXXJ0QCEb2Dcy5GNLEm3q/prXkVGDw7NsvqF9HP5kPiTlGif5dC/IYeVZRt+B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t1hm72Ge; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C01BC4CEEF;
+	Tue, 29 Jul 2025 19:51:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753818698;
-	bh=Ob6i4k+YDgHAyTugHatfau/eU2T8TXnMxmhtcURXq9o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TNaHMVAVECdpygkVPkQF2Dj2MJy0/B53t8wZlvi+PZ0SZVcnm/IhEao7cT6adE+7W
-	 uQ0nj12NLKE7d/FV60g2VIVDGa6XBwqhlOvavCWv5FIVUbBWtNrI3KenDiduybbHJ1
-	 hTFPU4TOHTixfGptBHXmymfvo3Mgzd/nilPUMfAssrOtMXE21987E0A0wOrhV/gQvF
-	 vWvOsR7esbtNYMsAG0y3sVHXL//KZYHB+qT+k4pEJhg7/8xP/msX9eZ5yv+zxT19dX
-	 B3mYi6C1C18J6uTY5eIdMAZ7YUJEj5KwzUDvmA9gLoaTrtHpwZOJw0Au5sg8ZzjFS5
-	 0h9+LV2gnlwgg==
-Date: Tue, 29 Jul 2025 14:51:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 5/6] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <20250729195137.GA658914-robh@kernel.org>
-References: <20250725152618.32886-1-herve.codina@bootlin.com>
- <20250725152618.32886-6-herve.codina@bootlin.com>
+	s=k20201202; t=1753818694;
+	bh=XNfxzmmDIpYeiYraiW29b1GdQiwaVUmIfGwURLuLshQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=t1hm72GeaxxuVei4TUDxywstrf6Zd8rc10Td2c+amrK8K8DKv1xdMnICIH0uteLYe
+	 KyUgNR9OQG/SXfwmDE7luemN4nyafxptHEgKiB0C7TKh53g4LcYgrzYrMzd2UmI8V5
+	 Rsg49snY44TzultYijcckpiDeDnTi2x6qwrDETaaAd7P0bgNIjxJpkv5r77Sedbwfi
+	 RpNCVljtdFO5ZOQoDJpfKDPvx6yR3rZI9kPfOh+HTZF6S/8lPXHuUAZ8np/ZKbhdNI
+	 75SD8YrhCBB615fnP7XPCWhC67e6yb7EwEK8I3sjFwwy58aunT/J7Rn4LT8TgvWrRR
+	 dvaauHP8P4Wjw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB0F5383BF5F;
+	Tue, 29 Jul 2025 19:51:51 +0000 (UTC)
+Subject: Re: [GIT PULL] kunit next update for Linux 6.17-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <c08408c3-a686-444c-9814-42d8c395d3ad@linuxfoundation.org>
+References: <c08408c3-a686-444c-9814-42d8c395d3ad@linuxfoundation.org>
+X-PR-Tracked-List-Id: <linux-kselftest.vger.kernel.org>
+X-PR-Tracked-Message-Id: <c08408c3-a686-444c-9814-42d8c395d3ad@linuxfoundation.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.17-rc1
+X-PR-Tracked-Commit-Id: 34db4fba81916a2001d7a503dfcf718c08ed5c42
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6f46e6fb4e267acf8741cb2c29d368b4de7b6c15
+Message-Id: <175381871062.1621303.15904488225576401919.pr-tracker-bot@kernel.org>
+Date: Tue, 29 Jul 2025 19:51:50 +0000
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, shuah <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725152618.32886-6-herve.codina@bootlin.com>
 
-On Fri, Jul 25, 2025 at 05:26:14PM +0200, Herve Codina wrote:
-> On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
-> interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
-> order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
-> 
-> The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
-> IRQ lines out of the 96 available to wire them to the GIC input lines.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  drivers/soc/renesas/Kconfig       |   4 +
->  drivers/soc/renesas/Makefile      |   1 +
->  drivers/soc/renesas/rzn1_irqmux.c | 169 ++++++++++++++++++++++++++++++
->  3 files changed, 174 insertions(+)
->  create mode 100644 drivers/soc/renesas/rzn1_irqmux.c
-> 
-> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-> index fbc3b69d21a7..9e8ac33052fb 100644
-> --- a/drivers/soc/renesas/Kconfig
-> +++ b/drivers/soc/renesas/Kconfig
-> @@ -58,6 +58,7 @@ config ARCH_RZN1
->  	select PM
->  	select PM_GENERIC_DOMAINS
->  	select ARM_AMBA
-> +	select RZN1_IRQMUX
->  
->  if ARM && ARCH_RENESAS
->  
-> @@ -435,6 +436,9 @@ config PWC_RZV2M
->  config RST_RCAR
->  	bool "Reset Controller support for R-Car" if COMPILE_TEST
->  
-> +config RZN1_IRQMUX
-> +	bool "Renesas RZ/N1 GPIO IRQ multiplexer support" if COMPILE_TEST
-> +
->  config SYSC_RZ
->  	bool "System controller for RZ SoCs" if COMPILE_TEST
->  
-> diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-> index 3bdcc6a395d5..daa932c7698d 100644
-> --- a/drivers/soc/renesas/Makefile
-> +++ b/drivers/soc/renesas/Makefile
-> @@ -14,4 +14,5 @@ obj-$(CONFIG_SYS_R9A09G057)	+= r9a09g057-sys.o
->  # Family
->  obj-$(CONFIG_PWC_RZV2M)		+= pwc-rzv2m.o
->  obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
-> +obj-$(CONFIG_RZN1_IRQMUX)		+= rzn1_irqmux.o
->  obj-$(CONFIG_SYSC_RZ)		+= rz-sysc.o
-> diff --git a/drivers/soc/renesas/rzn1_irqmux.c b/drivers/soc/renesas/rzn1_irqmux.c
-> new file mode 100644
-> index 000000000000..37e41c2b9104
-> --- /dev/null
-> +++ b/drivers/soc/renesas/rzn1_irqmux.c
-> @@ -0,0 +1,169 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * RZ/N1 GPIO Interrupt Multiplexer
-> + *
-> + * Copyright 2025 Schneider Electric
-> + * Author: Herve Codina <herve.codina@bootlin.com>
-> + */
-> +
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/platform_device.h>
-> +
-> +#define IRQMUX_MAX_IRQS 8
-> +
-> +static int irqmux_is_phandle_args_equal(const struct of_phandle_args *a,
-> +					const struct of_phandle_args *b)
-> +{
-> +	int i;
-> +
-> +	if (a->np != b->np)
-> +		return false;
-> +
-> +	if (a->args_count != b->args_count)
-> +		return false;
-> +
-> +	for (i = 0; i < a->args_count; i++) {
-> +		if (a->args[i] != b->args[i])
-> +			return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
-> +static int irqmux_find_interrupt_index(struct device *dev, struct device_node *np,
-> +				       const struct of_phandle_args *expected_irq)
-> +{
-> +	struct of_phandle_args out_irq;
-> +	bool is_equal;
-> +	int ret;
-> +	int i;
-> +
-> +	for (i = 0; i < IRQMUX_MAX_IRQS; i++) {
-> +		ret = of_irq_parse_one(np, i, &out_irq);
+The pull request you sent on Mon, 28 Jul 2025 14:40:00 -0600:
 
-I don't really want more users of this... More below.
+> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux_kselftest-kunit-6.17-rc1
 
-> +		if (ret)
-> +			return ret;
-> +
-> +		is_equal = irqmux_is_phandle_args_equal(expected_irq, &out_irq);
-> +		of_node_put(out_irq.np);
-> +		if (is_equal)
-> +			return i;
-> +	}
-> +
-> +	return -ENOENT;
-> +}
-> +
-> +struct irqmux_cb_data {
-> +	struct device_node *np;
-> +	struct device *dev;
-> +	u32 __iomem *regs;
-> +};
-> +
-> +static int irqmux_imap_cb(void *data, const __be32 *imap,
-> +			  const struct of_phandle_args *parent_args)
-> +{
-> +	struct irqmux_cb_data *priv = data;
-> +	u32 src_hwirq;
-> +	int index;
-> +
-> +	/*
-> +	 * The child #address-cells is 0. Already checked in irqmux_setup().
-> +	 * The first value in imap is the src_hwirq
-> +	 */
-> +	src_hwirq = be32_to_cpu(*imap);
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6f46e6fb4e267acf8741cb2c29d368b4de7b6c15
 
-The iterator should take care of the endianness conversion.
+Thank you!
 
-> +
-> +	/*
-> +	 * Get the index in our interrupt array that matches the parent in the
-> +	 * interrupt-map
-> +	 */
-> +	index = irqmux_find_interrupt_index(priv->dev, priv->np, parent_args);
-> +	if (index < 0)
-> +		return dev_err_probe(priv->dev, index, "output interrupt not found\n");
-> +
-> +	dev_info(priv->dev, "interrupt %u mapped to output interrupt[%u]\n",
-> +		 src_hwirq, index);
-
-Do you even need "interrupts"? Just make the "interrupt-map" index 
-important and correspond to the hw index. That would greatly simplify 
-all this.
-
-> +
-> +	/*
-> +	 * Our interrupt array items matches 1:1 the interrupt lines that could
-> +	 * be configured by registers (same order, same number).
-> +	 * Configure the related register with the src hwirq retrieved from the
-> +	 * interrupt-map.
-> +	 */
-> +	writel(src_hwirq, priv->regs + index);
-> +
-> +	return 0;
-> +}
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
