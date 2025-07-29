@@ -1,99 +1,188 @@
-Return-Path: <linux-kernel+bounces-749739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C17EB15254
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:46:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5494CB15256
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 19:46:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E895435CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:46:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 232AC3A2272
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9556299959;
-	Tue, 29 Jul 2025 17:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9369F236A88;
+	Tue, 29 Jul 2025 17:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="R/Q6KEB3"
-Received: from smtp.smtpout.orange.fr (smtp-69.smtpout.orange.fr [80.12.242.69])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OlY7dXwC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA2E2253A4;
-	Tue, 29 Jul 2025 17:46:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F108C1FE44D;
+	Tue, 29 Jul 2025 17:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753811170; cv=none; b=Z1nEzmsP4R2eXc3gLZSTkP4AshhkphZdYzVVwVSDaCAKWUnarub+vxc0xmeEhiCcUEDTP7WlmdCEtl4MbaC2/HHeqtfML59LA/JLWju1tO4PPpX1ME+npfLLVdoxrngrYaltzZGM4phPdNjlYNAX/7Mju66lqv/ZOBFWzMFvfm4=
+	t=1753811204; cv=none; b=Wv3FSxlR9vxJzUsaD8yjfOpzztRbxOjUTG9MFchis3i1BeDxoytGQSDCCWIuwQsRsMDSr77Iwmhr8OFawgN5nBLhGJ4pbe87TN4lZZ9XHc3e2wN9xdvAAdRRYEkPoyJaggSshbZAKT1A384qNDf9Rrno2jQHphp5Lcc/qkt2zEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753811170; c=relaxed/simple;
-	bh=aSAuubOoZk2xBwNE0D2tRu3u7GFonE019Ql06DMqXJo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dFPz9OpEwTfNkJjAWNJj4xZWNxTByY7lphd3gBvNd0a+T4J0pUtX4v/moy9oZQDQNtYrFKvOGph9Rx2OslDDu2tEXh1QiPQsJVQMQEnSuirrZLvbJiJfFHIqYJHLNhpPzcBENQrwwFJJULskL+v36UQEZmvlfBvkuH0byqcV6Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=R/Q6KEB3; arc=none smtp.client-ip=80.12.242.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
- ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
-	by smtp.orange.fr with ESMTPA
-	id goOiuRT6C5DGfgoOiuWHeR; Tue, 29 Jul 2025 19:45:57 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1753811157;
-	bh=NJG6pmOoHfRxQ3083ukC1LQhV9BLsROAtVMoHOK2Xr8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=R/Q6KEB3eWgp7Y/dfAEdxrjdE1OFHv0A1X1NxfYzvY2YvXEJ5plps3Nl5muH8bpGG
-	 XBrt3z9vGsK5kpzKXymDQ3/soSd0uHA2y98o6PpEoUKqhWY472iA7yh3lwJtu6d044
-	 v6aqpVkPM6Y9JcWkEgvCZQjv8MP1p04BJjR/1LIUSUM2WKaul8sYNOpmKK/ZTSCNw1
-	 oumXPsBPLWpv93cfYQaQV8ioAPHqISmqC6/mzY4aUuKwuynU6W/tTk2kow2UdMzmQb
-	 tARaucxjiBs6oPT/KlhTAXPwdKtCQQ7QOVm3eE9AOL4XxtCV78nMz+Rw7ztDJ/591h
-	 ogCZGuK25uQcQ==
-X-ME-Helo: [IPV6:2a01:cb10:785:b00:8347:f260:7456:7662]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 29 Jul 2025 19:45:57 +0200
-X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
-Message-ID: <86f359c3-8eb6-4fd7-8411-12d12e301d61@wanadoo.fr>
-Date: Tue, 29 Jul 2025 19:45:55 +0200
+	s=arc-20240116; t=1753811204; c=relaxed/simple;
+	bh=axw56qNK2M0b9TkvZbH1wszkzgL5tAgxNV9SaY843S0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J07sbmUbL5lv9Ky2lSEE9De+A0d9XR2Og2RMXJk83b/J1MGCy2J1Kx8dcCyMq/6xyTrkbpPf/5OclSkavJEbhHDmsQ6zhl9OlDGhMBOar+efgcAkOEyNNNJ3iQ1qsOyW9661gKZDPITpEzir2a4KaqiP3G2b7aCp+rquP1VSWFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OlY7dXwC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 446F7C4CEF4;
+	Tue, 29 Jul 2025 17:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753811203;
+	bh=axw56qNK2M0b9TkvZbH1wszkzgL5tAgxNV9SaY843S0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OlY7dXwCI86fpg+qoNSTeO6Z/W+YBwY1+Ujfh2mG014Qp6YO0B4PSgJ3+Enpz/4pP
+	 bfYBXJ/2AZG1Gl2tAhtewL8evwnyfKaX1Y6P9Iczjp/WVj8v+V6Vir3cZ6Mgr77QMY
+	 0pN9uoT0Zz8E/jbjgcDOSbGCG49f0Lf+U/Y9JKoFzjeBwh7s+nFtqr4l0iOE0Q/snY
+	 FeSrCS3UOKf+vSlok4vS855A7SSP6RLN5L4Vo+gEKLMCDVcykpmTPkAV3ZexHdeKwS
+	 pBoj9WvOXGCo0KxEPKVuM8xDzquvO8tAQ4Ezcuu4argY0mFnMIgvkSkIQfnQWC+lFB
+	 IsAJWURV0Vslg==
+From: SeongJae Park <sj@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Yueyang Pan <pyyjason@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Usama Arif <usamaarif642@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 2/2] mm/damon: Add damos_stat support for vaddr
+Date: Tue, 29 Jul 2025 10:46:40 -0700
+Message-Id: <20250729174640.55762-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <0cb3d5a5-683b-4dba-90a8-b45ab83eec53@redhat.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] scsi: scsi_debug: make read-only arrays static
- const
-To: Colin Ian King <colin.i.king@gmail.com>,
- "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>,
- linux-scsi@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729064930.1659007-1-colin.i.king@gmail.com>
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Content-Language: en-US, fr-FR
-In-Reply-To: <20250729064930.1659007-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Le 29/07/2025 à 08:49, Colin Ian King a écrit :
-> Don't populate the read-only arrays on the stack at run time, instead
-> make them static const. Also reduces overall size.
+Hi Pan and David, thank you for this patch and comments!
+
+On Tue, 29 Jul 2025 16:11:32 +0200 David Hildenbrand <david@redhat.com> wrote:
+
+> On 29.07.25 15:53, Yueyang Pan wrote:
+> > From: PanJason <pyyjason@gmail.com>
+> > 
+> > This patch adds support for damos_stat in virtual address space.
+> > It leverages the walk_page_range to walk the page table and gets
+> > the folio from page table. The last folio scanned is stored in
+> > damos->last_applied to prevent double counting.
+> > ---
+> >   mm/damon/vaddr.c | 113 ++++++++++++++++++++++++++++++++++++++++++++++-
+> >   1 file changed, 112 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> > index 87e825349bdf..3e319b51cfd4 100644
+> > --- a/mm/damon/vaddr.c
+> > +++ b/mm/damon/vaddr.c
+> > @@ -890,6 +890,117 @@ static unsigned long damos_va_migrate(struct damon_target *target,
+> >   	return applied * PAGE_SIZE;
+> >   }
+> >   
+> > +struct damos_va_stat_private {
+> > +	struct damos *scheme;
+> > +	unsigned long *sz_filter_passed;
+> > +};
+> > +
+> > +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> > +static int damos_va_stat_pmd_entry(pmd_t *pmd, unsigned long addr,
+> > +		unsigned long next, struct mm_walk *walk)
+> > +{
+> > +	struct damos_va_stat_private *priv = walk->private;
+> > +	struct damos *s = priv->scheme;
+> > +	unsigned long *sz_filter_passed = priv->sz_filter_passed;
+> > +	struct folio *folio;
+> > +	spinlock_t *ptl;
+> > +	pmd_t pmde;
+> > +
+> > +	ptl = pmd_lock(walk->mm, pmd);
+> > +	pmde = pmdp_get(pmd);
+> > +
+> > +	if (!pmd_present(pmde) || !pmd_trans_huge(pmde))
+> > +		goto unlock;
+> > +
+> > +	/* Tell page walk code to not split the PMD */
+> > +	walk->action = ACTION_CONTINUE;
+> > +
+> > +	folio = damon_get_folio(pmd_pfn(pmde));
+> > +	if (!folio)
+> > +		goto unlock;
+> > +
+> > +	if (damon_invalid_damos_folio(folio, s))
+> > +		goto update_last_applied;
+> > +
+> > +	if (!damos_va_filter_out(s, folio, walk->vma, addr, NULL, pmd)){
+> > +		*sz_filter_passed += folio_size(folio);
 > 
-> before:
->     text	   data	    bss	    dec	    hex	filename
->   367439	  89582	   5952	 462973	  7107d	drivers/scsi/scsi_debug.o
+> See my comment below regarding vm_normal_page and folio references.
 > 
-> after:
->     text	   data	    bss	    dec	    hex	filename
->   365847	  90702	   5952	 462501	  70ea5	drivers/scsi/scsi_debug.o
+> But this split into two handlers is fairly odd. Usually we only have a 
+> pmd_entry callback (see madvise_cold_or_pageout_pte_range as an 
+> example), and handle !CONFIG_TRANSPARENT_HUGEPAGE in there.
+> 
+> Then, there is also no need to mess with ACTION_CONTINUE
 
-Hi,
-
-out of curiosity, any idea why 'data' increase?
-
-All my constification patches lead to data reduction.
+I don't really mind this, but I agree keeping the consisteency would be good.
+Pan, could you please unify the handlers into one?
 
 > 
-> (gcc 14.2.0, x86-64)
+> > +	}
+> > +
+> > +	folio_put(folio);
+> > +update_last_applied:
+> > +	s->last_applied = folio;
+> > +unlock:
+> > +	spin_unlock(ptl);
+> > +	return 0;
+> > +}
+> > +#else
+> > +#define damon_va_stat_pmd_entry NULL
+> > +#endif
+> > +
+> > +static int damos_va_stat_pte_entry(pte_t *pte, unsigned long addr,
+> > +		unsigned long next, struct mm_walk *walk)
+> > +{
+> > +	struct damos_va_stat_private *priv = walk->private;
+> > +	struct damos *s = priv->scheme;
+> > +	unsigned long *sz_filter_passed = priv->sz_filter_passed;
+> > +	struct folio *folio;
+> > +	pte_t ptent;
+> > +
+> > +	ptent = ptep_get(pte);
+> > +	if (pte_none(ptent) || !pte_present(ptent))
+> > +		return 0;
+> > +
+> > +	folio = damon_get_folio(pte_pfn(ptent));
+> > +	if (!folio)
+> > +		return 0;
+> 
+> We have vm_normal_folio() and friends for a reason -- so you don't have 
+> to do pte_pfn() manually.
+> 
+> ... and now I am confused. We are holding the PTL, so why would you have 
+> to grab+put a folio reference here *at all*.
 
-(same kind of behavior with 15.1.1)
+We don't have to.  I think Pan does so because other similar existing code in
+this file is also doing so.  I was doing so because I wanted to use the handy
+damon_get_folio() and those are not making real problems.
+
+But, yes, unnecessary things are unnecessary things.  Pan, could you please use
+vm_normal_folio() instead of damon_get_folio() and remove the related
+folio_put() call?
+
+I will also work on cleanup of existing unnecessary folio reference
+manipulations, regardless of this patch series.
 
 
-CJ
+Thanks,
+SJ
+
+[...]
 
