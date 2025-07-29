@@ -1,95 +1,125 @@
-Return-Path: <linux-kernel+bounces-749109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D50F5B14A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:37:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D302B14A82
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D762F17EF0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:37:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCB54E16D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:53:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7EB285079;
-	Tue, 29 Jul 2025 08:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13462857C9;
+	Tue, 29 Jul 2025 08:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="SgzbsFIO"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="C78ofi88";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="GCO8EvsC";
+	dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="qkH4Tsbq"
+Received: from sender7.mail.selcloud.ru (sender7.mail.selcloud.ru [5.8.75.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B446257444;
-	Tue, 29 Jul 2025 08:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A142B263F40;
+	Tue, 29 Jul 2025 08:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753778272; cv=none; b=BSZ8+xCRTLdo6RfOopOzOEb+1VuUvj+NM7vsRkOmL3Vu8umUNM8/nLlDG2ZrHuPJDsbpwD06UXGC8EbvZbBSknSbkN1vqmWZS1LiSb/GJpmKajffpnD5DOUHQ71k2sLb5zRfF4nsoUADROVTZglTW5xMDAdMXTQcr57jl9lZM1M=
+	t=1753779248; cv=none; b=enwJawLf11OJcfsYnL92KZP0NGDTBJ6lUWY3rAAjvUIHRwXBLwZb5VZqf7BsnGzCXBsWZZAUlesa5cAbykTnjeCM/e7eDFfc7HXsum4gv9QgBJFJi/kdMcBAl0YIylQg2RpPxUNHSJyjBRKxfNWaZEuhvV2NZagfsmH9HBLRtlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753778272; c=relaxed/simple;
-	bh=y/Y5P0CroU7rC8cmm95jgO2l2qmNjaJJzsY9D8+nsIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pEEfbel0IljoCFnx6p4RIZGHT1+xlWzAD4FAcFXl21oXA/kRTK1UdKK+jreLYdlDJicmf0HzQkqV4uVbbURrN0feTuW1/C4lROfxyu+HLhWa9gcVaRlE3RlfL34beZIFdLoaLI5hBQZ/Paz0MiMBWvlVvpFvQkMwacJM7bVXFNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=SgzbsFIO; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1753779248; c=relaxed/simple;
+	bh=xHRF5ck/dSCKkvBdHGfIYaKerUtm2ifkBDGuilUXhnk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eESEGwke8Jf9sk9ZgpZ+zxw2UweG2gpjqH5AhXsEetRatAy0W3PnnuiBtJjZrJGMzOXYCG1xyVunWrBf57UL3xTJ68uOA+KgJIYHN4PqERyMVeFG1pbMw23JKWwJf6Dz0veA8D8K7+B6wMhU12zFlfD7QsUBpL8FswGVPgHPYzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=C78ofi88; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=GCO8EvsC; dkim=pass (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=qkH4Tsbq; arc=none smtp.client-ip=5.8.75.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=tZ00Hjq0cuPOuG6PFQ6g7fs+gf4AGbwqsb/B90LUVb8=; b=SgzbsFIObH7edu8MVUwwjZksCD
-	IKy0+ailYqETjkusyuO1+A+LD4jq8i739OmqohgmgEA580cv2xH+w6VnyXq+aInH6arHdpvuasfOi
-	6E/DgYOH0ufeqYtER2qnhhJytL4bFWazHJkf2G+z+0aAoz24HgIlvR588Y+wqCRV5u+v1zDMykM5b
-	toxjuM6r4Se2efghVUMERX76JnjNkCLUeW1srE3lBcGg5Ky9MQmXmf9xc391pUg3LxWwQSHH2DDM2
-	YIwFWlYiihKPA7sRhDq1FfUtury00VHL67ULCjJZ+y1qxvz2NQJayn24No3jhTn1321AQJlCP5TaM
-	zBdzv5Ww==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44212)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1ugfq5-0001aV-1N;
-	Tue, 29 Jul 2025 09:37:37 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1ugfq2-0007F0-20;
-	Tue, 29 Jul 2025 09:37:34 +0100
-Date: Tue, 29 Jul 2025 09:37:34 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [net-next RFC PATCH] net: phylink: add .pcs_link_down PCS OP
-Message-ID: <aIiITk-7WPYMzcEl@shell.armlinux.org.uk>
-References: <20250729082126.2261-1-ansuelsmth@gmail.com>
+	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	List-id:List-Unsubscribe:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PfA/Mzgm/emmBtrQ2XU6azYHY0aYh/fqXsSaSjV/xRk=; t=1753779245; x=1753952045;
+	 b=C78ofi88/AXW8nbhCUCysdHp7XJMKFK2PY2KVLIVddjT+KRPcwPO1R6FT+Koi2Zk566OACXjDq
+	Sbc4qXdCr9lLTKvn21kUVl1fqo/TuUvml79mgL0qPmyq1yi2ous6bP7aKh1zahqZr/vRfC0eZspvX
+	SbnBFUnLf21FidLQreGw=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
+	 s=selcloud; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:List-id:
+	List-Unsubscribe:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Help:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=PfA/Mzgm/emmBtrQ2XU6azYHY0aYh/fqXsSaSjV/xRk=; t=1753779245; x=1753952045;
+	 b=GCO8EvsCEE/ZDPfZrkXQ3Y1QmxqE/8VNnYRHTufdlq4tnFmH15BAp7OnvvbLJcpmWSiCHr6pUZ
+	crhAZUU4DKqm6OsMiy7oVvAcZZo6mJEjQslKNV1B50RDFZ5xo3pUVcJ+jYBMzvrh+KXLxbp4o3dvI
+	paXXcNWTXe+YPOQYOYy0=;
+Precedence: bulk
+X-Issuen: 1118611
+X-User: 99111435
+X-Postmaster-Msgtype: 3849
+Feedback-ID: 1118611:15965:3849:samotpravil
+X-From: foxido.dev
+X-from-id: 15965
+X-MSG-TYPE: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-blist-id: 3849
+X-Gungo: 20250728.224157
+X-SMTPUID: mlgnr61
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxido.dev; s=dkim;
+	t=1753778277; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=PfA/Mzgm/emmBtrQ2XU6azYHY0aYh/fqXsSaSjV/xRk=;
+	b=qkH4Tsbq/b3H1Wjt9J5GBw5CBlOwxbxkdL/+ZyzCzfoNxmqcFGYQCFLZ7pBKmILEp8Dzd1
+	8DT4BW26R1ZhZAvbK3+YFfQNo4OKoLmAgaFsKlBz/m14xzC8qb+4RlwU+P6NsJXELj5AbI
+	HeEvgAEehPSDMENZoOkVxa4bH7GG/wwG9qm5g0rXYYjCk9l59rCVyvcc8IvaOmXVrkdU51
+	25R4u/H8PkLh5JAj+hBuD/fStS4hJINx314V5qYUeu/CCWADgXQvTMTyxv1n/3WmXiQOEw
+	gz0Ogrrb9bBotio8NcKtbIkYzFwtc1/p78gZtVjAaPpraOs9IanhU2XZYoLHEw==
+Message-ID: <b9a06c17-c18d-4ff1-b020-9eea505a6f41@foxido.dev>
+Date: Tue, 29 Jul 2025 11:37:47 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729082126.2261-1-ansuelsmth@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] Add WMI driver for Redmibook keyboard.
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ Nikita Krasnov <nikita.nikita.krasnov@gmail.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ "open list:INPUT (KEYBOARD, MOUSE, JOYSTICK, TOUCHSCREEN)..."
+ <linux-input@vger.kernel.org>
+References: <20250727223516.29244-1-foxido@foxido.dev>
+ <2aa477f3-526e-4b06-826a-83f95633c040@gmx.de>
+Content-Language: en-US
+From: Gladyshev Ilya <foxido@foxido.dev>
+In-Reply-To: <2aa477f3-526e-4b06-826a-83f95633c040@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, Jul 29, 2025 at 10:21:23AM +0200, Christian Marangi wrote:
-> Permit for PCS driver to define specific operation to torn down the link
-> between the MAC and the PCS.
+On 7/29/25 00:47, Armin Wolf wrote:
+> Am 28.07.25 um 00:34 schrieb Gladyshev Ilya:
 > 
-> This might be needed for some PCS that reset counter or require special
-> reset to correctly work if the link needs to be restored later.
+>> This driver implements support for various Fn keys (like Cut) and Xiaomi
+>> specific AI button.
 > 
-> On phylink_link_down() call, the additional phylink_pcs_link_down() will
-> be called before .mac_link_down to torn down the link.
-> 
-> PCS driver will need to define .pcs_link_down to make use of this.
+> Interesting, i was just talking with another person about implementing a 
+> WMI event
+> driver for the exact same WMI event device. I CCed the person involved 
+> in the discussion
+> so that he can test this driver on his device as well.
+> All in all the driver looks promising, but there are still things that 
+> need to be improved
+> before we can include this driver in the mainline kernel. For details 
+> see below.
+Thanks for your feedback, will fix in v2. However, I have small 
+question: do I still need a mutex for linearizability if I implement 
+driver via sparse-keymap? I've copied mutex from xiaomi-wmi, but as I 
+looked up not all WMI keyboard drivers use it (fujitsu-laptop, acer-wmi).
 
-I don't accept new stuff without a user. Please provide the user as
-well. Thanks.
-
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+--
+Gladyshev Ilya
 
