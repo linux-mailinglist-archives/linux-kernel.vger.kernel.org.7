@@ -1,167 +1,127 @@
-Return-Path: <linux-kernel+bounces-749278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD1CB14C46
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:36:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671A2B14C49
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 12:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1289545785
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:36:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1A8545AC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D624F289E36;
-	Tue, 29 Jul 2025 10:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CDB0270EA3;
+	Tue, 29 Jul 2025 10:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gClfGBMC"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yNwA2w5u"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3992882CF;
-	Tue, 29 Jul 2025 10:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 528C8264F8A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 10:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753785362; cv=none; b=r+hRMEqRVeGnjOJF28yjf8RbL4HSYkVbElYuZKgAXcaroIKBeEIhDV+BfAv2QCNqlNEfz7pXkeV5AM1G0Wc8iS0V0YxQ1h2PnYvIQltsr/Dsrtaee8yaUZXqmvLrZ3RocBiYtetMnqzzCpQGJjUBgaYGfg21MXbhSpj1XkFqTHo=
+	t=1753785395; cv=none; b=fNNm4bh9ksevwuYeS9nRrP8w25m5Lhz7Iv5KFHiGfcbOh1pMNTdHUqY8EmeqXOtHhYdwvdkLyRpKCGLxWluS5M+1IOlMD+imVhTCjlSyMjHRhqXg/7qQyEo+rHVwGtj3+vz3g1juASUNnt25XKkvllcFdQ7SDS1l/u3X3vBQfEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753785362; c=relaxed/simple;
-	bh=Z9HumShDiufliIB4ciIlQDeCgYnIAnXWWEVH3x23bQQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qUeCosjMHFnIRdYl0jlY6/gdmEkc7mb+qkZByyF7T1tILZcsgSmO3RK2IZuAWDxdCazVUL8UnFQDFIfQr1jcVa3tr7/dSOc7rVizkm9EIYV156Zj1G8zV5YLI3KIjAbRAlZ7wZcoaIwrka66INTzKhuLaSDeMpO7jxSWH3c7ar0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gClfGBMC; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b3220c39cffso5542381a12.0;
-        Tue, 29 Jul 2025 03:36:00 -0700 (PDT)
+	s=arc-20240116; t=1753785395; c=relaxed/simple;
+	bh=JkOOl1qHh8wPHce4AVCasFuw0+R40eyw5LBg2HuecrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=atnMG0TNZ84NpyypX0B2dioEvtGFEG4G/RAbZCOb2uyx9N03bwRHbsiIW9Pw8j2N3uoCDgk4ucSswDOkVZlU/8mriOt1xGxlQLVH8KMBmI+ID6d2ZWnS7rnLZviUr0yO5uMlZqgUxwqg9Q1Uf0chahDcrTQSdC63c+k0RLA8hZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yNwA2w5u; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3b782cca9a0so1915154f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 03:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753785360; x=1754390160; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8087Ww2Ief01KPpqD9WgawznOlI5BWfEluXJ5Qfhq24=;
-        b=gClfGBMCIp0vzpKyr+JCDNCCwCdzRHDFUA0hFjoV/aZ2/NR4cyYRBacp797wLVDlQ7
-         nuywfU4lAkqpv1jG9mLsC73lNqJESol/tjHxbCA5GqA62ZaCll7uu1JENKy63rCtB80A
-         v1sYZSQPz7yq4gUrk/C9IDKxZUdMoJN2VnJV1o+lEsK9SclE7PauPXd9KQw80YZCzX9l
-         5OxXCiI9K5aKf5dx3iVhATftmn4jkEhzTQZ++5Jj4g77mLUVxbE8/vAZBYiJ42RC69hA
-         tJlUTrjy24SAa8LB0/7Kd7pSo1wPhxbYZNoLUBZ8fDH7TyNrSZlGUfMP5nEduouYTXQK
-         XnZA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753785391; x=1754390191; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5SlpVvwQN3dO1/Sw/WT9GrsHCvzTZlBS1ya2qhGGj2M=;
+        b=yNwA2w5uXyUqKA2rOlr/a49zxtJfBlSW9Z3V0y2tHZMRGdtlly46dK4LpY9N1qCif4
+         yuIvq9pOCtVvtctqu7+yPcGVkTg5myFfPPZFXjyzr4YrztTjxXAzh0OwBUZ1JXbj4GU6
+         auBCl1K4ddJku2zTdKKoVqMMMr2+wzLm0h0LlAIvuprzAfB40SByo5UE051YQPkVl/qq
+         E98CLf4ccNa36xT8SNecqA/XVArjgB7XCN0OG9uPYdG9VhwraZEEUWl2vqcyiz539X4w
+         MV2Gc5f1fRCefhQ388GXrnTiUW+5YI9U+SlHrgCKvfVVDY4LP9uBeo/SB9xnCLcFt/GP
+         yu5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753785360; x=1754390160;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8087Ww2Ief01KPpqD9WgawznOlI5BWfEluXJ5Qfhq24=;
-        b=EkTyhjtfrZypwy6lEIfFtDwkOWP8ybT5V8bbZUR0PQ5fj/UH2hD/9+QFucOsZ4le3i
-         F8063KQwLOtx4zIQKOq0AkiRdH7fFbfSllStiHF4BBwcXxJMkK5MEPhnwj06ecg+N/Wy
-         Q7H6eNkqVWGSJd12qCL+vcpdUaBX2RinKUosQiDbFk7gTduiSzXzutol/Qiust0fdKD0
-         sY+M7lcvXH9aHBjeCRQ6eZXjkXjCdyeLKVkNsvHuMkMUnvjrbTyX6llnzYks19Fp1aWq
-         GmlpUX0DXhKiK0O1H+xIEmEr1n0vWBk7L0vTwCNJwL74tvY6fRSezfb53H2yETu3719O
-         uJ8w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSgLrBykEZtvbMLG+ssdBhWo11RttYcZQbn+f4zdeERbbKJx713H8xZTqCNgyT4dwSucq6zJ9waSqI@vger.kernel.org, AJvYcCUUBc/ZH/63dIrVAwdHCYcI3AnOW5q12oWZAG+SNZy1aNJiYlYXzlYaMZnZaBX1EQcsp3pHhUCzmhw=@vger.kernel.org, AJvYcCWao1XFC4JCsA1Y+049iC3wRiSdQflG+BKHKqgCcxbmCylZXA/ygbE86dggMdxduL3O3fZ9aw2YcyXjiIU9@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWIuMEIsnEp7XXHk2Fy45RgrD4pzR9X0DDimgfjDYh2IK1rqv9
-	hkAIjxIr79K//X65KBBWmsxoXngHZculbssEtp3p1/UyQqEfSUxYffoL
-X-Gm-Gg: ASbGncv9/ANztohCESrtnmsRW6qzEUYbDUJR/zfrMcGtov6Dl0fn4sBYnw4aEvCXORN
-	Emd3MmjPO0noNA310XWlwXif4yTXCsbKKefJPbgTvva/trfXETFBsroEG1i9gQ3Fh9gPCbTluc3
-	XH+rPzuoU3A6DlH0pIfFQct/TR/QoxIczOpKLvMFqrXCRKm6ml4FkMkzBm2NevgPNVxjOzrpyBW
-	JHFIySMDBlAHVhRCChs2PvgN6Sz8S5H/rB3jOU1T/4DdDEtBqwge/bEX+LuPlwRy2evrItBS9Wx
-	nsZ0E+/41Mxu7joIgx+8a6sYoANkn49KKV+IsUadBD0/UCrjcPMqZ6zN2m3KJKjf52rBtw8mHH1
-	wCT4CTTPtB5CSnDj6u6YtkJOnHnPSit4LUOzOCJCUFM+S/vXrnunR74vr0MUerc61Oxepbv+FXh
-	2ngtQ=
-X-Google-Smtp-Source: AGHT+IEPkdK0ONC3SbVXWmFef8tZYCI8+3/GregdA3OnPSHja3+EYzzHnGB9qcHUGjypRrp1HWca6Q==
-X-Received: by 2002:a17:903:8cd:b0:240:3f4d:b9b1 with SMTP id d9443c01a7336-2403f4dbbdcmr94228405ad.29.1753785360151;
-        Tue, 29 Jul 2025 03:36:00 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f328cda53sm1301448a91.19.2025.07.29.03.35.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 03:35:59 -0700 (PDT)
-Message-ID: <3170902c-4a3a-4f85-8703-0e2cfc04201b@gmail.com>
-Date: Tue, 29 Jul 2025 19:35:57 +0900
+        d=1e100.net; s=20230601; t=1753785391; x=1754390191;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5SlpVvwQN3dO1/Sw/WT9GrsHCvzTZlBS1ya2qhGGj2M=;
+        b=spX7cqC9HDye7LfsGeFYkE/OQJCCcYbQ2rV68tpZL7JRs0hDFZx5eHIw0R5A9oGK2L
+         /Xe0My8YF67Z1DmnxLlSvj2lNh8PL4fUaAC9+Dwm+vIYYzr3HIjhhVo/BpWIH1yguNR2
+         KDHntRdhvN0cN7FcvFHi5Yk/cTE0AVUg//Q66cuVgg/hwenZrXqnY+rxDLiPJLsAjlhX
+         fgBNSnPMXp+rCyrYji5uE/u4+c1nXrSP63obza6Jr3fnI1zpPCdfpk6jv85YRr/m6Mhv
+         noD14GFlBofAh+dZOwbob4ZWjjYawm6rvGcD/odnIG68CI69wIuMHMTaWMdyPgQjJ7pD
+         x8Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFxPC0mOyR13yjMq9XI8kiKW9d9mRtIManmyndf+xa+vZtxQ3bV3N2Tr3hcC/O+cRD7TBM6kkIS+G8A2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlgzvKZshqvpPUWgwT3bjdG65+EF73ulSwackEU3lMj4hXpkrN
+	up0QMbVNPsiHHNjxtgl73R1SLHhqjCd0RhfPm6jneqLiqN/UkI5Aef5IR+/kU6hgSt0=
+X-Gm-Gg: ASbGncsysYAyz8pWQU1SUSyRnXGT5LQQyNl29k7FgszzuZPvxOKDb6ujNOjrGhUgro1
+	j6ypZRDkEOAL6wcHcYYnYbwXXvYfbAyvbQ+2x2Ju+zdc4TkLOrpknhNNQ2x2mwArkLH/pNnZ7Ok
+	dpA15RTtZ2dCJrhhAnyIUp9DZnJTA9bgda7MAUQPkBUQTQJoDOVTnrIHTf2wylDzGc2qETv6wJP
+	bzLWZoIMylwZ6rjLB/9csUVZduSnpEFcDQwrCBei9d8I4zfv9HL98Rcht8ELzSayH66aCRI05L2
+	ln1+qWHLtqNA6Lcyma+1W4dun4Udx2vBCVVm9QydWJEojSQxw9Iaz16yMstUxkGgmM94Ab7RazG
+	7uG+Q6QPFGkhzUM4Y4NXrvWOv9fZ8UjgLffHTrlgh3HwQDXmCepLNSHr+xq7wr204
+X-Google-Smtp-Source: AGHT+IGzeWX+Xnx1WFxojWPmyuVy1qNE5mfB/5ypGs8kFSziF/qB8m1k3GfOBoFqnttO2zo8LLpWpg==
+X-Received: by 2002:a05:6000:230c:b0:3a5:2b1d:7889 with SMTP id ffacd0b85a97d-3b77667470bmr11089986f8f.43.1753785390605;
+        Tue, 29 Jul 2025 03:36:30 -0700 (PDT)
+Received: from localhost (p200300f65f06ab0400000000000001b9.dip0.t-ipconnect.de. [2003:f6:5f06:ab04::1b9])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458705bcb96sm198733475e9.21.2025.07.29.03.36.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 03:36:30 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: linux-pwm@vger.kernel.org
+Cc: David Jander <david@protonic.nl>,
+	Clemens Gruber <clemens.gruber@pqgruber.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] pwm: pca9586: Convert to waveform API
+Date: Tue, 29 Jul 2025 12:35:59 +0200
+Message-ID: <cover.1753784092.git.u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: mchehab+huawei@kernel.org
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Jani Nikula <jani.nikula@intel.com>, Akira Yokosawa <akiyks@gmail.com>
-References: <adb2d431b60228a772ec4423457a08e9af4b1d2d.1753713955.git.mchehab+huawei@kernel.org>
-Subject: Re: [PATCH 2/2] docs: changes: better document Python needs
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <adb2d431b60228a772ec4423457a08e9af4b1d2d.1753713955.git.mchehab+huawei@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1191; i=u.kleine-koenig@baylibre.com; h=from:subject:message-id; bh=JkOOl1qHh8wPHce4AVCasFuw0+R40eyw5LBg2HuecrI=; b=owEBbAGT/pANAwAKAY+A+1h9Ev5OAcsmYgBoiKQPca6C/vrx+meTg+nZPyEslSZIGN74SFQB9 XEl5jm5XtSJATIEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCaIikDwAKCRCPgPtYfRL+ Th8pB/YyHv5/fmuidPs6QqWuBfe0NAgkVUTVTbg81DDBnaxEEXVeC1axU8ZFkw66Dua20PH+vKM V+yS+8EFFR6hSO5PQi2DY+gGo19Abp5mVsawNd7HRpKem9wP19IdLq4cv8dOgxk+ZLKsuLikM7h BxlQ+h9iBY9zCCqRnZpOG0uiwegVulH357205tLbhjYgNaG4MsGbbtb1pVSnWHoCL6VNGbeTZ0x 1MKDMjhU+vzDHGhAkpLzGIKXj57+/5lO5VtMjmUSlqtfDhSg/aUBfiTlkUN70V8aNarx0snn+7z cIGrhkdN3ce8NdWmYbtlmKLiJa3TnaXZp21dOZUzIgu3qHs=
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-[+CC Laurent and Jani]
+Hello,
 
-Hi,
+this series eventually converts the pca9685 driver to the new waveform
+callbacks. It starts with a few minor fixes and cleanups before the
+actual conversion.
 
-On Mon, 28 Jul 2025 16:54:29 +0200, Mauro Carvalho Chehab wrote:
-> Python is listed as an optional dependency, but this is not
-> true, as:
-> 
-> 1) CONFIG_LTO_CLANG runs a python script at scripts/Makefile.vmlinux_o;
-> 
-> 2) kernel-doc is called during compilation when some DRM options
->    like CONFIG_DRM_I915_WERROR are enabled;
-> 
-> 3) allyesconfig/allmodconfig will enable both.
+Note that this driver was the only one that supported the usage_power
+flag and when it was set increased the duty_offset. Now duty_offset is
+under control of the consumer, so no functionallity is lost.
 
-Well, these conditions still sound to me optional.
+Patch #4 drops GPIO support. Though the internal details differ a bit,
+this is superseded by patch
+https://lore.kernel.org/linux-pwm/20250717151117.1828585-2-u.kleine-koenig@baylibre.com
+which provides generic GPIO support for waveform PWM chips.
 
-> 
-> So, better document that.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/process/changes.rst | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-> index bccfa19b45df..f6abecf6da86 100644
-> --- a/Documentation/process/changes.rst
-> +++ b/Documentation/process/changes.rst
-> @@ -61,7 +61,7 @@ Sphinx\ [#f1]_         3.4.3            sphinx-build --version
->  GNU tar                1.28             tar --version
->  gtags (optional)       6.6.5            gtags --version
->  mkimage (optional)     2017.01          mkimage --version
-> -Python (optional)      3.9.x            python3 --version
-> +Python                 3.9.x            python3 --version
->  GNU AWK (optional)     5.1.0            gawk --version
->  ====================== ===============  ========================================
->  
-> @@ -154,6 +154,17 @@ Perl
->  You will need perl 5 and the following modules: ``Getopt::Long``,
->  ``Getopt::Std``, ``File::Basename``, and ``File::Find`` to build the kernel.
->  
-> +Python
-> +------
-> +
-> +CONFIG_LTO_CLANG requires python 2.7 or 3.0+; some DRM config options like
-> +CONFIG_DRM_I915_WERROR require at least Python 2.7 or 3.4+.
-> +
-> +The kernel-doc tool and docs build require at least 3.6, but they depend on
-> +dict changes that happened on 3.7 to produce valid results.
-> +
-> +Other tools within the Kernel tree require newer versions.
-> +
+Best regards
+Uwe
 
-These details look confusing in changes.rst.  The table above says
-python >=3.9.x.  All you need to say here would just something lile:
+Uwe Kleine-König (5):
+  pwm: pca9685: Don't disable hardware in .free()
+  pwm: pca9685: Use bulk write to atomicially update registers
+  pwm: pca9685: Make use of register caching in regmap
+  pwm: pca9685: Drop GPIO support
+  pwm: pca9586: Convert to waveform API
 
-+Python
-+------
-+
-+Required with CONFIG_LTO_CLANG, some DRM config options like
-+CONFIG_DRM_I915_WERROR, the kernel-doc tool, and docs build (Sphinx),
-+among others.
+ drivers/pwm/pwm-pca9685.c | 555 ++++++++++++++++----------------------
+ 1 file changed, 229 insertions(+), 326 deletions(-)
 
-Other details can go to comments in each script or other docs if
-necessary.
 
-        Thanks, Akira
+base-commit: 68b9272ca7ac948b71aba482ef8244dee8032f46
+prerequisite-patch-id: 917be1150626d7632f99929ac9f7dc1449864979
+-- 
+2.50.0
 
 
