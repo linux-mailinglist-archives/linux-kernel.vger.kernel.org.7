@@ -1,198 +1,106 @@
-Return-Path: <linux-kernel+bounces-749911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E56DB154A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:28:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D978B154C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 23:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5E3E18A7C3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:29:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177BA18C0A2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 21:39:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A06218E99;
-	Tue, 29 Jul 2025 21:28:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2D052797BE;
+	Tue, 29 Jul 2025 21:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lhsW2pTc"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="kRUTofvp"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21118145FE8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E8922539D;
+	Tue, 29 Jul 2025 21:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753824523; cv=none; b=WEa6TIKeVWcjTg5DWG3K5RpNragsWbEHkYjSXic2OUBK+lVK6iAOXRLWqKQK/DRbYVjNIpU0I4fr9OJVa3vNchMVgwykZH6+u1ff8tscVTuZeMRRwbGO86rpdypr/0lnpoBInmC39lSHh/lR/usAAm9BRYQDSiyc7liatfHoERU=
+	t=1753825134; cv=none; b=SYPbx5RMOtjzesgjdoxhjrcbi8KBX6IgtoeS0WhgexnpJzgh2cIKCyNz553+K60zvZf9DmOVW8k6KDLGbn86UxwB9jgj0sNkeHJVYn1eczAC04V31eifpfmGf+/JGZLxpu5Ty3qiFovLfCgroga2Ucgt7+6KsyF7OfukyrJPd5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753824523; c=relaxed/simple;
-	bh=wWr0PMMX8zXIq+UZH9Hw6e+QTKOqH5uI2PfCLe/lLZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=luKlDVVT6roSMRLCzOgYDzUY7lbsLTIts5EqpnZRvTpkAyoixkDanlxK0qBWI5dHRgVHH1xAoF05MYQnGNhGH92NimHLGfZaaek0ZUM9l9jRHcfv5OuYigc3jhyL7hrxiTFy9X6UZuX4pDxiT3iAWCD/5AfNEOY4H+/DBUKwpQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lhsW2pTc; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 29 Jul 2025 14:28:18 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753824508;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NR9slzoUcFOnPOoSMrOV4yposz1NlG4bkgRYfak492c=;
-	b=lhsW2pTcB10VQHQ789IqoXJswxckQki4VJ3/2loOEW2BzG6PgAfa2kj9NJPn524jv0WgfP
-	MjYAlqeTx1ZzRP990X7EM/qgcaHk5t/9IMRbFKRswJP+taDNsnL+hGCJ99RzwPHiQQ/vVN
-	YBCJ0Z4l9hzEspcc7A/hA8yTNEKhxYc=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: Jiaqi Yan <jiaqiyan@google.com>
-Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com,
-	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org,
-	pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org,
-	kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	duenwen@google.com, rananta@google.com, jthoughton@google.com
-Subject: Re: [PATCH v2 1/6] KVM: arm64: VM exit to userspace to handle SEA
-Message-ID: <aIk88sBA2eIEF7w-@linux.dev>
-References: <20250604050902.3944054-1-jiaqiyan@google.com>
- <20250604050902.3944054-2-jiaqiyan@google.com>
- <aHFohmTb9qR_JG1E@linux.dev>
- <CACw3F509B=AHhpaTcuH9O851rrDdHh1baC8uRYy7bDa7BSMhgg@mail.gmail.com>
- <aHK-DPufhLy5Dtuk@linux.dev>
- <CACw3F53TYZ1KFv0Yc-GCyOxn7TF3iYjTNSE8bd3nte=KaCN0UQ@mail.gmail.com>
- <CACw3F50Q_G75wf2rBm-P-NkyyO72i1NKqR9se99QrgipfD62yg@mail.gmail.com>
+	s=arc-20240116; t=1753825134; c=relaxed/simple;
+	bh=FKU6fQ4V7zP9CTK7la8Fetri5NOAexlnnfvH3zdAzEY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W/FZ+kA0hl7oJ9ffrCyTRRdlbr9/krYVuEUV6Bam/lunbRTtXCFHE1UT/HjWrfvu9MRc7bBUzVHMTOjWvO1uo4eBz+jPtlt8P+EWTK8i7vSzOZ+JmdjWm1/VZCszLBTTYc+Tg8qqqlJEN4mNvxR/ZiXikRcyrRyHT/mF1dh7VhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=kRUTofvp; arc=none smtp.client-ip=192.19.144.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 84467C0003DD;
+	Tue, 29 Jul 2025 14:31:56 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 84467C0003DD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1753824716;
+	bh=FKU6fQ4V7zP9CTK7la8Fetri5NOAexlnnfvH3zdAzEY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kRUTofvplBDYLEV1fLLX5w72S1kr4Kdny7htQJLuPQGub1Qtbx1h5mnb3arSZxDcv
+	 AOmrv2KO0mVEIpgWe2iLdpZTfG9qfQlhJDY4yrW/sR0mE4ht+pgltPkPb/NRLRXC+X
+	 WBCLx3sR5trgbdxLXIewbJ0hlxllLU1L7YKhEIMY=
+Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 2D2AE18000530;
+	Tue, 29 Jul 2025 14:31:56 -0700 (PDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Doug Berger <opendmb@gmail.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net] net: mdio: mdio-bcm-unimac: Correct rate fallback logic
+Date: Tue, 29 Jul 2025 14:31:48 -0700
+Message-Id: <20250729213148.3403882-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACw3F50Q_G75wf2rBm-P-NkyyO72i1NKqR9se99QrgipfD62yg@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Fri, Jul 25, 2025 at 03:54:10PM -0700, Jiaqi Yan wrote:
-> On Sat, Jul 19, 2025 at 2:24 PM Jiaqi Yan <jiaqiyan@google.com> wrote:
-> >
-> > On Sat, Jul 12, 2025 at 12:57 PM Oliver Upton <oliver.upton@linux.dev> wrote:
-> > >
-> > > On Fri, Jul 11, 2025 at 04:59:11PM -0700, Jiaqi Yan wrote:
-> > > > >  - Add some detail about FEAT_RAS where we may still exit to userspace
-> > > > >    for host-controlled memory, as we cannot differentiate between a
-> > > > >    stage-1 or stage-2 TTW SEA when taken on the descriptor PA
-> > > >
-> > > > Ah, IIUC, you are saying even if the FSC code tells fault is on TTW
-> > > > (esr_fsc_is_secc_ttw or esr_fsc_is_sea_ttw), it can either be guest
-> > > > stage-1's or stage-2's descriptor PA, and we can tell which from
-> > > > which.
-> > > >
-> > > > However, if ESR_ELx_S1PTW is set, we can tell this is a sub-case of
-> > > > stage-2 descriptor PA, their usage is for stage-1 PTW but they are
-> > > > stage-2 memory.
-> > > >
-> > > > Is my current understanding right?
-> > >
-> > > Yep, that's exactly what I'm getting at. As you note, stage-2 aborts
-> > > during a stage-1 walk are sufficiently described, but not much else.
-> >
-> > Got it, thanks!
-> >
-> > >
-> > > > > +/*
-> > > > > + * Returns true if the SEA should be handled locally within KVM if the abort is
-> > > > > + * caused by a kernel memory allocation (e.g. stage-2 table memory).
-> > > > > + */
-> > > > > +static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
-> > > > > +{
-> > > > > +       /*
-> > > > > +        * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any external abort
-> > > > > +        * taken from a guest EL to EL2 is due to a host-imposed access (e.g.
-> > > > > +        * stage-2 PTW).
-> > > > > +        */
-> > > > > +       if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
-> > > > > +               return true;
-> > > > > +
-> > > > > +       /* KVM owns the VNCR when the vCPU isn't in a nested context. */
-> > > > > +       if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
-> > > > > +               return true;
-> > > > > +
-> > > > > +       /*
-> > > > > +        * Determining if an external abort during a table walk happened at
-> > > > > +        * stage-2 is only possible with S1PTW is set. Otherwise, since KVM
-> > > > > +        * sets HCR_EL2.TEA, SEAs due to a stage-1 walk (i.e. accessing the PA
-> > > > > +        * of the stage-1 descriptor) can reach here and are reported with a
-> > > > > +        * TTW ESR value.
-> > > > > +        */
-> > > > > +       return esr_fsc_is_sea_ttw(esr) && (esr & ESR_ELx_S1PTW);
-> > > >
-> > > > Should we include esr_fsc_is_secc_ttw? like
-> > > >   (esr_fsc_is_sea_ttw(esr) || esr_fsc_is_secc_ttw(esr)) && (esr & ESR_ELx_S1PTW)
-> > >
-> > > Parity / ECC errors are not permitted if FEAT_RAS is implemented (which
-> > > is tested for up front).
-> >
-> > Ah, thanks for pointing this out.
-> >
-> > >
-> > > > > +}
-> > > > > +
-> > > > >  int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
-> > > > >  {
-> > > > > +       u64 esr = kvm_vcpu_get_esr(vcpu);
-> > > > > +       struct kvm_run *run = vcpu->run;
-> > > > > +       struct kvm *kvm = vcpu->kvm;
-> > > > > +       u64 esr_mask = ESR_ELx_EC_MASK  |
-> > > > > +                      ESR_ELx_FnV      |
-> > > > > +                      ESR_ELx_EA       |
-> > > > > +                      ESR_ELx_CM       |
-> > > > > +                      ESR_ELx_WNR      |
-> > > > > +                      ESR_ELx_FSC;
-> > > >
-> > > > Do you (and why) exclude ESR_ELx_IL on purpose?
-> > >
-> > > Unintended :)
-> >
-> > Will add into my patch.
-> >
-> > >
-> > > > BTW, if my previous statement about TTW SEA is correct, then I also
-> > > > understand why we need to explicitly exclude ESR_ELx_S1PTW.
-> > >
-> > > Right, we shouldn't be exposing genuine stage-2 external aborts to userspace.
-> > >
-> > > > > +       u64 ipa;
-> > > > > +
-> > > > > +
-> > > > >         /*
-> > > > >          * Give APEI the opportunity to claim the abort before handling it
-> > > > >          * within KVM. apei_claim_sea() expects to be called with IRQs
-> > > > > @@ -1824,7 +1864,32 @@ int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
-> > > > >         if (apei_claim_sea(NULL) == 0)
-> > > >
-> > > > I assume kvm should still lockdep_assert_irqs_enabled(), right? That
-> > > > is, a WARN_ON_ONCE is still useful in case?
-> > >
-> > > Ah, this is diffed against my VNCR prefix which has this context. Yes, I
-> > > want to preserve the lockdep assertion.
-> >
-> > Thanks for sharing the patch! Should I wait for you to send and queue
-> > to kvmarm/next and rebase my v3 to it? Or should I insert it into my
-> > v3 patch series with you as the commit author, and Signed-off-by you?
-> 
-> Friendly ping for this question, my v3 is ready but want to confirm
-> the best option here.
-> 
-> Recently we found even the newer ARM64 platforms used by our org has
-> to rely on KVM to more gracefully handle SEA (lacking support from
-> APEI), so we would really want to work with upstream to lock down the
-> proposed approach/UAPI asap.
+In case the rate for the parent clock is zero, make sure that we still
+fallback to using a fixed rate for the divider calculation, otherwise we
+simply ignore the desired MDIO bus clock frequency which can prevent us
+from interfacing with Ethernet PHYs properly.
 
-Posted the VNCR fix which I plan on taking in 6.17. Feel free to rebase
-your work on top of kvmarm-6.17 or -rc1 when it comes out.
+Fixes: ee975351cf0c ("net: mdio: mdio-bcm-unimac: Manage clock around I/O accesses")
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+ drivers/net/mdio/mdio-bcm-unimac.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-https://lore.kernel.org/kvmarm/20250729182342.3281742-1-oliver.upton@linux.dev/
+diff --git a/drivers/net/mdio/mdio-bcm-unimac.c b/drivers/net/mdio/mdio-bcm-unimac.c
+index b6e30bdf5325..9c0a11316cfd 100644
+--- a/drivers/net/mdio/mdio-bcm-unimac.c
++++ b/drivers/net/mdio/mdio-bcm-unimac.c
+@@ -209,10 +209,9 @@ static int unimac_mdio_clk_set(struct unimac_mdio_priv *priv)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (!priv->clk)
++	rate = clk_get_rate(priv->clk);
++	if (!priv->clk || !rate)
+ 		rate = 250000000;
+-	else
+-		rate = clk_get_rate(priv->clk);
+ 
+ 	div = (rate / (2 * priv->clk_freq)) - 1;
+ 	if (div & ~MDIO_CLK_DIV_MASK) {
+-- 
+2.34.1
 
-Thanks,
-Oliver
 
