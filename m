@@ -1,121 +1,78 @@
-Return-Path: <linux-kernel+bounces-749953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D41B1555F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:45:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E82DB15560
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:45:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EA8E18A6E87
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:45:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1F864E1519
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650C527FD62;
-	Tue, 29 Jul 2025 22:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4498F27FD62;
+	Tue, 29 Jul 2025 22:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NoHxaHhD"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fctg7IIz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7556122A4F4
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 22:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB4327FD52
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 22:45:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753829116; cv=none; b=InSO+clIy1xfGy9CVn4n4qazMcE0WhmLgcn1wson+KKLcefP6Cc0MrAOG3R3mk4G/VagN2VusLnLsVxyjVqaFtnX2hUYL2JGuwPyP0EzapdA3Lg54e92jLmdvu+FmOQzNN6C2iVYNUHUsmrxQ2oJaWqHm1xBNeXphixhltZO/zg=
+	t=1753829122; cv=none; b=SswZUXjsklOuXiRNb4S4d8whP5L/55H4bUEc6QPI34a4OEtdvsSIBfjdMKH1RfuC+I20vgdg3X9j60GcOh0i10Ely6hTslJBDVKyNIe4Hjj4Sc8du2h2Ih1Um2P2EP/Nx5DlYUIOD+1PUvE+ei+4KYzW1YBOVxZpjW+XCStsYvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753829116; c=relaxed/simple;
-	bh=qL+Vm8lMbkkauUVydnRswhxGIXQ0ZFlJGQG6dIHHVx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d8z3YFrtgZjBInMizugj4ZknOuEUoUrQky5AygPCnsC+8sC/mZGEEwEvs9E0c/RdB0wG+ethELA3wo6fXkmPidV0BULNCrE/ScT9CM/rPJSmR2+j4+yeR7wJD4KPfXXpekJq795vCml9erQGQUGPFdtrA0q7iSkGGmVajLSU4nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NoHxaHhD; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <2b69e397-a457-4dba-86f1-47b7fe87ef79@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753829111;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XHtbR4MKyVlIuat93c1sNNhih7aR3T+tXcbxNcT2Hxc=;
-	b=NoHxaHhDIYDryk5osFw6tdy4NWlzL14gU4kq/b+bUKuBIsTZV/UQtAPyoXgXpFpyh5Oeq1
-	5//b5z38AhmkFaKH5HwKpl0qtiIX3LwrmsFzt11wjD2kE1LTm6DWsFqObiJcmi915PYgLp
-	EYTvJhYdkeoVE93Ud5FAz2T9m9mTq14=
-Date: Tue, 29 Jul 2025 15:45:00 -0700
+	s=arc-20240116; t=1753829122; c=relaxed/simple;
+	bh=l+AKwvgmfwUocvHarx71lgZV0ChTuV1/FTU72wIgFkg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=kUkfsBBzqSjZv8AuYVS5ViD6A86EZMVDW+bUus8wLOR7KElR97n23JCW+EdRWVG6vT+LUL8deSNj+MvyK/u3tTDL09aj82/MkBHcSwqiWZLjNIuh5OHiSy0btK8NcOUBZyqyqXijdzAK9E/zhf3gTb+d9MiHFpnF7k1JF0JSGfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fctg7IIz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05EBBC4CEF7;
+	Tue, 29 Jul 2025 22:45:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753829122;
+	bh=l+AKwvgmfwUocvHarx71lgZV0ChTuV1/FTU72wIgFkg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=Fctg7IIzrJovibxepmYWrTpvEb9LpvjPtSRyPpnukcJA5DvoQMcHCgLsj4Iy2Z1Gd
+	 O53pwgERZ2hmYJaBgi9FwQ8hnek8Z51hiRwVY5nWIbZSgQchHP0EEKYj9nDmr2j6Ts
+	 EXcq0CQe7a8Z3+RYggk9zsaSw/YtAetXKQNG4cSzsNye4P/P07TIbMgVWLJdF+3gHX
+	 85JKIzbK0fMebmGuvahKzJpoDDV2SJdE+W0+CxXa+d4kszbEIkCZAP/7G1c4CSSOGg
+	 EMtgxj6rJjDaDLGZn7QZFHNAB69NxDDFRgs8wXkn6/4VftRzQV4brbGq5uL62wEoSb
+	 N1KHVt7Uva4Kg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E2F383BF5F;
+	Tue, 29 Jul 2025 22:45:39 +0000 (UTC)
+Subject: Re: [GIT pull] irq/msi for v6.17-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <175365568292.581055.1455338411054266072.tglx@xen13>
+References: <175365567943.581055.6806236199247802443.tglx@xen13> <175365568292.581055.1455338411054266072.tglx@xen13>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <175365568292.581055.1455338411054266072.tglx@xen13>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-msi-2025-07-27
+X-PR-Tracked-Commit-Id: 4a089c0b3f55b400689a5c35f7dfa0a74c363dae
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 5623870d9b4f1b9bd4a8b75544f2f9ed2a49afff
+Message-Id: <175382913805.1670422.17115992581687775353.pr-tracker-bot@kernel.org>
+Date: Tue, 29 Jul 2025 22:45:38 +0000
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, x86@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [PATCH v2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-Content-Language: en-GB
-To: Arnaud Lecomte <contact@arnaud-lcm.com>, song@kernel.org,
- jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com,
- syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-References: <20250729165622.13794-1-contact@arnaud-lcm.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yonghong Song <yonghong.song@linux.dev>
-In-Reply-To: <20250729165622.13794-1-contact@arnaud-lcm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
 
+The pull request you sent on Mon, 28 Jul 2025 00:37:54 +0200 (CEST):
 
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-msi-2025-07-27
 
-On 7/29/25 9:56 AM, Arnaud Lecomte wrote:
-> Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
-> when copying stack trace data. The issue occurs when the perf trace
->   contains more stack entries than the stack map bucket can hold,
->   leading to an out-of-bounds write in the bucket's data array.
-> For build_id mode, we use sizeof(struct bpf_stack_build_id)
->   to determine capacity, and for normal mode we use sizeof(u64).
->
-> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
-> Tested-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/5623870d9b4f1b9bd4a8b75544f2f9ed2a49afff
 
-Could you add a selftest? This way folks can easily find out what is
-the problem and why this fix solves the issue correctly.
+Thank you!
 
-> ---
-> Changes in v2:
->   - Use utilty stack_map_data_size to compute map stack map size
-> ---
->   kernel/bpf/stackmap.c | 8 +++++++-
->   1 file changed, 7 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
-> index 3615c06b7dfa..6f225d477f07 100644
-> --- a/kernel/bpf/stackmap.c
-> +++ b/kernel/bpf/stackmap.c
-> @@ -230,7 +230,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
->   	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
->   	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
->   	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
-> -	u32 hash, id, trace_nr, trace_len, i;
-> +	u32 hash, id, trace_nr, trace_len, i, max_depth;
->   	bool user = flags & BPF_F_USER_STACK;
->   	u64 *ips;
->   	bool hash_matches;
-> @@ -241,6 +241,12 @@ static long __bpf_get_stackid(struct bpf_map *map,
->   
->   	trace_nr = trace->nr - skip;
->   	trace_len = trace_nr * sizeof(u64);
-> +
-> +	/* Clamp the trace to max allowed depth */
-> +	max_depth = smap->map.value_size / stack_map_data_size(map);
-> +	if (trace_nr > max_depth)
-> +		trace_nr = max_depth;
-> +
->   	ips = trace->ip + skip;
->   	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
->   	id = hash & (smap->n_buckets - 1);
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
