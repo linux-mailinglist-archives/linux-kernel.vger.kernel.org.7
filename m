@@ -1,123 +1,103 @@
-Return-Path: <linux-kernel+bounces-749556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52E54B14FEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:04:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 421A8B14FF0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 17:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05A4D188EC91
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:04:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03E917A11B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4689B28852B;
-	Tue, 29 Jul 2025 15:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A612B2690E7;
+	Tue, 29 Jul 2025 15:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d6odanAi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYO6xcbl"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D195288C32;
-	Tue, 29 Jul 2025 15:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36E1746E;
+	Tue, 29 Jul 2025 15:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753801442; cv=none; b=HiNR/3fnKax9Rbg1nvxrIXlOeANOojjBops7JwubhVgg4aID2iAnWz163rEObShHBVhtPsww9hIXA+6Xc6RzI84oetrf9xQ/2sTXMCnWVaGTgq1tt8RO8UxKKbaphvF58D22ihj9mzZ0aR9BvQhnFUrq0iVz3TSBTLzEgx079v8=
+	t=1753801493; cv=none; b=ApMf/HNMwwik4CnPYDHb4ocIwjHIrAnEJpBClbBMN+wClNvgoA5125r7reG8NAZa+CKE5Pt2NmWlD9ZEm2cbpewOoY0HXzMtQmGTdn2PIgSirhdjgwfTr15mdjvWiDqIBbJQwDJJTFHNkv3soq/OJ3PPPnIVOurkJi5l9s8gpcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753801442; c=relaxed/simple;
-	bh=NDo2MtnREb/2JAL1a20dh5qK/0kehybsC86pu0c1U6U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NOXJd4x9dH0O9omdkmRLMt/8uYWkjSGozbA3dI7lms4Zp5fvu344q3yCCyIvM688qVgtB/om5y7M6gW8MG4CW3f8TgFt2gulBCnNGlwv2FO0tkzHxbH+uUIBzP4bEX2cOadqjo7qB2jujsYMITXppmY99GOLc0HMjIp51UUh26c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d6odanAi; arc=none smtp.client-ip=192.198.163.11
+	s=arc-20240116; t=1753801493; c=relaxed/simple;
+	bh=aQ+43kvtdWDOizoWPKmefgnCVdEt6FTWqKjZuLuJgJE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pvFUh+WsctIbk5IeQZXgXDXvpSC68hr+I8yRxI8N1j8Hu1OMy9IKmUUYBITyXli+Ukk64P2/0g7iOxYqVezgxC9+VIOXKDmPxET4uhIktTNbCYJOxMDlWxFm+AAEhOM49GBmjdLwVeD2kLVaTEECF+nh4g1rT148pjKqiZlOAU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYO6xcbl; arc=none smtp.client-ip=198.175.65.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753801441; x=1785337441;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NDo2MtnREb/2JAL1a20dh5qK/0kehybsC86pu0c1U6U=;
-  b=d6odanAiuw/YN9SblYWzLCys2SEzaTdhMehVH7DTk8TEj6nEgmWFkdW+
-   oX2WjoM3ViESpsVYjEc/u9FXdatvyfHhaR5fNm1ASRONirBqhM+8xrIOh
-   NOASkiz64hax0Iwi2kAD/AUHT6941lG2u9PlxJIXbnH0AgbT5pqRHv9vF
-   POn0WBhfca7+n6sOcaoXoonkt+VQvbr7HUf9t+K0zUP/4lSX4XoMnLOSf
-   6JvtAHYWgKqrGHZWmPODGeaaj2Bkgsl3yYjzJPk/PY+tcH9pI9+/+QFxC
-   tZxJAy85JbfyMXWDTVqiB/LIHNQxcxXu9DDdtG9pwrO4b8WA44Du/FNwn
+  t=1753801492; x=1785337492;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=aQ+43kvtdWDOizoWPKmefgnCVdEt6FTWqKjZuLuJgJE=;
+  b=JYO6xcblofdX7BBxR8qZmn314BRp+n6E7bRNSP7z2f50lMkiF2d6Ns8V
+   Ec0hn+sI7PrSsb3FLy9zB1uMg37HOnvuzrI7U1AWS4l8DJbHyTsIpu34m
+   /seqY2ZiqBsgQkHf2RoguB9O1BzaJSa0hkRCN8rT4Gb9+j/4xeCN7w/l4
+   xv0PRXvesMZ5L4ihHYz73Vy6tcS1USdIY2HpFp46t9gb3B9BfMATjEQ6+
+   uI22+vl01iMzjeL4PX/YN1r9BIsqQgF45K+KlSI6UUpmf0/ef71nQI09V
+   EHcIORLOPDGsUU0KtNzS9dDk/Rgq/X+3OyONGaCSkXvrxoBMPihMEvPTB
    w==;
-X-CSE-ConnectionGUID: Q/ilcqZsTamSQzI57n4L7Q==
-X-CSE-MsgGUID: FA+Z06WCROShhKy3QuXvKg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="66643485"
+X-CSE-ConnectionGUID: FNXFaidbSb6hLAcJJ9S8+w==
+X-CSE-MsgGUID: VQDKQ9w1TNWaIuZaDT1xlg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="67512504"
 X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
-   d="scan'208";a="66643485"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 08:04:01 -0700
-X-CSE-ConnectionGUID: A/XWs6NUTVK/11eKlqr0xw==
-X-CSE-MsgGUID: v1b4b8mjQu2qVqiY7Hnycg==
+   d="scan'208";a="67512504"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 08:04:52 -0700
+X-CSE-ConnectionGUID: n0T4/5DqR+SRBpjQDi3s5A==
+X-CSE-MsgGUID: zq7TZndwTJeEH5eSED3chA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.16,349,1744095600"; 
-   d="scan'208";a="163069781"
-Received: from ysun46-mobl (HELO YSUN46-MOBL..) ([10.239.96.51])
-  by fmviesa009.fm.intel.com with ESMTP; 29 Jul 2025 08:03:59 -0700
-From: Yi Sun <yi.sun@intel.com>
-To: vinicius.gomes@intel.com,
-	vkoul@kernel.org,
-	dave.jiang@intel.com,
-	fenghuay@nvidia.com,
-	xueshuai@linux.alibaba.com
-Cc: dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yi.sun@intel.com,
-	gordon.jin@intel.com
-Subject: [PATCH RESEND v3 2/2] dmaengine: idxd: Fix refcount underflow on module unload
-Date: Tue, 29 Jul 2025 23:03:13 +0800
-Message-ID: <20250729150313.1934101-3-yi.sun@intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250729150313.1934101-1-yi.sun@intel.com>
-References: <20250729150313.1934101-1-yi.sun@intel.com>
+   d="scan'208";a="167215188"
+Received: from fdefranc-mobl3.ger.corp.intel.com (HELO localhost) ([10.245.246.22])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 08:04:48 -0700
+From: Jani Nikula <jani.nikula@intel.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Linux Doc Mailing List
+ <linux-doc@vger.kernel.org>, linux-kernel@vger.kernel.org,
+ workflows@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
+Subject: Re: [PATCH v2 3/2] docs: changes: better document Python needs
+In-Reply-To: <20250729154437.6cbd2788@sal.lan>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1752307866.git.mchehab+huawei@kernel.org>
+ <58c0cfb40e600af697b1665ffbc8e5bb3d859bb5.1752309145.git.mchehab+huawei@kernel.org>
+ <20250712163155.GA22640@pendragon.ideasonboard.com>
+ <20250713002517.7f52b0e9@foz.lan> <875xfhabv0.fsf@trenco.lwn.net>
+ <20250724194306.27b98194@foz.lan>
+ <83d12d5293e23c622ae390204fed8fd4453014b1@intel.com>
+ <20250728173306.2ab1409a@sal.lan>
+ <fd1372a9fb57a1372db5b3c0992a929f90183f83@intel.com>
+ <20250729154437.6cbd2788@sal.lan>
+Date: Tue, 29 Jul 2025 18:04:45 +0300
+Message-ID: <9dc14f4a5adda5a8a40220404648457d56212cca@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-A recent refactor introduced a misplaced put_device() call, resulting in a
-reference count underflow during module unload.
+On Tue, 29 Jul 2025, Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> I don't think we should do much effort to support Python 2, but it comes
+> almost for free: only shebang needs to be different, and, if the comments
+> inside the doc contains non-utf8 chars, an encoding line.
 
-There is no need to add additional put_device() calls for idxd groups,
-engines, or workqueues. Although the commit claims: "Note, this also
-fixes the missing put_device() for idxd groups, engines, and wqs."
+As said in the other thread, changing the shebang is not a trivial
+thing. I don't have 'python' installed, haven't had for years, just
+'python3'.
 
-It appears no such omission actually existed. The required cleanup is
-already handled by the call chain:
-idxd_unregister_devices() -> device_unregister() -> put_device()
+BR,
+Jani.
 
-Extend idxd_cleanup() to handle the remaining necessary cleanup and
-remove idxd_cleanup_internals(), which duplicates deallocation logic
-for idxd, engines, groups, and workqueues. Memory management is also
-properly handled through the Linux device model.
 
-Fixes: a409e919ca32 ("dmaengine: idxd: Refactor remove call with idxd_cleanup() helper")
-Signed-off-by: Yi Sun <yi.sun@intel.com>
-Tested-by: Shuai Xue <xueshuai@linux.alibaba.com>
-
-diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-index 40cc9c070081..40f4bf446763 100644
---- a/drivers/dma/idxd/init.c
-+++ b/drivers/dma/idxd/init.c
-@@ -1292,7 +1292,10 @@ static void idxd_remove(struct pci_dev *pdev)
- 	device_unregister(idxd_confdev(idxd));
- 	idxd_shutdown(pdev);
- 	idxd_device_remove_debugfs(idxd);
--	idxd_cleanup(idxd);
-+	perfmon_pmu_remove(idxd);
-+	idxd_cleanup_interrupts(idxd);
-+	if (device_pasid_enabled(idxd))
-+		idxd_disable_system_pasid(idxd);
- 	pci_iounmap(pdev, idxd->reg_base);
- 	put_device(idxd_confdev(idxd));
- 	pci_disable_device(pdev);
 -- 
-2.43.0
-
+Jani Nikula, Intel
 
