@@ -1,87 +1,121 @@
-Return-Path: <linux-kernel+bounces-749952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4FAB1555E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:45:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D41B1555F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:45:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1FB18A682A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EA8E18A6E87
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 22:45:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F242857CA;
-	Tue, 29 Jul 2025 22:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650C527FD62;
+	Tue, 29 Jul 2025 22:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qw4wudlE"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NoHxaHhD"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAB41AA1D9;
-	Tue, 29 Jul 2025 22:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7556122A4F4
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 22:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753829102; cv=none; b=JPcUNwgmPW2JQ3RDQP1fbrJ206pp8mQkRDtGg1mHXe3P62TBbtbsyKwwTPhq9HB8o+sMT9BNh5FShZxANMRAHZHgrXSMCYGjaHt6NKSGuZsdC77wzTpdzs2GVmnkvJ7ffWs8x384XomKEOFea+Md5uo6p/xG7JLEghygOOkd/T0=
+	t=1753829116; cv=none; b=InSO+clIy1xfGy9CVn4n4qazMcE0WhmLgcn1wson+KKLcefP6Cc0MrAOG3R3mk4G/VagN2VusLnLsVxyjVqaFtnX2hUYL2JGuwPyP0EzapdA3Lg54e92jLmdvu+FmOQzNN6C2iVYNUHUsmrxQ2oJaWqHm1xBNeXphixhltZO/zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753829102; c=relaxed/simple;
-	bh=ObM698zo4DwV01L7bZzYsY6LWsBD229DFotACgPv4oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnaXXjIAoxFOfFT/afm8Bh8oNj5lHovkdZclpyq/LwnYMWZZq4ArLtPGZehflGq69NvOmqWr5SugfRqVJZyba7xFdTIhZ122kJxD38N8AcDc/sBtJsdmcwOJR1/9Q1iqJ16jg2ulqAbF8UCw9hMVi9SmmAKE1rKBtwBvPCc5TfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qw4wudlE; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=1WtoA09gcOii+21mVafZsCiy4A9k3Vy4kCvJTqQfyDI=; b=qw4wudlEHBvoKZoijh8Lpdu+/W
-	L2ce7YLBzr5ewjMQRc4ROJIaQ+3gAIu5YQ8TQSomEFFFcM4QY7fLtn7puv9f2OKXJLUa3TPmR4ch/
-	d8R9ZrP5gBQaH0wa9wBH6ahJ8waSwhJwugWXYEk0xXPxJHFAZ5Xq0qVOkPXWSeaOPL9Y=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1ugt3x-003Egn-5t; Wed, 30 Jul 2025 00:44:49 +0200
-Date: Wed, 30 Jul 2025 00:44:49 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] net: mdio: mdio-bcm-unimac: Correct rate fallback
- logic
-Message-ID: <775f7ae3-9705-4003-a7e8-aac3c418e48f@lunn.ch>
-References: <20250729213148.3403882-1-florian.fainelli@broadcom.com>
- <11482de4-2a37-48b5-a98e-ba8a51a355cd@lunn.ch>
- <9c10c78b-3818-4b97-8d10-bc038ec97947@broadcom.com>
+	s=arc-20240116; t=1753829116; c=relaxed/simple;
+	bh=qL+Vm8lMbkkauUVydnRswhxGIXQ0ZFlJGQG6dIHHVx4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d8z3YFrtgZjBInMizugj4ZknOuEUoUrQky5AygPCnsC+8sC/mZGEEwEvs9E0c/RdB0wG+ethELA3wo6fXkmPidV0BULNCrE/ScT9CM/rPJSmR2+j4+yeR7wJD4KPfXXpekJq795vCml9erQGQUGPFdtrA0q7iSkGGmVajLSU4nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NoHxaHhD; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <2b69e397-a457-4dba-86f1-47b7fe87ef79@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753829111;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XHtbR4MKyVlIuat93c1sNNhih7aR3T+tXcbxNcT2Hxc=;
+	b=NoHxaHhDIYDryk5osFw6tdy4NWlzL14gU4kq/b+bUKuBIsTZV/UQtAPyoXgXpFpyh5Oeq1
+	5//b5z38AhmkFaKH5HwKpl0qtiIX3LwrmsFzt11wjD2kE1LTm6DWsFqObiJcmi915PYgLp
+	EYTvJhYdkeoVE93Ud5FAz2T9m9mTq14=
+Date: Tue, 29 Jul 2025 15:45:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9c10c78b-3818-4b97-8d10-bc038ec97947@broadcom.com>
+Subject: Re: [PATCH v2] bpf: fix stackmap overflow check in
+ __bpf_get_stackid()
+Content-Language: en-GB
+To: Arnaud Lecomte <contact@arnaud-lcm.com>, song@kernel.org,
+ jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
+ kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com,
+ syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+References: <20250729165622.13794-1-contact@arnaud-lcm.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250729165622.13794-1-contact@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 29, 2025 at 03:22:57PM -0700, Florian Fainelli wrote:
-> On 7/29/25 15:20, Andrew Lunn wrote:
-> > On Tue, Jul 29, 2025 at 02:31:48PM -0700, Florian Fainelli wrote:
-> > > In case the rate for the parent clock is zero,
-> > 
-> > Is there a legitimate reason the parent clock would be zero?
-> 
-> Yes there is, the parent clock might be a gated clock that aggregates
-> multiple sub-clocks and therefore has multiple "parents" technically.
-> Because it has multiple parents, we can't really return a particular rate
-> (clock provider is SCMI/firmware).
 
-O.K. Maybe add this to the commit message?
 
-	Andrew
+On 7/29/25 9:56 AM, Arnaud Lecomte wrote:
+> Syzkaller reported a KASAN slab-out-of-bounds write in __bpf_get_stackid()
+> when copying stack trace data. The issue occurs when the perf trace
+>   contains more stack entries than the stack map bucket can hold,
+>   leading to an out-of-bounds write in the bucket's data array.
+> For build_id mode, we use sizeof(struct bpf_stack_build_id)
+>   to determine capacity, and for normal mode we use sizeof(u64).
+>
+> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
+> Tested-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
+> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+
+Could you add a selftest? This way folks can easily find out what is
+the problem and why this fix solves the issue correctly.
+
+> ---
+> Changes in v2:
+>   - Use utilty stack_map_data_size to compute map stack map size
+> ---
+>   kernel/bpf/stackmap.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
+> index 3615c06b7dfa..6f225d477f07 100644
+> --- a/kernel/bpf/stackmap.c
+> +++ b/kernel/bpf/stackmap.c
+> @@ -230,7 +230,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
+>   	struct bpf_stack_map *smap = container_of(map, struct bpf_stack_map, map);
+>   	struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
+>   	u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
+> -	u32 hash, id, trace_nr, trace_len, i;
+> +	u32 hash, id, trace_nr, trace_len, i, max_depth;
+>   	bool user = flags & BPF_F_USER_STACK;
+>   	u64 *ips;
+>   	bool hash_matches;
+> @@ -241,6 +241,12 @@ static long __bpf_get_stackid(struct bpf_map *map,
+>   
+>   	trace_nr = trace->nr - skip;
+>   	trace_len = trace_nr * sizeof(u64);
+> +
+> +	/* Clamp the trace to max allowed depth */
+> +	max_depth = smap->map.value_size / stack_map_data_size(map);
+> +	if (trace_nr > max_depth)
+> +		trace_nr = max_depth;
+> +
+>   	ips = trace->ip + skip;
+>   	hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
+>   	id = hash & (smap->n_buckets - 1);
+
 
