@@ -1,104 +1,116 @@
-Return-Path: <linux-kernel+bounces-749134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8338B14A89
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:58:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19EE0B14A8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 10:58:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04909178E4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:58:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6201E1AA04CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:58:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B60285CAF;
-	Tue, 29 Jul 2025 08:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE12285CB2;
+	Tue, 29 Jul 2025 08:58:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="MqUGmcR4"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB2732586E0;
-	Tue, 29 Jul 2025 08:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="maS+UQ9x"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D63C2586E0;
+	Tue, 29 Jul 2025 08:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753779495; cv=none; b=bqZLd5ZuLnEgeUklbWmrT8ts1m6BhjzLp4DZTEPtZ9v2unB4JB3qGPuaGsDzDkHp2AYF0Hu82NjpG7O5SU/xCWei6ARahOvUBZIdFVJ76B5V23+9rHfkpA5PPD3nnhdHXa6+f3FklR/Ws1ap2ljpigGxqrZ7k4VPAko9S8rH7ZQ=
+	t=1753779503; cv=none; b=uQW5+zqjVmfop9imijkoxS9zfnbalaAVoL2HMByQ/Aq+0mjN9tkVVxSblRKzncbynEoQXntyLFCAIlFzBT+Sf3vmDx7oBIp4XyqzlQzGt3eMyKe+eErID59JUwwwWfv8mzAk9yMLAFHd9EOcehwJtaPfeg1pL1J2eR6wqE6sbyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753779495; c=relaxed/simple;
-	bh=ievyL3g5Q46qxKZLnTmv/cYFeSgsBclXR9pVlWgcUos=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JnK6IKPtWjg87hFlqCSjWE6RzQPVL9i85OX6WFNbEJFwKyfrFy+qCCHD2h7M8k/lgDGaPAW/hTPL0soFfuAGlxujz6jEhywD/FqhgnKlkyCLnVZa00GNJOj5DrM9Ig3TLdxuxAgu6Mr2iMyfERv08hkga6awU+kCMPvpuYZyBoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=MqUGmcR4; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-Id:MIME-Version; bh=AY
-	UxPqccz5cc9qwkjV/MuJfbqx0ykQG6VuIw9i/MVRs=; b=MqUGmcR4X+V3QuPOKK
-	/qQRCmn3WuyaoLrtyZSi9GYS6R7ArBXAZR+ICJMVFFPm7cBhHytgqC+3UPwP5AaY
-	hPjEkzSpgEgstvu9ToHy5hL13eAEHKbW37qna7I2MYeRT1+zc96GYlHftnFSsZ+w
-	yAf9oXyC6Z44wg+b4nfji1ihI=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgDnr7wCjYho7e6SCQ--.26154S2;
-	Tue, 29 Jul 2025 16:57:39 +0800 (CST)
-From: Slark Xiao <slark_xiao@163.com>
-To: mani@kernel.org
-Cc: mhi@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Slark Xiao <slark_xiao@163.com>
-Subject: [PATCH] bus: mhi: host: pci_generic: Add more Foxconn T99W696 modem
-Date: Tue, 29 Jul 2025 16:57:26 +0800
-Message-Id: <20250729085726.106807-1-slark_xiao@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1753779503; c=relaxed/simple;
+	bh=W6M54otn3SvVum5fzDoqL8d+nK/jDuDbcJdl6OhFUh4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ffu2DVys5sWcVP1mDq+752PubUw5ivkB7MoInRrXs+owoDutw51Cls6SpKezWm4y2RNkUy6TPVNfm6+uaaDSFIxKEHHyEsstiXq1YGpT1xxrshTZbRwv4cZHfoSvPC/LG/hdsqvK2o4in9j6o7XvXQhL9A2hAY5s/xmlxoyvN7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=maS+UQ9x; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-60867565fb5so8317117a12.3;
+        Tue, 29 Jul 2025 01:58:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753779500; x=1754384300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9cEMDa3aLwAjGk+mYlrmS2BXToBWPi98g1WTE9orR6k=;
+        b=maS+UQ9xUGPc+6IVInGRwx68OviIj5vVZXp2icPRuowN6idoOHj/G1L/nHfG0kCjdk
+         x+ZH3FH1iwDzzeG7kRX615QQRLSpIGyUpWti59AEb8zd7ryRbZUH5IVLat+zsUqAOjM5
+         euLVlREcvX0MRcxOiuC1yPeRZ9/gbK6Us0PsOCNt1W8AMXA4pzMl+X5b3o0ZqlXYY0Lt
+         ID39yCVZwXp7452JO5TfepElaacvi7iFM7hGkPurX17R+2Gp7FOy2njLj4TtNDCf+gVK
+         pdvobG7cDS0P4QSKGbMIlCfAC5ushD5/3dMEJP48vkXDbOTHcqGGgRD+jMKWUqmc+Ctq
+         NyRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753779500; x=1754384300;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9cEMDa3aLwAjGk+mYlrmS2BXToBWPi98g1WTE9orR6k=;
+        b=qQmuvmH/p/hohLQEACQZkWFs6p9Ulee0GT3XQmJIxfHI/Uwf6NIm93r7NQXsHDOYv5
+         l8QZEsaikfWqfoz0C1hcWcJCR31o3XhRyS2M8IeYE7RCfyJVLIqV2LWnUO4A1HFAj+wJ
+         tu0qWkVnI+V6/96XttkqQj8MfPLI/1iwCzYTd6K2bWBfBZHY5uG0FRHrFtV/iI6PjhVp
+         9xjN8SEv2VS02xB4KHgZF50BKDcrQqfImHYB1AQAOSJAqkqgNXArG9ir+/Vk7W+SiI6J
+         4HfBqqBIHqImm1H7IAmtvOJ8vfJljEZXlQR5V2NkfPy8EQ0Y5Swi4vbpjRt10nuEayei
+         I7gw==
+X-Forwarded-Encrypted: i=1; AJvYcCVuXjQe1N80ytB4alxdgCUgpJM8EUQHtf3kls1uzwDZsYSpGB7JJmTPpG7z809xxHIViIO5tEDm4ZjFBw==@vger.kernel.org, AJvYcCWwyDvR3rFfjalIggC5oA1QBPX4jVxzMqdP4WVpeo9co9K5/D44GK4qI8JKXmxYzETyETdeLbLZeiRnwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSBKWeTpFZFtgzU4kVtZ9hhpafKNQtAihICQIQUcxcuHG75o/f
+	m0T3152y1IenY+mdW3D4v8OAhuGqTtgbHmuYGgIFF3LIm70pQGAAAPxLzTwTWg1+3yiNSx2BfDj
+	L89RN+vNEE96kim5wofY6k5jLz022MAQ=
+X-Gm-Gg: ASbGncuc2gWm21386EhbXfkEQVsk0XixAb0Ey5KEdMqoy4ZP2p3KcI8aJOOtTe4cvHK
+	ziI/lPkzM4upk3OQN0xtnl9T+4/bsYTbrVDMcS/1WcdAIXHBWgu0Kxi/ayXMjPJRyoyfRsuY9h9
+	id+ZXOkklVbzUorYcoORdGbWleO3Rt/C4oj56ZrdgwZtudxsp1ObPJSpQ1IkuHM2GKSslzzYrLN
+	ieMTL7kt7fuoxVXKFA=
+X-Google-Smtp-Source: AGHT+IG6Btn4D62i61GTeahmN3XXy/fWUvLkX1tmurIgkSJZdzTcBLxz/MoFPtpfK3zY4u7/sqI2FdTEUyAlENCj+qc=
+X-Received: by 2002:a05:6402:26c9:b0:615:1072:f34d with SMTP id
+ 4fb4d7f45d1cf-6151072f736mr9191847a12.15.1753779500321; Tue, 29 Jul 2025
+ 01:58:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgDnr7wCjYho7e6SCQ--.26154S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tw4xurW7ur4xXFyUJF45Awb_yoW8uFWkpF
-	4furWjqrWDJrW8tw4vvr4kZF95ua1fXry7Kr1xtw1FgrnakFy5Xrs7XryUZF13ta98Jr4a
-	vFykuF1UWanFyFUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pRgdjiUUUUU=
-X-CM-SenderInfo: xvod2y5b0lt0i6rwjhhfrp/1tbiMBGZZGiIgnP2lQAAsu
+References: <20250728163752.9778-1-linmag7@gmail.com> <20250728163752.9778-2-linmag7@gmail.com>
+ <aIh5HY1nVGusQ9Yb@infradead.org>
+In-Reply-To: <aIh5HY1nVGusQ9Yb@infradead.org>
+From: Magnus Lindholm <linmag7@gmail.com>
+Date: Tue, 29 Jul 2025 10:58:08 +0200
+X-Gm-Features: Ac12FXydrUc1KfbMt61O_tdNCkOAdA0oPwD-BlPeGy3YRVdpiOs72ppYE78eFck
+Message-ID: <CA+=Fv5QwEmgoHj=N-A-Ur1=XJMhP0QSoaWfdiw22RGvrGbgFdg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] scsi: qla1280: Make 64-bit DMA addressing a Kconfig option
+To: Christoph Hellwig <hch@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-alpha@vger.kernel.org, martin.petersen@oracle.com, 
+	James.Bottomley@hansenpartnership.com, macro@orcam.me.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are more platforms need support Foxconn T99W696 modem.
-This requirement comes from Lenovo side since they want 1 platform
-to correspond to 1 modem SKU.
+On Tue, Jul 29, 2025 at 9:32=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
 
-Signed-off-by: Slark Xiao <slark_xiao@163.com>
----
- drivers/bus/mhi/host/pci_generic.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+>
+> Compile time options like this are annoying as they require
+> distributions to pick a default.  Why not at least a module option
+> even if it just a workaround?
 
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index 4edb5bb476ba..1fc43f1b86be 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -932,6 +932,24 @@ static const struct pci_device_id mhi_pci_id_table[] = {
- 	/* Foxconn T99W696.00, Foxconn SKU */
- 	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe146),
- 		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.05, Lenovo T14 */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe150),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.06, Lenovo T15 */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe151),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.07, Lenovo T16 */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe152),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.08, Lenovo P14s */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe153),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.09, Lenovo P16s */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe154),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
-+	/* Foxconn T99W696.10, Lenovo P1 */
-+	{ PCI_DEVICE_SUB(PCI_VENDOR_ID_QCOM, 0x0308, PCI_VENDOR_ID_FOXCONN, 0xe155),
-+		.driver_data = (kernel_ulong_t) &mhi_foxconn_t99w696_info },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0308),
- 		.driver_data = (kernel_ulong_t) &mhi_qcom_sdx65_info },
- 	/* Telit FN990B40 (sdx72) */
--- 
-2.25.1
+I see your point, I've been looking at how the driver for the NCR53C8XX
+SYM53C8XX family of PCI-SCSI controllers does things. The driver
+has a SCSI_SYM53C8XX_DMA_ADDRESSING_MOD compile time
+option for setting DMA parameters.
 
+The qla1280 driver has different code for 32-bit and 64-bit mode of
+the driver, implying that 32 or 64 bit modes need to be selected at
+compile time.
+
+However, it would work just using the 64-bit version
+of the driver but, while defaulting to a 64-bit DMA bit mask, making
+it possible to limit the DMA bit mask to 32-bit via a kernel module
+option. This would make it possible to avoid using the
+"monster window" for DMA transfers on tsunami based Alphas.
+If the driver is built in 32-bit mode, this module option would simply
+have no effect.
 
