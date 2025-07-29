@@ -1,116 +1,354 @@
-Return-Path: <linux-kernel+bounces-748902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251D3B1476D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:05:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625E0B1478A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 07:21:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64AD04E3571
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:05:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A7B87A4118
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 05:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C394423185D;
-	Tue, 29 Jul 2025 05:05:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A5923185D;
+	Tue, 29 Jul 2025 05:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Xa7M7U31"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="DV0BO+m6"
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 965DF224892
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 05:05:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B2838B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 05:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753765544; cv=none; b=hUVqKvhGgVUtZEdEeT615NUmLOX9Mv93i5CxJqxUc/BOph4JamFZqzwGceBMcPiW4D8Fzjgf4/uFxNVtMgB056qKzV4aO3WFBlXooVKyp3uxCmdskGj8FHO6HMqkkOsZafKIF4YwBTNJyBX4g1ElAAMB8EoJHV05zOJ0ZnWByVs=
+	t=1753766446; cv=none; b=ZN7bGXa2TiIiYtoFtqJoEdUcTHq+GkY7m2+mu/zmN5FiII81zVbsl64VmSuIPJiEmlZGrpyPJT11pSd/8lpk5IAU412G+VvgD/6AHXgAUlUkjJEL3wFTUO3LuMF70E3gXA2G2f6HpWqNpqrn4gJjHpIG19fUnH0BedXOvki8ruo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753765544; c=relaxed/simple;
-	bh=ZZiUe00X7zQSTf/5Mt2Oq7NNm1mBkUe68Jw7+1UdMBQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YZRx3CLT2+epWJ2gTOfAPd7KalFWeBjeMyWKsrWjVyK9M4vSlvacwSSJ6I0d0TY5BF3wrioHe77/LwS6m9mj2Qsbmqyd/NwKBqaS4WQLvD4tpR4hn60V6FIZKOHfwgxr2L8pElpcXAqnJIwt/kBhZemZRmxrZy5zeuI/04ZK6PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Xa7M7U31; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0e0271d82so973205466b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:05:41 -0700 (PDT)
+	s=arc-20240116; t=1753766446; c=relaxed/simple;
+	bh=zQVIS95MCHbgKVmP70tuZsbdbBBxe7+I1Dy4EmWphPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fyxmmgu/czArBRMRnGW8TqE0qKB5kkxMbecn5e1ZhK4b991VUm3XzoXNJaSXMPNPZIjMCjEgnWqy2PEJNYKnjM+efEfvoCpM0Zk9bpUKaRqIl0lUfOzbpLCvs31FFzZQDzsdjbqPQdp10iWXu/fMYYfsnaTbp0MU4zCFt+ci7Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=DV0BO+m6; arc=none smtp.client-ip=209.85.219.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-704c5464aecso49169666d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:20:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753765540; x=1754370340; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Md0VKAKCQGHOa5Dc6D/SdULDfFmlsD9zuh7egV7ZnFk=;
-        b=Xa7M7U31dFGrGyW4FT6zp4FBEz0CuCqT22Tgoc1TvhCg9lSWGNed3cNz3mJCAipsRY
-         4H+6K2aSob5H86KVE06ZGIfAtC34fghA4WuqjYHKDyzUnEkKJdHv0e191N00cAv92hnJ
-         kM9zHC18n9t3ZSQqsEIE7Kduxul+vR8d3HjcY=
+        d=broadcom.com; s=google; t=1753766443; x=1754371243; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qZxTk+xbD3k7HT63erAFUcK93f+zR3h68hn4YtTzzuk=;
+        b=DV0BO+m6SETbin24EZQRqE61x8k/mIygPmTUtevHWzrRlO4n8Civd1OX5OM1soqIcV
+         PuWAB/D3XkZS7QRX2tNWRAwzSM8/3opGKj9wFPmBwjws/daPsdW7F9wlUULpmPKVPhMJ
+         3vKMIavsSJANZ93xJlHzApwD6YhWeGHLO7ZHo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753765540; x=1754370340;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753766443; x=1754371243;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Md0VKAKCQGHOa5Dc6D/SdULDfFmlsD9zuh7egV7ZnFk=;
-        b=bsIzOZzlra8B6qqyBMdS3nT+UG3R6h4QhjZj8CkuofhFTljiT1F1ITQZJIeJTu18rv
-         WTmhRmcSLKYkyGVNVt6bJl/0lbNhnohSPoGlk4nFhuqMq6xogc5ZoKbWrvBzegzhMG5i
-         uMhRo6zc/Mdp9p+40D1wbbFSwgMph7FYK+yx7q1JU5b/2G/UlxFVrYLZFF6MzqBkuML3
-         yY04qaHooGzj7XG1LOIENqHaaL8YHj6ZdeZvHsvqHBssIzav3YLkVMKmNNjok9aW4NP/
-         st0FGP7ZkRLqaNOvl5gcxYbfljtgJHrdxwDX1VbGiNCJW6vZcHkUZmujDIi9Yx6BF/4u
-         dSBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXGcG+BfxBKyKONFX6tslBziCy/NpnE9N5FlbeSkq/cr64jWWrMU73awcyxf3KE6ddAJYMqu10DuK1feo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJwNZ+RNW5RvONwxg+1WGh3LZbmvUKIfhBXRQSaKWyS9ZYjcyA
-	Qp5ZwAveqencb4ZGMd8qY0Y/HiWYf6VuGfcPNxW7i0tyBskhgPk+jCjaBkGv779/X/NudVCJYZJ
-	199ONQ+E=
-X-Gm-Gg: ASbGnctbf9YLxsRTynPxW9HWoUsvhNpiz1ovZuZutsKjZXz5HCx91y8RCYB7gkGnkgx
-	DA2gvmo72h1anoRQUi+W8XpMq3CdDHiJPZlbKn3rX4dstKmTJ/4gFNv7IYYD6iA75zSqF3BDANm
-	T5QDqK7D/vAYwOA9+pCqVyOADmwU2O8ClDYJHhx/K1YkwWA1xaERA7BWgvKB/SHQmxi4vKB2g1L
-	pEa7GEE/6B4TuFMVfvU2gU6n+wXRQ5qKnr4t9gyJVduc6PeQW5RS+AdsQsVi9J+BQ5uUwjKuy/6
-	IaksF3Gi0Q4ZJ79rLvbJIPeeZ2LXpZkzTec95qeowHjlTE6q5ouC+7dyAaXe1eMBXMzc5V5xE7s
-	+gm55YwUYzSJphHnxpjjxNGVvMQd3H4sJEvSnoR6PzLKmmpCG0y8rFTvh7eXjUApLQ5yIwVOf
-X-Google-Smtp-Source: AGHT+IHEZmCb64p8q7kKcipu0MC0DCJ223FhThJrAQ83VGS3qXHuAXmAV3Qu+/N/47cc+NNTkI11Qw==
-X-Received: by 2002:a17:907:3f0c:b0:af4:164c:177a with SMTP id a640c23a62f3a-af617d03bacmr1774225566b.27.1753765539744;
-        Mon, 28 Jul 2025 22:05:39 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635ad64f6sm519138166b.119.2025.07.28.22.05.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Jul 2025 22:05:38 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae0dffaa8b2so1030017766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jul 2025 22:05:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWghJVmjnzGHWzSu7YqcRom1k8ag3vobyYfxeb5iATdAqX/a76tLkpYqOm5hawCsBhAb02vRz0lFHqsO4=@vger.kernel.org
-X-Received: by 2002:a17:907:c2a:b0:ad8:9e80:6bc3 with SMTP id
- a640c23a62f3a-af61710a468mr1620060066b.1.1753765538135; Mon, 28 Jul 2025
- 22:05:38 -0700 (PDT)
+        bh=qZxTk+xbD3k7HT63erAFUcK93f+zR3h68hn4YtTzzuk=;
+        b=FMOafhKyouuYsGRKq2+sEXo6S+L8TpjQ/zRjeEOx6VUzyhp/7WI3oGA+cPdwv+7y0v
+         U5iX/ngvyI8loQ5GrMR6srx1q9ATn7YWovealN2oF1k61ixl/BmQRL+zQiuRVdWvZTm2
+         o8p1oiiZDRnMqJzXDgNG9j36UifRbaximelRiV7BcedWsC3a4/8dA1/byJMOPD14GTFu
+         umZDb5EKBMJ1/52An1IFAP346HosB6h34GljIqfs6rytUmA0v44DxZwTzYROGJT5gQW1
+         2ojdZxSu5OgfPfc3nwA+maSEqvbRU1l6hnb41aCUVO6CLDWwkTKFzmoRA91/gXIB4pJH
+         kZLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvmT2W+QRWxFXi3jP6Uxu0OJvRGzbGYmbSVWluIXYpMBOJODbZAPwnM6RPAq0Irwj+851Hvciv7LCFNfY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweKzYJ07/7HMATCvZeWntC7qNQgQjk0HfeiObNAFAGmTjJX5XR
+	qiGKiWLywHv2k1Gx06DDHZxgFSCmYAg83ZfwFXQRBVjgnOIXwqBxBXx6jRkMW7rKug==
+X-Gm-Gg: ASbGncscmx6Ykv1Kk1DOTpUDPg55gXk7P2HYxUBJOT63CgFxAbAVSA8wcpLId+fjFU6
+	rCyYeMbuJr/gBfi3m0ObK5D4Aw2OP1ADxX0l0fqYZvANE0YbMR1Cp5nPQ2i4h/6K4La489JY9DV
+	0QKkZn8du/30ZxvAQWwqWKwtKPPmw13CeivtT429gIgaGewf1j5wOeY81ydgPf7h3QdZQv9P7ce
+	Bf19qYTCv8ZM3lrOT1daRyCuGRgHdUVduGQ7k3Pob1RuLhXyA5hixXwP2Mfyq1+E8iwxW2WvkxW
+	h+0ul3Pg6BXboe5AGzCvy+e5GeC6huaWrQR9z9iXCJ4bo+GiIWUY//X7R94KU2URTiA2bpqRfE8
+	Z+rJBJiEWrdLmwmv70fOa3f0Hj+qfXB3cYHXiYgfeJW7llA6D6tBldppXtyOySbmSx8bAoRtmnJ
+	4=
+X-Google-Smtp-Source: AGHT+IE7QzWDeLcK2/2sEPFFg98V0WzCeVAddE+uKmU78K8I7+xgDkFheeLqrjSjhDdg8gFVONcXSA==
+X-Received: by 2002:a05:6214:2583:b0:707:41fe:c13a with SMTP id 6a1803df08f44-70741fec4camr99748996d6.42.1753766443408;
+        Mon, 28 Jul 2025 22:20:43 -0700 (PDT)
+Received: from shivania.lvn.broadcom.net ([192.19.161.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70729aa81bcsm40268426d6.41.2025.07.28.22.20.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Jul 2025 22:20:42 -0700 (PDT)
+From: Shivani Agarwal <shivani.agarwal@broadcom.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org
+Cc: bcm-kernel-feedback-list@broadcom.com,
+	linux-kernel@vger.kernel.org,
+	clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	linux-btrfs@vger.kernel.org,
+	ajay.kaher@broadcom.com,
+	alexey.makhalov@broadcom.com,
+	tapas.kundu@broadcom.com,
+	Filipe Manana <fdmanana@suse.com>,
+	Wang Yugui <wangyugui@e16-tech.com>,
+	Qu Wenruo <wqu@suse.com>,
+	Shivani Agarwal <shivani.agarwal@broadcom.com>
+Subject: [PATCH v5.10] btrfs: fix deadlock when cloning inline extents and using qgroups
+Date: Mon, 28 Jul 2025 22:07:53 -0700
+Message-Id: <20250729050753.98449-1-shivani.agarwal@broadcom.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728101658.44311-1-brgl@bgdev.pl>
-In-Reply-To: <20250728101658.44311-1-brgl@bgdev.pl>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 28 Jul 2025 22:05:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wieQsg76--QpUw8M01t-EYzUifZ5SyOekS3Negd5sRO5A@mail.gmail.com>
-X-Gm-Features: Ac12FXwf2tjFTlx_2VaNtkhhywBF4ljjq1iS3roEfzdtwYIwOWMaU7SkmEIMg4I
-Message-ID: <CAHk-=wieQsg76--QpUw8M01t-EYzUifZ5SyOekS3Negd5sRO5A@mail.gmail.com>
-Subject: Re: [GIT PULL] gpio updates for v6.17-rc1
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Jul 2025 at 03:17, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
->
-> On that note: the commit I mentioned above is already on the list[1]. I
-> have a second one that also renames the new callbacks back to their
-> original name[2]. This is a result of a simple sed over all source files
-> and a skim over the changes to make sure everything looks ok and to
-> adjust the formatting. I don't think it makes sense to send 4300+ lines
-> of diff to the mailing list, Cc'ing 200+ maintainers if all it does is
-> a simple treewide rename, so would you be willing to accept this commit
-> too as part of my second PR in order to avoid hundreds of small renaming
-> patches over the course of the next releases?
+From: Filipe Manana <fdmanana@suse.com>
 
-Yes, that sounds sane.  We do those big renames every once in a while,
-and while it can be a bit painful for silly conflicts, I assume this
-one isn't likely to conflict with many other things.
+commit f9baa501b4fd6962257853d46ddffbc21f27e344 upstream.
 
-                Linus
+There are a few exceptional cases where cloning an inline extent needs to
+copy the inline extent data into a page of the destination inode.
+
+When this happens, we end up starting a transaction while having a dirty
+page for the destination inode and while having the range locked in the
+destination's inode iotree too. Because when reserving metadata space
+for a transaction we may need to flush existing delalloc in case there is
+not enough free space, we have a mechanism in place to prevent a deadlock,
+which was introduced in commit 3d45f221ce627d ("btrfs: fix deadlock when
+cloning inline extent and low on free metadata space").
+
+However when using qgroups, a transaction also reserves metadata qgroup
+space, which can also result in flushing delalloc in case there is not
+enough available space at the moment. When this happens we deadlock, since
+flushing delalloc requires locking the file range in the inode's iotree
+and the range was already locked at the very beginning of the clone
+operation, before attempting to start the transaction.
+
+When this issue happens, stack traces like the following are reported:
+
+  [72747.556262] task:kworker/u81:9   state:D stack:    0 pid:  225 ppid:     2 flags:0x00004000
+  [72747.556268] Workqueue: writeback wb_workfn (flush-btrfs-1142)
+  [72747.556271] Call Trace:
+  [72747.556273]  __schedule+0x296/0x760
+  [72747.556277]  schedule+0x3c/0xa0
+  [72747.556279]  io_schedule+0x12/0x40
+  [72747.556284]  __lock_page+0x13c/0x280
+  [72747.556287]  ? generic_file_readonly_mmap+0x70/0x70
+  [72747.556325]  extent_write_cache_pages+0x22a/0x440 [btrfs]
+  [72747.556331]  ? __set_page_dirty_nobuffers+0xe7/0x160
+  [72747.556358]  ? set_extent_buffer_dirty+0x5e/0x80 [btrfs]
+  [72747.556362]  ? update_group_capacity+0x25/0x210
+  [72747.556366]  ? cpumask_next_and+0x1a/0x20
+  [72747.556391]  extent_writepages+0x44/0xa0 [btrfs]
+  [72747.556394]  do_writepages+0x41/0xd0
+  [72747.556398]  __writeback_single_inode+0x39/0x2a0
+  [72747.556403]  writeback_sb_inodes+0x1ea/0x440
+  [72747.556407]  __writeback_inodes_wb+0x5f/0xc0
+  [72747.556410]  wb_writeback+0x235/0x2b0
+  [72747.556414]  ? get_nr_inodes+0x35/0x50
+  [72747.556417]  wb_workfn+0x354/0x490
+  [72747.556420]  ? newidle_balance+0x2c5/0x3e0
+  [72747.556424]  process_one_work+0x1aa/0x340
+  [72747.556426]  worker_thread+0x30/0x390
+  [72747.556429]  ? create_worker+0x1a0/0x1a0
+  [72747.556432]  kthread+0x116/0x130
+  [72747.556435]  ? kthread_park+0x80/0x80
+  [72747.556438]  ret_from_fork+0x1f/0x30
+
+  [72747.566958] Workqueue: btrfs-flush_delalloc btrfs_work_helper [btrfs]
+  [72747.566961] Call Trace:
+  [72747.566964]  __schedule+0x296/0x760
+  [72747.566968]  ? finish_wait+0x80/0x80
+  [72747.566970]  schedule+0x3c/0xa0
+  [72747.566995]  wait_extent_bit.constprop.68+0x13b/0x1c0 [btrfs]
+  [72747.566999]  ? finish_wait+0x80/0x80
+  [72747.567024]  lock_extent_bits+0x37/0x90 [btrfs]
+  [72747.567047]  btrfs_invalidatepage+0x299/0x2c0 [btrfs]
+  [72747.567051]  ? find_get_pages_range_tag+0x2cd/0x380
+  [72747.567076]  __extent_writepage+0x203/0x320 [btrfs]
+  [72747.567102]  extent_write_cache_pages+0x2bb/0x440 [btrfs]
+  [72747.567106]  ? update_load_avg+0x7e/0x5f0
+  [72747.567109]  ? enqueue_entity+0xf4/0x6f0
+  [72747.567134]  extent_writepages+0x44/0xa0 [btrfs]
+  [72747.567137]  ? enqueue_task_fair+0x93/0x6f0
+  [72747.567140]  do_writepages+0x41/0xd0
+  [72747.567144]  __filemap_fdatawrite_range+0xc7/0x100
+  [72747.567167]  btrfs_run_delalloc_work+0x17/0x40 [btrfs]
+  [72747.567195]  btrfs_work_helper+0xc2/0x300 [btrfs]
+  [72747.567200]  process_one_work+0x1aa/0x340
+  [72747.567202]  worker_thread+0x30/0x390
+  [72747.567205]  ? create_worker+0x1a0/0x1a0
+  [72747.567208]  kthread+0x116/0x130
+  [72747.567211]  ? kthread_park+0x80/0x80
+  [72747.567214]  ret_from_fork+0x1f/0x30
+
+  [72747.569686] task:fsstress        state:D stack:    0 pid:841421 ppid:841417 flags:0x00000000
+  [72747.569689] Call Trace:
+  [72747.569691]  __schedule+0x296/0x760
+  [72747.569694]  schedule+0x3c/0xa0
+  [72747.569721]  try_flush_qgroup+0x95/0x140 [btrfs]
+  [72747.569725]  ? finish_wait+0x80/0x80
+  [72747.569753]  btrfs_qgroup_reserve_data+0x34/0x50 [btrfs]
+  [72747.569781]  btrfs_check_data_free_space+0x5f/0xa0 [btrfs]
+  [72747.569804]  btrfs_buffered_write+0x1f7/0x7f0 [btrfs]
+  [72747.569810]  ? path_lookupat.isra.48+0x97/0x140
+  [72747.569833]  btrfs_file_write_iter+0x81/0x410 [btrfs]
+  [72747.569836]  ? __kmalloc+0x16a/0x2c0
+  [72747.569839]  do_iter_readv_writev+0x160/0x1c0
+  [72747.569843]  do_iter_write+0x80/0x1b0
+  [72747.569847]  vfs_writev+0x84/0x140
+  [72747.569869]  ? btrfs_file_llseek+0x38/0x270 [btrfs]
+  [72747.569873]  do_writev+0x65/0x100
+  [72747.569876]  do_syscall_64+0x33/0x40
+  [72747.569879]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+  [72747.569899] task:fsstress        state:D stack:    0 pid:841424 ppid:841417 flags:0x00004000
+  [72747.569903] Call Trace:
+  [72747.569906]  __schedule+0x296/0x760
+  [72747.569909]  schedule+0x3c/0xa0
+  [72747.569936]  try_flush_qgroup+0x95/0x140 [btrfs]
+  [72747.569940]  ? finish_wait+0x80/0x80
+  [72747.569967]  __btrfs_qgroup_reserve_meta+0x36/0x50 [btrfs]
+  [72747.569989]  start_transaction+0x279/0x580 [btrfs]
+  [72747.570014]  clone_copy_inline_extent+0x332/0x490 [btrfs]
+  [72747.570041]  btrfs_clone+0x5b7/0x7a0 [btrfs]
+  [72747.570068]  ? lock_extent_bits+0x64/0x90 [btrfs]
+  [72747.570095]  btrfs_clone_files+0xfc/0x150 [btrfs]
+  [72747.570122]  btrfs_remap_file_range+0x3d8/0x4a0 [btrfs]
+  [72747.570126]  do_clone_file_range+0xed/0x200
+  [72747.570131]  vfs_clone_file_range+0x37/0x110
+  [72747.570134]  ioctl_file_clone+0x7d/0xb0
+  [72747.570137]  do_vfs_ioctl+0x138/0x630
+  [72747.570140]  __x64_sys_ioctl+0x62/0xc0
+  [72747.570143]  do_syscall_64+0x33/0x40
+  [72747.570146]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+So fix this by skipping the flush of delalloc for an inode that is
+flagged with BTRFS_INODE_NO_DELALLOC_FLUSH, meaning it is currently under
+such a special case of cloning an inline extent, when flushing delalloc
+during qgroup metadata reservation.
+
+The special cases for cloning inline extents were added in kernel 5.7 by
+by commit 05a5a7621ce66c ("Btrfs: implement full reflink support for
+inline extents"), while having qgroup metadata space reservation flushing
+delalloc when low on space was added in kernel 5.9 by commit
+c53e9653605dbf ("btrfs: qgroup: try to flush qgroup space when we get
+-EDQUOT"). So use a "Fixes:" tag for the later commit to ease stable
+kernel backports.
+
+Reported-by: Wang Yugui <wangyugui@e16-tech.com>
+Link: https://lore.kernel.org/linux-btrfs/20210421083137.31E3.409509F4@e16-tech.com/
+Fixes: c53e9653605dbf ("btrfs: qgroup: try to flush qgroup space when we get -EDQUOT")
+CC: stable@vger.kernel.org # 5.9+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+Signed-off-by: Filipe Manana <fdmanana@suse.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[Shivani: Modified to apply on 5.10.y, Passed false to
+btrfs_start_delalloc_flush() in fs/btrfs/transaction.c file to 
+maintain the default behaviour]
+Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
+---
+ fs/btrfs/ctree.h       | 2 +-
+ fs/btrfs/inode.c       | 4 ++--
+ fs/btrfs/ioctl.c       | 2 +-
+ fs/btrfs/qgroup.c      | 2 +-
+ fs/btrfs/send.c        | 4 ++--
+ fs/btrfs/transaction.c | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/fs/btrfs/ctree.h b/fs/btrfs/ctree.h
+index 7ad3091db571..d9d6a57acafe 100644
+--- a/fs/btrfs/ctree.h
++++ b/fs/btrfs/ctree.h
+@@ -3013,7 +3013,7 @@ int btrfs_truncate_inode_items(struct btrfs_trans_handle *trans,
+ 			       struct inode *inode, u64 new_size,
+ 			       u32 min_type);
+ 
+-int btrfs_start_delalloc_snapshot(struct btrfs_root *root);
++int btrfs_start_delalloc_snapshot(struct btrfs_root *root, bool in_reclaim_context);
+ int btrfs_start_delalloc_roots(struct btrfs_fs_info *fs_info, u64 nr,
+ 			       bool in_reclaim_context);
+ int btrfs_set_extent_delalloc(struct btrfs_inode *inode, u64 start, u64 end,
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 8d7ca8a21525..99aad39fad13 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -9566,7 +9566,7 @@ static int start_delalloc_inodes(struct btrfs_root *root,
+ 	return ret;
+ }
+ 
+-int btrfs_start_delalloc_snapshot(struct btrfs_root *root)
++int btrfs_start_delalloc_snapshot(struct btrfs_root *root, bool in_reclaim_context)
+ {
+ 	struct writeback_control wbc = {
+ 		.nr_to_write = LONG_MAX,
+@@ -9579,7 +9579,7 @@ int btrfs_start_delalloc_snapshot(struct btrfs_root *root)
+ 	if (test_bit(BTRFS_FS_STATE_ERROR, &fs_info->fs_state))
+ 		return -EROFS;
+ 
+-	return start_delalloc_inodes(root, &wbc, true, false);
++	return start_delalloc_inodes(root, &wbc, true, in_reclaim_context);
+ }
+ 
+ int btrfs_start_delalloc_roots(struct btrfs_fs_info *fs_info, u64 nr,
+diff --git a/fs/btrfs/ioctl.c b/fs/btrfs/ioctl.c
+index 24c4d059cfab..9d5dfcec22de 100644
+--- a/fs/btrfs/ioctl.c
++++ b/fs/btrfs/ioctl.c
+@@ -1030,7 +1030,7 @@ static noinline int btrfs_mksnapshot(const struct path *parent,
+ 	 */
+ 	btrfs_drew_read_lock(&root->snapshot_lock);
+ 
+-	ret = btrfs_start_delalloc_snapshot(root);
++	ret = btrfs_start_delalloc_snapshot(root, false);
+ 	if (ret)
+ 		goto out;
+ 
+diff --git a/fs/btrfs/qgroup.c b/fs/btrfs/qgroup.c
+index 95a39d535a82..bc1feb97698c 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3704,7 +3704,7 @@ static int try_flush_qgroup(struct btrfs_root *root)
+ 		return 0;
+ 	}
+ 
+-	ret = btrfs_start_delalloc_snapshot(root);
++	ret = btrfs_start_delalloc_snapshot(root, true);
+ 	if (ret < 0)
+ 		goto out;
+ 	btrfs_wait_ordered_extents(root, U64_MAX, 0, (u64)-1);
+diff --git a/fs/btrfs/send.c b/fs/btrfs/send.c
+index 3e7bb24eb227..d86b4d13cae4 100644
+--- a/fs/btrfs/send.c
++++ b/fs/btrfs/send.c
+@@ -7207,7 +7207,7 @@ static int flush_delalloc_roots(struct send_ctx *sctx)
+ 	int i;
+ 
+ 	if (root) {
+-		ret = btrfs_start_delalloc_snapshot(root);
++		ret = btrfs_start_delalloc_snapshot(root, false);
+ 		if (ret)
+ 			return ret;
+ 		btrfs_wait_ordered_extents(root, U64_MAX, 0, U64_MAX);
+@@ -7215,7 +7215,7 @@ static int flush_delalloc_roots(struct send_ctx *sctx)
+ 
+ 	for (i = 0; i < sctx->clone_roots_cnt; i++) {
+ 		root = sctx->clone_roots[i].root;
+-		ret = btrfs_start_delalloc_snapshot(root);
++		ret = btrfs_start_delalloc_snapshot(root, false);
+ 		if (ret)
+ 			return ret;
+ 		btrfs_wait_ordered_extents(root, U64_MAX, 0, U64_MAX);
+diff --git a/fs/btrfs/transaction.c b/fs/btrfs/transaction.c
+index 21a5a963c70e..424b1dd3fe27 100644
+--- a/fs/btrfs/transaction.c
++++ b/fs/btrfs/transaction.c
+@@ -2045,7 +2045,7 @@ static inline int btrfs_start_delalloc_flush(struct btrfs_trans_handle *trans)
+ 		list_for_each_entry(pending, head, list) {
+ 			int ret;
+ 
+-			ret = btrfs_start_delalloc_snapshot(pending->root);
++			ret = btrfs_start_delalloc_snapshot(pending->root, false);
+ 			if (ret)
+ 				return ret;
+ 		}
+-- 
+2.40.4
+
 
