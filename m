@@ -1,781 +1,860 @@
-Return-Path: <linux-kernel+bounces-748986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992DEB1486C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:47:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D42BB14862
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 08:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D15463BA81D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:47:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EB32188318C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 06:44:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DE7D25FA0F;
-	Tue, 29 Jul 2025 06:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D34725F994;
+	Tue, 29 Jul 2025 06:44:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="Xiz2UNnX"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ExJEV+8h";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="bZyLoi0E"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0469194A65;
-	Tue, 29 Jul 2025 06:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC7019ADBF;
+	Tue, 29 Jul 2025 06:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753771639; cv=none; b=lgB7LmxArKBwrw3XkzS30eV9+A1AXq6Wx3vqaDf+FAS3vtVtZYjTclRtXLdwcZwFBMZYqPDWK9jgC75qoFmhhxwSHb2uGqL0ZyOu+nb8RKeWjFIeuLNqeivbMHkCOWPn5kPgxarIJBTdU73WXhlPQzmIWaTzJ3cclA6Yd4mA7Rs=
+	t=1753771440; cv=none; b=mGvnwzxbZmcSTxaYQ2oHnvH/XDgdciqRJjQUjPV5552mgKdSTYO2KcMD9ursV7vXNRTTjXNIWxLaAFkSZRnSBrgKNdwXP4I6E+4pMjZtXdzshqzpu73d7C4txlBu9vLsP9Q47qfPzTUj9x6n93IwlZ0jht5T2CglwoGhpI4HNnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753771639; c=relaxed/simple;
-	bh=2dbT9ycEjl2giNLPckLIuOv6hQHmUjQxiSwZwiNyx5Q=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sTCHuXi07xPe8WIH5AB8QmwU75zLN0PJMNonlvY4iKi69QFmJHSk1Md4gSIYTqIzuLt6+ARdbJQAI+N5roEL6fkIsv1s1W69ZF/kQL45pHXyctWytem365vxuhzTmG7ZkhkQapBcPkWxMNhiIffYb7PhxaSX77yMR4DCJBzA7oE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=Xiz2UNnX; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1753771634;
-	bh=2reGn3XUwp1GNLWMEZjFbTJ83XEloHzjftz+14rIy2Y=; l=21308;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Xiz2UNnXej3kykdcj6CkwRNaJ/A+NGrHW0ztqRlrx0VBqNCmtkcevJhmlrHu96z3F
-	 6pdC4X3oraeTXXpDPuAD9pU1Wf/9kUZB8rF7vLlxJaEK8P2t3C/vJJbLEKOmkcoFkV
-	 VgwL0p9MmtsLersA8KYcFjPL7aN8mGdmkK4vMpc7mQJK3khnGWRbA9F6oQjXwjBhCS
-	 v/LOxXXuDGsHX+z4fCOe9SBeZf+Xqq51HJRHIkImwP8Mi5EKYeN3gz+vA3zfDx4lf1
-	 T58GDeknHdRHZstTY3FoxiEiUERDlCi4ixXGM14Ydc9E5TOsUOS0yThnKqfJQgZQr9
-	 qZF3YmGFFv5zw==
-Received: from 192.168.10.46
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(244574:3:AUTH_RELAY)
-	(envelope-from <jeff_chang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Tue, 29 Jul 2025 14:47:05 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex3.rt.l (192.168.10.46) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Jul
- 2025 14:47:04 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Tue, 29 Jul 2025 14:47:04 +0800
-From: <jeff_chang@richtek.com>
-To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>
-CC: <jeff_chang@richtek.com>
-Subject: [PATCH v5 2/2] regulator: rt5133: Add RT5133 PMIC regulator Support
-Date: Tue, 29 Jul 2025 14:40:59 +0800
-Message-ID: <20250729064719.2810734-2-jeff_chang@richtek.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250729064719.2810734-1-jeff_chang@richtek.com>
-References: <20250729064719.2810734-1-jeff_chang@richtek.com>
+	s=arc-20240116; t=1753771440; c=relaxed/simple;
+	bh=sM+1f1W3wxhedtvqVe4380UbBLWTaVwTmCwcVtH8AE0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EO+yKUGDC8dON5E1ZmQdsxCyDTHVeqcHYJ/w+zn4fH6iTEhpCvFFAzJL7LqOAb2+w2DUqZ5/lQXR3qcFHNBYzTajQdtwySPZACmRzBRbJ6L9hm1SVYMKPvIypqM+qa3CrOxYNijbeHLrIB/ott03a12dxKuUcSIfoDCbGf0Lk6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ExJEV+8h; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=bZyLoi0E reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1753771436; x=1785307436;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=QDyrCeBw4rnnn/DNJ6kkjkhexz49Zb8SKSCeM7mOOEo=;
+  b=ExJEV+8hYWI1COF3gUVu1IcG6kvwacGExlnM3n00rUwx2C7nRTnQKmcb
+   LvKT0rlV7YkxVpdL+9Gak8qN0dEpMOKLhrUKwL32jIX4s0HwebfTtI0kO
+   BSnMRDjubQl2BQX9cVX7mL4xnCk2/c7cEEWMFGaj8B0JcW1wWF0JhLOQH
+   O/1aB/m6w/RFVnc7zSG3fn9tA9Li091MeU3UUCDDFlIgFi68X1USovMXM
+   iAgzz9OoIHPMCo8dtndmEXv+ka+jLuCt+Nr5Mh9YI7OviQqFXLlPEWBCY
+   KkzGGqstu7Kg3MY8KEgrlIzmQmdQqETc6zOmB/Fn6DTT1dJ9m/+fso3Uv
+   A==;
+X-CSE-ConnectionGUID: ooo67CxaTUe86N+KC2c5Lw==
+X-CSE-MsgGUID: ulODftRJSdiGzpOUpPuoeg==
+X-IronPort-AV: E=Sophos;i="6.16,348,1744063200"; 
+   d="scan'208";a="45463951"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 29 Jul 2025 08:43:47 +0200
+X-CheckPoint: {68886DA3-7-4FC15ADB-CD71293B}
+X-MAIL-CPID: A6887ACEAF6F7F183E6628380BA7739F_0
+X-Control-Analysis: str=0001.0A00210D.68886D5A.0060,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id F0DB2160D38;
+	Tue, 29 Jul 2025 08:43:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1753771422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QDyrCeBw4rnnn/DNJ6kkjkhexz49Zb8SKSCeM7mOOEo=;
+	b=bZyLoi0Emda9peu1R7oYqcIIYhCXKygc1ha0D8MDLHWbMaQ2X9NX0B5lZnN4rXN/6EXdPA
+	axJE2b9Ky8jCf43N16KTgvE71Z4b9Xm9P+ZFyoLpZAjED5dxzEOL0tHJkFODwljhH33rjC
+	VA1WcAxVSIeS9i4Hg4k2iGK9I42dqhVk6WgMbWwUe0dq+VvIbDh2P+rMC+nU+fbnmC4kuX
+	VyM4QHgBmT6LUOLDpi1RGciSg1Vx6HyoIwZ2lv5QvwwtCmljviwpuSeV2N2D0MWCZFvsLb
+	wRUjn9NNYr82vAavZV/NxPyMc1owCCa6+95l5zBVHp8HPwF2FyTqrOmG8WcIEg==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, peng.fan@nxp.com, richardcochran@gmail.com,
+ catalin.marinas@arm.com, will@kernel.org, ulf.hansson@linaro.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com, frieder.schrempf@kontron.de,
+ primoz.fiser@norik.com, othacehe@gnu.org, Markus.Niebel@ew.tq-group.com,
+ Joy Zou <joy.zou@nxp.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux@ew.tq-group.com, netdev@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com, Frank.Li@nxp.com
+Subject:
+ Re: [PATCH v7 06/11] arm64: dts: freescale: add i.MX91 11x11 EVK basic
+ support
+Date: Tue, 29 Jul 2025 08:43:37 +0200
+Message-ID: <2793248.mvXUDI8C0e@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250728071438.2332382-7-joy.zou@nxp.com>
+References:
+ <20250728071438.2332382-1-joy.zou@nxp.com>
+ <20250728071438.2332382-7-joy.zou@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-From: Jeff Chang <jeff_chang@richtek.com>
+Hi,
 
-RT5133 is a highly-integrated chip. It includes 8 LDOs and 3 GPOs that can
-be used to drive output high/low purpose. The dependency of the GPO block is
-internally LDO1 Voltage.
+Am Montag, 28. Juli 2025, 09:14:33 CEST schrieb Joy Zou:
+> Add i.MX91 11x11 EVK board support.
+> - Enable ADC1.
+> - Enable lpuart1 and lpuart5.
+> - Enable network eqos and fec.
+> - Enable I2C bus and children nodes under I2C bus.
+> - Enable USB and related nodes.
+> - Enable uSDHC1 and uSDHC2.
+> - Enable Watchdog3.
+>=20
+> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> Signed-off-by: Joy Zou <joy.zou@nxp.com>
+> ---
+> Changes for v7:
+> 1. remove this unused comments, there are not imx91-11x11-evk-i3c.dts.
+> 2. align all pinctrl value to the same column.
+> 3. add aliases because remove aliases from common dtsi.
+> 4. The 'eee-broken-1000t' flag disables Energy-Efficient Ethernet (EEE) o=
+n 1G
+>    links as a workaround for PTP sync issues on older i.MX6 platforms.
+>    Remove it since the i.MX91 have not such issue.
+>=20
+> Changes for v6:
+> 1. remove unused regulators and pinctrl settings.
+>=20
+> Changes for v5:
+> 1. change node name codec and lsm6dsm into common name audio-codec and
+>    inertial-meter, and add BT compatible string.
+>=20
+> Changes for v4:
+> 1. remove pmic node unused newline.
+> 2. delete the tcpc@50 status property.
+> 3. align pad hex values.
+>=20
+> Changes for v3:
+> 1. format imx91-11x11-evk.dts with the dt-format tool.
+> 2. add lpi2c1 node.
+> ---
+>  arch/arm64/boot/dts/freescale/Makefile        |   1 +
+>  .../boot/dts/freescale/imx91-11x11-evk.dts    | 674 ++++++++++++++++++
+>  2 files changed, 675 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/imx91-11x11-evk.dts
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts=
+/freescale/Makefile
+> index 0b473a23d120..fbedb3493c09 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -315,6 +315,7 @@ dtb-$(CONFIG_ARCH_MXC) +=3D imx8qxp-tqma8xqp-mba8xx.d=
+tb
+>  dtb-$(CONFIG_ARCH_MXC) +=3D imx8qxp-tqma8xqps-mb-smarc-2.dtb
+>  dtb-$(CONFIG_ARCH_MXC) +=3D imx8ulp-evk.dtb
+>  dtb-$(CONFIG_ARCH_MXC) +=3D imx93-9x9-qsb.dtb
+> +dtb-$(CONFIG_ARCH_MXC) +=3D imx91-11x11-evk.dtb
 
-Signed-off-by: Jeff Chang <jeff_chang@richtek.com>
----
+Please add imx91 before imx93, otherwise inserting will be a pain.
 
-PATCH v5
-1. Move oc-shutdown-all, pgb-shutdown-all properties to chip layer. Remove
-   of_parse_cb of regulators_desc.
-2. Using vin as LDO7's and LDO8's supply_name.
+Best regards,
+Alexander
 
- drivers/regulator/Kconfig            |  12 +
- drivers/regulator/Makefile           |   1 +
- drivers/regulator/rt5133-regulator.c | 642 +++++++++++++++++++++++++++
- 3 files changed, 655 insertions(+)
- create mode 100644 drivers/regulator/rt5133-regulator.c
+> =20
+>  imx93-9x9-qsb-i3c-dtbs +=3D imx93-9x9-qsb.dtb imx93-9x9-qsb-i3c.dtbo
+>  dtb-$(CONFIG_ARCH_MXC) +=3D imx93-9x9-qsb-i3c.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/imx91-11x11-evk.dts b/arch/arm=
+64/boot/dts/freescale/imx91-11x11-evk.dts
+> new file mode 100644
+> index 000000000000..aca78768dbd4
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/imx91-11x11-evk.dts
+> @@ -0,0 +1,674 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright 2025 NXP
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/usb/pd.h>
+> +#include "imx91.dtsi"
+> +
+> +/ {
+> +	compatible =3D "fsl,imx91-11x11-evk", "fsl,imx91";
+> +	model =3D "NXP i.MX91 11X11 EVK board";
+> +
+> +	aliases {
+> +		ethernet0 =3D &fec;
+> +		ethernet1 =3D &eqos;
+> +		gpio0 =3D &gpio1;
+> +		gpio1 =3D &gpio2;
+> +		gpio2 =3D &gpio3;
+> +		i2c0 =3D &lpi2c1;
+> +		i2c1 =3D &lpi2c2;
+> +		i2c2 =3D &lpi2c3;
+> +		mmc0 =3D &usdhc1;
+> +		mmc1 =3D &usdhc2;
+> +		rtc0 =3D &bbnsm_rtc;
+> +		serial0 =3D &lpuart1;
+> +		serial1 =3D &lpuart2;
+> +		serial2 =3D &lpuart3;
+> +		serial3 =3D &lpuart4;
+> +		serial4 =3D &lpuart5;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path =3D &lpuart1;
+> +	};
+> +
+> +	reg_vref_1v8: regulator-adc-vref {
+> +		compatible =3D "regulator-fixed";
+> +		regulator-max-microvolt =3D <1800000>;
+> +		regulator-min-microvolt =3D <1800000>;
+> +		regulator-name =3D "vref_1v8";
+> +	};
+> +
+> +	reg_audio_pwr: regulator-audio-pwr {
+> +		compatible =3D "regulator-fixed";
+> +		regulator-always-on;
+> +		regulator-max-microvolt =3D <3300000>;
+> +		regulator-min-microvolt =3D <3300000>;
+> +		regulator-name =3D "audio-pwr";
+> +		gpio =3D <&adp5585 1 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +	};
+> +
+> +	reg_usdhc2_vmmc: regulator-usdhc2 {
+> +		compatible =3D "regulator-fixed";
+> +		off-on-delay-us =3D <12000>;
+> +		pinctrl-0 =3D <&pinctrl_reg_usdhc2_vmmc>;
+> +		pinctrl-names =3D "default";
+> +		regulator-max-microvolt =3D <3300000>;
+> +		regulator-min-microvolt =3D <3300000>;
+> +		regulator-name =3D "VSD_3V3";
+> +		gpio =3D <&gpio3 7 GPIO_ACTIVE_HIGH>;
+> +		enable-active-high;
+> +	};
+> +
+> +	reserved-memory {
+> +		ranges;
+> +		#address-cells =3D <2>;
+> +		#size-cells =3D <2>;
+> +
+> +		linux,cma {
+> +			compatible =3D "shared-dma-pool";
+> +			alloc-ranges =3D <0 0x80000000 0 0x40000000>;
+> +			reusable;
+> +			size =3D <0 0x10000000>;
+> +			linux,cma-default;
+> +		};
+> +	};
+> +};
+> +
+> +&adc1 {
+> +	vref-supply =3D <&reg_vref_1v8>;
+> +	status =3D "okay";
+> +};
+> +
+> +&eqos {
+> +	phy-handle =3D <&ethphy1>;
+> +	phy-mode =3D "rgmii-id";
+> +	pinctrl-0 =3D <&pinctrl_eqos>;
+> +	pinctrl-1 =3D <&pinctrl_eqos_sleep>;
+> +	pinctrl-names =3D "default", "sleep";
+> +	status =3D "okay";
+> +
+> +	mdio {
+> +		compatible =3D "snps,dwmac-mdio";
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +		clock-frequency =3D <5000000>;
+> +
+> +		ethphy1: ethernet-phy@1 {
+> +			reg =3D <1>;
+> +			realtek,clkout-disable;
+> +		};
+> +	};
+> +};
+> +
+> +&fec {
+> +	phy-handle =3D <&ethphy2>;
+> +	phy-mode =3D "rgmii-id";
+> +	pinctrl-0 =3D <&pinctrl_fec>;
+> +	pinctrl-1 =3D <&pinctrl_fec_sleep>;
+> +	pinctrl-names =3D "default", "sleep";
+> +	fsl,magic-packet;
+> +	status =3D "okay";
+> +
+> +	mdio {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +		clock-frequency =3D <5000000>;
+> +
+> +		ethphy2: ethernet-phy@2 {
+> +			reg =3D <2>;
+> +			realtek,clkout-disable;
+> +		};
+> +	};
+> +};
+> +
+> +&lpi2c1 {
+> +	clock-frequency =3D <400000>;
+> +	pinctrl-0 =3D <&pinctrl_lpi2c1>;
+> +	pinctrl-names =3D "default";
+> +	status =3D "okay";
+> +
+> +	audio_codec: wm8962@1a {
+> +		compatible =3D "wlf,wm8962";
+> +		reg =3D <0x1a>;
+> +		clocks =3D <&clk IMX93_CLK_SAI3_GATE>;
+> +		AVDD-supply =3D <&reg_audio_pwr>;
+> +		CPVDD-supply =3D <&reg_audio_pwr>;
+> +		DBVDD-supply =3D <&reg_audio_pwr>;
+> +		DCVDD-supply =3D <&reg_audio_pwr>;
+> +		MICVDD-supply =3D <&reg_audio_pwr>;
+> +		PLLVDD-supply =3D <&reg_audio_pwr>;
+> +		SPKVDD1-supply =3D <&reg_audio_pwr>;
+> +		SPKVDD2-supply =3D <&reg_audio_pwr>;
+> +		gpio-cfg =3D <
+> +			0x0000 /* 0:Default */
+> +			0x0000 /* 1:Default */
+> +			0x0000 /* 2:FN_DMICCLK */
+> +			0x0000 /* 3:Default */
+> +			0x0000 /* 4:FN_DMICCDAT */
+> +			0x0000 /* 5:Default */
+> +		>;
+> +	};
+> +
+> +	inertial-meter@6a {
+> +		compatible =3D "st,lsm6dso";
+> +		reg =3D <0x6a>;
+> +	};
+> +};
+> +
+> +&lpi2c2 {
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	clock-frequency =3D <400000>;
+> +	pinctrl-0 =3D <&pinctrl_lpi2c2>;
+> +	pinctrl-names =3D "default";
+> +	status =3D "okay";
+> +
+> +	pcal6524: gpio@22 {
+> +		compatible =3D "nxp,pcal6524";
+> +		reg =3D <0x22>;
+> +		#interrupt-cells =3D <2>;
+> +		interrupt-controller;
+> +		interrupts =3D <27 IRQ_TYPE_LEVEL_LOW>;
+> +		#gpio-cells =3D <2>;
+> +		gpio-controller;
+> +		interrupt-parent =3D <&gpio3>;
+> +		pinctrl-0 =3D <&pinctrl_pcal6524>;
+> +		pinctrl-names =3D "default";
+> +	};
+> +
+> +	pmic@25 {
+> +		compatible =3D "nxp,pca9451a";
+> +		reg =3D <0x25>;
+> +		interrupts =3D <11 IRQ_TYPE_EDGE_FALLING>;
+> +		interrupt-parent =3D <&pcal6524>;
+> +
+> +		regulators {
+> +			buck1: BUCK1 {
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-max-microvolt =3D <2237500>;
+> +				regulator-min-microvolt =3D <650000>;
+> +				regulator-name =3D "BUCK1";
+> +				regulator-ramp-delay =3D <3125>;
+> +			};
+> +
+> +			buck2: BUCK2 {
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-max-microvolt =3D <2187500>;
+> +				regulator-min-microvolt =3D <600000>;
+> +				regulator-name =3D "BUCK2";
+> +				regulator-ramp-delay =3D <3125>;
+> +			};
+> +
+> +			buck4: BUCK4 {
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-max-microvolt =3D <3400000>;
+> +				regulator-min-microvolt =3D <600000>;
+> +				regulator-name =3D "BUCK4";
+> +			};
+> +
+> +			buck5: BUCK5 {
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-max-microvolt =3D <3400000>;
+> +				regulator-min-microvolt =3D <600000>;
+> +				regulator-name =3D "BUCK5";
+> +			};
+> +
+> +			buck6: BUCK6 {
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-max-microvolt =3D <3400000>;
+> +				regulator-min-microvolt =3D <600000>;
+> +				regulator-name =3D "BUCK6";
+> +			};
+> +
+> +			ldo1: LDO1 {
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-min-microvolt =3D <1600000>;
+> +				regulator-name =3D "LDO1";
+> +			};
+> +
+> +			ldo4: LDO4 {
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-min-microvolt =3D <800000>;
+> +				regulator-name =3D "LDO4";
+> +			};
+> +
+> +			ldo5: LDO5 {
+> +				regulator-always-on;
+> +				regulator-boot-on;
+> +				regulator-max-microvolt =3D <3300000>;
+> +				regulator-min-microvolt =3D <1800000>;
+> +				regulator-name =3D "LDO5";
+> +			};
+> +		};
+> +	};
+> +
+> +	adp5585: io-expander@34 {
+> +		compatible =3D "adi,adp5585-00", "adi,adp5585";
+> +		reg =3D <0x34>;
+> +		#gpio-cells =3D <2>;
+> +		gpio-controller;
+> +		#pwm-cells =3D <3>;
+> +		gpio-reserved-ranges =3D <5 1>;
+> +
+> +		exp-sel-hog {
+> +			gpio-hog;
+> +			gpios =3D <4 GPIO_ACTIVE_HIGH>;
+> +			output-low;
+> +		};
+> +	};
+> +};
+> +
+> +&lpi2c3 {
+> +	#address-cells =3D <1>;
+> +	#size-cells =3D <0>;
+> +	clock-frequency =3D <400000>;
+> +	pinctrl-0 =3D <&pinctrl_lpi2c3>;
+> +	pinctrl-names =3D "default";
+> +	status =3D "okay";
+> +
+> +	ptn5110: tcpc@50 {
+> +		compatible =3D "nxp,ptn5110", "tcpci";
+> +		reg =3D <0x50>;
+> +		interrupts =3D <27 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-parent =3D <&gpio3>;
+> +
+> +		typec1_con: connector {
+> +			compatible =3D "usb-c-connector";
+> +			data-role =3D "dual";
+> +			label =3D "USB-C";
+> +			op-sink-microwatt =3D <15000000>;
+> +			power-role =3D "dual";
+> +			self-powered;
+> +			sink-pdos =3D <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)
+> +				     PDO_VAR(5000, 20000, 3000)>;
+> +			source-pdos =3D <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
+> +			try-power-role =3D "sink";
+> +
+> +			ports {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				port@0 {
+> +					reg =3D <0>;
+> +
+> +					typec1_dr_sw: endpoint {
+> +						remote-endpoint =3D <&usb1_drd_sw>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	ptn5110_2: tcpc@51 {
+> +		compatible =3D "nxp,ptn5110", "tcpci";
+> +		reg =3D <0x51>;
+> +		interrupts =3D <27 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-parent =3D <&gpio3>;
+> +		status =3D "okay";
+> +
+> +		typec2_con: connector {
+> +			compatible =3D "usb-c-connector";
+> +			data-role =3D "dual";
+> +			label =3D "USB-C";
+> +			op-sink-microwatt =3D <15000000>;
+> +			power-role =3D "dual";
+> +			self-powered;
+> +			sink-pdos =3D <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)
+> +				     PDO_VAR(5000, 20000, 3000)>;
+> +			source-pdos =3D <PDO_FIXED(5000, 3000, PDO_FIXED_USB_COMM)>;
+> +			try-power-role =3D "sink";
+> +
+> +			ports {
+> +				#address-cells =3D <1>;
+> +				#size-cells =3D <0>;
+> +
+> +				port@0 {
+> +					reg =3D <0>;
+> +
+> +					typec2_dr_sw: endpoint {
+> +						remote-endpoint =3D <&usb2_drd_sw>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+> +	pcf2131: rtc@53 {
+> +		compatible =3D "nxp,pcf2131";
+> +		reg =3D <0x53>;
+> +		interrupts =3D <1 IRQ_TYPE_EDGE_FALLING>;
+> +		interrupt-parent =3D <&pcal6524>;
+> +		status =3D "okay";
+> +	};
+> +};
+> +
+> +&lpuart1 {
+> +	pinctrl-0 =3D <&pinctrl_uart1>;
+> +	pinctrl-names =3D "default";
+> +	status =3D "okay";
+> +};
+> +
+> +&lpuart5 {
+> +	pinctrl-0 =3D <&pinctrl_uart5>;
+> +	pinctrl-names =3D "default";
+> +	status =3D "okay";
+> +
+> +	bluetooth {
+> +		compatible =3D "nxp,88w8987-bt";
+> +	};
+> +};
+> +
+> +&usbotg1 {
+> +	adp-disable;
+> +	disable-over-current;
+> +	dr_mode =3D "otg";
+> +	hnp-disable;
+> +	srp-disable;
+> +	usb-role-switch;
+> +	samsung,picophy-dc-vol-level-adjust =3D <7>;
+> +	samsung,picophy-pre-emp-curr-control =3D <3>;
+> +	status =3D "okay";
+> +
+> +	port {
+> +		usb1_drd_sw: endpoint {
+> +			remote-endpoint =3D <&typec1_dr_sw>;
+> +		};
+> +	};
+> +};
+> +
+> +&usbotg2 {
+> +	adp-disable;
+> +	disable-over-current;
+> +	dr_mode =3D "otg";
+> +	hnp-disable;
+> +	srp-disable;
+> +	usb-role-switch;
+> +	samsung,picophy-dc-vol-level-adjust =3D <7>;
+> +	samsung,picophy-pre-emp-curr-control =3D <3>;
+> +	status =3D "okay";
+> +
+> +	port {
+> +		usb2_drd_sw: endpoint {
+> +			remote-endpoint =3D <&typec2_dr_sw>;
+> +		};
+> +	};
+> +};
+> +
+> +&usdhc1 {
+> +	bus-width =3D <8>;
+> +	non-removable;
+> +	pinctrl-0 =3D <&pinctrl_usdhc1>;
+> +	pinctrl-1 =3D <&pinctrl_usdhc1_100mhz>;
+> +	pinctrl-2 =3D <&pinctrl_usdhc1_200mhz>;
+> +	pinctrl-names =3D "default", "state_100mhz", "state_200mhz";
+> +	status =3D "okay";
+> +};
+> +
+> +&usdhc2 {
+> +	bus-width =3D <4>;
+> +	cd-gpios =3D <&gpio3 00 GPIO_ACTIVE_LOW>;
+> +	no-mmc;
+> +	no-sdio;
+> +	pinctrl-0 =3D <&pinctrl_usdhc2>, <&pinctrl_usdhc2_gpio>;
+> +	pinctrl-1 =3D <&pinctrl_usdhc2_100mhz>, <&pinctrl_usdhc2_gpio>;
+> +	pinctrl-2 =3D <&pinctrl_usdhc2_200mhz>, <&pinctrl_usdhc2_gpio>;
+> +	pinctrl-3 =3D <&pinctrl_usdhc2_sleep>, <&pinctrl_usdhc2_gpio_sleep>;
+> +	pinctrl-names =3D "default", "state_100mhz", "state_200mhz", "sleep";
+> +	vmmc-supply =3D <&reg_usdhc2_vmmc>;
+> +	status =3D "okay";
+> +};
+> +
+> +&wdog3 {
+> +	fsl,ext-reset-output;
+> +	status =3D "okay";
+> +};
+> +
+> +&iomuxc {
+> +	pinctrl_eqos: eqosgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_ENET1_MDC__ENET1_MDC                           0x57e
+> +			MX91_PAD_ENET1_MDIO__ENET_QOS_MDIO                      0x57e
+> +			MX91_PAD_ENET1_RD0__ENET_QOS_RGMII_RD0                  0x57e
+> +			MX91_PAD_ENET1_RD1__ENET_QOS_RGMII_RD1                  0x57e
+> +			MX91_PAD_ENET1_RD2__ENET_QOS_RGMII_RD2                  0x57e
+> +			MX91_PAD_ENET1_RD3__ENET_QOS_RGMII_RD3                  0x57e
+> +			MX91_PAD_ENET1_RXC__ENET_QOS_RGMII_RXC                  0x5fe
+> +			MX91_PAD_ENET1_RX_CTL__ENET_QOS_RGMII_RX_CTL            0x57e
+> +			MX91_PAD_ENET1_TD0__ENET_QOS_RGMII_TD0                  0x57e
+> +			MX91_PAD_ENET1_TD1__ENET1_RGMII_TD1                     0x57e
+> +			MX91_PAD_ENET1_TD2__ENET_QOS_RGMII_TD2                  0x57e
+> +			MX91_PAD_ENET1_TD3__ENET_QOS_RGMII_TD3                  0x57e
+> +			MX91_PAD_ENET1_TXC__CCM_ENET_QOS_CLOCK_GENERATE_TX_CLK  0x5fe
+> +			MX91_PAD_ENET1_TX_CTL__ENET_QOS_RGMII_TX_CTL            0x57e
+> +		>;
+> +	};
+> +
+> +	pinctrl_eqos_sleep: eqossleepgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_ENET1_MDC__GPIO4_IO0                           0x31e
+> +			MX91_PAD_ENET1_MDIO__GPIO4_IO1                          0x31e
+> +			MX91_PAD_ENET1_RD0__GPIO4_IO10                          0x31e
+> +			MX91_PAD_ENET1_RD1__GPIO4_IO11                          0x31e
+> +			MX91_PAD_ENET1_RD2__GPIO4_IO12                          0x31e
+> +			MX91_PAD_ENET1_RD3__GPIO4_IO13                          0x31e
+> +			MX91_PAD_ENET1_RXC__GPIO4_IO9                           0x31e
+> +			MX91_PAD_ENET1_RX_CTL__GPIO4_IO8                        0x31e
+> +			MX91_PAD_ENET1_TD0__GPIO4_IO5                           0x31e
+> +			MX91_PAD_ENET1_TD1__GPIO4_IO4                           0x31e
+> +			MX91_PAD_ENET1_TD2__GPIO4_IO3                           0x31e
+> +			MX91_PAD_ENET1_TD3__GPIO4_IO2                           0x31e
+> +			MX91_PAD_ENET1_TXC__GPIO4_IO7                           0x31e
+> +			MX91_PAD_ENET1_TX_CTL__GPIO4_IO6                        0x31e
+> +		>;
+> +	};
+> +
+> +	pinctrl_fec: fecgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_ENET2_MDC__ENET2_MDC                           0x57e
+> +			MX91_PAD_ENET2_MDIO__ENET2_MDIO                         0x57e
+> +			MX91_PAD_ENET2_RD0__ENET2_RGMII_RD0                     0x57e
+> +			MX91_PAD_ENET2_RD1__ENET2_RGMII_RD1                     0x57e
+> +			MX91_PAD_ENET2_RD2__ENET2_RGMII_RD2                     0x57e
+> +			MX91_PAD_ENET2_RD3__ENET2_RGMII_RD3                     0x57e
+> +			MX91_PAD_ENET2_RXC__ENET2_RGMII_RXC                     0x5fe
+> +			MX91_PAD_ENET2_RX_CTL__ENET2_RGMII_RX_CTL               0x57e
+> +			MX91_PAD_ENET2_TD0__ENET2_RGMII_TD0                     0x57e
+> +			MX91_PAD_ENET2_TD1__ENET2_RGMII_TD1                     0x57e
+> +			MX91_PAD_ENET2_TD2__ENET2_RGMII_TD2                     0x57e
+> +			MX91_PAD_ENET2_TD3__ENET2_RGMII_TD3                     0x57e
+> +			MX91_PAD_ENET2_TXC__ENET2_RGMII_TXC                     0x5fe
+> +			MX91_PAD_ENET2_TX_CTL__ENET2_RGMII_TX_CTL               0x57e
+> +		>;
+> +	};
+> +
+> +	pinctrl_fec_sleep: fecsleepgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_ENET2_MDC__GPIO4_IO14                          0x51e
+> +			MX91_PAD_ENET2_MDIO__GPIO4_IO15                         0x51e
+> +			MX91_PAD_ENET2_RD0__GPIO4_IO24                          0x51e
+> +			MX91_PAD_ENET2_RD1__GPIO4_IO25                          0x51e
+> +			MX91_PAD_ENET2_RD2__GPIO4_IO26                          0x51e
+> +			MX91_PAD_ENET2_RD3__GPIO4_IO27                          0x51e
+> +			MX91_PAD_ENET2_RXC__GPIO4_IO23                          0x51e
+> +			MX91_PAD_ENET2_RX_CTL__GPIO4_IO22                       0x51e
+> +			MX91_PAD_ENET2_TD0__GPIO4_IO19                          0x51e
+> +			MX91_PAD_ENET2_TD1__GPIO4_IO18                          0x51e
+> +			MX91_PAD_ENET2_TD2__GPIO4_IO17                          0x51e
+> +			MX91_PAD_ENET2_TD3__GPIO4_IO16                          0x51e
+> +			MX91_PAD_ENET2_TXC__GPIO4_IO21                          0x51e
+> +			MX91_PAD_ENET2_TX_CTL__GPIO4_IO20                       0x51e
+> +		>;
+> +	};
+> +
+> +	pinctrl_lpi2c1: lpi2c1grp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_I2C1_SCL__LPI2C1_SCL                           0x40000b9e
+> +			MX91_PAD_I2C1_SDA__LPI2C1_SDA                           0x40000b9e
+> +		>;
+> +	};
+> +
+> +	pinctrl_lpi2c2: lpi2c2grp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_I2C2_SCL__LPI2C2_SCL                           0x40000b9e
+> +			MX91_PAD_I2C2_SDA__LPI2C2_SDA                           0x40000b9e
+> +		>;
+> +	};
+> +
+> +	pinctrl_lpi2c3: lpi2c3grp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_GPIO_IO28__LPI2C3_SDA                          0x40000b9e
+> +			MX91_PAD_GPIO_IO29__LPI2C3_SCL                          0x40000b9e
+> +		>;
+> +	};
+> +
+> +	pinctrl_pcal6524: pcal6524grp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_CCM_CLKO2__GPIO3_IO27                          0x31e
+> +		>;
+> +	};
+> +
+> +	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmcgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD2_RESET_B__GPIO3_IO7                         0x31e
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart1: uart1grp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_UART1_RXD__LPUART1_RX                          0x31e
+> +			MX91_PAD_UART1_TXD__LPUART1_TX                          0x31e
+> +		>;
+> +	};
+> +
+> +	pinctrl_uart5: uart5grp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_DAP_TDO_TRACESWO__LPUART5_TX                   0x31e
+> +			MX91_PAD_DAP_TDI__LPUART5_RX                            0x31e
+> +			MX91_PAD_DAP_TMS_SWDIO__LPUART5_RTS_B                   0x31e
+> +			MX91_PAD_DAP_TCLK_SWCLK__LPUART5_CTS_B                  0x31e
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1_100mhz: usdhc1-100mhzgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD1_CLK__USDHC1_CLK                            0x158e
+> +			MX91_PAD_SD1_CMD__USDHC1_CMD                            0x138e
+> +			MX91_PAD_SD1_DATA0__USDHC1_DATA0                        0x138e
+> +			MX91_PAD_SD1_DATA1__USDHC1_DATA1                        0x138e
+> +			MX91_PAD_SD1_DATA2__USDHC1_DATA2                        0x138e
+> +			MX91_PAD_SD1_DATA3__USDHC1_DATA3                        0x138e
+> +			MX91_PAD_SD1_DATA4__USDHC1_DATA4                        0x138e
+> +			MX91_PAD_SD1_DATA5__USDHC1_DATA5                        0x138e
+> +			MX91_PAD_SD1_DATA6__USDHC1_DATA6                        0x138e
+> +			MX91_PAD_SD1_DATA7__USDHC1_DATA7                        0x138e
+> +			MX91_PAD_SD1_STROBE__USDHC1_STROBE                      0x158e
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1_200mhz: usdhc1-200mhzgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD1_CLK__USDHC1_CLK                            0x15fe
+> +			MX91_PAD_SD1_CMD__USDHC1_CMD                            0x13fe
+> +			MX91_PAD_SD1_DATA0__USDHC1_DATA0                        0x13fe
+> +			MX91_PAD_SD1_DATA1__USDHC1_DATA1                        0x13fe
+> +			MX91_PAD_SD1_DATA2__USDHC1_DATA2                        0x13fe
+> +			MX91_PAD_SD1_DATA3__USDHC1_DATA3                        0x13fe
+> +			MX91_PAD_SD1_DATA4__USDHC1_DATA4                        0x13fe
+> +			MX91_PAD_SD1_DATA5__USDHC1_DATA5                        0x13fe
+> +			MX91_PAD_SD1_DATA6__USDHC1_DATA6                        0x13fe
+> +			MX91_PAD_SD1_DATA7__USDHC1_DATA7                        0x13fe
+> +			MX91_PAD_SD1_STROBE__USDHC1_STROBE                      0x15fe
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc1: usdhc1grp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD1_CLK__USDHC1_CLK                            0x1582
+> +			MX91_PAD_SD1_CMD__USDHC1_CMD                            0x1382
+> +			MX91_PAD_SD1_DATA0__USDHC1_DATA0                        0x1382
+> +			MX91_PAD_SD1_DATA1__USDHC1_DATA1                        0x1382
+> +			MX91_PAD_SD1_DATA2__USDHC1_DATA2                        0x1382
+> +			MX91_PAD_SD1_DATA3__USDHC1_DATA3                        0x1382
+> +			MX91_PAD_SD1_DATA4__USDHC1_DATA4                        0x1382
+> +			MX91_PAD_SD1_DATA5__USDHC1_DATA5                        0x1382
+> +			MX91_PAD_SD1_DATA6__USDHC1_DATA6                        0x1382
+> +			MX91_PAD_SD1_DATA7__USDHC1_DATA7                        0x1382
+> +			MX91_PAD_SD1_STROBE__USDHC1_STROBE                      0x1582
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD2_CLK__USDHC2_CLK                            0x158e
+> +			MX91_PAD_SD2_CMD__USDHC2_CMD                            0x138e
+> +			MX91_PAD_SD2_DATA0__USDHC2_DATA0                        0x138e
+> +			MX91_PAD_SD2_DATA1__USDHC2_DATA1                        0x138e
+> +			MX91_PAD_SD2_DATA2__USDHC2_DATA2                        0x138e
+> +			MX91_PAD_SD2_DATA3__USDHC2_DATA3                        0x138e
+> +			MX91_PAD_SD2_VSELECT__USDHC2_VSELECT                    0x51e
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD2_CLK__USDHC2_CLK                            0x15fe
+> +			MX91_PAD_SD2_CMD__USDHC2_CMD                            0x13fe
+> +			MX91_PAD_SD2_DATA0__USDHC2_DATA0                        0x13fe
+> +			MX91_PAD_SD2_DATA1__USDHC2_DATA1                        0x13fe
+> +			MX91_PAD_SD2_DATA2__USDHC2_DATA2                        0x13fe
+> +			MX91_PAD_SD2_DATA3__USDHC2_DATA3                        0x13fe
+> +			MX91_PAD_SD2_VSELECT__USDHC2_VSELECT                    0x51e
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2_gpio: usdhc2gpiogrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD2_CD_B__GPIO3_IO0                            0x31e
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2_gpio_sleep: usdhc2gpiosleepgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD2_CD_B__GPIO3_IO0                            0x51e
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2: usdhc2grp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD2_CLK__USDHC2_CLK                            0x1582
+> +			MX91_PAD_SD2_CMD__USDHC2_CMD                            0x1382
+> +			MX91_PAD_SD2_DATA0__USDHC2_DATA0                        0x1382
+> +			MX91_PAD_SD2_DATA1__USDHC2_DATA1                        0x1382
+> +			MX91_PAD_SD2_DATA2__USDHC2_DATA2                        0x1382
+> +			MX91_PAD_SD2_DATA3__USDHC2_DATA3                        0x1382
+> +			MX91_PAD_SD2_VSELECT__USDHC2_VSELECT                    0x51e
+> +		>;
+> +	};
+> +
+> +	pinctrl_usdhc2_sleep: usdhc2sleepgrp {
+> +		fsl,pins =3D <
+> +			MX91_PAD_SD2_CLK__GPIO3_IO1                             0x51e
+> +			MX91_PAD_SD2_CMD__GPIO3_IO2                             0x51e
+> +			MX91_PAD_SD2_DATA0__GPIO3_IO3                           0x51e
+> +			MX91_PAD_SD2_DATA1__GPIO3_IO4                           0x51e
+> +			MX91_PAD_SD2_DATA2__GPIO3_IO5                           0x51e
+> +			MX91_PAD_SD2_DATA3__GPIO3_IO6                           0x51e
+> +			MX91_PAD_SD2_VSELECT__GPIO3_IO19                        0x51e
+> +		>;
+> +	};
+> +
+> +};
+>=20
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 6d8988387da4..bada46e86cd0 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -1229,6 +1229,18 @@ config REGULATOR_RT5120
- 	  600mV to 1395mV, per step 6.250mV. The others are all fixed voltage
- 	  by external hardware circuit.
 
-+config REGULATOR_RT5133
-+	tristate "Richtek RT5133 PMIC Regulators"
-+	depends on I2C && GPIOLIB && OF
-+	select REGMAP
-+	select CRC8
-+	select OF_GPIO
-+	help
-+	  This driver adds support for RT5133 PMIC regulators.
-+	  RT5133 is an integrated chip. It includes 8 LDOs and 3 GPOs that
-+	  can be used to drive output high/low purpose. The dependency of the
-+	  GPO block is internally LDO1 Voltage.
-+
- config REGULATOR_RT5190A
- 	tristate "Richtek RT5190A PMIC"
- 	depends on I2C
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index c0bc7a0f4e67..709384ae0a0c 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -145,6 +145,7 @@ obj-$(CONFIG_REGULATOR_RT4803)	+= rt4803.o
- obj-$(CONFIG_REGULATOR_RT4831)	+= rt4831-regulator.o
- obj-$(CONFIG_REGULATOR_RT5033)	+= rt5033-regulator.o
- obj-$(CONFIG_REGULATOR_RT5120)	+= rt5120-regulator.o
-+obj-$(CONFIG_REGULATOR_RT5133)	+= rt5133-regulator.o
- obj-$(CONFIG_REGULATOR_RT5190A) += rt5190a-regulator.o
- obj-$(CONFIG_REGULATOR_RT5739)	+= rt5739.o
- obj-$(CONFIG_REGULATOR_RT5759)	+= rt5759-regulator.o
-diff --git a/drivers/regulator/rt5133-regulator.c b/drivers/regulator/rt5133-regulator.c
-new file mode 100644
-index 000000000000..05c6e1659e7f
---- /dev/null
-+++ b/drivers/regulator/rt5133-regulator.c
-@@ -0,0 +1,642 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2025 Richtek Technology Corp.
-+// Author: ChiYuan Huang <cy_huang@richtek.com>
-+// Author: ShihChia Chang <jeff_chang@richtek.com>
-+
-+#include <linux/crc8.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/gpio/driver.h>
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/driver.h>
-+
-+#define RT5133_REG_CHIP_INFO		0x00
-+#define RT5133_REG_RST_CTRL		0x06
-+#define RT5133_REG_BASE_CTRL		0x09
-+#define RT5133_REG_GPIO_CTRL		0x0B
-+#define RT5133_REG_BASE_EVT		0x10
-+#define RT5133_REG_LDO_PGB_STAT		0x15
-+#define RT5133_REG_BASE_MASK		0x16
-+#define RT5133_REG_LDO_SHDN		0x19
-+#define RT5133_REG_LDO_ON		0x1A
-+#define RT5133_REG_LDO_OFF		0x1B
-+#define RT5133_REG_LDO1_CTRL1		0x20
-+#define RT5133_REG_LDO1_CTRL2		0x21
-+#define RT5133_REG_LDO1_CTRL3		0x22
-+#define RT5133_REG_LDO2_CTRL1		0x24
-+#define RT5133_REG_LDO2_CTRL2		0x25
-+#define RT5133_REG_LDO2_CTRL3		0x26
-+#define RT5133_REG_LDO3_CTRL1		0x28
-+#define RT5133_REG_LDO3_CTRL2		0x29
-+#define RT5133_REG_LDO3_CTRL3		0x2A
-+#define RT5133_REG_LDO4_CTRL1		0x2C
-+#define RT5133_REG_LDO4_CTRL2		0x2D
-+#define RT5133_REG_LDO4_CTRL3		0x2E
-+#define RT5133_REG_LDO5_CTRL1		0x30
-+#define RT5133_REG_LDO5_CTRL2		0x31
-+#define RT5133_REG_LDO5_CTRL3		0x32
-+#define RT5133_REG_LDO6_CTRL1		0x34
-+#define RT5133_REG_LDO6_CTRL2		0x35
-+#define RT5133_REG_LDO6_CTRL3		0x36
-+#define RT5133_REG_LDO7_CTRL1		0x38
-+#define RT5133_REG_LDO7_CTRL2		0x39
-+#define RT5133_REG_LDO7_CTRL3		0x3A
-+#define RT5133_REG_LDO8_CTRL1		0x3C
-+#define RT5133_REG_LDO8_CTRL2		0x3D
-+#define RT5133_REG_LDO8_CTRL3		0x3E
-+#define RT5133_REG_LDO8_CTRL4		0x3F
-+
-+#define RT5133_LDO_REG_BASE(_id)	(0x20 + ((_id) - 1) * 4)
-+
-+#define RT5133_VENDOR_ID_MASK		GENMASK(7, 4)
-+#define RT5133_RESET_CODE		0xB1
-+
-+#define RT5133_FOFF_BASE_MASK		BIT(1)
-+#define RT5133_OCSHDN_ALL_MASK		BIT(7)
-+#define RT5133_OCSHDN_ALL_SHIFT		(7)
-+#define RT5133_PGBSHDN_ALL_MASK		BIT(6)
-+#define RT5133_PGBSHDN_ALL_SHIFT	(6)
-+
-+#define RT5133_OCPTSEL_MASK		BIT(5)
-+#define RT5133_PGBPTSEL_MASK		BIT(4)
-+#define RT5133_STBTDSEL_MASK		GENMASK(1, 0)
-+
-+#define RT5133_LDO_ENABLE_MASK		BIT(7)
-+#define RT5133_LDO_VSEL_MASK		GENMASK(7, 5)
-+#define RT5133_LDO_AD_MASK		BIT(2)
-+#define RT5133_LDO_SOFT_START_MASK	GENMASK(1, 0)
-+
-+#define RT5133_GPIO_NR			3
-+
-+#define RT5133_LDO_PGB_EVT_MASK		GENMASK(23, 16)
-+#define RT5133_LDO_PGB_EVT_SHIFT	16
-+#define RT5133_LDO_OC_EVT_MASK		GENMASK(15, 8)
-+#define RT5133_LDO_OC_EVT_SHIFT		8
-+#define RT5133_VREF_EVT_MASK		BIT(6)
-+#define RT5133_BASE_EVT_MASK		GENMASK(7, 0)
-+#define RT5133_INTR_CLR_MASK		GENMASK(23, 0)
-+#define RT5133_INTR_BYTE_NR		3
-+
-+#define RT5133_MAX_I2C_BLOCK_SIZE	1
-+
-+#define RT5133_CRC8_POLYNOMIAL		0x7
-+
-+#define RT5133_I2C_ADDR_LEN		1
-+#define RT5133_PREDATA_LEN		2
-+#define RT5133_I2C_CRC_LEN		1
-+#define RT5133_REG_ADDR_LEN		1
-+#define RT5133_I2C_DUMMY_LEN		1
-+
-+#define I2C_ADDR_XLATE_8BIT(_addr, _rw)	((((_addr) & 0x7F) << 1) | (_rw))
-+
-+enum {
-+	RT5133_REGULATOR_BASE = 0,
-+	RT5133_REGULATOR_LDO1,
-+	RT5133_REGULATOR_LDO2,
-+	RT5133_REGULATOR_LDO3,
-+	RT5133_REGULATOR_LDO4,
-+	RT5133_REGULATOR_LDO5,
-+	RT5133_REGULATOR_LDO6,
-+	RT5133_REGULATOR_LDO7,
-+	RT5133_REGULATOR_LDO8,
-+	RT5133_REGULATOR_MAX
-+};
-+
-+struct chip_data {
-+	const struct regulator_desc *regulators;
-+	const u8 vendor_id;
-+};
-+
-+struct rt5133_priv {
-+	struct device *dev;
-+	struct regmap *regmap;
-+	struct gpio_desc *enable_gpio;
-+	struct regulator_dev *rdev[RT5133_REGULATOR_MAX];
-+	struct gpio_chip gc;
-+	const struct chip_data *cdata;
-+	unsigned int gpio_output_flag;
-+	u8 crc8_tbls[CRC8_TABLE_SIZE];
-+};
-+
-+static const unsigned int vout_type1_tables[] = {
-+	1800000, 2500000, 2700000, 2800000, 2900000, 3000000, 3100000, 3200000
-+};
-+
-+static const unsigned int vout_type2_tables[] = {
-+	1700000, 1800000, 1900000, 2500000, 2700000, 2800000, 2900000, 3000000
-+};
-+
-+static const unsigned int vout_type3_tables[] = {
-+	900000, 950000, 1000000, 1050000, 1100000, 1150000, 1200000, 1800000
-+};
-+
-+static const unsigned int vout_type4_tables[] = {
-+	855000, 900000, 950000, 1000000, 1040000, 1090000, 1140000, 1710000
-+};
-+
-+static const struct regulator_ops rt5133_regulator_ops = {
-+	.list_voltage = regulator_list_voltage_table,
-+	.set_voltage_sel = regulator_set_voltage_sel_regmap,
-+	.get_voltage_sel = regulator_get_voltage_sel_regmap,
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+	.set_active_discharge = regulator_set_active_discharge_regmap,
-+};
-+
-+static const struct regulator_ops rt5133_base_regulator_ops = {
-+	.enable = regulator_enable_regmap,
-+	.disable = regulator_disable_regmap,
-+	.is_enabled = regulator_is_enabled_regmap,
-+};
-+
-+#define RT5133_REGULATOR_DESC(_name, _node_name, vtables, _supply) \
-+{\
-+	.name = #_name,\
-+	.id = RT5133_REGULATOR_##_name,\
-+	.of_match = of_match_ptr(#_node_name),\
-+	.regulators_node = of_match_ptr("regulators"),\
-+	.supply_name = _supply,\
-+	.type = REGULATOR_VOLTAGE,\
-+	.owner = THIS_MODULE,\
-+	.ops = &rt5133_regulator_ops,\
-+	.n_voltages = ARRAY_SIZE(vtables),\
-+	.volt_table = vtables,\
-+	.enable_reg = RT5133_REG_##_name##_CTRL1,\
-+	.enable_mask = RT5133_LDO_ENABLE_MASK,\
-+	.vsel_reg = RT5133_REG_##_name##_CTRL2,\
-+	.vsel_mask = RT5133_LDO_VSEL_MASK,\
-+	.active_discharge_reg = RT5133_REG_##_name##_CTRL3,\
-+	.active_discharge_mask = RT5133_LDO_AD_MASK,\
-+}
-+
-+static const struct regulator_desc rt5133_regulators[] = {
-+	/* For digital part, base current control */
-+	{
-+		.name = "rt5133,base",
-+		.id = RT5133_REGULATOR_BASE,
-+		.of_match = of_match_ptr("base"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.type = REGULATOR_VOLTAGE,
-+		.owner = THIS_MODULE,
-+		.ops = &rt5133_base_regulator_ops,
-+		.enable_reg = RT5133_REG_BASE_CTRL,
-+		.enable_mask = RT5133_FOFF_BASE_MASK,
-+		.enable_is_inverted = true,
-+	},
-+	RT5133_REGULATOR_DESC(LDO1, ldo1, vout_type1_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO2, ldo2, vout_type1_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO3, ldo3, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO4, ldo4, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO5, ldo5, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO6, ldo6, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO7, ldo7, vout_type3_tables, "vin"),
-+	RT5133_REGULATOR_DESC(LDO8, ldo8, vout_type3_tables, "vin"),
-+};
-+
-+static const struct regulator_desc rt5133a_regulators[] = {
-+	/* For digital part, base current control */
-+	{
-+		.name = "rt5133,base",
-+		.id = RT5133_REGULATOR_BASE,
-+		.of_match = of_match_ptr("base"),
-+		.regulators_node = of_match_ptr("regulators"),
-+		.type = REGULATOR_VOLTAGE,
-+		.owner = THIS_MODULE,
-+		.ops = &rt5133_base_regulator_ops,
-+		.enable_reg = RT5133_REG_BASE_CTRL,
-+		.enable_mask = RT5133_FOFF_BASE_MASK,
-+		.enable_is_inverted = true,
-+	},
-+	RT5133_REGULATOR_DESC(LDO1, ldo1, vout_type1_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO2, ldo2, vout_type1_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO3, ldo3, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO4, ldo4, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO5, ldo5, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO6, ldo6, vout_type2_tables, "rt5133,base"),
-+	RT5133_REGULATOR_DESC(LDO7, ldo7, vout_type3_tables, "vin"),
-+	RT5133_REGULATOR_DESC(LDO8, ldo8, vout_type4_tables, "vin"),
-+};
-+
-+static const struct chip_data regulator_data[] = {
-+	{ rt5133_regulators, 0x70},
-+	{ rt5133a_regulators, 0x80},
-+};
-+
-+static int rt5133_gpio_direction_output(struct gpio_chip *gpio,
-+					unsigned int offset, int value)
-+{
-+	struct rt5133_priv *priv = gpiochip_get_data(gpio);
-+
-+	if (offset >= RT5133_GPIO_NR)
-+		return -EINVAL;
-+
-+	return regmap_update_bits(priv->regmap, RT5133_REG_GPIO_CTRL,
-+				  BIT(7 - offset) | BIT(3 - offset),
-+				  value ? BIT(7 - offset) | BIT(3 - offset) : 0);
-+}
-+
-+static int rt5133_gpio_get(struct gpio_chip *chip, unsigned int offset)
-+{
-+	struct rt5133_priv *priv = gpiochip_get_data(chip);
-+
-+	return !!(priv->gpio_output_flag & BIT(offset));
-+}
-+
-+static int rt5133_get_gpioen_mask(unsigned int offset, unsigned int *mask)
-+{
-+	if (offset >= RT5133_GPIO_NR)
-+		return -EINVAL;
-+
-+	*mask = (BIT(7 - offset) | BIT(3 - offset));
-+
-+	return 0;
-+}
-+
-+static void rt5133_gpio_set(struct gpio_chip *chip, unsigned int offset,
-+			    int set_val)
-+{
-+	struct rt5133_priv *priv = gpiochip_get_data(chip);
-+	unsigned int mask = 0, val = 0, next_flag = priv->gpio_output_flag;
-+	int ret = 0;
-+
-+	ret = rt5133_get_gpioen_mask(offset, &mask);
-+	if (ret) {
-+		dev_err(priv->dev, "%s get gpion en mask failed, offset(%d)\n", __func__, offset);
-+		return;
-+	}
-+
-+	val = set_val ? mask : 0;
-+
-+	if (set_val)
-+		next_flag |= BIT(offset);
-+	else
-+		next_flag &= ~BIT(offset);
-+
-+	ret = regmap_update_bits(priv->regmap, RT5133_REG_GPIO_CTRL, mask, val);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to set gpio [%d] val %d\n", offset,
-+			set_val);
-+		return;
-+	}
-+
-+	priv->gpio_output_flag = next_flag;
-+}
-+
-+static irqreturn_t rt5133_intr_handler(int irq_number, void *data)
-+{
-+	struct rt5133_priv *priv = data;
-+	u32 intr_evts = 0, handle_evts;
-+	int i, ret;
-+
-+	ret = regmap_bulk_read(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
-+			       RT5133_INTR_BYTE_NR);
-+	if (ret) {
-+		dev_err(priv->dev, "%s, read event failed\n", __func__);
-+		return IRQ_NONE;
-+	}
-+
-+	handle_evts = intr_evts & RT5133_BASE_EVT_MASK;
-+	/*
-+	 * VREF_EVT is a special case, if base off
-+	 * this event will also be trigger. Skip it
-+	 */
-+	if (handle_evts & ~RT5133_VREF_EVT_MASK)
-+		dev_dbg(priv->dev, "base event occurred [0x%02x]\n",
-+			handle_evts);
-+
-+	handle_evts = (intr_evts & RT5133_LDO_OC_EVT_MASK) >>
-+		RT5133_LDO_OC_EVT_SHIFT;
-+
-+	for (i = RT5133_REGULATOR_LDO1; i < RT5133_REGULATOR_MAX && handle_evts; i++) {
-+		if (!(handle_evts & BIT(i - 1)))
-+			continue;
-+		regulator_notifier_call_chain(priv->rdev[i],
-+					      REGULATOR_EVENT_OVER_CURRENT,
-+					      &i);
-+	}
-+
-+	handle_evts = (intr_evts & RT5133_LDO_PGB_EVT_MASK) >>
-+		RT5133_LDO_PGB_EVT_SHIFT;
-+	for (i = RT5133_REGULATOR_LDO1; i < RT5133_REGULATOR_MAX && handle_evts; i++) {
-+		if (!(handle_evts & BIT(i - 1)))
-+			continue;
-+		regulator_notifier_call_chain(priv->rdev[i],
-+					      REGULATOR_EVENT_FAIL, &i);
-+	}
-+
-+	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_EVT, &intr_evts,
-+				RT5133_INTR_BYTE_NR);
-+	if (ret)
-+		dev_err(priv->dev, "%s, clear event failed\n", __func__);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int rt5133_enable_interrupts(int irq_no, struct rt5133_priv *priv)
-+{
-+	u32 mask = RT5133_INTR_CLR_MASK;
-+	int ret;
-+
-+	/* Force to write clear all events */
-+	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_EVT, &mask,
-+				RT5133_INTR_BYTE_NR);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to clear all interrupts\n");
-+		return ret;
-+	}
-+
-+	/* Unmask all interrupts */
-+	mask = 0;
-+	ret = regmap_bulk_write(priv->regmap, RT5133_REG_BASE_MASK, &mask,
-+				RT5133_INTR_BYTE_NR);
-+	if (ret) {
-+		dev_err(priv->dev, "Failed to unmask all interrupts\n");
-+		return ret;
-+	}
-+
-+	return devm_request_threaded_irq(priv->dev, irq_no, NULL,
-+					 rt5133_intr_handler, IRQF_ONESHOT,
-+					 dev_name(priv->dev), priv);
-+}
-+
-+static int rt5133_regmap_hw_read(void *context, const void *reg_buf,
-+				 size_t reg_size, void *val_buf,
-+				 size_t val_size)
-+{
-+	struct rt5133_priv *priv = context;
-+	struct i2c_client *client = to_i2c_client(priv->dev);
-+	u8 reg = *(u8 *)reg_buf, crc;
-+	u8 *buf;
-+	int buf_len = RT5133_PREDATA_LEN + val_size + RT5133_I2C_CRC_LEN;
-+	int read_len, ret;
-+
-+	buf = kzalloc(buf_len, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	buf[0] = I2C_ADDR_XLATE_8BIT(client->addr, I2C_SMBUS_READ);
-+	buf[1] = reg;
-+
-+	read_len = val_size + RT5133_I2C_CRC_LEN;
-+	ret = i2c_smbus_read_i2c_block_data(client, reg, read_len,
-+					    buf + RT5133_PREDATA_LEN);
-+
-+	if (ret < 0)
-+		goto out_read_err;
-+
-+	if (ret != read_len) {
-+		ret = -EIO;
-+		goto out_read_err;
-+	}
-+
-+	crc = crc8(priv->crc8_tbls, buf, RT5133_PREDATA_LEN + val_size, 0);
-+	if (crc != buf[RT5133_PREDATA_LEN + val_size]) {
-+		ret = -EIO;
-+		goto out_read_err;
-+	}
-+
-+	memcpy(val_buf, buf + RT5133_PREDATA_LEN, val_size);
-+	dev_dbg(priv->dev, "%s, reg = 0x%02x, data = 0x%02x\n", __func__, reg, *(u8 *)val_buf);
-+
-+out_read_err:
-+	kfree(buf);
-+	return (ret < 0) ? ret : 0;
-+}
-+
-+static int rt5133_regmap_hw_write(void *context, const void *data, size_t count)
-+{
-+	struct rt5133_priv *priv = context;
-+	struct i2c_client *client = to_i2c_client(priv->dev);
-+	u8 reg = *(u8 *)data, crc;
-+	u8 *buf;
-+	int buf_len = RT5133_I2C_ADDR_LEN + count + RT5133_I2C_CRC_LEN +
-+		RT5133_I2C_DUMMY_LEN;
-+	int write_len, ret;
-+
-+	buf = kzalloc(buf_len, GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+
-+	buf[0] = I2C_ADDR_XLATE_8BIT(client->addr, I2C_SMBUS_WRITE);
-+	buf[1] = reg;
-+	memcpy(buf + RT5133_PREDATA_LEN, data + RT5133_REG_ADDR_LEN,
-+	       count - RT5133_REG_ADDR_LEN);
-+
-+	crc = crc8(priv->crc8_tbls, buf, RT5133_I2C_ADDR_LEN + count, 0);
-+	buf[RT5133_I2C_ADDR_LEN + count] = crc;
-+
-+	write_len = count - RT5133_REG_ADDR_LEN + RT5133_I2C_CRC_LEN +
-+		RT5133_I2C_DUMMY_LEN;
-+	ret = i2c_smbus_write_i2c_block_data(client, reg, write_len,
-+					     buf + RT5133_PREDATA_LEN);
-+
-+	dev_dbg(priv->dev, "%s, reg = 0x%02x, data = 0x%02x\n", __func__, reg,
-+		*(u8 *)(buf + RT5133_PREDATA_LEN));
-+	kfree(buf);
-+	return ret;
-+}
-+
-+static const struct regmap_bus rt5133_regmap_bus = {
-+	.read = rt5133_regmap_hw_read,
-+	.write = rt5133_regmap_hw_write,
-+	/* Due to crc, the block read/write length has the limit */
-+	.max_raw_read = RT5133_MAX_I2C_BLOCK_SIZE,
-+	.max_raw_write = RT5133_MAX_I2C_BLOCK_SIZE,
-+};
-+
-+static bool rt5133_is_volatile_reg(struct device *dev, unsigned int reg)
-+{
-+	switch (reg) {
-+	case RT5133_REG_CHIP_INFO:
-+	case RT5133_REG_BASE_EVT...RT5133_REG_LDO_PGB_STAT:
-+	case RT5133_REG_LDO_ON...RT5133_REG_LDO_OFF:
-+	case RT5133_REG_LDO1_CTRL1:
-+	case RT5133_REG_LDO2_CTRL1:
-+	case RT5133_REG_LDO3_CTRL1:
-+	case RT5133_REG_LDO4_CTRL1:
-+	case RT5133_REG_LDO5_CTRL1:
-+	case RT5133_REG_LDO6_CTRL1:
-+	case RT5133_REG_LDO7_CTRL1:
-+	case RT5133_REG_LDO8_CTRL1:
-+		return true;
-+	default:
-+		return false;
-+	};
-+}
-+
-+static const struct regmap_config rt5133_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.max_register = RT5133_REG_LDO8_CTRL4,
-+	.cache_type = REGCACHE_FLAT,
-+	.num_reg_defaults_raw = RT5133_REG_LDO8_CTRL4 + 1,
-+	.volatile_reg = rt5133_is_volatile_reg,
-+};
-+
-+static int rt5133_chip_reset(struct rt5133_priv *priv)
-+{
-+	int ret;
-+
-+	ret = regmap_write(priv->regmap, RT5133_REG_RST_CTRL,
-+			   RT5133_RESET_CODE);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait for register reset to take effect */
-+	udelay(2);
-+
-+	return 0;
-+}
-+
-+static int rt5133_validate_vendor_info(struct rt5133_priv *priv)
-+{
-+	unsigned int val = 0;
-+	int i, ret;
-+
-+	ret = regmap_read(priv->regmap, RT5133_REG_CHIP_INFO, &val);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(regulator_data); i++) {
-+		if ((val & RT5133_VENDOR_ID_MASK) ==
-+						regulator_data[i].vendor_id){
-+			priv->cdata = &regulator_data[i];
-+			break;
-+		}
-+	}
-+	if (IS_ERR(priv->cdata)) {
-+		dev_err(priv->dev, "Failed to find regualtor match version\n");
-+		return -ENODEV;
-+	}
-+
-+	return 0;
-+}
-+
-+static int rt5133_parse_dt(struct rt5133_priv *priv)
-+{
-+	unsigned int val = 0;
-+	int ret = 0;
-+
-+	if (!device_property_read_bool(priv->dev, "richtek,oc-shutdown-all"))
-+		val = 0;
-+	else
-+		val = 1 << RT5133_OCSHDN_ALL_SHIFT;
-+	ret = regmap_update_bits(priv->regmap, RT5133_REG_LDO_SHDN,
-+				 RT5133_OCSHDN_ALL_MASK, val);
-+	if (ret)
-+		return ret;
-+
-+	if (!device_property_read_bool(priv->dev, "richtek,pgb-shutdown-all"))
-+		val = 0;
-+	else
-+		val = 1 << RT5133_PGBSHDN_ALL_SHIFT;
-+	return regmap_update_bits(priv->regmap, RT5133_REG_LDO_SHDN,
-+				  RT5133_PGBSHDN_ALL_MASK, val);
-+}
-+
-+static int rt5133_probe(struct i2c_client *i2c)
-+{
-+	struct rt5133_priv *priv;
-+	struct regulator_config config = {0};
-+	int i, ret;
-+
-+	priv = devm_kzalloc(&i2c->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = &i2c->dev;
-+	crc8_populate_msb(priv->crc8_tbls, RT5133_CRC8_POLYNOMIAL);
-+
-+	priv->enable_gpio = devm_gpiod_get_optional(&i2c->dev, "enable",
-+						    GPIOD_OUT_HIGH);
-+	if (IS_ERR(priv->enable_gpio))
-+		dev_err(&i2c->dev, "Failed to request HWEN gpio, check if default en=high\n");
-+
-+	priv->regmap = devm_regmap_init(&i2c->dev, &rt5133_regmap_bus, priv,
-+					&rt5133_regmap_config);
-+	if (IS_ERR(priv->regmap)) {
-+		dev_err(&i2c->dev, "Failed to register regmap\n");
-+		return PTR_ERR(priv->regmap);
-+	}
-+
-+	ret = rt5133_validate_vendor_info(priv);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to check vendor info [%d]\n", ret);
-+		return ret;
-+	}
-+
-+	ret = rt5133_chip_reset(priv);
-+	if (ret) {
-+		dev_err(&i2c->dev, "Failed to execute sw reset\n");
-+		return ret;
-+	}
-+
-+	config.dev = &i2c->dev;
-+	config.driver_data = priv;
-+	config.regmap = priv->regmap;
-+
-+	for (i = 0; i < RT5133_REGULATOR_MAX; i++) {
-+		priv->rdev[i] = devm_regulator_register(&i2c->dev,
-+							priv->cdata->regulators + i,
-+							&config);
-+		if (IS_ERR(priv->rdev[i])) {
-+			dev_err(&i2c->dev,
-+				"Failed to register [%d] regulator\n", i);
-+			return PTR_ERR(priv->rdev[i]);
-+		}
-+	}
-+
-+	ret = rt5133_parse_dt(priv);
-+	if (ret) {
-+		dev_err(&i2c->dev, "%s, Failed to parse dt\n", __func__);
-+		return ret;
-+	}
-+
-+	priv->gc.label = dev_name(&i2c->dev);
-+	priv->gc.parent = &i2c->dev;
-+	priv->gc.base = -1;
-+	priv->gc.ngpio = RT5133_GPIO_NR;
-+	priv->gc.set = rt5133_gpio_set;
-+	priv->gc.get = rt5133_gpio_get;
-+	priv->gc.direction_output = rt5133_gpio_direction_output;
-+	priv->gc.can_sleep = true;
-+
-+	ret = devm_gpiochip_add_data(&i2c->dev, &priv->gc, priv);
-+	if (ret)
-+		return ret;
-+
-+	ret = rt5133_enable_interrupts(i2c->irq, priv);
-+	if (ret) {
-+		dev_err(&i2c->dev, "enable interrupt failed\n");
-+		return ret;
-+	}
-+
-+	i2c_set_clientdata(i2c, priv);
-+
-+	return ret;
-+}
-+
-+static const struct of_device_id __maybe_unused rt5133_of_match_table[] = {
-+	{ .compatible = "richtek,rt5133", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, rt5133_of_match_table);
-+
-+static struct i2c_driver rt5133_driver = {
-+	.driver = {
-+		.name = "rt5133",
-+		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
-+		.of_match_table = rt5133_of_match_table,
-+	},
-+	.probe = rt5133_probe,
-+};
-+module_i2c_driver(rt5133_driver);
-+
-+MODULE_DESCRIPTION("RT5133 Regulator Driver");
-+MODULE_LICENSE("GPL v2");
---
-2.43.0
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
