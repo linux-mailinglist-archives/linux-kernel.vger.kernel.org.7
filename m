@@ -1,74 +1,45 @@
-Return-Path: <linux-kernel+bounces-749470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCCB8B14EC5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:52:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59695B14EC7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 15:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 826CA18A315D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:52:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D9164E4DDC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DCCB1A8F97;
-	Tue, 29 Jul 2025 13:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="CVukV2Yu"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5D6C1A2389;
+	Tue, 29 Jul 2025 13:52:33 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40F24C98;
-	Tue, 29 Jul 2025 13:51:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA321A00E7
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 13:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753797113; cv=none; b=dKXB4tTy807lC+9Kd8Tn2dpCJH5G5RIOBZ+zIu3FC2S/IVnQZ47q+3vJlG3Sqqlgmov+2RvK6iEMONJxmLVUIrYoyh4+//9VDQCl69AiNaWP+bvzBBUHPZkALgJ0G1nttLTUW5EO9Hp8LrtvsMBFYAeBo2cqUbx9kNG0u2wh9go=
+	t=1753797153; cv=none; b=lRAbLI1LgE7eTA+mgSeEodsYhnW7jhT61DEpHx+ALISRaPQrz9l8wmXZ6ubsop4eGNoeDZBCXhVwdlo9qRowyLRPILxut16QsrYEs7J8czbRmAII0Edm+Zup+vz+KIp8JzIqG7E8Jf/to4MZGhd19dHCRfd4cRXOOfWvSrxrOWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753797113; c=relaxed/simple;
-	bh=hoo0VZ8djB8RitqLM6jiFX6GVzpj9dIvdPNFEKlhtDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LHn4WE6+ub4GlP2GN+Jvz+jOdUAERRgVOlY1CexnYSi67WzU0RQBuRFMkw0p/YeHFv6rH1VFRDp2QclY1wdZNvFGfO4VCmcI6oQ88w1Xy3qGg7epsItCTwMfIB/IYGsPKqvd2QiJJFZ6eTBRCVsnDkssxD/Vz7fA2vchNffc1Ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=CVukV2Yu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56T4YuKp022242;
-	Tue, 29 Jul 2025 13:51:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=mHhfNB
-	3oDoP8UAbSAi6vxVgPlsnKrJzYQS128/QQKiE=; b=CVukV2Yu4MWjjN/Vc/qcNU
-	JzMQeTvoP9MQTHTq2SbeE9+OdZdqJv5wJ9KOWJy5jsSrt1PBrIYC5Ozt7VIP68j7
-	EijeCaxKDsCILDFUgkSEuf0Kaa7bM9G7tc5GP6BbVO1EB77ytsAJNos5s/0w5eu1
-	PYrg7EvBa1t2TqOk0OEFY/Pv4ygGGrWpbEqPolu22U29fqeen+rR+I+nWgyY6CCD
-	txwFJc+tdpjCSjhy+V8niZNB0GdeJrGN8bOf/tBwKkGg2adzt7ux5Mn3OPpBsQlV
-	Vr8lyYgLUBEx7SIi6j8BlPa91lENn/luI5H1ta8vIPPnkGmj7qk1iqlY/YvKlPPA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qd5f0y3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 13:51:34 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56TD3s77017464;
-	Tue, 29 Jul 2025 13:51:33 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4859r02q2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Jul 2025 13:51:33 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56TDpW7525428588
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Jul 2025 13:51:32 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AF3CB5805D;
-	Tue, 29 Jul 2025 13:51:32 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5995958057;
-	Tue, 29 Jul 2025 13:51:32 +0000 (GMT)
-Received: from [9.61.242.224] (unknown [9.61.242.224])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 29 Jul 2025 13:51:32 +0000 (GMT)
-Message-ID: <f2d3027f-44d1-44d2-b89c-e01085c6d036@linux.ibm.com>
-Date: Tue, 29 Jul 2025 08:51:31 -0500
+	s=arc-20240116; t=1753797153; c=relaxed/simple;
+	bh=Jh3PjVly/nnjbL1LLqoG6+gwIWPQA3FRR+iYYVjERY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m76MCPFrSfmzBLFDNR9RAI3AOK2MQCrZp48kYg36rMiSs5xNLo+444IJdiCcC+40YorrjefWE5K/5KNgTChte9KUoJN50iUzyKJlhH2PUX26y7suHTu7W6xgPF6WQkjrkdSwpz+7fDCIBUjhcCcAJ6deLeAMgr/O4ekU3RHME+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4brxYM0kHTz2RVvZ;
+	Tue, 29 Jul 2025 21:49:59 +0800 (CST)
+Received: from dggpemf200018.china.huawei.com (unknown [7.185.36.31])
+	by mail.maildlp.com (Postfix) with ESMTPS id 561E21A0188;
+	Tue, 29 Jul 2025 21:52:20 +0800 (CST)
+Received: from [10.174.176.250] (10.174.176.250) by
+ dggpemf200018.china.huawei.com (7.185.36.31) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 29 Jul 2025 21:52:19 +0800
+Message-ID: <ab6b06d6-d2e8-4695-9eda-5bfaf507c2f1@huawei.com>
+Date: Tue, 29 Jul 2025 21:52:18 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,72 +47,186 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] vhost: initialize vq->nheads properly
-To: Jason Wang <jasowang@redhat.com>, mst@redhat.com, eperezma@redhat.com
-Cc: kvm@vger.kernel.org, virtualization@lists.linux.dev,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sgarzare@redhat.com, will@kernel.org, Breno Leitao <leitao@debian.org>
-References: <20250729073916.80647-1-jasowang@redhat.com>
-Content-Language: en-US
-From: JAEHOON KIM <jhkim@linux.ibm.com>
-In-Reply-To: <20250729073916.80647-1-jasowang@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDEwNyBTYWx0ZWRfX3Yflp5UMOpWy
- O/YRFoiaTO1Le9cN3kuuAX9CILQQXc8SCTD/TgqoTiat/DU/Bj02LF9XA333U4W9w3U3lt+V+af
- Acsd5EScOtOT8Yfbpn135cIUC/yeERwEFdUtkxsT8NqiBfpwjU1+oXT5VV7bJiSuytzmkrG89d4
- K7avTQoW7Hj3rL74ldtIeDeHd00I+s7zViDJUCo8EHeoIHctzXuOqXsinhrzDzWy4QlHLBj8xyK
- +umj/h+wek1NOq2gWGjw5wYCQQq2eFy7gTkdB5vmGIktnOLW0lt1KS3AS3+RujSEupl8F/NkSOM
- V5x9fveXiuu9qktiJI5v18IPTzCJ82iuzxe8pc9lcFyuSo//ubT8msx1vtDb5VYLVc6icoAqGrR
- jC0MNoeozy01L+T08Eyk5qFys4FomsNQLBjlG6QKAMuiEnjWtpvr9ro2PrJisjud5J/GuNom
-X-Proofpoint-ORIG-GUID: mpOpWW-OLWu6n9CXOeVuW_P66Tb9mhIX
-X-Authority-Analysis: v=2.4 cv=B9q50PtM c=1 sm=1 tr=0 ts=6888d1e6 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=xNf9USuDAAAA:8
- a=20KFwNOVAAAA:8 a=wyMUYbSDCzE7wVUlRWoA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: mpOpWW-OLWu6n9CXOeVuW_P66Tb9mhIX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-29_03,2025-07-28_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 priorityscore=1501 mlxscore=0 spamscore=0 mlxlogscore=956
- suspectscore=0 clxscore=1015 impostorscore=0 bulkscore=0 lowpriorityscore=0
- malwarescore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507290107
+Subject: Re: [RFC PATCH] mm/damon: add full LPAE support for memory monitoring
+ above 4GB
+To: SeongJae Park <sj@kernel.org>
+CC: zuoze <zuoze1@huawei.com>, <akpm@linux-foundation.org>,
+	<damon@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <wangkefeng.wang@huawei.com>
+References: <20250726171616.53704-1-sj@kernel.org>
+From: Quanmin Yan <yanquanmin1@huawei.com>
+In-Reply-To: <20250726171616.53704-1-sj@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf200018.china.huawei.com (7.185.36.31)
 
-On 7/29/2025 2:39 AM, Jason Wang wrote:
-> Commit 7918bb2d19c9 ("vhost: basic in order support") introduces
-> vq->nheads to store the number of batched used buffers per used elem
-> but it forgets to initialize the vq->nheads to NULL in
-> vhost_dev_init() this will cause kfree() that would try to free it
-> without be allocated if SET_OWNER is not called.
->
-> Reported-by: JAEHOON KIM <jhkim@linux.ibm.com>
-> Reported-by: Breno Leitao <leitao@debian.org>
-> Fixes: 7918bb2d19c9 ("vhost: basic in order support")
-> Signed-off-by: Jason Wang <jasowang@redhat.com>
-> ---
->   drivers/vhost/vhost.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-> index a4873d116df1..b4dfe38c7008 100644
-> --- a/drivers/vhost/vhost.c
-> +++ b/drivers/vhost/vhost.c
-> @@ -615,6 +615,7 @@ void vhost_dev_init(struct vhost_dev *dev,
->   		vq->log = NULL;
->   		vq->indirect = NULL;
->   		vq->heads = NULL;
-> +		vq->nheads = NULL;
->   		vq->dev = dev;
->   		mutex_init(&vq->mutex);
->   		vhost_vq_reset(dev, vq);
->
-checked and confirmed no crash occurs.
-Thanks for the fast update.
 
-Tested-by: Jaehoon Kim <jhkim@linux.ibm.com>
+在 2025/7/27 1:16, SeongJae Park 写道:
+> Hi Quanmin,
+>
+> On Sat, 26 Jul 2025 11:14:19 +0800 Quanmin Yan <yanquanmin1@huawei.com> wrote:
+>
+>> 在 2025/7/26 4:22, SeongJae Park 写道:
+>>> On Fri, 25 Jul 2025 11:15:22 +0800 zuoze <zuoze1@huawei.com> wrote:
+>>>
+>>>> 在 2025/4/23 1:43, SeongJae Park 写道:
+>>>>> On Tue, 22 Apr 2025 19:50:11 +0800 zuoze <zuoze1@huawei.com> wrote:
+>>>>>
+>>>>> [...]
+>>>>>> Thanks for the patches - I’ve noted the RFC series and user-space
+>>>>>> updates. Apologies for the delay; I’ll prioritize reviewing these soon
+>>>>>> to verify they meet the intended tracking goals. Appreciate your
+>>>>>> patience.
+>>>>> No worry.  Please take your time and let me know if there is anything I can
+>>>>> help.
+>>>>>
+>>>>> I think we can improve the user-space tool support better for usability.  For
+>>>>> example, it could find LPAE case, set addr_unit parameter, and convert
+>>>>> user-input and output address ranges on its own.  But hopefully the current
+>>>>> support allows simple tests of the kernel side change, and we could do such
+>>>>> improvement after the kernel side change is made.
+>>>>>
+>>>>>
+>>>> Hi SJ,
+>>>>
+>>>> Apologies for the delayed response. We've verified your patch in our
+>>>> environment and confirmed it supports LPAE address monitoring.
+>>> No worry, thank you for testing that :)
+>>>
+>>>> However,
+>>>> we observed some anomalies in the reclaim functionality. During code
+>>>> review, we identified a few issues:
+>>>>
+>>>> The semantic meaning of damon_region changed after addr_unit was
+>>>> introduced. The units in damon_addr_range may no longer represent bytes
+>>>> directly.
+>>> You're right, and this is an intended change.
+>>>
+>>>> The size returned by damon_sz_region() now requires multiplication by
+>>>> addr_unit to get the actual byte count.
+>>> Again, this is an intended change.  damon_sz_region() callers should aware this
+>>> semantic and updated accordingly, if it could make a real problem otherwise.
+>>> If you found such changes required cases that this patch series is missing,
+>>> could you please list up?
+>>>
+>>>> Heavy usage of damon_sz_region() and DAMON_MIN_REGION likely requires
+>>>> addr_unit-aware adjustments throughout the codebase. While this approach
+>>>> works, it would involve considerable changes.
+>>> It has been a while since I wrote this patch series, but at least while writing
+>>> it, I didn't find such required changes.  Of course I should missed something,
+>>> though.  As I mentioned above, could you please list such changes required
+>>> parts that makes problem?  That would be helpful at finding the path forward.
+>>>
+>>>> What's your perspective on
+>>>> how we should proceed?
+>>> Let's see the list of required additional changes with why those are required
+>>> (what problems can happen if such chadnges are not made), and discuss.
+>> Hi SJ,
+>>
+>> Thank you for your email reply. Let's discuss the impacts introduced after
+>> incorporating addr_unit. First of all, it's essential to clarify that the
+>> definition of damon_addr_range (in damon_region) has changed, we will now use
+>> damon_addr_range * addr_unit to calculate physical addresses.
+>>
+>> I've noticed some issues, in mm/damon/core.c:
+>>
+>>    damos_apply_scheme()
+>>        ...
+>>        unsigned long sz = damon_sz_region(r);  // the unit of 'sz' is no longer bytes.
+>>        ...
+>>        if (c->ops.apply_scheme)
+>>            if (quota->esz && quota->charged_sz + sz > quota->esz)
+>>                sz = ALIGN_DOWN(quota->esz - quota->charged_sz,
+>>                        DAMON_MIN_REGION);  // the core issue lies here.
+>>            ...
+>>            quota->charged_sz += sz;    // note the units.
+>>        ...
+>>        update_stat:
+>>            // 'sz' should be multiplied by addr_unit:
+>>            damos_update_stat(s, sz, sz_applied, sz_ops_filter_passed);
+>>
+>> Currently, DAMON_MIN_REGION is defined as PAGE_SIZE, therefore aligning
+>> sz downward to DAMON_MIN_REGION is likely unreasonable. Meanwhile, the unit
+>> of sz in damos_quota is also not bytes, which necessitates updates to comments
+>> and user documentation. Additionally, the calculation involving DAMON_MIN_REGION
+>> requires reconsideration. Here are a few examples:
+>>
+>>    damos_skip_charged_region()
+>>        ...
+>>        sz_to_skip = ALIGN_DOWN(quota->charge_addr_from -
+>>                        r->ar.start, DAMON_MIN_REGION);
+>>        ...
+>>        if (damon_sz_region(r) <= DAMON_MIN_REGION)
+>>                        return true;
+>>        sz_to_skip = DAMON_MIN_REGION;
+>>
+>>    damon_region_sz_limit()
+>>          ...
+>>        if (sz < DAMON_MIN_REGION)
+>>            sz = DAMON_MIN_REGION;
+> Thank you for this kind and detailed explanation of the issue!  I understand
+> adopting addr_unit would make DAMON_MINREGION 'addr_unit * 4096' bytes, and it
+> is not a desired result when 'addr_unit' is large.  For example, if 'addr_unit'
+> is set as 4096, the access monitoring and operation schemes will work in only
+>> 16 MiB granularity at the best.
+>> Now I can think of two approaches, one is to keep sz in bytes, this requires
+>> modifications to many other call sites that use these two functions (at least
+>> passing the corresponding ctx->addr_unit. By the way, should we restrict the
+>> input of addr_unit?):
+>>
+>>    damos_apply_scheme()
+>>        ...
+>>    -    unsigned long sz = damon_sz_region(r);
+>>    +    unsigned long sz = damon_sz_region(r) * c->addr_unit;
+>>        ...
+>>    -    damon_split_region_at(t, r, sz);
+>>    +    damon_split_region_at(t, r, sz / c->addr_unit);
+>>
+>> The second approach is to divide by addr_unit when applying DAMON_MIN_REGION,
+>> and revert to byte units for statistics, this approach seems to involve
+>> significant changes as well:
+>>
+>>    damos_apply_scheme()
+>>        ...
+>>        sz = ALIGN_DOWN(quota->esz - quota->charged_sz,
+>>    -                    DAMON_MIN_REGION);
+>>    +                    DAMON_MIN_REGION / c->addr_unit);
+>>        ...
+>>    update_stat:
+>>    -    damos_update_stat(s, sz, sz_applied, sz_ops_filter_passed);
+>>    +    damos_update_stat(s, sz, sz_applied * c->addr_unit, sz_ops_filter_passed);
+>>
+>> These are my observations. What's your perspective on how we should proceed? Looking
+>> forward to your reply.
+> I think the second approach is better.  But I want to avoid changing every
+> DAMON_MIN_REGION usage.  What about changing DAMON_MIN_REGION as 'max(4096 /
+> addr_unit, 1)' instead?  Specifically, we can change DAMON_MIN_REGION from a
+> global macro value to per-context variable (a field of damon_ctx), and set it
+> accordingly when the parameters are set.
+>
+> For stats, I think the users should aware of the fact DAMON is working with the
+> addr_unit, so they should multiply addr_unit to the stats to get bytes
+> information.  So, I think the stats update in kernel is not really required.
+> DAMON user-space tool may need to be updated accordingly, though.
+>
+> I didn't take time to think about all corner cases, so I may missing something.
+> Please let me knwo if you find such missing things.
 
+Hi SJ,
+
+Apologies for the delayed response to this email. Following your suggested method,
+I added implementation damon_ctx->min_region, and also uncovered additional
+issues specific to 32-bit platforms. I've prepared a patch series, which is
+currently under testing. I'll get back to you as soon as the verification is complete.
+
+Thanks,
+Quanmin Yan
+
+>
+> Thanks,
+> SJ
+>
+> [...]
+>
 
