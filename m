@@ -1,128 +1,166 @@
-Return-Path: <linux-kernel+bounces-748737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8214B1457A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:56:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D99A6B1457D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 02:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D3961714E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:56:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE96F7A9797
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 00:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F103E18A93F;
-	Tue, 29 Jul 2025 00:56:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564DF18A93F;
+	Tue, 29 Jul 2025 00:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cKBWBRJM"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ml6H2AT/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCF42AE90;
-	Tue, 29 Jul 2025 00:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A511017578;
+	Tue, 29 Jul 2025 00:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753750611; cv=none; b=MklpNtGLjbocbXrouLzkLHLSk23YOCZPidMNIpJz456GcYagiq+/WziGkQ1z1aKzMk7NLrIj4am+WGe0rzMyvUOqy8JzDmOQzkQ2EV1TYz6jVC1m409MOPUQk0/zYYg/MAXpb4xtPtQ9F4lA5+6/7cZ1kpjx38tvVY++z/NIzKU=
+	t=1753750624; cv=none; b=BXKEKiXfUpIVv3WVGV/bZVs1TC+hbEtbOnHSnAYfGtaSNHW4XGFumjTVa9oaMciSv+OuWtyVGIi3siMrs44rdGi2fOwaNq61ZQ79p+BtDgDEOp6C1KWNIwb7AHpUkLSALFXKRq3KduHHwYkxlYl11VzBHtvjGz3Q8EiUZVyRmTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753750611; c=relaxed/simple;
-	bh=ZRj0BA6FAuWiJdzSHX7Yi5bfqEmLROewvDuAP1PQ8QI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pjtIYfQgjxCXG78zgg3HQIZvmIukcZ8+Q+pJNBSYjd+TBcoTK0czn8EqJAT4k0CXtZzNUdD22g3FaDv7UUr48Wuct66GWqD0gUM1/Rc5S9GDNav2iIypEhkQCCg9gYh6qasv6RLZWadgsb30QXwxohxBNOKaFjJXRCB6fVHND10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cKBWBRJM; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2402774851fso17723005ad.1;
-        Mon, 28 Jul 2025 17:56:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753750609; x=1754355409; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=84J/uTIpBTek7M7s8ekKOao4paiVT7+Ml3Zn33DutDY=;
-        b=cKBWBRJMrZwTGH24ClOeDUPsZvOKt9ArYLrDxjTjUTJsepykgGscN+3GlAzozCdZPN
-         D+TPqNTZaoRk6ep4yoQvjMx6tu3wSz+uBhlppnFQvl8btVB4nDG1q0lQR50JXYA4wAl9
-         6fU/MK+4Rdu80/Gq7hlpAYtr0Ri83J67Zguur5Wp5cz3UGiLyohbJOlpnTOCpeeCng0N
-         e97aNLj1NtkU0mkMB3vwhrsCTpRppwL5mNO1trS/8tKDnB9NG2EAoaACyq/v2IW8U5L5
-         E09EXl+amJ+kLcH5eThidf/MKYy+9F3/vZJBxoTIOHhD8YuX8/ErDxiJquR9ph5LZ8+D
-         PH+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753750609; x=1754355409;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=84J/uTIpBTek7M7s8ekKOao4paiVT7+Ml3Zn33DutDY=;
-        b=LzTgRm85R7+3fcgtFGe8nEVRMg8qo1sMOJhLswjSvsgdz77ldUWFJI/Z2+mspYaPtG
-         2j555EJD8J0BdeB89Mf3HPnpj7QLHxDxpJwtBvlOwaiEsvjShzzvg34e4lDQL5ExAXy/
-         NLajVYPPLjn1WoFLkUDzvGcbqmFgwNT/HMf166FYW8WZRwGh+r0um/Gf9roNcn/tmxia
-         BguYjT4KBafYMjGnSkTexTyDu9NSy+dmhQM0YSJ6kYWu1ZHQWcoFIDW2ceqEVO1DCoYJ
-         7UW8v7+aC27usODo/wnu4aJONlrvBw+kV2S52XSEUog/f4ogDkkYBmVMP/zZwk8In+7x
-         rQdA==
-X-Forwarded-Encrypted: i=1; AJvYcCUi4dDvV/XaOP+pjtljnbtxTPOQtXODBvVNl1jXsvY+LE+mMzuCJw2K9KE2fn4aTlH3uQ/Qx3YUPUEUKx2K@vger.kernel.org, AJvYcCV0QGMCafBKO2jxyh+6lXLe1kgJhqMf1YgbpjkwF34pvgJPhEC0hiXdA+pOGtN75vIA2d7pgmmw4JM=@vger.kernel.org, AJvYcCXBaG/uiRpQDQaYuzyqzmkujfvnltWdb7WoLdD6fO5lGPrm7+Rnt4A6own7oLpeau1KIHkT6JuMs/UjNA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzutWcwFl39BtsJkvozFa/LVbdn0V3jB2Rvuwekl6mfes0yfcRW
-	SH0fizTWhL9Qt7LPoTfG3JiZrkWiXwOE5VkmC9PLJsno3MnU+QZ+hrs2
-X-Gm-Gg: ASbGncsBTyWvLWUgSF6bezrrUdCWdhpCgkrYfmGp3b/POFNboDDTANRG/ZkWpZu9UwW
-	e1ebTdISPh2VIPXT8LHSCDzbMLdHbzdyjj+CH1L9T2a3PNkuvmBd/7Ce1r4hagNqe5hW9Ynad+J
-	CGMoNBR8f51VHnAF3ZT4E2AUSvC84AhxUnMuffHQsTXyp4venGjGtW2dWAmq3Tksp+OvYcnqg0N
-	jtMIVPLE0MNmVtxSwUZrPLaLgNkMX4vE8o0Q0BXoBQVx1/wOsDrwITxGaFgNHLpi8Tqfh8W0XKs
-	mMnjSWE88V4cwQhUkMeUWBWdf+AntzOABSCoxkGrSY2d/FWWKxQz4izmBTnkaeTxNGKL7lVDDsW
-	JcGc+/1U0AtoWWVFbZv40nhfFcPPNgSqcJHM=
-X-Google-Smtp-Source: AGHT+IGJKFEVQoBw3Z8VAFR7xi9JSagw5fpw/hROPG/o9WSAO/0cKgapmoBHsdkdUpwtRR23/6iUow==
-X-Received: by 2002:a17:903:1111:b0:234:d7b2:2ac3 with SMTP id d9443c01a7336-23fb3029b76mr171942425ad.20.1753750609133;
-        Mon, 28 Jul 2025 17:56:49 -0700 (PDT)
-Received: from alkaleus ([168.0.235.14])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23ff1dbec8esm48310715ad.194.2025.07.28.17.56.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Jul 2025 17:56:48 -0700 (PDT)
-From: Andre Luiz da Nobrega <andreluizrodriguescastro@gmail.com>
-To: tytso@mit.edu
-Cc: adilger.kernel@dilger.ca,
-	corbet@lwn.net,
-	linux-ext4@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] docs: ext4: fix duplicate Sphinx labels in atomic_writes.rst
-Date: Mon, 28 Jul 2025 21:56:28 -0300
-Message-ID: <20250729005628.68795-1-andreluizrodriguescastro@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753750624; c=relaxed/simple;
+	bh=sJxnHfWid00MWirjyyDq3Z9di88XPxdkYWN6cNbvApA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aLMUrYJVbNXedMRLpTMYcV96AkPzZrqDuBvD8XbFP4omePKn3cuXY05cKsAWwYQlM7iRKjslbmYYs/Hh1fQSQgQq/6/xGmxHBvaCg+yXYdYPJwHXqqrS9GdR4yGO0czAsgSCqSJKgMmx0FmLN+nBPOEoFe7WmpDaFM6jBQVmZhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ml6H2AT/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753750411;
+	bh=dnHlYLNAI+FO7+dy0eBPh4s4qLNT6XzxZ3vk2H16Vdo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ml6H2AT/J9tgZhW02LJKNzKeDFQI5VPxn9DYhfL0PedmXPw9HS1nymzPi75ZJDEGP
+	 tSK7JPOSqscZf/p46qTVVoC3AeDdOTZR/ESrkwL+chZdOXYU0v2tKHo5IuakYul2ps
+	 LOT1HG7DuzcY9l4h8LJXMwacLHNUTM5k06y3Vtg+/VXaJm3uKDz9dMFO88jbtHl9Dz
+	 wm4gVkE8zrxh4ETX96cHLu3i0e/wdywFUurTFmBIJ/vDxAux4Z4pCqIes3Ikr/0rVN
+	 xugy8LCckpVDHXsFXfPD36jA14UmuSqboawy1l9TcO4PYx3dENprNlAxZfWIm4Elr5
+	 ClMcK9VZQhBaw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4brcKP2SBsz4w2S;
+	Tue, 29 Jul 2025 10:53:29 +1000 (AEST)
+Date: Tue, 29 Jul 2025 10:56:55 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Christian Borntraeger <borntraeger@de.ibm.com>, Janosch Frank
+ <frankja@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
+ <peterz@infradead.org>
+Cc: Andrew Donnellan <ajd@linux.ibm.com>, Jinjie Ruan
+ <ruanjinjie@huawei.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Subject: linux-next: manual merge of the kvms390 tree with the tip tree
+Message-ID: <20250729105655.286c0496@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/gGq5Ha+JLfCAcA+77HlDgu/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Fixes Sphinx warnings about duplicate reference labels in
-Documentation/filesystems/ext4/atomic_writes.rst.
+--Sig_/gGq5Ha+JLfCAcA+77HlDgu/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Specifically, the label '.. _atomic_write_bdev_support:' was renamed to
-'.. _atomic_write_bdev_support_section:' to ensure label uniqueness
-within the document.
+Hi all,
 
-Signed-off-by: Andre Luiz da Nobrega <andreluizrodriguescastro@gmail.com>
+Today's linux-next merge of the kvms390 tree got a conflict in:
+
+  include/linux/entry-common.h
+
+between commit:
+
+  a70e9f647f50 ("entry: Split generic entry into generic exception and sysc=
+all entry")
+
+from the tip tree and commit:
+
+  ee4a2e08c101 ("entry: Add arch_in_rcu_eqs()")
+
+from the kvms390 tree.
+
+I fixed it up (I used the former version of this file and applied the
+following merge fix patch) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Tue, 29 Jul 2025 10:49:47 +1000
+Subject: [PATCH] fix up for "entry: Add arch_in_rcu_eqs()"
+
+interacting with "entry: Split generic entry into generic exception and
+syscall entry" from the tip tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 ---
- Documentation/arch/powerpc/index.rst | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/irq-entry-common.h | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
-index 0560cbae5fa1..ce39b54b5a7d 100644
---- a/Documentation/arch/powerpc/index.rst
-+++ b/Documentation/arch/powerpc/index.rst
-@@ -6,7 +6,7 @@ powerpc
- 
- .. toctree::
-     :maxdepth: 1
--
-+    
-     associativity
-     booting
-     bootwrapper
-@@ -20,6 +20,7 @@ powerpc
-     elfnote
-     firmware-assisted-dump
-     hvcs
-+    htm 
-     imc
-     isa-versions
-     kaslr-booke32
--- 
+diff --git a/include/linux/irq-entry-common.h b/include/linux/irq-entry-com=
+mon.h
+index 0cd828b4a444..d643c7c87822 100644
+--- a/include/linux/irq-entry-common.h
++++ b/include/linux/irq-entry-common.h
+@@ -49,6 +49,22 @@ static __always_inline void arch_enter_from_user_mode(st=
+ruct pt_regs *regs);
+ static __always_inline void arch_enter_from_user_mode(struct pt_regs *regs=
+) {}
+ #endif
+=20
++/**
++ * arch_in_rcu_eqs - Architecture specific check for RCU extended quiescent
++ * states.
++ *
++ * Returns: true if the CPU is potentially in an RCU EQS, false otherwise.
++ *
++ * Architectures only need to define this if threads other than the idle t=
+hread
++ * may have an interruptible EQS. This does not need to handle idle thread=
+s. It
++ * is safe to over-estimate at the cost of redundant RCU management work.
++ *
++ * Invoked from irqentry_enter()
++ */
++#ifndef arch_in_rcu_eqs
++static __always_inline bool arch_in_rcu_eqs(void) { return false; }
++#endif
++
+ /**
+  * enter_from_user_mode - Establish state when coming from user mode
+  *
+--=20
 2.50.1
 
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/gGq5Ha+JLfCAcA+77HlDgu/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiIHFcACgkQAVBC80lX
+0GxYMAgAo5KjWiLR3I9lVyZsZzL+hpVUNg1Fu9DsGGXv8xDWVQQkbIKyn8B5sERQ
+/RPooFJEY7QLVvuBJb81ja7lgQlk6rNDMBmCpIs6MIbSvkaoLtd78jUOSYuWzFtx
+qh1iitfeLrGZWK+qMOddLvJ39IvaX6kRUNsfZ952tCbosNgCAJp6X5Pda1EZgyIi
+vYN8zPJVwRC6H/pwP+ELBta+FmgjenfUfZTo18kqVwuIupBVUAbYzA5HlAC7qZqH
+7xj9HM4JHf6jQQQc4WGWwr8v4rVG5W6nmlYRsMoTSBAqG/qIG7q3qCS79awHtx9k
+/ceWS4z4YVAPxd1EZN2YHdYpx6wMNw==
+=hXE/
+-----END PGP SIGNATURE-----
+
+--Sig_/gGq5Ha+JLfCAcA+77HlDgu/--
 
