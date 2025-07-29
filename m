@@ -1,296 +1,236 @@
-Return-Path: <linux-kernel+bounces-748757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-748780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E002B145B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:20:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FD6B145F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 03:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68C7B171F7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:20:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73FAB3BC486
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 01:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA0211DFDB8;
-	Tue, 29 Jul 2025 01:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A261F1317;
+	Tue, 29 Jul 2025 01:43:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Pxpgj6ME"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020128.outbound.protection.outlook.com [52.101.191.128])
+	dkim=pass (2048-bit key) header.d=northwestern.edu header.i=@northwestern.edu header.b="dcvTZ/+h";
+	dkim=pass (1024-bit key) header.d=northwestern.edu header.i=@northwestern.edu header.b="N9vi71Uz"
+Received: from evcspprf10.ads.northwestern.edu (evcspprf10.ads.northwestern.edu [165.124.82.241])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F961DE8AF
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.128
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B05C21F237A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 01:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=165.124.82.241
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753752014; cv=fail; b=rh1hptkXv0nAQDoRYSBOWSkyrBPm16eMs8YjuCYEDLSS4E5gikJ8sxAX371VLo3SD3TuHSEmifOrgZVnnOqIE8DYg6wwur8S7ptVoeXH4sZvdn0NNzVOnrT3gye27Rnyqo2FJojabpIa67FmL5Tb+rug6brn52Xd0t5ocE/JCls=
+	t=1753753384; cv=fail; b=umR/UXNxDfd/3m8jZYmX7H55+G5gAkBC6IDfWM96i07kmLRnZqoZ6GwwNgb+qsfRne7x7hi73eWnOmTcbJxOrV4coI255pWMqcHZ0vBwRK8xtTFAWNmkyLhsU4rPrLwzg01pMaQEvTWIvO3n62BeSLXWYj62sGNJBPqWJdjKbSU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753752014; c=relaxed/simple;
-	bh=FEALpYa1U7cgnXLElwnhPW05kB8skXTgAAWKDfU51AY=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Tb5+ivM8vKY6/tTwZF3YL02jzLgWX27YtaJxW0lvgWj3Xq5mbirnEmkRLZm2l9fL1WRCJyueekcTWVe2lYsJKxF+Ld1KQlcAK80s3OPqi6rYQOTtspvDrvK2DRWw8lHog8w3FrnN0MAOCyWjLPVucXDSsqjY7dcTIS76GxR+A9Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=Pxpgj6ME; arc=fail smtp.client-ip=52.101.191.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+	s=arc-20240116; t=1753753384; c=relaxed/simple;
+	bh=N4yXk4ShAPqKAtoBLzHhipdNv/NXg8z03S7aRGgHhQA=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=t5h51t0nEzQuwUhpusH5QJDhhrQKH61nBJPawXxH5No7vfqq0Vs7p+R5ir/6gPzg6ZvSjKslKRDmmAt/4vtvm4vAsaBokXgvuyKz5apk+fq/2nbHKZG79WwgnKajg2+xWhxwQW+7OAMRml/s9IOMeufgdYl8koZKJNmdhigU18I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=northwestern.edu; spf=pass smtp.mailfrom=northwestern.edu; dkim=pass (2048-bit key) header.d=northwestern.edu header.i=@northwestern.edu header.b=dcvTZ/+h; dkim=pass (1024-bit key) header.d=northwestern.edu header.i=@northwestern.edu header.b=N9vi71Uz; arc=fail smtp.client-ip=165.124.82.241
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=northwestern.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=northwestern.edu
+Received: from pps.filterd (evcspprf10.ads.northwestern.edu [127.0.0.1])
+	by evcspprf10.ads.northwestern.edu (8.18.1.2/8.18.1.2) with ESMTP id 56T0uvMX028541;
+	Mon, 28 Jul 2025 20:22:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=northwestern.edu; h=cc :
+ content-transfer-encoding : content-type : date : from : message-id :
+ mime-version : subject : to; s=proofpoint;
+ bh=ikSir2NsMxvFO1NrWrgjWtVpcnZixkbr5m7gQw4NiC4=;
+ b=dcvTZ/+hMOi254oF/9a/YrD7hbnpn0wLxg18ndo3rmzYZbFmm3wb8G9KroMPbMD/6PEG
+ FXs7IYzf9H2c6vO5jylc+oMSurFmQtzws7gPF0lK33lE3o7mdQvcpMqeNwb2WZ3GHfSo
+ CYwLV/rnUtdpgIDdm9J3hKDUYxP8zJFT3C34/vgqptPjfGLxH8Nb9epocbcsZg/Q8Lw9
+ aK50IByLJy92Z6zRxJ+G0WXhwWRlrrVgyi9QuJWBDWU2nu08Rn6n0uOZDYP/j+hsltTU
+ WucC1yVA+RZ3s5HQA7AfWQIrFC9mjdq2TWkR+lgjqat6ZtKYyye2tSnnDjjTDToeHJnH 6Q== 
+Received: from pps.reinject (localhost [127.0.0.1])
+	by evcspprf10.ads.northwestern.edu (PPS) with ESMTPS id 485d75dsbq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 20:22:17 -0500
+Received: from evcspprf10.ads.northwestern.edu (evcspprf10.ads.northwestern.edu [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56T1MHjv020439;
+	Mon, 28 Jul 2025 20:22:17 -0500
+Received: from evcspexch02.ads.northwestern.edu (evcspexch02.ads.northwestern.edu [165.124.43.180])
+	by evcspprf10.ads.northwestern.edu (PPS) with ESMTPS id 485d75dsbn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Jul 2025 20:22:17 -0500
+Received: from EVCSPEXCH01.ads.northwestern.edu (165.124.43.179) by
+ EVCSPEXCH02.ads.northwestern.edu (165.124.43.180) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 28 Jul 2025 20:22:16 -0500
+Received: from DM2PR04CU003.outbound.protection.outlook.com (40.93.13.96) by
+ EVCSPEXCH01.ads.northwestern.edu (165.124.43.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11 via Frontend Transport; Mon, 28 Jul 2025 20:22:16 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AjOA61IcIGeTdNqJFulIKCwp6ioFTfQBpJ2b2mm+M40Iwvf691Uk3OvviU8S680A2vlYWdaBgjW1LgwpL37hN/qzIGVxU+xOjye4/ywN+Ode72fxm1emJ+iovdrdW3Ft2W+fiLe1oUUIOV4QipEeYem3ubYOUhUP5iHKZsHM7SEYKfaT1spjC9rrJTMCfV6I1qOZUiLdnvNKSEff2R2wuNMy4I7VccafU9f1/zq1++G3LiRij9agP/0DU2K7kKKwVjC9unjaoVEgP3mTEq5W8l3wyQnDT2kmFZWiMsKwX1sLQ2aFlPpR3h+81rcPfRrgAn8cwTMo8ECTSavwyuw0hA==
+ b=Oq8ceULipBnG07ew0MVhvfCp+YwdCgSoygRmxJotZ53jvyS0XrzVn2Wvg0iKsNyRIfReLaSUjfO8q9kx0vDenQ+ILDH5Hq5HVAaRPHSqV9l0cRpy69mTyj68zE09KDtZz+f/pTo+vWGjiv1+TTOf/hqcFWYqHIBIPnFmB1ONJAbGEziucgvw8bdwUPxQZoy60D+tkySxqvu2ToMsuySG8vmz8220ffc0JtRRWCl8NC9NHkYFcu84yVynUEFUgCL4G1YndeLi4qWxdZqUWgW5qXi66lZRXnPY44TmRTDij9rqFIsG4HG/wQBiLuwjlnUgnRUqogCc1CpqeUtHYJYf2w==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xTM0ZfGdmmSDSZ2p/B4A0f+boVuG2rb7QHtBgIbTExw=;
- b=QUfv4GgqbFd89QsdROXj/EloDAY9lZjsOB5oTAjcx9tmidJAr6JO3tVA8XORM/DvfW/q6UWtgnTaD22fgBTq6DzwnvuIgykCxBMEqIGVLVFEO34CMx3wPBRaVHqqH6E3uvvvtygFfipNhY2pkpy6IO/92Q6lCqoXLP5Aqlpt1HlMWkplWmzhxToqc1LOmudRjk+HuMhQSqidOnc8UTNtahQK5/O7NwbCgAREp6ed1UK9GH/zb9Fv0ns8Wj34FwdJO6Gr2RgT67vS9zC9nZPriZBLnA/dVNL0AJcv28JfrLJEn8nGHVjLl8X1SwooM0kbsfjtTOspl0k64oV9jFe4JA==
+ bh=ikSir2NsMxvFO1NrWrgjWtVpcnZixkbr5m7gQw4NiC4=;
+ b=zKvEUdzm7a8BvETUhm2qUCTD9srlU1Qi3zEKiYluC5bRkescZ03x8c6iwLeE+2V/H9iQjf0a10GcEPdPWgP0ADg3K8FPpQoZYyO1+zfHtU4TvZfjsJnnhcJlZUxJUDRw4FJwgbUWMr/WHBfPsfH/BgKQQAb/c2plKgaV77DTXlrNS83hc/DgpxEZannmEzvCKtF1phkNqM2Nk3tjr/AnBrg25AHarq71QmWVOXLi0VhlXPL3XIuzPCT/FDx7oSICvLdF9doZl3Z4LIOlhG6/Qv1HDKGGIoffL6ptsNPY1e9IwKlDGjVfolWfTHfvJIiZaUIZJbh6cb5CwS1+YDykdQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ smtp.mailfrom=northwestern.edu; dmarc=pass action=none
+ header.from=northwestern.edu; dkim=pass header.d=northwestern.edu; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=northwestern.edu;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xTM0ZfGdmmSDSZ2p/B4A0f+boVuG2rb7QHtBgIbTExw=;
- b=Pxpgj6MEk6QmAPhBsvhBhGYfQHmvjeSNeVzvxRAoExZf1MK3Ar1e0i5RK5uM/zY8n7opIwac6HMmAiFpCV09CLmdDO9L/Yt3zvP9naIjRqwDrxfr023JCWTWearw7MzMW/3PZIpdHqQx0wDsWs9I1Z7LY7eUrIH1Dhhqj3AXQCAXsoKC/Emi/I67GQ7XWVvt1ltVaoT9IeMNeRo3diVoS+f8v/drJ8i5M9dIA4Aeoye4MhaauB3WrHR1eQj9v6IKCOzfC4Pw6Kh4q8JKmQcOS4ScdNYkd9MP84ePP2uXbgxhFluHZLhq/zTbzs99JgROHvKhCCZABwT9k6knVuZB5w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by YQXPR01MB5804.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:3d::5) with
+ bh=ikSir2NsMxvFO1NrWrgjWtVpcnZixkbr5m7gQw4NiC4=;
+ b=N9vi71Uz0FT9KdSPkVpakiPdKvEH4U9etX1dGBSHSMnUw48zE/tTtl8L4q64Ltp4sqCa5Dwq1YM5h+zr5tty+o/L312MZ406ArDn8BOQwSaErYKSjOfY0RtWJDnaw6ZwY+Krb5DgQmTpvVEPMSijInHWdDq37dgQWEJejhNNEW8=
+Received: from BL0PR05MB4674.namprd05.prod.outlook.com (2603:10b6:208:2a::33)
+ by CO1PR05MB8117.namprd05.prod.outlook.com (2603:10b6:303:f7::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Tue, 29 Jul
- 2025 01:20:07 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%3]) with mapi id 15.20.8964.026; Tue, 29 Jul 2025
- 01:20:07 +0000
-Message-ID: <d9b6fade-8156-417a-a8f9-3d4fec14363c@efficios.com>
-Date: Mon, 28 Jul 2025 21:20:05 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [kernel?] WARNING in sched_mm_cid_remote_clear (3)
-To: Thomas Gleixner <tglx@linutronix.de>,
- syzbot <syzbot+c3be4001853e1add0a03@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, luto@kernel.org, peterz@infradead.org,
- syzkaller-bugs@googlegroups.com, Ingo Molnar <mingo@kernel.org>
-References: <68877998.050a0220.1a379b.0005.GAE@google.com>
- <87bjp4pe41.ffs@tglx>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Tue, 29 Jul
+ 2025 01:22:14 +0000
+Received: from BL0PR05MB4674.namprd05.prod.outlook.com
+ ([fe80::2a87:1931:383a:f54d]) by BL0PR05MB4674.namprd05.prod.outlook.com
+ ([fe80::2a87:1931:383a:f54d%4]) with mapi id 15.20.8964.019; Tue, 29 Jul 2025
+ 01:22:14 +0000
+From: Zheng Yu <zheng.yu@northwestern.edu>
+To: "shaggy@kernel.org" <shaggy@kernel.org>
+CC: "eadavis@qq.com" <eadavis@qq.com>,
+        "rand.sec96@gmail.com"
+	<rand.sec96@gmail.com>,
+        "aha310510@gmail.com" <aha310510@gmail.com>,
+        "niharchaithanya@gmail.com" <niharchaithanya@gmail.com>,
+        "kovalev@altlinux.org" <kovalev@altlinux.org>,
+        "jfs-discussion@lists.sourceforge.net"
+	<jfs-discussion@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH] jfs: fix metapage reference count leak in dbAllocCtl
+Thread-Topic: [PATCH] jfs: fix metapage reference count leak in dbAllocCtl
+Thread-Index: AQHcACaYk3hCTK8p0E2HtMrS6g0cmQ==
+Date: Tue, 29 Jul 2025 01:22:14 +0000
+Message-ID: <BL0PR05MB467408AB092885950559B422FF25A@BL0PR05MB4674.namprd05.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-In-Reply-To: <87bjp4pe41.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR0101CA0245.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:66::17) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL0PR05MB4674:EE_|CO1PR05MB8117:EE_
+x-ms-office365-filtering-correlation-id: 1a25bafd-12a1-4132-27f9-08ddce3e5979
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|10070799003|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?/yxL6Hpy+J9W+0+cVDWnwTyeN8E47ldPNQf7ako+S0znUWFIUjECe8VzpA?=
+ =?iso-8859-1?Q?M9pIhtV4NWcJtp78Y9SP60D/rj1UQlGG5EMlxvyN5cKth8t/4BhZQjQPSI?=
+ =?iso-8859-1?Q?3IYQ+Dq8dfBBWk7Dby4tPJFTJkZ6E3cS8PfZbQIZXPayi8V10kyS57TZFb?=
+ =?iso-8859-1?Q?+7eAzEElkm8IEbSlBrE+JgqYMeLW5pjJHHr6icheD94EawbKWfcmpCe/Hv?=
+ =?iso-8859-1?Q?eqyKhLxCib+JAusUrkJQ6La5w7lyfyQlu60pd7KS/IzYrxTgsndYvI6Pq5?=
+ =?iso-8859-1?Q?cf4lS3S1jzoSW2w7Qczxu1i0cDWBREDqsC6cATnl0Xnge/GhcP7qnHlBJF?=
+ =?iso-8859-1?Q?Zgfv+6BapYuJDaEOF3gIGIJonPw0VVluTa7ligTOARcuRrtsC4vGZVA5YO?=
+ =?iso-8859-1?Q?cD8iwnNT4jDYYWazL8vKK0dTwjlSeNossS68ZWe3Bg7vu7Wvuw3cdYcJWR?=
+ =?iso-8859-1?Q?CLHJ0UxFz76opikA9RUfg8DHw6tDLnnzHFYVJh2PhvvNtcVMEb0QuHHxSX?=
+ =?iso-8859-1?Q?ibNABUO0Qt/NKEd8/VKlCk9wuuXleTqAVUgyFn2cIFdgi4bjJrHKpoNts1?=
+ =?iso-8859-1?Q?Cj28jS0zUsnRvrvCuXHp3criiDW8JQNv1pCWJSCQtFVJKVu8QAv5l0B3JW?=
+ =?iso-8859-1?Q?vY4e301sPExRo8Jk3qkOZZbNg3KBKCTiX9gdRzWo538bpt47J0SGWMNfWc?=
+ =?iso-8859-1?Q?sNCdSKbplkS1kutxZmL2XCJo84PwohU0TYgYJpkAvcCiXE5Mt7iAZr+ml+?=
+ =?iso-8859-1?Q?rWxtheQlkwScJR53/g5xILsnlwD51j4w4IDJIMZip5FzQ7DsYM9ytCzFYo?=
+ =?iso-8859-1?Q?qYIp7BkUfl/jmNh5vqjd2W34pkeFX1bOO2EgfC7+aJskwgR4fAZbfOoZbj?=
+ =?iso-8859-1?Q?tCTP7yIRqG//AQk7BOTzl4vOgg3uSiaTLXqDfC+7CnpPkryMChiy3K2tRe?=
+ =?iso-8859-1?Q?N4/GsGDiz0qfDZ7LOUauGSkkNt595mQqrJnyIjeLuv9zTQnLudhQtavx3G?=
+ =?iso-8859-1?Q?tQ3CiMe8QFY+hFCoXmSzwXGhQDchckSorKq81L3U79cIC6G55vy1adU/Pq?=
+ =?iso-8859-1?Q?/joQNtyyksJrkM6Qkkr/TedhWHJL7b8HEVoYBZkotK12LetSB6laqkqT/n?=
+ =?iso-8859-1?Q?Tb3w8qCcP2XlvkJIZ43fL/YanB48dY2dDoTlvd8PZ9QM8t2NuPNZ7vIou5?=
+ =?iso-8859-1?Q?HvVX+1DdpwngBaoGfJahLnQdX6bHUbFxWMOBW5DlD17onDpCAfN0oUt4ld?=
+ =?iso-8859-1?Q?r13itPdnRlbO/MEcyFFxxE8eTrsKpioiHZ5+5Vp4mFaMIYdb0VCbqdhPLq?=
+ =?iso-8859-1?Q?Nh15tEeg0dJ3zx6BD8fcnf3Se7lnVTaWBwUAsWUxwNn+drP7+wEguvEKc0?=
+ =?iso-8859-1?Q?xvp65Qf2XvAB0Ee9sOi58v+7dFYUDBUARoTKJuCXR84OV4jPvLaUBwGgVn?=
+ =?iso-8859-1?Q?JHwk32afMZeS0libH4+Fy0ED3twGOVd6j5VSm3rymFIZBlBGD8G191gm9Q?=
+ =?iso-8859-1?Q?0Kr/OP//BSYGEXluFF1P5zIJDjbxfKNr/weM/aUUdvcw=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR05MB4674.namprd05.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(366016)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?wp1i3OiTFQ68j1B07Y7gWAFv1ivV4sw6Vu5rxDEXBM2jRpOHw5DVD2KS4e?=
+ =?iso-8859-1?Q?jARRvnaSG2Ba6pNMQGZ5RXf0VagdT/HguStHT0w1nJbykMliFhSDKuUa9X?=
+ =?iso-8859-1?Q?mWsUCAHLQQbmXNSbuPi8li4P/3sZujun4rP6MSMZk8gKoGugi4+ysEmuSr?=
+ =?iso-8859-1?Q?H3BhWAbfv2eiYfBxWM70yUPbUZnkiyIlVlk0aiCD6PWbOwujhTBDuEqWHa?=
+ =?iso-8859-1?Q?JAwaV5gDDkPC1V/D0y/1HWQI7tPiwfpotQ1EB3UQ5pd5rPnEK5HYAAbPT4?=
+ =?iso-8859-1?Q?voB/krvQXT2PPyhUdbLveVynUcsF7frAtxxiI8NP72QPztN0ws0Y7pXoX0?=
+ =?iso-8859-1?Q?WkabqrUdpitYhCe6QscaQSub5Tp23uF/Ihlto/CT5MLCvidCG2p2rbtCNk?=
+ =?iso-8859-1?Q?YJF/Jhi+0qU2FN+04Q3H1Ub1MIW+a0JrUoCJY8ChZV7VF78lz/P8iYjwb1?=
+ =?iso-8859-1?Q?8DCHktOiMYE1DeUEkX30zVpdLI0ubAXKXUOV9tVei8JGKDuCzZ2b2aVu6g?=
+ =?iso-8859-1?Q?PW7iO2dpPDoe/rIMgv2Xn1WISksVQS8Tu0Zul1HiikVAGXUaYAnDzkawFl?=
+ =?iso-8859-1?Q?LeJFFTKefMxt2JYMHA8Taqzo5jGchozT5g1LCjX3HzVO0w2XuufC6qtTxU?=
+ =?iso-8859-1?Q?AgydN9tlhG9rk7Q4uHp2h+6jDboKp52x5FTuklww8n1Yy2ykeS8pN9H/R8?=
+ =?iso-8859-1?Q?43UG+ckNItXeh7qe7eOBnErhkcWsXD2FbCCq0E8Ib8lJ6yBREwPKOrRA0O?=
+ =?iso-8859-1?Q?FIVvPI1pFk5wgFqztHLM2tC0BYLXBhEXKbj1tQhNAlo/zDUuAN3zpuJJ4G?=
+ =?iso-8859-1?Q?G5Re3b4x7iF4ffDpu0mNAtsWXzROaQxfC9rdVaqpYsvP0UkNajcTm6MVcK?=
+ =?iso-8859-1?Q?XPSPUQCx/8OBUb1HdEyVgF1bpRwYQHA7LkNPGPFiyytmyzo++keOSP1/16?=
+ =?iso-8859-1?Q?C2UymjkOgtCtyS3voyqq3gadgICaDC0mrSS9ry/8mqC2+Y0xtmELa6e+jl?=
+ =?iso-8859-1?Q?EBX3GmmIktc6Fv5URElw7i1Z7w7CoGiO1emNOVYlpnhZP2AsJrz3PYoGKZ?=
+ =?iso-8859-1?Q?twQpaqJSF7o1jd6EqSlOhjE98PTjyg5A35Ih6AWC+ppew7vBuypObi8uyz?=
+ =?iso-8859-1?Q?5bq4x88TnZ92eL41DHhKA6bW3meWaG/50sz+4IvPOBeFoH1zaIugDoj+Cf?=
+ =?iso-8859-1?Q?mG7pUTSLvfVCWkukl3qi09pMGih+5/eIM4sY8KumeS0ruCIZupK11s1oYD?=
+ =?iso-8859-1?Q?YcxWCosDKmkcf48ANFdzFP22LPXAvqHUtakPxtlvkLMTkHn1v5EcjyuNjI?=
+ =?iso-8859-1?Q?rE88Lefa8LAE+BTXTdiVkmq7F2DYxVg/OD0J/vJ51InjN4+2TYV+PNDbO9?=
+ =?iso-8859-1?Q?GpFM4DtSrzNKjocf/INXEd7bMp5u8S3a+fo8Y7LM8IJIP2bJUC5ZT26oNt?=
+ =?iso-8859-1?Q?hh2F0eLqsgMv+sAw1iBthufo9bg/aPhK2UJ2AcIIs4PQc2itr9u2rf6X9E?=
+ =?iso-8859-1?Q?oT1CTVqM1DiYnSYYStlrpJ2zmZ9pLYQLQfHA7IRcOzAsXsmTYLnWZHzDvA?=
+ =?iso-8859-1?Q?exQWg6uOMzu8FyGBLcxNYVGQoJ04+gQeXeEc+4hcmIWZvFg0Z1zgm7oQM9?=
+ =?iso-8859-1?Q?qGaAS15D+kqQ/Wwkp3TNDPizfx1Op6W0bjiGZu8+tqEo3RWouwGkJRmoqq?=
+ =?iso-8859-1?Q?fzD775uLCjhsIPvCY/hIwOoagJWqX9mhk9atuTcz?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQXPR01MB5804:EE_
-X-MS-Office365-Filtering-Correlation-Id: 40493a28-366e-4f04-798f-08ddce3e0dfc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VWppd2pORFJuQmVwUUdVYzg5Q0FjQlZiT3U2ZVZCWnI5ZEs0eVBLQ3ZuRGJH?=
- =?utf-8?B?Vm50c3JPMW84RGZJUFNObE9MRTBRSG1Jd0dUbVZUOXpiMHU3OTZaT1dtMDdE?=
- =?utf-8?B?VUFaZUFFMHRwZk0ySGEyTTZvMFhNRmlGOHU2bmJjWE1lWi96aFIwdmFrMnpi?=
- =?utf-8?B?QlNBUk9zVVRNUXl1azd4Q1dkL2MvL1UwK3JMR1Q4MzlLemkxbmxFazNUZHlj?=
- =?utf-8?B?d3I3ZWN1aVNoR2dmWCtXK1FpQnFvVnlmbjJ5aGszNFpiS2xDLzgzM2lhd3Z2?=
- =?utf-8?B?d0M0c2lZUE1sYXhPekRoajVmeStTUGMrQTRvZGR1VzNHbGk4ZFQycGg1Y0E1?=
- =?utf-8?B?aG1nci9rYm5WdjZCM2NRZkpLMnE3MXJMSktMcjEwMitvdnRvLy9iYlUvUTRp?=
- =?utf-8?B?SElTNW1KbU5tU3J5RUZMK2g5SndGOGNkcm5BcXo3UG9ITXdjSXpnMUgwbmhu?=
- =?utf-8?B?d05mL3haelc3MG16aW0vRUg1UnR0YmRwc2lSVGt4cVhjbHZZYVlDT2FUcnJX?=
- =?utf-8?B?VXlVME5TbEZwUVN0R1lzU1VVTnByVTJaSzByM3BUanpwNWREK0RzS0dsT3Ux?=
- =?utf-8?B?QzJ2d09MOWIwNWh4Um1MOFFCcjJpeHhCRkpENkZkS3IyR09STjZJNGtWQ0FE?=
- =?utf-8?B?OUs5Z1ZWajVJak1ibldHQkJIU1liWkg2c080S2R1dU04dzNGbnZOS0xxNlRB?=
- =?utf-8?B?MlpneUJhTGdtS255STNHa0ZnVS9TQVZBWU11K1pFcDFUQXZjZ3ViSGdPYmh1?=
- =?utf-8?B?L2tlYVI2SnN5Nm5yVG9OWm9ZR0crWndpTHdLaXJmNnhPam5ad2hYM1ptRzFD?=
- =?utf-8?B?c1J1dWhtbjhoTFF4K2JjZHliK21BMWJxbjJZRnA5VTlKL21XaXhOVFRFdERG?=
- =?utf-8?B?THZ2L1RYTFZZdXhNZW9PN2JYRkFneWUxbGtCQSt5djNqelNNMWdRSkM0V3Rn?=
- =?utf-8?B?ZHdQWjkyRnlKRUo0VXBIL1NMUHdSbXJ2dFlHT2huWXZhZ09hbG5IRHFhYjh1?=
- =?utf-8?B?SHpZaFRZY24wU1UrYzkxMzRCQ25pMCtWRmwyaUMrUE9wU283QUJicFlsR2U5?=
- =?utf-8?B?WmI1THVVSGlBSDZGZmlIVUlxY2ZSa05kV1lVK095TlJjUkUzUUkxSmpMdEsz?=
- =?utf-8?B?TGJ4cUFoTGVRS3pzd20yRU1CWlBtWElmY2VuMXFJRVF5ZWdkN1lBdk90Uysx?=
- =?utf-8?B?MXMwZjAxbHpOdFdNbEZFZFRrVm05OVFyUlVZRnhkaTVTbzl0L1ZGQjhSWWY5?=
- =?utf-8?B?anAwUmt4SnFOZGJzdTZCc0VSdHNiRCtyTDRtT0ExL3JsOTlXSk12bytNM0N6?=
- =?utf-8?B?QnJJZFRGWWJLc2V0NnBPRW1oUUgxTytNcXF0MnhWeXpMK2hQOHBsM3dwMGg5?=
- =?utf-8?B?T3lFNzg5TU0wWWlwSENWalorS3FJRnN3eXZ5MVlUOUJuTDF0N2dveWNhVmtt?=
- =?utf-8?B?M0I2bWZlVWNPWGNkemNXWHNkeVJkMXNiSFZaT0I2bnVUVDQ1UmF4dTlGRmpi?=
- =?utf-8?B?NitWd1hlSjRGRGNjcTgyZXVUa0pyVGRKY1plcEx2clVMU3kxRVVtYzY0Z1pM?=
- =?utf-8?B?dnhnVjVicm1Ucm9oZGs0aDhrRkxjRldpb1dDeWNiRXowa0FRaTVGZWlVNU1E?=
- =?utf-8?B?Q0Vtc1RlbVB6a203dVNmOWNxaU5yZzJHREZ2RXRvQUVkRVl1dkNVZU5jaFlu?=
- =?utf-8?B?RVpkSWJ4MlU2THROdm1mdHhCNEJYSGlxb1VnNXc4QUwybXExeWJ6ZWNtaU5C?=
- =?utf-8?B?cTZ4M3ZwS0hoMzkxZGJ0RHVNZ0xTNU5YRlNUTWxEVE5rL2djcWM3bkdidWNJ?=
- =?utf-8?Q?5wjAYRk6T8yClvGQF+vOE36HW/ZHqS6bLYv5Q=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NFd0SXE3K2kwODVUbXlVNEFOQ2pxaDVRYUtVc1BnRGVyV0pjclE2WUtaVWxC?=
- =?utf-8?B?S2h1NWdUV0RTWjlPZVkrSDJvRGMzdGorTWxaR3VtdUtSM2s1elFZQkRMdGJJ?=
- =?utf-8?B?MTNSaWtpMXRUb2pzU21TVlZXNkhBSkF4ZWZ4QStuY0hUMWpPWnNEWG16MTQv?=
- =?utf-8?B?VGJmVC8xZFRpMjUzUDRqM2k4bVluVDBUaVBzRzNqRVIxQktzbVBCVmRjYlZt?=
- =?utf-8?B?Y3RSRml0Ymw0aU5GbmV5WGZwZDgzVWRyMWNBOFIrQloycUhLQlhxSzVYa2Nt?=
- =?utf-8?B?eVJGWEFsZWdNZytaSGdaZ0E2dXhUTW5mc0dOUUE2VU1MY29pcktvNkxkMTFE?=
- =?utf-8?B?UmtOdi9TNjU2QU9nQ1d1Y1dqTDJobTNPaFZQd1Z0cnVyVm90aUdYcGtSQndR?=
- =?utf-8?B?WWVBbUdZQUN3eEdkVnZxRWFnVHo1ZFB0c0NhVUJ1YjZyaVlLYTE4N2Q3Wlhm?=
- =?utf-8?B?SC9URVA1ejFLUi9sRm04aWwwQ3ExVC9RN2tNTmZKMmRUTU9FRlcwc001N29z?=
- =?utf-8?B?eUx2cHBYUzZGMXdnWWFUUEdpRmsyRHFqMU1paFl5VzkrSDluMmVXcFIxUVBa?=
- =?utf-8?B?Ym5ZRmJma1VyYzQxZ3JCZjRyMkNXNi94Z3YrVytNQ1FETkkzbkJGcFJualZV?=
- =?utf-8?B?RDBXUlFOSGxnNXVGWTFJVDB3K1hjLzVuUEU0NWkvRURJZTQzcGI3OEtoRDdZ?=
- =?utf-8?B?R0VoNHVLaVEyb3hkMUV3ai9aaFJXRHZoRDFNdW9DS3JYdEVWOTllUjhBYlVt?=
- =?utf-8?B?YjRHbUpSam1kekR5TjZwei84VzloTFZ6WXNjR05WNW1TWlRGdGFWelptdVNE?=
- =?utf-8?B?ZElrUHdtN2sydkJHaTRadUN6MHBLTnlhb2xEVk84WEs1Z3c3YXR4bGx1RkJO?=
- =?utf-8?B?Z1BLTVUwb054Z2ZYYWZQMVFJY2tjd0FXUXNEenROU1NJOWdBdXVubGEwVncz?=
- =?utf-8?B?M0wxSHpXeTVHN3R6YTRFQmpnbUJjaEJoZTVycklsRkhiNCtmbDBoTzN5YnZv?=
- =?utf-8?B?aHF1NmEvTEJwNzc5NlFMNGxZbzdsSXMvM0FEL3hWWTNkaCtsMTcyeExKU0p5?=
- =?utf-8?B?empNNTNVRGhYZjhNOEpBR0RCUndNblhqM3hqUjVQNjZVZ2FKckk3di82T1Jn?=
- =?utf-8?B?VHlOeER5L3ZvallHZlJlSVdLcmFTS2h4SjZzejI0ZzlldTRURWdFeFJ5Vlcr?=
- =?utf-8?B?TUNHT0FncENGMEZRa0VOZFVnbFV3aEIrdHpmb3lUTHd5N3czVTlHT3ZFaG9E?=
- =?utf-8?B?ak1tRmFWa0Q1NDFxQ1pRTkE1WndHYWRlVEwzeWsxc2tUM3dWSFFOQk1yRlJW?=
- =?utf-8?B?bFhMZTNjb1cwZzB4OE1RdXdrclRkZjJuRHJzOEZtOUxrSGhjVTMyWDEzZ3VY?=
- =?utf-8?B?UDEray8zMUdjZFRBeEJ4d3h3UHRVZUVvYTFXeXNBNnh4RnFhSy9heGxoUCsy?=
- =?utf-8?B?bEhZYXJoZ2xjaDZxM3hrQzQ1d1Jzd3ErVXJVVFNnd3d4Yi9sY2pKQzRrcTdq?=
- =?utf-8?B?cHRkSXo4U2dZNFFTdTZJTFMvM21XZWRieDZSUjJzZ0FUVGVCSEN2eXFkZjF1?=
- =?utf-8?B?YWRRZmQvd2NVM1BlUEUwYUNDcVAyb1NlUUFlVDhPWFRielpONUlMYWVWOGJw?=
- =?utf-8?B?OWc4RGpoa2d0VjF4V2xaaDFiWXBTUEZ4OERERzRnV1Uxd0JGdERhSjc0MTdy?=
- =?utf-8?B?bExGamZQTk1mQlNMNEFITHFCeE9SMGVmTkZJYXVEN1I4Z0ZVTzhKTm53V3kw?=
- =?utf-8?B?b2xVZE9vOUg1bG9wZis4c08xWTFGbnpncFZVbFRMbFR5ck9RelpjNVFjMVpW?=
- =?utf-8?B?dVd2NnE3ZzRHbWhBdk5pTWVwR29jcXZmdm9kOW0vRkQwbG1CRDV4WkZ2UVg1?=
- =?utf-8?B?U0ExeS9ybHp1WGtSdXZXREFJKzBxekFXZEFUbVJVUFh2SnBYbEJxQlVtR3o3?=
- =?utf-8?B?UFhxZm4wdk5COTgrNFBrdW5WTlBSZUtHNlEycG5acjI2aEVKWW1IMDRWNzd3?=
- =?utf-8?B?K2k1d1JsM1ZYcW04V25YWWMxUisxNXRIdGM0cTVtUmtJV2d0dUJyK2dLSnhn?=
- =?utf-8?B?OGJMVEJLOWwvdGMxYkZZUmhJSzlqeWVSMitGbzlZdm5IWkd3bWtZREErbGRy?=
- =?utf-8?B?WVZLMytJRkdFWTNOZitNMG1RVDJxeGJRK2dBbHF4eWdUZkpMUWdEYzhJR0Vs?=
- =?utf-8?Q?wGGRiL1xfP7rGsqFqKo1f64=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 40493a28-366e-4f04-798f-08ddce3e0dfc
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Jul 2025 01:20:07.5633
+X-MS-Exchange-CrossTenant-AuthSource: BL0PR05MB4674.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a25bafd-12a1-4132-27f9-08ddce3e5979
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2025 01:22:14.0327
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h2s2zbSFXD6P7rrPBX+asfnC0905yA6DGLeHjbBM5IjMEs3oZbC150DQdC/IbQl+BLKW4HO6NoP+81962kHCyPCzdxg18j4xpL26u2JQAhQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR01MB5804
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7d76d361-8277-4708-a477-64e8366cd1bc
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: z6FkPzXAJmA3YJaiEvwKz8ISC2QelLDDxhB5TzDQ5py4WEgdIJBRpoPitqdh13EKEKNkdjIOJ9+eK2QTwULGVvyi/OSCvcNux/BuwWNENCA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR05MB8117
+X-OriginatorOrg: northwestern.edu
+X-Proofpoint-GUID: DydDdN7YB_9EXGjmqi5NTsQgpae3J5HR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzI5MDAwOCBTYWx0ZWRfXzX9USwUAgSFB eAaQ4CT2XNZ6bKreUKWzLrmCBehDCUQ8TeBL78VFmwb64HoLbb91peQIGbtO4nu6ZgwbVymoBrM lELN33Ad1akjJZKGU6vZK6zKJzZIVbqZwWF3RiXhSb9CzAdHcVQyYLfyUmgSMxoFXjv+ssiw1T4
+ QUlMpG+2vJM72zR9IdBT6HwXxEXgImgnHZS5gE7py/ACDvUCKb4qTGMeug8RvfCB5P9OeGJESkg l9lzn4/hnz9csm9HSWOVyrK7S62eBBbfG6HDFW8791hQAszS8kVQyxQiiovNCGghCjIKXIcfrBk URndkt0g5KqYKHRbiUfJqgsTNkn7lsRAQPeoSeAZE5Jv5vW7V0+bwa7a9U2IF5ZSV+YD/ocsVQH p5kuGsnL
+X-Proofpoint-ORIG-GUID: H7aLVPFMyM3hfyCjb2QXGNOHVbB6qagC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-28_05,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Reason: safe
 
-On 2025-07-28 10:46, Thomas Gleixner wrote:
-> On Mon, Jul 28 2025 at 06:22, syzbot wrote:
-> 
-> CC+ Mathieu and leaving the context intact.
-> 
->> Hello,
->>
->> syzbot found the following issue on:
->>
->> HEAD commit:    25fae0b93d1d Merge tag 'drm-fixes-2025-07-24' of https://g..
->> git tree:       upstream
->> console output: https://syzkaller.appspot.com/x/log.txt?x=136930a2580000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=9f175a9275d2cdd7
->> dashboard link: https://syzkaller.appspot.com/bug?extid=c3be4001853e1add0a03
->> compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
->>
->> Unfortunately, I don't have any reproducer for this issue yet.
->>
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/7acf9d19f311/disk-25fae0b9.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/532080ae9996/vmlinux-25fae0b9.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/47473831ee3b/bzImage-25fae0b9.xz
->>
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+c3be4001853e1add0a03@syzkaller.appspotmail.com
->>
->> ------------[ cut here ]------------
->> WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 cpu_max_bits_warn include/linux/cpumask.h:135 [inline]
-> 
-> That means __mm_cid_put() is invoked with cid >= nr_cpu_ids ....
-
-I'm trying to figure out how this can happen. One potential
-scenario I see is if we have mm->nr_cpus_allowed > num_possible_cpus().
-Is that possible ?
-
-We strongly rely on having mm->nr_cpus_allowed <= num_possible_cpus()
-in __mm_cid_try_get().
-
-When a process is created, it takes the main thread's p->nr_cpus_allowed
-as initial value. Then it is updated by mm_set_cpus_allowed(). It is
-basically a union each thread allowed CPUs masks.
-
-Can we expect all scheduler classes (including ext) to guarantee the
-affinity context only includes CPUs that are present in the possible
-CPU mask ?
-
-Thanks,
-
-Mathieu
-
-> 
->> WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 cpumask_check include/linux/cpumask.h:142 [inline]
->> WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 cpumask_clear_cpu include/linux/cpumask.h:620 [inline]
->> WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 __mm_cid_put kernel/sched/sched.h:3622 [inline]
->> WARNING: CPU: 1 PID: 12208 at ./include/linux/cpumask.h:135 sched_mm_cid_remote_clear+0x488/0x4f0 kernel/sched/core.c:10543
->> Modules linked in:
->> CPU: 1 UID: 0 PID: 12208 Comm: syz.4.2719 Not tainted 6.16.0-rc7-syzkaller-00034-g25fae0b93d1d #0 PREEMPT(full)
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
->> RIP: 0010:cpu_max_bits_warn include/linux/cpumask.h:135 [inline]
->> RIP: 0010:cpumask_check include/linux/cpumask.h:142 [inline]
->> RIP: 0010:cpumask_clear_cpu include/linux/cpumask.h:620 [inline]
->> RIP: 0010:__mm_cid_put kernel/sched/sched.h:3622 [inline]
->> RIP: 0010:sched_mm_cid_remote_clear+0x488/0x4f0 kernel/sched/core.c:10543
->> Code: 0f 01 e8 3b 71 0e 00 eb 9d 4c 89 ef e8 f1 73 97 00 e9 67 fc ff ff e8 e7 73 97 00 e9 47 fd ff ff 89 44 24 48 e9 17 fe ff ff 90 <0f> 0b 90 e9 f0 fd ff ff e8 8b b3 fc 09 e9 06 ff ff ff 48 89 d6 48
->> RSP: 0018:ffffc9000480fcc8 EFLAGS: 00010012
->> RAX: 0000000000000093 RBX: ffffe8ffffc476c0 RCX: ffffffff8189c611
->> RDX: 00000000ffffffff RSI: 0000000000000004 RDI: ffffc9000480fd10
->> RBP: 1ffff92000901f9a R08: 0000000000000001 R09: fffff52000901fa2
->> R10: 0000000000000003 R11: 0000000000000001 R12: ffff88807b22ed50
->> R13: ffffe8ffffc476c8 R14: 0000000000000200 R15: ffff8880b843a2c0
->> FS:  000055556f5a3500(0000) GS:ffff888124820000(0000) knlGS:0000000000000000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 000055558d727588 CR3: 00000000668d0000 CR4: 00000000003526f0
->> Call Trace:
->>   <TASK>
->>   sched_mm_cid_remote_clear_old kernel/sched/core.c:10576 [inline]
->>   task_mm_cid_work+0x3b4/0x910 kernel/sched/core.c:10626
->>   task_work_run+0x14d/0x240 kernel/task_work.c:227
->>   resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
->>   exit_to_user_mode_loop+0xeb/0x110 kernel/entry/common.c:114
->>   exit_to_user_mode_prepare include/linux/entry-common.h:330 [inline]
->>   syscall_exit_to_user_mode_work include/linux/entry-common.h:414 [inline]
->>   syscall_exit_to_user_mode include/linux/entry-common.h:449 [inline]
->>   do_syscall_64+0x3f6/0x4c0 arch/x86/entry/syscall_64.c:100
->>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7f8ef99c1265
->> Code: 24 0c 89 3c 24 48 89 4c 24 18 e8 f6 54 ff ff 4c 8b 54 24 18 48 8b 54 24 10 41 89 c0 8b 74 24 0c 8b 3c 24 b8 e6 00 00 00 0f 05 <44> 89 c7 48 89 04 24 e8 4f 55 ff ff 48 8b 04 24 48 83 c4 28 f7 d8
->> RSP: 002b:00007ffe741fc2d0 EFLAGS: 00000293 ORIG_RAX: 00000000000000e6
->> RAX: 0000000000000000 RBX: 00007f8ef9bb5fa0 RCX: 00007f8ef99c1265
->> RDX: 00007ffe741fc310 RSI: 0000000000000000 RDI: 0000000000000000
->> RBP: 00007f8ef9bb7ba0 R08: 0000000000000000 R09: 00007f8efa7eb000
->> R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000048110
->> R13: 00007f8ef9bb6080 R14: ffffffffffffffff R15: 00007ffe741fc450
->>   </TASK>
->>
->>
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->>
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->>
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->>
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->>
->> If the report is a duplicate of another one, reply with:
->> #syz dup: exact-subject-of-another-report
->>
->> If you want to undo deduplication, reply with:
->> #syz undup
-
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+In dbAllocCtl(), read_metapage() increases the reference count of the=0A=
+metapage. However, when dp->tree.budmin < 0, the function returns -EIO=0A=
+without calling release_metapage() to decrease the reference count,=0A=
+leading to a memory leak.=0A=
+=0A=
+Add release_metapage(mp) before the error return to properly manage=0A=
+the metapage reference count and prevent the leak.=0A=
+=0A=
+Fixes: 51a203470f502a64a3da8dcea51c4748e8267a6c ("jfs: fix shift-out-of-bou=
+nds in dbSplit")=0A=
+=0A=
+Signed-off-by: Zheng Yu <zheng.yu@northwestern.edu>=0A=
+---=0A=
+ fs/jfs/jfs_dmap.c | 4 +++-=0A=
+ 1 file changed, 3 insertions(+), 1 deletion(-)=0A=
+=0A=
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c=0A=
+index 35e063c9f3a4..5a877261c3fe 100644=0A=
+--- a/fs/jfs/jfs_dmap.c=0A=
++++ b/fs/jfs/jfs_dmap.c=0A=
+@@ -1809,8 +1809,10 @@ dbAllocCtl(struct bmap * bmp, s64 nblocks, int l2nb,=
+ s64 blkno, s64 * results)=0A=
+                         return -EIO;=0A=
+                 dp =3D (struct dmap *) mp->data;=0A=
+ =0A=
+-               if (dp->tree.budmin < 0)=0A=
++               if (dp->tree.budmin < 0) {=0A=
++                       release_metapage(mp);=0A=
+                         return -EIO;=0A=
++               }=0A=
+ =0A=
+                 /* try to allocate the blocks.=0A=
+                  */=0A=
+--=0A=
+2.43.0=0A=
 
