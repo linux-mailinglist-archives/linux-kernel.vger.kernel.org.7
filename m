@@ -1,293 +1,273 @@
-Return-Path: <linux-kernel+bounces-749318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-749320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B55B14CDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:16:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B56B14CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 13:18:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBCBE54652D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:16:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A26A3A57B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Jul 2025 11:17:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F14C28C2C9;
-	Tue, 29 Jul 2025 11:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93C228C872;
+	Tue, 29 Jul 2025 11:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jGBXIXCB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kOPyrZ+4"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE2CF1E3769;
-	Tue, 29 Jul 2025 11:16:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753787793; cv=fail; b=Q3N5d3DoSAAKNZRTVElQvTDoKFrNRcwXf+OqLsWagVLnJ1h/oxETRGCr+3D1KO7CXTEPQqyDOXVEpD9mFmCEljihn1lXSk0iIg7nlOARo+qxTAeVY38J/5M+VTfO8QoagMO9H49qtgH+N1M+8ZQTJrKvO4gZfqYSRtM+MxwALYU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753787793; c=relaxed/simple;
-	bh=sNVVnTxoErQUpgMwTBU5V3u5wCDN2wQzfi1G2EFAnRU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Kg7oDPbDCNOyyMnZls1IMz2X96333+RqG0c5NPXF8QU/McRtQHXBXGSs70SyYMh1YbHpGQUWWAeLZF9M/ozq/sWQ8cU/pkzlGgLCDeha2u3yPZLlgBwXlvNdgNFGZ/Zy8V7cKOwjwGghrzSm7PAS8h07PSqn89J3YvQ5yzDU6H0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jGBXIXCB; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753787792; x=1785323792;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=sNVVnTxoErQUpgMwTBU5V3u5wCDN2wQzfi1G2EFAnRU=;
-  b=jGBXIXCBg7wABaxgb5E1qV+7OsPp83aoyOIB4bed93rAhpjg4ltmvWqJ
-   c3EcwL9UaoH2Ky1Q1EBAzuBp6MYIgty3LGSwxnZwBBnpp/7Muu2ECAut7
-   U576zrSqK70/89glBff8a4tj5l3WJZ9lBLadQk8ogLOL5KDmPo7kphJ6J
-   mJYxWGVru16CnMoU7u5TbZR3ig0528H27Pvu3JuhpA3KjZ5H3KV5xeUTx
-   bj1EQE/XtmiCk+6bSuIBjyc+ohhkD7tpgneBI9NyNLA095GcVR8Kwj+qA
-   wfFtb3rZTa28y8JAobiDKkHFCmqfHNdkSgofSEIA4ENa7R7VBpPPoafpV
-   g==;
-X-CSE-ConnectionGUID: cwhkdbCAQwq25fgu9I6zcA==
-X-CSE-MsgGUID: S9jWQQzaRgmlhOiUmUFVtQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11505"; a="59858287"
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="59858287"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 04:16:32 -0700
-X-CSE-ConnectionGUID: eGeRr+l9Sr6KPNygHNKYXg==
-X-CSE-MsgGUID: iYKIhtnKTyq5u6aVy0zAIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,348,1744095600"; 
-   d="scan'208";a="193666834"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 04:16:31 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 29 Jul 2025 04:16:30 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Tue, 29 Jul 2025 04:16:30 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.50)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Tue, 29 Jul 2025 04:16:30 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W9Fax2o62Vd/v0zHAt8Vs02KCBfcc018KOF9+ET8SpUich5mUwXIoNs6fJ1gMwPmTrhaalSc4ouUCyVFXrgaLC1hZyTuNJprrrtpepijgsacZj5Hv1FwHgaFZ4zbfoGxbqEm0rv72EC2dGerYBWdo3ysDP1G+iNNlO6Pm2pPlSy9Uym1ZoM4iHzBqGNABylGVv6AdW0OQi2KZMqHX6Heml0ARs+Njg7eiSjoH0ju76v7SjK6J/CinObAGiY8abpkSv5YN+fYUp4WeWpyGEgZ5wQ4inIcu8VWNYoFoeIvZS3b9es3VrNE0Lt5XsCRwauhPJw0Stg98tH0mKDgOfKMMA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A5tCClkq9dwnAiNElO4qftAWPm+aJVEfPiZyNEYGXhc=;
- b=GZWzW+1uV0K4U0+Qif+ggBwT1YgMqsTqPKsiCOZ7Yzgq6Wc3FSENp0G5Kiaf4koZdBICfwBbdyCZwL8E15PH83avLhuNtA/MBj2XMK+y+5HoVPh+5+th24ebuu2XGJFFLz0+qWMDiE6CdN1QAigcqd8DqnVr5mdIBBY6elU/vSCHiZB/Iggou2nBPlw1333c2mCdOusOHHDI4i886+U3nr6nFT1BjD9QSvt+DlPqAN4/whA1n8blp2QL7gHZxRSgm+HKFB29Iww6hzmY7PdmoPg43f2lJVwvdgmmB9dkrU0t5viH71ZXBuf3UdmwIeBNpo3UvS8sCmoD6R/fnjv2eA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com (2603:10b6:208:577::21)
- by SA1PR11MB8279.namprd11.prod.outlook.com (2603:10b6:806:25c::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.24; Tue, 29 Jul
- 2025 11:16:28 +0000
-Received: from IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408]) by IA3PR11MB8986.namprd11.prod.outlook.com
- ([fe80::395e:7a7f:e74c:5408%4]) with mapi id 15.20.8964.021; Tue, 29 Jul 2025
- 11:16:27 +0000
-From: "Loktionov, Aleksandr" <aleksandr.loktionov@intel.com>
-To: "Kubalewski, Arkadiusz" <arkadiusz.kubalewski@intel.com>, "Nguyen, Anthony
- L" <anthony.l.nguyen@intel.com>, "Kitszel, Przemyslaw"
-	<przemyslaw.kitszel@intel.com>, "andrew+netdev@lunn.ch"
-	<andrew+netdev@lunn.ch>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"horms@kernel.org" <horms@kernel.org>, "sdf@fomichev.me" <sdf@fomichev.me>,
-	"almasrymina@google.com" <almasrymina@google.com>, "asml.silence@gmail.com"
-	<asml.silence@gmail.com>, "leitao@debian.org" <leitao@debian.org>,
-	"kuniyu@google.com" <kuniyu@google.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>, "Kubalewski, Arkadiusz"
-	<arkadiusz.kubalewski@intel.com>
-Subject: RE: [Intel-wired-lan] [RFC PATCH] net: add net-device TX clock source
- selection framework
-Thread-Topic: [Intel-wired-lan] [RFC PATCH] net: add net-device TX clock
- source selection framework
-Thread-Index: AQHcAHbOCr534cZchE2Cw5PXSDDqcrRI8l5g
-Date: Tue, 29 Jul 2025 11:16:27 +0000
-Message-ID: <IA3PR11MB8986B14D3CF3047845BD9926E525A@IA3PR11MB8986.namprd11.prod.outlook.com>
-References: <20250729104528.1984928-1-arkadiusz.kubalewski@intel.com>
-In-Reply-To: <20250729104528.1984928-1-arkadiusz.kubalewski@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA3PR11MB8986:EE_|SA1PR11MB8279:EE_
-x-ms-office365-filtering-correlation-id: e06d4a8c-d6cc-4a4c-815b-08ddce915cc8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014|7053199007|38070700018|921020;
-x-microsoft-antispam-message-info: =?us-ascii?Q?/Ncku3A75ba4W+N5nDzwKYGZaXXGJ/z5H2giIAKd+fCRN2peux9fXCdTQSy6?=
- =?us-ascii?Q?empW+2p6sU8XqZL7j84iQEnG8/eHbFOWAZWL4JPr6OIAOANzrCL+uIomA0Jv?=
- =?us-ascii?Q?+QW+7VgTvFlDExSEQUJvct6xQgpi3FePcqj2CwZychKdu+gOkOt0+nrUji6H?=
- =?us-ascii?Q?st0IUXGG8VujKTmDDa0BfNGCPnj3wsVVzcP5BT34KwvLD33onvfMUv7Dybsr?=
- =?us-ascii?Q?wZrilv8zIeMOwPmU1OfitfDfZTF4P9BJ9Vpyb5MU7zB7OHFLCs5YFn/6JiyE?=
- =?us-ascii?Q?SvUQigg/gfcuKZYfo+AzmO4AnhfQrsva66YyP6Xte8yhVAwOr4HSX5LPi8Ke?=
- =?us-ascii?Q?7Tk7we1kzS0eSU/R84TwgR2gTcuROcG0QdMPvDwMw52q2AkGLdiutVoBV282?=
- =?us-ascii?Q?6Y+Xf5kx56P2NVgpqn4qt/mpWRekztu1IS1nozf5Bztm72s2H2WrRaRF19nP?=
- =?us-ascii?Q?uyqZ74FUPJek7kGxJPdtpdnR/dDfkD/7glGVnFLj9HJEG8Pt5qsoytK5KXTd?=
- =?us-ascii?Q?GR8q9K900D1JTbig4TxnjNPqDBJaSoEpXHZqzEdmF20qhmuGKnMCZy+qFuSB?=
- =?us-ascii?Q?+QiFjP8/8kzNioiyR6VHIteV409AWq6o8se7sKlIHdRW56e4noShT5w650Ws?=
- =?us-ascii?Q?MhLFrnS2+Tu6hLiUlHjTcGWC92V4vEnTYtIMz61dRfZa5aHOJO5kkawKF64S?=
- =?us-ascii?Q?LOYRNlFqy7QQpd8A79Y2mEk2QP9cjVEWnjFn1cxGZcBbsTs9yaAXPcgMR5Qc?=
- =?us-ascii?Q?2WC3LzncHRSjIuSZFpbiThB0s351LaUFcRzGB4q+6dB71NDs7g2qEbiTsh3Q?=
- =?us-ascii?Q?izq8Y2mxOEZJt7bnrECUCVo8ar+2YYvDDIj/R3dSjicsuXZvhVQEgriRspbp?=
- =?us-ascii?Q?oJ0eWeXq5ECg6V+kvRJVsQCElshzHEoPthmSdE8ZxImPDqXEK5XC6zpresC8?=
- =?us-ascii?Q?rfpNhhHxU2ucsvy81t1P0jsk9hsGZSvsN7/elcGCGdKUx2HPAVIo6Tewh+x9?=
- =?us-ascii?Q?2rDh8pYUa+ovI5SC/6PVitKdllXMZIfGD8m1DDdusq98JX0QY4uDFVXJArKF?=
- =?us-ascii?Q?gGMMB+n+Xy4SKDpecHICUddiIMiFJdhwTvF3eYHwfb0XIFmn2UOXGi0qugRj?=
- =?us-ascii?Q?iODmqw8LuelC8if7Zc1275hy6zg+iP3CfJDxiYyUOHpXR23xrlOEZVYXXvxy?=
- =?us-ascii?Q?W2ruJF9Q9VC/lVB8RTM0wubwe8bED0vHRF0DmN+uX7jJAe6oQmlRmHGq2p69?=
- =?us-ascii?Q?CShhR3qJSLa5w1b7vIvwYBiCY5bLYectB1ojOjC38oDbbBht1XzUK1xQy97V?=
- =?us-ascii?Q?U6cqMwe0blJT8XEshaOR64y85ep/2QwyA/+CXitu5dR/6R3Fjr7AoYE+tc3v?=
- =?us-ascii?Q?0Eg4KHO1wD0uGHk3wvmS8wuCVlyd1p2Wsu8Bc3hYCMrrJjLowHyLcB8d15Vk?=
- =?us-ascii?Q?ndkPVqBR3m2FGMrIKdRU8kwhPrvjhq6sl2YGAY/zzMNTVDgOzrL7jeJgZl2b?=
- =?us-ascii?Q?njdS9YAYhu+LsYQ=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA3PR11MB8986.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014)(7053199007)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?qGTvAM8ngidqa1qPUzNtzgF9lxvMvEIlO6Ui9+bxW2wit0vBeYhQ/0KHqz9v?=
- =?us-ascii?Q?FE/0IHIKFwWQyhnWzL3TMYgdYiY8/qTjhOp+kx6W+J+XUqRukl8o6iPVdRmt?=
- =?us-ascii?Q?KtajA8KQqbO3I7qkO01KnCbLV60ssMc78VB7x9SZIpHHLGTM+8DcI9aAjmjZ?=
- =?us-ascii?Q?UXst8IGxzy7v5pCMKbXaX6jqGCAE9emHc2vA47bkKhJ34VtDgLRMg4FDhr2D?=
- =?us-ascii?Q?nkMgJ49yDSb1IvBqaXJRcp+Kj361JYQEpyNnnt1we/juMctv39byuqcsm7vW?=
- =?us-ascii?Q?wqyKyqmh6nZh82A87ObPmSQtnFdpNTD78aGiBse+WojPlwM8XoYuzoZ31Ki4?=
- =?us-ascii?Q?yyXZrcSGdR/aXqliXdQ84LjVtLGKMvygylgADdKPkXuAwUtmdmf14jlrc+8p?=
- =?us-ascii?Q?nY2LPgzDMXJj2XuSXDhdNYCixsAjdyPUePnXyOqPp5VO03O+0qENIg34xp9e?=
- =?us-ascii?Q?QPyzZlGpzuQkJcataOc34RvQwpP3E0eno7v7SWbkIHYdPlw7JAmDN40XUjGV?=
- =?us-ascii?Q?kTNNdvtse80yZetkpkhkKlYrIatmZ++N1oVv72pUNKsPwoMxX/dIYkSqiiXd?=
- =?us-ascii?Q?K0qO3nbyEBvW5zBEeI0rgY8LlTJiCxElOmgizaZHU5hhmZ6Rmjl2T3NYUWGy?=
- =?us-ascii?Q?m2jVUyoLQAY6DWstAVSv1grQUQbWWFVbMpBVvtzT0eh2hh1kwTLYJBqh8mNq?=
- =?us-ascii?Q?h8wG9FWaDiQFIVYeWcdabet0nqd1vq1BuRYJwDXzU2fOkRfJTXikKi7TYWMg?=
- =?us-ascii?Q?d1xqNaWKjgH8JbQcxpaiCpeOvv3sMFGubWAmnHAoBsmJzrTg7fpBUonr1e56?=
- =?us-ascii?Q?iOXsXd9PEp5WRDcJ0egcy6TBuqx14+GN6bCLNA1o7vGbc3qEjTtOafzhtMnZ?=
- =?us-ascii?Q?CpdYGV5VAVgX7UaFbawYUdmC1bSNR7ZiW9Ho/9zPrLrtAInWZY98lc213sG6?=
- =?us-ascii?Q?k0WkG3nb6X7q4YVnMXE1pteFqrZlB9hzsRhQwN9T3+kCfuVHJe/TdqIjUqrk?=
- =?us-ascii?Q?zPufhwPtFZ1za9PtHGKvCf2qzybQSCxUvbuv1k5xOWt8526XE3ZKXmW/aDvO?=
- =?us-ascii?Q?DP+s7qc+nHyHnwsRaR628yjqWKB3kisBopWD33hR9zCIvyZ/azgP4fThG2GD?=
- =?us-ascii?Q?gBYKZ8DsZDy+ZJbutwqX8esxFZA6/nXq+HJef7Ji8AWlisuVz1UxOSuuN/zg?=
- =?us-ascii?Q?EInIbjNUGK90+087DIKu5mMR7AuqJ/k8xakYWZ/KpYiUG8pP4IsHe9FF+rUx?=
- =?us-ascii?Q?6hS4hMEhPExdn+w3r6WoVqS1tig52FOgODZYSZxF1FQUDpGSjbe6bWfvVoll?=
- =?us-ascii?Q?iaZ0c/W8iIje7Bm6nhSnnQkkNGtn5W3G7csXSAVCVBdoAFuGjDmCnHcZyyHF?=
- =?us-ascii?Q?QhmXQJKwh8OW77dhSwJszEecjEtZ4pB8ZmDlC8LeR5pScT/+AAEFIntbVp3C?=
- =?us-ascii?Q?+mCiZWjx+hlv6K87QZeSMF650/t+7PZgf1NRGz6fQd3QwHd6y/YciUyVOHos?=
- =?us-ascii?Q?iMPK+N4LUHxkK/MeNxH4ThFIBW/wYL1lXO2HGe79ApVj8QuK8fvEHq8Sup2o?=
- =?us-ascii?Q?B2kyrwwgB5vnPMi1xgF8wZzYWgwPLXJIuTurPH8jBbg1Z9W1SQHsQlnJa4+6?=
- =?us-ascii?Q?Xg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA39C288C26
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 11:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753787869; cv=none; b=d/3wEWadpG/duZw/19e9q9f5ObIU4zJOY5acjQ4QD6+D0rokJFvtQxzhyHAXiny+uvQ1gsISZJfzXP6l/Ty6RAYZdiGGf5huLAviiJPXZWfQRF2AqOpF573xoRLLxQbHUAFs5xN07AqZbYe5f2fTbF1CtbHmPuT0BgCwOFlvzUg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753787869; c=relaxed/simple;
+	bh=wEVZhpgt1uNcasnqEQ15dSnD0eh7wUda2VTINBIA7/w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S4D/ROizmgAIIWFf6pztgwPQdpcTk794xX2sQyk2YiiIeIYrw90BNNZWqsouuEofqG/MNp/XGkb4pLL/qBwO723qZahu6CJmB4qdb/h7zwF1sfnqCVBWy8TBNOe8j6zkCBm8veFn90ChMmQvGNCxg8DyI17p0cXPv30PYegPolQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kOPyrZ+4; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-556fd896c99so4638305e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 04:17:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753787866; x=1754392666; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NNqyxgyK0nsgvQIxHIvNEn3WYoXCL9lVWy5TTd0G+sE=;
+        b=kOPyrZ+4WxhqPscq3pVAzPk2B3g8dQQsE6lOOTWt7PW1FGtp5FdHbx3PLEv+NalMLb
+         YdPlRAm8j32xPDJeX45zZdjPV2dIpup7iDiVAoyhzDGSV+eRI2svcHmnqUaUc0EHnVMC
+         v1Q+QXdr4INmLiZH3nv1A8bKVp0WEpYjm4ESwx+jnfHPIiC37LH6qela3khFvPzgtums
+         C4Lt6i2RAQBrO/Lg7ySVZgXeeu5OycIvKllEYvCjyJJp9M2RUD4/jBc1682E3axBBlJm
+         CGu+rpGFDbl8k9udzRFfuW1Dl9/jgVw7mS9gzZyGsq8NcXD86+T1eUVYLwPN5EITbuIm
+         CO9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753787866; x=1754392666;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NNqyxgyK0nsgvQIxHIvNEn3WYoXCL9lVWy5TTd0G+sE=;
+        b=D4F1Q/yNyDCa7KxzWH59YAv5A8dMGIe6qfX7UONzfsPI5fd+8H2RYxF6mrLNS6IPAg
+         PnSfVS6ht66NIVRsEolRp1BW2wci4OgVus1YYGBAdvKoZNBjSy0GaSwzZX1he/qQ0Tj1
+         EmmjeiNlTPFCRGxkdb09uCbRrXm3UqaZU5PbWE/03MCAmcE//XeG6L4qfZNWN8X+N1un
+         iEsHyjURC0Zr047WW5NYSEa4UGShlJR9OnHBXIG57fiiIJN9SuX87p6lnRByHUQIc1Te
+         nySeL5NmQCxEVFVE684Q7X62LWQCbECg19nadEBfv1OuSeyWK6YPwDZOu4zxs4gpE1/D
+         THWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX1V2g7KpLMEEew86XExKUP/5Ib4Lkx2hRsePl36yYDUqOPZHLNLNGfOePMbvDmAL76urVpOUTzQEjk57Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyurAocElj75KhCUHJyEpHv5XqmrjwXaa5xe9ziThG8U83nwnXY
+	z8FL1CSg6RkHcou2yx59obshRJhOCrvwn7V5/k7ziecyKzDiJZPP36IxO42M0jZ00sk=
+X-Gm-Gg: ASbGncs1cDbPIbFZbfI+ZK8Fr9LrNLZlfWoOfZCPlVTTcg/XE3yH25UbGiMHyI8DEN6
+	3ingIlpxbv7eKt7TKRQ5iJxdy4m5jYpxx4qsZcLp4HFsUzcWcu3Gw1aLafZK0dqVUizJVRpcaw6
+	ujnl+oK/82bXFMMhW68dJfdnrRhQ/dsYW2EMmx9U3tFcP9FNbo1Em5fNwfdmOYCDLdt+dRgsYlQ
+	t24EW+PsrvmPPboRqiJ4yPOk10+gwmTGOHdBZQKa1BWBZNKoGfuPw6NnlDPwVL1K+gquhqTLf0B
+	9Q1ateHeYBofdKuD9M3IfQnd2/NgH2F5my6w3eLQCRGwdgdOLhZRGK2zpQbEmIel63sJHXP7MTO
+	owiBXFY7vwPA2X1edqHlfLfyQudVpKARgKwtiucesFaV52UVQoGUbmPsg+RThqlPHWnpuV0az
+X-Google-Smtp-Source: AGHT+IGssqGSc/l4qTALfsZmnWpz0MEgV6jXLRfV5IBNiy/NKNIKDaCf0ufZ7BJYRZwGjpYZkZDx3g==
+X-Received: by 2002:a05:6512:23a2:b0:554:f76a:baba with SMTP id 2adb3069b0e04-55b5f3d5c73mr4808104e87.3.1753787865739;
+        Tue, 29 Jul 2025 04:17:45 -0700 (PDT)
+Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b6316db49sm1652507e87.3.2025.07.29.04.17.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 04:17:45 -0700 (PDT)
+From: Ulf Hansson <ulf.hansson@linaro.org>
+To: Linus <torvalds@linux-foundation.org>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL] pmdomain/cpuidle-psci updates for v6.17
+Date: Tue, 29 Jul 2025 13:17:33 +0200
+Message-ID: <20250729111743.14723-1-ulf.hansson@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA3PR11MB8986.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e06d4a8c-d6cc-4a4c-815b-08ddce915cc8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2025 11:16:27.8136
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3FYX6ymfdo6NCe9bNY3dS4V4evRtxbGWVHKKdLtWM7iCcgBNwsUy5brqNwCdLGP6RwLIy+QDrP0TxJXSub3ocgPd/ly1dola7NoLBnJAQwA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB8279
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi Linus,
+
+Here's the pull-request with pmdomain and cpuidle-psci updates for v6.17.
+
+FYI, this time we have made quite some changes in the pmdomain provider core
+(aka genpd), which affects a couple of provider drivers that are sprinkled
+across a few more subsystems than usual.
+
+More details about the highlights are as usual found in the signed tag.
+
+Please pull this in!
+
+Kind regards
+Ulf Hansson
 
 
+The following changes since commit 621a88dbfe9006c318a0cafbd12e677ccfe006e7:
 
-> -----Original Message-----
-> From: Intel-wired-lan <intel-wired-lan-bounces@osuosl.org> On Behalf
-> Of Arkadiusz Kubalewski
-> Sent: Tuesday, July 29, 2025 12:45 PM
-> To: Nguyen, Anthony L <anthony.l.nguyen@intel.com>; Kitszel,
-> Przemyslaw <przemyslaw.kitszel@intel.com>; andrew+netdev@lunn.ch;
-> davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
-> pabeni@redhat.com; horms@kernel.org; sdf@fomichev.me;
-> almasrymina@google.com; asml.silence@gmail.com; leitao@debian.org;
-> kuniyu@google.com
-> Cc: linux-kernel@vger.kernel.org; intel-wired-lan@lists.osuosl.org;
-> netdev@vger.kernel.org; Kubalewski, Arkadiusz
-> <arkadiusz.kubalewski@intel.com>
-> Subject: [Intel-wired-lan] [RFC PATCH] net: add net-device TX clock
-> source selection framework
->=20
-> Add support for user-space control over network device transmit clock
-> sources through a new sysfs interface.
-> A network device may support multiple TX clock sources (OCXO, SyncE
-> reference, external reference clocks) which are critical for time-
-> sensitive networking applications and synchronization protocols.
->=20
-> This patch introduces:
->=20
-> 1. Core TX clock framework (net/core/tx_clk.c):
-> - per net-device clock source registration and management
-> - sysfs interface under /sys/class/net/<device>/tx_clk/
-> - thread-safe clock switching by using mutex locking
->=20
-> 2. Generic netdev integration:
-> - new netdev_tx_clk_ops structure for driver callbacks
-> - TX clock list and kobject directory in struct net_device
-> - registration/cleanup functions for driver use
->=20
-> 3. Intel ICE driver implementation:
-> - support for E825 series network cards
-> - three clock sources: OCXO (default), SyncE_ref, ext_ref
-> - per-PF clock state management
->=20
-> 4. Kconfig option NET_TX_CLK:
-> - optional feature + user documentation
->=20
-> User interface:
-> - Read /sys/class/net/<device>/tx_clk/<clock_name> to get status (0/1)
-> - Write "1" to switch to that clock source
-> - Writing "0" is not supported (one clock must always be active)
->=20
-> Example usage:
->   # Check current clock status
->   $ cat /sys/class/net/eth0/tx_clk/*
->=20
->   # Switch to external reference clock
->   $ echo 1 > /sys/class/net/eth0/tx_clk/ext_ref
->=20
-> Signed-off-by: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-> ---
+  cpuidle: psci: Fix cpuhotplug routine with PREEMPT_RT=y (2025-07-14 13:09:04 +0200)
 
-...
+are available in the Git repository at:
 
-> a/drivers/net/ethernet/intel/ice/ice_tx_clk.c
-> b/drivers/net/ethernet/intel/ice/ice_tx_clk.c
-> new file mode 100644
-> index 000000000000..121e9fa0c146
-> --- /dev/null
-> +++ b/drivers/net/ethernet/intel/ice/ice_tx_clk.c
-> @@ -0,0 +1,113 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/* Copyright (C) 2025, Intel Corporation. */
-> +
+  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.17
 
+for you to fetch changes up to 05e35bd07d56780f0a5119973995b97a16843579:
 
-...
+  pmdomain: qcom: rpmhpd: Add Glymur RPMh Power Domains (2025-07-23 12:12:16 +0200)
 
-> +++ b/net/core/tx_clk.c
-> @@ -0,0 +1,150 @@
-> +// SPDX-License-Identifier: GPL-2.0
-I prefer old style /* SPDX-License-Identifier: GPL-2.0 */
-Everything else is fine for me.
-Reviewed-by: Aleksandr Loktionov <aleksandr.loktionov@intel.com>
+----------------------------------------------------------------
+pmdomain core:
+ - Leave powered-on genpds on until ->sync_state() or late_initcall_sync
+ - Export a common ->sync_state() helper for genpd providers
+ - Add generic ->sync_state() support
+ - Add a bus/driver for genpd provider-devices
+ - Introduce dev_pm_genpd_is_on() for consumers
 
-...
+pmdomain providers:
+ - cpuidle-psci: Drop redundant ->sync_state() support
+ - cpuidle-riscv-sbi: Drop redundant ->sync_state() support
+ - imx: Set ISI panic write for imx8m-blk-ctrl
+ - qcom: Add support for Glymur and Milos RPMh power-domains
+ - qcom: Use of_genpd_sync_state() for power-domains
+ - rockchip: Add support for the RK3528 variant
+ - samsung: Fix splash-screen handover by enforcing a ->sync_state()
+ - sunxi: Add support for Allwinner A523's PCK600 power-controller
+ - tegra: Opt-out from genpd's common ->sync_state() support for pmc
+ - thead: Instantiate a GPU power sequencer via the auxiliary bus
+ - renesas: Move init to postcore_initcalls
+ - xilinx: Move ->sync_state() support to firmware driver
+ - xilinx: Use of_genpd_sync_state() for power-domains
 
-> +EXPORT_SYMBOL_GPL(netdev_tx_clk_cleanup);
-> |
-> base-commit: fa582ca7e187a15e772e6a72fe035f649b387a60
-> --
-> 2.38.1
+pmdomain consumers:
+ - remoteproc: imx_rproc: Fixup the detect/attach procedure for pre-booted cores
 
+----------------------------------------------------------------
+Chen-Yu Tsai (4):
+      dt-bindings: power: Add A523 PPU and PCK600 power controllers
+      pmdomain: sunxi: sun20i-ppu: add A523 support
+      pmdomain: sunxi: add driver for Allwinner A523's PCK-600 power controller
+      pmdomain: sunxi: sun20i-ppu: change to tristate and enable for ARCH_SUNXI
+
+Christophe JAILLET (1):
+      pmdomain: amlogic: Constify struct meson_secure_pwrc_domain_data
+
+Guillaume La Roque (1):
+      pmdomain: ti: Select PM_GENERIC_DOMAINS
+
+Hiago De Franco (3):
+      pmdomain: core: introduce dev_pm_genpd_is_on()
+      remoteproc: imx_rproc: skip clock enable when M-core is managed by the SCU
+      remoteproc: imx_rproc: detect and attach to pre-booted remote cores
+
+Jonas Karlman (3):
+      dt-bindings: power: rockchip: Add support for RK3528
+      dt-bindings: rockchip: pmu: Add compatible for RK3528
+      pmdomain: rockchip: Add support for RK3528
+
+Kamal Wadhwa (2):
+      dt-bindings: power: rpmpd: Add Glymur power domains
+      pmdomain: qcom: rpmhpd: Add Glymur RPMh Power Domains
+
+Krzysztof Hałasa (1):
+      imx8m-blk-ctrl: set ISI panic write hurry level
+
+Kuninori Morimoto (2):
+      pmdomain: renesas: use menu for Renesas
+      pmdomain: renesas: sort Renesas Kconfig configs
+
+Luca Weiss (2):
+      dt-bindings: power: qcom,rpmpd: document the Milos RPMh Power Domains
+      pmdomain: qcom: rpmhpd: Add Milos power domains
+
+Lukas Bulwahn (1):
+      pmdomain: arm: scmi_pm_domain: remove code clutter
+
+Michal Wilczynski (2):
+      dt-bindings: firmware: thead,th1520: Add resets for GPU clkgen
+      pmdomain: thead: Instantiate GPU power sequencer via auxiliary bus
+
+Saravana Kannan (1):
+      driver core: Add dev_set_drv_sync_state()
+
+Sven Peter (1):
+      pmdomain: apple: Drop default ARCH_APPLE in Kconfig
+
+Ulf Hansson (31):
+      pmdomain: core: Use of_fwnode_handle()
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch dt into next
+      pmdomain: renesas: rcar-sysc: Add genpd OF provider at postcore_initcall
+      pmdomain: renesas: rmobile-sysc: Move init to postcore_initcall
+      pmdomain: renesas: rcar-gen4-sysc: Move init to postcore_initcall
+      pmdomain: core: Prevent registering devices before the bus
+      pmdomain: core: Add a bus and a driver for genpd providers
+      pmdomain: core: Add the genpd->dev to the genpd provider bus
+      pmdomain: core: Export a common ->sync_state() helper for genpd providers
+      pmdomain: core: Prepare to add the common ->sync_state() support
+      soc/tegra: pmc: Opt-out from genpd's common ->sync_state() support
+      cpuidle: psci: Opt-out from genpd's common ->sync_state() support
+      cpuidle: riscv-sbi: Opt-out from genpd's common ->sync_state() support
+      pmdomain: qcom: rpmpd: Use of_genpd_sync_state()
+      pmdomain: qcom: rpmhpd: Use of_genpd_sync_state()
+      firmware/pmdomain: xilinx: Move ->sync_state() support to firmware driver
+      firmware: xilinx: Don't share zynqmp_pm_init_finalize()
+      firmware: xilinx: Use of_genpd_sync_state()
+      driver core: Export get_dev_from_fwnode()
+      pmdomain: core: Add common ->sync_state() support for genpd providers
+      pmdomain: core: Default to use of_genpd_sync_state() for genpd providers
+      pmdomain: core: Leave powered-on genpds on until late_initcall_sync
+      pmdomain: core: Leave powered-on genpds on until sync_state
+      cpuidle: psci: Drop redundant sync_state support
+      cpuidle: riscv-sbi: Drop redundant sync_state support
+      pmdomain: samsung: Fix splash-screen handover by enforcing a sync_state
+      pmdomain: Merge branch fixes into next
+      pmdomain: Merge branch dt into next
+      pmdomain: Merge branch dt into next
+
+ .../devicetree/bindings/arm/rockchip/pmu.yaml      |   2 +
+ .../bindings/firmware/thead,th1520-aon.yaml        |   7 +
+ .../bindings/power/allwinner,sun20i-d1-ppu.yaml    |   4 +-
+ .../devicetree/bindings/power/qcom,rpmpd.yaml      |   2 +
+ .../bindings/power/rockchip,power-controller.yaml  |   1 +
+ drivers/base/core.c                                |   8 +-
+ drivers/cpuidle/cpuidle-psci-domain.c              |  14 --
+ drivers/cpuidle/cpuidle-riscv-sbi.c                |  14 --
+ drivers/firmware/xilinx/zynqmp.c                   |  18 +-
+ drivers/pmdomain/amlogic/meson-secure-pwrc.c       |  12 +-
+ drivers/pmdomain/apple/Kconfig                     |   1 -
+ drivers/pmdomain/arm/scmi_pm_domain.c              |  12 +-
+ drivers/pmdomain/core.c                            | 254 +++++++++++++++++++--
+ drivers/pmdomain/imx/imx8m-blk-ctrl.c              |  10 +
+ drivers/pmdomain/qcom/rpmhpd.c                     |  47 ++++
+ drivers/pmdomain/qcom/rpmpd.c                      |   2 +
+ drivers/pmdomain/renesas/Kconfig                   | 124 +++++-----
+ drivers/pmdomain/renesas/rcar-gen4-sysc.c          |   2 +-
+ drivers/pmdomain/renesas/rcar-sysc.c               |  19 +-
+ drivers/pmdomain/renesas/rmobile-sysc.c            |   3 +-
+ drivers/pmdomain/rockchip/pm-domains.c             |  27 +++
+ drivers/pmdomain/samsung/exynos-pm-domains.c       |   9 +
+ drivers/pmdomain/sunxi/Kconfig                     |  19 +-
+ drivers/pmdomain/sunxi/Makefile                    |   1 +
+ drivers/pmdomain/sunxi/sun20i-ppu.c                |  17 ++
+ drivers/pmdomain/sunxi/sun55i-pck600.c             | 234 +++++++++++++++++++
+ drivers/pmdomain/thead/Kconfig                     |   1 +
+ drivers/pmdomain/thead/th1520-pm-domains.c         |  51 +++++
+ drivers/pmdomain/ti/Kconfig                        |   2 +-
+ drivers/pmdomain/xilinx/zynqmp-pm-domains.c        |  16 --
+ drivers/remoteproc/imx_rproc.c                     |  45 +++-
+ drivers/soc/tegra/pmc.c                            |  26 ++-
+ .../power/allwinner,sun55i-a523-pck-600.h          |  15 ++
+ .../dt-bindings/power/allwinner,sun55i-a523-ppu.h  |  12 +
+ include/dt-bindings/power/rockchip,rk3528-power.h  |  19 ++
+ include/linux/device.h                             |  13 ++
+ include/linux/firmware/xlnx-zynqmp.h               |   6 -
+ include/linux/pm_domain.h                          |  23 ++
+ 38 files changed, 918 insertions(+), 174 deletions(-)
+ create mode 100644 drivers/pmdomain/sunxi/sun55i-pck600.c
+ create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-pck-600.h
+ create mode 100644 include/dt-bindings/power/allwinner,sun55i-a523-ppu.h
+ create mode 100644 include/dt-bindings/power/rockchip,rk3528-power.h
 
