@@ -1,173 +1,192 @@
-Return-Path: <linux-kernel+bounces-750924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC9AB162E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:32:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22CB5B162E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:34:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2252171CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3320B16ECCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:33:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19562D9792;
-	Wed, 30 Jul 2025 14:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D1922D9EDF;
+	Wed, 30 Jul 2025 14:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="gU968hKq"
-Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bz4SgOuh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B082284B37;
-	Wed, 30 Jul 2025 14:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 973132D77F6;
+	Wed, 30 Jul 2025 14:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753885953; cv=none; b=QLjD9zOwfRmsHMIrum40YQW8B8n/aPViBSqXmwbeSdg6BvqocARwjU720My5+2tiHccWox4xHgZNpihUHNvG6M5OU9533lkwif+1/0u0CWwqwaBCwjwg481FDzAcksCmVhu9RZVsyuIPQNUIrJdDJxYIBF2CH1AUNsOAs2LM39w=
+	t=1753886019; cv=none; b=PJDu94IvIXtPVkyH37kUKp0BHI7c29acWHVTPoTCqwn9O+XWsRjAexTxpDab1odLKkMlP/VI6TjjJgW2q10Lz48unb8KpECtXMvr8PoyFhlsTWLOSmoYIkc2Sif1D6D762KkJwOTZ+HyuACdfrJrfNND8vexU+DiQ2fL5ltw5/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753885953; c=relaxed/simple;
-	bh=gXeaMQKhbbLV+XDhyUGbP7yFSizyKb6o3AmRd0dDE8w=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=k/qIGim9BFo2CugGVCLnxH2tYT0CSPk9o1G8I30Fp4UipqvIfEqmkbYqwol4AeEFqWf6tCc42J9yalOJVSBKOpzCvg5kNPD5r/ZOgNsBjKNIzActkL3J/U3R8Zc+4sgtYqut9cQSNn13193+BlFgR3uGrNS82y7QsyrOEC+wyIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=gU968hKq; arc=none smtp.client-ip=119.8.177.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=4937AmRvhXpOfhqlM5MINHlko1YxCrPtTXjJt0WkGfA=;
-	b=gU968hKq8baK8Gq5MVmNxs/0rdDVVd3KOvY8reyJ5SqCg+iwxQOz7QY8aSz6uwLR5he/e/Psb
-	kZW4UjX4fyds80AwAXS8p8upjQi/fg60bY00IQPWHwKrlHVDR1Yrx0vF8jCEx+Sf34Srk2t8pb+
-	xIJ/vdQWIr2jieJHB6VEyqA=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.35])
-	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4bsZQH31G9z1P6lR;
-	Wed, 30 Jul 2025 22:31:03 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bsZPz0vj6z6M50h;
-	Wed, 30 Jul 2025 22:30:47 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3CC161402EA;
-	Wed, 30 Jul 2025 22:32:23 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Jul
- 2025 16:32:22 +0200
-Date: Wed, 30 Jul 2025 15:32:20 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
- Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 25/38] cca: guest: arm64: Realm device lock
- support
-Message-ID: <20250730153220.00006866@huawei.com>
-In-Reply-To: <20250728135216.48084-26-aneesh.kumar@kernel.org>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
-	<20250728135216.48084-26-aneesh.kumar@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753886019; c=relaxed/simple;
+	bh=pmEi+E7y8N1fUJ2Skd77GVL6bd2TokFUGYI1O6z8kE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hZc2xhKxXUqR6vZ9ZpKRjicYCaNFprm1a+PyvDHZ6v1nNZwyfRkEoxyZ4RxoTFSbfdKHVg4RmfQih5TmoTQmjHknIXdBTIKFIDrX6y8I1wyIKf4o2nhZkh5cq6k+jZQmNFpjz1uUC87QMeKD3bEWN6U0cuhKRGEwVjCNjiKFIUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bz4SgOuh; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753886017; x=1785422017;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=pmEi+E7y8N1fUJ2Skd77GVL6bd2TokFUGYI1O6z8kE8=;
+  b=bz4SgOuhTjzo4tbiBXg9uUkDQlvXLWX9kmP7mUaQYk0Kk/ywMx2wZxgA
+   rA2UV9FgN7CnvQgnp++gqklDemIpnb1HvaKQlHT7lUtZgCZ/xrx9wzOog
+   uWrdeIzH1/kALWNp8DzkQiF2ygBE9ac6guFH9/9DdSPeSiNJ2egaw+64u
+   NZ5dYQYWrZDBEMitfc4THthKkyBuVw5Kc04kLOfkE0lh7zL/RcDnk47jN
+   OoTyH1PYs8tSNEfMb/WwWkZeCLveT4jL5IL9jR/BMV/unnekACg+pGqSq
+   trPrIafJ4GTbNE5WJbd9T0h1u/banmFhq+BG17Mv2VZDCOkl5Z9NPyyxW
+   g==;
+X-CSE-ConnectionGUID: oSYIRRuPTGCEybDf0ElfwA==
+X-CSE-MsgGUID: 1yMVzIKRRU265qP10OSNGA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="60013797"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="60013797"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 07:33:37 -0700
+X-CSE-ConnectionGUID: hkTixScCTg6cwK/DCkLisA==
+X-CSE-MsgGUID: zW5cvb46RTmWg/nwgXfSFQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="167492737"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 30 Jul 2025 07:33:33 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uh7s2-0002pg-1A;
+	Wed, 30 Jul 2025 14:33:30 +0000
+Date: Wed, 30 Jul 2025 22:32:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marie Zhussupova <marievic@google.com>, rmoar@google.com,
+	davidgow@google.com, shuah@kernel.org, brendan.higgins@linux.dev
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, elver@google.com,
+	dvyukov@google.com, lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Marie Zhussupova <marievic@google.com>
+Subject: Re: [PATCH 3/9] kunit: Pass additional context to generate_params
+ for parameterized testing
+Message-ID: <202507302223.BTl33Nvo-lkp@intel.com>
+References: <20250729193647.3410634-4-marievic@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729193647.3410634-4-marievic@google.com>
 
-On Mon, 28 Jul 2025 19:22:02 +0530
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+Hi Marie,
 
-> Writing 1 to 'tsm/lock' will initiate the TDISP lock sequence.
-> 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> ---
->  arch/arm64/include/asm/rsi_cmds.h         | 32 +++++++++++++-
->  arch/arm64/include/asm/rsi_smc.h          |  5 +++
->  drivers/virt/coco/arm-cca-guest/Makefile  |  2 +-
->  drivers/virt/coco/arm-cca-guest/arm-cca.c | 18 ++++++++
->  drivers/virt/coco/arm-cca-guest/rsi-da.c  | 52 +++++++++++++++++++++++
->  drivers/virt/coco/arm-cca-guest/rsi-da.h  |  3 +-
->  6 files changed, 108 insertions(+), 4 deletions(-)
->  create mode 100644 drivers/virt/coco/arm-cca-guest/rsi-da.c
-> 
-> diff --git a/arch/arm64/include/asm/rsi_cmds.h b/arch/arm64/include/asm/rsi_cmds.h
-> index d4834baeef1b..b9c4b8ff5631 100644
-> --- a/arch/arm64/include/asm/rsi_cmds.h
-> +++ b/arch/arm64/include/asm/rsi_cmds.h
-> @@ -172,8 +172,36 @@ static inline int rsi_features(unsigned long index, unsigned long *out)
->  
->  	arm_smccc_1_1_invoke(SMC_RSI_FEATURES, index, &res);
->  
-> -	if (out)
-> -		*out = res.a1;
-> +	*out = res.a1;
-> +	return res.a0;
+kernel test robot noticed the following build errors:
 
-Seems unrelated change. 
+[auto build test ERROR on shuah-kselftest/kunit]
+[also build test ERROR on shuah-kselftest/kunit-fixes drm-xe/drm-xe-next linus/master v6.16 next-20250730]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> +}
-> +
+url:    https://github.com/intel-lab-lkp/linux/commits/Marie-Zhussupova/kunit-Add-parent-kunit-for-parameterized-test-context/20250730-033818
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git kunit
+patch link:    https://lore.kernel.org/r/20250729193647.3410634-4-marievic%40google.com
+patch subject: [PATCH 3/9] kunit: Pass additional context to generate_params for parameterized testing
+config: arm64-randconfig-002-20250730 (https://download.01.org/0day-ci/archive/20250730/202507302223.BTl33Nvo-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250730/202507302223.BTl33Nvo-lkp@intel.com/reproduce)
 
-> diff --git a/drivers/virt/coco/arm-cca-guest/rsi-da.c b/drivers/virt/coco/arm-cca-guest/rsi-da.c
-> new file mode 100644
-> index 000000000000..097cf52ee199
-> --- /dev/null
-> +++ b/drivers/virt/coco/arm-cca-guest/rsi-da.c
-> @@ -0,0 +1,52 @@
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507302223.BTl33Nvo-lkp@intel.com/
 
-> +int rsi_device_lock(struct pci_dev *pdev)
-> +{
-> +	unsigned long ret;
-> +	struct cca_guest_dsc *dsm = to_cca_guest_dsc(pdev);
-> +	int vdev_id = (pci_domain_nr(pdev->bus) << 16) |
-> +		PCI_DEVID(pdev->bus->number, pdev->devfn);
-> +
-> +	ret = rsi_rdev_get_instance_id(vdev_id, &dsm->instance_id);
-> +	if (ret != RSI_SUCCESS) {
-> +		pci_err(pdev, "failed to get the device instance id (%lu)\n", ret);
-> +		return -EIO;
-> +	}
-> +
-> +	ret = rsi_rdev_lock(pdev, vdev_id, dsm->instance_id);
-> +	if (ret != RSI_SUCCESS) {
-> +		pci_err(pdev, "failed to lock the device (%lu)\n", ret);
-> +		return -EIO;
-> +	}
-> +
-> +	return ret;
-return 0? 
+All errors (new ones prefixed by >>):
 
-You carefully overwrite other error codes. I assume RSI_SUCCESS == 0 but
-even better to just return 0 directly in the good path.
+   In file included from drivers/gpu/drm/xe/xe_migrate.c:1917:
+>> drivers/gpu/drm/xe/tests/xe_migrate.c:772:44: error: incompatible function pointer types initializing 'const void *(*)(struct kunit *, const void *, char *)' with an expression of type 'const void *(const void *, char *)' [-Wincompatible-function-pointer-types]
+     772 |         KUNIT_CASE_PARAM(xe_migrate_sanity_kunit, xe_pci_live_device_gen_param),
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:215:24: note: expanded from macro 'KUNIT_CASE_PARAM'
+     215 |                   .generate_params = gen_params, .module_name = KBUILD_MODNAME}
+         |                                      ^~~~~~~~~~
+   In file included from drivers/gpu/drm/xe/xe_migrate.c:1917:
+   drivers/gpu/drm/xe/tests/xe_migrate.c:773:42: error: incompatible function pointer types initializing 'const void *(*)(struct kunit *, const void *, char *)' with an expression of type 'const void *(const void *, char *)' [-Wincompatible-function-pointer-types]
+     773 |         KUNIT_CASE_PARAM(xe_validate_ccs_kunit, xe_pci_live_device_gen_param),
+         |                                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:215:24: note: expanded from macro 'KUNIT_CASE_PARAM'
+     215 |                   .generate_params = gen_params, .module_name = KBUILD_MODNAME}
+         |                                      ^~~~~~~~~~
+   2 errors generated.
+--
+   In file included from drivers/gpu/drm/xe/xe_dma_buf.c:319:
+>> drivers/gpu/drm/xe/tests/xe_dma_buf.c:285:37: error: incompatible function pointer types initializing 'const void *(*)(struct kunit *, const void *, char *)' with an expression of type 'const void *(const void *, char *)' [-Wincompatible-function-pointer-types]
+     285 |         KUNIT_CASE_PARAM(xe_dma_buf_kunit, xe_pci_live_device_gen_param),
+         |                                            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:215:24: note: expanded from macro 'KUNIT_CASE_PARAM'
+     215 |                   .generate_params = gen_params, .module_name = KBUILD_MODNAME}
+         |                                      ^~~~~~~~~~
+   1 error generated.
+--
+   In file included from drivers/gpu/drm/xe/xe_bo.c:3128:
+>> drivers/gpu/drm/xe/tests/xe_bo.c:610:41: error: incompatible function pointer types initializing 'const void *(*)(struct kunit *, const void *, char *)' with an expression of type 'const void *(const void *, char *)' [-Wincompatible-function-pointer-types]
+     610 |         KUNIT_CASE_PARAM(xe_ccs_migrate_kunit, xe_pci_live_device_gen_param),
+         |                                                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:215:24: note: expanded from macro 'KUNIT_CASE_PARAM'
+     215 |                   .generate_params = gen_params, .module_name = KBUILD_MODNAME}
+         |                                      ^~~~~~~~~~
+   In file included from drivers/gpu/drm/xe/xe_bo.c:3128:
+   drivers/gpu/drm/xe/tests/xe_bo.c:611:38: error: incompatible function pointer types initializing 'const void *(*)(struct kunit *, const void *, char *)' with an expression of type 'const void *(const void *, char *)' [-Wincompatible-function-pointer-types]
+     611 |         KUNIT_CASE_PARAM(xe_bo_evict_kunit, xe_pci_live_device_gen_param),
+         |                                             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:215:24: note: expanded from macro 'KUNIT_CASE_PARAM'
+     215 |                   .generate_params = gen_params, .module_name = KBUILD_MODNAME}
+         |                                      ^~~~~~~~~~
+   In file included from drivers/gpu/drm/xe/xe_bo.c:3128:
+   drivers/gpu/drm/xe/tests/xe_bo.c:624:44: error: incompatible function pointer types initializing 'const void *(*)(struct kunit *, const void *, char *)' with an expression of type 'const void *(const void *, char *)' [-Wincompatible-function-pointer-types]
+     624 |         KUNIT_CASE_PARAM_ATTR(xe_bo_shrink_kunit, xe_pci_live_device_gen_param,
+         |                                                   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:228:24: note: expanded from macro 'KUNIT_CASE_PARAM_ATTR'
+     228 |                   .generate_params = gen_params,                                \
+         |                                      ^~~~~~~~~~
+   3 errors generated.
+--
+   In file included from drivers/gpu/drm/xe/xe_mocs.c:799:
+>> drivers/gpu/drm/xe/tests/xe_mocs.c:193:46: error: incompatible function pointer types initializing 'const void *(*)(struct kunit *, const void *, char *)' with an expression of type 'const void *(const void *, char *)' [-Wincompatible-function-pointer-types]
+     193 |         KUNIT_CASE_PARAM(xe_live_mocs_kernel_kunit, xe_pci_live_device_gen_param),
+         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:215:24: note: expanded from macro 'KUNIT_CASE_PARAM'
+     215 |                   .generate_params = gen_params, .module_name = KBUILD_MODNAME}
+         |                                      ^~~~~~~~~~
+   In file included from drivers/gpu/drm/xe/xe_mocs.c:799:
+   drivers/gpu/drm/xe/tests/xe_mocs.c:194:45: error: incompatible function pointer types initializing 'const void *(*)(struct kunit *, const void *, char *)' with an expression of type 'const void *(const void *, char *)' [-Wincompatible-function-pointer-types]
+     194 |         KUNIT_CASE_PARAM(xe_live_mocs_reset_kunit, xe_pci_live_device_gen_param),
+         |                                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/kunit/test.h:215:24: note: expanded from macro 'KUNIT_CASE_PARAM'
+     215 |                   .generate_params = gen_params, .module_name = KBUILD_MODNAME}
+         |                                      ^~~~~~~~~~
+   2 errors generated.
 
-> +}
-> diff --git a/drivers/virt/coco/arm-cca-guest/rsi-da.h b/drivers/virt/coco/arm-cca-guest/rsi-da.h
-> index 8a4d5f1b0263..f12430c7d792 100644
-> --- a/drivers/virt/coco/arm-cca-guest/rsi-da.h
-> +++ b/drivers/virt/coco/arm-cca-guest/rsi-da.h
-> @@ -10,9 +10,9 @@
->  #include <linux/pci-tsm.h>
->  #include <asm/rsi_smc.h>
->  
-> -
 
-Push back to earlier patch where I comment on this.
+vim +772 drivers/gpu/drm/xe/tests/xe_migrate.c
 
->  struct cca_guest_dsc {
->  	struct pci_tsm_pf0 pci;
-> +	unsigned long instance_id;
->  };
->  
->  static inline struct cca_guest_dsc *to_cca_guest_dsc(struct pci_dev *pdev)
-> @@ -24,4 +24,5 @@ static inline struct cca_guest_dsc *to_cca_guest_dsc(struct pci_dev *pdev)
->  	return container_of(tsm, struct cca_guest_dsc, pci.tsm);
->  }
->  
-> +int rsi_device_lock(struct pci_dev *pdev);
->  #endif
+54f07cfc016226 Akshata Jahagirdar 2024-07-17  770  
+0237368193e897 Michal Wajdeczko   2024-07-08  771  static struct kunit_case xe_migrate_tests[] = {
+37db1e77628551 Michal Wajdeczko   2024-07-20 @772  	KUNIT_CASE_PARAM(xe_migrate_sanity_kunit, xe_pci_live_device_gen_param),
+37db1e77628551 Michal Wajdeczko   2024-07-20  773  	KUNIT_CASE_PARAM(xe_validate_ccs_kunit, xe_pci_live_device_gen_param),
+0237368193e897 Michal Wajdeczko   2024-07-08  774  	{}
+0237368193e897 Michal Wajdeczko   2024-07-08  775  };
+0237368193e897 Michal Wajdeczko   2024-07-08  776  
 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
