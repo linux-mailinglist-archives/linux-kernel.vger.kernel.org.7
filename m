@@ -1,101 +1,127 @@
-Return-Path: <linux-kernel+bounces-750176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AED2B15821
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:43:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8D17B15822
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D556540A14
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:43:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEBEA4E09FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B5618A93F;
-	Wed, 30 Jul 2025 04:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6F41C6FFD;
+	Wed, 30 Jul 2025 04:43:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="rl8xorxH"
-Received: from r3-25.sinamail.sina.com.cn (r3-25.sinamail.sina.com.cn [202.108.3.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RbyTLKHI"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 474214A32
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 04:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243664A32;
+	Wed, 30 Jul 2025 04:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753850574; cv=none; b=LCkHxE6iRRPDlxK3cJCuFk8f02RMIYyJz5UCYUTHJGIyf9MuwK3Y26ps8tUU2ez242aG6iqAKgJsOHv/uUtjT7vj3yGh8cNGQjFL0ZQdk1ogMCGJBmcBW37tXOWU3/cCvB8B4m28PjqUYjovKF+VPIxSuQC459KkwcEEeOa4VNM=
+	t=1753850636; cv=none; b=PmkCr3Zn78/FJJbKChyanusCwMMIUDD9j2A5gqYd54JXRqHSlGas0rSHk0WoZi6y5ssx39a24obArlXwEGjhxSJ2sDcZ/UcWJNXI2kgu0VlFXBR3TOe9/S2oSewKtsynZfn/8XcEUASHMfm6DIZpumhjKhJi3gTYTEvU0Oi5BDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753850574; c=relaxed/simple;
-	bh=BNYDSuEHkX3UtIYATWxiuBVF1H6ZMSUKGBj4/cGhLFQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MdMpZoTLtrtdXy1PcnrjxJEWPzBbCs2PJ5TYSkDXAsU8SjLwr7BvkDo//wFNwA4n9i8aDcaG85cewrk6EHcfRa2BNlojL6XYtqJu2pO870upmoTuTZ8ARTL8U/BVqkG/tSi++KNSkw7GVutZx2nrGRBcj0z0E/CW/tIFVx7Trj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=rl8xorxH; arc=none smtp.client-ip=202.108.3.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753850569;
-	bh=uznuf8zbOQCTVwVBLxMMcuG2IVAIwcvFGZuNNfMxJRw=;
-	h=From:Subject:Date:Message-ID;
-	b=rl8xorxHjR/z9ziJZYH/Y38U5Ty53g+BaQjrqJLir9us9BAodsTr0q5mjQGMtimgw
-	 FOYb4gn6t6I1IHt2WQ2ITalw5/lAkLn8s8O0CCOvrHn89CWHkB79mcxqYKrxeZKMrV
-	 RVC93GeHiU0tlX3BIPowakv+i8H7HzJFN7CDLu+o=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 6889A2BC000050AB; Wed, 30 Jul 2025 12:42:38 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 4228256816233
-X-SMAIL-UIID: 1674B0AC211D4AF4B6AC27BB5DA076EE-20250730-124238-1
-From: Hillf Danton <hdanton@sina.com>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	CoCC <conduct@kernel.org>
-Subject: Re: Code of Conduct violation complaint
-Date: Wed, 30 Jul 2025 12:42:27 +0800
-Message-ID: <20250730044228.3448-1-hdanton@sina.com>
-In-Reply-To: <aHanGu9nOGOegUg2@duo.ucw.cz>
-References: <13a6b8e3-a35a-425d-bafc-006e0a52599f@linuxfoundation.org>
+	s=arc-20240116; t=1753850636; c=relaxed/simple;
+	bh=/2/V//9TcM8n37ZKi0naC7ewOQzSYwOo7elh/RXKbGo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Un39OXw7dxMjIEx8/XIpKZpoUBSI+K6XPWAxW1AS1SCIyRiLPIWlIqbi2gbGPW17v/LRTJcpiZocJ3w6WlYqCMuWmKGyLoLbcYA/KWhXuF5t9G+PmDRJSaIttAXW53NhyTqX0dpPaYvRw2v3OCRN5ChGavVyoB8Uf8B9oKVASLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RbyTLKHI; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b3aa2a0022cso6643227a12.1;
+        Tue, 29 Jul 2025 21:43:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753850634; x=1754455434; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5nkMxoQrllcrB2LXAW9NScvifFO/bApn1I1MurFZrA=;
+        b=RbyTLKHIJgDnLabWsvqGyxdVfG9O92/yuazwJoPAgYisaDTk14Uqf62IHNasRTGEKx
+         Rae9iSub7Fsi0xVLPKFVzXf3h6R3c10BenlWxKkdlegNoGHzVyRnuc4u0hS1U6mKIVmK
+         LupLIf2Src3aOziBzT+nw65HS1jCtpGbEwFGAD5kEpOfYixhoQwp72YiA8X3RNgJSz+p
+         X5ExhzCiE4jyiGALmVdd07avcIK3Jpr2/XIzoifmPT+CqiQ/LIDEglVEoCkcwyLUKZnw
+         rgWCQpIzjx9T37zBbWwFCg7JZp48amXmHfLpsOxuGY2uSxZ8nIY0fR/8sa3AQTA2c6no
+         xRZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753850634; x=1754455434;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I5nkMxoQrllcrB2LXAW9NScvifFO/bApn1I1MurFZrA=;
+        b=kJrl1zjvRRC4kpOi3Nefxf5COzQhLf5awma3SdHHCG0ph7CO/rPxP+mJi3yGLzEH8U
+         kKXw7jr3gsVdLfAAFjvfua/H7j/gMv5OhkO4q5OBiBzBnMMA+X/11+paaCZczUltlgW+
+         I2HvGpzHDTEoaDPM81DdDQPUUCvjovPFL0Buz0fG3g9YoczJVbVkDuvNnJCAA2seDpIM
+         UtW18oNiOogrVfxSj5aSqMnAcakAM8eqIw9Jmfi26tAdjURaNf81wUfapuKdRTLexXqY
+         J4H8JdTwyZ0/9gsDuKpvz85J3oaibmJwazKtBFAQB+CGq1g3F0WPXLKp1VM6VrIF4D3Z
+         5udA==
+X-Forwarded-Encrypted: i=1; AJvYcCW83VO3NBpsCHgtru+1Y6+2bi6kbl0GuupFl2ZD6dKXr7JdvgLZJXp2FxQ9FR5nhuIiSoNwdmYULVVAl+s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxHWQOQMs4YjhpOWyCUNELTUm5qOu1dkaTBHVTuA+0D5mPM6wG
+	3s5hoIDjY5eRLE+OSU0kexj3jPPdGvUZ7bQpvwH0j9alF+3OKzbk+MucqyOthg==
+X-Gm-Gg: ASbGncueBcvxGZMzvNCrvpoilJKgDXM0a848H32wM0bGNC3U+1PcxYQH3py6STMsBCk
+	3oGnRH3nnYWzF6nA71aNM8UmylqPZj3WQsAvvc62aL+ZcpVekfMjEUCbEkOhbJHga00+SwxpKR/
+	VSLwrT3ZL109ISjcJAPfCb0kamJ1t4Z2cGeL+O9ZM54zPSombTGBEBq3rHHo6UI7mkx8HCe28lL
+	p2ZFMOBB/tBPxnn1Ck39+vyfwBbdj8A7DK7vS2qifM8PVqR+XLpQ8hmIi7CrpZLM1vdBRAOjis8
+	hDApywuis2Q8EpsGrrhexnoJNFaexXIqOmCqKevtA0SXaFbjYICegD3GLo95A33tporY5qjYQF5
+	UcqepdXFdE8hWBD6mu42DLBFCIGlZjLiSB0IpQDf3U33ljCnqV8OKvsuu68Po1AVvEk5Gx2I=
+X-Google-Smtp-Source: AGHT+IEWyn6eGxLkqj8DrGjaKHhNTwvBT4+ExTAGD2TcWtRfRypkRtXATulNqEKVHp7/JmLsFLpSkg==
+X-Received: by 2002:a17:90a:8f03:b0:31e:7410:a4d7 with SMTP id 98e67ed59e1d1-31f5de95125mr2475966a91.33.1753850634288;
+        Tue, 29 Jul 2025 21:43:54 -0700 (PDT)
+Received: from mail.free-proletariat.dpdns.org ([182.215.2.141])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63f0cb39sm706453a91.30.2025.07.29.21.43.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 21:43:53 -0700 (PDT)
+From: kmpfqgdwxucqz9@gmail.com
+X-Google-Original-From: admin@mail.free-proletariat.dpdns.org
+Received: from kernelkraze-550XDA.. (_gateway [192.168.219.1])
+	by mail.free-proletariat.dpdns.org (Postfix) with ESMTPSA id 448154C025C;
+	Wed, 30 Jul 2025 13:43:49 +0900 (KST)
+To: David Sterba <dsterba@suse.com>
+Cc: linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	KernelKraze <admin@mail.free-proletariat.dpdns.org>
+Subject: [PATCH 0/1] btrfs: strengthen integer overflow protection in batch allocation
+Date: Wed, 30 Jul 2025 13:43:47 +0900
+Message-ID: <20250730044348.133387-1-admin@mail.free-proletariat.dpdns.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 15 Jul 2025 21:08:10 +0200 Pavel Machek wrote:
-> Hi!
-> 
-> I publicly apologize.
-> 								Pavel
-> 
-Feel free to contact your lawyer before any step forward, Pavel,
-according to the First and Fifth Amendment in usa, particularly
-before making sure how you violated CoC, based on what law. Why
-and how next week was selected, based on what?
+From: KernelKraze <admin@mail.free-proletariat.dpdns.org>
 
-Hillf Danton
+Hi,
 
-> On Tue 2025-07-15 09:28:19, Shuah Khan wrote:
-> > Hi Pavel,
-> > 
-> > The Code of Conduct Committee has received a complaint about your
-> > interactions on the mailing list which are in violation of the
-> > Linux kernel code of conduct.
-> > 
-> > We urge you to apologize publicly to make amends within the next
-> > week.
-> > 
-> > Refer to these documents in the kernel repo for information on
-> > the Code of Conduct and actions taken when violations such as
-> > these happen.
-> > 
-> > https://docs.kernel.org/process/code-of-conduct.html
-> > https://docs.kernel.org/process/code-of-conduct-interpretation.html#code-of-conduct-interpretation
-> > 
-> > thanks,
-> > -- Shuah (On behalf of the Code of Conduct Committee)
+This patch improves robustness in the btrfs filesystem by adding integer
+overflow protection during batch allocation in flush_dir_items_batch().
+
+The improvement was identified during a systematic code review of kernel
+subsystems. Without proper bounds checking, theoretical integer overflow
+could occur with extremely large directory item counts.
+
+The fix implements proper overflow checking using the kernel's overflow
+detection helpers and adds a reasonable upper limit consistent with other
+btrfs batch operations.
+
+This has been compile-tested and the fix aligns with existing patterns
+in the btrfs codebase (log_delayed_insertion_items uses the same 195 limit).
+The patch passes checkpatch.pl with no errors or warnings.
+
+I've CC'd the btrfs maintainers for review.
+
+Thanks,
+KernelKraze
+
+KernelKraze (1):
+  btrfs: add integer overflow protection to flush_dir_items_batch allocation
+
+ fs/btrfs/tree-log.c | 27 ++++++++++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+--=20
+2.48.1
+
 
