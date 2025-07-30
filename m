@@ -1,165 +1,184 @@
-Return-Path: <linux-kernel+bounces-750512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF53DB15D2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:51:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51E1CB15D48
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7795C188B19B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9100218842D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33917277804;
-	Wed, 30 Jul 2025 09:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F42E2951D9;
+	Wed, 30 Jul 2025 09:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="dOYfO7V6"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BlvKlYFh"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514911F5834
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F333273D95;
+	Wed, 30 Jul 2025 09:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753868981; cv=none; b=HQG0E7m4dMpp3bYWoWNPOHbhJQlC6eqG6RfKBSRtKarFXvziibC1TyySpmZiBZw/RoWJhsqBRhNqHzc835rM5vs4S/I24/Talgzqo32f3Ib/+NcCS/MJrUGALIWSM6Ityowq2NTAHiQkgu+ZXTPfb29CRdXwkWgzi5opGPXs4Hc=
+	t=1753869072; cv=none; b=M7MJ7MO6VQOn1i9D2DC6i8c5vQ2bzvMDM8gDMIvd1GFc08KQQe+5yZn2l86MlBEzPwpZIvfuT7vH+PeDGI2htK6FGKbZfbh/FmNi9349gS7YFQhjFpOjqoU5q+/X+xgzttJsLr5PjFlyjcnbxjXthk1ciLT3viQ6WJf+ewQPQGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753868981; c=relaxed/simple;
-	bh=ULSog3kf+bL89KMT6vB8XVysrRKIR0SeaCEF3WPDjhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lJd67Y5My6g/IXwXOoq+dCZX7Hf1YKRGdvzvPbkScm41RhfWQJFP6cr5XJ7yIIwIXsEIgK7CMiyThCfDb/oAafi6AIWmomvkLV+iN5XJ2tG4olAf83iio9FkdciXdCMppNkpfc4/83W5UA1mT1MHv2SA9oP/SLpqUtcxlvm+p0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=dOYfO7V6; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 435F31C008E; Wed, 30 Jul 2025 11:49:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1753868976;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hbgfSAKg2C6APSx5l0p1+ObE37mdrJbXnh0D/kcfFvI=;
-	b=dOYfO7V6l4vIT0ogyD5m7DmLzKTnCwEmy2qF9EB1W4U2toUh4dBHseMcIaPWB2RuXBeVjT
-	kgUW5deDwgEv+n4qNA2auwlCv1K9nJPJUei4AISraNRBt4IPk0eYHf1M3ZMDCbhQSNbcvo
-	5bTbNC7ilLo6LEuefpvk3FLD2wJTq7U=
-Date: Wed, 30 Jul 2025 11:49:35 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Norbert Preining <norbert@preining.info>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: Lenovo P1 suspend to ram regression
-Message-ID: <aInqr7C08F+Ex0II@duo.ucw.cz>
-References: <aGFvYQFhGi_ytgDB@fettsack>
+	s=arc-20240116; t=1753869072; c=relaxed/simple;
+	bh=avsL+F1jXA1BVaHfmtiuEUn6JqqFEdZPj15ArKueTLw=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=TBWGib4ahZaboYnRqYka8CNbRqv5+r415aDi4/EPkbplLYh3qGo63xgTAaWGtBcRfm4Ma3il5+u8A9Hz45v6epJURJ2DlaByyXQVpw7j37/T2GKrG0hwFxfOA/915dT8JfrPEZ6jjjBZ3x5ticz/fyv+cGSp4dgA8KuH692K9I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BlvKlYFh; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U6Sl2W018742;
+	Wed, 30 Jul 2025 09:51:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=cHYbQ79RzYh34AnpKPu7mN
+	P7g4VOLZ5uD49m0MOjSGE=; b=BlvKlYFh8Nf3wtaK0015na0x1ocL10tixhl/Pn
+	N8lbU1EbM3CnJiKaGg/Eir//DhXFohRpsVPD72aJqpSOid6rI1RsfOHe+mtq1FLb
+	XYrx+RUfJZNJSnPpz3WRsD4akRjBEIJvIxQqa11Bw0rjHb5DERkIgNu3SXyqU322
+	7K16KruvyPY9l66OyiFk9mlArJGzJPVTEZBbYsWe8pBb6miWFY4KJPjlgn4+iv1O
+	A5Ichffnmp0y7pq6yomkAThDZhY7o6+feBlh61JDAqBY6QpoXSz3DmwYWXZWoEpG
+	/G4qobqt0l/tV9ethi9+4k1lv6zP73SuHY4X9IX0gCThgDrA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484pbm35ak-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 09:51:07 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56U9p6Ze018019
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 09:51:06 GMT
+Received: from cse-cd01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 30 Jul 2025 02:50:05 -0700
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+Subject: [PATCH v4 0/2] Enable DPU and Display Port for Qualcomm
+ QCS8300-ride platform
+Date: Wed, 30 Jul 2025 17:49:44 +0800
+Message-ID: <20250730-dts_qcs8300-v4-0-5e2dd12ddf6d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KQM6ti/BwZko7uVe"
-Content-Disposition: inline
-In-Reply-To: <aGFvYQFhGi_ytgDB@fettsack>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL7qiWgC/42R22rDMBBEf8XouQq62ZJCKfmPUoIu60ZQ24nXM
+ Q0h/17JaUND89DHHZizs7NngjAmQLKuzmSEOWEa+jyop4qEnevfgaaYZyKYUFyImsYJt4eARjJ
+ GVVTCWtZoyRqSHfsR2vS50F7frvMIh2OGTleRdIDoFui6es7MmnEuadzvd6dCtYU6c8qpUUJbE
+ wBAm01GhNSHVRi6l7LnMaWLiHG6hZslZbQJBqxUtW0Y+wdGc53DbDuctj71MfXveOVoEYAZYWr
+ N5GZAXB2O7iNzuhvMOwRalDStq1wWMAtKKR+FZ40DsJG3sgXtJZdBOxFb7j0pLe0STsN4Wl4wi
+ 6Wmh23PIgfhonZecC208b8PKhG+Xc1fFwQTVeubOnh35yr7Z/mzs/So7t3l+JjVEGpQrrX37sv
+ l8gU6VUT9QgIAAA==
+X-Change-ID: 20241225-dts_qcs8300-4d4299067306
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Yongxing Mou <quic_yongmou@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753869004; l=3094;
+ i=quic_yongmou@quicinc.com; s=20241121; h=from:subject:message-id;
+ bh=avsL+F1jXA1BVaHfmtiuEUn6JqqFEdZPj15ArKueTLw=;
+ b=rcuU6MsMiFh5HYEb/j15aHiwJMT+9evyIf8hweq45ZlWw2A1WTV1Gzxc5SO3fWkN9K364gmGi
+ QNDJCp+JzjnAbeXPu6LAdsV/266Y7L9l2on2pbaTfNCKyWqKbwA+OeE
+X-Developer-Key: i=quic_yongmou@quicinc.com; a=ed25519;
+ pk=zeCnFRUqtOQMeFvdwex2M5o0Yf67UHYfwCyBRQ3kFbU=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=LsaSymdc c=1 sm=1 tr=0 ts=6889eb0b cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=Ki_nu0Frpaj405WCvX8A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA2OCBTYWx0ZWRfX9Syt4fXPO+YI
+ EBwbjzSdxZaxgJI1WH0IUCJ9HzI1vxxxiMbxUhiXra9VBZ/17BaARWKI9VDt5ekkBVZ6QALt900
+ zoGVfCr33faeDHNeGMls2zUg8QMRW0YfmIVtFMubah3LdueG+fmXNqqBMt40Ba9rkLuYm3Y6o70
+ 90YSxj38D/Bx3yKw18AnZ5082gRqwA5p3FXLnOc4g72J5DuEvxniv5S0SfNItAESaabhvgbaisF
+ xz0di6gjh6QtzE6xyzDydeYnDWpmnAXQ1JKNvxv/7V71zdPS+UZB5NgBW/inxKqcpDYwPCaQTqa
+ HprM4SHgRV9p0H1Q1cYKXfdheoesN0h77P7hKad7X7fYXu4yVqHabXVHNx2SAGy5ROsu5kPTfSx
+ Hh8VQb3LqLPes6rcH8miiXI0Wml/xqEW8A8kCxyz3Ld0E0fEDKDXKxTn29bMBfK7Re+7KRVN
+X-Proofpoint-ORIG-GUID: n1efP_J7Y_vtUT4ApdXrY9fQRMtDessC
+X-Proofpoint-GUID: n1efP_J7Y_vtUT4ApdXrY9fQRMtDessC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=599 spamscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507300068
 
+This series adds the MDSS, DPU and DPTX0 node on Qualcomm QCS8300 SoC.
+It also enables Display Port on Qualcomm QCS8300-ride platform.
 
---KQM6ti/BwZko7uVe
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+---
+This series make top of 3 dt-bindings
+https://lore.kernel.org/all/20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com/
+https://lore.kernel.org/all/20250730072725.1433360-1-quic_yongmou@quicinc.com/
+https://lore.kernel.org/all/20250730-mdssdt_qcs8300-v5-0-bc8ea35bbed6@quicinc.com/
+---
+Changes in v4:Fixed review comments from Krzysztof.
+- Add the 4 pixel stream register regions and the correspondings clocks of the DP controller.
+- Change DP controlller compatible to qcs8300-dp.
+- Rebase to next-20250717.
+- Link to v3: https://lore.kernel.org/r/20250114-dts_qcs8300-v3-0-d114cc5e4af9@quicinc.com
 
-Hi!
+Changes in v3:Fixed review comments from Konrad, Dmitry.
+- Correct the Power-domain for DP PHY should be
+  RPMHPD_MX.[Dmitry][Konrad]
+- Correct the interconnects path for mdp and align the property order
+  with x1e80100.dtsi.[Konrad]
+- Rebase the patch to latest code base and update the dependencies in
+  the cover letter.
+- Link to v2: https://lore.kernel.org/r/20241226-dts_qcs8300-v2-0-ec8d4fb65cba@quicinc.com
 
-> (please Cc, thanks)
->=20
-> since some time, probably some kernel revisions, my Lenovo P1 Gen6
-> goes to sleep (suspend to ram), but produces considerable heat even
-> in sleep mode. Not surprising, it also drops battery level within
-> short time.
->=20
-> I am not sure where to report this bug, as well as which information I
-> can provide.=20
->=20
-> Kernel is 6.15.4-zen2-1-zen on Arch Linux
->=20
-> >From the dmesg:
->=20
-> [    0.000000] DMI: LENOVO 21FV002EUS/21FV002EUS, BIOS N3ZET48W (1.35 ) 0=
-2/25/2025
->=20
-> The supported sleep state seems to only be s2sleep:
+Changes in v2:Fixed review comments from Konrad, Dmitry and Krzysztof.
+- Reuse eDP PHY and DPU of SA8775 Platform.[Dmitry][Krzysztof]
+- Reuse DisplayPort controller of SM8650.[Dmitry]
+- Correct the regs length, format issues and power-domains.[Konrad]
+- Integrate the dt changes of DPU and DP together.
+- Link to v1: https://lore.kernel.org/all/20241127-dp_dts_qcs8300-v1-0-e3d13dec4233@quicinc.com/
+~
 
-You may want to Cc Rafael and regression tracker.
+---
+Yongxing Mou (2):
+      arm64: dts: qcom: qcs8300: add display dt nodes for MDSS, DPU, DisplayPort and eDP PHY
+      arm64: dts: qcom: qcs8300-ride: Enable Display Port
 
-And no, this is not easy to debug. Start is to determine good and bad
-kernel versions.
+ arch/arm64/boot/dts/qcom/qcs8300-ride.dts |  42 ++++++
+ arch/arm64/boot/dts/qcom/qcs8300.dtsi     | 216 +++++++++++++++++++++++++++++-
+ 2 files changed, 257 insertions(+), 1 deletion(-)
+---
+base-commit: 024e09e444bd2b06aee9d1f3fe7b313c7a2df1bb
+change-id: 20241225-dts_qcs8300-4d4299067306
+prerequisite-message-id: <20250113-dpphy_qcs9300-v1-1-842798ceee78@quicinc.com>
+prerequisite-patch-id: 2ea89bba3c9c6ba37250ebd947c1d4acedc78a5d
+prerequisite-message-id: <20250113-mdssdt_qcs8300-v3-0-6c8e93459600@quicinc.com>
+prerequisite-patch-id: b798711c6a9bd9c4f0b692835865235e78cd2adb
+prerequisite-patch-id: 146c61567c42bf5268d1005f8e9b307ea2af93d9
+prerequisite-patch-id: 3ce5246ad3470d7392df23a52b3c8b8bd1662db6
+prerequisite-patch-id: e81de8a09467a49eaeb4af73a0e197e4156ce202
+prerequisite-message-id: <20250717-dp_mst_bindings-v3-0-72ce08285703@oss.qualcomm.com>
+prerequisite-patch-id: 4782272bb7d2403e2f2dbf762586d4570e6b6ba6
+prerequisite-patch-id: cfdd5c37d38b2a4f1386af4021ba3920c6d8dcf8
+prerequisite-patch-id: c874bf64aec8cb2ff0bc91051620ac771cbeeeea
+prerequisite-patch-id: 63defbfb812a2f9c6365a98538421aea374e0e13
+prerequisite-patch-id: 0ffa9d544d516d4e14700229a4ab6a9c7751823f
 
 Best regards,
-								Pavel
+-- 
+Yongxing Mou <quic_yongmou@quicinc.com>
 
-> =E2=9D=AF cat /sys/power/mem_sleep
-> [s2idle]
->=20
->=20
-> Around suspend:
-> [47798.668789] PM: suspend entry (s2idle)
-> [47798.795045] Filesystems sync: 0.126 seconds
-> [47798.931393] Freezing user space processes
-> [47798.933739] Freezing user space processes completed (elapsed 0.002 sec=
-onds)
-> [47798.933743] OOM killer disabled.
-> [47798.933744] Freezing remaining freezable tasks
-> [47798.935141] Freezing remaining freezable tasks completed (elapsed 0.00=
-1 seconds)
-> [47798.935143] printk: Suspending console(s) (use no_console_suspend to d=
-ebug)
-> [47798.953325] cs35l41-hda i2c-CSC3551:00-cs35l41-hda.0: Asserting Reset
-> [47798.953498] CoreFreq: Suspend(0:1:19)
-> [47799.413769] ACPI: EC: interrupt blocked
-> [47805.654440] thinkpad_acpi: undocked from hotplug port replicator
-> [47807.218125] NVRM: rm_power_source_change_event: rm_power_source_change=
-_event: Failed to handle Power Source change event, status=3D0x11
-> [67168.670527] ACPI: EC: interrupt unblocked
-> [67169.622762] spd5118 10-0050: PM: dpm_run_callback(): spd5118_resume [s=
-pd5118] returns -6
-> [67169.622773] spd5118 10-0050: PM: failed to resume async: error -6
-> [67169.622816] spd5118 10-0052: PM: dpm_run_callback(): spd5118_resume [s=
-pd5118] returns -6
-> [67169.622828] spd5118 10-0052: PM: failed to resume async: error -6
-> [67169.635622] i915 0000:00:02.0: [drm] GT0: GuC firmware i915/adlp_guc_7=
-0.bin version 70.44.1
-> [67169.635628] i915 0000:00:02.0: [drm] GT0: HuC firmware i915/tgl_huc.bi=
-n version 7.9.3
-> [67169.644108] nvme nvme0: 20/0/0 default/read/poll queues
-> [67169.650551] i915 0000:00:02.0: [drm] GT0: HuC: authenticated for all w=
-orkloads
-> [67169.651715] i915 0000:00:02.0: [drm] GT0: GUC: submission enabled
-> [67169.651717] i915 0000:00:02.0: [drm] GT0: GUC: SLPC enabled
-> [67169.652243] i915 0000:00:02.0: [drm] GT0: GUC: RC enabled
-> [67169.654296] CoreFreq: SoC_SKL_VTD: request_mem_region 0xfed90000
->=20
->=20
-> What other information can I provide to debug this issue.
->=20
-> Thanks for any pointer, and please Cc.
->=20
-> Norbert
->=20
-> --
-> DI Dr Norbert Preining                        https://www.preining.info
-> arXiv / Cornell University   +   IFMGA Guide   +   TU Wien  +  TeX Live
-> GPG: 0x860CDC13   fp: F7D8 A928 26E3 16A1 9FA0 ACF0 6CAC A448 860C DC13
-
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---KQM6ti/BwZko7uVe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaInqrwAKCRAw5/Bqldv6
-8uT9AKCqvz6p5LS83ofL7gg8wZwAUTzfkQCgj7/evPemY/evF/mU0lSQgGsbhnQ=
-=rPpU
------END PGP SIGNATURE-----
-
---KQM6ti/BwZko7uVe--
 
