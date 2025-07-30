@@ -1,106 +1,105 @@
-Return-Path: <linux-kernel+bounces-750055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C258B156B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:45:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E78B156BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0ED4E8440
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:44:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3761548047
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C22217A2E6;
-	Wed, 30 Jul 2025 00:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAF542A9E;
+	Wed, 30 Jul 2025 00:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="OUlgE3IZ"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V09TStsM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07B1114D70E;
-	Wed, 30 Jul 2025 00:45:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3DD290F;
+	Wed, 30 Jul 2025 00:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753836306; cv=none; b=jU2J7D31ElYEYpfLlb4xxBk6CWqI05Xn/pCbcuuP3Ytfex5Aw2ZcRpf7eNSKEmJFZS2ALtuqzuE8URn6T/lIz1f7Vmh3KVVOSGBCAB8WsHbxijfx0r/VEN3ArYrAKUxV/k6I/QwD33wKiTgw96J7K6V+WX901PhjRGzlGZF1C9U=
+	t=1753836442; cv=none; b=dIJvl29izWi6mSydoZzg03m68Yxz4TsMB9/EB6VJ3yJ7VYhX0pZ0Z3wwHI2NvGJrM1mWccSjQ5xNk+9q8tL5I9MoCF0UHy8nRvCkRrah99t3cuVYDNGZnDNkeiG+6G6Dh3ZE+w4PatcV8l8Z6idKxawSRJ9LLLgJrGYcfsQjOck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753836306; c=relaxed/simple;
-	bh=0XfiLjiIhL6BI+4MuznCe+eUwqiJarGpY/RGX10q77E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SMl4Ss0BI/1aKS+AKuAh6SerkxH+t3bytuAmEEqzq42WQt4bmLwZLBXq2jeClGp+n5bLpDwYboxte0Wikv8ekFdm/zJCszyvkIJ6+hOIwwHSy1z1EsUKLkflqqGs84RuadPBW/0IYKfxKtqANO3Wl+doyNV6SiwUcShTf6MdLS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=OUlgE3IZ; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56U0ilSlB2734924, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1753836287; bh=0XfiLjiIhL6BI+4MuznCe+eUwqiJarGpY/RGX10q77E=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=OUlgE3IZVuCMu/8XB727y/yHtC+RG1H02Gdw2ZsOh3VXq2ATcKrMNIe0yCvC61bC1
-	 8xzJc0OfXAw/Qd6aJKINVXAjyEkf2tnKR/ZxsrtiQS5jazqUJQwSrdC9Rib/+YUhKy
-	 9XUImbmBItnC6qde7Fa4ZRBdY/GuyIjr/VJPLQwiWtjncgw2+rR3bOE8x3eLlaTTCA
-	 DeqC8oXlERJHsSvhCvhw4CywZMkNcxLhWtYFZ3dgZyuuwQa6YjXKTAKuvgkLKxwXsE
-	 SPauDtw9Fi7tzCtU44c6G3VTtQWCDL6SLaUGw3cl2TpTa0hRvu5/GIDCTeuqYEZRU1
-	 lRclM6j67bvdw==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56U0ilSlB2734924
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Jul 2025 08:44:47 +0800
-Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Jul 2025 08:44:47 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 30 Jul 2025 08:44:46 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
- RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
- 15.01.2507.035; Wed, 30 Jul 2025 08:44:46 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Bitterblue Smith <rtl8821cerfe2@gmail.com>,
-        Sean Anderson
-	<sean.anderson@linux.dev>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] wifi: rtw89: Print only once for unsupported c2h classes
-Thread-Topic: [PATCH] wifi: rtw89: Print only once for unsupported c2h classes
-Thread-Index: AQHcALaJzXGJOyfKPkG20PFKd07euLRI+tuAgADXwyA=
-Date: Wed, 30 Jul 2025 00:44:46 +0000
-Message-ID: <36a81df65326472b93c6524b7badb434@realtek.com>
-References: <20250729182743.114733-1-sean.anderson@linux.dev>
- <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
-In-Reply-To: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1753836442; c=relaxed/simple;
+	bh=u67O+gLwEAa/gq2wCXXMjm9mL65NJXOFP1Zua84rpjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kf1Ul/AMvRnlumskDvrMFOME8A6c+DaePpS6jb2gml+XVdquqGHY3L8oN10Zin1QhwYQ7Ddxu8yevx067xwbQSCrwj742SzpOrZKm/XyTcjhYDvhqepQwsJ1d4wR0x4YnVmGCL6nc7tAAPq/ZZNSWgow5KWE8iXAbFnTJvVoI7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V09TStsM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6984C4CEEF;
+	Wed, 30 Jul 2025 00:47:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753836441;
+	bh=u67O+gLwEAa/gq2wCXXMjm9mL65NJXOFP1Zua84rpjY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V09TStsMMDLa5jAhxxeLT3ZKdaWehBrRFfiSOAVtWEKPXui6OtjjJJRqOHMPuV2gM
+	 8G6ixJKohDk53Qb2cjMoEypV04EXGzbRk98MhSHJdlvQ8wQ/FL1GrHFhqaogJvQe8S
+	 rqXj0DAPB7SyaZkO9ChUua9kQVPI7421aNBmyIREhMEOFX4wnNZMl7mc1ic94Eqhaz
+	 LNUIOccM8TWjNzT/pXJrSAj678ZXb02pYjb4RzwmAk7Bpou8wKznkR1vxTuKLHQaaD
+	 sU4ZFBKtl8B/OjFq60hBXJUnq4+Sgzi88rJOb//YRRgwvRcOcEFm+BIsugZ6sj0Kqs
+	 MrdoaQKBDOlyQ==
+Date: Tue, 29 Jul 2025 17:47:17 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] kbuild: userprogs: use correct linker when mixing clang
+ and GNU ld
+Message-ID: <20250730004717.GA2984390@ax162>
+References: <20250724-userprogs-clang-gnu-ld-v1-1-3d3d071e53a7@linutronix.de>
+ <20250724231025.GA3620641@ax162>
+ <20250725122604-44874f95-859c-4c0a-b3b0-14b30e00b796@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250725122604-44874f95-859c-4c0a-b3b0-14b30e00b796@linutronix.de>
 
-Qml0dGVyYmx1ZSBTbWl0aCA8cnRsODgyMWNlcmZlMkBnbWFpbC5jb20+IHdyb3RlOg0KPiBPbiAy
-OS8wNy8yMDI1IDIxOjI3LCBTZWFuIEFuZGVyc29uIHdyb3RlOg0KPiA+IFRoZXJlIGFyZSBtb3Jl
-IHVuc3VwcG9ydGVkIGZ1bmN0aW9ucyB0aGFuIGp1c3QgTE9XUlRfUlRZLiBJbXByb3ZlIG9uDQo+
-ID4gY29tbWl0IDNiNjY1MTliMDIzYiAoIndpZmk6IHJ0dzg5OiBwaHk6IGFkZCBkdW1teSBjMmgg
-aGFuZGxlciB0byBhdm9pZA0KPiA+IHdhcm5pbmcgbWVzc2FnZSIpIGJ5IHByaW50aW5nIGEgbWVz
-c2FnZSBqdXN0IG9uY2Ugd2hlbiB3ZSBmaXJzdA0KPiA+IGVuY291bnRlciBhbiB1bnN1cHBvcnRl
-ZCBjbGFzcy4gVGhpcyBwcmV2ZW50cyBtZXNzYWdlcyBsaWtlDQo+ID4NCj4gPiBydHc4OV84OTIy
-YWUgMDAwMDo4MTowMC4wOiBQSFkgYzJoIGNsYXNzIDIgbm90IHN1cHBvcnQNCj4gPg0KPiA+IGZy
-b20gZmlsbGluZyB1cCBkbWVzZy4NCj4gPg0KPiANCj4gSSBhbHNvIGdldCAiTUFDIGMyaCBjbGFz
-cyAxIGZ1bmMgMyBub3Qgc3VwcG9ydCIgYW5kICJNQUMgYzJoIGNsYXNzDQo+IDAgZnVuYyA2IG5v
-dCBzdXBwb3J0IiB3aXRoIFJUTDg4MzJDVS4NCg0KVGhlc2UgdHdvIEMySCBldmVudHMgd2VyZSBk
-ZWZpbmVkIGFzOiANCg0KLy8gQ0xBU1MgMSAtIEZXX09GTEQNCiNkZWZpbmUgRldDTURfQzJIX0ZV
-TkNfQkVBQ09OX1JFU0VORCAweDMNCg0KLy8gQ0xBU1MgMCAtIEZXX0lORk8NCiNkZWZpbmUgRldD
-TURfQzJIX0ZVTkNfQkNOX1VQRF9ET05FIDB4MDYNCg0KVGhlIGltcGxlbWVudGF0aW9uIG9mIGhh
-bmRsZXJzIGluIHZlbmRvciBkcml2ZXIgbG9va3MgbGlrZSBkb2VzIG5vdGhpbmcNCm5lZWRlZCB0
-byBiZSByZXdyaXR0ZW4uIEp1c3QgYWRkIGEgZHVtbXkgdG8gcmVwcmVzZW50IHRoYXQgd2UgaGF2
-ZSByZXZpZXdlZA0KdGhlIEMySCBldmVudHMuDQoNCg0K
+On Fri, Jul 25, 2025 at 12:36:34PM +0200, Thomas Weißschuh wrote:
+> FWIW some architectures use GNU ld implicitly with clang because they also link
+> through $(CC) but do not use --ld-path. One example is UML, where the vDSO and
+> vmlinux are linked this way. But linking vmlinux of UML with ld.lld will
+> require changes to at least the linker script. Something for the ClangBuiltLinux
+> TODO? There were more examples, but I don't remember them right now.
+
+Yes, I believe this is the issue we had for tracking using ld.lld with
+UML: https://github.com/ClangBuiltLinux/linux/issues/1715
+
+I had not considered that it could be a linker script handling
+difference. I will have to look into that soon.
+
+> Longterm --ld-path should probably be added to the global KBUILD_CFLAGS, too.
+
+'--ld-path' is only relevant when the linking phase is run by the
+compiler, which is not really normal for the primary kernel build, as
+calling the linker directly with $(LD) is preferred. Doing that would
+break the build because of -Werror=unused-command-line-argument, which
+is needed to make cc-option work correctly.
+
+  $ echo 'int main(void) { return 0; }' | /usr/bin/clang --ld-path=/usr/bin/ld.lld -c -o /dev/null -x c -
+  clang: warning: argument unused during compilation: '--ld-path=/usr/bin/ld.lld' [-Wunused-command-line-argument]
+
+  $ echo 'int main(void) { return 0; }' | /usr/bin/clang --ld-path=/usr/bin/ld.lld -o /dev/null -x c -
+
+> No, it isn't respected. On the other hand I didn't yet run into any issues.
+> Do we want to fix it proactively?
+
+No, I think it is fine to just leave it as is and fix it if it comes up
+in the future, as I believe getting LLVM_IAS=1 working for sparc64 is
+the next major focus of the whole LLVM sparc endeavour.
+
+Cheers,
+Nathan
 
