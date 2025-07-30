@@ -1,64 +1,45 @@
-Return-Path: <linux-kernel+bounces-750114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FADB1576D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:07:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71D60B15775
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0871893A43
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:08:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C97F174DAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405B91A76DE;
-	Wed, 30 Jul 2025 02:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A268A1AF0A4;
+	Wed, 30 Jul 2025 02:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I2VUgDBS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="MfsLmMn4"
+Received: from out199-9.us.a.mail.aliyun.com (out199-9.us.a.mail.aliyun.com [47.90.199.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0806C156CA;
-	Wed, 30 Jul 2025 02:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701943FE5;
+	Wed, 30 Jul 2025 02:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753841267; cv=none; b=OG3SI3uEvc1HaqxlzzyGPzCbkWlunatCS2vrdw2ZRJiMpadhKupsGu8FhsorFSUUY701AYZD0aP5EkPqG0nN2IHOzPJoMQYkUtSCbc0MMLMJt30GxF//tClQeCe9o0mK3cZS291m2rWqBEhUml5AWDwBP/DnTu5YHvvoHzspbi0=
+	t=1753841614; cv=none; b=QHVsMIdoJ47KG2rxJx1AyaoXV39ilyn1PISksg2leD7x1YBi/2xNDpsChb986veIsJm426Dj52A2O8mbN+tSQjdNP9JNL2sWwhtRFXecZSAqSRyrJm+CKWejSHvVVW/GBwufQeVEwjrI+wIlpYcsAhkVUUQgbqRSbDwlWtQrqtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753841267; c=relaxed/simple;
-	bh=v6dnOhkoR0tGYQVmkdgXvFqmTTm7IALBGWk838ffNfw=;
+	s=arc-20240116; t=1753841614; c=relaxed/simple;
+	bh=7w0CkwnKcFnU0+fcewMt4t591W5I/jfWXB58gONFi6o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AjKECUfJ8T9UE1/s00Cbpg+8IsvVlfAz34/L3JuvgcuIWFQaY3/mnkt85GwvssGrh30QLZBJJIa2qJ9+I8pasv5Cj2hRSeJGDW2DeBHTOMGdGlaqsM2Uj7te6mFJ5AD+4CLPUFcNUqfcoyCGvxOtSQwAm0kxWu8liTGgbYhKBwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I2VUgDBS; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753841266; x=1785377266;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=v6dnOhkoR0tGYQVmkdgXvFqmTTm7IALBGWk838ffNfw=;
-  b=I2VUgDBS8FimErInLsf+MZbD39M1XthB8QoceKtvCCJOxiHQT3O0jFUP
-   7gv6j3Z03Qr3uN4VyXBjFFd2PEeUNPWLQdx5BCSUFvU/G+jOpOioQ8aGV
-   6AGivzoHDSLVnn9yGONtcf/MSVVoODdxaF7QaqLIlZPZKewIjnBuKb3kv
-   ZEV7tm9hTtwjUSDV+NcNk3eGy80kPyKD+iymeEKMtWKu+eC3xmdUC5zj2
-   pR5mZdZud8RcPUtyR9Gn6b+dPV1cZUQDRPpdw5e/Brsc36a1DA8MnTVK0
-   d/f3V135j7HdEiDASAXscUoBI647G1j1R7fHtb1n3TEn+Fgc2+HxysXmP
-   g==;
-X-CSE-ConnectionGUID: RajVa/SFTPeT9QT+dO4ylg==
-X-CSE-MsgGUID: u9ft46tPTR2CJ6vzQtpfRA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="59956662"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="59956662"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 19:07:43 -0700
-X-CSE-ConnectionGUID: MoMgqtUNQ0OE3upc11w1ig==
-X-CSE-MsgGUID: SBJJE9KuRWKMlW9/gXJRzw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="186526908"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 19:07:39 -0700
-Message-ID: <1b0ea352-c645-461b-9e19-5202791f8e2d@intel.com>
-Date: Wed, 30 Jul 2025 10:07:36 +0800
+	 In-Reply-To:Content-Type; b=EC/MQUMcE8HPQv/av3AnIXqLB5+e+Vry+QWeCdkQJl82uxdVnFzeWCnjZ/vP5us3JemSCqa0FhqdHARWJ2u1OxkMatadPz64I7YnpBdxDmQxxpnPlRfootkr2DohYL+nKeE/OBAG6ABY6pred/uP8I4UCmizgbCwiuvoFZBLkaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=MfsLmMn4; arc=none smtp.client-ip=47.90.199.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1753841597; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Dm3eSNIAoLVxqE9erJ6ULR5jgwQF3FgIn6ofz2lHyj4=;
+	b=MfsLmMn48LtumDxcCDa8BUxd9oDgIZKCqQrr9sJc/B9tJrwXpW8pgANG9DgG4eoYxQdSkBSWrs2JDPhFY6fIYDudzNfXLZ/hwO08AFcoCtObytBQ9lV4V7sI93dC+yf5XovVOXyb1G8kfuTEECLMxJa9Hl8yJtMzruyTWcMcWPQ=
+Received: from 30.246.181.19(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WkShN8z_1753841593 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 30 Jul 2025 10:13:15 +0800
+Message-ID: <a87c5e74-082f-4be6-bbfd-4867bf72ddcc@linux.alibaba.com>
+Date: Wed, 30 Jul 2025 10:13:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,74 +47,287 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] KVM: TDX: Exit with MEMORY_FAULT on unexpected
- pending S-EPT Violation
-To: Sean Christopherson <seanjc@google.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Vishal Annapurve <vannapurve@google.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Nikolay Borisov <nik.borisov@suse.com>
-References: <20250729193341.621487-1-seanjc@google.com>
- <20250729193341.621487-3-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250729193341.621487-3-seanjc@google.com>
+Subject: Re: [PATCH v3] vmcoreinfo: Track and log recoverable hardware errors
+To: Breno Leitao <leitao@debian.org>
+Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ James Morse <james.morse@arm.com>, Robert Moore <robert.moore@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ acpica-devel@lists.linux.dev, osandov@osandov.com, konrad.wilk@oracle.com,
+ linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-pci@vger.kernel.org, kernel-team@meta.com
+References: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
+ <7ce9731a-b212-4e27-8809-0559eb36c5f2@linux.alibaba.com>
+ <4qh2wbcbzdajh2tvki26qe4tqjazmyvbn7v7aqqhkxpitdrexo@ucch4ppo7i4e>
+ <fdb5dced-ea5a-48b8-bbb4-fc3ade7f3df8@linux.alibaba.com>
+ <ldlansfiesfxf4a6dzp5z2etquz5jgiq6ttx3al6q7sesgros6@xh4lkevbzsow>
+ <4ef01be1-44b2-4bf5-afec-a90d4f71e955@linux.alibaba.com>
+ <2a7ok3hdq3hmz45fzosd5vve4qpn6zy5uoogg33warsekigazu@wgfi7qsg5ixo>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <2a7ok3hdq3hmz45fzosd5vve4qpn6zy5uoogg33warsekigazu@wgfi7qsg5ixo>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 7/30/2025 3:33 AM, Sean Christopherson wrote:
-> Exit to userspace with -EFAULT and a valid MEMORY_FAULT exit if a vCPU
-> hits an unexpected pending S-EPT Violation instead of marking the VM dead.
-> While it's unlikely the VM can continue on, whether or not to terminate
-> the VM is not KVM's decision to make.
+
+
+在 2025/7/29 21:48, Breno Leitao 写道:
+> On Mon, Jul 28, 2025 at 09:08:25AM +0800, Shuai Xue wrote:
+>> 在 2025/7/26 00:16, Breno Leitao 写道:
+>>> On Fri, Jul 25, 2025 at 03:40:58PM +0800, Shuai Xue wrote:
+>>>
+>>> 	enum hwerr_error_type {
+>>> 		HWERR_RECOV_MCE,     // maps to errors in do_machine_check()
+>>> 		HWERR_RECOV_CXL,     // maps to CPER_SEC_CXL_
+>>> 		HWERR_RECOV_PCI,     // maps to AER (pci_dev_aer_stats_incr()) and CPER_SEC_PCIE and CPER_SEC_PCI
+>>> 		HWERR_RECOV_MEMORY,  // maps to CPER_SEC_PLATFORM_MEM_
+>>> 		HWERR_RECOV_CPU,     // maps to CPER_SEC_PROC_
+>>> 		HWERR_RECOV_DMA,     // maps to CPER_SEC_DMAR_
+>>> 		HWERR_RECOV_OTHERS,  // maps to CPER_SEC_FW_, CPER_SEC_DMAR_,
+>>> 	}
+>>>
+>>> Is this what you think we should track?
+>>>
+>>> Thanks
+>>> --breno
+>>
+>> It sounds good to me.
 > 
-> Set memory_fault.size to zero to communicate to userspace that reported
-> fault is "bad", and to effectively terminate the VM if userspace blindly
-> treats the exit as a conversion attempt (KVM_SET_MEMORY_ATTRIBUTES will
-> fail with -EINVAL if the size is zero).
-
-This sets a special contract on size zero.
-
-I had a patch internally, which introduce a new exit type:
-
-+               /* KVM_EXIT_GUEST_ERROR */
-+               struct {
-+  #define KVM_GUEST_ERROR_TDX_ACCESS_PENDING_PAGE      0
-+                       __u32 error_type;
-+                       __u32 ndata;
-+                       __u64 data[16];
-+               } guest_error;
-
-how about it?
-
-> Opportunistically delete the pr_warn(), which could be abused to spam the
-> kernel log, and is largely useless outside of interact debug as it doesn't
-> specify which VM encountered a failure.
+> Does the following patch matches your expectation?
 > 
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
-> ---
->   arch/x86/kvm/vmx/tdx.c | 6 ++----
->   1 file changed, 2 insertions(+), 4 deletions(-)
+> Thanks!
 > 
-> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-> index 3e0d4edee849..c2ef03f39c32 100644
-> --- a/arch/x86/kvm/vmx/tdx.c
-> +++ b/arch/x86/kvm/vmx/tdx.c
-> @@ -1937,10 +1937,8 @@ static int tdx_handle_ept_violation(struct kvm_vcpu *vcpu)
+> Author: Breno Leitao <leitao@debian.org>
+> Date:   Thu Jul 17 07:39:26 2025 -0700
+> 
+>      vmcoreinfo: Track and log recoverable hardware errors
+>      
+>      Introduce a generic infrastructure for tracking recoverable hardware
+>      errors (HW errors that did not cause a panic) and record them for vmcore
+>      consumption. This aids post-mortem crash analysis tools by preserving
+>      a count and timestamp for the last occurrence of such errors.
+>      
+>      Add centralized logging for sources of recoverable hardware
+>      errors based on the subsystem it has been notified.
+>      
+>      hwerror_data is write-only at kernel runtime, and it is meant to be read
+>      from vmcore using tools like crash/drgn. For example, this is how it
+>      looks like when opening the crashdump from drgn.
+>      
+>              >>> prog['hwerror_data']
+>              (struct hwerror_info[6]){
+>                      {
+>                              .count = (int)844,
+>                              .timestamp = (time64_t)1752852018,
+>                      },
+>                      ...
+>      
+>      This helps fleet operators quickly triage whether a crash may be
+>      influenced by hardware recoverable errors (which executes a uncommon
+>      code path in the kernel), especially when recoverable errors occurred
+>      shortly before a panic, such as the bug fixed by
+>      commit ee62ce7a1d90 ("page_pool: Track DMA-mapped pages and unmap them
+>      when destroying the pool")
+>      
+>      This is not intended to replace full hardware diagnostics but provides
+>      a fast way to correlate hardware events with kernel panics quickly.
+>      
+>      Suggested-by: Tony Luck <tony.luck@intel.com>
+>      Signed-off-by: Breno Leitao <leitao@debian.org>
+> 
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index 4da4eab56c81d..f85759453f89a 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -45,6 +45,7 @@
+>   #include <linux/task_work.h>
+>   #include <linux/hardirq.h>
+>   #include <linux/kexec.h>
+> +#include <linux/vmcore_info.h>
 >   
->   	if (vt_is_tdx_private_gpa(vcpu->kvm, gpa)) {
->   		if (tdx_is_sept_violation_unexpected_pending(vcpu)) {
-> -			pr_warn("Guest access before accepting 0x%llx on vCPU %d\n",
-> -				gpa, vcpu->vcpu_id);
-> -			kvm_vm_dead(vcpu->kvm);
-> -			return -EIO;
-> +			kvm_prepare_memory_fault_exit(vcpu, gpa, 0, true, false, true);
-> +			return -EFAULT;
->   		}
->   		/*
->   		 * Always treat SEPT violations as write faults.  Ignore the
+>   #include <asm/fred.h>
+>   #include <asm/cpu_device_id.h>
+> @@ -1690,6 +1691,9 @@ noinstr void do_machine_check(struct pt_regs *regs)
+>   	}
+>   
+>   out:
+> +	/* Given it didn't panic, mark it as recoverable */
+> +	hwerr_log_error_type(HWERR_RECOV_MCE);
+> +
+>   	instrumentation_end();
+>   
+>   clear:
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index a0d54993edb3b..f0b17efff713e 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -43,6 +43,7 @@
+>   #include <linux/uuid.h>
+>   #include <linux/ras.h>
+>   #include <linux/task_work.h>
+> +#include <linux/vmcore_info.h>
+>   
+>   #include <acpi/actbl1.h>
+>   #include <acpi/ghes.h>
+> @@ -867,6 +868,40 @@ int cxl_cper_kfifo_get(struct cxl_cper_work_data *wd)
+>   }
+>   EXPORT_SYMBOL_NS_GPL(cxl_cper_kfifo_get, "CXL");
+>   
+> +static void ghes_log_hwerr(int sev, guid_t *sec_type)
+> +{
+> +	if (sev != CPER_SEV_CORRECTED && sev != CPER_SEV_RECOVERABLE)
+> +		return;
+> +
+> +	if (guid_equal(sec_type, &CPER_SEC_PROC_ARM) ||
+> +	    guid_equal(sec_type, &CPER_SEC_PROC_GENERIC) ||
+> +	    guid_equal(sec_type, &CPER_SEC_PROC_IA)) {
+> +		hwerr_log_error_type(HWERR_RECOV_CPU);
+> +		return;
+> +	}
+> +
+> +	if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR) ||
+> +	    guid_equal(sec_type, &CPER_SEC_CXL_GEN_MEDIA_GUID) ||
+> +	    guid_equal(sec_type, &CPER_SEC_CXL_DRAM_GUID) ||
+> +	    guid_equal(sec_type, &CPER_SEC_CXL_MEM_MODULE_GUID)) {
+> +		hwerr_log_error_type(HWERR_RECOV_CXL);
+> +		return;
+> +	}
+> +
+> +	if (guid_equal(sec_type, &CPER_SEC_PCIE) ||
+> +	    guid_equal(sec_type, &CPER_SEC_PCI_X_BUS) {
+> +		hwerr_log_error_type(HWERR_RECOV_PCI);
+> +		return;
+> +	}
+> +
+> +	if (guid_equal(sec_type, &CPER_SEC_PLATFORM_MEM)) {
+> +		hwerr_log_error_type(HWERR_RECOV_MEMORY);
+> +		return;
+> +	}
+> +
+> +	hwerr_log_error_type(HWERR_RECOV_OTHERS);
+> +}
+> +
+>   static void ghes_do_proc(struct ghes *ghes,
+>   			 const struct acpi_hest_generic_status *estatus)
+>   {
+> @@ -888,6 +923,7 @@ static void ghes_do_proc(struct ghes *ghes,
+>   		if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
+>   			fru_text = gdata->fru_text;
+>   
+> +		ghes_log_hwerr(sev, sec_type);
+>   		if (guid_equal(sec_type, &CPER_SEC_PLATFORM_MEM)) {
+>   			struct cper_sec_mem_err *mem_err = acpi_hest_get_payload(gdata);
+>   
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index e286c197d7167..5ccb6ca347f3f 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -30,6 +30,7 @@
+>   #include <linux/kfifo.h>
+>   #include <linux/ratelimit.h>
+>   #include <linux/slab.h>
+> +#include <linux/vmcore_info.h>
+>   #include <acpi/apei.h>
+>   #include <acpi/ghes.h>
+>   #include <ras/ras_event.h>
+> @@ -746,6 +747,7 @@ static void pci_dev_aer_stats_incr(struct pci_dev *pdev,
+>   	switch (info->severity) {
+>   	case AER_CORRECTABLE:
+>   		aer_info->dev_total_cor_errs++;
+> +		hwerr_log_error_type(HWERR_RECOV_PCI);
 
+Hi Breno,
+
+Thanks for working on this! The patch looks good overall, but I noticed
+an inconsistency in the AER handling:
+
+In ghes_log_hwerr(), you're counting both CPER_SEV_CORRECTED and
+CPER_SEV_RECOVERABLE errors:
+
+However, in the AER section, you're only handling AER_CORRECTABLE cases.
+IMHO, Non-fatal errors are recoverable and correspond to
+CPER_SEV_RECOVERABLE in the ACPI context.
+
+The mapping should probably be:
+
+- AER_CORRECTABLE → CPER_SEV_CORRECTED
+- AER_NONFATAL → CPER_SEV_RECOVERABLE
+
+What do you think?
+
+Thanks,
+Shuai
+
+
+
+>   		counter = &aer_info->dev_cor_errs[0];
+>   		max = AER_MAX_TYPEOF_COR_ERRS;
+>   		break;
+> diff --git a/include/linux/vmcore_info.h b/include/linux/vmcore_info.h
+> index 37e003ae52626..538a3635fb1e5 100644
+> --- a/include/linux/vmcore_info.h
+> +++ b/include/linux/vmcore_info.h
+> @@ -77,4 +77,21 @@ extern u32 *vmcoreinfo_note;
+>   Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
+>   			  void *data, size_t data_len);
+>   void final_note(Elf_Word *buf);
+> +
+> +enum hwerr_error_type {
+> +	HWERR_RECOV_MCE,
+> +	HWERR_RECOV_CPU,
+> +	HWERR_RECOV_MEMORY,
+> +	HWERR_RECOV_PCI,
+> +	HWERR_RECOV_CXL,
+> +	HWERR_RECOV_OTHERS,
+> +	HWERR_RECOV_MAX,
+> +};
+> +
+> +#ifdef CONFIG_VMCORE_INFO
+> +noinstr void hwerr_log_error_type(enum hwerr_error_type src);
+> +#else
+> +static inline void hwerr_log_error_type(enum hwerr_error_type src) {};
+> +#endif
+> +
+>   #endif /* LINUX_VMCORE_INFO_H */
+> diff --git a/kernel/vmcore_info.c b/kernel/vmcore_info.c
+> index e066d31d08f89..4b5ab45d468f5 100644
+> --- a/kernel/vmcore_info.c
+> +++ b/kernel/vmcore_info.c
+> @@ -31,6 +31,13 @@ u32 *vmcoreinfo_note;
+>   /* trusted vmcoreinfo, e.g. we can make a copy in the crash memory */
+>   static unsigned char *vmcoreinfo_data_safecopy;
+>   
+> +struct hwerr_info {
+> +	int __data_racy count;
+> +	time64_t __data_racy timestamp;
+> +};
+> +
+> +static struct hwerr_info hwerr_data[HWERR_RECOV_MAX];
+> +
+>   Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
+>   			  void *data, size_t data_len)
+>   {
+> @@ -118,6 +125,17 @@ phys_addr_t __weak paddr_vmcoreinfo_note(void)
+>   }
+>   EXPORT_SYMBOL(paddr_vmcoreinfo_note);
+>   
+> +void hwerr_log_error_type(enum hwerr_error_type src)
+> +{
+> +	if (src < 0 || src >= HWERR_RECOV_MAX)
+> +		return;
+> +
+> +	/* No need to atomics/locks given the precision is not important */
+> +	hwerr_data[src].count++;
+> +	hwerr_data[src].timestamp = ktime_get_real_seconds();
+> +}
+> +EXPORT_SYMBOL_GPL(hwerr_log_error_type);
+> +
+>   static int __init crash_save_vmcoreinfo_init(void)
+>   {
+>   	vmcoreinfo_data = (unsigned char *)get_zeroed_page(GFP_KERNEL);
 
