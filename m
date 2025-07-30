@@ -1,111 +1,162 @@
-Return-Path: <linux-kernel+bounces-751049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82C5FB16498
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:28:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 558F8B164A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F5818C3B29
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:28:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8E757A533D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D209E2DECAF;
-	Wed, 30 Jul 2025 16:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CA22DE6E6;
+	Wed, 30 Jul 2025 16:29:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYhio+Qh"
-Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ww34yMAY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="giTTeePb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21862DC343;
-	Wed, 30 Jul 2025 16:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECEB1DFD96;
+	Wed, 30 Jul 2025 16:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753892877; cv=none; b=u1j+w0MJu5tlWJgPTgCUcICc+PFfQ5fmjQshvewbmeebulFHQFMrazRRx0EkTPH7p/7DtZJPPORPnR1us9TzACuyJo1RQ1rd4c/33tIAiBj6a8KpGpYqjhWGHMd04Du/R+FFgmbcEnBX54uoqRcK3HQBTgu0VG853VX2JYCb6R0=
+	t=1753892946; cv=none; b=Qy8gnid6d7bLu1m9MSyOnQwJeHrXBuBSD1IWAFo8Pr2I0dJIxQ5GKBUTmjIc4+6q3DNR6a4DQ44r6xw4SM+ip+JasasRxqEqZAKCsu4cT3l6fkaPxQnElNTq1kwTbwv8qgu9kKGLxCAhmUkKGuQLY+jUFJybpGyDfx/yQDaBe6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753892877; c=relaxed/simple;
-	bh=VDN1MKYrHnhKs8rJltEkmxfDO0gFuhaDH2a2kia8Czw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jFvomjTdE5K8CnZUJ+67lHqad28LBRUEhV3GabK0mckbk0IuKY5/ZFL6Xt6AFH6aQl0InIHXrmX74SSsXl4TQW6CdGicVVO6agbAHAHBJfxbWVp/cxrwzJCDiVFIeYIwCvn6VCud7rCIb46oKz9FPMPCGUqSGDF7TeRLPJTebic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYhio+Qh; arc=none smtp.client-ip=209.85.161.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-610cbca60cdso3653382eaf.0;
-        Wed, 30 Jul 2025 09:27:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753892875; x=1754497675; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=VDN1MKYrHnhKs8rJltEkmxfDO0gFuhaDH2a2kia8Czw=;
-        b=RYhio+Qh70tPxGH+BVl56ifH/1lwMA6R8eFKguF7SM+SMtPW+PICRZmelJxt79xM50
-         tFHFKJ2CGUhIOYUR5m/h35uidtiUx2RRG1H2X+GQdlWRfeRSgqCTa2EhwC/cMjvlCU/j
-         Ca+6VVmtlDLqi/XimTtDIMJ1OhidSrqCvkWk6dxvmvLnsy/cMky0YRMjmEdbmR6i0M5D
-         RpsBhWR1Oavziuw25xdPwCynYu3BwanaPfk/3as8RJhV4cDMuaKPVTYjrth24pC//fUX
-         dtxrtmDKr1PQt3fvbvinuFohKs8+DR9FHH5ir6reyM3mrE9xTm9efP6RPBALtc8kD+BW
-         vYzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753892875; x=1754497675;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VDN1MKYrHnhKs8rJltEkmxfDO0gFuhaDH2a2kia8Czw=;
-        b=v1KHQj1X1elt4cDHf3EbH73SGsdwqahK75ea9rXJZs6Vf5JEVO5KhcrS1o4LKSyW9y
-         UQc5jzFq6aQ1vSe8FifxQNTqvJbewZ8gQ8vNBossR+k6c3bIlagBGzBsU7xcDC4PnEnq
-         ucxXuEwFdlu7SpECGNiwx79wPhylCUYJylM3u95QvFWEF/lIDFERdW+lq6YW3Pzf8XuU
-         0Qgl0d8XURODR9dtSyyG1u5KeMhFKSwq/F12bA4wjjeeefF8aELq9ho796aoA8rHwwxD
-         cC9MBqlg4jJFccP7SkI7vopJDXpkv5/88OKRevHkvSCcKzmZLoaxlOrOH/FWM2xV1uQb
-         iLkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVaso2IhVgixsCiUTK6wQ6BN/3AaWlJNCQ4qWyBvWXlmkX/B6W3RdDOnaeq6fcyq52gFzaxj6iXqMq4rc=@vger.kernel.org, AJvYcCXdCGeEKZYojzcreVYD8UMvO4emPVN0lJZq5GHaSZFgjxM7h+o5FZ3KsUU0vqtObWe4BAGHU9PL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9ZH44NATzzzm0IB0QfOI14FrtmS8XMi4ldNjFE7jLFpK6wy6/
-	hojhx+HvCOj6EdtGhCMCfVgktLHbwATxqt+27UB6CtBHExoqp6tB3aTqNAhd3ZX71+BOtzKvJLW
-	kDShjPyfEFY8l8ViUhjDOisy+CVUe7Ls=
-X-Gm-Gg: ASbGncvEQ3BIFlE/rgmPgp1MPL2NliK4XhmbTtJ9byXCpbXzlLmVELkI8BdtaJefCru
-	GiHEr+EkN2wqSFawVJIx+OtK8eZOY5eZKipRY6Hw9i8v2/nudBT+bZs5wDEvgiW0UROkkZy+jKP
-	gD5QLK7qwyosw5TKqxJN3m8dbF/VezoLSyobeyWbFvUmuHNyBtAy9rs4eMxmIGgh1pgY20fpLCv
-	RmjUmMQ
-X-Google-Smtp-Source: AGHT+IFJBBircmFlzkuiZxltpkb8UXxxVju/Ryi2aiX0HE6gttXxNEsyR82wLNIYdBYNG+mN1mHi0d2hU2BueLd1gHE=
-X-Received: by 2002:a05:6820:998:b0:618:d339:1fe with SMTP id
- 006d021491bc7-6195d2d2924mr2688300eaf.3.1753892874659; Wed, 30 Jul 2025
- 09:27:54 -0700 (PDT)
+	s=arc-20240116; t=1753892946; c=relaxed/simple;
+	bh=jggiZaTVYbB4OEBA1i4DVSHo1/3uiB/LG8J/K0w9JWg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jLRNlIZHem8bQkN10YnPwptmHH+APv/U7DZ+jOipOwyUoF92cnGd7BWPdIvnjLnGyBFQUACel10zFRXKtUDcWyJEw5ndkiPkPSc9pzFmLNhjNeqVEKvx9FuXAclJnG0WBYvE7L2zdVmLUOIwzr5I3xa39M2r+OKDKi2CdESyJPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ww34yMAY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=giTTeePb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 30 Jul 2025 18:28:55 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753892937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oMls9zKlB4XZnAdVDASSbYnpYBlk93kj5Bflf/duEjk=;
+	b=ww34yMAY9CrRdppEj76TRYVcQUqYM/SnWvDs91XUhROZ9U4KZQeHBLd7vwIQFim9TDreYb
+	jtsFzeCO8xdpZpHeeWOZVg1BMac05XmAh7Bdd8QUotF/c1c1KxxlelmWLwFJSm5zRKPin4
+	tErSO0QeBw+Ut/NES9KkTi/WL74xWJRY2kmQmSDCnt5P+KRmiQLr6tmZQgFJIfhhD4d41U
+	HlwCbMFg/fFrwxlESl/smaIfbe6mTbLTH8KbGnDWUR2Ey98aPyJTJNqN6GlA0XnWuSMRXd
+	/ooH3CqBmt126/opmZSmpvZmhIzti7DuMUmkgBpiusjH6haPk80cBsUU0LzcdQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753892937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=oMls9zKlB4XZnAdVDASSbYnpYBlk93kj5Bflf/duEjk=;
+	b=giTTeePbCK3CFiqn6eneIPQ0Ma5dgnBSvYmpyWYR+YPHhLstrUWjCiSJ5HhL9adIttldll
+	wLMXhWmGyEKEjRDQ==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Tomas Glozar <tglozar@redhat.com>, Juri Lelli <jlelli@redhat.com>,
+	Clark Williams <williams@redhat.com>,
+	John Kacur <jkacur@redhat.com>
+Subject: Re: [PATCH v5 7/9] rv: Replace tss and sncid monitors with more
+ complete sts
+Message-ID: <20250730162855.U6IwNmsc@linutronix.de>
+References: <20250728135022.255578-1-gmonaco@redhat.com>
+ <20250728135022.255578-8-gmonaco@redhat.com>
+ <20250728155332.sbkepHj7@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730042617.5620-1-suchitkarunakaran@gmail.com>
- <30f01900-e79f-4947-b0b4-c4ba29d18084@intel.com> <CAO9wTFhZjWsK27e28Gv2-QqMozns47EacOQfXtTdMfLjR98MTw@mail.gmail.com>
- <834f393e-8af9-4fc0-9ff4-23e7803e7eb6@intel.com>
-In-Reply-To: <834f393e-8af9-4fc0-9ff4-23e7803e7eb6@intel.com>
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Date: Wed, 30 Jul 2025 21:57:42 +0530
-X-Gm-Features: Ac12FXzlj5yWkI6eKhlg68DANwG9PzzG0U_nSEKVUez-tYk1CF6GB0jjskMMJpo
-Message-ID: <CAO9wTFi6QZoZk2+TM--SeJLUsrYZXLeWkrfh1URXvRB=yWtwig@mail.gmail.com>
-Subject: Re: [PATCH v3] x86/cpu/intel: Fix the constant_tsc model check for
- Pentium 4s
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, darwi@linutronix.de, 
-	peterz@infradead.org, ravi.bangoria@amd.com, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728155332.sbkepHj7@linutronix.de>
 
-On Wed, 30 Jul 2025 at 21:03, Sohil Mehta <sohil.mehta@intel.com> wrote:
->
-> On 7/30/2025 7:58 AM, Suchit Karunakaran wrote:
->
-> > Hi Sohil. Thanks for reviewing it. Should I send a new version of the
-> > patch fixing the minor issues with the reviewed by tag?
->
-> Yes please, I think one more revision would be helpful and reduce manual
-> steps for the maintainers. (Likely after the merge window has closed).
->
-> Also, please try to trim your responses to only include the essential
-> context:
-> https://subspace.kernel.org/etiquette.html#trim-your-quotes-when-replying.
->
->
+On Mon, Jul 28, 2025 at 05:53:34PM +0200, Nam Cao wrote:
+> On Mon, Jul 28, 2025 at 03:50:19PM +0200, Gabriele Monaco wrote:
+> > The tss monitor currently guarantees task switches can happen only while
+> > scheduling, whereas the sncid monitor enforces scheduling occurs with
+> > interrupt disabled.
+> > 
+> > Replace the monitors with a more comprehensive specification which
+> > implies both but also ensures that:
+> > * each scheduler call disable interrupts to switch
+> > * each task switch happens with interrupts disabled
+> > 
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> 
+> I gave this a try on riscv64 and observed some errors:
+> 
+> [  620.696055] rv: monitor sts does not allow event sched_switch on state enable_to_exit
+> [  621.047705] rv: monitor sts does not allow event sched_switch on state enable_to_exit
+> [  642.440209] rv: monitor sts does not allow event sched_switch on state enable_to_exit
+> 
+> I tested with two user programs:
+> 
+>     int main() { asm ("unimp"); }
+>     int main() { asm ("ebreak"); }
+> 
+> The two programs are repeatedly executed:
+> 
+>     #!/bin/bash
+>     ./test1 &
+>     ./test2 &
+>     # ... repeat lots of time
 
-Alright. I will send v4 after the merge window closes. Thanks!
+Okay, I think I know why..
+
+It seems the monitor is in scheduling state. Then it sees a pair of
+irq_disable and irq_enable, and it mistakenly thinks that this is the
+is_switch==false case in __schedule. So it thinks it is at the end of
+__schedule(), and does not expect a switch_switch.
+
+However, this is wrong. The irq_disable and irq_enable pair is not from
+__schedule(), it is from softirq (see below).
+
+In short, the monitor thinks it is at the end of __schedule(), but actually
+it is still at the beginning.
+
+That's just from my limited understanding of the model, so I may be wrong.
+What do you think?
+
+Nam
+
+             test-256     [002] dns..    63.070743: da_event_sts: scheduling x irq_disable -> disable_to_switch
+             test-256     [002] dns..    63.070748: <stack trace>
+  => trace_dump_stack
+  => da_event_sts
+  => handle_irq_disable
+  => trace_hardirqs_off.part.0
+  => trace_hardirqs_off
+  => note_gp_changes
+  => rcu_core
+  => rcu_core_si
+  => handle_softirqs
+  => __irq_exit_rcu
+  => irq_exit_rcu
+  => handle_riscv_irq
+  => call_on_irq_stack
+             test-256     [002] dns..    63.070755: da_event_sts: disable_to_switch x irq_enable -> enable_to_exit
+             test-256     [002] dns..    63.070760: <stack trace>
+  => trace_dump_stack
+  => da_event_sts
+  => handle_irq_enable
+  => trace_hardirqs_on
+  => note_gp_changes
+  => rcu_core
+  => rcu_core_si
+  => handle_softirqs
+  => __irq_exit_rcu
+  => irq_exit_rcu
+  => handle_riscv_irq
+  => call_on_irq_stack
+  => call_on_irq_stack
 
