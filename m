@@ -1,184 +1,141 @@
-Return-Path: <linux-kernel+bounces-750721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D071B16039
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:23:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7F50B1603B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E3501AA1933
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:22:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6181818C70B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B163D221FCF;
-	Wed, 30 Jul 2025 12:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3358727E077;
+	Wed, 30 Jul 2025 12:22:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kLOI1mXw"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LIxdnV8k"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B40202C45
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E174413CF9C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753878024; cv=none; b=AQcaGf1IZCnCSHnjLJEJdYekHAvo5tJ0OE5/FscdTRg9Ido396zjBNtsTNkVzfiRJQqqejQktGUc1/PU3EXTqmuTGsbxPVNOvrOSd75wK4HIluHUjKFXqsxYHJuvkgHkNehlmaHyXe85uLkezX4mLejRlUHL0YOiDCigr3rBofo=
+	t=1753878153; cv=none; b=ob/OXvyUK8XQhyNslcm33ILQb/fhTi++zkTsXcBNyb5nrL1HKDAUaXXv+nGHi4QQHDMuZlRdFePNk4pHQguGdApqnFVSPiOwIQdQwM0gOGypmRHXqbzlLvRU7t+eomYIXfWPxTqmmniXI749N3+AuHedCKD1BhXjX9JJQaqKrHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753878024; c=relaxed/simple;
-	bh=zjiPu3cXl6sEosXyDz1t5PBP5oTsBy5Yj1jiRGlgaT8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=F+Ca1BfAkXs5rGAbio+Z9lUzzqcUvopGHgq3GtfN15HBcB8rTvRB3VY5Q/siGnsEBSMozAKjeIOhLUYOFGEFv0yURfdwfW3Dgqd9jeHycGtqwcpuuZjar1vDO2GeFQb8wG6z7E938FO+DZZ1LB5opjkw8fomUe3teH0cx1PUbLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kLOI1mXw; arc=none smtp.client-ip=209.85.221.48
+	s=arc-20240116; t=1753878153; c=relaxed/simple;
+	bh=EM2SeeEDeL1kFD6kgQfv5p7+jZ0ToNtVz+ZdTeIR22g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UKQKZFZQP8EDsJwokUapUT1/yecBLNP9tzayin3ygrnadM37dKZB0ni9qik1aennF2DwcaRVvLhHjZod20an6QoQXUv+xLcB9X1+9WJ4ZqCL4daHWI+8ElOYdvXUHdcpnL7JlmD3CUta8p1SCxTZHrp104GQs+TNNSCuaBAEsn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LIxdnV8k; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b7862bd22bso525200f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 05:20:21 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-454f428038eso57948455e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 05:22:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753878020; x=1754482820; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6RCIk5vzFfP8iX+aivLku36+ce7/VFd7gJpq5Z9shY4=;
-        b=kLOI1mXwksdHqonMMvBClC1WJXcD0dhONYmEwMdGtoYNt/pTlMMN6Wi4ypu4PITR64
-         o0TnDxlZ03xM54Tx6ADsL5LfyLBDRXqtCEziGPZZ57DbOMVJ8KEKBxKZtQp+fhHXlP+x
-         qHPfkzGsBLGOPXTtyuqpclAbkM/znDJMt0Lk4yKCuEA+yTLZm2NjQJFIzmZEzJxemktF
-         DuQGlfZdmtLTUh45XSE7gJxlfzM9uEulJU8XK5vWhqAAxXBNl4Y+KSleSJ8tcl0HFuRs
-         z9N0Vcw9y58KCc5eAmEpNVXWYgidII0J5PE143JTou89iJYVhIzHN7yJIaD/eeIi47vX
-         emuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753878020; x=1754482820;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        d=linaro.org; s=google; t=1753878149; x=1754482949; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6RCIk5vzFfP8iX+aivLku36+ce7/VFd7gJpq5Z9shY4=;
-        b=dWNuDNmJQId1kItVaPYescqV4bNrRbyFlLb/m5a/ZcM/fXv6vZ5nJ6uppHMUbAX/y4
-         9RMjHhwkWfSBbYgZzyz2bH2PIEhnckDBWffGoaIk2GG401r9WBE17Vu6fffnHQIvp2G9
-         kO47CLrI4Npm4ELdEcZpo5361K5neGZoWbmsHZW071xFESoSZZDZApQo0isxIBzBv0Lu
-         Tub8vYa0lT8LZHIb7Iy0Qy5SnXo4MgsZTZNxhlzHVN9NU9V1HG+1cPhhROR2C48ZdBUQ
-         AHKcZjE8T0aj74Pd1hQnhR/A4SzN9UP1slx5Q1yelGZgbDjcd1d+4yamytSPkLpajjIW
-         WkgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUF3/bxyEV6DZL2FBzqfbjxSR7MTEfKFr58PM7j5aGKrR5AjL8kru1O52TzUWcnGF4ydbphU4mJ9dXaYCs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Yp/IZ/QOVp/ofRV12VJ51khB/lHBVFGk5/b41n/A+idSu535
-	8bER8gX6m+jCBy4BSZaK2UzCSMPGSAyAO2YA/3nBVj1ZQkOhvoBElYEkJfx9TjT8wW8=
-X-Gm-Gg: ASbGncv9t1XnoOgKGOBvhaQnkrKAKZkYCR7xBQPnYF0gi5rtnHBYxAzPBirnXXElOTl
-	6/jUFdwFach9JIdHz3CNKswBj7gRgCGLalY/6j6o5j6KYX1PsMynXKLV+lNldbPRdMmgFiMmab8
-	nAGe6RSLLDdSjCIDxNaeAWLSS8tIRDTjj3HyjrihQXAegCPtX5lfjhdV1mQvrB59WMGnFKqCnXw
-	Gb8jdf4tWvm3mmcF+MLgZzpLkTTUDtPW7SmJuDJWXxEqWAZqBPE2KVaW1l8aGcoLqnibRv1faDP
-	jHerog4dR/T3LdQWO0WFnjfyzxsXXtai53K/Q4wyfDoKhLYnTTm4BqVQRq+s45Omas/CbGz4qUu
-	U99k3Zg/Dq4PC7GInNtqgRIrmLQ==
-X-Google-Smtp-Source: AGHT+IEf1nLZq2A/9qjF7cMRwVowf6aVMbDmzAl3uBNou1TtuZ9IH3zr/KEDQxg/DBhbKFpXNNTITA==
-X-Received: by 2002:a05:6000:2003:b0:3b7:908e:e4ac with SMTP id ffacd0b85a97d-3b7908eef14mr4440299f8f.2.1753878020074;
-        Wed, 30 Jul 2025 05:20:20 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78d45d010sm6980865f8f.8.2025.07.30.05.20.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 05:20:19 -0700 (PDT)
-Message-ID: <0c8cc83bb73abf080faf584f319008b67d0931db.camel@linaro.org>
-Subject: Re: [PATCH v2 2/6] futex: Use RCU-based per-CPU reference counting
- instead of rcuref_t
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	linux-kernel@vger.kernel.org
-Cc: =?ISO-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>, Darren Hart	
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar	
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra	
- <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Valentin
- Schneider <vschneid@redhat.com>, Waiman Long <longman@redhat.com>, Andrew
- Morton	 <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Michal Hocko	 <mhocko@suse.com>, Mike
- Rapoport <rppt@kernel.org>, Suren Baghdasaryan	 <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org
-Date: Wed, 30 Jul 2025 13:20:18 +0100
-In-Reply-To: <20250710110011.384614-3-bigeasy@linutronix.de>
-References: <20250710110011.384614-1-bigeasy@linutronix.de>
-	 <20250710110011.384614-3-bigeasy@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build2 
+        bh=lUEKxJ5rgjXe1YyHgv4NRENeR2LO4lvKY16JCFZwTMM=;
+        b=LIxdnV8kCrMKGgqQ5Bv/xbqFtCQzWjjwm/QU5/ONatS7oxPEubepeB+84Q8x7o+Pve
+         LRRgyJLZogPyRFOnnjte3+ofVIWrzVGNWYFMNeHrsYf0rJl3CM/GwZ1LBuSHFAe+d/nO
+         LohKWbka6nTwCGhpQhac0CzQthPfwJe4SdZmhxEBEuC5JBu405uvS8SzMFD5o4O0vuop
+         8T+hMhD6VK3vodtT2CmTbfjTRA57kfJbRrLQOhBZc85ZAWlyiv2IrgMCHrUxUa0yCVyY
+         RDfpzCpzDlFj2P+BjJL5ND4Cxh04piLFzjTrpMrc7IDoaWfUalUvgS4qjpJnqWs603a7
+         QJcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753878149; x=1754482949;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lUEKxJ5rgjXe1YyHgv4NRENeR2LO4lvKY16JCFZwTMM=;
+        b=XmL9JIXF4GzGWCoSE0MtamxQF0tzW5Do6Q8kMuM8qdBFgYQdxQyQ9hpra+SHVFU/tM
+         rs01UW2HLDYc/oSAG/uoy2IULFo7n5N9Mu9BW7A9yAOMLsewoVDpUzdvouEi4X8EA/t5
+         Tq4SUIHbr0ijA1oBFGbDtNoIUlb7+G+UIQKng8uiikrRXIJ7o/96o8/viiTNC5T94P8/
+         LMEwmg1SxkII0EpkmHOtB3bgHiebDYrMoi7XkI3Sc7ukSRT/yum+ac38+hamMvuDGVay
+         QMGyIxnjwiSF0EnJnGxHzYxcHSrLsNUAbXV6VJGnSIIo/+S98+zkIP7ZIhSypAiGlgik
+         c3xw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNdebk6gPVS3VC9XhoXfmTB1g40hWBPiE8COuUgSD2NmbOCmXLNg3xcWH7lJlg1UcTA2B4ILMK+0kR5aQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF67oaSwUGDnAd2sSOYbARViTWg2tr0FMk3mDYY9U9UsAY4JRx
+	AoYI0YNFnz6e1AaKfU1zDwjWxQiOAJgJFzGiZIoJxcO/t2JtnvF6h6KWgL8l31cH8cY=
+X-Gm-Gg: ASbGnctlzFOBDrl3EyI/vac6ZJahRJPC2wcogCTbLFFHwh+tKAH+9Gy2Dxzia505po0
+	upnT0PJa6ZBVzFHvyXOMPksHbSzDNOcmlDhcq7+H1h7+j5w87G84nTah7XKz51wCCAnK/p4YDmT
+	32kHPpOKYosoUDv58GJms4TFXkyjnFlrnww+rLi98C5YjpcnyloWOu5DZOIbApz3EvE11XryWx7
+	LHN0Oyo4M4WRQlcTkfGqP21g/XAn7UJPDMRBBKWnAzxwpDnGZUpb6ntqIy5ZQHN7il8t64qhZn+
+	pGtzIFPem6/sF8/gJu77xiW5Xe+DsdowpCiZisp8SDZWIgVv/tGdhuRhzcdPykURznVpTelMpAU
+	hv1suYpmV+TkKfelAdKHcGesPcjVWTpYBQjg9RGmhKnZpxb/bW9jg/afGE+qnkw==
+X-Google-Smtp-Source: AGHT+IFHgIPDAvCDwsGBDdTU9OFJARdnfPOtF5aFPjgRrA/x3zrrr25gAt3sbRb8qonK3Xud+Sbecw==
+X-Received: by 2002:a05:600c:1da6:b0:458:6733:fb43 with SMTP id 5b1f17b1804b1-45892bbf7f3mr28149845e9.19.1753878149097;
+        Wed, 30 Jul 2025 05:22:29 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4588dd375e0sm45991465e9.2.2025.07.30.05.22.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 05:22:28 -0700 (PDT)
+Message-ID: <e8e2bc93-1639-433d-9689-d1ce9f28b877@linaro.org>
+Date: Wed, 30 Jul 2025 14:22:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: build warning after merge of the clockevents tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Donghoon Yu <hoony.yu@samsung.com>,
+ Will McVicker <willmcvicker@google.com>,
+ Youngmin Nam <youngmin.nam@samsung.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+References: <20250716160809.30045a56@canb.auug.org.au>
+ <20250729114037.03a2d884@canb.auug.org.au>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250729114037.03a2d884@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-07-10 at 13:00 +0200, Sebastian Andrzej Siewior wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
->=20
-> The use of rcuref_t for reference counting introduces a performance bottl=
-eneck
-> when accessed concurrently by multiple threads during futex operations.
->=20
-> Replace rcuref_t with special crafted per-CPU reference counters. The
-> lifetime logic remains the same.
->=20
-> The newly allocate private hash starts in FR_PERCPU state. In this state,=
- each
-> futex operation that requires the private hash uses a per-CPU counter (an
-> unsigned int) for incrementing or decrementing the reference count.
->=20
-> When the private hash is about to be replaced, the per-CPU counters are
-> migrated to a atomic_t counter mm_struct::futex_atomic.
-> The migration process:
-> - Waiting for one RCU grace period to ensure all users observe the
-> =C2=A0 current private hash. This can be skipped if a grace period elapse=
-d
-> =C2=A0 since the private hash was assigned.
->=20
-> - futex_private_hash::state is set to FR_ATOMIC, forcing all users to
-> =C2=A0 use mm_struct::futex_atomic for reference counting.
->=20
-> - After a RCU grace period, all users are guaranteed to be using the
-> =C2=A0 atomic counter. The per-CPU counters can now be summed up and adde=
-d to
-> =C2=A0 the atomic_t counter. If the resulting count is zero, the hash can=
- be
-> =C2=A0 safely replaced. Otherwise, active users still hold a valid refere=
-nce.
->=20
-> - Once the atomic reference count drops to zero, the next futex
-> =C2=A0 operation will switch to the new private hash.
->=20
-> call_rcu_hurry() is used to speed up transition which otherwise might be
-> delay with RCU_LAZY. There is nothing wrong with using call_rcu(). The
-> side effects would be that on auto scaling the new hash is used later
-> and the SET_SLOTS prctl() will block longer.
->=20
-> [bigeasy: commit description + mm get/ put_async]
+On 29/07/2025 03:40, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Wed, 16 Jul 2025 16:08:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+>>
+>> After merging the clockevents tree, today's linux-next build (arm
+>> multi_v7_defconfig) produced this warning:
+>>
+>> WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x324 (section: .text) -> register_current_timer_delay (section: .init.text)
+>> WARNING: modpost: vmlinux: section mismatch in reference: mct_init_dt+0x4c4 (section: .text) -> register_current_timer_delay (section: .init.text)
+>>
+>> Introduced by commit
+>>
+>>    5d86e479193b ("clocksource/drivers/exynos_mct: Add module support")
+>>
+>> and possibly
+>>
+>>    7e477e9c4eb4 ("clocksource/drivers/exynos_mct: Fix section mismatch from the module conversion")
+>>
+>> For this build,
+>>
+>> CONFIG_CLKSRC_EXYNOS_MCT=y
+> 
+> I am still seeing these warnings.  The above commit is now also commit
+> 
+>    338007c44c7f ("clocksource/drivers/exynos_mct: Add module support")
+> 
+> in the tip tree.
 
-kmemleak complains about a new memleak with this commit:
+This should be fixed now.
 
-[  680.179004][  T101] kmemleak: 1 new suspected memory leaks (see /sys/ker=
-nel/debug/kmemleak)
+Also the clockevent branch has been reset.
 
-$ cat /sys/kernel/debug/kmemleak
-unreferenced object (percpu) 0xc22ec0eface8 (size 4):
-  comm "swapper/0", pid 1, jiffies 4294893115
-  hex dump (first 4 bytes on cpu 7):
-    01 00 00 00                                      ....
-  backtrace (crc b8bc6765):
-    kmemleak_alloc_percpu+0x48/0xb8
-    pcpu_alloc_noprof+0x6ac/0xb68
-    futex_mm_init+0x60/0xe0
-    mm_init+0x1e8/0x3c0
-    mm_alloc+0x5c/0x78
-    init_args+0x74/0x4b0
-    debug_vm_pgtable+0x60/0x2d8
-    do_one_initcall+0x128/0x3e0
-    do_initcall_level+0xb4/0xe8
-    do_initcalls+0x60/0xb0
-    do_basic_setup+0x28/0x40
-    kernel_init_freeable+0x158/0x1f8
-    kernel_init+0x2c/0x1e0
-    ret_from_fork+0x10/0x20
 
-And futex_mm_init+0x60/0xe0 resolves to
-    mm->futex_ref =3D alloc_percpu(unsigned int);
-in futex_mm_init().
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Reverting this commit (and patches 3 and 4 in this series due to context),
-makes kmemleak happy again.
-
-Cheers,
-Andre'
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
