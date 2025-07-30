@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-750635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5FB5B15F08
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:09:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FE2CB15F07
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:09:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D48116230F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:08:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BB823BD1A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5B8296161;
-	Wed, 30 Jul 2025 11:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58EB2293462;
+	Wed, 30 Jul 2025 11:04:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jBIxWF2e"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b="hIrludL7"
+Received: from mout01.posteo.de (mout01.posteo.de [185.67.36.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3633A208CA;
-	Wed, 30 Jul 2025 11:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66FB28031D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.67.36.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753873314; cv=none; b=gTjnZleLsNFOvzuMumbP4e2ENzv0WLPL03sUtsx2kZEjBSzGTLXV598/quTOBBLbNWvkuyxumSruTzeDbfgs5RyjhsTRnrbrZsdrOaODJO1ScnV1fErY/g0nmJAoQgQgAAEXNc81mYOu+9IwEZdzZqlilmx4Vb3rZ/Mk29UWncY=
+	t=1753873441; cv=none; b=FFGrtrPSLrO8rN3EjqSPQcowoBqDqf7LCyKMeXkZgJ05XPBUxxY0knAnXb5evDdJVSxg9RLMMbY0CLD74rUdJkglaggTXFWmaa91c8FDBHsrMyHoURtVz5+U/ulqTMLg8ZZ9futO83c4tBCieov5+UMw7PSuMPa+/MtBSJXLdM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753873314; c=relaxed/simple;
-	bh=AswIdtvJxUluZ7da+hgSOdHCTLNeM79Q45Q6XlIz4QU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SK2qWvltuvWbfhBrIMOQe+RU4laoKyiz3WPOEVCvcfT2GInWToiaEpOsdMpWeu2HdlK5XhHC6MNX/q6nVrdEbphWofxJqtN6rHBR/Y1sla8mQGvMC7kUPR64do01B7axxYVCXWZl6ROPH+t5fdcytllBLTFiITYNxWgzQmiwNlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jBIxWF2e; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2400b3008e8so3870425ad.3;
-        Wed, 30 Jul 2025 04:01:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753873312; x=1754478112; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AswIdtvJxUluZ7da+hgSOdHCTLNeM79Q45Q6XlIz4QU=;
-        b=jBIxWF2ezA7/XOYvYhx2FR+2xUTxnf5v65i1TjCXv5lam0N2hlh7Qru6MaH0h8p631
-         NjeQFHmRIpLA2jsMHB6G9JBqwpecGYBwVAECEZ9JzkjpQCEIdq4kuqzncml00HFvEp60
-         em6H4mZyoyfegn09BEZkjesaky1wTNpNfaqDnlx2NDWf+LsBRFHSV2bMzFROKzfXiE3d
-         b3gamVPqxltkKEIatCkemgwQJoOxbRELwG0PFKE+FWgmsY6COcBNoE90Zuoqu4wcIDna
-         aBRhRxr4sH7QNLrcsbyaacabLKU1NLFCEm3rS0kuNX3IgU4YHl5NcSQ/qCvwthwE1YnA
-         GTow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753873312; x=1754478112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AswIdtvJxUluZ7da+hgSOdHCTLNeM79Q45Q6XlIz4QU=;
-        b=onqx9PMraHvXwAIwg0QwopwWNUaYVfB5JqraC3GK2hu+fwaZlqFNbvotUB1CQtowG7
-         CUsujmLz2jC701Y3ykjLrY5v5QGch9/aPjBmp7x8NHyqUhW4U96eZaoJ3tLu4hzVSdH3
-         x8+V8Oz1I++Ec6VOxAfssPfaoIKBurX/wNua5OKJdYTgaAgNb1mWvLIW/ZzeNeGL2gm0
-         bUFBRnc81IHaXH6dSlPHKwih+0tgPExiGHuLrrNujvPznAhOd5SfLYF6u/mLPkjcPT1y
-         rZmSsdtwOEGt9KK84kg+XMWJ2GJcCxfYgkuz/4Kh0seSRYW0CC9uXlCn8evDRRkL9+3s
-         4HiA==
-X-Forwarded-Encrypted: i=1; AJvYcCXY+9F2/jUFcNR4/j1i0LGQ+nyvawUaXfD2gayvNK5QsbbEVFM/Dte4wWkUOwIak4Gx/IdQymvO8YukWiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVzehYXNxS3OUAmgxk/qk3ziTH6OhpJA0MSdHVio52w1r3vy/p
-	UO33tQQdRh4nN3rByWB5vUgcAxHnUy9LqhUTU27jIVUrhm9zfoTC5Pg1067rJA4kh4VrVvhJKRC
-	z5RG3Tit16CxUZikvH/ODHB7ijuu+lcc=
-X-Gm-Gg: ASbGncsMXy/fwulr5S9BS5L1KbNXYuJY01cotO6Jw5IVU7LwL+yb1drrGydRLByAGK4
-	IqXIZ6iBiUffa3PLzhYz0U8WjlkXT9YyQrO/ariNZ6Cvh1OUmNBCUKLuroYS9XhHF/HXHaZty8U
-	JiR61QHqw5FAQRfVSPirKiekV4rFCYb2kW9ZMqLCj3eoSchYGX4F/VN7cwCqimOyK9V42ePBU0Z
-	wgcyd9E
-X-Google-Smtp-Source: AGHT+IFcXkHZcOOJk+vlHnVT6J0/9laJ0SyHq/VnDphD/gEXxFATsIM0KCrAn8izb6DdrUnY4kzwFlHrmaJr7alDUE0=
-X-Received: by 2002:a17:902:ab8f:b0:240:711f:2068 with SMTP id
- d9443c01a7336-24096b0c975mr13303255ad.7.1753873312332; Wed, 30 Jul 2025
- 04:01:52 -0700 (PDT)
+	s=arc-20240116; t=1753873441; c=relaxed/simple;
+	bh=szHfJZabhBzQOJCt7xJakEBSVeQuaISLuhGKPgme3UI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tl/wYJbh5cYVfmhFBCdE8QGBjoI3CkICgs2Fh8nA1Jrs24sZrK5Ql45TunftsI47/UKVkuI44XdZTZh+8Am4HdJfB07QQBigByxlYSxMAe+8Q6IDeSfOJrxyftZj8Xy+Zq69ef8U4tPgF9AflELJQKG8E39sLMePhhPcQCs/ze0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net; spf=pass smtp.mailfrom=posteo.net; dkim=pass (3072-bit key) header.d=posteo.net header.i=@posteo.net header.b=hIrludL7; arc=none smtp.client-ip=185.67.36.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=posteo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=posteo.net
+Received: from submission (posteo.de [185.67.36.169]) 
+	by mout01.posteo.de (Postfix) with ESMTPS id C85A1240027
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:03:50 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=posteo.net;
+	s=1984.ea087b; t=1753873430;
+	bh=A8Tk31KLWXGEJE8kGQgr7GbyzbSIczErq5KW134DbNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Transfer-Encoding:From;
+	b=hIrludL71YOynUay6Y1461uhuCxgot24rOfIw0scNUOQh/d974/U3xbIoLda9pYQc
+	 yHXrHGbGsE+KU/dgx0byg95/nCLlq/ZLScKjKf2/tuiU5smJIg65XQkwR9cqm3p7EJ
+	 gX482UBcX8R//iXp9IuDbIVkc+nTfYn/UKNXx+yuwRM3P5+pRW2/cqi0R8aaAKyTF7
+	 gnmWBimIrPpArt+Bg9RxoA4KHIUIADoySTF07+viWFKZRkErgbCwg0C5FoK88eBAeL
+	 Ur8t9jOzeSVSyc0+Au1Z09/5mbsVpmW66CLOb3C4YBwqxBVAq9cLt/e0SgDMFDaK6K
+	 lDajYWmBr6pIRX4RcrtBTqhpFf43YKZEDjBgB2kigXR+pCor3E1Eq3th6DFpC7Wzmw
+	 QE0qzcdfd+b9rxWSZ3SAqBFSWEWtzqHcGv+2Vn7Fy0r/aCzUSgvmpfeSbGF5s64UYK
+	 fM+t5OpDe7TOUXoapI8ZuJK6Y7HXnxD0mRxDzkviPmsaioIlDzO
+Received: from customer (localhost [127.0.0.1])
+	by submission (posteo.de) with ESMTPSA id 4bsTq945Lfz9rxL;
+	Wed, 30 Jul 2025 13:03:49 +0200 (CEST)
+Date: Wed, 30 Jul 2025 11:03:50 +0000
+From: Wilken Gottwalt <wilken.gottwalt@posteo.net>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, Jiri Slaby
+ <jirislaby@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Parker Newman
+ <pnewman@connecttech.com>
+Subject: Re: [PATCH] tty: serial: 8250: exar: fix kernel warning in
+ default_setup function
+Message-ID: <20250730130348.082ad53d@posteo.net>
+In-Reply-To: <2025072929-distant-hardener-0e75@gregkh>
+References: <aIiDf31HzRBGuMN2@monster.localdomain>
+	<2025072929-distant-hardener-0e75@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729143600.5305-1-work@onurozkan.dev> <CANiq72=L_ov+Dc5S=adPdson9gq6wGp4xp=iCZLBnz+YC1_vgw@mail.gmail.com>
- <20250730130030.12d03ca6@nimda.home>
-In-Reply-To: <20250730130030.12d03ca6@nimda.home>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 30 Jul 2025 13:01:40 +0200
-X-Gm-Features: Ac12FXxEHE3aLm23pbqneQjcrKIrfKzuo0xdHTtigtpN1HeEtXGB-YGeMohuWi4
-Message-ID: <CANiq72=xCYA7z7_rxpzzKkkhJs6m7L_xEaLMuArVn3ZAcyeHdA@mail.gmail.com>
-Subject: Re: [PATCH v1] rust: update `error.rs` documentation
-To: =?UTF-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-Cc: rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, aliceryhl@google.com, 
-	tmgross@umich.edu, dakr@kernel.org, me@kloenk.dev, felipe_life@live.com, 
-	abdiel.janulgue@gmail.com, dirk.behme@de.bosch.com, daniel@sedlak.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 30, 2025 at 12:00=E2=80=AFPM Onur =C3=96zkan <work@onurozkan.de=
-v> wrote:
->
-> I thought with that approach the documentation can become outdated
-> again at some point, but I can still do it and send over v2 if you
-> would prefer.
+On Tue, 29 Jul 2025 10:48:17 +0200
+Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-That is fine -- documentation is never perfect, but it is all about
-the chance of being outdated/wrong vs. the benefits.
+> > diff --git a/drivers/tty/serial/8250/8250_exar.c b/drivers/tty/serial/8250/8250_exar.c
+> > index 04a0cbab02c2..5660bb897803 100644
+> > --- a/drivers/tty/serial/8250/8250_exar.c
+> > +++ b/drivers/tty/serial/8250/8250_exar.c
+> > @@ -500,12 +500,13 @@ static int default_setup(struct exar8250 *priv, struct pci_dev *pcidev,
+> >  			 struct uart_8250_port *port)
+> >  {
+> >  	const struct exar8250_board *board = priv->board;
+> > +	unsigned int bar = 0;
+> >  	unsigned char status;
+> > -	int err;
+> >  
+> > -	err = serial8250_pci_setup_port(pcidev, port, 0, offset, board->reg_shift);
+> > -	if (err)
+> > -		return err;
+> > +	port->port.iotype = UPIO_MEM;
+> > +	port->port.mapbase = pci_resource_start(pcidev, bar) + offset;
+> > +	port->port.membase = priv->virt + offset;
+> > +	port->port.regshift = board->reg_shift;
+> 
+> And so now serial8250_pci_setup_port() is never called?  Are you sure
+> that's ok?
 
-In this case, I think the files getting renamed and this line not
-getting updated is low (and it would be still clear), and we can
-eventually check if the files exist on generation.
+Hi Greg,
 
-Cheers,
-Miguel
+I will not provide a second version of this patch, because this is a bigger
+problem involving 8250_exar, 8250_pci and 8250_pci1xxxx. With the changes from
+kernel 6.10 to 6.11 the underlying pcim_* functions where changed. The
+serial8250_pci_setup_port() does checks on pci_dev + BAR where resources were
+already mapped via pcim_iomap(), pci_iomap() or even pci_ioremap_bar(). Not
+sure if mixing this is a good idea after the kernel 6.11 changes.
+
+serial8250_pci_setup_port() uses pcim_iomap() and pcim_iomap_table() for checking
+these already mapped resources. But the pcim_iomap_table() is deprecated and
+suggests to use pcim_iomap() function to aquire the pointer to the resources
+while at the same time pcim_iomap() description states, don't use this function 
+twice on the same BAR. I think the most sane approach would be to drop the
+pcim_iomap() and pcim_iomap_table() checks from the serial8250_pci_setup_port()
+function. But I can not fully test this, I only have access to some hardware
+used by the 8250_exar driver. I also CC Andy and Parker, both worked on the
+affected code.
+
+greetings,
+Wilken
 
