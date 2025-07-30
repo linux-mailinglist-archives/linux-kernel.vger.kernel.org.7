@@ -1,147 +1,123 @@
-Return-Path: <linux-kernel+bounces-751338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4DBB167EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99F00B167EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F195E5852E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:58:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6326E3A8B00
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32741221F24;
-	Wed, 30 Jul 2025 20:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD85421E0BB;
+	Wed, 30 Jul 2025 21:00:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqNAiXCo"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M46tIZ6P"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16A21DFD96;
-	Wed, 30 Jul 2025 20:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C8E1FBCA1
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753909093; cv=none; b=lcYr05RZX48KCyUE7m/2A0bW7T3nu8CTK/04Z5hUvzm5TaGYOgf+GVyFJaJ859bqERHi9+n0WiKqbVOx1XPSHufS6HNmdNV2NH2XvKh1YJRIGQggRMqN3IFF99Oqk/UywGHe/iq44VQ4fXeGi0/nBrVLhA29dSf/vyWMx+EBn8A=
+	t=1753909222; cv=none; b=ICSaApTbaRrHIsVIWUGXm3v+JmBGAkEnAvH4HC6gsCkTgH/qbVfBvV3DwioZRnnb1nXFyzaNcemUUTkC07Fn78TM+nDRLe4midedRXdovnplES6w7kZw/k236sjVOvtrPHJ3cKvFNVYYcf1SqnJf8RyDyo2RUfGWt5Xrol7AbDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753909093; c=relaxed/simple;
-	bh=44/DD350qh7WckBw9PGHp873Y/ioGlF9qgdVnOswNv8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eh+9Z3sAOUdfawGZxySyHsO+4q8iSNRaXMS504L4N32ZryJgqzA7LELaCL/L7f9jYFjnULRJ0EIdS1plX/8Wl3WOuZakujRyiZ+/TVhR0SuG5aodto/nRPqeiLIuIFOKmwGQPAGDbv+kPAibk5+LOOFoc0x0o0VoACPGMvQxA/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqNAiXCo; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae0de1c378fso29371666b.3;
-        Wed, 30 Jul 2025 13:58:11 -0700 (PDT)
+	s=arc-20240116; t=1753909222; c=relaxed/simple;
+	bh=qYO9XYMd9Ess2LLFsyadSHoQze0pFR9pSR+4q7JxSB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ccn/S8vzQCF6xhe8PrxKrZNMpGO5VKCw1XUvcB89sFzp7CXquJmvNriVGJsNGykfYo5F/V7ibIpTEHTYakqYw5q8fXfDDMjsdJPyinpG/poBwNcA7IPDI+VvptqXwYg7VtiitwujjpkgBJ7RjG9Jx4fTh88FmlJacspdhzm87mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=M46tIZ6P; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3da73df6c4eso1264635ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:00:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753909090; x=1754513890; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XOhp7r2EAcVU0KVvO1LP2KNwmRmtVbUzrMAhBUC15b8=;
-        b=gqNAiXCoGX/m/powAQARpfnnziHiynxz5GqbmJF+NKs6xCmOdW+Cr05j8xyvU/B+C0
-         uDzpad57pI2wdl6vkm1ED7uROk/9AG60t0auix5tksxH4KxgVY2pgutaIzq84PmnQMfc
-         U7aLeay4qVJFXd5kWDMTJornjCtWKhMVqPd7VHAyTM1fy9U033K3i0GqGMcW1fAA3G4A
-         mjqEj9vUP2HIKhs+CDBi12Icy3T3Dwa1C9tnSM6TgiVGdOeT6BW6Gmrcv4fn7lJ8P8Oq
-         +qKyb7eqJM5j6+Jg2R1YH/4WudFMeVdHsxvyU9NqGcj8BjnT7hlNM2buwzH2VuLV1rT9
-         4BVw==
+        d=linuxfoundation.org; s=google; t=1753909219; x=1754514019; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6nTYoBlbWe2hufH9UN/C4sSrgwEPP02z/hVZuVmtCWI=;
+        b=M46tIZ6PXfLfP52r+SU0yCBUE/63HE/9r4avOn3XDSE7WV3r10KYmvT71xXH9/wTF0
+         X5UHPRKDEX5yCEkKm3lovsX6rM6H7Mg6HxTD8Nryx59vPb8JkshwFfo2hoRoMZrmgydg
+         Fmz0rtZynd8g79gEXYbS313g1OVw+woajmNoA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753909090; x=1754513890;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XOhp7r2EAcVU0KVvO1LP2KNwmRmtVbUzrMAhBUC15b8=;
-        b=e5E7NgRa52XiuUn2gFKqQyyAkIXXJ2ZVBhG51puGSvkSxMqCHj3sHcU8jSQliDZTao
-         dhsMe70I2LEpxgScZ6endFqtLyJ3XmftiuMhLS9nmC9lbN0fFV82ZuvlvTsRsi0Muhbe
-         Px8DX2B1vpijRKvY5YUeoJPAdxN3clU+flqxtUEp9heZik6fDZYUMOzSgCd1mmUhB6Ol
-         6VArvrfHpdOJUajDtbuYDTUgUnInX/x0FzfHuZs+mU3Omapc77+j0YoE3CtqJkYPNq1e
-         XWTyoDG3UxwKnIESNy1oTj3/mXXRepxen07IhjAQGMiRoy8g0KJjCcpeA+bRVOImFDda
-         wwxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGo2IU8jVPVEeT7h8KC6yt+PuDCSMW90P/eEDpwSJHhh9rB6eAReQef8Hr4xhAD87Q8VOmy+5p3xyzkk0v@vger.kernel.org, AJvYcCXBh9j2dxSincQBKB2YTUbKI/VJITvOTtmLmGVstkRLYirWwYeQY7Mv9+ryFtCwtEv9JEHbnTRg0DQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8FgMQxDgOkR3CkWNhTG9gYUvudj4+HfLcOW2BHSvuZDgSeEDG
-	svvG9wmmOsZwZ8I5wp7cmJlfYJkldTYEKJaa4jZ8X39NzmmzwrLJLV1HJDqdv3rBSaN80G6qqys
-	Mweg2qhf1m5rmi0ptVVePuSgabjceVMk=
-X-Gm-Gg: ASbGncuamWUWNr983WfAVbWtjyYoR/023i4+gJ7Vgr7RnQfgDPhCdclH1X8l6ULwUzj
-	aAMO9DOzbLlTJdZZIFwG00OieE+sM+JIAtYd0wQaDvgm7vauP4SnFy7zC1HjKqktMtuD5b/AF0t
-	CnPMEdO2lff8vlRgfI5p2hfKEiRfAyKHdEd4coIp1w6sH9UjD+z1sKGJ+S/g3KtftRcaWWU8RhO
-	VeMa3NGlw==
-X-Google-Smtp-Source: AGHT+IFmpXrYzcmF+DYbymakSMAuwdT8++tJ5UvyNGeE55SK7ywq+6We2wcrxllHy1JZt5aJkdVOMj3VHa31r7GiSog=
-X-Received: by 2002:a17:907:7245:b0:ad8:8621:924f with SMTP id
- a640c23a62f3a-af8fda56751mr576429266b.56.1753909090119; Wed, 30 Jul 2025
- 13:58:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753909219; x=1754514019;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6nTYoBlbWe2hufH9UN/C4sSrgwEPP02z/hVZuVmtCWI=;
+        b=hB+1Kpm/Uq3QKXEDu7j7gk/hYgKTzDG1iyrBDGTciL7ZLyfYmmmBG5i+Lip5BPw0wS
+         bkpUp5Ut5X9kGdNMAPQfpgpfh0fBb5DIKE4OWooa5Vv/4OBc4PMcBV3MeG+uZ0etMdvF
+         kxPglcxfZbq821oPS89+r1tt2H55I+bGr0m5NCWzgnJ7+M5oQ80DCdqg/qM/NBMcK/Kr
+         ssUa8oThSvzm9DdEyv+gQBhiO3EdeOhiVTRkDoTyNZnvBMNIcRRrAv0+ZgZgD6/WNZq4
+         qpIJvV0WrOYJ05IjOyXGB6+k88CdWE5ci1btIoCJBfpSjFAoTrL+vbV5RuBABgHUHFME
+         e4HA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7rCJkOeEC2TGuv84pp4yVWsW9AYQKvi5KGz5/ffMsMWAeO25XbVGYMlZv8jfu0hShpq38uptNVeIvuBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAl8j7BxgTONna/ZMd0j/goqDEcuy3NdmlLXAlrclQqyhATBe2
+	EyRTFqL+IUtla0Y61gFClp1KS85+sXtmGqSxCwSG8xa+TwoY293dlE8E/3CXYXDhgXc=
+X-Gm-Gg: ASbGncugnGzFclEogOrrDDthjltFhHu6KiDJcKRetf3JfoI5T8tvKpPM4OgRdyauMxq
+	5GUWXpKQPBfMZVi/lCFteruz6tdcaHoDgTbsqysaVDa8aKGpVk5QHoMQr9QFfZyaF4Tb/oC+XPI
+	N3p/K76fc2jvYXzNZBA9IUyeCbPP09snP97lGC5SEmZa8BF4j/5u4JnpTU+xg9vB8xnn7MzxWKu
+	ynMWJ/N3av7fZHK140+XNScLA5qBymLx6djXs8nXOO90hQAYy6G41YqR5zhWQ90VG9qV/dl95v4
+	ceYfaMBmGORpT/lPDcMgm2THMGsG6ng5AdILKf9OIxdNa8O68yCG9roCb3owM1Kd0pEiq066+uO
+	fLzNYLgtIcZUT2PKRgHJxFcn6uW6fIHnqqA==
+X-Google-Smtp-Source: AGHT+IGjPEbPegqBnEDpd/XcqciAKEnaO2geFGrPEn0TWYZQKwLtS8S00ByN+2MQJrm5bjkEbIXPWA==
+X-Received: by 2002:a05:6e02:240a:b0:3e3:d50c:d657 with SMTP id e9e14a558f8ab-3e3f60b6207mr86671535ab.3.1753909219396;
+        Wed, 30 Jul 2025 14:00:19 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55b19250sm59262173.5.2025.07.30.14.00.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 14:00:19 -0700 (PDT)
+Message-ID: <ba33d960-df47-441f-8898-5253e685ed2d@linuxfoundation.org>
+Date: Wed, 30 Jul 2025 15:00:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730-bmi270-gpd-acpi-v1-1-1ffc85b17266@uniontech.com>
-In-Reply-To: <20250730-bmi270-gpd-acpi-v1-1-1ffc85b17266@uniontech.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 30 Jul 2025 22:57:32 +0200
-X-Gm-Features: Ac12FXxWIKzQumu6ECe2lGZVknHLNjhuKfVhKTzp8DYtfrctUf50gbxsZMlIKr4
-Message-ID: <CAHp75Vc2K3AmPhwme3+7cCGwDTA6V+4Ug8f++iFr8gCThCOnQw@mail.gmail.com>
-Subject: Re: [PATCH] iio: imu: bmi270: Match ACPI ID found on newer GPD firmware
-To: liziyao@uniontech.com
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yao Zi <ziyao@disroot.org>, WangYuli <wangyuli@uniontech.com>, 
-	Jun Zhan <zhanjun@uniontech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 00/76] 6.6.101-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250730093226.854413920@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250730093226.854413920@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 30, 2025 at 2:56=E2=80=AFPM Cryolitia PukNgae via B4 Relay
-<devnull+liziyao.uniontech.com@kernel.org> wrote:
->
-> From: Cryolitia PukNgae <liziyao@uniontech.com>
->
-> Some GPD devices ship a buggy firmware that describes on-device BMI260
-> with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40,
-> let's match the correct ID to detect the device. The buggy ID "BMI0160"
-> is kept as well to maintain compatibility with older firmwares.
+On 7/30/25 03:34, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.101 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.101-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-No, it's not true. See below why,
+Compiled and booted on my test system. No dmesg regressions.
 
-> ---
-> Some GPD devices ship a buggy firmware that describes on-device BMI260
-> with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40[1],
-> let's match the correct ID to detect the device. The buggy ID "BMI0160"
-> is kept as well to maintain compatibility with older firmwares.
->
-> Link: http://download.softwincn.com/WIN%20Max%202024/Max2-7840-BIOS-V0.41=
-.zip
->
-> [1]. See the update nodes in the archive file above
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-Yeah... I think you need one more attempt to fix it right.
-
-...
-
->  static const struct acpi_device_id bmi270_acpi_match[] =3D {
->         /* GPD Win Mini, Aya Neo AIR Pro, OXP Mini Pro, etc. */
->         { "BMI0160",  (kernel_ulong_t)&bmi260_chip_info },
-
-Unbelievable! How is the above supposed to work? Do we have DMI quirks
-in both drivers (bmi160 and bmi270)?
-
-> +       /* GPD Win Max 2 2023(sincice BIOS v0.40), etc. */
-> +       { "BMI0260",  (kernel_ulong_t)&bmi260_chip_info },
-
-For the record this is incorrect ACPI ID, nor PNP ID for Bosh, unless
-I missed that https://www.bensonmedical.com/ is bought by Bosh or part
-of the groups of the companies.,
-
->         { }
->  };
-
-Can you work with Bosh to resolve this as soon as possible and use a
-real Bosh ACPI ID (BOSCxxxx) or PNP ID (BSGxxxx)?
-Also, each ACPI ID adding patch (when it's incorrect) must provide a
-DSDT excerpt in the commit message to show this. Ideally this also
-should be confirmed by the vendor of the device (GPD) that the ID is
-incorrect and a correct one needs to be used.
-
---=20
-With Best Regards,
-Andy Shevchenko
+thanks,
+-- Shuah
 
