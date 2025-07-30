@@ -1,125 +1,175 @@
-Return-Path: <linux-kernel+bounces-750804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 767BDB16131
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:15:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6857BB16136
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:16:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8884E49D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51A584E2E74
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:15:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C328C298CC4;
-	Wed, 30 Jul 2025 13:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901F029B773;
+	Wed, 30 Jul 2025 13:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="PI779EIV"
-Received: from r3-24.sinamail.sina.com.cn (r3-24.sinamail.sina.com.cn [202.108.3.24])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5cckIKo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28D3A29827E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.108.3.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69C829A9D3;
+	Wed, 30 Jul 2025 13:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753881253; cv=none; b=X/gQLcqfe/zU5dlBGwVdqmg5sRxIyeqrDQdjeRaw9LUYBwtMdnCjeWb7QrEyCN0qvbzqURz606Sxc80v8Cu5+NS5nHlClvGZNN4lZQFWe3m94jDsY69RMFS4q7xl8xjGSC/BbXgET7GdNEwirIxkOz8/gnR61Icc8oEZJzq7a0w=
+	t=1753881256; cv=none; b=myePw5HvC6Cyy2UWJLneTCuHxHehGt9wAE/Iz+2as9XWW5IbeLVqcDEZlBXsQ7NUngm18fMFKujvV3hIR0cQm8jxf11r1GB1eB95NT8dq0UrTYkMPhGJbAF9kI5gRVtC4DY3AwOSK7+PC1LtNLkK0tOsmOZMRTfgJA5UoMVhSyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753881253; c=relaxed/simple;
-	bh=8nkgal3AIaXczY5z99W/HkPcv+g+U7dayeXCbOAYDks=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fpFw2mr8AlHJe3gN840YM3BuMh/tOZArcqcTu4IFzWIE7mjudxp6t2nbs0B5C9KYIxbVIRIoawKNKNT084SIsx7dAGNNAFcVirKM8BDvsCyAcTlEcywSJXNM7oFqpqWJtq2WkED5Xlk/bMpr0ctiv01bvtr+zJwAu8TKZ3J196g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=PI779EIV; arc=none smtp.client-ip=202.108.3.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753881245;
-	bh=z5dhJmX+9OjAgm/uNX1/FlLd/cNgHlyqaAP65twpnO0=;
-	h=From:Subject:Date:Message-ID;
-	b=PI779EIVAEw7aJ80rKnpKSa6R1y1aPGxgxum8nRaTm77LZOFR0xQJnEtW1xGoNN1q
-	 B5ERXY1J0N2f7+u73huaTQ4vrfkzzrOK6PwCZ+jjAPE8Cvpz0L+L/8BWcZ7PnxtOkY
-	 NFBo+cXDpk3bJYNtlBfFH+XW5rGh+YshBW5QRPk0=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.31) with ESMTP
-	id 688A1A920000044B; Wed, 30 Jul 2025 21:13:56 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2460526816259
-X-SMAIL-UIID: F5B70426B811491AB650D5663F35F1C1-20250730-211356-1
-From: Hillf Danton <hdanton@sina.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	syzbot <syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	syzkaller-bugs@googlegroups.com,
-	Valentin Schneider <valentin.schneider@arm.com>,
-	John Stultz <jstultz@google.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>
-Subject: Re: [syzbot] [dri?] WARNING in __ww_mutex_wound
-Date: Wed, 30 Jul 2025 21:13:44 +0800
-Message-ID: <20250730131345.3530-1-hdanton@sina.com>
-In-Reply-To: <61b68b13-2482-499b-a550-a11580a61e9d@amd.com>
-References: <68894443.a00a0220.26d0e1.0015.GAE@google.com> <8ab72592-7e16-4d79-9e26-f98a1938cb2a@linux.intel.com>
+	s=arc-20240116; t=1753881256; c=relaxed/simple;
+	bh=IhTVuxQMEvHhiCXnC04CN+Xg1LgeL0FXSIMIngGNJ+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WwhFIzXgOZpV+wGrXqYvwP8CdQDuvg7yehKJ6YIHtjzIgvERLWeHu3Kqo62BkPXE1t0kO50EuQpIQYjDUzhZJghpP/0vFp+hBfsYC0ZhOqGRemJai98RNWeQ/cPRHDJYBnn+5QFdZ34q7UQK1eF/Tqgj5mONnlzAKRAHSCt2MTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5cckIKo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64C21C4CEE7;
+	Wed, 30 Jul 2025 13:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753881256;
+	bh=IhTVuxQMEvHhiCXnC04CN+Xg1LgeL0FXSIMIngGNJ+s=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f5cckIKoQ87Y4ZO2vnKqJK4ZIO6MYM/c/e1E7Jf5OGr93aTdjIeC3peyz5PXuiLm7
+	 W7iq7IqkY5c4zirBO5gqplSX3MgtBP0C/scPHiJlrBsfsPwQKi4ngn46EkKNOdFaC6
+	 9D7LP26D0VdtSmfICwTupjD92wJLntoXbkQe1AArEbMfTI3+jV6VKhmXXwNeGozGN/
+	 q4QrFiALwPcdk/srRZJNANqItk//2jnGPOhJA28QxPpCH5h8JpYhD5oGUZ7W2XJ67w
+	 hIK0ErJoQO7Z+y+2y/X7//YryzK0NwcYs3BYzrPF0ON8175XL7mqM3DtNMejT4ypN0
+	 xS6IUMcID4eog==
+Message-ID: <e4c5ecc3-fd97-4b13-a057-bb1a3b7f9207@kernel.org>
+Date: Wed, 30 Jul 2025 15:14:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/3] dt-bindings: sram: qcom,imem: Allow
+ modem-tables
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Alex Elder <elder@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ Alex Elder <elder@riscstar.com>
+References: <20250527-topic-ipa_imem-v2-0-6d1aad91b841@oss.qualcomm.com>
+ <20250527-topic-ipa_imem-v2-1-6d1aad91b841@oss.qualcomm.com>
+ <97724a4d-fad5-4e98-b415-985e5f19f911@kernel.org>
+ <e7ee4653-194c-417a-9eda-2666e9f5244d@oss.qualcomm.com>
+ <68622599-02d0-45ca-82f5-cf321c153cde@kernel.org>
+ <bf78d681-723b-4372-86e0-c0643ecc2399@oss.qualcomm.com>
+ <62b0f514-a8a9-4147-a5c0-da9dbe13ce39@kernel.org>
+ <747e5221-0fb1-4081-9e98-94b330ebf8c7@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <747e5221-0fb1-4081-9e98-94b330ebf8c7@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 30 Jul 2025 15:20:39 +0530 K Prateek Nayak wrote:
-> On 7/30/2025 1:57 PM, Maarten Lankhorst wrote:
-> > Hey,
-> > 
-> > This warning is introduced in linux-next as a4f0b6fef4b0 ("locking/mutex: Add p->blocked_on wrappers for correctness checks")
-> > Adding relevant people from that commit.
-> > 
-> > Kind regards,
-> > ~Maarten
-> > 
-> > Den 2025-07-29 kl. 23:59, skrev syzbot:
-> >> Hello,
-> >>
-> >> syzbot found the following issue on:
-> >>
-> >> HEAD commit:    d086c886ceb9 Add linux-next specific files for 20250718
-> >> git tree:       linux-next
-> >> console output: https://syzkaller.appspot.com/x/log.txt?x=161204a2580000
-> >> kernel config:  https://syzkaller.appspot.com/x/.config?x=69896dd7b8c4e81e
-> >> dashboard link: https://syzkaller.appspot.com/bug?extid=602c4720aed62576cd79
-> >> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-> >> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16fff4f0580000
-> >> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111204a2580000
-> >>
-> >> Downloadable assets:
-> >> disk image: https://storage.googleapis.com/syzbot-assets/54504fbc2437/disk-d086c886.raw.xz
-> >> vmlinux: https://storage.googleapis.com/syzbot-assets/b427b00abffe/vmlinux-d086c886.xz
-> >> kernel image: https://storage.googleapis.com/syzbot-assets/5a87731b006b/bzImage-d086c886.xz
-> >>
-> >> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> >> Reported-by: syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com
-> >>
-> >> ------------[ cut here ]------------
-> >> WARNING: ./include/linux/sched.h:2173 at __clear_task_blocked_on include/linux/sched.h:2173 [inline], CPU#1: syz.1.8698/395
-> >> WARNING: ./include/linux/sched.h:2173 at __ww_mutex_wound+0x21a/0x2b0 kernel/locking/ww_mutex.h:346, CPU#1: syz.1.8698/395
-> >> Modules linked in:
-> >> CPU: 1 UID: 0 PID: 395 Comm: syz.1.8698 Not tainted 6.16.0-rc6-next-20250718-syzkaller #0 PREEMPT(full) 
-> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-> >> RIP: 0010:__clear_task_blocked_on include/linux/sched.h:2173 [inline]
-> >> RIP: 0010:__ww_mutex_wound+0x21a/0x2b0 kernel/locking/ww_mutex.h:346
+On 30/07/2025 14:07, Konrad Dybcio wrote:
+>>>>>>
+>>>>>> Missing additionalProperties: false, which would point you that this is
+>>>>>> incomplete (or useless because empty).
+>>>>>
+>>>>> How do I describe a 'stupid' node that is just a reg?
+>>>> With "reg" - similarly to many syscon bindings.
+>>>
+>>> Is this sort of inline style acceptable, or should I introduce
+>>> a separate file?
+>>
+>> It's fine, assuming that it is desired in general. We do not describe
+>> individual memory regions of syscon nodes and this is a syscon.
+>>
+>> If this is NVMEM (which it looks like), then could use NVMEM bindings to
+>> describe its cells - individual regions. But otherwise we just don't.
 > 
-> When wounding the lock owner, could it be possible that the lock
-> owner is blocked on a different nested lock? Lock owner implies it
-> is not blocked on the current lock we are trying to wound right?
+> It's volatile on-chip memory
 > 
-> I remember John mentioning seeing circular chains in find_proxy_task()
-> which required this but looking at this call-chain I'm wondering if
-> only the __ww_mutex_check_waiters() (or some other path) requires
-> __clear_task_blocked_on() for that case.
+>> There are many exceptions in other platforms, mostly old or even
+>> unreviewed by DT maintainers, so they are not a recommended example.
+>>
+>> This would need serious justification WHY you need to describe the
+>> child. Why phandle to the main node is not enough for consumers.
 > 
-It is buggy to read and clear owner->blocked_on without
-owner->blocked_on->wait_lock held, no?
+> It's simply a region of the SRAM, which needs to be IOMMU-mapped in a
+> specific manner (should IMEM move away from syscon+simple-mfd to
+> mmio-sram?). Describing slices is the DT way to pass them (like under
+> NVMEM providers).
+
+
+Then this might be not a syscon, IMO. I don't think mixing syscon and
+SRAM is appropriate, even though Linux could treat it very similar.
+
+syscon is for registers. mmio-sram is for SRAM or other parts of
+non-volatile RAM.
+
+Indeed you might need to move towards mmio-sram.
+
+> 
+>>
+>> If the reason is - to instantiate child device driver - then as well no.
+>> This has been NAKed on the lists many times - you need resources if the
+>> child should be a separate node. Address space is one resource but not
+>> enough, because it can easily be obtained from the parent/main node.
+> 
+> There is no additional driver for this
+
+Then it is not a simple-mfd...
+
+Best regards,
+Krzysztof
 
