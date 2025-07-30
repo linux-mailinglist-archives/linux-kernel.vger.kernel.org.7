@@ -1,114 +1,144 @@
-Return-Path: <linux-kernel+bounces-751231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD376B166BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:11:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59A03B166BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:12:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA1C1620B7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:10:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D76137B5413
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DEB2E03FA;
-	Wed, 30 Jul 2025 19:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 032432E03F2;
+	Wed, 30 Jul 2025 19:12:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="it9VRzGD"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IeVpqHSL"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14472D8DB5
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B511E5710
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753902675; cv=none; b=g0WM4g5qLf/zC9W25HteGPzMdNEvrjruYSc9RmPqa58qufW9qv3873SOT5nKGYf0zRtsaSaWEqyO+mep0KRg7pMxe0XqeD8rKHB7SHXoM9K9/jKKamF/eznOOU7OP8ucDAMR3vkcFoLJiPTQqDYIuu/hLsivQQBDRfyMAJtNX2c=
+	t=1753902730; cv=none; b=eURmuHvW/sWTIjEEESGEQgop1oMId+TGgYBnH9aJeR4n/Xpe43RaKiNhFRsCTqxKty/Vmjmp3AHjCUXiDXIoIHT5oEOGbPVHcUhMWOTrL6CRMlpGW8ZjcXRZ8YQZXBD1GclHiNvrrq1h3ooHVZj21hb2eyYGRfT37R0P1buuFEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753902675; c=relaxed/simple;
-	bh=RjESpSgTlZ9Dci+2KNBQWTDiCYqgKjywQQGX5kKRwf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=StIPq6zE4ZHBrGD5LAIa1cQcTC+eBZzWiXEABebn+nIh0jBA86aN0hny0yJGKFyb6FusP2Iz21fLTJmTWQRlxIRA0cqVZyAggKGy95FqOGVMLO0tl74c/55WxxEbaAdghh0tcjHjKeDiPQNJKh4s1NQ61nhwZK9wt129sQbJAK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=it9VRzGD; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-136.bstnma.fios.verizon.net [173.48.82.136])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56UJAXSA023302
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 15:10:35 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1753902639; bh=UiNk0XW4NYHC10bdELnI4yoPBxOiXLhG3u4btFGZsnQ=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=it9VRzGDvjcXJHIyF1z5i5afP6EBhLyPrM/lTJnPcmGKueLANKUUBKqJ7ku37+XRi
-	 Q5inuWG5KNAyD9RacC63YCQ1lpuhK1i7xK/RXeifnPNFYK+dkUxpn3K4Pi1lMDy8Wc
-	 nq9nGUls529HS8xoFvUhDdU/ad8ANIarX0Yz6v41QtCyjk3Uh8s7tIRn64CqLF9Gql
-	 U/NXe2Cw2GHzMbNpD9yjI9gdcTy4gnvB2ymNdZaVf8dR5UBWbVjIJh3M16zct8hLA9
-	 43sJ0n515vaEUVNWqkDfgEy+zOXdMYxGDeS9BeUiiFogHaTvxhGHfjbvQ8GBtOEoYx
-	 c2t2RqX2Q9Jbw==
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 13F7D2E00D6; Wed, 30 Jul 2025 15:10:33 -0400 (EDT)
-Date: Wed, 30 Jul 2025 15:10:33 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Sasha Levin <sashal@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Greg KH <greg@kroah.com>,
-        corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-        josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <20250730191033.GA441972@mit.edu>
-References: <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
- <2025072854-earthen-velcro-8b32@gregkh>
- <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
- <20250730112753.17f5af13@gandalf.local.home>
- <158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
- <20250730121829.0c89228d@gandalf.local.home>
- <aIpKCXrc-k2Dx43x@lappy>
- <20250730130531.4855a38b@gandalf.local.home>
- <aIpah6DTRd99mMqb@lappy>
- <20250730175909.GO222315@ZenIV>
+	s=arc-20240116; t=1753902730; c=relaxed/simple;
+	bh=V1F+bXXlYQeXi5X4k/5ncJkOOvpM5ZuJh2NXOjU0lxQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=am8SSvS/TbeurRc+ZVyWyZnutWrM3WaCq+3YmQvdh3BSsWaAS+t/H/0AKHT0dMeujDk+x9o854R3rn8AsAfws6jdpKoIIFw3/1QB1vflSJ7kjKzmleQcAIm+p13UD9E2SUD0IpW8KmzzUyprqZQwPUJWgkF3XxkWx4eKGF9vUls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IeVpqHSL; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-55b7e35a452so92406e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753902727; x=1754507527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V1F+bXXlYQeXi5X4k/5ncJkOOvpM5ZuJh2NXOjU0lxQ=;
+        b=IeVpqHSLawwOnHGr+Luk5ny+swgJwCI0JVzGY2PKbHGDug7HtYbk4xv7n4cdtqRByQ
+         Cq+1652JXTiSWG+bKwNNBRlY0y5MUiunNooB6vmWYoqEt1BEzpqHiejqGznDP5RzbjWH
+         e/ZEKfphYHNmLr1tDJ9+7AlCPMQweupmO/LLgQUNAy6C8TZ4nB/LM8TA7jRZYhCBjTLp
+         EmWSizA8s2cJxB5gfdXdLe9R7mWkh3aF5egapc4ifFa9UUB/tMaMz8bcSUjhNZbBzos0
+         TdTVqQgADb+NMDMr/bko5ISyUVr39ioFH1EANItwcf7M263npF6Xw9vM/0AzXhfM4UiF
+         5BpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753902727; x=1754507527;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V1F+bXXlYQeXi5X4k/5ncJkOOvpM5ZuJh2NXOjU0lxQ=;
+        b=GkMmsqYagl+tZIQ/8V6bqLVM58+AILwLIrP3cIs/ILuFjt3TQpU3IDrrW0Spnbmwen
+         hK0i9Oya/IJWiizvrPxraqB9XAYe/zY95K273rXS8vRSU7rCBiOmZ2acNJCxDg/PfH6q
+         yVLkTUU6oT/JNe9KkqcypWwCARXBuF+kOr/AE4/hy7vcC9VSBMhErygw4GKJiWPZxUqP
+         /L0KOFj3+6BeEFCJUbno+Yycc2OzIJTwlnmf979L2Ksf0odQp8v+gKZt0pXtLfcys7UK
+         +ajn3OjfVnSRsU8uT1q3tpGD+0j5tB7c1B+it1iX+cKPk4zrrlWNK7CZSFW+mEF7TMux
+         DenQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYigYHmzXjcirnE9cpHYLSX7cZHg8OwQgHfgGuC/eEVXssoJk+fAWO3mR5n8MJGfGWX382BF0v/VfmXuU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyh69/exsfo7KbqDM7bbEu5jW95oMg2RAA6oCZPMLI5SmJvpm5b
+	EP1u3x9CxSJqDKkhqtkZxDLCW4u2mIgS1yfZvJDjF/895rmk6HQ737IWYMyBtXUTrShe3Y5no0l
+	PU5A5IhgtNSgodT3O9i5DitvDNA1kx3HEJytKmXs=
+X-Gm-Gg: ASbGncsp7jg5xxjtx/QUiYUj1OCpsX0lEf1mMQkHDBD3KDg56mv0s6sI1/7bSFMkc/O
+	kPXyatCztKMtYUCvvZgg9/zH2robOasSchBxD4TE7ZJpzO9R9rakpU38GxyuHYuWupMxglWKq8A
+	GEb02oEgUKjcumbBn9y5wGUUmUPwskmRg+Qu34FaBGpqMrtL8SCwhlf5K6DTgNVoiqQLhtaTdrj
+	HqGpSqXEOaj4okZhyYPn2PWNH+CIfIkm/H/UdQVSlubekU=
+X-Google-Smtp-Source: AGHT+IHq3O02Isy9UO9EBNM2h/tgG1LradItYyY7WiGiYYCjnlChvIFaTIyvSt0KcCsrp/O3eMTcUwrT1XrBc1c3alM=
+X-Received: by 2002:a05:6512:39d2:b0:55a:4f05:6e4c with SMTP id
+ 2adb3069b0e04-55b7c0885ecmr1469195e87.49.1753902726644; Wed, 30 Jul 2025
+ 12:12:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730175909.GO222315@ZenIV>
+References: <68894443.a00a0220.26d0e1.0015.GAE@google.com> <8ab72592-7e16-4d79-9e26-f98a1938cb2a@linux.intel.com>
+ <61b68b13-2482-499b-a550-a11580a61e9d@amd.com>
+In-Reply-To: <61b68b13-2482-499b-a550-a11580a61e9d@amd.com>
+From: John Stultz <jstultz@google.com>
+Date: Wed, 30 Jul 2025 12:11:54 -0700
+X-Gm-Features: Ac12FXyCBe3eZdHmtT03zQRJBw01rHa-_e76up8xxbhmJkSgGW8khZKY2csyOUw
+Message-ID: <CANDhNCo+esbJpwqq0boTaKbEL5WBjwtuynH+jcNW1rzj65jJJw@mail.gmail.com>
+Subject: Re: [syzbot] [dri?] WARNING in __ww_mutex_wound
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	syzbot <syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com>, airlied@gmail.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	mripard@kernel.org, simona@ffwll.ch, syzkaller-bugs@googlegroups.com, 
+	tzimmermann@suse.de, Valentin Schneider <valentin.schneider@arm.com>, 
+	"Connor O'Brien" <connoro@google.com>, "Peter Zijlstra (Intel)" <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 06:59:09PM +0100, Al Viro wrote:
-> 
-> And I absolutely will refuse to take patches from somebody who would
-> consistently fail to explain why the patch is correct and needed.  Sasha,
-> this is the elephant in the room: we *ALREADY* get "contributions" that
-> very clearly stem from "$TOOL says so, what else do you need?" kind of
-> reasoning and some of that dreck ends up in the tree.  AI will serve as
-> a force multiplier for those...  persons.
+On Wed, Jul 30, 2025 at 2:50=E2=80=AFAM K Prateek Nayak <kprateek.nayak@amd=
+.com> wrote:
+> On 7/30/2025 1:57 PM, Maarten Lankhorst wrote:
+> > Hey,
+> >
+> > This warning is introduced in linux-next as a4f0b6fef4b0 ("locking/mute=
+x: Add p->blocked_on wrappers for correctness checks")
+> > Adding relevant people from that commit.
+> >
+...
+> >> ------------[ cut here ]------------
+> >> WARNING: ./include/linux/sched.h:2173 at __clear_task_blocked_on inclu=
+de/linux/sched.h:2173 [inline], CPU#1: syz.1.8698/395
+> >> WARNING: ./include/linux/sched.h:2173 at __ww_mutex_wound+0x21a/0x2b0 =
+kernel/locking/ww_mutex.h:346, CPU#1: syz.1.8698/395
+> >> Modules linked in:
+> >> CPU: 1 UID: 0 PID: 395 Comm: syz.1.8698 Not tainted 6.16.0-rc6-next-20=
+250718-syzkaller #0 PREEMPT(full)
+> >> Hardware name: Google Google Compute Engine/Google Compute Engine, BIO=
+S Google 07/12/2025
+> >> RIP: 0010:__clear_task_blocked_on include/linux/sched.h:2173 [inline]
+> >> RIP: 0010:__ww_mutex_wound+0x21a/0x2b0 kernel/locking/ww_mutex.h:346
 >
+> When wounding the lock owner, could it be possible that the lock
+> owner is blocked on a different nested lock? Lock owner implies it
+> is not blocked on the current lock we are trying to wound right?
+>
+> I remember John mentioning seeing circular chains in find_proxy_task()
+> which required this but looking at this call-chain I'm wondering if
+> only the __ww_mutex_check_waiters() (or some other path) requires
+> __clear_task_blocked_on() for that case.
 
-Any tool can be a force multipler, either for good or for ill.
+So yeah, I have tripped over this a few times (fixing and often later
+re-introducing the problem) but usually later in my full proxy-exec
+series, and somehow missed that the single-rq hit this.
 
-For example, I suspect we have a much greater set of problems from
-$TOOL's other than Large Language Models.  For example people who use
-"git grep strcpy" and send patches (because strcpy is eeeevil), some
-of which don't even compile, and some of which are just plain wrong.
-Ditto people who take a syzbot reproducer, make some change which
-makes the problem go away, and then submit a patch, and only for
-maintainers to point ut that the patch introduced bugs and/or really
-didn't fix the problem.
+Obviously with __ww_mutex_die() we are clearing the blocked on
+relationship for the lock waiter, but in __ww_mutex_wound() we are
+waking the lock *owner*, who might be waiting on a different lock, so
+passing the held lock to the clear_task_blocked_on() checks trips
+these warnings.
 
-I don't think that we should therefore forbid any use of patches
-generated using the assistance of "git grep" or syzbot.  That's
-because I view this as a problem of the people using the tool, not the
-tool itself.  It's just that AI / LLM have been become a Boogeyman
-that inspires a lot of fear and loathing.
+Passing NULL instead of lock is the right call here, I'll just need to
+loosen the __clear_task_blocked_on() check for null as well.
 
-							- Ted
+I'll spin up a quick patch.
 
-
-
+thanks
+-john
 
