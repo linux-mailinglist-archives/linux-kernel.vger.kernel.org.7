@@ -1,173 +1,191 @@
-Return-Path: <linux-kernel+bounces-751066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6131DB164E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:44:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CD68B164EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 107135637E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:44:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32652188ADEE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991EF2DECDF;
-	Wed, 30 Jul 2025 16:44:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A632DECB9;
+	Wed, 30 Jul 2025 16:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XznV2Mdc"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SVrGFOIs"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914784C62;
-	Wed, 30 Jul 2025 16:44:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB9F1A4F0A;
+	Wed, 30 Jul 2025 16:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753893862; cv=none; b=aDX6K5o6oQ6wKR3sSDVWXBoBn34YZPsLUY/V4kMmRhBK3A/0NO5i6wrP5HW/C1rlgCPGJ3kjLcJ/scuvrpiln6L647FS0xmd7NcbXTH6yc4O+eBYZokMjYUbEamLllP9pTHSe+JFbpFgQKp1J28np/zWTxiFyK1s47WXGEw9Yxg=
+	t=1753893954; cv=none; b=H7py4nDDHrTgVisYOj8S97BO2h7chGxdeI4EuE6mRyL4fp6Cxg+G4YtwjAX+yAx90EfOfARYEnbUgBvIBdAWdsD3kclrCQPEN1C7H0dfEJYb1B+4Rl1GrbNMfEbip6mJcN04cqx37z3s6NKRgeiyjz+EiI+abpDGJcX/9V8eHAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753893862; c=relaxed/simple;
-	bh=QMLIvD18q5k/AyzxrfAowYJawMX/ckycQV4knkks/tU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lTbL51EgMBO+HLyh7zRsvePExfjzULny97Wp2xutnb4eRi2lQeTDIfXFRo7R+yvM37EmeMYPNVW92gaOU++Kkfx9vlwv0fkToUtSd/CkoSH59R1Heb1jsGcNUS/bJ9A86t4cVDhlzxao17nsZ7UQXw44xBMNewqAav+Qb7sI2Xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XznV2Mdc; arc=none smtp.client-ip=209.85.214.170
+	s=arc-20240116; t=1753893954; c=relaxed/simple;
+	bh=5gIz02rnAb42b1p9cBg+FThC0U29PUwlOovNhPnbVj4=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=bXH5i0zDAvyUz3bjHhzqueHukPiggcAFymngkabBsNw5Pyji/XogNKQFYvlrI/aN9n8wMywFULwkpN4hDs1KhXkS/AWGEmM64Y0Lv5YWjjJn6Ooiq35aELfN9uhliDe/GrXiDxoDuTRJCkDKS3FQvXWbvoZqHvAiutwhDNRu2tU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SVrGFOIs; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-240418cbb8bso236225ad.2;
-        Wed, 30 Jul 2025 09:44:20 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7183d264e55so173967b3.2;
+        Wed, 30 Jul 2025 09:45:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753893860; x=1754498660; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RZPUO2mFivOcWxZXzDCxvwiqepTKrGBNT8NtkFMEnaM=;
-        b=XznV2MdcRNmIq9rLp8o8UukOLs6bg08d3GzcNBdOgL+/6ygLtogY5TzSXIHe9m9a9T
-         4TjM/nlp0EjCxbCjdvTdkQCUWNLQwxRAA4UYwLLncJp2YEICEHgPEWBvt127QYALOAjj
-         soo8SMiGJklLArtHnlVejbV43XnJKu1HRjp4jDNXVMzojJ2uYPq8llo3cJ66kVEVeghy
-         K9tRiMh0REQKjJEpkj2EhC3SYPI3udG/MIzNo8NajIOc3bx02ybvGRjm2gxfPvv+EV1p
-         HRUb5HRrhpiaOWY/3+jUZwsvaHh30zUS6vc0JgxPdSjrPfmuDSVU2RCRaUvklVJW9SUQ
-         7vhQ==
+        d=gmail.com; s=20230601; t=1753893951; x=1754498751; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+KwYqyq8/GeDTiwgxhq5r9d0jGsySNnWpnQCh6DhsHw=;
+        b=SVrGFOIsrl0w3unLJ/2jJc31YU6w9Fswx7SSfqdGN0MfwI+6vxAeo2oYKA0KYBJcE7
+         xpAEuTN5kwbKA1T8jT6S8NIO7S6yD3wjJsq8rlK0ArZ5vq5O8YKeZoh10X58l6cdyaGA
+         UElUd7ItRPoNxNXx5iXM7wkmtzBXbEmKPdpPKUaor8wXDTzHUdrSRDE0GUGkK1OBkzth
+         cxLiETgeTCW/s2pU7Jk4L5agYH5moR41kd7kWuVEl7VyKswvPjL6FHBYkJBnM54rVq/B
+         z400gwG9LredBDQg+kl0cGjMgwHKfVSpKoxwIEcr3cY9LsGGofsbL3hB29AfnFU0BqFG
+         /vjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753893860; x=1754498660;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RZPUO2mFivOcWxZXzDCxvwiqepTKrGBNT8NtkFMEnaM=;
-        b=rHNDrfkEz/ZCWzFHNvWTg1d/bmLad2AzfMtV7s414Td9Cpsb5JM8rqWHERHyliW+G8
-         iTOQdX0Apvmw7R26kcP+3ukXDujM7ObsHmdi8ws9b/5iwCQDi+RfRisnvQPC9muM2m8T
-         r69ABU0eUeApvT7EvEs5WYWGE8xa1hSZ8ERlwF9wLNXN9w5k7C02tgYoYPw6/6MFeDNK
-         eCTXzty7W88otm1Onujc5mzJCmiRhayQQj+hxR5QzJpEx/c0ijRkEQe3Oo6fSD6qov0w
-         vLKXxN+dSa6VYkjLnyrxXVDcIlFaSD0YE8c5GgbQjaV0ky48tv+/GDRMLuYZeetGL1nK
-         iqtA==
-X-Forwarded-Encrypted: i=1; AJvYcCVxaK8BjMB2ZXnFzeXWrHe7GH+DcDaCfG75tSMf1b3xehRE3IgzKdvs8aqGUTxLVEnObRDeCEvkxBVwT3EQ@vger.kernel.org, AJvYcCWuf35AVeJD8rlZTg778jpY6HrMTiq7r0C/jBu8g1P13Nn5O2Geo3iql7aauHsP2/yjor99Fq5CTvpXbBuk@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDAivSDDJPF9hMpN2ERCskUM5sYy3uo8EHk4tqNTTO3gkXbYZI
-	9X1Y14utxN7+3MEmU4i3sHT8LQpkP05ff0Z1DBl7Dt+DC2TcqrQIM9XO
-X-Gm-Gg: ASbGncuYyWoH9ABWE71u9JdEh/LunVa/34oNcdiQh1e3zmCqnbjeQyzwyM0xeJULUMA
-	FT87JQ6g5EGs15WHYi5wV7qjF+KJBDh0/cB0qc1gqHIFZ933n2mCk8VpWlVTPJ7bB0vZV2wMosH
-	ZS2e8qbDh/I9vugmnCqxwE4ooekiNv1CTu6ipdrMtUK4Znbnga2lvQ7U6NaeuygDi3mw2LcsbYQ
-	ltk4HeKGUA580pgCsmVFWnvjsm4pzbmgyyWh2u7L9m9KozIoAL6QcXO4rl9dziTZyYO+Dvb5vyP
-	Rcn9AehdMK0nRqbwXmWguOsbAvwQzApUcnrhu8xyaSFfJuOtHEHoNr/R2REUrbZOQTX05XfareY
-	I/YgFHYw8MQEHVf/kXJcGlTo+Qu8lI4KiVfU=
-X-Google-Smtp-Source: AGHT+IEAPGlsRH4RQkjsmxGlo4shReiMS64QRe9ionVdAW1LTVtZJkKHURqdPOQBbXf6M7Kx6mIBtw==
-X-Received: by 2002:a17:903:230c:b0:235:e1d6:4e22 with SMTP id d9443c01a7336-24096a85e98mr55559865ad.18.1753893859846;
-        Wed, 30 Jul 2025 09:44:19 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-24013a51427sm81147905ad.74.2025.07.30.09.44.18
+        d=1e100.net; s=20230601; t=1753893951; x=1754498751;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+KwYqyq8/GeDTiwgxhq5r9d0jGsySNnWpnQCh6DhsHw=;
+        b=vwPgg5+Yj0HPESJqL++Ym0q9zXlaffY2kQi9nyAdK9HfRMbo/KeUKjuLfwl9nBkObR
+         +FtnlEb1Zu+r4DQBm1tEAkN8I8v/GUgDes/q9or2oWpJv9hdSeTd14DAijoFTyoGG2jo
+         zpM73iV9EHksuZxubr1kKpxEfG43IRJrLDEuDQoT9APdxrYWZAFhWkV8N5LH6YfaOGkZ
+         vu6tpTSypfy51yxUY87IfUbDc33oV2Lu0TeQQcU/cFdoQcIXxRAt5yahVjW/32r+8+ph
+         lo1artwDJfFqNtw1tH+80y7xx1tZfqp9/2SaMbLxydageT5mklgezi5UcaUZKOgoKpCa
+         iCog==
+X-Forwarded-Encrypted: i=1; AJvYcCVVMfRkh4ZxmXdqcirX7atoXYPcIYiVEPiKxHj5cpNZEP86eRR9e5KMCvdOVxn5TkQpGv98usdr13D4ZzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUXhaXU8wlUHQ+e0EQrfJIrjeO2ECf6R+SKTzHN1bwxgA117F1
+	/zEtFVou/sn97TLnSSmM9FrjS3mmlw3KBD7fP5WAmrk+R8/7NHEYt+G4
+X-Gm-Gg: ASbGncvfHDDbr9iZHVVwyZ1PkqosmhAKCSjlgz4LmQ4KOk8N+HEdHJEDy3LWY0t1tx4
+	PGP67vke/XpPCfaqc2kfJzxaBwpxIyjTRskgolzdtEToDXKBeD+sdSPcB6fMTav1UD5vfwQ1Y14
+	oPPoYFG4CG1WxsJUTLaT8VTwNLq+zfSP3hErBNHzb+y58Hs+GQnJ9VEFh7Itfg67YW9LyMB65Jy
+	aDz9T0cpWs8T1paKa5cfZJhnOqXXzOLxICzLB8BssHvs7jPO2GjswOEKd4hk18VRYejETyiJA+9
+	b/lwiRs3/YhXYK41VQiz+GdeFVWUmhS4y2w+fLD5Vt7WLrS/ZOKe46drk9gh+1pS4d3xgpqPCIA
+	+2/lJ7CT+UopGx9mcIXo4UfvXevGGKB9Y78hv0IVRM9V28mNQD0rc/RCBWcz4dppdfyzsTA==
+X-Google-Smtp-Source: AGHT+IHBclhRaerazqNaE2k/PAHPAtsaCjH+bPrNg3pTDsrhpMJ9eHEvg3kdRZnGeb4d6I7Q86DG0A==
+X-Received: by 2002:a05:690c:f0e:b0:70c:aa00:e0ec with SMTP id 00721157ae682-71a466680acmr58827397b3.21.1753893950525;
+        Wed, 30 Jul 2025 09:45:50 -0700 (PDT)
+Received: from localhost (23.67.48.34.bc.googleusercontent.com. [34.48.67.23])
+        by smtp.gmail.com with UTF8SMTPSA id 00721157ae682-719f2961641sm25034617b3.43.2025.07.30.09.45.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 09:44:19 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: brauner@kernel.org,
-	djwong@kernel.org,
-	willy@infradead.org
-Cc: linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v2] iomap: move prefaulting out of hot write path
-Date: Thu, 31 Jul 2025 00:44:09 +0800
-Message-ID: <20250730164408.4187624-2-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
+        Wed, 30 Jul 2025 09:45:49 -0700 (PDT)
+Date: Wed, 30 Jul 2025 12:45:49 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: zhangyanjun@cestc.cn, 
+ willemdebruijn.kernel@gmail.com, 
+ jasowang@redhat.com
+Cc: netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ zhangyanjun@cestc.cn
+Message-ID: <688a4c3dd337_1cb79529426@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250730092940.1439637-1-zhangyanjun@cestc.cn>
+References: <20250730092940.1439637-1-zhangyanjun@cestc.cn>
+Subject: Re: [PATCH] tap/tun: add stats accounting when failed to transfer
+ data to user
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+zhangyanjun@ wrote:
+> From: Yanjun Zhang <zhangyanjun@cestc.cn>
+> 
+> To more accurately detect packet dropped, we add the dropped packet
+> counter with the device when kfree_skb is called because of failing
+> to transfer data to user space.
+> 
+> Signed-off-by: Yanjun Zhang <zhangyanjun@cestc.cn>
 
-Prefaulting the write source buffer incurs an extra userspace access
-in the common fast path. Make iomap_write_iter() consistent with
-generic_perform_write(): only touch userspace an extra time when
-copy_folio_from_iter_atomic() has failed to make progress.
+Net-next is currently closed. For networking patch process, see also
+Documentation/process/maintainer-netdev.rst.
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
-Changelog:
-v2: update commit message and comment
-v1: https://lore.kernel.org/linux-xfs/20250726090955.647131-2-alexjlzheng@tencent.com/
+> ---
+>  drivers/net/tap.c | 14 +++++++++++---
+>  drivers/net/tun.c |  9 ++++++---
+>  2 files changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/net/tap.c b/drivers/net/tap.c
+> index bdf0788d8..9d288a1ad 100644
+> --- a/drivers/net/tap.c
+> +++ b/drivers/net/tap.c
+> @@ -759,6 +759,8 @@ static ssize_t tap_do_read(struct tap_queue *q,
+>  {
+>  	DEFINE_WAIT(wait);
+>  	ssize_t ret = 0;
+> +	struct tap_dev *tap;
+> +	enum skb_drop_reason drop_reason = SKB_DROP_REASON_NOT_SPECIFIED;
+>  
+>  	if (!iov_iter_count(to)) {
+>  		kfree_skb(skb);
+> @@ -794,10 +796,16 @@ static ssize_t tap_do_read(struct tap_queue *q,
+>  put:
+>  	if (skb) {
+>  		ret = tap_put_user(q, skb, to);
+> -		if (unlikely(ret < 0))
+> -			kfree_skb(skb);
+> -		else
+> +		if (unlikely(ret < 0)) {
+> +			kfree_skb_reason(skb, drop_reason);
 
-This patch follows commit faa794dd2e17 ("fuse: Move prefaulting out of
-hot write path") and commit 665575cff098 ("filemap: move prefaulting out
-of hot write path").
----
- fs/iomap/buffered-io.c | 31 ++++++++++++++++---------------
- 1 file changed, 16 insertions(+), 15 deletions(-)
+kfreee_skb_reason(skb, SKB_DROP_REASON_NOT_SPECIFIED) is equivalent to
+kfree_skb().
 
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index fd827398afd2..54e0fa86ea16 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -967,21 +967,6 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
- 		if (bytes > iomap_length(iter))
- 			bytes = iomap_length(iter);
- 
--		/*
--		 * Bring in the user page that we'll copy from _first_.
--		 * Otherwise there's a nasty deadlock on copying from the
--		 * same page as we're writing to, without it being marked
--		 * up-to-date.
--		 *
--		 * For async buffered writes the assumption is that the user
--		 * page has already been faulted in. This can be optimized by
--		 * faulting the user page.
--		 */
--		if (unlikely(fault_in_iov_iter_readable(i, bytes) == bytes)) {
--			status = -EFAULT;
--			break;
--		}
--
- 		status = iomap_write_begin(iter, write_ops, &folio, &offset,
- 				&bytes);
- 		if (unlikely(status)) {
-@@ -996,6 +981,12 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
- 		if (mapping_writably_mapped(mapping))
- 			flush_dcache_folio(folio);
- 
-+		/*
-+		 * Faults here on mmap()s can recurse into arbitrary
-+		 * filesystem code. Lots of locks are held that can
-+		 * deadlock. Use an atomic copy to avoid deadlocking
-+		 * in page fault handling.
-+		 */
- 		copied = copy_folio_from_iter_atomic(folio, offset, bytes, i);
- 		written = iomap_write_end(iter, bytes, copied, folio) ?
- 			  copied : 0;
-@@ -1034,6 +1025,16 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
- 				bytes = copied;
- 				goto retry;
- 			}
-+
-+			/*
-+			 * 'folio' is now unlocked and faults on it can be
-+			 * handled. Ensure forward progress by trying to
-+			 * fault it in now.
-+			 */
-+			if (fault_in_iov_iter_readable(i, bytes) == bytes) {
-+				status = -EFAULT;
-+				break;
-+			}
- 		} else {
- 			total_written += written;
- 			iomap_iter_advance(iter, &written);
--- 
-2.49.0
+> +			rcu_read_lock();
+> +			tap = rcu_dereference(q->tap);
+> +			if (tap && tap->count_rx_dropped)
+> +				tap->count_rx_dropped(tap);
+> +			rcu_read_unlock();
+> +		} else {
+>  			consume_skb(skb);
+> +		}
+>  	}
+>  	return ret;
+>  }
+> diff --git a/drivers/net/tun.c b/drivers/net/tun.c
+> index f8c5e2fd0..eb3c68e5f 100644
+> --- a/drivers/net/tun.c
+> +++ b/drivers/net/tun.c
+> @@ -2137,6 +2137,7 @@ static ssize_t tun_do_read(struct tun_struct *tun, struct tun_file *tfile,
+>  {
+>  	ssize_t ret;
+>  	int err;
+> +	enum skb_drop_reason drop_reason = SKB_DROP_REASON_NOT_SPECIFIED;
+>  
+>  	if (!iov_iter_count(to)) {
+>  		tun_ptr_free(ptr);
+> @@ -2159,10 +2160,12 @@ static ssize_t tun_do_read(struct tun_struct *tun, struct tun_file *tfile,
+>  		struct sk_buff *skb = ptr;
+>  
+>  		ret = tun_put_user(tun, tfile, skb, to);
+> -		if (unlikely(ret < 0))
+> -			kfree_skb(skb);
+> -		else
+> +		if (unlikely(ret < 0)) {
+> +			dev_core_stats_tx_dropped_inc(tun->dev);
+
+I don't think counters need to be set in these recv syscall paths,
+where an error is communicated through the return vaule.
+
+> +			kfree_skb_reason(skb, drop_reason);
+> +		} else {
+>  			consume_skb(skb);
+> +		}
+>  	}
+>  
+>  	return ret;
+> -- 
+> 2.31.1
+> 
+> 
+> 
+
 
 
