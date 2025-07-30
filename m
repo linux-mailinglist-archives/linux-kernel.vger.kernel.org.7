@@ -1,163 +1,204 @@
-Return-Path: <linux-kernel+bounces-750350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754B6B15A77
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:23:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC6EB15A82
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08B474E242F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:23:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7D1617AFC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDDC264FBB;
-	Wed, 30 Jul 2025 08:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE35325DB1A;
+	Wed, 30 Jul 2025 08:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kCsQKrbZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iAHVEGI5"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234F92512D7;
-	Wed, 30 Jul 2025 08:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1023255F2F
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 08:23:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753863796; cv=none; b=vA0SwYXvQIO7lcV163bvW0pFEeZR80lfogyb+96pZxvD9bO/xPtdspxCsAGL1w+mAWbbNVdPAef09JsB+V11eFWJH2MiYlYkbLrnlFSE10BRcR165SEvJlQMH9zb7r6TiQbFkkL/t3rBRteUuw9OhnlpvIj43OSYYZ4fxGXvnM8=
+	t=1753863824; cv=none; b=oh9FSPqfoMx1WxlcVXQfqJYQkkRTDximQubgS63TxMyAZlXY0NAhrrgJ59jJPN55tREPTJ+YrHkyEnhAAYgE3eYiQ8wr6AmiEOJ/ZbqPOn63psoItTJPo2PRq3bmEANHTBw0jsLQDtJ4ogpolgLQ8/yHZ0IsY/hOgAazaiHL4co=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753863796; c=relaxed/simple;
-	bh=iIADWUHyZLwNebj8AZ9Vn0BrPX5WX6yaZsYValg9rsE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FIxZfeWDhBFwbDVY5Xf0E9cj7c0FfaD5rgkK3zpDe+9reGMFtI7+u55Nn7dkwxqdzeE7Pz/QAo7vMQycuSXAGtOFbzU907hwgOYiPv6RdTPxAK6rOWiCGseF/g+6GdEya5O3Vwf/qyv121OQERumckEFxv8Wy8CHv1Ybg1RP834=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kCsQKrbZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U4l3at014609;
-	Wed, 30 Jul 2025 08:23:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9MvI1nk60WdoG2bc7QtALmUwBFVl0IUg6QvjINNa64Q=; b=kCsQKrbZ+RaaeXK+
-	uZa4OPB47hJcg5SPUeN087XgL2twuJqN2IyTqxXzURuSrnpGFur1A3Et53lSDCu7
-	uNEjpfV3yquuMkz8Vyjuda8aDo+b4Gw3/k+o3hzWuDPOjOzh+5lUAmQPa5ZO6PYD
-	uh4NLSdI1AzjqAWOl9LuFXADsbTj4+fpfKIxarerbk8tv4t3UPFe6Q5FWfKtfAmI
-	WGhUVxXMNGNWiInAL968sMJdNErD/gmEvQ1vHGpbYw1GZv9b3F3loyXPKhJXgpRV
-	PmhJvJ8H4zTrp41wRh3gmMWFM+U/7yBNa9duk8BteUhJsVpD2qS5VggXss8cOHLa
-	tzz8gw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484q3xtx8p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 08:23:06 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56U8N5V4008534
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 08:23:05 GMT
-Received: from hu-rdwivedi-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 30 Jul 2025 01:23:01 -0700
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-To: <mani@kernel.org>, <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
-        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <agross@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH V1 3/3] arm64: dts: qcom: sm8750: Enable MCQ support for UFS controller
-Date: Wed, 30 Jul 2025 13:52:29 +0530
-Message-ID: <20250730082229.23475-4-quic_rdwivedi@quicinc.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
-References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
+	s=arc-20240116; t=1753863824; c=relaxed/simple;
+	bh=k0n3laGySUj8A81/FGX/9rlSYF4U3v2+KxowMb3vRYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qErbDfe+R/DJwsfnKQixD9f++tRYKvAhCZgShQAY++h5QCQ2q4rfIrdu0sFxkTep5yg1EtQ27KVdHbLwzOC3MlP0RSrNMAA33Q25nDkSI8emRl+fD5NWN49nFVOj171GVfcf7c4eHKm0+qk9Z5yd5/Hgt7RRprrr9IrpYDX4hW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=iAHVEGI5; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55a25635385so7112595e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:23:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753863821; x=1754468621; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U1r2R6OONrqy2phTDjM24jkvudNKHdg6QD1pSz1RSbE=;
+        b=iAHVEGI5T+Vg4X9WePWAFyZNJudEsM/U61+3V2HQE4on3oUfPNjXqtP6MGs6lA7Y9S
+         bdaAricCtJ5f7iPXDPNZycAS4SgvaNvSjjgdgVITTBwDjaN6E6xD6myvazovIKFqC9C9
+         h7bq/Kkez3MGYV7GsjOP/Ra/MSyIQXAuFRJG0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753863821; x=1754468621;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U1r2R6OONrqy2phTDjM24jkvudNKHdg6QD1pSz1RSbE=;
+        b=wuIsbh8ObEoqWDCtYXgn3LseQMf2boTwWrCvA61hyjqsq+LsX6RejILaQNjr4xKo8q
+         eygPiaY79pBgCRgN6DVbLOoSwC6QcsznoJSPA6b86T7U5lEa1b/mrxa/IokbFpCarlme
+         c5EtzEh2oq7TkZqIg6BaPlGTgfuLqGo7jmT4qLb0zTpV9Ppn0ep4ELh+MSHcc8xiOcPO
+         5EWYSxam5/HxurMa8GXVbwnPAfZIIE30VjpGymK/PFq4/BhAiIE8U6gkXZtkLJEjjXw2
+         Cd8kI4kimHJbsnshyWPloB4jPSIgd0F6RyefBGgCknq1o+MZ12EGZRA+7dTMwrTQE7Te
+         tcMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXxRUdu4Fz82+mVWzaOqcOEQ4UKzSjZ8T9UCt0+pDrt9FjBe/dnZETYW2SFjBvqCB8SUMARPrP2JvCn4ew=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9G7yk4nKdUJ09L20cvi/OdSbGAr58U0/TfVKX6ddaGLvbxrkh
+	ZY9SLy0LHNhF9zLm3AxTTlhlhP9sxDf/W+UmpmFsM9aX2FGzYC/FoIfrOSbcvTFZ8fQKcWYfEsJ
+	zwCywEcY1pEk2K4tVU6aM1R0Av2SBW+j3YlmXAEeT
+X-Gm-Gg: ASbGncsQY0aA+1AzTk4s7BI1oX7qH4bVR7kJcEiQCMmSpTnd2rYsFvcgz7Tg+FfKqKL
+	Y1Pt/Xa2T60LMHt3160c86/EkVybDhEksRsOJ5uaWDVgrXnfwy5PLO9COMstZ8gf7r7bvraY7x1
+	9FFtPhwAjTYdG3kc3w0ZgcZylooaVKX2ms1kAFCQI9F91JtV2ISZMYV33AxbwqS887SBpVwMy+/
+	tXkYg6sZACH3kLOlG2gLavP2CRl6W1ZztE=
+X-Google-Smtp-Source: AGHT+IFNNgGe2N+Najma2XgK1xBeO1Tq5z4VdOwxsWj1JkHm5nTTq++sDH5npr//Xe7MrxeLpTLuyirVohv+SG9hXog=
+X-Received: by 2002:a05:6512:3a81:b0:553:65bc:4232 with SMTP id
+ 2adb3069b0e04-55b7c06cb83mr858483e87.31.1753863820791; Wed, 30 Jul 2025
+ 01:23:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=JovxrN4C c=1 sm=1 tr=0 ts=6889d66a cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=Jh_ldMv1e_q4xxFTlQwA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: HIBHNy8Aenk1oD5M7SAzZTHCS-RjvrJ_
-X-Proofpoint-GUID: HIBHNy8Aenk1oD5M7SAzZTHCS-RjvrJ_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA1NCBTYWx0ZWRfXzycjsQAx4mGM
- 1cCEpT36793yYNXh4UZfleky1hL+F0DJSScmX8ocyScij/pk6SS4EZsJtXdmpdnMOe13jiSYXf8
- FfIe356+qI7dPadAdwycN8eSOD/Ey7szGzLmSgqh+ho3VcdzHvoqSFNXV8ipxT8E5duNlx+xqS4
- KB9EGDf0NouGm0mITVrjBOIQzQjOIXwU8bNWhLeI3Qb8YmKZQE5Slckxt3jaUL4P5RpV6LjqGsm
- Z1jOeqb4V5Ofxjby5vGjBCwSrcMEEmSVzqm9Yt4aUDuSyCVTLo+eV2zS0onPHCLJrxRgftyD8tu
- 7i8AnwAysJmeCxckfW7CimcZLkZTRgNQmNHLoCYQ35yD5nwZPHf7mmwtIT7CtOEy4r66HihxB9m
- XFPRPvN9S/faXOvHr56SCdTKLlM/jzOR62DsT3HXolCJdHsC45EUhTr2q6AF2a8h4+LtjJRw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_03,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- malwarescore=0 clxscore=1015 priorityscore=1501 bulkscore=0 impostorscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507300054
+References: <20250708111806.3992-1-darren.ye@mediatek.com> <20250708111806.3992-3-darren.ye@mediatek.com>
+In-Reply-To: <20250708111806.3992-3-darren.ye@mediatek.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Wed, 30 Jul 2025 16:23:29 +0800
+X-Gm-Features: Ac12FXziz9m63a9IuaHiHsS0x7hGxpkPqvcMpJ0GxNVtaytZnTnRhyBsZaU2UF8
+Message-ID: <CAGXv+5FiZJqymDfvGO05SNgzSUYAdOwtFCqE0WPGwC5Dwg7OEA@mail.gmail.com>
+Subject: Re: [PATCH v6 02/10] ASoC: mediatek: mt8196: add common header
+To: "Darren.Ye" <darren.ye@mediatek.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Palash Kambar <quic_pkambar@quicinc.com>
+On Tue, Jul 8, 2025 at 7:34=E2=80=AFPM Darren.Ye <darren.ye@mediatek.com> w=
+rote:
+>
+> From: Darren Ye <darren.ye@mediatek.com>
+>
+> Add header files for register definitions and structures.
+>
+> Signed-off-by: Darren Ye <darren.ye@mediatek.com>
+> ---
+>  sound/soc/mediatek/mt8196/mt8196-afe-common.h |   213 +
+>  .../mediatek/mt8196/mt8196-interconnection.h  |   121 +
+>  sound/soc/mediatek/mt8196/mt8196-reg.h        | 12068 ++++++++++++++++
+>  3 files changed, 12402 insertions(+)
+>  create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-common.h
+>  create mode 100644 sound/soc/mediatek/mt8196/mt8196-interconnection.h
+>  create mode 100644 sound/soc/mediatek/mt8196/mt8196-reg.h
+>
+> diff --git a/sound/soc/mediatek/mt8196/mt8196-afe-common.h b/sound/soc/me=
+diatek/mt8196/mt8196-afe-common.h
+> new file mode 100644
+> index 000000000000..574003a8a2e4
+> --- /dev/null
+> +++ b/sound/soc/mediatek/mt8196/mt8196-afe-common.h
+> @@ -0,0 +1,213 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * mt8196-afe-common.h  --  Mediatek 8196 audio driver definitions
+> + *
+> + * Copyright (c) 2024 MediaTek Inc.
+> + *  Author: Darren Ye <darren.ye@mediatek.com>
+> + */
+> +
+> +#ifndef _MT_8196_AFE_COMMON_H_
+> +#define _MT_8196_AFE_COMMON_H_
 
-Enable Multi-Circular Queue (MCQ) support for the UFS host controller
-on the Qualcomm SM8750 platform by updating the device tree node. This
-includes adding new register regions and specifying the MSI parent
-required for MCQ operation.
+Add an empty line here for separation.
 
-MCQ is a modern queuing model for UFS that improves performance and
-scalability by allowing multiple hardware queues. Although MCQ support
-has existed in the UFS driver for several years, this patch enables it
-via Device Tree for SM8750.
+> +#include <sound/soc.h>
+> +#include <sound/pcm.h>
+> +#include <linux/clk.h>
+> +#include <linux/list.h>
+> +#include <linux/regmap.h>
+> +#include "mt8196-reg.h"
+> +#include "mtk-base-afe.h"
 
-Changes:
-- Add reg entries for mcq_sqd and mcq_vs regions.
-- Define reg-names for the new regions.
-- Specify msi-parent for interrupt routing.
+Please add empty lines between each group of headers. Headers are grouped
+by path prefix.
 
-Signed-off-by: Palash Kambar <quic_pkambar@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Moreover, the contents of these header files are not required in this
+header file. Please push these include statements to the files that
+actually need them.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 4643705021c6..401e510ee738 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -3329,7 +3329,12 @@ ufs_mem_phy: phy@1d80000 {
- 
- 		ufs_mem_hc: ufs@1d84000 {
- 			compatible = "qcom,sm8750-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
--			reg = <0x0 0x01d84000 0x0 0x3000>;
-+			reg = <0x0 0x01d84000 0x0 0x3000>,
-+			      <0x0 0x1da5000 0x0 0x2000>,
-+			      <0x0 0x1da4000 0x0 0x10>;
-+			reg-names = "ufs_mem",
-+				    "mcq_sqd",
-+				    "mcq_vs";
- 
- 			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
- 
-@@ -3363,11 +3368,12 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 					     "cpu-ufs";
- 
- 			power-domains = <&gcc GCC_UFS_PHY_GDSC>;
-+
- 			required-opps = <&rpmhpd_opp_nom>;
- 
- 			iommus = <&apps_smmu 0x60 0>;
- 			dma-coherent;
--
-+			msi-parent = <&gic_its 0x60>;
- 			lanes-per-direction = <2>;
- 
- 			phys = <&ufs_mem_phy>;
--- 
-2.50.1
+For the pointer to struct types, you can just forward declare the struct
+types instead of including the whole header file:
 
+    struct clk;
+    struct mtk_base_afe;
+
+[...]
+
+> +struct mt8196_afe_private {
+> +       struct clk **clk;
+
+> +       struct clk_lookup **lookup;
+
+This doesn't seem to be used.
+
+> +       struct regmap *vlp_ck;
+
+IIRC this will get removed since the tuner values will be moved to the
+clk driver.
+
+> +       int irq_cnt[MT8196_MEMIF_NUM];
+
+> +       int dram_resource_counter;
+
+This seems unused. Please remove.
+
+> +
+> +       /* xrun assert */
+> +       int xrun_assert[MT8196_MEMIF_NUM];
+
+This doesn't seem to do anything. It is initialized to zero and then
+never used.
+
+> +
+> +       /* dai */
+> +       void *dai_priv[MT8196_DAI_NUM];
+> +
+> +       /* mck */
+> +       int mck_rate[MT8196_MCK_NUM];
+> +
+> +       /* channel merge */
+> +       unsigned int cm_rate[CM_NUM];
+> +       unsigned int cm_channels;
+> +};
+> +
+> +int mt8196_dai_adda_register(struct mtk_base_afe *afe);
+> +int mt8196_dai_i2s_register(struct mtk_base_afe *afe);
+> +int mt8196_dai_tdm_register(struct mtk_base_afe *afe);
+> +int mt8196_dai_set_priv(struct mtk_base_afe *afe, int id,
+> +                       int priv_size, const void *priv_data);
+
+Please add an empty line here.
+
+> +#endif
+
+[...]
+
+
+ChenYu
 
