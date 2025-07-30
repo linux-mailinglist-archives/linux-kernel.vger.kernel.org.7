@@ -1,256 +1,308 @@
-Return-Path: <linux-kernel+bounces-750579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4C8B15E4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:36:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2204CB163AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C8A07A61D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:34:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59DD31891C1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:25:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD5E279DAE;
-	Wed, 30 Jul 2025 10:35:56 +0000 (UTC)
-Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549C52DE1FA;
+	Wed, 30 Jul 2025 15:23:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SKIiqjIx"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9AC27FB3A
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2382C2DCF76
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 15:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753871755; cv=none; b=TQZkziA/CXuayhl2Z3Bxy0ZJAgpwcMU5SzvdQxUEV45gU09OGGzImylmNHVZwuNc4Co4qN/eCBuJAQz6SntxX7p+vd0wlq7GBJxphDbisj0a03KU21YHQqV9giTOUgOLBKi/K1VrRugwjJC9oWpJnWn3Wcv2WNvJjlXrP/JJrv4=
+	t=1753888989; cv=none; b=WB5u68uLFdeD+jdZPJXYAp/ygkYkVjFWmCgOArJSMvz7tc4+kF5OF8vVndlUIznkVcIaY1pme3Xb+0bTsuDVbIz+Uqbk2rSShrnHwlvD1VgNyQ2qFkLcLEbP+T5XkjRQA+2tzkHnr0oAHfc4DBe1kVphLpjAAcju9I7Jvt47Zac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753871755; c=relaxed/simple;
-	bh=qweWPyKEs3pN6MuNg0KaCYdJj9vxUHHf8MFrmW68PPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GZOeyWvb/WdVWGaz1KiltVbet6MKUsfrD79BUvFxtNj5GFFkIbyJDNjY24AGZyXorC2mBPO9N67aLL6VMSfqoBkss9UTarODssA7WZ0Rd8B6+dyc3OjRD6YWoJhrfJY7ZjV23USPy3sNgQNV/Z76UUFaIoqBJX3/Xu+2ysg2f2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
-X-ASG-Debug-ID: 1753871743-086e23295483150001-xx1T2L
-Received: from ZXBJMBX02.zhaoxin.com (ZXBJMBX02.zhaoxin.com [10.29.252.6]) by mx1.zhaoxin.com with ESMTP id EoKJyGyVHCBkiczC (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 30 Jul 2025 18:35:43 +0800 (CST)
-X-Barracuda-Envelope-From: WeitaoWang-oc@zhaoxin.com
-X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
-Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXBJMBX02.zhaoxin.com
- (10.29.252.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 30 Jul
- 2025 18:35:36 +0800
-Received: from ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f]) by
- ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f%7]) with mapi id
- 15.01.2507.044; Wed, 30 Jul 2025 18:35:36 +0800
-X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
-Received: from [10.29.8.21] (10.29.8.21) by zxbjmbx1.zhaoxin.com
- (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 30 Jul
- 2025 15:21:49 +0800
-Message-ID: <683553fc-3874-0c31-d317-03b28dc3431e@zhaoxin.com>
-Date: Wed, 30 Jul 2025 23:21:51 +0800
+	s=arc-20240116; t=1753888989; c=relaxed/simple;
+	bh=5uCO3VcPHbaG0omgsmS3KTn/iuvdyq8luYto/xpm7jY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=K25uhr2VeQfTL0glZGahUDamMKWiuXyT47+criMPHl9XnCFFyNjJNSR0Ka4V7Xkye4uwICGkb6SpzlZ5lbJQZ2YuRlXHSlQRcWDp5N70jSPv9xXDlSmE1gmzRqhOQZ7GqVBQwTxlEv2O6YWOqcugkOB8rOapuTuYpL+s/wrlybg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SKIiqjIx; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso67426285e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 08:23:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753888985; x=1754493785; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FSknzHorPhjTcfMcQKnv2MntcJIq2S43GpXuQPmNQgw=;
+        b=SKIiqjIxwAUeJqJsFSBsaipPhLxeiwJwMxbarTgfG5rS5eVavbqx3LE4GYS+UhvPx3
+         3sbc4itq6ulj+ZMcEcP1NrMIrr81XI4QTphlZc4I3trLHjEtFQrXzjD5/3JDLfZPvcbB
+         /8bBbzVb6D8J4YxxK5XA99bJP0myLMS0RytxbWRDIC8z375jcIN/BoZ5aGrre7z0TkfW
+         Lq0KDMLWIvAK6vPOMxGmFb41mU1m8N4cqhWnHkb924Q7IeXzB8WlgHcrGNXMrn43lKDA
+         i8fsuvuUUQL3zMisHiAQ5XmAIblu3uz+Sbc0KPEa6B/ZGkCFxMiNtxup5kl+YaqkotIZ
+         ymJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753888985; x=1754493785;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FSknzHorPhjTcfMcQKnv2MntcJIq2S43GpXuQPmNQgw=;
+        b=F9S+/arojr9rscsgMH4c1okzM/Orm/W0VRQrdoZfEQqLeXoW+HIJ8y/81nM5UBLWys
+         xEndnPNNR9j7LpxEbS5lWzW/TL+F+MMknIQd3+/36ME+5LX95++ctYHWbSbP5+PnBM5b
+         gKavPLdy9XOFkp8q2NBuqYvpTXdfs3xgllYOp0ppX2U8LBlN0JBGiqFLNRSC+HVzs+Is
+         bvHKEOVwzPKNLI7gkcjgEDHHAEWnWUF7Wh206eDquEqRpj1qxJBMX9sgmSVZBqIEbfTB
+         ISzvF6TSjRMZlUq9WixznliGNLSC+tEW3e8iMIggZdz9qeRdSIexh0wdXM2V4pKg2qvW
+         HJZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVegISAMPz2cyfnp8vGCGvq8tKAOvajWH+DaEM8X/j/1B6OZOHUWOMUdWGn0h6cX5KXEm2tdefsDYEzHY0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEpwq8TBmDv9prSrApEmpKyS3Vf9taWrMyVMlKcvMcIfUQjCvz
+	pNkjAuBkdklvpxKUJWaeJReLJf2AeL6KgkG48a70rE5FFA2w+sJkeMeePNGVUTgSpsw=
+X-Gm-Gg: ASbGncv4iYFR0og2ABl70ZyyWHnP92JdbLPIYCQfs+Iz0dgJJ6STWt/uh4KpvLaGGUm
+	3HZJjJPVwY+myeYfDHlE2KMPzuWM5Ml/W8ItHwEeKJDL0+D02btLcVwYeqPKCUjzUuFbn8fLEK1
+	zpHKD0lg7nxoWxVUBOym87P/zvIFN8tD4eh/5/UY2OV+Qm3zVrgsDf/L1QcHyPZJFV90gqTc86Y
+	QWcy4pJfgwgDAiGzC6v7QKsFBIwLxN6HF/EhKrBdUjUvNgeCSi9kuW20eolBjAkEcHG9Bq18c3i
+	oFwl7V1D5PMGU/qLzn/SW/4EiGaDBHcFzn3F7ePirlx/gZwjj9K74zJmacE4+vItgwW47CQzXVL
+	et9SCfoR1qUsBKg7AyutpR+NSxw==
+X-Google-Smtp-Source: AGHT+IFEfOPvUxFnjCIjvRgwT6HHnAVyMp877oB2unpoFPu/47jZPsMcKO0v1YP6b2RitUCQhVHLMQ==
+X-Received: by 2002:a05:600c:4fcb:b0:456:a1b:e906 with SMTP id 5b1f17b1804b1-45892bdecacmr31613595e9.33.1753888985256;
+        Wed, 30 Jul 2025 08:23:05 -0700 (PDT)
+Received: from [10.1.1.59] ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589539e491sm32694905e9.26.2025.07.30.08.23.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 08:23:04 -0700 (PDT)
+Message-ID: <34c52c88fd8fcbf68c453c1e94e4cd6294becff1.camel@linaro.org>
+Subject: Re: [PATCH v13 07/10] firmware: psci: Implement vendor-specific
+ resets as reboot-mode
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>, Bartosz
+ Golaszewski	 <bartosz.golaszewski@linaro.org>, Bjorn Andersson
+ <andersson@kernel.org>,  Sebastian Reichel	 <sre@kernel.org>, Rob Herring
+ <robh@kernel.org>, Sudeep Holla	 <sudeep.holla@arm.com>, Souvik Chakravarty
+ <Souvik.Chakravarty@arm.com>,  Krzysztof Kozlowski	 <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Andy Yan	 <andy.yan@rock-chips.com>,
+ Mark Rutland <mark.rutland@arm.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio
+ <konradybcio@kernel.org>, 	cros-qcom-dts-watchers@chromium.org, Vinod Koul
+ <vkoul@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Florian Fainelli	 <florian.fainelli@broadcom.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, Mukesh Ojha
+	 <mukesh.ojha@oss.qualcomm.com>, Stephen Boyd <swboyd@chromium.org>, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, Elliot Berman <quic_eberman@quicinc.com>, 
+ Srinivas Kandagatla
+	 <srini@kernel.org>
+Date: Wed, 30 Jul 2025 16:23:02 +0100
+In-Reply-To: <b92c164f-c6df-a2c0-1416-67652a01b179@oss.qualcomm.com>
+References: 
+	<20250727-arm-psci-system_reset2-vendor-reboots-v13-0-6b8d23315898@oss.qualcomm.com>
+	 <20250727-arm-psci-system_reset2-vendor-reboots-v13-7-6b8d23315898@oss.qualcomm.com>
+	 <b45b157593f1865a402f4098cdeafc298a294c6d.camel@linaro.org>
+	 <b92c164f-c6df-a2c0-1416-67652a01b179@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1-1+build2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
-Content-Language: en-US
-X-ASG-Orig-Subj: Re: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
-To: Mathias Nyman <mathias.nyman@linux.intel.com>,
-	<gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
-	<linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <WeitaoWang@zhaoxin.com>, <wwt8723@163.com>, <CobeChen@zhaoxin.com>,
-	<stable@vger.kernel.org>
-References: <20250725185101.8375-1-WeitaoWang-oc@zhaoxin.com>
- <094f9822-9f12-4c67-b648-84a48c2e154b@linux.intel.com>
- <dec32556-c28e-aeed-8516-2e0bb56c3a58@zhaoxin.com>
- <855b4621-fc40-4281-9e44-7a2ac861dd4b@linux.intel.com>
-From: "WeitaoWang-oc@zhaoxin.com" <WeitaoWang-oc@zhaoxin.com>
-In-Reply-To: <855b4621-fc40-4281-9e44-7a2ac861dd4b@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
- zxbjmbx1.zhaoxin.com (10.29.252.163)
-X-Moderation-Data: 7/30/2025 6:35:34 PM
-X-Barracuda-Connect: ZXBJMBX02.zhaoxin.com[10.29.252.6]
-X-Barracuda-Start-Time: 1753871743
-X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
-X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
-X-Virus-Scanned: by bsmtpd at zhaoxin.com
-X-Barracuda-Scan-Msg-Size: 5302
-X-Barracuda-BRTS-Status: 1
-X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
-X-Barracuda-Spam-Score: -1.60
-X-Barracuda-Spam-Status: No, SCORE=-1.60 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=DATE_IN_FUTURE_03_06, DATE_IN_FUTURE_03_06_2
-X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.145035
-	Rule breakdown below
-	 pts rule name              description
-	---- ---------------------- --------------------------------------------------
-	0.01 DATE_IN_FUTURE_03_06   Date: is 3 to 6 hours after Received: date
-	0.42 DATE_IN_FUTURE_03_06_2 DATE_IN_FUTURE_03_06_2
 
-On 2025/7/29 23:00, Mathias Nyman wrote:
+On Wed, 2025-07-30 at 18:33 +0530, Shivendra Pratap wrote:
 >=20
-> On 29.7.2025 20.25, WeitaoWang-oc@zhaoxin.com wrote:
->> On 2025/7/28 21:16, Mathias Nyman wrote:
->>>
->>> On 25.7.2025 21.51, Weitao Wang wrote:
->>>> In such a scenario, device-A with slot_id equal to 1 is disconnecting
->>>> while device-B is enumerating, device-B will fail to enumerate in the
->>>> follow sequence.
->>>>
->>>> 1.[device-A] send disable slot command
->>>> 2.[device-B] send enable slot command
->>>> 3.[device-A] disable slot command completed and wakeup waiting thread
->>>> 4.[device-B] enable slot command completed with slot_id equal to 1 and
->>>> wakeup waiting thread
->>>> 5.[device-B] driver check this slot_id was used by someone(device-A) i=
-n
->>>> xhci_alloc_virt_device, this device fails to enumerate as this conflic=
+>=20
+> On 7/30/2025 2:14 PM, Andr=C3=A9 Draszik wrote:
+> > On Sun, 2025-07-27 at 21:54 +0530, Shivendra Pratap wrote:
+> > > SoC vendors have different types of resets which are controlled
+> > > through various hardware registers. For instance, Qualcomm SoC
+> > > may have a requirement that reboot with =E2=80=9Cbootloader=E2=80=9D =
+command
+> > > should reboot the device to bootloader flashing mode and reboot
+> > > with =E2=80=9Cedl=E2=80=9D should reboot the device into Emergency fl=
+ashing mode.
+> > > Setting up such reboots on Qualcomm devices can be inconsistent
+> > > across SoC platforms and may require setting different HW
+> > > registers, where some of these registers may not be accessible to
+> > > HLOS. These knobs evolve over product generations and require
+> > > more drivers. PSCI spec defines, SYSTEM_RESET2, vendor-specific
+> > > reset which can help align this requirement. Add support for PSCI
+> > > SYSTEM_RESET2, vendor-specific resets and align the implementation
+> > > to allow user-space initiated reboots to trigger these resets.
+> > >=20
+> > > Introduce a late_initcall to register PSCI vendor-specific resets
+> > > as reboot modes. Implement a reboot-mode write function that sets
+> > > reset_type and cookie values during the reboot notifier callback.
+> > > Introduce a firmware-based call for SYSTEM_RESET2 vendor-specific
+> > > reset in the psci_sys_reset path, using reset_type and cookie if
+> > > supported by secure firmware.
+> > >=20
+> > > By using the above implementation, userspace will be able to issue
+> > > such resets using the reboot() system call with the "*arg"
+> > > parameter as a string based command. The commands can be defined
+> > > in PSCI device tree node as =E2=80=9Creset-types=E2=80=9D and are bas=
+ed on the
+> > > reboot-mode based commands.
+> > >=20
+> > > Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
+> > > ---
+> > > =C2=A0drivers/firmware/psci/Kconfig |=C2=A0 2 ++
+> > > =C2=A0drivers/firmware/psci/psci.c=C2=A0 | 57 +++++++++++++++++++++++=
++++++++++++++++++++-
+> > > =C2=A02 files changed, 58 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/drivers/firmware/psci/Kconfig b/drivers/firmware/psci/Kc=
+onfig
+> > > index 97944168b5e66aea1e38a7eb2d4ced8348fce64b..93ff7b071a0c364a37669=
+9733e6bc5654d56a17f 100644
+> > > --- a/drivers/firmware/psci/Kconfig
+> > > +++ b/drivers/firmware/psci/Kconfig
+> > > @@ -1,6 +1,8 @@
+> > > =C2=A0# SPDX-License-Identifier: GPL-2.0-only
+> > > =C2=A0config ARM_PSCI_FW
+> > > =C2=A0	bool
+> > > +	select POWER_RESET
+> > > +	select REBOOT_MODE
+> > > =C2=A0
+> > > =C2=A0config ARM_PSCI_CHECKER
+> > > =C2=A0	bool "ARM PSCI checker"
+> > > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psc=
+i.c
+> > > index 38ca190d4a22d6e7e0f06420e8478a2b0ec2fe6f..e14bcdbec1750db8aa929=
+7c8bcdb242f58cc420e 100644
+> > > --- a/drivers/firmware/psci/psci.c
+> > > +++ b/drivers/firmware/psci/psci.c
+> > > @@ -17,6 +17,7 @@
+> > > =C2=A0#include <linux/printk.h>
+> > > =C2=A0#include <linux/psci.h>
+> > > =C2=A0#include <linux/reboot.h>
+> > > +#include <linux/reboot-mode.h>
+> > > =C2=A0#include <linux/slab.h>
+> > > =C2=A0#include <linux/suspend.h>
+> > > =C2=A0
+> > > @@ -51,6 +52,14 @@ static int resident_cpu =3D -1;
+> > > =C2=A0struct psci_operations psci_ops;
+> > > =C2=A0static enum arm_smccc_conduit psci_conduit =3D SMCCC_CONDUIT_NO=
+NE;
+> > > =C2=A0
+> > > +struct psci_vendor_sysreset2 {
+> > > +	u32 reset_type;
+> > > +	u32 cookie;
+> > > +	bool valid;
+> > > +};
+> > > +
+> > > +static struct psci_vendor_sysreset2 vendor_reset;
+> > > +
+> > > =C2=A0bool psci_tos_resident_on(int cpu)
+> > > =C2=A0{
+> > > =C2=A0	return cpu =3D=3D resident_cpu;
+> > > @@ -309,7 +318,10 @@ static int get_set_conduit_method(const struct d=
+evice_node *np)
+> > > =C2=A0static int psci_sys_reset(struct notifier_block *nb, unsigned l=
+ong action,
+> > > =C2=A0			=C2=A0 void *data)
+> > > =C2=A0{
+> > > -	if ((reboot_mode =3D=3D REBOOT_WARM || reboot_mode =3D=3D REBOOT_SO=
+FT) &&
+> > > +	if (vendor_reset.valid && psci_system_reset2_supported) {
+> > > +		invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2), vendor_reset.re=
+set_type,
+> > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 vendor_reset.cookie, 0);
+> > > +	} else if ((reboot_mode =3D=3D REBOOT_WARM || reboot_mode =3D=3D RE=
+BOOT_SOFT) &&
+> > > =C2=A0	=C2=A0=C2=A0=C2=A0 psci_system_reset2_supported) {
+> > > =C2=A0		/*
+> > > =C2=A0		 * reset_type[31] =3D 0 (architectural)
+> >=20
+> > I don't know the PSCI spec, but it looks like with this code it's not
+> > possible to set=C2=A0a reboot mode (in DT) and at the same time instruc=
 t
->>>> 6.[device-A] xhci->devs[slot_id] set to NULL in xhci_free_virt_device
->>>>
->>>> To fix driver's slot_id resources conflict, let the xhci_free_virt_dev=
-ice
->>>> functionm call in the interrupt handler when disable slot command succ=
-ess.
->>>>
->>>> Cc: stable@vger.kernel.org
->>>> Fixes: 7faac1953ed1 ("xhci: avoid race between disable slot command an=
-d host runtime=20
->>>> suspend")
->>>> Signed-off-by: Weitao Wang <WeitaoWang-oc@zhaoxin.com>
->>>
->>> Nice catch, good to get this fixed.
->>>
->>> This however has the downside of doing a lot in interrupt context.
->>>
->>> what if we only clear some strategic pointers in the interrupt context,
->>> and then do all the actual unmapping and endpoint ring segments freeing=
-,
->>> contexts freeing ,etc later?
->>>
->>> Pseudocode:
->>>
->>> xhci_handle_cmd_disable_slot(xhci, slot_id, comp_code)
->>> {
->>> =C2=A0=C2=A0=C2=A0=C2=A0 if (cmd_comp_code =3D=3D COMP_SUCCESS) {
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci->dcbaa->dev_conte=
-xt_ptrs[slot_id] =3D 0;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci->devs[slot_id] =
-=3D NULL;
->>> =C2=A0=C2=A0=C2=A0=C2=A0 }
->>> }
->>>
->>> xhci_disable_and_free_slot(xhci, slot_id)
->>> {
->>> =C2=A0=C2=A0=C2=A0=C2=A0 struct xhci_virt_device *vdev =3D xhci->devs[s=
-lot_id];
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0 xhci_disable_slot(xhci, slot_id);
->>> =C2=A0=C2=A0=C2=A0=C2=A0 xhci_free_virt_device(xhci, vdev, slot_id);
->>> }
->>>
->>> xhci_free_virt_device(xhci, vdev, slot_id)
->>> {
->>> =C2=A0=C2=A0=C2=A0=C2=A0 if (xhci->dcbaa->dev_context_ptrs[slot_id] =3D=
-=3D vdev->out_ctx->dma)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci->dcbaa->dev_conte=
-xt_ptrs[slot_id] =3D 0;
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0 // free and unmap things just like before
->>> =C2=A0=C2=A0=C2=A0=C2=A0 ...
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0 if (xhci->devs[slot_id] =3D=3D vdev)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci->devs[slot_id] =
-=3D NULL;
->>>
->>> =C2=A0=C2=A0=C2=A0=C2=A0 kfee(vdev);
->>> }
->>
->> Hi Mathias,
->>
->> Yes, your suggestion is a better revision, I made some modifications
->> to the patch which is listed below. Please help to review again.
->> Thanks for your help.
->>
->> ---
->> =C2=A0 drivers/usb/host/xhci-hub.c=C2=A0 |=C2=A0 3 +--
->> =C2=A0 drivers/usb/host/xhci-mem.c=C2=A0 | 21 ++++++++++-----------
->> =C2=A0 drivers/usb/host/xhci-ring.c |=C2=A0 9 +++++++--
->> =C2=A0 drivers/usb/host/xhci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 23 ++++++=
-++++++++++-------
->> =C2=A0 drivers/usb/host/xhci.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +=
-+-
->> =C2=A0 5 files changed, 36 insertions(+), 23 deletions(-)
->>
->> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
->> index 92bb84f8132a..b3a59ce1b3f4 100644
->> --- a/drivers/usb/host/xhci-hub.c
->> +++ b/drivers/usb/host/xhci-hub.c
->> @@ -704,8 +704,7 @@ static int xhci_enter_test_mode(struct xhci_hcd *xhc=
-i,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!xhci->devs[i=
-])
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 continue;
->>
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retval =3D xhci_disable_slot=
-(xhci, i);
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci_free_virt_device(xhci, =
-i);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retval =3D xhci_disable_and_=
-free_slot(xhci, i);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (retval)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 xhci_err(xhci, "Failed to disable slot %d, %d. Enter test mode anywa=
-y\n",
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i, retval);
->> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
->> index 6680afa4f596..fc4aca2e65bc 100644
->> --- a/drivers/usb/host/xhci-mem.c
->> +++ b/drivers/usb/host/xhci-mem.c
->> @@ -865,21 +865,18 @@ int xhci_alloc_tt_info(struct xhci_hcd *xhci,
->> =C2=A0=C2=A0 * will be manipulated by the configure endpoint, allocate d=
-evice, or update
->> =C2=A0=C2=A0 * hub functions while this function is removing the TT entr=
-ies from the list.
->> =C2=A0=C2=A0 */
->> -void xhci_free_virt_device(struct xhci_hcd *xhci, int slot_id)
->> +void xhci_free_virt_device(struct xhci_hcd *xhci, struct xhci_virt_devi=
-ce *dev,
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int slot_id)
->> =C2=A0 {
->> -=C2=A0=C2=A0=C2=A0 struct xhci_virt_device *dev;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int old_active_eps =3D 0;
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Slot ID 0 is reserved */
->> -=C2=A0=C2=A0=C2=A0 if (slot_id =3D=3D 0 || !xhci->devs[slot_id])
->> +=C2=A0=C2=A0=C2=A0 if (slot_id =3D=3D 0 || !dev)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
->>
->> -=C2=A0=C2=A0=C2=A0 dev =3D xhci->devs[slot_id];
->> -
->> -=C2=A0=C2=A0=C2=A0 xhci->dcbaa->dev_context_ptrs[slot_id] =3D 0;
->> -=C2=A0=C2=A0=C2=A0 if (!dev)
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
->> +=C2=A0=C2=A0=C2=A0 if (xhci->dcbaa->dev_context_ptrs[slot_id] =3D=3D de=
-v->out_ctx->dma)
+> > the firmware whether a warm or a cold reboot was requested.
 >=20
-> forgot that dev_context_ptrs[] values are stored as le64 while
-> out_ctx->dma=C2=A0 is in whatever cpu uses.
+> The code added in this patch is kind of dead, until vendor_reset.valid is=
+ set to true.
+> It can be true, only when both below conditions are true.
+> =C2=A01. A SoC DT defines a psci->reboot-mode command say - "bootloader".
+> =C2=A02. reboot sys call is issued using LINUX_REBOOT_CMD_RESTART2 and th=
+e arg* as "bootloader".
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_M=
+AGIC2, LINUX_REBOOT_CMD_RESTART2, "bootloader");
 >=20
-> So above should be:
-> if (xhci->dcbaa->dev_context_ptrs[slot_id] =3D=3D cpu_to_le64(dev->out_ct=
-x->dma))
+> With that in place, warm and cold reboot just work same as before until a=
+bove conditions are true.
+> There is no effect on regular reboots or the reboots with a "command" whi=
+ch is not defined in
+> psci->reboot-mode DT.
 >=20
-> Otherwise it looks good to me
+> Now lets take a case below, where a SoC vendor wants a combination of psc=
+i->reboo-mode command and
+> warm/cold to work in combination. For ex. a requirement below:
+> =C2=A0- reboot command say - "bootlaoder" should do a cold reboot along w=
+ith some extra HW reg writes.
+> =C2=A0- reboot command say - "edl" should do a warm reboot along with som=
+e extra HW reg writes.
+>=20
+> 1. For this, both commands will be defined in the psci->reboot-mode DT No=
+de with the arguments that
+> =C2=A0=C2=A0 are defined and supported by the firmware.
+> 2. Further, such requirement will now be taken care by the underlying fir=
+mware that supports
+> =C2=A0=C2=A0 PSCI vendor-specific reset. When we call into firmware with =
+vendor specific reset arguments,
+> =C2=A0=C2=A0 firmware will take care of the defined HW writes and warm/co=
+ld reset as per the mapping of the
+> =C2=A0=C2=A0 defined arguments. Firmware and the Linux kernel here are in=
+ agreement for executing the
+> =C2=A0=C2=A0 vendor-specific resets.
 
-Ok, I got it. I'll submit a new version with this issue fix.
+So that means
 
-Best Regards,
-weitao
+    echo warm > /sys/kernel/reboot/mode
+    reboot bootloader
+
+and
+
+    echo cold > /sys/kernel/reboot/mode
+    reboot bootloader
+
+can not be distinguished.
+
+The firmware can not know whether or not cold or warm reboot was
+requested in this case by the user.
+
+More importantly, if e.g. an OOPS / panic happens after the reboot
+notifier has run (and set vendor_reset.valid because a reboot mode
+was requested),=C2=A0a panic handler changing reboot_mode to warm to
+retain RAM contents will have no effect, because the the original
+code above making those distinctions can not be reached anymore.
+
+Above scenario with OOPS / panic after reboot notifier could e.g.
+happen as part of device_shutdown() - see kernel_shutdown_prepare()
+
+
+> >=20
+> > Doing warm reboot is useful if e.g. RAM contents needs to be retained
+> > for crash recovery handling, or other reasons, while in normal cases
+> > doing a more secure cold reboot.
+> >=20
+> > On the other hand, of course it's useful to be able to specify the
+> > reboot target for normal reboots.
+> >=20
+> > Is this a problem with the PSCI spec or with this specific change
+> > geared at the Qcom implementation?
+>=20
+> SoC vendor should define a vendor-specific reset in psci DT only when the=
+y support them in their
+> firmware.=20
+>=20
+> Do we still think we are breaking anything in the spec or in the warm or =
+the cold
+> reset path? If so can we discuss such use-cases?
+
+I don't know the spec, but see examples above.
+
+Cheers,
+Andre'
 
