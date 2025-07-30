@@ -1,182 +1,163 @@
-Return-Path: <linux-kernel+bounces-750562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7297B15E0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:21:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF2E8B15E0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C46E16C370
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:21:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CE1D16A728
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D9028727F;
-	Wed, 30 Jul 2025 10:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A29C2741DA;
+	Wed, 30 Jul 2025 10:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ST9l7g0I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="gjFWxtb7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5723227FB3A;
-	Wed, 30 Jul 2025 10:21:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B83526FA4C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753870871; cv=none; b=QHM8R/c5lZs6KxQZm2ssHmL/g4GeAYSEry563SDLCBpjnriMOhiwJQ16nL4D4ctLsAYJ7wbenhSVM4tBtyKcYpdNR4BQjXX0OLY5IABlkOe3UU5YYMJ1B6upzEbmCygEOEmSXG/G6XVHnsmOqbG0PqBk5+HKUGkCCbdC+t4bssY=
+	t=1753870869; cv=none; b=a6XaE5ZaWIadrBFMxG8iRm78wMxL3KOnU6YLISEXf/CiWZ6riVaMPCW4+H2PyqPKMHMf5DQrnS7CP6oa+AX/zd5ylZEeDgswUk1nx1jDm8eHEpsPr6ogY6tE5JI7Zz6ntxcWqhCIbmGr03BcmKHOrCbTmC3zrBdkEItkla3HLJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753870871; c=relaxed/simple;
-	bh=5WLYtURJ7+E0ew+T9lWSwh94yasN9NmznSsFTfS59qk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iDtkRAW0OZVeI1JAvd6frhxtOevxitP59Cd6ClrBs10R2dzrNYoKDWGj2DR3ZMye9O2klVd2aBsda05qz0rZ6yxV2cqzold5XmQh5zOECBoEU2aBLKBzuy3B+2gk+RCXngcLFkqzTQvHycFwaIpKDSxgfW4RW7RUC93sQO/nOZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ST9l7g0I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9D7AC4CEF9;
-	Wed, 30 Jul 2025 10:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753870870;
-	bh=5WLYtURJ7+E0ew+T9lWSwh94yasN9NmznSsFTfS59qk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ST9l7g0I3tja8PGCrnYWnKJOxAQP/FNGxVNW8hsobFUZM8PizS5vTQAcFanjZXi6u
-	 ikrl+x0m+4HrPRrGJNVa7x6+50RM4YG65NiGNM1nbmb7y9bNcdV2JvSRmyHXhBXH+x
-	 w3oQHc8xQHj/74KkXNBSl40tXa+BvxkuffK+APGLVQSWUvbuyHcLXQnL1VLeSVWhyp
-	 HOzkI+JfypBNzV9ry0p6XnRiwxq4fjzchPwmjPpY3VOuWZPVI2peq7N2IUGCnsT+nY
-	 u5Cka8Ayaqok44f+Gd4wx46wZN4ExMh1CNfI1r7EAd4mPXZ4aVeQgDn0jteQ/xXk5N
-	 eQMmci0E/xv8A==
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-615622ed70fso3952032a12.3;
-        Wed, 30 Jul 2025 03:21:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWUQVnCPqgms3rmzW1zIuGRAJC2dxeUCiZ34LeNsWWd+eDhQmh26rMtd60Dtg/1JONB8nISzHXoqmu9BQ==@vger.kernel.org, AJvYcCX6052hH0YrRb2np/b8lII8+If5mpGxhWIBBPudruBPtTR4dSho/wPkjfdTpiPfVSbK+FQpkWNVsPocmrmG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnQD8T0JApzBQ5xRt7IbXEV4yV8LSmSO2YgZbR1WKH/BUuglHy
-	0iT4C9FVhcQbY7227iFZP/j1xHiuu8+xU9aFNO5A0vK4UOwrr33dIEfJfRKLZEl4daO5vWUdIa8
-	nHwa9amJu2H5USGtzpq8t/bcPc0vyUzw=
-X-Google-Smtp-Source: AGHT+IEh7f5DjE3aZhiOGW/lQcmghui9D0DDQFpGNh+U61oQCozkuYfrYz6pTFYYCMK+9hRA2lB5Gurv4f1FwTqWAm8=
-X-Received: by 2002:a17:907:6d0b:b0:ae0:bee7:ad7c with SMTP id
- a640c23a62f3a-af8fd9d1c8amr343180066b.46.1753870869385; Wed, 30 Jul 2025
- 03:21:09 -0700 (PDT)
+	s=arc-20240116; t=1753870869; c=relaxed/simple;
+	bh=j+9hz4E+vsPZjdDrRd0sik2x2f8tzkAgQtvmJSLMoTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kPV1AifcAl3wZ3TUinx2vKhzr5EUlMQGkldgx1+M9fHvRHa5UfO9xMI3Y8z1tk1nIA4EC2JUY9MeCKWkIVNsm0Y4POZkj4kOE0pkIhtrILTRHGWumSxqMRNlRYPP3EW5ZyUQQBohX7h5MswVZakjCFixJW8KhZsmJ+eEVxOD8AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=gjFWxtb7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U682dR027594
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:21:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	j+9hz4E+vsPZjdDrRd0sik2x2f8tzkAgQtvmJSLMoTo=; b=gjFWxtb75Y4ca+Pm
+	hr+/9aMcZL3+9Rehg/l2Oo/STEYeqKjwwL4bMFNtBWU/lcMoHNuSIYtHSFQwqwFW
+	SQ9QnRLg359/kpOH05QewnxLi78qgfBVsK0QmPKmn3gPEQHJG3fHLuNIV50A5wwR
+	0eBhNyzx67ZQLYqpjJbzXguJRZ+xm0eWAaBKMiAkAQt0mBsevuwMl8vn2/ajsTbe
+	hmEZ6E8mpBR3w7D0O7AAlEHBVZVAIOXt83e8l1APvnj2XvI/LLa1rfZwEf0HLtSf
+	qmb8f9W58H/u3hNxZYDQAPlX90iyx2/ShRitSc1oD5d0Fc+ajTAP5KHULLtV/jzg
+	obcPPw==
+Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com [209.85.210.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4860ep0pyn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:21:07 +0000 (GMT)
+Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-748f3d4c7e7so6352129b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:21:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753870867; x=1754475667;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=j+9hz4E+vsPZjdDrRd0sik2x2f8tzkAgQtvmJSLMoTo=;
+        b=LIcLj7zAxtlZpolCVBO8sSGvw+6FLCR3r7X5C+lF7gjdiEaE27x3xMq2urAmnI9TJr
+         HUNqzV/oA4OC6lbdF4T0f33m5LlbC3I/bT92nDbqZxKgVgnC4ygB7kR5sgKi+6OajkGG
+         11296HXMwE/tfzn8QDB6zNiPOKyK3gDh8vFDNlBfjQUQn5LGWido0m3l9ROyYdYoN5MK
+         9aDPV628Q2pv0T185mwPbeoa/bp5tJLu0H6PHrwfqxSx0qxYIWsnHThMANZ8w3Tgve0a
+         RPik5ZT34o4jWBgmis/xNhSlNyyMl+Ys2Gv1+tljW0QD9AEA97YY+0CUFDmRGoFWbZfA
+         2zqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVj9LeV7sTIeE5ZCHLHotjuT3mOgJERKI1DNMmLz2mACeP8CU58kEiN/uSQnjRCVqKVmgOh/wjrj/rQlF8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfJYviKEZm0HRbw2xQehzRYRRsuZMIJiiRIAmxgzxtHXePG26w
+	jEvJZTP7e+KHe8fwL/SBN3T1KW3/ufN2j9dOse0mU0S/Uv1B0TX0SaY68yianeisHMit/yO5cT8
+	Fd6IuyB7LYUhoAjpf+AeiVCMVHV2pz7OXAkIpd3cPHdTtszqwdJYb55ST7k5cbpRIQWg=
+X-Gm-Gg: ASbGncvpFRw1NTMrSUcbW4WNCEfEtXpbuKLher3Df5yBwlcQtN0faT0/GCgX+y3E2SG
+	pEAVYkJ8kJPNtncWJUlxpCEfWRFY2iGL+bhoKzJQqMJYryThXfsLSZyG1QUOzx1Wh3XsJHxv5nA
+	xmA4FDJqFnLKAhSVj/NRHCGFcqeA/yZspNXyk5y7lEv2FnWfn9B1WRRl4Bm1MVS8K5nUHf9qhpk
+	i/XOf8rFZEh0VI19Ok16CI5wWKxY/eC+Kd3zXs/WhsyZD2fEeUJDbs89F/3pib5hks7nAoLdcnX
+	14XwizGnCtwAugAjtbqIP4u/d/GiAQfY8K+YdwtjyVp1SjDh1MXjZ/lMEvRYcji29Epq1mms8CA
+	pL5M+noxF
+X-Received: by 2002:a05:6a20:7d8b:b0:220:2a64:bce1 with SMTP id adf61e73a8af0-23dc105d19dmr4848589637.35.1753870866931;
+        Wed, 30 Jul 2025 03:21:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHikeRjft5Kl0sNlMQ4iyepVjoUKBt1kzPNi1m1KyVzj+vIRXPgqn0nhGvehtzp5/D9BIPtRQ==
+X-Received: by 2002:a05:6a20:7d8b:b0:220:2a64:bce1 with SMTP id adf61e73a8af0-23dc105d19dmr4848538637.35.1753870866416;
+        Wed, 30 Jul 2025 03:21:06 -0700 (PDT)
+Received: from [10.152.207.84] ([202.46.23.19])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f58f15esm8958739a12.20.2025.07.30.03.21.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 03:21:05 -0700 (PDT)
+Message-ID: <91100136-bb4d-47e0-b910-b9c940775747@oss.qualcomm.com>
+Date: Wed, 30 Jul 2025 15:51:00 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730044348.133387-1-admin@mail.free-proletariat.dpdns.org> <20250730044348.133387-2-admin@mail.free-proletariat.dpdns.org>
-In-Reply-To: <20250730044348.133387-2-admin@mail.free-proletariat.dpdns.org>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Wed, 30 Jul 2025 11:20:31 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H5=cLEO3Cvty38bT1j5E6R0jJMuOWn+u9CkV6s58UhErQ@mail.gmail.com>
-X-Gm-Features: Ac12FXwD5kbbyuVduKgNiVB9bs8iC3lK0MT0xcXjROhMKTQPD1IC2LDmI_8alyk
-Message-ID: <CAL3q7H5=cLEO3Cvty38bT1j5E6R0jJMuOWn+u9CkV6s58UhErQ@mail.gmail.com>
-Subject: Re: [PATCH 1/1] btrfs: add integer overflow protection to
- flush_dir_items_batch allocation
-To: kmpfqgdwxucqz9@gmail.com
-Cc: David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	KernelKraze <admin@mail.free-proletariat.dpdns.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 30, 2025 at 5:48=E2=80=AFAM <kmpfqgdwxucqz9@gmail.com> wrote:
->
-> From: KernelKraze <admin@mail.free-proletariat.dpdns.org>
->
-> The flush_dir_items_batch() function performs memory allocation using
-> count * sizeof(u32) + count * sizeof(struct btrfs_key) without proper
-> integer overflow checking. When count is large enough, this multiplicatio=
-n
-> can overflow, resulting in an allocation smaller than expected, leading t=
-o
-> buffer overflows during subsequent array access.
->
-> In extreme cases with very large directory item counts, this could
-> theoretically lead to undersized memory allocation, though such scenarios
-> are unlikely in normal filesystem usage.
->
-> Fix this by:
-> 1. Adding a reasonable upper limit (195) to the batch size, consistent
->    with the limit used in log_delayed_insertion_items()
-> 2. Using check_mul_overflow() and check_add_overflow() to detect integer
->    overflows before performing the allocation
-> 3. Returning -EOVERFLOW when overflow is detected
-> 4. Adding appropriate warning and error messages for debugging
->
-> This ensures that memory allocations are always sized correctly and
-> prevents potential issues from integer overflow conditions, improving
-> overall code robustness.
->
-> Signed-off-by: KernelKraze <admin@mail.free-proletariat.dpdns.org>
-> ---
->  fs/btrfs/tree-log.c | 27 ++++++++++++++++++++++++---
->  1 file changed, 24 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/btrfs/tree-log.c b/fs/btrfs/tree-log.c
-> index 9f05d454b9df..19b443314db0 100644
-> --- a/fs/btrfs/tree-log.c
-> +++ b/fs/btrfs/tree-log.c
-> @@ -3655,14 +3655,35 @@ static int flush_dir_items_batch(struct btrfs_tra=
-ns_handle *trans,
->         } else {
->                 struct btrfs_key *ins_keys;
->                 u32 *ins_sizes;
-> +               size_t keys_size, sizes_size, total_size;
->
-> -               ins_data =3D kmalloc(count * sizeof(u32) +
-> -                                  count * sizeof(struct btrfs_key), GFP_=
-NOFS);
-> +               /*
-> +                * Prevent integer overflow when calculating allocation s=
-ize.
-> +                * We use the same reasonable limit as log_delayed_insert=
-ion_items()
-> +                * to prevent excessive memory allocation and potential D=
-oS.
-> +                */
-> +               if (count > 195) {
-> +                       btrfs_warn(inode->root->fs_info,
-> +                                  "dir items batch size %d exceeds safe =
-limit, truncating",
-> +                                  count);
-> +                       count =3D 195;
-> +               }
-
-Adding to what was already mentioned by others....
-This is so wrong that I'm not even sure where to begin.
-
-But here truncating to 195 (or whatever value) is incredibly wrong
-from a correctness point of view...
-This means you are discarding beyond that limit, making us not log
-index items that should be logged.
-
-The 195 you saw in the other place is fine, because we split things in
-batches up to that size and insert everything, but here we would just
-skip anything beyond the limit.
-
-Anyway there's no way we can have an overflow here in the first place....
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i2c: qcom-geni: fix I2C frequency table to achieve
+ accurate bus rates
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+        Manikanta Mylavarapu <quic_mmanikan@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>, linux-i2c@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@kernel.org
+References: <20250513-i2c-bus-freq-v1-1-9a333ad5757f@oss.qualcomm.com>
+ <kt372ehgwt3kjaxkdk47rri4s525pr4a6fvtjxy5c7rsf2ad6s@ebeaygqihe5k>
+Content-Language: en-US
+From: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+In-Reply-To: <kt372ehgwt3kjaxkdk47rri4s525pr4a6fvtjxy5c7rsf2ad6s@ebeaygqihe5k>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-GUID: 1lEHKI9Uyf3Cbg6UZRk8GWyewMJ8d86q
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA3MiBTYWx0ZWRfX1hvTbW1m9IYK
+ D/q8VjEFnKjc2NqmIyGr5zmHET9MO/g5/8gheyblkzrrv184rHuQ6KyepIC33z+FYGz+uU4Wno1
+ j+iRAG0R0cWZm3f9o8Szva3ACab2eQ6GEQ/mpfeAUJTNzurSV6D1W/rNr50lC6AdJEnZvI5WRbg
+ BS0e8QmROv9N5Z6HoH/ei0g+S6VlBT3AhD652Jp85Xm+PXzkVBDOuNM1nR+L/ms0Yz7x/RZr7Nj
+ fMyKykjNcNj1FuFXlJcUox4dTK0wDKqanFJePFZflSBw4/udmbJNBOwXFOxeZkmHLUmXhihMTB5
+ RdeL4L2wx7uSnZdZwVym+NyCIoeeaAKpBEZ/c5+bglUWnQf3hGgB2qp9078DSOseKvXuaiaLwH8
+ qRvtItphZDF0cNJKx44uvGspsXHE7wkGtkF5lGn4PnJTZx6A1lKoTZhLuFZKATU24QSJmTJS
+X-Authority-Analysis: v=2.4 cv=DIWP4zNb c=1 sm=1 tr=0 ts=6889f213 cx=c_pps
+ a=WW5sKcV1LcKqjgzy2JUPuA==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=Q61XbrR-VouMIcKfwD4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=OpyuDcXvxspvyRM73sMx:22
+X-Proofpoint-ORIG-GUID: 1lEHKI9Uyf3Cbg6UZRk8GWyewMJ8d86q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507300072
 
 
-> +
-> +               /* Check for overflow in size calculations */
-> +               if (check_mul_overflow(count, sizeof(u32), &sizes_size) |=
-|
-> +                   check_mul_overflow(count, sizeof(struct btrfs_key), &=
-keys_size) ||
-> +                   check_add_overflow(sizes_size, keys_size, &total_size=
-)) {
-> +                       btrfs_err(inode->root->fs_info,
-> +                                 "integer overflow in batch allocation s=
-ize calculation");
-> +                       return -EOVERFLOW;
-> +               }
-> +
-> +               ins_data =3D kmalloc(total_size, GFP_NOFS);
->                 if (!ins_data)
->                         return -ENOMEM;
+On 7/30/2025 4:12 AM, Andi Shyti wrote:
+> Hi Kathiravan,
 >
->                 ins_sizes =3D (u32 *)ins_data;
-> -               ins_keys =3D (struct btrfs_key *)(ins_data + count * size=
-of(u32));
-> +               ins_keys =3D (struct btrfs_key *)(ins_data + sizes_size);
->                 batch.keys =3D ins_keys;
->                 batch.data_sizes =3D ins_sizes;
->                 batch.total_data_size =3D 0;
-> --
-> 2.48.1
+> On Tue, May 13, 2025 at 04:38:33PM +0530, Kathiravan Thirumoorthy wrote:
+>> Update the I2C frequency table to match the recommended values
+>> specified in the I2C hardware programming guide. In the current IPQ5424
+>> configuration where 32MHz is the source clock, the I2C bus frequencies do
+>> not meet expectations—for instance, 363KHz is achieved instead of the
+>> expected 400KHz.
+>>
+>> Cc: stable@kernel.org
+>> Fixes: 506bb2ab0075 ("i2c: qcom-geni: Support systems with 32MHz serial engine clock")
+>> Signed-off-by: Kathiravan Thirumoorthy <kathiravan.thirumoorthy@oss.qualcomm.com>
+> I was sure I did apply this patch, but for some reason it has
+> completely slipped from my sight.
+
+
+Thanks Andi! I was about to remind you on this today :)
+
+
 >
+> Now it's applied in i2c/i2c-host.
+
+
+Hope it will be part of 6.17 PR.
+
+
 >
+> Thanks,
+> Andi
 
