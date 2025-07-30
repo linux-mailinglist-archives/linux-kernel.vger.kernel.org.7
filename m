@@ -1,111 +1,94 @@
-Return-Path: <linux-kernel+bounces-751037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765CCB1647B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:18:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC9FCB1647E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9763A3F12
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E6F6188B438
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EADCC2DE70C;
-	Wed, 30 Jul 2025 16:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="U7v++QGF"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B372DEA7D;
+	Wed, 30 Jul 2025 16:18:20 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22E02DE6E4
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD6718DB24;
+	Wed, 30 Jul 2025 16:18:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753892279; cv=none; b=AcTcFzidAoMLVIm6J+YafAgBim1KWUZf4hkvvQXVgfVkDnRYWBfT0cbwaljUX9wDkMxfOgVEU0zXEa9OlrmLN0B0IHDEiQL4uFpwh2j3sOksOW5pm5GbWVvGLEfo59xtd13lzo6v1nMQCSDgI4VYwEXvkGT91TI7PH0pJqsVJFM=
+	t=1753892300; cv=none; b=TmYq/Ml6L9WQcn8OwxxVZxvxSZLmwVAIWz1/nmY52XOTB+qugki0BT9Ef1vhN/B/CewvfIqwvrZweGeO6ikmY7lF3wGnpexqWn9lRlKbLfYzyGHnf6uhUi3xEmDhY42hgc0cnn9j3ATKrQCoWgZRVp1eZ9yLHc2p8GkFoc4a2ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753892279; c=relaxed/simple;
-	bh=T9egW+yuDv1sdibbS6gTQqeKitnpc7cvJCDpV0e5Zl4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YDgXwqtEQqCBgqkKgotge4gcjD9u9b1EMkXf8VPKLJSMNwWDmKSPbyprM7Ustlnsry9dG0RnTSutcw+WxdvYVirUF6Wh4yJ+czA+BlVdGarUrPVx+Gzae1gDuTfrN1GqgigiBiKr3XMS01+X3/peT6PCQQUcgZS9snUw9ReN+gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=U7v++QGF; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-74b56b1d301so4747443b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:17:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1753892277; x=1754497077; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yKVXiFSrRnWYZjHB7PInXkzk5lBOY7fcLObrtGYxkVQ=;
-        b=U7v++QGFN2/iFWL8GFW0Uwcdrx9IdXpkkCZuYP5V+sF742SEEsIWW/hhiR0IDZLf76
-         npMG4kSH5D3fq/NhSszdfaQAXIYPxrv12pqTyT8lkEGfTMmQ4p6E4KFA4E5bgUlpetB4
-         H1/LbJNF7GZ6jNLRiKuLR5a9xVKUQnAwCs42fIgUedxim/TV8NYZOjQI81PrmV1Mr9oy
-         0MAsf0ZFpjG4SB/mEdzKxDHurPkcqaemhqqFj/2Os81eN8Voorr0ViZ3z7vnpX3p7McD
-         fR6SFXvHg/ATIrLozTeS9oWWF3WOAnM3CFxln9NC9JAmzqxWpsHgOMeKBjB48ARoTZ5i
-         YEEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753892277; x=1754497077;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yKVXiFSrRnWYZjHB7PInXkzk5lBOY7fcLObrtGYxkVQ=;
-        b=gk95ZBXuH5MUoPDplH6aKYYCfn6qGgPOdn8FZV9zi0f1BW/H3Nd76tvUb7H3vCxpKW
-         1bkW1QJnIOrFiSwsqXF4UIHxJeEGAXRfR2GBn8um8qQeVwU4kg+GFc47jrZ4/0GorSP5
-         5gRznojbULcFJHoicK/I8dL4N6yBxKqHjRGP5qVJavhi9lIH+y6RlyhSbgd8y0jMDiu8
-         uAbbX6DoVrqTr0af4WsG2TLFHxsMuJVcy0QiHf48pj4rCl9noxRtygIjopQOJrTvLAHY
-         Gqy4qnzpbCcHiF24ln6e1UGiWvWBxcqfA1KlVm3Q7FOJsrzVwG8tV7eO+TJAyvlQDHUY
-         nN1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXxqr36+g6WnFp03HQGwOcurn9dFcogTYLHMyPy19HKX04G1Rw/8sKsK9L1ixQSyXR61IA5q40lAoNBExg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy379zECUA0vd5NDuD61Drjcosi+KozrBH/T0MT5pDwIjFmAbIL
-	0Hi8KyerFuvxO6ZIrJO8YyAzc+K5wd9Fh2JBv0jKQQLrsRVlY53lYxI5M34MAm4GQVs=
-X-Gm-Gg: ASbGnctc/emrbGO56X/h41TIHvZgQZ3DqqkS/LRJRZJ5mk1Ij/ElfixMa9mzpXLHxcT
-	XvSLlbTBRxL4Wzn3nJzg7+SCc88z/FgFCmCNVsZDgJBXm+1WwhGAwiBl3HbfSw9hiv00VebD5Mi
-	IMCzHLXh5VUV4xcEmK2Vc8kqUASjKt+RWq4ShkLpdzeloR7BGWD3fVa8sEJCLak/1k8nk8YnIjj
-	YC3iNBPGhNaXD6nib3+Pq4+RpKDbH+kEISEMO1XhUxr+sLCfVK0bKd9RARpzOdXGWSRNiCtDj8f
-	q7GpF6OhRkY5N162pV4hHB0iGO083Iwd/6tPOdGhYIkNlfNVnFPDVs+Z0aLa969FiHw1n83CDTA
-	5Vdg4w2So9NFygkgdQtRfT+wvxv89dSjBfPDYWKK5FEo=
-X-Google-Smtp-Source: AGHT+IH4WzCZIRsxDkQQbV4ooslyAXOnOnnFTkWKpM4k9PgSJygdHWtyWMUs2KYLkQMOoMS8IbvkQg==
-X-Received: by 2002:a05:6a00:814:b0:730:75b1:7219 with SMTP id d2e1a72fcca58-76ab2d5248bmr5203340b3a.12.1753892276985;
-        Wed, 30 Jul 2025 09:17:56 -0700 (PDT)
-Received: from medusa.lab.kspace.sh ([208.88.152.253])
-        by smtp.googlemail.com with UTF8SMTPSA id d2e1a72fcca58-7640ad06762sm11101766b3a.80.2025.07.30.09.17.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 09:17:56 -0700 (PDT)
-Date: Wed, 30 Jul 2025 09:17:55 -0700
-From: Mohamed Khalfella <mkhalfella@purestorage.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>, Hannes Reinecke <hare@kernel.org>,
-	Nilay Shroff <nilay@linux.ibm.com>,
-	Randy Jennings <randyj@purestorage.com>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvmet: Remove unnecessary assignment to ret in
- nvmet_ns_enable()
-Message-ID: <20250730161755.GA1177361-mkhalfella@purestorage.com>
-References: <20250725230639.2017274-1-mkhalfella@purestorage.com>
- <20250730155335.GB19799@lst.de>
+	s=arc-20240116; t=1753892300; c=relaxed/simple;
+	bh=7WHhap0k6u/Z0S7ZHEjO3hNhdKajez3+9KgQ3VaxjQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jRCLJgvDz4u5TJBO2UMoV4sPvb/ig2qIyC6K103Q9PZ1p1n9NysavHMWjZbfAS7UcfGs8Q6n+l3fLJmfmtT0DuiPxGLI0a1E3QIDjpBzOzuFPdLj5FgW4Y6d4iQXpvOV/I0z8zhz0Oa95h6tXrWIVnJJfIfpPTFrYr9vdiHmGtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 9611FC045B;
+	Wed, 30 Jul 2025 16:18:15 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 084DD20013;
+	Wed, 30 Jul 2025 16:18:12 +0000 (UTC)
+Date: Wed, 30 Jul 2025 12:18:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Greg KH <greg@kroah.com>, Sasha Levin <sashal@kernel.org>,
+ corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+ josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, "Dr. David Alan Gilbert"
+ <linux@treblig.org>
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+Message-ID: <20250730121829.0c89228d@gandalf.local.home>
+In-Reply-To: <158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+	<7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
+	<2025072854-earthen-velcro-8b32@gregkh>
+	<df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
+	<20250730112753.17f5af13@gandalf.local.home>
+	<158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730155335.GB19799@lst.de>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: of8tfcj65x1moznasd1u9c4acq6p1dx9
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 084DD20013
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1922e4tR6MPdhlbaQ4aZ4zeQnNCLT3FH08=
+X-HE-Tag: 1753892292-25121
+X-HE-Meta: U2FsdGVkX19PKljvnUbhYYqiGquQ96lDjf2eX/gtxyal8PzFRJp9QFDNTGR/4RyRRmsY72blv+STxTlUXG8WniZmAeORRf8bZNob1DDsofdV4z6BgBCexPQVPTbv6RcV/arvw31V9etXVoLy3St7qvadCfb5Mk/1AN0tUH3v+5JrzVc/uk8IExQIySnPot97J698gDv58oS5Zv736gRnO867Wwcm8zaHXk++aDGOkYNjv3JSt8F6K0t8fvBnWx7epy2u2IcLkT6gnbMnBngUiQ0lACbtzyS8FslHzetXMBwqJnYjkRFVXtjAnUPiKJ6P+XwPDuqGtRPaivIYQPU9xknYa764yLTk
 
-On 2025-07-30 17:53:35 +0200, Christoph Hellwig wrote:
-> On Fri, Jul 25, 2025 at 04:06:39PM -0700, Mohamed Khalfella wrote:
-> > Commit 74d16965d7ac ("nvmet-loop: avoid using mutex in IO hotpath")
-> > moved checking maximum number of namespaces in subsystem from
-> > nvmet_ns_enable() to nvmet_ns_alloc(). The assignment to ret in
-> > nvmet_ns_enable() is no longer needed, remove it.
+On Wed, 30 Jul 2025 16:34:28 +0100
+Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+
+> > Which looked like someone else (now Cc'd on this thread) took it public,
+> > and I wanted to see where that ended. I didn't want to start another
+> > discussion when there's already two in progress.  
 > 
-> This assignment already is gone in the current tree.
-> 
+> OK, but having a document like this is not in my view optional - we must
+> have a clear, stated policy and one which ideally makes plain that it's
+> opt-in and maintainers may choose not to take these patches.
 
-Yep, it looks like it has been removed in commit 2e7dd5c1a8ae ("nvmet: remove
-redundant assignment of error code in nvmet_ns_enable()").
+That sounds pretty much exactly as what I was stating in our meeting. That
+is, it is OK to submit a patch written with AI but you must disclose it. It
+is also the right of the Maintainer to refuse to take any patch that was
+written in AI. They may feel that they want someone who fully understands
+what that patch does, and AI can cloud the knowledge of that patch from the
+author.
 
-Thanks,
+I guess a statement in submitting-patches.rst would suffice, or should it
+be a separate standalone document?
+
+-- Steve
 
