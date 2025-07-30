@@ -1,253 +1,204 @@
-Return-Path: <linux-kernel+bounces-750647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3A62B15F2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:20:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D240B15F37
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC91A167A4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:20:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A133AB388
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:21:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C9F293B5E;
-	Wed, 30 Jul 2025 11:19:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7118F2951CD;
+	Wed, 30 Jul 2025 11:21:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQJXWQw6"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="SVMEXXGo"
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7127925761;
-	Wed, 30 Jul 2025 11:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753874398; cv=none; b=iYsIyFAJ2bz5cDUSOwrXH8Sb9k98jXeD6b1aHQKrBzfiCPmJAeB22SRq+GSXMvGYGkB0aYW/cEAnFOOLEO2oJ4DFffsrRz73ChUsemuFZDT0QIJuibnijM4QMJuaGfVfI51as1tX2kOgUQGhmUdJgy0BXx0tAOGu8PAdfl++gaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753874398; c=relaxed/simple;
-	bh=2YfyJTR1RQIdzBAGVF2wCKxoeT6+u6I1cJVUDJkkRc8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kC2JkM/r5qaj26Lj4mMInOODPjUqroRp7imU+gqJJLdhBSZQI1CmuRXNaASwcg6kzSinyi9glyuUsesRtYBAQKOpdsylzAdwlJxetwQtzuVn5EZijb2kcFSu0egL47NM58i/v94NWIQu9g95TtwNOsW8Q8l3jI5sTwtdWMA+AAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQJXWQw6; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4589180b266so5563175e9.3;
-        Wed, 30 Jul 2025 04:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753874395; x=1754479195; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yJXz1taZeMqAcIikmCjKmMy9sKu4coVbhTtZqnXW6zE=;
-        b=DQJXWQw6hiaHRgyerE1rwv4atLFYZfHnLj21DIZca68stPg2AyAiAu0G52yhyB5cep
-         h9oSyrRGD3OxTdDA5pna75rdZxqx09qp/w4XT9T/J36b02ek41AxtFiS6oVlvfmHiaaD
-         FkBJ/+/WuiyuKWmSxslXGsn4DgAwMYkKs1F0sieChsU8xXnL28pVMPm+94TmypFeHXHi
-         AWYtpzzfP8a+JlSWgLcF7TgUHhBRO0oxeCjg/HwEm7hn8aC+XN8HSVfjRdcrfm13i3bA
-         4xgYcho95HKqfekdaLFCn4FrUBpvSPV/4WjO8pCc3gh/SDUtVp8WRG7dKqyCVV51+Xp1
-         86/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753874395; x=1754479195;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yJXz1taZeMqAcIikmCjKmMy9sKu4coVbhTtZqnXW6zE=;
-        b=jd3Xy5ctTNvz058nxcryI1mVjYZ2oXT2bRrLcZdEA3wKex2UTUQvOD/SxOWT88gF+K
-         DNNwy/fjGJT+oeKIqvpGdqLVPR8YtBDrJpD6WmWCUDbXikI2b616fyw/ndvjAz8ROBro
-         76py6B2GdczOOETm5pczGs1rk3gVe9U/lIYKcZ5aY9ZNbSx23uD+avtXJ+C7JpHEs1VO
-         huxn/0wizQSkcuuQyHfhSuBt4tlp0EK/G7bMp5yLCqiEpD+M7AMuH4yP05xbrvYsMLJT
-         y+FzzILmYlAjujnBscNKhG/k6HC+hw4jiI16DoyE/z+GniN9QfC+XTfiDMa6i+XgoiPG
-         Dnjg==
-X-Forwarded-Encrypted: i=1; AJvYcCW9YS9YaZPJJwBjnPzopOqC3POGZRXrDlz+NG41SbT316N6uk/d8WgcofDtrwcG8+cpgwM=@vger.kernel.org, AJvYcCXOCh9RAoaxkjmgc2ppRPH2WrWpafgd/wvmSnNPjfcugOdberDq1PaxNxQ878z+7dvO4fL8Mq2u65fnV6jPbUS6owHW@vger.kernel.org, AJvYcCXPeyRDtK7gYHoN6qm4V9u32MQcsM+d3BlQWwCPgGtjMmTZizj3jez4OXUcbcWYw+Du2cU9yrl/BuicllM/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjmGzGYUMdvhrCB2AdqdbrFm1tNr+lV/CWUlix4mLYwPGchG9R
-	cgs4XDqSN4hurg5PJQzJSWS9sfjETuptpZXXxXs3pwzX4IvcPEJJWMVm
-X-Gm-Gg: ASbGncuxPasd2FX2rbzzMChkwa79FEODRHMe7g3iP/r3Ne/N7QC4expDiQR+cZ5ud5W
-	/uZo4i0AHob55hyyYbVPTeWP581WV0L88htiz3OzH5THc3OpgFcIAO6TvxFU5ywVjfws5EoBQ8H
-	tk7hqURwCH4SJSA/y58tgBP3nL0KBKXkVnLifKXC1cb3uiy4YAL4sYz2rQyfDVjcsH+U3C0qDp7
-	+AQhkGxCLsHfmO37r7Q39SWIDOK6ncMB5xWgJnOtPYyqmXeHFisI3kyNBvgGnl3I88PKSc1oTle
-	Vlx/F9BKxz2tzfeNM35ZqtFUBhDxIAdhmIsO81kbIfT1Ge18+91CGslc2yRO4VaOrnTvbwHjpvG
-	gZCjG+Pk6E1X7TrpwQc1576Uz5Mntsfo=
-X-Google-Smtp-Source: AGHT+IHS1hFJmenJMvbQ32NXUNrJjyDKifQkLe7CXSiHbDwUb6p0CnZ4mgpK2sqmbd7w0QSQjYebrQ==
-X-Received: by 2002:a05:600c:8812:b0:455:ed48:144f with SMTP id 5b1f17b1804b1-458930ec808mr19828185e9.14.1753874394307;
-        Wed, 30 Jul 2025 04:19:54 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45899fb191fsm18863345e9.21.2025.07.30.04.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 04:19:53 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Wed, 30 Jul 2025 13:19:51 +0200
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Steven Rostedt <rostedt@kernel.org>, Florent Revest <revest@google.com>,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Menglong Dong <menglong8.dong@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [RFC 00/10] ftrace,bpf: Use single direct ops for bpf trampolines
-Message-ID: <aIn_12KHz7ikF2t1@krava>
-References: <20250729102813.1531457-1-jolsa@kernel.org>
- <aIkLlB7Z7V--BeGi@J2N7QTR9R3.cambridge.arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD4C25761;
+	Wed, 30 Jul 2025 11:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753874482; cv=pass; b=N0XjJpekwUuX61FJbeXGrFkX6b7LiKTMZ1Q0unDDVLAJIg0c4OwbVcev3LGpa7sBNalOgGRyvd9VSPX1xNBPj3GZr3Rk/blazxLsdEYbdenPfWbxzIgacAjyrDv+uDe161FtEazsJltXGj29QzXck/woKi+RAKQYcRttncYmVkM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753874482; c=relaxed/simple;
+	bh=tbCibIy2cmD+3opvuXp1KpJuZJv+jtvN1A9fuYyZZxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fjMsX/dahACmEJe+O6tij2h4I7alkllfObzcs6ahbHv3R7FoRt4lUzz8DLgNxj3AYFlVHG1yMpWbk9URYvcSIymToHFjQPjD0N+irn3LNOSSCweiPubwpysLVCQ/FuQgDDl26/flaVvT2P5jjqWqx60hWuKuqotxVMFCXRfAR7c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=SVMEXXGo; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753874463; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=E8r8UTppfiLYDUKk0iKnk8G8/FN1FpODiWadA9FBObOHIUyt4+/SAyHoGwfo46HIndDDoFteDSt1WMnutOaImJhOmy+rQexDY3RzHypvTD6CR4BlGxZNGMEIgYrgO2F6rarDQveFgOiDgzhHzMXaWl2D8yADnrykjQeU7q9sx38=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753874463; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=8Oz8gEKqQKUEqMecwoAV5BMdQ44ozr0nc/GN/7ECVkk=; 
+	b=oLz/jflwJpTuDqk1ujOH9BxpbpSMpgfmSH7gOuadElCB9kWs8VIybTG09k0yq+6VJs52fLk0fsVrBU+KEkH5e/2n6higSulN2zYW6lzyGSTrelZtiNiW4994efaEu/9KlrFKMjKaIguaCHe8iuXE7G93+PP0XDDYYb6rvGJRcG4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753874463;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=8Oz8gEKqQKUEqMecwoAV5BMdQ44ozr0nc/GN/7ECVkk=;
+	b=SVMEXXGoydW4JlJFuYIzvP8ubzv4KonrfST271YiBRYjVfVmTtVUBq/+vew0kFIs
+	whQiqqJAHtHrWijhCPSgNfM4ccbpugxt1vpMG9IXkf8BiNIb2LgN0PxkQ7judxfFcf3
+	qfIXHt/kQufJpoDDlvE4Hxt/2/QlizuLHJ/63xi4=
+Received: by mx.zohomail.com with SMTPS id 175387445597336.57491374987171;
+	Wed, 30 Jul 2025 04:20:55 -0700 (PDT)
+Message-ID: <122a51eb-21e1-4cb4-b42b-fcb7e01cf64e@zohomail.com>
+Date: Wed, 30 Jul 2025 19:20:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIkLlB7Z7V--BeGi@J2N7QTR9R3.cambridge.arm.com>
-
-On Tue, Jul 29, 2025 at 06:57:40PM +0100, Mark Rutland wrote:
-> Hi Jiri,
-> 
-> [adding some powerpc and riscv folk, see below]
-> 
-> On Tue, Jul 29, 2025 at 12:28:03PM +0200, Jiri Olsa wrote:
-> > hi,
-> > while poking the multi-tracing interface I ended up with just one
-> > ftrace_ops object to attach all trampolines.
-> > 
-> > This change allows to use less direct API calls during the attachment
-> > changes in the future code, so in effect speeding up the attachment.
-> 
-> How important is that, and what sort of speedup does this result in? I
-> ask due to potential performance hits noted below, and I'm lacking
-> context as to why we want to do this in the first place -- what is this
-> intended to enable/improve?
-
-so it's all work on PoC stage, the idea is to be able to attach many
-(like 20,30,40k) functions to their trampolines quickly, which at the
-moment is slow because all the involved interfaces work with just single
-function/tracempoline relation
-
-there's ongoing development by Menglong [1] to organize such attachment
-for multiple functions and trampolines, but still at the end we have to use
-ftrace direct interface to do the attachment for each involved ftrace_ops 
-
-so at the point of attachment it helps to have as few ftrace_ops objects
-as possible, in my test code I ended up with just single ftrace_ops object
-and I see attachment time for 20k functions to be around 3 seconds
-
-IIUC Menglong's change needs 12 ftrace_ops objects so we need to do around
-12 direct ftrace_ops direct calls .. so probably not that bad, but still
-it would be faster with just single ftrace_ops involved
-
-[1] https://lore.kernel.org/bpf/20250703121521.1874196-1-dongml2@chinatelecom.cn/
-
-> 
-> > However having just single ftrace_ops object removes direct_call
-> > field from direct_call, which is needed by arm, so I'm not sure
-> > it's the right path forward.
-> 
-> It's also needed by powerpc and riscv since commits:
-> 
->   a52f6043a2238d65 ("powerpc/ftrace: Add support for DYNAMIC_FTRACE_WITH_DIRECT_CALLS")
->   b21cdb9523e5561b ("riscv: ftrace: support direct call using call_ops")
-> 
-> > Mark, Florent,
-> > any idea how hard would it be to for arm to get rid of direct_call field?
-> 
-> For architectures which follow the arm64 style of implementation, it's
-> pretty hard to get rid of it without introducing a performance hit to
-> the call and/or a hit to attachment/detachment/modification. It would
-> also end up being a fair amount more complicated.
-> 
-> There's some historical rationale at:
-> 
->   https://lore.kernel.org/lkml/ZfBbxPDd0rz6FN2T@FVFF77S0Q05N/
-> 
-> ... but the gist is that for several reasons we want the ops pointer in
-> the callsite, and for atomic modification of this to switch everything
-> dependent on that ops atomically, as this keeps the call logic and
-> attachment/detachment/modification logic simple and pretty fast.
-> 
-> If we remove the direct_call pointer from the ftrace_ops, then IIUC our
-> options include:
-> 
-> * Point the callsite pointer at some intermediate structure which points
->   to the ops (e.g. the dyn_ftrace for the callsite). That introduces an
->   additional dependent load per call that needs the ops, and introduces
->   potential incoherency with other fields in that structure, requiring
->   more synchronization overhead for attachment/detachment/modification.
-> 
-> * Point the callsite pointer at a trampoline which can generate the ops
->   pointer. This requires that every ops has a trampoline even for
->   non-direct usage, which then requires more memory / I$, has more
->   potential failure points, and is generally more complicated. The
->   performance here will vary by architecture and platform, on some this
->   might be faster, on some it might be slower.
-> 
->   Note that we probably still need to bounce through an intermediary
->   trampoline here to actually load from the callsite pointer and
->   indirectly branch to it.
-> 
-> ... but I'm not really keen on either unless we really have to remove 
-> the ftrace_ops::direct_call field, since they come with a substantial
-> jump in complexity.
-
-ok, that sounds bad.. thanks for the details
-
-Steven, please correct me if/when I'm wrong ;-)
-
-IIUC in x86_64, IF there's just single ftrace_ops defined for the function,
-it will bypass ftrace trampoline and call directly the direct trampoline
-for the function, like:
-
-   <foo>:
-     call direct_trampoline
-     ...
-
-IF there are other ftrace_ops 'users' on the same function, we execute
-each of them like:
-
-  <foo>:
-    call ftrace_trampoline
-      call ftrace_ops_1->func
-      call ftrace_ops_2->func
-      ...
-
-with our direct ftrace_ops->func currently using ftrace_ops->direct_call
-to return direct trampoline for the function:
-
-	-static void call_direct_funcs(unsigned long ip, unsigned long pip,
-	-                             struct ftrace_ops *ops, struct ftrace_regs *fregs)
-	-{
-	-       unsigned long addr = READ_ONCE(ops->direct_call);
-	-
-	-       if (!addr)
-	-               return;
-	-
-	-       arch_ftrace_set_direct_caller(fregs, addr);
-	-}
-
-in the new changes it will do hash lookup (based on ip) for the direct
-trampoline we want to execute:
-
-	+static void call_direct_funcs_hash(unsigned long ip, unsigned long pip,
-	+                                  struct ftrace_ops *ops, struct ftrace_regs *fregs)
-	+{
-	+       unsigned long addr;
-	+
-	+       addr = ftrace_find_rec_direct(ip);
-	+       if (!addr)
-	+               return;
-	+
-	+       arch_ftrace_set_direct_caller(fregs, addr);
-	+}
-
-still this is the slow path for the case where multiple ftrace_ops objects use
-same function.. for the fast path we have the direct attachment as described above
-
-sorry I probably forgot/missed discussion on this, but doing the fast path like in
-x86_64 is not an option in arm, right?
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 1/3] dt-bindings: clock: Add bindings for Canaan K230
+ clock controller
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>
+References: <20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com>
+ <20250730-b4-k230-clk-v7-1-c57d3bb593d3@zohomail.com>
+ <20250730-cobalt-salmon-of-charisma-aea028@kuoka>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <20250730-cobalt-salmon-of-charisma-aea028@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr0801122705379e726ccbd43f37e10cb6000094e63ed90cacde45cdbc9d713d3e27ea8ff19fee53717ce07d:zu080112272a964b8e78150ea41f6bca3600003d8e0fa10c7b72419c2cccc5a40a808f82a51dfb38244fb1a8:rf0801122c10cdd9d1176d37f07bf07f420000feac9293e220c0d9b6cd3327d2d7bf3d02e2af548a215b4f7b53805f1cdd:ZohoMail
+X-ZohoMailClient: External
 
 
-thanks,
-jirka
+On 2025/7/30 15:05, Krzysztof Kozlowski wrote:
+> On Wed, Jul 30, 2025 at 02:43:51AM +0800, Xukai Wang wrote:
+>> This patch adds the Device Tree binding for the clock controller
+>> on Canaan k230. The binding defines the clocks and the required
+>> properties to configure them correctly.
+>>
+>> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+>> ---
+>>  .../devicetree/bindings/clock/canaan,k230-clk.yaml |  61 ++++++
+>>  include/dt-bindings/clock/canaan,k230-clk.h        | 223 +++++++++++++++++++++
+>>  2 files changed, 284 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..f2aa509b12bce1a69679f6d7e2853273233266d5
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/canaan,k230-clk.yaml
+>> @@ -0,0 +1,61 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/canaan,k230-clk.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Canaan Kendryte K230 Clock
+>> +
+>> +maintainers:
+>> +  - Xukai Wang <kingxukai@zohomail.com>
+>> +
+>> +description:
+>> +  The Canaan K230 clock controller generates various clocks for SoC
+>> +  peripherals. See include/dt-bindings/clock/canaan,k230-clk.h for
+>> +  valid clock IDs.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: canaan,k230-clk
+>> +
+>> +  reg:
+>> +    items:
+>> +      - description: PLL control registers
+>> +      - description: Sysclk control registers
+>> +
+>> +  clocks:
+>> +    minItems: 1
+> No, drop. Hardware is not flexible.
+OK.
+>
+>> +    items:
+>> +      - description: Main external reference clock
+>> +      - description:
+>> +          External clock which used as the pulse input
+>> +          for the timer to provide timing signals.
+> So what is the difference that you removed my Rb? Only this? I do not
+> see any differences (and don't tell me, you claim some random indice
+> numbers as change DT maintainer would need to re-review...)
+Sorry about that. Since canaan/k230-clk.yaml was updated with new
+clocks, I thought it might require a re-review. I didn't mean to cause
+unnecessary noise.
+>
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+> No, drop. Hardware is not flexible.
+OK.
+>
+>> +    items:
+>> +      - const: osc24m
+>> +      - const: timer-pulse-in
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +  - '#clock-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    clock-controller@91102000 {
+>> +        compatible = "canaan,k230-clk";
+>> +        reg = <0x91102000 0x40>,
+>> +              <0x91100000 0x108>;
+>> +        clocks = <&osc24m>;
+>> +        clock-names = "osc24m";
+> Incomplete. Post complete hardware.
+OK.
+>
+>> +        #clock-cells = <1>;
+>> +    };
+>> diff --git a/include/dt-bindings/clock/canaan,k230-clk.h b/include/dt-bindings/clock/canaan,k230-clk.h
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..9eee9440a4f14583eac845b649e5685d623132e1
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/canaan,k230-clk.h
+>> @@ -0,0 +1,223 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+>> +/*
+>> + * Kendryte Canaan K230 Clock Drivers
+>> + *
+>> + * Author: Xukai Wang <kingxukai@zohomail.com>
+>> + */
+>> +
+>> +#ifndef __DT_BINDINGS_CANAAN_K230_CLOCK_H__
+>> +#define __DT_BINDINGS_CANAAN_K230_CLOCK_H__
+>> +
+>> +/* Kendryte K230 SoC clock identifiers (arbitrary values) */
+> Drop comment, redundant and obvious.
+OK, I'll drop it.
+>
+> Best regards,
+> Krzysztof
+>
 
