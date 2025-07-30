@@ -1,197 +1,281 @@
-Return-Path: <linux-kernel+bounces-750515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75E69B15D30
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:51:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E9B7B15D2E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CCE85A560B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 83B255644B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9011F28BA8C;
-	Wed, 30 Jul 2025 09:50:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1991F09B6;
-	Wed, 30 Jul 2025 09:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753869033; cv=none; b=m9SPrgfXUYR28FAngZa5oI5aAGQh5bcLFMdf7quqBSvLJ4Gn97N3X8atccslT0CEHbm2WSm3t7ozaUbQ05zyvQsZmn3KJmcP6ViqA6B1nov04jX5U3ZpjNp9YjsHtgJnWZqVpw2P1Laj2FY78hkrC55eDohZABWRQhaj6T4GNac=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753869033; c=relaxed/simple;
-	bh=XSx22nMmjlxza109AyQhc67lUcWbbXFFyCOm19DzJio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gmSk1unZNQ0/QtaWUWa8yTxzR3pbFedt9NIbKCFjF9oAuicOuHzBLAJiYORn0evi3UyUdBivbtlSWCof4gU3daIhiX2ZIc0KEmEhgaBIJkjMGQDMC9JABzGhREH2gKfg4PF33vbb26HS8mv14ub3dH/M2toHXamk7n0Mb38ofCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 161511BC0;
-	Wed, 30 Jul 2025 02:50:22 -0700 (PDT)
-Received: from raptor (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E04AD3F7BD;
-	Wed, 30 Jul 2025 02:50:27 -0700 (PDT)
-Date: Wed, 30 Jul 2025 10:50:17 +0100
-From: Alexandru Elisei <alexandru.elisei@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Leo Yan <leo.yan@arm.com>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Anshuman Khandual <Anshuman.Khandual@arm.com>,
-	Rob Herring <Rob.Herring@arm.com>,
-	Suzuki Poulose <Suzuki.Poulose@arm.com>,
-	Robin Murphy <Robin.Murphy@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] perf: arm_spe: Disable buffer before writing to
- PMBPTR_EL1 or PMBSR_EL1
-Message-ID: <aInqMPBzi7YnIxOB@raptor>
-References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
- <20250701-james-spe-vm-interface-v1-2-52a2cd223d00@linaro.org>
- <20250704155016.GI1039028@e132581.arm.com>
- <b77f12e7-ea3f-4c57-9706-ff8e32721cc8@linaro.org>
- <20250707153710.GB2182465@e132581.arm.com>
- <aG4_uYJgpMXo3QHQ@raptor>
- <20250714085849.GC1093654@e132581.arm.com>
- <0c53164a-306a-4cb7-9085-bba8985c32e7@linaro.org>
- <20250721152134.GF3137075@e132581.arm.com>
- <10e9cb52-2476-4c13-8632-0a85830f98dd@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 005D226E71A;
+	Wed, 30 Jul 2025 09:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Sbg2zmnf"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E21274666
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:50:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753869052; cv=fail; b=nM73DPYIrCMYvix1arnJB9cVEfsnehh4XFMFeG8AxXHa+nJrMyfjv9NTEAkatfCO6BejXfPGMkOO6jvwb4+JjDDTgaoMr7mrajwjrkYwjOoFX4mY2p0pnTieJtOUQsmGUXfjLSkbM/P20Yp28/DJTlsdUtIOyEhBrBiIzTvG+8M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753869052; c=relaxed/simple;
+	bh=T5HmMbcpdw1OX7iz0srn6/F8ozEukAhy4nsR3IUqU7U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hOcFdIi2Wd+HJ4oQEhPEJuqvgJYhXJKBW1lroZp889kjMSPnPLydLnhUKZ1E9qmuw0xVsbB0ARstk3u94lpxJZc1Unw0fj+yJuwUnuupcMuCowqA/duL6tDytHWeZqfrAk/kVBCzCcyiZ9AOe4xgvhd0CgjjD31wBJgHZeSqsIo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Sbg2zmnf; arc=fail smtp.client-ip=40.107.244.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zQpIjRjBuKK9iHX1wPEgLsmnDx8yUCSZufQX1K/bTVFW3KFeDB1KdOTB9M55sWjidOFi6Eklg5s80GGjrfkX4Mhimf4lP9TSaxDUC9FTkP+UyZ29VI6dJsteFJrBuojjnqiHbGIeILTpyi187MJDuUCU26Le+ap6JjIXw+WEfStch5MQ744OZ+CGPSWuXLWMX5DWmFpqt1VC9J8LGuMaBCSagM4Hr6hz29/He6xLxVSyGieXgFzXPfZjKzEmSM6tB1hlvL7nOIW7kMG7kZwRfGfgrrAu/gdUiSC7GWdNg7/f2zKMmq1NhQFiHue9V8ybD4Yz+zPeSEXjzwTS6XeOqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KFZ3Z2X2/oPH8X8X12+RjpsVIA8zP2VrWfFJMWAX9mM=;
+ b=xLtV/mVwtlgi0kZlFx9cOetqA0SNdZSVvweqIW/rmKkKms3MEYNF61ovjzaHYjgVQueI/PRX4QoS52U0DuzqrDUgH13oYbKmpVzwWYHgXW+ZG/ByqDfJHbplFQ5NMKerc1yQadZw4+4gFDOeKkGWSNk6/Vi7Y4iTQUkv4ok8Z7Vc1bBpVQkPGsz5llLChsCQj3rO4Q/2Cz50P+ffYsSK0uznEyA9/WQKN3kPiF6HkhjbGh+Ymeua47vcMXdzFlNu3BrigXoiYpD/BRy3Bf5yQNLsxDOxX1KhqaIoHwWs8KOs8LEBefRXWe3rbsuosGWzYmTkm84D8mfS2Mgl+rjOsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KFZ3Z2X2/oPH8X8X12+RjpsVIA8zP2VrWfFJMWAX9mM=;
+ b=Sbg2zmnfLYLss3JIG8eGsoccfnYXOf/YVk1theqo1yc5I/wHAj6JZVDsoE2qpnD4qmiCY7RF0UxHadulspAJs0SqWz8+YCHGdNpHwecU3HS08RZc6gfJ6VOEIIPl6f7ypQTNUvzA9gkAj9FkQx4qltqI/zSnbgNN5VBXyIuRSjo=
+Received: from DS7PR05CA0041.namprd05.prod.outlook.com (2603:10b6:8:2f::8) by
+ SJ1PR12MB6241.namprd12.prod.outlook.com (2603:10b6:a03:458::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Wed, 30 Jul
+ 2025 09:50:46 +0000
+Received: from DS1PEPF0001709B.namprd05.prod.outlook.com
+ (2603:10b6:8:2f:cafe::34) by DS7PR05CA0041.outlook.office365.com
+ (2603:10b6:8:2f::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.12 via Frontend Transport; Wed,
+ 30 Jul 2025 09:50:45 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ DS1PEPF0001709B.mail.protection.outlook.com (10.167.18.105) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8989.10 via Frontend Transport; Wed, 30 Jul 2025 09:50:45 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Jul
+ 2025 04:50:44 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Jul
+ 2025 04:50:44 -0500
+Received: from [10.85.43.78] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 30 Jul 2025 04:50:40 -0500
+Message-ID: <61b68b13-2482-499b-a550-a11580a61e9d@amd.com>
+Date: Wed, 30 Jul 2025 15:20:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <10e9cb52-2476-4c13-8632-0a85830f98dd@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [dri?] WARNING in __ww_mutex_wound
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, syzbot
+	<syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com>, <airlied@gmail.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<mripard@kernel.org>, <simona@ffwll.ch>, <syzkaller-bugs@googlegroups.com>,
+	<tzimmermann@suse.de>, Valentin Schneider <valentin.schneider@arm.com>,
+	Connor O'Brien <connoro@google.com>, John Stultz <jstultz@google.com>, "Peter
+ Zijlstra (Intel)" <peterz@infradead.org>
+References: <68894443.a00a0220.26d0e1.0015.GAE@google.com>
+ <8ab72592-7e16-4d79-9e26-f98a1938cb2a@linux.intel.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <8ab72592-7e16-4d79-9e26-f98a1938cb2a@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Received-SPF: None (SATLEXMB05.amd.com: kprateek.nayak@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001709B:EE_|SJ1PR12MB6241:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f3a8c8c-86d4-495c-6a51-08ddcf4e8e17
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|7416014|82310400026|13003099007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2x5Wlg3MytnSHU1TGZVYTlHZm5hVmpxVFRyallyZzNmS2YyYzNHMWg2NTQx?=
+ =?utf-8?B?M3NGdmszK0pSVzcwT3JrZUpzalYzbzAvSm44dEp4Ym9rbkdKTkk2VDkxL0Vl?=
+ =?utf-8?B?UHpiK3M5Uk1kSDB0SW50czFJekdvcDlxVjhkSk1mTUFuMmZWTmk5N0dpUFJr?=
+ =?utf-8?B?N0o4Vmk0ZFE4bjF5SjE2Si8rUC9CaXF6eldhdFIvL2dQbkJVcTFvdjMzZGxp?=
+ =?utf-8?B?aFFpczJaRThYTjY5M3c2aFR3Q3JGRjJLeVMxVEZMNjdPcGUrd29pN2R1NUtP?=
+ =?utf-8?B?YzBzZ3RBRFRQdXlkNGk0OFJtdGU5RGFQZm9pMTR2ckJhT3drbHFxRHVkZmto?=
+ =?utf-8?B?QXNWUFF3eGt4M0UzeEdOTW9HK2NWekxxbllacXlDWUtkZnFyVC9qZzVibzkr?=
+ =?utf-8?B?OGRHKy8wRnFNTlJsUFZIcEZ3KzhrRndyWWx3OHlaNjZBbC82WGhpaW15VnU3?=
+ =?utf-8?B?dVVtMldObXhZWnNERXdBSk9uZXF3VjM0ZWFpa3Y2enJIS2hRNGZuNFhnOVBS?=
+ =?utf-8?B?MUdoU2s4WjdLVEtZeXRjZFdaU3k3TVpDQzI0YlZqSU80dEhwVXFTaGNjSFNQ?=
+ =?utf-8?B?WTF4MTFobFQzSGtEeXNLTWx4RHdPeGxXeXpwc1BadE9mMkZGSk1wZ0JwVUxB?=
+ =?utf-8?B?VXZBUU5UbGhBbld4cDhCQ3ZmWTJnSGkxVzFkaW8zaDNqdUVaWSszYWh1TnpP?=
+ =?utf-8?B?Zk9vQzZoYkkvMjY0UjRCWDNsM3VRYWVQaU85dG01VElIOWxHd1AwdTRkemFt?=
+ =?utf-8?B?TVFuWCs2dDNUOVp5a1VVUXNXOUNKanJRZ1pYRHFxbnBZVFhWaVozUmwzd1ZR?=
+ =?utf-8?B?OEFqT3lLb3RDK1ErbWVISEc3VitKVHVyWVlTZWl2em9HRTlTTmVqc1diRTF3?=
+ =?utf-8?B?ZXJTOG5ZNkJWdWZNZnNZVzVhb0tFMThiRnowOWZscG5jREVBenQ2RlpLbmtG?=
+ =?utf-8?B?MnRJKzBTWEdHNzEyRUpkcVE2ZTBaMkxTYlNZSkJUQ3pkd0swdGJPcFNMSEZk?=
+ =?utf-8?B?YjVyVzN3OXFMcHpXdGhUd0hySk9ZbW5OK0p2SExLcGsyYXZZNTNFVlF3b0tY?=
+ =?utf-8?B?OTBQcHpIK2RocWNZY2xrYWVZakhsZE5SVDY5SkFnb0VBaHFuSm50TDJicGhv?=
+ =?utf-8?B?Ym9aTnZDaFJGdUovcDVCQnNES3RFM1B3ZUZqVmZ2aGVNTldyS0FxTDRLVW5G?=
+ =?utf-8?B?RWpTYVYvdnRBU3VGS0Mrd0F4RzdnbzVPYjlvakdKbjBoZkRmQ3RIcHYzZ1VZ?=
+ =?utf-8?B?djhQY2YxN0FiTmEwcldzYTRZKzlFaG9udlpNOUVKUzljZ3hNRmtBNEY5cTYy?=
+ =?utf-8?B?dHNQTmI2S2VQcU8vc1hLZWlWY1ZwR3RSMjQ0WWg3RERyaEwvQmxMVHM1SFBZ?=
+ =?utf-8?B?OHQzU3lZZHBOOUhaYVNrYUZYUVRQVEdpek9zT0J6TjljMDJ1bzdWU0dMTlox?=
+ =?utf-8?B?KzMzanFDVFQrenlsRDN2YmhzRnA3Zk5JR1liaGlCUFVLNlpiTFZLbnlMWU5s?=
+ =?utf-8?B?NXhCVlVjZTlzeXprY2JBN3VFL3dwWVpPYU5icDRreC90TzF2K0ZYRXlBZyt6?=
+ =?utf-8?B?YXBTckZPTVNMc2hGb0txMTd3OENxUFdJZ2NobUh5SWVhZHJ0UnJNTjBYS2Nw?=
+ =?utf-8?B?bHdJN3o3d2ZZVE1sVVhwa2tQTHVreHh3Q3dsSkNCa0IxYjRwaTJ3dHdxUlNH?=
+ =?utf-8?B?a05hcjE0aVM2YUxWcjZaZW5HVXpLbW0wZTV2OW96Y1NUQ0V2dDdleUdGQ1lB?=
+ =?utf-8?B?TThiQnVLRU1Pd0pjUEVCbE56RGJ5Um5RN1VDUGFMWklXSmtoZlBHZXFxVlN4?=
+ =?utf-8?B?YVZpanBxTXFtbElMS1cydURsaEs4NkYzYlFsYmtkOGhKd2RrRXNFVEtWVEE5?=
+ =?utf-8?B?ODJGUEh4MFNwVlp0cWNNdnVwYnJtcFVYWVNTUHYxbEQ1cmljZGI5eGpmOTB5?=
+ =?utf-8?B?R2FZYnZRUm9qWElQRCszU0dyZ0JCL0hCeHQ0Q2lTV2F6aWU1WEp1ci9GSlJw?=
+ =?utf-8?Q?qJto3mlrbvwiV4V0vHdpSyRuZTED8g=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(7416014)(82310400026)(13003099007)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 09:50:45.4022
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f3a8c8c-86d4-495c-6a51-08ddcf4e8e17
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001709B.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6241
 
-Hi Leo, James,
-
-On Tue, Jul 22, 2025 at 03:46:11PM +0100, James Clark wrote:
+On 7/30/2025 1:57 PM, Maarten Lankhorst wrote:
+> Hey,
 > 
+> This warning is introduced in linux-next as a4f0b6fef4b0 ("locking/mutex: Add p->blocked_on wrappers for correctness checks")
+> Adding relevant people from that commit.
 > 
-> On 21/07/2025 4:21 pm, Leo Yan wrote:
-> > On Mon, Jul 21, 2025 at 02:20:15PM +0100, James Clark wrote:
-> > 
-> > [...]
-> > 
-> > > > > Thought about this some more.
-> > > > > 
-> > > > > Before:
-> > > > > 
-> > > > > arm_spe_pmu_buf_get_fault_act:
-> > > > >     <drain buffer>
-> > > > >     ISB
-> > > > > arm_spe_perf_aux_output_begin:
-> > > > >     PMBLIMITR_EL1.E = 1
-> > > > > ISB
-> > > > > PMBSR_EL1.S = 0
-> > > > > ERET
-> > > > > 
-> > > > > Now:
-> > > > > 
-> > > > > PMBLIMITR_EL1 = 0
-> > > > > ISB
-> > > > > 
-> > > > > PMBSR_EL1.S = 0
-> > > > > arm_spe_perf_aux_output_begin:
-> > > > >     ISB
-> > > > >     PMBLIMITR_EL1.E = 1
-> > > > > ERET
-> > > > > 
-> > > > > I don't see much of a difference between the two sequences - the point after
-> > > > > which we can be sure that profiling is enabled remains the ERET from the
-> > > > > exception return.  The only difference is that, before this change, the ERET
-> > > > > synchronized clearing the PMBSR_EL1.S bit, now it synchronizes setting the
-> > > > > PMBLIMITR_EL1.E bit.
-> > > > > 
-> > > > > Thoughts?
-> > > > 
-> > > > To make the discussion easier, I'll focus on the trace enabling flow
-> > > > in this reply.
-> > > > 
-> > > > My understanding of a sane flow would be:
-> > > > 
-> > > >     arm_spe_pmu_irq_handler() {
-> > > >       arm_spe_perf_aux_output_begin() {
-> > > >             SYS_PMBPTR_EL1 = base;
-> > > > 
-> > > >             ISB // Synchronization between SPE register setting and
-> > > >                 // enabling profiling buffer.
-> > > >             PMBLIMITR_EL1.E = 1;
-> > > >       }
-> > > >       ISB // Context synchronization event to ensure visibility to SPE
-> > > >     }
-> > > > 
-> > > >     ... start trace ... (Bottom half, e.g., softirq, etc)
-> > > > 
-> > > >     ERET
-> > > > 
-> > > > In the current code, arm_spe_perf_aux_output_begin() is followed by an
-> > > > ISB, which serves as a context synchronization event to ensure
-> > > > visibility to the SPE. After that, it ensures that the trace unit will
-> > > > function correctly.
-> > > > 
-> > > 
-> > > But I think Alex's point is that in the existing code the thing that finally
-> > > enables trace (PMBSR_EL1.S = 0) isn't followed by an isb(), only an ERET. So
-> > > the new flow isn't any different in that regard.
-> > 
-> > Thanks for explanation.
-> > 
-> > > > I understand that the Software Usage PKLXF recommends using an ERET as
-> > > > the synchronization point. However, between enabling the profiling
-> > > > buffer and the ERET, the kernel might execute other operations (e.g.,
-> > > > softirqs, tasklets, etc.).
-> > > 
-> > > Isn't preemption disabled? Surely that's not possible. Even if something did
-> > > run it wouldn't be anything that touches the SPE registers, and we're sure
-> > > there's an isb() between setting up the buffer and the final PMBLIMITR_EL1.E
-> > > = 1
-> > 
-> > Yes, bottom half runs in preemtion disabled state. See:
-> > 
-> >    el1_interrupt() -> __el1_irq() -> irq_exit_rcu() -> invoke_softirq()
-> > 
-> > In some cases, sotfirq and tasklet might even cause long latency (I
-> > believe it can be milliseconds or even longer), this is why ftrace
-> > "irqsoff" tracer is used to profile latency caused by irq off state.
-> > 
-> > Bottom half does not modify SPE registsers, but it can be a long road
-> > between enabling SPE trace and ERET.
-> > 
-> > > > Therefore, it seems to me that using ERET as the synchronization point
-> > > > may be too late. This is why I think we should keep an ISB after
-> > > > arm_spe_perf_aux_output_begin().
-> > > 
-> > > Wouldn't that make the ERET too late even in the current code then? But I
-> > > think we're agreeing there's no issue there?
-> > 
-> > I would say ERET is too late for current code as well.
-> > 
-> > Thanks,
-> > Leo
-
-Thanks for the explanation and the analysis. I think we were looking at the
-patch from different point of views: I was interested in not changing the
-current behaviour, you were saying that the existing behaviour can be improved
-upon.
-
-> Ok I get it now. The point is that there is stuff in between the return in
-> the SPE IRQ handler and the actual ERET. If someone is interested in
-> sampling the kernel then they might miss sampling a small amount of that.
+> Kind regards,
+> ~Maarten
 > 
-> It's not a correctness thing, just reducing potential gaps in the samples. I
-> can add another commit to add it, but it doesn't look like it would be a
-> fixes commit either, just an improvement. And the same issue applies to the
-> existing code too.
+> Den 2025-07-29 kl. 23:59, skrev syzbot:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    d086c886ceb9 Add linux-next specific files for 20250718
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=161204a2580000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=69896dd7b8c4e81e
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=602c4720aed62576cd79
+>> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16fff4f0580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=111204a2580000
+>>
+>> Downloadable assets:
+>> disk image: https://storage.googleapis.com/syzbot-assets/54504fbc2437/disk-d086c886.raw.xz
+>> vmlinux: https://storage.googleapis.com/syzbot-assets/b427b00abffe/vmlinux-d086c886.xz
+>> kernel image: https://storage.googleapis.com/syzbot-assets/5a87731b006b/bzImage-d086c886.xz
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+>> Reported-by: syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com
+>>
+>> ------------[ cut here ]------------
+>> WARNING: ./include/linux/sched.h:2173 at __clear_task_blocked_on include/linux/sched.h:2173 [inline], CPU#1: syz.1.8698/395
+>> WARNING: ./include/linux/sched.h:2173 at __ww_mutex_wound+0x21a/0x2b0 kernel/locking/ww_mutex.h:346, CPU#1: syz.1.8698/395
+>> Modules linked in:
+>> CPU: 1 UID: 0 PID: 395 Comm: syz.1.8698 Not tainted 6.16.0-rc6-next-20250718-syzkaller #0 PREEMPT(full) 
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+>> RIP: 0010:__clear_task_blocked_on include/linux/sched.h:2173 [inline]
+>> RIP: 0010:__ww_mutex_wound+0x21a/0x2b0 kernel/locking/ww_mutex.h:346
 
-I agree here, this looks on an improvement on existing behaviour. I would keep
-it as a patch separate from this series, as it's not a fix, and it's not related
-to to the rules from DEN0154.
+When wounding the lock owner, could it be possible that the lock
+owner is blocked on a different nested lock? Lock owner implies it
+is not blocked on the current lock we are trying to wound right?
 
-Thanks,
-Alex
+I remember John mentioning seeing circular chains in find_proxy_task()
+which required this but looking at this call-chain I'm wondering if
+only the __ww_mutex_check_waiters() (or some other path) requires
+__clear_task_blocked_on() for that case.
+
+>> Code: 5f 5d c3 cc cc cc cc cc 90 0f 0b 90 e9 89 fe ff ff 90 0f 0b 90 e9 39 ff ff ff 90 0f 0b 90 4d 85 ff 0f 85 67 ff ff ff eb 95 90 <0f> 0b 90 eb 8f 48 c7 c1 70 00 e4 8f 80 e1 07 80 c1 03 38 c1 0f 8c
+>> RSP: 0018:ffffc900030e7720 EFLAGS: 00010046
+>> RAX: ffff888024a1b000 RBX: dffffc0000000000 RCX: 8f1a7ab232ebe500
+>> RDX: 00000000000003ef RSI: ffffffff8de5b067 RDI: ffffffff8c04d400
+>> RBP: 0000000000000001 R08: ffff888024a224bf R09: 1ffff11004944497
+>> R10: dffffc0000000000 R11: ffffed1004944498 R12: ffff88802dee8a78
+>> R13: ffffc900030e7ae8 R14: ffff88802dee8000 R15: ffff888024a224b8
+>> FS:  00007fe6e4a7f6c0(0000) GS:ffff8881258ab000(0000) knlGS:0000000000000000
+>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> CR2: 00007fe6e4a5ed58 CR3: 000000003115e000 CR4: 00000000003526f0
+>> Call Trace:
+>>  <TASK>
+>>  __ww_mutex_add_waiter kernel/locking/ww_mutex.h:574 [inline]
+>>  __mutex_lock_common kernel/locking/mutex.c:642 [inline]
+>>  __ww_mutex_lock+0xba3/0x2930 kernel/locking/mutex.c:771
+>>  ww_mutex_lock_interruptible+0x3f/0x1c0 kernel/locking/mutex.c:904
+>>  modeset_lock+0x21a/0x650 drivers/gpu/drm/drm_modeset_lock.c:-1
+>>  drm_modeset_lock drivers/gpu/drm/drm_modeset_lock.c:398 [inline]
+>>  drm_modeset_lock_all_ctx+0x62/0x300 drivers/gpu/drm/drm_modeset_lock.c:459
+>>  setplane_internal drivers/gpu/drm/drm_plane.c:1118 [inline]
+>>  drm_mode_setplane+0x577/0xba0 drivers/gpu/drm/drm_plane.c:1175
+>>  drm_ioctl_kernel+0x2cc/0x390 drivers/gpu/drm/drm_ioctl.c:796
+>>  drm_ioctl+0x67f/0xb10 drivers/gpu/drm/drm_ioctl.c:893
+>>  vfs_ioctl fs/ioctl.c:51 [inline]
+>>  __do_sys_ioctl fs/ioctl.c:598 [inline]
+>>  __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:584
+>>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>>  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7fe6e3b8e9a9
+>> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+>> RSP: 002b:00007fe6e4a7f038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>> RAX: ffffffffffffffda RBX: 00007fe6e3db5fa0 RCX: 00007fe6e3b8e9a9
+>> RDX: 0000200000000080 RSI: 00000000c03064b7 RDI: 0000000000000003
+>> RBP: 00007fe6e3c10d69 R08: 0000000000000000 R09: 0000000000000000
+>> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+>> R13: 0000000000000000 R14: 00007fe6e3db5fa0 R15: 00007ffdf1fa90a8
+>>  </TASK>
+>>
+>>
+>> ---
+>> This report is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this issue. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>>
+>> If the report is already addressed, let syzbot know by replying with:
+>> #syz fix: exact-commit-title
+>>
+>> If you want syzbot to run the reproducer, reply with:
+>> #syz test: git://repo/address.git branch-or-commit-hash
+>> If you attach or paste a git patch, syzbot will apply it before testing.
+>>
+>> If you want to overwrite report's subsystems, reply with:
+>> #syz set subsystems: new-subsystem
+>> (See the list of subsystem names on the web dashboard)
+>>
+>> If the report is a duplicate of another one, reply with:
+>> #syz dup: exact-subject-of-another-report
+>>
+>> If you want to undo deduplication, reply with:
+>> #syz undup
+> 
+
+-- 
+Thanks and Regards,
+Prateek
+
 
