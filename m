@@ -1,187 +1,254 @@
-Return-Path: <linux-kernel+bounces-750161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E57B157F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:58:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE29B157F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:59:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 754E418A4189
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:58:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E82546526
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AE61C6FFD;
-	Wed, 30 Jul 2025 03:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7201AAE13;
+	Wed, 30 Jul 2025 03:59:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="AdgxG56R"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qsHaJBmx"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E71154426;
-	Wed, 30 Jul 2025 03:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753847880; cv=pass; b=H02Y0f2nY+xrcRpg70yIKJp3u+gVV7HucnoIhxzayURbooinh2ueJ5M9YXRLUzEDwMSVOcvw49IqRfSZQT1FRZlMiufO4fAsPR3sWOV0wHQmf2zqKRvaWvgFnN9dQNqSNflM0yuX3nJM+jBIrCde1602ADa7+zXEGhRsYDTbEto=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753847880; c=relaxed/simple;
-	bh=FxmCAKhtpdq267tUKD5rYiqEjhu/7j22O+gAW8Uw2BA=;
-	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
-	 Content-Type; b=hZr5gm+mcDHbzR6on5ZfpYsB9IMdcdY6pcF8g/EFL+c2FU72XFaTLeQeHmnLO043Hmse8uZvGA6MwMAiyeEyIoKW9DLyaJdAgj5XvKfuVdSXJQT26GG12ag24Z4dU167Yk7/PvAwYlXue1ZGtYPULH5KZN+QMsxnv9PJwqM5TW4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=AdgxG56R; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1753847840; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=NCuR8+FsGRD+jtnwdfMXS57jZARc++6hqANo5M4wHJXIuSmXFNDZJA+aAe8jF9nHRkYNMTGYOZbkoklz/QH+MYNAaJ9YSS4a/Hn7Jf6QsQzdJKGKcd3iM2w6sLxmYLioTyQYs6PESJsrHMezF7G2Gb9nnJ0UZz1v2SjTHqKXJVM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753847840; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ASOku5JSU5RCbAivVDsH/TwJN9/qPsflUf5UEdZY4Mo=; 
-	b=B5qiUKAGkt8yrocZXi+vDyEzG1JGHCwYFheflZLFOUJeDlSnJfkaTTHN1HwG0UmJ2uaauj3iYN0DwG2uyrQmB8MBxifdMnU8pE1jKJXf8raCNLdSOxHn0ktF+SXW8FaMU6Rrtk8V6jb4MCcgRa6Sg2CblZAYIDqtvmJd7EFt/K8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753847840;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=ASOku5JSU5RCbAivVDsH/TwJN9/qPsflUf5UEdZY4Mo=;
-	b=AdgxG56RP5DB/CKLfrO5XyJbqz+zw8NrzBq8JzcUEIJFwpTCI6B6ZoS3fLYSrjAG
-	c9VhF2R7O4V9hQMgZSxHo7M19jJZbvSC2fMUElK4xT8F9ok5nbm7bJ6dsp2B4OslD35
-	BJ7iJ02bePpUDvz1N2STaW0/s0AsKa39PVAtWMrE=
-Received: by mx.zohomail.com with SMTPS id 1753847836673828.946911370315;
-	Tue, 29 Jul 2025 20:57:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211DD4642D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:59:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753847979; cv=none; b=dWJOJbZal3jhR43F8auV9HFGt6pd0JmniqsUmXMYQn3dCvLBeAPAQaEKCZfTt2QBaCEaBtwe5ySkfZGo6VKMwc+vcJi80wWQ13gBlKiHbNQW5LkP66lZ1hMy8Do1rPawtmcyMjwdDatkABtKiUhKCAmJGvBX1aQEpAOWc9fWOZY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753847979; c=relaxed/simple;
+	bh=2Vx+OVkIDNsjIzjIyltCRx3+scY2So6yx83lQF+SMmM=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=gz7kkbZPDYMOtfADVNwjcOR4PHX8M58nNrLG6iQnlVtJxvwXEmzlduO8CM507U/ARU6u4IhSQkd2umyiAyAj0frQbBp2O2F3l4svgkKP10xoBekxp74UhMaaAtDMyRvF/4xevWF55KCZ22FY6xYatzjhUkp3v65yBZkzQS0XeWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qsHaJBmx; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Inochi Amaoto" <inochiama@gmail.com>, 
-	"Bjorn Andersson" <andersson@kernel.org>, 
-	"Mathieu Poirier" <mathieu.poirier@linaro.org>, 
-	"Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Chen Wang" <unicorn_wang@outlook.com>, 
-	"Philipp Zabel" <p.zabel@pengutronix.de>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
-	"Alexandre Ghiti" <alex@ghiti.fr>
-In-Reply-To: <jcpr5tg7jyyyqmaujegeuq5j3dqz4rrgxfz73rl55l3jibtq63@3w7bzux2b2je>
-Cc: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>, 
-	<sophgo@lists.linux.dev>, <linux-kernel@vger.kernel.org>, 
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for Sophgo
-	 CV1800B SoC
-Message-ID: <1856eb4ef9c9b448.51cf78412ad49c56.737f9c77b35de27d@Jude-Air.local>
-Date: Wed, 30 Jul 2025 03:57:09 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753847965;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dlYZtGZVyCi4PinlFv9/1yDi5aJSz0ey8B3bkRTTyFE=;
+	b=qsHaJBmxhNoF2T/EbYommxMEZ+IY8yJCw8kJsFysiXkkO3j20a7sw4TMtISwGuvcFZD7d0
+	Ebw72OWXpqSTHNgnAagiVcvB/ME2a2qm/+R3vWuEdNHeV8CS8F7kY7zh0V4xJ+/CDY1Q4i
+	vf1D5ZIRZApKPrjt2AD7oNItYUeK2f8=
+Date: Wed, 30 Jul 2025 03:59:21 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Hui Zhu" <hui.zhu@linux.dev>
+Message-ID: <a1c1724a7796be559c89bb32c1e8ab38a37d5c4c@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v5 1/2] rust: allocator: add KUnit tests for alignment
+ guarantees
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
+ <vbabka@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ "Uladzislau  Rezki" <urezki@gmail.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
+ <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ bjorn3_gh@protonmail.com, "Benno Lossin" <lossin@kernel.org>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice  Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, "Hui Zhu" <zhuhui@kylinos.cn>, "Geliang
+ Tang" <geliang@kernel.org>, "Andrew Morton" <akpm@linux-foundation.org>,
+ vitaly.wool@konsulko.se
+In-Reply-To: <DBL1T0JY1LUX.1606LM78FACYM@kernel.org>
+References: <cover.1753423953.git.zhuhui@kylinos.cn>
+ <da9b2afca02124ec14fc9ac7f2a2a85e5be96bc7.1753423953.git.zhuhui@kylinos.cn>
+ <DBL1JZEZB87H.1IMYO79R3H9UM@kernel.org>
+ <DBL1T0JY1LUX.1606LM78FACYM@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 29/07/2025 16:31, Inochi Amaoto wrote:
-> On Mon, Jul 28, 2025 at 07:03:23PM +0800, Junhui Liu wrote:
->> Add C906L remote processor for CV1800B SoC, which is an asymmetric
->> processor typically running RTOS.
->>=20
->> Signed-off-by: Junhui Liu <junhui.liu@pigmoral.tech>
->> ---
->>  .../bindings/remoteproc/sophgo,cv1800b-c906l.yaml  | 79 ++++++++++++++++=
-++++++
->>  1 file changed, 79 insertions(+)
->>=20
->> diff --git a/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-=
-c906l.yaml b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c90=
-6l.yaml
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..2061c2fd6ba343c09b1a91700=
-ea4a695d2b57f81
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/remoteproc/sophgo,cv1800b-c906l.y=
-aml
->> @@ -0,0 +1,79 @@
->> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/remoteproc/sophgo,cv1800b-c906l.yaml#=
+2025=E5=B9=B47=E6=9C=8825=E6=97=A5 18:02, "Danilo Krummrich" <dakr@kernel=
+.org mailto:dakr@kernel.org?to=3D%22Danilo%20Krummrich%22%20%3Cdakr%40ker=
+nel.org%3E > =E5=86=99=E5=88=B0:
 
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Sophgo C906L remote processor controller for CV1800B SoC
->> +
->> +maintainers:
->> +  - Junhui Liu <junhui.liu@pigmoral.tech>
->> +
->> +description:
->> +  Document the bindings for the C906L remoteproc component that loads an=
-d boots
->> +  firmwares on the CV1800B SoC.
->> +
->> +properties:
->> +  compatible:
->> +    const: sophgo,cv1800b-c906l
->> +
->> +  firmware-name:
->> +    maxItems: 1
->> +
->> +  mbox-names:
->> +    items:
->> +      - const: tx
->> +      - const: rx
->> +
->> +  mboxes:
->> +    description:
->> +      This property is required only if the rpmsg/virtio functionality i=
-s used.
->> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
->> +    items:
->> +      - description: mailbox channel to send data to C906L
->> +      - description: mailbox channel to receive data from C906L
->> +
->> +  memory-region:
->> +    description:
->> +      List of phandles to reserved memory regions used by the remote pro=
-cessor.
->> +      The first region is required and provides the firmware region for =
-the
->> +      remote processor. The following regions (vdev buffer, vrings) are =
-optional
->> +      and are only required if rpmsg/virtio functionality is used.
->> +    minItems: 1
->> +    items:
->> +      - description: firmware region
->> +      - description: vdev buffer
->> +      - description: vring0
->> +      - description: vring1
->> +    additionalItems: true
->> +
->=20
-> Why not allocating these region dynamicly? I do not think firware is
-> always avaible before staring. Allowing dynamic firmware give us max
-> flexiblity.
-
-I'm afraid it's not easy to do this.
-
-For firmware region, the RTOS firmware usually needs a physical address
-to link to, and I have researched and tested two RTOS (RT-Thread and
-Zephyr) on the C906L, both of them do not support position-independent
-execution or runtime relocation. Therefore, a reserved memory region is
-needed to provide a fixed physical address for the RTOS firmware.
-(In fact, there is already a reserved memory region for the C906L in
-cv1800b-milkv-duo.dts)
-
-For virtio-related regions, the RTOS firmware also needs to know the
-shared memory regions for communications at compile time.
-
-So, reserving memory through DT is necessary for now.
 
 >=20
-> Regards,
-> Inochi
+>=20(Cc: Andrew)
+>=20
+>=20On Fri Jul 25, 2025 at 11:50 AM CEST, Danilo Krummrich wrote:
+>=20
+>=20>=20
+>=20> On Fri Jul 25, 2025 at 9:02 AM CEST, Hui Zhu wrote:
+> >=20
+>=20> >=20
+>=20> > From: Hui Zhu <zhuhui@kylinos.cn>
+> > >=20
+>=20> >  Add comprehensive tests to verify correct alignment handling in =
+Rust
+> > >  allocator wrappers. The tests validate:
+> > >=20
+>=20> >  That kmalloc respects both standard (128-byte) and page-size
+> > >  (8192-byte) alignments when allocating structs with explicit align=
+ment
+> > >  attributes.
+> > >=20
+>=20> >  That vmalloc correctly handles standard alignments but intention=
+ally
+> > >  rejects allocations requiring alignments larger than its capabilit=
+ies.
+> > >=20
+>=20> >  That kvmalloc mirrors vmalloc's constraints, accepting standard
+> > >  alignments but rejecting excessive alignment requirements.
+> > >=20
+>=20> >  The test infrastructure uses specialized aligned structs (Blob a=
+nd
+> > >  LargeAlignBlob) and a test harness (TestAlign) to validate pointer
+> > >  alignment through different allocation paths. This ensures our Rus=
+t
+> > >  allocators correctly propagate kernel allocation constraints.
+> > >=20
+>=20> >  Co-developed-by: Geliang Tang <geliang@kernel.org>
+> > >  Signed-off-by: Geliang Tang <geliang@kernel.org>
+> > >  Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
+> > >=20
+>=20>  Thanks, this looks good. I think it would be good to rebase onto [=
+1], since it
+> >  will likely land in the same cycle. Additionally, two nits below.
+> >=20
+>=20Please also Cc: Andrew for subsequent submissions, since this will, d=
+ue to the
+> interaction with [1] likely go through his tree.
+>=20
+>=20>=20
+>=20> As a follow-up we could also test alignment in the context of
+> >  Allocator::realloc(), i.e. when growing and shrinking buffers or req=
+uesting a
+> >  different NUMA node.
+> >=20
+>=20>  [1] https://lore.kernel.org/lkml/20250715135645.2230065-1-vitaly.w=
+ool@konsulko.se/
+> >=20
+>=20> >=20
+>=20> > ---
+> > >  rust/kernel/alloc/allocator.rs | 58 ++++++++++++++++++++++++++++++=
+++++
+> > >  1 file changed, 58 insertions(+)
+> > >=20
+>=20> >  diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/=
+allocator.rs
+> > >  index aa2dfa9dca4c..bcc916240f11 100644
+> > >  --- a/rust/kernel/alloc/allocator.rs
+> > >  +++ b/rust/kernel/alloc/allocator.rs
+> > >  @@ -187,3 +187,61 @@ unsafe fn realloc(
+> > >  unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flag=
+s) }
+> > >  }
+> > >  }
+> > >  +
+> > >  +#[macros::kunit_tests(rust_allocator_kunit)]
+> > >  +mod tests {
+> > >  + use super::*;
+> > >  + use core::mem::MaybeUninit;
+> > >  + use kernel::prelude::*;
+> > >  +
+> > >=20
+>=20>  --8<--
+> >=20
+>=20> >=20
+>=20> > + const TEST_SIZE: usize =3D 1024;
+> > >  + const TEST_LARGE_ALIGN_SIZE: usize =3D kernel::page::PAGE_SIZE *=
+ 4;
+> > >  +
+> > >  + // These two structs are used to test allocating aligned memory.
+> > >  + // they don't need to be accessed, so they're marked as dead_cod=
+e.
+> > >  + #[allow(dead_code)]
+> > >=20
+>=20>  This should be #[expect(dead_code)].
+> >=20
+>=20> >=20
+>=20> > + #[repr(align(128))]
+> > >  + struct Blob([u8; TEST_SIZE]);
+> > >  + #[allow(dead_code)]
+> > >  + #[repr(align(8192))]
+> > >  + struct LargeAlignBlob([u8; TEST_LARGE_ALIGN_SIZE]);
+> > >  +
+> > >  + struct TestAlign<T, A: Allocator>(Box<MaybeUninit<T>, A>);
+> > >  + impl<T, A: Allocator> TestAlign<T, A> {
+> > >  + fn new() -> Result<Self> {
+> > >  + Ok(Self(Box::<_, A>::new_uninit(GFP_KERNEL)?))
+> > >  + }
+> > >  +
+> > >  + fn alignment_valid(&self, align: usize) -> bool {
+> > >  + assert!(align.is_power_of_two());
+> > >  +
+> > >  + let addr =3D self.0.as_ptr() as usize;
+> > >  + if addr & (align - 1) !=3D 0 {
+> > >  + false
+> > >  + } else {
+> > >  + true
+> > >  + }
+> > >=20
+>=20>  This can just be
+> >=20
+>=20>  addr & (align - 1) =3D=3D 0
+> >=20
+>=20>  instead of the conditional clause.
+> >=20
+>=20> >=20
+>=20> > + }
+> > >  + }
+> > >=20
+>=20>  We could move all the above into test_alignment() given that it's =
+likely only
+> >  needed from there.
+> >=20
+>=20> >=20
 
---=20
-Best regards,
-Junhui Liu
+Hi=20Danilo,
 
+Thanks!
+
+I sent v6 version that rebased on [1].
+
+Best,
+Hui
+
+[1] https://lore.kernel.org/lkml/20250715135645.2230065-1-vitaly.wool@kon=
+sulko.se/
+
+> > > +
+> > >  + #[test]
+> > >  + fn test_alignment() -> Result<()> {
+> > >  + let ta =3D TestAlign::<Blob, Kmalloc>::new()?;
+> > >  + assert!(ta.alignment_valid(128));
+> > >  +
+> > >  + let ta =3D TestAlign::<LargeAlignBlob, Kmalloc>::new()?;
+> > >  + assert!(ta.alignment_valid(8192));
+> > >  +
+> > >  + let ta =3D TestAlign::<Blob, Vmalloc>::new()?;
+> > >  + assert!(ta.alignment_valid(128));
+> > >  +
+> > >  + assert!(TestAlign::<LargeAlignBlob, Vmalloc>::new().is_err());
+> > >  +
+> > >  + let ta =3D TestAlign::<Blob, KVmalloc>::new()?;
+> > >  + assert!(ta.alignment_valid(128));
+> > >  +
+> > >  + assert!(TestAlign::<LargeAlignBlob, KVmalloc>::new().is_err());
+> > >  +
+> > >  + Ok(())
+> > >  + }
+> > >  +}
+> > >  --=20
+>=20> >  2.43.0
+> > >
+> >
+>
 
