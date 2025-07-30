@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-750580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5EAB15E54
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:37:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9D8B15E56
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41DB56193F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 869BE18C43BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393FB286D71;
-	Wed, 30 Jul 2025 10:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F832900A8;
+	Wed, 30 Jul 2025 10:38:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iyzo21Il"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A40635;
-	Wed, 30 Jul 2025 10:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="jt6RaZC7"
+Received: from sinmsgout03.his.huawei.com (sinmsgout03.his.huawei.com [119.8.177.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 500D322318;
+	Wed, 30 Jul 2025 10:38:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753871844; cv=none; b=f8t1vXlkK/U+BUFRIZ/4jLu4k+whZhpIFv6izY9OsCyW0bhaaNJto9ZpvxJlWeRYb83m2vliOgymEi2xPfCh9KwdmPSAI/G940gGv6wEhsH/AVmpDB/hVo/q39qPSrpYqiXg8gnm19fZAqmEQIsAX179ZtqJAlTxGCJTMahwG+M=
+	t=1753871919; cv=none; b=NgZbsvBVdNzi4ACcINAQAQHzCob6SZnWL9Ba6bDiZaoZnxYe3T28OBluPN+n3Nty5pTeN5EzVA7dXaSPjKbWXQgyGe8XVEKbrwBS1Cur8NOPYgCUUWPvI6U2rJZ1icaMGD6lnb1Eiabwj+wEEoEb/3G0WskyUOr4wT4vn9+y3wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753871844; c=relaxed/simple;
-	bh=5MiY79uSTCiApTgg0QkpOqtP5K3XbFb7C1EdeOFdOno=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=ul3uTfxnTxg3ujnbO5yY3kU5ZkCjdZB0lCFLT2aHwNMyfFd/+zFaHyJoSBanpICtMIoCPEkFb9yTLappQkYB+I8SoU1WAn58sP0ioE6Orjfl0EaNozBKS9Up7YZwpOkcmVlZZzxPL43cMnzVGpYze/yy5eUA5gn00qQQtiLMagk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iyzo21Il; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1218)
-	id B56442120E96; Wed, 30 Jul 2025 03:37:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B56442120E96
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1753871842;
-	bh=1dIA69gtHyGW2TAC84ofupzUMnhwLhfuQ5oY/vwlB2I=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iyzo21IlRvuBuVjIwMfc1y02s9ozJRCbs3oLBTKECB2/wW+alJS3dp2BxSdT+ELWT
-	 yvDwrecxVuhU2bcJY4ocPB3Nd4XvsY7/W6Rutw93hdsnqK0sflE9WWsLa6js1cnvA+
-	 zzEcuMBoFudFvuc3z/lz59tpfPSB0nM0Tr9qcB/E=
-From: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
-To: abhitiwari@microsoft.com,
-	kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ssengar@microsoft.com
-Cc: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
-Subject: [PATCH] x86/hyperv: Cosmetic changes for hv_utils_transport.c
-Date: Wed, 30 Jul 2025 03:37:20 -0700
-Message-Id: <1753871840-23636-1-git-send-email-abhitiwari@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1753871919; c=relaxed/simple;
+	bh=a1bFVUSJNuMaRBg/bFJOzqjeINTdV1R6gNaDS47j1+4=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CreBKhGttmNP3EzNkxLgT4nXVqTzOwidPxqwZO3vhLt2SDks9dJf9a43i9kQcoWgiAG0avdve7Vxrdrsvt/iSSXT8rS2YAWVRqAgL2k3aFd/3qdrj+Dfika64qDq1aiq2y1vlqnjOJnlaxChJh3xoPz7vtcARfIpCBCVAChLM58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=jt6RaZC7; arc=none smtp.client-ip=119.8.177.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=gLqk2qxCFUARFWqQEVNpkMZmoZM/0ZAoR38yaf9PwTU=;
+	b=jt6RaZC7kIjJyJMVlCOtACitLf8JL40ho9fTX8wMm/KMbpSmLAopP6PA1ORQpfIJgUqiyEf58
+	awdwdE0ECUeLW8vBz8YHG9RExOffdJhGEVtH7xnC/HBrmcYxVQKbOGujrZX6y9il/BzciNFEiOa
+	3FtP7EJ/5/BiFiJHq0atJT4=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.35])
+	by sinmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4bsTDD75dnzMljM;
+	Wed, 30 Jul 2025 18:37:00 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bsTD636jqz6H8Rn;
+	Wed, 30 Jul 2025 18:36:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 370CA1402F3;
+	Wed, 30 Jul 2025 18:38:30 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Jul
+ 2025 12:38:29 +0200
+Date: Wed, 30 Jul 2025 11:38:27 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+CC: Jason Gunthorpe <jgg@ziepe.ca>, Dan Williams <dan.j.williams@intel.com>,
+	<linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>, Suzuki K Poulose <Suzuki.Poulose@arm.com>, Steven
+ Price <steven.price@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Marc
+ Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>, Oliver Upton
+	<oliver.upton@linux.dev>, <gregkh@linuxfounation.org>
+Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm
+ platform device
+Message-ID: <20250730113827.000032b8@huawei.com>
+In-Reply-To: <yq5aqzxy9ij1.fsf@kernel.org>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+	<20250728135216.48084-12-aneesh.kumar@kernel.org>
+	<20250729181045.0000100b@huawei.com>
+	<20250729231948.GJ26511@ziepe.ca>
+	<yq5aqzxy9ij1.fsf@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Fix issues reported by checkpatch.pl script for hv_utils_transport.c file
-- Update pr_warn() calls to use __func__ for consistent logging context.
-- else should follow close brace '}'
+On Wed, 30 Jul 2025 14:12:26 +0530
+"Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
 
-No functional changes intended.
+> Jason Gunthorpe <jgg@ziepe.ca> writes:
+> 
+> > On Tue, Jul 29, 2025 at 06:10:45PM +0100, Jonathan Cameron wrote:
+> >  
+> >> > +static struct platform_device cca_host_dev = {  
+> >> Hmm. Greg is getting increasingly (and correctly in my view) grumpy with
+> >> platform devices being registered with no underlying resources etc as glue
+> >> layers.  Maybe some of that will come later.  
+> >
+> > Is faux_device a better choice? I admit to not knowing entirely what
+> > it is for..
 
-Signed-off-by: Abhishek Tiwari <abhitiwari@linux.microsoft.com>
----
- drivers/hv/hv_utils_transport.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+I'll go with a cautious yes to faux_device. This case of a glue device
+with no resources and no reason to be on a particular bus was definitely
+the intent but I'm not 100% sure without trying it that we don't run
+into any problems.
 
-diff --git a/drivers/hv/hv_utils_transport.c b/drivers/hv/hv_utils_transport.c
-index 832885198643..b3de35ff6334 100644
---- a/drivers/hv/hv_utils_transport.c
-+++ b/drivers/hv/hv_utils_transport.c
-@@ -129,8 +129,7 @@ static int hvt_op_open(struct inode *inode, struct file *file)
- 		 * device gets released.
- 		 */
- 		hvt->mode = HVUTIL_TRANSPORT_CHARDEV;
--	}
--	else if (hvt->mode == HVUTIL_TRANSPORT_NETLINK) {
-+	} else if (hvt->mode == HVUTIL_TRANSPORT_NETLINK) {
- 		/*
- 		 * We're switching from netlink communication to using char
- 		 * device. Issue the reset first.
-@@ -195,7 +194,7 @@ static void hvt_cn_callback(struct cn_msg *msg, struct netlink_skb_parms *nsp)
- 	}
- 	spin_unlock(&hvt_list_lock);
- 	if (!hvt_found) {
--		pr_warn("hvt_cn_callback: spurious message received!\n");
-+		pr_warn("%s: spurious message received!\n", __func__);
- 		return;
- 	}
- 
-@@ -210,7 +209,7 @@ static void hvt_cn_callback(struct cn_msg *msg, struct netlink_skb_parms *nsp)
- 	if (hvt->mode == HVUTIL_TRANSPORT_NETLINK)
- 		hvt_found->on_msg(msg->data, msg->len);
- 	else
--		pr_warn("hvt_cn_callback: unexpected netlink message!\n");
-+		pr_warn("%s: unexpected netlink message!\n", __func__);
- 	mutex_unlock(&hvt->lock);
- }
- 
-@@ -260,8 +259,9 @@ int hvutil_transport_send(struct hvutil_transport *hvt, void *msg, int len,
- 		hvt->outmsg_len = len;
- 		hvt->on_read = on_read_cb;
- 		wake_up_interruptible(&hvt->outmsg_q);
--	} else
-+	} else {
- 		ret = -ENOMEM;
-+	}
- out_unlock:
- 	mutex_unlock(&hvt->lock);
- 	return ret;
--- 
-2.43.0
+Not that many examples yet, but cpuidle-psci.c looks like a vaguely similar
+case to this one.  
+
+All it really does is move the location of the device and
+smash together the device registration with probe/remove.
+That means the device disappears if probe() fails, which is cleaner
+in many ways than leaving a pointless stub behind.
+
+Maybe it isn't appropriate it if is actually useful to rmmod/modprobe the
+driver. 
+
++CC Greg on basis I may have wrong end of the stick ;)
+
+> >
+> > But alternatively, why do we need a dummy "hw" struct device at all?
+> > Typically a subsystem like TSM should be structured to create its own
+> > struct devices..
+> >
+> > I would expect this to just call 'register tsm' ?
+> >  
+> 
+> The goal is to have tsm class device to be parented by the platform
+> device.
+
+> 
+> # ls -al
+> total 0
+> drwxr-xr-x    2 root     root             0 Jan 13 06:07 .
+> drwxr-xr-x   23 root     root             0 Jan  1 00:00 ..
+> lrwxrwxrwx    1 root     root             0 Jan 13 06:07 tsm0 -> ../../devices/platform/arm-rmi-dev/tsm/tsm0
+> # pwd
+> /sys/class/tsm
+> 
+> -aneesh
+> 
 
 
