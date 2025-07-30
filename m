@@ -1,98 +1,67 @@
-Return-Path: <linux-kernel+bounces-750530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A50B15D9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:57:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9869BB15D97
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D967171F4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F94956581B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:56:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CD1293C4B;
-	Wed, 30 Jul 2025 09:55:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F7F292B5E;
+	Wed, 30 Jul 2025 09:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fNd9zYpP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yO+QUXvs";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fNd9zYpP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yO+QUXvs"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VqjE9TQ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AE3267733
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:55:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3379269AFB;
+	Wed, 30 Jul 2025 09:55:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753869350; cv=none; b=RNlsRESU5at4NW2pgfCzfmNkmKIIY2QpC6ml+oOA3wquE+ejp1Yriaz39VIoNsh5assbesuaQNYfCQ9+1a80fzlDFpWonUqHO+4mS6o3dA24BXs96eeKafW42tkVziRFBL4A7k4rlOHyGEx2zTyf/C/Spdo7RnsWu7jt3WUgCyo=
+	t=1753869349; cv=none; b=Nx+qYs0srM6a5Q7LCZNKg9s91Xgezh2DAD3jocEF+eW/O9ZJ+tG7gkyF+DUFT1dt6asA+Vss70XckZHJeZ/WLYAqyZ86lPhgblpa6zJ4nQdW5rWduCLSUKbHwE4VQjMYLbxIbvJhD2cOdSXsqElDMW2Wlnm3nIYURSca0ALC3BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753869350; c=relaxed/simple;
-	bh=XTXxciGEVeAh7uLF/y5qLSEgG0iN/zk4R/cgpxYEcYI=;
+	s=arc-20240116; t=1753869349; c=relaxed/simple;
+	bh=FqV1olhUgft990I/oyZdVydA0AezeH5ltbHMVflBEyE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tU5CWCZhKdeKNoIhfRc5F6M8bsLYmxZjvLsVuJsGTa/8E0tCLoWYW1epQDuwlCfkOO1mx0QcjdlsTSUKg7qvWIf10hg98ikNJZqMb34XhyR8L0GMNlQ8FZvQPqFLn9VL6srHVfsVlzrJlaj1pvJc2aWUuR2rOjlfW/KuqTxltdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fNd9zYpP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yO+QUXvs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fNd9zYpP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yO+QUXvs; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 852C01F8D5;
-	Wed, 30 Jul 2025 09:55:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753869346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+4PFGiNz7H3oAIKcLDB2QM4lgpaFjNjpSnfL7WIyvjI=;
-	b=fNd9zYpPgfxEr2mtcchdYo6zL2AtvALdC5j+ascWH2H2XkbG3jljJa+T7H2AR7dlSc1lLU
-	KVeJEXea9/vM9uvm+gCYmLF5EDNWE4SW18v+46Yv8R37MpJ5pn/ePp/PTCqQ7wkQzRZauk
-	JxgOACUkatF4Lfeoaa7gyqGN4eoU7kU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753869346;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+4PFGiNz7H3oAIKcLDB2QM4lgpaFjNjpSnfL7WIyvjI=;
-	b=yO+QUXvsecudDLqM0r91DzRbJSVQqlCqR4K2LFaQbqgGoX5JpgO4t9g9xemvUg413HNNag
-	fT3pK5OIFamILzCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753869346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+4PFGiNz7H3oAIKcLDB2QM4lgpaFjNjpSnfL7WIyvjI=;
-	b=fNd9zYpPgfxEr2mtcchdYo6zL2AtvALdC5j+ascWH2H2XkbG3jljJa+T7H2AR7dlSc1lLU
-	KVeJEXea9/vM9uvm+gCYmLF5EDNWE4SW18v+46Yv8R37MpJ5pn/ePp/PTCqQ7wkQzRZauk
-	JxgOACUkatF4Lfeoaa7gyqGN4eoU7kU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753869346;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+4PFGiNz7H3oAIKcLDB2QM4lgpaFjNjpSnfL7WIyvjI=;
-	b=yO+QUXvsecudDLqM0r91DzRbJSVQqlCqR4K2LFaQbqgGoX5JpgO4t9g9xemvUg413HNNag
-	fT3pK5OIFamILzCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75E5C13942;
-	Wed, 30 Jul 2025 09:55:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BI0zHCLsiWi0cgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 30 Jul 2025 09:55:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id F0BE3A09FB; Wed, 30 Jul 2025 11:55:41 +0200 (CEST)
-Date: Wed, 30 Jul 2025 11:55:41 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: prevent module unload while filesystem is in use
-Message-ID: <g6cbleoltydfxhdcuttckw7ntiqvwilqnbxegvec7eqtnqauje@e3h36x2lsj45>
-References: <20250724153044.149890-1-kevinpaul468@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqNYVZHfxw1JHbp/zTg3Bu1rfIhlGcO4HH5Rt/1Kdwoq14Mse1wAX76m2HHeh7ZY7ZtSIk8WnVreRMdbP06jz5d3Ex2OICDTrY/hfC6tFApLKyfT9DxI6tIUHWCykKC82gVCqktod8g3ImexLQ+w2Mg3gN147kO1UQXyMbbuWVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VqjE9TQ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ABB0C4CEF5;
+	Wed, 30 Jul 2025 09:55:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753869349;
+	bh=FqV1olhUgft990I/oyZdVydA0AezeH5ltbHMVflBEyE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VqjE9TQ0NooUsJykjVTLtlDpM2IjROOWmoZQeKXPI2UDXExgyqqZ37HESjkbJcp7j
+	 XGX9xNfsJSfgsp+8c2hiVm3L6U+TRqizMEvf3rfBAZd/p6axkEBkt5gGFMkAedxrzU
+	 v/xFtq5fLgRwLHOPdZ2Lf3Y1RwclrR5J4xkgC25w3owQGvFCuu25IKG6LnHoyAmnq0
+	 bsJ7TA4QmeInt+0k90dNCkVg/XyJlzlAWMMfXzwNzkYPStpWjgUa7yJQLXfXOISryn
+	 Arn5MIaGRb+N+RcXy5Ywc+ztAn0PHTIEjQHzD8U5YoqRskFvhRdK++1k7gtrQ64zC1
+	 KiDwDcg+GGHSA==
+Received: from johan by xi.lan with local (Exim 4.98.2)
+	(envelope-from <johan@kernel.org>)
+	id 1uh3XJ-000000006JN-3FwZ;
+	Wed, 30 Jul 2025 11:55:49 +0200
+Date: Wed, 30 Jul 2025 11:55:49 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com,
+	mani@kernel.org, lpieralisi@kernel.org, kwilczynski@kernel.org,
+	bhelgaas@google.com, johan+linaro@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+	kw@linux.com, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+	qiang.yu@oss.qualcomm.com, quic_krichai@quicinc.com,
+	quic_vbadigan@quicinc.com
+Subject: Re: [PATCH v9 1/5] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy:
+ Update pcie phy bindings for qcs8300
+Message-ID: <aInsJbZSqgRYkB5x@hovoldconsulting.com>
+References: <20250725104037.4054070-1-ziyue.zhang@oss.qualcomm.com>
+ <20250725104037.4054070-2-ziyue.zhang@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,113 +70,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250724153044.149890-1-kevinpaul468@gmail.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+In-Reply-To: <20250725104037.4054070-2-ziyue.zhang@oss.qualcomm.com>
 
-On Thu 24-07-25 21:00:44, Kevin Paul Reddy Janagari wrote:
-> preventing attempt to unload the ext4 module while the fs is still actively
-> mounted by adding a check before exit
+On Fri, Jul 25, 2025 at 06:40:33PM +0800, Ziyue Zhang wrote:
+> The gcc_aux_clk is not required by the PCIe PHY on qcs8300 and is not
+> specified in the device tree node. Hence, move the qcs8300 phy
+> compatibility entry into the list of PHYs that require six clocks.
 > 
-> The crash occurs because ext4_inode_cache still contain objects
-> in use when kmem_cache_destroy is called
+> Removed the phy_aux clock from the PCIe PHY binding as it is no longer
+> used by any instance.
 > 
-> This is a log of the bug produced by crepro given by a local syzkaller
+> Fixes: e46e59b77a9e ("dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the QCS8300 QMP PCIe PHY Gen4 x2")
 > 
-> [  301.647795] BUG ext4_inode_cache (Tainted: G  R                ): Objects remaining on __kmem_cache_shutdown()
-> [  301.652120] -----------------------------------------------------------
-> [  301.652120] 
-> [  301.653366] Object 0xffff88800ec88008 @offset=8
-> [  301.653877] Allocated in ext4_alloc_inode+0x27/0x1a0 [ext4] age=46055 cpu=0 pid=616
-> [  301.655766]  ext4_alloc_inode+0x27/0x1a0 [ext4]
-> [  301.657063]  alloc_inode+0x2b/0x120
-> [  301.657570]  iget_locked+0x1ae/0x3e0
-> [  301.658137]  __ext4_iget+0x243/0x1af0 [ext4]
-> [  301.659197]  ext4_lookup+0x1b5/0x3e0 [ext4]
-> [  301.660784]  __lookup_slow+0xd1/0x1f0
-> [  301.661575]  walk_component+0x1a7/0x250
-> [  301.662411]  path_lookupat+0x9a/0x2f0
-> [  301.663179]  filename_lookup+0x14e/0x2e0
-> [  301.663947]  vfs_statx+0xb9/0x240
-> [  301.664622]  __do_sys_newstat+0x62/0xd0
-> [  301.665376]  do_syscall_64+0x80/0x2c0
-> [  301.666091]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> 
-> Was not able to reproduce on my host system
-> Tested in a Qemu instance
-> 
-> Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
-
-This is definitely wrong. VFS calls get_filesystem() (to acquire module
-refcount) when mounting the filesystem (in sget_fc() or sget() depending on
-whether the filesystem has been converted to the new mount API or not).
-This prevents module removal so there must have been something else that
-broke this protection mechanism in the syzbot reproducer you have and we
-need to figure out what *that* was.
-
-								Honza
-
+> Signed-off-by: Ziyue Zhang <ziyue.zhang@oss.qualcomm.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  fs/ext4/super.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  .../bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml  | 15 +--------------
+>  1 file changed, 1 insertion(+), 14 deletions(-)
 > 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index c7d39da7e733..c6c77369a252 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -7480,8 +7480,24 @@ static int __init ext4_init_fs(void)
->  	return err;
->  }
->  
-> +static void ext4_busy_check(struct super_block *sb, void *data)
-> +{
-> +	int *is_busy = data;
-> +	*is_busy = 1;
-> +}
-> +
->  static void __exit ext4_exit_fs(void)
->  {
-> +
-> +	int is_busy = 0;
-> +
-> +	iterate_supers_type(&ext4_fs_type, ext4_busy_check, &is_busy);
-> +
-> +	if (is_busy) {
-> +		pr_warn("ext4: Cannot unload module, filesystem is still in use.\n");
-> +		return;
-> +	}
-> +
->  	ext4_destroy_lazyinit_thread();
->  	unregister_as_ext2();
->  	unregister_as_ext3();
-> -- 
-> 2.39.5
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> diff --git a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> index b6f140bf5b3b..e04d5940a498 100644
+> --- a/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> +++ b/Documentation/devicetree/bindings/phy/qcom,sc8280xp-qmp-pcie-phy.yaml
+> @@ -65,7 +65,6 @@ properties:
+>        - enum: [rchng, refgen]
+>        - const: pipe
+>        - const: pipediv2
+> -      - const: phy_aux
+
+Just realised that you forgot to update clocks: maxItems above, with
+that fixed you can add my:
+
+Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
 
