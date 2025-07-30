@@ -1,121 +1,135 @@
-Return-Path: <linux-kernel+bounces-750256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46080B1592C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:55:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3CD4B15932
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DBE57A3B54
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30DC918A64DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:59:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDAE1F8725;
-	Wed, 30 Jul 2025 06:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8B51FDE33;
+	Wed, 30 Jul 2025 06:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJLncwru"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAxOglA+"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23C41EA7FF;
-	Wed, 30 Jul 2025 06:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F3B1FBEA6;
+	Wed, 30 Jul 2025 06:58:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753858518; cv=none; b=ku9Hu/qjnk0dIBj0pu7SI0hXEHdvQGxxezqMSPRXCrAPF7FZtT6Sjp9dZkEwvYzTr8h13vudpmw5gB5r6kuF8IWgB33LKZLNJ1pW5MPqprXQHFx4qzbAxFXM5RnakTSV5BjRhb7ygFrQqF54feQ/4J+lbWcpyiJrX1o2FdVHWIY=
+	t=1753858706; cv=none; b=mYUwBzcI5cWY4cB3xHy3qMzcOl6VEAHHQonYGwMRZcobwKyjL6rKcJWJgYqoMGEz0zbpnbVgcfl/RGwnjsz9qTz2Bh7UwyDxshwoM/kO6UKgGr3ynDawR1rtvs38ehG8azeFHXdEX3sm0KvvyAWGMLdyza32MypsEqWR4boq41U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753858518; c=relaxed/simple;
-	bh=CE+VGFhEeMBuX62wOBgp62Z2B/CebCJnk+FFXVi5qSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=pvuFU2pgZB9EV1cc+FjaP3Bxb1N0nCKJ76iuGSps84iWiGEMSLyf5OvqBuy6eYXsiKY0q+5smowuJlAdGD3/lhltBJJEI1HU3C/V56kCnzU1Oqaj8MqSvq2XygyAybSTB6CljHW6vud934FdaQl6QRilCTBX4o7qz6sTsvdXpBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJLncwru; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82767C4CEE7;
-	Wed, 30 Jul 2025 06:55:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753858517;
-	bh=CE+VGFhEeMBuX62wOBgp62Z2B/CebCJnk+FFXVi5qSQ=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=EJLncwru6TUCRxeZ4od39fNNxekNt5DSvRCOdGH5q8gH3Zu8SnYrmlPPKPLYhM+3a
-	 qVNVOA+GqVwL1t3sHSP97O0tdI03qQv/kYgEjimqZM7Omkz028CBWXWFYUs6EoqnV/
-	 d6HHEKZr5uKVX9OkzoSxZry7MRX0DB9/nW4PmBaT9bUfH3EqEeIOZIR13FAk2mC1J0
-	 jFijBD+d3IYEsFLn4/HDyLI/7r3FBKe01kQjmj1J3vkgagE/ZZJ3x6tBlxdgAjWoUk
-	 mPFRceNdbK4pSWDMW0OInnfDUKbzXV7Oxkd5fKwV3Uysii9sIGdVyrJA/vqBtQmwRE
-	 aLQjlmrDCR6lQ==
-Message-ID: <926eebd1-4790-4ca4-a03b-b52a32e7fd91@kernel.org>
-Date: Wed, 30 Jul 2025 08:55:12 +0200
+	s=arc-20240116; t=1753858706; c=relaxed/simple;
+	bh=5pjH5bGDJslV+PWUxnoZ83BGVZ2TA8c3zUJVab4Zw7c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=HoIwyqFPzpDxegcjv60gIcw8qoDnwUIRrWqnWp1eLFPTpC5LikQ40RT7rnCX+I4M9M0NJHVxFux1IefuX5/s3jsu1ZTuWs5aTXIjirjeEplzujTyuGPQQt5UbibtMadZlf62Nj7k21jNsIxnjI9MiqP8cIQWCOaaPL/33FJMtPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iAxOglA+; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-31f02b6cd37so2870370a91.1;
+        Tue, 29 Jul 2025 23:58:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753858704; x=1754463504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5pjH5bGDJslV+PWUxnoZ83BGVZ2TA8c3zUJVab4Zw7c=;
+        b=iAxOglA+uIFogV3TIdQqNd8rUD1ZizjbMyvGs1J5wXnw2T20t98ChIUYzQnsN92fTg
+         ekobNIY5HMYSCoOWL+o0nbPvEhlIm5ibyhrGgrhbmvW8jfH7+gDFgVqthsoAJvcJ1k+j
+         T9QTObMkp65oJKyMjxk/ax4MJeyEq8u97QOW2wshtZST5mSThbGC/pD03C6c8+JiJo4D
+         AdLfHUuUM2mlxAiLN5kPabdcShimFnI2yibP2BTIdFvfn0UVMy4KjXOEiIRvsBdnj2PS
+         Zx38ulLX4LnzZg8NSGcgI8YnF6qhRqXBFWfplG5cxo+dVHw0KiscFRmE/2Aq0hKLrhoP
+         6z0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753858704; x=1754463504;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5pjH5bGDJslV+PWUxnoZ83BGVZ2TA8c3zUJVab4Zw7c=;
+        b=TQLVdRixg8CU/tmQNfu4XXeGIk5YfGkZhqo02hHKFhpSg9+kcZHqX9IcNevIJAemO2
+         prhkzfpvSBdptusMj9Z4MUTnjf3YkXDC/72T+3X+Tb3u1QRxUWCNZ31fOCCIbwXwqlCD
+         E4BdkM9RMhkOCSeBjj+gqXRNGEuitEy305vusCpYvs/QjWYZ4IvhOAwU08y7LP2z6eIS
+         sZg2IRkZHTYr0NoB7ZkugVM7LAJvAnzq3jT4NjDPTCM9xFcg06VENId825umrUdDkheE
+         /ckNnVNc0C4zxJ8V/ioQhlh6W1nRLDfOScg6vFbPrW90NjYgVIogoU+LGUbVSGOAOsMq
+         2qkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWnAyvbtkZLjhZWpI0nHbO3Y5h3uFIF0MaJxTCC9Bii5HvYkVD3Xnw3LCHPOSH7Wz4Erh6HpWM7PbxYhQ/f@vger.kernel.org, AJvYcCWzZRhUN+4E/lJlQV9STG0iu6V+m6d/C7WBZ8cWV/jm3P2A11d9jsOoYQoLm/n2kB8BClJmS14d4RCYAg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJTJ/hpzn2/Cp0AW+IFq52r2naMYC3iWbX5uRD0xoCtTu3JYsn
+	CFq7o9XqIQAIoFR+PwkrR9L8BC4hXxlX4RJwSkmREEWWBNMEqsgLWMZWdsTrIw==
+X-Gm-Gg: ASbGncvDwgrsWd4SRJvdRXmRQK5MemXMqJQi+YIkM1Oc9/77/Wv9qIowxQ5umRUMNY1
+	2tVIzRYFuTSNFu8vtuDFpERg5cFfDUU7YJZD/Z+0H4lWYQV8xwVLB4L6QtzqnEdIDi0/Dv2ko26
+	JHJUgwgDugk2puzYDwCJaDCRsFwwv+NB/Ocvvi7fFoRdUXhzb/6NT7aAOvSVv9B893teGm6VMAm
+	J4Z3vec1hVURu3sHZJlPy/Y2McA+RZNN/VtoIJBkMoimtpQbOvA0dx9kiloCZxij2+3BA0quno5
+	neFBfagtZA7UCjGDbNPOFhaU8844gEYLuYy4Bcm+4XXK7M5c7K8+zLPa80RyGQnVKeyVaahHC0k
+	p2mj+BHHxCCdS4AZk5QxkoBUEkYd2Uvwuaks3CKQnDhEzkvj7GyIqgaSR5XgR0tPWVRhEruJKp3
+	54E7Geow==
+X-Google-Smtp-Source: AGHT+IFJs1DT5Yvb56u38lYx+6vvfWV7r0rBgkLbhuToytqdijfwMb76ER2iDqkWV8E1SX4gEWiEog==
+X-Received: by 2002:a17:90b:3145:b0:311:e605:f60e with SMTP id 98e67ed59e1d1-31f5de96a5cmr3398959a91.20.1753858703893;
+        Tue, 29 Jul 2025 23:58:23 -0700 (PDT)
+Received: from mail.free-proletariat.dpdns.org ([182.215.2.141])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63f0b4aesm1087191a91.26.2025.07.29.23.58.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 23:58:23 -0700 (PDT)
+From: kmpfqgdwxucqz9@gmail.com
+X-Google-Original-From: admin@mail.free-proletariat.dpdns.org
+Received: from kernelkraze-550XDA.. (_gateway [192.168.219.1])
+	by mail.free-proletariat.dpdns.org (Postfix) with ESMTPSA id 47FE14C025C;
+	Wed, 30 Jul 2025 15:58:19 +0900 (KST)
+To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
+Cc: David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	KernelKraze <admin@mail.free-proletariat.dpdns.org>
+Subject: Re: [PATCH 1/1] btrfs: add integer overflow protection to flush_dir_items_batch allocation
+Date: Wed, 30 Jul 2025 15:58:18 +0900
+Message-ID: <20250730065818.149092-1-admin@mail.free-proletariat.dpdns.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <53686e91-5822-4137-9f79-e4f4d98ff6fb@wdc.com>
+References: <20250730044348.133387-1-admin@mail.free-proletariat.dpdns.org> <20250730044348.133387-2-admin@mail.free-proletariat.dpdns.org> <53686e91-5822-4137-9f79-e4f4d98ff6fb@wdc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] spi: dt-bindings: atmel,at91rm9200-spi: Add support
- for optional 'spi_gclk' clock
-To: Manikandan Muralidharan <manikandan.m@microchip.com>, broonie@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
- claudiu.beznea@tuxon.dev, tudor.ambarus@linaro.org,
- linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250730053720.262118-1-manikandan.m@microchip.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250730053720.262118-1-manikandan.m@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On 30/07/2025 07:37, Manikandan Muralidharan wrote:
-> Update the Atmel SPI DT binding to support an optional programmable
-> SPI generic clock 'spi_gclk', in addition to the required 'spi_clk'.
+From: KernelKraze <admin@mail.free-proletariat.dpdns.org>
 
-Why? Hardware changed? Explain why you are making changes to the stable ABI.
+Hi Johannes,
 
-Also, I do not see any user of this, but maybe you just created Cc-list
-incomplete.
+Thanks for the review.
 
-Best regards,
-Krzysztof
+On 7/30/25 6:35 AM, Johannes Thumshirn wrote:
+> Where does this number come from?
+
+It's from log_delayed_insertion_items() at line 6111:
+
+/* 195 (4095 bytes of keys and sizes) fits in a single 4K page. */
+const int max_batch_size =3D 195;
+
+I reused this limit for consistency across btrfs batch operations.
+
+> Wouldn't kcalloc() or kmalloc_array() be the better choice here?
+> kcalloc() calls kmalloc_array() which in term does overflow checking.
+
+Good point. The issue is we're allocating a mixed buffer:
+
+[u32 sizes array][struct btrfs_key keys array]
+
+kmalloc_array() handles single-type arrays, but we need:
+- ins_sizes =3D (u32 *)ins_data
+- ins_keys =3D (struct btrfs_key *)(ins_data + sizes_size)
+
+Two options:
+1. Keep current approach with manual overflow checks
+2. Split into separate kmalloc_array() calls (potential cache miss cost)
+
+Which would you prefer? I'm happy to rework it either way.
+
+Thanks,
+KernelKraze
 
