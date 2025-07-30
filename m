@@ -1,99 +1,135 @@
-Return-Path: <linux-kernel+bounces-751119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 870A2B16572
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 007D0B16579
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:26:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94D293AEB53
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DF1F5A6B64
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F5C2DFA3B;
-	Wed, 30 Jul 2025 17:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5762E06C9;
+	Wed, 30 Jul 2025 17:26:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="b1iCMmgE"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="bphNS+XV";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="6Af2hm4y"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C520CBA2D;
-	Wed, 30 Jul 2025 17:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B111DE8AF
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 17:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753896302; cv=none; b=Tp0blFegAiDA5mBRgthsWZVSsORdLbuCxysg2/+Um76Owt4KXw7AaQSeyZlOdy1Ri7XSKthHYykn9g2olpRcd/BsSLHFyOy5LUkUSPvLhf+1CtR3Q1BmGEv3uLRReJUwKw2oPQi8DIfA5b69Ufr5wJoPqyJ19NuKkmh8PCaOiBQ=
+	t=1753896388; cv=none; b=ptmWuv9FKDAHtDvflgm2dX0MQvhDjfwUEDxUXbBGvrozchNG7b4oLfXFoGB/IkX90nZSGddw7MvepBXtd0irgivGQBH1N3sXtFJD9bGIrJajfpHiXIT7ZiaAT/G5ToVW/KwYVqhEfXhUy3fNgCbWAazbY4cbzW0CV2H5lnQKQEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753896302; c=relaxed/simple;
-	bh=/lWyWVDZocagrXCpoIFP/0Hv9MDxEPjKMpTAhKNf3qY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BKffXpuJp0BDA6OTDTmObfA0VD/ujEkeXsM8PUNLajVDuFIKkTsFZmtUxweSdYqVnihZDo+v0U0epfZBe9P54s6Ii5IOKbKcDd88su4nqLrTSJ+sv9ngrJ+EZsJrKDI8jMmLDbDHIUNSeqmgNxFpPPhgPlBwpHGpmQKfhaTMpMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=b1iCMmgE; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bsfGz4x3JzlgqVc;
-	Wed, 30 Jul 2025 17:24:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1753896297; x=1756488298; bh=+QJVC+VXQCucnSBxEFhz/liH
-	/yAIajbaQoLwwIpoJIM=; b=b1iCMmgEwZF3kY4iab9tj76uXQvYm3ivPdnLLM4g
-	t8GC1YCeeU20A96y0iXbEhFPtseFEMNfOdw/qngTnwSQG+gNb3II5VNIZOjahZJy
-	whSeFB/K6YvIWREMLJ/f78NwUW911ne7/JL/2UA6DxkG14mYcK0Vzs0Y1q0Sol3k
-	ucVbaGHoyOvi+6oFmg+TNWjv28HG982VTIOmIlytUg1tFfcUV0UngBAgvLupzcWw
-	H8m/Ei4dASE0o8lUn+tVUb8pjSiJ7WMlDJ/dsHzKJuU9By676Ltvg5j4l9x2673h
-	cCVijafvQU5p6j/yYn0ZZ6zgJcyvVVJuPlEauhyx9Wc7cQ==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id IAC4pJZYGg11; Wed, 30 Jul 2025 17:24:57 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bsfGk312hzlgqVY;
-	Wed, 30 Jul 2025 17:24:45 +0000 (UTC)
-Message-ID: <fd1b4b38-4b0a-4897-8130-bb39ecf11c66@acm.org>
-Date: Wed, 30 Jul 2025 10:24:44 -0700
+	s=arc-20240116; t=1753896388; c=relaxed/simple;
+	bh=PGi2Cbl4x5cWD0I2ITAY/N2F9HJW2syAJhuk1NYiQAY=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ejYetAht0Fat891UvYXdOtKegE6oJFLfPojZfUAwIr8pFWxD02veCl92yDWM7cA9qvCKwWgHmFC1GCbCYVlD+CnylVqeqFnGK92fvetvehYoDbRXHP5H748JxMZOKNnnqTP4uQcPGEJ64DXP5i2vg+Ij6AMVZppXkA/7SpE/6Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=bphNS+XV; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=6Af2hm4y; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1753896317; x=1754501117;
+	d=konsulko.se; s=rsa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=PGi2Cbl4x5cWD0I2ITAY/N2F9HJW2syAJhuk1NYiQAY=;
+	b=bphNS+XVZXoX9g07m5+NodI8iBOu6iCZe9qsYu9hHOvQTKaIzlhzzUQUED7XQoyqJxC+tL7sgGcEa
+	 kFrKiQLtjdEWpHN18pKT0HFWZgYq1bbGQLXO/J6P86Lv8MVWqW2GTLshgF3eGaaOt4Uvt7yC1jLF1p
+	 r+813EgTmpNicMprW1wyH9yq5Ul2LpQZgZT2fva3wx0Pj1nj6xBbMz+KvJFCfEqMt+NKIWw1n49zQH
+	 1QdAlPPrlaK+rPo/FtDeo4VzniYkixsNODYSAqLiGGhV+aVoSF13JWDOg5WB/4NPeSGGF1an7ApX9Z
+	 vVF4cGW3eZTre/4hY5gWeDzCXg9XRvw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1753896317; x=1754501117;
+	d=konsulko.se; s=ed1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=PGi2Cbl4x5cWD0I2ITAY/N2F9HJW2syAJhuk1NYiQAY=;
+	b=6Af2hm4yEUeE/Oyl9MPj99Eu4MG7asvfvhfFyRnp28rv0ioRog4XZlBcGDfZGbuAOpPFeijWrfKWl
+	 0lE/kdVAg==
+X-HalOne-ID: 27e5fc15-6d6a-11f0-98dc-c9fa7b04d629
+Received: from smtpclient.apple (unknown [2a01:cb1d:9264:6f00:8e8:6eed:ae4e:a087])
+	by mailrelay1.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 27e5fc15-6d6a-11f0-98dc-c9fa7b04d629;
+	Wed, 30 Jul 2025 17:25:16 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] block, bfq: switch to use elevator lock
-To: Yu Kuai <yukuai1@huaweicloud.com>, dlemoal@kernel.org, hare@suse.de,
- jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
- yukuai3@huawei.com
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com
-References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
- <20250730082207.4031744-4-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250730082207.4031744-4-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v13 1/4] :mm/vmalloc: allow to set node and align in
+ vrealloc
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <aHZnmevtRYt26LBE@casper.infradead.org>
+Date: Wed, 30 Jul 2025 19:25:05 +0200
+Cc: linux-mm@kvack.org,
+ akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ rust-for-linux@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ bpf@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <B851D9FB-3745-4923-B196-C4D0C618DBF5@konsulko.se>
+References: <20250715135645.2230065-1-vitaly.wool@konsulko.se>
+ <20250715135724.2230116-1-vitaly.wool@konsulko.se>
+ <aHZnmevtRYt26LBE@casper.infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3826.200.121)
 
-On 7/30/25 1:22 AM, Yu Kuai wrote:
->   static sector_t bfq_io_struct_pos(void *io_struct, bool request)
-> @@ -5301,8 +5301,6 @@ static struct request *bfq_dispatch_request(struct blk_mq_hw_ctx *hctx)
->   	struct bfq_queue *in_serv_queue;
->   	bool waiting_rq, idle_timer_disabled = false;
->   
-> -	spin_lock_irq(&bfqd->lock);
-> -
->   	in_serv_queue = bfqd->in_service_queue;
->   	waiting_rq = in_serv_queue && bfq_bfqq_wait_request(in_serv_queue);
->   
 
-Please restrict this patch to changing &bfqd->lock into bfqd->lock only.
+
+> On Jul 15, 2025, at 4:37=E2=80=AFPM, Matthew Wilcox =
+<willy@infradead.org> wrote:
+>=20
+> On Tue, Jul 15, 2025 at 03:57:24PM +0200, Vitaly Wool wrote:
+>> +void *__must_check vrealloc_node_align_noprof(const void *p, size_t =
+size,
+>> + unsigned long align, gfp_t flags, int nid) __realloc_size(2);
+>> +#define vrealloc_node_noprof(_p, _s, _f, _nid) \
+>> + vrealloc_node_align_noprof(_p, _s, 1, _f, _nid)
+>> +#define vrealloc_noprof(_p, _s, _f) \
+>> + vrealloc_node_align_noprof(_p, _s, 1, _f, NUMA_NO_NODE)
+>> +#define vrealloc_node_align(...) =
+alloc_hooks(vrealloc_node_align_noprof(__VA_ARGS__))
+>> +#define vrealloc_node(...) =
+alloc_hooks(vrealloc_node_noprof(__VA_ARGS__))
+>> +#define vrealloc(...) alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+>=20
+> I think we can simplify all of this.
+>=20
+> void *__must_check vrealloc_noprof(const void *p, size_t size,
+> unsigned long align, gfp_t flags, int nid) __realloc_size(2);
+> #define vrealloc_node_align(...) \
+> alloc_hooks(vrealloc_noprof(__VA_ARGS__))
+> #define vrealloc_node(p, s, f, nid) \
+> alloc_hooks(vrealloc_noprof(p, s, 1, f, nid))
+> #define vrealloc(p, s, f) \
+> alloc_hooks(vrealloc_noprof(p, s, 1, f, NUMA_NO_NODE))
+>=20
+>=20
+
+In this case, to keep things buildable an each step we will need to =
+modify slub.c in this patch. Since we change slub.c in the next patch in =
+the series I would suggest that we keep things simple (=3D=3D as they =
+are now, even if it means some redundant macros have to stay). I can =
+come up with a macro simplification like yours when this series is =
+accepted.
 
 Thanks,
+Vitaly
 
-Bart.
 
