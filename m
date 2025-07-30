@@ -1,146 +1,128 @@
-Return-Path: <linux-kernel+bounces-751251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04EA3B166E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:27:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59B8BB166EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 673F87AC3DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91B81C20367
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219252E1C78;
-	Wed, 30 Jul 2025 19:27:09 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6D62E1C63;
+	Wed, 30 Jul 2025 19:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJJ28TET"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD941624EA;
-	Wed, 30 Jul 2025 19:27:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745FD2D613;
+	Wed, 30 Jul 2025 19:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753903628; cv=none; b=iclQbtAGPSU3Sr1xRRjUs9Sn/5R/0zFxwTuu/NjifcVw3uw5f0WywT0ag5B1LRAh4+3G7q6T+xFbmkA/JjpvwUGKXyJPahrO0mi1wueQz/ai8YO/HkAMD9YNmCqEZPAPiCW4E5ySbdE0n6hf8+4AEENXkEBgZOmkZm/xnRBGvM0=
+	t=1753903686; cv=none; b=GWCX0gBic+7CWcdGZ9WaqP+U5mYoBfbOk6ugPHVplxl0x9cVu8GGLGuOZf1KRRDAO4F2IefQ/w5Mh0egnBoCAewlCAzGPZniEhLLnSbhC5xJqesynYS/xSO5MDQG/tbrntCSfSBGjKqLpTcu7AdTiZJdV6G8PzHLLBXBFtZAj7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753903628; c=relaxed/simple;
-	bh=BInQqAuFuhv6ShllU1BMRFpqWjLupYaHWHnVG6WDYJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PqZzi3MwH9lHtWLNP5sQS3GBFkMNEj4mGWIDBuv3hnc/w/JR8yBDbxhBnCKwPWGxeOWlhBFcf2vn8z1tLoZPW0Nt0hmPyYzWAA1K2pATf4MCzhy4rKJ96jNarrB9Jjyv91K9p4kPAWV+zSq338WCb+QfKOS1g12vltHJrFjZI3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 52A0F56064;
-	Wed, 30 Jul 2025 19:27:04 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 0008D2F;
-	Wed, 30 Jul 2025 19:27:01 +0000 (UTC)
-Date: Wed, 30 Jul 2025 15:27:18 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Greg KH <greg@kroah.com>,
- corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
- josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
- linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>, "Dr. David Alan Gilbert"
- <linux@treblig.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <20250730152718.2f12b927@gandalf.local.home>
-In-Reply-To: <aIpah6DTRd99mMqb@lappy>
-References: <20250727195802.2222764-1-sashal@kernel.org>
-	<7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
-	<2025072854-earthen-velcro-8b32@gregkh>
-	<df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
-	<20250730112753.17f5af13@gandalf.local.home>
-	<158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
-	<20250730121829.0c89228d@gandalf.local.home>
-	<aIpKCXrc-k2Dx43x@lappy>
-	<20250730130531.4855a38b@gandalf.local.home>
-	<aIpah6DTRd99mMqb@lappy>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753903686; c=relaxed/simple;
+	bh=iR5+uRBldWlcUKs+VpB/kO7cqjcEx28y65V3BAPL9OQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cwi97akjuO9YJVmi2np6zU5YRJM9S0vcDylpv+6RHRkj9fACW8c8QOYJ6yNJF56hWa4PxEMGv8JjSPh0dS6h9GQ9kguarvNnpJTt5A2eAxffTwnWMMeb2YtASZeHhiPZIDBsA1FOvH08NhDTcY6WSo9Phl8WsUFhcE5GnpkObkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJJ28TET; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7642db47111so25048b3a.2;
+        Wed, 30 Jul 2025 12:28:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753903685; x=1754508485; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZNG8DXgwAP/5jPmamkbii8OoUAG4/pKAFcQJx/eZgY4=;
+        b=PJJ28TET2+ELm1+IQYYLu4d3W+N5vZyUJcVKjVIMIKNPPbp8iBbTE7XX7TAdVbYbr/
+         yPd+YTspjZ9nZNt9LKi2NxQV1/h2On2vdwbaCuY1T/LckY6t7ihymULBrLj7CmtYU746
+         qHZlbTSLU+cgaptPlRlzldYYUINBQhfXmQHvmM12PLl/4Gfq3+VftbXkMkBTcnSuEFny
+         PmYm2O0uURs5+BCg8++w2aCd7R3ST/fIvWNPwO6wvY/UqI1TBy8NksSOKApeLbli91IV
+         dMACS7c3RjUsXKL1Fh/F0Epf1ca/Fyn49V+Ye3x7eAmpm3jWZPH1CJvb0HC/OdchdtGJ
+         44Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753903685; x=1754508485;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZNG8DXgwAP/5jPmamkbii8OoUAG4/pKAFcQJx/eZgY4=;
+        b=FHFvT31zK1MorsMckVsQIKshCETUvg87f66L9ImtPqP24A98+GeuDH2OTNUeJcG77u
+         O/r1y4Z1W5/Fe55Pj0LzlqzCYoYBX+AdIlamtXEzfTPbPCWrlu48QiqGme60MYjGTyU/
+         aQhmQF4WEgdf4O1f4arz8nbiNgsYNySacfGoyLv1CThpteLThFD1eqnXbLpBu164WQ6R
+         WvoPDZJobYi9UqvzLMCU1uCRb82TPkmAXlThFwX/MdAYh2PoqU1MQqY6Aj0L4TKaIt0a
+         0uB2Dpcslrr38xBJ1SmeFoctCx4/H0dceqVpRUosc8VTSTq6vbQPhnLO9RjnOQOugz6H
+         MVKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmWaIjmxQVbb9gZmsBX987jkP5CCFMwYsEhbyfrzL2l5H+1YP9AcD9dojUFYW9yzH7BU9pUzWvB276uJQ=@vger.kernel.org, AJvYcCXVUO58Ht2I1hWM1SucWmkA7f0m4O6nRhnP4eQWLmv+eZZ0BLyerN+qleQCcREpUgLLSzIpxgvCle+qYps9vlNT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfMGUFDBNARAsdcdh1RQj0h9P/RwMrP6yPu5Kh/E/NfiNX6XQ7
+	ZeVai4iP5Z2cF+zCzOfXzaZAPRUYFznLtdsZ6Ebe4mSDuMp8+Yvj/K3O
+X-Gm-Gg: ASbGncvxnytXQu+I4FqCirwSvhwbdduVeR+15FAYijkhLHGH8yqEoPA12eiMWqWkNK2
+	Rv7IexKS7kw5yr4DS/DiHEYE2Su4u2VYTeepzN+iN0FqsgvfrDPHxhruOI+W9yH9tJoz2eTfPiD
+	GfXHiohADdwTXF74upk5zJnrWs+s7ecLBUdZP8/7A8guMmvPdrNvG8nJJOERs/Q0sbYHRQovE39
+	6eWyHLrpISLeBPkS5vyFvXu9VCKlQt6Ghkq5rJ8qdfRGSUglKPwc5XtSSwy+VXTcPqCnE/jPR10
+	niTcLFLjBkmxmtcaMbGwivx+VikE61+N3qIpkGCePmKWIf/rprH3YHngknjoFeD7nt7kznGQd3x
+	DoYhtVb2lI3Czy0KGK+hnsu6m0PUCIg==
+X-Google-Smtp-Source: AGHT+IEoZQqMr5MaOBTYKOEj+gA/zIED+BbftxKTZgXXgkW3/liGpeyXixM9xrSxleeRxCUjjW4w6A==
+X-Received: by 2002:a05:6a21:9185:b0:231:242:2596 with SMTP id adf61e73a8af0-23dc0e90f22mr2890425637.5.1753903684654;
+        Wed, 30 Jul 2025 12:28:04 -0700 (PDT)
+Received: from ranganath.. ([2406:7400:98:2557:8eec:789f:9109:20e3])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bb007b77asm1256508b3a.48.2025.07.30.12.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 12:28:04 -0700 (PDT)
+From: Ranganath V N <vnranganath.20@gmail.com>
+To: shuah@kernel.org,
+	jlayton@kernel.org,
+	brauner@kernel.org,
+	broonie@kernel.org
+Cc: skhan@linuxfoundation.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	Ranganath V N <vnranganath.20@gmail.com>
+Subject: [PATCH] selftests/filesystems: Fix build warning on anon_inode_test
+Date: Thu, 31 Jul 2025 00:57:47 +0530
+Message-ID: <20250730192748.39517-1-vnranganath.20@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: k1smr8y1wqmgzhjda147db5kejzepe75
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: 0008D2F
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18TekhUR2waaUF2I5r3QQ0y1GVRV1RYguU=
-X-HE-Tag: 1753903621-547155
-X-HE-Meta: U2FsdGVkX18v5lCV3uzaXGX+DgCCN6qk0Bs2jpUbn85hhBs/mdlHulN/ESdIGHvF5JIPQOmzShCkNxrrw4msiexwIH2UySSOxq+6sGGChW4DzwTwLOBH+MzCRmwUO2ikEbPdZA1nX/PQZUtMOvIZk2pacjIDI5DkDbBd86DwZTu7uKkqbYK89zHhdymFe59i2FBKhtL4X+VpJ5Gmwq7d8IyIXfYd/zRE2v7IHRsW5KupK6Z6MGLeMvKlxCLlE6PYbfmn/j6/xKDtED4iZfzTLQt48LyirFVyob8BtfbrtOBq5IFPKAOHfgdAMK5plCCWhB7r3enfVZ2DPxK6RVuxDA3zLCLuQ4lqiP1c+9bzFisSVFNed2cReqxcwoFCEElf
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Jul 2025 13:46:47 -0400
-Sasha Levin <sashal@kernel.org> wrote:
+clang warning null passed where non-null argument is expected.
 
-> >My point here is that AI can now add questions that maintainers can't
-> >answer. Is it really legal? Can the maintainer trust it? Yes, these too can
-> >fall under the "technical reasons" but having a clear policy that states
-> >that a maintainer may not want to even bother with AI generated code can
-> >perhaps give the maintainer something to point to if push comes to shove.  
-> 
-> I don't think that those are technical aspects.
+anon_inode_test.c:45:19: warning: argument 3 null where non-null expected [-Wnonnull]
+   45 |         ASSERT_LT(execveat(fd_context, "", NULL, NULL, AT_EMPTY_PATH), 0);
+      |                   ^~~~~~~~
 
-I didn't either, but I was just saying one could possibly argue that they
-are. But that also states why it should be called out explicitly. As
-refusing AI patches may not be a technical issue where all other refusals
-should be.
+Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+---
+ tools/testing/selftests/filesystems/anon_inode_test.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
-> >I wouldn't think so. This is about submitting patches and a statement there
-> >may be easier found by those about to submit an AI patch. Just because they
-> >are using AI doesn't mean they'll think it's an academic research.  
-> 
-> Not in the sense that AI is research, but more that this is code coming
-> from someone who is unable to reliably verify the patch that is being
-> sent in.
-
-The issue I have is that the person sending in the patch may not know that
-they don't understand the patch. We've had those in the past. I could
-imagine AI creating more of these kinds of submissions.
-
-> 
-> The source can be academic research, AI, or whatever else comes along.
-> 
-> It'll just be nice to have a unified set of rules around it. Otherwise
-> the amount of combinations will explode (in which category do we put in
-> academic researchers sending in AI generated code?).
-
-Research folks know they are doing research. Those using AI may likely will
-not, even if they are. Hence why I would like this outside of the academic
-research document.
-
-> 
-> >> Some sort of a "traffic light" system:
-> >>
-> >>   1. Green: the subsystem is happy to receive patches from any source.
-> >>
-> >>   2. Yellow: "If you're unfamiliar with the subsystem and using any
-> >>   tooling to generate your patches, please have a reviewed-by from a
-> >>   trusted developer before sending your patch".
-> >>
-> >>   3. No tool-generated patches without prior maintainer approval.  
-> >
-> >Perhaps. Of course there's the Coccinelle scripts that fix a bunch of code
-> >around the kernel that will like be ignored in this. But this may still be
-> >a good start.  
-> 
-> It'll be hard to draw a line here, so I suggest we don't try.
-
-Agreed. But perhaps we could have a note that some subsystems expect all
-submissions done by a human. Although treewide patches that change
-interfaces that are fixed up by coccinelle may not have a choice.
-
-> 
-> Are AI generated .cocci semantic patches that are then transformed into
-> C patches and sent in by a human ok?
-> 
-
-Up to the maintainer.
-
--- Steve
+diff --git a/tools/testing/selftests/filesystems/anon_inode_test.c b/tools/testing/selftests/filesystems/anon_inode_test.c
+index 73e0a4d4fb2f..f796dad679db 100644
+--- a/tools/testing/selftests/filesystems/anon_inode_test.c
++++ b/tools/testing/selftests/filesystems/anon_inode_test.c
+@@ -38,11 +38,13 @@ TEST(anon_inode_no_chmod)
+ TEST(anon_inode_no_exec)
+ {
+ 	int fd_context;
++	static char *argv[] = { NULL };
++	static char *envp[] = { NULL };
+ 
+ 	fd_context = sys_fsopen("tmpfs", 0);
+ 	ASSERT_GE(fd_context, 0);
+ 
+-	ASSERT_LT(execveat(fd_context, "", NULL, NULL, AT_EMPTY_PATH), 0);
++	ASSERT_LT(execveat(fd_context, "", argv, envp, AT_EMPTY_PATH), 0);
+ 	ASSERT_EQ(errno, EACCES);
+ 
+ 	EXPECT_EQ(close(fd_context), 0);
+-- 
+2.43.0
 
 
