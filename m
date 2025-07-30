@@ -1,286 +1,323 @@
-Return-Path: <linux-kernel+bounces-751173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A904CB16607
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:08:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11DDBB165FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:06:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDB5C58161C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:05:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4328A5A38E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 630932E2675;
-	Wed, 30 Jul 2025 18:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8006D1E008B;
+	Wed, 30 Jul 2025 18:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="l19BGMYy";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="YXH+dnSl"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="S0KP4Rwv"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A23BC2D839C;
-	Wed, 30 Jul 2025 18:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753898696; cv=fail; b=qmn7YKqwh2NrS/QXGZU33N7SnIj8H4jvlnJZijK4AXB1GckOppM99K7i9Wupc3/fEDskxMzJCsDjNsS5m/vIkhGh8PDcTLPL6dUaM6JGp3yw5ZpnijBmDZa8yqvPXcFsIP3ZLgXEh61hz6TZGlkBXzvUzfz1bWH0PaLmU/mf7eo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753898696; c=relaxed/simple;
-	bh=763IKNuA60QDX+ihpS/hmIYV0ftHR3mxeoex3DUmcnQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=H9zTG5js2tflvDzvV+Y9V+Pdsdgy9rJuPjDAER1bth/Tgir+396i8URZgn0XCLtwacbt5jxyklA4SBuJapH7WWbs1TbXzgYdZkcsI48oGPtmBMQl0wleqz5YVnYc1WD7Z5IDxsZi/V5YreeJT4yXklenFc4SgESjpI05UhV9Eo8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=l19BGMYy; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=YXH+dnSl; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UHMx5Q002347;
-	Wed, 30 Jul 2025 18:04:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=763IKNuA60QDX+ihpS
-	/hmIYV0ftHR3mxeoex3DUmcnQ=; b=l19BGMYy53qq8ZHRNHmX1BjFwULpXQO9WK
-	RsA/zSt8cmdR4F7e8xeUiYqiM4PXFmxhTnVQzkYwVMAQSEssceZnTUF8GTehmrB7
-	MdjCSj7lDhrAE/G2VyXR68OzCPU8UgfAvQhiCxoPZe5Xay/3B2fFGgBd/dSaBXF9
-	y/+Q1ae6IUizRqOywWuZhiQdWNcTmz0Ahr5hQLKp3YDkPDLn/Yrrp4Wd03EcrM3u
-	umu/D/SmDxRPLUkZk03X9CIjA9NEvv5KAQwqCS2fZcs3smFNOakmgug3VPfMPvgc
-	G8pZ8E9+i4vEmMCfyhOeNqLkk/4BgWUh7j+xgMEyRe4kgVsDtwFA==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 484q732hs8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Jul 2025 18:04:20 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56UGh1g6010421;
-	Wed, 30 Jul 2025 18:04:19 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02on2045.outbound.protection.outlook.com [40.107.212.45])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 484nfbbc58-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Jul 2025 18:04:19 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bcXHVejWcLNl4aUA8FDGl11vzWssyIyrE224LEZpt+pGYWgn2+KdmraDmyrJTl7PZS1KurEbKwMoNV+yBlG7pUr7bu146yLlPW+lagkfftZZCbuNS94UDndsGybjVx3SE/FhclPlUw2APnVWbObYEKJxJwLXZKoD1/4UBHgyQqiEAnHJ8kga3PuHbJfppSarMpD3bLg0/xdldVCQu6v4otTH//Ukl47v0Guni3sx//Dq6E5cfi55vamiwKFrur8bSn0MahYmrDCnkRcOj6USAtPzlYEfWX30wF70jqIoHKdfOx8RUpGX9nBWUY7XXF4JeiYodLghWexfOUGEr+Mr+w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=763IKNuA60QDX+ihpS/hmIYV0ftHR3mxeoex3DUmcnQ=;
- b=QUJb1Fy8Tbs8Ug7FSHLA5OCIacLSVklerWLhx5m1dDHZXTgFihw+kJiKLj+qc04BfKg9gl9+k+CJFc21b0iqVgX92imhqQqhlvQ0aqDo8C5ozWMhcbL8YtfnwfhzZWfoHpFQ79ytNZezO27DqwLkp2UVZXlnkUwjOvUdU04bph1u6kBsq5m/P0ypYfnV278gMOfgfrB0FuFDRVNQodkUJsLJ8udZyQgqETafv/oWblA4Yu2bNNUQZhN6sh05+MM4fvN6YHboe8S7CGLl0jFgWTjaAF2xEYACDWEmIrYccclf4Xr8pGpq4Sz0S9jgDW13JWzmOysaSc97+8sSQaZQbA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=763IKNuA60QDX+ihpS/hmIYV0ftHR3mxeoex3DUmcnQ=;
- b=YXH+dnSlij9/J+EdGrksvQ+qU869GjqewUdGIreSJ7unkWO4HkDAAWRyWQ7IH/e432Y5G1p07yAkQKUj+h8Y8oaAODXwzbeJP0N/WXXOSRhbyqKztGO7NxbLMJCG5mRfUBeP0nEHESKWRZBgM8O93suGQTeLxllSKJdDFiPpWaM=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH0PR10MB4504.namprd10.prod.outlook.com (2603:10b6:510:42::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Wed, 30 Jul
- 2025 18:04:17 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8989.010; Wed, 30 Jul 2025
- 18:04:17 +0000
-Date: Wed, 30 Jul 2025 19:04:13 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Sasha Levin <sashal@kernel.org>, Greg KH <greg@kroah.com>, corbet@lwn.net,
-        linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-        josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <eafe2f1f-c8f4-41d4-b590-94509093eca3@lucifer.local>
-References: <2025072854-earthen-velcro-8b32@gregkh>
- <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
- <20250730112753.17f5af13@gandalf.local.home>
- <158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
- <20250730121829.0c89228d@gandalf.local.home>
- <aIpKCXrc-k2Dx43x@lappy>
- <a1022055-52bd-4948-9399-908b29ca140a@lucifer.local>
- <aIpSlhPTC9G1AqvO@lappy>
- <eaf1366f-4b28-4312-a820-1cd04796ff1d@lucifer.local>
- <20250730133220.6e7e9370@gandalf.local.home>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730133220.6e7e9370@gandalf.local.home>
-X-ClientProxiedBy: MM0P280CA0120.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:9::34) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD41D1DF98F;
+	Wed, 30 Jul 2025 18:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753898679; cv=none; b=SCe7Dg/Lx18Sg3I1OFgkjr1mdJARG694rgHbtzsjUs7lmpH2cF1Yvr5Gz8OjYqCDyE54JzG16lpyCU1JmuPjYj0mbStL6HGCMiIE1aX1wrVzx6veOWIeb8oTFSgOYJ+ck2a1fUFaa0WrmQ1zwdITBZr6fRcYWlAhI+KifApwxoA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753898679; c=relaxed/simple;
+	bh=cbMS9OmeSERInvl7UM9IzHA/1kYbIyujkvyTsarEoyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KX376fW1YTOI2YNpbWPUQa/Xr8INTFiGemLVRkZCk55Z3mTuEI/gCXYtKerJeM/dSuAgZXeJZsv2YBIuo2PSxf9b1+yXkgfhkZ7OJZ7Yqgzafe0cPYbTdY5I+A5bQalZH0vS4dOhuI62ywop2ekQFheHC49IiJVNXO6qMZr4qLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=S0KP4Rwv; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id B2602C7A;
+	Wed, 30 Jul 2025 20:03:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1753898623;
+	bh=cbMS9OmeSERInvl7UM9IzHA/1kYbIyujkvyTsarEoyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S0KP4RwvjhhMCHmYAsXZhPvBAliHVBXvGmTOFn0QRy/xgBYQ37WjvUeDdDfOF8VqJ
+	 4w+3CldYfOmcc+CTzsXf9EPW11/nspDIDvbpl3dvSt3rXoNsvxPu72ajfhRG3E6BLo
+	 X1Fx2sy170lQ7HQmW8yy5kK+kVNDpQpNmz8aiJ2o=
+Date: Wed, 30 Jul 2025 21:04:17 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Sven Peter <sven@kernel.org>, Janne Grunau <j@jannau.net>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Neal Gompa <neal@gompa.dev>,
+	Ludovic Desroches <ludovic.desroches@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+	Viresh Kumar <vireshk@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>,
+	Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber@suse.de>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Daniel Mack <daniel@zonque.org>,
+	Haojian Zhuang <haojian.zhuang@gmail.com>,
+	Robert Jarzmik <robert.jarzmik@free.fr>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	=?utf-8?Q?Am=C3=A9lie?= Delaunay <amelie.delaunay@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Laxman Dewangan <ldewangan@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
+	Viken Dadhaniya <quic_vdadhani@quicinc.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
+	imx@lists.linux.dev, linux-actions@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-sunxi@lists.linux.dev, linux-tegra@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH RFC 2/6] dmaengine: Make of_dma_request_slave_channel
+ pass a cookie to of_xlate
+Message-ID: <20250730180417.GC21430@pendragon.ideasonboard.com>
+References: <20250730-topic-dma_genise_cookie-v1-0-b505c1238f9f@oss.qualcomm.com>
+ <20250730-topic-dma_genise_cookie-v1-2-b505c1238f9f@oss.qualcomm.com>
+ <aIpKz495WI1SJTeB@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH0PR10MB4504:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2291425e-30d9-439d-67cb-08ddcf937ffa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?EcWy+BPItI1YXjIMzc+NUv2WNCRjstYFi4918Sniy+mxlxBGgN3moaZwwsQn?=
- =?us-ascii?Q?++CYdpdvlakVlXJ3GY6dyFajCzFGtX6UEswT8zNMT1rnBclXgsnDFhwHjU9K?=
- =?us-ascii?Q?tHRpI4thypVsrdiRUaMC5KFn+Ayjl5fBfgCuDt0PiEFZ1Y8RAMBPdP0zBG5j?=
- =?us-ascii?Q?7peKFMg4kth9TmywZOh1Pu+MX89GoRRSkuAYuZHZr1AQNDLADs5dbio1vnbh?=
- =?us-ascii?Q?Cjsf1evptH6+BOwjAgRwlqp5LQzgNdru6laWxWlNdjiP8yOtYX8NWHYYNlYG?=
- =?us-ascii?Q?KpBVUw+hO/DvX8MwD1Hdto5c31AHO4ikjaz8rvbjBX49MT08DjjCvaWydgRK?=
- =?us-ascii?Q?cy+qD3hIrQcKVydadioJncmAXruMKGSd/PpiMixbtpoF84VUjgESyVVs+ofp?=
- =?us-ascii?Q?nL04JY/CBueqHAx5bNZuB/y+yARdQ1UJXMGVGbRXn4qmYxTzEVuTld5lrSqd?=
- =?us-ascii?Q?GCZc+l6cGC0hw13zzu4PvrutgVKkeTo6mXlb8bEo8EfBckXKapjHZ5yxvBDT?=
- =?us-ascii?Q?QLe/8tzdNuui/B+J6E2J62EjNiyRJiRgkgryfFjVNA40w6t6/99clynAuJLr?=
- =?us-ascii?Q?YZf9wxFqdBFTB+scOcZ/4JRdVozxn7AJ0cnG5SFKEYCX8vRcu1t+Wh4fBFbj?=
- =?us-ascii?Q?oNBtU1qLtQSgEdm3INUK4s/xu5W/FXrlXrdyThhAyaEKxVPMzqxxeWUP+6P8?=
- =?us-ascii?Q?AtWYkTBmjv95c07NgVadpfQiIhno47kYJ/y+ro7vxlcm4qQhjTx9X4FFsqdS?=
- =?us-ascii?Q?eq+pTmxBRjM8TAle3zzim9TCDuI8OpNMeUJByP7J8r/RI03yAXSBswnWJ65j?=
- =?us-ascii?Q?ifC7UWzhGCmvERwhjhBgku0d5Kvc9bp5iM8sAwkgMteQJQSzlHfUiORR7Usj?=
- =?us-ascii?Q?UWvd5V+S4xNqeyAC4uakDX/Ebx/hNyRoNHuPjROC0JXE9cBNiHLs4k++N7yk?=
- =?us-ascii?Q?JKF4wTaVa7ZB5Is97t2Hf/swu2imOuXYnrdTZ8svtHc+z5lm5En5LCsCgTPa?=
- =?us-ascii?Q?UFc8Oj4Pis1wcER9vQQN583LKqFaYLZOxu3YgYGY56k//AzeEgg1Z/+C+P4v?=
- =?us-ascii?Q?D/WvMngxA0cKMfNdNK1ZZ7eSFSrEW/hQZmR+lhr7U+HMQfief/cgZAWnOmqN?=
- =?us-ascii?Q?6AhF2P5fuPmZ8USYLilI0JCAVmzsk4yDrjF5t4tmK4WVuhg3hCG8bgjnXVzM?=
- =?us-ascii?Q?7IXxcokBORNVYeRuVBBzi+Z6H8dWnCa72mEjIN4RdBgzTy1EHBiAQRpZT9Nr?=
- =?us-ascii?Q?THYGySRQ2eZ1bPI6AN6btkriSdvU5+FH+2eZyCf3fnTsr9ltM6WURuDmBT28?=
- =?us-ascii?Q?wqXlf+yl6pf1llsnLU7x4TYRcp2eO56JNLYkbvKxIh/8gDVLJP+4cY7SGeQ+?=
- =?us-ascii?Q?DaXBgEcamhKz/On6E4C4p77RMSTv1qJAwrEse9+XSrqFp9qgCCEOFADXHixi?=
- =?us-ascii?Q?a+1HyQ3PuQo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wk0/cEBB0ZwSnFTaj3TxKSgXUWgRYf7HbRo3vHgEaiwsrCB3N3GVySbsCTU9?=
- =?us-ascii?Q?ma0Fg3vIplVsiFYeful+BQQ+05Mksw1ui19gJZKg4a3AZxZ1QHzLCDt/1FmH?=
- =?us-ascii?Q?GlbSBjUH6yJ8sKVtMyEVpEOkDclxn/sXX6sC7xJDkP/mEXi2PTseLc5Ki7EC?=
- =?us-ascii?Q?KeIDXOH8Il9+2Q/Km5/DPS+8Cf/cWFH6W4Y8fiArsiHLdie+VLCQUvB8exar?=
- =?us-ascii?Q?HM0jFAETtgZWEcUFtThRGWaKwFd+/znbxX14cK5riW+mNz0HwjvOj1uxOd6L?=
- =?us-ascii?Q?NVTyQcK/BIrK1xlqW/TjlxRA0yYcbkVarUlczRctTa9xF5WiZNWpwj3cUpZe?=
- =?us-ascii?Q?43X5UJ8156Xu7qXnRFBQY6GC6bBdLr5a7QbMgAD7FCDP9Kwv6C5PXVLJff43?=
- =?us-ascii?Q?vVPyBIF3n4k/Fqqwwgk7HREq9siKBwC2K3hr+1oArfV3T4ZWUAdMRmmV6ye2?=
- =?us-ascii?Q?LIAvc+59C2kwu0Z14P2XtgvYyc6NxyPkAIGURpJBWHnlKwdE6C3GE2MJ/PrD?=
- =?us-ascii?Q?x5EE5BjCrgBUTO/9zMjjtguAUtZ+ak4GlO6KbLIHb15YS1ZtDE9m/HRJHAL3?=
- =?us-ascii?Q?an7uYYpnOLj7ssSxTskvI3DEkPDzKZJPzC94vWkRsZKneTvnk3kJOhcZTDBr?=
- =?us-ascii?Q?yQs/rb6vXBlyMcO2REQkow8+tjyKQWTrf9M/VQg1njQXxEXPI5nMtPyuUhTN?=
- =?us-ascii?Q?PfqzgbwdrBE7OtYiCusQZUhXu2LBM1oLAyOnL4IsnfufWNgcAb+3tU9eC02K?=
- =?us-ascii?Q?pw/6WW2fM5TPFOXoJ5mCAe0QFiAysLley2B7zvuiumqHI1f7qfvo0ORo8gY0?=
- =?us-ascii?Q?DxfCCEWZavfJPWnyMBknbihZvbGbilv3UgLx0jqvsO/b7alQjGkpUAJG0SBZ?=
- =?us-ascii?Q?LmoMO1iSmuMYC5R5Fy3P/vAsUNoCHJf/q8KxLMCX2uSeWk/4a3tCyDfhhvY9?=
- =?us-ascii?Q?ZxARrjjtPNb/fL3mZWBQuK0VYzyGV77n08kk/zAn1LJAqXWgW88bA6tz/oc4?=
- =?us-ascii?Q?24I6K5/iJAdcEoE+DM7hEIaFyw8GZ4u4zce/jR/xLkOWa32h0EHVkBcLr5Q/?=
- =?us-ascii?Q?j2f9eBzkZJY/UXr9pK1OEiL5Uc75K9Lsiy3AU7In50fSADu9j4pZyU6hfeJZ?=
- =?us-ascii?Q?yC/HEbIme6pSkxusTFzeiz6zekc0gorG36zpeUnRKSzwznMAgovCNJ2GUz0e?=
- =?us-ascii?Q?khhd99PJ20mEaQuJrj6xOKz76gF/tm2ye2TvF0j9kzSlNCjpJmbPSJI50+vs?=
- =?us-ascii?Q?8i9k57BILu/VL2aZKL4+AY8BPQ3QyGDjS8AuKKCoeWw0Qy0isMpH9m/O5sSB?=
- =?us-ascii?Q?v04J2pw/r9vq2UdMeOmu8LfZIHf9S4RsoPP8FJSqRhG2c5uwQcExlQM/mr/e?=
- =?us-ascii?Q?eGsvH03xR0xEyBivyAwO1GoYATD4EVMql22+BA/rE9+SN5esqrEvhNNlQ+vA?=
- =?us-ascii?Q?CUCQT3woYZA5N3dusF+QI9IHg9EZDuIK4vCt7yna+sklFbGzA6uFa4OZVPsA?=
- =?us-ascii?Q?TAg0ti+ZGNbeIvhHRTlKG1QrfkcPFT9oPgbxqETMQvYhKW9hiGQA8WbxvNEy?=
- =?us-ascii?Q?BoTrxj6AqA91zxynTj489GAKTrlMqw73MnsMsJIJwWWfwXMv2OEQvnFNs6Yd?=
- =?us-ascii?Q?7w=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	F7DVV8im00d/l+jceQmxDgq74lTD7v71ilZYM/g/m6406uZ3XD68MJtfBIa6/qysrgSxGgOUFLrHiOsCr02Bkzgm/tzLDS4Fx7yxoucj9R5WkJNZlvzKO/uJ+MJC/oHNrlJU9At9fMEFJ9k+k/l4x/O6aA3dvtUmOvUM1HK98UuTpibR0oObCw8eBvmOm/LTH1qJeQrG5pSJrGrIOyCwjsQ76ygHUuQVlAhJhdkOUC46L9D1UMWyJ20prL4XrjctMo7KkxzAvnGt6/MthOQ2M/VctSDq7Fm+vq3uuZcY6of9OVOIL/TW9nL2laHRDh+tXJRaw6hfeQaV91KTUCsn/u0IlSTCJsc7IOw+qJGx+UDcFPeLYaHnYpVAneWlDNcJSnHZvalt9U/B5gsENYC3MSEAIcjAyVVBVzXWW2Ql6rvfcT0QiLZemaJUtaJL6XoA3QcYV1zHQj7JtmTfJJ7V3BbZD17jendZomiO8gYycP6O8fSSkfe+xbNuRzsqAzIau1ipdsa++fKE5SWtCMUi/L493uaea52QSRhCV5dI5tCC0QRiK2KZ5gmfnPo46wd7KLHGQZ+XBh1mJbqVsNiCeOpNPUFxQoicrmVfUjuIEgw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2291425e-30d9-439d-67cb-08ddcf937ffa
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 18:04:17.2457
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ro87BxIMnGmvazhfLnUnT0paddhm6KDFKHmrJ5P095leKt6YRstHOHGSKcb3BUFHQmsBrf6ttp/ceJeYm1J7b+UKGVRLZlXYNwOKMurxq7s=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR10MB4504
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_05,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- suspectscore=0 malwarescore=0 bulkscore=0 spamscore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2507300132
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDEzMiBTYWx0ZWRfXyp+E+04nR4tb
- mnDKdH9K34yktmDUnHKejZNeNH6IHLj9S2kUr+Ln12gVOCWgMGS8Syha9LWyHrTJFNY8St+wx1Y
- Me1airiJKhzO4a1Hfw+332yNfwk3mxdsxWBxJ6l1d81hoOaUVMQwHONdCXrUqJkPhHR5N+iswYQ
- SVSlHbylvxllXESsR1kM1hNWIdBdOjxp3n+C8u4ybcNpEvEM6cOmAq5rVBVqkU5VFAmbI+l7yg5
- ROPbtlmoQ0R7vJBLMaH0/pA7ksmPvfxIut1qQ9xDzvDP4JQsmBVRKiSjsvwzbL3wc0kYX58tWNi
- aXN6fDh3Haq+xvTrmxxsbHzOl4golisieWNowrdtfXRV7Bv2F0QxEhSKSXS9FNNnvGVCtV2fS4z
- o+EkJXFVC8yZsu3cLZg0RLjBWtd4dr64y1ljoLUfhE6rhB5QFLMCOfYLPxIaY9q4BaxMRiJU
-X-Authority-Analysis: v=2.4 cv=ZO3XmW7b c=1 sm=1 tr=0 ts=688a5ea4 b=1 cx=c_pps
- a=e1sVV491RgrpLwSTMOnk8w==:117 a=e1sVV491RgrpLwSTMOnk8w==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=PxQgCdHISfNXxvFpDJ8A:9
- a=CjuIK1q_8ugA:10 cc=ntf awl=host:13604
-X-Proofpoint-GUID: F0x6XhrP-jpYw_cCA4R3hgMakHA_hp0j
-X-Proofpoint-ORIG-GUID: F0x6XhrP-jpYw_cCA4R3hgMakHA_hp0j
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aIpKz495WI1SJTeB@lizhi-Precision-Tower-5810>
 
-On Wed, Jul 30, 2025 at 01:32:20PM -0400, Steven Rostedt wrote:
->
+On Wed, Jul 30, 2025 at 12:39:43PM -0400, Frank Li wrote:
+> On Wed, Jul 30, 2025 at 11:33:29AM +0200, Konrad Dybcio wrote:
+> > From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > >
-> > Assuming every maintainer accepts AI patches unless explicitly opted out is
-> > very clearly not something that will be acceptable to people.
->
-> You can opt out when you receive your first AI patch ;-)
-
-Yeah, there's just no way maintainers are going to be fine with this.
-
-But this is why mediating this via the maintainers summit is a great idea -
-let's get that feedback there.
-
-And if I'm wrong and everybody's cool with it I will happily eat copious
-humble pie :)
-
->
+> > The DMA subsystem attempts to make it theoretically possible to pair
+> > any DMA block with any user. While that's convenient from a
+> > codebase sanity perspective, some blocks are more intertwined.
 > >
-> > Assuming an LF policy most maintainers won't be aware of applies with the
-> > kind of ramifications this will inevitably have seems very unreasonable to
-> > me.
->
-> This is why the policy should just be "It's up to the maintainer to decide
-> if they will take the patch or not".
-
-Isn't this just what review is? :)
-
-I mean having a tag makes life easier on this front, but I think we should
-be as conservative as possible, and in my view that position is to default
-to not accepting.
-
-
->
-> If the maintainer starts getting too many submissions, then they can update
-> the MAINTAINERS file to say "stop all AI patches to me!". Just like we have
-> an opt-in for to not be part of the get_maintainer.pl "touched this file"
-> with the .get_maintainer.ignore script.
-
-Again I really don't think this aligns with what maintainers will want.
-
-But again I think that is better settled or at least addressed at the
-maintainers summit.
-
->
->
+> > One such case is the Qualcomm GENI, where each wrapper contains a
+> > number of Serial Engine instances, each one of which can be programmed
+> > to support a different protocol (such as I2C, I3C, SPI, UART, etc.).
 > >
-> > You might suggest presuming a policy for maintainers is inappropriate, but
-> > you are doing so wrt the LF policy on the assumption everybody is aware and
-> > agrees with it.
+> > The GPI DMA it's designed together with, needs to receive the ID of the
+> > protocol that's in use, to adjust its behavior accordingly. Currently,
+> > that's done through passing that ID through device tree, with each
+> > Serial Engine expressed NUM_PROTOCOL times, resulting in terrible
+> > dt-bindings that are full of useless copypasta.
 > >
-> > That same document says individual projects can _override_ this as they
-> > please. So the introduction of this document can very well override that.
+> > In a step to cut down on that, let the DMA user give the engine driver
+> > a hint at request time.
 > >
-> > We at the very least need this to be raised at the maintainers summit with
-> > a very clear decision on opt-in vs. opt-out, with the decision being
-> > communicated clearly.
->
-> Agreed.
->
+> > Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> > ---
+> >  drivers/dma/amba-pl08x.c                       |  3 ++-
+> >  drivers/dma/apple-admac.c                      |  3 ++-
+> >  drivers/dma/at_hdmac.c                         |  6 ++++--
+> >  drivers/dma/at_xdmac.c                         |  3 ++-
+> >  drivers/dma/bcm2835-dma.c                      |  3 ++-
+> >  drivers/dma/dma-jz4780.c                       |  3 ++-
+> >  drivers/dma/dmaengine.c                        | 20 +++++++++++++++++---
+> >  drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c |  3 ++-
+> >  drivers/dma/dw/of.c                            |  3 ++-
+> >  drivers/dma/ep93xx_dma.c                       |  6 ++++--
+> >  drivers/dma/fsl-edma-main.c                    |  6 ++++--
+> >  drivers/dma/img-mdc-dma.c                      |  3 ++-
+> >  drivers/dma/imx-dma.c                          |  3 ++-
+> >  drivers/dma/imx-sdma.c                         |  3 ++-
+> >  drivers/dma/lgm/lgm-dma.c                      |  3 ++-
+> >  drivers/dma/milbeaut-hdmac.c                   |  4 +++-
+> >  drivers/dma/mmp_pdma.c                         |  3 ++-
+> >  drivers/dma/mmp_tdma.c                         |  3 ++-
+> >  drivers/dma/moxart-dma.c                       |  3 ++-
+> >  drivers/dma/mxs-dma.c                          |  3 ++-
+> >  drivers/dma/nbpfaxi.c                          |  3 ++-
+> >  drivers/dma/of-dma.c                           | 18 +++++++++++-------
+> >  drivers/dma/owl-dma.c                          |  3 ++-
+> >  drivers/dma/pl330.c                            |  3 ++-
+> >  drivers/dma/pxa_dma.c                          |  3 ++-
+> >  drivers/dma/qcom/bam_dma.c                     |  3 ++-
+> >  drivers/dma/qcom/gpi.c                         |  3 ++-
+> >  drivers/dma/qcom/qcom_adm.c                    |  3 ++-
+> >  drivers/dma/sh/rcar-dmac.c                     |  3 ++-
+> >  drivers/dma/sh/rz-dmac.c                       |  3 ++-
+> >  drivers/dma/sh/usb-dmac.c                      |  3 ++-
+> >  drivers/dma/st_fdma.c                          |  3 ++-
+> >  drivers/dma/ste_dma40.c                        |  3 ++-
+> >  drivers/dma/stm32/stm32-dma.c                  |  3 ++-
+> >  drivers/dma/stm32/stm32-dma3.c                 |  4 +++-
+> >  drivers/dma/stm32/stm32-mdma.c                 |  3 ++-
+> >  drivers/dma/sun4i-dma.c                        |  3 ++-
+> >  drivers/dma/sun6i-dma.c                        |  3 ++-
+> >  drivers/dma/tegra186-gpc-dma.c                 |  3 ++-
+> >  drivers/dma/tegra20-apb-dma.c                  |  3 ++-
+> >  drivers/dma/tegra210-adma.c                    |  3 ++-
+> >  drivers/dma/ti/cppi41.c                        |  3 ++-
+> >  drivers/dma/ti/edma.c                          |  3 ++-
+> >  drivers/dma/ti/k3-udma.c                       |  3 ++-
+> >  drivers/dma/uniphier-xdmac.c                   |  3 ++-
+> >  drivers/dma/xilinx/xilinx_dma.c                |  3 ++-
+> >  drivers/dma/xilinx/xilinx_dpdma.c              |  3 ++-
+> >  drivers/dma/xilinx/zynqmp_dma.c                |  3 ++-
+> >  include/linux/dmaengine.h                      |  7 +++++++
+> >  include/linux/of_dma.h                         | 16 +++++++++-------
+> >  sound/soc/apple/mca.c                          |  2 +-
+> >  sound/soc/renesas/rcar/dma.c                   |  2 +-
+> >  52 files changed, 146 insertions(+), 68 deletions(-)
 > >
-> > It's maintainers like me that'll have to deal with the consequences of
-> > this.
->
-> And you may be the first to opt-in ;-)
+> > diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
+> 
+> ...
+> 
+> >  						const char *name)
+> >  {
+> > diff --git a/include/linux/of_dma.h b/include/linux/of_dma.h
+> > index fd706cdf255c61c82ce30ef9a2c44930bef34bc8..9f9bc4207b85d48d73c25aad4b362e7c84c01756 100644
+> > --- a/include/linux/of_dma.h
+> > +++ b/include/linux/of_dma.h
+> > @@ -19,7 +19,7 @@ struct of_dma {
+> >  	struct list_head	of_dma_controllers;
+> >  	struct device_node	*of_node;
+> >  	struct dma_chan		*(*of_dma_xlate)
+> > -				(struct of_phandle_args *, struct of_dma *);
+> > +				(struct of_phandle_args *, struct of_dma *, void *);
+> 
+> I suggest pass down more informaiton, like client's dev point. So we can
+> auto create device link between client's dev and dma chan's device.
 
-Well I'm taking no position on the issue at hand, more so how we do the
-_policy_ bits, so who knows ;)
+Is .of_dma_xlate() really the right place to do that ? If you want to
+create a device link for PM reasons, isn't it better created when the
+channel is requested ? It should also be removed when the channel is
+freed.
 
-Cheers, Lorenzo
+> 
+> DMA Engineer device
+>    DMA chan device
+>        consumer clients' device.
+> 
+> If consumer device runtime pm suspend can auto trigger DMA chan's device's
+> runtime pm function.
+> 
+> It will simplifly DMA engine's run time pm manage. Currently many DMA run
+> time pm implement as, runtime_pm_get() when alloc and runtime_pm_put() at
+> free channel.  But many devices request dma channel at probe, which make
+> dma engine work at always 'on' state.
+> 
+> But ideally, dma chan should be resume only when it is used to transfer.
+
+This is exactly what I was going to mention after reading the last
+paragraph. Is there anything that prevents a DMA engine driver to
+perform a rutime PM get() when a transfer is submitted and a put() when
+it completes ? (Logically speaking, the actual implementation would
+likely be a bit different in drivers, but the result would be similar.)
+
+> >  	void			*(*of_dma_route_allocate)
+> >  				(struct of_phandle_args *, struct of_dma *);
+> >  	struct dma_router	*dma_router;
+> > @@ -34,7 +34,7 @@ struct of_dma_filter_info {
+> >  #ifdef CONFIG_DMA_OF
+> >  extern int of_dma_controller_register(struct device_node *np,
+> >  		struct dma_chan *(*of_dma_xlate)
+> > -		(struct of_phandle_args *, struct of_dma *),
+> > +		(struct of_phandle_args *, struct of_dma *, void *),
+> >  		void *data);
+> >  extern void of_dma_controller_free(struct device_node *np);
+> >
+> > @@ -45,16 +45,17 @@ extern int of_dma_router_register(struct device_node *np,
+> >  #define of_dma_router_free of_dma_controller_free
+> >
+> >  extern struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
+> > -						     const char *name);
+> > +						     const char *name,
+> > +						     void *data);
+> >  extern struct dma_chan *of_dma_simple_xlate(struct of_phandle_args *dma_spec,
+> > -		struct of_dma *ofdma);
+> > +		struct of_dma *ofdma, void *data);
+> >  extern struct dma_chan *of_dma_xlate_by_chan_id(struct of_phandle_args *dma_spec,
+> > -		struct of_dma *ofdma);
+> > +		struct of_dma *ofdma, void *data);
+> >
+> >  #else
+> >  static inline int of_dma_controller_register(struct device_node *np,
+> >  		struct dma_chan *(*of_dma_xlate)
+> > -		(struct of_phandle_args *, struct of_dma *),
+> > +		(struct of_phandle_args *, struct of_dma *, void *),
+> >  		void *data)
+> >  {
+> >  	return -ENODEV;
+> > @@ -75,7 +76,8 @@ static inline int of_dma_router_register(struct device_node *np,
+> >  #define of_dma_router_free of_dma_controller_free
+> >
+> >  static inline struct dma_chan *of_dma_request_slave_channel(struct device_node *np,
+> > -						     const char *name)
+> > +							    const char *name,
+> > +							    void *data)
+> >  {
+> >  	return ERR_PTR(-ENODEV);
+> >  }
+> > diff --git a/sound/soc/apple/mca.c b/sound/soc/apple/mca.c
+> > index 5dd24ab90d0f052bb48f451cf009dc2e9128014d..43d48e4ac8161ee9955120fe64f7b911bfdfe1ca 100644
+> > --- a/sound/soc/apple/mca.c
+> > +++ b/sound/soc/apple/mca.c
+> > @@ -926,7 +926,7 @@ static struct dma_chan *mca_request_dma_channel(struct mca_cluster *cl, unsigned
+> >  	char *name = devm_kasprintf(cl->host->dev, GFP_KERNEL,
+> >  				    is_tx ? "tx%da" : "rx%db", cl->no);
+> >  #endif
+> > -	return of_dma_request_slave_channel(cl->host->dev->of_node, name);
+> > +	return of_dma_request_slave_channel(cl->host->dev->of_node, name, NULL);
+> >
+> >  }
+> >
+> > diff --git a/sound/soc/renesas/rcar/dma.c b/sound/soc/renesas/rcar/dma.c
+> > index 2035ce06fe4c4aeaa8620d817910a5319732fa58..dcbff2fc61a0472adea226371016a128563b3cd0 100644
+> > --- a/sound/soc/renesas/rcar/dma.c
+> > +++ b/sound/soc/renesas/rcar/dma.c
+> > @@ -204,7 +204,7 @@ struct dma_chan *rsnd_dma_request_channel(struct device_node *of_node, char *nam
+> >  		}
+> >
+> >  		if (i == rsnd_mod_id_raw(mod) && (!chan))
+> > -			chan = of_dma_request_slave_channel(np, x);
+> > +			chan = of_dma_request_slave_channel(np, x, NULL);
+> >  		i++;
+> >  	}
+> >
+
+-- 
+Regards,
+
+Laurent Pinchart
 
