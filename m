@@ -1,198 +1,170 @@
-Return-Path: <linux-kernel+bounces-751077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0CAB16509
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:49:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60637B1650A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:50:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C91FD3ABD7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:49:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8839B177E09
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A48416F0FE;
-	Wed, 30 Jul 2025 16:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354E62DCF74;
+	Wed, 30 Jul 2025 16:50:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="s0HRWjhO"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TPpEQoRc"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAAC19FA93;
-	Wed, 30 Jul 2025 16:49:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BAE51C7013
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753894181; cv=none; b=uQg1g1ZhLpbFyXK+BzpS3ED33ZKAo1edAWbHzQp8A0nCbUtt2AwbwzpikguizZ40dIHCARsXBCfMk7WaGyEm2jIGK8fuAwkSqzDra4uDErWiRRoiuwpEYM4EeIpY69HK21lYGLmFh98a6D0flUMobf1yL7NHJXLNRmqdD+aDfns=
+	t=1753894223; cv=none; b=CjFkAQXYqItuU6VQTBPBSY8XDtGIabgKDlid4l2p16C2Zv8rXG5Fmx5PL/qZKS+v+gM71H6O+w/N2Dxu4FRW0VrgnVgvXNg+ZS6E81A3DNm6qKt/d/EoF+6EMSjvtbYrZOZFmoreqERBgD3VdrF17kV7mRtHgShCYoUW+n9oymo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753894181; c=relaxed/simple;
-	bh=8IWg4D0A127Ud77sz80AqKP9QaA37XJBRXx5golNszw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YeQYYdz6p8C+K83E/4QzLso54VFeHCc1l+t/z3r5BQST3eJaacUecfJT2P4UVuU4VZEoef3LrBYYUE9e+Lewt5vIaix7Bjt3t/OtVZEf1ErS3+Sp4Altvi37yQ4RLi4gv1p8UMKnSZmp9KcYj14/6aYY67vzVDU1T/v7zRclD5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=s0HRWjhO; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1753894171; x=1754498971; i=w_armin@gmx.de;
-	bh=rtYohrdBlhN/r00M1EQA7z6XtSBmhzdN5scRpOf2SYw=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=s0HRWjhOIoWSjPwllD95xkUoNg74oPRvLafbbU72Y7qZLuQht4x7Wgx+nAf+fxFG
-	 re1NX9dlZKE/u/e0Eqi9nYtctaHC4zBt9aPqvLbgFfErRziz3/eq2dEc6oDFZg37F
-	 AfdGsmSXcHVmBic1fIw9dO5AENlHH2W37KuCdi/igkO8ahCEOScxIJD7vwUBbfPqy
-	 oc0rf9nCMXapIIFMbL1iwhSo01klDJRJgwCuYLvKS/o27algJDAgcfyuUANb/6E9f
-	 rFNp7k1OHTrLsMEK7DrJjITmZXxN8ug/DgQH9NDRYa3EUYCO4kC/TsQ6YqTBojGCF
-	 sYyIuIFJA4QSvie0hA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N3bSt-1uYBth2RQx-017tBF; Wed, 30
- Jul 2025 18:49:30 +0200
-Message-ID: <d8f9875b-03be-465b-9715-addd8334a782@gmx.de>
-Date: Wed, 30 Jul 2025 18:49:29 +0200
+	s=arc-20240116; t=1753894223; c=relaxed/simple;
+	bh=9dWTRXZaJPCq1JtfMK5xMNGaI4kHGmvqX/UGrLCtlVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LyRFMOdMT6PzzmQlaNRkA90tg8Ax3b9gHyPjf5T+o7azTqsyZsl1m0hnXpDlYKIeKF6WZubMBwB3CpXsITJWFWts/8sOJzc8sXWBJKRJWmWtsMT8m2gJncJFm+0m1j/3D2xtkJq8MPXXJuNgIiDe3l2ylzyXVSpWu5Heehkbu84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TPpEQoRc; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae360b6249fso1284223366b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1753894219; x=1754499019; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hhW6h1/+S/ULBh1mEzTRJl6Vdbe8H6LqlY995wIIFZ0=;
+        b=TPpEQoRchnkA8O/f8oQaVK/Sj2uMlYf+dWUkIEg+LnKSIrMFf58TrCNKUSDQrDFezl
+         cW6bsVvBPRH+Slo7xWZ3+CHK1XBy3EyHqmAdUjysmM9p1BfKh4Lq2tVim83PTp1mrr5i
+         8j2gwXCP+XkQvpYTE6pnmSHGcYE5UsntZgDys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753894219; x=1754499019;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hhW6h1/+S/ULBh1mEzTRJl6Vdbe8H6LqlY995wIIFZ0=;
+        b=jCY0vUw/QRzqjrk6CmQD+tI1kz4oxu2x9M0XSTymnSpCRnve7+8TXM+6ygIvfxtgJh
+         6jyCV4lzo6kd7KnfjNyOCInyHrYiM77/yu2+XdZ+KbN6Nhb2SxRGdyXznZHmnodnddAG
+         eonibAkfjsqFkwWHZJmbm9SWxgJbRk7qF18cRKWSeWnvZdFP4a0y359wes3TdFhoH0eG
+         SmN9vZmIeJypcEhxwVHzHUR8IzLLcbz21IcYAEeUEX4V6QhvnNzocxM6qDSi5Z6IOtzo
+         Y9wvO7O4w8fc1Zfb/nNwCl64qP0fTQevbBLIFQM5XhOg4N69I/aNPtJPzzgv4ZGOTyTO
+         LgGw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7lZ7jlWfCic2Gr+L1EaeeFBfUW1MXehA60njJFuMEpBpeX+jJMDLrj1QQ/gk4gxi9fXQfLsZhtNpHZ3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBhhU3BaIztra1wgoWEHM7KKp5KkjDtdFDfL+KDBx0FxuBnuR3
+	comAd4DK+uWwFs+nnIVvDNbSAlJW7Y4okLa57lStv23AWPlkFDHKk2QfOp64/x3iLpcH9RPywih
+	f5Y5YmRs=
+X-Gm-Gg: ASbGncs5P+AJ4W19p4vIlHwgiTdAILcFb7u/FlsWWHgliOVFLHhd2W/G9xfJiFtABLH
+	l2FgSB2LIiS51wC7JGCwjj3Zpm9y7CVJfcSFmLB5eqiUM+fyQUVGBJu+LdDHx9bIpiePc/qAl+x
+	n92fj6HhG8x/ahToEQsJA/QW3Ldawo6Ltx44Mgk7F0KccDiQENJANGPwicQDEAqA8XHlo9WGE6E
+	A4kKRJgWHPByqlbveo45SaVUorjyyTdjAT5GBRA6jjLMg7p09j4I/HC97AQqaeo3Vw9bfoaX2eW
+	g47CoYFYXB4NOw/NifTtU1WVZnEQMrB1M9brfoWmQrpD4bwCPS8A1a02PltcPLzaUy8eYORYYx9
+	RT+L5FtfBiN19hib8V3PQMTqi1pOpLuObu7J97KQW/v5jeGVE73JSRp71RInrM7bCgKdmA5y8Ky
+	L3TeVSOJE=
+X-Google-Smtp-Source: AGHT+IHvfDTGwvnIUiiSMQdLl5ZB1lOLDBug8wLVH+lkwWVc6vrfh3zDzawHJbRcWrc7n+8El4arPg==
+X-Received: by 2002:a17:907:971e:b0:ae0:16c5:d429 with SMTP id a640c23a62f3a-af8fda934a3mr492442966b.58.1753894219248;
+        Wed, 30 Jul 2025 09:50:19 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af8f77c4f9asm192421466b.58.2025.07.30.09.50.18
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 09:50:18 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-61592ff5ebbso1576191a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:50:18 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUJnoGLDKAia+tZbHig43SBeZvWWgbOkBtUbpi5ifoRrhcA5NBoc2/UIln9bGk/I34MOv9kRxwcXv8FaJw=@vger.kernel.org
+X-Received: by 2002:a05:6402:1d4e:b0:615:a3f9:7be2 with SMTP id
+ 4fb4d7f45d1cf-615a3f996c5mr655231a12.19.1753894218008; Wed, 30 Jul 2025
+ 09:50:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
-To: Ilya K <me@0upti.me>, rafael@kernel.org, lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729062038.303734-1-W_Armin@gmx.de>
- <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:h06vpeGl/KQFRXcysy+3W4RHci0G2c5v8QP7e5JK5+kPDRmnaxv
- kLZaeAiLHN8smi+oaCQiQQ5yFsWkKqpVbTU6/gFqgOIygAU5H8wkfW6EaOqbghlvZG4ntzE
- f/NRywof+5g5Czorw6YaE9PcfXDbiqapH8sOhYJpYLev0hOUm5IDh/5i1ON50ak8BdCPv/p
- 55Fwe1g569U4zWQ5oK1JA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:BZJm1AsMKqI=;PaWdNKDvCDWf1sWkZs4KBvuFd0K
- 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
- ISHapOoQZENzgj3VikypNvo=
+References: <87ecu4idvc.wl-tiwai@suse.de> <CAHk-=wjj9DvOZtmTkoLtyfHmy5mNKy6q_96d9=4FUEDXre=cww@mail.gmail.com>
+ <CAHk-=whvoZuw-Cv2Bx2ip8Kq4j9jw0meLBg0xz8GbxzFmQK7QA@mail.gmail.com> <8734aeteef.wl-tiwai@suse.de>
+In-Reply-To: <8734aeteef.wl-tiwai@suse.de>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 30 Jul 2025 09:50:00 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgO0Rx2LcYT4f75Xs46orbJ4JxO2jbAFQnVKDYAjV5HeQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwEVff61vrMyjTIvAD0SR_lkrr7F6Z_dxguNlvXb6tej_Sauo_3j4s3E48
+Message-ID: <CAHk-=wgO0Rx2LcYT4f75Xs46orbJ4JxO2jbAFQnVKDYAjV5HeQ@mail.gmail.com>
+Subject: Re: [GIT PULL] sound updates for 6.17-rc1
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Linux Sound Mailing List <linux-sound@vger.kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Am 29.07.25 um 09:00 schrieb Ilya K:
-
-> On 2025-07-29 09:20, Armin Wolf wrote:
->> It turns out that the ECDT table inside the ThinkBook 14 G7 IML
->> contains a valid EC description but an invalid ID string
->> ("_SB.PC00.LPCB.EC0"). Ignoring this ECDT based on the invalid
->> ID string prevents the kernel from detecting the built-in touchpad,
->> so relax the sanity check of the ID string and only reject ECDTs
->> with empty ID strings.
->>
->> Compile-tested only.
->>
->> Reported-by: Ilya K <me@0upti.me>
->> Fixes: 7a0d59f6a913 ("ACPI: EC: Ignore ECDT tables with an invalid ID s=
-tring")
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->> ---
->>   drivers/acpi/ec.c | 10 +++++++---
->>   1 file changed, 7 insertions(+), 3 deletions(-)
->>
-> Thanks, this works!
+On Tue, 29 Jul 2025 at 22:51, Takashi Iwai <tiwai@suse.de> wrote:
 >
-> Tested-by: Ilya K <me@0upti.me>
->
->> diff --git a/drivers/acpi/ec.c b/drivers/acpi/ec.c
->> index 75c7db8b156a..7855bbf752b1 100644
->> --- a/drivers/acpi/ec.c
->> +++ b/drivers/acpi/ec.c
->> @@ -2033,7 +2033,7 @@ void __init acpi_ec_ecdt_probe(void)
->>   		goto out;
->>   	}
->>  =20
->> -	if (!strstarts(ecdt_ptr->id, "\\")) {
->> +	if (!strlen(ecdt_ptr->id)) {
->>   		/*
->>   		 * The ECDT table on some MSI notebooks contains invalid data, toge=
-ther
->>   		 * with an empty ID string ("").
->> @@ -2042,9 +2042,13 @@ void __init acpi_ec_ecdt_probe(void)
->>   		 * a "fully qualified reference to the (...) embedded controller de=
-vice",
->>   		 * so this string always has to start with a backslash.
->>   		 *
->> -		 * By verifying this we can avoid such faulty ECDT tables in a safe =
-way.
->> +		 * However some ThinkBook machines have a ECDT table with a valid EC
->> +		 * description but an invalid ID string ("_SB.PC00.LPCB.EC0").
->> +		 *
->> +		 * Because of this we only check if the ID string is empty in order =
-to
->> +		 * avoid the obvious cases.
->>   		 */
->> -		pr_err(FW_BUG "Ignoring ECDT due to invalid ID string \"%s\"\n", ecd=
-t_ptr->id);
->> +		pr_err(FW_BUG "Ignoring ECDT due to empty ID string\n");
->>   		goto out;
->>   	}
->>  =20
-> Would it maybe make sense to also log a warning for the old case? Maybe =
-a vendor will notice it and fix the firmware...
-> (yeah yeah fat chance)
+> It's a dilemma of the default kconfig enablement.  In general we want
+> to keep the default disabled for leaf drivers.
 
-The Linux kernel is not a verification kit, so i am against keeping the ol=
-d check. Instead i suggest that we ensure that
-the FWTS project (https://github.com/fwts/fwts) detects such invalid ECDT =
-tables. Can you share the full output of
-acpidump so that i can run the fwts tool on it?
+You misunderstand.
 
-Thanks,
-Armin Wolf
+The problem is that you threw away all the old config data in the name
+of "reorganizing".
 
+And no, the answer is *not* "make everything enabled by default".  If
+somebody has a working configuration for their setup, new subdrivers
+shouldn't be enabled by "make oldconfig", because clearly those new
+drivers aren't relevant.
+
+So no - not "default y".
+
+If you change the names of config variables or re-organize things some
+other way - you need to accept the old configuration name as the
+default.
+
+And even then it's an absolute *nightmare* for any bisection, because
+losing configuration ends up being very easy when going back and forth
+if the person testing doesn't realize.
+
+And yes, dealing with this makes name changes and Kconfig
+reorganization more complex. And if that makes people go "that's too
+complicated", then DON'T DO IT THEN.
+
+Breaking peoples existing setup is bad. This is not quite a
+regression, but it's a huge inconvenience.
+
+My laptop is back to working - it turns out I only needed the addition
+of SND_HDA_CODEC_HDMI_INTEL in addition to figuring out which realtek
+codec got lost in this shuffle.
+
+And *that* case should have been handled by making the newly split up
+HDMI config variables be "default y". Because my *old* setup worked
+because I had SND_HDA_CODEC_HDMI enabled, and that enabled everything.
+
+The new setup didn't work, because I still had SND_HDA_CODEC_HDMI
+enabled, but the newly introduced sub-config variables weren't enabled
+by "make oldconfig".
+
+So that
+
+  config SND_HDA_CODEC_HDMI_INTEL
+         tristate "Intel HDMI/DisplayPort HD-audio codec support"
+         select SND_HDA_CODEC_HDMI
+
+is wrong, because it *should* have been done something like
+
+        depends on SND_HDA_CODEC_HDMI
+        default y
+        select SND_HDA_CODEC_HDMI_COMMON
+
+so that *if* people have SND_HDA_CODEC_HDMI from their old config, the
+new "oh, that old name used to select everything, so now we obviously
+need to make it 'default y' in the new world order".
+
+And the "select SND_HDA_CODEC_HDMI" doesn't work in that setup, so
+what you need to have is a different name for the "I want to select
+the common support that the intel HDMI code needs".
+
+End result: don't re-organize Kconfig stuff unless you are willing to
+deal with this kind of detail. Because as it was done, it was BADLY
+done.
+
+               Linus
 
