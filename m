@@ -1,175 +1,156 @@
-Return-Path: <linux-kernel+bounces-750051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DC3BB15697
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:36:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B13EB15699
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9755D7AA993
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:35:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B79F548390
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832661482F5;
-	Wed, 30 Jul 2025 00:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7011369B4;
+	Wed, 30 Jul 2025 00:37:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="G43m3NDM"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alGSwHb5"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C16443AA8;
-	Wed, 30 Jul 2025 00:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685AF801
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753835788; cv=none; b=p2FEBcH2yEw1XwnnewhnuL5/s4cwfLxDzAmNFZIGsbfN3Ods95edg4NvOkElKqZp+j+0B7KZXSQkxE4Pfz5b/QBagVzyKKtHoS8eXIxlcoZKc/6fW/lk9Jfx1EB3EK7TIwQ7LcWE65/7mHWqQBMx3guYvuLmc9v+3372wXVTT/o=
+	t=1753835848; cv=none; b=pp2XgrodqZ4pOFaovZ+bQTfFuEwO38JmmU3oZsPzPghpf9/iaa6yB7LfZPB6WvTja4W3SxOlLXPV40qiIL4ZbqlaO946UDiuted6G1DHYAyXxe2Q/gtF+vjbB75dkbhyDQ3hv8Bp3cXhbimBHAt1WNN7KIM5BRgNADqB4nF0zP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753835788; c=relaxed/simple;
-	bh=Xgkqjthp0xD8K7KDTt/KKfzQFiK9OF2TanBEnNzVjoM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pu4dlbLGHWj0kvRrpfnvtnbnnR2gpuG/RlzUCXnK087IP0ch+h6opQ1LYnVtFxpAQlCmstXXiSS7gkq1o5tEgfVNPMi++aKOKymWSUY0SdDetM7BAq20Mw6t9PRYN5PL+DJAb4/riXuHYlO3prO+YuPydYmgu+y20ObWBiqInaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=G43m3NDM; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56U0a4eI52729127, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1753835764; bh=ihPtxIQdIF+lWYnPR+GKRWPzygHLYkLUE15oRvSc/Ek=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=G43m3NDMGgoJ5g7cYlCSl6N2nUtGs79NIE06SgRYIpKP0TOQVFRsOY1ODkfrfes3j
-	 evD3UArKaf49Arqs7S0z1+o0mNfMP23zKTszW3o8nZ7tJA5qPCoBdQMal65yl/GT60
-	 2LylDuTSWvK6xlV0MgspgUeC2p5RwtxXTYb1kgUw14ih2vA74qecPMYJK0hMJthUiq
-	 NT3qCJclZAE41QbioVMr1zUgQnYKuoOGMIqZZ0cPdz2SJOKlFFywFy4JYYIoQGdBQ9
-	 /yCgsnmOed3gfxUlfYYdwCZ+KpXF6AwWTHeT88bGNW4hUekdMVgjuJReqzkP/oWjfn
-	 cLokD2zwT1Xhg==
-Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56U0a4eI52729127
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 30 Jul 2025 08:36:04 +0800
-Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
- RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Jul 2025 08:36:05 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Wed, 30 Jul 2025 08:36:05 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
- RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
- 15.01.2507.035; Wed, 30 Jul 2025 08:36:04 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Sean Anderson <sean.anderson@linux.dev>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Bitterblue
- Smith" <rtl8821cerfe2@gmail.com>
-Subject: RE: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
-Thread-Topic: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
-Thread-Index: AQHcANxb3F/NWj2ltUS/9AXHQ44SQ7RJzkeg
-Date: Wed, 30 Jul 2025 00:36:04 +0000
-Message-ID: <c034d5cc40784bfa859f918806c567de@realtek.com>
-References: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
- <20250729204437.164320-1-sean.anderson@linux.dev>
-In-Reply-To: <20250729204437.164320-1-sean.anderson@linux.dev>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1753835848; c=relaxed/simple;
+	bh=xyZ4PKsxhbFh8LNHdmLt9PmvCqfw+SXwlUH3hxSwz2M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DhZbusqQTJYGDOvSR5MvB9uAZpIMpW1S7ywuVWC+uFIyVegpHCqg3vNnWWpFz202DqY3zi/IzhW3bXr7GxdyG03b4YMkoodUQh58kjqAvP6AYiMQFn7wp/A0OjtQMouuQBe5OeIR/NbTZIG3izXXHvcZ6xl8/GmYEtozYiXZUic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alGSwHb5; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-769a9c3bbc4so1427639b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:37:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753835845; x=1754440645; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1IH7dLAPML0i0J6f7OwlshtvTGBaOPfMPixeHtVKbTU=;
+        b=alGSwHb5i05UydLycxzRmB2kmRpNqrJ9VDT4sTlXuG1Vy0iV++edFW90Eh4No5odbB
+         E302aQn83PgORyp9UN4gidLnKvY+MoHX56/wS5bOvcPAp5MpcenviwsSg/TNOhVRoLat
+         0KgnFDjf+xQ7TDSrcxaUxONfU4a+GO1RJxqzZN711x8eisns4xws61CqeFTtKoZG6k1+
+         SaMvuIKD2EuytfK2tsv84KeC4VZK8ft/uUjPleUd8EEeFsr+/z3vo5sytf7UDxTxIu08
+         TxCTPSxohfqVNv/oA6etsLzZ52pq1M6TUIwQNkw85ZK25rksoF85Q8P1TCB9W+tU03Cs
+         A+SQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753835845; x=1754440645;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1IH7dLAPML0i0J6f7OwlshtvTGBaOPfMPixeHtVKbTU=;
+        b=BmXC2Z9GANIf5+j5RFp0qh0asXRnxVcQWYamnlCo7XG9SaYd/baUkj17pGzwCGUvtD
+         V4k/Y80z8rHA4osN29uZA0ljrDENo4USw6KeAYy/31W9PDxgDeaKdYLXyuLK19mUEMXU
+         yv/Kf5i5aBBkQOC7ZwazM489wMopH9SQ5LEXD05CN4UuGamP3ze1cHKyFigew3gWyoEz
+         s/iFdAXeMIGP6/ienqEQLBLNFgTcWObYsinoK0vTON9zWD9sxv8JAaGoKlpwBY6wi4f/
+         rlgcl0kNvVKioecM6WqZKfPqfCuGCTIadTroXSbCK2s4GvZKnA5rHh1+ajBYUqbV/nz9
+         UzBg==
+X-Gm-Message-State: AOJu0YymEYD7xNVWwhvA0HGeYic8bQIlMHxYV2AgY+krwZtj6Wb0+FGX
+	1hp9spANV0FStbC+IZaq8Q3yAAH0p5MtVifiSv9Z+BAvNEbqoycj1yZV
+X-Gm-Gg: ASbGncuvVr11bBT2YMMYn+aqTLmnHazpHVU926k92etSe1tQOc/IH7DM37v+y+35Tfm
+	EXlDXLKOOVIcyECSBhYNanauzE4+d5Or2tPTpLre96rVRTshP2u8zseBO0BRhqaaeI1hsDqWQm7
+	Pn3Wyv96fdJR2lTfq2DCkt3hUcFuZGxTs8+QymVuISxZsDR+nwlRBoXmhFPxmaO1TZ9HhkRXSC1
+	tOdYypEld84IMIKTTjNQ38xD/Z/SL3Lp4rX4s239YZPNwkKOE9qyWRr8nDrKDCPwK/akp+gEmcD
+	O0LmI7fy71RxDOAOZDWqVGPHZZZrHU7B3PKXyi4+F3M2Qq2O5px/w73KQqOPuj2JYT9bcWMQfAc
+	710hsJn+iBrnFa3fXtxS17FwrTYOm22jGcDQneGcZ1N4=
+X-Google-Smtp-Source: AGHT+IF3xpRXIap3nhoGNQtn5l2Jl04XHZsHgByFscuO5zQRsqQGugs2wjoagzsgM0Rt4W1ybC/yBQ==
+X-Received: by 2002:a05:6a00:2347:b0:74e:c917:3b1a with SMTP id d2e1a72fcca58-76ab32e6e99mr2310545b3a.24.1753835845531;
+        Tue, 29 Jul 2025 17:37:25 -0700 (PDT)
+Received: from cs20-buildserver.lan ([2402:7500:400:60db:2e0:4cff:fe68:863])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b4c8762sm9099336b3a.117.2025.07.29.17.37.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 17:37:25 -0700 (PDT)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com
+Subject: [PATCH v3] i3c: master: svc: Fix npcm845 FIFO_EMPTY quirk
+Date: Wed, 30 Jul 2025 08:37:19 +0800
+Message-Id: <20250730003719.1825593-1-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Sean Anderson <sean.anderson@linux.dev> wrote:
-> There are more unsupported functions than just LOWRT_RTY. Improve on
-> commit 3b66519b023b ("wifi: rtw89: phy: add dummy c2h handler to avoid
-> warning message") by printing a message just once when we first
-> encounter an unsupported class.=20
+From: Stanley Chu <yschu@nuvoton.com>
 
-Once I encounter an unsupported class/func, I'll check firmware team if the
-C2H events can be ignored. If so, I add a dummy function to avoid the messa=
-ge.
-If not, I should add code to handle the event.=20
+In a private write transfer, the driver pre-fills the FIFO to work around
+the FIFO_EMPTY quirk. However, if an IBIWON event occurs, the hardware
+emits a NACK and the driver initiates a retry. During the retry, driver
+attempts to pre-fill the FIFO again if there is remaining data, but since
+the FIFO is already full, this leads to data loss.
 
-Do you want to see the message even though it only appears once?
+Check available space in FIFO to prevent overflow.
 
-> Do the same for each unsupported func of
-> the supported classes. This prevents messages like
->=20
-> rtw89_8922ae 0000:81:00.0: PHY c2h class 2 not support
->=20
-> from filling up dmesg.
->=20
-> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> ---
->=20
-> Changes in v2:
-> - Also suppress unsupported func messages
->=20
->  drivers/net/wireless/realtek/rtw89/phy.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/net/wireless/realtek/rtw89/phy.c b/drivers/net/wirel=
-ess/realtek/rtw89/phy.c
-> index f4eee642e5ce..9484d80eea9b 100644
-> --- a/drivers/net/wireless/realtek/rtw89/phy.c
-> +++ b/drivers/net/wireless/realtek/rtw89/phy.c
-> @@ -3535,17 +3535,25 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtwde=
-v, struct sk_buff *skb,
->  {
->         void (*handler)(struct rtw89_dev *rtwdev,
->                         struct sk_buff *c2h, u32 len) =3D NULL;
-> +       static DECLARE_BITMAP(printed_ra, U8_MAX);
-> +       static DECLARE_BITMAP(printed_rfk_log, U8_MAX);
-> +       static DECLARE_BITMAP(printed_rfk_report, U8_MAX);
-> +       static DECLARE_BITMAP(printed_class, U8_MAX);
-> +       unsigned long *printed;
->=20
->         switch (class) {
->         case RTW89_PHY_C2H_CLASS_RA:
-> +               printed =3D printed_ra;
->                 if (func < RTW89_PHY_C2H_FUNC_RA_MAX)
->                         handler =3D rtw89_phy_c2h_ra_handler[func];
->                 break;
->         case RTW89_PHY_C2H_RFK_LOG:
-> +               printed =3D printed_rfk_log;
->                 if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_log_handler))
->                         handler =3D rtw89_phy_c2h_rfk_log_handler[func];
->                 break;
->         case RTW89_PHY_C2H_RFK_REPORT:
-> +               printed =3D printed_rfk_report;
->                 if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_report_handler))
->                         handler =3D rtw89_phy_c2h_rfk_report_handler[func=
-];
->                 break;
-> @@ -3554,12 +3562,16 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtwde=
-v, struct sk_buff *skb,
->                         return;
->                 fallthrough;
->         default:
-> -               rtw89_info(rtwdev, "PHY c2h class %d not support\n", clas=
-s);
-> +               if (!test_and_set_bit(class, printed_class))
-> +                       rtw89_info(rtwdev, "PHY c2h class %d not supporte=
-d\n",
-> +                                  class);
->                 return;
->         }
->         if (!handler) {
-> -               rtw89_info(rtwdev, "PHY c2h class %d func %d not support\=
-n", class,
-> -                          func);
-> +               if (!test_and_set_bit(func, printed))
-> +                       rtw89_info(rtwdev,
-> +                                  "PHY c2h class %d func %d not supporte=
-d\n",
-> +                                  class, func);
->                 return;
->         }
->         handler(rtwdev, skb, len);
-> --
-> 2.35.1.1320.gc452695387.dirty
+Fixes: 4008a74e0f9b ("i3c: master: svc: Fix npcm845 FIFO empty issue")
+Signed-off-by: Stanley Chu <yschu@nuvoton.com>
+---
+Changes since v2:
+ update commit message
+
+ drivers/i3c/master/svc-i3c-master.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index 7e1a7cb94b43..ece563353895 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -104,6 +104,7 @@
+ #define   SVC_I3C_MDATACTRL_TXTRIG_FIFO_NOT_FULL GENMASK(5, 4)
+ #define   SVC_I3C_MDATACTRL_RXTRIG_FIFO_NOT_EMPTY 0
+ #define   SVC_I3C_MDATACTRL_RXCOUNT(x) FIELD_GET(GENMASK(28, 24), (x))
++#define   SVC_I3C_MDATACTRL_TXCOUNT(x) FIELD_GET(GENMASK(20, 16), (x))
+ #define   SVC_I3C_MDATACTRL_TXFULL BIT(30)
+ #define   SVC_I3C_MDATACTRL_RXEMPTY BIT(31)
+ 
+@@ -1304,14 +1305,19 @@ static int svc_i3c_master_xfer(struct svc_i3c_master *master,
+ 		 * FIFO start filling as soon as possible after EmitStartAddr.
+ 		 */
+ 		if (svc_has_quirk(master, SVC_I3C_QUIRK_FIFO_EMPTY) && !rnw && xfer_len) {
+-			u32 end = xfer_len > SVC_I3C_FIFO_SIZE ? 0 : SVC_I3C_MWDATAB_END;
+-			u32 len = min_t(u32, xfer_len, SVC_I3C_FIFO_SIZE);
+-
+-			writesb(master->regs + SVC_I3C_MWDATAB1, out, len - 1);
+-			/* Mark END bit if this is the last byte */
+-			writel(out[len - 1] | end, master->regs + SVC_I3C_MWDATAB);
+-			xfer_len -= len;
+-			out += len;
++			u32 space, end, len;
++
++			reg = readl(master->regs + SVC_I3C_MDATACTRL);
++			space = SVC_I3C_FIFO_SIZE - SVC_I3C_MDATACTRL_TXCOUNT(reg);
++			if (space) {
++				end = xfer_len > space ? 0 : SVC_I3C_MWDATAB_END;
++				len = min_t(u32, xfer_len, space);
++				writesb(master->regs + SVC_I3C_MWDATAB1, out, len - 1);
++				/* Mark END bit if this is the last byte */
++				writel(out[len - 1] | end, master->regs + SVC_I3C_MWDATAB);
++				xfer_len -= len;
++				out += len;
++			}
+ 		}
+ 
+ 		ret = readl_poll_timeout(master->regs + SVC_I3C_MSTATUS, reg,
+-- 
+2.34.1
 
 
