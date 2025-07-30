@@ -1,249 +1,136 @@
-Return-Path: <linux-kernel+bounces-751116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A0F0B1656A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:23:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C794B16564
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 342FA1AA35DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC14F1AA387C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:23:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC402DECD6;
-	Wed, 30 Jul 2025 17:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="0HqWsEpp"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8DBA2DFA39;
+	Wed, 30 Jul 2025 17:23:02 +0000 (UTC)
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52132DECD4;
-	Wed, 30 Jul 2025 17:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7AB1D7E41;
+	Wed, 30 Jul 2025 17:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753896192; cv=none; b=CSnsYMxeaoN1/gQHQq8Ng3buhqRR3QZxmoqas4u0yH0ZjaRNAGex4AkzQOMcOTYoIt5V+P9HnUywOoXUvjQlVwWWq2wwqVOfhGsuNIeyGu8N7iqMwpeXKWKaCKkpmi2AOnA/ab9vd4Lkg4jhaL9iiTp4U2Oj03HysJQJUmIXwpM=
+	t=1753896182; cv=none; b=bs6OoNW7amOlMYNLqtiJ9yk9/5JyCCIAcWpBaGRH3yFyHb0WEWbY3vU3poaAHZ610ZK+17wk+jfzQ4MRNKGrq8Qy/y8l0OZha8WCiPKBhsI0s5N/CL7gd4YYQ2qstVMiwYskXVoCLkByz68UwljSVKYf16xvwzpw86LvjnIY2h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753896192; c=relaxed/simple;
-	bh=fcQatGkLQTr442eBCsTf6Sj7AxhZRDvUiMo1ybgpxVM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GTDWsMrXN2aaXYGprQMnq/dSjmk12Z4EhC9R/2Zjzzzjkih/b9mmM2AIDr11cphsEt4fUdUEP/s4Gonma5ec3WWqK9GIYUYHxPetI4gelwxtFY6vnB8dDU5TMeQEPhQjFj7oHupRm/p4IJvQkIUB1vzTQALVkZecSB+Lr1B9Uwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=0HqWsEpp; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To:Content-Type;
-	bh=/EAN/+etvQisP+dIWJJSEsjYmf1s9wXpYrOfMl11APA=; b=0HqWsEppoOWpFOag26xBQkwC0h
-	9cB6O7VI6uZs2lj+U7EPvtBBpWPci7cTokyzhOjmLlCMkX2NG/67FjDIhvqHHs3SarccmzNkGXObL
-	DRtYwJp3P8VFWnRXkAnGioKPJegZ1HAdkt9q/c39Qj46dlNpHyc1I57N2+/cch+/1Zj9kLg6VnhKl
-	0gmAUlollZkwIe6Tfii/j6FYeKeztKhp6mDntuG3CNMtnhpBz8Y6hTl8a8ojZiHLJIKuIm9Ielr/d
-	TqAU7Cs5gLU5UmdFalY+5/GNTvCVdQmpP/++Yi9P/ryrkH1BenYBr2N+Eyp3Jy/cXh80mR8z900HG
-	rJ1Q1clA==;
-Received: from [194.95.143.137] (helo=phil.dip.tu-dresden.de)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uhAWC-0001Xq-Sj; Wed, 30 Jul 2025 19:23:08 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: lee@kernel.org,
-	srini@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] nvmem: add driver for the eeprom in qnap-mcu controllers
-Date: Wed, 30 Jul 2025 19:22:48 +0200
-Message-ID: <20250730172248.1875122-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250730172248.1875122-1-heiko@sntech.de>
-References: <20250730172248.1875122-1-heiko@sntech.de>
+	s=arc-20240116; t=1753896182; c=relaxed/simple;
+	bh=2inB9lrYIxnh5dD0KnQ79CfqCqa2mBwK28Hu1ed57RY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nyKxbBM5g8AXkrBswQjUE05h2GNiRvsipyYufFSMLFy2nyuqhx7P7MdBAMBd9hYpn4g53KsNouK9TFvO2lgb0c3TC7qeFG3q5FGkYP/1ecf5onJ6DsHvOHtWwqBzsOEzuZwO1KyzYomU7OhCJeAZkxsY+Mq0NQdq/5Iy3/IY9K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae36dc91dc7so2845466b.2;
+        Wed, 30 Jul 2025 10:23:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753896179; x=1754500979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RVG5g2ageWB6fvYTmlrchc1VftQuavVCJU6Q16hxq1Q=;
+        b=TWsJFbVmcJ+2unhu6eVN9mU6koxU7zwsliO+KRn0dym5wi8MJNeN5kn6PfMbSkh/10
+         r7KmwZsbOl4EZY8cAS98q0E2zOALhq5Y3Sa55AKmszu8o4bCfdGQk7//4lc9nTL4xt6n
+         uwe7L8Zjld6YrSVnLFnzS+xwpNLaxgumy55ddvrz36qbzkOdiJM2IAORBFOPLNzTd/uT
+         GXr6d0ayttRFdcjc0d+XHYW1d71GrVd+PCcaLzBDO4ZclHCIWZaRZeUaQGd6vIBO+wC0
+         SmVuvOyTItC+sdPJs1Ww97noa+v/auv70LNbZugXNiGiRM8l/HLLhP68HFg56y9oDPXV
+         dQjw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2RbvdzOPiEHreN593rrstqTuHqvrFPf8HzsOi0gJBwej/FLXl28lW3ngwKuWTHIgBE15Gq4skuU0T@vger.kernel.org, AJvYcCUpKqLRNX2kHuJtZR/zn1WpMPUGExNrpJ+bh4RbXJpqRB1hgn7OrYcvy1N5foI78mmTZi0jNphEeWf4@vger.kernel.org, AJvYcCX0geZbygbugmleA+KoSBCNE6m3N4R6ZEUAethNPh9W6UbQW/fqihhUOHNLMXIGyX76UX01/piq4qyCgdnb@vger.kernel.org, AJvYcCXWfkAIZqsAzqMhkJWh/fOWXA5IzZFRdxKeV8MJv3nZr2jB5o5bD/7/AKjRIZymsNShWy9Yy9atpueWcg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEftKqWYmY3O8h/J9jbwaaxkLsXng1moLqxPSmUVa8GfNGp5Iw
+	TLN8O01RAH8Sum6B6UN76HrI9DQbX5CGuykq98fQJMu1kSvOOm+wb/VN
+X-Gm-Gg: ASbGncuAm5mxYRjzc4kDrk19ESn8YXjGf61k9GypwnK637vevGeWWauKacXS5WWrCuz
+	H72Aup6388uWGg3jv67VbcX7zE587VHqYkCjMQQRwLwHtzq1CH0dEXhTZD/kq2gzy0kvwxSRuUM
+	9ELTZllvRIah7KgKIC1GJXY0HVszHZm/jhxtbdtRPb/dtWvyeRAUYoBMMkUZ7YsM8U0+RM/rrTS
+	GJ9WVC/4K/mSrtm2I/1zDxl7qOGYeWFvp3oGWzA50HaGFiEkyvQSK7eMLZi5i8nbA6l3UiKuDpX
+	yiFL12vqIYgtffy3juA9RJBpXmNnCBg0LNnxy6i/J7OKyG+D/pSy3Lul+j6CWH7QIuTQskB9rKA
+	WBDVvYXsiTbrz
+X-Google-Smtp-Source: AGHT+IEUbbT7MGZ9RPV14AyB319B+ILu1Zn4HTqqRjqhmc6jefo1B6r2lcAh4WufQuwJ5cKV1ZycMA==
+X-Received: by 2002:a17:907:3d0f:b0:ade:3eb6:3c6 with SMTP id a640c23a62f3a-af8fd71454bmr552748166b.15.1753896178789;
+        Wed, 30 Jul 2025 10:22:58 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:9::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635a63a5bsm781297566b.93.2025.07.30.10.22.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 10:22:58 -0700 (PDT)
+Date: Wed, 30 Jul 2025 10:22:55 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>, 
+	Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, James Morse <james.morse@arm.com>, 
+	Robert Moore <robert.moore@intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, acpica-devel@lists.linux.dev, osandov@osandov.com, 
+	konrad.wilk@oracle.com, linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-pci@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH v3] vmcoreinfo: Track and log recoverable hardware errors
+Message-ID: <4w7adjalaisxhdx4l2zzl6ghanky4geijl523q2ezz7b5kj4kq@fr44nlwsw6qa>
+References: <20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org>
+ <7ce9731a-b212-4e27-8809-0559eb36c5f2@linux.alibaba.com>
+ <4qh2wbcbzdajh2tvki26qe4tqjazmyvbn7v7aqqhkxpitdrexo@ucch4ppo7i4e>
+ <fdb5dced-ea5a-48b8-bbb4-fc3ade7f3df8@linux.alibaba.com>
+ <ldlansfiesfxf4a6dzp5z2etquz5jgiq6ttx3al6q7sesgros6@xh4lkevbzsow>
+ <4ef01be1-44b2-4bf5-afec-a90d4f71e955@linux.alibaba.com>
+ <2a7ok3hdq3hmz45fzosd5vve4qpn6zy5uoogg33warsekigazu@wgfi7qsg5ixo>
+ <a87c5e74-082f-4be6-bbfd-4867bf72ddcc@linux.alibaba.com>
+ <zc4jm3hwvtwo5y2knk2bqzwmpf7ma7bdzs6uv2osavzcdew3nk@lfjrlp6sr7zz>
+ <20250730182137.18605ea1@foz.lan>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730182137.18605ea1@foz.lan>
 
-The qnap-mcu also has an eeprom connected to it, that contains some
-specific product-information like the mac addresses for the network
-interfaces.
+Hello Mauro,
 
-Add a nvmem driver for it.
+On Wed, Jul 30, 2025 at 06:21:37PM +0200, Mauro Carvalho Chehab wrote:
+> Em Wed, 30 Jul 2025 06:11:52 -0700
+> Breno Leitao <leitao@debian.org> escreveu:
+> > On Wed, Jul 30, 2025 at 10:13:13AM +0800, Shuai Xue wrote:
+> > > In ghes_log_hwerr(), you're counting both CPER_SEV_CORRECTED and
+> > > CPER_SEV_RECOVERABLE errors:  
+> > 
+> > Thanks. I was reading this code a bit more, and I want to make sure my
+> > understanding is correct, giving I was confused about CORRECTED and
+> > RECOVERABLE errors.
+> > 
+> > CPER_SEV_CORRECTED means it is corrected in the background, and the OS
+> > was not even notified about it. That includes 1-bit ECC error.
+> > THose are not the errors we are interested in, since they are irrelavant
+> > to the OS.
+> 
+> Hardware-corrected errors aren't irrelevant. The rasdaemon utils capture
+> such errors, as they may be a symptom of a hardware defect. In a matter
+> of fact, at rasdamon, thresholds can be set to trigger an action, like
+> for instance, disable memory blocks that contain defective memories.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/mfd/qnap-mcu.c          |   1 +
- drivers/nvmem/Kconfig           |   9 +++
- drivers/nvmem/Makefile          |   2 +
- drivers/nvmem/qnap-mcu-eeprom.c | 110 ++++++++++++++++++++++++++++++++
- 4 files changed, 122 insertions(+)
- create mode 100644 drivers/nvmem/qnap-mcu-eeprom.c
+Sorry, I meant that Hardware-corrected errors aren't relevant in the
+context of this patch, where we are errors that the OS has some
+influence and decision.
 
-diff --git a/drivers/mfd/qnap-mcu.c b/drivers/mfd/qnap-mcu.c
-index 6ed020206e55..e942ead9e515 100644
---- a/drivers/mfd/qnap-mcu.c
-+++ b/drivers/mfd/qnap-mcu.c
-@@ -346,6 +346,7 @@ static const struct qnap_mcu_variant qnap_ts433_mcu = {
- };
- 
- static struct mfd_cell qnap_mcu_cells[] = {
-+	{ .name = "qnap-mcu-eeprom", },
- 	{ .name = "qnap-mcu-input", },
- 	{ .name = "qnap-mcu-leds", },
- 	{ .name = "qnap-mcu-hwmon", }
-diff --git a/drivers/nvmem/Kconfig b/drivers/nvmem/Kconfig
-index d370b2ad11e7..b3975488a5aa 100644
---- a/drivers/nvmem/Kconfig
-+++ b/drivers/nvmem/Kconfig
-@@ -265,6 +265,15 @@ config NVMEM_QCOM_SEC_QFPROM
-           This driver can also be built as a module. If so, the module will be called
-           nvmem_sec_qfprom.
- 
-+config NVMEM_QNAP_MCU_EEPROM
-+	tristate "QNAP MCU EEPROM Support"
-+	depends on MFD_QNAP_MCU
-+	help
-+	  Say y here to enable support for accessing the EEPROM attached to
-+	  QNAP MCU devices. This EEPROM contains additional runtime device
-+	  information, like MAC addresses for ethernet devices that do not
-+	  contain their own mac storage.
-+
- config NVMEM_RAVE_SP_EEPROM
- 	tristate "Rave SP EEPROM Support"
- 	depends on RAVE_SP_CORE
-diff --git a/drivers/nvmem/Makefile b/drivers/nvmem/Makefile
-index 2021d59688db..21b3ae1c57e8 100644
---- a/drivers/nvmem/Makefile
-+++ b/drivers/nvmem/Makefile
-@@ -54,6 +54,8 @@ obj-$(CONFIG_NVMEM_QCOM_QFPROM)		+= nvmem_qfprom.o
- nvmem_qfprom-y				:= qfprom.o
- obj-$(CONFIG_NVMEM_QCOM_SEC_QFPROM)	+= nvmem_sec_qfprom.o
- nvmem_sec_qfprom-y			:= sec-qfprom.o
-+obj-$(CONFIG_NVMEM_QNAP_MCU_EEPROM)	+= nvmem-qnap-mcu-eeprom.o
-+nvmem-qnap-mcu-eeprom-y			:= qnap-mcu-eeprom.o
- obj-$(CONFIG_NVMEM_RAVE_SP_EEPROM)	+= nvmem-rave-sp-eeprom.o
- nvmem-rave-sp-eeprom-y			:= rave-sp-eeprom.o
- obj-$(CONFIG_NVMEM_RCAR_EFUSE)		+= nvmem-rcar-efuse.o
-diff --git a/drivers/nvmem/qnap-mcu-eeprom.c b/drivers/nvmem/qnap-mcu-eeprom.c
-new file mode 100644
-index 000000000000..fea1e7b91764
---- /dev/null
-+++ b/drivers/nvmem/qnap-mcu-eeprom.c
-@@ -0,0 +1,110 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * ee1004 - driver for DDR4 SPD EEPROMs
-+ *
-+ * Copyright (C) 2017-2019 Jean Delvare
-+ *
-+ * Based on the at24 driver:
-+ * Copyright (C) 2005-2007 David Brownell
-+ * Copyright (C) 2008 Wolfram Sang, Pengutronix
-+ */
-+
-+#include <linux/mfd/qnap-mcu.h>
-+#include <linux/module.h>
-+#include <linux/nvmem-provider.h>
-+#include <linux/platform_device.h>
-+
-+/* Determined by trial and error until read anomalies appeared */
-+#define QNAP_MCU_EEPROM_SIZE		256
-+#define QNAP_MCU_EEPROM_BLOCK_SIZE	32
-+
-+static int qnap_mcu_eeprom_read_block(struct qnap_mcu *mcu, unsigned int offset,
-+				      void *val, size_t bytes)
-+{
-+	const u8 cmd[] = { 0xf7, 0xa1, offset, bytes };
-+	u8 *reply;
-+	int ret = 0;
-+
-+	reply = kzalloc(bytes + sizeof(cmd), GFP_KERNEL);
-+	if (!reply)
-+		return -ENOMEM;
-+
-+	ret = qnap_mcu_exec(mcu, cmd, sizeof(cmd), reply, bytes + sizeof(cmd));
-+	if (ret)
-+		goto out;
-+
-+	/* First bytes must mirror the sent command */
-+	if (memcmp(cmd, reply, sizeof(cmd))) {
-+		ret = -EIO;
-+		goto out;
-+	}
-+
-+	memcpy(val, reply + sizeof(cmd), bytes);
-+
-+out:
-+	kfree(reply);
-+	return ret;
-+}
-+
-+static int qnap_mcu_eeprom_read(void *priv, unsigned int offset, void *val, size_t bytes)
-+{
-+	struct qnap_mcu *mcu = priv;
-+	int pos = 0, ret;
-+	u8 *buf = val;
-+
-+	if (unlikely(!bytes))
-+		return 0;
-+
-+	while (bytes > 0) {
-+		size_t to_read = (bytes > QNAP_MCU_EEPROM_BLOCK_SIZE) ?
-+						QNAP_MCU_EEPROM_BLOCK_SIZE : bytes;
-+
-+		ret = qnap_mcu_eeprom_read_block(mcu, offset + pos, &buf[pos], to_read);
-+		if (ret < 0)
-+			return ret;
-+
-+		pos += to_read;
-+		bytes -= to_read;
-+	}
-+
-+	return 0;
-+}
-+
-+static int qnap_mcu_eeprom_probe(struct platform_device *pdev)
-+{
-+	struct qnap_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
-+	struct nvmem_config nvcfg = {};
-+	struct nvmem_device *ndev;
-+
-+	nvcfg.dev = &pdev->dev;
-+	nvcfg.of_node = pdev->dev.parent->of_node;
-+	nvcfg.name = dev_name(&pdev->dev);
-+	nvcfg.id = NVMEM_DEVID_NONE;
-+	nvcfg.owner = THIS_MODULE;
-+	nvcfg.type = NVMEM_TYPE_EEPROM;
-+	nvcfg.read_only = true;
-+	nvcfg.root_only = false;
-+	nvcfg.reg_read = qnap_mcu_eeprom_read;
-+	nvcfg.size = QNAP_MCU_EEPROM_SIZE,
-+	nvcfg.word_size = 1,
-+	nvcfg.stride = 1,
-+	nvcfg.priv = mcu,
-+
-+	ndev = devm_nvmem_register(&pdev->dev, &nvcfg);
-+	if (IS_ERR(ndev))
-+		return PTR_ERR(ndev);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver qnap_mcu_eeprom_driver = {
-+	.probe = qnap_mcu_eeprom_probe,
-+	.driver = {
-+		.name = "qnap-mcu-eeprom",
-+	},
-+};
-+module_platform_driver(qnap_mcu_eeprom_driver);
-+
-+MODULE_AUTHOR("Heiko Stuebner <heiko@sntech.de>");
-+MODULE_DESCRIPTION("QNAP MCU EEPROM driver");
-+MODULE_LICENSE("GPL");
--- 
-2.47.2
+> This is specially relevant on HPC and supercomputer workloads, where
+> it is a lot cheaper to disable a block of bad memory than to lose
+> an entire job because that could take several weeks of run time on
+> a supercomputer, just because a defective memory ended causing a
+> failure at the application.
 
+Agree. These errors are used in several ways, including to detect
+hardware aging and hardware replacement at maintenance windows.
+
+In this patchset, I am more focused on what information to add to
+crashdump, so, it makes it easy to correlate crashes to hardware events,
+and RECOVERABLE are the main ones.
 
