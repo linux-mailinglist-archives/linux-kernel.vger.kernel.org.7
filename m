@@ -1,173 +1,220 @@
-Return-Path: <linux-kernel+bounces-750905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549FAB1628B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:20:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E95B16290
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:21:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1D8164AA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D17218C7626
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210352D9794;
-	Wed, 30 Jul 2025 14:20:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB1E2D77E4;
+	Wed, 30 Jul 2025 14:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VmW6n4Ue"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gYLtscgp"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2071.outbound.protection.outlook.com [40.107.93.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0591F187554
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753885219; cv=none; b=PHVswChzGdIyNsW72vwyBlRvE4ftgl9HALBIt8uc1FB/MrTV++VwIDZUwzvPfttGgN53vySF8wxMEKAkbjcwUtsz22NnE6F4jBJ0Diw4iosjawqKBETnahKlJ00R21ivm1JdIVHymjvqzw5B6ZpuQqQRwubC8wDh8qYgzmCl6ug=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753885219; c=relaxed/simple;
-	bh=zbZ8zJ6FNNzVnMHRaX//DZkRQUevfKQvh7Gz3zKWny8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=auF9P4eKGH9wzsu3p8bm2/RSMfBl09ITwn9v93oO7TfXWjdCVmrEK/RbvzqE+OIhE66k68Y4q8M097FSdFZrlyqaYXpaVuUxA7wydnYTeOD5dJgPzL+E9ypeu9z/DJudqVhPZC6FsFqThiI9mvrftVc5JdLHKz0w+v5UIHBFwHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VmW6n4Ue; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-240718d5920so201425ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753885217; x=1754490017; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H5+kEdkXghppyQYetmPBQ6sqq9QmR3md7y7HiaGpJ0I=;
-        b=VmW6n4UeXMci5ovMEVQwhWyl5xnCpM7Lv/LaJTLJmmHipCgQCHS42yIALS66dV5un0
-         lVta1hj2fVzRWhXZ0vYk5w9Zw92EGDs7xA92pGSAFwqajgbnQqwtaA6A3Pn4oQb/i7yU
-         l6uich3/CO5E4kOdBIpylGbeIBeRPC2hv+XNAjWKaac3vywdXy1+MJQYaz2DPHzDzTuz
-         y06yOkO5jVXpWvCwNR25VdIJpJjqjQMwMM5r4WwNowNyf7bV8+eDEKr3G32NfydM/Hd6
-         DxqpnHuRpd38PbtbEenY/BiHdLhgEBsDYQh37vOYdaqjXvQ30CIkp/ntm0FMCLVzFmQb
-         +wKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753885217; x=1754490017;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H5+kEdkXghppyQYetmPBQ6sqq9QmR3md7y7HiaGpJ0I=;
-        b=ZCxvnY6wkDXRZhEdxMJKHX422g9TIreUfVDsnxZoBWAWanDEQEAP9Jq9XS3vye/yVl
-         w7JpXHj7xX66U1+bwKxkJElzKmbozhrtW9RVN3ZH5f3YNLg3Yi0oFYvrqHBqWMyhBrBr
-         k+szioD471pB+CXXRjzgkehLucNnp69OwPNFzxPnDfJu4JSt7tBp7btnc/6zpWmBw+pt
-         o8b0y6+OgMSkV9gCCalDSRT6ge8oLFSSVtJebh1LVWw9mhzMxplBTJyrBptrawRO1Kx5
-         ShGnTd/mpEEb1+XEOFujtNCnAjWiwoP2nCu6y/XGmh3nnOErXsZ7jEF/ZEQtmkfHvcSA
-         l3IA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpCp4s+YR+H+fQc3BK/xgUovSligC0+x5Jw37sd8BXjHiw7FGX1Ax9NISvgVlHiPwdrO6lEcuePVZ7MVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLpB6EgysmkFTFp3cABgIZ/KZQ7X95W1r4Ew9Qp2aVrmDXrD4C
-	SfY6uifhUJK8uDWvK6hZ8EZ2dEwnl1JmF0xNLluYq58CiuO4rY8LEmdtLuig6L/9IemOdrp/TdH
-	RDT6xtgXxkKEvubvmSdFSFRkXUp6SP6A2d6xrd71z
-X-Gm-Gg: ASbGncsddRFrNBHKgm0paLg5EIQ6AGaz3rtYJZ91S+n6XdwshivOlKCAwVNsoel4B+L
-	W8X5Gka3n1418WHYlqPrZax7YEM2HyAwzNvrPjGXIUKUG0uA4yVyNp/Wr31vr6kVxxfnS8FC/ee
-	mc9x7J0Y9ytMrCdliLZRBA25U2b1U7I0Yb9YxIA48lEpEwno3bmJekI03euyEgYGLiccLECBLav
-	iOS/A6PWTFtk4WBlSK5TjqZViTnZuvQAei6toVR
-X-Google-Smtp-Source: AGHT+IGnjBrALMz00bhbW0eE2eYltdA4uM50iHZ54Y4zr/NCz2eT9UCef9cglvhlSULb7QAcPGQ6YPk3ZKf0ScENAHo=
-X-Received: by 2002:a17:902:d50c:b0:237:e45b:4f45 with SMTP id
- d9443c01a7336-240a2210339mr3862855ad.1.1753885216823; Wed, 30 Jul 2025
- 07:20:16 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4EE92AE84;
+	Wed, 30 Jul 2025 14:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753885287; cv=fail; b=GyVnK43uZlLtKO0/1N93zqicbQWqR2QVORxj9DhyGKAX3HVWk5VySAC5NyPYnNyRKuXGkMmrCJpvpXkjsaFE/5JOmBkBfZr0RHuFamkYiPYyUZ74ulVwOXDWUd2gSMZjBLKvzYx5f1NPGXYjOlpdoNcaLAsUGAmJ92QlOIe2JW4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753885287; c=relaxed/simple;
+	bh=EHPxkGbvoHf7r4FDdOBL+MouTB4HtTKtanxcyCv66RI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GIKgcOlt1D1ca4sk/A6Sz/5t201vq5cvfP6NFNtzq7inl96/RuQ5s+GF4nCbw0kXSeedeXAd0S6PMDXKOn9F1MTIP8hLP+dFAShb93YByH0BBF5R9ZpPozWTLutTdJ2NRF5fp7Jsf6KhYlwaPHWFvcMZu46M3baVp2asCXrzF0A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gYLtscgp; arc=fail smtp.client-ip=40.107.93.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FKnfflEwZ0aiV0gDJ2yP/I3G2n5ZVfvakekTHfq6HhaTuQq7Oe4zK6W0vmXfacBteu/LKSnDCqcXi22BT9ZVTIduOMXgYue5nmBCNpNwyWkE4CWQbUsf3KPgA2NfxfPouNsDmXDQ+LvwXJ5MatDCpmFqbp5ayjB8WZTJ0xhWQHa83R6jUVRsveCg8YOyxVl0iMbxGzTjxvCReQF3RGqesz5K1DQ27liCH+CmkLxsIHgK6H+PbQ2XYuyKwrU+AHfJ0QDnRz9YB6QVNMmuqTRbMo/nr1+QLhAoKA/FkFXWuzfSnF+vk/u5BTL2mbiBAEgyD15WM6mdAuPRwuI7IDbmww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jwybOaHzIBthLs8G/IuO1ESl+V/z8kWER/2+ChZYdYw=;
+ b=k2qYv0vLYqJwTegi29m5SQtBEDdJnhi+7+9gBmLXUItkIF9P2UlQB5o5ZX5ZH+iT0q5mi+CHFZMZGQT9aWEaJCed7WXImmfoPVfqQr3Osn/2osS6qu1ZcVHfM1ggrKkEuVzR9wuBT7ARCqLzI+axFuQ56Y6727PGOh7ITGycb6od7Z9hlQ4OPnIb4k3NhckY7AbDfhYa3rqeEGi08GH20iH4LBLwynr7XRgS1oUTXgQbdAxpmMJCTwr0MtMS4uSdMYoDtluZ9r3MmX+TpQHBI6gorHCK77YlUEKFcmT8MdM1X6prMKLvZr0LPJdGTUXImV3yAEEJ+jtekG1dFSh6rw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=bootlin.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jwybOaHzIBthLs8G/IuO1ESl+V/z8kWER/2+ChZYdYw=;
+ b=gYLtscgpEZSTF4mc21Q9yMFNwvfttMViTSJPfi+vfb7y5p+kEsUTqLta7LafBsOgL94r2vhYW4U/NfYbOaWv1nbwy3Xm0L13+T1vSkEn+Jjvp+kdhgebf0JF8HEbAZ585ZUbUIyrvkDAqaDVEd8IZmJQ7F2sR6v6WvO4TCdgoZg=
+Received: from BYAPR02CA0033.namprd02.prod.outlook.com (2603:10b6:a02:ee::46)
+ by SJ2PR12MB9190.namprd12.prod.outlook.com (2603:10b6:a03:554::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.12; Wed, 30 Jul
+ 2025 14:21:23 +0000
+Received: from SJ5PEPF00000208.namprd05.prod.outlook.com
+ (2603:10b6:a02:ee:cafe::db) by BYAPR02CA0033.outlook.office365.com
+ (2603:10b6:a02:ee::46) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.13 via Frontend Transport; Wed,
+ 30 Jul 2025 14:21:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ SJ5PEPF00000208.mail.protection.outlook.com (10.167.244.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8989.10 via Frontend Transport; Wed, 30 Jul 2025 14:21:23 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Jul
+ 2025 09:21:21 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Jul
+ 2025 09:21:20 -0500
+Received: from xhdharinit40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 30 Jul 2025 09:21:18 -0500
+From: Harini T <harini.t@amd.com>
+To: <alexandre.belloni@bootlin.com>, <michal.simek@amd.com>
+CC: <linux-rtc@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <git@amd.com>, Harini T <harini.t@amd.com>
+Subject: [PATCH V2] rtc: zynqmp: Restore alarm functionality after kexec transition
+Date: Wed, 30 Jul 2025 19:51:10 +0530
+Message-ID: <20250730142110.2354507-1-harini.t@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250618120806.113884-1-adrian.hunter@intel.com>
- <20250618120806.113884-2-adrian.hunter@intel.com> <487c5e63-07d3-41ad-bfc0-bda14b3c435e@intel.com>
- <ccee2a0f-18fa-4037-bf97-f359e0791bf6@intel.com> <d443db90-ced5-43d0-9f85-ad436e445c3a@intel.com>
- <9a4752a4-e783-4f03-babf-23c31cee4ff9@intel.com> <SJ1PR11MB60836014330204B2FBCC7418FC45A@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <79eca29a-8ba4-4ad9-b2e0-54d8e668f731@intel.com> <807ff02d-7af0-419d-8d14-a4d6c5d5420d@intel.com>
-In-Reply-To: <807ff02d-7af0-419d-8d14-a4d6c5d5420d@intel.com>
-From: Vishal Annapurve <vannapurve@google.com>
-Date: Wed, 30 Jul 2025 07:20:04 -0700
-X-Gm-Features: Ac12FXx-NEErOwD5zsvgMenGyME20wGkcAEBJZMWnCCssNMO3qRavJ35mIpH_0w
-Message-ID: <CAGtprH9SpjSnR-u-AH+t6BB+0pzHbgLTUv0pu+dkYR=ZzEYicA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86/mce: Fix missing address mask in recovery for
- errors in TDX/SEAM non-root mode
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, "Luck, Tony" <tony.luck@intel.com>, 
-	Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
-	H Peter Anvin <hpa@zytor.com>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, "Huang, Kai" <kai.huang@intel.com>, 
-	"Chatre, Reinette" <reinette.chatre@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
-	"tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>, 
-	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
-	"Zhao, Yan Y" <yan.y.zhao@intel.com>, "Gao, Chao" <chao.gao@intel.com>, 
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: harini.t@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF00000208:EE_|SJ2PR12MB9190:EE_
+X-MS-Office365-Filtering-Correlation-Id: 37e4b677-6588-4034-89a8-08ddcf745c98
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?EPGmkM+DmTWfXsSopfVzAkm0FGc/asq6Z3BeQ1KLNi38sx4ejwfE3HYtBdnK?=
+ =?us-ascii?Q?u3sXcWzFRvePVsKbNNQQJe2mCwj+8jPv5gzXxyg6vcGmKG2KczpJcuZpEt4O?=
+ =?us-ascii?Q?ZUmBKCh2AGSbmJCvOMIxZw0evCh1ND4++CqsLejnqw5WBZ4f0mYXplIx5RrS?=
+ =?us-ascii?Q?Qy0sWxQzn/wt5Yda5KHONZOpedVxVyvSrlJI8TEmQaV1ednAa4A8PgqbQJwH?=
+ =?us-ascii?Q?e6rEp0nOgADFuM7g7jhUDa76+6CkzytOo1VHrzjBN91iNAh0W3hpdhFupCcY?=
+ =?us-ascii?Q?JP15tQGeTG6OeNLQHkMuTYFEBvKfmVT9yn+rSInI9wpM4jpbKn1KpOj06Iib?=
+ =?us-ascii?Q?Lua8VXvcoxOCNAQBMrH7GBB54NdgGxeFaQ7V6/88HYdSMF05Nd2TdUa5yGcS?=
+ =?us-ascii?Q?rYcqYLWEE5JoNnvutK95Twsv47nL6q40HOZJn968cP/osmcXDZa78nZ3UBHX?=
+ =?us-ascii?Q?m0LXvKudbJRmDJvFv9rlwl2Z6H8Z9Zws7Cpw1Tc6VgNLjqKDbZ06BUYfolAP?=
+ =?us-ascii?Q?WGqjnSf6D/jPUB8QRe4a0Xp7+WEkz5QeQJyaQwXWGzwLhyq3cdWSdOr0Yh88?=
+ =?us-ascii?Q?X252CG7VH5k96z5ucZudRG9z3au5pkXudwP9yKrCCiAhO7+WUjFASgrgKYBh?=
+ =?us-ascii?Q?f5oCkX8OdfyqpBeksRk4MpkEr6PcQ1js4rH4Cis3SiM0wKhxAZSQQNHtojl+?=
+ =?us-ascii?Q?mushs05UXDuhsg18uqYBTIQbXmFVjrUQd+z5lfz0mRlabDNJvfoN5giRmeqN?=
+ =?us-ascii?Q?bXoo7Lcu+Yo0n3KjK5A2JPvY7fnlugR2n/RqZwUtyHukTYI+b8Y6OWLIO2T/?=
+ =?us-ascii?Q?xNSzmY3hctjpE4VkttAQ0drvr/VHgNDt1GVI/F/XLBsIhvw0/v0EkjS5wvkJ?=
+ =?us-ascii?Q?jOI6OWXG/d9R25pJ0hYAbljOQJrigGV5qk7EAE5yV+ubdDSGSe1c5A5MW9ks?=
+ =?us-ascii?Q?Xq4yue3oOQUOGA6+K98IJ7/ur1yzSLIx2gl3Ug+5weGlfz0DOPJb4MWu2Xut?=
+ =?us-ascii?Q?iC8WLciGUF+NtLjCoBwzs/MPF+vwntFGyLLi7Sd06Ifq5cO19NwmPxPYiHgl?=
+ =?us-ascii?Q?5SB1zkpDCQULPFGxpCYzS1jZakivkDEBVIZHSy9wg4N8ing//5NR7f3hpXEg?=
+ =?us-ascii?Q?XG14SOiRahon/hguTaDE0sLYWa1+kFxL1sO42OCuiJSrrZHfa5UaiObvw0FQ?=
+ =?us-ascii?Q?Jbbicz1AAKYJM+0DlXM+pTn8KvS+AXiLqJsnE/Ne2PoHC3X92/bsZYQf00ez?=
+ =?us-ascii?Q?RMKLqAImWMHC8ChxnlIItnAWQ/Q0UaoDN3trmPfbb8h004B78jWC78NXZ/2n?=
+ =?us-ascii?Q?0SCMFzywBw5Dov4HLJMV4KUrV42ZyV+yl60FIOIBGpJj9S1y0Qdfk5xJog5J?=
+ =?us-ascii?Q?b/VThd+ecAhbZ5Z64zyUXUkxiiRVINt5vKCQKl2D6FVTxYr/3Ok+VmhyMCnf?=
+ =?us-ascii?Q?N3H7FT95cTFTnRoZHFLSaR1RjGK/b3E5nsAVCP9TOY+SSjfMF7K1zy+x7k6f?=
+ =?us-ascii?Q?t1NRKr480MIhJDmovbbL1+1bMwRbiZVW0r/6Hz2IxKqdrHeMdX1VcnM8rA?=
+ =?us-ascii?Q?=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 14:21:23.1787
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 37e4b677-6588-4034-89a8-08ddcf745c98
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF00000208.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9190
 
-On Wed, Jul 30, 2025 at 3:55=E2=80=AFAM Adrian Hunter <adrian.hunter@intel.=
-com> wrote:
->
-> On 27/06/2025 19:33, Dave Hansen wrote:
-> > On 6/27/25 09:24, Luck, Tony wrote:
-> >> We've been sending a combined key+address in the "mce->addr" to
-> >> user space for a while. Has anyone built infrastructure on top of that=
-?
-> >
-> > I'm not sure they can do anything useful with an address that has the
-> > KeyID in the first place. The partitioning scheme is in an MSR, so
-> > they'd need to be doing silly gymnastics to even decode the address.
-> >
-> > Userspace can deal with the KeyID not being in the address. It's been
-> > the default for ages. So, if we take it back out, I'd expect it fixes
-> > more things than it breaks.
-> >
-> > So, yeah, we should carefully consider it. But it still 100% looks like
-> > the right thing to me to detangle the KeyID and physical address in the=
- ABI.
->
-> Coming back to this after a bit of a break.
->
-> It feels unlikely to me that any users are expecting KeyID in mce->addr.
->
-> Looking at user space programs like mcelog and rasdaemon, gives the
-> impression that mce->addr contains only an address.
->
-> The UAPI header file describes addr as "Bank's MCi_ADDR MSR", but what
-> mce_read_aux() does tends to contradict that, especially for AMD
-> SMCA.
->
-> But there are also additional places where it seems like MCI_ADDR_PHYSADD=
-R
-> is missing:
->
->         tdx_dump_mce_info()
->                 paddr_is_tdx_private()
->                         __seamcall_ret(TDH_PHYMEM_PAGE_RDMD, &args)
->                                 TDH_PHYMEM_PAGE_RDMD expects KeyID bits t=
-o be zero
->
->         skx_mce_output_error()
->                 edac_mc_handle_error()
->                         expects page_frame_number, so without KeyID
->
-> The KeyID is probably only useful for potentially identifying the TD, but
-> given that the TD incurs a FATAL error, that may be obvious anyway.
->
-> So removing the KeyID from mce->addr looks like the right thing to do.
->
-> Note AFAICT there are 3 kernel APIs that deal with the MCE address:
->
->         Device /dev/mcelog which outputs struct mce
->         Tracepoint mce:mce_record which outputs members from struct mce
->         Tracepoint ras:mc_event where the kernel constructs the address
->         from page_frame_number implying that KeyID should not be present
->
-> I guess it would be sensible to ask what customers think.
->
-> Vishal, do you know anyone at Google who deals with handling machine
-> check information, and who might have an opinion on this?
->
+During kexec reboots, RTC alarms that are fired during the kernel
+transition experience delayed execution. The new kernel would eventually
+honor these alarms, but the interrupt handlers would only execute after
+the driver probe is completed rather than at the intended alarm time.
 
-I think it's safe to assume Google hasn't built any infra in the
-userspace that needs KeyID bits in the mce address. That being said,
-Dave's suggestion to "detangle the KeyID and physical address in the
-ABI" makes sense to me.
+This is because pending alarm interrupt status from the previous kernel
+is not properly cleared during driver initialization, causing timing
+discrepancies in alarm delivery.
+
+To ensure precise alarm timing across kexec transitions, enhance the
+probe function to:
+1. Clear any pending alarm interrupt status from previous boot.
+2. Detect existing valid alarms and preserve their state.
+3. Re-enable alarm interrupts for future alarms.
+
+Signed-off-by: Harini T <harini.t@amd.com>
+---
+Changes in V2:
+- Remove shutdown handler to prevent alarm interrupts from being
+  disabled during kexec transitions.
+- Add alarm state detection and restoration in probe.
+
+V1 link: https://lore.kernel.org/linux-rtc/20250724170517.974356-1-harini.t@amd.com/T/#u
+---
+ drivers/rtc/rtc-zynqmp.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
+index f39102b66eac..3baa2b481d9f 100644
+--- a/drivers/rtc/rtc-zynqmp.c
++++ b/drivers/rtc/rtc-zynqmp.c
+@@ -277,6 +277,10 @@ static irqreturn_t xlnx_rtc_interrupt(int irq, void *id)
+ static int xlnx_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct xlnx_rtc_dev *xrtcdev;
++	bool is_alarm_set = false;
++	u32 pending_alrm_irq;
++	u32 current_time;
++	u32 alarm_time;
+ 	int ret;
+ 
+ 	xrtcdev = devm_kzalloc(&pdev->dev, sizeof(*xrtcdev), GFP_KERNEL);
+@@ -296,6 +300,17 @@ static int xlnx_rtc_probe(struct platform_device *pdev)
+ 	if (IS_ERR(xrtcdev->reg_base))
+ 		return PTR_ERR(xrtcdev->reg_base);
+ 
++	/* Clear any pending alarm interrupts from previous kernel/boot */
++	pending_alrm_irq = readl(xrtcdev->reg_base + RTC_INT_STS) & RTC_INT_ALRM;
++	if (pending_alrm_irq)
++		writel(pending_alrm_irq, xrtcdev->reg_base + RTC_INT_STS);
++
++	/* Check if a valid alarm is already set from previous kernel/boot */
++	alarm_time = readl(xrtcdev->reg_base + RTC_ALRM);
++	current_time = readl(xrtcdev->reg_base + RTC_CUR_TM);
++	if (alarm_time > current_time && alarm_time != 0)
++		is_alarm_set = true;
++
+ 	xrtcdev->alarm_irq = platform_get_irq_byname(pdev, "alarm");
+ 	if (xrtcdev->alarm_irq < 0)
+ 		return xrtcdev->alarm_irq;
+@@ -337,6 +352,10 @@ static int xlnx_rtc_probe(struct platform_device *pdev)
+ 
+ 	xlnx_init_rtc(xrtcdev);
+ 
++	/* Re-enable alarm interrupt if a valid alarm was found */
++	if (is_alarm_set)
++		writel(RTC_INT_ALRM, xrtcdev->reg_base + RTC_INT_EN);
++
+ 	device_init_wakeup(&pdev->dev, true);
+ 
+ 	return devm_rtc_register_device(xrtcdev->rtc);
+-- 
+2.43.0
+
 
