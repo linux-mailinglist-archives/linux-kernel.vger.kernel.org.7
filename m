@@ -1,81 +1,147 @@
-Return-Path: <linux-kernel+bounces-750251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CC2AB1591A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:49:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44374B15923
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8389518A5621
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:50:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CD5D18A685F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D149B1F560D;
-	Wed, 30 Jul 2025 06:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8041EFFB4;
+	Wed, 30 Jul 2025 06:52:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jVqClJgr"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rFeOaYj1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="suk5mr6m";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="rFeOaYj1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="suk5mr6m"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD56D199BC;
-	Wed, 30 Jul 2025 06:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3D91F4C92
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753858184; cv=none; b=U09PiLHH/TRIp7qN9z8/HEtjmEytFlNo77EEIU02nxW2k/ov0aOoiaP1gUm47sSa2CreqLWkYp/oseZsh15xrmq+F9zxKZmRFe0cOjUdjw8KF2de7oPluud7PybyFeC4jZBaUhuuGdD27fR6uQviNllLvCtnsr6ofqA979z09aE=
+	t=1753858329; cv=none; b=tGLfkKhCelOGcBYzqh8QkvRrzV74273DX2EE/73WKZ4TmSgmLXiOtnKrSX23o7FtJgv5rN7TpouYvLpMAvriyt6EyibR+iuzam+zPxgHRdY1OnaVZXwRue+WLh6prawmbjPFXnzvmsN/qWcn5L7sqShti+GwWrCIpJxGMED8vCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753858184; c=relaxed/simple;
-	bh=1ehwRHB/c8fFjab9F28H5oq/vzrBHPM3+zW4uqq+1+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJkUO3hDPT+G+vc/hCqqFBR3hB5+emC8QJD+Tt7OhRf3YM3WTLg47Je8TV3+EwODv8RCPaXkW68h/vHiZyToObXBxAFqiZXgZlhprVX0880ulV+t1Wo83LE78T2v73nHQyFWCF02zHcNrED04mJRpkv8Iy4sIvrnhX3hNAQSnkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jVqClJgr; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=NmkQwUKQ9zppnOgLD4CWc0W0IQG1SxyEYIDqdfxZLfk=; b=jVqClJgrJirM0nDFfmASsSH7cP
-	RiL3ouqzy+jf61YX4AJclE7TYykfdnxHmkwpH/ELPHxS8C7G+HLuouzKTabwyZo7+pzWVyWVHnl56
-	QGJ/wT19TDv16naff7QVJ5F9+KIINAIe2t6JfKdlG99febnDYTOiYgBuwiI22M9I230Rv2219CTws
-	aOdD0xjx1rAHA+zRQYoxcLBTAucqB5X53ZtgcILS0twHrAcaRy2mu1vW9iSQEidNAvkGwr9AUpF2Z
-	aic4fMsRvJwPKj8B/NXPt2p0Glbf/wcoURbsOqCKIaLLuaew/fiRa1H/2v8IzIXXDtykOC/xgwJnP
-	eYCsgd8Q==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uh0d7-0000000AMFB-2YNs;
-	Wed, 30 Jul 2025 06:49:37 +0000
-Date: Wed, 30 Jul 2025 07:49:37 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Xichao Zhao <zhao.xichao@vivo.com>
-Cc: tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ext4: Use IS_ERR_OR_NULL() helper function
-Message-ID: <20250730064937.GM222315@ZenIV>
-References: <20250730063823.313324-1-zhao.xichao@vivo.com>
+	s=arc-20240116; t=1753858329; c=relaxed/simple;
+	bh=vcomCsS8vGaH9x5JXSKM2sRl5VCMsY+8hq3RZ+ntiLc=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t3m+FFEDtTLwotmUi+jHs9FWOoB6ibwNnwrR1zCN9+DHnBCf2tIFUeGlxx6kT0vbA2Sw1x0A/LxqQOk9vY6fdW/fi1fU4aE2sd8JE0ReZtGS2hittFNfYOZVju0G08i6z5jk7DMMBBfbasBMXT+uHC4QLa27U2Hz9Wd2nyX5zpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rFeOaYj1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=suk5mr6m; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=rFeOaYj1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=suk5mr6m; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 548491F45A;
+	Wed, 30 Jul 2025 06:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753858326; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6NC/ae93nUOfFJAm7ykrBqKhQrOW+D+LntLOlpAiHbU=;
+	b=rFeOaYj1wmgMANPGjYHQ40elAOTfNuJlbhRVfID+eYznUenDHknS96Qhcmx+QjD4sQxQhb
+	znMnxdXffFfwAgGfTtGjYI0SItM6pkyKEn2vWnsgzz7tQmRB0CGJ1wWp0M7K2gwrjS64pz
+	TxcjxRnKI+AWAxOB0jMwQo0s8A0c17o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753858326;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6NC/ae93nUOfFJAm7ykrBqKhQrOW+D+LntLOlpAiHbU=;
+	b=suk5mr6mUdpg4G2Km101DOwUFKTu+UgIXpz4Uco/pJaa0SG3ydasajEC4wKGNoz0n6eDDa
+	8WUh1Lv56eY2XaBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753858326; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6NC/ae93nUOfFJAm7ykrBqKhQrOW+D+LntLOlpAiHbU=;
+	b=rFeOaYj1wmgMANPGjYHQ40elAOTfNuJlbhRVfID+eYznUenDHknS96Qhcmx+QjD4sQxQhb
+	znMnxdXffFfwAgGfTtGjYI0SItM6pkyKEn2vWnsgzz7tQmRB0CGJ1wWp0M7K2gwrjS64pz
+	TxcjxRnKI+AWAxOB0jMwQo0s8A0c17o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753858326;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6NC/ae93nUOfFJAm7ykrBqKhQrOW+D+LntLOlpAiHbU=;
+	b=suk5mr6mUdpg4G2Km101DOwUFKTu+UgIXpz4Uco/pJaa0SG3ydasajEC4wKGNoz0n6eDDa
+	8WUh1Lv56eY2XaBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 242CD1388B;
+	Wed, 30 Jul 2025 06:52:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sPudBxbBiWhVOgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 30 Jul 2025 06:52:06 +0000
+Date: Wed, 30 Jul 2025 08:52:05 +0200
+Message-ID: <87y0s6rx0q.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: edip@medip.dev
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] ALSA: hda/realtek - Fix mute LED for HP Victus 16-s0xxx
+In-Reply-To: <20250729181848.24432-2-edip@medip.dev>
+References: <20250729181848.24432-2-edip@medip.dev>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730063823.313324-1-zhao.xichao@vivo.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-On Wed, Jul 30, 2025 at 02:38:23PM +0800, Xichao Zhao wrote:
-> Use the IS_ERR_OR_NULL() helper instead of open-coding a NULL and 
-> an error pointer checks to simplify the code and improve readability.
+On Tue, 29 Jul 2025 20:18:48 +0200,
+edip@medip.dev wrote:
+> 
+> From: Edip Hazuri <edip@medip.dev>
+> 
+> The mute led on this laptop is using ALC245 but requires a quirk to work
+> This patch enables the existing quirk for the device.
+> 
+> Tested on Victus 16-S0063NT Laptop. The LED behaviour works
+> as intended.
+> 
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Edip Hazuri <edip@medip.dev>
 
-IS_ERR_OR_NULL() is almost always a bad idea.  ext4_bread() *is* one
-of the cases where NULL is a legitimate return values that is not an
-error - it indicates a hole in a sparse file (BTW, not sure if it
-can legitimately occur in a directory); the thing is, among the
-functions that can return both NULL and ERR_PTR() the meaning assigned
-to NULL varies a lot; so much that "ERR_PTR() or NULL" has no good
-semantics.
+Applied both patches now.  Thanks.
 
-Most of the uses are either sloppy code from somebody who couldn't be
-arsed to find out whether it's pointer-or-NULL or pointer-or-ERR_PTR()
-or misguided "defensive" crap.  Any caller that is *not* of that sort
-is drowning in a pile of garbage.  Let's not breed that...
+
+Takashi
 
