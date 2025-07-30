@@ -1,245 +1,109 @@
-Return-Path: <linux-kernel+bounces-750125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82816B1578B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:24:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18E50B1578D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C251C4E48F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:24:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFAC24E1F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EF4D1B423D;
-	Wed, 30 Jul 2025 02:24:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A331C3C04;
+	Wed, 30 Jul 2025 02:25:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LrHFNfhV"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RfAHvX8O"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DC91E1DFE
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8822C120;
+	Wed, 30 Jul 2025 02:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753842253; cv=none; b=j99s29ZAnyoGtivYmlH0/LvU6ZrJFTN0iy62FsLF6auk6/yGb4so5fBZVD6UMGbLj1OXLbRrHLrDHKOZWrp6Q4LYuVz+trvCFt/VQmGg9qV2KNl02uV936szw7Nu2FwdqlDEFA2vL+aC/GWpW+7d1Rk+WgmOT2lqypxpiZXJgFA=
+	t=1753842335; cv=none; b=JOoTzJiUHKaf6Pw21CjMNw502KmBUOmjiio7ZbX1D8XdmSD6LITdHVXZ5ViErv7qVx6E4rOKmXFKpCftS7DeMEqiYHJj8sDJdcvM+EmmsjHJuQv+eHZCYWMPdkTYmK0XxEzAujs/XyEfL6scHiKpjorZzpo8Ae4NNoyal8I1T54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753842253; c=relaxed/simple;
-	bh=UIfabhiJWa3Z4s7GqC5WPKaw0anOyWSxrRl3qirvLr8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=L68vb0Yh5J2L7W35+K+6awb+VKKExz1YpaglnjiS6M8U0LiJTaVBvi/aM2TDTsz6K91UiEpI1sQDcxsaAc42pNFjZUSGtghP12CFu867ofxVCaBdbdF24VT+ABrE4lYDAfUNJUX3ugzjL7jKPsl+D6NMaXVtLEpZNDSyORctfhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=LrHFNfhV; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-23638e1605dso49579565ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:24:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753842251; x=1754447051; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/oRndOQtUuCTe+afI4UqP/ZtSY/9RpQUvM4BI6wS4mQ=;
-        b=LrHFNfhVOcnsMjknDSCYEhwshYfehgpX3f/PRv+DzckOzjEQLsGbKUyIBbrmHlrxix
-         SEMptHUJMKbc6dMrB4HXihNHeXZidG9AVMCVaKS8sSW8W+hpxTU7IjtrLZrqgv5131ML
-         HhtS8sv/idqlHpuzqy2Bs3s2edCYUXyFcfhosdZ1XNz8S11vxFredrOWXY0SS+rNw194
-         WHvrM2wvQfyID0Q40KOoLCvOEA8+J9EiptzAagDYnI5IUHR4A6vLVaTqxXq0VHD3hiVl
-         MRA/rYQf29RvBc9v8+57g/wYxCFQZgDtfBtdbnrC3L7qnHcUBrQBNbwF7LW9uXquiJK3
-         B0Ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753842251; x=1754447051;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/oRndOQtUuCTe+afI4UqP/ZtSY/9RpQUvM4BI6wS4mQ=;
-        b=jI4qpoPmRGOZ8pEshdjmllKXlQ+8W1WY3fHFQqBUepAw+JyBBCZRyVQeBpTbhV0Ncv
-         Bzf/8gEWlJ2nB/sDIMT6N6rvA1hb+3Z04+dKFzEDM7f8xmtkDyRKPYJdFhnoQr6A25Ca
-         ZKITBIdjoJyRb3YvbHuypFf/dTGhTxpK04ym3rAzFNK3aOqACdwtNOwNVO3ZNw1K/1f4
-         JAdHACb6Lwp7uPEbs1eTuEBGqrkMaJM1B4bRUXMjKSJAbUlpTEc1KPbbsdXnY8Bt7Yfa
-         /OgsWgIFWU7pq9mFv2yfkMifPnYH4hEJJ8WWcbW/kt5KqaveYuy/oiSn/cPXi9GbtNJ5
-         AmsA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8ZF1q2NJocUPVjMoknr30rgbh1cirss2pZomsgItr63uyCNniocooGB6cE9fklktJXNu5w/6/R6nM8Ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx7wtfsieKUiHVS2JY2dUEYNZ4Y5Ay76sKjoZYe3s6ppKmsdk/
-	TGNWQZ/e3HcIvpfZoZ/BLgzJK/aVjDEvDmBjYnQhTl6JCyrspxkp9RFAOEWSKcVFMAzmhOHNtzD
-	4MMP2HQ==
-X-Google-Smtp-Source: AGHT+IE28C8fLr7AW0K7sod7RfR/S9Ci5NQA8Kz+RkgdLQ32laB755YoHEksytGwtVXC18LfdYKXqjs7klA=
-X-Received: from pliy6.prod.google.com ([2002:a17:903:3d06:b0:240:931c:1712])
- (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:98f:b0:23f:d861:bd4a
- with SMTP id d9443c01a7336-24096b6804dmr20278865ad.27.1753842251216; Tue, 29
- Jul 2025 19:24:11 -0700 (PDT)
-Date: Tue, 29 Jul 2025 19:23:47 -0700
-In-Reply-To: <20250730022347.71722-1-yuzhuo@google.com>
+	s=arc-20240116; t=1753842335; c=relaxed/simple;
+	bh=T4saVRHW+Rd63tVciyPmElzG+gdHjLlabZNZEPM8ex8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qOalwWTyDKx/3pW0CCPa65TYeUoL4BckZx45tz3qrSJQruNC74tknhXbuio+e88jX0xbzsUUuNV7wEoVoThvlQZldBxInNe3WGGvdMiCx1YBiIPhyJSKrcmhk7pn++OmM+Fs/fCLn011V2q0MuzylH1INaBHLM91RwdK5fr0gug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RfAHvX8O; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753842335; x=1785378335;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=T4saVRHW+Rd63tVciyPmElzG+gdHjLlabZNZEPM8ex8=;
+  b=RfAHvX8OKm0s/f7DbLmRXzDl11ujiKwp0O53yKmRCmF2rRbkE1DRC+9O
+   QUZ7hiHUnnUM+5XHVGBgRY1Ytfh2oi7A9fGOB1jeHm0nubOWU6ympyHzJ
+   JJ5OvdckcSTS9Gppwcp5qYDaVHDz/XuJDTEhxyB+m5ycwQahZA8cr//8o
+   LF7wYXM/6nCKt02UbEXEXQqfgO6rpffhBmmTTXfNozG2FVmtTwk66rq3V
+   ZlxplbOGxqjG9O/cI2zxiF7tcx5CKjRq9XgWDIcXRaO0+9DGsNhjVdSDe
+   gx4wV3p1ObTmCyHSSdX45Im4jBsjKaDjCQFHfhfaZUwzeL/UCDSKLUn6k
+   g==;
+X-CSE-ConnectionGUID: VmZbeM+pQBWp7OwjYTXMHw==
+X-CSE-MsgGUID: in0meqfvTyOzX3wCvgJE8Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="56282155"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="56282155"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 19:25:34 -0700
+X-CSE-ConnectionGUID: hHqyItXXSpm1ytaGDKTDDQ==
+X-CSE-MsgGUID: 3erQg/wtQD2bbgelYdnCfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="162888983"
+Received: from jiguojix-mobl.ccr.corp.intel.com (HELO [10.238.0.249]) ([10.238.0.249])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 19:25:28 -0700
+Message-ID: <7de2b6ed-af39-4434-9ead-5b06ed4761c5@linux.intel.com>
+Date: Wed, 30 Jul 2025 10:25:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250730022347.71722-1-yuzhuo@google.com>
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250730022347.71722-5-yuzhuo@google.com>
-Subject: [PATCH v1 4/4] rcuscale: Add CPU affinity offset options
-From: Yuzhuo Jing <yuzhuo@google.com>
-To: Ian Rogers <irogers@google.com>, Yuzhuo Jing <yzj@umich.edu>, Jonathan Corbet <corbet@lwn.net>, 
-	Davidlohr Bueso <dave@stgolabs.net>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang@linux.dev>, 
-	Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>, Frank van der Linden <fvdl@google.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Cc: Yuzhuo Jing <yuzhuo@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 20/38] KVM: x86/pmu: Check if mediated vPMU can
+ intercept rdpmc
+To: Sean Christopherson <seanjc@google.com>
+Cc: Sandipan Das <sandipan.das@amd.com>, Mingwei Zhang <mizhang@google.com>,
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com,
+ Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ Yongwei Ma <yongwei.ma@intel.com>,
+ Xiong Zhang <xiong.y.zhang@linux.intel.com>,
+ Jim Mattson <jmattson@google.com>, Zide Chen <zide.chen@intel.com>,
+ Eranian Stephane <eranian@google.com>, Shukla Manali
+ <Manali.Shukla@amd.com>, Nikunj Dadhania <nikunj.dadhania@amd.com>
+References: <20250324173121.1275209-1-mizhang@google.com>
+ <20250324173121.1275209-21-mizhang@google.com>
+ <a700ab4c-0e8d-499d-be71-f24c4a6439cf@amd.com> <aG6QeTXrd7Can8PK@google.com>
+ <7dc97db7-5eea-4b65-aed3-4fc2846e13a6@linux.intel.com>
+ <aIlpaL-yEU_0kgrD@google.com>
+Content-Language: en-US
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+In-Reply-To: <aIlpaL-yEU_0kgrD@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently, reader, writer, and kfree threads set their affinity by their
-id % nr_cpu_ids.  IDs of the all three types all start from 0, and
-therefore readers, writers, and kfrees may be scheduled on the same CPU.
 
-This patch adds options to offset CPU affinity.
+On 7/30/2025 8:38 AM, Sean Christopherson wrote:
+> On Tue, Jul 29, 2025, Dapeng Mi wrote:
+>> BTW, Sean, may I know your plan about the mediated vPMU v5 patch set? Thanks.
+> I'll get it out this week (hopefully tomorrow).
 
-From the experiments below, writer duration characteristics are very
-different between offset 0 and 1.  Experiments carried out on a 256C 512T
-machine running PREEMPT=n kernel.
+Thumbs up! Thanks.
 
-Experiment: nreaders=1 nwriters=1 reader_cpu_offset=0 writer_cpu_offset=0
-Average grace-period duration: 108376 microseconds
-Minimum grace-period duration: 13000.4
-50th percentile grace-period duration: 115000
-90th percentile grace-period duration: 121000
-99th percentile grace-period duration: 121004
-Maximum grace-period duration: 219000
-Grace periods: 101 Batches: 1 Ratio: 101
 
-Experiment: nreaders=1 nwriters=1 reader_cpu_offset=0 writer_cpu_offset=1
-Average grace-period duration: 185950 microseconds
-Minimum grace-period duration: 8999.84
-50th percentile grace-period duration: 217946
-90th percentile grace-period duration: 218003
-99th percentile grace-period duration: 218018
-Maximum grace-period duration: 272195
-Grace periods: 101 Batches: 1 Ratio: 101
-
-Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
----
- .../admin-guide/kernel-parameters.txt         | 19 +++++++++++++++++++
- kernel/rcu/rcuscale.c                         | 16 +++++++++++-----
- 2 files changed, 30 insertions(+), 5 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 5e233e511f81..f68651c103a4 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1,3 +1,4 @@
-+# vim: noet:sw=8:sts=8:
- 	accept_memory=  [MM]
- 			Format: { eager | lazy }
- 			default: lazy
-@@ -5513,6 +5514,12 @@
- 			test until boot completes in order to avoid
- 			interference.
- 
-+	rcuscale.kfree_cpu_offset= [KNL]
-+			Set the starting CPU affinity index of kfree threads.
-+			CPU affinity is assigned sequentially from
-+			kfree_cpu_offset to kfree_cpu_offset+kfree_nthreads,
-+			modded by number of CPUs.  Negative value is reset to 0.
-+
- 	rcuscale.kfree_by_call_rcu= [KNL]
- 			In kernels built with CONFIG_RCU_LAZY=y, test
- 			call_rcu() instead of kfree_rcu().
-@@ -5567,6 +5574,12 @@
- 			the same as for rcuscale.nreaders.
- 			N, where N is the number of CPUs
- 
-+	rcuscale.reader_cpu_offset= [KNL]
-+			Set the starting CPU affinity index of reader threads.
-+			CPU affinity is assigned sequentially from
-+			reader_cpu_offset to reader_cpu_offset+nreaders, modded
-+			by number of CPUs.  Negative value is reset to 0.
-+
- 	rcuscale.scale_type= [KNL]
- 			Specify the RCU implementation to test.
- 
-@@ -5578,6 +5591,12 @@
- 	rcuscale.verbose= [KNL]
- 			Enable additional printk() statements.
- 
-+	rcuscale.writer_cpu_offset= [KNL]
-+			Set the starting CPU affinity index of writer threads.
-+			CPU affinity is assigned sequentially from
-+			writer_cpu_offset to writer_cpu_offset+nwriters, modded
-+			by number of CPUs.  Negative value is reset to 0.
-+
- 	rcuscale.writer_holdoff= [KNL]
- 			Write-side holdoff between grace periods,
- 			in microseconds.  The default of zero says
-diff --git a/kernel/rcu/rcuscale.c b/kernel/rcu/rcuscale.c
-index 43bcaeac457f..1208169be15e 100644
---- a/kernel/rcu/rcuscale.c
-+++ b/kernel/rcu/rcuscale.c
-@@ -95,12 +95,15 @@ torture_param(int, holdoff, 10, "Holdoff time before test start (s)");
- torture_param(int, minruntime, 0, "Minimum run time (s)");
- torture_param(int, nreaders, -1, "Number of RCU reader threads");
- torture_param(int, nwriters, -1, "Number of RCU updater threads");
-+torture_param(int, reader_cpu_offset, 0, "Offset of reader CPU affinity")
- torture_param(bool, shutdown, RCUSCALE_SHUTDOWN,
- 	      "Shutdown at end of scalability tests.");
- torture_param(int, verbose, 1, "Enable verbose debugging printk()s");
-+torture_param(int, writer_cpu_offset, 0, "Offset of writer CPU affinity")
- torture_param(int, writer_holdoff, 0, "Holdoff (us) between GPs, zero to disable");
- torture_param(int, writer_holdoff_jiffies, 0, "Holdoff (jiffies) between GPs, zero to disable");
- torture_param(bool, writer_no_print, false, "Do not print writer durations to ring buffer");
-+torture_param(int, kfree_cpu_offset, 0, "Offset of kfree CPU affinity")
- torture_param(int, kfree_rcu_test, 0, "Do we run a kfree_rcu() scale test?");
- torture_param(int, kfree_mult, 1, "Multiple of kfree_obj size to allocate.");
- torture_param(int, kfree_by_call_rcu, 0, "Use call_rcu() to emulate kfree_rcu()?");
-@@ -495,7 +498,7 @@ rcu_scale_reader(void *arg)
- 	long me = (long)arg;
- 
- 	VERBOSE_SCALEOUT_STRING("rcu_scale_reader task started");
--	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
-+	set_cpus_allowed_ptr(current, cpumask_of((reader_cpu_offset + me) % nr_cpu_ids));
- 	set_user_nice(current, MAX_NICE);
- 	atomic_inc(&n_rcu_scale_reader_started);
- 
-@@ -585,7 +588,7 @@ rcu_scale_writer(void *arg)
- 
- 	VERBOSE_SCALEOUT_STRING("rcu_scale_writer task started");
- 	WARN_ON(!wdpp);
--	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
-+	set_cpus_allowed_ptr(current, cpumask_of((writer_cpu_offset + me) % nr_cpu_ids));
- 	current->flags |= PF_NO_SETAFFINITY;
- 	sched_set_fifo_low(current);
- 
-@@ -719,8 +722,8 @@ static void
- rcu_scale_print_module_parms(struct rcu_scale_ops *cur_ops, const char *tag)
- {
- 	pr_alert("%s" SCALE_FLAG
--		 "--- %s: gp_async=%d gp_async_max=%d gp_exp=%d holdoff=%d minruntime=%d nreaders=%d nwriters=%d writer_holdoff=%d writer_holdoff_jiffies=%d verbose=%d shutdown=%d\n",
--		 scale_type, tag, gp_async, gp_async_max, gp_exp, holdoff, minruntime, nrealreaders, nrealwriters, writer_holdoff, writer_holdoff_jiffies, verbose, shutdown);
-+		 "--- %s: gp_async=%d gp_async_max=%d gp_exp=%d holdoff=%d minruntime=%d nreaders=%d nwriters=%d reader_cpu_offset=%d writer_cpu_offset=%d writer_holdoff=%d writer_holdoff_jiffies=%d kfree_cpu_offset=%d verbose=%d shutdown=%d\n",
-+		 scale_type, tag, gp_async, gp_async_max, gp_exp, holdoff, minruntime, nrealreaders, nrealwriters, reader_cpu_offset, writer_cpu_offset, writer_holdoff, writer_holdoff_jiffies, kfree_cpu_offset, verbose, shutdown);
- }
- 
- /*
-@@ -785,7 +788,7 @@ kfree_scale_thread(void *arg)
- 	DEFINE_TORTURE_RANDOM(tr);
- 
- 	VERBOSE_SCALEOUT_STRING("kfree_scale_thread task started");
--	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
-+	set_cpus_allowed_ptr(current, cpumask_of((kfree_cpu_offset + me) % nr_cpu_ids));
- 	set_user_nice(current, MAX_NICE);
- 	kfree_rcu_test_both = (kfree_rcu_test_single == kfree_rcu_test_double);
- 
-@@ -1446,6 +1449,9 @@ rcu_scale_init(void)
- 	atomic_set(&n_rcu_scale_reader_started, 0);
- 	atomic_set(&n_rcu_scale_writer_started, 0);
- 	atomic_set(&n_rcu_scale_writer_finished, 0);
-+	reader_cpu_offset = max(reader_cpu_offset, 0);
-+	writer_cpu_offset = max(writer_cpu_offset, 0);
-+	kfree_cpu_offset = max(kfree_cpu_offset, 0);
- 	rcu_scale_print_module_parms(cur_ops, "Start of test");
- 
- 	if (!block_start)
--- 
-2.50.1.552.g942d659e1b-goog
-
+>
 
