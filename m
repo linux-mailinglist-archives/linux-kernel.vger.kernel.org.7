@@ -1,95 +1,103 @@
-Return-Path: <linux-kernel+bounces-751375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E33B168C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4105B168CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBACD1AA2FDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC8043ABBAB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:04:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72B2B223DFF;
-	Wed, 30 Jul 2025 22:03:20 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD2222D781;
+	Wed, 30 Jul 2025 22:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Um/oz7Nt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B057E1FDE3D;
-	Wed, 30 Jul 2025 22:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B1319C556;
+	Wed, 30 Jul 2025 22:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753913000; cv=none; b=J1/nXJ3K3oiubIlicSQfFt1q1TFMiZDqhWP9H81bFGuqdxYkrbLsi/6okB5M5Y/m61IUhGJEAw5u3LBGLSIGOQcn2yD339xSUBObKfJIIxNKKv0zipi85CLkMFBvJ9nztcu6bIzyabsgTucxrzJ79HlwNnFgwudrimYhtMpE51o=
+	t=1753913072; cv=none; b=rQFArWPTy8V1B7rbvH6AcIPLBklszucr5zO3EcQdnyvnfAngAeAOyGOLL8fHJbYly+Xkl/e5xtqj1b/hjXx77buwuCslRILiX7gSrlfRDu0xJGxSthZaAY5H/Jq606RIEquvn6z2KWjKOFlgbrC2K0N6hrpwbYI7qOOGFP+vyEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753913000; c=relaxed/simple;
-	bh=g/N/hZ6W5cfDJAGMUWM2n2zgoKSohWbxiFAKvfP8O/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jOtY226Sx//eh4x5/vtDVjZA5m+7jDJEHmugEKwj+3cuSp0Se/mc1R0SDa+JQq5Zudw10PB+5IvPD8M/iMax4RVOjnWoc4mERN/Z7mIjV/J9dAG/Mv47MYy7JOGK/0z2zHV8qro2b+G+Cwa79eaZQzyyXa/6oScSZNrcusWXxSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 56UM2lZe019769;
-	Thu, 31 Jul 2025 07:02:47 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 56UM2kcl019766
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 31 Jul 2025 07:02:46 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <57d65c2f-ca35-475d-b950-8fd52b135625@I-love.SAKURA.ne.jp>
-Date: Thu, 31 Jul 2025 07:02:45 +0900
+	s=arc-20240116; t=1753913072; c=relaxed/simple;
+	bh=A+4NJg299rLznYuK0jos7NwHrFZTgz1u9++QAte4U2o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=udKJGVhmq1++LGPiQDlvrDWK8cmh8oqpU16bUTR96P33HlJ4N0AEhnYu9XY7M5Ce93PR1o6z0P6z5sYi1O8+eK+Vq1eXeOjlts+9+oUY83iktFmRLlid55ojKTkXtt/kB0EwKfSwNGRF7PoOXcZr32R95bYfqoJ9amw451CUbHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Um/oz7Nt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38562C4CEE3;
+	Wed, 30 Jul 2025 22:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753913072;
+	bh=A+4NJg299rLznYuK0jos7NwHrFZTgz1u9++QAte4U2o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Um/oz7NtCuk6lE3D6JV6Z31caeSe5vWaMzjxkfhS8di5iQOy1Soy0mfY0IFT8O+PE
+	 1LyorHWOZni50Hjcmi1FHC5aZ67YMLYbiejR9Q8BKWNtoV6vJzgYT/JFFEZEijhNxM
+	 DqVdmtEAq6GfnW4sjuUR+wKJWhPqU1UHd9MjTrWkFdJy1OYElroMu4LoixzRKLAZqM
+	 4U0IZ4GCNR8OzNAtkV3925kR/fCss8h5civSAM0GvsUw3hyN3ixai7+T7v2CaCD259
+	 tTjnhkXhEsUr+UZ85+HsaAaOX1xl3oQGHrgb+4pPLQRh1ThznnEJUAYJ/TGXf4UU0y
+	 VD8S3BEc+UGUQ==
+Date: Wed, 30 Jul 2025 17:04:31 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-clk@vger.kernel.org, Taniya Das <taniya.das@oss.qualcomm.com>,
+	Dmitry Baryshkov <lumag@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Andy Gross <andy.gross@linaro.org>, linux-kernel@vger.kernel.org,
+	Luca Weiss <luca.weiss@fairphone.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Richard Acayan <mailingradian@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>, devicetree@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	cros-qcom-dts-watchers@chromium.org,
+	Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+	Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCH RFC 03/24] dt-bindings: clock: qcom,gpucc: Merge in
+ sm8450-gpucc.yaml
+Message-ID: <175391307121.1783040.16926981800136194621.robh@kernel.org>
+References: <20250728-topic-gpucc_power_plumbing-v1-0-09c2480fe3e6@oss.qualcomm.com>
+ <20250728-topic-gpucc_power_plumbing-v1-3-09c2480fe3e6@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] hfs: update sanity check of the root record
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "leocstone@gmail.com" <leocstone@gmail.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "brauner@kernel.org" <brauner@kernel.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <65009dff-dd9d-4c99-aa53-5e87e2777017@I-love.SAKURA.ne.jp>
- <e00cff7b-3e87-4522-957f-996cb8ed5b41@I-love.SAKURA.ne.jp>
- <c99951ae12dc1f5a51b1f6c82bbf7b61b2f12e02.camel@ibm.com>
- <9a18338da59460bd5c95605d8b10f895a0b7dbb8.camel@ibm.com>
- <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
- <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
- <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
- <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
- <650d29da-4f3a-4cfe-b633-ea3b1f27de96@I-love.SAKURA.ne.jp>
- <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
- <1779f2ad-77da-40e3-9ee0-ef6c4cd468fa@I-love.SAKURA.ne.jp>
- <12de16685af71b513f8027a8bfd14bc0322eb043.camel@ibm.com>
- <0b9799d4-b938-4843-a863-8e2795d33eca@I-love.SAKURA.ne.jp>
- <427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp>
- <5498a57ea660b5366ef213acd554aba55a5804d1.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <5498a57ea660b5366ef213acd554aba55a5804d1.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav101.rs.sakura.ne.jp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728-topic-gpucc_power_plumbing-v1-3-09c2480fe3e6@oss.qualcomm.com>
 
-On 2025/07/31 4:24, Viacheslav Dubeyko wrote:
-> If we considering case HFS_CDR_DIR in hfs_read_inode(), then we know that it
-> could be HFS_POR_CNID, HFS_ROOT_CNID, or >= HFS_FIRSTUSER_CNID. Do you mean that
-> HFS_POR_CNID could be a problem in hfs_write_inode()?
 
-Yes. Passing one of 1, 5 or 15 instead of 2 from hfs_fill_super() triggers BUG()
-in hfs_write_inode(). We *MUST* validate at hfs_fill_super(), or hfs_read_inode()
-shall have to also reject 1, 5 and 15 (and as a result only accept 2).
+On Mon, 28 Jul 2025 18:16:03 +0200, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> The only difference is the requirement of clock-names, and only for
+> legacy reasons.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,gpucc.yaml      | 42 +++++++++++-
+>  .../bindings/clock/qcom,sm8450-gpucc.yaml          | 75 ----------------------
+>  2 files changed, 39 insertions(+), 78 deletions(-)
+> 
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
