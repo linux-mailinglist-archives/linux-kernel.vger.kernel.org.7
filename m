@@ -1,124 +1,138 @@
-Return-Path: <linux-kernel+bounces-750231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BFDDB158E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:23:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59960B158EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5A3A3A9F4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:23:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBD81188426D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0521E7C05;
-	Wed, 30 Jul 2025 06:23:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A36D1F30B2;
+	Wed, 30 Jul 2025 06:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btUaptIF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="glC7O/9/"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B710645
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2313E1E32DB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753856623; cv=none; b=mE9xLf4FvDZHHnjNCixQTEIYI5dUyIH7j+ZcUwMsCeuinXvGj362A/q3CRsFTR+GU2LTb/eopVA/SRgvLyVcGyaFclrKp8v4cwN+j7VnNoND5pXiPAHFYxw4etRPUy8/1kOHrDrDc0LmtqKVFFXUN/txSNfCTvpzA6lRuD7oOZg=
+	t=1753856642; cv=none; b=qNiXiN4G1NhW3C8e9IMc5h62OTtvrgDu4TrdYzILkeCxuQU60w6qTWJcgeXCRBi9NLXnFBIXm0cR5bwQNJZ4o16uFSWjOEhJDOKjWlccMp/8Ld31OvBKoyj9Cl1dd/HkPiuqMk+CYEINbcC5c/LbNpKIcwXI3fk6sGrsEnZqUCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753856623; c=relaxed/simple;
-	bh=NbabGEf45tBsmggcwEmmzNXhofnzWcIPDbRNYRqSgho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RCOLSLljs9I7/bF/NPY2GRDbOu4JEr7KCUBTKXTq+DCEJWsB145ajM7BmCECPHOLUJe2BPaq+eLe+ew1whSsWsj8FHFXuUOoRbJ4d8QlmI2rAMf0tfRPfiN+TUJm5nCZHSe+r3eNlYXSwN6CLDrhvaMh+kZ+6JvTaYtNwGTKhOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btUaptIF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB74DC4CEE7;
-	Wed, 30 Jul 2025 06:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753856623;
-	bh=NbabGEf45tBsmggcwEmmzNXhofnzWcIPDbRNYRqSgho=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=btUaptIFcmmIIUTW3bIM7hX1JY9njYYr61NV+eg9ZmP2tvoHFbdT8uoTYnR99Gvso
-	 Ljxx7j1HEh0Z7yMxbUXQZmytufdxYMWmPf5ttm1a2SJ/gber39TORLVsuTUApt39nb
-	 +jxGV/MYd/2ZZ9ELCR+Y2yo8iSQ1CMDxApZNKxFAIg0lZz2g7S3ysqEXqx+8vpCE9A
-	 x5LYqW0KhhlFj//exxWesvDQAXTtmFdMB77AmqxsrQkphJ7XiRLbGRy/L5YbCqevsG
-	 E3bg+GKvk45vPdMhUfjY30U1Xg+2GyUjN3mZHxd1GM4wzcuFwIzutKK5bOwYWfvx4M
-	 vln8fKez13wZQ==
-Message-ID: <fb454b30-9229-4095-91ba-62906d3bd276@kernel.org>
-Date: Wed, 30 Jul 2025 08:23:39 +0200
+	s=arc-20240116; t=1753856642; c=relaxed/simple;
+	bh=dGxjiNGntEIpDeEM5UuFmfE0zBkCHQ41vYKGFK5F1UU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dahcMiI+8MNTjUtM7RvmiJmVZV0qZT9LRuVVTqHKja1SJb3OF93rfRYwM343iqmfBdsOw61DgUnUo+avii2qobo7XyqqS+RGNbnGH3Y6TpCDF9lk2niDgN1t3K0oUP5q2J9Dk/i7oOXSI4eXYYOXIb3BUYdJqxKQmKs5CcFaFSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=glC7O/9/; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76b6422756fso140549b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:23:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753856639; x=1754461439; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4CidS/GccUuP6Xpj1XQrTjZ3SEq5HS8jiXMJq8sMBjg=;
+        b=glC7O/9/yWsxnYal0JEbxhj9n1fopOLNO+udRVRQ1C6QtBWifvxAUS2j+EtDpSElG6
+         Mz31rEo1/8Qon7KT4m3PvzRPrOywX5YXSa+RuA7tfv9m502YSWZ0FXiZWlT7/dKOp2gQ
+         /aFabtAw47jpaZdGgILKxrz1TrLE03R7pSAH2JZh7XlcZn6d2SNgalMQFXi0TT9wb6oD
+         Ea0zxP0PO7VzdD04kE+N7Rvidk60MdgiBZBIv+gZPbt15qdgvH8bUtVR6bH8LTPY72Ge
+         2YMrCKtgQzL3ORXxJNaLOMSZdjVMOPkvbfi4e8qnPr7OOK4JMFoDe3V/2Bx61ZvIvkIo
+         tf2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753856639; x=1754461439;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4CidS/GccUuP6Xpj1XQrTjZ3SEq5HS8jiXMJq8sMBjg=;
+        b=WWzXmx120XmqkSjiqGufPONyncbnRuMv3lddxqGVtx1eGGdLNfde2mqisp6lNw4mqk
+         FHaZk5cmD5g1+Na0p8LNdTvVXNJLwWu9oOlU8y/VfEgPGI7Yz6DvT6amfdRhvKZxeKFQ
+         bkIoBRqt4Mu3Vwpv55Pqg8TnNBZkGSxba4oCvuGW4QMbx3YxumaXMTaO5ExHHk/qQQia
+         JgVy/JGKk8i164DZ+N9Mu/CXQ048znxZmbaVpmXFNKtD+njTIi1ZQyR+NkNCENOGwjC2
+         a7sIqp4BPL6oL9QWvFtoYInIGBcJBa05w0dc96aBCU/I8HFLmugXcET3pF2Grh4q19JO
+         uecA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRS3UkX1liIS+UeEk64VqWSOkT3mXGNV/VR8TASDXIinwCJkkkbeOuBurvECHmQcNdPI50kaCQ5KUlVIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznXGs1u76rs66MUa+awhwKffjQuU8FCmHVK2EolKUL9fwpt1i4
+	gdXWtwbS9gbw2hwhnFfvJ2WxUIoMuCa55mENJ/1T5PxllTekX7IxgXuWl1ljXzbL65M=
+X-Gm-Gg: ASbGnctDhnXyGwUx8QZhuq7hw+0qS/lYK+yjK+qkqct3aLYFVNsUWmfHEhtgcgsyej/
+	Ozx5Tjbx04DXg90j18gRxpxPKc7KMX8DACXzJN/zrTFOSnGnAHvYI6iNggWXDbH9qcT9bAyx6vY
+	c6MQvZRRJumVc26L4Slc2eLXie3ztPb/eYoIWdQjlptXs6sAsQQMj/BQm6fjTsL0+Q/VuKtqgri
+	PoXGzsRDK33NhDs6mnCxZFiyBJ4tHuFWmZdjVEHNjjm1Pjg5/6zb52t8FPEbGZEGDFPu64jrwFH
+	H3MlfQiMJnwKnFUPqTd2gOenmd2L3ESYHmnT7onG0XwKRmiAk+IltIZQ7kQyzBYZIG9IsrKAMyK
+	yUj6CA+LoQL1f3HtCxIT8tOI=
+X-Google-Smtp-Source: AGHT+IFRAuObLQYS4Oy55+Xz2guxb/KTSj4E0KIUP/TcZUmzaODEEpLK7Md4GtPX+Txxpk521QOfKQ==
+X-Received: by 2002:a05:6a20:7489:b0:233:bbcf:749e with SMTP id adf61e73a8af0-23dc0d595d3mr3912159637.8.1753856639378;
+        Tue, 29 Jul 2025 23:23:59 -0700 (PDT)
+Received: from localhost ([122.172.85.40])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640881f595sm9045271b3a.27.2025.07.29.23.23.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 23:23:58 -0700 (PDT)
+Date: Wed, 30 Jul 2025 11:53:55 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>, linux-clk@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH] rust: clk: use the type-state pattern
+Message-ID: <20250730062355.bqifrzvxfmaaugnk@vireshk-i7>
+References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] SOC FSL for 6.17
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, soc@kernel.org,
- Arnd Bergmann <arnd@arndb.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <c947d537-cae5-44f0-abd8-0c558bac46d2@csgroup.eu>
- <cb913a0a-0f3f-4890-aa1f-1b01ec9c564e@kernel.org>
- <b885d194-dee0-4cc8-ad85-25949baf02b3@csgroup.eu>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <b885d194-dee0-4cc8-ad85-25949baf02b3@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
 
-On 30/07/2025 08:10, Christophe Leroy wrote:
->>> - Use new GPIO line value setter callbacks
->>
->> It has been many days and I still do not see this patch in linux-next.
->> Please confirm that you properly feed linux-next and for how long this
->> patch was sitting there (BEFORE you send them to upstream maintainer).
-> 
-> Until recently I was relying on my branch poping up into linux-next once 
-> merged into the soc tree.
-> 
-> Since monday last week it is now included in linux-next independently.
-> 
-Thank you!
+On 29-07-25, 18:38, Daniel Almeida wrote:
+> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+>      /// A reference-counted clock.
+>      ///
+>      /// Rust abstraction for the C [`struct clk`].
+>      ///
+> +    /// A [`Clk`] instance represents a clock that can be in one of several
+> +    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
+> +    ///
+> +    /// No action needs to be taken when a [`Clk`] is dropped. The calls to
+> +    /// `clk_unprepare()` and `clk_disable()` will be placed as applicable.
+> +    ///
+> +    /// An optional [`Clk`] is treated just like a regular [`Clk`], but its
+> +    /// inner `struct clk` pointer is `NULL`. This interfaces correctly with the
+> +    /// C API and also exposes all the methods of a regular [`Clk`] to users.
+> +    ///
+>      /// # Invariants
+>      ///
+>      /// A [`Clk`] instance holds either a pointer to a valid [`struct clk`] created by the C
+> @@ -99,20 +160,39 @@ mod common_clk {
+>      /// Instances of this type are reference-counted. Calling [`Clk::get`] ensures that the
+>      /// allocation remains valid for the lifetime of the [`Clk`].
+>      ///
+> -    /// ## Examples
+> +    /// The [`Prepared`] state is associated with a single count of
+> +    /// `clk_prepare()`, and the [`Enabled`] state is associated with a single
+> +    /// count of `clk_enable()`, and the [`Enabled`] state is associated with a
+> +    /// single count of `clk_prepare` and `clk_enable()`.
 
-Best regards,
-Krzysztof
+You have mentioned the `Enabled` state twice. Also clk_prepare() ?
+
+No objections from my side. Thanks.
+
+-- 
+viresh
 
