@@ -1,149 +1,94 @@
-Return-Path: <linux-kernel+bounces-751174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3A1FB1660A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:09:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8A4B16612
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 441FA1AA6858
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B92AC17795F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BFC8265288;
-	Wed, 30 Jul 2025 18:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B868A2DD61E;
+	Wed, 30 Jul 2025 18:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kxFC/qMW"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="QUz2Qwop"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5770BA29
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544C21DF98F;
+	Wed, 30 Jul 2025 18:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753898984; cv=none; b=gdVwBqpYINly8ldm9i1vCHe1Yw7QmiFWsDj0jZPZJGw1ksoHRYkKk/0dc+QC5LYPnPBB75TLvFSggdIt2XGJntWnrDEXjl3SpOqXO2LvzhmVMCP/4NXhJ7j9cA0NU5N08kKCj38C7zPAisMWFzaT+xZi/i1o/aYd7HHWaXwJ9ZI=
+	t=1753899043; cv=none; b=J9iqRBq/eKvI68QhuV1CCiIq1cMC3nNzMvlb91dXF1ZPwQjz5A54qPWswqpeBy36gohrWb/9WCzNA1dL7JxWxd6DASKxQfNWkXHsbv9naPpFhHaqyEERTODpKLQEZ72U31kMj1dBaTYwzuyXpjZHc/YOYqktA0zQTmr3lvSlznM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753898984; c=relaxed/simple;
-	bh=uysVQLDbrNrO2Dt1d2Mtse/kMVt7UURpOikxiU2uC7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PztbNvskoRt5/tGussaABBwIgiDqplmIUvBXjT1Zks3oQMayWX8wHKmM26vOH7Tjen0LT0NKfntZ4FoFB+CyEpOvyfKxtuIv3jxD8DWvR+TuqIED3yAoqw78nZlJQJH3nUKG4jn8GZErfV4KuCC+hgi2rtiJO6ZLXlO27IuLw+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kxFC/qMW; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UCbSeh030772
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:09:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=nvtzYg1hl8x/PPGrm3YFV7F+
-	GFXE8yyZC3xOnR+O4uo=; b=kxFC/qMWH5RhBuGIQfIVYvRLv+aomLMieSlJGYsU
-	xig53nUEDThyVhZ06mgZJVfStk6i5zT+GZ17rgL/vruU8hf08feCb/o06DnKwrnj
-	PgX2apy5TW2ejJBXMqzk6E0JWyL/pxbSkfjIKj5WSRL6xOiJ9UO+n08CFXnhqr4W
-	/Nw6+U26cU8l0kGp4nZPwAL9giQ6c2SynBcVXPo/4DFinJEDXgiNypKwzQkn5YyA
-	wW1JMmfLi878vC1rNsATsxKKtT3EaKgZLomoGrAe0mu+SuhoR4fSCOIl1I4b20h7
-	GuGwrfAW/GHzlrzWmC3G4dy1NNJjL6apHngweFTCwDXqdQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 487jwes7y7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:09:42 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-7073f820d42so1142616d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:09:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753898981; x=1754503781;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nvtzYg1hl8x/PPGrm3YFV7F+GFXE8yyZC3xOnR+O4uo=;
-        b=Q8XRv8Cs9JcmygNajoixQ7hEfAmL7thKaf71bkWcAeSNUeOtPpwlQgDpVs4yuGlwrx
-         j4tZbLElTqjavvBqTJHHPfvvff30ehiZIDOlZUotK2ICG0rODFI5HmtKuyPCqNGlwld4
-         fuoI0wBhl+MhVahPCFLC0/Pgn7aBilJ9zTeO95WGnFE+3P/ygNI0J98q1Sa2qFvXvn9G
-         eTLl+nhKyJwCEAQbo8t9xVYolszs2j+gRPgnTZqiZn5nuLsEoA8DvBRF578VzG33FIsy
-         VubhNXTEO3NVFU0QCi+fUlnXA7fjNNZViQTB9tX1hlV4ClNlcHvW6EMW5vm5XjWFgQ7+
-         eAiw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJfC+vM2bAQalejwpJbcLqhIRmn79KawaHqu6CDVdHrSxfIgd7uQzgLZsewhgA5F5fSgKSzd5nge/bXWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl8DQiXJIYDAIAPKl6S7tqeT2pP7xzQHv/K8P3Tnee9fCfQmRa
-	v2xRilW16pUc9RaxNVmhXBrlhWjk5c09dnd/c+OwFA5C91zxWwz41Yz+kRicvbKO3jiiEsFyrF6
-	3HqIRGBiOcQqDhqUhWF8AIfk0xnkYZLsSJOj/yfcpUtROEriqK2nTNs0oWlifN2VOdXs=
-X-Gm-Gg: ASbGncs3z6z2okUdyNeu2eNrDfa55AxO4xeeSmppQMjl6F2J+KOe4ROBtTwdtY0r7eR
-	tFpGPQC5h2XNG0BAtzjUUccYn9Z2ptLVuaElX7uF5zvHSO3g91AWK/6hyzKmkX2BGgKpkHVVLtR
-	I62WALvOi2N2GrG4gul9OYCE7wldl2R2WTUTL7hKSLdo9tutJzMvQgXyJSYY0SOuMjI24kvMlfQ
-	e96QY+NAes7+E4FLHMYi6FaAdazK4oUd0gxh1Q3MoozHWZVKlRzHJrLsWrC/RV6nV2NlGi1ZYoV
-	E0UypviPyyf0GNXdmySwwF9oPf4r+rftqm+t/jV9fV+B4R8EpaUEFiEVaxfFNaDg0aL/phomQ5O
-	vZVuPxs4kl0peIvo8Iad+mROcPP0XCqAh/aW0q0a7iWCWtPxgkHTq
-X-Received: by 2002:a05:6214:248d:b0:707:5fbf:26d2 with SMTP id 6a1803df08f44-70766d59498mr60197046d6.2.1753898981318;
-        Wed, 30 Jul 2025 11:09:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGJt6gobol1sslUNlmAmCuSnfF9g1pOZQ34oC0tL/it58uEDXC0isYw713JWBv+Uf2VQAj2Bg==
-X-Received: by 2002:a05:6214:248d:b0:707:5fbf:26d2 with SMTP id 6a1803df08f44-70766d59498mr60196546d6.2.1753898980852;
-        Wed, 30 Jul 2025 11:09:40 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b63375a82sm2251205e87.134.2025.07.30.11.09.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 11:09:40 -0700 (PDT)
-Date: Wed, 30 Jul 2025 21:09:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Johan Hovold <johan@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: tcsrcc-x1e80100: Set the bi_tcxo as parent to
- eDP refclk
-Message-ID: <qu54efmofss6247jdnnrsxvuojlf6fyex4h4c5rzrinbtznwin@2vysndddddy6>
-References: <20250730-clk-qcom-tcsrcc-x1e80100-parent-edp-refclk-v1-1-7a36ef06e045@linaro.org>
+	s=arc-20240116; t=1753899043; c=relaxed/simple;
+	bh=lCk0vwDNFmJ0RsVYQ+rLHlwtUTBY3kSZuRjSXYAlmkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nzgheY+78nlLja7HsLMNRu7o/umO4+ooXblaSV/YbdI8FfqSm0JuVpoAq6wGDDn8avmHXOWd9Pbg5BxWzTqMy509Wcob/Xp1GWrWWRxsVjWNm2SpB5eyRMRWGBsxZJpLaJAsO3jFV0HCD6LvEYc3gzoteDuspYrwIrzYk1FfsYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=QUz2Qwop; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bsgHh1szmzm0yQd;
+	Wed, 30 Jul 2025 18:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1753899037; x=1756491038; bh=Zpjz4pPSStNS5tw5fFT7ZAbJ
+	XfEgP/hudW65uYZt/AU=; b=QUz2QwopZssNgFrgBexce/nuNQwoyFZzlLGiAoHZ
+	HLRnONO22jheUC+MqXNVj+6taMxV9dhZ/pGwk4veKM9oC4bTxII8b6+bFqT/RWm8
+	qWXg6G9sLZc1mDccCW5tIpmibu2hvd4hb8bYp5U4cGdZaZaLmg/DxJtn0YAt1PnR
+	ozBiHl6r7tzeRWuT5+dmKqhot1QGL1IllSu+M/AgV1zVRFhjo9HMT+yQ56hkzOqt
+	Y+mJi1kkYEvjIWoBW5/TuvM58iulvhOxlm27qV1ggfAfCTN7xsLtwShUHiHpcAKA
+	O6YqxeUUoj8AYzNwXaziSQn8fdxrSiLubxlqv1MIXAI2xg==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id QJ_N9-q0RLPk; Wed, 30 Jul 2025 18:10:37 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bsgHP2lDmzm0c2T;
+	Wed, 30 Jul 2025 18:10:24 +0000 (UTC)
+Message-ID: <06f98711-7c09-4544-b832-b2a931907de8@acm.org>
+Date: Wed, 30 Jul 2025 11:10:23 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730-clk-qcom-tcsrcc-x1e80100-parent-edp-refclk-v1-1-7a36ef06e045@linaro.org>
-X-Proofpoint-ORIG-GUID: zfZH130eoMQjdAC_NQjWXYuRT2J0b-Mp
-X-Authority-Analysis: v=2.4 cv=Wv0rMcfv c=1 sm=1 tr=0 ts=688a5fe6 cx=c_pps
- a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8
- a=wC1PSKU0_OW3W4-qnQoA:9 a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: zfZH130eoMQjdAC_NQjWXYuRT2J0b-Mp
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDEzMSBTYWx0ZWRfX8El2tyrVBjHj
- dWbESCEVu17pe4gUq27xxSTPdqvQlLVdbqmWewxMQGeubX9OF+gWx+hHyKHQ80Xy7OUWI6zDeKK
- C3x+0Wepxuj+Q7dgVtF59/zqXwon1YFSkTEC9prDwD0hlnTeFmgY7Qk3VNCQ2wjy271zy7zcYq4
- AiHFScZGW47Ly6RCxS1vVaMddZSUhgfPvoCKCkgtWCPX377Nu7FjFb2OIvL9ME3uk5o2UrpbYtj
- ZrAeY0Zo84Grldxu+UyQCkJafuLD4+yTSskRnXABO6nZoN51/CJTz7vxBo2SQoG+3qeK3GO6vlx
- MSR9Yn4U+VYS9+UptjPYbZgFmdIwxgUsOmK5DmpguonJsvp4ySh7OmY64hqXPD5tjQKm+TsDwGw
- oqUO237MIKAJTJhmuuc48j3XfdZjIgdJ98DdZhEcqEJQ9LCAUkPhFFXn5HlRaLqE587iA8Jt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_05,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 mlxscore=0 adultscore=0 impostorscore=0
- phishscore=0 mlxlogscore=584 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507300131
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] mq-deadline: switch to use elevator lock
+To: yukuai@kernel.org, Yu Kuai <yukuai1@huaweicloud.com>, dlemoal@kernel.org,
+ hare@suse.de, jack@suse.cz, tj@kernel.org, josef@toxicpanda.com,
+ axboe@kernel.dk, yukuai3@huawei.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
+ <20250730082207.4031744-3-yukuai1@huaweicloud.com>
+ <ca605746-da46-46a4-a0f3-460ed2d35b0b@acm.org>
+ <d80b9fc4-515e-4ce8-9f3c-28bdf2676336@kernel.org>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <d80b9fc4-515e-4ce8-9f3c-28bdf2676336@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 30, 2025 at 07:11:12PM +0300, Abel Vesa wrote:
-> All the other ref clocks provided by this driver have the bi_tcxo
-> as parent. The eDP refclk is the only one without a parent, leading
-> to reporting its rate as 0. So set its parent to bi_tcxo, just like
-> the rest of the refclks.
-> 
-> Cc: stable@vger.kernel.org # v6.9
-> Fixes: 06aff116199c ("clk: qcom: Add TCSR clock driver for x1e80100")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  drivers/clk/qcom/tcsrcc-x1e80100.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
+On 7/30/25 11:01 AM, Yu Kuai wrote:
+> Ok, you mean that the lock is moved to the caller is functional change, 
+> right?
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+That's something one could argue about. But I think there is agreement
+that each patch should only include one logical change.
 
+Thanks,
 
--- 
-With best wishes
-Dmitry
+Bart.
 
