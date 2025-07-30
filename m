@@ -1,160 +1,192 @@
-Return-Path: <linux-kernel+bounces-750494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28C4BB15C74
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:43:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC88B15C95
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:44:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90AF07A8664
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:41:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD1C15A2080
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A7D8277013;
-	Wed, 30 Jul 2025 09:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B69294A10;
+	Wed, 30 Jul 2025 09:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="d89MPjXo"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012008.outbound.protection.outlook.com [52.101.126.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aSVVSl6N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A879A36124;
-	Wed, 30 Jul 2025 09:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753868582; cv=fail; b=J1Oxycl1NGugo+SJert9HYAy+LpHIn2yPabSgnwf3Ry9ESYSJy/QZ8foW6D98/yvyXTs3Sp26LBukHRVpwL/lp4J3O+qurm3vBMhBim5RisQh6QpWgN0h44qqLMJh+WgBlDG5kjhY/E4ZMD/ggEk7FxgWvD/fe0wxB4+YKMOiPQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753868582; c=relaxed/simple;
-	bh=3hY53Hj2HyJ40we5q70TYTt2czWlNcoFI5ucT4Q52bc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AGmotRTDs7EpS24ujpwrB3MRbowdKp66Wi0VVUWFuhHmM5F1dB0mD7IHoCmeO/++Vf8CBwyf9gSS7+8g7lQsxj+POnMEG64YWLlKSvbJANoLNxV7OWlsjb0eyiXFD34e3l2UC++Wi6ViIL9KSCCOsAD9q9bGmgrDuLV2SSuHxao=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=d89MPjXo; arc=fail smtp.client-ip=52.101.126.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YamxDyAQzxo+s9pv4wEJXFSoTiGebrwEhFrDEVcgeyUwcBjnziwtvPuDYs3FSUa9HDAMjFYtcMQ1G3mxgUfJtp3oRPlZbxW6sm/jNhv8X3MWdGnydoNZ9WzsZKLaP8hvrxSvqno60fdWYke/56g3N8ce7yYWPd6raC+mhmwC4BW1Pt3rp+G/vo+N8eZW9HD7h3WBcr6Xrxvx2RAoAnwM7h6uGr2zLYafRMUMxo+i47ofgZfTaM6SXgjVoeSP2w3Ex212QkHrbVqc3xw0YFqUUaNq008NquqS5S3PFEH8IYNYhgl94XV7kx8BTnP0KaWfSWnP9BC3769SXdRzDmkhCg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ebwzxi93GE81gIg9/wfNW/1T31+sPh/m63ytGMN2ZH8=;
- b=CcOP8pLQeYfv2IGOQBV5E/6ahm6nQfJaY3foFoK60P9P3YDWfDhW8JMUJHn+HgxndW91/Xdf/oT+WHHlabfjY2V+koWb83jFQAOGPRBeUkRTKRHmDD3Der/mi5bR77SBTHNAVSCte4DruR9Ti1Zkh3slf6IrvSOxGMX6b1DsZ2TA8nhiMkfcJn4ybpI+enrTI7hSg+LfEbA4YVSSVnvv6MZw1VzWcmjArsw6/pBP6DzE5ydT0vhT7yPdBu3XqNv6zyMWNmDt53Ru+cQko3wLJAPUz36NgnDbuGANbXVnx94KjrDLEPhhMXrR/M04rgMylh1beE1rXQbJfHj4OqF5pA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ebwzxi93GE81gIg9/wfNW/1T31+sPh/m63ytGMN2ZH8=;
- b=d89MPjXobKVZ/XGdo2vd+Ss+y0Y3kawClP6TAghwtpDwRmItLfzRH037kc8oV+cXDk4gFTeXwUzY3tTr2o1JUjEbmX87ylleh2XjkLNzE+A+HYdQ3Qy7+m/Onu6LrTZJj7QjCG07qZwObPsxfd0WicU7NV+4GR0uKNtJJcyTffoIdJIsetvkllYFaTRnUiEwEWBQDqiYdaG2cVlvnr+XgV/tS8a5YL7O3c8v6IIvpVANY7AVUTkgaSMsyblygUWcvQ9D/i4y8O5i9jQUlV60+yZQDjddK+YRIAFvhvn5pJIlWJ0b1sGndpqwC6ynL2B7wV5asJZ8B8uHlGwlyvSBFA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYSPR06MB7008.apcprd06.prod.outlook.com (2603:1096:400:469::8)
- by PUZPR06MB6221.apcprd06.prod.outlook.com (2603:1096:301:118::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Wed, 30 Jul
- 2025 09:42:50 +0000
-Received: from TYSPR06MB7008.apcprd06.prod.outlook.com
- ([fe80::41f3:1597:2953:65f2]) by TYSPR06MB7008.apcprd06.prod.outlook.com
- ([fe80::41f3:1597:2953:65f2%4]) with mapi id 15.20.8989.010; Wed, 30 Jul 2025
- 09:42:49 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: viro@zeniv.linux.org.uk
-Cc: adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	zhao.xichao@vivo.com
-Subject: Re: [PATCH] ext4: Use IS_ERR_OR_NULL() helper function
-Date: Wed, 30 Jul 2025 17:42:40 +0800
-Message-Id: <20250730094240.425748-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250730064937.GM222315@ZenIV>
-References: <20250730064937.GM222315@ZenIV>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0093.apcprd02.prod.outlook.com
- (2603:1096:4:90::33) To TYSPR06MB7008.apcprd06.prod.outlook.com
- (2603:1096:400:469::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2B1293C5F;
+	Wed, 30 Jul 2025 09:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753868615; cv=none; b=QIGz/irGqbocFyYxFULWDv4f6q2cvQ9fULpPvIFfnh8DMrCCoxkj7vrd5FpnfNHBoGLgV7XaHz8l2g4srSjYpKuYcsm9Z0xymjm6LJihexQ2zkgbWLzB/a8Kp/jMAoK+hoDDOaEOTHIj/O3Kt8twZQf2Pvkp5bd5TqoEQr2RKP4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753868615; c=relaxed/simple;
+	bh=l19ciGWdlKJF2Jx2rrIYOrVvfwPJixLfLxn7wpITpCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CDlAZs03OwIowhALkcc45lwIv8pNerAHgLeXALoBvp6E0+kCqJjt5ioNJK9T8EHCm/6+d+QHabTUmU8Ydaw1RfoJNdSwzYBr0aw4vHuZLEQ9wad+hKZAIjFa+cDfuLYunBMKiyoMC/8LDB2RAXYHCKUvFNZSQa8W5MW89tWDzaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aSVVSl6N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22CAEC4CEF8;
+	Wed, 30 Jul 2025 09:43:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753868615;
+	bh=l19ciGWdlKJF2Jx2rrIYOrVvfwPJixLfLxn7wpITpCw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aSVVSl6Ngd6ChWm5MqI1bsYnFwMijlANofgnDsGw0kOsFmxj19di7WOkGWLcZt3Mh
+	 5cakr+BB7r9dEUltqUReLnCDn5H8q/m3CaA8g8GifcXyRxd6vZbUiLeMUhyGC/wDpm
+	 jaRzWJ1WXHfbbB1fxu6ul21HwjY3CpRiCX6DyM/vPozQE86ajTuCOcQUuI93b/labr
+	 sVfPHsimNoSDQ45PP1OxI0fDXXwtFki2lmY3eZ8D1yiF36yg8xM+hR7sLOosRhnsqV
+	 0cFRwcaj/kXWtwxux1S9h9byLUXiYc66XMq8ZlLNwNZSEmam6hr/EPfS6xqffKx7l5
+	 8pqwoQTTXVHWw==
+Message-ID: <29f997f3-3b38-4bf9-9ed3-204a15edb849@kernel.org>
+Date: Wed, 30 Jul 2025 11:43:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR06MB7008:EE_|PUZPR06MB6221:EE_
-X-MS-Office365-Filtering-Correlation-Id: 253a4485-f326-4f55-d255-08ddcf4d7269
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?e9D5EYmWz8IzBX6czgnGsGU0e5QO+hlnDq/2fexzsyIy+L4LL1g+kJd5oco1?=
- =?us-ascii?Q?irXqgLHQHZpz5K0YKfvCdsoQeBdfMYIGb8iGXUUo1kea2gMHzH6mSNYJXHC9?=
- =?us-ascii?Q?+fYJNxhk27acaF3qRUrBGUDfep4GvqV3lvwGB+oV0PH3lMga0bGEQCmXrecf?=
- =?us-ascii?Q?61vKMHc+V1cLe4s6RdHsldGhLMe+FKxOgz5dn2E7o52+hixQJ0TO4QlWkiy+?=
- =?us-ascii?Q?m1x1R/kQk43ragfaQZCrlziak45bKxRK9oWYietTme5IftK/vk8BOLxOcU1a?=
- =?us-ascii?Q?XtgJtwApAfCPeHhFFaEyGqSqslwUvBiJr/njfH8GGVvusqAci5QhQVzGSQ6y?=
- =?us-ascii?Q?Y/wB/La1mFFvSbxPhW9w03JrrgJdzI07hiFxASpJwvvjQmZN8aT3/OgYNNDt?=
- =?us-ascii?Q?OPjS9payJ1rM8jX6iXQ+bJK/aSFIbDe8VmBOpsvZXCAnhzvfuXddzE/b7LNo?=
- =?us-ascii?Q?iAuaCRUdP3ejWy7RAz2mzZe8JIV+KFPKUKgMhPbnRhE9wnhSV4NIvbk8jnjN?=
- =?us-ascii?Q?mdDJEYVnfLE5nMbTXyDlcLwQzaEiEEQObGuq3o0LYgswIawdIZ2975ja6bmE?=
- =?us-ascii?Q?pfzRwWRdPnaJQbACkX+SlE3QJgU1F6t3fBmeSOB0zWCr/A/qo5c/5Hqo1nEB?=
- =?us-ascii?Q?w4BpGofmkA47ToqIEF4/GUCGZMORLp7LGgR7oIWRRLl3hHHtKLQveP+LpdZQ?=
- =?us-ascii?Q?LsGTOHlczObKRQ+MhqOcG3WKPyz1H5EIIEXqQ72IGjrFQSbHPSrdJY6FGo1w?=
- =?us-ascii?Q?L8x+SJgXqojYQD1wbn5RXE8leiUsWRqIWAKCBHWB1OVGUPwEBtfTNI9aUqwk?=
- =?us-ascii?Q?FZyB8GYTiMK5sb6/kTrhYkS5j5nrAKXA9njm/iHGIgYdEdjniq4aQAs0uNpA?=
- =?us-ascii?Q?J32N0EFL/qY+ZjQZi9tfwlmZ8ZLv5XL3jZRAB4ctAGo3SOT44Ia4TpwkDTYj?=
- =?us-ascii?Q?YGLyREFEeeqwiXO+GgLZSROT8W/I6G3fym3u7Vhws2T1woNTWSo3OWCFxu/U?=
- =?us-ascii?Q?PUx6wFTEgwIg3ZJjpRTEpAH17pmPKPEP2sMDXvUFvlGYSfKbNs2bDg78RTvN?=
- =?us-ascii?Q?jD3aiZmDZk2kZ8ktMZG9BCT6WQ3gYlzbBetDlqj2aEyck94oJb/cEK9eDgw6?=
- =?us-ascii?Q?/HgrvNjrgBZJInqUALam26ngmlIyYVxY7dM2+okjXyhzfIz5/7becOmzy2vi?=
- =?us-ascii?Q?RkDg0YKmvsX/6JBVnj9a5lLPtSmW1nRjWFoL7eI2X8MD7k79QQXzndgX6Qd4?=
- =?us-ascii?Q?mIsjivvsLOQkCEUj4m0w92IJ7BxnXJ7DvQmJy9ATkgYGMbPIQYgoR8p5Nw83?=
- =?us-ascii?Q?1xkQTeLUy+zGau7I1+cnWYQL9Kk072gkdhWAhPmlUpvu250eGzJP2ZM+xtYW?=
- =?us-ascii?Q?aJlfs1YuyoJzONc2/8RctYvV2XEaRF+aK60ZChAoRLhBnbKwAnXMunv+ik0h?=
- =?us-ascii?Q?qTS2h57AE3Y1ldYn8UjkCU68mThvMSbim8FgPzCdslBuYU+pa4C2KQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR06MB7008.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?1b04WBG5NsLh1+VsT8LFUkjAb5ScHZbF9nMTeYK+Db/BuCeWqaWNigYn2dJ/?=
- =?us-ascii?Q?YJwqmiKw5vgeldwy1IJFcGtYJpmdiu9uVZxJKxb+egUDUHLdpIzP7y3czvIW?=
- =?us-ascii?Q?Ln+uRkogsXJ2wx0oz16pQaWfYVFSUrUpXn5ctMeXPuLJVuUiQqFDmOsMUay8?=
- =?us-ascii?Q?obHnjAxxx7iS2hx0+dk9GwGdk1JJS/XqX5v6gPtGUksZPKPcZyoPvKH0/Jzq?=
- =?us-ascii?Q?oU4jGHpWTAZ1/ClYtddMmwmH1btspgszWMkkQQIIdj4+SJlH3xlbNSDZvGAg?=
- =?us-ascii?Q?4cS3AZ/i0mGc9urC8FEwJ5bIlFcCQkXwZnywzAbKtK1DHT1U5q1ILayKXZhC?=
- =?us-ascii?Q?7b0j+k9grwrQhvs6zLzZRcE8GCXyAOQmgm2R+hPY1WXSmCHMuZP7Xe6wQ8cH?=
- =?us-ascii?Q?vRQEqpJ9Dnc0FT0DBi1XWPlgUzWUAw7QuDSi/ayMu+p3ZdJPuPrs0wbJBT1L?=
- =?us-ascii?Q?DV1KEZATHeO3XZhYaX0sh0PqlXasr+ekzY0bfsboKgzLK0aLh2oRRh2o+Dvr?=
- =?us-ascii?Q?hA6whSev5G8+WCazpVyhdnKxVMVDyzjMc+av1sJ1ZG5hG/yOYGZ8Nf9JmHqj?=
- =?us-ascii?Q?OnU22g0P75uzqlrZX2F1r11m+A7ifE2Hgbb0htSXt/HtEXtd1VHYdEHotMjo?=
- =?us-ascii?Q?urT9EVFqc7WpTaCBw/wU3xd2WiDoxilIBSiO7xfg7fjekbev4TeU7q3v7+DT?=
- =?us-ascii?Q?eyaz4lHSTypqGvQ8AT3dYAJLDfIbwoJuf+rSpnfQSDb4U3vnwBSkrdSAtb3m?=
- =?us-ascii?Q?fqXV+y0tgWP9gf24VzOx85LUxHGT5oGwPk90lNHpXKxu8YYyw0idswThyEgw?=
- =?us-ascii?Q?tdysg6Df44X9cItl5H3oaFrrw8zjsz0iiZWySAMVbZx6hpJDe9LWAMWBpLNp?=
- =?us-ascii?Q?oJOXj67RoLli3qy6VIplCfM7fAX0FYxoR3SM5+XonKy2dD6KaEiGoT4HDdMK?=
- =?us-ascii?Q?QihOFmfmqjdKigYKEd5ElgyFpmUd0dYcsWDmQXc8POaKdkrODnD924I4xrUj?=
- =?us-ascii?Q?D3N6IVgBK1EbNP5GhFTKbu2FrQmJkqnHDLcrAOd0+akbmJibTi3z+3ZEbgQA?=
- =?us-ascii?Q?bJI2QYK1lK4M/q7vHK7uzNj/sXV8Q2iEJlXl+eaU9mN1y+wFKeegk32nNcT7?=
- =?us-ascii?Q?jCRWIVqkkLK2QZMPeld6WJCxrOz0CVrSeuNKR/4aqpG94pCMpfb+/zcwMDAx?=
- =?us-ascii?Q?guNuEG9a5++0caS5B54P1pd1ZACJnpUCJzmYCaaZUX+qt4XW1BcVWzJtb8ZY?=
- =?us-ascii?Q?VXS1O6uTDKL8RM0x8on3tSEsvWIqjbfxfeyUGveijgikOAEZGWNT7epcwA8d?=
- =?us-ascii?Q?4t1xiuWttxlf5Ld27qhAXsnAEHtLysgXWSyrU6VeGw0/FO/GhklahujsOHRs?=
- =?us-ascii?Q?a3lfrtqUejUE1KX/w8N8SVUe+kPZv5TQY9D1pO5nzlk+Ilcjas0KeEmkGRwL?=
- =?us-ascii?Q?NEryhaOQS65a4Zl/RsS0rF6fEvmuez+QgJ7kMpBeQBSEx45YEEvqXCknEV4m?=
- =?us-ascii?Q?BI9gwBSb9iqR7Hxw4Rern614WpsHTGfwnYl8/IrjAJBwnGWhfMTes6ZS4YXa?=
- =?us-ascii?Q?jeRwY2AOGm94592b7k40+d0r1k5A4NeEJyF6QBIB?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 253a4485-f326-4f55-d255-08ddcf4d7269
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR06MB7008.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 09:42:49.8122
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yNdjPaJeyQrvrJyPwIiyx5yHTl53Rjti5/BFth55Vb3mxw5loyM/xG/d53YVpA6FuBfd+UQCRigqSNLtQSWd1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6221
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] convert sound: realtek: alc5623 from txt to yaml
+To: Mahdi Khosravi <mmk1776@gmail.com>, devicetree@vger.kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250730093713.104003-1-mmk1776@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250730093713.104003-1-mmk1776@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Thank you for your response. As a beginner who just started submitting patches to the community, 
-I mistakenly thought these could simplify the code. I have learned a lot from your reply, thank you very much.
+On 30/07/2025 11:37, Mahdi Khosravi wrote:
+> I converted the alc5623 audio codec binding from text to DT schema.
+> This is my first try and I used make dt_binding_check & make dtbs_check to verify
+> without getting any errors.
+
+Take a look at your compatible and then look at your example.
+realtek,alc5632 is completely different. Just DTS using it in the kernel.
+
+
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+
+> diff --git a/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
+> new file mode 100644
+> index 000000000000..98524d06458c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/realtek,alc5623.yaml
+> @@ -0,0 +1,49 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/sound/realtek,alc5623.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ALC5621/ALC5622/ALC5623 audio Codec
+
+s/audio/Audio/. Keep it consistent.
+
+> +
+> +maintainers:
+> +  - Mahdi Khosravi <mmk1776@gmail.com>
+
+That's DAI, no? At least looking at driver? Then you miss dai-common
+reference.
+
+> +
+> +properties:
+> +  compatible:
+> +    const: realtek,alc5623
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  add-ctrl:
+> +    description:
+> +      Default register value for Reg-40h, Additional Control Register. If absent
+> +      or has the value of 0, the register is untouched.
+> +    type: object
+> +
+> +  jack-det-ctrl:
+> +    description:
+> +      Default register value for Reg-5Ah, Jack Detect Control Register. If absent
+> +      or has value 0, the register is untouched.
+> +    type: object
+
+None of these are objects. This wasn't tested due to your compatible
+issue. :/
+
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +additionalProperties: false
+
+unevaluatedProperties after adding dai-common ref.
+
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        codec@1a {
+> +            compatible = "realtek,alc5632";
+
+
+Best regards,
+Krzysztof
 
