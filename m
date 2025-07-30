@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-751261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 520DAB16705
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:42:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE85B16708
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:43:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7482B16800E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C68A1AA5E13
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0C8A205E26;
-	Wed, 30 Jul 2025 19:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107A8204C3B;
+	Wed, 30 Jul 2025 19:43:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FevqNnq2"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UINQwgg7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C391DE3BA;
-	Wed, 30 Jul 2025 19:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBB11E7C19;
+	Wed, 30 Jul 2025 19:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753904530; cv=none; b=O95qAbfi56lMk4iQ9N7XjkrsSIJ39nBCZ2QqYPTBvuQww5EcIe5KciInrRhaEw0kvMPmn/8CTKg8xj6KjEYYyJ2wrO+2b4GLjdUpHG3oPhqz4fjme4ZDcpS1yyWXVSd1i0OSRRDog+M085BslxR+umtNK2mFoGqEQGvNzHk/ews=
+	t=1753904587; cv=none; b=u06bpficSksIws0J4SPmwzZMIuUf2wldKb4q71Dz+rLnGtMQLq3QiUA6bYxjO8qAbFzqdKI74vIzBHrrTHyX8YkhlnN+/CoG2Ay/saH22+r5pUCPCkUr2To4H8zLxNeYLf/zK3DfxgLna1i+IvYhURZpi4lVtDPthu/sfcfeF+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753904530; c=relaxed/simple;
-	bh=UtrC41WvDOqfiQDOeoNtWihg9vXi424OpUxrwQuFHR8=;
+	s=arc-20240116; t=1753904587; c=relaxed/simple;
+	bh=mBiqnCcZwzp9m9hdznpsjeipa38RLGVR0dI7J56QWk0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aeZwKs+mGxX7BZCQg5RURGgyHNF7USt2C+k9Bgw99KcDbbvty1HTRtaovgI7WtVq2I1wBGjoZIn0aNzF+tO6921oFQa4VaDk8oaVxDIt0tb5JhXWNJ1J3FZT+GyhF1XiUTsibxjyWbLNc6CQgYUfojsviLKlFidmRGsgxE36yxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FevqNnq2; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b785a69454so117535f8f.2;
-        Wed, 30 Jul 2025 12:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753904526; x=1754509326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7tpp67HFXaje+zbq/UUFU2CGWBxgZPwO5Ve5z07q/6c=;
-        b=FevqNnq2Co/JncWSc5Yyk02Q0+xOmKGr4AyW8+VkxSR20lfPY+3xU9ox8Up126VJwL
-         FnbCPOi9ZvufpnA7JlWzeGMFwHKptgxd42XDtHfPzJFBlpN4QWMU5imvpIbek9V5fsg+
-         QARInxBGoPQ2e6gPKMAIpUSxG8+7NPauxrCFGigF18+zU5hA0UKNzGf9uAVJ6fFpqlew
-         bZrRPIN1erJZks4dxmpJQo3yjE4nWBD1qH+zhgmRl9Zbgx6zG8yxAIEmznaPyCM9Q2ek
-         /bTjs7rH1qL6tgAr7g9MLYW5Ds5x8skQg4Kpml1UgXUxJTGYwl0HpQuiBmT6o/ZYapNI
-         NKBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753904526; x=1754509326;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7tpp67HFXaje+zbq/UUFU2CGWBxgZPwO5Ve5z07q/6c=;
-        b=mWAS43rF3c1a/y+tnSccnrU20FN3g1tCnQ74yec+l15ulZnBtNmqCFxcZlw7R6TOO1
-         gIJHgJmcGf7iBN4/BQiFhPNiWkEv/0vIObTO3qeJYHseiXfGAK0iVszGqIlQjO/ZMJ3s
-         7f8RgBN2MAC7k8HW4tVBzYDo2nyQlYpZUZI2j35laFwk9/F8cst718JwlAL0bQEnwpkC
-         6pyCe+iCChjEpNYrdi4189Ckn9J+0/8QvobBXM1/BpF0Kvjjt5eFI8Adc5ehfn6+KoKS
-         pcFDmBMySF1q8QPMsdIFBjDJExDQWbr2voFNxcDpiY6eV4FD93T/J94tZdeEGxecJiWl
-         0gqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrB/ZzxlJLwNrCImmMJCK/lfF42qj8mQ5gKt+lxKJdt3q34ti3CSxGB4pvH355g+xCkEXdE2S8tBY=@vger.kernel.org, AJvYcCVxB61UBUZOw84cJRY2QmlGxHsbYtSVoNKEneWX+24isDQ6gcjZ2/y3ii0rhNu5+ASNzsXMwXpfk0Uw49Ku@vger.kernel.org, AJvYcCWX6mlFoXcus3etWTFp6gnigLG2j9UQd+/yj0b1OifGJhDOX/zV5JrSheBg4Y5sVy4RG9aE8pXLzIakYuspQg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrIHQiPFr0lvXdJn4NJ3G+F70mvI1u9l9ZXqAf89FDtLKLZo1L
-	ro5R5tj2vxaQYKhY3+x2XVJHoqV5w6THRboj+zIS0AIYQvo5TJt0tawR
-X-Gm-Gg: ASbGnctLxR5ChpB3n3b2byPEkAbghJ3Tv74FWMpfzCfSp8Ok/Fg8i8PZkg3MGT9EjOC
-	YgQNJvrvJm9q6YyS8REgffMgtXRkLbPMDmo8RvFp2bGLJF7tVA08fik4W9D8D409gpYyg2PO9uQ
-	74zm7fKNN3MPPD3zzG4OrybJOItvREkG7M5JDGdyNgiDrmPfaea4+G2ZOp9ESe79Rnbm0h06RAY
-	dPg+oNxjKdl0mCx7zi4pMYpLvUK72k+9MMrDNYw/twPbDNwgRmuNC7O7ZX6/NTvmbkyvVoKSf28
-	rri13TzGYpJTgyOyCngKc3vOp2EtrSD3nze5rQJi313Hc3zntW8/+ylyCbXl8kY/c41giIBPI0T
-	Hbz+DW9y9EBRc3ywuycfyGjIxwqQl0rDLX/67QUKnM8Hl1ws4q7e3GIJ5j17w34qKpvo10WCnc1
-	3KvmlgEEND4g==
-X-Google-Smtp-Source: AGHT+IGsO0a/g7U9Rcz2FlbWDKJ4AZTN79lLc8ocT/BXod2T3ojj+yGN6+Ym+T6RPVjWMdgLtBXe1A==
-X-Received: by 2002:a05:6000:3107:b0:3b7:885e:cd0f with SMTP id ffacd0b85a97d-3b794ffd082mr2757513f8f.31.1753904525724;
-        Wed, 30 Jul 2025 12:42:05 -0700 (PDT)
-Received: from ?IPV6:2a02:6b6f:e759:7e00:8b4:7c1f:c64:2a4? ([2a02:6b6f:e759:7e00:8b4:7c1f:c64:2a4])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cfcadsm41231225e9.18.2025.07.30.12.42.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 12:42:05 -0700 (PDT)
-Message-ID: <6eab6447-d9cb-4bad-aecc-cc5a5cd192bb@gmail.com>
-Date: Wed, 30 Jul 2025 20:42:04 +0100
+	 In-Reply-To:Content-Type; b=dWh4yDVVPwh8eXmJx5cWDAiWt2nU8ak4vygYCgoCVwZtEA4ouxn7zXWsJVhTxCwwP9Avoue0i4YXoSXFnf/X+/g723l6cf1XudF0/z9ExxL+eb7DO6HZMXUuo0bLcu/wpjdD2w7+fj0bbYLcnbmeJUTBFNqGa79n0XmBG43F9/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UINQwgg7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E38C4CEE3;
+	Wed, 30 Jul 2025 19:43:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753904586;
+	bh=mBiqnCcZwzp9m9hdznpsjeipa38RLGVR0dI7J56QWk0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UINQwgg7Bb48/XtWfqnqCIwmV5O4WK+re72ovMlkeyBukCbQ364LNyPE4/bDCh6uP
+	 S+Hh6CfmIk3VU3PFPss1lwON+eQRjJss7mHmHXy14DF0cByMUpk41ecOueq3X/yj1k
+	 8IWz0CWVqyADmStOZWJRuqswMinXGDnXuDPT1vbXqgxNReVhKD1p63Uid+i2abrpDs
+	 ysrmw6MV2DeYa4wwG8KBDev17ssFqTnLIgJNX441CqqzQbBqIJRKXgXXIea1A4NMm5
+	 Tz29kbWk+fjxV1XHiPJ3CX0VvvaDZaj9qpuyvB71B4OMyoCSzmh4iG1hs+DkxY7urr
+	 ZOO1vqwstiKQg==
+Message-ID: <97f0e27f-3128-4821-bc09-2acde1ebf81a@kernel.org>
+Date: Wed, 30 Jul 2025 21:43:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,495 +49,159 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
- rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
- baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>
-References: <20250725162258.1043176-1-usamaarif642@gmail.com>
- <20250725162258.1043176-2-usamaarif642@gmail.com>
- <8c5d607d-498e-4a34-a781-faafb3a5fdef@lucifer.local>
+Subject: Re: [BUG] 6.16-rc7: lockdep failure with max77620-gpio/max77686-rtc
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
+References: <aIpdVejR3Jkh9Z_I@shell.armlinux.org.uk>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <8c5d607d-498e-4a34-a781-faafb3a5fdef@lucifer.local>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <aIpdVejR3Jkh9Z_I@shell.armlinux.org.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 30/07/2025 19:58, Russell King (Oracle) wrote:
+> Hi,
+> 
+> First, I'm not sure who is responsible for the max77620-gpio driver
+
+77620 is only for nvidia platforms and nvidia was upstreaming it,
+although it shares the RTC driver part with max77686. You should Cc
+nvidia SoC maintainers, maybe Thierry has someone around who could
+investigate it.
+
+> (it's not in MAINTAINERS) but this bug points towards a problem with
+> one or other of these drivers.
+> 
+> Here is /proc/interrupts which may help debug this:
+> 
+>            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5
+>  94:          1          0          0          0          0          0 max77620-
+> top   4 Edge      max77686-rtc
+>  95:          1          0          0          0          0          0 max77686-rtc   1 Edge      rtc-alarm1
+> 
+> While running 6.16-rc7 on the Jetson Xavier NX platform, upon suspend,
+> I receive the following lockdep splat. I've added some instrumentation
+> into irq_set_irq_wake() which appears twice in the calltrace to print
+> the IRQ number and the "on" parameter to locate which interrupts are
+> involved in this splat. This splat is 100% reproducable.
+> 
+> [   46.721367] irq_set_irq_wake: irq=95 on=1
+> [   46.722067] irq_set_irq_wake: irq=94 on=1
+> [   46.722181] ============================================
+> [   46.722578] WARNING: possible recursive locking detected
+> [   46.722852] 6.16.0-rc7-net-next+ #432 Not tainted
+> [   46.722965] --------------------------------------------
+> [   46.723127] rtcwake/3984 is trying to acquire lock:
+> [   46.723235] ffff0000813b2c68 (&d->lock){+.+.}-{4:4}, at: regmap_irq_lock+0x18/0x24
+> [   46.723452]
+>                but task is already holding lock:
+> [   46.723556] ffff00008504dc68 (&d->lock){+.+.}-{4:4}, at: regmap_irq_lock+0x18/0x24
+> [   46.723780]
+>                other info that might help us debug this:
+> [   46.723903]  Possible unsafe locking scenario:
+> 
+> [   46.724015]        CPU0
+> [   46.724067]        ----
+> [   46.724119]   lock(&d->lock);
+> [   46.724212]   lock(&d->lock);
+> [   46.724282]
+>                 *** DEADLOCK ***
+> 
+> [   46.724348]  May be due to missing lock nesting notation
+> 
+> [   46.724492] 6 locks held by rtcwake/3984:
+> [   46.724576]  #0: ffff0000825693f8 (sb_writers#3){.+.+}-{0:0}, at: vfs_write+0x184/0x350
+> [   46.724902]  #1: ffff00008fd7fa88 (&of->mutex#2){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x104/0x1c8
+> [   46.725258]  #2: ffff000080a64588 (kn->active#87){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x10c/0x1c8
+> [   46.725609]  #3: ffff8000815d4fb8 (system_transition_mutex){+.+.}-{4:4}, at: pm_suspend+0x220/0x300
+> [   46.725897]  #4: ffff00008500a8f8 (&dev->mutex){....}-{4:4}, at: device_suspend+0x1d8/0x630
+> [   46.726173]  #5: ffff00008504dc68 (&d->lock){+.+.}-{4:4}, at: regmap_irq_lock+0x18/0x24
 
 
-On 30/07/2025 20:31, Lorenzo Stoakes wrote:
-> An aside - we should update the man page for this - see
-> https://man7.org/linux/man-pages/man2/PR_SET_THP_DISABLE.2const.html
-> 
-> This has to be done separately from the series I think.
-> 
-> On Fri, Jul 25, 2025 at 05:22:40PM +0100, Usama Arif wrote:
->> From: David Hildenbrand <david@redhat.com>
->>
->> People want to make use of more THPs, for example, moving from
->> the "never" system policy to "madvise", or from "madvise" to "always".
->>
->> While this is great news for every THP desperately waiting to get
->> allocated out there, apparently there are some workloads that require a
->> bit of care during that transition: individual processes may need to
->> opt-out from this behavior for various reasons, and this should be
->> permitted without needing to make all other workloads on the system
->> similarly opt-out.
->>
->> The following scenarios are imaginable:
->>
->> (1) Switch from "none" system policy to "madvise"/"always", but keep THPs
->>     disabled for selected workloads.
->>
->> (2) Stay at "none" system policy, but enable THPs for selected
->>     workloads, making only these workloads use the "madvise" or "always"
->>     policy.
->>
->> (3) Switch from "madvise" system policy to "always", but keep the
->>     "madvise" policy for selected workloads: allocate THPs only when
->>     advised.
->>
->> (4) Stay at "madvise" system policy, but enable THPs even when not advised
->>     for selected workloads -- "always" policy.
->>
->> Once can emulate (2) through (1), by setting the system policy to
->> "madvise"/"always" while disabling THPs for all processes that don't want
->> THPs. It requires configuring all workloads, but that is a user-space
->> problem to sort out.
->>
->> (4) can be emulated through (3) in a similar way.
->>
->> Back when (1) was relevant in the past, as people started enabling THPs,
->> we added PR_SET_THP_DISABLE, so relevant workloads that were not ready
->> yet (i.e., used by Redis) were able to just disable THPs completely. Redis
->> still implements the option to use this interface to disable THPs
->> completely.
->>
->> With PR_SET_THP_DISABLE, we added a way to force-disable THPs for a
->> workload -- a process, including fork+exec'ed process hierarchy.
->> That essentially made us support (1): simply disable THPs for all workloads
->> that are not ready for THPs yet, while still enabling THPs system-wide.
->>
->> The quest for handling (3) and (4) started, but current approaches
->> (completely new prctl, options to set other policies per process,
->> alternatives to prctl -- mctrl, cgroup handling) don't look particularly
->> promising. Likely, the future will use bpf or something similar to
->> implement better policies, in particular to also make better decisions
->> about THP sizes to use, but this will certainly take a while as that work
->> just started.
->>
->> Long story short: a simple enable/disable is not really suitable for the
->> future, so we're not willing to add completely new toggles.
->>
->> While we could emulate (3)+(4) through (1)+(2) by simply disabling THPs
->> completely for these processes, this is a step backwards, because these
->> processes can no longer allocate THPs in regions where THPs were
->> explicitly advised: regions flagged as VM_HUGEPAGE. Apparently, that
->> imposes a problem for relevant workloads, because "not THPs" is certainly
->> worse than "THPs only when advised".
->>
->> Could we simply relax PR_SET_THP_DISABLE, to "disable THPs unless not
->> explicitly advised by the app through MAD_HUGEPAGE"? *maybe*, but this
->> would change the documented semantics quite a bit, and the versatility
->> to use it for debugging purposes, so I am not 100% sure that is what we
->> want -- although it would certainly be much easier.
->>
->> So instead, as an easy way forward for (3) and (4), add an option to
->> make PR_SET_THP_DISABLE disable *less* THPs for a process.
->>
->> In essence, this patch:
->>
->> (A) Adds PR_THP_DISABLE_EXCEPT_ADVISED, to be used as a flag in arg3
->>     of prctl(PR_SET_THP_DISABLE) when disabling THPs (arg2 != 0).
->>
->>     prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED).
->>
->> (B) Makes prctl(PR_GET_THP_DISABLE) return 3 if
->>     PR_THP_DISABLE_EXCEPT_ADVISED was set while disabling.
->>
->>     Previously, it would return 1 if THPs were disabled completely. Now
->>     it returns the set flags as well: 3 if PR_THP_DISABLE_EXCEPT_ADVISED
->>     was set.
->>
->> (C) Renames MMF_DISABLE_THP to MMF_DISABLE_THP_COMPLETELY, to express
->>     the semantics clearly.
->>
->>     Fortunately, there are only two instances outside of prctl() code.
->>
->> (D) Adds MMF_DISABLE_THP_EXCEPT_ADVISED to express "no THP except for VMAs
->>     with VM_HUGEPAGE" -- essentially "thp=madvise" behavior
->>
->>     Fortunately, we only have to extend vma_thp_disabled().
->>
->> (E) Indicates "THP_enabled: 0" in /proc/pid/status only if THPs are
->>     disabled completely
->>
->>     Only indicating that THPs are disabled when they are really disabled
->>     completely, not only partially.
->>
->>     For now, we don't add another interface to obtained whether THPs
->>     are disabled partially (PR_THP_DISABLE_EXCEPT_ADVISED was set). If
->>     ever required, we could add a new entry.
->>
->> The documented semantics in the man page for PR_SET_THP_DISABLE
->> "is inherited by a child created via fork(2) and is preserved across
->> execve(2)" is maintained. This behavior, for example, allows for
->> disabling THPs for a workload through the launching process (e.g.,
->> systemd where we fork() a helper process to then exec()).
->>
->> For now, MADV_COLLAPSE will *fail* in regions without VM_HUGEPAGE and
->> VM_NOHUGEPAGE. As MADV_COLLAPSE is a clear advise that user space
->> thinks a THP is a good idea, we'll enable that separately next
->> (requiring a bit of cleanup first).
->>
->> There is currently not way to prevent that a process will not issue
->> PR_SET_THP_DISABLE itself to re-enable THP. There are not really known
->> users for re-enabling it, and it's against the purpose of the original
->> interface. So if ever required, we could investigate just forbidding to
->> re-enable them, or make this somehow configurable.
->>
->> Acked-by: Usama Arif <usamaarif642@gmail.com>
->> Tested-by: Usama Arif <usamaarif642@gmail.com>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> Cc: Andrew Morton <akpm@linux-foundation.org>
->> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
->> Cc: Zi Yan <ziy@nvidia.com>
->> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
->> Cc: Nico Pache <npache@redhat.com>
->> Cc: Ryan Roberts <ryan.roberts@arm.com>
->> Cc: Dev Jain <dev.jain@arm.com>
->> Cc: Barry Song <baohua@kernel.org>
->> Cc: Vlastimil Babka <vbabka@suse.cz>
->> Cc: Mike Rapoport <rppt@kernel.org>
->> Cc: Suren Baghdasaryan <surenb@google.com>
->> Cc: Michal Hocko <mhocko@suse.com>
->> Cc: Usama Arif <usamaarif642@gmail.com>
->> Cc: SeongJae Park <sj@kernel.org>
->> Cc: Jann Horn <jannh@google.com>
->> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
->> Cc: Yafang Shao <laoar.shao@gmail.com>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->>
->> ---
->>
->> At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
->> think there might be real use cases where we want to disable any THPs --
->> in particular also around debugging THP-related problems, and
->> "never" not meaning ... "never" anymore ever since we add MADV_COLLAPSE.
->> PR_SET_THP_DISABLE will also block MADV_COLLAPSE, which can be very
->> helpful for debugging purposes. Of course, I thought of having a
->> system-wide config option to modify PR_SET_THP_DISABLE behavior, but
->> I just don't like the semantics.
->>
->> "prctl: allow overriding system THP policy to always"[1] proposed
->> "overriding policies to always", which is just the wrong way around: we
->> should not add mechanisms to "enable more" when we already have an
->> interface/mechanism to "disable" them (PR_SET_THP_DISABLE). It all gets
->> weird otherwise.
->>
->> "[PATCH 0/6] prctl: introduce PR_SET/GET_THP_POLICY"[2] proposed
->> setting the default of the VM_HUGEPAGE, which is similarly the wrong way
->> around I think now.
->>
->> The ideas explored by Lorenzo to extend process_madvise()[3] and mctrl()[4]
->> similarly were around the "default for VM_HUGEPAGE" idea, but after the
->> discussion, I think we should better leave VM_HUGEPAGE untouched.
->>
->> Happy to hear naming suggestions for "PR_THP_DISABLE_EXCEPT_ADVISED" where
->> we essentially want to say "leave advised regions alone" -- "keep THP
->> enabled for advised regions",
->>
->> The only thing I really dislike about this is using another MMF_* flag,
->> but well, no way around it -- and seems like we could easily support
->> more than 32 if we want to (most users already treat it like a proper
->> bitmap).
->>
->> I think this here (modifying an existing toggle) is the only prctl()
->> extension that we might be willing to accept. In general, I agree like
->> most others, that prctl() is a very bad interface for that -- but
->> PR_SET_THP_DISABLE is already there and is getting used.
->>
->> Long-term, I think the answer will be something based on bpf[5]. Maybe
->> in that context, I there could still be value in easily disabling THPs for
->> selected workloads (esp. debugging purposes).
->>
->> Jann raised valid concerns[6] about new flags that are persistent across
->> exec[6]. As this here is a relaxation to existing PR_SET_THP_DISABLE I
->> consider it having a similar security risk as our existing
->> PR_SET_THP_DISABLE, but devil is in the detail.
->>
->> [1] https://lore.kernel.org/r/20250507141132.2773275-1-usamaarif642@gmail.com
->> [2] https://lkml.kernel.org/r/20250515133519.2779639-2-usamaarif642@gmail.com
->> [3] https://lore.kernel.org/r/cover.1747686021.git.lorenzo.stoakes@oracle.com
->> [4] https://lkml.kernel.org/r/85778a76-7dc8-4ea8-8827-acb45f74ee05@lucifer.local
->> [5] https://lkml.kernel.org/r/20250608073516.22415-1-laoar.shao@gmail.com
->> [6] https://lore.kernel.org/r/CAG48ez3-7EnBVEjpdoW7z5K0hX41nLQN5Wb65Vg-1p8DdXRnjg@mail.gmail.com
->>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>  Documentation/filesystems/proc.rst |  5 +--
->>  fs/proc/array.c                    |  2 +-
->>  include/linux/huge_mm.h            | 20 ++++++++---
->>  include/linux/mm_types.h           | 13 +++----
->>  include/uapi/linux/prctl.h         | 10 ++++++
->>  kernel/sys.c                       | 58 +++++++++++++++++++++++-------
->>  mm/khugepaged.c                    |  2 +-
->>  7 files changed, 81 insertions(+), 29 deletions(-)
->>
->> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
->> index 2971551b7235..915a3e44bc12 100644
->> --- a/Documentation/filesystems/proc.rst
->> +++ b/Documentation/filesystems/proc.rst
->> @@ -291,8 +291,9 @@ It's slow but very precise.
->>   HugetlbPages                size of hugetlb memory portions
->>   CoreDumping                 process's memory is currently being dumped
->>                               (killing the process may lead to a corrupted core)
->> - THP_enabled		     process is allowed to use THP (returns 0 when
->> -			     PR_SET_THP_DISABLE is set on the process
->> + THP_enabled                 process is allowed to use THP (returns 0 when
->> +                             PR_SET_THP_DISABLE is set on the process to disable
->> +                             THP completely, not just partially)
->>   Threads                     number of threads
->>   SigQ                        number of signals queued/max. number for queue
->>   SigPnd                      bitmap of pending signals for the thread
->> diff --git a/fs/proc/array.c b/fs/proc/array.c
->> index d6a0369caa93..c4f91a784104 100644
->> --- a/fs/proc/array.c
->> +++ b/fs/proc/array.c
->> @@ -422,7 +422,7 @@ static inline void task_thp_status(struct seq_file *m, struct mm_struct *mm)
->>  	bool thp_enabled = IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE);
->>
->>  	if (thp_enabled)
->> -		thp_enabled = !test_bit(MMF_DISABLE_THP, &mm->flags);
->> +		thp_enabled = !test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
->>  	seq_printf(m, "THP_enabled:\t%d\n", thp_enabled);
->>  }
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index 7748489fde1b..71db243a002e 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -318,16 +318,26 @@ struct thpsize {
->>  	(transparent_hugepage_flags &					\
->>  	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
->>
->> +/*
->> + * Check whether THPs are explicitly disabled for this VMA, for example,
->> + * through madvise or prctl.
->> + */
->>  static inline bool vma_thp_disabled(struct vm_area_struct *vma,
->>  		vm_flags_t vm_flags)
->>  {
->> +	/* Are THPs disabled for this VMA? */
->> +	if (vm_flags & VM_NOHUGEPAGE)
->> +		return true;
+max77686 only disables/enables interrupts in suspend path, but max77620
+is doing also I2C transfers, but above is regmap_irq_lock, not regmap
+lock. Maybe this is not really max77620/77686 related at all? None of
+these do anything weird (or different than last 5 years), so missing
+nesting could be result of changes in other parts...
 
-VM_NOHUGEPAGE will cause the THP being disabled here.
 
->> +	/* Are THPs disabled for all VMAs in the whole process? */
->> +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, &vma->vm_mm->flags))
->> +		return true;
->>  	/*
->> -	 * Explicitly disabled through madvise or prctl, or some
->> -	 * architectures may disable THP for some mappings, for
->> -	 * example, s390 kvm.
->> +	 * Are THPs disabled only for VMAs where we didn't get an explicit
->> +	 * advise to use them?
->>  	 */
->> -	return (vm_flags & VM_NOHUGEPAGE) ||
->> -	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
->> +	if (vm_flags & VM_HUGEPAGE)
->> +		return false;
-> 
-> Hm is this correct? This means that VM_NOHUGEPAGE no longer results in THP being
-> disabled here no?
+> [   46.732435]
+>                stack backtrace:
+> [   46.734019] CPU: 3 UID: 0 PID: 3984 Comm: rtcwake Not tainted 6.16.0-rc7-net-next+ #432 PREEMPT
+> [   46.734029] Hardware name: NVIDIA NVIDIA Jetson Xavier NX Developer Kit/Jetson, BIOS 6.0-37391689 08/28/2024
+> [   46.734033] Call trace:
+> [   46.734036]  show_stack+0x18/0x24 (C)
+> [   46.734070]  dump_stack_lvl+0x90/0xd0
+> [   46.734080]  dump_stack+0x18/0x24
+> [   46.734107]  print_deadlock_bug+0x260/0x350
+> [   46.734114]  __lock_acquire+0xf28/0x2088
+> [   46.734120]  lock_acquire+0x19c/0x33c
+> [   46.734126]  __mutex_lock+0x84/0x530
+> [   46.734135]  mutex_lock_nested+0x24/0x30
+> [   46.734155]  regmap_irq_lock+0x18/0x24
+> [   46.734161]  __irq_get_desc_lock+0x8c/0x9c
+> [   46.734170]  irq_set_irq_wake+0x5c/0x1ac	<== I guess IRQ 94
 
-Lorenzo, pointed to VM_NOHUGEPAGE case above.> 
->> +	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
->>  }
->>
->>  static inline bool thp_disabled_by_hw(void)
->> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->> index 1ec273b06691..123fefaa4b98 100644
->> --- a/include/linux/mm_types.h
->> +++ b/include/linux/mm_types.h
->> @@ -1743,19 +1743,16 @@ enum {
->>  #define MMF_VM_MERGEABLE	16	/* KSM may merge identical pages */
->>  #define MMF_VM_HUGEPAGE		17	/* set when mm is available for khugepaged */
->>
->> -/*
->> - * This one-shot flag is dropped due to necessity of changing exe once again
->> - * on NFS restore
->> - */
->> -//#define MMF_EXE_FILE_CHANGED	18	/* see prctl_set_mm_exe_file() */
->> +#define MMF_HUGE_ZERO_PAGE	18      /* mm has ever used the global huge zero page */
->>
->>  #define MMF_HAS_UPROBES		19	/* has uprobes */
->>  #define MMF_RECALC_UPROBES	20	/* MMF_HAS_UPROBES can be wrong */
->>  #define MMF_OOM_SKIP		21	/* mm is of no interest for the OOM killer */
->>  #define MMF_UNSTABLE		22	/* mm is unstable for copy_from_user */
->> -#define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
->> -#define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
->> -#define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
->> +#define MMF_DISABLE_THP_EXCEPT_ADVISED	23	/* no THP except when advised (e.g., VM_HUGEPAGE) */
->> +#define MMF_DISABLE_THP_COMPLETELY	24	/* no THP for all VMAs */
-> 
-> It's almost a bit weird to have these as separate flags, since they're distinct
-> (of course, I don't think there's necessarily another way).
-> 
-> Though this makes me think maybe in future we can have a new mode where both
-> enabled == something else :P
-> 
-> But perhaps I've been infected with 'bit packing' disease.
-> 
-> Anyway as discussed in the THP meeting, I'm going to be (hopefully!) making
-> the mm flags a bitmap soon so we'll get more flags available.
-> 
->> +#define MMF_DISABLE_THP_MASK	((1 << MMF_DISABLE_THP_COMPLETELY) |\
->> +				 (1 << MMF_DISABLE_THP_EXCEPT_ADVISED))
->>  #define MMF_OOM_REAP_QUEUED	25	/* mm was queued for oom_reaper */
->>  #define MMF_MULTIPROCESS	26	/* mm is shared between processes */
->>  /*
->> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
->> index 43dec6eed559..9c1d6e49b8a9 100644
->> --- a/include/uapi/linux/prctl.h
->> +++ b/include/uapi/linux/prctl.h
->> @@ -177,7 +177,17 @@ struct prctl_mm_map {
->>
->>  #define PR_GET_TID_ADDRESS	40
->>
->> +/*
->> + * Flags for PR_SET_THP_DISABLE are only applicable when disabling. Bit 0
->> + * is reserved, so PR_GET_THP_DISABLE can return "1 | flags", to effectively
->> + * return "1" when no flags were specified for PR_SET_THP_DISABLE.
->> + */
->>  #define PR_SET_THP_DISABLE	41
->> +/*
->> + * Don't disable THPs when explicitly advised (e.g., MADV_HUGEPAGE /
->> + * VM_HUGEPAGE).
->> + */
->> +# define PR_THP_DISABLE_EXCEPT_ADVISED	(1 << 1)
-> 
-> NO space after # please.
-> 
+...like changes in irqchip.
 
-I think this is following the file convention, the space is there in other flags
-all over this file. I dont like the space as well.
+> [   46.734176]  regmap_irq_sync_unlock+0x314/0x4f4
+> [   46.734182]  __irq_put_desc_unlock+0x48/0x4c
+> [   46.734190]  irq_set_irq_wake+0x88/0x1ac	<== I guess IRQ 95
+> [   46.734195]  max77686_rtc_suspend+0x34/0x74
 
->>  #define PR_GET_THP_DISABLE	42
->>
->>  /*
->> diff --git a/kernel/sys.c b/kernel/sys.c
->> index b153fb345ada..b87d0acaab0b 100644
->> --- a/kernel/sys.c
->> +++ b/kernel/sys.c
->> @@ -2423,6 +2423,50 @@ static int prctl_get_auxv(void __user *addr, unsigned long len)
->>  	return sizeof(mm->saved_auxv);
->>  }
->>
->> +static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
->> +				 unsigned long arg4, unsigned long arg5)
->> +{
->> +	unsigned long *mm_flags = &current->mm->flags;
->> +
->> +	if (arg2 || arg3 || arg4 || arg5)
->> +		return -EINVAL;
->> +
-> 
-> Can we have a comment here about what we're doing below re: the return
-> value?
-> 
 
-Do you mean add returning 1 for MMF_DISABLE_THP_COMPLETELY and 3 for MMF_DISABLE_THP_EXCEPT_ADVISED?
+Because really above part is virtually unchanged since 10 years, except
+my commit d8f090dbeafdcc3d30761aa0062f19d1adf9ef08 (you can try
+reverting it... but it still could be correct/needed and just irqchip
+changed something around locking).
 
-I will add it in next revision.
-
->> +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags))
->> +		return 1;
->> +	else if (test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags))
->> +		return 1 | PR_THP_DISABLE_EXCEPT_ADVISED;
->> +	return 0;
->> +}
->> +
->> +static int prctl_set_thp_disable(bool thp_disable, unsigned long flags,
->> +				 unsigned long arg4, unsigned long arg5)
->> +{
->> +	unsigned long *mm_flags = &current->mm->flags;
->> +
->> +	if (arg4 || arg5)
->> +		return -EINVAL;
->> +
->> +	/* Flags are only allowed when disabling. */
->> +	if ((!thp_disable && flags) || (flags & ~PR_THP_DISABLE_EXCEPT_ADVISED))
->> +		return -EINVAL;
->> +	if (mmap_write_lock_killable(current->mm))
->> +		return -EINTR;
->> +	if (thp_disable) {
->> +		if (flags & PR_THP_DISABLE_EXCEPT_ADVISED) {
->> +			clear_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
->> +			set_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
->> +		} else {
->> +			set_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
->> +			clear_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
->> +		}
->> +	} else {
->> +		clear_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags);
->> +		clear_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags);
->> +	}
->> +	mmap_write_unlock(current->mm);
->> +	return 0;
->> +}
->> +
->>  SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->>  		unsigned long, arg4, unsigned long, arg5)
->>  {
->> @@ -2596,20 +2640,10 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
->>  			return -EINVAL;
->>  		return task_no_new_privs(current) ? 1 : 0;
->>  	case PR_GET_THP_DISABLE:
->> -		if (arg2 || arg3 || arg4 || arg5)
->> -			return -EINVAL;
->> -		error = !!test_bit(MMF_DISABLE_THP, &me->mm->flags);
->> +		error = prctl_get_thp_disable(arg2, arg3, arg4, arg5);
->>  		break;
->>  	case PR_SET_THP_DISABLE:
->> -		if (arg3 || arg4 || arg5)
->> -			return -EINVAL;
->> -		if (mmap_write_lock_killable(me->mm))
->> -			return -EINTR;
->> -		if (arg2)
->> -			set_bit(MMF_DISABLE_THP, &me->mm->flags);
->> -		else
->> -			clear_bit(MMF_DISABLE_THP, &me->mm->flags);
->> -		mmap_write_unlock(me->mm);
->> +		error = prctl_set_thp_disable(arg2, arg3, arg4, arg5);
->>  		break;
->>  	case PR_MPX_ENABLE_MANAGEMENT:
->>  	case PR_MPX_DISABLE_MANAGEMENT:
->> diff --git a/mm/khugepaged.c b/mm/khugepaged.c
->> index 1ff0c7dd2be4..2c9008246785 100644
->> --- a/mm/khugepaged.c
->> +++ b/mm/khugepaged.c
->> @@ -410,7 +410,7 @@ static inline int hpage_collapse_test_exit(struct mm_struct *mm)
->>  static inline int hpage_collapse_test_exit_or_disable(struct mm_struct *mm)
->>  {
->>  	return hpage_collapse_test_exit(mm) ||
->> -	       test_bit(MMF_DISABLE_THP, &mm->flags);
->> +	       test_bit(MMF_DISABLE_THP_COMPLETELY, &mm->flags);
->>  }
->>
->>  static bool hugepage_pmd_enabled(void)
->> --
->> 2.47.3
->>
-
+Best regards,
+Krzysztof
 
