@@ -1,170 +1,103 @@
-Return-Path: <linux-kernel+bounces-750297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F29B159AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC247B159AE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FAE954803B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:35:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B8B0548295
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D6D28ECD8;
-	Wed, 30 Jul 2025 07:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FB3228ECE1;
+	Wed, 30 Jul 2025 07:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyXofFu8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bpg5HRUe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB051EEA3C;
-	Wed, 30 Jul 2025 07:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E4F1EEA3C;
+	Wed, 30 Jul 2025 07:36:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753860917; cv=none; b=QErwxFACwWdCphMZldYQwFqJIMynajyfGhBZNOfJaJiP3xPfqsDuiiqFIIhGC19xYty11L/d07NX0RIwDfVGr5ZNgw/NtUZ5eVBcitQe23ZdJXBpTFg275juAyVNgtQNwHm9oDf77ORnnEXIdSYJFNEFbd8R4VSlD9hz6EXHwD4=
+	t=1753860995; cv=none; b=lKCUNOggeZhqFSfDWVFr5juAznDL4Wc2Jx6/ePHJwbeWYDgWHvQ1zUjRMWkk4IpRM8XzDZJpPYu0zFVOu0wtj8ep4CTlL1T8vGzr15ii1uKJuUHgyQhAfGAg9tv5t05XCFFlkyRq+CduR7LGGd2mpwZMgpwHam78QzuYJfrHFF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753860917; c=relaxed/simple;
-	bh=Rb42T9aQ/AvFB04Um0C8TnqGFJJMEejYJB7uNmy/X7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p2HTImEc6kWN5Rn1MrEI4Ip0ZyqS34Kt6bOc+4meHhkbv2iBlssIiO7hwMYHRfQJpXW2Un+jwcCW0KlK9EN8EOhSWEi51HGdC+pAm8cJL0diykP6chYYNNfsEgIxYYBOSqZ+ga4RgXdmWZLBJbxoUnVhhwt+6EHvs55U0SYNAFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyXofFu8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8CEEC4CEE7;
-	Wed, 30 Jul 2025 07:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753860915;
-	bh=Rb42T9aQ/AvFB04Um0C8TnqGFJJMEejYJB7uNmy/X7s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lyXofFu8g8SSyulnEKipqT2pOCKv+cop+PA7ESplvce5MRGTqNlVUjnLgz/DgTKnT
-	 Qr1msG/NOCq5NC4G3D0vr4xL1GHxj/7mI/6dBp8NGoHTokAr1pzK1jk/1qUR3n/IxJ
-	 lTJfOJVDIjylOZ1QnwCvyHVHIC6+B/QpW2o9eVsKR7bX3N8VsCfBv4hzVT7qWrk+4u
-	 WbwWmEQH67o8hVqDOQeBuDmHDZyd2HB6uJHZSeqlhmHHoT+pMgg+FX9676Jn7R2Quq
-	 GRyPuKp8BNJMFu+dJPuX7m5PvNv6PYIcD4Edhtk1PRNwgBYS+6E8UCC5BGYvlwUxrA
-	 oO6+qJ8rcpEdw==
-Date: Wed, 30 Jul 2025 09:35:12 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: add support for NXPs TJA1145 CAN
- transceiver
-Message-ID: <20250730-aromatic-optimistic-hyena-f1db1a@kuoka>
-References: <20250728-tja1145-support-v1-0-ebd8494d545c@liebherr.com>
- <20250728-tja1145-support-v1-1-ebd8494d545c@liebherr.com>
+	s=arc-20240116; t=1753860995; c=relaxed/simple;
+	bh=Lgxb6ChAZm+S1lYlYOHvTXOyDWJ1q94r2HzDlbS89X0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CfvHLqPxuey07vl+qrcQtBGsjeHhgX4EfISFv3XuIXIQn/qVHmgIOb4jw97ehgAYg8f94C+WD94YNNFuyNoCRaDqUNT/+6n/8670E3xBiBck1V82cfNwIKYCR/JE3phvK9oYDixyjbVutpwd3zXsmumvMR7bmzA3RzrCImw2pgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bpg5HRUe; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753860995; x=1785396995;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Lgxb6ChAZm+S1lYlYOHvTXOyDWJ1q94r2HzDlbS89X0=;
+  b=bpg5HRUeEr6gvH0ceO+6fKNY4MwxOoyx3yzEA0/fdUIpfLIBL57hgZMT
+   7BuecC8dXQFHspILxELWq5HsgJ5v6Zfn3pmakzjVhQ2Php3xk/RCSIGcZ
+   ueRieLhQISvMeKMIBZoztbv1nU3wHXQVlJgOsePLUKiEg3rw2HTpuN+8S
+   HpVOY7tz7quLo6hdyX2zwjmbFjzCLIgRfp9v49GWMSKSRLmebg9IZJTVY
+   EyHciAxk0t1y6Er16UnemlpfSxTLn3NgJG3M2G2HYrMY0zTCsiYTE13no
+   dvVjngF/6lN+6CYBVyjg1rJiwhHRhNVGaKtjcV8Cj556BBGdsvmrReLeS
+   Q==;
+X-CSE-ConnectionGUID: OEZ5wljfQ5qLlb3DjIkHAQ==
+X-CSE-MsgGUID: FvGNJ7rnTfubnMmrpS2qgQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="56037645"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="56037645"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 00:36:34 -0700
+X-CSE-ConnectionGUID: OqQi3hkUReqqLpZr2iCwuA==
+X-CSE-MsgGUID: DbgjJr6SStqDXDA73Xhbqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="167395533"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 00:36:27 -0700
+Message-ID: <f61594a4-5823-453c-9f1f-8bd94d3ba4a2@intel.com>
+Date: Wed, 30 Jul 2025 15:36:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250728-tja1145-support-v1-1-ebd8494d545c@liebherr.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 15/24] KVM: x86/mmu: Extend guest_memfd's max mapping
+ level to shared mappings
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Ira Weiny <ira.weiny@intel.com>, Gavin Shan <gshan@redhat.com>,
+ Shivank Garg <shivankg@amd.com>, Vlastimil Babka <vbabka@suse.cz>,
+ David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Tao Chan <chentao@kylinos.cn>,
+ James Houghton <jthoughton@google.com>
+References: <20250729225455.670324-1-seanjc@google.com>
+ <20250729225455.670324-16-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250729225455.670324-16-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 28, 2025 at 05:39:29PM +0200, Dimitri Fedrau wrote:
-> Adding documentation for NXPs TJA1145 CAN transceiver.
+On 7/30/2025 6:54 AM, Sean Christopherson wrote:
+> Rework kvm_mmu_max_mapping_level() to consult guest_memfd for all mappings,
+> not just private mappings, so that hugepage support plays nice with the
+> upcoming support for backing non-private memory with guest_memfd.
 > 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> ---
->  .../devicetree/bindings/phy/nxp,tja1145-can.yaml   | 79 ++++++++++++++++++++++
-
-Why isn't this in can directory with rest of CAN bindings?
-
->  1 file changed, 79 insertions(+)
+> In addition to getting the max order from guest_memfd for gmem-only
+> memslots, update TDX's hook to effectively ignore shared mappings, as TDX's
+> restrictions on page size only apply to Secure EPT mappings.  Do nothing
+> for SNP, as RMP restrictions apply to both private and shared memory.
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml b/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..10bf2bce1b35788b3284c42e544a56eda6d79947
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml
+> Suggested-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
 
-Filename should match compatible.
-
-> @@ -0,0 +1,79 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/nxp,tja1145-can.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: TJA1145 CAN transceiver
-> +
-> +maintainers:
-> +  - Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> +
-> +allOf:
-> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-
-Missing ref to transceiver properties. Look at other CAN bindings.
-
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,tja1145
-> +
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  reg:
-> +    maxItems: 1
-
-reg is the second property, also in "required:" block.
-
-> +
-> +  spi-max-frequency:
-> +    maximum: 4000000
-> +
-> +  spi-cpha: true
-> +
-> +  spi-cs-setup-delay-ns:
-> +    minimum: 50
-> +    default: 50
-> +
-> +  spi-cs-hold-delay-ns:
-> +    minimum: 50
-> +    default: 50
-> +
-> +  spi-cs-inactive-delay-ns:
-> +    minimum: 250
-> +    default: 250
-> +
-> +  vcc-supply:
-> +    description:
-> +      CAN transceiver supply voltage
-> +
-> +  vio-supply:
-> +    description:
-> +      Supply voltage for I/O level adaptor
-> +
-> +  vbat-supply:
-> +    description:
-> +      Battery supply voltage
-> +
-> +required:
-> +  - compatible
-> +  - "#phy-cells"
-> +  - reg
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +        canphy@0 {
-
-can-phy if something like this exist. If not, then probably can-transceiver
-
-> +            compatible = "nxp,tja1145";
-> +            #phy-cells = <0>;
-> +            reg = <0>;
-
-Please follow DTS coding style.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
 
