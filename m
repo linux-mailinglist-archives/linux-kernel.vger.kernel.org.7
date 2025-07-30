@@ -1,104 +1,221 @@
-Return-Path: <linux-kernel+bounces-751380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD658B168E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:08:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1267CB168ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:12:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D998C5A3FF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:08:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 622387B4A34
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:10:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F338822D4E2;
-	Wed, 30 Jul 2025 22:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D1022B595;
+	Wed, 30 Jul 2025 22:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N221wvIa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0UkmTIu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B96E2288F7;
-	Wed, 30 Jul 2025 22:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B3D132103
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 22:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753913324; cv=none; b=Mmp6vCq6WfO4yBVvqCs2wZuqpvr4h+AwVbJQVd9kxQbPeC4AP4NdlEhVyrpYmUIAlZ90C/4XtI+h/AYn3z8ulc/9KvVxuCQdI4iv/cSPWLLO2DtPrXYi5xjlwnKZcyzDsCP1st5l17qmXednfMs8E8vVBpv/mjY3KF1r8q2ChIA=
+	t=1753913520; cv=none; b=hMMDW8aYpl8kx0bW55zC2YPRGYqrl1IbDiUzC2rOxiwlP29M/OfDA47arVb+Gcf6T+Hk318J2RgGM7P7DR/wQUASJyPoZLw0yT7W60CUpqY5tPvk1lzZcYBdQ7c3UwhXaSyVgC66q7MJQmVZPZVmcbE+naLqoMv34EA8mjunFzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753913324; c=relaxed/simple;
-	bh=5DzTqdWYc14PEiKnsSSikRhRB45dtYdKZX03jUMGTgw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=elVYT8/AZIMbRUDGN9wLrDF3kDsVCFZEmnUVIjfsrYHfS/z5iilMWJ6ucNl1d5XONpaQ9lZDPAhZDOY9KdJpUcTt/dlXu4jNnxRYROmzUqkxcA4bJNR1BJtbq5qNdUMEQGShKmB6jWJ5akGyfM0Wf+mpaxb2OQvG0uuYGxVgItc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N221wvIa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC94CC4CEE3;
-	Wed, 30 Jul 2025 22:08:38 +0000 (UTC)
+	s=arc-20240116; t=1753913520; c=relaxed/simple;
+	bh=yYOA1pLmN0sVFxakiTkblQuK9ECzy3Zjk+AwR/ykPeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TB9MyX6k1ZnS51ACPyXbTHkiTTtDE+DG7Ut692bJhHC7MZGOZdX3m7yq93lziEGuGwCEKorcLFK4uF4n8wAraC55MjWGGirPHSIPW7MBYzU2MuJuBZCwauaaZ5y3KNae2P/mNS4/DVWjoZ3o7v6ZOYXQJDvxUhpQPuJtvTqg7Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0UkmTIu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E55C4CEE3;
+	Wed, 30 Jul 2025 22:11:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753913322;
-	bh=5DzTqdWYc14PEiKnsSSikRhRB45dtYdKZX03jUMGTgw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=N221wvIanmHlfTpJcA+rlcJpNPH8kjj3O44sk42ouZRnpMFr8DprkUAqN0EAQFlLc
-	 hEup3TP40bmw/eoSvLPUf58EE2tRdMLmBAJEsl1nBLKlsnKUoujL9a25mONcEGFxL0
-	 mvRLqv1pkIOHGNO2WPvt+XWI6FZshF5ysUad9nenV1gsZlw0bjqnUam5EzbObopD4F
-	 vyyehZwoeCmOehW55Qd9QtCqwft11PIS36V1ZgYYTrPQOJvRCxjoMvnZe0NjaIR5VM
-	 UzoTR91CQkwZtLPaKECJRtEMeNKAN2ImRKcFcPE4WTJjo2hw1WlJRhad1MAn5ZccVA
-	 HlZHxAKk4QgIw==
-Date: Thu, 31 Jul 2025 07:08:36 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- oe-kbuild-all@lists.linux.dev, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Linux Memory Management List
- <linux-mm@kvack.org>, Namhyung Kim <namhyung@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2 1/2] tracing: Have eprobes have their own config
- option
-Message-Id: <20250731070836.69c43401858db35dd3b43ff0@kernel.org>
-In-Reply-To: <20250730100155.268d2442@gandalf.local.home>
-References: <20250729161912.056641407@kernel.org>
-	<202507301452.JPAcMvT0-lkp@intel.com>
-	<20250730191101.7e6203f21b94c3f932fa8348@kernel.org>
-	<20250730091727.7b3a8b96@gandalf.local.home>
-	<20250730225722.c88d2dbd3dfa07310de7edd4@kernel.org>
-	<20250730100155.268d2442@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1753913520;
+	bh=yYOA1pLmN0sVFxakiTkblQuK9ECzy3Zjk+AwR/ykPeI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=q0UkmTIuQRR3zMRPfIaEcB9MJHEPRVT8UFC4HTfnL2LszqZqdlRdQGl2smuAMF9hV
+	 t4pEYv3GgkTrDZ5miSCGv0B6/rEGdoGMJIEiCSW7n3bWnUWM27x5KC3OqP05ic7pSu
+	 Cv3IHnBa+cEMwie445Rw5qzBcXpmoIa/2IqQ6ZoBgnYOOvPTlwJw/J5+4mKX788CPq
+	 M14nL3t1CY+Q27Raje2205TchR27RZXeK6nsEWRep1KNgkKaBgNf/OJyriTf5Nu5IC
+	 UjLxB3gmWZwsxDPl3lAaTV6VemFobSm6H941rEn8VZek6kCzKALjpdYhsssTfkle37
+	 azLHeMp63UJwg==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Waiman Long <longman@redhat.com>,
+	Joel Granados <joel.granados@kernel.org>,
+	Anna Schumaker <anna.schumaker@oracle.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Yongliang Gao <leonylgao@tencent.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tomasz Figa <tfiga@chromium.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] hung_task: Dump blocker task if it is not hung
+Date: Thu, 31 Jul 2025 07:11:54 +0900
+Message-ID: <175391351423.688839.11917911323784986774.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Jul 2025 10:01:55 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-> On Wed, 30 Jul 2025 22:57:22 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
-> 
-> > > I see you already did the probe pull request.  
-> > 
-> > Ah, I thought this was for the next one... (but I think it is a kind of bugfix?)
-> 
-> Yeah, as its not adding eprobes, but just making it configurable.
-> 
-> But you haven't answered my question ;-)
-> 
-> Do you want to push it to Linus or should I?
-> 
-> I still have the trace/for-next to push (I've finished testing your last
-> "attribute" patch and now I'm just letting it simmer in linux-next before
-> doing the pull request). I can still add this to that one if you want.
-> 
+Dump the lock blocker task if it is not hung because if the blocker
+task is also hung, it should be dumped by the detector. This will
+de-duplicate the same stackdumps if the blocker task is also blocked
+by another task (and hung).
 
-OK, could you push this to Linus?
+Suggested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Acked-by: Lance Yang <lance.yang@linux.dev>
+---
+ Changes in v2:
+  - Rebase on next-20250730
+  - Merge task state checks.
+  - Add Lance's ack.
+---
+ kernel/hung_task.c |   78 +++++++++++++++++++++++++++-------------------------
+ 1 file changed, 41 insertions(+), 37 deletions(-)
 
-Thanks,
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 8708a1205f82..b2c1f14b8129 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -95,9 +95,41 @@ static struct notifier_block panic_block = {
+ 	.notifier_call = hung_task_panic,
+ };
+ 
++static bool task_is_hung(struct task_struct *t, unsigned long timeout)
++{
++	unsigned long switch_count = t->nvcsw + t->nivcsw;
++	unsigned int state = READ_ONCE(t->__state);
++
++	/*
++	 * skip the TASK_KILLABLE tasks -- these can be killed
++	 * skip the TASK_IDLE tasks -- those are genuinely idle
++	 * skip the TASK_FROZEN task -- it reasonably stops scheduling by freezer
++	 */
++	if (!(state & TASK_UNINTERRUPTIBLE) ||
++	    (state & (TASK_WAKEKILL | TASK_NOLOAD | TASK_FROZEN)))
++		return false;
++
++	/*
++	 * When a freshly created task is scheduled once, changes its state to
++	 * TASK_UNINTERRUPTIBLE without having ever been switched out once, it
++	 * musn't be checked.
++	 */
++	if (unlikely(!switch_count))
++		return false;
++
++	if (switch_count != t->last_switch_count) {
++		t->last_switch_count = switch_count;
++		t->last_switch_time = jiffies;
++		return false;
++	}
++	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
++		return false;
++
++	return true;
++}
+ 
+ #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+-static void debug_show_blocker(struct task_struct *task)
++static void debug_show_blocker(struct task_struct *task, unsigned long timeout)
+ {
+ 	struct task_struct *g, *t;
+ 	unsigned long owner, blocker, blocker_type;
+@@ -174,41 +206,21 @@ static void debug_show_blocker(struct task_struct *task)
+ 			       t->pid, rwsem_blocked_by);
+ 			break;
+ 		}
+-		sched_show_task(t);
++		/* Avoid duplicated task dump, skip if the task is also hung. */
++		if (!task_is_hung(t, timeout))
++			sched_show_task(t);
+ 		return;
+ 	}
+ }
+ #else
+-static inline void debug_show_blocker(struct task_struct *task)
++static inline void debug_show_blocker(struct task_struct *task, unsigned long timeout)
+ {
+ }
+ #endif
+ 
+ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ {
+-	unsigned long switch_count = t->nvcsw + t->nivcsw;
+-
+-	/*
+-	 * Ensure the task is not frozen.
+-	 * Also, skip vfork and any other user process that freezer should skip.
+-	 */
+-	if (unlikely(READ_ONCE(t->__state) & TASK_FROZEN))
+-		return;
+-
+-	/*
+-	 * When a freshly created task is scheduled once, changes its state to
+-	 * TASK_UNINTERRUPTIBLE without having ever been switched out once, it
+-	 * musn't be checked.
+-	 */
+-	if (unlikely(!switch_count))
+-		return;
+-
+-	if (switch_count != t->last_switch_count) {
+-		t->last_switch_count = switch_count;
+-		t->last_switch_time = jiffies;
+-		return;
+-	}
+-	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
++	if (!task_is_hung(t, timeout))
+ 		return;
+ 
+ 	/*
+@@ -243,7 +255,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
+ 			" disables this message.\n");
+ 		sched_show_task(t);
+-		debug_show_blocker(t);
++		debug_show_blocker(t, timeout);
+ 		hung_task_show_lock = true;
+ 
+ 		if (sysctl_hung_task_all_cpu_backtrace)
+@@ -299,7 +311,6 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	hung_task_show_lock = false;
+ 	rcu_read_lock();
+ 	for_each_process_thread(g, t) {
+-		unsigned int state;
+ 
+ 		if (!max_count--)
+ 			goto unlock;
+@@ -308,15 +319,8 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 				goto unlock;
+ 			last_break = jiffies;
+ 		}
+-		/*
+-		 * skip the TASK_KILLABLE tasks -- these can be killed
+-		 * skip the TASK_IDLE tasks -- those are genuinely idle
+-		 */
+-		state = READ_ONCE(t->__state);
+-		if ((state & TASK_UNINTERRUPTIBLE) &&
+-		    !(state & TASK_WAKEKILL) &&
+-		    !(state & TASK_NOLOAD))
+-			check_hung_task(t, timeout);
++
++		check_hung_task(t, timeout);
+ 	}
+  unlock:
+ 	rcu_read_unlock();
 
-> -- Steve
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
