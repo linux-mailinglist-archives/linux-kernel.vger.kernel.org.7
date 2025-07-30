@@ -1,124 +1,111 @@
-Return-Path: <linux-kernel+bounces-751048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A51B16495
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:28:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82C5FB16498
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 636D018C3848
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:28:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3F5818C3B29
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FC32DE1E2;
-	Wed, 30 Jul 2025 16:27:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D209E2DECAF;
+	Wed, 30 Jul 2025 16:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ep5n4pl3"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RYhio+Qh"
+Received: from mail-oo1-f44.google.com (mail-oo1-f44.google.com [209.85.161.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F8F1C7013;
-	Wed, 30 Jul 2025 16:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D21862DC343;
+	Wed, 30 Jul 2025 16:27:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753892871; cv=none; b=cEjxy9Dx4ceiSn/8QbBmRkzu5apPWdSSoGJf5aQyjJITnhETs0Tz2WD6J/YjpYjnccfmvoTEfhgKE711BeZ0FpolsWC9/lNKkmsmTaObHThiAttJvxQNU1OnSG1TBs5W3ej9wqhCx0McTL5UiebZDBKOHkx+Uup2Y9GGFVtcHbg=
+	t=1753892877; cv=none; b=u1j+w0MJu5tlWJgPTgCUcICc+PFfQ5fmjQshvewbmeebulFHQFMrazRRx0EkTPH7p/7DtZJPPORPnR1us9TzACuyJo1RQ1rd4c/33tIAiBj6a8KpGpYqjhWGHMd04Du/R+FFgmbcEnBX54uoqRcK3HQBTgu0VG853VX2JYCb6R0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753892871; c=relaxed/simple;
-	bh=IBd88+g75enem8ZFwiFE6FmfjZAFd6OhLTrZnh/J7ls=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nsTh9KTc4u7ccZTP+nshNFgHtPiiTObnXyj1fXztya+p9ceWIlroHMODzfSj/9wr58ThhvbNsAhPY56bA9YLJuim3oVeMUe0s0Vfgdz0gdmUuJ6xzmNFscvn9DE+/6Pi+hH63h24KAMfeEnALZ2Qc9LaedH5irFuqATZBzcyX/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ep5n4pl3; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1753892877; c=relaxed/simple;
+	bh=VDN1MKYrHnhKs8rJltEkmxfDO0gFuhaDH2a2kia8Czw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jFvomjTdE5K8CnZUJ+67lHqad28LBRUEhV3GabK0mckbk0IuKY5/ZFL6Xt6AFH6aQl0InIHXrmX74SSsXl4TQW6CdGicVVO6agbAHAHBJfxbWVp/cxrwzJCDiVFIeYIwCvn6VCud7rCIb46oKz9FPMPCGUqSGDF7TeRLPJTebic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RYhio+Qh; arc=none smtp.client-ip=209.85.161.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45892deb1dcso5704065e9.1;
-        Wed, 30 Jul 2025 09:27:49 -0700 (PDT)
+Received: by mail-oo1-f44.google.com with SMTP id 006d021491bc7-610cbca60cdso3653382eaf.0;
+        Wed, 30 Jul 2025 09:27:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753892868; x=1754497668; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6BqqfmK2qoQp6Ai7p0EgtaM5Od+R/trV0qF5iEdPoHE=;
-        b=ep5n4pl3Tm3pkjK2gf0ISUv1oB+pTLRKK3QIP8Gg7xrjsrEyf3IMyRmaU66DfxOlOM
-         07vO/UKkSlZMQkMp4FB5impVCh6aBGDmVAWaAtNNRURWhssyAnkO3FdIwa0vnwu7Us5s
-         S4hc7GYjnIOiw6Bj6oHv5HZU3FSI2N0NrysQFa8Q86ZhyUdRITFlhIUNKamTeGJjEFaw
-         3sbWdxMhle9h4KPTw9Mkojiz7dmAp5myBrIi2lZ1mzcyNjJ2jZzYOOCl/icmsffj4qvh
-         zxgkdYlS89OSPIYcJ7uTz3SFizAVDA4UXrVB+sds7qu8zTdc/9bCI4ax+9Jq5raDCd2v
-         /OtQ==
+        d=gmail.com; s=20230601; t=1753892875; x=1754497675; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VDN1MKYrHnhKs8rJltEkmxfDO0gFuhaDH2a2kia8Czw=;
+        b=RYhio+Qh70tPxGH+BVl56ifH/1lwMA6R8eFKguF7SM+SMtPW+PICRZmelJxt79xM50
+         tFHFKJ2CGUhIOYUR5m/h35uidtiUx2RRG1H2X+GQdlWRfeRSgqCTa2EhwC/cMjvlCU/j
+         Ca+6VVmtlDLqi/XimTtDIMJ1OhidSrqCvkWk6dxvmvLnsy/cMky0YRMjmEdbmR6i0M5D
+         RpsBhWR1Oavziuw25xdPwCynYu3BwanaPfk/3as8RJhV4cDMuaKPVTYjrth24pC//fUX
+         dtxrtmDKr1PQt3fvbvinuFohKs8+DR9FHH5ir6reyM3mrE9xTm9efP6RPBALtc8kD+BW
+         vYzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753892868; x=1754497668;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753892875; x=1754497675;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6BqqfmK2qoQp6Ai7p0EgtaM5Od+R/trV0qF5iEdPoHE=;
-        b=TQgpQnZk+Kh0f1k7xaCzCrBlaKvhM19DjJmPsXQKTDjeZbD5fAcdcu2mlZa3/z2W28
-         jCdzCWKM64LDpictZaLuCON2qEepJrcmKbJ1vIJKp1zqsa/SW3kCdZyitv4/W340tphW
-         /4wGHEAMvJnQwvlPMdEqeymHMi3kjiP6NhdpKCU6wxD6TR5VlHcvtFyjFtKIf0i/1wvb
-         v7G6Cukac6FM2Vo7DhlBnhpJrb+9QfTD4veyhR7LJkd/kBnj75VhWYZ6rZ6QPKvnsnWQ
-         G1JvK9kbu82PVFcivtioCn+Uyv5FgsYy+PRWqRDOd6si+QprxgLHB4uyzQ+D1vTJOTRq
-         vGng==
-X-Forwarded-Encrypted: i=1; AJvYcCVqWN7vQryBi35mo2FJdg2QYJ6C8dShoDO1/ChybBcSNT4i7JBzBVBt441emAsS0lFusHeGGJzVvdk=@vger.kernel.org, AJvYcCXzkgSHlWpRmoePtplQMPEl7xXo1PPJjYt/jG9MiC/j0XUwxssgXhWaoY32dQtTaUl+b0nG6G8ajZqKknnq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKB07QIJcpv5kiimMUYxpi2M6gaTl7vbkJPbGSpWGae9m6WkV5
-	uh+vBXzcSPDDU8+wqNiWHJDTkOX2mIzzBi9NxYbM7kMq30xpAmzLbdQW
-X-Gm-Gg: ASbGncsBs1JqGqk8MmIDlhC7maZzthRM5hIfDuHq8bGxUMIQRkX/XXHKKyZBO+1Q6ba
-	KedGS+90nzI+qI7tvMJ/Yp8YzHpifO94jyb778nIpUvX23rakQ5oN2J11xMQb7zJRiTJBmFsSCp
-	0HVKX0FAWNzqR/eEpy7a84L+hVSEnJxL8wK+Ca1L/dJ3MziXzw8pwdhO3bxy2EqL7uzUlbq3tZA
-	rk0Pc+tNPBNFzGEvddHy/+bkF1NrWU/1bWvjADV5pUeiQA7B6DXcw7Q6N23COvxkHMcnFAY4Yv4
-	/k7TZg0eOh/VQ2CF5NDqrxpvyFc3zZqsQrsrDA2USJWWW4kTyqKGjJ+8MNEpXpD6yojH3dsoR8K
-	9WXjvjeCloSJS+iNTF/6DYGxTFbYsbO0=
-X-Google-Smtp-Source: AGHT+IFNTEfL8MXUiyul7/qYy2OufuFwuC1wS29v9JYelkS5QR/IryALVLKRVISTNCURBmibZxI9Yg==
-X-Received: by 2002:a05:600c:3488:b0:456:2d06:618a with SMTP id 5b1f17b1804b1-4589c3650eamr18294605e9.18.1753892867826;
-        Wed, 30 Jul 2025 09:27:47 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589536bc42sm33362385e9.7.2025.07.30.09.27.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 09:27:47 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	dmaengine@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] dmaengine: ppc4xx: Remove space before newline
-Date: Wed, 30 Jul 2025 17:27:12 +0100
-Message-ID: <20250730162712.2086439-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        bh=VDN1MKYrHnhKs8rJltEkmxfDO0gFuhaDH2a2kia8Czw=;
+        b=v1KHQj1X1elt4cDHf3EbH73SGsdwqahK75ea9rXJZs6Vf5JEVO5KhcrS1o4LKSyW9y
+         UQc5jzFq6aQ1vSe8FifxQNTqvJbewZ8gQ8vNBossR+k6c3bIlagBGzBsU7xcDC4PnEnq
+         ucxXuEwFdlu7SpECGNiwx79wPhylCUYJylM3u95QvFWEF/lIDFERdW+lq6YW3Pzf8XuU
+         0Qgl0d8XURODR9dtSyyG1u5KeMhFKSwq/F12bA4wjjeeefF8aELq9ho796aoA8rHwwxD
+         cC9MBqlg4jJFccP7SkI7vopJDXpkv5/88OKRevHkvSCcKzmZLoaxlOrOH/FWM2xV1uQb
+         iLkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVVaso2IhVgixsCiUTK6wQ6BN/3AaWlJNCQ4qWyBvWXlmkX/B6W3RdDOnaeq6fcyq52gFzaxj6iXqMq4rc=@vger.kernel.org, AJvYcCXdCGeEKZYojzcreVYD8UMvO4emPVN0lJZq5GHaSZFgjxM7h+o5FZ3KsUU0vqtObWe4BAGHU9PL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9ZH44NATzzzm0IB0QfOI14FrtmS8XMi4ldNjFE7jLFpK6wy6/
+	hojhx+HvCOj6EdtGhCMCfVgktLHbwATxqt+27UB6CtBHExoqp6tB3aTqNAhd3ZX71+BOtzKvJLW
+	kDShjPyfEFY8l8ViUhjDOisy+CVUe7Ls=
+X-Gm-Gg: ASbGncvEQ3BIFlE/rgmPgp1MPL2NliK4XhmbTtJ9byXCpbXzlLmVELkI8BdtaJefCru
+	GiHEr+EkN2wqSFawVJIx+OtK8eZOY5eZKipRY6Hw9i8v2/nudBT+bZs5wDEvgiW0UROkkZy+jKP
+	gD5QLK7qwyosw5TKqxJN3m8dbF/VezoLSyobeyWbFvUmuHNyBtAy9rs4eMxmIGgh1pgY20fpLCv
+	RmjUmMQ
+X-Google-Smtp-Source: AGHT+IFJBBircmFlzkuiZxltpkb8UXxxVju/Ryi2aiX0HE6gttXxNEsyR82wLNIYdBYNG+mN1mHi0d2hU2BueLd1gHE=
+X-Received: by 2002:a05:6820:998:b0:618:d339:1fe with SMTP id
+ 006d021491bc7-6195d2d2924mr2688300eaf.3.1753892874659; Wed, 30 Jul 2025
+ 09:27:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250730042617.5620-1-suchitkarunakaran@gmail.com>
+ <30f01900-e79f-4947-b0b4-c4ba29d18084@intel.com> <CAO9wTFhZjWsK27e28Gv2-QqMozns47EacOQfXtTdMfLjR98MTw@mail.gmail.com>
+ <834f393e-8af9-4fc0-9ff4-23e7803e7eb6@intel.com>
+In-Reply-To: <834f393e-8af9-4fc0-9ff4-23e7803e7eb6@intel.com>
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Date: Wed, 30 Jul 2025 21:57:42 +0530
+X-Gm-Features: Ac12FXzlj5yWkI6eKhlg68DANwG9PzzG0U_nSEKVUez-tYk1CF6GB0jjskMMJpo
+Message-ID: <CAO9wTFi6QZoZk2+TM--SeJLUsrYZXLeWkrfh1URXvRB=yWtwig@mail.gmail.com>
+Subject: Re: [PATCH v3] x86/cpu/intel: Fix the constant_tsc model check for
+ Pentium 4s
+To: Sohil Mehta <sohil.mehta@intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, darwi@linutronix.de, 
+	peterz@infradead.org, ravi.bangoria@amd.com, skhan@linuxfoundation.org, 
+	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-There is a extraneous space before a newline in pr_err and dev_dbg
-messages. Remove the spaces.
+On Wed, 30 Jul 2025 at 21:03, Sohil Mehta <sohil.mehta@intel.com> wrote:
+>
+> On 7/30/2025 7:58 AM, Suchit Karunakaran wrote:
+>
+> > Hi Sohil. Thanks for reviewing it. Should I send a new version of the
+> > patch fixing the minor issues with the reviewed by tag?
+>
+> Yes please, I think one more revision would be helpful and reduce manual
+> steps for the maintainers. (Likely after the merge window has closed).
+>
+> Also, please try to trim your responses to only include the essential
+> context:
+> https://subspace.kernel.org/etiquette.html#trim-your-quotes-when-replying.
+>
+>
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/dma/ppc4xx/adma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
-index 9d2a5a967a99..61500ad7c850 100644
---- a/drivers/dma/ppc4xx/adma.c
-+++ b/drivers/dma/ppc4xx/adma.c
-@@ -874,7 +874,7 @@ static int ppc440spe_dma2_pq_slot_count(dma_addr_t *srcs,
- 		pr_err("%s: src_cnt=%d, state=%d, addr_count=%d, order=%lld\n",
- 			__func__, src_cnt, state, addr_count, order);
- 		for (i = 0; i < src_cnt; i++)
--			pr_err("\t[%d] 0x%llx \n", i, srcs[i]);
-+			pr_err("\t[%d] 0x%llx\n", i, srcs[i]);
- 		BUG();
- 	}
- 
-@@ -3636,7 +3636,7 @@ static void ppc440spe_adma_issue_pending(struct dma_chan *chan)
- 
- 	ppc440spe_chan = to_ppc440spe_adma_chan(chan);
- 	dev_dbg(ppc440spe_chan->device->common.dev,
--		"ppc440spe adma%d: %s %d \n", ppc440spe_chan->device->id,
-+		"ppc440spe adma%d: %s %d\n", ppc440spe_chan->device->id,
- 		__func__, ppc440spe_chan->pending);
- 
- 	if (ppc440spe_chan->pending) {
--- 
-2.50.0
-
+Alright. I will send v4 after the merge window closes. Thanks!
 
