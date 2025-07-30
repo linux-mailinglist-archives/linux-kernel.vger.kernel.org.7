@@ -1,236 +1,217 @@
-Return-Path: <linux-kernel+bounces-751410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDFDB16944
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:19:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FB5B1694B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:32:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BAF03BEC13
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8AEC18C4DBA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AED237170;
-	Wed, 30 Jul 2025 23:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3F3229B15;
+	Wed, 30 Jul 2025 23:31:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ShHoe0Lc"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2a/6kiQh"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2084.outbound.protection.outlook.com [40.107.94.84])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 957BA22318;
-	Wed, 30 Jul 2025 23:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753917565; cv=none; b=UDA0hI70Nwl6wZauBg1gGMEjcR5KSeIK1RQldqe5X2qxHFGP7qcYUWjwNDmxYQ9ke9EgGyez0DsIE23UvgOTIzWhDncIhJxV2Bbc2VnaCjcZcYP9+Dce/ZUs7V5+SRVloTBAEBqAs6iz+YT7SoWUspSPsaKNS8+AZk6XbLcaILk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753917565; c=relaxed/simple;
-	bh=pfMEPyAlmbg51/rRRPFggrrQ5K9ogyYDkxL2xa53jH8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nRUCgpjGrq8k1nFwKAWUKMHgjJcSHDKYE7/2wU8skuSlkvRpdmVzLBs4wfyeNOyem24Zm4dwQ1H8g0gaEBrzv+hVC4LxEDShxr9Iy7ZvL9NYV4TIaDEFb+3fooD7YqF/TXs8fXfppreZJnhgQZtqX85Fd5pQ+BN6YSjpNHi9jnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ShHoe0Lc; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-24031a3e05cso2163295ad.1;
-        Wed, 30 Jul 2025 16:19:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753917563; x=1754522363; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=8s2S0s+Q/X3hyGBkcdxZoJhfiSXZ24fRAddp33bdKFs=;
-        b=ShHoe0LcUxgHICekZHG0QGliUId9s0md74EgYKchiIdW9OEQ9Glm80k/pvvg0j9apV
-         ti3cY9J4IwKtDH1kFjYoxgAg5uyAApkjy8E3cILSmJLuSNsxaGorn5Ai73CbyRbUeIiK
-         tzmWpYFdvv1WAgrdWnuLSyOwqgUfwmoG90E3/DhIulgpLe5GgDu5DdNDOCnJKTaTkw7X
-         Y/dBti53uXtWJwFkBjwn00mE07+BcTrb6yEdgyR5cMujiIMKW9IwPKBCxBHaC34XUplY
-         IBRG8R59LlORZvYXoNpMZs6QfWtFCVzO/Yl8g0fJvtc5Un4aipx6wZ+K/qDtqREPHDHa
-         cfYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753917563; x=1754522363;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8s2S0s+Q/X3hyGBkcdxZoJhfiSXZ24fRAddp33bdKFs=;
-        b=P7hOSY03MzvXir5P+Au12nrQam6xYW5qwwHVJuHpHfQ5ZfiwQNWCL+yhR67h9Jgl4E
-         bWDqjwLxCaVCeXy3m/ZhrnBa9PMOVURxIRU3HZdPDyHpU8JVTlb/8bslfBrVoIaYbSRA
-         WlRWvtC2DEpJcKeK4H42oqz6Bpcu7iw+gyfE1fnAEIS2vGqMnvRw2EZ4CgxtmWxZwXW2
-         iUwvyOio9PRMWjXqoSV/lS6C5WpfWcNoxjG7C2EEf0ktNkVP39wXNNs74/EtuaLbiIku
-         uhxmZDtylCGnBKPbujwTS8JOS/zCDZpqpBmtWThXeB7ipb+udRGNHCr9FJDqKKcgpZXz
-         Ch/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUKjIGEvvLzXWXtCorAw3n1oLXrQkd4dq+4Ya8R4rhdiU/kobhH0Vtby+F2OvuEJO6XN570/4s6@vger.kernel.org, AJvYcCVuXVR7rRiwXFMna/DzPlfTGO3bPEvHNKCESMWXTTJ18Jp21VAY0+Ni8xYZRMs2gLnWPQICZlqEjmRve1A=@vger.kernel.org, AJvYcCWxGvi9DszWnzdVAYRrCw48fdsfmFC6q2J5/dV/a03EBxTXls+ytSPffAdpbnjznBG7VG6vByfL8rj2tJOX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjCvmMEMbky7LVnNlZ4dIWlWGDrxfj7EONCj/9/B9YdVSTq0CJ
-	RKvpWO66aoKqE6vTXCOYZgLlwBe5C07cRCzESlpYKkxg7YO67U3YBMZbvUki5A==
-X-Gm-Gg: ASbGncuQTbE7G+C036IUT9UOB5HPc4HDwF8mdj5BnY2nmL98AmLDltvvgObR2ZktN1z
-	gofzNqKt8QrtSHmMWSr1SPtL1fuDm6twCAemE+AO5mNK4RryBFVEcqnsouiDls6H8767obAHbmw
-	k3CU1uSbg+M5Dpg9G0KHqMB+kzRVt8DBqGKK7bh+I0YbaeejF0YAEIVj8R+4f50EH5p65vFOJn9
-	YTkFayrkC93XPOMP9g4zxTI8mV89o3o4iIaCmla2frP0/C+v1n1GZMoq9hXo4b6IWv0n0ARdXD6
-	XFG9A9KxThJjWH7Jqb0z6xeXMIuDkeOS6dXLbJ/ve+qxPCruE2O/FkrMRaXm0hPsuAVqOsJO+Hb
-	NEBro+pwQnloofi1UgtX9QzKQHPNtT3Vh4S0QP3pDoe4Hc5/jcmTQnkjkNwRAjp2W3ZsZ+2A=
-X-Google-Smtp-Source: AGHT+IHp1T7v3GeCocoi+vdpH0GVxi/ojy+El4cAzOnyOVrliuqPIbmBJ8oLLpVSUzUfLZCNcqUVig==
-X-Received: by 2002:a17:903:1cb:b0:23f:fa47:f933 with SMTP id d9443c01a7336-24200a5a8aamr65125ad.8.1753917562757;
-        Wed, 30 Jul 2025 16:19:22 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e897690csm1813515ad.99.2025.07.30.16.19.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 16:19:22 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <2919c400-9626-4cf7-a889-63ab50e989af@roeck-us.net>
-Date: Wed, 30 Jul 2025 16:19:20 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA8B17BD9;
+	Wed, 30 Jul 2025 23:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753918312; cv=fail; b=ZhqEO3YOEilWe80SiM0k3TuKcDD0sXaV3faH6S8P1va+/HXugXH4zcY5l3zS52vTubUax6oHMHwuuV7DZ2AbszBRFgetpM/mpo2cYgQ3il08vxPZ3zTxBVehKFvMxZt9kYeGMafvvAcVsiVCx9al2srTiQJu5JPTpt7XEdFmuNQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753918312; c=relaxed/simple;
+	bh=R/pr+aKpyC+e99hNZCsAhBgvhUp5Ase8EpR9gIprHrY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=fUAC7/4DidZvegr2+aQ2NK82qeaj+I/VB+KACrCsyLvV9frZojwqBKthctkqxTSMsqS6GjHMPx3XmuTHVAkv89Z4LGbz6kta4i0+GtXTw8PrKxDJ+wFFtCkBwKh/o3Ii9C3Q9cJ/2JE9o3D44ZHHGcuI5dbzXDKsC4Br4JjMbbE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2a/6kiQh; arc=fail smtp.client-ip=40.107.94.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fycATVUpwzktmca5eusKCR6DeXejlCWFICy3YYum+W2Ixyw2Gnw/JU8QbD8l61FSYUlJ7DAKVDCAN+DUITly3bv4JU3nxN1Ezu5wzQeEnTuzOH68ACoGwuCtgV+jHSVVX0XlR+MEKstTCaflzYBt04pzG6hQQvJV0Dvm7ak8wIBZ1T6828tClwGZwG8nRT+YJ87sAUw3SEhGkbD130tWE/+gLM8cgfDhqX80Pkj5J/96yJTmLWU6oYYP9dgI5gRKHXbN8mJwpI7svilcbwXON1DUvhcKW1dZQcAgh4uINdJtcB4WrsSIava3qF47m/5tEAo/xJKksnm5or56zaV5qg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WID+21ILgXcTTpfBEQOqrB205/l0dK+/A8n/WlspNfE=;
+ b=eVam4kCigy1WoKGje7uNqtHc2FMuwr8SMpOph7H7eNv6fplLuO2mST5utSQk9n0T29Fx7QygONFO+0lgWypfBu3iYDYOkOrB810TZYztmmUaxhfVXztjXguXHO+ITC5MGc8V5wYXnBwKMhA/GPkxHumocgsU9XuewZe3buLH+eoLp7J/nE0BRW3fKaz5VLr2Kv1/UU17vLmUYDcYYfPt4k28yRg+SPD7E7VU5boFbar2IK5ZGap9liq0V0omJKOobj/LeabjqmJmLBzGqVw5vhaAR0VRFtWcmjRq+uZ/pFiDOSBD6V2oBAvZClp5mPG3DAgH+x1kNuZ+wA2AgWMW/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WID+21ILgXcTTpfBEQOqrB205/l0dK+/A8n/WlspNfE=;
+ b=2a/6kiQhUuwa6SfoCarwK0jr2ynsQaM3vbSvf1fsvwKCK3QGY6zCFz4/J8k3SkZUY6DsqTC/wGl19X10cke3YMqfvbBMc/yVGZHAZG81Urghf4JMN8XdzZQ0HKVj+/qExHXHR+TJeIx9x+Oqa9DkjccKOGHaoEHpm4EtAeTgEKY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc) by CH2PR12MB4264.namprd12.prod.outlook.com
+ (2603:10b6:610:a4::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Wed, 30 Jul
+ 2025 23:31:47 +0000
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::bed0:97a3:545d:af16]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::bed0:97a3:545d:af16%7]) with mapi id 15.20.8989.011; Wed, 30 Jul 2025
+ 23:31:47 +0000
+Message-ID: <1a916a0a-66da-455b-9b09-4eae42e6eb1c@amd.com>
+Date: Wed, 30 Jul 2025 18:31:30 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 00/34] x86,fs/resctrl: Support AMD Assignable
+ Bandwidth Monitoring Counters (ABMC)
+To: Reinette Chatre <reinette.chatre@intel.com>,
+ Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tony.luck@intel.com,
+ james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
+ akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
+ Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
+ seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
+ xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
+ sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
+ peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
+ mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
+ gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
+References: <cover.1753467772.git.babu.moger@amd.com>
+ <a259ff37-9e3e-4b4f-970f-04610c35f4cf@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <bmoger@amd.com>
+In-Reply-To: <a259ff37-9e3e-4b4f-970f-04610c35f4cf@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR17CA0034.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::47) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] block/blk-throttle: Fix throttle slice time for SSDs
-To: yukuai@kernel.org, Tejun Heo <tj@kernel.org>
-Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
- Yu Kuai <yukuai3@huawei.com>, cgroups@vger.kernel.org,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250730164832.1468375-1-linux@roeck-us.net>
- <20250730164832.1468375-2-linux@roeck-us.net>
- <1a1fe348-9ae5-4f3e-be9e-19fa88af513c@kernel.org>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <1a1fe348-9ae5-4f3e-be9e-19fa88af513c@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|CH2PR12MB4264:EE_
+X-MS-Office365-Filtering-Correlation-Id: c8644926-0909-49c8-c7c8-08ddcfc13fe7
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?UHhtUHdwZEJSMlgxYjdNcXZORHV0L0srRmIyWmlOZFJnK25Ib3hOemFteVBu?=
+ =?utf-8?B?dnFadHU2TFZmdnhTWXk4NGR4UmxlUDBqN04rRm8yLzhYRW9hR2ZaY2UweUYx?=
+ =?utf-8?B?UEFjOGk3SnRXL0F0STZPdWNWWFpIWEJuNmJLS0NOWWl5cUE1enE4TVN5TVgw?=
+ =?utf-8?B?SEszNTZsYmZoc0cxWmtPQ2JiZEk0c2dGUzh4WHBCM0JDMnhjd2VDKzc2Z0xU?=
+ =?utf-8?B?S2pwdUFNYXpQRk9qejBSZnBuSnJqRTgvMEdkTVFMRFIxNnNmTytjR3JKWU1u?=
+ =?utf-8?B?dzBTUW93Sm9FNmppNTdLaUJMSkw0SzArNndpRGdCbHE1K1lvZW5mOThRMmtC?=
+ =?utf-8?B?Uit5clU3RzNmcWt6am0zMEhJOTVWWXBGajFyb1loNi9pU0MvVStFOTRKUGxU?=
+ =?utf-8?B?eFhvdDgrK3hWOWpJWjdNU2pNdG1DR2pJenJqSXptaG1sK3pscXhRY213a2U1?=
+ =?utf-8?B?TlVDZE9jOWhlS2JJd1JFSUpBelBRZWpxcEJrQU1uVmcwUEI2TGFua2pmeHZI?=
+ =?utf-8?B?SGFzdHB5dDg1bGRpNVZ3WmVrWUJValA4OEhmc21HSkw1ZGRYbjNMSHN1YTI1?=
+ =?utf-8?B?UXBTa1BMQkViRzFlN3hWeXlyS0NlS3pxRTk3QkNvYzlnbXRweGJxQVM2aEc2?=
+ =?utf-8?B?dWRxVmkvU2lGV2wwRmhzTVZXbWU5UWd1WSswSmJEaWJlN1BjY0g1eG9DZytF?=
+ =?utf-8?B?NHhnS1N2d0EwOUpNbUlJL0d2MGRKZ3AveFZ3ejRrUHY0UnJMUHN0bTk0Y09k?=
+ =?utf-8?B?OXh1OFQxVEdqK25IK0tMeXlHMk5iNEwzcDhYUUI0dGpxd25Zd2FGZUlyQmEy?=
+ =?utf-8?B?Q3ZnNUlrMEVQS2lhTnFuNTh3bEFiL292RlFNajZiZW1QWjA2TlQrVE80TzRM?=
+ =?utf-8?B?TVF3cENybXlFbkhFTHdVNnRXVXFidDV4cnV6blh6UEdwSG1xVDZMR1MzNk9p?=
+ =?utf-8?B?Z1R1U1lyaTVzNzk2REwwWWtIb1Y4KzdKT3ljTUZyQ2ROekRTR0Z3RTFnaXdW?=
+ =?utf-8?B?NXIwVExkeElyUklqVzh2N0p1a2JMbGpMRERqN3pTYXlBK0NiY21UVXgxaGZi?=
+ =?utf-8?B?eWsrVTVhZHN3V1RYbVBENVIxbGZCY3NEVCs5Vys1cU8zZUJkcjA1bTRVblJl?=
+ =?utf-8?B?VjBTbmlFM25kVjZZUUdNN0pnaGRYZElkQnc1MytITHo3anhmd0VpRktZS2VT?=
+ =?utf-8?B?VVNXekg3Qkt6QjdGQm9wY3lUejJER0dUaTYzejhLbG9RT01xK0k0TDUzTVNV?=
+ =?utf-8?B?ZklUdFFCV00xTnFSZFJhTCsyV3VqVXJ1cGhWNUdNbjZMT0xQNlQ2dk5xZ0Zl?=
+ =?utf-8?B?cnJzbUYxd2l5M05vOEZ6UUtieEtNTEFGYytEd09QQUNKb0kxNWpKMk9SQXRv?=
+ =?utf-8?B?UGt3QS9KWllGUkR5ajdFaW9rY2pGMFFaOVk1RHdCeU1RRmhoNjRXOVc1SlRm?=
+ =?utf-8?B?bXlsWmJpZEc3QzJNV20wS0hjSHhrY1Fydk43eE5DSWVuMmJxRmd4MUxrMlRZ?=
+ =?utf-8?B?L0NKekl0OTVaMXN6UmRyMkthSmlUWmtHZnh6L3g5OUM2R0JwSE03b1AxekdO?=
+ =?utf-8?B?dWZGdVAzTjd5dEcwaEErVnRzM1Z3cjRheHdFYjdIQWs5anNLTVNpSXhFQmtE?=
+ =?utf-8?B?bUhiS0cyM1FKMDdZU3VvbkJ5SUpsUWtWOWJCblNVUjlkamxRZ2VnM3Zsd2dR?=
+ =?utf-8?B?Y0Nid1VwdnpVZ1RvelpHSTV2RWFqb1BLSnlOL2V3ZkRvRVc3STN6Q0thb2NU?=
+ =?utf-8?B?b3dla2NoUHNCajdKMG1KY3NXZ2RTaEdRdm9yQmYvdDVwTk9tZjNDVXZOYksw?=
+ =?utf-8?B?ZGg3ZDh2R0VPNXdLS1o0Zk9pMFFvL1ZrVm1td3loVkRreTd0ZTVaTCtwMGNP?=
+ =?utf-8?B?SCs2Z2NzZ3hnNWRmUE1xM0ZFUXIrVG8ya0k4bTdJT3ZzSkE3UjZEaFRMRDZq?=
+ =?utf-8?Q?iZkS48TIuao=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?b1B4SGI3MEpNcUdFOHUyWXRnS05DZjh6MTI1WElYdEdtYit3SlhlZk5hNzJM?=
+ =?utf-8?B?UVh2NFBFMDQ2S29iVkhodFZHeWRYOFI3RkgxVXAwbW5BUEZtUHZpQnEydGli?=
+ =?utf-8?B?VDh3dFpFeVZqR2xCUXZrMDZRRi9ad0ZLVjJqek1nZTZVWVROZWJQRy9OTTI0?=
+ =?utf-8?B?U3U0ajBSUGxYUXYwNlVVZmdlNzQzMmZzWk9uSXpiV0t0Um1lQTVnSjVsRW1N?=
+ =?utf-8?B?UC83WndRdkcvMTRabnJsUVRweEdndytGZG9GRTkra2dLZUZCZEtHbWhreFh1?=
+ =?utf-8?B?WjR0OUN4YkRMR2E4S0RYT2tkLzZDMFJ0SEdncTlXbmtFZDdCNitrc25MQXdD?=
+ =?utf-8?B?TVlpdTQ0bk1LSWJtQjQzMmVUOC9GN0hjc2NUZldxZlZVTEc4WWtuZ2tobjE0?=
+ =?utf-8?B?QVNTMExZTm9Lc3R4SHBCVWZEUzlmZ0RvRkljL28yRW9SV2ZPSW82ckM5NTdN?=
+ =?utf-8?B?TkxBMVFpUDBVeW1tck5CWW16aEFvOFlSZDhSZ1I0UGRMSGlSOHBVUTBlZXJt?=
+ =?utf-8?B?aXNFQkZRS0ZsWklVaytYN0Exdjg2dXhCRGoyQ3lIbkhrSDZZV2xRWDlaeThW?=
+ =?utf-8?B?RUFGcUZ1OVRLQm9nRlNSWDRwbXRtWUJtazJNL0wySDNRRXVwZEtTd3V2Ukw1?=
+ =?utf-8?B?cFVDYTRQek5XOWRJTUk3SU1JQ004V3Z1RWZFaUdqSW9QTDQ5R1lMcFV6eGsw?=
+ =?utf-8?B?WVRBNzBxS04zck04MzJORE0yTXhJeUhjYUp4bVFEQjU1UE04MEZjRWRweFM4?=
+ =?utf-8?B?SHRmaTlNTnNCVzRxZVJ2bkxBZlF0WngyQzRlNEZEazdyTFROVlREWjIwMENp?=
+ =?utf-8?B?bGsyeFo4OUlVcHpMTnYrQ3hDQk1GSlFzK25nZ0VmTDBiSGRUbXhOUkRFbHlK?=
+ =?utf-8?B?Q3hZWFdRczJoekVTRkZJa2tjdHpMWm5IbDA4SG10UnhPNDJ2ZnRDeW5EYXp6?=
+ =?utf-8?B?Y2hpT0VlNndYVzluTkpWVVkrOFNBNE9NUnpxSlc5cG9YdDZtckt0MWRPWVo1?=
+ =?utf-8?B?eE9XNVRzcU8zdFpNbDB5Z0lBL1ZhaDh6TFFRa1Jma2tnOFE2ZlVxclVEZzNX?=
+ =?utf-8?B?UzRPbWZuQyt4dWI1VjFHeUxkUm9wcFBIVmQ0SFFwaHNHTng4aEZzN2lLVFhN?=
+ =?utf-8?B?OUtHenJCRGI3VTUxVWtaNHk1aUlWTHJoU3d3dnFJSnR3RTBLVWlnQmZUTDU2?=
+ =?utf-8?B?dndneC8xZlpOeUo5ZVlmUUE0S3pCOXhiOGdYaXdsNjVmY2kyS0RMcUsyaE1G?=
+ =?utf-8?B?Tjh6ZnhUNmlVVyswUG5XT0o1c0tZQk51ZmdmYjg2MUxvQVcrLy9Vc3VhVUVJ?=
+ =?utf-8?B?NGttOFVJU05oWjRVaXZtWFR4WXgxYk01Qkpvci9nV204YTRQaC9TMWVkd1A3?=
+ =?utf-8?B?bHpLbThQckJLcFNET1JMS3ZKZmtKek1oNmVjYWYxTkdiSEpwdjk0TDBqNkhq?=
+ =?utf-8?B?UkEva2hPc2Rma0pjQ3NxbDQ3YUw4bC9DL0tGVVNNS2xaeVRnb2RVYlRxNVAr?=
+ =?utf-8?B?b2tZOFdhSFVoclRkYnZiWjRRcG5aZ284TjRDb2tUVnJ2c3d6SmdVZVBkS2Nl?=
+ =?utf-8?B?QW0rdkxNbmhjZXo5cWNwWHU1aWNNZm82cjlNUXVvL3drRlZlV1h2K1RmZFA3?=
+ =?utf-8?B?dmdyem1yVS95RXduakphSUNNNWtlUnB5Q1ZnK0R4eVRqNmVleU1QdFdYUnB5?=
+ =?utf-8?B?bE9rTHlxNUlYcVgwODBhc1gxZENWS1V5MnM4SEl3M3JaSE9XdlVPeUVhUEtW?=
+ =?utf-8?B?V1V0VWJqb0FCRUFZTURlajBPSVd3QVA1WlJoNmhnQXFCdVQ0dnJjNHlxWVNp?=
+ =?utf-8?B?cG5TOTF4bm5CQlBycy9RUmRBQmFaSzM2MEtmcHd0K05oS2pVVHdFOGp5TW9K?=
+ =?utf-8?B?MkxZUWxlZzRBQWJ5YlJoSUJ6U1Q3TkVsUm5CSDh0R0twM0UxNGlpR0lubXRv?=
+ =?utf-8?B?QUE2enZzZi8yNFYxZ2hITlFVb1RGbUM4dzEwQmF2Rlk1L2xsam4ycnRMSlpw?=
+ =?utf-8?B?d1czaE5LU1RQTndnVzNoeFp5NFF0Sk9MZ2Rva0JiQ0NQVTVTNzFyZDhnRlEr?=
+ =?utf-8?B?YmFmQlIvZkE3UTlMeC9CWVl0SWlVR2x0TUJFVjRJLzN0RHVNUTJtcUlhU1Ra?=
+ =?utf-8?Q?KNdNvlpBn4AyXavfH+nGc7FLu?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c8644926-0909-49c8-c7c8-08ddcfc13fe7
+X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 23:31:46.7510
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GwEUbnYgJxeE+b7k2NIDCfmxMJzd0fbHyW7qv8t1/61gQUQ+X5faAOHamM1ZCFtI
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4264
 
-On 7/30/25 11:30, Yu Kuai wrote:
-> Hi,
+Hi Reinette,,
+
+On 7/30/2025 2:47 PM, Reinette Chatre wrote:
+> Hi Babu,
 > 
-> 在 2025/7/31 0:48, Guenter Roeck 写道:
->> Commit d61fcfa4bb18 ("blk-throttle: choose a small throtl_slice for SSD")
->> introduced device type specific throttle slices if BLK_DEV_THROTTLING_LOW
->> was enabled. Commit bf20ab538c81 ("blk-throttle: remove
->> CONFIG_BLK_DEV_THROTTLING_LOW") removed support for BLK_DEV_THROTTLING_LOW,
->> but left the device type specific throttle slices in place. This
->> effectively changed throttling behavior on systems with SSD which now use
->> a different and non-configurable slice time compared to non-SSD devices.
->> Practical impact is that throughput tests with low configured throttle
->> values (65536 bps) experience less than expected throughput on SSDs,
->> presumably due to rounding errors associated with the small throttle slice
->> time used for those devices. The same tests pass when setting the throttle
->> values to 65536 * 4 = 262144 bps.
+> On 7/25/25 11:29 AM, Babu Moger wrote:
+>> i. Change the event configuration for mbm_local_bytes.
 >>
->> The original code sets the throttle slice time to DFL_THROTL_SLICE_HD if
->> CONFIG_BLK_DEV_THROTTLING_LOW is disabled. Restore that code to fix the
->> problem. With that, DFL_THROTL_SLICE_SSD is no longer necessary. Revert to
->> the original code and re-introduce DFL_THROTL_SLICE to replace both
->> DFL_THROTL_SLICE_HD and DFL_THROTL_SLICE_SSD. This effectively reverts
->> commit d61fcfa4bb18 ("blk-throttle: choose a small throtl_slice for SSD").
+>> 	# echo "local_reads, local_non_temporal_writes, local_reads_slow_memory, remote_reads" >
+>> 	/sys/fs/resctrl/info/L3_MON/counter_configs/mbm_local_bytes/event_filter
 >>
->> After the removal of CONFIG_BLK_DEV_THROTTLING_LOW, it is no longer
->> necessary to enable block accounting, so remove the call to
->> blk_stat_enable_accounting(). With that, the track_bio_latency variable
->> is no longer used and can be deleted from struct throtl_data. Also,
->> including blk-stat.h is no longer necessary.
->>
->> While at it, also remove MAX_THROTL_SLICE since it is not used anymore.
->>
->> Fixes: bf20ab538c81 ("blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW")
->> Cc: Yu Kuai <yukuai3@huawei.com>
->> Cc: Tejun Heo <tj@kernel.org>
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> ---
->>   block/blk-throttle.c | 15 ++-------------
->>   1 file changed, 2 insertions(+), 13 deletions(-)
->>
->> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
->> index 397b6a410f9e..924d09b51b69 100644
->> --- a/block/blk-throttle.c
->> +++ b/block/blk-throttle.c
->> @@ -12,7 +12,6 @@
->>   #include <linux/blktrace_api.h>
->>   #include "blk.h"
->>   #include "blk-cgroup-rwstat.h"
->> -#include "blk-stat.h"
->>   #include "blk-throttle.h"
->>   /* Max dispatch from a group in 1 round */
->> @@ -22,9 +21,7 @@
->>   #define THROTL_QUANTUM 32
->>   /* Throttling is performed over a slice and after that slice is renewed */
->> -#define DFL_THROTL_SLICE_HD (HZ / 10)
->> -#define DFL_THROTL_SLICE_SSD (HZ / 50)
->> -#define MAX_THROTL_SLICE (HZ)
->> +#define DFL_THROTL_SLICE (HZ / 10)
->>   /* A workqueue to queue throttle related work */
->>   static struct workqueue_struct *kthrotld_workqueue;
->> @@ -45,8 +42,6 @@ struct throtl_data
->>       /* Work for dispatching throttled bios */
->>       struct work_struct dispatch_work;
->> -
->> -    bool track_bio_latency;
->>   };
->>   static void throtl_pending_timer_fn(struct timer_list *t);
->> @@ -1345,13 +1340,7 @@ static int blk_throtl_init(struct gendisk *disk)
->>           goto out;
->>       }
->> -    if (blk_queue_nonrot(q))
->> -        td->throtl_slice = DFL_THROTL_SLICE_SSD;
->> -    else
->> -        td->throtl_slice = DFL_THROTL_SLICE_HD;
->> -    td->track_bio_latency = !queue_is_mq(q);
->> -    if (!td->track_bio_latency)
->> -        blk_stat_enable_accounting(q);
->> +    td->throtl_slice = DFL_THROTL_SLICE;
->>   out:
->>       blk_mq_unquiesce_queue(disk->queue);
-> This looks correct, I do missed the throtl_slice for ssd is only used with
-> BLK_DEV_THROTTLING_LOW. However, I think it's better to factor the
-> track_bio_latency changes into a separate patch.
+>> 	# cat /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_local_bytes/event_filter
+>> 	local_reads,local_non_temporal_writes,local_reads_slow_memory,remote_reads
+> 
+> Above are some more "counter_configs" stragglers.
+
+Yea. Sure. Missed that.
+
+> 
+> Also, while considering our exchange in [1], I encountered quite a few functions doing
+> counter management work for which I believe monitor.c would be more appropriate. Centralizing
+> MBM counter management code to monitor.c was something that you planned for this version
+> so I may be missing why you decided to keep some of these functions in rdtgroup.c? I
+> highlighted these functions as I noticed them.
 > 
 
-I had combined it because it is another left-over from bf20ab538c81 and
-I don't know if enabling statistics has other side effects. But, sure,
-I can split it out if that is preferred. Let's wait for feedback from
-Jens and/or Tejun; I'll follow their guidance.
-
-Thanks,
-Guenter
-
+I looked at them. Most of the functions you mentioned are directly 
+referenced in res_common_files[] (show or write) and some of them are 
+even named as rdtgroup_<>. So, was not sure about moving them.
+Sure, I will move them one by one to monitor.c
+Thanks
+Babu
 
