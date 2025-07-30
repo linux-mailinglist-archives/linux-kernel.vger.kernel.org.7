@@ -1,363 +1,303 @@
-Return-Path: <linux-kernel+bounces-751056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21AEB164C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:33:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87ABFB164CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37A247A510F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:32:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 879EB7B61CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A792A1C7013;
-	Wed, 30 Jul 2025 16:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE612DCF69;
+	Wed, 30 Jul 2025 16:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="j1+AwkfI"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NJPDlu2e"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EE41A0BF3;
-	Wed, 30 Jul 2025 16:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753893208; cv=none; b=pp3T/ooizzIabcq6sfJS5kEr7CTpThncE0NiUtRTqIuOy93ge72jAc6V/jMvCyCszmVGXwM7H+jACIxcpNVx9BaES668T9WEH5+4XhA6dmoUPM9MApEjc0Hh21ZCnrn8+Stt8Ih2yFQXAd3yZ2m/ew+Vqt/DxOGNmasgMyYxuvM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753893208; c=relaxed/simple;
-	bh=FErZ7xZ8PnuFVP1dJiBHysI+aQYdPuyQaBx7RLrY850=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oyLmg9mO09eHijW2Chn37neVTA4a5gzUhRnO0S1jRJQ6MdgR4Cyz40FFAEnlgijytP+V4ep9mbuh1iXEpzd5KIVrEtAFZ3pmSuCCbng9wfenpebgtSZ/xukdB4cdSvad++FIBa7wdJVAeo3G68p7g0TGgFdP6LEICZyGRlyLhWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=j1+AwkfI; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1753893203; x=1754498003; i=w_armin@gmx.de;
-	bh=H3eF3lfoWbUqzXlZ3cF1HjhIfnKdDXgrzJwKQR2tsNA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=j1+AwkfIg9/EDictWNCofoALi98Bz0XELcL2tvLmCkeGJ88woULrSjE21ksjOLK8
-	 mRWaSsLaUTUTAjxTYsaKaHV9i5rYhLwXV28SF8g1vEuCxY5RjKpe9rVYv8g5wOxkm
-	 Ig73QO21OSda6GowVeuWGPEFi9C2sDj4c7qxHjDdoXb6y/739B1cgmg9HgXCwZXDa
-	 TBxb97VCLg+T6wfDCnFrTcOgTXCyKdhw281J4eLItpigBoC9q7ljYSems4qLyN3xt
-	 XejCITCX37hoIvVSMtzshi5BM1ktOziv3T/stzttsPhikum3nMsw6BS7ns139Sn/q
-	 o73u75VmKIAgHucWXQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M6Udt-1ujde60QB7-002NOg; Wed, 30
- Jul 2025 18:33:23 +0200
-Message-ID: <8e7f2cde-f068-4696-8298-f83619dfaf76@gmx.de>
-Date: Wed, 30 Jul 2025 18:33:21 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D331DACA7;
+	Wed, 30 Jul 2025 16:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753893224; cv=fail; b=DT7Fv8oa8aQ5ccrbQ+Z/rQD1tVtiPBTSU2/CntDjprVza6CbsZNTh1x/OcXfnjjeVjLvqvqKtL7zTmfKumCxR/+wzRyfvbxqSw44m4qd8ix7mPY9dL3mu3wOFnxU9a1ZFPY0Yi45imJoV4QdQrgpSDAXdieqUJ4Q6x4LYHDB6Xc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753893224; c=relaxed/simple;
+	bh=iiYsEW4tBTUDeOsNP1oerfA60vZMXlS3eAOBhIL8WOg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PiKQtuEwYJWFMW5M2qDFhagYkCuW9FKu7oT3iRBBOBUBTNPEc+bs8LZDz9iV6jFJpWUtubgzdN9B8uvORfNfSG0IBAbao3CdlLxNExNld76GocF9YBvZCbZ0uRAEsRiO+tRBBqKo9R9JciApKARyXjr6oYZjadpO7oAq6/HQOGU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NJPDlu2e; arc=fail smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753893223; x=1785429223;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:mime-version;
+  bh=iiYsEW4tBTUDeOsNP1oerfA60vZMXlS3eAOBhIL8WOg=;
+  b=NJPDlu2ewk7So/Cs0YDGE7ctZsH9iRnwjJ+P6WDkE5Z+fOMbBPXy1L9B
+   yeo3kmXxVL8sPEC3LAxiY+4tq9Rl1MS+8KtNDdmC8jau6bpSBAtjyfufm
+   CSnCefHiAR0qPu5YiWQQZ6HyEixSxr5/ppvC6GlFGaQKbKw90MKyyLjBI
+   XcKGuXn/jVGxFZu2Q80yrUG+F4OnE63nzAHHCjEpuZib/L+rhNk00s3bd
+   EmQ1QK4gOvDm//2LrQP7V6RSs7Jo302IN55dcsywQRgUIq74sH/SkZFWR
+   a3zVnnHqrUg9OSxMlNZWOSvrH++G0+sPin+66LIKB4K2+oqCWaeir2c96
+   A==;
+X-CSE-ConnectionGUID: 4Gj4duXAQNeSaC90mpdEYQ==
+X-CSE-MsgGUID: v8HNaHDjQ627V3aaYaay4A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="67644486"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208,223";a="67644486"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 09:33:43 -0700
+X-CSE-ConnectionGUID: toJYBTClRquJZiuo9w6BhA==
+X-CSE-MsgGUID: fSM/EhV8QoqNk7o0xiF7kw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208,223";a="163058808"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 09:33:42 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 30 Jul 2025 09:33:42 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 30 Jul 2025 09:33:42 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.43)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Wed, 30 Jul 2025 09:33:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=gnZqqwvbWOfsAp5o8FiN5HIo2OdefD+N7/y2KPWFqQh0VH29fFUkz1kP6QjUqDIbei69GLipEIh48WOXqg7WSAIpqc2fiGG67HImTuNLjbSyG0qe0mYe8WlxIElWBRqyM/m+0Em5pJMfEkUYZt3HxS/4rsg8UMLlpax0piUCo0JN1u8OceeoAu+0Je+pJaE79RRfJj8DpiOSfNQwtyRN/knH4EL7Ze3CQcCdVIcg8lxHKeEJORqE+jQzuu42oatDfREiQ2ElTsmiX4FyCCRO39LTX+JqF8JBYP8Cvjo/l7PYa8Pldm+xL8+GWB9mBJWtFa0lFsvzLZ5ZP64NhwMg3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=24aUmBH0JEFvJJKg9o5IYJSjPBG2qcjGxpI2Z7kfazM=;
+ b=UAOm0ULWoHNww9ZI5mpSQyNnfti1Qv7ulcKcW+2dyExmYVX81klxuHOuQfr7cDa9wEr+Pf7FwsWq9trWaOFnNDQgOXKq1Ll8Q8zoTlQSjTBHdG7pXCUv/zPLEyGIYpzCL/fKr3I2U68pfnB4aCQtU1nW3G6dug6E5CtkQkVArj/7dOy2VzRKF1xOaggVaoYUPhXBzBqSJBXBdG/PoufGtWuy9llpTXRQdLG9i+H1P6dagdGREyAmT2N0Qp8InVb44arcvNvy4u3pF3StLWecfOyMjRgNcYSCqf2VaPSfZ8vieQBndZeXWk72IgBONLCvJOAuLl7TpoAl+7nVbSF7Rw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
+ by BL1PR11MB6049.namprd11.prod.outlook.com (2603:10b6:208:391::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Wed, 30 Jul
+ 2025 16:33:37 +0000
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d%7]) with mapi id 15.20.8922.037; Wed, 30 Jul 2025
+ 16:33:37 +0000
+From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+To: "kao, acelan" <acelan.kao@canonical.com>
+CC: "Luck, Tony" <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, "James
+ Morse" <james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] EDAC/skx_common: Fix potential negative values in DIMM
+ size calculation
+Thread-Topic: [PATCH] EDAC/skx_common: Fix potential negative values in DIMM
+ size calculation
+Thread-Index: AQHcARutltp8VFr67UKnYaFhiZ8S4LRKSp5ggAAEGYCAAIr7oA==
+Date: Wed, 30 Jul 2025 16:33:37 +0000
+Message-ID: <CY8PR11MB7134BDC448F3DB558917DFCF8924A@CY8PR11MB7134.namprd11.prod.outlook.com>
+References: <20250730063155.2612379-1-acelan.kao@canonical.com>
+ <CY8PR11MB7134149FA7DF6E6C0FC7A9BD8924A@CY8PR11MB7134.namprd11.prod.outlook.com>
+ <CAFv23Qk3vHFk36deq4NUPsE7gihqa9vdSVM2irnEye-KKLpBMg@mail.gmail.com>
+In-Reply-To: <CAFv23Qk3vHFk36deq4NUPsE7gihqa9vdSVM2irnEye-KKLpBMg@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|BL1PR11MB6049:EE_
+x-ms-office365-filtering-correlation-id: 78a897c4-d493-47bc-b229-08ddcf86d5ae
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|4053099003|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?MEdCczgwNFBobDRiaDdGNDk2eFNzQ2pRRTFqYW53elkvckxKUUorY0owZEdJ?=
+ =?utf-8?B?Vi9vZVg5dmo4WURUdHV4MmFCcHFqR1VCTDBSSFJ0alZBdGEzam5pUW4wbkFw?=
+ =?utf-8?B?azN5Vit4V21kdk41SUw3d3IvU2I3SXNyMzJyNmMrMGMrTHppZ2V2eDUvQy9l?=
+ =?utf-8?B?N0hHL1dqVGhvYWtTbWtrME8ybmVsSjVDVCtIMTcveVkvdU82aWt1QnRNc3dy?=
+ =?utf-8?B?cDZmeFBsV2pnenFRZGhTZzY0cEU2S1RlU25wanRWc2dRUlJQMDJmL3BlVkZ2?=
+ =?utf-8?B?dkdRSk1uZ2Rvd1RRS2ZVTGpmZFJveDQrdjRJdjI1eWpxTXFNU1h0Rjl0cnVD?=
+ =?utf-8?B?V0YzZWdsMmlZTlJ6VGJPMkpyejJ4K2UySnZlMG0rWHk0RzI5V00weG9ZVElt?=
+ =?utf-8?B?a1FEMS9uUWN1M3ZHRjVKU3JueUprdTVNZ1grdTZZdStUUml6dHRPRS9kVzkv?=
+ =?utf-8?B?MkpqVndtSEhocWpzLzdKckVUMUpmU1Jwc1pGTDZUV2dPamdhZkI3ak9aUSta?=
+ =?utf-8?B?dUJvUzlkWTZyQnlKQ3ZtWThBc2dwblVYY2JXUG1KWEZCTGdubzBIUTdJQ0ti?=
+ =?utf-8?B?d0d5UkFMR25YVVpuUmExT2FCV200SHlnLyt2SHB1aTc2V29SeEdkMXdZUXJL?=
+ =?utf-8?B?bXZHN2pldkZlNGtoMk5hWENQZjdwU2krVkxQeVI2MVV4akVMZjNWR2Nwd1gv?=
+ =?utf-8?B?ZWpCREZkUVppMnBTYUdNUlQwTE95dzdRUFB0WEhIcUMwNWdxL2hRNHhzc1ND?=
+ =?utf-8?B?NTBBaEczTVovTFZaNENLRjJLOTYzK2xXR1RSQW84QXAyVFN4ZTNBc3NkNG4y?=
+ =?utf-8?B?Y04zSm5SMm5ISDVKSGl6YzVPalN3ekNlaTdYbHA3cHpZV09Ed0Ziemt4blNn?=
+ =?utf-8?B?amU2blM5QlZJOFpIWGFYakdoa0U3MktaajlaS096VFpYOEQwOFRaV2NLRElp?=
+ =?utf-8?B?OU4wQnRQU3o4cVhBU2VkdWdiVlN0VklBSnlkQ0NUQ1huT1lGd25CSjJKcWp3?=
+ =?utf-8?B?VHZWc1dnZVZ2dTVDdm45Y0trZy9KNGsxVUVRR0FlYVc3SWxDMStyRkpZVzhO?=
+ =?utf-8?B?VFNIT3RjY2xDYzVMK1ZSUXIyaTMzeWxnSmM5U3hjQmJhdXFWM29MVnVNaXVO?=
+ =?utf-8?B?dUdaSTRWaXdMTUFJTnpZc01JOGlyaGZreTFUeTMvTDRtVWhva2lDRTVCTDhh?=
+ =?utf-8?B?YzR2cEhzQmpUS3VQMzVWWWh5ZFk0NFVjL3VEN0szQnBISmRHa0VYMVRyUHVO?=
+ =?utf-8?B?cnNxQUdFcGV0YmJzWGxPd203UFFpU2JpU1JCcEpTbEM1cjJwQmxBWWFZTENE?=
+ =?utf-8?B?dVlBYXordUlkNHFCSFBPaGg2djJKSGxFY1J2VlIrV20rM1JRVWJCY2dmemk0?=
+ =?utf-8?B?MkdlRGpVYUZSTVpDcU1ETkZFM2lYbkZ2Rm8zdUNsM2ZqVGhRZU9aQ2dEYUoz?=
+ =?utf-8?B?VWRibWZHd2l0eURPcWpBbEhzdGcvQVREOEpPZlpSbjRaTEhEU3ozSWx2VWI2?=
+ =?utf-8?B?T1ZhQlZJQklJS3RkUmVjM1V6UW0rMVpsdEprS0NTbnR6c1l3YUV0VzY1OFJ0?=
+ =?utf-8?B?cG8renpkOVdPUVlYQVJpODJERERwL0xxdmJHWE9UcGVvZ3dqalI0N0w0RmhC?=
+ =?utf-8?B?Vkh0TmV1R05vcnJSY25oMmtOSlQ0N28wS2pGdEhXK1dVV0VEOGJabUZ4VUVx?=
+ =?utf-8?B?Skd0T1cwQTl0K2twYVZFZW5aeU15Q3FMQjJEcmh4bEs3eDhTYnJxKzhWcDJH?=
+ =?utf-8?B?djFEaGx4TFRGU0pXdEN5ZTdSTitWbUx3VmI3WGg0Tmg1dUh5L1AxYnN5UE1k?=
+ =?utf-8?B?L3lqamNNK1Y3eFdzaW0vbW10RnMvYW1MajQzNU00SElkb1plTmxyQWNLYmhT?=
+ =?utf-8?B?RVNLa0RrN2J0VDBnT2RLVlk0a1Jyd3ZESjBWOFJ3Z1d2TDFFSlpTYU9yaFBK?=
+ =?utf-8?B?cnZEcWpva2lrM2QxWXhWOVNYVHEzT01MdFRjbFcxZkxObGo5VU5jbE9Db2Iz?=
+ =?utf-8?Q?AVIZFW0Bji1P7E+oDuwKEVWMPdtFQE=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(4053099003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?azBSbVBBOWtodG91ckR6L0FCU1RaK011b3Q0TlNQU2V5eUJYU0dqU04wQVpW?=
+ =?utf-8?B?UjBvMmZmbzNnTUErM0thcExERWxwUFRlNzdXYmIxdXZtcWVIcUhQa3lUOGti?=
+ =?utf-8?B?ODlJMlMySzROc3hpeTBHSWdTK3BNZW5TYTdwNElvN0t3ZXMwb3VtK200cStX?=
+ =?utf-8?B?K0E4bWRTSnN4L2ZXTXFWZll4RStMRzZoTGF3QmpvTHptU1Y5T1Q1Q2dyNndw?=
+ =?utf-8?B?SjJuc2hXcUFzRnRqV3ZoUlM1STFuZFg2MW9HM3VmY3kySUNmaTMyUUhYakJq?=
+ =?utf-8?B?elU4NmVFUGZZdmhvMkdNNE40czR4V0dSNUZQdlZFd1dVVEtnblplU2huSTM5?=
+ =?utf-8?B?OW5SK0Zqa1JPWHoxSlZNTUp6Mm5XQzZCVURPWkRuU2xsaWVQenBSSXI4N2Qx?=
+ =?utf-8?B?NmdWODZzR0Q1OFBiajBUalB1L25XK2ZmVXViaHB4VWdCNmxsVWM3V1BqbW1a?=
+ =?utf-8?B?Mnp2d1BNTUlTV091MFErQ1M3NkVodVlLWW4rSFNiRmRKaHlDa3k1WkVLZDZj?=
+ =?utf-8?B?aWlnK2lYWDJEcHYyYUt3YVA2bUpESDIxNlIxTlpxbFBPYkY5V3dBY0RpdFBu?=
+ =?utf-8?B?bWxDNUFxWEtabkJHZEJqOUVyRVZuVTVyUmErTDNVdlFDMEhpeHlCTEt2aENI?=
+ =?utf-8?B?S2ZTSDJENzRhR1NVbktrRHZpZjE2YkczK3NXdzRveDlUQW1vS0d4SGpTS3pB?=
+ =?utf-8?B?bDhxYktUOVFFdWg4UmU2ZGRDZkwvckdrMU5aa3RMNUU3TVZ0U29KbnZVR2NT?=
+ =?utf-8?B?SktiWkVMbWZ1U1FFdlVDYm9YczRKRjJhemRjNCtkVndoOTNsVnBmaWFPMi9Y?=
+ =?utf-8?B?KzdQeENYampqQW9xUEc0QWt6L2RlcXNwTXdrM2JLSHloSjBaVlI4K0tBbHJO?=
+ =?utf-8?B?UStyRGxGaGVSZmdNOGdKRGF2U0hUWnJyZXFXQ1hWWEhCb2Q5SVpJQ0UxQ2di?=
+ =?utf-8?B?dnNWYm1pbGxIeC9QYW00U00xY0NmdmY0b1RKRWNlMlZzYWh6eDlUS0pKTnBR?=
+ =?utf-8?B?TitMWWR6WTROVTlkUmt4aXRybjY1c0N6ZWZvQzJmRTRoR2hpdENvL09iQ3pv?=
+ =?utf-8?B?TnplSDJOc1czMlB2cG1sQkxjNFoxK0F2UDlHeUhrd0JsTXFhU1FVR3Zwa2x1?=
+ =?utf-8?B?UFdWelNQWUdnamFwLzJaazR4NldqSnlWWXY1UHQxbElvK1JyaStPUHkycTVE?=
+ =?utf-8?B?U3c1K0xvSHBFUkVtS1YvSnpTRDZEb1pDaHQ2NzhVQTBUbWV2ZHRnVUhvbkdT?=
+ =?utf-8?B?NXZSNHBDeGFjRTAxMVhHMEk4cEFTVUkvdjVIQkdUaHBIWjYrY1o4blRrMVBm?=
+ =?utf-8?B?YVVwVEFYeEVBV2hBSHErYWhUYXBvNmtiSjRmNXRBN3RDV2lHcEJtV29oMWxp?=
+ =?utf-8?B?NWRlOG45Mi9pUjI3SjEyNkx6S0VkaStjQklqeWFvVzFST1gya0VCVUdiRkNu?=
+ =?utf-8?B?N0hPMFF5Tk5zSURyaDczOGxDRTl5c0Z6RDNxalpRQlYxTTdkTlNOYmxuTmNO?=
+ =?utf-8?B?NnorTUx5M1VHelZFekRjV0FaMEFGaGdyQmFEK0VZZVlxYVYrb3VQL3A1aURs?=
+ =?utf-8?B?NzBuSEpZdnZNUXZidGFNZUJxaDE1bFRyZXBBczIzZmJtUHFHcUdBR0ZITEVS?=
+ =?utf-8?B?ai8xR21OVEViRnkzazZjR2FueHJwTURUY1ZoL0lmbDRrSUthUTVaelZIanVY?=
+ =?utf-8?B?M3BOTXNLUEdGaEpubmQvdUFkRG00bmhvSWNvdEo3cEZzRnFoUFJETHlibTli?=
+ =?utf-8?B?NEMyUTVDWlJwMENORkxRTjZXdU9OeHhRTEdjVjBrTW1vZEFSOXdFcjBvdE1Z?=
+ =?utf-8?B?WkNhaGxPNjczVlJUSWp3dFRBVWgvV1RJVzduWEdkcCtOL3FiYjhIUzZOYkJ0?=
+ =?utf-8?B?TERNRkFWbCtob1NIcFUvY0FoQlRjZ3daSFl2NVZwZ1Jpb0s4Tks0bGdkRHRZ?=
+ =?utf-8?B?K21oQ1ZtNERZTFBseXdyOFVWVytmWHRyWTZOUVZCQUJ4WWo5eUZDYmlEZDgw?=
+ =?utf-8?B?ZWxNdnh1L3NRUXlGUHo2S0NFdlhNY1lMY3VtUVJHVjVTRUxsMWdnenQvR2t5?=
+ =?utf-8?B?WGVpUFd3Vm9vNzZ6WnUwa3ZYdzZCb3JndllrSUNjaTkyMmpPUElja3hDZ2FH?=
+ =?utf-8?Q?y+af+skDq+waAIkYlN0UYjzQw?=
+Content-Type: multipart/mixed;
+	boundary="_002_CY8PR11MB7134BDC448F3DB558917DFCF8924ACY8PR11MB7134namp_"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86: Add WMI driver for Redmibook keyboard.
-To: Gladyshev Ilya <foxido@foxido.dev>
-Cc: linux-input@vger.kernel.org, nikita.nikita.krasnov@gmail.com,
- Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20250729190528.8446-1-foxido@foxido.dev>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250729190528.8446-1-foxido@foxido.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oM2oG3/UrgyyWCyHPnuLLjIJ95hmrOwJwDTSzsTa4OAduLcs3oR
- qeELq8wT2PEP5LQXOJHgVJzMh9vV+lDnk1IgzluTNwgqgaG0dkmiAga2FeaALeVWixbUkXA
- vjwJvkYpl0NyS66/JLuxQSnts/UCAt+biPIDRh6/qu1KnMG55B78jp4Mr9UOUFBgLVCw7H9
- 09Qzpk3u+nn/s5Z2oR/9g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZmAXzYlLidY=;2SMEWfMPfsu8GusgRzaequmE7yu
- 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
- xR1Doqjg067Bmw=
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78a897c4-d493-47bc-b229-08ddcf86d5ae
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2025 16:33:37.3593
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6HpJEk0NruIj1o++NockZVq/alLhGFCPqQ4Jx16SOPssVqM0q/Ac6dqHHf4GXymyUGx8zaR7cnwaVaOqkapipw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB6049
+X-OriginatorOrg: intel.com
 
-Am 29.07.25 um 21:05 schrieb Gladyshev Ilya:
+--_002_CY8PR11MB7134BDC448F3DB558917DFCF8924ACY8PR11MB7134namp_
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 
-> This driver implements support for various Fn keys (like Cut) and Xiaomi
-> specific AI button.
->
-> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
-> ---
->
-> Changes from v1:
-> - Use sparse-keymap instead of manual matching
-> - Fix GUID case so it actually autoloads
-> - Other fixes from v1 review
->
-> Link to v1: https://lore.kernel.org/platform-driver-x86/20250727223516.2=
-9244-1-foxido@foxido.dev/
->
-> ---
->   MAINTAINERS                      |   6 ++
->   drivers/platform/x86/Kconfig     |  11 +++
->   drivers/platform/x86/Makefile    |   1 +
->   drivers/platform/x86/redmi-wmi.c | 129 +++++++++++++++++++++++++++++++
->   4 files changed, 147 insertions(+)
->   create mode 100644 drivers/platform/x86/redmi-wmi.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c0b444e5fd5a..eb25fb10e751 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20965,6 +20965,12 @@ S:	Maintained
->   T:	git https://github.com/pkshih/rtw.git
->   F:	drivers/net/wireless/realtek/rtw89/
->  =20
-> +REDMIBOOK WMI DRIVERS
-> +M:	Gladyshev Ilya <foxido@foxido.dev>
-> +L:	platform-driver-x86@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/platform/x86/redmi-wmi.c
-> +
->   REDPINE WIRELESS DRIVER
->   L:	linux-wireless@vger.kernel.org
->   S:	Orphan
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index e5cbd58a99f3..3c570cb398d3 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -109,6 +109,17 @@ config XIAOMI_WMI
->   	  To compile this driver as a module, choose M here: the module will
->   	  be called xiaomi-wmi.
->  =20
-> +config REDMI_WMI
-> +	tristate "Redmibook WMI key driver"
-> +	depends on ACPI_WMI
-> +	depends on INPUT
+SGkgQWNlTGFuLA0KDQo+IEZyb206IEFjZUxhbiBLYW8gPGFjZWxhbi5rYW9AY2Fub25pY2FsLmNv
+bT4NCj4gWy4uLl0NCj4gPiBXaGljaCBDUFUgZGlkIHlvdSB0ZXN0IGl0IG9uPw0KPiBJdCdzIGFu
+IG9uIGdvaW5nIHByb2plY3QsIHRoZXJlIGlzIG5vIENQVSBuYW1lIG9uIGl0Lg0KPiAkIGxzY3B1
+DQo+IEFyY2hpdGVjdHVyZTogICAgICAgICAgICAgICAgeDg2XzY0DQo+ICBDUFUgb3AtbW9kZShz
+KTogICAgICAgICAgICAzMi1iaXQsIDY0LWJpdA0KPiAgQWRkcmVzcyBzaXplczogICAgICAgICAg
+ICAgNTIgYml0cyBwaHlzaWNhbCwgNTcgYml0cyB2aXJ0dWFsDQo+ICBCeXRlIE9yZGVyOiAgICAg
+ICAgICAgICAgICBMaXR0bGUgRW5kaWFuDQo+IENQVShzKTogICAgICAgICAgICAgICAgICAgICAg
+MTcyDQo+ICBPbi1saW5lIENQVShzKSBsaXN0OiAgICAgICAwLTE3MQ0KPiBWZW5kb3IgSUQ6ICAg
+ICAgICAgICAgICAgICAgIEdlbnVpbmVJbnRlbA0KPiAgTW9kZWwgbmFtZTogICAgICAgICAgICAg
+ICAgR2VudWluZSBJbnRlbChSKSAwMDAwDQo+ICAgIENQVSBmYW1pbHk6ICAgICAgICAgICAgICA2
+DQo+ICAgIE1vZGVsOiAgICAgICAgICAgICAgICAgICAxNzMNCg0KVGhpcyBpcyB0aGUgQ1BVIHdp
+dGggdGhlwqBjb2RlIG5hbWUgIkdyYW5pdGUgUmFwaWRzIi4NCg0KPiAgICBUaHJlYWQocykgcGVy
+IGNvcmU6ICAgICAgMg0KPiAgICBDb3JlKHMpIHBlciBzb2NrZXQ6ICAgICAgODYNCj4gICAgU29j
+a2V0KHMpOiAgICAgICAgICAgICAgIDENCj4gICAgU3RlcHBpbmc6ICAgICAgICAgICAgICAgIDEN
+Cj4gICAgQ1BVKHMpIHNjYWxpbmcgTUh6OiAgICAgIDE4JQ0KPiAgICBDUFUgbWF4IE1IejogICAg
+ICAgICAgICAgNDgwMC4wMDAwDQo+ICAgIENQVSBtaW4gTUh6OiAgICAgICAgICAgICA4MDAuMDAw
+MA0KPiAgICBCb2dvTUlQUzogICAgICAgICAgICAgICAgMzgwMC4wMA0KPiANCj4gPiBXb3VsZCB5
+b3UgbWluZCB0YWtpbmcgYSBjb21wbGV0ZSBkbWVzZyBsb2cgd2l0aCB0aGUga2VybmVsIG9wdGlv
+bg0KPiA+IENPTkZJR19FREFDX0RFQlVHPXkgKHlvdXIgY3VycmVudCBsb2cgc2hvd2VkIHRoaXMg
+b3B0aW9uIGhhZCBiZWVuDQo+IGVuYWJsZWQpPw0KPiBTdXJlLCBoZXJlIHlvdSBhcmUuDQoNClRo
+YW5rcyBzbyBtdWNoIGZvciB5b3VyIGxvZy4NCg0KV2UndmUgZW5jb3VudGVyZWQgdGhlIHNhbWUg
+aXNzdWUgcmVjZW50bHkgZHVlIHRvIHRoZSBCSU9TIGRpc2FibGluZyB0aGUNCm1lbW9yeSBjb250
+cm9sbGVyIHdoZW4gbm8gRElNTXMgYXJlIHBvcHVsYXRlZCwgbGVhZGluZyB0b8KgaW52YWxpZCB2
+YWx1ZXMNCm9mIHRoZcKgZGlzYWJsZWQgbWVtb3J5IGNvbnRyb2xsZXIgcmVnaXN0ZXIgYW5kIHRo
+ZSBjYWxsIHRyYWNlIHlvdSByZXBvcnRlZC4NCg0KQXR0YWNoZWQgaXMgYSBwYXRjaCB0aGF0IHNr
+aXBzIERJTU0gZW51bWVyYXRpb24gb24gYSBkaXNhYmxlZCBtZW1vcnkgDQpjb250cm9sbGVyIHRv
+IGZpeCB0aGUgY2FsbCB0cmFjZS4gQ291bGQgeW91IHBsZWFzZSB0ZXN0IHRoaXMgcGF0Y2ggb24g
+eW91ciBtYWNoaW5lcyANCmFuZCBzaGFyZSB0aGUgZG1lc2cgbG9nPw0KDQpUaGFua3MhDQotUWl1
+eHUNCg==
 
-Please also select INPUT_SPARSEKMAP.
+--_002_CY8PR11MB7134BDC448F3DB558917DFCF8924ACY8PR11MB7134namp_
+Content-Type: application/octet-stream;
+	name="0001-EDAC-i10nm-Skip-DIMM-enumeration-on-a-disabled-memor.patch"
+Content-Description: 0001-EDAC-i10nm-Skip-DIMM-enumeration-on-a-disabled-memor.patch
+Content-Disposition: attachment;
+	filename="0001-EDAC-i10nm-Skip-DIMM-enumeration-on-a-disabled-memor.patch";
+	size=2434; creation-date="Wed, 30 Jul 2025 16:31:48 GMT";
+	modification-date="Wed, 30 Jul 2025 16:33:36 GMT"
+Content-Transfer-Encoding: base64
 
-> +	help
-> +	  Say Y here if you want support for WMI-based hotkey events on
-> +	  Xiaomi Redmibook devices.
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called redmi-wmi.
-> +
->   config GIGABYTE_WMI
->   	tristate "Gigabyte WMI temperature driver"
->   	depends on ACPI_WMI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefi=
-le
-> index bea87a85ae75..406dd0807ba7 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_HUAWEI_WMI)		+=3D huawei-wmi.o
->   obj-$(CONFIG_MXM_WMI)			+=3D mxm-wmi.o
->   obj-$(CONFIG_NVIDIA_WMI_EC_BACKLIGHT)	+=3D nvidia-wmi-ec-backlight.o
->   obj-$(CONFIG_XIAOMI_WMI)		+=3D xiaomi-wmi.o
-> +obj-$(CONFIG_REDMI_WMI)			+=3D redmi-wmi.o
->   obj-$(CONFIG_GIGABYTE_WMI)		+=3D gigabyte-wmi.o
->  =20
->   # Acer
-> diff --git a/drivers/platform/x86/redmi-wmi.c b/drivers/platform/x86/red=
-mi-wmi.c
-> new file mode 100644
-> index 000000000000..732688fb94e0
-> --- /dev/null
-> +++ b/drivers/platform/x86/redmi-wmi.c
-> @@ -0,0 +1,129 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* WMI driver for Xiaomi Redmibooks */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/device.h>
-> +#include <linux/input.h>
-> +#include <linux/input/sparse-keymap.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/unaligned.h>
-> +#include <linux/wmi.h>
-> +
-> +#include <uapi/linux/input-event-codes.h>
-> +
-> +#define WMI_REDMIBOOK_KEYBOARD_EVENT_GUID "46C93E13-EE9B-4262-8488-563B=
-CA757FEF"
-> +
-> +#define AI_KEY_VALUE_MASK 0x00000100
-> +
-> +static const struct key_entry redmi_wmi_keymap[] =3D {
-> +	{KE_KEY, 0x00000201,	{KEY_SELECTIVE_SCREENSHOT}},
-> +	{KE_KEY, 0x00000301,	{KEY_ALL_APPLICATIONS}},
-> +	{KE_KEY, 0x00001b01,	{KEY_SETUP}},
-> +
-> +	/* AI button has code for each position */
-> +	{KE_KEY, 0x00011801,	{KEY_ASSISTANT}},
-> +	{KE_KEY, 0x00011901,	{KEY_ASSISTANT}},
-> +
-> +	/* Keyboard backlight */
-> +	{KE_IGNORE, 0x00000501, {}},
-> +	{KE_IGNORE, 0x00800501, {}},
-> +	{KE_IGNORE, 0x00050501, {}},
-> +	{KE_IGNORE, 0x000a0501, {}},
-> +
-> +	{KE_END}
-> +};
-> +
-> +struct redmi_wmi {
-> +	struct input_dev *input_dev;
-> +	/* Protects the key event sequence */
-> +	struct mutex key_lock;
-> +};
-> +
-> +static int redmi_wmi_probe(struct wmi_device *wdev, const void *context=
-)
-> +{
-> +	struct redmi_wmi *data;
-> +	int err;
-> +
-> +	/* Init dev */
-> +	data =3D devm_kzalloc(&wdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(&wdev->dev, data);
-> +
-> +	err =3D devm_mutex_init(&wdev->dev, &data->key_lock);
-> +	if (err)
-> +		return err;
-> +
-> +	/* Setup input device */
-> +	data->input_dev =3D devm_input_allocate_device(&wdev->dev);
-> +	if (!data->input_dev)
-> +		return -ENOMEM;
-> +	data->input_dev->name =3D "Redmibook WMI keys";
-> +	data->input_dev->phys =3D "wmi/input0";
-> +
-> +	err =3D sparse_keymap_setup(data->input_dev, redmi_wmi_keymap, NULL);
-> +	if (err)
-> +		return err;
-> +
-> +	return input_register_device(data->input_dev);
-> +}
-> +
-> +static void redmi_wmi_notify(struct wmi_device *wdev, union acpi_object=
- *obj)
-> +{
-> +	struct redmi_wmi *data =3D dev_get_drvdata(&wdev->dev);
-> +	int value =3D 1;
-> +	bool autorelease =3D true;
+RnJvbSA0ZGUyMGJkMmU3ZTY2OWM3YTE2YmUzM2MxZWJiNDEwNmE1NDc5YjY5IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBRaXV4dSBaaHVvIDxxaXV4dS56aHVvQGludGVsLmNvbT4KRGF0
+ZTogV2VkLCAzMCBKdWwgMjAyNSAyMjozMjozMyArMDgwMApTdWJqZWN0OiBbUEFUQ0ggMS8xXSBF
+REFDL2kxMG5tOiBTa2lwIERJTU0gZW51bWVyYXRpb24gb24gYSBkaXNhYmxlZCBtZW1vcnkKIGNv
+bnRyb2xsZXIKCldoZW4gbG9hZGluZyB0aGUgaTEwbm1fZWRhYyBkcml2ZXIgb24gc29tZSBJbnRl
+bCBHcmFuaXRlIFJhcGlkcyBzZXJ2ZXJzLAphIGNhbGwgdHJhY2UgbWF5IGFwcGVhciBhcyBmb2xs
+b3dzOgoKICBVQlNBTjogc2hpZnQtb3V0LW9mLWJvdW5kcyBpbiBkcml2ZXJzL2VkYWMvc2t4X2Nv
+bW1vbi5jOjQ1MzoxNgogIHNoaWZ0IGV4cG9uZW50IC02NiBpcyBuZWdhdGl2ZQogIC4uLgogIF9f
+dWJzYW5faGFuZGxlX3NoaWZ0X291dF9vZl9ib3VuZHMrMHgxZTMvMHgzOTAKICBza3hfZ2V0X2Rp
+bW1faW5mby5jb2xkKzB4NDcvMHhkNDAgW3NreF9lZGFjX2NvbW1vbl0KICBpMTBubV9nZXRfZGlt
+bV9jb25maWcrMHgyM2UvMHgzOTAgW2kxMG5tX2VkYWNdCiAgc2t4X3JlZ2lzdGVyX21jaSsweDE1
+OS8weDIyMCBbc2t4X2VkYWNfY29tbW9uXQogIGkxMG5tX2luaXQrMHhjYjAvMHgxZmYwIFtpMTBu
+bV9lZGFjXQogIC4uLgoKVGhpcyBvY2N1cnMgYmVjYXVzZSBzb21lIEJJT1MgbWF5IGRpc2FibGUg
+YSBtZW1vcnkgY29udHJvbGxlciBpZiB0aGVyZQphcmVuJ3QgYW55IG1lbW9yeSBESU1NcyBwb3B1
+bGF0ZWQgb24gdGhpcyBtZW1vcnkgY29udHJvbGxlci4gVGhlIERJTU1NVFIKcmVnaXN0ZXIgb2Yg
+dGhpcyBkaXNhYmxlZCBtZW1vcnkgY29udHJvbGxlciBjb250YWlucyB0aGUgaW52YWxpZCB2YWx1
+ZQp+MCwgcmVzdWx0aW5nIGluIHRoZSBjYWxsIHRyYWNlIGFib3ZlLgoKRml4IHRoaXMgY2FsbCB0
+cmFjZSBieSBza2lwcGluZyBESU1NIGVudW1lcmF0aW9uIG9uIGEgZGlzYWJsZWQgbWVtb3J5CmNv
+bnRyb2xsZXIuCgpGaXhlczogYmE5ODdlYWFhYmY5ICgiRURBQy9pMTBubTogQWRkIEludGVsIEdy
+YW5pdGUgUmFwaWRzIHNlcnZlciBzdXBwb3J0IikKUmVwb3J0ZWQtYnk6IEpvc2UgSmVzdXMgQW1i
+cml6IE1lemEgPGpvc2UuamVzdXMuYW1icml6Lm1lemFAaW50ZWwuY29tPgpSZXBvcnRlZC1ieTog
+Q2hpYS1MaW4gS2FvIChBY2VMYW4pIDxhY2VsYW4ua2FvQGNhbm9uaWNhbC5jb20+CkNsb3Nlczog
+aHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjUwNzMwMDYzMTU1LjI2MTIzNzktMS1hY2Vs
+YW4ua2FvQGNhbm9uaWNhbC5jb20vClNpZ25lZC1vZmYtYnk6IFFpdXh1IFpodW8gPHFpdXh1Lnpo
+dW9AaW50ZWwuY29tPgotLS0KIGRyaXZlcnMvZWRhYy9pMTBubV9iYXNlLmMgfCAxNCArKysrKysr
+KysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKykKCmRpZmYgLS1naXQgYS9k
+cml2ZXJzL2VkYWMvaTEwbm1fYmFzZS5jIGIvZHJpdmVycy9lZGFjL2kxMG5tX2Jhc2UuYwppbmRl
+eCBhM2ZjYTI1Njc3NTIuLjEwM2ZiZjYwMmQxYiAxMDA2NDQKLS0tIGEvZHJpdmVycy9lZGFjL2kx
+MG5tX2Jhc2UuYworKysgYi9kcml2ZXJzL2VkYWMvaTEwbm1fYmFzZS5jCkBAIC0xMDQ3LDYgKzEw
+NDcsMTUgQEAgc3RhdGljIGJvb2wgaTEwbm1fY2hlY2tfZWNjKHN0cnVjdCBza3hfaW1jICppbWMs
+IGludCBjaGFuKQogCXJldHVybiAhIUdFVF9CSVRGSUVMRChtY210ciwgMiwgMik7CiB9CiAKK3N0
+YXRpYyBib29sIGkxMG5tX2NoYW5uZWxfZGlzYWJsZWQoc3RydWN0IHNreF9pbWMgKmltYywgaW50
+IGNoYW4pCit7CisJdTMyIG1jbXRyID0gSTEwTk1fR0VUX01DTVRSKGltYywgY2hhbik7CisKKwll
+ZGFjX2RiZygxLCAiY2glZCBtY210ciByZWcgJXhcbiIsIGNoYW4sIG1jbXRyKTsKKworCXJldHVy
+biAobWNtdHIgPT0gfjAgfHwgR0VUX0JJVEZJRUxEKG1jbXRyLCAxOCwgMTgpKTsKK30KKwogc3Rh
+dGljIGludCBpMTBubV9nZXRfZGltbV9jb25maWcoc3RydWN0IG1lbV9jdGxfaW5mbyAqbWNpLAog
+CQkJCSBzdHJ1Y3QgcmVzX2NvbmZpZyAqY2ZnKQogewpAQCAtMTA2MCw2ICsxMDY5LDExIEBAIHN0
+YXRpYyBpbnQgaTEwbm1fZ2V0X2RpbW1fY29uZmlnKHN0cnVjdCBtZW1fY3RsX2luZm8gKm1jaSwK
+IAkJaWYgKCFpbWMtPm1iYXNlKQogCQkJY29udGludWU7CiAKKwkJaWYgKGkxMG5tX2NoYW5uZWxf
+ZGlzYWJsZWQoaW1jLCBpKSkgeworCQkJZWRhY19kYmcoMSwgIm1jJWQgY2glZCBpcyBkaXNhYmxl
+ZC5cbiIsIGltYy0+bWMsIGkpOworCQkJY29udGludWU7CisJCX0KKwogCQluZGltbXMgPSAwOwog
+CiAJCWlmIChyZXNfY2ZnLT50eXBlICE9IEdOUikKCmJhc2UtY29tbWl0OiAwMzhkNjFmZDY0MjI3
+OGJhYjYzZWU4ZWY3MjJjNTBkMTBhYjAxZThmCi0tIAoyLjQzLjAKCg==
 
-Please order the variable declarations using reverse xmas tree order.
-
-> +
-> +	if (obj->type !=3D ACPI_TYPE_BUFFER) {
-> +		dev_err(&wdev->dev, "Bad response type %u\n", obj->type);
-> +		return;
-> +	}
-> +
-> +	if (obj->buffer.length !=3D 32) {
-
-Please also accept oversized buffers.
-
-> +		dev_err(&wdev->dev, "Invalid buffer length %u\n", obj->buffer.length)=
-;
-> +		return;
-> +	}
-> +
-> +	/* For linearizability */
-> +	guard(mutex)(&data->key_lock);
-> +
-> +	u32 payload =3D get_unaligned_le32(obj->buffer.pointer);
-> +	struct key_entry *entry =3D sparse_keymap_entry_from_scancode(data->in=
-put_dev, payload);
-> +
-> +	if (!entry) {
-> +		dev_dbg(&wdev->dev, "Unknown WMI event with payload %u", payload);
-> +		return;
-> +	}
-> +
-> +	/* AI key quirk */
-> +	if (entry->keycode =3D=3D KEY_ASSISTANT) {
-> +		value =3D !(payload & AI_KEY_VALUE_MASK);
-
-I would rather check the payload for 0x00011901 here.
-
-Thanks,
-Armin Wolf
-
-> +		autorelease =3D false;
-> +	}
-> +
-> +	sparse_keymap_report_entry(data->input_dev, entry, value, autorelease)=
-;
-> +}
-> +
-> +static const struct wmi_device_id redmi_wmi_id_table[] =3D {
-> +	{ .guid_string =3D WMI_REDMIBOOK_KEYBOARD_EVENT_GUID },
-> +	{ }
-> +};
-> +
-> +static struct wmi_driver redmi_wmi_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "redmi-wmi",
-> +		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS
-> +	},
-> +	.id_table =3D redmi_wmi_id_table,
-> +	.probe =3D redmi_wmi_probe,
-> +	.notify =3D redmi_wmi_notify,
-> +	.no_singleton =3D true,
-> +};
-> +module_wmi_driver(redmi_wmi_driver);
-> +
-> +MODULE_DEVICE_TABLE(wmi, redmi_wmi_id_table);
-> +MODULE_AUTHOR("Gladyshev Ilya <foxido@foxido.dev>");
-> +MODULE_DESCRIPTION("Redmibook WMI driver");
-> +MODULE_LICENSE("GPL");
+--_002_CY8PR11MB7134BDC448F3DB558917DFCF8924ACY8PR11MB7134namp_--
 
