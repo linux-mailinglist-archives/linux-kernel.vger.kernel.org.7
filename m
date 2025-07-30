@@ -1,117 +1,127 @@
-Return-Path: <linux-kernel+bounces-750037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B96C3B1562B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:02:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 804A6B1562D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A0547B0679
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:01:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FB2D3BAAFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:11:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01134566A;
-	Wed, 30 Jul 2025 00:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECCED5383;
+	Wed, 30 Jul 2025 00:12:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="MIE8NEoc"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HGll/GeG"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26632A55
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D443D69
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753833768; cv=none; b=V83h+PPKb0IMXp07KXO0HjkywJYoGEoO/tN1Fg5hppmjwB45MoQU7uzzZAqoQfm79LsmM36W3vD3JjR+g1MVh5pyxuCRJwwN0FZVaLC7CmRaQr314hpZEJqOCXHVWICEOd8UQWQ7BHd3DxKe6pIV1Le0qFAgop5HEaKpc8TaKuI=
+	t=1753834332; cv=none; b=pBNg8BYrIlOkwXEAPsKWAr0sDc8eZWo0ZqjskAbetyImGnS+nKVqJtR12fpLHTiwXKMV467P08udNEvTqHzowItdSSk05r+xCH89Nf+bevbyJgsiYJY/HBQAtrCFtANsAylDtVapkP1hjmOPhsHOQkSXUQ9YvxmerLsFYvCAXX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753833768; c=relaxed/simple;
-	bh=Y/M5/sPM670c0P9olu2X4VtHM3mcoU/sU4qAieG2bB0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=nLxCCuaNs5XYcYPuY84+Wa9bzi97JQArBcR61uKLdix1CEGuLUxvj5IPUwLKjyK4BJpa8bX/nZvqgNDCxbcvg67Rzwhgk545hlFC0jDnYYKfz2oiaTHr/q9S7MULkj0fmO64UoA2h1EE0bLPfsYPjF4v03eXsWCaM3Tu4anlNBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=MIE8NEoc; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-748e63d4b05so3804806b3a.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:02:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brighamcampbell.com; s=google; t=1753833766; x=1754438566; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Y/M5/sPM670c0P9olu2X4VtHM3mcoU/sU4qAieG2bB0=;
-        b=MIE8NEocn9xQeZrOuFRRCH6SnDSzl0EFamNwhIvgBsv6VVeN9tyewealMQXnkB42iQ
-         Ax5ajoeKHS22bbqnVTpSzLA4O78xM9WqKo88hqD+g9WZZrFC34cGCqmrwzc2xF+BPY9h
-         7dU8yOa45R7Sl6xq7tJiB8XGuggLqQ22Mxi3m2xxjcWAJXQrYwpGBTka9AFnnkvcTjej
-         xtdYyb6vpFtOGwykAR8lD/FKjEHbpwaQmgM6A46Mq+cErnTWJAyVGEPse3P0T4I+i8cT
-         QBWFdjclPdh4tVy1cphKJ52/f4hnIG9ZFzaYQNlvTXZ3KHsM++VZJIYkhM+CLkYUe3Vp
-         05Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753833766; x=1754438566;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Y/M5/sPM670c0P9olu2X4VtHM3mcoU/sU4qAieG2bB0=;
-        b=ueTJJYpVutT3tMx3wv2gM/cqAsftb7WXoZKGz/c1jnbG/dbLHC+pp+8XHuPweNeYzV
-         buxlwLrVKvbDDp3vE3eLTNHbkZF2x9J/KwC0YVnHctZH7/atTXs9O8eNc+3FUpt7BHcF
-         1mJYXvPIDvsKTS8r14LRX0yOSIjf10o/6VbUcdzhlHe0mQHvuaxGqjgd4gkOc0SEDgsJ
-         KdDJDX498GakzqD0rR23pW1nvXNb/yWbHkjvlMNzq4KqPFgtuLCVvYTM5tz7b5c63d4x
-         chLy6VkAJ8vTMJLERkelZgQ/9+1DptxwXQvwuC6qwdzoqP+ESljNM0gNN6cVmsQIWIrS
-         bOAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZQyKl0YWlJ8s7WVjF0+6qOQXkpyQrGhkn2HFmVyxSiQVh76ORW/XbE4kZG7sSo0AHFxJyWA1Q0qM21YI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylAMVj/KHIOIc0MBWTtkkREp1Kls3R80IWS2wACFm29m+x6TW7
-	mVgmbKvMqo4+F8p1kLX1J1YF50pR+d78V/gcMdxeCdjPbRmb3qFQtmJ6aRGZxpAPsTs=
-X-Gm-Gg: ASbGncvpDYtNkWmDKed2zonqAcb9/He3jPGxoSAwjbX+kFKGitVZxmndsAze14s69q2
-	NhNvTt9OT9HUd5Zkz4G3WBcUmdrgBnccPzpgX6YPhCTNbncSwdh7jpoA+jl/2SF+4Vy/xW41Q3q
-	wUPTv1QcbkuZqvZBsWCHz/roKaPISsfyc4u3Vh9rZGRe9JQ13H1KZI51wHNuij8YWOHTNVB/P9V
-	ThggMkY9LJ7qCpRrFiGvFwgdzWpyp6SgxIDG8tpPtMO+OfYfbkSGazXFnQ5jT4/sPrT7FtzRi1e
-	0xrVHW4E/xfLI7WcceW3/ioaciyKcdRGUMJoiu6/SIlo6VPJ/pBVLHiiy/455hBTVCbl+6mScnR
-	wmAku8nMk+Yun7lAZHbcEfYYFj6vcEA==
-X-Google-Smtp-Source: AGHT+IHVlZ6q95uroEIypdpjQbCuABwWzb7jPvXq7QWXyjT6+dlzAgyJCRMwTznOfewVnzIM/Cjhyw==
-X-Received: by 2002:a05:6a00:2450:b0:74c:f1d8:c402 with SMTP id d2e1a72fcca58-76ab101929fmr2149656b3a.8.1753833766071;
-        Tue, 29 Jul 2025 17:02:46 -0700 (PDT)
-Received: from localhost ([64.71.154.6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640b4c8516sm8967780b3a.106.2025.07.29.17.02.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Jul 2025 17:02:45 -0700 (PDT)
+	s=arc-20240116; t=1753834332; c=relaxed/simple;
+	bh=McVfknRJO2ItiJDLP9bbLxmtf27dEobQ2ayXeG0XqE4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R8ZBY8JAH8fS4uohEoXL19dW6fj8MrYr2utmr1XBeMsDr9HaySGssAIeEcS+fzMHBi2khTKoGDxQHbAi55TUwPammm/lMOM7F0JQVkqv/9ndZ/y6OOQ3xcr20lmpiv2mphoNooocdDfkfDdFWYag1u4m0ouaRpe+jMB5mhljBZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HGll/GeG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=VHtT7vYpAl0lXNyBpc02c8qfqUA/glzlTg9Rb6wRbOM=; b=HGll/GeGKmKJ/heVTz0EYE+QVD
+	jaO165xDGFk9l9BI9qk9ESpd9tg+6DdUV/ROANA02aVp/1fx8ta3sFvgEOlBRjwS4Rn8ystIKQgQd
+	WtRwnkAj/qh4gnql6G1ec1YbYzzekqJLb0gH4dKfDgVx5doQpiuocKV3oprSXDhhUfwg7DimgBfDx
+	XFXQoilZwRIDrd/aPX7vWqM/jgm5p+6zAiACGicMp6Iy/cEN5jHs3wFQ15Tgi8+YEa5e+nGQCjsqW
+	N5VI0Dky5hx1E54l9Waixtu3pcHqox3y4JORQ4q90GGjC2KHyn4mp/cE+amWNWMZo4dR9hlQnKh8Q
+	IbshnhCA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uguQP-00000000MOZ-1Kjd;
+	Wed, 30 Jul 2025 00:12:05 +0000
+Message-ID: <06e91cc6-ee85-4a90-b9e1-3d688b69c0e0@infradead.org>
+Date: Tue, 29 Jul 2025 17:12:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] i3c: fix module_i3c_i2c_driver() with I3C=n
+To: Arnd Bergmann <arnd@kernel.org>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Guenter Roeck <linux@roeck-us.net>, Boris Brezillon <bbrezillon@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Frank Li <Frank.Li@nxp.com>, Geert Uytterhoeven
+ <geert+renesas@glider.be>, linux-i3c@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250725090609.2456262-1-arnd@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250725090609.2456262-1-arnd@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Jul 2025 18:02:43 -0600
-Message-Id: <DBOY6KA7U0VE.1QR5VMO09T27H@brighamcampbell.com>
-Cc: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
- <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
- <linus.walleij@linaro.org>, <neil.armstrong@linaro.org>,
- <jessica.zhang@oss.qualcomm.com>, <sam@ravnborg.org>,
- <skhan@linuxfoundation.org>, <linux-kernel-mentees@lists.linux.dev>,
- <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/3] drm/panel: novatek-nt35560: Fix invalid return
- value
-From: "Brigham Campbell" <me@brighamcampbell.com>
-To: "Doug Anderson" <dianders@chromium.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250729054435.1209156-1-me@brighamcampbell.com>
- <20250729054435.1209156-2-me@brighamcampbell.com>
- <CAD=FV=VUdfTT4AJk77BFXWy7q_je0EbRKWc=nUVevbgitkn0gw@mail.gmail.com>
-In-Reply-To: <CAD=FV=VUdfTT4AJk77BFXWy7q_je0EbRKWc=nUVevbgitkn0gw@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue Jul 29, 2025 at 3:33 PM MDT, Doug Anderson wrote:
->>
->> Fixes: 7835ed6a9e86 ("drm/panel-sony-acx424akp: Modernize backlight hand=
-ling")
->
-> I think your Fixes tag is wrong, actually. I think it needs to be:
->
-> Fixes: 8152c2bfd780 ("drm/panel: Add driver for Sony ACX424AKP panel")
+On 7/25/25 2:06 AM, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> When CONFIG_I3C is disabled and the i3c_i2c_driver_register() happens
+> to not be inlined, any driver calling it still references the i3c_driver
+> instance, which then causes a link failure:
+> 
+> x86_64-linux-ld: drivers/hwmon/lm75.o: in function `lm75_i3c_reg_read':
+> lm75.c:(.text+0xc61): undefined reference to `i3cdev_to_dev'
+> x86_64-linux-ld: lm75.c:(.text+0xd25): undefined reference to `i3c_device_do_priv_xfers'
+> x86_64-linux-ld: lm75.c:(.text+0xdd8): undefined reference to `i3c_device_do_priv_xfers'
+> 
+> This issue was part of the original i3c code, but only now caused problems
+> when i3c support got added to lm75.
+> 
+> Change the 'inline' annotations in the header to '__always_inline' to
+> ensure that the dead-code-elimination pass in the compiler can optimize
+> it out as intended.
+> 
+> Fixes: 6071d10413ff ("hwmon: (lm75) add I3C support for P3T1755")
+> Fixes: 3a379bbcea0a ("i3c: Add core I3C infrastructure")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Oh, good catch! I thought that 7835ed6a9e86 introduced that code instead
-of just reorganizing it. I'll remember to take a closer look at the git
-tree next time I add a Fixes tag to a commit and I'll address this in
-v3.
+Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
 
-Thanks,
-Brigham
+Thanks.
+
+> ---
+>  include/linux/i3c/device.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/i3c/device.h b/include/linux/i3c/device.h
+> index b674f64d0822..7f136de4b73e 100644
+> --- a/include/linux/i3c/device.h
+> +++ b/include/linux/i3c/device.h
+> @@ -245,7 +245,7 @@ void i3c_driver_unregister(struct i3c_driver *drv);
+>   *
+>   * Return: 0 if both registrations succeeds, a negative error code otherwise.
+>   */
+> -static inline int i3c_i2c_driver_register(struct i3c_driver *i3cdrv,
+> +static __always_inline int i3c_i2c_driver_register(struct i3c_driver *i3cdrv,
+>  					  struct i2c_driver *i2cdrv)
+>  {
+>  	int ret;
+> @@ -270,7 +270,7 @@ static inline int i3c_i2c_driver_register(struct i3c_driver *i3cdrv,
+>   * Note that when CONFIG_I3C is not enabled, this function only unregisters the
+>   * @i2cdrv.
+>   */
+> -static inline void i3c_i2c_driver_unregister(struct i3c_driver *i3cdrv,
+> +static __always_inline void i3c_i2c_driver_unregister(struct i3c_driver *i3cdrv,
+>  					     struct i2c_driver *i2cdrv)
+>  {
+>  	if (IS_ENABLED(CONFIG_I3C))
 
