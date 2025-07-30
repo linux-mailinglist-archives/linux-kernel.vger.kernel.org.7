@@ -1,141 +1,123 @@
-Return-Path: <linux-kernel+bounces-750573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95F0B15E35
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:31:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1490BB15E37
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:32:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACDD75A0724
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:30:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A433AFAF0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB4128727F;
-	Wed, 30 Jul 2025 10:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7C626E6ED;
+	Wed, 30 Jul 2025 10:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZDAqZU7W"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mlLcHO1U"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E85F7E0E4;
-	Wed, 30 Jul 2025 10:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B2F7E0E4
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753871469; cv=none; b=tHHVcbSHdBiBZAUyHVsv9PYM37FetZYoz8uPBH8PRhI0UfyGxYn7KFCr8O7Y2qJz0PrszpLOZ52zX0j1bEqiDZfSVGg3rhPqQYS5qQH6FFPAnFZlNsGnvanN3l9UNQeFRj938jzVsfLJhoizcFt2qVvNOplNMxT9YKkXC4edtfQ=
+	t=1753871537; cv=none; b=TF6hU/DwKt/bEEPSVF7+exOeOwySae5Zv8oJyPw9ixQYdWszyU4zjlp7QZ6QJ2bCx+GnnrPfJ+eEG6XPX8no9RYTBQuLcI92lUxSk1LOvJ5R4VLTHIlAApXS5vtJcFak4qEcNoZqulDXDCC0KkXFd3207nvaaRKjsnixycUPqK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753871469; c=relaxed/simple;
-	bh=Wj6Wnx2sWzhyx4bQecfvZRebRBN4LRl9qY5cwtiXLBs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UoR4hy9Yvxn+pozjh/otMW/H8pedkoKtW4yD+NP9exm+BTSaoXzGIH1tp4+izn5BS7ztlnzw+e70Slk24XJQDtw6d+bO+oBdMnlaJyyhAKW27zJZ4EffGSEMCPzeIslYui+JZIp3MTRwuxNb8L/6sD3ieyNm21zaknQObKqzl7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZDAqZU7W; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U5bkp6027687;
-	Wed, 30 Jul 2025 10:30:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	J4ToOZRboBSrW8N0k/DtdgMfDMbgGeL0feKV1DAO8co=; b=ZDAqZU7WNKkm7tSN
-	viyC+OUT4+0FqSjuVy1CzQUu2I395B+QBzR1p/fpjRDlbHjcoGzDr1gpDfq8Caf3
-	m7ZzE9m6szZzsHQtwmZBz2fOWiTIYrh3mAeOeHHCi/oTCv224vaBOEkDGA8oFzG5
-	xuQSJG2ZojDQazhsKrrlXAFIB0vyFO/PexL/JNrPL8njSCfJEN6xfo2myy8YmPRZ
-	Y3GBoS4UPn2PJ4tQ2aTo2AbBqhbFqUBDj8rFiZaTMu7C8DZzq/AO+ntJ4ujcc+SX
-	4CsszWAgz+c+toTs+tSiAsL144QaSOUWiMsalSFqNa0B/4WxX0AQuxQ32f5iz1P1
-	uAFqQw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4860ep0qw9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 10:30:57 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56UAUuX0021581
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 10:30:56 GMT
-Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 30 Jul
- 2025 03:30:52 -0700
-Message-ID: <6580fe88-721a-4d78-baef-514de681d072@quicinc.com>
-Date: Wed, 30 Jul 2025 16:00:49 +0530
+	s=arc-20240116; t=1753871537; c=relaxed/simple;
+	bh=xY0cGAduPMxd5tMAYBCMfqbxzSqavrO5JyNnwoCIJHQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FQ9+pQwyvQuIxvW5z83P+jDwBEEg6G1ZFbbQYg2E05C1DDmySMEbpb2JhtTmt4j2KLVU7cn23cN7gkDFWtVNR3EN3PTBytLZabCslDghgPhZC5MIa/21hUCZpcdjoAogd1Utcq5IBveMedHNQdJPg+jScD2Xg8kTkR6j/snxn0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mlLcHO1U; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753871536; x=1785407536;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=xY0cGAduPMxd5tMAYBCMfqbxzSqavrO5JyNnwoCIJHQ=;
+  b=mlLcHO1UtPvyAkVEi6DWUxZkIXMG0cDMcgZjvsh6Ks3vKcNWFXr7sa3b
+   yHRJPByCtD0xo6vwp2g3UnlzwekgqiQX0t3CCuhgzN8FIUT/DHCy5vk2V
+   9t+mMFNjHhBjyzMf8kWF5FbYdmxQlSCud7PYhnY+7LJcLd73foPLTnamJ
+   L49Ms7FBNcyyIunbi3mmBid/jic9APRd7kwAtbjO1lT85U9eyBinXcosr
+   zh9MJVfLotVghuzQ1S25IzJr3HvtgK9pH/l4LbL7myWfyFrpcM2wPeIxG
+   fo5nW9fE5Q6qEPmu3w1RkYSCGfx/YGgWuB2E6BEbQXRAwDMqh00Ra82Hu
+   w==;
+X-CSE-ConnectionGUID: dr0xeJbJQdO+FJofY5klBg==
+X-CSE-MsgGUID: CAK8OvvPTzOWPf9YKlS34g==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="59808647"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="59808647"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 03:32:15 -0700
+X-CSE-ConnectionGUID: eI3AQv9KRMevZgfTBjMV8w==
+X-CSE-MsgGUID: ltEV/2/KTsCZXYhDXdqRuA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="162979081"
+Received: from carterle-desk.ger.corp.intel.com (HELO localhost) ([10.245.246.74])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 03:32:10 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, Vignesh
+ Raghavendra <vigneshr@ti.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Tomas Winkler <tomasw@gmail.com>, Alexander Usyskin
+ <alexander.usyskin@intel.com>, Raag Jadav <raag.jadav@intel.com>
+Cc: linux-mtd@lists.infradead.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, Geert
+ Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH] mtd: MTD_INTEL_DG should depend on DRM_I915 or DRM_XE
+In-Reply-To: <07f67ab8ee78f6bf2559131e193381aafff7479a.1753870424.git.geert+renesas@glider.be>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <07f67ab8ee78f6bf2559131e193381aafff7479a.1753870424.git.geert+renesas@glider.be>
+Date: Wed, 30 Jul 2025 13:32:07 +0300
+Message-ID: <d947168fd02d6f820159b456099e6aa8f465b633@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Enable MCQ support for
- UFS controller
-To: Krzysztof Kozlowski <krzk@kernel.org>, <mani@kernel.org>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>, <agross@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
- <20250730082229.23475-3-quic_rdwivedi@quicinc.com>
- <4f52b237-7380-46f3-9a26-bf3c11274523@kernel.org>
-Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <4f52b237-7380-46f3-9a26-bf3c11274523@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Mpx3EiDzVgQqSBJcA6Zjxb0IsqdyQszk
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA3MiBTYWx0ZWRfX/H8pvYu3qWdz
- S1kRKFbTRcRYDsdxhy6x0Tl9OfPno+RYA9gLZ9HwTWrei6viW3ZtpNxx47Ca6F/N2ZU4zHZMpm/
- l101ku7NJ/EhBiCYqoE26Y7Uj7agbz79jLz9Yc3nz6o56Fl1bp7c0ffnN51YXp9qVgby2X8u7Q+
- A0eZQpw0OEFlRsbyomuvdllCIyPyuP//EZi+6P+yYDtzDkhRZ7XLCXAUxxNdcTlxgl5CrjGQMS3
- hnhGeChIGKsEzaAgEaupSGfOyOK/jABhO/W+UmTvNzCnADOyYgW75H8QnFfLC+boMz3Eorx4gzl
- 4VxvKLe6b9FN3mhCPIcNNStFDMoATgiGdG6xvyVc6+irc/QM5eVuM7xoax1OuBBmpZfDYPstsXA
- gj3iaTzOmDdlDA97nEdn8oFgBiMaaGyWbiSpPavmqQH7oln7BE9y4pzItDXMSJIoxbQRbVSz
-X-Authority-Analysis: v=2.4 cv=DIWP4zNb c=1 sm=1 tr=0 ts=6889f461 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
- a=pCQ47apHa_6Vw97M47QA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: Mpx3EiDzVgQqSBJcA6Zjxb0IsqdyQszk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 mlxscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507300072
+Content-Type: text/plain
+
+On Wed, 30 Jul 2025, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+> Intel Discrete Graphics non-volatile memory is onlt present on intel
+> discrete graphics devices, and its auxiliary device is instantiated by
+> the Intel i915 and Xe2 DRM drivers.  Hence add dependencies on DRM_I915
+> and DRM_XE, to prevent asking the user about this driver when
+> configuring a kernel without Intel graphics support.
+>
+> Fixes: ceb5ab3cb6463795 ("mtd: add driver for intel graphics non-volatile memory device")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  drivers/mtd/devices/Kconfig | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mtd/devices/Kconfig b/drivers/mtd/devices/Kconfig
+> index 46cebde79f34b0b7..f0ab74d695347117 100644
+> --- a/drivers/mtd/devices/Kconfig
+> +++ b/drivers/mtd/devices/Kconfig
+> @@ -185,8 +185,8 @@ config MTD_POWERNV_FLASH
+>  
+>  config MTD_INTEL_DG
+>  	tristate "Intel Discrete Graphics non-volatile memory driver"
+> -	depends on AUXILIARY_BUS
+> -	depends on MTD
+> +	depends on AUXILIARY_BUS && MTD
+> +	depends on DRM_I915 || DRM_XE || COMPILE_TEST
+
+I understand the intent, but IIUC auxiliary bus usage should not require
+a "depends on" relationship. Couldn't you have MTD_INTEL_DG=y and
+DRM_I915=m just fine?
+
+BR,
+Jani.
 
 
+>  	help
+>  	  This provides an MTD device to access Intel Discrete Graphics
+>  	  non-volatile memory.
 
-On 30-Jul-25 2:42 PM, Krzysztof Kozlowski wrote:
-> On 30/07/2025 10:22, Ram Kumar Dwivedi wrote:
->> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
->> on the Qualcomm SM8650 platform by updating the device tree node. This
->> includes adding new register regions and specifying the MSI parent
->> required for MCQ operation.
->>
->> MCQ is a modern queuing model for UFS that improves performance and
->> scalability by allowing multiple hardware queues. 
->>
->> Changes:
->> - Add reg entries for mcq_sqd and mcq_vs regions.
->> - Define reg-names for the new regions.
->> - Specify msi-parent for interrupt routing.
-> 
-> 
-> We see that from the diff. Drop redundant description, your first
-> paragraph already said this.
-> 
-> Best regards,
-> Krzysztof
-
-
-Hi Krzysztof,
-
-I will update it in the next patchset.
-
-Thanks,
-Ram.
+-- 
+Jani Nikula, Intel
 
