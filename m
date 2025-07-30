@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-751378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24A5B168D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:06:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FCE6B168F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:17:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B7087B122A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:05:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCC9018C56F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5033822A804;
-	Wed, 30 Jul 2025 22:06:30 +0000 (UTC)
-Received: from mail-pf1-f194.google.com (mail-pf1-f194.google.com [209.85.210.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D96519C556
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 22:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5602820F078;
+	Wed, 30 Jul 2025 22:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="O77M/fGU"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471D4167DB7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 22:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753913190; cv=none; b=TJuqNZWd5jmhMiqGK3B3PPoYZVtSzEJoeLtwUK14tOlKl8IGCAB+xk8k+ZA6JJtNdobGkQOCcoqhUaI/bBhepsQuKkVgho4N89LvEXbeYoMos7/QoRwBxaSC9q1zPIlflcV2JVal+d/Pe+8C1pckcHo2h+h57b+I5fmMJyl3xxo=
+	t=1753913847; cv=none; b=nSl3MQnvq+EvUp+qIseHzA2wFvOVU/kOrniXrRm+tYqNyb3tb+g58iX29/tH9MnH4g9tM8jqe87VDjaKhYj9Em8+csGZmbeXGZzt/QJ4N+I+FHkMwUeait7aANx+/+xW3h7chr8qTq8udV4z+mq1mmr05F9Mymjc0IuxhQWekQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753913190; c=relaxed/simple;
-	bh=5FDyXQRbCQzjtmA0ZBTa4CrTmcIqeuFjE7UZ+wGrZ08=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=da/tn57foBk3LQEGD3N1oTIRUFt2ubaObmYeX2rGAk1N8DZZx+DHe79uIXOHY++z4ykryBPF0IJsxaFWKq5dFcc6zydsYJvr0a6R9BR1IX65A7L/4yo+FnoiQAPi3C2wNUOedGPigVjsmM8Xdx1mOumTpLLcZLR3IvSXKpen3rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.210.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f194.google.com with SMTP id d2e1a72fcca58-747e41d5469so316979b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 15:06:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753913188; x=1754517988;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CEntMuJf8K1VWn94KVCjax79vkBqXY4AtaSYgFOY52A=;
-        b=MSWqHfgtID4CdxXF2yaDME0ot9/JrwfonNCYgf/nzV+ShCL1pSJlHOspUagURKsdpK
-         GL+ClU19JEQOP17QBdBM2g4F9oeMD0xGWRbhoaAeQ6PT3A270cpnipoPqsxlxFDvSVJn
-         7kZBrY2Nb7nNQ0Pc/BKqwQTYalp4RK+q33nNRrgSlHumhVszN7Z8TvJWWd+4CjbGC+d5
-         MiGMAewyt1tF7h+rXdxOaqGO9IJQKP4LNOqUuL9kq2JcbChyH3ZTaAvGLmIkJI71Q3Jb
-         Q7f/e6WA4JRoL6rZCpXF8K/esaitHTz+dK9A9y6aHkjzkZS1FzR51+NzE4bp710Au+cq
-         9afQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW6mrmyEeEfEZ/o3VIgkFabJKn5fl3HBYD9Sv7wPCff9ELgHDNjDFrFdWlibtQ7+9NLxmrwKWin2HK+iS0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj1WO7N/Ygk3aCmbqh8eRlXixV6jDEXe0COyc3FeqyLiZprAnP
-	PlT4Hk4mY4KhcoQqcRiH3NtOZGTi5SwpVsQTkrakRkIlIS7vEJ0h4QbdLcgtxSPJT6dsXUWCBPS
-	t9gNTk8gkpw==
-X-Gm-Gg: ASbGncuoziRqqkEnboass5XaVpIJ/kfVuvNuWskX5+27NksTYXd8VBxONEORRj+2Uf5
-	9pO/Tyk1p2515796LFgt7CzBvAIdtKjmkp50J6wma8zHnDYBEwuXWBOAllGImBL7moIspoTVvWs
-	BUR/p0DhrGkOV0qQNtELGevZIcgkVOSbOtmak5dmSyLfazNhkre1GaoQDiJh07sCHmqi0HxWaOV
-	I9KlKKXeJ4MI+3lzh9LL0n7Ouja0EHTf3k0mNZJFOI3VdMNps9aagpvW0dkOZsSsi7AI2aYIg8m
-	Mk1+6x/gKS0r5diISPXjgHpHMN8wFagOG+NkKSeu3zG0fS3EGcVcUEWqtbziL8b7ySHzcSjbcQc
-	esnAmodI4JdcUUC5gVFbh
-X-Google-Smtp-Source: AGHT+IGKMwSJ63Nd2yH1XeUzJy9fbrTtsLW845jouCtlujT+wryYRIBOXBjfDANPssG0sgMTm8sLcA==
-X-Received: by 2002:a05:6a00:4b4e:b0:740:5927:bb8b with SMTP id d2e1a72fcca58-76aade688a3mr7553796b3a.0.1753913187759;
-        Wed, 30 Jul 2025 15:06:27 -0700 (PDT)
-Received: from localhost ([71.212.208.158])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7640872a180sm11482407b3a.29.2025.07.30.15.06.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 15:06:27 -0700 (PDT)
-From: Kevin Hilman <khilman@kernel.org>
-To: Sasha Levin <sashal@kernel.org>, corbet@lwn.net,
- linux-doc@vger.kernel.org, workflows@vger.kernel.org
-Cc: sashal@kernel.org, josh@joshtriplett.org, kees@kernel.org,
- konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
- rostedt@goodmis.org
-Subject: Re: [PATCH 1/4] agents: add unified agent coding assistant
- configuration
-In-Reply-To: <20250727195802.2222764-2-sashal@kernel.org>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <20250727195802.2222764-2-sashal@kernel.org>
-Date: Wed, 30 Jul 2025 15:06:26 -0700
-Message-ID: <7h1ppxcp0d.fsf@baylibre.com>
+	s=arc-20240116; t=1753913847; c=relaxed/simple;
+	bh=ddVPTpr4vlJtmcH42Kyjnj4MF0i/bfMojR6IIfEnIpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKKjQySZU1y328Xp6t5Ya5Viv1zg3pjXU3UZ6PNpkRiy3XfnzGtOTcQX4ONdap2biH4wQua9Yzis5yUuIguM+a41XdH6NNrAxEf4XRXQkH791QwZ4VEnNGqt7srT3XLkT5Hej2EUH8+B/fA7+gi0Udr3P9JzIgi/yKB+aSHtUUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=O77M/fGU; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id EED7314C2D3;
+	Thu, 31 Jul 2025 00:07:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1753913246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iiZLDAfEF+WO6c2mW5XQmquEWbHBp4FM+aN7ari3muw=;
+	b=O77M/fGUAz+iPaahe8hEHDJjg2yUndSGGQ/smAnVJMQ48f5miEliYFGzYAFHsS5A+3zVwB
+	PJJq1eKzISfZlPPQwDVf8lSlL+ef2fRNsSJCrMWyF6Juxk6ocaVg9Jw+Lt/c3mMmHv5/TM
+	w7SFUKGctTxDl2f+RU122UqrKrBKU8ruMH72NRuD/PII1nDZHFnthvzw95rt2jaW1WDbun
+	rJMFlHkWvDJOz3ynK0bFflHtGqYrgZAM1b7AvTcgih79s95MnCMJC6qjJskA8HAQtoebxR
+	lNU9k37E2hzUeBR5vJj7Eq9awPjTnobvWrel4mNq9BJ6yGOoA54gNhsDH+w9vQ==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id d224c4b4;
+	Wed, 30 Jul 2025 22:07:22 +0000 (UTC)
+Date: Thu, 31 Jul 2025 07:07:07 +0900
+From: asmadeus@codewreck.org
+To: Pierre Barre <pierre@barre.sh>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: Christian Schoenebeck <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
+	ericvh@kernel.org, lucho@ionkov.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: Use kvmalloc for message buffers
+Message-ID: <aIqXi6uBaWXtvgm3@codewreck.org>
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <2989343.ydHz1Oe0dO@silver>
+ <1fcc97fd-bf32-4ea1-82c1-74a8efb6359b@app.fastmail.com>
+ <2026737.7mX0AZtNi0@silver>
+ <bbf2ae2f-d0e6-4f8f-b359-128cd8d5539f@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <bbf2ae2f-d0e6-4f8f-b359-128cd8d5539f@app.fastmail.com>
 
-Sasha Levin <sashal@kernel.org> writes:
+(Added Willy in To, if you have time to advise on what's appropriate
+wrt. memory allocation here to use either as a contiguous virtual memory
+buffer or a scatterlist for various kind of dma used by transports
+that'd be appreciated)
 
-> Create a single source of truth for agent instructions in
-> Documentation/AI/main.md with symlinks for all major coding
-> agents:
-> - CLAUDE.md (Claude Code)
-> - .github/copilot-instructions.md (GitHub Copilot)
-> - .cursorrules (Cursor)
-> - .codeium/instructions.md (Codeium)
-> - .continue/context.md (Continue)
-> - .windsurfrules (Windsurf)
-> - .aider.conf.yml (Aider)
 
-This doesn't work for aider, probably because the .md it links to is not
-YAML.  When I start aider with this, I get:
+First - thanks for starting this thread, large contiguous allocations
+has been a problem reported regularly in the past, and no-one has had
+the energy to address it yet, but it's definitely something worth
+tackling.
 
-  aider: error: Couldn't parse config file: while scanning a simple key
-    in "/work/kernel/linux/.aider.conf.yml", line 3, column 1
-  could not find expected ':'
-    in "/work/kernel/linux/.aider.conf.yml", line 4, column 1
 
-Not related to this series, but related to aider... I'm curious if
-anyone has got aider to work with the kernel repo.  It seems to have
-problems with large repos.  When starting in the kernel, I get:
+Pierre Barre wrote on Wed, Jul 30, 2025 at 10:16:13PM +0200:
+> As a middle-ground, would it be acceptable to add a transport
+> capability flag indicating whether the transport requires contiguous
+> memory for DMA?
 
-  Unable to list files in git repo: cannot close exported pointers exist
-  Is your git repo corrupted?
-  Unable to read git repository, it may be corrupt?
-  cannot close exported pointers exist
+I think such a flag will be needed even if we do what Christian suggested:
+>> So a more reasonable solution instead might be using kvmalloc(), as suggested
+>> by you, and adjusting the individual transports such that they translate a
+>> virtual memory address to a list of physical addresses via e.g.
+>> vmalloc_to_page() if needed.
 
-but neither claude nor gemini-cli have any problems with the same repo.
+Start with a requires contiguous flag set for all transports except
+trans_fd (I'm not sure about usb, but I'm pretty sure all the rest need
+it); then each transport can figure out how to get a scatterlist or
+something they need from the allocation, so we don't need to have a big
+bang that breaks everything at the same time.
 
-The aider FAQ[1] mentions using .aiderignore to ignore parts of the
-repo, but even with an "ignore everything" rule, I get the same error,
-so something seems wrong with aider and large repos.
+I'm sure virtio's implem will come soon enough, but I don't see anyone
+working on RDMA or xen so fast.
 
-Kevin
+> 1. Add a P9_TRANS_REQUIRES_CONTIGUOUS flag to struct p9_trans_module
+> 2. Set this flag for virtio, xen, and rdma transports
 
-[1] https://aider.chat/docs/faq.html#can-i-use-aider-in-a-large-mono-repo
+This is a nit but I'd rather the flag go the other way around, e.g. no
+flag means requires contiguous and it's only set after confirming the
+transport works
+(I just looked at usb and struct usb_request makes me think some drivers
+use dma, so, yeah..)
+
+We can always turn it around later if the majority of transports handle
+it.
+
+
+> 3. Modify p9_fcall_init to check the flag:
+>      if (c->trans_mod->caps & P9_TRANS_REQUIRES_CONTIGUOUS)
+>         fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+>      else
+>         fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+
+I'm also curious if there's something more appropriate than kvmalloc wrt
+using either as a contiguous virtual memory buffer or a scatterlist, but
+I think this is fine for now unless someone knows of something more
+appropriate.
+
+
+Thanks,
+-- 
+Dominique Martinet | Asmadeus
 
