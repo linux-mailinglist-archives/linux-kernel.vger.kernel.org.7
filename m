@@ -1,180 +1,146 @@
-Return-Path: <linux-kernel+bounces-751213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43170B1667B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:45:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED54B1667D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D48F1AA31E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:45:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6229C166686
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807262E0B59;
-	Wed, 30 Jul 2025 18:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF512E06C3;
+	Wed, 30 Jul 2025 18:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DQTR+BRI"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ArWMqwR7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hiKK4tUW"
+Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5652BCFB;
-	Wed, 30 Jul 2025 18:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9CABE6C;
+	Wed, 30 Jul 2025 18:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753901099; cv=none; b=N4cfTjgp3IEDsamL4oAlVQrSbanZQnmGqByKmwDrMww2wU6NASuEaij8EW/WT8FdJkdvM/dlwlBu8eSNMemqwCO8hnLNy8GxgksykYhZD8/DA6B5Ibw6jTZclJeXDeF6c5nnp206xCHeoPusnNSSnYt3su83wbZnKKHbqet3g60=
+	t=1753901145; cv=none; b=Ty3CYneJNEwx73umpBKottwtT4MXnLSXtPYB2CpPAlEF0wC+vq4sJf/kVOztNbm+FGsqDdf9q6mwwa3ePwSqGxoAC6CPx1jEbx/zBvfMz8beXj5+upZPEz31PgoJsBbuW4XgHF4f2MSx9xE7AwuqPkp6EOlWmj4V2mviPRUIh+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753901099; c=relaxed/simple;
-	bh=DDzNrb4/KBwgOnqsjjO2c0fRBaYUNByny0LdYPhj7Xs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Vtwt803rII8thchgGgayaqsC2nj9+vPZreJfMhfOjHIRMgW62uKLQQ8bP8qlAsG/JM1O6HWRqfAtXc2MTsGc6//XFnW2giv5WTKVIHPG0olGik6DNJ4kp9iHPntOfOhNn9Mgtc0TM+p8ccLfBzFUB4HlBIvWXTq3ZeKzwI2DlfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DQTR+BRI; arc=none smtp.client-ip=198.47.19.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56UIiagb2823687;
-	Wed, 30 Jul 2025 13:44:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1753901076;
-	bh=TpA/iY6HaimgiIJXyRur9oIJCGOLfcmJvAehNpUMH2M=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=DQTR+BRIICbPG+m+2xwQTuD3eGv81YajwCL9NkicJEkYsyPGg8o/SzV2jq6cV+HCe
-	 KJVjvQXb6JXdl3GXsncrhG5A6JE9wlepnWb0pIDLz5pBxGcfBAoplnGbv7jKv0Rqy9
-	 RMeuN1hUp0Rba8rSU82HWiIubTM6M6rfwGXKqgQw=
-Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56UIia0X2121948
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Wed, 30 Jul 2025 13:44:36 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 30
- Jul 2025 13:44:36 -0500
-Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Wed, 30 Jul 2025 13:44:36 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56UIia1a1390304;
-	Wed, 30 Jul 2025 13:44:36 -0500
-Message-ID: <214ee37b-050a-4764-9d05-4afa7cc2f8bd@ti.com>
-Date: Wed, 30 Jul 2025 13:44:36 -0500
+	s=arc-20240116; t=1753901145; c=relaxed/simple;
+	bh=DML+pxg5472XMdWo/I3gaHRPJpUv/4fnoxH1XWFvbfE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=FWKsApg47l7NJ+zKxEsaLUCUZZks6OaVOHl8wacwCgpIdrV/oJ5544KDZ/FYVkhvVz/HNQq4tU8I6KF14nwTTlIzudbS7nhY1qeZnPU0nYWSO+DlcgivIyyYwh051iNW35oRC89SXvVdEHvNKCWO1OYM+zoyjy5LHN+7NAAYVVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ArWMqwR7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hiKK4tUW; arc=none smtp.client-ip=202.12.124.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id 11F761D0043E;
+	Wed, 30 Jul 2025 14:45:42 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Wed, 30 Jul 2025 14:45:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753901141;
+	 x=1753987541; bh=/r6ceY6wuLmPZxO2obp4/gZdNM/4IXxHbonw4d2nQfE=; b=
+	ArWMqwR7hD/w3J7bUCFuYrLZ0HhCHqnrWbhyP9BMFTm4mVMZqAgQXEShxcJG4Ixc
+	BxC8QnsMVChteLA+HQSqbqiQZlOKbYI/G5Z8ANgYh1jGZ9Pal9jF58lUwuBE/Ajm
+	Li4IpppdpFamfWhnTSheYPmAadCP1HC4115+ngguegX1Zq2eDOhm7UJNUBMee1Sx
+	DjnoI7tmrTbvI5TByJP9V2i8HnQmeWYZMkd0dgGFDn+joPpG3HORYQoHwAS9w45/
+	ft2d5BpjffF1plJJF7iip8c+OriCOloRnNxgAKU3YfqrF5RQ0LgaHVvYKZbP0UDp
+	eBjOIzKZHaqPLbRSycDatg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1753901141; x=
+	1753987541; bh=/r6ceY6wuLmPZxO2obp4/gZdNM/4IXxHbonw4d2nQfE=; b=h
+	iKK4tUWkuF4NE53qXW3FYuI9zWT/7elSOZ19zYsdxd3/4I/WAcvIR0riPUDInqRF
+	XrOYokynhJuwKQTWuSYDoIrKR2bA01L2fhldxJ1E+U9YdqhYLjxUjtDRiY0svDLc
+	00MiUtPOLetvD9UHgdeNeQsMu2WdvxU0Tire7QVFCKVieZM7+a+ZU/cfj1OSs9Bx
+	ags8ezt1CijxjQhFr/8CceQ1D3ZlIPC0ICRJM2Dj9a7FgiFXZE7p/BLTqIHiFCaS
+	HojzZ1Uuyj3zj8jgeQjDHtdc1o/N3aNb3edFi1nhABVmJiG3eEI/mh7Ewol6PLNR
+	vEaiyiRD9N1wnK2s/sTFQ==
+X-ME-Sender: <xms:VGiKaM3-og9oeXNg7TDOo9wljsRBftFKFsjTpO4s458ZOsk9vLCx-g>
+    <xme:VGiKaHHHRAxbLFba3De9JzwDTwyXJQUa1APUMi6iGipUn7JBRdQVbVP05MkzuZxql
+    K3rdwZ0_d0qMDjDNu8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelkeeilecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjug
+    hrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeejvdefhedtgeegveehfeeljeen
+    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnug
+    esrghrnhgusgdruggvpdhnsggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdp
+    rhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtohepshhfrhestggrnh
+    gsrdgruhhughdrohhrghdrrghupdhrtghpthhtoheptghhrhhishhtohhphhgvrdhlvghr
+    ohihsegtshhgrhhouhhprdgvuhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvghrnh
+    gvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhnuhig
+    qdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:VGiKaBOxyL1D1VkqoeaUWlVyV-Mx2RU2WOGCxHDnpRmQmZybpTxYoQ>
+    <xmx:VGiKaLnS6EjiD1xQV4aynnKIZJL06uNeP9BKAbdLNe7cqlLRJZ-tCg>
+    <xmx:VGiKaN7paHc0r3hlbiQjYgD9lFzfDm9FaiDpspvdSII-aemPzHSRTw>
+    <xmx:VGiKaH3F_cn6W738_4EnDnFxoqQH3TpAiRIcE4b0OuRm1xPyCJMIBg>
+    <xmx:VWiKaKV10Wj1loCmHSPdnPbPGBciNAEO1-pLjKWAh7nTjP-52Stwb6Ch>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id BABB6700065; Wed, 30 Jul 2025 14:45:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] remoteproc: core: Do not process carveout and devmem
- rsc in attach mode
-To: Beleswar Padhi <b-padhi@ti.com>, <andersson@kernel.org>,
-        <mathieu.poirier@linaro.org>
-CC: <hnagalla@ti.com>, <jm@ti.com>, <jan.kiszka@siemens.com>,
-        <christophe.jaillet@wanadoo.fr>, <linux-remoteproc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250724133144.3776839-1-b-padhi@ti.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <20250724133144.3776839-1-b-padhi@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-ThreadId: T1270fe1a31e2c778
+Date: Wed, 30 Jul 2025 20:45:19 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Bartosz Golaszewski" <brgl@bgdev.pl>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+ "Stephen Rothwell" <sfr@canb.auug.org.au>,
+ linux-next <linux-next@vger.kernel.org>
+Message-Id: <1457d4cc-512b-4dfe-bf2f-375af1fdbe94@app.fastmail.com>
+In-Reply-To: <0b738b01-8574-49b1-b89c-3c96e9a56b28@csgroup.eu>
+References: <20250723094558.5bcfca69@canb.auug.org.au>
+ <627cbb55-2a55-4124-8f6e-7b4ba0441558@csgroup.eu>
+ <6eac14b4-765b-4a29-b278-364dba47e0e9@app.fastmail.com>
+ <0b738b01-8574-49b1-b89c-3c96e9a56b28@csgroup.eu>
+Subject: Re: linux-next: duplicate patch in the fsl tree
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 7/24/25 8:31 AM, Beleswar Padhi wrote:
-> When attaching to a remote processor, it is implied that the rproc was
-> booted by an external entity. Thus, it's carveout and devmem resources
-> would already have been processed by the external entity during boot.
-> 
-> Re-allocating the carveouts in Linux (without proper flags) would zero
-> out the memory regions used by the firmware and can lead to undefined
-> behaviour. And there is no need to re-map the memory regions for devmem
-> resources as well.
-> 
+On Wed, Jul 30, 2025, at 16:23, Christophe Leroy wrote:
+> Le 30/07/2025 =C3=A0 15:55, Arnd Bergmann a =C3=A9crit=C2=A0:
+>> On Wed, Jul 30, 2025, at 15:41, Christophe Leroy wrote:
+>>>
+>>> Le 23/07/2025 =C3=A0 01:45, Stephen Rothwell a =C3=A9crit=C2=A0:
+>>>
+>>> I was going to send a pull request for this fix but I see the duplic=
+ate
+>>> patch is already tagged in the soc tree:
+>>>
+>>> $ git tag --contains 12702f0c3834
+>>> next-20250728
+>>> next-20250730
+>>> soc-drivers-6.17
+>>>
+>>> Shall I do anything or just ignore it and drop it from my tree ?
+>>=20
+>> Linus has already pulled the soc-drivers-6.17 tags, so I think
+>> both copies of the patch ended up in mainline and there is nothing
+>> left you can do to change that.
+>
+> The one in my tree is in Linux next, nowhere else for the time being a=
+s=20
+> far as I know, as it was not included in the pull request I sent three=20
+> weeks ago.
 
-So the zeroing of the memory seems to be one of the core issues, and as
-you know (just re-stating for folks following along) we internally carry
-some hacks that allows allocating from these carveouts without the core
-dma_alloc_coherent() zeroing the memory out. Those will not go upstream
-so skipping the allocations in the first place does seem logical here,
-but I'd like to better document what this implies.
+Ah right. I thought I saw it included in the branch I pulled
+from you when I looked earlier today, but I see I made a mistake
+now, as I had checked out a branch based on top of linux-next that
+included yours.
 
-For one, any requests for devmem and carveouts in the resource table
-will not be handled by Linux and so *must* be already fulfilled by the
-external entity that originally booted these rprocs.
-
-Two, since Linux is not providing these memory regions, it doesn't know
-they are in use by these rprocs, so we need to be sure to mark them as
-no-map or similar, reusable carveout regions will not work here.
-
-Lastly, I've been working on some plans to allow better passing of
-buffers to rprocs which currently requires the rproc framework have
-knowledge of which rprocs own which regions (for sanity checks,
-IOMMU translations, etc..). I'll have to think on how we can still
-associate these memories with the rprocs even if they were not
-allocated using the below path and don't end up in rproc->mappings.
-
-Andrew
-
-> Therefore, do not process the carveout and devmem resources in attach
-> mode by not appending them to the rproc->carveouts and rproc->mappings
-> lists respectively.
-> 
-> Signed-off-by: Beleswar Padhi <b-padhi@ti.com>
-> ---
-> Testing:
-> 1. Tested IPC with remoteprocs in attach mode in TI platforms.
-> [However, TI K3 platforms do not use resource table for carveouts,
-> all the memory regions are reserved statically in Device Tree.]
-> 
->   drivers/remoteproc/remoteproc_core.c | 30 ++++++++++++++++++++++++++++
->   1 file changed, 30 insertions(+)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index 825672100528..ef709a5fa73c 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -640,6 +640,20 @@ static int rproc_handle_devmem(struct rproc *rproc, void *ptr,
->   		return -EINVAL;
->   	}
->   
-> +	/*
-> +	 * When attaching to a remote processor, it is implied that the rproc
-> +	 * was booted by an external entity. Thus, it's devmem resources would
-> +	 * already have been mapped by the external entity during boot. There is
-> +	 * no need to re-map the memory regions here.
-> +	 *
-> +	 * Skip adding the devmem rsc to the mapping list and return without
-> +	 * complaining.
-> +	 */
-> +	if (rproc->state == RPROC_DETACHED) {
-> +		dev_info(dev, "skipping devmem rsc in attach mode\n");
-> +		return 0;
-> +	}
-> +
->   	mapping = kzalloc(sizeof(*mapping), GFP_KERNEL);
->   	if (!mapping)
->   		return -ENOMEM;
-> @@ -839,6 +853,22 @@ static int rproc_handle_carveout(struct rproc *rproc,
->   		return -EINVAL;
->   	}
->   
-> +	/*
-> +	 * When attaching to a remote processor, it is implied that the rproc
-> +	 * was booted by an external entity. Thus, it's carveout resources would
-> +	 * already have been allocated by the external entity during boot.
-> +	 * Re-allocating the carveouts here (without proper flags) would zero
-> +	 * out the memory regions used by the firmware and can lead to undefined
-> +	 * behaviour.
-> +	 *
-> +	 * Skip adding the carveouts to the alloc list and return without
-> +	 * complaining.
-> +	 */
-> +	if (rproc->state == RPROC_DETACHED) {
-> +		dev_info(dev, "skipping carveout allocation in attach mode\n");
-> +		return 0;
-> +	}
-> +
->   	dev_dbg(dev, "carveout rsc: name: %s, da 0x%x, pa 0x%x, len 0x%x, flags 0x%x\n",
->   		rsc->name, rsc->da, rsc->pa, rsc->len, rsc->flags);
->   
-
+      Arnd
 
