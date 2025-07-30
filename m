@@ -1,140 +1,166 @@
-Return-Path: <linux-kernel+bounces-750740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F8D4B16084
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:44:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12751B16087
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3BC18C720D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:45:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7B887A2BE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083682980B0;
-	Wed, 30 Jul 2025 12:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQpr8lWe"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E77295511;
+	Wed, 30 Jul 2025 12:44:57 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561E5217736;
-	Wed, 30 Jul 2025 12:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D19D277036;
+	Wed, 30 Jul 2025 12:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753879476; cv=none; b=LoivbqubktvMAZ37+JizjXf3+Af8b9jx50BdlCGGbyYAbE2xgS1YcdKA2cjeu5RBApqwUx9Qihqh1bXTUeZhpGLm3pYkHMkdn3dt8wr7asAgtuTKguzGkUID2bs6YLnvU2wsjKMEoxP6SfS46LNwHL8Qbj186ZN0onM4/HzCPjg=
+	t=1753879497; cv=none; b=EKXVzpoI3WptrM/OIesZgQkz2W+Da0T/k2Oz2b9K1wmpLvWJfj4K1T1wbV6tPqIveKQ6vwWadQq/ygxnYEMrxZdN4UytgsNPYfD4Fb5HtgMcky0aGFc37ZOFtVWjDLa/M5IRWgl+uI0r4OEWeqxU6IvWsP7ko+vP7A52nw7wzMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753879476; c=relaxed/simple;
-	bh=jCoiiWdENTEfMwdXA/0mmzNCCV7rvV0enSCM+Dcen5g=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ucO2ypipVsz+QjoIvOtPOtDFHvq/J9k5Y11KYwitxpYCkFkO229nbPRyb5394gjxM1xFed6pjAnUSrZJ2oAnvWkFUxBtmq24JeXAGAnf6xu7UQ0z3zq880dfxEVzoeGFh4RoalqonHNWWIeNkP13gQ5PHqTAJZqkwwWuA1+eap0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UQpr8lWe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 253DCC4CEE7;
-	Wed, 30 Jul 2025 12:44:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753879476;
-	bh=jCoiiWdENTEfMwdXA/0mmzNCCV7rvV0enSCM+Dcen5g=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=UQpr8lWen9uGW+/WsqGxilWkKjeYM3vz8AsUSBFO/23blC2MIz/HiCD3F4uVdsF2K
-	 N2US1i6G4qGQTMcPsGXVIZ+ygkbq98Z30K0ZLJyQOLdaoc4QagZbdk5MeOyCos/D5X
-	 zk+XBKr6CVoH/1rkYKUV84KXGjCFzNqDawJjML3KXMHsRqdC8KaEwqBmZqxvE6W7iF
-	 xj7Yt+LFe+BMSXWKF+PRSXbaXBlG3UwB28U4KU16eWWhH3cfTqL9DI9Leeof8VR06C
-	 N4xOo8uFbRD+JJtt9PCXyecadxuFAezIWcYKDg1l5kSq0+knY5FhzK5SShwkcGN0wy
-	 iHNnE58tixLSQ==
-Message-ID: <01f2c5d5-6321-49af-b73c-6924f46d6646@kernel.org>
-Date: Wed, 30 Jul 2025 14:44:30 +0200
+	s=arc-20240116; t=1753879497; c=relaxed/simple;
+	bh=lFRAr90NMgpAIDK0Ith2G3EuBCRB5q28p2q0r8Kxo1I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L2xp1vWEjXrPah1HUBE9WTpDToYmwECYmyvtPNdrVbRjd/8hy1APvzSZGTBAdO8srZUj3mRgW4NDiWKAZzRSKFQ4Uj+i88aMIrymBnDodoAUm9cLHzszQ5GlgB7rtRsod63FU3lp2ojXUjIUfLtXOPSefy7/bZY6b29a9ayjdkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97FDCC4CEE7;
+	Wed, 30 Jul 2025 12:44:54 +0000 (UTC)
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Gao Xiang <xiang@kernel.org>,
+	Chao Yu <chao@kernel.org>,
+	Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>,
+	Sandeep Dhavale <dhavale@google.com>,
+	Hongbo Li <lihongbo22@huawei.com>,
+	Bo Liu <liubo03@inspur.com>,
+	Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org,
+	linux-erofs@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] erofs: Do not select tristate symbols from bool symbols
+Date: Wed, 30 Jul 2025 14:44:49 +0200
+Message-ID: <da1b899e511145dd43fd2d398f64b2e03c6a39e7.1753879351.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 1/3] dt-bindings: ufs: qcom: Add reg and reg-names
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, mani@kernel.org,
- alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, agross@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
- <20250730082229.23475-2-quic_rdwivedi@quicinc.com>
- <466a42c4-54f5-45b2-b7f0-2d51695eac8e@kernel.org>
- <78998e50-a20c-41de-a2b8-a467475210cf@quicinc.com>
- <bc07c850-c3ba-48bf-8ca2-a6ffda8440e8@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <bc07c850-c3ba-48bf-8ca2-a6ffda8440e8@kernel.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 30/07/2025 13:33, Krzysztof Kozlowski wrote:
->>> "extending" but you are not extending at all.
->>>
->>> Recent qcom patches love to break ABI and impact users. No.
->>>
->>> Best regards,
->>> Krzysztof
->>
->>
->> Hi Krzysztof,
->>
->> Thanks for your feedback.
->>
->> Regarding your concern about this being an incompatible change — could you please clarify what specific aspect you believe breaks compatibility? 
->> From my side, I’ve carefully tested the patch and verified that it does not break any existing DTs. I ran the following command to validate against the schema:
-> 
-> 
-> I missed that earlier list is not actually used for SM8550 and SM8650.
-> The syntax is a bit confusing after looking only at diff, which probably
-> means this binding is getting messy.
-> 
-> I think binding should be just split the constraints are easier to follow.
+The EROFS filesystem has many configurable options, controlled through
+boolean Kconfig symbols.  When enabled, these options may need to enable
+additional library functionality elsewhere.  Currently this is done by
+selecting the symbol for the additional functionality.  However, if
+EROFS_FS itself is modular, and the target symbol is a tristate symbol,
+the additional functionality is always forced built-in.
 
-I sent a patch for splitting the bindings.
+Selecting tristate symbols from a tristate symbol does keep modular
+transitivity.  Hence fix this by moving selects of tristate symbols to
+the main EROFS_FS symbol.
 
-Best regards,
-Krzysztof
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+Triggered by noticing that commit 5e0bf36fd156b8d9 ("erofs: fix build
+error with CONFIG_EROFS_FS_ZIP_ACCEL=y") caused CONFIG_CRYPTO_DEFLATE
+and CONFIG_ZLIB_DEFLATE to change from m to y in m68k/allmodconfig.
+
+Unfortunately Kconfig cannot be changed easily to detect this
+automatically, as it cannot distinguish between a "bool" symbol
+representing a configurable option in a module, and a driver that cannot
+be a module.
+---
+ fs/erofs/Kconfig | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
+
+diff --git a/fs/erofs/Kconfig b/fs/erofs/Kconfig
+index 7b26efc271eec733..d81f3318417dff7c 100644
+--- a/fs/erofs/Kconfig
++++ b/fs/erofs/Kconfig
+@@ -3,8 +3,18 @@
+ config EROFS_FS
+ 	tristate "EROFS filesystem support"
+ 	depends on BLOCK
++	select CACHEFILES if EROFS_FS_ONDEMAND
+ 	select CRC32
++	select CRYPTO if EROFS_FS_ZIP_ACCEL
++	select CRYPTO_DEFLATE if EROFS_FS_ZIP_ACCEL
+ 	select FS_IOMAP
++	select LZ4_DECOMPRESS if EROFS_FS_ZIP
++	select NETFS_SUPPORT if EROFS_FS_ONDEMAND
++	select XXHASH if EROFS_FS_XATTR
++	select XZ_DEC if EROFS_FS_ZIP_LZMA
++	select XZ_DEC_MICROLZMA if EROFS_FS_ZIP_LZMA
++	select ZLIB_INFLATE if EROFS_FS_ZIP_DEFLATE
++	select ZSTD_DECOMPRESS if EROFS_FS_ZIP_ZSTD
+ 	help
+ 	  EROFS (Enhanced Read-Only File System) is a lightweight read-only
+ 	  file system with modern designs (e.g. no buffer heads, inline
+@@ -38,7 +48,6 @@ config EROFS_FS_DEBUG
+ config EROFS_FS_XATTR
+ 	bool "EROFS extended attributes"
+ 	depends on EROFS_FS
+-	select XXHASH
+ 	default y
+ 	help
+ 	  Extended attributes are name:value pairs associated with inodes by
+@@ -94,7 +103,6 @@ config EROFS_FS_BACKED_BY_FILE
+ config EROFS_FS_ZIP
+ 	bool "EROFS Data Compression Support"
+ 	depends on EROFS_FS
+-	select LZ4_DECOMPRESS
+ 	default y
+ 	help
+ 	  Enable transparent compression support for EROFS file systems.
+@@ -104,8 +112,6 @@ config EROFS_FS_ZIP
+ config EROFS_FS_ZIP_LZMA
+ 	bool "EROFS LZMA compressed data support"
+ 	depends on EROFS_FS_ZIP
+-	select XZ_DEC
+-	select XZ_DEC_MICROLZMA
+ 	help
+ 	  Saying Y here includes support for reading EROFS file systems
+ 	  containing LZMA compressed data, specifically called microLZMA. It
+@@ -117,7 +123,6 @@ config EROFS_FS_ZIP_LZMA
+ config EROFS_FS_ZIP_DEFLATE
+ 	bool "EROFS DEFLATE compressed data support"
+ 	depends on EROFS_FS_ZIP
+-	select ZLIB_INFLATE
+ 	help
+ 	  Saying Y here includes support for reading EROFS file systems
+ 	  containing DEFLATE compressed data.  It gives better compression
+@@ -132,7 +137,6 @@ config EROFS_FS_ZIP_DEFLATE
+ config EROFS_FS_ZIP_ZSTD
+ 	bool "EROFS Zstandard compressed data support"
+ 	depends on EROFS_FS_ZIP
+-	select ZSTD_DECOMPRESS
+ 	help
+ 	  Saying Y here includes support for reading EROFS file systems
+ 	  containing Zstandard compressed data.  It gives better compression
+@@ -147,8 +151,6 @@ config EROFS_FS_ZIP_ZSTD
+ config EROFS_FS_ZIP_ACCEL
+ 	bool "EROFS hardware decompression support"
+ 	depends on EROFS_FS_ZIP
+-	select CRYPTO
+-	select CRYPTO_DEFLATE
+ 	help
+ 	  Saying Y here includes hardware accelerator support for reading
+ 	  EROFS file systems containing compressed data.  It gives better
+@@ -163,9 +165,7 @@ config EROFS_FS_ZIP_ACCEL
+ config EROFS_FS_ONDEMAND
+ 	bool "EROFS fscache-based on-demand read support (deprecated)"
+ 	depends on EROFS_FS
+-	select NETFS_SUPPORT
+ 	select FSCACHE
+-	select CACHEFILES
+ 	select CACHEFILES_ONDEMAND
+ 	help
+ 	  This permits EROFS to use fscache-backed data blobs with on-demand
+-- 
+2.43.0
+
 
