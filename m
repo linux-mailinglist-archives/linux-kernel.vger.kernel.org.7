@@ -1,141 +1,157 @@
-Return-Path: <linux-kernel+bounces-751087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0560B16523
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:05:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10694B16529
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:07:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29A431738EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:05:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 408BD1AA05C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3460C2DE216;
-	Wed, 30 Jul 2025 17:05:22 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D1A15A8;
+	Wed, 30 Jul 2025 17:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ZBsuf+cs"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556041DFDAB;
-	Wed, 30 Jul 2025 17:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464994409
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 17:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753895121; cv=none; b=jeb64ItbfDILyaJFAHL5gBk98MJcOYNnDh3orK9GmS0Z6CzgydcpXcFqa2qxgLYlna8xhZJlb7Go/95/Ls2akmJ8XCE0E8mZtfA5Z9/onh+EGRWoj/o80nuFs1Mr22UPhagVqEmMg86SZAc8PfE81au0Mw7ZLd8udMrEJzcaC0o=
+	t=1753895258; cv=none; b=OA2dxNJ1z6HMWfvDJoZfJ6M2IJWvRH0p2xS6TpJDdQ9MCLV7hjKF8lvENjeUYlYTCT8AbNLQcuCrR7oPBvrDYwNaYvF5FYDovawgWtD/p9I8tru2xqKD8kHnFARLG3atsf+CCd3IaeIK+37zkpYMYHid2LKqTY/gkBdWD2avmjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753895121; c=relaxed/simple;
-	bh=Fz9AmItsSE1gQvYxIaSsn8ZhUticrdNuFl7P2+VOuo0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=karARQpfRdCvimQQ2fV8a0U+6oJVhcM5p/KpDqZ1CihYgFij45Ki4LCwqNBMD9quzu5cFdyhgpUDOnznXI7+xNnJwg2Wcj+GbvZrqbMqUKEjZwPhRd/xHGDyOKcDmvQ/vNjfj3nLGiOXhKfGp2qJewgmXg5yOCziMgUuFHo6sVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay05.hostedemail.com (Postfix) with ESMTP id 2F1B2593DB;
-	Wed, 30 Jul 2025 17:05:17 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id A1ED230;
-	Wed, 30 Jul 2025 17:05:14 +0000 (UTC)
-Date: Wed, 30 Jul 2025 13:05:31 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Greg KH <greg@kroah.com>,
- corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
- josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
- linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>, "Dr. David Alan Gilbert"
- <linux@treblig.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <20250730130531.4855a38b@gandalf.local.home>
-In-Reply-To: <aIpKCXrc-k2Dx43x@lappy>
-References: <20250727195802.2222764-1-sashal@kernel.org>
-	<7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
-	<2025072854-earthen-velcro-8b32@gregkh>
-	<df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
-	<20250730112753.17f5af13@gandalf.local.home>
-	<158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
-	<20250730121829.0c89228d@gandalf.local.home>
-	<aIpKCXrc-k2Dx43x@lappy>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753895258; c=relaxed/simple;
+	bh=DX1GHJEw+yV3RRzbL6bG3xAge8rpg3j/1QwDNAVuivQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=MHQnJUyAGtL5lAbnpqjfjYDcUIBX/sh+OAizpzVKC0g88G/rm7q6ZOJ5QyhunKrVrXdkcHvdJWcUFs1ZqByGlY9xD2QxJOjJCmEpVaYvSu6IG4t3C65qMVB+qlUCPLM6OglXFJgGP5E77JuguDtpOKtuVQcphRiaCdrKZ8rHtOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ZBsuf+cs; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b42249503c4so367303a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:07:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753895256; x=1754500056; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iwvX/+FCFrBIkeHTGaFzh+izLhsSIPbGbCbxZr6W88I=;
+        b=ZBsuf+csfQxlgG2dSBYTLs1gPALrU6SoJDDl9czF8f/3d8IZ9IsaGKAhNBhVxN+V/N
+         FnSSSzzQ1jCuWK+GoYb8h/bBNpNv7RXpgoaYtOovvmPHfZaStEhPocDnEyxW1OhJPafi
+         LgcxVUvx+1Uz5J3D07ZAG5Oc+YYyjE9Um2Q/ZrzCfL0TyIILLAAWmEaQxqM2Dg8O7deE
+         yKIhPMDHf9AEOVMiDcNuDp8cnPnu7h8QSW+tasDYTVGWvoYtptTByYdIkP4wN1IZgORk
+         XZ3Nvk3Ae8HGPeOnXKnUpt4IqW2w9x0qlJ2ZQto1xx5AZZjD7mi1yWv55LkHj5sU/HLh
+         QDbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753895256; x=1754500056;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iwvX/+FCFrBIkeHTGaFzh+izLhsSIPbGbCbxZr6W88I=;
+        b=OXaNC7whZuVHhl3FPuhSOwulr8eg5eYn56eOQMhkzVPUfLxjAqfZijKNlIUOtN4lCC
+         WIbklmlk2aRT2g/b7weKU/VMtozZka1W/gseg0Wu0WHTwS0qi0dyXXz9NjZR1YSuplLs
+         ySmliafctZquzxVPBKHrZa495mi4XLBqAU5QWbxCJBEJr/kWukjPyeT6R55xr+iC6bzE
+         KiNKE6KwEX4HKh3ue7orswiiR/sEkaggrbN9ZSH4MyM0SRxoEOjsUHj5lbSg1V49MYYD
+         UEpg8jLgI4Qh63pkhnNdc9NwzgSzgvCgN2Tv8T/ArSybu/uFktOuLwCTJgyvTVk7gNF6
+         jl+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUW6v515BrqouW+RZT56GThDrGYf4I6VxdYdJGazN/wO52xHVNZTPh9CPv8CO65q5xs0ETtMFyPgjLB5uM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHkMwYu9+szhDZlIPUXMq/jsnTLLipeernffZRZZLuk1QfL4CN
+	Sf2DmiBp3BlfrgMYeRD1fdzBc9rszlSPJ2lillnkOq4OuRw8Vi9l4mR+4o5aMYdIboL1A61ZNtD
+	b1Fu0/g==
+X-Google-Smtp-Source: AGHT+IFRpqzleLfhY584F3gS5nWpI1NhhfzwuIDnKy5qdpfvKqCIZN9aFroMt2PQhlQ+ZIOuvhwlGyX2lGc=
+X-Received: from pjee12.prod.google.com ([2002:a17:90b:578c:b0:313:246f:8d54])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:f54c:b0:240:b884:2fa0
+ with SMTP id d9443c01a7336-240b8843050mr21999235ad.26.1753895256448; Wed, 30
+ Jul 2025 10:07:36 -0700 (PDT)
+Date: Wed, 30 Jul 2025 10:07:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: ntgnn1j57rcamjw4pf3r96jnx45bu66s
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: A1ED230
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX19dTV0CfTG6wTPdg8qBFlf7zLOvV2ojrNQ=
-X-HE-Tag: 1753895114-634474
-X-HE-Meta: U2FsdGVkX1/hx5wyE7EefGyESyhBxTHzA6Du3wDY4KWgk0CBQqzFge6OybgrVWuEAjuOnojzW/rX3g0+ZM3T4qbCEm8ZbcpLlzM+l6C6Z5Bowm1UfXkfrZRAe7pa8HtZp/UI+VadRmxwa2Gjsiv5OYjZXDpiq894ddKZNz9K1CippgOZjR/1itAB/CFZcT/GxkNWWxO6qkBgyK+lSwvXjyn+etHmNxbg4WhpfPjHHC+AtAiv64dh2+2Bb74BOcEotuVxtdRhzCo7AkJgTPZQyC1lkJmrr7EeKPZIBYIVCdIcU5+ZfSD7blGBGOWkdZ5Xy8F7qUskanRDCK0hb3CYmfZOebO0E4SXGkQPIjo7uYPaYldLc1N8E9yLve/inluZ
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250730170733.3829267-1-surenb@google.com>
+Subject: [PATCH 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles a THP hole
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: peterx@redhat.com, david@redhat.com, aarcange@redhat.com, 
+	lokeshgidra@google.com, surenb@google.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 30 Jul 2025 12:36:25 -0400
-Sasha Levin <sashal@kernel.org> wrote:
+When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
+encounters a non-present THP, it fails to properly recognize an unmapped
+hole and tries to access a non-existent folio, resulting in
+a crash. Add a check to skip non-present THPs.
 
-> >
-> >That sounds pretty much exactly as what I was stating in our meeting. That
-> >is, it is OK to submit a patch written with AI but you must disclose it. It
-> >is also the right of the Maintainer to refuse to take any patch that was
-> >written in AI. They may feel that they want someone who fully understands  
-> 
-> This should probably be a stronger statement if we don't have it in the
-> docs yet: a maintainer can refuse to take any patch, period.
+Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Cc: stable@vger.kernel.org
+---
+ mm/userfaultfd.c | 38 +++++++++++++++++++++++---------------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
 
-I disagree with that. They had better have technical reasons to refuse to
-take a patch. I would have big qualms if a maintainer just said "I don't
-like you and I'm not going to take any patches from you".
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index cbed91b09640..60be8080ddd0 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -1818,27 +1818,35 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
+ 
+ 		ptl = pmd_trans_huge_lock(src_pmd, src_vma);
+ 		if (ptl) {
+-			/* Check if we can move the pmd without splitting it. */
+-			if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+-			    !pmd_none(dst_pmdval)) {
+-				struct folio *folio = pmd_folio(*src_pmd);
++			if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)) {
++				/* Check if we can move the pmd without splitting it. */
++				if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
++				    !pmd_none(dst_pmdval)) {
++					if (pmd_present(*src_pmd)) {
++						struct folio *folio = pmd_folio(*src_pmd);
++
++						if (!folio || (!is_huge_zero_folio(folio) &&
++							       !PageAnonExclusive(&folio->page))) {
++							spin_unlock(ptl);
++							err = -EBUSY;
++							break;
++						}
++					}
+ 
+-				if (!folio || (!is_huge_zero_folio(folio) &&
+-					       !PageAnonExclusive(&folio->page))) {
+ 					spin_unlock(ptl);
+-					err = -EBUSY;
+-					break;
++					split_huge_pmd(src_vma, src_pmd, src_addr);
++					/* The folio will be split by move_pages_pte() */
++					continue;
+ 				}
+ 
++				err = move_pages_huge_pmd(mm, dst_pmd, src_pmd,
++							  dst_pmdval, dst_vma, src_vma,
++							  dst_addr, src_addr);
++			} else {
++				/* nothing to do to move a hole */
+ 				spin_unlock(ptl);
+-				split_huge_pmd(src_vma, src_pmd, src_addr);
+-				/* The folio will be split by move_pages_pte() */
+-				continue;
++				err = 0;
+ 			}
+-
+-			err = move_pages_huge_pmd(mm, dst_pmd, src_pmd,
+-						  dst_pmdval, dst_vma, src_vma,
+-						  dst_addr, src_addr);
+ 			step_size = HPAGE_PMD_SIZE;
+ 		} else {
+ 			if (pmd_none(*src_pmd)) {
 
-This is a community project, and maintainers have been overridden before.
-Luckily, Linus has been pretty good at getting changes into the kernel when
-there was no clear technical argument that they should not be accepted.
+base-commit: 01da54f10fddf3b01c5a3b80f6b16bbad390c302
+-- 
+2.50.1.552.g942d659e1b-goog
 
-I believe the policy is that a maintainer may refuse any patch based on
-technical reasons. Now, patches can and are delayed due to maintainers just
-not having the time to review the patch. But that is eventually resolved if
-enough resources come into play.
-
-My point here is that AI can now add questions that maintainers can't
-answer. Is it really legal? Can the maintainer trust it? Yes, these too can
-fall under the "technical reasons" but having a clear policy that states
-that a maintainer may not want to even bother with AI generated code can
-perhaps give the maintainer something to point to if push comes to shove.
-
-> 
-> >what that patch does, and AI can cloud the knowledge of that patch from the
-> >author.  
-> 
-> Maybe we should unify this with the academic research doc we already
-> have?
-
-I wouldn't think so. This is about submitting patches and a statement there
-may be easier found by those about to submit an AI patch. Just because they
-are using AI doesn't mean they'll think it's an academic research.
-
-> 
-> This way we can extend MAINTAINERS to indicate which subsystems are
-> more open to research work (drivers/staging/ comes to mind) vs ones that
-> aren't.
-
-I wouldn't call it research work. Right now people who may be playing with
-AI models may think it's "research", but that's not going to be the
-majority of AI submissions.
-
-> 
-> Some sort of a "traffic light" system:
-> 
->   1. Green: the subsystem is happy to receive patches from any source.
-> 
->   2. Yellow: "If you're unfamiliar with the subsystem and using any
->   tooling to generate your patches, please have a reviewed-by from a
->   trusted developer before sending your patch".
-> 
->   3. No tool-generated patches without prior maintainer approval.
-
-Perhaps. Of course there's the Coccinelle scripts that fix a bunch of code
-around the kernel that will like be ignored in this. But this may still be
-a good start.
-
--- Steve
 
