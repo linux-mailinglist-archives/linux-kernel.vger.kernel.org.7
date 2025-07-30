@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-750643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8134B15F1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:11:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9186EB15F23
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC299188384B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:11:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 133CB7A9BD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC7028DEE0;
-	Wed, 30 Jul 2025 11:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TI+oVnhc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0D1239E81
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA5028031D;
+	Wed, 30 Jul 2025 11:11:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 790501E2848;
+	Wed, 30 Jul 2025 11:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753873788; cv=none; b=Ty2zHgct6v7bBaKZUvrjl2zak2OYqWNal3D+dCk7qxlTUyKlnQ3Y2N/3+oahGU1PTEds8V7dltDNVZ0MdnyU5Ty8kG7BPKDCYPGDhVGQTbPNNwDEpFth0xPXaTDdHc7MBDa1Z+6j0LsmjozQdWlylOfqWUdVY0EYqEG8z0uuTSU=
+	t=1753873901; cv=none; b=UJ3hi4dMFEjba4ANqOxFOa059n/1Hvxj52D0sOFin70f85zGbtQhfQAcvBxA6vPzY+qQLwTqUpF/ehAV5uQAs+U5jWprAfYmSj4i3r3xCAjHlqIs74l2Q7NdaV/DQlSmLEq7Qckzb9RvuY5ikbZtKdCdd/dYefW+se4gfXyeAo0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753873788; c=relaxed/simple;
-	bh=0CNjdPeIjNe/Cr8sVG0T9YvP+Ef20nkwmViNCVeY6D4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QefR/XfEFw4DjsEo+MXOMgrekXrAvI1T/7PxEVkESq4Rtdo4TCRvubHqXbzh8lcFKCVTOSJzJCSNySH2FR3ed+Fgr0kkJm7PPu0Lo10psJ3ld6PSlJyc966uikv0vrK87jjnatl5O+YkYc4MjXZ25Q91I+EDI4vqJjaDgeKYsEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TI+oVnhc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30DD1C4CEE7;
-	Wed, 30 Jul 2025 11:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753873787;
-	bh=0CNjdPeIjNe/Cr8sVG0T9YvP+Ef20nkwmViNCVeY6D4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TI+oVnhcSrTOFD+Zrt/5XD+vWnJ9HOWXqNFPqlCoi13+zCBM9llHXlTLfTcVzjFGQ
-	 /DJLdWvPNNmWlBO21+l6zZUjf7tGRWZ2SyAUpFgROLtL9rQxQH1smbJu3jCqsE8rTy
-	 qpf5ds5uyXJUYpqf/EUEqvSmXVPljL9RLWAd9pC7/5ZDNCgGRuwzNrRssxl4a4LXiU
-	 ai4oBDRZY0qwY1FCbv16kR765Dut24uuo++wLa4URS9a4QS89juH7ZK7dBfeJ9brYk
-	 pCPGDuS4fFo8gzP17T+bwuhTSd2jMvofxMF5Cl+3brEvGspZCDgm8Kd3mKStousCyj
-	 W1uRIc+MLdeSw==
-Date: Wed, 30 Jul 2025 12:09:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Leo Yan <leo.yan@arm.com>, Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 04/10] coresight: Appropriately disable programming
- clocks
-Message-ID: <015c39de-001b-4660-bc64-6fd07eff9f18@sirena.org.uk>
-References: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
- <20250724-arm_cs_fix_clock_v4-v5-4-63f648dae021@arm.com>
- <b3782b8f-8c09-4fb8-bec6-186102cc66a8@sirena.org.uk>
- <f9fb2174-5bc5-4c7b-b74b-8542b4f7cbe0@sirena.org.uk>
- <15370a42-8e92-4f57-9ff2-f283d9fd30bd@arm.com>
- <20250730085637.GB143191@e132581.arm.com>
- <caffdde4-fad4-4462-ba92-84416726a12d@arm.com>
- <20250730105432.GC143191@e132581.arm.com>
- <cd250adb-61e7-414f-bf17-6cc960e44f7b@arm.com>
+	s=arc-20240116; t=1753873901; c=relaxed/simple;
+	bh=asevILIzuNSddmtdG/bl/3I8QPtBkx8UBm3bkjmoh2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=da528wNR8mSEHp8E3aoEMCAqfxb1lnJW9W9KPtbke+Qv7EppGQuEDJ7FmWf2VZBDoDFdUoXWgWWp6hBi9AVPJpIP4M9vPwMXqi3Nt8KXFNKHdHcMBE5Kr509UWVFNcwbnxn+DAW5Kdib3fzYRhZdEm+iulTvsF3ZziaSjV5TMLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E047C1E5E;
+	Wed, 30 Jul 2025 04:11:30 -0700 (PDT)
+Received: from [10.57.3.116] (unknown [10.57.3.116])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3E3A73F673;
+	Wed, 30 Jul 2025 04:11:34 -0700 (PDT)
+Message-ID: <f912c446-1ae9-4390-9c11-00dce7bf0fd3@arm.com>
+Date: Wed, 30 Jul 2025 12:11:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="p4x4+9VUTrJ5jiST"
-Content-Disposition: inline
-In-Reply-To: <cd250adb-61e7-414f-bf17-6cc960e44f7b@arm.com>
-X-Cookie: Linux is obsolete
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/8] dma-mapping: migrate to physical address-based API
+To: Marek Szyprowski <m.szyprowski@samsung.com>,
+ Christoph Hellwig <hch@lst.de>, Leon Romanovsky <leon@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Alexander Potapenko <glider@google.com>,
+ Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ iommu@lists.linux.dev, virtualization@lists.linux.dev,
+ kasan-dev@googlegroups.com, linux-trace-kernel@vger.kernel.org,
+ linux-mm@kvack.org, Jason Gunthorpe <jgg@ziepe.ca>
+References: <CGME20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf@eucas1p2.samsung.com>
+ <cover.1750854543.git.leon@kernel.org>
+ <35df6f2a-0010-41fe-b490-f52693fe4778@samsung.com>
+ <20250627170213.GL17401@unreal> <20250630133839.GA26981@lst.de>
+ <69b177dc-c149-40d3-bbde-3f6bad0efd0e@samsung.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <69b177dc-c149-40d3-bbde-3f6bad0efd0e@samsung.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 2025-07-08 11:27 am, Marek Szyprowski wrote:
+> On 30.06.2025 15:38, Christoph Hellwig wrote:
+>> On Fri, Jun 27, 2025 at 08:02:13PM +0300, Leon Romanovsky wrote:
+>>>> Thanks for this rework! I assume that the next step is to add map_phys
+>>>> callback also to the dma_map_ops and teach various dma-mapping providers
+>>>> to use it to avoid more phys-to-page-to-phys conversions.
+>>> Probably Christoph will say yes, however I personally don't see any
+>>> benefit in this. Maybe I wrong here, but all existing .map_page()
+>>> implementation platforms don't support p2p anyway. They won't benefit
+>>> from this such conversion.
+>> I think that conversion should eventually happen, and rather sooner than
+>> later.
+> 
+> Agreed.
+> 
+> Applied patches 1-7 to my dma-mapping-next branch. Let me know if one
+> needs a stable branch with it.
 
---p4x4+9VUTrJ5jiST
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+As the maintainer of iommu-dma, please drop the iommu-dma patch because 
+it is broken. It does not in any way remove the struct page dependency 
+from iommu-dma, it merely hides it so things can crash more easily in 
+circumstances that clearly nobody's bothered to test.
 
-On Wed, Jul 30, 2025 at 12:01:25PM +0100, Suzuki K Poulose wrote:
+> Leon, it would be great if You could also prepare an incremental patch
+> adding map_phys callback to the dma_maps_ops, so the individual
+> arch-specific dma-mapping providers can be then converted (or simplified
+> in many cases) too.
 
-> I would recommend using that and don't force the use of apb_clk/apb
-> for AMBA devices. If the firmware doesn't specify a clock, but does
-> specify the CoreSight components, it knows it better.
+Marek, I'm surprised that even you aren't seeing why that would at best 
+be pointless churn. The fundamental design of dma_map_page() operating 
+on struct page is that it sits in between alloc_pages() at the caller 
+and kmap_atomic() deep down in the DMA API implementation (which also 
+subsumes any dependencies on having a kernel virtual address at the 
+implementation end). The natural working unit for whatever replaces 
+dma_map_page() will be whatever the replacement for alloc_pages() 
+returns, and the replacement for kmap_atomic() operates on. Until that 
+exists (and I simply cannot believe it would be an unadorned physical 
+address) there cannot be any *meaningful* progress made towards removing 
+the struct page dependency from the DMA API. If there is also a goal to 
+kill off highmem before then, then logically we should just wait for 
+that to land, then revert back to dma_map_single() being the first-class 
+interface, and dma_map_page() can turn into a trivial page_to_virt() 
+wrapper for the long tail of caller conversions.
 
-And perhaps more to the point if a currently working system suddenly
-starts requiring additional clocks in it's binding that's an ABI break.
+Simply obfuscating the struct page dependency today by dressing it up as 
+a phys_addr_t with implicit baggage is not not in any way helpful. It 
+only makes the code harder to understand and more bug-prone. Despite the 
+disingenuous claims, it is quite blatantly the opposite of "efficient" 
+for callers to do extra work to throw away useful information with 
+page_to_phys(), and the implementation then have to re-derive that 
+information with pfn_valid()/phys_to_page().
 
---p4x4+9VUTrJ5jiST
-Content-Type: application/pgp-signature; name="signature.asc"
+And by "bug-prone" I also include greater distractions like this 
+misguided idea that the same API could somehow work for non-memory 
+addresses too, so then everyone can move on bikeshedding VFIO while 
+overlooking the fundamental flaws in the whole premise. I mean, besides 
+all the issues I've already pointed out in that regard, not least the 
+glaring fact that it's literally just a worse version of *an API we 
+already have*, as DMA API maintainer do you *really* approve of a design 
+that depends on callers abusing DMA_ATTR_SKIP_CPU_SYNC, yet will still 
+readily blow up if they did then call a dma_sync op?
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiJ/XUACgkQJNaLcl1U
-h9BD8wf+ODcyt3KGHVPbd4ely45VxK+DeMhInki2yIOs1Qg9ZpVeJmClCei6+PXd
-RG8cM+o0v/8ut+TGA71E8c7PMiuCX64gfWtwoVRf0rDFSxHcPNTceXGJ4x3wmrhV
-wDHdzatndulWuOsHPUceg8HooawvvcI8597foZoSVMYjC3aylvWEiuvajgBvrpA+
-SOnaTAVCtD51Ppha5THQ6OUNgLK6W8TY0Q+yhsvn5Sg802StaXKo2XkJKN3Nz7Uj
-vhIrlxN4Bg54Vp4XVYe7xhzLHW4GVsKalXWhJNfpe1jgOkbjW6CHdFMs3sQk6YdJ
-0dIbSWroraDHYryqKFUSmEZIIhs4zQ==
-=7HYz
------END PGP SIGNATURE-----
-
---p4x4+9VUTrJ5jiST--
+Thanks,
+Robin.
 
