@@ -1,246 +1,332 @@
-Return-Path: <linux-kernel+bounces-751199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340DFB16653
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:34:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF48EB1665C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7BE162404B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:33:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4B5D17B8D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:35:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4772DC32A;
-	Wed, 30 Jul 2025 18:33:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F152DECD8;
+	Wed, 30 Jul 2025 18:35:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEgCSfkT"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O+CYcpTf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA65B15D1;
-	Wed, 30 Jul 2025 18:33:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A921EE019
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753900416; cv=none; b=mLYaHd7HyWcU5iyCEWRdVUxhWzCtlDWVkkcHwlj4JvxR7ry6OMsuTdSoKcm0BuvoivCiUjwl0pN1UDOx3oIH/tN1FRKuCwPxeIEuVl79DcJn3YSU+hH1HuOxq0+ITNm7m44/VAunwyzOyx9q/UhliblF4OjW3YTeqrn1XNjvMXE=
+	t=1753900510; cv=none; b=ghXhcn7iTl2uq1T/snHnOMZKe3IMLLaKdhW/fk1d9UXkEvVLZdNh2oPOD0kj0adIYGLLLbCoT7zPOj/D3WRLNxfCod0oQYbNyD/vwZsVxKejeCsRu0C4Rt06pw7viexxgRX5nn8f5xs3A5gwUWwnTf69VH2SdpNVEkHDZqE+u10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753900416; c=relaxed/simple;
-	bh=K75OD8oDjI/AOWUQUKexEk5vDgahZSkGDyUgITfjITc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uslNbtWZvkxaiMdWfQzGbIv/I1dSNH3WgaFAjXbmehc2fsAP7Xk7kzksDI+hFWuCQ9zjarNBxZZu8ILDn9pRlDATbd+fl3BSUqzEfCAJMVZNxlqvli5wXppL1Cpd5A/Gb/zZr+C1GQPIHCAWvExujDT2KtXmOO2srewP1p009R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XEgCSfkT; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-240418cbb8bso954235ad.2;
-        Wed, 30 Jul 2025 11:33:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753900414; x=1754505214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/LXC/P3UhtK4ADtDq003zjxL7YJD8iyJ1al2gSLKcFg=;
-        b=XEgCSfkTMQPmvhQ5FCPzyW0hHvGPRoEVIav36jcDexUN5QJDkauu29ybhBHuvZkg0g
-         jE1dS0l7RcjMYERN0oDgWUmJbZAOAyXih40b4afyj3P4BKJk8cOND5DdU/KOHDegmHZY
-         R4edQsIhpZAi7lke3EgkiLxWegSpQOxjszlMja+glVo33pAFp0XgjQFlTed6lxpUoOH2
-         hDmImDGHHCc30SnkDn9JVsJu9bihbTl37VknIEDnX6rJjAKsMsrrTaQCyHmloY0SO4SS
-         MsZcWHB5XE4TGlcV+PoDLShDHTxc5f5wpbh/a5WkeuQm9OVtYkPkkxsMCkMAWCq/q/35
-         61+A==
+	s=arc-20240116; t=1753900510; c=relaxed/simple;
+	bh=a44CJtTowNd7A+KwCUY0ZAqV0l3kVw/8bDoTakVrhZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ONaGbzwXVJlZzswrcDgOqdZbxnDpQZhxZTYf5yl95MKw+aoCSovkin9/xBG3El4xc+omzZYFyJNs4bHfxLhnYull1fQ6MB+8J0HChouAaaHtv5E5oBzzbDiJmokjH1Tri0rZDh/XA2GNwvSk6hmoriU7BtfnfGTyPx/hQGhCvNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O+CYcpTf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UCbOWZ024930
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:35:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qeQ+Jwe6tBBCJ8zRzKqHqrhVE6H4UDXs7p1wpuAs4qc=; b=O+CYcpTfRbYTk7Xh
+	A9SWB9rFELy7Ac3OLCeqDGcCI6KVWgBr/LPeFbMiOt9JZ13wZfBPCfZbgXMnBEEo
+	om/oJ9wmENdmayGiMQmifFpMSn86wR4kErWgS89X1wu9rdt5Mg2MHLKpMDTF309U
+	cSTYJ1kp3bhAboa7D9i1MQ5qyjQkwoSbkddn3G15fAs59WBFPZKP30gbFm54bvLl
+	NY0cucQFhWCNYeBYZXpHue/3fpcwaIsYYSKCxSQ5WRHCgOEEYG9gLeNNxKvEym78
+	UzYZaUHeQTlhXKUk969kFoFsvtBsb0do4OlJ1tattxK/s7xo9lwUmOSaw0ghob16
+	Ac5Olw==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484r6qvxkv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:35:06 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-7073cc86450so1065916d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:35:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753900414; x=1754505214;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/LXC/P3UhtK4ADtDq003zjxL7YJD8iyJ1al2gSLKcFg=;
-        b=lS/B37vBU57P4dBYWokVqTLi+1rd8cPOaS0rWTdjzaP1sErt0nj5xR6b9I5xl6FUO/
-         CIdM7jSR6AO4Y0iHY+9Rcu+KUshR+8Wf+eRD+Glc7wcas2RHV4iQE0CVF9oxXGK0g93X
-         2KRllhg8wh4Sfz8s9VfxwlEgiXOq4WPIsqGZC+kNgzd8ld7BwAcJIuuD9yTECFqCZKYN
-         L4vphayNfHakT8O7+OSZbXAiu0FK/50HAmjzTtMVklBhE6B64XvK0HP1mDrV9EhD2oaB
-         B8tL2cyAwOgWkdb6+wnmjOHOyYzT8Mm3Og12pRkiywNovoglDRRjxm87o2fRUcdlNNZ2
-         Hcqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXS/cASSsE29ya6vZ+xF61Ctz8IicAPswutDBhE5qY8j9Ms7ahFxbF2vJGDe5JxAob5+6rUfi5ScpQvHiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjP5y6yuW62zOkUXOgUFHDmVuxLoNXpfC566UBhjUBzt4hUQEc
-	m6CNStWXPly4SFLdnzXbayLcLYKMSf8hIRYaL5lVna0dVoZfaSlmimzo
-X-Gm-Gg: ASbGncuL/inWvf5WugRcmQn35rcsgf/98gCqAzAkwNwd/cBpAHpclYiSjFwQh4LXRSI
-	X771ZpbIwTrpAcsRaQv65EbKr0j9c0WiUmJfllzMKCWKdTkk9nkI6yPZJ2h5A4gBHvwZn13b/he
-	aeWuWADQ6PlAYwnJjA4m/IsQyaI2H02jTAp/GUB6T/Zp8WHTP0I8bmNUW74ET7fBcwHxViHpr4H
-	ed5yCTrEhySgjKnSk1zP3jmoM82PVLx2g44VKNsgxpy8lDWY/fYpU2gqXGSaSkpTTQe0UXEA/ol
-	Hkhm0Hw6fYsaH60vwKQVUTcVlVIGitiIp2ewPR3WIMRXaOmIk81ueePcn9HyiKOMxe4oCHhcI5a
-	vF92SOVbtFp5NfsaZfbrUWe2asbqUpxiSYmcrbYFdLbG6AhU1KbAh
-X-Google-Smtp-Source: AGHT+IHpBy+0LBCwjzZmW3aB+1tGd+YleBhuJ3andCoDufWYPAvK8XzlVHgKxfLqC4B5sYbKRBXdmQ==
-X-Received: by 2002:a17:903:198d:b0:23f:b112:2eaa with SMTP id d9443c01a7336-24096b23962mr61649835ad.41.1753900413613;
-        Wed, 30 Jul 2025 11:33:33 -0700 (PDT)
-Received: from localhost.localdomain ([2405:201:d021:481c:67c7:4b27:6088:74d5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fc5a9d219sm104643095ad.98.2025.07.30.11.33.31
+        d=1e100.net; s=20230601; t=1753900505; x=1754505305;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qeQ+Jwe6tBBCJ8zRzKqHqrhVE6H4UDXs7p1wpuAs4qc=;
+        b=RLhYiHWsUJJPPxgnphaVVZSjsvWhjWGYwyqjCiKO1zEa0B1C/kjpISgVZP5bX3ucz3
+         775ur6H8vGH23q39V3O6LSyGISWXLmCCoWEH5BNM5baINx/RScHvHK8GXHCQLuZAyuxh
+         FUjjPz4t1gQfoNGoBReWPhLR4oOFEcENMOif+dHEIQJwqbhAK9Nf3PDfI9jFvhtKlNcI
+         oA03gO5ofSWJ4w/9vaO6pjMVEq4/FPqsW+4+LfgEedMSBGJeDx7WK1apiCtRr5qalUfz
+         1U9Xunu+0+sr8YPZTqMS8bniduQZ37JenDzKPMqPwR3KiCcexEY5BxjVfZfhG4qR8CfC
+         dMfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVomF1NeKYQgGmx8HOgELQ+7VAyqrWPkDbapUTMx4V6EAs1CXC/87ggWe8cJbawv2sTQ93LCrgJgBdWw0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww2FLhRjKWJgNJNHy8pxGZjOWk1SU+lYo5kMJJKZ4gsKtbbcnv
+	RU63QiZYJHHyrZTaUUdo1GiNuluT2RoNb1QgqhAe4XYaz5LPWUfHfh8zchblFw2pckvcx0ubKe8
+	JixloMgIciPF+KISNXiiJkpaW8lN35saGJ8p52fpU9MMXuKnTfvhqCExVHGWl1K7dfcg=
+X-Gm-Gg: ASbGncsNTDIwncrp1F1i0PYeE3tFOm3J+lfpgaFmygFM3dTm6dPQv3mak7nJSTkiPaZ
+	4fcFVveAVHqtQaPX4Srq/Vdj/Mm6DGxLKmC++ei/EZ3uE3Un6QhuPItiQ1UhigxegO6IRjIwtAl
+	ewlAAMZJO/FoAXIXL/HXhjrkj4f5027lNqXE/aVJtznnd0kvXgLzOaH3zY+m7BGPSInlHbr64Jv
+	0I/loIt7xOM+QCM03pfgmnXLYx+5ht77HlKN4UBY23RQzXJwEbjfRXw3PICjLBBIeDyh2hmU5G3
+	b9trzEab1Ae2OuIL1eFcNITiqMNjft0Hyr2JeWyNXtKxhUZC99tG36J5YdKaQZkl7YHvbUIpMRL
+	Sdk/oaN/d+OKwh2oqTK7L0iW0tmlB2zCRavvpt6MpTz0R5pzUcHIg
+X-Received: by 2002:a05:6214:4705:b0:707:75cb:60b4 with SMTP id 6a1803df08f44-70775cb6130mr14420766d6.41.1753900504936;
+        Wed, 30 Jul 2025 11:35:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEyD8wbKesTPaUNkvnO8IF3mRX3OX9dDMnWFlB/T+fN/kELAp+CAVujEZjIvCvLTQWvOmHIFg==
+X-Received: by 2002:a05:6214:4705:b0:707:75cb:60b4 with SMTP id 6a1803df08f44-70775cb6130mr14420266d6.41.1753900504174;
+        Wed, 30 Jul 2025 11:35:04 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b6316d9f2sm2223927e87.12.2025.07.30.11.35.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 11:33:32 -0700 (PDT)
-From: Vishal Parmar <vishistriker@gmail.com>
-To: skhan@linuxfoundation.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vishal Parmar <vishistriker@gmail.com>
-Subject: [PATCH v2] Subject: [PATCH] selftests: panic: Add test module to trigger kernel panic
-Date: Thu, 31 Jul 2025 00:03:27 +0530
-Message-Id: <20250730183327.1001875-1-vishistriker@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250730172707.999401-1-vishistriker@gmail.com>
-References: <20250730172707.999401-1-vishistriker@gmail.com>
+        Wed, 30 Jul 2025 11:35:03 -0700 (PDT)
+Date: Wed, 30 Jul 2025 21:35:01 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+        konrad.dybcio@oss.qualcomm.com, fange.zhang@oss.qualcomm.com,
+        quic_lliu6@quicinc.com, quic_yongmou@quicinc.com
+Subject: Re: [PATCH v2 02/13] dt-bindings: phy: Add binding for QCS615
+ standalone QMP DP PHY
+Message-ID: <ffdvzupefzhqq7fqtloycc3xzu57i55ths73xcjftor2cifuzr@5vhq2hfmkvda>
+References: <20250722-add-displayport-support-for-qcs615-platform-v2-0-42b4037171f8@oss.qualcomm.com>
+ <20250722-add-displayport-support-for-qcs615-platform-v2-2-42b4037171f8@oss.qualcomm.com>
+ <jemfu5sy7k4a2iar55im5bhyhxzlrwpftmpqmps3b2tco7r6a2@oodls7gi45yy>
+ <e673a3a3-6924-49db-9040-e34b82199a43@oss.qualcomm.com>
+ <w3rwao5wbmstdyics6qhp7beulbbp5ludqkwpfsmevgqmzz3d6@u2e533zlitkr>
+ <e5a3f05f-9775-4e3d-ae7d-ebbca14b4df5@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e5a3f05f-9775-4e3d-ae7d-ebbca14b4df5@oss.qualcomm.com>
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDEzNSBTYWx0ZWRfX3FQQ+k8ns0X+
+ tfHKb/1CXJraG/GFDAp86Wega5oB/OBhqt+C8IJS1vaRCJ5GCdvoT8/V8TQT8/9u+SCsvL17YWY
+ kvTi1q2/ND3VuEkS+kxJUpOidQr2Pjf7dGBoxBZuWpOc0spL4OZubn42e9tq0sZsyoyyUam8yZ5
+ XyCPte9+h/6fIXVaZYJiQRV3/jeCjWYCgfQkdavMSf7Q/8p5znVRrI4K4Yh9bFZkHAu+MxIsteI
+ UFn7hRiRva9lGGlYx6t2VsUd7SJk5x8L3hvJevF7lSCXOqKAmDvt5qStNNloHuDRQk7sGKb/nPq
+ iXmJkoHvTY1ka3dfqNDAoW8fh8DBu9DG7lq68Pc/VcLXuyrt78PpKK8UMPOGBBaDglQHAeApRjt
+ UYJgY1H80zGRabhnBK77pJTXGt4++lCyk2c6Lnvjb/+mxRjEcPNo/eQSy/+GY3hS7X/fAVHM
+X-Proofpoint-ORIG-GUID: Ia6ojrcwvf8fNLQhrzo_Eu00fJ1_kxiz
+X-Authority-Analysis: v=2.4 cv=ea89f6EH c=1 sm=1 tr=0 ts=688a65da cx=c_pps
+ a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Wb1JkmetP80A:10 a=Oh2cFVv5AAAA:8 a=EUspDBNiAAAA:8 a=9txEVjketrlP7N9thScA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pJ04lnu7RYOZP9TFuWaZ:22
+ a=7KeoIwV6GZqOttXkcoxL:22
+X-Proofpoint-GUID: Ia6ojrcwvf8fNLQhrzo_Eu00fJ1_kxiz
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_05,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 clxscore=1015
+ spamscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507300135
 
-This patch adds a new test module under tools/testing/selftests/panic
-that intentionally triggers a kernel panic for test and diagnostic
-purposes. The goal is to provide a reproducible and isolated kernel
-panic event for testing crash dump mechanisms or validating kernel
-panic handling behavior.
+On Wed, Jul 30, 2025 at 04:53:16PM +0800, Xiangxu Yin wrote:
+> 
+> On 7/22/2025 8:41 PM, Dmitry Baryshkov wrote:
+> > On Tue, Jul 22, 2025 at 08:05:06PM +0800, Xiangxu Yin wrote:
+> >> On 7/22/2025 4:38 PM, Dmitry Baryshkov wrote:
+> >>> On Tue, Jul 22, 2025 at 03:22:03PM +0800, Xiangxu Yin wrote:
+> >>>> Introduce device tree binding documentation for the Qualcomm QMP DP PHY
+> >>>> on QCS615 SoCs. This PHY supports DisplayPort functionality and is
+> >>>> designed to operate independently from the USB3 PHY.
+> >>>>
+> >>>> Unlike combo PHYs found on other platforms, the QCS615 DP PHY is
+> >>>> standalone and does not support USB/DP multiplexing. The binding
+> >>>> describes the required clocks, resets, TCSR configuration, and clock/PHY
+> >>>> cells for proper integration.
+> >>> Simply put: no, this is not correct. Even if you go to the SM6150 block
+> >>> diagram, it points out that DP uses the USB3 PHY, not a separate DP PHY.
+> >>>
+> >>> I thought that we have discussed it beforehand.
+> >>>
+> >>> I can quote my comment from the previous thread:
+> >>>
+> >>>>> No. It means replacing extending existing entries with bigger reg and
+> >>>>> #phy-cells = <1>. The driver must keep working with old node definitions
+> >>>>> as is to ensure backwards compatibility. New nodes should make it
+> >>>>> register two PHYs (USB3 and DP). On the driver side modify generic code
+> >>>>> paths, all platforms supported by the driver should be able to support
+> >>>>> USB3+DP combination.
+> >>> Looking at the hardware memory maps:
+> >>>
+> >>> MSM8998: USB3 PHY regs at 0xc010000, DP PHY regs at 0xc011000
+> >>> SDM660: USB3 PHY regs at 0xc010000, DP PHY regs at 0xc011000
+> >>> QCM2290: USB3 PHY regs at 0x1615000, DP PHY regs at 0x1616000
+> >>> SM6115: USB3 PHY regs at 0x1615000, DP PHY regs at 0x1616000
+> >>>
+> >>> Now:
+> >>> SM6150: USB3 PHY regs at 0x88e6000
+> >>>         USB3 PHY regs at 0x88e8000, DP PHY regs at 0x88e9000
+> >>>
+> >>> I do not know, why msm-4.14 didn't describe second USB3 PHY. Maybe you
+> >>> can comment on it.
+> >>>
+> >>> But based on that list, the only special case that we need to handle is
+> >>> the first USB3 PHY, which doesn't have a corresponding DP PHY block. But
+> >>> it will be handled anyway by the code that implements support for the
+> >>> existing DT entries. All other hardware blocks are combo USB+DP PHYs.
+> >>>
+> >>> Having all of that in mind, please, for v3 patchset implement USB+DP
+> >>> support in the phy-qcom-qmp-usbc driver and add the following logic
+> >>> that also was requested in v1 review:
+> >>>
+> >>>>> Not quite. Both USB3 and DP drivers should be calling power_on / _off.
+> >>>>> If USB3 is on, powering on DP PHY should fail. Vice versa, if DP is on,
+> >>>>> powering on USB should fail.
+> >>> I think our understanding might not be fully aligned. 
+> > I did not write this. Please fix your mailer to quote messages properly.
+> > As you are using Thunderbird, I'm not sure where the issue comes from.
+> >
+> > Also please fix it to wrap your responses somwhere logically.
+> >
+> >>> Perhaps this is because I didn’t accurately update the mutual exclusion relationships and test results for the different PHYs. 
+> >>> Let me clarify my latest findings and explain why I believe these are separate PHYs that require mutual exclusion via TCSR.
+> >>>
+> >>> 1. About the TCSR DP_PHYMODE Registers
+> >>>
+> >>> MSM8998/SDM660:
+> >>> 	Only one TCSR_USB3_DP_PHYMODE register at 0x1FCB248.
+> >>> QCM2290/SM6115:
+> >>> 	TCSR_USB3_0_DP_PHYMODE at 0x3CB248
+> >>> 	TCSR_USB3_1_DP_PHYMODE at 0x3CB24C
+> >>> SM6150:
+> >>> 	TCSR_USB3_0_DP_PHYMODE at 0x1FCB248
+> >>> 	TCSR_USB3_1_DP_PHYMODE at 0x1FCB24C
+> > SM6150 has two different sets of output pins, so the first register
+> > covers first set of SS lanes (which are routed to the documented SS
+> > PHY), the second register covers the second set of SS lanes (which are
+> > routed to the DP and secondary USB PHY).
+> >
+> > I can only assume that the same configuration was supposed to be
+> > applicable to QCM2290 / SM6115, but was later removed / disabled, while
+> > the registers were kept in the TCSR block.
+> >
+> >>> Even though MSM8998, SDM660, QCM2290, and SM6115 all have one USB3 PHY and one DP PHY, the TCSR DP_PHYMODE register configuration is different on each platform.
+> >>>
+> >>> Additionally, I found some interesting register documentation for QCM2290/SM6115:
+> >>> 	TCSR_USB3_0_DP_PHYMODE: “In kamorta this one is for mobile usb. DP not supported.”
+> >>> 	TCSR_USB3_1_DP_PHYMODE: “DP mode supported for Auto usb in kamorta.”
+> >>> I think the reason for having two different TCSR registers is to allow both the USB3.0 and DP PHYs to be useds at the same time in certain product configurations.
+> > Sure. One for the first PHY (USB), one for the second PHY (USB+DP).
+> > If you check the memory map, you will find the second VLS CLAMP register
+> > for the second USB PHY.
+> >
+> >>> 2. SM6150 Test Results
+> >>> When TCSR_DP_PHYMODE_0 is switched to DP, the USB3 primary PHY cannot work, and the DP PHY is also not functional (possibly due to clock lack or other configuration mismatch with this TCSR setting).
+> >>> When TCSR_DP_PHYMODE_1 is switched to DP, both the USB3 primary PHY and the DP PHY work normally.
+> >>> I think "why msm-4.14 didn't describe second USB3 PHY", because TCSR_DP_PHYMODE_1 always works in DP mode.
+> >>> https://android.googlesource.com/kernel/msm/+/af03eef7d4c3cbd1fe26c67d4f1915b05d0c1488/drivers/gpu/drm/msm/dp/dp_catalog_v200.c
+> > Here it still programs the TCSR register.
+> >
+> >>> Based on these info, I believe these are separate PHYs, and only the
+> >>> TCSR DP_PHYMODE registers determine which USB3/DP PHYs are paired or
+> >>> mutually exclusive. This is why I have maintained separate private
+> >>> data for each PHY and implemented Power on mutex control via TCSR,
+> >>> rather than using a qmp_combo-like structure.
+> > Still, no. Check the block diagram of SM6150.
+> >
+> >>> Given the above, do you think we still need to force USB and DP to be strictly bound together like a combo PHY?
+> > Yes.
+> 
+> I checked the related PHY series and block diagrams again.
+> 
+> PRI and SEC go to different nodes based on the SoC design, and there are two types of configurations: USB3-only and USB3+DP pairing.
+> 
+> Before proceed the v3 patchset, I’d like to double-confirm whether the following structure is what you expect:
+> 
+> usb_qmpphy_1: phy@88e6000 {
+>     compatible = "qcom,sm6150-qmp-usb3-prim-phy"; <== rename to PRIM
 
-The test includes:
-- A kernel module that calls panic() in init.
-- A Makefile to build the kernel module.
-- A run.sh script to load the module and capture panic logs.
+No, we already have a compatible name and DT schema for this device.
 
-Changes in v2:
-- Added run.sh
-- Added reference output log of run.sh
+>     ...
+>     qcom,tcsr-reg = <&tcsr 0xb244>, <&tcsr 0xb248>;
+>     qcom,tcsr-names = "vls_clamp", "dp_phy_mode";
 
-Signed-off-by: Vishal Parmar <vishistriker@gmail.com>
----
- tools/testing/selftests/Makefile              |  1 +
- tools/testing/selftests/panic/Makefile        | 13 +++++++++
- .../selftests/panic/panic_trigger_test.c      | 26 +++++++++++++++++
- .../selftests/panic/reference_output_log.txt  | 29 +++++++++++++++++++
- tools/testing/selftests/panic/run.sh          | 17 +++++++++++
- 5 files changed, 86 insertions(+)
- create mode 100644 tools/testing/selftests/panic/Makefile
- create mode 100644 tools/testing/selftests/panic/panic_trigger_test.c
- create mode 100644 tools/testing/selftests/panic/reference_output_log.txt
- create mode 100755 tools/testing/selftests/panic/run.sh
+No need for qcom,tcsr-names. Second TCSR register should be optional in
+the driver.
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 339b31e6a6b5..7b824470a9b3 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -78,6 +78,7 @@ TARGETS += net/packetdrill
- TARGETS += net/rds
- TARGETS += net/tcp_ao
- TARGETS += nsfs
-+TARGETS += panic
- TARGETS += pci_endpoint
- TARGETS += pcie_bwctrl
- TARGETS += perf_events
-diff --git a/tools/testing/selftests/panic/Makefile b/tools/testing/selftests/panic/Makefile
-new file mode 100644
-index 000000000000..e4a1b88a63b2
---- /dev/null
-+++ b/tools/testing/selftests/panic/Makefile
-@@ -0,0 +1,13 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+obj-m := panic_trigger_test.o
-+
-+KDIR := $(abspath ../../../../)
-+PWD  := $(shell pwd)
-+
-+all:
-+	$(MAKE) -C $(KDIR) M=$(PWD) modules
-+
-+clean:
-+	$(MAKE) -C $(KDIR) M=$(PWD) clean
-+	rm -f *.mod.c *.o *.ko *.order *.symvers
-diff --git a/tools/testing/selftests/panic/panic_trigger_test.c b/tools/testing/selftests/panic/panic_trigger_test.c
-new file mode 100644
-index 000000000000..4e2e043fe3ad
---- /dev/null
-+++ b/tools/testing/selftests/panic/panic_trigger_test.c
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * panic_test.c - Module to test kernel panic
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/init.h>
-+
-+static int __init panic_test_init(void)
-+{
-+    pr_info("Triggering a deliberate kernel panic now.\n");
-+    panic("Triggered by panic_test module.");
-+    return 0;
-+}
-+
-+static void __exit panic_test_exit(void)
-+{
-+    pr_info("This should not be printed, as system panics on init.\n");
-+}
-+
-+module_init(panic_test_init);
-+module_exit(panic_test_exit);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Vishal Parmar");
-+MODULE_DESCRIPTION("Module to trigger kernel panic for testing");
-diff --git a/tools/testing/selftests/panic/reference_output_log.txt b/tools/testing/selftests/panic/reference_output_log.txt
-new file mode 100644
-index 000000000000..2c8143bf6c4a
---- /dev/null
-+++ b/tools/testing/selftests/panic/reference_output_log.txt
-@@ -0,0 +1,29 @@
-+[*] Inserting module: panic_trigger_test.ko
-+[   30.377307] panic_trigger_test: loading out-of-tree module taints kernel.
-+[   30.380328] Triggering a deliberate kernel panic now.
-+[   30.382369] Kernel panic - not syncing: Triggered by panic_test module.
-+[   30.383349] CPU: 1 UID: 0 PID: 99 Comm: insmod Tainted: G           O        6.16.0-rc7-00140-gec2df4364666 #1 PREEMPT(voluntary) 
-+[   30.383349] Tainted: [O]=OOT_MODULE
-+[   30.383349] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-+[   30.383349] Call Trace:
-+[   30.383349]  <TASK>
-+[   30.383349]  panic+0x325/0x380
-+[   30.383349]  ? __pfx_panic_test_init+0x10/0x10 [panic_trigger_test]
-+[   30.383349]  panic_test_init+0x1c/0xff0 [panic_trigger_test]
-+[   30.383349]  do_one_initcall+0x55/0x220
-+[   30.383349]  do_init_module+0x5b/0x230
-+[   30.383349]  __do_sys_init_module+0x150/0x180
-+[   30.383349]  do_syscall_64+0xa4/0x260
-+[   30.383349]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-+[   30.383349] RIP: 0033:0x7f88f09177d9
-+[   30.383349] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f7 05 8
-+[   30.383349] RSP: 002b:00007ffc16317848 EFLAGS: 00000206 ORIG_RAX: 00000000000000af
-+[   30.383349] RAX: ffffffffffffffda RBX: 000055a4a84b0eae RCX: 00007f88f09177d9
-+[   30.383349] RDX: 000055a4a84b0eae RSI: 00000000000019e8 RDI: 000055a4c9b4b370
-+[   30.383349] RBP: 00007ffc16317bd0 R08: 000055a4c9b4b310 R09: 00000000000019e8
-+[   30.383349] R10: 0000000000000007 R11: 0000000000000206 R12: 00007ffc16317bd8
-+[   30.383349] R13: 00007ffc16317be0 R14: 000055a4a84b0eae R15: 00007f88f0b25020
-+[   30.383349]  </TASK>
-+[   30.383349] Kernel Offset: 0x10000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-+[   30.383349] ---[ end Kernel panic - not syncing: Triggered by panic_test module. ]---
-+
-diff --git a/tools/testing/selftests/panic/run.sh b/tools/testing/selftests/panic/run.sh
-new file mode 100755
-index 000000000000..ffa20dc22708
---- /dev/null
-+++ b/tools/testing/selftests/panic/run.sh
-@@ -0,0 +1,17 @@
-+# tools/testing/selftests/panic/run.sh
-+
-+#!/bin/sh
-+set -e
-+
-+MOD_NAME="panic_trigger_test.ko"
-+LOG_FILE="panic_log.txt"
-+
-+echo "[*] Clearing dmesg..."
-+dmesg -c
-+
-+echo "[*] Inserting module: $MOD_NAME"
-+insmod ./$MOD_NAME
-+
-+echo "[*] Capturing dmesg..."
-+dmesg > "$LOG_FILE"
-+
+>     
+>     #clock-cells = <1>;
+>     #phy-cells = <1>;
+
+#clock-cells = <0>;
+#phy-cells = <0>;
+
+>     ...
+> };
+> 
+> usb_qmpphy_2: phy@88e8000 {
+>     compatible = "qcom,sm6150-qmp-usb3dp-sec-phy"; <== SEC SS, use usb3dp to indicate DP capability
+
+qcom,sm6150-qmp-usb3-dp-phy
+
+> 
+>     reg = <0x0 0x088e8000 0x0 0x2000>; <== SS2 base address and offset define in driver config
+> 
+>     clocks = <&gcc GCC_AHB2PHY_WEST_CLK>,
+>             <&gcc GCC_USB3_SEC_CLKREF_CLK>; <== This SoC has no USB3.0 SEC SS clk
+>     clock-names = "cfg_ahb",
+>                 "ref";
+>     clock-output-names = "dp_phy_link_clk",
+>                     "dp_phy_vco_div_clk";
+
+No need to, the driver can generate names on its own.
+
+>                     
+>     resets = <&gcc GCC_USB3PHY_PHY_SEC_BCR >,
+>          <&gcc GCC_USB3_DP_PHY_SEC_BCR>;
+>     reset-names = "phy", "phy_phy";
+
+"phy_phy", "dp_phy". Is there no GCC_USB3_PHY_SEC_BCR?
+
+> 
+>     qcom,tcsr-reg = <&tcsr 0xbff0>, <&tcsr 0xb24c>;
+>     qcom,tcsr-names = "vls_clamp", "dp_phy_mode"; <== added for backward compatibility with legacy configs that only had vls_clamp
+
+No need for qcom,tcsr-names, correct otherwise.
+
+> 
+>     #clock-cells = <1>;
+>     #phy-cells = <1>;
+> 
+>     status = "disabled";
+> };
+> 
+> >
+> >>>> Signed-off-by: Xiangxu Yin <xiangxu.yin@oss.qualcomm.com>
+> >>>> ---
+> >>>>  .../bindings/phy/qcom,qcs615-qmp-dp-phy.yaml       | 111 +++++++++++++++++++++
+> >>>>  1 file changed, 111 insertions(+)
+> >>>>
+
 -- 
-2.39.5
-
+With best wishes
+Dmitry
 
