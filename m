@@ -1,118 +1,111 @@
-Return-Path: <linux-kernel+bounces-750218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5411B158BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:09:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B946B158E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:20:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D945470FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:09:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D2603ABE46
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476C31F0985;
-	Wed, 30 Jul 2025 06:09:30 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B0381732;
-	Wed, 30 Jul 2025 06:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901181F418E;
+	Wed, 30 Jul 2025 06:20:41 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A0C199BC
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:20:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753855769; cv=none; b=rIf5KwCVWy6xdMSWQam+zN0kiJXY4dth3S7npYgfak9lgYv7JeOcCRN7ZAEAJfOz/VQns0ejqWRUYfDEx6D1JumEbemlIFU4zZUGAdH0IHkfAgxYAT1YvqkmTLwc0w2rNRoxbrwndBWkWPLXw5qJ7MuJ5XS9+kCC86L86jesnXk=
+	t=1753856441; cv=none; b=eesE2olVYsvh1UlYJK/tfg0Yj3ekqq09zSHLuEUC8BRYo6d7HRfXpbJn0fzNfpOyxZfwg95HrVemaUOtDEYA1RBGBaBLoc2qRy+7xoh4RcP9wAhqrYE3V+RjKXtgsEq6gYg4wINB/Mv4KYmOZIpoDXbbyqOFwUHRVraFiZsbmQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753855769; c=relaxed/simple;
-	bh=VqcABCOCHphdMKpPlMCUndhXnXhAZz+yaaZntvERK98=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=qiufM+xPtWp2/D4pK/dO3o6P95o6j/qQD7GZfR+1N0hiyzFePgbDTuIdVm77t00VB2h2NsrxMMfZcVfE0yaHyxD9BVKWrGtvVrrLQDS3fXN8FxID5nNn/Gw2+ulAYPjB6CPp26w/149Uc0HYXJQzYglhrkQzU8KoSUwfgfUqecY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bsMHM3lrZzYQtt5;
-	Wed, 30 Jul 2025 14:09:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 346111A13A7;
-	Wed, 30 Jul 2025 14:09:18 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHwhIMt4loQr7aBw--.41129S3;
-	Wed, 30 Jul 2025 14:09:18 +0800 (CST)
-Subject: Re: syztest
-To: Arnaud Lecomte <contact@arnaud-lcm.com>,
- syzbot+fa3a12519f0d3fd4ec16@syzkaller.appspotmail.com
-Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <68894408.a00a0220.26d0e1.0013.GAE@google.com>
- <20250730055126.114185-1-contact@arnaud-lcm.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <a166383d-a19a-deb4-e170-2350f8fdafd0@huaweicloud.com>
-Date: Wed, 30 Jul 2025 14:09:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753856441; c=relaxed/simple;
+	bh=nKY0YqG4t9mznqNAUvd95M6TzmSQjIk5LRlskSPR1Ik=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L+KoG8c29Kzj2JBUYjH+H+n9I9tekiCFYu8K5+B+gjtTgzyFDcPO1gzAx9jeh5mQvEMbrc9mvWiJ2M0eB2zaC77LP7VPGEy3G3EL0v7cKVOBdXGNXMGgCUI+4X+iqw8Cy9Ec/fEATEFIcu2DcDjuog8RKDNdCXyyBij1TMDi3x0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bsMJX4rC6z9sN6;
+	Wed, 30 Jul 2025 08:10:20 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id kvx3b491i35a; Wed, 30 Jul 2025 08:10:20 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bsMJX41K8z9s92;
+	Wed, 30 Jul 2025 08:10:20 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 7FE3B8B76C;
+	Wed, 30 Jul 2025 08:10:20 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id 3j76NxDL4snr; Wed, 30 Jul 2025 08:10:20 +0200 (CEST)
+Received: from [10.25.207.160] (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 57D8F8B763;
+	Wed, 30 Jul 2025 08:10:20 +0200 (CEST)
+Message-ID: <b885d194-dee0-4cc8-ad85-25949baf02b3@csgroup.eu>
+Date: Wed, 30 Jul 2025 08:10:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250730055126.114185-1-contact@arnaud-lcm.com>
-Content-Type: text/plain; charset=gbk; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] SOC FSL for 6.17
+To: Krzysztof Kozlowski <krzk@kernel.org>, soc@kernel.org,
+ Arnd Bergmann <arnd@arndb.de>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <c947d537-cae5-44f0-abd8-0c558bac46d2@csgroup.eu>
+ <cb913a0a-0f3f-4890-aa1f-1b01ec9c564e@kernel.org>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <cb913a0a-0f3f-4890-aa1f-1b01ec9c564e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHwhIMt4loQr7aBw--.41129S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrZr43uF4kXrWDGrWDXFWUurg_yoWDJwbEgF
-	90ya4Y9ayUG3yUKF1Fyw1xZryrt34UGan7uF93tFnxtrn8G3WjkF93Ca15uw10qF47Wwn0
-	kr1xG3s0ya1rAjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWDJVCq3wA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UK2N
-	tUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
 Hi,
 
-ÔÚ 2025/07/30 13:51, Arnaud Lecomte Ð´µÀ:
-> #syz test
+Le 18/07/2025 Ã  11:23, Krzysztof Kozlowski a Ã©critÂ :
+> On 10/07/2025 08:44, Christophe Leroy wrote:
+>> Hi Arnd,
+>>
+>> Please pull the following Freescale Soc Drivers changes for 6.17
+>>
+>> The tegra change is outside soc/fsl tree but it is acked by maintainer
+>> of DRM DRIVERS FOR NVIDIA TEGRA.
+>>
+>> Thanks
+>> Christophe
+>>
+>> The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+>>
+>>     Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+>>
+>> are available in the Git repository at:
+>>
+>>     https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fchleroy%2Flinux.git&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C2a2edd9aede449ece30d08ddc5dccf65%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638884274336423091%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=t2mexcfPjeKLqozoB28iCbWbrQY40jEdaaJ%2FHnyKSEY%3D&reserved=0 tags/soc_fsl-6.17-1
+>>
+>> for you to fetch changes up to 76760b9dbbf8088ef31afb60d92b955f88ad1288:
+>>
+>>     soc: Use dev_fwnode() (2025-07-08 10:29:28 +0200)
+>>
+>> ----------------------------------------------------------------
+>> FSL SOC Changes for 6.17:
+>> - Use dev_fwnode() instead of of_fwnode_handle()
+>> - Use new GPIO line value setter callbacks
 > 
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -5978,10 +5978,6 @@ struct mddev *md_alloc(dev_t dev, char *name)
->   
->   	disk->events |= DISK_EVENT_MEDIA_CHANGE;
->   	mddev->gendisk = disk;
-> -	error = add_disk(disk);
-> -	if (error)
-> -		goto out_put_disk;
-> -
->   	kobject_init(&mddev->kobj, &md_ktype);
->   	error = kobject_add(&mddev->kobj, &disk_to_dev(disk)->kobj, "%s", "md");
+> It has been many days and I still do not see this patch in linux-next.
+> Please confirm that you properly feed linux-next and for how long this
+> patch was sitting there (BEFORE you send them to upstream maintainer).
 
-This is wrong, you can't add mddev >kobj under the disk without
-kobject_add for the disk kobj.
+Until recently I was relying on my branch poping up into linux-next once 
+merged into the soc tree.
 
-Thanks,
-Kuai
+Since monday last week it is now included in linux-next independently.
 
->   	if (error) {
-> @@ -5999,6 +5995,9 @@ struct mddev *md_alloc(dev_t dev, char *name)
->   	kobject_uevent(&mddev->kobj, KOBJ_ADD);
->   	mddev->sysfs_state = sysfs_get_dirent_safe(mddev->kobj.sd, "array_state");
->   	mddev->sysfs_level = sysfs_get_dirent_safe(mddev->kobj.sd, "level");
-> +	error = add_disk(disk);
-> +	if (error)
-> +		goto out_put_disk;
->   	mutex_unlock(&disks_mutex);
->   	return mddev;
->   
-> 
-
+Christophe
 
