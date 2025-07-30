@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-750766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E78B160CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:56:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08937B160D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 809FF4E8093
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:56:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625191AA134F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 260E22980DB;
-	Wed, 30 Jul 2025 12:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8539298981;
+	Wed, 30 Jul 2025 12:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKdZFenv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HQX9IwjS"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8087A27AC34;
-	Wed, 30 Jul 2025 12:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E164E3594B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753880187; cv=none; b=XHnDFeVpyohIdIKfb1KbNuaTswLkJOM1/7VlYtChCWxn3ntJ4SWRGfs82dndgulRPRO6I0xaE2+IO9llnDxiIC2SPA5PjG3xHhd4aljRpAsxi45GuJcPj1pjgWTYsxYE82U2lT/dLmKmGnbkQEPNeV7S2puP3uDAQtGWsNEs8i4=
+	t=1753880230; cv=none; b=Cl063pKQjQ2EoKufUcJF9xfdfaNJUZFCx8gQ59TkoLfydPLpJ6gfncO2u9x1GQpS80vEfkU39XhC0JZGzpJFfSyXLKAV8zkT17s0IPGn+kM8b2liJSKXRRJNIHruL632ls9cX1TzEH7jTMsV76vpfaA2YRBD3/fdlYL2uqmpAgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753880187; c=relaxed/simple;
-	bh=DACPd/y8QWIW1UrMQhXjMSxlXYxRti2Z23/eSzS9wGA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SoXK0wP1LFRaZSOmfqpiA17XQcayoGj2HD+a83QqgvwEXwqCVymK9uDr/SXDvo0gV/+xUGCP+LD49mneI1t69Fv+OImtuwRVestH6V3e64qIiKqskg8JWcDC9njSdtDySugCTo50iuuja9hz115l8oomix/5mElComoerPSgPGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKdZFenv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 15083C4CEE7;
-	Wed, 30 Jul 2025 12:56:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753880187;
-	bh=DACPd/y8QWIW1UrMQhXjMSxlXYxRti2Z23/eSzS9wGA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=RKdZFenvScq7XtzpdrLi0gfRBmU1GLujceubsD0WUGuuAsyEpsJf2WVnhNf4N12kd
-	 01F7TEAZKIoJrPz6SfAs/zMNWfY32aACsqVf/tr6pRDyyI0qOAoA8aY2sOg1GWr93w
-	 IJWmdQjioXKhfSRF06i3Xh5O7brlTkLG3dMR9SsV+baDGLLzSZuthfAsDgS+Obt017
-	 3OzzU+USli+PCVoNcF+pERhZgRpWfMHx9KhL4nsdPrgzXYbXDwtlFqy7wQUW1bqScJ
-	 lHE1OcmILw7tjeIf+AvaT242pLh9wmN+cJIskK7ocjcvJAKE+fV2NkFbsgDno5B3ct
-	 TANxbGQC8wDvQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F38B5C83F26;
-	Wed, 30 Jul 2025 12:56:26 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+liziyao.uniontech.com@kernel.org>
-Date: Wed, 30 Jul 2025 20:56:16 +0800
-Subject: [PATCH] iio: imu: bmi270: Match ACPI ID found on newer GPD
- firmware
+	s=arc-20240116; t=1753880230; c=relaxed/simple;
+	bh=tbQGkXTx5N8cfzBhsKZ6O8byb9fUPaWpLKuMOPkynhE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=sJpYASeqwgabJgRRqCWzRzxDsIOi5Sx5bVwSjjvcRYUA2KwOkKtDjsUo+dgaETHIXKKT9iYMpoPDidrutbe3RPl1coMC3lNbro/InnZBfZ1eC/8OI3HBUS/tU7H1oSEYHefwMqPPfkEd+ARnCPeNUQPyAvyjRq1uaGcA5qgTZy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HQX9IwjS; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-313c3915345so10676865a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 05:57:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753880228; x=1754485028; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AGJERRSxIHYm/D7qRYs3pk5CzuzrfI4TxpqJDm/o52E=;
+        b=HQX9IwjSSz47AyaW5Je9MwpYr7KdHq4RVoerhjh9OI1HWyaqkBxYjEY7kEWQyHFghM
+         wIauXsGeYO9wz3nyumLj+Uea3jkMjB2GKKDDaXsv9lu/oyvvky6KuxjQCR2sX4t3SEPf
+         C5oAFww0wKTr/dpAfY/55oy+Ed5T0uqQhC8Khin8e1DN0oYJ96q3orNlDfYC3ssuP7O+
+         71EynRwr1aqf6BRxPLS5JBmVroEORr7RVotKrhxBKN9AYDN8a5bmoWSETbGHvJ4VS272
+         wr3v8Irrowbuprdlge2dU7g3IKJj5Mf0A8b5yXQ1snEgdfxi+1QF8x3SQTAjyd+mEad0
+         0SnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753880228; x=1754485028;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AGJERRSxIHYm/D7qRYs3pk5CzuzrfI4TxpqJDm/o52E=;
+        b=oRny8EaOtgiCLZ9kA2XHWNnQX5BACbUwQL2dgtGCK5cdV1MtXm1I70DjIxNb9QF7h8
+         TqpBhmgcG4KMGPqNRT+xWYGfD30cdBPJdudJKt4jkkmvCJlwSsLEVg2eOlfJZ5HF19V3
+         781yzmVaNPAzavUz9I7Lqox3sAon+LUaL/EdRnpbWfI05XU5m32GD8AsqC8SvqokM1Uu
+         +M/SdgfFziwkcNwNUum/tunIukfI9fP3t0V9kzidcTFHAXgjp+ylvNTYa8IvMXKQPftz
+         F5JNPyyZnsN1POqlzjikUCHsTHruD64sUSxbxPmJjAsDCFBFXuKAg+p5hKKnfigfvjs+
+         8OJA==
+X-Forwarded-Encrypted: i=1; AJvYcCWVPNPU19cjk0pMvVhUFOjZCquoUW1DJxLQGaSGgX0840gfaC8nQSFy1QEPOhjCGJ9xiPQoVvFfauiQ4gw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznG4/JMNiKINpRiAB9VQuynbPlYtCAJg3W8TpMpv3BJ/7Hecvn
+	otlUQ4Y/JWtbS65mxQniuTaph4W4xkn3c8Ey7g35W2OxVJ23g7ed7XMEBKYTOvTplOkm0sZmDFb
+	P7OdNvA==
+X-Google-Smtp-Source: AGHT+IGTVzSY5NC9djL4t4SYCqSM0WRzbgQXc+av5XxWfwIb706Wi6fuHTkYD9Th8LKmbEzDjnpm2KiAEQI=
+X-Received: from pjsa5.prod.google.com ([2002:a17:90a:be05:b0:313:274d:3007])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3948:b0:311:fde5:e224
+ with SMTP id 98e67ed59e1d1-31f5dd8ce1amr4347975a91.6.1753880228258; Wed, 30
+ Jul 2025 05:57:08 -0700 (PDT)
+Date: Wed, 30 Jul 2025 05:57:06 -0700
+In-Reply-To: <856487d0-8e1a-4e64-a8e6-13977fd31fed@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250730-bmi270-gpd-acpi-v1-1-1ffc85b17266@uniontech.com>
-X-B4-Tracking: v=1; b=H4sIAG8WimgC/x3MQQqAIBBA0avErBvQoRK6SrRInWwWmShEIN09a
- fkW/1conIULzF2FzLcUuWKD7jtwxxYDo/hmIEWjIjWhPYWMwpA8bi4Jeh68Jut4nAy0KmXe5fm
- Py/q+HxuTkRdhAAAA
-X-Change-ID: 20250206-bmi270-gpd-acpi-de4d12bce567
-To: Alex Lanzano <lanzano.alex@gmail.com>, 
- Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yao Zi <ziyao@disroot.org>, WangYuli <wangyuli@uniontech.com>, 
- Jun Zhan <zhanjun@uniontech.com>, Cryolitia PukNgae <liziyao@uniontech.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753880186; l=1662;
- i=liziyao@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=tfDPKjat9rlbUiCQbb3HHtNunn+iGtYvXq3O0y2Qh+g=;
- b=LLI6ML1UHHB/RjQT+LS52yxqoWtKT7VwVJIiqKv+jIcM3jHAegOP76mcKY0NMnSU9cVg8zPFb
- WtHkRien4rQCN9mPTIntTTuagB5l141KW9fbX8/e0xzL3aoHwvd+z0w
-X-Developer-Key: i=liziyao@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for liziyao@uniontech.com/20250730 with
- auth_id=471
-X-Original-From: Cryolitia PukNgae <liziyao@uniontech.com>
-Reply-To: liziyao@uniontech.com
+Mime-Version: 1.0
+References: <20250729225455.670324-1-seanjc@google.com> <20250729225455.670324-24-seanjc@google.com>
+ <856487d0-8e1a-4e64-a8e6-13977fd31fed@intel.com>
+Message-ID: <aIoWosN3UiPe2qQK@google.com>
+Subject: Re: [PATCH v17 23/24] KVM: selftests: guest_memfd mmap() test when
+ mmap is supported
+From: Sean Christopherson <seanjc@google.com>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, kvm@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>, 
+	Gavin Shan <gshan@redhat.com>, Shivank Garg <shivankg@amd.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, 
+	Ackerley Tng <ackerleytng@google.com>, Tao Chan <chentao@kylinos.cn>, 
+	James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="us-ascii"
 
-From: Cryolitia PukNgae <liziyao@uniontech.com>
+On Wed, Jul 30, 2025, Xiaoyao Li wrote:
+> On 7/30/2025 6:54 AM, Sean Christopherson wrote:
+> 
+> ...
+> 
+> > +int main(int argc, char *argv[])
+> > +{
+> > +	unsigned long vm_types, vm_type;
+> > +
+> > +	TEST_REQUIRE(kvm_has_cap(KVM_CAP_GUEST_MEMFD));
+> > +
+> > +	/*
+> > +	 * Not all architectures support KVM_CAP_VM_TYPES. However, those that
+> > +	 * support guest_memfd have that support for the default VM type.
+> > +	 */
+> > +	vm_types = kvm_check_cap(KVM_CAP_VM_TYPES);
+> > +	if (!vm_types)
+> > +		vm_types = VM_TYPE_DEFAULT;
+> > +
+> > +	for_each_set_bit(vm_type, &vm_types, BITS_PER_TYPE(vm_types))
+> > +		test_guest_memfd(vm_type);
+> 
+> For ARCHes that don't support KVM_CAP_VM_TYPES, e.g., ARM, vm_types is 0
+> (VM_TYPE_DEFAULT). the for_each_set_bit() loop will not execute any
+> iteration at all.
 
-Some GPD devices ship a buggy firmware that describes on-device BMI260
-with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40,
-let's match the correct ID to detect the device. The buggy ID "BMI0160"
-is kept as well to maintain compatibility with older firmwares.
+Doh, indeed.
 
-Signed-off-by: Cryolitia PukNgae <liziyao@uniontech.com>
----
-Some GPD devices ship a buggy firmware that describes on-device BMI260
-with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40[1],
-let's match the correct ID to detect the device. The buggy ID "BMI0160"
-is kept as well to maintain compatibility with older firmwares.
-
-Link: http://download.softwincn.com/WIN%20Max%202024/Max2-7840-BIOS-V0.41.zip
-
-[1]. See the update nodes in the archive file above
----
- drivers/iio/imu/bmi270/bmi270_i2c.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/iio/imu/bmi270/bmi270_i2c.c b/drivers/iio/imu/bmi270/bmi270_i2c.c
-index c77839b03a969f6f149c025a0305c4b9b8ac6571..b909a421ad0176ee414f2f96ff09db2297586ded 100644
---- a/drivers/iio/imu/bmi270/bmi270_i2c.c
-+++ b/drivers/iio/imu/bmi270/bmi270_i2c.c
-@@ -41,6 +41,8 @@ static const struct i2c_device_id bmi270_i2c_id[] = {
- static const struct acpi_device_id bmi270_acpi_match[] = {
- 	/* GPD Win Mini, Aya Neo AIR Pro, OXP Mini Pro, etc. */
- 	{ "BMI0160",  (kernel_ulong_t)&bmi260_chip_info },
-+	/* GPD Win Max 2 2023(sincice BIOS v0.40), etc. */
-+	{ "BMI0260",  (kernel_ulong_t)&bmi260_chip_info },
- 	{ }
- };
+diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+index b86bf89a71e0..b3ca6737f304 100644
+--- a/tools/testing/selftests/kvm/guest_memfd_test.c
++++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+@@ -372,7 +372,7 @@ int main(int argc, char *argv[])
+         */
+        vm_types = kvm_check_cap(KVM_CAP_VM_TYPES);
+        if (!vm_types)
+-               vm_types = VM_TYPE_DEFAULT;
++               vm_types = BIT(VM_TYPE_DEFAULT);
  
-
----
-base-commit: 0db240bc077fd16cc16bcecfd7f4645bc474aa7e
-change-id: 20250206-bmi270-gpd-acpi-de4d12bce567
-
-Best regards,
--- 
-Cryolitia PukNgae <liziyao@uniontech.com>
-
-
+        for_each_set_bit(vm_type, &vm_types, BITS_PER_TYPE(vm_types))
+                test_guest_memfd(vm_type);
 
