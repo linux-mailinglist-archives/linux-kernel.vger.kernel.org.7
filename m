@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-750445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C21B15B63
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E37B15B67
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4401D5615AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:22:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318D35611A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B22162701AB;
-	Wed, 30 Jul 2025 09:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DEBF277C8C;
+	Wed, 30 Jul 2025 09:22:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="aPKRiOiO"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2048.outbound.protection.outlook.com [40.107.237.48])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="apyemS9V"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2080.outbound.protection.outlook.com [40.107.243.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B8A273D96
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544F4276051
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753867329; cv=fail; b=JKSdxC+2Iu8LcfVd5DKr2OFg6thg+DgynXewG5mbz2mMGiX4rmK/l7EKc/XReaIFQq4RUwgROOmXYbA93A3RTL0W/g9tAobRaHyvfl0w61tU/dgTmsgeAIHC58wqTPQiOgqjYzCHgb4QOc3ksUXBW/soIqLjo9WabpYDI6t4gvA=
+	t=1753867335; cv=fail; b=D+saMUvWimZhK8N5B+5y7hZEZErq86yKjUIKszy2nANvLdgx5rPzzmPhmrG0+rCgx4dZqan9ANCqFCyabGU/LVsNElQGur9BJLhMADam0D0ogYopVN2lR2QifRNKXk3PVnNWX299TvO4bBFy6OkXK8F68IXQnP/SBS9AoDpq+/c=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753867329; c=relaxed/simple;
-	bh=jEY87tCOSot+dW3m2MtlXrS2q7VT2U4vUINWV0CX8fQ=;
+	s=arc-20240116; t=1753867335; c=relaxed/simple;
+	bh=6k+Cj6Z0/SEHXRVlnl0aNgJqJz1MAgDzrEXz0TMoUn8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=a2kkqzYy9FOhwLzRBvnBj0/u5ITTYrhFTsX8zpET0gRUhGu37e26WCS9KCRByzNj9co7QfSr5Sy3zo/KbOTKtPYKQTeQ54CHR1O6E/RfdyTlCFQ0wlhDy07i3An1seLZX62yuoRRzZm9iRzKcXnBM/J/dMYrp/3fEXo80xdunBc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=aPKRiOiO; arc=fail smtp.client-ip=40.107.237.48
+	 Content-Type:MIME-Version; b=nnICTI7jX40J1uV41iL7IsZ4qaXf9K1Ce4ydKdFFow9iGjmTGyBIQJXg5Y/aHeUgBzH+u0mF2/cMGD1L6705RlMRG4rUuebNj7J7rG2mN8JD5ncsrF9Ix4B2+eWMsSGxrIQo5IviGpPrxMHLKBV9F+3r53DsqrBXb3Blae0X2oQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=apyemS9V; arc=fail smtp.client-ip=40.107.243.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pXrSp0b7oOxBq1Lb+bLLfx1As9hzgkn5XqoBcLMMu3uyHp4RAKs3UR3y2tq3PI94ds0Clg9U4tO8LtEPAD8/9ECuJj7YSq3wstpT9YsN/KWENgdj7Irlq1Zz8uWbv5O3bnQ2hP9D0mSioLM7Hv1AqKucmONbOpyx7qt+ja05qkYtwfpWAyl5Xh0Lc/Pwogbd9ZMPprFQlGoKkwaPfsCJh3Gshjwd0jWKmnf+2MfiOUszIpfRdmtFq6iPS8FWpHXFmabC5qAtKOr0vmqtz3IGllkyKlWJ/zcjZcd4BKYlne3ZOJNnwIN21MTsmvgfU7W27fCNd4F1syPLtuHw24itOQ==
+ b=FLJ8olLunDZqU0PEdUFhqbcRHAMikbu20D60GZ1g8KpF66uyBA9D8BCqjPhskl5akb15ofEBsODUPKtLUl1OJbiqkLXHYaNMNgxEqCjLgneNOf7+rca6bDQpYErcXSmSVQj3g249CWp4J24e+vJv48YV0jsvLeMdh0ZWVzsblVCDJ+KBsjM0zMOXfKeT0FtXud5GdkXvDVTovLz49VTPPbnOfXFtXJjPLf6CpptfaBsVj+8kDZfUNvo9aDDa91FZkFszxsbaEE9M6bOsBvaKyBxCaw7ZNlLTzRKfQ4sOlord4JluGMGC2qqQ6D+BfeqvNsiAP0h3FakIuKrKdy9xcg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/WukgZ7ecUPoMqaBYd0oZ5Rm1/mV/0Ja/pqB4Fscaf8=;
- b=OXSX07N/8JdoTWl8mW/8o2PdRWUufUrmQdNxge6wnn9NfhreZL5qm1smQmtzycI9eIng79+vn7R8Fx91y3tDCgHkQNF8TGzLv0k9rCfQrMU2IE0b3aOC7vy8Og2HaMLy9N09iYdsQGdRZjsmZYbQRk0iEUIFho03se9r9XVOK1DfKYUOcvDRLNZqrUDEsBvsx4ETfEYkSnFfZz+pJz8V50T792hZawPSZearp84z7FTYF36kYD6xCgCR7NyDj8rT+dHyM9MGG0Mh4kEE5Ug11e7qL3qmpo9zzgzRAIEtTdZJFJpcAJjjfssZ7TeGaXvzZYCghZz6m3XYQ6NKI4gs/g==
+ bh=8IuxL8ZY5XuQaUWKy8sdw3n4uLB+HryPz5FqC3t2vCk=;
+ b=HuKJJ8f3ELAxpZu0PjnfE3Q3fnGyqTFbRa+89htnEJIOWsVNl4MQteDTrHF9d6iFYEE8MMtDBsfj2d6Zye28nb92Xg3IaICTP9f0uAjDpAi/oLXP1/BlqbFIW0Ygl1YfBXqOihNo/u0WfOrEDfs+LwwjX8gZpyfmPYViKI+N//e/1x0l40zhEj58O1rmDfYLuH4KwZztGuf9QIH8zVKIF+BMK4JQy5vjBw7mp06VWJQTknkogZz0z5AhxuTSH6AU4knIHtAsGlavaCwoXFm4rLlcNOIELogqFbvEwHQFWnWTUQ833ASeuHxAbKzIJ26+F/k0dMD2hlzZ8PSA20bqFw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/WukgZ7ecUPoMqaBYd0oZ5Rm1/mV/0Ja/pqB4Fscaf8=;
- b=aPKRiOiOC94sOxYHS+G/RqdgqchdNWNl/nvY56MvcmMdcsQnnrMccHpCO8DM4gckxYuUjstDSGpttEw4b3SkRkxVIhkm2tMHtXZNOS3Vu4Vwd+uFc/nSFKSSce5Yh01mmb0psOuVJfyz7Gf0YSwapZxcNHOWiyrc3rTtYcNcDjOMUNGAVHFDcozFfJ5/odU8mcOM0ewNIgia6kv6MMdEWZUoCpibFHmVHKkVfzVnxoidiqeteQDwvbbn5zbnwXdUkyfSo2AMfpEpGg+2bqevDHSlmmVuWIk4Sz9bSlB83eUICshHHgqtapLEu4/DxEuy5Xvlh/5GNb8kifbtrU7j/A==
+ bh=8IuxL8ZY5XuQaUWKy8sdw3n4uLB+HryPz5FqC3t2vCk=;
+ b=apyemS9VQ7uJ/tKSHmcAPOECdKxuJaKIgHBr55gkV+y4nYJHz8WY7UuosfXzVBB5j6iPvWbBQv9F+JDjjYT3g7ou2EWnKyDu+Bgv4b1KEZwU98a7KRWARabu0ttSGe90wB+4GLQ0aurDOl7iS9SNA87u35BxCvYXjshljUrlS6E7KqXpDB5DSDMLQBddZN9eKoIebPE1UM7tcPBbPPdLCw3hyG492hoJzwigwWB1In8UiLS0EKhSOuJgSc9u+w88XWGLxF2b5xQx4YRA2mYjPuy+662cT/9H5W2q8kKgkxqRi7rRmA4jRm6kB01nlmQ+vEs+0OnODP/N0w33JZk9wg==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from PH8PR12MB7277.namprd12.prod.outlook.com (2603:10b6:510:223::13)
  by PH7PR12MB8428.namprd12.prod.outlook.com (2603:10b6:510:243::17) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Wed, 30 Jul
- 2025 09:22:03 +0000
+ 2025 09:22:07 +0000
 Received: from PH8PR12MB7277.namprd12.prod.outlook.com
  ([fe80::3a4:70ea:ff05:1251]) by PH8PR12MB7277.namprd12.prod.outlook.com
  ([fe80::3a4:70ea:ff05:1251%5]) with mapi id 15.20.8964.025; Wed, 30 Jul 2025
- 09:22:03 +0000
+ 09:22:07 +0000
 From: Balbir Singh <balbirs@nvidia.com>
 To: linux-mm@kvack.org
 Cc: linux-kernel@vger.kernel.org,
@@ -82,16 +82,16 @@ Cc: linux-kernel@vger.kernel.org,
 	=?UTF-8?q?Mika=20Penttil=C3=A4?= <mpenttil@redhat.com>,
 	Matthew Brost <matthew.brost@intel.com>,
 	Francois Dugast <francois.dugast@intel.com>
-Subject: [v2 04/11] mm/memory/fault: add support for zone device THP fault handling
-Date: Wed, 30 Jul 2025 19:21:32 +1000
-Message-ID: <20250730092139.3890844-5-balbirs@nvidia.com>
+Subject: [v2 05/11] lib/test_hmm: test cases and support for zone device private THP
+Date: Wed, 30 Jul 2025 19:21:33 +1000
+Message-ID: <20250730092139.3890844-6-balbirs@nvidia.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250730092139.3890844-1-balbirs@nvidia.com>
 References: <20250730092139.3890844-1-balbirs@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY5PR04CA0025.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::35) To PH8PR12MB7277.namprd12.prod.outlook.com
+X-ClientProxiedBy: SJ0PR05CA0064.namprd05.prod.outlook.com
+ (2603:10b6:a03:332::9) To PH8PR12MB7277.namprd12.prod.outlook.com
  (2603:10b6:510:223::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -101,99 +101,114 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PH8PR12MB7277:EE_|PH7PR12MB8428:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8774e1a1-8924-41ce-93d9-08ddcf4a8bab
+X-MS-Office365-Filtering-Correlation-Id: cb68317d-0a8d-449e-5282-08ddcf4a8d90
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?UmNwTklzeWlJbUZxbnhLcXVYalNPSUFpOVRQMURUOCtUTUgrUjBrMmtET0ZG?=
- =?utf-8?B?cEZEM0ZyaS9uT1c3ZkxKSHpDMm5TQmVKNktjR0ZNQzdwYUViMFppU0V6NWwx?=
- =?utf-8?B?ck0rZjdBVkd3NWJMZ2M2SkNUaFRva3ZiTFY1OXJKWGZpN1h4SzlHMC95ZXly?=
- =?utf-8?B?RDNPRFp0Z002ZHpLVEZlQzRycVVmVGs1SSs4am9jZUhKSEcrWjhSR3RMdS9s?=
- =?utf-8?B?Q2ZvdTNwTytEdWlyUGVkN09TS0YxL1lUSDFrNkxXKzlGNVFoWS9HYkNsSlo2?=
- =?utf-8?B?Y3pwN3dSYi9RZWpERmVHQ2hEajBPUVFkWnBpSnJ6dHJNcmdFVjRHQVA2T1ZB?=
- =?utf-8?B?Vk1MREpiUHRUM1FRbXlnTkY1MDlyODVFN0Uvd2JGTmREY1dGcFhpNGR0Si9k?=
- =?utf-8?B?RFRuSDh1Q2hubVZ2bVlqOVhrUTZiaWVyUmQyZHNVSnQ3YllKSm90ODg0Sm1X?=
- =?utf-8?B?QlRkWEM2T3hYYlJicXA5QjIwSHN1eWF3amd5bmMrNFNvdTQ0aHFjMy8yVmJt?=
- =?utf-8?B?ZExXTlJ1ZVEyZGdCY3VtVUZWOXUreHVPT0syMWg0LzJIRzV5YUVVT3NpMVd2?=
- =?utf-8?B?K2JReDJyL0JHRExTTk9vMmFuVXhPU0hLVzlXeG1vUlVKY0hlTVhDeFMzVjJF?=
- =?utf-8?B?OG9hMU5GOFNJMnBmQWNGL2lEa0x3S0c3aklvSnR1Qk5aSzE0VTJWVUU1VkpW?=
- =?utf-8?B?UmVkcTIrbVRpeUpVdEFDUnBxK0Y4ZlM4K1o3Y2QzeXBMU2pvT3diQk1ZcGxv?=
- =?utf-8?B?ajZDNHphUG5ObGJ5SUtlc2R3Q0E3NllPWDR6bTR4QU9INHRLUEN6bERIT0pG?=
- =?utf-8?B?VVB5aGdvRXdtaERIejFKU0JTa29pRjlBUXpRR25vR2RRdk5tOWFIaDlCUExy?=
- =?utf-8?B?Zm9GRHZXTHNtZXRmc2M2Ty9aMms4Z3Zib0E5QXB1RzlRRytqdXV0WE1lZHlh?=
- =?utf-8?B?anpEMlZseXQxZzJDZjJXUzlwL0dUVCtLNmYxY0xQV1cyVnVyYkhQREVkUUFC?=
- =?utf-8?B?T3B3b3hQNUNvS3haRGVQSHROcHk5TkpIYXdHSE1BMHp2QUxMNmJRSmRUajA3?=
- =?utf-8?B?RGZsaWkrQjdFdjc0Q05jQ2NJTHZuKzhTUmZhUE8rSDgzRmJqTmZ5TUYyN0xq?=
- =?utf-8?B?SmZzTTFDRld2cWtsRStLM2xoblAzT0VOMmNZeHNaWUM3OTBZbTlLSkdKMXFK?=
- =?utf-8?B?UXd4TCtrL21zT0NMblJGQ1d6NlpXU3U0YU5mSW1aZzJNK0FjVWo3SmNKbUxE?=
- =?utf-8?B?a2hjUUMzWmhVMC83bi9tS3J5c3lBdHV3MjJ3Q0NxWjM2QmdHUlFGcWw2VStO?=
- =?utf-8?B?YzdkV1RZZVhQSWJJUzcxcXhhMGhLNGJ3UzQ2bDlReCtFUktlalh5dWo1Zml1?=
- =?utf-8?B?bTk3d3hvMlV1VkVTMXd3RjhFZEo5SjBFTEp0bkEyVVZxdzFiS2FTSkE0Unp0?=
- =?utf-8?B?VC9QTVhZcmNlYjVWTzQ5QVZuY2lTNTAxZ3ZuZFdtY0w4YXkrNEJyK2FiNElR?=
- =?utf-8?B?UU9LWmRsR09zNGNhbmdPMTVqanArRU9OcE0yL1NPa282VWtCR2JEWXN6aVJT?=
- =?utf-8?B?MGRCZnE5Um4ycUhtY1NKKzVBeWJvTW9MWTZuNGFyaTRWSkVWTTFKR2paMnRz?=
- =?utf-8?B?RjJvZUxSRGpUWU03T2hhSW1XdEEzcGZFWndJVjlFWG1zRjkvVFJqWHRHNzBW?=
- =?utf-8?B?Si9GV3NZbWZhNU5iU3hXNDdmTHk5MjdxbFBKMTd3azNWTEJ6THUyRlBmaUhr?=
- =?utf-8?B?U1k2Sm5oN3hFMWE5Rm8rcG1odTU4Y2o5a2JTSWFBWlJrbWdyTk5RTmpXQTVO?=
- =?utf-8?B?aGtibkNxa0hyM1c4b3laYXFYeUVyY1pUMmlGWjdzMGtJMTMzb3c5N1hXTjdD?=
- =?utf-8?B?N2hieTVENzlUTVRJdHlJSVlsdDFsOW90bk9VREFtc3g1VjQ2cGpsODhIQjdw?=
- =?utf-8?Q?rfYJg44xotw=3D?=
+	=?utf-8?B?eElMcDloclBzeTRjUGNXV1dyaW5Pb1JZS21FTEVoVUloZnNIYlZCTXFRQkQx?=
+ =?utf-8?B?bkZKTFY5ZGVEYjJwY1ViU2JQMFNxQWZZbVp6ZCtFc2YxZnRJUlZCMDFYYXRy?=
+ =?utf-8?B?UU1QdWRiUWJMOWZqSSs1a0VmTVE5R0NJOGNtRHBRSXp3OHhTcENRWEd0RW1E?=
+ =?utf-8?B?QXpKTCt4Z29uT1NPdjRjT0tLVjB1YTVYN2JWVUhXOWd3a2hPSEVTeFZEcHJq?=
+ =?utf-8?B?Z0xRNnIwdTZqUExpWnNHL0NPSWhNTHc2MWY3MHY1ZE85NldEYTlqbWlacDBp?=
+ =?utf-8?B?cnZJcXdpdHRaS1JSRnZoY0lyRCtuSG1EYVo3VFlHbUF5UlNEVy9wUCtkYm1G?=
+ =?utf-8?B?cWd3UHFIUFZ2OWliemZjT3JGdzFDbU5UMmVZanQ3MkNhZER4Vm1sSXN2ZzZK?=
+ =?utf-8?B?TGtiWGU1aUFzNTgrSndqYmxnbDVaMXJJcEFucTgyV2xrSUpxYVpwcUMweWN6?=
+ =?utf-8?B?aDBJZVN6cFhJQ2RLUTNsM3FiZlRTMFN4UEVtWkdqaGQrdFRCa0M5MHlvNDUv?=
+ =?utf-8?B?d0poelB5VlZlNVNldkIvandwRWxqV1BTcTFIbFQrSkhwMmYxYTNSY1hEOUdO?=
+ =?utf-8?B?eGN0QTJybC9OVk9QdkhaZk9oQ1RRU0R4UEQ1RTh6SHFKeWZLSmxaYzQ1UjZZ?=
+ =?utf-8?B?OVdvQVZWOHVlbXllRUlTcVkwcXppUFlONVJCM0Yxcis2RytKazNMSUNUMHdo?=
+ =?utf-8?B?WlpCRGlCN2oyS1F4dVNYbkFxZkY0TW9iMUFiL0FmODd1bXNJV1czd3U1TU5E?=
+ =?utf-8?B?dklHZDNNNSs1Q3ZqNDlKTmpDTnF1THpiSGlrZmVMNGRmbUg1V2l0ZFJNWGhC?=
+ =?utf-8?B?VWFHV3Y1bHJOWmpGZjhEN0syOGg5cUZPS01aMDRFV1lWNlNsMnl5UlFoNng2?=
+ =?utf-8?B?c2txcU93TUdYS2ZSZFIrcC9TaFV3ZGg2dkpyUlBETHJjbzRDcnpNU0J3S2Zv?=
+ =?utf-8?B?Mk5yRTBNTGEzV2UxTWNQNUp1R3M1TTdJSDVQMmVkWURrK1dxMHpOZXkwR0VM?=
+ =?utf-8?B?bGVtWlVIQ3AwL09FVXllMHhBNGdiQmUwTTA2OUVhMzZSVlVrVWUwY0tCRmxW?=
+ =?utf-8?B?TnlKSnVpZXpQQlFibU9Ld3NmSXNEWENhMDQwbkJreUhMSlIxWUcrb1IrZnpr?=
+ =?utf-8?B?SGxGN2Z1S1lNMS9qV3U3dVpDYTZLS1pJV3Jsdy9WK0Rxdk95Y1M4VVNubXRz?=
+ =?utf-8?B?MW50NjlicExxVis5WFZDaHdqb005NVNwdW5rcXF5TVl0MjRER0ZvRlNxWjJj?=
+ =?utf-8?B?WWpYTzFtL3FUTWRkR1FobjVITnU0UzdGZ0JrZ3VHd0svbWVWM1NaeXpjbHUv?=
+ =?utf-8?B?ckpYYVhnVlRQNkc0eVM5TENNcldXaytjVEJpbUxrY3JJZC9US2ZJcEJCaWZy?=
+ =?utf-8?B?eG8xc2NIUXY2VitxUkY4eURKc1RldUttNm9CaG85RkoyVVBmTmNLQWl6NEdn?=
+ =?utf-8?B?Mms5RFlvbHRlWHNmNlNOZ1FkQ0tEU2lhcXFxNTNtQkJZWG5zblo3R3ViazFh?=
+ =?utf-8?B?VW1CdnJpT280ZWZNMjdWMWRFczZTN3ZFeHpMOHhQT3dydzFqWlpUZ1djeEdH?=
+ =?utf-8?B?R0hNdnFjZmhxRVZ6LzNDaXRwazUyc0lVaEFkOG5mUFNzajd1SDJCLys3T1Vm?=
+ =?utf-8?B?QUlnVjg5TWF2Ti9HVERKL05zK3FNZHNqL3B5SDltV2ZxbTF0aWxaS2FseFh3?=
+ =?utf-8?B?Z2VsMlhsbmpVSXM1UWZoeXBHaGJGSngwQ0ZTbEh0RU4rUlZPdWw3RVpVVFBD?=
+ =?utf-8?B?NnR1cEErRXVDOE1qK1JkTHVETXhNRTROaEhxazdVVFluRFlFcS9ZaWJzbE9O?=
+ =?utf-8?B?R0NiSzhGV29Lek43WWh5WWk1VW1ZaXgvYmdSMHlqWXNxY2RsTElVOGphVjRk?=
+ =?utf-8?B?UDNONlJXbnlITHNydDJoQ1BWRGwrODhRa0lielltVCtVaHZEYWNmQUtEQ2NY?=
+ =?utf-8?Q?fi1UfTf0cZ8=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7277.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QmhQa1NwaU5SZWZhMEd5bWlNZ2J3ZDlpZ1RObkU1QXZTLzJzQ3hISFM1a0oz?=
- =?utf-8?B?Y1JFOEU2ME9uUDc1VU1qQndTd3FtaEZDakxrWXI3SjZEV1NzVnM3Nm9YSU5w?=
- =?utf-8?B?QTA4U3BxUUROUlJ2a0N5YjIzZnYrYmVxVEZLNXF2YTczczlBWEswb2ZrSTN5?=
- =?utf-8?B?WFVjREZmSmVHSVVzb29yREpuL1BtVXhPOUFMUFpTNG81QlJoU1U0OW1FbDNz?=
- =?utf-8?B?WHg1c3hqb1hBYVNWWHlXWXBMd3VvWmM5azhOZ2M1N1JyM0VjT3h0UzNpOGht?=
- =?utf-8?B?bm5hWXU5enRqQ25waitHUFgxVUp2KzIyOGVOL0V1MFpKTUl3Zm9kUElnUjND?=
- =?utf-8?B?Z1plZEtmR2hlQzlSMjE2czh1a0l1T0kvRzJacVZPYUZGcW9ZNGNJUkpaY25x?=
- =?utf-8?B?UWtnUS94cHJqejIybnNVaUtDQ2h5ZFZjdE1EcWp3MlNtYWJRT09RbHliTlJV?=
- =?utf-8?B?YUVVcTFXWXpEQ3ZVdlIzdEVMdm5aRE1NRnJDZnh2bGt1Y1NveGZQbHQ2VFQv?=
- =?utf-8?B?RTZya0QvOTFmUG0xSFloWTQxZW5tUTh2Q3RwOW9xL2o3b1l2UUxDQWU4TDZo?=
- =?utf-8?B?Z21yTW4xMnBaU0p3dVIxQnU3NWZYckJ6VEExTTBrSm1CRVBGNk4wc3BydzMz?=
- =?utf-8?B?Nm55WjdQTU8zK01DMkg5eHg4YXVhUzNZT1BteExjOG5TNWw2VkxweUhNTGZa?=
- =?utf-8?B?aGVtWTFDMHg4aHlnYndYYUgzaUVXK25aaWJOeUtnRVdTaTVjaTJiK1JVeGFy?=
- =?utf-8?B?SDBTbGZZRUNXVWFYRFlHQjJjRTd0MFRlT0FSUUYySlhTd3d6QUQzTFdRbXFy?=
- =?utf-8?B?N2tGcW5xVDV2NlFKU0lFUFJ5NS85UmNWOGtGdDc0c09YbmJueEVHT1NTd3Ri?=
- =?utf-8?B?U09sM1NnTk1CNU53TnNXWkdGQThCenliYU5wSlFmalc5NEJYalhBT1ZPNmhP?=
- =?utf-8?B?cEV5VFJ3UElFRWhjR2lGbWI1WXRjZ1FFcElaSDVDSEQ0Ukk0UjI3Tms5cXNO?=
- =?utf-8?B?YUZpM3JaVDR4djhoQzhJMlVFNklSTW91TXBYVm1JcTZzcFJUbXhwT0tRamJh?=
- =?utf-8?B?MFhUYjZ2VmpSNmh3Qm52aUFUU1o0aGpackw3eVFxd3dpdkVJM3lpMWwrMXFV?=
- =?utf-8?B?YWJyTzFyTklaNnV3NlFVdnJ6QjUwRVoxZVJIVWE5cUVrNSt1Wm82ZllEZm9B?=
- =?utf-8?B?TFJWcTJvaFV1MzhMUFUxMjhHSXIyak5PSi9tY3dob1hNQkg5TEdFbEcyRnFC?=
- =?utf-8?B?NDAvVU90Zk1xVjVicHJGNTgwNkNOdmI0bWJEaUhobXVhR1pOQ0x5Q2hvaGh4?=
- =?utf-8?B?dlI3bjdYdGVORWFVZ0tqYzQraHN1T1VsaG94eHl6bU5MbE9ydHE2MTN6V2hW?=
- =?utf-8?B?N3lhQWp0N1FVV2s3WGp5cVkrMGo2NzE1OG81TE9hN2tCZGoyN042MVZuem1G?=
- =?utf-8?B?L0NXc3BWMlc3MVRuVENlMFRQMk9PNVlqY3JNTGh4ZTEzTW53OWxvNmptQkdP?=
- =?utf-8?B?bkxVUGNISEkyb3hMMXk0UmtFcXZySkRrRURWdnlpKzB1T1pWQmcyNndNTmoy?=
- =?utf-8?B?SnlBZ21LRnZFcXVQcGZDbWhBbWRheU82TU5QN0MzUVpNbGhLZ3VvMUpKeXZQ?=
- =?utf-8?B?a3gyU3FKSkFtYkRDR0NlZjdXUStTOEN1UCtqdnFqSVdnTytVdGVaWkttaCs3?=
- =?utf-8?B?bDhpRWVIdWY4Zk1Jb0RoaWRJY3U1ZXlXN0lndFdSZUdCTnBnMUhncGU5VExK?=
- =?utf-8?B?ekw5QzdwVHd2Rk4reXM0VTI1RmhZeUtGaktmQ2RWWU4xeE40UE5WNlVoZDVM?=
- =?utf-8?B?MnlkSVhsMFNXalF4RG56czU0TXUxTDJzdVVua1ZuQi9KVXZxWm5OVDUvWnE3?=
- =?utf-8?B?b0ViQmxlNlNMOFZHeWIxeE05MlRuOUxScWxNenRKMzJaMk96aERsR0xOOEdu?=
- =?utf-8?B?Rkl3U09tMzZpOWk3NDg5UXBMRmY2ZDlEZEZneDc0Vk83UWxUa2VzR3ExNUFP?=
- =?utf-8?B?TUU0N2d6a0lpTGQ5NHJTT0hEaXYrMXRNaE82blFJSkFvbjdIV1lUWk5pazlh?=
- =?utf-8?B?VjB5bGdzVE5KczRwdnkrdnovZ2lBd3BHVi9hanBoYmVvd2ZTZ1JqTldrcDNP?=
- =?utf-8?Q?wOaAXx3ZsOrJ0hkDYk9/9t48K?=
+	=?utf-8?B?c3Jnb0NHamhGRDBOZkNobW51aW1ML3pKUk96cWNPL3RrSTY2T21JcUNBelpo?=
+ =?utf-8?B?TEFOdU9lakhpOEoyeUNuWlJhdTFlT21RWmd2RWYyd1BuQ3Z6MDE5bFJ0MWpB?=
+ =?utf-8?B?eDhyUkVDbGlsNTg1NTlBOXV4d3dlMVdJMldiNUhkR1F5OXRIeEJoSTU5OGpZ?=
+ =?utf-8?B?NjlFRTcwdXp1V0MvWU02MEp4cWdqNG54Z3g5REZrQnI2TFgwdTgydVJ6VVYw?=
+ =?utf-8?B?dmxkN09MZ280cE9ONG5LL2h4djVxN0dqWDlFUm80NXFuWWo1OCtsaUlwRUI2?=
+ =?utf-8?B?ZU9VUDFOdzJDMnJab3prTUxYMnVSZ2dnQ25XQUJ4cjBtOW44V3kzN2t2WnZL?=
+ =?utf-8?B?ZWw4SU9WOWdzMFBPcGtGTllDS3ExUEFQdDNvTU15eGRpMUt6NUZtRXV1VUpN?=
+ =?utf-8?B?UWVaMnJ6WlNrZ1RvVzlDZGxFQkxwQkhGUFRac1FFTXFCcXN2amNGVnZ2M0ZT?=
+ =?utf-8?B?cytYbDRyUW9OcEY3NEhvVEtIT3g3c1RFUjNVc2FtalE4bnVaMkZyZy9iUFl0?=
+ =?utf-8?B?MWpKb3AxekpSQW1NMWZRaVpkd1dUN2I3NlpKdXByZHRTYmk1OTY4eWwrR2pU?=
+ =?utf-8?B?cXNKMFdIdWl6cDVDMEt6dXdleUErN3FDaDA4RENyeEM0Q25FQjBrNVg2SE1C?=
+ =?utf-8?B?WGVzeFJPYVByZ3RtckFVZ0x0ZU1lZjQyMTFYYXYzOSsvK3dpSytDMjdrM1lY?=
+ =?utf-8?B?aXRsME1lRCt4UC85YXA2WVIzWlV2ZTRQRFZuOVNTbUJ2cmZYdktxTGwwU255?=
+ =?utf-8?B?dW16b1JHa25lYlEwcytYNEYzTDFCS2RXQ3B4MVhQRENjRUFPNklvQURnNXJB?=
+ =?utf-8?B?ZysrVk1Hbk53MWtxM2o3YnJ4dUdKSlBxWEs0bWJpc1lXS1E2MnNFblBackJI?=
+ =?utf-8?B?N0ZyUmxWVzNxVlFNejNoMEpYelVuT2JsZVpMaVY5bTQxNm5uZUdBbkFYNE03?=
+ =?utf-8?B?aitOcWsyMThwcjBxZi85d3I5M0xKcmpXRVF6bFVXUnZpa2ZvNHpsSmRFdlc1?=
+ =?utf-8?B?Rno1aW1JdVFZSlpnZ1ZNaXEvWklJOTJncHpCcHZiNE5rNFo5bjRvVjJHUXZJ?=
+ =?utf-8?B?OXZCanYzd2FmS1U5VGdlUTgyelBTYUdua3Y2dU4zMXpRQk1ZU3BoMzFYSEoz?=
+ =?utf-8?B?dEE3ZnQvaTJNaDlQNWxWY0FCaW1iVFE3TDd1YkVlK3NLeEthbFQvT0FHMEhG?=
+ =?utf-8?B?dkRrUFRmOEl1TFowaXExT2tWY3NIZklPZmJyZDlWMnZwZDZWL0ROQ2lMNFdU?=
+ =?utf-8?B?RVJWS1J0QjNBOHNGVU5aWktxTzFyWmhaQ1lwZFdTRitodXpuUVM2dS9Pc1Vp?=
+ =?utf-8?B?d014dU5DeDh4dzcwc2l3UlRucmZ6clgrMG5nL3JhSUhMeURvVXhwdDNTZGpv?=
+ =?utf-8?B?NHJyc1IzbnJDcmpIT2hBNGJJNmhRdmpQSW5aVDFtdlVVV1VvMFVscFFkSENu?=
+ =?utf-8?B?aFNWUzlKamZ0NGtlSGszQlFFQXZmRzZucytOQnB4NjR5cnY2dE40dVY4b0NU?=
+ =?utf-8?B?TWlTY3VBSE1hN1IzVGdEc2Y2QUJ5RTR0V2VhZnJ4UGlGbE15cTZYNElvZC85?=
+ =?utf-8?B?QVc3MHd3Z1o0cEJMb0FtamE3U3F2RWV4YnZiUGJia09YcGozNVc0Rm1hNGNE?=
+ =?utf-8?B?N2liVXcwSzVEcnBvcytZSE1XZU02b3BLZ3gyNk5wV0Z6VHZnNlZzVExVMUlZ?=
+ =?utf-8?B?UThxY2l0T2thOG5Xb040czlLbnNwdHJ1dGFnYjZ2amJNTURIQm54NHl6UjVG?=
+ =?utf-8?B?Y3dsS1htRVZZaElqSWt4WlNjMXZLbWZyRmJQTmJQQ0xQaVlZNWVPSkpJY3h5?=
+ =?utf-8?B?eUl6ZDIvT2kyMTcvSnhLL3RDblVEU25DK0dzeWx3cEUreHZXdk9vM3hsVG1s?=
+ =?utf-8?B?bzBuU3o4VU5PU09WVmduTitYNTM2OFB5OVVNdmJnNThlT3VNVTR5N2lpeUZz?=
+ =?utf-8?B?SlVBSVlWU0ZRcHEvdzZVa3VoWGRERTBYRGw0MlVIcHRpMnZJbGtObVlVdTVM?=
+ =?utf-8?B?WHhxYmg1alVqenFwMU9pZzFKWUR2U1YrYzVSMk03Q1RFYWhhendFaFdwVFZo?=
+ =?utf-8?B?SFhmRjRtMVlJS0tpY1E3VExxWFZIWDUrSXQxTG43S3k1OFJlNFNFMlN5YWZs?=
+ =?utf-8?Q?tzBUuH9IXLvvl4cGS2d25o++C?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8774e1a1-8924-41ce-93d9-08ddcf4a8bab
+X-MS-Exchange-CrossTenant-Network-Message-Id: cb68317d-0a8d-449e-5282-08ddcf4a8d90
 X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7277.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 09:22:03.6994
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 09:22:06.9123
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ImF69gI6AlAcjhJxQAYLfCP49fRSOlBfRGRUL1Q+d+MRIeWwToQrRpz3HU7U6wkkVnbR09AnOZd4U4xLbLyAiw==
+X-MS-Exchange-CrossTenant-UserPrincipalName: hXb6q+bRR3+MbRVcYcBsTb3UPK1K4eQKYudsKfcnrduozVl3LBCWRMdorEyb4WhEiifDHSgdoZR1CTU7aAbGHA==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8428
 
-When the CPU touches a zone device THP entry, the data needs to
-be migrated back to the CPU, call migrate_to_ram() on these pages
-via do_huge_pmd_device_private() fault handling helper.
+Enhance the hmm test driver (lib/test_hmm) with support for
+THP pages.
+
+A new pool of free_folios() has now been added to the dmirror
+device, which can be allocated when a request for a THP zone
+device private page is made.
+
+Add compound page awareness to the allocation function during
+normal migration and fault based migration. These routines also
+copy folio_nr_pages() when moving data between system memory
+and device memory.
+
+args.src and args.dst used to hold migration entries are now
+dynamically allocated (as they need to hold HPAGE_PMD_NR entries
+or more).
+
+Split and migrate support will be added in future patches in this
+series.
 
 Cc: Karol Herbst <kherbst@redhat.com>
 Cc: Lyude Paul <lyude@redhat.com>
@@ -220,100 +235,711 @@ Cc: Francois Dugast <francois.dugast@intel.com>
 
 Signed-off-by: Balbir Singh <balbirs@nvidia.com>
 ---
- include/linux/huge_mm.h |  7 +++++++
- mm/huge_memory.c        | 36 ++++++++++++++++++++++++++++++++++++
- mm/memory.c             |  6 ++++--
- 3 files changed, 47 insertions(+), 2 deletions(-)
+ include/linux/memremap.h |  12 ++
+ lib/test_hmm.c           | 366 +++++++++++++++++++++++++++++++--------
+ 2 files changed, 303 insertions(+), 75 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 2a6f5ff7bca3..56fdcaf7604b 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -475,6 +475,8 @@ static inline bool folio_test_pmd_mappable(struct folio *folio)
+diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+index a0723b35eeaa..0c5141a7d58c 100644
+--- a/include/linux/memremap.h
++++ b/include/linux/memremap.h
+@@ -169,6 +169,18 @@ static inline bool folio_is_device_private(const struct folio *folio)
+ 	return is_device_private_page(&folio->page);
+ }
  
- vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
- 
-+vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf);
++static inline void *folio_zone_device_data(const struct folio *folio)
++{
++	VM_WARN_ON_FOLIO(!folio_is_device_private(folio), folio);
++	return folio->page.zone_device_data;
++}
 +
- extern struct folio *huge_zero_folio;
- extern unsigned long huge_zero_pfn;
++static inline void folio_set_zone_device_data(struct folio *folio, void *data)
++{
++	VM_WARN_ON_FOLIO(!folio_is_device_private(folio), folio);
++	folio->page.zone_device_data = data;
++}
++
+ static inline bool is_pci_p2pdma_page(const struct page *page)
+ {
+ 	return IS_ENABLED(CONFIG_PCI_P2PDMA) &&
+diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+index 761725bc713c..4850f9026694 100644
+--- a/lib/test_hmm.c
++++ b/lib/test_hmm.c
+@@ -119,6 +119,7 @@ struct dmirror_device {
+ 	unsigned long		calloc;
+ 	unsigned long		cfree;
+ 	struct page		*free_pages;
++	struct folio		*free_folios;
+ 	spinlock_t		lock;		/* protects the above */
+ };
  
-@@ -633,6 +635,11 @@ static inline vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf)
+@@ -492,7 +493,7 @@ static int dmirror_write(struct dmirror *dmirror, struct hmm_dmirror_cmd *cmd)
+ }
+ 
+ static int dmirror_allocate_chunk(struct dmirror_device *mdevice,
+-				   struct page **ppage)
++				  struct page **ppage, bool is_large)
+ {
+ 	struct dmirror_chunk *devmem;
+ 	struct resource *res = NULL;
+@@ -572,20 +573,45 @@ static int dmirror_allocate_chunk(struct dmirror_device *mdevice,
+ 		pfn_first, pfn_last);
+ 
+ 	spin_lock(&mdevice->lock);
+-	for (pfn = pfn_first; pfn < pfn_last; pfn++) {
++	for (pfn = pfn_first; pfn < pfn_last; ) {
+ 		struct page *page = pfn_to_page(pfn);
+ 
++		if (is_large && IS_ALIGNED(pfn, HPAGE_PMD_NR)
++			&& (pfn + HPAGE_PMD_NR <= pfn_last)) {
++			page->zone_device_data = mdevice->free_folios;
++			mdevice->free_folios = page_folio(page);
++			pfn += HPAGE_PMD_NR;
++			continue;
++		}
++
+ 		page->zone_device_data = mdevice->free_pages;
+ 		mdevice->free_pages = page;
++		pfn++;
+ 	}
++
++	ret = 0;
+ 	if (ppage) {
+-		*ppage = mdevice->free_pages;
+-		mdevice->free_pages = (*ppage)->zone_device_data;
+-		mdevice->calloc++;
++		if (is_large) {
++			if (!mdevice->free_folios) {
++				ret = -ENOMEM;
++				goto err_unlock;
++			}
++			*ppage = folio_page(mdevice->free_folios, 0);
++			mdevice->free_folios = (*ppage)->zone_device_data;
++			mdevice->calloc += HPAGE_PMD_NR;
++		} else if (mdevice->free_pages) {
++			*ppage = mdevice->free_pages;
++			mdevice->free_pages = (*ppage)->zone_device_data;
++			mdevice->calloc++;
++		} else {
++			ret = -ENOMEM;
++			goto err_unlock;
++		}
+ 	}
++err_unlock:
+ 	spin_unlock(&mdevice->lock);
+ 
+-	return 0;
++	return ret;
+ 
+ err_release:
+ 	mutex_unlock(&mdevice->devmem_lock);
+@@ -598,10 +624,13 @@ static int dmirror_allocate_chunk(struct dmirror_device *mdevice,
+ 	return ret;
+ }
+ 
+-static struct page *dmirror_devmem_alloc_page(struct dmirror_device *mdevice)
++static struct page *dmirror_devmem_alloc_page(struct dmirror *dmirror,
++					      bool is_large)
+ {
+ 	struct page *dpage = NULL;
+ 	struct page *rpage = NULL;
++	unsigned int order = is_large ? HPAGE_PMD_ORDER : 0;
++	struct dmirror_device *mdevice = dmirror->mdevice;
+ 
+ 	/*
+ 	 * For ZONE_DEVICE private type, this is a fake device so we allocate
+@@ -610,49 +639,55 @@ static struct page *dmirror_devmem_alloc_page(struct dmirror_device *mdevice)
+ 	 * data and ignore rpage.
+ 	 */
+ 	if (dmirror_is_private_zone(mdevice)) {
+-		rpage = alloc_page(GFP_HIGHUSER);
++		rpage = folio_page(folio_alloc(GFP_HIGHUSER, order), 0);
+ 		if (!rpage)
+ 			return NULL;
+ 	}
+ 	spin_lock(&mdevice->lock);
+ 
+-	if (mdevice->free_pages) {
++	if (is_large && mdevice->free_folios) {
++		dpage = folio_page(mdevice->free_folios, 0);
++		mdevice->free_folios = dpage->zone_device_data;
++		mdevice->calloc += 1 << order;
++		spin_unlock(&mdevice->lock);
++	} else if (!is_large && mdevice->free_pages) {
+ 		dpage = mdevice->free_pages;
+ 		mdevice->free_pages = dpage->zone_device_data;
+ 		mdevice->calloc++;
+ 		spin_unlock(&mdevice->lock);
+ 	} else {
+ 		spin_unlock(&mdevice->lock);
+-		if (dmirror_allocate_chunk(mdevice, &dpage))
++		if (dmirror_allocate_chunk(mdevice, &dpage, is_large))
+ 			goto error;
+ 	}
+ 
+-	zone_device_page_init(dpage);
++	zone_device_folio_init(page_folio(dpage), order);
+ 	dpage->zone_device_data = rpage;
+ 	return dpage;
+ 
+ error:
+ 	if (rpage)
+-		__free_page(rpage);
++		__free_pages(rpage, order);
+ 	return NULL;
+ }
+ 
+ static void dmirror_migrate_alloc_and_copy(struct migrate_vma *args,
+ 					   struct dmirror *dmirror)
+ {
+-	struct dmirror_device *mdevice = dmirror->mdevice;
+ 	const unsigned long *src = args->src;
+ 	unsigned long *dst = args->dst;
+ 	unsigned long addr;
+ 
+-	for (addr = args->start; addr < args->end; addr += PAGE_SIZE,
+-						   src++, dst++) {
++	for (addr = args->start; addr < args->end; ) {
+ 		struct page *spage;
+ 		struct page *dpage;
+ 		struct page *rpage;
++		bool is_large = *src & MIGRATE_PFN_COMPOUND;
++		int write = (*src & MIGRATE_PFN_WRITE) ? MIGRATE_PFN_WRITE : 0;
++		unsigned long nr = 1;
+ 
+ 		if (!(*src & MIGRATE_PFN_MIGRATE))
+-			continue;
++			goto next;
+ 
+ 		/*
+ 		 * Note that spage might be NULL which is OK since it is an
+@@ -662,17 +697,45 @@ static void dmirror_migrate_alloc_and_copy(struct migrate_vma *args,
+ 		if (WARN(spage && is_zone_device_page(spage),
+ 		     "page already in device spage pfn: 0x%lx\n",
+ 		     page_to_pfn(spage)))
++			goto next;
++
++		dpage = dmirror_devmem_alloc_page(dmirror, is_large);
++		if (!dpage) {
++			struct folio *folio;
++			unsigned long i;
++			unsigned long spfn = *src >> MIGRATE_PFN_SHIFT;
++			struct page *src_page;
++
++			if (!is_large)
++				goto next;
++
++			if (!spage && is_large) {
++				nr = HPAGE_PMD_NR;
++			} else {
++				folio = page_folio(spage);
++				nr = folio_nr_pages(folio);
++			}
++
++			for (i = 0; i < nr && addr < args->end; i++) {
++				dpage = dmirror_devmem_alloc_page(dmirror, false);
++				rpage = BACKING_PAGE(dpage);
++				rpage->zone_device_data = dmirror;
++
++				*dst = migrate_pfn(page_to_pfn(dpage)) | write;
++				src_page = pfn_to_page(spfn + i);
++
++				if (spage)
++					copy_highpage(rpage, src_page);
++				else
++					clear_highpage(rpage);
++				src++;
++				dst++;
++				addr += PAGE_SIZE;
++			}
+ 			continue;
+-
+-		dpage = dmirror_devmem_alloc_page(mdevice);
+-		if (!dpage)
+-			continue;
++		}
+ 
+ 		rpage = BACKING_PAGE(dpage);
+-		if (spage)
+-			copy_highpage(rpage, spage);
+-		else
+-			clear_highpage(rpage);
+ 
+ 		/*
+ 		 * Normally, a device would use the page->zone_device_data to
+@@ -684,10 +747,42 @@ static void dmirror_migrate_alloc_and_copy(struct migrate_vma *args,
+ 
+ 		pr_debug("migrating from sys to dev pfn src: 0x%lx pfn dst: 0x%lx\n",
+ 			 page_to_pfn(spage), page_to_pfn(dpage));
+-		*dst = migrate_pfn(page_to_pfn(dpage));
+-		if ((*src & MIGRATE_PFN_WRITE) ||
+-		    (!spage && args->vma->vm_flags & VM_WRITE))
+-			*dst |= MIGRATE_PFN_WRITE;
++
++		*dst = migrate_pfn(page_to_pfn(dpage)) | write;
++
++		if (is_large) {
++			int i;
++			struct folio *folio = page_folio(dpage);
++			*dst |= MIGRATE_PFN_COMPOUND;
++
++			if (folio_test_large(folio)) {
++				for (i = 0; i < folio_nr_pages(folio); i++) {
++					struct page *dst_page =
++						pfn_to_page(page_to_pfn(rpage) + i);
++					struct page *src_page =
++						pfn_to_page(page_to_pfn(spage) + i);
++
++					if (spage)
++						copy_highpage(dst_page, src_page);
++					else
++						clear_highpage(dst_page);
++					src++;
++					dst++;
++					addr += PAGE_SIZE;
++				}
++				continue;
++			}
++		}
++
++		if (spage)
++			copy_highpage(rpage, spage);
++		else
++			clear_highpage(rpage);
++
++next:
++		src++;
++		dst++;
++		addr += PAGE_SIZE;
+ 	}
+ }
+ 
+@@ -734,14 +829,17 @@ static int dmirror_migrate_finalize_and_map(struct migrate_vma *args,
+ 	const unsigned long *src = args->src;
+ 	const unsigned long *dst = args->dst;
+ 	unsigned long pfn;
++	const unsigned long start_pfn = start >> PAGE_SHIFT;
++	const unsigned long end_pfn = end >> PAGE_SHIFT;
+ 
+ 	/* Map the migrated pages into the device's page tables. */
+ 	mutex_lock(&dmirror->mutex);
+ 
+-	for (pfn = start >> PAGE_SHIFT; pfn < (end >> PAGE_SHIFT); pfn++,
+-								src++, dst++) {
++	for (pfn = start_pfn; pfn < end_pfn; pfn++, src++, dst++) {
+ 		struct page *dpage;
+ 		void *entry;
++		int nr, i;
++		struct page *rpage;
+ 
+ 		if (!(*src & MIGRATE_PFN_MIGRATE))
+ 			continue;
+@@ -750,13 +848,25 @@ static int dmirror_migrate_finalize_and_map(struct migrate_vma *args,
+ 		if (!dpage)
+ 			continue;
+ 
+-		entry = BACKING_PAGE(dpage);
+-		if (*dst & MIGRATE_PFN_WRITE)
+-			entry = xa_tag_pointer(entry, DPT_XA_TAG_WRITE);
+-		entry = xa_store(&dmirror->pt, pfn, entry, GFP_ATOMIC);
+-		if (xa_is_err(entry)) {
+-			mutex_unlock(&dmirror->mutex);
+-			return xa_err(entry);
++		if (*dst & MIGRATE_PFN_COMPOUND)
++			nr = folio_nr_pages(page_folio(dpage));
++		else
++			nr = 1;
++
++		WARN_ON_ONCE(end_pfn < start_pfn + nr);
++
++		rpage = BACKING_PAGE(dpage);
++		VM_WARN_ON(folio_nr_pages(page_folio(rpage)) != nr);
++
++		for (i = 0; i < nr; i++) {
++			entry = folio_page(page_folio(rpage), i);
++			if (*dst & MIGRATE_PFN_WRITE)
++				entry = xa_tag_pointer(entry, DPT_XA_TAG_WRITE);
++			entry = xa_store(&dmirror->pt, pfn + i, entry, GFP_ATOMIC);
++			if (xa_is_err(entry)) {
++				mutex_unlock(&dmirror->mutex);
++				return xa_err(entry);
++			}
+ 		}
+ 	}
+ 
+@@ -829,31 +939,66 @@ static vm_fault_t dmirror_devmem_fault_alloc_and_copy(struct migrate_vma *args,
+ 	unsigned long start = args->start;
+ 	unsigned long end = args->end;
+ 	unsigned long addr;
++	unsigned int order = 0;
++	int i;
+ 
+-	for (addr = start; addr < end; addr += PAGE_SIZE,
+-				       src++, dst++) {
++	for (addr = start; addr < end; ) {
+ 		struct page *dpage, *spage;
+ 
+ 		spage = migrate_pfn_to_page(*src);
+-		if (!spage || !(*src & MIGRATE_PFN_MIGRATE))
+-			continue;
++		if (!spage || !(*src & MIGRATE_PFN_MIGRATE)) {
++			addr += PAGE_SIZE;
++			goto next;
++		}
+ 
+ 		if (WARN_ON(!is_device_private_page(spage) &&
+-			    !is_device_coherent_page(spage)))
+-			continue;
++			    !is_device_coherent_page(spage))) {
++			addr += PAGE_SIZE;
++			goto next;
++		}
++
+ 		spage = BACKING_PAGE(spage);
+-		dpage = alloc_page_vma(GFP_HIGHUSER_MOVABLE, args->vma, addr);
+-		if (!dpage)
+-			continue;
+-		pr_debug("migrating from dev to sys pfn src: 0x%lx pfn dst: 0x%lx\n",
+-			 page_to_pfn(spage), page_to_pfn(dpage));
++		order = folio_order(page_folio(spage));
+ 
++		if (order)
++			dpage = folio_page(vma_alloc_folio(GFP_HIGHUSER_MOVABLE,
++						order, args->vma, addr), 0);
++		else
++			dpage = alloc_page_vma(GFP_HIGHUSER_MOVABLE, args->vma, addr);
++
++		/* Try with smaller pages if large allocation fails */
++		if (!dpage && order) {
++			dpage = alloc_page_vma(GFP_HIGHUSER_MOVABLE, args->vma, addr);
++			if (!dpage)
++				return VM_FAULT_OOM;
++			order = 0;
++		}
++
++		pr_debug("migrating from sys to dev pfn src: 0x%lx pfn dst: 0x%lx\n",
++				page_to_pfn(spage), page_to_pfn(dpage));
+ 		lock_page(dpage);
+ 		xa_erase(&dmirror->pt, addr >> PAGE_SHIFT);
+ 		copy_highpage(dpage, spage);
+ 		*dst = migrate_pfn(page_to_pfn(dpage));
+ 		if (*src & MIGRATE_PFN_WRITE)
+ 			*dst |= MIGRATE_PFN_WRITE;
++		if (order)
++			*dst |= MIGRATE_PFN_COMPOUND;
++
++		for (i = 0; i < (1 << order); i++) {
++			struct page *src_page;
++			struct page *dst_page;
++
++			src_page = pfn_to_page(page_to_pfn(spage) + i);
++			dst_page = pfn_to_page(page_to_pfn(dpage) + i);
++
++			xa_erase(&dmirror->pt, addr >> PAGE_SHIFT);
++			copy_highpage(dst_page, src_page);
++		}
++next:
++		addr += PAGE_SIZE << order;
++		src += 1 << order;
++		dst += 1 << order;
+ 	}
  	return 0;
  }
- 
-+static inline vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf)
-+{
-+	return 0;
-+}
+@@ -879,11 +1024,14 @@ static int dmirror_migrate_to_system(struct dmirror *dmirror,
+ 	unsigned long size = cmd->npages << PAGE_SHIFT;
+ 	struct mm_struct *mm = dmirror->notifier.mm;
+ 	struct vm_area_struct *vma;
+-	unsigned long src_pfns[32] = { 0 };
+-	unsigned long dst_pfns[32] = { 0 };
+ 	struct migrate_vma args = { 0 };
+ 	unsigned long next;
+ 	int ret;
++	unsigned long *src_pfns;
++	unsigned long *dst_pfns;
 +
- static inline bool is_huge_zero_folio(const struct folio *folio)
- {
- 	return false;
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e373c6578894..713dd433d352 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1271,6 +1271,42 @@ static vm_fault_t __do_huge_pmd_anonymous_page(struct vm_fault *vmf)
++	src_pfns = kvcalloc(PTRS_PER_PTE, sizeof(*src_pfns), GFP_KERNEL | __GFP_NOFAIL);
++	dst_pfns = kvcalloc(PTRS_PER_PTE, sizeof(*dst_pfns), GFP_KERNEL | __GFP_NOFAIL);
  
+ 	start = cmd->addr;
+ 	end = start + size;
+@@ -902,7 +1050,7 @@ static int dmirror_migrate_to_system(struct dmirror *dmirror,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-		next = min(end, addr + (ARRAY_SIZE(src_pfns) << PAGE_SHIFT));
++		next = min(end, addr + (PTRS_PER_PTE << PAGE_SHIFT));
+ 		if (next > vma->vm_end)
+ 			next = vma->vm_end;
+ 
+@@ -912,7 +1060,7 @@ static int dmirror_migrate_to_system(struct dmirror *dmirror,
+ 		args.start = addr;
+ 		args.end = next;
+ 		args.pgmap_owner = dmirror->mdevice;
+-		args.flags = dmirror_select_device(dmirror);
++		args.flags = dmirror_select_device(dmirror) | MIGRATE_VMA_SELECT_COMPOUND;
+ 
+ 		ret = migrate_vma_setup(&args);
+ 		if (ret)
+@@ -928,6 +1076,8 @@ static int dmirror_migrate_to_system(struct dmirror *dmirror,
+ out:
+ 	mmap_read_unlock(mm);
+ 	mmput(mm);
++	kvfree(src_pfns);
++	kvfree(dst_pfns);
+ 
+ 	return ret;
+ }
+@@ -939,12 +1089,12 @@ static int dmirror_migrate_to_device(struct dmirror *dmirror,
+ 	unsigned long size = cmd->npages << PAGE_SHIFT;
+ 	struct mm_struct *mm = dmirror->notifier.mm;
+ 	struct vm_area_struct *vma;
+-	unsigned long src_pfns[32] = { 0 };
+-	unsigned long dst_pfns[32] = { 0 };
+ 	struct dmirror_bounce bounce;
+ 	struct migrate_vma args = { 0 };
+ 	unsigned long next;
+ 	int ret;
++	unsigned long *src_pfns;
++	unsigned long *dst_pfns;
+ 
+ 	start = cmd->addr;
+ 	end = start + size;
+@@ -955,6 +1105,18 @@ static int dmirror_migrate_to_device(struct dmirror *dmirror,
+ 	if (!mmget_not_zero(mm))
+ 		return -EINVAL;
+ 
++	ret = -ENOMEM;
++	src_pfns = kvcalloc(PTRS_PER_PTE, sizeof(*src_pfns),
++			  GFP_KERNEL | __GFP_NOFAIL);
++	if (!src_pfns)
++		goto free_mem;
++
++	dst_pfns = kvcalloc(PTRS_PER_PTE, sizeof(*dst_pfns),
++			  GFP_KERNEL | __GFP_NOFAIL);
++	if (!dst_pfns)
++		goto free_mem;
++
++	ret = 0;
+ 	mmap_read_lock(mm);
+ 	for (addr = start; addr < end; addr = next) {
+ 		vma = vma_lookup(mm, addr);
+@@ -962,7 +1124,7 @@ static int dmirror_migrate_to_device(struct dmirror *dmirror,
+ 			ret = -EINVAL;
+ 			goto out;
+ 		}
+-		next = min(end, addr + (ARRAY_SIZE(src_pfns) << PAGE_SHIFT));
++		next = min(end, addr + (PTRS_PER_PTE << PAGE_SHIFT));
+ 		if (next > vma->vm_end)
+ 			next = vma->vm_end;
+ 
+@@ -972,7 +1134,8 @@ static int dmirror_migrate_to_device(struct dmirror *dmirror,
+ 		args.start = addr;
+ 		args.end = next;
+ 		args.pgmap_owner = dmirror->mdevice;
+-		args.flags = MIGRATE_VMA_SELECT_SYSTEM;
++		args.flags = MIGRATE_VMA_SELECT_SYSTEM |
++				MIGRATE_VMA_SELECT_COMPOUND;
+ 		ret = migrate_vma_setup(&args);
+ 		if (ret)
+ 			goto out;
+@@ -992,7 +1155,7 @@ static int dmirror_migrate_to_device(struct dmirror *dmirror,
+ 	 */
+ 	ret = dmirror_bounce_init(&bounce, start, size);
+ 	if (ret)
+-		return ret;
++		goto free_mem;
+ 	mutex_lock(&dmirror->mutex);
+ 	ret = dmirror_do_read(dmirror, start, end, &bounce);
+ 	mutex_unlock(&dmirror->mutex);
+@@ -1003,11 +1166,14 @@ static int dmirror_migrate_to_device(struct dmirror *dmirror,
+ 	}
+ 	cmd->cpages = bounce.cpages;
+ 	dmirror_bounce_fini(&bounce);
+-	return ret;
++	goto free_mem;
+ 
+ out:
+ 	mmap_read_unlock(mm);
+ 	mmput(mm);
++free_mem:
++	kfree(src_pfns);
++	kfree(dst_pfns);
+ 	return ret;
  }
  
-+vm_fault_t do_huge_pmd_device_private(struct vm_fault *vmf)
-+{
-+	struct vm_area_struct *vma = vmf->vma;
-+	vm_fault_t ret = 0;
-+	spinlock_t *ptl;
-+	swp_entry_t swp_entry;
-+	struct page *page;
-+
-+	if (vmf->flags & FAULT_FLAG_VMA_LOCK) {
-+		vma_end_read(vma);
-+		return VM_FAULT_RETRY;
-+	}
-+
-+	ptl = pmd_lock(vma->vm_mm, vmf->pmd);
-+	if (unlikely(!pmd_same(*vmf->pmd, vmf->orig_pmd))) {
-+		spin_unlock(ptl);
-+		return 0;
-+	}
-+
-+	swp_entry = pmd_to_swp_entry(vmf->orig_pmd);
-+	page = pfn_swap_entry_to_page(swp_entry);
-+	vmf->page = page;
-+	vmf->pte = NULL;
-+	if (trylock_page(vmf->page)) {
-+		get_page(page);
-+		spin_unlock(ptl);
-+		ret = page_pgmap(page)->ops->migrate_to_ram(vmf);
-+		unlock_page(vmf->page);
-+		put_page(page);
-+	} else {
-+		spin_unlock(ptl);
-+	}
-+
-+	return ret;
-+}
-+
- /*
-  * always: directly stall for all thp allocations
-  * defer: wake kswapd and fail if not immediately available
-diff --git a/mm/memory.c b/mm/memory.c
-index 92fd18a5d8d1..6c87f043eea1 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6152,8 +6152,10 @@ static vm_fault_t __handle_mm_fault(struct vm_area_struct *vma,
- 		vmf.orig_pmd = pmdp_get_lockless(vmf.pmd);
+@@ -1200,6 +1366,7 @@ static void dmirror_device_evict_chunk(struct dmirror_chunk *chunk)
+ 	unsigned long i;
+ 	unsigned long *src_pfns;
+ 	unsigned long *dst_pfns;
++	unsigned int order = 0;
  
- 		if (unlikely(is_swap_pmd(vmf.orig_pmd))) {
--			VM_BUG_ON(thp_migration_supported() &&
--					  !is_pmd_migration_entry(vmf.orig_pmd));
-+			if (is_device_private_entry(
-+					pmd_to_swp_entry(vmf.orig_pmd)))
-+				return do_huge_pmd_device_private(&vmf);
+ 	src_pfns = kvcalloc(npages, sizeof(*src_pfns), GFP_KERNEL | __GFP_NOFAIL);
+ 	dst_pfns = kvcalloc(npages, sizeof(*dst_pfns), GFP_KERNEL | __GFP_NOFAIL);
+@@ -1215,13 +1382,25 @@ static void dmirror_device_evict_chunk(struct dmirror_chunk *chunk)
+ 		if (WARN_ON(!is_device_private_page(spage) &&
+ 			    !is_device_coherent_page(spage)))
+ 			continue;
 +
- 			if (is_pmd_migration_entry(vmf.orig_pmd))
- 				pmd_migration_entry_wait(mm, vmf.pmd);
- 			return 0;
++		order = folio_order(page_folio(spage));
+ 		spage = BACKING_PAGE(spage);
+-		dpage = alloc_page(GFP_HIGHUSER_MOVABLE | __GFP_NOFAIL);
++		if (src_pfns[i] & MIGRATE_PFN_COMPOUND) {
++			dpage = folio_page(folio_alloc(GFP_HIGHUSER_MOVABLE,
++					      order), 0);
++		} else {
++			dpage = alloc_page(GFP_HIGHUSER_MOVABLE | __GFP_NOFAIL);
++			order = 0;
++		}
++
++		/* TODO Support splitting here */
+ 		lock_page(dpage);
+-		copy_highpage(dpage, spage);
+ 		dst_pfns[i] = migrate_pfn(page_to_pfn(dpage));
+ 		if (src_pfns[i] & MIGRATE_PFN_WRITE)
+ 			dst_pfns[i] |= MIGRATE_PFN_WRITE;
++		if (order)
++			dst_pfns[i] |= MIGRATE_PFN_COMPOUND;
++		folio_copy(page_folio(dpage), page_folio(spage));
+ 	}
+ 	migrate_device_pages(src_pfns, dst_pfns, npages);
+ 	migrate_device_finalize(src_pfns, dst_pfns, npages);
+@@ -1234,7 +1413,12 @@ static void dmirror_remove_free_pages(struct dmirror_chunk *devmem)
+ {
+ 	struct dmirror_device *mdevice = devmem->mdevice;
+ 	struct page *page;
++	struct folio *folio;
+ 
++
++	for (folio = mdevice->free_folios; folio; folio = folio_zone_device_data(folio))
++		if (dmirror_page_to_chunk(folio_page(folio, 0)) == devmem)
++			mdevice->free_folios = folio_zone_device_data(folio);
+ 	for (page = mdevice->free_pages; page; page = page->zone_device_data)
+ 		if (dmirror_page_to_chunk(page) == devmem)
+ 			mdevice->free_pages = page->zone_device_data;
+@@ -1265,6 +1449,7 @@ static void dmirror_device_remove_chunks(struct dmirror_device *mdevice)
+ 		mdevice->devmem_count = 0;
+ 		mdevice->devmem_capacity = 0;
+ 		mdevice->free_pages = NULL;
++		mdevice->free_folios = NULL;
+ 		kfree(mdevice->devmem_chunks);
+ 		mdevice->devmem_chunks = NULL;
+ 	}
+@@ -1378,18 +1563,30 @@ static void dmirror_devmem_free(struct page *page)
+ {
+ 	struct page *rpage = BACKING_PAGE(page);
+ 	struct dmirror_device *mdevice;
++	struct folio *folio = page_folio(rpage);
++	unsigned int order = folio_order(folio);
+ 
+-	if (rpage != page)
+-		__free_page(rpage);
++	if (rpage != page) {
++		if (order)
++			__free_pages(rpage, order);
++		else
++			__free_page(rpage);
++		rpage = NULL;
++	}
+ 
+ 	mdevice = dmirror_page_to_device(page);
+ 	spin_lock(&mdevice->lock);
+ 
+ 	/* Return page to our allocator if not freeing the chunk */
+ 	if (!dmirror_page_to_chunk(page)->remove) {
+-		mdevice->cfree++;
+-		page->zone_device_data = mdevice->free_pages;
+-		mdevice->free_pages = page;
++		mdevice->cfree += 1 << order;
++		if (order) {
++			page->zone_device_data = mdevice->free_folios;
++			mdevice->free_folios = page_folio(page);
++		} else {
++			page->zone_device_data = mdevice->free_pages;
++			mdevice->free_pages = page;
++		}
+ 	}
+ 	spin_unlock(&mdevice->lock);
+ }
+@@ -1397,11 +1594,10 @@ static void dmirror_devmem_free(struct page *page)
+ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
+ {
+ 	struct migrate_vma args = { 0 };
+-	unsigned long src_pfns = 0;
+-	unsigned long dst_pfns = 0;
+ 	struct page *rpage;
+ 	struct dmirror *dmirror;
+-	vm_fault_t ret;
++	vm_fault_t ret = 0;
++	unsigned int order, nr;
+ 
+ 	/*
+ 	 * Normally, a device would use the page->zone_device_data to point to
+@@ -1412,21 +1608,38 @@ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
+ 	dmirror = rpage->zone_device_data;
+ 
+ 	/* FIXME demonstrate how we can adjust migrate range */
++	order = folio_order(page_folio(vmf->page));
++	nr = 1 << order;
++
++	/*
++	 * Consider a per-cpu cache of src and dst pfns, but with
++	 * large number of cpus that might not scale well.
++	 */
++	args.start = ALIGN_DOWN(vmf->address, (PAGE_SIZE << order));
+ 	args.vma = vmf->vma;
+-	args.start = vmf->address;
+-	args.end = args.start + PAGE_SIZE;
+-	args.src = &src_pfns;
+-	args.dst = &dst_pfns;
++	args.end = args.start + (PAGE_SIZE << order);
++
++	nr = (args.end - args.start) >> PAGE_SHIFT;
++	args.src = kcalloc(nr, sizeof(unsigned long), GFP_KERNEL);
++	args.dst = kcalloc(nr, sizeof(unsigned long), GFP_KERNEL);
+ 	args.pgmap_owner = dmirror->mdevice;
+ 	args.flags = dmirror_select_device(dmirror);
+ 	args.fault_page = vmf->page;
+ 
++	if (!args.src || !args.dst) {
++		ret = VM_FAULT_OOM;
++		goto err;
++	}
++
++	if (order)
++		args.flags |= MIGRATE_VMA_SELECT_COMPOUND;
++
+ 	if (migrate_vma_setup(&args))
+ 		return VM_FAULT_SIGBUS;
+ 
+ 	ret = dmirror_devmem_fault_alloc_and_copy(&args, dmirror);
+ 	if (ret)
+-		return ret;
++		goto err;
+ 	migrate_vma_pages(&args);
+ 	/*
+ 	 * No device finalize step is needed since
+@@ -1434,7 +1647,10 @@ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
+ 	 * invalidated the device page table.
+ 	 */
+ 	migrate_vma_finalize(&args);
+-	return 0;
++err:
++	kfree(args.src);
++	kfree(args.dst);
++	return ret;
+ }
+ 
+ static const struct dev_pagemap_ops dmirror_devmem_ops = {
+@@ -1465,7 +1681,7 @@ static int dmirror_device_init(struct dmirror_device *mdevice, int id)
+ 		return ret;
+ 
+ 	/* Build a list of free ZONE_DEVICE struct pages */
+-	return dmirror_allocate_chunk(mdevice, NULL);
++	return dmirror_allocate_chunk(mdevice, NULL, false);
+ }
+ 
+ static void dmirror_device_remove(struct dmirror_device *mdevice)
 -- 
 2.50.1
 
