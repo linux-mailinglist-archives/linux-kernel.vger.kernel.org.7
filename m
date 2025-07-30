@@ -1,74 +1,94 @@
-Return-Path: <linux-kernel+bounces-750971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AF5B1637E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:18:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD5E5B16388
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225DD1AA3FE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F451168D7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10855153BE8;
-	Wed, 30 Jul 2025 15:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94802D9EE3;
+	Wed, 30 Jul 2025 15:20:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nc01vCO6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e1hqUMOS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QImK2UTz"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A83513AD38;
-	Wed, 30 Jul 2025 15:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B41B1A5B92;
+	Wed, 30 Jul 2025 15:20:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753888703; cv=none; b=SLDru6e1+rj9uFnV7/sw7I9O/MBNGolWD7Q7kzuygyA0GxzG1fs0oemFrlFz/9ALEPaeCsfnoPE50BA1bbz1bCS+1CbzioCVYvNHdYtWDr8xdHmjQSbAQ+4S9glyUoyvRBHSTosrjPWSL76PxZxcU/kmh3eQ4TKVhBa3pCQ3Xd0=
+	t=1753888847; cv=none; b=MF6+5TSXCm7Mo7Dmh24DymmxGersna0ii8DEsr6v9+8kxXSyFl38eU6Xj1nxiyRBcIJybwegK3QXI7wlxX01Bdh9/M4Bh3KXZi13gLpaWzSwxANacSLDSLgVnmAbmtUgEFrWx7uQ5WL4xKSy0gTpFYjY/EbdXNQzBlpBRP5DsX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753888703; c=relaxed/simple;
-	bh=kzz6rxfN+Fgy4xuTgWtE9bGnLrdoXXgMDbz0lnfvswA=;
+	s=arc-20240116; t=1753888847; c=relaxed/simple;
+	bh=2YJILWFVi9iNE2E7aaZODttyLwFM9GOA/QeoQJ4EfeY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=czvxKOpBrVWtocdusANSwp/S8YUH8imit24jobWOWBVTBR9YCsOFL6kMbC1YkFwc8kjW02rY9135CVvWmf1ncURgOzwXbgPF7L3OtIzagwIilpJBQoN3+VmGVJEHFQxUbbYevxZZ07fpCRmgZSwYqlC1n+ZcFmPYIWa8nOT6GEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nc01vCO6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e1hqUMOS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 30 Jul 2025 17:18:18 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753888700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A3gZrMeoDLZoxHHiM7qzk4/zQZah7/LS2/SAvFh22+E=;
-	b=nc01vCO6ihLSn47cphSiDdud9wInqMksz97KjNwLzwcrBtziU7DXav9jSiuooLVb4W9BlO
-	JQEnvd1l6e5G03lrcdfr+9TKiYx/4U8rMixb71BMRfslRBU5QX3xtvZN1a1yJPaHucKLc2
-	yrmPy2C0EKKcb3lizu6q0w1QhZgboiRkYg0AykwdnI23QMEDir/juMUCZcO8mF3zDF5Hav
-	5IUZgQc6EcPPkpMmlO+5KjgCFRIPgo6Vx8Ir49je7hzY4bf5E+XgNtBnw1Vz67uBs1Fyo1
-	xGJnizriemMLGPBs/AeoXGs4CRS0y4sKCD9qy23J65bLUwnjV9uk48jVKdPSdg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753888700;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A3gZrMeoDLZoxHHiM7qzk4/zQZah7/LS2/SAvFh22+E=;
-	b=e1hqUMOSlAX+ADhdO/e7vlpx8sq3gscQGo1ygG2VSYtN7JKyUOL6q/KW8Tuc2AIPIajfq0
-	AmVKIopd7fjCB9Bw==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH 4/5] sched: Add rt task enqueue/dequeue trace points
-Message-ID: <20250730151818.7RemAREO@linutronix.de>
-References: <cover.1753879295.git.namcao@linutronix.de>
- <8f83869a5040bd7cd3096bd12090c1ab110ae5c4.1753879295.git.namcao@linutronix.de>
- <767a9d59081220594d21856f329fb35988ef7925.camel@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=buEr5ppC1EvajbLds7DJSdRwt23XQcdDfjHOY1cPvp2EjHNQnymIfvrzORCgEkRZBX3NFlOR/CdQ8u+ILF1jP7CleqttkciAkGZBK5STgVNqFqvaMJaqoq/yPxPHe+Sqvf0VwjIO4TKIwnD6cmbbGrtz+yC9UGI7KBzUl6rQjKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QImK2UTz; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b78d337dd9so1701977f8f.3;
+        Wed, 30 Jul 2025 08:20:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753888843; x=1754493643; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kci03Gb7LVvbq3eEOdY/a+e9RESG12PudUU6mEsPhsY=;
+        b=QImK2UTzs99K9rosAUMdz7lytv5ymcoStKsqj/P+sxlaNts3O4U2haW9gDKafXo4n1
+         3Cr3RBqTW53xdZ1sksR2xmsUdOSW7GF6iivrkuvU58PQNI2FCLVyQW33ZWy4zkkhETCv
+         CZ4dFnkiiWHsLh8vSuY+woR7lIurpTdXypWPpXdyUsdXJX8Dl8ALdDUBhm3VlJR6wDbh
+         ueWK3GWgWI63MlWqbAld4rcF5RzohvnDihqA0SO9MPG1YA5im8Zj/CyQ3dRRI+ZJLTLv
+         zZJR4P0T5M0WfyTaGK3UaXeooCZUpugp18wHwFhTG5wE8CudXS8ff9pevx+jhiyOGmTx
+         dGsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753888843; x=1754493643;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Kci03Gb7LVvbq3eEOdY/a+e9RESG12PudUU6mEsPhsY=;
+        b=NwWDxLllNw491STs5QowiSbnPVd33gLi84cZd+bD1ind8T11bkPwp0Hft2bdPtAC3d
+         VVrkRWSt+TBQmyCs+zKnUu7a8Oh92lkXuR4L7FB4unzc0T2/VR65T4nkopuPBAbq0Dqi
+         A+/3XnlcDL3VSjOPOD3yoInH4ssNf7VxKOr4KDmjwsANVsoIA1TFO6cSVkOA6DAeOOLY
+         IMxv7j9c1R2N4JxHWn0M8zvqNRsl48a6LAKxwTySA9nA1gwlrPYGUTzDqWFOqazPUALh
+         Wsp143g0YaXqJqh2Iob0vnPthtzEp1XHQZpMIQ+1xtusNGBdxL/rYHDd6OyEK9V/kqL5
+         gNhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4mwEnt1xJV392XKkP3BiffNXny/iE4ZABnp8xR9SKiL3JX577UFn0oGHonFNG0+7cbihBdarZu9e7TEs=@vger.kernel.org, AJvYcCWh3AikiwZ1eKUgD188UzK5uRE6vaMM2HFJz+473raL69+LilztMeHr2VV/BuF76bccpJal3D1j@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg1dsEHJVzDDPFT7iw1y2oJgUOuPdLLi3sMcpQ0L7Fog7VxYvf
+	v+H0sekPtfFlmIHC3K580i8G7daZ0dsHRDLVxnoKXrU1TksvsCdTiMxo
+X-Gm-Gg: ASbGncsDF7A9xHhOz1mkmMf53uBDoms6pA7R+t2xZQe0tZlYnoVocbO/XGaEAo1U5yT
+	wiQUmghkn5HIHN+VrykPUMJqHXak5hpYAMqp2u0I7fjh4HrwlntEr5+X7Aig4FQOnRLmlVkT309
+	gt4f2TtKE95G5tG/c25VXrRKzWE/6++8Y6uMo00CEMpQuJnkxG7fs4z1E1+kwu7CgmhAgsTvmjO
+	DJ9uIoBtK4Bix6F0ud4kRrLyV5SI7z15Q+J8dnnoQiw8nVRWibSpu/PbJOlHsmbAcycDZAYfjE/
+	qzrqeBz2cbBUPWPvy8A38By3P/ua6BCpKfqJOyllAxre433AQLRPE/J7n4lwhlRnPEaUAhLMSZ2
+	LzJlRM/yUhb+rTSmMUY85b6kEKYO/Xvv3M5krrs0hTSZ3Z/kMI0uQUJP4z2qOF88cmg==
+X-Google-Smtp-Source: AGHT+IFujs7Q9eRhqfnwDZ+MvXL7x9DocH05EbUQKXWIE5rTbWniIFMJNpGqQkP0jEAo4UKtbeJXqg==
+X-Received: by 2002:a05:6000:381:b0:3a4:dc93:1e87 with SMTP id ffacd0b85a97d-3b794fc19d1mr3452329f8f.1.1753888843257;
+        Wed, 30 Jul 2025 08:20:43 -0700 (PDT)
+Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cfe56sm32874015e9.20.2025.07.30.08.20.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 08:20:42 -0700 (PDT)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 76D18BE2DE0; Wed, 30 Jul 2025 17:20:41 +0200 (CEST)
+Date: Wed, 30 Jul 2025 17:20:41 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jari Ruusu <jariruusu@protonmail.com>, Yi Yang <yiyang13@huawei.com>,
+	GONG Ruiqi <gongruiqi1@huawei.com>, Helge Deller <deller@gmx.de>,
+	Sasha Levin <sashal@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Text mode VGA-console scrolling is broken in upstream & stable
+ trees
+Message-ID: <aIo4SSJXIrJEanmP@eldamar.lan>
+References: <C4_ogGo3eSdgo3wcbkdIXQDoGk2CShDfiQEjnwmgLUvd1cVp5kKguDC4M7KlWO4Tg9Ny3joveq7vH9K_zpBGvIA8-UkU2ogSE1T9Y6782js=@protonmail.com>
+ <2025073054-stipend-duller-9622@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,32 +97,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <767a9d59081220594d21856f329fb35988ef7925.camel@redhat.com>
+In-Reply-To: <2025073054-stipend-duller-9622@gregkh>
 
-On Wed, Jul 30, 2025 at 03:53:14PM +0200, Gabriele Monaco wrote:
-> On Wed, 2025-07-30 at 14:45 +0200, Nam Cao wrote:
-> > Add trace points into enqueue_task_rt() and dequeue_task_rt(). They
-> > are useful to implement RV monitor which validates RT scheduling.
+Hi,
+
+On Wed, Jul 30, 2025 at 04:26:44PM +0200, Greg Kroah-Hartman wrote:
+> On Wed, Jul 30, 2025 at 02:06:27PM +0000, Jari Ruusu wrote:
+> > The patch that broke text mode VGA-console scrolling is this one:
+> > "vgacon: Add check for vc_origin address range in vgacon_scroll()"
+> > commit 864f9963ec6b4b76d104d595ba28110b87158003 upstream.
 > > 
+> > How to preproduce:
+> > (1) boot a kernel that is configured to use text mode VGA-console
+> > (2) type commands:  ls -l /usr/bin | less -S
+> > (3) scroll up/down with cursor-down/up keys
+> > 
+> > Above mentioned patch seems to have landed in upstream and all
+> > kernel.org stable trees with zero testing. Even minimal testing
+> > would have shown that it breaks text mode VGA-console scrolling.
+> > 
+> > Greg, Sasha, Linus,
+> > Please consider reverting that buggy patch from all affected trees.
 > 
-> I get it's much simpler this way, but is it that different to follow
-> the task's existing tracepoints?
-> 
-> * task going to sleep (switch:prev_state != RUNNING) is dequeued
-> * task waking up is enqueued
-> * changing the tasks's policy (setpolicy and setattr syscalls) should
-> enqueue/dequeue as well
-> 
-> This is more thinking out loud, but I'm doing right now something
-> rather similar with the deadline tasks and this seems reasonable, at
-> least on paper.
-> 
-> What do you think?
+> Please work to fix it in Linus's tree first and then we will be glad to
+> backport the needed fix.
 
-I think more or less the same. The fewer tracepoints, the better. But the
-monitor is way more obvious this way.
+FWIW, and maybe just an interesting side node: if it ever get
+considered to revert the commit, this will re-introduce/re-open
+CVE-2025-38213.
 
-Let me see how hard it is to use the existing tracepoints...
+Cf. https://lore.kernel.org/linux-cve-announce/2025070422-CVE-2025-38213-c3e3@gregkh/T/#u
 
-Nam
+Regards,
+Salvatore
 
