@@ -1,90 +1,52 @@
-Return-Path: <linux-kernel+bounces-750286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B757B1598C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1FE1B15996
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25973B7ACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:27:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16EF518A7E8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF26C28751C;
-	Wed, 30 Jul 2025 07:27:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nic+ijc5"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBC628751A;
+	Wed, 30 Jul 2025 07:31:28 +0000 (UTC)
+Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B4C1F12F4;
-	Wed, 30 Jul 2025 07:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B55BE1EB5DB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753860460; cv=none; b=tYsUL57OWc54CA+V++iCAVcgyp+UnowAPjE5Q0ukPCqBHkvo54TRSs/ARslpo0TobPFAu8v+6V/gzkGJ1lkR7NI+lJBa0MHJQ6Ekkt+p00o59FgQGGOQ7woqpuH5YK33m5+y0HpEBODlw949HnyMGql/Y/P16+TG/ZSYsOLALUk=
+	t=1753860688; cv=none; b=pOoGJVj+ve84hNt8edtRohxs2Tnggj7QVypJzWb5CgjjHgtN/qptynALJaZ6AOedHwbONWYFtm20k+GB236AFsW4BVfE04Ax8DQ2LIJBAZV2zThat9WDlyUbKFt4X1lD38MWh4BeKVWPD65WCzao6dwk12a5Q2JKc442jcTzJM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753860460; c=relaxed/simple;
-	bh=kiLfI1wVhg5HCODuS6QMhP1+3AJY6AWK2NRmz0k2lBo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ja0w6VCVauc07vW6rSpft8RCckTXb8jTxElp1P5g5zWvzovKICX7bSJeZvZwARbqNiJq0qDLWKCFkaWYPCwh5Zsc2ekRFtPHjNckv4sBVkkI5i6TXrXEFbjMKGbrPeQDvVWyu5dLqaKKEbWwAWL8tQY45rXrZi/qxLUg02bhk5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nic+ijc5; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45622a1829eso22325345e9.1;
-        Wed, 30 Jul 2025 00:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753860457; x=1754465257; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6f0FwhvW4mq7M1CCFYzcRZRTS9S4BaVix+fIhnxA7VE=;
-        b=Nic+ijc5EwCST4GA5Rktuv4rK/IH82vi+yxRyJNjRTfkMo6J5vSAZaKR1KDFKb/Nxq
-         dp2yjQHrsbyRphs9aB1Sf2/ZHuYl55Wk4F/KTeU1yN/uz8YAoUCQxGQOgppzB4pGkOOy
-         cX1Cu4bttZfZq8dGYeAGWLxaavTBo7Dfx0csoe2r8UnUt6jT7aUncRu1QbEGz7fQOUgW
-         /nlbjIhIc702Ly0U1WfRsqAiI0gD8LNq/aJ82UpCyGwA9vQJIdopwv+LH+yWqJZAFvyo
-         86fv9jy2B9xG/OnwRfd1SQKVR/18tZ0iSCT4gOUiUMFP2MlXJn/D+hAjFmgLa9Q/Eifd
-         WFFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753860457; x=1754465257;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6f0FwhvW4mq7M1CCFYzcRZRTS9S4BaVix+fIhnxA7VE=;
-        b=n+Fd8dnf8LdsDyH/f1HSQAza2cQwRLA56SN49Wuad4aBe4PHPRNguHdu9XfsAIf9qj
-         nkesaYpac9uB8RrGf8Sm0TPd3yarHDe7y53t4faUlVd5OGO6hJbrFSR3sa6Y5bXw92Bg
-         2femh/LFZOx/MB0hJxrbxYlyxWs9Dk5W6GIOlMlp0O0yKnR1uDUL4Xp5ozqIKWZxxcNm
-         g37eFE9ib0fIJtT9zhzTMvBjoOmw0HJTtJVC9WcHPGxVbbGzHTL892IU4z4wIx6NvsMN
-         EzRmP1Z8xHf788ZXAgiDAtfyzzHkZOurANCICEwxWSiwApLgQUf7W56IaAJwoBFjcVwh
-         1s/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVdptvGE+vajWwDZB7Ne67gu7cJGate9O03bkycucctZSbHQjgvq23pBcD4EBEkD/r1v5mFILPeicVn@vger.kernel.org, AJvYcCXCIKUwIbilMt59hRYV1bN1Zan9EWe5LwKeDVIK9fpBiSFn0xmfU2uoHEbWOoh9Zuw8/JKN18wxyw/NhJGB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/+H3WmuXuE/uWl10BjT1Y9zPIERPg3hU5FXHXGBrWGwe1phmJ
-	0GidGr3IBPW6FXSVEdeM7fG5WaugJSSOA51cnF1fYgPYRtzWFi6fPXuL
-X-Gm-Gg: ASbGnctqCcPBcU42M7YLxfVaa5phZtozVE9i1ZnJRFtQjOEVXNLiKYHcblHnn2nGQEU
-	0L9YQBXAKi03g9juqok8X6F7/CjPcLyopsCYJJGIjpzfNU+vuIKBZvpc009yE/1uXnJ0E5rxE0S
-	2dWWdchr/eycVJLrvAJkQ+tWpwv2Tb/VrVjsDkCaHSKAlqIGMozR5LzbMU39WC2+Ecc1RDvqacR
-	9sMfqVBT9RevEd2U7r16lRfYqbIG/1xoD7wTwjCw/O33NVYWywtkXubqP0Hdm2AD4revij1aThu
-	w7vaj2mzjkjmoaG9Hzv3NHWxm841C8FRKhxMJpdEj4HjQNb3TiuFRKXAKOcXdIkiDQGAYEo8lwI
-	IvGlG3dTIZKSeuSf41foqG8O0B8jz7Jt4OJJv86LKIXqdGdKzNDW20fFtgwDOdsvDw6zk4DuIWw
-	==
-X-Google-Smtp-Source: AGHT+IGitxQ0sOEC+WgVaNX9L6/ItIfmQxZmM1ZdgBtR/19JOebjrySx8wjPj96seElfIW/TIv7EMQ==
-X-Received: by 2002:a05:600c:8409:b0:450:d4a6:799e with SMTP id 5b1f17b1804b1-45892bc58d3mr17968365e9.20.1753860456652;
-        Wed, 30 Jul 2025 00:27:36 -0700 (PDT)
-Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78084f79csm13259467f8f.71.2025.07.30.00.27.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 00:27:36 -0700 (PDT)
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: soc: samsung: usi: add samsung,exynos2200-usi compatible
-Date: Wed, 30 Jul 2025 10:27:30 +0300
-Message-ID: <20250730072730.1882549-1-ivo.ivanov.ivanov1@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753860688; c=relaxed/simple;
+	bh=lGANFSUGVJuOs7RkjlhNySfv8QsiOn3t9/P2gJicYgU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Nm64w+kuyvrcuNHQyqx1rfHMEsclADecO5CI8Q3L7mfK62muErucQJCrU5Ak+k7h2+igJt08hRp08GO2qe2n1wFCAxZOVkBc+8UTJbHXXStzA/UsSxzI3I9PA7oVtD55JV4KaYOd8MAAAetS8/wCuZ3/H4vujPRW2BTIOP+9aiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from jtjnmail201603.home.langchao.com
+        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202507301530076602;
+        Wed, 30 Jul 2025 15:30:07 +0800
+Received: from localhost.localdomain.com (10.94.10.113) by
+ jtjnmail201603.home.langchao.com (10.100.2.3) with Microsoft SMTP Server id
+ 15.1.2507.57; Wed, 30 Jul 2025 15:30:06 +0800
+From: chuguangqing <chuguangqing@inspur.com>
+To: <lkp@intel.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>
+CC: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	chuguangqing <chuguangqing@inspur.com>
+Subject: [PATCH v2 1/1] gpu: drm: fix compilation errors in drm_vram_helper
+Date: Wed, 30 Jul 2025 15:29:19 +0800
+Message-ID: <20250730072919.3720-1-chuguangqing@inspur.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250729060728.82402-1-chuguangqing@inspur.com>
+References: <20250729060728.82402-1-chuguangqing@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,34 +54,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+tUid: 20257301530073bb4d7eec5c6854491af538e201b4cf4
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-Add samsung,exynos2200-usi dedicated compatible for representing the USI
-of Samsung Exynos 2200 SoC.
+We encountered the following errors while compiling drm_vram_helper.ko
 
-Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+ERROR: modpost: "drm_gem_ttm_print_info" [drivers/gpu/drm/drm_vram_helper.ko] undefined!
+ERROR: modpost: "drm_gem_ttm_mmap" [drivers/gpu/drm/drm_vram_helper.ko] undefined!
 
+The functions drm_gem_ttm_mmap and drm_gem_ttm_print_info are defined in drm_gem_ttm_helper.c. This patch select CONFIG_DRM_TTM_HELPER on CONFIG_DRM_VRAM_HELPER to resolve the undefined symbol errors.
+
+Signed-off-by: chuguangqing <chuguangqing@inspur.com>
 ---
-changes in v2:
-dropped the first patch of the series
-added a r-b tag from Sam Protsenko
----
- Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 1 +
+ drivers/gpu/drm/Kconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-index cb2263709..c694926e5 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-@@ -36,6 +36,7 @@ properties:
-       - items:
-           - enum:
-               - google,gs101-usi
-+              - samsung,exynos2200-usi
-               - samsung,exynosautov9-usi
-               - samsung,exynosautov920-usi
-           - const: samsung,exynos850-usi
+diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
+index f7ea8e895c0c..01a314fdc9a8 100644
+--- a/drivers/gpu/drm/Kconfig
++++ b/drivers/gpu/drm/Kconfig
+@@ -226,6 +226,7 @@ config DRM_BUDDY
+ config DRM_VRAM_HELPER
+ 	tristate
+ 	depends on DRM
++	select DRM_TTM_HELPER if DRM_VRAM_HELPER != n
+ 	help
+ 	  Helpers for VRAM memory management
+ 
 -- 
-2.43.0
+2.43.5
 
 
