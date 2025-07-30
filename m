@@ -1,223 +1,407 @@
-Return-Path: <linux-kernel+bounces-751223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F3BCB1668D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B034AB16692
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:52:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87F58162FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:51:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB96E3B3CAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57ED729293D;
-	Wed, 30 Jul 2025 18:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 496152E172B;
+	Wed, 30 Jul 2025 18:52:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XAB1CmEL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LPx8WEcN";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XAB1CmEL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="LPx8WEcN"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="n0DUD4au"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0351DF97C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0512DFF19
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753901463; cv=none; b=j5/oztwndGuy0hRsTo/pWK06mY7K4d9W9+2B/x1+Xd0vDgi7ip00Iie1xUpPYRujUm3cu/RHzaBQDc8YtMR/NSJ7OeYiLGVdVOmZiNIMLv3z7wEcfNlBib+PDTOWJOEPJZutK97nqH2Ln39/gr9s5VpqFhZi7ps2bxNC+qjePyY=
+	t=1753901533; cv=none; b=X8bH3xDpWam6/0U9HX72Bbq6woAxcrXOlC4AI3aITBldFaMUUt9y2XDrwU+AVYt9eDr5wgTvbLcUZVZaESFcNvuj+TL1/R/5fsmw1poG2I/bV+neQVe/oUq1NwxRU/VrWfUMj4r8pB5raNygWUbhzd/1zEG5fay5NsbXCPgQ37o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753901463; c=relaxed/simple;
-	bh=7JFIWi+JCSQGKEANjBk34VC54j+l2/JP1Mw5CHBvQ5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TBJEbKAPD55U6zs0mZUNoFD8LPOOnAUmKXUkKHWQnP/r1MTS7UsmydCFz7cu65Lj3zicaFQZKf5UQUONlhfaZJ6Yz/bo3rrL79sss4XEUdMzh+J5HTgRObqdjyaKJYGazyp7MUkYnx8dzSrKjIefsaSxtfAL1gdQ8nUgIidApJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XAB1CmEL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LPx8WEcN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XAB1CmEL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=LPx8WEcN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5B6621F385;
-	Wed, 30 Jul 2025 18:50:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753901459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oDmEDfpUBvEBNUKgJNpynXmBAjcVVOYDhddchKRFs5g=;
-	b=XAB1CmEL8YSfYTgA7YedCmajVCMmwq42QNSJtDOZ2rgT8pafbaaolh6Ch1jZy+AUPymYmJ
-	mS6fZuhChwlZtfkHEOjmMUlxaLz4anh7LDfvFSznS+hs/Qwiq2bNuU5TdipQt/K6OfpyRI
-	Og60BPdTyRAPE8p8BxvScAb1zkjokHE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753901459;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oDmEDfpUBvEBNUKgJNpynXmBAjcVVOYDhddchKRFs5g=;
-	b=LPx8WEcNoosZxVHTyp6an5jl2PYF6PvYIKQ4P3Mfq6V10VyC1noKYPGQW13CKOzVx1uw5C
-	8bzlLdtonRkVaXBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1753901459; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oDmEDfpUBvEBNUKgJNpynXmBAjcVVOYDhddchKRFs5g=;
-	b=XAB1CmEL8YSfYTgA7YedCmajVCMmwq42QNSJtDOZ2rgT8pafbaaolh6Ch1jZy+AUPymYmJ
-	mS6fZuhChwlZtfkHEOjmMUlxaLz4anh7LDfvFSznS+hs/Qwiq2bNuU5TdipQt/K6OfpyRI
-	Og60BPdTyRAPE8p8BxvScAb1zkjokHE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1753901459;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oDmEDfpUBvEBNUKgJNpynXmBAjcVVOYDhddchKRFs5g=;
-	b=LPx8WEcNoosZxVHTyp6an5jl2PYF6PvYIKQ4P3Mfq6V10VyC1noKYPGQW13CKOzVx1uw5C
-	8bzlLdtonRkVaXBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 416581388B;
-	Wed, 30 Jul 2025 18:50:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 6cukD5NpimiyHgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 30 Jul 2025 18:50:59 +0000
-Message-ID: <b05d424b-fa55-4e12-a1af-7504b1be20a6@suse.cz>
-Date: Wed, 30 Jul 2025 20:50:58 +0200
+	s=arc-20240116; t=1753901533; c=relaxed/simple;
+	bh=IbxbUNtJRhezbHfWoj4hG0QyJlDf9fcOcWlxfpdd9Q4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rcQ0Icy6kWyJgkb4ICSciX/C4V5Ip+15IETsFPjCt1oM/3fzWRgk0wCA4PzQ4ZgO4agvgOIb+CVefZWXVKzgtSQUndO5cVJGBeAQEMT9BP/rQEnN5U3IHI+iiH9LQpDNsrbtfSkomaehv7T8Kbo2GEBPhG2XFwVMdUkaxOcfFY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=n0DUD4au; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UCbFkx017794
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:52:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=cTwARdfCwgr/NlvTGtGlbkJb
+	A7lOmveqZjNQjd5wXok=; b=n0DUD4augujSkO6bHRI09Nvi0ovzhYVKV406vdZm
+	1j36mDe6URlq9d1gCKduKh5g5Gjvi0RaNRO4gS51Jid8RtmWK7ZMKM5IVxqOYn/Y
+	tXxP2hRnON5fIJzVoeuYiqrw1pps2k/NokVnNUJTfUac8UGP5Q9TqAEGtvFxFKcC
+	fQEIpmEmspTvjgxnbSuo21kkqTF2Y+uhH956B0IN8t18u9S4+5+PyZqE6w3edFJ2
+	P0THcwqcQfm1dZZ/dBeKgf+VW9PrF77PfnF6/K3wbohYOUhQLiQ8NTVUiVPfjCpu
+	/35EuiwqCl3SMLL/7V17BUS4Ccmy+31RZsQIgCOAbYk6bw==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qda4wjr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:52:09 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-707722d08d9so1553616d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:52:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753901528; x=1754506328;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cTwARdfCwgr/NlvTGtGlbkJbA7lOmveqZjNQjd5wXok=;
+        b=lNL16k2ydSEWw005j/xkwI035ksjWkuxD1KINAm9ySnD/Fo6MyfM3hpEqim2nklP+B
+         wJAAvGeMJKO97ueqcSl3xk/EMSBf1aO7CGmtLJwfWK1Q45OCe67mXPQSXkVAaHcCbC06
+         K0MG1TL/OhSsdCc4J9oN6EwN98QgzkxKz1zUrMPvOO6lwGOQNteQaBrW3BH/4bJDt83J
+         DedfixdSRJvwUuGw5yOl1aj/1v61dLxzk0jq1OiL9jyy+lYL/kXrO2wR47GC9VVp+NPS
+         Fqu5tNnrZiKNEzjzYiPRCfpQ/hKbbgaS4/4Vu9vUbdS+cY5rSsIXl3kLBEe732/QekE6
+         Dl5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqt5EHDkQknzXXajQd8qFS9NFqKOrnGe5FNdRa7x1bWEQkdzrknBQgDRzQqDJc/quyxBqVWlkqAH6bo+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn8pA2qNDaT0Rw70ZIkLbGlwRoF9t518fpJloxHIT+2QOZuqLE
+	d7foVlEDi4yMUGtfTHRIL+INnCwOfEjUeOtLpF6xHrmvHderM42Lj40RRS1qxZtsjvUToCrUgmf
+	uZDrF29XokRyeUlNc16y3gOaWDTRpigH0frEnRjjCZL7WokGuIqr2l6J1bjgy3Yjf6ok=
+X-Gm-Gg: ASbGnctKitfp0gdb/PvD9Cs+oO454FuX+HNwRemSU3Q9adptixFYGqXaXljoXJwlUUh
+	lLXTkmIsfYCv9N1ftR5JIpJ/HGsVxF+l4C7mAKiy/ts1W6TStdAD/Mr1x/muewdIVwtrjpSZZYI
+	McAXGrRfhKmfdERmYZy9xiN1InYtuxN6BVqcW7pbI6nChj1j7RMtUnO6ZlwP9OdggWEyPSvN9Pq
+	ssGabMvyRhcLIGB2nOOsyUzEzvkN+Prni/0rqut4RZuzMjwjZSOSE0IcKMHNmW1D7I25nqe52p5
+	hsQddfAeGoxYbhU2WiHpddzfREgZf4aXvwAdMQfYc6et04+rkwdulWdL7oc4u1FobXK2vkFqGva
+	GmvNJIShGsnTnQyoe3zDXrDgek8/i1qqt4dzqqlGIqbetfkFlwVgW
+X-Received: by 2002:a05:6214:301a:b0:707:5d28:5756 with SMTP id 6a1803df08f44-707672d5bf0mr58691326d6.38.1753901528450;
+        Wed, 30 Jul 2025 11:52:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUgQbxh6ti7IV0IFdWPPJtqJvpimYqQzIhvgqG6WDSshQjaXtEIX2BkDqpxJvZ79BtOUo2+Q==
+X-Received: by 2002:a05:6214:301a:b0:707:5d28:5756 with SMTP id 6a1803df08f44-707672d5bf0mr58690726d6.38.1753901527818;
+        Wed, 30 Jul 2025 11:52:07 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b828b9999sm263879e87.182.2025.07.30.11.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 11:52:06 -0700 (PDT)
+Date: Wed, 30 Jul 2025 21:52:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Jessica Zhang <quic_jesszhan@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 10/12] drm/msm/dpu: support SSPP assignment for
+ quad-pipe case
+Message-ID: <4dpeif7wynynbsccbhc253wkshuylnsjslsosmrnyld3bmot5l@yqrmpln44qe2>
+References: <20250728-v6-16-rc2-quad-pipe-upstream-v13-0-954e4917fe4f@linaro.org>
+ <20250728-v6-16-rc2-quad-pipe-upstream-v13-10-954e4917fe4f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] slab updates for 6.17
-To: Jason Gunthorpe <jgg@nvidia.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>,
- Christoph Lameter <cl@gentwo.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>, Matthew Wilcox <willy@infradead.org>,
- Pedro Falcato <pfalcato@suse.de>, Bernard Metzler
- <bernard.metzler@linux.dev>,
- "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
- David Howells <dhowells@redhat.com>
-References: <450d3876-90a9-4b1c-8d73-62ac19048991@suse.cz>
- <CAHk-=wg70=mihHE3_Te=t1Fmvrh22bcEs8bvH3tDEXZd6q+4_g@mail.gmail.com>
- <20250730184724.GC89283@nvidia.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250730184724.GC89283@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728-v6-16-rc2-quad-pipe-upstream-v13-10-954e4917fe4f@linaro.org>
+X-Proofpoint-ORIG-GUID: 36KzQa8RAAqQA78xx3C-Ox4E9tLtIjKT
+X-Authority-Analysis: v=2.4 cv=Pfv/hjhd c=1 sm=1 tr=0 ts=688a69d9 cx=c_pps
+ a=wEM5vcRIz55oU/E2lInRtA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=Wb1JkmetP80A:10 a=sWKEhP36mHoA:10 a=KKAkSRfTAAAA:8 a=_amKiFhVn6yWzfpbwTQA:9
+ a=CjuIK1q_8ugA:10 a=OIgjcC2v60KrkQgK7BGD:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: 36KzQa8RAAqQA78xx3C-Ox4E9tLtIjKT
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDEzNyBTYWx0ZWRfX0IoYNTD8lcf5
+ ffqW7tBa8fWIGYffUi+9y61yX6VhA35Ern+jupTbLvRlytFTxIgqFHv8kpiIyxUxS5bvpB/D4sD
+ QfxTn6+8OlXkJQxeF/PDaYWRYWCkKT/72kwOchtShsroB/J4CRV8BQxPHRLyOxD4AD1MUjaXPdE
+ qp0wvYdx11D05ZN8VcJ52UNneOI3s9VOMli+apjjNa4fKsM8lX7b57Q1GtAkvvPgx8jb9PN9Zy1
+ MxZBRTtJuGj1u1wdJeZ4iWp9HcB7UrAnTkhL33Yj4Krwi1VUHeDq+FprORSLImCH2lSATg9lHBD
+ D95rYsI+9cOmA+h1BwuMbG8V3lYfrQLYoBsXju/g0RXcJqvXrJIIHPP1wpbZAYAreadqOtgJBkr
+ Xm8X8K6mUoDoDUH5NHoLO55ir91bi6z5ED+bEqRHbj2ej02qCgAXlzjU0SH5bETMk8aXdDgl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_05,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507300137
 
-On 7/30/25 20:47, Jason Gunthorpe wrote:
-> On Wed, Jul 30, 2025 at 11:42:21AM -0700, Linus Torvalds wrote:
->> On Mon, 28 Jul 2025 at 09:56, Vlastimil Babka <vbabka@suse.cz> wrote:
->> >
->> > We've hit a last-minute snag last week when lkp reported [1] the commit
->> > "mm, slab: use frozen pages for large kmalloc" exposed a pre-existing bug
->> > in siw_tcp_sendpages(). Pedro has been fixing it [2] so hopefully that will
->> > result in a PR soon, which you can pull before this one - or perhaps take
->> > the fix directly. If that gets stuck for some reason and taking the fix
->> > later would be unacceptable, I can do another PR with my commit taken out.
->> >
->> > [1] https://lore.kernel.org/all/202507220801.50a7210-lkp@intel.com/
->> > [2] https://lore.kernel.org/all/20250723104123.190518-1-pfalcato@suse.de/
->> 
->> Thanks for the heads up.
->> 
->> I've pulled this, although I don't see the rdma fix in the rdma tree
-
-Thanks.
-
->> (the pull for which is still pending in my inbox - I've merged a big
->> chunk already, people have been very good about sending their pulls
->> early - thanks)
+On Mon, Jul 28, 2025 at 09:14:34PM +0800, Jun Nie wrote:
+> Currently, SSPPs are assigned to a maximum of two pipes. However,
+> quad-pipe usage scenarios require four pipes and involve configuring
+> two stages. In quad-pipe case, the first two pipes share a set of
+> mixer configurations and enable multi-rect mode when certain
+> conditions are met. The same applies to the subsequent two pipes.
 > 
-> It is not there, it was unclear in the emails what should happen and I
-> did not want to delay things due to your travel note.
+> Assign SSPPs to the pipes in each stage using a unified method and
+> to loop the stages accordingly.
 > 
->> I'll take the fix directly in the worst case, but prefer for things to
->> go through the normal subsystem maintainer if at all possible, and
->> this one seems fairly straightforward.
+> Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 160 ++++++++++++++++++------------
+>  1 file changed, 99 insertions(+), 61 deletions(-)
 > 
-> I think it will be easiest for all if I send a one patch PR after you pick up
-> the main RDMA PR in the next few days. siw is not so critical that we
-> need to rush.
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> index 55429f29a4b95594771d930efe42aaa4126f6f07..e1e16a8d5ac55ba52a0f460d62901dced65e3a9e 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> @@ -959,6 +959,30 @@ static int dpu_plane_is_multirect_parallel_capable(struct dpu_hw_sspp *sspp,
+>  }
+>  
+>  
+> +static bool dpu_plane_get_single_pipe_in_stage(struct dpu_plane_state *pstate,
+> +					       struct dpu_sw_pipe **single_pipe,
+> +					       struct dpu_sw_pipe_cfg **single_pipe_cfg,
+> +					       int stage_index)
+> +{
+> +	int pipe_idx, i, valid_pipe = 0;
+> +
+> +	for (i = 0; i < PIPES_PER_STAGE; i++) {
 
-Great, thanks. The last version with ack from Bernard is here:
+Why do you need to loop here? Is there a case when pipe 0 is not
+assigned, but pipe 1 is?
 
-https://lore.kernel.org/all/20250729120348.495568-1-pfalcato@suse.de/
+> +		pipe_idx = stage_index * PIPES_PER_STAGE + i;
+> +		if (drm_rect_width(&pstate->pipe_cfg[pipe_idx].src_rect) != 0) {
+> +			valid_pipe++;
+> +			if (valid_pipe > 1)
+> +				return false;
+> +
+> +			if (single_pipe)
+> +				*single_pipe = &pstate->pipe[pipe_idx];
+> +			if (single_pipe_cfg)
+> +				*single_pipe_cfg = &pstate->pipe_cfg[pipe_idx];
+> +		}
+> +	}
+> +
+> +	return valid_pipe == 1;
+> +}
+> +
+>  static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+>  				       struct drm_atomic_state *state,
+>  				       const struct drm_crtc_state *crtc_state)
+> @@ -1023,17 +1047,20 @@ static bool dpu_plane_try_multirect_parallel(struct dpu_sw_pipe *pipe, struct dp
+>  static int dpu_plane_try_multirect_shared(struct dpu_plane_state *pstate,
+>  					  struct dpu_plane_state *prev_adjacent_pstate,
+>  					  const struct msm_format *fmt,
+> -					  uint32_t max_linewidth)
+> +					  uint32_t max_linewidth, int stage_index)
+>  {
+> -	struct dpu_sw_pipe *pipe = &pstate->pipe[0];
+> -	struct dpu_sw_pipe *r_pipe = &pstate->pipe[1];
+> -	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg[0];
+> -	struct dpu_sw_pipe *prev_pipe = &prev_adjacent_pstate->pipe[0];
+> -	struct dpu_sw_pipe_cfg *prev_pipe_cfg = &prev_adjacent_pstate->pipe_cfg[0];
+> +	struct dpu_sw_pipe *pipe, *prev_pipe;
+> +	struct dpu_sw_pipe_cfg *pipe_cfg, *prev_pipe_cfg;
+>  	const struct msm_format *prev_fmt = msm_framebuffer_format(prev_adjacent_pstate->base.fb);
+>  	u16 max_tile_height = 1;
+>  
+> -	if (prev_adjacent_pstate->pipe[1].sspp != NULL ||
+> +	if (!dpu_plane_get_single_pipe_in_stage(pstate, &pipe,
+> +						&pipe_cfg, stage_index))
+> +		return false;
+> +
+> +	if (!dpu_plane_get_single_pipe_in_stage(prev_adjacent_pstate,
+> +						&prev_pipe, &prev_pipe_cfg,
+> +						stage_index) ||
+>  	    prev_pipe->multirect_mode != DPU_SSPP_MULTIRECT_NONE)
+>  		return false;
+>  
+> @@ -1048,11 +1075,6 @@ static int dpu_plane_try_multirect_shared(struct dpu_plane_state *pstate,
+>  	if (MSM_FORMAT_IS_UBWC(prev_fmt))
+>  		max_tile_height = max(max_tile_height, prev_fmt->tile_height);
+>  
+> -	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -
+> -	r_pipe->sspp = NULL;
+> -
+>  	if (dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth) &&
+>  	    dpu_plane_is_parallel_capable(prev_pipe_cfg, prev_fmt, max_linewidth) &&
+>  	    (pipe_cfg->dst_rect.x1 >= prev_pipe_cfg->dst_rect.x2 ||
+> @@ -1181,36 +1203,69 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
+>  	return 0;
+>  }
+>  
+> +static int dpu_plane_assign_resource_in_stage(struct dpu_sw_pipe *pipe,
+> +					      struct dpu_sw_pipe_cfg *pipe_cfg,
+> +					      struct drm_plane_state *plane_state,
+> +					      struct dpu_global_state *global_state,
+> +					      struct drm_crtc *crtc,
+> +					      struct dpu_rm_sspp_requirements *reqs)
+> +{
+> +	struct drm_plane *plane = plane_state->plane;
+> +	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+> +	struct dpu_sw_pipe *r_pipe = pipe + 1;
+> +	struct dpu_sw_pipe_cfg *r_pipe_cfg = pipe_cfg + 1;
+> +
+> +	if (drm_rect_width(&pipe_cfg->src_rect) != 0) {
+> +		pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, reqs);
+> +		if (!pipe->sspp)
+> +			return -ENODEV;
+> +		pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> +		pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> +	}
+> +
+> +	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0 &&
+> +	    dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
+> +					      pipe->sspp,
+> +					      msm_framebuffer_format(plane_state->fb),
+> +					      dpu_kms->catalog->caps->max_linewidth))
+> +		goto stage_assinged;
+> +
+> +	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
+> +		r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, reqs);
+> +		if (!r_pipe->sspp)
+> +			return -ENODEV;
+> +		r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> +		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> +	}
+> +
+> +stage_assinged:
+> +	return 0;
+> +}
+> +
+>  static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+>  					      struct dpu_global_state *global_state,
+>  					      struct drm_atomic_state *state,
+>  					      struct drm_plane_state *plane_state,
+> -					      struct drm_plane_state *prev_adjacent_plane_state)
+> +					      struct drm_plane_state **prev_adjacent_plane_state)
+>  {
+>  	const struct drm_crtc_state *crtc_state = NULL;
+>  	struct drm_plane *plane = plane_state->plane;
+>  	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+>  	struct dpu_rm_sspp_requirements reqs;
+> -	struct dpu_plane_state *pstate, *prev_adjacent_pstate;
+> +	struct dpu_plane_state *pstate, *prev_adjacent_pstate[STAGES_PER_PLANE];
+>  	struct dpu_sw_pipe *pipe;
+> -	struct dpu_sw_pipe *r_pipe;
+>  	struct dpu_sw_pipe_cfg *pipe_cfg;
+> -	struct dpu_sw_pipe_cfg *r_pipe_cfg;
+>  	const struct msm_format *fmt;
+> -	int i;
+> +	int i, ret;
+>  
+>  	if (plane_state->crtc)
+>  		crtc_state = drm_atomic_get_new_crtc_state(state,
+>  							   plane_state->crtc);
+>  
+>  	pstate = to_dpu_plane_state(plane_state);
+> -	prev_adjacent_pstate = prev_adjacent_plane_state ?
+> -		to_dpu_plane_state(prev_adjacent_plane_state) : NULL;
+> -
+> -	pipe = &pstate->pipe[0];
+> -	r_pipe = &pstate->pipe[1];
+> -	pipe_cfg = &pstate->pipe_cfg[0];
+> -	r_pipe_cfg = &pstate->pipe_cfg[1];
+> +	for (i = 0; i < STAGES_PER_PLANE; i++)
+> +		prev_adjacent_pstate[i] = prev_adjacent_plane_state[i] ?
+> +			to_dpu_plane_state(prev_adjacent_plane_state[i]) : NULL;
+>  
+>  	for (i = 0; i < PIPES_PER_PLANE; i++)
+>  		pstate->pipe[i].sspp = NULL;
+> @@ -1225,42 +1280,27 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+>  
+>  	reqs.rot90 = drm_rotation_90_or_270(plane_state->rotation);
+>  
+> -	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0) {
+> -		if (!prev_adjacent_pstate ||
+> -		    !dpu_plane_try_multirect_shared(pstate, prev_adjacent_pstate, fmt,
+> -						    dpu_kms->catalog->caps->max_linewidth)) {
+> -			pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+> -			if (!pipe->sspp)
+> -				return -ENODEV;
+> -
+> -			r_pipe->sspp = NULL;
+> +	for (i = 0; i < STAGES_PER_PLANE; i++) {
+> +		if (!prev_adjacent_pstate[i])
+> +			goto assignment;
+>  
+> -			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -
+> -			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -		}
+> -	} else {
+> -		pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+> -		if (!pipe->sspp)
+> -			return -ENODEV;
+> -
+> -		if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pipe_cfg,
+> -						      pipe->sspp,
+> -						      msm_framebuffer_format(plane_state->fb),
+> -						      dpu_kms->catalog->caps->max_linewidth)) {
+> -			/* multirect is not possible, use two SSPP blocks */
+> -			r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
+> -			if (!r_pipe->sspp)
+> -				return -ENODEV;
+> +		if (dpu_plane_try_multirect_shared(pstate, prev_adjacent_pstate[i], fmt,
+> +						   dpu_kms->catalog->caps->max_linewidth,
+> +						   i))
+> +			continue;
 
-> Thanks,
-> Jason
 
+if (prev_adjacent_pstate[i] &&
+    dpu_plane_try_multirect_shared())
+	continue;
+
+No need for the goto.
+
+>  
+> -			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> +assignment:
+> +		if (dpu_plane_get_single_pipe_in_stage(pstate, NULL, NULL, i))
+> +			prev_adjacent_plane_state[i] = plane_state;
+>  
+> -			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+> -			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+> -		}
+> +		pipe = &pstate->pipe[i * PIPES_PER_STAGE];
+> +		pipe_cfg = &pstate->pipe_cfg[i * PIPES_PER_STAGE];
+> +		ret = dpu_plane_assign_resource_in_stage(pipe, pipe_cfg,
+> +							 plane_state,
+> +							 global_state,
+> +							 crtc, &reqs);
+> +		if (ret)
+> +			return ret;
+>  	}
+>  
+>  	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+> @@ -1273,7 +1313,7 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+>  			       unsigned int num_planes)
+>  {
+>  	unsigned int i;
+> -	struct drm_plane_state *prev_adjacent_plane_state = NULL;
+> +	struct drm_plane_state *prev_adjacent_plane_state[STAGES_PER_PLANE] = { NULL };
+>  
+>  	for (i = 0; i < num_planes; i++) {
+>  		struct drm_plane_state *plane_state = states[i];
+> @@ -1284,11 +1324,9 @@ int dpu_assign_plane_resources(struct dpu_global_state *global_state,
+>  
+>  		int ret = dpu_plane_virtual_assign_resources(crtc, global_state,
+>  							     state, plane_state,
+> -							     prev_adjacent_plane_state);
+> +							     &prev_adjacent_plane_state[0]);
+
+It's exactly the prev_adjacent_plane_state.
+
+>  		if (ret)
+>  			break;
+> -
+> -		prev_adjacent_plane_state = plane_state;
+>  	}
+>  
+>  	return 0;
+> 
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
 
