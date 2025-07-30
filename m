@@ -1,259 +1,175 @@
-Return-Path: <linux-kernel+bounces-751045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C726FB1648E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:24:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1093B16490
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B4D7189930F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8CE3A6DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:24:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4752DCF46;
-	Wed, 30 Jul 2025 16:24:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E1C2DCF46;
+	Wed, 30 Jul 2025 16:25:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Cr3pXpnh"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013019.outbound.protection.outlook.com [40.107.162.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nBbnRBXd"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303D32D838B;
-	Wed, 30 Jul 2025 16:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753892641; cv=fail; b=FEPdNSDyliK0jTiLegVdDKebzxcaTrvrFaumxbduGlRMHVQEIZBfXceq+UfBP1nFig2T1p2zuVK6v5rB79dM1zy3WvJerb4O3DegdF4ZvIEoIQ5cr0mSjY/su9lVoeTzsrC5ScCkre/mKCXCDhh7Q+p0+bZSdsCKVMek+w+ZL6o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753892641; c=relaxed/simple;
-	bh=3yv1ZKYdOBm1gIs6jWQsfT5/1nyNiZ025LXlKdpfvcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=OKehbb9tWmoLTKm+hwsCqlGakpYywKkvo4m09lhc+szAjzDGMUxZjmXIoOhin3Mp2WD0Ct9evBJoiORECSyOMJGEJ+DfcfDXIr3zOvzJKTrHDNXhPiqNbpYL7QI58Ld6lCimRWLMRnqBpaCGdneKejMhrOgAAx6F3hGOYCRCdyA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Cr3pXpnh; arc=fail smtp.client-ip=40.107.162.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rowFoOqPrKygV/DQIUXzjBsuP8cmIpSUhfepMFjzcmnmrG0Y5VprPJvGHDQzrEl5qgnPfo6SE5RvLD3lIe8Hl01LKuYva/fVI71hASYccfA/EXXu4MBIk9YwylrsFLWEeK90crFARWsF2vdqPzyLJ+dkW2/fzc96xKcZ8cMOYNudBdZGjd2EHR3XMvCE1IXubzteY2byCR2lB+9NiuanBLmBOMfuO47c245CDho7jacdMdb85okbvlxEFsK5pvdyZqY9Ur2d9PPmjxUB/pVHVw+mPBobIec9Bj14/1AAP2HPsbcB1RAT7rQ60fK/ecS2p32yVQPnnMQQ/mgk1yAxnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+TaVxcVJR8Iow8EXX7p0XNMJQZeeb4WZVCs7MtifldY=;
- b=UEzB7D5XAVBde+ptgKnlnDxy/oKd5ze/UYZwnCIGKo2IIDivUWGfSpMwxZClLUCBpHlTMXa1p+yCE2LHqcJWDeVs4KbDPSlbyn8sZjymFBTbO2Zk8HurdHOhu3ghjWU2/KjI1N+UIfQE1g2ygDjsZZZQK+VqC+UrjS2zFe0hyocR8ZEsB9VPdpzGDZjX8NG1zIZYfixNF3RmhwnrwQfMYz/S+U+wbY8fVJ2dZ67J6+7RP0FRiTfLXfm1aVb6CdeHN76TAwllfP6JtDsAtKbcHXsVx6JV8BrWI9rFujeQHKNASghlUz0ekjOMOqcZ7+kzDhbM1E921VbJWQxbjXLI4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+TaVxcVJR8Iow8EXX7p0XNMJQZeeb4WZVCs7MtifldY=;
- b=Cr3pXpnhvsvZVHUyz+KB/uaXgx85x2/hR+ezPHVW4vJTPDymnvKg9kkccp5L6RxQop2vhGwUWkT9bd0raOyr4YNdryE9f/nNFLYC7DwDeCUQA/NrMgD97d4uVQP4T9NQc/9MpIM1c91UlM4rVv1IycmxfP9H6X4Brq+oK4L+5BWJIu0zanngaDvRkmVAUlbwfimHb18i5bsBSfExxC/iA2fA4lveHjkHSZvATibE/+KY5fm4M8+ztrcb03zg0YTqXCbEF93Fb/p3h5Pc6nxZj1qzjPzc4Q4970NBE280kMj73HjL7yZ8rOdMjH5yDuS6TXZxCAvU/sj8P4LY8N4jxg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AS8PR04MB9094.eurprd04.prod.outlook.com (2603:10a6:20b:445::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.12; Wed, 30 Jul
- 2025 16:23:56 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%5]) with mapi id 15.20.8989.010; Wed, 30 Jul 2025
- 16:23:56 +0000
-Date: Wed, 30 Jul 2025 12:23:46 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-Cc: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: imx95-blk-ctl: Save/restore registers when RPM
- routines are called
-Message-ID: <aIpHEugNppI2C0/q@lizhi-Precision-Tower-5810>
-References: <20250730125932.357379-1-laurentiu.palcu@oss.nxp.com>
- <20250730125932.357379-3-laurentiu.palcu@oss.nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730125932.357379-3-laurentiu.palcu@oss.nxp.com>
-X-ClientProxiedBy: PH8PR15CA0020.namprd15.prod.outlook.com
- (2603:10b6:510:2d2::20) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12D52D8368
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753892717; cv=none; b=GhHjeYfi91Hxml98ZJOstbzhHMUkHcpn9GpOCUQ4Xb5B6AdDprz+Cew0Hy8XAMJvNSdzin9KTZC3leGOWJ2PRy+8Yemj4lpJTRv184zSQVO0E5+1HeC7QXZ6RJTDOoCSp+BeWH8/ly/Hv2lDXiOp3Z2YtwnW8Y1iqML5MzluTYk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753892717; c=relaxed/simple;
+	bh=EI0bMvYv5hSpvnTUf2HMOBA5DoaU+c0LboV5ElVAY00=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 Cc:Content-Type; b=lx13isS9FUYqFylV/P53hi432GKeKmNOheXaXMBINP9b+Mv1nLyq2HW7YScorK3ZZe9PaWhHBbPr8ATkq6DWWG9dikWPb9QDqTurmj4yCnkchTOOK/iuP1y23mfocFdXm+va057H1bf2oEwO41QLOxIEI+9AGDV429QAC7c4YEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nBbnRBXd; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2402b5396cdso312625ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:25:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753892714; x=1754497514; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E9XySPgRxGKmddhBeo4PW8+eY+WMXaAjgeL+q5qCHG4=;
+        b=nBbnRBXdoZHjwYvmM+loUeIjj5Ln4jufldqxQg8o9YARYGKU9VN5kYRQtVrFy9Yyum
+         LsUTVisxfAgrM3Ty4lfXqS8venvoPVYsncw8JBbQrvuVXyUX0MxTQ56CA0DWWf9unqcb
+         BXT0Co58FVIMCbUrYoDoxkLgaxIIU2sLJq5O4fjInLhkJw+DKmVTz0z/QK4Oc5iYUdaA
+         bdU8viCqX6yiH5AXngtU29uRa7Oom+FtqfMv35sUgAp5fOXymVcVksDSjQqzwDax8/zE
+         WADO0F4Os9bTddILA8yaEp9TSLSXuU5gB8J24sKI0arufhfQvhhaVMYuzD0HJu1eeFcc
+         GKfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753892714; x=1754497514;
+        h=content-transfer-encoding:cc:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E9XySPgRxGKmddhBeo4PW8+eY+WMXaAjgeL+q5qCHG4=;
+        b=oTuubNK3X9vQ1q6xiN/l2uHHVYwp8yoap9k3nMX3UOt+tG4di7fPVH8oDfeaZhP+YS
+         5zPsFCOsXlJ+bfWzMehIIezvuuZ2dZncWOm7zpvd8PDXF5c9fO9bzkjkV+1pu11Z5fiv
+         D0hbPK6ywfL0fuCzNZrM2RiVEOSxEOZwwW+plF0t8aWQy64P8fhSK2+oq8X3gHvZF60E
+         z1ETmNYRUpNWve7I4OOBQzd9LpSGpy3BdmO5aeW4Ob3Jf3vawiwdVHCyT/aUASNRcuzJ
+         Tf08PoNGIgz+rfEBxA27QrFs9aLNQUJhMuAkY7FFSk0a29OBzck4kU7eiWtWMXZ1yC49
+         vj1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU0Wse6QGRU9fMFGvdLZ57SOOzsEzp0fHcddml5UzD9BLsyUCPkQr4ly5canzqqYm2rIbdam5kQCEAoUQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvBxVu789HktCd6XaFOd+XemXm+XomgRENhFNfgzuDTYCzrbXv
+	3zcvdpCS4vuAIpVcRvIC/QyA6HxnmXLF3r0DncSm80JHhxW8GViDNS95UUBDsm76fEVZYIwEt8u
+	/0ypjWEZGHUco29NX2mV36Ogkup6dsFnSnYFEwwBNCQ==
+X-Gm-Gg: ASbGncuK0WEWqwZ44Q8FvIK/zbglLB67O/moe7zfUyZBVDNaG1J8fiXalUc1k9I1PNX
+	g5VGDJZGlzB6R64SA1HA5tf2QsZHR4o08ZpKqoIYkm53jwYfn4yOOBd0G6hzvpqtqEupfJ7UnvK
+	SGTuZjcRUqXuUINLKng/MVHPDgVv+UM6JUjNpzelVRbENzxJ8mRLV7335iLM3B9UKdqZKMRbVVj
+	2IvMM9OAEbFCpZHnqY3PRNNon8tDlrJ2V0rbMM0rw==
+X-Received: by 2002:a17:903:b4f:b0:240:92cc:8fcf with SMTP id
+ d9443c01a7336-24096b34743mt53106105ad.49.1753892713686; Wed, 30 Jul 2025
+ 09:25:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AS8PR04MB9094:EE_
-X-MS-Office365-Filtering-Correlation-Id: 45cee3d5-dfc3-4c9e-42e2-08ddcf857ad8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|19092799006|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7PMEIv2jU0kIy0roTIvFmVT7WEtRer9bmFse1ZxWbZk9tSYMU++JeOsT+jqI?=
- =?us-ascii?Q?ASdGJfEMVM+XUjBCw3PVTsC9fI6cNeAglxfKst5gaIJucCqgSnr9BU+Zb4nP?=
- =?us-ascii?Q?oKkPNKTu1G1UgNboG2KdlG+AfFf3E3FDZcqolgvQCgvOtKCn8eiQ50NF1aKO?=
- =?us-ascii?Q?Sh0yNPdJx1EG6GIaBgGFm8Q0h2wR1qqzl5KSi1mFek8gtQqGWOfzicABvBWA?=
- =?us-ascii?Q?OC4lqgqSRQmG6nd93NBW3k0x/QdNgvUSivGNszrOeL9PuqXjsUB2dLXMNXG0?=
- =?us-ascii?Q?NrHHPQVkxeXCc4HLteqleiMiTK3KyEPmGQvJrej+9BQFxoodhI7oVD859M5x?=
- =?us-ascii?Q?ASBlhyBXgyZ333qnvfD4x4JE9BW3bA2wnrjEilHTzGeaCtIjcgO2OCSFNNfa?=
- =?us-ascii?Q?ZmuQX9UCpx+VQLSdqBE+OWlG6zPxofy4VceUmRURzaaDAL+IaPrbcbB774WO?=
- =?us-ascii?Q?Dhc1rup7RjWqGPX7wc0s1FwFvyFh3Mjx9PcrNK38w95dQLgS/iXXrqDXWyur?=
- =?us-ascii?Q?yPvJq0zEW3snW+ZeabOZE/YLokGRXvyxhn3Qo3zRhzwLv6PXXtDotNyZx1r1?=
- =?us-ascii?Q?bUtF+WRuUmBf7m1rBFXrzZ2eef31x0yegbt74uY+9FQPoalj5G9on8edREBl?=
- =?us-ascii?Q?dnwUen0lk/RdR7aKhvsuDpbOVF9Ysr6hAnwq2Iy3XUh4iUHbzSwBXvFbWPtz?=
- =?us-ascii?Q?i4S4qMkp9MGMjIzM5//UIb/zCWh66Cjfs2X1rxuRJjEylCygLwny9MxPGTN5?=
- =?us-ascii?Q?gCx6o6yvQe9OeFrlnBHb4Vd4bDSDquh1Eif9R11AOXlkndSj1op29KzsMuIE?=
- =?us-ascii?Q?Gp7BYylqX8T35EYYFuD/NlFc9tFAIZ4uLaBZc5i2f9GvUuepwxymGI7uzAOX?=
- =?us-ascii?Q?B2pyT9ihHGTbpkmDznPPrld/JNruYn3KSyrlhNCuKdCX9Qp3RmISk017soZN?=
- =?us-ascii?Q?iHJgpkJE1arcrFnqVjprMfVR1h8G2hvGg0o3ua5lxDJTUYClQXpKYieTQjTQ?=
- =?us-ascii?Q?wQ5u5AN9Bsgtm2XD+2BUQ9YmyMJWx5JCiBBblaOeKsojE+UWno/IQLEzkvli?=
- =?us-ascii?Q?W2X4LcXtW9tGTl+o3IuCWjD00VLwiAgl3ZP2eDZ2a9EvGxsc8Inl+3IEsYrY?=
- =?us-ascii?Q?aa9gyMbuYP/vY3mKPGeiSE6EDVRiTDygpqv20yeHupn3ZySTXRyuR5DhBZKq?=
- =?us-ascii?Q?2j4bdyLN2s6QV9YpVM4OiwVpW5gXXlYUR/HYjgSucRSKLiA+IprquL+QyB3t?=
- =?us-ascii?Q?G0F1jqTcwfUjvRbkYY//Xjo+Y46bHJEJTjsZ6H2jMR01SV8aXSn/xiOCb6Sz?=
- =?us-ascii?Q?KQQQk+va3lIPEBhY3xXUj6yjfrQ4JRQXmsmzeZQcl+cc+e1vryD0H2fsZYd5?=
- =?us-ascii?Q?Te0FVcp14hpg5ti0Lkdf901pi8cEuOPLgQrceJN3gNaFXBbbNJvlLu3BTq3u?=
- =?us-ascii?Q?ZEczLr3eRRz+AhCQPIZDQaIlgG47LGI6TQy/HsF7aREpBk4moD5HuWPzuHTY?=
- =?us-ascii?Q?PIV6njoa4ZsOcTY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(19092799006)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?dnIBMj1bq+JyLpiD+p8olJmPeQodxsFhQE7+6kojVm40d9ctkf6W7rzULDBi?=
- =?us-ascii?Q?vHXoayqD2d976MjYrGCsYi8GIah5thiqh4Uw3Z3xu2gq7E8CA2qF4humIQAb?=
- =?us-ascii?Q?cm0RcHKaPce1xDCsK4hjDUyJPzlelTLj40TsX6RYmDX1e4wsaUV/Pnan443v?=
- =?us-ascii?Q?T8yn96OCBDsxYrEm8SfC6GjNpRtb1kHiiQLqeqK4s1xvbOp8NkZJ01juP6Vb?=
- =?us-ascii?Q?TSc5qZk4VuT2R3YOHb4guiwy2bLcLGvtISjQpdp5FqsHa/JNvQnOpr7hs2sj?=
- =?us-ascii?Q?Pl2o+6Est+uGaXnDv89svLVT9FZx2mjFU27INoq9qh2Rpx8jYOJ/DJPqjxgA?=
- =?us-ascii?Q?DShon0i7erryPpgAt4lpjJn0LSxNR55ckCrZgBYVYYZtGiyHZ6406ubNQ3aF?=
- =?us-ascii?Q?bCgjI4OyNKifXRy4fMAECOelRZe3hzC3aa8JTVRV9u+x4VTTESOidtUZUBMs?=
- =?us-ascii?Q?FdWOEwNC8p1YjA8lbhzLWFkust2RlxWhs+BV5M5mldS6gAXKuD5jqnb28RZ5?=
- =?us-ascii?Q?hk1jrF6JPk1aXoAvcprTQ6bFJiApQGTY8I+nUJmW6I2qWAJUR1irv2azwwM9?=
- =?us-ascii?Q?G15g0cQEY5cKa0Y2yhsto8n/Ot8tjqnIbh+GVGIDSstJT1Dk204hulroCvlv?=
- =?us-ascii?Q?sxMWwnxaATnJAppfodrpKn8/WJ1sQGACKzovfFYB3Qpkh5BcidaNvjt4kta9?=
- =?us-ascii?Q?VC7rZx/lVN1RbeB9qk6jrACWu4/0ltQ5FhgJePvlPBx8NND3WoShkBbZ6yS6?=
- =?us-ascii?Q?b4rbfdDvnAZ40XuRU5klK76hVK6laUYVvjpv18kr4P/lRd0MAJ5nPlw1OJZ1?=
- =?us-ascii?Q?v5vor0MU9gl5jfcRlfaspOYKwd8WiP57ul+SPsKD8RmEQ/jctOdwbzoRYSrA?=
- =?us-ascii?Q?jfOiWhgSJNSQZxngLIMQP1qtp0NaMwhEtlZ+4y9piU5jsdL3Hjid6eDvBVss?=
- =?us-ascii?Q?/EKF5LR4RNvkAwbSiEwbKr/6qwGYvH9paoZ9zVR+zNx+ztcHWq2/zKIahstb?=
- =?us-ascii?Q?tSf/mokGqV1hqnOzRS2yBS9/1KBTwXJJ5UET66uywSDNv34HNrVZ3CIYkFAL?=
- =?us-ascii?Q?HEFehTJQS9gZpAIDaPEBH/OZG/LynKNxFUtOmLyOYFo4XJwEOvm6fwntuXKB?=
- =?us-ascii?Q?4XYsU7sYhUupOPn94pbL2LMUvezqCHV624Sv5C/Pm61vvr8OugwCPBlkf/hw?=
- =?us-ascii?Q?N+GNP6bymgcIzuSIPuQB8haSVJJDqjw81WhyMFmgG3Q6uh/gPRbADOaJzchB?=
- =?us-ascii?Q?JAzpdpI6TnwL+1+UHgAyPIM29jlXfxe+Dz8Moik+wP3hGLd04/d4yFRBZv+w?=
- =?us-ascii?Q?xM4m/pQW7itQve8CYbXvL+gzzg8ct1Lb2rZELMzHdS6SAh9y+XA2Fu7JakJD?=
- =?us-ascii?Q?0Gc6fTLpPOSvB4/a5apBnvUjx9zJxv46uR4FYL+FCMnt8j8m/5vaEV22MRp3?=
- =?us-ascii?Q?f7RRJtjMrpJrSbl0qBnRz8ug6jAWr/9WEWprYRV+OMwhzqhLMrSvgNxz/oXJ?=
- =?us-ascii?Q?V9/vc/kvCXfh7nJsmGWD0WYUqWNCSVD4ZuGRfI2H+Yms4Mdc6RtEtnLImrR/?=
- =?us-ascii?Q?mNEPq9NWB7jVlRILQ60=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 45cee3d5-dfc3-4c9e-42e2-08ddcf857ad8
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 16:23:56.2922
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3YFlYovCMBLjpikfM4UUZW6S5KJwfu2R4KkTrcl+TdI4kIdTYPWvtXtJ9QWZzF6DkFI0a2sVONmO8QFDZ7FzQw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB9094
+References: <20250722203213.8762-1-andrewlbernal@gmail.com> <ccac04ec-fe14-46bd-a482-b9cbb65fadf5@acm.org>
+In-Reply-To: <ccac04ec-fe14-46bd-a482-b9cbb65fadf5@acm.org>
+From: Andrew Bernal <andrewlbernal@gmail.com>
+Date: Wed, 30 Jul 2025 12:25:02 -0400
+X-Gm-Features: Ac12FXz0zlijZdaLwoj5plPalzSt0irQiMMJ3O6QVUPamPWsNCHOxHvejkCXcOM
+Message-ID: <CAPj058cx390W=GE9fFXKY101GL7S=XNn=0YSTfojkvhybKEBvA@mail.gmail.com>
+Subject: Re: [PATCH] scsi_debug: add implicit zones in max_open check
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 03:59:31PM +0300, Laurentiu Palcu wrote:
-> If runtime PM is used for the clock providers and they're part of a
-> power domain, then the power domain supply will be cut off when runtime
-> suspended. That means all BLK CTL registers belonging to that power
-> domain will be reset. Save the registers, then, before entering suspend
-> and restore them in resume.
+Hi Bart,
+Yes, I've read the real standard now, and I see how it clearly defines
+the OPEN ZONE function.
+Thank you for your reply, I really appreciate the explanation. Sorry
+for the patch, I'll be more careful in the future.
 
-Save the registers before entering suspend, then restore them in resume.
+(my previous reply was sent to the email addresses, but didn't send to
+the mailing lists because it wasn't plaintext)
 
->
-> Also, fix the suspend/resume routines and make sure we disable/enable
-> the clock correctly.
+Sincerely,
+Andrew Bernal
 
-Check runtime pm status in suspend/resume routines to make sure
-disable/enable clock correctly.
 
+On Tue, Jul 29, 2025 at 12:19=E2=80=AFPM Bart Van Assche <bvanassche@acm.or=
+g> wrote:
 >
-> Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
-> ---
->  drivers/clk/imx/clk-imx95-blk-ctl.c | 33 ++++++++++++++++++-----------
->  1 file changed, 21 insertions(+), 12 deletions(-)
+> On 7/22/25 1:32 PM, Andrew Bernal wrote:
+> > https://zonedstorage.io/docs/introduction/zoned-storage Open Zones limi=
+t
+> > is defined as a "limit on the total number of zones that can simultaneo=
+usly
+> > be in an implicit open or explicit open state"
 >
-> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-imx95-blk-ctl.c
-> index c72debaf3a60b..56bed44719954 100644
-> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
-> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
-> @@ -453,15 +453,24 @@ static int imx95_bc_runtime_suspend(struct device *dev)
->  {
->  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
+> That's not an official standard and hence should not be used to motivate
+> this patch. Additionally, I don't see how a zone could be simultaneously
+> in the implicit open and the explicit open state. According to the ZBC-2
+> standard, these states are mutually exclusive.
 >
-> +	bc->clk_reg_restore = readl(bc->base + bc->pdata->clk_reg_offset);
->  	clk_disable_unprepare(bc->clk_apb);
-> +
->  	return 0;
->  }
+> devip->max_open is reported to the initiator in VPD page B6
+> as the MAXIMUM NUMBER OF OPEN SEQUENTIAL WRITE REQUIRED ZONES. From
+> ZBC-2 section 4.5.3.4.2: "If the value in the MAXIMUM NUMBER OF OPEN
+> SEQUENTIAL WRITE REQUIRED ZONES field (see 6.5.2) is non-zero and
+> the number of zones with a Zone Condition of EXPLICITLY OPENED is equal
+> to the value in the MAXIMUM NUMBER OF OPEN SEQUENTIAL WRITE REQUIRED
+> ZONES field, then a command that writes to or attempts to open a
+> sequential write required zone with a zone condition of EMPTY or CLOSED
+> is terminated with CHECK CONDITION status with sense key set to DATA
+> PROTECT and the additional sense code set to INSUFFICIENT ZONE RESOURCES
+> (see 4.5.3.2.8)."
 >
->  static int imx95_bc_runtime_resume(struct device *dev)
->  {
->  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
-> +	int ret;
+> > diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+> > index aef33d1e346a..0edb9a4698ca 100644
+> > --- a/drivers/scsi/scsi_debug.c
+> > +++ b/drivers/scsi/scsi_debug.c
+> > @@ -3943,7 +3943,7 @@ static int check_zbc_access_params(struct scsi_cm=
+nd *scp,
+> >       /* Handle implicit open of closed and empty zones */
+> >       if (zsp->z_cond =3D=3D ZC1_EMPTY || zsp->z_cond =3D=3D ZC4_CLOSED=
+) {
+> >               if (devip->max_open &&
+> > -                 devip->nr_exp_open >=3D devip->max_open) {
+> > +                 devip->nr_imp_open + devip->nr_exp_open >=3D devip->m=
+ax_open) {
+> >                       mk_sense_buffer(scp, DATA_PROTECT,
+> >                                       INSUFF_RES_ASC,
+> >                                       INSUFF_ZONE_ASCQ);
+> > @@ -6101,7 +6101,7 @@ static int resp_open_zone(struct scsi_cmnd *scp, =
+struct sdebug_dev_info *devip)
+> >       if (all) {
+> >               /* Check if all closed zones can be open */
+> >               if (devip->max_open &&
+> > -                 devip->nr_exp_open + devip->nr_closed > devip->max_op=
+en) {
+> > +                 devip->nr_imp_open + devip->nr_exp_open + devip->nr_c=
+losed > devip->max_open) {
+> >                       mk_sense_buffer(scp, DATA_PROTECT, INSUFF_RES_ASC=
+,
+> >                                       INSUFF_ZONE_ASCQ);
+> >                       res =3D check_condition_result;
+> > @@ -6136,7 +6136,7 @@ static int resp_open_zone(struct scsi_cmnd *scp, =
+struct sdebug_dev_info *devip)
+> >       if (zc =3D=3D ZC3_EXPLICIT_OPEN || zc =3D=3D ZC5_FULL)
+> >               goto fini;
+> >
+> > -     if (devip->max_open && devip->nr_exp_open >=3D devip->max_open) {
+> > +     if (devip->max_open && devip->nr_imp_open + devip->nr_exp_open >=
+=3D devip->max_open) {
+> >               mk_sense_buffer(scp, DATA_PROTECT, INSUFF_RES_ASC,
+> >                               INSUFF_ZONE_ASCQ);
+> >               res =3D check_condition_result;
 >
-> -	return clk_prepare_enable(bc->clk_apb);
-> +	ret = clk_prepare_enable(bc->clk_apb);
-> +	if (ret)
-> +		return ret;
-> +
-> +	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
-> +
-> +	return 0;
->  }
->  #endif
+> Do you agree that the current code in the scsi_debug driver follows the
+> ZBC standard and also that the above changes would break compatibility
+> with the ZBC standard?
 >
-> @@ -469,17 +478,12 @@ static int imx95_bc_runtime_resume(struct device *dev)
->  static int imx95_bc_suspend(struct device *dev)
->  {
->  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
-> -	int ret;
+> Thanks,
 >
-> -	if (bc->pdata->rpm_enabled) {
-> -		ret = pm_runtime_get_sync(bc->dev);
-> -		if (ret < 0) {
-> -			pm_runtime_put_noidle(bc->dev);
-> -			return ret;
-> -		}
-> -	}
-> +	if (pm_runtime_suspended(dev))
-> +		return 0;
->
->  	bc->clk_reg_restore = readl(bc->base + bc->pdata->clk_reg_offset);
-> +	clk_disable_unprepare(bc->clk_apb);
->
->  	return 0;
->  }
-> @@ -487,11 +491,16 @@ static int imx95_bc_suspend(struct device *dev)
->  static int imx95_bc_resume(struct device *dev)
->  {
->  	struct imx95_blk_ctl *bc = dev_get_drvdata(dev);
-> +	int ret;
->
-> -	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
-> +	if (pm_runtime_suspended(dev))
-> +		return 0;
->
-> -	if (bc->pdata->rpm_enabled)
-> -		pm_runtime_put(bc->dev);
-> +	ret = clk_prepare_enable(bc->clk_apb);
-> +	if (ret)
-> +		return ret;
-> +
-> +	writel(bc->clk_reg_restore, bc->base + bc->pdata->clk_reg_offset);
->
->  	return 0;
->  }
-> --
-> 2.46.1
->
+> Bart.
 
