@@ -1,122 +1,101 @@
-Return-Path: <linux-kernel+bounces-750811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91606B16150
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:20:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE174B16153
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:20:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE90618C6453
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:20:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56A6B18C6438
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0E1D2777E5;
-	Wed, 30 Jul 2025 13:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PkQh6Ruy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522B7279357;
+	Wed, 30 Jul 2025 13:20:43 +0000 (UTC)
+Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6791B413D;
-	Wed, 30 Jul 2025 13:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10B11531E3;
+	Wed, 30 Jul 2025 13:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753881617; cv=none; b=IwlTX06XAS7UGj5XFDAXOnPp05qvAwYtQrPrR0fah4WfUyXnU4YTdg6l6FOJXPQt/Th8nvSWyGs8XH28nP+08S8w3pFTzaX4VwRUxuCzTS+6dpBKB5MReQPwNEKQkc8W89WsY5MDzWpL2yeWXIMfyjUjvhqlmzKGoUIdngKwg3s=
+	t=1753881643; cv=none; b=mOYjLOtSO6yQ0if1TlrTKHWPT3EvBEBwl923u3m40C1Avcm92wHB92h7J+j1qQlrWdVoHY7brdJTRsMqBb/Vv84YlSvLgOMYmrQ/zaEmaWZxQzOF3KRdHtYLC1IX9fTAeO597BEf3U7moFlpidKBNVowEcMVBKmxHi6rQGWaG0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753881617; c=relaxed/simple;
-	bh=BDIRGoV9/+SjgCzyEVhLScdej+5iGX8RgYMpFrGm0nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DNn/80a6oHiq4B+QGCP/DeebafUYwjC7E4VWwmJGBrsY3T7NMdsnGvA8GqaTxjk7waMUfKJCdOb64f3VUb58XZx+deWpHPDPje92WCAXqU5bQwXNbw+s9tv98o7f56O6ycXuL12Tt0RouyoKwEQpthgg/g+8/BsP1hdNQVVwVVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PkQh6Ruy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F1F1C4CEE7;
-	Wed, 30 Jul 2025 13:20:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753881616;
-	bh=BDIRGoV9/+SjgCzyEVhLScdej+5iGX8RgYMpFrGm0nk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PkQh6Ruy+Ub8G9d+VQZ6erMisKZKdOTzeLuo8JyPQvxt1NCX3QEPmP0hK0EPXjCmY
-	 MYaxtxLGFnLjhdl+BQEjnD1YomkihCangG6MJWMeqIcGz+YIEHMBM8oKERdwVkIicZ
-	 cG6/kUAydL2J955FtN9xildB7hkDuWqxPIg6NXiRwXSNFNFKxncnisxDg6epZqW3W8
-	 24T/GooUY9WgskusVNYEsI/Jpo9gDXnh4s4dDJo4Qpb3xaDSC63RmRRsmILmW0sFwH
-	 TvGaDfquWDb98KqGe34vj1QKnvjtGSCeBVis1ifOci5l70mybpQAP9uk80rnsbF6pV
-	 ikeA4V6zVccgg==
-Message-ID: <7b2d0166-8bf8-4f48-ab20-ea1082515e9f@kernel.org>
-Date: Wed, 30 Jul 2025 15:20:12 +0200
+	s=arc-20240116; t=1753881643; c=relaxed/simple;
+	bh=fkKm7APfsMSQiT77hCcKhZPKA8BOP+Knyo6wH1vqqko=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=pLcQXi1lx/+LX6Jjg7F7HgX3PWIBtac+vevRky1ZP25Z3dQNrmIOTCXoRTrx7xu37b6NCHccsS/TSrPC0pzNYaElNOOQ4Lchh7+i8GK4B6QdpM/iRQ7Nh8w317DElLvMuYsWjPA+o6trAoA7vl7p3a5YUZrItSrLrguvHZCnA80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.213.139])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1dc0b97fb;
+	Wed, 30 Jul 2025 21:20:29 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: w@1wt.eu
+Cc: alchark@gmail.com,
+	amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	ziyao@disroot.org
+Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency scaling support
+Date: Wed, 30 Jul 2025 21:20:26 +0800
+Message-Id: <20250730132026.214754-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20250730071145.GA26734@1wt.eu>
+References: <20250730071145.GA26734@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: nvmem: add env-size property for u-boot
- env layout
-To: Shiji Yang <yangshiji66@outlook.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Srinivas Kandagatla <srini@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <OSBPR01MB1670FF3930C3B1736E7EFC23BC24A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
- <OSBPR01MB16702D6947772E526F64D63CBC24A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <OSBPR01MB16702D6947772E526F64D63CBC24A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a985b7dd39f03a2kunm09ab435824e847
+X-HM-MType: 10
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDQktMVh9IHk9CHxlITEsZTlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKSFVKSEJZV1kWGg8SFR0UWUFZT0tIVUpLSEpOTE5VSktLVU
+	pCS0tZBg++
 
-On 30/07/2025 15:17, Shiji Yang wrote:
-> This newly introduced property allows users to declare the size of
-> the environment storage area.
+Hi,
 
-Bindings come before the user.
+> My point is that if you disable cpufreq, the CPU is running at 1.2V, which
+> is even higher. I don't know why it's running at this voltage, maybe as
+> the result of initializing some regulators, but that's what we're getting.
+> So the question about safety of running between 1.13-1.15 resolves to
+> "it's at least safer than running without cpufreq" in the current state.
+>
+> And as I mentioned it's clearly linux and not u-boot that is setting 1.2V,
+> because under u-boot and during kernel selection and image loading, my
+> board is at 0.95V. It's only once the kernel starts to boot that it bumps
+> to 1.2V.
 
-Your commit msg should explain WHY you are doing this, not what you did
-here. I see from the diff everything what you said above. I don't see
-the reason to limit the env size.
+If opp-table is not configured, kernel will initialize the pwm-regulator
+to maximum microvolts. This can be solved by configuring the pwm-regulator
+in U-Boot (waiting for U-Boot to synchronize the DT of kernel 6.16):
 
-Best regards,
-Krzysztof
+```
+&vdd_arm {
+	regulator-init-microvolt = <953000>;
+};
+
+&vdd_logic {
+	regulator-init-microvolt = <900000>;
+};
+```
+
+Thanks,
+Chukun
+
+--
+2.25.1
+
+
 
