@@ -1,247 +1,134 @@
-Return-Path: <linux-kernel+bounces-750803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAA9B16130
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:15:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 397F2B16157
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15C418947C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:15:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97D9518C83C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0BC29DB78;
-	Wed, 30 Jul 2025 13:13:42 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF65A296150;
+	Wed, 30 Jul 2025 13:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="CBtfodzL"
+Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36D429A300;
-	Wed, 30 Jul 2025 13:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1BAD265CAB;
+	Wed, 30 Jul 2025 13:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753881222; cv=none; b=VqKqfLqi53cGYhWu/ZpCFuMfV/DKrsOLSuxqHOCZIx3TBNdZz8s2KAbB7R8RHJ0Ysz1RatZiTGu8J1W7XCabGyrnqjvknx3YlQr2k+LqsC8JgNF1VqEliG/G93gjdbDgpxfbOstZZSVU52iiFXfK7leDGRZCLmV8JfqWAjQbeVY=
+	t=1753881681; cv=none; b=Mre/iE9duLe3v3Qr305PKM4ptyAYdfXXhla6Hutc9WqT7NKTh+wo8YrwAPdmtHeV9di65cX0sLTYSiB+zYbBxRZY4/xOyli6ThFtk7G5yEQ0sJuoj4ooZajp6eK7/Xo7ySJIh+0sZsTj10bsf4PizijF1KOdy4NsPGU1voQjV2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753881222; c=relaxed/simple;
-	bh=s2SFJKdX9ENPtxVodS2TvRTGzN4XABBgJcW6wnXoGtQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nz0uL7Xgmykwk0Gnx3w4vJXwUCN9dwjDAkCHzZ/rRtiM4YCIzp7XUmwLTtdh+mxd9bTEKRaJV4czHGSr5rodFq8gnOnL9m/DfcA8jgh6atI3mi9iPa1FEBS5DDO1nFnOiKQQOc8ZZQpdYeOXekp1mSOQCC7m3bU/aZkPZavzLLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: fd59ff1c6d4611f0b29709d653e92f7d-20250730
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED, SN_EXISTED
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:f50ad0ef-3db2-421d-bf79-3f952d5904d6,IP:15,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:0
-X-CID-INFO: VERSION:1.1.45,REQID:f50ad0ef-3db2-421d-bf79-3f952d5904d6,IP:15,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:f6e644fb00daaf355476098d584512f5,BulkI
-	D:250730211334BS297NHW,BulkQuantity:0,Recheck:0,SF:17|19|24|38|44|66|78|81
-	|82|102,TC:nil,Content:0|50,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS
-	:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,A
-	RC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSI,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
-X-UUID: fd59ff1c6d4611f0b29709d653e92f7d-20250730
-X-User: duanchenghao@kylinos.cn
-Received: from localhost.localdomain [(116.128.244.171)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 2002870157; Wed, 30 Jul 2025 21:13:31 +0800
-From: Chenghao Duan <duanchenghao@kylinos.cn>
-To: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	yangtiezhu@loongson.cn,
-	hengqi.chen@gmail.com,
-	chenhuacai@kernel.org
-Cc: martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	kernel@xen0n.name,
-	linux-kernel@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	bpf@vger.kernel.org,
-	guodongtai@kylinos.cn,
-	duanchenghao@kylinos.cn,
-	youling.tang@linux.dev,
-	jianghaoran@kylinos.cn,
-	vincent.mc.li@gmail.com,
-	geliang@kernel.org
-Subject: [PATCH v5 5/5] LoongArch: BPF: Add struct ops support for trampoline
-Date: Wed, 30 Jul 2025 21:12:57 +0800
-Message-Id: <20250730131257.124153-6-duanchenghao@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250730131257.124153-1-duanchenghao@kylinos.cn>
-References: <20250730131257.124153-1-duanchenghao@kylinos.cn>
+	s=arc-20240116; t=1753881681; c=relaxed/simple;
+	bh=fxUh3dEZumi0cHiW6QpFsdbaoORLlmi8xlQ3Jppnza4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XtWSfwIFYqVy+hRkLNBBqK86dfFUXMEd78O3i4b+JyupFzNNttio7mQxkItPupYwkKFtY5O/jmsxExoHnUFAsYJ4y1ziKM1N/Nq8fGJZ2/GMfjFKWzTFB095jGqCn64jo7OfhF781FecrPiqAiEkTeh7TIzkxZ60kREjfIm2dKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=CBtfodzL; arc=none smtp.client-ip=178.154.239.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from mail-nwsmtp-smtp-production-main-74.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-74.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:515:0:640:ed11:0])
+	by forward501a.mail.yandex.net (Yandex) with ESMTPS id BAA55890DB;
+	Wed, 30 Jul 2025 16:13:23 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-74.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id HDa5Jx4MmuQ0-xh2DFQNF;
+	Wed, 30 Jul 2025 16:13:22 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1753881202;
+	bh=8z4SLApFyWRAw7OvW1QUAJYsAMQ8uODmFgZDAW4+n+8=;
+	h=Cc:Message-ID:Subject:Date:References:To:From:In-Reply-To;
+	b=CBtfodzLXuMQ1iE/wsmVgHKHCGhM5lKI7kTA0WejqL/SdLSQbiZUs1wHZUwqpdFRj
+	 AII25WPIzloHL+fN+fo/buDX8g6W85n66v90wd7K3cvK/yId+vscFchrBiZeTtdymC
+	 KLSd7b8ZYUPbjDqpZx+7ZZB8UfVEOqg0SKQvuAAQ=
+Authentication-Results: mail-nwsmtp-smtp-production-main-74.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+Date: Wed, 30 Jul 2025 16:13:16 +0300
+From: Onur =?UTF-8?B?w5Z6a2Fu?= <work@onurozkan.dev>
+To: Miguel Ojeda <ojeda@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Andreas Hindborg
+ <a.hindborg@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Boqun Feng <boqun.feng@gmail.com>, Gary
+ Guo <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Alice Ryhl
+ <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich
+ <dakr@kernel.org>, rust-for-linux@vger.kernel.org,
+ linux-block@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Subject: Re: [PATCH 3/3] rust: warn if `srctree/` links do not exist
+Message-ID: <20250730161316.57bd7745@nimda.home>
+In-Reply-To: <20250730130716.3278285-4-ojeda@kernel.org>
+References: <20250730130716.3278285-1-ojeda@kernel.org>
+	<20250730130716.3278285-4-ojeda@kernel.org>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
+On Wed, 30 Jul 2025 15:07:16 +0200
+Miguel Ojeda <ojeda@kernel.org> wrote:
 
-Use BPF_TRAMP_F_INDIRECT flag to detect struct ops and emit proper
-prologue and epilogue for this case.
+> `srctree/` links may point to nonexistent files, e.g. due to renames
+> that missed to update the files or simply because of typos.
+>=20
+> Since they can be easily checked for validity, do so and print a
+> warning in the file does not exist.
+>=20
+> This found the following cases already in-tree:
+>=20
+>     warning: srctree/ link to include/linux/blk_mq.h does not exist
+>     warning: srctree/ link to include/linux/drm/drm_gem.h does not
+> exist warning: srctree/ link to include/linux/drm/drm_drv.h does not
+> exist warning: srctree/ link to include/linux/drm/drm_ioctl.h does
+> not exist warning: srctree/ link to include/linux/drm/drm_file.h does
+> not exist warning: srctree/ link to include/linux/drm/drm_device.h
+> does not exist
+>=20
+> Inspired-by: "Onur =C3=96zkan" <work@onurozkan.dev>
+> Link:
+> https://lore.kernel.org/rust-for-linux/CANiq72=3DxCYA7z7_rxpzzKkkhJs6m7L_=
+xEaLMuArVn3ZAcyeHdA@mail.gmail.com/
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org> ---
+>  rust/Makefile | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>=20
+> diff --git a/rust/Makefile b/rust/Makefile
+> index 4e675d210dd8..a27503028216 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+> @@ -93,6 +93,12 @@ quiet_cmd_rustdoc =3D RUSTDOC $(if
+> $(rustdoc_host),H, ) $< # and then retouch the generated files.
+>  rustdoc: rustdoc-core rustdoc-macros rustdoc-compiler_builtins \
+>      rustdoc-kernel rustdoc-pin_init
+> +	$(Q)grep -Ehro '<a href=3D"srctree/([^"]+)"' $(rustdoc_output)
+> | \
+> +		cut -d'"' -f2 | cut -d/ -f2- | while read f; do \
+> +			if [ ! -e "$(srctree)/$$f" ]; then \
+> +				echo "warning: srctree/ link to $$f
+> does not exist"; \
+> +			fi \
+> +		done
+>  	$(Q)cp $(srctree)/Documentation/images/logo.svg
+> $(rustdoc_output)/static.files/ $(Q)cp
+> $(srctree)/Documentation/images/COPYING-logo
+> $(rustdoc_output)/static.files/ $(Q)find $(rustdoc_output) -name
+> '*.html' -type f -print0 | xargs -0 sed -Ei \
 
-With this patch, all of the struct_ops related testcases (except
-struct_ops_multi_pages) passed on LoongArch.
+That's awesome! This would help a lot. :)
 
-The testcase struct_ops_multi_pages failed is because the actual
-image_pages_cnt is 40 which is bigger than MAX_TRAMP_IMAGE_PAGES.
 
-Before:
+Reviewed-by: Onur =C3=96zkan <work@onurozkan.dev>
 
-  $ sudo ./test_progs -t struct_ops -d struct_ops_multi_pages
-  ...
-  WATCHDOG: test case struct_ops_module/struct_ops_load executes for 10 seconds...
+--
 
-After:
-
-  $ sudo ./test_progs -t struct_ops -d struct_ops_multi_pages
-  ...
-  #15      bad_struct_ops:OK
-  ...
-  #399     struct_ops_autocreate:OK
-  ...
-  #400     struct_ops_kptr_return:OK
-  ...
-  #401     struct_ops_maybe_null:OK
-  ...
-  #402     struct_ops_module:OK
-  ...
-  #404     struct_ops_no_cfi:OK
-  ...
-  #405     struct_ops_private_stack:SKIP
-  ...
-  #406     struct_ops_refcounted:OK
-  Summary: 8/25 PASSED, 3 SKIPPED, 0 FAILED
-
-Signed-off-by: Tiezhu Yang <yangtiezhu@loongson.cn>
----
- arch/loongarch/net/bpf_jit.c | 71 ++++++++++++++++++++++++------------
- 1 file changed, 47 insertions(+), 24 deletions(-)
-
-diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-index eddf582e4..725c2d5ee 100644
---- a/arch/loongarch/net/bpf_jit.c
-+++ b/arch/loongarch/net/bpf_jit.c
-@@ -1610,6 +1610,7 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 	struct bpf_tramp_links *fentry = &tlinks[BPF_TRAMP_FENTRY];
- 	struct bpf_tramp_links *fexit = &tlinks[BPF_TRAMP_FEXIT];
- 	struct bpf_tramp_links *fmod_ret = &tlinks[BPF_TRAMP_MODIFY_RETURN];
-+	bool is_struct_ops = flags & BPF_TRAMP_F_INDIRECT;
- 	int ret, save_ret;
- 	void *orig_call = func_addr;
- 	u32 **branches = NULL;
-@@ -1685,18 +1686,31 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 
- 	stack_size = round_up(stack_size, 16);
- 
--	/* For the trampoline called from function entry */
--	/* RA and FP for parent function*/
--	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16);
--	emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
--	emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
--	emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16);
--
--	/* RA and FP for traced function*/
--	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_size);
--	emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
--	emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
--	emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size);
-+	if (!is_struct_ops) {
-+		/*
-+		 * For the trampoline called from function entry,
-+		 * the frame of traced function and the frame of
-+		 * trampoline need to be considered.
-+		 */
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -16);
-+		emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
-+		emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 16);
-+
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_size);
-+		emit_insn(ctx, std, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
-+		emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size);
-+	} else {
-+		/*
-+		 * For the trampoline called directly, just handle
-+		 * the frame of trampoline.
-+		 */
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, -stack_size);
-+		emit_insn(ctx, std, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, stack_size - 8);
-+		emit_insn(ctx, std, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size);
-+	}
- 
- 	/* callee saved register S1 to pass start time */
- 	emit_insn(ctx, std, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off);
-@@ -1786,21 +1800,30 @@ static int __arch_prepare_bpf_trampoline(struct jit_ctx *ctx, struct bpf_tramp_i
- 
- 	emit_insn(ctx, ldd, LOONGARCH_GPR_S1, LOONGARCH_GPR_FP, -sreg_off);
- 
--	/* trampoline called from function entry */
--	emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
--	emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
--	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_size);
-+	if (!is_struct_ops) {
-+		/* trampoline called from function entry */
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_T0, LOONGARCH_GPR_SP, stack_size - 8);
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_size);
-+
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16);
- 
--	emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, 8);
--	emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, 0);
--	emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, 16);
-+		if (flags & BPF_TRAMP_F_SKIP_FRAME)
-+			/* return to parent function */
-+			emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA, 0);
-+		else
-+			/* return to traced function */
-+			emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T0, 0);
-+	} else {
-+		/* trampoline called directly */
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_RA, LOONGARCH_GPR_SP, stack_size - 8);
-+		emit_insn(ctx, ldd, LOONGARCH_GPR_FP, LOONGARCH_GPR_SP, stack_size - 16);
-+		emit_insn(ctx, addid, LOONGARCH_GPR_SP, LOONGARCH_GPR_SP, stack_size);
- 
--	if (flags & BPF_TRAMP_F_SKIP_FRAME)
--		/* return to parent function */
- 		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_RA, 0);
--	else
--		/* return to traced function */
--		emit_insn(ctx, jirl, LOONGARCH_GPR_ZERO, LOONGARCH_GPR_T0, 0);
-+	}
- 
- 	ret = ctx->idx;
- out:
--- 
-2.25.1
-
+Regards,
+Onur
 
