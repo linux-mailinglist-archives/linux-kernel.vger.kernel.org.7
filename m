@@ -1,102 +1,203 @@
-Return-Path: <linux-kernel+bounces-750345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E49B15A65
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:20:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF07B15A6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:21:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD49E1899610
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:20:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF335A08F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:20:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74F9254AE7;
-	Wed, 30 Jul 2025 08:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04668256C9E;
+	Wed, 30 Jul 2025 08:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIU54rE/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TptkLNIX"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCEB187326;
-	Wed, 30 Jul 2025 08:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52EBA255F2F;
+	Wed, 30 Jul 2025 08:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753863624; cv=none; b=UQfK/IfWocvLr7SrWjTJhiSP3qc+NkCk5MTxPWfVj2oZQrmurjwcikaM8F31lNDPufOlnb00p/tygkFHD95qUgRlOdghz/fRJByWvXuuEEEh5ad8PP9/+JDCHKcL/nw32BbWS4PlhRrcI0sE3+IxBXJzmyhPPV3oz3PaQt/B7sY=
+	t=1753863656; cv=none; b=o4pKJtsw69AgJ8I8dgiFZc3hx4E4nUFYAkztlBh2N84DbRaGhZbKW7sFjVlTlYhDReC4YSbP1V/pvxT4KCM8qmEYw8TGEb+PZUDYaIKgQwYk38KHfZJRQo1jFQ2hK3YzeM20585LYP2/DQ0cUuiq9EqMMNqdqhsHbb1rwebSML4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753863624; c=relaxed/simple;
-	bh=G2xhbiG9MhxwFQfbZuB+oDrqa9cbn97T9Zn90EGVbF0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=PhYVSl1H/XgR6MVVA927vDVOsKlHdE546rjiFy/Ebo5rkgDoSXPCvdTYbflmsouBwjV79zx77fRX4tH8SliRuJI+xkib9s79n/XGfMQdZNxZmxwT0MjLkxC0VZXDbeDgVs1CATmL9ArCTq4OWGcEXtKdyBa3mY8KdaSY8QXAWvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIU54rE/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE72C4CEF5;
-	Wed, 30 Jul 2025 08:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753863623;
-	bh=G2xhbiG9MhxwFQfbZuB+oDrqa9cbn97T9Zn90EGVbF0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gIU54rE/53PmhiwB/a0q1TUMwg6FBnJm8rOIhcfkpcIf3TnXT5tJYQOq2om+0SfAb
-	 va+0nhaPM2mySuzIQuHiRS1yF9fJr0KHugT9fcDyKZJE9VBTJA3mcKm2C4vv22HEqP
-	 MSj4+h89kLmi6G5zTK2s4WChbvBA74cevzu5iY3BCf7hEJNh2Q9uxXVa+6YZdAy/1B
-	 VtMhDon9WBCd8SUPzQycZt1H+gAvrZokQx7ucmeRl+EGdVQ5BD7xi4Z0AJxjtZW4L0
-	 EzmBm56rCDVMlOUjWy1Qd1MnpwEG+3wggI+on2PDjIFhlF6Y87UPOB/kJvP4uXUsQx
-	 /RO/Zw4u25ebg==
-Date: Wed, 30 Jul 2025 17:20:20 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, "Alan J. Wylie"
- <alan@wylie.me.uk>, linux-kernel@vger.kernel.org,
- regressions@lists.linux.dev, stable@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>
-Subject: Re: "stack state/frame" and "jump dest instruction" errors (was Re:
- Linux 6.16)
-Message-Id: <20250730172020.00a4dd1ad453d94c7ef47f30@kernel.org>
-In-Reply-To: <20250729224000.2f23f59acc79a78f47c1624f@kernel.org>
-References: <CAHk-=wh0kuQE+tWMEPJqCR48F4Tip2EeYQU-mi+2Fx_Oa1Ehbw@mail.gmail.com>
-	<871pq06728.fsf@wylie.me.uk>
-	<hla34nepia6wyi2fndx5ynud4dagxd7j75xnkevtxt365ihkjj@4p746zsu6s6z>
-	<20250729224000.2f23f59acc79a78f47c1624f@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753863656; c=relaxed/simple;
+	bh=sMpVGob/1Mg4p+/qdsiXIOdlRZ53nvSriy4F/sWaKfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aZKEshNz5IcdOb1lPVHYhbHvVnenL0LZA1noLcB17dW9RAYIh42S6W3B3V1uEXuCdcaba6bM5CrTZ2xyzeyfiRg4+7R5yiqSXThaI7TGHxzfWSQjbaTi2BZj9yaAMqfNUa3SiZcSFVwxwHdRbwyLIWNfobNJkbvyQWXZ7gvgNdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TptkLNIX; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753863653; x=1785399653;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sMpVGob/1Mg4p+/qdsiXIOdlRZ53nvSriy4F/sWaKfA=;
+  b=TptkLNIXH7jpBg1/dx2GQLg3DGSHWhis2zaJfrasjo/ISah+Tc+WRGjq
+   ZJ13PgYF6zOjLfqFEhdFwE7KosxojDOHPBSTlDPVOWFtXua259+VqySEX
+   GEN1PSuhMHNV1NBzJGS98ud8ckeuJ8kaGACXIEn18oxVxEyvqQeS1Ykc8
+   5s9j7iBvfBIKP78uk1JVThPgqjm0zFKEb6yp5mLMtIgCsMZvXGOvYlKeA
+   hIKxR+KIL7KjIFbaAuNQ6mx/g+UT+qjZFkaSpu0H1YXLiVqTBQBN7lnfk
+   UPW/hSqWsFwMCaEel8ViFCv4MlVRV4rrWHCt7A3NZkgO+lN8FX/VqNth9
+   g==;
+X-CSE-ConnectionGUID: AL4UQFVxQvqeERUTxwpkZA==
+X-CSE-MsgGUID: jMFGK+BERpyDJYy5TkGpig==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="43760837"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="43760837"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 01:20:53 -0700
+X-CSE-ConnectionGUID: Ek445IxjTgK8rLEtsHGYDg==
+X-CSE-MsgGUID: m2qrEWuSTVaeqSuq+gdBEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="168338717"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 01:20:48 -0700
+Message-ID: <42d840e5-d063-4a84-9028-e17a69fc7c91@intel.com>
+Date: Wed, 30 Jul 2025 16:20:45 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v17 24/24] KVM: selftests: Add guest_memfd testcase to
+ fault-in on !mmap()'d memory
+To: Sean Christopherson <seanjc@google.com>,
+ Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
+ Ira Weiny <ira.weiny@intel.com>, Gavin Shan <gshan@redhat.com>,
+ Shivank Garg <shivankg@amd.com>, Vlastimil Babka <vbabka@suse.cz>,
+ David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>,
+ Ackerley Tng <ackerleytng@google.com>, Tao Chan <chentao@kylinos.cn>,
+ James Houghton <jthoughton@google.com>
+References: <20250729225455.670324-1-seanjc@google.com>
+ <20250729225455.670324-25-seanjc@google.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20250729225455.670324-25-seanjc@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 29 Jul 2025 22:40:00 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On 7/30/2025 6:54 AM, Sean Christopherson wrote:
+> Add a guest_memfd testcase to verify that a vCPU can fault-in guest_memfd
+> memory that supports mmap(), but that is not currently mapped into host
+> userspace and/or has a userspace address (in the memslot) that points at
+> something other than the target guest_memfd range.  Mapping guest_memfd
+> memory into the guest is supposed to operate completely independently from
+> any userspace mappings.
 
-> On Mon, 28 Jul 2025 08:42:44 -0700
-> Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+Based on above, I suppose the userspace_address is not NULL but some 
+other separate userspace mapped memory.
+
+> Signed-off-by: Sean Christopherson <seanjc@google.com>
+> ---
+>   .../testing/selftests/kvm/guest_memfd_test.c  | 64 +++++++++++++++++++
+>   1 file changed, 64 insertions(+)
 > 
-> > On Mon, Jul 28, 2025 at 09:41:35AM +0100, Alan J. Wylie wrote:
-> > > #regzbot introduced: 6.15.8..6.16
-> 
-> > I don't have time to look at this for at least the next few days, but I
-> > suspect this one:
-> > 
-> >      1a3:	8f ea 78 10 c3 0a 06 00 00 	bextr  $0x60a,%ebx,%eax
-> 
-> Thanks for finding!
-> Indeed, this is encoded by XOP which is not currently supported
-> by x86 decodeer. 
-> 
-> > 
-> > in which case the kernel's x86 decoder (which objtool also uses) needs
-> > to be updated.
-> 
-> OK, let me see how XOP works.
+> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+> index 088053d5f0f5..b86bf89a71e0 100644
+> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -13,6 +13,7 @@
+>   
+>   #include <linux/bitmap.h>
+>   #include <linux/falloc.h>
+> +#include <linux/sizes.h>
+>   #include <setjmp.h>
+>   #include <signal.h>
+>   #include <sys/mman.h>
+> @@ -21,6 +22,7 @@
+>   
+>   #include "kvm_util.h"
+>   #include "test_util.h"
+> +#include "ucall_common.h"
+>   
+>   static void test_file_read_write(int fd)
+>   {
+> @@ -298,6 +300,66 @@ static void test_guest_memfd(unsigned long vm_type)
+>   	kvm_vm_free(vm);
+>   }
+>   
+> +static void guest_code(uint8_t *mem, uint64_t size)
+> +{
+> +	size_t i;
+> +
+> +	for (i = 0; i < size; i++)
+> +		__GUEST_ASSERT(mem[i] == 0xaa,
+> +			       "Guest expected 0xaa at offset %lu, got 0x%x", i, mem[i]);
+> +
+> +	memset(mem, 0xff, size);
+> +	GUEST_DONE();
+> +}
+> +
+> +static void test_guest_memfd_guest(void)
+> +{
+> +	/*
+> +	 * Skip the first 4gb and slot0.  slot0 maps <1gb and is used to back
+> +	 * the guest's code, stack, and page tables, and low memory contains
+> +	 * the PCI hole and other MMIO regions that need to be avoided.
+> +	 */
+> +	const uint64_t gpa = SZ_4G;
+> +	const int slot = 1;
+> +
+> +	struct kvm_vcpu *vcpu;
+> +	struct kvm_vm *vm;
+> +	uint8_t *mem;
+> +	size_t size;
+> +	int fd, i;
+> +
+> +	if (!kvm_has_cap(KVM_CAP_GUEST_MEMFD_MMAP))
+> +		return;
+> +
+> +	vm = __vm_create_shape_with_one_vcpu(VM_SHAPE_DEFAULT, &vcpu, 1, guest_code);
+> +
+> +	TEST_ASSERT(vm_check_cap(vm, KVM_CAP_GUEST_MEMFD_MMAP),
+> +		    "Default VM type should always support guest_memfd mmap()");
+> +
+> +	size = vm->page_size;
+> +	fd = vm_create_guest_memfd(vm, size, GUEST_MEMFD_FLAG_MMAP);
+> +	vm_set_user_memory_region2(vm, slot, KVM_MEM_GUEST_MEMFD, gpa, size, NULL, fd, 0);
+> +
+> +	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+> +	TEST_ASSERT(mem != MAP_FAILED, "mmap() on guest_memfd failed");
+> +	memset(mem, 0xaa, size);
+> +	munmap(mem, size);
+> +
+> +	virt_pg_map(vm, gpa, gpa);
+> +	vcpu_args_set(vcpu, 2, gpa, size);
+> +	vcpu_run(vcpu);
+> +
+> +	TEST_ASSERT_EQ(get_ucall(vcpu, NULL), UCALL_DONE);
+> +
+> +	mem = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+> +	TEST_ASSERT(mem != MAP_FAILED, "mmap() on guest_memfd failed");
+> +	for (i = 0; i < size; i++)
+> +		TEST_ASSERT_EQ(mem[i], 0xff);
+> +
+> +	close(fd);
+> +	kvm_vm_free(vm);
+> +}
+> +
+>   int main(int argc, char *argv[])
+>   {
+>   	unsigned long vm_types, vm_type;
+> @@ -314,4 +376,6 @@ int main(int argc, char *argv[])
+>   
+>   	for_each_set_bit(vm_type, &vm_types, BITS_PER_TYPE(vm_types))
+>   		test_guest_memfd(vm_type);
+> +
+> +	test_guest_memfd_guest();
 
-I've sent it to;
+First glance at the name, it leads me to think about something of nested.
 
-https://lore.kernel.org/all/175386161199.564247.597496379413236944.stgit@devnote2/
+>   }
 
-I confirmed it worked with the XOP encoded "bextr".
-
-Thank you,
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
