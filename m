@@ -1,120 +1,124 @@
-Return-Path: <linux-kernel+bounces-751314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 019D4B16792
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:24:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D10DB16794
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3814B177702
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:24:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 278274E2585
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:25:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13131E376E;
-	Wed, 30 Jul 2025 20:24:17 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8CA3218E9F;
+	Wed, 30 Jul 2025 20:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="cPRVf3nX"
+Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73EBF1E7C19;
-	Wed, 30 Jul 2025 20:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0648156CA;
+	Wed, 30 Jul 2025 20:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753907057; cv=none; b=NVDx45FKTAHJJAJ+B8+WzDQnxPpnMnkvndYhyPm9IQk4XZJcSHaqWXOgxWXgqFoPyaf/70iBYTQkQOdtFEMzJfhFkOLE/1soJCzQ17On2AER1R6PK2jz1DrDb6PpWFhdRQOCESKOlaIdYfPmTBZKD1TBRP0r6cv7VMBT+d2p/cc=
+	t=1753907139; cv=none; b=UU0F9Z0DuO2VKZFu/mARlm13nby7LkuthNZSi1gM9iCdl/pFBsJyEE2wkh2sk0DQiw+7BAYCWw7VKh0/NI5HK29McknIG4HS6P6xSe2kag0fPs7K7jqr9JyhRtuf754Zei8cNwJGUPAOq1egrj97jF5pl1OHet+DloR/r3WJ3tU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753907057; c=relaxed/simple;
-	bh=VUbTMcf9w61UswesyXxS8pLpFqy8WRInjHYkTP1EmH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g/FZn9oex2kLuVo8/78MFK8BSNx1RGJ+7/gaA69xVehAtSXhQKATgeVsDnkGXW4xD06J73sunYZsFeDm8H1RM/wKbI6Z6jcK2DjqnMHvd1NJOHJiQzIqBibrn5aTKjMMd8W5bksk6sLaWJX3a+M11qOYaF0ZPiTYWNNr1Tisv8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	s=arc-20240116; t=1753907139; c=relaxed/simple;
+	bh=u12wcI6di+0QI17z5QIslTni50sbtImCXQArA8krxAg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QBMSRYPF4NuFScZqWtDgPheBGyzak+hfYENoC79R8hM5zgDkY+JtW4RpsCmvwmwC2MujMBAjIpfm4XQGFtN0D1D822tXqMhmOioAHikTkXgxxn5lA2iwbQbLI2xSqnLm0RtXIgqCORSwbrmpZwEGsGjFP5ZNWA94d7D6dpPnD+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=cPRVf3nX; arc=none smtp.client-ip=192.19.144.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: from mail-acc-it-01.broadcom.com (mail-acc-it-01.acc.broadcom.net [10.35.36.83])
+	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 9EA54C0000F8;
+	Wed, 30 Jul 2025 13:25:36 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 9EA54C0000F8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
+	s=dkimrelay; t=1753907136;
+	bh=u12wcI6di+0QI17z5QIslTni50sbtImCXQArA8krxAg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cPRVf3nXtVoUA42ddkED9sFYrxfTRFIjh/UJ5sXz1So3sABmLpgKpx1yvERSrAfJV
+	 tDZJmqw7jcYT/EQyFt2Ildm7sKmhNsR+6vz6ALZjv1YJqvmONDz1qMIN9gA51Lz1Zi
+	 jmbJqztRyjmPUzfg76c5DpCzpvAOLFRZZx9jtNLc=
+Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 7F00D2C02AD6;
-	Wed, 30 Jul 2025 22:24:07 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 6C714467C48; Wed, 30 Jul 2025 22:24:07 +0200 (CEST)
-Date: Wed, 30 Jul 2025 22:24:07 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Linas Vepstas <linasvepstas@gmail.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v3 1/2] PCI/AER: Fix missing uevent on recovery when a
- reset is requested
-Message-ID: <aIp_Z9IdwSjMtDho@wunner.de>
-References: <20250730-add_err_uevents-v3-0-540b158c070f@linux.ibm.com>
- <20250730-add_err_uevents-v3-1-540b158c070f@linux.ibm.com>
- <aIp6LiKJor9KLVpv@wunner.de>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail-acc-it-01.broadcom.com (Postfix) with ESMTPSA id 88D024002F44;
+	Wed, 30 Jul 2025 16:25:35 -0400 (EDT)
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+To: netdev@vger.kernel.org
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Doug Berger <opendmb@gmail.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net v2] net: mdio: mdio-bcm-unimac: Correct rate fallback logic
+Date: Wed, 30 Jul 2025 13:25:33 -0700
+Message-Id: <20250730202533.3463529-1-florian.fainelli@broadcom.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIp6LiKJor9KLVpv@wunner.de>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 30, 2025 at 10:01:50PM +0200, Lukas Wunner wrote:
-> On Wed, Jul 30, 2025 at 01:20:57PM +0200, Niklas Schnelle wrote:
-> > Since commit 7b42d97e99d3 ("PCI/ERR: Always report current recovery
-> > status for udev") AER uses the result of error_detected() as parameter
-> > to pci_uevent_ers(). As pci_uevent_ers() however does not handle
-> > PCI_ERS_RESULT_NEED_RESET this results in a missing uevent for the
-> > beginning of recovery if drivers request a reset. Fix this by treating
-> > PCI_ERS_RESULT_NEED_RESET as beginning recovery.
-> [...]
-> > +++ b/drivers/pci/pci-driver.c
-> > @@ -1592,6 +1592,7 @@ void pci_uevent_ers(struct pci_dev *pdev, enum pci_ers_result err_type)
-> >  	switch (err_type) {
-> >  	case PCI_ERS_RESULT_NONE:
-> >  	case PCI_ERS_RESULT_CAN_RECOVER:
-> > +	case PCI_ERS_RESULT_NEED_RESET:
-> >  		envp[idx++] = "ERROR_EVENT=BEGIN_RECOVERY";
-> >  		envp[idx++] = "DEVICE_ONLINE=0";
-> >  		break;
-> 
-> I note that PCI_ERS_RESULT_NO_AER_DRIVER is also missing in that
-> switch/case statement.  I guess for the patch to be complete,
-> it needs to be added to the PCI_ERS_RESULT_DISCONNECT case.
-> Do you agree?
+When the parent clock is a gated clock which has multiple parents, the
+clock provider (clk-scmi typically) might return a rate of 0 since there
+is not one of those particular parent clocks that should be chosen for
+returning a rate. Prior to ee975351cf0c ("net: mdio: mdio-bcm-unimac:
+Manage clock around I/O accesses"), we would not always be passing a
+clock reference depending upon how mdio-bcm-unimac was instantiated. In
+that case, we would take the fallback path where the rate is hard coded
+to 250MHz.
 
-I realize now there's a bigger problem here:  In pcie_do_recovery(),
-when control reaches the "failed:" label, a uevent is only signaled
-for the *bridge*.  Shouldn't a uevent instead be signaled for every
-device *below* the bridge?  (And possibly the bridge itself if it was
-the device reporting the error.)
+Make sure that we still fallback to using a fixed rate for the divider
+calculation, otherwise we simply ignore the desired MDIO bus clock
+frequency which can prevent us from interfacing with Ethernet PHYs
+properly.
 
-In that case you don't need to add PCI_ERS_RESULT_NO_AER_DRIVER to
-the switch/case statement because we wouldn't want to have multiple
-uevents reporting disconnect, so the one emitted below the "failed:"
-label would be sufficient.
+Fixes: ee975351cf0c ("net: mdio: mdio-bcm-unimac: Manage clock around I/O accesses")
+Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+---
+Changes in v2:
 
-Right now we may report BEGIN_RECOVERY to user space, but we fail to
-later on signal FAILED_RECOVERY (unless I'm missing something).
+- provide additional details as to how a parent clock can have a rate of
+  0 (Andrew)
 
-This all looks so broken that I'm starting to wonder if there's any
-user space application at all that takes advantage of these uevents?
+- incorporate Simon's feedback that an optional clock is NULL and
+  therefore returns a rate of 0 as well
 
-Thanks,
+ drivers/net/mdio/mdio-bcm-unimac.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-Lukas
+diff --git a/drivers/net/mdio/mdio-bcm-unimac.c b/drivers/net/mdio/mdio-bcm-unimac.c
+index b6e30bdf5325..7baab230008a 100644
+--- a/drivers/net/mdio/mdio-bcm-unimac.c
++++ b/drivers/net/mdio/mdio-bcm-unimac.c
+@@ -209,10 +209,9 @@ static int unimac_mdio_clk_set(struct unimac_mdio_priv *priv)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (!priv->clk)
++	rate = clk_get_rate(priv->clk);
++	if (!rate)
+ 		rate = 250000000;
+-	else
+-		rate = clk_get_rate(priv->clk);
+ 
+ 	div = (rate / (2 * priv->clk_freq)) - 1;
+ 	if (div & ~MDIO_CLK_DIV_MASK) {
+-- 
+2.34.1
+
 
