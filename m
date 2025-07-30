@@ -1,597 +1,251 @@
-Return-Path: <linux-kernel+bounces-750501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B019AB15CA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:45:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF42B15BD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6F4656280C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:45:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2572918C1FC6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A1A29827C;
-	Wed, 30 Jul 2025 09:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U1ObQCEc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D36279DAD;
+	Wed, 30 Jul 2025 09:35:07 +0000 (UTC)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C960B296170;
-	Wed, 30 Jul 2025 09:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E13167DB7
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753868628; cv=none; b=gkapO6Lcqi8PPklNN24QXB87MJnrpGLiu66d8xpd0vUTrjyxmpKI9ucWIhwRIjkeIZucAqeKt2m9x5CQ0JAXPvNS54GP2o/xk/YGKcxqPY+TT1iVCPG4wyOxLZuDOupxcixJud+SnpkLrG3nldZAdDNsbIry+X1+lGa6j+SYchI=
+	t=1753868106; cv=none; b=Iis6pCCBon64CNduqB/4w7j//5ReXsuU3FVG0nU3sVLmWB4HUaEoFu22saNj+kciZv67HR6qQAjEHjIYoXFybJ3CgManmJ0PqcJ9mByo6FX/GWS8uQavefDYxUZvyONXMDwKYtrk5e6eUX97r4YHA3V1BT/dVASfBEFvt9Hlu+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753868628; c=relaxed/simple;
-	bh=wHmBZ09U7nWm46Vtbjrqu6BQC7RCl7dYwIAjJZvofEs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UtMD0U3vuz/ugZxeRWHamHgnZEFUhWhy8SoAamYf+zWQXSLh7ZHB2NkMBrNO0qIcqzELJ3bPy3m6YiwIhJRJhozelJBwnXEgyKZt780QnPUFkL07jPCL6PJWqix3THT/b/2TsUxGrmC0g9WNojre7XwTKwLmloeOGpmUpJE36+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U1ObQCEc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21821C4CEF5;
-	Wed, 30 Jul 2025 09:43:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753868628;
-	bh=wHmBZ09U7nWm46Vtbjrqu6BQC7RCl7dYwIAjJZvofEs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=U1ObQCEc0apvd74pzGo2qT/Go2wsSrhltexTzBkr7LyNJMUpbS3XuGnD8GnJ/4uoP
-	 mhLHZ9Nn/SXgNCmk47vRjvr3aepq9YG8hCoLGdsZ+GgbFXb0HT8wL8uha65Pj4C7nR
-	 YvjcHaa7PkAytrRymhB40bMLsiQrNbCh/QZQjSWM=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org
-Subject: [PATCH 6.12 000/117] 6.12.41-rc1 review
-Date: Wed, 30 Jul 2025 11:34:29 +0200
-Message-ID: <20250730093233.592541778@linuxfoundation.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753868106; c=relaxed/simple;
+	bh=Ul0O4QgDlk8UCNwdkXN6z/QOIq9BOSolmblqo5VTi3w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JIYpdcP2JUCZDCME0Ocdemgh49HO06ru7loljrpgJ0/Ta3aPROkIaaXWj5w1900fynyWYKc3wtTGJqj9RExFwIikQ2HiJuBE5DgB3NYbTR8wDlNl5xwCzyBdnx38vTiP62aXTqeDBS9mprgPFtAJWkMymJB1I7yABGqJMXJT7tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-88bc56adfb8so328520241.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:35:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753868102; x=1754472902;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/bw9ch+r6opJEUpIjpC/Dh8bkHfaHF/wvasrBSsHdMc=;
+        b=s5WvPAhXA0dASYJbX1F85qu4wByXQBYw/1r1iXKAzycsUHJ/U4X7h9mKLe0I0csyW1
+         b9d7JEjGsmgTT1TB48fThAwninprxw9tYDeHf/ZZGUCMqeACxtMz9izx6m0jRT5xf3PM
+         R1YVQSSyGsLmoUMgjzvQVVnLmdOS2uADY6962Cw8F1njDvIv/76oooGS56w0GppEkWmk
+         5aAffh9G4sA2jsuhib0iKnorMNnAxlrYxdAU+/ye4gkkFYlYnd671kMTxHDMxKUwhIw3
+         0EUALN1VDKHoI2OmCp27ug1tB6kUCzfp/qReOgtMNi5bRuiIbplr1eHjUB7vpYAuAS04
+         WOnw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/12zCf0O8Oid0zi+j0DTeAEtlVgOUDQqGzIA/QF/lc3CYKxRcmFexuCVJO1K9SyXSTVOBh8vaBsWF1XI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6ALFnRe8DrpD00gA/ZgOW726ao+VwQwgaxI84eE+VwUC1T/8m
+	khhWivGcsxOB1XhL47YLVmgecpmqOC0rPvggHRVAZKPs5MKFWt2Dh7HjqkskVsUz
+X-Gm-Gg: ASbGncvBgRtfYv61uyPopUssw3Kq6n5qIG/xyQAmeJqXTvaelXqnaMpvHD4OQGHJCf6
+	ccvMWVEU7GDozvhkU1n6MoBXWkTLMsQbUGZDfWGstI2u53te8Vwivc8eRyTyot4qcBsXyhOitiX
+	4teM830V7KLA3WS2XM5LNT+O8cpUJF3dQKCiNpvJPFRSgEfnC78zlZsuOMXmXKqwYbkAsHGz8WG
+	mGsBd256Sqyi4/yBHIg7zvu5qh6UYyBHgf2a64Jl6C063qEkSH96FXpkb9Y574aPi2rChE9b4P4
+	Lu7xkANtpFSsAYyF66Xgsu1a9uTPluI8gnsg/ihoIPaS6vN3tj32yMNtrLqpllk+HjSDPPSIBGb
+	L2p7fHLEiUV9RCeZp2gYtIzyFB61ido4g9O+gFFpw0gd1rg/yfBUOs9GUsUS6r/ltNpo57Dc=
+X-Google-Smtp-Source: AGHT+IFIJcxYj4253Z6p+Yp20u9rPh88+0k8hds7D2paZPTjdthlLY1eRkbYC0ZCqG8Wlv2mFYNaXQ==
+X-Received: by 2002:a05:6102:15a9:b0:4e5:9d76:e8c8 with SMTP id ada2fe7eead31-4fbe87a2aa6mr1469825137.18.1753868102390;
+        Wed, 30 Jul 2025 02:35:02 -0700 (PDT)
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8dcd2199sm2322376241.17.2025.07.30.02.35.01
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 02:35:01 -0700 (PDT)
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-87edd8f4e9fso1556892241.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:35:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGR4w2OdDIe4KkZm9FipOVQMGCMzrkW8IR1erFKO6EtWms2OljvTS7XeuS0WHBekQCa4tMtY3AEBX0lig=@vger.kernel.org
+X-Received: by 2002:a05:6102:1627:b0:4fa:58e:89c9 with SMTP id
+ ada2fe7eead31-4fbe7f1e5f8mr1723113137.5.1753868100701; Wed, 30 Jul 2025
+ 02:35:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.41-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-6.12.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 6.12.41-rc1
-X-KernelTest-Deadline: 2025-08-01T09:32+00:00
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-This is the start of the stable review cycle for the 6.12.41 release.
-There are 117 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
-
-Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
-Anything received after that time might be too late.
-
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.41-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
-and the diffstat can be found below.
-
-thanks,
-
-greg k-h
-
--------------
-Pseudo-Shortlog of commits:
-
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 6.12.41-rc1
-
-Liu Shixin <liushixin2@huawei.com>
-    mm: khugepaged: fix call hpage_collapse_scan_file() for anonymous vma
-
-Sean Christopherson <seanjc@google.com>
-    KVM: x86: Free vCPUs before freeing VM state
-
-Tomita Moeko <tomitamoeko@gmail.com>
-    Revert "drm/xe/forcewake: Add a helper xe_force_wake_ref_has_domain()"
-
-Tomita Moeko <tomitamoeko@gmail.com>
-    Revert "drm/xe/devcoredump: Update handling of xe_force_wake_get return"
-
-Tomita Moeko <tomitamoeko@gmail.com>
-    Revert "drm/xe/tests/mocs: Update xe_force_wake_get() return handling"
-
-Tomita Moeko <tomitamoeko@gmail.com>
-    Revert "drm/xe/gt: Update handling of xe_force_wake_get return"
-
-Ville Syrjälä <ville.syrjala@linux.intel.com>
-    drm/i915/dp: Fix 2.7 Gbps DP_LINK_BW value on g4x
-
-Daniel Dadap <ddadap@nvidia.com>
-    ALSA: hda: Add missing NVIDIA HDA codec IDs
-
-Mohan Kumar D <mkumard@nvidia.com>
-    ALSA: hda/tegra: Add Tegra264 support
-
-Naman Jain <namjain@linux.microsoft.com>
-    Drivers: hv: Make the sysfs node size for the ring buffer dynamic
-
-Nathan Chancellor <nathan@kernel.org>
-    ARM: 9448/1: Use an absolute path to unified.h in KBUILD_AFLAGS
-
-Zhang Lixu <lixu.zhang@intel.com>
-    iio: hid-sensor-prox: Fix incorrect OFFSET calculation
-
-Zhang Lixu <lixu.zhang@intel.com>
-    iio: hid-sensor-prox: Restore lost scale assignments
-
-Ming Yen Hsieh <mingyen.hsieh@mediatek.com>
-    wifi: mt76: mt7925: adjust rm BSS flow to prevent next connection failure
-
-Sean Wang <sean.wang@mediatek.com>
-    Revert "wifi: mt76: mt7925: Update mt7925_mcu_uni_[tx,rx]_ba for MLO"
-
-Stephan Gerhold <stephan.gerhold@linaro.org>
-    arm64: dts: qcom: x1-crd: Fix vreg_l2j_1p2 voltage
-
-Roman Kisel <romank@linux.microsoft.com>
-    x86/hyperv: Fix APIC ID and VP index confusion in hv_snp_boot_ap()
-
-Manuel Andreas <manuel.andreas@tum.de>
-    KVM: x86/hyper-v: Skip non-canonical addresses during PV TLB flush
-
-Maxim Levitsky <mlevitsk@redhat.com>
-    KVM: x86: model canonical checks more precisely
-
-Maxim Levitsky <mlevitsk@redhat.com>
-    KVM: x86: Add X86EMUL_F_MSR and X86EMUL_F_DT_LOAD to aid canonical checks
-
-Maxim Levitsky <mlevitsk@redhat.com>
-    KVM: x86: Route non-canonical checks in emulator through emulate_ops
-
-Maxim Levitsky <mlevitsk@redhat.com>
-    KVM: x86: drop x86.h include from cpuid.h
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: fix out of bounds punch offset
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: correct the error handle in ext4_fallocate()
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: fix incorrect punch max_end
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: move out common parts into ext4_fallocate()
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: move out inode_lock into ext4_fallocate()
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: factor out ext4_do_fallocate()
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: refactor ext4_insert_range()
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: refactor ext4_collapse_range()
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: refactor ext4_zero_range()
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: refactor ext4_punch_hole()
-
-Zhang Yi <yi.zhang@huawei.com>
-    ext4: don't explicit update times in ext4_fallocate()
-
-Gao Xiang <xiang@kernel.org>
-    erofs: fix large fragment handling
-
-Gao Xiang <xiang@kernel.org>
-    erofs: clean up header parsing for ztailpacking and fragments
-
-Gao Xiang <xiang@kernel.org>
-    erofs: simplify tail inline pcluster handling
-
-Hongzhen Luo <hongzhen@linux.alibaba.com>
-    erofs: use Z_EROFS_LCLUSTER_TYPE_MAX to simplify switches
-
-Gao Xiang <xiang@kernel.org>
-    erofs: refine z_erofs_get_extent_compressedlen()
-
-Gao Xiang <xiang@kernel.org>
-    erofs: simplify z_erofs_load_compact_lcluster()
-
-Johan Hovold <johan+linaro@kernel.org>
-    arm64: dts: qcom: x1e78100-t14s: mark l12b and l15b always-on
-
-Md Sadre Alam <quic_mdalam@quicinc.com>
-    mtd: rawnand: qcom: Fix last codeword read in qcom_param_page_type_exec()
-
-Eric Biggers <ebiggers@google.com>
-    crypto: powerpc/poly1305 - add depends on BROKEN for now
-
-Ian Abbott <abbotti@mev.co.uk>
-    comedi: comedi_test: Fix possible deletion of uninitialized timers
-
-Dmitry Antipov <dmantipov@yandex.ru>
-    jfs: reject on-disk inodes of an unsupported type
-
-Michael Zhivich <mzhivich@akamai.com>
-    x86/bugs: Fix use of possibly uninit value in amd_check_tsa_microcode()
-
-Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-    spi: cadence-quadspi: fix cleanup of rx_chan on failure paths
-
-RD Babiera <rdbabiera@google.com>
-    usb: typec: tcpm: apply vbus before data bringup in tcpm_src_attach
-
-Michael Grzeschik <m.grzeschik@pengutronix.de>
-    usb: typec: tcpm: allow switching to mode accessory to mux properly
-
-Michael Grzeschik <m.grzeschik@pengutronix.de>
-    usb: typec: tcpm: allow to use sink in accessory mode
-
-Yonghong Song <yonghong.song@linux.dev>
-    selftests/bpf: Add tests with stack ptr register in conditional jmp
-
-Miguel Ojeda <ojeda@kernel.org>
-    rust: give Clippy the minimum supported Rust version
-
-Harry Yoo <harry.yoo@oracle.com>
-    mm/zsmalloc: do not pass __GFP_MOVABLE if CONFIG_COMPACTION=n
-
-Jinjiang Tu <tujinjiang@huawei.com>
-    mm/vmscan: fix hwpoisoned large folio handling in shrink_folio_list
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    selftests: mptcp: connect: also cover checksum
-
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-    selftests: mptcp: connect: also cover alt modes
-
-Akinobu Mita <akinobu.mita@gmail.com>
-    resource: fix false warning in __request_region()
-
-Ryusuke Konishi <konishi.ryusuke@gmail.com>
-    nilfs2: reject invalid file types when reading inodes
-
-Marco Elver <elver@google.com>
-    kasan: use vmalloc_dump_obj() for vmalloc error reports
-
-Haoxiang Li <haoxiang_li2024@163.com>
-    ice: Fix a null pointer dereference in ice_copy_and_init_pkg()
-
-Praveen Kaligineedi <pkaligineedi@google.com>
-    gve: Fix stuck TX queue for DQ queue format
-
-Jacek Kowalski <jacek@jacekk.info>
-    e1000e: ignore uninitialized checksum word on tgp
-
-Jacek Kowalski <jacek@jacekk.info>
-    e1000e: disregard NVM checksum on tgp when valid checksum bit is not set
-
-Ma Ke <make24@iscas.ac.cn>
-    dpaa2-switch: Fix device reference count leak in MAC endpoint handling
-
-Ma Ke <make24@iscas.ac.cn>
-    dpaa2-eth: Fix device reference count leak in MAC endpoint handling
-
-Ada Couprie Diaz <ada.coupriediaz@arm.com>
-    arm64/entry: Mask DAIF in cpu_switch_to(), call_on_irq_stack()
-
-Edip Hazuri <edip@medip.dev>
-    ALSA: hda/realtek - Add mute LED support for HP Victus 15-fa0xxx
-
-Dawid Rezler <dawidrezler.patches@gmail.com>
-    ALSA: hda/realtek - Add mute LED support for HP Pavilion 15-eg0xxx
-
-Stephen Rothwell <sfr@canb.auug.org.au>
-    sprintf.h requires stdarg.h
-
-Ma Ke <make24@iscas.ac.cn>
-    bus: fsl-mc: Fix potential double device reference in fsl_mc_get_endpoint()
-
-Viresh Kumar <viresh.kumar@linaro.org>
-    i2c: virtio: Avoid hang by using interruptible completion wait
-
-Akhil R <akhilrajeev@nvidia.com>
-    i2c: tegra: Fix reset error handling with ACPI
-
-Yang Xiwen <forbidden405@outlook.com>
-    i2c: qup: jump out of the loop in case of timeout
-
-Markus Blöchl <markus@blochl.de>
-    timekeeping: Zero initialize system_counterval when querying time from phc drivers
-
-Nathan Chancellor <nathan@kernel.org>
-    ARM: 9450/1: Fix allowing linker DCE with binutils < 2.36
-
-Nathan Chancellor <nathan@kernel.org>
-    mm/ksm: fix -Wsometimes-uninitialized from clang-21 in advisor_mode_show()
-
-Lin.Cao <lincao12@amd.com>
-    drm/sched: Remove optimization that causes hang when killing dependent jobs
-
-Arunpravin Paneer Selvam <Arunpravin.PaneerSelvam@amd.com>
-    drm/amdgpu: Reset the clear flag in buddy during resume
-
-Rong Zhang <i@rong.moe>
-    platform/x86: ideapad-laptop: Fix kbd backlight not remembered among boots
-
-Rong Zhang <i@rong.moe>
-    platform/x86: ideapad-laptop: Fix FnLock not remembered among boots
-
-Jijie Shao <shaojijie@huawei.com>
-    net: hns3: default enable tx bounce buffer when smmu enabled
-
-Jian Shen <shenjian15@huawei.com>
-    net: hns3: fixed vf get max channels bug
-
-Yonglong Liu <liuyonglong@huawei.com>
-    net: hns3: disable interrupt when ptp init failed
-
-Jian Shen <shenjian15@huawei.com>
-    net: hns3: fix concurrent setting vlan filter issue
-
-Halil Pasic <pasic@linux.ibm.com>
-    s390/ism: fix concurrency management in ism_cmd()
-
-Nimrod Oren <noren@nvidia.com>
-    selftests: drv-net: wait for iperf client to stop sending
-
-SHARAN KUMAR M <sharweshraajan@gmail.com>
-    ALSA: hda/realtek: Fix mute LED mask on HP OMEN 16 laptop
-
-Douglas Anderson <dianders@chromium.org>
-    drm/bridge: ti-sn65dsi86: Remove extra semicolon in ti_sn_bridge_probe()
-
-Marc Kleine-Budde <mkl@pengutronix.de>
-    can: netlink: can_changelink(): fix NULL pointer deref of struct can_priv::do_set_mode
-
-Xiang Mei <xmei5@asu.edu>
-    net/sched: sch_qfq: Avoid triggering might_sleep in atomic context in qfq_delete_class
-
-Kito Xu (veritas501) <hxzene@gmail.com>
-    net: appletalk: Fix use-after-free in AARP proxy probe
-
-Jamie Bainbridge <jamie.bainbridge@gmail.com>
-    i40e: When removing VF MAC filters, only check PF-set MAC
-
-Dennis Chen <dechen@redhat.com>
-    i40e: report VF tx_dropped with tx_errors instead of tx_discards
-
-Shahar Shitrit <shshitrit@nvidia.com>
-    net/mlx5: E-Switch, Fix peer miss rules to use peer eswitch
-
-Chiara Meiohas <cmeiohas@nvidia.com>
-    net/mlx5: Fix memory leak in cmd_exec()
-
-Himanshu Mittal <h-mittal1@ti.com>
-    net: ti: icssg-prueth: Fix buffer allocation for ICSSG
-
-Guoqing Jiang <guoqing.jiang@canonical.com>
-    ASoC: mediatek: mt8365-dai-i2s: pass correct size to mt8365_dai_set_priv
-
-Eyal Birger <eyal.birger@gmail.com>
-    xfrm: interface: fix use-after-free after changing collect_md xfrm interface
-
-Tobias Brunner <tobias@strongswan.org>
-    xfrm: Set transport header to fix UDP GRO handling
-
-Sabrina Dubroca <sd@queasysnail.net>
-    xfrm: state: use a consistent pcpu_id in xfrm_state_find
-
-Sabrina Dubroca <sd@queasysnail.net>
-    xfrm: state: initialize state_ptrs earlier in xfrm_state_find
-
-Stefan Wahren <wahrenst@gmx.net>
-    staging: vchiq_arm: Make vchiq_shutdown never fail
-
-Torsten Hilbrich <torsten.hilbrich@secunet.com>
-    platform/x86: Fix initialization order for firmware_attributes_class
-
-Nuno Das Neves <nunodasneves@linux.microsoft.com>
-    x86/hyperv: Fix usage of cpu_online_mask to get valid cpu
-
-Yasumasa Suenaga <yasuenag@gmail.com>
-    tools/hv: fcopy: Fix incorrect file path conversion
-
-Shravan Kumar Ramani <shravankr@nvidia.com>
-    platform/mellanox: mlxbf-pmc: Use kstrtobool() to check 0/1 input
-
-Shravan Kumar Ramani <shravankr@nvidia.com>
-    platform/mellanox: mlxbf-pmc: Validate event/enable input
-
-Shravan Kumar Ramani <shravankr@nvidia.com>
-    platform/mellanox: mlxbf-pmc: Remove newline char from event name input
-
-Abdun Nihaal <abdun.nihaal@gmail.com>
-    regmap: fix potential memory leak of regmap_bus
-
-David Lechner <dlechner@baylibre.com>
-    iio: adc: ad7949: use spi_is_bpw_supported()
-
-Xilin Wu <sophon@radxa.com>
-    interconnect: qcom: sc7280: Add missing num_links to xm_pcie3_1 node
-
-Maor Gottlieb <maorg@nvidia.com>
-    RDMA/core: Rate limit GID cache warning messages
-
-Rahul Chandra <rahul@chandra.net>
-    platform/x86: asus-nb-wmi: add DMI quirk for ASUS Zenbook Duo UX8406CA
-
-Alessandro Carminati <acarmina@redhat.com>
-    regulator: core: fix NULL dereference on unbind due to stale coupling data
-
-Laurent Vivier <lvivier@redhat.com>
-    virtio_ring: Fix error reporting in virtqueue_resize
-
-Laurent Vivier <lvivier@redhat.com>
-    virtio_net: Enforce minimum TX ring size for reliability
-
-Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-    Input: gpio-keys - fix a sleep while atomic with PREEMPT_RT
-
-Xin Li (Intel) <xin@zytor.com>
-    x86/traps: Initialize DR7 by writing its architectural reset value
-
-
--------------
-
-Diffstat:
-
- .clippy.toml                                       |   2 +
- Makefile                                           |   4 +-
- arch/arm/Kconfig                                   |   2 +-
- arch/arm/Makefile                                  |   2 +-
- .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     |   2 +
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts          |   4 +-
- arch/arm64/include/asm/assembler.h                 |   5 +
- arch/arm64/kernel/entry.S                          |   6 +
- arch/powerpc/crypto/Kconfig                        |   1 +
- arch/x86/hyperv/hv_init.c                          |  33 ++
- arch/x86/hyperv/hv_vtl.c                           |  44 +-
- arch/x86/hyperv/irqdomain.c                        |   4 +-
- arch/x86/hyperv/ivm.c                              |  22 +-
- arch/x86/include/asm/debugreg.h                    |  19 +-
- arch/x86/include/asm/kvm_host.h                    |   2 +-
- arch/x86/include/asm/mshyperv.h                    |   6 +-
- arch/x86/kernel/cpu/amd.c                          |   2 +
- arch/x86/kernel/cpu/common.c                       |   2 +-
- arch/x86/kernel/kgdb.c                             |   2 +-
- arch/x86/kernel/process_32.c                       |   2 +-
- arch/x86/kernel/process_64.c                       |   2 +-
- arch/x86/kvm/cpuid.h                               |   1 -
- arch/x86/kvm/emulate.c                             |  15 +-
- arch/x86/kvm/hyperv.c                              |   3 +
- arch/x86/kvm/kvm_emulate.h                         |   5 +
- arch/x86/kvm/mmu.h                                 |   1 +
- arch/x86/kvm/mmu/mmu.c                             |   2 +-
- arch/x86/kvm/mtrr.c                                |   1 +
- arch/x86/kvm/vmx/hyperv.c                          |   1 +
- arch/x86/kvm/vmx/nested.c                          |  24 +-
- arch/x86/kvm/vmx/pmu_intel.c                       |   2 +-
- arch/x86/kvm/vmx/sgx.c                             |   5 +-
- arch/x86/kvm/vmx/vmx.c                             |   4 +-
- arch/x86/kvm/x86.c                                 |  19 +-
- arch/x86/kvm/x86.h                                 |  48 +-
- drivers/base/regmap/regmap.c                       |   2 +
- drivers/bus/fsl-mc/fsl-mc-bus.c                    |  19 +-
- drivers/comedi/drivers/comedi_test.c               |   2 +-
- drivers/gpu/drm/amd/amdgpu/amdgpu_device.c         |   2 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.h            |   1 +
- drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c       |  17 +
- drivers/gpu/drm/bridge/ti-sn65dsi86.c              |   2 +-
- drivers/gpu/drm/drm_buddy.c                        |  43 ++
- drivers/gpu/drm/i915/display/intel_dp.c            |   6 +
- drivers/gpu/drm/scheduler/sched_entity.c           |  21 +-
- drivers/gpu/drm/xe/tests/xe_mocs.c                 |  21 +-
- drivers/gpu/drm/xe/xe_devcoredump.c                |  14 +-
- drivers/gpu/drm/xe/xe_force_wake.h                 |  16 -
- drivers/gpu/drm/xe/xe_gt.c                         | 105 ++---
- drivers/hv/vmbus_drv.c                             |   2 +-
- drivers/i2c/busses/i2c-qup.c                       |   4 +-
- drivers/i2c/busses/i2c-tegra.c                     |  24 +-
- drivers/i2c/busses/i2c-virtio.c                    |  15 +-
- drivers/iio/adc/ad7949.c                           |   7 +-
- drivers/iio/light/hid-sensor-prox.c                |   8 +-
- drivers/infiniband/core/cache.c                    |   4 +-
- drivers/input/keyboard/gpio_keys.c                 |   4 +-
- drivers/interconnect/qcom/sc7280.c                 |   1 +
- drivers/mtd/nand/raw/qcom_nandc.c                  |  12 +-
- drivers/net/can/dev/dev.c                          |  12 +-
- drivers/net/can/dev/netlink.c                      |  12 +
- drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c   |  15 +-
- .../net/ethernet/freescale/dpaa2/dpaa2-switch.c    |  15 +-
- drivers/net/ethernet/google/gve/gve_main.c         |  67 +--
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  31 ++
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   2 +
- .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  36 +-
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c |   9 +-
- .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |   6 +-
- drivers/net/ethernet/intel/e1000e/defines.h        |   3 +
- drivers/net/ethernet/intel/e1000e/ich8lan.c        |   2 +
- drivers/net/ethernet/intel/e1000e/nvm.c            |   6 +
- drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c |   6 +-
- drivers/net/ethernet/intel/ice/ice_ddp.c           |   2 +
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c      |   4 +-
- .../ethernet/mellanox/mlx5/core/eswitch_offloads.c | 108 ++---
- drivers/net/ethernet/ti/icssg/icssg_config.c       | 162 ++++---
- drivers/net/ethernet/ti/icssg/icssg_config.h       |  78 ++-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c       |  20 +-
- drivers/net/ethernet/ti/icssg/icssg_prueth.h       |   2 +
- drivers/net/ethernet/ti/icssg/icssg_switch_map.h   |   3 +
- drivers/net/virtio_net.c                           |   6 +
- drivers/net/wireless/mediatek/mt76/mt7925/main.c   |  76 +--
- drivers/net/wireless/mediatek/mt76/mt7925/mcu.c    | 106 +++--
- drivers/net/wireless/mediatek/mt76/mt7925/mcu.h    |   2 +
- drivers/net/wireless/mediatek/mt76/mt7925/mt7925.h |   2 -
- drivers/platform/mellanox/mlxbf-pmc.c              |  25 +-
- drivers/platform/x86/Makefile                      |   3 +-
- drivers/platform/x86/asus-nb-wmi.c                 |   9 +
- drivers/platform/x86/ideapad-laptop.c              |   4 +-
- drivers/regulator/core.c                           |   1 +
- drivers/s390/net/ism_drv.c                         |   3 +
- drivers/spi/spi-cadence-quadspi.c                  |   5 -
- .../vc04_services/interface/vchiq_arm/vchiq_arm.c  |   3 +-
- drivers/usb/typec/tcpm/tcpm.c                      |  64 ++-
- drivers/virtio/virtio_ring.c                       |   8 +-
- fs/erofs/internal.h                                |  13 +-
- fs/erofs/zdata.c                                   |   2 +-
- fs/erofs/zmap.c                                    | 250 ++++------
- fs/ext4/ext4.h                                     |   2 +
- fs/ext4/extents.c                                  | 524 ++++++++-------------
- fs/ext4/inode.c                                    | 140 +++---
- fs/jfs/jfs_imap.c                                  |  13 +-
- fs/nilfs2/inode.c                                  |   9 +-
- include/drm/drm_buddy.h                            |   2 +
- include/linux/ism.h                                |   1 +
- include/linux/sprintf.h                            |   1 +
- kernel/bpf/verifier.c                              |   7 +-
- kernel/resource.c                                  |   5 +-
- kernel/time/timekeeping.c                          |   2 +-
- mm/kasan/report.c                                  |   4 +-
- mm/khugepaged.c                                    |   4 +-
- mm/ksm.c                                           |   6 +-
- mm/memory-failure.c                                |   4 +
- mm/vmscan.c                                        |   8 +
- mm/zsmalloc.c                                      |   3 +
- net/appletalk/aarp.c                               |  24 +-
- net/ipv4/xfrm4_input.c                             |   3 +
- net/ipv6/xfrm6_input.c                             |   3 +
- net/sched/sch_qfq.c                                |   7 +-
- net/xfrm/xfrm_interface_core.c                     |   7 +-
- net/xfrm/xfrm_state.c                              |  23 +-
- sound/pci/hda/hda_tegra.c                          |  51 +-
- sound/pci/hda/patch_hdmi.c                         |  20 +
- sound/pci/hda/patch_realtek.c                      |   4 +-
- sound/soc/mediatek/mt8365/mt8365-dai-i2s.c         |   3 +-
- tools/hv/hv_fcopy_uio_daemon.c                     |  37 +-
- .../selftests/bpf/progs/verifier_precision.c       |  53 +++
- tools/testing/selftests/drivers/net/lib/py/load.py |  23 +-
- tools/testing/selftests/net/mptcp/Makefile         |   3 +-
- .../selftests/net/mptcp/mptcp_connect_checksum.sh  |   5 +
- .../selftests/net/mptcp/mptcp_connect_mmap.sh      |   5 +
- .../selftests/net/mptcp/mptcp_connect_sendfile.sh  |   5 +
- 133 files changed, 1615 insertions(+), 1230 deletions(-)
-
-
+References: <20250702114924.091581796@infradead.org> <20250702121158.465086194@infradead.org>
+In-Reply-To: <20250702121158.465086194@infradead.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 30 Jul 2025 11:34:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com>
+X-Gm-Features: Ac12FXwKLsTXDgyNFgB_fGOTKvy3Pfg_IiJiWZaeBuDhTzV4576DeZdUaxz8VC0
+Message-ID: <CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com>
+Subject: Re: [PATCH v2 02/12] sched/deadline: Less agressive dl_server handling
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
+	mgorman@suse.de, vschneid@redhat.com, clm@meta.com, 
+	linux-kernel@vger.kernel.org, linux-m68k <linux-m68k@lists.linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+
+Hi Peter,
+
+On Wed, 2 Jul 2025 at 14:19, Peter Zijlstra <peterz@infradead.org> wrote:
+> Chris reported that commit 5f6bd380c7bd ("sched/rt: Remove default
+> bandwidth control") caused a significant dip in his favourite
+> benchmark of the day. Simply disabling dl_server cured things.
+>
+> His workload hammers the 0->1, 1->0 transitions, and the
+> dl_server_{start,stop}() overhead kills it -- fairly obviously a bad
+> idea in hind sight and all that.
+>
+> Change things around to only disable the dl_server when there has not
+> been a fair task around for a whole period. Since the default period
+> is 1 second, this ensures the benchmark never trips this, overhead
+> gone.
+>
+> Fixes: 557a6bfc662c ("sched/fair: Add trivial fair server")
+> Reported-by: Chris Mason <clm@meta.com>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Link: https://lkml.kernel.org/r/20250520101727.507378961@infradead.org
+
+Thanks for your patch, which is now commit cccb45d7c4295bbf
+("sched/deadline: Less agressive dl_server handling") upstream.
+
+This commit causes
+
+    sched: DL replenish lagged too much
+
+to be printed after full user-space (Debian) start-up on m68k
+(atari_defconfig running on ARAnyM).  Reverting this commit and fixing
+the small conflict gets rid of the message.
+
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -701,6 +701,7 @@ struct sched_dl_entity {
+>         unsigned int                    dl_defer          : 1;
+>         unsigned int                    dl_defer_armed    : 1;
+>         unsigned int                    dl_defer_running  : 1;
+> +       unsigned int                    dl_server_idle    : 1;
+>
+>         /*
+>          * Bandwidth enforcement timer. Each -deadline task has its
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -1215,6 +1215,8 @@ static void __push_dl_task(struct rq *rq
+>  /* a defer timer will not be reset if the runtime consumed was < dl_server_min_res */
+>  static const u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
+>
+> +static bool dl_server_stopped(struct sched_dl_entity *dl_se);
+> +
+>  static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_dl_entity *dl_se)
+>  {
+>         struct rq *rq = rq_of_dl_se(dl_se);
+> @@ -1234,6 +1236,7 @@ static enum hrtimer_restart dl_server_ti
+>
+>                 if (!dl_se->server_has_tasks(dl_se)) {
+>                         replenish_dl_entity(dl_se);
+> +                       dl_server_stopped(dl_se);
+>                         return HRTIMER_NORESTART;
+>                 }
+>
+> @@ -1639,8 +1642,10 @@ void dl_server_update_idle_time(struct r
+>  void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+>  {
+>         /* 0 runtime = fair server disabled */
+> -       if (dl_se->dl_runtime)
+> +       if (dl_se->dl_runtime) {
+> +               dl_se->dl_server_idle = 0;
+>                 update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
+> +       }
+>  }
+>
+>  void dl_server_start(struct sched_dl_entity *dl_se)
+> @@ -1663,7 +1668,7 @@ void dl_server_start(struct sched_dl_ent
+>                 setup_new_dl_entity(dl_se);
+>         }
+>
+> -       if (!dl_se->dl_runtime)
+> +       if (!dl_se->dl_runtime || dl_se->dl_server_active)
+>                 return;
+>
+>         dl_se->dl_server_active = 1;
+> @@ -1684,6 +1689,20 @@ void dl_server_stop(struct sched_dl_enti
+>         dl_se->dl_server_active = 0;
+>  }
+>
+> +static bool dl_server_stopped(struct sched_dl_entity *dl_se)
+> +{
+> +       if (!dl_se->dl_server_active)
+> +               return false;
+> +
+> +       if (dl_se->dl_server_idle) {
+> +               dl_server_stop(dl_se);
+> +               return true;
+> +       }
+> +
+> +       dl_se->dl_server_idle = 1;
+> +       return false;
+> +}
+> +
+>  void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
+>                     dl_server_has_tasks_f has_tasks,
+>                     dl_server_pick_f pick_task)
+> @@ -2435,7 +2454,7 @@ static struct task_struct *__pick_task_d
+>         if (dl_server(dl_se)) {
+>                 p = dl_se->server_pick_task(dl_se);
+>                 if (!p) {
+> -                       if (dl_server_active(dl_se)) {
+> +                       if (!dl_server_stopped(dl_se)) {
+>                                 dl_se->dl_yielded = 1;
+>                                 update_curr_dl_se(rq, dl_se, 0);
+>                         }
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -5879,7 +5879,6 @@ static bool throttle_cfs_rq(struct cfs_r
+>         struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
+>         struct sched_entity *se;
+>         long queued_delta, runnable_delta, idle_delta, dequeue = 1;
+> -       long rq_h_nr_queued = rq->cfs.h_nr_queued;
+>
+>         raw_spin_lock(&cfs_b->lock);
+>         /* This will start the period timer if necessary */
+> @@ -5963,10 +5962,6 @@ static bool throttle_cfs_rq(struct cfs_r
+>
+>         /* At this point se is NULL and we are at root level*/
+>         sub_nr_running(rq, queued_delta);
+> -
+> -       /* Stop the fair server if throttling resulted in no runnable tasks */
+> -       if (rq_h_nr_queued && !rq->cfs.h_nr_queued)
+> -               dl_server_stop(&rq->fair_server);
+>  done:
+>         /*
+>          * Note: distribution will already see us throttled via the
+> @@ -7060,7 +7055,6 @@ static void set_next_buddy(struct sched_
+>  static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+>  {
+>         bool was_sched_idle = sched_idle_rq(rq);
+> -       int rq_h_nr_queued = rq->cfs.h_nr_queued;
+>         bool task_sleep = flags & DEQUEUE_SLEEP;
+>         bool task_delayed = flags & DEQUEUE_DELAYED;
+>         struct task_struct *p = NULL;
+> @@ -7144,9 +7138,6 @@ static int dequeue_entities(struct rq *r
+>
+>         sub_nr_running(rq, h_nr_queued);
+>
+> -       if (rq_h_nr_queued && !rq->cfs.h_nr_queued)
+> -               dl_server_stop(&rq->fair_server);
+> -
+>         /* balance early to pull high priority tasks */
+>         if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
+>                 rq->next_balance = jiffies;
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
