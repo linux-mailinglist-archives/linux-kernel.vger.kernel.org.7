@@ -1,104 +1,158 @@
-Return-Path: <linux-kernel+bounces-751192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49517B16640
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:30:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DF9B16643
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:30:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AFC83B7BEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 050E4582736
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193E32E06C3;
-	Wed, 30 Jul 2025 18:30:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC5ACA4E;
+	Wed, 30 Jul 2025 18:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OUHEnhZN"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lyq4mJKF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006022E11DD
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE5B6198E9B;
+	Wed, 30 Jul 2025 18:30:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753900205; cv=none; b=jeRmcVcfD7P+h+JuWwRBvo1TWM3c5mjvenYAYPH8UNYphnC1RNPhcLDFacAOs/fVaJTfSaGDIMdKzA4QohXeQJXgrrlbewnQz7NBP13fLfWgP8vpgDHYswvfBkwpOKHJUqv6QhEamZspg6xmT2zv0bQ5Kw+5zyqjj2ranAKy4BI=
+	t=1753900211; cv=none; b=KNbrnWNKFhzmNe4cPP2+0ki2CiEoWAbkOy1oEabrY2omlgJs0T7Q60EmtN8tOBXI3Z/bLP+b48P6MKXAG/fD75vK8n8j5xBHDpxSg4YhjbpvFtgmrdAPaHM6LYAZLtGAcHE81pNMXOYE0K6j2j0qX4KTHbTFeUdn9s+YkUtBdW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753900205; c=relaxed/simple;
-	bh=+IlnsvCqZpWI1irANdU7vC/52xTZuuB1B7d87Am81c4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OOgjclZauDJwdbvAyIT5OnxWjBo3gYEupC+VdK5oonOjuPiggh++HvYspVXxShqXfDRf+bfmClscnfZTwP8uKKqqLDcpGbOc3OlHnrhR1NVb/1HIflSe066bp1BTL5gcW8RnjejrHnfeG5SMuYBLXA3JoU1n9TlmPx0t9eWRmNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OUHEnhZN; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61543b05b7cso1822a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:30:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753900202; x=1754505002; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7NIbM6q1x218b7Li1UvxruEIMKkwKF1Zyv43mPS1uqY=;
-        b=OUHEnhZN94w5azEkzVDqwNxQbrmR0zEibAM/XasVXnXVjGL0j7E7BmSRNc+bAz7S4Q
-         53OPHMTJ8fiBPfeF/8akZnLWWqMP0oSwW/rPr6lwyix61oSq2QbHVphJihJovHmqTBDy
-         SLaEN/tShBtJW/9eexd+z/Ov+KVtC7ty5Btf0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753900202; x=1754505002;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7NIbM6q1x218b7Li1UvxruEIMKkwKF1Zyv43mPS1uqY=;
-        b=IelRAkEW0+NlalMCFscvbtrS6UzjtOkN9957/TBZ963EVRwUOlrCPUAA9M2lBTKMd9
-         2UEkiyBOeXfu0fwcM2b3sdKaDWrLgiNkrQDnmxac8tH49Fsdk4vwmFaPy0H2UC30BdRG
-         kgYK+BLZzRzin0rEROdWmvjCFfc+ENeAO2VfDoRL64W+lwgBHw/Iz0HGoVhL+Tr8JvEd
-         JO2oNXFspktM1gNyfv6xebVrMnD4MReoYzLODILpNMopuBbbEXo0kIvcXztHyM+qEJqx
-         92zlNBpscSN5/8MPWiYTslPm9FBUBCG6tLNkZm9XsNCZsWIP/aw5a09vHOcnuVuVifYJ
-         XZ2g==
-X-Forwarded-Encrypted: i=1; AJvYcCWFkHdRX0UUxJntg8ROc+4+GPR/dsP0zMrEVUsAkaRnaa3ON+7QunAPSAnJ/9ljzgpS2ZTx5opk+xRcF1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxqV13olNZnU7qx6DFmxXBnlHLXQCm548M0cpX0cDAL1IoQ8kE
-	xMwZg7oUlYN+pDoPw4IyIwSbBY9Sl4YwNJlBj3YHrpZpSBpg6dSJyAAvtZaoQrxiSMFlDUOYVDy
-	kkTweRByUfUwk1/2pDMJsDGi/ExSfwyIyReS0c8E1
-X-Gm-Gg: ASbGncvK/HaAFfIRhoAlb4uGIYUbsd0oe5JBvRbuTfkdpG5Hc+09i5/xvmaDkcldP/p
-	6oqvDXiZazm3wupySbsBGJp+SXLn6JlTHo5nICI17fGuOiJsbYzMLyTXgnAhEGDqYOtetaW+Q1z
-	FEhZYLIOblHSvsd8o5/cWdKOwmpIm9nJfzyjzoTTvtp3yXDPZJKXgRdcFQ4ovfqHcEO7COeoSck
-	Lpe5vg=
-X-Google-Smtp-Source: AGHT+IFbbK/ul5EAl+qpurW8QCD6MUFcOByL7/YGvDuMq5A8bS06QIOt2f3QRAN6xuePrLmBIsEPhHn7xYqFra8YQrM=
-X-Received: by 2002:a05:6402:d50:b0:607:d206:7657 with SMTP id
- 4fb4d7f45d1cf-615a5f03c3amr15582a12.2.1753900202156; Wed, 30 Jul 2025
- 11:30:02 -0700 (PDT)
+	s=arc-20240116; t=1753900211; c=relaxed/simple;
+	bh=mBBE1GbJZP5xEjvANSJFvb0+ELOI64V2uh/Mm6Ose5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fHxkA1+6JkdahruYwKwa5cvnfpB9bHhR/QFcNzCTeRdBE0c039Xa1l5x6ir3Am8QngzqLZrZwR64H1Tu62+7x0Ojg2wtrXOqCdq8SJ65O0I5h5vW5uVfi+sM2UPGP9D044zh/e93BbJ/UAM9IeoN131RMoGJDlWm0lkhmt0ujUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lyq4mJKF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00DDC4CEE3;
+	Wed, 30 Jul 2025 18:30:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753900211;
+	bh=mBBE1GbJZP5xEjvANSJFvb0+ELOI64V2uh/Mm6Ose5s=;
+	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Lyq4mJKFhlvgMGrX0pzGrOkKsrdfH31ADKVpDosbvsODa5ciQV7k/0oyxkuSxcyWk
+	 dSO8Q9BvnrznwMpCmI6/aESJ6Y4O29DAIPj2mykiscqzeDab3IK3LohY/GMidDznZg
+	 1QQSyDinx56n5e8VZ8Du//yeTA0gtjkYRp7F25R8CuE6Tu50LnevxpRB3fGwgF+u6X
+	 PGTLXipzGETt245JTeGiky63c8Oa5AANqXqkJ3fGO5KvTQxHgGR4zx5Rj/8GwqoXcu
+	 9rXLDZYB3TxajUtSL2VPEPrxZsj9z6P1GKyI0x65TuEDkdcV8RJlXG0C3gPQ0OoAlp
+	 2uHWmxPl29Jiw==
+Message-ID: <1a1fe348-9ae5-4f3e-be9e-19fa88af513c@kernel.org>
+Date: Thu, 31 Jul 2025 02:30:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com> <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
-In-Reply-To: <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
-From: Julius Werner <jwerner@chromium.org>
-Date: Wed, 30 Jul 2025 11:29:49 -0700
-X-Gm-Features: Ac12FXzJRbNK4O4rQzoS61E9llbPlM-a0El1zXFqw746Wesi6zAN_YlMACvZJkI
-Message-ID: <CAODwPW8ZXfMdFL2=6ht+BvQq5_LQkwHhQJT5j9DcseEx9naXxg@mail.gmail.com>
-Subject: Re: [PATCH v5 06/20] dt-bindings: memory: introduce DDR4
-To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
-	Gatien Chevallier <gatien.chevallier@foss.st.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Le Goffic <legoffic.clement@gmail.com>, 
-	Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Reply-To: yukuai@kernel.org
+Subject: Re: [PATCH 1/2] block/blk-throttle: Fix throttle slice time for SSDs
+To: Guenter Roeck <linux@roeck-us.net>, Tejun Heo <tj@kernel.org>
+Cc: Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+ Yu Kuai <yukuai3@huawei.com>, cgroups@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250730164832.1468375-1-linux@roeck-us.net>
+ <20250730164832.1468375-2-linux@roeck-us.net>
+Content-Language: en-US
+From: Yu Kuai <yukuai@kernel.org>
+In-Reply-To: <20250730164832.1468375-2-linux@roeck-us.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> +title: DDR3 SDRAM compliant to JEDEC JESD79-4D
+Hi,
 
-Should this say DDR4?
+在 2025/7/31 0:48, Guenter Roeck 写道:
+> Commit d61fcfa4bb18 ("blk-throttle: choose a small throtl_slice for SSD")
+> introduced device type specific throttle slices if BLK_DEV_THROTTLING_LOW
+> was enabled. Commit bf20ab538c81 ("blk-throttle: remove
+> CONFIG_BLK_DEV_THROTTLING_LOW") removed support for BLK_DEV_THROTTLING_LOW,
+> but left the device type specific throttle slices in place. This
+> effectively changed throttling behavior on systems with SSD which now use
+> a different and non-configurable slice time compared to non-SSD devices.
+> Practical impact is that throughput tests with low configured throttle
+> values (65536 bps) experience less than expected throughput on SSDs,
+> presumably due to rounding errors associated with the small throttle slice
+> time used for those devices. The same tests pass when setting the throttle
+> values to 65536 * 4 = 262144 bps.
+>
+> The original code sets the throttle slice time to DFL_THROTL_SLICE_HD if
+> CONFIG_BLK_DEV_THROTTLING_LOW is disabled. Restore that code to fix the
+> problem. With that, DFL_THROTL_SLICE_SSD is no longer necessary. Revert to
+> the original code and re-introduce DFL_THROTL_SLICE to replace both
+> DFL_THROTL_SLICE_HD and DFL_THROTL_SLICE_SSD. This effectively reverts
+> commit d61fcfa4bb18 ("blk-throttle: choose a small throtl_slice for SSD").
+>
+> After the removal of CONFIG_BLK_DEV_THROTTLING_LOW, it is no longer
+> necessary to enable block accounting, so remove the call to
+> blk_stat_enable_accounting(). With that, the track_bio_latency variable
+> is no longer used and can be deleted from struct throtl_data. Also,
+> including blk-stat.h is no longer necessary.
+>
+> While at it, also remove MAX_THROTL_SLICE since it is not used anymore.
+>
+> Fixes: bf20ab538c81 ("blk-throttle: remove CONFIG_BLK_DEV_THROTTLING_LOW")
+> Cc: Yu Kuai <yukuai3@huawei.com>
+> Cc: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> ---
+>   block/blk-throttle.c | 15 ++-------------
+>   1 file changed, 2 insertions(+), 13 deletions(-)
+>
+> diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+> index 397b6a410f9e..924d09b51b69 100644
+> --- a/block/blk-throttle.c
+> +++ b/block/blk-throttle.c
+> @@ -12,7 +12,6 @@
+>   #include <linux/blktrace_api.h>
+>   #include "blk.h"
+>   #include "blk-cgroup-rwstat.h"
+> -#include "blk-stat.h"
+>   #include "blk-throttle.h"
+>   
+>   /* Max dispatch from a group in 1 round */
+> @@ -22,9 +21,7 @@
+>   #define THROTL_QUANTUM 32
+>   
+>   /* Throttling is performed over a slice and after that slice is renewed */
+> -#define DFL_THROTL_SLICE_HD (HZ / 10)
+> -#define DFL_THROTL_SLICE_SSD (HZ / 50)
+> -#define MAX_THROTL_SLICE (HZ)
+> +#define DFL_THROTL_SLICE (HZ / 10)
+>   
+>   /* A workqueue to queue throttle related work */
+>   static struct workqueue_struct *kthrotld_workqueue;
+> @@ -45,8 +42,6 @@ struct throtl_data
+>   
+>   	/* Work for dispatching throttled bios */
+>   	struct work_struct dispatch_work;
+> -
+> -	bool track_bio_latency;
+>   };
+>   
+>   static void throtl_pending_timer_fn(struct timer_list *t);
+> @@ -1345,13 +1340,7 @@ static int blk_throtl_init(struct gendisk *disk)
+>   		goto out;
+>   	}
+>   
+> -	if (blk_queue_nonrot(q))
+> -		td->throtl_slice = DFL_THROTL_SLICE_SSD;
+> -	else
+> -		td->throtl_slice = DFL_THROTL_SLICE_HD;
+> -	td->track_bio_latency = !queue_is_mq(q);
+> -	if (!td->track_bio_latency)
+> -		blk_stat_enable_accounting(q);
+> +	td->throtl_slice = DFL_THROTL_SLICE;
+>   
+>   out:
+>   	blk_mq_unquiesce_queue(disk->queue);
+This looks correct, I do missed the throtl_slice for ssd is only used with
+BLK_DEV_THROTTLING_LOW. However, I think it's better to factor the
+track_bio_latency changes into a separate patch.
 
-> +examples:
-> +  - |
-> +    ddr {
-> +        compatible = "ddr4-ff,f", "jedec,ddr4";
-
-This is not a valid example for the way you're defining it now anymore.
+Thanks,
+Kuai
 
