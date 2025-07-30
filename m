@@ -1,408 +1,253 @@
-Return-Path: <linux-kernel+bounces-750645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE5FB15F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:17:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A62B15F2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:20:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38B8F542341
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:17:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC91A167A4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3107F27F160;
-	Wed, 30 Jul 2025 11:17:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5C9F293B5E;
+	Wed, 30 Jul 2025 11:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B0C2ebSX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQJXWQw6"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F111DDC15
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7127925761;
+	Wed, 30 Jul 2025 11:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753874224; cv=none; b=C9eSnydccSvI7Rz1OStxPUFLZIJqjvLIavFaKRuoRaQFHYR4w+7L1213mseOdDHLQd/aHay3uxTH5tScfoLmhyhFzCTbWUASCtErSde8PewTgp7gA+ejU6ZRXQHm76/qt5ytqz6RM6L0RXg/0+EZahFHgYQq1Uf21bAY3anzf/0=
+	t=1753874398; cv=none; b=iYsIyFAJ2bz5cDUSOwrXH8Sb9k98jXeD6b1aHQKrBzfiCPmJAeB22SRq+GSXMvGYGkB0aYW/cEAnFOOLEO2oJ4DFffsrRz73ChUsemuFZDT0QIJuibnijM4QMJuaGfVfI51as1tX2kOgUQGhmUdJgy0BXx0tAOGu8PAdfl++gaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753874224; c=relaxed/simple;
-	bh=LTD16EOwxCrJVoK7xkoTVx21o0VOsrq/8M2g/+axzTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QFJoZ+ttwQW3cfc1MUTcWrOmQYiRMRFUAz0DPHtjDYm0xMRa1PrdRrKeqZVsgNCfBZybHZptTOmLK802BRb5jZyWDKS1vSRNwIPjQAZW/dZ9OFGu+U1iN0Y/Iapp8PtOtMS3KkjTL1b6uVIhdzWHZGzqRhrx3wZPiDcm+kSUYeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B0C2ebSX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753874220;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kvUZl8UsRxarX+a47kb4o3MCQM4rqegqmRJ5/HY1RYM=;
-	b=B0C2ebSXi/4zUWDCooJ2pAj/nk0RNd/W63ZDows3k3BsB0IAqXGMknYScPCu/xkAXhjtCG
-	jwkuoqnWZGNoDoDnLtVTpj9WnojMj74ZBD/Zw5nqAF0o9nE6IwJmo0J4uQGmdMKaeXMj19
-	gRiLT5l8rdp6Hvko+ME0ymUeeCQomew=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-63-XgGLsLiCPI2kwAtmBMC4KA-1; Wed, 30 Jul 2025 07:16:59 -0400
-X-MC-Unique: XgGLsLiCPI2kwAtmBMC4KA-1
-X-Mimecast-MFC-AGG-ID: XgGLsLiCPI2kwAtmBMC4KA_1753874218
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-55b8085bdabso409844e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 04:16:58 -0700 (PDT)
+	s=arc-20240116; t=1753874398; c=relaxed/simple;
+	bh=2YfyJTR1RQIdzBAGVF2wCKxoeT6+u6I1cJVUDJkkRc8=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kC2JkM/r5qaj26Lj4mMInOODPjUqroRp7imU+gqJJLdhBSZQI1CmuRXNaASwcg6kzSinyi9glyuUsesRtYBAQKOpdsylzAdwlJxetwQtzuVn5EZijb2kcFSu0egL47NM58i/v94NWIQu9g95TtwNOsW8Q8l3jI5sTwtdWMA+AAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQJXWQw6; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4589180b266so5563175e9.3;
+        Wed, 30 Jul 2025 04:19:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753874395; x=1754479195; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yJXz1taZeMqAcIikmCjKmMy9sKu4coVbhTtZqnXW6zE=;
+        b=DQJXWQw6hiaHRgyerE1rwv4atLFYZfHnLj21DIZca68stPg2AyAiAu0G52yhyB5cep
+         h9oSyrRGD3OxTdDA5pna75rdZxqx09qp/w4XT9T/J36b02ek41AxtFiS6oVlvfmHiaaD
+         FkBJ/+/WuiyuKWmSxslXGsn4DgAwMYkKs1F0sieChsU8xXnL28pVMPm+94TmypFeHXHi
+         AWYtpzzfP8a+JlSWgLcF7TgUHhBRO0oxeCjg/HwEm7hn8aC+XN8HSVfjRdcrfm13i3bA
+         4xgYcho95HKqfekdaLFCn4FrUBpvSPV/4WjO8pCc3gh/SDUtVp8WRG7dKqyCVV51+Xp1
+         86/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753874217; x=1754479017;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kvUZl8UsRxarX+a47kb4o3MCQM4rqegqmRJ5/HY1RYM=;
-        b=MzD+EXN///rLS++E32gCAhR6krvSND1L2a7J45pKvJAl7gCzk+30igJ1dgDxW20zn8
-         fo2THeujLhVsUDCx51sLDXSzXRAxjL56Y0T4bEJOP6SMXX2AX3L1H2tHHZcmhG0ejo1k
-         Wzi2uSq53abOV73u1ZaFpa+VImUU0E3QdLcFszCpDEksWlb8n+edU3InqmBGlGIlh+dX
-         rk15YezLK/JbpeKhO5iFs6p/CuxWNz7yLduiztZHNPiAOJIZIo6g+qydHGcxdMLJrx/t
-         Fo9NAvC50Xfewzb7Df41NV+0JHQ7H2sWObmgEfU0+oj6X2dyKDcCoAmz6qmr6OwZAxo1
-         Ej8A==
-X-Gm-Message-State: AOJu0YyYz4/ah+BTnnqK0FYeBbXYBnbicsuJkJ5GYVG+f0QKvJzqk3m/
-	92TsaNj4H50OyHYXed2Piu7bU493iN3UkNhgQ5/CoWuGJHkZSvpDKEO5iEcoZQjdy6/tbnm5DFe
-	5IJYgUfoI/HsLAuxlZy/46J7E56d4XnBgzGkGn0T6i9XQK2B1R8u6kQePkRQT2EoE
-X-Gm-Gg: ASbGncsSlX1zwJLUb9t5gE8XB81WKL3YzAUCwLy61YDyt21d+hr3RG7rvefo+ongLIU
-	32Aje/pYaD5ehZaArxiq80wFRfQajgBfhrhoJ9dMjIM1zqsDWiFR4cSy2Dphbp3SqA8e5NKJ/6D
-	49x6UB5Q8FoIxcf76DwCX9NxUin12Szh7uz7D0KRh5aAIaIBD8gB0oioR2LIuJ14UJL6M2dWu2J
-	IShxTLonCiyiPwaJ1rlUQxrofT3ea0PdZbnVnGAz4+au6nY7PX4qj/AIX5E1NppT/U9VOw1WM52
-	i3Qjbh0VrjfTgfqTFfho/GJJBa8+ND+nO5Osq+q4+OfYgT2r25gg2Em1EoSyZ9lg3A==
-X-Received: by 2002:a05:6512:4154:b0:55a:c9f0:a01c with SMTP id 2adb3069b0e04-55b7c0a5bf9mr547843e87.53.1753874217292;
-        Wed, 30 Jul 2025 04:16:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHn9i5LR+L5e7rVqqc3z2wJjWwtz+exUpZ3SHaIfX3F/NhAiWhrcRtNvN2AldXvieg3Lp906A==
-X-Received: by 2002:a05:6512:4154:b0:55a:c9f0:a01c with SMTP id 2adb3069b0e04-55b7c0a5bf9mr547830e87.53.1753874216740;
-        Wed, 30 Jul 2025 04:16:56 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b6317ba40sm2084515e87.46.2025.07.30.04.16.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 04:16:56 -0700 (PDT)
-Message-ID: <c2f2fe52-a358-489e-a1f2-5c0a6f5b4db5@redhat.com>
-Date: Wed, 30 Jul 2025 14:16:55 +0300
+        d=1e100.net; s=20230601; t=1753874395; x=1754479195;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yJXz1taZeMqAcIikmCjKmMy9sKu4coVbhTtZqnXW6zE=;
+        b=jd3Xy5ctTNvz058nxcryI1mVjYZ2oXT2bRrLcZdEA3wKex2UTUQvOD/SxOWT88gF+K
+         DNNwy/fjGJT+oeKIqvpGdqLVPR8YtBDrJpD6WmWCUDbXikI2b616fyw/ndvjAz8ROBro
+         76py6B2GdczOOETm5pczGs1rk3gVe9U/lIYKcZ5aY9ZNbSx23uD+avtXJ+C7JpHEs1VO
+         huxn/0wizQSkcuuQyHfhSuBt4tlp0EK/G7bMp5yLCqiEpD+M7AMuH4yP05xbrvYsMLJT
+         y+FzzILmYlAjujnBscNKhG/k6HC+hw4jiI16DoyE/z+GniN9QfC+XTfiDMa6i+XgoiPG
+         Dnjg==
+X-Forwarded-Encrypted: i=1; AJvYcCW9YS9YaZPJJwBjnPzopOqC3POGZRXrDlz+NG41SbT316N6uk/d8WgcofDtrwcG8+cpgwM=@vger.kernel.org, AJvYcCXOCh9RAoaxkjmgc2ppRPH2WrWpafgd/wvmSnNPjfcugOdberDq1PaxNxQ878z+7dvO4fL8Mq2u65fnV6jPbUS6owHW@vger.kernel.org, AJvYcCXPeyRDtK7gYHoN6qm4V9u32MQcsM+d3BlQWwCPgGtjMmTZizj3jez4OXUcbcWYw+Du2cU9yrl/BuicllM/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjmGzGYUMdvhrCB2AdqdbrFm1tNr+lV/CWUlix4mLYwPGchG9R
+	cgs4XDqSN4hurg5PJQzJSWS9sfjETuptpZXXxXs3pwzX4IvcPEJJWMVm
+X-Gm-Gg: ASbGncuxPasd2FX2rbzzMChkwa79FEODRHMe7g3iP/r3Ne/N7QC4expDiQR+cZ5ud5W
+	/uZo4i0AHob55hyyYbVPTeWP581WV0L88htiz3OzH5THc3OpgFcIAO6TvxFU5ywVjfws5EoBQ8H
+	tk7hqURwCH4SJSA/y58tgBP3nL0KBKXkVnLifKXC1cb3uiy4YAL4sYz2rQyfDVjcsH+U3C0qDp7
+	+AQhkGxCLsHfmO37r7Q39SWIDOK6ncMB5xWgJnOtPYyqmXeHFisI3kyNBvgGnl3I88PKSc1oTle
+	Vlx/F9BKxz2tzfeNM35ZqtFUBhDxIAdhmIsO81kbIfT1Ge18+91CGslc2yRO4VaOrnTvbwHjpvG
+	gZCjG+Pk6E1X7TrpwQc1576Uz5Mntsfo=
+X-Google-Smtp-Source: AGHT+IHS1hFJmenJMvbQ32NXUNrJjyDKifQkLe7CXSiHbDwUb6p0CnZ4mgpK2sqmbd7w0QSQjYebrQ==
+X-Received: by 2002:a05:600c:8812:b0:455:ed48:144f with SMTP id 5b1f17b1804b1-458930ec808mr19828185e9.14.1753874394307;
+        Wed, 30 Jul 2025 04:19:54 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45899fb191fsm18863345e9.21.2025.07.30.04.19.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 04:19:53 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 30 Jul 2025 13:19:51 +0200
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Steven Rostedt <rostedt@kernel.org>, Florent Revest <revest@google.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Menglong Dong <menglong8.dong@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [RFC 00/10] ftrace,bpf: Use single direct ops for bpf trampolines
+Message-ID: <aIn_12KHz7ikF2t1@krava>
+References: <20250729102813.1531457-1-jolsa@kernel.org>
+ <aIkLlB7Z7V--BeGi@J2N7QTR9R3.cambridge.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 02/11] mm/thp: zone_device awareness in THP handling code
-To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>,
- Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
- Peter Xu <peterx@redhat.com>, Zi Yan <ziy@nvidia.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Jane Chu <jane.chu@oracle.com>,
- Alistair Popple <apopple@nvidia.com>, Donet Tom <donettom@linux.ibm.com>,
- Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>,
- Ralph Campbell <rcampbell@nvidia.com>
-References: <20250730092139.3890844-1-balbirs@nvidia.com>
- <20250730092139.3890844-3-balbirs@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <20250730092139.3890844-3-balbirs@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIkLlB7Z7V--BeGi@J2N7QTR9R3.cambridge.arm.com>
 
-Hi,
+On Tue, Jul 29, 2025 at 06:57:40PM +0100, Mark Rutland wrote:
+> Hi Jiri,
+> 
+> [adding some powerpc and riscv folk, see below]
+> 
+> On Tue, Jul 29, 2025 at 12:28:03PM +0200, Jiri Olsa wrote:
+> > hi,
+> > while poking the multi-tracing interface I ended up with just one
+> > ftrace_ops object to attach all trampolines.
+> > 
+> > This change allows to use less direct API calls during the attachment
+> > changes in the future code, so in effect speeding up the attachment.
+> 
+> How important is that, and what sort of speedup does this result in? I
+> ask due to potential performance hits noted below, and I'm lacking
+> context as to why we want to do this in the first place -- what is this
+> intended to enable/improve?
 
-On 7/30/25 12:21, Balbir Singh wrote:
-> Make THP handling code in the mm subsystem for THP pages aware of zone
-> device pages. Although the code is designed to be generic when it comes
-> to handling splitting of pages, the code is designed to work for THP
-> page sizes corresponding to HPAGE_PMD_NR.
->
-> Modify page_vma_mapped_walk() to return true when a zone device huge
-> entry is present, enabling try_to_migrate() and other code migration
-> paths to appropriately process the entry. page_vma_mapped_walk() will
-> return true for zone device private large folios only when
-> PVMW_THP_DEVICE_PRIVATE is passed. This is to prevent locations that are
-> not zone device private pages from having to add awareness. The key
-> callback that needs this flag is try_to_migrate_one(). The other
-> callbacks page idle, damon use it for setting young/dirty bits, which is
-> not significant when it comes to pmd level bit harvesting.
->
-> pmd_pfn() does not work well with zone device entries, use
-> pfn_pmd_entry_to_swap() for checking and comparison as for zone device
-> entries.
->
-> Zone device private entries when split via munmap go through pmd split,
-> but need to go through a folio split, deferred split does not work if a
-> fault is encountered because fault handling involves migration entries
-> (via folio_migrate_mapping) and the folio sizes are expected to be the
-> same there. This introduces the need to split the folio while handling
-> the pmd split. Because the folio is still mapped, but calling
-> folio_split() will cause lock recursion, the __split_unmapped_folio()
-> code is used with a new helper to wrap the code
-> split_device_private_folio(), which skips the checks around
-> folio->mapping, swapcache and the need to go through unmap and remap
-> folio.
->
-> Cc: Karol Herbst <kherbst@redhat.com>
-> Cc: Lyude Paul <lyude@redhat.com>
-> Cc: Danilo Krummrich <dakr@kernel.org>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Barry Song <baohua@kernel.org>
-> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Cc: Peter Xu <peterx@redhat.com>
-> Cc: Zi Yan <ziy@nvidia.com>
-> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-> Cc: Jane Chu <jane.chu@oracle.com>
-> Cc: Alistair Popple <apopple@nvidia.com>
-> Cc: Donet Tom <donettom@linux.ibm.com>
-> Cc: Mika Penttilä <mpenttil@redhat.com>
-> Cc: Matthew Brost <matthew.brost@intel.com>
-> Cc: Francois Dugast <francois.dugast@intel.com>
-> Cc: Ralph Campbell <rcampbell@nvidia.com>
->
-> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> ---
->  include/linux/huge_mm.h |   1 +
->  include/linux/rmap.h    |   2 +
->  include/linux/swapops.h |  17 +++
->  mm/huge_memory.c        | 268 +++++++++++++++++++++++++++++++++-------
->  mm/page_vma_mapped.c    |  13 +-
->  mm/pgtable-generic.c    |   6 +
->  mm/rmap.c               |  22 +++-
->  7 files changed, 278 insertions(+), 51 deletions(-)
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 7748489fde1b..2a6f5ff7bca3 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -345,6 +345,7 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
->  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
->  int split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->  		unsigned int new_order);
-> +int split_device_private_folio(struct folio *folio);
->  int min_order_for_split(struct folio *folio);
->  int split_folio_to_list(struct folio *folio, struct list_head *list);
->  bool uniform_split_supported(struct folio *folio, unsigned int new_order,
-> diff --git a/include/linux/rmap.h b/include/linux/rmap.h
-> index 20803fcb49a7..625f36dcc121 100644
-> --- a/include/linux/rmap.h
-> +++ b/include/linux/rmap.h
-> @@ -905,6 +905,8 @@ struct page *make_device_exclusive(struct mm_struct *mm, unsigned long addr,
->  #define PVMW_SYNC		(1 << 0)
->  /* Look for migration entries rather than present PTEs */
->  #define PVMW_MIGRATION		(1 << 1)
-> +/* Look for device private THP entries */
-> +#define PVMW_THP_DEVICE_PRIVATE	(1 << 2)
->  
->  struct page_vma_mapped_walk {
->  	unsigned long pfn;
-> diff --git a/include/linux/swapops.h b/include/linux/swapops.h
-> index 64ea151a7ae3..2641c01bd5d2 100644
-> --- a/include/linux/swapops.h
-> +++ b/include/linux/swapops.h
-> @@ -563,6 +563,7 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
->  {
->  	return is_swap_pmd(pmd) && is_migration_entry(pmd_to_swp_entry(pmd));
->  }
-> +
->  #else  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
->  static inline int set_pmd_migration_entry(struct page_vma_mapped_walk *pvmw,
->  		struct page *page)
-> @@ -594,6 +595,22 @@ static inline int is_pmd_migration_entry(pmd_t pmd)
->  }
->  #endif  /* CONFIG_ARCH_ENABLE_THP_MIGRATION */
->  
-> +#if defined(CONFIG_ZONE_DEVICE) && defined(CONFIG_ARCH_ENABLE_THP_MIGRATION)
-> +
-> +static inline int is_pmd_device_private_entry(pmd_t pmd)
-> +{
-> +	return is_swap_pmd(pmd) && is_device_private_entry(pmd_to_swp_entry(pmd));
-> +}
-> +
-> +#else /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
-> +
-> +static inline int is_pmd_device_private_entry(pmd_t pmd)
-> +{
-> +	return 0;
-> +}
-> +
-> +#endif /* CONFIG_ZONE_DEVICE && CONFIG_ARCH_ENABLE_THP_MIGRATION */
-> +
->  static inline int non_swap_entry(swp_entry_t entry)
->  {
->  	return swp_type(entry) >= MAX_SWAPFILES;
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 9c38a95e9f09..e373c6578894 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -72,6 +72,10 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
->  					  struct shrink_control *sc);
->  static unsigned long deferred_split_scan(struct shrinker *shrink,
->  					 struct shrink_control *sc);
-> +static int __split_unmapped_folio(struct folio *folio, int new_order,
-> +		struct page *split_at, struct xa_state *xas,
-> +		struct address_space *mapping, bool uniform_split);
-> +
->  static bool split_underused_thp = true;
->  
->  static atomic_t huge_zero_refcount;
-> @@ -1711,8 +1715,11 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->  	if (unlikely(is_swap_pmd(pmd))) {
->  		swp_entry_t entry = pmd_to_swp_entry(pmd);
->  
-> -		VM_BUG_ON(!is_pmd_migration_entry(pmd));
-> -		if (!is_readable_migration_entry(entry)) {
-> +		VM_WARN_ON(!is_pmd_migration_entry(pmd) &&
-> +				!is_pmd_device_private_entry(pmd));
-> +
-> +		if (is_migration_entry(entry) &&
-> +			is_writable_migration_entry(entry)) {
->  			entry = make_readable_migration_entry(
->  							swp_offset(entry));
->  			pmd = swp_entry_to_pmd(entry);
-> @@ -1722,6 +1729,32 @@ int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
->  				pmd = pmd_swp_mkuffd_wp(pmd);
->  			set_pmd_at(src_mm, addr, src_pmd, pmd);
->  		}
-> +
-> +		if (is_device_private_entry(entry)) {
-> +			if (is_writable_device_private_entry(entry)) {
-> +				entry = make_readable_device_private_entry(
-> +					swp_offset(entry));
-> +				pmd = swp_entry_to_pmd(entry);
-> +
-> +				if (pmd_swp_soft_dirty(*src_pmd))
-> +					pmd = pmd_swp_mksoft_dirty(pmd);
-> +				if (pmd_swp_uffd_wp(*src_pmd))
-> +					pmd = pmd_swp_mkuffd_wp(pmd);
-> +				set_pmd_at(src_mm, addr, src_pmd, pmd);
-> +			}
-> +
-> +			src_folio = pfn_swap_entry_folio(entry);
-> +			VM_WARN_ON(!folio_test_large(src_folio));
-> +
-> +			folio_get(src_folio);
-> +			/*
-> +			 * folio_try_dup_anon_rmap_pmd does not fail for
-> +			 * device private entries.
-> +			 */
-> +			VM_WARN_ON(folio_try_dup_anon_rmap_pmd(src_folio,
-> +					  &src_folio->page, dst_vma, src_vma));
-> +		}
-> +
->  		add_mm_counter(dst_mm, MM_ANONPAGES, HPAGE_PMD_NR);
->  		mm_inc_nr_ptes(dst_mm);
->  		pgtable_trans_huge_deposit(dst_mm, dst_pmd, pgtable);
-> @@ -2219,15 +2252,22 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  			folio_remove_rmap_pmd(folio, page, vma);
->  			WARN_ON_ONCE(folio_mapcount(folio) < 0);
->  			VM_BUG_ON_PAGE(!PageHead(page), page);
-> -		} else if (thp_migration_supported()) {
-> +		} else if (is_pmd_migration_entry(orig_pmd) ||
-> +				is_pmd_device_private_entry(orig_pmd)) {
->  			swp_entry_t entry;
->  
-> -			VM_BUG_ON(!is_pmd_migration_entry(orig_pmd));
->  			entry = pmd_to_swp_entry(orig_pmd);
->  			folio = pfn_swap_entry_folio(entry);
->  			flush_needed = 0;
-> -		} else
-> -			WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
-> +
-> +			if (!thp_migration_supported())
-> +				WARN_ONCE(1, "Non present huge pmd without pmd migration enabled!");
-> +
-> +			if (is_pmd_device_private_entry(orig_pmd)) {
-> +				folio_remove_rmap_pmd(folio, &folio->page, vma);
-> +				WARN_ON_ONCE(folio_mapcount(folio) < 0);
-> +			}
-> +		}
->  
->  		if (folio_test_anon(folio)) {
->  			zap_deposited_table(tlb->mm, pmd);
-> @@ -2247,6 +2287,15 @@ int zap_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  				folio_mark_accessed(folio);
->  		}
->  
-> +		/*
-> +		 * Do a folio put on zone device private pages after
-> +		 * changes to mm_counter, because the folio_put() will
-> +		 * clean folio->mapping and the folio_test_anon() check
-> +		 * will not be usable.
-> +		 */
-> +		if (folio_is_device_private(folio))
-> +			folio_put(folio);
-> +
->  		spin_unlock(ptl);
->  		if (flush_needed)
->  			tlb_remove_page_size(tlb, &folio->page, HPAGE_PMD_SIZE);
-> @@ -2375,7 +2424,8 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  		struct folio *folio = pfn_swap_entry_folio(entry);
->  		pmd_t newpmd;
->  
-> -		VM_BUG_ON(!is_pmd_migration_entry(*pmd));
-> +		VM_WARN_ON(!is_pmd_migration_entry(*pmd) &&
-> +			   !folio_is_device_private(folio));
->  		if (is_writable_migration_entry(entry)) {
->  			/*
->  			 * A protection check is difficult so
-> @@ -2388,6 +2438,10 @@ int change_huge_pmd(struct mmu_gather *tlb, struct vm_area_struct *vma,
->  			newpmd = swp_entry_to_pmd(entry);
->  			if (pmd_swp_soft_dirty(*pmd))
->  				newpmd = pmd_swp_mksoft_dirty(newpmd);
-> +		} else if (is_writable_device_private_entry(entry)) {
-> +			entry = make_readable_device_private_entry(
-> +							swp_offset(entry));
-> +			newpmd = swp_entry_to_pmd(entry);
->  		} else {
->  			newpmd = *pmd;
->  		}
-> @@ -2834,6 +2888,44 @@ static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
->  	pmd_populate(mm, pmd, pgtable);
->  }
->  
-> +/**
-> + * split_huge_device_private_folio - split a huge device private folio into
-> + * smaller pages (of order 0), currently used by migrate_device logic to
-> + * split folios for pages that are partially mapped
-> + *
-> + * @folio: the folio to split
-> + *
-> + * The caller has to hold the folio_lock and a reference via folio_get
-> + */
-> +int split_device_private_folio(struct folio *folio)
-> +{
-> +	struct folio *end_folio = folio_next(folio);
-> +	struct folio *new_folio;
-> +	int ret = 0;
-> +
-> +	/*
-> +	 * Split the folio now. In the case of device
-> +	 * private pages, this path is executed when
-> +	 * the pmd is split and since freeze is not true
-> +	 * it is likely the folio will be deferred_split.
-> +	 *
-> +	 * With device private pages, deferred splits of
-> +	 * folios should be handled here to prevent partial
-> +	 * unmaps from causing issues later on in migration
-> +	 * and fault handling flows.
-> +	 */
-> +	folio_ref_freeze(folio, 1 + folio_expected_ref_count(folio));
+so it's all work on PoC stage, the idea is to be able to attach many
+(like 20,30,40k) functions to their trampolines quickly, which at the
+moment is slow because all the involved interfaces work with just single
+function/tracempoline relation
 
-Why can't this freeze fail? The folio is still mapped afaics, why can't there be other references in addition to the caller?
+there's ongoing development by Menglong [1] to organize such attachment
+for multiple functions and trampolines, but still at the end we have to use
+ftrace direct interface to do the attachment for each involved ftrace_ops 
 
-> +	ret = __split_unmapped_folio(folio, 0, &folio->page, NULL, NULL, true);
+so at the point of attachment it helps to have as few ftrace_ops objects
+as possible, in my test code I ended up with just single ftrace_ops object
+and I see attachment time for 20k functions to be around 3 seconds
 
-Confusing to  __split_unmapped_folio() if folio is mapped...
+IIUC Menglong's change needs 12 ftrace_ops objects so we need to do around
+12 direct ftrace_ops direct calls .. so probably not that bad, but still
+it would be faster with just single ftrace_ops involved
 
---Mika
+[1] https://lore.kernel.org/bpf/20250703121521.1874196-1-dongml2@chinatelecom.cn/
+
+> 
+> > However having just single ftrace_ops object removes direct_call
+> > field from direct_call, which is needed by arm, so I'm not sure
+> > it's the right path forward.
+> 
+> It's also needed by powerpc and riscv since commits:
+> 
+>   a52f6043a2238d65 ("powerpc/ftrace: Add support for DYNAMIC_FTRACE_WITH_DIRECT_CALLS")
+>   b21cdb9523e5561b ("riscv: ftrace: support direct call using call_ops")
+> 
+> > Mark, Florent,
+> > any idea how hard would it be to for arm to get rid of direct_call field?
+> 
+> For architectures which follow the arm64 style of implementation, it's
+> pretty hard to get rid of it without introducing a performance hit to
+> the call and/or a hit to attachment/detachment/modification. It would
+> also end up being a fair amount more complicated.
+> 
+> There's some historical rationale at:
+> 
+>   https://lore.kernel.org/lkml/ZfBbxPDd0rz6FN2T@FVFF77S0Q05N/
+> 
+> ... but the gist is that for several reasons we want the ops pointer in
+> the callsite, and for atomic modification of this to switch everything
+> dependent on that ops atomically, as this keeps the call logic and
+> attachment/detachment/modification logic simple and pretty fast.
+> 
+> If we remove the direct_call pointer from the ftrace_ops, then IIUC our
+> options include:
+> 
+> * Point the callsite pointer at some intermediate structure which points
+>   to the ops (e.g. the dyn_ftrace for the callsite). That introduces an
+>   additional dependent load per call that needs the ops, and introduces
+>   potential incoherency with other fields in that structure, requiring
+>   more synchronization overhead for attachment/detachment/modification.
+> 
+> * Point the callsite pointer at a trampoline which can generate the ops
+>   pointer. This requires that every ops has a trampoline even for
+>   non-direct usage, which then requires more memory / I$, has more
+>   potential failure points, and is generally more complicated. The
+>   performance here will vary by architecture and platform, on some this
+>   might be faster, on some it might be slower.
+> 
+>   Note that we probably still need to bounce through an intermediary
+>   trampoline here to actually load from the callsite pointer and
+>   indirectly branch to it.
+> 
+> ... but I'm not really keen on either unless we really have to remove 
+> the ftrace_ops::direct_call field, since they come with a substantial
+> jump in complexity.
+
+ok, that sounds bad.. thanks for the details
+
+Steven, please correct me if/when I'm wrong ;-)
+
+IIUC in x86_64, IF there's just single ftrace_ops defined for the function,
+it will bypass ftrace trampoline and call directly the direct trampoline
+for the function, like:
+
+   <foo>:
+     call direct_trampoline
+     ...
+
+IF there are other ftrace_ops 'users' on the same function, we execute
+each of them like:
+
+  <foo>:
+    call ftrace_trampoline
+      call ftrace_ops_1->func
+      call ftrace_ops_2->func
+      ...
+
+with our direct ftrace_ops->func currently using ftrace_ops->direct_call
+to return direct trampoline for the function:
+
+	-static void call_direct_funcs(unsigned long ip, unsigned long pip,
+	-                             struct ftrace_ops *ops, struct ftrace_regs *fregs)
+	-{
+	-       unsigned long addr = READ_ONCE(ops->direct_call);
+	-
+	-       if (!addr)
+	-               return;
+	-
+	-       arch_ftrace_set_direct_caller(fregs, addr);
+	-}
+
+in the new changes it will do hash lookup (based on ip) for the direct
+trampoline we want to execute:
+
+	+static void call_direct_funcs_hash(unsigned long ip, unsigned long pip,
+	+                                  struct ftrace_ops *ops, struct ftrace_regs *fregs)
+	+{
+	+       unsigned long addr;
+	+
+	+       addr = ftrace_find_rec_direct(ip);
+	+       if (!addr)
+	+               return;
+	+
+	+       arch_ftrace_set_direct_caller(fregs, addr);
+	+}
+
+still this is the slow path for the case where multiple ftrace_ops objects use
+same function.. for the fast path we have the direct attachment as described above
+
+sorry I probably forgot/missed discussion on this, but doing the fast path like in
+x86_64 is not an option in arm, right?
 
 
+thanks,
+jirka
 
