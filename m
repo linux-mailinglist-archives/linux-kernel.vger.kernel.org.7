@@ -1,107 +1,185 @@
-Return-Path: <linux-kernel+bounces-750860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CE8B161F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95955B161E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EC991627D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:54:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C8D3B9FDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:53:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263D12D9EDB;
-	Wed, 30 Jul 2025 13:53:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF5D2D979C;
+	Wed, 30 Jul 2025 13:53:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b="PMI/fwtv"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="ffLBMs8H"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA742D3EC5
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:53:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4812D94BD
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883619; cv=none; b=CpLK3JEGeKvEO2etgO0JQIed1ZbstsoFx2OCuzf3gbMNzNnJfEdoY3Uvw6D8m56al9cUNgN7qNkD+U1ygf8qsBBBRrla9i/4+6moWqVsbey9g/yLnEoYtskhrt25xhPw8dOJFjbiWgzGH6sklfHA6ypVrzdhayNm6R7UefY+d9E=
+	t=1753883610; cv=none; b=diArW7YOqYpiphA/r+9Md3F19kJQ/XQRbyHod1FhmuoD0rz4cUSrTIWKy9RrrCdhkUwVpM5x2dTCIUlUZWBtQEMQCh9h4xV9h7IyFLIfqwpem8cRyJDRFNnGlcNjpnftPzvgAcpRYhZxdPJTm2Y4VbmUulkRyYDzVydVGU3+CIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883619; c=relaxed/simple;
-	bh=vtgksuO6hykHnoNmq1iFn0TxRbhqfR0C34eckzuDpoI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JQUVpWfoiToenyHfGQobzT83l4WTMuLnaBujE2VtG76rnybbxzXioMqlsqtFBz65rckzebsMzdUs6yxQLmZIiT1Z0LdTVxrgSUNBlLF29rR8Dn8uG5pXtF02CghJcFATP8Nu9PwHESmF+CR9laT1nqSAuHJqPu61Sl/FVm0GSJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=pass smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar.org header.i=@fooishbar.org header.b=PMI/fwtv; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fooishbar.org
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab814c4f2dso125818301cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:53:37 -0700 (PDT)
+	s=arc-20240116; t=1753883610; c=relaxed/simple;
+	bh=IHzhk2MoW4xpq16rWlxrTfK0s7uTNJEKX5bczNq2v6E=;
+	h=From:Date:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=G/7DjwzWlbhmKGtAuG/+9cq6BDVmCumXYzE6kzSuUubNumAnGtFLX3AZHraUSfQCiOuJxmbRyBfr/S0Oa1kNDjbZfIlkdJ9zohYaReKdiwAXr8OaPccpsd2fOdnYho2DVYp9OnWu0Ebi5BV4nAKmWyKyIF/3cUvVNhT8Bu9j3iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu; spf=pass smtp.mailfrom=maine.edu; dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b=ffLBMs8H; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maine.edu
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70756dc2c00so26481656d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:53:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar.org; s=google; t=1753883617; x=1754488417; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=vtgksuO6hykHnoNmq1iFn0TxRbhqfR0C34eckzuDpoI=;
-        b=PMI/fwtvbH3i7SLxnA4ngBh6XNLnluSAZfq1D/LptTnS+7grL63Dqnt8kuyzWpg04g
-         AXhA8Z+3bgJA3Dg79hpPzK/lrkui9PbHOpa/gWqtgdMo+Je/j0Oh3KbL9oETJTj7ksn/
-         /tEZ6evCFVLQT0T1yop30yplcR30qok5lPRUZhf7CDgZITdOP+BN4dBzh0nINlQnkF0X
-         GstOfHR5HO2J1mX1hQ2PQXd7cJEbd95O2wO6Zg5TbiQNE8Lzw2biBA2UKU4afPq7j0tb
-         F7fYbetzQVex8GgMpB7oLLk2tHLK0sm6AZ6AX7yYy/zbtCsea9MMq2jRoW0mL3DAPGk9
-         gNXg==
+        d=maine.edu; s=google; t=1753883607; x=1754488407; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:date:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HfBKYiq3E5bby2FVP4Nb+uSJ1m62RFzk3S05K+Qp+E8=;
+        b=ffLBMs8HD68Qhg7hNfhjI+aMgYWQ7Zf8yHZUxFQN7HqbwZWnQ8iv81u2SA7bwKeNYm
+         Ne3opkfO/ZtKIxuLwoQrb59yWUgXAiSUF6xNzRzYqUgNRqTf7+3AU5w+EFGfnbz76Hds
+         /s9EezDSvcpgP3CCwUbKFzHN8K3UYJ7dFGoog=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753883617; x=1754488417;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vtgksuO6hykHnoNmq1iFn0TxRbhqfR0C34eckzuDpoI=;
-        b=buRLOSw58oKDd/YmOhFqQ5oXA2uKuCvSvlwUlPPulbVI4QqtIjFjr9DZQ6Bauf8nrN
-         hbIqe3GFRsXIE6I+7OuLof59gstiM0+fmzccSYMyR9AiGcCjzmArAHpfgJd7OjKK4D/r
-         5XA0fkHbCKDCHqWp/BqsBTG2xOS8MAsfuZCGUiz3WWWFpcJua11xNE16RiWpNEer9HTy
-         dnjdrmtcgE+tuEhjz05QGiVeDdeJoLokmt5zR2PyTFRAdvTuBD312rphdtD3ikTOwTD8
-         9vt/tcL1DNhRPTWlzu4cR+nZPL8DzWKELmRFDWXsiTpxPO50YJP+06eiKmbDohgZJB4H
-         puxg==
-X-Forwarded-Encrypted: i=1; AJvYcCULFpZApwlOgEh1NQ48KZhR2h8M9Zd7/ZM+HvZtRPsVZu0hfcDuLBaR+6YWGkxGH8sGyaxhNXhOCbkAPCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy93QXfpjT6jkAr+zPXyfLTPBxfTN/DtGsx90c0m8K46mZIWAm+
-	hfaMW57eQBjeApHYz3hKsT1GCwwgpQ6oe70xZq4SuHAEv2LD4Zl94F5dHu7OFryDklvQnMtyzBe
-	zlLs4RKUvF0OAgjkG3gyY5KNrkeRCgdfbLwZt52/J9g==
-X-Gm-Gg: ASbGncsokOlgBLjz53ISP2knDuQzi98uW7aakBmzkZmLWOSVcvDSZw6bYCJDaW4I71r
-	25nycUNA9tUVgffndd6UDkkl0fVZTTV36LB7vZeeC/tOGKNfBmJdOGrGyWbMfbo94vjMTjLPiTW
-	HcFc3LyuZaROz2Gg46t5cY7h9NsvGzsT939HQNoQhpDnEapUjpIZSttTr8h/J37RIWDTOCMcUxN
-	FdfgPz71RcjyWE=
-X-Google-Smtp-Source: AGHT+IEIQhExdDr4IKQExvv0orhOVhkECA1aSs0d6odXMaL4dWzG19C7jkn8agUo/YEkRE1/ySb6/ndtjxxgYgLkvhg=
-X-Received: by 2002:a05:622a:342:b0:4ab:3a21:c08f with SMTP id
- d75a77b69052e-4aedbc826b7mr51999961cf.47.1753883616833; Wed, 30 Jul 2025
- 06:53:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753883607; x=1754488407;
+        h=mime-version:message-id:subject:cc:to:date:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HfBKYiq3E5bby2FVP4Nb+uSJ1m62RFzk3S05K+Qp+E8=;
+        b=sPYs8ZJo64L9xtkHDPTo38sFjjNTodkbk58qrN3TVBDRu6zrBs7ntKCq7GHpIXYgQH
+         1TTRyi0RzKE5HPfsAhW/Skh7rxzvfsvyKqo7r4doWQdpaoCuLEAJsbF5yaOiZi09Ts/T
+         arYIy+2tUsDMQoWu9ySOwZLmMpOs6ftE8aQGZF/wRpaVKkWD09nn6prwsA9200HZMpZF
+         KJwd5QP11T+w0XDY5F96A3GLq54mD9km1hJDjroLOzHG4FvUGhLlOW+31FimAtEkd1Ei
+         notlcndRkeFAZypGYS/afoWODxnWjtmrLTnH1mvazeRwCN06MfTTooDztODYq4smNVXh
+         RLDA==
+X-Gm-Message-State: AOJu0YwK+fL6qxn8SyAvh6X4GxpMy9Cvbi5r8y3Ca6AnJF1yhvDQZ/P6
+	oXpFjWW1tVSofnDUgQYZvBbZpItDz8D7tvIWpqb2DO2TYsjc5dD2ZdLoTO63vJCC9PC4nwbiNeM
+	6jus=
+X-Gm-Gg: ASbGncsUcZ4RJg4w5x2ZW/4l1MoIRb6wXkfniC0wXtF6kk9SyA/viqKDaC+bSHZeMvc
+	6Pr01wjgUPyh3rp7AUhH4VXUJdkrCNqRt79q4QrMB86wL0U6KOha9pMmHplFEzFUJy9qGMTIedb
+	bY8fqftBHG3hKZR7aEGR+YrdtoTHFFZ/Uh34RoHFs5mGjlse12r8IF8MyuXGBTkMVL8hi6s/Ta9
+	AlqY8phQynXf6Fthn95JCr1M2C9VDTX1j+a3SqNRPVs8yPtdfE8fY2PWEaUDXzGSGtgUhq+6Mf2
+	1EA8DL1apjTkf1w2alPh2Coh4NljidI0f6jMewCgCOQ5GbjgOj9x6Z5ng3kWSm5DgvzK80yyO2f
+	zc87zsRpQjTkpJNaIaY9qOx027CiPP0YLNFFtlwGgmQ==
+X-Google-Smtp-Source: AGHT+IFS+NsWWCRAZT7DU1w30WDWGwT6PJJLySC0o1Ml3zqCyPQFp5+54OL74nnoFTiSvL+lbNIZeQ==
+X-Received: by 2002:a05:6214:c84:b0:707:54b6:1f32 with SMTP id 6a1803df08f44-70766de2240mr48776486d6.9.1753883607150;
+        Wed, 30 Jul 2025 06:53:27 -0700 (PDT)
+Received: from [192.168.8.146] (weaver.eece.maine.edu. [130.111.218.23])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae9951747csm66766601cf.12.2025.07.30.06.53.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 06:53:26 -0700 (PDT)
+From: Vince Weaver <vincent.weaver@maine.edu>
+X-Google-Original-From: Vince Weaver <vince@maine.edu>
+Date: Wed, 30 Jul 2025 09:53:25 -0400 (EDT)
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+cc: "Liang, Kan" <kan.liang@linux.intel.com>, 
+    Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+    Arnaldo Carvalho de Melo <acme@kernel.org>, 
+    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+    Adrian Hunter <adrian.hunter@intel.com>, 
+    "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+Subject: [perf] fuzzer triggers BUG: KASAN: wild-memory-access in
+ x86_pmu_stop
+Message-ID: <d869feec-dc50-070c-a363-6f677ab6d678@maine.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730133457.2076784-1-colin.i.king@gmail.com>
-In-Reply-To: <20250730133457.2076784-1-colin.i.king@gmail.com>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 30 Jul 2025 14:53:25 +0100
-X-Gm-Features: Ac12FXx55sEzySCoos6kjkVRDMdpbePHcxwOGpuWags5QI6mVL28NlrpkS_nyF0
-Message-ID: <CAPj87rMcb-m_-ek3JqFiY19Xfwwym8mbn3V0tLog434Uc-Wc7Q@mail.gmail.com>
-Subject: Re: [PATCH][next] drm/kmb: Fix dereference of pointer plane before a
- null check
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Anitha Chrisanthus <anitha.chrisanthus@intel.com>, Edmund Dea <edmund.j.dea@intel.com>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	Maxime Ripard <mripard@kernel.org>, =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hi,
+Hello
 
-On Wed, 30 Jul 2025 at 14:35, Colin Ian King <colin.i.king@gmail.com> wrote:
-> Currently pointer plane is being dereferenced on the calls to
-> drm_atomic_get_old_plane_state and drm_atomic_get_new_plane_state
-> when assigning old_plane_state and new_plane_state, this could
-> lead to a null pointer dereference. Fix this by first performing
-> a null pointer check on plane, then assigning old_plane_state and
-> new_plance_state and then null pointer checking these.
+I was fuzzing current git (6.16) on a RaptorLake machine with KASAN 
+enabled and it turned up this issue.  I think this is unrelated to the 
+other issue I've been tracking on this machine.
 
-plane cannot be NULL, so that check should just be deleted instead.
+Vince Weaver
+vincent.weaver@maine.edu
 
-Cheers,
-Daniel
+
+[62790.535489] ==================================================================
+[62790.535493] BUG: KASAN: wild-memory-access in x86_pmu_stop+0x80/0x2b0
+[62790.535499] Read of size 8 at addr 1fff888770d28e98 by task perf_fuzzer/1142475
+
+[62790.535502] CPU: 2 UID: 1000 PID: 1142475 Comm: perf_fuzzer Not tainted 6.16.0+ #13 PREEMPT(voluntary) 
+[62790.535505] Hardware name: Dell Inc. Precision 3660/0VJ7G2, BIOS 2.17.0 08/09/2024
+[62790.535507] Call Trace:
+[62790.535508]  <NMI>
+[62790.535509]  dump_stack_lvl+0x64/0x80
+[62790.535512]  kasan_report+0xce/0x100
+[62790.535516]  ? x86_pmu_stop+0x80/0x2b0
+[62790.535519]  kasan_check_range+0x100/0x1b0
+[62790.535521]  x86_pmu_stop+0x80/0x2b0
+[62790.535523]  __perf_event_account_interrupt+0x3a8/0x560
+[62790.535527]  __perf_event_overflow+0xf9/0xc00
+[62790.535529]  ? __pfx_perf_event_output+0x10/0x10
+[62790.535530]  ? __pfx_perf_event_update_userpage+0x10/0x10
+[62790.535533]  ? __pfx___perf_event_overflow+0x10/0x10
+[62790.535534]  ? setup_pebs_adaptive_sample_data+0x18a/0x24e0
+[62790.535537]  ? intel_pmu_save_and_restart_reload.isra.0+0x169/0x200
+[62790.535539]  intel_pmu_drain_pebs_icl+0x6da/0xc60
+[62790.535542]  ? __pfx_intel_pmu_drain_pebs_icl+0x10/0x10
+[62790.535544]  ? mutex_lock+0x81/0xe0
+[62790.535546]  ? intel_bts_disable_local+0x53/0xf0
+[62790.535551]  handle_pmi_common+0x606/0xab0
+[62790.535553]  ? __pfx_handle_pmi_common+0x10/0x10
+[62790.535554]  ? nmi_handle.part.0+0xa4/0x2e0
+[62790.535558]  ? ring_buffer_put+0x18/0x90
+[62790.535560]  ? intel_bts_interrupt+0x334/0x400
+[62790.535562]  ? __pfx_intel_bts_interrupt+0x10/0x10
+[62790.535564]  intel_pmu_handle_irq+0x1bf/0xac0
+[62790.535566]  perf_event_nmi_handler+0x3b/0x60
+[62790.535568]  nmi_handle.part.0+0xaa/0x2e0
+[62790.535570]  ? __pfx_nmi_cpu_backtrace_handler+0x10/0x10
+[62790.535572]  default_do_nmi+0x40/0x100
+[62790.535575]  exc_nmi+0x128/0x1a0
+[62790.535576]  end_repeat_nmi+0xf/0x53
+[62790.535578] RIP: 0010:kasan_check_range+0x4d/0x1b0
+[62790.535581] Code: cc cc cc 48 b8 00 00 00 00 00 00 00 ff eb 0a 48 b8 00 00 00 00 00 80 ff ff 48 39 c7 0f 82 b3 00 00 00 4c 8d 54 37 ff 48 89 fd <48> b8 00 00 00 00 00 fc ff df 4d 89 d1 48 c1 ed 03 49 c1 e9 03 48
+[62790.535583] RSP: 0018:ffff888126247c70 EFLAGS: 00000202
+[62790.535585] RAX: ffff800000000000 RBX: ffff888128d1ac08 RCX: ffffffffa18c0551
+[62790.535586] RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888128d1ac08
+[62790.535587] RBP: ffff888128d1ac08 R08: 0000000000000001 R09: ffffed1024c48fa8
+[62790.535588] R10: ffff888128d1ac0f R11: 1ffff110ee1a51fa R12: ffff88816bce1ac0
+[62790.535589] R13: ffffed102ba8cc7f R14: dffffc0000000000 R15: ffff888128d1ac80
+[62790.535591]  ? mutex_lock+0x81/0xe0
+[62790.535592]  ? kasan_check_range+0x4d/0x1b0
+[62790.535594]  ? kasan_check_range+0x4d/0x1b0
+[62790.535596]  </NMI>
+[62790.535596]  <TASK>
+[62790.535597]  mutex_lock+0x81/0xe0
+[62790.535599]  ? __pfx_mutex_lock+0x10/0x10
+[62790.535600]  ? __pfx___perf_event_enable+0x10/0x10
+[62790.535602]  ? __pfx_event_function_call+0x10/0x10
+[62790.535603]  perf_event_ctx_lock_nested.constprop.0+0x127/0x1f0
+[62790.535605]  ? __pfx_perf_event_ctx_lock_nested.constprop.0+0x10/0x10
+[62790.535607]  ? mutex_unlock+0x82/0xd0
+[62790.535609]  ? __pfx_mutex_unlock+0x10/0x10
+[62790.535611]  ? vm_mmap_pgoff+0x2cc/0x3a0
+[62790.535614]  perf_event_task_enable+0x81/0x1f0
+[62790.535617]  __do_sys_prctl+0x98d/0x1830
+[62790.535620]  ? __pfx___do_sys_prctl+0x10/0x10
+[62790.535623]  ? fput+0x29/0x80
+[62790.535625]  do_syscall_64+0x82/0x2f0
+[62790.535628]  ? fpregs_assert_state_consistent+0x63/0xf0
+[62790.535631]  ? do_syscall_64+0xc9/0x2f0
+[62790.535633]  ? fpregs_assert_state_consistent+0x63/0xf0
+[62790.535635]  ? do_syscall_64+0xc9/0x2f0
+[62790.535637]  ? fpregs_assert_state_consistent+0x63/0xf0
+[62790.535639]  ? do_syscall_64+0xc9/0x2f0
+[62790.535641]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[62790.535642] RIP: 0033:0x7faf2c2e940d
+[62790.535644] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 18 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 9d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 1b 48 8b 54 24 18 64 48 2b 14 25 28 00 00 00
+[62790.535645] RSP: 002b:00007ffdccacc260 EFLAGS: 00000246 ORIG_RAX: 000000000000009d
+[62790.535647] RAX: ffffffffffffffda RBX: 000000000000000e RCX: 00007faf2c2e940d
+[62790.535648] RDX: 0000000000000001 RSI: 00007ffdccacc294 RDI: 0000000000000020
+[62790.535649] RBP: 00007ffdccacc2d0 R08: 00007faf2c3b2200 R09: 00007faf2c3b2260
+[62790.535650] R10: 00007faf2c3b21f4 R11: 0000000000000246 R12: 0000000000000000
+[62790.535651] R13: 00007ffdccace728 R14: 0000560c62688dd8 R15: 00007faf2c41c020
+[62790.535653]  </TASK>
+[62790.535654] ==================================================================
+[62790.535654] Disabling lock debugging due to kernel taint
+
 
