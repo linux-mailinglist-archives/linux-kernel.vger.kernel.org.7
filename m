@@ -1,125 +1,149 @@
-Return-Path: <linux-kernel+bounces-750285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3922B15988
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:25:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D017EB15991
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:29:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2C1518A5BD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5FB3B792A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:28:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE990287512;
-	Wed, 30 Jul 2025 07:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443FE2877C6;
+	Wed, 30 Jul 2025 07:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELLXMByr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DW35AimM"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8681F12F4
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FA61EFFB2;
+	Wed, 30 Jul 2025 07:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753860340; cv=none; b=OEV4yieWzEoj5PCVCPz11Am7ILQPsSI2zXtBwNmVUu0vVhMqWC+JYvC5qmmY749VxdnuEJp28ouWUq3elnOHZz4JwmBtHnUgJPx19Fo6C0/nBU3h+EnyVobiH93WFhIejUaaDTLiMTKQ0yVU3B0OQ6AsBbabnuXtmfj9dxmJx8g=
+	t=1753860558; cv=none; b=XTB5jrzQ/V8TMuo70fLFBx+fmxeQbe76B2C7RbR5Fyd9keLmAz+YLHVKlY4l5aKHBf6uTYqMPfNdPobVu6c+2ZvXilSdkgiX1NtCMOkqbzfpf0I3g1pVG8rcgFzVzJSIB05PLGr0AVKIH92mgCUi8GL7+u73xKK00jaFXA9XxMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753860340; c=relaxed/simple;
-	bh=Y9XFarX5wXXNKvJxA/fXi0azVyJUgSnXVji4kBRB5cY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ldwmxNNLc9AKJ5Oa07f+rSuuifhfMWkqnLidWWr5wjVMLbuEgJsOW97QyY4GOy5MtgBkJFjbxk+7GvRFhbTTvtOKm/iahOuxrmsx8DfENYKUbH3wc9Bg1vaiSXR4wJZhHXtt8pqRJ6OyzCnC0kI2RYfOxVWwW9QpAHsPxqvPjlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ELLXMByr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FE94C4CEF6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:25:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753860340;
-	bh=Y9XFarX5wXXNKvJxA/fXi0azVyJUgSnXVji4kBRB5cY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ELLXMByr4YAahWcnGSP/EQnA4R7r0vPw43xvouZpqmOezpZPXGHFBKXzqq/TiY2I7
-	 RsZNO1pJPp24JOJgb7JIX/HdxUtc2KDJetSOoKhG0DA5ef1LiLKr1VaI7zQ3RoJPae
-	 f6+QtWTETlB9RGLpaIwyh4D83VoLtkTBKt5yx0/ivwjmV8oOdNeIIO2ixxv5Ii12AD
-	 4fcmZMYU2KAAZOa6S1e+s+YND4YvAK3XVJLCk+Voc3dsKWEdzIz7nPyJ+4zRVOIihy
-	 uBWA7xW+RV12xBgDXpwtLkrGzU8uF9vwuP9mEeXDJvpK7faOdm2ymmGk/ry+Paf8TO
-	 7wYLGw2KBYeTA==
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-acb5ec407b1so1072117266b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:25:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUXcUQxq5xADP4+BUa2nw+A9axDfM9rU3/P+46ti2seITEUltEpIiPxz+z6d6g3oH3uE8vUwcRmcAyvYZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1ivgJfytBWsdFu5toC1rjAbuTeVltkEK1nNzMXLXzPPtPL2sb
-	FOKvm1eZ+gIgoCZrnLvCBgTxcf5XDy/ZptPA8VXsfOTCA8dr/u8QkYNd+Pp1ffSUCWRHgm+MBmc
-	ErjIZbu584ksAUaLnXw1OEL7N8ayCv2k=
-X-Google-Smtp-Source: AGHT+IHfx8mKPIPw4DGi+8OUuv0oDgiPhPEzstduqNiwAErqxgRZHzgOO+heKkKMFkDBKwiWlU26BO4/PB4WCy6+M/I=
-X-Received: by 2002:a17:907:7e9c:b0:adf:f8f4:2001 with SMTP id
- a640c23a62f3a-af8fda2a3bfmr257723566b.49.1753860338770; Wed, 30 Jul 2025
- 00:25:38 -0700 (PDT)
+	s=arc-20240116; t=1753860558; c=relaxed/simple;
+	bh=rdoU1EqVgDl8sy6XJ5uPQgrUXQtgjF+c2wH2+gurJnc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s1QJmJ1D6ueoTLvhyyPlL6d1wl1nnLZFceogdyB1YHEAQdt11LISREyEOfGFYpz2iI3ru831ef/y8RRWx7mfOSq7b7fOlWkLg7VGjqpikmXbXGUTENoiUdGw8rmZo/Ufu2g9sJKD8R3BbHM04OqibQ4OqFTih0/SYYz9X45oNlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DW35AimM; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U5ggDs017481;
+	Wed, 30 Jul 2025 07:29:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=IY2gWL1+FPISpzXUYxlmfN
+	YyXNSkWMy9ApA1vD9WqQc=; b=DW35AimMBLuIjN9lu4Yvbeinxnt553HVKoNwVz
+	i9cRpxZ/EixDafxpGZKFN7P/8ZJ9rpYq1jpSaUJ6WJwS3rAq7147hMZdA2bYWO5s
+	xSrL9WCyDpbEOe55rX6kUf5fvOH/EbZ6wMR/Qd10V4OJ1Na2KqTX3AHpmKTYkdxF
+	kzsCje0tGdFXQ8WZD+jJeCBVDKCbWMIkKnm/0hsATT0vPW9rpYUGSYp74mzkat6C
+	hFZCw9hwCr0zKiX8e7Mysnu8Axb7H1XkZ9acijYUAFwWxV72UZh3otNTtCK80N66
+	gPJLs7qUztjWj+bwinYRZH4D5UMW/vH/3BGnIylUrHkCOCiA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484p1ajrs4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 07:29:08 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56U7T79x010408
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 07:29:07 GMT
+Received: from cse-cd01-lnx.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 30 Jul 2025 00:29:03 -0700
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yongxing Mou
+	<quic_yongmou@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+Subject: [PATCH RESEND] dt-bindings: phy: Add eDP PHY compatible for QCS8300
+Date: Wed, 30 Jul 2025 15:27:25 +0800
+Message-ID: <20250730072725.1433360-1-quic_yongmou@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250725132651.1974717-1-guanwentao@uniontech.com> <fd349fb6-be25-440e-932e-b15b6daedeee@linux.dev>
-In-Reply-To: <fd349fb6-be25-440e-932e-b15b6daedeee@linux.dev>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 30 Jul 2025 15:25:27 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5hbNS7_8v2zBjmOA+_M_My-7S3aN94S7QnvQq1adB5gA@mail.gmail.com>
-X-Gm-Features: Ac12FXxAaXf0R9-BiE4dd9fMPQqf6n0QDcrY1yJ3z7UeSm5VQF8ZhoAYRGakRBQ
-Message-ID: <CAAhV-H5hbNS7_8v2zBjmOA+_M_My-7S3aN94S7QnvQq1adB5gA@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: vDSO: remove -nostdlib complier flag
-To: Yanteng Si <si.yanteng@linux.dev>
-Cc: Wentao Guan <guanwentao@uniontech.com>, kernel@xen0n.name, xry111@xry111.site, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	wangyuli@uniontech.com, zhanjun@uniontech.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: NKrGXozUY7lmJ3T_S6uTyBS-dsbNDeU9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA1MCBTYWx0ZWRfXyfGu9lD0Q8xx
+ LPbHY64ejBzwQmL8ZKwQG89XQw3j2LA8M451lKju0+Bh5IkzCGiNwbm4ipimRNRbatyFkvFE7+v
+ /sSq7VJ6y6iDQefrwhrn7xNUwCe4ksrdiyk6uUJlti4y8+9jzeq3gdVdh6DdM4R6USgTSi2x16f
+ h+OMybbjyG5VMPWfzChMF9QG6/N2R7vjKkXsQZiC++w7cYiJffRn3iAK082AzKSj+iDPkeRpUIu
+ idk7A6vBG83dyXcuJ7jjBgPbVrNn8EybppmWuMuTZZNEI65NVy1xNGzh57yxI/w/TfHxa5Jhxsg
+ KZ5IuyepmJYVrj+RRSmT5vRIo6Z0vObNFc4eL2tHkquUnSOzb0al4l9oKsufFEPDjm1ccCZbMGM
+ Lk583oiTk2O+KSe1fJmx4Rfb0ATIPuM8dGQhuiymjB9fPav2m+hl3rpFOvZ9PLJrRJDiX55R
+X-Proofpoint-GUID: NKrGXozUY7lmJ3T_S6uTyBS-dsbNDeU9
+X-Authority-Analysis: v=2.4 cv=KtNN2XWN c=1 sm=1 tr=0 ts=6889c9c4 cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
+ a=O5udsO39-F6e2CSdgGgA:9 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_03,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 priorityscore=1501 lowpriorityscore=0 suspectscore=0
+ adultscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0
+ mlxscore=0 malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507300050
 
-On Wed, Jul 30, 2025 at 9:54=E2=80=AFAM Yanteng Si <si.yanteng@linux.dev> w=
-rote:
->
-> =E5=9C=A8 7/25/25 9:26 PM, Wentao Guan =E5=86=99=E9=81=93:
-> > It is clear to remove the -nostdlib for ld, it is similar to commit
-> > bdbf2038fbf4 ("MIPS: VDSO: remove -nostdlib compiler flag").
-> >
-> > Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-> Since MIPS has removed this, we should remove it too. In fact, other arch=
-itectures also use $(LD).
->
->        fe00e50b2db8 ("ARM: 8858/1: vdso: use $(LD) instead of $(CC) to li=
-nk VDSO")
->        691efbedc60d ("arm64: vdso: use $(LD) instead of $(CC) to link VDS=
-O")
->        2ff906994b6c ("MIPS: VDSO: Use $(LD) instead of $(CC) to link VDSO=
-")
->        2b2a25845d53 ("s390/vdso: Use $(LD) instead of $(CC) to link vDSO"=
-)
->
-> If Huacai is willing to apply this patch, I suggest supplementing the com=
-mit message.
-It is better to send V2.
+Add compatible string for the supported eDP PHY on QCS8300 platform.
+QCS8300 have the same eDP PHY with SA8775P.
 
-Huacai
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+---
+ .../devicetree/bindings/phy/qcom,edp-phy.yaml | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
->
->
-> Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
->
-> Thanks,
-> Yanteng
-> > ---
-> >   arch/loongarch/vdso/Makefile | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefil=
-e
-> > index ccd2c5e135c6..d8316f993482 100644
-> > --- a/arch/loongarch/vdso/Makefile
-> > +++ b/arch/loongarch/vdso/Makefile
-> > @@ -36,7 +36,7 @@ endif
-> >
-> >   # VDSO linker flags.
-> >   ldflags-y :=3D -Bsymbolic --no-undefined -soname=3Dlinux-vdso.so.1 \
-> > -     $(filter -E%,$(KBUILD_CFLAGS)) -nostdlib -shared --build-id -T
-> > +     $(filter -E%,$(KBUILD_CFLAGS)) -shared --build-id -T
-> >
-> >   #
-> >   # Shared build commands.
->
+diff --git a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+index 293fb6a9b1c3..eb97181cbb95 100644
+--- a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
++++ b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
+@@ -16,13 +16,18 @@ description:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - qcom,sa8775p-edp-phy
+-      - qcom,sc7280-edp-phy
+-      - qcom,sc8180x-edp-phy
+-      - qcom,sc8280xp-dp-phy
+-      - qcom,sc8280xp-edp-phy
+-      - qcom,x1e80100-dp-phy
++    oneOf:
++      - enum:
++          - qcom,sa8775p-edp-phy
++          - qcom,sc7280-edp-phy
++          - qcom,sc8180x-edp-phy
++          - qcom,sc8280xp-dp-phy
++          - qcom,sc8280xp-edp-phy
++          - qcom,x1e80100-dp-phy
++      - items:
++          - enum:
++              - qcom,qcs8300-edp-phy
++          - const: qcom,sa8775p-edp-phy
+ 
+   reg:
+     items:
+
+base-commit: 54efec8782214652b331c50646013f8526570e8d
+prerequisite-patch-id: 0000000000000000000000000000000000000000
+-- 
+2.34.1
+
 
