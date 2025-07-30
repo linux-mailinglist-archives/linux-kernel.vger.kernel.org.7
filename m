@@ -1,254 +1,130 @@
-Return-Path: <linux-kernel+bounces-750162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE29B157F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:59:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0597EB157FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8E82546526
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:59:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A57CE7A31A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7201AAE13;
-	Wed, 30 Jul 2025 03:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7F338DD1;
+	Wed, 30 Jul 2025 04:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qsHaJBmx"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dTSP6c/u"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211DD4642D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D72DDAD
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 04:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753847979; cv=none; b=dWJOJbZal3jhR43F8auV9HFGt6pd0JmniqsUmXMYQn3dCvLBeAPAQaEKCZfTt2QBaCEaBtwe5ySkfZGo6VKMwc+vcJi80wWQ13gBlKiHbNQW5LkP66lZ1hMy8Do1rPawtmcyMjwdDatkABtKiUhKCAmJGvBX1aQEpAOWc9fWOZY=
+	t=1753848263; cv=none; b=FCP1BqsoUYxtqtL75c5bL00VRy1s0Pyq8xxjudWlYGP1ZLKVn/GxH1wYkOEXYXJRBsTcyjZraPMunjE6KlUtwkRVT1t5gt6UQtyPwOajKNSWFT26AQ04slsjFJroYlNwu8E4t16xfswMiKGUz5WJM3XC8FH3XMYcTwj3PxpjWAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753847979; c=relaxed/simple;
-	bh=2Vx+OVkIDNsjIzjIyltCRx3+scY2So6yx83lQF+SMmM=;
-	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
-	 In-Reply-To:References; b=gz7kkbZPDYMOtfADVNwjcOR4PHX8M58nNrLG6iQnlVtJxvwXEmzlduO8CM507U/ARU6u4IhSQkd2umyiAyAj0frQbBp2O2F3l4svgkKP10xoBekxp74UhMaaAtDMyRvF/4xevWF55KCZ22FY6xYatzjhUkp3v65yBZkzQS0XeWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qsHaJBmx; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1753848263; c=relaxed/simple;
+	bh=WO7h7ptNQ+0Kd+IO3No6V43g//yPa9vBMPwtDSJ281A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=DnjQvkWnI3r/jUrZOfYiy6maMG5oqEjogmvJBV2BHIG9NEO8eJ4cFvphKvLYfIClu6uqwDFayZZ4AWazE0lWVnb3uVueQDhkSfupZQG3AOYBf4rgKOTs2XJ2nv7o3rkd2CbZ6+G42hNKZvU2W0uJstMho+ciQ2lxgapfOPyAAtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dTSP6c/u; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ab82eb33f9so105263251cf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:04:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753848260; x=1754453060; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i4a9sYy5/UHt9zQbhrCp+lFdkLTN7GRIjDcgOwX7XLc=;
+        b=dTSP6c/ubB4Yc1zqs0m5mnw6kYIF6q4Cv72rjNC7JzyIPMx8VlYHIqaqozEwaf4t0A
+         xY/KicM4vvkY5EOJKUIdcgicGs4fqt7D5SK1jabJst3jkvIa7aso5sfP6Ox10UG2oRBc
+         e313/AP1fiR31dCHAC5aF9NfUaG539LT6DAqrLIl2qEnkk/hmMmA+HBtfyf/kIP3E/tj
+         PZZ+ZuEucgIflh6bSQJ6RY/2ZoIWW2KBzbvej3fUBb2Mg0ycDACXf+fvfpwmtVsFcxKN
+         1JrrDjO3jM/Lc/YL5rvEssu00b/p3vVCN3vkYppAcvlK0kJ3+79eUC1R2w4WSDBruI0R
+         S8JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753848260; x=1754453060;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i4a9sYy5/UHt9zQbhrCp+lFdkLTN7GRIjDcgOwX7XLc=;
+        b=RDjaZPMRaLhr+2KpinUqh915pBkmQl0ZDHfo0y4eeqflbtPKHvLAdfxxHyr15iJ5+e
+         69QPCm7OYc4zFjBR8A2VEAiqEtAlhHLpdImo33NQhDOZ8ZmfLYciqWoIkAaQsiY6uVjh
+         INHQRIHvbVXciqp0M2MV/QkSx6Fi4KtR3D0bfST8edH5paieIZMEPP2OZnArPaSmzV9C
+         w86fk7xWCfZg/Z1WMl5B8aBpu4xkqIwFJ/T1FpKS2a05EegapYdocaNTpBGNE8/R8dfT
+         xLDdNRUdy+Ig8cDkdiOuG2TDXPV4ItVQlUSKRVLG7az5KkSmKS6iMv6GjvZitQ3VAwlQ
+         w38g==
+X-Gm-Message-State: AOJu0YxpIkwLCHgfzaF1wiel58KwnalFGUjOHCvQORPKyti6USCh3Jdl
+	az0+wiZ8Q6UsgLokJcUbeO/fnYKCyxT54LIhJkpkrQA4qqt35IifLANeYXIHvXmo
+X-Gm-Gg: ASbGnct/VygvOnlFMtMVEmsRweh0+SIcDb2NnKcTOUHTR6gQV/1vjGwvFNDrtz/4yu/
+	R0K9ocXx7m8XSWb9xKw7nDjWm6uQPcVcgjcfn99Mufui+tFgbr34nDVk7WqsPckrKVaBYF3rQes
+	JWfsnz55C1Ch/yMKmsOBmcBVhN4rTg+hMcrI4FJ3vAU4J0gDFemg6dHQIYUilBT6XRjn0HkvZYF
+	kOrLFQ30zgSqdGOhaROky3OjwNEZO0wkL9aVft7FBGJdFCGqGfjXdYXy33eyz9hzIRoxZ764i7c
+	q5jRzuqp8kgXbsp64QJoRMqrgxES+oi6w1K2Qdm3vJEA8Tgsl7r+vekbacepBW6vOIhrershqv6
+	rYhViTml++zkHFQBuxfTyFCJ+eDR40htvANxT/YO8p/JJc+ZPJAQ=
+X-Google-Smtp-Source: AGHT+IGj5tKV/3vzPEMftmSFFMwZvypQkE6wxk4J02+x+4t8xFQyvzhizYqTcghhmrhKkbZNHTeITw==
+X-Received: by 2002:a05:622a:1819:b0:4ab:5651:3fa0 with SMTP id d75a77b69052e-4aedbc5cf33mr32039031cf.28.1753848260178;
+        Tue, 29 Jul 2025 21:04:20 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae99671b3asm60056091cf.58.2025.07.29.21.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Jul 2025 21:04:19 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Markus.Elfring@web.de,
+	vivek.balachandhar@gmail.com
+Subject: [PATCH v2 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
+Date: Wed, 30 Jul 2025 04:04:02 +0000
+Message-Id: <20250730040402.488284-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250728043628.421849-1-vivek.balachandhar@gmail.com>
+References: <20250728043628.421849-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753847965;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dlYZtGZVyCi4PinlFv9/1yDi5aJSz0ey8B3bkRTTyFE=;
-	b=qsHaJBmxhNoF2T/EbYommxMEZ+IY8yJCw8kJsFysiXkkO3j20a7sw4TMtISwGuvcFZD7d0
-	Ebw72OWXpqSTHNgnAagiVcvB/ME2a2qm/+R3vWuEdNHeV8CS8F7kY7zh0V4xJ+/CDY1Q4i
-	vf1D5ZIRZApKPrjt2AD7oNItYUeK2f8=
-Date: Wed, 30 Jul 2025 03:59:21 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Hui Zhu" <hui.zhu@linux.dev>
-Message-ID: <a1c1724a7796be559c89bb32c1e8ab38a37d5c4c@linux.dev>
-TLS-Required: No
-Subject: Re: [PATCH v5 1/2] rust: allocator: add KUnit tests for alignment
- guarantees
-To: "Danilo Krummrich" <dakr@kernel.org>
-Cc: "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Vlastimil Babka"
- <vbabka@suse.cz>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- "Uladzislau  Rezki" <urezki@gmail.com>, "Miguel Ojeda"
- <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun Feng"
- <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- bjorn3_gh@protonmail.com, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice  Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Hui Zhu" <zhuhui@kylinos.cn>, "Geliang
- Tang" <geliang@kernel.org>, "Andrew Morton" <akpm@linux-foundation.org>,
- vitaly.wool@konsulko.se
-In-Reply-To: <DBL1T0JY1LUX.1606LM78FACYM@kernel.org>
-References: <cover.1753423953.git.zhuhui@kylinos.cn>
- <da9b2afca02124ec14fc9ac7f2a2a85e5be96bc7.1753423953.git.zhuhui@kylinos.cn>
- <DBL1JZEZB87H.1IMYO79R3H9UM@kernel.org>
- <DBL1T0JY1LUX.1606LM78FACYM@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-2025=E5=B9=B47=E6=9C=8825=E6=97=A5 18:02, "Danilo Krummrich" <dakr@kernel=
-.org mailto:dakr@kernel.org?to=3D%22Danilo%20Krummrich%22%20%3Cdakr%40ker=
-nel.org%3E > =E5=86=99=E5=88=B0:
+Add a blank line after the definition of rtw_roaming() to separate it from
+the following function (_rtw_roaming()), improving readability and matching
+kernel coding style guidelines.
 
+No functional changes.
 
->=20
->=20(Cc: Andrew)
->=20
->=20On Fri Jul 25, 2025 at 11:50 AM CEST, Danilo Krummrich wrote:
->=20
->=20>=20
->=20> On Fri Jul 25, 2025 at 9:02 AM CEST, Hui Zhu wrote:
-> >=20
->=20> >=20
->=20> > From: Hui Zhu <zhuhui@kylinos.cn>
-> > >=20
->=20> >  Add comprehensive tests to verify correct alignment handling in =
-Rust
-> > >  allocator wrappers. The tests validate:
-> > >=20
->=20> >  That kmalloc respects both standard (128-byte) and page-size
-> > >  (8192-byte) alignments when allocating structs with explicit align=
-ment
-> > >  attributes.
-> > >=20
->=20> >  That vmalloc correctly handles standard alignments but intention=
-ally
-> > >  rejects allocations requiring alignments larger than its capabilit=
-ies.
-> > >=20
->=20> >  That kvmalloc mirrors vmalloc's constraints, accepting standard
-> > >  alignments but rejecting excessive alignment requirements.
-> > >=20
->=20> >  The test infrastructure uses specialized aligned structs (Blob a=
-nd
-> > >  LargeAlignBlob) and a test harness (TestAlign) to validate pointer
-> > >  alignment through different allocation paths. This ensures our Rus=
-t
-> > >  allocators correctly propagate kernel allocation constraints.
-> > >=20
->=20> >  Co-developed-by: Geliang Tang <geliang@kernel.org>
-> > >  Signed-off-by: Geliang Tang <geliang@kernel.org>
-> > >  Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
-> > >=20
->=20>  Thanks, this looks good. I think it would be good to rebase onto [=
-1], since it
-> >  will likely land in the same cycle. Additionally, two nits below.
-> >=20
->=20Please also Cc: Andrew for subsequent submissions, since this will, d=
-ue to the
-> interaction with [1] likely go through his tree.
->=20
->=20>=20
->=20> As a follow-up we could also test alignment in the context of
-> >  Allocator::realloc(), i.e. when growing and shrinking buffers or req=
-uesting a
-> >  different NUMA node.
-> >=20
->=20>  [1] https://lore.kernel.org/lkml/20250715135645.2230065-1-vitaly.w=
-ool@konsulko.se/
-> >=20
->=20> >=20
->=20> > ---
-> > >  rust/kernel/alloc/allocator.rs | 58 ++++++++++++++++++++++++++++++=
-++++
-> > >  1 file changed, 58 insertions(+)
-> > >=20
->=20> >  diff --git a/rust/kernel/alloc/allocator.rs b/rust/kernel/alloc/=
-allocator.rs
-> > >  index aa2dfa9dca4c..bcc916240f11 100644
-> > >  --- a/rust/kernel/alloc/allocator.rs
-> > >  +++ b/rust/kernel/alloc/allocator.rs
-> > >  @@ -187,3 +187,61 @@ unsafe fn realloc(
-> > >  unsafe { ReallocFunc::KVREALLOC.call(ptr, layout, old_layout, flag=
-s) }
-> > >  }
-> > >  }
-> > >  +
-> > >  +#[macros::kunit_tests(rust_allocator_kunit)]
-> > >  +mod tests {
-> > >  + use super::*;
-> > >  + use core::mem::MaybeUninit;
-> > >  + use kernel::prelude::*;
-> > >  +
-> > >=20
->=20>  --8<--
-> >=20
->=20> >=20
->=20> > + const TEST_SIZE: usize =3D 1024;
-> > >  + const TEST_LARGE_ALIGN_SIZE: usize =3D kernel::page::PAGE_SIZE *=
- 4;
-> > >  +
-> > >  + // These two structs are used to test allocating aligned memory.
-> > >  + // they don't need to be accessed, so they're marked as dead_cod=
-e.
-> > >  + #[allow(dead_code)]
-> > >=20
->=20>  This should be #[expect(dead_code)].
-> >=20
->=20> >=20
->=20> > + #[repr(align(128))]
-> > >  + struct Blob([u8; TEST_SIZE]);
-> > >  + #[allow(dead_code)]
-> > >  + #[repr(align(8192))]
-> > >  + struct LargeAlignBlob([u8; TEST_LARGE_ALIGN_SIZE]);
-> > >  +
-> > >  + struct TestAlign<T, A: Allocator>(Box<MaybeUninit<T>, A>);
-> > >  + impl<T, A: Allocator> TestAlign<T, A> {
-> > >  + fn new() -> Result<Self> {
-> > >  + Ok(Self(Box::<_, A>::new_uninit(GFP_KERNEL)?))
-> > >  + }
-> > >  +
-> > >  + fn alignment_valid(&self, align: usize) -> bool {
-> > >  + assert!(align.is_power_of_two());
-> > >  +
-> > >  + let addr =3D self.0.as_ptr() as usize;
-> > >  + if addr & (align - 1) !=3D 0 {
-> > >  + false
-> > >  + } else {
-> > >  + true
-> > >  + }
-> > >=20
->=20>  This can just be
-> >=20
->=20>  addr & (align - 1) =3D=3D 0
-> >=20
->=20>  instead of the conditional clause.
-> >=20
->=20> >=20
->=20> > + }
-> > >  + }
-> > >=20
->=20>  We could move all the above into test_alignment() given that it's =
-likely only
-> >  needed from there.
-> >=20
->=20> >=20
+Identified using checkpatch.pl.
 
-Hi=20Danilo,
+Changes since v1:
+- Moved the '---' marker line below the Signed-off-by tag as per kernel
+  patch formatting rules
 
-Thanks!
+v1:
+- Addressed review comments from Markus Elfring on changing the description
+  of the patch regarding readability and separation between function definitions
 
-I sent v6 version that rebased on [1].
+Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+---
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Best,
-Hui
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index 24e505111f1f..b1a427a655ef 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -2449,6 +2449,7 @@ void rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
+ 	_rtw_roaming(padapter, tgt_network);
+ 	spin_unlock_bh(&pmlmepriv->lock);
+ }
++
+ void _rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
+ {
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+-- 
+2.39.5
 
-[1] https://lore.kernel.org/lkml/20250715135645.2230065-1-vitaly.wool@kon=
-sulko.se/
-
-> > > +
-> > >  + #[test]
-> > >  + fn test_alignment() -> Result<()> {
-> > >  + let ta =3D TestAlign::<Blob, Kmalloc>::new()?;
-> > >  + assert!(ta.alignment_valid(128));
-> > >  +
-> > >  + let ta =3D TestAlign::<LargeAlignBlob, Kmalloc>::new()?;
-> > >  + assert!(ta.alignment_valid(8192));
-> > >  +
-> > >  + let ta =3D TestAlign::<Blob, Vmalloc>::new()?;
-> > >  + assert!(ta.alignment_valid(128));
-> > >  +
-> > >  + assert!(TestAlign::<LargeAlignBlob, Vmalloc>::new().is_err());
-> > >  +
-> > >  + let ta =3D TestAlign::<Blob, KVmalloc>::new()?;
-> > >  + assert!(ta.alignment_valid(128));
-> > >  +
-> > >  + assert!(TestAlign::<LargeAlignBlob, KVmalloc>::new().is_err());
-> > >  +
-> > >  + Ok(())
-> > >  + }
-> > >  +}
-> > >  --=20
->=20> >  2.43.0
-> > >
-> >
->
 
