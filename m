@@ -1,161 +1,198 @@
-Return-Path: <linux-kernel+bounces-750948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508DBB1632D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:51:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B3F0B16330
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:52:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE34F7B3634
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:50:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CACB77B4180
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7A02DBF49;
-	Wed, 30 Jul 2025 14:51:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C982DC344;
+	Wed, 30 Jul 2025 14:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcJvjZk7"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="S+AevKxR"
+Received: from sinmsgout03.his.huawei.com (sinmsgout03.his.huawei.com [119.8.177.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7004D2C324F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1172DAFD2;
+	Wed, 30 Jul 2025 14:51:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753887097; cv=none; b=ZmDVFCbcx5+yT4lO98BFACFF9ZpQ99ZqaIviVjFqKpequv7FDXGRgYvi5dQuTs3U7f8uDDc9aorMdv2EjrQ77ULrM+CLscZSJIHG+ToCfgyymoEH7qIRanMgvrv0tMAYUcxEFxs8re1GyuAWSHMoRbXSaKKXoFUkng4PzoT4jTc=
+	t=1753887108; cv=none; b=Efm00fPKrCkpBpVdp9g2M1D5iAruLIuboVmPQeSSmEvuWIoYWlBcgwjA5uvBYIUUNHnabzcAowf/nnhm9CrwLMS7THN1VQZBYtncXLzEwCYi30hvIiYKxLjt4CM0hw8P1wdp1HuNJrDQLa+3JJC0ZCUWIv0YIYuJN1J3PxqseBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753887097; c=relaxed/simple;
-	bh=AvX6DV9MZeEEGnxMTsiMzU9R6U+GhYhri4HxSIUZVcg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ij6fDWpOjyvVeOgG3yzK9MfR7IWAZjnFmmPceLqk6CzV0iKXZ2NYzPi7e8eN5tmDN1NmEAqhKuf5aI2OXwCYsAkRYpYEhdHXN5NSXZmVrVDSDcUoLhRSEhH9sh2OZAY4nUSx2TjgXXmy5lXG16l3yzPIAOvse/FaU0K/KDyBzCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcJvjZk7; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55b73f4ead1so2315120e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753887093; x=1754491893; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A7NiWxPTKOFYM9uonseM4vMrBQ8wN02nGWedXjPFtiw=;
-        b=KcJvjZk7EEVmcCsWGIMUwJ/happltqEiJysuwTu78Gb22uxsbl7UpbVoqEcRQaD5U7
-         z3R/DkZtKnWogBJyCuJWH/u4+1MSTcIwXfXLcGr2MApTpYrXgaZxTtvNLf5bs2ZXpCNL
-         tTiKXdGQhJyuGQbV8SClXO48cT/S/qBXd7hFgDZseE5/fZhL/GPb2JyIXhPVpNc7Btf1
-         3qIqaMuI/rr4ld1P2Q/VF/SQ+QWvY44IG9XkyTXAqGKUMNUCC9IM2E/gJHvET3yJYiVK
-         ilWMkUxQCCl9LQBhpmuAjrnutmqQwPwn4o5wOD/xt5+ZBELBBn6G9V2CIi9uWvkFSBMB
-         Jtyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753887093; x=1754491893;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A7NiWxPTKOFYM9uonseM4vMrBQ8wN02nGWedXjPFtiw=;
-        b=pZ1kHSMIDjo0kF67tQwkAFPYcvNuypRWyBofqloBxt5xU6mhBBPWu5ITwGenf/mKwN
-         PETD2rmx44aZOHiVzpfZ6eqzz2iGccEftGAw0R3wCFhV/SXTvasjQwpHhGym8HcA+9Xd
-         l2vCPJhQ2uIaZggRYvUdDVfs70v+qjguGDi/BnLp21o9uYdv/YR/9wvj5RtEJpcfuX2m
-         HNdFgmQx15VPI1gS8gI4I4IojPWohDE7E7zBb9BNanTnKSml45haLX6eT5cdyct1LWSA
-         TOsQkv/dZAB4VdleB6oe5TaEB4IVJvccAV80LnsPdB1sX1+RNc5ZyzX17BAvh3NHl/um
-         xHiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUcyH+H4axPPbb7/QPJYoNvYfNpdCDCe5khvyo9wLuXX2OIP8/P0OdD6clLSxUW9LWrwWUfo1DP4iqeFw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6h4hOfCZehWw188CP5HRRJDWPk6EbS1Mf3hIv4ZAoPgcTCNKF
-	/rFQpu97g1k4PC0yk0iAdSpjn29nrVWPKeUn6iFmQJwxW1+6dIdLgXXgVU6AMswQsATJ849oRSj
-	XobOH8ny/AKL7sieXzWxmhbP/oXx/Jls=
-X-Gm-Gg: ASbGnct7e3U3c2k3rRKEbr5hmLXIXUPx93DKNGTwbT1RWZtCwYI5ffG7tarnwIhgvnI
-	lnxtrLTajGDOSb+P8PgWgUFp6DroA1OGzZh+jEkS0Vlk8TXwXVkMap39t4SO/7MrTb+zohD5w89
-	T0myLjNJ0312v3BkzLWGXRc52E9AxJqgc/eDOpeCENiOMc3AQzK9jII5c86j/Hdkf0kEePwAjkL
-	pMAGjr0ZGr0zRGaU4SX5MR4TLQ9Q/ftbpcohCXYrQ==
-X-Google-Smtp-Source: AGHT+IEgEmq4syI9+uAid95y/R35+yJJ48ObJP6+pf2CLRAl6znW8QzofACTPgJiAcWHclppjwRXGeQ3u9SrRiIwgDk=
-X-Received: by 2002:a05:6512:39c4:b0:553:adf2:38bb with SMTP id
- 2adb3069b0e04-55b7c0986ddmr1271842e87.46.1753887093209; Wed, 30 Jul 2025
- 07:51:33 -0700 (PDT)
+	s=arc-20240116; t=1753887108; c=relaxed/simple;
+	bh=q5UBGjR9V0TiCXYMpVi0Vb0FvsZJoTTs2TRMwSYwVUs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rMjde1HUP014B4TLov1bHGTGvCDnmTAp0j2wmNsC3PrZInoBUKmZlNzk8NmHFhAZp9+JMCYgHAWad4oEc6y8gWLqw4X+pz6jQr0C9FhoEGWAjJ8doUglaefQspNFFBGYa13DIm8lKdKVe+mtFgTCp/gldJ2x2THHwKE5FlQCsXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=S+AevKxR; arc=none smtp.client-ip=119.8.177.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=3e5XihT0AEvE9k2vfKg6bdeeRMsMb3oRVgdt3JCiDtM=;
+	b=S+AevKxRi9MUVpn74t6kjeavWhdteQg51A15oj30m5JwwkjOl5PC/1Y607tYITqkBiQXWAiED
+	fV7vQhvClARLa59CSv/85rVK0fSuTOgfv+1mmxjf6MIGKPzJfXpW4T8WOwExmI7nRVKNJPJg6c6
+	xrMD/2lZi/pqrz5Lc5s1WuY=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.35])
+	by sinmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4bsZrK4g6XzN0s6;
+	Wed, 30 Jul 2025 22:50:09 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bsZrC0pGdz6M4Zg;
+	Wed, 30 Jul 2025 22:50:03 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3DFD01402EA;
+	Wed, 30 Jul 2025 22:51:39 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Jul
+ 2025 16:51:38 +0200
+Date: Wed, 30 Jul 2025 15:51:36 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
+ Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 32/38] coco: guest: arm64: Add support for guest
+ initiated TDI bind/unbind
+Message-ID: <20250730155136.00003d5f@huawei.com>
+In-Reply-To: <20250728135216.48084-33-aneesh.kumar@kernel.org>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+	<20250728135216.48084-33-aneesh.kumar@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250607064444.4310-1-pranav.tyagi03@gmail.com>
- <87cybdp7to.ffs@tglx> <CAH4c4jLjSBxbd3bqkdgcCSWqXURratANgnbq9negrSU283xHpg@mail.gmail.com>
- <87frg3ss9s.ffs@tglx>
-In-Reply-To: <87frg3ss9s.ffs@tglx>
-From: Pranav Tyagi <pranav.tyagi03@gmail.com>
-Date: Wed, 30 Jul 2025 20:21:21 +0530
-X-Gm-Features: Ac12FXySoXDJCYsfTOJ1c18ryEETA_OYD0DDbNocu3gc910feNbr76AnTiqvAps
-Message-ID: <CAH4c4jKmj2gwmW2LS8CuGyw6phtiN+=_Bef8_pSEzjnbsqPOeg@mail.gmail.com>
-Subject: Re: [PATCH] futex: don't leak robust_list pointer on exec race
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
-	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
-	linux-kernel@vger.kernel.org, jann@thejh.net, keescook@chromium.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, Jun 13, 2025 at 6:38=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
->
-> On Wed, Jun 11 2025 at 19:33, Pranav Tyagi wrote:
-> > On Mon, Jun 9, 2025 at 3:15=E2=80=AFPM Thomas Gleixner <tglx@linutronix=
-.de> wrote:
-> > Does the revised version below address the concerns more effectively
-> > or does it still need a bit more seasoning?
-> >
-> > "Currently, sys_get_robust_list() and compat_get_robust_list() perform =
-a
-> > ptrace_may_access() check to verify if the calling task is allowed to
-> > query another task=E2=80=99s robust_list pointer. However, this check i=
-s racy
-> > against a concurrent exec() in the target process.
-> >
-> > During exec(), a task's credentials and memory mappings can change, and
-> > the task may transition from a non-privileged binary to a privileged on=
-e
-> > (e.g., a setuid binary). If get_robust_list() performs ptrace_may_acces=
-s()
-> > before this transition, it may wrongly allow access to sensitive
-> > information after the target becomes privileged.
-> >
-> > To address this, a read lock is taken on signal->exec_update_lock prior
-> > to invoking ptrace_may_access() and accessing the robust_list. This
-> > ensures that the target task's exec state remains stable during the
-> > check, allowing for consistent and synchronized validation of
-> > credentials."
->
-> That's way better, but it still does not explain what the consequences
-> of the racy access are.
-> >>
-> >> You really did not have a better idea than copying all of that logic
-> >> into the compat code?
-> >
-> > As I=E2=80=99m still learning, I wasn=E2=80=99t quite sure how to avoid
-> > duplication there. Would factoring out the common logic into a helper f=
-unction
-> > be the right direction? I=E2=80=99d be grateful for your suggestion.
->
-> Exactly.
->
-Hi,
+On Mon, 28 Jul 2025 19:22:09 +0530
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
 
-I face a small issue while refactoring the common code in a helper.
+> Add RHI for VDEV_SET_TDI_STATE
+> 
+> Note: This is not part of RHI spec. This is a POC implementation
+> and will be later switced to correct interface defined by RHI.
+> 
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
 
-The main obstacle to a full refactor is that the native and compat
-syscalls use different user-visible types (size_t vs compat_size_t,
-struct robust_list_head * vs compat_uptr_t). Because put_user() is
-type-checked at compile-time, I can=E2=80=99t unify both into one function
-without either unsafe casting or weakening type safety (this is as far
-as I understand).
+A few minor comments. 
 
-The best I can do is refactor the common task lookup/permission
-logic into a helper, and leave ABI-specific put_user() calls in thin wrappe=
-rs.
+Maybe we need some discussion of how this is used.
 
-I=E2=80=99d be grateful for your suggestion.
+> diff --git a/arch/arm64/kernel/rhi.c b/arch/arm64/kernel/rhi.c
+> new file mode 100644
+> index 000000000000..3685b50c2e94
+> --- /dev/null
+> +++ b/arch/arm64/kernel/rhi.c
+> @@ -0,0 +1,35 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2025 ARM Ltd.
+> + */
+> +
+> +#include <asm/memory.h>
+> +#include <asm/string.h>
+> +#include <asm/rsi.h>
+> +#include <asm/rhi.h>
+> +
+> +#include <linux/slab.h>
+> +
+> +long rhi_da_vdev_set_tdi_state(unsigned long guest_rid, unsigned long target_state)
+> +{
+> +	long ret;
+> +	struct rsi_host_call *rhi_call;
+> +
+> +	rhi_call = kmalloc(sizeof(struct rsi_host_call), GFP_KERNEL);
+	struct rsi_host_call *rhi_call __free(kfree) =
+		kmalloc(sizeof(*rhi_call), GFP_KERNEL);
 
-Regards
-Pranav Tyagi
+then direct returns on errors.
 
-> Thanks,
->
->         tglx
+> +	if (!rhi_call)
+> +		return -ENOMEM;
+> +
+> +	rhi_call->imm = 0;
+> +	rhi_call->gprs[0] = RHI_DA_VDEV_SET_TDI_STATE;
+> +	rhi_call->gprs[1] = guest_rid;
+> +	rhi_call->gprs[2] = target_state;
+> +
+> +	ret = rsi_host_call(virt_to_phys(rhi_call));
+> +	if (ret != RSI_SUCCESS)
+> +		ret =  -EIO;
+> +	else
+> +		ret = rhi_call->gprs[0];
+> +
+> +	kfree(rhi_call);
+> +	return ret;
+> +}
+> diff --git a/drivers/virt/coco/arm-cca-guest/arm-cca.c b/drivers/virt/coco/arm-cca-guest/arm-cca.c
+> index 2c0190bcb2a9..de70fba09e92 100644
+> --- a/drivers/virt/coco/arm-cca-guest/arm-cca.c
+> +++ b/drivers/virt/coco/arm-cca-guest/arm-cca.c
+> @@ -222,11 +222,20 @@ static void cca_tsm_pci_remove(struct pci_tsm *tsm)
+>  
+>  static int cca_tsm_lock(struct pci_dev *pdev)
+>  {
+> -	unsigned long ret;
+> +	long ret;
+
+Push this earlier. It doesn't do any harm that I can see and will reduce churn
+
+> +	int vdev_id = (pci_domain_nr(pdev->bus) << 16) |
+> +		PCI_DEVID(pdev->bus->number, pdev->devfn);
+>  
+> +	ret = rhi_da_vdev_set_tdi_state(vdev_id, RHI_DA_TDI_CONFIG_LOCKED);
+> +	if (ret) {
+> +		pci_err(pdev, "failed to TSM bind the device (%ld)\n", ret);
+> +		return -EIO;
+> +	}
+> +
+> +	/* This will be done by above rhi in later spec */
+>  	ret = rsi_device_lock(pdev);
+>  	if (ret) {
+> -		pci_err(pdev, "failed to lock the device (%lu)\n", ret);
+> +		pci_err(pdev, "failed to lock the device (%ld)\n", ret);
+>  		return -EIO;
+>  	}
+>  	return 0;
+
+>  
+>  static const struct pci_tsm_ops cca_pci_ops = {
+> diff --git a/drivers/virt/coco/arm-cca-host/arm-cca.c b/drivers/virt/coco/arm-cca-host/arm-cca.c
+> index 0807fcf8d222..18d0a627baa4 100644
+> --- a/drivers/virt/coco/arm-cca-host/arm-cca.c
+> +++ b/drivers/virt/coco/arm-cca-host/arm-cca.c
+> @@ -254,9 +254,13 @@ static struct pci_tdi *cca_tsm_bind(struct pci_dev *pdev, struct pci_dev *pf0_de
+>  static void cca_tsm_unbind(struct pci_tdi *tdi)
+>  {
+>  	struct realm *realm = &tdi->kvm->arch.realm;
+> -
+> +	/*
+> +	 * FIXME!!
+> +	 * All the related DEV RIPAS regions should be unmapped by now.
+> +	 * For now we handle them during stage2 teardown. There is no
+> +	 * bound IPA address available here. Possibly dmabuf can help
+> +	 */
+>  	rme_unbind_vdev(realm, tdi->pdev, tdi->pdev->tsm->dsm_dev);
+> -
+
+Tidy up these whitespace changes.  Just adds noise.
+
+>  	module_put(THIS_MODULE);
+>  }
+>  
+
 
