@@ -1,331 +1,270 @@
-Return-Path: <linux-kernel+bounces-750526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34B1BB15D71
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:54:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D627B15D99
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FC9B7A2ACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FC901893700
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:55:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F33E277CBA;
-	Wed, 30 Jul 2025 09:54:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B475293B63;
+	Wed, 30 Jul 2025 09:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="o5qIpDnx"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2052.outbound.protection.outlook.com [40.107.101.52])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KmXUO4Wq"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE38269AFB;
-	Wed, 30 Jul 2025 09:54:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753869252; cv=fail; b=Ejdzos9aC8Mv5Q81j13VNJzc9Vg116iiV+gXWkqn+oscA6Z1GgqgQcGvvN0N59a8FldWEWaIOk7hn5Lcn/cOPat5BLd5yPHLFnf/RcGHO21unJ5L0uYb8JLVb9uTK/MnUsHlu06w1u8VQ0sxZYh+7/ZXMxwLtNyr1ZA92y8Ekis=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753869252; c=relaxed/simple;
-	bh=utF7qBGQzvPEneDb2Ainkvq4ugZ4HOpgKsoimUX2yNg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=CoUTkfu95EcFxt+E0qn+TdFuLB9Vqv8WVyBc+02f0RgVxAVdU93RyFhzdMfUwbsN3rDrz3jQUNBuADXkuInTc6aWHdzmRJpDG2b25a2Ei6ucbWT5Z8Y4pFQDxs4iyUSeW1z3lWkdob9u+5zfGWU7VLaG90/Ep0s7Qn2VSXIpeos=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=o5qIpDnx; arc=fail smtp.client-ip=40.107.101.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dBxXbocBVresbXZ0tcAtJiEuA29qaCgvDgAZsIW7WgqnpEiIrZXYvVs2eNv9mhh7F9Iqb3MpHpdq15HB8e11FXKWScRtNcLgG/icP8yiLqkTWKXe6kHaLVK8PCPLz/XcCFBkWd4tmcLKjvhBKmam/iX5MA5x9vrn8H9hLQDCuOjOUa+2A+0YrakxlTIP4hRcKpwxgktvN3RZWGhK/vOOgJxr4kl3515PS3rLO1uJdvqhFc8EjIEnOKjNjzKiFs6vXBxuAeiDu4tBWDO0Z/FNA3Zft5tlJ9NFSjnZK3R3pwry07qpy0MiHT9RLsU/+823wOzXcMmvYMEYP+avewb4WQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tQH3jlZBlNtansmRO5RB3CQNHovTUrqpgQJrhHdffcI=;
- b=DZP3Eduwob7x7ScxZ1jOYqjwg5lcaOfAPjUuw+iAqQ3IslKTzVsrt2Un2pLiDPJ06edfbcQiGUdbTpeIvQfFJaZ99vsmpP34hMOsc/qjWluJrd6fnFgxanyoskGGGS0SJkGO/tud7vgdf6lQN1JEDjvfn49ammHNDh92B1uHBYgaoOyLpKlB3mwGBZzE0AvR0ylonPfQ98YgTYFyJ9Y2yV0RpGA33o7u5x2ckPBo2bgblKZRC6EIhKucEXLICMfBwgYYpYd0QbxXJ3x0TlSexndkIEkgGFaHQ7Ja6rcSFDYAZC0wWAYYMlu3+LeTozQz4Da09fD8Z5pMiDuo0u4fUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tQH3jlZBlNtansmRO5RB3CQNHovTUrqpgQJrhHdffcI=;
- b=o5qIpDnxty+Yw7I4+Etu8X6m6rQrDSYdXQQJnOD7j/6NhwhEum2DZq/AWVfptPfYiLoflJQn9aba5/vVAde/LoPSbnl1KrF+scedEw74WYaEcad5RLK3YADp/XeSa9IuMbOHiK632Kgegwz/+JLP1MiLd9aRaSrEmj9UtaCo8Y0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
- by SN7PR12MB6765.namprd12.prod.outlook.com (2603:10b6:806:26b::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Wed, 30 Jul
- 2025 09:54:07 +0000
-Received: from PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
- ([fe80::e5c1:4cae:6e69:52d7%3]) with mapi id 15.20.8964.026; Wed, 30 Jul 2025
- 09:54:06 +0000
-Message-ID: <a3272335-1813-4706-813e-a79a9cabc659@amd.com>
-Date: Wed, 30 Jul 2025 17:53:58 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
-To: Sultan Alsawaf <sultan@kerneltoast.com>
-Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
- sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
- gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
- bin.du@amd.com
-References: <20250618091959.68293-1-Bin.Du@amd.com>
- <aIEmJXNpNN0QF233@sultan-box> <12fb4d09-6b94-4f54-86b8-8a3ac0949151@amd.com>
- <aIVXVpg_9XxRXUAH@sultan-box> <b02d0749-6ecb-4e69-818a-6268f894464d@amd.com>
- <aIh7WB0TGNU15Zm1@sultan-box> <aIh8JPTv9Z5lphRQ@sultan-box>
- <751e9265-889f-4fbf-acf8-7374311a6b6f@amd.com> <aImvvC9JEgQ2xBki@sultan-box>
-Content-Language: en-US
-From: "Du, Bin" <bin.du@amd.com>
-In-Reply-To: <aImvvC9JEgQ2xBki@sultan-box>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0136.apcprd02.prod.outlook.com
- (2603:1096:4:188::16) To PH8PR12MB7446.namprd12.prod.outlook.com
- (2603:10b6:510:216::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9FBA442C;
+	Wed, 30 Jul 2025 09:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753869267; cv=none; b=fnqaK0dnN0qVi7vM+tWYEv1Tgu+aoHhu53v2MVcTk7q5BFDOzrsj+Hy11N5Q13bNaGljaTC/JDaM/GZO7T5c4z0GVE9QutiNpmsffIdkWCpYrtzju5XR5yYR+BszGGmSyIL/o+J67GAZ0bX5vsQFFIj3o2wZOZxij2tI5iLk/iY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753869267; c=relaxed/simple;
+	bh=JliacoCtK5j0DKn71ybgNXHHkJQzdyhYXbhX8z7fdos=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IduRJ5pE2u6wG70jwRW71Ntls1RS3E7zqj8hUNtsjP5/caQjiOqVJt75vrFaWhXB0vB68TFUORCMz/s8KMKS7to6B1U1wvmb5BDU77FtjeYey5zAgYFiLqrqKCOV0htMnvpA9842YuMNIbEK4lyZTh/gk2RoakuzSO5SSSJYlIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KmXUO4Wq; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BE35443173;
+	Wed, 30 Jul 2025 09:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753869263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1PP918sGSIPuq6wRtcjBer+cHyUovX7JvOYbDIDINdY=;
+	b=KmXUO4WqYJXYLmKtBQfhwAHlbEgZ2TdiIF7Qb+JSO7n0l5pVaztHfzq9YHqcE23OLAOPq0
+	Qw8znwEDRXY/XZtAh4FiB+GX+URemFb0+reXGUyM9rNp6zIsEXMdVXaeI0Q4P/Xzvtoizp
+	yEaSXPx7QLh6WnnJ5V+3G3VirJJDohkw7uxx/F+aUFoKWhVmZDZqEtBmA6euZoMas9Tk5P
+	Z9xPpcgeGdUBpBjNDJTaJpkDC0X55ux9d1g9SA6u1ksfg/xFM5rVsl5ECg+73CwleMpUgb
+	3sw9ZvwIZKUnUlnH4RMdd88JJk5KYClnNeTFmuycFVJyppgRW+5zqz93LCQw0w==
+Date: Wed, 30 Jul 2025 11:54:21 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
+ <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
+ Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Miquel
+ Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 5/6] soc: renesas: Add support for Renesas RZ/N1 GPIO
+ Interrupt Multiplexer
+Message-ID: <20250730115421.770d99bf@bootlin.com>
+In-Reply-To: <20250729195137.GA658914-robh@kernel.org>
+References: <20250725152618.32886-1-herve.codina@bootlin.com>
+	<20250725152618.32886-6-herve.codina@bootlin.com>
+	<20250729195137.GA658914-robh@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|SN7PR12MB6765:EE_
-X-MS-Office365-Filtering-Correlation-Id: c57684e2-bbab-472f-23d4-08ddcf4f05ea
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZC9GV1ZwSGxYRmppYms1Umt5ZFVaa29lWDRlS0NFbnpIck5WUzZITXVMTkcy?=
- =?utf-8?B?Mkk2OWJoNTlDeHVKd0JSUWdXZ3kwc2orZFlKckQ1RzlyeEF6VE5JaU9FSlJt?=
- =?utf-8?B?NStDaktCOElxaUdzT0tGQTBEUCt4OGlBNVRpYTNwSTI5VGpZRFh5N1VKRGlW?=
- =?utf-8?B?N3A3SEs2MEZvbnBNSzR1ZXJ1T0dWVHJiTWNpOVdwaWdZZkVZUVpHZUkxSWtC?=
- =?utf-8?B?QWo0Y0VPV0YvQTJSU2h0Y1FUdHpmbEh2azBnMnB0dW9ZQU1KOFQvWFBmMFNm?=
- =?utf-8?B?S3NpeXBIRUs3UXMwb1pWalZoeDZaQm4rVk9JRXU3TEhycmdWSjNKcmk4Nkdu?=
- =?utf-8?B?RTVCR2hIajQ3T0IrK1B1SmwrVkRYN290a0xLNUZMc1pNUmhZMHdFMGs3WW9j?=
- =?utf-8?B?WjBQMkh4RjAwQldHOXhvVlpWVEIvUGpxVmhRZlk2MHRPdDJ6VlY0SXpUeWpk?=
- =?utf-8?B?U0V5Z09sYk1YMnZUTzNsRDNJSVk3YjBOMktYbWl6UnZzaFJtNzg1V0dDcHlw?=
- =?utf-8?B?OVF3MktjRmFKSXVONFVIMkJFbXFrNDkyd1dpakx2WXhsVzVneThUR1pRRkM2?=
- =?utf-8?B?dFRQbGZZYmU0N09RL2NPZ1RUVW9FN1Q5MXYyTGxWUG1LU2hNWjhLQm81RnR4?=
- =?utf-8?B?ZVZYVHo0QzAzN25aODY3SlJYK1N2cTdvTmlCc2ZsVnMyYzk3WlZDNE5DeFZh?=
- =?utf-8?B?WUtLdXVzUEk0Wm9iSFYvY3ZUYlZPV05XMGJBYU9sTk1VbDhCOGJnOTluL3Vt?=
- =?utf-8?B?T25sK1RvbHJodklKQTBIVGV5VEJsUGRMS3ZXQkFBZS9LV2NIbG5KS3VBUmRt?=
- =?utf-8?B?ZFU3MERyRnlxY05mMy9UL1hnV29BeUNxT09SUWY2cGpMeCs1WXZDVVlpZkhC?=
- =?utf-8?B?UjdSZFMwUld6TFVJV2VoUk10MXdQZTY5VUtZUC9GNUpWcWVHQS8yYWl1WDRn?=
- =?utf-8?B?TkJSMGpJSC9YUkFQWkJsQm1pQVdxTFZpaEpZSGlMcURobC9iUndaYUdDcUUw?=
- =?utf-8?B?SzRGdFV1K0VrSHRnSFZ1cDJEQlBEN1ZCZDM4L3IyRUZtL3BEOU1WY0xmQlpm?=
- =?utf-8?B?Vkt6NDVNNldDNndpcGdDNHlNK0dzTkRYMlc2Tm0wM2hqRmFaTEttdXZHQkZD?=
- =?utf-8?B?bitjVzlWWG5lT0hGSWZmcXNWYUZBdWlBRW4vQlhhbEpEUDU5SGlaTVRPYitZ?=
- =?utf-8?B?aktZbDNuQy9WaGhDUWYxRkh3bDBCT0tqbWZnM0RyUWE5THV6RWNkZmVzR0g5?=
- =?utf-8?B?SzZvNGZoSVdwS1JjaEFicDB4bVp5VHI3VzF2cmNLNHRmWWFWcnJWMEJ3SWE0?=
- =?utf-8?B?TjE3S0tEUnFGeG9VVS9wYWR2OTRRZVoxRUFabWUwWnh3eEVYcVE2WVpiekpy?=
- =?utf-8?B?Y0dNUW53SSs4YmpydnB4bFR0WUgvRnByajg0RjVLM21jRjdDUVlNWU90WGZa?=
- =?utf-8?B?aHZ0SlJTZTVhcWJRY1pVcGxTSVE5ZHQ4aUFtVjMyOHVhWmlXNkhXaGJGbGRp?=
- =?utf-8?B?cXNneGVOVEppSHB3d0liT3BEZkhFVjhIbTBVSDM3T1pSNktJUHY3YVcxTUNt?=
- =?utf-8?B?b3R0UC9RWHNYRWdxRXZ1ZXFPQzNlRHEweFRpWVl1Vnlvak1LZmZpQ1JqdkVR?=
- =?utf-8?B?TzlxcUovNW1SY2dwUHNvSzhuWG9iSkQ2TnNQSWpwaEFqOGhkS1BacnpkbzZa?=
- =?utf-8?B?aTJtMmErUzdwUy9nTGpTK3pNN3luQ3hkUFZiei80dnR4bGIxbTc5M2Jhb3k4?=
- =?utf-8?B?Y0dXdWNWQTNra1JSVlZabXIwdk5EYzROQ2ZETUVqMnVzclc0V3RPTzRhNXpz?=
- =?utf-8?B?S0ZkRnhSMUt2eHEySjl0QXZTV3NBVEJRRUN2UGVhVnhpcEhDNTZSVUhMUmM4?=
- =?utf-8?B?MStKMXgzelVzT3RvdVBBTExKU1dYUnhMYzhid0Y4eHljalFoZmhXZnk5c2Mr?=
- =?utf-8?Q?MgiMr9CXCtM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z25mZHk2MEUreHppWVFnY0xXUUlkWEJURk5tN1JEako4aU0rdUNDc1NreE5V?=
- =?utf-8?B?TmtOOHVWZFJ2Ykc1NjJ0Tk9PWFA5YjRYNjkxUzZxSW15U1pRR2puamhEY09z?=
- =?utf-8?B?amZhT0VRU1FTTnVleE84aGNKbHJsWERiQzJTK1ZQZ0JQc0lEVDNuNlMvZm83?=
- =?utf-8?B?aUJoelpKZVZTSTFUT2JPcGxDZXBKbkJoVy9LR0tMSk1EZFF4RDJxOFhFNi8r?=
- =?utf-8?B?YXg5OG9pRHJ2L0FRQkxlaWR2U1JKdk1UcmdPOFRESC90L2RxZHJ4aGY5NTRk?=
- =?utf-8?B?c0VyRFVXclNXRHlteW04YXFySEdCMmZkbGtZZ3UyOWZnTHNlM29JdzEwNExa?=
- =?utf-8?B?V2FXV1lPMjcyaFg0anNCdUFlNzEzZkNXVFl2SnBPN0YyVEdrZTAxN0YxR3JZ?=
- =?utf-8?B?QU9GQjVLdGJYOGNOVThSaHJFWFQ2Szc5cllnVzVpZTJpbkVOVVBDbTlmdTdh?=
- =?utf-8?B?Z0F0U0JRTEg3ZC9SY1JVcWphR01Xb2lPVHozanBlVEdiTlVqK3dkUWF0bXlY?=
- =?utf-8?B?ZEVUM2RrUjFOdmw5Mmo2UGxVa0NVODl0R3ZNQW4ydXU4OVZOZUlreUFIZVYy?=
- =?utf-8?B?eC9VeHJJR1IvU01LZlpJNjlpSmJLSjR2aktCbytrZVBlcEgzRXp4S2tKS1R4?=
- =?utf-8?B?bHBlRUtoZkFSK3JwNWxxZENLRnVlWUYvdklzOUc5alRqSmtiL2tZemRTY2ha?=
- =?utf-8?B?SEFoaDVnNE51a1JRcVAvME9TTXB1WVN4VXFaUklkd0VJcHRxS3hNVlA3TVZF?=
- =?utf-8?B?aVI2YXVlMVFmeGM1akkzQWpob0JZK2FTbkxkb2ZtdFpnL1U3UVlpUFFtcTMy?=
- =?utf-8?B?VEdia0x1VDlNbVNUTk9NZHkxeWRQblA5YmpsOGthOHFYcitLYVVORE4zY2xO?=
- =?utf-8?B?ZEhJbnB6SjBIYThNRWhHcUdXQktjdlRhMFBJZkdNZXRuUWpqRmlhZUZEc1F0?=
- =?utf-8?B?SnpwenhYRnZFVVVjb1gvWG1RK2QvOTVVZ3RCNnRaVzBrY2ZFTWVMOGRLT1hQ?=
- =?utf-8?B?VTRqSEYvYzFKTk9qeklmckIzcXdHSnB3WkQ4V2lvZ0hENkRqcnVjVHVsRzQz?=
- =?utf-8?B?R3hFcTNjWmlXZWNvZlJUMjJhN1d0WEtJM3puYnE3NHFTV0JZQ3dGTUpkYnVZ?=
- =?utf-8?B?ZU5oeGRqY1BUdE04YkpSaEpRL09WYTdOTjJ3eUVrWU56cXpKVXZjbVZVVUhB?=
- =?utf-8?B?dlFDdC85Mm5nWmEyMVJheE9jOXFqdzF1VzA4ZVNuSXlhUXByOG1MZ1NQUUQv?=
- =?utf-8?B?VXgwdHJDWkI4WUZrZVkrT0FDcU1WQytHcVVQdWQxVWF0WS9nSXF2cnBTZmdJ?=
- =?utf-8?B?NTBjS29QdHljSGxyQmhwVjJLVVlIM20zVXhiNkhTRkdJTnZLaHl2ak83R2Vt?=
- =?utf-8?B?K0VHcEl6aFlhRm12c1NHQmtPbW9WTDhhdnZFbE92M1BHTERjU1BvbHloWVNY?=
- =?utf-8?B?WTFLdkZlL1Q3WEovTjFYdkJMUjMwV0tvVTFTVkpVeG5kRXRCRHBrRjBPdkhm?=
- =?utf-8?B?ZG9DUm9rWmZ1S2ZVOUhXSStlU3VYZU5PQmRRVGpCSUhCQWZEMEhUaWpPNklX?=
- =?utf-8?B?L1ErUEFpdmdldjZBZ2lSTjBWYm00SzduaURlM1Zaa1NrTkNwNGlJSk56MmdE?=
- =?utf-8?B?T1MxMUhKOXF2dmsxSVJzTE5TTFI1eWpDWkpCRzhBbEdmdGtBRERtM1ZaNE9u?=
- =?utf-8?B?cFlFaUFaVWJnVUhMZGJ0WmNMZU1IcWxBTUl4b1V6RDdpVUFmeXlVR0FkMVFB?=
- =?utf-8?B?WXN5VkdRRXEzOVBJNWljdk1WVCtud2dxTys4eXBLVWVxa29NUzJPeEE4R2FR?=
- =?utf-8?B?MkRGYXVuZ1RMVk5IUkkzM0NuQ3pZbDBlbHQ4SHJyU1JXdnhrR2JWa1dPcFVl?=
- =?utf-8?B?a1JpM05tbmJEOU0xeHV0YzVMU3hNQmpmSEhNSnRJa0xjM3lOeXdiNG1Bd1My?=
- =?utf-8?B?RE1uNnl0QkRjc3UzRXZMSWVIUytwSU9nZlkrempTTTJQZDhPQ2RtcGQzQytw?=
- =?utf-8?B?d1A4SGdvQUZyYUI3eDN2dk9YeUZQYmxySFFJdkdDcUthZDA5MVhndmNIZGFO?=
- =?utf-8?B?MnpmdGdJRkJISmFOTjErZ1VGMjN2VHFtMVpuVjZ3YnFyOExGdWlIOE9ycUJ4?=
- =?utf-8?Q?8b/c=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c57684e2-bbab-472f-23d4-08ddcf4f05ea
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 09:54:06.8277
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 4/co6PCg6jH1EVw/BpHwkxOw3YN8p3R3dwXJuffUdQlDpJ15wVFkCRVdJDM44oRf
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6765
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeljeeivdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhohgrnhesohhsrdgrmhhpvghrvggtohhmphhuthhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgut
+ heskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehmrghgnhhushdruggrmhhmsehgmhgrihhlrdgtohhm
+X-GND-Sasl: herve.codina@bootlin.com
 
-Hi Sultan, really glad to hear that you got your camera working
+Hi Rob,
 
-On 7/30/2025 1:38 PM, Sultan Alsawaf wrote:
-> On Tue, Jul 29, 2025 at 06:13:50PM +0800, Du, Bin wrote:
->> On 7/29/2025 3:45 PM, Sultan Alsawaf wrote:
->>> On Tue, Jul 29, 2025 at 12:42:16AM -0700, Sultan Alsawaf wrote:
->>>> On Tue, Jul 29, 2025 at 11:32:23AM +0800, Du, Bin wrote:
->>>>> Thanks Sultan, please see my comments
->>>>>
->>>>> On 7/27/2025 6:31 AM, Sultan Alsawaf wrote:
->>>>>> On Fri, Jul 25, 2025 at 06:22:03PM +0800, Du, Bin wrote:
->>>>>>>> I have the Ryzen AI MAX+ 395 SKU of the HP ZBook Ultra G1a 14.
->>>>>>>>
->>>>>>>> I cannot for the life of me get the webcam working under Linux. The webcam works
->>>>>>>> under Windows so it's not a hardware issue.
->>>>>>>>
->>>>>>>> With this patchset and all of the patches you link here applied to 6.15, I get
->>>>>>>> the following errors:
->>>>>>>>       [   11.970038] amd_isp_i2c_designware amd_isp_i2c_designware: Unknown Synopsys component type: 0xffffffff
->>>>>>>>       [   11.973162] amd_isp_i2c_designware amd_isp_i2c_designware: error -19: i2c_dw_probe failed
->>>>>>>>
->>>>>>>> With the old ispkernel code from February [1] applied on 6.15, the webcam
->>>>>>>> indicator LED lights up but there's no image. I see these messages at boot:
->>>>>>>>       [    9.449005] amd_isp_capture amd_isp_capture.1.auto: amdgpu: AMD ISP v4l2 device registered
->>>>>>>>       [    9.489005] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: The OV05 sensor device is added to the ISP I2C bus
->>>>>>>>       [    9.529012] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
->>>>>>>>       [    9.554046] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
->>>>>>>>       [    9.554174] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
->>>>>>>>       [    9.580022] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
->>>>>>>>
->>>>>>>> And then the kernel crashes due to the same use-after-free issues I pointed out
->>>>>>>> in my other email [2].
->>>>>>>>
->>>>>>>> Any idea what's going on?
->>>>>>>>
->>>>>>>> [1] https://github.com/amd/Linux_ISP_Kernel/commit/c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4
->>>>>>>> [2] https://lore.kernel.org/r/aIEiJL83pOYO8lUJ@sultan-box
->>>>>>> Hi Sultan,
->>>>>>>
->>>>>>> [1] is for kernel 6.8, believe it can't be applied to 6.15. We didn't verify
->>>>>>> on 6.15 but we are really glad to help, would you please provide some info,
->>>>>>> 1. Suppose you are using Ubuntu, right? What's the version?
->>>>>>> 2. 6.15, do you mean https://github.com/torvalds/linux/tree/v6.15 ?
->>>>>>>
->>>>>>> After your confirmation, we'll see what we can do to enable your camera
->>>>>>> quickly and easily
->>>>>>>
->>>>>>> Regards,
->>>>>>> Bin
->>>>>>
->>>>>> Thank you, Bin!
->>>>>>
->>>>>> 1. I'm using Arch Linux with the ISP4-patched libcamera [1].
->>>>>> 2. Yes, here is my kernel source [2].
->>>>>>
->>>>>> I have some more findings:
->>>>>>
->>>>>> Currently, the first blocking issue is that the I2C adapter fails to initialize.
->>>>>> This is because the ISP tile isn't powered on.
->>>>>>
->>>>>> I noticed that in the old version of amd_isp_i2c_designware [3], there were
->>>>>> calls to isp_power_set(), which is available in the old ISP4 sources [4].
->>>>>> Without isp_power_set(), the I2C adapter always fails to initialize for me.
->>>>>>
->>>>>> How is the ISP tile supposed to get powered on in the current ISP4 code?
->>>>>>
->>>>> You are correct, yes, i believe the I2C adapter failure is caused by ISP not
->>>>> being powered up. Currently in latest code, isp_power_set is no longer
->>>>> available, instead, we implemented genPD for ISP in amdgpu
->>>>> https://lore.kernel.org/all/20250618221923.3944751-1-pratap.nirujogi@amd.com/
->>>>> Both amd_isp_i2c and amd_isp_capture are in the power domain and use the
->>>>> standard runtime PM API to do the power control
->>>>
->>>> Thanks for that link, I found it along with another patch on the list to make
->>>> the fwnode work ("drm/amd/amdgpu: Initialize swnode for ISP MFD device").
->>>>
->>>>>> Also, I noticed that the driver init ordering matters between all of the drivers
->>>>>> needed for the ISP4 camera. In particular, amd_isp_i2c_designware and amd_isp4
->>>>>> must be initialized before amd_capture, otherwise amd_capture will fail to find
->>>>>> the fwnode properties for the OV05C10 device attached to the I2C bus.
->>>>>>
->>>>>> But there is no driver init ordering enforced, which also caused some issues for
->>>>>> me until I figured it out. Maybe probe deferral (-EPROBE_DEFER) should be used
->>>>>> to ensure each driver waits for its dependencies to init first?
->>>>>>
->>>>> amd_isp_capture only has dependency on amd_isp4 which is the ACPI platform
->>>>> driver, it is init before amd_isp_catpure.
->>>>> Do you see in your side the amd_capture probe failure caused by failing to
->>>>> read fwnode properties? If that's the case please help to check if amd_isp4
->>>>> is loaded successfully
->>>>
->>>> I got much further now: there aren't any driver initialization errors, but when
->>>> I open the camera, there's no image. The camera LED turns on so it's active.
->>>>
->>>> And then shortly afterwards, amdgpu dies and the entire system freezes.
->>>>
->>>> I've attached my full dmesg, please let me know what you think. Thanks!
->>>
->>> I almost forgot, here is my current kernel tree:
->>> https://github.com/kerneltoast/kernel_x86_laptop/tree/v6.16-sultan-isp4
->>>
->>> Sultan
->>
->> Thanks Sultan, yes, seems much close to the final success. Will have some
->> internal discussion.
+On Tue, 29 Jul 2025 14:51:37 -0500
+Rob Herring <robh@kernel.org> wrote:
+
+> On Fri, Jul 25, 2025 at 05:26:14PM +0200, Herve Codina wrote:
+> > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
+> > interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
+> > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
+> > 
+> > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
+> > IRQ lines out of the 96 available to wire them to the GIC input lines.
+> > 
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > ---
+> >  drivers/soc/renesas/Kconfig       |   4 +
+> >  drivers/soc/renesas/Makefile      |   1 +
+> >  drivers/soc/renesas/rzn1_irqmux.c | 169 ++++++++++++++++++++++++++++++
+> >  3 files changed, 174 insertions(+)
+> >  create mode 100644 drivers/soc/renesas/rzn1_irqmux.c
+> > 
+> > diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+> > index fbc3b69d21a7..9e8ac33052fb 100644
+> > --- a/drivers/soc/renesas/Kconfig
+> > +++ b/drivers/soc/renesas/Kconfig
+> > @@ -58,6 +58,7 @@ config ARCH_RZN1
+> >  	select PM
+> >  	select PM_GENERIC_DOMAINS
+> >  	select ARM_AMBA
+> > +	select RZN1_IRQMUX
+> >  
+> >  if ARM && ARCH_RENESAS
+> >  
+> > @@ -435,6 +436,9 @@ config PWC_RZV2M
+> >  config RST_RCAR
+> >  	bool "Reset Controller support for R-Car" if COMPILE_TEST
+> >  
+> > +config RZN1_IRQMUX
+> > +	bool "Renesas RZ/N1 GPIO IRQ multiplexer support" if COMPILE_TEST
+> > +
+> >  config SYSC_RZ
+> >  	bool "System controller for RZ SoCs" if COMPILE_TEST
+> >  
+> > diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+> > index 3bdcc6a395d5..daa932c7698d 100644
+> > --- a/drivers/soc/renesas/Makefile
+> > +++ b/drivers/soc/renesas/Makefile
+> > @@ -14,4 +14,5 @@ obj-$(CONFIG_SYS_R9A09G057)	+= r9a09g057-sys.o
+> >  # Family
+> >  obj-$(CONFIG_PWC_RZV2M)		+= pwc-rzv2m.o
+> >  obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
+> > +obj-$(CONFIG_RZN1_IRQMUX)		+= rzn1_irqmux.o
+> >  obj-$(CONFIG_SYSC_RZ)		+= rz-sysc.o
+> > diff --git a/drivers/soc/renesas/rzn1_irqmux.c b/drivers/soc/renesas/rzn1_irqmux.c
+> > new file mode 100644
+> > index 000000000000..37e41c2b9104
+> > --- /dev/null
+> > +++ b/drivers/soc/renesas/rzn1_irqmux.c
+> > @@ -0,0 +1,169 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * RZ/N1 GPIO Interrupt Multiplexer
+> > + *
+> > + * Copyright 2025 Schneider Electric
+> > + * Author: Herve Codina <herve.codina@bootlin.com>
+> > + */
+> > +
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_irq.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#define IRQMUX_MAX_IRQS 8
+> > +
+> > +static int irqmux_is_phandle_args_equal(const struct of_phandle_args *a,
+> > +					const struct of_phandle_args *b)
+> > +{
+> > +	int i;
+> > +
+> > +	if (a->np != b->np)
+> > +		return false;
+> > +
+> > +	if (a->args_count != b->args_count)
+> > +		return false;
+> > +
+> > +	for (i = 0; i < a->args_count; i++) {
+> > +		if (a->args[i] != b->args[i])
+> > +			return false;
+> > +	}
+> > +
+> > +	return true;
+> > +}
+> > +
+> > +static int irqmux_find_interrupt_index(struct device *dev, struct device_node *np,
+> > +				       const struct of_phandle_args *expected_irq)
+> > +{
+> > +	struct of_phandle_args out_irq;
+> > +	bool is_equal;
+> > +	int ret;
+> > +	int i;
+> > +
+> > +	for (i = 0; i < IRQMUX_MAX_IRQS; i++) {
+> > +		ret = of_irq_parse_one(np, i, &out_irq);  
 > 
-> I got the webcam working. The same bug happened when I tried Ubuntu's linux-oem
-> kernel, which made me think that the issue was firmware.
+> I don't really want more users of this... More below.
 > 
-> And indeed, the culprit was a firmware update from February. I bisected
-> linux-firmware and found the commit which broke the webcam for me:
+> > +		if (ret)
+> > +			return ret;
+> > +
+> > +		is_equal = irqmux_is_phandle_args_equal(expected_irq, &out_irq);
+> > +		of_node_put(out_irq.np);
+> > +		if (is_equal)
+> > +			return i;
+> > +	}
+> > +
+> > +	return -ENOENT;
+> > +}
+> > +
+> > +struct irqmux_cb_data {
+> > +	struct device_node *np;
+> > +	struct device *dev;
+> > +	u32 __iomem *regs;
+> > +};
+> > +
+> > +static int irqmux_imap_cb(void *data, const __be32 *imap,
+> > +			  const struct of_phandle_args *parent_args)
+> > +{
+> > +	struct irqmux_cb_data *priv = data;
+> > +	u32 src_hwirq;
+> > +	int index;
+> > +
+> > +	/*
+> > +	 * The child #address-cells is 0. Already checked in irqmux_setup().
+> > +	 * The first value in imap is the src_hwirq
+> > +	 */
+> > +	src_hwirq = be32_to_cpu(*imap);  
 > 
-> 	commit 1cc8c1bfa11251ce8bfcc97d1f15e312f7fe4df0 (HEAD)
-> 	Author: Pratap Nirujogi <pratap.nirujogi@amd.com>
-> 	Date:   Wed Feb 19 12:16:51 2025 -0500
+> The iterator should take care of the endianness conversion.
+
+Ok, it will take care.
+
 > 
-> 	    amdgpu: Update ISP FW for isp v4.1.1
-> 	
-> 	    From internal git commit:
-> 	    5058202443e08a673b6772ea6339efb50853be28
-> 	
-> 	    Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> > +
+> > +	/*
+> > +	 * Get the index in our interrupt array that matches the parent in the
+> > +	 * interrupt-map
+> > +	 */
+> > +	index = irqmux_find_interrupt_index(priv->dev, priv->np, parent_args);
+> > +	if (index < 0)
+> > +		return dev_err_probe(priv->dev, index, "output interrupt not found\n");
+> > +
+> > +	dev_info(priv->dev, "interrupt %u mapped to output interrupt[%u]\n",
+> > +		 src_hwirq, index);  
 > 
-> 	 amdgpu/isp_4_1_1.bin | Bin 4543184 -> 6083536 bytes
-> 	 1 file changed, 0 insertions(+), 0 deletions(-)
+> Do you even need "interrupts"? Just make the "interrupt-map" index 
+> important and correspond to the hw index. That would greatly simplify 
+> all this.
+
+I would like to avoid to be based on the interrupt-map index.
+
+Indeed, IMHO, it is less robust. I don't thing that we can enforce the
+interrupt-map items order. Based on interrupt-map index, we need to ensure
+that the first item is related to GIC 103, the second one to GIC 104 and so
+on.
+
+Anyway, I can simplify the code relying on the interrupt-map index even if
+it is less robust.
+
+I will propose this rework in the next iteration.
+
+Best regards,
+Hervé
+
+
 > 
-> Downgrading firmware to before that commit fixes the webcam. Any idea why?
-> 
-> Thanks,
-> Sultan
-
-So, can i say the working firmware binary is this one?
-
-Commit 8f070131
-amdgpu: Update ISP FW for isp v4.1.1
-
- From internal git commit:
-39b007366cc76ef8c65e3bc6220ccb213f4861fb
-
-Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
-
-There are too many changes between them, so i can't tell exactly which 
-change caused this. So, from my side
-1. Will try these two firmware to see if we have the same issue.
-2. It has been quite a long time since last release, will see if need to 
-release a latest one.
-
-Regards,
-Bin
-
+> > +
+> > +	/*
+> > +	 * Our interrupt array items matches 1:1 the interrupt lines that could
+> > +	 * be configured by registers (same order, same number).
+> > +	 * Configure the related register with the src hwirq retrieved from the
+> > +	 * interrupt-map.
+> > +	 */
+> > +	writel(src_hwirq, priv->regs + index);
+> > +
+> > +	return 0;
+> > +}  
 
