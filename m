@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-751135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1137FB1659A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:36:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DC0B1659E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22520620308
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:36:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE24F3B7001
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:37:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C052E0407;
-	Wed, 30 Jul 2025 17:36:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 557322E0419;
+	Wed, 30 Jul 2025 17:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mteuIjP7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="TgxOClRw";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="iMDSyqpJ";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="brAOXp34"
+Received: from sender7.mail.selcloud.ru (sender7.mail.selcloud.ru [5.8.75.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F80826772C;
-	Wed, 30 Jul 2025 17:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD69248881;
+	Wed, 30 Jul 2025 17:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753896987; cv=none; b=cXCCq0oiYiWzHk/z9MP5GcWRTzDtvlUMCmHNQZpyTL1Go6T8kPS+cTrksabhWBGB9+IDR6AkLXRaStjyx5FXeCOcf9pka0Po3JMnVqSk+61VNvEPmfyBwQm2/0Klqh0ub0PIiQ0NXVJHEL+wBf/xuFVmX3u15Tu76ls9r8ffOIc=
+	t=1753897058; cv=none; b=i/Po205d1hJKJWcZmHyBbMejUtfhgEfTb9CBmEUXHDFkvbog5dV23hcxVck4IcIjd5ynqNX4tco5u05aKfn3gqXGFzMtNnfegwvmB3XghLNjPVdIWD8fBPaUedn8JFvn5lGM4oeUreEYwkvsekb/HXCg/k7yaHhH3QIU0K1h7n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753896987; c=relaxed/simple;
-	bh=L71sYbk+olCwkb4z6+myg8QodwOVdyj+zp0NqOJSi3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rkD0wpEfj8MdRR7TuLM/KbRBN+zYUlu1pZFoMlTsVozua4z8DTGgdt7XUrG0exabMQp45OLb1lffQh6ne6K7XySe643goGn5Rn0l6/u0RBgMroxE2ADK7AxdGMq9zjhZQ+y0qPm95qfQA5FQA3B2fISqN16RTHzgTHymZ43vzt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mteuIjP7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C053EC4CEE3;
-	Wed, 30 Jul 2025 17:36:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753896986;
-	bh=L71sYbk+olCwkb4z6+myg8QodwOVdyj+zp0NqOJSi3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mteuIjP7788mdkdK0qr0Z+wqTeqZWAF3Taq2NMhx71+dI0yXBQX4kCiJPs69nwH0p
-	 DureNuvqkWS+cf+Qj4Cb/8wo0G1gnpv4IMVXNflbhKwKwgnSb1iwPDeLOGOkGv7lHf
-	 4KkBFc64/hbCaWaGNhFO8Y/Hh8JgEdThg2gHTvor9Gw7gtljljje2Wp9u9wWwQZ7rn
-	 O5TG/FpSRu4CQcvQt/OECuJ0nu+z63k9Sbah1DGbirXRhyFgSnb8XPsrJ1tyXk/pKB
-	 OEbrh5vikVEYt6FkoA4T9SSbewHvdnI1Sg8Qxgr1OXiPJ/NuKjvagNlYVcGRWQEAGl
-	 pG25KaJMP4rug==
-Date: Wed, 30 Jul 2025 10:36:26 -0700
-From: Kees Cook <kees@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Sasha Levin <sashal@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	Greg KH <greg@kroah.com>, corbet@lwn.net, linux-doc@vger.kernel.org,
-	workflows@vger.kernel.org, josh@joshtriplett.org,
-	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <202507301008.E109EB0F@keescook>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
- <2025072854-earthen-velcro-8b32@gregkh>
- <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
- <20250730112753.17f5af13@gandalf.local.home>
- <158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
- <20250730121829.0c89228d@gandalf.local.home>
- <aIpKCXrc-k2Dx43x@lappy>
- <a1022055-52bd-4948-9399-908b29ca140a@lucifer.local>
+	s=arc-20240116; t=1753897058; c=relaxed/simple;
+	bh=KuAp5Kws3BtjVIC6VGoMNr0R2JfE/8TcKT577RClDco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YxHWKxY2PtzjKj3n6hmXhYcgTK1cNXoieRuSoZFaz1HAAiTr6l8RkDTcmXQ11iWERz61ZRI6UfTyW+NVWjNcs05KXnPQI4DaV6vbDTagCbaCnbqzv+nfAANZVgwOSwg6hjf71aBSkqf94vlprg7ju7kGwB7W3juGojTbYw9g3/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=TgxOClRw; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=iMDSyqpJ; dkim=fail (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=brAOXp34 reason="signature verification failed"; arc=none smtp.client-ip=5.8.75.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	List-id:List-Unsubscribe:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KuAp5Kws3BtjVIC6VGoMNr0R2JfE/8TcKT577RClDco=; t=1753897054; x=1754069854;
+	 b=TgxOClRwDNkNXGdALry2r0CUFO00qkKYfRSpB1r9v/20yl8JKy+I1tTIP2g0olD+3HZ8PsqBEB
+	qB/80ua+PCoDfjUipzJGupN0m+sMJE+zLurPu0z6DSQf43RNZ0Lsasv8O1GSlAY9+IykzMtGpLgq7
+	JsVtHvgPJt5vB6mYOr3E=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
+	 s=selcloud; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:List-id:
+	List-Unsubscribe:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Help:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=KuAp5Kws3BtjVIC6VGoMNr0R2JfE/8TcKT577RClDco=; t=1753897054; x=1754069854;
+	 b=iMDSyqpJFz0ogca3il7K8kiCkXzXsQ9ki0ItrZElwIx931B6ZjVVafP6ztlmBiMR4aQc5CNxlL
+	WFfwxi5WKnAjFRaMoH4wvuNB8uMyL4d1W5Av3LxMYK8trdqpZI6DAmz0053bPoRZx0bfCnnK65YH1
+	Li0MhMXIzQCSTQQ+t7/0=;
+Precedence: bulk
+X-Issuen: 1120529
+X-User: 280060488
+X-Postmaster-Msgtype: 3849
+Feedback-ID: 1120529:15965:3849:samotpravil
+X-From: foxido.dev
+X-from-id: 15965
+X-MSG-TYPE: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-blist-id: 3849
+X-Gungo: 20250728.224157
+X-SMTPUID: mlgnr61
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxido.dev; s=dkim;
+	t=1753897042; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:content-language:in-reply-to:references;
+	bh=oFQ+eSdmstCHth7xPSbS81zdluAWB1sR7CUbVouWihw=;
+	b=brAOXp34I1a1ve3elQHUTZaHKFN0ASxyd97NDV9nv+4HWuh2IeeDHqtGyP5gKv3VzuxN1z
+	QkdCGWWz1lCOUGRjZPkGI7HIxcySrPJatb6yLazVD51ZT+8ZvR4y/7hiW1aTUUrL1e5uEQ
+	ubWtm87hLO3FlreeZm0Ppd9qzrBCWTA7l8227weGvQqr0L/ktNY8BYJeCyPjJ1+emylK3k
+	ryJF+a8NMbaClbYqNFSavrwHHyn5SjsSMAzbKmESpM8BY73nc91pq78/8bezKlZNNGP1Du
+	Ghdr4QK34BpdEY8Te4Qtl0wx9xskzUDJ7Wt4kAByfKmxZA06X+GUj4RkTNzNzA==
+Message-ID: <26cdd07b-7b5c-4636-99c2-6c078c6a48bc@foxido.dev>
+Date: Wed, 30 Jul 2025 20:37:12 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a1022055-52bd-4948-9399-908b29ca140a@lucifer.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] platform/x86: Add WMI driver for Redmibook keyboard.
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: linux-input@vger.kernel.org, nikita.nikita.krasnov@gmail.com,
+ Hans de Goede <hansg@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20250729190528.8446-1-foxido@foxido.dev>
+ <8e7f2cde-f068-4696-8298-f83619dfaf76@gmx.de>
+Content-Language: en-US
+From: Gladyshev Ilya <foxido@foxido.dev>
+In-Reply-To: <8e7f2cde-f068-4696-8298-f83619dfaf76@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 05:59:25PM +0100, Lorenzo Stoakes wrote:
-> On Wed, Jul 30, 2025 at 12:36:25PM -0400, Sasha Levin wrote:
-> > Some sort of a "traffic light" system:
-> >
-> >  1. Green: the subsystem is happy to receive patches from any source.
-> >
-> >  2. Yellow: "If you're unfamiliar with the subsystem and using any
-> >  tooling to generate your patches, please have a reviewed-by from a
-> >  trusted developer before sending your patch".
-> >
-> >  3. No tool-generated patches without prior maintainer approval.
-> 
-> This sounds good, with a default on red. Which would enforce the opt-in
-> part.
+Thx for review
 
-This is way too draconian. The human is still responsible for sending
-patches -- their reputation is on the line if things go badly.
+On 7/30/25 19:33, Armin Wolf wrote:
+>> +
+>> +=C2=A0=C2=A0=C2=A0 if (obj->type !=3D ACPI_TYPE_BUFFER) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(&wdev->dev, "Bad r=
+esponse type %u\n", obj->type);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>> +=C2=A0=C2=A0=C2=A0 }
+>> +
+>> +=C2=A0=C2=A0=C2=A0 if (obj->buffer.length !=3D 32) {
+>=20
+> Please also accept oversized buffers.
+>
+Sorry if this is a stupid question, but isn't any size other than 32 a=20
+sign of a firmware bug?
 
-I think we can capture the essence of "don't send bad patches, regardless
-of tool" without saying "if you use this class of tool, you are banned
-from sending anything that it helped you with." That's not useful,
-realistic, nor enforceable.
+>> +
+>> +=C2=A0=C2=A0=C2=A0 /* AI key quirk */
+>> +=C2=A0=C2=A0=C2=A0 if (entry->keycode =3D=3D KEY_ASSISTANT) {
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value =3D !(payload & AI_K=
+EY_VALUE_MASK);
+>=20
+> I would rather check the payload for 0x00011901 here.
+Personally I prefer to think about it as "some value encoded in payload"=20
+rather than "is it AI button release payload?", because in the latter=20
+case alternatives are more unclear. It's just a preference, btw, would=20
+fix if you insist.
 
-I get a sense that many people in this thread haven't actually used
-these tools themselves. It requires active management like anything else:
-Coccinelle isn't going to get things 100% right based on your first stab
-at a script. Neither is an LLM. It still requires the human to DTRT. And
-just as some examples, here are my LLM assisted patches so far:
-
-https://lore.kernel.org/lkml/20250717085156.work.363-kees@kernel.org/
-https://lore.kernel.org/lkml/20250724030233.work.486-kees@kernel.org/
-https://lore.kernel.org/lkml/20250724080756.work.741-kees@kernel.org/
-
-Even the latter I had to walk it through the analysis and suggest a style
-edit. With the KUnit tests, I had to do significant editing/adjustment/etc
-to all of these.
-
--- 
-Kees Cook
+--
+Gladyshev Ilya
 
