@@ -1,128 +1,224 @@
-Return-Path: <linux-kernel+bounces-750933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B94C4B162FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:43:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C628B16307
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E431718C83B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:43:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D216217F95D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AAF42DA779;
-	Wed, 30 Jul 2025 14:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12A452DAFA9;
+	Wed, 30 Jul 2025 14:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Xc39EcwP"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bz2oH02/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E36E2D97BC
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EC52DAFA0;
+	Wed, 30 Jul 2025 14:43:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753886578; cv=none; b=CrZx0jji+EzrUW6EfhxIbe+etpp7ppIcxLuP0ByGlmfdTRvTBwN5gFIHEl+UUa4z8JrdH+yuUFdThpqz9akteq3AomuubslOvwL4AapMAbQtakYCuTUQjuWvQ2F6FOoYjX8LoyYOLi0nrw+le/kjcpiNXUwYKGFxiGtjK7QYkXs=
+	t=1753886622; cv=none; b=izVprblrixs8QZKjC5uLnR8yZw2EtAclUJ3dBSHP617HCM0Ea1Laonp98yuSz0SLqO9shcwE4z8OYEBZa32OXhe/7TMJRMjG5asWaigZmls50akVtGkgAjxuF85da3lvVSe1soei0QKRlGnTRwflqAhGMf4Aly5xCC9Rc4Tn4S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753886578; c=relaxed/simple;
-	bh=gGRfP7BSpng2geWuLtovyzO2vvewCAFqLFPtlv86Vs0=;
+	s=arc-20240116; t=1753886622; c=relaxed/simple;
+	bh=idRnj5P4PrYGxexiNDf1IWPLr0mVthPDzs6oUfOLhrM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M91u7kGZU6xmzaAEWZdYFUnzIGTGwXOXZZhnHDHPCuXdcyWEFEbB1/c3IvRkpCWTC+8+GQIknhNnKTrh9+4BQLsfrO8N6L5WyD82035YyUMmzrnnMxghdvy5oofu2g+HwsRo50F4Xapvfnpoy13Emds4Uc14W0zPmu6ko5OLu2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Xc39EcwP; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-707453b0306so34482986d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:42:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1753886574; x=1754491374; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yE9XS5x/IPLFg7Q0+oI241GEqid5njht4Vd0VCx+/2E=;
-        b=Xc39EcwPHn8Za/GGpAlReewYoKJGNax1dmkCG5QsmeO1926lN2CEisE8C08YE5Z8Mz
-         T3q97Jstlsp/B8grFe8t+BYm1CvlASjFYYNBvzKC1FUAgtyerPlZLZ0VU7U7pXm++Osn
-         Si2viBpUlBrETT4rLJkQ5WkZB8H2n/tG7OZbmkuAkrMx8kqN9f9Orbk/e9soYqB4ZCvd
-         9oteokSIev2a3INMW/XnWQIBoBtlOLXIv17a39J1hOCp8/8p7xIUzcToGg6zFY8TGsQb
-         t6yF5IU24wvjdx/4b86AxH4RTTcNJBkv+pjKHvGSYfT80kkd7/3vdSYlFFN7TlGDQ57H
-         VSAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753886574; x=1754491374;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yE9XS5x/IPLFg7Q0+oI241GEqid5njht4Vd0VCx+/2E=;
-        b=LXq0tF8I57El3NJ2jiDn3Ru6ux9PKeaS58ZRlPy2qBQQolPq3dot2uGzJrAP3DqiZy
-         cZ7eSuubTAvKIxKYls27/R/YiRiZb1Tab1DdjjVpMbyCnuO7ql5gcfwBCURG6HkKCVL/
-         54eUFpTRhrl04Y+kqJqhGQnogVQyc/EjN6YVINShS/PR15krgXmfhwbH4jadw0aS/M+x
-         WaWv+tHmn0VQ8neYYo1/UA9tcGQYov9ThOssq70lN1J4Rm1P+A2g1S1i5C04RgyiLwl7
-         1ZP3BEnkMPyhylWOcoke+9t3GJCS6bB9g/jvEv9IYk2pHhvy6dK+dCpsuaCzPbpauRgP
-         7cIA==
-X-Gm-Message-State: AOJu0Yxizgq8peHWY0bCZTcjcJ5rKXR01tbEru0L0G8YsF/UlC9AFMJ3
-	OqrJIVHgw2QPz2Xnp+ndqvT1NwQio8cKE1CUU5IgI6ynPwi0jpemWA4INFh34bH4gS8=
-X-Gm-Gg: ASbGncu67+QAqHieBvnW0VltwRdVTiBV3o6ozxIYCNa4FY/zinRL77o7yyOM7R3eIlc
-	vE+qvvOyQDwzSvoyyrmiMZD2Epeiv/27g8NdoPxMCHtcmpUHypxIBhpnIHcGKIWQrMcYWeHXsta
-	sfE+B3O4cArUE/Q+HGN0IVcNbRcbTx0Q5PRyGwd/2rEnN4LChBX2lcZ/zgrWsk+PprbED5I85Sp
-	B6QJqcTwDKso/lYYNVRGN+E85QaYkqNa1dkD65gI9NyB+Rp7aSfJwc/eKiXnM9NkIJp18wrtt6+
-	zkrUs/j6jCpkMxNMqbScBB95cjWeVec0uKOOqo+e5Z/s0PLiztsgaQskH/KTIDmK68FfLPUFA+h
-	jy/vgSkKpgU91jsWAbjPo5ghjB7NXsswlfIQ+BH2R5agZEtQjOfg6cpDYtNCONYinTdhtvCaMPn
-	iDrAA=
-X-Google-Smtp-Source: AGHT+IFTshf+JMDcrv8+0/UalWTBjWGXz7BdMW99vihoM+QJWNKuspc/O9f/fXBj039JGJi+af7NVQ==
-X-Received: by 2002:a05:6214:ac7:b0:707:4daf:631 with SMTP id 6a1803df08f44-7076719b73dmr50415456d6.42.1753886574527;
-        Wed, 30 Jul 2025 07:42:54 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7074b52ddc7sm39845896d6.77.2025.07.30.07.42.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 07:42:53 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uh817-00000000RlW-0qIU;
-	Wed, 30 Jul 2025 11:42:53 -0300
-Date: Wed, 30 Jul 2025 11:42:53 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v3 29/29] iommu/arm-smmu-v3-kvm: Add IOMMU ops
-Message-ID: <20250730144253.GM26511@ziepe.ca>
-References: <20250728175316.3706196-1-smostafa@google.com>
- <20250728175316.3706196-30-smostafa@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AD7h4YtW5OklnXleX/HOMIuzvP+gzvDl3VqfGEelF6cVskaGzXYiG+ki48cnyO+MqWUmUgUI2Atl6QN4BPD/OpcZdAbXWO04eIPNovJZpEphO9F58pRTsHP/aRW3jmGy0ph9QAiTAHd3TuRgxJ8vIx8D3KnRJM11jN3vul53nck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bz2oH02/; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753886621; x=1785422621;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=idRnj5P4PrYGxexiNDf1IWPLr0mVthPDzs6oUfOLhrM=;
+  b=Bz2oH02/Z58mRocLaBzsJfjnRHGs7UiK3Lvfxuh1uZ5cfGpoJpEYshoX
+   y2A2HGum6UCiwkJch6i88gAraOMQybQJ4ORJZKp4OxR1hEryBet0pGIZU
+   dAik0eRhLAetr+Ime8fnvEtn8Xl6tJS/dY6s8xvcUs1oDhIuk+Y1/VvU1
+   jn6S3riB2Kc+h/ph/WxzwbiVRAmQvSfs8p5Z+0Tt7K/S4lEgHJ6IkAlnb
+   rnXOkvB2lBXDaBD1ZGnSpYQesiOrHnW7oNJQLNqRLjdvs6GYAPXCTSwyd
+   CkoPzXDmuKEkRySt9zMBU/I8AJmgHqKq8J3hstElDTvlfoxE6gX/CZrP4
+   g==;
+X-CSE-ConnectionGUID: Eqmfr9EHRpeo5RVIoNAkDw==
+X-CSE-MsgGUID: I29DRyAGQAOsLA4NGX/xHQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="55890914"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="55890914"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 07:43:40 -0700
+X-CSE-ConnectionGUID: oTzVPsG9QR+19wHO6VXhaA==
+X-CSE-MsgGUID: 8uYbk/j7SeWAaepWravi+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="193987297"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 30 Jul 2025 07:43:34 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uh81k-0002qG-0g;
+	Wed, 30 Jul 2025 14:43:32 +0000
+Date: Wed, 30 Jul 2025 22:43:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Le Goffic <legoffic.clement@gmail.com>,
+	Julius Werner <jwerner@chromium.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	=?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Subject: Re: [PATCH v5 13/20] perf: stm32: introduce DDRPERFM driver
+Message-ID: <202507302237.gyVCBmXs-lkp@intel.com>
+References: <20250728-ddrperfm-upstream-v5-13-03f1be8ad396@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250728175316.3706196-30-smostafa@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250728-ddrperfm-upstream-v5-13-03f1be8ad396@foss.st.com>
 
-On Mon, Jul 28, 2025 at 05:53:16PM +0000, Mostafa Saleh wrote:
-> Register the SMMUv3 through IOMMU ops, that only support identity
-> domains. This allows the driver to know which device are currently used
-> to properly enable/disable then.
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> ---
->  .../iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c   | 92 ++++++++++++++++++-
->  1 file changed, 91 insertions(+), 1 deletion(-)
+Hi Clément,
 
-Can you split the new iommu subysstem driver out please? I think I
-asked this before.
+kernel test robot noticed the following build errors:
 
-This series is big, reviewing a new iommu driver should be done separately.
+[auto build test ERROR on 89be9a83ccf1f88522317ce02f854f30d6115c41]
 
-Please review all the comments for the verisilicon driver, I think
-many of the remarks apply here too:
+url:    https://github.com/intel-lab-lkp/linux/commits/Cl-ment-Le-Goffic/bus-firewall-move-stm32_firewall-header-file-in-include-folder/20250728-234144
+base:   89be9a83ccf1f88522317ce02f854f30d6115c41
+patch link:    https://lore.kernel.org/r/20250728-ddrperfm-upstream-v5-13-03f1be8ad396%40foss.st.com
+patch subject: [PATCH v5 13/20] perf: stm32: introduce DDRPERFM driver
+config: s390-randconfig-001-20250730 (https://download.01.org/0day-ci/archive/20250730/202507302237.gyVCBmXs-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250730/202507302237.gyVCBmXs-lkp@intel.com/reproduce)
 
- - Domain attachment looks questionable. Please do not have
-   attach/detach language at all in the hypervisor facing API.
- - Get the ordering and APIs right so replace works. You need this to support RMRs
- - Use a blocking domain not some unclear detatch idea
- - Use a blocking domain for release
- - Use the smmu-v3 approach for the fwspec, don't store things in the drvdata.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507302237.gyVCBmXs-lkp@intel.com/
 
-Jason
+All errors (new ones prefixed by >>):
+
+>> drivers/perf/stm32_ddr_pmu.c:213:2: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     213 |         writel_relaxed(r->start.mask, pmu->membase + r->start.reg);
+         |         ^
+   drivers/perf/stm32_ddr_pmu.c:220:2: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     220 |         writel_relaxed(r->stop.mask, pmu->membase + r->stop.reg);
+         |         ^
+   drivers/perf/stm32_ddr_pmu.c:227:2: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     227 |         writel_relaxed(r->clear_time.mask, pmu->membase + r->clear_time.reg);
+         |         ^
+   drivers/perf/stm32_ddr_pmu.c:234:2: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     234 |         writel_relaxed(r->clear_cnt.mask & BIT(counter->idx), pmu->membase + r->clear_cnt.reg);
+         |         ^
+>> drivers/perf/stm32_ddr_pmu.c:240:15: error: call to undeclared function 'readl_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     240 |         u32 status = readl_relaxed(pmu->membase + r->status.reg);
+         |                      ^
+   drivers/perf/stm32_ddr_pmu.c:255:12: error: call to undeclared function 'readl_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     255 |         u32 val = readl_relaxed(pmu->membase + r->enable.reg);
+         |                   ^
+   drivers/perf/stm32_ddr_pmu.c:258:2: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     258 |         writel_relaxed(val, pmu->membase + r->enable.reg);
+         |         ^
+   drivers/perf/stm32_ddr_pmu.c:264:12: error: call to undeclared function 'readl_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     264 |         u32 val = readl_relaxed(pmu->membase + r->enable.reg);
+         |                   ^
+   drivers/perf/stm32_ddr_pmu.c:267:2: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     267 |         writel_relaxed(val, pmu->membase + r->enable.reg);
+         |         ^
+   drivers/perf/stm32_ddr_pmu.c:285:17: error: call to undeclared function 'readl_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     285 |                 cnt_sel_val = readl_relaxed(pmu->membase + r->cfg.reg);
+         |                               ^
+   drivers/perf/stm32_ddr_pmu.c:288:3: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     288 |                 writel_relaxed(cnt_sel_val, pmu->membase + r->cfg.reg);
+         |                 ^
+   drivers/perf/stm32_ddr_pmu.c:302:16: error: call to undeclared function 'readl_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     302 |         cnt_sel_val = readl_relaxed(pmu->membase + cnt_sel_evt_reg);
+         |                       ^
+   drivers/perf/stm32_ddr_pmu.c:306:2: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     306 |         writel_relaxed(cnt_sel_val, pmu->membase + cnt_sel_evt_reg);
+         |         ^
+   drivers/perf/stm32_ddr_pmu.c:428:9: error: call to undeclared function 'readl_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     428 |                 val = readl_relaxed(pmu->membase + r->counter_evt[counter->idx].reg);
+         |                       ^
+   drivers/perf/stm32_ddr_pmu.c:778:3: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     778 |                 writel_relaxed(pmu->dram_type, pmu->membase + pmu->cfg->regs->dram_inf.reg);
+         |                 ^
+   drivers/perf/stm32_ddr_pmu.c:803:2: error: call to undeclared function 'writel_relaxed'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     803 |         writel_relaxed(pmu->dram_type, pmu->membase + pmu->cfg->regs->dram_inf.reg);
+         |         ^
+   16 errors generated.
+
+
+vim +/writel_relaxed +213 drivers/perf/stm32_ddr_pmu.c
+
+   208	
+   209	static void stm32_ddr_start_counters(struct stm32_ddr_pmu *pmu)
+   210	{
+   211		const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
+   212	
+ > 213		writel_relaxed(r->start.mask, pmu->membase + r->start.reg);
+   214	}
+   215	
+   216	static void stm32_ddr_stop_counters(struct stm32_ddr_pmu *pmu)
+   217	{
+   218		const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
+   219	
+   220		writel_relaxed(r->stop.mask, pmu->membase + r->stop.reg);
+   221	}
+   222	
+   223	static void stm32_ddr_clear_time_counter(struct stm32_ddr_pmu *pmu)
+   224	{
+   225		const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
+   226	
+   227		writel_relaxed(r->clear_time.mask, pmu->membase + r->clear_time.reg);
+   228	}
+   229	
+   230	static void stm32_ddr_clear_event_counter(struct stm32_ddr_pmu *pmu, struct stm32_ddr_cnt *counter)
+   231	{
+   232		const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
+   233	
+   234		writel_relaxed(r->clear_cnt.mask & BIT(counter->idx), pmu->membase + r->clear_cnt.reg);
+   235	}
+   236	
+   237	static void stm32_ddr_clear_counter(struct stm32_ddr_pmu *pmu, struct stm32_ddr_cnt *counter)
+   238	{
+   239		const struct stm32_ddr_pmu_regspec *r = pmu->cfg->regs;
+ > 240		u32 status = readl_relaxed(pmu->membase + r->status.reg);
+   241	
+   242		if (counter->idx == pmu->cfg->time_cnt_idx)
+   243			stm32_ddr_clear_time_counter(pmu);
+   244		else
+   245			stm32_ddr_clear_event_counter(pmu, counter);
+   246	
+   247		if (status & r->status.mask)
+   248			dev_err(pmu->dev, "Failed to clear counter %i because the PMU is busy\n",
+   249				counter->idx);
+   250	}
+   251	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
