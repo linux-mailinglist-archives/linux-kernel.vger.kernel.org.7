@@ -1,169 +1,120 @@
-Return-Path: <linux-kernel+bounces-750138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0845B157D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:32:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F0E3B157D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89C5C7AA7CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4286A3BDF1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1944919B5B1;
-	Wed, 30 Jul 2025 03:32:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1F11DE891;
+	Wed, 30 Jul 2025 03:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="anpXcqJ7"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="D3wEZuTI"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51B811CA0;
-	Wed, 30 Jul 2025 03:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753846337; cv=pass; b=k3zcel3bavmIIArerJAV3slWCt4Zf4FrdShBSMIicLzn/7Dz/UoZC8UrL7Kdli4msmfBDs4mEqgYD/TZpiIPDu9DApAhlMG8Ui3gQtM++qpnv4cCA4+/bxhZmv8xFfCoCKi6OVwBpSuj5TTG0ZDAhhNFQIDSWuDRLB6iytXwHo8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753846337; c=relaxed/simple;
-	bh=v/mTQXR7nXI3YYXMNZ88NxH1RY7rcBGYIDdQy/5J6Zk=;
-	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
-	 Content-Type; b=jH2id1ZZVZh0WLoatoPoO3kZAFlgK+QixNq9LpMSZkQvhjhHTpxTKv+0uSIzDyd6CMmEDce2lHNhc4J9ja7qdM+pYiv7I+KjaRU66svvgfAi4/YsosADce2J4HHBhLHD7lHIGfO5gOS6WNkEC2qZ5ZMsObBC53sGunYYvYdnHBs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=anpXcqJ7; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1753846298; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ezBzqJB56c1miHFXcMTWwIQnARYDgvONAST09HSTlXIdTc5Oyuwbece6Q6hbRu19qzxpXQyP+Ri8d4HmC8T0TzjsSVuuFn3W5IoKFG5ZJjTlXM+xKpqoSUyDs5RsKpx6ZpjVuzUAnh60Uk8dT2x+V46NU0ESTv9mRB3w00VvNPQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753846298; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=0iSJ3Kr1iquFsEaFYZYQunG3FhEI8rJM6UK4xjhKbMo=; 
-	b=laocn2/YpsMzSuK4/HJD3XQbkTjgCDnYQbkYgdDSEqiQg5bs3ggxrpue5V0qtTl49tiJx8WX4odNOEAoB09qAn6D/FUbN8VTDB9PGHNP0JAKZTVCTbw0xWd8jzHpCeMEdxcgjp2FNSCuYbPT32zZ5dHv1GZctaG0IH17VOlKlsw=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753846298;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=0iSJ3Kr1iquFsEaFYZYQunG3FhEI8rJM6UK4xjhKbMo=;
-	b=anpXcqJ7jz1fCyVmJQqEwO4uGzIAJAiI6kljdDFlpHkpMQxAdUXzHh1xk1MHCjz5
-	u9ZSDGcNFQGowrt9ieLYx9YPwiRnEBYMyQAPjmv39JtD/kWZyYj3RveK762QmuPhRwX
-	QSPODxowaRR76HgP8cBd648UVYPNL+d0Naz8k8H4=
-Received: by mx.zohomail.com with SMTPS id 1753846295024259.9063222071202;
-	Tue, 29 Jul 2025 20:31:35 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CD0A18DB27
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753846624; cv=none; b=HaNtWX8qXR/fHfpcQMswvWCPSE5w7HQVsfXEIwAzE2M5XEr3JUqcN3yolXCm9R+IuA5WsoUusW0UewvBaywn664lhZTMlkOxyJVQqhFizwLgik5in5H4yhB/+UT/JaaFD5t0hJWzxRA1SS0Eq6ZpVhnSSTPn70yKCVGFP/DsyAw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753846624; c=relaxed/simple;
+	bh=zGY2jdf4vwNGy2jL8S1laYHDpWXAZd61lFxoeC07tZU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kCR2mZQ+X/TAB8JjZ76sFhb/VN+FNeEsqnJAGemIV1m2J3FMJibXsgNN5p+sUf+6FmJJsVQ2xYUojzef5kYIkRPg7qrYJ8iPyFFOKTpdmkLqHEw9ct9N5XcCYAuuZDo8YzOOqWJohEjPEgkq/Y2LlPsCBiaEcf/kX5hYZDEtXQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=D3wEZuTI; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753846610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=bYjDc48syFzuGpanzRl9N75Vx1E8TRBTq1YggaL7ywY=;
+	b=D3wEZuTIVeX67M8CGioaiYgUvCyaJV/2Kbb/eLQYdKuV/auXmX0CKozKB3WMVnpycU03m4
+	2Z6X7IHEl2WC3xB9z3jXbV8hJOCr1bc/qMCLvucWWhT29/0BXmE8odndBXOPDSEwkzqJGF
+	Ff5bayx2a5QKi8bLw7jKUBfZWVspVTA=
+From: Hui Zhu <hui.zhu@linux.dev>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	vitaly.wool@konsulko.se
+Cc: Hui Zhu <zhuhui@kylinos.cn>
+Subject: [PATCH v6 0/2] rust: alloc: kvec doc example and allocator unit tests
+Date: Wed, 30 Jul 2025 11:35:20 +0800
+Message-ID: <cover.1753841900.git.zhuhui@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, 
-	"Bjorn Andersson" <andersson@kernel.org>, 
-	"Mathieu Poirier" <mathieu.poirier@linaro.org>, 
-	"Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Chen Wang" <unicorn_wang@outlook.com>, 
-	"Inochi Amaoto" <inochiama@gmail.com>, 
-	"Philipp Zabel" <p.zabel@pengutronix.de>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
-	"Alexandre Ghiti" <alex@ghiti.fr>
-In-Reply-To: <f1b90b0f-f7a7-4117-9d36-046c4ca9c19a@kernel.org>
-Cc: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>, 
-	<sophgo@lists.linux.dev>, <linux-kernel@vger.kernel.org>, 
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: remoteproc: Add C906L rproc for Sophgo
-	 CV1800B SoC
-Message-ID: <1856e9e7bfdcb6a8.1f73e6be0161d31f.3ad0845628cf3b62@Jude-Air.local>
-Date: Wed, 30 Jul 2025 03:31:26 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 29/07/2025 08:27, Krzysztof Kozlowski wrote:
-> On 28/07/2025 19:13, Junhui Liu wrote:
->>>
->>>> +    description:
->>>> +      This property is required only if the rpmsg/virtio functionality=
- is used.
->>>> +      (see mailbox/sophgo,cv1800b-mailbox.yaml)
->>>> +    items:
->>>> +      - description: mailbox channel to send data to C906L
->>>> +      - description: mailbox channel to receive data from C906L
->>>> +
->>>> +  memory-region:
->>>> +    description:
->>>> +      List of phandles to reserved memory regions used by the remote p=
-rocessor.
->>>> +      The first region is required and provides the firmware region fo=
-r the
->>>> +      remote processor. The following regions (vdev buffer, vrings) ar=
-e optional
->>>> +      and are only required if rpmsg/virtio functionality is used.
->>>> +    minItems: 1
->>>
->>> Why isn't this constrained?
->>=20
->> Do you mean a maxItems should be added here?
->> >>
->>>> +    items:
->>>> +      - description: firmware region
->>>> +      - description: vdev buffer
->>>> +      - description: vring0
->>>> +      - description: vring1
->>>> +    additionalItems: true
->>>
->>> No, drop. This needs to be constrained.
->>=20
->> My intention is that RPMsg/OpenAMP is not the only use case for
->=20
-> We don't allow such syntax, that's not negotiable. Why 322 redundant
-> memory regions are fine now?
->=20
->> remoteproc. There are scenarios where the remoteproc is just used for
->> booting the remote processor without any communication with Linux. In
->> such case, only the firmware region is needed, and the other regions may
->> not be necessary.
->>=20
->> Additionally, the remote processor might reserve extra memory for custom
->> buffers or other firmware-specific purposes beyond virtio/rpmsg.
->> Therefore, I think only the firmware region should be required and
->> constrained, while allowing flexibility for additional/custom memory
->> regions as needed.
->=20
-> So how does this work exactly without the rest? Remote processor boots
-> and works fine? How do you communicate with it?
->=20
-> Please describe exactly the usecase.
+From: Hui Zhu <zhuhui@kylinos.cn>
 
-Thank you for your clarification.
+This patchset adds KUnit tests for allocator alignment
+guarantees and improves kvec documentation.
 
-The C906L remoteproc can run at two use cases:
-1. Standalone mode: Only the firmware region is used. In this case, the
-   remoteproc driver loads the firmware into the firmware region and
-   boots the C906L. The C906L runs independently, without communication
-   with Linux, and the mailbox is not used.
-2. OpenAMP/RPMsg mode: The firmware region, vdev buffer, and vrings are
-   used. In this scenario, the C906L runs firmware with OpenAMP support
-   and communicates with Linux via the virtio memory regions and mailbox.
+Patch 1 adds KUnit tests for verifying alignment guarantees
+in Rust kernel allocators. Tests cover Kmalloc, Vmalloc
+and KVmalloc with both standard (128B) and large page-aligned
+(8192B) allocations.
 
-To summarize:
-- Required: firmware region
-- Optional: vdev buffer, vrings, mailbox
+Patch 2 adds a practical usage example for KVec::as_slice
+method, showing how to create KVec, push elements and convert
+to a slice.
 
-Then I can add a "maxItems: 4" to the memory-region property and remove
-the "additionalItems: true" line.
+Both patches are co-developed with Geliang Tang. Based on [1].
+Tested on x86_64 using KUnit.
 
-Is this approach acceptable for you?
+Changelog:
+v6:
+According to the comments of Danilo, updated test for allocator.rs
+and allocator rebase onto [1].
+v5:
+According to the comments of Danilo, change to use generic struct and
+allocator Generics in allocator.rs.
+v4:
+According to the comments of, add the error check for push.
+v3:
+According to the comments of Danilo and Boqun, move KVec test to doc
+example and move VBox to allocator unit tests.
+v2:
+According to the comments of Danilo, updated the commit to samples the
+usage of VBox and KVec.
 
->=20
->=20
-> Best regards,
-> Krzysztof
+[1] https://lore.kernel.org/lkml/20250715135645.2230065-1-vitaly.wool@konsulko.se/
 
---=20
-Best regards,
-Junhui Liu
+Hui Zhu (2):
+  rust: allocator: add KUnit tests for alignment guarantees
+  rust: alloc: kvec: add doc example for as_slice method
+
+ rust/kernel/alloc/allocator.rs | 56 ++++++++++++++++++++++++++++++++++
+ rust/kernel/alloc/kvec.rs      | 10 ++++++
+ 2 files changed, 66 insertions(+)
+
+-- 
+2.43.0
 
 
