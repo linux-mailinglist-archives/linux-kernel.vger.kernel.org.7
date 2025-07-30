@@ -1,184 +1,101 @@
-Return-Path: <linux-kernel+bounces-750101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF9EB15751
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:56:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC53AB15753
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEA787AF60A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE41518A7E04
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD99720E702;
-	Wed, 30 Jul 2025 01:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F35FB199FAB;
+	Wed, 30 Jul 2025 01:54:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Va9InuCp"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iWsT84Cb"
+Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1812046A6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09EA22318
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753840466; cv=none; b=Jfl6Q5rkbuxz4JjMpLjAFvK6JJv2MwpqY22nmS0a0Gv8+CuvYKi1zZraeSfGS3vXCPrK+8tlhTwxnEuUuotmsJepjA5zMOmzfYrS+EwBT9JqkahJyAdsoJb/09vhqmiqzHiNTc+n8MnnDX46sl1rsRRnpGtO9OkNtiCFwswoumQ=
+	t=1753840499; cv=none; b=enF7/7wdmT9SLYDV89okPzs9HRVNF16hSteQzZWkTD9XlNchA79Zq01IYSD9BcGmwhQmJAVFB9Y+GjrXwOY0BNLGZ4cX1SNjdBuKRdrT+ADWYY5NJeoP9U89WqQmkIgXg/C9krHCs8NjvVajUazxhkYvmIWjFovZSeytIYkd0+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753840466; c=relaxed/simple;
-	bh=nPJJLP1zR91c9Y7ZN8HF7eAeTILNv1bxL9VL0/fy/6A=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Jp3QQlHHpO3VWybGorPRYXcIMFjQQJA+DHrC7ZFEJqGY9vs/FTjesZliKmTUR1m7tdGzMCuLv+qMqTuFC2BpHyTBYQhE9O63Y5TjxENCcNzgRUWE+lu1rUKYD9E1WkKKspAeRCSq3sjYl3KaiEIk4zY8982BbSSjlQbyRA4RIrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Va9InuCp; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b34fa832869so357405a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:54:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753840464; x=1754445264; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=L3flim+Na7xCLw8vVOZ8w5OEJGJTOj64xaI7scCyCdg=;
-        b=Va9InuCp3r4FpkSSL9l7XB8DwN2ZwfmdFGlITrr9fdfDZjXrbmEZm9oWl0xch/4ScI
-         hKbxHJzlVL6F6B7vD9Pyc3O32ww5xvhct2//r5NErF1wGavShp0H8Z+CBKHAcmFBt5o1
-         fhJg5dLB+1ozl4247AeqyP765G/Ku2UxygPKb/9FYp8t7s8Osbv+IGeLsfn5N9kPG5pn
-         DXxdpRUZS+9EqquImECuU/PrCyMkQEyq8rMqdsmpRmMNtR4V2OVC8weKMmamwEqb7WZK
-         TcoiMT+lgNmEDczz4IlUhay0nKYKFywI8Oj+Gamf8kP5OLWV/ypEphcRV6GFSZRhE97f
-         iaeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753840464; x=1754445264;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L3flim+Na7xCLw8vVOZ8w5OEJGJTOj64xaI7scCyCdg=;
-        b=E7u46rMOfOLrpimkD+8Gr62HB9QaqgqU5xjFXXnr8utQWPOORFt5wDHfsFtTkqO/xI
-         wO5kUHoA0PP7RxV528LDX+PSxMjzADJDeLdzKLFjqXugYBvG3jC6jP3GW9mwx5kBQEqu
-         RehqlczlDcYBPRGhLo6E8DaUFciAgKof9o/MVESem5prJXGN8rtHcCT5nN2kWDEpn7ap
-         bZUVfpJXjugaXishQFz1yFTqCoLb+xr4tvyqrJGVEEAD77mzA/GfbhOu/CVOvPALdsLl
-         dX+kpd1PuGsymHypunmXb/bHbs2NfmcbnheWfZRoaUI44ooND+O4rDxHTj7TjoDXqyXK
-         jtsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEDqUGZ+qgYj4u+zMCX+2eWqdN6QRojIxiKuO6sJGaCWVX0vvWRYdqP670Fj83crYXRk5kMLoteC6+TAw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8IroovCxt9U/egNsRGjrrDTM28sxlTYtHbdr10Jvq8k/cmpYw
-	9DpKD92hnmceQdskpQsEXxWOR/l34LPN6/Ctxb6GUDHhmFP34DysydyReG1m75JS7TAVsY/DCR5
-	XClOfD+RcxUYNYlHvOPhwh57ov+89x24BvTUYcQ==
-X-Google-Smtp-Source: AGHT+IGSsezyA6LC++SZ5I/UxQYHh/BgAfaZ3ltdoNiNEdtr06IoSwJQnz/o3hhQJ+ktgve5ykzzrjxSLeVPY67bFzlSZw==
-X-Received: from plkv11.prod.google.com ([2002:a17:903:1a2b:b0:240:608a:938d])
- (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:903:90c:b0:231:9817:6ec1 with SMTP id d9443c01a7336-2409689f466mr22524815ad.17.1753840463916;
- Tue, 29 Jul 2025 18:54:23 -0700 (PDT)
-Date: Tue, 29 Jul 2025 18:54:02 -0700
-In-Reply-To: <20250730015406.32569-1-isaacmanjarres@google.com>
+	s=arc-20240116; t=1753840499; c=relaxed/simple;
+	bh=3nmrzvt9T2OTj6OUt0SRV9AgvZb7btlDrbPL1yJkRa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p6MnN3qo5t2tYfquahN/Lp6GBNlGAcxQPVdwQx0lM21csuQz5jOITU+CmAbmc0G8v7muLBY0JqY9MXFjlySbUGVzxy2pnYaNSNwy9ofqhjHTNSHBzuhV0XS0VHDpCUTFaPPvbGiJ83/H+uzdAsb3U2bhEVfEaeoDJOLl8nsM67M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iWsT84Cb; arc=none smtp.client-ip=95.215.58.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <fd349fb6-be25-440e-932e-b15b6daedeee@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753840484;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=s6TFnWpvz0r+x9+h2O76oBP9t3gNEcHthOWOzMwa2ao=;
+	b=iWsT84Cb6OVvZzU1qXYXmR+MpgvZT/YrQMX1zqTq3lLkqkqBlIOdAet2GiqXCs4BJ7oxb3
+	gLEnVP0zXgUBkjClbtusDUvNKcYRa0nAsnoG8M/bQY67I4Cc9knNUEDJ5GcUd9LCX2x6fm
+	Ri+c+1mbqOMWp0CqCbMPaMofbzzaGJE=
+Date: Wed, 30 Jul 2025 09:54:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250730015406.32569-1-isaacmanjarres@google.com>
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250730015406.32569-5-isaacmanjarres@google.com>
-Subject: [PATCH 5.10.y 4/4] selftests/memfd: add test for mapping write-sealed
- memfd read-only
-From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
-	Shuah Khan <shuah@kernel.org>
-Cc: aliceryhl@google.com, surenb@google.com, stable@vger.kernel.org, 
-	"Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
-	Jann Horn <jannh@google.com>, Julian Orth <ju.orth@gmail.com>, 
-	"Liam R. Howlett" <Liam.Howlett@Oracle.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Subject: Re: [PATCH] LoongArch: vDSO: remove -nostdlib complier flag
+To: Wentao Guan <guanwentao@uniontech.com>, chenhuacai@kernel.org
+Cc: kernel@xen0n.name, xry111@xry111.site, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org, wangyuli@uniontech.com, zhanjun@uniontech.com
+References: <20250725132651.1974717-1-guanwentao@uniontech.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yanteng Si <si.yanteng@linux.dev>
+In-Reply-To: <20250725132651.1974717-1-guanwentao@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+在 7/25/25 9:26 PM, Wentao Guan 写道:
+> It is clear to remove the -nostdlib for ld, it is similar to commit
+> bdbf2038fbf4 ("MIPS: VDSO: remove -nostdlib compiler flag").
+> 
+> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Since MIPS has removed this, we should remove it too. In fact, other architectures also use $(LD).
 
-[ Upstream commit ea0916e01d0b0f2cce1369ac1494239a79827270 ]
+       fe00e50b2db8 ("ARM: 8858/1: vdso: use $(LD) instead of $(CC) to link VDSO")
+       691efbedc60d ("arm64: vdso: use $(LD) instead of $(CC) to link VDSO")
+       2ff906994b6c ("MIPS: VDSO: Use $(LD) instead of $(CC) to link VDSO")
+       2b2a25845d53 ("s390/vdso: Use $(LD) instead of $(CC) to link vDSO")
 
-Now we have reinstated the ability to map F_SEAL_WRITE mappings read-only,
-assert that we are able to do this in a test to ensure that we do not
-regress this again.
+If Huacai is willing to apply this patch, I suggest supplementing the commit message.
 
-Link: https://lkml.kernel.org/r/a6377ec470b14c0539b4600cf8fa24bf2e4858ae.1732804776.git.lorenzo.stoakes@oracle.com
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Julian Orth <ju.orth@gmail.com>
-Cc: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
----
- tools/testing/selftests/memfd/memfd_test.c | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
 
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index fba322d1c67a..5d1ad547416a 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -186,6 +186,24 @@ static void *mfd_assert_mmap_shared(int fd)
- 	return p;
- }
- 
-+static void *mfd_assert_mmap_read_shared(int fd)
-+{
-+	void *p;
-+
-+	p = mmap(NULL,
-+		 mfd_def_size,
-+		 PROT_READ,
-+		 MAP_SHARED,
-+		 fd,
-+		 0);
-+	if (p == MAP_FAILED) {
-+		printf("mmap() failed: %m\n");
-+		abort();
-+	}
-+
-+	return p;
-+}
-+
- static void *mfd_assert_mmap_private(int fd)
- {
- 	void *p;
-@@ -802,6 +820,30 @@ static void test_seal_future_write(void)
- 	close(fd);
- }
- 
-+static void test_seal_write_map_read_shared(void)
-+{
-+	int fd;
-+	void *p;
-+
-+	printf("%s SEAL-WRITE-MAP-READ\n", memfd_str);
-+
-+	fd = mfd_assert_new("kern_memfd_seal_write_map_read",
-+			    mfd_def_size,
-+			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
-+
-+	mfd_assert_add_seals(fd, F_SEAL_WRITE);
-+	mfd_assert_has_seals(fd, F_SEAL_WRITE);
-+
-+	p = mfd_assert_mmap_read_shared(fd);
-+
-+	mfd_assert_read(fd);
-+	mfd_assert_read_shared(fd);
-+	mfd_fail_write(fd);
-+
-+	munmap(p, mfd_def_size);
-+	close(fd);
-+}
-+
- /*
-  * Test SEAL_SHRINK
-  * Test whether SEAL_SHRINK actually prevents shrinking
-@@ -1056,6 +1098,7 @@ int main(int argc, char **argv)
- 
- 	test_seal_write();
- 	test_seal_future_write();
-+	test_seal_write_map_read_shared();
- 	test_seal_shrink();
- 	test_seal_grow();
- 	test_seal_resize();
--- 
-2.50.1.552.g942d659e1b-goog
+Reviewed-by: Yanteng Si <siyanteng@cqsoftware.com.cn>
+
+Thanks,
+Yanteng
+> ---
+>   arch/loongarch/vdso/Makefile | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/loongarch/vdso/Makefile b/arch/loongarch/vdso/Makefile
+> index ccd2c5e135c6..d8316f993482 100644
+> --- a/arch/loongarch/vdso/Makefile
+> +++ b/arch/loongarch/vdso/Makefile
+> @@ -36,7 +36,7 @@ endif
+>   
+>   # VDSO linker flags.
+>   ldflags-y := -Bsymbolic --no-undefined -soname=linux-vdso.so.1 \
+> -	$(filter -E%,$(KBUILD_CFLAGS)) -nostdlib -shared --build-id -T
+> +	$(filter -E%,$(KBUILD_CFLAGS)) -shared --build-id -T
+>   
+>   #
+>   # Shared build commands.
 
 
