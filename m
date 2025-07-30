@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-750968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F68DB16374
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:14:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AB54B16377
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:15:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43CFF3B942B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:13:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8176B1AA3DD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:15:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 620032DCBF1;
-	Wed, 30 Jul 2025 15:14:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D4862DCF68;
+	Wed, 30 Jul 2025 15:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aLKsDrfg"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="OHY6gjjN"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C012DC345;
-	Wed, 30 Jul 2025 15:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0E152DCF42;
+	Wed, 30 Jul 2025 15:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753888455; cv=none; b=IjJjU2b2Z1fClvXStYweK6E7f3IpU6eCFjXkye3wc2/nO+kaF9J1wtcmjqL5RJMxa+OX7iMgukDLi4AsiQkAfURhQ781PqD9JwRoEFfW6WCK1haLG2CK5npz7EbiDU5bwYSF4XKMydLZlN4kwKq8vTCsMvT6tNm75RqlEtZO1S8=
+	t=1753888510; cv=none; b=lDHT3ODtw0CXQV2ggC6onsMuIxH6ZX3IHLtz0efEgFz9k+jTjPyMuAriRKqXkk3xLLcVnXElP0u/dSQtWOgzKJs8W60DWadk+0TjI7UGA0LuRUsBUeo53qxgY8NnXs/pFdMRMfzyMjNhCaDu8bxxCODGtyvQShi6R+Z65LA+olA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753888455; c=relaxed/simple;
-	bh=rXgxOJXKazwcCCy2Fo+fCW58qMIKsjE4k03ekkUv2ME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r3YTxfUCRsW1T7Qrb4k7T1egcLbMYP+3bx5UkWTjqW7ou6wYQsXU344oVZ4tBweVOPbe4rBn93SfLD1GjU7K7BN0uVN5HuM0cwlfL+ZIw9r7/82/EsuIic4+TLeOpDRrAWnozZSSrzkD20dhnthbArPsDDta11ru7FyciGxFHR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=aLKsDrfg; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=m+oXDpSbXkFh02pwXQyjxgNWqMEN7+TwK51jzavy4dI=; b=aLKsDrfgV3sov/S+dwotba19Rr
-	NSv7IwEYsciotk4atSDJHXMTBFeSjc3JdOf5RA3qyzMIZ0kQYfUtDNlTPtzZoUlQ2W4f7NhMnY00A
-	6Rcip4sjW0bCZBtxgXIlU4AbJta+AERHElD/pHf4ndlnYATDk4QBpVjwEDiY8oSwROZRydRu3yaTb
-	dzXbcwVOvxMOSzQptRDj/mFimyhWizXZ7ez9UtCfeHBZVK0ZsuKO+fccFFNGrPAa5htWjgciTKp+Q
-	jEcZlLepI7SKxc5DVbO2only1mreG1D+Kde/Xbnhnbsjz1JURzGwm5waVYXMcr6T/S2cyQwQiodho
-	GIrMrxyQ==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uh8VK-00000001pES-3Y92;
-	Wed, 30 Jul 2025 15:14:06 +0000
-Message-ID: <7cedcdd9-c89e-4194-98ad-d3426a240863@infradead.org>
-Date: Wed, 30 Jul 2025 08:14:05 -0700
+	s=arc-20240116; t=1753888510; c=relaxed/simple;
+	bh=fkckccSyliv1upVL1rwY+95w9R7G/KX0DfE2SjKAKN4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OXoeYIjgkOfIgbTo+tRvmCWwTUL0KWynSa3xo5RpcnzwfqJwOZKtf7Nuq3ExzALjxE8baWbxOrkf0Zls3F4fVnDG/PGBSNp2TEfe8v2WAa3+12VHw19K4YBd6vfapchhRxigsTvIYEHvGXFOqT0hXWYWT5J8Ep7N493kDht6Q2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=OHY6gjjN; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56UFEGSR2817950;
+	Wed, 30 Jul 2025 10:14:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1753888457;
+	bh=7ua0MFYmmJwgIqN6yZsCwPYOXI20biJTE8N4JNQBlDw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=OHY6gjjN8f48a5pFEOih/K5sacIY6GHdPtjlSHyoUV9MFCdjpxyGn2bJFzV7DLSw5
+	 9H4L57FBpaKmKf7gPe4dV2kBEa0SCFo6cc2t2Wc1VyBr3WQcAYw+y7o6DcoN1EPjPo
+	 3HWB+1d6IWNAeH/SmYllNdtSSMHaSPFttWlARtLA=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56UFEGJf2644967
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Wed, 30 Jul 2025 10:14:16 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Wed, 30
+ Jul 2025 10:14:16 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Wed, 30 Jul 2025 10:14:16 -0500
+Received: from [10.24.69.13] (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56UFEAqb1134002;
+	Wed, 30 Jul 2025 10:14:11 -0500
+Message-ID: <daee58ee-2d20-4cb0-b5bb-2e4dc1ff7b20@ti.com>
+Date: Wed, 30 Jul 2025 20:44:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,61 +64,84 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warning after merge of the jc_docs tree
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
- Jonathan Corbet <corbet@lwn.net>, Stephen Rothwell <sfr@canb.auug.org.au>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>
-Cc: PowerPC <linuxppc-dev@lists.ozlabs.org>,
- Vishal Parmar <vishistriker@gmail.com>,
- Brigham Campbell <me@brighamcampbell.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250730102931.6334022c@canb.auug.org.au>
- <87cy9hx272.fsf@trenco.lwn.net>
- <f10f6457-1a19-47cf-86d1-eb787badd6dd@csgroup.eu>
+Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix skb handling for XDP_PASS
+To: Jakub Kicinski <kuba@kernel.org>
+CC: <namcao@linutronix.de>, <jacob.e.keller@intel.com>, <sdf@fomichev.me>,
+        <john.fastabend@gmail.com>, <hawk@kernel.org>, <daniel@iogearbox.net>,
+        <ast@kernel.org>, <pabeni@redhat.com>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>, <bpf@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+References: <20250721124918.3347679-1-m-malladi@ti.com>
+ <20250723171947.76995990@kernel.org>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <f10f6457-1a19-47cf-86d1-eb787badd6dd@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Meghana Malladi <m-malladi@ti.com>
+In-Reply-To: <20250723171947.76995990@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi Jakub,
 
-
-On 7/30/25 7:30 AM, Christophe Leroy wrote:
+On 7/24/25 05:49, Jakub Kicinski wrote:
+> On Mon, 21 Jul 2025 18:19:18 +0530 Meghana Malladi wrote:
+>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> index 12f25cec6255..a0e7def33e8e 100644
+>> --- a/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> +++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
+>> @@ -757,15 +757,12 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, u32 *xdp_state)
+>>   		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
+>>   
+>>   		*xdp_state = emac_run_xdp(emac, &xdp, page, &pkt_len);
+>> -		if (*xdp_state == ICSSG_XDP_PASS)
+>> -			skb = xdp_build_skb_from_buff(&xdp);
+>> -		else
+>> +		if (*xdp_state != ICSSG_XDP_PASS)
+>>   			goto requeue;
+>> -	} else {
+>> -		/* prepare skb and send to n/w stack */
+>> -		skb = napi_build_skb(pa, PAGE_SIZE);
+>>   	}
+>>   
+>> +	/* prepare skb and send to n/w stack */
+>> +	skb = napi_build_skb(pa, PAGE_SIZE);
+>>   	if (!skb) {
+>>   		ndev->stats.rx_dropped++;
+>>   		page_pool_recycle_direct(pool, page);
 > 
+> I'm not sure this is correct. We seem to hardcode headroom to
+> PRUETH_HEADROOM lower in this function. If XDP adds or removes
+> network headers and then returns XDP_PASS we'll look for the packet
+> at the wrong offset.
 > 
-> Le 30/07/2025 à 15:01, Jonathan Corbet a écrit :
->> Stephen Rothwell <sfr@canb.auug.org.au> writes:
->>
->>> Hi all,
->>>
->>> After merging the jc_docs tree, today's linux-next build (htmldocs)
->>> produced this warning:
->>>
->>> Documentation/arch/powerpc/index.rst:7: WARNING: duplicated entry found in toctree: arch/powerpc/htm
->>>
->>> Introduced by commit
->>>
->>>    c361f76da696 ("docs: powerpc: Add htm.rst to table of contents")
->>>
->>> interacting with commit
->>>
->>>    19122a7c28ed ("docs: powerpc: add htm.rst to toctree")
->>>
->>> from the powerpc tree.
->>
->> Did that just get added there?  I've had that fix since early June...I'd
->> rather not drop it (and have to redo my 6.17 pull request) now if
->> possible...
->>
+
+Yes that makes sense. Thanks for pointing it out. I think I have the 
+right fix in mind. Will post it shortly as v2.
+
+> We just merged some XDP tests, could you try running
+> tools/testing/selftests/drivers/net/xdp.py ?
+> Some general instructions can be found here:
+> https://github.com/linux-netdev/nipa/wiki/Running-driver-tests
 > 
-> There was a ping from Randy about it recently so that Maddy added it the powerpc tree, see https://lore.kernel.org/all/5ac25ceb-023d-409d-8e7e-014d010c5028@infradead.org/
+> Not sure how stable the test is for all NICs but I think the
+>   xdp.test_xdp_native_adjst_head_grow_data
+> test case will exercise what I'm suspecting will fail.
 
-IDK. Maybe the patch that I replied to there was made against mainline instead of linux-next.
-I should have checked linux-next.
+It took me some time to install all the dependencies and get this tool 
+running with the fix I mentioned above [1]. But I am not sure the error 
+logs I got [2] are the one which you were expecting or some stability 
+issue with the test. Can you please take a look at it.
 
--- 
-~Randy
+[1]: 
+https://gist.github.com/MeghanaMalladiTI/ce6a440f05fbdfb2d4363f672296d7d8
+[2]:https://gist.github.com/MeghanaMalladiTI/52fe9d06c114562be08105d73f91ba62 
 
+
+If the fix I attached here [1] makes sense, I will go ahead and post 
+this as v2.
+
+Thanks.
 
