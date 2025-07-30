@@ -1,294 +1,139 @@
-Return-Path: <linux-kernel+bounces-750698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 347F7B16004
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C8CAAB1602E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:21:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261B518C6EE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:15:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE2C31AA0D35
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAD5296165;
-	Wed, 30 Jul 2025 12:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC5B299AA3;
+	Wed, 30 Jul 2025 12:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="OwvZ+7jR"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2253FE5;
-	Wed, 30 Jul 2025 12:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753877696; cv=pass; b=o7+IXwjnYgMXfIObDegS/Ly36JXyLKV1t+TtBpjVRwsg5MKRlmxlxe11A6dINJhOi9F6Qk28vIum9YNDqQ0BuznIMMDe5T7u7ESNPHmA2wMsDx/LkMCyu5AidOYbEHcyu2E04xp3FhfSkoSaKd6+JfS5WzPfNrKHpxC3g+H98sM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753877696; c=relaxed/simple;
-	bh=MJr6t1BtBiLGwOJrWZI3GkXsGiXtGndz3Bsl8aCXD+g=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=I79CsgIZhSHdeEYoeylVPF7zxpSRJx9P3QiHIaOCRdd8gGn1ha9+2y+85Qf0mG1QxIJa9vB/sNBgJjWG75S+3iup0YGp/x8RVn+wzzh+u+NvyODv94s0FDaXSRDA8LeekQtw8x46V5TiXPFsn0ftbJT0/IhLfVsjki6z2oqQjhk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=OwvZ+7jR; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753877660; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BTtWjBu78T4K4p4DAbV00CQxqFcyQX//7jU/o2Ent7wT62szX9hAczBtFfalr5q4WF/AQPOgDIAS3OEWjUCMXHtYn5t+CuT8JApMULgK7bsmuL7g68Yk5aXLcJtQrm6e4RFiEllohlOzSiBnJUId62cnWWTb8paHI4XcK13e3NU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753877660; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Cvk/NZkWXutHuBZDgvvw0GnGlhYqcEb5gqbSSddkwpE=; 
-	b=NUyAscFzvgevk/dDAFGjTPvPFsnVfBo+l/B9JyGluJzGB12zCVxJykjKErPRLv8ObNmtDPl9HEvMPEqmxjAS7Qm9oKpCa0o1fDQn/yn5QoY2yg3FibTNU1GN3y/2vfoelH9CooqesHAMUziBrtv8JdDgc//cZZv4bHrF5kF4qYs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753877660;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=Cvk/NZkWXutHuBZDgvvw0GnGlhYqcEb5gqbSSddkwpE=;
-	b=OwvZ+7jRT07UJCP6CeqVSPLqXrDu5ElvsX51d7TTTsiFP95uTDfJm9GqRuvLs0C3
-	SLTMf29rTLIqls6QAn5VwqBAfnDREOo3cc9iDj6FkiuE5B+mOqQN8EfbVO8ictn+80z
-	7fXhyAu/ORQRu+ndu/gH+xiJEgho50V8WR5z0ImI=
-Received: by mx.zohomail.com with SMTPS id 1753877656376634.2090583909618;
-	Wed, 30 Jul 2025 05:14:16 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="J8VTz1+H"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277AD299A85;
+	Wed, 30 Jul 2025 12:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753877850; cv=none; b=piZFiGSuOzByTklG9ukMLuFK+EJEjW6UpH8sXd0i0LKzJ7rP/+XgkTOrJy7FZPJTpAUP20KIJsHZooaGLNpar1GPyfcHU0fxXZj3ExSgGQ0KVcjAwKWaSpF7fiGOws8ZiGPzKUobwRIg6DnZp+LXDlzaN5KRNMfiiafJOnu0rwI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753877850; c=relaxed/simple;
+	bh=14QIktobUUd1AEIYkWI4azufT+FypU+hkdl6HOH5mAE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=aRarjpayEAweLw+/NdNg9M43txFxUZEOmhdytOIrbAcX+xGvVDPeJbgjD93g3usZAFBFfmdz7rsQ7DD3NVWZ7fFjUgeBkqQ/kesUf3NQn/VZkG3ivnsW4xcGXqSkkvZgusUa2IJjuJTsYntGkt4U/fUAOXe1wAvlwWWPVx2+EhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=J8VTz1+H reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=ElSFpxyOTNVE1T0z8YDlqpPg0MdkDgeazT0leojoLgA=; b=J
+	8VTz1+HWGwyksH1/J3ahk6RCPqjfMpSDLn90iaX6A8LonsefGzYkgdwZyg/S2Iv/
+	244T//fOex0i3VyLcvwv+LMGmgcIywmvr/lx2eMlJ5WZURL8yWd4dAdyj4hoNAw6
+	iggBi2/1NoI1spucI2nYfSxdcoxI/xXByO6kNAO4SI=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-100 (Coremail) ; Wed, 30 Jul 2025 20:15:44 +0800
+ (CST)
+Date: Wed, 30 Jul 2025 20:15:44 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Sebastian Reichel" <sebastian.reichel@collabora.com>
+Cc: dmitry.baryshkov@oss.qualcomm.com, heiko@sntech.de, hjc@rock-chips.com,
+	mripard@kernel.org, naoki@radxa.com, stephen@radxa.com,
+	cristian.ciocaltea@collabora.com, neil.armstrong@linaro.org,
+	Laurent.pinchart@ideasonboard.com, yubing.zhang@rock-chips.com,
+	krzk+dt@kernel.org, devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, robh@kernel.org,
+	"Andy Yan" <andy.yan@rock-chips.com>
+Subject: Re:Re: [PATCH v6 09/10] arm64: dts: rockchip: Enable DisplayPort
+ for rk3588s Cool Pi 4B
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <hbvwlucm5mnjpve6hb6h7dusgrokvdxzbpq5zrwib4yesrdakp@v77ofq7u2vv2>
+References: <20250728082846.3811429-1-andyshrk@163.com>
+ <20250728082846.3811429-10-andyshrk@163.com>
+ <hbvwlucm5mnjpve6hb6h7dusgrokvdxzbpq5zrwib4yesrdakp@v77ofq7u2vv2>
+X-NTES-SC: AL_Qu2eAfScuE8v4iOQZOkfmkcVgOw9UcO5v/Qk3oZXOJF8jCrp+T8Sd2ZaF1DE/tCJOQeHiwGOexp84/ZoY4N9R58oIPqZyitgPF4yMudd86PcBQ==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] rust: clk: use the type-state pattern
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DBP8EWLCAE4B.34Y4FBSH5BTB6@kernel.org>
-Date: Wed, 30 Jul 2025 09:13:59 -0300
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Alexandre Courbot <acourbot@nvidia.com>,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <086CDFC4-A9EE-40C7-89BB-D3B8CBFA01EA@collabora.com>
-References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
- <DBP8EWLCAE4B.34Y4FBSH5BTB6@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Message-ID: <5deac95c.8ec2.1985b428b0b.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZCgvCgDnTyHwDIpok+cJAA--.18121W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwqaXmiKBmCJrQACsf
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-
-
-> On 30 Jul 2025, at 05:03, Danilo Krummrich <dakr@kernel.org> wrote:
->=20
-> On Tue Jul 29, 2025 at 11:38 PM CEST, Daniel Almeida wrote:
->> In light of the Regulator abstraction that was recently merged, =
-switch this
->> abstraction to use the type-state pattern instead. It solves both a) =
-and b)
->> by establishing a number of states and the valid ways to transition =
-between
->> them. It also automatically undoes any call to clk_get(), =
-clk_prepare() and
->> clk_enable() as applicable on drop(), so users do not have to do =
-anything
->> special before Clk goes out of scope.
->=20
-> That's a great improvement, thanks! Some questions / comments below.
->=20
->>     /// A reference-counted clock.
->>     ///
->>     /// Rust abstraction for the C [`struct clk`].
->>     ///
->> +    /// A [`Clk`] instance represents a clock that can be in one of =
-several
->> +    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
->> +    ///
->> +    /// No action needs to be taken when a [`Clk`] is dropped. The =
-calls to
->> +    /// `clk_unprepare()` and `clk_disable()` will be placed as =
-applicable.
->> +    ///
->> +    /// An optional [`Clk`] is treated just like a regular [`Clk`], =
-but its
->> +    /// inner `struct clk` pointer is `NULL`. This interfaces =
-correctly with the
->> +    /// C API and also exposes all the methods of a regular [`Clk`] =
-to users.
->> +    ///
->>     /// # Invariants
->>     ///
->>     /// A [`Clk`] instance holds either a pointer to a valid [`struct =
-clk`] created by the C
->> @@ -99,20 +160,39 @@ mod common_clk {
->>     /// Instances of this type are reference-counted. Calling =
-[`Clk::get`] ensures that the
->>     /// allocation remains valid for the lifetime of the [`Clk`].
->>     ///
->> -    /// ## Examples
->> +    /// The [`Prepared`] state is associated with a single count of
->> +    /// `clk_prepare()`, and the [`Enabled`] state is associated =
-with a single
->> +    /// count of `clk_enable()`, and the [`Enabled`] state is =
-associated with a
->> +    /// single count of `clk_prepare` and `clk_enable()`.
->> +    ///
->> +    /// All states are associated with a single count of =
-`clk_get()`.
->> +    ///
->> +    /// # Examples
->>     ///
->>     /// The following example demonstrates how to obtain and =
-configure a clock for a device.
->>     ///
->>     /// ```
->>     /// use kernel::c_str;
->> -    /// use kernel::clk::{Clk, Hertz};
->> +    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, =
-Prepared};
->>     /// use kernel::device::Device;
->>     /// use kernel::error::Result;
->>     ///
->>     /// fn configure_clk(dev: &Device) -> Result {
->> -    ///     let clk =3D Clk::get(dev, Some(c_str!("apb_clk")))?;
->> +    ///     // The fastest way is to use a version of `Clk::get` for =
-the desired
->> +    ///     // state, i.e.:
->> +    ///     let clk: Clk<Enabled> =3D Clk::<Enabled>::get(dev, =
-Some(c_str!("apb_clk")))?;
->=20
-> Given that this is a driver API, why do we allow obtaining and =
-configuring
-> clocks of any device, i.e. also unbound devices?
->=20
-> I think Clk::<T>::get() should take a &Device<Bound> instead.
-
-Ah, this was a question I had, but that I forgot to mention here.
-
-The same can probably be said of the regulator series? i.e.:
-
-impl Regulator<Disabled> {
-    /// Obtains a [`Regulator`] instance from the system.
-    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
-        Regulator::get_internal(dev, name)
-    }
-
->=20
->> -    ///     clk.prepare_enable()?;
->> +    ///     // Any other state is also possible, e.g.:
->> +    ///     let clk: Clk<Prepared> =3D Clk::<Prepared>::get(dev, =
-Some(c_str!("apb_clk")))?;
->> +    ///
->> +    ///     // Later:
->> +    ///     let clk: Clk<Enabled> =3D clk.enable().map_err(|error| {
->> +    ///         error.error
->> +    ///     })?;
->> +    ///
->> +    ///     // Note that error.clk is the original `clk` if the =
-operation
->> +    ///     // failed. It is provided as a convenience so that the =
-operation may be
->> +    ///     // retried in case of errors.
->>     ///
->>     ///     let expected_rate =3D Hertz::from_ghz(1);
->>     ///
->> @@ -120,104 +200,172 @@ mod common_clk {
->>     ///         clk.set_rate(expected_rate)?;
->>     ///     }
->>     ///
->> -    ///     clk.disable_unprepare();
->> +    ///     // Nothing is needed here. The drop implementation will =
-undo any
->> +    ///     // operations as appropriate.
->> +    ///     Ok(())
->> +    /// }
->> +    ///
->> +    /// fn shutdown(dev: &Device, clk: Clk<Enabled>) -> Result {
->=20
-> You don't need the dev argument here.
->=20
->> +    ///     // The states can be traversed "in the reverse order" as =
-well:
->> +    ///     let clk: Clk<Prepared> =3D clk.disable().map_err(|error| =
-{
->> +    ///         error.error
->> +    ///     })?;
->> +    ///
->> +    ///     let clk: Clk<Unprepared> =3D clk.unprepare();
->=20
-> I know you want to showcase the type state, yet I don't know if we =
-should
-> explicitly declare the type if not necessary. People will likely just =
-copy
-> things. Maybe a comment is better to emphasize it?
-
-Ok
-
->=20
->> +    ///
->>     ///     Ok(())
->>     /// }
->>     /// ```
->>     ///
->>     /// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
->>     #[repr(transparent)]
->> -    pub struct Clk(*mut bindings::clk);
->> +    pub struct Clk<T: ClkState> {
->> +        inner: *mut bindings::clk,
->> +        _phantom: core::marker::PhantomData<T>,
->> +    }
->=20
-> <snip>
->=20
->> +    impl<T: ClkState> Drop for Clk<T> {
->> +        fn drop(&mut self) {
->> +            if T::DISABLE_ON_DROP {
->> +                // SAFETY: By the type invariants, self.as_raw() is =
-a valid argument for
->> +                // [`clk_disable`].
->> +                unsafe { bindings::clk_disable(self.as_raw()) };
->> +            }
->> +
->> +            if T::UNPREPARE_ON_DROP {
->> +                // SAFETY: By the type invariants, self.as_raw() is =
-a valid argument for
->> +                // [`clk_unprepare`].
->> +                unsafe { bindings::clk_unprepare(self.as_raw()) };
->> +            }
->=20
-> Nice! I like this cleanup. However, don't you still need to call =
-clk_put() to
-> drop the reference count?
-
-Right, clk_put() was totally forgotten.
-
->=20
-> Also, given that this is a device resource, don't we want to take it =
-away from
-> drivers once the corresponding device has been unbound, i.e. use =
-Devres?
-
-Do you mean to have the get() functions return Devres<Clk>?
-
-Also, is this applicable for Regulator as well?
-
->=20
->>         }
->>     }
->> }
->=20
-
-=E2=80=94 Daniel
-
+CgpIZWxsbyBTZWJhc3RpYW7vvIwKCkF0IDIwMjUtMDctMzAgMDE6MDk6NDEsICJTZWJhc3RpYW4g
+UmVpY2hlbCIgPHNlYmFzdGlhbi5yZWljaGVsQGNvbGxhYm9yYS5jb20+IHdyb3RlOgo+SGksCj4K
+Pk9uIE1vbiwgSnVsIDI4LCAyMDI1IGF0IDA0OjI4OjM0UE0gKzA4MDAsIEFuZHkgWWFuIHdyb3Rl
+Ogo+PiBGcm9tOiBBbmR5IFlhbiA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cj4+IAo+PiBFbmFi
+bGUgdGhlIE1pbmkgRGlzcGxheVBvcnQgb24gdGhpcyBib2FyZC4KPj4gTm90ZSB0aGF0IFJPQ0tD
+SElQX1ZPUDJfRVBfRFAwIGlzIGRlZmluZWQgYXMgMTAgaW4gZHQtYmluZGluZyBoZWFkZXIsCj4+
+IGJ1dCBpdCB3aWxsIHRyaWdnZXIgYSBkdGMgd2FybmluZyBsaWtlICJncmFwaCBub2RlIHVuaXQg
+YWRkcmVzcyBlcnJvciwKPj4gZXhwZWN0ZWQgImEiIiBpZiB3ZSB1c2UgaXQgZGlyZWN0bHkgYWZ0
+ZXIgZW5kcG9pbnQsIHNvIHdlIHVzZSAiYSIKPj4gaW5zdGVhZCBoZXJlLgo+PiAKPj4gU2lnbmVk
+LW9mZi1ieTogQW5keSBZYW4gPGFuZHkueWFuQHJvY2stY2hpcHMuY29tPgo+PiBSZXZpZXdlZC1i
+eTogRG1pdHJ5IEJhcnlzaGtvdiA8ZG1pdHJ5LmJhcnlzaGtvdkBvc3MucXVhbGNvbW0uY29tPgo+
+PiAtLS0KPgo+VGhlIGdyYXBoIGN1cnJlbnRseSBsb29rcyBsaWtlIHRoaXM6Cj4KPlZPUCA8LT4g
+RFAgY29udHJvbGxlciA8LT4gRFAgQ29ubmVjdG9yCj4KPklJVUlDIHRoaXMgZG9lcyBub3Qgd29y
+ayBmb3IgVVNCLUMgYW5kIG5lZWRzIHRvIGxvb2sgbGlrZSB0aGlzLAo+YmVjYXVzZSB0aGUgVVNC
+RFAgUEhZIGhhbmRsZXMgdGhlIGxhbmUgbXV4aW5nIGFuZCB0aHVzIG11c3QgYmUKPnRoZSB0aGlu
+ZyBjb25uZWN0ZWQgdG8gdGhlIFVTQi1DIGNvbnRyb2xsZXIvY29ubmVjdG9yOgoKSSBwcmV2aW91
+c2x5IHRlc3RzIFVTQi1DIEFsdG1vZGUgb24gTGludXggNS4xNSB1c2luZyBSb2NrIDViLCAgdGhp
+cyBmdW5jdGlvbiB3b3JrcyB3ZWxsLiAKSG93ZXZlciwgd2hlbiB0aGUgc2FtZSBkdHMgY29uZmln
+dXJhdGlvbiBpcyB1c2VkIG9uIExpbnV4IDYuMTYgYW5kIHRlc3RlZCB3aXRoIFJvY2sgNWIgaW4g
+VVNCLUMgQWx0bW9kZSwgCnRoZSBIUEQgaW50ZXJydXB0IG9mIERQIGNhbm5vdCBiZSB0cmlnZ2Vy
+ZWQuIEknbSBub3Qgc3VyZSB5ZXQgd2hhdCBjaGFuZ2VzIGhhdmUgb2NjdXJyZWQgYmV0d2VlbiB0
+aGVtLgpNb3Jlb3ZlciwgSSBub3RpY2VkIHRoYXQgb24geW91ciB0ZXN0IGJyYW5jaFsxXSwgdGhl
+IERUUyBjb25maWd1cmF0aW9uIGhhcyBhbHNvIGNoYW5nZWQgY29tcGFyZWQgdG8gYmVmb3JlLgpJ
+IHdvdWxkIGdyZWF0bHkgYXBwcmVjaWF0ZSBpdCBpZiB5b3UgY291bGQgc2hhcmUgc29tZSBkZXRh
+aWxzLgoKCgpbMF1odHRwczovL2dpdGh1Yi5jb20vYW5keXNocmsvbGludXgvY29tbWl0L2I5Zjg3
+YTU2MmQ0MzFmYjU5YjY2NGI3YWVkNDE4NjlhOGYxODRkZTMKWzFdaHR0cHM6Ly9naXRsYWIuY29s
+bGFib3JhLmNvbS9oYXJkd2FyZS1lbmFibGVtZW50L3JvY2tjaGlwLTM1ODgvbGludXgvLS9jb21t
+aXQvMGU3ZTkwNDk0NDgyY2Y3N2Q1YmIwNThhNDc1ODNiNjc0N2IxNDBmNAo+Cj5WT1AgPC0+IERQ
+IGNvbnRyb2xsZXIgPC0+IFVTQkRQIFBIWSA8LT4gVVNCLUMgQ29ubmVjdG9yCj4KPkkgd29uZGVy
+IGlmIHRoZSBzaW1wbGUgY2FzZSBub3QgaW52b2x2aW5nIFVTQi1DIHNob3VsZCBhbHNvIGhhdmUK
+PnRoZSBVU0JEUCBQSFkgZGVzY3JpYmVkIGluIHRoZSBncmFwaCBhcyBhIHRyYW5zcGFyZW50IGJy
+aWRnZT8KPk5vdGUsIHRoYXQgdGhlIFVTQkRQIFBIWSBEVCBiaW5kaW5nIGlzIGN1cnJlbnRseSBu
+b3QgcmVhZHkgZm9yCj50aGlzICh0aGlzIGFsc28gYWZmZWN0cyB0aGUgbmV4dCBwYXRjaCwgYnV0
+IHNob3VsZCBiZSBlbm91Z2ggdG8KPmRpc2N1c3MgdGhpcyBvbmNlIDopKS4KPgo+R3JlZXRpbmdz
+LAo+Cj4tLSBTZWJhc3RpYW4KPgo+PiAKPj4gKG5vIGNoYW5nZXMgc2luY2UgdjIpCj4+IAo+PiBD
+aGFuZ2VzIGluIHYyOgo+PiAtIFNvcnQgaW4gYWxwaGFiZXRpY2FsIG9yZGVyCj4+IAo+PiAgLi4u
+L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OHMtY29vbHBpLTRiLmR0cyAgIHwgMzcgKysrKysrKysr
+KysrKysrKysrKwo+PiAgMSBmaWxlIGNoYW5nZWQsIDM3IGluc2VydGlvbnMoKykKPj4gCj4+IGRp
+ZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OHMtY29vbHBpLTRi
+LmR0cyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvcm9ja2NoaXAvcmszNTg4cy1jb29scGktNGIuZHRz
+Cj4+IGluZGV4IDhiNzE3YzQwMTdhNDYuLjUzOTNjNmNjNDkzYzMgMTAwNjQ0Cj4+IC0tLSBhL2Fy
+Y2gvYXJtNjQvYm9vdC9kdHMvcm9ja2NoaXAvcmszNTg4cy1jb29scGktNGIuZHRzCj4+ICsrKyBi
+L2FyY2gvYXJtNjQvYm9vdC9kdHMvcm9ja2NoaXAvcmszNTg4cy1jb29scGktNGIuZHRzCj4+IEBA
+IC0zOSw2ICszOSwxOCBAQCBjaG9zZW4gewo+PiAgCQlzdGRvdXQtcGF0aCA9ICJzZXJpYWwyOjE1
+MDAwMDBuOCI7Cj4+ICAJfTsKPj4gIAo+PiArCWRwLWNvbiB7Cj4+ICsJCWNvbXBhdGlibGUgPSAi
+ZHAtY29ubmVjdG9yIjsKPj4gKwkJbGFiZWwgPSAiRFAgT1VUIjsKPj4gKwkJdHlwZSA9ICJtaW5p
+IjsKPj4gKwo+PiArCQlwb3J0IHsKPj4gKwkJCWRwX2Nvbl9pbjogZW5kcG9pbnQgewo+PiArCQkJ
+CXJlbW90ZS1lbmRwb2ludCA9IDwmZHAwX291dF9jb24+Owo+PiArCQkJfTsKPj4gKwkJfTsKPj4g
+Kwl9Owo+PiArCj4+ICAJaGRtaS1jb24gewo+PiAgCQljb21wYXRpYmxlID0gImhkbWktY29ubmVj
+dG9yIjsKPj4gIAkJdHlwZSA9ICJkIjsKPj4gQEAgLTIxNSw2ICsyMjcsMjQgQEAgJmNwdV9iMiB7
+Cj4+ICAJY3B1LXN1cHBseSA9IDwmdmRkX2NwdV9iaWcxX3MwPjsKPj4gIH07Cj4+ICAKPj4gKyZk
+cDAgewo+PiArCXN0YXR1cyA9ICJva2F5IjsKPj4gKwlwaW5jdHJsLTAgPSA8JmRwMG0wX3BpbnM+
+Owo+PiArCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4+ICt9Owo+PiArCj4+ICsmZHAwX2lu
+IHsKPj4gKwlkcDBfaW5fdnAyOiBlbmRwb2ludCB7Cj4+ICsJCXJlbW90ZS1lbmRwb2ludCA9IDwm
+dnAyX291dF9kcDA+Owo+PiArCX07Cj4+ICt9Owo+PiArCj4+ICsmZHAwX291dCB7Cj4+ICsJZHAw
+X291dF9jb246IGVuZHBvaW50IHsKPj4gKwkJcmVtb3RlLWVuZHBvaW50ID0gPCZkcF9jb25faW4+
+Owo+PiArCX07Cj4+ICt9Owo+PiArCj4+ICAmZ3B1IHsKPj4gIAltYWxpLXN1cHBseSA9IDwmdmRk
+X2dwdV9zMD47Cj4+ICAJc3RhdHVzID0gIm9rYXkiOwo+PiBAQCAtODg5LDMgKzkxOSwxMCBAQCB2
+cDBfb3V0X2hkbWkwOiBlbmRwb2ludEBST0NLQ0hJUF9WT1AyX0VQX0hETUkwIHsKPj4gIAkJcmVt
+b3RlLWVuZHBvaW50ID0gPCZoZG1pMF9pbl92cDA+Owo+PiAgCX07Cj4+ICB9Owo+PiArCj4+ICsm
+dnAyIHsKPj4gKwl2cDJfb3V0X2RwMDogZW5kcG9pbnRAYSB7Cj4+ICsJCXJlZyA9IDxST0NLQ0hJ
+UF9WT1AyX0VQX0RQMD47Cj4+ICsJCXJlbW90ZS1lbmRwb2ludCA9IDwmZHAwX2luX3ZwMj47Cj4+
+ICsJfTsKPj4gK307Cj4+IC0tIAo+PiAyLjQzLjAKPj4gCg==
 
