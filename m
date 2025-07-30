@@ -1,257 +1,124 @@
-Return-Path: <linux-kernel+bounces-751047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2886BB16492
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:25:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A51B16495
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68E9B7AAC03
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:24:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 636D018C3848
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 177F52DCF46;
-	Wed, 30 Jul 2025 16:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FC32DE1E2;
+	Wed, 30 Jul 2025 16:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HzlZCk7/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ep5n4pl3"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D1F1DFD96;
-	Wed, 30 Jul 2025 16:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F8F1C7013;
+	Wed, 30 Jul 2025 16:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753892744; cv=none; b=hJnGilyLlk2/UOA87ljJV/G4H5YlK8vWui09lpgC2va3V/1xyA0HGi3tYQNAYXDZGpJgy1/VidArA1GFbD4a1BGliOqeR+qzHfot9ZxOAG7a0oGMb9G4Jm9EPzjX+7moLLTMOlyt5Fft0kNzNRRUVNrFiNQ88X6QZpCONUGkazA=
+	t=1753892871; cv=none; b=cEjxy9Dx4ceiSn/8QbBmRkzu5apPWdSSoGJf5aQyjJITnhETs0Tz2WD6J/YjpYjnccfmvoTEfhgKE711BeZ0FpolsWC9/lNKkmsmTaObHThiAttJvxQNU1OnSG1TBs5W3ej9wqhCx0McTL5UiebZDBKOHkx+Uup2Y9GGFVtcHbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753892744; c=relaxed/simple;
-	bh=UQeE2zjdzbOt9gppZh3hry9Bml97lFABzH2PwcilJz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eLAn07KaqISYOoDLfQcJ4p9OFxqS3MYuUkz2Yno7OVSJxA78hnTQUgLIrsDIisbcidBem4SdScQGWighA5YiBMIbwC7Hn2LA1PPKnczjjCLvaSyrR4eWJge0lmvt+GY8FpdV+uEWV6QNtIIPTGxVEj48MG3+XrtSCtGIkRpTntw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HzlZCk7/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FC4AC4CEE3;
-	Wed, 30 Jul 2025 16:25:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753892743;
-	bh=UQeE2zjdzbOt9gppZh3hry9Bml97lFABzH2PwcilJz8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HzlZCk7/ajeF9qnGBxfUh13bAUQxcbI2lb2iUQQFQUDnyQS+MDyBeYMrwHoYr6Q1+
-	 emx3+V90rFwNiNg67cllBF1grTIPiLieyTVm6nWzgJql4xKPiuuBKG5yp2sF1QHoZc
-	 uChTbKQ78gMELP8KH4Q1AkT6nR4Gl72TQJp7z45X7n2Zv7wKBciPVq99OoQKXaTX+w
-	 HRWITUYVIhIHs0qgf+UawXErGoavGrbFdrtKqafm5rUqY9ipqBix0Tj0tiGRF+8Gif
-	 jc8yr7IQpZlOR4/VH4NFyKjZp7wkbfI+xqrzNG7sJ93uKPVcMZ41lPxNrJ+l/vps6j
-	 BtVco7Igkb74A==
-Date: Wed, 30 Jul 2025 12:25:41 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-	josh@joshtriplett.org, konstantin@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH 2/4] agents: add core development references
-Message-ID: <aIpHhR8AhPJZE2Rp@lappy>
-References: <20250727195802.2222764-1-sashal@kernel.org>
- <20250727195802.2222764-3-sashal@kernel.org>
- <202507271937.EC44B39@keescook>
- <aIcD9f_52tlLgE-e@lappy>
- <202507272203.BECE244@keescook>
- <aIcRzndNUdh-9R18@lappy>
- <202507272310.FCB96F5E93@keescook>
+	s=arc-20240116; t=1753892871; c=relaxed/simple;
+	bh=IBd88+g75enem8ZFwiFE6FmfjZAFd6OhLTrZnh/J7ls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nsTh9KTc4u7ccZTP+nshNFgHtPiiTObnXyj1fXztya+p9ceWIlroHMODzfSj/9wr58ThhvbNsAhPY56bA9YLJuim3oVeMUe0s0Vfgdz0gdmUuJ6xzmNFscvn9DE+/6Pi+hH63h24KAMfeEnALZ2Qc9LaedH5irFuqATZBzcyX/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ep5n4pl3; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45892deb1dcso5704065e9.1;
+        Wed, 30 Jul 2025 09:27:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753892868; x=1754497668; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6BqqfmK2qoQp6Ai7p0EgtaM5Od+R/trV0qF5iEdPoHE=;
+        b=ep5n4pl3Tm3pkjK2gf0ISUv1oB+pTLRKK3QIP8Gg7xrjsrEyf3IMyRmaU66DfxOlOM
+         07vO/UKkSlZMQkMp4FB5impVCh6aBGDmVAWaAtNNRURWhssyAnkO3FdIwa0vnwu7Us5s
+         S4hc7GYjnIOiw6Bj6oHv5HZU3FSI2N0NrysQFa8Q86ZhyUdRITFlhIUNKamTeGJjEFaw
+         3sbWdxMhle9h4KPTw9Mkojiz7dmAp5myBrIi2lZ1mzcyNjJ2jZzYOOCl/icmsffj4qvh
+         zxgkdYlS89OSPIYcJ7uTz3SFizAVDA4UXrVB+sds7qu8zTdc/9bCI4ax+9Jq5raDCd2v
+         /OtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753892868; x=1754497668;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6BqqfmK2qoQp6Ai7p0EgtaM5Od+R/trV0qF5iEdPoHE=;
+        b=TQgpQnZk+Kh0f1k7xaCzCrBlaKvhM19DjJmPsXQKTDjeZbD5fAcdcu2mlZa3/z2W28
+         jCdzCWKM64LDpictZaLuCON2qEepJrcmKbJ1vIJKp1zqsa/SW3kCdZyitv4/W340tphW
+         /4wGHEAMvJnQwvlPMdEqeymHMi3kjiP6NhdpKCU6wxD6TR5VlHcvtFyjFtKIf0i/1wvb
+         v7G6Cukac6FM2Vo7DhlBnhpJrb+9QfTD4veyhR7LJkd/kBnj75VhWYZ6rZ6QPKvnsnWQ
+         G1JvK9kbu82PVFcivtioCn+Uyv5FgsYy+PRWqRDOd6si+QprxgLHB4uyzQ+D1vTJOTRq
+         vGng==
+X-Forwarded-Encrypted: i=1; AJvYcCVqWN7vQryBi35mo2FJdg2QYJ6C8dShoDO1/ChybBcSNT4i7JBzBVBt441emAsS0lFusHeGGJzVvdk=@vger.kernel.org, AJvYcCXzkgSHlWpRmoePtplQMPEl7xXo1PPJjYt/jG9MiC/j0XUwxssgXhWaoY32dQtTaUl+b0nG6G8ajZqKknnq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKB07QIJcpv5kiimMUYxpi2M6gaTl7vbkJPbGSpWGae9m6WkV5
+	uh+vBXzcSPDDU8+wqNiWHJDTkOX2mIzzBi9NxYbM7kMq30xpAmzLbdQW
+X-Gm-Gg: ASbGncsBs1JqGqk8MmIDlhC7maZzthRM5hIfDuHq8bGxUMIQRkX/XXHKKyZBO+1Q6ba
+	KedGS+90nzI+qI7tvMJ/Yp8YzHpifO94jyb778nIpUvX23rakQ5oN2J11xMQb7zJRiTJBmFsSCp
+	0HVKX0FAWNzqR/eEpy7a84L+hVSEnJxL8wK+Ca1L/dJ3MziXzw8pwdhO3bxy2EqL7uzUlbq3tZA
+	rk0Pc+tNPBNFzGEvddHy/+bkF1NrWU/1bWvjADV5pUeiQA7B6DXcw7Q6N23COvxkHMcnFAY4Yv4
+	/k7TZg0eOh/VQ2CF5NDqrxpvyFc3zZqsQrsrDA2USJWWW4kTyqKGjJ+8MNEpXpD6yojH3dsoR8K
+	9WXjvjeCloSJS+iNTF/6DYGxTFbYsbO0=
+X-Google-Smtp-Source: AGHT+IFNTEfL8MXUiyul7/qYy2OufuFwuC1wS29v9JYelkS5QR/IryALVLKRVISTNCURBmibZxI9Yg==
+X-Received: by 2002:a05:600c:3488:b0:456:2d06:618a with SMTP id 5b1f17b1804b1-4589c3650eamr18294605e9.18.1753892867826;
+        Wed, 30 Jul 2025 09:27:47 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589536bc42sm33362385e9.7.2025.07.30.09.27.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 09:27:47 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	dmaengine@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] dmaengine: ppc4xx: Remove space before newline
+Date: Wed, 30 Jul 2025 17:27:12 +0100
+Message-ID: <20250730162712.2086439-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <202507272310.FCB96F5E93@keescook>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sun, Jul 27, 2025 at 11:18:14PM -0700, Kees Cook wrote:
->I think the above list is perfect contents for the README. Yes, please
->make that an entry point, or point to some other .rst entry point that
->will have a list of roles like that, with some common starting points.
->And yes, a line for agents in there seems fine. Maybe "If you are a
->coding agent, also see ... for agent-specific details."
+There is a extraneous space before a newline in pr_err and dev_dbg
+messages. Remove the spaces.
 
-What about something like below for README:
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/dma/ppc4xx/adma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Linux kernel
-============
-
-The Linux kernel is the core of any Linux operating system. It manages hardware,
-system resources, and provides the fundamental services for all other software.
-
-Quick Start
------------
-
-* Report a bug: See Documentation/admin-guide/reporting-issues.rst
-* Get the latest kernel: https://kernel.org
-* Build the kernel: make defconfig && make -j$(nproc)
-* Join the community: https://lore.kernel.org/
-
-Essential Documentation
------------------------
-
-All users should be familiar with:
-
-* Code of Conduct: Documentation/process/code-of-conduct.rst
-* License: COPYING (GPLv2)
-
-Documentation can be built with make htmldocs or viewed online at:
-https://www.kernel.org/doc/html/latest/
-
-
-Who Are You?
-============
-
-Find your role below:
-
-* New Kernel Developer - Getting started with kernel development
-* Academic Researcher - Studying kernel internals and architecture
-* Security Expert - Hardening and vulnerability analysis
-* Backport/Maintenance Engineer - Maintaining stable kernels
-* System Administrator - Configuring and troubleshooting
-* Maintainer - Leading subsystems and reviewing patches
-* Hardware Vendor - Writing drivers for new hardware
-* Distribution Maintainer - Packaging kernels for distros
-* Agentic Coding - AI assistants working with kernel code
-
-
-For Specific Users
-==================
-
-New Kernel Developer
---------------------
-
-Welcome! Start your kernel development journey here:
-
-* Getting Started: Documentation/process/development-process.rst
-* Your First Patch: Documentation/process/submitting-patches.rst
-* Coding Style: Documentation/process/coding-style.rst
-* Build System: Documentation/kbuild/index.rst
-* Development Tools: Documentation/dev-tools/index.rst
-* Kernel Hacking Guide: Documentation/kernel-hacking/hacking.rst
-* Core APIs: Documentation/core-api/index.rst
-
-Academic Researcher
--------------------
-
-Explore the kernel's architecture and internals:
-
-* Researcher Guidelines: Documentation/process/researcher-guidelines.rst
-* Memory Management: Documentation/mm/index.rst
-* Scheduler: Documentation/scheduler/index.rst
-* Networking Stack: Documentation/networking/index.rst
-* Filesystems: Documentation/filesystems/index.rst
-* RCU (Read-Copy Update): Documentation/RCU/index.rst
-* Locking Primitives: Documentation/locking/index.rst
-* Power Management: Documentation/power/index.rst
-
-Security Expert
----------------
-
-Security documentation and hardening guides:
-
-* Security Documentation: Documentation/security/index.rst
-* LSM Development: Documentation/security/lsm-development.rst
-* Self Protection: Documentation/security/self-protection.rst
-* Reporting Vulnerabilities: Documentation/process/security-bugs.rst
-* CVE Procedures: Documentation/process/cve.rst
-* Embargoed Hardware Issues: Documentation/process/embargoed-hardware-issues.rst
-* Security Features: Documentation/features/seccomp/index.rst
-
-Backport/Maintenance Engineer
------------------------------
-
-Maintain and stabilize kernel versions:
-
-* Stable Kernel Rules: Documentation/process/stable-kernel-rules.rst
-* Backporting Guide: Documentation/process/backporting.rst
-* Applying Patches: Documentation/process/applying-patches.rst
-* Subsystem Profile: Documentation/maintainer/maintainer-entry-profile.rst
-* Git for Maintainers: Documentation/maintainer/configure-git.rst
-
-System Administrator
---------------------
-
-Configure, tune, and troubleshoot Linux systems:
-
-* Admin Guide: Documentation/admin-guide/index.rst
-* Kernel Parameters: Documentation/admin-guide/kernel-parameters.rst
-* Sysctl Tuning: Documentation/admin-guide/sysctl/index.rst
-* Tracing/Debugging: Documentation/trace/index.rst
-* Performance Security: Documentation/admin-guide/perf-security.rst
-* Hardware Monitoring: Documentation/hwmon/index.rst
-
-Maintainer
-----------
-
-Lead kernel subsystems and manage contributions:
-
-* Maintainer Handbook: Documentation/maintainer/index.rst
-* Pull Requests: Documentation/maintainer/pull-requests.rst
-* Managing Patches: Documentation/maintainer/modifying-patches.rst
-* Rebasing and Merging: Documentation/maintainer/rebasing-and-merging.rst
-* Development Process: Documentation/process/maintainer-handbooks.rst
-* Maintainer Entry Profile: Documentation/maintainer/maintainer-entry-profile.rst
-* Git Configuration: Documentation/maintainer/configure-git.rst
-
-Hardware Vendor
----------------
-
-Write drivers and support new hardware:
-
-* Driver API Guide: Documentation/driver-api/index.rst
-* Driver Model: Documentation/driver-api/driver-model/driver.rst
-* Device Drivers: Documentation/driver-api/infrastructure.rst
-* Bus Types: Documentation/driver-api/buses.rst
-* Device Tree Bindings: Documentation/devicetree/bindings/
-* Power Management: Documentation/driver-api/pm/index.rst
-* DMA API: Documentation/core-api/dma-api.rst
-
-Distribution Maintainer
------------------------
-
-Package and distribute the kernel:
-
-* Stable Kernel Rules: Documentation/process/stable-kernel-rules.rst
-* ABI Documentation: Documentation/ABI/README
-* Kernel Configuration: Documentation/kbuild/kconfig.rst
-* Module Signing: Documentation/admin-guide/module-signing.rst
-* Kernel Parameters: Documentation/admin-guide/kernel-parameters.rst
-* Tainted Kernels: Documentation/admin-guide/tainted-kernels.rst
-
-Agentic Coding
---------------
-
-Essential guidelines for AI coding assistants:
-
-* How to Do Kernel Development: Documentation/process/howto.rst
-* Coding Style: Documentation/process/coding-style.rst
-* Submitting Patches: Documentation/process/submitting-patches.rst
-* Submit Checklist: Documentation/process/submit-checklist.rst
-* Programming Language: Documentation/process/programming-language.rst
-
-Critical Requirements:
-
-* License: ALL code MUST be GPL-2.0 only (see COPYING)
-* Signed-off-by: Agents MUST NOT add Signed-off-by tags
-   (Only humans can legally certify code submission rights)
-* Attribution: Agents MUST add Co-developed-by tag:
-   Co-developed-by: $AGENT_NAME $AGENT_MODEL $AGENT_VERSION
-   Examples:
-   - Co-developed-by: Claude claude-3-opus-20240229
-   - Co-developed-by: GitHub-Copilot GPT-4 v1.0.0
-
-
-Communication and Support
-=========================
-
-* Mailing Lists: https://lore.kernel.org/
-* IRC: #kernelnewbies on irc.oftc.net
-* Bugzilla: https://bugzilla.kernel.org/
-* MAINTAINERS file: Lists subsystem maintainers and mailing lists
-
+diff --git a/drivers/dma/ppc4xx/adma.c b/drivers/dma/ppc4xx/adma.c
+index 9d2a5a967a99..61500ad7c850 100644
+--- a/drivers/dma/ppc4xx/adma.c
++++ b/drivers/dma/ppc4xx/adma.c
+@@ -874,7 +874,7 @@ static int ppc440spe_dma2_pq_slot_count(dma_addr_t *srcs,
+ 		pr_err("%s: src_cnt=%d, state=%d, addr_count=%d, order=%lld\n",
+ 			__func__, src_cnt, state, addr_count, order);
+ 		for (i = 0; i < src_cnt; i++)
+-			pr_err("\t[%d] 0x%llx \n", i, srcs[i]);
++			pr_err("\t[%d] 0x%llx\n", i, srcs[i]);
+ 		BUG();
+ 	}
+ 
+@@ -3636,7 +3636,7 @@ static void ppc440spe_adma_issue_pending(struct dma_chan *chan)
+ 
+ 	ppc440spe_chan = to_ppc440spe_adma_chan(chan);
+ 	dev_dbg(ppc440spe_chan->device->common.dev,
+-		"ppc440spe adma%d: %s %d \n", ppc440spe_chan->device->id,
++		"ppc440spe adma%d: %s %d\n", ppc440spe_chan->device->id,
+ 		__func__, ppc440spe_chan->pending);
+ 
+ 	if (ppc440spe_chan->pending) {
 -- 
-Thanks,
-Sasha
+2.50.0
+
 
