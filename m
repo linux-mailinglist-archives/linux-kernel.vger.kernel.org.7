@@ -1,112 +1,131 @@
-Return-Path: <linux-kernel+bounces-750333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C01B15A25
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:03:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDDCFB15A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:04:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C630C5A012A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:03:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE9A4560A07
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:03:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94D49260587;
-	Wed, 30 Jul 2025 08:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2DB238C29;
+	Wed, 30 Jul 2025 08:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Phq6ne8j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKDq6sVm"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA7D1D5AC6;
-	Wed, 30 Jul 2025 08:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268682236EB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 08:03:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753862604; cv=none; b=jviImF74GiapGvAs8Fbapl946Bu0iEPZrGXJyXynQc1ZDe2X8WjXZCoA5Ozd+Nzy3mdj5QsQ0mgN9ugmyBjvgKsoSe32mqgagapsV9vpz06yi4JX1NH9bCe9f04aqMqB7qFBH/xUpB/9FByPulWMX1Axk2SaFX4zf6+qy6kzm/Y=
+	t=1753862620; cv=none; b=A8vMyGHyfgHuxAGJdo8mgcImn/XAZuiSTfmJk2+hudMfYGBc9AjhPMYwd+MLtIhVGMYC7GX9quby2LF9Himvc4QaNB0b0P/X/zQ2xAvVx16dWpejESugZyFETY7pJa+vlRkCHREvprA2zFt+AW03nrq9B+E7pV/dGgOQyyJhJcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753862604; c=relaxed/simple;
-	bh=HEgPRodovJalgZ/g1kb94tmKLk2QtGEpj7zW37uzKec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Peyl2xsLGon5YcrfgY8l/khWyYWW5Rd71BduZ4ixczHnGave63Dd5jd6a8sHk3se5KzCpOOklZrX6r3gM1OhDa3XMQaH+HDTDs6z0FluAiEfBlgym4iXBGouTqugX+t2UokHhfvGUQclmhTjQBNyiM5WYKqHMdcCLHOvZPEhq6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Phq6ne8j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C439C4CEE7;
-	Wed, 30 Jul 2025 08:03:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753862603;
-	bh=HEgPRodovJalgZ/g1kb94tmKLk2QtGEpj7zW37uzKec=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Phq6ne8jeiHRh+g/jyaIbVu24BslXtOFr5jlNeVkeq5Pd4JP4IP/urevgfTH7y8Ng
-	 IM4N1EVTTw6lIyVWLMQ5K0tdY5QpmQj79Qaao8gIoOMRohyP/vZ3M9ekEqXib6GZL+
-	 Vd2t51G/uWQd6oD58QoSzV0VWLuJ8QqSIDQStXuXWQ5G8gEHsTZDXx81LTTpzH1daZ
-	 ezVZXuukAwl9TGk23btBxOterY1GjPt8BN4i8ULPTxzKhdnMZ1IhejtxHnXHMC5Wo6
-	 rXCmw6UrvY7ectigm1BvmYyiZfOF9dlvJf0mlr92yHUxxT/i06Xv2nhdtuZ9olDn3p
-	 c3RNuuUGIqBAg==
-Date: Wed, 30 Jul 2025 11:03:17 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>, Christoph Hellwig <hch@lst.de>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	dri-devel@lists.freedesktop.org, iommu@lists.linux.dev,
-	Jens Axboe <axboe@kernel.dk>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-	linaro-mm-sig@lists.linaro.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-	linux-mm@kvack.org, linux-pci@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Sumit Semwal <sumit.semwal@linaro.org>,
-	Vivek Kasireddy <vivek.kasireddy@intel.com>,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH 05/10] PCI/P2PDMA: Export pci_p2pdma_map_type() function
-Message-ID: <20250730080317.GO402218@unreal>
-References: <82e62eb59afcd39b68ae143573d5ed113a92344e.1753274085.git.leonro@nvidia.com>
- <20250724080313.GA31887@lst.de>
- <20250724081321.GT402218@unreal>
- <b32ae619-6c4a-46fc-a368-6ad4e245d581@deltatee.com>
- <20250727190514.GG7551@nvidia.com>
- <d69e0d74-285e-4cde-a2e4-a803accfa9e1@deltatee.com>
- <20250728164136.GD402218@unreal>
- <d3c8c573-f201-4450-9400-cc3ccafd2c04@deltatee.com>
- <20250728231107.GE36037@nvidia.com>
- <f332e2b9-151f-49ca-ac0c-8c9494c38027@deltatee.com>
+	s=arc-20240116; t=1753862620; c=relaxed/simple;
+	bh=Aa24vLyXllnQg3WiYXULS3Wr+CT5idpVokShGpFyeRY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ZWa15jYIsMrNATLTOBxhr0P1dTIjaoTH9xiCr0dWuV71xNlF/0KwuMa1+rqxKPolXg2YQJCMNDHUkqk8p8Yn+3R3MlB6WHKt+hgBSb7BTtW2wZGuo22OADYcdw+QhX7JfDlZeJ7iU2ePokKkDZfcLFl2rGrQbwBJWVW1SNO4iYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKDq6sVm; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7e6696eb4bfso111060785a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:03:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753862618; x=1754467418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uWnQEPlkqPV7cSY+6x+N1AZksE2srmMJWG66mvfTM4E=;
+        b=EKDq6sVmaKFiQA63EcvyHkrMqPE2vaiyLoSvHG6c8dzViOdWxGzw2ja6Odkei443XU
+         Yh6xBxNMaVFVAHPkxcT05THspb2zLxOMImBn/Rael3Bay6GP5qEIzZcov6HXGvyk68Sl
+         0vA2gKrci8nBq145W27Eawlgib3/nEk6whflGRHKDJs/1I83JBHZjOIajvOd7zJiX0rO
+         E3RwzzpQo4HNMgY4AIUU7NY4aJxjMdCA9HWWVOhAL32Jm/AcCy03rg43gffntDr+PQPt
+         CoDrouozWF+vK9BAxKBmatTOkKX8169oDKx33jHATF5XKGhT8kKAQY6SXBqRnJHTkQx+
+         KbXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753862618; x=1754467418;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uWnQEPlkqPV7cSY+6x+N1AZksE2srmMJWG66mvfTM4E=;
+        b=Y4FOfr1NpvgphBusCSLto508pfsdoXI7bin9QAzxrJcUqDBg8fQFlXgFENXTtsS1a5
+         QLxnKRxwAPigRMZ1i4mxfsOl1zv3M0Gg6emWgBkWNma6hRxuhO0CpTEoARk0qUuEgwBp
+         vcNuyxXFHCBn/HfSFaiFLua/4e9TyqupPr5lQfKxjZUK7MpWyKxjanZf8fXACeG34NRa
+         paAsUP8SAs4IREsX8yEyMynneO2fkPo/jVoxyM0JR6+asnqGncV8R3rBqTRQFmneBctV
+         wO9SJsLXCLgeZvZVkXgzwYRJAU3c4br/UWjagfxvaSrv2jb4smproy7T/K5F9GE05Xjp
+         TloQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2j2yHgM3c2BNwAR7QuH2NpxzMSy8m75hbVeqgKnyT8J1iBSo7IvFLa6kktOqXo0Rz7x1tCf6EpMzMWME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSTG62kuC6uLpig8FYuJ+4s50Q6MeCtTc0gM2Ig1FdoVsxh+VQ
+	vGqZCI+Hl+PKBnEUC2j54qRrl5aNrmFLohKVZOAgsqr046Tbd7SBHUcI
+X-Gm-Gg: ASbGnculh6Qw51bVpe/MoktGYBWSmiZppU4BrZm73Sm/zgu/aYBqXYYP/273KzznH3p
+	2L8iw/dQsCiPogkgwS/gpRNH69afRhRcvLvvMa4QHcO/PWtKxYOjOStkQ6BoDgpDfMROwZsjKQ7
+	YNrBnSrcK5Oxjqq67o7sHXM89snqmhyIbdxfDTgF6Rq62EkFmgdXJz+iB8wpuc2/s9DSVO9Pln5
+	l1mE9+tIxRBPgLanNBXfRPSQ94ItPE1Scfo2l9QJgYApk6eno8q4k7UUadlI6tkMWaLK42mFwXi
+	32v2Yr0rXZqJ6Ekjfxh/B4F0i0L317QNCn+zy4shbNKEQrsWcy3U2xIWpPQzMl0hprJQzXteWxX
+	uEo7yQfG6LXhfjXkf94EApjGUpan2bczNZcsRqm8pa0XBM8cbhak=
+X-Google-Smtp-Source: AGHT+IHCJuWpsQB07TGtQhgp//yWRYtMBSVH9da8NNUWbPjYxj+T51roVTDFRzhkXvkIH9EtoQ+9Tg==
+X-Received: by 2002:ae9:e008:0:b0:7e1:9c2d:a862 with SMTP id af79cd13be357-7e66f3534ffmr243727785a.39.1753862617814;
+        Wed, 30 Jul 2025 01:03:37 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432ae1f7sm530027785a.40.2025.07.30.01.03.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 01:03:37 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: vivek.balachandhar@gmail.com,
+	Markus.Elfring@web.de,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v3 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
+Date: Wed, 30 Jul 2025 08:03:23 +0000
+Message-Id: <20250730080323.491138-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250728064328.423024-1-vivek.balachandhar@gmail.com>
+References: <20250728064328.423024-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f332e2b9-151f-49ca-ac0c-8c9494c38027@deltatee.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29, 2025 at 02:54:13PM -0600, Logan Gunthorpe wrote:
-> 
-> 
-> On 2025-07-28 17:11, Jason Gunthorpe wrote:
-> >> If the dma mapping for P2P memory doesn't need to create an iommu
-> >> mapping then that's fine. But it should be the dma-iommu layer to decide
-> >> that.
-> > 
-> > So above, we can't use dma-iommu.c, it might not be compiled into the
-> > kernel but the dma_map_phys() path is still valid.
-> 
-> This is an easily solved problem. I did a very rough sketch below to say
-> it's really not that hard. (Note it has some rough edges that could be
-> cleaned up and I based it off Leon's git repo which appears to not be
-> the same as what was posted, but the core concept is sound).
+The extra parentheses around the function call in the if condition
+are redundant according to the kernel coding style. Removing them
+improves code readability without affecting the logic.
 
-I started to prepare v2, this is why posted version is slightly
-different from dmabuf-vfio branch.
+Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+---
+v3:
+- Improved explanation of why the parentheses were removed as per
+  Markus Elfring's suggestion.
 
-In addition to what Jason wrote. there is an extra complexity with using
-state. The wrappers which operate on dma_iova_state assume that all memory,
-which is going to be mapped, is the same type: or p2p or not.
+v2:
+- Mentioned the wrong version number in the previous patch.
 
-This is not the cased for HMM/RDMA users, there you create state in
-advance and get mixed type of pages.
+v1:
+- Fixed incorrect wording: the change was not around assignment
+- Addressed feedback from Markus Elfring.
+---
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index b8d72d28178b..7552f7e4d14a 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -699,7 +699,7 @@ void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
+ 	rtw_set_signal_stat_timer(&adapter->recvpriv);
+ 
+ 	if (pmlmepriv->to_join) {
+-		if ((check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
++		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true) {
+ 			if (check_fwstate(pmlmepriv, _FW_LINKED) == false) {
+ 				set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
+ 
+-- 
+2.39.5
+
 
