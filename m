@@ -1,281 +1,248 @@
-Return-Path: <linux-kernel+bounces-751268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6979EB16719
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:50:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3469B1671B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:51:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7B4B47AB296
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:49:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 020C64E23E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CC41F8EFF;
-	Wed, 30 Jul 2025 19:50:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51D01F78E6;
+	Wed, 30 Jul 2025 19:50:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="jQg5miRR"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dy3cahXQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2462AE74;
-	Wed, 30 Jul 2025 19:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753905042; cv=none; b=KryFNEBihJR6AuEqepa21HCUkmubwFDa82mAj+fG8raeQLcMUorf7NcyhrMwGkxmKkKVw6TH3Yo9upc/VUVj8fedUCQ0dFJN0Ticu3gu79rCP+hHe4YXmrWLcwN/U6QccPKZfitcvNEswS+8MJl7daKzWofePM4UGi8AOVWdwps=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753905042; c=relaxed/simple;
-	bh=khtml9RtnRjSSPRRrCR/+QfYGLYLBLAqmAvwfUCjcVo=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=aPMEWbCfD9RQ+953COUmZuwMQyRFcSJvx3oLLEVZueLtrO1/FTruV8xs5qtqjEZUCP/yrbZstelKXdIPhGebAnqolXeyLvE8OHUro0zkriWdsNMDgxNC7AntSJQKCGeuPZR653J8BBBCLzSAYBjYYyN2GVVWNQb1LusDaY7TgGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=jQg5miRR; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870CA1E5711;
+	Wed, 30 Jul 2025 19:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753905053; cv=fail; b=Wtqcconi2Lts1rQP5mZFO3RM6Gd1izYPmFCIB/dBHeap82UTrdZDskeREUlxOzysxH8/J8a9ysN+lR9WnUZvGmU4RVegb8oVLg7Lzp3nY5Bpex4AgwDSC82RQkAJHymL7KarbKkaCKlFgt4Rs6eVpkLkLMBzmwRCc9+Ku40Jvwo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753905053; c=relaxed/simple;
+	bh=HxW4hKmDMNHr3r97PCiMtiftgKvPRb+nr7abuhgCm24=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=gYRb9qnEZFR8QE1PdnSwpvmMDzBriuLS4uhMJclZi6wUPx+cami/cqKWjkDIBiNG+xkvvz8dNveAfM1X2gG9yDFqzw3Wa5EAilp0Ik4yfBF/uZ1+BfeduTxP7eW+yp3ATB5vi4LRXAY21ygmGJKCDz0OinFZVnZ1/5wX23KpXR4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dy3cahXQ; arc=fail smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753905051; x=1785441051;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=HxW4hKmDMNHr3r97PCiMtiftgKvPRb+nr7abuhgCm24=;
+  b=Dy3cahXQV+gplWqRT2oIf9Hx1vim8vrr6gUtfB90q9DI7ZAfXR4O5iLi
+   eVTVYIgzPyiHMXXAysiaGAqlewNiRh/+ZcLBnrdyu2yM65VEppXd+1K/K
+   KnesHLprjr0bi/JwlP/kHlzp/2D3KJ5jqLhXmVhCqiVtmCFsbtaF0tCsv
+   tMwe/e8S39j6N4ATv7A3U5ijJVxfkW490tNpEdPkxJ9QQkTzJ0PuQPB+4
+   jWpM4nYx9qfksGVY7E7ls4V76BUGPqu67gs+QefVXB5uTgm8Bb+54nA0Q
+   4gWj0bCCKovvds34RClEXW1nw2Emc/WjXfDvrY5Sx6Hxfjx3jVSjoOnbd
+   w==;
+X-CSE-ConnectionGUID: CWjnI7IrQlae4Zj2owd4Fg==
+X-CSE-MsgGUID: L18cRaXASrum+TQg9YGlRg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56150550"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="56150550"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 12:50:50 -0700
+X-CSE-ConnectionGUID: s9e8aaMLRbSFdP0sOvbfSw==
+X-CSE-MsgGUID: f9SKrmhUQ32xKxj+Ae3eNQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="162335591"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 12:50:50 -0700
+Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 30 Jul 2025 12:50:48 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Wed, 30 Jul 2025 12:50:48 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.74)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Wed, 30 Jul 2025 12:50:48 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i2GrLXwNgFG5e8OA1WfYw3brvydChqEtrkRtS1aGWYEqykY5e2zSv3YYHmP19uGI6R6by4T9a4ogiXpWltLCFL7jCUHBxMwHUSwj5Cpu7adWt/Sv9IiBo+b90mDi6rFdfppGbrICgJlGm6osQhHJadGbySXACHheX3ta9eRwwvKpCOE0WgInHZH6HRIjd/2LjS+5NVeaaMTZ+GkcyB1CALuejWsywhPujo2P3Fv1RJUEPLurcoeSoIexMr2VoGn5Bv16TNt1euuCU1CfkIKtJqCyHeoz124RVx0x5q5eEoyMMrZ/5Yple36TdOqY7JIjHW9ifEKpnylOlua2XQwsmg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=IKrykmzwqJy0Zd1VnKnwQONjA5eUgAey3vaEMNAQNu8=;
+ b=uW3AoEaZSpQVyBvsOnwlKvqxdE2VHQLzLr++DVdhA5kIKw0kM4NJpSJ3oabm8+4BfORQFzamvzl5gBhb+rDHPZdVQGFSyhY3OmHYHE0aC1CGBZyl9uNhO6YJxwQLQ9z6cQlLrv/vKw6fwqtPEzKl+jgkMK0GVLKI3mMiaj7ecdvC7aPu4sIHfg/3lAxurdQ74MAzCUboECl3uFoo8Ay7OYX/ZU64LamHgoMrju7wzdC4vCnRt2tXgb7Ar8TC/UmV8hlfBLt/8y7VdT3xHPEkEuXvMGnYjA0fM5AcwQS0d6EZoKQJ3sUwL3/GelqfxdHM6WOVBJ4UQbHkNQpI7fhkvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DS0PR11MB6422.namprd11.prod.outlook.com (2603:10b6:8:c6::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Wed, 30 Jul
+ 2025 19:50:31 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8964.026; Wed, 30 Jul 2025
+ 19:50:31 +0000
+Message-ID: <642ff1fc-3a79-4aff-b226-599d1a089516@intel.com>
+Date: Wed, 30 Jul 2025 12:50:28 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 16/34] x86,fs/resctrl: Implement
+ resctrl_arch_config_cntr() to assign a counter with ABMC
+To: Babu Moger <babu.moger@amd.com>, <corbet@lwn.net>, <tony.luck@intel.com>,
+	<james.morse@arm.com>, <tglx@linutronix.de>, <mingo@redhat.com>,
+	<bp@alien8.de>, <dave.hansen@linux.intel.com>
+CC: <Dave.Martin@arm.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<akpm@linux-foundation.org>, <paulmck@kernel.org>, <rostedt@goodmis.org>,
+	<Neeraj.Upadhyay@amd.com>, <david@redhat.com>, <arnd@arndb.de>,
+	<fvdl@google.com>, <seanjc@google.com>, <jpoimboe@kernel.org>,
+	<pawan.kumar.gupta@linux.intel.com>, <xin@zytor.com>,
+	<manali.shukla@amd.com>, <tao1.su@linux.intel.com>, <sohil.mehta@intel.com>,
+	<kai.huang@intel.com>, <xiaoyao.li@intel.com>, <peterz@infradead.org>,
+	<xin3.li@intel.com>, <kan.liang@linux.intel.com>,
+	<mario.limonciello@amd.com>, <thomas.lendacky@amd.com>, <perry.yuan@amd.com>,
+	<gautham.shenoy@amd.com>, <chang.seok.bae@intel.com>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<peternewman@google.com>, <eranian@google.com>
+References: <cover.1753467772.git.babu.moger@amd.com>
+ <5ce91d983fdb22648e13727866b0b5ebe1428b32.1753467772.git.babu.moger@amd.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <5ce91d983fdb22648e13727866b0b5ebe1428b32.1753467772.git.babu.moger@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0064.namprd03.prod.outlook.com
+ (2603:10b6:303:b6::9) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1753905027;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/q1/ijPw1e2Q92rioAtt4ZINjgooInrMuTW/Z/Sz9xE=;
-	b=jQg5miRR+84MPUTRh150aKHGLt4ikOIhQHFH9fpBqN92Q6FOwIUw3Uo0o19lX/IChB8Z6I
-	bmj40z2X4yv5x2/EPMGEtL7ZNuMzB1W3lxHps+kfmN6D/ivH4AIUanLXcFqRNuQj8dyDHw
-	AXK6VtpREotTOM8pqEMRgI0HHwDgvmdUHHOuMoH9WfFfs3jBdnzYnMUDqvix3dBASvJ4lo
-	QL+OtiBvzy4slFX8bG4+Hk/TKaAG5QnNZaoAJJJQvkZkEQ4UrV7Ojb77GCdxKzFT9Hb8LG
-	twq1w8QfXiGt72yotjLeokmNVrDGR7xPczBTKy5w9y4+FQ844zVBCyNXSNWxlA==
-Date: Wed, 30 Jul 2025 21:50:25 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Diederik de Haas <didi.debian@cknow.org>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
- S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-leds@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Subject: Re: BUG: Circular locking dependency on netdev led trigger on NanoPi
- R5S
-In-Reply-To: <6817efe1-f2c2-4686-bdf1-fca11f066e3a@arm.com>
-References: <DBLBPIBKFCJV.36AVW8JY88L7H@cknow.org>
- <6817efe1-f2c2-4686-bdf1-fca11f066e3a@arm.com>
-Message-ID: <475ee9ae8cdca5ce86b708fe0ade7c9d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DS0PR11MB6422:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5beadf04-a17e-4a62-b17e-08ddcfa25770
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?VERFUzRoc3lqb2NjWlBUQ1NoZlV5a2dNaEFVMXpIUnZZLytRSy9UUnZFb1VY?=
+ =?utf-8?B?T2lwV0w2NVJ3b2FDQ1dDOVA1a2lhN0VkOG1GQi9qMVVrVERBcU0xc3hWU2Vp?=
+ =?utf-8?B?QUtDdHkzTFQ4MHQ2Q3RWcSs2bXk5SERCSFNOdHJ2VzQzZFduNEY0ZTk4RHc4?=
+ =?utf-8?B?MlNTWjAwdXNuTk1GZ2FFWVdPTmttbHlTeWM5WGJwTXo2M0pVUGRuY3o0UTFm?=
+ =?utf-8?B?dnY1bmEzMUk2Qy9FbnlhTEFrTzVRSUtiQ1ZVWUdnSWx5aXJqVzBaVGpJZjkx?=
+ =?utf-8?B?NXhub053VzZnQzIxNFF4RlROajVGWDZhem5tMWp1UXVJWUI3S1dVVmxmd1RQ?=
+ =?utf-8?B?YVJBZjJoTTZJaERCZGVCUjVJVlNqZWFrdW5tN2N2Sm8yQzhPTS9rRi9ORDlO?=
+ =?utf-8?B?OU4yaTdZUnVncUVjczhNRlRDcU9DOFY1Q3VaczBZRHhlaVFDVytlbnFmSU5v?=
+ =?utf-8?B?ZExtenRHbDR2U1YrS2JWTW0wbXVsb3dCRE92WE4wMmtCb2RJVFNpL3p3ZU1u?=
+ =?utf-8?B?cWE2VFc5WG1xZXRDS2tnc3ZFQ3h6RHRHQU4wdUU2WjduVE5rMmFjWnpsZGFl?=
+ =?utf-8?B?WlBVSXNuTG9yRHhQa0tjWUtFSFFsOWNsUnhhcEVXYUVwNFltamovUGF2RjdY?=
+ =?utf-8?B?YkY3TzhvY1RwZktZUU1UVUlScjIrRUlxMlBVdnV4Mzd4aWxtQkk1QmpTNTFY?=
+ =?utf-8?B?dlJ0YUZkV3pjWlZuYlhHTFRhK1BRMGlSZmg1MytzeWxhS1BSN0JyMGdVWFls?=
+ =?utf-8?B?UXN6Y0R1aUFTVG02WmV5NEJjTnNJdlJpaTRUSmpFRWVUUi9YSXkvKzhZMnlu?=
+ =?utf-8?B?emE4Nm9LZkFWbkpoZXB3SWkwOHJ4ajF2ZGNiSkpoencxQ0dydkpueGg2UEVx?=
+ =?utf-8?B?cjl4NHJWcHhLaHNDOGkzbFFJK2dHZ0FVc1RydTVscm9GV2pVekRuWHJhSjBV?=
+ =?utf-8?B?ZVpHY0Z3cGN0NkdGbzY0ZmwxNE4wWlJiTzkzV2xLMVkvY1YyZHNYMHJXRnE0?=
+ =?utf-8?B?WjJMTThIRldRaXM3WjJQMkVjdXV5dFdOelNlaFgwdDVsOUZzeUYvYzlHWkRS?=
+ =?utf-8?B?SWtzakhYdnZPbDgzR29ZamxaOS9jZXlrdjR5TWpCVDRkSDRzVHByN3NwcklJ?=
+ =?utf-8?B?RjdFaGFCUHNTVHlkWGhTTGl2UnRTSEcwOWZubFhSU2ljQXNTUGpxSEV0Y0Uy?=
+ =?utf-8?B?T29DenA2d2g5RnpLZG9yb20zS2wrMHhFaDZZVll3MVlya093VDQzTTJnWVZt?=
+ =?utf-8?B?VnlnMFQ4cU1qUk9uYVdvbVBUSWxxWllDeWFQN0xzTjNRNFpjQXE1eS92bmNS?=
+ =?utf-8?B?SW8vL1BPa082Wkp5cUhnemFLYUZlR2NITmpxMDQvOWtuS2FwNkk1NkorcU5Y?=
+ =?utf-8?B?NGxiVjhqZFgvc2x1Mko2RmcveEprZEo2QXdOV0dlSXJxVjdDV3F1WXRhWWtH?=
+ =?utf-8?B?endGdUVhUXEyakhBaEQ1d1kwR1RXc1d0Q0F2UVNvUEx6dUlveFgxYmdaTTMv?=
+ =?utf-8?B?YUR1VitBenNsbkRTYjAyZ0hrcEZJbjQzME5RdkdJRnZsVys2SmJHd1d2TWhO?=
+ =?utf-8?B?S2YvenJXMW4vSklxUG93eDczSEVFTHV5a1V3R0FuTU5hOFhkVEdKTU9aaHE2?=
+ =?utf-8?B?dkRIVm4xK2Fzek13ZU1ocVEvL1pIdUhBTUlTdmJiMXFYVmd1eG9XT2p5K2RJ?=
+ =?utf-8?B?bEtaaFdsRWhOMDJTZHJ4VXpwMkZIcDJqaVNYdHVLNFBidWJGanBMRHBJUUdr?=
+ =?utf-8?B?MkJoWjVQcEtOYzVrcGMzcnpSaVdRWi9pNnRjSWZxQjdVRFNHcDU3c0pJYWtR?=
+ =?utf-8?B?cjhUc3hvbm5yd1E4SjRmOVNPN1RpYkxIdnlOUFhiaHNvcElIdlFOQi9FVUpZ?=
+ =?utf-8?B?cWE4NmFXZ2dMVkdKWFFqcnQ4K0htL2U5U0QyM21mSVRHZjFQb1RUZmJFSjRI?=
+ =?utf-8?Q?lx1/aCJ4jcE=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MnV6YzJ4UG4yWmJzZVZMaVNTb0NYd0lucU10UHhLeFhveTRCRWprZUV6ZTNM?=
+ =?utf-8?B?bEhuSkhkZjZjeHM0ekE2VlJhTno1di9VMHdPV0RVU1lmMWxSaFVZR3ArRWt6?=
+ =?utf-8?B?dlBraVVLRE0zb0lYeFB2N2RNUHk5Q1I1WklxVHVscEFFWkVJZ0FQUVpRbE96?=
+ =?utf-8?B?eXN6WmdQZitzdVpncTVoMFE0a3UzUFRlMFR0UUI1MDljak5mOTVFalJRa1N6?=
+ =?utf-8?B?QnYwZUlOMVNKVmIvMXNRMElEMnNBMWRCVFJxWlQ2RklMbmV0VlFTWVQ2b2px?=
+ =?utf-8?B?cUdCMmo1VU1zdytSbG1FR3BrbVZnbGd1T2N1Y1hJM1RCSFhDYmRwZDl5MnNI?=
+ =?utf-8?B?NmJjR3dVcUM0TWV5Z0g4NFZQeHE1Y0VMNTI1RkhNSXk5MVBvN2tncnhPTnBO?=
+ =?utf-8?B?NWo5NXozV3Bzb3JjbEhJdHU3M3h2Z2luWWVXRGF3dWx5M3dpWUErcEwzemZN?=
+ =?utf-8?B?TlQ0Z1JlN3U2TUc4L01iZWdQOXYxUlVmYmg0ZkNhOTdydWQxcjFQTENtRC80?=
+ =?utf-8?B?anRpeTY1RGhlVjJEVzNpSUxlanBWVG5UOTJDMk4veDR2bWdxalQ1WG1NZERp?=
+ =?utf-8?B?V08zNEttVHgra0RiajZWOFVYaXkyR05JOXZ6UUV5YTArTi9ZRWNWYWQ3V29O?=
+ =?utf-8?B?T0U4QjhBV3dLRTdUbUE5Y0dTSmJNNUFEdnZYb2duMzRZaE1pcHN2Ly9tT2xx?=
+ =?utf-8?B?eDU0QTA5aFZqTHRQS1gwbWFUTWlpSENoWWhCVHBPUFlZRWRXUjcveU1lc04r?=
+ =?utf-8?B?bkRRdWE0aEp5WHNjTmEvamROWHdkdTZ6UHA0ZEtWUHZHZjNxVVlVT3dWRUZn?=
+ =?utf-8?B?YVdmaG0xREJKeHoyeE8wQ29LRFd3bzMyMDZKMkU4cVlBbk1rdWpBdHpVVGZs?=
+ =?utf-8?B?Ym9TZGsyRmNtbDczVHMxeWJQcS9wMzBUOXNqMm94Y3pEVCtwdjEvMXErbFV2?=
+ =?utf-8?B?dUR0SGJySG9YTDJYVGJYd0xTeEVxZFJMWWdCSU42aWpucyt6VERnVm5UOUJE?=
+ =?utf-8?B?cU10WnMzdVBwUnZvOFVoRm11cStXR1dDSnBLaFJTV29EWGhDMEZLbWt3Sjky?=
+ =?utf-8?B?cU5WaVFBd1FESHdvdGhHeHRhSHBwTXVkSUVFZmtUYythZ1BGbzUrVDFlOWhi?=
+ =?utf-8?B?L2VCcnBmdS9TWHRWSlVMUlBTaEo3SzA5bjhvNzN3bVBSMWlhaXpMSWJua3Bv?=
+ =?utf-8?B?cnRtV0E2TkhRdEFJS3JreW1EZEhWUEpzY2N1d2hOUkZCRFZqR2UwZW5BZjJl?=
+ =?utf-8?B?RjV2d0lHejhHRnpiYy8zaDE3N0pCVU9hL0c1c25CcFZBb2gvbkNZMTk4TTA2?=
+ =?utf-8?B?MXozNU92aG1hZytqWERHWEdEWHZpU0tyMVBWV2dhcDJUWUR6QU8xQ1pLc0lJ?=
+ =?utf-8?B?UHN6ekhzM2NCaFc1QVhic2twQXBTOG1XQitrcGJsSS9rSnNDWUhDTEZDK3Fn?=
+ =?utf-8?B?YTdLdlRmVlEzcVBMbFZOQTg1dk43bEkxR09SbGxleDBqZ29qREVqUGd6WlJO?=
+ =?utf-8?B?QlpNTjVqZml1Z2tXNVhhVTNXZXlmdzRadHpiaG9hUmQ4UjZhVytFUmZoRzVm?=
+ =?utf-8?B?RUN6d2RCSkZBcmdBRUhFWnlmb0pWOExmSUJOZ2cvUHhKOFdOdlVpUndLVXJx?=
+ =?utf-8?B?cU5sc2FhQXZpd1NjSzF4RnlHVndob0IxM1FtUUxDcTJtaFlZOWY3SlllODBq?=
+ =?utf-8?B?NVJ4cVJRTUo0eXZSV3RWRHAydU1Hdm5PUmtKeUtnalV0Q05Zd21HN0VXS0o2?=
+ =?utf-8?B?RE0xaldRMG5Ub3dmUmhMT3llOTFjWUI2alBtbTd4Z0lid3pyZ09wWGJNY3I2?=
+ =?utf-8?B?SS9EQmx2aUhWKzJqT2M2VE9DL2ZtZ3BLbkNYc0JIUFdEeE0yaUZrNDNuRkxB?=
+ =?utf-8?B?R0RxcTR2SFR3aVliY3VGa1p2NGU3WDdxbU9pb2pOcVJDSDlOQkRwOUVOMFFJ?=
+ =?utf-8?B?ZXVjK3cwbW5LMXdRcWwxMDdHbEw4WTlJNWtnUEgrdW1KVEtpZVZVQ3Q2aEc4?=
+ =?utf-8?B?ZEsrK0FhelY2ak9JSmpyeHJjYWZaaGlnNjErNDRGWDNMVVlLZ01wMDJUcmJ6?=
+ =?utf-8?B?ZXNoWnBCWVNGa3I3ZW1VM0VoZ0FJWlBqL3dnWTgvNjd1Z0ZrS1FHYUp2cHdQ?=
+ =?utf-8?B?YSt6Nm02NG9vM2NWb3JzMXZlV0xLK0lKclVsNFZpRmp6MGRGNzFuVUdTWUVy?=
+ =?utf-8?B?NGc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5beadf04-a17e-4a62-b17e-08ddcfa25770
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 19:50:31.6476
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jYOYkr1mYh6BLo50zYzzO72ONUGrDzsllghhRIXI0dKH81ub9jXQaxjot3cM9CLDhQ7sAi+xc02CNpYh+7Yaphoml9EHb7HiJq/47fSpPqc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB6422
+X-OriginatorOrg: intel.com
 
-Hello Robin and Diederik,
+Hi Babu,
 
-On 2025-07-25 20:12, Robin Murphy wrote:
-> On 2025-07-25 6:48 pm, Diederik de Haas wrote:
->> I have a FriendlyELEC NanoPi R5S (with rk3568 SoC) and in commit
->> 1631cbdb8089 ("arm64: dts: rockchip: Improve LED config for NanoPi 
->> R5S")
->> 
->> I tried to improve its LED configuration and that included
->> ``linux,default-trigger = "netdev"``
->> 
->> Problem: sometimes I got a 'hung task' error which resulted in the WAN
->> port not to come up (that's the only one I use) and logging in via
->> serial also didn't work, so pulling the plug was the only remedy.
->> 
->> Robin Murphy quickly identified that it likely had to do with led
->> triggers and removing those netdev triggers made the problem go 
->> away[1].
->> To find out what actually caused it, I built a kernel with 
->> PROOF_LOCKING
->> and PRINTK_CALLER enabled, which after adding a patch which fixed an
->> OOPS [2], showed the underlaying problem:
+On 7/25/25 11:29 AM, Babu Moger wrote:
+> The ABMC feature allows users to assign a hardware counter to an RMID,
+> event pair and monitor bandwidth usage as long as it is assigned. The
+> hardware continues to track the assigned counter until it is explicitly
+> unassigned by the user.
 > 
-> For the record, I think the actual deadlock condition Diederik's
-> system hits in practice is a shorter cycle, wherein immediately after
-> acquiring pernet_ops_rwsem, thread #0 then tries to take rtnl_mutex,
-> which forms a straight inversion against thread #2 (which holds
-> rtnl_mutex from devinet_ioctl()).
+> Implement an x86 architecture-specific handler to configure a counter. This
+> architecture specific handler is called by resctrl fs when a counter is
+> assigned or unassigned as well as when an already assigned counter's
+> configuration should be updated. Configure counters by writing to the
+> L3_QOS_ABMC_CFG MSR, specifying the counter ID, bandwidth source (RMID),
+> and event configuration.
+> 
+> The feature details are documented in the APM listed below [1].
+> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
+>     Publication # 24593 Revision 3.41 section 19.3.3.3 Assignable Bandwidth
+>     Monitoring (ABMC).
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
+> ---
 
-Thanks for the bug report and for the additional insights!
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
-I've spent some time digging through the LED subsystem, which I'm
-already somewhat familiar with, and I think I've narrowed down the
-root cause of this deadlock.
+Reinette
 
-I'll send a preliminary patch soon, after I make sure that the root
-cause is identified correctly, and I hope Diederik will be willing
-to test the patch.  If so, and if the patch checks out to be the
-cure, I'll prepare and submit a proper patch, of course.
-
->>     ======================================================
->>     WARNING: possible circular locking dependency detected
->>     6.16-rc7+unreleased-arm64-cknow #1 Not tainted
->>     ------------------------------------------------------
->>     modprobe/936 is trying to acquire lock:
->>     ffffc943e0edc3b0 (pernet_ops_rwsem){++++}-{4:4}, at: 
->> register_netdevice_notifier+0x38/0x148
->> 
->>     but task is already holding lock:
->>     ffff0001f2762248 (&led_cdev->trigger_lock){+.+.}-{4:4}, at: 
->> led_trigger_register+0x14c/0x1e0
->> 
->>     which lock already depends on the new lock.
->> 
->>     the existing dependency chain (in reverse order) is:
->> 
->>     -> #3 (&led_cdev->trigger_lock){+.+.}-{4:4}:
->>            lock_acquire+0x1cc/0x348
->>            down_write+0x40/0xd8
->>            led_trigger_set_default+0x5c/0x170
->>            led_classdev_register_ext+0x340/0x488
->>            __sdhci_add_host+0x190/0x368 [sdhci]
->>            dwcmshc_probe+0x2b8/0x6b0 [sdhci_of_dwcmshc]
->>            platform_probe+0x70/0xe8
->>            really_probe+0xc8/0x3a0
->>            __driver_probe_device+0x84/0x160
->>            driver_probe_device+0x44/0x128
->>            __device_attach_driver+0xc4/0x170
->>            bus_for_each_drv+0x90/0xf8
->>            __device_attach_async_helper+0xc0/0x120
->>            async_run_entry_fn+0x40/0x180
->>            process_one_work+0x23c/0x640
->>            worker_thread+0x1b4/0x360
->>            kthread+0x150/0x250
->>            ret_from_fork+0x10/0x20
->> 
->>     -> #2 (triggers_list_lock){++++}-{4:4}:
->>            lock_acquire+0x1cc/0x348
->>            down_write+0x40/0xd8
->>            led_trigger_register+0x58/0x1e0
->>            phy_led_triggers_register+0xf4/0x258 [libphy]
->>            phy_attach_direct+0x328/0x3a8 [libphy]
->>            phylink_fwnode_phy_connect+0xb0/0x138 [phylink]
->>            __stmmac_open+0xec/0x520 [stmmac]
->>            stmmac_open+0x4c/0xe8 [stmmac]
->>            __dev_open+0x13c/0x310
->>            __dev_change_flags+0x1d4/0x260
->>            netif_change_flags+0x2c/0x80
->>            dev_change_flags+0x90/0xd0
->>            devinet_ioctl+0x55c/0x730
->>            inet_ioctl+0x1e4/0x200
->>            sock_do_ioctl+0x6c/0x140
->>            sock_ioctl+0x328/0x3c0
->>            __arm64_sys_ioctl+0xb4/0x118
->>            invoke_syscall+0x6c/0x100
->>            el0_svc_common.constprop.0+0x48/0xf0
->>            do_el0_svc+0x24/0x38
->>            el0_svc+0x54/0x1e0
->>            el0t_64_sync_handler+0x10c/0x140
->>            el0t_64_sync+0x198/0x1a0
->> 
->>     -> #1 (rtnl_mutex){+.+.}-{4:4}:
->>            lock_acquire+0x1cc/0x348
->>            __mutex_lock+0xac/0x590
->>            mutex_lock_nested+0x2c/0x40
->>            rtnl_lock+0x24/0x38
->>            register_netdevice_notifier+0x40/0x148
->>            rtnetlink_init+0x40/0x68
->>            netlink_proto_init+0x120/0x158
->>            do_one_initcall+0x88/0x3b8
->>            kernel_init_freeable+0x2d0/0x340
->>            kernel_init+0x28/0x160
->>            ret_from_fork+0x10/0x20
->> 
->>     -> #0 (pernet_ops_rwsem){++++}-{4:4}:
->>            check_prev_add+0x114/0xcb8
->>            __lock_acquire+0x12e8/0x15f0
->>            lock_acquire+0x1cc/0x348
->>            down_write+0x40/0xd8
->>            register_netdevice_notifier+0x38/0x148
->>            netdev_trig_activate+0x18c/0x1e8 [ledtrig_netdev]
->>            led_trigger_set+0x1d4/0x328
->>            led_trigger_register+0x194/0x1e0
->>            netdev_led_trigger_init+0x20/0xff8 [ledtrig_netdev]
->>            do_one_initcall+0x88/0x3b8
->>            do_init_module+0x5c/0x270
->>            load_module+0x1ed8/0x2608
->>            init_module_from_file+0x94/0x100
->>            idempotent_init_module+0x1e8/0x2f0
->>            __arm64_sys_finit_module+0x70/0xe8
->>            invoke_syscall+0x6c/0x100
->>            el0_svc_common.constprop.0+0x48/0xf0
->>            do_el0_svc+0x24/0x38
->>            el0_svc+0x54/0x1e0
->>            el0t_64_sync_handler+0x10c/0x140
->>            el0t_64_sync+0x198/0x1a0
->> 
->>     other info that might help us debug this:
->> 
->>     Chain exists of:
->>       pernet_ops_rwsem --> triggers_list_lock --> 
->> &led_cdev->trigger_lock
->> 
->>      Possible unsafe locking scenario:
->> 
->>            CPU0                    CPU1
->>            ----                    ----
->>       lock(&led_cdev->trigger_lock);
->>                                    lock(triggers_list_lock);
->>                                    lock(&led_cdev->trigger_lock);
->>       lock(pernet_ops_rwsem);
->> 
->>      *** DEADLOCK ***
->> 
->>     2 locks held by modprobe/936:
->>      #0: ffffc943e0d2baa8 (leds_list_lock){++++}-{4:4}, at: 
->> led_trigger_register+0x10c/0x1e0
->>      #1: ffff0001f2762248 (&led_cdev->trigger_lock){+.+.}-{4:4}, at: 
->> led_trigger_register+0x14c/0x1e0
->> 
->>     stack backtrace:
->>     CPU: 0 UID: 0 PID: 936 Comm: modprobe Not tainted 
->> 6.16-rc7+unreleased-arm64-cknow #1 PREEMPTLAZY  Debian 6.16~rc7-2~exp1
->>     Hardware name: FriendlyElec NanoPi R5S (DT)
->>     Call trace:
->>      show_stack+0x34/0xa0 (C)
->>      dump_stack_lvl+0x70/0x98
->>      dump_stack+0x18/0x24
->>      print_circular_bug+0x230/0x280
->>      check_noncircular+0x174/0x188
->>      check_prev_add+0x114/0xcb8
->>      __lock_acquire+0x12e8/0x15f0
->>      lock_acquire+0x1cc/0x348
->>      down_write+0x40/0xd8
->>      register_netdevice_notifier+0x38/0x148
->>      netdev_trig_activate+0x18c/0x1e8 [ledtrig_netdev]
->>      led_trigger_set+0x1d4/0x328
->>      led_trigger_register+0x194/0x1e0
->>      netdev_led_trigger_init+0x20/0xff8 [ledtrig_netdev]
->>      do_one_initcall+0x88/0x3b8
->>      do_init_module+0x5c/0x270
->>      load_module+0x1ed8/0x2608
->>      init_module_from_file+0x94/0x100
->>      idempotent_init_module+0x1e8/0x2f0
->>      __arm64_sys_finit_module+0x70/0xe8
->>      invoke_syscall+0x6c/0x100
->>      el0_svc_common.constprop.0+0x48/0xf0
->>      do_el0_svc+0x24/0x38
->>      el0_svc+0x54/0x1e0
->>      el0t_64_sync_handler+0x10c/0x140
->>      el0t_64_sync+0x198/0x1a0
->>     leds-gpio gpio-leds: bus: 'platform': really_probe: bound device 
->> to driver leds-gpio
->> 
->> Full serial log can be found at [3] which is quite verbose and the 
->> boot
->> took way longer then normal as the following was added to cmdline:
->> ``dyndbg="file dd.c func really_probe +p" maxcpus=1``
->> 
->> Free free to ask for additional info and/or to run tests.
->> 
->> [1] 
->> https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git/commit/?h=arm/fixes&id=912b1f2a796ec73530a709b11821cb0c249fb23e
->> [2] 
->> https://lore.kernel.org/linux-rockchip/f81b88df-9959-4968-a60a-b7efd3d5ea24@arm.com/
->> [3] 
->> https://paste.sr.ht/~diederik/142e92bfb29bbb58bca18a74cdffc5e0ba79081c
 
