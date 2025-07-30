@@ -1,217 +1,238 @@
-Return-Path: <linux-kernel+bounces-750469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C5AB15BA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:31:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16CA6B15BB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B949B5A2EA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:31:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73ACB3B9285
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E715A294A12;
-	Wed, 30 Jul 2025 09:30:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9371275B16;
+	Wed, 30 Jul 2025 09:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JYrMDvHx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZLCOVJYn"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3D3293462
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:30:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F86275AF5
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753867829; cv=none; b=sFfOt7VrT57cE+vxVI45sZk5qfVjoBk6o5VNk6N7FvhHhY15fsqh7o4ypVPPGN8knsPQZgGRTxYpz+AjM98tNsgtPTXqxNLrya68v7VolCgnvypH9x43FWYQBdmrW5wwPENWeSkdS15dmuzu1m8kml2qyehANxSHLoWqG/xmxf0=
+	t=1753867914; cv=none; b=G41oq6ZMvP7WUtRiJIvCEaw4wSGp1Yjw8qUn+nhemF4qHuliihdqvwsOvr36BUrjDitmBJGDZbmjz0rgohOElljImDEqHgRKOkTJL48EZ/Ifo896hnzRX6kKC2QkmbpJrypuykvQ2I5Hsa/mhM8YFfmp6gynL0xQzF2CtTTBZJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753867829; c=relaxed/simple;
-	bh=nbz5KPAiisbkkskWQzfo8wpxO3FdiohO0O8vd5FQuoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Tx3g/foW5DGMzo6w3t57r0nCbc/dxONoZ2Khc00UV8et1kRnOn2BKyU3I3uLrMtqbXhl6WXfmE74Oyq+Uw0mrb6MxiM7FddYJapMGcNk2imd54Oc09JHAiFdXKPUjNWpVFxAGmLRpLFlqBqqeqo8kULK1wm3Rss11RyZADHIqXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JYrMDvHx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753867825;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=sQoSc3uTIHO11Q/Y+3M9cYKzxEMFJgl+ZKCLZTEtcGA=;
-	b=JYrMDvHxsjEIUTWwJbdcvHeATZ1echErQj5D+/BrW9WwQMmX+H+Gby75v066HTq4UsX+2A
-	qvRXyz7wgI11azmlmsjvZ9S/Ok3cYlN0cHt1avuzVZGBYuNLQTwn41Vb4qM5QKcJyF5zis
-	Fpw1EQCUnokwBGwvXZWDiFrfI9Mg6SI=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-650-CU_75tToPqm9jkNEI8uaBg-1; Wed, 30 Jul 2025 05:30:24 -0400
-X-MC-Unique: CU_75tToPqm9jkNEI8uaBg-1
-X-Mimecast-MFC-AGG-ID: CU_75tToPqm9jkNEI8uaBg_1753867823
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b7891afb31so2037420f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:30:23 -0700 (PDT)
+	s=arc-20240116; t=1753867914; c=relaxed/simple;
+	bh=JQvshfvimgHfM0RiZnHUyLwR4iIsBOC1lbymHIY70KQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=uIzo4IyW5uKime5rCXtM1h9EwAmRaIOgu3zGzETPy3LZAEmq7o5keBpTlLKiErTM3AVm8Sh+RrKKwMeuhYYBEKlSFfCPtYPOeqAjxQ9svk31hbUmtHy1gxB/+hIijVlZSRURZqYIiX+vlpFnRLOFsr4Gl6DRMyeOEkadTBf3y2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZLCOVJYn; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6b7so3233010a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:31:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753867910; x=1754472710; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ign5Rvn1nrFDYbDVfbmxV7M+H+jM3AW8cIlkron9MVw=;
+        b=ZLCOVJYnswBPPpfve49dvoNBPTURF6JGwYE52NYmL6TDVwQbrcoB8JMOABRzBgzVxL
+         lW7NC8GtIgB1n/fNWFFFFcjAZJjRk6w2HGXg6WjAG/RdjvVmvOcJfxlXna/QIGAIbjCo
+         2bG4p1gx91lHn5XGnf47JqMwiOx48Iw2R4J5JaCqYRW7nGl/JgdKUwba0BbI0s/juoYD
+         M37Qmy3WZrZvXXei2c3ogzJxE3wx24ACWlIEkjhd8kjJTej6UUcZkcJCVOx+3DYEEIVu
+         fjdZQdII/L93zkLFY7bqhDz6q7JTWz/kZKfi97V6afm8vm21X3PrZVkaWvxaM+D3i540
+         iiiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753867823; x=1754472623;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=sQoSc3uTIHO11Q/Y+3M9cYKzxEMFJgl+ZKCLZTEtcGA=;
-        b=PcqSdRanLCGfw8mnplC41L/cyGc0Cfg0P/RpJg5vPZr6XrnsWxXMVshwrYRij4mFkP
-         HLWNov4M2Ok2eMR9DRWtp91DS46Rgp5U9i0UIKad128cDbZiaWCyDBO6wseW6XEONiER
-         PNDF1y2Ern+rbjrxY7GFnbl/8e573krAJCXUwPjUHJBDgbt4r6kJbbb7mVG7FRWUnvgw
-         nmJWrvHoNyWwhyh6N4ESwtzYO3TvKyOOvxNOd01NLgbLC8XBkSNCjG3mgsNxzpmjRIX4
-         EUmXCT1pvFcA4zBicalcz+kmX9SULikuDnBkmeklSrq29PWIk7q9kW5z3ZlaG92dkI2W
-         rTSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOdOECRHsXbSjIxoDOiIE6GSN8fI4n5EnVxatFtHwOjNsoD9lgnkT1wVJr+QKvQH6S1z9gwyK1+QBwARw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyW7rpvOEauSKf3ZJ2kIRRSRVsc+vH6REDHXFP1xZ6QCl2/lUS
-	VlSkxvWTyKUSRFHqVFULdMSKBDrWYiyefttO/u41XxUrf43npyrcQIcbI44XXpohhevMs+WRRPo
-	gFVxgClTbdBktEa8qhJz46mtcWKYNeOMwulmUy/Ck8I2Y8l7Ggx4DSpmDLxN239y4Vw==
-X-Gm-Gg: ASbGncuEQUPu0S+bz0wfICVaQnXjpRumDgVXu+1nJGFWHiwqmwbziwI9c/Aq5+9P5fJ
-	0KnuMwYTUoxOx2Xdhr/QJJO1HfJ3nJruFqC3Y0PriFSlKKwGGzQyiragA4ZJZvSoEnRRiAhYlz+
-	URlZ4i4Hwur7rmEFAVEXUt86pJq+SR0CWu5DlOpHBAsTy8O4319Whdp2vjz+LHsrFAP1xXjtLtR
-	/gQxWqO/hS9+aVUSJ6c0TnhUtIByhWbjWDIxktCODnKmapz4VUB7ETBc0bRKF/4dNXBjPLUPnBg
-	VS+oOYDsAdhQSEFdDWVpEN20zpu0tvz9vKiy10wXJDBs117xVS9+xT/Hmg44Nw==
-X-Received: by 2002:a05:6000:2508:b0:3b7:8b20:6fd6 with SMTP id ffacd0b85a97d-3b794fc2b6bmr2170413f8f.10.1753867822725;
-        Wed, 30 Jul 2025 02:30:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH1zXQsSsy4uimTG4SYCl268lNUyozGT87L3/S/XA4SGUEUoAEnG1n695zgsFbOoxviY57dtQ==
-X-Received: by 2002:a05:6000:2508:b0:3b7:8b20:6fd6 with SMTP id ffacd0b85a97d-3b794fc2b6bmr2170372f8f.10.1753867822248;
-        Wed, 30 Jul 2025 02:30:22 -0700 (PDT)
-Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78ba267e3sm7317566f8f.59.2025.07.30.02.30.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 02:30:21 -0700 (PDT)
-Message-ID: <0a689e9f-082b-497d-a32b-afc3feddcdb8@redhat.com>
-Date: Wed, 30 Jul 2025 11:30:20 +0200
+        d=1e100.net; s=20230601; t=1753867910; x=1754472710;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ign5Rvn1nrFDYbDVfbmxV7M+H+jM3AW8cIlkron9MVw=;
+        b=pZouJnPriwrmpi6YQuo12ttnM4ahEQiQfs4uUUkGMKYuaxoeHDEYJxXSIX32KUEQBD
+         gc0e5FSeFTviotj6LV2azMhW6q8hbTOXkpBljBIlyQdBKjDbqQLSLRiq1XhcVQfmHiIw
+         bXE1fKjF1GI2u2UxfLN64CpCQUSZ665Z0zFAwJKiOxVJ928tHXcIpXWdHfSiKHiXLV6O
+         yDPEGmpdD+K8s1oyLmsQdWA/Yej56depl9rwUFXMzjvR6QWdRe+wJD2whS3G2t112UxW
+         w/5Dmp4GZl/EHWx+4rA0JImbu6RANC4rbWVkyzFGFEiRkSibFK7lxEjzgSVZni9t1dhL
+         A/6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU4D+tVLsgAnXj5FU2lAyqDpfxPFeB1fFKh0MjhtqmhB8SCiiUEhKYc1zBWYYx6Q1sga9GNjyc5kyaryt8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3GyMB7pdR2q42B1QgWYwwKsUpiV+3sg5+yELRxhhJOF6aWRzO
+	fYcz6p/hJiXVBqNOUm1NjOeG4UcBvTnGNDwA6uggi+25EOY48CTexdgN4PgJZTXkom0=
+X-Gm-Gg: ASbGncu5Hv5s40lReEMhkdkyz2a4CZuDZHtVAwLo+XoRPRbw/d2pfpb4JcqwHsdkTZw
+	jERiqTueC9BvHb+FBQDlde9HSrs6Dh7rg9YeJBt6sbfvb8SeBm0FSAl4qCM4aYeMkdGGf708v9n
+	+7j3Ley3m/qmpRlLgmmpWU2+++UfI3SL3XkPni2gOrIaM8t0wt6LgtOFVQOxzMmTqqIf4QvR5It
+	Srrs6X3xJc8M9WmjajrvI+aKL/oAvbkNNmkY1KhZJk+vz5vzRh9RIOCc3UirPiCtep76IQA9TcU
+	s8GTGUMyp5wHY6PVYkEco1BjV3HQmprD/ZgYPwyuvm1gxF0EPzSxUwIrE5wTcg8b1eI6lhwnqvX
+	5P9B6TB9dEwe90ZjkdzKv3mfjxHiBX18y43IEeWn8+v2jQZWGaqZ9PRGX39PxPmVERoKG5K2O0/
+	k8Y5OTOA==
+X-Google-Smtp-Source: AGHT+IHblx3Qz+7RLXy0BsXAU+JhtlCfvSdqO2qWeJIEcuKpggfXj3qv90ALBrzdmml33C0iVYKiqQ==
+X-Received: by 2002:a05:6402:35c3:b0:615:79b9:28ba with SMTP id 4fb4d7f45d1cf-61586eef0e9mr2633422a12.6.1753867909762;
+        Wed, 30 Jul 2025 02:31:49 -0700 (PDT)
+Received: from puffmais.c.googlers.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-61536916dbasm4090424a12.43.2025.07.30.02.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 02:31:49 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
+Date: Wed, 30 Jul 2025 10:31:33 +0100
+Message-Id: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] mm: shmem: fix the strategy for the tmpfs 'huge='
- options
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
- hughd@google.com
-Cc: willy@infradead.org, lorenzo.stoakes@oracle.com, ziy@nvidia.com,
- Liam.Howlett@oracle.com, npache@redhat.com, ryan.roberts@arm.com,
- dev.jain@arm.com, baohua@kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <701271092af74c2d969b195321c2c22e15e3c694.1753863013.git.baolin.wang@linux.alibaba.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <701271092af74c2d969b195321c2c22e15e3c694.1753863013.git.baolin.wang@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHXmiWgC/2XOTQ7CIBAF4KsY1mIGBvrjynsYFyJDJdHSgGk0T
+ e8u1WhrXL7JfG9mYImip8S2q4FF6n3yoc1Br1fsdD62DXFvc2YSpAaUgid57RoBnJy2goxFUMj
+ ydhfJ+furaX/I+ezTLcTHq7gX0/TTgd+OXnDgFqpaYQmyhHJ38e0xhk2IDZtKermE1QxlhkYrS
+ 4ToTGH+IM5QweIivqE0qEFTUf1BtYT1DNX0alFY7bDOB90PHMfxCcaAvPNKAQAA
+X-Change-ID: 20250321-s2mpg10-ef5d1ebd3043
+To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Peter Griffin <peter.griffin@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
 
-On 30.07.25 10:14, Baolin Wang wrote:
-> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"),
-> we have extended tmpfs to allow any sized large folios, rather than just
-> PMD-sized large folios.
-> 
-> The strategy discussed previously was:
-> 
-> "
-> Considering that tmpfs already has the 'huge=' option to control the
-> PMD-sized large folios allocation, we can extend the 'huge=' option to
-> allow any sized large folios.  The semantics of the 'huge=' mount option
-> are:
-> 
->      huge=never: no any sized large folios
->      huge=always: any sized large folios
->      huge=within_size: like 'always' but respect the i_size
->      huge=advise: like 'always' if requested with madvise()
-> 
-> Note: for tmpfs mmap() faults, due to the lack of a write size hint, still
-> allocate the PMD-sized huge folios if huge=always/within_size/advise is
-> set.
-> 
-> Moreover, the 'deny' and 'force' testing options controlled by
-> '/sys/kernel/mm/transparent_hugepage/shmem_enabled', still retain the same
-> semantics.  The 'deny' can disable any sized large folios for tmpfs, while
-> the 'force' can enable PMD sized large folios for tmpfs.
-> "
-> 
-> This means that when tmpfs is mounted with 'huge=always' or 'huge=within_size',
-> tmpfs will allow getting a highest order hint based on the size of write() and
-> fallocate() paths. It will then try each allowable large order, rather than
-> continually attempting to allocate PMD-sized large folios as before.
-> 
-> However, this might break some user scenarios for those who want to use
-> PMD-sized large folios, such as the i915 driver which did not supply a write
-> size hint when allocating shmem [1].
-> 
-> Moreover, Hugh also complained that this will cause a regression in userspace
-> with 'huge=always' or 'huge=within_size'.
-> 
-> So, let's revisit the strategy for tmpfs large page allocation. A simple fix
-> would be to always try PMD-sized large folios first, and if that fails, fall
-> back to smaller large folios. However, this approach differs from the strategy
-> for large folio allocation used by other file systems. Is this acceptable?
+Original cover letter further down.
 
-My opinion so far has been that anon and shmem are different than 
-ordinary FS'es ... primarily because 
-allocation(readahead)+reclaim(writeback) behave differently.
+This is a resend of two patches from the original series that haven't
+been merged yet. That series was merged except for the attached two
+patches here. Other than rebasing against next-20250729 there are no
+changes to them.
 
-There were opinions in the past that tmpfs should just behave like any 
-other fs, and I think that's what we tried to satisfy here: use the 
-write size as an indication.
+Lee, I think Stephen's intention was to get these two merged via the
+MFD tree please.
 
-I assume there will be workloads where either approach will be 
-beneficial. I also assume that workloads that use ordinary fs'es could 
-benefit from the same strategy (start with PMD), while others will 
-clearly not.
+Original cover letter:
+----------------------
 
-So no real opinion, it all doesn't feel ideal ... at least with his 
-approach here we would stick more to the old tmpfs behavior.
+This series adds initial support for the Samsung S2MPG10 PMIC using the
+MFD framework. This is a PMIC for mobile applications and is used on
+the Google Pixel 6 and 6 Pro (oriole / raven).
 
--- 
+*** dependency note ***
+
+To compile, this depends on the Samsung ACPM driver in Linux next with
+the following additional patches:
+https://lore.kernel.org/all/20250324-acpm-atomic-v2-0-7d87746e1765@linaro.org/
+https://lore.kernel.org/all/20250319-acpm-fixes-v2-0-ac2c1bcf322b@linaro.org/
+https://lore.kernel.org/all/20250327-acpm-children-v1-0-0afe15ee2ff7@linaro.org/
+
+*** dependency note end ***
+
++++ Kconfig update +++
+
+There is a Kconfig symbol update in this series, because the existing
+Samsung S2M driver has been split into core and transport (I2C & ACPM)
+parts. CONFIG_MFD_SEC_CORE is now truly a core driver, and
+the I2C code that was part of it is now enabled via CONFIG_MFD_SEC_I2C.
+
+This was necessary because unlike the other S2M PMICs, S2MPG10 doesn't
+talk via I2C, but via the Samsung ACPM firmware.
+
++++ Kconfig update end +++
+
+This series must be applied in-order, due to interdependencies of some
+of the patches. There are also various cleanup patches to the S2M
+drivers. I've kept them ordered as:
+  * DT bindings (patches 1 ... 3)
+  * s2m mfd prep for adding S2MPG10 support (patches 4 ... 7)
+  * split S2M mfd driver into s2m-core and s2m-i2c, including the
+    kconfig symbol update (patch 8)
+  * S2MPG10 core driver (patch 9)
+  * s2m mfd driver cleanup patches (patches 10 ... 23)
+  * S2MPG10 clock driver (patch 24)
+  * s2m RTC prep for adding S2MPG10 (patch 25 ... 26)
+  * S2MPG10 RTC driver (patch 27)
+  * s2m RTC cleanup patches (patches 28 ... 31)
+
+I realise these are many, but since some prep-work was required to be
+able to add S2MPG anyway, I wanted to get the cleanup patches in as
+well :-) Let me know if I should postpone them to a later date instead.
+
+The S2MPG10 includes buck converters, various LDOs, power meters, RTC,
+clock outputs, and additional GPIOs interfaces.
+
+This series adds support in the top-level device driver, and for the
+RTC and clock. Importantly, having the RTC driver allows to do a proper
+reset of the system. Drivers or driver updates for the other components
+will be added in future patches.
+
+This will need a DT update for Oriole / Raven to enable this device. I
+will send that out separately.
+
 Cheers,
+Andre'
 
-David / dhildenb
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v5:
+- just a rebase & resend of the last two remaining patches
+- no other changes
+- Link to v4: https://lore.kernel.org/r/20250409-s2mpg10-v4-0-d66d5f39b6bf@linaro.org
+
+Changes in v4:
+- various updates to sec-acpm (patch 9, Lee)
+- cache enum type in patch 25 (Krzysztof)
+- collect tags
+- Link to v3: https://lore.kernel.org/r/20250403-s2mpg10-v3-0-b542b3505e68@linaro.org
+
+Changes in v3:
+- Krzysztof:
+  - keep 'regulators' subnode required even for s2mpg10
+  - drop '$ref' and 'unevaluatedProperties' from pmic subnode, use
+    'additionalProperties' instead
+  - add some regulators to examples since s2mpg10 requires them as of
+    v3
+- sec-acpm:
+  - use an enum for struct sec_acpm_bus_context::type
+  - consistent name space for all functions sec_pmic_acpm_... to be
+    similar to i2c and consistent in this file
+- Link to v2: https://lore.kernel.org/r/20250328-s2mpg10-v2-0-b54dee33fb6b@linaro.org
+
+Changes in v2:
+- Rob:
+  - make PMIC node a child of ACPM, and all related changes (binding,
+    driver)
+- Krzysztof:
+  - merge defconfig updates into patch changing the symbols (patch 8)
+  - split MODULE_AUTHOR update into a separate patch
+  - better alignment fix (patch 11)
+  - merge two s2dos05/s2mpu05 related patches into one (patch 14)
+- myself:
+  - keep PMIC DT parsing in core, not in transport driver
+  - several updates in sec-acpm.c, see separate entries in patch 9
+  - fix typo in patch 17
+  - collect tags
+- Link to v1: https://lore.kernel.org/r/20250323-s2mpg10-v1-0-d08943702707@linaro.org
+
+---
+André Draszik (2):
+      dt-bindings: clock: samsung,s2mps11: add s2mpg10
+      clk: s2mps11: add support for S2MPG10 PMIC clock
+
+ Documentation/devicetree/bindings/clock/samsung,s2mps11.yaml | 1 +
+ drivers/clk/clk-s2mps11.c                                    | 8 ++++++++
+ 2 files changed, 9 insertions(+)
+---
+base-commit: 54efec8782214652b331c50646013f8526570e8d
+change-id: 20250321-s2mpg10-ef5d1ebd3043
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
 
