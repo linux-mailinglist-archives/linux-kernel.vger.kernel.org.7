@@ -1,367 +1,141 @@
-Return-Path: <linux-kernel+bounces-750926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B70B162E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:33:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942C2B162EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:35:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D292A16156A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:33:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0046E1AA348B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E9D2DA75C;
-	Wed, 30 Jul 2025 14:33:21 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DB62D9EDF;
+	Wed, 30 Jul 2025 14:35:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="HKBSTtuz"
+Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE041DE3D6;
-	Wed, 30 Jul 2025 14:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEEF1C5D57;
+	Wed, 30 Jul 2025 14:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753886001; cv=none; b=ip2th2lmz60sbQsb0sHz/xoQE+sNp4EcVXBicyTCvwoAQ4Njt6MCJVBsVb/oQ2EHl9sLfEqvINS/yPZVCBGbf5mvXtHM+ECtwYaZtMqaoqlXm2qxisbxoqry025X2XmpotSZRstJmDkFt2rxQnvuURa9gRrbsbIxkwgYNo75b4w=
+	t=1753886118; cv=none; b=co9VUip2JSFRbTxeUNRVRy2IDo/DFW+7oc14mOjBULa/orPqSlufkE3BIff2dILlYDlrx/3qhZsmArtmp6XR8UIkwPOe+WR6xyH1e27bI/5zTuXJFQlsRkU0HMRb7eZQR3bYNHzOk4JS3h/ZQbMBxZXG+v4hcqLJCVzkdHueB1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753886001; c=relaxed/simple;
-	bh=PlM6vG64I7c9NulyIvT028yULjYuIv0uAORqJQLB7Zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=icBfK0prgktdpYXQ1GPgIaBRc+MnpoOtjJmMg3P4q+06N10bIQGakULqtN0I5ATQVm3mG2LPKThs6WVRgmcp1xk/pYlVImhzYt73g+HdmR5e6G9LaG3d0Yi9dBq0M80RjgyK0ky/+tUnok4LDd0BN0hadhOVE917k79YQWM9108=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay09.hostedemail.com (Postfix) with ESMTP id 82C3A8029E;
-	Wed, 30 Jul 2025 14:33:15 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 5B6A732;
-	Wed, 30 Jul 2025 14:33:12 +0000 (UTC)
-Date: Wed, 30 Jul 2025 10:33:28 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland
- <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, Namhyung Kim
- <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>, Douglas Raillard
- <douglas.raillard@arm.com>, Tom Zanussi <zanussi@kernel.org>, Andrew Morton
- <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ian
- Rogers <irogers@google.com>, aahringo@redhat.com
-Subject: Re: [PATCH] tracing/probes: Allow use of BTF names to dereference
- pointers
-Message-ID: <20250730103328.40bb6da5@gandalf.local.home>
-In-Reply-To: <20250730225340.92ead36268880e0bc098f12e@kernel.org>
-References: <20250729113335.2e4f087d@batman.local.home>
-	<20250730225340.92ead36268880e0bc098f12e@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753886118; c=relaxed/simple;
+	bh=KX9gky5b66eICbQ0UiZw3jTma9kJ/uimQoSGy09Y554=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XFC2I3cfDoh447nM1I0B4At3Gz5T69C+h3A3zQ1GFNd6D9Tiej8c51L0UpWZ0LatwLbBqJsHAigpjklLy6mVt/WKlWrMeaKYcqScyPCq8x+mGXFpNX4ukdfVIZ9rk+4/mCvxz9GijyZT7W107bKHvIO7vPLo22t6quofOwCM0RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=HKBSTtuz; arc=none smtp.client-ip=119.8.177.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=V4VzUm4zcB95VkurnMS1za6yWaYSay+dQ+3Hi8qJDuM=;
+	b=HKBSTtuzFdIanTfuhOsFeGOSLmYVsWUE41QHkn8zXLZs/UdFZieK/WTSKGhb/KngdNlsDOo/2
+	v90rSbM2uhWR9+cJygGBmHFgIZKlfNZ46XqWq/s5dk+4tsMpKe57zvxKi6+LAT2Coh2p8jDjq5G
+	fFMairtdXGK12fYQJwH4Ilg=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.37])
+	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4bsZTT4vDSz1P7Hb;
+	Wed, 30 Jul 2025 22:33:49 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bsZQ82bphz6GD84;
+	Wed, 30 Jul 2025 22:30:56 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 77D00140393;
+	Wed, 30 Jul 2025 22:35:09 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Jul
+ 2025 16:35:08 +0200
+Date: Wed, 30 Jul 2025 15:35:06 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
+ Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 26/38] KVM: arm64: Add exit handler related to
+ device assignment
+Message-ID: <20250730153506.00006280@huawei.com>
+In-Reply-To: <20250728135216.48084-27-aneesh.kumar@kernel.org>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+	<20250728135216.48084-27-aneesh.kumar@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: owht7mijtbqgypkt8zazaa3mkppuz44d
-X-Rspamd-Server: rspamout07
-X-Rspamd-Queue-Id: 5B6A732
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18KjGCoIIafpUQP6IflbDC2HCE3gjnzJUw=
-X-HE-Tag: 1753885992-619570
-X-HE-Meta: U2FsdGVkX1/uAB27RqUDe8L3UhaDhi+jNIDHMCg5551QroW6nIJzxG79cAkGo7qKAtEV+reGYZwKCbaNHq7Ux5XR6zwIQonhyqcX5eJmJmVfGyh3Kub/R5CfINaXsnvAMca+ZHfNOAkGN+AXMZ7crdG0izHXlwyN4RqrInJzuD5ykkDMDANkVKOGjalCDeKnerN2EoUp83W1iAz7Dc/3+sPlXAPvdXyMv6kL9JEKwoIj9WxuE7ck7URQb2fY+LOZTdVetE4U6MqM9taeG0r8rAjlUD2EyLWBMpHiFbBhS3lFOl5a2pqBhDB1miKuGrvItP3YYnja2uhAIrVFWISg13Z1YPV6J9NnwrA10KfS3LCkgz6I7m/PZt62SHqNJqjW
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, 30 Jul 2025 22:53:40 +0900
-Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Mon, 28 Jul 2025 19:22:03 +0530
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
 
-
-> > If BTF is in the kernel, it can be used to find this with names, where the
-> > user doesn't need to find the actual offset:
-> > 
-> >  # echo 'f:cache kmem_cache_alloc_noprof size=+kmem_cache.size($arg1):u32' >> dynamic_events  
+> Different RSI calls related to DA result in REC exits. Add a facility to
+> register handlers for handling these REC exits.
 > 
-> Great! This is something like a evolution of assembler to "symbolic"
-> assembler. ;)
-
-Yep!
-
-> 
-> > 
-> > Instead of the "+0x18", it would have "+kmem_cache.size" where the format is:
-> > 
-> >   +STRUCT.MEMBER[.MEMBER[..]]  
-> 
-> Yeah, and using '.' delimiter looks nice to me.
-
-I know I initially suggested using ':' but then it hit me that a structure
-uses '.' and that made a lot more sense. Also, it made parsing easier as I
-had a hack to get around the ':' parsing that extracted the "type"
-(like :u64 or :string)
-
-> 
-> > 
-> > The delimiter is '.' and the first item is the structure name. Then the
-> > member of the structure to get the offset of. If that member is an
-> > embedded structure, another '.MEMBER' may be added to get the offset of
-> > its members with respect to the original value.
-> > 
-> >   "+kmem_cache.size($arg1)" is equivalent to:
-> > 
-> >   (*(struct kmem_cache *)$arg1).size
-> > 
-> > Anonymous structures are also handled:
-> > 
-> >   # echo 'e:xmit net.net_dev_xmit +net_device.name(+sk_buff.dev($skbaddr)):string' >> dynamic_events  
-> 
-> So this only replaces the "offset" part. So we still need to use
-> +OFFS() syntax for dereferencing the pointer.
-
-Correct.
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
 
 
-> > And produces:
-> > 
-> >        trace-cmd-1381    [002] ...1.  2082.676268: read: (filemap_readahead.isra.0+0x0/0x150) file="trace.dat"
-> >   
-> 
-> OK, the desgin looks good to me. I have some comments below.
+> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+> index c6e16ab608e1..a5ef68b62bc0 100644
+> --- a/arch/arm64/include/asm/rmi_smc.h
+> +++ b/arch/arm64/include/asm/rmi_smc.h
 
-I'd expected as much ;-)
-
-This is for the next merge window so we have plenty of time.
-
-> >  
-> > +#define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
-> > +
-> > +static int find_member(const char *ptr, struct btf *btf,
-> > +		       const struct btf_type **type, int level)
-> > +{
-> > +	const struct btf_member *member;
-> > +	const struct btf_type *t = *type;
-> > +	int i;
-> > +
-> > +	/* Max of 3 depth of anonymous structures */
-> > +	if (level > 3)
-> > +		return -1;  
-> 
-> Please return an error code, maybe this is -E2BIG?
-
-OK.
-
-I was thinking that perhaps we should update the error_log to handle these
-cases too.
-
-> 
-> > +
-> > +	for_each_member(i, t, member) {
-> > +		const char *tname = btf_name_by_offset(btf, member->name_off);
-> > +
-> > +		if (strcmp(ptr, tname) == 0) {
-> > +			*type = btf_type_by_id(btf, member->type);
-> > +			return BITS_ROUNDDOWN_BYTES(member->offset);
-> > +		}
-> > +
-> > +		/* Handle anonymous structures */
-> > +		if (strlen(tname))
-> > +			continue;
-> > +
-> > +		*type = btf_type_by_id(btf, member->type);
-> > +		if (btf_type_is_struct(*type)) {
-> > +			int offset = find_member(ptr, btf, type, level + 1);
-> > +
-> > +			if (offset < 0)
-> > +				continue;
-> > +
-> > +			return offset + BITS_ROUNDDOWN_BYTES(member->offset);
-> > +		}
-> > +	}
-> > +
-> > +	return -1;  
-> 
-> 	return -ENOENT;
-
-Ah. This return doesn't propagate up to the caller. It's a static function
-and just returns "not found". Which means that the "-E2BIG" will not be used.
-
-If we want the -E2BIG to be used as well, then we can return the result of
-this function.
+> diff --git a/arch/arm64/kvm/rme-exit.c b/arch/arm64/kvm/rme-exit.c
+> index 1a8ca7526863..25948207fc5b 100644
+> --- a/arch/arm64/kvm/rme-exit.c
+> +++ b/arch/arm64/kvm/rme-exit.c
 
 
-> 
-> > +}
-> > +
-> > +/**
-> > + * btf_find_offset - Find an offset of a member for a structure
-> > + * @arg: A structure name followed by one or more members
-> > + * @offset_p: A pointer to where to store the offset
-> > + *
-> > + * Will parse @arg with the expected format of: struct.member[[.member]..]
-> > + * It is delimited by '.'. The first item must be a structure type.
-> > + * The next are its members. If the member is also of a structure type it
-> > + * another member may follow ".member".
-> > + *
-> > + * Note, @arg is modified but will be put back to what it was on return.
-> > + *
-> > + * Returns: 0 on success and -EINVAL if no '.' is present
-> > + *    or -ENXIO if the structure or member is not found.
-> > + *    Returns -EINVAL if BTF is not defined.
-> > + *  On success, @offset_p will contain the offset of the member specified
-> > + *    by @arg.
-> > + */
-> > +int btf_find_offset(char *arg, long *offset_p)
-> > +{
-> > +	const struct btf_type *t;
-> > +	struct btf *btf;
-> > +	long offset = 0;
-> > +	char *ptr;
-> > +	int ret;
-> > +	s32 id;
-> > +
-> > +	ptr = strchr(arg, '.');
-> > +	if (!ptr)
-> > +		return -EINVAL;  
-> 
-> Instead of just returning error, can't we log an error for helping user?
+> +static int rec_exit_dev_mem_map(struct kvm_vcpu *vcpu)
+> +{
+> +	int ret;
+> +	struct realm_rec *rec = &vcpu->arch.rec;
+> +
+> +	if (realm_exit_dev_mem_map_handler) {
+> +		ret = (*realm_exit_dev_mem_map_handler)(rec);
+> +	} else {
+> +		kvm_pr_unimpl("Unsupported exit reason: %u\n",
+> +			      rec->run->exit.exit_reason);
+> +		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
+> +		ret = 0;
 
-Yeah, but that will require the caller of this to handle it. I rather not
-have the probe error logging code put in this file.
+I guess maybe this gets more complex later, but right now
+		return 0;
 
-That means the negative numbers will need to mean something so that the
-trace probe logic can know what to report.
+And maybe return in the if branch as well.
+Same for other similar code in this patch.
 
-> 
-> trace_probe_log_err(BYTE_OFFSET, ERROR_CODE);
-> 
-> The base offset is stored in ctx->offset, so you can use it.
-> ERROR_CODE is defined in trace_probe.h. 
-> 
-> Maybe you can add something like
-> 
-> 	C(BAD_STRUCT_FMT,		"Symbolic offset must be +STRUCT.MEMBER format"),\
-> 
-> And for other cases, you can use
-> 
-> 	C(BAD_BTF_TID,		"Failed to get BTF type info."),\
-
-OK, so the caller can handle this (see below).
-
-> 
-> > +
-> > +	*ptr = '\0';
-> > +
-> > +	id = bpf_find_btf_id(arg, BTF_KIND_STRUCT, &btf);
-> > +	if (id < 0)
-> > +		goto error;
-> > +
-> > +	/* Get BTF_KIND_FUNC type */
-> > +	t = btf_type_by_id(btf, id);
-> > +
-> > +	/* May allow more than one member, as long as they are structures */
-> > +	do {
-> > +		if (!t || !btf_type_is_struct(t))
-> > +			goto error;
-> > +
-> > +		*ptr++ = '.';
-> > +		arg = ptr;
-> > +		ptr = strchr(ptr, '.');
-> > +		if (ptr)
-> > +			*ptr = '\0';
-> > +
-> > +		ret = find_member(arg, btf, &t, 0);
-> > +		if (ret < 0)
-> > +			goto error;
-> > +
-> > +		offset += ret;
-> > +
-> > +	} while (ptr);
-> > +
-> > +	*offset_p = offset;
-> > +	return 0;
-> > +
-> > +error:
-> > +	if (ptr)
-> > +		*ptr = '.';
-> > +	return -ENXIO;
-> > +}
-> > diff --git a/kernel/trace/trace_btf.h b/kernel/trace/trace_btf.h
-> > index 4bc44bc261e6..7b0797a6050b 100644
-> > --- a/kernel/trace/trace_btf.h
-> > +++ b/kernel/trace/trace_btf.h
-> > @@ -9,3 +9,13 @@ const struct btf_member *btf_find_struct_member(struct btf *btf,
-> >  						const struct btf_type *type,
-> >  						const char *member_name,
-> >  						u32 *anon_offset);
-> > +
-> > +#ifdef CONFIG_PROBE_EVENTS_BTF_ARGS
-> > +/* Will modify arg, but will put it back before returning. */
-> > +int btf_find_offset(char *arg, long *offset);
-> > +#else
-> > +static inline int btf_find_offset(char *arg, long *offset)
-> > +{  
-> 
-> Here also should use 
-> 
-> 	C(NOSUP_BTFARG,		"BTF is not available or not supported"),	\
-> 
-
-Again, this should be from the caller.
-
-> 
-> Thank you,
-> 
-> > +	return -EINVAL;
-
-So this can return -ENODEV;
-
-
-> > +}
-> > +#endif
-> > diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-> > index 424751cdf31f..4c13e51ea481 100644
-> > --- a/kernel/trace/trace_probe.c
-> > +++ b/kernel/trace/trace_probe.c
-> > @@ -1137,7 +1137,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
-> >  
-> >  	case '+':	/* deref memory */
-> >  	case '-':
-> > -		if (arg[1] == 'u') {
-> > +		if (arg[1] == 'u' && isdigit(arg[2])) {
-> >  			deref = FETCH_OP_UDEREF;
-> >  			arg[1] = arg[0];
-> >  			arg++;
-> > @@ -1150,7 +1150,10 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
-> >  			return -EINVAL;
-> >  		}
-> >  		*tmp = '\0';
-> > -		ret = kstrtol(arg, 0, &offset);
-> > +		if (arg[0] != '-' && !isdigit(*arg))
-> > +			ret = btf_find_offset(arg, &offset);
-
-Here we could have:
-
-			if (ret < 0) {
-				int err = 0;
-				switch (ret) {
-				case -ENODEV: err = NOSUP_BTFARG; break;
-				case -E2BIG: err = MEMBER_TOO_DEEP; break;
-				case -EINVAL: err = BAD_STRUCT_FMT; break;
-				case -ENXIO: err = BAD_BTF_TID; break;
-				}
-				if (err)
-					trace_probe_log_err(ctx->offset, err);
-				return ret;
-			}
-
--- Steve
-
-			
-
-
-> > +		else
-> > +			ret = kstrtol(arg, 0, &offset);
-> >  		if (ret) {
-> >  			trace_probe_log_err(ctx->offset, BAD_DEREF_OFFS);
-> >  			break;
-> > -- 
-> > 2.47.2
-> >   
-> 
-> 
+> +	}
+> +	return ret;
+> +}
+> +
+>  static void update_arch_timer_irq_lines(struct kvm_vcpu *vcpu)
+>  {
+>  	struct realm_rec *rec = &vcpu->arch.rec;
+> @@ -198,6 +252,12 @@ int handle_rec_exit(struct kvm_vcpu *vcpu, int rec_run_ret)
+>  		return rec_exit_ripas_change(vcpu);
+>  	case RMI_EXIT_HOST_CALL:
+>  		return rec_exit_host_call(vcpu);
+> +	case RMI_EXIT_VDEV_REQUEST:
+> +		return rec_exit_vdev_request(vcpu);
+> +	case RMI_EXIT_VDEV_COMM:
+> +		return rec_exit_vdev_communication(vcpu);
+> +	case RMI_EXIT_DEV_MEM_MAP:
+> +		return rec_exit_dev_mem_map(vcpu);
+>  	}
+>  
+>  	kvm_pr_unimpl("Unsupported exit reason: %u\n",
 
 
