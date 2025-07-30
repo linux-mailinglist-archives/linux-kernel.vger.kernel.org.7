@@ -1,135 +1,150 @@
-Return-Path: <linux-kernel+bounces-750599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9704EB15E83
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:54:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C509B15E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB588563426
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:54:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2950563460
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8E627C158;
-	Wed, 30 Jul 2025 10:54:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23191A83ED
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304C72874FB;
+	Wed, 30 Jul 2025 10:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="le7WExzy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD2C1A83ED;
+	Wed, 30 Jul 2025 10:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753872880; cv=none; b=r6K3lFPVUeBZVoDPtSPAyNnegT4mys3e6mO68sIpx9M0VY+VRZztVegTE6jUJ+l92EMOCeGitXybDn1TjSKNKVj0y7Xa6RnTemwozOxWVT1B+RD2HhVJXl3bE5UJZgthtwBHMkGYuS87/4Ec6yJZe3kaLYdQbSDhtsOdelpwR4Q=
+	t=1753872924; cv=none; b=nejg78oo1WpTbcoA/cbm867ZP0GEvUxxXroXM067Kn3h+rKCS4rcz2BoLOgQACM5jq3ebdP1FkRzRy9MFruuoi+M4XIIrYTkTbhYgGykhhgr7rjZLaytIqfXg7ho1olRS51hxy1dX16aSMqe4bi76xndyGOiW15ISr90yqQwmng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753872880; c=relaxed/simple;
-	bh=tFjGCHkodjewqQzVkcaSycMgkj1U6ITooGxsGqWSHHE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7mvopxKCXieh9kUyP/ULrA6sgpYDdgMkDQq9fIZPOs035fyKJ1xSm6dqHkS/nar1mjr4WTWlCzhMBbrjEU9RBDuk+jQz7IsrR4zkymNCMD/25sF6I5nYi5lQWfZjR5ievjfVlCCMk7rFV2oWHPntqBQ3ITSHZ6N1K6/gIY0fKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C74031BC0;
-	Wed, 30 Jul 2025 03:54:26 -0700 (PDT)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C1CE3F673;
-	Wed, 30 Jul 2025 03:54:34 -0700 (PDT)
-Date: Wed, 30 Jul 2025 11:54:32 +0100
-From: Leo Yan <leo.yan@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: Mark Brown <broonie@kernel.org>, Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Yeoreum Yun <yeoreum.yun@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 04/10] coresight: Appropriately disable programming
- clocks
-Message-ID: <20250730105432.GC143191@e132581.arm.com>
-References: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
- <20250724-arm_cs_fix_clock_v4-v5-4-63f648dae021@arm.com>
- <b3782b8f-8c09-4fb8-bec6-186102cc66a8@sirena.org.uk>
- <f9fb2174-5bc5-4c7b-b74b-8542b4f7cbe0@sirena.org.uk>
- <15370a42-8e92-4f57-9ff2-f283d9fd30bd@arm.com>
- <20250730085637.GB143191@e132581.arm.com>
- <caffdde4-fad4-4462-ba92-84416726a12d@arm.com>
+	s=arc-20240116; t=1753872924; c=relaxed/simple;
+	bh=f46/FtSc5yFgABtkdDwRxVIJIxcwDr/wN6veGoVHsqQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=T+00M4Fjkjg+mFFu3OVwIJyEQ0nPPBV2dkwkzSHHy1r36D5y95T0UeS7gspnUpjGl590vWnZzdhPitS1nG9HOJoUkUPFec9PD3OF43eRlz5kqnEhOjG8w4ZjoVcKza6S6knFCjv1qzSMzGG7eGkmj8B/oPSUYAO08aT3rR8y0aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=le7WExzy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FA55C4CEE7;
+	Wed, 30 Jul 2025 10:55:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753872924;
+	bh=f46/FtSc5yFgABtkdDwRxVIJIxcwDr/wN6veGoVHsqQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=le7WExzyw4HMM/44Oqi9NsnWYWcKKuJliDpg6j2UDRwhP6Xxw8s2BBHaEBiT4T0y1
+	 EmbFIJuy5LxJx2mM49o2EfUXUzlQsD/GYt+78IxFi7Y7DeuI+iFDPdSezSKGebMidB
+	 i99kOsLysQRrHEpytqIWy9ylN5zq94SyvJZ3Fzzb0ugtzqRfXUjcG/RZoGJZrHsxFc
+	 2JzZZ4seaQgcoVLaG0LRiYH90GE0Yxn88bOOkci1FssPNvLohbOjOOiGOKqcp+VGRZ
+	 RA8zAWPpeHdWY5nnf7FeNrUqG/3XGR84m7PCSwSm2PEGBQGVmXmutCF834R0YPy+le
+	 27ZmJKfLOlOPQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <caffdde4-fad4-4462-ba92-84416726a12d@arm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 30 Jul 2025 12:55:18 +0200
+Message-Id: <DBPC27REX4N1.3JA4SSHDYXAHJ@kernel.org>
+Subject: Re: [PATCH v5 0/3] rust: add `ww_mutex` support
+From: "Benno Lossin" <lossin@kernel.org>
+To: =?utf-8?q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+ <gary@garyguo.net>, <a.hindborg@kernel.org>, <aliceryhl@google.com>,
+ <tmgross@umich.edu>, <dakr@kernel.org>, <peterz@infradead.org>,
+ <mingo@redhat.com>, <will@kernel.org>, <longman@redhat.com>,
+ <felipe_life@live.com>, <daniel@sedlak.dev>, <bjorn3_gh@protonmail.com>,
+ "Lyude" <thatslyude@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250621184454.8354-1-work@onurozkan.dev>
+ <20250724165351.509cff53@nimda.home>
+ <DBOPIJHY9NZ7.2CU5XP7UY7ES3@kernel.org>
+ <20250730132457.20a13d71@nimda.home>
+In-Reply-To: <20250730132457.20a13d71@nimda.home>
 
-On Wed, Jul 30, 2025 at 10:27:48AM +0100, Suzuki Kuruppassery Poulose wrote:
-> On 30/07/2025 09:56, Leo Yan wrote:
-> > On Tue, Jul 29, 2025 at 01:30:28PM +0100, Suzuki Kuruppassery Poulose wrote:
-> > > On 29/07/2025 12:31, Mark Brown wrote:
-> > > > On Mon, Jul 28, 2025 at 05:45:04PM +0100, Mark Brown wrote:
-> > > > > On Thu, Jul 24, 2025 at 04:22:34PM +0100, Leo Yan wrote:
-> > > > > 
-> > > > > Previously we would return NULL for any error (which isn't super great
-> > > > > for deferred probe but never mind).
-> > > > > 
-> > > > > > +	pclk = devm_clk_get_enabled(dev, "apb_pclk");
-> > > > > > +	if (IS_ERR(pclk))
-> > > > > > +		pclk = devm_clk_get_enabled(dev, "apb");
-> > > > > 
-> > > > > ...
-> > > > > 
-> > > > > >    	return pclk;
-> > > > > >    }
-> > > > > 
-> > > > > Now we pass errors back to the caller, making missing clocks fatal.
-> > > > 
-> > > > Thinking about this some more I think for compatiblity these clocks need
-> > > > to be treated as optional - that's what the original code was
-> > > > effectively doing, and I can imagine this isn't the only SoC which has
-> > > > (hopefully) always on clocks and didn't wire things up in DT.
-> > > 
-> > > You're right. The static components (funnels, replicators) don't have
-> > > APB programming interface and hence no clocks. That said, may be the
-> > > "is amba device" check could be used to enforce the presence of a clock.
-> > 
-> > I was wondering how this issue slipped through when I tested it on the
-> > Hikey960 board. The Hikey960 also has one static funnel, but it binds
-> > pclk with the static funnel node. That's why I didn't detect the issue.
-> > 
-> > I don't think using optional clock API is right thing, as DT binding
-> > schema claims the pclk is mandatory for dynamic components. My proposal
-> > is to enable the clocks only when IORESOURCE_MEM is available, something
-> > like:
-> > 
-> >    if (res) {
-> >        ret = coresight_get_enable_clocks(dev, &drvdata->pclk,
-> >                                          &drvdata->atclk);
-> 
-> That may not work, as they may need the ATCLK enabled to
-> push the trace over ATB. They may skip the APB, as there
-> is no programming interface.
+On Wed Jul 30, 2025 at 12:24 PM CEST, Onur =C3=96zkan wrote:
+> On Tue, 29 Jul 2025 19:15:12 +0200
+> "Benno Lossin" <lossin@kernel.org> wrote:
+>
+>> > - The second note is about how EDEADLK is handled. On the C side, it
+>> > looks like some code paths may not release all the previously locked
+>> > mutexes or have a special/custom logic when locking returns EDEADLK
+>> > (see [3]). So, handling EDEADLK automatically (pointed
+>> > in [1]) can be quite useful for most cases, but that could also be a
+>> > limitation in certain scenarios.
+>> >
+>> >  I was thinking we could provide an alternative version of each
+>> > `lock*` function that accepts a closure which is called on the
+>> > EDEADLK error. This way, we can support both auto-release locks and
+>> > custom logic for handling EDEADLK scenarios.
+>> >
+>> >  Something like this (just a dummy code for demonstration):
+>> >
+>> >     ctx.lock_and_handle_edeadlk(|active_locks| {
+>> >         // user-defined handling here
+>> >     });
+>>=20
+>> But this function wouldn't be locking any additional locks, right?
+>>=20
+>> I think the closure makes sense to give as a way to allow custom code.
+>> But we definitely should try to get the common use-cases closure-free
+>> (except of course they run completely custom code to their specific
+>> use-case).
+>>=20
+>> We can also try to invent a custom return type that is used instead of
+>> `Result`. So for example:
+>>=20
+>>     let a: WwMutex<'_, A>;
+>>     let b: WwMutex<'_, B>;
+>>     let ctx: WwAcquireCtx<'_>;
+>>=20
+>>     ctx.enter()             // EnteredContext<'_, ()>
+>>         .lock(a)            // LockAttempt<'_, A, ()>
+>>         .or_err(a)?         // EnteredContext<'_, (A,)>
+>>         .lock(b)            // LockAttempt<'_, B, (A,)>
+>>         .or_lock_slow(a, b) // Result<EnteredContext<'_, (A, B,)>>
+>>         ?.finish()          // (WwMutexGuard<'_, A>, WwMutexGuard<'_,
+>> B>)
+>>=20
+>> But no idea if this is actually useful...
+>
+> That wouldn't work if the user wants to lock `a` and `b` in separate
+> calls, right? If user wants to lock `a` right away and lock `b` later
+> under certain conditions (still in the same context as `a`), then to
+> automatically release `a`, we have to keep the locked mutexes in some
+> dynamic list inside `EnteredContext` so we can access all the locked
+> mutexes when we want to unlock them on EDEADLK.
 
-If so, I will use an extra patch to skip pclk enabling for static funnel
-and replicator, as a result, patch 04 will be:
+Not sure I understand, you can write:
 
-  if (res) {
-      drvdata->pclk = coresight_get_enable_apb_pclk(dev);
-      if (IS_ERR(drvdata->pclk))
-          return PTR_ERR(drvdata->pclk);
-  }
+    let a: WwMutex<'_, A>;
+    let b: WwMutex<'_, B>;
+    let ctx: WwAcquireCtx<'_>;
 
-Then, when consolidation in patch 07, it will have a code:
+    let lock_ctx =3D ctx.enter()
+        .lock(a)
+        .or_err(a)?;
+    if !cond() {
+        return ...;
+    }
+    lock_ctx.lock(b)
+        .or_lock_slow(a, b)?
+        .finish()
 
-  /* Only enable pclk for a device with I/O resource */
-  ret = coresight_get_enable_clocks(dev, res ? &drvdata->pclk : NULL,
-                                    &drvdata->atclk);
+>> What I think would be a good way forward would be to convert some
+>> existing C uses of `WwMutex` to the intended Rust API and see how it
+>> looks. Best to cover several different kinds of uses.
+>
+> Good idea. I will try find sometime to do that during next week.
 
-This turns out to be the case for both static funnel and replicator
-devices — regardless of whether the DT binding includes "apb_pclk" or
-not, the driver will always skip enabling it. Any concerns?
+Thanks!
 
-Thanks,
-Leo
+---
+Cheers,
+Benno
 
