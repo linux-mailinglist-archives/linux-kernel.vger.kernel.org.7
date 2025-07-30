@@ -1,104 +1,104 @@
-Return-Path: <linux-kernel+bounces-750438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D132B15B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:18:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4128B15B5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6ED7A3AD9B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:17:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C99F7A71F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECD726E179;
-	Wed, 30 Jul 2025 09:18:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YiiO+s0d"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD6D26CE08;
+	Wed, 30 Jul 2025 09:20:44 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F53E255F4C;
-	Wed, 30 Jul 2025 09:17:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6AA635
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753867082; cv=none; b=OqBPoAa1E75ou+JHCHJ+Li8h+tWia3eWOntovsQIxhoF9TweQ0+9oLezdlf8UUMwJUFThqty2aSkvDC3KCT04ytX/T/9rDum2HDD6v6Q49Jb5NXyjeyUQwiyDaTDSw+uHzCp7BtJ1B/8acdGmF9VAJKR/8bfRAxVnotlYke8too=
+	t=1753867244; cv=none; b=eOS/mMjX42g2IZmfM8/E1/9q36Mn4fqds60ydqiz2fWP1W0VsMPOqzRsbC0vUQv4uL8uHeaBHgDdYH7wzp3Qw1czo0aMtltdkk1FTnSId7DYywcviquEc36I22F4wv53hFVGccbhw+KggrBj0eui4Xi2cL9R85PySX3xYyuyzYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753867082; c=relaxed/simple;
-	bh=h6yGFTzSbbPIM+l71zfwBjl9gFp/4RDVYaLZu+XyfXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GX8I3wTs2i+0nH32Q/KXiO3VjPbWW15Hk7iR6s2Ym7Y9YVJvsf54K/gUj5k+UW/j4KlPfy2Pe293Gg0Jxn493MoVz/KiuhT3XlsjnXlBc1oZhXb4U4y+iRL2GSmCJ5/nxpe2+np4Sw9kqaJ3TaBFyA1geGJZDfLgdYQLF4QQdzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YiiO+s0d; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AC5C21F6BE;
-	Wed, 30 Jul 2025 09:17:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753867078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Yjpl5P036SzcXdZApIpw3yupiX65ZpgCi/JEAYydfII=;
-	b=YiiO+s0d37LZ9m5y4kzMD1QTAn+DwVlPjGwKIHBc4N2yry3xKv7QSlfFBbzDpMQWJ0/KaI
-	9I74izbx3XPoxTdKtc+mKlEAMlJkoVrLiwgnCCPFBM4c37qmjOPwEJt3z+ENTvZ8yk+U+e
-	01DMMY2JTqGlpI3eqBVSuf8MDG4671+9+FWDqCsG8W+jLyh1mRiGBWH2vWoo4JPCfYnaLf
-	gSB2Hywk5IAtJl82BvQw2ctOjjGVETk4+cr5an67pKSjMctAv6N6b0oniLcSJ+TWlf7zGI
-	1bIqzVvWCk3NuKd8sHYTip5+CXeNopQy7ODoKPEqBI+ARcJxpZR+SEFiLMXwCA==
-Date: Wed, 30 Jul 2025 11:17:55 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert
- Uytterhoeven <geert+renesas@glider.be>, Magnus Damm
- <magnus.damm@gmail.com>, Saravana Kannan <saravanak@google.com>, Serge
- Semin <fancer.lancer@gmail.com>, Phil Edworthy <phil.edworthy@renesas.com>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Miquel
- Raynal <miquel.raynal@bootlin.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 1/6] dt-bindings: gpio: snps,dw-apb: Add support for
- Renesas RZ/N1
-Message-ID: <20250730111755.24aa16b2@bootlin.com>
-In-Reply-To: <20250729181151.GA530390-robh@kernel.org>
-References: <20250725152618.32886-1-herve.codina@bootlin.com>
-	<20250725152618.32886-2-herve.codina@bootlin.com>
-	<20250729181151.GA530390-robh@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1753867244; c=relaxed/simple;
+	bh=58QFvsk52yymtHAcL08UPhhWdeUkb9614x0+E6nSf5w=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=h2FxFTMsnp2S5nYVAOOXwy12VS/SYmddXoPnMrJj+AqMR8vbaIHmMPWhtAYORYRnSHM230g9O5eGZXiUP9PvNbwUt3ypHUb+BnEU2oFIWDSCnlKmtdj2JoTnnmTkjarLo1gQadd/8cynn/OLENB1QVt0rO6MrsfhS06tnfCG1Xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bsRRC75LvzdcBV;
+	Wed, 30 Jul 2025 17:16:23 +0800 (CST)
+Received: from dggpemf500012.china.huawei.com (unknown [7.185.36.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id 87E8E1402CC;
+	Wed, 30 Jul 2025 17:20:37 +0800 (CST)
+Received: from huawei.com (10.175.124.71) by dggpemf500012.china.huawei.com
+ (7.185.36.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 30 Jul
+ 2025 17:20:36 +0800
+From: Zhang Qilong <zhangqilong3@huawei.com>
+To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<lorenzo.stoakes@oracle.com>, <david@redhat.com>,
+	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>, Zhang Qilong
+	<zhangqilong3@huawei.com>
+Subject: [PATCH resend v2] /dev/zero: try to align PMD_SIZE for private mapping
+Date: Wed, 30 Jul 2025 17:19:05 +0800
+Message-ID: <20250730091905.383353-1-zhangqilong3@huawei.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeljeehhecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudejpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehhohgrnhesohhsrdgrmhhpvghrvggtohhmphhuthhinhhgrdgtohhmpdhrtghpthhtoheplhhinhhushdrfigrlhhlvghijheslhhinhgrrhhordhorhhgpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplhdprhgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgut
- heskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvgdprhgtphhtthhopehmrghgnhhushdruggrmhhmsehgmhgrihhlrdgtohhm
-X-GND-Sasl: herve.codina@bootlin.com
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
+ dggpemf500012.china.huawei.com (7.185.36.8)
 
-Hi Rob,
+Attempt to map aligned to huge page size for private mapping which
+could achieve performance gains, the mprot_tw4m in libMicro average
+execution time on arm64:
+  - Test case:        mprot_tw4m
+  - Before the patch:   22 us
+  - After the patch:    17 us
 
-On Tue, 29 Jul 2025 13:11:51 -0500
-Rob Herring <robh@kernel.org> wrote:
+Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+---
+v2:
+- Add comments on code suggested by Lorenzo
+- Use IS_ENABLED to check THP config
 
-> On Fri, Jul 25, 2025 at 05:26:10PM +0200, Herve Codina wrote:
-> > The RZ/N1 SoCs uses the Synopsys DesignWare IP to handle GPIO blocks.
-> > 
-> > Add RZ/N1 SoC and family compatible strings.  
-> 
-> Why? Yes, that's policy, but so far we avoided it on this IP. Perhaps 
-> because it is simple enough. So what's different here?
+ drivers/char/mem.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-I've just followed Renesas policy.
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index 48839958b0b1..c27cc89bd02d 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -525,11 +525,18 @@ static unsigned long get_unmapped_area_zero(struct file *file,
+ 		 * so as not to confuse shmem with our handle on "/dev/zero".
+ 		 */
+ 		return shmem_get_unmapped_area(NULL, addr, len, pgoff, flags);
+ 	}
+ 
+-	/* Otherwise flags & MAP_PRIVATE: with no shmem object beneath it */
++	/*
++	 * Otherwise flags & MAP_PRIVATE: with no shmem object beneath it,
++	 * attempt to map aligned to huge page size if possible, otherwise we
++	 * fall back to system page size mappings.
++	 */
++	if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
++		return thp_get_unmapped_area(file, addr, len, pgoff, flags);
++
+ 	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
+ #else
+ 	return -ENOSYS;
+ #endif
+ }
+-- 
+2.43.0
 
-Nothing other than this policy justifies the change and so, I can remove
-the Renesas compatible strings. In other words, I can simply remove this
-patch.
-
-Best regards,
-Hervé
 
