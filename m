@@ -1,166 +1,217 @@
-Return-Path: <linux-kernel+bounces-751323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2CD1B167B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:40:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3327DB167B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 067CA1AA7943
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B3826247F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB67D2206B5;
-	Wed, 30 Jul 2025 20:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF642206B7;
+	Wed, 30 Jul 2025 20:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G/g7046s"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j1U4WXo4"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D906D173;
-	Wed, 30 Jul 2025 20:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648C321480B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753907996; cv=none; b=CrW3sxkZmtpcDsZjvdTVfQFAW4yjPqDf7q8aZEKcoco8b9+R8BzMnPpJpI9GP+MVFpuHveAIed+kX5iKovxzkMVE+TMudBGXF8QjqEpWW7+22EWdVRoKx963lga2i5bXZSp2x3u37hvUYvT1BUcAvjJ402zSlstOAVRCmQFE+PI=
+	t=1753908061; cv=none; b=jbC+l/AXoDNRHpM3TeTK9mKghV8R4o9IYxawsUZVf6S4XHDzLIaSljOosCQN+S5jWBJcVQf6CdDoQTwYgvrOFwXqVRkQJzUEvdp6aGKbOZYF8AhtJNMwbeuQpC9IXa/7r0vHUxNgEPkM5DBz+wC7bFcmg/i9vEL+7ivStKkHN70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753907996; c=relaxed/simple;
-	bh=sCGfqOllVeDU2XNdp/ZZKubAJEHEg60+Ucsw9iZdHLA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CO2a3pIskc0lTIzGKeKRVsWuSPDK11wl0OXAsysX5or1bZjk/T3X5ug/Hfn0NlTKjrggrXuC9CJ/sQlxLOy51i+xz+dHjpLBc/UZZlc0q7RZSZ4lj9k+9FiLEpHa0/2xERkP2gsSt/ngLhcrwZh1FdWOc3JoQteerJ5VEX98ETk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G/g7046s; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753907995; x=1785443995;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=sCGfqOllVeDU2XNdp/ZZKubAJEHEg60+Ucsw9iZdHLA=;
-  b=G/g7046s92orqEJnR5+ZxXhURQ1ChKd6m4SxT8Ye8rpz1mBwioCZXC6Y
-   FeePwJfgajJDYDKAc5sjcDdW89U3gDex0LtxZg2w3mX4ZAv5t3st2OIAk
-   rWmGn1qd/5s4XO0vfBfzVKOdYXv5CdLrJG6KxdlDjeVtj7BOTtvactGSO
-   ah7TK9tDfe4HhTBoKEDEkOcDwebm2LwhqE6y9jSqwLERVQR/PGSfHKyWt
-   y3ZJWyriMOjUn4FcaWg7Fyt8DsnxLriyToEgRbdxq9sl6bm5Z42WiDdLt
-   apQIqdTHobvEFTAv8rNEX5XwqhAkSxwCQpNz9ILaiTjA/JpC/FlsnTRfh
-   A==;
-X-CSE-ConnectionGUID: W6nvQkP8QWKaj3cvKQsjHA==
-X-CSE-MsgGUID: 2uQwGyoPSduNDUY9zDMEDA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56312553"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="56312553"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 13:39:52 -0700
-X-CSE-ConnectionGUID: HIFruFCOTTuG08zDwolCeQ==
-X-CSE-MsgGUID: KUDqT5cDSjabvYX18DkYOQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="163115445"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.245.245.173])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 13:39:48 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id 1F90911FBA7;
-	Wed, 30 Jul 2025 23:39:46 +0300 (EEST)
-Date: Wed, 30 Jul 2025 20:39:46 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - c/o Alberga Business Park, 6 krs, Bertel Jungin Aukio 5, 02600 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v5 06/10] media: i2c: ov9282: add led_mode v4l2 control
-Message-ID: <aIqDEgrAoSkozxA3@kekkonen.localdomain>
-References: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
- <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
- <aG7bWXpz5sxYcLKI@kekkonen.localdomain>
- <5i6a77wbggmjjxfridurbq5mrdjksse236vwucawbi43fjv2ae@umy4fe7six5p>
- <aG92TxxIRdRES5cs@kekkonen.localdomain>
- <f4owcdddwjar6lg5f2urpaynykks4yrttto7h7qfnodmqg22ll@xl45pbhuyhmx>
+	s=arc-20240116; t=1753908061; c=relaxed/simple;
+	bh=CsObEssTfFyAOuxMHOBuH4SwCM9FsgK44eMrRV/+Bag=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ixIRBkN5pXb68BPSPAIAfwlkR8FOtXn3YjXpUXYaCQOlk9YGxzSpX2hbQY4LEiBcNPgSlMluMytVQy+KaXzcV1A8fE/bZVUPN4BmNAIDCZ/uVXD9AXlA2BtwDqTR2mfXasE4YN8quWy4oyfkN/7/RxKfHBGwDE88s5qYoYGrpaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j1U4WXo4; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-7076b55460eso2636656d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:40:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753908058; x=1754512858; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4XLKL6Xhg/Q0qq3baCuq/rD4471fpLDdQOk3nBX3yRc=;
+        b=j1U4WXo4jichiglukgarpgWbg2vvV7SwDh+uy2jb1wevp7XWg/SxblZHmpRHLdyr+P
+         t09WE1P8Dfsl3a7xOYu9R35uAQ83XzLUwKgCZ5D5YQLl/WnggtT3CVjf24E8gWqgF3fr
+         Qf0hZVSNhNmmmCxX1CJtckSKjlGyxr0CbB6iPEfUDp0mKtE/mqZfXJ6vMwhCjTa16+78
+         69dTdDchHTSnY9jAIYW696XnG2mvBwB0k70f+Q5MFfxGl2TtqeY1Mv/HGzAPxME4fjq4
+         H6HHTOK44oKPyZevxix7mxU6kzRoE433RXMfLmGvyYmuhidvCdEoRb8ZKSgCuaHcF6WD
+         w9xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753908058; x=1754512858;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4XLKL6Xhg/Q0qq3baCuq/rD4471fpLDdQOk3nBX3yRc=;
+        b=oUjWw30rThyNte+in+XWNvF0hy1Phg+9ka+cy2tzggWcGDjDNf22ljqzm2n+8uRVBy
+         TTQeQsFxXWDRWlDHnheBIQZfIH0YsFCI1h6/7OvDo7oG+qaSNOQ3NLLfdlXLdP4bD531
+         U7vlr12kJhsEG5hMN3SuXwkDgFflEdVLsgt9jlgbgG+rwdwGlz5IRRwo4YRoOHZaDIYw
+         EQTZyYFae2l/21XZ4ETARQj1pin//CtVDimCY3Q2C6O19jjPwzRsP+bPQg5QniNW2DLW
+         6fWUa5QMtJ4+Jwp6O9BEw31c0baPeabF4BP3VzYQpE0n3pQgPFRbVtDjFMdH1ujIH7bi
+         ftOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxDCFq+WjbcDaj+ou090/DtDUNciapX4gu5jRTMogAC365e1gU9giq3CrgZEFav/v4a4ZrLgIpE20ubsk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yydp0Bf2UUGBmrpovRML0NlCPWvBYRJ5gYHkYisTMNGHaAkZ5M+
+	4RtErZuVPgv3qMDkQQdcC7LGDkm/Kwa39mrapzwOGsQzOr4D+Ash8oFm
+X-Gm-Gg: ASbGnctYYq6xWigsOLk1KoT0rjaDzj7F98vdMsAgF6CfUhvIxCXGBwfBWq0sCpkeuHm
+	CoSPo/8BOwZoYIM9h+2PyIIoJN4klHadzyP8v82ikJIexIzHr+rAThmECLV4NEyDnk7ju1easDM
+	dSFJY0wJ4H0omp5/gHoDkpI2jdGFjGZpvJEd7Cr0qZQvSSESp4gJ+AX3zBYl3O78AURx2yPfOu0
+	xWE83b5bFpujdvFZN3jdlnEu+3qsB3e/ODG++Zh7+QaaQVCVR9h+SaGuj8sUmim6xo6LHhoDOz4
+	/StpCgpnlupAkaUlX5J5QP3BM0TQhxiiC3FfyerBHZ0hOAP+5SLKIdxjZmHg9SrY9IC2hxLvA53
+	adZGHVwWrhuUsnj5KlIiBCWQ1+lx/8zef
+X-Google-Smtp-Source: AGHT+IHKi+RRvgWVQA9W//b5vs7l10xfB5gOYL+kEfkwHUFEe1OBICZQr8vd/q/KpqPni1qwrTF87g==
+X-Received: by 2002:a05:6214:2424:b0:705:c148:26a0 with SMTP id 6a1803df08f44-70767197d07mr74480876d6.31.1753908058186;
+        Wed, 30 Jul 2025 13:40:58 -0700 (PDT)
+Received: from iman-pc.home ([142.186.9.88])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-707299ff109sm64448176d6.10.2025.07.30.13.40.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 13:40:57 -0700 (PDT)
+From: Seyediman Seyedarab <imandevel@gmail.com>
+X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
+To: dwmw2@infradead.org,
+	baolu.lu@linux.intel.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Seyediman Seyedarab <ImanDevel@gmail.com>
+Subject: [PATCH v2] iommu/vt-d: replace snprintf with scnprintf in dmar_latency_snapshot()
+Date: Wed, 30 Jul 2025 16:40:37 -0400
+Message-ID: <20250730204037.28159-1-ImanDevel@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f4owcdddwjar6lg5f2urpaynykks4yrttto7h7qfnodmqg22ll@xl45pbhuyhmx>
+Content-Transfer-Encoding: 8bit
 
-Hi Richard,
+snprintf() returns the number of bytes that would have been
+written, not the number actually written. Using this for offset
+tracking can cause buffer overruns if truncation occurs.
 
-On Fri, Jul 11, 2025 at 09:41:52AM +0200, Richard Leitner wrote:
-> Hi Sakari,
-> 
-> On Thu, Jul 10, 2025 at 08:14:07AM +0000, Sakari Ailus wrote:
-> > Hi Richard,
-> > 
-> > On Thu, Jul 10, 2025 at 08:50:24AM +0200, Richard Leitner wrote:
-> > > Hi Sakari,
-> > > 
-> > > thanks for the feedback :)
-> > > 
-> > > On Wed, Jul 09, 2025 at 09:12:57PM +0000, Sakari Ailus wrote:
-> > > > Hi Richard,
-> > > > 
-> > > > Thanks for the update.
-> > > > 
-> > > > On Tue, Jun 17, 2025 at 09:31:40AM +0200, Richard Leitner wrote:
-> > > > > Add V4L2_CID_FLASH_LED_MODE support using the "strobe output enable"
-> > > > > feature of the sensor. This implements following modes:
-> > > > > 
-> > > > >  - V4L2_FLASH_LED_MODE_NONE, which disables the strobe output
-> > > > >  - V4L2_FLASH_LED_MODE_FLASH, which enables the strobe output
-> > > > 
-> > > > I really think you should use a different control for this. The sensor can
-> > > > strobe the flash but it won't control its mode.
-> > > > 
-> > > > How about calling it V4L2_FLASH_STROBE_ENABLE?
-> > > 
-> > > I agree on that. But tbh V4L2_FLASH_STROBE_ENABLE somehow sounds wrong
-> > > to me. As the strobe output in the ov9282 case goes high for the strobe
-> > > duration, what do you think about calling it V4L2_FLASH_STROBE_PULSE?
-> > 
-> > That's how the hardware strobe is supposed to work, there's nothing unusual
-> > in that. How about V4L2_FLASH_HW_STROBE_ENABLE?
-> 
-> Ah. Sorry. I believe I completely misunderstood your previous point.
-> You're not referring to a new menu entry in V4L2_CID_FLASH_LED_MODE,
-> but rather proposing a completely new boolean control, correct?
+Replace snprintf() with scnprintf() to ensure the offset stays
+within bounds.
 
-Correct.
+Since scnprintf() never returns a negative value, and zero is not
+possible in this context because 'bytes' starts at 0 and 'size - bytes'
+is DEBUG_BUFFER_SIZE in the first call, which is large enough to hold
+the string literals used, the return value is always positive. An integer
+overflow is also completely out of reach here due to the small and fixed
+buffer size. The error check in latency_show_one() is therefore unnecessary.
+Remove it and make dmar_latency_snapshot() return void.
 
-> 
-> As this would be separating the V4L2_CID's of "strobe signal source"
-> (aka sensor) and "strobe signal consumer" (aka flash device/LEDs), that
-> makes perfect sense to me now! :)
-> 
-> What are your thoughts on naming it V4L2_FLASH_HW_STROBE_SIGNAL?
+Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+---
+Changes in v2:
+- The return type of dmar_latency_snapshot() was changed based on the
+  discussion here:
+  https://lore.kernel.org/linux-iommu/aIDN3pvUSG3rN4SW@willie-the-truck/
 
-Seems reasonable.
 
-In order to use the control, the user space would need to know when to use
-it, i.e. when the latching point would be in order to hit a particular
-frame. If the strobe can start before the exposure (and presumably it needs
-to), the latching point is before that point of time. I wonder if pixels
-(as in the pixel array) would be reasonable unit for this as well.
+ drivers/iommu/intel/debugfs.c | 8 ++------
+ drivers/iommu/intel/perf.c    | 8 ++++----
+ drivers/iommu/intel/perf.h    | 7 +++----
+ 3 files changed, 9 insertions(+), 14 deletions(-)
 
-Does the sensor datasheet shed any light on this? It might be good to add a
-control for that as well.
-
-> 
-> The main reason behind removing the "ENABLE" suffix is that none of
-> the V4L2_CID_FLASH_* controls currently include "ENABLE" in their
-> names. Altough, for example, V4L2_CID_FLASH_CHARGE performs a
-> similar function (en-/disabling the charging of the capacitor).
-> 
-> On the other hand, adding "SIGNAL" to the control name, in my opinion,
-> makes it clearer that it only enables a signal and not some kind of
-> flash device or LED.
-
+diff --git a/drivers/iommu/intel/debugfs.c b/drivers/iommu/intel/debugfs.c
+index affbf4a1558d..c4aca0eb5e29 100644
+--- a/drivers/iommu/intel/debugfs.c
++++ b/drivers/iommu/intel/debugfs.c
+@@ -653,12 +653,8 @@ static void latency_show_one(struct seq_file *m, struct intel_iommu *iommu,
+ 	seq_printf(m, "IOMMU: %s Register Base Address: %llx\n",
+ 		   iommu->name, drhd->reg_base_addr);
+ 
+-	ret = dmar_latency_snapshot(iommu, debug_buf, DEBUG_BUFFER_SIZE);
+-	if (ret < 0)
+-		seq_puts(m, "Failed to get latency snapshot");
+-	else
+-		seq_puts(m, debug_buf);
+-	seq_puts(m, "\n");
++	dmar_latency_snapshot(iommu, debug_buf, DEBUG_BUFFER_SIZE);
++	seq_printf(m, "%s\n", debug_buf);
+ }
+ 
+ static int latency_show(struct seq_file *m, void *v)
+diff --git a/drivers/iommu/intel/perf.c b/drivers/iommu/intel/perf.c
+index adc4de6bbd88..7e726e1ba40b 100644
+--- a/drivers/iommu/intel/perf.c
++++ b/drivers/iommu/intel/perf.c
+@@ -113,7 +113,7 @@ static char *latency_type_names[] = {
+ 	"     svm_prq"
+ };
+ 
+-int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
++void dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ {
+ 	struct latency_statistic *lstat = iommu->perf_statistic;
+ 	unsigned long flags;
+@@ -122,7 +122,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 	memset(str, 0, size);
+ 
+ 	for (i = 0; i < COUNTS_NUM; i++)
+-		bytes += snprintf(str + bytes, size - bytes,
++		bytes += scnprintf(str + bytes, size - bytes,
+ 				  "%s", latency_counter_names[i]);
+ 
+ 	spin_lock_irqsave(&latency_lock, flags);
+@@ -130,7 +130,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 		if (!dmar_latency_enabled(iommu, i))
+ 			continue;
+ 
+-		bytes += snprintf(str + bytes, size - bytes,
++		bytes += scnprintf(str + bytes, size - bytes,
+ 				  "\n%s", latency_type_names[i]);
+ 
+ 		for (j = 0; j < COUNTS_NUM; j++) {
+@@ -156,7 +156,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 				break;
+ 			}
+ 
+-			bytes += snprintf(str + bytes, size - bytes,
++			bytes += scnprintf(str + bytes, size - bytes,
+ 					  "%12lld", val);
+ 		}
+ 	}
+diff --git a/drivers/iommu/intel/perf.h b/drivers/iommu/intel/perf.h
+index df9a36942d64..dcf2741c2d53 100644
+--- a/drivers/iommu/intel/perf.h
++++ b/drivers/iommu/intel/perf.h
+@@ -35,12 +35,12 @@ struct latency_statistic {
+ };
+ 
+ #ifdef CONFIG_DMAR_PERF
+-int dmar_latency_enable(struct intel_iommu *iommu, enum latency_type type);
++void dmar_latency_enable(struct intel_iommu *iommu, enum latency_type type);
+ void dmar_latency_disable(struct intel_iommu *iommu, enum latency_type type);
+ bool dmar_latency_enabled(struct intel_iommu *iommu, enum latency_type type);
+ void dmar_latency_update(struct intel_iommu *iommu, enum latency_type type,
+ 			 u64 latency);
+-int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size);
++void dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size);
+ #else
+ static inline int
+ dmar_latency_enable(struct intel_iommu *iommu, enum latency_type type)
+@@ -64,9 +64,8 @@ dmar_latency_update(struct intel_iommu *iommu, enum latency_type type, u64 laten
+ {
+ }
+ 
+-static inline int
++static inline void
+ dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ {
+-	return 0;
+ }
+ #endif /* CONFIG_DMAR_PERF */
 -- 
-Kind regards,
+2.50.1
 
-Sakari Ailus
 
