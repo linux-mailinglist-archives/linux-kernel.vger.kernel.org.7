@@ -1,74 +1,105 @@
-Return-Path: <linux-kernel+bounces-751125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC95B16584
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:29:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50D73B1654E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06DDF1884A7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:29:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03ACB3A8761
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14322E0413;
-	Wed, 30 Jul 2025 17:29:07 +0000 (UTC)
-Received: from bregans-0.gladserv.net (bregans-0.gladserv.net [185.128.210.58])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9EF2DECD8;
+	Wed, 30 Jul 2025 17:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="vR+L1CCy"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524142E0406;
-	Wed, 30 Jul 2025 17:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.210.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1784414883F;
+	Wed, 30 Jul 2025 17:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753896547; cv=none; b=p73oxez3rBYjDzAuB4YzQ4CbqkqbLhh10ILUS+ylhSpgo2id1Ahb69qZZFo3nTfCDPDmtdkx91XpfaiWrQ6iDM0qFAKBEufp8MWDf5M/Gz5XKgI1+0Ld+L4XKx09To5mG4Y6NSlIMnEJeEVQxDjeOzQfJjH/sPAGOWoeDyNnGGk=
+	t=1753895968; cv=none; b=TMAUXFZc18SSxzMDJGWNquRcabPuRQmhTzI8Q8gFrf5snYBQWug2YjtUltwDOEOU79tNIhY7/zAY6I2LgItNPBqYy1xfJ82MIivXTKeYnH39Pvg2vH/t7p8nCNvMyisNtPf7XjhRan1e4H5cfUDs2t6Q3OCwlUGYkzvB/R9TwE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753896547; c=relaxed/simple;
-	bh=wdOxPCidP8lEoUDdij9ppCOPsaIa0slcpRMVoASTGEc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PJV1FWymcktCGA6jGVJCU1xGn6S7ixjFb9H3nduwo87nd5z/ucXvAmeCZ/gQJJhpwNoHVRRI8cPhOlz8g2CIkrojHBIZ6qmrnWYGmBDc40jbJjWuWjIuJnD0QeEEcsULw/j4Xcymo9hnKl2aAFUqPc6w8ogAQCw+RUO6VIQNo6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.210.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
-From: Brett A C Sheffield <bacs@librecast.net>
-To: gregkh@linuxfoundation.org
-Cc: stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	Brett A C Sheffield <bacs@librecast.net>
-Subject: Re: [PATCH 6.12 000/117] 6.12.41-rc1 review
-Date: Wed, 30 Jul 2025 17:18:28 +0000
-Message-ID: <20250730171827.29770-2-bacs@librecast.net>
-X-Mailer: git-send-email 2.49.1
-In-Reply-To: <20250730093233.592541778@linuxfoundation.org>
-References: <20250730093233.592541778@linuxfoundation.org>
+	s=arc-20240116; t=1753895968; c=relaxed/simple;
+	bh=vVO1ljNSDH1Cp8VX7BOW3MNOkdRvOJSjxYNtbTlnUxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Nj4wykLw1hwnE2Gx+skqM03dlKihvJflLrbjmiFaWALCzXRwTL3tlLGXDkTxInoG5uBQaXvoiAuRt1ROJGhSDFtmrVjf0iRPbf5NZzkmld6XaC72WQKTRRkf+m7iLk9JQ7bP764RznO4u7rtynXyojtRONkPMz5sjKoQxnGi6vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=vR+L1CCy; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bsf8S4bH0zm174f;
+	Wed, 30 Jul 2025 17:19:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1753895958; x=1756487959; bh=LK8Ywagmger3p3W2LJRM3ZNT
+	6HAP88/rEQvWnEl+jZ0=; b=vR+L1CCysci27QjVRibHOjHpw9xGe8jKVJeiyHWW
+	HEdX5WigwOwGXwP1eY+WjnYE9keaWPbcA+jL8DHRFz+ZZm4crkODbTivJFcqLesw
+	1jeVypCa5RxfLbgZawCNUTo03zdbGiTiNQK/J4G1yOPaB4b6i3M2zOJCWRnG9XzS
+	ruZ/qkwyhHbs9rJ0Fe+4BujhY3Et60qx+7AsvJd8Ys6rs69QZAqxTlbhJpyCwEip
+	XXelttie9C3vCBX3rPJwuhrqcSPyBkidxzeNEO1VS//OWr39er5GttlFih+H2L7N
+	MVwfeptuJF3E8m/GEdCd6sWOnjCAM5BAR/tC7hQ/wWccVg==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id vVwTOGKiAr_y; Wed, 30 Jul 2025 17:19:18 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bsf8F0mktzm1Hc9;
+	Wed, 30 Jul 2025 17:19:08 +0000 (UTC)
+Message-ID: <e07ce691-c298-4cb4-8ac3-35c8a8beaea4@acm.org>
+Date: Wed, 30 Jul 2025 10:19:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] blk-mq-sched: introduce high level elevator lock
+To: Yu Kuai <yukuai1@huaweicloud.com>, dlemoal@kernel.org, hare@suse.de,
+ jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk,
+ yukuai3@huawei.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
+ <20250730082207.4031744-2-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250730082207.4031744-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-# Librecast Test Results
+On 7/30/25 1:22 AM, Yu Kuai wrote:
+> +		if (sq_sched)
+> +			spin_lock(&e->lock);
+>   		rq = e->type->ops.dispatch_request(hctx);
+> +		if (sq_sched)
+> +			spin_unlock(&e->lock);
 
-010/010 [ OK ] libmld
-120/120 [ OK ] liblibrecast
+The above will confuse static analyzers. Please change it into something
+like the following:
 
-CPU/kernel: Linux auntie 6.12.41-rc1-g487cdbecb4dc #32 SMP PREEMPT_DYNAMIC Wed Jul 30 10:13:12 -00 2025 x86_64 AMD Ryzen 9 9950X 16-Core Processor AuthenticAMD GNU/Linux
+if (blk_queue_sq_sched(q)) {
+	spin_lock(&e->lock);
+	rq = e->type->ops.dispatch_request(hctx);
+	spin_unlock(&e->lock);
+} else {
+	rq = e->type->ops.dispatch_request(hctx);
+}
 
-Tested-by: Brett A C Sheffield <bacs@librecast.net>
+Otherwise this patch looks good to me.
+
+Thanks,
+
+Bart.
 
