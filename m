@@ -1,154 +1,133 @@
-Return-Path: <linux-kernel+bounces-750348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D59FFB15A6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A626CB15A71
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:23:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853C34E205D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:22:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E5C4E1C04
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21410255E4E;
-	Wed, 30 Jul 2025 08:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A865256C9E;
+	Wed, 30 Jul 2025 08:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="djPONCMI"
-Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hDTMmcJm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4949C1B0F0A;
-	Wed, 30 Jul 2025 08:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1828B1B0F0A;
+	Wed, 30 Jul 2025 08:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753863749; cv=none; b=oa99TgQtqL3jTiwcKYPUpji8kwkf3vgxwy8zr2PmB+kL/BtGcjYwDN2o3Vj6dlEiAqMDTkGfhrV8jHKBrU8vhfzp6uptgMb/Wnt2XrFxzi4vYqz9YC6Uu8ZOLBnyy/e20c/T9KrJTyLF249XtqDw+Trmxkg8QmWxmBf3wTjMwk8=
+	t=1753863785; cv=none; b=BR8PlmUAUCPfwueylILON1DKtORzRJ2sUgPMR+cc56Ke4JTOJRAEyGDoQCLo3FiWCttO27Ie4BbXfpnFQXossEz/Vs2yb20aTdweeXqIEPh0m5EEhV2ozfHilWfUzi+VyvIt1bQAU1WienCwG+SfjDalUShGPlRQg2Wdtvs74JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753863749; c=relaxed/simple;
-	bh=gbBIR+y+konKWVt4kgPJOB4DIAF0clpx2ptWxEdYXK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0QIktrEy+v+j9VhfMvzbIe6BmcPOaLin2yoXpesQyfvVmUGxK0R/uTWyfcExSeV7HuG9rIPHP2FEciXwc8yoZqz1HTJyRwMiTWyMURNO32CLxRtzmAPiiGUgJIrPTRHdFL3HecId/F9MLZFmCOyGLoxp6xbOHI0rMNbbyU4GPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=djPONCMI; arc=none smtp.client-ip=51.159.173.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=k3qD6eVLYJwH4LbBEku4b7SzdXGj/kHmJcfyp+Dlc5M=; b=djPONCMIG+DoFcUgjEzPhHfmpu
-	j+AcjQwuBP0zBs6CRtuClMBD82arfP9Pn+rT6ErOqXX+HUnoJpb0C5kKCIxnD/A9bFceyJTAGZXO/
-	zjB6/dQlQ3BAlDAvQzTzXh+JV3fHGB/khzKfcZ8bJQsO+5JLFlJNVl5qtMh/hOvC3VAH/VOu12vZE
-	MFSmk5/Fg4VUlObZdDF73TSRSbkoiXz84xv2GNxzMNmJ4PgLDKRWEiq5DiBDrsZQBvWAQ2vrBPZ7l
-	z/4j7UO1nebaaA47zIJlegyNqPDPVIvIGOuyAlXdG21NZK/Nv6k/QNRMy025UMs1wuNvSu2OdzFZR
-	Q09wgTVg==;
-Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:34579 helo=archlinux)
-	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.98.2)
-	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
-	id 1uh24w-000000098Sh-10Cu;
-	Wed, 30 Jul 2025 10:22:25 +0200
-Date: Wed, 30 Jul 2025 10:22:23 +0200
-From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Jann Horn <jannh@google.com>
-Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Subject: Re: [PATCH] fs: hidepid: Fixes hidepid non dumpable behavior
-Message-ID: <rta37trkqzuvoim5muoukxmkbxcamlydwn6zfpm65k5qxyxb7y@pcq6nj54z6hl>
-References: <20250717-hidepid_fix-v1-1-dd211d6eca6e@ssi.gouv.fr>
+	s=arc-20240116; t=1753863785; c=relaxed/simple;
+	bh=8gyL7MYu/JzPDd8rjFBT7qS6pFlxZSqptARxEYz0i84=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TLrDUEaNNmDZ3OvFKGlKJ2/uNjjFwAmCvRtCaeN6L5bzCpyG57E7eDa1rFIy0vLcBjkkade6SAjyhXJTmIcjYzAP0kpGA7Yb9uh96Bmdlq6WXFVKCji6Ty2MMnQNeNJcC0P/SIc+6WFJKf0lsQ173Meq0gcle7Gh9FaRgyeD92A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hDTMmcJm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U766DX028204;
+	Wed, 30 Jul 2025 08:22:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=CNds7FahsWob/e53U7acBB
+	xmgatYTUwfWW4rKcpYeXk=; b=hDTMmcJmfEddV/IJNoJBCz033Hq9Icpi1ddgcF
+	lcKg0gW3nfzUqnoLuu8nf02+2Sw2zvUOHZ7AYpf40QEocsP5IacJNtsb+tZ7GE+Z
+	Qx/knLmOF8XHvRCZsk0cX4CJuH+CwXLcYkY10xCVzcU6fYKRW1o0VfQfDfPMOki/
+	z4Y8sNcgFuZoNMqkn5ET+3BzFfK5oOfwbPX4Gux8/uph/XUL2XV/6Wn0IZ3QleoL
+	FehO4QxP/lAexPih2VKrlVivYoSDSKDpD1YsIIBs6u0wYH0q4vfrqwPoTpk3TS4p
+	uRCtNdoJPap9jCNnLJ5tYmiDMmT5HQ28N+HY0lF7k1yjY/UA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qda2va8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 08:22:53 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56U8MqjU002868
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 08:22:52 GMT
+Received: from hu-rdwivedi-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Wed, 30 Jul 2025 01:22:47 -0700
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+To: <mani@kernel.org>, <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
+        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH V1 0/3] Enable UFS MCQ support for SM8650 and SM8750
+Date: Wed, 30 Jul 2025 13:52:26 +0530
+Message-ID: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250717-hidepid_fix-v1-1-dd211d6eca6e@ssi.gouv.fr>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
-X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: hJu9X8pP4MCjQ8iT6rDEZnHjNURrhgUF
+X-Authority-Analysis: v=2.4 cv=Pfv/hjhd c=1 sm=1 tr=0 ts=6889d65d cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=dnzSO1FTSQS5A_PjxWcA:9
+X-Proofpoint-GUID: hJu9X8pP4MCjQ8iT6rDEZnHjNURrhgUF
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA1NSBTYWx0ZWRfX+lzWKLEfJOrz
+ wU/v7d3Xk5vl5hSYpfroF5aUP3yrWkBHZqLbx8T3KZXWlpGyaYXF03UnNE0Hk5RVNg6vHS1RjLr
+ fPDes1kbfmrb/hMrMuvyfN+rCYjFdHy45xdCK1po1LvtJ1hnMa+EsFYsNADIVwbG8/PU7t6KgEp
+ vAJOlPRABZNCu/+OBNMFiZqpkOoZRAByS/WHS4gxieDr/dEGlnzsSPoy8zcxysiyphS1MCovXFZ
+ xq3InYr52qxBuxMLGhXFSb5XaPm22bi/tPDWR88UVuZypf/jzDtK6nRcbkLASK9laCV2vYrq7VD
+ pUeh3pyytsTTfZgJCwY7ovanFdlNxgKu5X10USEK3YeE90uab9grzxOBChhx61dUtC3054YOcsr
+ hxTKXWUds8/UV9wWSKJSUnATo7u/xVuCZijzBhu8y2KVa7u7F2d9Rf0RY2fTJphmF/sWQIzP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_03,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=864 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
+ spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507300055
 
-Hi Jann,
+This patch series enables Multi-Circular Queue (MCQ) support for the UFS
+host controller on Qualcomm SM8650 and SM8750 platforms. MCQ is a modern
+queuing model that improves performance and scalability by allowing
+multiple hardware queues.
 
-While documenting "hidepid=" I encountered those clunky behavior, which
-I think we should not have.
+Although MCQ support has been present in the UFS driver for several years,
+this is the first time it is being enabled via Device Tree for these
+platforms.
 
-Let say we set the "hidepid=" option to "invisible", processes will be fully
-invisible to other users than root and the user that reads the procfs entry.
+Patch 1 updates the device tree bindings to allow the additional register
+regions and reg-names required for MCQ operation.
 
-The fact that root is able to see every processes is partialy due to the fact
-that the "gid=" variable is set to "0" by default :
+Patches 2 and 3 update the device trees for SM8650 and SM8750 respectively
+to enable MCQ by adding the necessary register mappings and MSI parent.
 
-```C has_pid_permissions
-[...]
-	if (in_group_p(fs_info->pid_gid))
-		return true;
-[...]
-```
+Tested on internal hardware for both platforms.
 
-This means that if a process GID is in the group defined by the "gid=" option,
-an authorization is directly returned, and the `ptrace_may_access()` function
-is never called.
+Palash Kambar (1):
+  arm64: dts: qcom: sm8750: Enable MCQ support for UFS controller
 
-Thus, if one sets the "gid=" option to "1000", if a process is in this group,
-it will now bypass the `security_ptrace_access_check()` hook calls.
+Ram Kumar Dwivedi (2):
+  dt-bindings: ufs: qcom: Add MCQ support to reg and reg-names
+  arm64: dts: qcom: sm8650: Enable MCQ support for UFS controller
 
-This comes with the side effect that now, root will go through the
-`ptrace_may_access()` checks and thus, if I have a root process without the
-cap_sys_ptrace in its effective set, it will not be able to see other processes
-anymore.
+ .../devicetree/bindings/ufs/qcom,ufs.yaml     | 21 ++++++++++++-------
+ arch/arm64/boot/dts/qcom/sm8650.dtsi          |  9 +++++++-
+ arch/arm64/boot/dts/qcom/sm8750.dtsi          | 10 +++++++--
+ 3 files changed, 29 insertions(+), 11 deletions(-)
 
-```C __ptrace_may_access
-[...]
-	if (ptrace_has_cap(tcred->user_ns, mode))
-		goto ok;
-	rcu_read_unlock();
-	return -EPERM;
-[...]
-```
+-- 
+2.50.1
 
-The following behavior thus happens :
-
-```bash
-$ sudo capsh --user=root --drop=cap_sys_ptrace -- -c /bin/bash
-# mount -o remount,hidepid=2 /proc
-# getpcaps $$
-=ep cap_sys_ptrace-ep
-# ps aux
-root         1  0.0  0.1 204724  1404 ?        S    09:43   0:00 /usr/lib/python3.13/site-packages/virtme/guest/bin/virtme-ng-init
-root         2  0.0  0.0      0     0 ?        S    09:43   0:00 [kthreadd]
-root         3  0.0  0.0      0     0 ?        S    09:43   0:00 [pool_workqueue_release]
-[...]
-
-# mount -o remount,hidepid=2,gid=1000 /proc
-# getpcaps $$
-=ep cap_sys_ptrace-ep
-# ps aux
-root       621  0.0  0.2   8656  2556 pts/0    S    09:46   0:00 /bin/bash
-root       641  0.0  0.4   9592  4012 pts/0    R+   10:03   0:00 ps aux
-root       642  0.0  0.2   6896  2452 pts/0    S+   10:03   0:00 less
-```
-
-This also means that if a process accesses were controled by an LSM, lets say
-with the `audit ptrace` option of AppArmor, they magically disappears for the
-process in the group defined in the "gid=" hidepid option and those controls
-are "transfered" to root, which was not controlled at first.
-
-Also, note that with "hidepid=ptraceable", the "gid=" option is ignored
-and `ptrace_may_access()` is always called.
-
-Shouldn't we always check for the "gid=0" and also call the
-`security_ptrace_access_check()` even if the group is set ?
-
-Best regards,
-
-Nicolas
 
