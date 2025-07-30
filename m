@@ -1,251 +1,547 @@
-Return-Path: <linux-kernel+bounces-750696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F5AEB15FFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:09:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F46B16006
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 698F618C55DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:09:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F1D85A5F7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA15293B73;
-	Wed, 30 Jul 2025 12:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7A227E077;
+	Wed, 30 Jul 2025 12:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XzrPp96s"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rdXiXMCW"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25242874F2
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A65B1E51D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753877336; cv=none; b=NMCkEVJL5LEZ57R3Lq6uwsV0thbr6s8tLwMThLnthXk/UlB4dq19+2nGx9TmyWVhf7y9Uo7IVarVOKUt98o7ohAMBP4iOBqxR6gtLaKL3OwxLDEIkg2y4wxxul3XLtTtNib9LKsloGE4SOsZpZJwfwDu5/NSi2zGhN4b4WenIrk=
+	t=1753877776; cv=none; b=hOpGJ72yzcNmyTtrn4dKv/ESuybHwMqVVZF2ktnJAZ8XJBSd2DyrowcWQ83FffXpyvzGJ7BIKQ8H9sQypoMksrccBlWN4MOrTLyp+VQAcuzZBvQiPlOHgBNjL5nlBNNqXlcMcpSUIKnF+7nEQkFpMwTifUPtkHe0VdAb9CRPHWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753877336; c=relaxed/simple;
-	bh=n4E3dSdFCN4QVczwtCanSQYTzz7QT00QqO2Qi4tubSM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=gY9x92tXmhstIIqQSzKPKFUGndAM0CvWnOIR6f+gZTptjlmTDXDPV8ANGyg0TZ4guRMBcvtioLPXUXMjMPpg1V5i50ppQljiSHYffn+jxR/m4HdAbecZp0T1KVHTzm/7MUlRRMjRajiN6euJJ+7h180LLFnO6Qhxm+PnnZdeFuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XzrPp96s; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753877333;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0zayXxjXOJyhWgrxS4M7tAq9Of6SpcSVV6owXdHf3Lo=;
-	b=XzrPp96smXgqeMQePrElxobZJGnTAYMopJJJLa/jjfuSWMPiSDuG7Aq0pZxNuNzCNi/LyU
-	dTJCedwBFTAz38fcXeEzqZqmARZhcIFC52ZefiB2265He2akt7RL5kDODV5qNA/Wg7S993
-	HubpfeD9sd7P6lEissY9bpjgdO64hWw=
-Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
- [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-219-DxwQJNTFPzGVolFVwBbTYQ-1; Wed, 30 Jul 2025 08:08:51 -0400
-X-MC-Unique: DxwQJNTFPzGVolFVwBbTYQ-1
-X-Mimecast-MFC-AGG-ID: DxwQJNTFPzGVolFVwBbTYQ_1753877329
-Received: by mail-lf1-f69.google.com with SMTP id 2adb3069b0e04-55b823523a9so307446e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 05:08:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753877329; x=1754482129;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0zayXxjXOJyhWgrxS4M7tAq9Of6SpcSVV6owXdHf3Lo=;
-        b=Nr1dc2kCfTicST5PfLYL2d9fllUEuDkA246aU5fomE2OgtmMeSRUWBbp57FUWLocqy
-         CgNRONtyoHcpMtiTT6tpbzrpEAy0u3igjRmDDIw5USHepJXg6EGAXGh+I/jFrBV9VhfP
-         Bo1gRIL9aEyaO6UnzTvvnj0tywDm12OFKP2LcXCkILVdKb++7Bd6Dy0T1OhbBnoQERpQ
-         +R5VFg8OLSy0KcU+M9eRVBehErMgjCZh3hS2RsGTh8SdLLdBgfUFND75zKH8KxygGsch
-         WkpNKaAg4x+iUys68w6+gPRmQkiXXWn5s6acGNeX9VuoAO94LGnMcglLkN9UZm6oXKY9
-         UbOw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuQQ3DPpnpQuJ+2+x2kyd2KYEqAe4aPsQ+dLnT6vrpscSCsxF5rbOmQiS1NwCG3h/2GWulL1GJkkNNeJA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxziJS5NKZSmOqcopsisGxxJReEKS06V004brvhocMcwQ4yq9x1
-	0avA9LMYv0P4EQaYSsdL7eypXKLeKGmIorv64kmbZzcEyDhkGW9AX6NXaHcfwiMbdl/T9bv5zZU
-	gxLTmbFoOPLUD771PGMCGu18H3PwlNpcvMEJAx7cmovEL6LB9X8CHxbsNr/+0ibq1
-X-Gm-Gg: ASbGncsw8a7vbbxa2OyXct6GeFOWMQtl9Ogow9VvDX6udUyp6jz/mY0+/+e0PpMhY4x
-	Db0jRtC0JhtuzKg3Kv0cNre7IxMdj5hJ//OKFEjygDUcDjjXWj2vKNn/YYWQpzoyQuKULPm9D/O
-	PgyUFNqbnyQQjmNQ7/prv2t0qg7HLTLJomma3sTix2kmrPmQeYPSwgElbP2rEbgKmD9vUmKIfGf
-	mzypJEzQTiwHFX9h61A1iIgYunzKuVWUyV8o4AgBFgf96nWtQJe1AJzIDSlIxW3Z/r3a13VweRF
-	62h2WfLQ72LxMJVgdQ+JksOLw02b0TFqvYekrAEuIea1kkkH3fW1xIt5mhnwwwAehQ==
-X-Received: by 2002:a05:6512:3c84:b0:55b:2242:a9c1 with SMTP id 2adb3069b0e04-55b7c089e2bmr964218e87.49.1753877329122;
-        Wed, 30 Jul 2025 05:08:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFvIhc4qMQOPIbpnZe14iwXH/4Cx+G2ep9eLTTzMWEJn+T/HUl1X158JOxA2msrN/fq149EBA==
-X-Received: by 2002:a05:6512:3c84:b0:55b:2242:a9c1 with SMTP id 2adb3069b0e04-55b7c089e2bmr964196e87.49.1753877328627;
-        Wed, 30 Jul 2025 05:08:48 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b63393c72sm2127002e87.178.2025.07.30.05.08.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 05:08:48 -0700 (PDT)
-Message-ID: <884b9246-de7c-4536-821f-1bf35efe31c8@redhat.com>
-Date: Wed, 30 Jul 2025 15:08:47 +0300
+	s=arc-20240116; t=1753877776; c=relaxed/simple;
+	bh=cljvZ1kwU5LE2sffc3QpcbD/0xuM/cGlH34jzt6XlXU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=DgxpPhMW9dpPJWEqHTB05g4iCNtOb9nFGsFgXx1sL6MD/b+FQ/FcJBrzbfu4SBikZJ3vY6FI4OYYqCzLM31Yu+bvzeUcbY1seLjhxNeIyVyuVI9t1jhmsH7Ym68Bdr3KBtXtuidHm+K+34BPrR4ur5iFrC8YYQQlUi0qRLgaRbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=rdXiXMCW; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250730121611epoutp02cd63ebf045a61f8866b9efc1630af327~XBopp007P1752617526epoutp02j
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:16:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250730121611epoutp02cd63ebf045a61f8866b9efc1630af327~XBopp007P1752617526epoutp02j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753877771;
+	bh=WKCg2C+Bl5+MHBzLcUFO0PF9YApCsjiJrOdgliT177I=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=rdXiXMCWcRCeI9dk8joliZTo9w7HyxsJNdeaOn7HNUYUGlC7IS2IBJQciZPC3+xUw
+	 msjuIBZubNq6eHygyHZTDx6Nvj2SX5LCKJqsKicfCaUgv2+eE1vldyo/uWcaUp33nz
+	 SJJuuVsPaor/5mR+WXrGNSnsWiUu/UHrTCTgMaeg=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250730121610epcas5p1ba3d9da9612c77a85128e88c44271c1d~XBopNjtei1007910079epcas5p1n;
+	Wed, 30 Jul 2025 12:16:10 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.89]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bsWQf009dz6B9m5; Wed, 30 Jul
+	2025 12:16:10 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250730121221epcas5p3ffb9e643af6b8ae07cfccf0bdee90e37~XBlTpzi0l0107801078epcas5p3U;
+	Wed, 30 Jul 2025 12:12:21 +0000 (GMT)
+Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
+	by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250730121220epsmtip18d62279748c9ff76a3f5144732903b58~XBlSk2lbx0450704507epsmtip1P;
+	Wed, 30 Jul 2025 12:12:20 +0000 (GMT)
+From: Neeraj Kumar <s.neeraj@samsung.com>
+To: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, gost.dev@samsung.com
+Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	Neeraj Kumar <s.neeraj@samsung.com>
+Subject: [PATCH V2 00/20] Add CXL LSA 2.1 format support in nvdimm and cxl
+ pmem
+Date: Wed, 30 Jul 2025 17:41:49 +0530
+Message-Id: <20250730121209.303202-1-s.neeraj@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 02/11] mm/thp: zone_device awareness in THP handling code
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>,
- Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
- Peter Xu <peterx@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Jane Chu <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>,
- Donet Tom <donettom@linux.ibm.com>, Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>,
- Ralph Campbell <rcampbell@nvidia.com>
-References: <20250730092139.3890844-1-balbirs@nvidia.com>
- <20250730092139.3890844-3-balbirs@nvidia.com>
- <c2f2fe52-a358-489e-a1f2-5c0a6f5b4db5@redhat.com>
- <22D1AD52-F7DA-4184-85A7-0F14D2413591@nvidia.com>
- <F60614E1-28D1-466B-A434-7FF1061B0778@nvidia.com>
- <9f836828-4f53-41a0-b5f7-bbcd2084086e@redhat.com>
-Content-Language: en-US
-In-Reply-To: <9f836828-4f53-41a0-b5f7-bbcd2084086e@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250730121221epcas5p3ffb9e643af6b8ae07cfccf0bdee90e37
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250730121221epcas5p3ffb9e643af6b8ae07cfccf0bdee90e37
+References: <CGME20250730121221epcas5p3ffb9e643af6b8ae07cfccf0bdee90e37@epcas5p3.samsung.com>
+
+Introduction:
+=============
+CXL Persistent Memory (Pmem) devices region, namespace and content must be
+persistent across system reboot. In order to achieve this persistency, it
+uses Label Storage Area (LSA) to store respective metadata. During system
+reboot, stored metadata in LSA is used to bring back the region, namespace
+and content of CXL device in its previous state.
+CXL specification provides Get_LSA (4102h) and Set_LSA (4103h) mailbox
+commands to access the LSA area. nvdimm driver is using same commands to
+get/set LSA data.
+
+There are three types of LSA format and these are part of following
+specifications: 
+ - v1.1: https://pmem.io/documents/NVDIMM_Namespace_Spec.pdf
+ - v1.2: https://uefi.org/sites/default/files/resources/UEFI_Spec_2_7.pdf
+ - v2.1: https://computeexpresslink.org/wp-content/uploads/2024/02/CXL-2.0-Specification.pdf
+
+Basic differences between these LSA formats:
+ - v1.1: Support Namespace persistency. Size of Namespace Label is 128 bytes
+ - v1.2: Support Namespace persistency. Size of Namespace Label is 256 bytes
+ - v2.1: Support Namespace and Region persistency. Size of Namespace and
+   Region Label is 256 bytes.
+
+Linux nvdimm driver supports only v1.1 and v1.2 LSA format. CXL pmem device
+require support of LSA v2.1 format for region and namespace persistency.
+Initial support of LSA 2.1 was add in [1].
+
+This patchset adds support of LSA 2.1 in nvdimm and cxl pmem driver.
+
+Patch 1:     Introduce NDD_CXL_LABEL flag and Update cxl label index as per v2.1
+Patch 2-4:   Update namespace label as per v2.1
+Patch 5-12:  Introduce cxl region labels and modify existing change accordingly
+Patch 13:    Refactor cxl pmem region auto assembly
+Patch 14-18: Save cxl region info in LSA and region recreation during reboot
+Patch 19:    Segregate out cxl pmem region code from region.c to pmem_region.c
+Patch 20:    Introduce cxl region addition/deletion attributes
 
 
-On 7/30/25 14:42, Mika Penttilä wrote:
-> On 7/30/25 14:30, Zi Yan wrote:
->> On 30 Jul 2025, at 7:27, Zi Yan wrote:
->>
->>> On 30 Jul 2025, at 7:16, Mika Penttilä wrote:
->>>
->>>> Hi,
->>>>
->>>> On 7/30/25 12:21, Balbir Singh wrote:
->>>>> Make THP handling code in the mm subsystem for THP pages aware of zone
->>>>> device pages. Although the code is designed to be generic when it comes
->>>>> to handling splitting of pages, the code is designed to work for THP
->>>>> page sizes corresponding to HPAGE_PMD_NR.
->>>>>
->>>>> Modify page_vma_mapped_walk() to return true when a zone device huge
->>>>> entry is present, enabling try_to_migrate() and other code migration
->>>>> paths to appropriately process the entry. page_vma_mapped_walk() will
->>>>> return true for zone device private large folios only when
->>>>> PVMW_THP_DEVICE_PRIVATE is passed. This is to prevent locations that are
->>>>> not zone device private pages from having to add awareness. The key
->>>>> callback that needs this flag is try_to_migrate_one(). The other
->>>>> callbacks page idle, damon use it for setting young/dirty bits, which is
->>>>> not significant when it comes to pmd level bit harvesting.
->>>>>
->>>>> pmd_pfn() does not work well with zone device entries, use
->>>>> pfn_pmd_entry_to_swap() for checking and comparison as for zone device
->>>>> entries.
->>>>>
->>>>> Zone device private entries when split via munmap go through pmd split,
->>>>> but need to go through a folio split, deferred split does not work if a
->>>>> fault is encountered because fault handling involves migration entries
->>>>> (via folio_migrate_mapping) and the folio sizes are expected to be the
->>>>> same there. This introduces the need to split the folio while handling
->>>>> the pmd split. Because the folio is still mapped, but calling
->>>>> folio_split() will cause lock recursion, the __split_unmapped_folio()
->>>>> code is used with a new helper to wrap the code
->>>>> split_device_private_folio(), which skips the checks around
->>>>> folio->mapping, swapcache and the need to go through unmap and remap
->>>>> folio.
->>>>>
->>>>> Cc: Karol Herbst <kherbst@redhat.com>
->>>>> Cc: Lyude Paul <lyude@redhat.com>
->>>>> Cc: Danilo Krummrich <dakr@kernel.org>
->>>>> Cc: David Airlie <airlied@gmail.com>
->>>>> Cc: Simona Vetter <simona@ffwll.ch>
->>>>> Cc: "Jérôme Glisse" <jglisse@redhat.com>
->>>>> Cc: Shuah Khan <shuah@kernel.org>
->>>>> Cc: David Hildenbrand <david@redhat.com>
->>>>> Cc: Barry Song <baohua@kernel.org>
->>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>>> Cc: Matthew Wilcox <willy@infradead.org>
->>>>> Cc: Peter Xu <peterx@redhat.com>
->>>>> Cc: Zi Yan <ziy@nvidia.com>
->>>>> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
->>>>> Cc: Jane Chu <jane.chu@oracle.com>
->>>>> Cc: Alistair Popple <apopple@nvidia.com>
->>>>> Cc: Donet Tom <donettom@linux.ibm.com>
->>>>> Cc: Mika Penttilä <mpenttil@redhat.com>
->>>>> Cc: Matthew Brost <matthew.brost@intel.com>
->>>>> Cc: Francois Dugast <francois.dugast@intel.com>
->>>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
->>>>>
->>>>> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
->>>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>>>> ---
->>>>>  include/linux/huge_mm.h |   1 +
->>>>>  include/linux/rmap.h    |   2 +
->>>>>  include/linux/swapops.h |  17 +++
->>>>>  mm/huge_memory.c        | 268 +++++++++++++++++++++++++++++++++-------
->>>>>  mm/page_vma_mapped.c    |  13 +-
->>>>>  mm/pgtable-generic.c    |   6 +
->>>>>  mm/rmap.c               |  22 +++-
->>>>>  7 files changed, 278 insertions(+), 51 deletions(-)
->>>>>
->>> <snip>
->>>
->>>>> +/**
->>>>> + * split_huge_device_private_folio - split a huge device private folio into
->>>>> + * smaller pages (of order 0), currently used by migrate_device logic to
->>>>> + * split folios for pages that are partially mapped
->>>>> + *
->>>>> + * @folio: the folio to split
->>>>> + *
->>>>> + * The caller has to hold the folio_lock and a reference via folio_get
->>>>> + */
->>>>> +int split_device_private_folio(struct folio *folio)
->>>>> +{
->>>>> +	struct folio *end_folio = folio_next(folio);
->>>>> +	struct folio *new_folio;
->>>>> +	int ret = 0;
->>>>> +
->>>>> +	/*
->>>>> +	 * Split the folio now. In the case of device
->>>>> +	 * private pages, this path is executed when
->>>>> +	 * the pmd is split and since freeze is not true
->>>>> +	 * it is likely the folio will be deferred_split.
->>>>> +	 *
->>>>> +	 * With device private pages, deferred splits of
->>>>> +	 * folios should be handled here to prevent partial
->>>>> +	 * unmaps from causing issues later on in migration
->>>>> +	 * and fault handling flows.
->>>>> +	 */
->>>>> +	folio_ref_freeze(folio, 1 + folio_expected_ref_count(folio));
->>>> Why can't this freeze fail? The folio is still mapped afaics, why can't there be other references in addition to the caller?
->>> Based on my off-list conversation with Balbir, the folio is unmapped in
->>> CPU side but mapped in the device. folio_ref_freeeze() is not aware of
->>> device side mapping.
->> Maybe we should make it aware of device private mapping? So that the
->> process mirrors CPU side folio split: 1) unmap device private mapping,
->> 2) freeze device private folio, 3) split unmapped folio, 4) unfreeze,
->> 5) remap device private mapping.
-> Ah ok this was about device private page obviously here, nevermind..
+Testing:
+========
+In order to test this patchset, I also added the support of LSA v2.1 format
+in ndctl. ndctl changes are available at [2]. After review, I’ll push in
+ndctl repo for community review.
 
-Still, isn't this reachable from split_huge_pmd() paths and folio is mapped to CPU page tables as a huge device page by one or more task?
+1. Used Qemu using following CXL topology
+   M2="-object memory-backend-file,id=cxl-mem1,share=on,mem-path=$TMP_DIR/cxltest.raw,size=512M \
+       -object memory-backend-file,id=cxl-lsa1,share=on,mem-path=$TMP_DIR/lsa.raw,size=1M \
+       -object memory-backend-file,id=cxl-mem2,share=on,mem-path=$TMP_DIR/cxltest2.raw,size=512M \
+       -object memory-backend-file,id=cxl-lsa2,share=on,mem-path=$TMP_DIR/lsa2.raw,size=1M \
+       -device pxb-cxl,bus_nr=10,bus=pcie.0,id=cxl.1 \
+       -device cxl-rp,port=1,bus=cxl.1,id=root_port11,chassis=0,slot=1 \
+       -device cxl-type3,bus=root_port11,memdev=cxl-mem1,lsa=cxl-lsa1,id=cxl-pmem1,sn=1 \
+       -device cxl-rp,port=2,bus=cxl.1,id=root_port12,chassis=0,slot=2 \
+       -device cxl-type3,bus=root_port12,memdev=cxl-mem2,lsa=cxl-lsa2,id=cxl-pmem2,sn=2 \
+       -M cxl-fmw.0.targets.0=cxl.1,cxl-fmw.0.size=4G,cxl-fmw.0.interleave-granularity=8k"
 
->
->>>>> +	ret = __split_unmapped_folio(folio, 0, &folio->page, NULL, NULL, true);
->>>> Confusing to  __split_unmapped_folio() if folio is mapped...
->>> From driver point of view, __split_unmapped_folio() probably should be renamed
->>> to __split_cpu_unmapped_folio(), since it is only dealing with CPU side
->>> folio meta data for split.
->>>
->>>
->>> Best Regards,
->>> Yan, Zi
->> Best Regards,
->> Yan, Zi
->>
+2. Create cxl region on both devices
+	cxl create-region -d decoder0.0 -m mem0
+	cxl create-region -d decoder0.0 -m mem1
 
---Mika
+	root@QEMUCXL6060pmem:~# cxl list
+	[
+	  {
+	    "memdevs":[
+	      {
+	        "memdev":"mem0",
+	        "pmem_size":536870912,
+	        "serial":2,
+	        "host":"0000:0c:00.0",
+	        "firmware_version":"BWFW VERSION 00"
+	      },
+	      {
+	        "memdev":"mem1",
+	        "pmem_size":536870912,
+	        "serial":1,
+	        "host":"0000:0b:00.0",
+	        "firmware_version":"BWFW VERSION 00"
+	      }
+	    ]
+	  },
+	  {
+	    "regions":[
+	      {
+	        "region":"region0",
+	        "resource":45365592064,
+	        "size":536870912,
+	        "type":"pmem",
+	        "interleave_ways":1,
+	        "interleave_granularity":256,
+	        "decode_state":"commit",
+	        "qos_class_mismatch":true
+	      },
+	      {
+	        "region":"region1",
+	        "resource":45902462976,
+	        "size":536870912,
+	        "type":"pmem",
+	        "interleave_ways":1,
+	        "interleave_granularity":256,
+	        "decode_state":"commit",
+	        "qos_class_mismatch":true
+	      }
+	    ]
+	  }
+	]
+
+3. Re-Start Qemu and we could see cxl region persistency using "cxl list"
+
+4. Create namespace for both regions
+	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=fsdax --region=region0 --size=128M
+	{
+	  "dev":"namespace0.0",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"124.00 MiB (130.02 MB)",
+	  "uuid":"8a125dcb-f992-406d-b3ad-be82fc518f05",
+	  "sector_size":512,
+	  "align":2097152,
+	  "blockdev":"pmem0"
+	}
+	
+	real    0m31.866s
+	user    0m0.183s
+	sys     0m14.855s
+
+	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=fsdax --region=region1 --size=256M
+	{
+	  "dev":"namespace1.0",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"250.00 MiB (262.14 MB)",
+	  "uuid":"8e16d950-c11d-4253-94a0-5b2928926433",
+	  "sector_size":512,
+	  "align":2097152,
+	  "blockdev":"pmem1"
+	}
+	
+	real    0m44.359s
+	user    0m0.196s
+	sys     0m26.768s
+
+	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=fsdax --region=region0 --size=256M
+	{
+	  "dev":"namespace0.1",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"250.00 MiB (262.14 MB)",
+	  "uuid":"f3170bfe-548a-4ce4-ae00-145a24e70426",
+	  "sector_size":512,
+	  "align":2097152,
+	  "blockdev":"pmem0.1"
+	}
+	
+	real    0m44.004s
+	user    0m0.220s
+	sys     0m25.711s
+
+	root@QEMUCXL6060pmem:~# time ndctl create-namespace --mode=fsdax --region=region1 --size=128M
+	{
+	  "dev":"namespace1.1",
+	  "mode":"fsdax",
+	  "map":"dev",
+	  "size":"124.00 MiB (130.02 MB)",
+	  "uuid":"6318d2d9-bc78-4896-84f9-6c18c3a8f58c",
+	  "sector_size":512,
+	  "align":2097152,
+	  "blockdev":"pmem1.1"
+	}
+	
+	real    0m36.612s
+	user    0m0.225s
+	sys     0m16.457s
+
+	root@QEMUCXL6060pmem:~# ndctl list
+	[
+	  {
+	    "dev":"namespace1.0",
+	    "mode":"fsdax",
+	    "map":"dev",
+	    "size":262144000,
+	    "uuid":"e07564eb-6653-4d67-ab07-434c22474001",
+	    "sector_size":512,
+	    "align":2097152,
+	    "blockdev":"pmem1"
+	  },
+	  {
+	    "dev":"namespace1.1",
+	    "mode":"fsdax",
+	    "map":"dev",
+	    "size":130023424,
+	    "uuid":"27dfd65a-c428-426a-8316-f340a59e0671",
+	    "sector_size":512,
+	    "align":2097152,
+	    "blockdev":"pmem1.1"
+	  },
+	  {
+	    "dev":"namespace0.1",
+	    "mode":"fsdax",
+	    "map":"dev",
+	    "size":130023424,
+	    "uuid":"689b4135-668d-4885-b138-b86f27d7602f",
+	    "sector_size":512,
+	    "align":2097152,
+	    "blockdev":"pmem0.1"
+	  },
+	  {
+	    "dev":"namespace0.0",
+	    "mode":"fsdax",
+	    "map":"dev",
+	    "size":262144000,
+	    "uuid":"ed15c67a-842d-4d5d-8996-be3aa24985e4",
+	    "sector_size":512,
+	    "align":2097152,
+	    "blockdev":"pmem0"
+	  }
+	]
+
+5. Re-Start Qemu and we could see
+	- Region persistency using "cxl list"
+	- Namespace persistency using "ndctl list" and cat /proc/iomem
+
+	root@QEMUCXL6060pmem:~# cat /proc/iomem
+	
+	a90000000-b8fffffff : CXL Window 0
+	  a90000000-aafffffff : Persistent Memory
+	    a90000000-aafffffff : region0
+	      a90000000-a97ffffff : namespace0.0
+	      a98000000-aa7ffffff : namespace0.1
+	  ab0000000-acfffffff : Persistent Memory
+	    ab0000000-acfffffff : region1
+	      ab0000000-abfffffff : namespace1.0
+	      ac0000000-ac7ffffff : namespace1.1
+	
+
+	- NOTE: We can see some lag in restart, Its WIP
+
+6. Also verify LSA version using "ndctl read-labels -j nmem0"
+	root@QEMUCXL6060pmem:~# ndctl read-labels -j nmem0
+	{
+	  "dev":"nmem0",
+	  "index":[
+	    {
+	      "signature":"NAMESPACE_INDEX",
+	      "major":2,
+	      "minor":1,
+	      "labelsize":256,
+	      "seq":2,
+	      "nslot":4090
+	    },
+	    {
+	      "signature":"NAMESPACE_INDEX",
+	      "major":2,
+	      "minor":1,
+	      "labelsize":256,
+	      "seq":1,
+	      "nslot":4090
+	    }
+	  ],
+	  "label":[
+	    {
+	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+	      "uuid":"cbb3fe1e-9345-4ae7-95ca-2638db27ee7d",
+	      "name":"",
+	      "flags":8,
+	      "nrange":1,
+	      "position":0,
+	      "dpa":134217728,
+	      "rawsize":268435456,
+	      "slot":0,
+	      "align":0,
+	      "region_uuid":"50d806c8-fd11-49eb-b19e-77fc67f6364b",
+	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+	      "lbasize":512
+	    },
+	    {
+	      "type":"529d7c61-da07-47c4-a93f-ecdf2c06f444",
+	      "uuid":"50d806c8-fd11-49eb-b19e-77fc67f6364b",
+	      "flags":0,
+	      "nlabel":1,
+	      "position":0,
+	      "dpa":0,
+	      "rawsize":536870912,
+	      "hpa":45365592064,
+	      "slot":1,
+	      "interleave granularity":256,
+	      "align":0
+	    },
+	    {
+	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+	      "uuid":"d9ef8d35-ef84-4111-b302-bce53c94a2ad",
+	      "name":"",
+	      "flags":0,
+	      "nrange":1,
+	      "position":0,
+	      "dpa":0,
+	      "rawsize":134217728,
+	      "slot":2,
+	      "align":0,
+	      "region_uuid":"50d806c8-fd11-49eb-b19e-77fc67f6364b",
+	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+	      "lbasize":512
+	    },
+	    {
+	      "type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c",
+	      "uuid":"cbb3fe1e-9345-4ae7-95ca-2638db27ee7d",
+	      "name":"",
+	      "flags":0,
+	      "nrange":1,
+	      "position":0,
+	      "dpa":134217728,
+	      "rawsize":268435456,
+	      "slot":3,
+	      "align":0,
+	      "region_uuid":"50d806c8-fd11-49eb-b19e-77fc67f6364b",
+	      "abstraction_uuid":"266400ba-fb9f-4677-bcb0-968f11d0d225",
+	      "lbasize":512
+	    }
+	  ]
+	}
+	read 1 nmem
+
+	- NOTE: We have following UUID types as per CXL Spec
+		"type":"529d7c61-da07-47c4-a93f-ecdf2c06f444" is region label
+		"type":"68bb2c0a-5a77-4937-9f85-3caf41a0f93c" is namespace label
 
 
+Limitation (WIP):
+================
+Current changes only support interleave way == 1
+
+
+Observation:
+============
+First time namespace creation using ndctl takes around 10 to 20 second time
+while executing "devm_memremap_pages" at [3]
+
+As using this patchset, after auto region creation, namespace creation is
+happening in boot sequence (if nvdimm and cxl drivers are static), It is
+therefore boot sequence is increased by around 10 to 20 sec.
+
+Changes
+=======
+Changes in v1 -> v2
+- v1 patch-set was broken. Find the v1 links at [4] and [5]
+[PATCH 01/20]
+- Simplify return in nvdimm_check_cxl_label_format() [Jonathan]
+- Add spec reference while updating LSA major/minor [Jonathan, Dave]
+[PATCH 02/20]
+- Elaborate commit message with more information [Jonathan, Ira]
+- Minimize extra re-naming to avoid churn & complexity [Johathan]
+[PATCH 05/20]
+- Use guard(mutex)(&nd_mapping->lock) [Jonathan]
+[PATCH 06/20]
+- Use switch in place if condition check [Jonathan]
+- Fix wrong style for multiline comments in this file [Jonathan]
+- Fix wrong condition check in del_labels()
+- Bail out extra condition check using extra variable [Jonathan]
+[PATCH 07/20]
+- Modify init_labels function to init_labels() [Jonathan]
+[PATCH 08/20]
+- Simplify return in is_region_label() and flip if condition [Jonathan]
+[PATCH 12/20]
+- Fix comment syntax [Jonathan]
+[PATCH 13/20]
+- Elaborate commit message and remove history statement from comment [Jonathan]
+- Move cxl_region_discovery() from core/port.c to core/region.c [Dave]
+[PATCH 14/20]
+- Spell check fix in commit message [Jonathan]
+- Use ACQUIRE() instead of down_write_killable() [Jonathan]
+- Fix extra return check [Jonathan]
+- Rename port to root_port to avoid long indirection [Jonathan]
+- Remove cxl_wq_flush() as its not required [Jonathan, Dave]
+- Add comment of attaching just one target [Jonathan]
+- Rename update_region_size() to resize_or_free_region_hpa() [Dave]
+- Rename val to size in resize_or_free_region_hpa() [Dave]
+- Share common code using helper function in size_store() [Dave]
+- Rename update_region_dpa_size() to resize_or_free_dpa() [Dave]
+- Rename u64 in place of unsigned long long [Dave]
+- Share common code using helper function in dpa_size_store() [Dave]
+- Rename CXL_DECODER_PMEM with CXL_PARTMODE_PMEM [Dave]
+- Share common code using helper function in commit_store() [Dave]
+- Update verbose information about devm_cxl_pmem_add_region() [Dave]
+- Renamed and refactored __create_region() to cxl_create_region() [Dave]
+[PATCH 15/20]
+- Avoid blank line [Jonathan]
+- Rename root-cxl-port to CXL port [Dave]
+- Add comment to release device ref taken via device_find_child() [Dave]
+- Rename cxl_find_root_decoder() to cxl_find_root_decoder_by_port() [Dave]
+[PATCH 18/20]
+- Avoid extra nvdimm validity check [Jonathan]
+- Flip logic to check for unhandled case first [Jonathan]
+- Simplify return in match_ep_decoder() [Dave]
+- Use lockdep_assert_held() in create_pmem_region() [Dave]
+- To use lock moved create_pmem_region() from cxl/pmem.c to core/region.c
+[PATCH 19/20]
+- Spell check fix in commit message [Jonathan]
+- Fix LIBNVDIMM selection condition check in cxl/Kconfig [Jonathan]
+[PATCH 20/20]
+- Add Documentation/ABI/testing/sysfs-bus-cxl [Jonathan]
+- Use ACQUIRE() instead of down_write_killable() [Jonathan]
+- Drop trailing comma on terminating entries [Jonathan]
+
+
+[1]: https://lore.kernel.org/all/163116432405.2460985.5547867384570123403.stgit@dwillia2-desk3.amr.corp.intel.com/
+[2]: https://github.com/neerajoss/ndctl/tree/linux-cxl/CXL_LSA_2.1_Support
+[3]: https://elixir.bootlin.com/linux/v6.13.7/source/drivers/nvdimm/pmem.c#L520
+[4] v1 Cover Letter: https://lore.kernel.org/linux-cxl/1931444790.41750165203442.JavaMail.epsvc@epcpadp1new/
+[5] v1 Rest Thread: https://lore.kernel.org/linux-cxl/158453976.61750165203630.JavaMail.epsvc@epcpadp1new/
+
+
+Neeraj Kumar (20):
+  nvdimm/label: Introduce NDD_CXL_LABEL flag to set cxl label format
+  nvdimm/label: Prep patch to accommodate cxl lsa 2.1 support
+  nvdimm/namespace_label: Add namespace label changes as per CXL LSA v2.1
+  nvdimm/label: CXL labels skip the need for 'interleave-set cookie'
+  nvdimm/region_label: Add region label updation routine
+  nvdimm/region_label: Add region label deletion routine
+  nvdimm/namespace_label: Update namespace init_labels and its region_uuid
+  nvdimm/label: Include region label in slot validation
+  nvdimm/namespace_label: Skip region label during ns label DPA reservation
+  nvdimm/region_label: Preserve cxl region information from region label
+  nvdimm/region_label: Export routine to fetch region information
+  nvdimm/namespace_label: Skip region label during namespace creation
+  cxl/mem: Refactor cxl pmem region auto-assembling
+  cxl/region: Add devm_cxl_pmem_add_region() for pmem region creation
+  cxl: Add a routine to find cxl root decoder on cxl bus using cxl port
+  cxl/mem: Preserve cxl root decoder during mem probe
+  cxl/pmem: Preserve region information into nd_set
+  cxl/pmem: Add support of cxl lsa 2.1 support in cxl pmem
+  cxl/pmem_region: Prep patch to accommodate pmem_region attributes
+  cxl/pmem_region: Add sysfs attribute cxl region label updation/deletion
+
+ Documentation/ABI/testing/sysfs-bus-cxl |  22 ++
+ drivers/cxl/Kconfig                     |  12 +
+ drivers/cxl/core/Makefile               |   1 +
+ drivers/cxl/core/core.h                 |   9 +-
+ drivers/cxl/core/pmem_region.c          | 294 ++++++++++++++++
+ drivers/cxl/core/port.c                 |  58 +++-
+ drivers/cxl/core/region.c               | 400 +++++++++++-----------
+ drivers/cxl/cxl.h                       |  54 ++-
+ drivers/cxl/cxlmem.h                    |   1 +
+ drivers/cxl/mem.c                       |  24 +-
+ drivers/cxl/pmem.c                      |  15 +-
+ drivers/cxl/port.c                      |  39 +--
+ drivers/nvdimm/dimm.c                   |   5 +
+ drivers/nvdimm/dimm_devs.c              |  25 ++
+ drivers/nvdimm/label.c                  | 426 ++++++++++++++++++++----
+ drivers/nvdimm/label.h                  |  20 +-
+ drivers/nvdimm/namespace_devs.c         | 110 +++++-
+ drivers/nvdimm/nd-core.h                |   2 +
+ drivers/nvdimm/nd.h                     |  79 ++++-
+ drivers/nvdimm/region_devs.c            |   5 +
+ include/linux/libnvdimm.h               |  28 ++
+ tools/testing/cxl/Kbuild                |   1 +
+ 22 files changed, 1279 insertions(+), 351 deletions(-)
+ create mode 100644 drivers/cxl/core/pmem_region.c
+
+
+base-commit: f11a5f89910a7ae970fbce4fdc02d86a8ba8570f
+-- 
+2.34.1
 
