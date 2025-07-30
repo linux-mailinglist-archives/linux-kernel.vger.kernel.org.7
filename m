@@ -1,119 +1,204 @@
-Return-Path: <linux-kernel+bounces-750726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07593B1604F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:26:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08B7EB16051
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:27:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C103B7435
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:26:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30F4D5651B5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:27:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB302298CD5;
-	Wed, 30 Jul 2025 12:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE39299931;
+	Wed, 30 Jul 2025 12:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TMd1KkW3"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ec0MmWcK"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D45FB2980A5;
-	Wed, 30 Jul 2025 12:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753878382; cv=none; b=aotoanqFTsa7AebHyn1hEPmjy5shnGHIuBGx1opFoCwDLGBVsdnnZcbaWrfqVPKI7APlcrCxBreC1G3A6lDTJ3QobewpxvasL9C1Kh947tRwAmG1leDsNiOVmcCq+CnhNj2Ysyi1gby0EO7tsMtrpc74NQM+zj9vcW5waWOVPtY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753878382; c=relaxed/simple;
-	bh=Yqt9k3FEoN2rn755DspRcdnjCj8ruGaUo76ndianeec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dovJoIuJcFOUlQtxR5cAfoM2NPjseIFQqfJwtrZmWBDXj8T7fDRKR0EeBr+can6MDbN4MWlO+coqSqzYDiCESi423fC1eX1F3Yqi6XU7pHk8qEjUCZiyu823F3PlgyEZy6pPNfQm8SFUWmb9BHLDr5i6/pFlHHjFEZfSgoTm5Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TMd1KkW3; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753878381; x=1785414381;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Yqt9k3FEoN2rn755DspRcdnjCj8ruGaUo76ndianeec=;
-  b=TMd1KkW3QNLEoDmxJ7j5DCmm3nBkTCCDRV1KQeyd7bEQvsDDqRjUlKdB
-   bVpvtYcb/B+ue3P653MxGKsFX/fXJuYwiFvUJ7GeoC7v8E7FZqrOkOFAu
-   tidCcL9qCbJrFCtCBN0fDS9DE+KnFuC30p/k9RrLT32++l3C4jSS56Osm
-   XHFD2XWwt50xKz80tGNQxLZJBwWyAUMVIhbD/13+YNGvf7hxxjDUzA7IN
-   62Yi2J79E+83woUkCqP8s9mKAWQLBWUBLdrseIB5EhEVHy742QGfK0hJ0
-   mCJMFiY9f0fBc26rECR/Ih7U0iv5a8tjIrB3UzUnS58qATGvxwBevQN2V
-   A==;
-X-CSE-ConnectionGUID: oI1QIkhXQICs0/mSRBpPtA==
-X-CSE-MsgGUID: 0FycXf1KQF2HgITbY7o4Jg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56142550"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="56142550"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 05:26:21 -0700
-X-CSE-ConnectionGUID: QsyMguNhTASkZtzr+udzvw==
-X-CSE-MsgGUID: vuxavx1ZQKGyIClQO/DVXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="163427193"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 30 Jul 2025 05:26:16 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uh5sr-0002ie-31;
-	Wed, 30 Jul 2025 12:26:13 +0000
-Date: Wed, 30 Jul 2025 20:25:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Marie Zhussupova <marievic@google.com>, rmoar@google.com,
-	davidgow@google.com, shuah@kernel.org, brendan.higgins@linux.dev
-Cc: oe-kbuild-all@lists.linux.dev, elver@google.com, dvyukov@google.com,
-	lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com,
-	rodrigo.vivi@intel.com, linux-kselftest@vger.kernel.org,
-	kunit-dev@googlegroups.com, kasan-dev@googlegroups.com,
-	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Marie Zhussupova <marievic@google.com>
-Subject: Re: [PATCH 7/9] kunit: Add example parameterized test with shared
- resources and direct static parameter array setup
-Message-ID: <202507302042.9Aw3rrmW-lkp@intel.com>
-References: <20250729193647.3410634-8-marievic@google.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0D292B3E;
+	Wed, 30 Jul 2025 12:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753878391; cv=pass; b=rdvBoEZnl+bX1oxDtuoN/HjxVYTZctP9DIgvaaCJBI3BDx9wwRcJ6x270DPz/JDY28Ktnq/Acv2lkbTq4QRTio/X+3LcfTJftkfQtYQGOmUZaduF8gMyTGzWIfQfQ4v/PXmfPLnvYxxUZ5yPVJ8Kgt7QqaRSV2Fjt1sWIheLIWc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753878391; c=relaxed/simple;
+	bh=Q6oQXPc0uUIXKVAaxW26JT+8u/fuAMuSKd+0dC8qmUU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=uNZQQbgxiUm0FrD9zUwwDimIPV3YQehAns1uPLEDAIp01vcFx2TRgMfDorArQt3dP+jO5voQhLlwER9qKM02Ektr3L0e46Qea2RJJ8Pdi/tcIk/1nwwiU/JejjSpW8Ry3wK1cKjcu3Ioi/PPiyXoD+Tk9zAqyA8WylBjjTRFI0o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ec0MmWcK; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753878371; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=E5Ij+vKWOvKdNDa/G4T+pXm0WxamYVDvI1aGt+s8bQazMLbU8yflr9HUdNiiq0f5QTT5yVuhPvUEFujoj3VFZORe9NL/aMh11FPhGAd/vkcGFuGGQ7aLV/u1oPrhqGDTI+odSvNJbTVU6d4rEhO1J/B1VsUzdUv0yr+OcP7+tf4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753878371; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ZAn/LS7lWGDlLcV5/c1TbKTMhX/5ghkEvmsY8L1tCU0=; 
+	b=i6EnZl62jX6nLa7Z39XV9P3SJnkqMPLZi2NSGVljHVLxALe/f5RlutCnbtLwyvY4wHYuBfCLN0GDUgNOQTWoMCRQJcLPF9zCebiwTXOr4AKu2r/IRqOXysB7nO8Q1UrXCLnyyNfdZt13cBCFEpjWtaa6pXuitKYEmAw08vuFWQ8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753878371;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=ZAn/LS7lWGDlLcV5/c1TbKTMhX/5ghkEvmsY8L1tCU0=;
+	b=ec0MmWcK3Vm6CAKnyFR9UwhlNpKugOoP1f+uAWH8znmo0A0NkdtCVFIthNXxzkzj
+	CQbHrDFgG7kNwPWFbS7+e8FbSMcbF/kSrFryQ9LQXb9UCfBLfarXK0kFbaa6NPPncwQ
+	77knDkhhl6Q0VjDXQYUnAjGAtk1YaJ2k2jVnwL2w=
+Received: by mx.zohomail.com with SMTPS id 1753878369632893.3488341415878;
+	Wed, 30 Jul 2025 05:26:09 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729193647.3410634-8-marievic@google.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] rust: clk: use the type-state pattern
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <fc26c393-5c4b-48a8-a7ac-12558f79b140@sedlak.dev>
+Date: Wed, 30 Jul 2025 09:25:53 -0300
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BEDA91F1-B6FB-4A28-8B34-4811CE683514@collabora.com>
+References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
+ <fc26c393-5c4b-48a8-a7ac-12558f79b140@sedlak.dev>
+To: Daniel Sedlak <daniel@sedlak.dev>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Hi Marie,
+Hi Daniel,
 
-kernel test robot noticed the following build errors:
+> On 30 Jul 2025, at 04:29, Daniel Sedlak <daniel@sedlak.dev> wrote:
+>=20
+> Hi Daniel,
+>=20
+> On 7/29/25 11:38 PM, Daniel Almeida wrote:
+>> +    mod private {
+>> +        pub trait Sealed {}
+>> +
+>> +        impl Sealed for super::Unprepared {}
+>> +        impl Sealed for super::Prepared {}
+>> +        impl Sealed for super::Enabled {}
+>> +    }
+>=20
+> I just noticed we have plenty of Sealed traits scattered across rust/ =
+folder. Do you think we would benefit from unifying it to a single =
+location to prevent duplication?
 
-[auto build test ERROR on shuah-kselftest/kunit]
-[also build test ERROR on shuah-kselftest/kunit-fixes drm-xe/drm-xe-next linus/master v6.16 next-20250730]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Benno replied to this below.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Marie-Zhussupova/kunit-Add-parent-kunit-for-parameterized-test-context/20250730-033818
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git kunit
-patch link:    https://lore.kernel.org/r/20250729193647.3410634-8-marievic%40google.com
-patch subject: [PATCH 7/9] kunit: Add example parameterized test with shared resources and direct static parameter array setup
-config: arc-randconfig-001-20250730 (https://download.01.org/0day-ci/archive/20250730/202507302042.9Aw3rrmW-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250730/202507302042.9Aw3rrmW-lkp@intel.com/reproduce)
+>=20
+>> +
+>> +    /// A trait representing the different states that a [`Clk`] can =
+be in.
+>> +    pub trait ClkState: private::Sealed {
+>> +        /// Whether the clock should be disabled when dropped.
+>> +        const DISABLE_ON_DROP: bool;
+>> +
+>> +        /// Whether the clock should be unprepared when dropped.
+>> +        const UNPREPARE_ON_DROP: bool;
+>> +    }
+>> +
+>> +    /// A state where the [`Clk`] is not prepared and not enabled.
+>> +    pub struct Unprepared;
+>> +
+>> +    /// A state where the [`Clk`] is prepared but not enabled.
+>> +    pub struct Prepared;
+>> +
+>> +    /// A state where the [`Clk`] is both prepared and enabled.
+>> +    pub struct Enabled;
+>=20
+> I would put a private member into the structs so the user of this API =
+cannot construct it themself without using your abstractions.
+>=20
+> pub struct Unprepared(());
+> pub struct Prepared(());
+> pub struct Enabled(());
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507302042.9Aw3rrmW-lkp@intel.com/
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
+I don=E2=80=99t think it=E2=80=99s a problem if they construct these. =
+They can
+construct e.g.: Unprepared, Prepared, etc, but not Clk<Unprepared>, or
+Clk<Prepared> and others without going through the right API.
 
->> ERROR: modpost: "kunit_get_next_param_and_desc" [lib/kunit/kunit-example-test.ko] undefined!
+>=20
+>> +
+>> +    impl ClkState for Unprepared {
+>> +        const DISABLE_ON_DROP: bool =3D false;
+>> +        const UNPREPARE_ON_DROP: bool =3D false;
+>> +    }
+>> +
+>> +    impl ClkState for Prepared {
+>> +        const DISABLE_ON_DROP: bool =3D false;
+>> +        const UNPREPARE_ON_DROP: bool =3D true;
+>> +    }
+>> +
+>> +    impl ClkState for Enabled {
+>> +        const DISABLE_ON_DROP: bool =3D true;
+>> +        const UNPREPARE_ON_DROP: bool =3D true;
+>> +    }
+>> +
+>> +    /// An error that can occur when trying to convert a [`Clk`] =
+between states.
+>> +    pub struct Error<State: ClkState> {
+>=20
+> Nit: IMO we mostly use the `where` variant instead of the colon.
+>=20
+> pub struct Error<State>
+> where State: ClkState
+>=20
+> But does it make sense to put the bounds on the structs? Shouldn't be =
+enough but but the bounds on the impl block?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This does have some implications in general, but in practical terms, I =
+don=E2=80=99t think it
+matters here.
+
+Also, the bound on Clk<T> is somewhat warranted even though we could =
+probably
+get away with having it only on the impl block. It correctly encodes =
+that a
+Clk<T> should only _ever_ exist if T is one of the states.
+
+=46rom the above, it follows that Error<T> also needs the bound on the =
+struct,
+otherwise this will likely not compile.
+
+>=20
+>> +        /// The error that occurred.
+>> +        pub error: kernel::error::Error,
+>> +
+>> +        /// The [`Clk`] that caused the error, so that the operation =
+may be
+>> +        /// retried.
+>> +        pub clk: Clk<State>,
+>> +    }
+>> =20
+>=20
+> Thanks!
+> Daniel
+
 
