@@ -1,114 +1,128 @@
-Return-Path: <linux-kernel+bounces-750921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4F37B162D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:31:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC503B162DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:32:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C23818C7DD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:31:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B77BE17A7B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8E32D9EED;
-	Wed, 30 Jul 2025 14:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C95523A9B0;
+	Wed, 30 Jul 2025 14:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVGZHb/A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HmSkARWA"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE3422539D;
-	Wed, 30 Jul 2025 14:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 007822343C7;
+	Wed, 30 Jul 2025 14:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753885871; cv=none; b=u0FhTWkY/ZTrEDXma1+0fYP5WIwdt8mO0fNGrFGhoU8ymwn1lqAhf0JSzz3Xwaks55tawQ2x/1ySjOER9IRINs7H66jKUIQZrkKXxsrbYE0JwFf3SApucI2/DJKgV8ZxnEAs5rsQQrXcAk3t9kWoJtKyFXWkEGZ0XjYKeScpny0=
+	t=1753885916; cv=none; b=SLVkIBXFnoeh6SNvzJ5bAbdmPc3P8mAApc0OvgZEHCISb6XFJaq+U6smBIYdkpRHFoLCPATiHolaOz2DtHKEcUu3plP2nTUxPx/pPgxfiaqQbsTUYGJ5SInqUK/A9EP6dEKG2180kldFc8ciEW3de647ACpYK3JK+HKcLOAcFWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753885871; c=relaxed/simple;
-	bh=Snch+KOVqe7Btb1kUNrEoTqutUb5jKG8E3w1pNm7imo=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=nozd1NkOYb5rKZjMg+I2qiE1w1KUJ6pCUVsK2mAt+uXMiVHKGXG+J26zwzPpUyxXprUO9HKQUrdUV5dR0HH8OuZBxjM/89KZAxZ7sP78zr6MWoxGjJ1s0f0NK9qeAutWUucA0A+bS6GxMWrU/VWssB1JvsGjws6D+Flyqobogxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVGZHb/A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D27DDC4CEE3;
-	Wed, 30 Jul 2025 14:31:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753885871;
-	bh=Snch+KOVqe7Btb1kUNrEoTqutUb5jKG8E3w1pNm7imo=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=TVGZHb/A1l0YucqC2rUHutS0EqhFAxlfKKvTI2cliqg/+GY45+2JjV1JOlvSiVc/D
-	 zYAC/AG+Q8tisWKqtZ8TMFZz7KJw1sMq3AuGddoFsUbEUlLwaw4k0nvgNBz4xIfK4I
-	 mdd23JaSRBUjHBsCE7J1UTbSfZPOuEKxljaDQxvcN8IhbgF84iOHw3CM3osdoNNork
-	 JihLPXAOI0oOtYxJs815xJaJWg+EdmEZK01/IRMDqPfYXbXygKetP9AX0rAX64/Ziw
-	 WNwV/lKCqizWfTTHQE8nEsW78e8QeVZ+mXA0f9KzT1EwB792PsB4FxsoNURo1idq3l
-	 PTNojLno1JosQ==
-Date: Wed, 30 Jul 2025 09:31:10 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1753885916; c=relaxed/simple;
+	bh=3nakqcQLdo4b6fdx7x/jSt4n6vGC5mPdKboWPGw6N1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J4YPxdcqo4YguDZ1gKdooto20uA2VYbzvt0YfhgVblxuy/ESTtuPK3OLqugw/nr9hNaMLe9JtgskjZ2/XwSOTE+JXi5FbwIA9lGNn7FHyKOEJoL3V9bAIYIWyPtoeXUt0pokgXnnEqDhLwK4wYRELFcVG1lv6dWGMi7IxqVscr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HmSkARWA; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753885693;
+	bh=kLrwclfc8DAyKhc5QwmGDJFM1rT+vOw8cAV0CK2t0ck=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HmSkARWA8cjqdgTiRSIMn9jPI5i6vhF9cgTtNKGSS0hLHzS/kTaYdkg67BEh5Lrfl
+	 /lXeHSJTNhVY3iSaWjUkit63o4xSLdxFqCxOK+0mDINTWYWyXWwemq/wUau3pGNstu
+	 mT9AzjafCKXyxm6o1/AYU46mX8f2ucve2e1Tbp0IRFP5+jncEOjqEMzRHUo5os4Mqp
+	 gPf4tylysTZistakmtGvCUXQYQuHFlkqa+usPVWfbV11DjgLUJ/wkfBHMxKfVq/CEv
+	 zxihRUFIuTTGIo7Xcpag/JmM9iDzk1PxzT0wYJDPbG4YHLsvnzAuNbBxvU1tnC3oW3
+	 dzE8fhGShIZOg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsZM12TVBz4x4m;
+	Thu, 31 Jul 2025 00:28:12 +1000 (AEST)
+Date: Thu, 31 Jul 2025 00:31:49 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman
+ <mpe@ellerman.id.au>, PowerPC <linuxppc-dev@lists.ozlabs.org>, Vishal
+ Parmar <vishistriker@gmail.com>, Brigham Campbell <me@brighamcampbell.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the jc_docs tree
+Message-ID: <20250731003149.3fa05f7f@canb.auug.org.au>
+In-Reply-To: <87cy9hx272.fsf@trenco.lwn.net>
+References: <20250730102931.6334022c@canb.auug.org.au>
+	<87cy9hx272.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- stable@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, Johan Hovold <johan@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, devicetree@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-arm-msm@vger.kernel.org
-To: Abel Vesa <abel.vesa@linaro.org>
-In-Reply-To: <20250730-phy-qcom-edp-add-missing-refclk-v1-1-6f78afeadbcf@linaro.org>
-References: <20250730-phy-qcom-edp-add-missing-refclk-v1-0-6f78afeadbcf@linaro.org>
- <20250730-phy-qcom-edp-add-missing-refclk-v1-1-6f78afeadbcf@linaro.org>
-Message-Id: <175388587013.1443735.2833199363518772235.robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: phy: qcom-edp: Add missing clock for
- X Elite
+Content-Type: multipart/signed; boundary="Sig_/vUeU2YtpEMwmihA3.3V/gBH";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/vUeU2YtpEMwmihA3.3V/gBH
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Jul 2025 14:46:48 +0300, Abel Vesa wrote:
-> On X Elite platform, the eDP PHY uses one more clock called
-> refclk. Add it to the schema.
-> 
-> Cc: stable@vger.kernel.org # v6.10
-> Fixes: 5d5607861350 ("dt-bindings: phy: qcom-edp: Add X1E80100 PHY compatibles")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  .../devicetree/bindings/phy/qcom,edp-phy.yaml      | 23 +++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
-> 
+Hi Jon,
 
-My bot found errors running 'make dt_binding_check' on your patch:
+On Wed, 30 Jul 2025 07:01:21 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
+>
+> Stephen Rothwell <sfr@canb.auug.org.au> writes:
+>=20
+> > Hi all,
+> >
+> > After merging the jc_docs tree, today's linux-next build (htmldocs)
+> > produced this warning:
+> >
+> > Documentation/arch/powerpc/index.rst:7: WARNING: duplicated entry found=
+ in toctree: arch/powerpc/htm
+> >
+> > Introduced by commit
+> >
+> >   c361f76da696 ("docs: powerpc: Add htm.rst to table of contents")
+> >
+> > interacting with commit
+> >
+> >   19122a7c28ed ("docs: powerpc: add htm.rst to toctree")
+> >
+> > from the powerpc tree. =20
+>=20
+> Did that just get added there?  I've had that fix since early June...I'd
+> rather not drop it (and have to redo my 6.17 pull request) now if
+> possible...
 
-yamllint warnings/errors:
+Yeah, it was added to the powerpc tree last night (or yesterday).  Just
+tell Linus to take your version (I think) when he merges the 2 trees.
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sa8775p-mdss.example.dtb: phy@aec2a00 (qcom,sa8775p-edp-phy): clock-names: ['aux', 'cfg_ahb'] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,sc7280-mdss.example.dtb: phy@aec2a00 (qcom,sc7280-edp-phy): clock-names: ['aux', 'cfg_ahb'] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/phy/qcom,edp-phy.example.dtb: phy@aec2a00 (qcom,sc8180x-edp-phy): clock-names: ['aux', 'cfg_ahb'] is too short
-	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+Or a fix patch could be sent after both are merged.
+--=20
+Cheers,
+Stephen Rothwell
 
-doc reference errors (make refcheckdocs):
+--Sig_/vUeU2YtpEMwmihA3.3V/gBH
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250730-phy-qcom-edp-add-missing-refclk-v1-1-6f78afeadbcf@linaro.org
+-----BEGIN PGP SIGNATURE-----
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiKLNUACgkQAVBC80lX
+0GyCTQf/ce5bU85QuQzMnMJ2JXqNVsue0OnGeTYvqrDZXbGvUAlKdtcTZeTT3Enm
+p6F2fzNQVSyjtEYOnHhAxZuV2hu2SRxgCf6koPqttan09BZ+7b/b+IfRMFVngwrr
+/eLdqSIDxa8MuT15imMXwBFSOYDuhehrrd8QtMn5Mw4m3jI6622oM1Od7zzM/6On
+ooIP78j0KxrBRK+n9xYPBx8YCWBJStefBqE3WwR9YT8L/lwXEXtTwAgR675vmBar
+UH/OqHDtBZg8hbogENY9kuWG3sOwxoznoUlLBGIm5QHEC0E4CnMPQ809lFlM5dPs
+XsMMfr2LMiPNscb4PJsjeWAm9mQP1g==
+=uJID
+-----END PGP SIGNATURE-----
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+--Sig_/vUeU2YtpEMwmihA3.3V/gBH--
 
