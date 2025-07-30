@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-750667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2002B15F78
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:30:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F020DB15F7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:31:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D5C87A816E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:29:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0445F3AD132
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAD027A46E;
-	Wed, 30 Jul 2025 11:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6468C296153;
+	Wed, 30 Jul 2025 11:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="t87RExfG"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IZ3CRW5q"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81EC678F4C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229EB1C4A10
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753875049; cv=none; b=jCfpJ/QvxaZx9MWN79pOzwb7Y2JBrKBia2URZOLKntkTaJs+AARGKzl3rrmNvXQrJWCCNZWuP9OfZ2ksHkGWu+7ZaLyVAASG0xnWkmoXKfdC1SVMYFloqLXCD/Bijo95g43mV7P0nFJXNdr3ulW2LrnH1+TLPOJgNSX2Y8OJplo=
+	t=1753875067; cv=none; b=spEVsVxtutk3Hs8a8uQMU+re1QGOwz8QViiaIDMO11oIjZTK57Ja+i7hXQkwn6RfD5fQ3l2ZPOrDoHGILB/vYSM+dzEyjlIHWALWdPFwuUBQcsLaIYlenWZWgpmmc/5BQXHNhVr1X9qW+ZkJ9tjWuOywD9Xnzu5lKQvV+WleGt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753875049; c=relaxed/simple;
-	bh=1e0fzHuI/rntwQ57mo91TY0dA532PxuDhYaJ1EW9Fz8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M0Xg6zzGvE6iXbIYdYxqri14NbWnHY8Sw62l/6MO5bQnpnQku0t3rRmZARuPiw6xlye3IVTKsG9/7mU6DRYaX45u0iHySmY2gvZfRenxELsybCdwch3Qt82C0EWb8ZvoIgDw8zwuADw+TGRGGgfGoJalRw0OF+lvcd4sHuWKyak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=t87RExfG; arc=none smtp.client-ip=95.215.58.183
+	s=arc-20240116; t=1753875067; c=relaxed/simple;
+	bh=hAlHxZgp123abcDlCAe4hLooeK+QSEHWh7S7DenqCZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=m4pWDZlWMT02cwENPo6wzpHe1P9Kjcu/sCPLZL1MB5Ut5LTFWz7h2t8F74pmCeeZIBNmm34DdIhCbYggN/FAdtHO8G2gpAbv90cMba/EXwTvPW/4wdqoFbNfJpa31SY4MhrSfLnNlHd8ziwjWgJk3Mtkp/SkQeNOlwsofJttSWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IZ3CRW5q; arc=none smtp.client-ip=95.215.58.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753875045;
+	t=1753875061;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1tv44tN9Mkqwho1YUvMPXc0XtnufGsYHnhFM50s3ejw=;
-	b=t87RExfGxDlCWLoEd8I2gjZws88G6p2YEPKi9fShkszQWsXN/hSW6fqe0lpFcQlxXhNorx
-	RdVGllDZkaasdetDsGU8qYj12okMrA/msC2X7X1N9SvhGFOJGs9nAlQZAeBiDCR2K3Bk9E
-	D3b2Q6nzIiqEF3lLHY/TcMPO8NxBmxA=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EyRW6+jgu8v2tPvU9GwSnYS/RWU/00H/0M7Q5DWKSUg=;
+	b=IZ3CRW5ql5W1SFHbme8rf+aD0MUNBIrpKDdtgC2AONQrU/0nE0JzV3tHk/2L6H7HdR99OB
+	hE+tF7yqhR7aIahcfLNXEbfLzRZ59nrohZLVQvClX8dFbOICIaYE1ugAXmPqU6SnXJAyTl
+	Ho0smwdIbEnXLBoE+q0gUb0JiTZVENA=
 From: Tao Chen <chen.dylane@linux.dev>
 To: rostedt@goodmis.org,
 	bristot@kernel.org
@@ -46,9 +48,11 @@ Cc: linux-trace-kernel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	bpf@vger.kernel.org,
 	Tao Chen <chen.dylane@linux.dev>
-Subject: [PATCH bpf-next 1/2] tools/latency-collector: Check pkg-config install
-Date: Wed, 30 Jul 2025 19:30:27 +0800
-Message-ID: <20250730113028.1666038-1-chen.dylane@linux.dev>
+Subject: [PATCH bpf-next 2/2] rtla: Check pkg-config install
+Date: Wed, 30 Jul 2025 19:30:28 +0800
+Message-ID: <20250730113028.1666038-2-chen.dylane@linux.dev>
+In-Reply-To: <20250730113028.1666038-1-chen.dylane@linux.dev>
+References: <20250730113028.1666038-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,22 +74,25 @@ After:
 Makefile.config:10: *** Error: pkg-config needed by libtraceevent/libtracefs is missing
 on this system, please install it.
 
-Fixes: 9d56c88e5225 ("tools/tracing: Use tools/build makefiles on latency-collector")
+Fixes: 01474dc706ca ("tools/rtla: Use tools/build makefiles to build rtla")
 Signed-off-by: Tao Chen <chen.dylane@linux.dev>
 ---
- tools/tracing/latency/Makefile.config | 8 ++++++++
+ tools/tracing/rtla/Makefile.config | 8 ++++++++
  1 file changed, 8 insertions(+)
 
-diff --git a/tools/tracing/latency/Makefile.config b/tools/tracing/latency/Makefile.config
-index 0fe6b50f029b..6efa13e3ca93 100644
---- a/tools/tracing/latency/Makefile.config
-+++ b/tools/tracing/latency/Makefile.config
-@@ -1,7 +1,15 @@
+diff --git a/tools/tracing/rtla/Makefile.config b/tools/tracing/rtla/Makefile.config
+index 5f2231d8d626..07ff5e8f3006 100644
+--- a/tools/tracing/rtla/Makefile.config
++++ b/tools/tracing/rtla/Makefile.config
+@@ -1,10 +1,18 @@
  # SPDX-License-Identifier: GPL-2.0-only
  
 +include $(srctree)/tools/scripts/utilities.mak
 +
  STOP_ERROR :=
+ 
+ LIBTRACEEVENT_MIN_VERSION = 1.5
+ LIBTRACEFS_MIN_VERSION = 1.6
  
 +ifndef ($(NO_LIBTRACEEVENT),1)
 +  ifeq ($(call get-executable,$(PKG_CONFIG)),)
