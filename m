@@ -1,116 +1,144 @@
-Return-Path: <linux-kernel+bounces-750131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853D4B157B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:07:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED6DCB157BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC0AC547357
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 004574E6843
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BF11ADC83;
-	Wed, 30 Jul 2025 03:06:57 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093441D516A;
+	Wed, 30 Jul 2025 03:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDwp4EVw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE34813C8EA;
-	Wed, 30 Jul 2025 03:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571CBEEBA;
+	Wed, 30 Jul 2025 03:08:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753844817; cv=none; b=X0SYOW4DEYjtAH8TxqVAanLsjvFCZZM9GiBIJl2QkwwTq1eSRWWcbu21Y+goxG64u9xPpuMzqIVtDxCTRA1+bdE/+z3+oNzxw9/xF5tUVns9U/2JpyNrkbYRKRXDFh94er2RE9hYYtd4cCj4a+yoSUQ/k6rMuXBB7/NKy4BEu/Q=
+	t=1753844881; cv=none; b=NrSpsIWbYMuJIFGCX5j1Z6T0kp549FANdpmpXS3Efob2sjxf/dxFQ/RV7TokwARkNVNHddY5dyX4x88R6CshVKOLJMsUqz8kUhmeszSUh/94OrDkmdpkfzKSrHDCdlBqIadkiy5sK7V453YfpMcE8TNC5mX2VZxrfdI6v7/Xze4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753844817; c=relaxed/simple;
-	bh=Aagab7gg5BIDVgKuHhsCNAhAFJ50a4FvrAVmXv53GF4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TvFLKg/VCCu7JDTyiFdUNh5q9W88/9WclSrxCvnGEzRMLzzNzOaP07z9jSQ3llTPrCwSBzDLpoihDOOcr49vP2V018M7b10Rh7u8Jjqy1me3dTTD8CpGOZN2zGBTMXZkhwNicWQVKALyZk32lMLFLThjA1ixqZagDWLgIyzoVDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bsHG01tzZz27j5K;
-	Wed, 30 Jul 2025 11:07:52 +0800 (CST)
-Received: from kwepemk500012.china.huawei.com (unknown [7.202.194.97])
-	by mail.maildlp.com (Postfix) with ESMTPS id C302018005F;
-	Wed, 30 Jul 2025 11:06:50 +0800 (CST)
-Received: from localhost.localdomain (10.50.165.33) by
- kwepemk500012.china.huawei.com (7.202.194.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Jul 2025 11:06:50 +0800
-From: BowenYu <yubowen8@huawei.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linuxarm@huawei.com>, <jonathan.cameron@huawei.com>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <zhenglifeng1@huawei.com>,
-	<yubowen8@huawei.com>
-Subject: [PATCH] cpufreq: Remove unused parameter in cppc_perf_from_fbctrs()
-Date: Wed, 30 Jul 2025 11:06:49 +0800
-Message-ID: <20250730030649.151272-1-yubowen8@huawei.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1753844881; c=relaxed/simple;
+	bh=22JhCyglsPUS7n2HIlluUovVfg0gdi1H2bFhA3h5f2I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=AZjn4U1B2Gx4+4xtk2Umt4Lr6teYvm7yvVOOReV+HndL3r+cQpqXhByHEvLHQhIt/wRohbmMb3qf82119a/7t39EG3r43eeVvyjO9XrVjujus4hQAIjiqsB3xG+TLx4EmNVla4LZD5WIzlcrgmDNK5xPnnE0LXyI7fqqJ3xfpIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDwp4EVw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC53C4CEEF;
+	Wed, 30 Jul 2025 03:07:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753844880;
+	bh=22JhCyglsPUS7n2HIlluUovVfg0gdi1H2bFhA3h5f2I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jDwp4EVw1g8SvHbFCRjrDMDqtQrfuRlrsJrSk1n8V/DfJAlXqwpTsrAmSgZ0LTiCU
+	 WpwGnt0det3VO4BDH3X12/vsJptOoFDZsrtIPj+s9QDrIZR5dhTS7txqrfyvzfn6Mn
+	 B43hEnfubrG0xAZRXE55MaC4xSikeenNTMXjXuR9y9b6p5x0cKYd0uvHFzhkijAMzh
+	 9MYJlW8BKfaRh7zPRt9XvGvF9tcrAteIpAG/5O9zswbZ7wHrhLo42+Nh7r1tgGfBC3
+	 E7hMbYZcjxw4Tp8ftHGwTpm05M4OJBEnZs6UWIZ3RGiX6q7y71i++bUgbazrBiYpSQ
+	 g8mfFuh2iWfKg==
+Date: Wed, 30 Jul 2025 12:07:57 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Namhyung Kim <namhyung@kernel.org>, Jonathan
+ Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 1/2] tracing: Have eprobes have their own config
+ option
+Message-Id: <20250730120757.c1441d2ffd08bf4c0d4f7e65@kernel.org>
+In-Reply-To: <20250729161912.056641407@kernel.org>
+References: <20250729161816.678462962@kernel.org>
+	<20250729161912.056641407@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemk500012.china.huawei.com (7.202.194.97)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Remove the unused parameter cppc_cpudata* cpu_data in 
-cppc_perf_from_fbctrs().
+On Tue, 29 Jul 2025 12:18:17 -0400
+Steven Rostedt <rostedt@kernel.org> wrote:
 
-Signed-off-by: BowenYu <yubowen8@huawei.com>
----
- drivers/cpufreq/cppc_cpufreq.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Eprobes were added in 5.15 and were selected whenever any of the other
+> probe events were selected. If kprobe events were enabled (which it is by
+> default if kprobes are enabled) it would enable eprobe events as well. The
+> same for uprobes and fprobes.
+> 
+> Have eprobes have its own config and it gets enabled by default if tracing
+> is enabled.
+> 
+> Link: https://lore.kernel.org/all/20250729102636.b7cce553e7cc263722b12365@kernel.org/
+> 
 
-diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-index b7c688a5659c..c58e548ec491 100644
---- a/drivers/cpufreq/cppc_cpufreq.c
-+++ b/drivers/cpufreq/cppc_cpufreq.c
-@@ -58,8 +58,7 @@ struct cppc_freq_invariance {
- static DEFINE_PER_CPU(struct cppc_freq_invariance, cppc_freq_inv);
- static struct kthread_worker *kworker_fie;
- 
--static int cppc_perf_from_fbctrs(struct cppc_cpudata *cpu_data,
--				 struct cppc_perf_fb_ctrs *fb_ctrs_t0,
-+static int cppc_perf_from_fbctrs(struct cppc_perf_fb_ctrs *fb_ctrs_t0,
- 				 struct cppc_perf_fb_ctrs *fb_ctrs_t1);
- 
- /**
-@@ -95,8 +94,7 @@ static void cppc_scale_freq_workfn(struct kthread_work *work)
- 		return;
- 	}
- 
--	perf = cppc_perf_from_fbctrs(cpu_data, &cppc_fi->prev_perf_fb_ctrs,
--				     &fb_ctrs);
-+	perf = cppc_perf_from_fbctrs(&cppc_fi->prev_perf_fb_ctrs, &fb_ctrs);
- 	if (!perf)
- 		return;
- 
-@@ -699,8 +697,7 @@ static inline u64 get_delta(u64 t1, u64 t0)
- 	return (u32)t1 - (u32)t0;
- }
- 
--static int cppc_perf_from_fbctrs(struct cppc_cpudata *cpu_data,
--				 struct cppc_perf_fb_ctrs *fb_ctrs_t0,
-+static int cppc_perf_from_fbctrs(struct cppc_perf_fb_ctrs *fb_ctrs_t0,
- 				 struct cppc_perf_fb_ctrs *fb_ctrs_t1)
- {
- 	u64 delta_reference, delta_delivered;
-@@ -762,8 +759,7 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpu)
- 			return 0;
- 	}
- 
--	delivered_perf = cppc_perf_from_fbctrs(cpu_data, &fb_ctrs_t0,
--					       &fb_ctrs_t1);
-+	delivered_perf = cppc_perf_from_fbctrs(&fb_ctrs_t0, &fb_ctrs_t1);
- 	if (!delivered_perf)
- 		goto out_invalid_counters;
- 
+Looks good to me.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+BTW, is it a bugfix or improvement?
+
+Thanks,
+
+> Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  kernel/trace/Kconfig  | 13 +++++++++++++
+>  kernel/trace/Makefile |  2 +-
+>  2 files changed, 14 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+> index 93e8e7fc11c0..b951c027fffb 100644
+> --- a/kernel/trace/Kconfig
+> +++ b/kernel/trace/Kconfig
+> @@ -792,6 +792,19 @@ config UPROBE_EVENTS
+>  	  This option is required if you plan to use perf-probe subcommand
+>  	  of perf tools on user space applications.
+>  
+> +config EPROBE_EVENTS
+> +	bool "Enable event-based dynamic events"
+> +	depends on TRACING
+> +	select PROBE_EVENTS
+> +	select DYNAMIC_EVENTS
+> +	default y
+> +	help
+> +	  Eprobes are dynamic events that can be placed on other existing
+> +	  events. It can be used to limit what fields are recorded in
+> +	  an event or even dereference a field of an event. It can
+> +	  convert the type of an event field. For example, turn an
+> +	  address into a string.
+> +
+>  config BPF_EVENTS
+>  	depends on BPF_SYSCALL
+>  	depends on (KPROBE_EVENTS || UPROBE_EVENTS) && PERF_EVENTS
+> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
+> index 057cd975d014..dcb4e02afc5f 100644
+> --- a/kernel/trace/Makefile
+> +++ b/kernel/trace/Makefile
+> @@ -82,7 +82,7 @@ obj-$(CONFIG_EVENT_TRACING) += trace_event_perf.o
+>  endif
+>  obj-$(CONFIG_EVENT_TRACING) += trace_events_filter.o
+>  obj-$(CONFIG_EVENT_TRACING) += trace_events_trigger.o
+> -obj-$(CONFIG_PROBE_EVENTS) += trace_eprobe.o
+> +obj-$(CONFIG_EPROBE_EVENTS) += trace_eprobe.o
+>  obj-$(CONFIG_TRACE_EVENT_INJECT) += trace_events_inject.o
+>  obj-$(CONFIG_SYNTH_EVENTS) += trace_events_synth.o
+>  obj-$(CONFIG_HIST_TRIGGERS) += trace_events_hist.o
+> -- 
+> 2.47.2
+> 
+> 
+
+
 -- 
-2.33.0
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
