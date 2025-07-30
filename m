@@ -1,45 +1,59 @@
-Return-Path: <linux-kernel+bounces-750539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B77CB15DC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:03:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9799FB15DDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB58C1894955
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:04:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFFD73A59EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C3621E0BE;
-	Wed, 30 Jul 2025 10:03:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A50A55
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C9B26FA4C;
+	Wed, 30 Jul 2025 10:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="NT8ot2CY"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF62E1C861F
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753869824; cv=none; b=cF86+mIsHrBAS/6MyK0fxOUuvPW5OocKz/w6HFsZTQfMv6Gfcv97TlkFxQuz2fPqvJKFt8HRhMky+b4ObpeSVJ8mxupAiny7ZQuaL8lzOIY8Y6VUeK3OLy4YDU+2EPy6EwSLe5uXEUSPbmmshawSVQ1pEHXw5GZMtYUdhzSI6Ec=
+	t=1753870256; cv=none; b=JMQKzqssl2Cy7ZrGLyBimNl3MTBtVVPxKfi9yxQDsnaKIp2HkWw5c2fmefkmQBuw19QtyeL4lsLEwiQ62U2c0JKBOqq5cqNN/iAoV4q2RTTH6+rEBvTqDO760vak4wTubh0EMSBF9QaZwzVz+tiqI9pghy9H9SMYHjIIDODSE/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753869824; c=relaxed/simple;
-	bh=lniad1Z1YK2ll96TyqrJcqf1bW4m7i3amNDQuejT47A=;
+	s=arc-20240116; t=1753870256; c=relaxed/simple;
+	bh=AdCsx8Nngs+lrhMZa9aMiJC0qTRB3siwTyn9Iw/xzBo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nfE6Mr5QfD3fpXY+rZmkmf+ZmYarlNPQTHRaxFmj/Tmvz8idc4C8obWtIHYbnr00A/Hne0Z15dKgNmFtqee91HNgb6dY5/MJVXb6CRV+8q/a5LB/OC3zZRvl454hzBMBCUXfpiR0cws8hf6UCm0E1/a5b14AnYh4c03IxcbClnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11DE91BC0;
-	Wed, 30 Jul 2025 03:03:28 -0700 (PDT)
-Received: from arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5F38E3F673;
-	Wed, 30 Jul 2025 03:03:35 -0700 (PDT)
-Date: Wed, 30 Jul 2025 11:03:24 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSFHjW8OuobhaOwPtHUGFwRiPqFFdUQ7q87RAa69HlC07j4OHizihWWvFL4RRIhrTlveyZNncZhCB7NOBNwuE+P57pNlWqafMHjhDdgh7KOYPdCC8VMdg10aqRdjDrc7+px9KVZ7pR2VgIpExUI3Blw/YaNbC5/rnTgGL39cqN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=NT8ot2CY; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 6044 invoked from network); 30 Jul 2025 12:04:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1753869849; bh=5T32YM0L13QAl9GVrd5giNXERZAqYqtFnELJWH4hMok=;
+          h=From:To:Cc:Subject;
+          b=NT8ot2CYTEmbnhZII2QW9snUuGvunjOz4G8ijR8Bf45bdzDh1MKva3KUSFZKQGILf
+           DF6Qje7LwCRDaKvNHZLy6t9oNG9hPfcBSIpoHIOrQ7W0pxgE2oEl1qcdCPVgosTqx8
+           9fjmslP9h/Y5opnuqUwXf9gk2OhSRMwdN7vh3V+QiwHro7IL5et3sqApyL1AJX2gbf
+           +qyPSqOr//XjlxJhxS5ZPXokmyZkY4qyeAjIZ20gvmVpiUoT5xy4mqJX0h9OJyt6CH
+           ZfP3IighBib1nJeSoHmHHXFbMHNDZRN0WjogaLx2kpUDcyFsoTDsVcygr7ZTKNTxGO
+           zXsDO/94BdIFw==
+Received: from 89-64-9-64.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.9.64])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <arnd@kernel.org>; 30 Jul 2025 12:04:09 +0200
+Date: Wed, 30 Jul 2025 12:04:08 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Johannes Berg <johannes.berg@intel.com>, Rosen Penev <rosenp@gmail.com>,
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/kmemleak: Avoid soft lockup in __kmemleak_do_cleanup()
-Message-ID: <aInt7Fa6N7Y3zW_K@arm.com>
-References: <20250728190248.605750-1-longman@redhat.com>
+Subject: Re: [PATCH] wifi: rt2800: select CONFIG_RT2X00_LIB as needed
+Message-ID: <20250730100408.GA117709@wp.pl>
+References: <20250729152924.2462423-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,39 +62,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250728190248.605750-1-longman@redhat.com>
+In-Reply-To: <20250729152924.2462423-1-arnd@kernel.org>
+X-WP-MailID: 63b43a80a2d624911acb2c9655d84779
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [oaNx]                               
 
-On Mon, Jul 28, 2025 at 03:02:48PM -0400, Waiman Long wrote:
-> A soft lockup warning was observed on a relative small system x86-64
-> system with 16 GB of memory when running a debug kernel with kmemleak
-> enabled.
+On Tue, Jul 29, 2025 at 05:29:21PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
->   watchdog: BUG: soft lockup - CPU#8 stuck for 33s! [kworker/8:1:134]
+> The rt2800 specific code requires the more general library code:
 > 
-> The test system was running a workload with hot unplug happening
-> in parallel. Then kemleak decided to disable itself due to its
-> inability to allocate more kmemleak objects. The debug kernel has its
-> CONFIG_DEBUG_KMEMLEAK_MEM_POOL_SIZE set to 40,000.
+> ERROR: modpost: "rt2x00queue_get_entry" [drivers/net/wireless/ralink/rt2x00/rt2x00mmio.ko] undefined!
+> ERROR: modpost: "rt2x00lib_dmastart" [drivers/net/wireless/ralink/rt2x00/rt2x00mmio.ko] undefined!
+> ERROR: modpost: "rt2x00lib_dmadone" [drivers/net/wireless/ralink/rt2x00/rt2x00mmio.ko] undefined!
+> ERROR: modpost: "rt2x00lib_rxdone" [drivers/net/wireless/ralink/rt2x00/rt2x00mmio.ko] undefined!
+> ERROR: modpost: "rt2x00lib_txdone_nomatch" [drivers/net/wireless/ralink/rt2x00/rt2800lib.ko] undefined!
+> ERROR: modpost: "rt2x00lib_txdone" [drivers/net/wireless/ralink/rt2x00/rt2800lib.ko] undefined!
+> ERROR: modpost: "rt2x00queue_get_entry" [drivers/net/wireless/ralink/rt2x00/rt2800lib.ko] undefined!
+> ERROR: modpost: "rt2x00lib_get_bssidx" [drivers/net/wireless/ralink/rt2x00/rt2800lib.ko] undefined!
+> ERROR: modpost: "rt2x00mac_conf_tx" [drivers/net/wireless/ralink/rt2x00/rt2800lib.ko] undefined!
+> ERROR: modpost: "rt2x00lib_txdone_noinfo" [drivers/net/wireless/ralink/rt2x00/rt2800lib.ko] undefined!
 > 
-> The soft lockup happened in kmemleak_do_cleanup() when the existing
-> kmemleak objects were being removed and deleted one-by-one in a loop
-> via a workqueue. In this particular case, there are at least 40,000
-> objects that need to be processed and given the slowness of a debug
-> kernel and the fact that a raw_spinlock has to be acquired and released
-> in __delete_object(), it could take a while to properly handle all
-> these objects.
+> Select the symbol to avoid this build failure.
 > 
-> As kmemleak has been disabled in this case, the object removal and
-> deletion process can be further optimized as locking isn't really
-> needed. However, it is probably not worth the effort to optimize for
-> such an edge case that should rarely happen. So the simple solution is
-> to call cond_resched() at periodic interval in the iteration loop to
-> avoid soft lockup.
+> Fixes: 7f6109086c9e ("wifi: rt2800: move 2x00soc to 2800soc")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+> ---
+>  drivers/net/wireless/ralink/rt2x00/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Signed-off-by: Waiman Long <longman@redhat.com>
-
-I agree, it's not worth rewriting this path for an unlikely event. So
-I'm fine with this approach. Thanks.
-
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> diff --git a/drivers/net/wireless/ralink/rt2x00/Kconfig b/drivers/net/wireless/ralink/rt2x00/Kconfig
+> index 4d98b7723c56..d66fc839c3ce 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/Kconfig
+> +++ b/drivers/net/wireless/ralink/rt2x00/Kconfig
+> @@ -225,6 +225,7 @@ config RT2800_LIB_MMIO
+>  
+>  config RT2X00_LIB_MMIO
+>  	tristate
+> +	select RT2X00_LIB
+>  
+>  config RT2X00_LIB_PCI
+>  	tristate
+> -- 
+> 2.39.5
+> 
 
