@@ -1,135 +1,180 @@
-Return-Path: <linux-kernel+bounces-750872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2BFB16216
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:58:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FC96B16207
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:56:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED12B7B43CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:56:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 368C33A14E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EB52D9EEA;
-	Wed, 30 Jul 2025 13:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="YnR/a8gj"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D7B82D8DAA;
+	Wed, 30 Jul 2025 13:56:41 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85E742D97AA;
-	Wed, 30 Jul 2025 13:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883847; cv=pass; b=WKSN4RMZnTyuxqFUks6MWtoa2zqSxM4dC6z+gYpkFQfBVtNN/+hOm6kqavc5SXZilAOUszRwQC5J9rLOaW+DwKpwWchMxsz5vB+io16y5ouPSznxyhHdqdNz5LcSO+vjaIDvGoBu8OdbFZAAX3SZJxaG3hctM/FUA9zJwSezzHE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883847; c=relaxed/simple;
-	bh=/1Z0B86lIfaqQpoJGmWBnivyAyNad2J3d1f8p5NY6ew=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=g1TIPc2H1dYJPTC6w5N6t8E4pzrhfakYUIpuDeYQ1m850muuLwAnVFEhItV9VDgf4nFUjiEhoSc90umo5a5RPwNiqjUIvLqF6a3NQf0ypUyCKbeGOKkiAD0JujE8fsaZtR0mTZ9SGj+POJHY7ALCq2wDqeuD1LU1OG0ir1jmpLY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=YnR/a8gj; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753883815; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=ZLiYjS3NO9RNSSID4MHQqwWKu2i6um9uJemRNiKCozfx5bbBiyCIun+qKGlUKR6x/pWVWHRyq0MjLPFO1IShS9K1IhmBOTY6xrt0USzf8JJM7W5ZlphCdNqpf33NL2oKq8jELpjnKGyTMRWV5yh0eNO6zgDWZ1ZU2531EyXYih4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753883815; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=/1Z0B86lIfaqQpoJGmWBnivyAyNad2J3d1f8p5NY6ew=; 
-	b=lNTecuHWedTV0yOHGAOceTbaCly4NHPWnJs34+FgqVdPuuRx7hqPkmzbaL3QQQuQAc1hEy95MyphSUbceK5kixqPKiOaBn5GbaUSfIMwvsQ1Igx8dLtI7etytgr+WAVLo3HD6nA9oVAvfTKODdEiXDXJe+uKGouova2YoLHkxrY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753883815;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=/1Z0B86lIfaqQpoJGmWBnivyAyNad2J3d1f8p5NY6ew=;
-	b=YnR/a8gjq+Hjp5hCY2bMW0gHUEkleJZxXu6ELOJgXVQT0ivi5HCV0wjKM0Cfl7/Q
-	VykfymdVr56cCibViUsCi8NVVaeNUW35TXWRqtaW2CVPiZgrE7PguGeiX4OXh9wPz5k
-	BBz+w15lXqrVc1/HAnXAT5YyXJ3rRDtJ6Y3jPZcQ=
-Received: by mx.zohomail.com with SMTPS id 1753883811262351.39162426409564;
-	Wed, 30 Jul 2025 06:56:51 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADBB29A9D3;
+	Wed, 30 Jul 2025 13:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753883800; cv=none; b=UNc5O419biy1y/6RCWn53xYJAuDMRqIQLDseXUqsQaPrT5XQm/R1HyWlUsmWTK2DBW0Id6MSh86ZvQw9L8WsY6zCpGaSFwltv++tUI+8mmCq6SZucM4GaUuW36ECZwTClCUSW+0nRQ6DetXgLeZqW4oUa8qnRti40cQDAaQ7HTY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753883800; c=relaxed/simple;
+	bh=eOMWDKHUmy1gD0Z7poNwDp33IXetjz2L4RUzoqiHY7I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gu9lMPd4Z+IEHCKygHZdTC6vZ/ymtQ65q6Q3EoYxOg5sJl82gQrqrQzJN9XiJRCTG1D0/msnRdiCe8s1sRc5r9UT+lLynGgJXyPG8YETjrrxIEYBxzwJv0K5nwzaMAy//ZvlfP2OyEw2em1xokwH9reI0xmG4E7VWL2U3wZQxpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 5A0C41DA394;
+	Wed, 30 Jul 2025 13:56:29 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id B003A6000C;
+	Wed, 30 Jul 2025 13:56:25 +0000 (UTC)
+Date: Wed, 30 Jul 2025 09:56:41 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Steven Rostedt
+ <rostedt@kernel.org>, Florent Revest <revest@google.com>,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Menglong Dong
+ <menglong8.dong@gmail.com>, Naveen N Rao <naveen@kernel.org>, Michael
+ Ellerman <mpe@ellerman.id.au>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, Andy Chiu <andybnac@gmail.com>, Alexandre Ghiti
+ <alexghiti@rivosinc.com>, Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [RFC 00/10] ftrace,bpf: Use single direct ops for bpf
+ trampolines
+Message-ID: <20250730095641.660800b1@gandalf.local.home>
+In-Reply-To: <aIn_12KHz7ikF2t1@krava>
+References: <20250729102813.1531457-1-jolsa@kernel.org>
+	<aIkLlB7Z7V--BeGi@J2N7QTR9R3.cambridge.arm.com>
+	<aIn_12KHz7ikF2t1@krava>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v2] rust: update error.rs documentation
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250730120459.15607-1-work@onurozkan.dev>
-Date: Wed, 30 Jul 2025 10:56:35 -0300
-Cc: rust-for-linux@vger.kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- lossin@kernel.org,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- dakr@kernel.org,
- me@kloenk.dev,
- felipe_life@live.com,
- abdiel.janulgue@gmail.com,
- dirk.behme@de.bosch.com,
- daniel@sedlak.dev,
- linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <69315F62-A882-4622-B967-CCE206013C41@collabora.com>
-References: <20250730120459.15607-1-work@onurozkan.dev>
-To: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: B003A6000C
+X-Stat-Signature: 7a4jg1qcadtiqm5ucfmr9eog7prsws1c
+X-Rspamd-Server: rspamout02
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+GT+298XNw3sUtH/KUCJiMoJtrK0AAras=
+X-HE-Tag: 1753883785-400689
+X-HE-Meta: U2FsdGVkX18Y/wSr2PULlU+lJxRhXXAG/s/Ujl4zZXjBJpuMO1KJcwBl6CXFVM4KjGtjbyoRKGWOanlXAYGH35krn+qg641/t3dLIKJfubRLoHassBCAHH6NHSYjV/xU5DlgyPLzrruf7cTfAVQU9yhZdLOm/GBzFYd+mN3oTIa+0e7LTcEeMguNJfkLqAD2pGsjrgYJ3s851UwStnvdSsq4aYxwsejKlXtgRJJeRLAs7eeWOr/Tg2BKayY4NyeqP1CBq5OgEApEpQE0HhY/LrzaUzbgxIIpBzuhqDSUWNpJUT/neq02SIPkdVnRkvuWsVLeU+OMwlHlphB1TE8cvDSNbsG80ko4
 
-Hi Onur,
+On Wed, 30 Jul 2025 13:19:51 +0200
+Jiri Olsa <olsajiri@gmail.com> wrote:
 
-> On 30 Jul 2025, at 09:04, Onur =C3=96zkan <work@onurozkan.dev> wrote:
->=20
-> Adds missing header links.
->=20
-> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+> so it's all work on PoC stage, the idea is to be able to attach many
+> (like 20,30,40k) functions to their trampolines quickly, which at the
+> moment is slow because all the involved interfaces work with just single
+> function/tracempoline relation
 
-This is a v2 but there is no changelog.
-
-Could you let us know what changed in future iterations, if any?
-
-> ---
-> rust/kernel/error.rs | 2 ++
-> 1 file changed, 2 insertions(+)
->=20
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index 3dee3139fcd4..dd3e4224218d 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -2,6 +2,8 @@
->=20
-> //! Kernel errors.
-> //!
-> +//! C header: =
-[`arch/mips/include/uapi/asm/errno.h`](srctree/arch/mips/include/uapi/asm/=
-errno.h)
-
-Why is this mips file being referenced here? :)
-
-> +//! C header: =
-[`include/linux/errno.h`](srctree/include/linux/errno.h)
-> //! C header: =
-[`include/uapi/asm-generic/errno-base.h`](srctree/include/uapi/asm-generic=
-/errno-base.h)
->=20
-> use crate::{
-> --
-> 2.50.0
->=20
->=20
-
-=E2=80=94 Daniel
+Sounds like you are reinventing the ftrace mechanism itself. Which I warned
+against when I first introduced direct trampolines, which were purposely
+designed to do a few functions, not thousands. But, oh well.
 
 
+> Steven, please correct me if/when I'm wrong ;-)
+> 
+> IIUC in x86_64, IF there's just single ftrace_ops defined for the function,
+> it will bypass ftrace trampoline and call directly the direct trampoline
+> for the function, like:
+> 
+>    <foo>:
+>      call direct_trampoline
+>      ...
 
+Yes.
+
+And it will also do the same for normal ftrace functions. If you have:
+
+struct ftrace_ops {
+	.func = myfunc;
+};
+
+It will create a trampoline that has:
+
+      <tramp>
+	...
+	call myfunc
+	...
+	ret
+
+On x86, I believe the ftrace_ops for myfunc is added to the trampoline,
+where as in arm, it's part of the function header. To modify it, it
+requires converting to the list operation (which ignores the ops
+parameter), then the ops at the function gets changed before it goes to the
+new function.
+
+And if it is the only ops attached to a function foo, the function foo
+would have:
+
+      <foo>
+	call tramp
+	...
+
+But what's nice about this is that if you have 12 different ftrace_ops that
+each attach to a 1000 different functions, but no two ftrace_ops attach to
+the same function, they all do the above. No hash needed!
+
+> 
+> IF there are other ftrace_ops 'users' on the same function, we execute
+> each of them like:
+> 
+>   <foo>:
+>     call ftrace_trampoline
+>       call ftrace_ops_1->func
+>       call ftrace_ops_2->func
+>       ...
+> 
+> with our direct ftrace_ops->func currently using ftrace_ops->direct_call
+> to return direct trampoline for the function:
+> 
+> 	-static void call_direct_funcs(unsigned long ip, unsigned long pip,
+> 	-                             struct ftrace_ops *ops, struct ftrace_regs *fregs)
+> 	-{
+> 	-       unsigned long addr = READ_ONCE(ops->direct_call);
+> 	-
+> 	-       if (!addr)
+> 	-               return;
+> 	-
+> 	-       arch_ftrace_set_direct_caller(fregs, addr);
+> 	-}
+> 
+> in the new changes it will do hash lookup (based on ip) for the direct
+> trampoline we want to execute:
+> 
+> 	+static void call_direct_funcs_hash(unsigned long ip, unsigned long pip,
+> 	+                                  struct ftrace_ops *ops, struct ftrace_regs *fregs)
+> 	+{
+> 	+       unsigned long addr;
+> 	+
+> 	+       addr = ftrace_find_rec_direct(ip);
+> 	+       if (!addr)
+> 	+               return;
+> 	+
+> 	+       arch_ftrace_set_direct_caller(fregs, addr);
+> 	+}
+
+I think the above will work.
+
+> 
+> still this is the slow path for the case where multiple ftrace_ops objects use
+> same function.. for the fast path we have the direct attachment as described above
+> 
+> sorry I probably forgot/missed discussion on this, but doing the fast path like in
+> x86_64 is not an option in arm, right?
+
+That's a question for Mark, right?
+
+-- Steve
 
