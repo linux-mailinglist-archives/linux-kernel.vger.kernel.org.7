@@ -1,185 +1,392 @@
-Return-Path: <linux-kernel+bounces-750858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95955B161E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:54:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26DD6B161EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:54:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C8D3B9FDE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:53:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65B517AFA65
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF5D2D979C;
-	Wed, 30 Jul 2025 13:53:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F162D8DDD;
+	Wed, 30 Jul 2025 13:53:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="ffLBMs8H"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQhdQ2qO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4812D94BD
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 426DC2D948C;
+	Wed, 30 Jul 2025 13:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883610; cv=none; b=diArW7YOqYpiphA/r+9Md3F19kJQ/XQRbyHod1FhmuoD0rz4cUSrTIWKy9RrrCdhkUwVpM5x2dTCIUlUZWBtQEMQCh9h4xV9h7IyFLIfqwpem8cRyJDRFNnGlcNjpnftPzvgAcpRYhZxdPJTm2Y4VbmUulkRyYDzVydVGU3+CIw=
+	t=1753883626; cv=none; b=L+R2/GcDCNGKx7SZ9gZee6/sHj3tI7xV5fEXXwBwIw8qtHmxAUapMx9+k9O19ZDIJ+3RP7wBusj8CdDgY/oRt3+eBD8JIlkV6bGxuSn/UzaRv6TVK/tQt2wZBvSIYSR4jc+wIt91s81jnvz+5vE6rMVO4EnRJ4XRIFk6oo0wbyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883610; c=relaxed/simple;
-	bh=IHzhk2MoW4xpq16rWlxrTfK0s7uTNJEKX5bczNq2v6E=;
-	h=From:Date:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=G/7DjwzWlbhmKGtAuG/+9cq6BDVmCumXYzE6kzSuUubNumAnGtFLX3AZHraUSfQCiOuJxmbRyBfr/S0Oa1kNDjbZfIlkdJ9zohYaReKdiwAXr8OaPccpsd2fOdnYho2DVYp9OnWu0Ebi5BV4nAKmWyKyIF/3cUvVNhT8Bu9j3iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu; spf=pass smtp.mailfrom=maine.edu; dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b=ffLBMs8H; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=maine.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maine.edu
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-70756dc2c00so26481656d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:53:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google; t=1753883607; x=1754488407; darn=vger.kernel.org;
-        h=mime-version:message-id:subject:cc:to:date:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HfBKYiq3E5bby2FVP4Nb+uSJ1m62RFzk3S05K+Qp+E8=;
-        b=ffLBMs8HD68Qhg7hNfhjI+aMgYWQ7Zf8yHZUxFQN7HqbwZWnQ8iv81u2SA7bwKeNYm
-         Ne3opkfO/ZtKIxuLwoQrb59yWUgXAiSUF6xNzRzYqUgNRqTf7+3AU5w+EFGfnbz76Hds
-         /s9EezDSvcpgP3CCwUbKFzHN8K3UYJ7dFGoog=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753883607; x=1754488407;
-        h=mime-version:message-id:subject:cc:to:date:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HfBKYiq3E5bby2FVP4Nb+uSJ1m62RFzk3S05K+Qp+E8=;
-        b=sPYs8ZJo64L9xtkHDPTo38sFjjNTodkbk58qrN3TVBDRu6zrBs7ntKCq7GHpIXYgQH
-         1TTRyi0RzKE5HPfsAhW/Skh7rxzvfsvyKqo7r4doWQdpaoCuLEAJsbF5yaOiZi09Ts/T
-         arYIy+2tUsDMQoWu9ySOwZLmMpOs6ftE8aQGZF/wRpaVKkWD09nn6prwsA9200HZMpZF
-         KJwd5QP11T+w0XDY5F96A3GLq54mD9km1hJDjroLOzHG4FvUGhLlOW+31FimAtEkd1Ei
-         notlcndRkeFAZypGYS/afoWODxnWjtmrLTnH1mvazeRwCN06MfTTooDztODYq4smNVXh
-         RLDA==
-X-Gm-Message-State: AOJu0YwK+fL6qxn8SyAvh6X4GxpMy9Cvbi5r8y3Ca6AnJF1yhvDQZ/P6
-	oXpFjWW1tVSofnDUgQYZvBbZpItDz8D7tvIWpqb2DO2TYsjc5dD2ZdLoTO63vJCC9PC4nwbiNeM
-	6jus=
-X-Gm-Gg: ASbGncsUcZ4RJg4w5x2ZW/4l1MoIRb6wXkfniC0wXtF6kk9SyA/viqKDaC+bSHZeMvc
-	6Pr01wjgUPyh3rp7AUhH4VXUJdkrCNqRt79q4QrMB86wL0U6KOha9pMmHplFEzFUJy9qGMTIedb
-	bY8fqftBHG3hKZR7aEGR+YrdtoTHFFZ/Uh34RoHFs5mGjlse12r8IF8MyuXGBTkMVL8hi6s/Ta9
-	AlqY8phQynXf6Fthn95JCr1M2C9VDTX1j+a3SqNRPVs8yPtdfE8fY2PWEaUDXzGSGtgUhq+6Mf2
-	1EA8DL1apjTkf1w2alPh2Coh4NljidI0f6jMewCgCOQ5GbjgOj9x6Z5ng3kWSm5DgvzK80yyO2f
-	zc87zsRpQjTkpJNaIaY9qOx027CiPP0YLNFFtlwGgmQ==
-X-Google-Smtp-Source: AGHT+IFS+NsWWCRAZT7DU1w30WDWGwT6PJJLySC0o1Ml3zqCyPQFp5+54OL74nnoFTiSvL+lbNIZeQ==
-X-Received: by 2002:a05:6214:c84:b0:707:54b6:1f32 with SMTP id 6a1803df08f44-70766de2240mr48776486d6.9.1753883607150;
-        Wed, 30 Jul 2025 06:53:27 -0700 (PDT)
-Received: from [192.168.8.146] (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae9951747csm66766601cf.12.2025.07.30.06.53.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 06:53:26 -0700 (PDT)
-From: Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date: Wed, 30 Jul 2025 09:53:25 -0400 (EDT)
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-cc: "Liang, Kan" <kan.liang@linux.intel.com>, 
-    Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-    Arnaldo Carvalho de Melo <acme@kernel.org>, 
-    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-    Adrian Hunter <adrian.hunter@intel.com>, 
-    "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-Subject: [perf] fuzzer triggers BUG: KASAN: wild-memory-access in
- x86_pmu_stop
-Message-ID: <d869feec-dc50-070c-a363-6f677ab6d678@maine.edu>
+	s=arc-20240116; t=1753883626; c=relaxed/simple;
+	bh=FrY1tORaOz9Dh269bjvURkmvNtbx8l98ZBz+dBh1xJ8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=NKhRQkgt/Y46IzvHgtXIiLZlvpSx/EnRep3Q6wlv43los/BDafwQ+zb4t7YwrJBeF2IAAFKIIm0andz8ff/KZngDCZnKgRsobAkyo2+GjzOebWXgGGrk5wFbzSDfm6hN/L7RVsyhkzSf+biFvVzWkJNJmEVgeeEJ/1JXQOmp3+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQhdQ2qO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B650DC4CEE7;
+	Wed, 30 Jul 2025 13:53:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753883626;
+	bh=FrY1tORaOz9Dh269bjvURkmvNtbx8l98ZBz+dBh1xJ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kQhdQ2qOBWXpkE1DrU/4qU/yR5lIzJ9aclPd5lCBmAQktWViebMW9IuzuE/gkD/pC
+	 6YoJrIWRVbbCc1OYox8y+/GKsMWNHSQ97CpTCHyHzAgFxteIafr5rVkamodRWV5Npt
+	 /cl/BY3jIZgZdtSbanADTKh6wAoCo8M+pCW26YlRaukJm1Lu2jdbeWMa17QwK9i5re
+	 qTREek1c7yVZTpxv7yW33j0WF/nUkHuEHIksQ7cHFNy7vVAPIZEQITRAupL8Jhrps4
+	 jSWhXeGogfSJvC4K9hvY7QE0zVH84b3uROEM3c7XkkbUCrq/eIuafl2Z+mvDR3ygaJ
+	 g5fb57FTkpb9g==
+Date: Wed, 30 Jul 2025 22:53:40 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Namhyung Kim <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>,
+ Douglas Raillard <douglas.raillard@arm.com>, Tom Zanussi
+ <zanussi@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Ian Rogers <irogers@google.com>,
+ aahringo@redhat.com
+Subject: Re: [PATCH] tracing/probes: Allow use of BTF names to dereference
+ pointers
+Message-Id: <20250730225340.92ead36268880e0bc098f12e@kernel.org>
+In-Reply-To: <20250729113335.2e4f087d@batman.local.home>
+References: <20250729113335.2e4f087d@batman.local.home>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello
+On Tue, 29 Jul 2025 11:33:35 -0400
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-I was fuzzing current git (6.16) on a RaptorLake machine with KASAN 
-enabled and it turned up this issue.  I think this is unrelated to the 
-other issue I've been tracking on this machine.
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Add syntax to the FETCHARGS parsing of probes to allow the use of
+> structure and member names to get the offsets to dereference pointers.
+> 
+> Currently, a dereference must be a number, where the user has to figure
+> out manually the offset of a member of a structure that they want to
+> reference. For example, to get the size of a kmem_cache that was passed to
+> the function kmem_cache_alloc_noprof, one would need to do:
+> 
+>  # cd /sys/kernel/tracing
+>  # echo 'f:cache kmem_cache_alloc_noprof size=+0x18($arg1):u32' >> dynamic_events
+> 
+> This requires knowing that the offset of size is 0x18, which can be found
+> with gdb:
+> 
+>   (gdb) p &((struct kmem_cache *)0)->size
+>   $1 = (unsigned int *) 0x18
+> 
+> If BTF is in the kernel, it can be used to find this with names, where the
+> user doesn't need to find the actual offset:
+> 
+>  # echo 'f:cache kmem_cache_alloc_noprof size=+kmem_cache.size($arg1):u32' >> dynamic_events
 
-Vince Weaver
-vincent.weaver@maine.edu
+Great! This is something like a evolution of assembler to "symbolic"
+assembler. ;)
+
+> 
+> Instead of the "+0x18", it would have "+kmem_cache.size" where the format is:
+> 
+>   +STRUCT.MEMBER[.MEMBER[..]]
+
+Yeah, and using '.' delimiter looks nice to me.
+
+> 
+> The delimiter is '.' and the first item is the structure name. Then the
+> member of the structure to get the offset of. If that member is an
+> embedded structure, another '.MEMBER' may be added to get the offset of
+> its members with respect to the original value.
+> 
+>   "+kmem_cache.size($arg1)" is equivalent to:
+> 
+>   (*(struct kmem_cache *)$arg1).size
+> 
+> Anonymous structures are also handled:
+> 
+>   # echo 'e:xmit net.net_dev_xmit +net_device.name(+sk_buff.dev($skbaddr)):string' >> dynamic_events
+
+So this only replaces the "offset" part. So we still need to use
++OFFS() syntax for dereferencing the pointer.
+
+> 
+> Where "+net_device.name(+sk_buff.dev($skbaddr))" is equivalent to:
+> 
+>   (*(struct net_device *)((*(struct sk_buff *)($skbaddr))->dev)->name)
+> 
+> Note that "dev" of struct sk_buff is inside an anonymous structure:
+> 
+> struct sk_buff {
+> 	union {
+> 		struct {
+> 			/* These two members must be first to match sk_buff_head. */
+> 			struct sk_buff		*next;
+> 			struct sk_buff		*prev;
+> 
+> 			union {
+> 				struct net_device	*dev;
+> 				[..]
+> 			};
+> 		};
+> 		[..]
+> 	};
+> 
+> This will allow up to three deep of anonymous structures before it will
+> fail to find a member.
+> 
+> The above produces:
+> 
+>     sshd-session-1080    [000] b..5.  1526.337161: xmit: (net.net_dev_xmit) arg1="enp7s0"
+> 
+> And nested structures can be found by adding more members to the arg:
+> 
+>   # echo 'f:read filemap_readahead.isra.0 file=+0(+dentry.d_name.name(+file.f_path.dentry($arg2))):string' >> dynamic_events
+> 
+> The above is equivalent to:
+> 
+>   *((*(struct dentry *)(*(struct file *)$arg2)->f_path.dentry)->d_name.name)
+> 
+> And produces:
+> 
+>        trace-cmd-1381    [002] ...1.  2082.676268: read: (filemap_readahead.isra.0+0x0/0x150) file="trace.dat"
+> 
+
+OK, the desgin looks good to me. I have some comments below.
 
 
-[62790.535489] ==================================================================
-[62790.535493] BUG: KASAN: wild-memory-access in x86_pmu_stop+0x80/0x2b0
-[62790.535499] Read of size 8 at addr 1fff888770d28e98 by task perf_fuzzer/1142475
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+>  Documentation/trace/kprobetrace.rst |   3 +
+>  kernel/trace/trace_btf.c            | 106 ++++++++++++++++++++++++++++
+>  kernel/trace/trace_btf.h            |  10 +++
+>  kernel/trace/trace_probe.c          |   7 +-
+>  4 files changed, 124 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/trace/kprobetrace.rst b/Documentation/trace/kprobetrace.rst
+> index 3b6791c17e9b..00273157100c 100644
+> --- a/Documentation/trace/kprobetrace.rst
+> +++ b/Documentation/trace/kprobetrace.rst
+> @@ -54,6 +54,8 @@ Synopsis of kprobe_events
+>    $retval	: Fetch return value.(\*2)
+>    $comm		: Fetch current task comm.
+>    +|-[u]OFFS(FETCHARG) : Fetch memory at FETCHARG +|- OFFS address.(\*3)(\*4)
+> +  +STRUCT.MEMBER[.MEMBER[..]](FETCHARG) : If BTF is supported, Fetch memory
+> +		  at FETCHARG + the offset of MEMBER inside of STRUCT.(\*5)
+>    \IMM		: Store an immediate value to the argument.
+>    NAME=FETCHARG : Set NAME as the argument name of FETCHARG.
+>    FETCHARG:TYPE : Set TYPE as the type of FETCHARG. Currently, basic types
+> @@ -70,6 +72,7 @@ Synopsis of kprobe_events
+>          accesses one register.
+>    (\*3) this is useful for fetching a field of data structures.
+>    (\*4) "u" means user-space dereference. See :ref:`user_mem_access`.
+> +  (\*5) +STRUCT.MEMBER(FETCHARG) is equivalent to (*(struct STRUCT *)(FETCHARG)).MEMBER
+>  
+>  Function arguments at kretprobe
+>  -------------------------------
+> diff --git a/kernel/trace/trace_btf.c b/kernel/trace/trace_btf.c
+> index 5bbdbcbbde3c..b69404451410 100644
+> --- a/kernel/trace/trace_btf.c
+> +++ b/kernel/trace/trace_btf.c
+> @@ -120,3 +120,109 @@ const struct btf_member *btf_find_struct_member(struct btf *btf,
+>  	return member;
+>  }
+>  
+> +#define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
+> +
+> +static int find_member(const char *ptr, struct btf *btf,
+> +		       const struct btf_type **type, int level)
+> +{
+> +	const struct btf_member *member;
+> +	const struct btf_type *t = *type;
+> +	int i;
+> +
+> +	/* Max of 3 depth of anonymous structures */
+> +	if (level > 3)
+> +		return -1;
 
-[62790.535502] CPU: 2 UID: 1000 PID: 1142475 Comm: perf_fuzzer Not tainted 6.16.0+ #13 PREEMPT(voluntary) 
-[62790.535505] Hardware name: Dell Inc. Precision 3660/0VJ7G2, BIOS 2.17.0 08/09/2024
-[62790.535507] Call Trace:
-[62790.535508]  <NMI>
-[62790.535509]  dump_stack_lvl+0x64/0x80
-[62790.535512]  kasan_report+0xce/0x100
-[62790.535516]  ? x86_pmu_stop+0x80/0x2b0
-[62790.535519]  kasan_check_range+0x100/0x1b0
-[62790.535521]  x86_pmu_stop+0x80/0x2b0
-[62790.535523]  __perf_event_account_interrupt+0x3a8/0x560
-[62790.535527]  __perf_event_overflow+0xf9/0xc00
-[62790.535529]  ? __pfx_perf_event_output+0x10/0x10
-[62790.535530]  ? __pfx_perf_event_update_userpage+0x10/0x10
-[62790.535533]  ? __pfx___perf_event_overflow+0x10/0x10
-[62790.535534]  ? setup_pebs_adaptive_sample_data+0x18a/0x24e0
-[62790.535537]  ? intel_pmu_save_and_restart_reload.isra.0+0x169/0x200
-[62790.535539]  intel_pmu_drain_pebs_icl+0x6da/0xc60
-[62790.535542]  ? __pfx_intel_pmu_drain_pebs_icl+0x10/0x10
-[62790.535544]  ? mutex_lock+0x81/0xe0
-[62790.535546]  ? intel_bts_disable_local+0x53/0xf0
-[62790.535551]  handle_pmi_common+0x606/0xab0
-[62790.535553]  ? __pfx_handle_pmi_common+0x10/0x10
-[62790.535554]  ? nmi_handle.part.0+0xa4/0x2e0
-[62790.535558]  ? ring_buffer_put+0x18/0x90
-[62790.535560]  ? intel_bts_interrupt+0x334/0x400
-[62790.535562]  ? __pfx_intel_bts_interrupt+0x10/0x10
-[62790.535564]  intel_pmu_handle_irq+0x1bf/0xac0
-[62790.535566]  perf_event_nmi_handler+0x3b/0x60
-[62790.535568]  nmi_handle.part.0+0xaa/0x2e0
-[62790.535570]  ? __pfx_nmi_cpu_backtrace_handler+0x10/0x10
-[62790.535572]  default_do_nmi+0x40/0x100
-[62790.535575]  exc_nmi+0x128/0x1a0
-[62790.535576]  end_repeat_nmi+0xf/0x53
-[62790.535578] RIP: 0010:kasan_check_range+0x4d/0x1b0
-[62790.535581] Code: cc cc cc 48 b8 00 00 00 00 00 00 00 ff eb 0a 48 b8 00 00 00 00 00 80 ff ff 48 39 c7 0f 82 b3 00 00 00 4c 8d 54 37 ff 48 89 fd <48> b8 00 00 00 00 00 fc ff df 4d 89 d1 48 c1 ed 03 49 c1 e9 03 48
-[62790.535583] RSP: 0018:ffff888126247c70 EFLAGS: 00000202
-[62790.535585] RAX: ffff800000000000 RBX: ffff888128d1ac08 RCX: ffffffffa18c0551
-[62790.535586] RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff888128d1ac08
-[62790.535587] RBP: ffff888128d1ac08 R08: 0000000000000001 R09: ffffed1024c48fa8
-[62790.535588] R10: ffff888128d1ac0f R11: 1ffff110ee1a51fa R12: ffff88816bce1ac0
-[62790.535589] R13: ffffed102ba8cc7f R14: dffffc0000000000 R15: ffff888128d1ac80
-[62790.535591]  ? mutex_lock+0x81/0xe0
-[62790.535592]  ? kasan_check_range+0x4d/0x1b0
-[62790.535594]  ? kasan_check_range+0x4d/0x1b0
-[62790.535596]  </NMI>
-[62790.535596]  <TASK>
-[62790.535597]  mutex_lock+0x81/0xe0
-[62790.535599]  ? __pfx_mutex_lock+0x10/0x10
-[62790.535600]  ? __pfx___perf_event_enable+0x10/0x10
-[62790.535602]  ? __pfx_event_function_call+0x10/0x10
-[62790.535603]  perf_event_ctx_lock_nested.constprop.0+0x127/0x1f0
-[62790.535605]  ? __pfx_perf_event_ctx_lock_nested.constprop.0+0x10/0x10
-[62790.535607]  ? mutex_unlock+0x82/0xd0
-[62790.535609]  ? __pfx_mutex_unlock+0x10/0x10
-[62790.535611]  ? vm_mmap_pgoff+0x2cc/0x3a0
-[62790.535614]  perf_event_task_enable+0x81/0x1f0
-[62790.535617]  __do_sys_prctl+0x98d/0x1830
-[62790.535620]  ? __pfx___do_sys_prctl+0x10/0x10
-[62790.535623]  ? fput+0x29/0x80
-[62790.535625]  do_syscall_64+0x82/0x2f0
-[62790.535628]  ? fpregs_assert_state_consistent+0x63/0xf0
-[62790.535631]  ? do_syscall_64+0xc9/0x2f0
-[62790.535633]  ? fpregs_assert_state_consistent+0x63/0xf0
-[62790.535635]  ? do_syscall_64+0xc9/0x2f0
-[62790.535637]  ? fpregs_assert_state_consistent+0x63/0xf0
-[62790.535639]  ? do_syscall_64+0xc9/0x2f0
-[62790.535641]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[62790.535642] RIP: 0033:0x7faf2c2e940d
-[62790.535644] Code: 00 48 89 44 24 18 31 c0 48 8d 44 24 60 c7 04 24 18 00 00 00 48 89 44 24 08 48 8d 44 24 20 48 89 44 24 10 b8 9d 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 1b 48 8b 54 24 18 64 48 2b 14 25 28 00 00 00
-[62790.535645] RSP: 002b:00007ffdccacc260 EFLAGS: 00000246 ORIG_RAX: 000000000000009d
-[62790.535647] RAX: ffffffffffffffda RBX: 000000000000000e RCX: 00007faf2c2e940d
-[62790.535648] RDX: 0000000000000001 RSI: 00007ffdccacc294 RDI: 0000000000000020
-[62790.535649] RBP: 00007ffdccacc2d0 R08: 00007faf2c3b2200 R09: 00007faf2c3b2260
-[62790.535650] R10: 00007faf2c3b21f4 R11: 0000000000000246 R12: 0000000000000000
-[62790.535651] R13: 00007ffdccace728 R14: 0000560c62688dd8 R15: 00007faf2c41c020
-[62790.535653]  </TASK>
-[62790.535654] ==================================================================
-[62790.535654] Disabling lock debugging due to kernel taint
+Please return an error code, maybe this is -E2BIG?
 
+> +
+> +	for_each_member(i, t, member) {
+> +		const char *tname = btf_name_by_offset(btf, member->name_off);
+> +
+> +		if (strcmp(ptr, tname) == 0) {
+> +			*type = btf_type_by_id(btf, member->type);
+> +			return BITS_ROUNDDOWN_BYTES(member->offset);
+> +		}
+> +
+> +		/* Handle anonymous structures */
+> +		if (strlen(tname))
+> +			continue;
+> +
+> +		*type = btf_type_by_id(btf, member->type);
+> +		if (btf_type_is_struct(*type)) {
+> +			int offset = find_member(ptr, btf, type, level + 1);
+> +
+> +			if (offset < 0)
+> +				continue;
+> +
+> +			return offset + BITS_ROUNDDOWN_BYTES(member->offset);
+> +		}
+> +	}
+> +
+> +	return -1;
+
+	return -ENOENT;
+
+> +}
+> +
+> +/**
+> + * btf_find_offset - Find an offset of a member for a structure
+> + * @arg: A structure name followed by one or more members
+> + * @offset_p: A pointer to where to store the offset
+> + *
+> + * Will parse @arg with the expected format of: struct.member[[.member]..]
+> + * It is delimited by '.'. The first item must be a structure type.
+> + * The next are its members. If the member is also of a structure type it
+> + * another member may follow ".member".
+> + *
+> + * Note, @arg is modified but will be put back to what it was on return.
+> + *
+> + * Returns: 0 on success and -EINVAL if no '.' is present
+> + *    or -ENXIO if the structure or member is not found.
+> + *    Returns -EINVAL if BTF is not defined.
+> + *  On success, @offset_p will contain the offset of the member specified
+> + *    by @arg.
+> + */
+> +int btf_find_offset(char *arg, long *offset_p)
+> +{
+> +	const struct btf_type *t;
+> +	struct btf *btf;
+> +	long offset = 0;
+> +	char *ptr;
+> +	int ret;
+> +	s32 id;
+> +
+> +	ptr = strchr(arg, '.');
+> +	if (!ptr)
+> +		return -EINVAL;
+
+Instead of just returning error, can't we log an error for helping user?
+
+trace_probe_log_err(BYTE_OFFSET, ERROR_CODE);
+
+The base offset is stored in ctx->offset, so you can use it.
+ERROR_CODE is defined in trace_probe.h. 
+
+Maybe you can add something like
+
+	C(BAD_STRUCT_FMT,		"Symbolic offset must be +STRUCT.MEMBER format"),\
+
+And for other cases, you can use
+
+	C(BAD_BTF_TID,		"Failed to get BTF type info."),\
+
+> +
+> +	*ptr = '\0';
+> +
+> +	id = bpf_find_btf_id(arg, BTF_KIND_STRUCT, &btf);
+> +	if (id < 0)
+> +		goto error;
+> +
+> +	/* Get BTF_KIND_FUNC type */
+> +	t = btf_type_by_id(btf, id);
+> +
+> +	/* May allow more than one member, as long as they are structures */
+> +	do {
+> +		if (!t || !btf_type_is_struct(t))
+> +			goto error;
+> +
+> +		*ptr++ = '.';
+> +		arg = ptr;
+> +		ptr = strchr(ptr, '.');
+> +		if (ptr)
+> +			*ptr = '\0';
+> +
+> +		ret = find_member(arg, btf, &t, 0);
+> +		if (ret < 0)
+> +			goto error;
+> +
+> +		offset += ret;
+> +
+> +	} while (ptr);
+> +
+> +	*offset_p = offset;
+> +	return 0;
+> +
+> +error:
+> +	if (ptr)
+> +		*ptr = '.';
+> +	return -ENXIO;
+> +}
+> diff --git a/kernel/trace/trace_btf.h b/kernel/trace/trace_btf.h
+> index 4bc44bc261e6..7b0797a6050b 100644
+> --- a/kernel/trace/trace_btf.h
+> +++ b/kernel/trace/trace_btf.h
+> @@ -9,3 +9,13 @@ const struct btf_member *btf_find_struct_member(struct btf *btf,
+>  						const struct btf_type *type,
+>  						const char *member_name,
+>  						u32 *anon_offset);
+> +
+> +#ifdef CONFIG_PROBE_EVENTS_BTF_ARGS
+> +/* Will modify arg, but will put it back before returning. */
+> +int btf_find_offset(char *arg, long *offset);
+> +#else
+> +static inline int btf_find_offset(char *arg, long *offset)
+> +{
+
+Here also should use 
+
+	C(NOSUP_BTFARG,		"BTF is not available or not supported"),	\
+
+
+Thank you,
+
+> +	return -EINVAL;
+> +}
+> +#endif
+> diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+> index 424751cdf31f..4c13e51ea481 100644
+> --- a/kernel/trace/trace_probe.c
+> +++ b/kernel/trace/trace_probe.c
+> @@ -1137,7 +1137,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
+>  
+>  	case '+':	/* deref memory */
+>  	case '-':
+> -		if (arg[1] == 'u') {
+> +		if (arg[1] == 'u' && isdigit(arg[2])) {
+>  			deref = FETCH_OP_UDEREF;
+>  			arg[1] = arg[0];
+>  			arg++;
+> @@ -1150,7 +1150,10 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
+>  			return -EINVAL;
+>  		}
+>  		*tmp = '\0';
+> -		ret = kstrtol(arg, 0, &offset);
+> +		if (arg[0] != '-' && !isdigit(*arg))
+> +			ret = btf_find_offset(arg, &offset);
+> +		else
+> +			ret = kstrtol(arg, 0, &offset);
+>  		if (ret) {
+>  			trace_probe_log_err(ctx->offset, BAD_DEREF_OFFS);
+>  			break;
+> -- 
+> 2.47.2
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
