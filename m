@@ -1,111 +1,109 @@
-Return-Path: <linux-kernel+bounces-751422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A12FB16979
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:50:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C87B1697B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:52:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9DA23A2FC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:49:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14DF618C7853
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01C923643E;
-	Wed, 30 Jul 2025 23:49:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917FD238C35;
+	Wed, 30 Jul 2025 23:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ox2tLStS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0kK/w41"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABBE31FC7D2;
-	Wed, 30 Jul 2025 23:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8F9212FB7;
+	Wed, 30 Jul 2025 23:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753919395; cv=none; b=KDHz+qp19lPQfwf/HPy8bxzKeD8i6jggW2CA06auUcVsTEsCew+nCszYQulLxZxFyYEEpRzjUlShIhkdZHleoCJticSdHx6vCA204No0TuLNlUcNub45jr1ymuP8/Q/cGZtmq9VDUmrw+vYMLE4avWSv/KLhwB3DhwkRWIe8aoM=
+	t=1753919536; cv=none; b=aCdnp6+Ib+6P/x/Vx41bpMPVaSFGizHfjYVLTw7scikfBOLJBcevbtbsvstAB2Vd8ofWtAhQ1ztmpXqRRjwpZHJlX4vOA2T4fIT1MredCuoNwI/seo7F88FNOlA4MIKM5v7bz22KkkPflMs/Rt8ZDGnLwRbX1/+TAcuJ1tz5GQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753919395; c=relaxed/simple;
-	bh=soqgUaoYhkuLAoFuRimbkAIqKM8GN8sQRRZlLMLZPAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mlVtFlQAk0gRJ9U66XYWQVDntkkXKyku2YCuhq8vfmL/9/22sqeQ/TipJNRn4WkAnYs8W9gf3Skun9+QsUMed4lCt0zC523D2BGam7uaE4N5LUNmdlBKDeX0+Ju/knuZ5C0sIbWYZO4g6v267IH5zgNmEcFbDU9weHBTEZ+kCj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ox2tLStS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753919165;
-	bh=EHFI+oN/GebQpV/BqMKEJEfQYp0rAET/jY+BuizOIuM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ox2tLStSfBwk2/kYRNfviRX09Sed+iKRj/pewIWPytS7cvud2mwA8ObAnv1fvzUsr
-	 K+Y3ZE7Y7iMUPB3IYfMtJwPIcr+lIPXGnhsUz/y0EI1P38ncOVXWs8kUZyrXIORdOA
-	 pd5Mf5z+ZDQUQpS3esU4WpSD1lOHP2gvd3UxEfC88x6GPVUrl+8vUn1mJbPF3ac7rT
-	 oSum5LNGa08T5sYWCNJXKAUEjeIUavhg5bWUZ3MxjvOWH9c90g39T2vU67PUBxiJaa
-	 oSh3/Y7nzhEAAcyzrlDONgb5QJwF8L5fA/zqXQ+1X+0Xjf7ZOW7tJ26fpUDsSfv5Q4
-	 BztOym9lMOoFQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bspkh20S1z4wcn;
-	Thu, 31 Jul 2025 09:46:04 +1000 (AEST)
-Date: Thu, 31 Jul 2025 09:49:44 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Boris Brezillon <boris.brezillon@collabora.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Frank Li <Frank.Li@nxp.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tag needs some work in the i3c tree
-Message-ID: <20250731094944.4c547f36@canb.auug.org.au>
+	s=arc-20240116; t=1753919536; c=relaxed/simple;
+	bh=zsGUwtWCHJliIuhsWXlAWg6lQCzm+yw+rRaXzComjqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eE6N65upoxgyxI8nYDm0QOviEM9wjH1SoefueuM8Vy+IweSDzzCO8aYKZ6CTpudrRuS5ZZxODJlxGJoSvbO5yx+t1yyiNuovpmHnDKQ4qhFclY9BXDDnDs5XyWQVCcCFNljIziTtLZ+zNKgy6vZIxcxBHkhmj0wbPMAVyGcX+OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0kK/w41; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBB4C4CEE3;
+	Wed, 30 Jul 2025 23:52:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753919535;
+	bh=zsGUwtWCHJliIuhsWXlAWg6lQCzm+yw+rRaXzComjqk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i0kK/w41Ne0scmqL6sqW8WL13YI3UWEFHP3kTvruANn8XbjZnEeBs7XQ2F/nX5d4D
+	 FE0vg1+I863qTxROe55DrDf7SNpTcc7rBw9AzfBERoC1vVbIXy00c3fDGR4rtChUBr
+	 8xmC+SB8E/u13/19Li2IKc/2yt0qviOBtz4cLNDAteh7XbXCqGMaljagK15Gbi0EIl
+	 gvSXhZvDdu7n4YyqkYdGLtCDWz3gmZrSK7yJ70sJrv/eV/8FLo55Oy+biIlW/LEg3u
+	 rTkX0ee0n3A1aYC5YrMhLKm1NLn1giBiW2MHGFjLzKsT5nR8itoYixpvaRvMU/kdZU
+	 ok/jbTT9CUD0g==
+Date: Wed, 30 Jul 2025 18:52:14 -0500
+From: Rob Herring <robh@kernel.org>
+To: Shiji Yang <yangshiji66@outlook.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: nvmem: add env-size property for u-boot
+ env layout
+Message-ID: <20250730235214.GA1907865-robh@kernel.org>
+References: <OSBPR01MB1670FF3930C3B1736E7EFC23BC24A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
+ <OSBPR01MB16702D6947772E526F64D63CBC24A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/GK+9NgeUB0FC9z5nQcccP.8";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <OSBPR01MB16702D6947772E526F64D63CBC24A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
 
---Sig_/GK+9NgeUB0FC9z5nQcccP.8
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Jul 30, 2025 at 09:17:47PM +0800, Shiji Yang wrote:
+> This newly introduced property allows users to declare the size of
+> the environment storage area.
 
-Hi all,
+Why do you need it to be less than the partition size? They commit msg 
+needs to explain that.
 
-In commit
+The partition size for fixed partitions in particular are purely a DT 
+construct. No reason the partition size can't always be the env size.
 
-  99008720736a ("i3c: add missing include to internal header")
-
-Fixes tag
-
-  Fixes: b7371ff9bdf7 ("i3c: master: Add inline i3c_readl_fifo() and i3c_wr=
-itel_fifo()")
-
-has these problem(s):
-
-  - Target SHA1 does not exist
-
-Maybe you meant
-
-Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() and i3c_writ=
-el_fifo()")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/GK+9NgeUB0FC9z5nQcccP.8
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiKr5gACgkQAVBC80lX
-0GyK8gf/XiYyVdcqNFOVnVb0LWzUtVQbGlye1EIunSqn/ipMYreiHzUCXvCbMHK5
-0GRQZezGBCN4D4z2mCc2+BG8tUJjSWrCls7oeOlm+jXRgS38zNh9Ty59A0exFAM4
-t4QwZWsZkMBg0SSV5gR+OD+TEzXOiOuP3Yv8WRwYA+6Cw5LypTQxO0is73EXdTbZ
-byXGCbUv3Ns1ehogO+TMGHuOCegvj8R3j/7mSaOVJw4QuYZ5Oo7ngO7pzmHxvqUm
-nk5aWmcf+wavMjrOtzZoNGiPxyzfMmEAUrtgo96DTsDBjfxeuEPx5JTF9SGB2oh2
-oFT69KVIS6OaUHEWQ4Rm9AdQYz1Eag==
-=qi5S
------END PGP SIGNATURE-----
-
---Sig_/GK+9NgeUB0FC9z5nQcccP.8--
+> Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
+> ---
+>  .../devicetree/bindings/nvmem/layouts/u-boot,env.yaml      | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml b/Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml
+> index 56a8f55d4..e0b65a53e 100644
+> --- a/Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml
+> +++ b/Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml
+> @@ -46,6 +46,12 @@ properties:
+>      type: object
+>      description: Command to use for automatic booting
+>  
+> +  env-size:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description:
+> +      Size of the environment storage area in bytes. If this property
+> +      is not defined, the default size is the partition size.
+> +
+>    ethaddr:
+>      type: object
+>      description: Ethernet interfaces base MAC address.
+> @@ -85,6 +91,7 @@ examples:
+>          env: partition@40000 {
+>              compatible = "u-boot,env";
+>              reg = <0x40000 0x10000>;
+> +            env-size = <0x1000>;
+>  
+>              mac: ethaddr {
+>                  #nvmem-cell-cells = <1>;
+> -- 
+> 2.50.0
+> 
 
