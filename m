@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-750269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD71B15957
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:11:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCF8B1595C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D33C5478A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:11:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E2EB3BFF82
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D32F01F8BA6;
-	Wed, 30 Jul 2025 07:11:03 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6437CBA33;
-	Wed, 30 Jul 2025 07:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D26224B1E;
+	Wed, 30 Jul 2025 07:12:21 +0000 (UTC)
+Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE63C21FF2B;
+	Wed, 30 Jul 2025 07:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753859463; cv=none; b=bDy8m3I8MS0VVk4AgDqWZOren1XPC3UPwf5xbzWg1pw5EA/ITz9PNx86G54X2q9NDqBT+nFyQXKe2rWi5Irk2JttYM0nclU/ym7mC5dT4REUfwHZf/krZpYadJJYAgXFCWI2/pqtzMa/Z+RumRpaqgt1oCcUVMU9jwEK6S5em28=
+	t=1753859540; cv=none; b=knn+Sm9jUrUwwlHVLCd5h45Y8TUMpaORxJ/ygjstwgLX8+GpyiMhrqb6RNjgArH5ftcE9jzM8Y2dVQ4RuetR8/4AazPx2sGRd4xUs/tM8ZukvlbILmw0GcoZjkuOjmzmeqq5QYi2La/wBKa36/7TvdcO40F5DHxH0jP07CYm+Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753859463; c=relaxed/simple;
-	bh=NSllsyQFECNSbwkNJwP6l/Zcq043LRtCs6+wqW9sfms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bmlNNh1UArCSTdsGZ4vTOoKKrKXbFo+jKQ9FRZ3SkO/HgMtHb6r/eF5wumCSJHl32tFTTdzH8cFictOildRpQNsRvDciF2cpJAj3vx6ahdCViFODpaCVgoIMeLJRD/tuEV56sciSVj/wlTKZKKh+JsQ0I3hwNQvhtELaXkWjWrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [IPV6:2a02:8084:255b:aa00:1726:a1d9:9a49:d971] (unknown [IPv6:2a02:8084:255b:aa00:1726:a1d9:9a49:d971])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id AA64F40A9F;
-	Wed, 30 Jul 2025 07:10:58 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 2a02:8084:255b:aa00:1726:a1d9:9a49:d971) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:1726:a1d9:9a49:d971]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <5124b615-3a71-4a44-a497-eea3b5964fda@arnaud-lcm.com>
-Date: Wed, 30 Jul 2025 08:10:58 +0100
+	s=arc-20240116; t=1753859540; c=relaxed/simple;
+	bh=ZuSp//kVhmATYjMaP/FNEufGoy6Pa1v9492w4C9YlHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NBW6rBQxRy+PKZAhOArdFgwSGTwpRd0vUFGUBpLuZisYo58N7EKBTd7m+ZsdQ8IAxBuSpuG9zAUde5bRQgxLO0gznJ8VIu94XK938GJ9HnZZdZQy0MZZzVxiQZdwYeGchGfQo5+II147tJcJ5qX3R4Sbh+sm0gi8eKGJkqx0q4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
+Received: (from willy@localhost)
+	by pcw.home.local (8.15.2/8.15.2/Submit) id 56U7BjvR026741;
+	Wed, 30 Jul 2025 09:11:45 +0200
+Date: Wed, 30 Jul 2025 09:11:45 +0200
+From: Willy Tarreau <w@1wt.eu>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: alchark@gmail.com, conor+dt@kernel.org, devicetree@vger.kernel.org,
+        heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-rockchip@lists.infradead.org, ziyao@disroot.org
+Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: rk3528: Add CPU frequency
+ scaling support
+Message-ID: <20250730071145.GA26734@1wt.eu>
+References: <20250727170947.GA19379@1wt.eu>
+ <20250730070026.60109-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-To: Yonghong Song <yonghong.song@linux.dev>, song@kernel.org,
- jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com,
- syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-References: <20250729165622.13794-1-contact@arnaud-lcm.com>
- <2b69e397-a457-4dba-86f1-47b7fe87ef79@linux.dev>
-Content-Language: en-US
-From: Arnaud Lecomte <contact@arnaud-lcm.com>
-In-Reply-To: <2b69e397-a457-4dba-86f1-47b7fe87ef79@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175385945951.4041.11384093926136790668@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730070026.60109-1-amadeus@jmu.edu.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 29/07/2025 23:45, Yonghong Song wrote:
->
->
-> On 7/29/25 9:56 AM, Arnaud Lecomte wrote:
->> Syzkaller reported a KASAN slab-out-of-bounds write in 
->> __bpf_get_stackid()
->> when copying stack trace data. The issue occurs when the perf trace
->>   contains more stack entries than the stack map bucket can hold,
->>   leading to an out-of-bounds write in the bucket's data array.
->> For build_id mode, we use sizeof(struct bpf_stack_build_id)
->>   to determine capacity, and for normal mode we use sizeof(u64).
->>
->> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
->> Tested-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
->> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->
-> Could you add a selftest? This way folks can easily find out what is
-> the problem and why this fix solves the issue correctly.
->
-Sure, will be done after work
-Thanks,
-Arnaud
->> ---
->> Changes in v2:
->>   - Use utilty stack_map_data_size to compute map stack map size
->> ---
->>   kernel/bpf/stackmap.c | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
->> index 3615c06b7dfa..6f225d477f07 100644
->> --- a/kernel/bpf/stackmap.c
->> +++ b/kernel/bpf/stackmap.c
->> @@ -230,7 +230,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
->>       struct bpf_stack_map *smap = container_of(map, struct 
->> bpf_stack_map, map);
->>       struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
->>       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
->> -    u32 hash, id, trace_nr, trace_len, i;
->> +    u32 hash, id, trace_nr, trace_len, i, max_depth;
->>       bool user = flags & BPF_F_USER_STACK;
->>       u64 *ips;
->>       bool hash_matches;
->> @@ -241,6 +241,12 @@ static long __bpf_get_stackid(struct bpf_map *map,
->>         trace_nr = trace->nr - skip;
->>       trace_len = trace_nr * sizeof(u64);
->> +
->> +    /* Clamp the trace to max allowed depth */
->> +    max_depth = smap->map.value_size / stack_map_data_size(map);
->> +    if (trace_nr > max_depth)
->> +        trace_nr = max_depth;
->> +
->>       ips = trace->ip + skip;
->>       hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
->>       id = hash & (smap->n_buckets - 1);
->
->
+Hi!
+
+On Wed, Jul 30, 2025 at 03:00:26PM +0800, Chukun Pan wrote:
+> Hi,
+> 
+> > It's interesting to note that 816, 1008 and 1200 MHz result in a higher
+> > frequency than configured, but upper ones result in slightly smaller
+> > frequencies (~2%, might just be a measurement error), particularly for
+> > the last one which is 6% lower.
+> 
+> Please refer to the description of this series:
+> https://lore.kernel.org/lkml/20250320100002.332720-1-amadeus@jmu.edu.cn/
+
+Yes I had read this one. I'm just getting higher differences on my
+device here.
+
+> During the discussion, it was considered that the minimum voltage should
+> be 875mV to maintain stability, so there is a deviation in the frequency
+> between 816MHz and 1200MHz.
+
+I tend to agree, especially on low voltages, where the gain in stability
+is important while the difference in consumptionis barely noticeable.
+
+> > I noticed a missing entry for 2 GHz in clk-rk3528.c so I've added it,
+> > expecting that it would solve the problem:
+> >
+> > +       RK3036_PLL_RATE(2016000000, 1, 84, 1, 1, 1, 0),
+> >
+> > But it had no effect at all, the frequency remains limited to 1896 MHz.
+> 
+> There is a comment in the bsp kernel:
+> https://github.com/rockchip-linux/kernel/blob/develop-5.10/drivers/clk/rockchip/clk-rk3528.c#L101
+> 
+> Only 408MHz and 600MHz are generated by normal PLL, the rest of the
+> CPU frequency is controlled by TF-A via SCMI.
+
+OK!
+
+> > Or maybe we could simply raise the voltage a little bit. The table above
+> > shows that at 1.15V we're close to the configured OPP and still below the
+> > stock voltage. This is not critical, but I find it a bit annoying that
+> > enabling cpufreq results in lower performance than without!
+> 
+> I also mentioned this in the cover letter. The actual frequency of 2016MHz
+> requires 1.13V ~ 1.15V. Not sure if this is safe for the rk3528 SoC.
+
+My point is that if you disable cpufreq, the CPU is running at 1.2V, which
+is even higher. I don't know why it's running at this voltage, maybe as
+the result of initializing some regulators, but that's what we're getting.
+So the question about safety of running between 1.13-1.15 resolves to
+"it's at least safer than running without cpufreq" in the current state.
+
+And as I mentioned it's clearly linux and not u-boot that is setting 1.2V,
+because under u-boot and during kernel selection and image loading, my
+board is at 0.95V. It's only once the kernel starts to boot that it bumps
+to 1.2V.
+
+So there's something to fix somewhere, either by lowering the default
+setting or by increasing the voltages in OPP, but as it is right now the
+situation is inconsistent.
+
+Regards,
+Willy
 
