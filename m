@@ -1,106 +1,142 @@
-Return-Path: <linux-kernel+bounces-751124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7B8B1657F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:28:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8ADB16587
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:31:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFA0C1AA45CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:28:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9BDB188AD9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EE02DFF18;
-	Wed, 30 Jul 2025 17:28:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8A92D836C;
+	Wed, 30 Jul 2025 17:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="YqK+RXyD"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="blp4qorU"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82CD24B26;
-	Wed, 30 Jul 2025 17:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C311B0414;
+	Wed, 30 Jul 2025 17:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753896493; cv=none; b=frTkSXBoDI9Ser0RxBoGpFITc5y24q2PLNy6htI6ieTHsBtEpuSspyC77Q74j3nh5WwKwgkyQdd2kLAtt5EK/RXwy4YyZ+YYYK+rXasQIiU1lC4bbNSmX7uZ0Y//ArD25jclkviP6SwNVaKKx+SYPoXLYBLhBA3udI199s8yQR0=
+	t=1753896682; cv=none; b=DIMNA89C9z1val6Ese77IDL+Cem/jpmYI+lvq6rgebgQNKQQtQyJAbdJWsjLQ20q9OvgKszvVUi059qLvhjk1okS9k0b9ZrFPQEiz5opi61z7JXeitKgrooyVZO0mrgQYyyOOg33bWc7vxyR9NJmyopXrgV3pzbtXs+dqfgWaPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753896493; c=relaxed/simple;
-	bh=JjmuY8DFzgMy2TKr+WyJ2EWjjp4TmyV4tQJJJKS9yi0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b/7+EToG2Hxg5W4ZdMT4NTiDP/sB9xMj1fRpkt5OpSIFH7f33CPcUw3iD9tOpPK2SWMc6ePRCo0nszY3kw+SqsmTZ4xcE9lNXFDZ7S/mx4nNJsNmb7gNd836M/0FWglpFICXMnMQosnqIJmmjPTza/VriTZwfllNF1/sDJVnnd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=YqK+RXyD; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=3Gbk3Sqo2hYVjm3I0SkL68Ub+vIB1qTw/GwnXeIdsUg=; b=YqK+RXyD9Wxm68e7UTwkeSS6Oo
-	eA4JvlofNDzHrNp5XHUrKnfNbAU7ngCMjEnKnY0wTcP5pJUbTr6Um94uSOL/mG+AaZX7salN0E6I/
-	yD/3ydQB1ICJbluAkbJk0wUMx8kl+bGbOTIrWL9Ed9yZxsZF3p3SYS/0uAyCwzbPQTKtutc5LlLOB
-	sZvrn07wxKLowKzKgqecWLEcfWgB1B+d1T2dAVKQwO/VxkHgmL2ETniJ9tBj73bubLpQYSHTOmknm
-	JD/C7WTpnhSi54vjzoFHim4Z4XLgzw30wK8ZzkJP+yuk37VpG7pUMLjPDn6ZkZbY3i13iJTpjV9Ra
-	1uPQbSQ3rDB7MyNiiP4FB+9KHPHN7+GQhLI4oOQVAhXN5Q3qPOeKJmtUo1lX3Ia7DU2bHwzNiChrc
-	OMGmZAYnMBzD1x9A3Jxc64nPcP4SHid6kGVrOMc31zKXvNXL4o791g4uookMj3O4VS94zZjycexB4
-	sZlhlGAg7VI0Vur8FbxVssN/AbjNFxjrTgw2yuzqHGcU9kzRoSOezYxlXOvAcKs8KHE87Lm+MFppl
-	4zcFQ27Ll+mH17q+apEcDWzcMmJUQf5F9SUZAkJM7FuEXWZwvkMb+PULWzm0zQtyswDSk6kApcVw0
-	dT/43jSc0cH1bEDjtLgBrVrEcTwXLaKbUeIqjdlWM=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: v9fs@lists.linux.dev, Pierre Barre <pierre@barre.sh>
-Cc: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p: Use kvmalloc for message buffers
-Date: Wed, 30 Jul 2025 19:28:02 +0200
-Message-ID: <2026737.7mX0AZtNi0@silver>
-In-Reply-To: <1fcc97fd-bf32-4ea1-82c1-74a8efb6359b@app.fastmail.com>
-References:
- <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
- <2989343.ydHz1Oe0dO@silver>
- <1fcc97fd-bf32-4ea1-82c1-74a8efb6359b@app.fastmail.com>
+	s=arc-20240116; t=1753896682; c=relaxed/simple;
+	bh=wh+OxDjm2ky6TsO+BjsktO3Xiz+K1KybX+LIivatlJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vB0aaxAOKiBNrHW8HreIdOcl2XE+0MVcrgWg4+hNOgFq73WSoS15XvLDQ43UNwEyIAwb925f7pq+MDAwPNVZy6m/4exsYAchrR6Karq92MaQckXtwtuNfxIg2Bd7Ld2ODIfKvn0Z5MMxH7dAql5Ck7rs6rSjxu5xMCDSmvchXfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=blp4qorU; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so614575e9.1;
+        Wed, 30 Jul 2025 10:31:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1753896679; x=1754501479; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DgAezQfpfvoELnWJXyHtGAEOwJomNa/aau3M286QXoc=;
+        b=blp4qorUuFv7zc99GPoSRwRMQdBBW4H8B5xUUZ5KDJywvA+HQDSXDBl5bEtj2uGLOd
+         g6SnvNgI1mdEwGz1WKmFxHhhPp4j3tsCvTEui+Eca+qvL+WSRD4Dok1xR9DtNUdEAkZU
+         mqQmeLKNJcyOUiVUPSG+kfEPn1JLF29ugI8haGFOZLwP5pRrxdn6H/nUDxtz+AnNaAk/
+         WjcyL001YNy6zsqQ4Nm0gGRJP73FfvWAPmRyNH0oKIBeBh3hzn8f0nAbzZDwZ5WRty4p
+         hP4gZdztSqdpVh9nfjffWanqtPxvqNs1iL7mWZcio336zeSiPlQPfrqJbevHuNTxvBK+
+         XTAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753896679; x=1754501479;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DgAezQfpfvoELnWJXyHtGAEOwJomNa/aau3M286QXoc=;
+        b=TkUd2Vi4egJjBgqX/G+JQ3g+b8SpkOgJqR1uuOefmAlo0sQf/YwbhdmEHdo0YKhoQU
+         UgSjedQ7oQPvHsEi17Qb4cJ+QtkFUiVpiHMD8ZHQxzjfxIiazFurc5hFYtB8can19z90
+         +TpFma6lI7SQKR/z/GD64cvpfKRb/dZOQXbRUH6eiqRtO87lv4IEHCARwsUvKNUcCAFk
+         VNAEWwFelXOJLpwwE/ZbfkclEGtBZXja8HotsLJzJHJTDqk3yBJC0ckyOIoPgSfaCplJ
+         msNX1mITwRWOiNrPFPP9X6LRytECMN0vdRvdhzirmJInN7SYpwG0k+dyUe3HmiO8Ra45
+         pNXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVPWyHMiZ1CHgn2pQgBiYksOpKl40bwF/qxpkBoeBVh9SR6xexgahr/6iao5VpBlLype01YJulU@vger.kernel.org, AJvYcCXY3wkz34C/RoT0Qw46TfqcwDBFH6sEEigbha7thPKkMp5Zt8JZ06izkSlNPoGeEKGcO6dYwP6Fx39tnOg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2mURARXhaFfx6RuS9zo5SMFO6Sxhqib2JK2G2sfs8EkVMLzmG
+	lT0qzkiGEXGtH6MftRU3CSXwFxziDGU6b2CciY2G53fBNVcI2CkGLlfslK7ZjL4=
+X-Gm-Gg: ASbGncuPwGqy6LQOx7/mXldWww69MwKN87+5cJHzKJYHiv5hEJAJqBM9APfS83FT7Nr
+	573BisUiNaWnKsoITS9Zy3TkeBFDJ3w5K7DRLjthO0Fe/Zru+Secr5nrD7wAuPevDPDb+yqfOzx
+	eBlwVTUPg+Gn3eIMJL0ARrEcFyXShfwfyp5cb99AWFizvwYYncR1nkt2fBulCn9g+OPa6tbJizB
+	Q/3Vv0ehiC1Ww60QdRj9HeeXO3SQu+j/5IMizN7lJ/l1BtTE/z8X6R5y/qlr9VDodtxUIDTKfzO
+	A9pYO5azNwUdjcCJXuW3i0v2DD66Ag1LpGIghcL/qS1XsvRnNyI00DcRGxM18e70BvI6pNgwnk9
+	CdWdmsz1buVA9PJ6Yo9Y0rrOGebaAOT+NBqysxMtF+FEw9Hl6azq4WnXVqeL09lqP8eK2fEuusq
+	A=
+X-Google-Smtp-Source: AGHT+IEtSt2YP/r84p7bemt90c5M7i6/iVLdQs6GJqDQf54Hhh+r1spT0+0cyprZiObRj5UZUJ7U+g==
+X-Received: by 2002:a5d:5f51:0:b0:3b7:8da6:1baf with SMTP id ffacd0b85a97d-3b794fd5940mr3365633f8f.16.1753896679003;
+        Wed, 30 Jul 2025 10:31:19 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2b4284.dip0.t-ipconnect.de. [91.43.66.132])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b778f04009sm16894324f8f.38.2025.07.30.10.31.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 10:31:18 -0700 (PDT)
+Message-ID: <5cc15441-1759-41f0-a987-6f2c0473340a@googlemail.com>
+Date: Wed, 30 Jul 2025 19:31:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 00/76] 6.6.101-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250730093226.854413920@linuxfoundation.org>
+Content-Language: de-DE
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20250730093226.854413920@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wednesday, July 30, 2025 6:19:37 PM CEST Pierre Barre wrote:
-> Thank you for your email.
-> 
-> > What was msize?
-> 
-> I was mounting the filesystem using:
-> 
-> trans=tcp,port=5564,version=9p2000.L,msize=1048576,cache=mmap,access=user
+Am 30.07.2025 um 11:34 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.101 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Yeah, that explains both why you were triggering this issue, as 1M msize will
-likely cause kmalloc() failures under heavy load, and why your patch was
-working for you due to chosen tcp transport.
+Built wich Clang 20.1.8 this time, boots and works fine on my 2-socket Ivy Bridge Xeon 
+E5-2697 v2 server. No dmesg oddities or regressions found.
 
-> > That would work with certain transports like fd I guess, but not via
-> > virtio-pci transport for instance, since PCI-DMA requires physical pages. Same
-> > applies to Xen transport I guess.
-> 
-> Would it be acceptable to add a mount option (like nocontig or loosealloc?) that enables kvmalloc?
-
-Dominique's call obviously, I'm just giving my few cents here. To me it would
-make sense to fix the root cause instead of shorting a symptom:
-
-Right now 9p filesystem code (under fs/9p) requires a linear buffer, whereas
-some 9p transports (under net/9p) require physical pages, and the latter is
-not going to change.
-
-One solution therefore might be changing fs/9p code to work on a scatter/
-gather list instead of a simple linear buffer. But I guess that would be too
-much work.
-
-So a more reasonable solution instead might be using kvmalloc(), as suggested
-by you, and adjusting the individual transports such that they translate a
-virtual memory address to a list of physical addresses via e.g.
-vmalloc_to_page() if needed.
-
-/Christian
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
 
+[    0.000000] Linux version 6.6.101-rc1+ (root@linus.localdomain) (clang version 20.1.8 
+(https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261), LLD 
+20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)) #1 
+SMP PREEMPT_DYNAMIC Wed Jul 30 18:47:00 CEST 2025
+[    0.000000] Command line: BOOT_IMAGE=/boot/vmlinuz-6.6.101-rc1+ 
+root=UUID=3842ebdd-e37f-4e4e-afd4-d7eb79b41984 ro quiet intel_iommu=on iommu=pt 
+vfio-pci.ids=10de:1201,10de:0e0c
+[    0.000000] KERNEL supported cpus:
+[    0.000000]   Intel GenuineIntel
+[    0.000000]   AMD AuthenticAMD
+[    0.000000]   Hygon HygonGenuine
+[    0.000000]   Centaur CentaurHauls
+[    0.000000]   zhaoxin   Shanghai
+[    0.000000] BIOS-provided physical RAM map:
+[    0.000000] BIOS-e820: [mem 0x0000000000000000-0x0000000000096fff] usable
+
+
+
+Beste Grüße,
+Peter Schneider
+
+-- 
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
+
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
