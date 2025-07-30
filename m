@@ -1,203 +1,184 @@
-Return-Path: <linux-kernel+bounces-750104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B190AB15757
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:57:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF9EB15751
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:56:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BE2E56157D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:57:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEA787AF60A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03D11A4F0A;
-	Wed, 30 Jul 2025 01:55:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD99720E702;
+	Wed, 30 Jul 2025 01:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BEMuXXvo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Va9InuCp"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C03E1D5ACE;
-	Wed, 30 Jul 2025 01:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1812046A6
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753840524; cv=none; b=sxuVLCoGQuHLj5D3CJ8y1NurDGPCF79wtDqkQ19Ws07vV/AF8fvICgsUM3Y4Du/nydbrXxIfKh1/OVsrATRajnPnlzMnkFtANLNq0R+FH0nKNfKTCc6UIifm+opjR0KLXEmMWv2Fn9YXvA/KuHfXA3Knh6xkY06SbT1+hXqcf9I=
+	t=1753840466; cv=none; b=Jfl6Q5rkbuxz4JjMpLjAFvK6JJv2MwpqY22nmS0a0Gv8+CuvYKi1zZraeSfGS3vXCPrK+8tlhTwxnEuUuotmsJepjA5zMOmzfYrS+EwBT9JqkahJyAdsoJb/09vhqmiqzHiNTc+n8MnnDX46sl1rsRRnpGtO9OkNtiCFwswoumQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753840524; c=relaxed/simple;
-	bh=6q2oS9xMDuKejqakhbNN96CcrcHUFDbaFHGFCOILUA8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K1RXgI/0mkwBXI037OXc+h3WP3z2ARqDue5tJT9hTRXpkrcyGqqWyVnWTp6ovPZYN9TWM9YnYJJbZBvntZ3ZLzqzorvuWdByfTbT3rNWLkL2c8wiufiWQ2au64HXeQy8MKl5mi2gbZIyG1k/7CSKRFMrZg0xwf5tM09TqQP3TxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BEMuXXvo; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753840522; x=1785376522;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6q2oS9xMDuKejqakhbNN96CcrcHUFDbaFHGFCOILUA8=;
-  b=BEMuXXvo5zxdwINQyn+6RcO/qQ4OVITTsQhdB4c8acyAOKmrECJYlEqM
-   S13PuOrKgFrj+Qk6eCN/xTW9x4StsSEWWXaDB0Ncojr2epW06lo0JE5f8
-   JfHPQObZ7EZFsMi/YN8EsLwLDqrRGTy1OHr9eWKVkwzluVggl7WiV2kJ9
-   59pP+dXTpwtB7iS6ixgNn7ueyhMf/2ABDgFrg/DGo0lpgJxGQ+THd+7qC
-   XYutOgQmrXqI88wsBsgNAyAx0GtqdzWC0TXWuuJ2aj8OSowvaDYnadSzY
-   JwOCqXV3P0WRNmzafrjRTCVNTfL38WFBZwzMlLxo3vhpPyIx1FCoGN1rH
-   A==;
-X-CSE-ConnectionGUID: ywQD3AdXRi+mOlcpesSCZA==
-X-CSE-MsgGUID: yN2gBMqiSj23Unt9+LngnA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="56276101"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="56276101"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 18:55:21 -0700
-X-CSE-ConnectionGUID: vriuH8aiR8aux9E1vdkrdA==
-X-CSE-MsgGUID: 9seRSIkmSkGjEB3orlvdZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="162440867"
-Received: from jiguojix-mobl.ccr.corp.intel.com (HELO [10.238.0.249]) ([10.238.0.249])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 18:54:04 -0700
-Message-ID: <88331bf6-5bfc-476b-a7cb-48596d979fe8@linux.intel.com>
-Date: Wed, 30 Jul 2025 09:54:02 +0800
+	s=arc-20240116; t=1753840466; c=relaxed/simple;
+	bh=nPJJLP1zR91c9Y7ZN8HF7eAeTILNv1bxL9VL0/fy/6A=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Jp3QQlHHpO3VWybGorPRYXcIMFjQQJA+DHrC7ZFEJqGY9vs/FTjesZliKmTUR1m7tdGzMCuLv+qMqTuFC2BpHyTBYQhE9O63Y5TjxENCcNzgRUWE+lu1rUKYD9E1WkKKspAeRCSq3sjYl3KaiEIk4zY8982BbSSjlQbyRA4RIrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Va9InuCp; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b34fa832869so357405a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:54:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753840464; x=1754445264; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=L3flim+Na7xCLw8vVOZ8w5OEJGJTOj64xaI7scCyCdg=;
+        b=Va9InuCp3r4FpkSSL9l7XB8DwN2ZwfmdFGlITrr9fdfDZjXrbmEZm9oWl0xch/4ScI
+         hKbxHJzlVL6F6B7vD9Pyc3O32ww5xvhct2//r5NErF1wGavShp0H8Z+CBKHAcmFBt5o1
+         fhJg5dLB+1ozl4247AeqyP765G/Ku2UxygPKb/9FYp8t7s8Osbv+IGeLsfn5N9kPG5pn
+         DXxdpRUZS+9EqquImECuU/PrCyMkQEyq8rMqdsmpRmMNtR4V2OVC8weKMmamwEqb7WZK
+         TcoiMT+lgNmEDczz4IlUhay0nKYKFywI8Oj+Gamf8kP5OLWV/ypEphcRV6GFSZRhE97f
+         iaeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753840464; x=1754445264;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L3flim+Na7xCLw8vVOZ8w5OEJGJTOj64xaI7scCyCdg=;
+        b=E7u46rMOfOLrpimkD+8Gr62HB9QaqgqU5xjFXXnr8utQWPOORFt5wDHfsFtTkqO/xI
+         wO5kUHoA0PP7RxV528LDX+PSxMjzADJDeLdzKLFjqXugYBvG3jC6jP3GW9mwx5kBQEqu
+         RehqlczlDcYBPRGhLo6E8DaUFciAgKof9o/MVESem5prJXGN8rtHcCT5nN2kWDEpn7ap
+         bZUVfpJXjugaXishQFz1yFTqCoLb+xr4tvyqrJGVEEAD77mzA/GfbhOu/CVOvPALdsLl
+         dX+kpd1PuGsymHypunmXb/bHbs2NfmcbnheWfZRoaUI44ooND+O4rDxHTj7TjoDXqyXK
+         jtsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEDqUGZ+qgYj4u+zMCX+2eWqdN6QRojIxiKuO6sJGaCWVX0vvWRYdqP670Fj83crYXRk5kMLoteC6+TAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8IroovCxt9U/egNsRGjrrDTM28sxlTYtHbdr10Jvq8k/cmpYw
+	9DpKD92hnmceQdskpQsEXxWOR/l34LPN6/Ctxb6GUDHhmFP34DysydyReG1m75JS7TAVsY/DCR5
+	XClOfD+RcxUYNYlHvOPhwh57ov+89x24BvTUYcQ==
+X-Google-Smtp-Source: AGHT+IGSsezyA6LC++SZ5I/UxQYHh/BgAfaZ3ltdoNiNEdtr06IoSwJQnz/o3hhQJ+ktgve5ykzzrjxSLeVPY67bFzlSZw==
+X-Received: from plkv11.prod.google.com ([2002:a17:903:1a2b:b0:240:608a:938d])
+ (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:90c:b0:231:9817:6ec1 with SMTP id d9443c01a7336-2409689f466mr22524815ad.17.1753840463916;
+ Tue, 29 Jul 2025 18:54:23 -0700 (PDT)
+Date: Tue, 29 Jul 2025 18:54:02 -0700
+In-Reply-To: <20250730015406.32569-1-isaacmanjarres@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [perf] fuzzer triggers "BUG: kernel NULL pointer dereference"
-To: Vince Weaver <vincent.weaver@maine.edu>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>
-References: <5baea1f7-6edd-d6fa-27ce-04eddb7e5199@maine.edu>
- <fdcdd5a7-76b5-6c52-63dc-95fadddf7772@maine.edu>
- <db7043a4-f815-4178-8d81-2da1dda6236e@linux.intel.com>
- <ff282f45-9f17-5790-174c-e765aae0038c@maine.edu>
- <6f2ecd8e-a041-6c0d-e4bc-7a3886b7bdd2@maine.edu>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <6f2ecd8e-a041-6c0d-e4bc-7a3886b7bdd2@maine.edu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250730015406.32569-1-isaacmanjarres@google.com>
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250730015406.32569-5-isaacmanjarres@google.com>
+Subject: [PATCH 5.10.y 4/4] selftests/memfd: add test for mapping write-sealed
+ memfd read-only
+From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
+To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
+	Shuah Khan <shuah@kernel.org>
+Cc: aliceryhl@google.com, surenb@google.com, stable@vger.kernel.org, 
+	"Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
+	Jann Horn <jannh@google.com>, Julian Orth <ju.orth@gmail.com>, 
+	"Liam R. Howlett" <Liam.Howlett@Oracle.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks the information. I would look at the issue.
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-On 7/30/2025 2:06 AM, Vince Weaver wrote:
-> On Tue, 29 Jul 2025, Vince Weaver wrote:
->
->> This is on a RaptorLake system.
->>
->> I can reproduce this issue with the perf_fuzzer but it is possibly timing 
->> sensitive and so if I enable fuzzer trace logging to try to make a 
->> reproducible test case it won't trigger anymore.
->>
->> The system locks up extremely hard and so I can't really get the panic 
->> message besides taking a picture of the screen.
->>
->> I can try enabling KASAN to see if that helps get better debug messages.
-> I managed to get KASAN to trigger the issue without crashing the system, 
-> not sure if this helps at all:
->
-> [  115.636383] ==================================================================
-> [  115.636432] BUG: KASAN: slab-use-after-free in rb_erase+0xd25/0x1370
-> [  115.636467] Read of size 8 at addr ffff8881151dc0b8 by task swapper/5/0
->
-> [  115.636508] CPU: 5 UID: 0 PID: 0 Comm: swapper/5 Not tainted 6.16.0+ #13 PREEMPT(voluntary) 
-> [  115.636517] Hardware name: Dell Inc. Precision 3660/0VJ7G2, BIOS 2.17.0 08/09/2024
-> [  115.636520] Call Trace:
-> [  115.636524]  <TASK>
-> [  115.636528]  dump_stack_lvl+0x64/0x80
-> [  115.636536]  print_report+0xce/0x650
-> [  115.636547]  ? rb_erase+0xd25/0x1370
-> [  115.636552]  kasan_report+0xce/0x100
-> [  115.636559]  ? rb_erase+0xd25/0x1370
-> [  115.636565]  rb_erase+0xd25/0x1370
-> [  115.636570]  ? __tmigr_cpu_activate+0x13d/0x310
-> [  115.636578]  timerqueue_del+0x68/0x120
-> [  115.636585]  __remove_hrtimer+0x84/0x200
-> [  115.636592]  hrtimer_try_to_cancel+0x19c/0x350
-> [  115.636597]  hrtimer_cancel+0x15/0x30
-> [  115.636602]  tick_nohz_restart_sched_tick+0x5b/0x210
-> [  115.636609]  tick_nohz_idle_exit+0xfc/0x180
-> [  115.636615]  do_idle+0x258/0x410
-> [  115.636623]  ? __pfx_do_idle+0x10/0x10
-> [  115.636631]  ? do_idle+0x2c1/0x410
-> [  115.636638]  cpu_startup_entry+0x54/0x60
-> [  115.636645]  start_secondary+0x20f/0x290
-> [  115.636654]  ? __pfx_start_secondary+0x10/0x10
-> [  115.636661]  common_startup_64+0x13e/0x141
-> [  115.636671]  </TASK>
->
-> [  115.637037] Allocated by task 1091:
-> [  115.637054]  kasan_save_stack+0x33/0x60
-> [  115.637062]  kasan_save_track+0x14/0x30
-> [  115.637069]  __kasan_slab_alloc+0x89/0x90
-> [  115.637076]  kmem_cache_alloc_node_noprof+0x136/0x450
-> [  115.637086]  perf_event_alloc+0x100/0x41e0
-> [  115.637093]  __do_sys_perf_event_open+0x39b/0x1c30
-> [  115.637098]  do_syscall_64+0x82/0x2f0
-> [  115.637105]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
-> [  115.637121] Freed by task 0:
-> [  115.637136]  kasan_save_stack+0x33/0x60
-> [  115.637143]  kasan_save_track+0x14/0x30
-> [  115.637149]  kasan_save_free_info+0x3b/0x60
-> [  115.637155]  __kasan_slab_free+0x51/0x70
-> [  115.637162]  kmem_cache_free+0x2f2/0x540
-> [  115.637167]  rcu_do_batch+0x39a/0xe00
-> [  115.637174]  rcu_core+0x3f0/0xb10
-> [  115.637180]  handle_softirqs+0x1bf/0x5d0
-> [  115.637188]  __irq_exit_rcu+0x14e/0x1a0
-> [  115.637193]  sysvec_apic_timer_interrupt+0x72/0x90
-> [  115.637201]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
->
-> [  115.637216] Last potentially related work creation:
-> [  115.637235]  kasan_save_stack+0x33/0x60
-> [  115.637242]  kasan_record_aux_stack+0xa7/0xc0
-> [  115.637248]  __call_rcu_common.constprop.0+0xc8/0x1160
-> [  115.637255]  perf_event_release_kernel+0x2f6/0x400
-> [  115.637262]  perf_release+0x31/0x50
-> [  115.637270]  __fput+0x35b/0xac0
-> [  115.637276]  task_work_run+0x11a/0x1f0
-> [  115.637282]  do_exit+0x6c6/0x2400
-> [  115.637289]  do_group_exit+0xac/0x230
-> [  115.637297]  get_signal+0x1cbc/0x1e40
-> [  115.637304]  arch_do_signal_or_restart+0x8d/0x5e0
-> [  115.637312]  irqentry_exit_to_user_mode+0x12c/0x1f0
-> [  115.637319]  asm_sysvec_reschedule_ipi+0x1a/0x20
->
-> [  115.637334] The buggy address belongs to the object at ffff8881151dbf40
->                 which belongs to the cache perf_event of size 1344
-> [  115.637376] The buggy address is located 376 bytes inside of
->                 freed 1344-byte region [ffff8881151dbf40, ffff8881151dc480)
->
-> [  115.637428] The buggy address belongs to the physical page:
-> [  115.637450] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1151d8
-> [  115.637457] head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> [  115.637461] flags: 0x17ffffc0000040(head|node=0|zone=2|lastcpupid=0x1fffff)
-> [  115.637470] page_type: f5(slab)
-> [  115.637477] raw: 0017ffffc0000040 ffff88810004b040 dead000000000122 0000000000000000
-> [  115.637483] raw: 0000000000000000 0000000000160016 00000000f5000000 0000000000000000
-> [  115.637488] head: 0017ffffc0000040 ffff88810004b040 dead000000000122 0000000000000000
-> [  115.637492] head: 0000000000000000 0000000000160016 00000000f5000000 0000000000000000
-> [  115.637497] head: 0017ffffc0000003 ffffea0004547601 00000000ffffffff 00000000ffffffff
-> [  115.637501] head: ffffffffffffffff 0000000000000000 00000000ffffffff 0000000000000008
-> [  115.637504] page dumped because: kasan: bad access detected
->
-> [  115.637517] Memory state around the buggy address:
-> [  115.637537]  ffff8881151dbf80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [  115.637564]  ffff8881151dc000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [  115.637590] >ffff8881151dc080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [  115.637615]                                         ^
-> [  115.637636]  ffff8881151dc100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [  115.637661]  ffff8881151dc180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [  115.637687] ==================================================================
-> [  115.637712] Disabling lock debugging due to kernel taint
+[ Upstream commit ea0916e01d0b0f2cce1369ac1494239a79827270 ]
+
+Now we have reinstated the ability to map F_SEAL_WRITE mappings read-only,
+assert that we are able to do this in a test to ensure that we do not
+regress this again.
+
+Link: https://lkml.kernel.org/r/a6377ec470b14c0539b4600cf8fa24bf2e4858ae.1732804776.git.lorenzo.stoakes@oracle.com
+Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Julian Orth <ju.orth@gmail.com>
+Cc: Liam R. Howlett <Liam.Howlett@Oracle.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
+---
+ tools/testing/selftests/memfd/memfd_test.c | 43 ++++++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+
+diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
+index fba322d1c67a..5d1ad547416a 100644
+--- a/tools/testing/selftests/memfd/memfd_test.c
++++ b/tools/testing/selftests/memfd/memfd_test.c
+@@ -186,6 +186,24 @@ static void *mfd_assert_mmap_shared(int fd)
+ 	return p;
+ }
+ 
++static void *mfd_assert_mmap_read_shared(int fd)
++{
++	void *p;
++
++	p = mmap(NULL,
++		 mfd_def_size,
++		 PROT_READ,
++		 MAP_SHARED,
++		 fd,
++		 0);
++	if (p == MAP_FAILED) {
++		printf("mmap() failed: %m\n");
++		abort();
++	}
++
++	return p;
++}
++
+ static void *mfd_assert_mmap_private(int fd)
+ {
+ 	void *p;
+@@ -802,6 +820,30 @@ static void test_seal_future_write(void)
+ 	close(fd);
+ }
+ 
++static void test_seal_write_map_read_shared(void)
++{
++	int fd;
++	void *p;
++
++	printf("%s SEAL-WRITE-MAP-READ\n", memfd_str);
++
++	fd = mfd_assert_new("kern_memfd_seal_write_map_read",
++			    mfd_def_size,
++			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
++
++	mfd_assert_add_seals(fd, F_SEAL_WRITE);
++	mfd_assert_has_seals(fd, F_SEAL_WRITE);
++
++	p = mfd_assert_mmap_read_shared(fd);
++
++	mfd_assert_read(fd);
++	mfd_assert_read_shared(fd);
++	mfd_fail_write(fd);
++
++	munmap(p, mfd_def_size);
++	close(fd);
++}
++
+ /*
+  * Test SEAL_SHRINK
+  * Test whether SEAL_SHRINK actually prevents shrinking
+@@ -1056,6 +1098,7 @@ int main(int argc, char **argv)
+ 
+ 	test_seal_write();
+ 	test_seal_future_write();
++	test_seal_write_map_read_shared();
+ 	test_seal_shrink();
+ 	test_seal_grow();
+ 	test_seal_resize();
+-- 
+2.50.1.552.g942d659e1b-goog
+
 
