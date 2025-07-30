@@ -1,187 +1,124 @@
-Return-Path: <linux-kernel+bounces-750544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC01B15DCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:07:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15A0FB15DC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D7CF3A4785
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:06:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2045C5A4CDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:06:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3AC275AE9;
-	Wed, 30 Jul 2025 10:06:44 +0000 (UTC)
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA6CB22F76F;
+	Wed, 30 Jul 2025 10:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D4wDNTgt"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5EB26E71A
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD6011FDA8C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753870004; cv=none; b=tJB/GfV61PsyKKHE0WWR8a4htlHR99erTwcO+idJtPREbipSenS63c3gz8MRzqLzTbMdSmbH+cnm6xaxPWcNfN/9xoLWDQmrEYymft6PKHZwy8V5ekOREI8MkQrdn+UeFw5JyALX3OL0N/KHYgWCa3aH5qz4cLHEuIg8sO32nmw=
+	t=1753870000; cv=none; b=PlgpcBnLCUIZQEpzMYnRq9kCNv7eLbnowhpPEk229mp21MZ10xmIpZcWZUwUX6bfLTi+UCZJ0cIdOFopqY8Ii5gCa1/HfsTYvPjuXRI1o5qZLETiDFhEQ1gMei3Mpf0tYgc3e71yc73Gq0ROAM0+n2hXeRrd8kjqNwxA8Tcgm5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753870004; c=relaxed/simple;
-	bh=Wu365XglTiD1XDf0deuZ6g4j72EDVPTtpoJYD/6wVls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cG9YKEhNahaNX2BL1WOF3x3eWKaLHDzvHky4QNSNxee6URpHqrxFMpApmWwgRJAbzYisxAQj2muJkij+AcXkRrX24QhjgNmzJAswAL6E+DYf1ypKvaL4RPQSW3u8hZ12cYPH63jgmQN7n50SyNuKGr/WMlc7onNyDxfYYIpqXl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1753870000; c=relaxed/simple;
+	bh=/a0rtjnyZzpJV5wKZI+rX7Cs7DvWwPsxBdWNTNBK53E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=US/Zbag+y9lIa1hxSa8wVGCxoWrhVKmDdFJIfvq8QS1NBzlmBaLQ0YZy5JsYQaHtFZvpcEyQ0SEdRZ/taWS97qsxcfufalpAeurHrHQTrdADYUnhMVrrsWzYdJ0e9bbsOUmvKeLmvOk7xWtKEzmf21r5ZnbZl4qOphrdmzfTE+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D4wDNTgt; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-88bacb82a6dso705367241.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:06:42 -0700 (PDT)
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-24041a39005so20291755ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:06:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753869998; x=1754474798; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=a3NHXtKl1WYxzEukpqzzAix9WcGat22WB22yDRcRvYU=;
+        b=D4wDNTgt6JK+9Y3dO8zJWdg6apT6TRtnztKy6e5ARDj8VIneiNj84b9EgRA9mfI6Ra
+         hWafa2/mA5Bu1x9aTsKU+q6filZ6lo0ThTlB/FlSUlyYAwHb4fE+JQxIbXqIFeySSQBR
+         /KB6SWbSOgI81IoB7ZAOnS6TZLvmnpsDwMyBuQt754PwAUvX3lTW48lQytAgvgT78wlq
+         yFl6IfJxLkMped8FZnwQY6ENXhhDJx7j/vgHCR4Q3MCy1JcCQsQgChqwW3Z2FQT2IV91
+         jV8vdtwIJTSi3nYSBpGZnFj2z+Kxg5P/JtkJbVNRN4UbwlxEUiYXKCmRCURjOct7lA6J
+         MK7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753870001; x=1754474801;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753869998; x=1754474798;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bsrA2A2QMyCV/Ikd00XgPWtG5DcZPDcgRSJ6z3M0gt8=;
-        b=tf/YNyTJDyipyRicDa1bKkYzvnxnrnJZvfEv9kqDmsqf129uhpML8HVoeJ89O/MWIZ
-         8VqeTdhSJrnbeBJfofPRfN8U65n9FaDgbqXWcMg/63M4hUXc2m0qGiV8JJtVNJAgGsNl
-         659bfFqQLfht9i8GxgVlcm46VkUmkjtwRTjgqyQ4hiMPEo/AFTATQLVqnTNhaMWy2T8s
-         ihCbit25+ztn4V+f/n7I8CdJRH3b3VNrHvu8Ht9Q2Ho8UeGD7J7fTPssJ3G0AUiU8bgm
-         PP3LR8KnVC87xFGHYk/w11DPmlaB0lWq1rDEbIdSnoAPNncmGP2Y27Aop0TYGHJkhS9H
-         W0yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUl7Jg1z9XoIsuLjcM5SMbZoRLUDQw8fXb0vL9HMNiZS7/3xr1uBKyOaAJ1jV8CLB9KzmBsHXJh3okm2kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxxAgssPVxgkLN5+gL8CYaks4PQ7brZbO4KUpB3Q2ec5Ko4cJy
-	HBPBc7SirY+rmebzmGD0Ohu2CPtXuRSe1eatA4B5+CbL3IJ9HUc4PSztb6/gP3yP
-X-Gm-Gg: ASbGncthe97xUBTegAowxM6ePRc6q8T1mbxzWuAoHfLGa/fyjQ/JlqUoHMNQUollpKJ
-	sihSImbinSSd6lwH6ZO2zjqzEOEUfwiL5jzv6lTmJ4hHkBF0EnXyOMRevpI+sXqJ36hwxo9JfkN
-	Qc8YQbp6qMU+Dj0Iu3gvTtpkz6RpvzHvIdfUyUdGfCBMaK3sC1xnWSpFIywxRli7L/DpzW47Ioy
-	LG3nHQdq3ksKPTq/L2aTxFOU3n2OWC6QM9dm8qTQqFIxX3ribo08ovZ25p/Q4bCohLsPTkXultz
-	CV0VSCTOTkfkyPkkq9oSahlye4sa+bWZehgqksDEXdwoesxaDw1y2AdrzDxjf5rQFEQdcsMbgBq
-	oR0X10Os9p4VrotPsmx50VPUQaX9AV1DUjNPPXbnbNUN9RVFqHJvk+ZfuZKfp
-X-Google-Smtp-Source: AGHT+IG7941G5mjsfkah6mu/nrw5Lt2QH3lXuZhLMGFWnSLVToP0WKd45vs34VBPdW9+MSGNXmnEHg==
-X-Received: by 2002:a05:6102:c02:b0:4e6:4e64:baeb with SMTP id ada2fe7eead31-4fbe8753cd0mr1517757137.17.1753870000953;
-        Wed, 30 Jul 2025 03:06:40 -0700 (PDT)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8dcf7645sm2355149241.20.2025.07.30.03.06.40
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 03:06:40 -0700 (PDT)
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4fbfbda957fso59349137.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:06:40 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVNEHXFzdngXO1olSANiYx7zht0svMNf3odlEHLbmh1T2yi2CQXU9SUmxlj2fHIjieOvdw5rl0gO01kPZg=@vger.kernel.org
-X-Received: by 2002:a05:6102:3c81:b0:4fb:dd65:b97f with SMTP id
- ada2fe7eead31-4fbe87dd1aamr1637733137.23.1753869999913; Wed, 30 Jul 2025
- 03:06:39 -0700 (PDT)
+        bh=a3NHXtKl1WYxzEukpqzzAix9WcGat22WB22yDRcRvYU=;
+        b=D0gdN5tJNW6/RXPLSmnJt0BeRjzEmL8nWaClAK20kbvSypJmmf+e6hL7rj3jEA666u
+         u1b0GK/89DldQt8HCZX9KpFN7azYQS4vRAbupVfIrBQKscT8dCtBh/wS/wFR+zjh6pCL
+         sj/x/N6wR355TjG6PGzPLqSTDIl3f9NDNG3URZniTLlj/+0LRRLI3oN9D3giwC3EEFHX
+         /s4rFrZoazfMHUVyKycce9MF5pC4/sf7MbpZYmJPSVzcE0U04wN28JCZ7EcPllUZ6T5R
+         RDMr1giYafUdFKcmtb8DFifuBwFvTsa1dnBiq/k+cG19+/hXdsxz7O8s/0iTaU83o7gP
+         uwPA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2IVfSz+vSCTtRYlCuQVnvqHeLP6rauQc3cEvMpe8FoRFtQkgePwM84oGM/Jv6tj4R5UZXpGpe7aVqogU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3h9xdmSuc9y6frew31jFNveT9V70W/dBrZQKMgRFSKIprGxSX
+	lzijwC9FF2TpsNpQWYdkfifMSZlrVoZJVSuOKp7ZBfgmQIJDzltgxs0E
+X-Gm-Gg: ASbGnctY+3Sx5ImujP+HKM9I2bGsxyVSFQtaUHx1BhARyULuDLJbTYRml7OTiDPfxwx
+	Bws+uPE29fBrSPa3EGS310jIUkZ8SFc34mgDkL7nifFJQ4uYiZ0qw3Iv0rN1iz3FFm/50dhINfa
+	bZ87wdt13gt58P08dpct6ttI34e1lLy+qgq7KaM0F0pK4kQXR3R2037OqML6vGRhIp0K1zLtHSw
+	emNdmBP1MSM0zVWLfU7vkjYfmrqB9fPkeysovOL8aTYIBWA3xeWisf3PSYoXY0UFGVer21LxwWW
+	T3wMc0D9iV3gmm0LmZ/qLpJcg0Qmx5dG1o4fVOyS3W1qz4kLN8mRcn2NOMJaO8G6e43rrtLHS9i
+	ulu1w2NcJySR6pM6UpkJ3AEHm4MuMNw==
+X-Google-Smtp-Source: AGHT+IGjmz171p/eMAUj0vv69q71m0C38ra0zQDkESB7ci9lp4BxyaZXgaej7D+7K682ECMo73417w==
+X-Received: by 2002:a17:902:fc50:b0:234:ef42:5d65 with SMTP id d9443c01a7336-24096c0dcf7mr38804835ad.52.1753869997911;
+        Wed, 30 Jul 2025 03:06:37 -0700 (PDT)
+Received: from localhost ([61.152.143.57])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-24007d98b25sm76878685ad.97.2025.07.30.03.06.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 03:06:37 -0700 (PDT)
+From: "mason.zhang" <masonzhang.linuxer@gmail.com>
+To: chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	masonzhang.linuxer@gmail.com
+Subject: [PATCH v2] f2fs: add error checking in do_write_page()
+Date: Wed, 30 Jul 2025 18:06:33 +0800
+Message-ID: <20250730100633.26292-1-masonzhang.linuxer@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250615131129.954975-1-kuyo.chang@mediatek.com>
-In-Reply-To: <20250615131129.954975-1-kuyo.chang@mediatek.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 Jul 2025 12:06:28 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWZHwr_nmMbVREKC9nQCYigT_gvKH3M9v+oyYqk6FLONw@mail.gmail.com>
-X-Gm-Features: Ac12FXwS-l7uHGU1oTYcgJSesd4W3K8Q8G2IZz1kbq4jmTeRDTrEyXIFWqDBxL0
-Message-ID: <CAMuHMdWZHwr_nmMbVREKC9nQCYigT_gvKH3M9v+oyYqk6FLONw@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/1] sched/deadline: Fix RT task potential starvation
- when expiry time passed
-To: Kuyo Chang <kuyo.chang@mediatek.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, jstultz <jstultz@google.com>, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Kuyo,
+Otherwise, the filesystem may unaware of potential file corruption.
 
-On Mon, 16 Jun 2025 at 14:39, Kuyo Chang <kuyo.chang@mediatek.com> wrote:
-> From: kuyo chang <kuyo.chang@mediatek.com>
->
-> [Symptom]
-> The fair server mechanism, which is intended to prevent fair starvation
-> when higher-priority tasks monopolize the CPU.
-> Specifically, RT tasks on the runqueue may not be scheduled as expected.
->
-> [Analysis]
-> ---------
-> The log "sched: DL replenish lagged too much" triggered.
->
-> By memory dump of dl_server:
-> --------------
->     curr = 0xFFFFFF80D6A0AC00 (
->       dl_server = 0xFFFFFF83CD5B1470(
->         dl_runtime = 0x02FAF080,
->         dl_deadline = 0x3B9ACA00,
->         dl_period = 0x3B9ACA00,
->         dl_bw = 0xCCCC,
->         dl_density = 0xCCCC,
->         runtime = 0x02FAF080,
->         deadline = 0x0000082031EB0E80,
->         flags = 0x0,
->         dl_throttled = 0x0,
->         dl_yielded = 0x0,
->         dl_non_contending = 0x0,
->         dl_overrun = 0x0,
->         dl_server = 0x1,
->         dl_server_active = 0x1,
->         dl_defer = 0x1,
->         dl_defer_armed = 0x0,
->         dl_defer_running = 0x1,
->         dl_timer = (
->           node = (
->             expires = 0x000008199756E700),
->           _softexpires = 0x000008199756E700,
->           function = 0xFFFFFFDB9AF44D30 = dl_task_timer,
->           base = 0xFFFFFF83CD5A12C0,
->           state = 0x0,
->           is_rel = 0x0,
->           is_soft = 0x0,
->     clock_update_flags = 0x4,
->     clock = 0x000008204A496900,
->
-> - The timer expiration time (rq->curr->dl_server->dl_timer->expires)
->   is already in the past, indicating the timer has expired.
-> - The timer state (rq->curr->dl_server->dl_timer->state) is 0.
->
-> [Suspected Root Cause]
-> --------------------
-> The relevant code flow in the throttle path of
-> update_curr_dl_se() as follows:
->
-> dequeue_dl_entity(dl_se, 0);                // the DL entity is dequeued
->
-> if (unlikely(is_dl_boosted(dl_se) || !start_dl_timer(dl_se))) {
->     if (dl_server(dl_se))                   // timer registration fails
->         enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);//enqueue immediately
->     ...
-> }
->
-> The failure of `start_dl_timer` is caused by attempting to register a
-> timer with an expiration time that is already in the past. When this
-> situation persists, the code repeatedly re-enqueues the DL entity
-> without properly replenishing or restarting the timer, resulting in RT
-> task may not be scheduled as expected.
->
-> [Proposed Solution]:
-> ------------------
-> Instead of immediately re-enqueuing the DL entity on timer registration
-> failure, this change ensures the DL entity is properly replenished and
-> the timer is restarted, preventing RT potential starvation.
->
-> Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
+Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
+---
+ fs/f2fs/segment.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Thanks, this fixes the issue I was seeing!
-
-Closes: https://lore.kernel.org/CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com
-Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+index ae1223ef648f..10aaa32defca 100644
+--- a/fs/f2fs/segment.c
++++ b/fs/f2fs/segment.c
+@@ -3936,12 +3936,17 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
+ 	int seg_type = log_type_to_seg_type(type);
+ 	bool keep_order = (f2fs_lfs_mode(fio->sbi) &&
+ 				seg_type == CURSEG_COLD_DATA);
++	int err;
+ 
+ 	if (keep_order)
+ 		f2fs_down_read(&fio->sbi->io_order_lock);
+ 
+-	if (f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
+-			&fio->new_blkaddr, sum, type, fio)) {
++	err = f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
++			&fio->new_blkaddr, sum, type, fio);
++	if (unlikely(err)) {
++		f2fs_err_ratelimited(fio->sbi,
++			"%s Failed to allocate data block, ino:%u, type:%d, err:%d",
++			__func__, fio->ino, type, err);
+ 		if (fscrypt_inode_uses_fs_layer_crypto(folio->mapping->host))
+ 			fscrypt_finalize_bounce_page(&fio->encrypted_page);
+ 		folio_end_writeback(folio);
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.48.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
