@@ -1,109 +1,102 @@
-Return-Path: <linux-kernel+bounces-750915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E763CB162B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:27:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1458FB162C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3214F7ACC23
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:25:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9161AA3048
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495072D9ECF;
-	Wed, 30 Jul 2025 14:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5469D2D9ECD;
+	Wed, 30 Jul 2025 14:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YnmuGi1u"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="cWTN2jpR"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D09D2BD582;
-	Wed, 30 Jul 2025 14:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B7C86347;
+	Wed, 30 Jul 2025 14:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753885624; cv=none; b=AtcvERuVmCTjmvcFaXF2t/9QCAHRPJinlXyNsGTBf5ObeQg7LMnrfDPFQYoL1XrhW7NP1nt8H6LouOax+6n8IniX+mrH0D3A60bGYsMwVlCn/zzzvs1MxsPDZt3XznP/JOtHy19WRSFEFdCH3Oro0uW/ddUnYwgwMZA9Lz165ZM=
+	t=1753885683; cv=none; b=Cfjl4N2HAXdaZ8WFFS+3mbvsAo9Tj4y5sWcRv7CDf37fDhwSLDTR2Q5GVzbR30Y0zL0yyPAHH83zGC1rSyXs8ubWMuhoQEsfPjw1a+liwOXY9ueVavwP2VOTg3GHKXE2RLcNbD+Uwg17Z9en3cuOy6PnL0H6f0g/GzoE5bLme1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753885624; c=relaxed/simple;
-	bh=bE094o3im5w7P13S0HeOXZd789744GBC6W3B0HmnpDw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QSM8q0iwmcWy69qhcauhnlOymtvOZOZwNVLPQ5XJ0pK/t9F9WqCR9AInon3dRRki6/+Z4a36GbnglMUAGB5QTaTWBaCSPHRZjDvIUDgd0AnrEo+dDnIhSeULFgeV+XBJH8FF29zUbcSLruH0wxVFpJFp1gDO/+DVBiFoWBEJ6iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YnmuGi1u; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753885399;
-	bh=bE094o3im5w7P13S0HeOXZd789744GBC6W3B0HmnpDw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=YnmuGi1uL2tpQPebcZywcWIzIUbAoCP1dsUkIAf4ATK0M1OmpDc5oUJ585zvr+i8O
-	 mKjrT7Pti8Vc3Xl/LmddWdx05MR4kiN4RsAQFPPOFLFBBVEUGZ40cVMtpB4m0cG1JC
-	 Z9SN2czc67l+jAkj/zNyLWI9unfoDNbVYDK/WB7t6rEO+GNr1K6l79/+frcB3lDlOz
-	 e6UFuox5qoEgVaZol8u9YDLziKBNwoQEaEhJjMa5Pz9cFmLGn2JAE+0LxISZWTlsoI
-	 d4FwFuHfNMkvJI/nk4qU4362g+/aJZIVAmbUdC0PJ9FHkqlx6rpgpulYP2GYkz/I3v
-	 uoepnAuPdvmOw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsZFL1wlSz4x6p;
-	Thu, 31 Jul 2025 00:23:18 +1000 (AEST)
-Date: Thu, 31 Jul 2025 00:26:54 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Donghoon Yu <hoony.yu@samsung.com>, Will McVicker
- <willmcvicker@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
- Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
- <peterz@infradead.org>
-Subject: Re: linux-next: build warning after merge of the clockevents tree
-Message-ID: <20250731002654.19af9458@canb.auug.org.au>
-In-Reply-To: <e8e2bc93-1639-433d-9689-d1ce9f28b877@linaro.org>
-References: <20250716160809.30045a56@canb.auug.org.au>
-	<20250729114037.03a2d884@canb.auug.org.au>
-	<e8e2bc93-1639-433d-9689-d1ce9f28b877@linaro.org>
+	s=arc-20240116; t=1753885683; c=relaxed/simple;
+	bh=DinYEeBOt6c9tCP6gCMhoCD1UZtBO8dFhn/bQEbO0ZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqIjnVozAasj1oSOb3f96ppnYXcgtMphfs0RrmF5eJmcAPk3qqfyHE6JkhxQfqqjUCKViMaXHT2tKkncXSCxQKlRtSiB88ZwAf5nYN3m4jWi6hkHmH7Z16Q+oMcd1dE5mwMmBoJeWyzEsjHZN7GP6sV2SCw4bOWU0aizs8fhm/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=cWTN2jpR; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=yDtUj+yMRtsh81u+6h/bP9XngquZjb4gJP2fgdLgwz4=; b=cWTN2jpR/c4Qfere2e1vXXQ+XT
+	5zCKpBMC8cEPGm+bXGXDKy879Hlv+AK+02omzvvOatPgBOHzef5M9GBazczm4aRGAXkeqRtA2+Ngh
+	/3osGea119Sj0dRJG2P5a14uNtjUdiOLYjhctoNMiKBCQ8tQ2/abndrl/WZKr939CzoY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uh7ma-003HoP-KT; Wed, 30 Jul 2025 16:27:52 +0200
+Date: Wed, 30 Jul 2025 16:27:52 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Michael Walle <mwalle@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Roger Quadros <rogerq@kernel.org>, Simon Horman <horms@kernel.org>,
+	Siddharth Vadapalli <s-vadapalli@ti.com>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@ew.tq-group.com
+Subject: Re: [PATCH net-next] Revert "net: ethernet: ti: am65-cpsw: fixup PHY
+ mode for fixed RGMII TX delay"
+Message-ID: <84588371-ddae-453e-8de9-2527c5e15740@lunn.ch>
+References: <20250728064938.275304-1-mwalle@kernel.org>
+ <57823bd1-265c-4d01-92d9-9019a2635301@lunn.ch>
+ <DBOD5ICCVSL1.23R4QZPSFPVSM@kernel.org>
+ <d9b845498712e2372967e40e9e7b49ddb1f864c1.camel@ew.tq-group.com>
+ <DBOEPHG2V5WY.Q47MW1V5ZJZE@kernel.org>
+ <2269f445fb233a55e63460351ab983cf3a6a2ed6.camel@ew.tq-group.com>
+ <88972e3aa99d7b9f4dd1967fbb445892829a9b47.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/HdvHeNX1UtLYp6D3caRo_AJ";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <88972e3aa99d7b9f4dd1967fbb445892829a9b47.camel@ew.tq-group.com>
 
---Sig_/HdvHeNX1UtLYp6D3caRo_AJ
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+> I can confirm that the undocumented/reserved bit switches the MAC-side TX delay
+> on and off on the J722S/AM67A.
 
-Hi Daniel,
+Thanks.
 
-On Wed, 30 Jul 2025 14:22:27 +0200 Daniel Lezcano <daniel.lezcano@linaro.or=
-g> wrote:
->
-> This should be fixed now.
->=20
-> Also the clockevent branch has been reset.
+> I have not checked if there is anything wrong with the undelayed
+> mode that might explain why TI doesn't want to support it, but
+> traffic appears to flow through the interface without issue if I
+> disable the MAC-side and enable the PHY-side delay.
 
-Thanks for both.
+I cannot say this is true for TI, but i've often had vendors say that
+they want the MAC to do the delay so you can use a PHY which does not
+implement delays. However, every single RGMII PHY driver in Linux
+supports all four RGMII modes. So it is a bit of a pointless argument.
 
---=20
-Cheers,
-Stephen Rothwell
+And MAC vendors want to make full use of the hardware they have, so
+naturally want to do the delay in the MAC because they can.
 
---Sig_/HdvHeNX1UtLYp6D3caRo_AJ
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+TI is a bit unusual in this, in that they force the delay on. So that
+adds a little bit of weight towards maybe there being a design issue
+with it turned off.
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiKK64ACgkQAVBC80lX
-0Gy4WwgAn3CVtaKNDvo3qQ7LdaCbOY96ppun5gQoA5T54f3G9Rhvn/VgdWdgajS2
-i7X4oQVHc9PDvoThreMDQp1PVL4Ey5WL2qBbqdCzxWgdd0CBHqHr1iWTWTVMPM5d
-R929REoNxQBWnhKG0wJRV4EiMIJFtPr87OuYUOIy82o7KozrYzIfIn5JWPj6RCAC
-gejC5SZE95bIQR6nLykWRlSSnHh95YOjgR1xr0psJwEbyQepw0SCV4nQuUI/T+hA
-MkSciRdsUawlGmTVoOQvAl6xGC8vnzSgCKKiiTxB+KLnEt3YjfMGJVbiCTJz2/zA
-lSPm57Qx4eKIdDfcZX6MY86LTO/Cjw==
-=vW6g
------END PGP SIGNATURE-----
-
---Sig_/HdvHeNX1UtLYp6D3caRo_AJ--
+	Andrew
 
