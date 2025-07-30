@@ -1,120 +1,209 @@
-Return-Path: <linux-kernel+bounces-750868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA1BB1620B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:57:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C97B1620F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6ACD0162B21
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:57:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 126123BE03E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851F42D8DB1;
-	Wed, 30 Jul 2025 13:57:10 +0000 (UTC)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED502D94B4;
+	Wed, 30 Jul 2025 13:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="wzSHR/bR"
+Received: from sinmsgout02.his.huawei.com (sinmsgout02.his.huawei.com [119.8.177.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FF8629DB8F;
-	Wed, 30 Jul 2025 13:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E89629DB8F;
+	Wed, 30 Jul 2025 13:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883830; cv=none; b=jCMpZrsybnQdg26hOPXL3zBn1biBp5II3baDz2YnTHWfcpthW44/oIT1avoPKwd1enUPzIkVSfWRcDFAe+FxLCEQcF6rldLL01WZLYbqX6E8elBHPTePQUpewQy8qYOgf2mOhdOecRjhlD6wDB+XfRhlRcClscmhASxpcABrb1s=
+	t=1753883842; cv=none; b=PK8YKlAGvAIxdjhqsvfhCHglC2YOUf690chA8JzPmf9ndhujI3qbgH73e2QOOLOA46KDnJTTA5M8/Olr5ydTEkfzNQclMnNApIIQbwi/C5OffAypWLwOaEZM9VvTY9Rh8wJmZkfihNWmaWFhv5qh0n6p7ze9z1wEgmAqiRC2BKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883830; c=relaxed/simple;
-	bh=pnXS+ZeQrAV806NHxF70MyvcJe+ytbXZbl1EeUCQArQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GNnS4Ua0hbPYXsoUZ7LAKHGiinyccPi8toJi+6oFNbbofcqGHzrYFzBfet+RwdJp7Wva4aVj0/Ri1tgo3xFy3JcF29gtHqfdzPL9J0roWHsGtrLOjkL10EHKYSWbi0YN6/EG8jN//0mW8AASd/7L8HhXTa9/dQLp+rHKyqSeRIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5379498da7eso681974e0c.1;
-        Wed, 30 Jul 2025 06:57:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753883827; x=1754488627;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8tXb90Hs6p9aqwd3uCfNog+BrrHi7uqFWUQ414hzBWg=;
-        b=JjJ+0vFPgZdFC44u4WvQa2Cq0sDot/hdnsicaY7TXS3DY63anrCy9f9hlGJpw4awKE
-         KM2hdznu5hvqo9TMKLKaDenHHfADsaiJWuTYIzYXdTk8EyEhYCRKqwfko+AMPCfVm6Z8
-         ghTzYCy9irRAcfkX17Xpco/MXmJ+gD94ed9KQr2RNKZ5O6E+rIlATizASqw/RFowuCnu
-         bulpjDnms3BYvgNb/LjB9VgJRyxBJcf2RnzNcegt6r07n4c+3O1HMhxMFglD0MIB9Qs2
-         Jit6zillTb9/ZihOshc0knpCex59ilUlulMUpmtr0vytwJEk0F60HrAqlfbXA8Py6SGb
-         w/+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW2GY50b4COZp/v/blrE8EIFuf9C2tT3XKH5qYowqUfUe4Ja7cHheaU50no8ApnQa6RKN5H/V4QSoejbdkmn7TMBWs=@vger.kernel.org, AJvYcCWGxS8AiTTWXIEbS43p+8x4JzLlIXyfT3SrMJIBpuxMLs+94K/belgHSehJ4sNqs6Fh6h4vfNHFsTZX@vger.kernel.org, AJvYcCXVGAitdQ/ezL3U0Qx39MR/elQU7ioUt9ICbyIqd2hIjQM18DnYJB/Hcg4bfHvYXlLmvN/zPfRLze3lmj8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZNj7sfDTa+Crn/ewAWZ5Tb8xPgNQVwcXEJYz0FqsCS4bwrT+y
-	b3hbSa4yBAnf5T+Cc0kI01BI3eCRXaM4nBlesz95WVAMpdOVmGRF5ZenD0ApT+ZW
-X-Gm-Gg: ASbGncsAeK4SoOfqH97H+TVSB944HdGhETi6/+YA7mBY09H/x2unryyKa0hIwaNGi9Z
-	vkWxMboNfdrq6jAAE8sw626MmYUV5cnUYzUglmFIWHD/3QPTav4eKH48/f/COUk62FMRKUzO7Va
-	49Tn7sxHSduPZu8fFl+bmU/6AT+GidM3tZKnqqBGCJlFz6PeACfk0hDsl0Dv4IAI7fiQKnmYRow
-	3x1qtNva/Xc4Mv2W3LKTAKBzfP5RozAmp2nzfBOlHqi0hdW5xnlvyao95V2zCjc1VQHUI6tVD8P
-	PH/quYRaB7amZb1rgSzu7ce4BJCUDOrMK4PAOzdCb4i8gxKS5IFcTqOFH9CzPqcq/9lDxp8p0Zg
-	xmDgt0JNpbJ7Gz0tI0UObnYK7tqup+YlbEHYGO3goyJs1zb6cNgfHNEjncIA/
-X-Google-Smtp-Source: AGHT+IGF+4fTgVGbY887fRxjZOiCsKawtz8flH3PkdMnJRiWOB+EN9J18XFayk4YBksdoxvob1ok1A==
-X-Received: by 2002:a05:6122:201a:b0:538:e454:ea8e with SMTP id 71dfb90a1353d-5390f5fe1ccmr4555224e0c.7.1753883826931;
-        Wed, 30 Jul 2025 06:57:06 -0700 (PDT)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-538e28ca2f0sm2749361e0c.36.2025.07.30.06.57.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 06:57:05 -0700 (PDT)
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-88ba6bb90d6so525156241.0;
-        Wed, 30 Jul 2025 06:57:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVw7/cDeLJaSECwSahl9l+An8fR3N1odvOyIHFQRlDd1QioC35IGe7xNHtBL0Xkbjaeqlp4cgoFFePxDkA=@vger.kernel.org, AJvYcCVwU2r8kVgcBx9R0LPd2RQsLwtnTzUhIrxkRD+HFpI/MmQJQB1zVXmMyCnxuygVF0TCOTwgernVovZm@vger.kernel.org, AJvYcCWweix0x9RJhj0X294XG5VJCR5EgSEaAf3mIEu/Fq0Q6qmxb1guhTuh3WDZEo1CoM35+QwIIU7Y2zGidri9MeR85pc=@vger.kernel.org
-X-Received: by 2002:a05:6102:30dc:10b0:4ef:a46d:dcaa with SMTP id
- ada2fe7eead31-4fa77918e19mr2727446137.6.1753883825406; Wed, 30 Jul 2025
- 06:57:05 -0700 (PDT)
+	s=arc-20240116; t=1753883842; c=relaxed/simple;
+	bh=uQ1UYrwH0/53F7ngVoDfjOFYxgyygQ8nxHBIBAc+/hg=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ifq66bBY8lQ9OzJwAToL9ep6M0ZZe49Ddfb0LwP0Zqxx0J0kxJfACMDWkLHsCRpCjo3N0Z3I1oR2DtwEM+oipDL/x1EjE6UQZC9ST6qrWlSXrjC7+xYyGTN1Fz7KQltByft1CtKHghVb9aGWsLza2lnH3p7gudSA41fLttoH7C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=wzSHR/bR; arc=none smtp.client-ip=119.8.177.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=PQj4hXynEm5aScbEfuGnihzcPyYwYpjxnhAnzZkYjiY=;
+	b=wzSHR/bRKg73t+PLfQ7iO6Zq73kQ7/Lfsrj6MROcP/4WS+0qD+G4leEP2nJtTb9kUVq3hodw6
+	Rd9aqWATKiKSUCAOolaWxVhD/TEwnhU/mwmOegrbxCtImjY7Lnci19txNyiVdJi3bFrCSlvQ2RA
+	QWg0entsBF7h6M4SPc4rTe8=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.35])
+	by sinmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4bsYdR0VPzz1vnKc;
+	Wed, 30 Jul 2025 21:55:38 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bsYdM1TDBz6M4Z3;
+	Wed, 30 Jul 2025 21:55:35 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 43F971401DC;
+	Wed, 30 Jul 2025 21:57:11 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Jul
+ 2025 15:57:10 +0200
+Date: Wed, 30 Jul 2025 14:57:08 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
+ Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 15/38] coco: host: arm64: Stop and destroy the
+ physical device
+Message-ID: <20250730145708.00005181@huawei.com>
+In-Reply-To: <20250728135216.48084-16-aneesh.kumar@kernel.org>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+	<20250728135216.48084-16-aneesh.kumar@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727160731.106312-2-biju.das.jz@bp.renesas.com>
- <202507301421.AmWhOZBk-lkp@intel.com> <aInjE-sduVbBRmJx@shikoro>
-In-Reply-To: <aInjE-sduVbBRmJx@shikoro>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 Jul 2025 15:56:54 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUHog6rehPFu9t99N0F-69sr1fQGWmX1sBR40=kDvD=Bg@mail.gmail.com>
-X-Gm-Features: Ac12FXxXrlohX7L8lLksOtpqFo1L0Wc-yLeqGDDQ2dNNpRDdPIsNf4pmzEDKaN4
-Message-ID: <CAMuHMdUHog6rehPFu9t99N0F-69sr1fQGWmX1sBR40=kDvD=Bg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mmc: tmio: Add 64-bit read/write support for
- SD_BUF0 in polling mode
-To: Wolfram Sang <wsa-dev@sang-engineering.com>
-Cc: kernel test robot <lkp@intel.com>, Biju <biju.das.au@gmail.com>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, llvm@lists.linux.dev, 
-	oe-kbuild-all@lists.linux.dev, Biju Das <biju.das.jz@bp.renesas.com>, 
-	linux-mmc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Wolfram,
+On Mon, 28 Jul 2025 19:21:52 +0530
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
 
-On Wed, 30 Jul 2025 at 11:17, Wolfram Sang <wsa-dev@sang-engineering.com> wrote:
-> >    In file included from drivers/mmc/host/uniphier-sd.c:21:
-> > >> drivers/mmc/host/tmio_mmc.h:249:2: error: call to undeclared function 'ioread64_rep'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-> >      249 |         ioread64_rep(host->ctl + (addr << host->bus_shift), buf, count);
-> >          |         ^
-> > >> drivers/mmc/host/tmio_mmc.h:255:2: error: call to undeclared function 'iowrite64_rep'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-> >      255 |         iowrite64_rep(host->ctl + (addr << host->bus_shift), buf, count);
-> >          |         ^
->
-> Sigh, then the guard seems to be ARM64 after all :(
+> Add support for stopping and destroying physical devices.
 
-ioread64_rep() is defined in include/asm-generic/io.h, and powerpc does
-include that.
+I think it's an odd mix to not do create and destroy in a single patch.
+Same with start and stop.
+Leaves reviewers thinking perhaps you weren't cleaning up properly
+an any error paths are much less obvious.
 
-Perhaps drivers/mmc/host/tmio_mmc.h should just include <linux/io.h>?
+> 
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  arch/arm64/include/asm/rmi_cmds.h        | 18 ++++++++++++++++++
+>  arch/arm64/include/asm/rmi_smc.h         |  2 ++
+>  drivers/virt/coco/arm-cca-host/arm-cca.c |  3 +++
+>  drivers/virt/coco/arm-cca-host/rmm-da.c  | 21 +++++++++++++++++++++
+>  drivers/virt/coco/arm-cca-host/rmm-da.h  |  1 +
+>  5 files changed, 45 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/rmi_cmds.h b/arch/arm64/include/asm/rmi_cmds.h
+> index eb0034a675bb..d4ea9f8363f5 100644
+> --- a/arch/arm64/include/asm/rmi_cmds.h
+> +++ b/arch/arm64/include/asm/rmi_cmds.h
+> @@ -547,4 +547,22 @@ static inline unsigned long rmi_pdev_communicate(unsigned long pdev_phys,
+>  	return res.a0;
+>  }
+>  
+> +static inline unsigned long rmi_pdev_stop(unsigned long pdev_phys)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_PDEV_STOP, pdev_phys, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+> +static inline unsigned long rmi_pdev_destroy(unsigned long pdev_phys)
+> +{
+> +	struct arm_smccc_res res;
+> +
+> +	arm_smccc_1_1_invoke(SMC_RMI_PDEV_DESTROY, pdev_phys, &res);
+> +
+> +	return res.a0;
+> +}
+> +
+>  #endif /* __ASM_RMI_CMDS_H */
+> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+> index 8bece465b670..9f25a876238e 100644
+> --- a/arch/arm64/include/asm/rmi_smc.h
+> +++ b/arch/arm64/include/asm/rmi_smc.h
+> @@ -49,7 +49,9 @@
+>  
+>  #define SMC_RMI_PDEV_COMMUNICATE        SMC_RMI_CALL(0x0175)
+>  #define SMC_RMI_PDEV_CREATE             SMC_RMI_CALL(0x0176)
+> +#define SMC_RMI_PDEV_DESTROY		SMC_RMI_CALL(0x0177)
+>  #define SMC_RMI_PDEV_GET_STATE		SMC_RMI_CALL(0x0178)
+> +#define SMC_RMI_PDEV_STOP		SMC_RMI_CALL(0x017c)
+>  
+>  #define RMI_ABI_MAJOR_VERSION	1
+>  #define RMI_ABI_MINOR_VERSION	0
+> diff --git a/drivers/virt/coco/arm-cca-host/arm-cca.c b/drivers/virt/coco/arm-cca-host/arm-cca.c
+> index 294a6ef60d5f..c65b81f0706f 100644
+> --- a/drivers/virt/coco/arm-cca-host/arm-cca.c
+> +++ b/drivers/virt/coco/arm-cca-host/arm-cca.c
+> @@ -210,12 +210,15 @@ static void cca_tsm_disconnect(struct pci_dev *pdev)
+>  	ide = dsc_pf0->sel_stream;
+>  	dsc_pf0->sel_stream = NULL;
+>  	pci_ide_stream_disable(pdev, ide);
+> +	rme_unassign_device(pdev);
+> +	module_put(THIS_MODULE);
+>  	tsm_ide_stream_unregister(ide);
+>  	pci_ide_stream_teardown(rp, ide);
+>  	pci_ide_stream_teardown(pdev, ide);
+>  	pci_ide_stream_unregister(ide);
+>  	clear_bit(ide->stream_id, cca_stream_ids);
+>  	pci_ide_stream_free(ide);
+> +	free_dev_communication_buffers(&dsc_pf0->comm_data);
+>  }
+>  
+>  static const struct pci_tsm_ops cca_pci_ops = {
+> diff --git a/drivers/virt/coco/arm-cca-host/rmm-da.c b/drivers/virt/coco/arm-cca-host/rmm-da.c
+> index d123940ce82e..ec8c5bfcee35 100644
+> --- a/drivers/virt/coco/arm-cca-host/rmm-da.c
+> +++ b/drivers/virt/coco/arm-cca-host/rmm-da.c
+> @@ -346,3 +346,24 @@ int schedule_rme_ide_setup(struct pci_dev *pdev)
+>  
+>  	return 0;
+>  }
+> +
+> +void rme_unassign_device(struct pci_dev *pdev)
+> +{
+> +	unsigned long ret;
+> +	unsigned long state;
+> +	phys_addr_t rmm_pdev_phys;
+> +	struct cca_host_dsc_pf0 *dsc_pf0;
+> +
+> +	dsc_pf0 = to_cca_dsc_pf0(pdev);
+> +	rmm_pdev_phys = virt_to_phys(dsc_pf0->rmm_pdev);
 
-Gr{oetje,eeting}s,
+As with previous patches, I'd set as many of these are seems reasonable at the
+variable declations.
 
-                        Geert
+> +	ret = rmi_pdev_stop(rmm_pdev_phys);
+> +	if (WARN_ON(ret != RMI_SUCCESS))
+> +		return;
+> +
+> +	state = do_pdev_communicate(pdev->tsm, RMI_PDEV_STOPPED);
+> +	/* ignore the error state and destroy the device */
+WARN_ON is rather heavy if you want to ignore it.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +	WARN_ON(state != RMI_PDEV_STOPPED);
+> +	ret = rmi_pdev_destroy(rmm_pdev_phys);
+> +	if (WARN_ON(ret != RMI_SUCCESS))
+> +		return;
+> +}
+> diff --git a/drivers/virt/coco/arm-cca-host/rmm-da.h b/drivers/virt/coco/arm-cca-host/rmm-da.h
+> index b9ddc4d9112b..c401be55d770 100644
+> --- a/drivers/virt/coco/arm-cca-host/rmm-da.h
+> +++ b/drivers/virt/coco/arm-cca-host/rmm-da.h
+> @@ -71,5 +71,6 @@ static inline struct cca_host_comm_data *to_cca_comm_data(struct pci_dev *pdev)
+>  }
+>  
+>  int rme_asign_device(struct pci_dev *pdev);
+> +void rme_unassign_device(struct pci_dev *pdev);
+>  int schedule_rme_ide_setup(struct pci_dev *pdev);
+>  #endif
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
