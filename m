@@ -1,85 +1,54 @@
-Return-Path: <linux-kernel+bounces-751051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE78B164AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:29:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 471ADB164B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC82D4E6358
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72B4188CBA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD4B2DCF63;
-	Wed, 30 Jul 2025 16:29:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C892DECAF;
+	Wed, 30 Jul 2025 16:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WqL2MU/w"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="quhF3/Ao"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2E81DFD96
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227771D2F42;
+	Wed, 30 Jul 2025 16:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753892974; cv=none; b=PbaMd+Ah54vb1L3JqE/+3sqOU/Z/XO7y89L09qJlxpfm78K43dxmnyHjdM1iY7dPjafKfMNYz+XO9B/+xJhau0AaAyrdd8Urrd52ioD1V0y2Zk7MhWHHmSxVf63IfCu3FnQ5NBh3Wd0meOTecA02Vf0yV/Vmmpn1+16FxErKxdo=
+	t=1753893024; cv=none; b=EK0Isf20oFPP9KNB+CTVVe3ApW6CEYaJR6EiMsj80/5Y/+jj1laGTgmZFeSkUta86iXKWbN+dEPUb39baxUoFak2jHii1eCSqTQMTC3JHSOeKLXG8Wd6fFiShCX54NJEN5oPUH5kRONaqw9w2H2C6Lmd9AAc1SNoO/M/lzOVFEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753892974; c=relaxed/simple;
-	bh=BUdfNCMxmJ9083VO4XvZ+Lji0j3FFNgyzr0uphmuZeo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KkT1lTSMNliDHd7GPNnWyDyOH4+K7Tmt+O6a9f3NqR1TnGDlcHjTFNlZipwKmk9HN8JAHgcg+GafBK6qQVLiJoL9KtK5eWI9Qwa1FZNmieUyhXkzQU3afLWTmUezKea5PD2Hoe6A9p+BIe5NUkrSRDS0lwy+GvsAwt501DMxFV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WqL2MU/w; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753892971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dEQXawrDSm/zTim30qZTufFHeqh0z4KbFmTdRdtP3Ts=;
-	b=WqL2MU/wnkYiq03/qgn2EnidpT/cQRHTlE49wVBi4MtlUK4BTLw3YjaE8PPj8KdqWNGaIN
-	4zfGcOVD9ccYTcVrfhZgjlXDAuK0zuf3mW8YdTBT9VkCVPW+aK2c5McpTUOHtsNDQe8aFc
-	vpbTVXamWkbqoWda1DwuSr7Yue6GUh0=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-tWjIB2H8NKqfwiUW3P1Ffw-1; Wed, 30 Jul 2025 12:29:29 -0400
-X-MC-Unique: tWjIB2H8NKqfwiUW3P1Ffw-1
-X-Mimecast-MFC-AGG-ID: tWjIB2H8NKqfwiUW3P1Ffw_1753892968
-Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-553c6367ec1so593402e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:29:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753892968; x=1754497768;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dEQXawrDSm/zTim30qZTufFHeqh0z4KbFmTdRdtP3Ts=;
-        b=FRwfbyVjIaUbRs2opXBN2nilIOUmS/JyZCS8DhGlzxcLRhtoIeALOIpCwgXZETPS+z
-         MDb1ks/8ohfwCekgWzRj2hHam5jQ1lIM846juwzs9rr7r6yiuVtjaYZcfuYUlgsBUUci
-         7/AYNeYtSirL94Q81XlKUihxnvVLPuRuSftRdyz1gLKYU2mS6/VVzIoRXMEhIRf5OhYc
-         YuHRJvagzBVnJ7+K3RrE7uGPGvqq2Ni1Q4NPQYvDfw5fOnDzRau3fXsAJbHxr7o76RWo
-         2ahpFWT2wQ+mScPDWeXorCtsmv0hduoXAVeEysPtdHT/0syq2U8YxNXKOJqBWkR25qxd
-         LW1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVfvnkewl+mRGdaWYwYjHxMIDYyRzSykwwdNOe2OjMMb+GJw44Z0d3ZYHkfb2N8UfjFSCCSS6H6JV7gC2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzp16maXmqzrjQQxtPV0ZjHNQYsu68iR+n2KvKftgwqJFD8ilxS
-	p96x82thkJaJPiPiQoziBJbEvOt4jMS67CPhwHnsAsBOvIuu4bR+gGUuYsY+TFgLLbjBVXaBbaI
-	jwqAfvMDRKTPYk30Fire7tMiEfyvKrltww+wUQr6V8WiQww2WAQoGJIs81udz7db/
-X-Gm-Gg: ASbGncuOcEjKWZqc/+j8QJlRVyJlzNxInGoDaseGQjS8YDbk+c0wQP6+izak+t90djR
-	832+fvmHyl9eRgy8ZZQ3ekhgbASxwe8SzamFYIPXwaFTrPATkCHtXlj6tqEGRbaYeyMnPlijA8j
-	gaP/TGhHfM+2ciTka28fY09SclktFfLL47nF3buIFO3op7ZTxnVlP7AH/1qKdZAoBJ2N2ptHvdd
-	Aah2QKfSlrFAQFhTrxKiLkhvKR5b/echELWqxSPgFR4MESN4oKH5ARSwcHX+eXEIyFIJqO/fNKu
-	D3d+Ok9KxiYXeS5sd+CAEe7B+88C4z/VssZfe+laAk+ZlPwS1PEw7WpYcj9XWMktvQ==
-X-Received: by 2002:a05:6512:110e:b0:550:e608:410b with SMTP id 2adb3069b0e04-55b7c05d518mr1073829e87.33.1753892967813;
-        Wed, 30 Jul 2025 09:29:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHCtSmMjqj8jYBMAEp8khqU0VrRa4oUIthwQ+vCPSkdQiuj611DDDkU8OVhVcpRR0AOxttI2g==
-X-Received: by 2002:a05:6512:110e:b0:550:e608:410b with SMTP id 2adb3069b0e04-55b7c05d518mr1073815e87.33.1753892967335;
-        Wed, 30 Jul 2025 09:29:27 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b6316db1dsm2211386e87.40.2025.07.30.09.29.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 09:29:26 -0700 (PDT)
-Message-ID: <11ee9c5e-3e74-4858-bf8d-94daf1530314@redhat.com>
-Date: Wed, 30 Jul 2025 19:29:25 +0300
+	s=arc-20240116; t=1753893024; c=relaxed/simple;
+	bh=lOMtUaYx3i8bMy9bYIr/qCsiAGICtIDD+fh3Mzcc04Y=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=AhaWKCufH5t0lWYpPRlavAndP3wsdDWxxv8pIx4hQj2kb4Oozdhg1p+y7qkhohO/WRzY4UH6dxG0mnZsk/rnA84YVPwKOx0bztr5C+8QYUakM31+q/I90QVsRC9aJ0rp3NN3KvqsfVQk1D8w1NvrRaBhGvcHp8qBFxQERDcei+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=quhF3/Ao; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753893013; x=1754497813; i=markus.elfring@web.de;
+	bh=lOMtUaYx3i8bMy9bYIr/qCsiAGICtIDD+fh3Mzcc04Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=quhF3/AoOkmBX/br0M11hZ5eg8gMFX/mcygzvlNwqMTL9xQ7yv5HlzIQnVx4WVkc
+	 WNeSSJAvgGNtbJV41pTEPUXw0yil3N1IyLQg5tQfOIAjZckFTt3aPvzyV88rgQh1I
+	 Ymh7p4CYQU4kArH9hI/cchLC4xkQ1dp5ZV9X0SKd/hGc5cTa3Q74KtCpgmTlAlgh8
+	 L6Nz7WRdn3DTKYwrRM9AuaSiYb7j31VB3TwpkXTWrrpB478V+jp3J4LPWJQzL0UOz
+	 /poKoHapug2iGyw0Ht19UjDWGDmmW+4dPwcy2tXEbGbLTKsiUQXHAXwdxN08nWihn
+	 nR5QV8+YNpUK0ArXog==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.238]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MXXRF-1vAYoc0anH-00QKeu; Wed, 30
+ Jul 2025 18:30:13 +0200
+Message-ID: <20574d0a-0a8e-4b54-afe3-8a0744df9d09@web.de>
+Date: Wed, 30 Jul 2025 18:30:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,235 +56,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 02/11] mm/thp: zone_device awareness in THP handling code
-To: Zi Yan <ziy@nvidia.com>
-Cc: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Shuah Khan <shuah@kernel.org>, David Hildenbrand <david@redhat.com>,
- Barry Song <baohua@kernel.org>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
- Peter Xu <peterx@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Jane Chu <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>,
- Donet Tom <donettom@linux.ibm.com>, Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>,
- Ralph Campbell <rcampbell@nvidia.com>
-References: <20250730092139.3890844-1-balbirs@nvidia.com>
- <20250730092139.3890844-3-balbirs@nvidia.com>
- <c2f2fe52-a358-489e-a1f2-5c0a6f5b4db5@redhat.com>
- <22D1AD52-F7DA-4184-85A7-0F14D2413591@nvidia.com>
- <F60614E1-28D1-466B-A434-7FF1061B0778@nvidia.com>
- <9f836828-4f53-41a0-b5f7-bbcd2084086e@redhat.com>
- <884b9246-de7c-4536-821f-1bf35efe31c8@redhat.com>
- <6291D401-1A45-4203-B552-79FE26E151E4@nvidia.com>
- <b62234fc-051f-4b2a-b7da-0c0959fb269b@redhat.com>
- <8E2CE1DF-4C37-4690-B968-AEA180FF44A1@nvidia.com>
- <2308291f-3afc-44b4-bfc9-c6cf0cdd6295@redhat.com>
- <9FBDBFB9-8B27-459C-8047-055F90607D60@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <9FBDBFB9-8B27-459C-8047-055F90607D60@nvidia.com>
+To: Colin Ian King <colin.i.king@gmail.com>, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, Abhinav Kumar <abhinav.kumar@linux.dev>,
+ David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
+ Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+ Simona Vetter <simona@ffwll.ch>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20250730142905.2080035-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH] drm/msm: Fix dereference of pointer minor before null
+ check
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250730142905.2080035-1-colin.i.king@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MYt42syjUbB2ixPRz8ILRnIR9ELZrqzsuVLn6eHJLa6anlgJgmV
+ nZbNwhXhaQsUDIHP3T+Q/3uRHlmvUntQku1SAxvO6m+4aytLlsPOuQBuxnH9Lenmoucrq55
+ zlNXLbrwq0Su/xLDO+yvbsNA27DLfJAUSI/q4hxk9ZfjDx2Fd6NbBxZ5SOLnjx4FE1MhDni
+ 1vSQZ7qVjSDwgrNU3oquQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oCDTdeEbe28=;2hv7EIh5M27uoZTJcjCnaOb1Mpo
+ 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
 
+=E2=80=A6
+> by dereferencing the pointer only after it has been null checked. Also
+> Replace minor->dev with dev.
 
-On 7/30/25 18:58, Zi Yan wrote:
-> On 30 Jul 2025, at 11:40, Mika Penttilä wrote:
->
->> On 7/30/25 18:10, Zi Yan wrote:
->>> On 30 Jul 2025, at 8:49, Mika Penttilä wrote:
->>>
->>>> On 7/30/25 15:25, Zi Yan wrote:
->>>>> On 30 Jul 2025, at 8:08, Mika Penttilä wrote:
->>>>>
->>>>>> On 7/30/25 14:42, Mika Penttilä wrote:
->>>>>>> On 7/30/25 14:30, Zi Yan wrote:
->>>>>>>> On 30 Jul 2025, at 7:27, Zi Yan wrote:
->>>>>>>>
->>>>>>>>> On 30 Jul 2025, at 7:16, Mika Penttilä wrote:
->>>>>>>>>
->>>>>>>>>> Hi,
->>>>>>>>>>
->>>>>>>>>> On 7/30/25 12:21, Balbir Singh wrote:
->>>>>>>>>>> Make THP handling code in the mm subsystem for THP pages aware of zone
->>>>>>>>>>> device pages. Although the code is designed to be generic when it comes
->>>>>>>>>>> to handling splitting of pages, the code is designed to work for THP
->>>>>>>>>>> page sizes corresponding to HPAGE_PMD_NR.
->>>>>>>>>>>
->>>>>>>>>>> Modify page_vma_mapped_walk() to return true when a zone device huge
->>>>>>>>>>> entry is present, enabling try_to_migrate() and other code migration
->>>>>>>>>>> paths to appropriately process the entry. page_vma_mapped_walk() will
->>>>>>>>>>> return true for zone device private large folios only when
->>>>>>>>>>> PVMW_THP_DEVICE_PRIVATE is passed. This is to prevent locations that are
->>>>>>>>>>> not zone device private pages from having to add awareness. The key
->>>>>>>>>>> callback that needs this flag is try_to_migrate_one(). The other
->>>>>>>>>>> callbacks page idle, damon use it for setting young/dirty bits, which is
->>>>>>>>>>> not significant when it comes to pmd level bit harvesting.
->>>>>>>>>>>
->>>>>>>>>>> pmd_pfn() does not work well with zone device entries, use
->>>>>>>>>>> pfn_pmd_entry_to_swap() for checking and comparison as for zone device
->>>>>>>>>>> entries.
->>>>>>>>>>>
->>>>>>>>>>> Zone device private entries when split via munmap go through pmd split,
->>>>>>>>>>> but need to go through a folio split, deferred split does not work if a
->>>>>>>>>>> fault is encountered because fault handling involves migration entries
->>>>>>>>>>> (via folio_migrate_mapping) and the folio sizes are expected to be the
->>>>>>>>>>> same there. This introduces the need to split the folio while handling
->>>>>>>>>>> the pmd split. Because the folio is still mapped, but calling
->>>>>>>>>>> folio_split() will cause lock recursion, the __split_unmapped_folio()
->>>>>>>>>>> code is used with a new helper to wrap the code
->>>>>>>>>>> split_device_private_folio(), which skips the checks around
->>>>>>>>>>> folio->mapping, swapcache and the need to go through unmap and remap
->>>>>>>>>>> folio.
->>>>>>>>>>>
->>>>>>>>>>> Cc: Karol Herbst <kherbst@redhat.com>
->>>>>>>>>>> Cc: Lyude Paul <lyude@redhat.com>
->>>>>>>>>>> Cc: Danilo Krummrich <dakr@kernel.org>
->>>>>>>>>>> Cc: David Airlie <airlied@gmail.com>
->>>>>>>>>>> Cc: Simona Vetter <simona@ffwll.ch>
->>>>>>>>>>> Cc: "Jérôme Glisse" <jglisse@redhat.com>
->>>>>>>>>>> Cc: Shuah Khan <shuah@kernel.org>
->>>>>>>>>>> Cc: David Hildenbrand <david@redhat.com>
->>>>>>>>>>> Cc: Barry Song <baohua@kernel.org>
->>>>>>>>>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>>>>>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>>>>>>>>>> Cc: Matthew Wilcox <willy@infradead.org>
->>>>>>>>>>> Cc: Peter Xu <peterx@redhat.com>
->>>>>>>>>>> Cc: Zi Yan <ziy@nvidia.com>
->>>>>>>>>>> Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
->>>>>>>>>>> Cc: Jane Chu <jane.chu@oracle.com>
->>>>>>>>>>> Cc: Alistair Popple <apopple@nvidia.com>
->>>>>>>>>>> Cc: Donet Tom <donettom@linux.ibm.com>
->>>>>>>>>>> Cc: Mika Penttilä <mpenttil@redhat.com>
->>>>>>>>>>> Cc: Matthew Brost <matthew.brost@intel.com>
->>>>>>>>>>> Cc: Francois Dugast <francois.dugast@intel.com>
->>>>>>>>>>> Cc: Ralph Campbell <rcampbell@nvidia.com>
->>>>>>>>>>>
->>>>>>>>>>> Signed-off-by: Matthew Brost <matthew.brost@intel.com>
->>>>>>>>>>> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
->>>>>>>>>>> ---
->>>>>>>>>>>  include/linux/huge_mm.h |   1 +
->>>>>>>>>>>  include/linux/rmap.h    |   2 +
->>>>>>>>>>>  include/linux/swapops.h |  17 +++
->>>>>>>>>>>  mm/huge_memory.c        | 268 +++++++++++++++++++++++++++++++++-------
->>>>>>>>>>>  mm/page_vma_mapped.c    |  13 +-
->>>>>>>>>>>  mm/pgtable-generic.c    |   6 +
->>>>>>>>>>>  mm/rmap.c               |  22 +++-
->>>>>>>>>>>  7 files changed, 278 insertions(+), 51 deletions(-)
->>>>>>>>>>>
->>>>>>>>> <snip>
->>>>>>>>>
->>>>>>>>>>> +/**
->>>>>>>>>>> + * split_huge_device_private_folio - split a huge device private folio into
->>>>>>>>>>> + * smaller pages (of order 0), currently used by migrate_device logic to
->>>>>>>>>>> + * split folios for pages that are partially mapped
->>>>>>>>>>> + *
->>>>>>>>>>> + * @folio: the folio to split
->>>>>>>>>>> + *
->>>>>>>>>>> + * The caller has to hold the folio_lock and a reference via folio_get
->>>>>>>>>>> + */
->>>>>>>>>>> +int split_device_private_folio(struct folio *folio)
->>>>>>>>>>> +{
->>>>>>>>>>> +	struct folio *end_folio = folio_next(folio);
->>>>>>>>>>> +	struct folio *new_folio;
->>>>>>>>>>> +	int ret = 0;
->>>>>>>>>>> +
->>>>>>>>>>> +	/*
->>>>>>>>>>> +	 * Split the folio now. In the case of device
->>>>>>>>>>> +	 * private pages, this path is executed when
->>>>>>>>>>> +	 * the pmd is split and since freeze is not true
->>>>>>>>>>> +	 * it is likely the folio will be deferred_split.
->>>>>>>>>>> +	 *
->>>>>>>>>>> +	 * With device private pages, deferred splits of
->>>>>>>>>>> +	 * folios should be handled here to prevent partial
->>>>>>>>>>> +	 * unmaps from causing issues later on in migration
->>>>>>>>>>> +	 * and fault handling flows.
->>>>>>>>>>> +	 */
->>>>>>>>>>> +	folio_ref_freeze(folio, 1 + folio_expected_ref_count(folio));
->>>>>>>>>> Why can't this freeze fail? The folio is still mapped afaics, why can't there be other references in addition to the caller?
->>>>>>>>> Based on my off-list conversation with Balbir, the folio is unmapped in
->>>>>>>>> CPU side but mapped in the device. folio_ref_freeeze() is not aware of
->>>>>>>>> device side mapping.
->>>>>>>> Maybe we should make it aware of device private mapping? So that the
->>>>>>>> process mirrors CPU side folio split: 1) unmap device private mapping,
->>>>>>>> 2) freeze device private folio, 3) split unmapped folio, 4) unfreeze,
->>>>>>>> 5) remap device private mapping.
->>>>>>> Ah ok this was about device private page obviously here, nevermind..
->>>>>> Still, isn't this reachable from split_huge_pmd() paths and folio is mapped to CPU page tables as a huge device page by one or more task?
->>>>> The folio only has migration entries pointing to it. From CPU perspective,
->>>>> it is not mapped. The unmap_folio() used by __folio_split() unmaps a to-be-split
->>>>> folio by replacing existing page table entries with migration entries
->>>>> and after that the folio is regarded as “unmapped”.
->>>>>
->>>>> The migration entry is an invalid CPU page table entry, so it is not a CPU
->>>> split_device_private_folio() is called for device private entry, not migrate entry afaics.
->>> Yes, but from CPU perspective, both device private entry and migration entry
->>> are invalid CPU page table entries, so the device private folio is “unmapped”
->>> at CPU side.
->> Yes both are "swap entries" but there's difference, the device private ones contribute to mapcount and refcount.
-> Right. That confused me when I was talking to Balbir and looking at v1.
-> When a device private folio is processed in __folio_split(), Balbir needed to
-> add code to skip CPU mapping handling code. Basically device private folios are
-> CPU unmapped and device mapped.
->
-> Here are my questions on device private folios:
-> 1. How is mapcount used for device private folios? Why is it needed from CPU
->    perspective? Can it be stored in a device private specific data structure?
+I suggest to separate desirable changes into another patch series.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.16#n81
 
-Mostly like for normal folios, for instance rmap when doing migrate. I think it would make
-common code more messy if not done that way but sure possible. 
-And not consuming pfns (address space) at all would have benefits.
-
-> 2. When a device private folio is mapped on device, can someone other than
->    the device driver manipulate it assuming core-mm just skips device private
->    folios (barring the CPU access fault handling)?
->
-> Where I am going is that can device private folios be treated as unmapped folios
-> by CPU and only device driver manipulates their mappings?
->
-Yes not present by CPU but mm has bookkeeping on them. The private page has no content
-someone could change while in device, it's just pfn.
-
->> Also which might confuse is that v1 of the series had only
->>   migrate_vma_split_pages()
->> which operated only on truly unmapped (mapcount wise) folios. Which was a motivation for split_unmapped_folio()..
->> Now,
->>   split_device_private_folio()
->> operates on mapcount != 0 folios.
->>
->>>
->>>> And it is called from split_huge_pmd() with freeze == false, not from folio split but pmd split.
->>> I am not sure that is the right timing of splitting a folio. The device private
->>> folio can be kept without splitting at split_huge_pmd() time.
->> Yes this doesn't look quite right, and also
->> +	folio_ref_freeze(folio, 1 + folio_expected_ref_count(folio));
-> I wonder if we need to freeze a device private folio. Can anyone other than
-> device driver change its refcount? Since CPU just sees it as an unmapped folio.
->
->> looks suspicious
->>
->> Maybe split_device_private_folio() tries to solve some corner case but maybe good to elaborate
->> more the exact conditions, there might be a better fix.
->>
->>> But from CPU perspective, a device private folio has no CPU mapping, no other
->>> CPU can access or manipulate the folio. It should be OK to split it.
->>>
->>>>> mapping, IIUC.
->>>>>
->>>>>>>>>>> +	ret = __split_unmapped_folio(folio, 0, &folio->page, NULL, NULL, true);
->>>>>>>>>> Confusing to  __split_unmapped_folio() if folio is mapped...
->>>>>>>>> From driver point of view, __split_unmapped_folio() probably should be renamed
->>>>>>>>> to __split_cpu_unmapped_folio(), since it is only dealing with CPU side
->>>>>>>>> folio meta data for split.
->
->
-> Best Regards,
-> Yan, Zi
->
-
---Mika
-
-
+Regards,
+Markus
 
