@@ -1,55 +1,89 @@
-Return-Path: <linux-kernel+bounces-750306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17234B159CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:42:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74907B159CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E544560947
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:42:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E86A560B2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20B6290BC8;
-	Wed, 30 Jul 2025 07:42:17 +0000 (UTC)
-Received: from azure-sdnproxy.icoremail.net (azure-sdnproxy.icoremail.net [4.193.249.245])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4181E7C27;
-	Wed, 30 Jul 2025 07:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.193.249.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A7A290BC4;
+	Wed, 30 Jul 2025 07:43:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GvaaMgcA"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC1C1E7C27;
+	Wed, 30 Jul 2025 07:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753861337; cv=none; b=FwWeyOF/QROMmzbI8qqtsB0JxlvDVeFRHFlfcAaShEXudl4IDizNv6cnRu6IXXGwLtwuU1IhO1boV05uUKAdknPtKB72dMHOlt89qDxF/U4AUGj8UEVhDwLQ47IxiJx3m3dcHal4sJrVYzi2ZRQ7d4ZMXmC6/mfIfSWKiJpv3iw=
+	t=1753861380; cv=none; b=f9i/nMD1w0I+ddnnFznQ6MUUzsGdSbawmUrgBELGxK242tHE0m3WgRt3UcXNY+qcNy90Lrg46aP3rCSgzknfKYc3HSCtdEKzYWYSO9WGlQoz4ylXHN9/6PVbkvvHG+RQtnIoEAoYZjfpEu0dr30hUytccTy9dTBB//sw4T8MeEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753861337; c=relaxed/simple;
-	bh=Jy5buhfNQWEdoYecamEiCJwtPxunZbYDYXWlN6ah0AE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=pO/4D1NV5uV6TloEUqPSzHC1+vlYCnhMOlEETE2QB6V5ianSFkhJXRiV1QB9eR2VsvCuIq5/gqR/QOUqXNcqn+IEZL7SAvqWvp8IgSXkLTkhqjj+/ZDpWqw3yoWjEXxM5+zO+A420FMtangNtOJUXKKYMu7CR383QrwxGL7PKso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=4.193.249.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from E0004758DT.eswin.cn (unknown [10.12.96.83])
-	by app2 (Coremail) with SMTP id TQJkCgBn+ZLGzIlo8OC4AA--.27051S2;
-	Wed, 30 Jul 2025 15:41:59 +0800 (CST)
-From: zhangsenchuan@eswincomputing.com
-To: gregkh@linuxfoundation.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	s=arc-20240116; t=1753861380; c=relaxed/simple;
+	bh=If9gNpv4iuv5ZBX6KjGQdiCeXynHnG/2N5eb6pRWKTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i1w8p68uyl8HibCscOmznHR9TjBscUlarFNbi35YSKudfVD0pVlbkRTcXuOaD/QoFYX4QcUMMOrL2Jbz+SiPhGhT6pULHZlSrH3wcKPV/f01AwNKh5yC6N3rO7sirPGKKBgdYs16mGmSHL0BXBNRu/wZst5jBDm287kFyrB+EI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GvaaMgcA; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a575a988f9so3480690f8f.0;
+        Wed, 30 Jul 2025 00:42:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753861377; x=1754466177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=chG+U92YJTb/06zPnc4uKR/tZueFYP4V4J7hoK/qdXo=;
+        b=GvaaMgcAftupl5aEfKYvU/wUS4yBRquRprZqaSoTxaCjDsQEyhFJ1gAFVsqno/GjY2
+         g8KSLS3hdbzWQp9YCHmdOIWDciGX5DBRLb4UZ8Z10Eg5iXY84Ir6PakhZR0MQqgzgJgR
+         +tEnAKqTzhAsczU9uZoqjjJsKx8KvNyCuuC+oyu6A9QPJjZM/y3dN7Jc9RgsLEqvTReL
+         f8RYmNDEGWMLQae30ptIlMEOUuL9eODyZ1m3cckXpbNtPhqCfDAfxT1e/oSn5QZbclyS
+         26dnVYSMPtIEgCgrboMJPApLwUdU+D6PJppetwtaiQgk607D7qn1sCMuiUrY8TaIjPUl
+         1Vkg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753861377; x=1754466177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=chG+U92YJTb/06zPnc4uKR/tZueFYP4V4J7hoK/qdXo=;
+        b=vBnjzvmMN1yg+jHWTWwjDhhkc16YO5HzBbT2absScSUgVbfrVpxbNSDnVEcp+9Cvf7
+         1bOCBn4Hcw6fHedylSutk63gI8COll/hh7UHimc7jMJclVahiZWIxCjrC8XS3EnHf2D0
+         2Ojie+qDrOPHqgaMMqTiDfJWk18+uhhPMdytQ3kEXADZuA/YXFcEExSekOZRd/dJTbMl
+         NP3Lf2syJBYBfiOCKaVpN2O6bYJnElPpY5H1ZuoOs3mzt9uFNPS72O8gyCobR2HH9mdq
+         CCIctW4EXLJLNk8ED9cZ87maNPeHupo15wX5KP2jPqaRHB6ECz44RBaTpSxA62bfaK/B
+         iwjg==
+X-Forwarded-Encrypted: i=1; AJvYcCULfXf5c4Gk9LQL6fgmvuP38MuKnnQauLNV4sRV0eHPbDV6NLARPiEmjJknQeTYl8vS4trgtoLLuCpkci3y@vger.kernel.org, AJvYcCUh5gUav7B6OuUUJhwGHSMXcp/Gxrer/8xrTNf381qxHs6uzSByMvxj3B4FmSa6VcEpLOylcIFwRt+L@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc5aLvZO6MsU7QW1ZszWZRw/osdXxltL7tIV2eHSpNYGS5S3O8
+	b0nBdesTCS+Xye+c5hhK511F8pTMW4JlXCjPw+I+yfo4zafAdp6Px2Qk
+X-Gm-Gg: ASbGncuPh4TKzpTQfZjF8raidP+h5ytO56Djuuw1nvNgHiy3I2+kaZ6uI7PEddJFyRv
+	EXSc3cAlYQ/dJnknnTIyCjXIJDiP+19bULROhEKaZqA4Zboj9AbXfZyIPYseN6em7u5V+1mvygK
+	5/Q9gULAvP7Bpm7jyn83bbj+45TtNVgrWotYuUYyp5Pk3CD7TP2TE9CQNRtyf0uNCvjQhj3gRbm
+	t9tfhPMhS9QCxPkTYccO6vjGWrbN5S1mt3AjPMxj3oLgPWsX2FxnFmoKO9pMZyxU0pCJxusSXqX
+	FosbLOwQoXpU0atuWF9jAGMbnYXiPQW4uIZW/eBEsqkahzD4It6DoVmM2RNDtos+gq97qph9E2K
+	M1NJFIv09YABKY8NST7HjveMCfsfM0Jafb28rLj9eIBocuQ00BiGVbca7eVxZa+eoK8l4qjjYcU
+	y8TpNvOmXP
+X-Google-Smtp-Source: AGHT+IGL8/AcxTOI0rdRbKser4vIAzAAFwvdC4/eIKFajFt1OS3n+7CpNkbdjokahJIUyITvnfm8Ug==
+X-Received: by 2002:a05:6000:2212:b0:3a4:e841:b236 with SMTP id ffacd0b85a97d-3b794ff34f3mr1712839f8f.33.1753861376651;
+        Wed, 30 Jul 2025 00:42:56 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953eaed4sm14783835e9.27.2025.07.30.00.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 00:42:56 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	Thinh.Nguyen@synopsys.com,
-	p.zabel@pengutronix.de
-Cc: ningyu@eswincomputing.com,
-	linmin@eswincomputing.com,
-	yangwei1@eswincomputing.com,
-	pinkesh.vaghela@einfochips.com,
-	Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-Subject: [PATCH v2 2/2] usb: dwc3: eic7700: Add EIC7700 USB driver
-Date: Wed, 30 Jul 2025 15:41:55 +0800
-Message-ID: <20250730074156.1600-1-zhangsenchuan@eswincomputing.com>
-X-Mailer: git-send-email 2.49.0.windows.1
-In-Reply-To: <20250730073953.1623-1-zhangsenchuan@eswincomputing.com>
-References: <20250730073953.1623-1-zhangsenchuan@eswincomputing.com>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] arm64: dts: exynos2200: introduce serial busses, except spi
+Date: Wed, 30 Jul 2025 10:42:48 +0300
+Message-ID: <20250730074253.1884111-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,283 +91,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:TQJkCgBn+ZLGzIlo8OC4AA--.27051S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFW8Jw47Xw1rWryrWw4fGrg_yoW3JFy3pF
-	4UJFy5KrZ3Gr4xXw4fAF1v9F4rJw40gFy8JrWIg3Zruw18tas7XF1kKFyYgFn8AFn8JFy5
-	JF4DKayFkF4Y9rJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBv14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
-	Y2ka0xkIwI1lw4CEc2x0rVAKj4xxMxkF7I0En4kS14v26r1q6r43MxkIecxEwVCm-wCF04
-	k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18
-	MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr4
-	1lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1l
-	IxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4
-	A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHCJQUUUUU=
-X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/
 
-From: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
+Hey, folks!
 
-Add the eic7700 usb driver, which is responsible for
-identifying,configuring and connecting usb devices.
+Before anything, this patchset only has binding dependencies, without
+which it will have undocumented compatibles. They are the following:
 
-Co-developed-by: Wei Yang <yangwei1@eswincomputing.com>
-Signed-off-by: Wei Yang <yangwei1@eswincomputing.com>
-Signed-off-by: Senchuan Zhang <zhangsenchuan@eswincomputing.com>
----
- drivers/usb/dwc3/Kconfig        |  11 ++
- drivers/usb/dwc3/Makefile       |   1 +
- drivers/usb/dwc3/dwc3-eic7700.c | 207 ++++++++++++++++++++++++++++++++
- 3 files changed, 219 insertions(+)
- create mode 100644 drivers/usb/dwc3/dwc3-eic7700.c
+[1] - https://lore.kernel.org/all/20250730072730.1882549-1-ivo.ivanov.ivanov1@gmail.com/
 
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 310d182e10b5..19657cfb5d08 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -189,4 +189,15 @@ config USB_DWC3_RTK
- 	  or dual-role mode.
- 	  Say 'Y' or 'M' if you have such device.
- 
-+config USB_DWC3_EIC7700
-+	tristate "Eswin Platforms"
-+	depends on OF
-+	depends on USB=y || USB=USB_DWC3
-+	default USB_DWC3
-+	help
-+	  The usb controller on eic7700 SoC.
-+	  support of USB2/3 functionality
-+	  in Eswin platforms.
-+	  say 'Y' or 'M' if you have one such device.
-+
- endif
-diff --git a/drivers/usb/dwc3/Makefile b/drivers/usb/dwc3/Makefile
-index 830e6c9e5fe0..05f582103f8b 100644
---- a/drivers/usb/dwc3/Makefile
-+++ b/drivers/usb/dwc3/Makefile
-@@ -57,3 +57,4 @@ obj-$(CONFIG_USB_DWC3_IMX8MP)		+= dwc3-imx8mp.o
- obj-$(CONFIG_USB_DWC3_XILINX)		+= dwc3-xilinx.o
- obj-$(CONFIG_USB_DWC3_OCTEON)		+= dwc3-octeon.o
- obj-$(CONFIG_USB_DWC3_RTK)		+= dwc3-rtk.o
-+obj-$(CONFIG_USB_DWC3_EIC7700)		+= dwc3-eic7700.o
-diff --git a/drivers/usb/dwc3/dwc3-eic7700.c b/drivers/usb/dwc3/dwc3-eic7700.c
-new file mode 100644
-index 000000000000..337f6c1cbe66
---- /dev/null
-+++ b/drivers/usb/dwc3/dwc3-eic7700.c
-@@ -0,0 +1,207 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Eswin Specific Glue layer
-+ *
-+ * Copyright 2025, Beijing ESWIN Computing Technology Co., Ltd.
-+ *
-+ * Authors: Wei Yang <yangwei1@eswincomputing.com>
-+ *          Senchuan Zhang <zhangsenchuan@eswincomputing.com>
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/platform_device.h>
-+#include <linux/clk.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/reset.h>
-+#include <linux/usb.h>
-+#include <linux/pm.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/regmap.h>
-+
-+#define HSP_USB_VBUS_FSEL 0x2a
-+#define HSP_USB_MPLL_DEFAULT 0x0
-+
-+#define HSP_USB_BUS_FILTER_EN (0x1 << 0)
-+#define HSP_USB_BUS_CLKEN_GM (0x1 << 9)
-+#define HSP_USB_BUS_CLKEN_GS (0x1 << 16)
-+#define HSP_USB_BUS_SW_RST (0x1 << 24)
-+#define HSP_USB_BUS_CLK_EN (0x1 << 28)
-+
-+#define HSP_USB_AXI_LP_XM_CSYSREQ (0x1 << 0)
-+#define HSP_USB_AXI_LP_XS_CSYSREQ (0x1 << 16)
-+
-+struct dwc3_eswin {
-+	int num_clks;
-+	struct device *dev;
-+	struct clk_bulk_data *clks;
-+	struct reset_control *vaux_rst;
-+};
-+
-+static int dwc_usb_clk_init(struct device *dev)
-+{
-+	struct regmap *regmap;
-+	u32 hsp_usb_bus;
-+	u32 hsp_usb_axi_lp;
-+	u32 hsp_usb_vbus_freq;
-+	u32 hsp_usb_mpll;
-+	u32 args[4];
-+
-+	regmap = syscon_regmap_lookup_by_phandle_args(dev->of_node,
-+						      "eswin,hsp-sp-csr", 4,
-+						      args);
-+	if (IS_ERR(regmap)) {
-+		dev_err(dev, "No hsp-sp-csr phandle specified\n");
-+		return PTR_ERR(regmap);
-+	}
-+
-+	hsp_usb_bus       = args[0];
-+	hsp_usb_axi_lp    = args[1];
-+	hsp_usb_vbus_freq = args[2];
-+	hsp_usb_mpll      = args[3];
-+
-+	/*
-+	 * usb clock init
-+	 * ref clock is 24M, below need to be set to satisfy
-+	 * usb phy requirement(125M)
-+	 */
-+	regmap_write(regmap, hsp_usb_vbus_freq, HSP_USB_VBUS_FSEL);
-+	regmap_write(regmap, hsp_usb_mpll, HSP_USB_MPLL_DEFAULT);
-+	/*
-+	 * reset usb core and usb phy
-+	 */
-+	regmap_write(regmap, hsp_usb_bus, HSP_USB_BUS_FILTER_EN |
-+		     HSP_USB_BUS_CLKEN_GM | HSP_USB_BUS_CLKEN_GS |
-+		     HSP_USB_BUS_SW_RST | HSP_USB_BUS_CLK_EN);
-+	regmap_write(regmap, hsp_usb_axi_lp, HSP_USB_AXI_LP_XM_CSYSREQ |
-+		     HSP_USB_AXI_LP_XS_CSYSREQ);
-+
-+	return 0;
-+}
-+
-+static int dwc3_eswin_probe(struct platform_device *pdev)
-+{
-+	struct dwc3_eswin *eswin;
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	int ret;
-+
-+	eswin = devm_kzalloc(dev, sizeof(*eswin), GFP_KERNEL);
-+	if (!eswin)
-+		return -ENOMEM;
-+
-+	eswin->dev = dev;
-+	platform_set_drvdata(pdev, eswin);
-+
-+	eswin->num_clks = devm_clk_bulk_get_all_enabled(dev, &eswin->clks);
-+	if (eswin->num_clks < 0)
-+		return dev_err_probe(dev, eswin->num_clks,
-+				     "Failed to get usb clocks\n");
-+
-+	eswin->vaux_rst = devm_reset_control_get(dev, "vaux");
-+	if (IS_ERR(eswin->vaux_rst))
-+		return dev_err_probe(dev, PTR_ERR(eswin->vaux_rst),
-+				     "Failed to get vaux reset\n");
-+
-+	ret = reset_control_deassert(eswin->vaux_rst);
-+	if (ret)
-+		return dev_err_probe(eswin->dev, ret,
-+				     "Failed to deassert reset\n");
-+
-+	ret = dwc_usb_clk_init(dev);
-+	if (ret) {
-+		dev_err(eswin->dev, "Failed to clk init: %d\n", ret);
-+		goto reset_assert;
-+	}
-+
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0) {
-+		dev_err(dev, "get_sync failed with err %d\n", ret);
-+		goto disable_pm;
-+	}
-+
-+	/* Allocate and initialize the core */
-+	ret = of_platform_populate(np, NULL, NULL, dev);
-+	if (ret) {
-+		dev_err(dev, "failed to create dwc3 core: %d\n", ret);
-+		goto put_pm;
-+	}
-+
-+	return ret;
-+
-+put_pm:
-+	pm_runtime_put_sync(dev);
-+disable_pm:
-+	pm_runtime_disable(dev);
-+reset_assert:
-+	reset_control_assert(eswin->vaux_rst);
-+
-+	return ret;
-+}
-+
-+static void dwc3_eswin_remove(struct platform_device *pdev)
-+{
-+	struct dwc3_eswin *eswin = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
-+
-+	of_platform_depopulate(dev);
-+
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
-+	reset_control_assert(eswin->vaux_rst);
-+}
-+
-+static int __maybe_unused dwc3_eswin_runtime_suspend(struct device *dev)
-+{
-+	struct dwc3_eswin *eswin = dev_get_drvdata(dev);
-+
-+	clk_bulk_disable_unprepare(eswin->num_clks, eswin->clks);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused dwc3_eswin_runtime_resume(struct device *dev)
-+{
-+	struct dwc3_eswin *eswin = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = clk_bulk_prepare_enable(eswin->num_clks, eswin->clks);
-+	if (ret) {
-+		dev_err(dev, "failed to enable clocks: %d\n", ret);
-+		return ret;
-+	}
-+
-+	return ret;
-+}
-+
-+static const struct dev_pm_ops dwc3_eswin_dev_pm_ops = {
-+	SET_RUNTIME_PM_OPS(dwc3_eswin_runtime_suspend,
-+			   dwc3_eswin_runtime_resume, NULL)
-+};
-+
-+static const struct of_device_id eswin_dwc3_match[] = {
-+	{ .compatible = "eswin,eic7700-dwc3" },
-+	{},
-+};
-+
-+MODULE_DEVICE_TABLE(of, eswin_dwc3_match);
-+
-+static struct platform_driver dwc3_eswin_driver = {
-+	.probe = dwc3_eswin_probe,
-+	.remove = dwc3_eswin_remove,
-+	.driver = {
-+		.name = "eic7700-dwc3",
-+		.pm	= &dwc3_eswin_dev_pm_ops,
-+		.of_match_table = eswin_dwc3_match,
-+	},
-+};
-+
-+module_platform_driver(dwc3_eswin_driver);
-+
-+MODULE_AUTHOR("Wei Yang <yangwei1@eswincomputing.com");
-+MODULE_AUTHOR("Senchuan Zhang <zhangsenchuan@eswincomputing.com");
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("DesignWare USB3 ESWIN Glue Layer");
+This patchset adds serial busses, implemented in usi, as well as serial_0
+and serial_1 for exynos2200. It's missing spi, due to me having troubles
+with reads when testing.
+
+Best regards,
+Ivaylo
+
+Changes in v2:
+- add a patch that switches address and size cells to 1 in /soc
+- adjust all new nodes to define reg props with 2 cells in total instead of 4
+
+Ivaylo Ivanov (5):
+  arm64: dts: exynos2200: fix typo in hsi2c23 bus pins label
+  arm64: dts: exynos2200: use 32-bit address space for /soc
+  arm64: dts: exynos2200: increase peric1 and cmgp syscon sizes
+  arm64: dts: exynos2200: add serial_0/1 nodes
+  arm64: dts: exynos2200: define all usi nodes
+
+ .../boot/dts/exynos/exynos2200-pinctrl.dtsi   |    2 +-
+ arch/arm64/boot/dts/exynos/exynos2200.dtsi    | 1459 ++++++++++++++++-
+ 2 files changed, 1424 insertions(+), 37 deletions(-)
+
 -- 
-2.25.1
+2.43.0
 
 
