@@ -1,93 +1,90 @@
-Return-Path: <linux-kernel+bounces-750875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68567B1621B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:59:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA92BB16225
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAD93B3D7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:59:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB0116D522
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:01:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0F02D837C;
-	Wed, 30 Jul 2025 13:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3TOXbtV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691A52D6638;
+	Wed, 30 Jul 2025 14:01:47 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFE527A93D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:59:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E84C4A35;
+	Wed, 30 Jul 2025 14:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883979; cv=none; b=ZoHOpNLiOByaz3d+ucWkNkbp7EmEQFcSSGZ8YgYbDJwhewLkDK95lwFUYO7wXPec2PBgmnyiVMOe4MIko9CCUnaCBdy3HdC46+ZZ+mDP02eqF3ajnRUklOVGkb944DT/fay9/w3vfJCTAUKn+dlDwAkdJkZbMUrOxv2HWuFAPS4=
+	t=1753884107; cv=none; b=NN/Tr71nMpExJ3atDQjhZRnAl8MTHZcZam1MB9/NlnnIL88MuheA/Up0JfU9f10W7qF+qd0ixhOvpBuk5AethWbEOjd6kJ98gEjlotQ6QtT7tPLG8uBdeVqHJQTcaAWvUy7NLU+Wh2fZvFbnIr3s2HFFmSmuPozGaC1jO6mokvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883979; c=relaxed/simple;
-	bh=N3+NIbm5eiDev1M+UzrXcz/aTODki3H4qf2X/mq2JzU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WmnFmvtQR3tzYO1yaqGP8H5q+3oFpBFDmyi4D2n16K1pEfBEMw2QGMi+KXghYKsZGtUQtmo1SRNlNZHFf9vHpZXQICUT3CRl8ZulMWntLmjojrZLQMIGdPMx95q1w4B1HuiRdfP0DDl22CDVKbW5iXYVluXDFN5NeOacaB25dMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3TOXbtV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A17DAC4CEE3;
-	Wed, 30 Jul 2025 13:59:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753883978;
-	bh=N3+NIbm5eiDev1M+UzrXcz/aTODki3H4qf2X/mq2JzU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=U3TOXbtVl6wxmpHXPj4zmgqZHrEbB0UeMs5FY0LVR3iDlJ1NVNNeXxlOwovBrnyD4
-	 GW/yRVZFNUxtmw+0pm9H491HTmFyEsLfbV23THcTNPhIfjU7yioP3qnhNLDnQW5JW3
-	 Gkq0ilv9VAlJ/ZQas0MoQjjgyoTZonO7vK5r/HMqHgrnSNOPInheXuU694Jg9FPtfv
-	 pIfYCRwZsyGmPYW+w6+G789nzBgXd/7JDBbHkC134sD5xmzPrrGA4YjXVFB67LHhlh
-	 YNRtwNrisSprnh/av5slh8r0QSzEmuPaImkWjzPFZD7zp/3UvkLWYg8Swjb97icOS8
-	 yeBpUlVf64JUQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mtd: map: add back asm/barrier.h inclusion
-Date: Wed, 30 Jul 2025 15:59:24 +0200
-Message-Id: <20250730135934.1712198-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753884107; c=relaxed/simple;
+	bh=7RnPBP22ydtmNfvMaNDWqH0JdrLnHI/M2PBXtkcuFxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kpiwFgRx1T3tkdk/7wQ+3qa5XIVuO2kuWI6KGSuVA/H2M4XQ+suMbtryJBs+lyEnigDp7gJeLq0BNxwTWRhaxZwyiU9b6/Nbgwt+QY4i+FBczLaKBluXYE4F4DTLqRXSxHSPbECcW1S3V08KKpQxWm0ufaqBQRbcrvLIMEXfpMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf15.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay07.hostedemail.com (Postfix) with ESMTP id 58F1C160462;
+	Wed, 30 Jul 2025 14:01:42 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf15.hostedemail.com (Postfix) with ESMTPA id 917A41A;
+	Wed, 30 Jul 2025 14:01:39 +0000 (UTC)
+Date: Wed, 30 Jul 2025 10:01:55 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ oe-kbuild-all@lists.linux.dev, Mark Rutland <mark.rutland@arm.com>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Linux Memory Management List
+ <linux-mm@kvack.org>, Namhyung Kim <namhyung@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 1/2] tracing: Have eprobes have their own config
+ option
+Message-ID: <20250730100155.268d2442@gandalf.local.home>
+In-Reply-To: <20250730225722.c88d2dbd3dfa07310de7edd4@kernel.org>
+References: <20250729161912.056641407@kernel.org>
+	<202507301452.JPAcMvT0-lkp@intel.com>
+	<20250730191101.7e6203f21b94c3f932fa8348@kernel.org>
+	<20250730091727.7b3a8b96@gandalf.local.home>
+	<20250730225722.c88d2dbd3dfa07310de7edd4@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: 8bdr1qaiuyiqeg9bhfbz1td1gb4gms7k
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 917A41A
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+/YoaC5S0m6XgLEI0KXUlT7Ux5npWQxGs=
+X-HE-Tag: 1753884099-284807
+X-HE-Meta: U2FsdGVkX19fNWmLTzEFbGr2d8oyKHH1JxLjen/f4/Pq5ZFXK8n1OCSZYlWKoRxJjvbVP1eZx2Z+YU1Vpu+9GeZeuzlfTnEqu7ftGHkC+D5raU1QP/7i60awdafBIT+ByL2WPuB9n3BPwnn6m5KlvxrCTRoGpEbwYw3/2Ip/qhCOkYST0eKSpo7BkeHKSe9/peJwCwGlRYNyRg7WSL4AS2OEvyrVCwLgW2aOmRvz1eY9o5NzbRQKm8XH2ZvO+Pw65mDq8IMzB5m0PuoXE0uVRWKrqDrS7X+QWDcZWcT82Xk/VUhryK/7MRTKmZERDPdoB+94XmgxR+n9lYsrje3SIygbYUAJlwTo
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed, 30 Jul 2025 22:57:22 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-The mb() macro is used in this header:
+> > I see you already did the probe pull request.  
+> 
+> Ah, I thought this was for the next one... (but I think it is a kind of bugfix?)
 
-In file included from include/linux/mtd/qinfo.h:5,
-                 from include/linux/mtd/pfow.h:8,
-                 from drivers/mtd/lpddr/lpddr_cmds.c:14:
-include/linux/mtd/map.h: In function 'inline_map_write':
-include/linux/mtd/map.h:428:9: error: implicit declaration of function 'mb' [-Wimplicit-function-declaration]
+Yeah, as its not adding eprobes, but just making it configurable.
 
-Fixes: 56eb7c13b97c ("mtd: map: Don't use "proxy" headers")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- include/linux/mtd/map.h | 1 +
- 1 file changed, 1 insertion(+)
+But you haven't answered my question ;-)
 
-diff --git a/include/linux/mtd/map.h b/include/linux/mtd/map.h
-index 288ef765a44e..75b0b2abc880 100644
---- a/include/linux/mtd/map.h
-+++ b/include/linux/mtd/map.h
-@@ -14,6 +14,7 @@
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/unaligned.h>
-+#include <asm/barrier.h>
- 
- struct device_node;
- struct module;
--- 
-2.39.5
+Do you want to push it to Linus or should I?
 
+I still have the trace/for-next to push (I've finished testing your last
+"attribute" patch and now I'm just letting it simmer in linux-next before
+doing the pull request). I can still add this to that one if you want.
+
+-- Steve
 
