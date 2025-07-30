@@ -1,144 +1,117 @@
-Return-Path: <linux-kernel+bounces-750133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED6DCB157BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:08:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395BBB157C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 004574E6843
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:07:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA687A9D1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093441D516A;
-	Wed, 30 Jul 2025 03:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465E512B93;
+	Wed, 30 Jul 2025 03:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDwp4EVw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KoqpbWCv"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571CBEEBA;
-	Wed, 30 Jul 2025 03:08:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D083C38
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753844881; cv=none; b=NrSpsIWbYMuJIFGCX5j1Z6T0kp549FANdpmpXS3Efob2sjxf/dxFQ/RV7TokwARkNVNHddY5dyX4x88R6CshVKOLJMsUqz8kUhmeszSUh/94OrDkmdpkfzKSrHDCdlBqIadkiy5sK7V453YfpMcE8TNC5mX2VZxrfdI6v7/Xze4=
+	t=1753845391; cv=none; b=tqBgq0Af4zOsIkWniy/tQYVsjvuB37bHmaXe2EfCxlNmUzaQHF7O5OhJUwvVjDja8SQeMi2sDDz0MUoqbYnECttHu25LvTLjqt7pIVdn0A3s86rc1ngzBmWECJ5mJExCKAVT2odKPsbRFy3y4fYy6/qtpREYaZXcgQf7vdyqsug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753844881; c=relaxed/simple;
-	bh=22JhCyglsPUS7n2HIlluUovVfg0gdi1H2bFhA3h5f2I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=AZjn4U1B2Gx4+4xtk2Umt4Lr6teYvm7yvVOOReV+HndL3r+cQpqXhByHEvLHQhIt/wRohbmMb3qf82119a/7t39EG3r43eeVvyjO9XrVjujus4hQAIjiqsB3xG+TLx4EmNVla4LZD5WIzlcrgmDNK5xPnnE0LXyI7fqqJ3xfpIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDwp4EVw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AC53C4CEEF;
-	Wed, 30 Jul 2025 03:07:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753844880;
-	bh=22JhCyglsPUS7n2HIlluUovVfg0gdi1H2bFhA3h5f2I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jDwp4EVw1g8SvHbFCRjrDMDqtQrfuRlrsJrSk1n8V/DfJAlXqwpTsrAmSgZ0LTiCU
-	 WpwGnt0det3VO4BDH3X12/vsJptOoFDZsrtIPj+s9QDrIZR5dhTS7txqrfyvzfn6Mn
-	 B43hEnfubrG0xAZRXE55MaC4xSikeenNTMXjXuR9y9b6p5x0cKYd0uvHFzhkijAMzh
-	 9MYJlW8BKfaRh7zPRt9XvGvF9tcrAteIpAG/5O9zswbZ7wHrhLo42+Nh7r1tgGfBC3
-	 E7hMbYZcjxw4Tp8ftHGwTpm05M4OJBEnZs6UWIZ3RGiX6q7y71i++bUgbazrBiYpSQ
-	 g8mfFuh2iWfKg==
-Date: Wed, 30 Jul 2025 12:07:57 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Namhyung Kim <namhyung@kernel.org>, Jonathan
- Corbet <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2 1/2] tracing: Have eprobes have their own config
- option
-Message-Id: <20250730120757.c1441d2ffd08bf4c0d4f7e65@kernel.org>
-In-Reply-To: <20250729161912.056641407@kernel.org>
-References: <20250729161816.678462962@kernel.org>
-	<20250729161912.056641407@kernel.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753845391; c=relaxed/simple;
+	bh=MN7GgaHIgDRbrqe3I07ng/28QqizBLcpdBKhjr4lKF4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NQQLJDv97qGTzLS52SBUVTmUG+6my6RZpKyloFZ7LpNqB0KrKt17obT0AYQCCQc2LgijYuBKypE6rCiTWr+AxBvIZ/zCfpq9Hv1Tel/pNMOUJ88FblPoqMor7J9Bbx07pFnCGDhppZlmeg0w85Lp0eiLNE4kVfcObHuiiVc2TJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KoqpbWCv; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-749177ad09fso2800004b3a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 20:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753845390; x=1754450190; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Asu+fopkVf6m2d9W4lxgsLTIcRr+Y4DqV5z97WhuY7o=;
+        b=KoqpbWCvKRFAJjDEYIaDe20C9JlwctFbiPdwHt4fRzzd+HDmq4iutO0ptAXOvEu2g5
+         ZFRgAjzKEsvNAGskvOExyTjuQZ0fC6+JRzxXseuvhhdt+qUG5/1SycfI7ZAEUNq9PYCT
+         O92y3Z2qmdD2bnmyYkRRxMkmRQ0VnKY79Qo5jL3ZKDVVveWnmX0UTdFC/lylzm8CbqVo
+         ifuyhIT3FhQ/QaZt7AxgEZ2vw42t6h6vKX4cnnKdj7EuiCNTHFWBPJ4x2UAoVoxmHbOt
+         Xs3gCEveg505P3R40+IVbALUmjNXs/siwsmVqVM9KZJolPp01IfGlL9rikPVTkSH6V79
+         wLEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753845390; x=1754450190;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Asu+fopkVf6m2d9W4lxgsLTIcRr+Y4DqV5z97WhuY7o=;
+        b=Qvb0xON6po22t8NhkgdTKnwoQytF0hyiKnIbSvA0paoZvKrwzf8Kjfs+76Oc9RCb9W
+         phwDI+Ikort79BjZF3iLsCak6E7PAVdxbVYQBh/xGPk851sgcw+XA2DQVwaN5nutYoEo
+         /KHLADNna6U+GQcHT0zuWMLjfQnf8POCUQcqSdXjlKh8AXbAF26jSJy6xLWr8yQ//B4d
+         /UYFSLeJpkr8sDicROvxHecrsQ0mECIfP9dJjNNC0DP0PjzQQVp371u0uWEBMFV+iXgo
+         KuR+uCi9ykmodW4flvb1A4OYFnMDyGG8dvDZS+083Qem8o4KEDTRlq7Iup1aLVGfjBQ9
+         1fPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUEdxvIHb3auXKNcH/PCSqshjNdH0tS3dvS+F8m6rBkC15EFpfwfjrHbZpBRQ+HOrU5kmxWg5NxCKfraAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPU0JarDIk5GLS/SICQ/9QkgqYAuN9QYGsr+U3mi3YasEGjIFM
+	Z28g2aCN2maKkuB+j0itCGU3HVdcjKn5OadU549ry/w9VEgkeVx3PXA1/PJ973Z8jurZvzRXUbm
+	ypXskhDJs0QD26w==
+X-Google-Smtp-Source: AGHT+IEnrIySPqknb7uywjsaF+v7om3gojmPqMY1fEfNR9VibXM07aFjoVO7c22iFGu7Tfuvr+64FUDEsymNMQ==
+X-Received: from pfbfb31.prod.google.com ([2002:a05:6a00:2d9f:b0:746:3185:144e])
+ (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a00:4b4c:b0:749:456:4082 with SMTP id d2e1a72fcca58-76ab082d0acmr2447294b3a.1.1753845389670;
+ Tue, 29 Jul 2025 20:16:29 -0700 (PDT)
+Date: Wed, 30 Jul 2025 11:16:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250730031624.1911689-1-davidgow@google.com>
+Subject: [PATCH] kunit: tool: Accept --raw_output=full as an alias of 'all'
+From: David Gow <davidgow@google.com>
+To: Rae Moar <rmoar@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Shuah Khan <skhan@linuxfoundation.org>
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, David Gow <davidgow@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 29 Jul 2025 12:18:17 -0400
-Steven Rostedt <rostedt@kernel.org> wrote:
+I can never remember whether --raw_output takes 'all' or 'full'. No
+reason we can't support both.
 
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Eprobes were added in 5.15 and were selected whenever any of the other
-> probe events were selected. If kprobe events were enabled (which it is by
-> default if kprobes are enabled) it would enable eprobe events as well. The
-> same for uprobes and fprobes.
-> 
-> Have eprobes have its own config and it gets enabled by default if tracing
-> is enabled.
-> 
-> Link: https://lore.kernel.org/all/20250729102636.b7cce553e7cc263722b12365@kernel.org/
-> 
+For the record, 'all' is the recommended, documented option.
 
-Looks good to me.
+Signed-off-by: David Gow <davidgow@google.com>
+---
+ tools/testing/kunit/kunit.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-BTW, is it a bugfix or improvement?
-
-Thanks,
-
-> Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/Kconfig  | 13 +++++++++++++
->  kernel/trace/Makefile |  2 +-
->  2 files changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> index 93e8e7fc11c0..b951c027fffb 100644
-> --- a/kernel/trace/Kconfig
-> +++ b/kernel/trace/Kconfig
-> @@ -792,6 +792,19 @@ config UPROBE_EVENTS
->  	  This option is required if you plan to use perf-probe subcommand
->  	  of perf tools on user space applications.
->  
-> +config EPROBE_EVENTS
-> +	bool "Enable event-based dynamic events"
-> +	depends on TRACING
-> +	select PROBE_EVENTS
-> +	select DYNAMIC_EVENTS
-> +	default y
-> +	help
-> +	  Eprobes are dynamic events that can be placed on other existing
-> +	  events. It can be used to limit what fields are recorded in
-> +	  an event or even dereference a field of an event. It can
-> +	  convert the type of an event field. For example, turn an
-> +	  address into a string.
-> +
->  config BPF_EVENTS
->  	depends on BPF_SYSCALL
->  	depends on (KPROBE_EVENTS || UPROBE_EVENTS) && PERF_EVENTS
-> diff --git a/kernel/trace/Makefile b/kernel/trace/Makefile
-> index 057cd975d014..dcb4e02afc5f 100644
-> --- a/kernel/trace/Makefile
-> +++ b/kernel/trace/Makefile
-> @@ -82,7 +82,7 @@ obj-$(CONFIG_EVENT_TRACING) += trace_event_perf.o
->  endif
->  obj-$(CONFIG_EVENT_TRACING) += trace_events_filter.o
->  obj-$(CONFIG_EVENT_TRACING) += trace_events_trigger.o
-> -obj-$(CONFIG_PROBE_EVENTS) += trace_eprobe.o
-> +obj-$(CONFIG_EPROBE_EVENTS) += trace_eprobe.o
->  obj-$(CONFIG_TRACE_EVENT_INJECT) += trace_events_inject.o
->  obj-$(CONFIG_SYNTH_EVENTS) += trace_events_synth.o
->  obj-$(CONFIG_HIST_TRIGGERS) += trace_events_hist.o
-> -- 
-> 2.47.2
-> 
-> 
-
-
+diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
+index 7f9ae55fd6d5..cd99c1956331 100755
+--- a/tools/testing/kunit/kunit.py
++++ b/tools/testing/kunit/kunit.py
+@@ -228,7 +228,7 @@ def parse_tests(request: KunitParseRequest, metadata: kunit_json.Metadata, input
+ 		fake_test.counts.passed = 1
+ 
+ 		output: Iterable[str] = input_data
+-		if request.raw_output == 'all':
++		if request.raw_output == 'all' or request.raw_output == 'full':
+ 			pass
+ 		elif request.raw_output == 'kunit':
+ 			output = kunit_parser.extract_tap_lines(output)
+@@ -425,7 +425,7 @@ def add_parse_opts(parser: argparse.ArgumentParser) -> None:
+ 	parser.add_argument('--raw_output', help='If set don\'t parse output from kernel. '
+ 			    'By default, filters to just KUnit output. Use '
+ 			    '--raw_output=all to show everything',
+-			     type=str, nargs='?', const='all', default=None, choices=['all', 'kunit'])
++			     type=str, nargs='?', const='all', default=None, choices=['all', 'full', 'kunit'])
+ 	parser.add_argument('--json',
+ 			    nargs='?',
+ 			    help='Prints parsed test results as JSON to stdout or a file if '
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.50.1.552.g942d659e1b-goog
+
 
