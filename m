@@ -1,176 +1,260 @@
-Return-Path: <linux-kernel+bounces-750940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE708B16314
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:46:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2407EB16316
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99D207B2663
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:44:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0422F7A7FE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD032DBF5C;
-	Wed, 30 Jul 2025 14:45:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47DD12D9EE4;
+	Wed, 30 Jul 2025 14:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="tN++uUuI"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="Qm3xWw6g"
+Received: from sinmsgout02.his.huawei.com (sinmsgout02.his.huawei.com [119.8.177.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3832D2DBF78
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7927E1953A1;
+	Wed, 30 Jul 2025 14:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753886737; cv=none; b=I1masYm7xZP0RgF0Tw7GZ8gHzxpez5c4QuBxmg5EQ0IuPZsrytvWHAHd7x3c6Y3pc+H0eUOHy94Xltf855FA6YkYdI+V2YmFXUSU24t99FEc5jTPzNCFuy3s3utsPedPK50gz5lkkhapo7hgBuNMVE0A57yafFIuXhm+ueQEH4M=
+	t=1753886802; cv=none; b=taTQs9J5iD0p+EfjZkqWLp7k/JM4z7lCwBPgHH3ipAKLilwqO9suaNItpMfN3TiQQN/OIMDwt9A7paLRSJiWPgFui43062iimvY1EENOoHpF9YmKzxYwJ8e4W37YT9KPNM/imdNil7g1tEpMYG2u+EnK+onTM3KI4QDQO4lbLY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753886737; c=relaxed/simple;
-	bh=h6BIraPSPPKSk7SSDXt989v2WJKnWFnkSVC/oGpVfug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f+aXt3B7nOQqoXZJuTCQgQPyM5oCHV0J4zJ3rMpW+sNMQkuQuW0j17KWNTdPtznAlEBTcQTw7C1gfe8G1JnqVuMii2sT4fjLjPQccjC1oF+onEbEhTk+i8VFJRx6Pi4vrQ2xr8f61z1eFGIUtuEFoHTd+WXn4ZPbD6x9RwUne/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=tN++uUuI; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-55b829c7f1aso612310e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:45:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753886733; x=1754491533; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m6AXuDDeUL1WpUxErghD7iQZDxn7tXl0MHZ3gm9RjBI=;
-        b=tN++uUuIIMW6vesD77CdgIQpMj9SC843EEVWdApX2Fr/6Mb92tbIooX9hKjDxmOaWt
-         cq6VWik3lq5SenrRNASErTN+Rvq7T0RjE+Qk1Dlcws/0vwn769kQRw27Q/c5GXUp06Az
-         A+8xDyLhN8j7jY30CceRKNgb5h69NSB+WTX9ln8eOXHSF47PNmCHXg6R63TraW5qipvr
-         XwnAj3+jNZvCU0X4PN4CunIARdAOd7hrRtb/bdzVs2RaZvJicEJU0JJd1NofUwsUuX/W
-         NncwyaGCbpsF9x5XEr/KEh7EWcrC07Rb+Q4FCU1wUlbg3gGVy4YDXJq7dkWAZsDdfN4u
-         O3jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753886733; x=1754491533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m6AXuDDeUL1WpUxErghD7iQZDxn7tXl0MHZ3gm9RjBI=;
-        b=rqJxoOTbEPXi2Gynxdr+M0vijMOdeqQiHVJ3btEtc4IJCH5ch6qXpSNOkymeOtK3jm
-         PKnqT6tcSIbxcKhB1MBW7SqnwXdfpoIOc7igvETBrSyIkOUXOxxwrCrAIuwewgtnZ8Wz
-         0mWm1E+RnZ1m2TrX8Uwq0IWo9hMMBSpdd3YASadqNLsV/AzQ5VR7GreA9SmQtanaX0Gk
-         e+njfDju8Vfvwx2bhzdJHPbNzYsBM335p1jXTqyJnIca8s6yfRXJrEQ6FY20stdnPVLT
-         Ig/HspLfKvOqQF1YEYSGXxbOcMUKqAEru76mhdnc5MC+nMeizwSt6Q14PUtlQSvtLnr8
-         UGsA==
-X-Forwarded-Encrypted: i=1; AJvYcCWuO00SqMwS0Kk2yn8H/Mmixq/NNz97y3mXTN8fmryGzsROkEg1RFmKtGRwfWePWP2q4rjnQqNjIjmOd9c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNBE6KcO2psjLj827GO38R8yeshqBTiHJtO1K+g8cag5h4me+y
-	a+bLnzV8dk+A24kKKUy421C64mea6lHL+eIAJDtMeUIs0vHlWmmCSowDOWnTln8htGNvyX/l0PD
-	1QSW9Wh9cc2JNsf7xjHAc6JAoBqsDdShMRDb3Y6ZVHQ==
-X-Gm-Gg: ASbGnct3rpmszPk7VWsgQ+6ccgzNiEj3gh9+1BCQoibZ8wpgOeoFrhm7x1IfIgZxiXZ
-	RO/t4Cy+XaEXVlv9S1G1YaEzs7DhHHqCWUSR6SFybscjT77hiLROqjOKSb8pOrNi/h5GTpcWfg9
-	GKq95tnmyEYcuregXx/TFvGIj+AO1av/MuENo1i/nZXo85wMQUOrVHB9OjAGA0ThBCYjhmWaBuO
-	dMJ0WBf5F+tkm+QhPqtd2jBzwyygf48YEsvQo0=
-X-Google-Smtp-Source: AGHT+IG0Q6hH9i+UpqLftCvpSVBouzPpbLbuygIY2t4i0+nQyoHOVMz3gwtmG10RMLHn13yYgB8U2bSlEYWDzelEprk=
-X-Received: by 2002:a05:6512:23a3:b0:554:f7ec:3b23 with SMTP id
- 2adb3069b0e04-55b7c027afamr1034186e87.15.1753886733212; Wed, 30 Jul 2025
- 07:45:33 -0700 (PDT)
+	s=arc-20240116; t=1753886802; c=relaxed/simple;
+	bh=fv8z732sb0X7FzfQv/LemtDxEILk4pkH79izQS4oPcc=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iG7SCwL8y5kUUi6doEwEHJdtPODFKMliMO1r6IXlnre/iqYqp+D2x33gFQzVx8wiDTRfQsCJrSMRuYFH/R0scLPV9SArxWbHutoCvcU13AFlLfdB0+L0y7QyRyuYSQe8L6Mh/q8NR0GcFAAV6RT2FVK0W5vgY/nKxbD9LH8SmVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=Qm3xWw6g; arc=none smtp.client-ip=119.8.177.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=gDYuSUHEA/sgI6zOOL1uogU4Aat+EC2bRnpHV0fNS/w=;
+	b=Qm3xWw6g48vH8xrLWZO/dGKQFGudk8v6f/koYNcKOk+JXGBYrj+3QXLXm5CP2+RLa8v2A19QV
+	6Iqvi80S9yaahqrMT1duBJAWckGaAFygmROtmETbnqjwbYoq1JjQLzxeFqYIClPsXYFIpwr9feQ
+	CqkFkv9aXXjmMz0WJGyWLJ0=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.36])
+	by sinmsgout02.his.huawei.com (SkyGuard) with ESMTPS id 4bsZkN5KDzz1vnKW;
+	Wed, 30 Jul 2025 22:45:00 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bsZjw6gwfz6L58r;
+	Wed, 30 Jul 2025 22:44:36 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id E4A83140122;
+	Wed, 30 Jul 2025 22:46:32 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Jul
+ 2025 16:46:31 +0200
+Date: Wed, 30 Jul 2025 15:46:30 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
+ Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 31/38] coco: guest: arm64: Add support for
+ fetching interface report and certificate chain from host
+Message-ID: <20250730154630.00004905@huawei.com>
+In-Reply-To: <20250728135216.48084-32-aneesh.kumar@kernel.org>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+	<20250728135216.48084-32-aneesh.kumar@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org>
- <20250724-pinctrl-gpio-pinfuncs-v3-12-af4db9302de4@linaro.org>
- <CAHp75Vc4vsJh_-GbP+YO50veoGoGtfAPL4tjcF+73uophfmnGw@mail.gmail.com>
- <CAMRc=Mc1ophkofB6MmtD4adBAi69C3JyovM-S9YD_y7UA3V1qA@mail.gmail.com>
- <CAHp75VcV=K-DfOGs0z64==nO+wQNoEB2Ngd2vc+dLYr3WLChjg@mail.gmail.com>
- <CAMRc=MeVOEFkdqf+SwQ-a=7ZPvpoerb4G_kn-aZgNLR3aTTUog@mail.gmail.com> <CAHp75Vd_5HVwzuiV17XKkzpEvzd8dzPDRRx5w-VqZnjuCz6m6A@mail.gmail.com>
-In-Reply-To: <CAHp75Vd_5HVwzuiV17XKkzpEvzd8dzPDRRx5w-VqZnjuCz6m6A@mail.gmail.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 30 Jul 2025 16:45:21 +0200
-X-Gm-Features: Ac12FXyd8ePQ6VSvFuinf3meGy3NBROTyjzQV07xe8o_XLvEkxT-hmgEmHvLoEA
-Message-ID: <CAMRc=McPvFzb7CSFSKOsQZD9ZPwtf+bCw+Ui=m6OoX0GxH9DtQ@mail.gmail.com>
-Subject: Re: [PATCH v3 12/15] pinctrl: allow to mark pin functions as
- requestable GPIOs
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed, Jul 30, 2025 at 3:30=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Wed, Jul 30, 2025 at 2:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
-> > On Wed, Jul 30, 2025 at 2:50=E2=80=AFPM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> > > On Wed, Jul 30, 2025 at 11:54=E2=80=AFAM Bartosz Golaszewski <brgl@bg=
-dev.pl> wrote:
-> > > > On Thu, Jul 24, 2025 at 2:22=E2=80=AFPM Andy Shevchenko
-> > > > <andy.shevchenko@gmail.com> wrote:
-> > > > >
-> > > > > >  struct pinfunction {
-> > > > > >         const char *name;
-> > > > > >         const char * const *groups;
-> > > > > >         size_t ngroups;
-> > > > > > +       unsigned long flags;
-> > > > >
-> > > > > Not sure we need this. If the function is GPIO, pin control alrea=
-dy
-> > > > > knows about this. The pin muxing has gpio request / release callb=
-acks
-> > > > > that change the state. Why do we need an additional flag(s)?
-> > > >
-> > > > I'm not following, how does the pin controller know that the functi=
-on
-> > > > is GPIO exactly, other than by the bit set in this field?
-> > >
-> > > AFAICS the gpio_owner !=3D NULL means that. No need to have a duplica=
-te
-> > > of this information.
-> >
-> > No, that's not at all what this series does... gpio_owner is the
-> > consumer label of a pin used by the GPIOLIB framework. The flag I'm
-> > introducing it telling the pinctrl core - before GPIOLIB is ever
-> > involved - that *this pin can be requested as a GPIO by GPIOLIB*.
->
-> The certain pin control driver may even not know about this. But even
-> though the proposed change is an overkill. If it indeed needs to be
-> done, the solution of valid_mask approach sounds to me much better. It
-> will be a single bitmask per pin control to tell this.
->
-> > It's
-> > the other way around - without knowing this, for strict pinmuxers,
-> > GPIOLIB would never be able to request this pin if it was muxed to a
-> > function (even if the function is called "GPIO").
->
-> I need to read the series again, but I truly believe we don't need
-> this new field in the struct pinfunction.
->
+On Mon, 28 Jul 2025 19:22:08 +0530
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
 
-Without a code example, I can't tell what you're imagining but let me
-give some more context: the flags field could only exist in the
-qualcomm drivers but the problem will be the same on all existing
-platforms so IMO it's better to centralize it right away. And if we're
-already centralizing it, let's make it future proof by making it
-possible to define more such flags if we need it. Since the GPIO
-category is a function property, it only makes sense to put it in the
-structure defining the function.
+> Fetch interface report and certificate chain from the host using RHI calls.
+> 
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
 
-Bartosz
+Comments inline
+
+> diff --git a/drivers/virt/coco/arm-cca-guest/rsi-da.c b/drivers/virt/coco/arm-cca-guest/rsi-da.c
+> index 28ec946df1e2..47b379318e7c 100644
+> --- a/drivers/virt/coco/arm-cca-guest/rsi-da.c
+> +++ b/drivers/virt/coco/arm-cca-guest/rsi-da.c
+> @@ -4,6 +4,7 @@
+>   */
+>  
+>  #include <linux/pci.h>
+> +#include <linux/mem_encrypt.h>
+>  #include <asm/rsi_cmds.h>
+>  
+>  #include "rsi-da.h"
+> @@ -50,6 +51,121 @@ rsi_rdev_get_interface_report(struct pci_dev *pdev, unsigned long vdev_id,
+>  	return RSI_SUCCESS;
+>  }
+>  
+> +static long rhi_get_report(int vdev_id, int da_object_type, void **report, int *report_size)
+> +{
+> +	int ret, enc_ret = 0;
+> +	int nr_pages;
+> +	int max_data_len;
+> +	void *data_buf_shared, *data_buf_private;
+> +	struct rsi_host_call *rhicall;
+> +
+> +	rhicall = kmalloc(sizeof(struct rsi_host_call), GFP_KERNEL);
+> +	if (!rhicall)
+> +		return -ENOMEM;
+> +
+> +	rhicall->imm = 0;
+> +	rhicall->gprs[0] = RHI_DA_FEATURES;
+> +
+> +	ret = rsi_host_call(virt_to_phys(rhicall));
+> +	if (ret != RSI_SUCCESS) {
+> +		ret =  -EIO;
+
+Extra space.
+
+> +		goto err_out;
+> +	}
+> +
+> +	if (rhicall->gprs[0] != 0x3) {
+> +		ret =  -EIO;
+> +		goto err_out;
+> +	}
+> +
+> +	rhicall->imm = 0;
+> +	rhicall->gprs[0] = RHI_DA_OBJECT_SIZE;
+> +	rhicall->gprs[1] = vdev_id;
+> +	rhicall->gprs[2] = da_object_type;
+> +
+> +	ret = rsi_host_call(virt_to_phys(rhicall));
+> +	if (ret != RSI_SUCCESS) {
+> +		ret =  -EIO;
+> +		goto err_out;
+> +	}
+> +	if (rhicall->gprs[0] != RHI_DA_SUCCESS) {
+> +		ret =  -EIO;
+> +		goto err_out;
+> +	}
+> +	max_data_len = rhicall->gprs[1];
+> +	*report_size = max_data_len;
+> +
+> +	/*
+> +	 * We need to share this memory with hypervisor.
+> +	 * So it should be multiple of sharing unit.
+> +	 */
+> +	max_data_len = ALIGN(max_data_len, PAGE_SIZE);
+> +	nr_pages = max_data_len >> PAGE_SHIFT;
+> +
+> +	if (!max_data_len || nr_pages > MAX_ORDER_NR_PAGES) {
+> +		ret = -ENOMEM;
+> +		goto err_out;
+> +	}
+> +
+> +	/*
+> +	 * We need to share this memory with hypervisor.
+> +	 * So it should be multiple of sharing unit.
+> +	 */
+> +	data_buf_shared = (void *)__get_free_pages(GFP_KERNEL, get_order(max_data_len));
+> +	if (!data_buf_shared) {
+> +		ret =  -ENOMEM;
+
+extra space.  All of these seem to have one.  Not seeing a reason for it
+though.
+
+
+> +		goto err_out;
+> +	}
+> +
+> +	data_buf_private = kmalloc(*report_size, GFP_KERNEL);
+> +	if (!data_buf_private) {
+> +		ret =  -ENOMEM;
+> +		goto err_private_alloc;
+> +	}
+> +
+> +	ret = set_memory_decrypted((unsigned long)data_buf_shared, nr_pages);
+> +	if (ret) {
+> +		ret =  -EIO;
+> +		goto err_decrypt;
+> +	}
+> +
+> +	rhicall->imm = 0;
+> +	rhicall->gprs[0] = RHI_DA_OBJECT_READ;
+> +	rhicall->gprs[1] = vdev_id;
+> +	rhicall->gprs[2] = da_object_type;
+> +	rhicall->gprs[3] = 0; /* offset within the data buffer */
+> +	rhicall->gprs[4] = max_data_len;
+> +	rhicall->gprs[5] = virt_to_phys(data_buf_shared);
+> +	ret = rsi_host_call(virt_to_phys(rhicall));
+> +	if (ret != RSI_SUCCESS || rhicall->gprs[0] != RHI_DA_SUCCESS) {
+> +		ret =  -EIO;
+> +		goto err_rhi_call;
+> +	}
+> +
+> +	memcpy(data_buf_private, data_buf_shared, *report_size);
+> +	enc_ret = set_memory_encrypted((unsigned long)data_buf_shared, nr_pages);
+> +	if (!enc_ret)
+> +		/* If we fail to mark it encrypted don't free it back */
+> +		free_pages((unsigned long)data_buf_shared, get_order(max_data_len));
+> +
+> +	*report = data_buf_private;
+> +	kfree(rhicall);
+> +	return 0;
+> +
+> +err_rhi_call:
+> +	enc_ret = set_memory_encrypted((unsigned long)data_buf_shared, nr_pages);
+> +err_decrypt:
+> +	kfree(data_buf_private);
+> +err_private_alloc:
+> +	if (!enc_ret)
+> +		/* If we fail to mark it encrypted don't free it back */
+> +		free_pages((unsigned long)data_buf_shared, get_order(max_data_len));
+> +err_out:
+I'd expect there to be nothing to do except return under an err_out label
+So rename it.
+
+> +	*report = NULL;
+> +	*report_size = 0;
+> +	kfree(rhicall);
+> +	return ret;
+> +}
+> +
+>  int rsi_device_lock(struct pci_dev *pdev)
+>  {
+>  	unsigned long ret;
+> @@ -82,5 +198,20 @@ int rsi_device_lock(struct pci_dev *pdev)
+>  		return -EOPNOTSUPP;
+>  	}
+>  
+> +	/* Now make a host call to copy the interface report to guest. */
+> +	ret = rhi_get_report(vdev_id, RHI_DA_OBJECT_INTERFACE_REPORT,
+> +			     &dsm->interface_report, &dsm->interface_report_size);
+> +	if (ret) {
+> +		pci_err(pdev, "failed to get interface report from the host (%lu)\n", ret);
+> +		return -EIO;
+> +	}
+> +
+> +	ret = rhi_get_report(vdev_id, RHI_DA_OBJECT_CERTIFICATE,
+> +			     &dsm->certificate, &dsm->certificate_size);
+> +	if (ret) {
+> +		pci_err(pdev, "failed to get device certificate from the host (%lu)\n", ret);
+> +		return -EIO;
+> +	}
+> +
+
+>  	return ret;
+return 0;
+
+>  }
+
 
