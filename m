@@ -1,135 +1,124 @@
-Return-Path: <linux-kernel+bounces-750547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FE04B15DD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:09:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CCDB15DDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C26B3A3DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:09:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA2CB3A5070
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F002741DA;
-	Wed, 30 Jul 2025 10:09:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780A015E96;
-	Wed, 30 Jul 2025 10:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5687C2741DA;
+	Wed, 30 Jul 2025 10:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="rGUmOfLB"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2017C1C861F;
+	Wed, 30 Jul 2025 10:10:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753870181; cv=none; b=TikqV5r7jhU/gYkdEqpTmou1vFDNW5gzUslAobC4NVGK64sCWGYhlb3HWiAjVc9FagtQJfuoVekvdJ60lrh6aHwEFOoGu48OXEdPGgAScBRTqPV3PXHxWZj4R+y8CLU4DYjDAko07H7E9SYF+Iyn9CSlDiWuXI3S78CvWLAQLnE=
+	t=1753870247; cv=none; b=gS4KwFC9davYotNQ7ZFryzyY4EsUuMaMo8HllWVKcU2YexV+G7g8WgwKkaFlkrkKywwr9V5nikAyOiIFrgWoJSjtLwjlbdB+/y1N+9PqPQrJRLRzD+XAj5XUDMmYJxYi+YKlCPEnL1zr8vn2jr6k2Tvq1Nois2l+fy6dcZG3hFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753870181; c=relaxed/simple;
-	bh=UCyVpLH87cSFpHt6B2Knjye0VwgeSGRgyWbokISmTG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HUSe4TC3PZHSMtF827crdhxmI+JcoTDCzU46oYdj605Qmnk2i3ozzJMk3k5GeHFHj9r7tD+Iz9X+jtpU/5KKjquLUgIcT4Mjq1GkEea/PtfFfPFxPAPG4eOfJOHKOZMUJiLWYVT7GJaXJ5xhDEsto4Y2796mCDJ4ezWM2kF7GzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D36201BC0;
-	Wed, 30 Jul 2025 03:09:30 -0700 (PDT)
-Received: from [10.57.3.117] (unknown [10.57.3.117])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 94F683F673;
-	Wed, 30 Jul 2025 03:09:36 -0700 (PDT)
-Message-ID: <bbe2a41a-8f72-4224-a0bc-225c1e35a180@arm.com>
-Date: Wed, 30 Jul 2025 11:09:35 +0100
+	s=arc-20240116; t=1753870247; c=relaxed/simple;
+	bh=CEApDR0me/9Oh3mS6/WNJv0S9khVvbMWXbrANG9jKFw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nErHv0cg3Gc0XYBArIB6Alz9yz/mkbRNl9vXiA5yeyJJ4zSBnYcNoWlK2tebZsxh2G31PMnF0JkgrOVaV64avD4sLS7vw276PY7g7QP2fRKuCPxm5PIBqe4VMaSy930uFG07D/Anxpw9fiQVfwNDJnNYhlu/MbAppw/WTULP0Cw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=rGUmOfLB; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1753870247; x=1785406247;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CEApDR0me/9Oh3mS6/WNJv0S9khVvbMWXbrANG9jKFw=;
+  b=rGUmOfLBwzLuLCUYWEWT0L7W3kGTHu9FKjdMkxJdrxOucSd5MsJBmofl
+   KVw7IUz4D4X/LjrH3NUnP+A/IAO/np6g3G1hCFX4RL75C5X6mQYNEuk9y
+   bt978I7fhw+YTEilpsymrYW3XkfCtdLvj5d+30iUsB9WrebTeUv0LXK8F
+   /tCh4VpW6ekUkqLBq5Gl5Z9/wFV1g3NraGZZj7qC0fOtHMO2ZfpsnOYUw
+   auTV0+oee/bglmK2wHh3VEXHAsh5y1XObBHlQgdhl6IPRRUc1wejri3eQ
+   vTWQBbExA9ETcp0I64nzYXvwFY+CZAznFHBFM9CQjqxt6CpaAepf80hUU
+   Q==;
+X-CSE-ConnectionGUID: vbXkopccR520ORU6weHWoA==
+X-CSE-MsgGUID: plcsMLO+TOCy5vR7WLXQ6g==
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="275986690"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Jul 2025 03:10:45 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Wed, 30 Jul 2025 03:10:26 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.44 via Frontend Transport; Wed, 30 Jul 2025 03:10:21 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<ryan.wanner@microchip.com>, <tudor.ambarus@linaro.org>,
+	<linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <manikandan.m@microchip.com>
+Subject: [PATCH v2 1/3] spi: atmel: simplify MR register update in cs_activate()
+Date: Wed, 30 Jul 2025 15:40:13 +0530
+Message-ID: <20250730101015.323964-1-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 04/38] tsm: Support DMA Allocation from private
- memory
-Content-Language: en-GB
-To: Jason Gunthorpe <jgg@ziepe.ca>, "Aneesh Kumar K.V"
- <aneesh.kumar@kernel.org>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, aik@amd.com,
- lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
- Xu Yilun <yilun.xu@linux.intel.com>, Steven Price <steven.price@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-5-aneesh.kumar@kernel.org>
- <20250728143318.GD26511@ziepe.ca> <yq5a5xfbbe35.fsf@kernel.org>
- <20250729143339.GH26511@ziepe.ca>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250729143339.GH26511@ziepe.ca>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On 29/07/2025 15:33, Jason Gunthorpe wrote:
-> On Tue, Jul 29, 2025 at 01:53:10PM +0530, Aneesh Kumar K.V wrote:
->> Jason Gunthorpe <jgg@ziepe.ca> writes:
->>
->>> On Mon, Jul 28, 2025 at 07:21:41PM +0530, Aneesh Kumar K.V (Arm) wrote:
->>>> @@ -48,3 +49,12 @@ int set_memory_decrypted(unsigned long addr, int numpages)
->>>>   	return crypt_ops->decrypt(addr, numpages);
->>>>   }
->>>>   EXPORT_SYMBOL_GPL(set_memory_decrypted);
->>>> +
->>>> +bool force_dma_unencrypted(struct device *dev)
->>>> +{
->>>> +	if (dev->tdi_enabled)
->>>> +		return false;
->>>
->>> Is this OK? I see code like this:
->>>
->>> static inline dma_addr_t phys_to_dma_direct(struct device *dev,
->>> 		phys_addr_t phys)
->>> {
->>> 	if (force_dma_unencrypted(dev))
->>> 		return phys_to_dma_unencrypted(dev, phys);
->>> 	return phys_to_dma(dev, phys);
->>>
->>> What are the ARM rules for generating dma addreses?
->>>
->>> 1) Device is T=0, memory is unencrypted, call dma_addr_unencrypted()
->>>     and do "top bit IBA set"
->>>
->>> 2) Device is T=1, memory is encrypted, use the phys_to_dma() normally
->>>
->>> 3) Device it T=1, memory is uncrypted, use the phys_to_dma()
->>>     normally??? Seems odd, I would have guessed the DMA address sould
->>>     be the same as case #1?
->>>
->>> Can you document this in a comment?
->>>
->>
->> If a device is operating in secure mode (T=1), it is currently assumed
->> that only access to private (encrypted) memory is supported.
-> 
-> No, this is no how the PCI specs were written as far as I
-> understand. The XT bit thing is supposed to add more fine grained
-> device side control over what memory the DMA can target. T alone does
-> not do that.
-> 
->> It is unclear whether devices would need to perform DMA to shared
->> (unencrypted) memory while operating in this mode, as TLPs with T=1
->> are generally expected to target private memory.
-> 
-> PCI SIG supports it, kernel should support it.
+simplified the MR register configuration by updating only the PCS field
+using SPI_BFINS() instead of rewriting the entire register.
+Avoids code duplication.
 
-ACK. On Arm CCA, the device can access shared IPA, with T=1 transaction
-as long as the mapping is active in the Stage2 managed by RMM.
+Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+---
+changes in v2:
+ - Fixed mail threading
+---
+ drivers/spi/spi-atmel.c | 14 ++------------
+ 1 file changed, 2 insertions(+), 12 deletions(-)
 
-Rather than mapping the entire memory from the host, it would be ideal
-if the Coco vms have some sort of a callback to "make sure the DMA
-wouldn't fault for a device". e.g, it could be as simple as touching
-the page in Arm CCA (GFP_ZERO could do the trick, well one byte
-per Granule is good). or an ACCEPT a given page.
+diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
+index 89a6b46cd319..409f544d8983 100644
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -397,20 +397,10 @@ static void cs_activate(struct atmel_spi *as, struct spi_device *spi)
+ 		 * on CS1,2,3 needs SPI_CSR0.BITS config as SPI_CSR1,2,3.BITS
+ 		 */
+ 		spi_writel(as, CSR0, asd->csr);
+-		if (as->caps.has_wdrbt) {
+-			spi_writel(as, MR,
+-					SPI_BF(PCS, ~(0x01 << chip_select))
+-					| SPI_BIT(WDRBT)
+-					| SPI_BIT(MODFDIS)
+-					| SPI_BIT(MSTR));
+-		} else {
+-			spi_writel(as, MR,
+-					SPI_BF(PCS, ~(0x01 << chip_select))
+-					| SPI_BIT(MODFDIS)
+-					| SPI_BIT(MSTR));
+-		}
+ 
+ 		mr = spi_readl(as, MR);
++		mr = SPI_BFINS(PCS, ~(0x01 << chip_select), mr);
++		spi_writel(as, MR, mr);
+ 
+ 		/*
+ 		 * Ensures the clock polarity is valid before we actually
 
-Is this a problem for AMDE SNP / Intel TDX ?
-
-Suzuki
-
-
-
-
-> 
-> Jason
+base-commit: 4b290aae788e06561754b28c6842e4080957d3f7
+-- 
+2.25.1
 
 
