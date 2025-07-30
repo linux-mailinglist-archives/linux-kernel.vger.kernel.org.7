@@ -1,262 +1,154 @@
-Return-Path: <linux-kernel+bounces-750386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E68BB15AB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:33:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D59FFB15A6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0854A18C1C7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 853C34E205D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC9329E0EA;
-	Wed, 30 Jul 2025 08:29:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21410255E4E;
+	Wed, 30 Jul 2025 08:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b="djPONCMI"
+Received: from pf-012.whm.fr-par.scw.cloud (pf-012.whm.fr-par.scw.cloud [51.159.173.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E2E2641F9;
-	Wed, 30 Jul 2025 08:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4949C1B0F0A;
+	Wed, 30 Jul 2025 08:22:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.159.173.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753864147; cv=none; b=GmDjaAO3rdYof7q3y5N2t+I9SQhELdCVcfAkp/OhQyA1OiABuKhdYStp+z9juBfuVv2deoli5jxmLfJ8Ie4MeliwuupDztK/T+vLWJBRGX74TLJ/e0DJHkbj73x5tUOTPXt+36NcxL1MPSBniHexeAURAlXn4viZ9uiYlKRR5t4=
+	t=1753863749; cv=none; b=oa99TgQtqL3jTiwcKYPUpji8kwkf3vgxwy8zr2PmB+kL/BtGcjYwDN2o3Vj6dlEiAqMDTkGfhrV8jHKBrU8vhfzp6uptgMb/Wnt2XrFxzi4vYqz9YC6Uu8ZOLBnyy/e20c/T9KrJTyLF249XtqDw+Trmxkg8QmWxmBf3wTjMwk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753864147; c=relaxed/simple;
-	bh=f2wvEgYM1XikNsWZ7fLrp9n6v3ynezmIBuJfDqurXgg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f8X4A92fVbVDjU74ONnS22zExyV29fxZQya6RmbnsPy3RG8oRQpjJYqVdaDrnz2Vn3AqgyO1+gmWC2DBnnNfiPoSbCXmf8H2C+jWQ9PGNfBjaEw14kEsYSlgVKLocGgf9PdgtDsFjvpe4n0EFjjF82iZS+vPWazuV+O4qYzWvjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bsQNb2ZZ1zYQvLb;
-	Wed, 30 Jul 2025 16:29:03 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 0964E1A14D1;
-	Wed, 30 Jul 2025 16:29:02 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAXkxPI14lokcLlBw--.17899S9;
-	Wed, 30 Jul 2025 16:29:01 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: dlemoal@kernel.org,
-	hare@suse.de,
-	jack@suse.cz,
-	tj@kernel.org,
-	josef@toxicpanda.com,
-	axboe@kernel.dk,
-	yukuai3@huawei.com
-Cc: cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com,
-	johnny.chenyi@huawei.com
-Subject: [PATCH v2 5/5] blk-mq-sched: support request batch dispatching for sq elevator
-Date: Wed, 30 Jul 2025 16:22:07 +0800
-Message-Id: <20250730082207.4031744-6-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
-References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1753863749; c=relaxed/simple;
+	bh=gbBIR+y+konKWVt4kgPJOB4DIAF0clpx2ptWxEdYXK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0QIktrEy+v+j9VhfMvzbIe6BmcPOaLin2yoXpesQyfvVmUGxK0R/uTWyfcExSeV7HuG9rIPHP2FEciXwc8yoZqz1HTJyRwMiTWyMURNO32CLxRtzmAPiiGUgJIrPTRHdFL3HecId/F9MLZFmCOyGLoxp6xbOHI0rMNbbyU4GPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr; spf=pass smtp.mailfrom=oss.cyber.gouv.fr; dkim=pass (2048-bit key) header.d=oss.cyber.gouv.fr header.i=@oss.cyber.gouv.fr header.b=djPONCMI; arc=none smtp.client-ip=51.159.173.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.cyber.gouv.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.cyber.gouv.fr
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=oss.cyber.gouv.fr; s=default; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=k3qD6eVLYJwH4LbBEku4b7SzdXGj/kHmJcfyp+Dlc5M=; b=djPONCMIG+DoFcUgjEzPhHfmpu
+	j+AcjQwuBP0zBs6CRtuClMBD82arfP9Pn+rT6ErOqXX+HUnoJpb0C5kKCIxnD/A9bFceyJTAGZXO/
+	zjB6/dQlQ3BAlDAvQzTzXh+JV3fHGB/khzKfcZ8bJQsO+5JLFlJNVl5qtMh/hOvC3VAH/VOu12vZE
+	MFSmk5/Fg4VUlObZdDF73TSRSbkoiXz84xv2GNxzMNmJ4PgLDKRWEiq5DiBDrsZQBvWAQ2vrBPZ7l
+	z/4j7UO1nebaaA47zIJlegyNqPDPVIvIGOuyAlXdG21NZK/Nv6k/QNRMy025UMs1wuNvSu2OdzFZR
+	Q09wgTVg==;
+Received: from laubervilliers-658-1-215-187.w90-63.abo.wanadoo.fr ([90.63.246.187]:34579 helo=archlinux)
+	by pf-012.whm.fr-par.scw.cloud with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.98.2)
+	(envelope-from <nicolas.bouchinet@oss.cyber.gouv.fr>)
+	id 1uh24w-000000098Sh-10Cu;
+	Wed, 30 Jul 2025 10:22:25 +0200
+Date: Wed, 30 Jul 2025 10:22:23 +0200
+From: Nicolas Bouchinet <nicolas.bouchinet@oss.cyber.gouv.fr>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Jann Horn <jannh@google.com>
+Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Subject: Re: [PATCH] fs: hidepid: Fixes hidepid non dumpable behavior
+Message-ID: <rta37trkqzuvoim5muoukxmkbxcamlydwn6zfpm65k5qxyxb7y@pcq6nj54z6hl>
+References: <20250717-hidepid_fix-v1-1-dd211d6eca6e@ssi.gouv.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXkxPI14lokcLlBw--.17899S9
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFWkXFyfCF1kuF15GFW5GFg_yoWrAF1UpF
-	WrJa1FyrW0q3ZFqF9xCw47Jw15Gw4I9r9rWryfKr43JFs7XrsxGr1rJa4UZF4xAr4fCFsr
-	ur4DXas5uF1Iva7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUma14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4UJVWxJrUvcSsG
-	vfC2KfnxnUUI43ZEXa7VUbPC7UUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250717-hidepid_fix-v1-1-dd211d6eca6e@ssi.gouv.fr>
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - pf-012.whm.fr-par.scw.cloud
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - oss.cyber.gouv.fr
+X-Get-Message-Sender-Via: pf-012.whm.fr-par.scw.cloud: authenticated_id: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Authenticated-Sender: pf-012.whm.fr-par.scw.cloud: nicolas.bouchinet@oss.cyber.gouv.fr
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Yu Kuai <yukuai3@huawei.com>
+Hi Jann,
 
-For dispatch_request method, current behavior is dispatching one request at
-a time. In the case of multiple dispatching contexts, This behavior, on the
-one hand, introduce intense lock contention:
+While documenting "hidepid=" I encountered those clunky behavior, which
+I think we should not have.
 
-t1:                     t2:                     t3:
-lock                    lock                    lock
-// grab lock
-ops.dispatch_request
-unlock
-                        // grab lock
-                        ops.dispatch_request
-                        unlock
-                                                // grab lock
-                                                ops.dispatch_request
-                                                unlock
+Let say we set the "hidepid=" option to "invisible", processes will be fully
+invisible to other users than root and the user that reads the procfs entry.
 
-on the other hand, messing up the requests dispatching order:
-t1:
+The fact that root is able to see every processes is partialy due to the fact
+that the "gid=" variable is set to "0" by default :
 
-lock
-rq1 = ops.dispatch_request
-unlock
-                        t2:
-                        lock
-                        rq2 = ops.dispatch_request
-                        unlock
+```C has_pid_permissions
+[...]
+	if (in_group_p(fs_info->pid_gid))
+		return true;
+[...]
+```
 
-lock
-rq3 = ops.dispatch_request
-unlock
+This means that if a process GID is in the group defined by the "gid=" option,
+an authorization is directly returned, and the `ptrace_may_access()` function
+is never called.
 
-                        lock
-                        rq4 = ops.dispatch_request
-                        unlock
+Thus, if one sets the "gid=" option to "1000", if a process is in this group,
+it will now bypass the `security_ptrace_access_check()` hook calls.
 
-//rq1,rq3 issue to disk
-                        // rq2, rq4 issue to disk
+This comes with the side effect that now, root will go through the
+`ptrace_may_access()` checks and thus, if I have a root process without the
+cap_sys_ptrace in its effective set, it will not be able to see other processes
+anymore.
 
-In this case, the elevator dispatch order is rq 1-2-3-4, however,
-such order in disk is rq 1-3-2-4, the order for rq2 and rq3 is inversed.
+```C __ptrace_may_access
+[...]
+	if (ptrace_has_cap(tcred->user_ns, mode))
+		goto ok;
+	rcu_read_unlock();
+	return -EPERM;
+[...]
+```
 
-Fix those problems by introducing elevator_dispatch_requests(), this
-helper will grab the lock and dispatch a batch of requests while holding
-the lock.
+The following behavior thus happens :
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- block/blk-mq-sched.c | 61 +++++++++++++++++++++++++++++++++++++++++---
- block/blk-mq.h       | 21 +++++++++++++++
- 2 files changed, 78 insertions(+), 4 deletions(-)
+```bash
+$ sudo capsh --user=root --drop=cap_sys_ptrace -- -c /bin/bash
+# mount -o remount,hidepid=2 /proc
+# getpcaps $$
+=ep cap_sys_ptrace-ep
+# ps aux
+root         1  0.0  0.1 204724  1404 ?        S    09:43   0:00 /usr/lib/python3.13/site-packages/virtme/guest/bin/virtme-ng-init
+root         2  0.0  0.0      0     0 ?        S    09:43   0:00 [kthreadd]
+root         3  0.0  0.0      0     0 ?        S    09:43   0:00 [pool_workqueue_release]
+[...]
 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index f18aecf710ad..9ee05d6e8350 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -101,6 +101,55 @@ static bool elevator_can_dispatch(struct sched_dispatch_ctx *ctx)
- 	return true;
- }
- 
-+static void elevator_dispatch_requests(struct sched_dispatch_ctx *ctx)
-+{
-+	bool has_get_budget = ctx->q->mq_ops->get_budget != NULL;
-+	int budget_token[BUDGET_TOKEN_BATCH];
-+	int count = ctx->q->nr_requests;
-+	int i;
-+
-+	while (true) {
-+		if (!elevator_can_dispatch(ctx))
-+			return;
-+
-+		if (has_get_budget) {
-+			count = blk_mq_get_dispatch_budgets(ctx->q, budget_token);
-+			if (count <= 0)
-+				return;
-+		}
-+
-+		spin_lock_irq(&ctx->e->lock);
-+		for (i = 0; i < count; ++i) {
-+			struct request *rq =
-+				ctx->e->type->ops.dispatch_request(ctx->hctx);
-+
-+			if (!rq) {
-+				ctx->run_queue = true;
-+				goto err_free_budgets;
-+			}
-+
-+			if (has_get_budget)
-+				blk_mq_set_rq_budget_token(rq, budget_token[i]);
-+			list_add_tail(&rq->queuelist, &ctx->rq_list);
-+			ctx->count++;
-+			if (rq->mq_hctx != ctx->hctx)
-+				ctx->multi_hctxs = true;
-+
-+			if (!blk_mq_get_driver_tag(rq)) {
-+				i++;
-+				goto err_free_budgets;
-+			}
-+		}
-+		spin_unlock_irq(&ctx->e->lock);
-+	}
-+
-+err_free_budgets:
-+	spin_unlock_irq(&ctx->e->lock);
-+	if (has_get_budget)
-+		for (; i < count; ++i)
-+			blk_mq_put_dispatch_budget(ctx->q, budget_token[i]);
-+}
-+
- static bool elevator_dispatch_one_request(struct sched_dispatch_ctx *ctx)
- {
- 	bool sq_sched = blk_queue_sq_sched(ctx->q);
-@@ -213,10 +262,14 @@ static int __blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
- 	else
- 		max_dispatch = hctx->queue->nr_requests;
- 
--	do {
--		if (!elevator_dispatch_one_request(&ctx))
--			break;
--	} while (ctx.count < max_dispatch);
-+	if (!hctx->dispatch_busy && blk_queue_sq_sched(ctx.q))
-+		elevator_dispatch_requests(&ctx);
-+	else {
-+		do {
-+			if (!elevator_dispatch_one_request(&ctx))
-+				break;
-+		} while (ctx.count < max_dispatch);
-+	}
- 
- 	return elevator_finish_dispatch(&ctx);
- }
-diff --git a/block/blk-mq.h b/block/blk-mq.h
-index affb2e14b56e..450c16a07841 100644
---- a/block/blk-mq.h
-+++ b/block/blk-mq.h
-@@ -37,6 +37,7 @@ enum {
- };
- 
- #define BLK_MQ_CPU_WORK_BATCH	(8)
-+#define BUDGET_TOKEN_BATCH	(8)
- 
- typedef unsigned int __bitwise blk_insert_t;
- #define BLK_MQ_INSERT_AT_HEAD		((__force blk_insert_t)0x01)
-@@ -262,6 +263,26 @@ static inline int blk_mq_get_dispatch_budget(struct request_queue *q)
- 	return 0;
- }
- 
-+static inline int blk_mq_get_dispatch_budgets(struct request_queue *q,
-+					      int *budget_token)
-+{
-+	int count = 0;
-+
-+	while (count < BUDGET_TOKEN_BATCH) {
-+		int token = 0;
-+
-+		if (q->mq_ops->get_budget)
-+			token = q->mq_ops->get_budget(q);
-+
-+		if (token < 0)
-+			return count;
-+
-+		budget_token[count++] = token;
-+	}
-+
-+	return count;
-+}
-+
- static inline void blk_mq_set_rq_budget_token(struct request *rq, int token)
- {
- 	if (token < 0)
--- 
-2.39.2
+# mount -o remount,hidepid=2,gid=1000 /proc
+# getpcaps $$
+=ep cap_sys_ptrace-ep
+# ps aux
+root       621  0.0  0.2   8656  2556 pts/0    S    09:46   0:00 /bin/bash
+root       641  0.0  0.4   9592  4012 pts/0    R+   10:03   0:00 ps aux
+root       642  0.0  0.2   6896  2452 pts/0    S+   10:03   0:00 less
+```
 
+This also means that if a process accesses were controled by an LSM, lets say
+with the `audit ptrace` option of AppArmor, they magically disappears for the
+process in the group defined in the "gid=" hidepid option and those controls
+are "transfered" to root, which was not controlled at first.
+
+Also, note that with "hidepid=ptraceable", the "gid=" option is ignored
+and `ptrace_may_access()` is always called.
+
+Shouldn't we always check for the "gid=0" and also call the
+`security_ptrace_access_check()` even if the group is set ?
+
+Best regards,
+
+Nicolas
 
