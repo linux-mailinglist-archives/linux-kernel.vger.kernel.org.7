@@ -1,1150 +1,246 @@
-Return-Path: <linux-kernel+bounces-750316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDAB4B159F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:47:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D10B159FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:49:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CBA91683D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CEF818A6F1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31356291C3B;
-	Wed, 30 Jul 2025 07:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D7C290D83;
+	Wed, 30 Jul 2025 07:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOG3KB+D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DBvqUKWV"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718FD290BCC;
-	Wed, 30 Jul 2025 07:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B054325291C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753861618; cv=none; b=QzH5bkg93d9sTzRnhXJ5/07t1f7wMFWI+z2CjX5qZ8o3ne9e8DnFpnolTM+o5GenDo43tUrUAmxUwz7Nm7ICzPucRJ88RrzmB8Efib/usQF+Y1bF0GVaw2wBpQkjyScBQr/OV3Ueyf6eEKFqY12jdQmxKeBgBybwlOaCy8K6xd4=
+	t=1753861772; cv=none; b=N7kmIsMupxyV5NU4PXZ5eRRyL0EsSjBMJI5PCtwP5X99RMqaE48UYHs6tZcMoctRRjBqu3XWgX+q1i/c0A9wRU4++5G2KJyIA+t0HSCRJkec1q0Ak7wykOZT9lz82PrKxPW6PERJK4MkE0m+PXskKYzrYKDgvrn/PFWGfEw2Lw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753861618; c=relaxed/simple;
-	bh=8Ejtt8ooS0vSndAsapFx2lVyqypvSA3mLRBaWU4MP4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J4olVoI3bm+fQNEI2tsGSe6F+R9ihYCM/G75lkriwagfhQiEvEuaX3B02tyCNkKGFCe8oqSKLhDYdD1efgKjVLXCtz3i/4HtTprT7YOvE2lsymQhwBCV6mZhzGNnIFbRS0M7I/uryrCuWoR4zTiVP+6DBRUevW/2eUtskL3qK/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOG3KB+D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D00D4C4CEE7;
-	Wed, 30 Jul 2025 07:46:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753861618;
-	bh=8Ejtt8ooS0vSndAsapFx2lVyqypvSA3mLRBaWU4MP4w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=UOG3KB+DLc0tYBcMFpGYhb6jeYowzYZssBMGOdkJf/Fq5tSEaUEZqwHoHRgFCDQq2
-	 P8Pkj84vQ+DUn4s4lXVIerauXddUDozgbYDssmcWSUUgNgTslWCBlS+RWzMcUEUXBq
-	 psrxkYRUxYzO8+wWPHoPxUNresLQ2ejvhSm91U5ZkMnMSHPB9Wr3ym0gdQyDLT1YHX
-	 pdf9soBiljiXr0R61LxVDcFo2n4slBmND2UJJzJdli9qsiyBN9+V/vB4TJC0rq29T7
-	 ceAN4EE6qLXmpi9O+GTr209Z0/948t/ifXJJqSIae1DhA+hTv/zS6zZXiBhfI9Ues2
-	 yNWv9JK3hMB1g==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "Alan J . Wylie" <alan@wylie.me.uk>,
-	linux-kernel@vger.kernel.org,
-	regressions@lists.linux.dev,
-	stable@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86: XOP prefix instructions decoder support
-Date: Wed, 30 Jul 2025 16:46:52 +0900
-Message-ID: <175386161199.564247.597496379413236944.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1753861772; c=relaxed/simple;
+	bh=7OrtonhUaQaIKcj4rTSyDDhduZaizBYkdzgK7qXmycU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oixqGvUm7VASyv0RbtbuZX2jRSw9v63s1KDxuhBcAmGGKDlST9GOfCbII5meyHW8qLNofSl1WS6OyiHgcacV53oYqOn5JeTCLOqpKYz8R+P/hIVBsT5RHHyfW26tDHOreIpFELb+209NtO+eUa9vauZrnZTL5sLJX1thHUXuEBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DBvqUKWV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U60Zl3023457
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:49:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rTm+TZkQT/SGQGK62s6S181SpWgQH5VtRqWeAqKrzZc=; b=DBvqUKWVV6+E3hMq
+	WemIAzJm3LT2m6sGOWR+cg/hJWHEaFz31nnOakfi6LAogcIilPrC6WEOO28ovgDf
+	lymO0BXfeHSfbweKmBEiP8OEk7M96xynCHloyYXZ9efHUPSal3PhgUqUbFhV4Hw2
+	f5nSEkFcD55Hxe4ZmtLNZgHN6IE8cTNqr8S9PLwMxHpGygxxtCOPNKVOMKUlSabi
+	vjmyfeNCXocYaeRxiPu7p69i6lZbCceAd3GQ47WmZ9kOpahLV1fFHWv57Mc1W9XO
+	hEKpZtR8rdl04mIETVTOFGGFQBW15B5IHvto2riCYE9zLfesedjZ7voALZdp+CAG
+	U4IfbA==
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484r6qtvmq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:49:29 +0000 (GMT)
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4ab5e4f4600so17464651cf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:49:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753861768; x=1754466568;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rTm+TZkQT/SGQGK62s6S181SpWgQH5VtRqWeAqKrzZc=;
+        b=FupYzN5a5stlp3W1Bt6RtyDXYncItCsn6js0s0hbdUN52kIoy79mpeJFbaY+gcNrt1
+         pP9fmq+b/uQx4huX7UlR3UQ3ZnI7QUv3JPtKCuyQjSgV+zQETGgTHGSKwjhAmkLM0ZJ4
+         mtB2hXQ8ylYXxJEN2xn0SvibFB1ZYCytEJv/N53BqCzptJSucg973aFtN/gJzEoPrDnF
+         y8RZifbPsuLHjTroqMix0bxrv5JloaVYCGJCFEzRhTqHc9BL0e2fY8UoVxZNBh2EYo9Q
+         Zq09DeGpFJm1HXJlpuvhGzbLubmzSl2iAvvc0WH2yw3cEH5BjSO3iZTSro7JhKJbYkqV
+         TqQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeG1jbKA1pL5bd+LpIE2r25TGgFQ6T2IrzrleRPadnnL2mLzA65gTiKEr/C2spqMUUuggaUoa2ryTLXKk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyggs66t6w75HaKMuBYuXG4hNgAPC0TUazC3rYWnApajCx33/S7
+	MzvvTKkzJb1atABrYNVt+mEkx4ben5WFbFEb1/cA7TIlKgtJsDRhczrkG+IafXLsDHkhQaxEgiE
+	8m0n/egL+i3uJwkB3y6cY/NTOO5vQyVEL4aP0Y0OTuwQue6n47WXrldBxlHJFoBKhCWw=
+X-Gm-Gg: ASbGnctEHhlH2hMfZyPaXslwUtdrH0yqCijvwS/R56Oay1moFRUtqrxsZAer6ionWGb
+	U/A0u8Oh+8rKSxbws1W3PxZ+NzJ7vTAqVB+wlPC+BKERm6eRJy9GsuwDMFksQ1ytJHfzgDTG+eR
+	BNz4Rcxw82u5yDw/eZL2Kr/vxshlMlavIHMAIV5LPzz/Hm/3YaqTFsFlFecu/IE0Dy/tuGV3EwX
+	/mHOKZtYKQlafNvVRuXADfUyN47rwBDbLd0owOF7lJNXWP2V5fd1GqVnf4Hj44iuGCPc2J72AaX
+	LYYHrrOiSCdMsw+bI+q8qoX34WpC8GkmD2xxWIWPB1Jcqrq1cqlYMDFgHdhoicJ+YlMEhet6811
+	gz+gzqyoEXpuo0Xu6DQ==
+X-Received: by 2002:a05:622a:488:b0:4a7:bed9:524c with SMTP id d75a77b69052e-4aedbc144cemr18606071cf.11.1753861768340;
+        Wed, 30 Jul 2025 00:49:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGpPhh045uTi/QuFSdP8//pNs61a36JHJHwALkH8CLnoy9U2dacpk/Mha/zFLAQRC76nIkYJw==
+X-Received: by 2002:a05:622a:488:b0:4a7:bed9:524c with SMTP id d75a77b69052e-4aedbc144cemr18605921cf.11.1753861767853;
+        Wed, 30 Jul 2025 00:49:27 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af9015990c4sm74181966b.128.2025.07.30.00.49.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 00:49:27 -0700 (PDT)
+Message-ID: <7c5df7d1-6757-4cfd-b69d-46854731a119@oss.qualcomm.com>
+Date: Wed, 30 Jul 2025 09:49:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 07/17] drm/msm/adreno: Add fenced regwrite support
+To: Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250720-ifpc-support-v1-0-9347aa5bcbd6@oss.qualcomm.com>
+ <20250720-ifpc-support-v1-7-9347aa5bcbd6@oss.qualcomm.com>
+ <tyjkwrdmsj7k7tkqqxdd65l5v5jxugr5me3ivg5onn3hbffkwp@7uhsbzolqiyd>
+ <30442713-2990-490a-b076-93c3cfc3901d@oss.qualcomm.com>
+ <d696e7df-7f11-4491-89ff-ba71274ae101@oss.qualcomm.com>
+ <1d320aac-e928-4fd0-812c-268a3a943575@oss.qualcomm.com>
+ <3f58451a-9b5f-4697-9679-d549104e8312@oss.qualcomm.com>
+ <9e48ea8e-b59b-4620-9781-211cc1f7cc07@oss.qualcomm.com>
+ <bd6076a5-f888-4044-8a5d-ea6e6fea28e8@oss.qualcomm.com>
+ <4226ced8-411e-4cc1-be2c-4d1452c09b14@oss.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <4226ced8-411e-4cc1-be2c-4d1452c09b14@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA1MCBTYWx0ZWRfX8EUx/SpNorZQ
+ 5bJUU3L/262CQQbfeDFQECD3NHCu8jOmuEVXPvlKjxN7qDShn9YpOeUOCaPQWyPmQYl/vtPonw4
+ OY1DMi+LwF6v0Y7TpI7puq9Xx2+G9e8nbVtKC6zuz9PUQo3Rxkv7NcA+fpyq4fqRDJYFXTDdzct
+ g6SQMrx1gQpf7M82SbsURHGuPscWf7OfQ83V7YIAz6cVmMV7L0EtzC+Qges+m7qlRrKnQNprJUa
+ +vyIUDvG1YLPKFDJ2yQM1Per1TPF/p9YLD12NquGwhGOLJ6WrUrTSfRoYKxHPIKFsitA6JycQnk
+ g2fb9PUCw798V5QgedR4mMQpEnKyXHCFQjQuzCh93bA0+qPAjrwdy77cqO05LQkOiZntdI+NEOe
+ H6lJAne0rGmMa2hXrbwJk42GiHkUjfxsgmmsjj8hQJrf24GQTTbiUlL5Xcnp/qWv+wIPqGvF
+X-Proofpoint-ORIG-GUID: B0uFi8l80O4cEJu4aOj94vYj6o0DhE1l
+X-Authority-Analysis: v=2.4 cv=ea89f6EH c=1 sm=1 tr=0 ts=6889ce89 cx=c_pps
+ a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=ND-EWpZVFRsHkRg0wacA:9
+ a=QEXdDO2ut3YA:10 a=a_PwQJl-kcHnX1M80qC6:22
+X-Proofpoint-GUID: B0uFi8l80O4cEJu4aOj94vYj6o0DhE1l
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_03,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 clxscore=1015
+ spamscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507300050
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 7/29/25 11:49 PM, Akhil P Oommen wrote:
+> On 7/30/2025 3:10 AM, Akhil P Oommen wrote:
+>> On 7/29/2025 6:31 PM, Konrad Dybcio wrote:
+>>> On 7/24/25 6:54 PM, Akhil P Oommen wrote:
+>>>> On 7/24/2025 5:16 PM, Konrad Dybcio wrote:
+>>>>> On 7/23/25 11:06 PM, Akhil P Oommen wrote:
+>>>>>> On 7/22/2025 8:22 PM, Konrad Dybcio wrote:
+>>>>>>> On 7/22/25 3:39 PM, Dmitry Baryshkov wrote:
+>>>>>>>> On Sun, Jul 20, 2025 at 05:46:08PM +0530, Akhil P Oommen wrote:
+>>>>>>>>> There are some special registers which are accessible even when GX power
+>>>>>>>>> domain is collapsed during an IFPC sleep. Accessing these registers
+>>>>>>>>> wakes up GPU from power collapse and allow programming these registers
+>>>>>>>>> without additional handshake with GMU. This patch adds support for this
+>>>>>>>>> special register write sequence.
+>>>>>>>>>
+>>>>>>>>> Signed-off-by: Akhil P Oommen <akhilpo@oss.qualcomm.com>
+>>>>>>>>> ---
+>>>>>>>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c     | 63 ++++++++++++++++++++++++++++++-
+>>>>>>>>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.h     |  1 +
+>>>>>>>>>  drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 20 +++++-----
+>>>>>>>>>  3 files changed, 73 insertions(+), 11 deletions(-)
+>>>>>>>>>
+>>>>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>>>>>>>>> index 491fde0083a202bec7c6b3bca88d0e5a717a6560..8c004fc3abd2896d467a9728b34e99e4ed944dc4 100644
+>>>>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>>>>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>>>>>>>>> @@ -16,6 +16,67 @@
+>>>>>>>>>  
+>>>>>>>>>  #define GPU_PAS_ID 13
+>>>>>>>>>  
+>>>>>>>>> +static bool fence_status_check(struct msm_gpu *gpu, u32 offset, u32 value, u32 status, u32 mask)
+>>>>>>>>> +{
+>>>>>>>>> +	/* Success if !writedropped0/1 */
+>>>>>>>>> +	if (!(status & mask))
+>>>>>>>>> +		return true;
+>>>>>>>>> +
+>>>>>>>>> +	udelay(10);
+>>>>>>>>
+>>>>>>>> Why do we need udelay() here? Why can't we use interval setting inside
+>>>>>>>> gmu_poll_timeout()?
+>>>>>>>
+>>>>>>> Similarly here:
+>>>>>>>
+>>>>>>> [...]
+>>>>>>>
+>>>>>>>>> +	if (!gmu_poll_timeout(gmu, REG_A6XX_GMU_AHB_FENCE_STATUS, status,
+>>>>>>>>> +			fence_status_check(gpu, offset, value, status, mask), 0, 1000))
+>>>>>>>>> +		return 0;
+>>>>>>>>> +
+>>>>>>>>> +	dev_err_ratelimited(gmu->dev, "delay in fenced register write (0x%x)\n",
+>>>>>>>>> +			offset);
+>>
+>> This print should be after the 2nd polling. Otherwise the delay due to
+>> this may allow GPU to go back to IFPC.
+>>
+>>>>>>>>> +
+>>>>>>>>> +	/* Try again for another 1ms before failing */
+>>>>>>>>> +	gpu_write(gpu, offset, value);
+>>>>>>>>> +	if (!gmu_poll_timeout(gmu, REG_A6XX_GMU_AHB_FENCE_STATUS, status,
+>>>>>>>>> +			fence_status_check(gpu, offset, value, status, mask), 0, 1000))
+>>>>>>>>> +		return 0;
+>>>>>>>>> +
+>>>>>>>>> +	dev_err_ratelimited(gmu->dev, "fenced register write (0x%x) fail\n",
+>>>>>>>>> +			offset);
+>>>>>>>
+>>>>>>> We may want to combine the two, so as not to worry the user too much..
+>>>>>>>
+>>>>>>> If it's going to fail, I would assume it's going to fail both checks
+>>>>>>> (unless e.g. the bus is so congested a single write can't go through
+>>>>>>> to a sleepy GPU across 2 miliseconds, but that's another issue)
+>>>>>>
+>>>>>> In case of success, we cannot be sure if the first write went through.
+>>>>>> So we should poll separately.
+>>>>>
+>>>>> You're writing to it 2 (outside fence_status_check) + 2*1000/10 (inside)
+>>>>> == 202 times, it really better go through..
+>>>>
+>>>> For the following sequence:
+>>>> 1. write reg1 <- suppose this is dropped
+>>>> 2. write reg2 <- and this went through
+>>>> 3. Check fence status <- This will show success
+>>>
+>>> What I'm saying is that fence_status_check() does the same write you
+>>> execute inbetween the polling calls
+>>
+>> On a second thought I think it is simpler to just use a single polling
+>> of 2ms and measure the time taken using ktime to print a warning if it
+>> took more that 1ms.
+> 
+> But then we can't know if the higher latency measured is because this
+> thread got scheduled out just before we measure with ktime 2nd time. So
+> we should rely on gmu_poll_timeout() for accuracy.
+> 
+> We need a warn after 1ms because there is a 1ms timeout in VRM. We
+> should know if it occurs frequently enough to cause a performance issue.
 
-Support decoding AMD's XOP prefix encoded instructions.
+VRM, as in the RPMh component?
 
-These instructions are introduced for Bulldozer micro architecture,
-and not supported on Intel's processors. But when compiling kernel
-with CONFIG_X86_NATIVE_CPU on some AMD processor (e.g. -march=bdver2),
-these instructions can be used.
+Please provide more context on how it's tied together in the commit
+message, it'll be useful for people down the line (I'd assume accessing
+these special registers invokes some handler that brings GX back up
+momentarily, which is why we're polling in the first place?)
 
-Reported-by: Alan J. Wylie <alan@wylie.me.uk>
-Closes: https://lore.kernel.org/all/871pq06728.fsf@wylie.me.uk/
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- arch/x86/include/asm/inat.h                        |   15 +++
- arch/x86/include/asm/insn.h                        |   51 +++++++++
- arch/x86/lib/inat.c                                |   13 ++
- arch/x86/lib/insn.c                                |   35 +++++-
- arch/x86/lib/x86-opcode-map.txt                    |  111 ++++++++++++++++++++
- arch/x86/tools/gen-insn-attr-x86.awk               |   44 ++++++++
- tools/arch/x86/include/asm/inat.h                  |   15 +++
- tools/arch/x86/include/asm/insn.h                  |   51 +++++++++
- tools/arch/x86/lib/inat.c                          |   13 ++
- tools/arch/x86/lib/insn.c                          |   35 +++++-
- tools/arch/x86/lib/x86-opcode-map.txt              |  111 ++++++++++++++++++++
- tools/arch/x86/tools/gen-insn-attr-x86.awk         |   44 ++++++++
- .../util/intel-pt-decoder/intel-pt-insn-decoder.c  |    2 
- 13 files changed, 513 insertions(+), 27 deletions(-)
-
-diff --git a/arch/x86/include/asm/inat.h b/arch/x86/include/asm/inat.h
-index 97f341777db5..1b3060a3425c 100644
---- a/arch/x86/include/asm/inat.h
-+++ b/arch/x86/include/asm/inat.h
-@@ -37,6 +37,8 @@
- #define INAT_PFX_EVEX	15	/* EVEX prefix */
- /* x86-64 REX2 prefix */
- #define INAT_PFX_REX2	16	/* 0xD5 */
-+/* AMD XOP prefix */
-+#define INAT_PFX_XOP	17	/* 0x8F */
- 
- #define INAT_LSTPFX_MAX	3
- #define INAT_LGCPFX_MAX	11
-@@ -77,6 +79,7 @@
- #define INAT_MOFFSET	(1 << (INAT_FLAG_OFFS + 3))
- #define INAT_VARIANT	(1 << (INAT_FLAG_OFFS + 4))
- #define INAT_VEXOK	(1 << (INAT_FLAG_OFFS + 5))
-+#define INAT_XOPOK	INAT_VEXOK
- #define INAT_VEXONLY	(1 << (INAT_FLAG_OFFS + 6))
- #define INAT_EVEXONLY	(1 << (INAT_FLAG_OFFS + 7))
- #define INAT_NO_REX2	(1 << (INAT_FLAG_OFFS + 8))
-@@ -111,6 +114,8 @@ extern insn_attr_t inat_get_group_attribute(insn_byte_t modrm,
- extern insn_attr_t inat_get_avx_attribute(insn_byte_t opcode,
- 					  insn_byte_t vex_m,
- 					  insn_byte_t vex_pp);
-+extern insn_attr_t inat_get_xop_attribute(insn_byte_t opcode,
-+					  insn_byte_t map_select);
- 
- /* Attribute checking functions */
- static inline int inat_is_legacy_prefix(insn_attr_t attr)
-@@ -164,6 +169,11 @@ static inline int inat_is_vex3_prefix(insn_attr_t attr)
- 	return (attr & INAT_PFX_MASK) == INAT_PFX_VEX3;
- }
- 
-+static inline int inat_is_xop_prefix(insn_attr_t attr)
-+{
-+	return (attr & INAT_PFX_MASK) == INAT_PFX_XOP;
-+}
-+
- static inline int inat_is_escape(insn_attr_t attr)
- {
- 	return attr & INAT_ESC_MASK;
-@@ -229,6 +239,11 @@ static inline int inat_accept_vex(insn_attr_t attr)
- 	return attr & INAT_VEXOK;
- }
- 
-+static inline int inat_accept_xop(insn_attr_t attr)
-+{
-+	return attr & INAT_XOPOK;
-+}
-+
- static inline int inat_must_vex(insn_attr_t attr)
- {
- 	return attr & (INAT_VEXONLY | INAT_EVEXONLY);
-diff --git a/arch/x86/include/asm/insn.h b/arch/x86/include/asm/insn.h
-index 7152ea809e6a..091f88c8254d 100644
---- a/arch/x86/include/asm/insn.h
-+++ b/arch/x86/include/asm/insn.h
-@@ -71,7 +71,10 @@ struct insn {
- 					 * prefixes.bytes[3]: last prefix
- 					 */
- 	struct insn_field rex_prefix;	/* REX prefix */
--	struct insn_field vex_prefix;	/* VEX prefix */
-+	union {
-+		struct insn_field vex_prefix;	/* VEX prefix */
-+		struct insn_field xop_prefix;	/* XOP prefix */
-+	};
- 	struct insn_field opcode;	/*
- 					 * opcode.bytes[0]: opcode1
- 					 * opcode.bytes[1]: opcode2
-@@ -135,6 +138,17 @@ struct insn {
- #define X86_VEX_V(vex)	(((vex) & 0x78) >> 3)	/* VEX3 Byte2, VEX2 Byte1 */
- #define X86_VEX_P(vex)	((vex) & 0x03)		/* VEX3 Byte2, VEX2 Byte1 */
- #define X86_VEX_M_MAX	0x1f			/* VEX3.M Maximum value */
-+/* XOP bit fields */
-+#define X86_XOP_R(xop)	((xop) & 0x80)	/* XOP Byte2 */
-+#define X86_XOP_X(xop)	((xop) & 0x40)	/* XOP Byte2 */
-+#define X86_XOP_B(xop)	((xop) & 0x20)	/* XOP Byte2 */
-+#define X86_XOP_M(xop)	((xop) & 0x1f)	/* XOP Byte2 */
-+#define X86_XOP_W(xop)	((xop) & 0x80)	/* XOP Byte3 */
-+#define X86_XOP_V(xop)	((xop) & 0x78)	/* XOP Byte3 */
-+#define X86_XOP_L(xop)	((xop) & 0x04)	/* XOP Byte3 */
-+#define X86_XOP_P(xop)	((xop) & 0x03)	/* XOP Byte3 */
-+#define X86_XOP_M_MIN	0x08	/* Min of XOP.M */
-+#define X86_XOP_M_MAX	0x1f	/* Max of XOP.M */
- 
- extern void insn_init(struct insn *insn, const void *kaddr, int buf_len, int x86_64);
- extern int insn_get_prefixes(struct insn *insn);
-@@ -178,7 +192,7 @@ static inline insn_byte_t insn_rex2_m_bit(struct insn *insn)
- 	return X86_REX2_M(insn->rex_prefix.bytes[1]);
- }
- 
--static inline int insn_is_avx(struct insn *insn)
-+static inline int insn_is_avx_or_xop(struct insn *insn)
- {
- 	if (!insn->prefixes.got)
- 		insn_get_prefixes(insn);
-@@ -192,6 +206,22 @@ static inline int insn_is_evex(struct insn *insn)
- 	return (insn->vex_prefix.nbytes == 4);
- }
- 
-+/* If we already know this is AVX/XOP encoded */
-+static inline int avx_insn_is_xop(struct insn *insn)
-+{
-+	insn_attr_t attr = inat_get_opcode_attribute(insn->vex_prefix.bytes[0]);
-+
-+	return inat_is_xop_prefix(attr);
-+}
-+
-+static inline int insn_is_xop(struct insn *insn)
-+{
-+	if (!insn_is_avx_or_xop(insn))
-+		return 0;
-+
-+	return avx_insn_is_xop(insn);
-+}
-+
- static inline int insn_has_emulate_prefix(struct insn *insn)
- {
- 	return !!insn->emulate_prefix_size;
-@@ -222,11 +252,26 @@ static inline insn_byte_t insn_vex_w_bit(struct insn *insn)
- 	return X86_VEX_W(insn->vex_prefix.bytes[2]);
- }
- 
-+static inline insn_byte_t insn_xop_map_bits(struct insn *insn)
-+{
-+	if (insn->xop_prefix.nbytes < 3)	/* XOP is 3 bytes */
-+		return 0;
-+	return X86_XOP_M(insn->xop_prefix.bytes[1]);
-+}
-+
-+static inline insn_byte_t insn_xop_p_bits(struct insn *insn)
-+{
-+	return X86_XOP_P(insn->vex_prefix.bytes[2]);
-+}
-+
- /* Get the last prefix id from last prefix or VEX prefix */
- static inline int insn_last_prefix_id(struct insn *insn)
- {
--	if (insn_is_avx(insn))
-+	if (insn_is_avx_or_xop(insn)) {
-+		if (avx_insn_is_xop(insn))
-+			return insn_xop_p_bits(insn);
- 		return insn_vex_p_bits(insn);	/* VEX_p is a SIMD prefix id */
-+	}
- 
- 	if (insn->prefixes.bytes[3])
- 		return inat_get_last_prefix_id(insn->prefixes.bytes[3]);
-diff --git a/arch/x86/lib/inat.c b/arch/x86/lib/inat.c
-index b0f3b2a62ae2..a5cafd402cfd 100644
---- a/arch/x86/lib/inat.c
-+++ b/arch/x86/lib/inat.c
-@@ -81,3 +81,16 @@ insn_attr_t inat_get_avx_attribute(insn_byte_t opcode, insn_byte_t vex_m,
- 	return table[opcode];
- }
- 
-+insn_attr_t inat_get_xop_attribute(insn_byte_t opcode, insn_byte_t map_select)
-+{
-+	const insn_attr_t *table;
-+
-+	if (map_select < X86_XOP_M_MIN || map_select > X86_XOP_M_MAX)
-+		return 0;
-+	map_select -= X86_XOP_M_MIN;
-+	/* At first, this checks the master table */
-+	table = inat_xop_tables[map_select];
-+	if (!table)
-+		return 0;
-+	return table[opcode];
-+}
-diff --git a/arch/x86/lib/insn.c b/arch/x86/lib/insn.c
-index 149a57e334ab..225af1399c9d 100644
---- a/arch/x86/lib/insn.c
-+++ b/arch/x86/lib/insn.c
-@@ -200,12 +200,15 @@ int insn_get_prefixes(struct insn *insn)
- 	}
- 	insn->rex_prefix.got = 1;
- 
--	/* Decode VEX prefix */
-+	/* Decode VEX/XOP prefix */
- 	b = peek_next(insn_byte_t, insn);
--	attr = inat_get_opcode_attribute(b);
--	if (inat_is_vex_prefix(attr)) {
-+	if (inat_is_vex_prefix(attr) || inat_is_xop_prefix(attr)) {
- 		insn_byte_t b2 = peek_nbyte_next(insn_byte_t, insn, 1);
--		if (!insn->x86_64) {
-+
-+		if (inat_is_xop_prefix(attr) && X86_MODRM_REG(b2) == 0) {
-+			/* Grp1A.0 is always POP Ev */
-+			goto vex_end;
-+		} else if (!insn->x86_64) {
- 			/*
- 			 * In 32-bits mode, if the [7:6] bits (mod bits of
- 			 * ModRM) on the second byte are not 11b, it is
-@@ -226,13 +229,13 @@ int insn_get_prefixes(struct insn *insn)
- 			if (insn->x86_64 && X86_VEX_W(b2))
- 				/* VEX.W overrides opnd_size */
- 				insn->opnd_bytes = 8;
--		} else if (inat_is_vex3_prefix(attr)) {
-+		} else if (inat_is_vex3_prefix(attr) || inat_is_xop_prefix(attr)) {
- 			b2 = peek_nbyte_next(insn_byte_t, insn, 2);
- 			insn_set_byte(&insn->vex_prefix, 2, b2);
- 			insn->vex_prefix.nbytes = 3;
- 			insn->next_byte += 3;
- 			if (insn->x86_64 && X86_VEX_W(b2))
--				/* VEX.W overrides opnd_size */
-+				/* VEX.W/XOP.W overrides opnd_size */
- 				insn->opnd_bytes = 8;
- 		} else {
- 			/*
-@@ -288,9 +291,22 @@ int insn_get_opcode(struct insn *insn)
- 	insn_set_byte(opcode, 0, op);
- 	opcode->nbytes = 1;
- 
--	/* Check if there is VEX prefix or not */
--	if (insn_is_avx(insn)) {
-+	/* Check if there is VEX/XOP prefix or not */
-+	if (insn_is_avx_or_xop(insn)) {
- 		insn_byte_t m, p;
-+
-+		/* XOP prefix has different encoding */
-+		if (unlikely(avx_insn_is_xop(insn))) {
-+			m = insn_xop_map_bits(insn);
-+			insn->attr = inat_get_xop_attribute(op, m);
-+			if (!inat_accept_xop(insn->attr)) {
-+				insn->attr = 0;
-+				return -EINVAL;
-+			}
-+			/* XOP has only 1 byte for opcode */
-+			goto end;
-+		}
-+
- 		m = insn_vex_m_bits(insn);
- 		p = insn_vex_p_bits(insn);
- 		insn->attr = inat_get_avx_attribute(op, m, p);
-@@ -383,7 +399,8 @@ int insn_get_modrm(struct insn *insn)
- 			pfx_id = insn_last_prefix_id(insn);
- 			insn->attr = inat_get_group_attribute(mod, pfx_id,
- 							      insn->attr);
--			if (insn_is_avx(insn) && !inat_accept_vex(insn->attr)) {
-+			if (insn_is_avx_or_xop(insn) && !inat_accept_vex(insn->attr) &&
-+			    !inat_accept_xop(insn->attr)) {
- 				/* Bad insn */
- 				insn->attr = 0;
- 				return -EINVAL;
-diff --git a/arch/x86/lib/x86-opcode-map.txt b/arch/x86/lib/x86-opcode-map.txt
-index 262f7ca1fb95..2a4e69ecc2de 100644
---- a/arch/x86/lib/x86-opcode-map.txt
-+++ b/arch/x86/lib/x86-opcode-map.txt
-@@ -27,6 +27,11 @@
- #  (evo): this opcode is changed by EVEX prefix (EVEX opcode)
- #  (v): this opcode requires VEX prefix.
- #  (v1): this opcode only supports 128bit VEX.
-+#  (xop): this opcode accepts XOP prefix.
-+#
-+# XOP Superscripts
-+#  (W=0): this opcode requires XOP.W == 0
-+#  (W=1): this opcode requires XOP.W == 1
- #
- # Last Prefix Superscripts
- #  - (66): the last prefix is 0x66
-@@ -194,7 +199,7 @@ AVXcode:
- 8c: MOV Ev,Sw
- 8d: LEA Gv,M
- 8e: MOV Sw,Ew
--8f: Grp1A (1A) | POP Ev (d64)
-+8f: Grp1A (1A) | POP Ev (d64) | XOP (Prefix)
- # 0x90 - 0x9f
- 90: NOP | PAUSE (F3) | XCHG r8,rAX
- 91: XCHG rCX/r9,rAX
-@@ -1106,6 +1111,84 @@ AVXcode: 7
- f8: URDMSR Rq,Id (F2),(v1),(11B) | UWRMSR Id,Rq (F3),(v1),(11B)
- EndTable
- 
-+# From AMD64 Architecture Programmer's Manual Vol3, Appendix A.1.5
-+Table: XOP map 8h
-+Referrer:
-+XOPcode: 0
-+85: VPMACSSWW Vo,Ho,Wo,Lo
-+86: VPMACSSWD Vo,Ho,Wo,Lo
-+87: VPMACSSDQL Vo,Ho,Wo,Lo
-+8e: VPMACSSDD Vo,Ho,Wo,Lo
-+8f: VPMACSSDQH Vo,Ho,Wo,Lo
-+95: VPMACSWW Vo,Ho,Wo,Lo
-+96: VPMACSWD Vo,Ho,Wo,Lo
-+97: VPMACSDQL Vo,Ho,Wo,Lo
-+9e: VPMACSDD Vo,Ho,Wo,Lo
-+9f: VPMACSDQH Vo,Ho,Wo,Lo
-+a2: VPCMOV Vx,Hx,Wx,Lx (W=0) | VPCMOV Vx,Hx,Lx,Wx (W=1)
-+a3: VPPERM Vo,Ho,Wo,Lo (W=0) | VPPERM Vo,Ho,Lo,Wo (W=1)
-+a6: VPMADCSSWD Vo,Ho,Wo,Lo
-+b6: VPMADCSWD Vo,Ho,Wo,Lo
-+c0: VPROTB Vo,Wo,Ib
-+c1: VPROTW Vo,Wo,Ib
-+c2: VPROTD Vo,Wo,Ib
-+c3: VPROTQ Vo,Wo,Ib
-+cc: VPCOMccB Vo,Ho,Wo,Ib
-+cd: VPCOMccW Vo,Ho,Wo,Ib
-+ce: VPCOMccD Vo,Ho,Wo,Ib
-+cf: VPCOMccQ Vo,Ho,Wo,Ib
-+ec: VPCOMccUB Vo,Ho,Wo,Ib
-+ed: VPCOMccUW Vo,Ho,Wo,Ib
-+ee: VPCOMccUD Vo,Ho,Wo,Ib
-+ef: VPCOMccUQ Vo,Ho,Wo,Ib
-+EndTable
-+
-+Table: XOP map 9h
-+Referrer:
-+XOPcode: 1
-+01: GrpXOP1
-+02: GrpXOP2
-+12: GrpXOP3
-+80: VFRCZPS Vx,Wx
-+81: VFRCZPD Vx,Wx
-+82: VFRCZSS Vq,Wss
-+83: VFRCZSD Vq,Wsd
-+90: VPROTB Vo,Wo,Ho (W=0) | VPROTB Vo,Ho,Wo (W=1)
-+91: VPROTW Vo,Wo,Ho (W=0) | VPROTB Vo,Ho,Wo (W=1)
-+92: VPROTD Vo,Wo,Ho (W=0) | VPROTB Vo,Ho,Wo (W=1)
-+93: VPROTQ Vo,Wo,Ho (W=0) | VPROTB Vo,Ho,Wo (W=1)
-+94: VPSHLB Vo,Wo,Ho (W=0) | VPSHLB Vo,Ho,Wo (W=1)
-+95: VPSHLW Vo,Wo,Ho (W=0) | VPSHLW Vo,Ho,Wo (W=1)
-+96: VPSHLD Vo,Wo,Ho (W=0) | VPSHLD Vo,Ho,Wo (W=1)
-+97: VPSHLQ Vo,Wo,Ho (W=0) | VPSHLQ Vo,Ho,Wo (W=1)
-+98: VPSHAB Vo,Wo,Ho (W=0) | VPSHAB Vo,Ho,Wo (W=1)
-+99: VPSHAW Vo,Wo,Ho (W=0) | VPSHAW Vo,Ho,Wo (W=1)
-+9a: VPSHAD Vo,Wo,Ho (W=0) | VPSHAD Vo,Ho,Wo (W=1)
-+9b: VPSHAQ Vo,Wo,Ho (W=0) | VPSHAQ Vo,Ho,Wo (W=1)
-+c1: VPHADDBW Vo,Wo
-+c2: VPHADDBD Vo,Wo
-+c3: VPHADDBQ Vo,Wo
-+c6: VPHADDWD Vo,Wo
-+c7: VPHADDWQ Vo,Wo
-+cb: VPHADDDQ Vo,Wo
-+d1: VPHADDUBWD Vo,Wo
-+d2: VPHADDUBD Vo,Wo
-+d3: VPHADDUBQ Vo,Wo
-+d6: VPHADDUWD Vo,Wo
-+d7: VPHADDUWQ Vo,Wo
-+db: VPHADDUDQ Vo,Wo
-+e1: VPHSUBBW Vo,Wo
-+e2: VPHSUBWD Vo,Wo
-+e3: VPHSUBDQ Vo,Wo
-+EndTable
-+
-+Table: XOP map Ah
-+Referrer:
-+XOPcode: 2
-+10: BEXTR Gy,Ey,Id
-+12: GrpXOP4
-+EndTable
-+
- GrpTable: Grp1
- 0: ADD
- 1: OR
-@@ -1320,3 +1403,29 @@ GrpTable: GrpRNG
- 4: xcrypt-cfb
- 5: xcrypt-ofb
- EndTable
-+
-+# GrpXOP1-4 is shown in AMD APM Vol.3 Appendix A as XOP group #1-4
-+GrpTable: GrpXOP1
-+1: BLCFILL By,Ey (xop)
-+2: BLSFILL By,Ey (xop)
-+3: BLCS By,Ey (xop)
-+4: TZMSK By,Ey (xop)
-+5: BLCIC By,Ey (xop)
-+6: BLSIC By,Ey (xop)
-+7: T1MSKC By,Ey (xop)
-+EndTable
-+
-+GrpTable: GrpXOP2
-+1: BLCMSK By,Ey (xop)
-+6: BLCI By,Ey (xop)
-+EndTable
-+
-+GrpTable: GrpXOP3
-+0: LLWPCB Ry (xop)
-+1: SLWPCB Ry (xop)
-+EndTable
-+
-+GrpTable: GrpXOP4
-+0: LWPINS By,Ed,Id (xop)
-+1: LWPVAL By,Ed,Id (xop)
-+EndTable
-diff --git a/arch/x86/tools/gen-insn-attr-x86.awk b/arch/x86/tools/gen-insn-attr-x86.awk
-index 2c19d7fc8a85..7ea1b75e59b7 100644
---- a/arch/x86/tools/gen-insn-attr-x86.awk
-+++ b/arch/x86/tools/gen-insn-attr-x86.awk
-@@ -21,6 +21,7 @@ function clear_vars() {
- 	eid = -1 # escape id
- 	gid = -1 # group id
- 	aid = -1 # AVX id
-+	xopid = -1 # XOP id
- 	tname = ""
- }
- 
-@@ -39,9 +40,11 @@ BEGIN {
- 	ggid = 1
- 	geid = 1
- 	gaid = 0
-+	gxopid = 0
- 	delete etable
- 	delete gtable
- 	delete atable
-+	delete xoptable
- 
- 	opnd_expr = "^[A-Za-z/]"
- 	ext_expr = "^\\("
-@@ -61,6 +64,7 @@ BEGIN {
- 	imm_flag["Ob"] = "INAT_MOFFSET"
- 	imm_flag["Ov"] = "INAT_MOFFSET"
- 	imm_flag["Lx"] = "INAT_MAKE_IMM(INAT_IMM_BYTE)"
-+	imm_flag["Lo"] = "INAT_MAKE_IMM(INAT_IMM_BYTE)"
- 
- 	modrm_expr = "^([CDEGMNPQRSUVW/][a-z]+|NTA|T[012])"
- 	force64_expr = "\\([df]64\\)"
-@@ -87,6 +91,8 @@ BEGIN {
- 	evexonly_expr = "\\(ev\\)"
- 	# (es) is the same as (ev) but also "SCALABLE" i.e. W and pp determine operand size
- 	evex_scalable_expr = "\\(es\\)"
-+	# All opcodes in XOP table or with (xop) superscript accept XOP prefix
-+	xopok_expr = "\\(xop\\)"
- 
- 	prefix_expr = "\\(Prefix\\)"
- 	prefix_num["Operand-Size"] = "INAT_PFX_OPNDSZ"
-@@ -106,6 +112,7 @@ BEGIN {
- 	prefix_num["VEX+2byte"] = "INAT_PFX_VEX3"
- 	prefix_num["EVEX"] = "INAT_PFX_EVEX"
- 	prefix_num["REX2"] = "INAT_PFX_REX2"
-+	prefix_num["XOP"] = "INAT_PFX_XOP"
- 
- 	clear_vars()
- }
-@@ -147,6 +154,7 @@ function array_size(arr,   i,c) {
- 	if (NF != 1) {
- 		# AVX/escape opcode table
- 		aid = $2
-+		xopid = -1
- 		if (gaid <= aid)
- 			gaid = aid + 1
- 		if (tname == "")	# AVX only opcode table
-@@ -156,6 +164,20 @@ function array_size(arr,   i,c) {
- 		tname = "inat_primary_table"
- }
- 
-+/^XOPcode:/ {
-+	if (NF != 1) {
-+		# XOP opcode table
-+		xopid = $2
-+		aid = -1
-+		if (gxopid <= xopid)
-+			gxopid = xopid + 1
-+		if (tname == "")	# XOP only opcode table
-+			tname = sprintf("inat_xop_table_%d", $2)
-+	}
-+	if (xopid == -1 && eid == -1)	# primary opcode table
-+		tname = "inat_primary_table"
-+}
-+
- /^GrpTable:/ {
- 	print "/* " $0 " */"
- 	if (!($2 in group))
-@@ -206,6 +228,8 @@ function print_table(tbl,name,fmt,n)
- 			etable[eid,0] = tname
- 			if (aid >= 0)
- 				atable[aid,0] = tname
-+			else if (xopid >= 0)
-+				xoptable[xopid] = tname
- 		}
- 		if (array_size(lptable1) != 0) {
- 			print_table(lptable1,tname "_1[INAT_OPCODE_TABLE_SIZE]",
-@@ -347,6 +371,8 @@ function convert_operands(count,opnd,       i,j,imm,mod)
- 			flags = add_flags(flags, "INAT_VEXOK | INAT_VEXONLY")
- 		else if (match(ext, vexok_expr) || match(opcode, vexok_opcode_expr))
- 			flags = add_flags(flags, "INAT_VEXOK")
-+		else if (match(ext, xopok_expr) || xopid >= 0)
-+			flags = add_flags(flags, "INAT_XOPOK")
- 
- 		# check prefixes
- 		if (match(ext, prefix_expr)) {
-@@ -413,6 +439,14 @@ END {
- 				print "	["i"]["j"] = "atable[i,j]","
- 	print "};\n"
- 
-+	print "/* XOP opcode map array */"
-+	print "const insn_attr_t * const inat_xop_tables[X86_XOP_M_MAX - X86_XOP_M_MIN + 1]" \
-+	      " = {"
-+	for (i = 0; i < gxopid; i++)
-+		if (xoptable[i])
-+			print "	["i"] = "xoptable[i]","
-+	print "};"
-+
- 	print "#else /* !__BOOT_COMPRESSED */\n"
- 
- 	print "/* Escape opcode map array */"
-@@ -430,6 +464,10 @@ END {
- 	      "[INAT_LSTPFX_MAX + 1];"
- 	print ""
- 
-+	print "/* XOP opcode map array */"
-+	print "static const insn_attr_t *inat_xop_tables[X86_XOP_M_MAX - X86_XOP_M_MIN + 1];"
-+	print ""
-+
- 	print "static void inat_init_tables(void)"
- 	print "{"
- 
-@@ -455,6 +493,12 @@ END {
- 			if (atable[i,j])
- 				print "\tinat_avx_tables["i"]["j"] = "atable[i,j]";"
- 
-+	print ""
-+	print "\t/* Print XOP opcode map array */"
-+	for (i = 0; i < gxopid; i++)
-+		if (xoptable[i])
-+			print "\tinat_xop_tables["i"] = "xoptable[i]";"
-+
- 	print "}"
- 	print "#endif"
- }
-diff --git a/tools/arch/x86/include/asm/inat.h b/tools/arch/x86/include/asm/inat.h
-index 183aa662b165..099e926595bd 100644
---- a/tools/arch/x86/include/asm/inat.h
-+++ b/tools/arch/x86/include/asm/inat.h
-@@ -37,6 +37,8 @@
- #define INAT_PFX_EVEX	15	/* EVEX prefix */
- /* x86-64 REX2 prefix */
- #define INAT_PFX_REX2	16	/* 0xD5 */
-+/* AMD XOP prefix */
-+#define INAT_PFX_XOP	17	/* 0x8F */
- 
- #define INAT_LSTPFX_MAX	3
- #define INAT_LGCPFX_MAX	11
-@@ -77,6 +79,7 @@
- #define INAT_MOFFSET	(1 << (INAT_FLAG_OFFS + 3))
- #define INAT_VARIANT	(1 << (INAT_FLAG_OFFS + 4))
- #define INAT_VEXOK	(1 << (INAT_FLAG_OFFS + 5))
-+#define INAT_XOPOK	INAT_VEXOK
- #define INAT_VEXONLY	(1 << (INAT_FLAG_OFFS + 6))
- #define INAT_EVEXONLY	(1 << (INAT_FLAG_OFFS + 7))
- #define INAT_NO_REX2	(1 << (INAT_FLAG_OFFS + 8))
-@@ -111,6 +114,8 @@ extern insn_attr_t inat_get_group_attribute(insn_byte_t modrm,
- extern insn_attr_t inat_get_avx_attribute(insn_byte_t opcode,
- 					  insn_byte_t vex_m,
- 					  insn_byte_t vex_pp);
-+extern insn_attr_t inat_get_xop_attribute(insn_byte_t opcode,
-+					  insn_byte_t map_select);
- 
- /* Attribute checking functions */
- static inline int inat_is_legacy_prefix(insn_attr_t attr)
-@@ -164,6 +169,11 @@ static inline int inat_is_vex3_prefix(insn_attr_t attr)
- 	return (attr & INAT_PFX_MASK) == INAT_PFX_VEX3;
- }
- 
-+static inline int inat_is_xop_prefix(insn_attr_t attr)
-+{
-+	return (attr & INAT_PFX_MASK) == INAT_PFX_XOP;
-+}
-+
- static inline int inat_is_escape(insn_attr_t attr)
- {
- 	return attr & INAT_ESC_MASK;
-@@ -229,6 +239,11 @@ static inline int inat_accept_vex(insn_attr_t attr)
- 	return attr & INAT_VEXOK;
- }
- 
-+static inline int inat_accept_xop(insn_attr_t attr)
-+{
-+	return attr & INAT_XOPOK;
-+}
-+
- static inline int inat_must_vex(insn_attr_t attr)
- {
- 	return attr & (INAT_VEXONLY | INAT_EVEXONLY);
-diff --git a/tools/arch/x86/include/asm/insn.h b/tools/arch/x86/include/asm/insn.h
-index 0e5abd896ad4..c683d609934b 100644
---- a/tools/arch/x86/include/asm/insn.h
-+++ b/tools/arch/x86/include/asm/insn.h
-@@ -71,7 +71,10 @@ struct insn {
- 					 * prefixes.bytes[3]: last prefix
- 					 */
- 	struct insn_field rex_prefix;	/* REX prefix */
--	struct insn_field vex_prefix;	/* VEX prefix */
-+	union {
-+		struct insn_field vex_prefix;	/* VEX prefix */
-+		struct insn_field xop_prefix;	/* XOP prefix */
-+	};
- 	struct insn_field opcode;	/*
- 					 * opcode.bytes[0]: opcode1
- 					 * opcode.bytes[1]: opcode2
-@@ -135,6 +138,17 @@ struct insn {
- #define X86_VEX_V(vex)	(((vex) & 0x78) >> 3)	/* VEX3 Byte2, VEX2 Byte1 */
- #define X86_VEX_P(vex)	((vex) & 0x03)		/* VEX3 Byte2, VEX2 Byte1 */
- #define X86_VEX_M_MAX	0x1f			/* VEX3.M Maximum value */
-+/* XOP bit fields */
-+#define X86_XOP_R(xop)	((xop) & 0x80)	/* XOP Byte2 */
-+#define X86_XOP_X(xop)	((xop) & 0x40)	/* XOP Byte2 */
-+#define X86_XOP_B(xop)	((xop) & 0x20)	/* XOP Byte2 */
-+#define X86_XOP_M(xop)	((xop) & 0x1f)	/* XOP Byte2 */
-+#define X86_XOP_W(xop)	((xop) & 0x80)	/* XOP Byte3 */
-+#define X86_XOP_V(xop)	((xop) & 0x78)	/* XOP Byte3 */
-+#define X86_XOP_L(xop)	((xop) & 0x04)	/* XOP Byte3 */
-+#define X86_XOP_P(xop)	((xop) & 0x03)	/* XOP Byte3 */
-+#define X86_XOP_M_MIN	0x08	/* Min of XOP.M */
-+#define X86_XOP_M_MAX	0x1f	/* Max of XOP.M */
- 
- extern void insn_init(struct insn *insn, const void *kaddr, int buf_len, int x86_64);
- extern int insn_get_prefixes(struct insn *insn);
-@@ -178,7 +192,7 @@ static inline insn_byte_t insn_rex2_m_bit(struct insn *insn)
- 	return X86_REX2_M(insn->rex_prefix.bytes[1]);
- }
- 
--static inline int insn_is_avx(struct insn *insn)
-+static inline int insn_is_avx_or_xop(struct insn *insn)
- {
- 	if (!insn->prefixes.got)
- 		insn_get_prefixes(insn);
-@@ -192,6 +206,22 @@ static inline int insn_is_evex(struct insn *insn)
- 	return (insn->vex_prefix.nbytes == 4);
- }
- 
-+/* If we already know this is AVX/XOP encoded */
-+static inline int avx_insn_is_xop(struct insn *insn)
-+{
-+	insn_attr_t attr = inat_get_opcode_attribute(insn->vex_prefix.bytes[0]);
-+
-+	return inat_is_xop_prefix(attr);
-+}
-+
-+static inline int insn_is_xop(struct insn *insn)
-+{
-+	if (!insn_is_avx_or_xop(insn))
-+		return 0;
-+
-+	return avx_insn_is_xop(insn);
-+}
-+
- static inline int insn_has_emulate_prefix(struct insn *insn)
- {
- 	return !!insn->emulate_prefix_size;
-@@ -222,11 +252,26 @@ static inline insn_byte_t insn_vex_w_bit(struct insn *insn)
- 	return X86_VEX_W(insn->vex_prefix.bytes[2]);
- }
- 
-+static inline insn_byte_t insn_xop_map_bits(struct insn *insn)
-+{
-+	if (insn->xop_prefix.nbytes < 3)	/* XOP is 3 bytes */
-+		return 0;
-+	return X86_XOP_M(insn->xop_prefix.bytes[1]);
-+}
-+
-+static inline insn_byte_t insn_xop_p_bits(struct insn *insn)
-+{
-+	return X86_XOP_P(insn->vex_prefix.bytes[2]);
-+}
-+
- /* Get the last prefix id from last prefix or VEX prefix */
- static inline int insn_last_prefix_id(struct insn *insn)
- {
--	if (insn_is_avx(insn))
-+	if (insn_is_avx_or_xop(insn)) {
-+		if (avx_insn_is_xop(insn))
-+			return insn_xop_p_bits(insn);
- 		return insn_vex_p_bits(insn);	/* VEX_p is a SIMD prefix id */
-+	}
- 
- 	if (insn->prefixes.bytes[3])
- 		return inat_get_last_prefix_id(insn->prefixes.bytes[3]);
-diff --git a/tools/arch/x86/lib/inat.c b/tools/arch/x86/lib/inat.c
-index dfbcc6405941..ffcb0e27453b 100644
---- a/tools/arch/x86/lib/inat.c
-+++ b/tools/arch/x86/lib/inat.c
-@@ -81,3 +81,16 @@ insn_attr_t inat_get_avx_attribute(insn_byte_t opcode, insn_byte_t vex_m,
- 	return table[opcode];
- }
- 
-+insn_attr_t inat_get_xop_attribute(insn_byte_t opcode, insn_byte_t map_select)
-+{
-+	const insn_attr_t *table;
-+
-+	if (map_select < X86_XOP_M_MIN || map_select > X86_XOP_M_MAX)
-+		return 0;
-+	map_select -= X86_XOP_M_MIN;
-+	/* At first, this checks the master table */
-+	table = inat_xop_tables[map_select];
-+	if (!table)
-+		return 0;
-+	return table[opcode];
-+}
-diff --git a/tools/arch/x86/lib/insn.c b/tools/arch/x86/lib/insn.c
-index bce69c6bfa69..1d1c57c74d1f 100644
---- a/tools/arch/x86/lib/insn.c
-+++ b/tools/arch/x86/lib/insn.c
-@@ -200,12 +200,15 @@ int insn_get_prefixes(struct insn *insn)
- 	}
- 	insn->rex_prefix.got = 1;
- 
--	/* Decode VEX prefix */
-+	/* Decode VEX/XOP prefix */
- 	b = peek_next(insn_byte_t, insn);
--	attr = inat_get_opcode_attribute(b);
--	if (inat_is_vex_prefix(attr)) {
-+	if (inat_is_vex_prefix(attr) || inat_is_xop_prefix(attr)) {
- 		insn_byte_t b2 = peek_nbyte_next(insn_byte_t, insn, 1);
--		if (!insn->x86_64) {
-+
-+		if (inat_is_xop_prefix(attr) && X86_MODRM_REG(b2) == 0) {
-+			/* Grp1A.0 is always POP Ev */
-+			goto vex_end;
-+		} else if (!insn->x86_64) {
- 			/*
- 			 * In 32-bits mode, if the [7:6] bits (mod bits of
- 			 * ModRM) on the second byte are not 11b, it is
-@@ -226,13 +229,13 @@ int insn_get_prefixes(struct insn *insn)
- 			if (insn->x86_64 && X86_VEX_W(b2))
- 				/* VEX.W overrides opnd_size */
- 				insn->opnd_bytes = 8;
--		} else if (inat_is_vex3_prefix(attr)) {
-+		} else if (inat_is_vex3_prefix(attr) || inat_is_xop_prefix(attr)) {
- 			b2 = peek_nbyte_next(insn_byte_t, insn, 2);
- 			insn_set_byte(&insn->vex_prefix, 2, b2);
- 			insn->vex_prefix.nbytes = 3;
- 			insn->next_byte += 3;
- 			if (insn->x86_64 && X86_VEX_W(b2))
--				/* VEX.W overrides opnd_size */
-+				/* VEX.W/XOP.W overrides opnd_size */
- 				insn->opnd_bytes = 8;
- 		} else {
- 			/*
-@@ -288,9 +291,22 @@ int insn_get_opcode(struct insn *insn)
- 	insn_set_byte(opcode, 0, op);
- 	opcode->nbytes = 1;
- 
--	/* Check if there is VEX prefix or not */
--	if (insn_is_avx(insn)) {
-+	/* Check if there is VEX/XOP prefix or not */
-+	if (insn_is_avx_or_xop(insn)) {
- 		insn_byte_t m, p;
-+
-+		/* XOP prefix has different encoding */
-+		if (unlikely(avx_insn_is_xop(insn))) {
-+			m = insn_xop_map_bits(insn);
-+			insn->attr = inat_get_xop_attribute(op, m);
-+			if (!inat_accept_xop(insn->attr)) {
-+				insn->attr = 0;
-+				return -EINVAL;
-+			}
-+			/* XOP has only 1 byte for opcode */
-+			goto end;
-+		}
-+
- 		m = insn_vex_m_bits(insn);
- 		p = insn_vex_p_bits(insn);
- 		insn->attr = inat_get_avx_attribute(op, m, p);
-@@ -383,7 +399,8 @@ int insn_get_modrm(struct insn *insn)
- 			pfx_id = insn_last_prefix_id(insn);
- 			insn->attr = inat_get_group_attribute(mod, pfx_id,
- 							      insn->attr);
--			if (insn_is_avx(insn) && !inat_accept_vex(insn->attr)) {
-+			if (insn_is_avx_or_xop(insn) && !inat_accept_vex(insn->attr) &&
-+			    !inat_accept_xop(insn->attr)) {
- 				/* Bad insn */
- 				insn->attr = 0;
- 				return -EINVAL;
-diff --git a/tools/arch/x86/lib/x86-opcode-map.txt b/tools/arch/x86/lib/x86-opcode-map.txt
-index 262f7ca1fb95..2a4e69ecc2de 100644
---- a/tools/arch/x86/lib/x86-opcode-map.txt
-+++ b/tools/arch/x86/lib/x86-opcode-map.txt
-@@ -27,6 +27,11 @@
- #  (evo): this opcode is changed by EVEX prefix (EVEX opcode)
- #  (v): this opcode requires VEX prefix.
- #  (v1): this opcode only supports 128bit VEX.
-+#  (xop): this opcode accepts XOP prefix.
-+#
-+# XOP Superscripts
-+#  (W=0): this opcode requires XOP.W == 0
-+#  (W=1): this opcode requires XOP.W == 1
- #
- # Last Prefix Superscripts
- #  - (66): the last prefix is 0x66
-@@ -194,7 +199,7 @@ AVXcode:
- 8c: MOV Ev,Sw
- 8d: LEA Gv,M
- 8e: MOV Sw,Ew
--8f: Grp1A (1A) | POP Ev (d64)
-+8f: Grp1A (1A) | POP Ev (d64) | XOP (Prefix)
- # 0x90 - 0x9f
- 90: NOP | PAUSE (F3) | XCHG r8,rAX
- 91: XCHG rCX/r9,rAX
-@@ -1106,6 +1111,84 @@ AVXcode: 7
- f8: URDMSR Rq,Id (F2),(v1),(11B) | UWRMSR Id,Rq (F3),(v1),(11B)
- EndTable
- 
-+# From AMD64 Architecture Programmer's Manual Vol3, Appendix A.1.5
-+Table: XOP map 8h
-+Referrer:
-+XOPcode: 0
-+85: VPMACSSWW Vo,Ho,Wo,Lo
-+86: VPMACSSWD Vo,Ho,Wo,Lo
-+87: VPMACSSDQL Vo,Ho,Wo,Lo
-+8e: VPMACSSDD Vo,Ho,Wo,Lo
-+8f: VPMACSSDQH Vo,Ho,Wo,Lo
-+95: VPMACSWW Vo,Ho,Wo,Lo
-+96: VPMACSWD Vo,Ho,Wo,Lo
-+97: VPMACSDQL Vo,Ho,Wo,Lo
-+9e: VPMACSDD Vo,Ho,Wo,Lo
-+9f: VPMACSDQH Vo,Ho,Wo,Lo
-+a2: VPCMOV Vx,Hx,Wx,Lx (W=0) | VPCMOV Vx,Hx,Lx,Wx (W=1)
-+a3: VPPERM Vo,Ho,Wo,Lo (W=0) | VPPERM Vo,Ho,Lo,Wo (W=1)
-+a6: VPMADCSSWD Vo,Ho,Wo,Lo
-+b6: VPMADCSWD Vo,Ho,Wo,Lo
-+c0: VPROTB Vo,Wo,Ib
-+c1: VPROTW Vo,Wo,Ib
-+c2: VPROTD Vo,Wo,Ib
-+c3: VPROTQ Vo,Wo,Ib
-+cc: VPCOMccB Vo,Ho,Wo,Ib
-+cd: VPCOMccW Vo,Ho,Wo,Ib
-+ce: VPCOMccD Vo,Ho,Wo,Ib
-+cf: VPCOMccQ Vo,Ho,Wo,Ib
-+ec: VPCOMccUB Vo,Ho,Wo,Ib
-+ed: VPCOMccUW Vo,Ho,Wo,Ib
-+ee: VPCOMccUD Vo,Ho,Wo,Ib
-+ef: VPCOMccUQ Vo,Ho,Wo,Ib
-+EndTable
-+
-+Table: XOP map 9h
-+Referrer:
-+XOPcode: 1
-+01: GrpXOP1
-+02: GrpXOP2
-+12: GrpXOP3
-+80: VFRCZPS Vx,Wx
-+81: VFRCZPD Vx,Wx
-+82: VFRCZSS Vq,Wss
-+83: VFRCZSD Vq,Wsd
-+90: VPROTB Vo,Wo,Ho (W=0) | VPROTB Vo,Ho,Wo (W=1)
-+91: VPROTW Vo,Wo,Ho (W=0) | VPROTB Vo,Ho,Wo (W=1)
-+92: VPROTD Vo,Wo,Ho (W=0) | VPROTB Vo,Ho,Wo (W=1)
-+93: VPROTQ Vo,Wo,Ho (W=0) | VPROTB Vo,Ho,Wo (W=1)
-+94: VPSHLB Vo,Wo,Ho (W=0) | VPSHLB Vo,Ho,Wo (W=1)
-+95: VPSHLW Vo,Wo,Ho (W=0) | VPSHLW Vo,Ho,Wo (W=1)
-+96: VPSHLD Vo,Wo,Ho (W=0) | VPSHLD Vo,Ho,Wo (W=1)
-+97: VPSHLQ Vo,Wo,Ho (W=0) | VPSHLQ Vo,Ho,Wo (W=1)
-+98: VPSHAB Vo,Wo,Ho (W=0) | VPSHAB Vo,Ho,Wo (W=1)
-+99: VPSHAW Vo,Wo,Ho (W=0) | VPSHAW Vo,Ho,Wo (W=1)
-+9a: VPSHAD Vo,Wo,Ho (W=0) | VPSHAD Vo,Ho,Wo (W=1)
-+9b: VPSHAQ Vo,Wo,Ho (W=0) | VPSHAQ Vo,Ho,Wo (W=1)
-+c1: VPHADDBW Vo,Wo
-+c2: VPHADDBD Vo,Wo
-+c3: VPHADDBQ Vo,Wo
-+c6: VPHADDWD Vo,Wo
-+c7: VPHADDWQ Vo,Wo
-+cb: VPHADDDQ Vo,Wo
-+d1: VPHADDUBWD Vo,Wo
-+d2: VPHADDUBD Vo,Wo
-+d3: VPHADDUBQ Vo,Wo
-+d6: VPHADDUWD Vo,Wo
-+d7: VPHADDUWQ Vo,Wo
-+db: VPHADDUDQ Vo,Wo
-+e1: VPHSUBBW Vo,Wo
-+e2: VPHSUBWD Vo,Wo
-+e3: VPHSUBDQ Vo,Wo
-+EndTable
-+
-+Table: XOP map Ah
-+Referrer:
-+XOPcode: 2
-+10: BEXTR Gy,Ey,Id
-+12: GrpXOP4
-+EndTable
-+
- GrpTable: Grp1
- 0: ADD
- 1: OR
-@@ -1320,3 +1403,29 @@ GrpTable: GrpRNG
- 4: xcrypt-cfb
- 5: xcrypt-ofb
- EndTable
-+
-+# GrpXOP1-4 is shown in AMD APM Vol.3 Appendix A as XOP group #1-4
-+GrpTable: GrpXOP1
-+1: BLCFILL By,Ey (xop)
-+2: BLSFILL By,Ey (xop)
-+3: BLCS By,Ey (xop)
-+4: TZMSK By,Ey (xop)
-+5: BLCIC By,Ey (xop)
-+6: BLSIC By,Ey (xop)
-+7: T1MSKC By,Ey (xop)
-+EndTable
-+
-+GrpTable: GrpXOP2
-+1: BLCMSK By,Ey (xop)
-+6: BLCI By,Ey (xop)
-+EndTable
-+
-+GrpTable: GrpXOP3
-+0: LLWPCB Ry (xop)
-+1: SLWPCB Ry (xop)
-+EndTable
-+
-+GrpTable: GrpXOP4
-+0: LWPINS By,Ed,Id (xop)
-+1: LWPVAL By,Ed,Id (xop)
-+EndTable
-diff --git a/tools/arch/x86/tools/gen-insn-attr-x86.awk b/tools/arch/x86/tools/gen-insn-attr-x86.awk
-index 2c19d7fc8a85..7ea1b75e59b7 100644
---- a/tools/arch/x86/tools/gen-insn-attr-x86.awk
-+++ b/tools/arch/x86/tools/gen-insn-attr-x86.awk
-@@ -21,6 +21,7 @@ function clear_vars() {
- 	eid = -1 # escape id
- 	gid = -1 # group id
- 	aid = -1 # AVX id
-+	xopid = -1 # XOP id
- 	tname = ""
- }
- 
-@@ -39,9 +40,11 @@ BEGIN {
- 	ggid = 1
- 	geid = 1
- 	gaid = 0
-+	gxopid = 0
- 	delete etable
- 	delete gtable
- 	delete atable
-+	delete xoptable
- 
- 	opnd_expr = "^[A-Za-z/]"
- 	ext_expr = "^\\("
-@@ -61,6 +64,7 @@ BEGIN {
- 	imm_flag["Ob"] = "INAT_MOFFSET"
- 	imm_flag["Ov"] = "INAT_MOFFSET"
- 	imm_flag["Lx"] = "INAT_MAKE_IMM(INAT_IMM_BYTE)"
-+	imm_flag["Lo"] = "INAT_MAKE_IMM(INAT_IMM_BYTE)"
- 
- 	modrm_expr = "^([CDEGMNPQRSUVW/][a-z]+|NTA|T[012])"
- 	force64_expr = "\\([df]64\\)"
-@@ -87,6 +91,8 @@ BEGIN {
- 	evexonly_expr = "\\(ev\\)"
- 	# (es) is the same as (ev) but also "SCALABLE" i.e. W and pp determine operand size
- 	evex_scalable_expr = "\\(es\\)"
-+	# All opcodes in XOP table or with (xop) superscript accept XOP prefix
-+	xopok_expr = "\\(xop\\)"
- 
- 	prefix_expr = "\\(Prefix\\)"
- 	prefix_num["Operand-Size"] = "INAT_PFX_OPNDSZ"
-@@ -106,6 +112,7 @@ BEGIN {
- 	prefix_num["VEX+2byte"] = "INAT_PFX_VEX3"
- 	prefix_num["EVEX"] = "INAT_PFX_EVEX"
- 	prefix_num["REX2"] = "INAT_PFX_REX2"
-+	prefix_num["XOP"] = "INAT_PFX_XOP"
- 
- 	clear_vars()
- }
-@@ -147,6 +154,7 @@ function array_size(arr,   i,c) {
- 	if (NF != 1) {
- 		# AVX/escape opcode table
- 		aid = $2
-+		xopid = -1
- 		if (gaid <= aid)
- 			gaid = aid + 1
- 		if (tname == "")	# AVX only opcode table
-@@ -156,6 +164,20 @@ function array_size(arr,   i,c) {
- 		tname = "inat_primary_table"
- }
- 
-+/^XOPcode:/ {
-+	if (NF != 1) {
-+		# XOP opcode table
-+		xopid = $2
-+		aid = -1
-+		if (gxopid <= xopid)
-+			gxopid = xopid + 1
-+		if (tname == "")	# XOP only opcode table
-+			tname = sprintf("inat_xop_table_%d", $2)
-+	}
-+	if (xopid == -1 && eid == -1)	# primary opcode table
-+		tname = "inat_primary_table"
-+}
-+
- /^GrpTable:/ {
- 	print "/* " $0 " */"
- 	if (!($2 in group))
-@@ -206,6 +228,8 @@ function print_table(tbl,name,fmt,n)
- 			etable[eid,0] = tname
- 			if (aid >= 0)
- 				atable[aid,0] = tname
-+			else if (xopid >= 0)
-+				xoptable[xopid] = tname
- 		}
- 		if (array_size(lptable1) != 0) {
- 			print_table(lptable1,tname "_1[INAT_OPCODE_TABLE_SIZE]",
-@@ -347,6 +371,8 @@ function convert_operands(count,opnd,       i,j,imm,mod)
- 			flags = add_flags(flags, "INAT_VEXOK | INAT_VEXONLY")
- 		else if (match(ext, vexok_expr) || match(opcode, vexok_opcode_expr))
- 			flags = add_flags(flags, "INAT_VEXOK")
-+		else if (match(ext, xopok_expr) || xopid >= 0)
-+			flags = add_flags(flags, "INAT_XOPOK")
- 
- 		# check prefixes
- 		if (match(ext, prefix_expr)) {
-@@ -413,6 +439,14 @@ END {
- 				print "	["i"]["j"] = "atable[i,j]","
- 	print "};\n"
- 
-+	print "/* XOP opcode map array */"
-+	print "const insn_attr_t * const inat_xop_tables[X86_XOP_M_MAX - X86_XOP_M_MIN + 1]" \
-+	      " = {"
-+	for (i = 0; i < gxopid; i++)
-+		if (xoptable[i])
-+			print "	["i"] = "xoptable[i]","
-+	print "};"
-+
- 	print "#else /* !__BOOT_COMPRESSED */\n"
- 
- 	print "/* Escape opcode map array */"
-@@ -430,6 +464,10 @@ END {
- 	      "[INAT_LSTPFX_MAX + 1];"
- 	print ""
- 
-+	print "/* XOP opcode map array */"
-+	print "static const insn_attr_t *inat_xop_tables[X86_XOP_M_MAX - X86_XOP_M_MIN + 1];"
-+	print ""
-+
- 	print "static void inat_init_tables(void)"
- 	print "{"
- 
-@@ -455,6 +493,12 @@ END {
- 			if (atable[i,j])
- 				print "\tinat_avx_tables["i"]["j"] = "atable[i,j]";"
- 
-+	print ""
-+	print "\t/* Print XOP opcode map array */"
-+	for (i = 0; i < gxopid; i++)
-+		if (xoptable[i])
-+			print "\tinat_xop_tables["i"] = "xoptable[i]";"
-+
- 	print "}"
- 	print "#endif"
- }
-diff --git a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
-index 8fabddc1c0da..72c7a4e15d61 100644
---- a/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
-+++ b/tools/perf/util/intel-pt-decoder/intel-pt-insn-decoder.c
-@@ -32,7 +32,7 @@ static void intel_pt_insn_decoder(struct insn *insn,
- 	intel_pt_insn->rel = 0;
- 	intel_pt_insn->emulated_ptwrite = false;
- 
--	if (insn_is_avx(insn)) {
-+	if (insn_is_avx_or_xop(insn)) {
- 		intel_pt_insn->op = INTEL_PT_OP_OTHER;
- 		intel_pt_insn->branch = INTEL_PT_BR_NO_BRANCH;
- 		intel_pt_insn->length = insn->length;
-
+Konrad
 
