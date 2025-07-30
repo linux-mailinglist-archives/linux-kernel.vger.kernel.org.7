@@ -1,207 +1,133 @@
-Return-Path: <linux-kernel+bounces-751262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE85B16708
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:43:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04554B16709
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C68A1AA5E13
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:43:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBCE03B311B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107A8204C3B;
-	Wed, 30 Jul 2025 19:43:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0BD7204C3B;
+	Wed, 30 Jul 2025 19:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UINQwgg7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TTee3jR4";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="6/Gz0aKb"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DBB11E7C19;
-	Wed, 30 Jul 2025 19:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCFF61FAC54
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753904587; cv=none; b=u06bpficSksIws0J4SPmwzZMIuUf2wldKb4q71Dz+rLnGtMQLq3QiUA6bYxjO8qAbFzqdKI74vIzBHrrTHyX8YkhlnN+/CoG2Ay/saH22+r5pUCPCkUr2To4H8zLxNeYLf/zK3DfxgLna1i+IvYhURZpi4lVtDPthu/sfcfeF+Y=
+	t=1753904700; cv=none; b=a4Bx69qjKdQv3gyBGMxZo9UGjjmlMD7lb7eYbttKg4uPt2e5UMoA94JLmlNUKc3RZHmmA19cS9GVWPZGVkfyK6vicpY+EIFYhQB6VAir9pXiim5wV4/XbMQSsvcYIWOpaxyx8Yeo+q16pbr0JPbVuSgD6ZvL5noIeKBmU/87VV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753904587; c=relaxed/simple;
-	bh=mBiqnCcZwzp9m9hdznpsjeipa38RLGVR0dI7J56QWk0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dWh4yDVVPwh8eXmJx5cWDAiWt2nU8ak4vygYCgoCVwZtEA4ouxn7zXWsJVhTxCwwP9Avoue0i4YXoSXFnf/X+/g723l6cf1XudF0/z9ExxL+eb7DO6HZMXUuo0bLcu/wpjdD2w7+fj0bbYLcnbmeJUTBFNqGa79n0XmBG43F9/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UINQwgg7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1E38C4CEE3;
-	Wed, 30 Jul 2025 19:43:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753904586;
-	bh=mBiqnCcZwzp9m9hdznpsjeipa38RLGVR0dI7J56QWk0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UINQwgg7Bb48/XtWfqnqCIwmV5O4WK+re72ovMlkeyBukCbQ364LNyPE4/bDCh6uP
-	 S+Hh6CfmIk3VU3PFPss1lwON+eQRjJss7mHmHXy14DF0cByMUpk41ecOueq3X/yj1k
-	 8IWz0CWVqyADmStOZWJRuqswMinXGDnXuDPT1vbXqgxNReVhKD1p63Uid+i2abrpDs
-	 ysrmw6MV2DeYa4wwG8KBDev17ssFqTnLIgJNX441CqqzQbBqIJRKXgXXIea1A4NMm5
-	 Tz29kbWk+fjxV1XHiPJ3CX0VvvaDZaj9qpuyvB71B4OMyoCSzmh4iG1hs+DkxY7urr
-	 ZOO1vqwstiKQg==
-Message-ID: <97f0e27f-3128-4821-bc09-2acde1ebf81a@kernel.org>
-Date: Wed, 30 Jul 2025 21:43:02 +0200
+	s=arc-20240116; t=1753904700; c=relaxed/simple;
+	bh=Ke9lyDaaMDdndi2lxCQE1wADg998E4SFP0E2I6SEiUY=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=Ivn96WppYrylAwTnHeo488k7L13veN8gYarypcv7VW/MAb8yBvsCTXryqJa6WN14j2uPmdw3U9VNSvT0krYjs6s96G6ubvaO30SKjl4SwA6yzC6SY0Y1ayTdyhTJNyM0SyUgG+MrPNWi65zsjBEb1EsaNpGdX4gitg1QqiKSVsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TTee3jR4; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=6/Gz0aKb; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1753904696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=cgIR3LlEqm5Yn4FbgFmfo81Tc4TUNuPGbcZVD8SuLzs=;
+	b=TTee3jR4JgLVEmuOlv5TLzXRmHqeQhruQHEhwnOfbjfW/3/AF71PJM5ag9KGfK3f1PfXah
+	44cuO6UyKwwmXB4RDgwrrGbOdQgxQEmRaBhvDJB+Yw2b1/XOfK5BCJXFg9eDiTLcYjtKu5
+	xk2VTq3M+zcpqavajvn79gMJzE9VIMgZTfJT0rfe+w+4u0Ntd5/vpex4LDamvmJY7eVXin
+	X2iZLaRJZWqwMMLMCbXLlt+9zQEeC7sJBs9BWxvssHklMB2QrLAv5j94UhEAGCCU4gYBOM
+	ao4CGkjFc/G6NzEW6lQUA4DOFhKAe1KN2KCWCHYKBBvmm5H0tnOG8EKKqcYeHg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1753904696;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
+	bh=cgIR3LlEqm5Yn4FbgFmfo81Tc4TUNuPGbcZVD8SuLzs=;
+	b=6/Gz0aKbOJRDitx+CqwintG72qHhWn2ENuaJEAHGtoXwk2w+2JlJXrSLoqBK75YWS2j+bV
+	01onNiQW+J6VLuAg==
+To: =?utf-8?Q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Sebastian
+ Andrzej Siewior <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: =?utf-8?Q?Andr=C3=A9?= Almeida <andrealmeid@igalia.com>, Darren Hart
+ <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar
+ <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra
+ <peterz@infradead.org>, Valentin
+ Schneider <vschneid@redhat.com>, Waiman Long <longman@redhat.com>, Andrew
+ Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Michal Hocko <mhocko@suse.com>, Mike
+ Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org
+Subject: Re: [PATCH v2 2/6] futex: Use RCU-based per-CPU reference counting
+ instead of rcuref_t
+In-Reply-To: <0c8cc83bb73abf080faf584f319008b67d0931db.camel@linaro.org>
+Date: Wed, 30 Jul 2025 21:44:55 +0200
+Message-ID: <87ldo5ihu0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [BUG] 6.16-rc7: lockdep failure with max77620-gpio/max77686-rtc
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>
-References: <aIpdVejR3Jkh9Z_I@shell.armlinux.org.uk>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aIpdVejR3Jkh9Z_I@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 30/07/2025 19:58, Russell King (Oracle) wrote:
-> Hi,
-> 
-> First, I'm not sure who is responsible for the max77620-gpio driver
+On Wed, Jul 30 2025 at 13:20, Andr=C3=A9 Draszik wrote:
+> kmemleak complains about a new memleak with this commit:
+>
+> [  680.179004][  T101] kmemleak: 1 new suspected memory leaks (see /sys/k=
+ernel/debug/kmemleak)
+>
+> $ cat /sys/kernel/debug/kmemleak
+> unreferenced object (percpu) 0xc22ec0eface8 (size 4):
+>   comm "swapper/0", pid 1, jiffies 4294893115
+>   hex dump (first 4 bytes on cpu 7):
+>     01 00 00 00                                      ....
+>   backtrace (crc b8bc6765):
+>     kmemleak_alloc_percpu+0x48/0xb8
+>     pcpu_alloc_noprof+0x6ac/0xb68
+>     futex_mm_init+0x60/0xe0
+>     mm_init+0x1e8/0x3c0
+>     mm_alloc+0x5c/0x78
+>     init_args+0x74/0x4b0
+>     debug_vm_pgtable+0x60/0x2d8
+>
+> Reverting this commit (and patches 3 and 4 in this series due to context),
+> makes kmemleak happy again.
 
-77620 is only for nvidia platforms and nvidia was upstreaming it,
-although it shares the RTC driver part with max77686. You should Cc
-nvidia SoC maintainers, maybe Thierry has someone around who could
-investigate it.
+Unsurprisingly ...
 
-> (it's not in MAINTAINERS) but this bug points towards a problem with
-> one or other of these drivers.
-> 
-> Here is /proc/interrupts which may help debug this:
-> 
->            CPU0       CPU1       CPU2       CPU3       CPU4       CPU5
->  94:          1          0          0          0          0          0 max77620-
-> top   4 Edge      max77686-rtc
->  95:          1          0          0          0          0          0 max77686-rtc   1 Edge      rtc-alarm1
-> 
-> While running 6.16-rc7 on the Jetson Xavier NX platform, upon suspend,
-> I receive the following lockdep splat. I've added some instrumentation
-> into irq_set_irq_wake() which appears twice in the calltrace to print
-> the IRQ number and the "on" parameter to locate which interrupts are
-> involved in this splat. This splat is 100% reproducable.
-> 
-> [   46.721367] irq_set_irq_wake: irq=95 on=1
-> [   46.722067] irq_set_irq_wake: irq=94 on=1
-> [   46.722181] ============================================
-> [   46.722578] WARNING: possible recursive locking detected
-> [   46.722852] 6.16.0-rc7-net-next+ #432 Not tainted
-> [   46.722965] --------------------------------------------
-> [   46.723127] rtcwake/3984 is trying to acquire lock:
-> [   46.723235] ffff0000813b2c68 (&d->lock){+.+.}-{4:4}, at: regmap_irq_lock+0x18/0x24
-> [   46.723452]
->                but task is already holding lock:
-> [   46.723556] ffff00008504dc68 (&d->lock){+.+.}-{4:4}, at: regmap_irq_lock+0x18/0x24
-> [   46.723780]
->                other info that might help us debug this:
-> [   46.723903]  Possible unsafe locking scenario:
-> 
-> [   46.724015]        CPU0
-> [   46.724067]        ----
-> [   46.724119]   lock(&d->lock);
-> [   46.724212]   lock(&d->lock);
-> [   46.724282]
->                 *** DEADLOCK ***
-> 
-> [   46.724348]  May be due to missing lock nesting notation
-> 
-> [   46.724492] 6 locks held by rtcwake/3984:
-> [   46.724576]  #0: ffff0000825693f8 (sb_writers#3){.+.+}-{0:0}, at: vfs_write+0x184/0x350
-> [   46.724902]  #1: ffff00008fd7fa88 (&of->mutex#2){+.+.}-{4:4}, at: kernfs_fop_write_iter+0x104/0x1c8
-> [   46.725258]  #2: ffff000080a64588 (kn->active#87){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x10c/0x1c8
-> [   46.725609]  #3: ffff8000815d4fb8 (system_transition_mutex){+.+.}-{4:4}, at: pm_suspend+0x220/0x300
-> [   46.725897]  #4: ffff00008500a8f8 (&dev->mutex){....}-{4:4}, at: device_suspend+0x1d8/0x630
-> [   46.726173]  #5: ffff00008504dc68 (&d->lock){+.+.}-{4:4}, at: regmap_irq_lock+0x18/0x24
+debug_vm_pgtable() allocates it via mm_alloc() -> mm->init() and then
+after the selftest it invokes mmdrop(), which does not free it, as it is
+only freed in __mmput().
 
+The patch below should fix it.
 
-max77686 only disables/enables interrupts in suspend path, but max77620
-is doing also I2C transfers, but above is regmap_irq_lock, not regmap
-lock. Maybe this is not really max77620/77686 related at all? None of
-these do anything weird (or different than last 5 years), so missing
-nesting could be result of changes in other parts...
+Thanks,
 
-
-> [   46.732435]
->                stack backtrace:
-> [   46.734019] CPU: 3 UID: 0 PID: 3984 Comm: rtcwake Not tainted 6.16.0-rc7-net-next+ #432 PREEMPT
-> [   46.734029] Hardware name: NVIDIA NVIDIA Jetson Xavier NX Developer Kit/Jetson, BIOS 6.0-37391689 08/28/2024
-> [   46.734033] Call trace:
-> [   46.734036]  show_stack+0x18/0x24 (C)
-> [   46.734070]  dump_stack_lvl+0x90/0xd0
-> [   46.734080]  dump_stack+0x18/0x24
-> [   46.734107]  print_deadlock_bug+0x260/0x350
-> [   46.734114]  __lock_acquire+0xf28/0x2088
-> [   46.734120]  lock_acquire+0x19c/0x33c
-> [   46.734126]  __mutex_lock+0x84/0x530
-> [   46.734135]  mutex_lock_nested+0x24/0x30
-> [   46.734155]  regmap_irq_lock+0x18/0x24
-> [   46.734161]  __irq_get_desc_lock+0x8c/0x9c
-> [   46.734170]  irq_set_irq_wake+0x5c/0x1ac	<== I guess IRQ 94
-
-...like changes in irqchip.
-
-> [   46.734176]  regmap_irq_sync_unlock+0x314/0x4f4
-> [   46.734182]  __irq_put_desc_unlock+0x48/0x4c
-> [   46.734190]  irq_set_irq_wake+0x88/0x1ac	<== I guess IRQ 95
-> [   46.734195]  max77686_rtc_suspend+0x34/0x74
-
-
-Because really above part is virtually unchanged since 10 years, except
-my commit d8f090dbeafdcc3d30761aa0062f19d1adf9ef08 (you can try
-reverting it... but it still could be correct/needed and just irqchip
-changed something around locking).
-
-Best regards,
-Krzysztof
+        tglx
+---
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -686,6 +686,7 @@ void __mmdrop(struct mm_struct *mm)
+ 	mm_pasid_drop(mm);
+ 	mm_destroy_cid(mm);
+ 	percpu_counter_destroy_many(mm->rss_stat, NR_MM_COUNTERS);
++	futex_hash_free(mm);
+=20
+ 	free_mm(mm);
+ }
+@@ -1133,7 +1134,6 @@ static inline void __mmput(struct mm_str
+ 	if (mm->binfmt)
+ 		module_put(mm->binfmt->module);
+ 	lru_gen_del_mm(mm);
+-	futex_hash_free(mm);
+ 	mmdrop(mm);
+ }
+=20
 
