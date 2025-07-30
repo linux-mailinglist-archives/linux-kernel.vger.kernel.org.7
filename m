@@ -1,115 +1,173 @@
-Return-Path: <linux-kernel+bounces-750752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56CEB1609D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:48:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B9EB160A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:48:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02FAC5A6826
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:47:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1BEC3A7495
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 694CA29B228;
-	Wed, 30 Jul 2025 12:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806AA7E110;
+	Wed, 30 Jul 2025 12:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9Hx+Vyo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LPqXtAj1"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BF815199A;
-	Wed, 30 Jul 2025 12:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753879590; cv=none; b=TYAXID7ZN+ZQfrgK0tvjAsVE1HFO2Kak1NB+BzdHXETMw7LYM/rv9zVSFfTfC/k28aFCssgCNVXiiu7vqpweTu/+2m/+2TrGahq5lqA5zMOl6yHvwaCoc2hU7nPcW3q+qq4ElnH3zkz3+T6foKYBxIPy4HljORrg86mCfo1UvIg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753879590; c=relaxed/simple;
-	bh=Lui6GKk4m26Q1KnLkBRH6igXI56M/yLQNw685PM8lqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=axrADbaNKPaTXdB72ZO05oJSm4VKqSVF0OtY0pDtE/Kmoh1bDaptwYXkFmPiIy6Jvt0J42oi6/oamAlrXenn8duYsAEsQP4VHthYZshZ0wvBWzG6MdvPYbUzhmT5XgbIju9x+2bVGhO/vaD1C6b1pnvZdRTQ5sZ/DpiI6cYDbFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9Hx+Vyo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90364C4CEE7;
-	Wed, 30 Jul 2025 12:46:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753879590;
-	bh=Lui6GKk4m26Q1KnLkBRH6igXI56M/yLQNw685PM8lqs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t9Hx+VyozBE+6nbCPs7o2jtX/f6zv7/XaPbyPQB54clWIALi6VlboH526XPtNImPF
-	 3kHmbwamTd7LsAwozYNX8YQFhXFv9CZEkml2QEa003Q64PAKAIeaEUu1vu68EsYyuL
-	 8TL3zEbhcZ5QGxWikQjuQM/kji3uL2u8aiTkglI7gxSCFBTOncvHrEP5MapGRUwAFu
-	 tntmnP3r+4k1Y/zoS4pId1Hya7XVxZ7qS1cDCmJeS/RrtY/vXZ83ZeYPM2++m06I5D
-	 1VC5236EE2aW3w7GIa3acixfZIpj5GJup0/qjqJwQBttxmvBNEgWYPPZ0nJue2ejbN
-	 +sqjGsfPiNtFw==
-Date: Wed, 30 Jul 2025 13:46:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: ew kim <ew.kim@samsung.com>
-Cc: s.nawrocki@samsung.com, robh@kernel.org, krzk+dt@kernel.org,
-	lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz,
-	conor+dt@kernel.org, alim.akhtar@samsung.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Add ExynosAuto ABOX generic platform and PCM support
-Message-ID: <f4a71a23-a3ca-42ec-97ee-03e70e369db4@sirena.org.uk>
-References: <CGME20250721024611epcas2p43099e043aaa6f48c05eb0237065d31c7@epcas2p4.samsung.com>
- <20250721023052.3586000-1-ew.kim@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4951F39FCE;
+	Wed, 30 Jul 2025 12:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753879698; cv=pass; b=DkeN3jXEkmUKZikOa7uKNTVvYpil6Jrn/ZFog0B+nOngoJ2000ycSgWICpxmS2VfW3mXX328IbxhmOlAulx0ImyBqeyW636IMnMkXLtd3S5EJGBRAUAl4yx7Rjntrbc8lybqnJlinVpLnXrVOM5IePTKIxjYWlO6Lcm45z2fxK4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753879698; c=relaxed/simple;
+	bh=LQJvyS0Ptxkc/4sz59cK6OA3QxtTyxr0Qv8/lmUBW4M=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=mb4a1SV6mhR5VBUDNkT/gXkvIimIyh63SIdKCEEJa1h4ZeUJye+F94eqbTLhKL69S1vLU4AtvIqBlSYQSo2u4KzrvJUH2rg3SxR12MARDWa56ZjacqeJ0q/VGX44mMU+r5LxQvSvPuLd6rtrO2Mcqsh+6+caINwrXuZxq3RRQYU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LPqXtAj1; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753879681; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=EgwO8/clcXidq7f5NTIpU176mTfpMVWmEDxmWj7WeOtZdm/NsMUDB2/ZNU2d2aa3ZjvNBp6vVpg5lWbdwIHC+GEAcH/TBqZ0x3XgSF4xhb6THIm+PxXbWYcXbFRUujREoVUETHhAwHbqvsDiD5cD3d0RYqrWtrVLNzSEq8lppdE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753879681; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=qCAvTtSpwv/bw10fNrHo7ZJSdHiHGn8ognmTiLYqv5c=; 
+	b=FmKnqmnRVOZ+1fBoTHmkZiOjDr8ZZVdGCmuYmtaIK7IpL6j8dTtPmCsCwx0+IQmQWRpZX0ZsXdKOemmTQuGw1N3cGzb5vGuEkrGDDykflnVxH8crUP67YTmBhCHEJ/20+nMgz2744tPSu73LimhWhlpy1gOH3934gleto4pGGmc=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753879681;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=qCAvTtSpwv/bw10fNrHo7ZJSdHiHGn8ognmTiLYqv5c=;
+	b=LPqXtAj1Hq8kcKQOe+HKg8fp04yscpgn/dprQm29XC/UMsQoEAD/g57cA4xXPHX6
+	G4Emvjg6u3GzaYnqZ/dtoV1hpx3XlcDmbnMSn6p1dwn/DKQic/yjcF9hEDrg6HcyqQv
+	rjnL4czHLOpUTW2/V/zAB8fiThCkVELhpYZPm9Ag=
+Received: by mx.zohomail.com with SMTPS id 1753879678687259.03361556399955;
+	Wed, 30 Jul 2025 05:47:58 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Lb7pF4nCCeJVaNeG"
-Content-Disposition: inline
-In-Reply-To: <20250721023052.3586000-1-ew.kim@samsung.com>
-X-Cookie: Linux is obsolete
-
-
---Lb7pF4nCCeJVaNeG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 01/19] gpu: nova-core: register: minor grammar and
+ spelling fixes
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <b1289f95-616f-4bb8-b408-222ce6925e21@arm.com>
+Date: Wed, 30 Jul 2025 09:47:43 -0300
+Cc: Alexandre Courbot <acourbot@nvidia.com>,
+ Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ Beata Michalska <beata.michalska@arm.com>,
+ nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ John Hubbard <jhubbard@nvidia.com>,
+ Nouveau <nouveau-bounces@lists.freedesktop.org>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <DC0D1E12-75A9-4FFC-871C-05831FA67504@collabora.com>
+References: <20250718-nova-regs-v2-0-7b6a762aa1cd@nvidia.com>
+ <20250718-nova-regs-v2-1-7b6a762aa1cd@nvidia.com>
+ <B1AA6359-7854-4284-B533-F5CA3C18AF34@collabora.com>
+ <DBNF8SZWLI79.1NRX9AMW5QW45@nvidia.com>
+ <d0ffb55b-690a-4a65-98b5-b83adebfd88b@arm.com>
+ <DBNNTU14VH90.25AZCJSVT4JDR@nvidia.com>
+ <ce8b4bd9-5122-4b85-b605-a1bf10556208@arm.com>
+ <DBOL3HSE1OUW.22PGYP5T6164C@nvidia.com>
+ <b1289f95-616f-4bb8-b408-222ce6925e21@arm.com>
+To: Steven Price <steven.price@arm.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On Mon, Jul 21, 2025 at 11:30:43AM +0900, ew kim wrote:
-> This patch series adds the ABOX Generic audio management driver for
-> Samsung ExynosAuto SoCs, along with IPC messaging and PCM frontend
-> drivers, including their corresponding device tree bindings.
+[=E2=80=A6]
+
+>>>=20
+>>>> The idea of register blocks is interesting. I wonder how that would
+>>>> translate in terms of access to invididual registers, i.e. does the
+>>>> block end up just being a prefix into the full register name, or is =
+it
+>>>> something else? =46rom your example declaration I picture that =
+accesses
+>>>> would look something like `MMU_AS_CONTROL[4]::MEMATTR::read(bar)`, =
+which
+>>>> ngl looks great, but I also cannot think of a construct that would =
+allow
+>>>> such a syntax... Happy to think more about it though.
+>>>=20
+>>> Yes, that is the sort of syntax I was imagining, although I was =
+hoping
+>>> you could do something like:
+>>>=20
+>>>  let as =3D MMU_AS_CONTROL[as_id]::try_get(&bar)?;
+>>>=20
+>>>  let memattr =3D as.MEMATTR.read(&bar);
+>>>  memattr.set_attr0(3).write(&bar);
+>>>  as.TRANSTAB.write(&bar, 0x1000);
+>>>=20
+>>> Which I'm sure shows how little Rust I've written, but hopefully you =
+get
+>>> the idea - only the first line is a try_xxx which can fail and takes =
+the
+>>> address space ID from a variable and bounds checks it. The other
+>>> accesses we already know the bounds so there's no need to deal with
+>>> failure, and we don't have to consider the situation where MEMATTR =
+is
+>>> written but the TRANSTAB write fails (which couldn't actually happen
+>>> with non-contiguous register arrays but the compiler wouldn't be =
+able to
+>>> tell).
+>>=20
+>> That for sure looks elegant. Now the question is how can we implement
+>> something similar using only ZSTs? `MMU_AS_CONTROL` would have to be =
+a
+>> static array. Then `as` needs to be some sort of struct?
+>>=20
+>> The way this works looks very similar to what I suggested above with
+>> register arrays and validating once that a given index is valid for =
+the
+>> register array accesses. Then the non-try accessors can be used, =
+knowing
+>> that the compiler will be able to infer that the index is valid. The
+>> only drawback being that each `read` and `write` will have to carry =
+the
+>> `as_id`.
 >=20
-> ### ABOX Architecture Design: Fixed and Variable Structure
+> Presumably it should be possible to implement with 'as' being a type
+> which actually contains 'as_id' (as opposed to an actual ZST) so you
+> don't need to explicitly pass that in. Otherwise there's a possibility
+> of passing the wrong as_id in and so the compiler won't be able to =
+infer
+> that it must be valid.
 >=20
-> The ABOX audio framework is designed with a clear split between:
-> - **Fixed part** (common framework): reusable components across SoCs
->   - Generic ABOX platform driver
->   - IPC messaging handler
->   - PCM frontend with ALSA compressed audio support
->   - Solution manager for dynamic control
-> - **Variable part** (SoC-specific): defined via device tree
->   - IRQ numbers, stream IDs, buffer sizes, and ADSP allocation
->   - Defined per PCM/IPC device node in DTS
+>> This would work, but if someone wants to experiment to try and =
+implement
+>> something closer to the interface you proposed, I'm very open to the
+>> idea. I wonder if we could do this without any runtime overhead...
+>=20
+> Since my Rust knowledge is very limited there might be a better way of
+> doing this, but that this seemed like the most natural interface to =
+me.
+> I can see how a similar approach could be used in C with minimal/no
+> overhead so I would have thought this is possible in Rust.
 
-This all sounds from a system integration point of view like a fairly
-standard audio DSP.  Usually something like that would be structured
-with the generic bits of DSP support done as a library which the drivers
-for specific bits of hardware link to, the SOF code is the most obvious
-example of this we have upstream but there's a few other simpler ones
-like the Cirrus CODECs.  If there's a reason why this wouldn't work here
-it's not clear to me from what you've posted thus far.
+I hate macros with a passion, but I can try tackling this in the =
+interest of
+moving it forward :)
 
---Lb7pF4nCCeJVaNeG
-Content-Type: application/pgp-signature; name="signature.asc"
+=E2=80=94 Daniel
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiKFCAACgkQJNaLcl1U
-h9AtLQf/WYJ1EIaoWIZAwVvNH9YQ4sTD4B2XT8JhFja1VlF2nccAJrayd9KIRtyL
-KN98pq968BtDvoUfVqUZSMqCxGT9zFbHVnlcz7puPgx5+EaBD3MFetOu8QpQMUcR
-spR6D/KBrtRr9e72xsoKqn4Z5h5CzBjMzmjGpAtfGWFjS8iJNHA+eJf4k3+X2VDx
-jy6yqXkn6hQYyMmVk8lxuphugWVfhIK94Mnq9Wn59+Z99CiTDaLQue8y6GU+KCNI
-46v3KKd2zQXqwS+1I54NIXvftpXBccxgLNhmiCg6Mq7Oh2FQv2Aw+Ha+yp59fRhY
-iNQDBJ+7snNxHPIbY9F1EE6hzWiKAw==
-=cIJ5
------END PGP SIGNATURE-----
-
---Lb7pF4nCCeJVaNeG--
 
