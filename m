@@ -1,118 +1,173 @@
-Return-Path: <linux-kernel+bounces-750904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51BAB16281
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:18:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 549FAB1628B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:20:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1C65161E06
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:18:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1D8164AA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:20:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0FB2D9794;
-	Wed, 30 Jul 2025 14:18:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 210352D9794;
+	Wed, 30 Jul 2025 14:20:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ME2Rr1Qr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VmW6n4Ue"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 509C1296159
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0591F187554
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753885097; cv=none; b=UYYO6X0Hn650TvSww0AJQHgbfsBwwrGmCMO13OQO/JfITMXdc/JrBTQEwNn93NnZOXzJDKfmAZIYqrKeMEidVTRnfFNDDghdf47Euhh5Qw8ZyH5+FY0K5JAvu1Gj67vz1xa3SEfu34qruugkUERBRx+2cYFQ/qG7IpnhwtPZGAU=
+	t=1753885219; cv=none; b=PHVswChzGdIyNsW72vwyBlRvE4ftgl9HALBIt8uc1FB/MrTV++VwIDZUwzvPfttGgN53vySF8wxMEKAkbjcwUtsz22NnE6F4jBJ0Diw4iosjawqKBETnahKlJ00R21ivm1JdIVHymjvqzw5B6ZpuQqQRwubC8wDh8qYgzmCl6ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753885097; c=relaxed/simple;
-	bh=t+XdUySbetWUIJJo0KSa7Zw1Ei6449339h1xdEc7AKk=;
+	s=arc-20240116; t=1753885219; c=relaxed/simple;
+	bh=zbZ8zJ6FNNzVnMHRaX//DZkRQUevfKQvh7Gz3zKWny8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u69DVGp5bqDOsWx42MLGr63+sm+zYFjdIpWCBvdSFlWp+r+5+hW5a3th5rk6Fa8yd28iacYfF8YmvP5wx5uqKA+x0OUbn2G/brqR8J9gB6wmDK02+0ZzPBf8sunzi9YCyvqFDNstpPh4D0r2+W6G3jlQjuJ+OzrVfZFxa3vMLow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ME2Rr1Qr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753885095;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t+XdUySbetWUIJJo0KSa7Zw1Ei6449339h1xdEc7AKk=;
-	b=ME2Rr1Qrn36RjrgJMJ2G64oeQaPut2eY+fdOv5qV1TRT/t1u75lXHwOcWLDkMD83y1qJQc
-	RzceXj7pFbw2FTGtaXVP0cP4JRjNbWqw3j4yyHc40uNFvpgVZmJzmEglAseRe/W98KZIxu
-	b/UyKWAhhC2Z3B2EKHPS6FPJ1bdeX+g=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-270-ZG3FwAd5PniV3733AwW8ow-1; Wed, 30 Jul 2025 10:18:13 -0400
-X-MC-Unique: ZG3FwAd5PniV3733AwW8ow-1
-X-Mimecast-MFC-AGG-ID: ZG3FwAd5PniV3733AwW8ow_1753885092
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ae3c5ca46f2so518764266b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:18:13 -0700 (PDT)
+	 To:Cc:Content-Type; b=auF9P4eKGH9wzsu3p8bm2/RSMfBl09ITwn9v93oO7TfXWjdCVmrEK/RbvzqE+OIhE66k68Y4q8M097FSdFZrlyqaYXpaVuUxA7wydnYTeOD5dJgPzL+E9ypeu9z/DJudqVhPZC6FsFqThiI9mvrftVc5JdLHKz0w+v5UIHBFwHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VmW6n4Ue; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-240718d5920so201425ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753885217; x=1754490017; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H5+kEdkXghppyQYetmPBQ6sqq9QmR3md7y7HiaGpJ0I=;
+        b=VmW6n4UeXMci5ovMEVQwhWyl5xnCpM7Lv/LaJTLJmmHipCgQCHS42yIALS66dV5un0
+         lVta1hj2fVzRWhXZ0vYk5w9Zw92EGDs7xA92pGSAFwqajgbnQqwtaA6A3Pn4oQb/i7yU
+         l6uich3/CO5E4kOdBIpylGbeIBeRPC2hv+XNAjWKaac3vywdXy1+MJQYaz2DPHzDzTuz
+         y06yOkO5jVXpWvCwNR25VdIJpJjqjQMwMM5r4WwNowNyf7bV8+eDEKr3G32NfydM/Hd6
+         DxqpnHuRpd38PbtbEenY/BiHdLhgEBsDYQh37vOYdaqjXvQ30CIkp/ntm0FMCLVzFmQb
+         +wKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753885092; x=1754489892;
+        d=1e100.net; s=20230601; t=1753885217; x=1754490017;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t+XdUySbetWUIJJo0KSa7Zw1Ei6449339h1xdEc7AKk=;
-        b=KYIEd2sqNOnVe5O3FxnQigeNOQ9TdYoJY87100cilmRzspahb9jjJGSnUAYw36wjQU
-         SIz7j8AfgzypxK5qprLRQ5rDXSJhxUCw+CsujJ3BFEG8tzegp80COIlnz/MniNMCeHOp
-         w0zByz3lvR/zv69/zbY29la9ojil8Yi9LSyweATKiLJGF5jdzk275zRzoY765EFUQppE
-         OHDw8nwTs6BTtY74p0gVvSN6hegm1wnIGb8/RvOl55VVD3IoRw/yb/w3tK1ZcksB4gWZ
-         CF73MOhOW2M+g/nZKG+bNPFgqx1/X5Qi31ublYOV0buNd5Y2yICnmh5zZjoDFs1PtxCY
-         O9SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVesn+4Km0Yr/H9Im8EeyPzJnh9fcOygV2q9BKoQlswEb4KtjFOLscKquVv9KAthspg1bhCm15QbBCZA84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFq9lesjNIlQ+tpPabVqwkzzhMx7ZYAf3FaZXNwCiELhUk3u6Z
-	OIorFA17Thg2qTdjcQxRX8Wzsf/aeL1Ow/cX+Dp2rfSMCMm+QEsQIVtAjVNIdp1AjKap+qayUBa
-	efq5NMLX+TAKW9LrbGEE7T5jXkOY4Y/GEHAUb92gcDff4HGvoYp/GDeizqmdwmu2uwM9FEsPJWb
-	HRlUVs4PLiO3FeTkRGSwO8YGziHeKU9hU8FknwA7T9
-X-Gm-Gg: ASbGnctu89fD173F550Huk+F/KdATDxKTfTgRKD77N5cBd0ox37/ZMmNd/zn27OMxcK
-	6UOKULwaB8O1Tj6Z7A+VDCXZ6at2yPsZCMIbq89ZMutoTZOTdfPPfontqUbLtIuuQa9t/rD+K8g
-	/OLidyTUhZgVIabqvZ4UHT29w2ZLJUxGQKX6qs6wH82pGqaBXd2TM=
-X-Received: by 2002:a17:907:d88:b0:ae0:1883:78ce with SMTP id a640c23a62f3a-af8fd9b15a2mr449199266b.47.1753885092395;
-        Wed, 30 Jul 2025 07:18:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlSNefCMn8VL1asAYFBErw9EQVssdL+ytIqdvxN27jklDKwvouyVj4iHUy3iqQTvHr0jMpgoVmlIpd0cOzuIM=
-X-Received: by 2002:a17:907:d88:b0:ae0:1883:78ce with SMTP id
- a640c23a62f3a-af8fd9b15a2mr449195666b.47.1753885091955; Wed, 30 Jul 2025
- 07:18:11 -0700 (PDT)
+        bh=H5+kEdkXghppyQYetmPBQ6sqq9QmR3md7y7HiaGpJ0I=;
+        b=ZCxvnY6wkDXRZhEdxMJKHX422g9TIreUfVDsnxZoBWAWanDEQEAP9Jq9XS3vye/yVl
+         w7JpXHj7xX66U1+bwKxkJElzKmbozhrtW9RVN3ZH5f3YNLg3Yi0oFYvrqHBqWMyhBrBr
+         k+szioD471pB+CXXRjzgkehLucNnp69OwPNFzxPnDfJu4JSt7tBp7btnc/6zpWmBw+pt
+         o8b0y6+OgMSkV9gCCalDSRT6ge8oLFSSVtJebh1LVWw9mhzMxplBTJyrBptrawRO1Kx5
+         ShGnTd/mpEEb1+XEOFujtNCnAjWiwoP2nCu6y/XGmh3nnOErXsZ7jEF/ZEQtmkfHvcSA
+         l3IA==
+X-Forwarded-Encrypted: i=1; AJvYcCUpCp4s+YR+H+fQc3BK/xgUovSligC0+x5Jw37sd8BXjHiw7FGX1Ax9NISvgVlHiPwdrO6lEcuePVZ7MVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLpB6EgysmkFTFp3cABgIZ/KZQ7X95W1r4Ew9Qp2aVrmDXrD4C
+	SfY6uifhUJK8uDWvK6hZ8EZ2dEwnl1JmF0xNLluYq58CiuO4rY8LEmdtLuig6L/9IemOdrp/TdH
+	RDT6xtgXxkKEvubvmSdFSFRkXUp6SP6A2d6xrd71z
+X-Gm-Gg: ASbGncsddRFrNBHKgm0paLg5EIQ6AGaz3rtYJZ91S+n6XdwshivOlKCAwVNsoel4B+L
+	W8X5Gka3n1418WHYlqPrZax7YEM2HyAwzNvrPjGXIUKUG0uA4yVyNp/Wr31vr6kVxxfnS8FC/ee
+	mc9x7J0Y9ytMrCdliLZRBA25U2b1U7I0Yb9YxIA48lEpEwno3bmJekI03euyEgYGLiccLECBLav
+	iOS/A6PWTFtk4WBlSK5TjqZViTnZuvQAei6toVR
+X-Google-Smtp-Source: AGHT+IGnjBrALMz00bhbW0eE2eYltdA4uM50iHZ54Y4zr/NCz2eT9UCef9cglvhlSULb7QAcPGQ6YPk3ZKf0ScENAHo=
+X-Received: by 2002:a17:902:d50c:b0:237:e45b:4f45 with SMTP id
+ d9443c01a7336-240a2210339mr3862855ad.1.1753885216823; Wed, 30 Jul 2025
+ 07:20:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726072455.289445-1-costa.shul@redhat.com>
-In-Reply-To: <20250726072455.289445-1-costa.shul@redhat.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Wed, 30 Jul 2025 16:18:00 +0200
-X-Gm-Features: Ac12FXx4xowUzfg1QpHqAj2vPs_ZSJpkqZBvPfLdbkfVkH-lOdJVad_fyktbcHo
-Message-ID: <CAP4=nvREsJ=y0F4UhwhvUvK4JUxCKAGXNmDmiDpPB4bdGTs78g@mail.gmail.com>
-Subject: Re: [PATCH v2] tools/rtla: Consolidate common parameters into shared structure
-To: Costa Shulyupin <costa.shul@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, John Kacur <jkacur@redhat.com>, 
-	Eder Zulian <ezulian@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Jan Stancek <jstancek@redhat.com>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+References: <20250618120806.113884-1-adrian.hunter@intel.com>
+ <20250618120806.113884-2-adrian.hunter@intel.com> <487c5e63-07d3-41ad-bfc0-bda14b3c435e@intel.com>
+ <ccee2a0f-18fa-4037-bf97-f359e0791bf6@intel.com> <d443db90-ced5-43d0-9f85-ad436e445c3a@intel.com>
+ <9a4752a4-e783-4f03-babf-23c31cee4ff9@intel.com> <SJ1PR11MB60836014330204B2FBCC7418FC45A@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <79eca29a-8ba4-4ad9-b2e0-54d8e668f731@intel.com> <807ff02d-7af0-419d-8d14-a4d6c5d5420d@intel.com>
+In-Reply-To: <807ff02d-7af0-419d-8d14-a4d6c5d5420d@intel.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Wed, 30 Jul 2025 07:20:04 -0700
+X-Gm-Features: Ac12FXx-NEErOwD5zsvgMenGyME20wGkcAEBJZMWnCCssNMO3qRavJ35mIpH_0w
+Message-ID: <CAGtprH9SpjSnR-u-AH+t6BB+0pzHbgLTUv0pu+dkYR=ZzEYicA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] x86/mce: Fix missing address mask in recovery for
+ errors in TDX/SEAM non-root mode
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, "Luck, Tony" <tony.luck@intel.com>, 
+	Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	H Peter Anvin <hpa@zytor.com>, "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, 
+	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, "Huang, Kai" <kai.huang@intel.com>, 
+	"Chatre, Reinette" <reinette.chatre@intel.com>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
+	"tony.lindgren@linux.intel.com" <tony.lindgren@linux.intel.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"Zhao, Yan Y" <yan.y.zhao@intel.com>, "Gao, Chao" <chao.gao@intel.com>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "seanjc@google.com" <seanjc@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-so 26. 7. 2025 v 9:25 odes=C3=ADlatel Costa Shulyupin <costa.shul@redhat.co=
-m> napsal:
-> ---
-> Changes since v1:
-> - Rebase on top of recent changes
-> - Address Tomas's comments
-> - Don't change already not common members: trace_output, runtime
+On Wed, Jul 30, 2025 at 3:55=E2=80=AFAM Adrian Hunter <adrian.hunter@intel.=
+com> wrote:
+>
+> On 27/06/2025 19:33, Dave Hansen wrote:
+> > On 6/27/25 09:24, Luck, Tony wrote:
+> >> We've been sending a combined key+address in the "mce->addr" to
+> >> user space for a while. Has anyone built infrastructure on top of that=
+?
+> >
+> > I'm not sure they can do anything useful with an address that has the
+> > KeyID in the first place. The partitioning scheme is in an MSR, so
+> > they'd need to be doing silly gymnastics to even decode the address.
+> >
+> > Userspace can deal with the KeyID not being in the address. It's been
+> > the default for ages. So, if we take it back out, I'd expect it fixes
+> > more things than it breaks.
+> >
+> > So, yeah, we should carefully consider it. But it still 100% looks like
+> > the right thing to me to detangle the KeyID and physical address in the=
+ ABI.
+>
+> Coming back to this after a bit of a break.
+>
+> It feels unlikely to me that any users are expecting KeyID in mce->addr.
+>
+> Looking at user space programs like mcelog and rasdaemon, gives the
+> impression that mce->addr contains only an address.
+>
+> The UAPI header file describes addr as "Bank's MCi_ADDR MSR", but what
+> mce_read_aux() does tends to contradict that, especially for AMD
+> SMCA.
+>
+> But there are also additional places where it seems like MCI_ADDR_PHYSADD=
+R
+> is missing:
+>
+>         tdx_dump_mce_info()
+>                 paddr_is_tdx_private()
+>                         __seamcall_ret(TDH_PHYMEM_PAGE_RDMD, &args)
+>                                 TDH_PHYMEM_PAGE_RDMD expects KeyID bits t=
+o be zero
+>
+>         skx_mce_output_error()
+>                 edac_mc_handle_error()
+>                         expects page_frame_number, so without KeyID
+>
+> The KeyID is probably only useful for potentially identifying the TD, but
+> given that the TD incurs a FATAL error, that may be obvious anyway.
+>
+> So removing the KeyID from mce->addr looks like the right thing to do.
+>
+> Note AFAICT there are 3 kernel APIs that deal with the MCE address:
+>
+>         Device /dev/mcelog which outputs struct mce
+>         Tracepoint mce:mce_record which outputs members from struct mce
+>         Tracepoint ras:mc_event where the kernel constructs the address
+>         from page_frame_number implying that KeyID should not be present
+>
+> I guess it would be sensible to ask what customers think.
+>
+> Vishal, do you know anyone at Google who deals with handling machine
+> check information, and who might have an opinion on this?
 >
 
-Just a clarification: runtime was never a common parameter, it was
-just mistakenly added (but unused) in timerlat_params. On the other
-hand trace_output used to be common before the actions patchset, when
-it was moved to the actions structure for rtla-timerlat, but stayed
-separate for rtla-osnoise. If rtla-osnoise also adopt actions, it will
-go away there, too.
-
-Reviewed-by: Tomas Glozar <tglozar@redhat.com>
-
-Tomas
-
+I think it's safe to assume Google hasn't built any infra in the
+userspace that needs KeyID bits in the mce address. That being said,
+Dave's suggestion to "detangle the KeyID and physical address in the
+ABI" makes sense to me.
 
