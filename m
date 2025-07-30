@@ -1,190 +1,136 @@
-Return-Path: <linux-kernel+bounces-751035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 908A3B1646B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:17:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3FF6B16475
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178811888B75
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:14:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54DE3622102
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:14:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53FF2E1726;
-	Wed, 30 Jul 2025 16:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CADE2DFA38;
+	Wed, 30 Jul 2025 16:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kowalczyk-ws.20230601.gappssmtp.com header.i=@kowalczyk-ws.20230601.gappssmtp.com header.b="NeLKWtyn"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ISdH6fY/"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FE62DECD6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AAC12D8368;
+	Wed, 30 Jul 2025 16:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753891901; cv=none; b=T54e2Tds0wZ+4xdaRtQ54bmRQMii7/WczKtIKTKpOJNK5dVr91EiNrcWaU47PxOtqwgEyId+aRBY90ErHZnGWv3lV12URFiDbPEojn2tTSxtkUja0e0hG3NNpe6N8PfxvRQR3KMuYFfwqp2n+52Gs08Iw7DpNVmnH1YO9ehq0+M=
+	t=1753892016; cv=none; b=qMnhroOWiM8ZNguxhOPpx00/QRcfLjlEM4oMcoqToAhyNqbX1mY3S/L+6NhBzw+Yxx4lLRaH+/ZaH2F+mbxJ9TnXzeqqpswU8yDloTLJk4wQtVFwrxU7GhbwMS63DPW0DwpP2ryz0yDr1HKiWo2zCL6GIBFz42/9DRiCxhysbJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753891901; c=relaxed/simple;
-	bh=Vmo9MPpzR3UA0aXhLoe6GzwAA9g82u5gZPhQFBCXDLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZpVW0HgBFtmCqj4HPvzcLkKm1nWfG4Cs8xKr/Q3Glldg199gBGXwXkKDiIShdnMAF97u7Lw11HAgffUEEmUSOZLLM44SVZtZ6TSMjdNQT9snkCLsWlQAxPJ6mPtGMgj6byEiVd+qrmsQYia2XZbDfNaWRI6lE8XHT4XKbZ4hddA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kowalczyk.ws; spf=pass smtp.mailfrom=kowalczyk.ws; dkim=pass (2048-bit key) header.d=kowalczyk-ws.20230601.gappssmtp.com header.i=@kowalczyk-ws.20230601.gappssmtp.com header.b=NeLKWtyn; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kowalczyk.ws
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kowalczyk.ws
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-61571192ba5so2861906a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:11:38 -0700 (PDT)
+	s=arc-20240116; t=1753892016; c=relaxed/simple;
+	bh=0PF5NUEd0WyI2Xp2HpSr440L/r7appM8CdBDYgI55iM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=SkfNHGGPponLm7aLNkP8/E8wIGw3c+KKqiH24NNulA2GirWjpry9gduVSijRXKyz2LtmP6SmcHQTzXc7Rxdit5FJuFSd5CeRt/wPDrKJ4xCI8cOKp4xsjiREOhjYSX0eUsfwChTTyfn9noWTm+L/r4gsFanAX46H1DWKuotgCfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ISdH6fY/; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23fe2be6061so9605215ad.0;
+        Wed, 30 Jul 2025 09:13:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kowalczyk-ws.20230601.gappssmtp.com; s=20230601; t=1753891897; x=1754496697; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i2b79vf5ak+e/xCZeuA0BNxm0tT114JbbliY/uAS1iI=;
-        b=NeLKWtyntvIXM4S6WZZxILH2022aXq2Xn0FKWSdPsZh0+B7gtHdfKWEdqXnZGNmu/H
-         37To894AhDqnzuZGuDvRFSrSYr/7ERUeGh/wmmRwWfpIc3PmDRzjbt4rPed8sX+Gp/dC
-         MIl0x+OBsCDTEMKEFZwO5SGAbAlXaXoQ9anWIC++NXELHNw8X4vxQcUA6MZWr8N0Nzzi
-         expzNNjsJIyusZc42ucY3ShkLXVkUrlN2abvSMF6aRPolPYiIufl5Xu9CF7YdZwqWo3x
-         Gcx+ToCJElqm49/X5Amidh0j372wr6hEnt3XXnPNnYWb6bft62ALqHdLEWJ6NNvRJII/
-         YDxg==
+        d=gmail.com; s=20230601; t=1753892014; x=1754496814; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=dQUCXzvYt5b3ohSOIHozCTQslzQ/AVFvh6qH07LQ54U=;
+        b=ISdH6fY/BcimD01z+0ACrvXiutCu7kwLBF/V4gIswJz7aDd+QRn8Npq7sz6d46nRTz
+         DPgh0GGqLGgTdk0oVbjj2vuRzGCoN2c4wL32OF1UsT9puRTyeW9srpAA4LjuiMtsj8kX
+         flS1/JzdPvXHWbIbbY8iHOs9zropAxQopYvnw6AmijJAQpeAsApdf7YEwERh5+S1k/I0
+         HRLnEAvJoTfuICpL4q+B/Cn0FPvUmARlG/qtRvIYmgVgvMK88jGInVu71Mo5gva84u9T
+         TLCxVjAomzBUUprgwUbxwmaynrr/Y4HGomdMIeUsCjljOxtMLNcOR6dTWnE2128hjpS1
+         Ng7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753891897; x=1754496697;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i2b79vf5ak+e/xCZeuA0BNxm0tT114JbbliY/uAS1iI=;
-        b=CBg5ZpuSTYRhYT721snLs3uMt+CcReaa3MQmNHY2ir1PDiHkwxecZM84oG5Y3omjat
-         AUqqWKUV0FPxRdEgQ1QBtNlBKkJyes8hViKF4XTVWWaCoLOiyWC0+76nlXFah+fRT5eq
-         lrxir2JB1qk5DBLuxUnJeTtbI8pUag8j8ZJoymDRCOD9dxqA0c9p99V0M8hdcMxORMNU
-         JEbFFy3rkygAedN/QQInfeHGKC0A+Lcv/hDVdTFKj/eB7kKbqD84s8cPFE4EfDRLzZSo
-         EHw1mBCzvgwegoABj/XSXaYfw2cvGVU23AuBfIE6NRZGIMpGrTQqaUbLhGWJfp1aX70t
-         nElA==
-X-Forwarded-Encrypted: i=1; AJvYcCVyWplf2iON0v1Uwg0idWuZHEUDYX4Lcls+yI9HhBJRy4vA2pfXF8iov66BLS4nz1+nfD5muINRtBdwuoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQjX9MEslHJjhh7oLGXeLXs/vZMmju0eldnVRCNsJjzVyFmhhr
-	xDpiKwS8aTbefQe/X4Pdew/UZW/5WUuKMxk4aCheSrogrEaVLn8gtvR6Ip+Ea/BwA9e72tW1eYE
-	rAMrOqvzRbQ2bdkteHtziQDc4104/97zXfvvvAuPN
-X-Gm-Gg: ASbGnctwYxnMJDRUI2f/lF6zJkXnza1dMzG29ABjsWbXfz0HdPZrMEqWqGn84RXKWbT
-	Jv8koWl0KUrHN7AKpAhPhztYu66M8VH56ci2wSQY9S8DBmA17ZanIrbdrLPV7lDHnlgpdRvgSSx
-	6hhGNGW7d50ROKJ8As7+r4Lb7jh7/bJkEcBY3LoMLn3HmIl7aZ6hnJSMw+Gqh1aFsFLTH7Gov+r
-	SZX
-X-Google-Smtp-Source: AGHT+IF0RbHZTmyeGEceTHCSVk3sXAK7Fvg37ayxPFDsP6BZA0CVmeBroxYKzVp8m2JfRHhouMt2MBxOgQuv6Q7rqjU=
-X-Received: by 2002:a05:6402:2553:b0:615:8f13:6324 with SMTP id
- 4fb4d7f45d1cf-6158f1367d8mr2751996a12.1.1753891896854; Wed, 30 Jul 2025
- 09:11:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753892014; x=1754496814;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dQUCXzvYt5b3ohSOIHozCTQslzQ/AVFvh6qH07LQ54U=;
+        b=gL9T2+3coqJJIENuxF/K984HT+Z2RKe99NL6c8vVKEJu75BNDtAFo46kGVc17q2dWA
+         OYgRXRbiLHDylBVQ2vDCnqQnuOp5Jry3irugSMs+Eu9ZelYsky7vyWVku0avABJldQDi
+         pMPYFbvnBjpHUqPDfb+BGuk1XlEyDjKbM9NpwdikYc4TezYxOfOlmXtqWSls3HhQ2m5c
+         O6L2YctrkHQY+5vs7NuJax2KluOD+LX5yzN+A0jgDBlFaQguqZfNSf9ubn/RwnQhMF8W
+         B/oC5+KZuw5+bVqogVOQkbSCWforzvDCWCwOWKsB56GPKOnayZdPd7h+xfgDO31oxgVn
+         hUXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLnzs+NdU/L/l84cnULd7cXSFKzZJP/bF4LCiKqV/ynEn0nAuh1nSKicrM7DX9IJUxBRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+3uWIZ/L8oTyBsX0wDUS95lXTOsGFwUKxQZpcU4LQNBLy2yen
+	HN71Q8YHWKF7h1iLt7ZiBk2Hq3+9N6vnsCSU/TPIKcyoeuqlLIRB/6RO
+X-Gm-Gg: ASbGncspuiwHTfmYM2SNJlsYHM+vo5tKBwVW4Baf2kmfYI4QswRFjI8ImplE0Wre9jQ
+	wHf3MMTlgloKE+Lsw0eYA64swzTQHmAOzxYwRA8NQxd24S3CFePMZIRutGgdnN034TpoL7jSoeY
+	iCQyfJmipFR4GMyKLL2qt9vNjLGDk1C6CF5OakeS2+yhnPXTqE5TE7i4r4cx0eJ4D+Dk2BMCf1e
+	Jy1mtKnxAHCqg7+y9LpgqkwPLV+pOY8k/rVvKEiHowLMz3ZM6YnPfFe4wwvrzHyKukIZtarPddu
+	LTDANPHVq1cn98IQvS/rTIBEKOhQLj1r5gBicmJ/TJ7Y+PjNXsUeT2lfRcYo6P0F8Y5ufl4Y7CT
+	5kxa0Gt/Xyw1lX6kkJe++fVK1aP5d7fFMiIXE57A=
+X-Google-Smtp-Source: AGHT+IGeFSOw+/X0Z7X4n9ogZ/o87Th6ejMZXu2HkaiuIh3jZZvvHw0QjHjI57QITzDcg0qs70orEw==
+X-Received: by 2002:a17:902:fc50:b0:240:20a8:cc22 with SMTP id d9443c01a7336-240967c5fb9mr54261485ad.4.1753892014219;
+        Wed, 30 Jul 2025 09:13:34 -0700 (PDT)
+Received: from ?IPv6:2620:10d:c096:14a::1cf? ([2620:10d:c090:600::1:f0da])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23ff71916f0sm87534415ad.147.2025.07.30.09.13.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 09:13:33 -0700 (PDT)
+Message-ID: <a74ec917c2e3bf4d756a5ce2745f0f0a2970805a.camel@gmail.com>
+Subject: Re: [PATCH] libbpf: avoid possible use of uninitialized mod_len
+From: Eduard Zingerman <eddyz87@gmail.com>
+To: Yonghong Song <yonghong.song@linux.dev>, Achill Gilgenast
+	 <fossdd@pwned.life>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+	 <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Viktor Malik
+	 <vmalik@redhat.com>, bpf@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Martin KaFai Lau <martin.lau@linux.dev>, 
+ Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>, KP
+ Singh <kpsingh@kernel.org>,  Stanislav Fomichev	 <sdf@fomichev.me>, Hao Luo
+ <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 30 Jul 2025 09:13:32 -0700
+In-Reply-To: <49c6b3ba-7860-4b13-944f-5f503eb201fd@linux.dev>
+References: <20250729094611.2065713-1-fossdd@pwned.life>
+	 <49c6b3ba-7860-4b13-944f-5f503eb201fd@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0d734549d5ed073c80b11601da3abdd5223e1889.1753689802.git.baolin.wang@linux.alibaba.com>
- <ff93c415-7ce8-a331-9568-7543c6a37992@google.com> <817c59dd-ad54-47f1-ac16-9cb9583308d1@linux.alibaba.com>
-In-Reply-To: <817c59dd-ad54-47f1-ac16-9cb9583308d1@linux.alibaba.com>
-From: Patryk Kowalczyk <patryk@kowalczyk.ws>
-Date: Wed, 30 Jul 2025 18:11:25 +0200
-X-Gm-Features: Ac12FXy5SspHtr8bWKbmfyjbAMrdH8laeeJCxAogBGa40D3TbRxRNcwy2_YhjZ8
-Message-ID: <CAJCW39LLyJjOyMNreiVd+SjS3dKSXwvT6kVz-sf8y9YpsU1dTg@mail.gmail.com>
-Subject: Re: [PATCH] mm: shmem: fix the shmem large folio allocation for the
- i915 driver
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: Hugh Dickins <hughd@google.com>, akpm@linux-foundation.org, 
-	ville.syrjala@linux.intel.com, david@redhat.com, willy@infradead.org, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, jani.nikula@linux.intel.com, 
-	joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, tursulin@ursulin.net, 
-	christian.koenig@amd.com, ray.huang@amd.com, matthew.auld@intel.com, 
-	matthew.brost@intel.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
-This patch solves the performance issue very well.
-best regards,
-Patryk
+On Tue, 2025-07-29 at 09:17 -0700, Yonghong Song wrote:
+>=20
+> On 7/29/25 2:45 AM, Achill Gilgenast wrote:
+> > If not fn_name, mod_len does never get initialized which fails now with
+> > gcc15 on Alpine Linux edge:
+> >=20
+> > 	libbpf.c: In function 'find_kernel_btf_id.constprop':
+> > 	libbpf.c:10100:33: error: 'mod_len' may be used uninitialized [-Werror=
+=3Dmaybe-uninitialized]
+> > 	10100 |                 if (mod_name && strncmp(mod->name, mod_name, m=
+od_len) !=3D 0)
+> > 	      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~~
+> > 	libbpf.c:10070:21: note: 'mod_len' was declared here
+> > 	10070 |         int ret, i, mod_len;
+> > 	      |                     ^~~~~~~
+> >=20
+> > Fixes: 8f8a024272f3 ("libbpf: support "module: Function" syntax for tra=
+cing programs")
+> > Signed-off-by: Achill Gilgenast <fossdd@pwned.life>
+>=20
+> The code itself is actually okay. The error is triggered due to'maybe-uni=
+nitialized'.
+> To silence the compilation error, I think this change is okay.
+>=20
+> Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
-=C5=9Br., 30 lip 2025 o 09:46 Baolin Wang <baolin.wang@linux.alibaba.com> n=
-apisa=C5=82(a):
->
->
->
-> On 2025/7/30 14:54, Hugh Dickins wrote:
-> > On Mon, 28 Jul 2025, Baolin Wang wrote:
-> >
-> >> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmp=
-fs"),
-> >> we extend the 'huge=3D' option to allow any sized large folios for tmp=
-fs,
-> >> which means tmpfs will allow getting a highest order hint based on the=
- size
-> >> of write() and fallocate() paths, and then will try each allowable lar=
-ge order.
-> >>
-> >> However, when the i915 driver allocates shmem memory, it doesn't provi=
-de hint
-> >> information about the size of the large folio to be allocated, resulti=
-ng in
-> >> the inability to allocate PMD-sized shmem, which in turn affects GPU p=
-erformance.
-> >>
-> >> To fix this issue, add the 'end' information for shmem_read_folio_gfp(=
-)  to help
-> >> allocate PMD-sized large folios. Additionally, use the maximum allocat=
-ion chunk
-> >> (via mapping_max_folio_size()) to determine the size of the large foli=
-os to
-> >> allocate in the i915 driver.
-> >>
-> >> Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
-> >> Reported-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
-> >> Reported-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
-> >> Tested-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
-> >> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> >> ---
-> >>   drivers/gpu/drm/drm_gem.c                 | 2 +-
-> >>   drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 7 ++++++-
-> >>   drivers/gpu/drm/ttm/ttm_backup.c          | 2 +-
-> >>   include/linux/shmem_fs.h                  | 4 ++--
-> >>   mm/shmem.c                                | 7 ++++---
-> >>   5 files changed, 14 insertions(+), 8 deletions(-)
-> >
-> > I know I said "I shall not object to a temporary workaround to suit the
-> > i915 driver", but really, I have to question this patch.  Why should an=
-y
-> > change be required at the drivers/gpu/drm end?
-> >
-> > And in drivers/gpu/drm/{i915,v3d} I find they are using huge=3Dwithin_s=
-ize:
-> > I had been complaining about the userspace regression in huge=3Dalways,
-> > and thought it had been changed to behave like huge=3Dwithin_size,
-> > but apparently huge=3Dwithin_size has itself regressed too.
->
-> I'm preparing a RFC patch to discuss this.
->
-> > Please explain why the below is not a better patch for i915 and v3d
-> > (but still a temporary workaround, because the root of the within_size
-> > regression must lie deeper, in the handling of write_end versus i_size)=
-.
->
-> OK. This looks good to me. Patryk, could you try Hugh's simple patch?
-> Thanks.
->
-> > ---
-> >   mm/shmem.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 3a5a65b1f41a..c67dfc17a819 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -5928,8 +5928,8 @@ struct folio *shmem_read_folio_gfp(struct address=
-_space *mapping,
-> >       struct folio *folio;
-> >       int error;
-> >
-> > -     error =3D shmem_get_folio_gfp(inode, index, 0, &folio, SGP_CACHE,
-> > -                                 gfp, NULL, NULL);
-> > +     error =3D shmem_get_folio_gfp(inode, index, i_size_read(inode),
-> > +                                 &folio, SGP_CACHE, gfp, NULL, NULL);
-> >       if (error)
-> >               return ERR_PTR(error);
-> >
->
+I agree with Yonghong, `mod_len` is only read if mod_name !=3D NULL,
+meaning that "if (fn_name) { ... mod_name =3D ...; mod_len =3D ... }"
+block was executed.
+
+Please drop the "Fixes" tag.
+
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+
+[...]
 
