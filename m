@@ -1,116 +1,151 @@
-Return-Path: <linux-kernel+bounces-750633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E524FB15F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:08:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4D2B15F06
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:08:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E06E18C6D01
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:08:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A268C18C75BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE65293B5E;
-	Wed, 30 Jul 2025 11:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RSxtUr+z"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4928E2110E;
-	Wed, 30 Jul 2025 11:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E90293C45;
+	Wed, 30 Jul 2025 11:01:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47C6280312
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753873239; cv=none; b=ROfqWGbQw4Fb1nHKbntpnrCalUOBtgGfisJtm+hElHLC96Pr1isWR3Cnmg4EJ2UM8UzGykGpO/VCSx2B98jtdc/W4J167m0ijOmZHW2Jk8EedaBrW29vOXZNLOkXjyJxx2oMwk4hUKbQdTL8bxb9FBT+L/KQaON4THnKOP5P8zI=
+	t=1753873290; cv=none; b=BthkZ+aU9I8oWIcxww0GHGVAEl5QQcrU4wa3sgMZ1/ZAZkU/bi/hxubHTMPCVpR0LlAlacGgb46wUs/SNzHLIEN94nE0Ehhiv2IQ0g5UIvzOOzt68lbeB99/5Dr7hm4REx1b56SVebuB8Jtn/wYbIPgf7udpwsBRGPQbIghIX9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753873239; c=relaxed/simple;
-	bh=HaZMMuKZQZcg6lQ9hU9TY59/UTNMhl0PQFmNQNiY2yo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ir3dzEO33qmwJXUGvGqs1oU45488DYbQm9O0WIoZf8kFR+h9Q+Q9DbQ4rdWJ+RH/PXDrEmndmZkf8g6gjdKBe/TBJMz/r4QJMaX4CXmKnvMEcMGkRZJKeKO8JQGBMzLOzBnX3B25CKhrZ3bPicE4A2y7O0vvnhP57nnwc2wwExs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RSxtUr+z; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45611a6a706so30950435e9.1;
-        Wed, 30 Jul 2025 04:00:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753873234; x=1754478034; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SbLm+cLzm8h/ctscYb3BMVYRqSGLoFptIrggVe0rnsU=;
-        b=RSxtUr+zok94JKSJQp7VoE3lEVVyGI7bI9fPU5tYUbvHVLNS5SKeYo02vX1zSOGhVv
-         +Fob7OacWa5a1EWB+C65FjnzksV5vtrh4qPjU9GdYQ+08lNcwAzyU3KXXmKGf7It76OG
-         6b3G/aqrsWm87UDTmAuIO/aqedrBqvg0/4FxVnsjfQr7y58++gCZgekX7Fdh0t4AOBOU
-         qgV4VXAyL55aZ3+Xq1rX7uQAk3nlpZTeKJKHuWaPTmIB9fUstxB4/Y1h9/2m0VNDW4ex
-         rIIKrKvVrYr6uAFInqCSAXHHrX6eJ/NaQVuojSJ3UlN/Ub7GqRIBxbUQE/s9nK6mmYRf
-         90yQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753873234; x=1754478034;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SbLm+cLzm8h/ctscYb3BMVYRqSGLoFptIrggVe0rnsU=;
-        b=qSVeqwMCfRRPazaUduHDXOrYAnOWLzT5Gf5VKZ5gFqlausUfz3QFiclQELcFpX9TFP
-         erTG2XNWsKMW47xKFTiZcwQq/P2lBS62apsq+kP6HFRafWDe0xj9eggAYENDyKg7fN0h
-         Gzzv8ixLpLAYGudzyx2FbD0uE8dH4xQw+shrvmxmKBahsqO2gHNkKEzISReeukhnQc2N
-         0RQZLCKFP7Yh9LTRPNLn2GSGsP/5Dc7comKd9/ba+wpVGVMRIsSCtrqQPBSqWrJIfuzn
-         X/IrNUZHLslNTQ/yvLtjXbTFYrpqACqDaDCaP120is6/ouCRqGtqgeN9tdufYIFBVeoL
-         +vvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBjibCvgqgL5IdBJGxtzusjQI1OIMFUcSquUzSYJ8Dy6DCX7pzHPgQ1lVG2B+f90D3pSbhlUz9XSPg6epd@vger.kernel.org, AJvYcCWog98TqzHr7cJQHkFt5u35Q/hFUBtpszJiPWPPxOImS+ZhgY8gDUsDT8bYUOOlb15NkZcJMJ/pmNc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIK2PjiKoVxUxFMN0fgmt7i4KHyAbb862ZzqoCLVI4+p3BoGT3
-	X8rTgf9UDmnAJV20zfgyZIEAjZDD77RW/KoVNSrnxfSh14kGx6IwXT2t
-X-Gm-Gg: ASbGncsr1+R+0RPI24lv/uObKPP20pRJmPoafRcprQNhkmaZ6yO9ML74dLMYgRk3KSJ
-	YlBO8jsi31tCuHjbKQN6gOZnyB0ONaFTrPOZoAKo85OCsH+f63L2aVAeoudVJyoudOfbWZM1vY5
-	KOrUyhVSPu0y3rKIGspWAHDrEfAscbGzWp9ilOxEHa6mgmUbS1ZI0/Ysx7zy2SlEEY/UpHPIFt+
-	G1OUfN6lqrLpZzvrM2azDKPgcS4ZThrLEQChwsV3gzKoDVihiiVTN6a9FU7L/gT2XzXt3VNTBND
-	mX/TcWhv9NJA91cdgKDevADThysE1LljIY5JRqsaPpMad1X9OpHHkQ3vc3ZrDXwTG+YNrMq0L/W
-	t6p5iGp+2esi5Bad+YUY+
-X-Google-Smtp-Source: AGHT+IHL6le99e4dQvuL6ZyO5dMlJdlnJwbY2lLiTZCb+XxxAi5luS5/iEhxQDi0lFJnLlF8pRBcbw==
-X-Received: by 2002:a05:600c:358b:b0:450:d4a6:79ad with SMTP id 5b1f17b1804b1-45892bcc5f2mr19847925e9.23.1753873234274;
-        Wed, 30 Jul 2025 04:00:34 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458953865dfsm22547585e9.18.2025.07.30.04.00.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 04:00:33 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-ide@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ata: libata-core: Remove space before newline
-Date: Wed, 30 Jul 2025 11:59:59 +0100
-Message-ID: <20250730105959.2058765-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753873290; c=relaxed/simple;
+	bh=WIHSoj9U5zVplPJU+/BW3aOS3qX5DTcD2U34zANRbns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cyf7araJ1UFtUHY5PaK/NFuf4mAgM3DGt1+x/aRbi59Wpi5jxhyrSOFxQx6vsVKEYG/87Liocq6mMjXLF+wKxck8aiEP5vXz+ViWJpRQmjFi0EL4F21LrBUrUN7SY3bvv2X3kL27uXoCbfcutpXaNWiYk3LMwIgdZbfeYRQHhDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 188D21BC0;
+	Wed, 30 Jul 2025 04:01:20 -0700 (PDT)
+Received: from [10.57.3.117] (unknown [10.57.3.117])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 618343F673;
+	Wed, 30 Jul 2025 04:01:26 -0700 (PDT)
+Message-ID: <cd250adb-61e7-414f-bf17-6cc960e44f7b@arm.com>
+Date: Wed, 30 Jul 2025 12:01:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 04/10] coresight: Appropriately disable programming
+ clocks
+Content-Language: en-GB
+To: Leo Yan <leo.yan@arm.com>
+Cc: Mark Brown <broonie@kernel.org>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Yeoreum Yun <yeoreum.yun@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com>
+ <20250724-arm_cs_fix_clock_v4-v5-4-63f648dae021@arm.com>
+ <b3782b8f-8c09-4fb8-bec6-186102cc66a8@sirena.org.uk>
+ <f9fb2174-5bc5-4c7b-b74b-8542b4f7cbe0@sirena.org.uk>
+ <15370a42-8e92-4f57-9ff2-f283d9fd30bd@arm.com>
+ <20250730085637.GB143191@e132581.arm.com>
+ <caffdde4-fad4-4462-ba92-84416726a12d@arm.com>
+ <20250730105432.GC143191@e132581.arm.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250730105432.GC143191@e132581.arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-There is a extraneous space before a newline in a ata_dev_dbg message.
-Remove the space.
+On 30/07/2025 11:54, Leo Yan wrote:
+> On Wed, Jul 30, 2025 at 10:27:48AM +0100, Suzuki Kuruppassery Poulose wrote:
+>> On 30/07/2025 09:56, Leo Yan wrote:
+>>> On Tue, Jul 29, 2025 at 01:30:28PM +0100, Suzuki Kuruppassery Poulose wrote:
+>>>> On 29/07/2025 12:31, Mark Brown wrote:
+>>>>> On Mon, Jul 28, 2025 at 05:45:04PM +0100, Mark Brown wrote:
+>>>>>> On Thu, Jul 24, 2025 at 04:22:34PM +0100, Leo Yan wrote:
+>>>>>>
+>>>>>> Previously we would return NULL for any error (which isn't super great
+>>>>>> for deferred probe but never mind).
+>>>>>>
+>>>>>>> +	pclk = devm_clk_get_enabled(dev, "apb_pclk");
+>>>>>>> +	if (IS_ERR(pclk))
+>>>>>>> +		pclk = devm_clk_get_enabled(dev, "apb");
+>>>>>>
+>>>>>> ...
+>>>>>>
+>>>>>>>     	return pclk;
+>>>>>>>     }
+>>>>>>
+>>>>>> Now we pass errors back to the caller, making missing clocks fatal.
+>>>>>
+>>>>> Thinking about this some more I think for compatiblity these clocks need
+>>>>> to be treated as optional - that's what the original code was
+>>>>> effectively doing, and I can imagine this isn't the only SoC which has
+>>>>> (hopefully) always on clocks and didn't wire things up in DT.
+>>>>
+>>>> You're right. The static components (funnels, replicators) don't have
+>>>> APB programming interface and hence no clocks. That said, may be the
+>>>> "is amba device" check could be used to enforce the presence of a clock.
+>>>
+>>> I was wondering how this issue slipped through when I tested it on the
+>>> Hikey960 board. The Hikey960 also has one static funnel, but it binds
+>>> pclk with the static funnel node. That's why I didn't detect the issue.
+>>>
+>>> I don't think using optional clock API is right thing, as DT binding
+>>> schema claims the pclk is mandatory for dynamic components. My proposal
+>>> is to enable the clocks only when IORESOURCE_MEM is available, something
+>>> like:
+>>>
+>>>     if (res) {
+>>>         ret = coresight_get_enable_clocks(dev, &drvdata->pclk,
+>>>                                           &drvdata->atclk);
+>>
+>> That may not work, as they may need the ATCLK enabled to
+>> push the trace over ATB. They may skip the APB, as there
+>> is no programming interface.
+> 
+> If so, I will use an extra patch to skip pclk enabling for static funnel
+> and replicator, as a result, patch 04 will be:
+> 
+>    if (res) {
+>        drvdata->pclk = coresight_get_enable_apb_pclk(dev);
+>        if (IS_ERR(drvdata->pclk))
+>            return PTR_ERR(drvdata->pclk);
+>    }
+> 
+> Then, when consolidation in patch 07, it will have a code:
+> 
+>    /* Only enable pclk for a device with I/O resource */
+>    ret = coresight_get_enable_clocks(dev, res ? &drvdata->pclk : NULL,
+>                                      &drvdata->atclk);
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/ata/libata-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can we not differentiate the error code in devm_get..() for
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 97d9f0488cc1..ff53f5f029b4 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4602,7 +4602,7 @@ static unsigned int ata_dev_init_params(struct ata_device *dev,
- 		return AC_ERR_INVALID;
- 
- 	/* set up init dev params taskfile */
--	ata_dev_dbg(dev, "init dev params \n");
-+	ata_dev_dbg(dev, "init dev params\n");
- 
- 	ata_tf_init(dev, &tf);
- 	tf.command = ATA_CMD_INIT_DEV_PARAMS;
--- 
-2.50.0
+  ENOENT (not found) vs Some other failure ?
+
+I would recommend using that and don't force the use of apb_clk/apb
+for AMBA devices. If the firmware doesn't specify a clock, but does
+specify the CoreSight components, it knows it better.
+
+Suzuki
+
+
+
+> 
+> This turns out to be the case for both static funnel and replicator
+> devices — regardless of whether the DT binding includes "apb_pclk" or
+> not, the driver will always skip enabling it. Any concerns?
+> 
+> Thanks,
+> Leo
 
 
