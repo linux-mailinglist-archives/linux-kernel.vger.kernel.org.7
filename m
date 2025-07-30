@@ -1,217 +1,143 @@
-Return-Path: <linux-kernel+bounces-750289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A0CB15995
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:30:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CED7B1599A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:32:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8734A3BB77B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:29:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B0E73A3E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74545288C1E;
-	Wed, 30 Jul 2025 07:30:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9758F20E6;
+	Wed, 30 Jul 2025 07:31:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKw4qa1W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L6BEKRg6"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27F31F1906
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:30:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804481F5423
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753860614; cv=none; b=deQSBdtjhKXLgLYfjWa7+7Y2g7SIRhDc/hd5Fi8klsZA+dAs98eSRLnWKHZ/qqivLsz7bInG8twFDWaVYWhjOGTxUkIEn4xfrmQApuf3srBPb82z5zCcIQ3iplFKCe/LHR9CixTkux5aAwThhwj5HhCLzxcNJZ/qmgHa3FLT7A8=
+	t=1753860708; cv=none; b=dMV1zgpXoDJ+B6VGhDk/HwKgg1z6oNJF2O6BUd/aQBezUJdpjRgBH+e5dPDrfmCXWebRXQFBV2urxBWms2k2bCwvNwPflV2cgJitVbfKuhctrmEFkW3PALKllUdEhP2/c5kRyaTpHcTisWMdSuhsZpikzDdF9P/3u4Ro2K6U9O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753860614; c=relaxed/simple;
-	bh=H/pqotFZUKNnyxSNnhtzvMiTrU7Ao/+haG8ZKeInaec=;
-	h=Content-Type:Date:Message-Id:From:To:Subject:References:
-	 In-Reply-To; b=rniBJoUZcfr4HDa1T854WoGZprl9Uv7kWDP8dZzc6kglstuwYCCO+eOMptoMe2XFMeiwEMs2PzaQjpLkJWtKA/J+uJqJ05bu+mVP9n52R8fHDucFHlCMQ5URzhAp2F+hjd/i5oE2A8la2l2+CivMMA3FrKSjHZ+GUuIk0xQM3/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKw4qa1W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E91B5C4CEE7;
-	Wed, 30 Jul 2025 07:30:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753860614;
-	bh=H/pqotFZUKNnyxSNnhtzvMiTrU7Ao/+haG8ZKeInaec=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=sKw4qa1WsD98Zi1U0HNE5xEtnC0Ozn/EkWRLtWlnaSRidZd97CxLS+0MtAcYIg4ef
-	 HF0Y2smDLxZsM7th6pRC7roNv6IMXyWuYyEDSvyL+QmN9rRmL+zbq/jj1CbNCJP9Ky
-	 JnyqtSXf/yU334XrvNzire2kjPgN2LZrTiHj2btkexq0xt4em/r6ExEtpxRX7p3RBw
-	 F2+9XkPw6ONCJHkX94/McbmqNlpUFuL0i15Mg4b3yF1PD3AiCaPSe0QyB1u3CLlcma
-	 /46gvngmyr659hW0jLmDeedH1ITcc4bEjF7LkoWHbMUbwwegsL+rWhk5f7ySnE4aPT
-	 2SCHZQOhjQRYA==
-Content-Type: multipart/signed;
- boundary=a3e9b9de6cf3dc4c98cb83aa2206db48083b13031472f83fa1f6f0a267af;
- micalg=pgp-sha384; protocol="application/pgp-signature"
-Date: Wed, 30 Jul 2025 09:30:06 +0200
-Message-Id: <DBP7P3RWX17B.14Q27IBS3T3FL@kernel.org>
-From: "Michael Walle" <mwalle@kernel.org>
-To: "Khairul Anuar Romli" <khairul.anuar.romli@altera.com>, "Tudor Ambarus"
- <tudor.ambarus@linaro.org>, "Pratyush Yadav" <pratyush@kernel.org>, "Miquel
- Raynal" <miquel.raynal@bootlin.com>, "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>, "open list:SPI NOR SUBSYSTEM"
- <linux-mtd@lists.infradead.org>, "open list"
- <linux-kernel@vger.kernel.org>, "Matthew Gerlach"
- <matthew.gerlach@altera.com>
-Subject: Re: [PATCH v3 1/1] mtd: spi-nor: core: Prevent oops during driver
- removal with active read or write operations
-X-Mailer: aerc 0.16.0
-References: <cover.1753839339.git.khairul.anuar.romli@altera.com>
- <566fc1168db723672ab0bc6482ec7b72b4b8fe2b.1753839339.git.khairul.anuar.romli@altera.com>
-In-Reply-To: <566fc1168db723672ab0bc6482ec7b72b4b8fe2b.1753839339.git.khairul.anuar.romli@altera.com>
+	s=arc-20240116; t=1753860708; c=relaxed/simple;
+	bh=RCtMMM6XgxNvf3yX1V7jUGQ4cWFLiZXdFPs6kpBK5k8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kh9Y9mW4mKfTimWHzQl5IALYWExwiGsC0oCnbSWviq5YJSMa47iNpff7ofW6OPyfyoS5UHbRTaKhQrlADugP8+AwyKqyhXvdCl7vOzHeHjbkeseLBkR6hZ/0WxaTZO2Ozxx8+CqFaNzdXZ0SRHmWvAKb3+VRTSK3h7C1yDycbGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L6BEKRg6; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso320051cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:31:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753860705; x=1754465505; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=taGUVZn54Sb7/8YVAVSPAtR/Xh7nS0Q82m+kPwJckSI=;
+        b=L6BEKRg6jE4NxOBQPe1i7AJOUrJB9K0DYIGKBL3yFgUyFEHreRAI5wNQZ647qzB2ha
+         nnMiuCjJg8ahtR9mKPpmRNFuKWT1s8U4UsYPCTbsj+voPl4xzOmle3lzSahMCdsvCopt
+         ToGeTcrRPb5BFaG3qFpypiVIrwiVxE9tKOM8wI6zjxxzcGEeREUViBJT1nVG8lBHIW2y
+         94sLfF58guvmS6gyuiP4aCGkcWEHsndesxqzw8KIhgKNjucAAtERnXtvK/GwTkWX39WQ
+         jT+Dv7jdtXAPzw0Y2m3RtAWGpdVyBp2YKxtiHY6rflVQ3wcWVfSHrG4qE4M+/8fsN98W
+         /q7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753860705; x=1754465505;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=taGUVZn54Sb7/8YVAVSPAtR/Xh7nS0Q82m+kPwJckSI=;
+        b=lh5QBYqPH44EEO43PLy5iD2b0V9NZsN0wsy/Q0nAPCrOEc64COYvLY2K0peMeuytkA
+         eL0FC0+6iRSohdBJTnsP2xjegGaEK0HBkmhy0VPvWrIVbFV4HbL1ZGT9Ql/89Ws7nJkJ
+         v02jCDjsPRN+qoqQ0yqlfqFzXMIqG+aPav9qHDOJc7m5UR7KTQRL+EcrZKaDVwAEVksG
+         dOovgL0ONTnyVfSVELanIld7xOMfbJfSs55qPJyjRqLvT0YE8/nj8b4ILkw0O7QGLPDV
+         XRrY65WUb/wVyLOKULn8NqjVSGD/7u3WGG3il5FqtulAzxO5UKnuvQgi1uBEWglTQ1/H
+         2I2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVkW4jZlll2icnu8zLMc4d1Go9yw1BKgA+tELhAjxaDc9ucOmxSUkFkOYndOBNrE81jReCxB64SEesgUuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7NNDjJ+icrLnW8lbDipua+bJLGBWGom9zktf/uyFgBFED5wb6
+	kCOM9xfjDeDsQs5Y+Oo32IjG3+/+hn4w2HcZ8n0K4c7hPEMutDTULTP3vXji6nWrCzgWeCFfHXX
+	A0Li1QqgS10EoRmj1eEeLRYQS6s9PpoVsTkoRKI6a
+X-Gm-Gg: ASbGncufF51aXprqHNkH9KYVbSQHDF8g2vXRR2zkgYx6zXFrkCWbgd4yzTHcWnsEW5V
+	Lsa7DfDHWm0GyNHtOHFafNp++rcDeCK1NR+ySoMjLEB4m25gPdHDKpp9xIi0LRAk1BCSh6TvqS2
+	imjJRY0oV+8uaBv5dBKVWOuDAOPxBbXUnaf+YyJu/QIqi8mCu0zyLerCoiwPrZ6XLUE1KCsGNiA
+	dJcLQ==
+X-Google-Smtp-Source: AGHT+IFOAox761YmBm/0UsdXxtW5XXgTXWBlNQe6dcfPOkIEexhAq6o1NxjcDMrSZPMPFCRG7X33gALeaQgNNM5Lcmc=
+X-Received: by 2002:ac8:7d47:0:b0:4ae:d2d4:21cc with SMTP id
+ d75a77b69052e-4aedf53fd05mr2185641cf.3.1753860704933; Wed, 30 Jul 2025
+ 00:31:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <ef3f933a-742c-9e8e-9da4-762b33f2de94@hisilicon.com>
+ <CAFivqmLCW2waDnJ0nGbjBd5gs+w+DeszPKe0be3VRLVu06-Ytg@mail.gmail.com>
+ <CAFivqm+D9mbGku-nZKSUEMcQV5XK_ayarxL9gpV5JyfmhirsPw@mail.gmail.com>
+ <aGuGLu2u7iKxR3ul@arm.com> <CAFivqmJL90xsELhz4tPtkYA9vMzS9C=V__nwo=kWJKjKS=mE_Q@mail.gmail.com>
+ <CAFivqmKBgYVa6JUh82TS2pO915PUDYZMH+k-5=-0u1-K9-gMMw@mail.gmail.com>
+ <aHTOSyhwIAaW_1m1@arm.com> <CAFivqmJ912sEdSih_DFkiWRm478XUJhNDe=s2M_UO2gVTu4e3w@mail.gmail.com>
+ <CAJZ5v0irG16e2cM_tX_UeEJVmB_EdUvk-4Nv36dXoUS=Ud3U5A@mail.gmail.com>
+ <CAFivqmLoDv_pWdmBG8ws-CMUBXcb9bS1TgMaxW9YZMqqHpRSyA@mail.gmail.com>
+ <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7> <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
+In-Reply-To: <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
+From: Prashant Malani <pmalani@google.com>
+Date: Wed, 30 Jul 2025 00:31:33 -0700
+X-Gm-Features: Ac12FXxQZiodhWI_bOWM2KSmw00jzvlZ6_RTTuF3j9DWwSAaillUswPC4ftFKyE
+Message-ID: <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Beata Michalska <beata.michalska@arm.com>, 
+	Jie Zhan <zhanjie9@hisilicon.com>, Ionela Voinescu <ionela.voinescu@arm.com>, 
+	Ben Segall <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
+	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
+Content-Type: text/plain; charset="UTF-8"
 
---a3e9b9de6cf3dc4c98cb83aa2206db48083b13031472f83fa1f6f0a267af
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Sorry for restarting this thread, but I think the solution submitted
+solves the write path. The read path still needs addressing.
 
-Hi,
+As such, given the limitations and scheduler uncertainties
+around the reads of the FFH registers, I think the patch in this
+thread is still a good optimization to include; namely, if we know
+the CPU is idle, don't bother trying to wake up that CPU just to
+calculate frequency.
 
-On Wed Jul 30, 2025 at 3:39 AM CEST, Khairul Anuar Romli wrote:
-> From: kromli <khairul.anuar.romli@altera.com>
+
+On Mon, 21 Jul 2025 at 23:02, Prashant Malani <pmalani@google.com> wrote:
 >
-> Ensure that the pointer passed to module_put() in spi_nor_put_device() is
-> not NULL before use. This change adds a guard clause to return early,
-> preventing the kernel crash below when the cadence-qspi driver is removed
-> during a dd operation:
-
-As already asked in v2. This needs a (more detailed) description
-what is going on and what is going wrong.
-
--michael
-
-> [  200.448732] Unable to handle kernel NULL pointer deref
-> erence at virtual address 0000000000000010
-> [  200.457576] Mem abort info:
-> [  200.460370]   ESR =3D 0x0000000096000004
-> [  200.464136]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-> [  200.469527]   SET =3D 0, FnV =3D 0
-> [  200.472609]   EA =3D 0, S1PTW =3D 0
-> [  200.475904]   FSC =3D 0x04: level 0 translation fault
-> [  200.480786] Data abort info:
-> [  200.483659]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
-> [  200.489141]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-> [  200.494189]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-> [  200.499500] user pgtable: 4k pages, 48-bit VAs, pgdp=3D0000000185df800=
-0
-> [  200.505932] [0000000000000010] pgd=3D0000000000000000, p4d=3D000000000=
-0000000
-> [  200.512720] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> [  200.518968] Modules linked in: 8021q garp mrp stp llc bluetooth ecdh_g=
-eneric
-> ecc rfkill crct10dif_ce rtc_ds1307 at24 stratix10_soc soc64_hwmon gpio_al=
-tera of
-> _fpga_region fpga_region fpga_bridge uio_pdrv_genirq uio fuse drm backlig=
-ht ipv6
-> [  200.540016] CPU: 0 UID: 0 PID: 372 Comm: dd Not tainted 6.12.19-altera=
--gb6b26
-> c4179a6 #1
-> [  200.547996] Hardware name: SoCFPGA Stratix 10 SoCDK (DT)
-> [  200.553292] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYP=
-E=3D--)
-> [  200.560234] pc : spi_nor_put_device+0x30/0x60
-> [  200.564594] lr : __put_mtd_device+0x8c/0x120
-> [  200.568856] sp : ffff80008411bc20
-> [  200.572161] x29: ffff80008411bc20 x28: ffff000185e2c500 x27: 000000000=
-0000000
-> [  200.579282] x26: 0000000000000000 x25: ffff000185e2cb00 x24: ffff00018=
-5e2cc88
-> [  200.586404] x23: ffff00018034c620 x22: 0000000000000001 x21: ffff00018=
-873e080
-> [  200.593524] x20: 0000000000000000 x19: ffff00018873e080 x18: fffffffff=
-fffffff
-> [  200.600645] x17: 0030393d524f4a41 x16: 4d0064746d3d4d45 x15: ffff00018=
-5757700
-> [  200.607767] x14: 0000000000000000 x13: ffff000180045010 x12: ffff00018=
-57576c0
-> [  200.614888] x11: 000000000000003a x10: ffff000180045018 x9 : ffff00018=
-0045010
-> [  200.622009] x8 : ffff80008411bb70 x7 : 0000000000000000 x6 : ffff00018=
-1325048
-> [  200.629129] x5 : 00000000820001cf x4 : fffffdffc60095e0 x3 : 000000000=
-0000000
-> [  200.636250] x2 : 0000000000000000 x1 : ffff00018873e080 x0 : 000000000=
-0000000
-> [  200.643371] Call trace:
-> [  200.645811]  spi_nor_put_device+0x30/0x60
-> [  200.649816]  __put_mtd_device+0x8c/0x120
-> [  200.653731]  put_mtd_device+0x30/0x48
-> [  200.657387]  mtdchar_close+0x30/0x78
-> [  200.660958]  __fput+0xc8/0x2d0
-> [  200.664011]  ____fput+0x14/0x20
-> [  200.667146]  task_work_run+0x70/0xdc
-> [  200.670718]  do_exit+0x2b4/0x8e4
-> [  200.673944]  do_group_exit+0x34/0x90
-> [  200.677512]  pid_child_should_wake+0x0/0x60
-> [  200.681686]  invoke_syscall+0x48/0x104
-> [  200.685432]  el0_svc_common.constprop.0+0xc0/0xe0
-> [  200.690128]  do_el0_svc+0x1c/0x28
-> [  200.693439]  el0_svc+0x30/0xcc
-> [  200.696454] dw_mmc ff808000.mmc: Unexpected interrupt latency
-> [  200.696485]  el0t_64_sync_handler+0x120/0x12c
-> [  200.706552]  el0t_64_sync+0x190/0x194
-> [  200.710213] Code: f9400000 f9417c00 f9402000 f9403400 (f9400800)
-> [  200.716290] ---[ end trace 0000000000000000 ]---
-> [  200.720948] Fixing recursive fault but reboot is needed!
+> Hi Viresh and Rafael,
 >
-> Fixes: be94215be1ab ("mtd: spi-nor: core: Fix an issue of releasing resou=
-rces during read/write")
-> CC: stable@vger.kernel.org # 6.12+
-> Signed-off-by: Khairul Anuar Romli <khairul.anuar.romli@altera.com>
-> Reviewed-by: Matthew Gerlach <matthew.gerlach@altera.com>
-> ---
-> Changes in v3:
->     - exclude !dev && !dev->driver check in spi_nor_get_device to
->       resolve kernel test robot smatchwarnings.
-> Changes in v2:
->     - Move the null check prior to try_module_get().
-> ---
->  drivers/mtd/spi-nor/core.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
+> Thank you for taking the time to look at this series.
 >
-> diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-> index ac4b960101cc..eb21d660036b 100644
-> --- a/drivers/mtd/spi-nor/core.c
-> +++ b/drivers/mtd/spi-nor/core.c
-> @@ -3210,6 +3210,9 @@ static int spi_nor_get_device(struct mtd_info *mtd)
->  	else
->  		dev =3D nor->dev;
-> =20
-> +	if (!dev->driver->owner)
-> +		return -EINVAL;
-> +
->  	if (!try_module_get(dev->driver->owner))
->  		return -ENODEV;
-> =20
-> @@ -3227,7 +3230,8 @@ static void spi_nor_put_device(struct mtd_info *mtd=
-)
->  	else
->  		dev =3D nor->dev;
-> =20
-> -	module_put(dev->driver->owner);
-> +	if (dev && dev->driver && dev->driver->owner)
-> +		module_put(dev->driver->owner);
->  }
-> =20
->  static void spi_nor_restore(struct spi_nor *nor)
+> On Mon, 21 Jul 2025 at 20:27, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> >
+> > On 21-07-25, 12:40, Prashant Malani wrote:
+> > > On Mon, 21 Jul 2025 at 10:00, Rafael J. Wysocki <rafael@kernel.org> wrote:
+> > > > Why don't you flag the driver as CPUFREQ_NEED_UPDATE_LIMITS?
+> > > >
+> > > > That would kind of make sense given how the driver works overall, or
+> > > > am I missing anything?
+> >
+> > +1
+>
+> Thanks, I posted [1] which implements what's suggested by Rafael. PTAL
+>
+> Best regards,
+>
+> [1] https://lore.kernel.org/linux-pm/20250722055611.130574-2-pmalani@google.com/
+>
+> --
+> -Prashant
 
 
---a3e9b9de6cf3dc4c98cb83aa2206db48083b13031472f83fa1f6f0a267af
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iKgEABMJADAWIQTIVZIcOo5wfU/AngkSJzzuPgIf+AUCaInJ/xIcbXdhbGxlQGtl
-cm5lbC5vcmcACgkQEic87j4CH/i97wGA9CAFtXIoHqpiNWKi9a7EpgDY7fGtmecV
-/MppRb3od4IUHW5/vIJPK8EPO25YkAVMAX98MjA03NK1yq3Z4qVPVCWlTsxIZD3C
-0Kv41gIx/WQqq4trGWkFhbdeb0t9ERUjfOE=
-=fIbF
------END PGP SIGNATURE-----
-
---a3e9b9de6cf3dc4c98cb83aa2206db48083b13031472f83fa1f6f0a267af--
+-- 
+-Prashant
 
