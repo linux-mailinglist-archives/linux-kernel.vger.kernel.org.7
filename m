@@ -1,138 +1,114 @@
-Return-Path: <linux-kernel+bounces-751230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE63B166B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:06:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD376B166BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0408C4E5CEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA1C1620B7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9A12D8DD0;
-	Wed, 30 Jul 2025 19:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33DEB2E03FA;
+	Wed, 30 Jul 2025 19:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BSDnGIlu"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="it9VRzGD"
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11AEA202C2A
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F14472D8DB5
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753902390; cv=none; b=mANvj0cki3LDaQx3Pw7sy3LOIp8Rmieeta7h8R2EagGFbYX6UPLyyikBXAfPLH68IzuHsfNAzhQwu+ZAN22EDgqrEZ9w/hlSAQDjaXbKYoWPnwrS6sLbRBAkx4EDkYoZSr+4nBxzq4FgbWlrZX4MDBreCVF5oP9EzPV5RbQZOCQ=
+	t=1753902675; cv=none; b=g0WM4g5qLf/zC9W25HteGPzMdNEvrjruYSc9RmPqa58qufW9qv3873SOT5nKGYf0zRtsaSaWEqyO+mep0KRg7pMxe0XqeD8rKHB7SHXoM9K9/jKKamF/eznOOU7OP8ucDAMR3vkcFoLJiPTQqDYIuu/hLsivQQBDRfyMAJtNX2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753902390; c=relaxed/simple;
-	bh=6KVv13hT5JsR6YdNzNX5uk/jXpAm7CYMxH6SaNm6F2s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rCz1MspvbrucWkMlamJwNyVtr1hLooKuxT6qsU4Dj5bLVc1hYaeyS7cjABzSvU742CquBeDCeYQwzj5RwfG61ig9At5PlTdTR6HGd8cvVLkwKEYkR1tWmOqWW12TF/uprrvW57oXSr5KkrGbDKRTh1H3lrY4HmQAxZHIS4DogsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BSDnGIlu; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7e62a1cbf82so16660785a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:06:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753902388; x=1754507188; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ybVQcVFyEdYnpN12omIpuUPF5pVwuzWEDeaUsFMkJkM=;
-        b=BSDnGIlu5chqo5lKX50eeJG+e2+xcZlX4IYknOEZF3rD0RTVZ+w6Dd/FPYjOzOeWXo
-         wvGiYpGOrUK7PguBIzYJ14HUMF1OYYm586X9btLYQugLyi81SbjrhKvbdmot2BmLdW0k
-         G9yt4svyf89q6rakvt3+cYxKGUoQQy2iL7Vb1jZAtB2Mo8ZnXkFX5o6hLUGTMUPhf/6B
-         BqI+QWH3u5yXeeNwmQkSgbO0W/1yl8QRiGymp+89VtbftXwVNZPytVCGudwp4veRz3Mc
-         oryKd+syp5dUVN5/djfUvee1FFILpe/R0H0cugiJ9kP83PoM2ikvbeJFbWj6q6y/mOKU
-         pVqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753902388; x=1754507188;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ybVQcVFyEdYnpN12omIpuUPF5pVwuzWEDeaUsFMkJkM=;
-        b=JjKq3hi0oy6y4+aXJ3zhaEyQuM5uxwaiil5Y7r2cA98MuJDZs7Z/MPehBZw46aDsTj
-         eMKDLfOloBlItq0D/XXMEguTMUNrCQjOUOBxWz49fODPb09/vMO4mkDuKFdlJNO8+a1Z
-         NclKSBXZjpEfRJIgAXGlEhfbakhx9I3P+vg+G140MnRydYp1FOrEp9xj8UkfPr/v6kng
-         j8aEEEcC9jKa/z/EEEqxIr/uEQRtHRgjPMwey+80ACbpTSaxOIrrpOR9mITyg4v2XrIl
-         m4s6G9+uzVYfs3bb9H9/ZObxugEPfZd4BjWZUQ6c/PIgdpHEV6V5U4eiPL1OTSLWyIBl
-         Hf+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWzq0NoBB+2id91a6/F9s/07WHPBtYlpodY0ErSfS19JP+rldeV7D/yL19gC4aEc7H0tqccdJMLQjZICTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKjQZ3pD2fU0FP9mulR/YuE+Q/AyKR3+NZJTEcadiR7FhNIg8i
-	zwHTKIflf8XX1zcf/IL4KLM6OeWGL8tx/ErxwDrVRaJnLAKKY5fMblO9
-X-Gm-Gg: ASbGncsGxS4FB7HoX4TdmK5+2KHfzld4BCkKJb3p0EnT3ETVOuP05If4GpIejzKv3qc
-	O2Rah5itEJWPScncZ1PrAOH7sMtXEYDk+Bot6sixVQCRtsmNRNZ3ZEBq7tgZ+h0TpO58YfB40Ms
-	BFd9rf20K5zW5gqTLhusXGfzgrolQVvlW8gnNzlhVeelpZjhUekCCTR/ty/jfM9OOkR/3aT0wwK
-	rDKik9T3PRs3t/osVpvpIKimvyKF6oh0pczqwBFiEsl7BCDkp+ek4mc3vo43pcF/V6eUC32xsju
-	Io+EqO/nfZP+4ara9htXFF2zy8U3qVJZsCSzPg8WmHt05sgCMRu0HXT5I5HFuCFrwyS5OoPps2O
-	ima2yYImQc9/Jo/xPAFR8ZYcA7LcRpZvpe0hc3lBB9y/tkIP38xE=
-X-Google-Smtp-Source: AGHT+IHLclzYu0Z5jQH82f2rH2WaZHw9fp1kXrSjViyulmKi/bc1CxAr9BwKnxR6p81aGiAVZl86dA==
-X-Received: by 2002:a05:620a:4720:b0:7e3:45e0:ff41 with SMTP id af79cd13be357-7e66f3637e0mr622267885a.38.1753902386470;
-        Wed, 30 Jul 2025 12:06:26 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6438a1345sm618286385a.82.2025.07.30.12.06.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 12:06:26 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: vivek.balachandhar@gmail.com,
-	Markus.Elfring@web.de,
-	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Subject: [PATCH v4 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
-Date: Wed, 30 Jul 2025 19:06:15 +0000
-Message-Id: <20250730190615.500904-1-vivek.balachandhar@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250730042032.488456-1-vivek.balachandhar@gmail.com>
-References: <20250730042032.488456-1-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1753902675; c=relaxed/simple;
+	bh=RjESpSgTlZ9Dci+2KNBQWTDiCYqgKjywQQGX5kKRwf8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=StIPq6zE4ZHBrGD5LAIa1cQcTC+eBZzWiXEABebn+nIh0jBA86aN0hny0yJGKFyb6FusP2Iz21fLTJmTWQRlxIRA0cqVZyAggKGy95FqOGVMLO0tl74c/55WxxEbaAdghh0tcjHjKeDiPQNJKh4s1NQ61nhwZK9wt129sQbJAK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=it9VRzGD; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-173-48-82-136.bstnma.fios.verizon.net [173.48.82.136])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 56UJAXSA023302
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 15:10:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+	t=1753902639; bh=UiNk0XW4NYHC10bdELnI4yoPBxOiXLhG3u4btFGZsnQ=;
+	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
+	b=it9VRzGDvjcXJHIyF1z5i5afP6EBhLyPrM/lTJnPcmGKueLANKUUBKqJ7ku37+XRi
+	 Q5inuWG5KNAyD9RacC63YCQ1lpuhK1i7xK/RXeifnPNFYK+dkUxpn3K4Pi1lMDy8Wc
+	 nq9nGUls529HS8xoFvUhDdU/ad8ANIarX0Yz6v41QtCyjk3Uh8s7tIRn64CqLF9Gql
+	 U/NXe2Cw2GHzMbNpD9yjI9gdcTy4gnvB2ymNdZaVf8dR5UBWbVjIJh3M16zct8hLA9
+	 43sJ0n515vaEUVNWqkDfgEy+zOXdMYxGDeS9BeUiiFogHaTvxhGHfjbvQ8GBtOEoYx
+	 c2t2RqX2Q9Jbw==
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 13F7D2E00D6; Wed, 30 Jul 2025 15:10:33 -0400 (EDT)
+Date: Wed, 30 Jul 2025 15:10:33 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Sasha Levin <sashal@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Greg KH <greg@kroah.com>,
+        corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+        josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+Message-ID: <20250730191033.GA441972@mit.edu>
+References: <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
+ <2025072854-earthen-velcro-8b32@gregkh>
+ <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
+ <20250730112753.17f5af13@gandalf.local.home>
+ <158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
+ <20250730121829.0c89228d@gandalf.local.home>
+ <aIpKCXrc-k2Dx43x@lappy>
+ <20250730130531.4855a38b@gandalf.local.home>
+ <aIpah6DTRd99mMqb@lappy>
+ <20250730175909.GO222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730175909.GO222315@ZenIV>
 
-Add a blank line after the definition of rtw_roaming() to separate it from
-the following function (_rtw_roaming()), improving readability and matching
-kernel coding style guidelines.
+On Wed, Jul 30, 2025 at 06:59:09PM +0100, Al Viro wrote:
+> 
+> And I absolutely will refuse to take patches from somebody who would
+> consistently fail to explain why the patch is correct and needed.  Sasha,
+> this is the elephant in the room: we *ALREADY* get "contributions" that
+> very clearly stem from "$TOOL says so, what else do you need?" kind of
+> reasoning and some of that dreck ends up in the tree.  AI will serve as
+> a force multiplier for those...  persons.
+>
 
-No functional changes.
+Any tool can be a force multipler, either for good or for ill.
 
-Identified using checkpatch.pl.
+For example, I suspect we have a much greater set of problems from
+$TOOL's other than Large Language Models.  For example people who use
+"git grep strcpy" and send patches (because strcpy is eeeevil), some
+of which don't even compile, and some of which are just plain wrong.
+Ditto people who take a syzbot reproducer, make some change which
+makes the problem go away, and then submit a patch, and only for
+maintainers to point ut that the patch introduced bugs and/or really
+didn't fix the problem.
 
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
----
-v4:
-- Reword version note from "Changes since v2" to "v3" for consistency,
-  as suggested by Markus Elfring
+I don't think that we should therefore forbid any use of patches
+generated using the assistance of "git grep" or syzbot.  That's
+because I view this as a problem of the people using the tool, not the
+tool itself.  It's just that AI / LLM have been become a Boogeyman
+that inspires a lot of fear and loathing.
 
-v3:
-- Move version notes below the '---' line
+							- Ted
 
-v2:
-- Place the '---' marker below the Signed-off-by tag to follow patch
-  formatting guidelines
 
-v1:
-- Improve patch description for readability and better separation of
-  function definitions, as suggested by Markus Elfring
----
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 357fc6a56c27..f8680124ce24 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -2449,6 +2449,7 @@ void rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
- 	_rtw_roaming(padapter, tgt_network);
- 	spin_unlock_bh(&pmlmepriv->lock);
- }
-+
- void _rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
- {
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
--- 
-2.39.5
 
 
