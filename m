@@ -1,137 +1,121 @@
-Return-Path: <linux-kernel+bounces-750261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B032B15940
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:04:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46080B1592C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:55:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A32318A39EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:05:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DBE57A3B54
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D937C1FAC48;
-	Wed, 30 Jul 2025 07:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DDAE1F8725;
+	Wed, 30 Jul 2025 06:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d+FizXXU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJLncwru"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24831F1306;
-	Wed, 30 Jul 2025 07:04:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23C41EA7FF;
+	Wed, 30 Jul 2025 06:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753859069; cv=none; b=ge7Hy+5VThIl0E/gLVtE66jguUtO/vW1Zs60BVjucpCzRNx+YDXXxWh8YIGbVY1OamMy8tCSQis3KndDKLuQ0fXdCOl/2mVZup392u4p+R806tqHcg+zDKDDQl8HWkqk3n606bOVaB9DwbeGPojzrPlufvd510MWGTAzZjHx2Wo=
+	t=1753858518; cv=none; b=ku9Hu/qjnk0dIBj0pu7SI0hXEHdvQGxxezqMSPRXCrAPF7FZtT6Sjp9dZkEwvYzTr8h13vudpmw5gB5r6kuF8IWgB33LKZLNJ1pW5MPqprXQHFx4qzbAxFXM5RnakTSV5BjRhb7ygFrQqF54feQ/4J+lbWcpyiJrX1o2FdVHWIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753859069; c=relaxed/simple;
-	bh=hRRwxJjQE9wJHAhuatc6RMPSyGgs/xP53hoMSHC/2FU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=npO+xs0uamom6kz8omSeqBaPWlP3RFOn5sCAWZ/ZBjtiPBx2pGC1H63amckPeLldchdI1aeHsSwl9z4+HSvEBB23AbFvQSdFdOpFjWdSyHkJiVNv4uCJO42wS35F455ORNfyw1pBffg6t9ojlKRYwGtT1p90jiPGWhvlhXUW8NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d+FizXXU; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753859068; x=1785395068;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=hRRwxJjQE9wJHAhuatc6RMPSyGgs/xP53hoMSHC/2FU=;
-  b=d+FizXXUMwXt4JoZecJEYSTDfklMiN8MMtEkszEOlhIY5i7SHotKc2Wj
-   PpzTIR8FpbS96JQ7MOolvunHpUNeCs89NPFFYUO8cuc/SDGWqF5IOlNBr
-   3Yhg0XWQQx9xHSxXHACrEMsCJUr8nD1/WirBbvLF8DTLl6ATZVvugCwlZ
-   tjVWGS000pC7RBgINpKnTquuFYjMIy/uLZfjTiuTuDdbmUmILMP2rm6Ux
-   Eozdxz9hjSghUjyi6iHtIGZZwGapPhe7xpWslmbfhUURtsVwgTaGzMiCB
-   40/J3qgoU4exxAFdp+nNSgYrwT/P0Ids5ciaY65Gp63zKWOETqb7PkIBa
-   g==;
-X-CSE-ConnectionGUID: W/vh5BJvS+m/1mPTgz1kUw==
-X-CSE-MsgGUID: Lumic/dFTwiPB+kPEUA2Hw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="56229392"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="56229392"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 00:04:24 -0700
-X-CSE-ConnectionGUID: gxhRvuheTAG+uvZ6+T69iw==
-X-CSE-MsgGUID: kU6LqtksTKK5o0weRmGeTw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="167122521"
-Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
-  by orviesa003.jf.intel.com with ESMTP; 30 Jul 2025 00:04:21 -0700
-Date: Wed, 30 Jul 2025 14:55:02 +0800
-From: Xu Yilun <yilun.xu@linux.intel.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
-	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 06/38] iommufd: Add and option to request for bar
- mapping with IORESOURCE_EXCLUSIVE
-Message-ID: <aInBxnVIu+lnkzlV@yilunxu-OptiPlex-7050>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-7-aneesh.kumar@kernel.org>
- <20250728140841.GA26511@ziepe.ca>
- <yq5a34afbdtl.fsf@kernel.org>
- <20250729142917.GF26511@ziepe.ca>
+	s=arc-20240116; t=1753858518; c=relaxed/simple;
+	bh=CE+VGFhEeMBuX62wOBgp62Z2B/CebCJnk+FFXVi5qSQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=pvuFU2pgZB9EV1cc+FjaP3Bxb1N0nCKJ76iuGSps84iWiGEMSLyf5OvqBuy6eYXsiKY0q+5smowuJlAdGD3/lhltBJJEI1HU3C/V56kCnzU1Oqaj8MqSvq2XygyAybSTB6CljHW6vud934FdaQl6QRilCTBX4o7qz6sTsvdXpBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJLncwru; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82767C4CEE7;
+	Wed, 30 Jul 2025 06:55:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753858517;
+	bh=CE+VGFhEeMBuX62wOBgp62Z2B/CebCJnk+FFXVi5qSQ=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=EJLncwru6TUCRxeZ4od39fNNxekNt5DSvRCOdGH5q8gH3Zu8SnYrmlPPKPLYhM+3a
+	 qVNVOA+GqVwL1t3sHSP97O0tdI03qQv/kYgEjimqZM7Omkz028CBWXWFYUs6EoqnV/
+	 d6HHEKZr5uKVX9OkzoSxZry7MRX0DB9/nW4PmBaT9bUfH3EqEeIOZIR13FAk2mC1J0
+	 jFijBD+d3IYEsFLn4/HDyLI/7r3FBKe01kQjmj1J3vkgagE/ZZJ3x6tBlxdgAjWoUk
+	 mPFRceNdbK4pSWDMW0OInnfDUKbzXV7Oxkd5fKwV3Uysii9sIGdVyrJA/vqBtQmwRE
+	 aLQjlmrDCR6lQ==
+Message-ID: <926eebd1-4790-4ca4-a03b-b52a32e7fd91@kernel.org>
+Date: Wed, 30 Jul 2025 08:55:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250729142917.GF26511@ziepe.ca>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] spi: dt-bindings: atmel,at91rm9200-spi: Add support
+ for optional 'spi_gclk' clock
+To: Manikandan Muralidharan <manikandan.m@microchip.com>, broonie@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+ claudiu.beznea@tuxon.dev, tudor.ambarus@linaro.org,
+ linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250730053720.262118-1-manikandan.m@microchip.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250730053720.262118-1-manikandan.m@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 29, 2025 at 11:29:17AM -0300, Jason Gunthorpe wrote:
-> On Tue, Jul 29, 2025 at 01:58:54PM +0530, Aneesh Kumar K.V wrote:
-> > Jason Gunthorpe <jgg@ziepe.ca> writes:
-> > 
-> > > On Mon, Jul 28, 2025 at 07:21:43PM +0530, Aneesh Kumar K.V (Arm) wrote:
-> > >> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> > >
-> > > Why would we need this?
-> > >
-> > > I can sort of understand why Intel would need it due to their issues
-> > > with MCE, but ARM shouldn't care either way, should it?
-> > >
-> > > But also why is it an iommufd option? That doesn't seem right..
-> > >
-> > > Jason
-> > 
-> > This is based on our previous discussion https://lore.kernel.org/all/20250606120919.GH19710@nvidia.com
-> 
-> I suggested a global option, this is a per-device option, and that
-> especially seems wrong for iommufd. If it is per-device that is vfio,
+On 30/07/2025 07:37, Manikandan Muralidharan wrote:
+> Update the Atmel SPI DT binding to support an optional programmable
+> SPI generic clock 'spi_gclk', in addition to the required 'spi_clk'.
 
-I think this should be per-device. The original purpose of this
-pci_region_request_*() is to prevent further mmap/read/write against
-a vfio_cdev FD which would be used for private assignment. You shouldn't
-prevent all other devices from working with userspace APPs (e.g. DPDK)
-if there is one private assignment in system.
+Why? Hardware changed? Explain why you are making changes to the stable ABI.
 
-> if it is global then vfio can pick it up during the early phases of
-> opening the device.
-> 
-> > IIUC, we intend to request the resource in exclusive mode for secure
-> > guests—regardless of whether the platform is Intel or ARM. Could you
-> > help clarify the MCE issue observed on Intel platforms in this context?
-> 
-> As I understand it Intel MCEs if the non-secure side ever reads from
-> secure'd address space. So there is alot of emphasis there to ensure
+Also, I do not see any user of this, but maybe you just created Cc-list
+incomplete.
 
-Yeah, Intel TDX doesn't have a lower access control table for CC. So if
-host reads, the TLP sends and MCE happens.
-
-Thanks,
-Yilun
-
-> there are no CPU mappings.
-> 
-> Jason
+Best regards,
+Krzysztof
 
