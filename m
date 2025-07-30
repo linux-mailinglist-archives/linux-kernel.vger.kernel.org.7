@@ -1,131 +1,162 @@
-Return-Path: <linux-kernel+bounces-750266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A1AB1594D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:07:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BE0B1594F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C85E18A7608
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:07:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51AA03A4B2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049C31F78E0;
-	Wed, 30 Jul 2025 07:07:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPgmkXvt"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126DE1F8747;
+	Wed, 30 Jul 2025 07:09:14 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D8C1F4262;
-	Wed, 30 Jul 2025 07:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB54E55B;
+	Wed, 30 Jul 2025 07:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753859244; cv=none; b=M2zhGmOyEiGypP9lF9KLM5s77pb+KVuDvKxxDsfpQ2ilmNiWio/xIeO4N4KXERAYSyBLJyc0l9TCVCiYmCpamvE+rVgb0ZRK2TxRTahrWc+7cbypGLCYlF0DR1rqKCl9QKQ4PoT/tv8apGZ8EuGN0u288MpVtVB1rA5gXVFJNMw=
+	t=1753859353; cv=none; b=YJfNSFq+mVvTKf/F6RrZ6C7wftRiDNGL3w8RTGuPJf6UEiLmq0guZGHEoigI9rr+gEaKsc66YzgXqZTx+Cj1UqX7B9VEBWx6xtwkyX95F56VsCt548esWnCSN/5svJUsrrrnkLiZWUrODD02pT/FwdkWobUH3Mu2UWWqDC5XyWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753859244; c=relaxed/simple;
-	bh=Pm/Lk7KfQs8EoJ9U08KtR33aU8MhOt7Yk/fgpWoRQTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xf8n85uCRmo+/ygokfevPVghvmNYUorCpbzbjnK8m+/vWkWY7Z3DwHfhE5k4IwHhmZRvsmk4TUCrI4T2V5HrBHoRgRYuJL0hTrZeUS8V13AE4cMzBKu4HDCjD6kbj5fpk9zMwkq0MQZAmWkLaQPoxdR+5jpAjQcY+BfYRroLcqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dPgmkXvt; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1753859353; c=relaxed/simple;
+	bh=cpyg7+SssmixBibNAAVlopRj2Yy2Zu+PVYzWZjWOg3M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cC/IdWBE3hhAw5x/zrKihmBZqvDA8HB39z+dTTqLK1kFuORUK2GXRcjiZCyHmH5v5Tmbn50JpPEu+gy3bHT4Ps8mi//BJRnNy5FWPeZp4QG5gUPSma7Jsy8gW9tC9W97aHeWGd8f6W8SZA1azMShYDfo1ktBWueOpQUv+yw3otU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45619d70c72so4007825e9.0;
-        Wed, 30 Jul 2025 00:07:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753859241; x=1754464041; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5bzMP7jHlifnf/IUk+jkMokmhgg+MOsQ6pZDOdnVvcQ=;
-        b=dPgmkXvtYfkYicclgXlHOQ46YRffihL6AU74g2kZaxD8qzN/iDKpKEXFGgv4RsDtqm
-         t3YaN8Ye+s0ne/o3EljtfVJstZDHnWOVZGKPhxvdKpC+BfCs1ae7EglyeUm/yKWFAkNg
-         AGvhawfOvMFkSjvYbQrX0dchW2HvhAE5J0XSxDPRW/InX18uwUPtaVBx6asVzAnKP40w
-         +nvJzPP3kyBF/wskQoslTXLu0awUceiaaLfJfCJ3AXeBoQdBR6fOui0amYgmRe71HnB6
-         /T/MLp0v7ZaLYtWPCSDvnSZVdfWQrYyHq2BOVLczr8w0HNB02Y3qtnauC2k+Ab8SSexy
-         c3Uw==
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-5316a5e4c6cso2869186e0c.1;
+        Wed, 30 Jul 2025 00:09:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753859241; x=1754464041;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5bzMP7jHlifnf/IUk+jkMokmhgg+MOsQ6pZDOdnVvcQ=;
-        b=d3ny09RZI0fUfpbiSxFosgdGNhzsJ12uSYrbzY3JGAxZHZVA236VPdBFnkfKkCrO1k
-         IJ4mcRC1FGuFNWs8h/D1Q6oWwdPb2rUQnSM5EOqLVoPBSoL8KfDuUeKoPcOCcZLzYtZN
-         kyHdtnQRn0opYaP7AMfLN0k9/BqdaFeDTwwc5W3pp6E7F2PIfo5Pnae4ua9aSxD2qiZ7
-         ArqVwNkgzsMgE6WyA7/3CUDP+yJLuC/HcxbtHljEWttNK/gIdCBIITYNBy4Q/5C8I4x0
-         ZxpJuMMeBPaj6xmgUQg4Pzxhv5S8vYA8YQKNDpVM79ObuguB5RtC8KhFEjiHe3Z37E3C
-         lxiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVw/5n40+DyN3KpW39B1R55ywCCnFZM7kpqbksmwiaLOZ5S/fwOXOPSo2j3Gh14+9n6RGrJRdY2gfDEfQ==@vger.kernel.org, AJvYcCWLY6HGLznUjfQMPStcRf6L6y0zLh8Ig+vlFH4z1S5+yXFNciag1IN1Bwd5FbH+tYzazLxoEdLo0wLJFLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygOiQTlfYpd6uICi+ajStEhHakXo61jOOOAHbvqhjmLDKHije6
-	8xac2/3G+hU9vykI8Krp5pf0rD7O4LwVjzxopeIKsGjY0TfBUO4jO8ku7Oujpw==
-X-Gm-Gg: ASbGncsp9VrVoo4/GGuj8D3O1aAEmcvY3aKKd7H/3hq6eEzHagbK4dP+1xv4HpFY1bG
-	GjP0Richy89+8yYqGrDSAiy0eRJMziqF9llQbzFdYEiokyuz1ZhOpHT5lw0vOXgSjMzEh+K+gzw
-	FRzpmzG7MvsZDpP3cbercAbYmXy4W8SepM6B7l/4RVW2j09sPCuJGsngPDuRzs0UM+gMEWH5TKS
-	Er1cGkr9jjrLE7KijY7ALEjsr6pDDodN8cKEa9BkFlkIH77SOykw8Vle4NUuJ2+JcbW6gmKDeXF
-	bQVZXnjZUEFWt/bEMEHJw71ZeaEgx8G6uLhfsX9fmlxSYnFb8btZgm6zfxnCV+TsSVMiPhp4TcK
-	n3qyNrzQiAMja+mGrH4wHv3914SwhzM9RsO5C5HZBzV0MmMohWfCI0DhdE5e0v9A=
-X-Google-Smtp-Source: AGHT+IEJD06z10thlRARh4WWU8PZr93VuhL0pqbokieheNEtOo4bweOlHodmlnZFUrAnO4PUik8I2g==
-X-Received: by 2002:adf:f009:0:b0:3b7:8f49:94e4 with SMTP id ffacd0b85a97d-3b78f499706mr3285222f8f.7.1753859240859;
-        Wed, 30 Jul 2025 00:07:20 -0700 (PDT)
-Received: from [192.168.20.170] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b797fc5e3esm103899f8f.69.2025.07.30.00.07.19
+        d=1e100.net; s=20230601; t=1753859350; x=1754464150;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bQSQokBnxqqY+8kUjyXkmv0h9LGdm7ljH7u2UnABSuQ=;
+        b=JVcToM2wX5/kLkJ/+bpNON+uz4iVj2dknGyucb9QyovmjPDNQ7fvcjOJQTtrhMZvG4
+         vPHbLZk5gESP91WpS5iABph8aoRnD4/baBV64h9JqViNSLaOd7RAf2fRHWVAS4pBkWDt
+         mdiqMv2mTDNj50XytsEK9KONtscGy74jLyQl30MEVollBY57A2SOEzl+rEiJ9hb6JZye
+         5ZpGkparNYB3N5z3HWUX6oudEonJ2Rld3uZ3SCgkqgUMRSL5ZZln05a0JNVtWpEdibRO
+         KEK0hF4LkafpV8luHH62Xu6qQJY2iOGMd0SNVx+z1yYSBvJb94dtsbqKtdScTaplIx2x
+         Mywg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAIYKonEnD9/H33d/lk+i1cK0jjLhpjkGrbXOO2Z9fctHcRKe1QJrZQP2SnPiXozJVDM8S5xPzG+6zR9M=@vger.kernel.org, AJvYcCXuwJpUccvlsl8rvvVU4wewEIZVK7a+TOTJaX7E8z0nnC1rFHgDQ8tdPYAQFn/7v8nTBW37fg/fxyvUjNTEhEFC@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr0EEAjdgOnk6TexEhC89hGEByj7T2RxraEyNKcL8+mRinVN/8
+	NLU6y6MmDo/mw8Vh4791puCmBB/c12EHM8KBCYNpK/3lfTObmenSXoHfjkBJ+ejX
+X-Gm-Gg: ASbGnctm+q+fjIzvNCzKPsKcOHRzlowv9oP95Rj6dwWRoxUIN2wCJEwEYCO2cfB22SC
+	MrLnC8JSEFLTi91fxJX4M3ZDg4g0dD/qIXK/vUdB+UI/0kXluk7IKYMNFfc95m8acbo7ZQsKjmH
+	rvl2n4if0XMU2alYNnySF6CcJO/6xbZswCYPig9vkwznlA/j4V6vckpBn9v7jBFrDfY3DqARJy4
+	x1T2dJbpyUoTAfyqikQ8aX2K57tmI97bYFevczPfkNOfdYRDO7IgAN7lVsbqTYC49lUkpg7ebS7
+	DE65rUazb8u1zY96CtRZt+b83uZbm0yHOyfR8NeMpZVnGt38OCPuCRi4jDetJOb3NW6S4U8YN2d
+	zHqECE65yZfregtAzlVv4H+7CvvbX4qV4Jufh0Y3jtPdCqUHZuj8mRCELXTXL
+X-Google-Smtp-Source: AGHT+IGof9faKmVMufJQK1Dq82H14MQTHR+KIce2/H+CmOj0/JrbdN2WtD0dusoRRXifONtJLn4myA==
+X-Received: by 2002:a05:6122:d9e:b0:538:dd8b:666b with SMTP id 71dfb90a1353d-5391c9d0a70mr1545143e0c.0.1753859350129;
+        Wed, 30 Jul 2025 00:09:10 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8d902bffsm2297506241.10.2025.07.30.00.09.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 00:07:20 -0700 (PDT)
-Message-ID: <4cef0788-e586-47af-8c2a-5d3c87ae42cd@gmail.com>
-Date: Wed, 30 Jul 2025 09:07:17 +0200
+        Wed, 30 Jul 2025 00:09:09 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-88bc6f023edso493635241.2;
+        Wed, 30 Jul 2025 00:09:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVf3Wz13fLi58Z8OAotgfDwseIPlvQkHexVmLcXp0AEgIHhSHlpyvVNrNzjUxFjLOkHh+IjECO7BaCB5Gk=@vger.kernel.org, AJvYcCX+a2E9Wl0PFIe8CRRa1ZBXXOo/LJ2VRIdO0MayBsYbMA3pvU8RKTcScc7/Dhp9+qgvmLp5EI/Hho7ahZQuzeIW@vger.kernel.org
+X-Received: by 2002:a67:e00f:0:20b0:4fb:ebe1:7db1 with SMTP id
+ ada2fe7eead31-4fbebe1869amr738719137.12.1753859348845; Wed, 30 Jul 2025
+ 00:09:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: manual merge of the spi tree with the nand tree
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
- Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mark Brown <broonie@kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250729103816.5354a528@canb.auug.org.au>
- <87bjp3pawb.fsf@bootlin.com>
-Content-Language: hu
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <87bjp3pawb.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250612-misc-dynrange-v5-1-6f35048f7273@igalia.com>
+In-Reply-To: <20250612-misc-dynrange-v5-1-6f35048f7273@igalia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 30 Jul 2025 09:08:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVxTW-6Wpw6qDc_ZoSE-f21WvJ478j+0jQURL+SiM_n7A@mail.gmail.com>
+X-Gm-Features: Ac12FXyVlivqeZdWusp45xQnWO6PiyOPHxe7Bh78pQOb6__ve0XIVM5je-ojSKQ
+Message-ID: <CAMuHMdVxTW-6Wpw6qDc_ZoSE-f21WvJ478j+0jQURL+SiM_n7A@mail.gmail.com>
+Subject: Re: [PATCH v5] char: misc: add test cases
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Dirk VanDerMerwe <dirk.vandermerwe@sophos.com>, 
+	Vimal Agrawal <vimal.agrawal@sophos.com>, linux-kernel@vger.kernel.org, 
+	kernel-dev@igalia.com, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
+	KUnit Development <kunit-dev@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Miquel,
+Hi Thadeu,,
 
-2025. 07. 29. 12:08 keltezéssel, Miquel Raynal írta:
-> Hello,
-> 
-> On 29/07/2025 at 10:38:16 +10, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
->> Hi all,
->>
->> Today's linux-next merge of the spi tree got a conflict in:
->>
->>   include/linux/mtd/nand-qpic-common.h
->>
->> between commit:
->>
->>   8e37aaf97153 ("mtd: nand: qpic-common: remove a bunch of unused defines")
->>
->> from the nand tree and commit:
->>
->>   0dc7e656ddd5 ("mtd: nand: qpic-common: add defines for ECC_MODE values")
->>
->> from the spi tree.
-> 
-> Indeed, I forgot about this change which conflicts. I'll drop the patch
-> from my tree, it is not urgent anyway. Gabor, please resend after a
-> rebase at -rc1, sorry for the extra work..
+On Sun, 15 Jun 2025 at 23:31, Thadeu Lima de Souza Cascardo
+<cascardo@igalia.com> wrote:
+>
+> Add test cases for static and dynamic minor number allocation and
+> deallocation.
+>
+> While at it, improve description and test suite name.
+>
+> Some of the cases include:
+>
+> - that static and dynamic allocation reserved the expected minors.
+>
+> - that registering duplicate minors or duplicate names will fail.
+>
+> - that failing to create a sysfs file (due to duplicate names) will
+>   deallocate the dynamic minor correctly.
+>
+> - that dynamic allocation does not allocate a minor number in the static
+>   range.
+>
+> - that there are no collisions when mixing dynamic and static allocations.
+>
+> - that opening devices with various minor device numbers work.
+>
+> - that registering a static number in the dynamic range won't conflict with
+>   a dynamic allocation.
+>
+> This last test verifies the bug fixed by commit 6d04d2b554b1 ("misc:
+> misc_minor_alloc to use ida for all dynamic/misc dynamic minors") has not
+> regressed.
+>
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
 
-Sorry for the trouble, I will resend the patch once rc1 gets released.
+Thanks for your patch, which is now commit 74d8361be3441dff ("char:
+misc: add test cases") in linus/master stable/master
 
-Regards,
-Gabor
+> Changes in v5:
+> - Make miscdevice unit test built-in only
+> - Make unit test require CONFIG_KUNIT=y
 
+Why were these changes made? This means the test is no longer available
+if KUNIT=m, and I can no longer just load the module when I want to
+run the test.
+
+> - Link to v4: https://lore.kernel.org/r/20250423-misc-dynrange-v4-0-133b5ae4ca18@igalia.com
+
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -2506,8 +2506,8 @@ config TEST_IDA
+>         tristate "Perform selftest on IDA functions"
+>
+>  config TEST_MISC_MINOR
+> -       tristate "miscdevice KUnit test" if !KUNIT_ALL_TESTS
+> -       depends on KUNIT
+> +       bool "miscdevice KUnit test" if !KUNIT_ALL_TESTS
+> +       depends on KUNIT=y
+>         default KUNIT_ALL_TESTS
+>         help
+>           Kunit test for miscdevice API, specially its behavior in respect to
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
