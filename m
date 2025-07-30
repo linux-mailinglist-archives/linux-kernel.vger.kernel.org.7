@@ -1,75 +1,101 @@
-Return-Path: <linux-kernel+bounces-750277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F010B1596F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:16:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5D9EB15971
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F36F7AC5E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:14:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 661503BF644
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE62E24293F;
-	Wed, 30 Jul 2025 07:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C220923099F;
+	Wed, 30 Jul 2025 07:16:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jS9+vL2g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="jXjf9NRP"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2668922A4EE;
-	Wed, 30 Jul 2025 07:15:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4AB318C933;
+	Wed, 30 Jul 2025 07:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753859759; cv=none; b=ou57CM4/uFFNhDhImrRkbMB2W1WK7p3YwfFRgC4E4X7NFyMuPQ0Q/O926uc02p/07i51PNEGB89+K7ywDZwEBNmGX0p9ABdfmjhYkviT1x6aC39VDaWR2BBAbCo21eOBKxMRXjttwakSF7AXfZzRw8GnenmQaRY2vYmFL/AwD2s=
+	t=1753859793; cv=none; b=eLFwOySi9kF5U9hW1SNjoOFj3Dv9oERLaH1p44MDM15oNoFlOHn56FOlrnaZmoYT6k9FSLtKdI0FYLQc3RNdZmHfHX1Nn8fz8DKkLq7zJmuV+fjmxGaJo1Q/W2ECYfM/vJTL298zKpxGtFSF9aSTRPcEK3iVdoKPZ6p7+KdZ6a0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753859759; c=relaxed/simple;
-	bh=Jb2osp3Mh4btRoO6IabTe6l8x0W/LsjmNRDdLsaEj98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTWnaxxq+ZGf/uDWTes6ZPYFVa5YGkrj1FRv2HVx4hEfHrJSr8FCfyYk5heCGQSdltE7l1KFj/sbBdYC6SN29NT9NI13PGPjis8LIPYZr3U1fcerwdxCCv6hE8An6/osfWg4qHPoMEMTU3W/Pp194PZSzUvUDl38ZW0bduXpG6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jS9+vL2g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26CDDC4CEE7;
-	Wed, 30 Jul 2025 07:15:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753859758;
-	bh=Jb2osp3Mh4btRoO6IabTe6l8x0W/LsjmNRDdLsaEj98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jS9+vL2gwjfZo1I+3ARBIrn1BU4lMN9dqp9ShXj94bOh1HTyYtu+N6TkJPY8gN6P/
-	 Jnyi6n/jXPOd0bI3U7FuyrvLpXvy46/PhtxZxMcu2enPv699SlD+y0OFvvph1QYhoK
-	 HUvRBxbJ062j1xU2qNB1wXeH7lf6o3GYQMO5N815jajerzsF6x9efDKD04hUT2RpzN
-	 OqoSM0U/1A/0B5bUMuJJMAxeFBKOcGF8DRwnFy6e1aeY0XawbNyVu4xqf54tSbZKX5
-	 QX+p0VPON7Vt9dq2dMRn3myKVmwqpQsV1jutbgOAYKfXA6P5/fs/AxrhE+Emb2K535
-	 QWdDzltmRObHQ==
-Date: Wed, 30 Jul 2025 09:15:56 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Taniya Das <taniya.das@oss.qualcomm.com>
-Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/7] dt-bindings: clock: qcom-rpmhcc: Add support for
- Glymur SoCs
-Message-ID: <20250730-mottled-anteater-of-renovation-92b2ed@kuoka>
-References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
- <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-1-227cfe5c8ef4@oss.qualcomm.com>
+	s=arc-20240116; t=1753859793; c=relaxed/simple;
+	bh=bnUSIl0kITiFRnE2LoF33Pmwq9nHbcImI1H0MEClb20=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=DE2fKRLBmlYwpb/i+AOJ+cam1kdv3El8czn9UG6Uwxkex8QAx/6y6Bcne+VyN7FSO/ZuZgf6QrvyIJ+exu3ArnisxW1Wi9lCCcDAtCwp3I4lLd01uQAQXBTuqNL8vOn6iZO+8uqu+qOPNYnHXVSdlChEqlUQDu1rdsdhedMd9qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=jXjf9NRP; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753859570;
+	bh=bnUSIl0kITiFRnE2LoF33Pmwq9nHbcImI1H0MEClb20=;
+	h=Date:From:To:Cc:Subject:From;
+	b=jXjf9NRPg8AQfTtBKC5p05KKcKH0j9CvuLNJr7+IvrTyY0n/qshEKfudkLXrr8/qa
+	 SO+QS6odUEBIKS8X01Nz/hqk7txg78NMSdAHx9+vAcMuRTq/5G53DoWnWQKTCMRYS+
+	 vNTw3+r8/krJrUwhsB4j/buyjN1yvut0QzbcUo9nTq8GQfoWK6uwmx/Bh0miW8DOeg
+	 dSqJhuzU+eHWveQvzo6svlXYN8iu8XDepxhXvncYvIEmXH6dBJ0cmxSMqFcXfLJqt2
+	 kYCrbzj9aVxvuK1OE5SWB4QtZ/hxIeiCG0Cwcn+pOD834p7Z9uYNzVbAmbzwoa4YO6
+	 3Xl3xNH/cnCYQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsNhf5SK2z4x4m;
+	Wed, 30 Jul 2025 17:12:50 +1000 (AEST)
+Date: Wed, 30 Jul 2025 17:16:26 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Joel
+ Granados <joel.granados@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the sysctl tree
+Message-ID: <20250730171626.5ea7e0df@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-1-227cfe5c8ef4@oss.qualcomm.com>
+Content-Type: multipart/signed; boundary="Sig_/Cd1beS6S+6v3VgSslVhtqY9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Tue, Jul 29, 2025 at 11:12:35AM +0530, Taniya Das wrote:
-> Document compatible for RPMh clock controller on Glymur platform.
+--Sig_/Cd1beS6S+6v3VgSslVhtqY9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I do not see how my v1 comments got addressed.
+Hi all,
 
-Best regards,
-Krzysztof
+The following commits are also in Linus Torvalds' tree as different
+commits (but the same patches):
 
+(looks like all the commits in the sysctl tree)
+
+I guess it was rebased before the pull request was sent to Linus.
+
+Please clean up the sysctl tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Cd1beS6S+6v3VgSslVhtqY9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiJxsoACgkQAVBC80lX
+0GzhcAf8CDfZUnropaps0er7jAOgziDSbfThOjLywNtWUZ/P/At5nmuXAhfxF/ZS
+76lkbeEY6ag4FtIRPLYa+qFOTU3vH1iKt5MFemmmaK3xgzBuyrrZrcY16MMbk8tO
+DK8ALamtUGtDV7Ciw4Tn2p5zA8yDcUtpoMsgwpMNQJK+c8IqMlJldujAsopt2hIn
+tTEgNggTxW5KPf0LbRMT8Nd9m9TcVs18xwGx68T3klpQliRTUVaHLUDWR/NaI2xH
+AMUgQeSkYWUp9EqbhUYaZ9504jORmhVgDFdiY4/lzX+kkmwD/s/6oUh17RXivdvY
+BJL/HqSLj8DYR6LREAUqvaBcOqGspA==
+=8LRb
+-----END PGP SIGNATURE-----
+
+--Sig_/Cd1beS6S+6v3VgSslVhtqY9--
 
