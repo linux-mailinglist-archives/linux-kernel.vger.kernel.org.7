@@ -1,194 +1,190 @@
-Return-Path: <linux-kernel+bounces-750454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF7EB15B75
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:25:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7778B15B77
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:25:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BE623BE35C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:24:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EABA2176406
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:25:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A1D270EBF;
-	Wed, 30 Jul 2025 09:23:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF7E92701C0;
+	Wed, 30 Jul 2025 09:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SubXcjS1"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="e4sxHj22"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318F5270542
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C1510E3;
+	Wed, 30 Jul 2025 09:25:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753867394; cv=none; b=nk57Ys0TQefa/WXsz3nvfBoDZTJl2+mtOyaxpyaYBlsA0Lbv26d9kWHkr1T4v6BGvS/cKpI+y1yK1pQQFu+inze9qMk/OqDqL930b4cVT4yrTuFbaBSCeXTe31R+yzUMOti0aMFP5ERlx2BiRlZybaINzXSy7pnVCDxj5M9B660=
+	t=1753867524; cv=none; b=ULkkx64ScNnJ+cpWiCrhHrGFtNhTZxJhTfHcQTkmV4TuGXwScobZtCQaxICUq7+G8qqWZGbuD83Xop7k2ZIpqSWcYEOav+r1mw6Q63dKhpC2wStYCSqszM2JPeXbCI4RG/POUle0dNoUxdYaYhT1IT6jwj+URqwLjWIH+lMoFp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753867394; c=relaxed/simple;
-	bh=zhQEXdzY9wPGLnOAGDyGmb50Qft7puioGy9ER23tpHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gJpxXLZQ0LnMJ6bKNc8w+XHPNjTaCazx8t8wb9hXvjojFX58HrFhKIESIwdJs0Wy0juzDMOM9YzZcSxHpsAe1X81FkAUxL6ebMCdFhpj8wYK1RpE9YiJzPGUkAawTAFYtx0mudRNuwtdgClWymXIwaz3PZimojMsmSzcxxJ1aNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SubXcjS1; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <392dc660-b4b0-4a0e-8e70-51e19c62589c@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753867389;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zmAzPly67sv1VGDCn9GEHPT33P9sZAQ+9+ib6EbFReo=;
-	b=SubXcjS1Ky5Yw7Wnn/GxIXzPbT9cgM7ELkuTP4UyPvhGE7j+JVCZ1rxwWjTULg+qaX8oeI
-	hFer7QAMoOVHEsgJwyujCmCEUOf+X2o975wZYyMApaYg93g9Bp42PcmRv9+Y6yqHXskbDQ
-	ptClaDpO15CMWspq1BfcbaZDfMn1ndY=
-Date: Wed, 30 Jul 2025 17:22:59 +0800
+	s=arc-20240116; t=1753867524; c=relaxed/simple;
+	bh=1MHRdEhKZxS+HzmEBYk4+Y9wIW2b2Cp3Qo/0aeWItA8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=a8A0Lko+zEe2zHK3Y2k4+1Rg9eR1zq6J2BOfsvQr42AfcNE9A4y2X9/h0tVGYvhOGUsKRf52Kf5NiRMzMt2bTWyDVS3OZjE6w7p7IoSzjBJxUZ0u06oyVEo/+XCFRNNOXgQotL+FY5wATzRRrUEDsTon+QvcGeTM5Nxb8tI9rhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=e4sxHj22; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1753867493;
+	bh=5TbeNkB8ldYnEXcb1m/XCnlkvWahX+znrHwbJGCTAgI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To;
+	b=e4sxHj22ssG9WshGpEQw4/82BvBQlHPX2H7STjxx3r1jrON8BKSgiafI3Hmj0/Yv5
+	 hmQgFhbcGVV0PqHM1Uk/JFbaBbVheew75ICke1xkiBsfAFCl2iMNVgpvuC8Jk12bmL
+	 BodaX7yPyeqk4zXHeX0w9Bg4zBxQksdEvUnbhFD4=
+X-QQ-mid: esmtpgz10t1753867490t9a6472fa
+X-QQ-Originating-IP: lQl0MESZLYhgwmh4DSr716DxfUxHtn7Ebgq7yyCQOZc=
+Received: from [198.18.0.1] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 30 Jul 2025 17:24:31 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 1206265350598173633
+Message-ID: <B751D49737DD10DC+00a0ff95-476a-4d0a-9bc6-40e77012a554@uniontech.com>
+Date: Wed, 30 Jul 2025 17:24:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 1/2] hung_task: Show the blocker task if the task is
- hung on mutex
+User-Agent: Mozilla Thunderbird
+From: Cryolitia <liziyao@uniontech.com>
+Subject: Re: [PATCH v6 1/2] hwmon: add GPD devices sensor driver
+To: Antheas Kapenekakis <lkml@antheas.dev>, Guenter Roeck <linux@roeck-us.net>
+Cc: Cryolitia@gmail.com, Jean Delvare <jdelvare@suse.com>,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+ Celeste Liu <CoelacanthusHex@gmail.com>, Yao Zi <ziyao@disroot.org>,
+ Derek John Clark <derekjohn.clark@gmail.com>,
+ =?UTF-8?Q?Marcin_Str=C4=85gowski?= <marcin@stragowski.com>,
+ someone5678 <someone5678.dev@gmail.com>,
+ Justin Weiss <justin@justinweiss.com>, command_block <mtf@ik.me>
+References: <20250314-gpd_fan-v6-0-1dc992050e42@gmail.com>
+ <20250314-gpd_fan-v6-1-1dc992050e42@gmail.com>
+ <CAGwozwENLOOS5q1Bs5SEh3FFJAY-=kcVimf5U+tWzy6HaiGd=g@mail.gmail.com>
+ <bb57fe1d-fde9-45f8-9f5c-0836a6e557ff@roeck-us.net>
+ <CAGwozwGdZ5tzHg7_TF5d_AWVDmypP987XS-x_GWqrSF81PiG2Q@mail.gmail.com>
 Content-Language: en-US
-To: Sergey Senozhatsky <senozhatsky@chromium.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
- Joel Granados <joel.granados@kernel.org>,
- Anna Schumaker <anna.schumaker@oracle.com>, Lance Yang
- <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
- Yongliang Gao <leonylgao@tencent.com>, Steven Rostedt <rostedt@goodmis.org>,
- Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org
-References: <174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com>
- <174046695384.2194069.16796289525958195643.stgit@mhiramat.tok.corp.google.com>
- <tfzs3z7yjs6ppobm53hxwjzhhptgq2aqc2obylblz5rk7mdstg@bkas4xcq66xk>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <tfzs3z7yjs6ppobm53hxwjzhhptgq2aqc2obylblz5rk7mdstg@bkas4xcq66xk>
+In-Reply-To: <CAGwozwGdZ5tzHg7_TF5d_AWVDmypP987XS-x_GWqrSF81PiG2Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-QQ-SENDSIZE: 520
+Feedback-ID: esmtpgz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: M8e5kblytUZR2/NuQijMYYgSbRTX+/osZL2apFBDKqF1qD11KeQzMDJZ
+	MKJ6iEbl3t5lYh5lHhA3fy8ZcXlQrYg/QLkEYarE6spLY5Xx4L9ZyIH6sfRPGohUX/W3YDK
+	TkIAawT2jwST69e/zbz3lg3no8Ir0MJsqzoYYLV+BxqVzVd5nvNy3+nRY5RrgU6qg8rsYNd
+	ypjw68yzysNWWMIRVVc9vudmL5JtFWAeJ6gs3WLi0UbcplVmQBprKeZcWI+CYIE9sGFQlQc
+	QCcd9di0kFcYJjrTuwi2vOQMS+JfpCeaLni4Djg0StCp+kmfmty+94SaG5D2NMaEZWpa4Hm
+	x4WFL6pqe3o89iqmi4xdvx9Hm25jhtCeCWLICfUDEJE1BFvQDd18bEFGTVTuUpo203oUPft
+	VU4Inu/85MvhYh1cPVsiBCS+aAdTSvq/eRvWicdXf3E7MVCGSGNmHnSed8qmzjLC3+Z3egn
+	aNzcXayNIMLKEbsxVVRlHSBnlMrvutNiAZekTbQlgpWQkCq5rV1k6ET61IFNNlxbrqJ5mLo
+	ai74BR1hSvc3NHUNhYkFwkIlGDc5TEX1FzaAFL25NY2o2GNBJO98etCeOBpIzuQWqQ/wNSs
+	yy8z/Wq5iH2eF6ZIDsi+6qYIco7sSdu3znqpRKcmPkU3UKXvsDdBFOaVRfWxx1HicQ58+Je
+	3kfUVGQ86EEMT5usnNz2+azdWg8J6Rai+Q9TyKPr+EJjPV31HOZ4Xb7KZA2lgmAzE8u5eWq
+	hlK6+4/WtooIeDw2DviXmnu8kZUCIkPoj/rsq1BXW7IiTpKf6XwZ7QbIQEqNsELpGh2GPOh
+	n6BFkvrOP2bjn0uXPqdKiCe2iiIwSPwkQ3ELme16A+9hKTTloEzIPvE44fkHlNepZxGuJ8H
+	GRJ7X6RYRjdJ7kigaqCFzFpAgEU3nNW2ChWcHlTvuda+g02jJSlo04gCWzR87AaHYn6ocND
+	8a4FgaWGto/n7u+jVmNKn4NO4GkdWkvyG8xtNE+6h2fJcj+XedaO+uQebaJG09UTyOD9Jwm
+	gp/XU0JAsR4RIcVaEFz11uMBOIPt0Db+Q8P3xp3Q==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
+Thank you for raising this valid concern. We've closely monitored GPD's
+development plans and currently see no indication of EC functionality
+expansion beyond thermal sensors in the foreseeable future. Given this
+observation, we believe placing the driver in hwmon remains appropriate
+for now.
 
+That said, we fully respect your maintainer perspective on
+future-proofing. If you feel strongly that platform/x86 would be a safer
+long-term home despite the current scope, we're happy to move the driver
+there immediately. We're committed to finding the most sustainable
+solution for upstream.
 
-On 2025/7/30 15:59, Sergey Senozhatsky wrote:
-> On (25/02/25 16:02), Masami Hiramatsu (Google) wrote:
->> The "hung_task" shows a long-time uninterruptible slept task, but most
->> often, it's blocked on a mutex acquired by another task. Without
->> dumping such a task, investigating the root cause of the hung task
->> problem is very difficult.
+------
+Apologies for mistakenly replying to Antheas Kapenekakis instead of the 
+mailing list.
+
+I am Cryolitia <cryolitia@gmail.com> that previously sending the patch. 
+Due to work, I changed my email address. GPG can verify it's the same 
+person: 
+https://keyserver.ubuntu.com/pks/lookup?op=vindex&search=0x84dd0c0130a54df7
+------
+
+在 2025/7/19 00:38, Antheas Kapenekakis 写道:
+> On Thu, 17 Jul 2025 at 04:32, Guenter Roeck <linux@roeck-us.net> wrote:
 >>
->> This introduce task_struct::blocker_mutex to point the mutex lock
->> which this task is waiting for. Since the mutex has "owner"
->> information, we can find the owner task and dump it with hung tasks.
+>> On 3/13/25 13:58, Antheas Kapenekakis wrote:
+>>> On Thu, 13 Mar 2025 at 21:10, Cryolitia PukNgae via B4 Relay
+>>> <devnull+Cryolitia.gmail.com@kernel.org> wrote:
+>>>>
+>>>> From: Cryolitia PukNgae <Cryolitia@gmail.com>
+>>>>
+>>>> Sensors driver for GPD Handhelds that expose fan reading and control via
+>>>> hwmon sysfs.
+>>>>
+>>>> Shenzhen GPD Technology Co., Ltd. manufactures a series of handheld
+>>>> devices. This driver implements these functions through x86 port-mapped IO.
+>>>>
+>>>> Signed-off-by: Cryolitia PukNgae <Cryolitia@gmail.com>
+>>>> ---
+>>>>    MAINTAINERS             |   6 +
+>>>>    drivers/hwmon/Kconfig   |  10 +
+>>>>    drivers/hwmon/Makefile  |   1 +
+>>>>    drivers/hwmon/gpd-fan.c | 681 ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>    4 files changed, 698 insertions(+)
+>>>>
+>>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>>> index 0fa7c5728f1e64d031f4a47b6fce1db484ce0fc2..777ba74ccb07ccc0840c3cd34e7b4d98d726f964 100644
+>>>> --- a/MAINTAINERS
+>>>> +++ b/MAINTAINERS
+>>>> @@ -9762,6 +9762,12 @@ F:       drivers/phy/samsung/phy-gs101-ufs.c
+>>>>    F:     include/dt-bindings/clock/google,gs101.h
+>>>>    K:     [gG]oogle.?[tT]ensor
+>>>>
+>>>> +GPD FAN DRIVER
+>>>> +M:     Cryolitia PukNgae <Cryolitia@gmail.com>
+>>>> +L:     linux-hwmon@vger.kernel.org
+>>>> +S:     Maintained
+>>>> +F:     drivers/hwmon/gpd-fan.c
+>>>
+>>> A problem we had with oxp sensors is that once OneXPlayer expanded
+>>> their EC to include e.g., battery capacity limits, it was no longer
+>>> appropriate for it to reside in hwmon. I expect GPD to do the same
+>>> sometime in the near future. If that is the case, should we
+>>> futureproof the driver by moving it to platform-x86 right away?
+>>>
 >>
->> Note: the owner can be changed while dumping the owner task, so
->> this is "likely" the owner of the mutex.
+>> My problem with platform drivers, especially with x86 platform drivers,
+>> including the OneXPlayer driver, is that the developers responsible for
+>> those drivers refrain from implementing the client drivers as auxiliary
+>> drivers but instead like to bundle everything into a non-subsystem
+>> directory. I have always wondered why that is the case. My best guess
+>> is that it is to limit and/or avoid subsystem maintainer oversight.
+>> Does that work out for you ?
+> 
+> Particularly for simple ECs such as OneXPlayer and GPD boards I think
+> keeping all the addresses in the same file makes sense. E.g., I just
+> sent a Fixes for the OneXPlayer G1 AMD variant and it was one commit
+> instead of 2 or 3. At least for me it was practical, I did not
+> consider having a lesser oversight as a benefit when making that
+> choice.
+> 
+> But I do understand the concern.
+> 
+> Antheas
+> 
+>> Not objecting, I am just curious.
 >>
->> With this change, the hung task shows blocker task's info like below;
+>> Guenter
 >>
->>   INFO: task cat:115 blocked for more than 122 seconds.
->>         Not tainted 6.14.0-rc3-00003-ga8946be3de00 #156
->>   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
->>   task:cat             state:D stack:13432 pid:115   tgid:115   ppid:106    task_flags:0x400100 flags:0x00000002
->>   Call Trace:
->>    <TASK>
->>    __schedule+0x731/0x960
->>    ? schedule_preempt_disabled+0x54/0xa0
->>    schedule+0xb7/0x140
->>    ? __mutex_lock+0x51b/0xa60
->>    ? __mutex_lock+0x51b/0xa60
->>    schedule_preempt_disabled+0x54/0xa0
->>    __mutex_lock+0x51b/0xa60
->>    read_dummy+0x23/0x70
->>    full_proxy_read+0x6a/0xc0
->>    vfs_read+0xc2/0x340
->>    ? __pfx_direct_file_splice_eof+0x10/0x10
->>    ? do_sendfile+0x1bd/0x2e0
->>    ksys_read+0x76/0xe0
->>    do_syscall_64+0xe3/0x1c0
->>    ? exc_page_fault+0xa9/0x1d0
->>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>   RIP: 0033:0x4840cd
->>   RSP: 002b:00007ffe99071828 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->>   RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
->>   RDX: 0000000000001000 RSI: 00007ffe99071870 RDI: 0000000000000003
->>   RBP: 00007ffe99071870 R08: 0000000000000000 R09: 0000000000000000
->>   R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
->>   R13: 00000000132fd3a0 R14: 0000000000000001 R15: ffffffffffffffff
->>    </TASK>
->>   INFO: task cat:115 is blocked on a mutex likely owned by task cat:114.
->>   task:cat             state:S stack:13432 pid:114   tgid:114   ppid:106    task_flags:0x400100 flags:0x00000002
->>   Call Trace:
->>    <TASK>
->>    __schedule+0x731/0x960
->>    ? schedule_timeout+0xa8/0x120
->>    schedule+0xb7/0x140
->>    schedule_timeout+0xa8/0x120
->>    ? __pfx_process_timeout+0x10/0x10
->>    msleep_interruptible+0x3e/0x60
->>    read_dummy+0x2d/0x70
->>    full_proxy_read+0x6a/0xc0
->>    vfs_read+0xc2/0x340
->>    ? __pfx_direct_file_splice_eof+0x10/0x10
->>    ? do_sendfile+0x1bd/0x2e0
->>    ksys_read+0x76/0xe0
->>    do_syscall_64+0xe3/0x1c0
->>    ? exc_page_fault+0xa9/0x1d0
->>    entry_SYSCALL_64_after_hwframe+0x77/0x7f
->>   RIP: 0033:0x4840cd
->>   RSP: 002b:00007ffe3e0147b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
->>   RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
->>   RDX: 0000000000001000 RSI: 00007ffe3e014800 RDI: 0000000000000003
->>   RBP: 00007ffe3e014800 R08: 0000000000000000 R09: 0000000000000000
->>   R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
->>   R13: 000000001a0a93a0 R14: 0000000000000001 R15: ffffffffffffffff
->>    </TASK>
+>>
 > 
-> One thing that gives me a bit of "inconvenience" is that in certain
-> cases this significantly increases the amount of stack traces to go
-> through.  A distilled real life example:
-> - task T1 acquires lock L1, attempts to acquire L2
-> - task T2 acquires lock L2, attempts to acquire L3
-> - task T3 acquires lock L3, attempts to acquire L1
-> 
-> So we'd now see:
-> - a backtrace of T1, followed by a backtrace of T2 (owner of L2)
-> - a backtrace of T2, followed by a backtrace of T3 (owner of L3)
-> - a backtrace of T3, followed by a backtrace of T1 (owner of L1)
-> 
-> Notice how each task is backtraced twice.  I wonder if it's worth it
-> to de-dup the backtraces.  E.g. in
-> 
-> 	task cat:115 is blocked on a mutex likely owned by task cat:114
-> 
-> if we know that cat:114 is also blocked on a lock, then we probably
-> can just say "is blocked on a mutex likely owned by task cat:114" and
-> continue iterating through tasks.  That "cat:114" will be backtraced
-> individually later, as it's also blocked on a lock, owned by another
-> task.
-> 
-> Does this make any sense?
-
-Good spot! There is room for improvement.
-
-In a deadlock chain like T1->T2->T3->T1, by definition, T1, T2, and T3
-are all hung tasks, and the detector's primary responsibility is to
-generate a report for each of them. The current implementation, when
-reporting on one task, also dumps the backtrace of its blocker.
-
-This results in a task's backtrace being printed twice — once as a
-blocker and again as a primary hung task.
-
-Regarding the de-duplication idea: it is elegant, but it does introduce
-more complexity into the detector. We should also consider that in many
-real-world cases, the blocking chain is just one level deep, where this
-isn't an issue, IHMO ;)
-
-Thanks,
-Lance
-
 
 
