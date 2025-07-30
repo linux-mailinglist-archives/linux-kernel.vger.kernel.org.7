@@ -1,63 +1,68 @@
-Return-Path: <linux-kernel+bounces-751424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7755AB1697E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:55:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D53C9B16982
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D7C13B98DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:54:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13113562DED
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A09239E8F;
-	Wed, 30 Jul 2025 23:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200BC239E88;
+	Wed, 30 Jul 2025 23:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rSOLHC+2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2kOSmy8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0ED376;
-	Wed, 30 Jul 2025 23:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798A041760;
+	Wed, 30 Jul 2025 23:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753919692; cv=none; b=Ncgn/DIyzL8jIRY8F1q8XLdbvyLti2p4v1s4QqLy8i/EgdFvSbIVogt2XSUyl+reSkD92HXuDJIYSfdYdPvj/Y4ehaCMqTU2ZXWCUqesbFUzE/+9umuqWlaIkHIsyBNbCR+jVKt8Pz4gS3wflYZmFQ6hHQH+eRMJlvt5AqGaTBc=
+	t=1753919814; cv=none; b=X6s9tUdrGv4ejLb8pifWhfjGT5m7lU/cN3VW8d8IfTc/ygs2YZ3dN0KAY4f4aoFoNnz+gPh1p+q4isp9YS0J9H5NxY1ASr+xjwxGnIPqtjRyNQpB14rmj0SGmTBlYmmrbN6mB5kg0/XfQyPveVcrpZofx71g89scncjpoYqdsLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753919692; c=relaxed/simple;
-	bh=ksTAo89B5tD8/lmoPdu3reTp6aOUnIluUg9OleY9U14=;
+	s=arc-20240116; t=1753919814; c=relaxed/simple;
+	bh=QZsdIcHWxpI9QDh/Acp10J22Rwmw8P/g++NrOm4SvtA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s0fboJH/x9TS5jqeAsOYaaCDxyyVL+zbZe2KdzTk/gfNlA6Ua/Z+92Awv0tV5sjvvpDwHlCDWmFSfHQWY81aiXzPu5QjcFyOniX/aqu2bNHvC8Dzn16AYmdsNMPNniIJlU68J8GlxgQ3St7iDI5OATBZNpPSBBIi+OVgSgzoKXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rSOLHC+2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9603DC4CEE3;
-	Wed, 30 Jul 2025 23:54:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=LPWVXYZqMoyBXWAKDDgMN93VDaqiuBgcgKkRMz4QZqu9s1447LnZr4H4sDi/a/Eqgp1al0RcHCItko/dsam/W+5rOWgP7dO568Tbi19jkxNF9wygrpDX9l5xLjWDnB6vHuAYhLz8KMRQwVdSG5deqjdq6bsVhF12cqKH5dxxf7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t2kOSmy8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C36B9C4CEE3;
+	Wed, 30 Jul 2025 23:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753919691;
-	bh=ksTAo89B5tD8/lmoPdu3reTp6aOUnIluUg9OleY9U14=;
+	s=k20201202; t=1753919814;
+	bh=QZsdIcHWxpI9QDh/Acp10J22Rwmw8P/g++NrOm4SvtA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rSOLHC+2xcUclev5lMKl8YTnHqCnmu2FR84Qb5kWKtyZbtzmti1Wa3KT7HXqwee7d
-	 XyCHLZKJitXDKtefOZDI+zCGWDIYnT2BBDuM56ofl267HDMSbr7C/g0Unv4i5o9lzr
-	 tmAheYiFoK07Q/mv54PpuwelfzTTj6EE11VYCTTKAk5GARLbO5mfhdsEWg5eKsQey9
-	 9pAfbmqhy4FU1ayoYWBiirB4O8w2dqVtwxIQzJPn+hG9CMAhqwAjXvFuxbJxA/Nott
-	 Cfy12vaqHhWQHW/c0fjk8to667+B5u6m9hNT0st8d2NJUjvNyTM5PD6c9XYGj/JhLz
-	 JveiUKPWniMQw==
-Date: Wed, 30 Jul 2025 18:54:51 -0500
+	b=t2kOSmy8UhjztMdU71mBZlIUrHgHNdE1WicfZDCRKVDj7r5Gr0Fa+cFH+0t7sYjqe
+	 0ri4igYvUEyFp35/tO5cNqpvtl8w5CF6GVDv+z9SJSCunjeJl8DqDtURRKLv7c0kbM
+	 xTGc/JyWp3gbJBMQm6WNO55NVYvPVqWbtyM19f2cNwjs0b5kztu3DeMOHa6xA4f6nN
+	 2grq5qZ4F37/qft/lbiVpO5apcljhUiSdFYbQrFI+yNc4GoMAKMGMx2CDQpB/IHa8W
+	 5BIpdQxmGi6JJTwUda2/osXLUwaPh1nlkpYRSvjUFbzJJZZ9mXoKFxMcsuOgrnNmF8
+	 hY9yZIOO+xKwg==
+Date: Wed, 30 Jul 2025 18:56:53 -0500
 From: Rob Herring <robh@kernel.org>
-To: Laura Nao <laura.nao@collabora.com>
-Cc: srini@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com,
-	lukasz.luba@arm.com, matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com, wenst@chromium.org,
-	nfraprado@collabora.com, arnd@arndb.de, colin.i.king@gmail.com,
-	u.kleine-koenig@baylibre.com, andrew-ct.chen@mediatek.com,
-	lala.lin@mediatek.com, bchihi@baylibre.com, frank-w@public-files.de,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel@collabora.com
-Subject: Re: [PATCH v2 9/9] dt-bindings: nvmem: mediatek: efuse: Add support
- for MT8196
-Message-ID: <20250730235451.GA1911689-robh@kernel.org>
-References: <20250730152128.311109-1-laura.nao@collabora.com>
- <20250730152128.311109-10-laura.nao@collabora.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Jyri Sarha <jyri.sarha@iki.fi>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
+	Benoit Parrot <bparrot@ti.com>, Lee Jones <lee@kernel.org>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, thomas.petazzoni@bootlin.com,
+	Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: display: ti,am65x-dss: Add clk property
+ for data edge synchronization
+Message-ID: <20250730235653.GA1914482-robh@kernel.org>
+References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
+ <20250730-fix-edge-handling-v1-1-1bdfb3fe7922@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,35 +71,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250730152128.311109-10-laura.nao@collabora.com>
+In-Reply-To: <20250730-fix-edge-handling-v1-1-1bdfb3fe7922@bootlin.com>
 
-On Wed, Jul 30, 2025 at 05:21:28PM +0200, Laura Nao wrote:
-> The MT8196 eFuse layout is compatible with MT8186 and shares the same
-> decoding scheme for the gpu-speedbin cell.
+On Wed, Jul 30, 2025 at 07:02:44PM +0200, Louis Chauvet wrote:
+> The dt-bindings for the display, specifically ti,am65x-dss, need to
+> include a clock property for data edge synchronization. The current
+> implementation does not correctly apply the data edge sampling property.
 > 
-> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+> To address this, synchronization of writes to two different registers is
+> required: one in the TIDSS IP (which is already described in the tidss
+> node) and one is in the Memory Mapped Control Register Modules (added by
+> the previous commit).
+> 
+> As the Memory Mapped Control Register Modules is located in a different
+> IP, we need to use a phandle to write values in its registers.
+
+You can always just lookup the target node by compatible. Then you don't 
+need a DT update to solve your problem.
+
+> 
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> 
 > ---
->  Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 1 +
->  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-> index 4dc0d42df3e6..455b96c1e1f4 100644
-> --- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-> +++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-> @@ -25,6 +25,7 @@ properties:
->    compatible:
->      oneOf:
->        - items:
-> +          - const: mediatek,mt8196-efuse
->            - const: mediatek,mt8188-efuse
->            - const: mediatek,mt8186-efuse
-
-You just broke mt8188 as it had 2 entries and now has 3. I think 
-(based on the commit msg) you want to change 8188 entry to an enum with 
-mediatek,mt8196-efuse and mediatek,mt8188-efuse.
-
->        - const: mediatek,mt8186-efuse
+> Cc: stable@vger.kernel.org
+> ---
+>  Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+> index 361e9cae6896c1f4d7fa1ec47a6e3a73bca2b102..b9a373b569170332f671416eb7bbc0c83f7b5ea6 100644
+> --- a/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+> +++ b/Documentation/devicetree/bindings/display/ti/ti,am65x-dss.yaml
+> @@ -133,6 +133,12 @@ properties:
+>        and OLDI_CLK_IO_CTRL registers. This property is needed for OLDI
+>        interface to work.
+>  
+> +  ti,clk-ctrl:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      phandle to syscon device node mapping CFG0_CLK_CTRL registers.
+> +      This property is needed for proper data sampling edge.
+> +
+>    max-memory-bandwidth:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      description:
+> 
 > -- 
-> 2.39.5
+> 2.50.1
 > 
 
