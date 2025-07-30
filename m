@@ -1,141 +1,183 @@
-Return-Path: <linux-kernel+bounces-750859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 462EFB161F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:54:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E325BB161EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEDDA179D36
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:54:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F115617E8C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7A262D97B6;
-	Wed, 30 Jul 2025 13:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6AB2D94B2;
+	Wed, 30 Jul 2025 13:53:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="E9hdR0Qi"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mwyGYuTj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1410D2D97A8;
-	Wed, 30 Jul 2025 13:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883617; cv=pass; b=toZJHqXNjkVtBrc4wzZVKtbujyoP3n/P2buTth07DbwkPnZyVxR+l/Tx2bvYCAFq36T6u1454+ANyI41tdFzdhFDZhYHWrx+geKbu26rwsPIoh0f7e/gwBQwa9cljFkr3CO0aPRcUjmWU4W+8OUD1AXzhGCLPAibYSPj4wzR/ek=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883617; c=relaxed/simple;
-	bh=Jx1Dkak9qnVIvoXGG0Fyb1u3c00AFlts7wrW5uDa+Hc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=YY7jq9fJjd/pfM4GaOy3zotYLuJ8tVepibQCJKeUHLpRmuNUDhsyAos+ufAMocie7gKZRkDby1suR/kwcuVI7LuqmcMyYSCjIW4ENm6F8mvjIIASXGpGkkcElYxfXoWnYmh0Cr9nzImIDl+Xix1/WgVbZT+K5xxK2aA4yWbtmDY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=E9hdR0Qi; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753883595; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=mv2jCEPms2pSZJRfqTnkUNFI2eX/giXyFEi5WWe4va2FykTEwZX/9r2XLO8CmKGTmhAvElh2HIOLRgnj7c49DLubRv5jEPjysh/KqmSioFVF3uUt2wWmxRE347l+shEY1DWcB3NU0nbRcd0WyG5XHZyeyk72GdMElKmRZSK5JU4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753883595; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FRDg6VhwDKyAPe3WRc3tkSs9KfKtj9WJq1E9k2oIvow=; 
-	b=kPPp+B7wAn8By9QuWOUNYDiOK6Olq1ERtMjf8KQm93/0lH5zHJCkIygr6dmwwCpkh+dVlgRHIDVig66Qh5luLHiS5K2isDY5nDIVrrfk3r8ihS4alYKzws6KZhLg4KbRhPp3dmLHIQEYJZRBD52bsV73/e3cpySKzNW7Ty8rAUY=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753883595;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=FRDg6VhwDKyAPe3WRc3tkSs9KfKtj9WJq1E9k2oIvow=;
-	b=E9hdR0QiA/QoiQuQx/wi4ft63vU1OT7wmus5I6T87oZReJgY2ukfUChWDUwm4O8i
-	bHQoLn+H2fd+ba4SPlDSkf/AHEezILA8An/PkxY22Y2R7rTz+fSCXyXoe904ELGBBSG
-	jePzVHwtwcIdB367tMx96Im2VaqhUIQSYD5DVoaU=
-Received: by mx.zohomail.com with SMTPS id 1753883592221643.0644285011297;
-	Wed, 30 Jul 2025 06:53:12 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47A22D8DDB;
+	Wed, 30 Jul 2025 13:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753883607; cv=none; b=K0sHtEsyrkb0sjsGl9YesRAuP/8mnisoW7BTwdHCmmER+xJfL+9EUXJjLCDewJBJHvpZhGfYBqA0Jc9Tv2FL+iiHasyv4utWMPgfaLKabZ3aYZWX/neBPjXIjaMf76JRZc3ECzVh0fTdura/w2bfvtXy+4nYM9HsZ5fCt29BLkQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753883607; c=relaxed/simple;
+	bh=stuy2rI58Vsc0PiqRzUo/vprvXkWOhvLV54M9TdCCp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JBTSYaKM0ozSDr+ZlyYk5PJ0Qz/lyYUnpfjChzp0BMiR5HSmG4Rer9D2PrtSY4Rx4MazgI1IWbWiYUu/DgCcs3WAlgdMcop252FzBLbL6FsdLwCt9lECaehFGdqDAsafhYkqJ4Vp3omAszdrHBdxQa/VhuZXBoSKk9eK6f0qoJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mwyGYuTj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UCbAWo006561;
+	Wed, 30 Jul 2025 13:53:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	krEHYvALcIr5L6u5+iHLkKXMi4mmcRlQVfkjxj3pvNc=; b=mwyGYuTj4PGqy940
+	pI/w8l+YapTE88rnvZzY17Je1eChVB/Zdd8J3vcpyc1DGPyfwolQec+jbsoA/Hvc
+	OaTlz9Z/tgSLU20JoW5mHuffzefRQDomdP4YxPntTzWDliR9w2a6InbAMFNgxEuW
+	4CFN8SZGdA/dEtCo7asPg9hqCcB1Q/0voiaToNwhxU4I77ythcG8Of/DcnmQGvH3
+	zEy90BvFtbdGtQTWK1kioSOgheI87J/vLhGaRJ9HOGnyG/aeLysCVw5oZLlEjDhB
+	THvTHoQo49jMIwBKvViDGOFQV4BlCnoimfM9z2iyBWU3eVcc4J/iVbjOaxIZLlHH
+	J421qA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 485v1xhc2r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 13:53:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56UDrFb7023656
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 13:53:15 GMT
+Received: from [10.218.7.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 30 Jul
+ 2025 06:53:10 -0700
+Message-ID: <df8b3c85-d572-4cee-863b-35fe6a5ed9ff@quicinc.com>
+Date: Wed, 30 Jul 2025 19:23:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] rust: clk: use the type-state pattern
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
-Date: Wed, 30 Jul 2025 10:52:55 -0300
-Cc: Alexandre Courbot <acourbot@nvidia.com>,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <6EDE1C11-8654-404D-98AC-0D102090C15F@collabora.com>
-References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] dt-bindings: ufs: qcom: Split SC7280 and similar into
+ separate file
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar
+	<alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche
+	<bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Manivannan
+ Sadhasivam" <mani@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Andy
+ Gross" <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Ram Kumar
+ Dwivedi" <quic_rdwivedi@quicinc.com>
+References: <20250730-dt-bindings-ufs-qcom-v1-0-4cec9ff202dc@linaro.org>
+Content-Language: en-US
+From: Nitin Rawat <quic_nitirawa@quicinc.com>
+In-Reply-To: <20250730-dt-bindings-ufs-qcom-v1-0-4cec9ff202dc@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA5OSBTYWx0ZWRfXydAnmnJ2pSbP
+ +ehsQxfAiJLBtgMi0jfpm0+MVaIl8SshR3yPXcHxTA+jGQGa7f1kVxBt+TiupW1S+vHg9ulZ/oI
+ pVZOb8nFjPBTnaDubMhvgdQAI3XVbvl+0FfozuzIcdNTeX8TX6fNrQFdkkVLJfAXJep8ZoJBQ1r
+ MtV3GRRy8ftdkZmnZrf6C5ZMTCzhB1PegxVB4HSv+iafD503bYfwB4ktw+Nffi3SZK3cId4C4v9
+ Pn8sJSmHgKrKoWKtCbpOUiMi5ga8TpHmQepSZuK9PddCARnYDhGbgEW70Yai2OI07A5p4naEHLb
+ VH72/hsRBRduPg4oDxM/g56Q6vlUjqYwih858o0CIVLGU0qeZyvFkCNgRxz1FIJyY4GBL7zn1VB
+ DubPnm1yC6czb9CeZMg8HEMxv+kSJlXzY9dtj4VQfB9w8qZzOedamIdzodDlHAF7QXmS/q8s
+X-Authority-Analysis: v=2.4 cv=JKw7s9Kb c=1 sm=1 tr=0 ts=688a23cb cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8
+ a=COk6AnOGAAAA:8 a=HodSQJYkpgkrawyL3x8A:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: ikEp6fss3AxCKMVGJYn3mxCMUe8sAJCY
+X-Proofpoint-GUID: ikEp6fss3AxCKMVGJYn3mxCMUe8sAJCY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0 clxscore=1011
+ mlxlogscore=999 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507300099
 
 
-[=E2=80=A6]
 
->         }
->=20
-> -        /// Enable the clock.
-> +        /// Attempts to convert the [`Clk`] to a [`Prepared`] state.
->         ///
-> -        /// Equivalent to the kernel's [`clk_enable`] API.
-> +        /// Equivalent to the kernel's [`clk_prepare`] API.
->         ///
-> -        /// [`clk_enable`]: =
-https://docs.kernel.org/core-api/kernel-api.html#c.clk_enable
-> +        /// [`clk_prepare`]: =
-https://docs.kernel.org/core-api/kernel-api.html#c.clk_prepare
->         #[inline]
-> -        pub fn enable(&self) -> Result {
-> -            // SAFETY: By the type invariants, self.as_raw() is a =
-valid argument for
-> -            // [`clk_enable`].
-> -            to_result(unsafe { bindings::clk_enable(self.as_raw()) })
-> +        pub fn prepare(self) -> Result<Clk<Prepared>, =
-Error<Unprepared>> {
-> +            // We will be transferring the ownership of our =
-`clk_get()` count to
-> +            // `Clk<Prepared>`.
-> +            let clk =3D ManuallyDrop::new(self);
-> +
-> +            // SAFETY: By the type invariants, self.0 is a valid =
-argument for [`clk_prepare`].
+On 7/30/2025 6:05 PM, Krzysztof Kozlowski wrote:
+> The binding for Qualcomm SoC UFS controllers grew and it will grow
+> further.  It already includes several conditionals, partially for
+> difference in handling encryption block (ICE, either as phandle or as IO
+> address space) but it will further grow for MCQ.
+> 
+> See also: lore.kernel.org/r/20250730082229.23475-1-quic_rdwivedi@quicinc.com
+> 
+> The question is whether SM8650 and SM8750 should have their own schemas,
+> but based on bindings above I think all devices here have MCQ?
+> 
+> Best regards,
+> Krzysztof
+> 
 
-I just noticed that some comments still refer to the old =E2=80=9Cself.0=E2=
-=80=9D field, but that doesn=E2=80=99t exist anymore.
 
-I=E2=80=99ll fix that in v2.
+Hi Krzysztof,
 
-> +            to_result(unsafe { bindings::clk_prepare(clk.as_raw()) })
-> +                .map(|()| Clk {
-> +                    inner: clk.inner,
-> +                    _phantom: PhantomData,
-> +                })
-> +                .map_err(|error| Error {
-> +                    error,
-> +                    clk: ManuallyDrop::into_inner(clk),
-> +                })
->         }
-> +    }
->=20
+If I understand correctly, you're splitting the YAML files based on MCQ 
+(Multi-Circular Queue) support:
 
-=E2=80=94 Daniel
+-qcom,sc7280-ufshc.yaml includes targets that support MCQ
+-qcom,ufs-common.yaml includes common properties
+-qcom,ufs.yaml includes targets that do not support MCQ
+
+
+In future, if a new property applies to both some MCQ and some
+non-MCQ targets, we would need to update both YAML files. In the current 
+implementation, we handle such cases using if-else conditions to include 
+the new property.
+
+For reference, only SM8650 and SM8750 currently support MCQ, though more 
+targets may be added later.
+
+Regarding the patch 
+lore.kernel.org/r/20250730082229.23475-1-quic_rdwivedi@quicinc.com, 
+instead of using two separate YAML files, we could use if-else 
+conditions to differentiate the reg and reg-name properties between MCQ 
+targets (SM8650 and SM8750) and non-MCQ targets (all others).
+
+Regards,
+Nitin
+
+
+
+> ---
+> Krzysztof Kozlowski (2):
+>        dt-bindings: ufs: qcom: Split common part to qcom,ufs-common.yaml
+>        dt-bindings: ufs: qcom: Split SC7280 and similar
+> 
+>   .../devicetree/bindings/ufs/qcom,sc7280-ufshc.yaml | 149 +++++++++++++++++++
+>   .../devicetree/bindings/ufs/qcom,ufs-common.yaml   |  67 +++++++++
+>   .../devicetree/bindings/ufs/qcom,ufs.yaml          | 160 +++++----------------
+>   3 files changed, 251 insertions(+), 125 deletions(-)
+> ---
+> base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
+> change-id: 20250730-dt-bindings-ufs-qcom-980795ebd0aa
+> 
+> Best regards,
 
 
