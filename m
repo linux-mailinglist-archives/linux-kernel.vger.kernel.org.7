@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-750247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1460B1590F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EFA4B15910
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:45:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E058D544B1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:44:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 989FA544CF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D6B1F4CAA;
-	Wed, 30 Jul 2025 06:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB58D1F78E6;
+	Wed, 30 Jul 2025 06:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCGH1sgA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="PzHzzkiy"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB41D42A9E;
-	Wed, 30 Jul 2025 06:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791C58F66;
+	Wed, 30 Jul 2025 06:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753857869; cv=none; b=qiLIg/SoQkCZKpy+ny0Ch/+8W0mjVdVstLSaCP+7diue5crsf4CeA2HUfSPs5i7ojqHOa29DTHQUtuIwYzbC/PXvHklrzAbOtBeipS7RBR8UvcxVV7MXJgGvmSeE7GxlkHsBeG4kyoE4g8EQQ4bAkEDnqy4clI8/zsZ6Am93BFc=
+	t=1753857938; cv=none; b=M3zuz402JwZ7MK001YM+CFjIDw6EWAHVsxJf8Zi2DdrJyCrbY35Az348jegB+A+j88eJy7Xzg2ZRBmA1zgL+6I83wDcypIzU6LznauXo//37qfcwAbbtHwAGTUsmmWmu+IDXETBp69veM5B/2d+yhESYxiWisCdo19XEShqo0Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753857869; c=relaxed/simple;
-	bh=y5AXV1e6MbPhnz4RWeVpBB6rnHzp/Px9FD29zL36zTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dt7q2NgzbEdnarPup45rJxRVz6ZNbyEs5mzbrJpnoGpijUkl/krCkcTIWLN6ifL+JUPnjVtoklhJQkQJvRVSvDlt48em8NJVMtJhmQkwUu67GyrgjWp8b7p5+RwmVdmHnr7jqzG/b+YP7tPZva4/5WFkBYH5AVkzTb/U8qyK5Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCGH1sgA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D808BC4CEE7;
-	Wed, 30 Jul 2025 06:44:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753857869;
-	bh=y5AXV1e6MbPhnz4RWeVpBB6rnHzp/Px9FD29zL36zTk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CCGH1sgAY6cfZIyghEtoIxrl0TN8NgogU3jpwIKFHiqnIiUhjl1ygiUbLAsBvFqiE
-	 g4rvh3Mo2XqpCHMPX25vTz8VagX6XXI8wQdbP0cTUx4H+cUcxaEbwMHsbuFPYBs8+U
-	 84adzWWt0xooRbDtjutO6IuFBYuoLhlFM7CYLP9QNTwBpdLR/Iz+EnRXLiaWyMFeZa
-	 MJxnB6M4slMMg5yzYStc7AStLYxiMhTC9hG2sdjJQRDEq0jVmZyKS1hrSAuZciqQqd
-	 EZYYtMfTtmztvqYXVhmzPLcQuI85vywBHg3stJ5K2koY1VIBrYxPJtllpvJH/SxB61
-	 wIuk84cf1RVUg==
-Message-ID: <157fee28-e6b9-4c81-9698-57302117c885@kernel.org>
-Date: Wed, 30 Jul 2025 08:44:25 +0200
+	s=arc-20240116; t=1753857938; c=relaxed/simple;
+	bh=HCyzQ8a3VN4v6kdVioWqrCWuReY43dsMay3j9Tuyy1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=McVLTOCbETqt4s2Lc66J5gX5mjlgSeeOEh34FklYpQYiJLPsA4PMDzR/qnGc1yjEjGFSzH7c+24uVBhMf9zWJhfRrST1rWPxhgUMQ6/1BkOPJ3z10J2PaYEMXs7wE/bYEiIQSmyDNFUM4RdDmjCAFeF3yIkRi0bIchi1w1iXTp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=PzHzzkiy; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1753857931; x=1754462731; i=markus.elfring@web.de;
+	bh=HCyzQ8a3VN4v6kdVioWqrCWuReY43dsMay3j9Tuyy1E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:From:Cc:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=PzHzzkiyxAqdYNkbRAPdCnNVGR92JGhw7Qu+5RvmBEgBmyGNSm0BXweC+FYNePSP
+	 08o2AFmuM6b+GBnYwlnLtDW4ekrAJNw9QDMj+ahfwYhNXioLI+hHDMe9iE7TncvM0
+	 wQ2KA4R4NAsWT6yHussTucgfLti4Ap4LAoeny3/EzMo+ljRX+FSjJfx29e5WM7O40
+	 aJvFnqmdrhGUuIPYwh6ZbfSdteNMJqRitPcH+pU6gw/Srgrq9Fv4t9x5Noh76adHf
+	 jQKvrVvyFSngKxBeMZAhgaFLhwXJuYc0/lJap3F2pGS4KnjetMjACld+XsUXuMnfq
+	 GcLkEQjAdJmc1YzSHg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.92.238]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N79N8-1ubNKA3aIe-00yZ6e; Wed, 30
+ Jul 2025 08:45:30 +0200
+Message-ID: <f0c7dbf1-b3a7-477a-acfd-2ae90340d4b3@web.de>
+Date: Wed, 30 Jul 2025 08:45:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,87 +57,88 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
-To: Yijie Yang <yijie.yang@oss.qualcomm.com>,
- Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729-hamoa_initial-v3-0-806e092789dc@oss.qualcomm.com>
- <20250729-hamoa_initial-v3-3-806e092789dc@oss.qualcomm.com>
- <5hgynbka274jerw5x6ekfuoj45k6bqt2hdbsx2puniqornil4s@pdgavjb2jeci>
- <ef9c302a-28f9-4bc9-912c-92bf5ca7bbf3@oss.qualcomm.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <ef9c302a-28f9-4bc9-912c-92bf5ca7bbf3@oss.qualcomm.com>
+Subject: Re: [PATCH v9 0/1] genirq/devres: Add dev_err_probe() in
+ devm_request_threaded_irq() and devm_request_any_context_irq()
+To: Pan Chuang <panchuang@vivo.com>, Yangtao Li <frank.li@vivo.com>,
+ kernel-janitors@vger.kernel.org
+References: <20250730062554.269151-1-panchuang@vivo.com>
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Ahmad Fatoum <a.fatoum@pengutronix.de>,
+ Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+In-Reply-To: <20250730062554.269151-1-panchuang@vivo.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KwE4PqM8+qSAD4Xbs9YE4MVl8vGmJyfYOiE0Wa991yGt7sgglUE
+ NsCBejuFJeafXGhJb04S45pBkT3cQwzQ8zXXoYefRJZe6/yXvflIHwPXKPxRKA0hcQj0yi0
+ 5QBdcK44slmd4SBjsymtFra1RENtl+3MHHS1dDH+qsUWjYXzzZ3F99GOeyC+x4zNfycDDtN
+ F0p1h+SmzFpLDaBYfBdqQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UHx2beVbgaI=;zJWqsdBTESjpsMLAdIVamKU76I5
+ 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
 
-On 30/07/2025 03:11, Yijie Yang wrote:
-> 
-> 
-> On 2025-07-29 18:44, Dmitry Baryshkov wrote:
->> On Tue, Jul 29, 2025 at 09:31:59AM +0800, Yijie Yang wrote:
->>> The HAMOA-IOT-SOM is a compact computing module that integrates a System
->>> on Chip (SoC) — specifically the x1e80100 — along with essential
->>> components optimized for IoT applications. It is designed to be mounted on
->>> carrier boards, enabling the development of complete embedded systems.
->>>
->>> This change enables and overlays the following components:
->>
->> What does this mean, how can it overlay something?
-> 
-> What I want to convey here is that I referenced some nodes defined in 
-> x1e80100.dtsi within this file to add additional properties. I’ll revise 
-> the wording to make this clearer.
+=E2=80=A6
+> This patch implements a standardized error reporting approach[1]:
+=E2=80=A6
 
-That is not an overlay. Use proper, not misleading terms.
+Do you imagine that another patch series would become helpful
+for the presented software transformation approach?
 
-Best regards,
-Krzysztof
+Regards,
+Markus
 
