@@ -1,141 +1,118 @@
-Return-Path: <linux-kernel+bounces-750928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942C2B162EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:35:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4611EB162EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0046E1AA348B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:35:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA1FA16586E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:36:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01DB62D9EDF;
-	Wed, 30 Jul 2025 14:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367492DAFA4;
+	Wed, 30 Jul 2025 14:35:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="HKBSTtuz"
-Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="Y0DK5VdK"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DEEF1C5D57;
-	Wed, 30 Jul 2025 14:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696501C5D57;
+	Wed, 30 Jul 2025 14:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753886118; cv=none; b=co9VUip2JSFRbTxeUNRVRy2IDo/DFW+7oc14mOjBULa/orPqSlufkE3BIff2dILlYDlrx/3qhZsmArtmp6XR8UIkwPOe+WR6xyH1e27bI/5zTuXJFQlsRkU0HMRb7eZQR3bYNHzOk4JS3h/ZQbMBxZXG+v4hcqLJCVzkdHueB1Q=
+	t=1753886158; cv=none; b=CH8KlkJtRWVn6I7B38zVuax3MK6E4KrY9uKp3qlzkYVBo8frwSENf5ukWaNGiFdShBYqyeexpG9iPknzKG8CerClT5pr+sy4H+aX9vK7an8kMr+LP9gekfjK2lQJxtpYclKhCNDr5aA5QKWW4InUulDE4n8Dy+nX6IOd7OdDKdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753886118; c=relaxed/simple;
-	bh=KX9gky5b66eICbQ0UiZw3jTma9kJ/uimQoSGy09Y554=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XFC2I3cfDoh447nM1I0B4At3Gz5T69C+h3A3zQ1GFNd6D9Tiej8c51L0UpWZ0LatwLbBqJsHAigpjklLy6mVt/WKlWrMeaKYcqScyPCq8x+mGXFpNX4ukdfVIZ9rk+4/mCvxz9GijyZT7W107bKHvIO7vPLo22t6quofOwCM0RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=HKBSTtuz; arc=none smtp.client-ip=119.8.177.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=V4VzUm4zcB95VkurnMS1za6yWaYSay+dQ+3Hi8qJDuM=;
-	b=HKBSTtuzFdIanTfuhOsFeGOSLmYVsWUE41QHkn8zXLZs/UdFZieK/WTSKGhb/KngdNlsDOo/2
-	v90rSbM2uhWR9+cJygGBmHFgIZKlfNZ46XqWq/s5dk+4tsMpKe57zvxKi6+LAT2Coh2p8jDjq5G
-	fFMairtdXGK12fYQJwH4Ilg=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.37])
-	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4bsZTT4vDSz1P7Hb;
-	Wed, 30 Jul 2025 22:33:49 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bsZQ82bphz6GD84;
-	Wed, 30 Jul 2025 22:30:56 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 77D00140393;
-	Wed, 30 Jul 2025 22:35:09 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Jul
- 2025 16:35:08 +0200
-Date: Wed, 30 Jul 2025 15:35:06 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
- Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 26/38] KVM: arm64: Add exit handler related to
- device assignment
-Message-ID: <20250730153506.00006280@huawei.com>
-In-Reply-To: <20250728135216.48084-27-aneesh.kumar@kernel.org>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
-	<20250728135216.48084-27-aneesh.kumar@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753886158; c=relaxed/simple;
+	bh=V34/0BUif7+ERzhsr3sFEFQWqSf4vhHV9Pu8EYOM8sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FWUpkpEdXOLaX85U5CRuI7jK3ndeagSIPon5wQygT2v8Cf6ei6qU7mCVXsm5AmOFC/5/Vt3RhgDrDcERX/2jrh27lTYphuG2QPJ+5IITK33X+efWbGeEJ4Tzyf5g9AQgDYn8kOqThrBYa/dRJ5o9vBC77Zu68TzxPSK/khr0qXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=Y0DK5VdK; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id C56891C008E; Wed, 30 Jul 2025 16:35:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1753886148;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jM2lKKsaUK/2/ezpP7H67fTfmIqiEVsc2+l+DJuNOLo=;
+	b=Y0DK5VdKj7DdGQWZYOl9Oy0kbFy2e52flvg2Ks8DK4Jg5OIgTHODnagVLxgoI3/eXGn5DK
+	xYLp8YH71CxbqqFNEcCAqhnR+X2M94MHnlVBaHcKvF4fohv2651N8ubol7u1h5EfViVzE0
+	G05d01CXLVshIEkmNS6gC/foc+HCG7Y=
+Date: Wed, 30 Jul 2025 16:35:48 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Olivier Benjamin <olivier.benjamin@bootlin.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Nicholas Roth <nicholas@rothemail.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	imx@lists.linux.dev, ~diederik/pine64-discuss@lists.sr.ht,
+	Dragan Simic <dsimic@manjaro.org>, Ondrej Jirman <megi@xff.cz>
+Subject: Re: [PATCH v4 0/4] Describe the cameras in the PinePhone Pro dts
+Message-ID: <aIotxHrxuEEqGbkk@duo.ucw.cz>
+References: <20250620-camera-v4-0-0201a8ed5fae@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
-
-On Mon, 28 Jul 2025 19:22:03 +0530
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
-
-> Different RSI calls related to DA result in REC exits. Add a facility to
-> register handlers for handling these REC exits.
-> 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="UCFE5hbQc5QNmNAy"
+Content-Disposition: inline
+In-Reply-To: <20250620-camera-v4-0-0201a8ed5fae@bootlin.com>
 
 
-> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
-> index c6e16ab608e1..a5ef68b62bc0 100644
-> --- a/arch/arm64/include/asm/rmi_smc.h
-> +++ b/arch/arm64/include/asm/rmi_smc.h
+--UCFE5hbQc5QNmNAy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/arch/arm64/kvm/rme-exit.c b/arch/arm64/kvm/rme-exit.c
-> index 1a8ca7526863..25948207fc5b 100644
-> --- a/arch/arm64/kvm/rme-exit.c
-> +++ b/arch/arm64/kvm/rme-exit.c
+On Fri 2025-06-20 17:21:31, Olivier Benjamin wrote:
+> This series adds support for the Pine64 PinePhone Pro's rear and front
+> cameras in Device Tree.
+> This is based on some of Ondrej Jirman's patches hosted in his tree at
+> https://codeberg.org/megi/linux, but I have also fully reviewed and
+> re-written the code from the RK3399 datasheet, the PinePhone Pro
+> schematic, and the IMX258-0AQH5 software reference manual.
+>=20
+> I have tested these changes on my PinePhone Pro and am able to take
+> photos from both cameras using libcamera's cam.
+>=20
+> This series has raised a question about the proper label name for the
+> front/user camera and rear/world camera for phones.
 
+I am not familiar with "user" / "world" cameras, but "selfie" and
+"main" is something I've seen before.
 
-> +static int rec_exit_dev_mem_map(struct kvm_vcpu *vcpu)
-> +{
-> +	int ret;
-> +	struct realm_rec *rec = &vcpu->arch.rec;
-> +
-> +	if (realm_exit_dev_mem_map_handler) {
-> +		ret = (*realm_exit_dev_mem_map_handler)(rec);
-> +	} else {
-> +		kvm_pr_unimpl("Unsupported exit reason: %u\n",
-> +			      rec->run->exit.exit_reason);
-> +		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> +		ret = 0;
+Best regards,
+								Pavel
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
 
-I guess maybe this gets more complex later, but right now
-		return 0;
+--UCFE5hbQc5QNmNAy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-And maybe return in the if branch as well.
-Same for other similar code in this patch.
+-----BEGIN PGP SIGNATURE-----
 
-> +	}
-> +	return ret;
-> +}
-> +
->  static void update_arch_timer_irq_lines(struct kvm_vcpu *vcpu)
->  {
->  	struct realm_rec *rec = &vcpu->arch.rec;
-> @@ -198,6 +252,12 @@ int handle_rec_exit(struct kvm_vcpu *vcpu, int rec_run_ret)
->  		return rec_exit_ripas_change(vcpu);
->  	case RMI_EXIT_HOST_CALL:
->  		return rec_exit_host_call(vcpu);
-> +	case RMI_EXIT_VDEV_REQUEST:
-> +		return rec_exit_vdev_request(vcpu);
-> +	case RMI_EXIT_VDEV_COMM:
-> +		return rec_exit_vdev_communication(vcpu);
-> +	case RMI_EXIT_DEV_MEM_MAP:
-> +		return rec_exit_dev_mem_map(vcpu);
->  	}
->  
->  	kvm_pr_unimpl("Unsupported exit reason: %u\n",
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaIotxAAKCRAw5/Bqldv6
+8jtFAKCAXX0aOwyInpx0Q+gZ2vXgWjrBHQCeMQnkyOMwVT35tIbT/RC5hlstnU0=
+=x7Kn
+-----END PGP SIGNATURE-----
 
+--UCFE5hbQc5QNmNAy--
 
