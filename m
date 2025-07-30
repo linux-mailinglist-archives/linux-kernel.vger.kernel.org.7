@@ -1,100 +1,141 @@
-Return-Path: <linux-kernel+bounces-750120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07257B15781
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:23:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3663B15783
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:24:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 149F54E0DA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:23:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 058254E1026
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7703185E7F;
-	Wed, 30 Jul 2025 02:23:39 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60521AA786;
+	Wed, 30 Jul 2025 02:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3iX+nsSS"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAE717BBF
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:23:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1F229D0D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753842219; cv=none; b=c+DeGIZSbmTZOC83NQ9Eq9iRTpFaMnb1sjcob67uPy9Xcp+nc5KgZub7alm8NvQag2GEM9mbAwdRwWgxVNk+cFWKOGxqaR2Hw+5BSxdGDVo6B/1kfmhkZdu8D6Txe1v2jpb2vdRlKqfShSS+sqde4QVO42g4GelgEOTaRsOJhVc=
+	t=1753842246; cv=none; b=YRovAI6xJT85Q1rW/CmIfG+9MJwD7Oa0RG1XpXIZctbKxbvQo+YUjiR3V1Uz9dCzBoDVzglfEIsJdCE6Og/Ntv4FwobW6lLSgLzENGICVyopV0kaMzSsX1WhuVa912CVrT6IGHBwwZ7BAzUf2wQW4OLr6sf5uBHIOw8YcJjYgj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753842219; c=relaxed/simple;
-	bh=WT9jXiKICMBwYJJ8VqCRuGTbcsh5xCQdpQ7WpVDO4NQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sQuAQfvWxwJ9ft3AyEmO1+BhBBVmH5JvhvzDgaExzJzSGKI1CLaEWVk5rmyx4z7c88Twyffe9ZClTu3BjuP4XLt3O2RfbiRs+2JtewY4rt28GXxBQBD6MSCxqGF4HNv1eaW2cPi0VuWjjPO/F7c5XLrdcpW2RlvLeq3YiVWhcRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bsGHv3N4wz27j6G;
-	Wed, 30 Jul 2025 10:24:27 +0800 (CST)
-Received: from dggpemf500012.china.huawei.com (unknown [7.185.36.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0A3B51401F1;
-	Wed, 30 Jul 2025 10:23:26 +0800 (CST)
-Received: from huawei.com (10.175.124.71) by dggpemf500012.china.huawei.com
- (7.185.36.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 30 Jul
- 2025 10:23:25 +0800
-From: Zhang Qilong <zhangqilong3@huawei.com>
-To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<lorenzo.stoakes@oracle.com>, <wangkefeng.wang@huawei.com>,
-	<zhangqilong3@huawei.com>, <sunnanyong@huawei.com>
-Subject: [PATCH v2] /dev/zero: try to align PMD_SIZE for private mapping
-Date: Wed, 30 Jul 2025 10:22:06 +0800
-Message-ID: <20250730022206.1349706-1-zhangqilong3@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753842246; c=relaxed/simple;
+	bh=H0UUCMwPbauJFwXKf5FEJMbuxTY4gBIHnlfo177PUBI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=tQZDdUPebEATq4y/PlZ7cuEyNMN2D5cnBVmlvnCgMR9uoZf3jwzhzrII8JdOV/+oXQrh/i2oYJEn7odt5KEUjt3aRp8UOp2Eboic2R9Vk8HUrYi4K93UawLkNsIDi4+dxsDRBHyS8cs+cgRXIYBCuFYBhg+nOWkItmUSnI55q2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3iX+nsSS; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74b4d2f67d5so6127447b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 19:24:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753842244; x=1754447044; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=5Ci2ReqvExh5hUJsZr8hncyF/IZp83k8aCl7UPO5nf8=;
+        b=3iX+nsSS5v4DmZb69+fiu5gmJYfkfoyjOal8kwmHI+haOZ1kXHfZ57fg0xA6T8c49n
+         MNwtrJ1TdBC2IsRVCLxxppwSBhmhHlxZ3K4JeWr6FjSXpSAHdtNqjhnk9aqlDAfkvTX2
+         GwaPRFB6IfGASpslh0gLaX6g6rWVubGt0teOf8/QD5+cVF1ZSzMoMO+CP6sx9lZRMiqZ
+         quhHHohhVd4rprrtUIsK02siQC4G9wVhwdwGCyCnvvTaFk+6jxw98feP6OevdpTxMNlj
+         HxtQVJM+idrlGUIxHBwzFARHy9OHT7nGKmuVsYRykVM0SKN6L5WzztIM8T/zS5HtBPzg
+         JZDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753842244; x=1754447044;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5Ci2ReqvExh5hUJsZr8hncyF/IZp83k8aCl7UPO5nf8=;
+        b=IL7DSl1NfQH/ifuuaOzuap1PlYPNWUaoWpn+/v8t9olnw3jml42nuBYZ9RZFgIAWb6
+         ySQbciNVDcqLclxUPIvs9Wfk9j9cKTZq+HjFCG6aMMTE4VbvZNGumgXU/PmjIm4uPM0N
+         XHrkfeR6oNUkM+PM/SlLMZ3bYNDNYPZnLK8+bkT7scKjy8oPdEWQS/4GbJ0yJpipRCWy
+         YLgVwCeEV61g3U4MFcvRJNmjlckw7psfldyQSi9FthwEHVZPlQ84un9rqv4rX8Ffyz1b
+         nK4W9Pd5GERmTBsTicyX1HoZg8ljMFPAVH3oa315DCzk1LLnzPi0oNw/ENCG5Kq9AMau
+         qs6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXdo3jyCoViF5fR9OgYn/AoHBuH4hgxtsBRY6b8a5aOxSs34DHzS5brbBb0A43iunT8fSn9HL1w5u3ACGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC9ISHroov5xShm83oGmz0kcwHFandXt/v4sC6O4gn8B3rhO0n
+	y2VtSHikkie0SYq837wpislPKFfBM+ZqGDPjbBS+gPPk1BeurygEQZqBNSfPSRWzKyhgJIDwcPI
+	zOQH0gQ==
+X-Google-Smtp-Source: AGHT+IGCk06yTemJIvRZYVkO5wpPDlMdnXl+JYzRbjc4qUTdc6uFzIoU4ooIBU7ilF26pnQ7F85gFRA5qrM=
+X-Received: from pfhx21.prod.google.com ([2002:a05:6a00:1895:b0:747:af58:72ca])
+ (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:1152:b0:748:33f3:8da3
+ with SMTP id d2e1a72fcca58-76ab30c3c7amr2430894b3a.19.1753842243778; Tue, 29
+ Jul 2025 19:24:03 -0700 (PDT)
+Date: Tue, 29 Jul 2025 19:23:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- dggpemf500012.china.huawei.com (7.185.36.8)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+Message-ID: <20250730022347.71722-1-yuzhuo@google.com>
+Subject: [PATCH v1 0/4] rcuscale: Add debugfs file based controls and CPU
+ affinity offset
+From: Yuzhuo Jing <yuzhuo@google.com>
+To: Ian Rogers <irogers@google.com>, Yuzhuo Jing <yzj@umich.edu>, Jonathan Corbet <corbet@lwn.net>, 
+	Davidlohr Bueso <dave@stgolabs.net>, "Paul E . McKenney" <paulmck@kernel.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Frederic Weisbecker <frederic@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang@linux.dev>, 
+	Andrew Morton <akpm@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Arnd Bergmann <arnd@arndb.de>, Frank van der Linden <fvdl@google.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Cc: Yuzhuo Jing <yuzhuo@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-If THP is enable, mapping /dev/zero with a size larger than 2MB could
-achieve performance gains by allocating aligned address. The mprot_tw4m
-in libMicro average execution time on arm64:
-  - Test case:        mprot_tw4m
-  - Before the patch:   22 us
-  - After the patch:    17 us
+In an effort to add RCU benchmarks to the perf tool and to improve
+the base-metal rcuscale tests, this patch series adds several auxiliary
+features useful for testing tools.
 
-Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
----
- drivers/char/mem.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+This series introduces a few rcuscale options:
+  * writer_no_print: skip writer duration printing during shutdown, but
+    instead let users read from the new "writer_durations" debugfs file.
+    This drastically improves cleanup speed.
+  * block_start: an option to hold all worker thread until the new
+    debugfs "should_start" file is written.
+  * {reader,writer,kfree}_cpu_offset: the starting value of CPU affinity
+    for each type of threads.  This can be used to avoid scheduling
+    different types of threads on the same CPU.  The 4th patch in this
+    series shows drastic performance differences w/ and w/o overlaps.
 
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index 48839958b0b1..3699e716b84e 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -525,12 +525,20 @@ static unsigned long get_unmapped_area_zero(struct file *file,
- 		 * so as not to confuse shmem with our handle on "/dev/zero".
- 		 */
- 		return shmem_get_unmapped_area(NULL, addr, len, pgoff, flags);
- 	}
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	/*
-+	 * Attempt to map aligned to huge page size if possible, otherwise we
-+	 * fall back to system page size mappings in thp_get_unmapped_area.
-+	 */
-+	return thp_get_unmapped_area(file, addr, len, pgoff, flags);
-+#else
- 	/* Otherwise flags & MAP_PRIVATE: with no shmem object beneath it */
- 	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
-+#endif
- #else
- 	return -ENOSYS;
- #endif
- }
- 
+This patch series creates an "rcuscale" folder in debugfs, containing
+the following files:
+  * writer_durations: a CSV formatted file containing writer id and
+    writer durations.
+  * {reader,writer,kfree}_tasks: the list of kernel task PIDs for
+    external tools to attach to.
+  * should_start: a writable file to signal the start of the experiment,
+    used in conjunction with the new "block_start" option.
+  * test_complete: a readable file to indicate whether the experiment has
+    finished or not.
+
+RFCs:
+  * Should those new files reside in debugfs or in procfs?
+  * What format should be used for the writer_duartions file, and what
+    documentations should be updated for the file format definition?
+  * In the 4th patch, we see different characteristics between overlap
+    and non-overlap.  Current rcuscale creates nr_cpu readers and nr_cpu
+    writers, thus scheduling 2nr_cpu tasks on nr_cpu CPUs.  Should we
+    consider changes to this behavior?  Or add automatic conflict
+    resolutions when total threads <= nr_cpu.
+
+Thank you!
+
+Yuzhuo Jing (4):
+  rcuscale: Create debugfs file for writer durations
+  rcuscale: Create debugfs files for worker thread PIDs
+  rcuscale: Add file based start/finish control
+  rcuscale: Add CPU affinity offset options
+
+ .../admin-guide/kernel-parameters.txt         |  29 ++
+ kernel/rcu/rcuscale.c                         | 361 +++++++++++++++++-
+ 2 files changed, 377 insertions(+), 13 deletions(-)
+
 -- 
-2.43.0
+2.50.1.552.g942d659e1b-goog
 
 
