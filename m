@@ -1,314 +1,278 @@
-Return-Path: <linux-kernel+bounces-750595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67669B15E74
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:46:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B10CB15E77
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:47:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C5895A46D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:46:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C8AF7A3895
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:45:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657AE299950;
-	Wed, 30 Jul 2025 10:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE51122A4F6;
+	Wed, 30 Jul 2025 10:47:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ijtjfvks"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XiOzldYo"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE3B2980AC
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A2F25D535
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:47:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753872318; cv=none; b=Rf5f32jpBl/8ka+SCR9x9VxgBso9CG8vL6iAiLYb1DPvCMqrg38BxSxXl3YXLHnCNNnSoqN0svqC+5NCMCFvgW/hHXA7VimQ0O38Ns1ILf3fjV4G229tD7R95quovBersG/s0MPEbAYWZSGgmMigAO7lZffhK6m8JNsmXgRc0Us=
+	t=1753872425; cv=none; b=bLXfxhTslCa4bd5Adxq30HV9un7PVmZmty5FFdnX8bNAGuL2R2Jux8tLz4tvaE76w05OVOdF/L5OVoQAbfTONBkb65LSC3VbAwkMKIHkq84A46bQebMw4z4acK05XrM9uFYhqUVPktq1g1fUlLsS4yL/YRs0tSAusT+uj7FgXlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753872318; c=relaxed/simple;
-	bh=zMYDgD1v9PbcRgvlt7dYWThewO6Q4BQc0fqBmXE/dmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r02yVbLSvO1oCptShpvfl+8ENyIh8BYsf2thyZN5uSJvBguqtSIxK5SFNqhMXr6srYlKFk6noqxXt/xKmUKc9JBpAC0lDJseU8YfPbIEcNvOZjviVyqyhnnr4biP1/kzZuzTDFww+Y6RAbknhrPlVnO4mxsjFH8U1lsBz5wQHcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ijtjfvks; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-615378b42ecso6107077a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:45:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753872314; x=1754477114; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Orl0dxFN5prrJRMhCNo44wNjAVEDhcd1qwh2pT3Fzc=;
-        b=Ijtjfvks8xtS+5BwZm9XB/lYS0kaH0370HYACHGkwKNSWfl5i10xUgeBY5Ry4QpPYF
-         VYONZCHTQMkpopZeIb6ZtWzfpK5qwAYql1YX1ukTmpuVZbVh9NosmDZEcOyaNnY0po+e
-         73TqMOQtncfb3xH+2dkVIQyRSZvaZ/fDzQ/kXdUNDNHpZwf7lW3mZxkvn7vN0t0XVcyE
-         pzWC2jdHm9Xka/YAO6pPhV4PqLGwcqoPXcVmGO1MA0mqG2GzIZb2+EHkl8RqvmADCuZV
-         hoUJvFP3M/NVSsaE0BFqo73msqpLwsCG/3pY+I+RhyXh4/GOU/MSpHVbTQnerSjabPyh
-         ifFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753872314; x=1754477114;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Orl0dxFN5prrJRMhCNo44wNjAVEDhcd1qwh2pT3Fzc=;
-        b=BRY8dJtNIxFS1xcv9zaO36LrtfQ8tLtRj8QMC11gP3pcQQivoyt23bLADDQ9A0VrGR
-         es9HrjPU7tICCulxkUZElTYVujPvObKdjsMqlALjgEMZ6EcCQDVcx1uz/o5EGql7zdgJ
-         WJ8HkYv1P2PPim952lcXfOtfHKOlWEFsTzbObQg2Ly6fc+8+k0V2yvjHgeXmcn/KvtT1
-         yqIgs8l20o9bl00ifKzlRX59vCtGFobAej/YjMDh3rml2lEvbw2XyyJPMqG7XsOLczrA
-         4Hf9l5a0W15Lf/b1bfRtfYDByDtC26fTk/e3R0skFsW6dVsM24Lf7vAv6hh6QFxgHho+
-         9m9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWXzz9lgHS6AA1nXRl+3lhDgleb7VMrU9EstvD9DKuEarzqyQIYkvJLc+axAh+f+35+YI769ug1el2PlAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxigDtFWT/0xePGN502eVE6QWESiuKpLZbUtdJpzxuv67NwBCMW
-	fCvXJcFaBMVzOeU8mEPTDjVgUNE7hftMzsR0g9DCp/QcjhM3C5L96FLK
-X-Gm-Gg: ASbGncuKD1K8aNumyObd7foraGutweVs80QR59LyM0fcKPjtT776almAPcijtcHpnU+
-	r5r0RBHvWOcjga7LohEch1x3j+M4eug1mASU4cREmzUJuoqC+viRqX3FjOxXHh8nBLflRDY5ZbM
-	T7KhkABj80178TsJUE/AIcmKtGd7wJxeWcAAGnghKai42n9yT4cmvV+MYXn5ttJGa9SQVpmbQdm
-	OGImx7eqsv8dDkL48niGQdbx+y/uX2AB3/R3qfnxlb+k1F83KGmBzQGa/9+tnW7UXxEbOXv239o
-	DyQAl8qKfVSEGlTk9Z587pPlw7EmNI33hCCNOzLO4cI+oZTB7n/zWK/O9Ot13GY+9LbQaD7pfLX
-	mz980RMfSGdM+fC9rEp78JBWGN+pXI76gsP4HtJrNh3jZZ7AgGorV4J1b
-X-Google-Smtp-Source: AGHT+IHulO8SbF+m+xqs94001tnJHzK4YfZ6e4AqFOBfQddGkX20d5N5vga3aLzI/716AKlWIiQMHQ==
-X-Received: by 2002:a50:9fec:0:b0:609:a91:87e with SMTP id 4fb4d7f45d1cf-61586eef919mr1936150a12.1.1753872313417;
-        Wed, 30 Jul 2025 03:45:13 -0700 (PDT)
-Received: from tumbleweed (ip-77-25-32-208.web.vodafone.de. [77.25.32.208])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6157974fde0sm1582734a12.7.2025.07.30.03.45.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 03:45:13 -0700 (PDT)
-From: Michael Straube <straube.linux@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: hdegoede@redhat.com,
-	Larry.Finger@lwfinger.net,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 8/8] staging: rtl8723bs: move rtw_reset_securitypriv to core/rtw_mlme.c
-Date: Wed, 30 Jul 2025 12:45:01 +0200
-Message-ID: <20250730104501.150270-9-straube.linux@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250730104501.150270-1-straube.linux@gmail.com>
-References: <20250730104501.150270-1-straube.linux@gmail.com>
+	s=arc-20240116; t=1753872425; c=relaxed/simple;
+	bh=xJcr7OixK/+gzG4tUCcaDzpDdglPfVNlJJeGq+WVujk=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=eVrOW/d4oXbZuagRLWj4voYh3onF+jGVgoZRB5YAqfjQIt4ZuMIw2YSSb1DBcZ4a1BhBSHL43GCMkMq0BEdmmvoh1IFSalJmTu94P7g/txseKP4zQCM5R7tSltsAmWPwRNlc5xkQZURaA+Gu9dX1d5m7V8s59WIb7dM2gtAqqz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XiOzldYo; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U0IOuf008962;
+	Wed, 30 Jul 2025 10:46:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=1z1uP4
+	9klDvnz1PCnlN/PgZalSHcJuI+oDjWq743grk=; b=XiOzldYoCf7A3Y44MCT27m
+	q8MUJmJXEz8QKOrk4fVIFXJrt6sCaw7xlpgKe+qQIaezo/h7yiirJTYhD3UBPKKX
+	2akX51QKbKS71bZL3ePqduuhsKQJ0Y5H+kilMUXqdo0QcmC8us7NmZbJwbm/16mY
+	qYyvKE6X7H/VXiDp84D96bcqAIXIxjSxf9bYh+Bj3MmIBcX8Ho1ZTTRdS+U04LOD
+	xiccWI1OOnA6Ulg0bIqGCNcMr/FfLjHAoH+jx3luD1eERHxDzsNWRHs/ANdijN6v
+	6AuLMnwShFHy7sJ3mHeX0j9pzF/xMZgvhPC8uerSlbbupEPrpnEVd9M/wm7S5F+w
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcg45c6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 10:46:40 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56UAkeDC013479;
+	Wed, 30 Jul 2025 10:46:40 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcg45c1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 10:46:40 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56U6ZGwD016406;
+	Wed, 30 Jul 2025 10:46:39 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485aumpvgu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 10:46:39 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56UAkcHF9438402
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Jul 2025 10:46:38 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0C1A858063;
+	Wed, 30 Jul 2025 10:46:38 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 514A358059;
+	Wed, 30 Jul 2025 10:46:37 +0000 (GMT)
+Received: from ltc.linux.ibm.com (unknown [9.5.196.140])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 30 Jul 2025 10:46:37 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Wed, 30 Jul 2025 16:16:36 +0530
+From: samir <samir@linux.ibm.com>
+To: "Nysal Jan K.A." <nysal@linux.ibm.com>
+Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman
+ <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy
+ <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc/qspinlock: Add spinlock contention tracepoint
+In-Reply-To: <20250725081432.1254986-1-nysal@linux.ibm.com>
+References: <20250725081432.1254986-1-nysal@linux.ibm.com>
+Message-ID: <7147ea4e429326e76723fd788e44b6f4@linux.ibm.com>
+X-Sender: samir@linux.ibm.com
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA3NiBTYWx0ZWRfXwAX79tK09qbW
+ 5e5+oSGa2/Yw4n2KarCQ2xuyj44KEaALdhUff2413+RkR/1qQKAkYCiAm491OwuxhY6epA+9nWV
+ H7CjqHh+Tryl4dZs/jnNSJg+N6sZuixl/a3F+YWi6cu56RX3HYiPQedJqIsqB7ys47rEStT1zPP
+ TY5oQD5lMzE0OQVUePwwKQBwFUrPgBnpVH6deRpOmtRSB/3lO3X/HaNVPtgB0Aw980rkAi/6cr1
+ 93N/Ke8hEHo0ILd8ZchT/azySbG/Ekgj7vuKTlvyvLRLEs5QVRK8mAAxqT3QSuoXJu3owE/BE0o
+ TgQq/k+RZ1Mp0Rep3INZNSF3Od+0J9nI7IxW7srNMD6Kn3GcUHgfL5WA9YTuYr/OoTipauEeDzc
+ 6LR1KfBoF2AAOHeQe8NYTceIQw1s8l3EmfXVw0XSAxWcENDJL9gDzDtzhNoM2dYDjQSKxXF/
+X-Proofpoint-ORIG-GUID: nqb4w52MkUjpp6xb-tZ_24uc6Iw1NTz6
+X-Authority-Analysis: v=2.4 cv=Lp2Symdc c=1 sm=1 tr=0 ts=6889f810 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=NEAV23lmAAAA:8 a=VnNF1IyMAAAA:8
+ a=hfXmp_HCLgfKRUNig1YA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: uj1zfZhl9W3Qyuk1dGZIlUEWUTBXsx9D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
+ adultscore=0 clxscore=1011 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507300076
 
-Move the function rtw_reset_securitypriv from os_dep/mlme_linux.c to
-core/rtw_mlme.c to reduce code in the os_dep directory.
+On 2025-07-25 13:44, Nysal Jan K.A. wrote:
+> Add a lock contention tracepoint in the queued spinlock slowpath.
+> Also add the __lockfunc annotation so that in_lock_functions()
+> works as expected.
+> 
+> Signed-off-by: Nysal Jan K.A. <nysal@linux.ibm.com>
+> ---
+>  arch/powerpc/lib/qspinlock.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/powerpc/lib/qspinlock.c 
+> b/arch/powerpc/lib/qspinlock.c
+> index bcc7e4dff8c3..622e7f45c2ce 100644
+> --- a/arch/powerpc/lib/qspinlock.c
+> +++ b/arch/powerpc/lib/qspinlock.c
+> @@ -9,6 +9,7 @@
+>  #include <linux/sched/clock.h>
+>  #include <asm/qspinlock.h>
+>  #include <asm/paravirt.h>
+> +#include <trace/events/lock.h>
+> 
+>  #define MAX_NODES	4
+> 
+> @@ -708,8 +709,9 @@ static __always_inline void
+> queued_spin_lock_mcs_queue(struct qspinlock *lock, b
+>  	qnodesp->count--;
+>  }
+> 
+> -void queued_spin_lock_slowpath(struct qspinlock *lock)
+> +void __lockfunc queued_spin_lock_slowpath(struct qspinlock *lock)
+>  {
+> +	trace_contention_begin(lock, LCB_F_SPIN);
+>  	/*
+>  	 * This looks funny, but it induces the compiler to inline both
+>  	 * sides of the branch rather than share code as when the condition
+> @@ -718,16 +720,17 @@ void queued_spin_lock_slowpath(struct qspinlock 
+> *lock)
+>  	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) && is_shared_processor()) {
+>  		if (try_to_steal_lock(lock, true)) {
+>  			spec_barrier();
+> -			return;
+> +		} else {
+> +			queued_spin_lock_mcs_queue(lock, true);
+>  		}
+> -		queued_spin_lock_mcs_queue(lock, true);
+>  	} else {
+>  		if (try_to_steal_lock(lock, false)) {
+>  			spec_barrier();
+> -			return;
+> +		} else {
+> +			queued_spin_lock_mcs_queue(lock, false);
+>  		}
+> -		queued_spin_lock_mcs_queue(lock, false);
+>  	}
+> +	trace_contention_end(lock, 0);
+>  }
+>  EXPORT_SYMBOL(queued_spin_lock_slowpath);
 
-The file os_dep/mlme_linux.c is finally empty now and we can remove it.
+Hello,
 
-Signed-off-by: Michael Straube <straube.linux@gmail.com>
----
- drivers/staging/rtl8723bs/Makefile            |  1 -
- drivers/staging/rtl8723bs/core/rtw_mlme.c     | 60 +++++++++++++++++
- drivers/staging/rtl8723bs/include/drv_types.h |  1 -
- .../staging/rtl8723bs/include/mlme_osdep.h    | 13 ----
- drivers/staging/rtl8723bs/include/rtw_mlme.h  |  1 +
- drivers/staging/rtl8723bs/os_dep/mlme_linux.c | 67 -------------------
- 6 files changed, 61 insertions(+), 82 deletions(-)
- delete mode 100644 drivers/staging/rtl8723bs/include/mlme_osdep.h
- delete mode 100644 drivers/staging/rtl8723bs/os_dep/mlme_linux.c
+I have verified the patch with the latest upstream Linux kernel, and 
+here are my findings:
 
-diff --git a/drivers/staging/rtl8723bs/Makefile b/drivers/staging/rtl8723bs/Makefile
-index 8560b84a3146..19c0525ec3e0 100644
---- a/drivers/staging/rtl8723bs/Makefile
-+++ b/drivers/staging/rtl8723bs/Makefile
-@@ -48,7 +48,6 @@ r8723bs-y = \
- 		hal/HalHWImg8723B_RF.o \
- 		hal/HalPhyRf_8723B.o \
- 		os_dep/ioctl_cfg80211.o \
--		os_dep/mlme_linux.o \
- 		os_dep/osdep_service.o \
- 		os_dep/os_intfs.o \
- 		os_dep/recv_linux.o \
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 1c720947955e..69b64d605186 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -1116,6 +1116,66 @@ static void rtw_joinbss_update_network(struct adapter *padapter, struct wlan_net
- 	rtw_update_ht_cap(padapter, cur_network->network.ies, cur_network->network.ie_length, (u8) cur_network->network.configuration.ds_config);
- }
- 
-+static struct rt_pmkid_list   backupPMKIDList[NUM_PMKID_CACHE];
-+void rtw_reset_securitypriv(struct adapter *adapter)
-+{
-+	u8 backupPMKIDIndex = 0;
-+	u8 backupTKIPCountermeasure = 0x00;
-+	u32 backupTKIPcountermeasure_time = 0;
-+	/*  add for CONFIG_IEEE80211W, none 11w also can use */
-+	struct mlme_ext_priv *pmlmeext = &adapter->mlmeextpriv;
-+
-+	spin_lock_bh(&adapter->security_key_mutex);
-+
-+	if (adapter->securitypriv.dot11AuthAlgrthm == dot11AuthAlgrthm_8021X) {
-+		/* 802.1x */
-+		/*  Added by Albert 2009/02/18 */
-+		/*  We have to backup the PMK information for WiFi PMK Caching test item. */
-+		/*  */
-+		/*  Backup the btkip_countermeasure information. */
-+		/*  When the countermeasure is trigger, the driver have to disconnect with AP for 60 seconds. */
-+
-+		memcpy(&backupPMKIDList[0], &adapter->securitypriv.PMKIDList[0], sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
-+		backupPMKIDIndex = adapter->securitypriv.PMKIDIndex;
-+		backupTKIPCountermeasure = adapter->securitypriv.btkip_countermeasure;
-+		backupTKIPcountermeasure_time = adapter->securitypriv.btkip_countermeasure_time;
-+
-+		/* reset RX BIP packet number */
-+		pmlmeext->mgnt_80211w_IPN_rx = 0;
-+
-+		memset((unsigned char *)&adapter->securitypriv, 0, sizeof(struct security_priv));
-+
-+		/*  Added by Albert 2009/02/18 */
-+		/*  Restore the PMK information to securitypriv structure for the following connection. */
-+		memcpy(&adapter->securitypriv.PMKIDList[0], &backupPMKIDList[0], sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
-+		adapter->securitypriv.PMKIDIndex = backupPMKIDIndex;
-+		adapter->securitypriv.btkip_countermeasure = backupTKIPCountermeasure;
-+		adapter->securitypriv.btkip_countermeasure_time = backupTKIPcountermeasure_time;
-+
-+		adapter->securitypriv.ndisauthtype = Ndis802_11AuthModeOpen;
-+		adapter->securitypriv.ndisencryptstatus = Ndis802_11WEPDisabled;
-+
-+	} else {
-+		/* reset values in securitypriv */
-+		/* if (adapter->mlmepriv.fw_state & WIFI_STATION_STATE) */
-+		/*  */
-+		struct security_priv *psec_priv = &adapter->securitypriv;
-+
-+		psec_priv->dot11AuthAlgrthm = dot11AuthAlgrthm_Open;  /* open system */
-+		psec_priv->dot11PrivacyAlgrthm = _NO_PRIVACY_;
-+		psec_priv->dot11PrivacyKeyIndex = 0;
-+
-+		psec_priv->dot118021XGrpPrivacy = _NO_PRIVACY_;
-+		psec_priv->dot118021XGrpKeyid = 1;
-+
-+		psec_priv->ndisauthtype = Ndis802_11AuthModeOpen;
-+		psec_priv->ndisencryptstatus = Ndis802_11WEPDisabled;
-+		/*  */
-+	}
-+	/*  add for CONFIG_IEEE80211W, none 11w also can use */
-+	spin_unlock_bh(&adapter->security_key_mutex);
-+}
-+
- /* Notes: the function could be > passive_level (the same context as Rx tasklet) */
- /* pnetwork : returns from rtw_joinbss_event_callback */
- /* ptarget_wlan: found from scanned_queue */
-diff --git a/drivers/staging/rtl8723bs/include/drv_types.h b/drivers/staging/rtl8723bs/include/drv_types.h
-index 080c321665c0..f1c16ddacc83 100644
---- a/drivers/staging/rtl8723bs/include/drv_types.h
-+++ b/drivers/staging/rtl8723bs/include/drv_types.h
-@@ -40,7 +40,6 @@
- #include <rtw_qos.h>
- #include <rtw_pwrctrl.h>
- #include <rtw_mlme.h>
--#include <mlme_osdep.h>
- #include <rtw_io.h>
- #include <rtw_ioctl_set.h>
- #include <osdep_intf.h>
-diff --git a/drivers/staging/rtl8723bs/include/mlme_osdep.h b/drivers/staging/rtl8723bs/include/mlme_osdep.h
-deleted file mode 100644
-index 3930d9e6dab7..000000000000
---- a/drivers/staging/rtl8723bs/include/mlme_osdep.h
-+++ /dev/null
-@@ -1,13 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0 */
--/******************************************************************************
-- *
-- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
-- *
-- ******************************************************************************/
--#ifndef	__MLME_OSDEP_H_
--#define __MLME_OSDEP_H_
--
--
--void rtw_reset_securitypriv(struct adapter *adapter);
--
--#endif	/* _MLME_OSDEP_H_ */
-diff --git a/drivers/staging/rtl8723bs/include/rtw_mlme.h b/drivers/staging/rtl8723bs/include/rtw_mlme.h
-index 3cf68b85eb32..4c15d0194d4f 100644
---- a/drivers/staging/rtl8723bs/include/rtw_mlme.h
-+++ b/drivers/staging/rtl8723bs/include/rtw_mlme.h
-@@ -395,5 +395,6 @@ u8 rtw_to_roam(struct adapter *adapter);
- int rtw_select_roaming_candidate(struct mlme_priv *pmlmepriv);
- 
- void rtw_sta_media_status_rpt(struct adapter *adapter, struct sta_info *psta, u32 mstatus);
-+void rtw_reset_securitypriv(struct adapter *adapter);
- 
- #endif /* __RTL871X_MLME_H_ */
-diff --git a/drivers/staging/rtl8723bs/os_dep/mlme_linux.c b/drivers/staging/rtl8723bs/os_dep/mlme_linux.c
-deleted file mode 100644
-index 918d9496d7cc..000000000000
---- a/drivers/staging/rtl8723bs/os_dep/mlme_linux.c
-+++ /dev/null
-@@ -1,67 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/******************************************************************************
-- *
-- * Copyright(c) 2007 - 2011 Realtek Corporation. All rights reserved.
-- *
-- ******************************************************************************/
--#include <drv_types.h>
--
--static struct rt_pmkid_list   backupPMKIDList[NUM_PMKID_CACHE];
--void rtw_reset_securitypriv(struct adapter *adapter)
--{
--	u8 backupPMKIDIndex = 0;
--	u8 backupTKIPCountermeasure = 0x00;
--	u32 backupTKIPcountermeasure_time = 0;
--	/*  add for CONFIG_IEEE80211W, none 11w also can use */
--	struct mlme_ext_priv *pmlmeext = &adapter->mlmeextpriv;
--
--	spin_lock_bh(&adapter->security_key_mutex);
--
--	if (adapter->securitypriv.dot11AuthAlgrthm == dot11AuthAlgrthm_8021X) {
--		/* 802.1x */
--		/*  Added by Albert 2009/02/18 */
--		/*  We have to backup the PMK information for WiFi PMK Caching test item. */
--		/*  */
--		/*  Backup the btkip_countermeasure information. */
--		/*  When the countermeasure is trigger, the driver have to disconnect with AP for 60 seconds. */
--
--		memcpy(&backupPMKIDList[0], &adapter->securitypriv.PMKIDList[0], sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
--		backupPMKIDIndex = adapter->securitypriv.PMKIDIndex;
--		backupTKIPCountermeasure = adapter->securitypriv.btkip_countermeasure;
--		backupTKIPcountermeasure_time = adapter->securitypriv.btkip_countermeasure_time;
--
--		/* reset RX BIP packet number */
--		pmlmeext->mgnt_80211w_IPN_rx = 0;
--
--		memset((unsigned char *)&adapter->securitypriv, 0, sizeof(struct security_priv));
--
--		/*  Added by Albert 2009/02/18 */
--		/*  Restore the PMK information to securitypriv structure for the following connection. */
--		memcpy(&adapter->securitypriv.PMKIDList[0], &backupPMKIDList[0], sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
--		adapter->securitypriv.PMKIDIndex = backupPMKIDIndex;
--		adapter->securitypriv.btkip_countermeasure = backupTKIPCountermeasure;
--		adapter->securitypriv.btkip_countermeasure_time = backupTKIPcountermeasure_time;
--
--		adapter->securitypriv.ndisauthtype = Ndis802_11AuthModeOpen;
--		adapter->securitypriv.ndisencryptstatus = Ndis802_11WEPDisabled;
--
--	} else {
--		/* reset values in securitypriv */
--		/* if (adapter->mlmepriv.fw_state & WIFI_STATION_STATE) */
--		/*  */
--		struct security_priv *psec_priv = &adapter->securitypriv;
--
--		psec_priv->dot11AuthAlgrthm = dot11AuthAlgrthm_Open;  /* open system */
--		psec_priv->dot11PrivacyAlgrthm = _NO_PRIVACY_;
--		psec_priv->dot11PrivacyKeyIndex = 0;
--
--		psec_priv->dot118021XGrpPrivacy = _NO_PRIVACY_;
--		psec_priv->dot118021XGrpKeyid = 1;
--
--		psec_priv->ndisauthtype = Ndis802_11AuthModeOpen;
--		psec_priv->ndisencryptstatus = Ndis802_11WEPDisabled;
--		/*  */
--	}
--	/*  add for CONFIG_IEEE80211W, none 11w also can use */
--	spin_unlock_bh(&adapter->security_key_mutex);
--}
--- 
-2.50.1
+———Kernel Version———
+6.16.0-rc7-160000.11-default+
+———perf --version———
+perf version 6.16.rc7.g5f33ebd2018c
 
+To test this patch, I used the Lockstorm benchmark, which rigorously 
+exercises spinlocks from kernel space.
+
+Benchmark repository: https://github.com/lop-devops/lockstorm
+To capture all events related to the Lockstorm benchmark, I used the 
+following command:
+cmd: perf lock record -a insmod lockstorm.ko
+After generating the perf.data, I analyzed the results using:
+cmd: perf lock contention -a -i perf.data
+
+————Logs————
+contended   total wait     max wait     avg wait         type   caller
+
+    6187241     12.50 m       2.30 ms    121.22 us     spinlock   
+kthread+0x160
+         78      8.23 ms    209.87 us    105.47 us     rwlock:W   
+do_exit+0x378
+         71      7.97 ms    208.07 us    112.24 us     spinlock   
+do_exit+0x378
+         68      4.18 ms    210.04 us     61.43 us     rwlock:W   
+release_task+0xe0
+         63      3.96 ms    204.02 us     62.90 us     spinlock   
+release_task+0xe0
+        115    477.15 us     19.69 us      4.15 us     spinlock   
+rcu_report_qs_rdp+0x40
+        250    437.34 us      5.34 us      1.75 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+         32    156.32 us     13.56 us      4.88 us     spinlock   
+cgroup_exit+0x34
+         19     88.12 us     12.20 us      4.64 us     spinlock   
+exit_fs+0x44
+         12     23.25 us      3.09 us      1.94 us     spinlock   
+lock_hrtimer_base+0x4c
+          1     18.83 us     18.83 us     18.83 us      rwsem:R   
+btrfs_tree_read_lock_nested+0x38
+          1     17.84 us     17.84 us     17.84 us      rwsem:W   
+btrfs_tree_lock_nested+0x38
+         10     15.75 us      5.72 us      1.58 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          5     15.08 us      5.59 us      3.02 us     spinlock   
+mix_interrupt_randomness+0xb4
+          2     12.78 us      9.50 us      4.26 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          1     11.13 us     11.13 us     11.13 us     spinlock   
+__queue_work+0x338
+          3     10.79 us      7.04 us      3.60 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          3      8.17 us      4.58 us      2.72 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          3      7.99 us      3.13 us      2.66 us     spinlock   
+lock_hrtimer_base+0x4c
+          2      6.66 us      4.57 us      3.33 us     spinlock   
+free_pcppages_bulk+0x50
+          3      5.34 us      2.19 us      1.78 us     spinlock   
+ibmvscsi_handle_crq+0x1e4
+          2      3.71 us      2.32 us      1.85 us     spinlock   
+__hrtimer_run_queues+0x1b8
+          2      2.98 us      2.19 us      1.49 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          1      2.85 us      2.85 us      2.85 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          2      2.15 us      1.09 us      1.07 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          2      2.06 us      1.06 us      1.03 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          1      1.69 us      1.69 us      1.69 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          1      1.53 us      1.53 us      1.53 us     spinlock   
+__queue_work+0xd8
+          1      1.27 us      1.27 us      1.27 us     spinlock   
+pull_rt_task+0xa0
+          1      1.16 us      1.16 us      1.16 us     spinlock   
+raw_spin_rq_lock_nested+0x24
+          1       740 ns       740 ns       740 ns     spinlock   
+add_device_randomness+0x5c
+          1       566 ns       566 ns       566 ns     spinlock   
+raw_spin_rq_lock_nested+0x24
+
+ From the results, we were able to observe lock contention specifically 
+on spinlocks.
+
+The patch works as expected.
+Thank you for the patch!
+
+Tested-by: Samir Mulani <samir@linux.ibm.com>
 
