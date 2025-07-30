@@ -1,256 +1,155 @@
-Return-Path: <linux-kernel+bounces-751143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE4A7B165B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:44:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B4A6B165B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:45:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA6935A3518
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:44:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EEB4170D55
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6886B2E06C3;
-	Wed, 30 Jul 2025 17:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 677F92E093F;
+	Wed, 30 Jul 2025 17:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bwFXq8wL";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="bwFXq8wL"
-Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11011056.outbound.protection.outlook.com [52.101.65.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JEP1lFUj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 335131DF754
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 17:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.56
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753897480; cv=fail; b=TadSl3cpP9/DZ0G6B/+ObDZJKszQGxxXatQs5oCUvzTW1pXRa2qh72xz7RGMCJA7YhiTioHIFchPqSIQKw5uj4/qOa2bJZPtEBEOo4hszX6otG8lvvzylPqyoIEOb2RHogDK3dupvWoYoelcrpEhoLYfkMPDK7PoEsfi9vt/SJU=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753897480; c=relaxed/simple;
-	bh=Y6Yh1qqj8/NLDWQSrojSd4JvsMkjcG4nfVjZvY1UTzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=IuMASDIfRxLu9zIMzkEawxzb8FhSgvRgJQljJ4+31dAsUvXFAesx5SRuEVhyaMHGgg4AibXU99/FPdrNJjZ1tKY/YkdfnNzIpvQXe7eoQgcnuTworJgstz5+TZwWPNlnRtZHk6ZaCiakljO29NGxdYSH28DclZ2v9IJ3OH61IgA=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bwFXq8wL; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=bwFXq8wL; arc=fail smtp.client-ip=52.101.65.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=TRui+J9X6UGH2WcBPSEeLYKIxGysoC4eOTHPuT4nnWSDq5CvuwBUC/JQZjeupdZt0TS97CyznpQ+loZfoNx/0eDSHdOWdug9klXfRRL598tKgBHuzruPXrZxCqfFW/1yciOlTwn08snAPm2v3oz2OcvAr6APTTIbg5bMGVqIcVBvMAw+fIgnk3cSRf9Tj94IUVGS1eQT0aY/p1Yhd+S+Fp2PFnr3WJFjDCJACyAAenWW5nwGiyByeIRMHjIwL3J2Nb1ubgKVjLxi5Oq66hC4YGnJC83NK8xRmw6v+vgKCLT3P4/0tLk/R2qDsPNEj/LSM6X/cYs2mCmJgo/BIk3JDg==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=69YVguywP5AU9QJY7JtfCkBSc51jGCMRZur/+Z8fi+A=;
- b=xzzhkflPEDZRWygwIM7k8z489ITzlp5p3/JWEwR3FIhWR4mDEHevYlsLo0hjmkenakj82PaR/jrUF6+nSSGp9ZGX6ao5Aoz/46aKh1JlQ4IuVTCQ9ElVeJup2gg7F7ToFZzUdfg5IKYx5+wn1ioHfXczJjFi5yOpWKII+Z/NVSsLdswEt6nS7+qK+AJ0+MTpLvXGLI1Zo8TU+9LYyO7jP7CDf8w/ySdlqPgnsaxYq5En7AT/NnHRbKk5NabOsAkQYGPbxGEANYvbZpe3MKTz+MS4xIUU8yvB/r83SFRLpPlmvzag1wa31IAuAaSpXMjbaPSXlAEzaPT2WCd7PUNknQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=lists.freedesktop.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=69YVguywP5AU9QJY7JtfCkBSc51jGCMRZur/+Z8fi+A=;
- b=bwFXq8wLOAHWmhoDOQCgrtYyCOuhwrf1xFMDfExHqVT98c/oo1NAq/5Um/t9AXqKGmii91arMiZae/ehQ8L3CuRt77sLWs6FflCfdHaeIidBa9ekF853TJiwlUzA/qV73TwZiqAiigRyDbXChJzHwpgWtEc0miSLmw5LNcf4nps=
-Received: from CWLP123CA0177.GBRP123.PROD.OUTLOOK.COM (2603:10a6:400:19b::14)
- by GV1PR08MB8571.eurprd08.prod.outlook.com (2603:10a6:150:83::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.25; Wed, 30 Jul
- 2025 17:44:30 +0000
-Received: from AM3PEPF0000A791.eurprd04.prod.outlook.com
- (2603:10a6:400:19b:cafe::bb) by CWLP123CA0177.outlook.office365.com
- (2603:10a6:400:19b::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8964.26 via Frontend Transport; Wed,
- 30 Jul 2025 17:44:29 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- AM3PEPF0000A791.mail.protection.outlook.com (10.167.16.120) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.10
- via Frontend Transport; Wed, 30 Jul 2025 17:44:28 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ENTbcHNFD82tzAhnRWcwEb6yBif+adoKokDsKSpQTRdrjkWYT4F/Le2L6LF/z3jwyHj4U9h5zSZlDN0zzyTc422v9qTTIeYV+zeKqQz8+r0i7qx3kHbWQcLCkK42mCcCa0d6Cc2BM6TdgYxHv2zjINkZMemNjK02rc7JXFQquHzYkbKtHwHaNHEiOYzwtHUSXW5dupJ8ELM/wNFMBQHdpj2oMu+yV7B9wvsXnai6AThBSb5omq2x0ueSZVduJzQvYaSJkPTedZcTxeY6V5vltZmJ2j9lBhGzz394NNUMo8N8J8aJdy9QhX6fey6V81JBiSqhj+wMvVDfbo9pRatjRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=69YVguywP5AU9QJY7JtfCkBSc51jGCMRZur/+Z8fi+A=;
- b=WOntSTOQy50WtHQwyo6N/a3Z0BD65sUwNvz5l5KilJ8TAb6TDd3hCnqnSZrAy8jKlMmITpEW66VGKdIxZFYrAHKDxZUm3h9loRLV91FQGG8GswtAP6cgJlJ0wedlewGFrPhBMUNpEm0DpZw5OcNYD3B/gqQnd+MScJVm4/OjSJ2rZsm5iP/xekT5rLNJqpxzzkKzsyUr9k89ONekF8x9AV7C1FKP7638ARQufHqEAVAkZAvsmCbyKA+mlpncHqv6s+G8Zbo5eiuEty5oRvxxzwXae8Yel//PlhvPLZSx6c8rgrVrCXC9VRQftmnSDXSTC9Qxlat+4c3G3woN1olgAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=69YVguywP5AU9QJY7JtfCkBSc51jGCMRZur/+Z8fi+A=;
- b=bwFXq8wLOAHWmhoDOQCgrtYyCOuhwrf1xFMDfExHqVT98c/oo1NAq/5Um/t9AXqKGmii91arMiZae/ehQ8L3CuRt77sLWs6FflCfdHaeIidBa9ekF853TJiwlUzA/qV73TwZiqAiigRyDbXChJzHwpgWtEc0miSLmw5LNcf4nps=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18) by GV1PR08MB10856.eurprd08.prod.outlook.com
- (2603:10a6:150:161::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Wed, 30 Jul
- 2025 17:43:53 +0000
-Received: from VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74]) by VI0PR08MB11200.eurprd08.prod.outlook.com
- ([fe80::d594:64a:dfc:db74%5]) with mapi id 15.20.8964.025; Wed, 30 Jul 2025
- 17:43:52 +0000
-From: Karunika Choo <karunika.choo@arm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: nd@arm.com,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org,
-	Dennis Tsiang <dennis.tsiang@arm.com>
-Subject: [PATCH v1] drm/panthor: Serialize GPU cache flush operations
-Date: Wed, 30 Jul 2025 18:43:38 +0100
-Message-ID: <20250730174338.1650212-1-karunika.choo@arm.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0429.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:a0::33) To VI0PR08MB11200.eurprd08.prod.outlook.com
- (2603:10a6:800:257::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C751E0DEA;
+	Wed, 30 Jul 2025 17:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753897510; cv=none; b=N4xoiofK4mnzWkwJXgGCO3PD2P6JmBthCwchS+YYMv6Myp59oGlGD4stph5rHYVQsG2WHvIlm/NICTH4grxx4VYNe3yzwyQP1WG/wFHE7X1ToJ6I/skF/1kEEuulHKdHnQaxo36RsnHB321qwYGD+nS06QBfpvmQemCEuP5OhPI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753897510; c=relaxed/simple;
+	bh=hs1BG8aT9FKJxFJ3orJrSyaFQ690x26pRpZbi29Wndk=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=sx04xqj9cCyh9oHSYYRvgsPDJmG0UpTePxmueobDnCV5nkMLi9BPsi34R3znrwGQooU6snfT7Rc1h2aUM64oqtTSwJw3zSf1h6mwis7m+8n6vny/l/6mF4WXplynIZDC+9A5dSyxvSECBYCETLbswZ4rdzx9Uq16jPo1NRKLrGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JEP1lFUj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10487C4CEE3;
+	Wed, 30 Jul 2025 17:45:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753897510;
+	bh=hs1BG8aT9FKJxFJ3orJrSyaFQ690x26pRpZbi29Wndk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=JEP1lFUjEuHDMz5py9iUrVsEfEUE3+316GPzop2YCr8II6veIhr+2UKp3+HveEOt4
+	 McQndkN1Kv7EJVlTixbMJXxm4E51Dh9egxNyDeAdyYYY9BJocgN4F4s/wnO7virAn2
+	 gunidqgh+rTFBKl9cIDmX9H3a0j02bihNJ7LCDm47V4nZz/RyJ3Q4hDCmaV9SPQrJc
+	 X8wgSv62S+FnIk/OMBvPACfPGDalOkBwzkS0iyU/WX67vHEqZAWzE1Ynm9105LLd4i
+	 V1dhUvlBjvaKkaqpNpGtHIqoBjmI8Sedasm4GzRWBj1B8SX55DpwRpYgEgQ8xvkxSU
+	 cqwtdcytBispw==
+From: SeongJae Park <sj@kernel.org>
+To: Yueyang Pan <pyyjason@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Usama Arif <usamaarif642@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] mm/damon: Move has filter to ops-common
+Date: Wed, 30 Jul 2025 10:45:06 -0700
+Message-Id: <20250730174506.60001-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <06734aa15198e542f9defbc1d29fc0731671c3d8.1753895066.git.pyyjason@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	VI0PR08MB11200:EE_|GV1PR08MB10856:EE_|AM3PEPF0000A791:EE_|GV1PR08MB8571:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6bd4e9c-f67f-465c-f168-08ddcf90bbc8
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?2wLY6MSCtNAGtQxccjqwtO9iDJXb9tWjLgrFBiSBnYuSGddOwc80dWiOeFJC?=
- =?us-ascii?Q?BzOzNB+g34wFL44U+UPP209OAE7ugOmc+O5ZMGMh+9VZbctEG9cy9GBsp8Xd?=
- =?us-ascii?Q?3fFh+bGy38Qtv40CT9JGje8KouOz2M94pBIqU7DjqPi1l6Vhfj2BDFn9BJQ+?=
- =?us-ascii?Q?fhKhuzx55XeUoKRM1s9d5ajMo1mHUvnNgPSWHPs0Hqm1BVuKG0T7//E63IpW?=
- =?us-ascii?Q?jQSJ0Z1/Kv05ThU9CCvlO9IaJxdeE2eytInGPLC6fCzCQZH7yMCcqTYRKDUg?=
- =?us-ascii?Q?DOKtHDcWopuImyBOCTt/xG2XHgY8y+8XQctMTsyBeTlPJtwgt3mu6foxaJ3u?=
- =?us-ascii?Q?+ewUkV6OKXLodwwX06p48WUnc+ysoMPucSnNrhdX+aF2+++OTBbim9uAJEXB?=
- =?us-ascii?Q?GZwqO2gcw2BIAIm2NMs3pQ8fh9GYFoGyeK4PUBXgD+OdMKwhPE3rZ7KC/5/l?=
- =?us-ascii?Q?rqkvmOZmGVc+oRQ7ZjIOF0ArFurPgxhTtpWpD8L9EziVrRHxZR/3Q4Mj5/PF?=
- =?us-ascii?Q?0taw2B4CAw9b6qlaYGLrNfKuuhOXuzg/5CBkxkzKxa3OTks8Owc3hKfwwXfN?=
- =?us-ascii?Q?0P+uF3lWIxM2eoXaEDOOpZvd1VEvTIPXJ1pNzgo+RptEFIFFjBjqxF79wLsH?=
- =?us-ascii?Q?QCfgrlyQxSo9hKU5z82RAZGEPZB6RbGhFwleb+PSs1CT+hpslyLUONI6+ZBn?=
- =?us-ascii?Q?bRhHTBGeZuznUdzIwbqLd94tbrBa/9Ugarwvmw+uW4CVUtczTgH/hNhSoV/j?=
- =?us-ascii?Q?uAzhe+tKMe/mHf8veErDoDp3z5ellfoR+1b3wg6ayDcXFNHmVAZqw8Tgn1Co?=
- =?us-ascii?Q?QIXhYDwMYMuijio82aQDDIufvQD662WyxvLHDmto71lwi15+QLabeW9NhKO4?=
- =?us-ascii?Q?vGdVXm9x6lHCiUaJvFIys89pZDBx8VmE2a6kX2ZUd23Z8Oz73g5Cy4GucXVx?=
- =?us-ascii?Q?WKnYWQgRG9kNC+8Aa7Jvf43wWSGHwwGxQ8fiRjZpELrhpB3MDGEzBHLXjY8S?=
- =?us-ascii?Q?ZmWNUmcYNN4ExoaL98auS1Zr0xWXFkA3j/26WkqxUHDZwDnneP8t44bE5xfd?=
- =?us-ascii?Q?BXXCjYAx5oXMSKtU65N7FT4unBd7a111ZksKmRtKmkTPiND/eYO6xBOxSVbo?=
- =?us-ascii?Q?wE2kmdZeTbETda8xdTJSZilAytJdnDIMyA4yEkN8WGcLBlbfrgvhHljbMfLd?=
- =?us-ascii?Q?sDrv8EYmtGVxSdgwdlXGejcZvQIpIzlrweJXo2PSZy4xqA2mM0mnu8VZak2l?=
- =?us-ascii?Q?UG08idJ/BWtC7QfnVaqeIJFITfd4jwDEGedvlBMUwYXul6dR1Dxnj2fWO4Lr?=
- =?us-ascii?Q?xoRnTBFvRvLhl0O65xo6/3Hj6klCWq+ghaUz7+K6AEeOAW6vm5l0ufxgMKnf?=
- =?us-ascii?Q?0xh2LVXKWJdmvxbGJ83vQrM2ahg7tKd9O6ltqPzLVvh7r5pPWCRHLtMoVkT/?=
- =?us-ascii?Q?g6symrL0iZQ=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:VI0PR08MB11200.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB10856
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM3PEPF0000A791.eurprd04.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	aa057d70-80c5-4e6e-dcd3-08ddcf90a5ff
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|35042699022|36860700013|376014|82310400026|14060799003;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KMb16anaB7RdL8wxnzFlVLbE2j1C1KX1vtaFu32DCaXtdbpQFkr6E7ko2USJ?=
- =?us-ascii?Q?V/RJki+AaZ2fe06Pa+ktcf55Ts+tVIjKaF4kLKJ59+5NxsBrbgrG2CrzGu4Q?=
- =?us-ascii?Q?raDTbSIAagX7jF6GLDEotYCX6B3LGRLcmU0tehayZVK9fjzy76/ghdXTCY25?=
- =?us-ascii?Q?3TWJk2WdUcVIeUlsQTVia0/jWWYRccGItLnPSQPNJRM8NDK5QcLF3chATory?=
- =?us-ascii?Q?N2drD3lgLDmboS2Qq9Fz8E/j1VCJA14alm+2+XMuVt4y7+hdIOltkLmAZNHB?=
- =?us-ascii?Q?/m3l4l+FonYHvTeaqAXkZERIFU4XwcKll0/dWJpzQ6Jjcri2Wl1DR3bIZcaV?=
- =?us-ascii?Q?4nA9u7Ctq0e1g3Udbf2+Cf+z3g/XCbtK+omvBhqS3oTV2n+x6826gMp35RdJ?=
- =?us-ascii?Q?WS5dAnWcpfEC6YzM/RutEPQQCoFokoeSumA+wbclV4etpTfBODCI6GT65llm?=
- =?us-ascii?Q?9JktzAj6I5f0jxzh3DXBStWkGtmEMnRQQrf8qEYNxEgCW0YxsLjIFUKss6VW?=
- =?us-ascii?Q?JZiBZMrcl0Nbict+iPC8+Vc4t9oC/Yk4/uyGUuv3UlcYQShKgQURg8IYir52?=
- =?us-ascii?Q?ORv4rXmInb880b9ZpJHy6u+rsHJuV8I9boUjcq9xY/ttv0HmMxvd4gdP2Ppa?=
- =?us-ascii?Q?bt+E+6/0SLJ5NgTT9c8jREU2AVeFLrswy3fjXcSdoXIAUjwJn+Hw1CPKrQn+?=
- =?us-ascii?Q?VcCUH8dEuxhQw3ZhwvaimxVex2zKV4FPZNVDZe4o2CUXq1itHjsKD/D2gBlp?=
- =?us-ascii?Q?alR4UDHfJ7zKhHwk1HtEOBMxGmO77PIJBnRJE4z570RXzTfSS9p3mHmqNuQv?=
- =?us-ascii?Q?r1XBbQFqGNlD4V4T1vHABWlyCciEVpdXlNyX1QgfiHHAvM4YYZerYxuR8utL?=
- =?us-ascii?Q?70gWALU1scvPpn/Y7NgSAbZZuHjQIBMUfYYKNyeI5VmhG2dbcd6MATZGR5SL?=
- =?us-ascii?Q?j3cYxvfuiatlvhzkuMAabpvtq9fDcuL/raGb6qNx+LYM2Mr4bOHYHP7cDawf?=
- =?us-ascii?Q?DsBCTA2iwT21ipX40PVfnDiCTPqxm89gapUM6Uw/lHQVwqsjzSkDD5TLODoP?=
- =?us-ascii?Q?rBz7qc23Ya3uBbq6mrkbw+MrGkiygs4A6kciFPc+Xhi3y4XqEpox36Vss755?=
- =?us-ascii?Q?PYBXQx9xjvaLqIFAD2iMz98Uhc1gGhbYOx4L9DKprn9b0T+ycwmU6ege/Noy?=
- =?us-ascii?Q?Qu0uXxyTyQykNjCBH036+s+zGqVRpuAQlJMgSMnXSDVlF+mpCGjbCZYfTq9h?=
- =?us-ascii?Q?rNIgqdxVuWWK/UP+J50vsbxHpJcjphdGQ1AshzkjRqTlp2GAQowmy57Q8W+G?=
- =?us-ascii?Q?8OtJcNwqN7BRYu9dGWxaBY8rw0XDpSg2n+OwC1WeoZRg68Ab1z9aiFmHqnEu?=
- =?us-ascii?Q?/iHBmL1Db3l34DDsfJi0qmjMG7dSJTNZVkJ+a53y0R1prCPcPA8rKcwlBTYS?=
- =?us-ascii?Q?HzUErwTROCWdFwAtz5ZdechnA9Ignhv4x8X8pldcMNXuS4erKhZU2uL3R4iz?=
- =?us-ascii?Q?NaJNLWaWLR8r5MGC3RYJKGctuaRfWi/pfkgb?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(35042699022)(36860700013)(376014)(82310400026)(14060799003);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 17:44:28.8272
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6bd4e9c-f67f-465c-f168-08ddcf90bbc8
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM3PEPF0000A791.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB8571
+Content-Transfer-Encoding: 8bit
 
-In certain scenarios, it is possible for multiple cache flushes to be
-requested before the previous one completes. This patch introduces the
-cache_flush_lock mutex to serialize these operations and ensure that
-any requested cache flushes are completed instead of dropped.
+On Wed, 30 Jul 2025 10:19:55 -0700 Yueyang Pan <pyyjason@gmail.com> wrote:
 
-Signed-off-by: Karunika Choo <karunika.choo@arm.com>
-Co-developed-by: Dennis Tsiang <dennis.tsiang@arm.com>
----
- drivers/gpu/drm/panthor/panthor_gpu.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> This patch moves damon_pa_scheme_has_filter to ops-common. renaming
+> to damon_scheme_has_filter.
+> Doing so allows us to reuse its logic in the vaddr version
+> of DAMOS_STAT
+> 
+> Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
+> ---
+>  mm/damon/ops-common.c |  9 +++++++++
+>  mm/damon/ops-common.h |  2 ++
+>  mm/damon/paddr.c      | 11 +----------
+>  3 files changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
+> index 99321ff5cb92..3ebfa356ca46 100644
+> --- a/mm/damon/ops-common.c
+> +++ b/mm/damon/ops-common.c
+> @@ -412,3 +412,12 @@ unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid)
+>  
+>  	return nr_migrated;
+>  }
+> +
+> +bool damon_scheme_has_filter(struct damos *s)
+> +{
+> +	struct damos_filter *f;
+> +
+> +	damos_for_each_ops_filter(f, s)
+> +		return true;
+> +	return false;
+> +}
 
-diff --git a/drivers/gpu/drm/panthor/panthor_gpu.c b/drivers/gpu/drm/panthor/panthor_gpu.c
-index cb7a335e07d7..030409371037 100644
---- a/drivers/gpu/drm/panthor/panthor_gpu.c
-+++ b/drivers/gpu/drm/panthor/panthor_gpu.c
-@@ -35,6 +35,9 @@ struct panthor_gpu {
- 
- 	/** @reqs_acked: GPU request wait queue. */
- 	wait_queue_head_t reqs_acked;
-+
-+	/** @cache_flush_lock: Lock to serialize cache flushes */
-+	struct mutex cache_flush_lock;
- };
- 
- /**
-@@ -204,6 +207,7 @@ int panthor_gpu_init(struct panthor_device *ptdev)
- 
- 	spin_lock_init(&gpu->reqs_lock);
- 	init_waitqueue_head(&gpu->reqs_acked);
-+	mutex_init(&gpu->cache_flush_lock);
- 	ptdev->gpu = gpu;
- 	panthor_gpu_init_info(ptdev);
- 
-@@ -353,6 +357,9 @@ int panthor_gpu_flush_caches(struct panthor_device *ptdev,
- 	bool timedout = false;
- 	unsigned long flags;
- 
-+	/* Serialize cache flush operations. */
-+	guard(mutex)(&ptdev->gpu->cache_flush_lock);
-+
- 	spin_lock_irqsave(&ptdev->gpu->reqs_lock, flags);
- 	if (!drm_WARN_ON(&ptdev->base,
- 			 ptdev->gpu->pending_reqs & GPU_IRQ_CLEAN_CACHES_COMPLETED)) {
--- 
-2.49.0
+I should have tell this earlier, sorry.  I now think it would be good to have
+ops-common.c own prefix, since this namee makes me expect the function is on
+DAMON core layer.  Also, I use normal 'grep' and ctags at the best, and maybe
+I'm not the only one that that lazy at learning new tools.
 
+Following the weird and none-public naming convention we have on DAMON,
+damos_ops_ for DAMOS-related functions and damon_ops_ for monitoring-related
+functions would be the prefix for ops-common.c.
+
+So, what about renaming this to damos_ops_has_filter() if we have a chance to
+revision this once again?
+
+> diff --git a/mm/damon/ops-common.h b/mm/damon/ops-common.h
+> index 61ad54aaf256..8d5c5c7631ac 100644
+> --- a/mm/damon/ops-common.h
+> +++ b/mm/damon/ops-common.h
+> @@ -21,3 +21,5 @@ int damon_hot_score(struct damon_ctx *c, struct damon_region *r,
+>  
+>  bool damos_folio_filter_match(struct damos_filter *filter, struct folio *folio);
+>  unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid);
+> +
+> +bool damon_scheme_has_filter(struct damos *s);
+> diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
+> index 53a55c5114fb..daeceed981a0 100644
+> --- a/mm/damon/paddr.c
+> +++ b/mm/damon/paddr.c
+> @@ -262,22 +262,13 @@ static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
+>  	return applied * PAGE_SIZE;
+>  }
+>  
+> -static bool damon_pa_scheme_has_filter(struct damos *s)
+> -{
+> -	struct damos_filter *f;
+> -
+> -	damos_for_each_ops_filter(f, s)
+> -		return true;
+> -	return false;
+> -}
+> -
+>  static unsigned long damon_pa_stat(struct damon_region *r, struct damos *s,
+>  		unsigned long *sz_filter_passed)
+>  {
+>  	unsigned long addr;
+>  	struct folio *folio;
+>  
+> -	if (!damon_pa_scheme_has_filter(s))
+> +	if (!damon_scheme_has_filter(s))
+>  		return 0;
+>  
+>  	addr = r->ar.start;
+> -- 
+> 2.47.3
+
+Otherwise, all looks good to me.
+
+
+Thanks,
+SJ
 
