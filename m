@@ -1,148 +1,152 @@
-Return-Path: <linux-kernel+bounces-750507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B7D8B15CD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:48:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB687B15CE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEF2A3A4B64
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA9F318C40D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF40293C6F;
-	Wed, 30 Jul 2025 09:46:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D802951D0;
+	Wed, 30 Jul 2025 09:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fzL5KCjx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="raOgpMBA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE86C293C45
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75BC5442C;
+	Wed, 30 Jul 2025 09:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753868794; cv=none; b=JsxU1fa8tZK49K2ud/Q7w9kYTPsDsa5w+nA3r2Tbww92YeH17Ct+C0uh65KFW42ysmSqDS2YheMnA+hmf7v3E29pcWlgoMPe3i8+soESgXSS8kPm5b1oL5L1N3IRjnn0PZ7xZMBU+crzDKVlBLwrKIIUIQm7XFFts3GvzP1NvLg=
+	t=1753868812; cv=none; b=UnAsFuQmWiMxy91ZYblqvtxG+11OJoB4hp7NRm5f8iApcDUetudaqyODw2qIsa2za6bZaXe3fnrmdW16g06EAmOEH2sPlzjqbDmaoP1hDMsHzBEooEF+NB49qJHj0kGlchqzSOiWSgmI13WLh1cZLMfgYHvAdtFlwR3lX125ZqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753868794; c=relaxed/simple;
-	bh=AUDj59rYnczPCMf9wlp6ZingVWh2KbRausWbvPoRJ1M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gdrScaGkFniEktVouzo19WYxDrBPC9h3bD/Od+p3RtpK6cJvsV4x64XdI+XN8wMrx/ztlhvvDI83e4m62ymOTATAaZkFjzGae19HmzdlSLO9TgJWduesDi3DnkeJlWzoC7hJ9HF9j9sboOXt4PEr28E+LeJgc9iWVwiQYjg8rx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fzL5KCjx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753868791;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w8YLhjpZYCS4lKUs2U55ivx7YPJBp2KB/Xof2yC5kTA=;
-	b=fzL5KCjx+RNSgSGOkZuWX7KV9ji/TtcmuqZCQmkAbfDJaBXzPaZ02Q2rLNhksGMs33ya3H
-	Aya7uf1fR3IY/QGvVsEVVJDc7F2biGOlvtU6g5xg61U6KLpWrTzneIOeizOFfIrEtIMYd2
-	X9dgPjZAydqj7ivSS2WJslW3Hj30uM4=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-28-ggWpYXpzOdGEL5eWbbYL8A-1; Wed, 30 Jul 2025 05:46:29 -0400
-X-MC-Unique: ggWpYXpzOdGEL5eWbbYL8A-1
-X-Mimecast-MFC-AGG-ID: ggWpYXpzOdGEL5eWbbYL8A_1753868788
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4e713e05bso2310174f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:46:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753868788; x=1754473588;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w8YLhjpZYCS4lKUs2U55ivx7YPJBp2KB/Xof2yC5kTA=;
-        b=vOpCCgxb7Ydl2RE/nrVkLVkc/Fgd9HUXB579waNFyAiiQIM78LokJ32cj90zNbL4jZ
-         jkn2Qcf8yG9N2rMZVSjDPBYyChYVgSCRw0/qleadLy9vA6ALRh4HTUffYsAipDoGbm9j
-         +geb+6FsMBF0PICV4B2mjoG+zMxq5hdV5OEwCHtNFT+Pzn+aEAJJc9Ia8DD1E9ynd+TJ
-         zbYbBfB7vty5APFj++HiXIiC8msLatar0/53oyLaqsEV4IH7LApFPpp6EzHZRtYXQp9D
-         GVWkVY531oMeKunIFpprd/oNyeJBZ6cZ7/+QQIHJFsQDN0L+oj+SSCJfbsy6gikQFB2E
-         JRIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVG6NRTCXZFxitDSj5krpd/Xi1DfM11+nxL7IaDTgdXXH4KNZzLEHTQgqWoPKqSqm7c7O/NkuUijkTrJ48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBoOjZh4HyJUCMfX1KulfTn51tG5UFJghAjNwGN4+THH4ecjT7
-	ByxbvsZTiaRrx2xigoHFCMnZCHX+6klnRhoJ6EwKZtVYR/xgh66IpgSV1wZfTHad9k5LtlphgXQ
-	4Rk7TVC+U5vpVBoOOx729J0CgEuemkz6EQ1hErZ8jju/rCVFWJpNNyh+hGvAveNkH/A==
-X-Gm-Gg: ASbGncvoAXm7rCuW/juCuVRFBDw7Kq1jVpWrvD2+XG5NSByR00Q1g1sL4s7NKnXDxA8
-	I7CBF+oroG6/t7LTfCOBxZ/WWn/AGHSwyjKamBI6bFSHzmDoB/NM5rC3fQHg5mwt/m9fJl2spTM
-	6S2YtbaBmZav6wVOijAJk+V7gRAryfjJ56pKXNkQhr6gv343H9Q5DzFq89PVe2d74Qcc2wQG9jW
-	gJ+XULMBFObozN2BxkGRanJVGX+sPoLQif9zWOHshW21MLcyRnNHVP0c/O0VMOgKBjDE+bNcl4J
-	iyaVZEb//xtLQRdfF08h/yie1swmCAP2WUxDGYnn13dHZ8Ap6nP1VsGv+eW4WHVHbJNDWA==
-X-Received: by 2002:a05:6000:41d3:b0:3b7:974d:5359 with SMTP id ffacd0b85a97d-3b7974d597dmr873875f8f.32.1753868788363;
-        Wed, 30 Jul 2025 02:46:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFKkBPIcxvn3I2VLjanO8enRfr0E8zNPS46Uf7PRzUN7RGEKOsEdB7MUQb6QgWZ0jBstua6bA==
-X-Received: by 2002:a05:6000:41d3:b0:3b7:974d:5359 with SMTP id ffacd0b85a97d-3b7974d597dmr873853f8f.32.1753868787970;
-        Wed, 30 Jul 2025 02:46:27 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.43.90.121])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b785258135sm11317502f8f.42.2025.07.30.02.46.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 02:46:27 -0700 (PDT)
-Date: Wed, 30 Jul 2025 11:46:23 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	vschneid@redhat.com, clm@meta.com, linux-kernel@vger.kernel.org,
-	linux-m68k <linux-m68k@lists.linux-m68k.org>
-Subject: Re: [PATCH v2 02/12] sched/deadline: Less agressive dl_server
- handling
-Message-ID: <aInp78zC_WwVW6yd@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250702114924.091581796@infradead.org>
- <20250702121158.465086194@infradead.org>
- <CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com>
+	s=arc-20240116; t=1753868812; c=relaxed/simple;
+	bh=uyeZmXmKI4iT+qFSAZJTJfQfO5Y7A1PihaHJyFjEudw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KsQMfqnjzoVdlUngQwwWSZenvKdh+EsPsdKYO/0IxUERZHJpCv4KRazTHQ4eYl0b6vu36Y0axMUBjrSFQdRYiPxKd1dNxBA9GYZiaa59Lm548xHeY9Li5/g8jo2sNz2XhKeFBIIiVSppa8l/UqScYMpceev3VoNYtuYYhhEWrHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=raOgpMBA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C4A1C4CEF9;
+	Wed, 30 Jul 2025 09:46:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753868812;
+	bh=uyeZmXmKI4iT+qFSAZJTJfQfO5Y7A1PihaHJyFjEudw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=raOgpMBALXt15WK1hEDMIk/x/TfEvBST3vaF+Y6lw4mUY+79Azoqpw4D0dBO429X4
+	 pDt7vZ2LRnxUjZA6XolpYSQkOiSvLI+7KTwRGBKywTUaxTOLmiYe8OrLhcnnWuMRyJ
+	 KO26eWncMCqCFXB74xrJAcICYW6GYrS83eiRBlXmXVfjaTyT5q4CuspHt17CiC4L7G
+	 2iPSylI9C76Rqhqyr4NQZABlXOMbL3rmGBVK9G34FCc4OvAHD/5JwvyD2SmkM9MrOh
+	 wtMfLOY345B2c/hN+fBxkigEQj7ti00fB7dRVenVEzTDCkLcmRKn58rVGJvkHaLOD7
+	 NyaNm5qgzdFzQ==
+Message-ID: <b32b9698-0254-43b3-8109-ee8e37482bae@kernel.org>
+Date: Wed, 30 Jul 2025 11:46:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/6] of: reserved-memory: Add
+ of_reserved_mem_lookup_by_name
+To: Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
+ Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Bill Mills <bill.mills@linaro.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, devicetree@vger.kernel.org,
+ virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>,
+ Bertrand Marquis <bertrand.marquis@arm.com>,
+ "Edgar E . Iglesias" <edgar.iglesias@amd.com>,
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <cover.1753865268.git.viresh.kumar@linaro.org>
+ <feb4591cc48c70f9790c3f4d37c149fc336c3110.1753865268.git.viresh.kumar@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <feb4591cc48c70f9790c3f4d37c149fc336c3110.1753865268.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 30/07/2025 11:29, Viresh Kumar wrote:
+> This adds of_reserved_mem_lookup_by_name() helper to get a
 
-On 30/07/25 11:34, Geert Uytterhoeven wrote:
-> Hi Peter,
+Add...
 
-Apologies for interjecting.
 
-> On Wed, 2 Jul 2025 at 14:19, Peter Zijlstra <peterz@infradead.org> wrote:
-> > Chris reported that commit 5f6bd380c7bd ("sched/rt: Remove default
-> > bandwidth control") caused a significant dip in his favourite
-> > benchmark of the day. Simply disabling dl_server cured things.
-> >
-> > His workload hammers the 0->1, 1->0 transitions, and the
-> > dl_server_{start,stop}() overhead kills it -- fairly obviously a bad
-> > idea in hind sight and all that.
-> >
-> > Change things around to only disable the dl_server when there has not
-> > been a fair task around for a whole period. Since the default period
-> > is 1 second, this ensures the benchmark never trips this, overhead
-> > gone.
-> >
-> > Fixes: 557a6bfc662c ("sched/fair: Add trivial fair server")
-> > Reported-by: Chris Mason <clm@meta.com>
-> > Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> > Link: https://lkml.kernel.org/r/20250520101727.507378961@infradead.org
-> 
-> Thanks for your patch, which is now commit cccb45d7c4295bbf
-> ("sched/deadline: Less agressive dl_server handling") upstream.
-> 
-> This commit causes
-> 
->     sched: DL replenish lagged too much
-> 
-> to be printed after full user-space (Debian) start-up on m68k
-> (atari_defconfig running on ARAnyM).  Reverting this commit and fixing
-> the small conflict gets rid of the message.
+>  
+> +/**
+> + * of_reserved_mem_lookup_by_name() - acquire reserved_mem from node name
+> + * @name:	node name
+> + *
+> + * This function allows drivers to acquire a reference to the reserved_mem
+> + * struct based on a reserved-memory node name.
+> + *
+> + * Returns a reserved_mem reference, or NULL on error.
+> + */
+> +struct reserved_mem *of_reserved_mem_lookup_by_name(const char *name)
+> +{
+> +	struct device_node *np __free(device_node) =
+> +		of_find_node_by_path("/reserved-memory");
+> +	struct device_node *child __free(device_node) = NULL;
 
-Does
-https://lore.kernel.org/lkml/20250615131129.954975-1-kuyo.chang@mediatek.com/
-help already (w/o the revert)?
+This should not be NULL or this should not be cleanup. Follow coding
+style for cleanup - constructor must be real here. You probably wanted
+scoped loop below.
 
-Best,
-Juri
+> +
+> +	if (!np)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	for_each_child_of_node(np, child) {
 
+
+Best regards,
+Krzysztof
 
