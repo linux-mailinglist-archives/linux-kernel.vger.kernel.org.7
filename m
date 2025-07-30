@@ -1,150 +1,262 @@
-Return-Path: <linux-kernel+bounces-750728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43B75B16056
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:28:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F42FB1605A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9595B7B4751
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:26:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0D9C7B495B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:27:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7B0295D95;
-	Wed, 30 Jul 2025 12:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5562957BA;
+	Wed, 30 Jul 2025 12:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="XjNwG/Xg"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="FKGy8NSP"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2075.outbound.protection.outlook.com [40.107.244.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9E91CFBC;
-	Wed, 30 Jul 2025 12:27:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74997279DAD;
+	Wed, 30 Jul 2025 12:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.75
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753878479; cv=pass; b=o56JnNultkOSjhs9Ymn4oGMh+xP6skm3faY/RcgqIcOXd/X7SfGkomz/BWgyrDTbugML8QkRvWEVwlgS4qycryPVM6tTaEZrlb3QVXZ+NWXOrRl6eiSbXWliTxOU9FczP2wRueEHT0lGpcssjj7jMPBGvAoufxymt67pUth8NZE=
+	t=1753878557; cv=fail; b=HaD2CTfRReZZq9Q9pQ2/R/04HTm07sEL+7s5dJt3qapD/0BQ4NBdvrkMLQCy3MT61dSiHABaLlc4zqfbCW5RqT+xL8LcE+ev84MhlGAuRVpVKeMnwbUri0cEKXriAG8eL37pVKGqfs0IHL3mNCt9zNBaTI3GO1u8Ns7ZrLXok7w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753878479; c=relaxed/simple;
-	bh=1u5nCh/OB64p+3fygbatYMm5eLb4AW5nGEdzsz0CuuQ=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CGnrpfQSBzHHB1iOGWGr+sR4L1eLh5dKLJQfQZrAhWzD5D6TJI3NlNbVoXzc6z0rEPwLh3SHBbxFchWo89+uUOuGTggiScRr2kltJMELBLAq68mHzVxxsUnyPFwemBzmkrXQMH68ph3YQDiYV7MuQoHPJ0lgcVBEKZf0CMnidIc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=XjNwG/Xg; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753878458; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aa+JvgvjUZLRkUGGezY4GcgyoF06A8LYgj8541vK9kM3Tr+OyQWCHR3x//m0utO33aeA+WZ8Ys1ks2d+XxjasHSKhwKpm1RBotJ5jSXhgcYYqy5nqjkI/4JOkvBvS7d2m394HRhX6+U2fQwRtAFjAmtFmZFpB7bhi8A7ZY/c4gw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753878458; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Oh/5HLcjYMuz4jd5BSONf5KBlrnXjhIJw2EBlDJFW6o=; 
-	b=MJpyr71yo3wRBDWrkMENS0iS+u1v5mmiFJLtLoR4bjj3c/Wh7FtckhoER2uvL+S0C2mktbxf3KwKDAWDmFlmJ2t5+inEDNlTLjMRgv7DTDEfx6ybxKXBkBgrUpXdR7ajA6QO0Awi5dfHkKqh9Y2GjqOzwq0pomskGDz+OfH3Mk0=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753878458;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=Oh/5HLcjYMuz4jd5BSONf5KBlrnXjhIJw2EBlDJFW6o=;
-	b=XjNwG/XgSrIe7SIL9LpVG+dcL+TYhQzQJ0XZDaBneAXCCxHL2pLI28ntGR3WCLYe
-	bW1JuwwgRdDc0I4hZWbOsBK48rcbKUTmu3YGJqG2Q06XYvu+CI2z2ubvHtKErZiPxCJ
-	BXJXwZnoObZhHDuGDCoR7Is0lkm4rjdhN3d5kBwE=
-Received: by mx.zohomail.com with SMTPS id 1753878454937281.63399144933067;
-	Wed, 30 Jul 2025 05:27:34 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1753878557; c=relaxed/simple;
+	bh=qMnX9LetWPcP97v/I24zgn8cVT2nRykErTUmqLdOsvg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BO/47ow4Gq1v4UWEY9ubmfZYrJ6HpvNuAii30C4XpQQSyIekKdovHwmVGolA4krPypR+vLF+ApFDosVgozqExDtbo+yzRSRyIs3nua5Zeq+b6YZejq8lPipq235z8mqtb9GyH+yZraSQphk5jm0F/73sBtJNI733XBJFcmxmaCk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=FKGy8NSP; arc=fail smtp.client-ip=40.107.244.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OGPyYy1UXxqaZi+2oYGiIbg1dSfOm+Dtjs4ULKknOP0cbGHumQNAkgIrKBKAbNiI5uPPW0gnDVK8jSqUbWyrDQSWc3tIUu6n1zem5Ll7wzABeE0u5dSWWgBO4ZaM/NvKH+hwz1VW6MPbzxfVG/LXW8Y0O9zOViY4N09rGjHQA/B2yJH3WRky4ikUvBGbK0CQxc331r9Y0EVIWBZoNrKPvy33rKlES9GEwsqb1c2lYRu9lbwm5WqZT/a0xiy5cfg6mnS9Ky9nYj/19aKyZKRseV/gbftMhB5/7hZF8fFOlWwyi/WAWU6WH6k+12KeFKvhgftJdqDyYdjK7U9lgUVHMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TvHTMI69oohv6hnXiu7R54jhYD+uZNp4wXPDIFnIgAo=;
+ b=Pu1Sp7IiqkIUczH0WVIa0R0VrYHhC7lRr2syZjWR8IbIqcRCRcjLsHbuvbhkQXpr8ze1bvPQEHFam6gjajDiDTzfVWn149i5U0eOPl35Erxaff6JOyifit6Vjw/HMEe9kvmjqJ+8jG8xSj1ddItxollY8SODlPfCzWEewXUGyX1aRGo7B7XD0j2d7UaqaSigWOyYivgVQYx/YzNNZiFKxiRnuf0XN/Nbms1CoTAjeV9RvsxQ0bhQ3V//QPFel+alBhKC4uPDRPEjmdS2Y+tThvSNY5rByLg4Uld3EYBgcp0KMtUI7/E81JmVZ3/nw8ncY4vODGUu6k358pcVhEqY0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TvHTMI69oohv6hnXiu7R54jhYD+uZNp4wXPDIFnIgAo=;
+ b=FKGy8NSP/PRah8mjkAeAVxGW9JC3tI6PtEePiqkt4/ghcHxLO+TOuMCdQmHKGdtOgS1jM8mYLx4N0PwtjIXfw0rr0vrjjD/EtlZ78KlhFaIVQVe95/EpL4bUpEpqV91vsNCEGbWMDkmxgfcQDWmg88zqiy5LlfHOFHVfaRVpSLA=
+Received: from BN9P223CA0030.NAMP223.PROD.OUTLOOK.COM (2603:10b6:408:10b::35)
+ by LV2PR12MB5991.namprd12.prod.outlook.com (2603:10b6:408:14f::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.12; Wed, 30 Jul
+ 2025 12:29:14 +0000
+Received: from BL6PEPF0001AB54.namprd02.prod.outlook.com
+ (2603:10b6:408:10b:cafe::5a) by BN9P223CA0030.outlook.office365.com
+ (2603:10b6:408:10b::35) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.11 via Frontend Transport; Wed,
+ 30 Jul 2025 12:29:14 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF0001AB54.mail.protection.outlook.com (10.167.241.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8989.10 via Frontend Transport; Wed, 30 Jul 2025 12:29:14 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Jul
+ 2025 07:29:13 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Jul
+ 2025 07:29:12 -0500
+Received: from xhdharinik40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 30 Jul 2025 07:29:10 -0500
+From: Ajay Neeli <ajay.neeli@amd.com>
+To: <git@amd.com>, <andi.shyti@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <michal.simek@amd.com>, <srinivas.goud@amd.com>,
+	<radhey.shyam.pandey@amd.com>, Ajay Neeli <ajay.neeli@amd.com>
+Subject: [PATCH v3] i2c: cadence: Add shutdown handler
+Date: Wed, 30 Jul 2025 17:59:07 +0530
+Message-ID: <20250730122907.18909-1-ajay.neeli@amd.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] rust: clk: use the type-state pattern
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250730062355.bqifrzvxfmaaugnk@vireshk-i7>
-Date: Wed, 30 Jul 2025 09:27:18 -0300
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Alexandre Courbot <acourbot@nvidia.com>,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <9746F6D6-488C-4562-8FB1-BE268C69BA97@collabora.com>
-References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
- <20250730062355.bqifrzvxfmaaugnk@vireshk-i7>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: ajay.neeli@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB54:EE_|LV2PR12MB5991:EE_
+X-MS-Office365-Filtering-Correlation-Id: ee93891d-b984-403a-ec71-08ddcf64b1ca
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|376014|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?t/XcRD8b9DvE54bZZnl/29AHNQUVNSAQJqtTv96PpSpL/UjHhkZIrxSTcow8?=
+ =?us-ascii?Q?mnSUUh1jt+WNFIaNN8fPzMN7l9+KrZYHz4EnPcuNqWvE1pYz6wuifnLTBagj?=
+ =?us-ascii?Q?BalF4MPnuu/Y3gn2eK++SD7WEx4On3kO1o7ob7LKo/YjiL4IbVxO7niIguMU?=
+ =?us-ascii?Q?rknekj8nG/Xa/URSUqROtuoxagqwHlG40uSbhM0RQQO96Uot68J5nBo1OpZL?=
+ =?us-ascii?Q?yZny0m2t1PzI92xQDhlCwLnq3MWqoGxGtDzRsOaKECQds3QzzxfAQYXDu7IX?=
+ =?us-ascii?Q?saxRhQ/wN2BW2Ak2fngkEMtaXjmTTx5kh2ReHyXxSoEd/afQaZ4jHFHj96rJ?=
+ =?us-ascii?Q?kogAmbMd7r88Xvi2KCw3DuZES2PAAi9S34MPtxdDApNzKPRZfleHa7UZCdDV?=
+ =?us-ascii?Q?yFoOKHBrhfzlMVXPXSaFQ1ULnV++nspaD3MYXHdhuKGcDQkIeBg5drFUtSON?=
+ =?us-ascii?Q?eD7d2xqepylxJGX4npRKUtOGAPucecCSkRBq8Ry7A8Do8rF5FqAGJQv+fLwT?=
+ =?us-ascii?Q?RQ4gztYZFPwKlufz1Cf3fcEoJ4VHxXmzuQOgPRlIbhPMV36s9jxTsJn5pbd3?=
+ =?us-ascii?Q?8WGFe0SvAQrBJh0NXAeFdAjz2BDXRqJH1YHCTfCu3S0ikkiAdoBS+5tJoUEZ?=
+ =?us-ascii?Q?K7+QH/pTkJdDYo0izszPX/ZMdZ4Lc/LR/96VBrhRSyqqFV6bAhZpvtGJVtXz?=
+ =?us-ascii?Q?rEtlAMux2iXnUQxlGb1OSE/5QTM81yIZRQ7qphl8BRQUw6OXiqLfPWjkU4iM?=
+ =?us-ascii?Q?Y74z0GWfK0ji8zN4s3nEtC3ZF2HCiLyo5tjd3h6ouot2WavlOAuj+AI374IY?=
+ =?us-ascii?Q?XYBn0Yv4pNLk/X72cVoxdksnVLZayk0fCIKZZq7H/MFMHBMdd2JezdLeRzR4?=
+ =?us-ascii?Q?Np/kBSK8FKP9AnETrQXBVP63L3azM6aXm66IHPw68VBrGUuNDDCDgQNzPDXZ?=
+ =?us-ascii?Q?FH82K3X2Sv6zqwnohGCbYS+ZZRL/3whBRxYp2kFvKGgY6Cn1u28nYd9xWRRc?=
+ =?us-ascii?Q?GTG3Rq9H+tHNUb5h2n4Lg4iw51NU0djK6uDVSbqmSjNtxrpdu4QDYD442bFJ?=
+ =?us-ascii?Q?/DHhu81i6vsZu1cPyBVjwp/4WUtxke/5VTQZ8M6NCh24rLkpF8ye0mWaPIgY?=
+ =?us-ascii?Q?1cqGN1nQ6MoA+mLXNtwByIl5L9bQN6y3CdeYSUCxSnD2CFqhiNKraogQbhmD?=
+ =?us-ascii?Q?VpqTnjHgrwKRhfnMEFgScwviK0k0yuo3kk4bXQRlurnLOzrwy6CwXzIRYJwU?=
+ =?us-ascii?Q?BDt93rubFJZQ9m1LnNovaRKXLBf5ydgYGEEy7waeV9D75iz9LWIjLwiMhkdH?=
+ =?us-ascii?Q?jr/ULMSkxgCQmy88yvvdBIqcdbdt+qd3t4z8cJsAElJ7FRd7IhwcVxHzuzi1?=
+ =?us-ascii?Q?YlBZoSrszZnyIPHmoFtzQEtBV9j0x4ptz6dYt5yToNQbxvF4CP69f8pvJMeg?=
+ =?us-ascii?Q?q5QINvfeMY1kmgi/MNvTjNx73kaFAfv7ZjCCakFxlwDT7f277JEuJk1spMVy?=
+ =?us-ascii?Q?ckMhFyWaJ1xkcXpwev9+s3uKQNHZV3W5z2+/?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(376014)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 12:29:14.2593
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ee93891d-b984-403a-ec71-08ddcf64b1ca
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB54.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5991
 
-Hi Viresh,
+Implement shutdown function for Cadence I2C driver to suspend the bus
+during system "reboot" or "shutdown".
 
-> On 30 Jul 2025, at 03:23, Viresh Kumar <viresh.kumar@linaro.org> =
-wrote:
->=20
-> On 29-07-25, 18:38, Daniel Almeida wrote:
->> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
->>     /// A reference-counted clock.
->>     ///
->>     /// Rust abstraction for the C [`struct clk`].
->>     ///
->> +    /// A [`Clk`] instance represents a clock that can be in one of =
-several
->> +    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
->> +    ///
->> +    /// No action needs to be taken when a [`Clk`] is dropped. The =
-calls to
->> +    /// `clk_unprepare()` and `clk_disable()` will be placed as =
-applicable.
->> +    ///
->> +    /// An optional [`Clk`] is treated just like a regular [`Clk`], =
-but its
->> +    /// inner `struct clk` pointer is `NULL`. This interfaces =
-correctly with the
->> +    /// C API and also exposes all the methods of a regular [`Clk`] =
-to users.
->> +    ///
->>     /// # Invariants
->>     ///
->>     /// A [`Clk`] instance holds either a pointer to a valid [`struct =
-clk`] created by the C
->> @@ -99,20 +160,39 @@ mod common_clk {
->>     /// Instances of this type are reference-counted. Calling =
-[`Clk::get`] ensures that the
->>     /// allocation remains valid for the lifetime of the [`Clk`].
->>     ///
->> -    /// ## Examples
->> +    /// The [`Prepared`] state is associated with a single count of
->> +    /// `clk_prepare()`, and the [`Enabled`] state is associated =
-with a single
->> +    /// count of `clk_enable()`, and the [`Enabled`] state is =
-associated with a
->> +    /// single count of `clk_prepare` and `clk_enable()`.
->=20
-> You have mentioned the `Enabled` state twice. Also clk_prepare() ?
+Interrupts are disabled in the handler to avoid spurious events when the
+driver is in slave mode.
 
-Ah, thanks for catching that.
+Signed-off-by: Ajay Neeli <ajay.neeli@amd.com>
+---
+Changes v2->v3:
+Corrected a typo that caused a build error in v2
 
-What=E2=80=99s the issue with clk_prepare? You mean that the parenthesis =
-are missing?
+Changes in v1->v2:
+Disable interrupts
+---
+ drivers/i2c/busses/i2c-cadence.c | 34 +++++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
 
->=20
-> No objections from my side. Thanks.
->=20
-> --=20
-> viresh
-
-=E2=80=94 Daniel
+diff --git a/drivers/i2c/busses/i2c-cadence.c b/drivers/i2c/busses/i2c-cadence.c
+index 8df63aa..4f033a6 100644
+--- a/drivers/i2c/busses/i2c-cadence.c
++++ b/drivers/i2c/busses/i2c-cadence.c
+@@ -192,6 +192,7 @@ enum cdns_i2c_slave_state {
+  * @transfer_size:	The maximum number of bytes in one transfer
+  * @atomic:		Mode of transfer
+  * @err_status_atomic:	Error status in atomic mode
++ * @irq:		IRQ Number
+  */
+ struct cdns_i2c {
+ 	struct device		*dev;
+@@ -224,6 +225,7 @@ struct cdns_i2c {
+ 	unsigned int transfer_size;
+ 	bool atomic;
+ 	int err_status_atomic;
++	int irq;
+ };
+ 
+ struct cdns_platform_data {
+@@ -1495,7 +1497,7 @@ static int cdns_i2c_probe(struct platform_device *pdev)
+ {
+ 	struct resource *r_mem;
+ 	struct cdns_i2c *id;
+-	int ret, irq;
++	int ret;
+ 	const struct of_device_id *match;
+ 
+ 	id = devm_kzalloc(&pdev->dev, sizeof(*id), GFP_KERNEL);
+@@ -1526,9 +1528,9 @@ static int cdns_i2c_probe(struct platform_device *pdev)
+ 	if (IS_ERR(id->membase))
+ 		return PTR_ERR(id->membase);
+ 
+-	irq = platform_get_irq(pdev, 0);
+-	if (irq < 0)
+-		return irq;
++	id->irq = platform_get_irq(pdev, 0);
++	if (id->irq < 0)
++		return id->irq;
+ 
+ 	id->adap.owner = THIS_MODULE;
+ 	id->adap.dev.of_node = pdev->dev.of_node;
+@@ -1590,10 +1592,10 @@ static int cdns_i2c_probe(struct platform_device *pdev)
+ 		goto err_clk_notifier_unregister;
+ 	}
+ 
+-	ret = devm_request_irq(&pdev->dev, irq, cdns_i2c_isr, 0,
++	ret = devm_request_irq(&pdev->dev, id->irq, cdns_i2c_isr, 0,
+ 				 DRIVER_NAME, id);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "cannot get irq %d\n", irq);
++		dev_err(&pdev->dev, "cannot get irq %d\n", id->irq);
+ 		goto err_clk_notifier_unregister;
+ 	}
+ 	cdns_i2c_init(id);
+@@ -1603,7 +1605,7 @@ static int cdns_i2c_probe(struct platform_device *pdev)
+ 		goto err_clk_notifier_unregister;
+ 
+ 	dev_info(&pdev->dev, "%u kHz mmio %08lx irq %d\n",
+-		 id->i2c_clk / 1000, (unsigned long)r_mem->start, irq);
++		 id->i2c_clk / 1000, (unsigned long)r_mem->start, id->irq);
+ 
+ 	return 0;
+ 
+@@ -1636,6 +1638,23 @@ static void cdns_i2c_remove(struct platform_device *pdev)
+ 	reset_control_assert(id->reset);
+ }
+ 
++/**
++ * cdns_i2c_shutdown - Shutdown the i2c device
++ * @pdev:	Handle to the platform device structure
++ *
++ * This function handles shutdown sequence
++ */
++static void cdns_i2c_shutdown(struct platform_device *pdev)
++{
++	struct cdns_i2c *id = platform_get_drvdata(pdev);
++
++	/* Disable interrupts */
++	disable_irq(id->irq);
++
++	/* Initiate failure of client i2c transfers */
++	i2c_mark_adapter_suspended(&id->adap);
++}
++
+ static struct platform_driver cdns_i2c_drv = {
+ 	.driver = {
+ 		.name  = DRIVER_NAME,
+@@ -1644,6 +1663,7 @@ static void cdns_i2c_remove(struct platform_device *pdev)
+ 	},
+ 	.probe  = cdns_i2c_probe,
+ 	.remove = cdns_i2c_remove,
++	.shutdown = cdns_i2c_shutdown,
+ };
+ 
+ module_platform_driver(cdns_i2c_drv);
+-- 
+1.8.3.1
 
 
