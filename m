@@ -1,107 +1,184 @@
-Return-Path: <linux-kernel+bounces-750321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2063B15A03
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:51:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3569B15A09
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 276E018C0EC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:51:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 200BD5421DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A775292B36;
-	Wed, 30 Jul 2025 07:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFF4291C23;
+	Wed, 30 Jul 2025 07:56:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXAcMkMC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="g1uHE8L/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2571F1537;
-	Wed, 30 Jul 2025 07:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6870A18A93F
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:56:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753861852; cv=none; b=cqh4ochcsBsYr4CyEXt6CcaHLBf1fLOMjQileK0YZ+RHv+J4FjTb9pPYWIR9YvdXxjMJ8xj1vrHKk/3LmxtVZl/zGldonHkFB3BgaG5p0UwND2oZUYKImI2ogyCikehRf2PWyqRDEky+BEWUA6pmFt/AlG4753eWPEpgKM94VrA=
+	t=1753862184; cv=none; b=e36qn6RhiSoR8KehpqKwF4ZFXopc+UZYJn2xnFA1wzUH/T8XCL3a1SqaMcjwVshRfuJTYfHg4xqUiJAwzwKvZW/O9hEVsFe0IhmhPFxyE5URjmDRcIH9sfT32FGblr+1RhMEOodta7XbV0IrKHDjRjc/0q4hWftpVzh8lgxyTuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753861852; c=relaxed/simple;
-	bh=TMcBBZ8n9IMNaJwCFya59fGEYacW1l+xZAaQ7cAKSy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VrDGIWhUZgjDouwaJRw6JcWTVGINQiUPuJYC0CPONi3mGObISJcZiugNaENHpZO1DMuNIeki9Mo59T8Tn1WlHQ8kKDOHaApXVRzMFMSpffICJhFtEimpIg2bZJ79gMoW9okQ8nBcSwHJxS0wM7tURZWxVrAUpnVYop6hA9bdgNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FXAcMkMC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE8F4C4CEE7;
-	Wed, 30 Jul 2025 07:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753861852;
-	bh=TMcBBZ8n9IMNaJwCFya59fGEYacW1l+xZAaQ7cAKSy8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FXAcMkMC/I5S0O9jzLpdT/gC+27hD6Ls4vrrsWnyfAqSpcyhkCjkC/ck1GL2w/zeu
-	 NNIpPTo1DeXzV9tFU7h9B9NmucveAqMZQe/Yy8GJ+/D03d/ej5Y2XoxR8U0GjziX76
-	 WnidD5pZ1eGyPNhz38D8bfRXiMWbeHwUNQcTPUbGRv64vlWMSftra2C5rdD0sEASVB
-	 A86o+3Y3fqZ7QfZLhJ71J7ezfMirsGj2vAXxnePDqU2e7FHZpbJ2THAgj1Y6Brz1yX
-	 FVgb63+nsJT7ZXTzd1ceGAHBHWaY979FREqOSiy8nKo9LU0bb2zlJgXSIB/1hJWxac
-	 kuE8BLbqASG3Q==
-Date: Wed, 30 Jul 2025 09:50:49 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: ChiYuan Huang <cy_huang@richtek.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] dt-bindings: power: supply: Add Richtek RT9756 smart
- cap divider charger
-Message-ID: <20250730-giga-cricket-of-development-f886fb@kuoka>
-References: <cover.1753759794.git.cy_huang@richtek.com>
- <3fa997b42b4aec43fc182a043cf521f7e3e7fcb3.1753759794.git.cy_huang@richtek.com>
- <3603a744-e898-49ef-968a-2388e14cae54@kernel.org>
- <aIl+VKFURqFfXKz3@git-send.richtek.com>
- <20250730-sassy-competent-mule-d94f1a@kuoka>
+	s=arc-20240116; t=1753862184; c=relaxed/simple;
+	bh=SuN47byAthyv6iJdSiSm3XcP3i63e6LM6boRfco+DWs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VDBPUPOqBg5cPx5M2fxBOoU8fPUs/poLA+r4TUQvA0y3or4bkTCIQrPpXiGMwUg+J4vyWN0LBqnK1MX3EO9rBMdIo8tubxndlNFkeglukCbepzCw7bKxuhwKIfRx8x4OsvxVTVNLQYU0zmEgKP4paCx0jaR4EiaJpJtgFaWiWtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=g1uHE8L/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753862181;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mges3aFw0nNxUJUhav3brRvu8FlZVekMDOOAYiIFIiM=;
+	b=g1uHE8L/zuom6ix3I6DseoYRyAvvk37pKVhOuiZDQUVFvv2SozqTuS4ekKdCSTgUjAa7un
+	Rz2HKuI58O+nifo6VK3PvyLZj9MJBLf094dS8iYVl/E2e4aHFBEWJXzlVmAQdlerl5Tvbm
+	u/ay4tiGW9olp067BM1e/DI5OecORec=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-631-9wRpSmlaNFyngpaXN8soNw-1; Wed, 30 Jul 2025 03:56:19 -0400
+X-MC-Unique: 9wRpSmlaNFyngpaXN8soNw-1
+X-Mimecast-MFC-AGG-ID: 9wRpSmlaNFyngpaXN8soNw_1753862177
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-557e35aad50so3554749e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:56:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753862177; x=1754466977;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Mges3aFw0nNxUJUhav3brRvu8FlZVekMDOOAYiIFIiM=;
+        b=epNzi8AwufCo86JlAoM6N4h4l/YF6ZCiPULxNQj9ZWUGkvS9gWdmmjO2u0uf8nbnsZ
+         dePPx6Q3u0b5zCAteMrG9qfbR+PAjnSa03+QQZAxNTriSn5B9rJ8cjKhz1TsxTNf+s3Z
+         AqzWoNLjCHYd8RSlqNp/KVDWIOMEVChi/SsMTFgi9Do1/5gO+tAsVBtNrD3DuMyF1z8x
+         BjMbdoZBsTSxhmkykw5oNegg0jqYp0J2fwJDbqi20W561NrE29DHraslZr6ZdxMaHt+c
+         b+AzKgSqqYp4eh/pbHSnG6RuCBp5tlGO1067Si5ItKWOz31qGwY6ypo8J6Ol61xmylAP
+         vb0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXMNlXdVw4mUbBl7s0cVAy+6L+ce9cYtoojVGW7LvCfswXN9KF36/INZt7UIPslbk9P3O0vJ0JTheHUW9E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5pj53Q1yq1olTgpcjmJq0vnkIsL3aiE4fTv+/syFWmK+yq3Qw
+	UlMnF54di9G+bu3/3YC1thfRxGTb6Ra2e8AsFg9DRC0goVOXKR4pLPPjfRIR4S4Ut1srrGuLUtj
+	cZnPH+06v7+IJQIT0qXhGevFDJ802Kw1xZDp/g8yE0xANqBT2S9POWPIgVLvvzoUhFuHcxDjUh7
+	ArKL+TdtyJiow8R4gacrJjTVpt/4vBmswyf6O5Az5Y
+X-Gm-Gg: ASbGncvFmfqVezD4XJaWalfa3TJ2isbxzvG4L5RlDZ+jH67c81IdMn4FPmx0tdhjRxw
+	Ylx300j6d80iVLZmCn6b4D4PayjXqXYTh2DcsNKJkDLcKOOSBc0D9jo/9RSC3jlwc9rlazavHDZ
+	ZC9CN2XrbegOUiVSNkfMpt7g==
+X-Received: by 2002:a05:6512:3d28:b0:553:3407:eee0 with SMTP id 2adb3069b0e04-55b7bffbdc2mr1001098e87.4.1753862177381;
+        Wed, 30 Jul 2025 00:56:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IESTI1a6kk0yt+h/hjD2gSzvOmJjmDWARDZLTIKOLFsg85k/XH7stv4opStbSdyGBd1qpDU0IiXGfiznHniw0M=
+X-Received: by 2002:a05:6512:3d28:b0:553:3407:eee0 with SMTP id
+ 2adb3069b0e04-55b7bffbdc2mr1001089e87.4.1753862176939; Wed, 30 Jul 2025
+ 00:56:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250730-sassy-competent-mule-d94f1a@kuoka>
+References: <20250730073321.2583158-1-yukuai1@huaweicloud.com>
+In-Reply-To: <20250730073321.2583158-1-yukuai1@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Wed, 30 Jul 2025 15:56:04 +0800
+X-Gm-Features: Ac12FXzYTSZcxvxIHazLoTMZzQ0rv9webYymyVm-iH8Hrg4Cy08MUcQVJUtvlx0
+Message-ID: <CALTww2-iYqWhKJED1tCOEtQL9f1_4NC=1=s=zwM7WK0mu6+COw@mail.gmail.com>
+Subject: Re: [PATCH] md: fix create on open mddev lifetime regression
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: contact@arnaud-lcm.com, hdanton@sina.com, song@kernel.org, 
+	yukuai3@huawei.com, linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 09:39:38AM +0200, Krzysztof Kozlowski wrote:
-> On Wed, Jul 30, 2025 at 10:07:16AM +0800, ChiYuan Huang wrote:
-> > On Tue, Jul 29, 2025 at 05:40:32PM +0200, Krzysztof Kozlowski wrote:
-> > > On 29/07/2025 06:21, cy_huang@richtek.com wrote:
-> > > > +
-> > > > +  shunt-resistor-micro-ohms:
-> > > > +    description: Battery current sense resistor mounted.
-> > > > +    default: 2000
-> > > > +
-> > > > +required:
-> > > > +  - compatible
-> > > > +  - reg
-> > > > +  - wakeup-source
-> > > 
-> > > Why do you require this? I cannot find any use of it, so maybe I missed
-> > > some change in Linux code (and that's second question like that for
-> > > Richtek, so refer to your other patchsets for contexr).
-> > > 
-> > 
-> > This will mark the interrupt as wakeup capable.
-> > https://elixir.bootlin.com/linux/v6.16/source/drivers/i2c/i2c-core-of.c#L57
-> > https://elixir.bootlin.com/linux/v6.16/source/drivers/i2c/i2c-core-base.c#L547
-> 
-> OK, but this does not explain why this is required. Why it is impossible
-> to make board which uses this PMIC and wires the interrupt in a way it
-> is not waking up the system?
-> 
-> To my limited knowledge this should be possible, but what do I know
-> about hardware...
+On Wed, Jul 30, 2025 at 3:40=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> w=
+rote:
+>
+> From: Yu Kuai <yukuai3@huawei.com>
+>
+> Commit 9e59d609763f ("md: call del_gendisk in control path") move
+> setting MD_DELETED from __mddev_put() to do_md_stop(), however, for the
+> case create on open, mddev can be freed without do_md_stop():
+>
+> 1) open
+>
+> md_probe
+>  md_alloc_and_put
+>   md_alloc
+>    mddev_alloc
+>    atomic_set(&mddev->active, 1);
+>    mddev->hold_active =3D UNTIL_IOCTL
+>   mddev_put
+>    atomic_dec_and_test(&mddev->active)
+>     if (mddev->hold_active)
+>     -> active is 0, hold_active is set
+> md_open
+>  mddev_get
+>   atomic_inc(&mddev->active);
+>
+> 2) ioctl that is not STOP_ARRAY, for example, GET_ARRAY_INFO:
+>
+> md_ioctl
+>  mddev->hold_active =3D 0
+>
+> 3) close
+>
+> md_release
+>  mddev_put(mddev);
+>   atomic_dec_and_lock(&mddev->active, &all_mddevs_lock)
+>   __mddev_put
+>   -> hold_active is cleared, mddev will be freed
+>   queue_work(md_misc_wq, &mddev->del_work)
+>
+> Now that MD_DELETED is not set, before mddev is freed by
+> mddev_delayed_delete(), md_open can still succeed and break mddev
+> lifetime, causing mddev->kobj refcount underflow or mddev uaf
+> problem.
+>
+> Fix this problem by setting MD_DELETED before queuing del_work.
+>
+> Reported-by: syzbot+9921e319bd6168140b40@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68894408.a00a0220.26d0e1.0012.GAE@goo=
+gle.com/
+> Reported-by: syzbot+fa3a12519f0d3fd4ec16@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68894408.a00a0220.26d0e1.0013.GAE@goo=
+gle.com/
+> Fixes: 9e59d609763f ("md: call del_gendisk in control path")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>  drivers/md/md.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 046fe85c76fe..5289dcc3a6af 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -636,6 +636,12 @@ static void __mddev_put(struct mddev *mddev)
+>             mddev->ctime || mddev->hold_active)
+>                 return;
+>
+> +       /*
+> +        * If array is freed by stopping array, MD_DELETED is set by
+> +        * do_md_stop(), MD_DELETED is still set here in cause mddev is f=
+reed
+> +        * directly by closing a mddev that is created by create_on_open.
+> +        */
+> +       set_bit(MD_DELETED, &mddev->flags);
+>         /*
+>          * Call queue_work inside the spinlock so that flush_workqueue() =
+after
+>          * mddev_find will succeed in waiting for the work to be done.
+> --
+> 2.39.2
+>
+Hi Kuai
 
-Another question is still valid, although you provided more context - if
-the device is ALWAYS waking up, this is implied by compatible and you do
-not need this property at all.
+Thanks for figuring out this problem so quicily.
 
-That would be the first usage of I2C client wakeup flag in drivers, but
-maybe that is how it should be done? You can consult I2C folks on IRC.
-
-Best regards,
-Krzysztof
+Looks good to me
+Reviewed-by: Xiao Ni <xni@redhat.com>
 
 
