@@ -1,107 +1,149 @@
-Return-Path: <linux-kernel+bounces-750653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317F7B15F47
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:23:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7D6EB15F4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C3C63A9042
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198EF16ECA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFF4294A16;
-	Wed, 30 Jul 2025 11:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE12294A12;
+	Wed, 30 Jul 2025 11:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RXX/RAVI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C99AB15383A;
-	Wed, 30 Jul 2025 11:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C3125761;
+	Wed, 30 Jul 2025 11:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753874619; cv=none; b=UWNA/tLH8a4N9NFyp09/+a+HuR84kxgjGxJ0IvsyFF5HEUlAKrqL9zcl/Hg6olvnzaVgMrESlnK/cUPOMR/nLZpnfx8jGjgKaDyimbB5L2vBX+8JTW4F/PZCuTpWfJM2uHJadXhERdKW2k8fMWjWSDMA79E9r0I2CA7SvUbHe+w=
+	t=1753874648; cv=none; b=GHrlik1nbE1WfBoHSr5t1J7xICqaAidAkADwBQ/gdTnjXwrRegQktcjEsXbHjBFFsd5OojUBtR6ifAywwqqy9+nUU+Esai8IbrANEEn64oQmPs1BBGhsQtK28oWSnhCNNNONT7HVZMxonHAVJ1nxheggdcHXqsg25c4/SlVkYFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753874619; c=relaxed/simple;
-	bh=ado/mW/al6GgtHriar0Rs7TCQCI1FxEm96mQuOFcW2o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tuBbGIhHGSO+DC2sGdaFdMe+ze1uWN9PLVhDYu67j7y9GOcvYISEdC9zeifO2wma/NdMnbljFZdZv0WOslqlW99rEQV5muVyfR+ZskrgnPWjPwH2HB6CIlg9caY2Ks/nFzKhAgs9Ym48BBIWObawVu7UBlO2L66yQH8rEWeggZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD71C4CEE7;
-	Wed, 30 Jul 2025 11:23:36 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Ivan Vecera <ivecera@redhat.com>,
-	Prathosh Satish <Prathosh.Satish@microchip.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Conor Dooley <conor.dooley@microchip.com>
-Cc: netdev@vger.kernel.org,
-	linux-spi@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] dpll: Make ZL3073X invisible
-Date: Wed, 30 Jul 2025 13:23:32 +0200
-Message-ID: <97804163aeb262f0e0706d00c29d9bb751844454.1753874405.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753874648; c=relaxed/simple;
+	bh=p439xKdUjQDIZnib0dKjcMt9bu3g5d26E1vN3T7Uh5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o07ttfxULoWlkNi68gKvQUu3r15tMwPDINdslY3EcCJPd9z948Q43UQ9pwzVhWhJUZesXFJzCODMBWgKvcPROnHc2qRpf3EvPkCbseccTEAc0GqrPah/ExkATGHEdrHlt9nxxcy0RsvHtR72f7kgHBGWKOQHE7bq3I07r/ulKvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RXX/RAVI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92105C4CEE7;
+	Wed, 30 Jul 2025 11:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753874647;
+	bh=p439xKdUjQDIZnib0dKjcMt9bu3g5d26E1vN3T7Uh5Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RXX/RAVI27DR10M/gfwNiS935Ue6Zdqk/CyooqHwDNb1SajzszBzF//byGdkDyMh/
+	 UAAt9LcAAbHCIWusf/pcLfNpauaUSv1kP3YuAJ0VWBYxwC/rYvuaMvBinpT1EejcYH
+	 dg/5Dntnt0khOT2LTdswlfMM7U0O9/yrEBBcR5Sdjlf7yM60FhAr8YW+TveE/sB8zB
+	 xifWuuVuCW6Xd0ysWCE5nO+CEtkabJlrx7R+DVYeSjFVIEKJVFXUTqohy/R/XQkYED
+	 +h87tW629+0bc/n2PTAJv7Bn91DM15gh9GKcNlidOiDUbS4VeJLXf0kE3Ucx4Lb7bW
+	 FD0QR+nY09++Q==
+Message-ID: <462402ce-22cf-492b-bc40-bd9dbc3a2f16@kernel.org>
+Date: Wed, 30 Jul 2025 13:24:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/6] of: reserved-memory: Add
+ of_reserved_mem_lookup_by_name
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>, Arnd Bergmann <arnd@kernel.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
+ Bill Mills <bill.mills@linaro.org>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Jason Wang <jasowang@redhat.com>, devicetree@vger.kernel.org,
+ virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>,
+ Bertrand Marquis <bertrand.marquis@arm.com>,
+ "Edgar E . Iglesias" <edgar.iglesias@amd.com>,
+ Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <cover.1753865268.git.viresh.kumar@linaro.org>
+ <feb4591cc48c70f9790c3f4d37c149fc336c3110.1753865268.git.viresh.kumar@linaro.org>
+ <b32b9698-0254-43b3-8109-ee8e37482bae@kernel.org>
+ <20250730105744.w5arednoluxufvio@vireshk-i7>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250730105744.w5arednoluxufvio@vireshk-i7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Currently, the user is always asked about the Microchip Azurite
-DPLL/PTP/SyncE core driver, even when I2C and SPI are disabled, and thus
-the driver cannot be used at all.
+On 30/07/2025 12:57, Viresh Kumar wrote:
+> On 30-07-25, 11:46, Krzysztof Kozlowski wrote:
+>> On 30/07/2025 11:29, Viresh Kumar wrote:
+>>> +	struct device_node *child __free(device_node) = NULL;
+>>
+>> This should not be NULL or this should not be cleanup. Follow coding
+>> style for cleanup - constructor must be real here.
+> 
+> I may have misunderstood how cleanup works, but this is what I
+> thought:
+> 
+> The cleanup is defined in of.h as:
+> 
+> DEFINE_FREE(device_node, struct device_node *, if (_T) of_node_put(_T))
+> 
+> 
+> Doesn't this mean that it handles the case where `child` is NULL, by
+> not calling of_node_put() ? So it should either be a valid constructor
+> or NULL and not some stale value.
 
-Fix this by making the Kconfig symbol for the core driver invisible
-(unless compile-testing), and selecting it by the bus glue sub-drivers.
-Drop the modular defaults, as drivers should not default to enabled.
+I am speaking about coding style. It's explicitly requested to use only
+the full constructor syntax (see long time Linus' remark or just read
+cleanup.h docs).
 
-Fixes: 2df8e64e01c10a4b ("dpll: Add basic Microchip ZL3073x support")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/dpll/zl3073x/Kconfig | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+NULL is allowed in certain cases, but the code here does not look like
+needing it in the first place.
 
-diff --git a/drivers/dpll/zl3073x/Kconfig b/drivers/dpll/zl3073x/Kconfig
-index 7db262ab84582d29..9915f7423dea370c 100644
---- a/drivers/dpll/zl3073x/Kconfig
-+++ b/drivers/dpll/zl3073x/Kconfig
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-only
- 
- config ZL3073X
--	tristate "Microchip Azurite DPLL/PTP/SyncE devices"
-+	tristate "Microchip Azurite DPLL/PTP/SyncE devices" if COMPILE_TEST
- 	depends on NET
- 	select DPLL
- 	select NET_DEVLINK
-@@ -16,9 +16,9 @@ config ZL3073X
- 
- config ZL3073X_I2C
- 	tristate "I2C bus implementation for Microchip Azurite devices"
--	depends on I2C && ZL3073X
-+	depends on I2C
- 	select REGMAP_I2C
--	default m
-+	select ZL3073X
- 	help
- 	  This is I2C bus implementation for Microchip Azurite DPLL/PTP/SyncE
- 	  devices.
-@@ -28,9 +28,9 @@ config ZL3073X_I2C
- 
- config ZL3073X_SPI
- 	tristate "SPI bus implementation for Microchip Azurite devices"
--	depends on SPI && ZL3073X
-+	depends on SPI
- 	select REGMAP_SPI
--	default m
-+	select ZL3073X
- 	help
- 	  This is SPI bus implementation for Microchip Azurite DPLL/PTP/SyncE
- 	  devices.
--- 
-2.43.0
 
+Best regards,
+Krzysztof
 
