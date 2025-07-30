@@ -1,78 +1,193 @@
-Return-Path: <linux-kernel+bounces-750158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00E54B157EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:41:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E63B157F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:42:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59AB71892A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCE7A17FA8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BEF1FBEBD;
-	Wed, 30 Jul 2025 03:39:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 433341B0413;
+	Wed, 30 Jul 2025 03:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vd2HHbIX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="liSVPyQs"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29040201276
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F24C4A32;
+	Wed, 30 Jul 2025 03:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753846789; cv=none; b=bTZDhrzUILOjtql8Ipa/HavAigmCcE946xdmyaCiksYUkbpeDFueEComksKMHNTvlxPu1dZCVtqharveteGGGoFBD1oS7i7mSR7SBqypkjDbofHqDaYfqrZDND7AoAfYSaxNGxk0ByPpWVqZ9XIPhuLGfaymGJIWYXXKan9nTC8=
+	t=1753846955; cv=none; b=OPyPgC4Bi+nlwAEbAQOtXhVZrcMgmvKi3kVvBMh187dr2u+C7iYyScCKzfeDm43RGHkhxeOToVF9ttVk4b4aM7Cf9VEuQWGv1fR02/NuuR9JO9+AVs+08e4HPDfheUkAY9WhOQqDELXdzuv2rVAJvWuLLZelAIrx9qnTJJMhdW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753846789; c=relaxed/simple;
-	bh=Lgmo1+CGQX4gXmlpgvxlKHV/6i+kdUYiGaxJQcUCDG0=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=s7ucEseuR62PWWFwjt0iqp4sT8hDTOo4U4UCXjRKZ9QzHmPat67QksXP0n0VZ0DNug/cCBl4gTt/VBOrUpTkIFdNY0Lkkir4t+dTGuA9hbclHXx1rpJkslOlb+la6zExLgmAcAgkIemYOmk2StHicmrZqEAQWPv0SN378gC97pQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vd2HHbIX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CC8FC4CEE7;
-	Wed, 30 Jul 2025 03:39:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753846789;
-	bh=Lgmo1+CGQX4gXmlpgvxlKHV/6i+kdUYiGaxJQcUCDG0=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=Vd2HHbIX2HCv9KtJDeXp1MFG3MAa1/YLMd3dgVSymq1Qb4MnV5bRVsh/+0Xmua4Xg
-	 Sg1hR4SN4JxPpqkpglZa409/Kt6CaZ5dmnP5QhEUmRIg7BkeV89rxr/BdAR1v8G2c0
-	 J4dvl3bzo9dlF3H2hIzmuTg5dsn4mp7V+0TLO5bmPJl5lHJH77zeCENjyKohRdX3s7
-	 4fDvj/ek7S4Mt/oaBeI9OjUerQvVrVW7ypN28v5gdB2IZkLGcc/qQxjkNA5ZVTMgr7
-	 7bX3FY/jroJuJPQU4iOjfJveEL/6R9/SalStFamyMLnIOZQdkBNAbSL569h1lQPCWb
-	 984OQrIZm6pOg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70E90383BF5F;
-	Wed, 30 Jul 2025 03:40:06 +0000 (UTC)
-Subject: Re: [GIT PULL] uml 6.17-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250729100457.14550-3-johannes@sipsolutions.net>
-References: <20250729100457.14550-3-johannes@sipsolutions.net>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250729100457.14550-3-johannes@sipsolutions.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.17-rc1
-X-PR-Tracked-Commit-Id: fc9ed2f6589dc2c11f05883e5c323be5f39fd241
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: beb6c8326eb4e7006c4aa16b0fee3e303d42e685
-Message-Id: <175384680492.1749338.7260404881755511172.pr-tracker-bot@kernel.org>
-Date: Wed, 30 Jul 2025 03:40:04 +0000
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, linux-um@lists.infradead.org, Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>
+	s=arc-20240116; t=1753846955; c=relaxed/simple;
+	bh=y7A+Cbj306d1WCA4eZFH5mlwMJjPjUpIqFI600wJ9VQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:Content-Type:
+	 MIME-Version; b=CeK77C3lIQeFm3HhwJQyS7h6Z+A4o6l/aHYF5kFjrDsbiBD9hnaTQWwJeEL8YXfIz3RHJ+2/liqj7n4z78e9UUkTj2RvsAcInK8hyoQPhsXtjhIH4HfbSToAS954BqmCiNtCllKA1rFzKI6Tdlpv15Rdr9EjqwDAb69buxM3nGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=liSVPyQs; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56U3gFRs93000309, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1753846936; bh=emXP3TU+KkAxNPKlWl+x3MVQSf2hHwYEGXZb4YFAAPc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:Content-Type:
+	 Content-Transfer-Encoding:MIME-Version;
+	b=liSVPyQs5lt8bpbBjhC5BDWkHz5m04YaWMKr++QMi1OVK0fhPzdWQrR68peBPbNjv
+	 1rvdixGt0K7u+TWDlvslLUpXmYfNWOAhSpzfwbZwYNkRt8bM7YNY6YmAP6tCf44Jhl
+	 q5PIcuf9ez9xrXuV1d3g64gENG0WTNwUuxu4h20BKBh72cIJSrfFixISRaLLDwNhXT
+	 lE0vh2/164qIBBj3OOUYavY9ybazEyekMfm9XW2JKWz9GDGtiJYc7lL/G3xOxpaM4Y
+	 eFhOZOjKftXMhis3IhrY9y3elwo1lATqO4GFB/ENcmkqgKh5VBx9loZ2fwcPp5Pjco
+	 vVbFNNHfSOyRw==
+Received: from mail.realtek.com (rtkexhmbs02.realtek.com.tw[172.21.6.41])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56U3gFRs93000309
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Jul 2025 11:42:15 +0800
+Received: from RTEXMBS01.realtek.com.tw (172.21.6.94) by
+ RTKEXHMBS02.realtek.com.tw (172.21.6.41) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 30 Jul 2025 11:42:16 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS01.realtek.com.tw (172.21.6.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 30 Jul 2025 11:42:15 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
+ RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
+ 15.01.2507.035; Wed, 30 Jul 2025 11:42:15 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Sean Anderson <sean.anderson@linux.dev>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Bitterblue
+ Smith" <rtl8821cerfe2@gmail.com>
+Subject: RE: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+Thread-Topic: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+Thread-Index: AQHcANxb3F/NWj2ltUS/9AXHQ44SQ7RJzkeggAA2TWA=
+Date: Wed, 30 Jul 2025 03:42:15 +0000
+Message-ID: <e8e68a94bb9940509233153f9764c397@realtek.com>
+References: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
+ <20250729204437.164320-1-sean.anderson@linux.dev> 
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS01.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-The pull request you sent on Tue, 29 Jul 2025 12:02:03 +0200:
+Ping-Ke Shih <pkshih@realtek.com> wrote:
+> Sean Anderson <sean.anderson@linux.dev> wrote:
+> > There are more unsupported functions than just LOWRT_RTY. Improve on
+> > commit 3b66519b023b ("wifi: rtw89: phy: add dummy c2h handler to avoid
+> > warning message") by printing a message just once when we first
+> > encounter an unsupported class.
+>=20
+> Once I encounter an unsupported class/func, I'll check firmware team if t=
+he
+> C2H events can be ignored. If so, I add a dummy function to avoid the mes=
+sage.
+> If not, I should add code to handle the event.
+>=20
+> Do you want to see the message even though it only appears once?
+>=20
+> > Do the same for each unsupported func of
+> > the supported classes. This prevents messages like
+> >
+> > rtw89_8922ae 0000:81:00.0: PHY c2h class 2 not support
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/uml/linux.git tags/uml-for-linux-6.17-rc1
+Is this a real example? We have handled class 2 (RTW89_PHY_C2H_CLASS_DM), n=
+o?
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/beb6c8326eb4e7006c4aa16b0fee3e303d42e685
+Please point out the class / func you encountered. Then I can look up vendo=
+r
+driver or contact internal firmware team to know if we should implement or
+just add a dummy function.
 
-Thank you!
+If we defer it, I don't know when we can do it.=20
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> >
+> > from filling up dmesg.
+> >
+> > Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> > ---
+> >
+> > Changes in v2:
+> > - Also suppress unsupported func messages
+> >
+> >  drivers/net/wireless/realtek/rtw89/phy.c | 18 +++++++++++++++---
+> >  1 file changed, 15 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/net/wireless/realtek/rtw89/phy.c b/drivers/net/wir=
+eless/realtek/rtw89/phy.c
+> > index f4eee642e5ce..9484d80eea9b 100644
+> > --- a/drivers/net/wireless/realtek/rtw89/phy.c
+> > +++ b/drivers/net/wireless/realtek/rtw89/phy.c
+> > @@ -3535,17 +3535,25 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtw=
+dev, struct sk_buff *skb,
+> >  {
+> >         void (*handler)(struct rtw89_dev *rtwdev,
+> >                         struct sk_buff *c2h, u32 len) =3D NULL;
+> > +       static DECLARE_BITMAP(printed_ra, U8_MAX);
+> > +       static DECLARE_BITMAP(printed_rfk_log, U8_MAX);
+> > +       static DECLARE_BITMAP(printed_rfk_report, U8_MAX);
+> > +       static DECLARE_BITMAP(printed_class, U8_MAX);
+> > +       unsigned long *printed;
+> >
+> >         switch (class) {
+> >         case RTW89_PHY_C2H_CLASS_RA:
+> > +               printed =3D printed_ra;
+> >                 if (func < RTW89_PHY_C2H_FUNC_RA_MAX)
+> >                         handler =3D rtw89_phy_c2h_ra_handler[func];
+> >                 break;
+> >         case RTW89_PHY_C2H_RFK_LOG:
+> > +               printed =3D printed_rfk_log;
+> >                 if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_log_handler))
+> >                         handler =3D rtw89_phy_c2h_rfk_log_handler[func]=
+;
+> >                 break;
+> >         case RTW89_PHY_C2H_RFK_REPORT:
+> > +               printed =3D printed_rfk_report;
+> >                 if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_report_handler)=
+)
+> >                         handler =3D rtw89_phy_c2h_rfk_report_handler[fu=
+nc];
+> >                 break;
+> > @@ -3554,12 +3562,16 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtw=
+dev, struct sk_buff *skb,
+> >                         return;
+> >                 fallthrough;
+> >         default:
+> > -               rtw89_info(rtwdev, "PHY c2h class %d not support\n", cl=
+ass);
+> > +               if (!test_and_set_bit(class, printed_class))
+> > +                       rtw89_info(rtwdev, "PHY c2h class %d not suppor=
+ted\n",
+> > +                                  class);
+> >                 return;
+> >         }
+> >         if (!handler) {
+> > -               rtw89_info(rtwdev, "PHY c2h class %d func %d not suppor=
+t\n", class,
+> > -                          func);
+> > +               if (!test_and_set_bit(func, printed))
+> > +                       rtw89_info(rtwdev,
+> > +                                  "PHY c2h class %d func %d not suppor=
+ted\n",
+> > +                                  class, func);
+> >                 return;
+> >         }
+> >         handler(rtwdev, skb, len);
+> > --
+> > 2.35.1.1320.gc452695387.dirty
+
 
