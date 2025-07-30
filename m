@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-751252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B8BB166EA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92393B166EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91B81C20367
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:28:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38F2D161A71
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:28:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6D62E1C63;
-	Wed, 30 Jul 2025 19:28:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB99B2E3B0D;
+	Wed, 30 Jul 2025 19:28:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJJ28TET"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j+OhMKTI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745FD2D613;
-	Wed, 30 Jul 2025 19:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B5B2D613;
+	Wed, 30 Jul 2025 19:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753903686; cv=none; b=GWCX0gBic+7CWcdGZ9WaqP+U5mYoBfbOk6ugPHVplxl0x9cVu8GGLGuOZf1KRRDAO4F2IefQ/w5Mh0egnBoCAewlCAzGPZniEhLLnSbhC5xJqesynYS/xSO5MDQG/tbrntCSfSBGjKqLpTcu7AdTiZJdV6G8PzHLLBXBFtZAj7Q=
+	t=1753903691; cv=none; b=MBM1T3bG6TprmTOGxgJFKBQFt8QD+M/m3XnkP9hwqbT9Gt2hmp4O1m6I21/HST9DSGanHVj6mD33kRBvEOCacbkLwjEuvi3fjqgua53DXQFw0Dojs2ZP07DOBURIxgiDpOAFP0tMFRy7tVFJVikmq/107tvvCWVyDGhLglio0I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753903686; c=relaxed/simple;
-	bh=iR5+uRBldWlcUKs+VpB/kO7cqjcEx28y65V3BAPL9OQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cwi97akjuO9YJVmi2np6zU5YRJM9S0vcDylpv+6RHRkj9fACW8c8QOYJ6yNJF56hWa4PxEMGv8JjSPh0dS6h9GQ9kguarvNnpJTt5A2eAxffTwnWMMeb2YtASZeHhiPZIDBsA1FOvH08NhDTcY6WSo9Phl8WsUFhcE5GnpkObkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJJ28TET; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7642db47111so25048b3a.2;
-        Wed, 30 Jul 2025 12:28:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753903685; x=1754508485; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZNG8DXgwAP/5jPmamkbii8OoUAG4/pKAFcQJx/eZgY4=;
-        b=PJJ28TET2+ELm1+IQYYLu4d3W+N5vZyUJcVKjVIMIKNPPbp8iBbTE7XX7TAdVbYbr/
-         yPd+YTspjZ9nZNt9LKi2NxQV1/h2On2vdwbaCuY1T/LckY6t7ihymULBrLj7CmtYU746
-         qHZlbTSLU+cgaptPlRlzldYYUINBQhfXmQHvmM12PLl/4Gfq3+VftbXkMkBTcnSuEFny
-         PmYm2O0uURs5+BCg8++w2aCd7R3ST/fIvWNPwO6wvY/UqI1TBy8NksSOKApeLbli91IV
-         dMACS7c3RjUsXKL1Fh/F0Epf1ca/Fyn49V+Ye3x7eAmpm3jWZPH1CJvb0HC/OdchdtGJ
-         44Nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753903685; x=1754508485;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZNG8DXgwAP/5jPmamkbii8OoUAG4/pKAFcQJx/eZgY4=;
-        b=FHFvT31zK1MorsMckVsQIKshCETUvg87f66L9ImtPqP24A98+GeuDH2OTNUeJcG77u
-         O/r1y4Z1W5/Fe55Pj0LzlqzCYoYBX+AdIlamtXEzfTPbPCWrlu48QiqGme60MYjGTyU/
-         aQhmQF4WEgdf4O1f4arz8nbiNgsYNySacfGoyLv1CThpteLThFD1eqnXbLpBu164WQ6R
-         WvoPDZJobYi9UqvzLMCU1uCRb82TPkmAXlThFwX/MdAYh2PoqU1MQqY6Aj0L4TKaIt0a
-         0uB2Dpcslrr38xBJ1SmeFoctCx4/H0dceqVpRUosc8VTSTq6vbQPhnLO9RjnOQOugz6H
-         MVKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWmWaIjmxQVbb9gZmsBX987jkP5CCFMwYsEhbyfrzL2l5H+1YP9AcD9dojUFYW9yzH7BU9pUzWvB276uJQ=@vger.kernel.org, AJvYcCXVUO58Ht2I1hWM1SucWmkA7f0m4O6nRhnP4eQWLmv+eZZ0BLyerN+qleQCcREpUgLLSzIpxgvCle+qYps9vlNT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfMGUFDBNARAsdcdh1RQj0h9P/RwMrP6yPu5Kh/E/NfiNX6XQ7
-	ZeVai4iP5Z2cF+zCzOfXzaZAPRUYFznLtdsZ6Ebe4mSDuMp8+Yvj/K3O
-X-Gm-Gg: ASbGncvxnytXQu+I4FqCirwSvhwbdduVeR+15FAYijkhLHGH8yqEoPA12eiMWqWkNK2
-	Rv7IexKS7kw5yr4DS/DiHEYE2Su4u2VYTeepzN+iN0FqsgvfrDPHxhruOI+W9yH9tJoz2eTfPiD
-	GfXHiohADdwTXF74upk5zJnrWs+s7ecLBUdZP8/7A8guMmvPdrNvG8nJJOERs/Q0sbYHRQovE39
-	6eWyHLrpISLeBPkS5vyFvXu9VCKlQt6Ghkq5rJ8qdfRGSUglKPwc5XtSSwy+VXTcPqCnE/jPR10
-	niTcLFLjBkmxmtcaMbGwivx+VikE61+N3qIpkGCePmKWIf/rprH3YHngknjoFeD7nt7kznGQd3x
-	DoYhtVb2lI3Czy0KGK+hnsu6m0PUCIg==
-X-Google-Smtp-Source: AGHT+IEoZQqMr5MaOBTYKOEj+gA/zIED+BbftxKTZgXXgkW3/liGpeyXixM9xrSxleeRxCUjjW4w6A==
-X-Received: by 2002:a05:6a21:9185:b0:231:242:2596 with SMTP id adf61e73a8af0-23dc0e90f22mr2890425637.5.1753903684654;
-        Wed, 30 Jul 2025 12:28:04 -0700 (PDT)
-Received: from ranganath.. ([2406:7400:98:2557:8eec:789f:9109:20e3])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bb007b77asm1256508b3a.48.2025.07.30.12.28.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 12:28:04 -0700 (PDT)
-From: Ranganath V N <vnranganath.20@gmail.com>
-To: shuah@kernel.org,
-	jlayton@kernel.org,
-	brauner@kernel.org,
-	broonie@kernel.org
-Cc: skhan@linuxfoundation.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Ranganath V N <vnranganath.20@gmail.com>
-Subject: [PATCH] selftests/filesystems: Fix build warning on anon_inode_test
-Date: Thu, 31 Jul 2025 00:57:47 +0530
-Message-ID: <20250730192748.39517-1-vnranganath.20@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753903691; c=relaxed/simple;
+	bh=TYlUKBz/U7F0smL1Nhou3hsVgjS5e6LWsWxW8aR82m0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=SbUsLILDGZEG7Ad71Q76gSD4OYp4Rj67voRYTC8zauVwoU7qwQFYwVyfj+/eIXUyYQH9qTrXDg6JTxW8kIFlM5mUtCh46AZtD/oxATfKw0cjN8urSMT4XEWbbV0idci+kMZZkDDNJ1n47iTfGdGj4KiICTlMsZtnI7wCdXZqLjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j+OhMKTI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8B71C4CEF9;
+	Wed, 30 Jul 2025 19:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753903691;
+	bh=TYlUKBz/U7F0smL1Nhou3hsVgjS5e6LWsWxW8aR82m0=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=j+OhMKTIJ6Y5pGIQhJUpxf1Pl4DL2XEAUniK6mcu6bzioxJLspM3djWIs0B7iHx5r
+	 +lW7tLk4Ra7aVO6yhaSTZ/1fAgVm5s153/+2zJOACLcp1MUdUKZDcGG6poJuo5TVT3
+	 VnU1W7n7a+DxvJ72BbYXFoxJCDNYFMdfhfoD/ivhXvxysR7vXgKJ3lti4rq6YfGNv9
+	 0IG0dnLdim8YOc5fsU1pLvdsOc0XC4MEi98T+uPqfbGhUmDcOPm9+WFiH7G6m2RdYg
+	 m764rjhin+PMdgBOKcEt3Xm2IZjcZtITQrjPH80WTztPLALdRGFdy0hLoy+hlLlwoO
+	 y/cxztbeUHEtQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 30 Jul 2025 21:28:05 +0200
+Message-Id: <DBPMYTZSIEQ5.3NPJM1CYVO3CK@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Tejun Heo" <tj@kernel.org>, "Tamir Duberstein" <tamird@gmail.com>, "Hamza
+ Mahfooz" <hamzamahfooz@linux.microsoft.com>, "Alban Kurti"
+ <kurti@invicto.ai>, "Joel Fernandes" <joelagnelf@nvidia.com>, "Paul E.
+ McKenney" <paulmck@kernel.org>
+Subject: Re: [RFC PATCH] rust: workqueue: Add an example for try_spawn()
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Boqun Feng" <boqun.feng@gmail.com>, <rust-for-linux@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250730163439.50753-1-boqun.feng@gmail.com>
+In-Reply-To: <20250730163439.50753-1-boqun.feng@gmail.com>
 
-clang warning null passed where non-null argument is expected.
+On Wed Jul 30, 2025 at 6:34 PM CEST, Boqun Feng wrote:
+> `try_spawn()` could use an example to demonstrate the usage, and
+> arguably it's the most simple usage of workqueue in case someone needs a
+> deferred work, so add it.
+>
+> Cc: Joel Fernandes <joelagnelf@nvidia.com>
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> ---
+> Miguel, Alice and Tejun, while I'm at it, should we also rename the
+> function to `spawn()` because of the motivation mentioned here [1]?
+>
+> [1]: https://rust-for-linux.zulipchat.com/#narrow/channel/291566-Library/=
+topic/.60new.60.20or.20.60try_new.60.3F/near/529533317
+>
+> Also I find the `{ <clone> || { } }` is really good if I only need to
+> clone the Arc for passing to a callback closure, but I'm not sure how
+> people feel about it, so criticism is welcome ;-)
 
-anon_inode_test.c:45:19: warning: argument 3 null where non-null expected [-Wnonnull]
-   45 |         ASSERT_LT(execveat(fd_context, "", NULL, NULL, AT_EMPTY_PATH), 0);
-      |                   ^~~~~~~~
+I'm not so sure, see below :)
 
-Signed-off-by: Ranganath V N <vnranganath.20@gmail.com>
+>  rust/kernel/workqueue.rs | 27 +++++++++++++++++++++++++++
+>  1 file changed, 27 insertions(+)
+>
+> diff --git a/rust/kernel/workqueue.rs b/rust/kernel/workqueue.rs
+> index b9343d5bc00f..59c1a5e14d12 100644
+> --- a/rust/kernel/workqueue.rs
+> +++ b/rust/kernel/workqueue.rs
+> @@ -331,6 +331,33 @@ pub fn enqueue_delayed<W, const ID: u64>(&self, w: W=
+, delay: Jiffies) -> W::Enqu
+>      /// Tries to spawn the given function or closure as a work item.
+>      ///
+>      /// This method can fail because it allocates memory to store the wo=
+rk item.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::{alloc::flags, sync::{Arc, Completion, new_spinlock}=
+, workqueue};
+> +    ///
+> +    /// let work_done =3D Arc::pin_init(Completion::new(), flags::GFP_KE=
+RNEL)?;
+> +    /// let data =3D Arc::pin_init(new_spinlock!(0), flags::GFP_KERNEL)?=
+;
+> +    ///
+> +    /// workqueue::system().try_spawn(
+> +    ///     flags::GFP_KERNEL,
+> +    ///     {
+> +    ///         let work_done =3D work_done.clone();
+> +    ///         let data =3D data.clone();
+> +    ///         move || {
+> +    ///             *data.lock() =3D 42;
+> +    ///             work_done.complete_all();
+> +    ///         }
+> +    ///     }
+> +    /// )?;
+
+Not doing your pattern and instead adding a `2` postfix we get:
+
+    let work_done2 =3D work_done.clone();
+    let data2 =3D data.clone();
+
+    workqueue::system().try_spawn(flags::GFP_KERNEL, move || {
+        *data2.lock() =3D 42;
+        work_done2.complete_all();
+    })?;
+
+There are some discussions of introducing some better syntax for (cheap)
+cloning, so maybe we can use that in the future.
+
 ---
- tools/testing/selftests/filesystems/anon_inode_test.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Cheers,
+Benno
 
-diff --git a/tools/testing/selftests/filesystems/anon_inode_test.c b/tools/testing/selftests/filesystems/anon_inode_test.c
-index 73e0a4d4fb2f..f796dad679db 100644
---- a/tools/testing/selftests/filesystems/anon_inode_test.c
-+++ b/tools/testing/selftests/filesystems/anon_inode_test.c
-@@ -38,11 +38,13 @@ TEST(anon_inode_no_chmod)
- TEST(anon_inode_no_exec)
- {
- 	int fd_context;
-+	static char *argv[] = { NULL };
-+	static char *envp[] = { NULL };
- 
- 	fd_context = sys_fsopen("tmpfs", 0);
- 	ASSERT_GE(fd_context, 0);
- 
--	ASSERT_LT(execveat(fd_context, "", NULL, NULL, AT_EMPTY_PATH), 0);
-+	ASSERT_LT(execveat(fd_context, "", argv, envp, AT_EMPTY_PATH), 0);
- 	ASSERT_EQ(errno, EACCES);
- 
- 	EXPECT_EQ(close(fd_context), 0);
--- 
-2.43.0
+> +    ///
+> +    /// work_done.wait_for_completion();
+> +    ///
+> +    /// // `work_done` being completed implies the observation of the wr=
+ite of `data` in the work.
+> +    /// assert_eq!(*data.lock(), 42);
+> +    /// # Ok::<(), Error>(())
+> +    /// ```
+>      pub fn try_spawn<T: 'static + Send + FnOnce()>(
+>          &self,
+>          flags: Flags,
 
 
