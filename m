@@ -1,133 +1,115 @@
-Return-Path: <linux-kernel+bounces-750555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C23B7B15DF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:17:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F50B15B33
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD41C3B6788
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:17:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331B9173DE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2834275867;
-	Wed, 30 Jul 2025 10:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 943A926A0AB;
+	Wed, 30 Jul 2025 09:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S41Xtgrz"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Js3erVtJ"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2D5E1DF738;
-	Wed, 30 Jul 2025 10:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B5D224FA;
+	Wed, 30 Jul 2025 09:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753870668; cv=none; b=focWAWSNxK77YL5DUK/ncmEHYnqpwqQmkZIwWdZI2WKS85nFiYk7I1CKNi8FGhVbp9Yq3F/SNbH5QLDZ0y0gEJLPBeDZ/N/pTAWNuaXj0lirsZsOpTqAVgcuS/bYvHfzkjapcnbpKG2t8rtWmdc040fmuK1EcO9OwnTzubyh0l8=
+	t=1753866331; cv=none; b=cWjeqQuhqBEItW1lQlTuvFkclEDDBeN47UNW1YOPCYr1fvXQ1biL8cBMzxcQv4bzSa1ksnTwMqzF8iwDuI6M+g+smyM2UawetfzXULs9MsTFMN/pkVz+q5WjXsHp8HSoSmn67NPVLrA+nQM7YAeJnJUQook/6nxy0KNkC1SAWAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753870668; c=relaxed/simple;
-	bh=O+qmG/7ycFRlMp5aRPMDncbugQOZSV3NOqYfZz2Ktks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uSX9okfttSgNb3fv3u4KLuCrmfUcK5pbyk8Jjm1/2strCXlAVwJCKWtIi8kdwkPWWRhlBt2UVFUV0ms9hEnU+ZUqnx075wQeyM5gqpgstSvvChZgJtCkkcHHR5OvJ52xX372dMXMvGskajItBJcQkdbwJvp/dQjJlXJfTfWzVes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S41Xtgrz; arc=none smtp.client-ip=209.85.214.169
+	s=arc-20240116; t=1753866331; c=relaxed/simple;
+	bh=/EsMy17JElruVccra2rJNhXuxYY654TvWWIqnzkBzaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QZeGHQdnwkNmmguGPW9HDx5GGFV0mF4zsVHZYYvZN36dePM++VWtmSWUISNlU8xyA3zeqy7pEGL9N/z8iry51WPRiw8nvjWVEkRoEL4dHVeyV2nv0vR5OWp2iP0EGz/0w3Dl42NeIFIlQDIq21T1HhgZ7wfarH7zjAN+byC0dYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Js3erVtJ; arc=none smtp.client-ip=209.85.214.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24003ed822cso22103565ad.1;
-        Wed, 30 Jul 2025 03:17:46 -0700 (PDT)
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2400b3008e8so3704125ad.3;
+        Wed, 30 Jul 2025 02:05:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753870666; x=1754475466; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+bZoUFL9G9l8B9hX7hIXTN1VCZgqBqq5bjZvrBOTHZM=;
-        b=S41XtgrzZcIFSpSMcwJ2zLoaupmDALlhxglcb7/pL5l+5+f1OJAbtppVsYKZYLF5wP
-         Bc8fKeU87+sSBtzTBWfyFD3g7p9iq0wUS7WpPQp8Nruwoi7w/yBJajyCjxtITqSG6Vn4
-         evihT2B+OpFP27KZmtHkjYhMQhoFJ6HYIfk3vh8jtdD9Jyx4Ro7rhORCPzrR2MKt/lZm
-         m/gw75UquovZdbj2xKdjZAmR/Kpmpt0/oXQxqdbFAgnpNIYRIhnJwx55/xO5PIx3mSG5
-         wKtmNLzLYamDTkNGfyJCGoKaL8JjtqDnDAtOLj18wKuf82jEsn8NWDWBRbTR/B4qPaTe
-         tQcA==
+        d=gmail.com; s=20230601; t=1753866329; x=1754471129; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/EsMy17JElruVccra2rJNhXuxYY654TvWWIqnzkBzaM=;
+        b=Js3erVtJzMWenl7RkMfEez/mJAlc710TMaO6Tp8FVMyaskKb+HQ8NUQIsbRQwjbZGu
+         nVt/vWVBIQSA1LbCm3p+vfenj40mR+kXbnGwtEwMpNbcoS8w4RAitsJdD5MS8rVRYV17
+         fyGsGZ0w8Xm03vyPF7oijm3Ru6JuPSY9QAuLf/+yNVhgXGKnGCec2zaIyTTpABePo/mb
+         hnJEqQYFhA5W3CBRdEB+HSwYxZ3ua8MA4jgrZ/IOeJ5NzDqkTVvhWY0b4o52YbvhiRyL
+         vB60o7o3xOT8LahsheDYFmg2ke7kWyja2ikWq7Zclfe0fs4lXvd4bov/BvlOSUE/Z+NI
+         MONw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753870666; x=1754475466;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+bZoUFL9G9l8B9hX7hIXTN1VCZgqBqq5bjZvrBOTHZM=;
-        b=JyzQFJNJl22QjgJqpJz6UNAvEXY8TMmIx16NLyVp2x7UOKRBpPWlvbvKl4XBzMJfr6
-         CaCpny49zQJGZGm9OAXnhZiZaI4/iqS6fifzaSmU7KLn3w6PVf6KZzQlzynseW3tV1+/
-         84sTyg6orImKrL75J8VrIok5tQMvkRoYr75kOyvGhF6mHmQmcc0mEqTy49S2/5LxB40U
-         ZCl0wngYtmHZNxWrXvW1frbePnyyLiIxC2wWhcR5Yxf5M/IK0E0P2pB3WQVFEXEkqlVe
-         ErY8En+wvSAVMruIHN4hvpmr1SAfD9gtKl+d5Pv92OYHBgik6qcb6rZH4wnYCR/w9CV7
-         lyhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJROkWRbo1LV+RMQQB2iust6BG/9UHZEkL/ABj1e4LJVKmVExk+DoEjw/D5X32+hBYDm1XFbthPJ+8naw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJgDVYYr4X4qqpq1NBa+AfrI3nxkcdt9ebLJwH+nZyITbRFdla
-	WJSrS6UriU+2zUEuSL8jmBD1fPYTSMRRwr9aharDYz03wsn60Z9HcMGg
-X-Gm-Gg: ASbGncsDpibqf7/SHf5PVbmHM1lS9Pdy8ctgLcJaAULI9di8mGY/d52Ze14HhVLqR7v
-	yuyGSWX+8ApwT2C6Z+ZcC0yLRRAUgCqgWdlpttZyql0jSgc9XS8MS5sTJ1VOYlHQ4vuhWUueqTi
-	+WWMrQPT10mEe8lF5zB6gWgL2cetD21ApEwiiSF1jP0WpXCVm2VSvX/8ZEhtG2gFmdrKFvOciWZ
-	GnmmYGYkYrL4J20KN3Dv7WI9yyJItD9e+coLqopa9RU51LZkDQ/xcbg8wLaIzJCgmFFEEnX0ZOF
-	R+PbekT2yQG/BgqAho6BZToGnzR2eY0ubYDiWlFrAOJKpla/IXk3BfD/68jXI9aKWpDmMlo66t5
-	Ku1glSteH59Ps708r8mm3fQBYD+ZrCQP1bH1Ho6opNJ9W4mBuyO3QMC2iGP522b5WOLajC6M6ww
-	==
-X-Google-Smtp-Source: AGHT+IGQsO+8vGqIOomzjP0WFp+Pzob79mQJT9AXCAigJ+3Qak9aEP0dZ4x5BM+lngjN2SRvwcAh6Q==
-X-Received: by 2002:a17:903:903:b0:240:2eae:aecb with SMTP id d9443c01a7336-24096b49851mr32847525ad.43.1753870665945;
-        Wed, 30 Jul 2025 03:17:45 -0700 (PDT)
-Received: from SIQOL-WIN-0002-DARSHAN.localdomain ([49.36.70.111])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2403c9922d1sm60161265ad.13.2025.07.30.03.17.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 03:17:45 -0700 (PDT)
-From: Darshan Rathod <darshanrathod475@gmail.com>
-To: gregkh@linuxfoundation.org,
-	m.grzeschik@pengutronix.de
-Cc: linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Darshan Rathod <darshanrathod475@gmail.com>
-Subject: [PATCH v2] usb: gadget: uvc: avoid assignment in if conditions
-Date: Wed, 30 Jul 2025 09:04:11 +0000
-Message-ID: <20250730090411.13044-1-darshanrathod475@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1753866329; x=1754471129;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/EsMy17JElruVccra2rJNhXuxYY654TvWWIqnzkBzaM=;
+        b=O/mF1Fjn6AZFFdHZGeEdPXmnYoadE/bEpNb9s5fFeVF/darVFkZLsiwX8pIPdIhNIW
+         MW7kATxOZBWMJKlsmmzxhuDgn3jOoanIK34LWhm5aY6VapskSBad+djrLgQIws50Q4HZ
+         WMjUoR4RdetJrgMbuiKaAfZcutVcUg1R6+zxOKHOhFSRwjntdW84xvfSMC3/DE//sRfI
+         dQ2Z+qmyfTlk5yxglzwwWNUCnXjI6tNjBvvAQjgvvoK6QwK7kZ7LCPoWg08qicAk+rVp
+         DJzlcYlhdI9XCpHbBs3cT3QeJgtQCqkj+1cExkVqimOBg+E9CBwz7fqqMbBOqJWXLjhj
+         o3wA==
+X-Forwarded-Encrypted: i=1; AJvYcCVNK1p4hRqOrf4gqUYLCQwjI31dCp+Tr5qiejH6xmIx70wvux7lceZVYPfm2UNEzxRIj4X9odiVIeIMtiQ=@vger.kernel.org, AJvYcCXy5z2IzB2Sl5ZvA46gqkQB1oacrfGhaVeBHvwdQGt6qZ/I6OWKZCeAdZ70BbD/ahur1NfWYncT211s@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUjbHNV8OY3KtZy6/f1ZnMKWjKy9Emu40Hk3XywKPYAPiOZQXr
+	N1Ikk2JhbKzDgV+/+sFvFkcnf++GYo0FsBIwCxnHX2JQxE8+7fpi9z8N+UJIG5hX3p/95oCa556
+	iqWBNxWRkgL4ZXjy8RaGA6Kqyoae8uyxTK+cm
+X-Gm-Gg: ASbGnctMGWFeHptNS+G6gEMI8M5Y6pfwng2Pz3+aewNexm+XeWillL4celFyKulsOQO
+	VQxPx4bQliqBc+mK5VDc7uJiN6AKN5UJczci+aDZNQxls6nsiCj77+D2VPSJ26L2iNRFxCM80RF
+	PrdEdl+HPVna4EWsbs8R4qnw9hEpMMCLV3AULpHN2xqROFFIzlp1/72L092Q6GYLZJn3jvZpYYh
+	Pikbgdx
+X-Google-Smtp-Source: AGHT+IGySRAOV+djesXDaPR4TJ3aHBZNppgospN11oNLqL5TYtRHOtJyQQTzANoECnSbt+2wN+anMAN9utsfht0XdN0=
+X-Received: by 2002:a17:902:d50d:b0:22e:62c3:8c5d with SMTP id
+ d9443c01a7336-24096b0c531mr19943065ad.8.1753866328704; Wed, 30 Jul 2025
+ 02:05:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250730013417.640593-1-apopple@nvidia.com>
+In-Reply-To: <20250730013417.640593-1-apopple@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 30 Jul 2025 11:05:15 +0200
+X-Gm-Features: Ac12FXwbXvIMu5qIoQekmsCAUtlTUoCMVOFLDM1LV1SLDgQ3ZVljXgRFPwoAfMA
+Message-ID: <CANiq72mt3xaDCiGs30XG6VkEJrEj8KnHfjDFdhrj5qgW-dTgdw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] rust: Update PCI binding safety comments and add
+ inline compiler hint
+To: Alistair Popple <apopple@nvidia.com>
+Cc: rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	John Hubbard <jhubbard@nvidia.com>, Alexandre Courbot <acourbot@nvidia.com>, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Refactored code to separate assignments from conditional checks.
-This improves readability and conforms to kernel coding style
-as reported by checkpatch.pl.
+On Wed, Jul 30, 2025 at 3:34=E2=80=AFAM Alistair Popple <apopple@nvidia.com=
+> wrote:
+>
+> Cc: linux-kernel@vger.kernel.org
 
-Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
----
- drivers/usb/gadget/function/uvc_video.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+I think this list of Ccs is automated, given even the LKML is
+included, but the Cc: tag inside the commit message is not meant to be
+used to mention every maintainer/reviewer, i.e. it is normally used
+when you want to document that someone was contacted (i.e. for a
+particular reason, not in general).
 
-diff --git a/drivers/usb/gadget/function/uvc_video.c b/drivers/usb/gadget/function/uvc_video.c
-index fb77b0b21790..d77ee5fd9b21 100644
---- a/drivers/usb/gadget/function/uvc_video.c
-+++ b/drivers/usb/gadget/function/uvc_video.c
-@@ -777,18 +777,21 @@ int uvcg_video_enable(struct uvc_video *video)
- 	 */
- 	video->is_enabled = true;
- 
--	if ((ret = uvcg_queue_enable(&video->queue, 1)) < 0)
-+	ret = uvcg_queue_enable(&video->queue, 1);
-+	if (ret < 0)
- 		return ret;
- 
--	if ((ret = uvc_video_alloc_requests(video)) < 0)
-+	ret = uvc_video_alloc_requests(video);
-+	if (ret < 0)
- 		return ret;
- 
- 	if (video->max_payload_size) {
- 		video->encode = uvc_video_encode_bulk;
- 		video->payload_size = 0;
--	} else
-+	} else {
- 		video->encode = video->queue.use_sg ?
- 			uvc_video_encode_isoc_sg : uvc_video_encode_isoc;
-+	}
- 
- 	video->req_int_count = 0;
- 
--- 
-2.43.0
+Otherwise, all commits would have very long lists of Ccs and the value
+of the tag is diminished.
 
+Cheers,
+Miguel
 
