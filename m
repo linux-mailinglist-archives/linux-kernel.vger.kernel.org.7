@@ -1,164 +1,116 @@
-Return-Path: <linux-kernel+bounces-750637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 039E4B15F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:11:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49D2CB15F10
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:10:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF7407B5B62
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E5E168164
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A6A0299937;
-	Wed, 30 Jul 2025 11:04:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A519E299AA1;
+	Wed, 30 Jul 2025 11:05:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bf/NApAP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4qVj7LW"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3222B284B41;
-	Wed, 30 Jul 2025 11:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DDC284B41;
+	Wed, 30 Jul 2025 11:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753873481; cv=none; b=TwJkH9R48aI8kPo89o28uRg/To/wBufZte4WNUnPN1GkmD+lGQu08ZNQHWKHAMHJw7zl4FuCRlwonxc5E50ydR3cgy8APZVpZcv/ZY6NgvCUb/V22l5H7Lg/B1CF6Ve7YJjoXKu86Y5hk9z7AtI84Kw0v4ZHRiaSM+OzPKa/JPM=
+	t=1753873521; cv=none; b=Zuu6uaN0JQo0zij9Br9mf1JdyZHbstiTkQWsVw09lIbFL0xb8MyWoB8lW/c9u3tiOzugNUvQi0WdZ3Zo88JRx007+jFtWirEetrCZDDk58uSOLlAUw/kbB7jyJ5XPdmPE/EJM2WhCNWcsIY64Sn9yLJQCnpm/w9pj22tsT2YaFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753873481; c=relaxed/simple;
-	bh=ztg7FRt5UKPNEA3tAFLtII2s8T5WXcv9COtdzco54FE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nPOWdIBzSZmaQIG3/5YeAhzFXhGIldzwMTZV7AM7dngQlBoBVAwatyhiOyupkZTPtlXRk9h7AXZKqioJD1Ah1yf+4HQBZ0WuTXn2UocIMq2CHCXD39MRo1Vp3SsjEl36Dl4G21psLWpAoLe9o9lXe5HxZd7GcR4/WYUYjOt+Kf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bf/NApAP; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753873480; x=1785409480;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ztg7FRt5UKPNEA3tAFLtII2s8T5WXcv9COtdzco54FE=;
-  b=Bf/NApAP87TA09MvneuADSkEPalrND3k4AT6VNj2gE905XEjibgzamRJ
-   ZawiIT55LkhsUmQH+WqEfw5DCdr4pYKat7ekpO5eDcXkczDJM+Q8i5Cz6
-   U4aqvBDVL06yjC4pfImJo8xgeMvCk/fnFKjTYLUG/3ygbT2EhEGn+CqnZ
-   4pY+8g18M1OJp+MqEC+S5ZhXj1Ohzmnu4IXdnZv+QvjhZwPM17U95proW
-   DjLbKC/2ZOPydJ8QiEI/HM/lxcK2KlHsoNCEAAlR0dwEwNRuQD2AumySZ
-   jAkFM0yCFRk6UK/FTFU5M/92C2IQPMEIRJv8mAswgl17lR3zlWE8V+irD
-   A==;
-X-CSE-ConnectionGUID: shT9MtguRjm7m9v3FXDELA==
-X-CSE-MsgGUID: JdBKKXhuQ6KCogARrS0ETw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="56055959"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="56055959"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 04:04:38 -0700
-X-CSE-ConnectionGUID: fC9Y47YQSmqENkR33+2+jw==
-X-CSE-MsgGUID: KMR8BEEmSC+9bp4GEfwV/w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="193801210"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 04:04:32 -0700
-Message-ID: <f0378019-01d7-48df-bebf-d2a59e9d8582@intel.com>
-Date: Wed, 30 Jul 2025 19:04:29 +0800
+	s=arc-20240116; t=1753873521; c=relaxed/simple;
+	bh=ZfP+G/ZvV75Byc+EUdeEQxcNfw6I2EE/Dec9sK0mFxI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ISqdKA9oBAjGrl6ed2oOSXCBdUsoiwL7jQexs9Ku3zLN849aHsTls8I5e1ebB1VNFB9ERIHfqal2TzHWn8a90DYg5XwJsJyv8WOYlbElafR5B+EtvKs84Eho74XXGPrZQt8mJUfE67arrfxdA1i5sfcmFC93w3uS5P1b0AnMikc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a4qVj7LW; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b790dbb112so1057839f8f.3;
+        Wed, 30 Jul 2025 04:05:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753873517; x=1754478317; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=54AIPyJy1uCtqZ7NGhSPeutHe5R23DZ/fm+drMb1lCs=;
+        b=a4qVj7LWRC3+KqatnGRnGBamFVYM+huh8P6AXRpv1kRT2q+qx2Q2mMKicKML4gpYQH
+         XJQ84sAnte8JvNSi+xhJaGayEWHXy2V3l1DMjyDs9OWBLD8ZQ/lS+osvDJqyItnxZcyj
+         h6f3V2vTRFd2ZVLzSEziQspvA4QDqoGKurYBEg7pyw68RiAi2jotWviWh2JxxTonfcYr
+         HLOhPpTQWf65qfdMy0U1U+ofyKdcuLta3auTr2gehcRfVC7dtQat+U8nH39sNmENVhSx
+         FpXl3ju1qIgbtZdcVOuDRRpBqgY1IddH0IQr7b51IgijWRkyKoLUjndrTj+NlaWK5lyM
+         LqMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753873517; x=1754478317;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=54AIPyJy1uCtqZ7NGhSPeutHe5R23DZ/fm+drMb1lCs=;
+        b=f/T60UGAourk1jEb+UF5S+DgN5FfmfefGMTWtN56ikpM2kLjYA54uVoFsOh1hlx+uS
+         8eY3MLkY/XhUGa1c/mWNepDALwKAReDMqvkzb6lfNAFC5VOQjj8EFXXm0/UsHcyR0eHK
+         f/V+OJA3qRc1n6Z+gingDnbz/yfXa5Kovdd1RVzcTNfNzEUAaC+h35ueewy6PxERIey8
+         /O86/wwYmQJR5kaer/WsQ4a5G8kbxbksNVe5qYuN8ie9VSJEmd+tI28swTv3vMNawn1S
+         CBoLVXM62zUIVdFl8lucDYuG9hbNYKzBbNe9UvStKSNEgbp8HeXU8qoe718++B+sjcEj
+         pYRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCP4B6DkHVNNRJ0qu36TwXmwXNHxdbLIS9aMSNTFYTbcwDmNNPbB9Cj5422EsoqVtUPZ+1kuw60kEohVR1@vger.kernel.org, AJvYcCXSHSdVEd03FUH1fqfdwNJmqoBLdyhQKaad+ueSFH5UQ78cqmBh5d9rRWns7yhyjgxhDFVcKZTOQLo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoqpquVGCPpR7uI93VE7sL28cs8+Bewi6P7jkW7g/MA2AMMzvz
+	xRQzmXi1t86RY3rg++7sMDYsLbCzIXJ8WlDRPUaSEZjnAbF0Bi8f1n65
+X-Gm-Gg: ASbGnctcC99KzLWcf5zGTv2Li34GwD7POl0jQB9jf/nQdUzRRb0LUP7z2GFTarnbpG6
+	ZcqLYuvmvuyRR1fkC705/uLsEGl6EIAdis0i5TkmR69CwbaDhAJD0WLGr6VPpTqDg0TCSe+kMKY
+	zpPvQdnG2KYNnEa0dPdrVKb2BgxZayTSlqTeOPjqgZa2D/llcSRRi3MZx0bQ3ktGZ07/gkNoitl
+	ijwSyAm/1qcXUAbU1Uciqhj9bcIxR0znfb12imxvVXrSt0Wn2fXLHwuN6i5DqrkJiuqxgbXztTp
+	vYDauLi6cS858zAf6Pyp6Ja0yqhROFaxCg7SF1wDyS3mY3pATN1k6J6wzCiX669SSUoG/iRaTXL
+	gSk4yKC35YTk4HvwTYf3dWFi87qQWGEU=
+X-Google-Smtp-Source: AGHT+IHNkjb7RgoRXtTFkL5ICG4Uho4Y4jKD4r50o8pxtcFYUvIysyolnX0sizkUEgmucDNp8pv8Sw==
+X-Received: by 2002:adf:a297:0:b0:3b7:970d:a565 with SMTP id ffacd0b85a97d-3b7970da81bmr918250f8f.46.1753873516536;
+        Wed, 30 Jul 2025 04:05:16 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778f104ffsm14990170f8f.66.2025.07.30.04.05.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 04:05:16 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	linux-ide@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] ata: pata_macio: Remove space before newline
+Date: Wed, 30 Jul 2025 12:04:42 +0100
+Message-ID: <20250730110442.2059004-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 22/24] KVM: selftests: Do not use hardcoded page sizes
- in guest_memfd test
-To: Sean Christopherson <seanjc@google.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>
-Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org,
- Ira Weiny <ira.weiny@intel.com>, Gavin Shan <gshan@redhat.com>,
- Shivank Garg <shivankg@amd.com>, Vlastimil Babka <vbabka@suse.cz>,
- David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>,
- Ackerley Tng <ackerleytng@google.com>, Tao Chan <chentao@kylinos.cn>,
- James Houghton <jthoughton@google.com>
-References: <20250729225455.670324-1-seanjc@google.com>
- <20250729225455.670324-23-seanjc@google.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20250729225455.670324-23-seanjc@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 7/30/2025 6:54 AM, Sean Christopherson wrote:
-> From: Fuad Tabba <tabba@google.com>
-> 
-> Update the guest_memfd_test selftest to use getpagesize() instead of
-> hardcoded 4KB page size values.
-> 
-> Using hardcoded page sizes can cause test failures on architectures or
-> systems configured with larger page sizes, such as arm64 with 64KB
-> pages. By dynamically querying the system's page size, the test becomes
-> more portable and robust across different environments.
-> 
-> Additionally, build the guest_memfd_test selftest for arm64.
-> 
-> Reviewed-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Shivank Garg <shivankg@amd.com>
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> Suggested-by: Gavin Shan <gshan@redhat.com>
-> Signed-off-by: Fuad Tabba <tabba@google.com>
-> Signed-off-by: Sean Christopherson <seanjc@google.com>
+There is a extraneous space before a newline in a dev_dbg message.
+Remove the space.
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/ata/pata_macio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->   tools/testing/selftests/kvm/Makefile.kvm       |  1 +
->   tools/testing/selftests/kvm/guest_memfd_test.c | 11 ++++++-----
->   2 files changed, 7 insertions(+), 5 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/kvm/Makefile.kvm b/tools/testing/selftests/kvm/Makefile.kvm
-> index 40920445bfbe..963687892bcb 100644
-> --- a/tools/testing/selftests/kvm/Makefile.kvm
-> +++ b/tools/testing/selftests/kvm/Makefile.kvm
-> @@ -174,6 +174,7 @@ TEST_GEN_PROGS_arm64 += arch_timer
->   TEST_GEN_PROGS_arm64 += coalesced_io_test
->   TEST_GEN_PROGS_arm64 += dirty_log_perf_test
->   TEST_GEN_PROGS_arm64 += get-reg-list
-> +TEST_GEN_PROGS_arm64 += guest_memfd_test
->   TEST_GEN_PROGS_arm64 += memslot_modification_stress_test
->   TEST_GEN_PROGS_arm64 += memslot_perf_test
->   TEST_GEN_PROGS_arm64 += mmu_stress_test
-> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-> index ce687f8d248f..341ba616cf55 100644
-> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
-> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-> @@ -146,24 +146,25 @@ static void test_create_guest_memfd_multiple(struct kvm_vm *vm)
->   {
->   	int fd1, fd2, ret;
->   	struct stat st1, st2;
-> +	size_t page_size = getpagesize();
->   
-> -	fd1 = __vm_create_guest_memfd(vm, 4096, 0);
-> +	fd1 = __vm_create_guest_memfd(vm, page_size, 0);
->   	TEST_ASSERT(fd1 != -1, "memfd creation should succeed");
->   
->   	ret = fstat(fd1, &st1);
->   	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-> -	TEST_ASSERT(st1.st_size == 4096, "memfd st_size should match requested size");
-> +	TEST_ASSERT(st1.st_size == page_size, "memfd st_size should match requested size");
->   
-> -	fd2 = __vm_create_guest_memfd(vm, 8192, 0);
-> +	fd2 = __vm_create_guest_memfd(vm, page_size * 2, 0);
->   	TEST_ASSERT(fd2 != -1, "memfd creation should succeed");
->   
->   	ret = fstat(fd2, &st2);
->   	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-> -	TEST_ASSERT(st2.st_size == 8192, "second memfd st_size should match requested size");
-> +	TEST_ASSERT(st2.st_size == page_size * 2, "second memfd st_size should match requested size");
->   
->   	ret = fstat(fd1, &st1);
->   	TEST_ASSERT(ret != -1, "memfd fstat should succeed");
-> -	TEST_ASSERT(st1.st_size == 4096, "first memfd st_size should still match requested size");
-> +	TEST_ASSERT(st1.st_size == page_size, "first memfd st_size should still match requested size");
->   	TEST_ASSERT(st1.st_ino != st2.st_ino, "different memfd should have different inode numbers");
->   
->   	close(fd2);
+diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
+index f7a933eefe05..9eefdc5df5df 100644
+--- a/drivers/ata/pata_macio.c
++++ b/drivers/ata/pata_macio.c
+@@ -758,7 +758,7 @@ static void pata_macio_irq_clear(struct ata_port *ap)
+ 
+ static void pata_macio_reset_hw(struct pata_macio_priv *priv, int resume)
+ {
+-	dev_dbg(priv->dev, "Enabling & resetting... \n");
++	dev_dbg(priv->dev, "Enabling & resetting...\n");
+ 
+ 	if (priv->mediabay)
+ 		return;
+-- 
+2.50.0
 
 
