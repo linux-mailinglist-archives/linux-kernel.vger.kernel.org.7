@@ -1,250 +1,218 @@
-Return-Path: <linux-kernel+bounces-751328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316C6B167C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:47:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C3FB167C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:51:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CC811AA0708
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:48:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B5DCF7AA2F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8E622128B;
-	Wed, 30 Jul 2025 20:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDA60221D94;
+	Wed, 30 Jul 2025 20:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXEF/9BQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e+qJ1w9D"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92A617BD3;
-	Wed, 30 Jul 2025 20:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1E921C16D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753908455; cv=none; b=ROWjouBRZSOMWkyRPhF/Ba8M9WRoSu2J2+VAndFyZT8sGjlSYKaviBV571LPnoXc8vfnpas2Q7LQEOZl1WkudsLMEwkt6NzfDohYQqvGnLKw9wpB+Ywg6XK3UtlHHKyA/hG66jAWh58oq6krhD+NcKp+a3PSjwgYe5iHPdmUA6s=
+	t=1753908664; cv=none; b=QniiE1L8g3OnxaCGd3zQ9wRUnijuzC8IUYUxA4LFp1x89rLPqO56dh7Dho+fWr5nnVrXOf7yjSaVblY0ORlGG7vKKPRXp9HfUi5LZymwhygNMcYdyOJRQ4zX/XWAfg+I2luO1vnmfyGemkqnjoMB9LqoFjv7qyqpixvP8Go21p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753908455; c=relaxed/simple;
-	bh=RI0ksHF6O152eL68aDJf82KbbpvphujgM5aWcGo3uNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRfxUcsfxebQ0SwLb+f/H17OYF2A1eS4qgI36FFBVxD++Si5HtSIrXw8VxnPSGuR7F7n2EYAXSsA5QJKw2vrf80wm8yu4XMzPMqw3Z834zj5UM8pwy0tLr76DNcb6Lc2zaG6BOAMp1vqaVzIZfUHUNhEVSVJ8uZRHWofyvXElxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXEF/9BQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 542FDC4CEE3;
-	Wed, 30 Jul 2025 20:47:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753908454;
-	bh=RI0ksHF6O152eL68aDJf82KbbpvphujgM5aWcGo3uNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DXEF/9BQY5gJWoTcj2QRalWAgOTQjN8Q09CwQJoIAUti4iZsi1eErMTyzhqe+YudV
-	 YBmToktDl7ADhktK08376xC2qPABezs52q7r8fc6Oclbqvm8ipsxMp1SWCYaQsI+Im
-	 vN+nXsRDI2MyKQKbS4NTwvNE0G+TfERjk/s6TChnIPkYJxgaKoVHaz+1ZEXjqEOjgs
-	 WOax7F6gUmcJbEcrZpukzZf6bS8HPtgSijnRkxRTHrv24S3V1zbU7pkE17brvIgFNw
-	 wgLWdh9Y4mnA0no/AVICZKOtD29B/yGVqiKGwL1pbLZGFrv5KdSU8pUj+4Ej9dxoqZ
-	 AuT1M4OwLWfow==
-Date: Wed, 30 Jul 2025 15:47:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Hoan Tran <hoan@os.amperecomputing.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Phil Edworthy <phil.edworthy@renesas.com>,
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 5/6] soc: renesas: Add support for Renesas RZ/N1 GPIO
- Interrupt Multiplexer
-Message-ID: <20250730204733.GA1717453-robh@kernel.org>
-References: <20250725152618.32886-1-herve.codina@bootlin.com>
- <20250725152618.32886-6-herve.codina@bootlin.com>
- <20250729195137.GA658914-robh@kernel.org>
- <20250730115421.770d99bf@bootlin.com>
+	s=arc-20240116; t=1753908664; c=relaxed/simple;
+	bh=t3N7WtR4RfBRmftjkE7xfrmPPh5HlmkVCRgdTnGFxNM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SG7eOR+FQDUq0JVk/zbvzxDaqmCLp2SXIC+bZ43Ce9TpKa2UvDQheAicXHSJw5n6ktv46ijRqiQyGqP6QX/waoKzMy4OEQtx+N0KNLDtQfbdSew48ixASDi6wJ6a/uRPO+8/bH3IveNS0RICzh21mg8wvpuieEg+/E2QPQ/y2cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e+qJ1w9D; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab7082b3f7so2468731cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:51:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753908661; x=1754513461; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxsQTv+1d89X+/7XUvxxHrkY1JbEEOii8Iv+aCI0JR0=;
+        b=e+qJ1w9D/pcBvpjjPTnFFAJKhrZQF6lU8eIGZ6btt6gi1q+pCVw28Cbo/AueLKu8sU
+         WSqNA9dZIH3t567CF1B7YrTLcfHcsX4K/jplWaUvc870dydk2C3pUs9nrPcpJE5CuzW0
+         ZqJk62O46cLFFL/Ma2PsdfXrMiRjzhPFpg+97YfSo7o2y9t+8NYEhxmIWzp/p+1TlERr
+         WZu0LQkooS952S2mqfSmc3UenY56rcpmcFUKMgSNcpB1lW4PAniPIJUZd7jgcM/qihDJ
+         ACASjkpJpsB0PflEdEnYeFwK+uOY0uGuQO52udpPBNmZ69HF7e1vVXiJUGallVsOSryO
+         dHQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753908661; x=1754513461;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZxsQTv+1d89X+/7XUvxxHrkY1JbEEOii8Iv+aCI0JR0=;
+        b=hj9dtQny1DLn1SC3+Q83fwR2PEjiDzYbpLA+Jr2NOIZpP4/dGS4Sa9ZTgQjp9mAi8Z
+         Lgke97NnNoJjlEbTu65u81XzWZErkGLHxkuH9kRB9w0SPXeLgNMnS8ieMSGrf2mzDbF4
+         4xOo/m0bRKYvp2duGDCbZtz6Y6oCqWvwWZXm3XvSFMRZVTfN/VFKB31eFKIftkR/koDS
+         TXHoXfdBa1lJqI49Dwu2JUCgpoVm6ltwvwn+6SLKTbsyerYHNwYLdp3JzQu49eOC6Uby
+         AbeR6qlrTUOEdhOILgBKdAlLq0wdLZYgbjNill9IrWgv1DM+SfDdW/Oco5Ag/J9GGp1h
+         NC4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV5cZSEge8ZMziMKKmN1xSAMmdcChJeJv2xs/OctQ8u4rVj5CTdHPTiktPmYwdhv6cC7W0zlCxXXNrGLdw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN5tbKbaMSUOY1vfCwj+xsC/YFrn+CSAoDqeSmPjx+Df8FDOd1
+	O6gvD3ODP8Yi4+2xvPHiid/RXuU4wZwXNGlmwdBrr4YYt0GWOkCeGEa2cJUWn1Q8
+X-Gm-Gg: ASbGncv5MoekipHZD+dbUNKzExTZZDnfBHHtx/Y406JOji8srRDOl312FL68GIaKItT
+	RNkC1+yTob8QRpCeJNjE/cvQf2HkZyv+3DroZACLyPBxlwbBA0e1IZjNNqFEz+wbM5jr/bFhC6w
+	X5lvon2KPd0RA8H/TMBOBqey4402ZAgEtPya5kSu6+ydxnRz3ITHyIYnzaUxkNVV1SXg+xg+GLx
+	sV4ySkYR69ZyAO5rwE04a3pl/fFlZa29X5oIDTSx5IFKUvpKY6eVbEtt1J7Ndqqm8by5FQZR1xO
+	slfKU5+MAg3JKRxnIwDe1bT8vQl/cQxc/NgHZc9kPNA2YrVQJRIIdq9BnwNGx2LZoYfUtXCy65m
+	BG8Y9lo8uDUzMQNda9oY05yEMVWhPQd16
+X-Google-Smtp-Source: AGHT+IF4SY6nqUnAOs7SYh4/F2wVLWmnhhH7H+aOriIH4llzUs34xcg/l57609kc1KE/JMjE9h1v4w==
+X-Received: by 2002:ac8:5887:0:b0:4ab:95a7:cfa5 with SMTP id d75a77b69052e-4aedbc7a2ecmr84409361cf.56.1753908661426;
+        Wed, 30 Jul 2025 13:51:01 -0700 (PDT)
+Received: from iman-pc.home ([142.186.9.88])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aeeee2570asm758721cf.63.2025.07.30.13.51.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 13:51:01 -0700 (PDT)
+From: Seyediman Seyedarab <imandevel@gmail.com>
+X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
+To: dwmw2@infradead.org,
+	baolu.lu@linux.intel.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com
+Cc: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Seyediman Seyedarab <ImanDevel@gmail.com>
+Subject: [PATCH v3] iommu/vt-d: replace snprintf with scnprintf in dmar_latency_snapshot()
+Date: Wed, 30 Jul 2025 16:50:46 -0400
+Message-ID: <20250730205046.29719-1-ImanDevel@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730115421.770d99bf@bootlin.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 30, 2025 at 11:54:21AM +0200, Herve Codina wrote:
-> Hi Rob,
-> 
-> On Tue, 29 Jul 2025 14:51:37 -0500
-> Rob Herring <robh@kernel.org> wrote:
-> 
-> > On Fri, Jul 25, 2025 at 05:26:14PM +0200, Herve Codina wrote:
-> > > On the Renesas RZ/N1 SoC, GPIOs can generate interruptions. Those
-> > > interruption lines are multiplexed by the GPIO Interrupt Multiplexer in
-> > > order to map 32 * 3 GPIO interrupt lines to 8 GIC interrupt lines.
-> > > 
-> > > The GPIO interrupt multiplexer IP does nothing but select 8 GPIO
-> > > IRQ lines out of the 96 available to wire them to the GIC input lines.
-> > > 
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > > ---
-> > >  drivers/soc/renesas/Kconfig       |   4 +
-> > >  drivers/soc/renesas/Makefile      |   1 +
-> > >  drivers/soc/renesas/rzn1_irqmux.c | 169 ++++++++++++++++++++++++++++++
-> > >  3 files changed, 174 insertions(+)
-> > >  create mode 100644 drivers/soc/renesas/rzn1_irqmux.c
-> > > 
-> > > diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
-> > > index fbc3b69d21a7..9e8ac33052fb 100644
-> > > --- a/drivers/soc/renesas/Kconfig
-> > > +++ b/drivers/soc/renesas/Kconfig
-> > > @@ -58,6 +58,7 @@ config ARCH_RZN1
-> > >  	select PM
-> > >  	select PM_GENERIC_DOMAINS
-> > >  	select ARM_AMBA
-> > > +	select RZN1_IRQMUX
-> > >  
-> > >  if ARM && ARCH_RENESAS
-> > >  
-> > > @@ -435,6 +436,9 @@ config PWC_RZV2M
-> > >  config RST_RCAR
-> > >  	bool "Reset Controller support for R-Car" if COMPILE_TEST
-> > >  
-> > > +config RZN1_IRQMUX
-> > > +	bool "Renesas RZ/N1 GPIO IRQ multiplexer support" if COMPILE_TEST
-> > > +
-> > >  config SYSC_RZ
-> > >  	bool "System controller for RZ SoCs" if COMPILE_TEST
-> > >  
-> > > diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
-> > > index 3bdcc6a395d5..daa932c7698d 100644
-> > > --- a/drivers/soc/renesas/Makefile
-> > > +++ b/drivers/soc/renesas/Makefile
-> > > @@ -14,4 +14,5 @@ obj-$(CONFIG_SYS_R9A09G057)	+= r9a09g057-sys.o
-> > >  # Family
-> > >  obj-$(CONFIG_PWC_RZV2M)		+= pwc-rzv2m.o
-> > >  obj-$(CONFIG_RST_RCAR)		+= rcar-rst.o
-> > > +obj-$(CONFIG_RZN1_IRQMUX)		+= rzn1_irqmux.o
-> > >  obj-$(CONFIG_SYSC_RZ)		+= rz-sysc.o
-> > > diff --git a/drivers/soc/renesas/rzn1_irqmux.c b/drivers/soc/renesas/rzn1_irqmux.c
-> > > new file mode 100644
-> > > index 000000000000..37e41c2b9104
-> > > --- /dev/null
-> > > +++ b/drivers/soc/renesas/rzn1_irqmux.c
-> > > @@ -0,0 +1,169 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > +/*
-> > > + * RZ/N1 GPIO Interrupt Multiplexer
-> > > + *
-> > > + * Copyright 2025 Schneider Electric
-> > > + * Author: Herve Codina <herve.codina@bootlin.com>
-> > > + */
-> > > +
-> > > +#include <linux/mod_devicetable.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/of_irq.h>
-> > > +#include <linux/platform_device.h>
-> > > +
-> > > +#define IRQMUX_MAX_IRQS 8
-> > > +
-> > > +static int irqmux_is_phandle_args_equal(const struct of_phandle_args *a,
-> > > +					const struct of_phandle_args *b)
-> > > +{
-> > > +	int i;
-> > > +
-> > > +	if (a->np != b->np)
-> > > +		return false;
-> > > +
-> > > +	if (a->args_count != b->args_count)
-> > > +		return false;
-> > > +
-> > > +	for (i = 0; i < a->args_count; i++) {
-> > > +		if (a->args[i] != b->args[i])
-> > > +			return false;
-> > > +	}
-> > > +
-> > > +	return true;
-> > > +}
-> > > +
-> > > +static int irqmux_find_interrupt_index(struct device *dev, struct device_node *np,
-> > > +				       const struct of_phandle_args *expected_irq)
-> > > +{
-> > > +	struct of_phandle_args out_irq;
-> > > +	bool is_equal;
-> > > +	int ret;
-> > > +	int i;
-> > > +
-> > > +	for (i = 0; i < IRQMUX_MAX_IRQS; i++) {
-> > > +		ret = of_irq_parse_one(np, i, &out_irq);  
-> > 
-> > I don't really want more users of this... More below.
-> > 
-> > > +		if (ret)
-> > > +			return ret;
-> > > +
-> > > +		is_equal = irqmux_is_phandle_args_equal(expected_irq, &out_irq);
-> > > +		of_node_put(out_irq.np);
-> > > +		if (is_equal)
-> > > +			return i;
-> > > +	}
-> > > +
-> > > +	return -ENOENT;
-> > > +}
-> > > +
-> > > +struct irqmux_cb_data {
-> > > +	struct device_node *np;
-> > > +	struct device *dev;
-> > > +	u32 __iomem *regs;
-> > > +};
-> > > +
-> > > +static int irqmux_imap_cb(void *data, const __be32 *imap,
-> > > +			  const struct of_phandle_args *parent_args)
-> > > +{
-> > > +	struct irqmux_cb_data *priv = data;
-> > > +	u32 src_hwirq;
-> > > +	int index;
-> > > +
-> > > +	/*
-> > > +	 * The child #address-cells is 0. Already checked in irqmux_setup().
-> > > +	 * The first value in imap is the src_hwirq
-> > > +	 */
-> > > +	src_hwirq = be32_to_cpu(*imap);  
-> > 
-> > The iterator should take care of the endianness conversion.
-> 
-> Ok, it will take care.
-> 
-> > 
-> > > +
-> > > +	/*
-> > > +	 * Get the index in our interrupt array that matches the parent in the
-> > > +	 * interrupt-map
-> > > +	 */
-> > > +	index = irqmux_find_interrupt_index(priv->dev, priv->np, parent_args);
-> > > +	if (index < 0)
-> > > +		return dev_err_probe(priv->dev, index, "output interrupt not found\n");
-> > > +
-> > > +	dev_info(priv->dev, "interrupt %u mapped to output interrupt[%u]\n",
-> > > +		 src_hwirq, index);  
-> > 
-> > Do you even need "interrupts"? Just make the "interrupt-map" index 
-> > important and correspond to the hw index. That would greatly simplify 
-> > all this.
-> 
-> I would like to avoid to be based on the interrupt-map index.
-> 
-> Indeed, IMHO, it is less robust. I don't thing that we can enforce the
-> interrupt-map items order. Based on interrupt-map index, we need to ensure
-> that the first item is related to GIC 103, the second one to GIC 104 and so
-> on.
+snprintf() returns the number of bytes that would have been
+written, not the number actually written. Using this for offset
+tracking can cause buffer overruns if truncation occurs.
 
-How exactly are you enforcing that order for "interrupts"? You can't. 
+Replace snprintf() with scnprintf() to ensure the offset stays
+within bounds.
 
-Aren't you just duplicating the information in "interrupts" in the 
-interrupt-map.
+Since scnprintf() never returns a negative value, and zero is not
+possible in this context because 'bytes' starts at 0 and 'size - bytes'
+is DEBUG_BUFFER_SIZE in the first call, which is large enough to hold
+the string literals used, the return value is always positive. An integer
+overflow is also completely out of reach here due to the small and
+fixed buffer size. The error check in latency_show_one() is therefore
+unnecessary. Remove it and make dmar_latency_snapshot() return void.
 
-Rob
+Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+---
+Changes in v3:
+- Restored return type of dmar_latency_enable() back to 'int'. It was
+  mistakenly changed to 'void' in the previous version.
+
+Changes in v2:
+- The return type of dmar_latency_snapshot() was changed based on the
+  discussion here:
+  https://lore.kernel.org/linux-iommu/aIDN3pvUSG3rN4SW@willie-the-truck/
+
+ drivers/iommu/intel/debugfs.c |  8 ++------
+ drivers/iommu/intel/perf.c    | 10 ++++------
+ drivers/iommu/intel/perf.h    |  5 ++---
+ 3 files changed, 8 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/iommu/intel/debugfs.c b/drivers/iommu/intel/debugfs.c
+index affbf4a1558d..c4aca0eb5e29 100644
+--- a/drivers/iommu/intel/debugfs.c
++++ b/drivers/iommu/intel/debugfs.c
+@@ -653,12 +653,8 @@ static void latency_show_one(struct seq_file *m, struct intel_iommu *iommu,
+ 	seq_printf(m, "IOMMU: %s Register Base Address: %llx\n",
+ 		   iommu->name, drhd->reg_base_addr);
+ 
+-	ret = dmar_latency_snapshot(iommu, debug_buf, DEBUG_BUFFER_SIZE);
+-	if (ret < 0)
+-		seq_puts(m, "Failed to get latency snapshot");
+-	else
+-		seq_puts(m, debug_buf);
+-	seq_puts(m, "\n");
++	dmar_latency_snapshot(iommu, debug_buf, DEBUG_BUFFER_SIZE);
++	seq_printf(m, "%s\n", debug_buf);
+ }
+ 
+ static int latency_show(struct seq_file *m, void *v)
+diff --git a/drivers/iommu/intel/perf.c b/drivers/iommu/intel/perf.c
+index adc4de6bbd88..dceeadc3ee7c 100644
+--- a/drivers/iommu/intel/perf.c
++++ b/drivers/iommu/intel/perf.c
+@@ -113,7 +113,7 @@ static char *latency_type_names[] = {
+ 	"     svm_prq"
+ };
+ 
+-int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
++void dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ {
+ 	struct latency_statistic *lstat = iommu->perf_statistic;
+ 	unsigned long flags;
+@@ -122,7 +122,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 	memset(str, 0, size);
+ 
+ 	for (i = 0; i < COUNTS_NUM; i++)
+-		bytes += snprintf(str + bytes, size - bytes,
++		bytes += scnprintf(str + bytes, size - bytes,
+ 				  "%s", latency_counter_names[i]);
+ 
+ 	spin_lock_irqsave(&latency_lock, flags);
+@@ -130,7 +130,7 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 		if (!dmar_latency_enabled(iommu, i))
+ 			continue;
+ 
+-		bytes += snprintf(str + bytes, size - bytes,
++		bytes += scnprintf(str + bytes, size - bytes,
+ 				  "\n%s", latency_type_names[i]);
+ 
+ 		for (j = 0; j < COUNTS_NUM; j++) {
+@@ -156,11 +156,9 @@ int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ 				break;
+ 			}
+ 
+-			bytes += snprintf(str + bytes, size - bytes,
++			bytes += scnprintf(str + bytes, size - bytes,
+ 					  "%12lld", val);
+ 		}
+ 	}
+ 	spin_unlock_irqrestore(&latency_lock, flags);
+-
+-	return bytes;
+ }
+diff --git a/drivers/iommu/intel/perf.h b/drivers/iommu/intel/perf.h
+index df9a36942d64..1d4baad7e852 100644
+--- a/drivers/iommu/intel/perf.h
++++ b/drivers/iommu/intel/perf.h
+@@ -40,7 +40,7 @@ void dmar_latency_disable(struct intel_iommu *iommu, enum latency_type type);
+ bool dmar_latency_enabled(struct intel_iommu *iommu, enum latency_type type);
+ void dmar_latency_update(struct intel_iommu *iommu, enum latency_type type,
+ 			 u64 latency);
+-int dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size);
++void dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size);
+ #else
+ static inline int
+ dmar_latency_enable(struct intel_iommu *iommu, enum latency_type type)
+@@ -64,9 +64,8 @@ dmar_latency_update(struct intel_iommu *iommu, enum latency_type type, u64 laten
+ {
+ }
+ 
+-static inline int
++static inline void
+ dmar_latency_snapshot(struct intel_iommu *iommu, char *str, size_t size)
+ {
+-	return 0;
+ }
+ #endif /* CONFIG_DMAR_PERF */
+-- 
+2.50.1
+
 
