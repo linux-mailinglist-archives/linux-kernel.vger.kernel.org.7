@@ -1,112 +1,194 @@
-Return-Path: <linux-kernel+bounces-750327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23A8FB15A17
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:58:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 184B2B15A19
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:59:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B64E5433E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260693A7FE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A2E292B3D;
-	Wed, 30 Jul 2025 07:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47BD291C23;
+	Wed, 30 Jul 2025 07:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yjHuj2w8"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AULFQAK9"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 512AC290BCC
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A64A101E6
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753862272; cv=none; b=K5nwAhrJp2kStQR2/5ajz/EJFsob1TqJqW9e+apgeYB3k0XgTtxgC4cRam3G88qO2wU3avMV+Q5LxazN81sPVo63d/yoqyzDxzFRU054tkFY6jaAXgD2ttW4waoYrq0k48wecOUognmOMw9m7bS7xK5VYTtkQHI5jB03UtSvyFM=
+	t=1753862371; cv=none; b=pux+6I9UdImvhzTDFNVkFnrQ+hPYlOxHF2TScHuzeA9aUyQW8DGP/WW2IN5PfKi7AjVHfkfXcBdnQ5DFz2psYTAlQ8gpby/6Wsr7N6isBYjTC3OrkVFyPyrvb9oyXLK8T5XXnG1TWUE8yfGkmnoWfa/5oVP/1GkiqPjQnZP2BOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753862272; c=relaxed/simple;
-	bh=smz0s47ENzWJoVfL6gZB5jmHbvR//Sa4vQ9XJgjD1+w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=njlL8MwlcYO+xq18T9zxPy1LMkNXgfRLURD+e3aG5Y18UG3x9MKuFrr932S/1nWzlH/4N5tipsX0mr6rEgC2QsadF4XOlWLPB5cPKtkMr5N14EkBP34JYe3uAagyqn/VavN9eYYaz0mNvpkpmIYgPzxcFIY69xKggvwfmg4C9gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yjHuj2w8; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-ae6f9b15604so508917666b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:57:51 -0700 (PDT)
+	s=arc-20240116; t=1753862371; c=relaxed/simple;
+	bh=y4SL9+GGy9xNGZOWmYz9n3AeLtr7OKx24Fizraj/nlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MzNIfWc080/t8EarmFT6ORu2/LEcD2X42ysiBQllWZU/wA5wkAY65o3dcRStnd/KmA84IogwwaB19mrXkC+HyRJb55tW/SSiM92tiHgLIIavkSWOnxrAMB36cv2RTBkuhs94Qw3QsBk03gD4aVMXYjandJfUO4qf/+inRH34yKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AULFQAK9; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b390d09e957so6898673a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:59:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753862269; x=1754467069; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibU44Ftq98mAdTatqw5GBxBTG4xcjjy5CLljWHMN/6g=;
-        b=yjHuj2w8O8p2QS0gJCxMgEyhDiNsNWvkmhLpAXux7mK8JPVirSUuaLnUPWW5DMtfRB
-         dhE+hC94aBJK80frGA+rXVXFmwTUx/AXoHEKdRq6RhMCj3Y08IyCNDeZB8UGhs0khUB3
-         5XPNJ0VGUhJShHR1npu+Bj5ERc7hSLSbkPkaKAOktp1uVZx22eMrfrDomGLf/axRm6RC
-         swiDOLdK/c2Z0QBisO6/R0WyO2NR84hX40gAPK4mUX+6ego3RTJgBkwDBM2rT6keNasQ
-         dUtFqgq4pKmLIQWii8qfd343X2pW/m42G39hVURXTZLv3R3gxr6+0SxjIOArn7Dj1nPC
-         ImjA==
+        d=chromium.org; s=google; t=1753862369; x=1754467169; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ppQEYA6PEQukgbI5/u3lRql6gX2RUDaFwY+o3TibgFw=;
+        b=AULFQAK9KcwAktLvC5XKky/BNSr6szCSXVwez428jxFlwbo6kRPjyGjyH+SNMHb0FO
+         xiWgKXROUFjU+at9ZJ8q44siekj/4qxwMDBLn6GXZmtggIfmQoijujQSSW7OEkt6HUbb
+         LYsVquw35LkF7vbYwZOGSgvvyJSGkvPx6qGTM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753862269; x=1754467069;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibU44Ftq98mAdTatqw5GBxBTG4xcjjy5CLljWHMN/6g=;
-        b=I+fy9whsfLZgWoRSZcMiX7Ugw75gDP5CYRuqsTskKbKJuGobU/LO0E1oSMiRE2bjXB
-         n5itzAnoym+zBxeYouGtTnko/lWoXMbQO9mgam6uOWDxa+9nTJcQCgouM+dSTf/KD+px
-         kF2uE03kUEnuoyTgsNUzUPeIvAm5yYryJkyWQR/Muv5msIVYU6hUrEQ49aHRLf6xDekC
-         GX2MDKQYYtfSh1id3Y64ZY7JcMepEimgLGxR6CUgml0mtPtIZgqlwtQnLACv9oUof0+E
-         F+e72BSfwyga9E8hNrnfOvA8iMFw/WBXzI2Wr1OGWeAN7nH8+gN9FPuuVIxlQ86UADuT
-         TGSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUW5rmgPPzk+eKqGW87bDc8vYF4CGFa1lKwAENCDgl6qBMTFHZroFV9iKuf3iq9jnigYGgIBhDPF2UExRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9u9pUbW7sABkGI8vNmXBYlq5G7mkrHiG3eySOwPkz8B0g6/Lm
-	gbj2bqEQqk7kkFWo3A/Gf7Z4EsRCYuQHi9SJ9TjR8sMQxUgcHUogDxkZ512ZR3Qlf1NU/IyrjCp
-	CIxAGmvgLHy80u9Bt4g==
-X-Google-Smtp-Source: AGHT+IEOVXeHC1r/hz+Tx2maJd+AAzxr+M2KzaJ+f1U+lCSeLVEGvFmmDtiCAtV/69p9x0JJxrpeeODxXzry/7k=
-X-Received: from ejcvi1.prod.google.com ([2002:a17:907:d401:b0:ad8:9944:a3d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:907:7247:b0:af4:dba9:3eb6 with SMTP id a640c23a62f3a-af8fd919a99mr303002066b.31.1753862269580;
- Wed, 30 Jul 2025 00:57:49 -0700 (PDT)
-Date: Wed, 30 Jul 2025 07:57:48 +0000
-In-Reply-To: <20250729-regulator-send-sync-v1-0-8bcbd546b940@collabora.com>
+        d=1e100.net; s=20230601; t=1753862369; x=1754467169;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ppQEYA6PEQukgbI5/u3lRql6gX2RUDaFwY+o3TibgFw=;
+        b=F/mjWk1BxaVSHLznFQGJhMY19tcO8sujdh3mGHwFRQgY7tVxZooyH0ccEoUuWHLeis
+         QeoI7/oiTqkn5txUcmBW6Fl5b+taX8tkYmw0YftqxLt89vzH1PkF/hgibLecOin4WrPN
+         VXtBI2We2Avmtck3AwZNfx53/0wuVrBR+ReR0WqeRfhF7W3+vCTfneCYdYUE0IFjoLl3
+         dxSEYrCDnUFnnEbaIcBXSWKx1c/N3eRT832Pt5fCmOXwj6UoIrRQcgQWroOlwlN671Tc
+         Q0wF1mm197Xs34CTiLVIDxdCbNLkSQn/oThqVDsPdZrbT8oKpOWuHHwfwh1+0Q/TbCaO
+         d2NA==
+X-Forwarded-Encrypted: i=1; AJvYcCUEVRqJIMiKOazFAaNAunGXf5GkM0PUhNA4ENiF5Dj43RL8iKebhvi0S5QGhQwfmicOHFCrLArtJTrKBpc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3ao1iIdroYBRdKLegOtqLbqWwN0rF3pbgrs+i3pvAPuj1OUpz
+	tMpg3o4whRCOzEw76Bs/cVQm1QLdsj96cThCfVtExe5X5pMq/SccFL/BUI/9fHytNg==
+X-Gm-Gg: ASbGncuUw9QcQIbW8fqn+Sx0UKW1y6FUvaUVUfviGhKBoRXXtZMolXfjVoXtJEpMqaO
+	RlliHhXZMabXNefX0cFzDA2jBa/dt6UQz4uTOEZ4wYq0J/raAfHUG/8beS75VK/Vg95LXc3xfP5
+	cHrEju+8Fv8MaWEOp2zX4cBwdLM4G1nRUZTm+0CJtCWwXaqx9Fnr9kiIAT4KD/kZQliSusjftop
+	net6Q+DfwOAWo/UO585MznmLZ0/+w7BzXN6WWXjjXpGjr9DFUTIjlC5LBL5J0CXOL99UpIwKwl6
+	GYZTqbMsAfh/qW513kHPdVXK5lJRjOCfCPuMKeZFAOKwv8i85iixxUtZaq1DEpS/1s2rSO2ibZD
+	X/qztZqzXeezl1aBrv4P7kPR8
+X-Google-Smtp-Source: AGHT+IF5cqW+MyWJtIMuD182pcw/GH2UdNMbPs9F8Pey0BstbUXezcOMp1KRUzvls+wThdPqmHmhng==
+X-Received: by 2002:a17:90b:1b48:b0:31f:4a91:4e97 with SMTP id 98e67ed59e1d1-31f5de1ea3cmr3455804a91.7.1753862368777;
+        Wed, 30 Jul 2025 00:59:28 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:6490:361:df77:361d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63e3bf4dsm1254134a91.36.2025.07.30.00.59.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 00:59:28 -0700 (PDT)
+Date: Wed, 30 Jul 2025 16:59:22 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
+	Joel Granados <joel.granados@kernel.org>, Anna Schumaker <anna.schumaker@oracle.com>, 
+	Lance Yang <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Yongliang Gao <leonylgao@tencent.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tomasz Figa <tfiga@chromium.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] hung_task: Show the blocker task if the task is
+ hung on mutex
+Message-ID: <tfzs3z7yjs6ppobm53hxwjzhhptgq2aqc2obylblz5rk7mdstg@bkas4xcq66xk>
+References: <174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com>
+ <174046695384.2194069.16796289525958195643.stgit@mhiramat.tok.corp.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250729-regulator-send-sync-v1-0-8bcbd546b940@collabora.com>
-Message-ID: <aInQfMf02dfsrgQ3@google.com>
-Subject: Re: [PATCH 0/2] rust: regulator: relax a few constraints on Regulator<T>
-From: Alice Ryhl <aliceryhl@google.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174046695384.2194069.16796289525958195643.stgit@mhiramat.tok.corp.google.com>
 
-On Tue, Jul 29, 2025 at 02:31:39PM -0300, Daniel Almeida wrote:
-> This series implement two related changes to address a bit of an oversight
-> on my end on the initial patch for the Regulator abstraction. Note that
-> this is not a fix, as it just relaxes the constraints on the previous code
-> as it is safe to do so.
+On (25/02/25 16:02), Masami Hiramatsu (Google) wrote:
+> The "hung_task" shows a long-time uninterruptible slept task, but most
+> often, it's blocked on a mutex acquired by another task. Without
+> dumping such a task, investigating the root cause of the hung task
+> problem is very difficult.
 > 
-> Patch 1 removes some needless &mut self for functions that already provide
-> their own locking on the C side.
+> This introduce task_struct::blocker_mutex to point the mutex lock
+> which this task is waiting for. Since the mutex has "owner"
+> information, we can find the owner task and dump it with hung tasks.
 > 
-> Patch 2 implements Send and Sync. In particular, there is no reason for
-> Regulator<T> not to be Send, and as discussed above, it is naturally Sync.
+> Note: the owner can be changed while dumping the owner task, so
+> this is "likely" the owner of the mutex.
 > 
-> This is based on linux-next for now, I am waiting for 6.17-rc1 to be out in
-> order to rebase.
+> With this change, the hung task shows blocker task's info like below;
 > 
-> ---
-> Daniel Almeida (2):
->       rust: regulator: remove needless &mut from member functions
->       rust: regulator: implement Send and Sync for Regulator<T>
-> 
->  rust/kernel/regulator.rs | 26 +++++++++++++++++---------
->  1 file changed, 17 insertions(+), 9 deletions(-)
+>  INFO: task cat:115 blocked for more than 122 seconds.
+>        Not tainted 6.14.0-rc3-00003-ga8946be3de00 #156
+>  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+>  task:cat             state:D stack:13432 pid:115   tgid:115   ppid:106    task_flags:0x400100 flags:0x00000002
+>  Call Trace:
+>   <TASK>
+>   __schedule+0x731/0x960
+>   ? schedule_preempt_disabled+0x54/0xa0
+>   schedule+0xb7/0x140
+>   ? __mutex_lock+0x51b/0xa60
+>   ? __mutex_lock+0x51b/0xa60
+>   schedule_preempt_disabled+0x54/0xa0
+>   __mutex_lock+0x51b/0xa60
+>   read_dummy+0x23/0x70
+>   full_proxy_read+0x6a/0xc0
+>   vfs_read+0xc2/0x340
+>   ? __pfx_direct_file_splice_eof+0x10/0x10
+>   ? do_sendfile+0x1bd/0x2e0
+>   ksys_read+0x76/0xe0
+>   do_syscall_64+0xe3/0x1c0
+>   ? exc_page_fault+0xa9/0x1d0
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>  RIP: 0033:0x4840cd
+>  RSP: 002b:00007ffe99071828 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+>  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
+>  RDX: 0000000000001000 RSI: 00007ffe99071870 RDI: 0000000000000003
+>  RBP: 00007ffe99071870 R08: 0000000000000000 R09: 0000000000000000
+>  R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
+>  R13: 00000000132fd3a0 R14: 0000000000000001 R15: ffffffffffffffff
+>   </TASK>
+>  INFO: task cat:115 is blocked on a mutex likely owned by task cat:114.
+>  task:cat             state:S stack:13432 pid:114   tgid:114   ppid:106    task_flags:0x400100 flags:0x00000002
+>  Call Trace:
+>   <TASK>
+>   __schedule+0x731/0x960
+>   ? schedule_timeout+0xa8/0x120
+>   schedule+0xb7/0x140
+>   schedule_timeout+0xa8/0x120
+>   ? __pfx_process_timeout+0x10/0x10
+>   msleep_interruptible+0x3e/0x60
+>   read_dummy+0x2d/0x70
+>   full_proxy_read+0x6a/0xc0
+>   vfs_read+0xc2/0x340
+>   ? __pfx_direct_file_splice_eof+0x10/0x10
+>   ? do_sendfile+0x1bd/0x2e0
+>   ksys_read+0x76/0xe0
+>   do_syscall_64+0xe3/0x1c0
+>   ? exc_page_fault+0xa9/0x1d0
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>  RIP: 0033:0x4840cd
+>  RSP: 002b:00007ffe3e0147b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+>  RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
+>  RDX: 0000000000001000 RSI: 00007ffe3e014800 RDI: 0000000000000003
+>  RBP: 00007ffe3e014800 R08: 0000000000000000 R09: 0000000000000000
+>  R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
+>  R13: 000000001a0a93a0 R14: 0000000000000001 R15: ffffffffffffffff
+>   </TASK>
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+One thing that gives me a bit of "inconvenience" is that in certain
+cases this significantly increases the amount of stack traces to go
+through.  A distilled real life example:
+- task T1 acquires lock L1, attempts to acquire L2
+- task T2 acquires lock L2, attempts to acquire L3
+- task T3 acquires lock L3, attempts to acquire L1
+
+So we'd now see:
+- a backtrace of T1, followed by a backtrace of T2 (owner of L2)
+- a backtrace of T2, followed by a backtrace of T3 (owner of L3)
+- a backtrace of T3, followed by a backtrace of T1 (owner of L1)
+
+Notice how each task is backtraced twice.  I wonder if it's worth it
+to de-dup the backtraces.  E.g. in
+
+	task cat:115 is blocked on a mutex likely owned by task cat:114
+
+if we know that cat:114 is also blocked on a lock, then we probably
+can just say "is blocked on a mutex likely owned by task cat:114" and
+continue iterating through tasks.  That "cat:114" will be backtraced
+individually later, as it's also blocked on a lock, owned by another
+task.
+
+Does this make any sense?
 
