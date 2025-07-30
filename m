@@ -1,149 +1,167 @@
-Return-Path: <linux-kernel+bounces-750816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57662B1615D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:24:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8EE2B16113
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:11:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342E85A0D79
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8F3E3AFD3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F7C299AA0;
-	Wed, 30 Jul 2025 13:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="abB+6CaC"
-Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF47298CD0;
+	Wed, 30 Jul 2025 13:11:36 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3AD299923;
-	Wed, 30 Jul 2025 13:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 611D7293C4A
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753881866; cv=none; b=fFi0Yq0hHlIW7RcQloxGOSFcgrhk1RRMn9pKqGwAWRuTw3S2fjVjosKKnm9dF+ndZhy4GpTDgBwqZ0i2ABeYeI3neva1b2uXoQl2eEhxy7dBRpg9xgHUU/FgVZpiPI4xA+guHfgtCfCixVhrjP7fKfvjuCEUpHfizMOHzp/mdw0=
+	t=1753881095; cv=none; b=FTVYE99uSHay47xc720nLU1tjBdXYmt8+tCmuoMcWRH8ydzy2RT2DVnS8MtjnPuDZSxIvU+J7t9ZekIh9SovZ2bvAI4UPDVlDMOAflLQY7u3iaT+mN6Gy/Vlvbk5VruRgR6wPgDtUoB/ys+2rPbBxe5cTUg9iI5bL+6TzM4mIp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753881866; c=relaxed/simple;
-	bh=lCuqhOrWg0T3ijnvoon7IE1CXll6OeKPOnk5bcyzb00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkMMqdXeMOe5StUjhls1KsRoGY4a4xplLS/u3HX8FP8NqS/1NcT37oLJuMfOe26x6fsJMXicZZtJMAMwjO0ECGs1Q/Qvg7a15AuEedoccwZyiTnvqyRspfYEjoiUfnPpeBIwtUYs7veRc8U8GUFyZefqG+AwFc16e3LdJQwnNgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=abB+6CaC; arc=none smtp.client-ip=217.72.192.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1753881857; x=1754486657; i=christian@heusel.eu;
-	bh=F+f+ZzjCVEINsWps0V76Rygvtyr7S2FjfQcZbbWPwss=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=abB+6CaCSErfOVO/Pxz4BUcMdgiZlcXou/LPhWMz4QOmXR8oS9rJ0IZjP+8vADhi
-	 KoHVppgPR0kizHP5iw4ZSUF3zn1x0cDFPWKhZ9+QozN8varq/6QIiZm/7MkhUbRH3
-	 kEBm8XJsHO1xOaa7MX+55zYDSy2AEU7+QyoNb2GVPFeZpQ5M1IlbDSrhrxMz8s6Ua
-	 PcS9sLiRjcmaMPEhTskL3uVlR2lD42lRVp5afvConKktmZ1ZaOUIFxFqqYV1yLEVR
-	 UhhpD4Q8zC+M3QiLeOiZkeqxtLyQ+xBgN8vTQ2+JHbYDJboViWRC2OpFzuohUJKi/
-	 jyly3/euCgRtQUaJPg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([94.31.75.247]) by mrelayeu.kundenserver.de
- (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M597q-1uiD1A48nc-009CYn; Wed, 30 Jul 2025 15:09:13 +0200
-Date: Wed, 30 Jul 2025 15:09:10 +0200
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
-Message-ID: <a200f754-82df-4a66-bd85-b0ba0c9ac345@heusel.eu>
-References: <20250730093230.629234025@linuxfoundation.org>
+	s=arc-20240116; t=1753881095; c=relaxed/simple;
+	bh=KG7fc77M01owqZUjVFGZdn6vql/jSvmuV/IfwiUPv28=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=sKIB1ImjU3xFXeOq/i1dUJOS4X1zhjpclLt0uu96v+VKr1JlbQcCmCEGBXCK899StDv3SaZ3iH8vUNThCMto4Hh0g9+28ymI6Yxf1XmTAUjAQVIxWLE3hHpVdFkKIih95FwY4FKg3VrqDF5qOXZDJ3TvUOiN/hfbMfqcXYmfNoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-86a5def8869so1726493839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:11:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753881093; x=1754485893;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NJmB3YmXk9guqFYOXDB/HPecSW6ZbcNiYqBhlwZDyNA=;
+        b=ImVliTtjmPtseoHNYMLge0YfL4IxW+Qy+BoPzJOSrmzInfRxTBGXfCMpxZz2Ok3OYG
+         z1o+P+q0++ypEf/5PA/CYfbhq8/DsFEiuz0vDdirDCaF2hg/E5TjAgNTOmQm+CXgfI+w
+         rPkHo+XHjMVdpHk669EELBK6B29UeWGdJLlQKuaG0s0fe+sy0lr4eLv56GVzatbiuRhc
+         LFRsBHSbpMuRJNgzVkz+GUiCZzXCQKBUpZAgpsC6bG63izyuL0qdGNNeN5mO56yGiQJz
+         ao4wFMGNgLe3snDqHeVeNaCGyPRBamfiC+RWRAWORfpCLKpgG/KDBUBS6NbmEdKiqoaw
+         pcNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBgthZC/gD8tooH2A2tOBzgyYHl4iHXiVhTjiAdColec0+Le3Pb74wOCK9NHTbqsflKVuPjP2ABDVuxhk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhIGNp8vXkZxFJqZUSG/CGMhLkyVtEqi3MZxJxr/iSatxufak+
+	uZfFcSCezGgp/1ab4rTyPZZ8Odzpp8AH5X4MXbqCypmhFcEKcvQRk5vzemXsM0J60FbpdIeQs/n
+	wFCFbNLoH3Nylh48QXdSDMNgUNXifvvpzOKQFEnmYXS+en2xjRVP3HSaCsFI=
+X-Google-Smtp-Source: AGHT+IGJwAdTFGg3Rdi9jBmlpL/2xSJuY7eJEzfxnTLlkQxPj47h2YY6tNCTixDNuZcPqnEZAYUmlr4YyfnDppwIQ9XgBrKTc6Wq
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qw7jpb2xcpdsmjqy"
-Content-Disposition: inline
-In-Reply-To: <20250730093230.629234025@linuxfoundation.org>
-X-Provags-ID: V03:K1:kuMtRY/zmeaeg3zNX+ncSB8G5XJd6JH3T0cqn6L3CfLcP3mwDy4
- zhUCWrH2MkBzGDLyFIgTMVjv8nez+CxvBvWTle7O6MAKnhMO74K1lel6NR4GrbgHYWtllao
- NGvkdRZFgCrqX8uUHTZJ1DTEUrlJ98IkqVveFa8LH8eifVAlVJhB8aRgRrpqUC55iQi6H1m
- hI1i1ioHhG/xq6TRQvo4Q==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VyGm44GzmUY=;yaLSiRjpPG7nD8KZqBql+0wnuZA
- /52hXsSBMTQufVRxe3+YtpLJbMRnSvpOLCobkimUJyQaf95k1hERiUP/+hJqmbDmIekM9eSUl
- cC9labZUbHejy5cGctNUOihG90rAOVhj88eeH0iYHzo95gVxQFUzTG6/XFWvWHvdpgx3Xcbo6
- IqTp2Cuv29m21OCL6O/KUKI+qt0fjfojvCN6QqY1u1LQydbxi3g51UfS04NrazCmtdN5LjMEz
- DsGe9UKFMHHZ02nSgaVIoQQ013aAEWXbJiiORiM7A80/lXiwxl6ZZ1t1cgrXtXBisBd6IvtCW
- 31hYsWdwA7ypZ2EdZBvUNK1NUjCMY8Danzd8uEUaeNcfqRm5OYR1XJ7/jjnVOlQ/fnKEhHknz
- rIMazgh/LZ74t1FHXp+PA0CKE4N2hV4ERt29KQ50TW7IkZDhDsdr6sAKFWNdElCltgkX7bc1t
- mCogamFgHhzAutkfpqUC6vnSME/zfSdJbhS0XVo2CMvupAPTGrtztqugqCjOKeED8XNghc30J
- p/mc+UcPsn8Sng2Cuf9oDIoHb449uHnyQt1wkb59shomLTEGS0+HZsSGtJ4vA1SKmsaOXFUy2
- ylSHGCmrMefObSNpYZQNry18/375Awu+9lWkda1R5TRBohFN7US5cS2Fef5kzCOgHG2ztBDHF
- ChVMWyT3f//dJGruPO+qeuhZ502edM7jIY6bIerRKw7emvphYNRr0pYr2hJIXu4I0GCRgfKWt
- SsK0VhA3Vep4aG9oEjKtdQ2L4rsHDieHQTdODKUOTrNNRQnKW96JY6nZS7UTSKc6q6Ou0pxbR
- iQ/0Gbd9lIRyanqi7Hmm9NjU7rfkKRu1AtgFnh4WiNs78ejgRWbtoHXM4Q/2ERUAfM8SIqCNg
- 5hDNDzKhC6ZSHBalsTyU5Z7nhvrqs/OmWuhR3uj4Jm8O56SnqpGOlhCnaAhs3pUbc6alPPB+q
- rRPKv+WRmLrxTMYXin6E7e2ihF+eFxIHDPvgQAQqfgGGQbZ20wV3ezc//AA7ByV9Tlw334vXh
- vntoN8ZGmGxJ1SD4eqvvPfHLdx2gGsQoNAOL84MX5HTcjetaQK3Ji3yKvjcPbbYfJbS5uwYWT
- feVCdboIRaNNU8Yi15FclyKEtuJaTtmfpHxqM1GjdNwCzH1QW6ZFRRXKhaqjRe4mzlMrRubG4
- 3sKaGA/zcNMMb4VO5KQDOea1gluMPfcuOaA3TThLbR4FFrxErMc6f1RMH7JxST6xqGGY1AV3+
- NxqhH60zLGpKlGfSght3fLuOSgHzJI813oQmTYS/XaPRFqMeay+I9l03DyvGB0Mi3aF4Wyd8k
- Lmkn8wuiks/lEbI/5zU0unaVRN6zASopdrf2OK5i5Ts6ItWJctypQmJZ++LHPHEYSsXUSsllS
- GmhScjixkBUlNx5n6ovnE6xXwCwPjfxh3V+pibCQNO2UaVWHST28ryP8PqQuC6P87S25Ri8oO
- c9l69pxWTTGVuobnafoKa++GbQE3ZKTdN0zcTbrxVYZARQC9jFMqpnFMCJisSxxNv1ghyT/87
- NYoC7bbhcAwkm5lVMF2BXxUZKeBE+MR/BiKLjZ33HUUNIuwlL44ieyibnLBu4PtWsw86ZFgDA
- 73Q75hNDko3HAPO3EUeCifVMXh8WZst
+X-Received: by 2002:a05:6e02:3288:b0:3e2:8ddd:b406 with SMTP id
+ e9e14a558f8ab-3e3f624f316mr51134025ab.17.1753881093463; Wed, 30 Jul 2025
+ 06:11:33 -0700 (PDT)
+Date: Wed, 30 Jul 2025 06:11:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688a1a05.050a0220.5d226.0008.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in ipv6_gso_segment
+From: syzbot <syzbot+af43e647fd835acc02df@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    7abc678e3084 Merge tag 'pmdomain-v6.16-rc2' of git://git.k..
+git tree:       bpf
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=11cc0ca2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=12b5044868deb866
+dashboard link: https://syzkaller.appspot.com/bug?extid=af43e647fd835acc02df
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10480f82580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14248834580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8a9fc2a6bfdf/disk-7abc678e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/29375cef95f6/vmlinux-7abc678e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8148ffc5b47b/bzImage-7abc678e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+af43e647fd835acc02df@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5874 at ./include/linux/skbuff.h:3032 skb_reset_transport_header include/linux/skbuff.h:3032 [inline]
+WARNING: CPU: 1 PID: 5874 at ./include/linux/skbuff.h:3032 ipv6_gso_segment+0x15e2/0x21e0 net/ipv6/ip6_offload.c:151
+Modules linked in:
+CPU: 1 UID: 0 PID: 5874 Comm: syz-executor410 Not tainted 6.16.0-rc6-syzkaller-g7abc678e3084 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:skb_reset_transport_header include/linux/skbuff.h:3032 [inline]
+RIP: 0010:ipv6_gso_segment+0x15e2/0x21e0 net/ipv6/ip6_offload.c:151
+Code: ff ff e8 f1 db 80 f7 49 c7 c5 a3 ff ff ff e9 27 fe ff ff e8 e0 db 80 f7 49 c7 c5 a3 ff ff ff e9 16 fe ff ff e8 cf db 80 f7 90 <0f> 0b 90 e9 71 f5 ff ff e8 c1 db 80 f7 e9 d3 00 00 00 e8 b7 db 80
+RSP: 0018:ffffc90003faed00 EFLAGS: 00010293
+RAX: ffffffff8a3f4d21 RBX: ffffffff8de66da0 RCX: ffff888030385a00
+RDX: 0000000000000000 RSI: 00000000000100f4 RDI: 0000000000010000
+RBP: ffffc90003faee30 R08: ffffea0001ff8240 R09: 0000013a000001a7
+R10: ffffea0001ff8240 R11: 0000013a000001a7 R12: 1ffffffff1bccdb4
+R13: ffff8880334eb280 R14: 00000000000100f4 R15: ffff8880334eb350
+FS:  000055555a160380(0000) GS:ffff888125d23000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000010000 CR3: 000000007fe76000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ skb_mac_gso_segment+0x31c/0x640 net/core/gso.c:53
+ nsh_gso_segment+0x54a/0xe10 net/nsh/nsh.c:110
+ skb_mac_gso_segment+0x31c/0x640 net/core/gso.c:53
+ __skb_gso_segment+0x342/0x510 net/core/gso.c:124
+ skb_gso_segment include/net/gso.h:83 [inline]
+ validate_xmit_skb+0x857/0x11b0 net/core/dev.c:3950
+ validate_xmit_skb_list+0x84/0x120 net/core/dev.c:4000
+ sch_direct_xmit+0xd3/0x4b0 net/sched/sch_generic.c:329
+ __dev_xmit_skb net/core/dev.c:4102 [inline]
+ __dev_queue_xmit+0x17b6/0x3a70 net/core/dev.c:4679
+ packet_snd net/packet/af_packet.c:3130 [inline]
+ packet_sendmsg+0x3e16/0x5060 net/packet/af_packet.c:3162
+ sock_sendmsg_nosec net/socket.c:712 [inline]
+ __sock_sendmsg+0x21c/0x270 net/socket.c:727
+ ____sys_sendmsg+0x505/0x830 net/socket.c:2566
+ ___sys_sendmsg+0x21f/0x2a0 net/socket.c:2620
+ __sys_sendmsg net/socket.c:2652 [inline]
+ __do_sys_sendmsg net/socket.c:2657 [inline]
+ __se_sys_sendmsg net/socket.c:2655 [inline]
+ __x64_sys_sendmsg+0x19b/0x260 net/socket.c:2655
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7ffb36bb8ea9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 01 1a 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fff4bae10a8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007ffb36bb8ea9
+RDX: 00000000200400c4 RSI: 0000200000000180 RDI: 0000000000000003
+RBP: 00000000000f4240 R08: 0000000000000001 R09: 0000000000000001
+R10: 0000200000000180 R11: 0000000000000246 R12: 00007fff4bae1100
+R13: 00007ffb36c063fe R14: 0000000000000003 R15: 00007fff4bae10e0
+ </TASK>
 
 
---qw7jpb2xcpdsmjqy
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
-MIME-Version: 1.0
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-On 25/07/30 11:35AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.9 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->=20
-> Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
-> Anything received after that time might be too late.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Tested-by: Christian Heusel <christian@heusel.eu>
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Tested on the following hardware:
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-* a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
-* a Framework Laptop with a Ryzen AI 5 340=20
-* a Framework Desktop
-* a Steam Deck LCD Edition
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
---qw7jpb2xcpdsmjqy
-Content-Type: application/pgp-signature; name="signature.asc"
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmiKGXYACgkQwEfU8yi1
-JYXu/g/+NxM7Lexz5g8+vNOzP2RphQ7ymAD0vecStCKuZl/BdhkPtYzQc+OIQH0m
-JcrrUPZwHE12R5XuV9JDHwed41Le9yorD8A/llddnyTBDxYjQB82KKZD5+XvoLnU
-wj7JiIP+TQzYE4ZiGHB5t29Z0/wqraoBGT5UgaJrxsOS2aEncqOnOyVGCFjqwpmW
-wFux2qHuaJaqXT7pArg3qdwMYdqBfNi4/EwOJfZit8rCpJY57Ln68bi5Qle3h1rU
-A0heuo42giNQZDizjGo1Yh/RZ2xJLwxD875Y65B+pZJbLEdABYa3LsYXz1b+KN25
-3fGjc/E0zWKG11hyrmHrMl/Km53KjkcNKokXof0Qtr5br65yg2pyD8vazLiUJCaW
-tEghoKViV3vmKV1vxKu2D8t1r2eUQcI/XagD0mh7CBo6dB0Vq/3tDR7usspCzCyN
-RFQBec7xBOAFMdCOPFFWFdcY+XQFRKfYDjOS681Mwu5h23qCjSeaAn57ElQjJCoM
-Xa7wq3oWo0iSAE8uiZHRp4TxdkJSmmycZLxiSGPy3WXyzWEtP0S8a7NeK7joJ2JU
-cue0sArzEA16aiYLqpIX2fXCHVeYLr4gVdJBqBraD3eCXzAgt2I/qKkiJKd/e4k8
-te2Letxo9H/EgwbkV8tWDJW375GHXv5PqkOX5g40LbddkU1DIbk=
-=Q1Ru
------END PGP SIGNATURE-----
-
---qw7jpb2xcpdsmjqy--
+If you want to undo deduplication, reply with:
+#syz undup
 
