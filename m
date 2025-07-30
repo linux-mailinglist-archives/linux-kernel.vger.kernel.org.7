@@ -1,123 +1,100 @@
-Return-Path: <linux-kernel+bounces-751382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA32AB168F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:13:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB73B168F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:21:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A563AC91B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:12:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A24566FBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E77B22B8CF;
-	Wed, 30 Jul 2025 22:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1B42264D0;
+	Wed, 30 Jul 2025 22:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Sx+0XCrP"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E1C1DED57
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 22:12:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="FX6EG+Iy"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD6C1DE8A8;
+	Wed, 30 Jul 2025 22:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753913583; cv=none; b=g8FyQjAk4M4lHcAdoMZxgHm/lJn4A+ihJm0TgUz18ZUh5FtlMo9QGRJF4Q3dt5j9C7Em8E5CCV9eB9bt/kjqu6m5iP+HK7d/IOwje34dJgWrhIFDxrZWpuWdOrJ3sluIYDqBAZpn9iMr873QepyJF/+vD97MF7xD7clGpYJaPTU=
+	t=1753914099; cv=none; b=QxIMV08j7pPY0yhE5jDiKpA9KO8qZeN0DYkfrvynwX/HqQ3W6g71BLf0u3DxUOkdaZsS1LC+wY+xybvKVUJh/JAv19gmM7ysc8O9oAnsVR6cvWkc9umx54om9Swq2vIQHBG+vxqOr0z7RcsKa9RftAP1w32Mm0XCn8XfdAyHE0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753913583; c=relaxed/simple;
-	bh=qYO9XYMd9Ess2LLFsyadSHoQze0pFR9pSR+4q7JxSB0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NJuNlEtAWp279kd9FzHY0+zk2fZpeCV8Pba+wdXOb/SvVGBGFh+aghdAl+ppKN7vEO1MkjbWf6rTht0fA2aTxhNKfRmHLvi+snVwMXoqaC+NwKWnJg/bZxLFoCddGqAradaEECDIYsNRiQunSDeHPmbkv8YPJdrfM9GaQSUshn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Sx+0XCrP; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3e2ab85e0b4so6595735ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 15:12:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1753913577; x=1754518377; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6nTYoBlbWe2hufH9UN/C4sSrgwEPP02z/hVZuVmtCWI=;
-        b=Sx+0XCrP4+Q2rGIg3799Y6VxfCDIVLn7mvjlKiZc1fnNDIFbjSChPaxgrNKBRGe1Yk
-         CAFE/bZyv1TgmXxrwev0ZYaYjTFJ6+7A28Mb3xfNWeGR6vjQw/Ww3Dka44l11/zq7onO
-         Ks1/IMHxFf6NPbLx/QyQt5qNAShsm+Lyp6Qng=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753913577; x=1754518377;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6nTYoBlbWe2hufH9UN/C4sSrgwEPP02z/hVZuVmtCWI=;
-        b=LG/wX1mOP3PyU98rRnubsxf6mDIstuWzEatJ/tYqA7KBm4G3wBurmiznPvIluwg1tf
-         7HUPasm/uivu0E01rxyvu17UoYPK1NGLWNgcD3E4/h2hPQNT617Xuhq4XIGCydDbaQMS
-         zgCk9ilnPMc90EReEanvcN4jQDeU4tc/tp3tX0OAn3Z175L2PmC4g0PJpaVokwEU5Xb5
-         +WuGyxyeMNF9BYiGApWHQ9riOSsEc1Ni7N2lsNcGzxjne5jF2pzsGvJeNK22BDy1CyAu
-         Ga0qdWpPyGmE2/66mA5O2CnoTUszK/H5s/D2FdvB8pWNSNvO/TRHz5NPa0GlXxdLyV1W
-         EjAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKonbff1YDjOdipAXq+HYndvtNUagT68b+GA2GQeNilcOH2zy48RoSYys/2x7iVFujhYyh9TPcwbdDQQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7FwogcLXeEDQMj6OAMZrCPIgqY6w+v/o+ebPzbEU0EH7D/eih
-	tqDb/FT2S6TI2h/UAaRrPc4vyxoBM9MFCZwVo/S+I+/lhCO7M3xk+rYYDHw/M//0kic=
-X-Gm-Gg: ASbGncuvkMmfGH6llfem/fvWr+cSSuDKA/K24kLZyJ//fypErBXW9pIbMM0l2AhTgzV
-	xqEuejzLWncGbGg7EPCqJ4TqR0YuEwM6kmhLIZroPFbqlfyNSpGMulSm6TVcSlxvxc2G9sZ7ve6
-	X+30Gwudwsc/zlIW/+42b+KFCtYKsAX/Z4PNkFL2wnr4aivZoNOUQVfvoK/lt+hamkExyQ12eIo
-	n29SpxA5sxIKcKWikU4QY51mV+XPgHMb1rlsWRlK9OdTMQiGKjdWPRnyU6whmcyYOvRy5ZLVm0E
-	tFmrVNXqhVc/Mge8mnoFfkAoa5PzXye9anzYFNmW40NTMc9r9G8dFqBsWqn+hMvdGRp4BYUC6kY
-	evvuJLUrEX2UopC8KvjrkXo2u4vHcE5Y4vg==
-X-Google-Smtp-Source: AGHT+IENXvtA8hkhU/P6BXgu/6rZ6F/aOk7oAL7Z3QHmfwQrFaEE1/aG4rLPZfTApHUL7oAUHR3i0w==
-X-Received: by 2002:a05:6e02:ca2:b0:3d9:2992:671b with SMTP id e9e14a558f8ab-3e3e92ceab4mr94834675ab.4.1753913572713;
-        Wed, 30 Jul 2025 15:12:52 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55da3360sm91133173.83.2025.07.30.15.12.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 15:12:52 -0700 (PDT)
-Message-ID: <b718868b-d805-4ff3-bcae-3ee8b540707f@linuxfoundation.org>
-Date: Wed, 30 Jul 2025 16:12:51 -0600
+	s=arc-20240116; t=1753914099; c=relaxed/simple;
+	bh=gPV/fgmzSN1XFnlZAHxb9pvfXXEMpz0osDLD/6DJ3W8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bH35BBjglY1nVmGj25mYJ9jOktbo+7CvVS7bnEAxCCKzkz70TgWcZjDwYwOdfTeHy1I7ecqaIkbZxHvRWr6uE2wBCdD7alUQJcNxZYOl0gn2kilvXq9xIrQW81eZmcgK2JPqKB0hXKi60KEDt9H+9EsbTIE7lFbz4jm/Sj+B5kI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=FX6EG+Iy; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 9D97C14C2D3;
+	Thu, 31 Jul 2025 00:21:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1753914096;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D6JhiF7KoKNgSPD3zCt9p8g2uKhJH9FPFoUMsjdvKB4=;
+	b=FX6EG+IyhJiM2RBZ/KS+3Jz+TsegqLOZXiLNApe+3/CuS68KAz+BdeCjNcQIOioo3eDx0h
+	46POYyy2gWBw30aDw88dEg4Y25ArxKMDI+rO6olMTmAKLcgzvAgFrRPAbaFfpX8MQRriA1
+	zrURvN5QcfKNJtCavzEOqtcdYf8Uv69A2yB/AF2UeODOEBBU0NdAsK1QctGqb/4owV/fQh
+	OROGCfSJGmTli7Jrt6uk7TDV3EQDtuUPcHcG+0Dvb0WfxCnZYQ6il9e27p6oZH9Bk7Dsrh
+	8WHB6QD/IS7ifZnIrbamYVs7y0/t7hZEh4YLuw5x+eSjWdy9FcPl7z0tyRuBfw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id ad4612f5;
+	Wed, 30 Jul 2025 22:21:32 +0000 (UTC)
+Date: Thu, 31 Jul 2025 07:21:17 +0900
+From: asmadeus@codewreck.org
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: v9fs@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, ericvh@kernel.org, lucho@ionkov.net,
+	linux_oss@crudebyte.com, dhowells@redhat.com
+Subject: Re: [PATCH V2 0/4] 9p: convert to the new mount API
+Message-ID: <aIqa3cdv3whfNhfP@codewreck.org>
+References: <20250730192511.2161333-1-sandeen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 00/76] 6.6.101-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250730093226.854413920@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250730093226.854413920@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250730192511.2161333-1-sandeen@redhat.com>
 
-On 7/30/25 03:34, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.101 release.
-> There are 76 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.101-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Hi Eric,
 
-Compiled and booted on my test system. No dmesg regressions.
+Eric Sandeen wrote on Wed, Jul 30, 2025 at 02:18:51PM -0500:
+> This is an updated attempt to convert 9p to the new mount API. 9p is
+> one of the last conversions needed, possibly because it is one of the
+> trickier ones!
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Thanks for this work!
 
-thanks,
--- Shuah
+I think the main contention point here is that we're moving some opaque
+logic that was in each transport into the common code, so e.g. an out of
+tree transport can no longer have its own options (not that I'm aware of
+such a transport existing anyway, so we probably don't have to worry
+about this)
+
+OTOH this is also a blessing because 9p used to silently ignore unknown
+options, and will now properly refuse them (although it'd still silently
+ignore e.g. rdma options being set for a virtio mount -- I guess there's
+little harm in that as long as typos are caught?)
+
+So I think I'm fine with the approach.
+
+> I was able to test this to some degree, but I am not sure how to test
+> all transports; there may well be bugs here. It would be great to get
+> some feedback on whether this approach seems reasonable, and of course
+> any further review or testing would be most welcome.
+
+I still want to de-dust my test setup with rdma over siw for lack of
+supported hardware, so I'll try to give it a try, but don't necessarily
+wait for me as I don't know when that'll be..
+
+-- 
+Dominique Martinet | Asmadeus
 
