@@ -1,159 +1,400 @@
-Return-Path: <linux-kernel+bounces-750690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 317DAB15FE3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:59:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D6CB15FE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 606DB188962C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58F5818C44C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D8F286430;
-	Wed, 30 Jul 2025 11:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="crORyQp4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C0A27E061;
+	Wed, 30 Jul 2025 12:00:18 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB0326FDB6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E0223741
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753876745; cv=none; b=hdUFJqAeb03w/LpYIwMUKpQ0nZxKBSv4LyuWreHVmSXgZ4RUZFfU4/t8ApXZA6z8jR+A45dZhM/TwAe2R++qoIlvH3VDP/mLuXA7uul7pr/dNDSiFryiQy3FXzsmP98wp41d6IM8CDeAbNc3wjA5gTJjeGE6klTOVoIQ80SYV0s=
+	t=1753876817; cv=none; b=owyEMfXIRjhs5ponOyEQRtv1hAi5VN7FbMKlwhS7Bmw4m66f1HKZXRJZwdkG6eQcIGg/+jUuKAbijJFHmzI11k5YZ28rsqNXueBasBEo3m/0cltL7k3zVmkeTX98gZ63Ch/cmXGHQ57aPyl0eiu/nNh0dQ3uqrHHmKmCQZ2JrSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753876745; c=relaxed/simple;
-	bh=HQDIFLaL7om6a5f7K5WAYN1xBKXB6S74doNDZJgGVJA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JBPaYvEjeSQwilHo5xKDrarhEyxIA4Q4zlUjj+QIGwQP3jxzEZ82q4f2b9odJq8meGpqi8PJ2xxKEWZLL0F+NsorWuvnq3cfbRJxE0kL0rXnIaR0SytxJk7FRKS7tNfGfb02CPqgoHW823kfZCCISNTwxXPKpmJ6WO9POJdAdxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=crORyQp4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UBqvoP007632
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:59:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Gk5vGXil7RKOKTWhaZMiJw3ByMsUyxc9oWInTblZhxs=; b=crORyQp4VZYYq5OJ
-	vXVC7Wpf33iPtrORDiTeGescorvgBNvzaX4JO8AvZP8vQDXOCg/Ow3SnuduUbFNz
-	5lDV1TGFjX5DcZ5nsVlQrUMDFdelzDcKVx67ta3K2GGceIKhf68wIH6yE5v7Jssl
-	vhr5j5BcVHsX7UVDX0w2HFlTruIJOVRDdbXUq64BVvHHNliW41/NnqWfsvvzDHom
-	rTUCBP2VIvo7Y5edUNpOZAKSZRS4mM8ICO7mr6sLV78K2xWxEl0gsz2xVIoeYN3R
-	D8Q+xHdxpbPFgeoFoqx4iVrQwUtpQKOnAws3Cr5yn0m6Ray+fyJpKE5sGd0vwHS+
-	doS0Eg==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 487jwer0jx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:59:03 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-707428e0cd2so3778806d6.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 04:59:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753876743; x=1754481543;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gk5vGXil7RKOKTWhaZMiJw3ByMsUyxc9oWInTblZhxs=;
-        b=oNXRnRddNSlY+TAvdz3XehYxI3QFRRyXfkUL3NfP1owRNx/bWbQjIWMNSZD9KqVbo7
-         1GwLIRDbBwen+zP4mdKeUyURv/NqWviXs1leEWbnjZcrNvXUWBR3jeM8WBA8VMLfMqdX
-         cNcjrpb84k1sy7n+mjuLvD/7idw+FsdZEuLdFwcbZNGE27pxXeMgWdwqsI1cejcQm6EB
-         rF6xEBUGzh8ECF7jROxUud65xlZHPCEw+Xf1fyoIcwLdAIz70cggYVVK1DyjOWp8k6lk
-         bQIVUzfLfPuMRxueAVmSVnXX3lfcQBCXd+VaXCV1arrPqJ1lpkjd30nP8AHfTTBQJXWz
-         +dbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUcXxun+z8pPNlQ2WuOYL8xNW6lomZJTzc/WTNLsza0B6/SO/B6h0aX9dWOXe0Nfxz3QCFm36JIjXVxJ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYLm52F+26ihxd3nV41L2jwnLdg9YGrB+mskYiVNvW/twGGuYF
-	6QazEzKt+wE8ZkF9b90b5N+b6v2xk1sGVnMNs4x++oZQpkBcJas8yBb+0zgVRPLWVe33oxqJs0h
-	wk4IEawtzrVOTf026gkF0UqpUukCUK9mU5yj2HJRvM7ajsHafaNAVXc90GLyDzKyLszM=
-X-Gm-Gg: ASbGncuDQb1I5efEbvKuSfSPcyRrU38VYZH4XWkrk9HPH5D/xCs7uja1sYX1+tu4txJ
-	TjmW+FaEGdiQMaczQB1WQhsjUJGQ926H/exgdsmpvE4jYtV9wZi3X2t4c506kdSKpjNTRQVXc0C
-	GI0LNz8Wh7oIFD/8MZKdRSeVHIiiKy5IBXYNyAHKWM63ZmIGMTpAvAP5BfUuvyvfLo+yXsl582S
-	Pwm2X/504ieRS5G4npGDJcsfdE5QbR+R3LXzxSgbCXdJo1rBnlljujtifG7fXE+R+wgRRD3fspH
-	kZzhRzGZXoJIHqI5goKspTi+gzZeZ9hI2m34dWHN00S1qsJ82KpNt3RELb28hDEFY6bGk934Hfu
-	P3NtUB2ayWKnyZB0fGg==
-X-Received: by 2002:a05:620a:2546:b0:7e6:39a2:3ebe with SMTP id af79cd13be357-7e66ef831b1mr218066185a.1.1753876742520;
-        Wed, 30 Jul 2025 04:59:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEy3Ac2RJmbNiBhetSgsrV4zyrjPh4J4l/19B5GXz/9xAxchLE62srybp1Dcr/TAc04N6REnA==
-X-Received: by 2002:a05:620a:2546:b0:7e6:39a2:3ebe with SMTP id af79cd13be357-7e66ef831b1mr218063685a.1.1753876742082;
-        Wed, 30 Jul 2025 04:59:02 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af635ad9cb9sm741180666b.123.2025.07.30.04.58.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 04:59:01 -0700 (PDT)
-Message-ID: <e7952a9e-23db-45fc-9abf-0373fa26f2ee@oss.qualcomm.com>
-Date: Wed, 30 Jul 2025 13:58:58 +0200
+	s=arc-20240116; t=1753876817; c=relaxed/simple;
+	bh=sFe+JwfoweY/fIHJ74hP1zgxoV4WX/SZ1BjpMgvuuKM=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=WYejPj58rPf6+Ql0ikHeLRxmmDqc/5n2ttFu+BG86EpSU8Y8cvQjI5ySZDtLgE4AS7An71XBDKK3R/8qmmImTyGPZfYmRsqSTJJSob9kOzC/9qFdrGpifBC8LcqiYGV6Lo41s2py1XLllRJfPXkW2ArWYO/E82FTbp54M9lJRGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bsVzK4LRxzdc6d;
+	Wed, 30 Jul 2025 19:55:57 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2F4EE180B52;
+	Wed, 30 Jul 2025 20:00:11 +0800 (CST)
+Received: from [10.174.179.155] (10.174.179.155) by
+ kwepemg500017.china.huawei.com (7.202.181.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 30 Jul 2025 20:00:10 +0800
+Message-ID: <83591d0b-2467-433c-bce0-5581298eb161@huawei.com>
+Date: Wed, 30 Jul 2025 20:00:09 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] phy: qcom: edp: Add missing refclk for X1E80100
-To: Abel Vesa <abel.vesa@linaro.org>, Vinod Koul <vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Sibi Sankar <quic_sibis@quicinc.com>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>
-Cc: Johan Hovold <johan@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20250730-phy-qcom-edp-add-missing-refclk-v1-0-6f78afeadbcf@linaro.org>
- <20250730-phy-qcom-edp-add-missing-refclk-v1-2-6f78afeadbcf@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250730-phy-qcom-edp-add-missing-refclk-v1-2-6f78afeadbcf@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: HVFImX3WcgaAwt7TLxhClZP0o2NG4gK1
-X-Authority-Analysis: v=2.4 cv=Wv0rMcfv c=1 sm=1 tr=0 ts=688a0907 cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8
- a=C9jaBoPFOhspESL_4l8A:9 a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: HVFImX3WcgaAwt7TLxhClZP0o2NG4gK1
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA4NSBTYWx0ZWRfX0RCsp4Qs0TC8
- apF2rF8jfvcXy8NVYPt4EMMOQueYj89EiWWpz01vEp8sCwUAzt+eLDtWhvn4pBAw3fWPW5ACV0N
- xg+kdL/H18F5yVk6fuBz5zN+R9YS8g1dzToog1seiOptAuGhfxwjXZzVRFvHGFoXfdkSLrlW1S6
- q6Hp0+kcVQbR3wxis/npeD73QpZZB7h2fV9YiQBJ+3H4eTnSRXWtuS/W3jiX2dYrj71euK6TTSN
- eDZ8tExmg4SyUMx4cfL4//zbPrI1GC9iCFfrh+ERbKIgN2EUfiaN7wERC4Br4SUKj552ogfJjSj
- N8G/OdkmGebjITdi64PwFTNvRtgINc/NM2CUvKfBzsTZj4HyICLGcciwosWTrY8NIN4oa8C/zuy
- OGRuDBJ0AZweESt5fKO6iVKuFAaQySSf7mpuXFFtnqMzP+m4NRuuyoNIBJ4/H02uyahrow9Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
- lowpriorityscore=0 bulkscore=0 mlxscore=0 adultscore=0 impostorscore=0
- phishscore=0 mlxlogscore=763 suspectscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507300085
+User-Agent: =?UTF-8?B?TW96aWxsYSBUaHVuZGVyYmlyZCDmtYvor5XniYg=?=
+To: <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka
+	<mpatocka@redhat.com>, <dm-devel@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: <zhengqixing@huawei.com>, yangerkun <yangerkun@huawei.com>, "zhangyi (F)"
+	<yi.zhang@huawei.com>, Hou Tao <houtao1@huawei.com>, "yukuai (C)"
+	<yukuai3@huawei.com>, "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>, Li
+ Lingfeng <lilingfeng@huaweicloud.com>
+From: Li Lingfeng <lilingfeng3@huawei.com>
+Subject: [bug report] dm: 'tried to init an initialized object' error
+ triggered during device creation
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-On 7/30/25 1:46 PM, Abel Vesa wrote:
-> On X Elite, the DP PHY needs another clock called refclk.
-> Rework the match data to allow passing different number of clocks and
-> add the refclk to the X1E80100 config data.
-> 
-> Cc: stable@vger.kernel.org # v6.10
-> Fixes: db83c107dc29 ("phy: qcom: edp: Add v6 specific ops and X1E80100 platform support")
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
+Hi all,
 
-[...]
+Recently, when creating dm-mpath devices based on iSCSI devices, we
+encountered a 'tried to init an initialized object' error triggered
+by one DM_DEV_CREATE and two DM_TABLE_LOAD operations.
 
-> +	edp->num_clks = edp->cfg->num_clks;
-> +
-> +	ret = devm_clk_bulk_get(dev, edp->num_clks, edp->clks);
+// DM_DEV_CREATE
+dev_create
+  dm_create
+   alloc_dev
+    blk_alloc_disk // alloc gendisk for md->disk
 
-Go with devm_clk_bulk_get_all() instead, no need to be so stringent
+// first DM_TABLE_LOAD
+table_load
+  dm_get_md_type // md->type is DM_TYPE_NONE
+  dm_setup_md_queue
+   dm_mq_init_request_queue
+    add_disk // add md->disk
+     device_add_disk
+      add_disk_fwnode
+       __add_disk
+        blk_register_queue
+         kobject_init
+          kobject_init_internal
+           // set kobj->state_initialized
+  bd_link_disk_holder
+   // return -ENODEV since iscsi device has been logged out
+  // skip setting md->type and leave it as DM_TYPE_NONE
 
-Konrad
+// second DM_TABLE_LOAD
+table_load
+  dm_get_md_type // md->type is DM_TYPE_NONE
+  dm_setup_md_queue
+   dm_mq_init_request_queue
+    add_disk // add md->disk
+     device_add_disk
+      add_disk_fwnode
+       __add_disk
+        blk_register_queue
+         kobject_init
+          // dump_stack since kobj->state_initialized has been set
+
+Resetting state_initialized after the first failed DM_TABLE_LOAD might
+resolve this issue, but it seems weird — I think state_initialized is
+designed to ​never be reset during the object lifecycle.
+
+Any suggestions would be appreciated.
+
+Thanks,
+Lingfeng
+
+*Reproduction steps are as follows:*
+Base:
+master   4b290aae788e
+
+Diff:
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index abfe0392b5a4..b41f5a6f3e72 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -2598,6 +2598,9 @@ int dm_setup_md_queue(struct mapped_device *md, 
+struct dm_table *t)
+         if (r)
+                 return r;
+
++       printk("%s sleep before link disk holder\n", __func__);
++       msleep(10 * 1000);
++       printk("%s sleep done\n", __func__);
+         /*
+          * Register the holder relationship for devices added before 
+the disk
+          * was live.
+
+Procedures:
+[root@nfs_test3 test]# lsblk
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+sda    8:0    0  10G  0 disk
+sdb    8:16   0  10G  0 disk
+sdc    8:32   0  30G  0 disk
+vda  253:0    0  20G  0 disk /
+[root@nfs_test3 test]# ifconfig lo:0 127.0.0.2 up
+[root@nfs_test3 test]# ifconfig lo:1 127.0.0.3 up
+[root@nfs_test3 test]# service tgtd restart
+Redirecting to /bin/systemctl restart tgtd.service
+[root@nfs_test3 test]# service iscsid restart
+Redirecting to /bin/systemctl restart iscsid.service
+[root@nfs_test3 test]# iscsiadm -m discovery -p 127.0.0.2 -t st
+127.0.0.2:3260,1 iqn.2019-04.jenkins.disk
+[root@nfs_test3 test]# iscsiadm -m discovery -p 127.0.0.3 -t st
+127.0.0.3:3260,1 iqn.2019-04.jenkins.disk
+[root@nfs_test3 test]# iscsiadm -m node -l
+Logging in to [iface: default, target: iqn.2020-05.com.bdqn:disk1, 
+portal: 192.168.240.250,3260] (multiple)
+Logging in to [iface: default, target: iqn.2019-04.jenkins.disk, portal: 
+127.0.0.2,3260] (multiple)
+Logging in to [iface: default, target: iqn.2019-04.jenkins.disk, portal: 
+127.0.0.3,3260] (multiple)
+Logging in to [iface: default, target: , portal: ,3260] (multiple)
+[  275.687170][   C10] sd 3:0:0:1: Power-on or device reset occurred
+[  275.708911][   C10] sd 4:0:0:1: Power-on or device reset occurred
+iscsiadm: caught SIGINT, exiting...
+[root@nfs_test3 test]# lsblk
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+sda    8:0    0  10G  0 disk
+sdb    8:16   0  10G  0 disk
+sdc    8:32   0  30G  0 disk
+sdd    8:48   0  10G  0 disk
+sde    8:64   0  10G  0 disk
+vda  253:0    0  20G  0 disk /
+[root@nfs_test3 test]# ./dmtest &
+[1] 2742
+[root@nfs_test3 test]# DM_VERSION 4 50 0
+[  294.101770][ T2742] dm_setup_md_queue sleep before link disk holder
+[root@nfs_test3 test]#
+[root@nfs_test3 test]# iscsiadm -m node -u
+Logging out of session [sid: 1, target: iqn.2019-04.jenkins.disk, 
+portal: 127.0.0.2,3260]
+Logging out of session [sid: 2, target: iqn.2019-04.jenkins.disk, 
+portal: 127.0.0.3,3260]
+Logout of [sid: 1, target: iqn.2019-04.jenkins.disk, portal: 
+127.0.0.2,3260] successful.
+Logout of [sid: 2, target: iqn.2019-04.jenkins.disk, portal: 
+127.0.0.3,3260] successful.
+[root@nfs_test3 test]#
+[root@nfs_test3 test]#
+[root@nfs_test3 test]# [  304.185384][ T2742] dm_setup_md_queue sleep done
+[  304.280823][ T2742] device-mapper: ioctl: unable to set up device 
+queue for new table.
+delay before second table_load...
+[root@nfs_test3 test]#
+[root@nfs_test3 test]# iscsiadm -m node -l
+Logging in to [iface: default, target: iqn.2020-05.com.bdqn:disk1, 
+portal: 192.168.240.250,3260] (multiple)
+Logging in to [iface: default, target: iqn.2019-04.jenkins.disk, portal: 
+127.0.0.2,3260] (multiple)
+Logging in to [iface: default, target: iqn.2019-04.jenkins.disk, portal: 
+127.0.0.3,3260] (multiple)
+iscsiadm: could not read session targetname: 5
+iscsiadm: could not find session info for session3
+Logging in to [iface: default, target: , portal: ,3260] (multiple)
+[  307.357847][   C10] sd 3:0:0:1: Power-on or device reset occurred
+[  307.372301][   C10] sd 4:0:0:1: Power-on or device reset occurred
+iscsiadm: caught SIGINT, exiting...
+[root@nfs_test3 test]#
+[root@nfs_test3 test]#
+[root@nfs_test3 test]# lsblk
+NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+sda    8:0    0  10G  0 disk
+sdb    8:16   0  10G  0 disk
+sdc    8:32   0  30G  0 disk
+sdd    8:48   0  10G  0 disk
+sde    8:64   0  10G  0 disk
+vda  253:0    0  20G  0 disk /
+[root@nfs_test3 test]# delay done
+[  314.938868][ T2742] kobject: kobject (ffff88810c27bb90): tried to 
+init an initialized object, something is seriously wrong.
+[  314.940322][ T2742] CPU: 6 UID: 0 PID: 2742 Comm: dmtest Not tainted 
+6.16.0-04405-g4b290aae788e-dirty #21 PREEMPT(none)
+[  314.940331][ T2742] Hardware name: QEMU Standard PC (i440FX + PIIX, 
+1996), BIOS 1.16.3-2.fc40 04/01/2014
+[  314.940335][ T2742] Call Trace:
+[  314.940339][ T2742]  <TASK>
+[  314.940345][ T2742]  dump_stack_lvl+0x5b/0x80
+[  314.940370][ T2742]  kobject_init.cold+0x43/0x51
+[  314.940380][ T2742]  blk_register_queue+0x46/0x280
+[  314.940399][ T2742]  __add_disk+0x385/0x5d0
+[  314.940413][ T2742]  add_disk_fwnode+0xb5/0x280
+[  314.940425][ T2742]  dm_setup_md_queue+0x194/0x1c0
+[  314.940434][ T2742]  ? mempool_init_noprof+0x16/0x20
+[  314.940443][ T2742]  ? __pfx_dm_setup_md_queue+0x10/0x10
+[  314.940476][ T2742]  table_load+0x297/0x2d0
+[  314.940484][ T2742]  ? __pfx_table_load+0x10/0x10
+[  314.940489][ T2742]  ? _inline_copy_from_user+0x6c/0x90
+[  314.940499][ T2742]  ? copy_params+0xa6/0x330
+[  314.940513][ T2742]  ctl_ioctl+0x2a2/0x480
+[  314.940520][ T2742]  ? __pfx_table_load+0x10/0x10
+[  314.940528][ T2742]  ? __pfx_ctl_ioctl+0x10/0x10
+[  314.940564][ T2742]  ? __free_zapped_classes+0x70/0x120
+[  314.940572][ T2742]  ? exc_page_fault+0x61/0xa0
+[  314.940591][ T2742]  dm_ctl_ioctl+0xe/0x20
+[  314.940598][ T2742]  __x64_sys_ioctl+0xc7/0x110
+[  314.940605][ T2742]  ? rcu_is_watching+0x20/0x50
+[  314.940616][ T2742]  do_syscall_64+0x72/0x390
+[  314.940624][ T2742]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[  314.940631][ T2742] RIP: 0033:0x7f8ce1106577
+[  314.940639][ T2742] Code: b3 66 90 48 8b 05 11 89 2c 00 64 c7 00 26 
+00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10 00 
+00 00 0f 05 <48> 3d 01 f0 ff ff 73 018
+[  314.940645][ T2742] RSP: 002b:00007fff58708438 EFLAGS: 00000202 
+ORIG_RAX: 0000000000000010
+[  314.940652][ T2742] RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 
+00007f8ce1106577
+[  314.940657][ T2742] RDX: 0000000008355010 RSI: 00000000c138fd09 RDI: 
+0000000000000003
+[  314.940661][ T2742] RBP: 00007fff587084d0 R08: 0000000000000000 R09: 
+0000000000000000
+[  314.940665][ T2742] R10: 0000000000400e00 R11: 0000000000000202 R12: 
+3120312030206874
+[  314.940669][ T2742] R13: 6563697672657320 R14: 5f65756575712031 R15: 
+61705f6f6e5f6669
+[  314.940686][ T2742]  </TASK>
+[  315.026828][ T2742] dm_setup_md_queue sleep before link disk holder
+[root@nfs_test3 test]# [  325.177205][ T2742] dm_setup_md_queue sleep done
+
+
+dmtest.c
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <string.h>
+#include <errno.h>
+#include <linux/dm-ioctl.h>
+#include <sys/ioctl.h>
+
+#define DM_EXISTS_FLAG 0x00000004
+
+int main(int argc, char *argv[]) {
+     int ret, fd, index;
+     int in_data;
+
+     struct dm_ioctl *param = calloc(1, sizeof(struct dm_ioctl) + 16384);
+     struct dm_target_spec sp;
+     char *target = (char *)(param + 1);
+     char *last_param = target + sizeof(struct dm_target_spec);
+
+     struct dm_target_msg tmsg;
+     fd = open("/dev/mapper/control", O_RDWR);
+     if (fd < 0) {
+         printf("Failed to open device /dev/mapper/control: %s\n", 
+strerror(errno));
+         return -1;
+     }
+
+     // DM_VERSION
+     param->version[0] = 4;
+     param->version[1] = 0;
+     param->version[2] = 0;
+     param->data_size = 16384;
+     param->flags = DM_EXISTS_FLAG;
+
+     ret = ioctl(fd, DM_VERSION, param);
+     if (ret < 0) {
+         printf("Failed to send DM_VERSION: %s\n", strerror(errno));
+         close(fd);
+         return -1;
+     }
+     printf("DM_VERSION %d %d %d\n", param->version[0], 
+param->version[1], param->version[2]);
+
+     // DM_DEV_CREATE
+     param->data_start = 312;
+     strncpy(param->name, "multipath-dev", sizeof(param->name));
+
+     // clear
+     memset(target, 0, 16384);
+
+     param->data_size = 16384;
+     param->dev = 0;
+
+     ret = ioctl(fd, DM_DEV_CREATE, param);
+     if (ret < 0) {
+         printf("Failed to send DM_DEV_CREATE: %s\n", strerror(errno));
+         close(fd);
+         return -1;
+     }
+
+     // DM_TABLE_LOAD
+     memset(param->name, 0, sizeof(param->name));
+     param->flags = DM_EXISTS_FLAG;
+     param->data_start = 312;
+     param->data_size = 16384;
+     //param->dev = 64514; // makedev(252, 2)
+     param->target_count = 1;
+
+     sp.sector_start = 0;
+     sp.length = 20971520;
+     strncpy(sp.target_type, "multipath", sizeof(sp.target_type) - 1);
+     sp.target_type[sizeof(sp.target_type) - 1] = '\0';
+
+     memcpy(target, &sp, sizeof(struct dm_target_spec));
+     strcpy(last_param, "1 queue_if_no_path 0 1 1 service-time 0 1 1 
+8:48 1");
+
+     ret = ioctl(fd, DM_TABLE_LOAD, param);
+//    if (ret < 0) {
+//        printf("Failed to send DM_TABLE_LOAD: %s\n", strerror(errno));
+//        close(fd);
+//        return -1;
+//    }
+
+     printf("delay before second table_load...\n");
+     sleep(10);
+     printf("delay done\n");
+     memset(param->name, 0, sizeof(param->name));
+     param->flags = DM_EXISTS_FLAG;
+     param->data_start = 312;
+     param->data_size = 16384;
+     param->target_count = 1;
+
+     sp.sector_start = 0;
+     sp.length = 20971520;
+     strncpy(sp.target_type, "multipath", sizeof(sp.target_type) - 1);
+     sp.target_type[sizeof(sp.target_type) - 1] = '\0';
+
+     memcpy(target, &sp, sizeof(struct dm_target_spec));
+     strcpy(last_param, "1 queue_if_no_path 0 1 1 service-time 0 1 1 
+8:48 1");
+
+     ret = ioctl(fd, DM_TABLE_LOAD, param);
+     if (ret < 0) {
+         printf("Failed to send DM_TABLE_LOAD: %s\n", strerror(errno));
+         close(fd);
+         return -1;
+     }
+
+     // DM_DEV_SUSPEND
+     param->flags = DM_EXISTS_FLAG; // continue creating
+     param->event_nr = 6345265;
+     param->data_size = 16384;
+     param->dev = 0;
+     strncpy(param->name, "multipath-dev", sizeof(param->name));
+
+     ret = ioctl(fd, DM_DEV_SUSPEND, param);
+     if (ret < 0) {
+         printf("Failed to send DM_DEV_SUSPEND: %s\n", strerror(errno));
+         close(fd);
+         return -1;
+     }
+     printf("DM_DEV_SUSPEND sent successfully\n");
+     close(fd);
+
+     return 0;
+}
+
+
 
