@@ -1,98 +1,93 @@
-Return-Path: <linux-kernel+bounces-750814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7148CB16158
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:21:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9780B1615B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D07D71AA17C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:21:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C62FE4E1C3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23D8299AA0;
-	Wed, 30 Jul 2025 13:21:23 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD772299A8E;
+	Wed, 30 Jul 2025 13:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BdEcX8LU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E291413B284
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DA778F4E;
+	Wed, 30 Jul 2025 13:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753881683; cv=none; b=f4xtDk/2vz+qBMYO3m27hpcjrqFlkp3u6BJIYuFrdKDlWEZoBzswb7ksamjbvOEPEs+sHG2f8AxYMThPlN1PgceQ0dTLPhKVDnicukDyE6uBuQksa27cFDP33fp+rAdn4O27mNJXxJHrQQyab0ns3QLSsvkxnQ4RpOg3RF6ZkXA=
+	t=1753881773; cv=none; b=X9uuQfVtEUWiZgTecUWWVxBtefWsrmBicA98IVRAXjjzepsXC5KfQOq9x5DxcE0fPGumSy9JWm6yHeF6t0xISW/HbdOPzoYDNa0BxCGFgOQw91jy4+L5KvJiMcEpdBdLDRmTUH+gFF4PWIFxJ/M1UQge/6/75elYlnNCrtBP0lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753881683; c=relaxed/simple;
-	bh=ur9DU62uLbaRr3z05vT3quPJrqVhXl1UXwDJwHpdNDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VyUHFntqqoZ2HSbx8cWayYnNFBRBKh+wxTd3rN+XTGofjXns/asrBRq5RvlTk8F2X0QIjtO6RE0Xr4jGPa4Zwlc0w8mWTnhWkmfKtHFI477V1Io2aHlmVionyrFOuXD+vIU+hfW/dOanFqCA5X7rb//dd5G+t41k8u0+nRIqDq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bsXmv2Gc2zdc6T;
-	Wed, 30 Jul 2025 21:17:03 +0800 (CST)
-Received: from dggpemf100017.china.huawei.com (unknown [7.185.36.74])
-	by mail.maildlp.com (Postfix) with ESMTPS id E7A48180485;
-	Wed, 30 Jul 2025 21:21:16 +0800 (CST)
-Received: from [10.67.111.186] (10.67.111.186) by
- dggpemf100017.china.huawei.com (7.185.36.74) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 30 Jul 2025 21:21:16 +0800
-Message-ID: <f3809f8b-693e-1d6e-7adf-12757f43a20b@huawei.com>
-Date: Wed, 30 Jul 2025 21:21:15 +0800
+	s=arc-20240116; t=1753881773; c=relaxed/simple;
+	bh=Q3iDUAJTSaX8nRsvstx+mgRnQLOX9ppyrxzYW7PWT/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OXuvjwGuQ579LMayoG99ySffmBA7oiyjTSFkooRLPRR3kuWYXJOgg0mUjUaVZ2kUfX1cKtnQPsCPOBVRwfrCMAVfoC1sX2OwrYIXJr64kEQtjndF3kHq57OFbLgyTlX11SvmRAsCTjYTFusRn7VsQIAMNhblqXdAIv9I2IO5Y6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BdEcX8LU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D124C4CEE7;
+	Wed, 30 Jul 2025 13:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753881772;
+	bh=Q3iDUAJTSaX8nRsvstx+mgRnQLOX9ppyrxzYW7PWT/g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BdEcX8LUiTHF4Q4LdKOAViqMAgHJnhSaWkslyziJOaj9Mj2ZMNQGWroy8p8D1ODP6
+	 hoTmk8PV2stFs5YeLqrJ3juPOLFNuKZsfkiMpe7XugAlU5F9itrYolnppDVdB39PxS
+	 5Kmdsr+aZD2uLfyVLr5VVjsnzlhnRCNvu0t9GIuxwCfp3C1/0Y1/eF2PWkDwy1dPZB
+	 7w+CgAD8lVwK1pooBdkzWZjefL3Jt+rL7F8OJqQJiyskGef6tQA83Pmt/ZItZfZF5D
+	 1Mst6f9CJ64ac9RMa6F+BK0k3ifmVPl9ruRqHLFm8BkZmYFjY8jCKN4b5j6GH4OfCW
+	 5FwXTCAu84C6g==
+From: Sumit Garg <sumit.garg@kernel.org>
+To: linux-arm-msm@vger.kernel.org
+Cc: andersson@kernel.org,
+	konradybcio@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sumit Garg <sumit.garg@oss.qualcomm.com>
+Subject: [PATCH] arm64: dts: qcom: qcm2290: Add TCSR download mode address
+Date: Wed, 30 Jul 2025 18:52:30 +0530
+Message-ID: <20250730132230.247727-1-sumit.garg@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.1.1
-Subject: Re: [PATCH] sched/clock: Init generic clock with
- CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y
-To: <tglx@linutronix.de>, <frederic@kernel.org>, <anna-maria@linutronix.de>,
-	<jstultz@google.com>, <peterz@infradead.org>, <namcao@linutronix.de>
-CC: <linux-kernel@vger.kernel.org>, <yuanlulu4@huawei.com>,
-	<tanghui20@huawei.com>
-References: <20250723020326.622368-1-zhangqiao22@huawei.com>
-From: Zhang Qiao <zhangqiao22@huawei.com>
-In-Reply-To: <20250723020326.622368-1-zhangqiao22@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
- dggpemf100017.china.huawei.com (7.185.36.74)
 
-ping...
+From: Sumit Garg <sumit.garg@oss.qualcomm.com>
 
-在 2025/7/23 10:03, Zhang Qiao 写道:
-> The sched_clock_timer is used to prevent the sched clock wrapped, this
-> timer is initialized in generic_sched_clock_init();
-> 
-> When CONFIG_HAVE_UNSTABLE_SCHED_CLOCK=y, generic_sched_clock_init() is
-> not called and sched_clock_timer is not initialized, causing the
-> sched clock to wrap.
-> 
-> To fix this issue, call generic_sched_clock_init() in sched_clock_init()
-> to initialize the sched_clock_timer.
-> 
-> Fixes: 5d2a4e91a541 ("sched/clock: Move sched clock initialization and merge with generic clock")
-> Reported-by: yuanlulu <yuanlulu4@huawei.com>
-> Signed-off-by: Zhang Qiao <zhangqiao22@huawei.com>
-> ---
->  kernel/sched/clock.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/kernel/sched/clock.c b/kernel/sched/clock.c
-> index a09655b481402..13e76cfb59f23 100644
-> --- a/kernel/sched/clock.c
-> +++ b/kernel/sched/clock.c
-> @@ -213,6 +213,7 @@ void __init sched_clock_init(void)
->  	 */
->  	local_irq_disable();
->  	__sched_clock_gtod_offset();
-> +	generic_sched_clock_init();
->  	local_irq_enable();
->  
->  	static_branch_inc(&sched_clock_running);
-> 
+Allow configuration of download mode via qcom_scm driver via specifying
+download mode register address in the TCSR space. It is especially useful
+for a clean watchdog reset without entry into download mode.
+
+The problem remained un-noticed until now since error reporting for
+missing download mode configuration feature was explicitly suppressed.
+
+Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+---
+ arch/arm64/boot/dts/qcom/qcm2290.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
+index f49ac1c1f8a3..08eadec59882 100644
+--- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
+@@ -154,6 +154,7 @@ scm: scm {
+ 			compatible = "qcom,scm-qcm2290", "qcom,scm";
+ 			clocks = <&rpmcc RPM_SMD_CE1_CLK>;
+ 			clock-names = "core";
++			qcom,dload-mode = <&tcsr_regs 0x13000>;
+ 			#reset-cells = <1>;
+ 			interconnects = <&system_noc MASTER_CRYPTO_CORE0 RPM_ALWAYS_TAG
+ 					 &bimc SLAVE_EBI1 RPM_ALWAYS_TAG>;
+-- 
+2.48.1
+
 
