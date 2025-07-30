@@ -1,221 +1,123 @@
-Return-Path: <linux-kernel+bounces-751381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1267CB168ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:12:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA32AB168F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 622387B4A34
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:10:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A563AC91B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D1022B595;
-	Wed, 30 Jul 2025 22:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E77B22B8CF;
+	Wed, 30 Jul 2025 22:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0UkmTIu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Sx+0XCrP"
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B3D132103
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 22:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E1C1DED57
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 22:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753913520; cv=none; b=hMMDW8aYpl8kx0bW55zC2YPRGYqrl1IbDiUzC2rOxiwlP29M/OfDA47arVb+Gcf6T+Hk318J2RgGM7P7DR/wQUASJyPoZLw0yT7W60CUpqY5tPvk1lzZcYBdQ7c3UwhXaSyVgC66q7MJQmVZPZVmcbE+naLqoMv34EA8mjunFzE=
+	t=1753913583; cv=none; b=g8FyQjAk4M4lHcAdoMZxgHm/lJn4A+ihJm0TgUz18ZUh5FtlMo9QGRJF4Q3dt5j9C7Em8E5CCV9eB9bt/kjqu6m5iP+HK7d/IOwje34dJgWrhIFDxrZWpuWdOrJ3sluIYDqBAZpn9iMr873QepyJF/+vD97MF7xD7clGpYJaPTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753913520; c=relaxed/simple;
-	bh=yYOA1pLmN0sVFxakiTkblQuK9ECzy3Zjk+AwR/ykPeI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TB9MyX6k1ZnS51ACPyXbTHkiTTtDE+DG7Ut692bJhHC7MZGOZdX3m7yq93lziEGuGwCEKorcLFK4uF4n8wAraC55MjWGGirPHSIPW7MBYzU2MuJuBZCwauaaZ5y3KNae2P/mNS4/DVWjoZ3o7v6ZOYXQJDvxUhpQPuJtvTqg7Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0UkmTIu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9E55C4CEE3;
-	Wed, 30 Jul 2025 22:11:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753913520;
-	bh=yYOA1pLmN0sVFxakiTkblQuK9ECzy3Zjk+AwR/ykPeI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=q0UkmTIuQRR3zMRPfIaEcB9MJHEPRVT8UFC4HTfnL2LszqZqdlRdQGl2smuAMF9hV
-	 t4pEYv3GgkTrDZ5miSCGv0B6/rEGdoGMJIEiCSW7n3bWnUWM27x5KC3OqP05ic7pSu
-	 Cv3IHnBa+cEMwie445Rw5qzBcXpmoIa/2IqQ6ZoBgnYOOvPTlwJw/J5+4mKX788CPq
-	 M14nL3t1CY+Q27Raje2205TchR27RZXeK6nsEWRep1KNgkKaBgNf/OJyriTf5Nu5IC
-	 UjLxB3gmWZwsxDPl3lAaTV6VemFobSm6H941rEn8VZek6kCzKALjpdYhsssTfkle37
-	 azLHeMp63UJwg==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	Joel Granados <joel.granados@kernel.org>,
-	Anna Schumaker <anna.schumaker@oracle.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Yongliang Gao <leonylgao@tencent.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tomasz Figa <tfiga@chromium.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] hung_task: Dump blocker task if it is not hung
-Date: Thu, 31 Jul 2025 07:11:54 +0900
-Message-ID: <175391351423.688839.11917911323784986774.stgit@devnote2>
-X-Mailer: git-send-email 2.43.0
-User-Agent: StGit/0.19
+	s=arc-20240116; t=1753913583; c=relaxed/simple;
+	bh=qYO9XYMd9Ess2LLFsyadSHoQze0pFR9pSR+4q7JxSB0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NJuNlEtAWp279kd9FzHY0+zk2fZpeCV8Pba+wdXOb/SvVGBGFh+aghdAl+ppKN7vEO1MkjbWf6rTht0fA2aTxhNKfRmHLvi+snVwMXoqaC+NwKWnJg/bZxLFoCddGqAradaEECDIYsNRiQunSDeHPmbkv8YPJdrfM9GaQSUshn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Sx+0XCrP; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3e2ab85e0b4so6595735ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 15:12:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1753913577; x=1754518377; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6nTYoBlbWe2hufH9UN/C4sSrgwEPP02z/hVZuVmtCWI=;
+        b=Sx+0XCrP4+Q2rGIg3799Y6VxfCDIVLn7mvjlKiZc1fnNDIFbjSChPaxgrNKBRGe1Yk
+         CAFE/bZyv1TgmXxrwev0ZYaYjTFJ6+7A28Mb3xfNWeGR6vjQw/Ww3Dka44l11/zq7onO
+         Ks1/IMHxFf6NPbLx/QyQt5qNAShsm+Lyp6Qng=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753913577; x=1754518377;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6nTYoBlbWe2hufH9UN/C4sSrgwEPP02z/hVZuVmtCWI=;
+        b=LG/wX1mOP3PyU98rRnubsxf6mDIstuWzEatJ/tYqA7KBm4G3wBurmiznPvIluwg1tf
+         7HUPasm/uivu0E01rxyvu17UoYPK1NGLWNgcD3E4/h2hPQNT617Xuhq4XIGCydDbaQMS
+         zgCk9ilnPMc90EReEanvcN4jQDeU4tc/tp3tX0OAn3Z175L2PmC4g0PJpaVokwEU5Xb5
+         +WuGyxyeMNF9BYiGApWHQ9riOSsEc1Ni7N2lsNcGzxjne5jF2pzsGvJeNK22BDy1CyAu
+         Ga0qdWpPyGmE2/66mA5O2CnoTUszK/H5s/D2FdvB8pWNSNvO/TRHz5NPa0GlXxdLyV1W
+         EjAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKonbff1YDjOdipAXq+HYndvtNUagT68b+GA2GQeNilcOH2zy48RoSYys/2x7iVFujhYyh9TPcwbdDQQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7FwogcLXeEDQMj6OAMZrCPIgqY6w+v/o+ebPzbEU0EH7D/eih
+	tqDb/FT2S6TI2h/UAaRrPc4vyxoBM9MFCZwVo/S+I+/lhCO7M3xk+rYYDHw/M//0kic=
+X-Gm-Gg: ASbGncuvkMmfGH6llfem/fvWr+cSSuDKA/K24kLZyJ//fypErBXW9pIbMM0l2AhTgzV
+	xqEuejzLWncGbGg7EPCqJ4TqR0YuEwM6kmhLIZroPFbqlfyNSpGMulSm6TVcSlxvxc2G9sZ7ve6
+	X+30Gwudwsc/zlIW/+42b+KFCtYKsAX/Z4PNkFL2wnr4aivZoNOUQVfvoK/lt+hamkExyQ12eIo
+	n29SpxA5sxIKcKWikU4QY51mV+XPgHMb1rlsWRlK9OdTMQiGKjdWPRnyU6whmcyYOvRy5ZLVm0E
+	tFmrVNXqhVc/Mge8mnoFfkAoa5PzXye9anzYFNmW40NTMc9r9G8dFqBsWqn+hMvdGRp4BYUC6kY
+	evvuJLUrEX2UopC8KvjrkXo2u4vHcE5Y4vg==
+X-Google-Smtp-Source: AGHT+IENXvtA8hkhU/P6BXgu/6rZ6F/aOk7oAL7Z3QHmfwQrFaEE1/aG4rLPZfTApHUL7oAUHR3i0w==
+X-Received: by 2002:a05:6e02:ca2:b0:3d9:2992:671b with SMTP id e9e14a558f8ab-3e3e92ceab4mr94834675ab.4.1753913572713;
+        Wed, 30 Jul 2025 15:12:52 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55da3360sm91133173.83.2025.07.30.15.12.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 15:12:52 -0700 (PDT)
+Message-ID: <b718868b-d805-4ff3-bcae-3ee8b540707f@linuxfoundation.org>
+Date: Wed, 30 Jul 2025 16:12:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 00/76] 6.6.101-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250730093226.854413920@linuxfoundation.org>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250730093226.854413920@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+On 7/30/25 03:34, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.101 release.
+> There are 76 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.101-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-Dump the lock blocker task if it is not hung because if the blocker
-task is also hung, it should be dumped by the detector. This will
-de-duplicate the same stackdumps if the blocker task is also blocked
-by another task (and hung).
+Compiled and booted on my test system. No dmesg regressions.
 
-Suggested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-Acked-by: Lance Yang <lance.yang@linux.dev>
----
- Changes in v2:
-  - Rebase on next-20250730
-  - Merge task state checks.
-  - Add Lance's ack.
----
- kernel/hung_task.c |   78 +++++++++++++++++++++++++++-------------------------
- 1 file changed, 41 insertions(+), 37 deletions(-)
+Tested-by: Shuah Khan <skhan@linuxfoundation.org>
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index 8708a1205f82..b2c1f14b8129 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -95,9 +95,41 @@ static struct notifier_block panic_block = {
- 	.notifier_call = hung_task_panic,
- };
- 
-+static bool task_is_hung(struct task_struct *t, unsigned long timeout)
-+{
-+	unsigned long switch_count = t->nvcsw + t->nivcsw;
-+	unsigned int state = READ_ONCE(t->__state);
-+
-+	/*
-+	 * skip the TASK_KILLABLE tasks -- these can be killed
-+	 * skip the TASK_IDLE tasks -- those are genuinely idle
-+	 * skip the TASK_FROZEN task -- it reasonably stops scheduling by freezer
-+	 */
-+	if (!(state & TASK_UNINTERRUPTIBLE) ||
-+	    (state & (TASK_WAKEKILL | TASK_NOLOAD | TASK_FROZEN)))
-+		return false;
-+
-+	/*
-+	 * When a freshly created task is scheduled once, changes its state to
-+	 * TASK_UNINTERRUPTIBLE without having ever been switched out once, it
-+	 * musn't be checked.
-+	 */
-+	if (unlikely(!switch_count))
-+		return false;
-+
-+	if (switch_count != t->last_switch_count) {
-+		t->last_switch_count = switch_count;
-+		t->last_switch_time = jiffies;
-+		return false;
-+	}
-+	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
-+		return false;
-+
-+	return true;
-+}
- 
- #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
--static void debug_show_blocker(struct task_struct *task)
-+static void debug_show_blocker(struct task_struct *task, unsigned long timeout)
- {
- 	struct task_struct *g, *t;
- 	unsigned long owner, blocker, blocker_type;
-@@ -174,41 +206,21 @@ static void debug_show_blocker(struct task_struct *task)
- 			       t->pid, rwsem_blocked_by);
- 			break;
- 		}
--		sched_show_task(t);
-+		/* Avoid duplicated task dump, skip if the task is also hung. */
-+		if (!task_is_hung(t, timeout))
-+			sched_show_task(t);
- 		return;
- 	}
- }
- #else
--static inline void debug_show_blocker(struct task_struct *task)
-+static inline void debug_show_blocker(struct task_struct *task, unsigned long timeout)
- {
- }
- #endif
- 
- static void check_hung_task(struct task_struct *t, unsigned long timeout)
- {
--	unsigned long switch_count = t->nvcsw + t->nivcsw;
--
--	/*
--	 * Ensure the task is not frozen.
--	 * Also, skip vfork and any other user process that freezer should skip.
--	 */
--	if (unlikely(READ_ONCE(t->__state) & TASK_FROZEN))
--		return;
--
--	/*
--	 * When a freshly created task is scheduled once, changes its state to
--	 * TASK_UNINTERRUPTIBLE without having ever been switched out once, it
--	 * musn't be checked.
--	 */
--	if (unlikely(!switch_count))
--		return;
--
--	if (switch_count != t->last_switch_count) {
--		t->last_switch_count = switch_count;
--		t->last_switch_time = jiffies;
--		return;
--	}
--	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
-+	if (!task_is_hung(t, timeout))
- 		return;
- 
- 	/*
-@@ -243,7 +255,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
- 		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
- 			" disables this message.\n");
- 		sched_show_task(t);
--		debug_show_blocker(t);
-+		debug_show_blocker(t, timeout);
- 		hung_task_show_lock = true;
- 
- 		if (sysctl_hung_task_all_cpu_backtrace)
-@@ -299,7 +311,6 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	hung_task_show_lock = false;
- 	rcu_read_lock();
- 	for_each_process_thread(g, t) {
--		unsigned int state;
- 
- 		if (!max_count--)
- 			goto unlock;
-@@ -308,15 +319,8 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 				goto unlock;
- 			last_break = jiffies;
- 		}
--		/*
--		 * skip the TASK_KILLABLE tasks -- these can be killed
--		 * skip the TASK_IDLE tasks -- those are genuinely idle
--		 */
--		state = READ_ONCE(t->__state);
--		if ((state & TASK_UNINTERRUPTIBLE) &&
--		    !(state & TASK_WAKEKILL) &&
--		    !(state & TASK_NOLOAD))
--			check_hung_task(t, timeout);
-+
-+		check_hung_task(t, timeout);
- 	}
-  unlock:
- 	rcu_read_unlock();
-
+thanks,
+-- Shuah
 
