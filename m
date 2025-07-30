@@ -1,173 +1,206 @@
-Return-Path: <linux-kernel+bounces-750853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34056B161DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:52:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C98DAB161E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:53:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34325565DFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:52:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EE325664BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ADF72D8DB5;
-	Wed, 30 Jul 2025 13:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CD52D8DA9;
+	Wed, 30 Jul 2025 13:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="CL1axfhY"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NnmcbnfJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63C1C8F0
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:52:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E392C8F0
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883565; cv=none; b=tVLvrIj8UxWMQF9EGM/nlx0oAxh1Q5JU7Pc4YkgqxXD5THnSYcmtRX/LOw94XTdfLTSZvIu+6u0IqhBGL5Ih7Bm4vYLNtPWe1m7V2gqeedEZnEoUDXsKdCXd4sTWA2j8u4XGRnAz8gQ94w+/rrk05FVcEWp7fM7TCHgYEucixOE=
+	t=1753883572; cv=none; b=bdlMbqNf2idMVIIwISwX8cLmqpRcWsnBR58brZXLjGLKZxdWT51j9xQWpze51UPg2hoFoFtR41n+G++zRhoBGlwJ7H/E1B5PCzshZn9nLQhE0mIvR7mN8x99z7mQ1QOYG0yebtR9rwcEb3AV49aaWvMgQhrZ+Gye4kJdqnciatI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883565; c=relaxed/simple;
-	bh=n+/Al/hya7iKccfkk2/acBwTs2umvyAH+cTmAiASgng=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=lvUYyaBhBXUWpzLf9rTVac33rMBk1GTpWwFQEJ5vN9KAqFDyjPXU9S/FUg5q4IYpEWjNAlQ64IM9KPkPOzbS8Iw3Y6NOkdk93OdEckbycR4Sex0P8c1AhQW3PpLKb1RGDx1MR3T9ULsdYkQkRRaFEN8cjGl702EirBFIifmdcQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=CL1axfhY; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6155e75a9acso4237282a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:52:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753883562; x=1754488362; darn=vger.kernel.org;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=+rp5BOhOSI3hJlfQlyw0n/QrQz57EFsvEJK12JX37JM=;
-        b=CL1axfhYUp1p32DMTs16tlR8K9euMFnYh3Lyy0ktI66sxaftJLwnl4StwvpuK+dmB6
-         qj9me9NS/KdvKxvB6LjiDEo0OVy3iAem4nVF7i71v1pYm1iQaXggYrdcqWyeXoqLeUwA
-         dPWbrG7qTFssU1wA91c9oQ0ptr1DtaUk9nq6/DpNctscUhmdv7PUTFK+IDyI+hrBLujk
-         Cl4kxoxwrDk9tDCB48xUmX7JwG7TWCV0wUiiBidlP2uwhjgUL0IGrEWOnKDVZcHI0eAD
-         LhyB7CmIvxBPXuqisPYV+aue1/IFw38mEoEnrjyvq1P3pe/5UApI3JKssgEn9ez+fsGN
-         APPg==
+	s=arc-20240116; t=1753883572; c=relaxed/simple;
+	bh=+fhqt74zbGwFmAVFYzLM/I7yTITHbGkLqM+wqDzwR5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P5wqo1HEXFoGSGpAFtO7LIReyS6UjZr2FWRKlcejh4Tp0sgWMihVEhsJhl5wq/TReu5VYkJfy4qzrrtIW7K3rBHXFw0pxjvVhYEuVDq6NWi8u7+GjjbBBqJ2kjMn/Ek6ndjYtu0iGK7bgl7/hzvTD2sJrxKibfT6mfNW8j8ECzs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NnmcbnfJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753883570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=INvhw9PaQlqHnlfqMb8yKpdneujvD9kPiqSCHTmOp+c=;
+	b=NnmcbnfJhU2/NmsRFZVrdqjNb5iMgOgQqbzK9LVodq8aDOuY6kCm/h/jNenCXHLdwak9Bf
+	6ihB/pUr2EfVQrfdqua1RmzzPZ1u+oQnEvsbeFbIqa1oGKbROs286G+gCPjrvmr2REfDDw
+	Ese/ZybnmLWigjzY9x/lgBKwH0D3M4Q=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-562-YWLBQm3tO3WN-ymX6zp1sw-1; Wed, 30 Jul 2025 09:52:49 -0400
+X-MC-Unique: YWLBQm3tO3WN-ymX6zp1sw-1
+X-Mimecast-MFC-AGG-ID: YWLBQm3tO3WN-ymX6zp1sw_1753883568
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ade6db50b9cso91028066b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:52:48 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753883562; x=1754488362;
-        h=in-reply-to:references:from:subject:cc:to:message-id:date
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+rp5BOhOSI3hJlfQlyw0n/QrQz57EFsvEJK12JX37JM=;
-        b=Y2kVCs0IyyqIRuuChHqUoaIlY7RrHMI1qbfYHjPdal0bD+GuPV1/fwXuG8PEPdUV8q
-         VoP8eYPKNajS6isVqvO2nC5MiBPmf7rijbz6zFfZNb4IFgxt+pXAdeQEka19ZJFvUoEH
-         1O73b3zGaoD2QvZR3//geF0n60emJm5EixUe8d/cTY73EhHRdv2EqHepcQBw0KusL8lB
-         RkSkKl9e2iMQEIbjsGLu4O5ObaaJtD8Nr6nzJtsZ4w5+doYS5t4tJynk8S3Y30JB2sIz
-         KcrwVZM9nflqhpvCUFcYNQTlpvNy4Qofko+DXnTvV3vYDq1JrKjA3IZ/O8sHyf8QjVY4
-         +LgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqjz9s15C52CwKkt0JCXnU7mFKaoECQSBH0WI50a5/RR4mpvres/MMzsjEHoAU8tq0vnAw+a7YqIbKD64=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz1mMdHDorJsJeaVMHGZtI1d4CH0aJk+BD5oiHka3Q1aYVsKx1
-	ndlentfUfjV/oZxEyny/vattBbkYmlPFEfiRaDYM/2SjodbHHHP6TpKsGUTufzxP0EU=
-X-Gm-Gg: ASbGncs2ga0M99m53VGbZUxgdATlbtv3suESeFf5KNZur1A0C96IJ7E2hHv6i9UD9pV
-	HJ0/YiHOA6wgPRDZhWqDC3/L9iGWKjlQZSsISNQRRKB10kIck07IJGxEVs0nSrmTiWzW5+2gjbB
-	rolyEFEUzHnh6RCO4lb/Oa3C8evkG1t+sb+FHSBrHmckho74yZi7i2ttW1/cI0PX3bhbVAq0zcd
-	IoBciLwcuUbyL1wVhJTSG2ozY1kwBMG2sibX7vZDkRISXBt8+pyJHLC3JKSEWwJx8N0ZF5wyTC3
-	WUeIq6acWQCCRWOabkB6C9mADQqrNLp9CtACMi340U2HeEXeskQ+Y0r3Ix3LA5o0/oKXCMi8GP2
-	3XMZEONZwEzqvikr27tzuQZLyLTw=
-X-Google-Smtp-Source: AGHT+IHmHFD7kf9axGR7OqSKqgBDA0mgn8z8jZ8b9IsKFZAES+c1F4OBGbCYGQRGpeMsepIGLtvF1g==
-X-Received: by 2002:a05:6402:40c5:b0:615:9b3c:5918 with SMTP id 4fb4d7f45d1cf-6159b3c5954mr1538590a12.1.1753883562203;
-        Wed, 30 Jul 2025 06:52:42 -0700 (PDT)
-Received: from localhost ([2001:4090:a244:83c4:a15:2832:36af:7a70])
-        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-6158ab9d0dbsm1108310a12.60.2025.07.30.06.52.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 06:52:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753883568; x=1754488368;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=INvhw9PaQlqHnlfqMb8yKpdneujvD9kPiqSCHTmOp+c=;
+        b=QK+qVBNSkg9CtXD7qKdtJbW9NbL7KYvsp3Apzb8TGGnRVdAkYjl3i5CnIXbZpMioxP
+         ITFsdNCSmv9NzzvZMiqpo8H3OGyw60lmFiuLLZdW6J+NzbkmVgZ4VuwahfBENbIMlLR1
+         W8S8OD4VlkjUpcA14Xd2gdRdngDKO6XbPp3xnw/Ig4DhDFYDPvwoWHLIDpMM9vnCCkNw
+         BEMqh4eVl80tY0SHhOlIhUM7SnK4uz/4v9ZJrIC+ucF/Fu42i/IP3ITDjsvezT02dVmw
+         430IJsD7m3t23Mu3VUdnIDUKfPqrTatvmrI4WxiCJD2yonag3Ug5QeFm/s4pxvatO0B+
+         GOrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTR9o5NoyrYui1BFcTFPIHc07cR3vsCERi6qKg+uOIqnzcNuOxNMp4kx3LqZoLPKDlwEG85bl42TFHJ4I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGy7ukfILD8OLGiuw4dtk5821V15XMcDH0hBJgBrAidwqOHjwp
+	L/Wg1OrtEeCFidNQzyx+t9odMRZzhL+rl93ap7pjqR4NVl7XVNIQxxnukelNvwCNMC1rT4JBLFb
+	bjPoATIEKguDNvF2GzN+x5VrQ3I2jCeATgUTQjrSeFR8U6YBJLBThep+P1XiToCIx/w==
+X-Gm-Gg: ASbGncuhEG1CaA6+aq57+0ga5FXQnfaYbnUPl8fo0YxKV8mTTToMlwFDxG/QrifzNki
+	ezWyhI2JnvvhQ4TCnIiMdu9ODeszJ4J2YiXpxpzIXHNyfTFPbCidn/fVjT3+P6H+WXm9TEPxlnt
+	pl+6vezDYTT9qtSo4hL1sz4nagGamfma5tf53l/h4VbROYy9DRGjzS5sPSkRJiPiuf82X8vCDeT
+	WONGbufTkEjFyIlkL6PxlIDM7o3UEaY+R9KcVjGYx2wL6mcAFzKrlkZxm6u7l1hBOKuIag5w/Qo
+	WDJAk32nZUMI5K2sSye43/2Tl3uiNuNhCXWXcJgARUoBbwkNfiekZUxyn3fN9A==
+X-Received: by 2002:a17:907:7252:b0:ae6:e25b:2413 with SMTP id a640c23a62f3a-af8fda42a6emr459883466b.44.1753883567585;
+        Wed, 30 Jul 2025 06:52:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE2KhtHgQZ228r5yO4JfetEAu342+CZE6Zr5/g2fkWHPp7n9P5vjQqg7A7lY87sHfovdnuCuA==
+X-Received: by 2002:a17:907:7252:b0:ae6:e25b:2413 with SMTP id a640c23a62f3a-af8fda42a6emr459879766b.44.1753883567129;
+        Wed, 30 Jul 2025 06:52:47 -0700 (PDT)
+Received: from [10.32.64.156] (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af8f1b172f2sm210258566b.80.2025.07.30.06.52.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 06:52:46 -0700 (PDT)
+Message-ID: <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
+Date: Wed, 30 Jul 2025 15:52:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed;
- boundary=166989f9f9a66e3cb36fa7f8ad6c45ebf369d74034ef3f270c152a3ef9d3;
- micalg=pgp-sha512; protocol="application/pgp-signature"
-Date: Wed, 30 Jul 2025 15:52:33 +0200
-Message-Id: <DBPFTXDNMIS5.1RCL30X7VN5MG@baylibre.com>
-To: "Michael Walle" <mwalle@kernel.org>, "Jon Cormier"
- <jcormier@criticallink.com>, "Jerome Neanne" <jneanne@baylibre.com>
-Cc: "Job Sava" <jsava@criticallink.com>, "Krzysztof Kozlowski"
- <krzk@kernel.org>, "Lee Jones" <lee@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, "Julien Panis" <jpanis@baylibre.com>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-input@vger.kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: mfd: Add power-button option for TI
- TPS6594 PMIC
-From: "Markus Schneider-Pargmann" <msp@baylibre.com>
-X-Mailer: aerc 0.20.1
-References: <20250520-linux-stable-tps6594-pwrbutton-v1-0-0cc5c6e0415c@criticallink.com> <20250520-linux-stable-tps6594-pwrbutton-v1-1-0cc5c6e0415c@criticallink.com> <20250521-wandering-tested-porpoise-acbef7@kuoka> <CAKMwjwTP=xSsX3UuK02sKbXWaU7y-ErytNYCL_P0UveDytQW2A@mail.gmail.com> <20250529-wise-tremendous-stork-a7d091@kuoka> <CAKMwjwQOBE651A-5VVjwcv5TspO2eNZfgwWzMpTTWxhR3nGKUw@mail.gmail.com> <0fb4b411-1b27-43fc-8d48-e5220fc85478@kernel.org> <CAKMwjwSZEhXav2U-bd+JNyVDK3JdJoN1kJjnxpfKXBKsW2XxdQ@mail.gmail.com> <DBEDT0OKPYAC.EX6HDQCKUWIS@walle.cc> <CADL8D3bpVVrswNUvS5nSeQYuZbyPOfMoMFG_JrPSFb9YkNEKdg@mail.gmail.com> <DBHJ1S8MTSA2.35ZZDZFQGFNB1@kernel.org>
-In-Reply-To: <DBHJ1S8MTSA2.35ZZDZFQGFNB1@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
+To: Eugen Hristev <eugen.hristev@linaro.org>, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-mm@kvack.org, tglx@linutronix.de, andersson@kernel.org,
+ pmladek@suse.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
+ jonechou@google.com, tudor.ambarus@linaro.org
+References: <20250724135512.518487-1-eugen.hristev@linaro.org>
+ <20250724135512.518487-23-eugen.hristev@linaro.org>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250724135512.518487-23-eugen.hristev@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---166989f9f9a66e3cb36fa7f8ad6c45ebf369d74034ef3f270c152a3ef9d3
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+On 24.07.25 15:55, Eugen Hristev wrote:
+> Annotate vital static information into kmemdump:
+>   - node_data
+> 
+> Information on these variables is stored into dedicated kmemdump section.
+> 
+> Register dynamic information into kmemdump:
+>   - dynamic node data for each node
+> 
+> This information is being allocated for each node, as physical address,
+> so call kmemdump_phys_alloc_size that will allocate an unique kmemdump
+> uid, and register the virtual address.
+> 
+> Signed-off-by: Eugen Hristev <eugen.hristev@linaro.org>
+> ---
+>   mm/numa.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/numa.c b/mm/numa.c
+> index 7d5e06fe5bd4..88cada571171 100644
+> --- a/mm/numa.c
+> +++ b/mm/numa.c
+> @@ -4,9 +4,11 @@
+>   #include <linux/printk.h>
+>   #include <linux/numa.h>
+>   #include <linux/numa_memblks.h>
+> +#include <linux/kmemdump.h>
+>   
+>   struct pglist_data *node_data[MAX_NUMNODES];
+>   EXPORT_SYMBOL(node_data);
+> +KMEMDUMP_VAR_CORE(node_data, MAX_NUMNODES * sizeof(struct pglist_data));
+>   
+>   /* Allocate NODE_DATA for a node on the local memory */
+>   void __init alloc_node_data(int nid)
+> @@ -16,7 +18,8 @@ void __init alloc_node_data(int nid)
+>   	int tnid;
+>   
+>   	/* Allocate node data.  Try node-local memory and then any node. */
+> -	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+> +	nd_pa = kmemdump_phys_alloc_size(nd_size, memblock_phys_alloc_try_nid,
+> +					 nd_size, SMP_CACHE_BYTES, nid);
 
-Hi,
+Do we really want to wrap memblock allocations in such a way? :/
 
-I think my mail wasn't sent properly, so here we go again:
+Gah, no, no no.
 
-On Mon Jul 21, 2025 at 8:42 AM CEST, Michael Walle wrote:
-> [+ Jerome and Markus ]
->
-> Hi,
->
->> > > > Someone knowing the device should come with arguments whether
->> > > > other states for this are useful at all. Or not useful and then ar=
-gument
->> > > > that in commit msg for example.
->> > > The other states are not useful for the kernel. Only the push button
->> > > has a need for an interrupt handler. The other states the PMIC handl=
-es
->> > > on its own.
->> > >
->> > > What exactly do you want me to change?
->> >
->> > Because the driver isn't setting the configuration anyway, wouldn't
->> > it be possible to read the config bits (Register 0x3c, bits 7-6) to
->> > figure out whether the pin is configured as power-button instead of
->> > having this property?
->> >
->> > I mean, the correct config is likely stored in the NVM anyway, and
->> > reconfiguring it to another value seems unlikely.
->> Currently, the TPS MFD driver only loads the power button driver if
->> the flag is set.  We could put that discovery code in the MFD driver,
->> but what if the system designer doesn't want the power button driver?
->
-> The device tree is not for configuration. The designer can just
-> ignore the input event in that case.
->
->> I'm not sure auto detecting it makes sense.
->
-> Why?
->
->> We are basing this on the other TI PMIC drivers and how they are
->> configured. I'm not sure I want to reinvent the wheel, so to speak.
->
-> That was never a good reason. Maybe there was a reason for the
-> TPS65219. Markus? Jerome? I haven't found anything in the commit
-> messages or cover letters. Only that it is "optional". Not sure what
-> that means. According to the TPS65219 datasheet, that pin if not
-> used shall be configured as EN and be connected to VSYS.
+Can't we pass that as some magical flag, or just ... register *after* 
+allocating?
 
-I don't think the TPS65219 has a config register to detect if the pin is
-a power-button that's why a devicetree description was necessary.
-Looking at it now, it should probably have been an enum for TPS65219. It
-is not relevant to any software but it is not describing the
-configuration fully.
+-- 
+Cheers,
 
-Best
-Markus
+David / dhildenb
 
---166989f9f9a66e3cb36fa7f8ad6c45ebf369d74034ef3f270c152a3ef9d3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIcEABYKAC8WIQSJYVVm/x+5xmOiprOFwVZpkBVKUwUCaIojoREcbXNwQGJheWxp
-YnJlLmNvbQAKCRCFwVZpkBVKUwQ+AQCCSckOjQFmKhWjtgebU+FH8Kv6EqNOhk12
-kbOkJ/ZVqwEA3K1IyehD1qEqHEZwyCvmd2D9lIEd1pazKofQxtaTygo=
-=YrKw
------END PGP SIGNATURE-----
-
---166989f9f9a66e3cb36fa7f8ad6c45ebf369d74034ef3f270c152a3ef9d3--
 
