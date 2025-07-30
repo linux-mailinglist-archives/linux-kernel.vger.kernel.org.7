@@ -1,125 +1,141 @@
-Return-Path: <linux-kernel+bounces-751407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10626B1693D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:15:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA96EB1693F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A18165305
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:15:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC863BC568
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148881DE89A;
-	Wed, 30 Jul 2025 23:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8509D183CA6;
+	Wed, 30 Jul 2025 23:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KECMClRa"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lh4pmISM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D227677111
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 23:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1619139B;
+	Wed, 30 Jul 2025 23:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753917343; cv=none; b=qtm3Nfjc4bmxnsodYkUblW0G+ALmEaE+RJ0P76dVuCJjycGvySrmG+1eLbkUnHgPnE1MUfeAhBY4Mo4BvJC+op/dYUknpdX3SiyYbjw22eJ1jUWfT/JuujMcAW7IEQjHrg6ZsLJJ7Wkq6ZAZ4L/GWGKVDFg6ZIF9SKSqlxXlk74=
+	t=1753917453; cv=none; b=qCrwr4NU4Bm2R/joMoAa9DEgYbQxOwgCOHWxVL7D9MRxmDCcDA4z7Y7FW2/KRa0Du5ywSQo1xwW1qGa65Z/qCncQNJ3u6Ehw0K+AGE30qaaFC8EeEDnpVCO2oRgTbSuf4jy/ufE6oPvyvFa65KeZ6s0rRDYwAyi3lWZ+O/KNITQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753917343; c=relaxed/simple;
-	bh=VaBo0qMXBUw6Qukm5bA/FuEZBJqFMknhXsZYWUD5ilA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qo+LdU9fduBHTLeuIhuwQblH+CtI1d39sgS5oPxJsRmbK13UcHSu8tTWEZAm7OcPnKLAAeEKIFL7KDo2UsYc3xUlYDTmeDCRAazZu+mi22qoFr2L+69uuijYZm4rJSu2RloG54Pmf/0PtEWKEiwZqlFGBnWwtc3gwu0QlMk0WG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KECMClRa; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af90fd52147so51984066b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:15:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753917339; x=1754522139; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zrorEb+Zqet9C5+oVSXh5W5YSkHv0u4TJBOY75jsBGM=;
-        b=KECMClRaz2Zbmav2cF5uL/MrzLCUtllOt2js8WGtrfik7iQubWJfo4CUddtIUf53xO
-         HRvRImj51v4J5mtRoJvHFh9HENd98cXxE+WhacaIsE5oKOBqlt9Kt4SP9uEkgYczEikU
-         N6hUDNomH1gOP/neVjiA6vTRww2dJqRtx0CGo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753917339; x=1754522139;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zrorEb+Zqet9C5+oVSXh5W5YSkHv0u4TJBOY75jsBGM=;
-        b=eJV0M1B0tSEOrvDyRB8xVJnv2QmOFN4zojwpNhD2zh7eNnDKjPcitCMW4cOo9x7ztB
-         i97NPJYVukZ5or2//IvwUpZph1QZJAL+DDFsof8HM3v/Hb1Kkqoyfx5xYikxxF0GvQNb
-         Egh9Igo8TQXFBa3SV70pM7E2LuFl1RkdFyRs2og8eaMByBQThQ1Kzsjq0deILdE+v7GS
-         o6jI5n/FKiIkXWNXFsswMVBsTpAg+7ABywKDUY14bdFHdwtOWKKcjJArFFQMvyJXa7yV
-         /TtaBKwy5cu72vzmP/QUF9u0Z6fSX5APgHZ4mSw1xGEBxBs4blfzRbI9OATYxr+OqjZt
-         s8ig==
-X-Gm-Message-State: AOJu0YzWCqfXwDZ2jg8jHzxOs6EWHDBMmLjW4pR1TZlRiIzALnaxcloy
-	HkdUOEHzs+wyE3AG63DPv72GH9NzpQnne8I2p3sdSd5n8r2Ln1Cb0ID4PHsSqMT0S4yvchH//Aq
-	mTBcLzP4=
-X-Gm-Gg: ASbGncvyq2psyfD2jJtCyKhaNYIZiKo82St+C1rxChbWmKYOfL/EpoGqAgU9wHV2pqV
-	HoPOJ259rzfHNfF8+TWJkbXc+mPl28iJmHyPI7qRNca7q5tNjwNEtK2KOc3tTa8pOV/Wn4nKTxr
-	Pw/OPQStzwUHFowq0DNXsz8WXfm/1I6NOZuM0cMkTTuVlBQyusmE1diT0n272jVeOCrWc60ez7g
-	09VHFLDymlSf02pqrKEm9B1EI5Pe4lGwEbNUXKsyZO0nyTYT5xYYGQQYmhcOoTDI4Dt1xQxBGra
-	kjIth86aaFQCwVwF4OXDkghVoer/UATUwPdaPImOCwlqw27TpenuOy6ETQEBhJ8FIvZL0gCrj6O
-	1I48NJb6B0LeYaISJZkoi2zVFVCXengGwL6CRyjZ4suJiWoreerJYbKQknWI0+pOXNWQ7nH0F
-X-Google-Smtp-Source: AGHT+IFux6zY/0ZyogCV9ld9emENWrqpTu3vdNia+KuCyOy3tWacNhxaQ9eXH7rKP/qXDfWIOMHlGQ==
-X-Received: by 2002:a17:906:4fc4:b0:ae6:a8c1:c633 with SMTP id a640c23a62f3a-af8fd919698mr495384166b.34.1753917338827;
-        Wed, 30 Jul 2025 16:15:38 -0700 (PDT)
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3cb7sm13337766b.55.2025.07.30.16.15.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 16:15:37 -0700 (PDT)
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6157b5d0cc2so342270a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:15:37 -0700 (PDT)
-X-Received: by 2002:a05:6402:42c2:b0:615:8db4:2602 with SMTP id
- 4fb4d7f45d1cf-6158db428a8mr4340389a12.22.1753917337349; Wed, 30 Jul 2025
- 16:15:37 -0700 (PDT)
+	s=arc-20240116; t=1753917453; c=relaxed/simple;
+	bh=usQeiladO4SDE2xY1rjGtFzjou57Fgbm4iDs/oYuVYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=jrwTLtT8ADymYGaWpfjoq9v4gzQ/YiIK9NDlxZ25iLBy1KNKK/lY3ny+YOAuiqePDqovfOVw7r+cY0v4vIpx6sR5cCp9tXZdToycT9XbmB+uFY3izwCQYz+qzKWQ6krV7z+P+1Nk/e2dwEdTPEw3NsWL/ju/CWFYdhQoQQTjil0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lh4pmISM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45EA7C4CEE3;
+	Wed, 30 Jul 2025 23:17:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753917452;
+	bh=usQeiladO4SDE2xY1rjGtFzjou57Fgbm4iDs/oYuVYw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lh4pmISMJ9uQsx6lpzVyKgHL86k7TmFOC3v8kxaGj6UDv9240/C3o/xKwD19bdPKv
+	 29DXGEdi2gujlGZIrUhGWWZnkGlhRGP7m8UFytHbSau65uC5Es+TJgYPm4OCQ61KB2
+	 6MS3BlZQf0SIf/8hDpLlzF8g79N0ueVXFixOJ3IpHO7DD3XmpxGDeXxarWo8/ovCND
+	 EDQz3bMRcbI1sxzb4wQrk/Z3hUnOicIptGfUnhWWzrFpM2l6rEZk8oj5BM1R1cWPD1
+	 QN2On2clWjGddwZINqsh0Wh2jXn5tpUl+JtWh9eajlvLsj7rKdspas9HbvrXBpdWMb
+	 tUkk1cNPT2Aeg==
+Date: Wed, 30 Jul 2025 13:17:31 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, David Vernet <void@manifault.com>,
+	Andrea Righi <arighi@nvidia.com>,
+	Changwoo Min <changwoo@igalia.com>, sched-ext@lists.linux.dev
+Subject: [GIT PULL] sched_ext: Changes for v6.17
+Message-ID: <aIqoCzHb5yRoQsER@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729144226.6b72dca7@batman.local.home>
-In-Reply-To: <20250729144226.6b72dca7@batman.local.home>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 30 Jul 2025 16:15:21 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh+h2WR6f2g+3HyLD1Zjg-fXC8yOE5bQmetrPvWHCU-2w@mail.gmail.com>
-X-Gm-Features: Ac12FXxFAH_zh2hgF6gUml--thoWzLsAGhMoPLICse8K6Cyzt_tZ0d_YEdj5GsU
-Message-ID: <CAHk-=wh+h2WR6f2g+3HyLD1Zjg-fXC8yOE5bQmetrPvWHCU-2w@mail.gmail.com>
-Subject: Re: [GIT PULL] ftrace: Changes for v6.17
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Artem Sadovnikov <a.sadovnikov@ispras.ru>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 29 Jul 2025 at 11:42, Steven Rostedt <rostedt@goodmis.org> wrote:
->
->   In print_graph_proc() the pid_ptr string is of size 11, but the comment says
->   /* sign + log10(MAX_INT) + '\0' */ which is actually 12.
+The following changes since commit 5bc34be478d09c4d16009e665e020ad0fcd0deea:
 
-Lol. Quoting the ancient Greeks: "Math is hard, let's go shopping".
+  sched/core: Reorganize cgroup bandwidth control interface file writes (2025-06-18 13:59:57 +0200)
 
-That said, the comment is garbage anyway.
+are available in the Git repository at:
 
-Because "sign + log10(MAX_INT) + '\0'" really is just 11 - if you
-round or truncate.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext.git/ tags/sched_ext-for-6.17
 
-So somebody may have actually done the math "correctly", but the math
-was just stated wrongly.
+for you to fetch changes up to ae96bba1ca0000ebb3f3ced64c9367e2a223d69e:
 
-Much better to actually write things out properly instead of trying to be fancy.
+  sched_ext: Fix scx_bpf_reenqueue_local() reference (2025-07-17 08:17:26 -1000)
 
-Becasue might be more legible to actually write it out and let the
-compiler do things, ie just do
+----------------------------------------------------------------
+sched_ext: Changes for v6.17
 
-   // This includes the sign and the terminating '\0'
-   #define MAX_INT_CHARACTERS sizeof("-2147483648")
+- Add support for cgroup "cpu.max" interface.
 
-which doesn't require people to know - or think they know - logarithms.
+- Code organization cleanup so that ext_idle.c doesn't depend on the
+  source-file-inclusion build method of sched/.
 
-Random rule for the day: don't ask people to do more than third-grade math.
+- Drop UP paths in accordance with sched core changes.
 
-         Linus
+- Documentation and other misc changes.
+
+----------------------------------------------------------------
+Andrea Righi (5):
+      sched_ext: idle: Remove unnecessary ifdef in scx_bpf_cpu_node()
+      sched_ext: idle: Make local functions static in ext_idle.c
+      sched_ext: Make scx_rq_bypassing() inline
+      sched_ext: Make scx_locked_rq() inline
+      sched_ext: Documentation: Clarify time slice handling in task lifecycle
+
+Cheng-Yang Chou (5):
+      sched_ext: Always use SMP versions in kernel/sched/ext.c
+      sched_ext: Always use SMP versions in kernel/sched/ext.h
+      sched_ext: Always use SMP versions in kernel/sched/ext_idle.c
+      sched_ext: Always use SMP versions in kernel/sched/ext_idle.h
+      sched_ext: Return NULL in llc_span
+
+Christian Loehle (1):
+      sched_ext: Fix scx_bpf_reenqueue_local() reference
+
+David Dai (1):
+      sched_ext, rcu: Eject BPF scheduler on RCU CPU stall panic
+
+Jake Hillion (1):
+      sched_ext: Drop kfuncs marked for removal in 6.15
+
+Ke Ma (1):
+      kernel/sched/ext.c: fix typo "occured" -> "occurred" in comments
+
+Tejun Heo (5):
+      Merge branch 'sched/core' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip into for-6.17
+      sched_ext: Merge branch 'sched/core' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip into for-6.17
+      sched_ext: Merge branch 'for-6.16-fixes' into for-6.17
+      sched_ext, sched/core: Factor out struct scx_task_group
+      sched_ext: Add support for cgroup bandwidth control interface
+
+ Documentation/scheduler/sched-ext.rst           |  11 +-
+ MAINTAINERS                                     |   2 +-
+ arch/powerpc/platforms/book3s/vas-api.c         |   9 +
+ arch/powerpc/platforms/powernv/memtrace.c       |   8 +-
+ include/linux/key.h                             |   2 +-
+ include/linux/sched/ext.h                       |  23 ++-
+ init/Kconfig                                    |   5 +
+ kernel/rcu/tree_stall.h                         |   7 +
+ kernel/sched/core.c                             |  33 ++-
+ kernel/sched/ext.c                              | 261 ++++++++++++------------
+ kernel/sched/ext.h                              |  22 +-
+ kernel/sched/ext_idle.c                         |  45 +---
+ kernel/sched/ext_idle.h                         |  12 --
+ kernel/sched/sched.h                            |   9 +-
+ mm/damon/Kconfig                                |   1 -
+ security/keys/gc.c                              |   4 +-
+ security/keys/key.c                             |   5 +-
+ tools/sched_ext/scx_qmap.bpf.c                  |  23 +++
+ tools/testing/selftests/sched_ext/maximal.bpf.c |   5 +
+ 19 files changed, 275 insertions(+), 212 deletions(-)
+
+-- 
+tejun
 
