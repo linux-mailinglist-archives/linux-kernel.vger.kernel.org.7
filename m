@@ -1,133 +1,146 @@
-Return-Path: <linux-kernel+bounces-750972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD5E5B16388
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:20:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A901B1638A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:21:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F451168D7D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:20:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 172A71AA3DCE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A94802D9EE3;
-	Wed, 30 Jul 2025 15:20:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 730FB2D9EEA;
+	Wed, 30 Jul 2025 15:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QImK2UTz"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="O1U5Bewq"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B41B1A5B92;
-	Wed, 30 Jul 2025 15:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1B8728726C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 15:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753888847; cv=none; b=MF6+5TSXCm7Mo7Dmh24DymmxGersna0ii8DEsr6v9+8kxXSyFl38eU6Xj1nxiyRBcIJybwegK3QXI7wlxX01Bdh9/M4Bh3KXZi13gLpaWzSwxANacSLDSLgVnmAbmtUgEFrWx7uQ5WL4xKSy0gTpFYjY/EbdXNQzBlpBRP5DsX8=
+	t=1753888860; cv=none; b=d+A+extxT4WQjFnCrIcjeGPMGpAoVdphbCUNlq1RwR6lU7r4pSl8+XbkaozWackDQnpXnofu61jsKAeXqpJAu4kgb399q36YOUO54yZKXTFLCvMdj9pb4jL55I2uaDaO1uCBg5SGmp0cuwMep9VFNKXO18yKNUBJa0qVVkf8g2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753888847; c=relaxed/simple;
-	bh=2YJILWFVi9iNE2E7aaZODttyLwFM9GOA/QeoQJ4EfeY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=buEr5ppC1EvajbLds7DJSdRwt23XQcdDfjHOY1cPvp2EjHNQnymIfvrzORCgEkRZBX3NFlOR/CdQ8u+ILF1jP7CleqttkciAkGZBK5STgVNqFqvaMJaqoq/yPxPHe+Sqvf0VwjIO4TKIwnD6cmbbGrtz+yC9UGI7KBzUl6rQjKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QImK2UTz; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b78d337dd9so1701977f8f.3;
-        Wed, 30 Jul 2025 08:20:44 -0700 (PDT)
+	s=arc-20240116; t=1753888860; c=relaxed/simple;
+	bh=Ht2ar+uJvSuCh1Ikj4KCGSwv35IuRlbJLzN8oreri/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kPXo8C7/soYy+0AXmYBvA/UBAUY6TMq7wFTZ9x8l7TZsl4UQRn4iF0mg1tUTHFBpqJC5/ojCAAZoaU6ezhc06Tu19GrKpPCEn8OaGEqGx9nVbpQ6iVDWr63S0tHpk0oFPY21X5Z97+ebVdvQtUxbQGBdP2trCrf5bHsGXkLMicI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=O1U5Bewq; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-87c3e35b3cbso62511339f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 08:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753888843; x=1754493643; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kci03Gb7LVvbq3eEOdY/a+e9RESG12PudUU6mEsPhsY=;
-        b=QImK2UTzs99K9rosAUMdz7lytv5ymcoStKsqj/P+sxlaNts3O4U2haW9gDKafXo4n1
-         3Cr3RBqTW53xdZ1sksR2xmsUdOSW7GF6iivrkuvU58PQNI2FCLVyQW33ZWy4zkkhETCv
-         CZ4dFnkiiWHsLh8vSuY+woR7lIurpTdXypWPpXdyUsdXJX8Dl8ALdDUBhm3VlJR6wDbh
-         ueWK3GWgWI63MlWqbAld4rcF5RzohvnDihqA0SO9MPG1YA5im8Zj/CyQ3dRRI+ZJLTLv
-         zZJR4P0T5M0WfyTaGK3UaXeooCZUpugp18wHwFhTG5wE8CudXS8ff9pevx+jhiyOGmTx
-         dGsQ==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753888857; x=1754493657; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dGvN81tK3SiKuUwwOdxVCQ6vX1YLyW1gSNQPEFsAu5s=;
+        b=O1U5Bewq+McHAMFL72hbHG/9pPSqZpacW33QB46kuoWfNG7MMCG2oAGez00Xv8ITYk
+         sLzVI4tJ9zV9PhvL8wupihRyqoiawOoBaTGO8u3Nq/8s+eXxev4A3GsaACCgG+I6Ry1l
+         Wztjr62n9LgnwNOAYQKs/Twd+x7e8LgdE1tyBtJQs2Ft60vS0E9i0dsgHerGWbs6gjC0
+         2H7cxUM7U0//R8CCNqpaCsjgy3GWQcbLE9yaaMvzgcUKcd/UdO5yy7K5HMrF8OZfoP8m
+         3EsrHqRyotIWsZ0Sq48+9xlFc3rN69M5EssLXGZ+BMA78qR90TGkLHGpzgCdDefs8YUC
+         y4cA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753888843; x=1754493643;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kci03Gb7LVvbq3eEOdY/a+e9RESG12PudUU6mEsPhsY=;
-        b=NwWDxLllNw491STs5QowiSbnPVd33gLi84cZd+bD1ind8T11bkPwp0Hft2bdPtAC3d
-         VVrkRWSt+TBQmyCs+zKnUu7a8Oh92lkXuR4L7FB4unzc0T2/VR65T4nkopuPBAbq0Dqi
-         A+/3XnlcDL3VSjOPOD3yoInH4ssNf7VxKOr4KDmjwsANVsoIA1TFO6cSVkOA6DAeOOLY
-         IMxv7j9c1R2N4JxHWn0M8zvqNRsl48a6LAKxwTySA9nA1gwlrPYGUTzDqWFOqazPUALh
-         Wsp143g0YaXqJqh2Iob0vnPthtzEp1XHQZpMIQ+1xtusNGBdxL/rYHDd6OyEK9V/kqL5
-         gNhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4mwEnt1xJV392XKkP3BiffNXny/iE4ZABnp8xR9SKiL3JX577UFn0oGHonFNG0+7cbihBdarZu9e7TEs=@vger.kernel.org, AJvYcCWh3AikiwZ1eKUgD188UzK5uRE6vaMM2HFJz+473raL69+LilztMeHr2VV/BuF76bccpJal3D1j@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg1dsEHJVzDDPFT7iw1y2oJgUOuPdLLi3sMcpQ0L7Fog7VxYvf
-	v+H0sekPtfFlmIHC3K580i8G7daZ0dsHRDLVxnoKXrU1TksvsCdTiMxo
-X-Gm-Gg: ASbGncsDF7A9xHhOz1mkmMf53uBDoms6pA7R+t2xZQe0tZlYnoVocbO/XGaEAo1U5yT
-	wiQUmghkn5HIHN+VrykPUMJqHXak5hpYAMqp2u0I7fjh4HrwlntEr5+X7Aig4FQOnRLmlVkT309
-	gt4f2TtKE95G5tG/c25VXrRKzWE/6++8Y6uMo00CEMpQuJnkxG7fs4z1E1+kwu7CgmhAgsTvmjO
-	DJ9uIoBtK4Bix6F0ud4kRrLyV5SI7z15Q+J8dnnoQiw8nVRWibSpu/PbJOlHsmbAcycDZAYfjE/
-	qzrqeBz2cbBUPWPvy8A38By3P/ua6BCpKfqJOyllAxre433AQLRPE/J7n4lwhlRnPEaUAhLMSZ2
-	LzJlRM/yUhb+rTSmMUY85b6kEKYO/Xvv3M5krrs0hTSZ3Z/kMI0uQUJP4z2qOF88cmg==
-X-Google-Smtp-Source: AGHT+IFujs7Q9eRhqfnwDZ+MvXL7x9DocH05EbUQKXWIE5rTbWniIFMJNpGqQkP0jEAo4UKtbeJXqg==
-X-Received: by 2002:a05:6000:381:b0:3a4:dc93:1e87 with SMTP id ffacd0b85a97d-3b794fc19d1mr3452329f8f.1.1753888843257;
-        Wed, 30 Jul 2025 08:20:43 -0700 (PDT)
-Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cfe56sm32874015e9.20.2025.07.30.08.20.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 08:20:42 -0700 (PDT)
-Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
-Received: by eldamar.lan (Postfix, from userid 1000)
-	id 76D18BE2DE0; Wed, 30 Jul 2025 17:20:41 +0200 (CEST)
-Date: Wed, 30 Jul 2025 17:20:41 +0200
-From: Salvatore Bonaccorso <carnil@debian.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jari Ruusu <jariruusu@protonmail.com>, Yi Yang <yiyang13@huawei.com>,
-	GONG Ruiqi <gongruiqi1@huawei.com>, Helge Deller <deller@gmx.de>,
-	Sasha Levin <sashal@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Text mode VGA-console scrolling is broken in upstream & stable
- trees
-Message-ID: <aIo4SSJXIrJEanmP@eldamar.lan>
-References: <C4_ogGo3eSdgo3wcbkdIXQDoGk2CShDfiQEjnwmgLUvd1cVp5kKguDC4M7KlWO4Tg9Ny3joveq7vH9K_zpBGvIA8-UkU2ogSE1T9Y6782js=@protonmail.com>
- <2025073054-stipend-duller-9622@gregkh>
+        d=1e100.net; s=20230601; t=1753888857; x=1754493657;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dGvN81tK3SiKuUwwOdxVCQ6vX1YLyW1gSNQPEFsAu5s=;
+        b=EgRv72XF2dRPd5MS+kE0T8YWOb5WcJS3Dma33C0v+ExBngVTZUdiuiv875YmVcmyNu
+         sujRbuw2jHisigdZYMh5uhHO5JlF0xhZYNGZ6a8L5njJq5OFiisOwe35/v4nTvEGyFEF
+         LFw48qTHe8BMy3iBkiixV6goarmpwh1rqSWw6pCVi1F+GSX9n0yPWZQsq8LdhGPP76A1
+         PXtINX0h0U75SeXiFD/v/Ikpqp5Kh4HmZA9X7Sze5+pfSS7mTOGFXe3pBp+1Qy+Vkpg8
+         tUtbZoL0/89NduCJG0NOUF7MyNkrgAaF9Bj3YehkKNILa0E4tr/gD9772g1MmwnVaddo
+         o9kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXCkjias1SjT6Q9b2Ok/XvQ7uVs6rRU1004s1xXiU9oWZmls3B9/3lWqcepH3cGIr+QbE5foshv/sF04tw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2g2u7Q3quvm38QsqaT31F/upRIdhP4Ll1O6BGfYmII87tqXSY
+	FJ+X7w5kYJ2Elywv+JnCRhDc54dof4aJ4GvNPUqNTI5dtPiV5MZ5xY07lT8mhE8QWr8=
+X-Gm-Gg: ASbGncsxvdeBSs8tlwMEfsK91rUE9xqqZwibS2/J61mYRLnZl2f1J58OGYEORYDbEul
+	tlE/5HmzXS0tzKbdiLmWcD47b6dxj0wO/+c7KKDqpD5UnpXeU0BQpz+QOzMjtSWCwstaWu39Cit
+	A5w7N1DDg+GlERp/C89nUhN1BxGKLXdBKoZCy+J0zw0sZ8g3luwjaUR8CtUzW6Y96QwWnMDt1/p
+	cd67rkoaVifEF/BKWnMSE7If8zoskT2S1kvZWbCqoL0sJjUNo8t+655Qkef/Ko5xkp0WkPHwK/F
+	Ba+DpLGF9W2UYJ0uMSLs4GYplJsf16EihIEvVofSpzx8GrcrkCtl2ADzu309rh/UWR6leNnx6k7
+	/rKngCczRbPJgl3Hh1g==
+X-Google-Smtp-Source: AGHT+IEYoOQssgXqmLYl6Ge/P/+WMJXz1cstrJMMaV4kH+gwrSXxse4HeKT5xLsNZC2QjL8pj4jG4g==
+X-Received: by 2002:a05:6e02:2388:b0:3e2:9253:a19 with SMTP id e9e14a558f8ab-3e3f624cea4mr59279225ab.13.1753888857506;
+        Wed, 30 Jul 2025 08:20:57 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-508c93751a4sm3317700173.96.2025.07.30.08.20.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 08:20:56 -0700 (PDT)
+Message-ID: <1b420389-d46b-48ef-aa49-585d84e2710f@kernel.dk>
+Date: Wed, 30 Jul 2025 09:20:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025073054-stipend-duller-9622@gregkh>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] f2fs: f2fs supports uncached buffered I/O read
+To: hanqi <hanqi@vivo.com>, Chao Yu <chao@kernel.org>, jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20250725075310.1614614-1-hanqi@vivo.com>
+ <d258ab6d-a97a-4232-bf90-5afedd5cccb2@kernel.org>
+ <e1a1dbfe-165f-4cb3-9d5b-8ac4ba61265e@vivo.com>
+ <087f7937-20b5-4151-8a3f-5b6b2b045b41@kernel.org>
+ <b1cf56a6-d23d-40ca-acaa-07944140b1b5@vivo.com>
+From: Jens Axboe <axboe@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <b1cf56a6-d23d-40ca-acaa-07944140b1b5@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On Wed, Jul 30, 2025 at 04:26:44PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jul 30, 2025 at 02:06:27PM +0000, Jari Ruusu wrote:
-> > The patch that broke text mode VGA-console scrolling is this one:
-> > "vgacon: Add check for vc_origin address range in vgacon_scroll()"
-> > commit 864f9963ec6b4b76d104d595ba28110b87158003 upstream.
-> > 
-> > How to preproduce:
-> > (1) boot a kernel that is configured to use text mode VGA-console
-> > (2) type commands:  ls -l /usr/bin | less -S
-> > (3) scroll up/down with cursor-down/up keys
-> > 
-> > Above mentioned patch seems to have landed in upstream and all
-> > kernel.org stable trees with zero testing. Even minimal testing
-> > would have shown that it breaks text mode VGA-console scrolling.
-> > 
-> > Greg, Sasha, Linus,
-> > Please consider reverting that buggy patch from all affected trees.
+On 7/28/25 2:28 AM, hanqi wrote:
+> ? 2025/7/28 16:07, Chao Yu ??:
+>> On 7/28/25 16:03, hanqi wrote:
+>>> ? 2025/7/28 15:38, Chao Yu ??:
+>>>
+>>>> On 7/25/25 15:53, Qi Han wrote:
+>>>>> Jens has already completed the development of uncached buffered I/O
+>>>>> in git [1], and in f2fs, uncached buffered I/O read can be enabled
+>>>>> simply by setting the FOP_DONTCACHE flag in f2fs_file_operations.
+>>>> IIUC, we may suffer lock issue when we call pwritev(.. ,RWF_DONTCACHE)?
+>>>> as Jen mentioned in below path, right?
+>>>>
+>>>> soft-irq
+>>>> - folio_end_writeback()
+>>>>    - filemap_end_dropbehind_write()
+>>>>     - filemap_end_dropbehind()
+>>>>      - folio_unmap_invalidate()
+>>>>       - lock i_lock
+>>>>
+>>>> Thanks,
+>>> That's how I understand it.
+>> So I guess we need to wait for the support RWF_DONTCACHE on write path, unless
+>> you can walk around for write path in this patch.
+>>
+>> Thanks,
 > 
-> Please work to fix it in Linus's tree first and then we will be glad to
-> backport the needed fix.
+> I think the read and write paths can be submitted separately.
+> Currently, uncached buffered I/O write requires setting the
+> FGP_DONTCACHE flag when the filesystem allocates a folio. In
+> f2fs, this is done in the following path:
+> 
+> - write_begin
+>  - f2fs_write_begin
+>   - __filemap_get_folio
+>   As I understand it, if we don't set the FGP_DONTCACHE flag here, this
+> issue shouldn't occur.
 
-FWIW, and maybe just an interesting side node: if it ever get
-considered to revert the commit, this will re-introduce/re-open
-CVE-2025-38213.
+It won't cause an issue, but it also won't work in the sense that the
+intent is that if the file system doesn't support DONTCACHE, it would
+get errored at submission time. Your approach would just ignore the flag
+for writes, rather than return -EOPNOTSUPP as would be expected.
 
-Cf. https://lore.kernel.org/linux-cve-announce/2025070422-CVE-2025-38213-c3e3@gregkh/T/#u
+You could potentially make it work just on the read side by having the
+f2fs write submit side check DONTCACHE on the write side and error them
+out.
 
-Regards,
-Salvatore
+-- 
+Jens Axboe
 
