@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-751086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7F3B16521
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:04:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF12AB1651D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51E0B7A4D6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:03:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 516327A1553
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:02:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 522232DCF71;
-	Wed, 30 Jul 2025 17:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b="aBvgDuBI"
-Received: from forward500d.mail.yandex.net (forward500d.mail.yandex.net [178.154.239.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C57B2DA76D;
+	Wed, 30 Jul 2025 17:03:56 +0000 (UTC)
+Received: from bregans-1.gladserv.net (bregans-1.gladserv.net [185.128.211.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590F8153BE8;
-	Wed, 30 Jul 2025 17:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158ED132122;
+	Wed, 30 Jul 2025 17:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.128.211.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753895085; cv=none; b=PYtInPcsUe7IZwY4UchOvC+7MLJoyeb9VE1SPtJJmm3A4J2tL/EazsOGbtHXw0TbvvAYUakJes8hUgnuLw8G3JjBUXwQQNiFk9QSFJM/q3bcLMSLnyv5CusWfwG3vc6Npa/WMP9QGQZi/1nNCw9H1Qmsc4FmCdF3miw2bmQw5Bw=
+	t=1753895035; cv=none; b=lbewRvwn0EZLnWgP4if1NQBvkFkvtluXnG6Qvqkh+/pkK4jh7mNAVIRARK/83cryq8qTXTeR80WXaYAkz4HYEKmG2ge0Gi0AU8R2yk9mxaqd0XfwjO4f7VvCnCGXXGXYpTAixWJv5mXvfZPnQiydyQVYNxEcJzmFf0cz0mCp7c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753895085; c=relaxed/simple;
-	bh=hs3dzAjyUKphmkDxjxvVhAKvISabdzhuvqT2WcHlYq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c+g5MdhJjH4qflIPQ4jUzK+rGd9EYTjNAdHxjxff9aMoJ5DZnrTryij1yPtSTrUw6K7/HgKSoue4KHUSLl1EkvKkNjJpsoiw7XCoUh/VHWd/fWosR6bRbn36S2jdbRTt492DF7Uq9ExnfwvEgFS9qYkfvPYJTWyVjyUPvxMqP4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me; spf=pass smtp.mailfrom=0upti.me; dkim=pass (1024-bit key) header.d=0upti.me header.i=@0upti.me header.b=aBvgDuBI; arc=none smtp.client-ip=178.154.239.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=0upti.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0upti.me
-Received: from mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1ca9:0:640:4823:0])
-	by forward500d.mail.yandex.net (Yandex) with ESMTPS id 240FD8998F;
-	Wed, 30 Jul 2025 19:59:03 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 1xdvEk5MaGk0-7c6jaPuk;
-	Wed, 30 Jul 2025 19:59:02 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=0upti.me; s=mail;
-	t=1753894742; bh=yLAVHffmFzit0X/rM00O1XYfW0WHPBgT57gj8AuJI30=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=aBvgDuBIeS18OFmd24+Houqtycb/2KKlen/4z59Trw46fs8L/N1XrocdWBfrAo1Tp
-	 a2VZJniED7n0ZjpYXGS05FNHkYXyyN6JXycMEXqpPXvGh2u6HLlPDhvoT3EDcJEa3z
-	 d2VH5aYe4lSD+KIz6PlZHZ6E0Qg6Wz3zzKjbdFKw=
-Authentication-Results: mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net; dkim=pass header.i=@0upti.me
-Message-ID: <992be8dd-f0da-4a3c-8f82-85a6a605e2cb@0upti.me>
-Date: Wed, 30 Jul 2025 19:59:00 +0300
+	s=arc-20240116; t=1753895035; c=relaxed/simple;
+	bh=m/rDzWAlOo6y3gOCHwAlb/5G7CUl/K81mlWb1hMbAt0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=K2CFYXW5tlXiSRTWgQenCGEYR0Fn6hPyqel25KXErTSbGR6jAVSw2IGmobzisu/yl+QbIl+sG3UhKS9Poj4T2EyNnfGal+3imb8q0Stb0qaZ38znZRtjOKatjCL3qjYLGkKc6YPxB0kqQ1S9uBs34eYaVNk8wnPR2v7RG3SBd9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net; spf=pass smtp.mailfrom=librecast.net; arc=none smtp.client-ip=185.128.211.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=librecast.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=librecast.net
+From: Brett A C Sheffield <bacs@librecast.net>
+To: gregkh@linuxfoundation.org
+Cc: stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	Brett A C Sheffield <bacs@librecast.net>
+Subject: Re: 6.6.101-rc1-g1a25720a319a review
+Date: Wed, 30 Jul 2025 16:59:12 +0000
+Message-ID: <20250730165911.29371-2-bacs@librecast.net>
+X-Mailer: git-send-email 2.49.1
+In-Reply-To: <20250722134333.375479548@linuxfoundation.org>
+References: <20250722134333.375479548@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ACPI: EC: Relax sanity check of the ECDT ID string
-To: Armin Wolf <W_Armin@gmx.de>, rafael@kernel.org, lenb@kernel.org
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729062038.303734-1-W_Armin@gmx.de>
- <e911ca96-fe8f-4cc5-bf68-f20ec7da46be@0upti.me>
- <d8f9875b-03be-465b-9715-addd8334a782@gmx.de>
-Content-Language: en-US
-From: Ilya K <me@0upti.me>
-In-Reply-To: <d8f9875b-03be-465b-9715-addd8334a782@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-> The Linux kernel is not a verification kit, so i am against keeping the old check. Instead i suggest that we ensure that
-> the FWTS project (https://github.com/fwts/fwts) detects such invalid ECDT tables. Can you share the full output of
-> acpidump so that i can run the fwts tool on it?
-> 
-Uploaded here: https://github.com/K900/21mr-acpi-dumps
+# Librecast Test Results
 
-Thanks!
+010/010 [ OK ] libmld
+120/120 [ OK ] liblibrecast
+
+CPU/kernel: Linux auntie 6.6.101-rc1-g1a25720a319a #34 SMP PREEMPT_DYNAMIC Wed Jul 30 10:56:44 -00 2025 x86_64 AMD Ryzen 9 9950X 16-Core Processor AuthenticAMD GNU/Linux
+
+Tested-by: Brett A C Sheffield <bacs@librecast.net>
 
