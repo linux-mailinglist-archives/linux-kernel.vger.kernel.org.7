@@ -1,118 +1,233 @@
-Return-Path: <linux-kernel+bounces-750457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95271B15B7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:26:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49004B15B7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:26:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A308D3A5509
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827C618A1913
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82530271445;
-	Wed, 30 Jul 2025 09:26:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50989271442;
+	Wed, 30 Jul 2025 09:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="enw/ndHO"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZLmdn6Ke";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hYn+v/AS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZLmdn6Ke";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hYn+v/AS"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71C32192FC;
-	Wed, 30 Jul 2025 09:26:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ACF2701B8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753867606; cv=none; b=XFV9s8EsAEoznm87ketkVXZUM5JRN4nrsztaCFW06V4NAQu+5DSZsTS0FvlRgsEtz6oyqX2WujIBCwR1yQ/HuKIbgtOPEDirKoe55MkedKIi9BGc2oXMvCqFRv8E74JZlSgmy4c5jOpXKyBwqbPeJvKyGdkg3vT01vhpWgq4r/o=
+	t=1753867582; cv=none; b=fE5hQQaOPbUKwbngujFvoet3C4PbU1SuUhbstW4YPESU/5EykvRU2SHX8UbPuVjpS/XufBtLZQWsxVo15M4RJSyxmsVKNC4FNF9dGyM4OF60f1AU5PsHES31ACXU459ErfsLSHPGUEc4S/90wwjxLEaTMN54FopT4DUXkAUIsf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753867606; c=relaxed/simple;
-	bh=ZLwtql3PAv5rT5fZZseO69SnXuOKkCikTwuzUTrOy8M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P94w6pHjGar13KEUa55w6oUqCzC0+H0hzLqNY5cQMiHrv+fWGWSCjzYXIFqxoh2l4yVuLBm3C8AQUwysbaJZcJthTkCcDRRLZfQjdXcisOrJRvOL2w7Cr0YPBztWX6YYto5E/gvO4AVHC12vT8y/oMOYJrrYwk1M2EGP3AkgQNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=enw/ndHO; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753867593; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=ftYGM2w9MWCsVNvyG5RJGXhmw0ACmw9Xueyrdwm3brw=;
-	b=enw/ndHOeliff3jRd8awu9wDpqa+OCDrsYqa+aK6vifA3+6W20W3Fs+PVx7o2XBOiAJE1Oiql2KBzL5SDT3JTMHoAUyMWpOleJOlVGXZsSUzvbrW5VTyATJFFatDqCYoEiuPI+jLaWJl0BgtNYdLpdXtmgcg7/6SS8aIwFH1bvM=
-Received: from 30.246.163.44(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0WkUQDEK_1753867555 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 30 Jul 2025 17:26:33 +0800
-Message-ID: <c946ad53-15c8-497d-863b-a237e6c4466c@linux.alibaba.com>
-Date: Wed, 30 Jul 2025 17:25:50 +0800
+	s=arc-20240116; t=1753867582; c=relaxed/simple;
+	bh=iFo5w61ygk5/00ivNfP6LrdjhO0dAK1GgoLyoRyT60I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qrWwPl0pY+uCa9ppigf4O8fEih/bgT8tImjHqy93CAk1Z97g0Y8+w++1W4Nb1gnrTo28w7riaN49QkIQALOZpK5LAWXAXSbL6hSUmT3996snrzOqfWU6DKX+T1FtFA+FJq5gap2I8LkPD8rrgo3I93W6UKO5Riuf80oEDOapiw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZLmdn6Ke; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hYn+v/AS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZLmdn6Ke; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hYn+v/AS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F31741F45A;
+	Wed, 30 Jul 2025 09:26:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753867579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwwSk2G3t3g+z+exLv/8KSZMKkvH9vcoZU1kIker1MQ=;
+	b=ZLmdn6KegNLRzn+dBx89gzlvx3N85If5zqoX3jHJv/5IxACROsLEdUumVIkRVA+qfzpztX
+	llTr1qluDQxRaUlsR6kyh1U/XzPdd1H7TiWrXD77yNnjpu92kgcjRv3+jV5tfv9asZF5Qz
+	YQDFeqGDy0vnCXKJkSiLRysSmse6Q0w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753867579;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwwSk2G3t3g+z+exLv/8KSZMKkvH9vcoZU1kIker1MQ=;
+	b=hYn+v/ASBkF5r+OUfvChwnoKZ4xNlRwApU8Dh9pNJIJcPp1ffL7v7NxnFmSGQTbMMcma1v
+	OSpQhY2+thaekjAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753867579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwwSk2G3t3g+z+exLv/8KSZMKkvH9vcoZU1kIker1MQ=;
+	b=ZLmdn6KegNLRzn+dBx89gzlvx3N85If5zqoX3jHJv/5IxACROsLEdUumVIkRVA+qfzpztX
+	llTr1qluDQxRaUlsR6kyh1U/XzPdd1H7TiWrXD77yNnjpu92kgcjRv3+jV5tfv9asZF5Qz
+	YQDFeqGDy0vnCXKJkSiLRysSmse6Q0w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753867579;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwwSk2G3t3g+z+exLv/8KSZMKkvH9vcoZU1kIker1MQ=;
+	b=hYn+v/ASBkF5r+OUfvChwnoKZ4xNlRwApU8Dh9pNJIJcPp1ffL7v7NxnFmSGQTbMMcma1v
+	OSpQhY2+thaekjAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D61E13942;
+	Wed, 30 Jul 2025 09:26:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id De7RAzrliWjwaAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 30 Jul 2025 09:26:18 +0000
+Date: Wed, 30 Jul 2025 10:26:16 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Bernard Metzler <bernard.metzler@linux.dev>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jakub Kicinski <kuba@kernel.org>, 
+	David Howells <dhowells@redhat.com>, Tom Talpey <tom@talpey.com>, linux-rdma@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, torvalds@linux-foundation.org, 
+	stable@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
+Subject: Re: [PATCH v2] RDMA/siw: Fix the sendmsg byte count in
+ siw_tcp_sendpages
+Message-ID: <x43xlqzuher54k3j4iwkos36jz5qkhtgxw4zh52j5cz6l2spzw@yips5h4liqbi>
+References: <20250729120348.495568-1-pfalcato@suse.de>
+ <8fad6c00-9c15-4315-a8c5-b8eac4281757@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
-To: Paul Moore <paul@paul-moore.com>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
- <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
- <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
-Content-Language: en-US
-From: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8fad6c00-9c15-4315-a8c5-b8eac4281757@linux.dev>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-
-
-On 7/29/25 11:09 PM, Paul Moore wrote:
-> On Tue, Jul 29, 2025 at 10:43 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
->>> The implementation of function security_inode_copy_up_xattr can be
->>> simplified to directly call call_int_hook().
->>>
->>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->>> ---
->>>   security/security.c | 8 +-------
->>>   1 file changed, 1 insertion(+), 7 deletions(-)
->>>
->>> diff --git a/security/security.c b/security/security.c
->>> index 596d41818577..a5c2e5a8009f 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
->>>    */
->>>   int security_inode_copy_up_xattr(struct dentry *src, const char *name)
->>>   {
->>> -     int rc;
->>> -
->>> -     rc = call_int_hook(inode_copy_up_xattr, src, name);
->>> -     if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
->>> -             return rc;
->>> -
->>> -     return LSM_RET_DEFAULT(inode_copy_up_xattr);
->>> +     return call_int_hook(inode_copy_up_xattr, src, name);
->>
->> Both the existing code and the proposed change are incorrect.
->> If two LSMs supply the hook, and the first does not recognize
->> the attribute, the second, which might recognize the attribute,
->> will not be called. As SELinux and EVM both supply this hook
->> there may be a real problem here.
+On Tue, Jul 29, 2025 at 08:53:02PM +0200, Bernard Metzler wrote:
+> On 29.07.2025 14:03, Pedro Falcato wrote:
+> > Ever since commit c2ff29e99a76 ("siw: Inline do_tcp_sendpages()"),
+> > we have been doing this:
+> > 
+> > static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
+> >                               size_t size)
+> > [...]
+> >          /* Calculate the number of bytes we need to push, for this page
+> >           * specifically */
+> >          size_t bytes = min_t(size_t, PAGE_SIZE - offset, size);
+> >          /* If we can't splice it, then copy it in, as normal */
+> >          if (!sendpage_ok(page[i]))
+> >                  msg.msg_flags &= ~MSG_SPLICE_PAGES;
+> >          /* Set the bvec pointing to the page, with len $bytes */
+> >          bvec_set_page(&bvec, page[i], bytes, offset);
+> >          /* Set the iter to $size, aka the size of the whole sendpages (!!!) */
+> >          iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
+> > try_page_again:
+> >          lock_sock(sk);
+> >          /* Sendmsg with $size size (!!!) */
+> >          rv = tcp_sendmsg_locked(sk, &msg, size);
+> > 
+> > This means we've been sending oversized iov_iters and tcp_sendmsg calls
+> > for a while. This has a been a benign bug because sendpage_ok() always
+> > returned true. With the recent slab allocator changes being slowly
+> > introduced into next (that disallow sendpage on large kmalloc
+> > allocations), we have recently hit out-of-bounds crashes, due to slight
+> > differences in iov_iter behavior between the MSG_SPLICE_PAGES and
+> > "regular" copy paths:
+> > 
+> > (MSG_SPLICE_PAGES)
+> > skb_splice_from_iter
+> >    iov_iter_extract_pages
+> >      iov_iter_extract_bvec_pages
+> >        uses i->nr_segs to correctly stop in its tracks before OoB'ing everywhere
+> >    skb_splice_from_iter gets a "short" read
+> > 
+> > (!MSG_SPLICE_PAGES)
+> > skb_copy_to_page_nocache copy=iov_iter_count
+> >   [...]
+> >     copy_from_iter
+> >          /* this doesn't help */
+> >          if (unlikely(iter->count < len))
+> >                  len = iter->count;
+> >            iterate_bvec
+> >              ... and we run off the bvecs
+> > 
+> > Fix this by properly setting the iov_iter's byte count, plus sending the
+> > correct byte count to tcp_sendmsg_locked.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: c2ff29e99a76 ("siw: Inline do_tcp_sendpages()")
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes: https://lore.kernel.org/oe-lkp/202507220801.50a7210-lkp@intel.com
+> > Reviewed-by: David Howells <dhowells@redhat.com>
+> > Signed-off-by: Pedro Falcato <pfalcato@suse.de>
+> > ---
+> > 
+> > v2:
+> >   - Add David Howells's Rb on the original patch
+> >   - Remove the offset increment, since it's dead code
+> > 
+> >   drivers/infiniband/sw/siw/siw_qp_tx.c | 5 ++---
+> >   1 file changed, 2 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
+> > index 3a08f57d2211..f7dd32c6e5ba 100644
+> > --- a/drivers/infiniband/sw/siw/siw_qp_tx.c
+> > +++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
+> > @@ -340,18 +340,17 @@ static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
+> >   		if (!sendpage_ok(page[i]))
+> >   			msg.msg_flags &= ~MSG_SPLICE_PAGES;
+> >   		bvec_set_page(&bvec, page[i], bytes, offset);
+> > -		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
+> > +		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, bytes);
+> >   try_page_again:
+> >   		lock_sock(sk);
+> > -		rv = tcp_sendmsg_locked(sk, &msg, size);
+> > +		rv = tcp_sendmsg_locked(sk, &msg, bytes)
+> >   		release_sock(sk);
+> >   		if (rv > 0) {
+> >   			size -= rv;
+> >   			sent += rv;
+> >   			if (rv != bytes) {
+> > -				offset += rv;
+> >   				bytes -= rv;
+> >   				goto try_page_again;
+> >   			}
 > 
-> It appears that Smack also supplies a inode_copy_up_xattr() callback
-> via smack_inode_copy_up_xattr().
-> 
-> Someone should double check this logic, but looking at it very
-> quickly, it would appear that LSM framework should run the individual
-> LSM callbacks in order so long as they return -EOPNOTSUPP, if they do
-> not return -EOPNOTSUPP, the return value should be returned to the
-> caller without executing any further callbacks.  As a default return
-> value, or if all of the LSM callbacks succeed with -EOPNOTSUPP, the
-> hook should return -EOPNOTSUPP.
-> 
-> Tianjia Zhang, would you be able to develop and test a patch for this?
-> 
+> Acked-by: Bernard Metzler <bernard.metzler@linux.dev>
 
-Yes, I will submit a new patch to try to fix this issue. Thanks for your
-suggestion.
 
-Cheers,
-Tianjia
+Thanks!
+
+Do you want to take the fix through your tree? Otherwise I suspect Vlastimil
+could simply take it (and possibly resubmit the SLAB PR, which hasn't been
+merged yet).
+
+-- 
+Pedro
 
