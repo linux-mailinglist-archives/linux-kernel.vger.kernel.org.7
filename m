@@ -1,71 +1,90 @@
-Return-Path: <linux-kernel+bounces-750287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D017EB15991
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:29:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B757B1598C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:27:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D5FB3B792A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:28:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D25973B7ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 443FE2877C6;
-	Wed, 30 Jul 2025 07:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF26C28751C;
+	Wed, 30 Jul 2025 07:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DW35AimM"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nic+ijc5"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22FA61EFFB2;
-	Wed, 30 Jul 2025 07:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B4C1F12F4;
+	Wed, 30 Jul 2025 07:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753860558; cv=none; b=XTB5jrzQ/V8TMuo70fLFBx+fmxeQbe76B2C7RbR5Fyd9keLmAz+YLHVKlY4l5aKHBf6uTYqMPfNdPobVu6c+2ZvXilSdkgiX1NtCMOkqbzfpf0I3g1pVG8rcgFzVzJSIB05PLGr0AVKIH92mgCUi8GL7+u73xKK00jaFXA9XxMU=
+	t=1753860460; cv=none; b=tYsUL57OWc54CA+V++iCAVcgyp+UnowAPjE5Q0ukPCqBHkvo54TRSs/ARslpo0TobPFAu8v+6V/gzkGJ1lkR7NI+lJBa0MHJQ6Ekkt+p00o59FgQGGOQ7woqpuH5YK33m5+y0HpEBODlw949HnyMGql/Y/P16+TG/ZSYsOLALUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753860558; c=relaxed/simple;
-	bh=rdoU1EqVgDl8sy6XJ5uPQgrUXQtgjF+c2wH2+gurJnc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s1QJmJ1D6ueoTLvhyyPlL6d1wl1nnLZFceogdyB1YHEAQdt11LISREyEOfGFYpz2iI3ru831ef/y8RRWx7mfOSq7b7fOlWkLg7VGjqpikmXbXGUTENoiUdGw8rmZo/Ufu2g9sJKD8R3BbHM04OqibQ4OqFTih0/SYYz9X45oNlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DW35AimM; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U5ggDs017481;
-	Wed, 30 Jul 2025 07:29:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=IY2gWL1+FPISpzXUYxlmfN
-	YyXNSkWMy9ApA1vD9WqQc=; b=DW35AimMBLuIjN9lu4Yvbeinxnt553HVKoNwVz
-	i9cRpxZ/EixDafxpGZKFN7P/8ZJ9rpYq1jpSaUJ6WJwS3rAq7147hMZdA2bYWO5s
-	xSrL9WCyDpbEOe55rX6kUf5fvOH/EbZ6wMR/Qd10V4OJ1Na2KqTX3AHpmKTYkdxF
-	kzsCje0tGdFXQ8WZD+jJeCBVDKCbWMIkKnm/0hsATT0vPW9rpYUGSYp74mzkat6C
-	hFZCw9hwCr0zKiX8e7Mysnu8Axb7H1XkZ9acijYUAFwWxV72UZh3otNTtCK80N66
-	gPJLs7qUztjWj+bwinYRZH4D5UMW/vH/3BGnIylUrHkCOCiA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484p1ajrs4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 07:29:08 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56U7T79x010408
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 07:29:07 GMT
-Received: from cse-cd01-lnx.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Wed, 30 Jul 2025 00:29:03 -0700
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-To: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Yongxing Mou
-	<quic_yongmou@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-Subject: [PATCH RESEND] dt-bindings: phy: Add eDP PHY compatible for QCS8300
-Date: Wed, 30 Jul 2025 15:27:25 +0800
-Message-ID: <20250730072725.1433360-1-quic_yongmou@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1753860460; c=relaxed/simple;
+	bh=kiLfI1wVhg5HCODuS6QMhP1+3AJY6AWK2NRmz0k2lBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ja0w6VCVauc07vW6rSpft8RCckTXb8jTxElp1P5g5zWvzovKICX7bSJeZvZwARbqNiJq0qDLWKCFkaWYPCwh5Zsc2ekRFtPHjNckv4sBVkkI5i6TXrXEFbjMKGbrPeQDvVWyu5dLqaKKEbWwAWL8tQY45rXrZi/qxLUg02bhk5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Nic+ijc5; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45622a1829eso22325345e9.1;
+        Wed, 30 Jul 2025 00:27:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753860457; x=1754465257; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6f0FwhvW4mq7M1CCFYzcRZRTS9S4BaVix+fIhnxA7VE=;
+        b=Nic+ijc5EwCST4GA5Rktuv4rK/IH82vi+yxRyJNjRTfkMo6J5vSAZaKR1KDFKb/Nxq
+         dp2yjQHrsbyRphs9aB1Sf2/ZHuYl55Wk4F/KTeU1yN/uz8YAoUCQxGQOgppzB4pGkOOy
+         cX1Cu4bttZfZq8dGYeAGWLxaavTBo7Dfx0csoe2r8UnUt6jT7aUncRu1QbEGz7fQOUgW
+         /nlbjIhIc702Ly0U1WfRsqAiI0gD8LNq/aJ82UpCyGwA9vQJIdopwv+LH+yWqJZAFvyo
+         86fv9jy2B9xG/OnwRfd1SQKVR/18tZ0iSCT4gOUiUMFP2MlXJn/D+hAjFmgLa9Q/Eifd
+         WFFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753860457; x=1754465257;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6f0FwhvW4mq7M1CCFYzcRZRTS9S4BaVix+fIhnxA7VE=;
+        b=n+Fd8dnf8LdsDyH/f1HSQAza2cQwRLA56SN49Wuad4aBe4PHPRNguHdu9XfsAIf9qj
+         nkesaYpac9uB8RrGf8Sm0TPd3yarHDe7y53t4faUlVd5OGO6hJbrFSR3sa6Y5bXw92Bg
+         2femh/LFZOx/MB0hJxrbxYlyxWs9Dk5W6GIOlMlp0O0yKnR1uDUL4Xp5ozqIKWZxxcNm
+         g37eFE9ib0fIJtT9zhzTMvBjoOmw0HJTtJVC9WcHPGxVbbGzHTL892IU4z4wIx6NvsMN
+         EzRmP1Z8xHf788ZXAgiDAtfyzzHkZOurANCICEwxWSiwApLgQUf7W56IaAJwoBFjcVwh
+         1s/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVdptvGE+vajWwDZB7Ne67gu7cJGate9O03bkycucctZSbHQjgvq23pBcD4EBEkD/r1v5mFILPeicVn@vger.kernel.org, AJvYcCXCIKUwIbilMt59hRYV1bN1Zan9EWe5LwKeDVIK9fpBiSFn0xmfU2uoHEbWOoh9Zuw8/JKN18wxyw/NhJGB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/+H3WmuXuE/uWl10BjT1Y9zPIERPg3hU5FXHXGBrWGwe1phmJ
+	0GidGr3IBPW6FXSVEdeM7fG5WaugJSSOA51cnF1fYgPYRtzWFi6fPXuL
+X-Gm-Gg: ASbGnctqCcPBcU42M7YLxfVaa5phZtozVE9i1ZnJRFtQjOEVXNLiKYHcblHnn2nGQEU
+	0L9YQBXAKi03g9juqok8X6F7/CjPcLyopsCYJJGIjpzfNU+vuIKBZvpc009yE/1uXnJ0E5rxE0S
+	2dWWdchr/eycVJLrvAJkQ+tWpwv2Tb/VrVjsDkCaHSKAlqIGMozR5LzbMU39WC2+Ecc1RDvqacR
+	9sMfqVBT9RevEd2U7r16lRfYqbIG/1xoD7wTwjCw/O33NVYWywtkXubqP0Hdm2AD4revij1aThu
+	w7vaj2mzjkjmoaG9Hzv3NHWxm841C8FRKhxMJpdEj4HjQNb3TiuFRKXAKOcXdIkiDQGAYEo8lwI
+	IvGlG3dTIZKSeuSf41foqG8O0B8jz7Jt4OJJv86LKIXqdGdKzNDW20fFtgwDOdsvDw6zk4DuIWw
+	==
+X-Google-Smtp-Source: AGHT+IGitxQ0sOEC+WgVaNX9L6/ItIfmQxZmM1ZdgBtR/19JOebjrySx8wjPj96seElfIW/TIv7EMQ==
+X-Received: by 2002:a05:600c:8409:b0:450:d4a6:799e with SMTP id 5b1f17b1804b1-45892bc58d3mr17968365e9.20.1753860456652;
+        Wed, 30 Jul 2025 00:27:36 -0700 (PDT)
+Received: from ivaylo-T580.. (91-139-201-119.stz.ddns.bulsat.com. [91.139.201.119])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b78084f79csm13259467f8f.71.2025.07.30.00.27.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 00:27:36 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: soc: samsung: usi: add samsung,exynos2200-usi compatible
+Date: Wed, 30 Jul 2025 10:27:30 +0300
+Message-ID: <20250730072730.1882549-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,77 +92,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: NKrGXozUY7lmJ3T_S6uTyBS-dsbNDeU9
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA1MCBTYWx0ZWRfXyfGu9lD0Q8xx
- LPbHY64ejBzwQmL8ZKwQG89XQw3j2LA8M451lKju0+Bh5IkzCGiNwbm4ipimRNRbatyFkvFE7+v
- /sSq7VJ6y6iDQefrwhrn7xNUwCe4ksrdiyk6uUJlti4y8+9jzeq3gdVdh6DdM4R6USgTSi2x16f
- h+OMybbjyG5VMPWfzChMF9QG6/N2R7vjKkXsQZiC++w7cYiJffRn3iAK082AzKSj+iDPkeRpUIu
- idk7A6vBG83dyXcuJ7jjBgPbVrNn8EybppmWuMuTZZNEI65NVy1xNGzh57yxI/w/TfHxa5Jhxsg
- KZ5IuyepmJYVrj+RRSmT5vRIo6Z0vObNFc4eL2tHkquUnSOzb0al4l9oKsufFEPDjm1ccCZbMGM
- Lk583oiTk2O+KSe1fJmx4Rfb0ATIPuM8dGQhuiymjB9fPav2m+hl3rpFOvZ9PLJrRJDiX55R
-X-Proofpoint-GUID: NKrGXozUY7lmJ3T_S6uTyBS-dsbNDeU9
-X-Authority-Analysis: v=2.4 cv=KtNN2XWN c=1 sm=1 tr=0 ts=6889c9c4 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=Wb1JkmetP80A:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8
- a=O5udsO39-F6e2CSdgGgA:9 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_03,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507300050
 
-Add compatible string for the supported eDP PHY on QCS8300 platform.
-QCS8300 have the same eDP PHY with SA8775P.
+Add samsung,exynos2200-usi dedicated compatible for representing the USI
+of Samsung Exynos 2200 SoC.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+
 ---
- .../devicetree/bindings/phy/qcom,edp-phy.yaml | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
+changes in v2:
+dropped the first patch of the series
+added a r-b tag from Sam Protsenko
+---
+ Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-index 293fb6a9b1c3..eb97181cbb95 100644
---- a/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/qcom,edp-phy.yaml
-@@ -16,13 +16,18 @@ description:
- 
- properties:
-   compatible:
--    enum:
--      - qcom,sa8775p-edp-phy
--      - qcom,sc7280-edp-phy
--      - qcom,sc8180x-edp-phy
--      - qcom,sc8280xp-dp-phy
--      - qcom,sc8280xp-edp-phy
--      - qcom,x1e80100-dp-phy
-+    oneOf:
-+      - enum:
-+          - qcom,sa8775p-edp-phy
-+          - qcom,sc7280-edp-phy
-+          - qcom,sc8180x-edp-phy
-+          - qcom,sc8280xp-dp-phy
-+          - qcom,sc8280xp-edp-phy
-+          - qcom,x1e80100-dp-phy
-+      - items:
-+          - enum:
-+              - qcom,qcs8300-edp-phy
-+          - const: qcom,sa8775p-edp-phy
- 
-   reg:
-     items:
-
-base-commit: 54efec8782214652b331c50646013f8526570e8d
-prerequisite-patch-id: 0000000000000000000000000000000000000000
+diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+index cb2263709..c694926e5 100644
+--- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
++++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
+@@ -36,6 +36,7 @@ properties:
+       - items:
+           - enum:
+               - google,gs101-usi
++              - samsung,exynos2200-usi
+               - samsung,exynosautov9-usi
+               - samsung,exynosautov920-usi
+           - const: samsung,exynos850-usi
 -- 
-2.34.1
+2.43.0
 
 
