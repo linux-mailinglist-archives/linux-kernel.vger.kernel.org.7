@@ -1,51 +1,62 @@
-Return-Path: <linux-kernel+bounces-751402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D63EB1692A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A75EB1692B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0C971AA41CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80CD318C735D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:00:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C5F231852;
-	Wed, 30 Jul 2025 22:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B22233140;
+	Wed, 30 Jul 2025 22:59:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LScQz0Ig"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMJCjgzz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7EC1F8BA6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 22:56:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CA41F8BA6;
+	Wed, 30 Jul 2025 22:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753916198; cv=none; b=eBIBYXfB3V1pXaUNE8YoLgZ95ORzReXUxCP3fvNUiIsnuFT7uLxL6f1yFUhw3afiamdUsB2ONYUew/DEBqJhViGh2SLy5nWjeYXuNeAJ+j2Y+2RCepN1wqFqcf/jurKm9JAiusC1z5bFHqRcaXIfX0AIwVIUyEzLer79p+SpPCw=
+	t=1753916385; cv=none; b=jiboEygHX8g+YSYlI6qVXLmlvi/nJdNq1daurxu10Ee8Vjek03kTzpWjq5UTyHwaXrfRsBou4AFqF9zNcu0gTEpzXTpzEny9XJ6GzrhIlfNCawgZv6+2h+0jw9eYE5TPuxCq4M+Jh4Zf27V5CwQD+O9OJFxr1xODBiO5fn4tyT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753916198; c=relaxed/simple;
-	bh=J5y2323sa7souGXfUB6aT0cJsEkW9go4MOfWRq0bSyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OZusnLQGPaZ4wiyFz0VkDGRm5rIm35YgMXKZEyijXYa9azk3LsUnJk1t6P7j8s8AQfru1hAZhjLc4TlyFRdFM+w3uNY+uaJfTR1X1E1f8+8Umr/vGWrcVcwHUiZ7GdB1adQHy4Kk5JB3QCjTqriMklhhoGLUYG16YIlqfNEJDTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LScQz0Ig; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6F2FC4CEE3;
-	Wed, 30 Jul 2025 22:56:37 +0000 (UTC)
+	s=arc-20240116; t=1753916385; c=relaxed/simple;
+	bh=sw1TAVhbjjieMP2pEg2JVm8qjXF311nK+4IsPc7U84w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iaveOXn9DwC7E4uCXNu7jydg2xLFETn7/uv9anoVyPRpAnPnNu5HnDUxaQhYlJSguvh6YoUK1EYED9xUBU/BjGdEboHXhxtU8EeocfhVfQxzBbYOKyLlyvbLH5E3h+3b5y3jmH+pNnJfQx9GUNSQKB8CP/e3ne8DUNo4F9GOrJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMJCjgzz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73C1DC4CEEB;
+	Wed, 30 Jul 2025 22:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753916198;
-	bh=J5y2323sa7souGXfUB6aT0cJsEkW9go4MOfWRq0bSyg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=LScQz0Ig9380Dya3jixG+u0x3U1twAWXXaBfg/LRhgqLJcw9OSv6mpEsmzXj11ybC
-	 YHaRYoojj+w9Ysd9XiWCECbwIlzKQsfBYF7rYcs9e+vj8IfPWtOP89BuwYjplwOq77
-	 iPsSNZN3UDZgb8UwJPLEwwPBqhCBC3ma4/dCpfCxo12QkzQCQupOK5QKzYXHOp5Kf7
-	 yoyQp2YSFarbtJgWGCEtQnsdibSi1JBS2x8j75em3go0r9Mg0DfhB4/awHnAlRJSnF
-	 gbrMk6nIis9tZ4j0Ca4PWNixGuAND7pkwrUfKc5VOIfXRBFOjiRzgqjF/ydsZbA/k1
-	 CCvzmzbTHTGnQ==
-Date: Wed, 30 Jul 2025 12:56:36 -1000
-From: Tejun Heo <tj@kernel.org>
+	s=k20201202; t=1753916383;
+	bh=sw1TAVhbjjieMP2pEg2JVm8qjXF311nK+4IsPc7U84w=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=TMJCjgzzAUr8q9/dsf479hY7eQ91cNvSkF16mhBeOJah6hMXWaGRj8El0mDE1p+YR
+	 sFR8d6LDFL1nAKlkN+pLXxUVJzY68hAF2oeyIzGaTF2/oOlvfjuPH/t3PcQbVDlQbP
+	 GrAZxoeNq+M35poz2DH5t/LImaL29wR/ZB4tgTwfAGFyV/ZCmY5MIkAK51qS0IGNi4
+	 uS0mWJEOuQLj1EdjCbcA7YZjO+tdWof/8I41PBlIshR6/M/RlcOMg65UwcXib7B6K8
+	 W9MbZEDtz/jjAoKJk0u61JupMlR/D+xo3FRJxRcZX1XwqoEMpr7H+J4SrW4jAgLyKU
+	 CKgvdvbYGsV2Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2089BCE0B1C; Wed, 30 Jul 2025 15:59:43 -0700 (PDT)
+Date: Wed, 30 Jul 2025 15:59:43 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] workqueue: Changes for v6.17
-Message-ID: <aIqjJFLe9V4w2zLd@slm.duckdns.org>
+Cc: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>, joelagnelf@nvidia.com,
+	frederic@kernel.org, boqun.feng@gmail.com, urezki@gmail.com,
+	qiang.zhang1211@gmail.com, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rcu@vger.kernel.org, Tze-nan.Wu@mediatek.com,
+	a.sadovnikov@ispras.ru
+Subject: Re: [GIT PULL] RCU changes for v6.17
+Message-ID: <b5cb2b64-483c-4c38-b7ff-de045a420ef4@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250726024605.GA17131@neeraj.linux>
+ <CAHk-=wh1Cjqv08fdm3T3ZSBGN2vhMm00Ud+JjbWthK0RygMF0Q@mail.gmail.com>
+ <ba898d9d-021b-40f5-9627-dce11e403fdc@paulmck-laptop>
+ <CAHk-=wgWstOqx6Cbn_axAE-o=8-vcf5z_ZKDtytRw_osHLMGdA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,55 +65,139 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAHk-=wgWstOqx6Cbn_axAE-o=8-vcf5z_ZKDtytRw_osHLMGdA@mail.gmail.com>
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+On Wed, Jul 30, 2025 at 03:34:55PM -0700, Linus Torvalds wrote:
+> On Wed, 30 Jul 2025 at 12:24, Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > As it happens, I will be sending the pull request for the v6.18 merge
+> > window, so I will stop doing my usual octopus merges (hey, they *were*
+> > cool!) and instead merge each branch separately, with each merge's commit
+> > log giving a synopsis of the commits in the branch being merged.
+> 
+> Note that octopus merges aren't a no-no per se. Sometimes they make
+> perfect sense, particularly if there's a handful of really trivial
+> branches with just a commit or two each.
+> 
+> Then an octopus merge can be a really convenient way to avoid having
+> as many merges as you have "real" commits.
+> 
+> So don't take my comment as a "never use octopus merges".
+> 
+> Take it more as "octopus merges have some downsides, and making _any_
+> merge without an explanation for it in the commit message is bad".
+> 
+> The main downside of octopus merges really is just bisectability:
+> because even if the problem doesn't end up being the merge itself, an
+> octopus merge can make it fundamentally hard to do the "cut the
+> history in two roughly equal points for testing".
+> 
+> But again, that's not a problem if you have just a fairly small
+> handful of purely trivial commits.
+> 
+> So people just need to balance the "octopus merges are cool, and can
+> avoid pointless repeated silly small merges" with "octopus merges can
+> make for bisectability issues and should be avoided for anything even
+> halfway comples".
+> 
+> (Also, try *very* hard to avoid octopus merges when any conflicts
+> exist - even trivial ones. Octopus merges with conflict resolution
+> take "that's hard to follow" to a whole other level, to the point
+> where you really shouldn't even try).
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+Thank you!
 
-are available in the Git repository at:
+So octopus merges of documentation, torture testing, and other things that
+are very unlikely to matter for bisection should be fine.  Branches that
+are not going to interact should be fine, give or take any uncertainty in
+"not going to interact".  No merge conflicts are permitted in octopus
+merges.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git/ tags/wq-for-6.17
+On the other hand, given that there are cases where octopus merges are
+not fine, it might be more straightforward to merge one branch at a time.
+The main loss is that remerging after applying fises is a bit easier
+with octopus merges, but that isn't a big deal.
 
-for you to fetch changes up to df316ab3d4440177e322a2847969d356c29b0eef:
+So it might be time to say "goodbye" to octopus merges.  I will try
+that for v6.18.
 
-  workqueue: Use atomic_try_cmpxchg_relaxed() in tryinc_node_nr_active() (2025-07-17 08:14:50 -1000)
+> > If you have a best-practice series of merges example in mind, could you
+> > please point me at it?
+> 
+> It's hard to give a good "typical" example, because I don't think
+> "typical" exists.
+> 
+> Sometimes a simple one-line merge message just stating "Misc fixes for
+> subsystem Xyz" really might be the "proper" merge message.
+> 
+> Because maybe that branch really had all just tiny uninteresting
+> fixes, and git shortlog entirely describes it all to the point that
+> writing anything more would just be wasting everybody's time.
+> 
+> Honestly, the merge messages you guys send me for *my* RCU merge are
+> fine - the only thing I ask for is that instead of describing the
+> branches with an esoteric branch name, you write them out for humans.
+> 
+> So having the header read "Improvements expedited RCU grace periods"
+> or something is just _soo_ much more understandable than
+> "rcu-exp.23.07.2025", wouldn't you agree?
 
-----------------------------------------------------------------
-workqueue: Changes for v6.17
+Fair point!
 
-- Prepare for defaulting to unbound workqueue. A separate branch was created
-  to ease pulling in from other trees but none of the conversions have
-  landed yet.
+> As to the merge messages for *your* own merges, where you just put
+> several branches together in order to send the result to me: knowing
+> that there will be a more complete message in the upstream merge, I
+> think the main issue is to think about people who hit that merge
+> because they have some issue.
+> 
+> So again, it might be because somebody ends up hitting that merge
+> during bisection, or has some other reason why they are looking at
+> that merge in particular, rather than the "bigger picture" upstream
+> merge.
 
-- Memory allocation profiling support added.
+And that argues for putting the material that we currently put into the
+pull request into the merge commit logs.
 
-- Misc changes.
+> In other words, please write merge messages with the intended audience
+> in mind. They don't necessarily need to be the same kind of
+> full-fledged explanation that I want to explain why I'm merging (and
+> for people who follow the development process: people most definitely
+> look at the pull requests that come upstream, and it's informative to
+> not just me, but you find tech press etc looking at them too).
+> 
+> But you should at a minimum think about "what if somebody hits this
+> during a bisection". Give those random developers a clue about what is
+> going on. Don't just make it be that "Merge branch XYZ", because that
+> tells _outsiders_ so little.
+> 
+> Does that make sense as an answer?
 
-----------------------------------------------------------------
-Dr. David Alan Gilbert (1):
-      workqueue: Remove unused work_on_cpu_safe
+Very much so, and again thank you.
 
-Kent Overstreet (1):
-      workqueue: Basic memory allocation profiling support
+> Anyway, I'm happy to say that if you are looking for _examples_ of
+> merges, we have tons of them. I'm proud of the fact that I think
+> kernel commit messages in general are very good, and when I compare
+> them to other projects I feel like we tend to do a stellar job. And
+> I'm not just patting myself on the back, we have tons of good
+> examples.
+> 
+> So you can do a
+> 
+>     git log --merges
+> 
+> in general, and while you'll find some that just list branches, I
+> think most of them tend to be very good these days. Look at the
+> networking and bpf merges, for example (so typically Jakub and
+> Alexei). Or the SoC merges (Arnd), or the VFS merges (Christian
+> Brauner).
+> 
+> Or really most of them. I started looking for more names (the ones I
+> mentioned were people I already knew wrote good merge messages), and
+> really my reaction was that "most of them are great".
+> 
+> Good on us.
 
-Marco Crivellari (2):
-      workqueue: Add system_percpu_wq and system_dfl_wq
-      workqueue: Add new WQ_PERCPU flag
+Thank you, and as you say, lots of examples.  ;-)
 
-Tejun Heo (1):
-      Merge branch 'WQ_PERCPU' into for-6.17
-
-Uros Bizjak (1):
-      workqueue: Use atomic_try_cmpxchg_relaxed() in tryinc_node_nr_active()
-
-Yury Norov [NVIDIA] (1):
-      workqueue: fix opencoded cpumask_next_and_wrap() in wq_select_unbound_cpu()
-
- Documentation/core-api/workqueue.rst |  6 +++
- include/linux/workqueue.h            | 34 +++++++----------
- kernel/workqueue.c                   | 74 ++++++++++++------------------------
- 3 files changed, 44 insertions(+), 70 deletions(-)
-
--- 
-tejun
+							Thanx, Paul
 
