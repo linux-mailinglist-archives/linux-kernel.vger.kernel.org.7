@@ -1,248 +1,125 @@
-Return-Path: <linux-kernel+bounces-750552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50EAAB15DE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD822B15DDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:11:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B84D27ADEC1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42CA018A0490
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D5C293C44;
-	Wed, 30 Jul 2025 10:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 562EB279DCB;
+	Wed, 30 Jul 2025 10:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="FYOyLrDH"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrE9nbyJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520451F09B6;
-	Wed, 30 Jul 2025 10:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3ECA1C861F;
+	Wed, 30 Jul 2025 10:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753870276; cv=none; b=TzrVC1Lv8y2Og7nkJGdmpDh68ub2hgWGNEIjK6Ge9pB85tTwjbt+YDy83lIC063ybbZ4p6gukd5RBs+/j1jjy1UORHICNgxgc7lE0sKuUwoRYmJWwJklXww+8P1yxEPsGG3drxlX44Qi5E7vgcoatQo6Deh1gZpGmbrNND/wfHI=
+	t=1753870267; cv=none; b=mxFwDqhPAVFICSw9NqB/H5AKwSlorW5sr98mXJxDRYAjblDwdv1ZzVb94ILLi8WCtWRF9+AhFgbRBHyT0UNhImA3pPrG+mqJStX7Jf9Wq3Ux+a2b0WTXCHrFHu50X1ks8dYMDd//42kZdAeA5pgMyV/mshLjl9MVJn0sdSgcwsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753870276; c=relaxed/simple;
-	bh=Q5iWrsIMXpRDAygoxfGOZsTjC81BxOD/oAIcBKlczI8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ABeLStnyFcFvGxZzXUjgVe3vTNS0WC66nMJ5K2XSNj4uyMliQqG2G0rfawpw11NBK1JKPhokObSjKl7mndC6snCg6r8ZLlJfz74WfL1GdBZcRIlDBUFDHWfxvzQvj3nDAANACsu1M5Y47g69PWWg9CaV5IVjmyUQRtFewHfdrz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=FYOyLrDH; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1753870274; x=1785406274;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=Q5iWrsIMXpRDAygoxfGOZsTjC81BxOD/oAIcBKlczI8=;
-  b=FYOyLrDHJVNtrEDALZQYO59Td6FGRCZCqnLyPBsheemjJb6YM2vUr+yT
-   u6SvPZuHnwwTFFOVyKWmoFE90pnzfOOQTm/jlQ2D2G2RYpnU+eJkzUvLD
-   lGvD2PRHWz29lbrPGqlUOzYVWyXYKNr94N8V2RSkYhmj99kWDrGVC5z/1
-   Z0+DbK53B7SFUs61Tw8Wk5PCZkB1P1ZoeIhun/hCSMQCLZeL1TgaPo/SJ
-   vRLaoeh2oCT958xx8Y7XQZZY8QWWSqeZNHNtTnGD1pD9v47kpYGaKwWzH
-   9qhrYclcMVHiz07qimQSa82egS7kkQa1PPnOvArEYlvBk94lT3S/T5VEe
-   w==;
-X-CSE-ConnectionGUID: zjJ/PdTbTgKvrskxeKL28w==
-X-CSE-MsgGUID: PjxoSgqfSBiifod6J4ocUQ==
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="49962579"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Jul 2025 03:11:11 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 30 Jul 2025 03:10:44 -0700
-Received: from che-lt-i67131.microchip.com (10.10.85.11) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
- 15.1.2507.44 via Frontend Transport; Wed, 30 Jul 2025 03:10:39 -0700
-From: Manikandan Muralidharan <manikandan.m@microchip.com>
-To: <broonie@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
-	<ryan.wanner@microchip.com>, <tudor.ambarus@linaro.org>,
-	<linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <manikandan.m@microchip.com>
-Subject: [PATCH v2 3/3] spi: atmel: Add support for handling GCLK as a clock source
-Date: Wed, 30 Jul 2025 15:40:15 +0530
-Message-ID: <20250730101015.323964-3-manikandan.m@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250730101015.323964-1-manikandan.m@microchip.com>
-References: <20250730101015.323964-1-manikandan.m@microchip.com>
+	s=arc-20240116; t=1753870267; c=relaxed/simple;
+	bh=pnGxoS3OSecq/nhtm6H+J4Cjcuia3dKAU/NRqZLtAY0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=T2QzSxD+KPdAPD7ukjEib0edqk4KayGsVoeJUKHaT5kNnag4rm17NQW+E3WiXWxgUnFriEvbsS4cPdK6jPOLHoH3E3Qpxe1pQj1peekklbkw4BBwvxp79w+VhFgqGED3F0vjLWuPVRtdbFWTU73ubXu1m92QBCbElKzFD/CxcAE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrE9nbyJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 112E4C4CEE7;
+	Wed, 30 Jul 2025 10:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753870267;
+	bh=pnGxoS3OSecq/nhtm6H+J4Cjcuia3dKAU/NRqZLtAY0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DrE9nbyJnXasszyzxe7vuARHwlZqRT4Egs8bU8yW7nxeMXKu+ofCfJWdWI9vY/1E2
+	 f+vKgHulgbDiHWElrxhi7ziGMvehBIoDHfaXNhciy32V1IrHXC7o7NfJqC6Qa1qhfG
+	 gVUuC5C5bZXcJFeK7Xunxz8EGdXxm0E3qJl118erF6tqja8IFneOstrFfOVPjqUSee
+	 64gg/x0fiBrFdMENMIWlxKzvhcLDG3E77FBMts9mXKcz4h7OcWY1rcs+qfBE6z37KW
+	 bMi2n1Rk1nSQI6WE8oz65iext9Ry6aWyphwXDVsoQJio8lnqnfii9n2bqk48yfMFt3
+	 nmekez5FtSNww==
+Date: Wed, 30 Jul 2025 19:11:01 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ oe-kbuild-all@lists.linux.dev, Masami Hiramatsu <mhiramat@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Linux Memory Management List
+ <linux-mm@kvack.org>, Namhyung Kim <namhyung@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH v2 1/2] tracing: Have eprobes have their own config
+ option
+Message-Id: <20250730191101.7e6203f21b94c3f932fa8348@kernel.org>
+In-Reply-To: <202507301452.JPAcMvT0-lkp@intel.com>
+References: <20250729161912.056641407@kernel.org>
+	<202507301452.JPAcMvT0-lkp@intel.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The SPI peripheral clock is typically used to derive the serial
-clock (SPCK) via the FLEX_SPI_CSRx.SCBR field. However, on platforms
-like the SAM9X7 SoC, where the peripheral clock can reach up to 266 MHz,
-this may exceed the SCBR limit, causing SPI transfers to fail.
-This patch adds support for using the SPI Generic Clock (GCLK) as an
-alternative and more flexible clock source for SPCK generation.
-The FLEX_SPI_MR.BRSRCCLK bit is updated accordingly to select between the
-peripheral clock and GCLK.
+On Wed, 30 Jul 2025 14:27:08 +0800
+kernel test robot <lkp@intel.com> wrote:
 
-Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
----
-changes in v2:
- - Fixed mail threading
----
- drivers/spi/spi-atmel.c | 64 +++++++++++++++++++++++++++++++++++------
- 1 file changed, 56 insertions(+), 8 deletions(-)
+> Hi Steven,
+> 
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on trace/for-next]
+> [also build test ERROR on lwn/docs-next akpm-mm/mm-everything linus/master v6.16 next-20250729]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/tracing-Have-eprobes-have-their-own-config-option/20250730-001958
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+> patch link:    https://lore.kernel.org/r/20250729161912.056641407%40kernel.org
+> patch subject: [PATCH v2 1/2] tracing: Have eprobes have their own config option
+> config: xtensa-randconfig-002-20250730 (https://download.01.org/0day-ci/archive/20250730/202507301452.JPAcMvT0-lkp@intel.com/config)
+> compiler: xtensa-linux-gcc (GCC) 12.5.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250730/202507301452.JPAcMvT0-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202507301452.JPAcMvT0-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    kernel/trace/trace_probe.c: In function 'parse_probe_arg':
+> >> kernel/trace/trace_probe.c:1105:23: error: implicit declaration of function 'regs_query_register_offset'; did you mean 'ftrace_regs_query_register_offset'? [-Werror=implicit-function-declaration]
+>     1105 |                 ret = regs_query_register_offset(arg + 1);
+>          |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~
+>          |                       ftrace_regs_query_register_offset
+>    cc1: some warnings being treated as errors
 
-diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
-index 409f544d8983..89977bff76d2 100644
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -256,6 +256,7 @@ struct atmel_spi {
- 	void __iomem		*regs;
- 	int			irq;
- 	struct clk		*clk;
-+	struct clk		*gclk;
- 	struct platform_device	*pdev;
- 	unsigned long		spi_clk;
+
+Interesting, this find another issue. Since this is provided by
+CONFIG_PROBE_EVENTS, we need to fix CONFIG_PROBE_EVENTS depending
+on HAVE_REGS_AND_STACK_ACCESS_API.
+
+diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
+index a3f35c7d83b6..cd239240b0ef 100644
+--- a/kernel/trace/Kconfig
++++ b/kernel/trace/Kconfig
+@@ -792,6 +792,7 @@ config DYNAMIC_EVENTS
+        def_bool n
  
-@@ -1480,6 +1481,8 @@ static void atmel_get_caps(struct atmel_spi *as)
+ config PROBE_EVENTS
++       depends on HAVE_REGS_AND_STACK_ACCESS_API
+        def_bool n
  
- static void atmel_spi_init(struct atmel_spi *as)
- {
-+	u32 mr = 0;
-+
- 	spi_writel(as, CR, SPI_BIT(SWRST));
- 	spi_writel(as, CR, SPI_BIT(SWRST)); /* AT91SAM9263 Rev B workaround */
- 
-@@ -1487,12 +1490,17 @@ static void atmel_spi_init(struct atmel_spi *as)
- 	if (as->fifo_size)
- 		spi_writel(as, CR, SPI_BIT(FIFOEN));
- 
--	if (as->caps.has_wdrbt) {
--		spi_writel(as, MR, SPI_BIT(WDRBT) | SPI_BIT(MODFDIS)
--				| SPI_BIT(MSTR));
--	} else {
--		spi_writel(as, MR, SPI_BIT(MSTR) | SPI_BIT(MODFDIS));
--	}
-+	/*
-+	 * If GCLK is selected as the source clock for the bit rate generation
-+	 * Enable the BRSRCCLK/FDIV/DIV32 bit
-+	 */
-+	if (as->gclk)
-+		mr |= SPI_BIT(FDIV);
-+
-+	if (as->caps.has_wdrbt)
-+		mr |= SPI_BIT(WDRBT);
-+
-+	spi_writel(as, MR, mr | SPI_BIT(MODFDIS) | SPI_BIT(MSTR));
- 
- 	if (as->use_pdc)
- 		spi_writel(as, PTCR, SPI_BIT(RXTDIS) | SPI_BIT(TXTDIS));
-@@ -1555,6 +1563,11 @@ static int atmel_spi_probe(struct platform_device *pdev)
- 	as->phybase = regs->start;
- 	as->irq = irq;
- 	as->clk = clk;
-+	as->gclk = devm_clk_get_optional(&pdev->dev, "spi_gclk");
-+	if (IS_ERR(as->gclk)) {
-+		ret = PTR_ERR(as->gclk);
-+		goto out_unmap_regs;
-+	}
- 
- 	init_completion(&as->xfer_completion);
- 
-@@ -1615,7 +1628,19 @@ static int atmel_spi_probe(struct platform_device *pdev)
- 	if (ret)
- 		goto out_free_irq;
- 
--	as->spi_clk = clk_get_rate(clk);
-+	/*
-+	 * In cases where the peripheral clock is higher,the FLEX_SPI_CSRx.SCBR
-+	 * exceeds the threshold (SCBR ≤ 255), the GCLK is used as the source clock
-+	 * for the SPCK (SPI Serial Clock) bit rate generation
-+	 */
-+	if (as->gclk) {
-+		ret = clk_prepare_enable(as->gclk);
-+		if (ret)
-+			goto out_disable_clk;
-+		as->spi_clk = clk_get_rate(as->gclk);
-+	} else {
-+		as->spi_clk = clk_get_rate(clk);
-+	}
- 
- 	as->fifo_size = 0;
- 	if (!of_property_read_u32(pdev->dev.of_node, "atmel,fifo-size",
-@@ -1650,6 +1675,8 @@ static int atmel_spi_probe(struct platform_device *pdev)
- 
- 	spi_writel(as, CR, SPI_BIT(SWRST));
- 	spi_writel(as, CR, SPI_BIT(SWRST)); /* AT91SAM9263 Rev B workaround */
-+	clk_disable_unprepare(as->gclk);
-+out_disable_clk:
- 	clk_disable_unprepare(clk);
- out_free_irq:
- out_unmap_regs:
-@@ -1685,6 +1712,8 @@ static void atmel_spi_remove(struct platform_device *pdev)
- 	spin_unlock_irq(&as->lock);
- 
- 	clk_disable_unprepare(as->clk);
-+	if (as->gclk)
-+		clk_disable_unprepare(as->gclk);
- 
- 	pm_runtime_put_noidle(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
-@@ -1696,6 +1725,8 @@ static int atmel_spi_runtime_suspend(struct device *dev)
- 	struct atmel_spi *as = spi_controller_get_devdata(host);
- 
- 	clk_disable_unprepare(as->clk);
-+	if (as->gclk)
-+		clk_disable_unprepare(as->gclk);
- 	pinctrl_pm_select_sleep_state(dev);
- 
- 	return 0;
-@@ -1705,10 +1736,20 @@ static int atmel_spi_runtime_resume(struct device *dev)
- {
- 	struct spi_controller *host = dev_get_drvdata(dev);
- 	struct atmel_spi *as = spi_controller_get_devdata(host);
-+	int ret;
- 
- 	pinctrl_pm_select_default_state(dev);
- 
--	return clk_prepare_enable(as->clk);
-+	ret = clk_prepare_enable(as->clk);
-+	if (ret)
-+		return ret;
-+	if (as->gclk) {
-+		ret = clk_prepare_enable(as->gclk);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
- }
- 
- static int atmel_spi_suspend(struct device *dev)
-@@ -1736,10 +1777,17 @@ static int atmel_spi_resume(struct device *dev)
- 	ret = clk_prepare_enable(as->clk);
- 	if (ret)
- 		return ret;
-+	if (as->gclk) {
-+		ret = clk_prepare_enable(as->gclk);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	atmel_spi_init(as);
- 
- 	clk_disable_unprepare(as->clk);
-+	if (as->gclk)
-+		clk_disable_unprepare(as->gclk);
- 
- 	if (!pm_runtime_suspended(dev)) {
- 		ret = atmel_spi_runtime_resume(dev);
+ config BPF_KPROBE_OVERRIDE
+
 -- 
-2.25.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
