@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-750986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2DA8B163B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:27:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AF76B163BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05BF2162F0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABBDA3AB67C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BADF2DCF69;
-	Wed, 30 Jul 2025 15:27:44 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F492DCF69;
+	Wed, 30 Jul 2025 15:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdNKp5YO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88810298CD5;
-	Wed, 30 Jul 2025 15:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 152E51E492;
+	Wed, 30 Jul 2025 15:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753889263; cv=none; b=GZwu7kPZdf7YwbwF72zWswOXT+414NWvKfvyPQ9mUJS5jH18cAPG629NxW24sHHQuL771l3FT/wLrVVNjQehhPedxYm6fXPu+fczzAtEMHhRnC2+S/eCTvqQLOr0OcU6RE5Cqg73xqpfmP985FT8hClKMEE1P6Fe3ggimeSJSFw=
+	t=1753889347; cv=none; b=pV1tn2l/DiL4t629SyW+fMEyb6rHvzywlPLkgPYR0pLKhs/aJiQgCT4J97pnXfQ3Dz3O28PSkv0r/69HLJdMyqAJdwl5xiQX/xaqkDeTaGsDoSsvw8rOi0uU2CSwnXxeRcWVI5g+7yVzyzY9uN1W69w5NxQ3avT1E15nuJ7FVS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753889263; c=relaxed/simple;
-	bh=ThRQpQImKohW3j0bDzEv1ge11WAODJfzdzfjbsd8yyI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mEjkmLBoKnPutUsuT9r+rlRTMMSR8rWo2OtHCBNU3hcu3SOqIEpmxnK0TnWY+08PFSXueJZWO2/mRHjHfE7UzNcupUcjY52jMR99R5nh2GCLO3/8l13Jb9vuRSQFTJ4xJzzmnWDzVackyJeB8uYQZXel0YoDs/lgUGjQFBdZsTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 976B81A04C8;
-	Wed, 30 Jul 2025 15:27:39 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id 155412E;
-	Wed, 30 Jul 2025 15:27:37 +0000 (UTC)
-Date: Wed, 30 Jul 2025 11:27:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Greg KH <greg@kroah.com>, Sasha Levin <sashal@kernel.org>,
- corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
- josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
- linux-kernel@vger.kernel.org, Linus Torvalds
- <torvalds@linux-foundation.org>, "Dr. David Alan Gilbert"
- <linux@treblig.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <20250730112753.17f5af13@gandalf.local.home>
-In-Reply-To: <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
-References: <20250727195802.2222764-1-sashal@kernel.org>
-	<7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
-	<2025072854-earthen-velcro-8b32@gregkh>
-	<df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753889347; c=relaxed/simple;
+	bh=OgXBpaAsic4nMS468vahtDEunU4AdzoBhyfpgoQC/38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TgcA5l+cbTu66+PjBpX9WcEh+JHzdH8JpxbBcdBUUA5/vECaJSte+IH8n4/FQcw8w+JfDgoxEQuhsjjzaGVUiQ1oCpduLRo4br82qDKfAuozFzqxFEYIvWNGc1GjGuXwyYjuWHYw2DxNnzItVb8M1OkCgZVZqMLsGy70sBWqiZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RdNKp5YO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 398DBC4CEE3;
+	Wed, 30 Jul 2025 15:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753889346;
+	bh=OgXBpaAsic4nMS468vahtDEunU4AdzoBhyfpgoQC/38=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RdNKp5YOgKvik3i+Wv6NLwH2UxocsRtxEG4otYmdcM2stFn7fmXzrn/NIiAQgiYCc
+	 e9Um2O+Zl80TMhDBvdg2YCYGuBgdwm5kNFlhLPTHyQpT0kNpbLtEDq4Gcr5CurdqZ4
+	 IjovzfDudtf6HD43CHbLnGElAZNTwy2e7uD2idoeEBLYjSu5aROUzPxt4fEEIZCKwz
+	 /NW0UJFGIUTD/DNxrMnIiegTJM0yFYmcNBcyccOVRrLhxBtJzTqj4RNdm32T7JPdhi
+	 vJsp+pTKtXakzpd3KgZotFFs2lSENi5ubxeAAI/tp8o9g24lmISL0Z6tIB7fmw31JM
+	 /aLe9FVjXJ7+w==
+Date: Wed, 30 Jul 2025 16:29:00 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
+Message-ID: <ec14bd9a-ef9f-4458-b033-0f96cd5daae6@sirena.org.uk>
+References: <20250730093230.629234025@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: a3f4m4toxzif1947pcpybdrnexzuu6wh
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 155412E
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/6zddIWnwaG0PC03/R4rWftBR/ZnZuRK4=
-X-HE-Tag: 1753889257-723928
-X-HE-Meta: U2FsdGVkX1/WwWjUnrXvCwivuj741K146bUz3Qsieq2Nfs3GLxqCHF45x8wUpM7HqpoDkWTiRuWNq4wUhpA/30hhT/xdy+X4ky7BKuFgFAsJUVtUZRYnxv99OZGA0vNyncrDk8rPvOkQoDYp7WjQ2iwGCPRxshtVPKucme7o6w9PYU+N3WbgkiShRvLeDPusWKYvvOaKV+oyh7+N7nYh1+CWgv8JJht94yW+nOEUovVTHGXqozcEHl1zaaJnaqqe+2eBl4iHVIf5FoF45B2c1mvWnbKe8av9gWHpG/lbrsPC09NKFfRmsBEeGLFmWW78H/lBsjNwKm2Ssure1CPlqEfbnXNPOmw/fwtgFByt1XoOxS1LFj7DFxp7N+w7BIYm5H8k7aVEPegQC7Bkn2mSEErZBB3/opyXyu1F5cDNXAM=
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="YS4c70tu4ZFNYZXq"
+Content-Disposition: inline
+In-Reply-To: <20250730093230.629234025@linuxfoundation.org>
+X-Cookie: Linux is obsolete
 
-On Mon, 28 Jul 2025 11:52:47 +0100
-Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-> On Mon, Jul 28, 2025 at 12:35:02PM +0200, Greg KH wrote:
-> > > So to me:
-> > >
-> > > - We should establish an official kernel AI policy document.  
-> >
-> > Steven Rostedt is working on this right now, hopefully he has something
-> > "soon".  
-> 
-> Great! Thanks for looking at that Steve.
-> 
-> I think a key element here has to be maintainer opt-in.
-> 
+--YS4c70tu4ZFNYZXq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I had started looking into what to write, as in the TAB meeting we were
-going to pass a document around before we posted it to the mailing list,
-but then I was made aware of this thread:
+On Wed, Jul 30, 2025 at 11:35:08AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.9 release.
+> There are 92 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-  https://lore.kernel.org/lkml/20250724175439.76962-1-linux@treblig.org/
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Which looked like someone else (now Cc'd on this thread) took it public,
-and I wanted to see where that ended. I didn't want to start another
-discussion when there's already two in progress.
+--YS4c70tu4ZFNYZXq
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- Steve
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiKOjsACgkQJNaLcl1U
+h9B1rgf5AV8NwF3OZmRhsYjvixuU4pUEIARJWK/8mWdOlja3UIHIw/pQjxv51ztR
+itkKmABSprvOsjPKrQVUkbgzE3GpOu9OXh2nZilECYf+MMDuI5ml3C/ysXM0UJS7
+eNREgWjviKLN7c0c9KCxHHMte1oZErIYFQhhvuT95LD53A6CsWC+CzvXjJe4c1LV
+5OC4N2EzLygVcd2qXaM8ondWQqxafV74yQU4sNMf1lxHLF0JlJaFKS0CYrzsyntW
+y95D/ukeT748hkrR4zzGiN9Bjq0fReW1bkSJdSpIGJOrnAAjWvljZlKwYQ09oREi
+Hr8zDHZJVOL7Qs3rCOrR8WlytF9KlA==
+=sO58
+-----END PGP SIGNATURE-----
+
+--YS4c70tu4ZFNYZXq--
 
