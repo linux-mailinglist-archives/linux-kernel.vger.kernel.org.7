@@ -1,132 +1,155 @@
-Return-Path: <linux-kernel+bounces-750851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE1EB161D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:51:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816A5B161AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:39:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E8B5A4F93
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:50:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C799547CDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4BBC2D8DC3;
-	Wed, 30 Jul 2025 13:50:50 +0000 (UTC)
-Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7132D6623;
-	Wed, 30 Jul 2025 13:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3C92D6617;
+	Wed, 30 Jul 2025 13:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pFZmi5Gq"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7415414D70E
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883450; cv=none; b=MLmmrXehaYgtGFJUjomG3i2aQ5wN0mwX4lvixJTNE8dsiAcjrpw5RnHwJQ2PnWDyr0H5CVuoJ6oPsJYnm10v8xU1HVqa5+wNWxRwc9IfLMCIKkvX7ho8bS1RzTEi7Z6sS2J3rTvcYRV+hlfuqrl9eXaPbFrbW7RlGL+mSyEBIfA=
+	t=1753882774; cv=none; b=IAEpEHKAsBWeTh5MjwNIZCYXg32JfS5PYUZQRyQWcJdKpJUumJ8/nMjBatUEOZ0CwpTUyf5PPtpadZSgCK7tUMTR0PbK/msSSBvQsELW1ABks/xlG/oJ7fCfgX6kSuY1bRH1g77B7uSWnAB+2mHV5AlK+laerMkqtsuUZA+GRrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883450; c=relaxed/simple;
-	bh=J7dvpyIoCy9NIKCBj4b8RMd8iL7yTVA0V2WKCp0lX20=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=nWPi0NEGUxwWFh/LE+yxUfLeZWiiLcySHimHp78u1B1trA9WXooX96WKg67udp6YH1RROgKSejizt0MGodGLzaWd5OAh20k4JnD/jaROK0zeFSynWemSER+zKtMiXBvKvALoPLGGEucB/U10ruk86KcAmUI4rhobPKt/nJSwrmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
-	by localhost (Postfix) with ESMTP id 4bsYDJ1Vh3z9srp;
-	Wed, 30 Jul 2025 15:37:20 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id hTOaUPuVAapB; Wed, 30 Jul 2025 15:37:20 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase1.c-s.fr (Postfix) with ESMTP id 4bsYDC13bxz9st0;
-	Wed, 30 Jul 2025 15:37:15 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 1EEA78B76E;
-	Wed, 30 Jul 2025 15:37:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id rpERR39Nzj83; Wed, 30 Jul 2025 15:37:15 +0200 (CEST)
-Received: from [10.25.207.160] (unknown [10.25.207.160])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EA4F58B763;
-	Wed, 30 Jul 2025 15:37:14 +0200 (CEST)
-Message-ID: <5553bad0-2bd1-41c0-966f-98a0a4acbb23@csgroup.eu>
-Date: Wed, 30 Jul 2025 15:37:14 +0200
+	s=arc-20240116; t=1753882774; c=relaxed/simple;
+	bh=8msNZxV4vzYZHV5zdjpoumhb4VdGCiYWL1hPZvJX9ZE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cnREWXyh6T7z+9bAAjWGxUQCILHzNElSzdG2DdsEVVajvh8Ja+LAs9pdAM7RJN8+CCrN7Wc18WsDNTv+ocB9SYvjIrRxS+s3wp58+ogjDTUbzm3NRX3F8gs1X4zGNha01/99N3kSjwqg4eL8bkyx+yFDPVZ6L63/dq3V618CplI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pFZmi5Gq; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b783ea5014so2376656f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753882771; x=1754487571; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ItEELH3cRLVD+iAArrenHRjEW7ZVw4L4zIbc9jOQ2nI=;
+        b=pFZmi5GqnR6GCsyM7o5Av0AxoSdCeD7pPeOmwSCVKPQplZBdXensaOdktyKZ1qdsa+
+         9AFPFuxDmgPN4meywZDgABDdxhK9uP6cugI6sFD+cELkcoRoJW4m1JJE8ziFdQHYfBJP
+         jwHbG1n5xbsTb++splsKifgnu1aBlavrAjoWI9QDlP49P7W1rYSDvHOjrBR78Ilsecap
+         mfzAVOoGiX9L/a3iYTBA6gnYPJfXzSoW3lEgMa/410Pz6XhKhNw+YiXC+uImFs1ZdAZ3
+         xeKgfuJhiAxowTu4nyIv9YBIuUrf+yB+ATSXWfcJjmQ76lUZf+N2MrOmKK+aHICjluyu
+         xR6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753882771; x=1754487571;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ItEELH3cRLVD+iAArrenHRjEW7ZVw4L4zIbc9jOQ2nI=;
+        b=g/kdmY8nj+imM61bmItGcnxnAn9aDhdzCsNfTZO8KEpejtlv7qp00GpSsDYx2BtcPn
+         EXPlQ9UC0hxuzc1mq0skihAY24JeVY4/vuEG8JO1dj5xKfRGsgNqtwhLyURYuymBhF8A
+         XJzmGSM4SY6VREhmJ83UIHd//KbATZkF+FtDmIOCt9Qf+IH9WQrJNrVKDJXpuWr4liUx
+         U1l15SjnQR1bW5yFXVrCD/N1IrCGiVx2rxtWHkdg5lsCg6O34oXPOEdODdaeQM0V2wHj
+         ciUJpUt1n5iT09IRtWYDi09xTDbGJa4zhoAtO69+zherxG2dR+h2+hdwOHFZiT9wgsQZ
+         fa8w==
+X-Forwarded-Encrypted: i=1; AJvYcCWw6cpFzMADVOoWVO4P2JfGoiBcFiB9oPHGzMfA2lt7wQjvdnHxdGCV9xUPuthWmHBwubkSBchiJ0k8OtU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySYhqafc46c1C6nqtApUIlVzK4oz0tax+2VoEIBMttfAPV+7ZN
+	2fCm9eEhZNE7IQptUdXM2YKHiTV7j/l4UlhauZ6uu7MhTRs8ABrTwOMfHzphA9K/nYPi8mET+lm
+	S+MwJ+0xgHrpYfjXF81a2n27Ypr0vtjxsdtDM8BxW
+X-Gm-Gg: ASbGncuJ4IrgrVGoCLBEVjDBoJ0SsSS5ry4hyz3xqpiNp254kRl4FvnC3MxYwH49ac5
+	j0H54SFqCPMUNvjte5IkJM+a4tGo4isZ2htE0xl80//3DgQXj84/qMVUCs1cg4iLzgf3Vx5jCFt
+	TdXlLaFdC0oUAOka9ME9s/OweR84Jp9FZywSLeuwYA5Gy+1M0YuK3g5PNFi0GMDOdxTHC3LChL7
+	tIJu7pU
+X-Google-Smtp-Source: AGHT+IEyr2t9aHif2RFUX92J/+mKbiL5ER5m1V7hwBgTcdhRVH7lV6emYSvc7TOE1oUP0faIrNPGeGeGOw3MAShGOAw=
+X-Received: by 2002:a05:6000:288c:b0:3a4:eae1:a79f with SMTP id
+ ffacd0b85a97d-3b794ffd043mr2795662f8f.33.1753882770587; Wed, 30 Jul 2025
+ 06:39:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: Use dev_fwnode()
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, Qiang Zhao <qiang.zhao@nxp.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- linux-tegra@vger.kernel.org
-References: <20250611104348.192092-1-jirislaby@kernel.org>
- <20250611104348.192092-19-jirislaby@kernel.org>
- <907f875e-5ed0-4eca-b285-ebb7e47137ce@csgroup.eu>
-Content-Language: fr-FR
-In-Reply-To: <907f875e-5ed0-4eca-b285-ebb7e47137ce@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
+ <fc26c393-5c4b-48a8-a7ac-12558f79b140@sedlak.dev> <DBP8RFDV59PF.1OV46P0UYKOGM@kernel.org>
+ <07575756-58EA-4245-B837-AEC4DDCD0DB5@collabora.com> <20cc8581-0af2-47b3-9fdd-584ff0ef36ab@sedlak.dev>
+In-Reply-To: <20cc8581-0af2-47b3-9fdd-584ff0ef36ab@sedlak.dev>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 30 Jul 2025 15:39:18 +0200
+X-Gm-Features: Ac12FXzumko90MY33tXnHyIvT1ML5t_t7BouF-ETji09Sr887Pkg4SW4INEXrAY
+Message-ID: <CAH5fLgjBQF+AGWQ-rKowViiL1kK47FZ80QfEa58Cx9bk11cjAw@mail.gmail.com>
+Subject: Re: [PATCH] rust: clk: use the type-state pattern
+To: Daniel Sedlak <daniel@sedlak.dev>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Benno Lossin <lossin@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-clk@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 30, 2025 at 3:27=E2=80=AFPM Daniel Sedlak <daniel@sedlak.dev> w=
+rote:
+>
+>
+> On 7/30/25 2:59 PM, Daniel Almeida wrote:
+> > [=E2=80=A6]
+> >
+> >> We essentially would like to have a `#[sealed]` attribute that we can
+> >> put on a trait to avoid the `mod private { pub trait Sealed }` dance.
+> >> (so a trait that cannot be implemented outside of the module declaring
+> >> it)
+> >>
+> >> ---
+> >> Cheers,
+> >> Benno
+> >
+> > This is not exactly what you said, but how about a declarative macro? e=
+.g.:
+> >
+> > macro_rules! sealed {
+> >      ($($ty:ident),* $(,)?) =3D> {
+> >          mod private {
+> >              pub trait Sealed {}
+> >              $(impl Sealed for super::$ty {})*
+> >          }
+> >          use private::Sealed;
+> >      };
+> > }
+> >
+> > sealed!(Unprepared, Prepared, Enabled)
+> >
+> > Note that I am just brainstorming the general idea here, I did not test=
+ it yet.
+>
+> I think that API-wise it would be better to have a proc-macro #[sealed],
+> something similar to [1], as it may provide better error messages, when
+> used incorrectly. So the outcome could look like.
+>
+>         #[sealed]
+>         pub trait ClkState {
+>         =E2=80=A6
+>         }
+>
+> And then
+>
+>         #[sealed]
+>         impl ClkState for XXX {
+>         =E2=80=A6
+>         }
+>
+> If you are interested, I can try to look into that.
+>
+> Link: https://crates.io/crates/sealed [1]
 
-
-Le 08/07/2025 à 10:33, Christophe Leroy a écrit :
-> Hi,
-> 
-> Le 11/06/2025 à 12:43, Jiri Slaby (SUSE) a écrit :
->> irq_domain_create_simple() takes fwnode as the first argument. It can be
->> extracted from the struct device using dev_fwnode() helper instead of
->> using of_node with of_fwnode_handle().
->>
->> So use the dev_fwnode() helper.
->>
->> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
->> Cc: Qiang Zhao <qiang.zhao@nxp.com>
->> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
->> Cc: Thierry Reding <thierry.reding@gmail.com>
->> Cc: Jonathan Hunter <jonathanh@nvidia.com>
->> Cc: linux-arm-kernel@lists.infradead.org
->> Cc: linuxppc-dev@lists.ozlabs.org
-> 
-> There must be something wrong with this patch. b4 shazam applies a 
-> different patch.
-> 
-> $ b4 shazam -l -s --single-message --no-parent 20250611104348.192092-19- 
-> jirislaby@kernel.org
-> Single-message mode, ignoring any follow-ups
-> Grabbing thread from lore.kernel.org/all/20250611104348.192092-19- 
-> jirislaby@kernel.org/t.mbox.gz
-> Breaking thread to remove parents of 20250611104348.192092-19- 
-> jirislaby@kernel.org
-> Checking for newer revisions
-> Grabbing search results from lore.kernel.org
->    Added from v2: 1 patches
-> Analyzing 25 messages in the thread
-> Looking for additional code-review trailers on lore.kernel.org
-> Analyzing 22 code-review messages
-> Will use the latest revision: v2
-> You can pick other revisions using the -vN flag
-> Checking attestation on all messages, may take a moment...
-> ---
->    ✓ [PATCH v2] iio: adc: stm32-adc: Use dev_fwnode()
->      + Reviewed-by: David Lechner <dlechner@baylibre.com> (✗ DKIM/ 
-> baylibre-com.20230601.gappssmtp.com)
->      + Link: https://lore.kernel.org/r/20250612084627.217341-1- 
-> jirislaby@kernel.org
->      + Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
->    ---
->    ✓ Signed: DKIM/kernel.org
-> ---
-> Total patches: 1
-> ---
-> Application de  iio: adc: stm32-adc: Use dev_fwnode()
-> 
-> You must have posted another patch with the same message ID. I had to 
-> apply it manually.
-> 
-
-Applied (Manually), thanks!
+It seems a bit much to have macros for everything.
 
