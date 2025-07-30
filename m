@@ -1,217 +1,138 @@
-Return-Path: <linux-kernel+bounces-750291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3D9AB15997
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:31:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99E90B159A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C297D3BBB76
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 017F118A8269
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F591EB5DB;
-	Wed, 30 Jul 2025 07:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A5328751A;
+	Wed, 30 Jul 2025 07:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HlbAukv0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hItgKbn6"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5867F28ECDF
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616E92874E9
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:32:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753860691; cv=none; b=aYa5n4Fm4WBZgL6g1Eklw/84M0qBXF8fw8V1Xn/GVcIW7FnFnK2Ur4pf7b+eMtKwSQ6God2BzDrzQAbdTQDDs4+vjh4YQxwzSonjEgqOEbgrdNmagGcj0mGL1711WCe+lP52GyuyIciCKyyp0mieiL4lo4rH+mwpW+0SkwL5xE0=
+	t=1753860774; cv=none; b=QY8PicwlnXKHBAjrxMrShwUS7yxk6be7UK+uiWnK4Gw80ktFLSsignsmCiaeUUhtx2Aqgt93174q/gPER/sZg5jHgWgprPhkzpkCaPg8tmEW0S4Dl968iZiZTZU8oMi63OX79JuRCmCgbEEF/PsIscmIwMzoQQjPsTgUE8VDx2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753860691; c=relaxed/simple;
-	bh=pGAOCVRw0BLj2G2xXBMzOn9p5X2PAw/oxgucy6qgMkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R48O5V8RWmcpvrD5l8r86E0GiF3m5wVVTX2GzJTEJ4qzxR3VsImmmbrt3/OWei8xf0jW6Wcd2M5XIGvDCAoQt5CoSmXaVc42XOMovddvsodbS7uEOkDs/NkR9BQ28S+iRqxOGV0V7quDbQifHP0x+SouS2Dv/ufk71Uk2WdJu/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HlbAukv0; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753860688;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tg3kHXf/VEPySXPdaIeZnW9fOV15ESdV9yA7hGdIv+A=;
-	b=HlbAukv0JvBGI1Zud1n951DvJ+pj8O2MN2qBpv/A8qWpZDBUADc2AF3eqvsbHEW1HsjeW0
-	BbowV4OBCfgTjhdz8xAIYKhhrWJ6gbnhv49fkjd0711CpKcM0NWjahc5EBZLOQkuxXa8PP
-	oxXMlCxYDUeeyJ8BsKU5rH7U/SqyDEU=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-626-Dp1SzmyFOle5TuJFQO5dSQ-1; Wed,
- 30 Jul 2025 03:31:24 -0400
-X-MC-Unique: Dp1SzmyFOle5TuJFQO5dSQ-1
-X-Mimecast-MFC-AGG-ID: Dp1SzmyFOle5TuJFQO5dSQ_1753860683
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1116119560AA;
-	Wed, 30 Jul 2025 07:31:22 +0000 (UTC)
-Received: from darkstar.users.ipa.redhat.com (unknown [10.72.116.59])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 438C21800B71;
-	Wed, 30 Jul 2025 07:31:12 +0000 (UTC)
-Date: Wed, 30 Jul 2025 15:31:59 +0800
-From: Dave Young <dyoung@redhat.com>
-To: Brian Mak <makb@juniper.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Baoquan He <bhe@redhat.com>, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>, x86@kernel.org,
-	kexec@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] x86/kexec: Carry forward the boot DTB on kexec
-Message-ID: <aInKb8qr689ytM41@darkstar.users.ipa.redhat.com>
-References: <20250729182142.4875-1-makb@juniper.net>
+	s=arc-20240116; t=1753860774; c=relaxed/simple;
+	bh=O32Ie8Am603046JA4arS3OFon7lXrwsdPMSnmBgjKFs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VgRGRwSkBkQeLuB85jb3mR3w0blrWLIn9HyQWzoFBtMvdLs0CxPRHUA0SNr+dnxWHrPeuHcVLSVFSGtJ/hQVPfbkRcsvgXo9wMAqbPnjObExj29+2CGCITSXeX4e/SxJCxSeLarx6TCeHYDYGoFikoDWgXiOtZPb+5jD9vjxCA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hItgKbn6; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4ae721c2f10so59807401cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:32:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753860772; x=1754465572; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3QgyZUt2WJh4tQvZzl2B9nRznrnVSTuASTHr5LO7G+E=;
+        b=hItgKbn6JBr86Czfdc5voaYW4DR1yIMUQnbHtjmdxUmN88I03ull8+iYW3ASbeHyAi
+         nGRBAGOn4FPyqfXreUBZYo0o8jyf3kdzLqqO/3U5K5SL+SF7W6AEAo2GTlghf/MeRIhl
+         kVxnYK1pAJsmhDop9JSxH3z53DzMMl5323mM2kJVoixmvuSg6UKBKQAcTIqvMTLhPd9W
+         2s2F/8lziLrS07jjG8fVPfGqqq7E8bYFTSMZ80WRh3fd3mW5CKEJuYYuJ8Do3VIgXj18
+         LlRboMdRsxbXmsUqb+Cx/YD6BkkQnSq4KQ5pEHB7EhiBvnf+kwo4l4PPwrQh/TneLRBO
+         ntWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753860772; x=1754465572;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3QgyZUt2WJh4tQvZzl2B9nRznrnVSTuASTHr5LO7G+E=;
+        b=Ggz83+0lWir5Sh2VDi16HQqDTabbVAEh8Nor8Y78fWviw8b7eV35FR/CLcAGJj9OoH
+         SsB5U5NLhfsFR0jtTdG217iTvY4wq0TD14mawk4Kugi3vc+InPCYZAwGf0uSrdRMYYO8
+         tgAaFXdjY55PITRyqYCyzi5gLO3AGWHxHC7IyPv82Y3YV2AWlWsDjfyPKTNe+5zoyzdn
+         ECSq8hZrxi7/xHibRfyeZQmQ50MukkmpzHCQ43LfCKZhSDiDDjCoNKrue45aWtt0glOY
+         tZ4d2OmTWcI1DvA2GQoUiKV0M5LYEfLazwWMk5OdgkE600RC8+TOi8lpxp4e/TX1X5rH
+         5tTw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZIh77ogsjkfIRvJOpaTFjgnHoGbtgrkTCCOF+fFMb9+WLW4PN1XTSsVH8yHZWLZoo0GT/OSpViuqDDx0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykoKEwau0ufOGHDXlrvkcroaQ3cKwA7e5oaGIN2+N8cqZo3scI
+	Pul3QPFHioNnG3WkFm3b4LjQICJiF7U0nqXUGTQyuuNPLfW5/Zd5w+3a
+X-Gm-Gg: ASbGncsnb8MyP5hn6dFPxY1J5TaihCqNXHYvwFO1RWzP9BzbbcJhWt9qo9BnkK02K4k
+	ybleaTZXdEDlLZLeG3n5rqY4M9EscQIdR/+WABZzR/jY5YjPF1tRJYyPvsWYPxIdzP8tOtuL9bn
+	tenXRWrdAsD14oBB3PDdEEC1Z3MPbm38f12Zo0PnVaG9cBzjBXNIoLhg5BVak5nt/9UrxdFGlea
+	57C2Mctugw0CnXfz54B8H0DB8f7A63tTiHMOWM1c4x3PSU0YnK2e7JtylNgKZ7BUV6nrmrmL846
+	VL8nFc3+Av85rEcsGB4hkubovzcpjKaLJ4p5xPY9Lfpk1AgesYFgbdToFGS64qH7Tv871U9JQFc
+	v7l6cqsQXuzsCE7VGOsx/KVFa7HyxvgZjR26RpwcDNump6ivV1/g=
+X-Google-Smtp-Source: AGHT+IHmqYte3ijgzk02Zta+BjezQKmqmxp3FWkE6qrzg1Mtefch78YALl0dEgAi+oR4A+BIuxjeyA==
+X-Received: by 2002:a05:622a:394:b0:4ab:417f:aa44 with SMTP id d75a77b69052e-4aedbc59df6mr41746121cf.51.1753860772151;
+        Wed, 30 Jul 2025 00:32:52 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4ae99545512sm62680331cf.21.2025.07.30.00.32.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 00:32:51 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: vivek.balachandhar@gmail.com,
+	Markus.Elfring@web.de,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v4 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
+Date: Wed, 30 Jul 2025 07:32:24 +0000
+Message-Id: <20250730073224.490578-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250730042032.488456-1-vivek.balachandhar@gmail.com>
+References: <20250730042032.488456-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729182142.4875-1-makb@juniper.net>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29, 2025 at 11:21:42AM -0700, Brian Mak wrote:
-> The kexec_file_load syscall on x86 currently does not support passing
-> a device tree blob to the new kernel.
-> 
-> To add support for this, we copy the behavior of ARM64 and PowerPC and
-> copy the current boot's device tree blob for use in the new kernel. We
-> do this on x86 by passing the device tree blob as a setup_data entry in
-> accordance with the x86 boot protocol.
-> 
-> Signed-off-by: Brian Mak <makb@juniper.net>
-> ---
->  arch/x86/kernel/kexec-bzimage64.c | 46 +++++++++++++++++++++++++++++--
->  1 file changed, 43 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/kexec-bzimage64.c b/arch/x86/kernel/kexec-bzimage64.c
-> index 24a41f0e0cf1..c24536c25f98 100644
-> --- a/arch/x86/kernel/kexec-bzimage64.c
-> +++ b/arch/x86/kernel/kexec-bzimage64.c
-> @@ -16,6 +16,8 @@
->  #include <linux/kexec.h>
->  #include <linux/kernel.h>
->  #include <linux/mm.h>
-> +#include <linux/libfdt.h>
-> +#include <linux/of_fdt.h>
->  #include <linux/efi.h>
->  #include <linux/random.h>
->  
-> @@ -212,6 +214,28 @@ setup_efi_state(struct boot_params *params, unsigned long params_load_addr,
->  }
->  #endif /* CONFIG_EFI */
->  
-> +#ifdef CONFIG_OF_FLATTREE
-> +static void setup_dtb(struct boot_params *params,
-> +		      unsigned long params_load_addr,
-> +		      unsigned int dtb_setup_data_offset)
-> +{
-> +	struct setup_data *sd = (void *)params + dtb_setup_data_offset;
-> +	unsigned long setup_data_phys, dtb_len;
-> +
-> +	dtb_len = fdt_totalsize(initial_boot_params);
-> +	sd->type = SETUP_DTB;
-> +	sd->len = dtb_len;
-> +
-> +	/* Carry over current boot DTB with setup_data */
-> +	memcpy(sd->data, initial_boot_params, dtb_len);
-> +
-> +	/* Add setup data */
-> +	setup_data_phys = params_load_addr + dtb_setup_data_offset;
-> +	sd->next = params->hdr.setup_data;
-> +	params->hdr.setup_data = setup_data_phys;
-> +}
-> +#endif /* CONFIG_OF_FLATTREE */
-> +
->  static void
->  setup_ima_state(const struct kimage *image, struct boot_params *params,
->  		unsigned long params_load_addr,
-> @@ -336,6 +360,16 @@ setup_boot_parameters(struct kimage *image, struct boot_params *params,
->  			sizeof(struct efi_setup_data);
->  #endif
->  
-> +#ifdef CONFIG_OF_FLATTREE
-> +	if (initial_boot_params) {
-> +		setup_dtb(params, params_load_addr, setup_data_offset);
-> +		setup_data_offset += sizeof(struct setup_data) +
-> +				     fdt_totalsize(initial_boot_params);
+Add a blank line after the definition of rtw_roaming() to separate it from
+the following function (_rtw_roaming()), improving readability and matching
+kernel coding style guidelines.
 
-I suppose current boot dtb should be valid for the current runnning
-kernel, if you use kexec to load another kernel the next kexec reboot
-could fail due to unmatching dtb.
+No functional changes.
 
-Make this unconditionally could break the previous working kexec?
+Identified using checkpatch.pl.
 
-> +	} else {
-> +		pr_info("No DTB\n");
+Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+---
+v4:
+- Changed the wording of version from "Changes since v2" to "v3" as per
+  Markus Elfring comments.
 
-pr_debug sounds better.
+v3:
+- Moved version change notes below the '---' line
 
-> +	}
-> +#endif
-> +
->  	if (IS_ENABLED(CONFIG_IMA_KEXEC)) {
->  		/* Setup IMA log buffer state */
->  		setup_ima_state(image, params, params_load_addr,
-> @@ -529,6 +563,12 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  				sizeof(struct setup_data) +
->  				RNG_SEED_LENGTH;
->  
-> +#ifdef CONFIG_OF_FLATTREE
-> +	if (initial_boot_params)
-> +		kbuf.bufsz += sizeof(struct setup_data) +
-> +			      fdt_totalsize(initial_boot_params);
-> +#endif
-> +
->  	if (IS_ENABLED(CONFIG_IMA_KEXEC))
->  		kbuf.bufsz += sizeof(struct setup_data) +
->  			      sizeof(struct ima_setup_data);
-> @@ -537,7 +577,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  		kbuf.bufsz += sizeof(struct setup_data) +
->  			      sizeof(struct kho_data);
->  
-> -	params = kzalloc(kbuf.bufsz, GFP_KERNEL);
-> +	params = kvzalloc(kbuf.bufsz, GFP_KERNEL);
->  	if (!params)
->  		return ERR_PTR(-ENOMEM);
->  	efi_map_offset = params_cmdline_sz;
-> @@ -647,7 +687,7 @@ static void *bzImage64_load(struct kimage *image, char *kernel,
->  	return ldata;
->  
->  out_free_params:
-> -	kfree(params);
-> +	kvfree(params);
->  	return ERR_PTR(ret);
->  }
->  
-> @@ -659,7 +699,7 @@ static int bzImage64_cleanup(void *loader_data)
->  	if (!ldata)
->  		return 0;
->  
-> -	kfree(ldata->bootparams_buf);
-> +	kvfree(ldata->bootparams_buf);
->  	ldata->bootparams_buf = NULL;
->  
->  	return 0;
-> 
-> base-commit: d7b8f8e20813f0179d8ef519541a3527e7661d3a
-> -- 
-> 2.25.1
-> 
+v2:
+- Moved the '---' marker line below the Signed-off-by tag as per kernel
+  patch formatting rules
 
+v1:
+- Addressed review comments from Markus Elfring on changing the description
+  of the patch regarding readability and separation between function definitions
+---
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks
-Dave
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index 357fc6a56c27..f8680124ce24 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -2449,6 +2449,7 @@ void rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
+ 	_rtw_roaming(padapter, tgt_network);
+ 	spin_unlock_bh(&pmlmepriv->lock);
+ }
++
+ void _rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
+ {
+ 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
+-- 
+2.39.5
 
 
