@@ -1,144 +1,192 @@
-Return-Path: <linux-kernel+bounces-750461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAFF0B15B87
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:28:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9021EB15B8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EE3418C1F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:29:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B994454822E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA7B27144C;
-	Wed, 30 Jul 2025 09:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A16E271445;
+	Wed, 30 Jul 2025 09:30:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b="ofTCsuO9"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m8JqsNdp"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DBB720E6;
-	Wed, 30 Jul 2025 09:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753867724; cv=pass; b=G3g7adDYIGRJLgu+IxOC8wY81ojTG7wY4bgdvv21oxdadKDjgW3NET5ifaD7ZbT3IwisR9o14IFGxTbroy+CSw2k8kex8ovsOWIxXz4PzwHKKFPg1JPp0egROraeq2W+eB1wc6BpZRCIhUJXU6k9GOIFFzP1ijhPryhZneXFjMs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753867724; c=relaxed/simple;
-	bh=t3c7ApzZHOMiKIf3qYga0AK7Hlk1UGv35rVUccyTIV8=;
-	h=MIME-Version:From:To:In-Reply-To:Cc:Subject:Message-ID:Date:
-	 Content-Type; b=fGbjPYfNcBIfdd8I/6758yA6+6owW0iinQLjqTTRZizbY+iO0y0MFpmBa64P5Tokf512GuCIFB64Va0/GISvDazIs4LwtHu9lqUW/bJeKNATE/CMgyo/5iv8i0IEL1demuVeu0keSuggKVHP5Rxapnelw5Fc3rMYJaXLhNqVsxY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech; spf=pass smtp.mailfrom=pigmoral.tech; dkim=pass (1024-bit key) header.d=pigmoral.tech header.i=junhui.liu@pigmoral.tech header.b=ofTCsuO9; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pigmoral.tech
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pigmoral.tech
-ARC-Seal: i=1; a=rsa-sha256; t=1753867687; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=nddlrO4R71yX3djJdv0vnzDk2yDBK552d6TsBN0yiSBexeMJAAVdQY7UyR9lwQ7jsA5C2zQbVfYd8GnBaiNQR21tXMF/sepZi2LbrpvDna+jLoxIP+NYcqtJ0yIoM0JZFPZoAkKTdBuYyvjzYl4Dbj8W/p6TSGL5NJgiIhbj4d8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753867687; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=JM3444/P86FR1Z2gUwUAcrgLuv1NTNO1qEqDAd2ngac=; 
-	b=j5hBgeS8On3qEOG7n8tsZvtaIbCQvY507MKEQikPquJ5fURIeYnhZL89+VNzjoYe8eajqzB0PNVWYK/gBGeeHQ5IwjrxN0g8Moy1PmCoi5P6e3ZInP7IHHdfR8NXpW25PtEFLps9Zi/d8fYdcxogzVZNp1U+kts/6b6jreEV1w4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=pigmoral.tech;
-	spf=pass  smtp.mailfrom=junhui.liu@pigmoral.tech;
-	dmarc=pass header.from=<junhui.liu@pigmoral.tech>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753867687;
-	s=zmail; d=pigmoral.tech; i=junhui.liu@pigmoral.tech;
-	h=MIME-Version:From:From:To:To:In-Reply-To:Cc:Cc:Subject:Subject:Message-ID:Date:Date:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=JM3444/P86FR1Z2gUwUAcrgLuv1NTNO1qEqDAd2ngac=;
-	b=ofTCsuO9zgQI/w44cuB+/P49sCcqePfZSEnRJyi43ey2KjwkBgxEJt/AY4d/ae5L
-	1E2uaI0nzua2mxogo3GpvOotYE8RXWAZdKnhdf13oCxFMEqWWFftvAxvDA5XbZtTkJT
-	5Wzq2Z2SAKOHcRnHSVFi0fbdBTNPsfUdv4Gnooyg=
-Received: by mx.zohomail.com with SMTPS id 1753867684529441.77053887820284;
-	Wed, 30 Jul 2025 02:28:04 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4838269811
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753867799; cv=none; b=NearuYt1xOAp70OsLqvqfx1APhnPrCQ+NxKN7lubAYWY2q6rCRAwMfBEvbk3CCBuIGGlwSxEkw6p2rfXGtcAxk8dJWU87zvm0uHtLqpV/EBxDSq7e7KxjVCa8QmvkYgqZ6FOjvnbm4kj55ciQdsDRTQNL5qUmBNZXLsdcfcLdJw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753867799; c=relaxed/simple;
+	bh=fnvRP+SViXyCbSMzmsrKWpJn9OYHrE70YQgzPaCywJA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=WOfuZWiGkpuBEDlzGYJroiyUFH47W2LdKPyWsQlevMx9wFFXHif3oNlcdWYfrJDrYooJegpjZGnvaBgbqikDeWjb8cBUllQ7OwEwkQ2tw7efJ7WUxnfi6/+zaa0YXLkPiK8HMBfe5L0vvsWHFdWn8TPT8lkONJ/eKDNhUicMV70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m8JqsNdp; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b39011e5f8eso5840326a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753867797; x=1754472597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=L0POlGKbEX0EvHYDWI2NptB2rFaQwWq9w/pBl23x/4k=;
+        b=m8JqsNdpmNjEiQDZlPQYPmq10IeFALBuw6Cqqxxd5JCEVEc5XxrGhS5RiJm5CNuot7
+         SJgEzx0BGd8lrtdO2/I75RCNyk5Su7htVs99clauIY5z7tg/+Mbp0Ml5WfHSqX+Dz7sM
+         aa6gd8ty80jHXsZ4it3QMuMzSdmRbcAogtBCpC+TtE8Wp4EPl4i43AwVO64N17XLFIGb
+         mpq/eRUjpHLefY/8DCiM/zkNzf5Mq5GfiQ1C4PTw71XwmJp953UGhTJeRTKhiYPaMwfT
+         4qfRAbH9ag0X7immokP4AtKtFlUZfKUJtkNaw5AHan1uMGbg/J6XxJgEHdMue6WCe80l
+         E1IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753867797; x=1754472597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=L0POlGKbEX0EvHYDWI2NptB2rFaQwWq9w/pBl23x/4k=;
+        b=QVrOkTmhsYxknywSgqIju2nv/ACTOEvaLAU+4zzX31ZIn4IeTQsAw5g/sAweQhVui/
+         V7O/47TY0+qisnIX61UMa2/AJNgpoNR0nuGmn5EwBhq/4ZCrf7EI0hzy6CXfXHaGJuVv
+         ezzLy8VCJQrYg80WfHuE+ekWtNVcdPsnqlcBomGCqJXzsB/iQ4hb1CgiIgiS28cg+c+j
+         9sz/6KLCX9MBHcJReg0RODlIoXqIW0miWyrYCCNvLE69Jx7lXgeO0az6eIh55T/v6Qv5
+         QRpdbiC5syP3TgTt2HXsbFUHvGaIpqQ9q1FYGkkUEznHHKS3KKT7YK3ykclLsBrESQJD
+         SbXA==
+X-Gm-Message-State: AOJu0Yx3dgbS67ew7I5YzfT48i8lcHWjF75r2Fs8swwWkaO8cMstVjGh
+	V9HiXtdxk2ZoV7Af6yNRBjorEQzns/5DkJT2PF8fbzUfleWVs4cF0yWDALHx+RQnWCfrBjZPsfG
+	J9kot
+X-Gm-Gg: ASbGncuJYmM9/19ak53B60XFgtfXYO7n5xET86BbMquYhBpqqqZTVg3UNVe3HtMEVMs
+	Nya22DzItAjXzxv4SxDMXHI/WMfkN4fmhHuMGV+togTflQYwpKIgC1+9JWa6ZccL9zs3gUrSuYV
+	t9duZD/bTRSLTfEXxQ1S0RrgemNE3voBAQJl/RS/WlM7xaWrZZwTsvYAD2y66Qth1kdQsvXwM40
+	kxjiexfGIs8HL7NvIHLnHPcWXsCz+7GL5VKlTaK4mgLaQkPMmtdPH0MJFLRlIJZE96D8bFjLN6m
+	9ajlz0PqlEdz8/Wuxq36PTuA8QizVIq6R86rT34ZFo+Jdk/u5xlRFpxGkfsyGAhX1D56Qg0ff2T
+	ZoZC8hLYbjFI5gpSIf9RdvKc=
+X-Google-Smtp-Source: AGHT+IF4uc5aZmco6mwIQFVn7igbRT3lJPHP6Dmmwr2upZelWkrrgq0JOAt0HEgC+nPLPHXlqWICLw==
+X-Received: by 2002:a17:90b:5103:b0:313:f6fa:5bb5 with SMTP id 98e67ed59e1d1-31f5de54a99mr4185193a91.18.1753867797096;
+        Wed, 30 Jul 2025 02:29:57 -0700 (PDT)
+Received: from localhost ([122.172.85.40])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63ee4f42sm1477362a91.23.2025.07.30.02.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 02:29:56 -0700 (PDT)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Viresh Kumar <viresh.kumar@linaro.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	=?UTF-8?q?Alex=20Benn=C3=A9e?= <alex.bennee@linaro.org>,
+	Bill Mills <bill.mills@linaro.org>,
+	devicetree@vger.kernel.org,
+	virtualization@lists.linux.dev,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Bertrand Marquis <bertrand.marquis@arm.com>,
+	"Edgar E . Iglesias" <edgar.iglesias@amd.com>,
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [RFC PATCH  0/6] virtio: Add support for Virtio message transport
+Date: Wed, 30 Jul 2025 14:59:29 +0530
+Message-Id: <cover.1753865268.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Junhui Liu" <junhui.liu@pigmoral.tech>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, 
-	"Bjorn Andersson" <andersson@kernel.org>, 
-	"Mathieu Poirier" <mathieu.poirier@linaro.org>, 
-	"Rob Herring" <robh@kernel.org>, 
-	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
-	"Conor Dooley" <conor+dt@kernel.org>, 
-	"Chen Wang" <unicorn_wang@outlook.com>, 
-	"Inochi Amaoto" <inochiama@gmail.com>, 
-	"Philipp Zabel" <p.zabel@pengutronix.de>, 
-	"Paul Walmsley" <paul.walmsley@sifive.com>, 
-	"Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>, 
-	"Alexandre Ghiti" <alex@ghiti.fr>
-In-Reply-To: <8a4ba1b1-0960-4433-b183-59c99157b0e2@kernel.org>
-Cc: <linux-remoteproc@vger.kernel.org>, <devicetree@vger.kernel.org>, 
-	<sophgo@lists.linux.dev>, <linux-kernel@vger.kernel.org>, 
-	<linux-riscv@lists.infradead.org>
-Subject: Re: [PATCH v2 2/2] drivers: remoteproc: Add C906L controller for Sophgo
-	 CV1800B SoC
-Message-ID: <1856fd5bd24fbc18.7164ab65bf64e5c2.99b72db93ceee539@Jude-Air.local>
-Date: Wed, 30 Jul 2025 09:27:55 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 30/07/2025 08:46, Krzysztof Kozlowski wrote:
-> On 28/07/2025 13:03, Junhui Liu wrote:
->> +
->> +static int cv1800b_c906l_mem_alloc(struct rproc *rproc,
->> +				   struct rproc_mem_entry *mem)
->> +{
->> +	void __iomem *va;
->> +
->> +	va =3D ioremap_wc(mem->dma, mem->len);
->> +	if (!va)
->> +		return -ENOMEM;
->> +
->> +	/* Update memory entry va */
->> +	mem->va =3D (void *)va;
->> +
->> +	return 0;
->> +}
->> +
->> +static int cv1800b_c906l_mem_release(struct rproc *rproc,
->> +				     struct rproc_mem_entry *mem)
->> +{
->> +	iounmap((void __iomem *)mem->va);
->> +	return 0;
->> +}
->> +
->> +static int cv1800b_c906l_add_carveout(struct rproc *rproc)
->> +{
->> +	struct device *dev =3D rproc->dev.parent;
->> +	struct device_node *np =3D dev->of_node;
->> +	struct of_phandle_iterator it;
->> +	struct rproc_mem_entry *mem;
->> +	struct reserved_mem *rmem;
->> +	int i =3D 0;
->> +
->> +	/* Register associated reserved memory regions */
->> +	of_phandle_iterator_init(&it, np, "memory-region", NULL, 0);
->> +	while (of_phandle_iterator_next(&it) =3D=3D 0) {
->> +		rmem =3D of_reserved_mem_lookup(it.node);
->> +		if (!rmem) {
->> +			of_node_put(it.node);
->> +			return -EINVAL;
->> +		}
->> +
->> +		if (!strcmp(it.node->name, "vdev0buffer")) {
->=20
-> Why are you adding undocumented ABI? And so hidden, not even using
-> standard OF API!
->=20
-> How does this behaves when I change your DTS to call it
-> "whateverbuffer"? Does it work? Obviously not.
->=20
-> No, stop doing that.
+Hello,
 
-Yes, you're right. I will consider introducing a "memory-region-names"
-property in the bindings, instead of relying on the node labels directly.
+This RFC series introduces support for a new Virtio transport type:
+"virtio-msg", as proposed in [1]. Unlike existing transport types like
+virtio-mmio or virtio-pci, which rely on memory-mapped registers, virtio-msg
+implements transport operations via structured messages. Those messages can be
+transported through different mechanisms such as mailboxes, shared memory based
+FIFO or specific protocols such as FF-A on Arm.
 
---=20
-Best regards,
-Junhui Liu
+This series includes:
+- Core virtio-msg transport support.
+- Two message transport bus implementations:
+  - virtio-msg-ffa: based on ARM's Firmware Framework for Arm (FF-A).
+  - virtio-msg-loopback: a loopback device for testing and validation.
+
+The code is available here for reference: [2] and virtio-msg loopback and FF-A
+test setups are explained here: [3] and [4].
+
+This series is based on v6.16 and depends on commit [5].
+
+
+### Memory Mapping and Reserved Memory Usage
+
+The first two patches enhance the reserved-memory subsystem to support attaching
+struct device`s that do not originate from DT nodes — essential for virtual or
+dynamically discovered devices like the FF-A or loopback buses.
+
+This reserved-memory region enables:
+- Restricting all DMA-coherent and streaming DMA memory to a controlled range.
+- Allowing the remote endpoint to pre-map this memory, reducing runtime overhead.
+- Preventing unintentional data leaks, since memory is typically shared at page
+  granularity.
+- For the loopback bus, it restricts the portion of kernel memory that can be
+  mapped into userspace, improving safety.
+
+Device association with reserved-memory regions is based on DT node naming
+conventions, such as vmsglb@ or vmsgffa@, similar to the remoteproc framework’s
+approach.
+
+Feedback on the design, API, and approach is welcome.
+
+--
+Viresh
+
+[1] https://lore.kernel.org/all/20250620224426.3923880-2-bill.mills@linaro.org/
+[2] git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/linux.git virtio/msg-rfc-v1
+[3] https://linaro.atlassian.net/wiki/spaces/HVAC/pages/30104092673
+[4] https://linaro.atlassian.net/wiki/spaces/HVAC/pages/29657792513
+[5] From linux-next: 5be53630b4f0 virtio-mmio: Remove virtqueue list from mmio device
+
+
+Viresh Kumar (6):
+  of: reserved-memory: Add reserved_mem_device_init()
+  of: reserved-memory: Add of_reserved_mem_lookup_by_name
+  virtio: Add support for virtio-msg transport
+  virtio-msg: Add optional userspace interface for message I/O
+  virtio-msg: Add support for FF-A (Firmware Framework for Arm) bus
+  virtio-msg: Add support for loopback bus
+
+ MAINTAINERS                          |   7 +
+ drivers/of/of_reserved_mem.c         |  91 +++-
+ drivers/virtio/Kconfig               |  34 ++
+ drivers/virtio/Makefile              |   5 +
+ drivers/virtio/virtio_msg.c          | 655 +++++++++++++++++++++++++++
+ drivers/virtio/virtio_msg_ffa.c      | 505 +++++++++++++++++++++
+ drivers/virtio/virtio_msg_internal.h |  88 ++++
+ drivers/virtio/virtio_msg_loopback.c | 323 +++++++++++++
+ drivers/virtio/virtio_msg_user.c     | 140 ++++++
+ include/linux/of_reserved_mem.h      |  13 +
+ include/uapi/linux/virtio_msg.h      | 213 +++++++++
+ include/uapi/linux/virtio_msg_ffa.h  |  94 ++++
+ include/uapi/linux/virtio_msg_lb.h   |  22 +
+ 13 files changed, 2166 insertions(+), 24 deletions(-)
+ create mode 100644 drivers/virtio/virtio_msg.c
+ create mode 100644 drivers/virtio/virtio_msg_ffa.c
+ create mode 100644 drivers/virtio/virtio_msg_internal.h
+ create mode 100644 drivers/virtio/virtio_msg_loopback.c
+ create mode 100644 drivers/virtio/virtio_msg_user.c
+ create mode 100644 include/uapi/linux/virtio_msg.h
+ create mode 100644 include/uapi/linux/virtio_msg_ffa.h
+ create mode 100644 include/uapi/linux/virtio_msg_lb.h
+
+-- 
+2.31.1.272.g89b43f80a514
 
 
