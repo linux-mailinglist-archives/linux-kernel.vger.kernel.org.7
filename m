@@ -1,121 +1,120 @@
-Return-Path: <linux-kernel+bounces-750783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A703B16109
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:08:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D87D2B16108
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:08:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0837D7B4874
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:06:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B645A4F36
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0252A29992E;
-	Wed, 30 Jul 2025 13:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E64F2980A4;
+	Wed, 30 Jul 2025 13:08:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nE40kn1E"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="DpcJM/S3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593AF2980DB;
-	Wed, 30 Jul 2025 13:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1E3DDC1;
+	Wed, 30 Jul 2025 13:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753880862; cv=none; b=E0aU6kQIgmxZ20Q97k9Jssny3GuQMBvQzkjYKMkT2E6MTLk/YjD8EjsmeMwxbC+KUolXuZr6PVMd01xRar7jfxYuQPDrcnvCo0MfwVIDfqgrYo37kxfzaDAFGtPdYl3b5Gmyhxts/jmgoj+753rddSiqGfd28xY22oXtoqvWfW0=
+	t=1753880882; cv=none; b=uGTt0k93w/LYItR5IxP8/qoXBzvzz84i1nhEZ1PgEA1j2asE7/7EDN2IeF56yg09oCGi7r6PYp0rSi+awxlgs0Cw1iKItAlJ3VtCeuU6Ap9SY1ABbRR7W71oCnCmBMSbbacwK6MHbFVRSUVB3M6qwpf11T1kHv9Qfn+4PA8oB08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753880862; c=relaxed/simple;
-	bh=MCKKk6h+3JEL6n0iy6Y6XeM4Z1b+uuvj/oVkrOFjj0M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uJxCJuLD/rtAn14+aKjdAwa3Ek2UyjumP7MtOHO2TL0DFbKw6OFfAw0fdFzliOq0vqL0KuMnfyUJXwx0/62nukr4X2WlT+5Fee4c2BpRrKoIll713BG2fGYUokd+3kNmSWKjELDw0lAf27hIqnDUh5sMSZKmEsG2xYPSQ9gsi7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nE40kn1E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2F4EC4CEE7;
-	Wed, 30 Jul 2025 13:07:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753880862;
-	bh=MCKKk6h+3JEL6n0iy6Y6XeM4Z1b+uuvj/oVkrOFjj0M=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nE40kn1E8vb+JirYTULptewIKmCOOzLFKQ5jEk+yfgBr6ztVyn/NoeuR1ILlTa4Cr
-	 fE5XI/0rzTwnq9mwzDiKbJAH6mjXRGSO517gT0Dg5+AfnE+ejH0gPzwpz7lD/RlM60
-	 fuDYO46LUk/zUcdpgT2Ez8GYxOdB5mCuckXrVCVmJVQFRYAHNRMv+Et0CrLcc9orXl
-	 L/q9YLIRSxKneEYQ34nJNOofcr6VTvDYcQ6XTbE56qXa/Yn63ShYu9FjTx2L0dAJFz
-	 cBG34Jst6PN7joglvLDSr8oCB/ToSyE3THMRd2h8WB6SADGPSVwTPWnL9Ra5tyC9w1
-	 NlqVL4zWIt+rQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	rust-for-linux@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev,
-	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
-Subject: [PATCH 3/3] rust: warn if `srctree/` links do not exist
-Date: Wed, 30 Jul 2025 15:07:16 +0200
-Message-ID: <20250730130716.3278285-4-ojeda@kernel.org>
-In-Reply-To: <20250730130716.3278285-1-ojeda@kernel.org>
-References: <20250730130716.3278285-1-ojeda@kernel.org>
+	s=arc-20240116; t=1753880882; c=relaxed/simple;
+	bh=pcptWvpGnZ0zEXWJBDt0MWQbVsZGKk578TFASBUhd5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DK7DgRYmPwZQ8sIM/lLB+5MHUh+coJeKeLFNyO7aLAHB5eY4kx2TjM3Hv6u5UYELqnIB5VKtdPjL9G/6vCTlcEdTtirwFwwL7FvwO9gBeZqTpN4pYITPnleN6itapuFDLn3uiJCu77+JXUG/GYiuqowc4jb+1hSN8WVAwwLPMkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=DpcJM/S3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64768C4CEE7;
+	Wed, 30 Jul 2025 13:08:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753880882;
+	bh=pcptWvpGnZ0zEXWJBDt0MWQbVsZGKk578TFASBUhd5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DpcJM/S3elZXvUohTZx6U84otLPd04tg6T+kNqTSjUWSV+OAaj6Kzwu+/klfkdoDS
+	 O8DeIC1aFKSuL7hhkTv189VYrWrGpLVXbnUXZWN1PWWBKS65ccLGbPNYIFhhqUisEi
+	 erVkIlidrLqiK6omApXBNwHSr8r5SAMR/p2IopAk=
+Date: Wed, 30 Jul 2025 15:07:58 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Dan Williams <dan.j.williams@intel.com>, linux-coco@lists.linux.dev,
+	kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm platform
+ device
+Message-ID: <2025073035-bulginess-rematch-b92e@gregkh>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-12-aneesh.kumar@kernel.org>
+ <20250729181045.0000100b@huawei.com>
+ <20250729231948.GJ26511@ziepe.ca>
+ <yq5aqzxy9ij1.fsf@kernel.org>
+ <20250730113827.000032b8@huawei.com>
+ <20250730132333.00006fbf@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730132333.00006fbf@huawei.com>
 
-`srctree/` links may point to nonexistent files, e.g. due to renames
-that missed to update the files or simply because of typos.
+On Wed, Jul 30, 2025 at 01:23:33PM +0100, Jonathan Cameron wrote:
+> On Wed, 30 Jul 2025 11:38:27 +0100
+> Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
+> 
+> > On Wed, 30 Jul 2025 14:12:26 +0530
+> > "Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
+> > 
+> > > Jason Gunthorpe <jgg@ziepe.ca> writes:
+> > >   
+> > > > On Tue, Jul 29, 2025 at 06:10:45PM +0100, Jonathan Cameron wrote:
+> > > >    
+> > > >> > +static struct platform_device cca_host_dev = {    
+> > > >> Hmm. Greg is getting increasingly (and correctly in my view) grumpy with
+> > > >> platform devices being registered with no underlying resources etc as glue
+> > > >> layers.  Maybe some of that will come later.    
+> > > >
+> > > > Is faux_device a better choice? I admit to not knowing entirely what
+> > > > it is for..  
+> > 
+> > I'll go with a cautious yes to faux_device. This case of a glue device
+> > with no resources and no reason to be on a particular bus was definitely
+> > the intent but I'm not 100% sure without trying it that we don't run
+> > into any problems.
+> > 
+> > Not that many examples yet, but cpuidle-psci.c looks like a vaguely similar
+> > case to this one.  
+> > 
+> > All it really does is move the location of the device and
+> > smash together the device registration with probe/remove.
+> > That means the device disappears if probe() fails, which is cleaner
+> > in many ways than leaving a pointless stub behind.
+> > 
+> > Maybe it isn't appropriate it if is actually useful to rmmod/modprobe the
+> > driver. 
+> > 
+> > +CC Greg on basis I may have wrong end of the stick ;)
+> This time with at least one less typo in Greg's email address.
 
-Since they can be easily checked for validity, do so and print a warning
-in the file does not exist.
+Yes, use faux_device if you need/want a struct device to represent
+something in the tree and it does NOT have any real platform resources
+behind it.  That's explicitly what it was designed for.
 
-This found the following cases already in-tree:
+thanks,
 
-    warning: srctree/ link to include/linux/blk_mq.h does not exist
-    warning: srctree/ link to include/linux/drm/drm_gem.h does not exist
-    warning: srctree/ link to include/linux/drm/drm_drv.h does not exist
-    warning: srctree/ link to include/linux/drm/drm_ioctl.h does not exist
-    warning: srctree/ link to include/linux/drm/drm_file.h does not exist
-    warning: srctree/ link to include/linux/drm/drm_device.h does not exist
-
-Inspired-by: "Onur Özkan" <work@onurozkan.dev>
-Link: https://lore.kernel.org/rust-for-linux/CANiq72=xCYA7z7_rxpzzKkkhJs6m7L_xEaLMuArVn3ZAcyeHdA@mail.gmail.com/
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/Makefile | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/rust/Makefile b/rust/Makefile
-index 4e675d210dd8..a27503028216 100644
---- a/rust/Makefile
-+++ b/rust/Makefile
-@@ -93,6 +93,12 @@ quiet_cmd_rustdoc = RUSTDOC $(if $(rustdoc_host),H, ) $<
- # and then retouch the generated files.
- rustdoc: rustdoc-core rustdoc-macros rustdoc-compiler_builtins \
-     rustdoc-kernel rustdoc-pin_init
-+	$(Q)grep -Ehro '<a href="srctree/([^"]+)"' $(rustdoc_output) | \
-+		cut -d'"' -f2 | cut -d/ -f2- | while read f; do \
-+			if [ ! -e "$(srctree)/$$f" ]; then \
-+				echo "warning: srctree/ link to $$f does not exist"; \
-+			fi \
-+		done
- 	$(Q)cp $(srctree)/Documentation/images/logo.svg $(rustdoc_output)/static.files/
- 	$(Q)cp $(srctree)/Documentation/images/COPYING-logo $(rustdoc_output)/static.files/
- 	$(Q)find $(rustdoc_output) -name '*.html' -type f -print0 | xargs -0 sed -Ei \
--- 
-2.50.1
-
+greg k-h
 
