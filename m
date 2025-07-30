@@ -1,197 +1,175 @@
-Return-Path: <linux-kernel+bounces-750050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A174B1568A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:31:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DC3BB15697
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:36:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B9965608E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:31:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9755D7AA993
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6C47A13A;
-	Wed, 30 Jul 2025 00:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832661482F5;
+	Wed, 30 Jul 2025 00:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qZjT7dil"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="G43m3NDM"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFB12AE74
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C16443AA8;
+	Wed, 30 Jul 2025 00:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753835496; cv=none; b=mdW7xQBQgJ3RswgUIAg7+6La42MkPfg5vwyK9MttzQioja9gnySAbMmKFuNPAEXsL+Ff9BUryqp8iwBzAl0yAkeEEIZhAJPH9pIw4EYbpsNRm0IOn6BC2qwNpMKwHR8zuA2ltMiL6/fNe2FHCmFqR5VkogBjtCnF5ArfLO0bbPk=
+	t=1753835788; cv=none; b=p2FEBcH2yEw1XwnnewhnuL5/s4cwfLxDzAmNFZIGsbfN3Ods95edg4NvOkElKqZp+j+0B7KZXSQkxE4Pfz5b/QBagVzyKKtHoS8eXIxlcoZKc/6fW/lk9Jfx1EB3EK7TIwQ7LcWE65/7mHWqQBMx3guYvuLmc9v+3372wXVTT/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753835496; c=relaxed/simple;
-	bh=xBqYcPOMq93xlyP7/znvTXGQJiBTxVO/kOVZXtDD+9o=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uyPCJ5qeltvzYijdRTruLc0wbUNz2ViFRivHD9XAq7P9cdx2cgIRoijAHnJjLxzeXnbxjsSfrT7Hz5HkUmd6j8a7mGMEE7qhx69cInAbnqrxNjmymgGwPkbd0XKrCFvFHX3zm5pxfu6WiWDYG6vVG4iMEX3QiTEtPG3ckuivgzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qZjT7dil; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31366819969so338252a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:31:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753835494; x=1754440294; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZsvMJHxi0Jk9Ob0YWIw4MQPlATsEKQhQD2Gx/yz9Pks=;
-        b=qZjT7dilcKyMf/lvgv27m7hyyBEdKOZnkBehHV4Mss+NyQ9odaIWC9lg0qEyfFPO7m
-         pYlXPEIgzrYA67FazKBqBUKrawlEfD1ncIIpQYewKOF8J/2PA/UP/EhE0HnmuGITW8z3
-         QjuD/GvaA7bpVN/J640iYJENKnqMRVztOx8KGpYYZ5iI8AqXWil4A1pCsTUpg6Q7AJHq
-         2dQGOzsjQxXR45pIGMrVlH5gHNtv7CTwoI9BoOF8WFRdgD1HZRcozqR97Td4NLW91Emh
-         fr3K32lr42r/hjszsPi5e4bs3Ab44FvJWENh581r7lheKE494WfqWv4RHLbAf6X0THIH
-         6kPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753835494; x=1754440294;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZsvMJHxi0Jk9Ob0YWIw4MQPlATsEKQhQD2Gx/yz9Pks=;
-        b=bJ6I6Qd4ySRGkEIWL9jeuw3yyZVOkKtZeTQ6KmlFVvBjJGd0mS8LdLK5dd62dCilRa
-         4IxZJd3KNh9YXukamqhxBM1OyIb8bfc78d2J62Inab/+UXb9ImXbXsx8cO1PuyVmX9J8
-         lx7YH0gMuw3NI22S6iGRGZsTdhzSoX0o+amKSJH8iEktBhSiR/Ug+jAlLeNswBg32wlI
-         0+CQKqzYE1lwkEawyqlwgM8khi/pMV3O8lKbnfypT/jMNhfwjYMZSpnBQ6IdXt5On14A
-         /A88qIFCtdHd/v2GvNZVz5qGC4eGS8hSMUi1t+fX/KQtI8hL39xmHxJUgLCsgGQ+P9qU
-         HaQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5i8hSFc2jkWSv3gIEbbMBfeyLLxfDri3+RTASCloADdJDBmnWdaV8N8Zy4yYbRJEaafOpLw8PO45/3tw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8FyFZCCtuNA7eVscUjDOa9O1+1G1367rnJUVfuA2Hc6cixlGQ
-	bJB3GFYp9U7VH52sgq+Q7ndNhpduoGcfpdGinUIfgJ+H9H7hvc2OIr3Q46iIngEKCA/LXYr0F9M
-	wUR76TQ==
-X-Google-Smtp-Source: AGHT+IFCF3M3I1KqAW7n7dx3RKk9sCzbdlNYVQtyXACNkKIW9/xqHIXRzHtQZzgpVcJKkggbqyQ4NVMy3mQ=
-X-Received: from pjg6.prod.google.com ([2002:a17:90b:3f46:b0:31c:bd1d:516])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2784:b0:312:e76f:5213
- with SMTP id 98e67ed59e1d1-31f5de6c813mr1791644a91.28.1753835494079; Tue, 29
- Jul 2025 17:31:34 -0700 (PDT)
-Date: Tue, 29 Jul 2025 17:31:32 -0700
-In-Reply-To: <dacd4a8e-5104-4043-b647-63e2df6d6a94@linux.intel.com>
+	s=arc-20240116; t=1753835788; c=relaxed/simple;
+	bh=Xgkqjthp0xD8K7KDTt/KKfzQFiK9OF2TanBEnNzVjoM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=pu4dlbLGHWj0kvRrpfnvtnbnnR2gpuG/RlzUCXnK087IP0ch+h6opQ1LYnVtFxpAQlCmstXXiSS7gkq1o5tEgfVNPMi++aKOKymWSUY0SdDetM7BAq20Mw6t9PRYN5PL+DJAb4/riXuHYlO3prO+YuPydYmgu+y20ObWBiqInaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=G43m3NDM; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56U0a4eI52729127, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1753835764; bh=ihPtxIQdIF+lWYnPR+GKRWPzygHLYkLUE15oRvSc/Ek=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=G43m3NDMGgoJ5g7cYlCSl6N2nUtGs79NIE06SgRYIpKP0TOQVFRsOY1ODkfrfes3j
+	 evD3UArKaf49Arqs7S0z1+o0mNfMP23zKTszW3o8nZ7tJA5qPCoBdQMal65yl/GT60
+	 2LylDuTSWvK6xlV0MgspgUeC2p5RwtxXTYb1kgUw14ih2vA74qecPMYJK0hMJthUiq
+	 NT3qCJclZAE41QbioVMr1zUgQnYKuoOGMIqZZ0cPdz2SJOKlFFywFy4JYYIoQGdBQ9
+	 /yCgsnmOed3gfxUlfYYdwCZ+KpXF6AwWTHeT88bGNW4hUekdMVgjuJReqzkP/oWjfn
+	 cLokD2zwT1Xhg==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56U0a4eI52729127
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Jul 2025 08:36:04 +0800
+Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 30 Jul 2025 08:36:05 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 30 Jul 2025 08:36:05 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
+ RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
+ 15.01.2507.035; Wed, 30 Jul 2025 08:36:04 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Sean Anderson <sean.anderson@linux.dev>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Bitterblue
+ Smith" <rtl8821cerfe2@gmail.com>
+Subject: RE: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+Thread-Topic: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+Thread-Index: AQHcANxb3F/NWj2ltUS/9AXHQ44SQ7RJzkeg
+Date: Wed, 30 Jul 2025 00:36:04 +0000
+Message-ID: <c034d5cc40784bfa859f918806c567de@realtek.com>
+References: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
+ <20250729204437.164320-1-sean.anderson@linux.dev>
+In-Reply-To: <20250729204437.164320-1-sean.anderson@linux.dev>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-11-mizhang@google.com>
- <20250425111531.GG1166@noisy.programming.kicks-ass.net> <e2f3b1d5-ed91-47a1-aead-28675bcca2c8@linux.intel.com>
- <20250425134323.GA35881@noisy.programming.kicks-ass.net> <dacd4a8e-5104-4043-b647-63e2df6d6a94@linux.intel.com>
-Message-ID: <aIln5KlHYlIg3Ui-@google.com>
-Subject: Re: [PATCH v4 10/38] perf/x86: Support switch_guest_ctx interface
-From: Sean Christopherson <seanjc@google.com>
-To: Kan Liang <kan.liang@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Mingwei Zhang <mizhang@google.com>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
-	"H. Peter Anvin" <hpa@zytor.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Yongwei Ma <yongwei.ma@intel.com>, 
-	Xiong Zhang <xiong.y.zhang@linux.intel.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>, 
-	Jim Mattson <jmattson@google.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Zide Chen <zide.chen@intel.com>, Eranian Stephane <eranian@google.com>, 
-	Shukla Manali <Manali.Shukla@amd.com>, Nikunj Dadhania <nikunj.dadhania@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
 
-On Fri, Apr 25, 2025, Kan Liang wrote:
-> On 2025-04-25 9:43 a.m., Peter Zijlstra wrote:
-> > On Fri, Apr 25, 2025 at 09:06:26AM -0400, Liang, Kan wrote:
-> >>
-> >>
-> >> On 2025-04-25 7:15 a.m., Peter Zijlstra wrote:
-> >>> On Mon, Mar 24, 2025 at 05:30:50PM +0000, Mingwei Zhang wrote:
-> >>>> From: Kan Liang <kan.liang@linux.intel.com>
-> >>>>
-> >>>> Implement switch_guest_ctx interface for x86 PMU, switch PMI to dedicated
-> >>>> KVM_GUEST_PMI_VECTOR at perf guest enter, and switch PMI back to
-> >>>> NMI at perf guest exit.
-> >>>>
-> >>>> Signed-off-by: Xiong Zhang <xiong.y.zhang@linux.intel.com>
-> >>>> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> >>>> Tested-by: Yongwei Ma <yongwei.ma@intel.com>
-> >>>> Signed-off-by: Mingwei Zhang <mizhang@google.com>
-> >>>> ---
-> >>>>  arch/x86/events/core.c | 12 ++++++++++++
-> >>>>  1 file changed, 12 insertions(+)
-> >>>>
-> >>>> diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-> >>>> index 8f218ac0d445..28161d6ff26d 100644
-> >>>> --- a/arch/x86/events/core.c
-> >>>> +++ b/arch/x86/events/core.c
-> >>>> @@ -2677,6 +2677,16 @@ static bool x86_pmu_filter(struct pmu *pmu, int cpu)
-> >>>>  	return ret;
-> >>>>  }
-> >>>>  
-> >>>> +static void x86_pmu_switch_guest_ctx(bool enter, void *data)
-> >>>> +{
-> >>>> +	u32 guest_lvtpc = *(u32 *)data;
-> >>>> +
-> >>>> +	if (enter)
-> >>>> +		apic_write(APIC_LVTPC, guest_lvtpc);
-> >>>> +	else
-> >>>> +		apic_write(APIC_LVTPC, APIC_DM_NMI);
-> >>>> +}
-> >>>
-> >>> This, why can't it use x86_pmu.guest_lvtpc here and call it a day? Why
-> >>> is that argument passed around through the generic code only to get back
-> >>> here?
-> >>
-> >> The vector has to be from the KVM. However, the current interfaces only
-> >> support KVM read perf variables, e.g., perf_get_x86_pmu_capability and
-> >> perf_get_hw_event_config.
-> >> We need to add an new interface to allow the KVM write a perf variable,
-> >> e.g., perf_set_guest_lvtpc.
-> > 
-> > But all that should remain in x86, there is no reason what so ever to
-> > leak this into generic code.
+Sean Anderson <sean.anderson@linux.dev> wrote:
+> There are more unsupported functions than just LOWRT_RTY. Improve on
+> commit 3b66519b023b ("wifi: rtw89: phy: add dummy c2h handler to avoid
+> warning message") by printing a message just once when we first
+> encounter an unsupported class.=20
 
-Finally prepping v5, and this is one of two <knock wood> comments that isn't fully
-addressed.
+Once I encounter an unsupported class/func, I'll check firmware team if the
+C2H events can be ignored. If so, I add a dummy function to avoid the messa=
+ge.
+If not, I should add code to handle the event.=20
 
-The vector isn't a problem; that's *always* PERF_GUEST_MEDIATED_PMI_VECTOR and
-so doesn't even require anything in x86_pmu.
+Do you want to see the message even though it only appears once?
 
-But whether or not the entry should be masked comes from the guest's LVTPC entry,
-and I don't see a cleaner way to get that information into x86, especially since
-the switch between host and guest PMI needs to happen in the "perf context disabled"
-section.
+> Do the same for each unsupported func of
+> the supported classes. This prevents messages like
+>=20
+> rtw89_8922ae 0000:81:00.0: PHY c2h class 2 not support
+>=20
+> from filling up dmesg.
+>=20
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+> ---
+>=20
+> Changes in v2:
+> - Also suppress unsupported func messages
+>=20
+>  drivers/net/wireless/realtek/rtw89/phy.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/net/wireless/realtek/rtw89/phy.c b/drivers/net/wirel=
+ess/realtek/rtw89/phy.c
+> index f4eee642e5ce..9484d80eea9b 100644
+> --- a/drivers/net/wireless/realtek/rtw89/phy.c
+> +++ b/drivers/net/wireless/realtek/rtw89/phy.c
+> @@ -3535,17 +3535,25 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtwde=
+v, struct sk_buff *skb,
+>  {
+>         void (*handler)(struct rtw89_dev *rtwdev,
+>                         struct sk_buff *c2h, u32 len) =3D NULL;
+> +       static DECLARE_BITMAP(printed_ra, U8_MAX);
+> +       static DECLARE_BITMAP(printed_rfk_log, U8_MAX);
+> +       static DECLARE_BITMAP(printed_rfk_report, U8_MAX);
+> +       static DECLARE_BITMAP(printed_class, U8_MAX);
+> +       unsigned long *printed;
+>=20
+>         switch (class) {
+>         case RTW89_PHY_C2H_CLASS_RA:
+> +               printed =3D printed_ra;
+>                 if (func < RTW89_PHY_C2H_FUNC_RA_MAX)
+>                         handler =3D rtw89_phy_c2h_ra_handler[func];
+>                 break;
+>         case RTW89_PHY_C2H_RFK_LOG:
+> +               printed =3D printed_rfk_log;
+>                 if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_log_handler))
+>                         handler =3D rtw89_phy_c2h_rfk_log_handler[func];
+>                 break;
+>         case RTW89_PHY_C2H_RFK_REPORT:
+> +               printed =3D printed_rfk_report;
+>                 if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_report_handler))
+>                         handler =3D rtw89_phy_c2h_rfk_report_handler[func=
+];
+>                 break;
+> @@ -3554,12 +3562,16 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtwde=
+v, struct sk_buff *skb,
+>                         return;
+>                 fallthrough;
+>         default:
+> -               rtw89_info(rtwdev, "PHY c2h class %d not support\n", clas=
+s);
+> +               if (!test_and_set_bit(class, printed_class))
+> +                       rtw89_info(rtwdev, "PHY c2h class %d not supporte=
+d\n",
+> +                                  class);
+>                 return;
+>         }
+>         if (!handler) {
+> -               rtw89_info(rtwdev, "PHY c2h class %d func %d not support\=
+n", class,
+> -                          func);
+> +               if (!test_and_set_bit(func, printed))
+> +                       rtw89_info(rtwdev,
+> +                                  "PHY c2h class %d func %d not supporte=
+d\n",
+> +                                  class, func);
+>                 return;
+>         }
+>         handler(rtwdev, skb, len);
+> --
+> 2.35.1.1320.gc452695387.dirty
 
-I think/hope I dressed up the code so that it's not _so_ ugly, and so that it's
-fully extensible in the unlikely event a non-x86 arch were to ever support a
-mediated vPMU, e.g. @data could be used to pass a pointer to a struct.
-
-  void perf_load_guest_context(unsigned long data)
-  {
-	struct perf_cpu_context *cpuctx = this_cpu_ptr(&perf_cpu_context);
-
-	lockdep_assert_irqs_disabled();
-
-	guard(perf_ctx_lock)(cpuctx, cpuctx->task_ctx);
-
-	if (WARN_ON_ONCE(__this_cpu_read(guest_ctx_loaded)))
-		return;
-
-	perf_ctx_disable(&cpuctx->ctx, EVENT_GUEST);
-	ctx_sched_out(&cpuctx->ctx, NULL, EVENT_GUEST);
-	if (cpuctx->task_ctx) {
-		perf_ctx_disable(cpuctx->task_ctx, EVENT_GUEST);
-		task_ctx_sched_out(cpuctx->task_ctx, NULL, EVENT_GUEST);
-	}
-
-	arch_perf_load_guest_context(data);
-
-	...
-  }
-
-  void arch_perf_load_guest_context(unsigned long data)
-  {
-	u32 masked = data & APIC_LVT_MASKED;
-
-	apic_write(APIC_LVTPC,
-		   APIC_DM_FIXED | PERF_GUEST_MEDIATED_PMI_VECTOR | masked);
-	this_cpu_write(x86_guest_ctx_loaded, true);
-  }
-
-Holler if you have a better idea.  I'll plan on posting v5 in the next day or so
-no matter what, so that it's not delayed for this one thing (it's already been
-delayed more than I was hoping, and there are a lot of changes relative to v4).
 
