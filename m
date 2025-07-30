@@ -1,116 +1,158 @@
-Return-Path: <linux-kernel+bounces-750638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49D2CB15F10
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:10:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8401B15F0C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:09:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0E5E168164
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C3C3ACD7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A519E299AA1;
-	Wed, 30 Jul 2025 11:05:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CCA29A9C9;
+	Wed, 30 Jul 2025 11:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4qVj7LW"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YZwzA9gH"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DDC284B41;
-	Wed, 30 Jul 2025 11:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE56294A1C;
+	Wed, 30 Jul 2025 11:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753873521; cv=none; b=Zuu6uaN0JQo0zij9Br9mf1JdyZHbstiTkQWsVw09lIbFL0xb8MyWoB8lW/c9u3tiOzugNUvQi0WdZ3Zo88JRx007+jFtWirEetrCZDDk58uSOLlAUw/kbB7jyJ5XPdmPE/EJM2WhCNWcsIY64Sn9yLJQCnpm/w9pj22tsT2YaFk=
+	t=1753873551; cv=none; b=ktqykuy9Mne8AzJ9t8egOOxk0cYLj7s97SWmHfKjeR/KpS8CnDnd3ksBKxh+8bmvMhsCBd753o/mJXozlmxGFoWLOGzz23UY+sMIMRraXGY+DzPgB/HvYVxn6i7hGEnrRhl+frwF6B4/dJvykGnKkpo0EKiID9kgewM4rnNJ3pg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753873521; c=relaxed/simple;
-	bh=ZfP+G/ZvV75Byc+EUdeEQxcNfw6I2EE/Dec9sK0mFxI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ISqdKA9oBAjGrl6ed2oOSXCBdUsoiwL7jQexs9Ku3zLN849aHsTls8I5e1ebB1VNFB9ERIHfqal2TzHWn8a90DYg5XwJsJyv8WOYlbElafR5B+EtvKs84Eho74XXGPrZQt8mJUfE67arrfxdA1i5sfcmFC93w3uS5P1b0AnMikc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a4qVj7LW; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b790dbb112so1057839f8f.3;
-        Wed, 30 Jul 2025 04:05:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753873517; x=1754478317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=54AIPyJy1uCtqZ7NGhSPeutHe5R23DZ/fm+drMb1lCs=;
-        b=a4qVj7LWRC3+KqatnGRnGBamFVYM+huh8P6AXRpv1kRT2q+qx2Q2mMKicKML4gpYQH
-         XJQ84sAnte8JvNSi+xhJaGayEWHXy2V3l1DMjyDs9OWBLD8ZQ/lS+osvDJqyItnxZcyj
-         h6f3V2vTRFd2ZVLzSEziQspvA4QDqoGKurYBEg7pyw68RiAi2jotWviWh2JxxTonfcYr
-         HLOhPpTQWf65qfdMy0U1U+ofyKdcuLta3auTr2gehcRfVC7dtQat+U8nH39sNmENVhSx
-         FpXl3ju1qIgbtZdcVOuDRRpBqgY1IddH0IQr7b51IgijWRkyKoLUjndrTj+NlaWK5lyM
-         LqMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753873517; x=1754478317;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=54AIPyJy1uCtqZ7NGhSPeutHe5R23DZ/fm+drMb1lCs=;
-        b=f/T60UGAourk1jEb+UF5S+DgN5FfmfefGMTWtN56ikpM2kLjYA54uVoFsOh1hlx+uS
-         8eY3MLkY/XhUGa1c/mWNepDALwKAReDMqvkzb6lfNAFC5VOQjj8EFXXm0/UsHcyR0eHK
-         f/V+OJA3qRc1n6Z+gingDnbz/yfXa5Kovdd1RVzcTNfNzEUAaC+h35ueewy6PxERIey8
-         /O86/wwYmQJR5kaer/WsQ4a5G8kbxbksNVe5qYuN8ie9VSJEmd+tI28swTv3vMNawn1S
-         CBoLVXM62zUIVdFl8lucDYuG9hbNYKzBbNe9UvStKSNEgbp8HeXU8qoe718++B+sjcEj
-         pYRw==
-X-Forwarded-Encrypted: i=1; AJvYcCXCP4B6DkHVNNRJ0qu36TwXmwXNHxdbLIS9aMSNTFYTbcwDmNNPbB9Cj5422EsoqVtUPZ+1kuw60kEohVR1@vger.kernel.org, AJvYcCXSHSdVEd03FUH1fqfdwNJmqoBLdyhQKaad+ueSFH5UQ78cqmBh5d9rRWns7yhyjgxhDFVcKZTOQLo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoqpquVGCPpR7uI93VE7sL28cs8+Bewi6P7jkW7g/MA2AMMzvz
-	xRQzmXi1t86RY3rg++7sMDYsLbCzIXJ8WlDRPUaSEZjnAbF0Bi8f1n65
-X-Gm-Gg: ASbGnctcC99KzLWcf5zGTv2Li34GwD7POl0jQB9jf/nQdUzRRb0LUP7z2GFTarnbpG6
-	ZcqLYuvmvuyRR1fkC705/uLsEGl6EIAdis0i5TkmR69CwbaDhAJD0WLGr6VPpTqDg0TCSe+kMKY
-	zpPvQdnG2KYNnEa0dPdrVKb2BgxZayTSlqTeOPjqgZa2D/llcSRRi3MZx0bQ3ktGZ07/gkNoitl
-	ijwSyAm/1qcXUAbU1Uciqhj9bcIxR0znfb12imxvVXrSt0Wn2fXLHwuN6i5DqrkJiuqxgbXztTp
-	vYDauLi6cS858zAf6Pyp6Ja0yqhROFaxCg7SF1wDyS3mY3pATN1k6J6wzCiX669SSUoG/iRaTXL
-	gSk4yKC35YTk4HvwTYf3dWFi87qQWGEU=
-X-Google-Smtp-Source: AGHT+IHNkjb7RgoRXtTFkL5ICG4Uho4Y4jKD4r50o8pxtcFYUvIysyolnX0sizkUEgmucDNp8pv8Sw==
-X-Received: by 2002:adf:a297:0:b0:3b7:970d:a565 with SMTP id ffacd0b85a97d-3b7970da81bmr918250f8f.46.1753873516536;
-        Wed, 30 Jul 2025 04:05:16 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b778f104ffsm14990170f8f.66.2025.07.30.04.05.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 04:05:16 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-ide@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] ata: pata_macio: Remove space before newline
-Date: Wed, 30 Jul 2025 12:04:42 +0100
-Message-ID: <20250730110442.2059004-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753873551; c=relaxed/simple;
+	bh=gN/rgofoovU80nYhL5B9i6uDmcuQm71jhYXUwm0kwqg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgaYYjp2w+U4DKW4fRCaa/0omgZG5q9x6C6NUaG+Xldwxxf7/lFMt+vuovIW6fgOflApiwPrs1NV2l28jc5RZG4ktPkBXHciyfFAE+n1cnsclrrxsTMRFZnmnOmZcSHKWKaTAPhuyAc1OTZVot6zD5D7GUbqjn5AlllYoqQMvE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YZwzA9gH; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=0k4CeBRPRQzj6qo4MD4PdQtTm2NxuKCF0igS9Zlaies=; b=YZwzA9gHquDHe/JgfBHz7fTwK9
+	+cFmCvuZ8zjF1dviirVbEDhRCXrSOu+hZxA3AjJ5pH1uyd2NPsII5jdfgCm5MM8AG3VnhaKj5oj5u
+	qaj0EU9hAzfA+OJkg7uCdcDzbL/7FhxhTLmLUcYp/LE9uc/ZKbBRoDyFUctY7iCedYaWLAHNiwuM+
+	PbznVMavEs57qFWdnffOE+/6wSNJfdx75yty4eYR7bkzNSGOFqn5uH/YX1awZ3RE6K7DZqjTBJO1p
+	wAx5TnRnmTiGjQfbxYUKFQhCbFeLdxWFbfCN576tfT+VGKdmomeO8go/GkJOIcRbzdATpaeFp9QMP
+	w1lEFOnw==;
+Received: from 179-125-70-183-dinamico.pombonet.net.br ([179.125.70.183] helo=quatroqueijos.cascardo.eti.br)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uh4ct-005tWS-CE; Wed, 30 Jul 2025 13:05:39 +0200
+Date: Wed, 30 Jul 2025 08:05:32 -0300
+From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dirk VanDerMerwe <dirk.vandermerwe@sophos.com>,
+	Vimal Agrawal <vimal.agrawal@sophos.com>,
+	linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>,
+	KUnit Development <kunit-dev@googlegroups.com>
+Subject: Re: [PATCH v5] char: misc: add test cases
+Message-ID: <aIn8fDpGz7MCACQ3@quatroqueijos.cascardo.eti.br>
+References: <20250612-misc-dynrange-v5-1-6f35048f7273@igalia.com>
+ <CAMuHMdVxTW-6Wpw6qDc_ZoSE-f21WvJ478j+0jQURL+SiM_n7A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVxTW-6Wpw6qDc_ZoSE-f21WvJ478j+0jQURL+SiM_n7A@mail.gmail.com>
 
-There is a extraneous space before a newline in a dev_dbg message.
-Remove the space.
+On Wed, Jul 30, 2025 at 09:08:57AM +0200, Geert Uytterhoeven wrote:
+> Hi Thadeu,,
+> 
+> On Sun, 15 Jun 2025 at 23:31, Thadeu Lima de Souza Cascardo
+> <cascardo@igalia.com> wrote:
+> >
+> > Add test cases for static and dynamic minor number allocation and
+> > deallocation.
+> >
+> > While at it, improve description and test suite name.
+> >
+> > Some of the cases include:
+> >
+> > - that static and dynamic allocation reserved the expected minors.
+> >
+> > - that registering duplicate minors or duplicate names will fail.
+> >
+> > - that failing to create a sysfs file (due to duplicate names) will
+> >   deallocate the dynamic minor correctly.
+> >
+> > - that dynamic allocation does not allocate a minor number in the static
+> >   range.
+> >
+> > - that there are no collisions when mixing dynamic and static allocations.
+> >
+> > - that opening devices with various minor device numbers work.
+> >
+> > - that registering a static number in the dynamic range won't conflict with
+> >   a dynamic allocation.
+> >
+> > This last test verifies the bug fixed by commit 6d04d2b554b1 ("misc:
+> > misc_minor_alloc to use ida for all dynamic/misc dynamic minors") has not
+> > regressed.
+> >
+> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> 
+> Thanks for your patch, which is now commit 74d8361be3441dff ("char:
+> misc: add test cases") in linus/master stable/master
+> 
+> > Changes in v5:
+> > - Make miscdevice unit test built-in only
+> > - Make unit test require CONFIG_KUNIT=y
+> 
+> Why were these changes made? This means the test is no longer available
+> if KUNIT=m, and I can no longer just load the module when I want to
+> run the test.
+> 
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/ata/pata_macio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These were made because a bug was found that devices with minor > 255 could
+not be opened. So I added a test for that, which used __init functions, so
+the test now had to be built-in. The alternative is to make these functions
+not __init anymore and export them. Those functions are init_mknod and
+init_unlink.
 
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index f7a933eefe05..9eefdc5df5df 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -758,7 +758,7 @@ static void pata_macio_irq_clear(struct ata_port *ap)
- 
- static void pata_macio_reset_hw(struct pata_macio_priv *priv, int resume)
- {
--	dev_dbg(priv->dev, "Enabling & resetting... \n");
-+	dev_dbg(priv->dev, "Enabling & resetting...\n");
- 
- 	if (priv->mediabay)
- 		return;
--- 
-2.50.0
+I will see if I can cook an RFC later today.
 
+Cascardo.
+
+> > - Link to v4: https://lore.kernel.org/r/20250423-misc-dynrange-v4-0-133b5ae4ca18@igalia.com
+> 
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -2506,8 +2506,8 @@ config TEST_IDA
+> >         tristate "Perform selftest on IDA functions"
+> >
+> >  config TEST_MISC_MINOR
+> > -       tristate "miscdevice KUnit test" if !KUNIT_ALL_TESTS
+> > -       depends on KUNIT
+> > +       bool "miscdevice KUnit test" if !KUNIT_ALL_TESTS
+> > +       depends on KUNIT=y
+> >         default KUNIT_ALL_TESTS
+> >         help
+> >           Kunit test for miscdevice API, specially its behavior in respect to
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
 
