@@ -1,105 +1,104 @@
-Return-Path: <linux-kernel+bounces-750693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CD98B15FEE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FBBB16000
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:12:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FF7F18C5450
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:05:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F31C3A969B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:11:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0FB292B3E;
-	Wed, 30 Jul 2025 12:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDA7293C6C;
+	Wed, 30 Jul 2025 12:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eGH7f8yd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b="c3p9Mwqh"
+Received: from forward205b.mail.yandex.net (forward205b.mail.yandex.net [178.154.239.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F5E149C4D;
-	Wed, 30 Jul 2025 12:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DCCE292B5E;
+	Wed, 30 Jul 2025 12:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753877098; cv=none; b=K4v/MsKJ8525Avt+ahi3jM0HSGTckLTZjfXsFlcAzDVpGvS6JvxX/PHgecQXVb76b9jI34ty7lo7/8nTHu40F2ZPS5q/56DfiEYLwgMMAwIPV51CPHLk/WT/OFPhc/1a8n4dIS3uYtA97Ca03k0oe3FlFBaqnwEaUhnqjjxm8d4=
+	t=1753877533; cv=none; b=GG6uW7ZH4uvHPej048GQWUlEXVhyY0QLHjecR8Tx1Cx4FfqNmqT18lc0nhXRtiQBDvhckGhLb1Zju65Q91iw5VCb2bYqj4yZ5NN3WRQ/fXAE3T1iOPaDMi0fCGDFlK94NuApiWZ71bSItHEZ0sw5q/QPc3sSQc4t/z5sy7LeHuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753877098; c=relaxed/simple;
-	bh=fhubS5ePL6n0ha77CiCJRFvyxD4OLQrzCZO9cuiJiYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEIjxZLF0hxCBclOF+EYmWcXdwLQloZ8dDbskC3KEEBmfmFVcsFybWDc7Sl8n0tlp6MWhDpB1/6H8uB0S5XjbZXaHpepSQqYCaMiTsgxYdeOR53Q/1KW69UaKZ/QeDlafQ0WT71KT4e0jMYbDvFT21K7riM+sp9mNzj8gnh/8KQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eGH7f8yd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67D13C4CEE7;
-	Wed, 30 Jul 2025 12:04:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753877098;
-	bh=fhubS5ePL6n0ha77CiCJRFvyxD4OLQrzCZO9cuiJiYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eGH7f8ydXuzC5TyfEH7bYraXQzcFznm7WxBg37g65n6MN7MO+QPL0irJm76TFe9jr
-	 dNqD7Pi5apkwR7pItb0LdTnRQZ7u7RbSLclPtyb1bZDg66IZELPDlWETmHajRtn2yD
-	 39zqT7YnnXl/vzt1FblmnbhAHAbtDvnRHV7q9t37d2IAwM2Z+1UmNduvhm6YG28AUL
-	 nQlBeaQ81pWDkfYSeLjGNPLjJjNxtglDUKyYcxy09aiiaUa1w0TBh6IBJIX4gWJ5mY
-	 kBZzPU/dk8pITEWrB2hwojwBZha/t739bp2my3L85Vq2fFhMmuynV6pGZaUmSvYU9q
-	 azEM/ArEaVo3Q==
-Date: Wed, 30 Jul 2025 13:04:52 +0100
-From: Mark Brown <broonie@kernel.org>
-To: ew kim <ew.kim@samsung.com>
-Cc: s.nawrocki@samsung.com, robh@kernel.org, krzk+dt@kernel.org,
-	lgirdwood@gmail.com, tiwai@suse.com, perex@perex.cz,
-	conor+dt@kernel.org, alim.akhtar@samsung.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/9] ASoC: samsung: Add generic ABOX management driver
-Message-ID: <80020ba1-cd00-4ce7-962f-04218559582c@sirena.org.uk>
-References: <20250721023052.3586000-1-ew.kim@samsung.com>
- <CGME20250721024611epcas2p45ddc52c1644f5779c7da822573f03246@epcas2p4.samsung.com>
- <20250721023052.3586000-2-ew.kim@samsung.com>
+	s=arc-20240116; t=1753877533; c=relaxed/simple;
+	bh=hnwFMGVddiaj4FGSNZe0IX1pB7gFBavSOPqdW3Q/Gms=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sm2RijxnXXAWemyqmm7j/Haip56m4+A+iNjjwa5w7HgkQT/0NzWZLwvkO/yrtldg2tc0n22zuXKJgLAtLZg2lvQ/GJtB1qZH9C1yY2xm2q3nSlnGqtX2A7tlJkMnCPB+LvjqO2vc0GhWTw/qnm84rZz7wgD1jwbZxv3Y1Z2YjcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev; spf=pass smtp.mailfrom=onurozkan.dev; dkim=pass (1024-bit key) header.d=onurozkan.dev header.i=@onurozkan.dev header.b=c3p9Mwqh; arc=none smtp.client-ip=178.154.239.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=onurozkan.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=onurozkan.dev
+Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
+	by forward205b.mail.yandex.net (Yandex) with ESMTPS id EDCF78308C;
+	Wed, 30 Jul 2025 15:05:24 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:1ca9:0:640:4823:0])
+	by forward102b.mail.yandex.net (Yandex) with ESMTPS id A31B5C0181;
+	Wed, 30 Jul 2025 15:05:16 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 15ZEvq3MbmI0-eAmi243C;
+	Wed, 30 Jul 2025 15:05:15 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=onurozkan.dev;
+	s=mail; t=1753877116;
+	bh=hnwFMGVddiaj4FGSNZe0IX1pB7gFBavSOPqdW3Q/Gms=;
+	h=Message-ID:Date:Cc:Subject:To:From;
+	b=c3p9MwqhYA8lkHiikloNnoOfl2J8ouJPdaYIpWbRcfIn31Ao/OOvtYPr5tP07AC+H
+	 vrcM6WI5xfy45zl06+zQugybBRulxse+jfX1hBBCObP8PtIKSS5TgUHRtn2mr5FGTw
+	 u/38SN/CYON4c5cvlIiTAMtP8sEugIkpyK4XWoOM=
+Authentication-Results: mail-nwsmtp-smtp-production-main-91.iva.yp-c.yandex.net; dkim=pass header.i=@onurozkan.dev
+From: =?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+To: rust-for-linux@vger.kernel.org
+Cc: ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	dakr@kernel.org,
+	me@kloenk.dev,
+	felipe_life@live.com,
+	abdiel.janulgue@gmail.com,
+	dirk.behme@de.bosch.com,
+	daniel@sedlak.dev,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Onur=20=C3=96zkan?= <work@onurozkan.dev>
+Subject: [PATCH v2] rust: update error.rs documentation
+Date: Wed, 30 Jul 2025 15:04:59 +0300
+Message-ID: <20250730120459.15607-1-work@onurozkan.dev>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="uncjgrThkp45R8LT"
-Content-Disposition: inline
-In-Reply-To: <20250721023052.3586000-2-ew.kim@samsung.com>
-X-Cookie: Linux is obsolete
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Adds missing header links.
 
---uncjgrThkp45R8LT
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Onur Özkan <work@onurozkan.dev>
+---
+ rust/kernel/error.rs | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Mon, Jul 21, 2025 at 11:30:44AM +0900, ew kim wrote:
+diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+index 3dee3139fcd4..dd3e4224218d 100644
+--- a/rust/kernel/error.rs
++++ b/rust/kernel/error.rs
+@@ -2,6 +2,8 @@
 
-> This driver implements the *generic* (fixed) part of the ABOX management
-> stack for Samsung Automotive SoCs. It does not directly control hardware
-> but provides common interfaces and state needed by SoC-specific
-> (variable) drivers.
+ //! Kernel errors.
+ //!
++//! C header: [`arch/mips/include/uapi/asm/errno.h`](srctree/arch/mips/include/uapi/asm/errno.h)
++//! C header: [`include/linux/errno.h`](srctree/include/linux/errno.h)
+ //! C header: [`include/uapi/asm-generic/errno-base.h`](srctree/include/uapi/asm-generic/errno-base.h)
 
-> The abox generic driver manages child drivers and provides an interface
-> that bridges the fixed and variable parts, connecting the two modules.
+ use crate::{
+--
+2.50.0
 
-I think for such an unusual design we need a much clearer description of
-what this is trying to do and why it's not following normal kernel
-patterns.  I can't tell what the services this generic code is providing
-are, nor why it's done this way.
-
---uncjgrThkp45R8LT
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiKCmMACgkQJNaLcl1U
-h9D1Ewf9EGxgcRMPdsLLc8+MwqZ2Yuy0gBJQAtKlLbDOH+w9EcU3zUusN2xBL5Wo
-oZekF5oly3qup40QkqyV+6n9Kuc5XbCavzy/HP5SGHSG56YSjndwX9HAbPw4/5b9
-z4PEvkzmLy60r2c8zrVVEEKv1dFQHjhnaCwgys/toyYL1ZjRVLtxYsJQLUsv5j5P
-+sLoMU2qwtbjptp67QgGZ/sxXw3HJWIJSOLcz1OzEhqjj41numH1+pjjuVeUAmMh
-FuEx4frWDrnfQzJEbiHGurYzPn/9wkCj4orly5bRr0g8jbRcDwjlfQZMEmDny1El
-Ti4hdIAMod9r4VJc0yLURXHxOruIRA==
-=/8UY
------END PGP SIGNATURE-----
-
---uncjgrThkp45R8LT--
 
