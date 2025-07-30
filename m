@@ -1,122 +1,170 @@
-Return-Path: <linux-kernel+bounces-750298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AA8BB159AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:35:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F29B159AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 713F318C08C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:35:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FAE954803B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA7828751A;
-	Wed, 30 Jul 2025 07:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D6D28ECD8;
+	Wed, 30 Jul 2025 07:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="O7aANDc9"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lyXofFu8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819141EEA3C;
-	Wed, 30 Jul 2025 07:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FB051EEA3C;
+	Wed, 30 Jul 2025 07:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753860924; cv=none; b=OP9UJxd5IOH81EbPB0YynGJF5RPI390WvUfgXa/XFPori5ZSytlE+90gGGBUW88ZLDCVDlOBedMPG3jYaHSG2stJoCh337Uk+0tRwuuOaUWycuayasc+TUjSPZOslB5jVWAUkk59kXLUbkhMp9ItUarsn87nq1yXiGVP1Bzuq9E=
+	t=1753860917; cv=none; b=QErwxFACwWdCphMZldYQwFqJIMynajyfGhBZNOfJaJiP3xPfqsDuiiqFIIhGC19xYty11L/d07NX0RIwDfVGr5ZNgw/NtUZ5eVBcitQe23ZdJXBpTFg275juAyVNgtQNwHm9oDf77ORnnEXIdSYJFNEFbd8R4VSlD9hz6EXHwD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753860924; c=relaxed/simple;
-	bh=VlXnZibtdmdKimqu6qXZyu/DjzJ+xUxz1yDOIaJW3z4=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=TsbVL/JS3mS5xTS9tsSjTtHrweb/l8xutSzf25Z8Rm1lzLldwMvFqNDMH54IjwfW3XLqe1ycSPwIQJ3ke5+BSWYYq7DMsGv8NaDTJrVIqdnm6M+BjMyrw4i7cy6vZtKab1StuDTcDDQQj0iPSe+DUuZmcmzGesw5OzBA68VvopA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=O7aANDc9; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jzhbZhe6tjjT85IYcBPClShujk44zmFvIfzzOCZVjl8=; t=1753860920; x=1754465720; 
-	b=O7aANDc9KjSkZIR+A+P6kxJ+PHdaFItE/dDC2QVDNcSlu8j//twHpCCvEXo0a4Xhh79tEybG+W1
-	McrH3z8TdF/6FEVrpvZ/gFnwKeHBZIwbMXRRWP07D6DWi+4vCakb7Kopy8x3ACgFBT7I+1Y7YQmRk
-	oyfXO++EscT1vhvIOLcyo9nxWUwZwstuJSqDpU6LEQeboDjTL/qXdiZaN9crKSyUaD3baOVhDAxpw
-	FCfSCbfI9HUwAi5nrODYfg3zknAciHrd3r+/uLVDZjtHosn177QRBhLFNfQESWKfqWRrTLvRTf4Ux
-	OSRprA6hDJkMaDOdcSRXTmYw0vZk18cmqKfA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uh1LB-00000003x53-2PLV; Wed, 30 Jul 2025 09:35:09 +0200
-Received: from dynamic-002-242-133-026.2.242.pool.telefonica.de ([2.242.133.26] helo=[192.168.178.50])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uh1LB-00000001ACF-1Udf; Wed, 30 Jul 2025 09:35:09 +0200
-Message-ID: <949b52e4e97f7531cd5f40d13e7689ae7768cde3.camel@physik.fu-berlin.de>
-Subject: [GIT PULL] sh updates for v6.17
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Ben Hutchings <benh@debian.org>, Rich Felker <dalias@libc.org>, 
- Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh
- <linux-sh@vger.kernel.org>, linux-kernel	 <linux-kernel@vger.kernel.org>
-Date: Wed, 30 Jul 2025 09:35:08 +0200
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1753860917; c=relaxed/simple;
+	bh=Rb42T9aQ/AvFB04Um0C8TnqGFJJMEejYJB7uNmy/X7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2HTImEc6kWN5Rn1MrEI4Ip0ZyqS34Kt6bOc+4meHhkbv2iBlssIiO7hwMYHRfQJpXW2Un+jwcCW0KlK9EN8EOhSWEi51HGdC+pAm8cJL0diykP6chYYNNfsEgIxYYBOSqZ+ga4RgXdmWZLBJbxoUnVhhwt+6EHvs55U0SYNAFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lyXofFu8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8CEEC4CEE7;
+	Wed, 30 Jul 2025 07:35:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753860915;
+	bh=Rb42T9aQ/AvFB04Um0C8TnqGFJJMEejYJB7uNmy/X7s=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lyXofFu8g8SSyulnEKipqT2pOCKv+cop+PA7ESplvce5MRGTqNlVUjnLgz/DgTKnT
+	 Qr1msG/NOCq5NC4G3D0vr4xL1GHxj/7mI/6dBp8NGoHTokAr1pzK1jk/1qUR3n/IxJ
+	 lTJfOJVDIjylOZ1QnwCvyHVHIC6+B/QpW2o9eVsKR7bX3N8VsCfBv4hzVT7qWrk+4u
+	 WbwWmEQH67o8hVqDOQeBuDmHDZyd2HB6uJHZSeqlhmHHoT+pMgg+FX9676Jn7R2Quq
+	 GRyPuKp8BNJMFu+dJPuX7m5PvNv6PYIcD4Edhtk1PRNwgBYS+6E8UCC5BGYvlwUxrA
+	 oO6+qJ8rcpEdw==
+Date: Wed, 30 Jul 2025 09:35:12 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: add support for NXPs TJA1145 CAN
+ transceiver
+Message-ID: <20250730-aromatic-optimistic-hyena-f1db1a@kuoka>
+References: <20250728-tja1145-support-v1-0-ebd8494d545c@liebherr.com>
+ <20250728-tja1145-support-v1-1-ebd8494d545c@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250728-tja1145-support-v1-1-ebd8494d545c@liebherr.com>
 
-Hi Linus,
+On Mon, Jul 28, 2025 at 05:39:29PM +0200, Dimitri Fedrau wrote:
+> Adding documentation for NXPs TJA1145 CAN transceiver.
+> 
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> ---
+>  .../devicetree/bindings/phy/nxp,tja1145-can.yaml   | 79 ++++++++++++++++++++++
 
-this is my pull request for v6.17 which contains just one patch.
+Why isn't this in can directory with rest of CAN bindings?
 
-The patch Ben Hutchings replaces the hyphen in the exported variable ld-bfd
-with an underscore to avoid issues with certain shells such as dash which
-do not pass through environment variables whose name includes a hyphen.
+>  1 file changed, 79 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml b/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..10bf2bce1b35788b3284c42e544a56eda6d79947
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494=
-:
+Filename should match compatible.
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+> @@ -0,0 +1,79 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/phy/nxp,tja1145-can.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: TJA1145 CAN transceiver
+> +
+> +maintainers:
+> +  - Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
 
-are available in the Git repository at:
+Missing ref to transceiver properties. Look at other CAN bindings.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/glaubitz/sh-linux.git tags/=
-sh-for-v6.17-tag1
+> +
+> +properties:
+> +  compatible:
+> +    const: nxp,tja1145
+> +
+> +  "#phy-cells":
+> +    const: 0
+> +
+> +  reg:
+> +    maxItems: 1
 
-for you to fetch changes up to c32969d0362a790fbc6117e0b6a737a7e510b843:
+reg is the second property, also in "required:" block.
 
-  sh: Do not use hyphen in exported variable name (2025-07-26 17:15:41 +020=
-0)
+> +
+> +  spi-max-frequency:
+> +    maximum: 4000000
+> +
+> +  spi-cpha: true
+> +
+> +  spi-cs-setup-delay-ns:
+> +    minimum: 50
+> +    default: 50
+> +
+> +  spi-cs-hold-delay-ns:
+> +    minimum: 50
+> +    default: 50
+> +
+> +  spi-cs-inactive-delay-ns:
+> +    minimum: 250
+> +    default: 250
+> +
+> +  vcc-supply:
+> +    description:
+> +      CAN transceiver supply voltage
+> +
+> +  vio-supply:
+> +    description:
+> +      Supply voltage for I/O level adaptor
+> +
+> +  vbat-supply:
+> +    description:
+> +      Battery supply voltage
+> +
+> +required:
+> +  - compatible
+> +  - "#phy-cells"
+> +  - reg
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        canphy@0 {
 
-Thanks for pulling!
+can-phy if something like this exist. If not, then probably can-transceiver
 
-Adrian
+> +            compatible = "nxp,tja1145";
+> +            #phy-cells = <0>;
+> +            reg = <0>;
 
-----------------------------------------------------------------
-sh updates for v6.17
+Please follow DTS coding style.
 
-- sh: Do not use hyphen in exported variable name
+Best regards,
+Krzysztof
 
-----------------------------------------------------------------
-Ben Hutchings (1):
-      sh: Do not use hyphen in exported variable name
-
- arch/sh/Makefile                 | 10 +++++-----
- arch/sh/boot/compressed/Makefile |  4 ++--
- arch/sh/boot/romimage/Makefile   |  4 ++--
- 3 files changed, 9 insertions(+), 9 deletions(-)
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
