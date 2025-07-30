@@ -1,235 +1,254 @@
-Return-Path: <linux-kernel+bounces-750335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28F9FB15A2B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:04:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2A17B15A34
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0FB816AA91
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:04:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC53818A3910
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15486264FBB;
-	Wed, 30 Jul 2025 08:03:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61603262FFF;
+	Wed, 30 Jul 2025 08:10:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHSwnj7F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O0xPZhAj"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F6F1D54F7;
-	Wed, 30 Jul 2025 08:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C01FF2253A5;
+	Wed, 30 Jul 2025 08:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753862634; cv=none; b=YUDRISL9fPcbH+C7bqee4cOmNnYNBYjEt7xfg1iysThMJnioXrTkEJUEGgwOKr54J/nOB71HTMna58+BCspdXFHKV0hizA0ZJa/v8bJgHraSve1d5rqqk0Q/EMtGJhFy3gLoWG+d6u52T9hJXP57+eEsYxRXV/RYAh/q+wo8QkU=
+	t=1753863024; cv=none; b=d3puOyJWH5ZkMmzvvCUgCZdNT07k7MmiCjF+ZM654nli2iLQRYV6m+rxYP6Xzg3He8tl6vvFW4EJ++C6YhI1E7Ft3fkEe9KZNQLhXUMkqI3pg8oD0KJllha/1vBYgHcRkKChN9ZFIMV0wKrm5n7d9t4y2V7r95YIpZbiSl4NITA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753862634; c=relaxed/simple;
-	bh=zMori7sX/UDbxCNR2EI8mynJoVEW1MfajN3fR3vL3RM=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=pEvazfwPOHK6m8LwRyq1q0dSgDD9Rze1P+L3zJOx4F5xHf5OVQEpuWEF0gMkp3QkaVQY1OxnljLofNgnpJuLnzqe/y4AS2CsiZUH9mCHnYevizwg+uEcl2sQmq53y1xLIXfszIJqc1/08DvPsHOX7eZebjI0OxEssE3cbaO9Ifs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHSwnj7F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85D1DC4CEE7;
-	Wed, 30 Jul 2025 08:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753862634;
-	bh=zMori7sX/UDbxCNR2EI8mynJoVEW1MfajN3fR3vL3RM=;
-	h=Date:To:From:Subject:Cc:References:In-Reply-To:From;
-	b=GHSwnj7Fd1tMRkr9dNuz2ToiGvIRTK09AjT0F/4PshJ0Gm38xxbS+csJgHvu+5IVA
-	 8gML/P1FOqVOjqDj1D2nJwUd4FCQjdeVanj9S1lWFQBbvIl4vsXteeuS8r8lRVSalW
-	 LeTIiQ7YFMnmA+Y3fFFo3prUSPBJl/bmyA7sWEovGhNAMWjkStZFH3AbLY2nMHCqR9
-	 AyZyBdGYR1yDv5b4NCnNysZJ86s2/Fac502hh+Mvjb2JODbv1JOTm5U+h5lw3nrKUO
-	 5NEwA2gM4nbhR4AlRjLocgj24tNc/DdKcwSWH9Jr1mKKLS2XLIz3LFEmTEKR8ztxlf
-	 eyqBm0VyYGdJA==
+	s=arc-20240116; t=1753863024; c=relaxed/simple;
+	bh=YBq0SKGRnPswqt43Y1t+cjiSBNY3A+c2eONjz2IpXrY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BkBBB6omSCeq5coBBJT/KuW2cu77rz/SgmGTI4/TXyv1/hqFZCJpLPd5Ki8O0iu52g5ZBGurT6QPWHij2vmQiVl7phlbGcJt7a0N75Ul5ZeHFkJCVYSjvOIxesHTWz4tXc3hZwbh0MhzyCsYoA5jXIfSlPF1TAEVrBKxeHKpu6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O0xPZhAj; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 9796B4447C;
+	Wed, 30 Jul 2025 08:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753863010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3TthCFgIH8wLI4dLCfe2QLJEfDqNxOUUkBOW1DRbUqI=;
+	b=O0xPZhAj1T/Oea/AcfHYfAUaTrBNKebzhDCnJT+5StWS+Pxqm3+InAr5J9Xsd60UVzS+JF
+	3mjTU9fDV7DT6vMypFHPSWYnNAuc6TFo8AWo5Z5MorZtnTsXXhafADjfLcQB9dzdA5gfDt
+	b5P2khvf98J3XbZmpl33trAOyNVEMxlvVCj9D9nmkPoRNJdgTxSqKL4xlCH27YDTSQM3UI
+	8bVhF6PrZS2DWbM5VxT1y7+aY+jDAY1bx2DkeCIShjJUwyxCqUKlpxIIBaZ5tSQO2By6kw
+	dWGEPEMxn/MD4AZBpCsSBv2zbq97df3gLFsHtC6xT+ExFHEfgL75AjOJSy+jJQ==
+Date: Wed, 30 Jul 2025 10:10:07 +0200
+From: Herve Codina <herve.codina@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Hoan Tran <hoan@os.amperecomputing.com>, Linus Walleij
+ <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Saravana Kannan
+ <saravanak@google.com>, Serge Semin <fancer.lancer@gmail.com>, Phil
+ Edworthy <phil.edworthy@renesas.com>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Miquel Raynal
+ <miquel.raynal@bootlin.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 0/6] gpio: renesas: Add support for GPIO and related
+ interrupts in RZ/N1 SoC
+Message-ID: <20250730101007.314d88ce@bootlin.com>
+In-Reply-To: <aIYHD5SEAqQNfDjD@ninjato>
+References: <20250725152618.32886-1-herve.codina@bootlin.com>
+	<aIYHD5SEAqQNfDjD@ninjato>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Wed, 30 Jul 2025 10:03:48 +0200
-Message-Id: <DBP8EWLCAE4B.34Y4FBSH5BTB6@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH] rust: clk: use the type-state pattern
-Cc: "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo"
- <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, "Benno Lossin" <lossin@kernel.org>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Rafael J. Wysocki"
- <rafael@kernel.org>, "Viresh Kumar" <viresh.kumar@linaro.org>, "Alexandre
- Courbot" <acourbot@nvidia.com>, <linux-clk@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pm@vger.kernel.org>
-References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
-In-Reply-To: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdeljeegudcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthekredtredtjeenucfhrhhomhepjfgvrhhvvgcuvehoughinhgruceohhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeviefffeegiedtleelieeghfejleeuueevkeevteegffehledtkeegudeigffgvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudekpdhrtghpthhtohepfihsrgdorhgvnhgvshgrshesshgrnhhgqdgvnhhgihhnvggvrhhinhhgrdgtohhmpdhrtghpthhtohephhhorghnsehoshdrrghmphgvrhgvtghomhhpuhhtihhnghdrtghomhdprhgtphhtthhopehlihhnuhhsrdifrghllhgvihhjsehlihhnrghrohdrohhrghdprhgtphhtthhopegsrhhglhessghguggvvhdrphhlpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrghdpr
+ hgtphhtthhopehkrhiikhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghgvvghrthdorhgvnhgvshgrshesghhlihguvghrrdgsvg
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Tue Jul 29, 2025 at 11:38 PM CEST, Daniel Almeida wrote:
-> In light of the Regulator abstraction that was recently merged, switch th=
-is
-> abstraction to use the type-state pattern instead. It solves both a) and =
-b)
-> by establishing a number of states and the valid ways to transition betwe=
-en
-> them. It also automatically undoes any call to clk_get(), clk_prepare() a=
-nd
-> clk_enable() as applicable on drop(), so users do not have to do anything
-> special before Clk goes out of scope.
+Hi Wolfram,
 
-That's a great improvement, thanks! Some questions / comments below.
+On Sun, 27 Jul 2025 13:01:35 +0200
+Wolfram Sang <wsa+renesas@sang-engineering.com> wrote:
 
->      /// A reference-counted clock.
->      ///
->      /// Rust abstraction for the C [`struct clk`].
->      ///
-> +    /// A [`Clk`] instance represents a clock that can be in one of seve=
-ral
-> +    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
-> +    ///
-> +    /// No action needs to be taken when a [`Clk`] is dropped. The calls=
- to
-> +    /// `clk_unprepare()` and `clk_disable()` will be placed as applicab=
-le.
-> +    ///
-> +    /// An optional [`Clk`] is treated just like a regular [`Clk`], but =
-its
-> +    /// inner `struct clk` pointer is `NULL`. This interfaces correctly =
-with the
-> +    /// C API and also exposes all the methods of a regular [`Clk`] to u=
-sers.
-> +    ///
->      /// # Invariants
->      ///
->      /// A [`Clk`] instance holds either a pointer to a valid [`struct cl=
-k`] created by the C
-> @@ -99,20 +160,39 @@ mod common_clk {
->      /// Instances of this type are reference-counted. Calling [`Clk::get=
-`] ensures that the
->      /// allocation remains valid for the lifetime of the [`Clk`].
->      ///
-> -    /// ## Examples
-> +    /// The [`Prepared`] state is associated with a single count of
-> +    /// `clk_prepare()`, and the [`Enabled`] state is associated with a =
-single
-> +    /// count of `clk_enable()`, and the [`Enabled`] state is associated=
- with a
-> +    /// single count of `clk_prepare` and `clk_enable()`.
-> +    ///
-> +    /// All states are associated with a single count of `clk_get()`.
-> +    ///
-> +    /// # Examples
->      ///
->      /// The following example demonstrates how to obtain and configure a=
- clock for a device.
->      ///
->      /// ```
->      /// use kernel::c_str;
-> -    /// use kernel::clk::{Clk, Hertz};
-> +    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, Prepared};
->      /// use kernel::device::Device;
->      /// use kernel::error::Result;
->      ///
->      /// fn configure_clk(dev: &Device) -> Result {
-> -    ///     let clk =3D Clk::get(dev, Some(c_str!("apb_clk")))?;
-> +    ///     // The fastest way is to use a version of `Clk::get` for the=
- desired
-> +    ///     // state, i.e.:
-> +    ///     let clk: Clk<Enabled> =3D Clk::<Enabled>::get(dev, Some(c_st=
-r!("apb_clk")))?;
-
-Given that this is a driver API, why do we allow obtaining and configuring
-clocks of any device, i.e. also unbound devices?
-
-I think Clk::<T>::get() should take a &Device<Bound> instead.
-
-> -    ///     clk.prepare_enable()?;
-> +    ///     // Any other state is also possible, e.g.:
-> +    ///     let clk: Clk<Prepared> =3D Clk::<Prepared>::get(dev, Some(c_=
-str!("apb_clk")))?;
-> +    ///
-> +    ///     // Later:
-> +    ///     let clk: Clk<Enabled> =3D clk.enable().map_err(|error| {
-> +    ///         error.error
-> +    ///     })?;
-> +    ///
-> +    ///     // Note that error.clk is the original `clk` if the operatio=
-n
-> +    ///     // failed. It is provided as a convenience so that the opera=
-tion may be
-> +    ///     // retried in case of errors.
->      ///
->      ///     let expected_rate =3D Hertz::from_ghz(1);
->      ///
-> @@ -120,104 +200,172 @@ mod common_clk {
->      ///         clk.set_rate(expected_rate)?;
->      ///     }
->      ///
-> -    ///     clk.disable_unprepare();
-> +    ///     // Nothing is needed here. The drop implementation will undo=
- any
-> +    ///     // operations as appropriate.
-> +    ///     Ok(())
-> +    /// }
-> +    ///
-> +    /// fn shutdown(dev: &Device, clk: Clk<Enabled>) -> Result {
-
-You don't need the dev argument here.
-
-> +    ///     // The states can be traversed "in the reverse order" as wel=
-l:
-> +    ///     let clk: Clk<Prepared> =3D clk.disable().map_err(|error| {
-> +    ///         error.error
-> +    ///     })?;
-> +    ///
-> +    ///     let clk: Clk<Unprepared> =3D clk.unprepare();
-
-I know you want to showcase the type state, yet I don't know if we should
-explicitly declare the type if not necessary. People will likely just copy
-things. Maybe a comment is better to emphasize it?
-
-> +    ///
->      ///     Ok(())
->      /// }
->      /// ```
->      ///
->      /// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
->      #[repr(transparent)]
-> -    pub struct Clk(*mut bindings::clk);
-> +    pub struct Clk<T: ClkState> {
-> +        inner: *mut bindings::clk,
-> +        _phantom: core::marker::PhantomData<T>,
-> +    }
-
-<snip>
-
-> +    impl<T: ClkState> Drop for Clk<T> {
-> +        fn drop(&mut self) {
-> +            if T::DISABLE_ON_DROP {
-> +                // SAFETY: By the type invariants, self.as_raw() is a va=
-lid argument for
-> +                // [`clk_disable`].
-> +                unsafe { bindings::clk_disable(self.as_raw()) };
-> +            }
+> Hi Hervé,
+> 
+> > This series adds support for GPIO and GPIO IRQ mux available in the
+> > RZ/N1 SoCs.  
+> 
+> Yes, way cool! Very happy to see this upstreaming effort!
+> 
+> > The first two patches of the series add support for GPIO (binding update
+> > and device-tree description).  
+> 
+> So, I started simple and used the first two patches to enable LEDs on
+> pins 92 and 93 on my board. I added this on top of patch 1+2:
+> 
+> diff --git a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
+> index 3258b2e27434..4790ffad578f 100644
+> --- a/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
+> +++ b/arch/arm/boot/dts/renesas/r9a06g032-rzn1d400-db.dts
+> @@ -185,6 +185,12 @@ fixed-link {
+>  	};
+>  };
+>  
+> +&gpio1 {
+> +	pinctrl-0 = <&pins_gpio1>;
+> +	pinctrl-names = "default";
+> +	status = "okay";
+> +};
 > +
-> +            if T::UNPREPARE_ON_DROP {
-> +                // SAFETY: By the type invariants, self.as_raw() is a va=
-lid argument for
-> +                // [`clk_unprepare`].
-> +                unsafe { bindings::clk_unprepare(self.as_raw()) };
-> +            }
+>  &i2c2 {
+>  	pinctrl-0 = <&pins_i2c2>;
+>  	pinctrl-names = "default";
+> @@ -256,6 +262,11 @@ pins_cpld: pins-cpld {
+>  			 <RZN1_PINMUX(122, RZN1_FUNC_USB)>;
+>  	};
+>  
+> +	pins_gpio1: pins-gpio1 {
+> +		pinmux = <RZN1_PINMUX(92, RZN1_FUNC_GPIO)>,	/* GPIO1B[23] */
+> +			 <RZN1_PINMUX(93, RZN1_FUNC_GPIO)>;	/* GPIO1B[24] */
+> +	};
+> +
+>  	pins_eth3: pins_eth3 {
+>  		pinmux = <RZN1_PINMUX(36, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>,
+>  			 <RZN1_PINMUX(37, RZN1_FUNC_CLK_ETH_MII_RGMII_RMII)>
+> 
+> to my board dts. The controller gets probed but I can't control the
+> LEDs. Neither with exported GPIOs (via sysfs) nor with a dedicated LED
+> node. Am I missing something obvious? The LEDs are attached to PL_GPIO92
+> and PL_GPIO93 which are mapped to GPIO1b[23] and GPIO1b[24]. That seems
+> to be in accordance with the datasheet. I hope I just overlooked
+> something simple. Some outputs, first /sys/kernel/debug/gpio:
+> 
+> 	...
+> 	gpiochip1: GPIOs 552-583, parent: platform/5000c000.gpio, 5000c000.gpio:
+> 
+> 	gpiochip2: GPIOs 584-615, parent: platform/5000c000.gpio, 5000c000.gpio:
+> 	 gpio-608 (                    |sysfs               ) out hi 
+> 
+> And /sys/kernel/debug/pinctrl/40067000.pinctrl/pinmux-pins:
+> 
+> 	Pinmux settings per pin
+> 	Format: pin (name): mux_owner gpio_owner hog?
+> 	...
+> 	pin 92 (pl_gpio92): 5000c000.gpio (GPIO UNCLAIMED) function pins-gpio1 group pins-gpio1
+> 	pin 93 (pl_gpio93): 5000c000.gpio (GPIO UNCLAIMED) function pins-gpio1 group pins-gpio1
+> 
+> I wonder about the "(GPIO UNCLAIMED)" a little? How do you use it on
+> your board?
+> 
 
-Nice! I like this cleanup. However, don't you still need to call clk_put() =
-to
-drop the reference count?
+Strange, I have a LED working on my side.
 
-Also, given that this is a device resource, don't we want to take it away f=
-rom
-drivers once the corresponding device has been unbound, i.e. use Devres?
+My LED is connected to gpio0b[9] (GPIO17).
 
->          }
->      }
->  }
+I just used:
+--- 8< ---
+	gpio_leds {
+		compatible = "gpio-leds";
+
+		led_1g: led-0 {
+			label = "led_1g";
+			gpios = <&gpio0b 9 GPIO_ACTIVE_HIGH>;
+		};
+	};
+
+	&gpio0 {
+		pinctrl-0 = <&pins_gpio0>;
+		pinctrl-names = "default";
+		status = "okay";
+	};
+
+	&pinctrl{
+		/*
+		 * I have other pins used as GPIOs but my led is :
+		 *    RZN1_PINMUX(17, RZN1_FUNC_GPIO)
+		 */
+
+		pins_gpio0: pins_gpio0 {
+			pinmux = <
+				RZN1_PINMUX(13, RZN1_FUNC_GPIO)	/* GPIO0B[7] */
+				RZN1_PINMUX(14, RZN1_FUNC_GPIO)	/* GPIO0B[8] */
+				RZN1_PINMUX(15, RZN1_FUNC_GPIO)	/* GPIO0A[6] */
+				RZN1_PINMUX(16, RZN1_FUNC_GPIO)	/* GPIO0A[7] */
+				RZN1_PINMUX(17, RZN1_FUNC_GPIO)	/* GPIO0B[9] */
+				RZN1_PINMUX(18, RZN1_FUNC_GPIO)	/* GPIO0B[10] */
+				RZN1_PINMUX(22, RZN1_FUNC_GPIO)	/* GPIO0A[9] */
+				RZN1_PINMUX(23, RZN1_FUNC_GPIO)	/* GPIO0B[13] */
+			>;
+			drive-strength = <6>;
+			bias-disable;
+		pins_gpio0_pullup {
+			pinmux = <
+				RZN1_PINMUX(25, RZN1_FUNC_GPIO)	/* GPIO0B[14] - A70CI_EN_N */
+				RZN1_PINMUX(26, RZN1_FUNC_GPIO)	/* GPIO0B[15] - A71CH_EN_N */
+				RZN1_PINMUX(27, RZN1_FUNC_GPIO)	/* GPIO0A[11] - TRUST_M_EN_N */
+				RZN1_PINMUX(28, RZN1_FUNC_GPIO)	/* GPIO0A[12] - TRUST_X_EN_N */
+				RZN1_PINMUX(32, RZN1_FUNC_GPIO)	/* GPIO0B[19] - STMA100_EN_N*/
+			>;
+			drive-strength = <6>;
+			bias-pull-up;
+		};
+
+	};
+--- 8< ---
+
+Of course with:
+  CONFIG_GPIO_DWAPB=y
+  CONFIG_LEDS_CLASS=y
+  CONFIG_LEDS_GPIO=y
+
+My led is accessible from the user-space without any issue:
+  echo 255 > /sys/class/leds/led_1g/brightness
+
+I have checked /sys/kernel/debug/pinctrl/40067000.pinctrl/pinmux-pins and
+I have also the "(GPIO UNCLAIMED)":
+	...
+	pin 12 (pl_gpio12): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	pin 13 (pl_gpio13): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0
+	pin 14 (pl_gpio14): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0
+	pin 15 (pl_gpio15): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0
+	pin 16 (pl_gpio16): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0
+	pin 17 (pl_gpio17): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0
+	pin 18 (pl_gpio18): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0
+	pin 19 (pl_gpio19): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	pin 20 (pl_gpio20): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	pin 21 (pl_gpio21): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	pin 22 (pl_gpio22): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0
+	pin 23 (pl_gpio23): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0
+	pin 24 (pl_gpio24): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	pin 25 (pl_gpio25): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0_pullup
+	pin 26 (pl_gpio26): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0_pullup
+	pin 27 (pl_gpio27): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0_pullup
+	pin 28 (pl_gpio28): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0_pullup
+	pin 29 (pl_gpio29): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	pin 30 (pl_gpio30): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	pin 31 (pl_gpio31): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	pin 32 (pl_gpio32): 5000b000.gpio (GPIO UNCLAIMED) function pins_gpio0 group pins_gpio0_pullup
+	pin 33 (pl_gpio33): (MUX UNCLAIMED) (GPIO UNCLAIMED)
+	...
+
+When you described the LED on your side, did you reference the GPIO using &gpio1b
+for instance gpios = <&gpio1b 23 GPIO_ACTIVE_HIGH>;
+
+For GPIO accesses from user space I used gpioget/gpioset tools from libgpiod
+without any issues to read/write a GPIO.
+
+Best regards,
+Hervé
 
