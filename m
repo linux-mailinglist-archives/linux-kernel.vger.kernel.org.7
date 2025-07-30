@@ -1,123 +1,263 @@
-Return-Path: <linux-kernel+bounces-750996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13E0B163DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:42:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F174AB163E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FCE4E800A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:42:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CD9A566956
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE6B2DE6EA;
-	Wed, 30 Jul 2025 15:42:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE132DE6E3;
+	Wed, 30 Jul 2025 15:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="tE0oIhur"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LB8kfxhH"
+Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4777B78F4E;
-	Wed, 30 Jul 2025 15:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1E6A2652B4;
+	Wed, 30 Jul 2025 15:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753890159; cv=none; b=i+V1fgoxVtxZAKdI2dNY/dyIHjAfh5tx4Zs5XwFe2PeyYHDLeDaTzUQqly6mb1seEx0Aa/qbh/+k80b9ngvK815LcWs/KveXCH/5CW4Mh3pogMAKHeJlPqFrH2VBFZhg03nccx/dJwDb+bVM1FqFhGDfJ1JXTr5n0RmhKXZ78gE=
+	t=1753890369; cv=none; b=pJ9tFYteLZbohSWBwfyINKfxE21BYTe4yVZkPKSpX7wXpTFcNm+bICLOHTqzmp14wxtXZmaMmcAPUpZ9o56v09fK8eBx/IlezWlF0k5nT1aE/bSJrhaPV8CjSnNQ0o//5EQqw+FtQuIXeFXnnPDOLTMHx4nno6/Fydgtf+F6QZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753890159; c=relaxed/simple;
-	bh=8y0o//TYzUzbKwKRuy6EOZNwYhkcVWNfb8USVc/H+ws=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=qcl1FHjkULgsdAcyN2lTQ1nb1pxnkPVadIKKZKtRwwU6DfCXhzEEoFjiq1X5de+CFMbsB0FAr7JABOChr9zm/8xZUF/sgGvlmlHQ0rUYMm2AZsD8V17csRTumWDmUUNW5hYQal0OC4nHtBNkxE4+sT3BngsyeYbe7jsEaGhDKxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=tE0oIhur; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4bsc0s19BRzm1Hbb;
-	Wed, 30 Jul 2025 15:42:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:content-language:references:from:from:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1753890153; x=1756482154; bh=8y0o//TYzUzbKwKRuy6EOZNw
-	YhkcVWNfb8USVc/H+ws=; b=tE0oIhurTvTl46X/22wx7u2BKSPF4cM37pJUBT++
-	6rWWQs2uw7oSkyzxzjNFgbx0sJBHoRj1Z56mTr+sOZMHNNrKjRMfkW+EkMFW485b
-	FMY9kxvHL4bBEZbeoxV2uPhVQWntH6VrgV8W6B3TzsTzggug88JOKFZoexc3KdVs
-	c0nmXGgxuFdzZW6Go2qT3rhrpFuEaqNdYnIILxLHExbKomwoM3H00d/9HbwtKQdx
-	Ydbquv1p9zhVv7g8bDBSyv43d6UP14ym2IQaiJRNGEQIVhwHmA/iMvmaSAhG7nl2
-	E96fai7L0YF08pABzqGTsEWnfXpRZENnjvQRyGoUsU03iQ==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id YzB5OBHMuh-f; Wed, 30 Jul 2025 15:42:33 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4bsc0T0VLMzm1HcS;
-	Wed, 30 Jul 2025 15:42:16 +0000 (UTC)
-Message-ID: <3ad6282f-bb41-42c2-9dda-337a0e0be68a@acm.org>
-Date: Wed, 30 Jul 2025 08:42:15 -0700
+	s=arc-20240116; t=1753890369; c=relaxed/simple;
+	bh=L8XzuUBtVMiUY3rJrZnCLHPBuVniF1PoqG4acgTlRg0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lkaxFUa2aVGic1Q7PLyBRwCehn4WdDwqKWL19Ba8AJMudomS7PKIv/7wDXLIRjSBgKG9OHb8Paej8BbFJZ+WvS1Pkt0dwWcMRLqJlPX5KHIW7z78w/T1zI8SUPPCyiCU7QXgHtwxkPXbqrcpmKnVS6uNpHzwO0fTsCEjsznBWDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LB8kfxhH; arc=none smtp.client-ip=217.70.178.236
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id EB2DA43881;
+	Wed, 30 Jul 2025 15:45:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753890356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BVuoo4VG2tlrXaQpp6d0XpKPV/Ar3pXYePMdRqvPDDM=;
+	b=LB8kfxhHMjKFKuZDoPujS+Fa1sNVuy84ku1XnoiCqQfC820A/eyfM6Xrd3IcuX8XPe7Pnp
+	ym7Ne/+6rpAvNDTpd55CUZcf8hGAejzcOtJRGL3tarBMONIWC77eM6yT+0RG8fDFcyE8oz
+	iJ++aVnKu70MqWNrPT7zWBXIkG5rfadhW8gXhEcLAf1+3aWoN0riVVEh9MTzKuDGWrj7yF
+	YEpYWwy02OUTU/cl7YWzhbu+dnG4ke0fGAN3St4df7l90pjwnW7Zx0carXWnt9cwpov+Ke
+	UZnYJZUVlEGSPvXce1fKL7T8uShf2EXTIiF+ElzO1jtL0ct/hfTwDqt6i58kUw==
+Date: Wed, 30 Jul 2025 17:45:53 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ayush Singh <ayush@beagleboard.org>, Mark Brown <broonie@kernel.org>,
+ herve.codina@bootlin.com, conor+dt@kernel.org, Jason Kridner
+ <jkridner@beagleboard.org>, Deepak Khatri <lorforlinux@beagleboard.org>,
+ Dhruva Gole <d-gole@ti.com>, Robert Nelson <robertcnelson@beagleboard.org>,
+ Andrew Davis <afd@ti.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, linux-spi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 4/4] devicetree: bindings: spi: Introduce SPI bus
+ extensions
+Message-ID: <20250730174553.4df8037b@booty>
+In-Reply-To: <c65d26d0-51b8-4131-a755-6c72b7dea549@kernel.org>
+References: <20250729-spi-bus-extension-v1-0-b20c73f2161a@beagleboard.org>
+	<20250729-spi-bus-extension-v1-4-b20c73f2161a@beagleboard.org>
+	<c65d26d0-51b8-4131-a755-6c72b7dea549@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] scsi: ufs: core: Don't perform UFS clkscale if host
- asyn scan in progress
-From: Bart Van Assche <bvanassche@acm.org>
-To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
- "beanhuo@micron.com" <beanhuo@micron.com>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
- "quic_cang@quicinc.com" <quic_cang@quicinc.com>,
- "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
- "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
- "quic_ziqichen@quicinc.com" <quic_ziqichen@quicinc.com>,
- "luca.weiss@fairphone.com" <luca.weiss@fairphone.com>,
- "konrad.dybcio@oss.qualcomm.com" <konrad.dybcio@oss.qualcomm.com>,
- "mani@kernel.org" <mani@kernel.org>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "quic_rampraka@quicinc.com" <quic_rampraka@quicinc.com>,
- "junwoo80.lee@samsung.com" <junwoo80.lee@samsung.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- =?UTF-8?B?VHplLW5hbiBXdSAo5ZCz5r6k5Y2XKQ==?= <Tze-nan.Wu@mediatek.com>,
- "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
- "James.Bottomley@HansenPartnership.com"
- <James.Bottomley@HansenPartnership.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20250522081233.2358565-1-quic_ziqichen@quicinc.com>
- <5f3911ffd2c09b6d86300c3905e9c760698df069.camel@mediatek.com>
- <1989e794-6539-4875-9e87-518da0715083@acm.org>
- <10b41d77c287393d4f6e50e712c3713839cb6a8c.camel@mediatek.com>
- <673e1960-f911-451d-ab18-3dc30abddd79@quicinc.com>
- <418bfbe4bfb3f04e805af8fa667144f148787aeb.camel@mediatek.com>
- <ea382e7c-2436-4e82-a2b5-d5b7737b8828@acm.org>
-Content-Language: en-US
-In-Reply-To: <ea382e7c-2436-4e82-a2b5-d5b7737b8828@acm.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelkeefvdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkjghfohfogggtgfesthhqredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpefhkeeigeethfegleeiheehgfdtkeffvefggedvgeegleekheejteettefhvedugfenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudehpdhrtghpthhtohepkhhriihksehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrhihushhhsegsvggrghhlvggsohgrrhgurdhorhhgpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlr
+ dhorhhgpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjkhhrihgunhgvrhessggvrghglhgvsghorghrugdrohhrghdprhgtphhtthhopehlohhrfhhorhhlihhnuhigsegsvggrghhlvggsohgrrhgurdhorhhgpdhrtghpthhtohepugdqghholhgvsehtihdrtghomh
 
-On 7/30/25 8:37 AM, Bart Van Assche wrote:
-> On 7/30/25 5:55 AM, Peter Wang (=E7=8E=8B=E4=BF=A1=E5=8F=8B) wrote:
->> However, in theory, this issue should still be solvable
->> without using a lock.
->> Another idea is to only start ufshcd_devfreq_init
->> when shost->async_scan =3D 0.
+On Tue, 29 Jul 2025 14:52:00 +0200
+Krzysztof Kozlowski <krzk@kernel.org> wrote:
+
+> On 29/07/2025 11:51, Ayush Singh wrote:
+> > An SPI bus can be wired to the connector and allows an add-on board to
+> > connect additional SPI devices to this bus.
+> >  =20
 >=20
-> Does the lockdep complaint mentioned in this email thread occur on
-> multiple platforms or only on MediaTek platforms? I don't see any
-> lockdep complaints with Martin's SCSI for-next branch on my
-> development platform. If this warning only occurs on MediaTek
-> platforms, why to modify the UFSHCI core driver to eliminate this
-> lockdep complaint?
+> ... so I found the binding. Not marked by my filters due to non-standard
+> subject.
+>=20
+> Please use subject prefixes matching the subsystem. You can get them for
+> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+> your patch is touching. For bindings, the preferred subjects are
+> explained here:
+> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-pat=
+ches.html#i-for-patch-submitters
+>=20
+> > Those additional SPI devices could be described as sub-nodes of the SPI
+> > bus controller node however for hotplug connectors described via device
+> > tree overlays there is additional level of indirection, which is needed
+> > to decouple the overlay and the base tree:
+> >=20
+> >   --- base device tree ---
+> >=20
+> >   spi1: spi@abcd0000 {
+> >       compatible =3D "xyz,foo";
+> >       spi-bus-extension@0 {
+> >           spi-bus =3D <&spi_ctrl>;
+> >       };
+> >       ...
+> >   };
+> >=20
+> >   spi5: spi@cafe0000 {
+> >       compatible =3D "xyz,bar";
+> >       spi-bus-extension@0 {
+> >           spi-bus =3D <&spi_sensors>;
+> >       };
+> >       ...
+> >   };
+> >=20
+> >   connector {
+> >       spi_ctrl: spi-ctrl {
+> >           spi-parent =3D <&spi1>;
+> >           #address-cells =3D <1>;
+> >           #size-cells =3D <0>;
+> >       };
+> >=20
+> >       spi_sensors: spi-sensors {
+> >           spi-parent =3D <&spi5>;
+> >           #address-cells =3D <1>;
+> >           #size-cells =3D <0>;
+> >       };
+> >   }; =20
+>=20
+> It looks like you are re-doing I2C work. Please wait till I2C discussion
+> finishes, so we won't have to comment on the same in multiple places.
+>=20
+> >=20
+> >   --- device tree overlay ---
+> >=20
+> >   ...
+> >   // This node will overlay on the spi-ctrl node of the base tree
+> >   spi-ctrl {
+> >       eeprom@50 { compatible =3D "atmel,24c64"; ... };
+> >   };
+> >   ...
+> >=20
+> >   --- resulting device tree ---
+> >=20
+> >   spi1: spi@abcd0000 {
+> >       compatible =3D "xyz,foo";
+> >       spi-bus-extension@0 {
+> >           spi-bus =3D <&spi_ctrl>;
+> >       };
+> >       ...
+> >   };
+> >=20
+> >   spi5: spi@cafe0000 {
+> >       compatible =3D "xyz,bar";
+> >       spi-bus-extension@0 {
+> >           spi-bus =3D <&spi_sensors>;
+> >       };
+> >       ...
+> >   };
+> >=20
+> >   connector {
+> >       spi_ctrl: spi-ctrl {
+> >           spi-parent =3D <&spi1>;
+> >           #address-cells =3D <1>;
+> >           #size-cells =3D <0>;
+> >=20
+> >           device@1 { compatible =3D "xyz,foo"; ... };
+> >       };
+> >=20
+> >       spi_sensors: spi-sensors {
+> >           spi-parent =3D <&spi5>;
+> >           #address-cells =3D <1>;
+> >           #size-cells =3D <0>;
+> >       };
+> >   };
+> >=20
+> > Here spi-ctrl (same goes for spi-sensors) represent the part of SPI bus
+> > that is on the hot-pluggable add-on. On hot-plugging it will physically
+> > connect to the SPI adapter on the base board. Let's call the 'spi-ctrl'
+> > node an "extension node".
+> >=20
+> > In order to decouple the overlay from the base tree, the SPI adapter
+> > (spi@abcd0000) and the extension node (spi-ctrl) are separate nodes.
+> >=20
+> > The extension node is linked to the SPI bus controller in two ways. The
+> > first one with the spi-bus-extension available in SPI controller
+> > sub-node and the second one with the spi-parent property available in
+> > the extension node itself.
+> >=20
+> > The purpose of those two links is to provide the link in both direction
+> > from the SPI controller to the SPI extension and from the SPI extension
+> > to the SPI controller.
+> >=20
+> > Signed-off-by: Ayush Singh <ayush@beagleboard.org>
+> > ---
+> >  .../devicetree/bindings/spi/spi-controller.yaml    | 66 ++++++++++++++=
++++++++-
+> >  1 file changed, 65 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml =
+b/Documentation/devicetree/bindings/spi/spi-controller.yaml
+> > index 82d051f7bd6e09dab9809c85ff13475d2b118efd..9b44ce4542f9552c94cb065=
+8ffe3f6d3f29bc434 100644
+> > --- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
+> > +++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
+> > @@ -25,6 +25,13 @@ properties:
+> >    "#size-cells":
+> >      const: 0
+> > =20
+> > +  spi-parent:
+> > +    $ref: /schemas/types.yaml#/definitions/phandle
+> > +    description:
+> > +      In case of an SPI bus extension, reference to the SPI bus contro=
+ller
+> > +      this extension is connected to. In other word, reference the SPI=
+ bus
+> > +      controller on the fixed side that drives the bus extension.
+> > +
+> >    cs-gpios:
+> >      description: |
+> >        GPIOs used as chip selects.
+> > @@ -111,7 +118,26 @@ properties:
+> >        - compatible
+> > =20
+> >  patternProperties:
+> > -  "^.*@[0-9a-f]+$":
+> > +  'spi-bus-extension@[0-9a-f]+$':
+> > +    type: object
+> > +    description:
+> > +      An SPI bus extension connected to an SPI bus. Those extensions a=
+llow to
+> > +      decouple SPI busses when they are wired to connectors. =20
+>=20
+> I really do not get why you need separate two-way phandles for marking
+> parent child relationship. IOW, if you need two way, then why not graphs?
+>=20
+> Or why not just making the device@2 a child of SPI, since it is coming
+> from overlay.
 
-Answering my own question: clock scaling is not enabled on my
-development platform and that's why I'm not seeing this lockdep
-complaint.
+For the same reason as in I2C (and the proposed solution is the same).
 
-Bart.
+As you wrote above, Ayush could wait for the I2C discussion to finish.
+Problem is, the I2C discussion is not moving forward: Herv=C3=A9 is sending
+proposals but there is no feedback on the core of the proposal, and no
+feedback at all on the latest iteration. In case your filters missed it:
+https://lore.kernel.org/all/20250618082313.549140-1-herve.codina@bootlin.co=
+m/
+
+I think Ayush's series is useful anyway in that it shows the approach
+Herv=C3=A9 proposed works unmodified for another subsystem and is useful for
+a different use case.
+
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
