@@ -1,144 +1,165 @@
-Return-Path: <linux-kernel+bounces-750511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF0CAB15D16
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:50:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF53DB15D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 240BC5A422C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:49:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7795C188B19B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:50:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9AE26C383;
-	Wed, 30 Jul 2025 09:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33917277804;
+	Wed, 30 Jul 2025 09:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u0l0FvA7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="dOYfO7V6"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4B4635;
-	Wed, 30 Jul 2025 09:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514911F5834
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753868961; cv=none; b=T4vUDx4ahBTZ3v60gn4y9qHvZorGrnV5fwYRTtLgsl0rDR2VGA/D7k5OkOyma1YP0T0Z+BObR3mPO/y1awSFiMzHCUitMYYAZO//ndnP1mq0qAiKMucQHwMrgARUcUcXo8cWaKQvMba3YjVAZpSXCz7mB9mwePuZLfsllBVqDKg=
+	t=1753868981; cv=none; b=HQG0E7m4dMpp3bYWoWNPOHbhJQlC6eqG6RfKBSRtKarFXvziibC1TyySpmZiBZw/RoWJhsqBRhNqHzc835rM5vs4S/I24/Talgzqo32f3Ib/+NcCS/MJrUGALIWSM6Ityowq2NTAHiQkgu+ZXTPfb29CRdXwkWgzi5opGPXs4Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753868961; c=relaxed/simple;
-	bh=UimlKP3HSONXYCOXhI5k/xeHFAvvYzDBkpGyXWw4lgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OMkDTtEQHEk7vV3WsJOrFAvONhflKKb7eGSl9yVlOUrTFbyNeFpDeGASKcw/1KcWs8dwtwEvGfPkiODmOhKoHIfZOrjsBGJQPUjd+HVpTzQME5meC+T4dUAsgMvs30ZLRFKowjuTtr9uaxRyaYiZbn+5taQbjWq1tW/Wqo7F0tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u0l0FvA7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B123C4CEF6;
-	Wed, 30 Jul 2025 09:49:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753868960;
-	bh=UimlKP3HSONXYCOXhI5k/xeHFAvvYzDBkpGyXWw4lgU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=u0l0FvA7Sm1rh+7Sx/2QZ6/Uq1zhgLUSU8BykuTP2Enw+rHBCAztUZT7XxPeg2hAQ
-	 Jel8Ha8NMkVppS9NELGZCEPO7XjSalYDa+M8WweEzICFlobk4/Kvq7hpfSQgGmijX0
-	 bY0euDSjUbTIMZhUm9L9yzSQ2ULOpU+X9JykUfQcSOHhR/LmProiQw0ctpCDnHY+fR
-	 EyUAk9mePNWDvtt+F9AIU6Z40etr890Y9IQSSQeuSxHw++lMJNB5PbzGkXCVBFtoQq
-	 6LmdjEcqM2EjQzVftBwdWkDkDPmFLJH37P5KEcHr9KXzbOwZqrA5F0JQCTZ0ZP2U3O
-	 Zpj7N3ohZsJIA==
-Message-ID: <1ba0e803-cbca-43d0-be9d-79fef4e54201@kernel.org>
-Date: Wed, 30 Jul 2025 11:49:14 +0200
+	s=arc-20240116; t=1753868981; c=relaxed/simple;
+	bh=ULSog3kf+bL89KMT6vB8XVysrRKIR0SeaCEF3WPDjhI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lJd67Y5My6g/IXwXOoq+dCZX7Hf1YKRGdvzvPbkScm41RhfWQJFP6cr5XJ7yIIwIXsEIgK7CMiyThCfDb/oAafi6AIWmomvkLV+iN5XJ2tG4olAf83iio9FkdciXdCMppNkpfc4/83W5UA1mT1MHv2SA9oP/SLpqUtcxlvm+p0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=dOYfO7V6; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 435F31C008E; Wed, 30 Jul 2025 11:49:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1753868976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hbgfSAKg2C6APSx5l0p1+ObE37mdrJbXnh0D/kcfFvI=;
+	b=dOYfO7V6l4vIT0ogyD5m7DmLzKTnCwEmy2qF9EB1W4U2toUh4dBHseMcIaPWB2RuXBeVjT
+	kgUW5deDwgEv+n4qNA2auwlCv1K9nJPJUei4AISraNRBt4IPk0eYHf1M3ZMDCbhQSNbcvo
+	5bTbNC7ilLo6LEuefpvk3FLD2wJTq7U=
+Date: Wed, 30 Jul 2025 11:49:35 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Norbert Preining <norbert@preining.info>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Lenovo P1 suspend to ram regression
+Message-ID: <aInqr7C08F+Ex0II@duo.ucw.cz>
+References: <aGFvYQFhGi_ytgDB@fettsack>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 6/6] virtio-msg: Add support for loopback bus
-To: Viresh Kumar <viresh.kumar@linaro.org>, linux-kernel@vger.kernel.org,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>
-Cc: Arnd Bergmann <arnd@kernel.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
- Bill Mills <bill.mills@linaro.org>, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>, devicetree@vger.kernel.org,
- virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>,
- Bertrand Marquis <bertrand.marquis@arm.com>,
- "Edgar E . Iglesias" <edgar.iglesias@amd.com>,
- Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-References: <cover.1753865268.git.viresh.kumar@linaro.org>
- <622460b11118be66d5ec380b3d5771be77fc1e91.1753865268.git.viresh.kumar@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <622460b11118be66d5ec380b3d5771be77fc1e91.1753865268.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="KQM6ti/BwZko7uVe"
+Content-Disposition: inline
+In-Reply-To: <aGFvYQFhGi_ytgDB@fettsack>
 
-On 30/07/2025 11:29, Viresh Kumar wrote:
-> Add a loopback bus implementation for the virtio-msg transport.
-> 
-> This bus simulates a backend that echoes messages to itself, allowing
-> testing and development of virtio-msg without requiring an actual remote
-> backend or transport hardware.
-> 
-> The loopback bus requires a reserved memory region for its operation.
-> All DMA-coherent and streaming DMA allocations are restricted to this
-> region, enabling safe mapping into user space and helping validate the
-> memory-sharing model.
-> 
-> The reserved-memory region must be named "vmsglb" in the device tree.
 
-No, because I can name regions how I wish. You cannot add undocumented
-ABI and claim in commit msg, that the commit msg is the ABI.
+--KQM6ti/BwZko7uVe
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Either you have ABI documented or you cannot rely on implicit ABI, thus
-remove above restriction.
+Hi!
 
-This is really poor choice to add such hidden ABI and it already broke
-several users in the past.
+> (please Cc, thanks)
+>=20
+> since some time, probably some kernel revisions, my Lenovo P1 Gen6
+> goes to sleep (suspend to ram), but produces considerable heat even
+> in sleep mode. Not surprising, it also drops battery level within
+> short time.
+>=20
+> I am not sure where to report this bug, as well as which information I
+> can provide.=20
+>=20
+> Kernel is 6.15.4-zen2-1-zen on Arch Linux
+>=20
+> >From the dmesg:
+>=20
+> [    0.000000] DMI: LENOVO 21FV002EUS/21FV002EUS, BIOS N3ZET48W (1.35 ) 0=
+2/25/2025
+>=20
+> The supported sleep state seems to only be s2sleep:
 
+You may want to Cc Rafael and regression tracker.
+
+And no, this is not easy to debug. Start is to determine good and bad
+kernel versions.
 
 Best regards,
-Krzysztof
+								Pavel
+
+> =E2=9D=AF cat /sys/power/mem_sleep
+> [s2idle]
+>=20
+>=20
+> Around suspend:
+> [47798.668789] PM: suspend entry (s2idle)
+> [47798.795045] Filesystems sync: 0.126 seconds
+> [47798.931393] Freezing user space processes
+> [47798.933739] Freezing user space processes completed (elapsed 0.002 sec=
+onds)
+> [47798.933743] OOM killer disabled.
+> [47798.933744] Freezing remaining freezable tasks
+> [47798.935141] Freezing remaining freezable tasks completed (elapsed 0.00=
+1 seconds)
+> [47798.935143] printk: Suspending console(s) (use no_console_suspend to d=
+ebug)
+> [47798.953325] cs35l41-hda i2c-CSC3551:00-cs35l41-hda.0: Asserting Reset
+> [47798.953498] CoreFreq: Suspend(0:1:19)
+> [47799.413769] ACPI: EC: interrupt blocked
+> [47805.654440] thinkpad_acpi: undocked from hotplug port replicator
+> [47807.218125] NVRM: rm_power_source_change_event: rm_power_source_change=
+_event: Failed to handle Power Source change event, status=3D0x11
+> [67168.670527] ACPI: EC: interrupt unblocked
+> [67169.622762] spd5118 10-0050: PM: dpm_run_callback(): spd5118_resume [s=
+pd5118] returns -6
+> [67169.622773] spd5118 10-0050: PM: failed to resume async: error -6
+> [67169.622816] spd5118 10-0052: PM: dpm_run_callback(): spd5118_resume [s=
+pd5118] returns -6
+> [67169.622828] spd5118 10-0052: PM: failed to resume async: error -6
+> [67169.635622] i915 0000:00:02.0: [drm] GT0: GuC firmware i915/adlp_guc_7=
+0.bin version 70.44.1
+> [67169.635628] i915 0000:00:02.0: [drm] GT0: HuC firmware i915/tgl_huc.bi=
+n version 7.9.3
+> [67169.644108] nvme nvme0: 20/0/0 default/read/poll queues
+> [67169.650551] i915 0000:00:02.0: [drm] GT0: HuC: authenticated for all w=
+orkloads
+> [67169.651715] i915 0000:00:02.0: [drm] GT0: GUC: submission enabled
+> [67169.651717] i915 0000:00:02.0: [drm] GT0: GUC: SLPC enabled
+> [67169.652243] i915 0000:00:02.0: [drm] GT0: GUC: RC enabled
+> [67169.654296] CoreFreq: SoC_SKL_VTD: request_mem_region 0xfed90000
+>=20
+>=20
+> What other information can I provide to debug this issue.
+>=20
+> Thanks for any pointer, and please Cc.
+>=20
+> Norbert
+>=20
+> --
+> DI Dr Norbert Preining                        https://www.preining.info
+> arXiv / Cornell University   +   IFMGA Guide   +   TU Wien  +  TeX Live
+> GPG: 0x860CDC13   fp: F7D8 A928 26E3 16A1 9FA0 ACF0 6CAC A448 860C DC13
+
+--=20
+I don't work for Nazis and criminals, and neither should you.
+Boycott Putin, Trump, and Musk!
+
+--KQM6ti/BwZko7uVe
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaInqrwAKCRAw5/Bqldv6
+8uT9AKCqvz6p5LS83ofL7gg8wZwAUTzfkQCgj7/evPemY/evF/mU0lSQgGsbhnQ=
+=rPpU
+-----END PGP SIGNATURE-----
+
+--KQM6ti/BwZko7uVe--
 
