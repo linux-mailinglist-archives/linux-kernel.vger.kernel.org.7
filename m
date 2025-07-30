@@ -1,146 +1,138 @@
-Return-Path: <linux-kernel+bounces-751204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92ED9B1666A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:39:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5185FB1666C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:40:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68B4217CFF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:38:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 614C33B98DA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:39:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02962DFF3F;
-	Wed, 30 Jul 2025 18:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA39C2DFA21;
+	Wed, 30 Jul 2025 18:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="czyzcLBk"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O14JS54B"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909A44AEE0;
-	Wed, 30 Jul 2025 18:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99AB82BCFB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753900723; cv=none; b=hwHtKnMfRuWKqvVajxSAdaUkC8kAqQBHUaWzZ2eov/sLlwYN+6kuYYLY/4GeyhyWYpnpmj0/KG9tN0586wWNHBUGxqsVA00iFJTgnrB4UG4R0jukXtB/FYFMzOPErQYOqCx5iyw3q3v8BCFlUSEqQjVjmVWPfrhgkER0seS3rLw=
+	t=1753900809; cv=none; b=APxE75N91WCuA4pM7je88nsOgAxKpwQ2ZBgI3sD9vVH60tQJ42GYhA9eehcsDAfshNb7ZJBN+QFb7mI2LE8n/I6FDZ5qnVirbIIYqZzl48Ot2/XRdI6gVPhCICTaYiXWPCu64Oga8NgbGbo0vkNzuHp1DP30aQhnWk83CkePLyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753900723; c=relaxed/simple;
-	bh=iuETnzHMth2evVeqAbBnInRi5z+R2+bC5QE9h7TMDA4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=X3CsRDo/+oZLfKK/6xN8+RyZx9pdQU+s0vZ8zMD5M9D7NWuPqsmRbe3mgj1dTjhzUmuBXNwTHJiaKBxKM0Mty6IzpeyW9ozaoMX03AqRtpv6rj8l7g8/NiCMV5IGlqoyzcGdIGqiHpzd5BLJk0gdUSd5ohfnL7zc8b+8W+SJeuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=czyzcLBk; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753900694; x=1754505494; i=markus.elfring@web.de;
-	bh=iuETnzHMth2evVeqAbBnInRi5z+R2+bC5QE9h7TMDA4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=czyzcLBkLurq4pRjblNuHIWQuS44pMkR1ChYxYkEuz3WDRd3hSsJ22GX2IRW7DT6
-	 rL4S51ckwcHp9yfgct1epLtXpjIxoB4pqdFIBgF1deeQCamS9fhUcErzutaxlEg9k
-	 Sa8MsKDpwSml1RKKjHXmtLvjY26Vgp7vl0XouFKAwSw7Se/WrtK3WdQnvTcwlkibA
-	 WhR3bY5HSp5SF3Z/xedrKQ96GpNG7SGA6yq04BuqxFJeDxlJE8yibK+dmI3zgDxFU
-	 XetcdEbC8cxy0L8gFVbD8DVnORN0VRdzQYx2l3iT5CdMSEDc6baU3dnQFt0ynfxzC
-	 S8VokEwbt4sPZL5Qkg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.92.238]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqZMQ-1uLJCv3SM4-00dbr3; Wed, 30
- Jul 2025 20:38:13 +0200
-Message-ID: <4955be6b-9806-4f73-8618-1d8de7d3a9dc@web.de>
-Date: Wed, 30 Jul 2025 20:38:10 +0200
+	s=arc-20240116; t=1753900809; c=relaxed/simple;
+	bh=q12LXBzQtE5vNm2i/WY7kOjnYF8AThpIfB96tzBkLf4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=D3F9WN4F9vfEHVqIWj5+gzrMyaSG3c0lJqBICA14ZbqdS8hsRjtbfJk1VQAWNw/yB2JcR2v7N+9Khuuyrt56D+NnJ+mgHFn1OXUGT+Enoy2EsTq/0W66GxxUyxXqXY/srd+WfuONMPk+lfkEw9DFipoApApc4Xf5Qxf5AZ2D9gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O14JS54B; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6fafdd322d3so946836d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:40:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753900806; x=1754505606; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DWLv1kUgn6SKLcyh8VLUuc6r9Cuh/UEKenIns7AFq3U=;
+        b=O14JS54BHAoKqSOUnSWmuYI3Etse7fPzFcQTyaUliDuxA1/iiS8s2g1cXDXkthAmp5
+         eqNq9IiOJth4Z6iSmeZhgLG2Wq1+QD/4vPp+PLSgtqJFDFmlKShIS+27+lB9guk36+gO
+         tEm9JBqP09NGlVQ2LjwfpdDCMRSjr8cXm3tmFrt5wioUk1IGjqvQcb/fYGHNoHITDOkO
+         0jZqZ6p0KgF9z/WfFNiCZYr20N0xOSl3hNZaBmm5SegncnjSQ5nKlIYikEX8SfBVbAqs
+         LPfDHGmAil0sKUmDa4RXHtV4OJSGaoqTVtD561SHUMZOK22bi9J37O9J1r/R0XZinMhM
+         6u8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753900806; x=1754505606;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DWLv1kUgn6SKLcyh8VLUuc6r9Cuh/UEKenIns7AFq3U=;
+        b=AB+6PzRNxGTpqc2HfBJOnUHTv2mSR7bt4Sjl/8GPnTpTdw+4c/XUYPQ1SA31LdI3Lb
+         ZdE05ZlHKsNSGsD5zCi8dBf5j9UAbRRrTkCtpS18L6TCXm/1bSeSq3P9es0AXqPA8wNs
+         g0svr+OkWacyENkddIK+hkSMgwQcX+OKWFXjBwrX2pzakgbm76TGXRiGXdD27eIgqsQD
+         AmL0+Eh4ucevCiQ87p0wL4OQH/Jz8JWlgqlrovnwaOL5dIOXpzu/O4KkS2Y1OIm2O4Rv
+         quNelgbbMPqFpbalkmsPPvJGfFXV6JW4zcfHWvc+4M0qCXOgHWiEot/4pG3hasES0LG0
+         Q2Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9Q9T65bGC2Hj6FkPcRS3+BMfwxNLKJDjZ7yisFJnHoZN6vhYrK+jcgKYgj10kVo8FgbkcI76dZ3mhqow=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+cjqHnAzr18ljs7Qz/Vhof4yobiOrRXtliXbweBF8wBl8Y96h
+	JRIDpL2k5bzASHVNM8cU7KYV4iZfK8QqnQ/gZDj54krLVbNtK85d5Oy4
+X-Gm-Gg: ASbGncsC33wADc+QuY4wa5TiWfuBmdknhCq6i5vguA/1Zxm3BhVVgB9G4wfLNyNTVzr
+	nGUfc82A3/ZBBT7eGSZKfd2QRrSwNKM9smMJ+8MHppSTEMsr+h/aYP9/9NGvrb7ovfxF+FRTXet
+	uKikESlZGd2hUHdNs4YeOrAEVxxVEGYJ7p5BIBLobMOGl4jUgoA60GP/+sXctZXt3/I7AWcjRfF
+	SI3IX0iSgmeyLCI7+gVhN8Yin0pHw82trqN0ViGM73Y0pVJ0AVV/fC5+X1LYnPPST6jyUzdI73L
+	S7Tt1tEcueYe/fVlINmXUZVLR19pWrTKARiC1/Nk24+4cMl39Y5svMWcmPye9OeIyol7tfk7YYk
+	tnBEq9K5f3pZ5FpamVMYnj1dL6tx5UX+COFEZuqlnvxVzMquu7GQ=
+X-Google-Smtp-Source: AGHT+IE4++CNg3UAGgJK+/LWn+6RbEykwxS/T6Kamr85O+qD0SFzQUdw4RX4iRcCF4uxmqUwf5GG0Q==
+X-Received: by 2002:ad4:5cae:0:b0:705:11dc:546c with SMTP id 6a1803df08f44-707674da9c4mr81435576d6.37.1753900804873;
+        Wed, 30 Jul 2025 11:40:04 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-70729c15762sm65463206d6.51.2025.07.30.11.40.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 11:40:04 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: Markus.Elfring@web.de,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	vivek.balachandhar@gmail.com
+Subject: [PATCH 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
+Date: Wed, 30 Jul 2025 18:39:54 +0000
+Message-Id: <20250730183954.500155-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250730080323.491138-1-vivek.balachandhar@gmail.com>
+References: <20250730080323.491138-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Jie Zhan <zhanjie9@hisilicon.com>, linux-pm@vger.kernel.org,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, linuxarm@huawei.com,
- Beata Michalska <beata.michalska@arm.com>, Bowen Yu <yubowen8@huawei.com>,
- Huisong Li <lihuisong@huawei.com>, Ionela Voinescu
- <ionela.voinescu@arm.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Lifeng Zheng <zhenglifeng1@huawei.com>, Prashant Malani <pmalani@google.com>
-References: <20250730032312.167062-3-yubowen8@huawei.com>
-Subject: Re: [PATCH 2/2] cpufreq: CPPC: Fix error handling in
- cppc_scale_freq_workfn()
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250730032312.167062-3-yubowen8@huawei.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YXn6k4GSIvbcBR3tbsaZuHTkAdnz/k15f/TSwOODTx/Zb8Z3kTZ
- 6d2VQ6b26KXxfoyz0GnknNazI4j3DjggbZfAssE5nXhw4KN7kQjufNgSufq7HxJnQ2xBAZq
- mb48B4yIAAdFxm5v8C4bmkAJqlc51IL5ARUcp7r0Ds7fU89VSycPYue/Ya5NXaWgG7u9M9v
- iAuoshTwKLcZlFi/amlgA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:+tnJZuA0pes=;EcIrYoTvgAto3xZguQklfMIrSPh
- 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
+Content-Transfer-Encoding: 8bit
 
-> Perf counters could be 0 if the cpu is in a low-power idle state. Just t=
-ry
-> it again next time and update the frequency scale when the cpu is active
-> and perf counters successfully return.
->=20
-> Also, remove the FIE source on an actual failure.
+Remove redundant parentheses from the check_fwstate() call in an if-condition.
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16#n145
+These parentheses are not required and violate the kernel coding style.
+Dropping them simplifies the expression without changing its logic.
 
-Regards,
-Markus
+Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+---
+v4:
+- Reword the commit message to clarify location and purpose of removed parentheses
+- Use imperative mood as recommended
+- Remove ambiguous phrase “around the function call”
+
+v3:
+- Improved explanation of why the parentheses were removed as per
+  Markus Elfring's suggestion.
+
+v2:
+- Mentioned the wrong version number in the previous patch.
+
+v1:
+- Fixed incorrect wording: the change was not around assignment
+- Addressed feedback from Markus Elfring.
+---
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index b8d72d28178b..7552f7e4d14a 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -699,7 +699,7 @@ void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
+ 	rtw_set_signal_stat_timer(&adapter->recvpriv);
+ 
+ 	if (pmlmepriv->to_join) {
+-		if ((check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
++		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true) {
+ 			if (check_fwstate(pmlmepriv, _FW_LINKED) == false) {
+ 				set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
+ 
+-- 
+2.39.5
+
 
