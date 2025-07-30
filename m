@@ -1,155 +1,264 @@
-Return-Path: <linux-kernel+bounces-751367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12F8B1686A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:45:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E49B16898
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E2B1AA572B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:46:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA1F622749
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 21:50:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C47C224AFB;
-	Wed, 30 Jul 2025 21:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB702253FE;
+	Wed, 30 Jul 2025 21:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ir5aMzbG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcmSAP+k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88872E3711;
-	Wed, 30 Jul 2025 21:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7B41E1A05
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:50:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753911944; cv=none; b=VceBGxtfqMXxv+mzneTfVc/PZf6osu7xcIfszF2lt9ZFOoLOBHc6t+GR6GpqeFGUyCYZYtCUdpMLX+dep5TYz99yjcp//YFE0K9EjOvJFhkVxsROyIF/c8zLPFSm0vRJ6p+2HhO97hpYL/cUQUFjB7eczlWpIZ81Qah+R4z7cg4=
+	t=1753912256; cv=none; b=f2aj786qUBbMcxbW8NTVLX5OiBggSpLL0+67AKcMdVoY8IhJ22Do5y2OSTq6zmAp5K9xDdh6JxNNOwhL1CDxKn/zVzTo5Ig7hjLhVs68wrNr2iHBBg4yxE6f5WmAtONm3hjAgfBUKub6XtDeQ213C4xPCeaC65vhwCsTAjvJ0T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753911944; c=relaxed/simple;
-	bh=Y92YzVx0S6qzMTvUYIZsDyuNk7AZBf+dBkZeWeD2ETk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iNFJqNW1PybCpLxF3kUz9UHJnpdqrhjnXQaZhcBUzcaxsIZO4EaUgRH+FMFosVys2Daj5BM4M4AqB7wJgLOcuvLwxHL5SKBqlZnCZghtj7EKrg8erUIkZjG+ZRFm1GYAzMDNguHR00VMtaJGkxh0H9q2A4gq4ZvRYpZEvEazsMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ir5aMzbG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD8A3C4CEE3;
-	Wed, 30 Jul 2025 21:45:40 +0000 (UTC)
+	s=arc-20240116; t=1753912256; c=relaxed/simple;
+	bh=uxRJXSWej+1pl/HDqr/i9dIOy3MyQoKUeCAFVRS8AZ8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=UHBopzujV0QICUe4OU1wTKdTlShRc9atg4dDFLOYf8WlE1pXllR9Z2zNCi7m30o0wWg8I9yV29IotgzIiLuxBOK5/rX7zyZdtGAuYkMehrFkGwy00MT6dM117XglCPnN25U/Y6wl96lMCit5O305OgU5PX3M4v54gEEgo+x0I3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcmSAP+k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF25C4CEE3;
+	Wed, 30 Jul 2025 21:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753911944;
-	bh=Y92YzVx0S6qzMTvUYIZsDyuNk7AZBf+dBkZeWeD2ETk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Ir5aMzbGzMa/CQUN7Ury5S5+qORKlY61LlQcnpDusGKHVBBa8/iJKWiUsKgbrLACu
-	 Ka9PuAsMHHuk9lslUGAI6PCkQX4Jz0E6PYIxucFgr3rzUkdc3K4ov3nZvDCPgVxCD1
-	 Uc3QemOx2chhNr+8914HYMHm4u5gBIisFJ3s141DIeNU+PoO4/Rt/HcOvAeTNSqOgt
-	 NxnZ/R6yjv5DFsb5jZvs3xcQcq31JsP8UldJUIeCyplXZ27q7HcR68QmzUm7qv/AFz
-	 XwXa06h/BemjAJpoo59U/sDXDdvaNY5VEns5rco6WyeA9WIn10/J5OnesqXe3kc0ZP
-	 GfhIX1EpYhAtA==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Ido Schimmel <idosch@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	David Ahern <dsahern@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Simon Horman <horms@kernel.org>,
-	Breno Leitao <leitao@debian.org>,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	bridge@lists.linux.dev,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] netfilter: add back NETFILTER_XTABLES dependencies
-Date: Wed, 30 Jul 2025 23:45:32 +0200
-Message-Id: <20250730214538.466973-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1753912256;
+	bh=uxRJXSWej+1pl/HDqr/i9dIOy3MyQoKUeCAFVRS8AZ8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dcmSAP+kkky5t6fIl43Eb991tE8j+ncx35TTySqegkqEqBP8Ia8pSaJvLxYFyS+v1
+	 NZQfG1CUyqM9iEcQotJJhR/at2fcEDmGUHXDdtzkm16tyHPljaMm4qGAJ+V2fcRF7D
+	 yRtf+dQ3d3FVPP9MWR3X5BD7mWQHCgvn5N6JNaPTPvj4dkaRzNN1FrMoWFt/czMB6a
+	 4CXn8CL7KyQrVD7BIje1CFmfRXe/JzOow/fgtK/lkohwtUt5nMSCtHIkwmKEG8Jm17
+	 vHiKFflF0s+OH7VM7AAOvGn2Ylgu0gKHfBfZyuvMcdQpoBf2tr8xqDX56f7YlBsDT+
+	 a9cRWxG1GZIYg==
+Date: Thu, 31 Jul 2025 06:50:50 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Lance Yang <lance.yang@linux.dev>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, Joel
+ Granados <joel.granados@kernel.org>, Anna Schumaker
+ <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
+ Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
+ <leonylgao@tencent.com>, Steven Rostedt <rostedt@goodmis.org>, Tomasz Figa
+ <tfiga@chromium.org>, linux-kernel@vger.kernel.org, Sergey Senozhatsky
+ <senozhatsky@chromium.org>
+Subject: Re: [RFC PATCH] hung_task: Dump blocker task if it is not hung
+Message-Id: <20250731065050.38905afadd094ddc0d7a8bcf@kernel.org>
+In-Reply-To: <c40f5578-7c07-4328-9885-500957a7dcab@linux.dev>
+References: <20250730175150.af61caf3be97ef4cfbcc4da3@kernel.org>
+	<175386922226.617855.4016966678697742834.stgit@devnote2>
+	<c40f5578-7c07-4328-9885-500957a7dcab@linux.dev>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Wed, 30 Jul 2025 21:46:16 +0800
+Lance Yang <lance.yang@linux.dev> wrote:
 
-Some Kconfig symbols were changed to depend on the 'bool' symbol
-NETFILTER_XTABLES_LEGACY, which means they can now be set to built-in
-when the xtables code itself is in a loadable module:
+> 
+> 
+> On 2025/7/30 17:53, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > 
+> > Dump the lock blocker task if it is not hung because if the blocker
+> > task is also hung, it should be dumped by the detector. This will
+> > de-duplicate the same stackdumps if the blocker task is also blocked
+> > by another task (and hung).
+> 
+> Makes sense to me ;)
+> 
+> > 
+> > Suggested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >   kernel/hung_task.c |   86 ++++++++++++++++++++++++++++++----------------------
+> >   1 file changed, 49 insertions(+), 37 deletions(-)
+> > 
+> > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> > index d2432df2b905..52d72beb2233 100644
+> > --- a/kernel/hung_task.c
+> > +++ b/kernel/hung_task.c
+> > @@ -94,9 +94,49 @@ static struct notifier_block panic_block = {
+> >   	.notifier_call = hung_task_panic,
+> >   };
+> >   
+> > +static bool task_is_hung(struct task_struct *t, unsigned long timeout)
+> > +{
+> > +	unsigned long switch_count = t->nvcsw + t->nivcsw;
+> > +	unsigned int state;
+> > +
+> > +	/*
+> > +	 * skip the TASK_KILLABLE tasks -- these can be killed
+> > +	 * skip the TASK_IDLE tasks -- those are genuinely idle
+> > +	 */
+> > +	state = READ_ONCE(t->__state);
+> > +	if (!(state & TASK_UNINTERRUPTIBLE) ||
+> > +		(state & TASK_WAKEKILL) ||
+> > +		(state & TASK_NOLOAD))
+> > +		return false;
+> > +
+> > +	/*
+> > +	 * Ensure the task is not frozen.
+> > +	 * Also, skip vfork and any other user process that freezer should skip.
+> > +	 */
+> > +	if (unlikely(READ_ONCE(t->__state) & TASK_FROZEN))
+> > +		return false;
+> 
+> 
+> Nit: the two separate checks on t->__state could be combined into
+> a single read and one conditional check ;)
+> 
+> Something like:
+> 
+> 	state = READ_ONCE(t->__state);
+> 
+> 	if (!(state & TASK_UNINTERRUPTIBLE) ||
+> 		(state & (TASK_WAKEKILL | TASK_NOLOAD | TASK_FROZEN)))
+> 			return false;
 
-x86_64-linux-ld: vmlinux.o: in function `arpt_unregister_table_pre_exit':
-(.text+0x1831987): undefined reference to `xt_find_table'
-x86_64-linux-ld: vmlinux.o: in function `get_info.constprop.0':
-arp_tables.c:(.text+0x1831aab): undefined reference to `xt_request_find_table_lock'
-x86_64-linux-ld: arp_tables.c:(.text+0x1831bea): undefined reference to `xt_table_unlock'
-x86_64-linux-ld: vmlinux.o: in function `do_arpt_get_ctl':
-arp_tables.c:(.text+0x183205d): undefined reference to `xt_find_table_lock'
-x86_64-linux-ld: arp_tables.c:(.text+0x18320c1): undefined reference to `xt_table_unlock'
-x86_64-linux-ld: arp_tables.c:(.text+0x183219a): undefined reference to `xt_recseq'
+Ah, Indeed.
 
-Change these to depend on both NETFILTER_XTABLES and
-NETFILTER_XTABLES_LEGACY.
+> 
+> 
+> Otherwise, looks good to me:
+> Acked-by: Lance Yang <lance.yang@linux.dev>
 
-Fixes: 9fce66583f06 ("netfilter: Exclude LEGACY TABLES on PREEMPT_RT.")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- net/bridge/netfilter/Kconfig | 1 +
- net/ipv4/netfilter/Kconfig   | 3 +++
- net/ipv6/netfilter/Kconfig   | 1 +
- 3 files changed, 5 insertions(+)
+Thanks, let me update it. (also on the next tree)
 
-diff --git a/net/bridge/netfilter/Kconfig b/net/bridge/netfilter/Kconfig
-index 60f28e4fb5c0..4fd5a6ea26b4 100644
---- a/net/bridge/netfilter/Kconfig
-+++ b/net/bridge/netfilter/Kconfig
-@@ -43,6 +43,7 @@ config NF_CONNTRACK_BRIDGE
- config BRIDGE_NF_EBTABLES_LEGACY
- 	tristate "Legacy EBTABLES support"
- 	depends on BRIDGE && NETFILTER_XTABLES_LEGACY
-+	depends on NETFILTER_XTABLES
- 	default	n
- 	help
- 	 Legacy ebtables packet/frame classifier.
-diff --git a/net/ipv4/netfilter/Kconfig b/net/ipv4/netfilter/Kconfig
-index 2c438b140e88..7dc9772fe2d8 100644
---- a/net/ipv4/netfilter/Kconfig
-+++ b/net/ipv4/netfilter/Kconfig
-@@ -14,6 +14,7 @@ config NF_DEFRAG_IPV4
- config IP_NF_IPTABLES_LEGACY
- 	tristate "Legacy IP tables support"
- 	depends on NETFILTER_XTABLES_LEGACY
-+	depends on NETFILTER_XTABLES
- 	default	m if NETFILTER_XTABLES_LEGACY
- 	help
- 	  iptables is a legacy packet classifier.
-@@ -326,6 +327,7 @@ endif # IP_NF_IPTABLES
- config IP_NF_ARPTABLES
- 	tristate "Legacy ARPTABLES support"
- 	depends on NETFILTER_XTABLES_LEGACY
-+	depends on NETFILTER_XTABLES
- 	default	n
- 	help
- 	  arptables is a legacy packet classifier.
-@@ -343,6 +345,7 @@ config IP_NF_ARPFILTER
- 	select IP_NF_ARPTABLES
- 	select NETFILTER_FAMILY_ARP
- 	depends on NETFILTER_XTABLES_LEGACY
-+	depends on NETFILTER_XTABLES
- 	help
- 	  ARP packet filtering defines a table `filter', which has a series of
- 	  rules for simple ARP packet filtering at local input and
-diff --git a/net/ipv6/netfilter/Kconfig b/net/ipv6/netfilter/Kconfig
-index 276860f65baa..81daf82ddc2d 100644
---- a/net/ipv6/netfilter/Kconfig
-+++ b/net/ipv6/netfilter/Kconfig
-@@ -10,6 +10,7 @@ menu "IPv6: Netfilter Configuration"
- config IP6_NF_IPTABLES_LEGACY
- 	tristate "Legacy IP6 tables support"
- 	depends on INET && IPV6 && NETFILTER_XTABLES_LEGACY
-+	depends on NETFILTER_XTABLES
- 	default	m if NETFILTER_XTABLES_LEGACY
- 	help
- 	  ip6tables is a legacy packet classifier.
+Thank you!
+
+> 
+> Thanks,
+> Lance
+> 
+> > +
+> > +	/*
+> > +	 * When a freshly created task is scheduled once, changes its state to
+> > +	 * TASK_UNINTERRUPTIBLE without having ever been switched out once, it
+> > +	 * musn't be checked.
+> > +	 */
+> > +	if (unlikely(!switch_count))
+> > +		return false;
+> > +
+> > +	if (switch_count != t->last_switch_count) {
+> > +		t->last_switch_count = switch_count;
+> > +		t->last_switch_time = jiffies;
+> > +		return false;
+> > +	}
+> > +	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
+> > +		return false;
+> > +
+> > +	return true;
+> > +}
+> >   
+> >   #ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > -static void debug_show_blocker(struct task_struct *task)
+> > +static void debug_show_blocker(struct task_struct *task, unsigned long timeout)
+> >   {
+> >   	struct task_struct *g, *t;
+> >   	unsigned long owner, blocker, blocker_type;
+> > @@ -153,41 +193,21 @@ static void debug_show_blocker(struct task_struct *task)
+> >   			       task->comm, task->pid, t->comm, t->pid);
+> >   			break;
+> >   		}
+> > -		sched_show_task(t);
+> > +		/* Avoid duplicated task dump, skip if the task is also hung. */
+> > +		if (!task_is_hung(t, timeout))
+> > +			sched_show_task(t);
+> >   		return;
+> >   	}
+> >   }
+> >   #else
+> > -static inline void debug_show_blocker(struct task_struct *task)
+> > +static inline void debug_show_blocker(struct task_struct *task, unsigned long timeout)
+> >   {
+> >   }
+> >   #endif
+> >   
+> >   static void check_hung_task(struct task_struct *t, unsigned long timeout)
+> >   {
+> > -	unsigned long switch_count = t->nvcsw + t->nivcsw;
+> > -
+> > -	/*
+> > -	 * Ensure the task is not frozen.
+> > -	 * Also, skip vfork and any other user process that freezer should skip.
+> > -	 */
+> > -	if (unlikely(READ_ONCE(t->__state) & TASK_FROZEN))
+> > -		return;
+> > -
+> > -	/*
+> > -	 * When a freshly created task is scheduled once, changes its state to
+> > -	 * TASK_UNINTERRUPTIBLE without having ever been switched out once, it
+> > -	 * musn't be checked.
+> > -	 */
+> > -	if (unlikely(!switch_count))
+> > -		return;
+> > -
+> > -	if (switch_count != t->last_switch_count) {
+> > -		t->last_switch_count = switch_count;
+> > -		t->last_switch_time = jiffies;
+> > -		return;
+> > -	}
+> > -	if (time_is_after_jiffies(t->last_switch_time + timeout * HZ))
+> > +	if (!task_is_hung(t, timeout))
+> >   		return;
+> >   
+> >   	/*
+> > @@ -222,7 +242,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+> >   		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
+> >   			" disables this message.\n");
+> >   		sched_show_task(t);
+> > -		debug_show_blocker(t);
+> > +		debug_show_blocker(t, timeout);
+> >   		hung_task_show_lock = true;
+> >   
+> >   		if (sysctl_hung_task_all_cpu_backtrace)
+> > @@ -278,7 +298,6 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+> >   	hung_task_show_lock = false;
+> >   	rcu_read_lock();
+> >   	for_each_process_thread(g, t) {
+> > -		unsigned int state;
+> >   
+> >   		if (!max_count--)
+> >   			goto unlock;
+> > @@ -287,15 +306,8 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+> >   				goto unlock;
+> >   			last_break = jiffies;
+> >   		}
+> > -		/*
+> > -		 * skip the TASK_KILLABLE tasks -- these can be killed
+> > -		 * skip the TASK_IDLE tasks -- those are genuinely idle
+> > -		 */
+> > -		state = READ_ONCE(t->__state);
+> > -		if ((state & TASK_UNINTERRUPTIBLE) &&
+> > -		    !(state & TASK_WAKEKILL) &&
+> > -		    !(state & TASK_NOLOAD))
+> > -			check_hung_task(t, timeout);
+> > +
+> > +		check_hung_task(t, timeout);
+> >   	}
+> >    unlock:
+> >   	rcu_read_unlock();
+> >
+> 
+
+
 -- 
-2.39.5
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
