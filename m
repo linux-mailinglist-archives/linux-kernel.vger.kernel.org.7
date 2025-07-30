@@ -1,169 +1,131 @@
-Return-Path: <linux-kernel+bounces-751041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39288B16482
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:20:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061BAB16485
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538FD1895822
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:20:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E46A167166
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60682DC357;
-	Wed, 30 Jul 2025 16:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456022DCC06;
+	Wed, 30 Jul 2025 16:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b="jRssZYRB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="M2T2jsi6"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KeRRsbGa"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE77347DD
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B37F347DD
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753892403; cv=none; b=PeE8zzEeG9CAx/jETDASJo3Bb3aSiGrHCYB3CNHcY0hMZq4PkPfdI8J8oDpUKj0TlVHPGpjyd9rCJ7enjn8Dxlf2t7wSrcqTP754jW8Ie4VyIrYjAiB2JjHkuCiRglCW76qRv9oNBeWNn9qN6bUAfprdQYoBbeK8quBF01zQsL8=
+	t=1753892468; cv=none; b=OA5uBza6BruwVt3j3iw/p45C+6KzjhgL/IpSiPTmIQwBGyA62S38MQ/BVKT5VCI+dSX0bbF+eDXvpIJnjI2360ThCRjblJ4xA3GrB7iWTIq9uyJNMjMC5n+QAzLdkj5nWb5z1qno6qkX/q67t60hwK6Z4R3ghqKB1Guq1WP1AiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753892403; c=relaxed/simple;
-	bh=qxsFtVaQ+8GvwmWj3mTG3NeZ4EFj6Ypnl/PYcQGnsEI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=pXLiF7BfheY0YUZmf/PORGcsk282c1csyX0SYp7WIOgEhJzMw7/Mx1Gts1+bKtwTGomQDNbu47iIVT4kwwfwvRjRv9XxvXl/MbVSkoXH/EhuIqMyNk4MPG4iRnpDwsrBLWF4tBb7Z1RkXfViiXSPieV22z9c21CP6PaS/5ccG5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh; spf=pass smtp.mailfrom=barre.sh; dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b=jRssZYRB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=M2T2jsi6; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=barre.sh
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 573727A0061;
-	Wed, 30 Jul 2025 12:20:00 -0400 (EDT)
-Received: from phl-imap-04 ([10.202.2.82])
-  by phl-compute-01.internal (MEProxy); Wed, 30 Jul 2025 12:20:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=barre.sh; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1753892400;
-	 x=1753978800; bh=JDMyoYUR9BxhyTbON9A5YBTPY9ObxpkF11IXTvWyR/0=; b=
-	jRssZYRBzwa+8lh69t2QG3LG3tSnUrZj/Qb+t5WseyJZj3UMYNLhLjdrUKxe/g/X
-	nN2m4EXgvLgvHqkArLxl2ElOScwFTpn0nhOzaC2b28CZu7U62WLoZ9VIyVn8TfaG
-	mh0apMFw6hABUhEtXZFOyAa1ax4odweP4QupPYsoaX1//vHUPDfJiobQ+Nuxgu1g
-	C9sVZ5kPm6f8Snj9SdiNTE31qG+orHmtvvYvFYK5JIa6X1j5mHIMELYqUcag57bH
-	adjmy1tWv7VXpanwDC8s0VeU8u7Vh7KCswf57/v+HZfaxGqW2Tfk34zUkV0NdIZS
-	10B2LQmONZq4lSTYGUDsXA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1753892400; x=
-	1753978800; bh=JDMyoYUR9BxhyTbON9A5YBTPY9ObxpkF11IXTvWyR/0=; b=M
-	2T2jsi6Xhd0vQWue0ClbcrN2YFokPuBAL1Zl6ZrGdmU+4sJrJLEPc7qQL3gypNrF
-	akyFRmZyO/6y6jX2OnjUZosi4J2YhaKANAn7/3q7TWxYHbBKbu4EA2WGqVWfvOxF
-	dNVKYNq+fGoXWhI+RdrJu1aMZ6r/0cphPB1V0eRYU005CR8VBrBcvt5nNrL9uA6R
-	kBwF72BP7HlEkb8ov5zAtR5BGuFt6aAza05e4C5FMOgexhXvFVRraPgRRG57VSYU
-	LErlQd8kH9VweXLAtBy4KpQjyqd1t3FCnZDZRxPD7uKbjYNrQcu/E5wc39MdOuZA
-	TXoPhB6IEEhQ/pcRK1OiQ==
-X-ME-Sender: <xms:L0aKaDgfZXyMw2EdeoWa2Cr_yNByI5vLaO8M52j6gB15aMWQKscKsg>
-    <xme:L0aKaAC3sHBrxAWDW-3R5VDZeO9ZDrGVOIk7I1x22m3XGQz_4cLY_xUke5BV-bdBf
-    aK8V0KmRSBZT6V9QzA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelkeegtdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
-    ihhlohhuthemuceftddtnecunecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertd
-    ertddtnecuhfhrohhmpedfrfhivghrrhgvuceurghrrhgvfdcuoehpihgvrhhrvgessggr
-    rhhrvgdrshhhqeenucggtffrrghtthgvrhhnpeelieffteelkedtvdffjeevfeelgfehhe
-    ffhfeivdelfeetkedvgfffffeutdfhvdenucffohhmrghinhepghhithhhuhgsrdgtohhm
-    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepphhivg
-    hrrhgvsegsrghrrhgvrdhshhdpnhgspghrtghpthhtohepiedpmhhouggvpehsmhhtphho
-    uhhtpdhrtghpthhtoheprghsmhgruggvuhhssegtohguvgifrhgvtghkrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugigpohhsshestghruhguvggshihtvgdrtghomhdprhgtphhtthho
-    pehluhgthhhosehiohhnkhhovhdrnhgvthdprhgtphhtthhopegvrhhitghvhheskhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtohepvhelfhhssehlihhsthhsrdhlihhnuhigrdguvghv
-    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
-    hg
-X-ME-Proxy: <xmx:L0aKaDLGIDsWYIBTcvTqtT2lXDhPvY6NZVwHIUqDEts4SZ6zmpc_8Q>
-    <xmx:L0aKaOjFJb_TDtW69cwb426Wkqfp1Rg9St87bAqKJPn9K8MFE_T_BQ>
-    <xmx:L0aKaBS4kfMJw-zMKvEDPA8s-HRWqKV6GUn-WztKVf7wS8jyqp1dIQ>
-    <xmx:L0aKaIU0IZZx1wU2DuL3PhYJ940MOobxcNGar-We7EV7FC02G62wmg>
-    <xmx:MEaKaABXDnNx8b7othGwyBYzrfun6IdobwnoyVar7ngcAHBWeZYJOMlv>
-Feedback-ID: i97614980:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 66519B6006B; Wed, 30 Jul 2025 12:19:59 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1753892468; c=relaxed/simple;
+	bh=43uGzvt4ob7grTZb2tT0nh21mLKwphtCkU+Kw8genDg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HQTAQtlPixjBmPvo6YgG7Rm7Ga4TRGN83P9fehcGFIq88WiQmPy7SJIWDxQUbCNI9KJuI3VV9PYznd/R3uZntNrP/hjEeCGu4DtNE4qBXnqkl2qXfvF4RNSw1MMhIsgSoxfjAs3ty3kWbEnJ2FZLC6rfk4sRNaCAZbbNugpPmzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KeRRsbGa; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae360b6249fso1277591266b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:21:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1753892465; x=1754497265; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NH/3GagQyynALf0TJNfWRtPo9NIRhr2hMw8M+oi+jAw=;
+        b=KeRRsbGaSPUbsRcEcMLlmW0Hw41oCYe0wQCMDfyzQSgRdzsfj9GEoaaMV9FvMWq3u8
+         SjJVnvr8R0A/uyH60KqXukTSlxc6Rxxi25DnnFvJt4yno3p46wyYWIsp/6Gb2/qu3TjI
+         okzZmhJBJumKNoY0fB601c9RK1ATaET6+pnjA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753892465; x=1754497265;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NH/3GagQyynALf0TJNfWRtPo9NIRhr2hMw8M+oi+jAw=;
+        b=ih1oDJVHMTa/UZ6C0KF5kkyW/2ds6KpqozDmYrxypuas0aQKEKabAYBJgQT+GohpwW
+         zh58sFTI9OXvfnvjaJMXoAekWNGTgBRcAD4MzFC4aMBFVZP7ABPds5bofZeIGUVVwQOY
+         UkPmgJhjIb0Z9NoV+FcZzqnHX1aF51pTlU76u+wKkOPi9VW7shQT4rvgdECgH5e59rAu
+         MJS8kPjO5XqWK8TGvBXBrgt/0XUz+IFtZ5ISR3/jTIdLqpzOImpq3XhfHyvq2sz4Hm8c
+         jHz5MfNvZI3F+ty/InKDOeZnU6qBrtubFZOae9c5WCT7A26AfKhjEfbACTtkTEvYS8B0
+         sSfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWytnO/Bit3XvK/YDMeb+CsSYL9btKc5XNNSJMIcATyLl7ojhCPIfVMIqPfKOgSTM76enTFJEcJjMxoSeU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxjxy2STwIkzFlQjz4h76274IhzNxbln9SxuFdQ9j8K2wz0UNeZ
+	gAjUY+K6ZIIS9QmHGSprH/1BZyy4VhbndGIDWU/35U4KwAJFLANEgYtIXOcINxhNpOWyFD4bZrT
+	vc26lHhs=
+X-Gm-Gg: ASbGncvIOBWNbTKi3a9oQkWHLzf6faDCtnoWYiUz2gJbbAaCmn6DzpENKrsBwJSbGTz
+	pXJzgh0mc12nWHrYdb3zVA7FWVhog6pM1D9Qf0MF3k68ewRWmUohKtMUeeQLGsiwe6Jz0STYGEI
+	uaZ6XWgwKmnwlZ54qYANvxZ9ZsXSftBDri+t+aBl+htUtucXCJlpPQ0wuezES6xhGttkEwHO7Ez
+	416mYR8O77JUQxG3tvT+DX9PaXKzjLZ4Q3nd4xVEdsdNB59TlTA/POMqFyyuolM9SUiFVyXHUl/
+	fPwaN3zBK7dSTYcqMcCzXQmYeO6RWU6KOIE6PvNs0REdZ09vUsuoQmT0kTYcQTvmxo7cXk6bEJV
+	ZvEHIZeQwBEVgid89sxQLN8DtP751UE927ORu2Rsw6C/AisG5zWPCMjMh/xk2kZI0l8jhq4g4
+X-Google-Smtp-Source: AGHT+IHpZR9GNNEgCX5lBTxaIfnTEvGP2Ps1T+kRLnNpOwaLN448hTVP2ilRm7hTnTLBF/jp+xwjsg==
+X-Received: by 2002:a17:907:3ea0:b0:ae0:dcd5:ea75 with SMTP id a640c23a62f3a-af8fd69b12fmr453297766b.5.1753892464084;
+        Wed, 30 Jul 2025 09:21:04 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af6358e2f09sm764661966b.64.2025.07.30.09.21.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 09:21:03 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61592ff5ebbso1513497a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:21:03 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWhvPnFIRLG2T9L5M1ryhtNvFmxujwzhsQhCakoXi2Cf1qRYi0du/pAsd5k9ibl7yHDiggFwCHJI7DK4sU=@vger.kernel.org
+X-Received: by 2002:a05:6402:1d4e:b0:615:a3f9:7be2 with SMTP id
+ 4fb4d7f45d1cf-615a3f996c5mr542955a12.19.1753892462648; Wed, 30 Jul 2025
+ 09:21:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tea62be34c8f8a220
-Date: Wed, 30 Jul 2025 18:19:37 +0200
-From: "Pierre Barre" <pierre@barre.sh>
-To: "Christian Schoenebeck" <linux_oss@crudebyte.com>, v9fs@lists.linux.dev
-Cc: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
- linux-kernel@vger.kernel.org
-Message-Id: <1fcc97fd-bf32-4ea1-82c1-74a8efb6359b@app.fastmail.com>
-In-Reply-To: <2989343.ydHz1Oe0dO@silver>
-References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
- <2989343.ydHz1Oe0dO@silver>
-Subject: Re: [PATCH] 9p: Use kvmalloc for message buffers
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <20250727013451.2436467-1-kuba@kernel.org>
+In-Reply-To: <20250727013451.2436467-1-kuba@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 30 Jul 2025 09:20:46 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whnXTvh2b0WcNFyjj7t9SKvbPtF8YueBg=_H5a7j_2yuA@mail.gmail.com>
+X-Gm-Features: Ac12FXybTQ2GnQWYUYI6uVtMHGtsdyuV7m6LIaAejVL-Hc0-6S3c4N-n3CkDkzI
+Message-ID: <CAHk-=whnXTvh2b0WcNFyjj7t9SKvbPtF8YueBg=_H5a7j_2yuA@mail.gmail.com>
+Subject: Re: [GIT PULL] Networking for v6.17
+To: Jakub Kicinski <kuba@kernel.org>, Christian Brauner <brauner@kernel.org>
+Cc: davem@davemloft.net, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-Thank you for your email.
-
-> What was msize?
-
-I was mounting the filesystem using:
-
-trans=tcp,port=5564,version=9p2000.L,msize=1048576,cache=mmap,access=user
-
-
-> That would work with certain transports like fd I guess, but not via
-> virtio-pci transport for instance, since PCI-DMA requires physical pages. Same
-> applies to Xen transport I guess.
-
-Would it be acceptable to add a mount option (like nocontig or loosealloc?) that enables kvmalloc?
-
-Best,
-Pierre
-
-On Wed, Jul 30, 2025, at 18:08, Christian Schoenebeck wrote:
-> On Wednesday, July 30, 2025 5:08:05 PM CEST Pierre Barre wrote:
->> While developing a 9P server (https://github.com/Barre/ZeroFS) and testing it under high-load, I was running into allocation failures. The failures occur even with plenty of free memory available because kmalloc requires contiguous physical memory.
->> 
->> This results in errors like:
->> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
+On Sat, 26 Jul 2025 at 18:35, Jakub Kicinski <kuba@kernel.org> wrote:
 >
-> What was msize?
->
->> Signed-off-by: Pierre Barre <pierre@barre.sh>
->> ---
->>  net/9p/client.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/net/9p/client.c b/net/9p/client.c
->> index 5c1ca57ccd28..f82b5674057c 100644
->> --- a/net/9p/client.c
->> +++ b/net/9p/client.c
->> @@ -230,7 +230,7 @@ static int p9_fcall_init(struct p9_client *c, struct p9_fcall *fc,
->>  		fc->sdata = kmem_cache_alloc(c->fcall_cache, GFP_NOFS);
->>  		fc->cache = c->fcall_cache;
->>  	} else {
->> -		fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
->> +		fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
->
-> That would work with certain transports like fd I guess, but not via
-> virtio-pci transport for instance, since PCI-DMA requires physical pages. Same
-> applies to Xen transport I guess.
->
->>  		fc->cache = NULL;
->>  	}
->>  	if (!fc->sdata)
->> @@ -252,7 +252,7 @@ void p9_fcall_fini(struct p9_fcall *fc)
->>  	if (fc->cache)
->>  		kmem_cache_free(fc->cache, fc->sdata);
->>  	else
->> -		kfree(fc->sdata);
->> +		kvfree(fc->sdata);
->>  }
->>  EXPORT_SYMBOL(p9_fcall_fini);
->>  
->>
+> Networking changes for 6.17.
+
+So while merging this, there was a trivial conflict with commit
+9b0240b3ccc3 ("netns: use stable inode number for initial mount ns")
+from the vfs side (acked by networking people).
+
+And the conflict wasn't hard to resolve, but while looking at it, I
+got very unhappy with that conflicting commit from the vfs tree.
+
+Christian - when the "use stable inode number" code triggers, it
+bypasses ns_alloc_inum() entirely. Fine - except that function *also*
+does that
+
+        WRITE_ONCE(ns->stashed, NULL);
+
+so now ns->stashed isn't initialized any more.
+
+Now, that shouldn't matter here because this only triggers for
+'init_net' that is a global data structure and thus initialized to all
+zeroes anyway, but it makes me very unhappy about that pattern that
+ends up being about allocating the pid, but also almost incidentally
+initializing that 'stashed' entry.
+
+I ended up re-organizing the net_ns_net_init() code a bit (because it
+now does that debugfs setup on success, so the old "return 0" didn't
+work), and I think the merge is fine, but I think this "don't call
+ns_alloc_inum()" pattern is wrong.
+
+IOW, I don't think this is a bug, but I think it's not great.
+
+               Linus
 
