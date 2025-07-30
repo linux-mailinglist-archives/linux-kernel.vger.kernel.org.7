@@ -1,126 +1,121 @@
-Return-Path: <linux-kernel+bounces-750930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065FDB162F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:37:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26BE1B162FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034DA3BD06A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:37:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8617F18C8171
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AF32DA740;
-	Wed, 30 Jul 2025 14:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C052DA779;
+	Wed, 30 Jul 2025 14:42:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="1TlXqUzk"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEDbYTjr"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77EAA2D6407
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EA62D9ED8;
+	Wed, 30 Jul 2025 14:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753886257; cv=none; b=F5zf9hc9bPLqRnMHoKhnaNS5FYgevqf69HtB/kVjlH9qRdccKKglG11UW4BwVnwaX9rWBzWGDcfJIlXN1JtWjiCbpi80ztpviiCdlIGNxA8FncObZQ3yte2n3toicOvQooDgGxqQfvcXtAoOoGOVaULGX2GoFE2gKilVUxA1DIA=
+	t=1753886530; cv=none; b=VtShaauHh1WT1Vgq9upU9JX/S9ENCpblqcVu2UZDhq/OYVNMASLAIbNF443PWNz1OMFDjN33dQMhZmaeCr3n6nlr1fGMVEId8bViIhgbWzRDXXzt9/fG245yT42jwLDYgulqY80UPN/DjvxId66sKNX9Q5NQBE/yFCCVCF4WLn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753886257; c=relaxed/simple;
-	bh=lXJ73jdHr5s/O4AsJ9vHXZKR5cKPhac21dmjQ/GtsgM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e+krFS1vvUo1MIhy7rFKeNjT3hSOaBf2jQ6VM+liLGDcFlZtWcMIjnjGB1PnTkCwSo/atF6DYii9xjG+c9bIvobG4IArb4qy7N693ojF02/NGxzOUjGjolxzb3mEjYzvd3hBafL7vPLFWu/hvUsPv+8bCEgS1ZoXfxYs8bUqCDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=1TlXqUzk; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5550dca1241so6197775e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:37:35 -0700 (PDT)
+	s=arc-20240116; t=1753886530; c=relaxed/simple;
+	bh=yBKebHSmHOfmlKzt4dxWwUdm5H/+xqmsFAEGPRL8Vqc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZwZPLVc/X2ugY5SoXLHTTkVeCKsmDs601+0zQlSrs1UnnfLVL9S5fusZXDPQ5VJCzdJMW2/uPVEfI289mShyvuSedT4WIQBOcyQQ/yxmckxwLOpbXDi2IwXlJZAsvvMWS2fkqMln8PfCwPgk+mcULVh4KDD/yvMRKTaoXESVMqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEDbYTjr; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so8287886a12.0;
+        Wed, 30 Jul 2025 07:42:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1753886253; x=1754491053; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lXJ73jdHr5s/O4AsJ9vHXZKR5cKPhac21dmjQ/GtsgM=;
-        b=1TlXqUzks9/AvUHlc2In5g2M7Bq3ooD3MMhfdkH3pRS/lbFQxAdvEgU57iA8eqKPa0
-         qzQZQcSY6+7Mulm2NoLribjNdN3WYKamoBc3t4RGx2Mac3wtke0YA3pSEUafIWWeWHQ/
-         y2f2xaQaTIvwH9uEpJuoo+NpxkQ2xrrNkQO6q1MzO9QFd3woMgnzSf0XOlbfVeYNLTRL
-         HqdaUhRAFncKnupMXoxkaU0pye58LCmqHTqbwAe8NbK/YQ24DbVP5RV44pR9fxTLBv7H
-         I2RYkZotZsuurDvIakEqXI0LUyyVDt8EWqGKRjAlhyFRHE18SP9zkBDTAw4/Xn4+Lbxp
-         NqnA==
+        d=gmail.com; s=20230601; t=1753886528; x=1754491328; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FYHDRzJKOaAYMNCXSgPR1P5klbcOxCCuVtkaiNHOnc4=;
+        b=WEDbYTjrqPAAVgt9whClW830FzZfgzEYxrTtnDQxzCE1IPRaOepT43C9T6JBqNw/Vn
+         pyGeiHgLfwUgdHSNsRiO4mQMdypNAq2o4qtD8D6HMce9eqVW0C0bGDLacw0K1vhchXF1
+         +XoN+Cc+lG7SY27BloxHdPro75m67QWL2bk0G9O9V+R7ch3MuWtFWpaQlA3LgNJII/Y7
+         RYuOvYyJj0noeHn4w9IcHho3BuAfoSNDPJhx9lfwUiUETTk9/VmtblK4huOKBSczHdlg
+         BzOzRtQdjYQCikvOWiOGZm2rLB3uH/WqUC4fmwVA4bwHe+NSu6MSqomrmNxB6AS709tn
+         evAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753886253; x=1754491053;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lXJ73jdHr5s/O4AsJ9vHXZKR5cKPhac21dmjQ/GtsgM=;
-        b=WVnT4hlnosJNvFWjzw1fmY13EIhTAqnc9D1Ro8dCjVBpekLjPrtzQ7pZoKZT95fD5i
-         LyNGdV6HazsW90MPXeUKYTTfkkIigqQBuN9PqwrI3ARb7XPfURLltzfHmZF1N/r78wZj
-         0i08fHDr0mmbR1H0DEcl0i4nDvN3hLt0vEXycahm60If4Ll4MzXEVFZVe/CH+TIlzRZR
-         fVzejpL91rJjLoMJJI7cf93WwqPT+84tpUW1ZLNjUTtvb/ClEjRkerqEDj02/HO/1uvc
-         0jaFcLc2KWspN22CwgZdz/juWKaw7KBzM15ZshasKzJFqOwAVuN9jmfFxXhgDmsGUULN
-         C1GA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjmWW4dIlHPxrGccIq9QfwJUiTDaf9LIzsfrXEDwTlpxk+NK93CMmx7JQ6VYeWtiCUlmqjvIo2U5yCeFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHKWeeyGDRGUkaqgd8GszdtckfGVxKQ3lWwH7S0HN7wE8DSS8t
-	fw77R9qiPuLa3o+v3AvMbYuHOkQNLXv5xgWHluTB0En5cFFUSQ8bDAKFev/7r4750yjtA4AYgEg
-	aStswbOlESTgMVXFX0bKwJV0kl98/xGo2E9xTBLhhkA==
-X-Gm-Gg: ASbGncujMmm69vt5DPHTgJ3ytkKhDxZwaGjSXOLKaOhpsR8+x60fMy0wiilLIhWkdY0
-	RJZPMhwwNrhsxv29MzdwBbrWQLYKdPaM60FeApyTya4xoZ2BwaXozwdo8aowG6WI0wUNc0UJgHR
-	+8j3mXhpSm+A25WatrTgAt20nUSOSlsj5wmfX+9zuchg9+UT7XLrGPK7mcqiQxQYOhRBIgtC5ta
-	zVXMhA4tEsrC+unZ4xiweEhKa9p4icYcL35r5Q=
-X-Google-Smtp-Source: AGHT+IEHQwnB79u13ccn0v4jhSNP1wNv1SCqDLPqjR5PoLcasXYprdf/GeMcKzgEB2VCqotr8ZyorITapctIMNYkHD0=
-X-Received: by 2002:a05:6512:39d6:b0:553:2e3a:bae with SMTP id
- 2adb3069b0e04-55b7c05f18fmr984925e87.39.1753886253374; Wed, 30 Jul 2025
- 07:37:33 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753886528; x=1754491328;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FYHDRzJKOaAYMNCXSgPR1P5klbcOxCCuVtkaiNHOnc4=;
+        b=il/e20gHcM2f4pytktB/C/mZ5i+KhZfk2ihIrIdgVAAhbG36/CHBIYsgZuBmdLG408
+         qe1NeN7slNIj4lClExJuezCDRGt3aPYk8A/sZgFMVGfJe+fkiHs37EVGhnrNiFdPMfkC
+         f6Q6U34R1esc811+Qit9wsEo4UkMGPnlnPqM2NB40zj/uzy+IDxcSfFtkq7qPfMoKpJm
+         MHjD7Gb7meav6gv/78IYaGEQiUjGhTn1Hvm/5bP+k/xcZXrcFQio1BAhZlhlxDx4gIoX
+         m68S56ooPr2rELHLz5UDoQquFZErynMOUkQfL/OgT29XPq/rX9jcXyxh9/msNj4CRyAg
+         h68w==
+X-Forwarded-Encrypted: i=1; AJvYcCWGhvzqRPkgM5G1GNCAWfRB02MH8Fq7wqYoY4nB4xDZBAZqghxgjPpZGOK6VKJCeB97WFyb97PRw+1WunTD@vger.kernel.org, AJvYcCXFIfz5zdumOxr/F8zx/X/BOJV7UYfYkBWG3qbTB3kxH6utuk9skmhFC+sR8zGNdCflahTjHhTec4Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoyHxGIT+wHkoyAHN2KwdqsBWXMyartjl5IxbiEn4Ur25s5OXC
+	VadT79mh8pNrTT++C3qAvoLztdQsZRh2E2f2UAgFIp7vmY0b5BDX1PiN
+X-Gm-Gg: ASbGnctG2AUmq4ARqHrXyhtjK01QIbu8TjzmKajFQdrccu059W9pRYDsE0WgNempmNB
+	2L3c+4CHBsKKgBz2Xiu3vFAAVfHnjlP8HOOarMEwyBcSCCVnAZm+WpowTVmy/IHPn26rfMVd9zb
+	+dnHEcIxj2P4iF3rsksF7KpJKCCIIsj+G+0wy7lfIKdEhcTbknJ+MjHvTsayQhh5ZCXXA7btF9y
+	vLp1ZEN5Ug0dqLUGSGtad7eEfSJI9Ctd/oiSgc+XcmOHaxfdjpwkNdoQ/SKPuovVC+eTlPcJARn
+	N3fnIehqFANifFUoKdmmAy2gRV5h5iOlaOHkIeBEis6F7NbU2qdOWjrOm0N1uavP8Go4IicFeVT
+	DuB/uP5x8ocU=
+X-Google-Smtp-Source: AGHT+IHHhMReMrcHM0rLPnguJMUg4v42TJz2pDtZFa86c15cEiGMS6XSNlbDGKZ7Gy8VKfe9R0BtaQ==
+X-Received: by 2002:a17:903:41d1:b0:240:8cca:50fb with SMTP id d9443c01a7336-24096b49247mr42457225ad.37.1753886528338;
+        Wed, 30 Jul 2025 07:42:08 -0700 (PDT)
+Received: from Arch ([103.87.142.72])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23ff6e201a3sm87342125ad.150.2025.07.30.07.42.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 07:42:07 -0700 (PDT)
+From: Ayash-Bera <ayashbera@gmail.com>
+To: skhan@linuxfoundation.org,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	corbet@lwn.net,
+	dri-devel@lists.freedesktop.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Cc: Ayash-Bera <ayashbera@gmail.com>
+Subject: [PATCH] fixed typo in the DRM UAPI documentation.
+Date: Wed, 30 Jul 2025 20:10:23 +0530
+Message-ID: <20250730144158.7926-1-ayashbera@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723094558.5bcfca69@canb.auug.org.au> <627cbb55-2a55-4124-8f6e-7b4ba0441558@csgroup.eu>
- <6eac14b4-765b-4a29-b278-364dba47e0e9@app.fastmail.com> <0b738b01-8574-49b1-b89c-3c96e9a56b28@csgroup.eu>
-In-Reply-To: <0b738b01-8574-49b1-b89c-3c96e9a56b28@csgroup.eu>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Wed, 30 Jul 2025 16:37:22 +0200
-X-Gm-Features: Ac12FXyBTxA114Svy5Uj0ivWoSbrkrjvRPCa-JAMdMs5h4ChxTFMooUaMdouQsE
-Message-ID: <CAMRc=Me=hNhER-EnvJarG-uig67cEPWfjuLyT1_F0WKd8jyLig@mail.gmail.com>
-Subject: Re: linux-next: duplicate patch in the fsl tree
-To: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: Arnd Bergmann <arnd@arndb.de>, ARM <linux-arm-kernel@lists.infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	linux-next <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 30, 2025 at 4:23=E2=80=AFPM Christophe Leroy
-<christophe.leroy@csgroup.eu> wrote:
->
->
->
-> Le 30/07/2025 =C3=A0 15:55, Arnd Bergmann a =C3=A9crit :
-> > On Wed, Jul 30, 2025, at 15:41, Christophe Leroy wrote:
-> >>
-> >> Le 23/07/2025 =C3=A0 01:45, Stephen Rothwell a =C3=A9crit :
-> >>
-> >> I was going to send a pull request for this fix but I see the duplicat=
-e
-> >> patch is already tagged in the soc tree:
-> >>
-> >> $ git tag --contains 12702f0c3834
-> >> next-20250728
-> >> next-20250730
-> >> soc-drivers-6.17
-> >>
-> >> Shall I do anything or just ignore it and drop it from my tree ?
-> >
-> > Linus has already pulled the soc-drivers-6.17 tags, so I think
-> > both copies of the patch ended up in mainline and there is nothing
-> > left you can do to change that.
->
-> The one in my tree is in Linux next, nowhere else for the time being as
-> far as I know, as it was not included in the pull request I sent three
-> weeks ago.
->
+fix a minor typo for the drm-uapi Documentation. 
 
-Arnd kindly picked it up directly into his tree when you were on
-vacation in order to make sure it makes the v6.17 merge window.
+Signed-off-by: Ayash-Bera <ayashbera@gmail.com>
+---
+ Documentation/gpu/drm-uapi.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bartosz
+diff --git a/Documentation/gpu/drm-uapi.rst b/Documentation/gpu/drm-uapi.rst
+index 69f72e71a96e..64e002c6383c 100644
+--- a/Documentation/gpu/drm-uapi.rst
++++ b/Documentation/gpu/drm-uapi.rst
+@@ -518,7 +518,7 @@ ENOSPC:
+ EPERM/EACCES:
+         Returned for an operation that is valid, but needs more privileges.
+         E.g. root-only or much more common, DRM master-only operations return
+-        this when called by unpriviledged clients. There's no clear
++        this when called by unprivileged clients. There's no clear
+         difference between EACCES and EPERM.
+ 
+ ENODEV:
+-- 
+2.50.1
+
 
