@@ -1,45 +1,42 @@
-Return-Path: <linux-kernel+bounces-750315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D59B159ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:46:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF737B159F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B15618C0E82
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:47:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E21FC171D2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D86292B40;
-	Wed, 30 Jul 2025 07:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hqbuTHFk"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA7C290BD3;
+	Wed, 30 Jul 2025 07:47:45 +0000 (UTC)
+Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F40290D9C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205D11E47AE;
+	Wed, 30 Jul 2025 07:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753861588; cv=none; b=Sypofj8CbQ3HSRAEZdd657cKdf07+bbbXVoepR3mtkz4Jlh1VfXEpNOQGFL7Zm0hIsr0QdNtfulOtAhsIzxgo2lekVdIdsgbMD9CISBBM0RNOmv5PBUKfpvcvlDJvhLdzk8gLIxU6RkNZZOFbKjbFj6XfpIi/cu+0kIavIVu+98=
+	t=1753861664; cv=none; b=PfEzxncFIBnnKR/VFopWqCtXXE0Wgak74yH2XuPFO5G5yGZHKz2ccBCEVBUy3pcvvjVh6V96OlHBjc/GngmPT7z/tGt+F59RGzQvByfpYymSHjHBQaQJSUQ4nGMzqmTmHT0bqE2B9nYvLsq4K+umsrUqALxijmPJRHAfGvLkzPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753861588; c=relaxed/simple;
-	bh=hM0XLIeAi7J4Bjt83dta1H4ZcWgXJwvOP0OEhvwBKJA=;
+	s=arc-20240116; t=1753861664; c=relaxed/simple;
+	bh=RdnRTWz6q5dc7ZEVCfnQbL14nbOEVcUJ8cYBq7rRizk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bAUXV9clKe85hs45ndSiHEjpsiZxsnyhgYO3FnpBKe55nknTyYliYKkEy/41m08DYf+GpDm97nSe3+1hEkhXL/pmbM2il8d9zfUC8lyN0yTvIx2Hrhhu6veDFCcZxaWPbYIRerYGnSvh9x6Cn6bmWdGtz9/kx2dl+IuoAi1uVok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hqbuTHFk; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753861582; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Rw9coQSPDusbh6xlzH1libYuWMCbw8rIDakkSoz4oHQ=;
-	b=hqbuTHFkY7Wd99fNVDc/QqD83GFNCXqkkwMFpGelhw77OH/bEsQtw/UHzl75K2aJJV94eSgtKY/fQ+k/QuSqZQ6ePnAxyv8XmapXC7+S1CKj/3fLtGARLRi9/3XxFMJgA36IpwmixhfcZetqDkr8NaBc0igUfgenII8Ou85fXPw=
-Received: from 30.74.144.115(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WkU-UhV_1753861580 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 30 Jul 2025 15:46:20 +0800
-Message-ID: <817c59dd-ad54-47f1-ac16-9cb9583308d1@linux.alibaba.com>
-Date: Wed, 30 Jul 2025 15:46:19 +0800
+	 In-Reply-To:Content-Type; b=bTMbciOvpgj8tIIbDGi+piFa5KZyF3bzWoDn33pb0/uNjcEwHmngtMBcAH0Jehq5N3cscOr2PbBZQizkSMD51ex1L5DPFS4b5LD9l/sBABYoSVJNyEXDfGRecF1ZdZrzg1zSZCpdpkMSW76lTDZrzO/g63Rws1325H1nenGp+v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
+Received: from [192.168.0.5] (ip5f5af7d2.dynamic.kabel-deutschland.de [95.90.247.210])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: pmenzel)
+	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 9989661E647BA;
+	Wed, 30 Jul 2025 09:46:43 +0200 (CEST)
+Message-ID: <51d8593c-150e-4c81-8b0a-37720062a5d8@molgen.mpg.de>
+Date: Wed, 30 Jul 2025 09:46:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,93 +44,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: shmem: fix the shmem large folio allocation for the
- i915 driver
-To: Hugh Dickins <hughd@google.com>
-Cc: akpm@linux-foundation.org, patryk@kowalczyk.ws,
- ville.syrjala@linux.intel.com, david@redhat.com, willy@infradead.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, jani.nikula@linux.intel.com,
- joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com,
- tursulin@ursulin.net, christian.koenig@amd.com, ray.huang@amd.com,
- matthew.auld@intel.com, matthew.brost@intel.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <0d734549d5ed073c80b11601da3abdd5223e1889.1753689802.git.baolin.wang@linux.alibaba.com>
- <ff93c415-7ce8-a331-9568-7543c6a37992@google.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <ff93c415-7ce8-a331-9568-7543c6a37992@google.com>
+Subject: Re: [PATCH] md: fix create on open mddev lifetime regression
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: contact@arnaud-lcm.com, hdanton@sina.com, song@kernel.org,
+ yukuai3@huawei.com, xni@redhat.com, linux-raid@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250730073321.2583158-1-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Paul Menzel <pmenzel@molgen.mpg.de>
+In-Reply-To: <20250730073321.2583158-1-yukuai1@huaweicloud.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+
+Dear Kuai,
 
 
+Thank you for your patch and tracking this down.
 
-On 2025/7/30 14:54, Hugh Dickins wrote:
-> On Mon, 28 Jul 2025, Baolin Wang wrote:
+Am 30.07.25 um 09:33 schrieb Yu Kuai:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
->> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"),
->> we extend the 'huge=' option to allow any sized large folios for tmpfs,
->> which means tmpfs will allow getting a highest order hint based on the size
->> of write() and fallocate() paths, and then will try each allowable large order.
->>
->> However, when the i915 driver allocates shmem memory, it doesn't provide hint
->> information about the size of the large folio to be allocated, resulting in
->> the inability to allocate PMD-sized shmem, which in turn affects GPU performance.
->>
->> To fix this issue, add the 'end' information for shmem_read_folio_gfp()  to help
->> allocate PMD-sized large folios. Additionally, use the maximum allocation chunk
->> (via mapping_max_folio_size()) to determine the size of the large folios to
->> allocate in the i915 driver.
->>
->> Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
->> Reported-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
->> Reported-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
->> Tested-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
->> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->> ---
->>   drivers/gpu/drm/drm_gem.c                 | 2 +-
->>   drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 7 ++++++-
->>   drivers/gpu/drm/ttm/ttm_backup.c          | 2 +-
->>   include/linux/shmem_fs.h                  | 4 ++--
->>   mm/shmem.c                                | 7 ++++---
->>   5 files changed, 14 insertions(+), 8 deletions(-)
+> Commit 9e59d609763f ("md: call del_gendisk in control path") move
+
+move*s*
+
+> setting MD_DELETED from __mddev_put() to do_md_stop(), however, for the
+> case create on open, mddev can be freed without do_md_stop():
 > 
-> I know I said "I shall not object to a temporary workaround to suit the
-> i915 driver", but really, I have to question this patch.  Why should any
-> change be required at the drivers/gpu/drm end?
+> 1) open
 > 
-> And in drivers/gpu/drm/{i915,v3d} I find they are using huge=within_size:
-> I had been complaining about the userspace regression in huge=always,
-> and thought it had been changed to behave like huge=within_size,
-> but apparently huge=within_size has itself regressed too.
-
-I'm preparing a RFC patch to discuss this.
-
-> Please explain why the below is not a better patch for i915 and v3d
-> (but still a temporary workaround, because the root of the within_size
-> regression must lie deeper, in the handling of write_end versus i_size).
-
-OK. This looks good to me. Patryk, could you try Hugh's simple patch? 
-Thanks.
-
+> md_probe
+>   md_alloc_and_put
+>    md_alloc
+>     mddev_alloc
+>     atomic_set(&mddev->active, 1);
+>     mddev->hold_active = UNTIL_IOCTL
+>    mddev_put
+>     atomic_dec_and_test(&mddev->active)
+>      if (mddev->hold_active)
+>      -> active is 0, hold_active is set
+> md_open
+>   mddev_get
+>    atomic_inc(&mddev->active);
+> 
+> 2) ioctl that is not STOP_ARRAY, for example, GET_ARRAY_INFO:
+> 
+> md_ioctl
+>   mddev->hold_active = 0
+> 
+> 3) close
+> 
+> md_release
+>   mddev_put(mddev);
+>    atomic_dec_and_lock(&mddev->active, &all_mddevs_lock)
+>    __mddev_put
+>    -> hold_active is cleared, mddev will be freed
+>    queue_work(md_misc_wq, &mddev->del_work)
+> 
+> Now that MD_DELETED is not set, before mddev is freed by
+> mddev_delayed_delete(), md_open can still succeed and break mddev
+> lifetime, causing mddev->kobj refcount underflow or mddev uaf
+> problem.
+> 
+> Fix this problem by setting MD_DELETED before queuing del_work.
+> 
+> Reported-by: syzbot+9921e319bd6168140b40@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68894408.a00a0220.26d0e1.0012.GAE@google.com/
+> Reported-by: syzbot+fa3a12519f0d3fd4ec16@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68894408.a00a0220.26d0e1.0013.GAE@google.com/
+> Fixes: 9e59d609763f ("md: call del_gendisk in control path")
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > ---
->   mm/shmem.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/md/md.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
 > 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 3a5a65b1f41a..c67dfc17a819 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -5928,8 +5928,8 @@ struct folio *shmem_read_folio_gfp(struct address_space *mapping,
->   	struct folio *folio;
->   	int error;
+> diff --git a/drivers/md/md.c b/drivers/md/md.c
+> index 046fe85c76fe..5289dcc3a6af 100644
+> --- a/drivers/md/md.c
+> +++ b/drivers/md/md.c
+> @@ -636,6 +636,12 @@ static void __mddev_put(struct mddev *mddev)
+>   	    mddev->ctime || mddev->hold_active)
+>   		return;
 >   
-> -	error = shmem_get_folio_gfp(inode, index, 0, &folio, SGP_CACHE,
-> -				    gfp, NULL, NULL);
-> +	error = shmem_get_folio_gfp(inode, index, i_size_read(inode),
-> +				    &folio, SGP_CACHE, gfp, NULL, NULL);
->   	if (error)
->   		return ERR_PTR(error);
->   
+> +	/*
+> +	 * If array is freed by stopping array, MD_DELETED is set by
+> +	 * do_md_stop(), MD_DELETED is still set here in cause mddev is freed
 
+in case
+
+> +	 * directly by closing a mddev that is created by create_on_open.
+> +	 */
+> +	set_bit(MD_DELETED, &mddev->flags);
+>   	/*
+>   	 * Call queue_work inside the spinlock so that flush_workqueue() after
+>   	 * mddev_find will succeed in waiting for the work to be done.
+
+With the changes above:
+
+Reviewed-by: Paul Menzel <pmenzel@molgen.mpg.de>
+
+
+Kind regards,
+
+Paul
 
