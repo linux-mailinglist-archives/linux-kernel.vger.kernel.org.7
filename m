@@ -1,233 +1,469 @@
-Return-Path: <linux-kernel+bounces-750456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49004B15B7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:26:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AD98B15B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:27:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 827C618A1913
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:26:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C5297B1AB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50989271442;
-	Wed, 30 Jul 2025 09:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFA52192FC;
+	Wed, 30 Jul 2025 09:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZLmdn6Ke";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hYn+v/AS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ZLmdn6Ke";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hYn+v/AS"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Fs21ByA/"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7ACF2701B8
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753867582; cv=none; b=fE5hQQaOPbUKwbngujFvoet3C4PbU1SuUhbstW4YPESU/5EykvRU2SHX8UbPuVjpS/XufBtLZQWsxVo15M4RJSyxmsVKNC4FNF9dGyM4OF60f1AU5PsHES31ACXU459ErfsLSHPGUEc4S/90wwjxLEaTMN54FopT4DUXkAUIsf8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753867582; c=relaxed/simple;
-	bh=iFo5w61ygk5/00ivNfP6LrdjhO0dAK1GgoLyoRyT60I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qrWwPl0pY+uCa9ppigf4O8fEih/bgT8tImjHqy93CAk1Z97g0Y8+w++1W4Nb1gnrTo28w7riaN49QkIQALOZpK5LAWXAXSbL6hSUmT3996snrzOqfWU6DKX+T1FtFA+FJq5gap2I8LkPD8rrgo3I93W6UKO5Riuf80oEDOapiw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZLmdn6Ke; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hYn+v/AS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ZLmdn6Ke; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hYn+v/AS; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F31741F45A;
-	Wed, 30 Jul 2025 09:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753867579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PwwSk2G3t3g+z+exLv/8KSZMKkvH9vcoZU1kIker1MQ=;
-	b=ZLmdn6KegNLRzn+dBx89gzlvx3N85If5zqoX3jHJv/5IxACROsLEdUumVIkRVA+qfzpztX
-	llTr1qluDQxRaUlsR6kyh1U/XzPdd1H7TiWrXD77yNnjpu92kgcjRv3+jV5tfv9asZF5Qz
-	YQDFeqGDy0vnCXKJkSiLRysSmse6Q0w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753867579;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PwwSk2G3t3g+z+exLv/8KSZMKkvH9vcoZU1kIker1MQ=;
-	b=hYn+v/ASBkF5r+OUfvChwnoKZ4xNlRwApU8Dh9pNJIJcPp1ffL7v7NxnFmSGQTbMMcma1v
-	OSpQhY2+thaekjAw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753867579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PwwSk2G3t3g+z+exLv/8KSZMKkvH9vcoZU1kIker1MQ=;
-	b=ZLmdn6KegNLRzn+dBx89gzlvx3N85If5zqoX3jHJv/5IxACROsLEdUumVIkRVA+qfzpztX
-	llTr1qluDQxRaUlsR6kyh1U/XzPdd1H7TiWrXD77yNnjpu92kgcjRv3+jV5tfv9asZF5Qz
-	YQDFeqGDy0vnCXKJkSiLRysSmse6Q0w=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753867579;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PwwSk2G3t3g+z+exLv/8KSZMKkvH9vcoZU1kIker1MQ=;
-	b=hYn+v/ASBkF5r+OUfvChwnoKZ4xNlRwApU8Dh9pNJIJcPp1ffL7v7NxnFmSGQTbMMcma1v
-	OSpQhY2+thaekjAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D61E13942;
-	Wed, 30 Jul 2025 09:26:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id De7RAzrliWjwaAAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Wed, 30 Jul 2025 09:26:18 +0000
-Date: Wed, 30 Jul 2025 10:26:16 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Bernard Metzler <bernard.metzler@linux.dev>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jakub Kicinski <kuba@kernel.org>, 
-	David Howells <dhowells@redhat.com>, Tom Talpey <tom@talpey.com>, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, torvalds@linux-foundation.org, 
-	stable@vger.kernel.org, kernel test robot <oliver.sang@intel.com>
-Subject: Re: [PATCH v2] RDMA/siw: Fix the sendmsg byte count in
- siw_tcp_sendpages
-Message-ID: <x43xlqzuher54k3j4iwkos36jz5qkhtgxw4zh52j5cz6l2spzw@yips5h4liqbi>
-References: <20250729120348.495568-1-pfalcato@suse.de>
- <8fad6c00-9c15-4315-a8c5-b8eac4281757@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B3526CE18;
+	Wed, 30 Jul 2025 09:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753867638; cv=fail; b=MqEBToaPwW1M0H4bi6LjWjHZXBiEv4m7UZHgpORXFwFhSGhi8Uud76WJOEx19TpCVzPeLwEaftJ5jSKVAjLgeVKoxzmvV7tuYsOjl+lMZh7yZSD+D03hzYIpxj4yTejNlFocUIUjnnlLc0xMa/L3W5t+Ki40snsLSqjIxW4a9s0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753867638; c=relaxed/simple;
+	bh=qdDjr3ebUFG3u0dy23qySn4yD9B5/Q7gZKPydMj31CU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=SY8TkUhJYuLyvIKvd3rSHrSFGA2rgyDnS/2noAiFSHNWSHev9G2nzxLd4AzgvxEnecQQ0JM+B5Qk0lexDjeQlgOBPq++22I4Y8eqnKvETOKIPVQKdXjaj+4IULVSloOQX4rUJiIbBL1XNuLa6GdFTHyCnwWMSJyP8IV1myr7wVI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Fs21ByA/; arc=fail smtp.client-ip=40.107.92.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FvXhuKWvsjupkJ3KNL6rWyDZsYmWAUb3X6+YguH0SBDvQoamyhCIA0xv3Y4s/aJvMd65jpNHw4pbnilDpFpnrt8ykwhl9iGvOa7+Iq+N+KWQ0atnU8wmsXOV2H9Yz43+xu+28alAHrnlMdWCqHspuu5Q5CIM9YG7BHJQ1ZHFpbgYOvzlbpNevsVSDYVrZgYUOUv+MERH6bv9S6/Q0DiX1wLsOzHDZ0g+qHVXqYhlQ566scIVo79Y8g0Wq+6B5jufqTz/UWwhZffI6yl4DX+WkcfFx5lJISeNRJdjSqYOFWTXkcfztd9qSc5xm0g71uwDzP/ij4iEQWfTl/jIL31/aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=FjfPLPiDQCLhvHjuNyUYq+LEWbBo6+RInD/DT+xMXEk=;
+ b=np+RzhlsdtTEWwBOnYtspT4scKW4YUX5DulgYN0It6nEPYgW7QpZUBPvlQI/OsuyAbUwCnjOqn2A2zfbyDbQK/ChPd2xhCn4q5Osa9/bKQc5V3j1ejqGHEDPYaqs0RQeNm6/sFCFOwuOamBi5v5KGD3Tf1OVJlzmWWttbfKpFe7mk5t3glWfAMNx/xRwDNh95H1orBZgSATb+1wQ6CHROp52ZaraJ9lSQn+hJwMPBtR8qNwi68TzPuKmmTAGbcPz1rkNjY/leUdn5Kd4YtFEUg4JSNmnfORoUhDRVr6CabGxUc+/pGfsYCbcwFsFYUk3cj9I3/JgSRYSF6Jof0QMaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=FjfPLPiDQCLhvHjuNyUYq+LEWbBo6+RInD/DT+xMXEk=;
+ b=Fs21ByA/T3FDGY8R3FRUzQfJIgab6KMG+4hXKi9sUinW7TsEe1/Pzm2/xaTPTpBno0EdUgiQARnQgZLfTZUToj+HcVNM0hkERSPYu0UsWtU3Ad90X1dkrjsjjzOKN6muXASMxfrXu3kZnKV8p2JuHOgJ6feTm8X4jIiC3+tmIbI=
+Received: from BL3PR12MB6571.namprd12.prod.outlook.com (2603:10b6:208:38e::18)
+ by IA0PR12MB7554.namprd12.prod.outlook.com (2603:10b6:208:43e::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Wed, 30 Jul
+ 2025 09:27:11 +0000
+Received: from BL3PR12MB6571.namprd12.prod.outlook.com
+ ([fe80::4cf2:5ba9:4228:82a6]) by BL3PR12MB6571.namprd12.prod.outlook.com
+ ([fe80::4cf2:5ba9:4228:82a6%5]) with mapi id 15.20.8964.024; Wed, 30 Jul 2025
+ 09:27:10 +0000
+From: "Gupta, Suraj" <Suraj.Gupta2@amd.com>
+To: Sean Anderson <sean.anderson@linux.dev>, "Pandey, Radhey Shyam"
+	<radhey.shyam.pandey@amd.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S
+ . Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, "Simek, Michal"
+	<michal.simek@amd.com>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, Leon Romanovsky <leon@kernel.org>
+Subject: RE: [PATCH net-next v3 1/7] net: axienet: Fix resource release
+ ordering
+Thread-Topic: [PATCH net-next v3 1/7] net: axienet: Fix resource release
+ ordering
+Thread-Index: AQHcAA2a70rKnYMeAkmDnHlC3LpJqrRKZ6gA
+Date: Wed, 30 Jul 2025 09:27:10 +0000
+Message-ID:
+ <BL3PR12MB65714EDC41F1FB4CB39FE96EC924A@BL3PR12MB6571.namprd12.prod.outlook.com>
+References: <20250728221823.11968-1-sean.anderson@linux.dev>
+ <20250728221823.11968-2-sean.anderson@linux.dev>
+In-Reply-To: <20250728221823.11968-2-sean.anderson@linux.dev>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Enabled=True;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_SetDate=2025-07-30T09:25:42.0000000Z;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Name=Open
+ Source;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_ContentBits=3;MSIP_Label_f265efc6-e181-49d6-80f4-fae95cf838a0_Method=Privileged
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL3PR12MB6571:EE_|IA0PR12MB7554:EE_
+x-ms-office365-filtering-correlation-id: 76abef0d-1771-48e2-c504-08ddcf4b42f7
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?OUJ3CH/s8XhNAsRX/u868ClJQWW5tOUfxdC7uC8eepIvJ6YGciJrZ3N2eI6A?=
+ =?us-ascii?Q?sEliF+xa95TW01kQDeuSfvhs4L+Jh0Ym6htl31C1NStgyI6qKI4iAXbUr2lr?=
+ =?us-ascii?Q?PY1qepcLvZW7ccIas+lsKJT6xE4yiza3wophqc6xh0q8+SAfk/J2+f1z8DKR?=
+ =?us-ascii?Q?L5conJDao6nWExSR+zofnBpKhhm0ThIPsydPUDoDHnaG4VSBbgD1uXWWIMMN?=
+ =?us-ascii?Q?KnRikHj8jMlOWVZOHIkFMDZzpCgdCeCTgYrlxi1/ChqfzTR+p9N1KyeRqNzU?=
+ =?us-ascii?Q?9Y4LnutCBGj0ibK5vqUpT5VQdj1DLxWMv8sOBHGhI7x/RNbL0MdCEblYhOgv?=
+ =?us-ascii?Q?hm3SrjSrxqigoqu1dISxTKt52DyNou/64A8m1ipqI11DnXRj9JN8GXejGaco?=
+ =?us-ascii?Q?RCSMKkRwPLTOI/pVuB9Zfr7GX6vsVpqzABz95AWZozqoQ5nY8fyNgyeNcBBb?=
+ =?us-ascii?Q?W532xIBa/EejvwAWOtY/czbWUcWTy8dDL8EKrpyjf7KHYXAl1eZGDzf18HXk?=
+ =?us-ascii?Q?AVwEbHtX9xlLCdwr5wiR41WntSB+/niVNpyAB8zBXvJqu9bzYJB1EAUBdfOi?=
+ =?us-ascii?Q?gmsdyShEYgJqO5dBxXNOhzPq+kqjIPaXma9xecnd9M9E0opMlsU/vmkBs0GL?=
+ =?us-ascii?Q?5U6dSEj7MJHdUkJs9h03ffXliERNzAFnWroujWIDW6WaKEx17iwtQJ/lYbuq?=
+ =?us-ascii?Q?OrS2fmw4E3x0zqU7XRRqeXMHeFgzRpq+ivTlRTrRLQzLKcmsRc67Vy450jTu?=
+ =?us-ascii?Q?h8w3mqVLGtNgneFafzomApb840/r7qObKoic6dDyhEooSDTacmVXMFNjCWn5?=
+ =?us-ascii?Q?HrMbKOnZAQsb19KY7x4GltKozmaiCBdd2Z5x3M/aOhTg4xY+X2vyYAzQAcSM?=
+ =?us-ascii?Q?bj6mbZj33yi93gduPKzGr8KqrTKmt+JH1lnK+2mTx6Hdvh/1IaYV+on/SdcR?=
+ =?us-ascii?Q?zMblFdbEPFxADaV4JyjHcLHO2DRuWYg4M2MHwGnfxD7qT3Ne7bedZARwXMMP?=
+ =?us-ascii?Q?8mpeLOkQuNHaAuXMofHRe+j5nEh0G5tQLPYOJP0QR4a10/nSFR6RYwBzKKdX?=
+ =?us-ascii?Q?0TWvVqdwkHb3sDyPekBgoeXkYTZPZEyescbFuSbAxuV9Pd2Lujuuh2AXZgpo?=
+ =?us-ascii?Q?W8yyb8g3vmdQWzZLZcTjkobix5ovaqXQE7y4PuZrFWBtk17zWoLv96jHQ95S?=
+ =?us-ascii?Q?dX769P3GIFp+Mg+jVPxUkpnFYaXw61GJsg5swwmitB6fZLmMBRDnkLeXatdd?=
+ =?us-ascii?Q?IApM4AXtq94H0oOkPlq1RlbN0Dl/TQquVhgOxRjBhKkNaEjpCYYQ/Caxb2tT?=
+ =?us-ascii?Q?WXdZLhQzz+8FKkoMEWekpbMUQHxacYCIDV0WQ5wiLYwEPMy+GDnot0a2+4Pl?=
+ =?us-ascii?Q?X5LjaDN9zEEO4g5z5gcscLH+ma2DKw+K5wDgiJNeTvekBUbChlUQbkY7SNQA?=
+ =?us-ascii?Q?zkFqKKlnjS56+IWh/BTc0weO5A2aqJ3i2fbbMB6msVDSgXgjk0YdqDOZGSiZ?=
+ =?us-ascii?Q?Xx7AzLAio/Zw8hw=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6571.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?acTXi5d51nw1TVnw1YOqdMCAuls68TxJ3ueIgQREb/Jrh6XKw9voaa9e10HX?=
+ =?us-ascii?Q?g3K81E7u6GP74CWo6OhCyER6nVnO46zHZ9Uc5vIPNKVsl0lIINyzGsl0R37Z?=
+ =?us-ascii?Q?72+bqIcLD2V2ipqJwMZnPK9tXqSuddVWWUE396ht1O/JoKS12VlDHMmjzHk1?=
+ =?us-ascii?Q?fyEPppfY+tnFFBwVgiE8x56641otRYnt4P9NaD1PhoZgCd2MOsOCMpNkpCmT?=
+ =?us-ascii?Q?Ldfip1iLFlUeMzML/hGzoc1tiNj/ov9vm/In0iU8i58k+lmS+2lIwbRJ44jc?=
+ =?us-ascii?Q?26kRW1v1tnbbU9E5fwPJbaptuxmgjCrZoxc8IO+34HVmUfXBlP3hr09KsUqt?=
+ =?us-ascii?Q?HZBaX+JTXp8QTz37mBrKuHa3WwkonDk/IqbstuDe6+o5KOJjlMjSBhiVVpUx?=
+ =?us-ascii?Q?xYN88szVxoDMkuyV5Gkm1AFvSLB4hORZVjxDRpxc2k57nzsKKfJyegBkmHSE?=
+ =?us-ascii?Q?jyQkKOkMtpr54ZqPARL5OVpsJJmgaBg9SnblH5p09eh5hRL6OvBlMFNFmhYl?=
+ =?us-ascii?Q?8bePeaXr+tmOwNWpnUFAZQccqzUU4iiV6kSbWL+GFlHCTcBcydoARAzJWHkf?=
+ =?us-ascii?Q?/PJhcXtz9QnP2TVToLf7xEBVCZVxpJOeL7TEM5P5hf+TBlL7B1pckQjKD/E+?=
+ =?us-ascii?Q?vkUtt2jExApgmewLVVEpvQxMnW8sTldWEZzDG+Jj3EuhlcIrpsKR8hP0Z6fn?=
+ =?us-ascii?Q?OsvRJkfMuNVgYNXG000qZeHDf2m0RlEP5lqDdA0E+Lt3ZUWfYqbAUub7a08V?=
+ =?us-ascii?Q?FnXww66QW1SnYW3UTWN42vM2xcMakZaVgwIJUBusygDIKM6g4Fd4TPUIdJA4?=
+ =?us-ascii?Q?4d4StA1wobUFmRcqV8o5fgvSro9KtmPsJ9qfNaIJcNa9brw+jlpDWDLlpQpt?=
+ =?us-ascii?Q?+lJGUgrclDCzG5eSoH1ZH99fIaIaB7P65B5XoX/cSMmP2NuLf10EQCG6phO5?=
+ =?us-ascii?Q?rmvI68HHT3UEMw568wa1GuO+gXL6Uohj3l8OuZ/RnV2/d6QqhFzx6ltTKvdR?=
+ =?us-ascii?Q?rwMB+79sXVip89ZwenvdmRx0FAEgYDoaACdUhyMPA03lHzcae+uZ6vTBkLSy?=
+ =?us-ascii?Q?f7ffxO5v3w9b18pz7tVNl1i/PBLgOUeliUbkR32sOziLl32tPFhVUA5Oe/wl?=
+ =?us-ascii?Q?sUUdtujmUWtqNaJ6+N1o/YQVYA4IrmR7KqZvRCUrg+v5eW8R3m0s2ASPRvGh?=
+ =?us-ascii?Q?yOiDfZC6HDv3TggVGRXtx3AgFAErW31PVl0WKhWbHJL+8MRUBjEJb5aSZbAC?=
+ =?us-ascii?Q?+HH91fCn27oKTKPJC0qwWvIHqAvkojRziY6FhveNRAcyapibotuQBgDGdqhh?=
+ =?us-ascii?Q?IJtqu5ZfK9bFqklyVE+ujgwgy0cYdrlXs7CXDBjgxQ4115mHGG0JzEOHxNMt?=
+ =?us-ascii?Q?tA2XDfeKsMvw21x+sye64PK3XMZ5S2c8d0lwtDRdFA18CxqJ42bXx0SqSIuW?=
+ =?us-ascii?Q?1fNQwGhQAhBQmoakiebu6E2lPt1bSbUAV8/TIWtOsO3CLP+6hl813m9IepXC?=
+ =?us-ascii?Q?7yeBDOyH+zp+X28/w9eGYge+b6vQzKrRZ4IjoUkIGbu9sBDgHfJTsO3WXpt8?=
+ =?us-ascii?Q?9TiP2S1QItMsVCJ6AWs=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8fad6c00-9c15-4315-a8c5-b8eac4281757@linux.dev>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6571.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76abef0d-1771-48e2-c504-08ddcf4b42f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2025 09:27:10.9151
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 0uzE3NfeMfKOqF7JdFFCFmfKE//n2xKJxgYiLlaH1B/uqkhnxWoTdiGtk5beZ5b/9I6m1vC+h7KGOZpZe/KRCw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7554
 
-On Tue, Jul 29, 2025 at 08:53:02PM +0200, Bernard Metzler wrote:
-> On 29.07.2025 14:03, Pedro Falcato wrote:
-> > Ever since commit c2ff29e99a76 ("siw: Inline do_tcp_sendpages()"),
-> > we have been doing this:
-> > 
-> > static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
-> >                               size_t size)
-> > [...]
-> >          /* Calculate the number of bytes we need to push, for this page
-> >           * specifically */
-> >          size_t bytes = min_t(size_t, PAGE_SIZE - offset, size);
-> >          /* If we can't splice it, then copy it in, as normal */
-> >          if (!sendpage_ok(page[i]))
-> >                  msg.msg_flags &= ~MSG_SPLICE_PAGES;
-> >          /* Set the bvec pointing to the page, with len $bytes */
-> >          bvec_set_page(&bvec, page[i], bytes, offset);
-> >          /* Set the iter to $size, aka the size of the whole sendpages (!!!) */
-> >          iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-> > try_page_again:
-> >          lock_sock(sk);
-> >          /* Sendmsg with $size size (!!!) */
-> >          rv = tcp_sendmsg_locked(sk, &msg, size);
-> > 
-> > This means we've been sending oversized iov_iters and tcp_sendmsg calls
-> > for a while. This has a been a benign bug because sendpage_ok() always
-> > returned true. With the recent slab allocator changes being slowly
-> > introduced into next (that disallow sendpage on large kmalloc
-> > allocations), we have recently hit out-of-bounds crashes, due to slight
-> > differences in iov_iter behavior between the MSG_SPLICE_PAGES and
-> > "regular" copy paths:
-> > 
-> > (MSG_SPLICE_PAGES)
-> > skb_splice_from_iter
-> >    iov_iter_extract_pages
-> >      iov_iter_extract_bvec_pages
-> >        uses i->nr_segs to correctly stop in its tracks before OoB'ing everywhere
-> >    skb_splice_from_iter gets a "short" read
-> > 
-> > (!MSG_SPLICE_PAGES)
-> > skb_copy_to_page_nocache copy=iov_iter_count
-> >   [...]
-> >     copy_from_iter
-> >          /* this doesn't help */
-> >          if (unlikely(iter->count < len))
-> >                  len = iter->count;
-> >            iterate_bvec
-> >              ... and we run off the bvecs
-> > 
-> > Fix this by properly setting the iov_iter's byte count, plus sending the
-> > correct byte count to tcp_sendmsg_locked.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: c2ff29e99a76 ("siw: Inline do_tcp_sendpages()")
-> > Reported-by: kernel test robot <oliver.sang@intel.com>
-> > Closes: https://lore.kernel.org/oe-lkp/202507220801.50a7210-lkp@intel.com
-> > Reviewed-by: David Howells <dhowells@redhat.com>
-> > Signed-off-by: Pedro Falcato <pfalcato@suse.de>
-> > ---
-> > 
-> > v2:
-> >   - Add David Howells's Rb on the original patch
-> >   - Remove the offset increment, since it's dead code
-> > 
-> >   drivers/infiniband/sw/siw/siw_qp_tx.c | 5 ++---
-> >   1 file changed, 2 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/infiniband/sw/siw/siw_qp_tx.c b/drivers/infiniband/sw/siw/siw_qp_tx.c
-> > index 3a08f57d2211..f7dd32c6e5ba 100644
-> > --- a/drivers/infiniband/sw/siw/siw_qp_tx.c
-> > +++ b/drivers/infiniband/sw/siw/siw_qp_tx.c
-> > @@ -340,18 +340,17 @@ static int siw_tcp_sendpages(struct socket *s, struct page **page, int offset,
-> >   		if (!sendpage_ok(page[i]))
-> >   			msg.msg_flags &= ~MSG_SPLICE_PAGES;
-> >   		bvec_set_page(&bvec, page[i], bytes, offset);
-> > -		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, size);
-> > +		iov_iter_bvec(&msg.msg_iter, ITER_SOURCE, &bvec, 1, bytes);
-> >   try_page_again:
-> >   		lock_sock(sk);
-> > -		rv = tcp_sendmsg_locked(sk, &msg, size);
-> > +		rv = tcp_sendmsg_locked(sk, &msg, bytes)
-> >   		release_sock(sk);
-> >   		if (rv > 0) {
-> >   			size -= rv;
-> >   			sent += rv;
-> >   			if (rv != bytes) {
-> > -				offset += rv;
-> >   				bytes -= rv;
-> >   				goto try_page_again;
-> >   			}
-> 
-> Acked-by: Bernard Metzler <bernard.metzler@linux.dev>
+[Public]
+
+> -----Original Message-----
+> From: Sean Anderson <sean.anderson@linux.dev>
+> Sent: Tuesday, July 29, 2025 3:48 AM
+> To: Pandey, Radhey Shyam <radhey.shyam.pandey@amd.com>; Andrew Lunn
+> <andrew+netdev@lunn.ch>; David S . Miller <davem@davemloft.net>; Eric Dum=
+azet
+> <edumazet@google.com>; Jakub Kicinski <kuba@kernel.org>; Paolo Abeni
+> <pabeni@redhat.com>; netdev@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org; Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org>; Simek, Michal <michal.simek@amd.com>; linux=
+-arm-
+> kernel@lists.infradead.org; Leon Romanovsky <leon@kernel.org>; Sean Ander=
+son
+> <sean.anderson@linux.dev>
+> Subject: [PATCH net-next v3 1/7] net: axienet: Fix resource release order=
+ing
+>
+> Caution: This message originated from an External Source. Use proper caut=
+ion when
+> opening attachments, clicking links, or responding.
+>
+>
+> Device-managed resources are released after manually-managed resources.
+> Therefore, once any manually-managed resource is acquired, all further re=
+sources
+> must be manually-managed too.
+>
+> Convert all resources before the MDIO bus is created into device-managed =
+resources.
+> In all cases but one there are already devm variants available.
+>
+> Fixes: 46aa27df8853 ("net: axienet: Use devm_* calls")
+> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
 
 
-Thanks!
+Looks fine to me.
+Reviewed-by: Suraj Gupta <suraj.gupta2@amd.com>
 
-Do you want to take the fix through your tree? Otherwise I suspect Vlastimil
-could simply take it (and possibly resubmit the SLAB PR, which hasn't been
-merged yet).
+> ---
+>
+> (no changes since v1)
+>
+>  .../net/ethernet/xilinx/xilinx_axienet_main.c | 89 ++++++++-----------
+>  1 file changed, 37 insertions(+), 52 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> index 6011d7eae0c7..1f277e5e4a62 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+> @@ -2744,6 +2744,11 @@ static void axienet_dma_err_handler(struct work_st=
+ruct
+> *work)
+>         axienet_setoptions(ndev, lp->options);  }
+>
+> +static void axienet_disable_misc(void *clocks) {
+> +       clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, clocks); }
+> +
+>  /**
+>   * axienet_probe - Axi Ethernet probe function.
+>   * @pdev:      Pointer to platform device structure.
+> @@ -2767,7 +2772,7 @@ static int axienet_probe(struct platform_device *pd=
+ev)
+>         int addr_width =3D 32;
+>         u32 value;
+>
+> -       ndev =3D alloc_etherdev(sizeof(*lp));
+> +       ndev =3D devm_alloc_etherdev(&pdev->dev, sizeof(*lp));
+>         if (!ndev)
+>                 return -ENOMEM;
+>
+> @@ -2795,22 +2800,17 @@ static int axienet_probe(struct platform_device *=
+pdev)
+>         seqcount_mutex_init(&lp->hw_stats_seqcount, &lp->stats_lock);
+>         INIT_DEFERRABLE_WORK(&lp->stats_work, axienet_refresh_stats);
+>
+> -       lp->axi_clk =3D devm_clk_get_optional(&pdev->dev, "s_axi_lite_clk=
+");
+> +       lp->axi_clk =3D devm_clk_get_optional_enabled(&pdev->dev,
+> +                                                   "s_axi_lite_clk");
+>         if (!lp->axi_clk) {
+>                 /* For backward compatibility, if named AXI clock is not =
+present,
+>                  * treat the first clock specified as the AXI clock.
+>                  */
+> -               lp->axi_clk =3D devm_clk_get_optional(&pdev->dev, NULL);
+> -       }
+> -       if (IS_ERR(lp->axi_clk)) {
+> -               ret =3D PTR_ERR(lp->axi_clk);
+> -               goto free_netdev;
+> -       }
+> -       ret =3D clk_prepare_enable(lp->axi_clk);
+> -       if (ret) {
+> -               dev_err(&pdev->dev, "Unable to enable AXI clock: %d\n", r=
+et);
+> -               goto free_netdev;
+> +               lp->axi_clk =3D devm_clk_get_optional_enabled(&pdev->dev,
+> + NULL);
+>         }
+> +       if (IS_ERR(lp->axi_clk))
+> +               return dev_err_probe(&pdev->dev, PTR_ERR(lp->axi_clk),
+> +                                    "could not get AXI clock\n");
+>
+>         lp->misc_clks[0].id =3D "axis_clk";
+>         lp->misc_clks[1].id =3D "ref_clk"; @@ -2818,18 +2818,23 @@ static=
+ int
+> axienet_probe(struct platform_device *pdev)
+>
+>         ret =3D devm_clk_bulk_get_optional(&pdev->dev, XAE_NUM_MISC_CLOCK=
+S, lp-
+> >misc_clks);
+>         if (ret)
+> -               goto cleanup_clk;
+> +               return dev_err_probe(&pdev->dev, ret,
+> +                                    "could not get misc. clocks\n");
+>
+>         ret =3D clk_bulk_prepare_enable(XAE_NUM_MISC_CLOCKS, lp->misc_clk=
+s);
+>         if (ret)
+> -               goto cleanup_clk;
+> +               return dev_err_probe(&pdev->dev, ret,
+> +                                    "could not enable misc. clocks\n");
+> +
+> +       ret =3D devm_add_action_or_reset(&pdev->dev, axienet_disable_misc=
+,
+> +                                      lp->misc_clks);
+> +       if (ret)
+> +               return ret;
+>
+>         /* Map device registers */
+>         lp->regs =3D devm_platform_get_and_ioremap_resource(pdev, 0, &eth=
+res);
+> -       if (IS_ERR(lp->regs)) {
+> -               ret =3D PTR_ERR(lp->regs);
+> -               goto cleanup_clk;
+> -       }
+> +       if (IS_ERR(lp->regs))
+> +               return PTR_ERR(lp->regs);
+>         lp->regs_start =3D ethres->start;
+>
+>         /* Setup checksum offload, but default to off if not specified */=
+ @@ -2898,19
+> +2903,17 @@ static int axienet_probe(struct platform_device *pdev)
+>                         lp->phy_mode =3D PHY_INTERFACE_MODE_1000BASEX;
+>                         break;
+>                 default:
+> -                       ret =3D -EINVAL;
+> -                       goto cleanup_clk;
+> +                       return -EINVAL;
+>                 }
+>         } else {
+>                 ret =3D of_get_phy_mode(pdev->dev.of_node, &lp->phy_mode)=
+;
+>                 if (ret)
+> -                       goto cleanup_clk;
+> +                       return ret;
+>         }
+>         if (lp->switch_x_sgmii && lp->phy_mode !=3D PHY_INTERFACE_MODE_SG=
+MII
+> &&
+>             lp->phy_mode !=3D PHY_INTERFACE_MODE_1000BASEX) {
+>                 dev_err(&pdev->dev, "xlnx,switch-x-sgmii only supported w=
+ith SGMII or
+> 1000BaseX\n");
+> -               ret =3D -EINVAL;
+> -               goto cleanup_clk;
+> +               return -EINVAL;
+>         }
+>
+>         if (!of_property_present(pdev->dev.of_node, "dmas")) { @@ -2925,7=
+ +2928,7
+> @@ static int axienet_probe(struct platform_device *pdev)
+>                                 dev_err(&pdev->dev,
+>                                         "unable to get DMA resource\n");
+>                                 of_node_put(np);
+> -                               goto cleanup_clk;
+> +                               return ret;
+>                         }
+>                         lp->dma_regs =3D devm_ioremap_resource(&pdev->dev=
+,
+>                                                              &dmares); @@=
+ -2942,19 +2945,17 @@ static
+> int axienet_probe(struct platform_device *pdev)
+>                 }
+>                 if (IS_ERR(lp->dma_regs)) {
+>                         dev_err(&pdev->dev, "could not map DMA regs\n");
+> -                       ret =3D PTR_ERR(lp->dma_regs);
+> -                       goto cleanup_clk;
+> +                       return PTR_ERR(lp->dma_regs);
+>                 }
+>                 if (lp->rx_irq <=3D 0 || lp->tx_irq <=3D 0) {
+>                         dev_err(&pdev->dev, "could not determine irqs\n")=
+;
+> -                       ret =3D -ENOMEM;
+> -                       goto cleanup_clk;
+> +                       return -ENOMEM;
+>                 }
+>
+>                 /* Reset core now that clocks are enabled, prior to acces=
+sing MDIO */
+>                 ret =3D __axienet_device_reset(lp);
+>                 if (ret)
+> -                       goto cleanup_clk;
+> +                       return ret;
+>
+>                 /* Autodetect the need for 64-bit DMA pointers.
+>                  * When the IP is configured for a bus width bigger than =
+32 bits, @@ -
+> 2981,14 +2982,13 @@ static int axienet_probe(struct platform_device *pdev=
+)
+>                 }
+>                 if (!IS_ENABLED(CONFIG_64BIT) && lp->features &
+> XAE_FEATURE_DMA_64BIT) {
+>                         dev_err(&pdev->dev, "64-bit addressable DMA is no=
+t compatible with
+> 32-bit architecture\n");
+> -                       ret =3D -EINVAL;
+> -                       goto cleanup_clk;
+> +                       return -EINVAL;
+>                 }
+>
+>                 ret =3D dma_set_mask_and_coherent(&pdev->dev,
+> DMA_BIT_MASK(addr_width));
+>                 if (ret) {
+>                         dev_err(&pdev->dev, "No suitable DMA available\n"=
+);
+> -                       goto cleanup_clk;
+> +                       return ret;
+>                 }
+>                 netif_napi_add(ndev, &lp->napi_rx, axienet_rx_poll);
+>                 netif_napi_add(ndev, &lp->napi_tx, axienet_tx_poll); @@ -=
+2998,15 +2998,12
+> @@ static int axienet_probe(struct platform_device *pdev)
+>
+>                 lp->eth_irq =3D platform_get_irq_optional(pdev, 0);
+>                 if (lp->eth_irq < 0 && lp->eth_irq !=3D -ENXIO) {
+> -                       ret =3D lp->eth_irq;
+> -                       goto cleanup_clk;
+> +                       return lp->eth_irq;
+>                 }
+>                 tx_chan =3D dma_request_chan(lp->dev, "tx_chan0");
+> -               if (IS_ERR(tx_chan)) {
+> -                       ret =3D PTR_ERR(tx_chan);
+> -                       dev_err_probe(lp->dev, ret, "No Ethernet DMA (TX)=
+ channel found\n");
+> -                       goto cleanup_clk;
+> -               }
+> +               if (IS_ERR(tx_chan))
+> +                       return dev_err_probe(lp->dev, PTR_ERR(tx_chan),
+> +                                            "No Ethernet DMA (TX)
+> + channel found\n");
+>
+>                 cfg.reset =3D 1;
+>                 /* As name says VDMA but it has support for DMA channel r=
+eset */ @@ -
+> 3014,7 +3011,7 @@ static int axienet_probe(struct platform_device *pdev)
+>                 if (ret < 0) {
+>                         dev_err(&pdev->dev, "Reset channel failed\n");
+>                         dma_release_channel(tx_chan);
+> -                       goto cleanup_clk;
+> +                       return ret;
+>                 }
+>
+>                 dma_release_channel(tx_chan); @@ -3119,13 +3116,6 @@ stat=
+ic int
+> axienet_probe(struct platform_device *pdev)
+>                 put_device(&lp->pcs_phy->dev);
+>         if (lp->mii_bus)
+>                 axienet_mdio_teardown(lp);
+> -cleanup_clk:
+> -       clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
+> -       clk_disable_unprepare(lp->axi_clk);
+> -
+> -free_netdev:
+> -       free_netdev(ndev);
+> -
+>         return ret;
+>  }
+>
+> @@ -3143,11 +3133,6 @@ static void axienet_remove(struct platform_device =
+*pdev)
+>                 put_device(&lp->pcs_phy->dev);
+>
+>         axienet_mdio_teardown(lp);
+> -
+> -       clk_bulk_disable_unprepare(XAE_NUM_MISC_CLOCKS, lp->misc_clks);
+> -       clk_disable_unprepare(lp->axi_clk);
+> -
+> -       free_netdev(ndev);
+>  }
+>
+>  static void axienet_shutdown(struct platform_device *pdev)
+> --
+> 2.35.1.1320.gc452695387.dirty
+>
 
--- 
-Pedro
 
