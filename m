@@ -1,133 +1,126 @@
-Return-Path: <linux-kernel+bounces-750586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B731EB15E6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:44:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E58B15E6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2D275A2A10
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:44:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1CEA18C473A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFB428750A;
-	Wed, 30 Jul 2025 10:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F4B293C4B;
+	Wed, 30 Jul 2025 10:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mJZp2d1C";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EN1B9K51"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVpXV2S1"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA1A224FA
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5878128F53F
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753872282; cv=none; b=ZtvfQzEdaz2IV+4X/ETyARYnCM0h4vha2vNhFff1BdMM6oCXUhwwX5VpGpiG3QJ5brpBrA2MB84KY7mcjk2T3fvLcfef5g/fLgz74hX2oTzKWL2HfsY0zxbzBzukPT0VRBu8AnOnVsZlPztAY9Tf9/zEsMWISsJ06fWejXSSzuk=
+	t=1753872312; cv=none; b=jJJ/TKlXBr2VoP558TkIeNqM+14DGrL+Z2pjC8QEMPT/f9mzoKdcOH7jA1Q40hoA7tUvX5XdSTpdJ+itl8UZvDWpBos0S86BSG5XWNi5m7wzS5Q/bmXMzrbU5GGmTmB9UrVHA0T2Po/8isRg0cHYVYmFdwG0PJKAh5mmewuD7Qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753872282; c=relaxed/simple;
-	bh=yRMiDmkysd4n8rAvtQH+xNNG2Jp7rPDHsGcJ8tFACAQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GYa7toggXhTKa6XVTUm7RZ44L+vGtZzbbUCTupMRNrNn26n7ynrZsRs2QR6VzcEWaYWMmEuHcNtgf/LC8ZGsoRcZ01Q3ASpf/sHlCjNJO/3ZglpV12NvW9nfp9XbGwbH+PO0VQ3UBVgw3y4zvkmXLZ+FYY9Dy9v+mTLENmcwy9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mJZp2d1C; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EN1B9K51; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753872275;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c5SwZrMWjMmbTsp+xtI6eRvizUSGLwjEkSr7w5zK5cc=;
-	b=mJZp2d1CxYIH8GLi0FAqNc5hHL/+kkcSIG/u2IZB1H59Q4Vs3Pr18RwCLoVJnRhSNoM/tG
-	jKXmDaY0W9DvPWOM9Gh9tY20EQO3R3Qpv+L/Tosfol0biyQ3BEbk9MYuTvqiY8Y8EK55/7
-	QyjfCq+1dWzN0Fcz0fRodEHMBOIK6kokNCX8CvLuK3uhYK+Gbzvv/c68STs/eTdsnf6xcF
-	FEJo2drnopXFG0c9TgBFJKtM86MUvcSrHR1HrHRrE2vTbD0zfaXS46JRMo6SCT3jUWlNnO
-	06FymX/LZ0GkTsE2J4pUIEn3GGumhEloNjnd8pr3bFhlatMV4URhOY6Z4Tx7Sw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753872275;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=c5SwZrMWjMmbTsp+xtI6eRvizUSGLwjEkSr7w5zK5cc=;
-	b=EN1B9K51EF6Yho9Uwiy0fPifahULvO3zl3V9+Rncou6aMsTChJO24aayMqsbjg/Ym6eY2J
-	IM8k1oTnZdtlIpCg==
-To: Kees Cook <kees@kernel.org>
-Cc: syzbot <syzbot+5245cb609175fb6e8122@syzkaller.appspotmail.com>,
- bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- linux-kernel@vger.kernel.org, mingo@redhat.com,
- syzkaller-bugs@googlegroups.com, x86@kernel.org, Linus Torvalds
- <torvalds@linuxfoundation.org>, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [syzbot] upstream build error (23)
-In-Reply-To: <202507291506.1DF23781A2@keescook>
-References: <6888d004.a00a0220.26d0e1.0004.GAE@google.com>
- <87cy9ikcwh.ffs@tglx> <874iuuk87e.ffs@tglx>
- <202507291506.1DF23781A2@keescook>
-Date: Wed, 30 Jul 2025 12:44:33 +0200
-Message-ID: <871ppyj6um.ffs@tglx>
+	s=arc-20240116; t=1753872312; c=relaxed/simple;
+	bh=jOV7BUd+BxQm+6JWyTqHgR6WW31NY2nHqscpQxQ5P6M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UYHR8LsNNJCPc0HBgDNHaVEgD1I1M2PAinejjwpROzPv3g6MSeNjDBfPj9e8Rr0HeuvAUtOhM4VIorn62QtHm3LQrdbe2Py1PzgkeVPreVDamTc2AcMWTgPnZsNYIAdXjkBL3FUUFud6xhrVW+OI1gTy5bD8s1xtxCcODWaF9OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVpXV2S1; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6157b5d0cc2so2036890a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753872308; x=1754477108; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6m4PfRCnoAEr2MU5yGI1+CYXF+Pd2iMMmnbkl/STpIU=;
+        b=GVpXV2S1YnZdzf+LyPyqS/1R/seCd4+1P03qKmZeAcoEMpu6Bnf0YrlDEci+3P9L1C
+         FytG/YkXzJeiukx5hDPWI/6uAWuEVf6K5WuQ1DoJzxU4U4aS2/B255L8fWGKg1L8aktg
+         zWD4tgVTr5gWekE78g1AeoOWaH2J8YXYCAwR2m1n1rHJneBObYq19yaOZiiORS/EI6BX
+         Kqncid+3x+e2cSa0ODYlEi2DOpdOuBrVXvcr+1gCrr0IKZkf/8UwFAAbamaztNqjFONd
+         9XUAVhm0mUvccZBzQ+TkdzVjh6njL/MEjMl22XNSQI2p3/XKxPE8Z6gZ7ll7MEz+WgUz
+         7UxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753872308; x=1754477108;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6m4PfRCnoAEr2MU5yGI1+CYXF+Pd2iMMmnbkl/STpIU=;
+        b=bMD+BBYh5iitIlV2D5libmRX66RkmR3VbmkS7Yc5kyMFYxjTpEnmzu72lkYmSedQRl
+         5g9NvQnwk10sMBdBcdNrcGRKzNtMjGeWMlGlnf95M+J6vQapfbKgq8c/3SiyADXwFlPb
+         SYvdLZlJDA4oeKeAIpV4dIE1qQIqJzNrW9fSeugNA16BrWEkMy4P6M0gaQ5U7A9j8RZ0
+         cqZ9i35t/wywy2I1605JJDlrxLqr6t/7qzT30fTZCHSHhCkudwsuqAnQk8LM6Pswo2Hz
+         YYC2JVm7eR4+ur2yQ7zrNz2uuTZQfW/dCI8xBhRnXKoooQn9q93wEpBHEOcPj8DL16/S
+         s2IA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+i9OmAkRCqaY3Qh1MX6i9owiVabtMIrExmcGXtH5LXgMyKldtIS+vNpUNpREMwkjUMfxI/+EE1knKKgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySBYTTQ5lrIGt5fggksJ9j2SGN+kS9Gmcl+ns7sL5wFl3cYHD0
+	TgE3bKZ8xfmszrp1mFanQmBOT0mOGzagZyt+ZaGtfjJZxzyME64/74Kv
+X-Gm-Gg: ASbGncvPSh+AAKv/Qryn/LEqAkgt+oI4PTIq2MFWkl7hwQOkjgKs3KWdBdJsQ+YcU3u
+	ySIc8sCsope3x4vcq29WrAepaluaVfyHQt2MOhd8hdxdlslHg/ZVd4p5E9rHNkFGO3T2Q5wM8RH
+	aUnlqZmhSQ1XXJsqgZ3Z53Iho9ta3NnWaH67oAaxOnLYju6NiPgoqzzhyLNeBAJ8wzvUWPSthhG
+	8PH+PeCwXsjjXGwSbjbzplH5OGUaGeKNRdgSIg+hxRj5qU4YuIFft38mtIH1yUzc30SJ3dpgopG
+	F5ZSIaC0w1u4LdjvUIJ4lwQqcfEhv8Kxufyzc09hfHLMNZIviwjUaE7bds86mb/uKXA8YZC4+zK
+	XZRanqoD2sIOIH70MSlVujcml6tiZj0XOVJY6eaCcbjV7Z7DLqLsoyvGp
+X-Google-Smtp-Source: AGHT+IGkarRKU0Hr17FdMZz3OLaW+08RJPp4c1MIWrnB80qPcPQG9ijy3jGSlIwZSgzYWzd/7qZMJw==
+X-Received: by 2002:a05:6402:2708:b0:612:dfdd:46fc with SMTP id 4fb4d7f45d1cf-61586eecd21mr3079139a12.11.1753872308405;
+        Wed, 30 Jul 2025 03:45:08 -0700 (PDT)
+Received: from tumbleweed (ip-77-25-32-208.web.vodafone.de. [77.25.32.208])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6157974fde0sm1582734a12.7.2025.07.30.03.45.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 03:45:08 -0700 (PDT)
+From: Michael Straube <straube.linux@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: hdegoede@redhat.com,
+	Larry.Finger@lwfinger.net,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH 0/8] staging: rtl8723bs: get rid of os_dep/mlme_linux.c
+Date: Wed, 30 Jul 2025 12:44:53 +0200
+Message-ID: <20250730104501.150270-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29 2025 at 15:12, Kees Cook wrote:
-> On Tue, Jul 29, 2025 at 11:17:41PM +0200, Thomas Gleixner wrote:
->> > The kernel is full of such inline (not __always_inline) stub
->> > conditionals which evaluate to a constant....
->> 
->> And chasing all those stubs and convert them to __always_inline seems to
->> be a whack-a-mole game.
->> 
->> Can we just stop pretending that GCC12 is KCOV capable?
->
-> That's fine by me, but I do think something weirder is happening here.
-> Those efi linkages should be entirely DCE'ed?
+This series moves/merges the functions/functionality of os_dep/mlme_linux.c
+into the corresponding parts of the driver in the core directory to reduce
+"os dependent" code.
 
-Of course.
+The patches have been compile-tested only due to lack of hardware.
 
-Though it un-inlines the stub function and slaps the sanitizer call into
-it, which seems to prevent DCE to drop it:
+Michael Straube (8):
+  staging: rtl8723bs: remove wrapper rtw_os_indicate_scan_done
+  staging: rtl8723bs: move init_mlme_ext_timer to core/rtw_mlme_ext.c
+  staging: rtl8723bs: move rtw_init_mlme_timer to core/rtw_mlme.c
+  staging: rtl8723bs: remove wrapper init_addba_retry_timer
+  staging: rtl8723bs: merge rtw_os_indicate_connect into
+    rtw_indicate_connect
+  staging: rtl8723bs: merge rtw_os_indicate_disconnect into
+    rtw_indicate_disconnect
+  staging: rtl8723bs: move rtw_report_sec_ie to core/rtw_mlme.c
+  staging: rtl8723bs: move rtw_reset_securitypriv to core/rtw_mlme.c
 
-	.type   efi_enabled.constprop.0, @function
-efi_enabled.constprop.0:
-.LASANPC6082:
-.LFB6082:
-        .file 5 "/home/tglx/work/kernel/linus/linux/include/linux/efi.h"
-        .loc 5 891 20 is_stmt 1 view -0
-        .cfi_startproc
-.LVL13:
-        .loc 5 893 2 view .LVU43
-        .loc 5 893 9 is_stmt 0 view .LVU44
-        call    __sanitizer_cov_trace_pc
-.LVL14:
-	.loc 5 894 1 view .LVU45
-	xorl    %eax, %eax
-	jmp     __x86_return_thunk
-	.cfi_endproc
+ drivers/staging/rtl8723bs/Makefile            |   1 -
+ drivers/staging/rtl8723bs/core/rtw_mlme.c     | 151 ++++++++++++++-
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c |   9 +
+ drivers/staging/rtl8723bs/core/rtw_sta_mgt.c  |   2 +-
+ drivers/staging/rtl8723bs/include/drv_types.h |   1 -
+ .../staging/rtl8723bs/include/mlme_osdep.h    |  19 --
+ drivers/staging/rtl8723bs/include/rtw_mlme.h  |   1 +
+ .../staging/rtl8723bs/include/rtw_mlme_ext.h  |   2 -
+ drivers/staging/rtl8723bs/os_dep/mlme_linux.c | 179 ------------------
+ 9 files changed, 155 insertions(+), 210 deletions(-)
+ delete mode 100644 drivers/staging/rtl8723bs/include/mlme_osdep.h
+ delete mode 100644 drivers/staging/rtl8723bs/os_dep/mlme_linux.c
 
-We had similar issues with function tracing in the past where different
-GCC versions decided un-inlining at random places, so we ended up adding
-notrace to the inline define.
+-- 
+2.50.1
 
-Adding __no_sanitize_coverage as well is curing it for good.
-
-Thanks,
-
-        tglx
----
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 2b77d12e07b2..46f7722039c3 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -233,7 +233,7 @@ struct ftrace_likely_data {
-  * of extern inline functions at link time.
-  * A lot of inline functions can cause havoc with function tracing.
-  */
--#define inline inline __gnu_inline __inline_maybe_unused notrace
-+#define inline inline __gnu_inline __inline_maybe_unused notrace __no_sanitize_coverage
- 
- /*
-  * gcc provides both __inline__ and __inline as alternate spellings of
 
