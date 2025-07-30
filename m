@@ -1,148 +1,370 @@
-Return-Path: <linux-kernel+bounces-750127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A33B5B15799
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:37:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2699FB1579B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF8937AD4E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 410F23BDA18
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:42:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9191C84BD;
-	Wed, 30 Jul 2025 02:37:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 773511C68A6;
+	Wed, 30 Jul 2025 02:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="AgwMK+2x"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="a1aFdSec"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013051.outbound.protection.outlook.com [40.107.44.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA8E288A2;
-	Wed, 30 Jul 2025 02:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753843051; cv=none; b=Lh8rjaNhE/q7TWmxS4kzi9yXc4yfC4hU2V1bJlHHCgEqgIE+fk6MRvqgQ5kcgp+cjYFzOU48fvfI97ruxkePK/xKqEMGmy2psAhYfe6aWzJGAtH949h9lIeGEWWx5+8Vck6mzTXCs1iwREc4ismegAAj9/cMa6O7Fdaj9J4DEtE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753843051; c=relaxed/simple;
-	bh=r6EJUgnKNkBU/gY2vKM1Kph1PWJOeN4y03H/SRXg+vA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qkbXCn1wiWPp+stLbtOkhrxtpp4Itsvi0Aoe6n/GAAvJ4rjS1QRTONcBfh/nqMnGAINbqUNddm69yisBQqVWnu0ukJKlzAVHeG1/uIw/5BwP2stDLPoEViRdvpYkTr+L48OO/J71wPxgpQQTcBtiAGkk1CvPdTk8dvLhgA6pJ1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=AgwMK+2x; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 079EC20F9E;
-	Wed, 30 Jul 2025 04:37:26 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id 8jRGBdc8Sp0M; Wed, 30 Jul 2025 04:37:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1753843045; bh=r6EJUgnKNkBU/gY2vKM1Kph1PWJOeN4y03H/SRXg+vA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=AgwMK+2xLh/uRypIC/UB7RAXvQhhzpfFuUw3sFrlic/janHA/4c574mpUHzuP2h+r
-	 GNL2CupOEq6B5gdiZV45oHIDI15qtrPbsHYqpwM+J7ZmXSRWqNxJGO71PZTccZ32gv
-	 f9t8yDb2AjhhPWT1+2Edh/9S4pP4zsJ9FmYGq/WgRPGHSR/Cr4mlHMxgoOGaM65pSL
-	 4SJ7xThP+4fULiS0c/geMdiST2UWrUW5oJXk/kIwZL3f7tZtQApxwNbspRarsfTCT3
-	 Sbgzjq328tWP01hPwQEwMF4PU96Rc4IqwCcCbOt9qEoBmyfu/21MlpHaCTnDYEwpF4
-	 EfrzKAF4mIMiw==
-Date: Wed, 30 Jul 2025 02:37:09 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Conor Dooley <conor@kernel.org>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 1/3] dt-bindings: net: thead,th1520-gmac: Describe
- APB interface clock
-Message-ID: <aImFVW1Pl_QHijWx@pie>
-References: <20250729093734.40132-1-ziyao@disroot.org>
- <20250729093734.40132-2-ziyao@disroot.org>
- <20250729-canal-stimuli-492b4550108c@spud>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F53315A8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753843369; cv=fail; b=NJei8oGMaQFW5r7SMRXWlZWML8SC8Fsj5n3HcoLk1tYyqmFWrQWa4FNPKgIS+PJKR4AJI52IEiqRNWOii7GhoKB0lOB0je8E78yXrYjCVCNeyiy0/2Xo/y4sq9vX1vD7RCCSPld6nYa1QdlBtuWcHSYFojNgU9Qeykxnb+VkTQo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753843369; c=relaxed/simple;
+	bh=M/2H4Dd8FeMH1Q3yjmyigWTK3S3N6dDI64dhVm6Ftqg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=k03S7e0PdoEqrbRUfjhfcoCURk7wlM91aAsRw8Kk+JVYbSGmm3jThezZHsZW6gu8Xh5wqhHxSvjIxRxbbUnehz8Srrbq9Fwdov3BZzMoiKQSeKWjgmovX6g7B/4ci7juVk/Ieoa0q6aTq8GPhwcHiUJ6eJc9vrPFHVcQopgkGGY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=a1aFdSec; arc=fail smtp.client-ip=40.107.44.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D3R9+uVbUr+ydc9DgnoPC9bbU4GEgNV7E52gZc2Z3NKzZGvLeNM6XMahCZHSfIj8ejgCoa7CK3SNRA9r4hbbogyVBwJN2/xaTJqBXy1pcQh65TmC7NlsNwbQWgaFaMAczLy4y3C7oUupDX8051p+Gbunb+BTP7RxZXVxMoVX/t6PHB8mXRUBMFgmAgAaB8ka38XWTNUiLW/e9Uj3PKjrwU0F/P8KeUY9/gMJoEx6OCu5RL0lEJQWEqvP03yDJHftRlFo4k1HMD0xsbnLub3N8IXKIsu5e5HnxkvIKZ2ub+eHUFCppGb2dfDbeCZgF95nwdlpQ6oosAnLad0NdXRoQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=V+S/2PTJ2+uV+abFDRTmhoNEqxHX6iC03j3erW8RGO8=;
+ b=HyTpsoTNB0ipdIUxIha/wuPyYmNK7ZQXiSdP1Na6QplejKPQIQDDxCuTzmCBA/Olp876oz7YaeYLPyJ3MHEKyC2e9Bw8hZTj4lFFA5lFQavL1mh+asfaaEBFd9UyQGTIQlVM4Pm5Mcz6Y7sbT5LumHN69+pG5PXlj9aZRPgbgGeF7QL2azkmdbCp/8cTU5x9p0SmwvtV4sOvnYnVN64xt+u/dYaYXTmSWjJ7z+5SCjQmqZAtfVX/8eQHABQyayunUU607fO9Q4I7N10YLvQbRnDxPgn0MXvWLRHX+U8+l3LEO7vsvntGIz58RPE4YKukUxz0ZcpzDO1ViX9+uMav1g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=V+S/2PTJ2+uV+abFDRTmhoNEqxHX6iC03j3erW8RGO8=;
+ b=a1aFdSecxCEmsbTQV+7lDO3ckaFwmymQe3p6eRFr0cV3PeQ0Mgf3ZWQ0Qi5uHIo9CqISsh3mnODVmMsN4IQr/arHqFREy3/7Tjl41ulKGO8888dX0TM+rZMDwpuL5HH9nP3At94BHJYh63ZlfrX/rp1d1S4tBoKG1ZlOADIZYZMRqeBtGtbTOVVxbooBuYRAYXczI2O38H5YVZ+N2ku7AoVTUbLKHLk/gm9Wau3+V3KIdJ3vMzBQAca//czkG6l+nUPdXyvymdpCGwbnIgduFrQRzHDf5Dz0sDM1/qNEUE0/T5KN4dhWC5wdH6Lz+YAI8Iyf0xngdtRan7O/XnsFGQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from PS1PPF5540628D6.apcprd06.prod.outlook.com (2603:1096:308::24e)
+ by OSQPR06MB7132.apcprd06.prod.outlook.com (2603:1096:604:296::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Wed, 30 Jul
+ 2025 02:42:40 +0000
+Received: from PS1PPF5540628D6.apcprd06.prod.outlook.com
+ ([fe80::5f12:df6:9716:ecb2]) by PS1PPF5540628D6.apcprd06.prod.outlook.com
+ ([fe80::5f12:df6:9716:ecb2%7]) with mapi id 15.20.8964.023; Wed, 30 Jul 2025
+ 02:42:40 +0000
+From: Chunhai Guo <guochunhai@vivo.com>
+To: chao@kernel.org,
+	jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chunhai Guo <guochunhai@vivo.com>
+Subject: [PATCH v2] f2fs: add reserved nodes for privileged users
+Date: Wed, 30 Jul 2025 10:42:27 +0800
+Message-Id: <20250730024227.584549-1-guochunhai@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0026.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:190::18) To PS1PPF5540628D6.apcprd06.prod.outlook.com
+ (2603:1096:308::24e)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729-canal-stimuli-492b4550108c@spud>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PS1PPF5540628D6:EE_|OSQPR06MB7132:EE_
+X-MS-Office365-Filtering-Correlation-Id: a211dbc3-f6c2-41dc-0f3e-08ddcf12c0b0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ysfKb4SXhn6oznzdiPfurSm/sEVDqkLgfWRk9TRmWSp50FGuWPOKQFIEW6gR?=
+ =?us-ascii?Q?3RJ1z6T7wjzP4xl5mkleBlsHUdHelMEDjmPzgENWoccUJvDxlntf/AFk9eT5?=
+ =?us-ascii?Q?PiX50CgK4Mep7SgcZTWpNrkfh2wQzSq5DPweDahfjJhbZpcqbdmGho058Qtf?=
+ =?us-ascii?Q?KSnRbAoyhpRvTPA2ITm0X4665/r7rbiGhSGG9pKz/gJbMZQddYdpIZCOMWXX?=
+ =?us-ascii?Q?AqnYUaD0yQiIpWX1GLIJvPgrnOQ78sf90Q/sHQb84lDVH2o3ND65Yp8foVaD?=
+ =?us-ascii?Q?WM001kNOWbkw5FHYsEa+pgv3gUrMeZhd9dF1i3JIG9P3TIX9FJovKRMGvr0T?=
+ =?us-ascii?Q?6GDHVsbwFxJ01/hZ+2VqIPdrFc8i+Z7wH8PRqoZVLWCfZsXu3nC8YOYeL7Xw?=
+ =?us-ascii?Q?O5GZRg6sbkriVJO/ZINRx5F1X/jUZnGsfYff1S5No5cIPDmvJi46iFryqLUq?=
+ =?us-ascii?Q?fj4HfozAhBWd/SND82Vc8Nisnw8yd1FWCusExAVfOlkPoB7XfVKCpOpamHjn?=
+ =?us-ascii?Q?nUG7k/2ikg5Wyyk870WP+viAWM8XMULYozuODCzxjPLDNbM2GDh61mLvullY?=
+ =?us-ascii?Q?DXRoAPEJpvj+zteOSfMPGF0A5AzSmtX1Zt+TybiO8ROWXCy4CBSsoQGa5Ihk?=
+ =?us-ascii?Q?/ybIdOJDQP+pIHSyHpk2dAJ1TEdhksW4dt3cTZihxaBAdqMrSt+Wj+S+KjIW?=
+ =?us-ascii?Q?46LKO2QgUZLaBtnoZYxp7mhvwlkaPau+klBWBp1Dxuxg08XGeOm+cgF5CexI?=
+ =?us-ascii?Q?nUjJjS5cYLMc3S7yol8Fl4UnCEAyLzyrBRpET0Iv3s/bHil4Ebwi9fYqjVZR?=
+ =?us-ascii?Q?+qQccQL7XyC2e236xVNCGP3UYFpMtDuJGvEYrCAh5/VfeqfZlT5eaZBKoaxk?=
+ =?us-ascii?Q?508sxncbwg9Ma+3fK57MU1HNs5z66RkPzAjr8jARyRcUgcm1Oy6xGBjz51q6?=
+ =?us-ascii?Q?XQh7KIXuSbTDXNKipxgZMKNTGuYLwZS9oRKuPO+S5rqqrWeyBm+BLDT06TYA?=
+ =?us-ascii?Q?ec30SQr6L2tun8vV95geXpIE9m6x/iaSfDMMIBWghN7neSa/ipBV2p5pJzvn?=
+ =?us-ascii?Q?oEDrb2dDnvsy5xOEORFVpb2Qr45FTRrGg5gPMTaptX8YXnVrP9/U+QRjfZ5b?=
+ =?us-ascii?Q?JgTZexint9hDN4SP2xxv/zxnajlPXiThUmpsnKjpWKhhJb0hqJ/mJjHDN9e8?=
+ =?us-ascii?Q?hINYNJSUxckm51UkZrh08HLlaeVQ9WS+S1Zsb30h+lBAsi8xTLsMA4NJRu7W?=
+ =?us-ascii?Q?Mgt3y1Y0mUtRa3LsPxbFm4Jys01N2kdRZ3yXGoyfXJ+RXIyMruIen+gbnHnS?=
+ =?us-ascii?Q?6PrBldXGlvODsgyLdaRR0SzkQ75vSjSz42qZyKZT8OnR0rtVXuAlh/gRsjEh?=
+ =?us-ascii?Q?EUxTrrS+qHKVTlHzHHd4efbrkfb7if+eAxynNRrQcjncv1k1bIAPK6nUTo3N?=
+ =?us-ascii?Q?uSdEePiFhQrex6mZXgHa8SDEDDEYnYOBHi/T3w8n0YwvKKQQV1o/p1rhU/MX?=
+ =?us-ascii?Q?6N6dAtWBYRNwgXc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PS1PPF5540628D6.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DIKtsvCSVyhJzUpyLcx9bowOzq6osvouQiNuBdVNQZlV8DcRaI9LIZEG3T8n?=
+ =?us-ascii?Q?XbIAhh/kAlXbsgrQRnN1HqCtZDh6zDZh9pn0ToV41h6JkbnckfqEkgXwFgsx?=
+ =?us-ascii?Q?yxjZKFy9EFRxHACg3ik6GsmZh3FDvpaQt0vHEJ3cfFr8BPfXrUuz8h7KRR/6?=
+ =?us-ascii?Q?ZAuceiO6iQFereTLL2AfDmoT8PBwuLe4xhESt6KZLQcx/cI/OwGVXOOHP8nh?=
+ =?us-ascii?Q?Yyd9oki7r3Tjhk9TXssvod8XUKZ+HXvFZq0wGWtW//RtLu/KOCI4+TGCU08H?=
+ =?us-ascii?Q?xuLBipjDHIWjWaTdBbso452DpLg+KS1La5Sc711NlXRuU6Cb46qU5CKmKy5Y?=
+ =?us-ascii?Q?tWajfvCFU0e0NyC6ldrSD4PecI70AnmDoT+WBP289xmQVeMgrXBXgxqO1x3k?=
+ =?us-ascii?Q?UCxwc4UCGt/3RhHcU3NdRvnPNeFiu/ioUJ50VRjwtBWlC6sulN6IrjMAdVD2?=
+ =?us-ascii?Q?23UWRuC2y7jdbiws+B7CN/9Ae1eSduSi/C4j1llmGQGeAHt4r1Xy4sNWhuft?=
+ =?us-ascii?Q?jtd9/mGnxmAK17orUIZXo0TtZxTore7FaF73YgDiA8gzxOYSqbDpXpUSmqGh?=
+ =?us-ascii?Q?gMuQiiYE5sWl1PEgkKtHMn/BvYbiroC0S+wGK3ryXVepGZZ/BkCyXk5mQ4ns?=
+ =?us-ascii?Q?JcPCt30rARhGlJZYzCuT8R5R1gUNzbhm/LelsCfw6qJB3Yba3O2gF3nkXFcN?=
+ =?us-ascii?Q?rQdJySMfPxdppYecthn5Xq50gyDIw17qC+1K6S/LNyma5Pm8UysXf8t+sIex?=
+ =?us-ascii?Q?8T8GQDbyBk2W3f39j+Pncl5dy3YbqlOtgKi2YCARqsWB9Lcxvgy7IyLwxgK9?=
+ =?us-ascii?Q?gnlmlwpFCSh1Zb5jY87kLnRUbCDMLq34x88+zEjx3upOSewyCr7nEr2tHYsA?=
+ =?us-ascii?Q?Yi7AE+3Z1MPO0TBeB4yT2iRa0fBhEEUovbKhZzGlCtd6uJr8JtKq+b6PJDlj?=
+ =?us-ascii?Q?B9+PzE0hNRwsiFrFeZpgkUEc5hDtCeuyTZxr1Mrnb9aZW83vTG2WzBmjs9Ab?=
+ =?us-ascii?Q?7UKmmqn6FwWPncTvw9ELRtjh6ARnCsGuTtClHQOmxGU0Ff320O8wQRQ61dVo?=
+ =?us-ascii?Q?j5aOJf0PHnz2UeFmlt4yKNKkXuYMr047Uo6KUiA5heU6dAjbdsM5WvYoC2cJ?=
+ =?us-ascii?Q?r5GffY8wtiejIUggI0QfUE8JQjcq8NjzbPacQs+QgSVhV0YOqmBTv3yPJ4oq?=
+ =?us-ascii?Q?7fIHsV7v84AnVlgjx8QZpUpN/v+L7t87NC5bUuosnMpRgjhKS9HKMF58wCS3?=
+ =?us-ascii?Q?Ai1Y34otn6Q2aTYJjwcxpKTz+Tz5DGsAXkz/NPOFN44gjZmfUA2z0H4jcE0b?=
+ =?us-ascii?Q?tUosRg8R4iWTRasqNbqG7E/YT7BeDcAk/qPc0iqVxE0GDF8KJRgCT97WF69a?=
+ =?us-ascii?Q?S+HUpf1YpIMeXV6F+QHnCPOA/L1yQI7pgEeEGYD1foPm7XVGOYXkcHZatr4W?=
+ =?us-ascii?Q?cxdWVfR0PEae6YyydLZDRBfKCZwIFvZx76N799d9DZXoC9QqOJhaib2GKFlE?=
+ =?us-ascii?Q?+5uBUozEG/oKdLtrNoO4lGcKNBJh708rmCCQiOKR8Raxc3gYS8g/wPRddI/O?=
+ =?us-ascii?Q?7MnIKmLaqWlcImYJMvLgg6ucm4kbNxc9+wJn+qnr?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a211dbc3-f6c2-41dc-0f3e-08ddcf12c0b0
+X-MS-Exchange-CrossTenant-AuthSource: PS1PPF5540628D6.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 02:42:40.8544
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2+yY0ldLpOMnfAekY94z+h4fR8ZlCilOJhMCoaSiWEAh9zBigrObjvjl7oMexZxYn1CH6TN6yxPee0vkfGosgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSQPR06MB7132
 
-On Tue, Jul 29, 2025 at 06:43:42PM +0100, Conor Dooley wrote:
-> On Tue, Jul 29, 2025 at 09:37:32AM +0000, Yao Zi wrote:
-> > Besides ones for GMAC core and peripheral registers, the TH1520 GMAC
-> > requires one more clock for configuring APB glue registers. Describe
-> > it in the binding.
-> > 
-> > Though the clock is essential for operation, it's not marked as required
-> > for now to avoid introducing new dt-binding warnings to existing dts.
-> 
-> Nah, introduce the warnings. If the clock is required for operation, it
-> should be marked as such. You've made it optional in the driver, which
-> is the important part (backwards compatible) and you've got the dts
-> patch in the series.
+This patch allows privileged users to reserve nodes via the
+'reserve_node' mount option, which is similar to the existing
+'reserve_root' option.
 
-Thanks for the confirmation, will remove minItems in v2.
+"-o reserve_node=<N>" means <N> nodes are reserved for privileged
+users only.
 
-Regards,
-Yao Zi
+Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+---
+v2: Add two missing handling parts.
+v1: https://lore.kernel.org/linux-f2fs-devel/20250729095238.607433-1-guochunhai@vivo.com/
+---
+ Documentation/filesystems/f2fs.rst |  9 +++++---
+ fs/f2fs/f2fs.h                     | 15 +++++++-----
+ fs/f2fs/super.c                    | 37 ++++++++++++++++++++++++++----
+ 3 files changed, 48 insertions(+), 13 deletions(-)
 
-> > 
-> > Fixes: f920ce04c399 ("dt-bindings: net: Add T-HEAD dwmac support")
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> >  .../devicetree/bindings/net/thead,th1520-gmac.yaml        | 8 ++++++--
-> >  1 file changed, 6 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-> > index 6d9de3303762..fea9fbc1d006 100644
-> > --- a/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-> > +++ b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
-> > @@ -59,14 +59,18 @@ properties:
-> >        - const: apb
-> >  
-> >    clocks:
-> > +    minItems: 2
-> >      items:
-> >        - description: GMAC main clock
-> >        - description: Peripheral registers interface clock
-> > +      - description: APB glue registers interface clock
-> >  
-> >    clock-names:
-> > +    minItems: 2
-> >      items:
-> >        - const: stmmaceth
-> >        - const: pclk
-> > +      - const: apb
-> >  
-> >    interrupts:
-> >      items:
-> > @@ -88,8 +92,8 @@ examples:
-> >          compatible = "thead,th1520-gmac", "snps,dwmac-3.70a";
-> >          reg = <0xe7070000 0x2000>, <0xec003000 0x1000>;
-> >          reg-names = "dwmac", "apb";
-> > -        clocks = <&clk 1>, <&clk 2>;
-> > -        clock-names = "stmmaceth", "pclk";
-> > +        clocks = <&clk 1>, <&clk 2>, <&clk 3>;
-> > +        clock-names = "stmmaceth", "pclk", "apb";
-> >          interrupts = <66>;
-> >          interrupt-names = "macirq";
-> >          phy-mode = "rgmii-id";
-> > -- 
-> > 2.50.1
-> > 
-
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 03b1efa6d3b2..95dbcd7ac9a8 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -173,9 +173,12 @@ data_flush		 Enable data flushing before checkpoint in order to
+ 			 persist data of regular and symlink.
+ reserve_root=%d		 Support configuring reserved space which is used for
+ 			 allocation from a privileged user with specified uid or
+-			 gid, unit: 4KB, the default limit is 0.2% of user blocks.
+-resuid=%d		 The user ID which may use the reserved blocks.
+-resgid=%d		 The group ID which may use the reserved blocks.
++			 gid, unit: 4KB, the default limit is 12.5% of user blocks.
++reserve_node=%d		 Support configuring reserved nodes which are used for
++			 allocation from a privileged user with specified uid or
++			 gid, the default limit is 12.5% of all nodes.
++resuid=%d		 The user ID which may use the reserved blocks and nodes.
++resgid=%d		 The group ID which may use the reserved blocks and nodes.
+ fault_injection=%d	 Enable fault injection in all supported types with
+ 			 specified injection rate.
+ fault_type=%d		 Support configuring fault injection type, should be
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 97c1a2a3fbd7..f4c4ea115465 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -131,6 +131,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
+  * string rather than using the MS_LAZYTIME flag, so this must remain.
+  */
+ #define F2FS_MOUNT_LAZYTIME		0x40000000
++#define F2FS_MOUNT_RESERVE_NODE		0x80000000
+ 
+ #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
+ #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
+@@ -171,6 +172,7 @@ struct f2fs_rwsem {
+ 
+ struct f2fs_mount_info {
+ 	unsigned int opt;
++	unsigned int root_reserved_nodes; /* root reserved nodes */
+ 	block_t root_reserved_blocks;	/* root reserved blocks */
+ 	kuid_t s_resuid;		/* reserved blocks for uid */
+ 	kgid_t s_resgid;		/* reserved blocks for gid */
+@@ -2355,13 +2357,11 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
+ 	return ofs == XATTR_NODE_OFFSET;
+ }
+ 
+-static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
++static inline bool __allow_reserved_root(struct f2fs_sb_info *sbi,
+ 					struct inode *inode, bool cap)
+ {
+ 	if (!inode)
+ 		return true;
+-	if (!test_opt(sbi, RESERVE_ROOT))
+-		return false;
+ 	if (IS_NOQUOTA(inode))
+ 		return true;
+ 	if (uid_eq(F2FS_OPTION(sbi).s_resuid, current_fsuid()))
+@@ -2382,7 +2382,7 @@ static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
+ 	avail_user_block_count = sbi->user_block_count -
+ 					sbi->current_reserved_blocks;
+ 
+-	if (!__allow_reserved_blocks(sbi, inode, cap))
++	if (!__allow_reserved_root(sbi, inode, cap))
+ 		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
+ 
+ 	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+@@ -2740,7 +2740,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 					struct inode *inode, bool is_inode)
+ {
+ 	block_t	valid_block_count;
+-	unsigned int valid_node_count;
++	unsigned int valid_node_count, avail_user_node_count;
+ 	unsigned int avail_user_block_count;
+ 	int err;
+ 
+@@ -2769,8 +2769,11 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+ 		goto enospc;
+ 	}
+ 
++	avail_user_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
++	if (!__allow_reserved_root(sbi, inode, false))
++		avail_user_node_count -= F2FS_OPTION(sbi).root_reserved_nodes;
+ 	valid_node_count = sbi->total_valid_node_count + 1;
+-	if (unlikely(valid_node_count > sbi->total_node_count)) {
++	if (unlikely(valid_node_count > avail_user_node_count)) {
+ 		spin_unlock(&sbi->stat_lock);
+ 		goto enospc;
+ 	}
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 30c038413040..54a40820b3da 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -143,6 +143,7 @@ enum {
+ 	Opt_extent_cache,
+ 	Opt_data_flush,
+ 	Opt_reserve_root,
++	Opt_reserve_node,
+ 	Opt_resgid,
+ 	Opt_resuid,
+ 	Opt_mode,
+@@ -265,6 +266,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+ 	fsparam_flag_no("extent_cache", Opt_extent_cache),
+ 	fsparam_flag("data_flush", Opt_data_flush),
+ 	fsparam_u32("reserve_root", Opt_reserve_root),
++	fsparam_u32("reserve_node", Opt_reserve_node),
+ 	fsparam_gid("resgid", Opt_resgid),
+ 	fsparam_uid("resuid", Opt_resuid),
+ 	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
+@@ -336,6 +338,7 @@ static match_table_t f2fs_checkpoint_tokens = {
+ #define F2FS_SPEC_discard_unit			(1 << 21)
+ #define F2FS_SPEC_memory_mode			(1 << 22)
+ #define F2FS_SPEC_errors			(1 << 23)
++#define F2FS_SPEC_reserve_node			(1 << 24)
+ 
+ struct f2fs_fs_context {
+ 	struct f2fs_mount_info info;
+@@ -439,6 +442,7 @@ static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
+ {
+ 	block_t limit = min((sbi->user_block_count >> 3),
+ 			sbi->user_block_count - sbi->reserved_blocks);
++	unsigned int node_limit = sbi->total_node_count >> 3;
+ 
+ 	/* limit is 12.5% */
+ 	if (test_opt(sbi, RESERVE_ROOT) &&
+@@ -447,12 +451,19 @@ static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
+ 		f2fs_info(sbi, "Reduce reserved blocks for root = %u",
+ 			  F2FS_OPTION(sbi).root_reserved_blocks);
+ 	}
+-	if (!test_opt(sbi, RESERVE_ROOT) &&
++	if (test_opt(sbi, RESERVE_NODE) &&
++			F2FS_OPTION(sbi).root_reserved_nodes > node_limit) {
++		F2FS_OPTION(sbi).root_reserved_nodes = node_limit;
++		f2fs_info(sbi, "Reduce reserved nodes for root = %u",
++			  F2FS_OPTION(sbi).root_reserved_nodes);
++	}
++	if (!test_opt(sbi, RESERVE_ROOT) && !test_opt(sbi, RESERVE_NODE) &&
+ 		(!uid_eq(F2FS_OPTION(sbi).s_resuid,
+ 				make_kuid(&init_user_ns, F2FS_DEF_RESUID)) ||
+ 		!gid_eq(F2FS_OPTION(sbi).s_resgid,
+ 				make_kgid(&init_user_ns, F2FS_DEF_RESGID))))
+-		f2fs_info(sbi, "Ignore s_resuid=%u, s_resgid=%u w/o reserve_root",
++		f2fs_info(sbi, "Ignore s_resuid=%u, s_resgid=%u w/o reserve_root"
++				" and reserve_node",
+ 			  from_kuid_munged(&init_user_ns,
+ 					   F2FS_OPTION(sbi).s_resuid),
+ 			  from_kgid_munged(&init_user_ns,
+@@ -841,6 +852,11 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 		F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
+ 		ctx->spec_mask |= F2FS_SPEC_reserve_root;
+ 		break;
++	case Opt_reserve_node:
++		ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
++		F2FS_CTX_INFO(ctx).root_reserved_nodes = result.uint_32;
++		ctx->spec_mask |= F2FS_SPEC_reserve_node;
++		break;
+ 	case Opt_resuid:
+ 		F2FS_CTX_INFO(ctx).s_resuid = result.uid;
+ 		ctx->spec_mask |= F2FS_SPEC_resuid;
+@@ -1424,6 +1440,14 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
+ 		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
+ 		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_ROOT;
+ 	}
++	if (test_opt(sbi, RESERVE_NODE) &&
++			(ctx->opt_mask & F2FS_MOUNT_RESERVE_NODE) &&
++			ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_NODE)) {
++		f2fs_info(sbi, "Preserve previous reserve_node=%u",
++			F2FS_OPTION(sbi).root_reserved_nodes);
++		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
++		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_NODE;
++	}
+ 
+ 	err = f2fs_check_test_dummy_encryption(fc, sb);
+ 	if (err)
+@@ -1623,6 +1647,9 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+ 	if (ctx->spec_mask & F2FS_SPEC_reserve_root)
+ 		F2FS_OPTION(sbi).root_reserved_blocks =
+ 					F2FS_CTX_INFO(ctx).root_reserved_blocks;
++	if (ctx->spec_mask & F2FS_SPEC_reserve_node)
++		F2FS_OPTION(sbi).root_reserved_nodes =
++					F2FS_CTX_INFO(ctx).root_reserved_nodes;
+ 	if (ctx->spec_mask & F2FS_SPEC_resgid)
+ 		F2FS_OPTION(sbi).s_resgid = F2FS_CTX_INFO(ctx).s_resgid;
+ 	if (ctx->spec_mask & F2FS_SPEC_resuid)
+@@ -2342,9 +2369,11 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+ 	else if (F2FS_OPTION(sbi).fs_mode == FS_MODE_FRAGMENT_BLK)
+ 		seq_puts(seq, "fragment:block");
+ 	seq_printf(seq, ",active_logs=%u", F2FS_OPTION(sbi).active_logs);
+-	if (test_opt(sbi, RESERVE_ROOT))
+-		seq_printf(seq, ",reserve_root=%u,resuid=%u,resgid=%u",
++	if (test_opt(sbi, RESERVE_ROOT) || test_opt(sbi, RESERVE_NODE))
++		seq_printf(seq, ",reserve_root=%u,reserve_node=%u,resuid=%u,"
++				"resgid=%u",
+ 				F2FS_OPTION(sbi).root_reserved_blocks,
++				F2FS_OPTION(sbi).root_reserved_nodes,
+ 				from_kuid_munged(&init_user_ns,
+ 					F2FS_OPTION(sbi).s_resuid),
+ 				from_kgid_munged(&init_user_ns,
+-- 
+2.34.1
 
 
