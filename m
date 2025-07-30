@@ -1,156 +1,157 @@
-Return-Path: <linux-kernel+bounces-750818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDA4B16163
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:25:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80601B16164
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47244564623
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:25:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6AAC56468A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8398329ACDA;
-	Wed, 30 Jul 2025 13:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6D529A9CD;
+	Wed, 30 Jul 2025 13:24:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nv/zDsgX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aLmPv3Po"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DE529AAF5
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:24:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1B6299A84;
+	Wed, 30 Jul 2025 13:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753881875; cv=none; b=dpAVbeQcoNSIq+VaT44jaM2PKcIVJuR17cxTcJgt003oHz7yZWoFq9YkRfq+SVsB/fco2SsPBKNhWqMPT5qDWZshpYOISye37iwpfnLMH512IlDR3ZCK90g8BrxsRijz85CtvZ4vPgcFg3B4vzXEFGe2uH7WVGsVeI6gDDGnyHs=
+	t=1753881898; cv=none; b=RbBcujORmYOXIsCUWoXZiuzFxQ1KWu0ldzu1LIWiiDF9OwB2jveLBvcAup4F/HBpR+0e118QNkjydU2mUjRBnmFgUMHE5n0+a/k9HDVQK8xfewSG3rN15w1Je+Eb/0hdwB4nRgPrtwr955ooYJM4tRhIfN41HfuexS3tlF2X2WA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753881875; c=relaxed/simple;
-	bh=e5IwqqJeeCUDusazZ7w6XkeOtv7ySZo6uxGQet2ZmjU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fg3ZN5sJkz7nMXqM/UWfWF42mybgyqvK3TsN6u9r3D/BYygts2TXtvRky7wAkDvWRlyVv0eKvtQMVIKRjPL3S2pbusNxL66nTrresEuTV0C9Jnw1q/U9BISGGpOIIh+LeL0XtZU+N3Yi18ns2EnelTMDjEMq3zYy6ID5edfbK1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nv/zDsgX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UCb8A2009681
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:24:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	xTzI3N8eKRe/dkZlaYa0pONj9a17JsdqA7y1qmJPaXQ=; b=nv/zDsgXDUZzZWoK
-	3pnSQwA7AkfWBjxOvzCPQ6TW+45UOkWquG8nIFBRDbPRF6m91LAVzvxw9o2NV0ug
-	QgX+aA4I6LG3RtB3zG5SnFUT4LKd5SNwSqGhEk8jjDQ64/kH6azeKKbFm7EKdc91
-	5FrMF5h/jMudSgX/C8qeqRjMCyu48IHGNlha09w21tSraKDAw2K35cQYn4KAg2pZ
-	nvBUq4EW9uvtTIp2wQjXA5+yBi/QIUU7eZuXCeZYJFiUQ832BYA1Wo8ctjF6mPGf
-	y8aJs+Q2+da+lcSfuFVMG57tLzPo5YQMDfqZvk63205ObTIG4unPDPWcy2ZVwInE
-	b2JGSg==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4860ep179k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:24:33 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7dea65840b8so54462285a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:24:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753881872; x=1754486672;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xTzI3N8eKRe/dkZlaYa0pONj9a17JsdqA7y1qmJPaXQ=;
-        b=IoeVbZReMJyqZVWQAkk3zgG5B0CdILKTeXv1sCe/99sHlrp2dcli3xyg0OinPAhTZz
-         40hBs/xQEaOGKwuvA4XCWOQjV9RZkAFzh2FsRoN3CXJPVOggC3YBXG8EcmFOXNoQYroT
-         Hf2vxDsfCFqvudduyhD82nzhgeCqCciKeyq0M3phRzUhGuQtu4SYDafsEfYsCR1nqk3Z
-         TJCQavY/A2vS0G0UYicQHX0bEkG4s63xVCWu6nTReXDNGI5fa9cVPu1NwTeMJFqCegWo
-         FDBcGKgeG13xhbX2CBVqgm9Y5oBO+SO9tuERV7a3mCEGpsXpuh2aBr0gcvUISUGovLHQ
-         4izw==
-X-Forwarded-Encrypted: i=1; AJvYcCXL4g/V4JNhYXtgSjwLwCS3X7gpLzBdb7DkTOymttajplBajF7kGoja7HofDHtqTSe1mBP4F7uCcCAQ+hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywr15hGB2bA0yXvHTabJbzKQDo67C3rsCtQskPHYKSG2G/yfQc4
-	ef6z9SSfbck9CUbnstwAFv7fwbH7IMPpFQB7JZDvQZgYho0mw/WjuU6m/YAGui6GfWA/RPYlyyL
-	xKE/kXVnUu5qZdnPgjEQgveaB6te8eme+WVzclBmPG56Bq8zlJge8JkIcKZ2jZ04SW/o=
-X-Gm-Gg: ASbGncvxx0AjY9OXC602RQqas2yOT5ftB4F9zvTV5+LV2HTjWLNNIwgsLL8Ddt9GGS+
-	mvUZ13wIxxE62NSptYnHSmd1bEp3o5ooTPFSG8d/a8RuJLd7UPDIJ5H4TVNIbtwSsA61Y06WIuY
-	1VAjxiw8A21OsGENrxopTyG3QL3lpEysc5cmqUKIGfxkftN69vZALLW4+x1uIjVcqNYlSibSfZS
-	xFVpppy5meWgb2McAR1KPccXy0h8a9BqvA0NfyDnXryCDA/fYqu1WggPwYUwjUn0vNMpcCLUVU2
-	TuFvL0BpekvxDCeAL5+oNzkD1qzS0wmBbWsLb4VBiHgDGNVvom1pfRgYZzmBbn8Qs2ol065PSJQ
-	Sdt16fpmtBVtgehJWsQ==
-X-Received: by 2002:a05:620a:280e:b0:7e3:4535:4f7b with SMTP id af79cd13be357-7e66f35c7e1mr216229085a.12.1753881872291;
-        Wed, 30 Jul 2025 06:24:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGhiBVwlELcMoRQwGB79Dr2y5jrjodmypBvSVsOqt9WTv9u/8VXfq5aqICzEbt9JwVIxNH9Q==
-X-Received: by 2002:a05:620a:280e:b0:7e3:4535:4f7b with SMTP id af79cd13be357-7e66f35c7e1mr216226885a.12.1753881871792;
-        Wed, 30 Jul 2025 06:24:31 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-6155181f641sm3377347a12.36.2025.07.30.06.24.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 06:24:31 -0700 (PDT)
-Message-ID: <a58eb607-74e5-4f31-8ea2-b38ebbca5344@oss.qualcomm.com>
-Date: Wed, 30 Jul 2025 15:24:29 +0200
+	s=arc-20240116; t=1753881898; c=relaxed/simple;
+	bh=pwzh++zHm4PBnw6/mF1yZymDUo3Db8nyIvIwSvR2yjM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=faZCtfpa/M4kEa82eXByWE9aB7QisEvnilZddd2YOdOjPodzdwcfEtQrSKpbM3WVPximTu04iXXL+MzZ7a66Y/BDxq45pRn+RyBEAkz3pVZqVuG+oG7kiFP0h19qw0GiVARCpq6qpMBZgRBQsyTCHZ3zALwl9aSUcAq+D3E+dP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aLmPv3Po; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8858C4CEE7;
+	Wed, 30 Jul 2025 13:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753881898;
+	bh=pwzh++zHm4PBnw6/mF1yZymDUo3Db8nyIvIwSvR2yjM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=aLmPv3PoP5MpqV3XzoV3iM9qyCvXFl/+PwWrQUNn3DtmblpzblnsHtaXPHNLHKvsQ
+	 qwBDe15sRvTbZatDWC2axLw+LFM+aJ5d+nZ695i72UiSlw+0e/j/yaZj95RK+5hsg+
+	 IC7o2dr3D8e/hth53e7fTc0KsODOxTVpq4r3VpmCl7ReEEOA1F5k6vbUMmM91mNAu9
+	 5ID6JY3CJk06UsxlZcLXBAY0WiaHjMDBEE66wf/yRbw3tHxkrSDLKJLlYnJtP2qM3k
+	 qqXIKihPT794nFTBk52DCNgbLBrAwLrd4Ot8mDyw3jjp636r6qFhQInZkapQg6Jvax
+	 WPyizy0K7fN3w==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH v4 0/8] nfsd/vfs: fix handling of delegated timestamp
+ updates
+Date: Wed, 30 Jul 2025 09:24:29 -0400
+Message-Id: <20250730-nfsd-testing-v4-0-7f5730570a52@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcm2290: Add TCSR download mode address
-To: Sumit Garg <sumit.garg@kernel.org>, linux-arm-msm@vger.kernel.org
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Sumit Garg <sumit.garg@oss.qualcomm.com>
-References: <20250730132230.247727-1-sumit.garg@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250730132230.247727-1-sumit.garg@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: NvAVLeIRF2aDWUzV7T1dkUDtz5EqjsB8
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA5NiBTYWx0ZWRfX4CSog7pBc4WY
- Puj5gGSL1GJ6elaRcgnya0EHBD5BofAnWDE6pQ7T5J2cXuxRzrHOFZpCTLunhvn960BO/3lT0OG
- ccPNNPvmZP6HpTpuJXL0Q+wPlswKxM01lGFZWjevhSl9LcYGS5PDIj6HL3h0Ui6nVMVqi6L28+t
- GFeOhOR+tNF5VxkBaQxJUlk7Mv8qRH3oUsQdp80IAw22ksz0vhoR8qro8sOrbFo/A4q3iegCq+1
- gAFOIMHTKn195Uf4GpcIn39dnjR+t2/+iYkAVCzBWVLYVbOXKYux5nUQBpEujRzKrSlxm8Y4xva
- Amsu5dTOIfNuJrPPyDeJyGdXCiRVayGAtcQ940vYiDjmi9DqparQc3H6/3wvGVlDWy9FyA+Rzh8
- ufMH3qWu/gwuuivnvTJFQCxD6DsWwSVweUhfKcX59JjnAQE8pNePkNKLrj3+hl2nVEl3uyGG
-X-Authority-Analysis: v=2.4 cv=DIWP4zNb c=1 sm=1 tr=0 ts=688a1d11 cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=0h7C-uHhpuvjb9gYxF4A:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22
-X-Proofpoint-ORIG-GUID: NvAVLeIRF2aDWUzV7T1dkUDtz5EqjsB8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 clxscore=1015 bulkscore=0 mlxscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507300096
+X-B4-Tracking: v=1; b=H4sIAA0dimgC/3XM0Q6CIBiG4VtxHEeTHwXrqPtoHSD8KKthA8dqz
+ nsPPTJbh9+3Pe9EIgaHkZyLiQRMLrrB51EdCqJ75TukzuRNoIS6lADU22joiHF0vqM1NoIpri1
+ XJcnkGdC615q73vLuXRyH8F7riS3vn1BitKSccWBaWn2S9nLH4PFxHEJHllKCrRY7DVnbqj4BN
+ y3Ytv3RfKvlTvOsG6NBKdsyIcyXnuf5AyG4AqglAQAA
+X-Change-ID: 20250722-nfsd-testing-5e861a3cf3a0
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Chuck Lever <chuck.lever@oracle.com>, NeilBrown <neil@brown.name>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>
+Cc: Trond Myklebust <trondmy@hammerspace.com>, 
+ Anna Schumaker <anna@kernel.org>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+ linux-nfs@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2864; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=pwzh++zHm4PBnw6/mF1yZymDUo3Db8nyIvIwSvR2yjM=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoih0bxAvobwuwik/ceoob714smm4CT5DeKE97J
+ IzDBjB73RSJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaIodGwAKCRAADmhBGVaC
+ FYL6EADQWXWv3x8UIcmxSna8hYxrbZ0VrPBfZBlAyWMJ/z2NzvQVsL4OTbyc96QnmCgnU8Sjd9H
+ ZMKcbhlTRTR6TcLE/acldMf5TYvvdYoT7APLYfbbGFkoPZ2tZvvAa4ZMceS+aVBC3scuPSUZJJe
+ nWn/f4h0tWWvcrcqf+M6Pjtj45sYgtAaeIZD3rDgd9x4lNWzo8cYfLlSrzpsuepQobSNxQpeWhr
+ uwLakkjv2M89TZG31RTgWnWo9nXtiRO5eawBOo8bxPrcbOP5YzWQodSmRWw7s8CDcacfWxDyhXu
+ yQMTQkHp8CrSRhPvpnhv0a1X/aFqzKJHdEVhZoFUjecBqJX+kfffCrdqlVJKkGuBINvDpaJH/oo
+ brc4x0kGaR+G2CRfCRkTSZWjpZ7fwEysqLAegOkjZfmtXQWaIfpHHJHAxIXVmMjhUwSSCwrO8Ht
+ o8nCzzXRw1O7Bxl9Ku749leourAWHhfcZGINqVu5Mw5q3kyyMqoFHJ0cGcWLzIOJGxVOm+786xO
+ fP0o1bDB5yWfCvajzfIGkOckVIrGbXOWH9pGlwhF0Cb84xau2rftvFM6pD112EwqYehlU1w1bpJ
+ S0g5WKQCvP1UBHenWgB8Db7IkEbwdRWCJVWi+czC0zmRNcryh40hMig+oMiHsBeU9k5ewCHryRL
+ ddC45dSpjAlA/Rw==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 7/30/25 3:22 PM, Sumit Garg wrote:
-> From: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> 
-> Allow configuration of download mode via qcom_scm driver via specifying
-> download mode register address in the TCSR space. It is especially useful
-> for a clean watchdog reset without entry into download mode.
-> 
-> The problem remained un-noticed until now since error reporting for
-> missing download mode configuration feature was explicitly suppressed.
-> 
-> Signed-off-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm2290.dtsi | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> index f49ac1c1f8a3..08eadec59882 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-> @@ -154,6 +154,7 @@ scm: scm {
->  			compatible = "qcom,scm-qcm2290", "qcom,scm";
->  			clocks = <&rpmcc RPM_SMD_CE1_CLK>;
->  			clock-names = "core";
-> +			qcom,dload-mode = <&tcsr_regs 0x13000>;
+This patchset fixes the handling of delegated timestamps in nfsd. This
+one also adopts Neil's suggestopn to use FMODE_NOCMTIME to freeze
+timestamp updates while there is a WRITE_ATTRS delegation outstanding.
 
-Can confirm it's the right addr
+Most of these patches are identical to the last set. I dropped the patch
+that removes inode_set_ctime_deleg(), and reworked the logic in
+setattr_copy() and friends to accomodate.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+The last patch in the series is new. That one adds FMODE_NOCMTIME to the
+file while a WRITE_ATTRS delegation is in force, and adds a mechanism to
+ensure that the timestamps gets updated appropriately if the client
+never sends a SETATTR with updated timestamps in it. That should ensure
+that the ctime never rolls backward.
 
-Konrad
+This patchset also leaves inode_set_ctime_deleg() in place. That's
+probably overengineered if we don't need to worry about ctime updates
+from the client racing with ctime updates due to writes anymore, but we
+can simplify it later if so.
+
+The series passes the gitr testsuite in the "stress" configuration.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Changes in v4:
+- Use FMODE_NOCMTIME to freeze timestamp updates on write
+- drop patch that removes inode_set_ctime_deleg()
+- rework logic in setattr_copy()
+- Link to v3: https://lore.kernel.org/r/20250727-nfsd-testing-v3-0-8dc2aafb166d@kernel.org
+
+Changes in v3:
+- split out decoder fix into separate patch
+- add Fixes: tags
+- Link to v2: https://lore.kernel.org/r/20250726-nfsd-testing-v2-0-f45923db2fbb@kernel.org
+
+Changes in v2:
+- add ATTR_CTIME_SET and remove inode_set_ctime_deleg()
+- track original timestamps in struct nfs4_delegation
+- fix delegated timestamp updates to respect saved timestamps
+- Link to v1: https://lore.kernel.org/r/20250722-nfsd-testing-v1-0-31321c7fc97f@kernel.org
+
+---
+Jeff Layton (8):
+      nfsd: fix assignment of ia_ctime.tv_nsec on delegated mtime update
+      nfsd: ignore ATTR_DELEG when checking ia_valid before notify_change()
+      vfs: add ATTR_CTIME_SET flag
+      nfsd: use ATTR_CTIME_SET for delegated ctime updates
+      nfsd: track original timestamps in nfs4_delegation
+      nfsd: fix SETATTR updates for delegated timestamps
+      nfsd: fix timestamp updates in CB_GETATTR
+      nfsd: freeze c/mtime updates with outstanding WRITE_ATTRS delegation
+
+ fs/attr.c           | 44 ++++++++++++---------------
+ fs/nfsd/nfs4proc.c  | 55 ++++++++++++++++++++++++++++++++--
+ fs/nfsd/nfs4state.c | 86 ++++++++++++++++++++++++++++++++++++++++-------------
+ fs/nfsd/nfs4xdr.c   |  5 ++--
+ fs/nfsd/state.h     | 12 +++++++-
+ fs/nfsd/vfs.c       |  2 +-
+ include/linux/fs.h  |  1 +
+ 7 files changed, 153 insertions(+), 52 deletions(-)
+---
+base-commit: b05f077b59098b4760e3f675b00a4e6a1ad4b0ad
+change-id: 20250722-nfsd-testing-5e861a3cf3a0
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
