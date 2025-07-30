@@ -1,85 +1,109 @@
-Return-Path: <linux-kernel+bounces-750914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7398DB162B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:27:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E763CB162B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:27:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4630D3A432D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:26:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3214F7ACC23
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91192D9ED5;
-	Wed, 30 Jul 2025 14:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495072D9ECF;
+	Wed, 30 Jul 2025 14:27:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ax415/bk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="YnmuGi1u"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE5F2BD582;
-	Wed, 30 Jul 2025 14:26:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D09D2BD582;
+	Wed, 30 Jul 2025 14:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753885608; cv=none; b=kWDrhBgmXwmG1uptKpFsLmovUV/F4UvqcYysSUzsCLZY6ngCHr/yj+KlBauksgaLgNcItVP1Hfo2adDVz4N4/Fksiyag0bzXR5rGx7mI+LadCOPGFZQtGFDSr/5LW0FH5Q2inCa4QTY+A4cjc7uuUV0Y5fgHGosypa+g4j9y1To=
+	t=1753885624; cv=none; b=AtcvERuVmCTjmvcFaXF2t/9QCAHRPJinlXyNsGTBf5ObeQg7LMnrfDPFQYoL1XrhW7NP1nt8H6LouOax+6n8IniX+mrH0D3A60bGYsMwVlCn/zzzvs1MxsPDZt3XznP/JOtHy19WRSFEFdCH3Oro0uW/ddUnYwgwMZA9Lz165ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753885608; c=relaxed/simple;
-	bh=NzNLnN8gkgPqDzoHuFxVWpIUGLGJD3DT7IFgIBIS9g4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ONqvnMtdh2HOFyy8kBeT0znEzdtJ+n6Uo/xdlzcPO/4vK84259mY8ce/tiC/B1g89IjeT2jMuLNqcsjwqwnYl3R66BfIJLzOetxJZ8PFwg40OlBIYZKfLyctOxhCFo8GObngXqs4iPDh7HHwLeDJuABkgSscRa6ocgs3tuHhxJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ax415/bk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D87A8C4CEE3;
-	Wed, 30 Jul 2025 14:26:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753885607;
-	bh=NzNLnN8gkgPqDzoHuFxVWpIUGLGJD3DT7IFgIBIS9g4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ax415/bk24Tzgeq1G/8ojgjMZ9l4aOhSrbgBipGN/WHjGqJ9XbB6s5ML3cPEXE36a
-	 lStSND8JC/ZBTua/JbEymvfLm5FGiSN5yoNjxoRXymTzlLsqTyzkGwV5j5gk320SIc
-	 oKRkSmA2J2fnYhNe2k2qwdRIZ/7jrS2fSCWUvkUY=
-Date: Wed, 30 Jul 2025 16:26:44 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jari Ruusu <jariruusu@protonmail.com>
-Cc: Yi Yang <yiyang13@huawei.com>, GONG Ruiqi <gongruiqi1@huawei.com>,
-	Helge Deller <deller@gmx.de>, Sasha Levin <sashal@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Text mode VGA-console scrolling is broken in upstream & stable
- trees
-Message-ID: <2025073054-stipend-duller-9622@gregkh>
-References: <C4_ogGo3eSdgo3wcbkdIXQDoGk2CShDfiQEjnwmgLUvd1cVp5kKguDC4M7KlWO4Tg9Ny3joveq7vH9K_zpBGvIA8-UkU2ogSE1T9Y6782js=@protonmail.com>
+	s=arc-20240116; t=1753885624; c=relaxed/simple;
+	bh=bE094o3im5w7P13S0HeOXZd789744GBC6W3B0HmnpDw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QSM8q0iwmcWy69qhcauhnlOymtvOZOZwNVLPQ5XJ0pK/t9F9WqCR9AInon3dRRki6/+Z4a36GbnglMUAGB5QTaTWBaCSPHRZjDvIUDgd0AnrEo+dDnIhSeULFgeV+XBJH8FF29zUbcSLruH0wxVFpJFp1gDO/+DVBiFoWBEJ6iU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=YnmuGi1u; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753885399;
+	bh=bE094o3im5w7P13S0HeOXZd789744GBC6W3B0HmnpDw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=YnmuGi1uL2tpQPebcZywcWIzIUbAoCP1dsUkIAf4ATK0M1OmpDc5oUJ585zvr+i8O
+	 mKjrT7Pti8Vc3Xl/LmddWdx05MR4kiN4RsAQFPPOFLFBBVEUGZ40cVMtpB4m0cG1JC
+	 Z9SN2czc67l+jAkj/zNyLWI9unfoDNbVYDK/WB7t6rEO+GNr1K6l79/+frcB3lDlOz
+	 e6UFuox5qoEgVaZol8u9YDLziKBNwoQEaEhJjMa5Pz9cFmLGn2JAE+0LxISZWTlsoI
+	 d4FwFuHfNMkvJI/nk4qU4362g+/aJZIVAmbUdC0PJ9FHkqlx6rpgpulYP2GYkz/I3v
+	 uoepnAuPdvmOw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsZFL1wlSz4x6p;
+	Thu, 31 Jul 2025 00:23:18 +1000 (AEST)
+Date: Thu, 31 Jul 2025 00:26:54 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Donghoon Yu <hoony.yu@samsung.com>, Will McVicker
+ <willmcvicker@google.com>, Youngmin Nam <youngmin.nam@samsung.com>, Linux
+ Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo
+ Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra
+ <peterz@infradead.org>
+Subject: Re: linux-next: build warning after merge of the clockevents tree
+Message-ID: <20250731002654.19af9458@canb.auug.org.au>
+In-Reply-To: <e8e2bc93-1639-433d-9689-d1ce9f28b877@linaro.org>
+References: <20250716160809.30045a56@canb.auug.org.au>
+	<20250729114037.03a2d884@canb.auug.org.au>
+	<e8e2bc93-1639-433d-9689-d1ce9f28b877@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <C4_ogGo3eSdgo3wcbkdIXQDoGk2CShDfiQEjnwmgLUvd1cVp5kKguDC4M7KlWO4Tg9Ny3joveq7vH9K_zpBGvIA8-UkU2ogSE1T9Y6782js=@protonmail.com>
+Content-Type: multipart/signed; boundary="Sig_/HdvHeNX1UtLYp6D3caRo_AJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, Jul 30, 2025 at 02:06:27PM +0000, Jari Ruusu wrote:
-> The patch that broke text mode VGA-console scrolling is this one:
-> "vgacon: Add check for vc_origin address range in vgacon_scroll()"
-> commit 864f9963ec6b4b76d104d595ba28110b87158003 upstream.
-> 
-> How to preproduce:
-> (1) boot a kernel that is configured to use text mode VGA-console
-> (2) type commands:  ls -l /usr/bin | less -S
-> (3) scroll up/down with cursor-down/up keys
-> 
-> Above mentioned patch seems to have landed in upstream and all
-> kernel.org stable trees with zero testing. Even minimal testing
-> would have shown that it breaks text mode VGA-console scrolling.
-> 
-> Greg, Sasha, Linus,
-> Please consider reverting that buggy patch from all affected trees.
+--Sig_/HdvHeNX1UtLYp6D3caRo_AJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Please work to fix it in Linus's tree first and then we will be glad to
-backport the needed fix.
+Hi Daniel,
 
-thanks,
+On Wed, 30 Jul 2025 14:22:27 +0200 Daniel Lezcano <daniel.lezcano@linaro.or=
+g> wrote:
+>
+> This should be fixed now.
+>=20
+> Also the clockevent branch has been reset.
 
-greg k-h
+Thanks for both.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/HdvHeNX1UtLYp6D3caRo_AJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiKK64ACgkQAVBC80lX
+0Gy4WwgAn3CVtaKNDvo3qQ7LdaCbOY96ppun5gQoA5T54f3G9Rhvn/VgdWdgajS2
+i7X4oQVHc9PDvoThreMDQp1PVL4Ey5WL2qBbqdCzxWgdd0CBHqHr1iWTWTVMPM5d
+R929REoNxQBWnhKG0wJRV4EiMIJFtPr87OuYUOIy82o7KozrYzIfIn5JWPj6RCAC
+gejC5SZE95bIQR6nLykWRlSSnHh95YOjgR1xr0psJwEbyQepw0SCV4nQuUI/T+hA
+MkSciRdsUawlGmTVoOQvAl6xGC8vnzSgCKKiiTxB+KLnEt3YjfMGJVbiCTJz2/zA
+lSPm57Qx4eKIdDfcZX6MY86LTO/Cjw==
+=vW6g
+-----END PGP SIGNATURE-----
+
+--Sig_/HdvHeNX1UtLYp6D3caRo_AJ--
 
