@@ -1,149 +1,99 @@
-Return-Path: <linux-kernel+bounces-750243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C563B15904
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:39:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085F9B15907
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9475D18A127C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:40:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F3105433B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932D91F2BAE;
-	Wed, 30 Jul 2025 06:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8C7E1F3BB5;
+	Wed, 30 Jul 2025 06:40:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iwwhYGYT"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="I4v/35pX"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EBB199BC
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101B5199BC;
+	Wed, 30 Jul 2025 06:40:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753857576; cv=none; b=ZqVhT7oZDOFiRmiFKfhKjSfqXppncUC67QYxb2Dh6Ztgd2eqo71A7zkP3gEPtZJ21/StC8JesXbJesSUDf+T7ROydW11JWjtqP61eIGK98tLbkUr60mrQ9xDpb0vqmTxfwOxsOSlUI0FC9XUAGsLAgjr2jtfmeJ6HBjwrUZ1afs=
+	t=1753857654; cv=none; b=tP5apb3C/Y0G3ZtbN8WGCE5g/VAPY0g/i63XMWAZnOu85RIj9lp9+g6aBZ9yAqR4E3sUy+oMp7njco1t14m1IQhLiDM8QPWjwog0weFcxAMiOGjfnBvs0xycSuM9R9vJO9pA8+pF3pjH3rk7EGgwtdLS+izQLHrmcSN4HYn2Pq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753857576; c=relaxed/simple;
-	bh=s3oAeiGMCGpEUY4W0CLVktyAxCLyAnDPTL2QrMiUGXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P4+D5F7xtPBR3Z/1YAFo/lqlwIlZjWocVd/Ent8+++hxsJ45cxcdyXhxDNfSzNDvdp7N0b1dGaf9jdBTMf+r/rfHmG3CzyH4nnApSH8qu+ia1E0nFVKAE4LAZWiHpSwOAAYyXv0lqjjW0CCgGHQZe0jVYNypQO5EM9rl4Ke98Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iwwhYGYT; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-76b77a97a04so63745b3a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:39:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753857573; x=1754462373; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cxqq0Cq3rXpDHMk3wnpPiQiHk/GfScecX6DtSmTnXPU=;
-        b=iwwhYGYTGq5VvhZtiC+JbMX1lbXf59xzWjh0EoFZk+Tvz2uL1yJbMvOcFdTR7CCUC+
-         hr4NMrfkkLDWhUT67Y2NsLOBy5SDzbXKrDpikowQRXK8PqSDMewwh5AFmPS6B2dQKMXJ
-         DMoknMHiQrsNEwTVzhTsC4p6J4lKkBVmL6fPiS3Mu7/3guINLCil2JipvX+jwcAVUcJI
-         xJ4BhIyINiCcbod86yCDTxS5MnUDghMknOmXgr1dz2LX2fapVIbKIs+FvI8BrASZToNZ
-         j9TRpsCfSoLHKFv+IEF876U/QxYpr2b/VMuviNIltHhJAV/dAuiCqvIpl+cFIuRLMAsw
-         nm1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753857573; x=1754462373;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cxqq0Cq3rXpDHMk3wnpPiQiHk/GfScecX6DtSmTnXPU=;
-        b=fs0s1IxrsOIilLiSOrlaQEht4pL+OmYVBe91U7lNK/P6e7JfzZJitWentVLzEolBTc
-         cZdvn515Tgw4Punus5XG+JKIwxgFU85j6oq4uU6LHZcVhE6F+C1HrKP3+G7OAUKX01zQ
-         XkNFE/JVvo3RvqeME4Nrx34GOJJEFeTkgrsBY7jj8c6US6KYyTf+9GZi0Fostd45oFSI
-         h/0UXJqtFDLtxjUgbVAsqF2rXqMJBx74XVqGYvy7zAKMwXBEU0GKP+ill9tVwCMaqIxD
-         TpLgte9tjZ3gOgBVpdvlvYCp6GzemJmyuqZYEBOOxzBXpi6shnidr79C3fAEblgVp/bP
-         HfIg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZERLOvg2AP41Hkln0pLO1K2aJjGvhxQHaow0Zr/9+svJkKdutb5YY6/afwhqDNL9enZ0fPX4O57CpBOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypalU5kUiuDLVHM+kVNrOIIj+Kl5dAsKQWV8Ks8NaOgPRIPKrr
-	T1Vu/9Y4LtLXEr8Ir3mcqDQkW288lZxblnDhwn4X1sWuaA0i3u94LrqkhSoaJIkj8Uc=
-X-Gm-Gg: ASbGncv1IgkL2frOwnVIAXiW5IuKLmCFhNOvhW1VtEbzIHBtaVLG/Jns5HtC6tBX6wg
-	gWz8LO2o2XZ2MS4uJ+DgzVSLgbgf8Lxc9CpRYR2JWDsnb+lp7v9qqGD2Vhin0feGvuc8ZZ1/3FI
-	t9zx0hvQ5Ji/4IsMho/9FXY05y/icj+FubF9r9cQGHhqfeRb1qm4MXMOTNayDpxCLOeugUcwEgL
-	ErRtmAwfndcRydyOJd92rneirDvM5Kd7pCAX1g1w+IVYQjZ632MHTU0UJysm7G0RuuKaMmC3FcS
-	1xaZIQ173Nl4LUuRraXhbl1ojqb3ggyobKTAkxU0d4FzkzLhddxBWcEPhkaIEFTay+VSIDn7EuB
-	OduW7RBpLdYxFsKfcW1lu2ag=
-X-Google-Smtp-Source: AGHT+IHxxY7HQAsnbPM3mEwljLdyelb9+TlSrMF7nkdPAIT593PMDdIyHE4C4wABCZ568IM+pGtllg==
-X-Received: by 2002:a05:6a00:4b02:b0:748:2d1d:f7b3 with SMTP id d2e1a72fcca58-76ab30d04c2mr2941003b3a.22.1753857573262;
-        Tue, 29 Jul 2025 23:39:33 -0700 (PDT)
-Received: from localhost ([122.172.85.40])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76a794e7eebsm1921693b3a.123.2025.07.29.23.39.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 23:39:32 -0700 (PDT)
-Date: Wed, 30 Jul 2025 12:09:30 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Bowen Yu <yubowen8@huawei.com>
-Cc: rafael@kernel.org, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
-	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com,
-	lihuisong@huawei.com, zhenglifeng1@huawei.com,
-	Prashant Malani <pmalani@google.com>,
-	Beata Michalska <beata.michalska@arm.com>,
-	Ionela Voinescu <ionela.voinescu@arm.com>
-Subject: Re: [PATCH 2/2] cpufreq: CPPC: Fix error handling in
- cppc_scale_freq_workfn()
-Message-ID: <20250730063930.cercfcpjwnfbnskj@vireshk-i7>
-References: <20250730032312.167062-1-yubowen8@huawei.com>
- <20250730032312.167062-3-yubowen8@huawei.com>
+	s=arc-20240116; t=1753857654; c=relaxed/simple;
+	bh=awj8/NHPS85HdZnYwAKBZ27TWIFeKMqgPXkZmuK7/Xs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=nDWG1Tq0KCn6DfvY9Vl0UwxWN6kUrl3RVdoikjEWvEt0w1KiU8B5S0o6iK3UvNpFK9QrQrgEIl1OtyiAMZA52ZKhtbR0qnJ8b52ms1Ra0axWph5xMUWVZvnNAa5RoIdVzhbKWpcEXJfgNy5EkvJNwpjRe8yHavzyHlQY5k2lR+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=I4v/35pX; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753857432;
+	bh=awj8/NHPS85HdZnYwAKBZ27TWIFeKMqgPXkZmuK7/Xs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=I4v/35pX5BPVY1eYio6b+7z9AYOkVVFUO7KJseXINDvTyyx2Y4Pnkom2+vo5hrXjy
+	 PKkF2J/ujaqzrWR9lXc5Pfc3gTW5NJiT99c0x9YDhzwwzKI69terI+cXMU2t4yodIb
+	 6YRCEpRVPBpEWW9eGtMRkMf2CrHjR+QiWx+S+Oir+u7b3Dr5X43RjUGZUOhzmw5uRD
+	 D+ULH/uGlegzVyk/Z8AZ+cWPX2+nXpjS8+PC08k3sfnXIFC4iHJd0erpWEmHPkAhAp
+	 XuyQjYZKWmvFMzc0WrHWj0mgSGjYRv9VqpRVm8rwXBnKrL2ldXsCRVHJ8q0O6iHqxS
+	 G9QSbrvCLUw2Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsMvX3lpSz4x5Z;
+	Wed, 30 Jul 2025 16:37:12 +1000 (AEST)
+Date: Wed, 30 Jul 2025 16:40:47 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the kbuild tree
+Message-ID: <20250730164047.7c4a731a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730032312.167062-3-yubowen8@huawei.com>
+Content-Type: multipart/signed; boundary="Sig_/argN=GS7Mm23mkIjWNzFyuD";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-+ Prashant/Beata/Ionela
+--Sig_/argN=GS7Mm23mkIjWNzFyuD
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On 30-07-25, 11:23, Bowen Yu wrote:
-> From: Jie Zhan <zhanjie9@hisilicon.com>
-> 
-> Perf counters could be 0 if the cpu is in a low-power idle state. Just try
-> it again next time and update the frequency scale when the cpu is active
-> and perf counters successfully return.
-> 
-> Also, remove the FIE source on an actual failure.
-> 
-> Signed-off-by: Jie Zhan <zhanjie9@hisilicon.com>
-> ---
->  drivers/cpufreq/cppc_cpufreq.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index 904006027df2..e95844d3d366 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -78,12 +78,23 @@ static void cppc_scale_freq_workfn(struct kthread_work *work)
->  	struct cppc_cpudata *cpu_data;
->  	unsigned long local_freq_scale;
->  	u64 perf;
-> +	int ret;
->  
->  	cppc_fi = container_of(work, struct cppc_freq_invariance, work);
->  	cpu_data = cppc_fi->cpu_data;
->  
-> -	if (cppc_get_perf_ctrs(cppc_fi->cpu, &fb_ctrs)) {
-> +	ret = cppc_get_perf_ctrs(cppc_fi->cpu, &fb_ctrs);
-> +	/*
-> +	 * Perf counters could be 0 if the cpu is in a low-power idle state.
-> +	 * Just try it again next time.
-> +	 */
-> +	if (ret == -EFAULT)
-> +		return;
-> +
-> +	if (ret) {
->  		pr_warn("%s: failed to read perf counters\n", __func__);
-> +		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_CPPC,
-> +						 cpu_data->shared_cpu_map);
->  		return;
->  	}
->  
-> -- 
-> 2.33.0
+Hi all,
 
--- 
-viresh
+After merging the kbuild tree, today's linux-next build (arm64 defconfig)
+produced this warning:
+
+aarch64-linux-gnu-objcopy: vmlinux.unstripped: warning: empty loadable segm=
+ent detected at vaddr=3D0xffff800082750000, is this intentional?
+
+I am guessing this is caused by something added to the kbuild tree today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/argN=GS7Mm23mkIjWNzFyuD
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiJvm8ACgkQAVBC80lX
+0GxMsgf/TYjwU0h3h8ERAutJOvPgEf9HT57Ei1EMr7Wt7ugKaakk76qcKezVJcsS
+5QhpYj2vtrEJZNnOfqW0Pd+u3r6A3bQ7XzVBocL+10F1nEYHzKCk3B4CIeym7nlY
+uHubL0ky41LCVSjJTB4WK5PuYbc0Ku6zVK8vmO5gh0DRlu4cJbeGiYPMn8AZ4E4f
+tjmzVpTcQIZsrSUcjgO+zSfnc0KOS3cW16p+zsfRRxvOi0h+gHGLylqaHHxYZD0v
+regY0JnsCGL5KqWIkjWsunoe2dnGQ1ivsZCP6Uu7FUsgSmVif66+5MvRnOrAO1+U
+Gqra2brXY+1knF0KpDQJGUWz0vsHug==
+=jE5r
+-----END PGP SIGNATURE-----
+
+--Sig_/argN=GS7Mm23mkIjWNzFyuD--
 
