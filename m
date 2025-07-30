@@ -1,225 +1,108 @@
-Return-Path: <linux-kernel+bounces-751030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E24CB1645F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:16:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61900B164D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:37:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89E71AA61F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:13:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E46189619C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B724B2E7BA7;
-	Wed, 30 Jul 2025 16:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60782DE70B;
+	Wed, 30 Jul 2025 16:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="do8ofpoy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="hclBiAz5"
+Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B6DC2E7645;
-	Wed, 30 Jul 2025 16:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3DB190692;
+	Wed, 30 Jul 2025 16:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753891743; cv=none; b=BlBYCIh/KJzIYQP6hvc0nW3ZETZzlZiEpbJqo3e0TDiUP6CZNKONzsC0W+a5lWK1unA2zsj1P+xzCFasgsKvzyqCEMsCNccYhEcRS0VacuPDmiNd4ynBQ151M6j4UXOpemMFcMbsdqsRUlW9IQIYlla+llKkh7euht2vBIrBU1g=
+	t=1753893466; cv=none; b=bMlJmvickD+8nm8caZA7wdGvdjynell4WBxDfWweCoEsIrWzQDrK2dFNVTl7tHIqJ5CQQvPCb075HVUzefByYI2gpPhUcv1VZ7/+RX/oaXYgZnOt+CpDOadwDddYXAQkom94BpzQ2E4wMW94bBYW5tExNWSZQQ8xDuoGIyrhS5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753891743; c=relaxed/simple;
-	bh=CjvGV5hPrqqR5jpzUsV/mVpTr+53npZ/zD34Fh+5nM0=;
+	s=arc-20240116; t=1753893466; c=relaxed/simple;
+	bh=0C0KsPi9Xafpx8vSaO7NnuYX2LgMpY46VySoYhdbHeA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XtAiPh6X3ntH/rdmjux5pp9vnyiKXUmVp8JOH5nom3cr4KsW54DdYC5aiZXAeF7krueFP3z4bA2m+iPVQKq0Og4ew8tgMnoboqvrD/YFwBDBfRVUVMnXxBKnlKjgjyhQ0iLNbsoQYFkBmFyXPK8xUdGFHVYdw8R2xIAH1ZboZ18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=do8ofpoy; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753891742; x=1785427742;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=CjvGV5hPrqqR5jpzUsV/mVpTr+53npZ/zD34Fh+5nM0=;
-  b=do8ofpoyZ/nF6SWnR6zGuQNEOeAGCpclPRt8OE3n1NjtBhd8IXrRWTCl
-   wIZVXL5Epo0E6miRYm0+0FP7bnztj5h5lHoJpMfLkWqJ9Gbcw6pcWT193
-   2DzimdGljK2Nzwav+lnGWIVjAAHVTpE/fuMdueoGsCaolMXPNnwsPsNPR
-   CWTq1Ve6K00eEXOI3yKzCCJK1O57O7XaO9FhjHdVrlT9ZE6NisAKroQUR
-   EQLU3XmiXqtqR+rO+0EOXhfuGJyu18LOwm08qjinKOFE300Zhpw46yksM
-   DomqX/e+z8T2qUT//seVQIeiyhLkaoFIjfGmopOoy4J4pVeWJxDk2QFCj
-   g==;
-X-CSE-ConnectionGUID: WrNMIJP7SOOHjy9YvEwuUQ==
-X-CSE-MsgGUID: C0D9pOMkTXSuyjIbQOJoFg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="67279008"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="67279008"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 09:09:01 -0700
-X-CSE-ConnectionGUID: yYCfxNg6T667veVV8q54tA==
-X-CSE-MsgGUID: 3/6sTqFyS9S0zSBvEZRNSg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="163813094"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by fmviesa010.fm.intel.com with ESMTP; 30 Jul 2025 09:08:57 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Simon Horman <horms@kernel.org>,
-	nxne.cnse.osdt.itp.upstreaming@intel.com,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH iwl-next v3 18/18] idpf: add XDP RSS hash hint
-Date: Wed, 30 Jul 2025 18:07:17 +0200
-Message-ID: <20250730160717.28976-19-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250730160717.28976-1-aleksander.lobakin@intel.com>
-References: <20250730160717.28976-1-aleksander.lobakin@intel.com>
+	 MIME-Version:Content-Type; b=GiXDhO4c+gz64QNZka+H/LDED9PEhAVU7KVXLunmqlsUbOgd55FnarcRpJYo1gW4NE2HkglbFvvYNjROr+n2nVyT+bmi5OIcFxmc7lFNyW5vJjQ/mvbquDdga2cMcCui7aNTp0MeZHtJvb57NztPSQnn4zJvjk6nBvBobSvtIoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=hclBiAz5; arc=none smtp.client-ip=5.189.157.229
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
+	Content-ID:Content-Description;
+	bh=6WzFyA7HHnsN0YX0BqT+sbS2GLp4HfpygWNA1sHG2qA=; b=hclBiAz56+bxfks6IKny9sWiCZ
+	jQoQkRoa5oVm0TQejM5rrKbmeb2XyRSlxuFMcqXp3CZq3ZWab5/zMHJPrtU6P6BcNeThuC/LHCGF3
+	njZmGfkU3/DDeh05Uka4WpkVCdPlqsbdcdPVipCvx7A1nyMknpmK6dcIw4YBflPLA+sFBX4WKghJ1
+	m4BKUuFaZy+/g/LorgBsNVoLzHY1tCU6LRk7HtNXzfgsoL04GDz8eaSJss/Of7zhkt/2a69xY1vrx
+	GaD6w1prP3wxhLJJz0H7YbVec6Og6suugJRC3ElLKShYAPWePDgMy9SDuowNsOHcpie6MHfsY3A/j
+	PScQy7ssolPiKR33AaurA32/d5RyoY2xRnjVGoS6z3cwmvfr/tCfYN30fFAAl8uZR0K2VH4w7HnZm
+	6xRoTgn3rEYPOewFOqYMhZ3RPthxOBY0b1emvMVB4/Tg+qagpGKhGs6MfRk8fvIj8uWQXAX0vXGZ8
+	/C3IMYWDmvmZm/5vNHc3DFY2N82mWnnzuKwHkHAFY7KyFBXTOH0n/h61dL2XD9fPbBvyUsPG4LnP3
+	kF759PRQn1pWJkkiJuAz4XoHK//J2uT+Zkurjdo2HYYfDB+1DovmVI5DkPVoL9zreJcnw4zKVSME/
+	0TYT8MqVgj03RawFZIMUaIshc5JIlmoCeb/gUdGZA=;
+From: Christian Schoenebeck <linux_oss@crudebyte.com>
+To: v9fs@lists.linux.dev, Pierre Barre <pierre@barre.sh>
+Cc: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] 9p: Use kvmalloc for message buffers
+Date: Wed, 30 Jul 2025 18:08:13 +0200
+Message-ID: <2989343.ydHz1Oe0dO@silver>
+In-Reply-To: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Add &xdp_metadata_ops with a callback to get RSS hash hint from the
-descriptor. Declare the splitq 32-byte descriptor as 4 u64s to parse
-them more efficiently when possible.
+On Wednesday, July 30, 2025 5:08:05 PM CEST Pierre Barre wrote:
+> While developing a 9P server (https://github.com/Barre/ZeroFS) and testing it under high-load, I was running into allocation failures. The failures occur even with plenty of free memory available because kmalloc requires contiguous physical memory.
+> 
+> This results in errors like:
+> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
 
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- drivers/net/ethernet/intel/idpf/xdp.h | 64 +++++++++++++++++++++++++++
- drivers/net/ethernet/intel/idpf/xdp.c | 28 +++++++++++-
- 2 files changed, 91 insertions(+), 1 deletion(-)
+What was msize?
 
-diff --git a/drivers/net/ethernet/intel/idpf/xdp.h b/drivers/net/ethernet/intel/idpf/xdp.h
-index db8ecc1843fe..66ad83a0e85e 100644
---- a/drivers/net/ethernet/intel/idpf/xdp.h
-+++ b/drivers/net/ethernet/intel/idpf/xdp.h
-@@ -99,6 +99,70 @@ static inline void idpf_xdp_tx_finalize(void *_xdpsq, bool sent, bool flush)
- 	libeth_xdpsq_unlock(&xdpsq->xdp_lock);
- }
- 
-+struct idpf_xdp_rx_desc {
-+	aligned_u64		qw0;
-+#define IDPF_XDP_RX_BUFQ	BIT_ULL(47)
-+#define IDPF_XDP_RX_GEN		BIT_ULL(46)
-+#define IDPF_XDP_RX_LEN		GENMASK_ULL(45, 32)
-+#define IDPF_XDP_RX_PT		GENMASK_ULL(25, 16)
-+
-+	aligned_u64		qw1;
-+#define IDPF_XDP_RX_BUF		GENMASK_ULL(47, 32)
-+#define IDPF_XDP_RX_EOP		BIT_ULL(1)
-+
-+	aligned_u64		qw2;
-+#define IDPF_XDP_RX_HASH	GENMASK_ULL(31, 0)
-+
-+	aligned_u64		qw3;
-+} __aligned(4 * sizeof(u64));
-+static_assert(sizeof(struct idpf_xdp_rx_desc) ==
-+	      sizeof(struct virtchnl2_rx_flex_desc_adv_nic_3));
-+
-+#define idpf_xdp_rx_bufq(desc)	!!((desc)->qw0 & IDPF_XDP_RX_BUFQ)
-+#define idpf_xdp_rx_gen(desc)	!!((desc)->qw0 & IDPF_XDP_RX_GEN)
-+#define idpf_xdp_rx_len(desc)	FIELD_GET(IDPF_XDP_RX_LEN, (desc)->qw0)
-+#define idpf_xdp_rx_pt(desc)	FIELD_GET(IDPF_XDP_RX_PT, (desc)->qw0)
-+#define idpf_xdp_rx_buf(desc)	FIELD_GET(IDPF_XDP_RX_BUF, (desc)->qw1)
-+#define idpf_xdp_rx_eop(desc)	!!((desc)->qw1 & IDPF_XDP_RX_EOP)
-+#define idpf_xdp_rx_hash(desc)	FIELD_GET(IDPF_XDP_RX_HASH, (desc)->qw2)
-+
-+static inline void
-+idpf_xdp_get_qw0(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw0 = ((const typeof(desc))rxd)->qw0;
-+#else
-+	desc->qw0 = ((u64)le16_to_cpu(rxd->pktlen_gen_bufq_id) << 32) |
-+		    ((u64)le16_to_cpu(rxd->ptype_err_fflags0) << 16);
-+#endif
-+}
-+
-+static inline void
-+idpf_xdp_get_qw1(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw1 = ((const typeof(desc))rxd)->qw1;
-+#else
-+	desc->qw1 = ((u64)le16_to_cpu(rxd->buf_id) << 32) |
-+		    rxd->status_err0_qw1;
-+#endif
-+}
-+
-+static inline void
-+idpf_xdp_get_qw2(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw2 = ((const typeof(desc))rxd)->qw2;
-+#else
-+	desc->qw2 = ((u64)rxd->hash3 << 24) |
-+		    ((u64)rxd->ff2_mirrid_hash2.hash2 << 16) |
-+		    le16_to_cpu(rxd->hash1);
-+#endif
-+}
-+
- void idpf_xdp_set_features(const struct idpf_vport *vport);
- 
- int idpf_xdp(struct net_device *dev, struct netdev_bpf *xdp);
-diff --git a/drivers/net/ethernet/intel/idpf/xdp.c b/drivers/net/ethernet/intel/idpf/xdp.c
-index d2549f8b8e24..c143b5dc9e2b 100644
---- a/drivers/net/ethernet/intel/idpf/xdp.c
-+++ b/drivers/net/ethernet/intel/idpf/xdp.c
-@@ -340,12 +340,38 @@ int idpf_xdp_xmit(struct net_device *dev, int n, struct xdp_frame **frames,
- 				       idpf_xdp_tx_finalize);
- }
- 
-+static int idpf_xdpmo_rx_hash(const struct xdp_md *ctx, u32 *hash,
-+			      enum xdp_rss_hash_type *rss_type)
-+{
-+	const struct libeth_xdp_buff *xdp = (typeof(xdp))ctx;
-+	struct idpf_xdp_rx_desc desc __uninitialized;
-+	const struct idpf_rx_queue *rxq;
-+	struct libeth_rx_pt pt;
-+
-+	rxq = libeth_xdp_buff_to_rq(xdp, typeof(*rxq), xdp_rxq);
-+
-+	idpf_xdp_get_qw0(&desc, xdp->desc);
-+
-+	pt = rxq->rx_ptype_lkup[idpf_xdp_rx_pt(&desc)];
-+	if (!libeth_rx_pt_has_hash(rxq->xdp_rxq.dev, pt))
-+		return -ENODATA;
-+
-+	idpf_xdp_get_qw2(&desc, xdp->desc);
-+
-+	return libeth_xdpmo_rx_hash(hash, rss_type, idpf_xdp_rx_hash(&desc),
-+				    pt);
-+}
-+
-+static const struct xdp_metadata_ops idpf_xdpmo = {
-+	.xmo_rx_hash		= idpf_xdpmo_rx_hash,
-+};
-+
- void idpf_xdp_set_features(const struct idpf_vport *vport)
- {
- 	if (!idpf_is_queue_model_split(vport->rxq_model))
- 		return;
- 
--	libeth_xdp_set_features_noredir(vport->netdev);
-+	libeth_xdp_set_features_noredir(vport->netdev, &idpf_xdpmo);
- }
- 
- static int idpf_xdp_setup_prog(struct idpf_vport *vport,
--- 
-2.50.1
+> Signed-off-by: Pierre Barre <pierre@barre.sh>
+> ---
+>  net/9p/client.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/9p/client.c b/net/9p/client.c
+> index 5c1ca57ccd28..f82b5674057c 100644
+> --- a/net/9p/client.c
+> +++ b/net/9p/client.c
+> @@ -230,7 +230,7 @@ static int p9_fcall_init(struct p9_client *c, struct p9_fcall *fc,
+>  		fc->sdata = kmem_cache_alloc(c->fcall_cache, GFP_NOFS);
+>  		fc->cache = c->fcall_cache;
+>  	} else {
+> -		fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+> +		fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+
+That would work with certain transports like fd I guess, but not via
+virtio-pci transport for instance, since PCI-DMA requires physical pages. Same
+applies to Xen transport I guess.
+
+>  		fc->cache = NULL;
+>  	}
+>  	if (!fc->sdata)
+> @@ -252,7 +252,7 @@ void p9_fcall_fini(struct p9_fcall *fc)
+>  	if (fc->cache)
+>  		kmem_cache_free(fc->cache, fc->sdata);
+>  	else
+> -		kfree(fc->sdata);
+> +		kvfree(fc->sdata);
+>  }
+>  EXPORT_SYMBOL(p9_fcall_fini);
+>  
+> 
+
 
 
