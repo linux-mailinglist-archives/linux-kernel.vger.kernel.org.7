@@ -1,153 +1,124 @@
-Return-Path: <linux-kernel+bounces-750532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD9AB15DB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99324B15DB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:59:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390DD3A1A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:56:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13850188E1C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:57:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 051C9277804;
-	Wed, 30 Jul 2025 09:56:35 +0000 (UTC)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C6D291880;
+	Wed, 30 Jul 2025 09:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CLM83OLe"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B654B1ACEDE;
-	Wed, 30 Jul 2025 09:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C2128BA8C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753869394; cv=none; b=eEc2l86Xe49WaKCYBwBYkhpfIWa+UoY5TxWYp5y7iGrU2J5O3Idt0RNnfWAXnghy5jU4Ch26Lye4nI4mtd0FHOT1D8Re1bhVLZnYxSlrZwYfGk6j1KJv+qR8aLyYiuKqRwTHskZolaHoPJLZWqQMlDOJicmpw8BcFkFefQq3W8s=
+	t=1753869402; cv=none; b=ZsisrtIkoEyrlNgfm8Gbcn3BTPj2ipLwTR4MppKU8mq5jt9gOTtY4jAKe6iyotxvWYV8BDK8RM4tuOysdt0y9JTCbeHgDWd7QQ+f6VtTLtq30PH3DSYn+HW1rSb2LRxjis5VkiqRAYZy+3M9FPDsYUPZEzxsmIp6HmNO8mmP8IM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753869394; c=relaxed/simple;
-	bh=h4QE5Qik/eRs2qOkqSaWcqVaq+Ol8rYWj1Hq3bUKEG4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KoEVqBzwMlTihbKsdS3Ti2wyV+Q+1yCFgZ/isQfbfcwXvwDhDyk/AKqu3s2s7Tv9WrCX5BJ/nGflpjy5dGE6BFGDF9F40ziOkMD+PU/M3j7/bbohZylKzArIUZHUioEYT7jx4wgjobn7jmAcnlyhSM87YSbHKmBwlxJEl0Rrx2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4e7fc3309f2so1908267137.2;
-        Wed, 30 Jul 2025 02:56:32 -0700 (PDT)
+	s=arc-20240116; t=1753869402; c=relaxed/simple;
+	bh=w9n3EYtiCtFMcllnFHfYMN0Nqed1svW0RYUrV62rBLk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MiHLZZOQOmSj8XQEWX32kg9RDxyrsbfk4ij5F+V+OHIypjFCpatnV+Ankx16VTBHdpmpKXjbWaa9kg+kND6UEwHO5RmacjGGaByHlivbwGV2UIW1O2+3kahe8A0BgwvOYpJPNbf8Ah/puBwEgdx4z9ePsh6BcR7RQ2QCuawKVbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CLM83OLe; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-b2c4e46a89fso5652035a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:56:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753869400; x=1754474200; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oK8H9rTrTInYv+JtHmq2H4dZt8ZSwYJYFJpg9TM/EIQ=;
+        b=CLM83OLeQJdYimUK7gIGq6u4bIyaxt9MBDf+Hfq1Kwp3w0b5Cv9AI+wmSth7YuZQhW
+         bkKbDp2ls4DMWLS4Zy8cBDK2ew0rFcMGhtGaO7BK5p6KD7NHIbqTNHtu++C2xqEwxD5l
+         NpQmrrLVYk6WlJPu7N0k37COzxmr2XwnjsZgk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753869391; x=1754474191;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=AISXCkdyfWizizwGG/lMEnAGITAartWfZjVCOPp8Btc=;
-        b=rJGgMqQU2yYjuAo55Qp9Uzzzrwq6O6oBqqGZH8Q0IvzIaCjXW3f0DMmIMQ/8uNR89b
-         CjlzVEJo7KoWJYfGA71O2hSKpqvRCsrg4lKbbqafOAvD+zZlWISNrQjumNUDz5hpHoFo
-         18xnRDBoSGRnW9/lYgX1ShoIgRCUFgEvegDumFco27KJiXI5W1724ex/ZdmLW1tO00YB
-         OjMD6aJWKGVXIb9mvy6lVE/Ccp1RT3IOLw0Nh9AB1VVPQwY8arv0p2+VZDqmG6dHzYDI
-         hLsvFdWJCGxm3TXg7NhlBDiMOR21jo7MQctqywWwdBgwUvkJ2mvDHPIOTfYYVaGFfFJo
-         WSsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1GQ69lyRE/s90o0YyP1G9M3OUWcKDnoOtOfQJMjugXPxbKv+vGmrp2hOd2ijb37peEqh0hNEIpetl1q+nl66a2uY=@vger.kernel.org, AJvYcCUKysKbI7caDBL3mC/A7QpUldWokY9InEfV+A3+tUeU/eLHp5ybgkc5YPFEqnq4hG4iklic0zFR89Q=@vger.kernel.org, AJvYcCXI8vPc/AjQUIIiH+TMysJlD+28p6NtEwFi46ywgsnzXc51BA3xBf5pV3xYc2IF+VN8plONOH7J9oprL/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyiAwHH1taDB0kdPhxqF6nMJl9DetEYRwBLIAkEGk5luYiIGOF
-	upFq0uP08gwEMSX5Y7g+xzMXppPjU4FY2rDDfrGPRye6TpDet2///17vHlfI159e
-X-Gm-Gg: ASbGncuiPRugzylunD9hxeRhzeWGm/DDH2Ob4AwxiPve6VfetZGuraybWSeROjuQ3EN
-	GnWwpCCkEGlG0BWyU9B4Zw+vBHNdx7HTSWX4Oe8Z+OVZKVeFhLZ/BHn7q/xt94hPWaeB5EZI7QX
-	Vkn7ON4l2pL0ufhEaAwtLB25ixkd0IJlwPdIAM86MJm48G43dZVAuxhvmeMO+tGskWOKl1jYRXO
-	cMVrczKGICsWzoh/nDy2yyKEfADSMS5qtJ/mlXoIj6P6QhaMitVWL6p89+uyPdifPR2dT85wSyG
-	n8r8Nks0RiZ0FTRuXY+ee/jWFi1x52Cn3pn5+TCxhu1tgR2skzASbg0W+/Y3CNfCm9ZnewqEGiV
-	O1wAsj90bliUV9AQNoNwi1jsVAtZtfwWgfhyi/M+oDcsZGKCX0fSSAGxCv7c9
-X-Google-Smtp-Source: AGHT+IGsULorRTe6vAGA4MMFatdhHfaW8cHQeGwpRlcYZeLlgexo++dF4pJnagGIhF1AdKEOdR89GA==
-X-Received: by 2002:a05:6102:3053:b0:4fb:142:f4d3 with SMTP id ada2fe7eead31-4fbe8910b7cmr1331479137.25.1753869391238;
-        Wed, 30 Jul 2025 02:56:31 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fa46d08f92sm1978484137.3.2025.07.30.02.56.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 02:56:30 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-884f7d29b85so1516442241.1;
-        Wed, 30 Jul 2025 02:56:30 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVLeCJhb3tHQxpWwe0zksb8WT1tQmv6lctnsd6iFHcIShqkCHB6C00N93syneDna+296qbpvAQ4/5ZUfxU=@vger.kernel.org, AJvYcCWe22A4ZUxeigMvGaBMgAu4VUNfAVFZyTiolm8K8s8xIvVU/eVoJqLycfmXYtPzWlRZMJxfjG+dVTE=@vger.kernel.org, AJvYcCXsEkgbhbt35OncxVvP31l7t8FTfGaI8d8XG5/NjtacPLLV3wSe18IMwzf5e5HH8oqA0xEs8vr5XA0PmZLZsiF99WI=@vger.kernel.org
-X-Received: by 2002:a05:6102:6488:10b0:4fb:f31a:98ce with SMTP id
- ada2fe7eead31-4fbf31a9e23mr303837137.6.1753869389838; Wed, 30 Jul 2025
- 02:56:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753869400; x=1754474200;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oK8H9rTrTInYv+JtHmq2H4dZt8ZSwYJYFJpg9TM/EIQ=;
+        b=XNrOBjRCUxf7ZgOzosNSPynO2j6T+bqCnQT3sly/gFoj9g03fTbzk6Fb8ryr85+OvR
+         f+l9LuGlRO5wBCZnVURDcZoCjmclIEH50tOSX1gVdX0s634aw7yMK4qyHaj06mNvj3J6
+         h4ZjcM1BP9tO7QQExOR3GClUM0cpXH9bwBCweSTi4Ep5/Db57yhk1Qq/2nuY1jTKFQuE
+         A9x8Sr9UhzNaU7BIvYfnSNu18C6IKSUDgGishs4T97UZITENHpK/nkQG0VciB0185rYM
+         An+AyWGR/tHTKmivmA9MlDjUoWPnPmwbVjP6PKow4Y4deCiHI7hDoNXU8dkJtqW3R/wq
+         +MPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVns9JnjEocgB3r6wE+SUuB0FR7M+bQZl4T/ZJGSp+zp2lifKB/YUjKZc2pe0D+CjfJYHlhZ6lg5GdBs74=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8foyRjxfOVhP6uESV+HrMrfut6qcKTC1j7hl12WmdBu6IzZGY
+	vY1WuReHBpwD75VKHObPavU+zjmbASRfNvtVTaYZB4iveZjm0vdq7Jazg0SrbbeZOg==
+X-Gm-Gg: ASbGncuJjX16/OJ1Uk1uqqRAh0sTlX1X54fZpVxb0Y2GsGtjWuiL01Z3FHaSpRXWdsV
+	Uq26tPXABg/SNLuI+IroIeJCoeiTOtHLNkLvGqahdEj8CS4R4cBGgJBE2FkI28SDiarWOZlEvbB
+	C0duVbrLe8KxDAX/vpY9nqA/XvP2KXBDIffjUVQcRyUwA1et0slvdFOAzKkIedEjk+R2sJm1bW+
+	Qx8XL1PUR9CKLcW7WGB0ek1cvSSYX6qyr50d7BDVkrQt08pJZfWunVMz5/d4uCUxhiy52b6lMLE
+	ju/9Pin1FZqjY0p4H5PyO1p3gI+QA/UxNAIIK9YPmHqdzA6S1hFBreqpCtmwlAxV8OQVQLa/YcC
+	LmNIDszbCAW48+5rGjF851O9A
+X-Google-Smtp-Source: AGHT+IG4vB1avAUYC4wg1+JU+WCH2gXrPKr2vD8piaxJZfPcdAAOSX4moxksL2HFhPdU/UH9e3DKHw==
+X-Received: by 2002:a17:90b:3a08:b0:31e:8203:4b9d with SMTP id 98e67ed59e1d1-31f5ea4cc0cmr3908356a91.29.1753869400218;
+        Wed, 30 Jul 2025 02:56:40 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:6490:361:df77:361d])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f2efd8b36sm2388240a91.1.2025.07.30.02.56.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 02:56:39 -0700 (PDT)
+Date: Wed, 30 Jul 2025 18:56:33 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Waiman Long <longman@redhat.com>, Joel Granados <joel.granados@kernel.org>, 
+	Anna Schumaker <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Yongliang Gao <leonylgao@tencent.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] hung_task: Show the blocker task if the task is
+ hung on mutex
+Message-ID: <oiyb3a2qmf4hgqfyoztipno3d6j22ew77s43adt4rfd6kqhqvn@pqzvbsxgj2cq>
+References: <174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com>
+ <174046695384.2194069.16796289525958195643.stgit@mhiramat.tok.corp.google.com>
+ <tfzs3z7yjs6ppobm53hxwjzhhptgq2aqc2obylblz5rk7mdstg@bkas4xcq66xk>
+ <20250730175150.af61caf3be97ef4cfbcc4da3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org> <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
-In-Reply-To: <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 Jul 2025 11:56:18 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
-X-Gm-Features: Ac12FXyBxoyf0eZjZq4tsf22xBIlBFOx02dopJh05JbQN3Bvqm8lfaYDOjqls6g
-Message-ID: <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
-Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730175150.af61caf3be97ef4cfbcc4da3@kernel.org>
 
-Hi Ulf,
+On (25/07/30 17:51), Masami Hiramatsu wrote:
+[..]
+> > Notice how each task is backtraced twice.  I wonder if it's worth it
+> > to de-dup the backtraces.  E.g. in
+> > 
+> > 	task cat:115 is blocked on a mutex likely owned by task cat:114
+> > 
+> > if we know that cat:114 is also blocked on a lock, then we probably
+> > can just say "is blocked on a mutex likely owned by task cat:114" and
+> > continue iterating through tasks.  That "cat:114" will be backtraced
+> > individually later, as it's also blocked on a lock, owned by another
+> > task.
+> > 
+> > Does this make any sense?
+> 
+> Hrm, OK. So what about dump the blocker task only if that task is
+> NOT blocked? (because if the task is blocked, it should be dumped
+> afterwards (or already))
 
-On Wed, 9 Jul 2025 at 13:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Tue, 1 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > Changes in v3:
-> >         - Added a couple of patches to adress problems on some Renesas
-> >         platforms. Thanks Geert and Tomi for helping out!
-> >         - Adressed a few comments from Saravanna and Konrad.
-> >         - Added some tested-by tags.
->
-> I decided it was time to give this a try, so I have queued this up for
-> v6.17 via the next branch at my pmdomain tree.
->
-> If you encounter any issues, please let me know so I can help to fix them.
+Yes, I think this is precisely what I tried to suggest.
 
-Thanks for your series!  Due to holidays, I only managed to test
-this very recently.
-
-Unfortunately I have an issue with unused PM Domains no longer being
-disabled on R-Car:
-  - On R-Car Gen1/2/3, using rcar-sysc.c, unused PM Domains are never
-    disabled.
-  - On R-Car Gen4, using rcar-gen4-sysc.c, unused PM Domains are
-    sometimes not disabled.
-    At first, I noticed the IOMMU driver was not enabled in my config,
-    and enabling it did fix the issue.  However, after that I still
-    encountered the issue in a different config that does have the
-    IOMMU driver enabled...
-
-FTR, unused PM Domains are still disabled correctly on R/SH-Mobile
-(using rmobile-sysc.c) and on BeagleBone Black. Note that these use
-of_genpd_add_provider_simple(), while all R-Car drivers use
-of_genpd_add_provider_onecell().  Perhaps there is an issue with
-the latter?  If you don't have a clue, I plan to do some more
-investigation later...
-
-BTW, the "pending due to"-messages look weird to me.
-On R-Car M2-W (r8a7791.dtsi) I see e.g.:
-
-    genpd_provider ca15-cpu0: sync_state() pending due to e6020000.watchdog
-    renesas-cpg-mssr e6150000.clock-controller: sync_state() pending
-due to e6020000.watchdog
-
-ca15-cpu0 is the PM Domain holding the first CPU core, while
-the watchdog resides in the always-on Clock Domain, and uses the
-clock-controller for PM_CLK handling.
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+I'm not saying that we should fix it, I just noticed that while looking
+at some crash reports I found this
+   "wait.. how is this possible... aah, same PID, so I saw that
+   backtrace already"
+a little inconvenient.
 
