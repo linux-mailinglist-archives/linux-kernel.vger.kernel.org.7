@@ -1,159 +1,205 @@
-Return-Path: <linux-kernel+bounces-751395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF3CB1691B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:41:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08E7B1691C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE00F3A8996
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:41:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8A8256841D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F97233158;
-	Wed, 30 Jul 2025 22:41:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3D55233728;
+	Wed, 30 Jul 2025 22:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOE1BIb5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="laJmeKBP"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FA81FC0E6;
-	Wed, 30 Jul 2025 22:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F331F4C90
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 22:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753915308; cv=none; b=JViWLpY4uYZSjSQI0ghI/4fXrun9J8dPHS3d5XaLffALgxTQQS7Y6TOn1Z9+4X/XuizzuaW94rJ0dH3o9dniYlnB78MNN2LGTupzk/abuz73K3k0LUYmKR6ItJmKrsLWxc1tk43/gI9cUlUcPHOqRgW00ONGnV0zSqFwdKx8IPw=
+	t=1753915487; cv=none; b=EdaU3Ly0pPXF1WXakW1+XKV/eVGdeNoKhO7NCC85HHaFZ7KOgmBWqVi4qAE90X8vJSnKUs6AnOnCgET9LBF08+Df4TpaxVpxueTRysznaT7hdR8GjhPnKUSLggZGLpNar4lnCGztZ7X0jpXoXnWuYCWCkOm7hwY1Q6FwJKeUaKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753915308; c=relaxed/simple;
-	bh=GWaDf3adn+wN1fKBXt2Ts7vvMaetMJXms4RCI3IHYUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iy3QTVLVgd1fuv5RJfFEzTwBZO9T2/vq74wOIXxbLDvf/OQUZOL/1wDxIo0lPCcSiofpUF2yKjziDgJ5rj2oAYZmCOLqfSBzGIK1nlGmQBzaGT8ym1CEKgiVL+PsAjVdUJ3GQSW6nmrcOJC4Xk5ogqWiUIOtGLL/juOUTf1SANw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOE1BIb5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F87C4CEE3;
-	Wed, 30 Jul 2025 22:41:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753915308;
-	bh=GWaDf3adn+wN1fKBXt2Ts7vvMaetMJXms4RCI3IHYUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YOE1BIb5RrLaijIXCXMec2ww8/iSXQlF6La+cvZddui90k9ts4RBQQumjPHBWBXlS
-	 BWZ86NRIu4gm5jY9SFjsA7AVcVGDjoX6/LthdzMfFnlGkU5uUH55arGrQUTff5sFG8
-	 dGD4UBgUJPQXadeXI3mId8fpOfopeeXo1xKdklYRA7Lf9Vdy89TDMKP4Rps32VZySc
-	 65jy32t2vOx14v2qsycq/eSzCmm4UXC3eYNukHBVdxjH74HKuaAnKRDJoMIowdd6xz
-	 8wpB++/EXaykQMx1a3DgCnuYdg6EeWN3/7UUT5v1/iWFh/Mg7ZN/XUgmqiJsCEuRwQ
-	 TkbUrgeXdkRFw==
-Date: Wed, 30 Jul 2025 17:41:42 -0500
-From: Rob Herring <robh@kernel.org>
-To: Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
-Cc: m.szyprowski@samsung.com, robin.murphy@arm.com, saravanak@google.com,
-	quic_obabatun@quicinc.com, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	william.zhang@broadcom.com, kernel@oss.qualcomm.com,
-	will@kernel.org, djakov@kernel.org
-Subject: Re: [PATCH v3] of: reserved_mem: Restructure call site for
- dma_contiguous_early_fixup()
-Message-ID: <20250730224132.GA1822233-robh@kernel.org>
-References: <20250730002956.1812694-1-oreoluwa.babatunde@oss.qualcomm.com>
+	s=arc-20240116; t=1753915487; c=relaxed/simple;
+	bh=plnA5GPYRADuDvOFCrwy5MjhmaBZB11lrvEEaNu+2hE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=GMAE5nROHmEqeSKxoidyjSdXxDv5G8RVn6bninB3MeS7IylwwWVks90NIpYxU3DJeycGeivfNsLAyerKGLTa+Hud3ObDhnbxwiFyX3kUrr06UapontZi7EumlsugZomU8NK84+WfV7cBprMHpcLU3tHAmv7cc6fcZGlmtJiDZjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=laJmeKBP; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74ae13e99d6so1061544b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 15:44:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753915485; x=1754520285; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ECWzv5e2xsuSDiY8UbhBmnQ0CYKWUYp4TIAX7WJgUDc=;
+        b=laJmeKBP3wGNohGGFhlv/5FtOURHMU50gIp8PIvevwm1QjkO5asRsRxS8XlE8p5rDM
+         aQbkh+LEzSsHOYH7WEVAHlgGfV2v6z/jPGveO1iWQ7ndWz1DbGASTjW9kkMmjLKt1EBB
+         g+/ntVfgX3NtYbC30kSTwyKSmnKwu3EH2XORHg8SJc6e+p7SlLToCGjCUPY9JAK3eeMx
+         4MAm6yE9bBa0K+f241MUjjJbEW4tNMAeIDMujiqDGb3d/dN8G9Y5zppP0RQZv07cBvx3
+         H7TLg0fBfB9sAHuc7krZn+3pueFcD9sP3+ILbVXEJiXz0g7a593dSce8tYUJvizGRYiF
+         /pBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753915485; x=1754520285;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ECWzv5e2xsuSDiY8UbhBmnQ0CYKWUYp4TIAX7WJgUDc=;
+        b=tMluEHX0zj/B5ZP+It95rhW6VXiejl1bMGF8z1z6CU8VSNzR7sQe9/9uxQnfIyhTa5
+         QpQFR/fx7UNVWePVTsWD9iF25q/ARp8iTa8G13+IDmaw6HxCQAlM93gTJKYOaIBEZ3ww
+         ORBB8+hMu3W9piZavdtQMF+yh1D6i3HSz/IxdARsdzB2CYmug+0ylX606cFnGq6t64Kw
+         OujnqMdHKzShTxkaEq0lzmGX8HHHSsHWXvS7JAVmL0SSn1IXqXkZkJ/utrXCH0nTx1v6
+         jLwaBCT/HurTpRrS62IF0y940ucn7bPCMRio9wW8Fb6ZwqQqw4gI0pyR7+iW+lDHzxRZ
+         kVPw==
+X-Forwarded-Encrypted: i=1; AJvYcCX+sXrBauFquVKNWF3PHQpAqksdygqnC88pGdevT7liOfSDfQu4SKK8ScjX0n0dqS8hTPaj9ws0gj5C1Lk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7gbrL2OrQNepZhNbvsRG+kmRsqpJrw5uudtgbnI+lMED7RrPX
+	dk/GA7KVi0A5BzUJ3QBOfvPRV+F2Z9R0zf03K1ws9m2573r/XDZu5dLRldSOiEfzhraC7YqfDyh
+	dhMAti7tabwOjc8APedfy7qedOA==
+X-Google-Smtp-Source: AGHT+IG2jrN7LcvgIWrJ4pHg8D4X2boCwV7dmSEgcVYsZ4qFvdN8Q5fmxfreX5UVqZROCmx2pQYYvC5DyR2A5cxeKg==
+X-Received: from pfoo1.prod.google.com ([2002:a05:6a00:1a01:b0:746:21fd:3f7a])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6a21:47c7:b0:23d:c7aa:a6f0 with SMTP id adf61e73a8af0-23dc7aaa79dmr5184186637.22.1753915485016;
+ Wed, 30 Jul 2025 15:44:45 -0700 (PDT)
+Date: Wed, 30 Jul 2025 15:44:43 -0700
+In-Reply-To: <diqzwm7pjrbf.fsf@ackerleytng-ctop.c.googlers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730002956.1812694-1-oreoluwa.babatunde@oss.qualcomm.com>
+Mime-Version: 1.0
+References: <20250729225455.670324-1-seanjc@google.com> <diqzwm7pjrbf.fsf@ackerleytng-ctop.c.googlers.com>
+Message-ID: <diqztt2tjo2s.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [PATCH v17 00/24] KVM: Enable mmap() for guest_memfd
+From: Ackerley Tng <ackerleytng@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Ira Weiny <ira.weiny@intel.com>, Gavin Shan <gshan@redhat.com>, Shivank Garg <shivankg@amd.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	David Hildenbrand <david@redhat.com>, Fuad Tabba <tabba@google.com>, Tao Chan <chentao@kylinos.cn>, 
+	James Houghton <jthoughton@google.com>, Jiaqi Yan <jiaqiyan@google.com>, vannapurve@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 29, 2025 at 05:29:56PM -0700, Oreoluwa Babatunde wrote:
-> Restructure the call site for dma_contiguous_early_fixup() to
-> where the reserved_mem nodes are being parsed from the DT so that
-> dma_mmu_remap[] is populated before dma_contiguous_remap() is called.
-> 
-> Fixes: 8a6e02d0c00e ("of: reserved_mem: Restructure how the reserved memory regions are processed")
-> Signed-off-by: Oreoluwa Babatunde <oreoluwa.babatunde@oss.qualcomm.com>
-> Tested-by: William Zhang <william.zhang@broadcom.com>
-> ---
-> v3: Wrap the call to dma_contiguous_early_fixup() with a check for
->     CONFIG_DMA_CMA to fix compile error seen on x86. The __weak function
->     definition introduced in v2 was not sufficient to prevent the issue,
->     so remove that as well.
->     Also add Tested-by tag from William Zhang.
-> 
-> v2: Add a check for the "reusable" property to narrow things down to
->     only cma regions.
->     Also add __weak function definition for dma_contiguous_early_fixup()
->     to avoid compile errors on architectures that do not define the
->     function.
-> 
->  drivers/of/of_reserved_mem.c | 20 ++++++++++++++++----
->  kernel/dma/contiguous.c      |  2 --
->  2 files changed, 16 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
-> index 77016c0cc296..cfffecb91c3a 100644
-> --- a/drivers/of/of_reserved_mem.c
-> +++ b/drivers/of/of_reserved_mem.c
-> @@ -25,6 +25,7 @@
->  #include <linux/memblock.h>
->  #include <linux/kmemleak.h>
->  #include <linux/cma.h>
-> +#include <linux/dma-map-ops.h>
->  
->  #include "of_private.h"
->  
-> @@ -175,13 +176,19 @@ static int __init __reserved_mem_reserve_reg(unsigned long node,
->  		base = dt_mem_next_cell(dt_root_addr_cells, &prop);
->  		size = dt_mem_next_cell(dt_root_size_cells, &prop);
->  
-> -		if (size &&
-> -		    early_init_dt_reserve_memory(base, size, nomap) == 0)
-> +		if (size && early_init_dt_reserve_memory(base, size, nomap) == 0) {
-> +			/* Architecture specific contiguous memory fixup. */
-> +#ifdef CONFIG_DMA_CMA
-> +			if (of_flat_dt_is_compatible(node, "shared-dma-pool") &&
-> +			    of_get_flat_dt_prop(node, "reusable", NULL))
-> +				dma_contiguous_early_fixup(base, size);
-> +#endif
+Ackerley Tng <ackerleytng@google.com> writes:
 
-Add a static inline for dma_contiguous_early_fixup() instead of having 
-an #ifdef.
+> Sean Christopherson <seanjc@google.com> writes:
+>
+>> Paolo,
+>>
+>> The arm64 patches have been Reviewed-by Marc, and AFAICT the x86 side of
+>> things is a go.  Barring a screwup on my end, this just needs your approval.
+>>
+>> Assuming everything looks good, it'd be helpful to get this into kvm/next
+>> shortly after rc1.  The x86 Kconfig changes in particular create semantic
+>> conflicts with in-flight series.
+>>
+>>
+>> Add support for host userspace mapping of guest_memfd-backed memory for VM
+>> types that do NOT use support KVM_MEMORY_ATTRIBUTE_PRIVATE (which isn't
+>> precisely the same thing as CoCo VMs, since x86's SEV-MEM and SEV-ES have
+>> no way to detect private vs. shared).
+>>
+>> mmap() support paves the way for several evolving KVM use cases:
+>>
+>>  * Allows VMMs like Firecracker to run guests entirely backed by
+>>    guest_memfd [1]. This provides a unified memory management model for
+>>    both confidential and non-confidential guests, simplifying VMM design.
+>>
+>>  * Enhanced Security via direct map removal: When combined with Patrick's
+>>    series for direct map removal [2], this provides additional hardening
+>>    against Spectre-like transient execution attacks by eliminating the
+>>    need for host kernel direct maps of guest memory.
+>>
+>>  * Lays the groundwork for *restricted* mmap() support for guest_memfd-backed
+>>    memory on CoCo platforms [3] that permit in-place
+>>    sharing of guest memory with the host.
+>>
+>> Based on kvm/queue.
+>>
+>> [1] https://github.com/firecracker-microvm/firecracker/tree/feature/secret-hiding
+>> [2] https://lore.kernel.org/all/20250221160728.1584559-1-roypat@amazon.co.uk
+>> [3] https://lore.kernel.org/all/20250328153133.3504118-1-tabba@google.com
+>>
+>> [...snip...]
+>
+> With this version, when guest_memfd memory is mmap-ed() and faulted to
+> userspace, when there's a memory failure, the process does not get a
+> SIGBUS. Specifically, this selftest fails with "MADV_HWPOISON should
+> have triggered SIGBUS."
+>
+> diff --git i/tools/testing/selftests/kvm/guest_memfd_test.c w/tools/testing/selftests/kvm/guest_memfd_test.c
+> index b86bf89a71e04..70ef75a23bb60 100644
+> --- i/tools/testing/selftests/kvm/guest_memfd_test.c
+> +++ w/tools/testing/selftests/kvm/guest_memfd_test.c
+> @@ -70,6 +70,10 @@ static void test_mmap_supported(int fd, size_t page_size, size_t total_size)
+>  
+>  	ret = munmap(mem, total_size);
+>  	TEST_ASSERT(!ret, "munmap() should succeed.");
+> +
+> +	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0,
+> +			total_size);
+> +	TEST_ASSERT(!ret, "Truncate the entire file (cleanup) should succeed.");
+>  }
+>  
+>  static sigjmp_buf jmpbuf;
+> @@ -104,6 +108,47 @@ static void test_fault_overflow(int fd, size_t page_size, size_t total_size)
+>  
+>  	ret = munmap(mem, map_size);
+>  	TEST_ASSERT(!ret, "munmap() should succeed.");
+> +
+> +	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0,
+> +			total_size);
+> +	TEST_ASSERT(!ret, "Truncate the entire file (cleanup) should succeed.");
+> +}
+> +
+> +static void test_memory_failure(int fd, size_t page_size, size_t total_size)
+> +{
+> +	struct sigaction sa_old, sa_new = {
+> +		.sa_handler = fault_sigbus_handler,
+> +	};
+> +	void *memory_failure_addr;
+> +	char *mem;
+> +	int ret;
+> +
+> +	mem = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0);
+> +	TEST_ASSERT(mem != MAP_FAILED, "mmap() for guest_memfd should succeed.");
+> +
+> +	memset(mem, 0xaa, page_size);
+> +
 
->  			pr_debug("Reserved memory: reserved region for node '%s': base %pa, size %lu MiB\n",
->  				uname, &base, (unsigned long)(size / SZ_1M));
-> -		else
-> +		} else {
->  			pr_err("Reserved memory: failed to reserve memory for node '%s': base %pa, size %lu MiB\n",
->  			       uname, &base, (unsigned long)(size / SZ_1M));
-> +		}
+My bad. If the above was changed from page_size to total_size, the page
+would have been faulted in, and then we get a SIGBUS.
+
+> +	memory_failure_addr = mem + page_size;
+> +	sigaction(SIGBUS, &sa_new, &sa_old);
+> +	if (sigsetjmp(jmpbuf, 1) == 0) {
+> +		madvise(memory_failure_addr, page_size, MADV_HWPOISON);
+> +		TEST_ASSERT(false, "MADV_HWPOISON should have triggered SIGBUS.");
+> +	}
+> +	sigaction(SIGBUS, &sa_old, NULL);
+> +
+> +	ret = munmap(mem, total_size);
+> +	TEST_ASSERT(!ret, "munmap() should succeed.");
+> +
+> +	ret = fallocate(fd, FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE, 0,
+> +			total_size);
+> +	TEST_ASSERT(!ret, "Truncate the entire file (cleanup) should succeed.");
+>  }
 >  
->  		len -= t_len;
+>  static void test_mmap_not_supported(int fd, size_t page_size, size_t total_size)
+> @@ -286,6 +331,7 @@ static void test_guest_memfd(unsigned long vm_type)
+>  	if (flags & GUEST_MEMFD_FLAG_MMAP) {
+>  		test_mmap_supported(fd, page_size, total_size);
+>  		test_fault_overflow(fd, page_size, total_size);
+> +		test_memory_failure(fd, page_size, total_size);
+>  	} else {
+>  		test_mmap_not_supported(fd, page_size, total_size);
 >  	}
-> @@ -472,7 +479,12 @@ static int __init __reserved_mem_alloc_size(unsigned long node, const char *unam
->  		       uname, (unsigned long)(size / SZ_1M));
->  		return -ENOMEM;
->  	}
-> -
-> +#ifdef CONFIG_DMA_CMA
-> +	/* Architecture specific contiguous memory fixup. */
-> +	if (of_flat_dt_is_compatible(node, "shared-dma-pool") &&
-> +	    of_get_flat_dt_prop(node, "reusable", NULL))
-> +		dma_contiguous_early_fixup(base, size);
-> +#endif
->  	/* Save region in the reserved_mem array */
->  	fdt_reserved_mem_save_node(node, uname, base, size);
->  	return 0;
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index 67af8a55185d..d9b9dcba6ff7 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -483,8 +483,6 @@ static int __init rmem_cma_setup(struct reserved_mem *rmem)
->  		pr_err("Reserved memory: unable to setup CMA region\n");
->  		return err;
->  	}
-> -	/* Architecture specific contiguous memory fixup. */
-> -	dma_contiguous_early_fixup(rmem->base, rmem->size);
->  
->  	if (default_cma)
->  		dma_contiguous_default_area = cma;
-> -- 
-> 2.34.1
-> 
+>
+> Is this by design or should some new memory_failure handling be added?
 
