@@ -1,270 +1,199 @@
-Return-Path: <linux-kernel+bounces-750190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E2FB15867
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:12:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F5DB1586A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:16:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21FAA3BE575
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:12:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4288018A535D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C921E32B9;
-	Wed, 30 Jul 2025 05:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A792D1E5711;
+	Wed, 30 Jul 2025 05:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sAPZSXOt"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2050.outbound.protection.outlook.com [40.107.223.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vg2RwPmn"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D25A15AF6;
-	Wed, 30 Jul 2025 05:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753852338; cv=fail; b=krQJcjLFdo/cCJ7G50cNEboR37eAAWajCMIJ5El3SHG3zQ2nHwyd/XUbk2pwXW83yIi14b5Lxf0obRmgITTbp2HOBPpiesBJaS43o7qsxOSvgumh4saobkKaTj/3qsi6xzm64enEHL45V+0H1J7W38XsNRufkWLyynqNXU8Faq8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753852338; c=relaxed/simple;
-	bh=U66RslzH+ISZJYfFfQ9yxZaEoR0froaCh37tacp+Z7c=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VRo5iUlwWpUrkhI1T0z2UKFyzH4aT2H0h26HUaV1htzb9F18RQL9I8RvrUiJLEvCETpiARkNcn12xD1mShEl4lPmZCBjE8UThmURwENiN0zPoVMazm7NaokVc/cWErxxAgv+5ryqiitN4OXKGRJCkLPJpSWUQLgtkhQvPDBWPpU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sAPZSXOt; arc=fail smtp.client-ip=40.107.223.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S7V+SbftlavNf4R6uAZoJiRT5x6CxvsetMGxn0DMt8xrm8d+f4GAacaAGYGk9Bxg3nhgD31u2Drfa+vNscVt5eMi1XCctX+3iPoWfmKR+YWRlPRScKsV50lJ5W67mMWC5A9ldQjGzZUSP8vkATlytqTCLMSlasOmLgsXu62fG0N98GTN/mHA9zXgk46IoKpSZMw6u3LJPl0fIfHedKSoJsrGYi3jpD0qCBoKRyCvmJ+xsfIoXNZaHYMkYzLfiMX2f8AOFeot4mqpjlGjaXTFvwI3F1FGqiyg5iTvL+ZlpOGhwSwp1JWU5wx0fRk5u95E+8Fa9MyVFRPzly2oR016mQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0dUaCroVle60YM4yzf5FesD/djAS66r+pYhXiLiZ8J8=;
- b=QzJcGVBcBTUi87vq7MEYrvsPnrJyn/LSMbrsK4FelPbGSw1soDgkBGZDvOjKVQlu1VmymFO5FrU4lSLQYUmnURJZoqbdKK/lcQMXOu1Esg5jaxRODZ3EpSiEz6j1c8Jpeb1dZ67VTLaYU5LjnJQQw/cWtGueSxfLTtdHZYt2GpLvwUJhwtIGE9s4ZBi05fxUyzJkKdTnke6g4OrUSDnefvDfF4uIt8ao1ktvPKkF7iorfGGJjWv/7sM0orNJj2RloqCNLj/x7D5ZFhC7RuY25C3LJA2poHMNCJG7LGiSIeZZy3x+m6KfJ6O5kHYLS005NZiQM3/VrdIySSiTGXxCxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0dUaCroVle60YM4yzf5FesD/djAS66r+pYhXiLiZ8J8=;
- b=sAPZSXOtpAn6sBUYltqdqQRiCryPJGuwfgZkGl9lTE6i5cIHIIsNL3lgoYxrhhcGoivM2LokvnSnYaqf29i0Zk4WPuprlmEaw9UGsSTGKdAB40ge7f57FsbHgCnJbMezEOpfd5RWoQ63VIdzFfIJAbIjEuGxqSBeglUTXh0oZ2c=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA1PR12MB9064.namprd12.prod.outlook.com (2603:10b6:208:3a8::19)
- by IA4PR12MB9763.namprd12.prod.outlook.com (2603:10b6:208:55a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Wed, 30 Jul
- 2025 05:12:14 +0000
-Received: from IA1PR12MB9064.namprd12.prod.outlook.com
- ([fe80::1f25:d062:c8f3:ade3]) by IA1PR12MB9064.namprd12.prod.outlook.com
- ([fe80::1f25:d062:c8f3:ade3%5]) with mapi id 15.20.8964.019; Wed, 30 Jul 2025
- 05:12:14 +0000
-Message-ID: <1d64b342-2ec2-b3ed-c341-9c05d36bcbef@amd.com>
-Date: Wed, 30 Jul 2025 10:42:04 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v4 14/14] RDMA/ionic: Add Makefile/Kconfig to kernel build
- environment
-Content-Language: en-US
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: allen.hubbe@amd.com, nikhil.agarwal@amd.com, linux-rdma@vger.kernel.org,
- netdev@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, shannon.nelson@amd.com, brett.creeley@amd.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, jgg@ziepe.ca, corbet@lwn.net, leon@kernel.org,
- andrew+netdev@lunn.ch
-References: <20250723173149.2568776-1-abhijit.gangurde@amd.com>
- <20250723173149.2568776-15-abhijit.gangurde@amd.com>
- <62345993-46bb-48d9-853b-09a82b03edaf@infradead.org>
-From: Abhijit Gangurde <abhijit.gangurde@amd.com>
-In-Reply-To: <62345993-46bb-48d9-853b-09a82b03edaf@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PR01CA0044.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:98::21) To IA1PR12MB9064.namprd12.prod.outlook.com
- (2603:10b6:208:3a8::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E481E570D;
+	Wed, 30 Jul 2025 05:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753852569; cv=none; b=oGd8Wo0xYUTt9fdy0DKeFrJGm9+kn3yip2mJUlOgl3Ejm7Xodf86h7pVy48L/erkTwsDnTS7GSKVtg877GH8YDwD1iv7eR/TehS39pWmkD/LYN92H37ou+iCYNIDGUbLWw3YU5eOj0VBBQDDIlvSunavgZurxDVsAsEUrtRdUCc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753852569; c=relaxed/simple;
+	bh=v38Oh17/JGHcivGVKy2sckjh/J/d77DhoOF+ja2ZXG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iTx4v/l9KIMo6lqpkOjicf9kvmb9BppPkoQQKQyYmKut8wr7eq8mfuMMNfRGPCekn1mhueoqJ6ao0NhCOXlaGEP+VUgdrTTAOnnSla2KIc9PxjnZHXWIgilxNi0nSCfhtZ7e1caTbitbFQTCvYkp+4Gj2Mt3HuOc4x4qGexmTVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vg2RwPmn; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-24003ed822cso20796435ad.1;
+        Tue, 29 Jul 2025 22:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753852566; x=1754457366; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G9Fh26bF3MqXUV2HfzEAs7u0sxYZEa/PtdeN7DPnQSI=;
+        b=Vg2RwPmnONaz2MTVjRahVX27UH4l94kv/eFMcIVKmSFF4X1laW6xSWFw6iippxANbk
+         +CNRHakUMjWB7YBDJvL2C7PK2e1xMlhs2SVyfOtEQBBxaOL5DLsVvypjdJr4KYDC05hG
+         ZOn+O6jtLe1Uc6mgtnDgCtdISGgj2iu4cMy5uB0fAzAuBplPPGnAHHPRHVnyjqZUgyW8
+         UnqEpG+rNrZYbD+Gz9woRh6KJW4Y01nwLP28Np9cBEYelVODgOuOK+Dex+8lZhxLuAWO
+         +9rhD5UrsY5oJN30MKLCr7XNORNUxRoJGYjqU50/cUexmiDJD4CWfDtj2cTEaQluAprh
+         IVhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753852566; x=1754457366;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G9Fh26bF3MqXUV2HfzEAs7u0sxYZEa/PtdeN7DPnQSI=;
+        b=WfPuM05fw9Ig6mKN+j9WvcRtfohT5gRUlF246sMF6eI6FzlatN1OvSnpSiSUyeUh5t
+         8soL/hYWuJSjk9OG3gEJU2UGnyAEF71OfM9r54piqhmwxcCpGihOED61wuQzo5d/8KYe
+         PBgjrM7O8D+MT5eR72MUc2rTLO3zYtbN/1TOcThh940SZwJC95kxXusa9BqctJFI7BJy
+         rsJIUJQle92c7f/YhFxpbM7ll5X9nbEOFLU1nd6Rl+leroxODA/CecePD+we/pWFg5I3
+         3D/bvKsyTgYk2S4Qu9VbsvbMLCkzojv/5th0FIuyPaFVPoxX2pN7edYjgmOCFr51xyPm
+         pmgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxWblbPe4TOvnQqzFbp8h701xUMz9HOi1vUJr7/jKzRpRLmbaA6UcZ0qx1xl26qtc4CrX//vUgKq5DfqjR@vger.kernel.org, AJvYcCWxY9W+qVn9frJMTmXutWFcQiQgtv2u5QJCepInYn0R/Ijv8cFWvzaIIxd1OwWc8zrMLG6HCKCQ22bWf10=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOwIJjGU89QiYw9eGlrQPd23JxpFEzi1pZV+OmxWS4iM+vWQQG
+	AjZp5Jp/AOr0AlgsNu9XR0nWqE6yOOHZ3U2qeSCu34TxOjWLyKXZ3YWLCmKLeAesZzEcvhN7/h6
+	CiaRGn9wFusDRbuiRJebk114fmJe0d9Q=
+X-Gm-Gg: ASbGncttzh6lu22KGLZrF9rRMC7YH3AtVmTWTzBkvUwpoiln/1TfeE6hs/uxybS2VgK
+	BExahhTrRfDnpYMw9Mi29U3bX3JARPO0X1834vErN2Zc3PjOnJ6BPc64UgPSt5wMUwDFbVVG+oR
+	p8BDzGisezUlWYKiQU4INwXDaDKdsAfIUZP/sTOb/xJNs8x5xKN7Iu6evi6EJrukC2vjvDR+zcj
+	deCKAntv8f9+ns=
+X-Google-Smtp-Source: AGHT+IGKtD4/8mznHqLoyCqAkND0AGIztHq7zkuhlt3Y85XcG+oqruiwYehE/DG8LdT/Ctb2AUwL5+agKkCc0A2Aab4=
+X-Received: by 2002:a17:902:ce05:b0:240:763d:e999 with SMTP id
+ d9443c01a7336-24096b17733mr35400965ad.29.1753852565757; Tue, 29 Jul 2025
+ 22:16:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB9064:EE_|IA4PR12MB9763:EE_
-X-MS-Office365-Filtering-Correlation-Id: 74e1da09-edfc-4e57-ef6d-08ddcf27a53f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SERqdHRPeWtabVRYR3J5SE9NRWxkWVBWeWFTeGV4dlNFaEJXZHFXKzk3R3BM?=
- =?utf-8?B?UWNhZkV6Y3FnVmp2Y0tkOVhoWTZKVC82NkJEREF1L2RNcDJ0b29Ic1oxSU83?=
- =?utf-8?B?SWVrNjlEcithLzc4MWU2WnBiYUl3T0tIOGY1dUI5bHdGQ2pjRG9Ma3pvU2JT?=
- =?utf-8?B?WHdaKzhqZGJPUm5lRzRLVkpMR2E3bE5VclR5cElwbVRqdXJKWjRtdEFQVzdU?=
- =?utf-8?B?MWZoR2NRSDZFTVRtdllHSzFZb3pTS0c4QTRTZXNjZm4zKzd2enFaZXRjVlV6?=
- =?utf-8?B?Vm5xUW14VGNkOHhQdXlPa2Z4VktnUXJORlVCd2ZWQ2JrbmFqQ3c1Sm0zWXB0?=
- =?utf-8?B?aEJ5cWVsU2E0c2tEWENhaTNmb1RLM2tUQnJnQWtPejZNeS9IK2xySVlVcndX?=
- =?utf-8?B?MzFkM2JvaVZHR3dMcEo1YkVFaHhoM3ZuNyt1S0l5disyZ3NHQ1o0UlVCMzFZ?=
- =?utf-8?B?bndUakJmMHdqZldPRnloSTNsdXVaKzRucTFLclB3YTh5WlY4RldBcHJ1Q2Vu?=
- =?utf-8?B?TlVSazc0ZHNZOWFDcW9CUnNKQ1pxNlZ3Ykwrc0RnNGZBVUZpQVcvdEZaSkFD?=
- =?utf-8?B?MFhpNVpsTjd6dzRnSk8xWnFwSVNVTUIxd0kxSm84UTNsT2Y3MTlCTkJZQnpH?=
- =?utf-8?B?OTM4RkNBVldLTTlHNElDbjBvNGlDb0FpRWN1R1IyVVN1RUFlZ1krSmltTzF6?=
- =?utf-8?B?bGtPZ2s0OVg4U3gyV3Ria3NtdkFMclo3SDdySzNoeVVwRFFoZzBvalI4NUJ2?=
- =?utf-8?B?R2xBM2N6K2VBVSt0TitWQmJqWmxUQWliS1hVQzErelJwTlI2SWpSQWJDVm1W?=
- =?utf-8?B?WC8wcFlwVkVJc0NOVEFBeWZIVGFaM1FPclIzcCs1OXdYbDV3TVRtNWwxaVlQ?=
- =?utf-8?B?b0JZbkorWDdiQ1RINWxPVnNDWDhhU21LVEFvejA0dmRYQS93Ujd2QnFPNkZp?=
- =?utf-8?B?ZzcvT2pFN3Rqek1kMFI1QytIMGpnTWJWZ1RBUWp6d3FjSlVmUWtDaDd0d2Vw?=
- =?utf-8?B?dHVEMkVIcHpZQWRoNmwvQ2tacVJLYjRVaisrZWQ3aDRGQ0NxN0ZaSVI3SWYz?=
- =?utf-8?B?UXdQbm5SKzdFZmRmb2diVWdlZ1E5Q2VxTE43SnBpQi9YdDh3bDlkenh1Vy8v?=
- =?utf-8?B?VnBFeDZKaStCTVRTdlIvcmRDS0pjdXdNSDVkL2JKSTdhS3BFelZnc21jTlhv?=
- =?utf-8?B?NFVOQ1BhUjVqM2VHamdielZVMGJNNVMyZDVWemNtVGZZaFNENG1sb3ZhR282?=
- =?utf-8?B?VXg5R0dibHJHYVNrZTFENUZLTURteWdPbGxodHgwaUh4L1BwWHZBVFY3dmoz?=
- =?utf-8?B?MzVQR0FRVjIwamhPd3cxaDVjQVZ4Y1M0QU9QOGNSb1dXbGxTRXQxZGRYOHVI?=
- =?utf-8?B?S1dzbHpFYXQ1cFBUTFErRXQ1SEtUYU84VlBSSDZHUi94YlUvRTRIOWlmWmdS?=
- =?utf-8?B?eE0vYWI4QmNVNlRCTnVGQXV5clhHd3YxeUlxS1BrL2hrbkt4ZUNPNWVGRUg0?=
- =?utf-8?B?VGpod3dibURkelhrU3ZmdGYyZmdwVEUwbUlzTE5QUHZWek5LbzFHUkt0YXAv?=
- =?utf-8?B?ZXptNVJWWkRWNEF3RnlXaHNVT3IvN0pkUGlieUNVcjdEb01RNW9JWVJsWlFl?=
- =?utf-8?B?UDVMTnVLWHFFMmhDMkFoQXRnSERyVGhnc1o5eTNmbVhBUHM2RG5JSThYSFBI?=
- =?utf-8?B?VnhZd0JIMjJoUkpGZ2pzRHZmU1dFN1dxY2lXVDc0ZkJaTXBndHhhT1oyeGVU?=
- =?utf-8?B?dGh0dTZrYnFiZi90dGZXOVR6aThsSk1yMXRzTVVzSjUzb2hFUjZrSjVYcTMr?=
- =?utf-8?B?amVzbWsvK1ROVGVJVHErV2VWOHM3Y3JjSkM4SlZEK1FjR2gvZEoyNHk0L0lR?=
- =?utf-8?B?Z2l1T1l4ek44dUlLK0o1QUJlZVNSY2dDaU9KU3JaRnJPOCtIdDhCdlNUMVRW?=
- =?utf-8?Q?jJKOgGrAgLo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB9064.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Y2FKWkowTHl2V0VCYTJiMi92Q3pWakI4N1Z2MVN3eTFIZEgzNkFtbDdlSlRM?=
- =?utf-8?B?RnJMbE5HTk9FR2h6ejBGbVVlL0lHOVNQeldCVlJ4elYwODJNMGhKTktIY2FZ?=
- =?utf-8?B?alRlRHNyd2ZrZEFydVZ6RUNjS2F3Ulk5bEJmYkxqQ05WMHFBcFBYZ090SU9T?=
- =?utf-8?B?Y0dzQklBOXZUcXpzc0trVGQrRVZmWGFTL3QxVGRzZ25oM1VuVS9lT2Jqdy8y?=
- =?utf-8?B?VWFoL0ZwaTM0UEo0U28xSjJpTnVHaGpHTVdNUXJCYnNVUGU5M3ZHOEU1SnhQ?=
- =?utf-8?B?WWRTZTJFRzEvYm9DbE41VDdiaVhkLzFKT1lMUURkRFN6ZTJqSWo3eFArQ1BL?=
- =?utf-8?B?UHV0N0ZaOWpQcWM5ZVVQMW4xcUhhaUlUcFd5QmN4ejNwMUhObU0wQW1hTDk2?=
- =?utf-8?B?RkRiUnRMTkZ5czF6UTVCakJQKzg3T2o2RmpxSVU1a25LWnNkY1BRSDNDYmU1?=
- =?utf-8?B?clNSYVhGeTlTNGxCQ3lPazd3YWUwWFhjcDlwa21LNkFrdWhXVU5CK3gyTEdw?=
- =?utf-8?B?NVk5bmx1NUF6dW9yU1VhQ0R3ZnZ5ZUx6OWZwTFpkTVJEekR6S25pZGFidWh5?=
- =?utf-8?B?ZUZvSEdqOFhlTVMyM2tZV0pqdlNMRDBJT1ZSZ3NRNks1RVBXZFo5SzY3YXd4?=
- =?utf-8?B?c2F6UEtEbW02M0h5NGVBZGJ4eE91RVlJNGlxSmtnUmZnUk4vNkFXcDRzZ1dU?=
- =?utf-8?B?S1pVWS8vOVFkSTg1L0lyZHE0anNOWjRPbkY4MGd4QVVYbEtVeHZBdUZiVjU1?=
- =?utf-8?B?Y0FLaXBLYjZFcGVFaGl2Y2hCdm04TGpPQy90c2lZU0dMM3ltbUdRdzZObVUy?=
- =?utf-8?B?V1I2eURwSTZwbktiNXp4bWR6TW42R2taQ1YrL0Y0U3paR2dSMFV0cUlOc1ZR?=
- =?utf-8?B?ejJwK0plNE81UXJzKy9GRVNDN2NTemxQZEJxdUszaHppdmZIeWFQcnJuVmJ5?=
- =?utf-8?B?L1BFeXFEenloYmFqYXpSL0cyR3A0OU5sOFB3L1RlaCtZSjBBZksxaTg2Q0Ra?=
- =?utf-8?B?LzM0aTYvY2dpVGRpNjYreWdqd0RVdDNtZjluOHVQckN0eEl1WlFDOEhyNllS?=
- =?utf-8?B?U2Rjb0dtc0RCMENZWTdsR2pRMVhEalJjWmk0RCtiOHgrY2kvNCtob09qQ3pv?=
- =?utf-8?B?d2l1TG1aVHhZWXdYMWgyM25MSmgrUnR0T3l0S3E3RHBUMERIbU9VMjFML2lG?=
- =?utf-8?B?ejVzSjZGTnFQNE5UVDVZc0lESjlnUWtOa0NJMjU3UG0vNWMxelovTEptWG50?=
- =?utf-8?B?STFSRklQR1NEU0phNjVLdEVNRTNwRkNiMjVia0xNUDhkT0dlVjd2UmZua0pn?=
- =?utf-8?B?NTRVODQzanhsMmlQNmlFVFJ0U1ozbU1uUVgvZU1IOHM5VlF4cXFxZEFadVlX?=
- =?utf-8?B?b3cxb2c2MUxkWk80OWt5YTlkVVFEZk9oQ0RPN0NVY3RBSnN2aEhwVmlhOWlH?=
- =?utf-8?B?NitRM3dyUXZhbmVjZTB5SDF6STNxSmU2QkQxTGgrME4zNGoxY1g5VXU3NmtR?=
- =?utf-8?B?SWRNOWovUGRrWUtpTmwxMWY0QXc0SHd3SE1aYnYwc1ZFb0Z5bTNPTnRWbDV2?=
- =?utf-8?B?UUdCSmZ6d3FSVmlqRWUySjg4UkZSQmRWUzJ4RitnbWZVcy9wWVVicGlEKzYw?=
- =?utf-8?B?UHFOWFFiK2VSVEIrSTZoSDRSNWUwVXBKN2RvUGV3OVN0NlBqSUdDK0RCd0NK?=
- =?utf-8?B?RWlsbW96aUMwa2dxRUtHaUJMYnFZRmVsTkY3R2M3Q0NpMHZOYWhtR3ZqOGRI?=
- =?utf-8?B?UUhrWFFDRTBUNWh6c3dyMFQ3WktUaFF3ZWF1eU5FNEpJSVQwVFFzWE9yY0d6?=
- =?utf-8?B?VkRyaEhTa1hJS1dnVlNBTkQrSTVyYW9xRUIzM3hrOTZBeTVQQ2JsbnlEUjMy?=
- =?utf-8?B?b3RVamUrMUthNUtWQ3ZKV3FQZ0VraDBkaTdPZ0hqTFN2N2IzNjVPV2FHMDcx?=
- =?utf-8?B?UWQzbmZmMkNpaWlwUzV6NEduK2lIYWlKN1EvR1pCRGxVdmY1SjJDRnRBQ3Yr?=
- =?utf-8?B?eVIwMllZUi9MS0RiQlAySmJ6emwrVmxBSk5aUnJsNzFOWnZ5d0NCMjBlUElG?=
- =?utf-8?B?UjBjcW1tYm9wRHNkdjAvTUdScjQ1ZHNCS1JYMXpJcEtadGhpZ0FqZWJCZ1Jw?=
- =?utf-8?Q?mbKoU55Fjr60GJhE1aaz80al2?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 74e1da09-edfc-4e57-ef6d-08ddcf27a53f
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB9064.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 05:12:14.3266
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: maPerKsvS7E2P4v7NVhGF6t0SqW4ZbmYFf0TI/XJIen492XMZTOEka5yl5iDy5hhrywcU8R8K3MgQM+s3Rt5lQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR12MB9763
+References: <20250729051436.190703-1-namjain@linux.microsoft.com> <20250729051436.190703-2-namjain@linux.microsoft.com>
+In-Reply-To: <20250729051436.190703-2-namjain@linux.microsoft.com>
+From: Tianyu Lan <ltykernel@gmail.com>
+Date: Wed, 30 Jul 2025 13:15:29 +0800
+X-Gm-Features: Ac12FXwqcCF3k3YCTl4GjTuOuP9fWlNaWG8AoRu9t-mwzHkXNhX6Ifft0VxzL_Q
+Message-ID: <CAMvTesAzY+x_2_40xji6_g6Uquf4j1HmREb1vH9kT4fNzuLY1Q@mail.gmail.com>
+Subject: Re: [PATCH v7 1/2] Drivers: hv: Export some symbols for mshv_vtl
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: "K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	Michael Kelley <mhklinux@outlook.com>, Roman Kisel <romank@linux.microsoft.com>, 
+	Anirudh Rayabharam <anrayabh@linux.microsoft.com>, Saurabh Sengar <ssengar@linux.microsoft.com>, 
+	Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>, 
+	Nuno Das Neves <nunodasneves@linux.microsoft.com>, ALOK TIWARI <alok.a.tiwari@oracle.com>, 
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Jul 29, 2025 at 1:15=E2=80=AFPM Naman Jain <namjain@linux.microsoft=
+.com> wrote:
+>
+> MSHV_VTL driver is going to be introduced, which is supposed to
+> provide interface for Virtual Machine Monitors (VMMs) to control
+> Virtual Trust Level (VTL). Export the symbols needed
+> to make it work (vmbus_isr, hv_context and hv_post_message).
+>
+> Co-developed-by: Roman Kisel <romank@linux.microsoft.com>
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> Co-developed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Reviewed-by: Roman Kisel <romank@linux.microsoft.com>
+> Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202506110544.q0NDMQVc-lkp@i=
+ntel.com/
+> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+> ---
+>  drivers/hv/hv.c           | 3 +++
+>  drivers/hv/hyperv_vmbus.h | 1 +
+>  drivers/hv/vmbus_drv.c    | 4 +++-
+>  3 files changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/hv/hv.c b/drivers/hv/hv.c
+> index b14c5f9e0ef2..b16e94daa270 100644
+> --- a/drivers/hv/hv.c
+> +++ b/drivers/hv/hv.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/clockchips.h>
+>  #include <linux/delay.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/export.h>
+>  #include <clocksource/hyperv_timer.h>
+>  #include <asm/mshyperv.h>
+>  #include <linux/set_memory.h>
+> @@ -25,6 +26,7 @@
+>
+>  /* The one and only */
+>  struct hv_context hv_context;
+> +EXPORT_SYMBOL_GPL(hv_context);
+>
+>  /*
+>   * hv_init - Main initialization routine.
+> @@ -95,6 +97,7 @@ int hv_post_message(union hv_connection_id connection_i=
+d,
+>
+>         return hv_result(status);
+>  }
+> +EXPORT_SYMBOL_GPL(hv_post_message);
+>
+>  int hv_synic_alloc(void)
+>  {
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index 0b450e53161e..b61f01fc1960 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -32,6 +32,7 @@
+>   */
+>  #define HV_UTIL_NEGO_TIMEOUT 55
+>
+> +void vmbus_isr(void);
+>
+>  /* Definitions for the monitored notification facility */
+>  union hv_monitor_trigger_group {
+> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+> index 2ed5a1e89d69..a366365f2c49 100644
+> --- a/drivers/hv/vmbus_drv.c
+> +++ b/drivers/hv/vmbus_drv.c
+> @@ -36,6 +36,7 @@
+>  #include <linux/syscore_ops.h>
+>  #include <linux/dma-map-ops.h>
+>  #include <linux/pci.h>
+> +#include <linux/export.h>
+>  #include <clocksource/hyperv_timer.h>
+>  #include <asm/mshyperv.h>
+>  #include "hyperv_vmbus.h"
+> @@ -1306,7 +1307,7 @@ static void vmbus_chan_sched(struct hv_per_cpu_cont=
+ext *hv_cpu)
+>         }
+>  }
+>
+> -static void vmbus_isr(void)
+> +void vmbus_isr(void)
+>  {
+>         struct hv_per_cpu_context *hv_cpu
+>                 =3D this_cpu_ptr(hv_context.cpu_context);
+> @@ -1329,6 +1330,7 @@ static void vmbus_isr(void)
+>
+>         add_interrupt_randomness(vmbus_interrupt);
+>  }
+> +EXPORT_SYMBOL_GPL(vmbus_isr);
+>
+>  static irqreturn_t vmbus_percpu_isr(int irq, void *dev_id)
+>  {
+> --
+> 2.34.1
+>
+>
 
-On 7/23/25 23:40, Randy Dunlap wrote:
->
-> On 7/23/25 10:31 AM, Abhijit Gangurde wrote:
->> Add ionic to the kernel build environment.
->>
->> Co-developed-by: Allen Hubbe <allen.hubbe@amd.com>
->> Signed-off-by: Allen Hubbe <allen.hubbe@amd.com>
->> Signed-off-by: Abhijit Gangurde <abhijit.gangurde@amd.com>
->> ---
->> v2->v3
->>    - Removed select of ethernet driver
->>    - Fixed make htmldocs error
->>
->>   .../device_drivers/ethernet/index.rst         |  1 +
->>   .../ethernet/pensando/ionic_rdma.rst          | 43 +++++++++++++++++++
->>   MAINTAINERS                                   |  9 ++++
->>   drivers/infiniband/Kconfig                    |  1 +
->>   drivers/infiniband/hw/Makefile                |  1 +
->>   drivers/infiniband/hw/ionic/Kconfig           | 15 +++++++
->>   drivers/infiniband/hw/ionic/Makefile          |  9 ++++
->>   7 files changed, 79 insertions(+)
->>   create mode 100644 Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
->>   create mode 100644 drivers/infiniband/hw/ionic/Kconfig
->>   create mode 100644 drivers/infiniband/hw/ionic/Makefile
->>
->> diff --git a/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst b/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
->> new file mode 100644
->> index 000000000000..80c4d9876d3e
->> --- /dev/null
->> +++ b/Documentation/networking/device_drivers/ethernet/pensando/ionic_rdma.rst
->> @@ -0,0 +1,43 @@
->> +.. SPDX-License-Identifier: GPL-2.0+
->> +
->> +============================================================
->> +Linux Driver for the AMD Pensando(R) Ethernet adapter family
->> +============================================================
-> Please try to differentiate the title of this driver from that of
-> the Pensando ethernet driver:
->
-> ========================================================
-> Linux Driver for the Pensando(R) Ethernet adapter family
-> ========================================================
->
-> Thanks.
-
-Thanks. I will correct the title of the RDMA driver.
-
-Abhijit
-
->
->> +
->> +AMD Pensando RDMA driver.
->> +Copyright (C) 2018-2025, Advanced Micro Devices, Inc.
->> +
->> +Contents
->> +========
->> +
->> +- Identifying the Adapter
->> +- Enabling the driver
->> +- Support
->> +
->> +Identifying the Adapter
->> +=======================
->> +
->> +See Documentation/networking/device_drivers/ethernet/pensando/ionic.rst
->> +for more information on identifying the adapter.
->> +
->> +Enabling the driver
->> +===================
->> +
->> +The driver is enabled via the standard kernel configuration system,
->> +using the make command::
->> +
->> +  make oldconfig/menuconfig/etc.
->> +
->> +The driver is located in the menu structure at:
->> +
->> +  -> Device Drivers
->> +    -> InfiniBand support
->> +      -> AMD Pensando DSC RDMA/RoCE Support
->> +
->> +Support
->> +=======
->> +
->> +For general Linux rdma support, please use the rdma mailing
->> +list, which is monitored by AMD Pensando personnel::
->> +
->> +  linux-rdma@vger.kernel.org
->
+Reviewed-by: Tianyu Lan <tiala@microsoft.com>
+--=20
+Thanks
+Tianyu Lan
 
