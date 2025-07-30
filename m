@@ -1,162 +1,141 @@
-Return-Path: <linux-kernel+bounces-750572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF556B15E31
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:30:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A95F0B15E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA86B5A03C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:30:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACDD75A0724
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:30:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2958128313D;
-	Wed, 30 Jul 2025 10:30:37 +0000 (UTC)
-Received: from ni.piap.pl (ni.piap.pl [195.187.100.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB4128727F;
+	Wed, 30 Jul 2025 10:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZDAqZU7W"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26038223DE5;
-	Wed, 30 Jul 2025 10:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.187.100.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E85F7E0E4;
+	Wed, 30 Jul 2025 10:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753871436; cv=none; b=DJcDGBg8n+9gWAyg2YpXX46vGnKWbf84yzmgDBfrJZz496EyAzC4YEtby+9p4IapRBg7sOhmamo6zp4hAYREQhCU0U0jSBIc9Bx5VB42NiqPd8PxBULZaed/hUzSd/QxsC+RUMWV/iGY3x3HiHAk0t7NMblBjcV1EcHrIuRJxjc=
+	t=1753871469; cv=none; b=tHHVcbSHdBiBZAUyHVsv9PYM37FetZYoz8uPBH8PRhI0UfyGxYn7KFCr8O7Y2qJz0PrszpLOZ52zX0j1bEqiDZfSVGg3rhPqQYS5qQH6FFPAnFZlNsGnvanN3l9UNQeFRj938jzVsfLJhoizcFt2qVvNOplNMxT9YKkXC4edtfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753871436; c=relaxed/simple;
-	bh=kjiONlZ4qb52/e8c/9zYz/rz3IwBjM3cXha5zd1GmQU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l2IsUhQIuDvSG6U/UMWlpi8pfhtE0Ar3FQfSZQDlBdNLJsrx1GiZ1U6l8lRtNV4d0EmOELoUtyJHBGrWzjb2kn8cg2YysIRYMzyfy/e46F7ccSGbeF8j6Ek/Nxcyu8C/ZKtQIduOEWIMJd22rRgVo8Bsx8ZlzLTtG7SPBfwAdoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl; spf=pass smtp.mailfrom=piap.pl; arc=none smtp.client-ip=195.187.100.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=piap.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=piap.pl
-Received: from t19.piap.pl (OSB1819.piap.pl [10.0.9.19])
-	by ni.piap.pl (Postfix) with ESMTPS id 2C134C3EEAC9;
-	Wed, 30 Jul 2025 12:30:24 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ni.piap.pl 2C134C3EEAC9
-From: =?utf-8?Q?Krzysztof_Ha=C5=82asa?= <khalasa@piap.pl>
-To: Stefan Klug <stefan.klug@ideasonboard.com>
-Cc: Dafna Hirschfeld <dafna@fastmail.com>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,  Heiko Stuebner <heiko@sntech.de>,
-  Paul Elder <paul.elder@ideasonboard.com>,  Jacopo Mondi
- <jacopo.mondi@ideasonboard.com>,  Ondrej Jirman <megi@xff.cz>,
-  linux-media@vger.kernel.org,  linux-rockchip@lists.infradead.org,
-  linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org
-Subject: Re: FYI: i.MX8MP ISP (RKISP1) MI registers corruption
-In-Reply-To: <175344176070.2811177.10693943493658922992@localhost> (Stefan
-	Klug's message of "Fri, 25 Jul 2025 13:09:20 +0200")
-References: <m3h5zbxkc6.fsf@t19.piap.pl> <m38qknx939.fsf@t19.piap.pl>
-	<175308758352.3134829.9472501038683860006@localhost>
-	<m31pq9y98z.fsf@t19.piap.pl>
-	<175326599663.2811177.16620980968274114885@localhost>
-	<m3h5z2vw12.fsf@t19.piap.pl>
-	<175344176070.2811177.10693943493658922992@localhost>
-Sender: khalasa@piap.pl
-Date: Wed, 30 Jul 2025 12:30:23 +0200
-Message-ID: <m3qzxyug1s.fsf@t19.piap.pl>
+	s=arc-20240116; t=1753871469; c=relaxed/simple;
+	bh=Wj6Wnx2sWzhyx4bQecfvZRebRBN4LRl9qY5cwtiXLBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UoR4hy9Yvxn+pozjh/otMW/H8pedkoKtW4yD+NP9exm+BTSaoXzGIH1tp4+izn5BS7ztlnzw+e70Slk24XJQDtw6d+bO+oBdMnlaJyyhAKW27zJZ4EffGSEMCPzeIslYui+JZIp3MTRwuxNb8L/6sD3ieyNm21zaknQObKqzl7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZDAqZU7W; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U5bkp6027687;
+	Wed, 30 Jul 2025 10:30:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	J4ToOZRboBSrW8N0k/DtdgMfDMbgGeL0feKV1DAO8co=; b=ZDAqZU7WNKkm7tSN
+	viyC+OUT4+0FqSjuVy1CzQUu2I395B+QBzR1p/fpjRDlbHjcoGzDr1gpDfq8Caf3
+	m7ZzE9m6szZzsHQtwmZBz2fOWiTIYrh3mAeOeHHCi/oTCv224vaBOEkDGA8oFzG5
+	xuQSJG2ZojDQazhsKrrlXAFIB0vyFO/PexL/JNrPL8njSCfJEN6xfo2myy8YmPRZ
+	Y3GBoS4UPn2PJ4tQ2aTo2AbBqhbFqUBDj8rFiZaTMu7C8DZzq/AO+ntJ4ujcc+SX
+	4CsszWAgz+c+toTs+tSiAsL144QaSOUWiMsalSFqNa0B/4WxX0AQuxQ32f5iz1P1
+	uAFqQw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4860ep0qw9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 10:30:57 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56UAUuX0021581
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 10:30:56 GMT
+Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 30 Jul
+ 2025 03:30:52 -0700
+Message-ID: <6580fe88-721a-4d78-baef-514de681d072@quicinc.com>
+Date: Wed, 30 Jul 2025 16:00:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-still investigating the problem, but I can't see a simple way to work
-around it.
-
-It happens with the second ISP only, so the single camera setups (using
-isp0) are immune.
-
-The ISP MI (memory interface) register read operations are not
-a problem, the workaround uses LDP instructions (for registers located
-at addresses not on 32-byte boundary) or read multiple times and return
-the most frequent result (fortunately the MI reads have no side
-effects).
-
-The writes are a problem, though. Especially writing to
-RKISP1_CIF_MI_ICR register (address 0x32E21504) can (and does) corrupt
-other MI registers, like RKISP1_CIF_MI_CTRL (0x32E21400):
-
-Camera apps just started:
-32E21400:   7A2001       20 3C180000   1FA400
-32E21410:        0        0        0 3C200000
-32E21420:    FD200        0        0        0
-32E21470:        0    10001 3C0C0000   1FA400
-32E21480:        0        0 3C140000    FD200
-32E214F0:        0        0        1       3C
-32E21540:        0        0        0  2000000
-32E21550:      780        0        0        1
-32E21560:        0      780      438   1FA400
-32E21570:        0 1E1E00EF 1E2200E0        0
-
-Video stream halted:
-32E21400:  1000007       20 3C240000   1FA400
-32E21410:        0        0        0 3C2C0000
-32E21420:    FD200        0        0        0
-32E21470:        0        0 3C0C0000   1FA400
-32E21480:        0        0 3C140000    FD200
-32E21490:    7E900        0        0        0
-32E214F0:        0        0        1       7C
-32E21500:        0        0        0        7
-32E21540:        0        0        0  2000000
-32E21550:      780        0        0        1
-32E21560:        0      780      438   1FA400
-32E21570:        0 1E060000 1E0A0000       77
-
-Note that e.g. the 0x32E21400 register, MI_CTRL, has changed value from
-the valid one (0x7A2001) to 0x1000007, which probably originated in
-MI_MIS (and was to be written to MI_ICR).
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Enable MCQ support for
+ UFS controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, <mani@kernel.org>,
+        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>, <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
+ <20250730082229.23475-3-quic_rdwivedi@quicinc.com>
+ <4f52b237-7380-46f3-9a26-bf3c11274523@kernel.org>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <4f52b237-7380-46f3-9a26-bf3c11274523@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Mpx3EiDzVgQqSBJcA6Zjxb0IsqdyQszk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA3MiBTYWx0ZWRfX/H8pvYu3qWdz
+ S1kRKFbTRcRYDsdxhy6x0Tl9OfPno+RYA9gLZ9HwTWrei6viW3ZtpNxx47Ca6F/N2ZU4zHZMpm/
+ l101ku7NJ/EhBiCYqoE26Y7Uj7agbz79jLz9Yc3nz6o56Fl1bp7c0ffnN51YXp9qVgby2X8u7Q+
+ A0eZQpw0OEFlRsbyomuvdllCIyPyuP//EZi+6P+yYDtzDkhRZ7XLCXAUxxNdcTlxgl5CrjGQMS3
+ hnhGeChIGKsEzaAgEaupSGfOyOK/jABhO/W+UmTvNzCnADOyYgW75H8QnFfLC+boMz3Eorx4gzl
+ 4VxvKLe6b9FN3mhCPIcNNStFDMoATgiGdG6xvyVc6+irc/QM5eVuM7xoax1OuBBmpZfDYPstsXA
+ gj3iaTzOmDdlDA97nEdn8oFgBiMaaGyWbiSpPavmqQH7oln7BE9y4pzItDXMSJIoxbQRbVSz
+X-Authority-Analysis: v=2.4 cv=DIWP4zNb c=1 sm=1 tr=0 ts=6889f461 cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10
+ a=pCQ47apHa_6Vw97M47QA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: Mpx3EiDzVgQqSBJcA6Zjxb0IsqdyQszk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 clxscore=1015 bulkscore=0 mlxscore=0 mlxlogscore=999
+ spamscore=0 impostorscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507300072
 
 
-It appears the problems are not constant, they manifest themselves in
-maybe 10% of system boots. Once a system boots, the problems are either
-present (and don't go away) or not.
 
-It appears the ISP uses 3 clocks (+2 used by CSI receiver) - dump of
-their CCM registers (Clock Control Module, IMX8MPRM page 227 and so on):
-MEDIA_ISP           EN mux 7       post 0 SYSTEM_PLL2_DIV2 =3D 500 MHz
-MEDIA_AXI           EN mux 1 pre 1 post 0 SYSTEM_PLL2_CLK / 2 =3D 500 MHz
-MEDIA_APB           EN mux 2 pre 3 post 0 SYSTEM_PLL1_CLK / 4 =3D 200 MHz
-MEDIA_MIPI_PHY1_REF EN mux 0 pre 0 post 0 24M_REF_CLK =3D 24 MHz
-MEDIA_CAM2_PIX      EN mux 2 pre 0 post 0 SYSTEM_PLL2_DIV4 =3D 250 MHz
+On 30-Jul-25 2:42 PM, Krzysztof Kozlowski wrote:
+> On 30/07/2025 10:22, Ram Kumar Dwivedi wrote:
+>> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
+>> on the Qualcomm SM8650 platform by updating the device tree node. This
+>> includes adding new register regions and specifying the MSI parent
+>> required for MCQ operation.
+>>
+>> MCQ is a modern queuing model for UFS that improves performance and
+>> scalability by allowing multiple hardware queues. 
+>>
+>> Changes:
+>> - Add reg entries for mcq_sqd and mcq_vs regions.
+>> - Define reg-names for the new regions.
+>> - Specify msi-parent for interrupt routing.
+> 
+> 
+> We see that from the diff. Drop redundant description, your first
+> paragraph already said this.
+> 
+> Best regards,
+> Krzysztof
 
-Now, it appears that in certain cases changing the MEDIA_APB
-(MEDIA_APB_CLOCK_ROOT) "fixes" the problem (for current boot only), or
-make it less (or more) visible. I'm changing the POST divider in
-CCM_POST_ROOT21_SET register directly (the MEDIA_APB frequency is then
-100 MHz):
 
-0x30388A80 MEDIA_APB EN mux 2 pre 3 post 0 SYSTEM_PLL1_CLK / 4 =3D 200 MHz
-# devmem write32 0x30388AA4 1
-0x30388A80 MEDIA_APB EN mux 2 pre 3 post 1 SYSTEM_PLL1_CLK / 8 =3D 100 MHz
+Hi Krzysztof,
 
-Examples - bad read counts from register 0x32E21400 (mi_ctrl)
-per 10 millions of read operations:
-POST=3D0 (default)  with POST=3D1
-945               1
-1448              2361
-1088              2419
-1842              2451
-1333              0
-67                5
-2033              0
-1                 8
-13                16
-2                 4
-7                 0
-1                 0
-539               0
-2605              0
-1                 0
-1723              1
+I will update it in the next patchset.
 
-I'm starting to run out of ideas.
---=20
-Krzysztof "Chris" Ha=C5=82asa
-
-Sie=C4=87 Badawcza =C5=81ukasiewicz
-Przemys=C5=82owy Instytut Automatyki i Pomiar=C3=B3w PIAP
-Al. Jerozolimskie 202, 02-486 Warszawa
+Thanks,
+Ram.
 
