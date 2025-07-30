@@ -1,180 +1,137 @@
-Return-Path: <linux-kernel+bounces-750255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A779B15929
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:55:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B032B15940
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48CB2545F44
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A32318A39EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:05:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35FDD1F5435;
-	Wed, 30 Jul 2025 06:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D937C1FAC48;
+	Wed, 30 Jul 2025 07:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="op0fk3a6"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d+FizXXU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024E523741
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24831F1306;
+	Wed, 30 Jul 2025 07:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753858500; cv=none; b=LhrfupJwtKlSD7eV9JxRE9FPbKxKdbYBVhm7CLxMIEFpQfW7TVhlxoBOCMsSOkw0dilZ0o5KrwkXN1s+OhxZYZN5VMcJQZ7gKuUU/PtjFeJKwSRWJmhi3SEYGwv8BA6Jm38nUeiXKx6QPBJJNsGsUBymR0oilz+0gcJvw6R43q0=
+	t=1753859069; cv=none; b=ge7Hy+5VThIl0E/gLVtE66jguUtO/vW1Zs60BVjucpCzRNx+YDXXxWh8YIGbVY1OamMy8tCSQis3KndDKLuQ0fXdCOl/2mVZup392u4p+R806tqHcg+zDKDDQl8HWkqk3n606bOVaB9DwbeGPojzrPlufvd510MWGTAzZjHx2Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753858500; c=relaxed/simple;
-	bh=Rq34rctAyfwWtDTGvNUB7biVZ/HQfQ2mLqYrw/Jygj4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=GSAP5PpTd5Z2C/p/415Up/wyXQGraBKhCyamva/WBMeYbV/OAuVnOaG7lXnBmJLYo9AKwIkAbs6tOvUbtsehd7itC4AMdN01El+AG26wOIfWvReQNcsAIdEQUSkf/PseReekR/aQL8dGU3dc6JRZh/pCsrLKguuUOi+h4BjTWaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=op0fk3a6; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-70f862dbeaeso58623597b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 23:54:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753858498; x=1754463298; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xb9lxccqqzV/HuE6IBjo5UmOhzvTQ7eGMAvIhyfuiTI=;
-        b=op0fk3a6CIgIM8KclP96oGI+lQAL6DyBI+tbvp0cALdGi3CDRoL6Xw+rjZCsHkZhgc
-         j3J3/fON459jagXwzj+6ujFxqqbSAvCqQAP25XHSHt+DbigLLgiNemHISTwrh2Gi0UmN
-         L/mttv6qkiepG95CZdJk+WfXEAGaNCDTi1T+hrg9QKxtMXdicqX4v8W11KShN8qpZJ9m
-         VvAXNFebdL7EUbAgY0vp/XDOlSGBVc3SBGGEqUEgxy9ZxA/0FqzYr18LBvPNMmtF3gGb
-         XLbW1bRDRzYnPfrFuf5zkYJtWc0xtnJOr7h10Oa9X/bJByAaoZbTMtUR8n2/O6FPBbei
-         Izjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753858498; x=1754463298;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xb9lxccqqzV/HuE6IBjo5UmOhzvTQ7eGMAvIhyfuiTI=;
-        b=sr8dJwc6TWHCMMlrGPLvJL8BTWWYFh2diiUoSQYbnQrx7bkBtaXXlm0FHfXhi4fIxQ
-         nsGeKBEQ6uCvVsVYgv5P3yisW/3PxpIqczAR2P3a2JTiqLxn//JMeck4INYowQH8ORMU
-         qQ8KL7EOlhgDHwUUD/GGS4ggs+qxSy3+VDLLBtEavpmyTzRMfZGlfcTjWSNUNyr9BJXg
-         0Ny5AAoUdnSen+xwm9QFd6UbmDsFeyFPOAWVtZ4yuulRs+iiS13uYaSVUzOOg4u0Xc4m
-         4WV5nZ6iEEn9CjaJY02r/fa2RG7Nb+iUsyJEuOJGSVcAQgt7iHfELO4EN7PF0qMLbxzh
-         0oLg==
-X-Forwarded-Encrypted: i=1; AJvYcCXDz1dj1m8BsK0oTbee7A8aSdWFmjx/mFuB607x89OnCLCW/l73fVLlClIAePdhcfBIuMDUqiy+DoeNdE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTWQBddnEL04Ou0jAH+k2uv+QLcD1kxEkUuEuxLFz0YVHQoJdK
-	Dp7CZtSFuzQnHUyRzIeYrXPS0FNPCgUn04Dvs4UrDrs+xgmTNbbpoTTNBrCtURXwPg==
-X-Gm-Gg: ASbGnctaXp/QF6DDBxLeR+XFrlr0hQQLkNLMfXCu08rIC5bYm2+SURxrVzarZG+6aC2
-	Cx2ziQFiVNWMmCkRXvC5ZZMjdqaROdG+HqccdtKTzYU1S+a6XCAJEnIm9A0DaWqo+k1mCPI9tjT
-	7pV93z0wx2SKg3djwayfIMComLjfcxWFJOYETN+34+dSR1MlsZqdqNPG37liD7ErN47DayK5yNy
-	dO3IhEPMy2jwVb2GAEWTrT0zKWrjVF6MY9iWFVN9Cl2qpe0ktLTi9ZtvZNR1WtmCpRpqRBmP936
-	Y2XmvxhPCgntSoFk4q5Hm2g9FmSUMGdYXwGAJx5jPSYNGeKxmvYnRRDZCpcmyqOVCo+tEaxA4Ew
-	d51ttjQdsEK7Op7Bvo/78D+OB9V1T85GwLESdj5he3OwjLDH6kuoI1k/X1jajbgN5MgYO7aMlYR
-	xMfr1lGhg=
-X-Google-Smtp-Source: AGHT+IFRrK4i6oO1zKk7GnmCX4K+vLePl7LTsNrBKA6nlwjLECThBMqUufa7+jqHJdcW9Ic1/5Dy+A==
-X-Received: by 2002:a05:6902:921:b0:e8d:7451:d738 with SMTP id 3f1490d57ef6-e8e315bfb59mr2626997276.35.1753858497592;
-        Tue, 29 Jul 2025 23:54:57 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e8e3f3a46b3sm504319276.27.2025.07.29.23.54.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 23:54:55 -0700 (PDT)
-Date: Tue, 29 Jul 2025 23:54:43 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: Baolin Wang <baolin.wang@linux.alibaba.com>
-cc: akpm@linux-foundation.org, hughd@google.com, patryk@kowalczyk.ws, 
-    ville.syrjala@linux.intel.com, david@redhat.com, willy@infradead.org, 
-    maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-    airlied@gmail.com, simona@ffwll.ch, jani.nikula@linux.intel.com, 
-    joonas.lahtinen@linux.intel.com, rodrigo.vivi@intel.com, 
-    tursulin@ursulin.net, christian.koenig@amd.com, ray.huang@amd.com, 
-    matthew.auld@intel.com, matthew.brost@intel.com, 
-    dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org
-Subject: Re: [PATCH] mm: shmem: fix the shmem large folio allocation for the
- i915 driver
-In-Reply-To: <0d734549d5ed073c80b11601da3abdd5223e1889.1753689802.git.baolin.wang@linux.alibaba.com>
-Message-ID: <ff93c415-7ce8-a331-9568-7543c6a37992@google.com>
-References: <0d734549d5ed073c80b11601da3abdd5223e1889.1753689802.git.baolin.wang@linux.alibaba.com>
+	s=arc-20240116; t=1753859069; c=relaxed/simple;
+	bh=hRRwxJjQE9wJHAhuatc6RMPSyGgs/xP53hoMSHC/2FU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=npO+xs0uamom6kz8omSeqBaPWlP3RFOn5sCAWZ/ZBjtiPBx2pGC1H63amckPeLldchdI1aeHsSwl9z4+HSvEBB23AbFvQSdFdOpFjWdSyHkJiVNv4uCJO42wS35F455ORNfyw1pBffg6t9ojlKRYwGtT1p90jiPGWhvlhXUW8NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d+FizXXU; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753859068; x=1785395068;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=hRRwxJjQE9wJHAhuatc6RMPSyGgs/xP53hoMSHC/2FU=;
+  b=d+FizXXUMwXt4JoZecJEYSTDfklMiN8MMtEkszEOlhIY5i7SHotKc2Wj
+   PpzTIR8FpbS96JQ7MOolvunHpUNeCs89NPFFYUO8cuc/SDGWqF5IOlNBr
+   3Yhg0XWQQx9xHSxXHACrEMsCJUr8nD1/WirBbvLF8DTLl6ATZVvugCwlZ
+   tjVWGS000pC7RBgINpKnTquuFYjMIy/uLZfjTiuTuDdbmUmILMP2rm6Ux
+   Eozdxz9hjSghUjyi6iHtIGZZwGapPhe7xpWslmbfhUURtsVwgTaGzMiCB
+   40/J3qgoU4exxAFdp+nNSgYrwT/P0Ids5ciaY65Gp63zKWOETqb7PkIBa
+   g==;
+X-CSE-ConnectionGUID: W/vh5BJvS+m/1mPTgz1kUw==
+X-CSE-MsgGUID: Lumic/dFTwiPB+kPEUA2Hw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="56229392"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="56229392"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 00:04:24 -0700
+X-CSE-ConnectionGUID: gxhRvuheTAG+uvZ6+T69iw==
+X-CSE-MsgGUID: kU6LqtksTKK5o0weRmGeTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="167122521"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by orviesa003.jf.intel.com with ESMTP; 30 Jul 2025 00:04:21 -0700
+Date: Wed, 30 Jul 2025 14:55:02 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>,
+	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 06/38] iommufd: Add and option to request for bar
+ mapping with IORESOURCE_EXCLUSIVE
+Message-ID: <aInBxnVIu+lnkzlV@yilunxu-OptiPlex-7050>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-7-aneesh.kumar@kernel.org>
+ <20250728140841.GA26511@ziepe.ca>
+ <yq5a34afbdtl.fsf@kernel.org>
+ <20250729142917.GF26511@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463770367-1769646309-1753858495=:2474"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250729142917.GF26511@ziepe.ca>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, Jul 29, 2025 at 11:29:17AM -0300, Jason Gunthorpe wrote:
+> On Tue, Jul 29, 2025 at 01:58:54PM +0530, Aneesh Kumar K.V wrote:
+> > Jason Gunthorpe <jgg@ziepe.ca> writes:
+> > 
+> > > On Mon, Jul 28, 2025 at 07:21:43PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> > >> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> > >
+> > > Why would we need this?
+> > >
+> > > I can sort of understand why Intel would need it due to their issues
+> > > with MCE, but ARM shouldn't care either way, should it?
+> > >
+> > > But also why is it an iommufd option? That doesn't seem right..
+> > >
+> > > Jason
+> > 
+> > This is based on our previous discussion https://lore.kernel.org/all/20250606120919.GH19710@nvidia.com
+> 
+> I suggested a global option, this is a per-device option, and that
+> especially seems wrong for iommufd. If it is per-device that is vfio,
 
----1463770367-1769646309-1753858495=:2474
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+I think this should be per-device. The original purpose of this
+pci_region_request_*() is to prevent further mmap/read/write against
+a vfio_cdev FD which would be used for private assignment. You shouldn't
+prevent all other devices from working with userspace APPs (e.g. DPDK)
+if there is one private assignment in system.
 
-On Mon, 28 Jul 2025, Baolin Wang wrote:
+> if it is global then vfio can pick it up during the early phases of
+> opening the device.
+> 
+> > IIUC, we intend to request the resource in exclusive mode for secure
+> > guests—regardless of whether the platform is Intel or ARM. Could you
+> > help clarify the MCE issue observed on Intel platforms in this context?
+> 
+> As I understand it Intel MCEs if the non-secure side ever reads from
+> secure'd address space. So there is alot of emphasis there to ensure
 
-> After commit acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs"=
-),
-> we extend the 'huge=3D' option to allow any sized large folios for tmpfs,
-> which means tmpfs will allow getting a highest order hint based on the si=
-ze
-> of write() and fallocate() paths, and then will try each allowable large =
-order.
->=20
-> However, when the i915 driver allocates shmem memory, it doesn't provide =
-hint
-> information about the size of the large folio to be allocated, resulting =
-in
-> the inability to allocate PMD-sized shmem, which in turn affects GPU perf=
-ormance.
->=20
-> To fix this issue, add the 'end' information for shmem_read_folio_gfp()  =
-to help
-> allocate PMD-sized large folios. Additionally, use the maximum allocation=
- chunk
-> (via mapping_max_folio_size()) to determine the size of the large folios =
-to
-> allocate in the i915 driver.
->=20
-> Fixes: acd7ccb284b8 ("mm: shmem: add large folio support for tmpfs")
-> Reported-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
-> Reported-by: Ville Syrj=C3=A4l=C3=A4 <ville.syrjala@linux.intel.com>
-> Tested-by: Patryk Kowalczyk <patryk@kowalczyk.ws>
-> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
-> ---
->  drivers/gpu/drm/drm_gem.c                 | 2 +-
->  drivers/gpu/drm/i915/gem/i915_gem_shmem.c | 7 ++++++-
->  drivers/gpu/drm/ttm/ttm_backup.c          | 2 +-
->  include/linux/shmem_fs.h                  | 4 ++--
->  mm/shmem.c                                | 7 ++++---
->  5 files changed, 14 insertions(+), 8 deletions(-)
+Yeah, Intel TDX doesn't have a lower access control table for CC. So if
+host reads, the TLP sends and MCE happens.
 
-I know I said "I shall not object to a temporary workaround to suit the
-i915 driver", but really, I have to question this patch.  Why should any
-change be required at the drivers/gpu/drm end?
+Thanks,
+Yilun
 
-And in drivers/gpu/drm/{i915,v3d} I find they are using huge=3Dwithin_size:
-I had been complaining about the userspace regression in huge=3Dalways,
-and thought it had been changed to behave like huge=3Dwithin_size,
-but apparently huge=3Dwithin_size has itself regressed too.
-
-Please explain why the below is not a better patch for i915 and v3d
-(but still a temporary workaround, because the root of the within_size
-regression must lie deeper, in the handling of write_end versus i_size).
-
-Hugh
-
----
- mm/shmem.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 3a5a65b1f41a..c67dfc17a819 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -5928,8 +5928,8 @@ struct folio *shmem_read_folio_gfp(struct address_spa=
-ce *mapping,
- =09struct folio *folio;
- =09int error;
-=20
--=09error =3D shmem_get_folio_gfp(inode, index, 0, &folio, SGP_CACHE,
--=09=09=09=09    gfp, NULL, NULL);
-+=09error =3D shmem_get_folio_gfp(inode, index, i_size_read(inode),
-+=09=09=09=09    &folio, SGP_CACHE, gfp, NULL, NULL);
- =09if (error)
- =09=09return ERR_PTR(error);
-=20
----1463770367-1769646309-1753858495=:2474--
+> there are no CPU mappings.
+> 
+> Jason
 
