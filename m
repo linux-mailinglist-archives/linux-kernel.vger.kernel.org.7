@@ -1,231 +1,149 @@
-Return-Path: <linux-kernel+bounces-750786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD2FB16111
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:09:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57662B1615D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A58417A64C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:07:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 342E85A0D79
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:24:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5F8299943;
-	Wed, 30 Jul 2025 13:09:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F7C299AA0;
+	Wed, 30 Jul 2025 13:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="hZFLgRwk"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="abB+6CaC"
+Received: from mout.kundenserver.de (mout.kundenserver.de [217.72.192.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85CB72957AD
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3AD299923;
+	Wed, 30 Jul 2025 13:24:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753880948; cv=none; b=N9APd/XpEWsz9qhD6+fRCErsHp1dsszaInUa636rnkUZQfXAO1f1R1AqILVlw6lR+08Jyf5Bm7o+JsB0rfIpdYXP0fvQjgho7fTDri18ZALkhTT/XO8EZbYOYkcV+rEyUYvBdiwWJZKDwkqkLQSsLB3DfDfIerPqmErtvinhs1s=
+	t=1753881866; cv=none; b=fFi0Yq0hHlIW7RcQloxGOSFcgrhk1RRMn9pKqGwAWRuTw3S2fjVjosKKnm9dF+ndZhy4GpTDgBwqZ0i2ABeYeI3neva1b2uXoQl2eEhxy7dBRpg9xgHUU/FgVZpiPI4xA+guHfgtCfCixVhrjP7fKfvjuCEUpHfizMOHzp/mdw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753880948; c=relaxed/simple;
-	bh=iuuKGIizxFYPlT/bt0zoSMj0nd3jCkg/TFY2jENqJBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qYI8XnqqKITVGUH+epSWQe8Nc8Rken5i98FaQejMuQP1bmSt+kaLswikCDUiKzyMqqM/mMlq14vMhsaJpxp/NRa1yVA+m+urc/EWqqtd1dDUNcIXqG//aBaB5kotlM2wOFb38JOwwimrwRCTuO+DjgqqeA5OnlsxNvgHcPNA51Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=hZFLgRwk; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UCbBFs024575
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:09:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wNDjzyGP/l854i6KT01aZoOncfqe5cUyUJTb5qnC1kY=; b=hZFLgRwkVOm0twVG
-	7m3CXCrAyBdRSRzunSCBpu6djgXBoZcpeLkDHNYd2NpE5xF6cyxTZA2siSVH7HIa
-	Tv/nAKLx4Q4QsS6Cc3XKH8hWf4UrPm2OVZZgwaXFt7Sbucn4Kj0bBVs6BIZ32v4P
-	cLGuDWHyOqn969q4Tn8BC18yfsUAZCFSsSn1CfaLgmy9caCLf93LjRZwUcpCxUrY
-	35EgB+ICiKCym9XzOZ+Q/l2l34T8Ufn2hfLyhLL1NGZ1874NdY24SBQPPouQU8To
-	6f8oQGEQhft2GVVqTYgUNV7QNnnUEImy3SXRfmTlU+7Gfkry2a+7Xbd1tMQfxMcA
-	5JbZGw==
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com [209.85.210.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484p1akrmf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:09:05 +0000 (GMT)
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-76b857c5be7so466435b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:09:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753880944; x=1754485744;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wNDjzyGP/l854i6KT01aZoOncfqe5cUyUJTb5qnC1kY=;
-        b=VcHaf2JQ9cBqNtn/y9pFXBw0zdZ3GbI+TtS5udQJvmik+InfCq3dyHrOJYIGgYfDTF
-         j3NmLQ8tIIoqgJraMWTPoHo+FhVpg/NnPsykPf3cvn/hipB1/u4Nsm0dAFPb4uMdAfcq
-         9Lxh/E7ohZL2WOmKZapSwk+J/LMTmUXjQdYRBwZX1kElIRBtH6DZMaSU1lRGM1Gp28Wt
-         M4WlG900a4jV1XKGSpoGaaf944XX+EZeXfqcAxiwnVqa3Ck5jEwHgvnPiP2HSRrSHoEn
-         KaqBQ3qnUKadE2Hs8gex0EvverN+iqdwf7d0GULCjn2i5FgdfdnkIa0m5B+X+NG8LeI/
-         3vUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsp9vLPf42RECL1scPADChKygWKOOwCvh/FbmcDVzkdpNtbGnSGm6Z40wCGKbAaT6X6BmPuN3g+SsSLNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHr7JtWvlBGUq6dpz6Aozrl2ymt50HBCWzzHvswtob5wQuZG1D
-	Tu25Exz6d11fmOUkvjWbVC4m3KAhGc+20Yu1b4VH54eRdZErlPdgCNiD5PfOQaSScJGA5r4pwiD
-	uvgaUANu1HRTMROXS7qTsFsoGZrDv51SB0HEAzPDS+OZ7oLqFLo9P/PorkL07HeyZTXQ=
-X-Gm-Gg: ASbGncvdvhGMzYWBi2xzAfcEBKFubuOSqugreQaqcKd8IConctv5LK6snkNUgzVyGpE
-	H67gjX2WjXZANJUt55l+VDsEMjEUWyro7Q5Cs4UJupmHOGtSssJvhjlk1/W5A+VyJaCZoFxoH8v
-	nh4h2LoOrkVDidtsbD5JWh4b0QyvnPkUkCyGRF3mXmzjGsqp2uFsS9S7P2COaLmTaIlC4eGqzN5
-	/admm75J9pPeb4OJ0qvxIjYTi1L/u0GqDFV1/vLcL4+mu4SX3UG4hqqU0hVEP0cZmLsDzWySSTw
-	7ZQJR4B9nQhwEF/NwS/4ndwcSkbWy91YD8DhuJBo04tKnV6j+DUPRCB/16Hr2sk5GC0TBrLVTQ=
-	=
-X-Received: by 2002:a05:6a20:548d:b0:239:c7c:8de8 with SMTP id adf61e73a8af0-23dc0d3e328mr4807709637.12.1753880943800;
-        Wed, 30 Jul 2025 06:09:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGs6wjsf0Q2uV+QjNX2+BJebA7gZlSlrORRFmXImrXs/DTnl6FWhcQ6Ay1Cko/oB0Ikr9ynZQ==
-X-Received: by 2002:a05:6a20:548d:b0:239:c7c:8de8 with SMTP id adf61e73a8af0-23dc0d3e328mr4807652637.12.1753880943335;
-        Wed, 30 Jul 2025 06:09:03 -0700 (PDT)
-Received: from [10.219.57.35] ([202.46.23.19])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b3f7f67c8fcsm7588223a12.37.2025.07.30.06.08.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 06:09:02 -0700 (PDT)
-Message-ID: <2b8a2ea6-f13c-ea09-c089-f2296b887859@oss.qualcomm.com>
-Date: Wed, 30 Jul 2025 18:38:55 +0530
+	s=arc-20240116; t=1753881866; c=relaxed/simple;
+	bh=lCuqhOrWg0T3ijnvoon7IE1CXll6OeKPOnk5bcyzb00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkMMqdXeMOe5StUjhls1KsRoGY4a4xplLS/u3HX8FP8NqS/1NcT37oLJuMfOe26x6fsJMXicZZtJMAMwjO0ECGs1Q/Qvg7a15AuEedoccwZyiTnvqyRspfYEjoiUfnPpeBIwtUYs7veRc8U8GUFyZefqG+AwFc16e3LdJQwnNgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=abB+6CaC; arc=none smtp.client-ip=217.72.192.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
+	s=s1-ionos; t=1753881857; x=1754486657; i=christian@heusel.eu;
+	bh=F+f+ZzjCVEINsWps0V76Rygvtyr7S2FjfQcZbbWPwss=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=abB+6CaCSErfOVO/Pxz4BUcMdgiZlcXou/LPhWMz4QOmXR8oS9rJ0IZjP+8vADhi
+	 KoHVppgPR0kizHP5iw4ZSUF3zn1x0cDFPWKhZ9+QozN8varq/6QIiZm/7MkhUbRH3
+	 kEBm8XJsHO1xOaa7MX+55zYDSy2AEU7+QyoNb2GVPFeZpQ5M1IlbDSrhrxMz8s6Ua
+	 PcS9sLiRjcmaMPEhTskL3uVlR2lD42lRVp5afvConKktmZ1ZaOUIFxFqqYV1yLEVR
+	 UhhpD4Q8zC+M3QiLeOiZkeqxtLyQ+xBgN8vTQ2+JHbYDJboViWRC2OpFzuohUJKi/
+	 jyly3/euCgRtQUaJPg==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([94.31.75.247]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1M597q-1uiD1A48nc-009CYn; Wed, 30 Jul 2025 15:09:13 +0200
+Date: Wed, 30 Jul 2025 15:09:10 +0200
+From: Christian Heusel <christian@heusel.eu>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
+	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
+	hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
+Message-ID: <a200f754-82df-4a66-bd85-b0ba0c9ac345@heusel.eu>
+References: <20250730093230.629234025@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [PATCH v13 04/10] Documentation: ABI: Add
- sysfs-class-reboot-mode-reboot_modes
-Content-Language: en-US
-To: =?UTF-8?Q?Andr=c3=a9_Draszik?= <andre.draszik@linaro.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Souvik Chakravarty <Souvik.Chakravarty@arm.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Andy Yan <andy.yan@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>, Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org, Vinod Koul <vkoul@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-        Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>,
-        Stephen Boyd <swboyd@chromium.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        Srinivas Kandagatla <srini@kernel.org>
-References: <20250727-arm-psci-system_reset2-vendor-reboots-v13-0-6b8d23315898@oss.qualcomm.com>
- <20250727-arm-psci-system_reset2-vendor-reboots-v13-4-6b8d23315898@oss.qualcomm.com>
- <b1b34e31904f711e7cf82394843a9966238f2896.camel@linaro.org>
-From: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
-In-Reply-To: <b1b34e31904f711e7cf82394843a9966238f2896.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: 8BBb14ppAZLiSfkTwyne8h9cJxR62fSi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA5NCBTYWx0ZWRfX7snSUbEp5mrV
- EJzGOk6YNjWEqE/uvdD3nfxH0mhtNPUQX/OrwKDsbhp1FdA9WQAAwiocj2dXhS72o4BkI4tjuT1
- T7Hn/nNm+2LZ6cNN5YNu8ZfMvncjV4NVe0W5RXb0DDb0WQkobuJ/Qas6X30orLCd5SJHkGhXnId
- u6MH1P5qK6cUSh1B+3aljxM3RfgKUeuMJ3JIOvLp1SRYPqcllm/tbizTr+vJS3eh8Hvumn7jAfD
- InnzR/J3I8LfrwXr0FOyaAnPSQbwt1CAqA5Rbf06qxUwAqDVTsRoJe9PfBjQG9mMOx6peNfR8QI
- R3SOq84PWxQ6vRaW++lxnK/MFv2zeBFULFxlopWUVx8eVQ9JW8M3029VBadCi4bLv9TRsHoaibL
- 75Z+0QlCWNUyDTCjPrNKag2zGUSMAyWCaBPLhL9uTFanSGE4URwEOfqU6P2GITyEUs0fCFaS
-X-Proofpoint-GUID: 8BBb14ppAZLiSfkTwyne8h9cJxR62fSi
-X-Authority-Analysis: v=2.4 cv=KtNN2XWN c=1 sm=1 tr=0 ts=688a1971 cx=c_pps
- a=mDZGXZTwRPZaeRUbqKGCBw==:117 a=j4ogTh8yFefVWWEFDRgCtg==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8
- a=OQUscKAIWfOqcitIQgEA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=zc0IvFSfCIW2DFIPzwfm:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_04,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 suspectscore=0
- adultscore=0 mlxlogscore=999 bulkscore=0 spamscore=0 impostorscore=0
- mlxscore=0 malwarescore=0 phishscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507300094
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="qw7jpb2xcpdsmjqy"
+Content-Disposition: inline
+In-Reply-To: <20250730093230.629234025@linuxfoundation.org>
+X-Provags-ID: V03:K1:kuMtRY/zmeaeg3zNX+ncSB8G5XJd6JH3T0cqn6L3CfLcP3mwDy4
+ zhUCWrH2MkBzGDLyFIgTMVjv8nez+CxvBvWTle7O6MAKnhMO74K1lel6NR4GrbgHYWtllao
+ NGvkdRZFgCrqX8uUHTZJ1DTEUrlJ98IkqVveFa8LH8eifVAlVJhB8aRgRrpqUC55iQi6H1m
+ hI1i1ioHhG/xq6TRQvo4Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:VyGm44GzmUY=;yaLSiRjpPG7nD8KZqBql+0wnuZA
+ /52hXsSBMTQufVRxe3+YtpLJbMRnSvpOLCobkimUJyQaf95k1hERiUP/+hJqmbDmIekM9eSUl
+ cC9labZUbHejy5cGctNUOihG90rAOVhj88eeH0iYHzo95gVxQFUzTG6/XFWvWHvdpgx3Xcbo6
+ IqTp2Cuv29m21OCL6O/KUKI+qt0fjfojvCN6QqY1u1LQydbxi3g51UfS04NrazCmtdN5LjMEz
+ DsGe9UKFMHHZ02nSgaVIoQQ013aAEWXbJiiORiM7A80/lXiwxl6ZZ1t1cgrXtXBisBd6IvtCW
+ 31hYsWdwA7ypZ2EdZBvUNK1NUjCMY8Danzd8uEUaeNcfqRm5OYR1XJ7/jjnVOlQ/fnKEhHknz
+ rIMazgh/LZ74t1FHXp+PA0CKE4N2hV4ERt29KQ50TW7IkZDhDsdr6sAKFWNdElCltgkX7bc1t
+ mCogamFgHhzAutkfpqUC6vnSME/zfSdJbhS0XVo2CMvupAPTGrtztqugqCjOKeED8XNghc30J
+ p/mc+UcPsn8Sng2Cuf9oDIoHb449uHnyQt1wkb59shomLTEGS0+HZsSGtJ4vA1SKmsaOXFUy2
+ ylSHGCmrMefObSNpYZQNry18/375Awu+9lWkda1R5TRBohFN7US5cS2Fef5kzCOgHG2ztBDHF
+ ChVMWyT3f//dJGruPO+qeuhZ502edM7jIY6bIerRKw7emvphYNRr0pYr2hJIXu4I0GCRgfKWt
+ SsK0VhA3Vep4aG9oEjKtdQ2L4rsHDieHQTdODKUOTrNNRQnKW96JY6nZS7UTSKc6q6Ou0pxbR
+ iQ/0Gbd9lIRyanqi7Hmm9NjU7rfkKRu1AtgFnh4WiNs78ejgRWbtoHXM4Q/2ERUAfM8SIqCNg
+ 5hDNDzKhC6ZSHBalsTyU5Z7nhvrqs/OmWuhR3uj4Jm8O56SnqpGOlhCnaAhs3pUbc6alPPB+q
+ rRPKv+WRmLrxTMYXin6E7e2ihF+eFxIHDPvgQAQqfgGGQbZ20wV3ezc//AA7ByV9Tlw334vXh
+ vntoN8ZGmGxJ1SD4eqvvPfHLdx2gGsQoNAOL84MX5HTcjetaQK3Ji3yKvjcPbbYfJbS5uwYWT
+ feVCdboIRaNNU8Yi15FclyKEtuJaTtmfpHxqM1GjdNwCzH1QW6ZFRRXKhaqjRe4mzlMrRubG4
+ 3sKaGA/zcNMMb4VO5KQDOea1gluMPfcuOaA3TThLbR4FFrxErMc6f1RMH7JxST6xqGGY1AV3+
+ NxqhH60zLGpKlGfSght3fLuOSgHzJI813oQmTYS/XaPRFqMeay+I9l03DyvGB0Mi3aF4Wyd8k
+ Lmkn8wuiks/lEbI/5zU0unaVRN6zASopdrf2OK5i5Ts6ItWJctypQmJZ++LHPHEYSsXUSsllS
+ GmhScjixkBUlNx5n6ovnE6xXwCwPjfxh3V+pibCQNO2UaVWHST28ryP8PqQuC6P87S25Ri8oO
+ c9l69pxWTTGVuobnafoKa++GbQE3ZKTdN0zcTbrxVYZARQC9jFMqpnFMCJisSxxNv1ghyT/87
+ NYoC7bbhcAwkm5lVMF2BXxUZKeBE+MR/BiKLjZ33HUUNIuwlL44ieyibnLBu4PtWsw86ZFgDA
+ 73Q75hNDko3HAPO3EUeCifVMXh8WZst
 
 
+--qw7jpb2xcpdsmjqy
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
+MIME-Version: 1.0
 
-On 7/30/2025 2:36 PM, André Draszik wrote:
-> On Sun, 2025-07-27 at 21:54 +0530, Shivendra Pratap wrote:
->> Add ABI documentation for /sys/class/reboot-mode/*/reboot_modes,
->> a read-only sysfs attribute exposing the list of supported
->> reboot-mode arguments. This file is created by reboot-mode
->> framework and provides a user-readable interface to query
->> available reboot-mode arguments.
->>
->> Signed-off-by: Shivendra Pratap <shivendra.pratap@oss.qualcomm.com>
->> ---
->>  .../testing/sysfs-class-reboot-mode-reboot_modes   | 39 ++++++++++++++++++++++
->>  1 file changed, 39 insertions(+)
->>
->> diff --git a/Documentation/ABI/testing/sysfs-class-reboot-mode-reboot_modes b/Documentation/ABI/testing/sysfs-class-reboot-mode-
->> reboot_modes
->> new file mode 100644
->> index 0000000000000000000000000000000000000000..7147a781e5d4d11977c3a156bf4308aa13310e39
->> --- /dev/null
->> +++ b/Documentation/ABI/testing/sysfs-class-reboot-mode-reboot_modes
->> @@ -0,0 +1,39 @@
->> +What:		/sys/class/reboot-mode/<driver>/reboot_modes
->> +Date:		July 2025
->> +KernelVersion:	6.16
-> 
-> The version should probably be updated.
+On 25/07/30 11:35AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.9 release.
+> There are 92 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>=20
+> Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
+> Anything received after that time might be too late.
 
-sure. will update this.
+Tested-by: Christian Heusel <christian@heusel.eu>
 
-> 
->> +Contact:	linux-pm@vger.kernel.org
->> +		Description:
->> +		This interface exposes the reboot-mode arguments
->> +		registered with the reboot-mode framework. It is
->> +		a read-only interface and provides a comma
->> +		separated list of reboot-mode arguments supported
->> +		on the current platform.
->> +		Example:
->> +		 recovery,fastboot,bootloader
-> 
-> I'd personally find space separated like e.g. in files below /sys/power
-> and many other similar files below /sys easier to read.
+Tested on the following hardware:
 
-sure. Will make it space.
+* a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU
+* a Framework Laptop with a Ryzen AI 5 340=20
+* a Framework Desktop
+* a Steam Deck LCD Edition
 
-thanks.
+--qw7jpb2xcpdsmjqy
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> 
-> Cheers,
-> Andre'
-> 
-> 
->> +
->> +		The exact sysfs path may vary depending on the
->> +		name of the driver that registers the arguments.
->> +		Example:
->> +		 /sys/class/reboot-mode/nvmem-reboot-mode/reboot_modes
->> +		 /sys/class/reboot-mode/syscon-reboot-mode/reboot_modes
->> +		 /sys/class/reboot-mode/qcom-pon/reboot_modes
->> +
->> +		The supported arguments can be used by userspace
->> +		to invoke device reset using the reboot() system
->> +		call, with the "argument" as string to "*arg"
->> +		parameter along with LINUX_REBOOT_CMD_RESTART2.
->> +		Example:
->> +		 reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
->> +		        LINUX_REBOOT_CMD_RESTART2, "bootloader");
->> +
->> +		A driver can expose the supported arguments by
->> +		registering them with the reboot-mode framework
->> +		using the property names that follow the
->> +		mode-<argument> format.
->> +		Example:
->> +		 mode-bootloader, mode-recovery.
->> +
->> +		This attribute is useful for scripts or initramfs
->> +		logic that need to programmatically determine
->> +		which reboot-mode arguments are valid before
->> +		triggering a reboot.
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmiKGXYACgkQwEfU8yi1
+JYXu/g/+NxM7Lexz5g8+vNOzP2RphQ7ymAD0vecStCKuZl/BdhkPtYzQc+OIQH0m
+JcrrUPZwHE12R5XuV9JDHwed41Le9yorD8A/llddnyTBDxYjQB82KKZD5+XvoLnU
+wj7JiIP+TQzYE4ZiGHB5t29Z0/wqraoBGT5UgaJrxsOS2aEncqOnOyVGCFjqwpmW
+wFux2qHuaJaqXT7pArg3qdwMYdqBfNi4/EwOJfZit8rCpJY57Ln68bi5Qle3h1rU
+A0heuo42giNQZDizjGo1Yh/RZ2xJLwxD875Y65B+pZJbLEdABYa3LsYXz1b+KN25
+3fGjc/E0zWKG11hyrmHrMl/Km53KjkcNKokXof0Qtr5br65yg2pyD8vazLiUJCaW
+tEghoKViV3vmKV1vxKu2D8t1r2eUQcI/XagD0mh7CBo6dB0Vq/3tDR7usspCzCyN
+RFQBec7xBOAFMdCOPFFWFdcY+XQFRKfYDjOS681Mwu5h23qCjSeaAn57ElQjJCoM
+Xa7wq3oWo0iSAE8uiZHRp4TxdkJSmmycZLxiSGPy3WXyzWEtP0S8a7NeK7joJ2JU
+cue0sArzEA16aiYLqpIX2fXCHVeYLr4gVdJBqBraD3eCXzAgt2I/qKkiJKd/e4k8
+te2Letxo9H/EgwbkV8tWDJW375GHXv5PqkOX5g40LbddkU1DIbk=
+=Q1Ru
+-----END PGP SIGNATURE-----
+
+--qw7jpb2xcpdsmjqy--
 
