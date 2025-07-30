@@ -1,92 +1,106 @@
-Return-Path: <linux-kernel+bounces-750270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDDE2B15959
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:11:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0E08B15953
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5338D188A9C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:12:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3B3E547899
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 07:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0D7224256;
-	Wed, 30 Jul 2025 07:11:40 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C851F8BA6;
+	Wed, 30 Jul 2025 07:10:34 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DAD121E0BA
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2DA0BA33;
+	Wed, 30 Jul 2025 07:10:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753859500; cv=none; b=bH4Kic28269FxDi0wl7FoauyLPeSLxYsx91gc3+HmABeWh9a8HAIdYFhMbN+vOVBwh3LE/PVjiFUK512wgSCPtBGmS0EHnxUBsIKRQLxIFgeAK12SLv4eHxkkM7nQK2E9YX0Jkk2bHPx3CyPQa2Je8VGUd27GSk8YTvBr/i9ggU=
+	t=1753859433; cv=none; b=Z5QdSJHZD5Z7lXEO/P5bjHGj+hWiMel8/ae7IapwcNIe6GV+WJSjMH99x+onW0cPqo4boVPH1/+VwkiG916xOkRAwAsn7Zq7fl8F7uGIuX8ZjsMOGPOhWfz2IasspErbtA4DkJErAHImxfmJLue07lyzPtkfZXGcnTVKUg9Hr1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753859500; c=relaxed/simple;
-	bh=lGANFSUGVJuOs7RkjlhNySfv8QsiOn3t9/P2gJicYgU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JvU+7G8/rIIAQ/WvtdQVUbOLKYiMfPv4FENWb9CnG3+/2NdjfNMJsc8VDe5r1Z7QFoaA8W+ZwNOPCEqcLPZxV37LHE+PvBzn5bi5xPMXIdBcrHmddKbznqVHLpt6bkcb9y8xxX5V9J1zmaHHKKoEgJPdxfRubVpbBcQlYxSpoEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201603.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202507301511303437;
-        Wed, 30 Jul 2025 15:11:30 +0800
-Received: from localhost.localdomain.com (10.94.10.113) by
- jtjnmail201603.home.langchao.com (10.100.2.3) with Microsoft SMTP Server id
- 15.1.2507.57; Wed, 30 Jul 2025 15:11:27 +0800
-From: chuguangqing <chuguangqing@inspur.com>
-To: <lkp@intel.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>
-CC: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	chuguangqing <chuguangqing@inspur.com>
-Subject: [PATCH v2 1/1] gpu: drm: fix compilation errors in drm_vram_helper
-Date: Wed, 30 Jul 2025 15:09:18 +0800
-Message-ID: <20250730071002.2697-2-chuguangqing@inspur.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250730071002.2697-1-chuguangqing@inspur.com>
-References: <202507300646.kTchyjvh-lkp@intel.com>
- <20250730071002.2697-1-chuguangqing@inspur.com>
+	s=arc-20240116; t=1753859433; c=relaxed/simple;
+	bh=AYXgVU+NUpq51qEoouH9W91fgq+DWPYCXeIQaUhV9mk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qM/IF6f1WNxQ9sKMdoqo/RC0Cd/ukjmhj6c3gci/QCzbkNHnbmCdya4xkgN++iXzBEvXmctnVKNlZZziNYoUtBql0z5FZVzB7z4CZa1MxnRkSZAuP/hunS59gUwOs1wL5THaRAwcOhzNxsTHtH1dbBLPuw1Ipio8iX95iVevPTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a02:8084:255b:aa00:1726:a1d9:9a49:d971] (unknown [IPv6:2a02:8084:255b:aa00:1726:a1d9:9a49:d971])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id 7F9F6410A7;
+	Wed, 30 Jul 2025 07:10:28 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a02:8084:255b:aa00:1726:a1d9:9a49:d971) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:1726:a1d9:9a49:d971]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <b3310f8e-3e71-42d2-a4f6-1df2c2d294c1@arnaud-lcm.com>
+Date: Wed, 30 Jul 2025 08:10:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: syztest
+To: Yu Kuai <yukuai1@huaweicloud.com>,
+ syzbot+fa3a12519f0d3fd4ec16@syzkaller.appspotmail.com
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <68894408.a00a0220.26d0e1.0013.GAE@google.com>
+ <20250730055126.114185-1-contact@arnaud-lcm.com>
+ <a166383d-a19a-deb4-e170-2350f8fdafd0@huaweicloud.com>
+Content-Language: en-US
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+In-Reply-To: <a166383d-a19a-deb4-e170-2350f8fdafd0@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 20257301511302ee24eee9004cca4580053c0ddbd2814
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+X-PPP-Message-ID: <175385942907.4005.1019230276540793814@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
-We encountered the following errors while compiling drm_vram_helper.ko
 
-ERROR: modpost: "drm_gem_ttm_print_info" [drivers/gpu/drm/drm_vram_helper.ko] undefined!
-ERROR: modpost: "drm_gem_ttm_mmap" [drivers/gpu/drm/drm_vram_helper.ko] undefined!
+On 30/07/2025 07:09, Yu Kuai wrote:
+> Hi,
+>
+> 在 2025/07/30 13:51, Arnaud Lecomte 写道:
+>> #syz test
+>>
+>> --- a/drivers/md/md.c
+>> +++ b/drivers/md/md.c
+>> @@ -5978,10 +5978,6 @@ struct mddev *md_alloc(dev_t dev, char *name)
+>>         disk->events |= DISK_EVENT_MEDIA_CHANGE;
+>>       mddev->gendisk = disk;
+>> -    error = add_disk(disk);
+>> -    if (error)
+>> -        goto out_put_disk;
+>> -
+>>       kobject_init(&mddev->kobj, &md_ktype);
+>>       error = kobject_add(&mddev->kobj, &disk_to_dev(disk)->kobj, 
+>> "%s", "md");
+>
+> This is wrong, you can't add mddev >kobj under the disk without
+> kobject_add for the disk kobj.
+>
+Will dive a bit more into that after work,
+Thanks
 
-The functions drm_gem_ttm_mmap and drm_gem_ttm_print_info are defined in drm_gem_ttm_helper.c. This patch select CONFIG_DRM_TTM_HELPER on CONFIG_DRM_VRAM_HELPER to resolve the undefined symbol errors.
-
-Signed-off-by: chuguangqing <chuguangqing@inspur.com>
----
- drivers/gpu/drm/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index f7ea8e895c0c..01a314fdc9a8 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -226,6 +226,7 @@ config DRM_BUDDY
- config DRM_VRAM_HELPER
- 	tristate
- 	depends on DRM
-+	select DRM_TTM_HELPER if DRM_VRAM_HELPER != n
- 	help
- 	  Helpers for VRAM memory management
- 
--- 
-2.43.5
-
+> Thanks,
+> Kuai
+>
+>>       if (error) {
+>> @@ -5999,6 +5995,9 @@ struct mddev *md_alloc(dev_t dev, char *name)
+>>       kobject_uevent(&mddev->kobj, KOBJ_ADD);
+>>       mddev->sysfs_state = sysfs_get_dirent_safe(mddev->kobj.sd, 
+>> "array_state");
+>>       mddev->sysfs_level = sysfs_get_dirent_safe(mddev->kobj.sd, 
+>> "level");
+>> +    error = add_disk(disk);
+>> +    if (error)
+>> +        goto out_put_disk;
+>>       mutex_unlock(&disks_mutex);
+>>       return mddev;
+>>
+>
 
