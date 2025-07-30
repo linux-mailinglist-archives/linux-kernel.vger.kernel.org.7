@@ -1,87 +1,104 @@
-Return-Path: <linux-kernel+bounces-751191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B077AB1663B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:29:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49517B16640
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C5E3B69FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:29:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AFC83B7BEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE6432E11A5;
-	Wed, 30 Jul 2025 18:29:29 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFB8F2E0405
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 193E32E06C3;
+	Wed, 30 Jul 2025 18:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OUHEnhZN"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 006022E11DD
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753900169; cv=none; b=KGlWkZI5mA6O4HRYIYQyo9DUsaMrDkLO5Wy9Rx2m9mNdxI+vdqOw3kIpbuxJcXhTV7W25MVtaQVLnZdOm9/NA5Hseoi/OrQXkY1fHgTwfTAMvDkcCNlXJD7Bhvc041wbKHtShbXFaFs+JNLrIPhfNIO85GteMdTL4JI2GcCSL+U=
+	t=1753900205; cv=none; b=jeRmcVcfD7P+h+JuWwRBvo1TWM3c5mjvenYAYPH8UNYphnC1RNPhcLDFacAOs/fVaJTfSaGDIMdKzA4QohXeQJXgrrlbewnQz7NBP13fLfWgP8vpgDHYswvfBkwpOKHJUqv6QhEamZspg6xmT2zv0bQ5Kw+5zyqjj2ranAKy4BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753900169; c=relaxed/simple;
-	bh=CABo9Hc5J03jEKF2za1Qtce1ZRnA4efHREMNHOtujZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eNYjP+h4iVenr15wL4ohlIhVFNbgCodfeL/IoK16cMU+GwdLfV5ORSAo9IDWa1awaN3EMd3KlgsrmGCz9T4mFfHBwOZokVEp3FgXkbRUHSUjynos76IGOTjKH9AjJILo93vmHMuHCcFpAQVJQAc6G4x7VS9oAhp43t5IJzfapd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0ED1B1BF7;
-	Wed, 30 Jul 2025 11:29:19 -0700 (PDT)
-Received: from [10.57.87.181] (unknown [10.57.87.181])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB6563F66E;
-	Wed, 30 Jul 2025 11:29:24 -0700 (PDT)
-Message-ID: <8f89490b-bac5-4297-a4a8-9e9c4a8f5ef5@arm.com>
-Date: Wed, 30 Jul 2025 19:29:23 +0100
+	s=arc-20240116; t=1753900205; c=relaxed/simple;
+	bh=+IlnsvCqZpWI1irANdU7vC/52xTZuuB1B7d87Am81c4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OOgjclZauDJwdbvAyIT5OnxWjBo3gYEupC+VdK5oonOjuPiggh++HvYspVXxShqXfDRf+bfmClscnfZTwP8uKKqqLDcpGbOc3OlHnrhR1NVb/1HIflSe066bp1BTL5gcW8RnjejrHnfeG5SMuYBLXA3JoU1n9TlmPx0t9eWRmNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OUHEnhZN; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61543b05b7cso1822a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:30:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753900202; x=1754505002; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7NIbM6q1x218b7Li1UvxruEIMKkwKF1Zyv43mPS1uqY=;
+        b=OUHEnhZN94w5azEkzVDqwNxQbrmR0zEibAM/XasVXnXVjGL0j7E7BmSRNc+bAz7S4Q
+         53OPHMTJ8fiBPfeF/8akZnLWWqMP0oSwW/rPr6lwyix61oSq2QbHVphJihJovHmqTBDy
+         SLaEN/tShBtJW/9eexd+z/Ov+KVtC7ty5Btf0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753900202; x=1754505002;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7NIbM6q1x218b7Li1UvxruEIMKkwKF1Zyv43mPS1uqY=;
+        b=IelRAkEW0+NlalMCFscvbtrS6UzjtOkN9957/TBZ963EVRwUOlrCPUAA9M2lBTKMd9
+         2UEkiyBOeXfu0fwcM2b3sdKaDWrLgiNkrQDnmxac8tH49Fsdk4vwmFaPy0H2UC30BdRG
+         kgYK+BLZzRzin0rEROdWmvjCFfc+ENeAO2VfDoRL64W+lwgBHw/Iz0HGoVhL+Tr8JvEd
+         JO2oNXFspktM1gNyfv6xebVrMnD4MReoYzLODILpNMopuBbbEXo0kIvcXztHyM+qEJqx
+         92zlNBpscSN5/8MPWiYTslPm9FBUBCG6tLNkZm9XsNCZsWIP/aw5a09vHOcnuVuVifYJ
+         XZ2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWFkHdRX0UUxJntg8ROc+4+GPR/dsP0zMrEVUsAkaRnaa3ON+7QunAPSAnJ/9ljzgpS2ZTx5opk+xRcF1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxqV13olNZnU7qx6DFmxXBnlHLXQCm548M0cpX0cDAL1IoQ8kE
+	xMwZg7oUlYN+pDoPw4IyIwSbBY9Sl4YwNJlBj3YHrpZpSBpg6dSJyAAvtZaoQrxiSMFlDUOYVDy
+	kkTweRByUfUwk1/2pDMJsDGi/ExSfwyIyReS0c8E1
+X-Gm-Gg: ASbGncvK/HaAFfIRhoAlb4uGIYUbsd0oe5JBvRbuTfkdpG5Hc+09i5/xvmaDkcldP/p
+	6oqvDXiZazm3wupySbsBGJp+SXLn6JlTHo5nICI17fGuOiJsbYzMLyTXgnAhEGDqYOtetaW+Q1z
+	FEhZYLIOblHSvsd8o5/cWdKOwmpIm9nJfzyjzoTTvtp3yXDPZJKXgRdcFQ4ovfqHcEO7COeoSck
+	Lpe5vg=
+X-Google-Smtp-Source: AGHT+IFbbK/ul5EAl+qpurW8QCD6MUFcOByL7/YGvDuMq5A8bS06QIOt2f3QRAN6xuePrLmBIsEPhHn7xYqFra8YQrM=
+X-Received: by 2002:a05:6402:d50:b0:607:d206:7657 with SMTP id
+ 4fb4d7f45d1cf-615a5f03c3amr15582a12.2.1753900202156; Wed, 30 Jul 2025
+ 11:30:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH v5] arm64: Enable vmalloc-huge with ptdump
-Content-Language: en-GB
-To: Catalin Marinas <catalin.marinas@arm.com>, Dev Jain <dev.jain@arm.com>
-Cc: will@kernel.org, anshuman.khandual@arm.com, quic_zhenhuah@quicinc.com,
- kevin.brodsky@arm.com, yangyicong@hisilicon.com, joey.gouly@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- david@redhat.com, mark.rutland@arm.com, urezki@gmail.com
-References: <20250723161827.15802-1-dev.jain@arm.com>
- <aIpPsg1Kij8Knnjl@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <aIpPsg1Kij8Knnjl@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com> <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
+In-Reply-To: <20250728-ddrperfm-upstream-v5-6-03f1be8ad396@foss.st.com>
+From: Julius Werner <jwerner@chromium.org>
+Date: Wed, 30 Jul 2025 11:29:49 -0700
+X-Gm-Features: Ac12FXzJRbNK4O4rQzoS61E9llbPlM-a0El1zXFqw746Wesi6zAN_YlMACvZJkI
+Message-ID: <CAODwPW8ZXfMdFL2=6ht+BvQq5_LQkwHhQJT5j9DcseEx9naXxg@mail.gmail.com>
+Subject: Re: [PATCH v5 06/20] dt-bindings: memory: introduce DDR4
+To: =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>, 
+	Gatien Chevallier <gatien.chevallier@foss.st.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Le Goffic <legoffic.clement@gmail.com>, 
+	Julius Werner <jwerner@chromium.org>, linux-arm-kernel@lists.infradead.org, 
+	linux-perf-users@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 30/07/2025 18:00, Catalin Marinas wrote:
-> On Wed, Jul 23, 2025 at 09:48:27PM +0530, Dev Jain wrote:
+> +title: DDR3 SDRAM compliant to JEDEC JESD79-4D
 
-[...]
+Should this say DDR4?
 
-> 
->> +	 * mmap_write_lock/unlock in T1 be called CS (the critical section).
->> +	 *
->> +	 * Claim: The CS of T1 will never operate on a freed PMD table.
->> +	 *
->> +	 * Proof:
->> +	 *
->> +	 * Case 1: The static branch is visible to T2.
->> +	 *
->> +	 * Case 1 (a): T1 acquires the lock before T2 can.
->> +	 * T2 will block until T1 drops the lock, so pmd_free() will only be
->> +	 * executed after T1 exits CS.
-> 
-> This assumes that there is some ordering between unlock and pmd_free()
-> (e.g. some poisoning of the old page). The unlock only gives us release
-> semantics, not acquire. It just happens that we have an atomic
-> dec-and-test down the __free_pages() path but I'm not convinced we
-> should rely on it unless free_pages() has clear semantics on ordering
-> related to prior memory writes.
+> +examples:
+> +  - |
+> +    ddr {
+> +        compatible = "ddr4-ff,f", "jedec,ddr4";
 
-I can understand how pmd_free() could be re-ordered before the unlock, but
-surely it can't be reorded before the lock? I need to go unlearn everything I
-thought I understood about locking if that's the case...
-
+This is not a valid example for the way you're defining it now anymore.
 
