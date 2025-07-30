@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-751405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD8AB16937
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 777FEB16939
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:09:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 747F55A5592
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:07:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814F75A48C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B16B233737;
-	Wed, 30 Jul 2025 23:08:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159EC230BF2;
+	Wed, 30 Jul 2025 23:09:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mN9MfhjT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTs1OBkN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04997376;
-	Wed, 30 Jul 2025 23:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750A5376;
+	Wed, 30 Jul 2025 23:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753916880; cv=none; b=sLn3fY4ngXKb8QFNaLi0Jrk6tIZ8zCFUETEfDSYM9xPrptYvxblenT6i992VydVfiHbHoPDKbAbrMOFq3PSQTj5qjuNTJLAkRMsEZOnyzKjA0keP/Zj0GMB8rUSF0CjADllbo147N7AbQ1Xoth89Ily83IMDrmx1DzKH7b4WxjU=
+	t=1753916960; cv=none; b=QxTdAKhzET4LrberWOfdCbGeJBM83fvXrGT+6XOHY7H4AWGm35Daqm7kS/VHAZ7WBIUd86/o+szJL/ThFb+jh/C5colAuo6bFMkhxgR0qPikIEI/TsN5VCn4RXaW686wXsFekixl2uzoiTfTCGsI+AvlVtKyxkbKQ3LSZqzTsAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753916880; c=relaxed/simple;
-	bh=zzjnzxC1bl9JFaBe32DCTnSQkUzSkshMzgbbgw6ZEMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qQIlnp3VK6F3NpaSglEiYu9iRwQaZeWSonrlM7ZVccZ4C0ZTmJQNzBMzhGIEazWdCNLKr9ShMPc8P74zFIHEpfPn4+q2skU3jjohEHLlljer4A2FrwmhZiFjSyEJhHXhmpUPY3T+oN/rnAtcURfj5r+qb2CUnUFWQ+zx1qfiQrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mN9MfhjT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CFABC4CEE3;
-	Wed, 30 Jul 2025 23:07:59 +0000 (UTC)
+	s=arc-20240116; t=1753916960; c=relaxed/simple;
+	bh=jWK+2vcwMV2X7+9pqxnzwY6rxLt7ezaNRM0TqULxrN4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=AYgAvVjLuOz7q8ill0az0BNzHaMXZSklQ7SttbSdCmOEMYwWa0Qyx1cYd7+GIxFM+VdnY5LGe2faOFY02Oyyb4QcLUjDPNgJXMVLQ55PIiSAVz8NZiNbBhOAccy2+413Fb36aOn2rf3RyEnH1JUlmLIVEaDz0Le6/7eODGfkvfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTs1OBkN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6190C4CEE3;
+	Wed, 30 Jul 2025 23:09:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753916879;
-	bh=zzjnzxC1bl9JFaBe32DCTnSQkUzSkshMzgbbgw6ZEMs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mN9MfhjT+/YVyTMyWJLvfNo0eu+njIpdeOca+ciB1jMjxGPPBjFdK1mkMyxSmSAYp
-	 Cj73hk3g3w81+yK0sinTnoDYcsitkpw9BUTGBJF7Wrq/8hJIqSmJlqIFmQijX82occ
-	 nERVS98Xurmxr2m4x1gka7Zgf7hh2SB8CTiLLNlmh0EUKHIHBl+QD533eSgMiMHqch
-	 HsD6aNHrWPUP5ufPnToBhwJHpMHHiKxaKy4v7c8Wr+rF/5Z8fqej+a73kGQr26N7zq
-	 gwbqTceMDvY3glLoJ0Tc5/vxm6TKhyQNur0Nb9ou35jrmzy11QU8kaI3tFd6C+Rfji
-	 cl9TgwKzCSxdw==
-Date: Wed, 30 Jul 2025 16:07:59 -0700
-From: Kees Cook <kees@kernel.org>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	Krzysztof Karas <krzysztof.karas@intel.com>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Qasim Ijaz <qasdev00@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
-Subject: Re: [PATCH v15 6/9] ref_tracker: automatically register a file in
- debugfs for a ref_tracker_dir
-Message-ID: <202507301603.62E553F93@keescook>
-References: <20250618-reftrack-dbgfs-v15-0-24fc37ead144@kernel.org>
- <20250618-reftrack-dbgfs-v15-6-24fc37ead144@kernel.org>
+	s=k20201202; t=1753916958;
+	bh=jWK+2vcwMV2X7+9pqxnzwY6rxLt7ezaNRM0TqULxrN4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DTs1OBkNgdCk7RyTLwscW4dVwBlor0BZrGT5WVrTNfsmqKE2vam/1eLmFy05sNvCU
+	 HvQMCJ5dxKxtQayVwcaFB3HTT0aQWxTKdEW7s1wajJP0n1YYRTEsNMzlv0HjVzaOgT
+	 lCnHVm8hIjEJya+nG5qFgmb2M/9PY2uSdNnATm9nfI78zknglBhAu/PkPzMPmOoAwq
+	 gNSGR4mUibWOARhClj2BnxWvEUs+QPAMgqOBj+20Hs6K7yx/Y8LlRiIWl0DJekZVDZ
+	 drJlK0TiGPjrfyMzoNctuZGk8nRjxLKH3EhuIEISk48WT4to8tadH1Z4LAWpoHfqkX
+	 GwCXAR0Dai8aA==
+Date: Wed, 30 Jul 2025 13:09:17 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] cgroup: Changes for v6.17
+Message-ID: <aIqmHVGyKjFG8agb@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250618-reftrack-dbgfs-v15-6-24fc37ead144@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 18, 2025 at 10:24:19AM -0400, Jeff Layton wrote:
-> [...]
-> The file is given the name "class@%px", as having the unmodified address
-> is helpful for debugging. This should be safe since this directory is only
-> accessible by root
-> [...]
-> +void ref_tracker_dir_debugfs(struct ref_tracker_dir *dir)
-> +{
-> +	char name[NAME_MAX + 1];
-> +	struct dentry *dentry;
-> +	int ret;
-> +
-> +	/* No-op if already created */
-> +	dentry = xa_load(&debugfs_dentries, (unsigned long)dir);
-> +	if (dentry && !xa_is_err(dentry))
-> +		return;
-> +
-> +	ret = snprintf(name, sizeof(name), "%s@%px", dir->class, dir);
-> +	name[sizeof(name) - 1] = '\0';
+The following changes since commit 2043ae9019e0f75c7785048230586c3f3ca0a2a4:
 
-Yikes! Never use %px, and especially don't use it for a stable
-identifier nor expose it to userspace like this. If you absolutely must,
-use %p, but never %px. This is a kernel address leak:
-https://docs.kernel.org/process/deprecated.html#p-format-specifier
+  Merge tag 'hid-for-linus-2025060301' of git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid (2025-06-03 10:34:36 -0700)
 
-"helpful for debugging" is not a sufficiently good reason; and "only
-accessible by root" has nothing to do with kernel address integrity.
-Those kinds of things are (roughly) managed by various capabilities,
-not DAC uid==0.
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.17
+
+for you to fetch changes up to 646faf36d7271c597497ca547a59912fcab49be9:
+
+  cgroup: Add compatibility option for content of /proc/cgroups (2025-07-19 06:14:44 -1000)
+
+----------------------------------------------------------------
+cgroup: Changes for v6.17
+
+- Allow css_rstat_updated() in NMI context to enable memory accounting for
+  allocations in NMI context.
+
+- /proc/cgroups doesn't contain useful information for cgroup2 and was
+  updated to only show v1 controllers. This unfortunately broke something in
+  the wild. Add an option to bring back the old behavior to ease transition.
+
+- selftest updates and other cleanups.
+
+----------------------------------------------------------------
+Michal Koutný (6):
+      cgroup: Drop sock_cgroup_classid() dummy implementation
+      selftests: cgroup_util: Add helpers for testing named v1 hierarchies
+      selftests: cgroup: Add support for named v1 hierarchies in test_core
+      selftests: cgroup: Optionally set up v1 environment
+      selftests: cgroup: Fix compilation on pre-cgroupns kernels
+      cgroup: Add compatibility option for content of /proc/cgroups
+
+Sebastian Chlad (2):
+      selftests: cgroup: Allow longer timeout for kmem_dead_cgroups cleanup
+      selftests: cgroup: Fix missing newline in test_zswap_writeback_one
+
+Shakeel Butt (5):
+      cgroup: support to enable nmi-safe css_rstat_updated
+      cgroup: make css_rstat_updated nmi safe
+      cgroup: remove per-cpu per-subsystem locks
+      memcg: cgroup: call css_rstat_updated irrespective of in_nmi()
+      cgroup: llist: avoid memory tears for llist_node
+
+Shashank Balaji (1):
+      selftests/cgroup: fix cpu.max tests
+
+Tejun Heo (1):
+      Merge branch 'for-6.16-fixes' into for-6.17
+
+Vishal Chourasia (1):
+      Documentation: cgroup: add section explaining controller availability
+
+ Documentation/admin-guide/cgroup-v2.rst            |   9 +
+ Documentation/admin-guide/kernel-parameters.txt    |   8 +
+ include/linux/cgroup-defs.h                        |  21 +--
+ include/linux/llist.h                              |   6 +-
+ include/trace/events/cgroup.h                      |  47 ------
+ kernel/cgroup/cgroup-v1.c                          |  14 +-
+ kernel/cgroup/rstat.c                              | 184 ++++++++++-----------
+ mm/memcontrol.c                                    |  10 +-
+ tools/testing/selftests/cgroup/lib/cgroup_util.c   |   4 +-
+ .../selftests/cgroup/lib/include/cgroup_util.h     |   5 +
+ tools/testing/selftests/cgroup/test_core.c         |  84 ++++++++--
+ tools/testing/selftests/cgroup/test_cpu.c          |  63 ++++---
+ tools/testing/selftests/cgroup/test_kmem.c         |   5 +-
+ tools/testing/selftests/cgroup/test_zswap.c        |   2 +-
+ 14 files changed, 264 insertions(+), 198 deletions(-)
 
 -- 
-Kees Cook
+tejun
 
