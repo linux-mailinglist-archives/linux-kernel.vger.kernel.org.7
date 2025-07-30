@@ -1,113 +1,309 @@
-Return-Path: <linux-kernel+bounces-751225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B40EB16693
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:52:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10EF0B1669B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C185A163524
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26B4517ADD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9254A2E0B79;
-	Wed, 30 Jul 2025 18:52:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FEA2E1C56;
+	Wed, 30 Jul 2025 18:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MwMFVs2Z"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b="LFOuNDOm";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="Uyx5C+55";
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b="IzefgpgP"
+Received: from sender6.mail.selcloud.ru (sender6.mail.selcloud.ru [5.8.75.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66862DCC11
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E7B2E040D;
+	Wed, 30 Jul 2025 18:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.8.75.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753901569; cv=none; b=mv0hdmGyN7kqHD86I3gtxj3hau+C9wFKr2RzCt/hiUk2kyQH9TDebETYi/PvjDo/XzTMwsJYQB/XMZ94G3hu2zDwwfD2hebHcshBJiKCe+iJ2WZNd96Oj8tHkW1jkfBh49/XBocCykPtZ0CrYMmn55NnwzMk6w1KlNNOE7P47b4=
+	t=1753901849; cv=none; b=Z7lxab2O+d2x53Xo+hn3ajRVtjoXiTHmCAvOlDDmgfIzE5ebI84peoBNJcY1wFNm2mO8HGWukpPXKzFi3bOiermg+89m5KeeCG9y1t+vMm28aHdQ9QeMS3Vy6Rz/+z/DBOUb/98vqKDCBJX9aOpT/MDzMawwTB2qVFgSJjPqvhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753901569; c=relaxed/simple;
-	bh=tpddjbFeE3p3zUkTtUjkjP/V4559OzhrUQ2QMEp2efY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ev1GbDdlEIywCL1bDbhO3Z8o5LrYfQZK12RtxMnxQaz/C3e1TKB/hosjtiKWslunzQfsvQi4pGjF54wSxSkIsdAULx2jKR4DOj+w92SaoooKz5o9I7HHtd6a18Tu/TMVU1u94shyARrldqmrHjVqSNHP5UBl3yB3RzLdu40FY9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MwMFVs2Z; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61521cd7be2so96045a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:52:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753901566; x=1754506366; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=slAyeWyqtgn0qVMjTiorxiyOrDOZnrQB9QTmFJ0CFeE=;
-        b=MwMFVs2ZS/o6tGWVJjqL41FPds96mGf4D5h2U/6LvAcWQb8h4/kd85t8G7Ezz19tYj
-         hmNieFG3xL3MFFB+CQT7U50VsjHMQT8gojBsezmrzwDe2AMFwHV8ES++Rg/yzrkpWrpk
-         BOCECO5K2hlNovG+WRvFTVUllh8+xYqDZICW0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753901566; x=1754506366;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=slAyeWyqtgn0qVMjTiorxiyOrDOZnrQB9QTmFJ0CFeE=;
-        b=NQeU9Ku86RiOvtduIq7/t+Xe13QxAlvWttMgyNmVjPOtii+sLi9ZBhNXPdzqunKqSy
-         mjifjk66xXKCotxYkHar2I16/NEAphxe9udD6K58XORyC0SNfRaz5Mqh6eliXj4noIcL
-         wU7ZKY5qWJMD+BcJdjKArxhzqc8002wTylcr8YB65UN5pLaTNmpKxETXKiSFTfFQySOB
-         V44WokQxhMX/v4TYZjfBJ4wscWnwpsskD6gDIPKHNY3Iq/mBQlGmuo0eUbpbHzaneJNG
-         gy0Sb8OK3TQV169rI7X5qKf2vXsswEStU26VTZqBNTrwu/lCvAEQdOC6dHdNmvTXEJ3/
-         6Exw==
-X-Forwarded-Encrypted: i=1; AJvYcCXObcY6vmPToC1UTbG7UfisA+N8tnlZJDp1HJwWqQF5vUXjfABrYuHY977+pSL8Kx5hqoctdjcK3rup6f0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG1CGBmnhEKgg3qjZMWK1O6LgGEcitX632/O736GbNZfjzN/S/
-	KKEH6qN5DlctFAWYqS6vQpyE8o23SOp1N3Zi/Ui+icBxNbag1S8i14Qr0ZNAq0Cg7mRKnbUQhAh
-	aR9/RVwk=
-X-Gm-Gg: ASbGncs28tFev1xsBKle0yPV8On07wEQ2eJanO29JyxAcm3Q6X9ooJZR69dtvr/C792
-	MkkNybueBkaz0n2LJq8cEEoQCGthvZkiyVZIO9LTu7Lb/c+qDJG2IFlV4z29mq2cVJ2B8W63AMY
-	XpzwDOylQMC55I82RlNwRtgWP3HeN9hc8/F6sWjk9VJPRb/rT3fdE7pT/XaNpzi2XEfIPgL7FNH
-	mhOOeonsmTwNZAiR2CikratczRXLUQSePpP5W9GUG2VsceXZIAnM3Sx+aYHhhxeC+8U+DZPXHQW
-	/JMCHu33KnV/LhhzreNRbpTkwXZOpFVxhElnyjpj9ZXzJhedBxdmPgL8XGrfgLjInpkY+D5+Gq1
-	xEvNtcy2CYyfQhKfG1FNSegpOiqbhRccIEd+bfosw/wie5brcTpc5anQ/8Br1Xatxw3grWg+E
-X-Google-Smtp-Source: AGHT+IHasHapd82Q1lJsA4BURbjIcguYzGRKLAgtowWxQWFWZ2kVZ8qC+fT2U5fje00O5BSzRMsrOA==
-X-Received: by 2002:a05:6402:1ed5:b0:615:905a:3d47 with SMTP id 4fb4d7f45d1cf-615905a3fa0mr3059683a12.21.1753901565823;
-        Wed, 30 Jul 2025 11:52:45 -0700 (PDT)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com. [209.85.208.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a17f1d45sm484673a12.34.2025.07.30.11.52.44
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 11:52:45 -0700 (PDT)
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61521cd7be2so96001a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:52:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW00cNv6D65YqtCQIY9l/HH99Lf4Bt/Lc6436FeggO2Raj7YN1BApMuMU7ylrd2DgXTi6/5bT0Zp9MtGaQ=@vger.kernel.org
-X-Received: by 2002:a05:6402:2708:b0:612:dfdd:46fc with SMTP id
- 4fb4d7f45d1cf-61586eecd21mr4741613a12.11.1753901564582; Wed, 30 Jul 2025
- 11:52:44 -0700 (PDT)
+	s=arc-20240116; t=1753901849; c=relaxed/simple;
+	bh=046a63qWt97W4qUsw19vK9WvukUJj/1gstAKzeftaWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SxyC+mLDaO6lOsGd1gNlszUY+VhyIqKWROSKcaFd6rdQHfMpI83R+Bc3eWRfO55jKz8Eg9BxvWMcvAQVKuF5B42t5F7jVCZ8FFry2W22431T4np1XdW+bQ/lwkuDbTVTva9Fk1heGrHJ1y0i28kRJdjSpHxNkFQInKqgwHZgZXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev; spf=pass smtp.mailfrom=mail.selcloud.ru; dkim=pass (1024-bit key) header.d=mail.selcloud.ru header.i=@mail.selcloud.ru header.b=LFOuNDOm; dkim=pass (1024-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=Uyx5C+55; dkim=fail (2048-bit key) header.d=foxido.dev header.i=@foxido.dev header.b=IzefgpgP reason="signature verification failed"; arc=none smtp.client-ip=5.8.75.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxido.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.selcloud.ru
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=mail.selcloud.ru; s=selcloud; h=Content-Transfer-Encoding:MIME-Version:
+	Message-ID:Date:Subject:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:
+	Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:
+	List-Help:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EAWk/VZVT6FtLIzp7yLEpQc/s81hLBk2+uT6GH2SPck=; t=1753901845; x=1754074645;
+	 b=LFOuNDOmflcGvp28RdMcMUJ04OdqPVYSxYYYb5a60/C0O2FfXA+Qyrd/l0yFzd+NU9v30+efyp
+	LblaEn/RghqCpui5Itc3BWk/UayLoSFAcrmiKx+qsDBCaX9b0mdGU7e0L7BvVPmlM7dUgR9HxkXIx
+	dkT41Ii8AcYjw06+mKBc=;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=foxido.dev;
+	 s=selcloud; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject
+	:Cc:To:From:List-id:List-Unsubscribe:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Help:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=EAWk/VZVT6FtLIzp7yLEpQc/s81hLBk2+uT6GH2SPck=;
+	t=1753901845; x=1754074645; b=Uyx5C+55o7sgROraXTbYZhrUZX+C0Tfr9eMlAawQ34JvUYb
+	3VkL+ykQMOUy3SOgl85maJKIAFDMSaB4h0DZOs0795T5jbGQpzvdXwNRIr+f3/BJ0Kl1e3tkfPPoL
+	MYfFys7XR7E3wQi21wa6BVLeK8/WA4XeoFdA/G9Y7iJOgGA=;
+Precedence: bulk
+X-Issuen: 1120529
+X-User: 280060488
+X-Postmaster-Msgtype: 3849
+Feedback-ID: 1120529:15965:3849:samotpravil
+X-From: foxido.dev
+X-from-id: 15965
+X-MSG-TYPE: bulk
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+X-blist-id: 3849
+X-Gungo: 20250728.224157
+X-SMTPUID: mlgnr60
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxido.dev; s=dkim;
+	t=1753901836; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=IxgYNAMOATuJkMUPc2HzQecFSd+a8bOZ5WucgUpaVSw=;
+	b=IzefgpgPfIcUei49/BJt235d8H57LQe3qGdqp2Ws6KIAM144mvRRVQhego5UOBtWmHoE8E
+	m5X6nR//Dk/fX3pYaW572M3dX0RWjRrpjePns+1CW0zVnO1l3efb6CiQ0pPZazdDfoqZBd
+	nVeqSsQurSfy9I0s+HjQBDFvD6jkwj88yMcOm7KciVyoYtZAH4OXjvj/wMDXvLPMfs2ul8
+	I6jETXIlWedJN5dlKYgX9iLjzlgYaGsQnxMLrpIrZHIrlO47n3uAFql0ew6axalpqyf4no
+	V1SxujtQfjskyROb8cDSPu0RAzY2o2uNdhPMgzvyA+46aR6kBW4dBYfSRaNTHw==
+From: Gladyshev Ilya <foxido@foxido.dev>
+To: foxido@foxido.dev
+Cc: w_armin@gmx.de,
+	linux-input@vger.kernel.org,
+	nikita.nikita.krasnov@gmail.com,
+	Hans de Goede <hansg@kernel.org>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v3] platform/x86: Add WMI driver for Redmibook keyboard.
+Date: Wed, 30 Jul 2025 21:56:09 +0300
+Message-ID: <20250730185619.8725-1-foxido@foxido.dev>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <450d3876-90a9-4b1c-8d73-62ac19048991@suse.cz> <CAHk-=wg70=mihHE3_Te=t1Fmvrh22bcEs8bvH3tDEXZd6q+4_g@mail.gmail.com>
- <20250730184724.GC89283@nvidia.com>
-In-Reply-To: <20250730184724.GC89283@nvidia.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 30 Jul 2025 11:52:26 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh_ukn6ESXTLKR9+g9hxVdop0sMe-Hu7AS8dinXGvYhJg@mail.gmail.com>
-X-Gm-Features: Ac12FXzOpWstClby8n_gZ1wN_LSRv3bSws6YzxdQ9YiX4spwxDywE66Yp6AB2ZU
-Message-ID: <CAHk-=wh_ukn6ESXTLKR9+g9hxVdop0sMe-Hu7AS8dinXGvYhJg@mail.gmail.com>
-Subject: Re: [GIT PULL] slab updates for 6.17
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	Harry Yoo <harry.yoo@oracle.com>, David Rientjes <rientjes@google.com>, 
-	Christoph Lameter <cl@gentwo.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Matthew Wilcox <willy@infradead.org>, Pedro Falcato <pfalcato@suse.de>, 
-	Bernard Metzler <bernard.metzler@linux.dev>, 
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>, David Howells <dhowells@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Jul 2025 at 11:47, Jason Gunthorpe <jgg@nvidia.com> wrote:
->
-> I think it will be easiest for all if I send a one patch PR after you pick up
-> the main RDMA PR in the next few days. siw is not so critical that we
-> need to rush.
+This driver implements support for various Fn keys (like Cut) and Xiaomi
+specific AI button.
 
-Ack, sounds good.
+Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
+---
+Changes since v2:
+- Fix Kconfig dependencies
+- Accept WMI buffers that are bigger than expected
 
-            Linus
+Link to v2: https://lore.kernel.org/platform-driver-x86/20250729190528.84=
+46-1-foxido@foxido.dev/
+---
+ MAINTAINERS                      |   6 ++
+ drivers/platform/x86/Kconfig     |  12 +++
+ drivers/platform/x86/Makefile    |   1 +
+ drivers/platform/x86/redmi-wmi.c | 129 +++++++++++++++++++++++++++++++
+ 4 files changed, 148 insertions(+)
+ create mode 100644 drivers/platform/x86/redmi-wmi.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c0b444e5fd5a..eb25fb10e751 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -20965,6 +20965,12 @@ S:	Maintained
+ T:	git https://github.com/pkshih/rtw.git
+ F:	drivers/net/wireless/realtek/rtw89/
+=20
++REDMIBOOK WMI DRIVERS
++M:	Gladyshev Ilya <foxido@foxido.dev>
++L:	platform-driver-x86@vger.kernel.org
++S:	Maintained
++F:	drivers/platform/x86/redmi-wmi.c
++
+ REDPINE WIRELESS DRIVER
+ L:	linux-wireless@vger.kernel.org
+ S:	Orphan
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index e5cbd58a99f3..9f98a7042e43 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -109,6 +109,18 @@ config XIAOMI_WMI
+ 	  To compile this driver as a module, choose M here: the module will
+ 	  be called xiaomi-wmi.
+=20
++config REDMI_WMI
++	tristate "Redmibook WMI key driver"
++	depends on ACPI_WMI
++	depends on INPUT
++	select INPUT_SPARSEKMAP
++	help
++	  Say Y here if you want support for WMI-based hotkey events on
++	  Xiaomi Redmibook devices.
++
++	  To compile this driver as a module, choose M here: the module will
++	  be called redmi-wmi.
++
+ config GIGABYTE_WMI
+ 	tristate "Gigabyte WMI temperature driver"
+ 	depends on ACPI_WMI
+diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefil=
+e
+index bea87a85ae75..406dd0807ba7 100644
+--- a/drivers/platform/x86/Makefile
++++ b/drivers/platform/x86/Makefile
+@@ -13,6 +13,7 @@ obj-$(CONFIG_HUAWEI_WMI)		+=3D huawei-wmi.o
+ obj-$(CONFIG_MXM_WMI)			+=3D mxm-wmi.o
+ obj-$(CONFIG_NVIDIA_WMI_EC_BACKLIGHT)	+=3D nvidia-wmi-ec-backlight.o
+ obj-$(CONFIG_XIAOMI_WMI)		+=3D xiaomi-wmi.o
++obj-$(CONFIG_REDMI_WMI)			+=3D redmi-wmi.o
+ obj-$(CONFIG_GIGABYTE_WMI)		+=3D gigabyte-wmi.o
+=20
+ # Acer
+diff --git a/drivers/platform/x86/redmi-wmi.c b/drivers/platform/x86/redm=
+i-wmi.c
+new file mode 100644
+index 000000000000..3dbf4a40a4ff
+--- /dev/null
++++ b/drivers/platform/x86/redmi-wmi.c
+@@ -0,0 +1,129 @@
++// SPDX-License-Identifier: GPL-2.0
++/* WMI driver for Xiaomi Redmibooks */
++
++#include <linux/acpi.h>
++#include <linux/device.h>
++#include <linux/input.h>
++#include <linux/input/sparse-keymap.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/unaligned.h>
++#include <linux/wmi.h>
++
++#include <uapi/linux/input-event-codes.h>
++
++#define WMI_REDMIBOOK_KEYBOARD_EVENT_GUID "46C93E13-EE9B-4262-8488-563BC=
+A757FEF"
++
++#define AI_KEY_VALUE_MASK 0x00000100
++
++static const struct key_entry redmi_wmi_keymap[] =3D {
++	{KE_KEY, 0x00000201,	{KEY_SELECTIVE_SCREENSHOT}},
++	{KE_KEY, 0x00000301,	{KEY_ALL_APPLICATIONS}},
++	{KE_KEY, 0x00001b01,	{KEY_SETUP}},
++
++	/* AI button has code for each position */
++	{KE_KEY, 0x00011801,	{KEY_ASSISTANT}},
++	{KE_KEY, 0x00011901,	{KEY_ASSISTANT}},
++
++	/* Keyboard backlight */
++	{KE_IGNORE, 0x00000501, {}},
++	{KE_IGNORE, 0x00800501, {}},
++	{KE_IGNORE, 0x00050501, {}},
++	{KE_IGNORE, 0x000a0501, {}},
++
++	{KE_END}
++};
++
++struct redmi_wmi {
++	struct input_dev *input_dev;
++	/* Protects the key event sequence */
++	struct mutex key_lock;
++};
++
++static int redmi_wmi_probe(struct wmi_device *wdev, const void *context)
++{
++	struct redmi_wmi *data;
++	int err;
++
++	/* Init dev */
++	data =3D devm_kzalloc(&wdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	dev_set_drvdata(&wdev->dev, data);
++
++	err =3D devm_mutex_init(&wdev->dev, &data->key_lock);
++	if (err)
++		return err;
++
++	/* Setup input device */
++	data->input_dev =3D devm_input_allocate_device(&wdev->dev);
++	if (!data->input_dev)
++		return -ENOMEM;
++	data->input_dev->name =3D "Redmibook WMI keys";
++	data->input_dev->phys =3D "wmi/input0";
++
++	err =3D sparse_keymap_setup(data->input_dev, redmi_wmi_keymap, NULL);
++	if (err)
++		return err;
++
++	return input_register_device(data->input_dev);
++}
++
++static void redmi_wmi_notify(struct wmi_device *wdev, union acpi_object =
+*obj)
++{
++	struct redmi_wmi *data =3D dev_get_drvdata(&wdev->dev);
++	bool autorelease =3D true;
++	int value =3D 1;
++
++	if (obj->type !=3D ACPI_TYPE_BUFFER) {
++		dev_err(&wdev->dev, "Bad response type %u\n", obj->type);
++		return;
++	}
++
++	if (obj->buffer.length < 32) {
++		dev_err(&wdev->dev, "Invalid buffer length %u\n", obj->buffer.length);
++		return;
++	}
++
++	/* For linearizability */
++	guard(mutex)(&data->key_lock);
++
++	u32 payload =3D get_unaligned_le32(obj->buffer.pointer);
++	struct key_entry *entry =3D sparse_keymap_entry_from_scancode(data->inp=
+ut_dev, payload);
++
++	if (!entry) {
++		dev_dbg(&wdev->dev, "Unknown WMI event with payload %u", payload);
++		return;
++	}
++
++	/* AI key quirk */
++	if (entry->keycode =3D=3D KEY_ASSISTANT) {
++		value =3D !(payload & AI_KEY_VALUE_MASK);
++		autorelease =3D false;
++	}
++
++	sparse_keymap_report_entry(data->input_dev, entry, value, autorelease);
++}
++
++static const struct wmi_device_id redmi_wmi_id_table[] =3D {
++	{ .guid_string =3D WMI_REDMIBOOK_KEYBOARD_EVENT_GUID },
++	{ }
++};
++
++static struct wmi_driver redmi_wmi_driver =3D {
++	.driver =3D {
++		.name =3D "redmi-wmi",
++		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS
++	},
++	.id_table =3D redmi_wmi_id_table,
++	.probe =3D redmi_wmi_probe,
++	.notify =3D redmi_wmi_notify,
++	.no_singleton =3D true,
++};
++module_wmi_driver(redmi_wmi_driver);
++
++MODULE_DEVICE_TABLE(wmi, redmi_wmi_id_table);
++MODULE_AUTHOR("Gladyshev Ilya <foxido@foxido.dev>");
++MODULE_DESCRIPTION("Redmibook WMI driver");
++MODULE_LICENSE("GPL");
+--=20
+2.50.0
+
 
