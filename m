@@ -1,62 +1,41 @@
-Return-Path: <linux-kernel+bounces-750881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51AC3B16236
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:04:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7233FB16239
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:05:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0260E3A9871
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:04:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 208033AE97F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C67F2D97B4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2102DA75A;
+	Wed, 30 Jul 2025 14:04:34 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791FD2D9EC4;
 	Wed, 30 Jul 2025 14:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ONhNN1bE"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8DA12D8DD9;
-	Wed, 30 Jul 2025 14:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753884267; cv=none; b=J4twvXSshZejifYhxKYvC26bSilMq0Xxll6708xmn568U7ak23bibcIXOLwwz4BEWWlGE3tTowq1ZVPHa4Rhkk5vXJwsobulnaAiA5zS9gB4FylRzacSATIl0CV9gQZmuYo+++i1ZNF/qzLSGJKtZ5fr+cNDaJO6DsbsaILJvRo=
+	t=1753884274; cv=none; b=PEa/pPJfdxA2d14wR88sL46rkAfID/6h+ozqWmEKGQ92B9Va/Bq88kJZ0Il9PPbH65mR9j9cXiWNZBAtiwhWjrJV29+eqziN//queOZ3FCuIU8b0G8ESzVG+jWdVATjhXhDPKLJo+gE59+3RgqsIdzP4UzNWEo1eJOqsKxKHHjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753884267; c=relaxed/simple;
-	bh=0QUgoLmOzTxIOTgR39jazaxTcUO8R7achWFRTaEI3hc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=psstdiGQ/6OJB5dzVV+JvZZBKX7jzvXMNVLFU8N1F83LowsOIZF8H3DBCxJkFWGTPZ2XXepMbELEjzowklAjNt2B7Ud0etGF6a/gmZV5v3qtLOz/+GQ8Ux5vBHWsLAuxhSKtU0cciKx8MsQlKBYrH5CRDdhA1LTzfAcb/VIJU9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ONhNN1bE; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=9FOzRDrm4k7ocA4kO9VO4g/icl7IvB2SOCCVPLY5wro=; b=ONhNN1bEEM357dbXPC3O3Qg4Oe
-	euUQQmnp/SYBZJydRPlm7IxUaesPobFN8su/IDUF6MMaKE39cua60kRc1rxdVr7qE06GqlqaAUVIe
-	zFvBnDeA/33LZ17l+vmQSRrBDnsdvAd0IoZS4e5aPGB4qSYu51Xodj0PPJsLmp2Vi9T973Hd3M19G
-	U7koTuV6jodGla8Meu8UA0im+dZWLTGffRtFC3Od55uUYXmdXCMXPf0fay40sWRTOejMBzVy/lSkd
-	BtYIBgSK28VHSqmuflcyNwCa9OlGbqigkD9ICXkPBjC8VrgCduYr1vlIgDLPHwhsj+tTw5VBHYAAV
-	dLkrNwjg==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uh7Pa-005yiX-HZ; Wed, 30 Jul 2025 16:04:06 +0200
-From: Luis Henriques <luis@igalia.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  Bernd Schubert <bschubert@ddn.com>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-In-Reply-To: <20250729233854.GV2672029@frogsfrogsfrogs> (Darrick J. Wong's
-	message of "Tue, 29 Jul 2025 16:38:54 -0700")
-References: <8734afp0ct.fsf@igalia.com>
-	<20250729233854.GV2672029@frogsfrogsfrogs>
-Date: Wed, 30 Jul 2025 15:04:00 +0100
-Message-ID: <87freddbcf.fsf@igalia.com>
+	s=arc-20240116; t=1753884274; c=relaxed/simple;
+	bh=gZRPD95/soQMhSkwWf1uGpIQQ9RTp0+6YEXUTxv9pp8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BCYkz9dNiKhIqCSZzHkKlbyiE++vruDiV1L+fB94+YCmiLEJ684n7eF6CmzqEG/gY7/HsSiLkSB4koZO2nP9tF4JYqHgFq44Zw9P5PqwgN8aRQep0opv6aKySl6zfoLxPQEjZP7OdSFjUfobIHsH40ZfI2Z7jKsSe83TeMkCrIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1uh7Po-0005uy-00; Wed, 30 Jul 2025 16:04:20 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id F3FDCC035D; Wed, 30 Jul 2025 16:04:09 +0200 (CEST)
+Date: Wed, 30 Jul 2025 16:04:09 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: torvalds@linux-foundation.org
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] MIPS changes for v6.17
+Message-ID: <aIomWdeNOQwaKPu1@alpha.franken.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,132 +43,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Darrick,
+The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
 
-On Tue, Jul 29 2025, Darrick J. Wong wrote:
+  Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
 
-> On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
->> Hi!
->>=20
->> I know this has been discussed several times in several places, and the
->> recent(ish) addition of NOTIFY_RESEND is an important step towards being
->> able to restart a user-space FUSE server.
->>=20
->> While looking at how to restart a server that uses the libfuse lowlevel
->> API, I've created an RFC pull request [1] to understand whether adding
->> support for this operation would be something acceptable in the project.
->
-> Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> could restart itself.  It's unclear if doing so will actually enable us
-> to clear the condition that caused the failure in the first place, but I
-> suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> aren't totally crazy.
+are available in the Git repository at:
 
-Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
-the restart itself.  Instead, it simply adds some visibility into the
-opaque data structures so that a FUSE server could re-initialise a session
-without having to go through a full remount.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mips/linux.git/ tags/mips_6.17
 
-But sure, there are other things that could be added to the library as
-well.  For example, in my current experiments, the FUSE server needs start
-some sort of "file descriptor server" to keep the fd alive for the
-restart.  This daemon could be optionally provided in libfuse itself,
-which could also be used to store all sorts of blobs needed by the file
-system after recovery is done.
+for you to fetch changes up to 3ebcbf079c26ab6e82faa7f896b66def55547eee:
 
->> The PR doesn't do anything sophisticated, it simply hacks into the opaque
->> libfuse data structures so that a server could set some of the sessions'
->> fields.
->>=20
->> So, a FUSE server simply has to save the /dev/fuse file descriptor and
->> pass it to libfuse while recovering, after a restart or a crash.  The
->> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
->> course.  And there are probably other data structures that user-space fi=
-le
->> systems will have to keep track as well, so that everything can be
->> restored.  (The parameters set in the INIT phase, for example.)
->
-> Yeah, I don't know how that would work in practice.  Would the kernel
-> send back the old connection flags and whatnot via some sort of
-> FUSE_REINIT request, and the fuse server can either decide that it will
-> try to recover, or just bail out?
+  MIPS: Don't use %pK through printk (2025-07-28 09:58:49 +0200)
 
-That would be an option.  But my current idea would be that the server
-would need to store those somewhere and simply assume they are still OK
-after reconnecting.  The kernel wouldn't need to know the user-space was
-replaced by another server, potentially different, after an upgrade for
-example.
+----------------------------------------------------------------
+DT updates for ralink, mobileye and ralink
+Clean up of mc146818 usage
+Speed up delay calibration for CPS
+Other cleanups and fixes
 
-Right now, AFAIU, restarting a FUSE server *can* be done without any help
-from the kernel side, as long as the fd is kept alive.  The NOTIFY_RESEND
-is used only for resending FUSE requests for which the kernel is currently
-waiting replies for.  So, for example if the kernel sends a FUSE_READ to
-user-space and the server crashes while trying to serve it, the kernel
-will still be waiting for that reply.  However, a new server trying to
-recover from the crash will have no way to know that.  And this is where
-the NOTIFY_RESEND is useful.
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      firmware/nvram: bcm47xx: Don't use "proxy" headers
 
->> But, from the discussion with Bernd in the PR, one of the things that
->> would be good to have is for the kernel to send back to user-space the
->> information about the inodes it already knows about.
->>=20
->> I have been playing with this idea with a patch that simply sends out
->> LOOKUPs for each of these inodes.  This could be done through a new
->> NOTIFY_RESEND_INODES, or maybe it could be an extra operation added to t=
-he
->> already existing NOTIFY_RESEND.
->
-> I have no idea if NOTIFY_RESEND already does this, but you'd probably
-> want to purge all the unreferenced dentries/inodes to reduce the amount
-> of re-querying.
+Benoît Monin (5):
+      MIPS: mobileye: dts: eyeq6h: add the emmc controller
+      MIPS: eyeq6_defconfig: add cadence MMC/SDHCI driver
+      MIPS: mobileye: dts: eyeq5: add the emmc controller
+      MIPS: eyeq5_defconfig: add cadence MMC/SDHCI driver
+      MIPS: mobileye: dts: eyeq5,eyeq6h: rename the emmc controller
 
-No, NOTIFY_RESEND doesn't purge any of those; currently it simply resend
-all the requests.
+Chris Packham (4):
+      mips: dts: cameo-rtl9302c: Add switch block
+      mips: dts: realtek: Add switch interrupts
+      mips: dts: realtek: Add watchdog
+      mips: dts: realtek: Add gpio block
 
-> I gather that any fuse server that wants to reboot itself would either
-> have to persist what the nodeids map to, or otherwise stabilize them?
-> For example, fuse2fs could set the nodeid to match the ext2 inode
-> numbers.  Then reconnecting them wouldn't be too hard.
+Ezra Buehler (4):
+      dt-bindings: clock: mediatek,mtmips-sysc: Adapt compatible for MT7688 boards
+      MIPS: dts: ralink: mt7628a: Fix sysc's compatible property for MT7688
+      MIPS: dts: ralink: mt7628a: Update watchdog node according to bindings
+      MIPS: dts: ralink: gardena_smart_gateway_mt7688: Fix power LED
 
-Right, that's my understanding as well -- restarting a server requires
-stable nodeids.  IIRC most (all?) examples shipped with libfuse can't be
-restarted because they cast a pointer (the memory address to some sort of
-inode data struct) and use that as the nodeid.
+Geert Uytterhoeven (1):
+      MIPS: txx9: Constify bin_attribute arguments of txx9_sram_{read,write}()
 
->> Anyway, before spending any more time with this, I wanted to ask whether
->> this is something that could be acceptable in the kernel, if people think
->> a different approach should be followed, or if I'm simply trying to solve
->> the wrong problem.
->>=20
->> Thanks in advance for any feedback on this.
->>=20
->> [1] https://github.com/libfuse/libfuse/pull/1219
->
-> Who calls fuse_session_reinitialize() ?
+Gregory CLEMENT (3):
+      MIPS: disable MMID when not supported by the hardware
+      MIPS: CPS: Improve mips_cps_first_online_in_cluster()
+      MIPS: CPS: Optimise delay CPU calibration for SMP
 
-Ah! Good question!  So, my idea was that a FUSE server would do something
-like this:
+Huacai Chen (1):
+      MIPS/Loongson: Fix build warnings about export.h
 
-	fuse_session_new()
+Jiaxun Yang (1):
+      MIPS: mm: tlb-r4k: Uniquify TLB entries on init
 
-	if (do_recovery) {
-		get_old_fd()
-		fuse_session_reinitialize()
-                fuse_lowlevel_notify_resend()
-	} else
-		fuse_session_mount()
+Joshua Kinard (1):
+      MIPS: Update Joshua Kinard's e-mail address
 
-	fuse_daemonize()
-	fuse_session_loop_mt()
+Markus Elfring (1):
+      MIPS: SGI-IP27: Delete an unnecessary check before kfree() in hub_domain_free()
 
-Anyway, my initial concerns with restartability started because it is
-currently not possible to restart a server that uses libfuse without
-hacking into it's internal data structures.  The idea of resending all
-LOOKUPs just came from the discussion in the PR.
+Masahiro Yamada (1):
+      mips: boot: use 'targets' instead of extra-y in Makefile
 
-Cheers,
---=20
-Lu=C3=ADs
+Mateusz Jończyk (4):
+      mips: remove unused function mc146818_set_rtc_mmss
+      mips/mach-rm: remove custom mc146818rtc.h file
+      mips: remove redundant macro mc146818_decode_year
+      mips/malta,loongson2ef: use generic mc146818_get_time function
+
+Mieczyslaw Nalewaj (2):
+      MIPS: ralink: add missing header include
+      MIPS: pci-rt2880: make pcibios_init() static
+
+Rosen Penev (1):
+      mips: dts: qca: add wmac support
+
+Shiji Yang (12):
+      MIPS: lantiq: xway: mark dma_init() as static
+      MIPS: pci: lantiq: marks pcibios_init() as static
+      MIPS: lantiq: xway: mark dcdc_init() as static
+      MIPS: lantiq: irq: fix misc missing-prototypes warnings
+      MIPS: lantiq: xway: mark ltq_ar9_sys_hz() as static
+      MIPS: lantiq: xway: gptu: mark gptu_init() as static
+      MIPS: lantiq: xway: add prototype for ltq_get_cp1_base()
+      MIPS: lantiq: falcon: fix misc missing-prototypes warnings
+      MIPS: lantiq: falcon: sysctrl: remove unused falcon_trigger_hrst()
+      MIPS: lantiq: falcon: sysctrl: add missing header prom.h
+      MIPS: lantiq: falcon: sysctrl: fix request memory check logic
+      MIPS: vpe-mt: add missing prototypes for vpe_{alloc,start,stop,free}
+
+Thomas Weißschuh (2):
+      MIPS: Don't crash in stack_top() for tasks without ABI or vDSO
+      MIPS: Don't use %pK through printk
+
+Théo Lebrun (6):
+      MIPS: eyeq5_defconfig: Update for v6.16-rc1
+      MIPS: mobileye: eyeq5: add 5 I2C controller nodes
+      MIPS: mobileye: eyeq5: add evaluation board I2C temp sensor
+      MIPS: mobileye: eyeq5: add two GPIO bank nodes
+      MIPS: eyeq5_defconfig: add GPIO subsystem & driver
+      MIPS: eyeq5_defconfig: add I2C subsystem, driver and temp sensor driver
+
+ .../bindings/clock/mediatek,mtmips-sysc.yaml       |  28 +++--
+ arch/mips/Kconfig                                  |   2 +
+ arch/mips/boot/Makefile                            |   8 +-
+ arch/mips/boot/dts/mobileye/eyeq5-epm5.dts         |   8 ++
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             | 127 +++++++++++++++++++++
+ arch/mips/boot/dts/mobileye/eyeq6h.dtsi            |  22 ++++
+ arch/mips/boot/dts/qca/ar9132.dtsi                 |   9 ++
+ arch/mips/boot/dts/qca/ar9132_tl_wr1043nd_v1.dts   |   4 +
+ arch/mips/boot/dts/qca/ar9331.dtsi                 |   9 ++
+ arch/mips/boot/dts/qca/ar9331_dpt_module.dts       |   4 +
+ arch/mips/boot/dts/qca/ar9331_dragino_ms14.dts     |   4 +
+ arch/mips/boot/dts/qca/ar9331_omega.dts            |   4 +
+ .../dts/qca/ar9331_openembed_som9331_board.dts     |   4 +
+ arch/mips/boot/dts/qca/ar9331_tl_mr3020.dts        |   4 +
+ .../dts/ralink/gardena_smart_gateway_mt7688.dts    |   2 +-
+ arch/mips/boot/dts/ralink/mt7628a.dtsi             |  11 +-
+ .../dts/realtek/cameo-rtl9302c-2x-rtl8224-2xge.dts |  96 ++++++++++++++++
+ arch/mips/boot/dts/realtek/rtl930x.dtsi            |  31 +++++
+ arch/mips/configs/eyeq5_defconfig                  |  12 +-
+ arch/mips/configs/eyeq6_defconfig                  |   2 +
+ arch/mips/include/asm/cpu-info.h                   |   1 +
+ arch/mips/include/asm/mach-generic/mc146818rtc.h   |   4 -
+ .../include/asm/mach-ip30/cpu-feature-overrides.h  |   2 +-
+ arch/mips/include/asm/mach-ip30/spaces.h           |   2 +-
+ arch/mips/include/asm/mach-jazz/mc146818rtc.h      |   2 -
+ .../mips/include/asm/mach-lantiq/xway/lantiq_soc.h |   3 +
+ arch/mips/include/asm/mach-malta/mc146818rtc.h     |   2 -
+ arch/mips/include/asm/mach-rm/mc146818rtc.h        |  21 ----
+ arch/mips/include/asm/mc146818-time.h              | 105 ++---------------
+ arch/mips/include/asm/mips-cps.h                   |   4 +-
+ arch/mips/include/asm/sgi/heart.h                  |   2 +-
+ arch/mips/include/asm/smp-cps.h                    |   1 +
+ arch/mips/include/asm/vpe.h                        |   8 ++
+ arch/mips/kernel/cpu-probe.c                       |  42 ++++++-
+ arch/mips/kernel/mips-cm.c                         |  52 ++++-----
+ arch/mips/kernel/process.c                         |  16 +--
+ arch/mips/kernel/relocate.c                        |  10 +-
+ arch/mips/kernel/smp-cps.c                         |  16 ++-
+ arch/mips/kvm/mips.c                               |   2 +-
+ arch/mips/lantiq/falcon/prom.c                     |   4 +-
+ arch/mips/lantiq/falcon/sysctrl.c                  |  29 ++---
+ arch/mips/lantiq/irq.c                             |   4 +-
+ arch/mips/lantiq/xway/clk.c                        |   2 +-
+ arch/mips/lantiq/xway/dcdc.c                       |   2 +-
+ arch/mips/lantiq/xway/dma.c                        |   2 +-
+ arch/mips/lantiq/xway/gptu.c                       |   2 +-
+ arch/mips/loongson64/setup.c                       |   1 -
+ arch/mips/mm/physaddr.c                            |   2 +-
+ arch/mips/mm/tlb-r4k.c                             |  56 ++++++++-
+ arch/mips/pci/pci-lantiq.c                         |   2 +-
+ arch/mips/pci/pci-rt2880.c                         |   2 +-
+ arch/mips/ralink/irq.c                             |   1 +
+ arch/mips/sgi-ip27/ip27-irq.c                      |   2 +-
+ arch/mips/sgi-ip30/ip30-power.c                    |   2 +-
+ arch/mips/sgi-ip30/ip30-setup.c                    |   2 +-
+ arch/mips/sgi-ip30/ip30-smp.c                      |   2 +-
+ arch/mips/sgi-ip30/ip30-timer.c                    |   2 +-
+ arch/mips/sgi-ip30/ip30-xtalk.c                    |   2 +-
+ arch/mips/txx9/generic/setup.c                     |   4 +-
+ drivers/mfd/ioc3.c                                 |   2 +-
+ drivers/tty/serial/8250/8250_ioc3.c                |   2 +-
+ include/linux/bcm47xx_nvram.h                      |   1 -
+ include/linux/bcm47xx_sprom.h                      |   2 +-
+ 63 files changed, 570 insertions(+), 248 deletions(-)
+ delete mode 100644 arch/mips/include/asm/mach-rm/mc146818rtc.h
+
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
