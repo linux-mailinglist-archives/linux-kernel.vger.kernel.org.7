@@ -1,251 +1,427 @@
-Return-Path: <linux-kernel+bounces-750479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF42B15BD8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:35:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECAB4B15C20
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:39:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2572918C1FC6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:35:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256A417F2BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:38:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D36279DAD;
-	Wed, 30 Jul 2025 09:35:07 +0000 (UTC)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA79293454;
+	Wed, 30 Jul 2025 09:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WG463kuU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E13167DB7
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D14720F078;
+	Wed, 30 Jul 2025 09:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753868106; cv=none; b=Iis6pCCBon64CNduqB/4w7j//5ReXsuU3FVG0nU3sVLmWB4HUaEoFu22saNj+kciZv67HR6qQAjEHjIYoXFybJ3CgManmJ0PqcJ9mByo6FX/GWS8uQavefDYxUZvyONXMDwKYtrk5e6eUX97r4YHA3V1BT/dVASfBEFvt9Hlu+0=
+	t=1753868308; cv=none; b=cM6HC1EWIIV+1Vc9cagshJe0eTkvP50EF37sSispzpOzkLnb7ZZ/0aB6RcmAs9lZl1G7JpWHmHeaNisBxomfWeMsTzXP03S5b/lOFvAwwFivW2ka/kY+Um7CCEWsYrkkrCQm/iYAaJ95XjrZMUh1f3ZO1cf4PISfsBzsK+2MXAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753868106; c=relaxed/simple;
-	bh=Ul0O4QgDlk8UCNwdkXN6z/QOIq9BOSolmblqo5VTi3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JIYpdcP2JUCZDCME0Ocdemgh49HO06ru7loljrpgJ0/Ta3aPROkIaaXWj5w1900fynyWYKc3wtTGJqj9RExFwIikQ2HiJuBE5DgB3NYbTR8wDlNl5xwCzyBdnx38vTiP62aXTqeDBS9mprgPFtAJWkMymJB1I7yABGqJMXJT7tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-88bc56adfb8so328520241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:35:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753868102; x=1754472902;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/bw9ch+r6opJEUpIjpC/Dh8bkHfaHF/wvasrBSsHdMc=;
-        b=s5WvPAhXA0dASYJbX1F85qu4wByXQBYw/1r1iXKAzycsUHJ/U4X7h9mKLe0I0csyW1
-         b9d7JEjGsmgTT1TB48fThAwninprxw9tYDeHf/ZZGUCMqeACxtMz9izx6m0jRT5xf3PM
-         R1YVQSSyGsLmoUMgjzvQVVnLmdOS2uADY6962Cw8F1njDvIv/76oooGS56w0GppEkWmk
-         5aAffh9G4sA2jsuhib0iKnorMNnAxlrYxdAU+/ye4gkkFYlYnd671kMTxHDMxKUwhIw3
-         0EUALN1VDKHoI2OmCp27ug1tB6kUCzfp/qReOgtMNi5bRuiIbplr1eHjUB7vpYAuAS04
-         WOnw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/12zCf0O8Oid0zi+j0DTeAEtlVgOUDQqGzIA/QF/lc3CYKxRcmFexuCVJO1K9SyXSTVOBh8vaBsWF1XI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6ALFnRe8DrpD00gA/ZgOW726ao+VwQwgaxI84eE+VwUC1T/8m
-	khhWivGcsxOB1XhL47YLVmgecpmqOC0rPvggHRVAZKPs5MKFWt2Dh7HjqkskVsUz
-X-Gm-Gg: ASbGncvBgRtfYv61uyPopUssw3Kq6n5qIG/xyQAmeJqXTvaelXqnaMpvHD4OQGHJCf6
-	ccvMWVEU7GDozvhkU1n6MoBXWkTLMsQbUGZDfWGstI2u53te8Vwivc8eRyTyot4qcBsXyhOitiX
-	4teM830V7KLA3WS2XM5LNT+O8cpUJF3dQKCiNpvJPFRSgEfnC78zlZsuOMXmXKqwYbkAsHGz8WG
-	mGsBd256Sqyi4/yBHIg7zvu5qh6UYyBHgf2a64Jl6C063qEkSH96FXpkb9Y574aPi2rChE9b4P4
-	Lu7xkANtpFSsAYyF66Xgsu1a9uTPluI8gnsg/ihoIPaS6vN3tj32yMNtrLqpllk+HjSDPPSIBGb
-	L2p7fHLEiUV9RCeZp2gYtIzyFB61ido4g9O+gFFpw0gd1rg/yfBUOs9GUsUS6r/ltNpo57Dc=
-X-Google-Smtp-Source: AGHT+IFIJcxYj4253Z6p+Yp20u9rPh88+0k8hds7D2paZPTjdthlLY1eRkbYC0ZCqG8Wlv2mFYNaXQ==
-X-Received: by 2002:a05:6102:15a9:b0:4e5:9d76:e8c8 with SMTP id ada2fe7eead31-4fbe87a2aa6mr1469825137.18.1753868102390;
-        Wed, 30 Jul 2025 02:35:02 -0700 (PDT)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88b8dcd2199sm2322376241.17.2025.07.30.02.35.01
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 02:35:01 -0700 (PDT)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-87edd8f4e9fso1556892241.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 02:35:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUGR4w2OdDIe4KkZm9FipOVQMGCMzrkW8IR1erFKO6EtWms2OljvTS7XeuS0WHBekQCa4tMtY3AEBX0lig=@vger.kernel.org
-X-Received: by 2002:a05:6102:1627:b0:4fa:58e:89c9 with SMTP id
- ada2fe7eead31-4fbe7f1e5f8mr1723113137.5.1753868100701; Wed, 30 Jul 2025
- 02:35:00 -0700 (PDT)
+	s=arc-20240116; t=1753868308; c=relaxed/simple;
+	bh=pRNuFhfe6J7LIoGRpoziCUBYI/Pee0a4GmZfuvnSLXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jNaxBG0+XRplCtj/hMmyPA/thnUNvOAfkSXohDmj7OZAFWQczlAqppjAVFYg/ULjbb62R7gCxoqD5aHRItb68vz4sfsHbeHeohRJvfyBmmd+uFxvzSgnncsBNiT80uJvBwg05rHFxg0xUbxVoZO2KoUYsyx7BsH6NcDtBxTvX4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WG463kuU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA171C4CEE7;
+	Wed, 30 Jul 2025 09:38:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753868308;
+	bh=pRNuFhfe6J7LIoGRpoziCUBYI/Pee0a4GmZfuvnSLXc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WG463kuU1CcBbpGsqSLOmDmcFyqacIvxJU+0CrCHMxQXwGYhnjdURdAR2DeLpQu55
+	 nE50jGNpKIYBMf7r2nakLLu6Hn78p/fiMtcN7JdDQs1KEx1jiaBi8eyRmnDl9Vb2Wf
+	 ylPwxPaZ7uVKuNE9CqcJ7JazVIbdCT2xJSDlDn60=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org
+Subject: [PATCH 6.6 00/76] 6.6.101-rc1 review
+Date: Wed, 30 Jul 2025 11:34:53 +0200
+Message-ID: <20250730093226.854413920@linuxfoundation.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250702114924.091581796@infradead.org> <20250702121158.465086194@infradead.org>
-In-Reply-To: <20250702121158.465086194@infradead.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 30 Jul 2025 11:34:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com>
-X-Gm-Features: Ac12FXwKLsTXDgyNFgB_fGOTKvy3Pfg_IiJiWZaeBuDhTzV4576DeZdUaxz8VC0
-Message-ID: <CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com>
-Subject: Re: [PATCH v2 02/12] sched/deadline: Less agressive dl_server handling
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, clm@meta.com, 
-	linux-kernel@vger.kernel.org, linux-m68k <linux-m68k@lists.linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.101-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-6.6.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 6.6.101-rc1
+X-KernelTest-Deadline: 2025-08-01T09:32+00:00
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Peter,
+This is the start of the stable review cycle for the 6.6.101 release.
+There are 76 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-On Wed, 2 Jul 2025 at 14:19, Peter Zijlstra <peterz@infradead.org> wrote:
-> Chris reported that commit 5f6bd380c7bd ("sched/rt: Remove default
-> bandwidth control") caused a significant dip in his favourite
-> benchmark of the day. Simply disabling dl_server cured things.
->
-> His workload hammers the 0->1, 1->0 transitions, and the
-> dl_server_{start,stop}() overhead kills it -- fairly obviously a bad
-> idea in hind sight and all that.
->
-> Change things around to only disable the dl_server when there has not
-> been a fair task around for a whole period. Since the default period
-> is 1 second, this ensures the benchmark never trips this, overhead
-> gone.
->
-> Fixes: 557a6bfc662c ("sched/fair: Add trivial fair server")
-> Reported-by: Chris Mason <clm@meta.com>
-> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Link: https://lkml.kernel.org/r/20250520101727.507378961@infradead.org
+Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
+Anything received after that time might be too late.
 
-Thanks for your patch, which is now commit cccb45d7c4295bbf
-("sched/deadline: Less agressive dl_server handling") upstream.
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.101-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+and the diffstat can be found below.
 
-This commit causes
+thanks,
 
-    sched: DL replenish lagged too much
+greg k-h
 
-to be printed after full user-space (Debian) start-up on m68k
-(atari_defconfig running on ARAnyM).  Reverting this commit and fixing
-the small conflict gets rid of the message.
+-------------
+Pseudo-Shortlog of commits:
 
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -701,6 +701,7 @@ struct sched_dl_entity {
->         unsigned int                    dl_defer          : 1;
->         unsigned int                    dl_defer_armed    : 1;
->         unsigned int                    dl_defer_running  : 1;
-> +       unsigned int                    dl_server_idle    : 1;
->
->         /*
->          * Bandwidth enforcement timer. Each -deadline task has its
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -1215,6 +1215,8 @@ static void __push_dl_task(struct rq *rq
->  /* a defer timer will not be reset if the runtime consumed was < dl_server_min_res */
->  static const u64 dl_server_min_res = 1 * NSEC_PER_MSEC;
->
-> +static bool dl_server_stopped(struct sched_dl_entity *dl_se);
-> +
->  static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_dl_entity *dl_se)
->  {
->         struct rq *rq = rq_of_dl_se(dl_se);
-> @@ -1234,6 +1236,7 @@ static enum hrtimer_restart dl_server_ti
->
->                 if (!dl_se->server_has_tasks(dl_se)) {
->                         replenish_dl_entity(dl_se);
-> +                       dl_server_stopped(dl_se);
->                         return HRTIMER_NORESTART;
->                 }
->
-> @@ -1639,8 +1642,10 @@ void dl_server_update_idle_time(struct r
->  void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
->  {
->         /* 0 runtime = fair server disabled */
-> -       if (dl_se->dl_runtime)
-> +       if (dl_se->dl_runtime) {
-> +               dl_se->dl_server_idle = 0;
->                 update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
-> +       }
->  }
->
->  void dl_server_start(struct sched_dl_entity *dl_se)
-> @@ -1663,7 +1668,7 @@ void dl_server_start(struct sched_dl_ent
->                 setup_new_dl_entity(dl_se);
->         }
->
-> -       if (!dl_se->dl_runtime)
-> +       if (!dl_se->dl_runtime || dl_se->dl_server_active)
->                 return;
->
->         dl_se->dl_server_active = 1;
-> @@ -1684,6 +1689,20 @@ void dl_server_stop(struct sched_dl_enti
->         dl_se->dl_server_active = 0;
->  }
->
-> +static bool dl_server_stopped(struct sched_dl_entity *dl_se)
-> +{
-> +       if (!dl_se->dl_server_active)
-> +               return false;
-> +
-> +       if (dl_se->dl_server_idle) {
-> +               dl_server_stop(dl_se);
-> +               return true;
-> +       }
-> +
-> +       dl_se->dl_server_idle = 1;
-> +       return false;
-> +}
-> +
->  void dl_server_init(struct sched_dl_entity *dl_se, struct rq *rq,
->                     dl_server_has_tasks_f has_tasks,
->                     dl_server_pick_f pick_task)
-> @@ -2435,7 +2454,7 @@ static struct task_struct *__pick_task_d
->         if (dl_server(dl_se)) {
->                 p = dl_se->server_pick_task(dl_se);
->                 if (!p) {
-> -                       if (dl_server_active(dl_se)) {
-> +                       if (!dl_server_stopped(dl_se)) {
->                                 dl_se->dl_yielded = 1;
->                                 update_curr_dl_se(rq, dl_se, 0);
->                         }
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -5879,7 +5879,6 @@ static bool throttle_cfs_rq(struct cfs_r
->         struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(cfs_rq->tg);
->         struct sched_entity *se;
->         long queued_delta, runnable_delta, idle_delta, dequeue = 1;
-> -       long rq_h_nr_queued = rq->cfs.h_nr_queued;
->
->         raw_spin_lock(&cfs_b->lock);
->         /* This will start the period timer if necessary */
-> @@ -5963,10 +5962,6 @@ static bool throttle_cfs_rq(struct cfs_r
->
->         /* At this point se is NULL and we are at root level*/
->         sub_nr_running(rq, queued_delta);
-> -
-> -       /* Stop the fair server if throttling resulted in no runnable tasks */
-> -       if (rq_h_nr_queued && !rq->cfs.h_nr_queued)
-> -               dl_server_stop(&rq->fair_server);
->  done:
->         /*
->          * Note: distribution will already see us throttled via the
-> @@ -7060,7 +7055,6 @@ static void set_next_buddy(struct sched_
->  static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
->  {
->         bool was_sched_idle = sched_idle_rq(rq);
-> -       int rq_h_nr_queued = rq->cfs.h_nr_queued;
->         bool task_sleep = flags & DEQUEUE_SLEEP;
->         bool task_delayed = flags & DEQUEUE_DELAYED;
->         struct task_struct *p = NULL;
-> @@ -7144,9 +7138,6 @@ static int dequeue_entities(struct rq *r
->
->         sub_nr_running(rq, h_nr_queued);
->
-> -       if (rq_h_nr_queued && !rq->cfs.h_nr_queued)
-> -               dl_server_stop(&rq->fair_server);
-> -
->         /* balance early to pull high priority tasks */
->         if (unlikely(!was_sched_idle && sched_idle_rq(rq)))
->                 rq->next_balance = jiffies;
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 6.6.101-rc1
 
-Gr{oetje,eeting}s,
+Shung-Hsi Yu <shung-hsi.yu@suse.com>
+    Revert "selftests/bpf: Add a cgroup prog bpf_get_ns_current_pid_tgid() test"
 
-                        Geert
+Khairul Anuar Romli <khairul.anuar.romli@altera.com>
+    spi: cadence-quadspi: fix cleanup of rx_chan on failure paths
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Lin.Cao <lincao12@amd.com>
+    drm/sched: Remove optimization that causes hang when killing dependent jobs
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Nathan Chancellor <nathan@kernel.org>
+    ARM: 9448/1: Use an absolute path to unified.h in KBUILD_AFLAGS
+
+Paolo Abeni <pabeni@redhat.com>
+    mptcp: reset fallback status gracefully at disconnect() time
+
+Paolo Abeni <pabeni@redhat.com>
+    mptcp: plug races between subflow fail and subflow creation
+
+Paolo Abeni <pabeni@redhat.com>
+    mptcp: make fallback action and fallback decision atomic
+
+Nianyao Tang <tangnianyao@huawei.com>
+    arm64/cpufeatures/kvm: Add ARMv8.9 FEAT_ECBHB bits in ID_AA64MMFR1 register
+
+Namjae Jeon <linkinjeon@kernel.org>
+    ksmbd: add free_transport ops in ksmbd connection
+
+Deren Wu <deren.wu@mediatek.com>
+    wifi: mt76: mt7921: prevent decap offload config before STA initialization
+
+Kan Liang <kan.liang@linux.intel.com>
+    perf/x86/intel: Fix crash in icl_update_topdown_event()
+
+Md Sadre Alam <quic_mdalam@quicinc.com>
+    mtd: rawnand: qcom: Fix last codeword read in qcom_param_page_type_exec()
+
+Namjae Jeon <linkinjeon@kernel.org>
+    ksmbd: fix use-after-free in __smb2_lease_break_noti()
+
+Zhang Lixu <lixu.zhang@intel.com>
+    iio: hid-sensor-prox: Restore lost scale assignments
+
+Zhang Lixu <lixu.zhang@intel.com>
+    iio: hid-sensor-prox: Fix incorrect OFFSET calculation
+
+Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+    crypto: qat - add shutdown handler to qat_dh895xcc
+
+Eric Biggers <ebiggers@google.com>
+    crypto: powerpc/poly1305 - add depends on BROKEN for now
+
+Gao Xiang <xiang@kernel.org>
+    erofs: address D-cache aliasing
+
+Liu Shixin <liushixin2@huawei.com>
+    mm: khugepaged: fix call hpage_collapse_scan_file() for anonymous vma
+
+Ville Syrjälä <ville.syrjala@linux.intel.com>
+    drm/i915/dp: Fix 2.7 Gbps DP_LINK_BW value on g4x
+
+Daniel Dadap <ddadap@nvidia.com>
+    ALSA: hda: Add missing NVIDIA HDA codec IDs
+
+Mohan Kumar D <mkumard@nvidia.com>
+    ALSA: hda/tegra: Add Tegra264 support
+
+Ian Abbott <abbotti@mev.co.uk>
+    comedi: comedi_test: Fix possible deletion of uninitialized timers
+
+Dmitry Antipov <dmantipov@yandex.ru>
+    jfs: reject on-disk inodes of an unsupported type
+
+Michael Zhivich <mzhivich@akamai.com>
+    x86/bugs: Fix use of possibly uninit value in amd_check_tsa_microcode()
+
+RD Babiera <rdbabiera@google.com>
+    usb: typec: tcpm: apply vbus before data bringup in tcpm_src_attach
+
+Michael Grzeschik <m.grzeschik@pengutronix.de>
+    usb: typec: tcpm: allow switching to mode accessory to mux properly
+
+Michael Grzeschik <m.grzeschik@pengutronix.de>
+    usb: typec: tcpm: allow to use sink in accessory mode
+
+Philip Yang <Philip.Yang@amd.com>
+    drm/amdkfd: Don't call mmput from MMU notifier callback
+
+Harry Yoo <harry.yoo@oracle.com>
+    mm/zsmalloc: do not pass __GFP_MOVABLE if CONFIG_COMPACTION=n
+
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+    selftests: mptcp: connect: also cover checksum
+
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
+    selftests: mptcp: connect: also cover alt modes
+
+Akinobu Mita <akinobu.mita@gmail.com>
+    resource: fix false warning in __request_region()
+
+Ryusuke Konishi <konishi.ryusuke@gmail.com>
+    nilfs2: reject invalid file types when reading inodes
+
+Marco Elver <elver@google.com>
+    kasan: use vmalloc_dump_obj() for vmalloc error reports
+
+Haoxiang Li <haoxiang_li2024@163.com>
+    ice: Fix a null pointer dereference in ice_copy_and_init_pkg()
+
+Praveen Kaligineedi <pkaligineedi@google.com>
+    gve: Fix stuck TX queue for DQ queue format
+
+Jacek Kowalski <jacek@jacekk.info>
+    e1000e: ignore uninitialized checksum word on tgp
+
+Jacek Kowalski <jacek@jacekk.info>
+    e1000e: disregard NVM checksum on tgp when valid checksum bit is not set
+
+Ma Ke <make24@iscas.ac.cn>
+    dpaa2-switch: Fix device reference count leak in MAC endpoint handling
+
+Ma Ke <make24@iscas.ac.cn>
+    dpaa2-eth: Fix device reference count leak in MAC endpoint handling
+
+Ada Couprie Diaz <ada.coupriediaz@arm.com>
+    arm64/entry: Mask DAIF in cpu_switch_to(), call_on_irq_stack()
+
+Dawid Rezler <dawidrezler.patches@gmail.com>
+    ALSA: hda/realtek - Add mute LED support for HP Pavilion 15-eg0xxx
+
+Stephen Rothwell <sfr@canb.auug.org.au>
+    sprintf.h requires stdarg.h
+
+Ma Ke <make24@iscas.ac.cn>
+    bus: fsl-mc: Fix potential double device reference in fsl_mc_get_endpoint()
+
+Viresh Kumar <viresh.kumar@linaro.org>
+    i2c: virtio: Avoid hang by using interruptible completion wait
+
+Akhil R <akhilrajeev@nvidia.com>
+    i2c: tegra: Fix reset error handling with ACPI
+
+Yang Xiwen <forbidden405@outlook.com>
+    i2c: qup: jump out of the loop in case of timeout
+
+Rong Zhang <i@rong.moe>
+    platform/x86: ideapad-laptop: Fix kbd backlight not remembered among boots
+
+Jijie Shao <shaojijie@huawei.com>
+    net: hns3: default enable tx bounce buffer when smmu enabled
+
+Jian Shen <shenjian15@huawei.com>
+    net: hns3: fixed vf get max channels bug
+
+Yonglong Liu <liuyonglong@huawei.com>
+    net: hns3: disable interrupt when ptp init failed
+
+Jian Shen <shenjian15@huawei.com>
+    net: hns3: fix concurrent setting vlan filter issue
+
+Halil Pasic <pasic@linux.ibm.com>
+    s390/ism: fix concurrency management in ism_cmd()
+
+Douglas Anderson <dianders@chromium.org>
+    drm/bridge: ti-sn65dsi86: Remove extra semicolon in ti_sn_bridge_probe()
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: netlink: can_changelink(): fix NULL pointer deref of struct can_priv::do_set_mode
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: can_restart(): move debug message and stats after successful restart
+
+Marc Kleine-Budde <mkl@pengutronix.de>
+    can: dev: can_restart(): reverse logic to remove need for goto
+
+Xiang Mei <xmei5@asu.edu>
+    net/sched: sch_qfq: Avoid triggering might_sleep in atomic context in qfq_delete_class
+
+Kito Xu (veritas501) <hxzene@gmail.com>
+    net: appletalk: Fix use-after-free in AARP proxy probe
+
+Jamie Bainbridge <jamie.bainbridge@gmail.com>
+    i40e: When removing VF MAC filters, only check PF-set MAC
+
+Dennis Chen <dechen@redhat.com>
+    i40e: report VF tx_dropped with tx_errors instead of tx_discards
+
+Yajun Deng <yajun.deng@linux.dev>
+    i40e: Add rx_missed_errors for buffer exhaustion
+
+Shahar Shitrit <shshitrit@nvidia.com>
+    net/mlx5: E-Switch, Fix peer miss rules to use peer eswitch
+
+Chiara Meiohas <cmeiohas@nvidia.com>
+    net/mlx5: Fix memory leak in cmd_exec()
+
+Eyal Birger <eyal.birger@gmail.com>
+    xfrm: interface: fix use-after-free after changing collect_md xfrm interface
+
+Stefan Wahren <wahrenst@gmx.net>
+    staging: vchiq_arm: Make vchiq_shutdown never fail
+
+Torsten Hilbrich <torsten.hilbrich@secunet.com>
+    platform/x86: Fix initialization order for firmware_attributes_class
+
+Nuno Das Neves <nunodasneves@linux.microsoft.com>
+    x86/hyperv: Fix usage of cpu_online_mask to get valid cpu
+
+Abdun Nihaal <abdun.nihaal@gmail.com>
+    regmap: fix potential memory leak of regmap_bus
+
+David Lechner <dlechner@baylibre.com>
+    iio: adc: ad7949: use spi_is_bpw_supported()
+
+Xilin Wu <sophon@radxa.com>
+    interconnect: qcom: sc7280: Add missing num_links to xm_pcie3_1 node
+
+Maor Gottlieb <maorg@nvidia.com>
+    RDMA/core: Rate limit GID cache warning messages
+
+Alessandro Carminati <acarmina@redhat.com>
+    regulator: core: fix NULL dereference on unbind due to stale coupling data
+
+Laurent Vivier <lvivier@redhat.com>
+    virtio_ring: Fix error reporting in virtqueue_resize
+
+Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+    Input: gpio-keys - fix a sleep while atomic with PREEMPT_RT
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                           |   4 +-
+ arch/arm/Makefile                                  |   2 +-
+ arch/arm64/include/asm/assembler.h                 |   5 +
+ arch/arm64/kernel/cpufeature.c                     |   1 +
+ arch/arm64/kernel/entry.S                          |   6 ++
+ arch/powerpc/crypto/Kconfig                        |   1 +
+ arch/x86/events/intel/core.c                       |   2 +-
+ arch/x86/hyperv/irqdomain.c                        |   4 +-
+ arch/x86/kernel/cpu/amd.c                          |   2 +
+ drivers/base/regmap/regmap.c                       |   2 +
+ drivers/bus/fsl-mc/fsl-mc-bus.c                    |  19 ++--
+ drivers/comedi/drivers/comedi_test.c               |   2 +-
+ drivers/crypto/intel/qat/qat_dh895xcc/adf_drv.c    |   9 ++
+ drivers/gpu/drm/amd/amdkfd/kfd_svm.c               |  47 +++++----
+ drivers/gpu/drm/bridge/ti-sn65dsi86.c              |   2 +-
+ drivers/gpu/drm/i915/display/intel_dp.c            |   6 ++
+ drivers/gpu/drm/scheduler/sched_entity.c           |  25 +----
+ drivers/i2c/busses/i2c-qup.c                       |   4 +-
+ drivers/i2c/busses/i2c-tegra.c                     |  24 +----
+ drivers/i2c/busses/i2c-virtio.c                    |  15 +--
+ drivers/iio/adc/ad7949.c                           |   7 +-
+ drivers/iio/light/hid-sensor-prox.c                |   8 +-
+ drivers/infiniband/core/cache.c                    |   4 +-
+ drivers/input/keyboard/gpio_keys.c                 |   4 +-
+ drivers/interconnect/qcom/sc7280.c                 |   1 +
+ drivers/mtd/nand/raw/qcom_nandc.c                  |  12 ++-
+ drivers/net/can/dev/dev.c                          |  31 +++---
+ drivers/net/can/dev/netlink.c                      |  12 +++
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-eth.c   |  15 ++-
+ .../net/ethernet/freescale/dpaa2/dpaa2-switch.c    |  15 ++-
+ drivers/net/ethernet/google/gve/gve_main.c         |  67 +++++++------
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  31 ++++++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |   2 +
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    |  36 ++++---
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c |   9 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  |   6 +-
+ drivers/net/ethernet/intel/e1000e/defines.h        |   3 +
+ drivers/net/ethernet/intel/e1000e/ich8lan.c        |   2 +
+ drivers/net/ethernet/intel/e1000e/nvm.c            |   6 ++
+ drivers/net/ethernet/intel/i40e/i40e_ethtool.c     |   3 +-
+ drivers/net/ethernet/intel/i40e/i40e_main.c        |  18 ++--
+ drivers/net/ethernet/intel/i40e/i40e_virtchnl_pf.c |   8 +-
+ drivers/net/ethernet/intel/ice/ice_ddp.c           |   2 +
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c      |   4 +-
+ .../ethernet/mellanox/mlx5/core/eswitch_offloads.c | 108 ++++++++++-----------
+ drivers/net/wireless/mediatek/mt76/mt7921/main.c   |   3 +
+ drivers/platform/x86/Makefile                      |   3 +-
+ drivers/platform/x86/ideapad-laptop.c              |   2 +-
+ drivers/regulator/core.c                           |   1 +
+ drivers/s390/net/ism_drv.c                         |   3 +
+ drivers/spi/spi-cadence-quadspi.c                  |   5 -
+ .../vc04_services/interface/vchiq_arm/vchiq_arm.c  |   3 +-
+ drivers/usb/typec/tcpm/tcpm.c                      |  64 +++++++-----
+ drivers/virtio/virtio_ring.c                       |   8 +-
+ fs/erofs/decompressor.c                            |   6 +-
+ fs/erofs/zdata.c                                   |  32 +++---
+ fs/jfs/jfs_imap.c                                  |  13 ++-
+ fs/nilfs2/inode.c                                  |   9 +-
+ fs/smb/server/connection.c                         |   4 +-
+ fs/smb/server/connection.h                         |   1 +
+ fs/smb/server/transport_rdma.c                     |  10 +-
+ fs/smb/server/transport_tcp.c                      |  15 ++-
+ fs/smb/server/transport_tcp.h                      |   1 +
+ include/linux/ism.h                                |   1 +
+ include/linux/sprintf.h                            |   1 +
+ kernel/resource.c                                  |   5 +-
+ mm/kasan/report.c                                  |   4 +-
+ mm/khugepaged.c                                    |   4 +-
+ mm/zsmalloc.c                                      |   3 +
+ net/appletalk/aarp.c                               |  24 ++++-
+ net/mptcp/options.c                                |   3 +-
+ net/mptcp/pm.c                                     |   8 +-
+ net/mptcp/protocol.c                               |  58 +++++++++--
+ net/mptcp/protocol.h                               |  27 ++++--
+ net/mptcp/subflow.c                                |  30 +++---
+ net/sched/sch_qfq.c                                |   7 +-
+ net/xfrm/xfrm_interface_core.c                     |   7 +-
+ sound/pci/hda/hda_tegra.c                          |  51 ++++++++--
+ sound/pci/hda/patch_hdmi.c                         |  20 ++++
+ sound/pci/hda/patch_realtek.c                      |   1 +
+ .../selftests/bpf/prog_tests/ns_current_pid_tgid.c |  73 --------------
+ .../selftests/bpf/progs/test_ns_current_pid_tgid.c |   7 --
+ tools/testing/selftests/net/mptcp/Makefile         |   3 +-
+ .../selftests/net/mptcp/mptcp_connect_checksum.sh  |   5 +
+ .../selftests/net/mptcp/mptcp_connect_mmap.sh      |   5 +
+ .../selftests/net/mptcp/mptcp_connect_sendfile.sh  |   5 +
+ 86 files changed, 681 insertions(+), 450 deletions(-)
+
+
 
