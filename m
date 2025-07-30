@@ -1,123 +1,100 @@
-Return-Path: <linux-kernel+bounces-750836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7174B1619A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:34:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C811B161D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:51:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBA9D5A5C89
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:34:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DF3B18C84CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:51:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525DE2D46A2;
-	Wed, 30 Jul 2025 13:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i0Svggp2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13AF272811;
-	Wed, 30 Jul 2025 13:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1B32D8795;
+	Wed, 30 Jul 2025 13:50:46 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C04C2C3261;
+	Wed, 30 Jul 2025 13:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753882463; cv=none; b=JmLaI96UyVQPKfCUaHK/CBhaDnN39pl9lDC7qdHRDAic7sswaTJJovBmyBgExnRefNHjnE12vecctj3UQ/kgSh21uKvmAKvNgqWXoT40dvs5M3TE4Z8NX5Jcb+EzSHgZQ4o6RuYeEmVnAQOY6hru9BIZxiMe5F5FnDWsDXO+myE=
+	t=1753883445; cv=none; b=jkiqUOjmly0x9gDBhEu0QH1aeBZsy9Pkn4ZcLGuLewC+BHGn2dUv9g5zbLCshWbE4hw0b6ghDs+j4/brbC/UQ1S9XfRWpL9MGowZl0v0jc9P5P/TP9ZEk7PZil3LWqoJSwsmQbHePHeamFXdT8PcLrFvG7vJXWfZIVcQ5Xpz5fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753882463; c=relaxed/simple;
-	bh=RTq/HmujBTojLcJSLOhpTonp9KM6fxbaiWIe5QZA6Uo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Ns8D/tWS7TWOXrWOIp+8Qeq4OhaauHNEcsVjoKek6jEAlA/AseXSujX7ddEqdwzxtNi7bg4D/7g3zcAvurRmnBJqP3eW8Bux+35hs+w8AEAoO8RSiAMEbntnJIdxTOHIE3vc9aO+uzLIuY5VcoEHU8UPgTP48vTn+oQ60elZkmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i0Svggp2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B93ABC4CEE7;
-	Wed, 30 Jul 2025 13:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753882463;
-	bh=RTq/HmujBTojLcJSLOhpTonp9KM6fxbaiWIe5QZA6Uo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=i0Svggp2pHjd6/C8TZbWp/Wl9Ve0Jahtn/dZvjuIh88r1i3u0f6uAknJlpCE5la5a
-	 XWbUO0cuaJEavOZ9KghHZSjkObHhAFRw3j4Oc0Xfx/01tX28f1fO2ADvjVEjrJQlCD
-	 w77r9rSWo2n5JxrCn2ECIvPrqJamh7jFpsE1AOpYAZpL9V/ot+ms4oaGZTqfmtihBA
-	 k/BLpXxL36FChWkUvdSOEvtAtk1A70x2tfDxod27/yyMzcYlW4wiQ8aEzDD4uIcKIt
-	 bH0SKXms6ccpykob8FDQ7o/odIpHrLDgNyiMz/a80aub8lOJDqJzQkK02J6coad5in
-	 QO/vfOyBI5oWw==
-Date: Wed, 30 Jul 2025 10:34:20 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 1/1 v6.17] perf python: Stop using deprecated
- PyUnicode_AsString()
-Message-ID: <aIofXNK8QLtLIaI3@x1>
+	s=arc-20240116; t=1753883445; c=relaxed/simple;
+	bh=jj/L/VuxfOUnU6mseAdQQe6yRTUBqobeU21hBqEmVTI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XgXdY1lPCyqSOuMwSpfjHGqkNqj+euorEAndob0qdOsw0zNJeqd5yy8XjRbb2fwq/Aqg61aFMRddo9yhTYerKKxfajA3YgCp8tj4ymWcwG6Q3VJDUEF/DGDGNu2q8J8gu28jqg2hLx5p23+WMJ4yUUusx5YZKDJCAVZvouxn8Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4bsY9h1rxmz9v53;
+	Wed, 30 Jul 2025 15:35:04 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5MxTpDkr189x; Wed, 30 Jul 2025 15:35:04 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4bsY9C2Symz9t5l;
+	Wed, 30 Jul 2025 15:34:39 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 4F1908B76E;
+	Wed, 30 Jul 2025 15:34:39 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id B3TTTuOPHS02; Wed, 30 Jul 2025 15:34:39 +0200 (CEST)
+Received: from PO20335.IDSI0.si.c-s.fr (unknown [10.25.207.160])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 32F008B763;
+	Wed, 30 Jul 2025 15:34:39 +0200 (CEST)
+Received: from PO20335.IDSI0.si.c-s.fr (localhost [127.0.0.1])
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.17.1) with ESMTPS id 56UDYXEm271745
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
+	Wed, 30 Jul 2025 15:34:33 +0200
+Received: (from chleroy@localhost)
+	by PO20335.IDSI0.si.c-s.fr (8.18.1/8.18.1/Submit) id 56UDYXMb271743;
+	Wed, 30 Jul 2025 15:34:33 +0200
+X-Authentication-Warning: PO20335.IDSI0.si.c-s.fr: chleroy set sender to christophe.leroy@csgroup.eu using -f
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Qiang Zhao <qiang.zhao@nxp.com>, Linus Walleij <linus.walleij@linaro.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 1/2] soc: fsl: qe: use new GPIO line value setter callbacks
+Date: Wed, 30 Jul 2025 15:34:22 +0200
+Message-ID: <175388235172.270971.7957080828511695950.b4-ty@csgroup.eu>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250610-gpiochip-set-rv-soc-v1-1-1a0c36c9deed@linaro.org>
+References: <20250610-gpiochip-set-rv-soc-v1-0-1a0c36c9deed@linaro.org> <20250610-gpiochip-set-rv-soc-v1-1-1a0c36c9deed@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753882464; l=407; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=/o4cDiVkyPr0JbwYVaNEzFDJY8Bq/G7J5zt/xxb12Qo=; b=T8m3DHSjY8I3U43L/rEU2ojmXAySZGPQXNqoopT4g+PYQNfxMX5El9+y8GY8hGY8L71TgIJwE TRZuWcHBtxgDaNODgHwZ2PPCnKlCVyMagmq7d9dn3uva5+yc1VmKmGa
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-As noticed while building for Fedora 43:
 
-    GEN     /tmp/build/perf/python/perf.cpython-314-x86_64-linux-gnu.so
-  /git/perf-6.16.0-rc3/tools/perf/util/python.c: In function ‘get_tracepoint_field’:
-  /git/perf-6.16.0-rc3/tools/perf/util/python.c:340:9: error: ‘_PyUnicode_AsString’ is deprecated [-Werror=deprecated-declarations]
-    340 |         const char *str = _PyUnicode_AsString(PyObject_Str(attr_name));
-        |         ^~~~~
-  In file included from /usr/include/python3.14/unicodeobject.h:1022,
-                   from /usr/include/python3.14/Python.h:89,
-                   from /git/perf-6.16.0-rc3/tools/perf/util/python.c:2:
-  /usr/include/python3.14/cpython/unicodeobject.h:648:1: note: declared here
-    648 | _PyUnicode_AsString(PyObject *unicode)
-        | ^~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
-  error: command '/usr/bin/gcc' failed with exit code 1
+On Tue, 10 Jun 2025 14:38:50 +0200, Bartosz Golaszewski wrote:
+> struct gpio_chip now has callbacks for setting line values that return
+> an integer, allowing to indicate failures. Convert the driver to using
+> them.
+> 
+> 
 
-Use PyUnicode_AsUTF8() instead and also check if PyObject_Str() fails
-before doing so.
+Applied, thanks!
 
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/python.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+[1/2] soc: fsl: qe: use new GPIO line value setter callbacks
+      (no commit info)
 
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 2f28f71325a87a2d..ea77bea0306fa08d 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -337,7 +337,6 @@ tracepoint_field(const struct pyrf_event *pe, struct tep_format_field *field)
- static PyObject*
- get_tracepoint_field(struct pyrf_event *pevent, PyObject *attr_name)
- {
--	const char *str = _PyUnicode_AsString(PyObject_Str(attr_name));
- 	struct evsel *evsel = pevent->evsel;
- 	struct tep_event *tp_format = evsel__tp_format(evsel);
- 	struct tep_format_field *field;
-@@ -345,7 +344,18 @@ get_tracepoint_field(struct pyrf_event *pevent, PyObject *attr_name)
- 	if (IS_ERR_OR_NULL(tp_format))
- 		return NULL;
- 
-+	PyObject *obj = PyObject_Str(attr_name);
-+	if (obj == NULL)
-+		return NULL;
-+
-+	const char *str = PyUnicode_AsUTF8(obj);
-+	if (str == NULL) {
-+		Py_DECREF(obj);
-+		return NULL;
-+	}
-+
- 	field = tep_find_any_field(tp_format, str);
-+	Py_DECREF(obj);
- 	return field ? tracepoint_field(pevent, field) : NULL;
- }
- #endif /* HAVE_LIBTRACEEVENT */
+Best regards,
 -- 
-2.50.1
-
+Christophe Leroy <christophe.leroy@csgroup.eu>
 
