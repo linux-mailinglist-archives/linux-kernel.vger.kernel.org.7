@@ -1,107 +1,150 @@
-Return-Path: <linux-kernel+bounces-750725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CDDB1604E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:26:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43B75B16056
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45E943B88AC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:26:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9595B7B4751
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2032980AC;
-	Wed, 30 Jul 2025 12:26:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7B0295D95;
+	Wed, 30 Jul 2025 12:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b="FiD+E6mi"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="XjNwG/Xg"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D9F64C62
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753878380; cv=none; b=YeME8TYCT+ElxtIAARCnWZ0CiiHyX5FohTryM2zikIK3lakOyUdvSg89mEDlZmx7D4Xl9amzdB3kQ6WH5AssLk/xAcv2mQkq/GM4YVHI3CGn2ciEGzou4u7+GUcZ2Wv0MOaBh4sFZvgUZuwyAt1tLBmEAFa0QbaUcJEvKR4+YrY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753878380; c=relaxed/simple;
-	bh=+LP51TJm8dISaosFKCpGTh4TYAMN3Q+nI+H4aWw5P+0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R/kAOMM1M9HUGkBbkDwd59kMrffHQfz0gnsE4wXhLxtYqXYlQOlmngYoA8HujEOUsqv1LwgAo8NASpjcCPKGHa61Z8LISsKPAcYlGXsmu51fiG2kN+jUalfHdmomaDmju0qtW/WoS60jAZ4RQdjX9jPVbYlRNmSwfpcrk3AnR8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us; spf=none smtp.mailfrom=resnulli.us; dkim=pass (2048-bit key) header.d=resnulli-us.20230601.gappssmtp.com header.i=@resnulli-us.20230601.gappssmtp.com header.b=FiD+E6mi; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=resnulli.us
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=resnulli.us
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae35f36da9dso1372050466b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 05:26:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20230601.gappssmtp.com; s=20230601; t=1753878376; x=1754483176; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+LP51TJm8dISaosFKCpGTh4TYAMN3Q+nI+H4aWw5P+0=;
-        b=FiD+E6miVc2QmDKAHSNYy+zSYbj9gf9IFsRvQdWiOxYkUW3CHfYPscxz+PoVWU4l7R
-         qeVVTOMgSLvY4oFXEqM63gQUcojbCNzwX0ghvC6hCtWnDdrGQkHmYLaM04oidOKgOHiG
-         BOwztpdtra6jyBnLCOLS+N/TVpuWKYf9Iu+NdS3jbK8SVlDUm0TXAoNaCdRNq6BCIvaQ
-         uW+2oIc3B7HA2GteQG4aKkrm3ECIDKfP+B2gBdzbmOWoBRAPmiKppCE9DbDGxLI/7voC
-         U7DlVzkc1vsXkJyzifJLWsK65xNc9Y4ON/We+2A8Ngv0hSCVMlwWGgyzMVJZWca+BYhH
-         NCWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753878376; x=1754483176;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LP51TJm8dISaosFKCpGTh4TYAMN3Q+nI+H4aWw5P+0=;
-        b=QmHHNThGzU4SVgbE/QFmIWFsgehCrfEezxR+SzVWj0hvRuq8iowUfjFxVIsWXbi0L8
-         oxtlR8pBkJhE6huaBOIksLQYuMkVZZOvWt00ruC6k2rtcxUx0t2tifksChSEYXPAm1HM
-         NXPoBbAjnhB4f7k2E8R5t3D4G4uvdWwt25Ese97nAp6avmLLzJTaF3y2acbJ5dvmd60l
-         4RSJY3FPy0k0hwOU6cZfGDzIVqXOZfkaqb+DHiRuVLSp7v/W6waGfJB/JN0oE7blF5D7
-         VXmvIPKdxRh8EAgHOoa+6jEynOCe1xD6rj4t0C7MfH4VfKLejMe5czPM9gxCTflael2k
-         NZoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUiAqf08S7FSEF9uexgk4vZTF0xrazCED4w4FvPo7NIw1/24NsMnerWpIOKRQ3B7kQG13Xh8GNUMUr+owU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZWaIW+xWYfLDPanVG1SlcSjJXYJ2rMKKcLWdd3tQxxP0cUICv
-	JCbISc7LzorYrKeylAe3KxxNdKmPRDM3Jdrqx1MTBcbAezxzjMvu9WfYB8Gl9BYQGcY=
-X-Gm-Gg: ASbGnct7gQQpeZVa98T4g2BaaWFph3oJy17zfXgujTejENRqWWI1SPmp+zRzdV2L+ks
-	c0FwQAc0qvTi790v81Do9uoERpfMcdmeQb57Pst84X9hEYWBlChCUwbmWGKVUF7jorWxBDoEozi
-	9rL5Y0D+y2NHyB8traFurFCfLyd5ld3+GM2EItbQNEjB/HkQe92QpAw71q9Z49ys0rxp24K2+gG
-	+aNozb6Sdw3P8Mxe0c3ozDEAtD0hwucptTNRrI27SzwXCY6ggjLZ4WpGPchRhvrF8D/rnXAkht0
-	WhJYi8apAyz10nhmasVn6aFtauSKpi1ImHVXcPy0RmckKmayj9TjXZaY8kNzvpoK3W4SKzUjcGX
-	6+CCbAkTetiKrziV+NO5RE0j69GGK0OJebg==
-X-Google-Smtp-Source: AGHT+IHKmQuJBcyurJqjso+EQtT2hv+uRozjr/hSsB9kfXnfZX4KNBg+3NUqbOWeTkLYA6c562pzyA==
-X-Received: by 2002:a17:907:e849:b0:ae3:7b53:31bd with SMTP id a640c23a62f3a-af8fd97316emr411726166b.28.1753878376235;
-        Wed, 30 Jul 2025 05:26:16 -0700 (PDT)
-Received: from jiri-mlt ([85.163.81.98])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af63586008dsm741418566b.16.2025.07.30.05.26.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 05:26:15 -0700 (PDT)
-Date: Wed, 30 Jul 2025 14:26:12 +0200
-From: Jiri Pirko <jiri@resnulli.us>
-To: Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, horms@kernel.org, sdf@fomichev.me, almasrymina@google.com, 
-	asml.silence@gmail.com, leitao@debian.org, kuniyu@google.com, 
-	linux-kernel@vger.kernel.org, intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org
-Subject: Re: [RFC PATCH] net: add net-device TX clock source selection
- framework
-Message-ID: <p4tnkuf3zh7ja45d4y2pas6fj6epbqdqdqtfai2vmyul3n43lf@v3e5dvvbphiv>
-References: <20250729104528.1984928-1-arkadiusz.kubalewski@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9E91CFBC;
+	Wed, 30 Jul 2025 12:27:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753878479; cv=pass; b=o56JnNultkOSjhs9Ymn4oGMh+xP6skm3faY/RcgqIcOXd/X7SfGkomz/BWgyrDTbugML8QkRvWEVwlgS4qycryPVM6tTaEZrlb3QVXZ+NWXOrRl6eiSbXWliTxOU9FczP2wRueEHT0lGpcssjj7jMPBGvAoufxymt67pUth8NZE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753878479; c=relaxed/simple;
+	bh=1u5nCh/OB64p+3fygbatYMm5eLb4AW5nGEdzsz0CuuQ=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=CGnrpfQSBzHHB1iOGWGr+sR4L1eLh5dKLJQfQZrAhWzD5D6TJI3NlNbVoXzc6z0rEPwLh3SHBbxFchWo89+uUOuGTggiScRr2kltJMELBLAq68mHzVxxsUnyPFwemBzmkrXQMH68ph3YQDiYV7MuQoHPJ0lgcVBEKZf0CMnidIc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=XjNwG/Xg; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753878458; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=aa+JvgvjUZLRkUGGezY4GcgyoF06A8LYgj8541vK9kM3Tr+OyQWCHR3x//m0utO33aeA+WZ8Ys1ks2d+XxjasHSKhwKpm1RBotJ5jSXhgcYYqy5nqjkI/4JOkvBvS7d2m394HRhX6+U2fQwRtAFjAmtFmZFpB7bhi8A7ZY/c4gw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753878458; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Oh/5HLcjYMuz4jd5BSONf5KBlrnXjhIJw2EBlDJFW6o=; 
+	b=MJpyr71yo3wRBDWrkMENS0iS+u1v5mmiFJLtLoR4bjj3c/Wh7FtckhoER2uvL+S0C2mktbxf3KwKDAWDmFlmJ2t5+inEDNlTLjMRgv7DTDEfx6ybxKXBkBgrUpXdR7ajA6QO0Awi5dfHkKqh9Y2GjqOzwq0pomskGDz+OfH3Mk0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753878458;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Oh/5HLcjYMuz4jd5BSONf5KBlrnXjhIJw2EBlDJFW6o=;
+	b=XjNwG/XgSrIe7SIL9LpVG+dcL+TYhQzQJ0XZDaBneAXCCxHL2pLI28ntGR3WCLYe
+	bW1JuwwgRdDc0I4hZWbOsBK48rcbKUTmu3YGJqG2Q06XYvu+CI2z2ubvHtKErZiPxCJ
+	BXJXwZnoObZhHDuGDCoR7Is0lkm4rjdhN3d5kBwE=
+Received: by mx.zohomail.com with SMTPS id 1753878454937281.63399144933067;
+	Wed, 30 Jul 2025 05:27:34 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729104528.1984928-1-arkadiusz.kubalewski@intel.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] rust: clk: use the type-state pattern
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250730062355.bqifrzvxfmaaugnk@vireshk-i7>
+Date: Wed, 30 Jul 2025 09:27:18 -0300
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9746F6D6-488C-4562-8FB1-BE268C69BA97@collabora.com>
+References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
+ <20250730062355.bqifrzvxfmaaugnk@vireshk-i7>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Tue, Jul 29, 2025 at 12:45:28PM +0200, arkadiusz.kubalewski@intel.com wrote:
+Hi Viresh,
 
-[...]
+> On 30 Jul 2025, at 03:23, Viresh Kumar <viresh.kumar@linaro.org> =
+wrote:
+>=20
+> On 29-07-25, 18:38, Daniel Almeida wrote:
+>> diff --git a/rust/kernel/clk.rs b/rust/kernel/clk.rs
+>>     /// A reference-counted clock.
+>>     ///
+>>     /// Rust abstraction for the C [`struct clk`].
+>>     ///
+>> +    /// A [`Clk`] instance represents a clock that can be in one of =
+several
+>> +    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
+>> +    ///
+>> +    /// No action needs to be taken when a [`Clk`] is dropped. The =
+calls to
+>> +    /// `clk_unprepare()` and `clk_disable()` will be placed as =
+applicable.
+>> +    ///
+>> +    /// An optional [`Clk`] is treated just like a regular [`Clk`], =
+but its
+>> +    /// inner `struct clk` pointer is `NULL`. This interfaces =
+correctly with the
+>> +    /// C API and also exposes all the methods of a regular [`Clk`] =
+to users.
+>> +    ///
+>>     /// # Invariants
+>>     ///
+>>     /// A [`Clk`] instance holds either a pointer to a valid [`struct =
+clk`] created by the C
+>> @@ -99,20 +160,39 @@ mod common_clk {
+>>     /// Instances of this type are reference-counted. Calling =
+[`Clk::get`] ensures that the
+>>     /// allocation remains valid for the lifetime of the [`Clk`].
+>>     ///
+>> -    /// ## Examples
+>> +    /// The [`Prepared`] state is associated with a single count of
+>> +    /// `clk_prepare()`, and the [`Enabled`] state is associated =
+with a single
+>> +    /// count of `clk_enable()`, and the [`Enabled`] state is =
+associated with a
+>> +    /// single count of `clk_prepare` and `clk_enable()`.
+>=20
+> You have mentioned the `Enabled` state twice. Also clk_prepare() ?
 
->User interface:
->- Read /sys/class/net/<device>/tx_clk/<clock_name> to get status (0/1)
->- Write "1" to switch to that clock source
+Ah, thanks for catching that.
 
-I wonder, if someone invented a time machine and sent me back to 2005...
+What=E2=80=99s the issue with clk_prepare? You mean that the parenthesis =
+are missing?
 
-[...]
+>=20
+> No objections from my side. Thanks.
+>=20
+> --=20
+> viresh
+
+=E2=80=94 Daniel
+
 
