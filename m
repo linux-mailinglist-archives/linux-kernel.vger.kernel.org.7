@@ -1,118 +1,101 @@
-Return-Path: <linux-kernel+bounces-751133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD6AB16597
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:35:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECE8B16599
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:35:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA205801B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:35:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 522333B7BE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF4F2DECBF;
-	Wed, 30 Jul 2025 17:34:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7B0E2E0407;
+	Wed, 30 Jul 2025 17:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kDka26ri"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="pB176l38"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F722E1730;
-	Wed, 30 Jul 2025 17:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B742DECBF;
+	Wed, 30 Jul 2025 17:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753896876; cv=none; b=Viuzpm955hJCWJ0Cz0MH7GsAUX0JFHbrlyCk/UwQyQjLK/Z8w6VeWFEHG6NSDQZzYYg817cMTOh4FadLkaQe1BjKgIzMxKxf1sV3RXE1Cd2oGXgBrqP3I4yKO/jQ9ZTojRJvAOMNJK+l55vE1DQ3AAF0jdU5k4+ZZ2CkJJ+Fze0=
+	t=1753896937; cv=none; b=R8DpSNYaGPHTfX3utQ1rjo1kcQbxC98YVFpDQ08VvXykkEPGhbLtEALUgpcF9R1m86/BHHtSaFvA+gEahMUPhKR0t7hpiIZHBLCQrvluQhnGn+Qo6nLKR0wQg8Kxcaduyz+MN0tU/d+bVJa6CM4xBt4+UbrIp52z6p7DO3uXbWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753896876; c=relaxed/simple;
-	bh=D1dL3gmNG0kL9WbM7ic03uMC58TkVVhk/y6yBvxp0FM=;
+	s=arc-20240116; t=1753896937; c=relaxed/simple;
+	bh=mBIPSC2SfTHg7ragTq/TxT5NWv9iMduW9WUrCuOL5q8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fhB+flrNwp6RMm97hXGGd+Z/yjN4MNNxKsmfaaElUhaqmJ6BsfW/AAtFeLBnacgwt5PdWkj8Cs9jELPaQPsD0fcO2WbWaSRSiPcfKteeogcc3uzsdYETrnwuGQIS6JZ4mfPX8Qkvkhwi90xghLh87JcLnk4GtcqtBoFZ6FCyJPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kDka26ri; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 728E4C4CEE3;
-	Wed, 30 Jul 2025 17:34:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753896876;
-	bh=D1dL3gmNG0kL9WbM7ic03uMC58TkVVhk/y6yBvxp0FM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kDka26rizjwaK0Ndd0b71enHl+i38hQgeA4/y49WSOlzUHjwZNJ+6XlVAvbiiO6A7
-	 QDGoNqgFk/QEUcKzKYu3mNrVoyme7Y4K1gm7VagjvCtjvSdQ8qJ6OIdT5xzp0Dc+q0
-	 vRcvxd4WIEA69mYwLpL2ilYI4uTcXt4cRRIbl3NPY6d00ndVi6kkf/DbPzy6XibHLG
-	 bD1UcGdkND32H256S8nTIAmAKDwSe7+Ve5DKtKAPheiwj8k/3EFIhgXbgAElHwE/Z5
-	 Y1sduTPi3IINI70yH6ikbrakMlXPTdYivsTYrs/9GdcXdobVP+cS8j91q2z7to3Drm
-	 kkfB5DQL2mx4w==
-Date: Wed, 30 Jul 2025 18:34:30 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Sasha Levin <sashal@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
-	Greg KH <greg@kroah.com>, corbet@lwn.net, linux-doc@vger.kernel.org,
-	workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=pUZZUoY1Y+Qmsdpfb9AjXzSZPALvHkS+dSWDR2QMvZcHM2CCeNnKmMgjXsKZNWhp94CIPj9Ng8DmVEPoCqYljwsREufHvM6KmToPLGer2xQeCADVwZpeE/cRWgqevQRod8BhYkKoU+eV5HIBAIDIgYC2YygRgX/E0PUGngYs8qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=pB176l38; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=quVgobNNfMZi/K3V1npxXwvY90xOE2Oc/x30TsUJKbk=; b=pB176l387k/VqNnEsQdzOYm+KQ
+	tfdS/YdY30DRNW7MqUSQygfb+9dIr19u0fDa0BIBRYuZ+1NF8s26ExLTvSBrR9VSQUmCFDHP21Azr
+	uS80tfaKN+PaQDqN96QzVLZ/VhQbCvzJJvF6EeYNsdT2HCFs+X4M0M1Vki3kvkj5m2sIk3zs76WET
+	sZWLzuzkQp8uuPagsAJ0uNwvtkgZkjNJtpSTkcWr6bT0vdxGg2LzwGidFJ2VGMF4gWGUtrOB4TCf0
+	4P4NX/v+S3DcUwUY1CJcSLj0vSmB5ff8w551RHBxwmjsZ6vHNCGp6OVwntaYvDCiDw58VDWe5rdcx
+	VoO0BRXQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uhAi8-0000000FDdk-3TOM;
+	Wed, 30 Jul 2025 17:35:28 +0000
+Date: Wed, 30 Jul 2025 18:35:28 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, corbet@lwn.net, linux-doc@vger.kernel.org,
+	workflows@vger.kernel.org, josh@joshtriplett.org,
 	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <c814bee7-9fac-42b7-af8a-aae0567d6435@sirena.org.uk>
+	rostedt@goodmis.org
+Subject: Re: [PATCH 2/4] agents: add core development references
+Message-ID: <20250730173528.GN222315@ZenIV>
 References: <20250727195802.2222764-1-sashal@kernel.org>
- <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
- <2025072854-earthen-velcro-8b32@gregkh>
- <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
- <20250730112753.17f5af13@gandalf.local.home>
- <158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
- <20250730121829.0c89228d@gandalf.local.home>
- <aIpKCXrc-k2Dx43x@lappy>
- <a1022055-52bd-4948-9399-908b29ca140a@lucifer.local>
+ <20250727195802.2222764-3-sashal@kernel.org>
+ <202507271937.EC44B39@keescook>
+ <aIcD9f_52tlLgE-e@lappy>
+ <202507272203.BECE244@keescook>
+ <aIcRzndNUdh-9R18@lappy>
+ <202507272310.FCB96F5E93@keescook>
+ <aIpHhR8AhPJZE2Rp@lappy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="m3m/JDs+hLe7vKCQ"
-Content-Disposition: inline
-In-Reply-To: <a1022055-52bd-4948-9399-908b29ca140a@lucifer.local>
-X-Cookie: Linux is obsolete
-
-
---m3m/JDs+hLe7vKCQ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <aIpHhR8AhPJZE2Rp@lappy>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Jul 30, 2025 at 05:59:25PM +0100, Lorenzo Stoakes wrote:
-> On Wed, Jul 30, 2025 at 12:36:25PM -0400, Sasha Levin wrote:
+On Wed, Jul 30, 2025 at 12:25:41PM -0400, Sasha Levin wrote:
 
-> > Some sort of a "traffic light" system:
+> Critical Requirements:
+> 
+> * License: ALL code MUST be GPL-2.0 only (see COPYING)
+> * Signed-off-by: Agents MUST NOT add Signed-off-by tags
+>   (Only humans can legally certify code submission rights)
+> * Attribution: Agents MUST add Co-developed-by tag:
+>   Co-developed-by: $AGENT_NAME $AGENT_MODEL $AGENT_VERSION
+>   Examples:
+>   - Co-developed-by: Claude claude-3-opus-20240229
+>   - Co-developed-by: GitHub-Copilot GPT-4 v1.0.0
 
-> >  1. Green: the subsystem is happy to receive patches from any source.
+  * for any patch there must be some entity capable of usefully
+    answering questions about that patch.  Legal certification
+    be damned, there must be somebody able to handle active
+    questioning.
 
-> >  2. Yellow: "If you're unfamiliar with the subsystem and using any
-> >  tooling to generate your patches, please have a reviewed-by from a
-> >  trusted developer before sending your patch".
+And no, it's not the same as with human submitters.  If entity
+A sends a patch to maintainer B, who passes it along and gets
+questions/feedback regarding that patch, B might have to resort
+to passing the questions to A, to confirm their understanding
+of the situation.  And from what I've seen, LLM tend to do
+very badly in such cases.
 
-> >  3. No tool-generated patches without prior maintainer approval.
-
-> This sounds good, with a default on red. Which would enforce the opt-in
-> part.
-
-That's probably a bit much - I suspect we don't want to default block
-coccinelle for example.  It's going to be very tool and technology
-dependent, probably the main thing that's generally applicable is going
-to be that people should say if and how they've used tools.
-
---m3m/JDs+hLe7vKCQ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiKV6UACgkQJNaLcl1U
-h9DTJgf8Da351rBfCFEZTOi0H/3TU5/qnMziaS+NLwRm+JbxbB+fXNYsuk5eHnUp
-7rFQwjjxuuM5eLcIHM2snMKlMag0iCe+DtUZhtrUck7okQlhqlvqDTec/pPZu8ht
-/mHaGN/PP682QtCgyZIJZkk1xSGxAACaYIkFoANDGkEn1nhpshRaYp2ivgAfA4+3
-B18Mntvv3B8S3oZ58zq/PnOUh9fwj7xcG5UPWfJTHmDVfTYiWv+RbJt1BKzuDcF9
-EbwBKBKTYDWxXdIgEsqIUXHEyH9rLawRZ29ul+k6XLfwFIQhZaSj4ZIMIWftJd14
-FKtM3dq95ytrDysMvkR5QCLriiJRhg==
-=iImI
------END PGP SIGNATURE-----
-
---m3m/JDs+hLe7vKCQ--
+IOW, defending any agent-originated patch falls entirely upon
+the human "co-developer".  IMO that is a critical requirement.
 
