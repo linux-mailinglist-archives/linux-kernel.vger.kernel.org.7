@@ -1,105 +1,140 @@
-Return-Path: <linux-kernel+bounces-750056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E78B156BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:47:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E232B156C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B3761548047
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:47:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719B418A1EEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAF542A9E;
-	Wed, 30 Jul 2025 00:47:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E24CB13AA2A;
+	Wed, 30 Jul 2025 00:51:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V09TStsM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tybz5EJx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3DD290F;
-	Wed, 30 Jul 2025 00:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C74E535966;
+	Wed, 30 Jul 2025 00:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753836442; cv=none; b=dIJvl29izWi6mSydoZzg03m68Yxz4TsMB9/EB6VJ3yJ7VYhX0pZ0Z3wwHI2NvGJrM1mWccSjQ5xNk+9q8tL5I9MoCF0UHy8nRvCkRrah99t3cuVYDNGZnDNkeiG+6G6Dh3ZE+w4PatcV8l8Z6idKxawSRJ9LLLgJrGYcfsQjOck=
+	t=1753836709; cv=none; b=jyf/DnyKKwq8iAp7z5Pb+yfyGThAT0o/7HFdz0mKm1gRtnnFGz0+85fJ+0GLbPxSSF9Ab6eEEcho49/WsiBiBIg2ZFbbE0TaAzsTiM3rCibqrNWQsqzcXmRGgUaurMLRGtdqdNYxxRyKI+4jyoOfZgrIDsy0hGE5h94itxJPsuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753836442; c=relaxed/simple;
-	bh=u67O+gLwEAa/gq2wCXXMjm9mL65NJXOFP1Zua84rpjY=;
+	s=arc-20240116; t=1753836709; c=relaxed/simple;
+	bh=PRvj7/tY0gbPjZ9nvQIa9jtFtzC+d4gO88MH1ziiZgY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kf1Ul/AMvRnlumskDvrMFOME8A6c+DaePpS6jb2gml+XVdquqGHY3L8oN10Zin1QhwYQ7Ddxu8yevx067xwbQSCrwj742SzpOrZKm/XyTcjhYDvhqepQwsJ1d4wR0x4YnVmGCL6nc7tAAPq/ZZNSWgow5KWE8iXAbFnTJvVoI7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V09TStsM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6984C4CEEF;
-	Wed, 30 Jul 2025 00:47:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753836441;
-	bh=u67O+gLwEAa/gq2wCXXMjm9mL65NJXOFP1Zua84rpjY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V09TStsMMDLa5jAhxxeLT3ZKdaWehBrRFfiSOAVtWEKPXui6OtjjJJRqOHMPuV2gM
-	 8G6ixJKohDk53Qb2cjMoEypV04EXGzbRk98MhSHJdlvQ8wQ/FL1GrHFhqaogJvQe8S
-	 rqXj0DAPB7SyaZkO9ChUua9kQVPI7421aNBmyIREhMEOFX4wnNZMl7mc1ic94Eqhaz
-	 LNUIOccM8TWjNzT/pXJrSAj678ZXb02pYjb4RzwmAk7Bpou8wKznkR1vxTuKLHQaaD
-	 sU4ZFBKtl8B/OjFq60hBXJUnq4+Sgzi88rJOb//YRRgwvRcOcEFm+BIsugZ6sj0Kqs
-	 MrdoaQKBDOlyQ==
-Date: Tue, 29 Jul 2025 17:47:17 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] kbuild: userprogs: use correct linker when mixing clang
- and GNU ld
-Message-ID: <20250730004717.GA2984390@ax162>
-References: <20250724-userprogs-clang-gnu-ld-v1-1-3d3d071e53a7@linutronix.de>
- <20250724231025.GA3620641@ax162>
- <20250725122604-44874f95-859c-4c0a-b3b0-14b30e00b796@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKo8qg0GFaRLCvzdeFpuCNqbPKKh4nKtJC5LCfwxI2IIH3BFwJ5N8FJL9BNeT4JtTCFKSNvh0jJDFuLA+XD74SH+YOrqoeb+Yps9k9J3tZpyG2uxj6C/KpGV3B4dwvGRxnqM1tCvxO+St+pQA/4tMme7fSA48u6Oi8fCTMbZpCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tybz5EJx; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753836708; x=1785372708;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=PRvj7/tY0gbPjZ9nvQIa9jtFtzC+d4gO88MH1ziiZgY=;
+  b=Tybz5EJxBbZ7VnH7jLO89wQiSur4un6C4Qg4VyTI5Pi6fhn93SlUVEof
+   qGnKo/FxXxEYGvOxgOzBdDOEbkPqGQQYn4uYEC8wrhsPKqX63yna2++hM
+   uCjRbKlRh1PZ4zh4IiAivQ7bBZ7XSnRZkZMWD0fKlSATK7mpDiDDGmPlC
+   Cgu/f1V8alNo+cQJY0XxSJXsz1RiNFPfiBhjqE2RiuFSL6Lt1dLARMT/A
+   wqZL9MGt0lSya/luAuSTsrLCcf07/zyjpPfulCbmObcT+i7hVz9xtT3g/
+   vNF54GOK2pQQgDIqG7OuYlduzAYII8wZ255dBaVlvGroyH43SEhb/qVyx
+   Q==;
+X-CSE-ConnectionGUID: JHBhCjzYRySfJ9uz3R9VJQ==
+X-CSE-MsgGUID: Eta+2O+VQP2ES0HkR7KDSA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="67566240"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="67566240"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 17:51:47 -0700
+X-CSE-ConnectionGUID: 1Std8N5pSHOU8Hrf9kRN4A==
+X-CSE-MsgGUID: tRwCDmk9QRGDzKVmAmsItA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="193840524"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 29 Jul 2025 17:51:40 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ugv2f-0001oh-2w;
+	Wed, 30 Jul 2025 00:51:37 +0000
+Date: Wed, 30 Jul 2025 08:50:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chaoyi Chen <kernel@airkyi.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Yubing Zhang <yubing.zhang@rock-chips.com>,
+	Frank Wang <frank.wang@rock-chips.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Amit Sunil Dhamne <amitsd@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Chaoyi Chen <chaoyi.chen@rock-chips.com>,
+	Dragan Simic <dsimic@manjaro.org>, Johan Jonker <jbx6244@gmail.com>,
+	Diederik de Haas <didi.debian@cknow.org>,
+	Dmitry Baryshkov <lumag@kernel.org>,
+	Peter Robinson <pbrobinson@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v3 2/5] phy: rockchip: phy-rockchip-typec: Add
+ typec_mux/typec_switch support
+Message-ID: <202507300837.EQJOJgpi-lkp@intel.com>
+References: <20250729090032.97-3-kernel@airkyi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250725122604-44874f95-859c-4c0a-b3b0-14b30e00b796@linutronix.de>
+In-Reply-To: <20250729090032.97-3-kernel@airkyi.com>
 
-On Fri, Jul 25, 2025 at 12:36:34PM +0200, Thomas Weißschuh wrote:
-> FWIW some architectures use GNU ld implicitly with clang because they also link
-> through $(CC) but do not use --ld-path. One example is UML, where the vDSO and
-> vmlinux are linked this way. But linking vmlinux of UML with ld.lld will
-> require changes to at least the linker script. Something for the ClangBuiltLinux
-> TODO? There were more examples, but I don't remember them right now.
+Hi Chaoyi,
 
-Yes, I believe this is the issue we had for tracking using ld.lld with
-UML: https://github.com/ClangBuiltLinux/linux/issues/1715
+kernel test robot noticed the following build errors:
 
-I had not considered that it could be a linker script handling
-difference. I will have to look into that soon.
+[auto build test ERROR on next-20250729]
+[also build test ERROR on linus/master v6.16]
+[cannot apply to robh/for-next rockchip/for-next krzk/for-next krzk-dt/for-next v6.16 v6.16-rc7 v6.16-rc6]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> Longterm --ld-path should probably be added to the global KBUILD_CFLAGS, too.
+url:    https://github.com/intel-lab-lkp/linux/commits/Chaoyi-Chen/dt-bindings-phy-rockchip-rk3399-typec-phy-Support-mode-switch/20250729-170255
+base:   next-20250729
+patch link:    https://lore.kernel.org/r/20250729090032.97-3-kernel%40airkyi.com
+patch subject: [PATCH v3 2/5] phy: rockchip: phy-rockchip-typec: Add typec_mux/typec_switch support
+config: powerpc-randconfig-002-20250730 (https://download.01.org/0day-ci/archive/20250730/202507300837.EQJOJgpi-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 8.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250730/202507300837.EQJOJgpi-lkp@intel.com/reproduce)
 
-'--ld-path' is only relevant when the linking phase is run by the
-compiler, which is not really normal for the primary kernel build, as
-calling the linker directly with $(LD) is preferred. Doing that would
-break the build because of -Werror=unused-command-line-argument, which
-is needed to make cc-option work correctly.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507300837.EQJOJgpi-lkp@intel.com/
 
-  $ echo 'int main(void) { return 0; }' | /usr/bin/clang --ld-path=/usr/bin/ld.lld -c -o /dev/null -x c -
-  clang: warning: argument unused during compilation: '--ld-path=/usr/bin/ld.lld' [-Wunused-command-line-argument]
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-  $ echo 'int main(void) { return 0; }' | /usr/bin/clang --ld-path=/usr/bin/ld.lld -o /dev/null -x c -
+>> ERROR: modpost: "drm_connector_oob_hotplug_event" [drivers/phy/rockchip/phy-rockchip-typec.ko] undefined!
 
-> No, it isn't respected. On the other hand I didn't yet run into any issues.
-> Do we want to fix it proactively?
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for HOTPLUG_CPU
+   Depends on [n]: SMP [=y] && (PPC_PSERIES [=n] || PPC_PMAC [=n] || PPC_POWERNV [=n] || FSL_SOC_BOOKE [=n])
+   Selected by [y]:
+   - PM_SLEEP_SMP [=y] && SMP [=y] && (ARCH_SUSPEND_POSSIBLE [=n] || ARCH_HIBERNATION_POSSIBLE [=y]) && PM_SLEEP [=y]
 
-No, I think it is fine to just leave it as is and fix it if it comes up
-in the future, as I believe getting LLVM_IAS=1 working for sparc64 is
-the next major focus of the whole LLVM sparc endeavour.
-
-Cheers,
-Nathan
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
