@@ -1,92 +1,130 @@
-Return-Path: <linux-kernel+bounces-751187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE24B16630
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:24:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D590B16654
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FD33B30B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:24:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 438B116886B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375EB2E174C;
-	Wed, 30 Jul 2025 18:24:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 387AF2DECD8;
+	Wed, 30 Jul 2025 18:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nngbOdBK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="SM8TWMmv"
+Received: from smtp.smtpout.orange.fr (smtp-78.smtpout.orange.fr [80.12.242.78])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B32D2E11B8;
-	Wed, 30 Jul 2025 18:24:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B3429A9F9;
+	Wed, 30 Jul 2025 18:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753899880; cv=none; b=atWOCfVb71eEUBltdsOpr6YkUhuMWjHddsR4l132SQd6sHOCx4rObjQWhZzYXiAfBJud7JtgTOJEl1ewu1d2EIfzZljg8g/+Hpz/bOORW1PYy8r8jMHmxu/kn9EXK9Dt/x+Y2nJ/SE8N4SA/4LRlIoNfX+p1y+Bi+jK+WEEQr/Y=
+	t=1753900461; cv=none; b=iSuBP+NkoQTRV3itdRbbu435GWPw+2fv4yD4o9edsUKoF5JB3VehlyJ7rRei3ZkI+LN7WmUTRrsNO/Hmo7yHnCihOXjSAGJrNc+C8M33Jbb+037gEHD9wVGKatLhs476ZAGOykF1OXOGfvHBsjBpq+kggEFZwgJ7mEu68xtzxjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753899880; c=relaxed/simple;
-	bh=SVUxG3//hb8UHCN4I07aWYSwn9hZOjdtL6QSHDR6zPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O09+7qMWzSzPqAsPjicYd/Sll6yWpESe3jmfWrikIJLwY8XizTREuvInqpgBXCcIdai7I2gWYrSLgjyH4F5LsWjyIDhhIiEuvMuw2I09HwKkZPd30ZbSy0bCZJy/cuIy3MGG2nO2dGxaZXxyAFeh5a1CGvOeepIm829FVJ6Gquw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nngbOdBK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73AE0C4CEE3;
-	Wed, 30 Jul 2025 18:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753899879;
-	bh=SVUxG3//hb8UHCN4I07aWYSwn9hZOjdtL6QSHDR6zPY=;
-	h=Date:Reply-To:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nngbOdBK2tjDPEFgPZ/O1weK+wX3umrBzl8GCxIBK7YylSWZbPFK6k8ZOqfrAdYBs
-	 8BxUHD7HLShfev60lp1Qx9/dKds26qJ52oIaGEfR7ISYUC0+Wsv9apqCQT1Yjv3x+H
-	 oK0G6xHAYhNKNoC9egQtkp7slBL1aPILZ5aKW46uyUUOnTjOezopWMfI+WGj/67KhD
-	 IT56N4TDwp/Hv4G4Rzw2ZQonQDS7WdwUxAu0veoQEk5JmOtpKy78dYtrIuv00kgzmQ
-	 634yfe72DThGAwDaf1Yus7Os+oj7jJzXGxFN1yS69IJw/R68gVyjxDD0FhE6edy5Dg
-	 H53VopF/UT5WQ==
-Message-ID: <223acbc1-60d4-4687-8eea-5306aa44ae24@kernel.org>
-Date: Thu, 31 Jul 2025 02:24:32 +0800
+	s=arc-20240116; t=1753900461; c=relaxed/simple;
+	bh=sZp0+q2msDXv7PtyHH+ek5wNvhUBQ1q8UFch023NJj4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tkRsvZibdxsZfIYUf/QTZ3jDrTwzoIA9+UB1RsQhdc09FiaFiq4Z5m8oKksGZrPOs8k1K9u4wuJG/dxgx7FdaB9ZHP3VFrKQMCpHMB+0f/v0S2iV16OtdovyUkJjw3YhXpJNQi3uIPl3AlkDupeYa3r5N+skrpaYlnbLGnJIjwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=SM8TWMmv; arc=none smtp.client-ip=80.12.242.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from fedora.home ([IPv6:2a01:cb10:785:b00:8347:f260:7456:7662])
+	by smtp.orange.fr with ESMTPA
+	id hBU1uXDqxjmWBhBU1uNSd5; Wed, 30 Jul 2025 20:24:58 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1753899898;
+	bh=K4L6S9AIfcJmSktpYUDEepH8hgI/JaLBu8Gt3usbxsU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=SM8TWMmvKS/4qkzNc44dLKl7l3TO+THTVs7zsKsSAV6n1jAeZk4X3jiDrlQecbk2d
+	 dIVqKLjbxjqYtRhKiZIIeaB2JOM3X1Z1yGFTOFn9p2Z0MaBsMkB9/d0ZfZlkCa+WTh
+	 wrb8IDi4uASeiAazw44XGtPOfzjpDpw9b0LXD0izdP4+THJDLBwcbZkf+wUHcyB+GJ
+	 hKXGgOnkPpn9lpDzoSokLTbkAnoBzdbpThTV572lBjBfXPYi5Fp13LgGZ+urmaoKC7
+	 BvNhOnBvcWSE2uMo6hsaK/C/8BJO7Jw7uWqBckVVN6QkC1iUOikNI0U7Bm7iS6lu5l
+	 LyJpKexqVM5SA==
+X-ME-Helo: fedora.home
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Wed, 30 Jul 2025 20:24:58 +0200
+X-ME-IP: 2a01:cb10:785:b00:8347:f260:7456:7662
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	linux-media@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] media: rkvdec: Fix an error handling path in rkvdec_probe()
+Date: Wed, 30 Jul 2025 20:24:44 +0200
+Message-ID: <00b13063525c2aee6a60a7f6810f69c12bf2a866.1753899866.git.christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: yukuai@kernel.org
-Subject: Re: [PATCH v2 1/2] lib/sbitmap: convert shallow_depth from one word
- to the whole sbitmap
-To: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
- dlemoal@kernel.org, ming.lei@redhat.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, Omar Sandoval <osandov@fb.com>,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250729031906.3615228-1-yukuai1@huaweicloud.com>
- <20250729031906.3615228-2-yukuai1@huaweicloud.com>
- <ozjsdoiqa2uem65qqj4fjbrwm6toxlj5bzv7f5dg5xfiljv3zi@wcaamboo2r6h>
- <8edcdef6-8749-aa45-e7d2-ada677645d76@huaweicloud.com>
- <jr54uomodnzqyw4bu4hcdpllgafkhueyygiiempuudwjy3vir5@d7lv3jsxxqx2>
-Content-Language: en-US
-From: Yu Kuai <yukuai@kernel.org>
-In-Reply-To: <jr54uomodnzqyw4bu4hcdpllgafkhueyygiiempuudwjy3vir5@d7lv3jsxxqx2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-hi, Jan!
+If an error occurs after a successful iommu_paging_domain_alloc() call, it
+should be undone by a corresponding iommu_domain_free() call, as already
+done in the remove function.
 
-在 2025/7/30 21:03, Jan Kara 写道:
-> I think having two APIs will be even more confusing than the current state.
-> But as I wrote I think you can have API to specify shallow depth in total
-> size and in sbitmap_queue_get_shallow() do:
->
-> shallow_per_word = (shallow_depth << sb->shift) / sb->depth;
-> rounding_index = shallow_depth - shallow_per_word * sb->depth;
->
-> and allow depth shallow_per_word + 1 if current index < rounding_index and
-> exactly shallow_per_word if current index >= rounding_index. This will
-> still evenly distribute shallow depth among words and I don't think the
-> additional overhead of the several arithmetic operations will be visible.
-Yes, you're right, I did not get your idea before. Thanks for the 
-explanation
-and the suggestion :） Will follow this idea in the next version.
+In order to fix the issue, move the corresponding call at the end of the
+function, because it is safe to allocate 'empty_domain' later.
 
-Thanks
+Fixes: ff8c5622f9f7 ("media: rkvdec: Restore iommu addresses on errors")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+---
+Compile tested only.
+
+Changes in v2:
+  - Move code instead of handling errors   [Nicolas Dufresne]
+  - Add R-b tag
+
+v1: https://lore.kernel.org/all/b69c20783a7b6f7964ab636679d3da80fc48372e.1753610517.git.christophe.jaillet@wanadoo.fr/
+---
+ drivers/media/platform/rockchip/rkvdec/rkvdec.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+index d707088ec0dc..6eae10e16c73 100644
+--- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
++++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
+@@ -1159,13 +1159,6 @@ static int rkvdec_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
+-	if (iommu_get_domain_for_dev(&pdev->dev)) {
+-		rkvdec->empty_domain = iommu_paging_domain_alloc(rkvdec->dev);
+-
+-		if (!rkvdec->empty_domain)
+-			dev_warn(rkvdec->dev, "cannot alloc new empty domain\n");
+-	}
+-
+ 	vb2_dma_contig_set_max_seg_size(&pdev->dev, DMA_BIT_MASK(32));
+ 
+ 	irq = platform_get_irq(pdev, 0);
+@@ -1188,6 +1181,13 @@ static int rkvdec_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_disable_runtime_pm;
+ 
++	if (iommu_get_domain_for_dev(&pdev->dev)) {
++		rkvdec->empty_domain = iommu_paging_domain_alloc(rkvdec->dev);
++
++		if (!rkvdec->empty_domain)
++			dev_warn(rkvdec->dev, "cannot alloc new empty domain\n");
++	}
++
+ 	return 0;
+ 
+ err_disable_runtime_pm:
+-- 
+2.50.1
 
 
