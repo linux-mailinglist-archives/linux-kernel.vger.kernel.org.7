@@ -1,137 +1,148 @@
-Return-Path: <linux-kernel+bounces-750731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E17B16064
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:35:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34464B16066
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:36:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32E067B21DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:33:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9705E7B29D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75793294A0C;
-	Wed, 30 Jul 2025 12:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB23296159;
+	Wed, 30 Jul 2025 12:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="W8RqVLJB"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dK9Xc8b0"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE0142A82;
-	Wed, 30 Jul 2025 12:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ECB4286430
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753878918; cv=none; b=Wmkmfizwj/Bhm3mJU8N7lSQJ4hrvLo/QtfTZ0aFkhJ48bHjpuqy3oLHoe7+Gutii/d6qz2K6q6kQ+Cvp/PV0QOxxp0VRkJBHs4FSXunOaJMPCUvr/o6fFB/mxpUDc8JMNZ29H8ihp4hSAaPba7YYsp1o9AVNHhk/cX3yV2J6ups=
+	t=1753878957; cv=none; b=QOXb85tAoPTuS46wrrkbYVypflM2bCgN5NJaDmYxGh6oKLxGoEmx9pHoatgw/srMfAPnoMaQTxJ611/lDXTuqPbHmzMPxtpHa7kflVE2yXoNRO2GC9vL5MntnWOZGxoeJXn7xlpeWKSLLC5v1T2sopQh6P1/33cTvfPhdDzzcYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753878918; c=relaxed/simple;
-	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kn5lp2lUKLYkr5Yv1hf+9YPkqu4AhNEbNMh0wDo8SagHNV9b6LP/8k2pkZRV/XFEACA8wQpr9vbU7nEsZzoKxwX9pMGIN1opyaKmDVc88FCpn3NznCUh9Z2UNm/kxR1AEGkzYiW5o7IuuePRNMSS7Idb0r5BgxxFgwwjN0bRCL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=W8RqVLJB; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1753878914; x=1754483714; i=rwarsow@gmx.de;
-	bh=W5ID3OY7yfWGGgbtnZevjVWj3uINdDq2sxdewYF9kdo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=W8RqVLJBtr/F+S2Jk0028V+m9CS3hcFs9/XWYtldfZR3k+Ab5TSQPGJhpdtzQ7f3
-	 EEmMbNNdJI29m8cC+2X3eRAs0OuIEt/wJShvc+ap0mQkdVrUgsu8SQA5AewQnJPxQ
-	 YR/ncVrZOdjCikInQBLeYSP+DJ8lIobkD04usm9PzSbwUl90a9XdpiRk5/id9osuk
-	 Rg4KZd0cSwCYhdLvVia2wok25f8Z5zT6br4a6nnSHOuNjq7ol6AjcFMmGemloMg1C
-	 a7/u6tVKDhhF3loUF/JXEm1l8+olH+GZMtd05bBdjECy/Z5D4Vw8x2BdUN1zAzyh9
-	 CcUlO7b6fH7or8o7RA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.200.20] ([46.142.33.242]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N0XCw-1uVBqf3jLY-012uGx; Wed, 30
- Jul 2025 14:35:13 +0200
-Message-ID: <bc57b62e-d1ac-43a8-acf9-e3cb680d205c@gmx.de>
-Date: Wed, 30 Jul 2025 14:35:12 +0200
+	s=arc-20240116; t=1753878957; c=relaxed/simple;
+	bh=TL1jslkYbGnwFQhxIVDseQLkHj1wo3EdT3LmGuFst8U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VabRJn6Vaa5/5y+DLsNr2ThvB90eHtjGk8t0eTTvxOP4EGLXlMjW1oNqB1yos4qfWmk6SiW3Rt2OSfkRDnJFTU0hShvY8Lf//ll9Ly96dvQrIac9KI4zZRcdKygCP271Hj/2HZJ6JORTPIdBBFmFYZMWtiVqutlOrAR+0GDFOyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dK9Xc8b0; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70742520205so7869886d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 05:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753878955; x=1754483755; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CjCcWWa4qk/EoiiwDodc2dHJ7c4wzCVNfTSg63QPfzs=;
+        b=dK9Xc8b0CDWCFOc4cVm3iLvlrhsS5bi2v7X19qbRVe+Tu+Q0zNCigUeD8o5XG++JDy
+         crL/1/zZxl17ICAz0v0y80So5kBTPkV6lPL9YjgOaERMKLe00s3EoJgoC6bhICPaIA70
+         meLf8mfFpVA2Z5cR5hPxvqOMB7jRsfe926IRMxTJqtXGrTcnuB5YE7zTqXhUqbP5suuK
+         cp5sbCjP6BrX8NfWpXVfW9oFE6UGwmLr3SJQ+PS41zm3m9+p7AcUFNqsus6dro5cSW5q
+         IbgH+kTG3EMxqzUdriUOY/GyN0ZUlmedExgnFgWrjHBeBVjUcFj7D/Z56FQhRO/3viW5
+         3Weg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753878955; x=1754483755;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CjCcWWa4qk/EoiiwDodc2dHJ7c4wzCVNfTSg63QPfzs=;
+        b=mnrS1eUJhPBAsGOieSEmQ91rncBJve97yJY5DAKqT99pqT0DuRmNVuPJS40sRjz5VY
+         1WSZk9nbVrds4djWc4tTt8bpgqrOtarpG1jm6orZtRYcJ35ctG8Q42maDVvZBcGP1Ad1
+         n8xAKJEjy9jRI3mF23wUFDDvq9fDOhLIibx4vnk31e46uI254d+opfbLERu8ohNl3Fm9
+         7ax19GvLCHKYLITPUGWhc2YtIUF71Y48FrvqUz7wQqWbPnRs5nC6VrMI+hf/S6bX7gxz
+         uOet7SuarcWrAF/ptJzus5jjC6H5MRwGcAxdibM49toAy6/ecP7mwvJhfCbQG/5H9EwV
+         Rx4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUTa6+igfMPsV4FESVP8Fi3vLWD6fpHxWkugBs0FG1vHHYt5CMFIcJd1pEPxO3/IvZjoaV7/3Ni6+bIiDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTJMf4w9MBOhNDsdDQaRTu1wIvKQUQEHayBE/a/g2uQ7P+SeLN
+	8yJrwAKimRqymp0lz6/EkSljKNzN5/IrgJHQpcvI3RbsjtEGCArqXce1mK/17g9diYc=
+X-Gm-Gg: ASbGncsT66DZwOuN2Wsq1kowB77iYgEi0IZhcXO9PwgzIlXJGJR7f9euRVxKuezIe1r
+	JuhijuGYS101WhIOaibiy1kwBBUNtJscB9H0iVeU9ZWKNMkq2CpsccakKoA6c5N/F9ZMPe8iKHN
+	E14o+iaBCbCHhx6rfPJ7GTMSOpsTnWJ+x5bQhdkljJRffkkzDFiwpM9F1yBoPIGgO4Ci9A+QhTh
+	OBA+KFceBvXO9AEi0VzZJr/1FxjeiG9rAR/+/lwU/gaOV7sNuLk5pBljdPE8add3RZp8onRLNaK
+	TZtG5U+1/JWAd/QCxgzIZw1rR8jiLVG0Ly9RQurJz0mWg4mSYQ1qTgKAzGHKjgp5jXk+T1gQDhM
+	aU3B6voSkxYodCo6NP2lk+yuoraKz0vXsHtThHPY=
+X-Google-Smtp-Source: AGHT+IGwmNhyLd0DJNnkCT8/jZWKIr1CBuLvQyt8ZpffWXjV7NHNiRP2B0ipuCo3xhp1GZHIOlRERQ==
+X-Received: by 2002:a05:6214:cae:b0:707:4daf:62f with SMTP id 6a1803df08f44-70767230172mr19957096d6.7.1753878954791;
+        Wed, 30 Jul 2025 05:35:54 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.218.223])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7076a647d47sm10105716d6.9.2025.07.30.05.35.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 05:35:54 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/2] dt-bindings: ufs: qcom: Split SC7280 and similar into
+ separate file
+Date: Wed, 30 Jul 2025 14:35:35 +0200
+Message-Id: <20250730-dt-bindings-ufs-qcom-v1-0-4cec9ff202dc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250730093230.629234025@linuxfoundation.org>
-From: Ronald Warsow <rwarsow@gmx.de>
-Content-Language: de-DE, en-US
-In-Reply-To: <20250730093230.629234025@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:5MFlGcTK8VnH6BlmuyyIW1v80aHuhQQbD+24dlqI3YvudT6PLVm
- 66WB49gu8OkTJFd6WbUT9YnrTuK1lUcmCQPg+m/AMLfozVwFf/cOIBkQO+p6SsEoaUo0FKF
- v4JiqAsL05SyLE3O0WFvXg359PquQ2LpGfeYgkog23PY1/FnXD1vCHPRruMK8W7Y5YLe0RE
- YkliTqROi+V11RiVAmoKA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nJdz57n+bIM=;AS373Yh/KnZpiEim4Ln1w4ECTSr
- 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
+X-B4-Tracking: v=1; b=H4sIAJcRimgC/x3MTQ5AMBBA4avIrE0yiPi5ili0OpiFooNIxN01l
+ t/ivQeUg7BCmzwQ+BKV1UdkaQLDbPzEKC4acspLqgpCd6AV78RPiueouA/rgk1NVVOydWQMxHQ
+ LPMr9b7v+fT+nToDBZgAAAA==
+X-Change-ID: 20250730-dt-bindings-ufs-qcom-980795ebd0aa
+To: Alim Akhtar <alim.akhtar@samsung.com>, 
+ Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1146;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=TL1jslkYbGnwFQhxIVDseQLkHj1wo3EdT3LmGuFst8U=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBoihGhB/RGRzrg5Tdt3rmYaNBElttGKFnKKlPZR
+ CgVwij/l3eJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCaIoRoQAKCRDBN2bmhouD
+ 18OJD/4wpVCzAyd22DzRzFtEz75KU8fQ6hsp8mAxyM5GPjK00GuPcR+lthX4JfMXIiHGBd0n2Sb
+ iHQ8uj9GGEOUlxYlNPI4BtyDqVu5K9yuF3PMjpYriQwuYacPVczW/zgEUpHg2oL8VJtTJF6kxch
+ 88h1ivpTvFLKdF8Q+CKKQbhbfTAy9Eixrsn9ZsZORDYbbb897TJ6a6uTqnEPXLb5octEOyihwgK
+ B7EfkrHg6XhBoGh4F3ZNrPfg3moQDO23eNnSLwd0bW2VaXLPcSx0tEyU2Rjzu9y40xR/QTWtKJz
+ g2QCZdj98DV3RcwW/Pc6YqoUZCN5m4bH+brGElQgCuWAM3T7hwuKvWrgshygIzXOfPFBSuwNUNr
+ /ruUjfYMIJ8mT+Bw148mb8b2wg1o3ojuWvsgZ6JAPm5hv3rCOyD+Aer9FIKe6m7X3m8Dk7SLCMw
+ w5X6ufiK5nz9svvavOhsEVa60kYvI6d1mXEMt5brtjONMZFG0hgCBAtUuYCV5hbrVbXYydr0qgO
+ +4Fdgni0ISqZG9AlSMCcqX1UcMObmIrowhLW7qij33qA2mEHXb6fHBsupeX+ArcaSteQi4Jwkyk
+ RTmE5ZX0XBpmUHWrcqVJGjfkNB1swDtzPF3Qx5mg4rQJMpPh1wbrm08M4u4xUHjC+1h9XeO5J1O
+ jRaoPR+XZc8wLBQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi
+The binding for Qualcomm SoC UFS controllers grew and it will grow
+further.  It already includes several conditionals, partially for
+difference in handling encryption block (ICE, either as phandle or as IO
+address space) but it will further grow for MCQ.
 
-no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
+See also: lore.kernel.org/r/20250730082229.23475-1-quic_rdwivedi@quicinc.com
 
-Thanks
+The question is whether SM8650 and SM8750 should have their own schemas,
+but based on bindings above I think all devices here have MCQ?
 
-Tested-by: Ronald Warsow <rwarsow@gmx.de>
+Best regards,
+Krzysztof
+
+---
+Krzysztof Kozlowski (2):
+      dt-bindings: ufs: qcom: Split common part to qcom,ufs-common.yaml
+      dt-bindings: ufs: qcom: Split SC7280 and similar
+
+ .../devicetree/bindings/ufs/qcom,sc7280-ufshc.yaml | 149 +++++++++++++++++++
+ .../devicetree/bindings/ufs/qcom,ufs-common.yaml   |  67 +++++++++
+ .../devicetree/bindings/ufs/qcom,ufs.yaml          | 160 +++++----------------
+ 3 files changed, 251 insertions(+), 125 deletions(-)
+---
+base-commit: d7af19298454ed155f5cf67201a70f5cf836c842
+change-id: 20250730-dt-bindings-ufs-qcom-980795ebd0aa
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
