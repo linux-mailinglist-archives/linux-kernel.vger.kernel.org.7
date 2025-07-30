@@ -1,257 +1,141 @@
-Return-Path: <linux-kernel+bounces-751088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC82FB16525
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:05:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0560B16523
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55B4C18989EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:05:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29A431738EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C28296159;
-	Wed, 30 Jul 2025 17:05:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="vQfg6XYe"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3460C2DE216;
+	Wed, 30 Jul 2025 17:05:22 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6B3A1DFDAB;
-	Wed, 30 Jul 2025 17:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 556041DFDAB;
+	Wed, 30 Jul 2025 17:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753895126; cv=none; b=O09AKds4g+qUsqmpymitvQxNSZeCjgZ7RPsmxWfXNua31z7l51kEpf7hLr/XoDrHJ01XiTMQzsUWhZUFR61PbdMJOjnNAtMCTZijHm9VYvZHxaUN9AdqWgYp2guhPO/DPQcXBBoiWKdz/oEnQWRrsFgon4pPiHFWCIOssf4+Mik=
+	t=1753895121; cv=none; b=jeb64ItbfDILyaJFAHL5gBk98MJcOYNnDh3orK9GmS0Z6CzgydcpXcFqa2qxgLYlna8xhZJlb7Go/95/Ls2akmJ8XCE0E8mZtfA5Z9/onh+EGRWoj/o80nuFs1Mr22UPhagVqEmMg86SZAc8PfE81au0Mw7ZLd8udMrEJzcaC0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753895126; c=relaxed/simple;
-	bh=6f315aKBpZbc/FKzdZZbxH8She+aKjcwj6qDICLts3M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mogsC4gl6Bgfw1We4Rr9YN1osq64Za+OpmbJQ5e9avTAJnAM2TXdfKRd1VHavRR5R8/GUz63YhKxSUZCKRFH9Fxw/yyKr0gE5rOCa25zygSPS+D2wNAlOnAdCJTO+Miv2Vr9WEFzEGKONc07sLUiiMEq5vUhKAEXt8PUdk5NGqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=vQfg6XYe; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Reply-To:Content-Type:In-Reply-To:References;
-	bh=ACKnkrsm3996mQlnpuWF1ZjvpEvYQar65sXrCnRnrYo=; b=vQfg6XYe8S13wo+nJaxxj0ewRc
-	m4R6njKJVSKczMshuVl0nhq7dBlscrU5Rg/GX51UdTi2WLI3Aw5XL44igJsW6d+DMRMNW+Uf9JyWc
-	cXLEEEkLpRYUukuF8rL5EK5yiWClzXkxmB8He78R2g33m8IvS1AXcXxSID4bNn4X3n652NUCGkq2A
-	4HNRo7P/wNdWvyhdpHk/JlgXMVrxdAyxV3xpvDPUYxKmAAawO9QHxOmYHoVEHOkRiYVsIKw/nEwe8
-	z9EW+pUlRajP8W33jTK8EEMtgOS/aomN0KRsbb55yGxK3y/ZZCRNri9QlXJUNbV8AFxFreriyjlDV
-	9QGOl4NA==;
-Received: from [194.95.143.137] (helo=phil.dip.tu-dresden.de)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uhAEt-0001N9-Jc; Wed, 30 Jul 2025 19:05:15 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: lee@kernel.org,
-	pavel@kernel.org
-Cc: heiko@sntech.de,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] leds: qnap-mcu: add support for the red and green status leds
-Date: Wed, 30 Jul 2025 19:05:07 +0200
-Message-ID: <20250730170507.1869905-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1753895121; c=relaxed/simple;
+	bh=Fz9AmItsSE1gQvYxIaSsn8ZhUticrdNuFl7P2+VOuo0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=karARQpfRdCvimQQ2fV8a0U+6oJVhcM5p/KpDqZ1CihYgFij45Ki4LCwqNBMD9quzu5cFdyhgpUDOnznXI7+xNnJwg2Wcj+GbvZrqbMqUKEjZwPhRd/xHGDyOKcDmvQ/vNjfj3nLGiOXhKfGp2qJewgmXg5yOCziMgUuFHo6sVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf18.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id 2F1B2593DB;
+	Wed, 30 Jul 2025 17:05:17 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf18.hostedemail.com (Postfix) with ESMTPA id A1ED230;
+	Wed, 30 Jul 2025 17:05:14 +0000 (UTC)
+Date: Wed, 30 Jul 2025 13:05:31 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Greg KH <greg@kroah.com>,
+ corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+ josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org,
+ linux-kernel@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>, "Dr. David Alan Gilbert"
+ <linux@treblig.org>
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+Message-ID: <20250730130531.4855a38b@gandalf.local.home>
+In-Reply-To: <aIpKCXrc-k2Dx43x@lappy>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+	<7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
+	<2025072854-earthen-velcro-8b32@gregkh>
+	<df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
+	<20250730112753.17f5af13@gandalf.local.home>
+	<158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
+	<20250730121829.0c89228d@gandalf.local.home>
+	<aIpKCXrc-k2Dx43x@lappy>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: ntgnn1j57rcamjw4pf3r96jnx45bu66s
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: A1ED230
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19dTV0CfTG6wTPdg8qBFlf7zLOvV2ojrNQ=
+X-HE-Tag: 1753895114-634474
+X-HE-Meta: U2FsdGVkX1/hx5wyE7EefGyESyhBxTHzA6Du3wDY4KWgk0CBQqzFge6OybgrVWuEAjuOnojzW/rX3g0+ZM3T4qbCEm8ZbcpLlzM+l6C6Z5Bowm1UfXkfrZRAe7pa8HtZp/UI+VadRmxwa2Gjsiv5OYjZXDpiq894ddKZNz9K1CippgOZjR/1itAB/CFZcT/GxkNWWxO6qkBgyK+lSwvXjyn+etHmNxbg4WhpfPjHHC+AtAiv64dh2+2Bb74BOcEotuVxtdRhzCo7AkJgTPZQyC1lkJmrr7EeKPZIBYIVCdIcU5+ZfSD7blGBGOWkdZ5Xy8F7qUskanRDCK0hb3CYmfZOebO0E4SXGkQPIjo7uYPaYldLc1N8E9yLve/inluZ
 
-There is one more set of two LEDs on the qnap devices to indicate status.
+On Wed, 30 Jul 2025 12:36:25 -0400
+Sasha Levin <sashal@kernel.org> wrote:
 
-One LED is green, the other is red and while they occupy the same space
-on the front panel, they cannot be enabled at the same time.
+> >
+> >That sounds pretty much exactly as what I was stating in our meeting. That
+> >is, it is OK to submit a patch written with AI but you must disclose it. It
+> >is also the right of the Maintainer to refuse to take any patch that was
+> >written in AI. They may feel that they want someone who fully understands  
+> 
+> This should probably be a stronger statement if we don't have it in the
+> docs yet: a maintainer can refuse to take any patch, period.
 
-But they can interact via blink functions, the MCU can flash them
-alternately, going red -> green -> red -> ... either in 500ms or
-1s intervals. They can of course also blink individually.
+I disagree with that. They had better have technical reasons to refuse to
+take a patch. I would have big qualms if a maintainer just said "I don't
+like you and I'm not going to take any patches from you".
 
-Add specific led functions for them and register them on probe.
+This is a community project, and maintainers have been overridden before.
+Luckily, Linus has been pretty good at getting changes into the kernel when
+there was no clear technical argument that they should not be accepted.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/leds/leds-qnap-mcu.c | 156 +++++++++++++++++++++++++++++++++++
- 1 file changed, 156 insertions(+)
+I believe the policy is that a maintainer may refuse any patch based on
+technical reasons. Now, patches can and are delayed due to maintainers just
+not having the time to review the patch. But that is eventually resolved if
+enough resources come into play.
 
-diff --git a/drivers/leds/leds-qnap-mcu.c b/drivers/leds/leds-qnap-mcu.c
-index 4e4709456261..b7747b47c604 100644
---- a/drivers/leds/leds-qnap-mcu.c
-+++ b/drivers/leds/leds-qnap-mcu.c
-@@ -190,6 +190,157 @@ static int qnap_mcu_register_usb_led(struct device *dev, struct qnap_mcu *mcu)
- 	return qnap_mcu_usb_led_set(&usb_led->cdev, 0);
- }
- 
-+enum qnap_mcu_status_led_mode {
-+	QNAP_MCU_STATUS_LED_OFF = 0,
-+	QNAP_MCU_STATUS_LED_ON = 1,
-+	QNAP_MCU_STATUS_LED_BLINK_FAST = 2, /* 500ms / 500ms */
-+	QNAP_MCU_STATUS_LED_BLINK_SLOW = 3, /* 1s / 1s */
-+};
-+
-+struct qnap_mcu_status;
-+struct qnap_mcu_status_led {
-+	struct qnap_mcu_status *base;
-+	struct led_classdev cdev;
-+	u8 mode;
-+};
-+
-+struct qnap_mcu_status {
-+	struct qnap_mcu *mcu;
-+	struct qnap_mcu_status_led red;
-+	struct qnap_mcu_status_led green;
-+};
-+
-+static inline struct qnap_mcu_status_led *
-+		cdev_to_qnap_mcu_status_led(struct led_classdev *led_cdev)
-+{
-+	return container_of(led_cdev, struct qnap_mcu_status_led, cdev);
-+}
-+
-+static u8 qnap_mcu_status_led_encode(struct qnap_mcu_status *status)
-+{
-+	if (status->red.mode == QNAP_MCU_STATUS_LED_OFF) {
-+		switch (status->green.mode) {
-+		case QNAP_MCU_STATUS_LED_OFF:
-+			return '9';
-+		case QNAP_MCU_STATUS_LED_ON:
-+			return '6';
-+		case QNAP_MCU_STATUS_LED_BLINK_FAST:
-+			return '5';
-+		case QNAP_MCU_STATUS_LED_BLINK_SLOW:
-+			return 'A';
-+		}
-+	} else if (status->green.mode == QNAP_MCU_STATUS_LED_OFF) {
-+		switch (status->red.mode) {
-+		case QNAP_MCU_STATUS_LED_OFF:
-+			return '9';
-+		case QNAP_MCU_STATUS_LED_ON:
-+			return '7';
-+		case QNAP_MCU_STATUS_LED_BLINK_FAST:
-+			return '4';
-+		case QNAP_MCU_STATUS_LED_BLINK_SLOW:
-+			return 'B';
-+		}
-+	} else if (status->green.mode == QNAP_MCU_STATUS_LED_BLINK_SLOW &&
-+		   status->red.mode == QNAP_MCU_STATUS_LED_BLINK_SLOW) {
-+		return 'C';
-+	}
-+
-+	/*
-+	 * At this point, both LEDs are on in some fashion, but both
-+	 * cannot be on at the same time, so just use the fast blink
-+	 */
-+	return '8';
-+}
-+
-+static int qnap_mcu_status_led_update(struct qnap_mcu *mcu,
-+				      struct qnap_mcu_status *status)
-+{
-+	u8 cmd[] = { '@', 'C', 0 };
-+
-+	cmd[2] = qnap_mcu_status_led_encode(status);
-+
-+	return qnap_mcu_exec_with_ack(mcu, cmd, sizeof(cmd));
-+}
-+
-+static int qnap_mcu_status_led_set(struct led_classdev *led_cdev,
-+				   enum led_brightness brightness)
-+{
-+	struct qnap_mcu_status_led *status_led = cdev_to_qnap_mcu_status_led(led_cdev);
-+
-+	/* Don't disturb a possible set blink-mode if LED stays on */
-+	if (brightness != 0 &&
-+	    status_led->mode >= QNAP_MCU_STATUS_LED_BLINK_FAST)
-+		return 0;
-+
-+	status_led->mode = brightness ? QNAP_MCU_STATUS_LED_ON :
-+					QNAP_MCU_STATUS_LED_OFF;
-+
-+	return qnap_mcu_status_led_update(status_led->base->mcu,
-+					  status_led->base);
-+}
-+
-+static int qnap_mcu_status_led_blink_set(struct led_classdev *led_cdev,
-+					 unsigned long *delay_on,
-+					 unsigned long *delay_off)
-+{
-+	struct qnap_mcu_status_led *status_led = cdev_to_qnap_mcu_status_led(led_cdev);
-+
-+	/* LED is off, nothing to do */
-+	if (status_led->mode == QNAP_MCU_STATUS_LED_OFF)
-+		return 0;
-+
-+	if (*delay_on <= 500) {
-+		*delay_on = 500;
-+		*delay_off = 500;
-+		status_led->mode = QNAP_MCU_STATUS_LED_BLINK_FAST;
-+	} else {
-+		*delay_on = 1000;
-+		*delay_off = 1000;
-+		status_led->mode = QNAP_MCU_STATUS_LED_BLINK_SLOW;
-+	}
-+
-+	return qnap_mcu_status_led_update(status_led->base->mcu,
-+					  status_led->base);
-+}
-+
-+static int qnap_mcu_register_status_leds(struct device *dev, struct qnap_mcu *mcu)
-+{
-+	struct qnap_mcu_status *status;
-+	int ret;
-+
-+	status = devm_kzalloc(dev, sizeof(*status), GFP_KERNEL);
-+	if (!status)
-+		return -ENOMEM;
-+
-+	status->mcu = mcu;
-+	status->red.base = status;
-+	status->green.base = status;
-+
-+	status->red.mode = QNAP_MCU_STATUS_LED_OFF;
-+	status->red.cdev.name = "red:status";
-+	status->red.cdev.brightness_set_blocking = qnap_mcu_status_led_set;
-+	status->red.cdev.blink_set = qnap_mcu_status_led_blink_set;
-+	status->red.cdev.brightness = 0;
-+	status->red.cdev.max_brightness = 1;
-+
-+	status->green.mode = QNAP_MCU_STATUS_LED_OFF;
-+	status->green.cdev.name = "green:status";
-+	status->green.cdev.brightness_set_blocking = qnap_mcu_status_led_set;
-+	status->green.cdev.blink_set = qnap_mcu_status_led_blink_set;
-+	status->green.cdev.brightness = 0;
-+	status->green.cdev.max_brightness = 1;
-+
-+	ret = devm_led_classdev_register(dev, &status->red.cdev);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_led_classdev_register(dev, &status->green.cdev);
-+	if (ret)
-+		return ret;
-+
-+	return qnap_mcu_status_led_update(status->mcu, status);
-+}
-+
- static int qnap_mcu_leds_probe(struct platform_device *pdev)
- {
- 	struct qnap_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
-@@ -210,6 +361,11 @@ static int qnap_mcu_leds_probe(struct platform_device *pdev)
- 					"failed to register USB LED\n");
- 	}
- 
-+	ret = qnap_mcu_register_status_leds(&pdev->dev, mcu);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to register status LED\n");
-+
- 	return 0;
- }
- 
--- 
-2.47.2
+My point here is that AI can now add questions that maintainers can't
+answer. Is it really legal? Can the maintainer trust it? Yes, these too can
+fall under the "technical reasons" but having a clear policy that states
+that a maintainer may not want to even bother with AI generated code can
+perhaps give the maintainer something to point to if push comes to shove.
 
+> 
+> >what that patch does, and AI can cloud the knowledge of that patch from the
+> >author.  
+> 
+> Maybe we should unify this with the academic research doc we already
+> have?
+
+I wouldn't think so. This is about submitting patches and a statement there
+may be easier found by those about to submit an AI patch. Just because they
+are using AI doesn't mean they'll think it's an academic research.
+
+> 
+> This way we can extend MAINTAINERS to indicate which subsystems are
+> more open to research work (drivers/staging/ comes to mind) vs ones that
+> aren't.
+
+I wouldn't call it research work. Right now people who may be playing with
+AI models may think it's "research", but that's not going to be the
+majority of AI submissions.
+
+> 
+> Some sort of a "traffic light" system:
+> 
+>   1. Green: the subsystem is happy to receive patches from any source.
+> 
+>   2. Yellow: "If you're unfamiliar with the subsystem and using any
+>   tooling to generate your patches, please have a reviewed-by from a
+>   trusted developer before sending your patch".
+> 
+>   3. No tool-generated patches without prior maintainer approval.
+
+Perhaps. Of course there's the Coccinelle scripts that fix a bunch of code
+around the kernel that will like be ignored in this. But this may still be
+a good start.
+
+-- Steve
 
