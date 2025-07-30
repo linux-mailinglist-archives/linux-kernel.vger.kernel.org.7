@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-751206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3329FB1666D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:40:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88F09B16670
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:41:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F5BC3B94A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:40:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FCD620816
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4022DFF19;
-	Wed, 30 Jul 2025 18:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41F232E1737;
+	Wed, 30 Jul 2025 18:41:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="C+LRz/Fs"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="f1Ka3DmR"
 Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 806EC1DDC00
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425D5132122
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:41:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753900840; cv=none; b=iWAAIti2lCnoIwUr4esqbmoeQQCNV9HvlKoLssqGS9ON4qqxpIla/u7aKKQW3M7MQUtlX/sMmRJ0Ohf55eWk69a18TbGTTaqe2v+/IP0wCIaC+hnReb7Jj4lJGSkSlbGQh0LQO9b7ZDutNOQK7T91MHDBQD3L9PvWrUoh4D0BLM=
+	t=1753900868; cv=none; b=DM1JBNWK6JAW2CJOrjX0BLKlVSVagGLHhsPdFq1S6J/h6eLpzsddhxHIAlHUzxY2c1pNNOJ/p5HYKk2Vp955f+BaIL00bMXQCwRd5QbcADFn7T9UBhfSodcuFeTprN3ByKLeiSrCB0x8TI8n9b6/6ImcNo4gNJt+WfNz2R0mWlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753900840; c=relaxed/simple;
-	bh=IVM70qYvN/XOAguGi/kqskNt7LzvrV9LGIbn7aH+V8Y=;
+	s=arc-20240116; t=1753900868; c=relaxed/simple;
+	bh=IDZVHAUnqA+hvKUpyxjPG3LKpwEKeCQmIrk5w6Arm98=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qEy3HSnWSoTE2MRmg4VGGOmU6EWWqBqfdJLrpduZ04mt83lzdfB7jZ6benmA0hPrHTmD984t/eqUJnDDViM/km7xdUlbo7LkfQGHGv6Ah9hNGqJGYhe+YqDp5hulARDQoaYGcAPT6cA5tdxcyhaNpgbtT2k8fYjUViQxQqCMG9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=C+LRz/Fs; arc=none smtp.client-ip=209.85.222.175
+	 In-Reply-To:Content-Type; b=klI5eyQjGHaezgDvs70npzZ2uq2jBu3PakMtfGcb/xIx6wnASKOTWdiuUxtZMevTyeqxVX+Osr3RIwYMeWg6gd5VrGSR4g93olN2aMbnvJR6hIxakVJIEIfZxx39xmE/JPFxVTBNW5dBOOmqLCxByGrhk27tOpHePR2ov8jbJCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=f1Ka3DmR; arc=none smtp.client-ip=209.85.222.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7e346ab53d8so19031285a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:40:38 -0700 (PDT)
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7e62773cab8so21613585a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:41:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1753900837; x=1754505637; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1753900865; x=1754505665; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=IonUsexfFJI2Qe7J6Ag5z9tijA0TPXif9Ty5AL7Fkk8=;
-        b=C+LRz/FssFd95e6X9dQ9qW7kSlA1OIAg6zHdRnjn4ghMWqt6jfqROQxsDZ5Lzwh2J2
-         p+vsJg1ZhK92WljZZSQvHjKDIrGPu4jRz8iytBaDtYVrcQ1tGf+em2tYT4qmHMIJixV1
-         banbenB8KXjhlMt3SmBQkAH6PJhRi/ZoQpkXQ=
+        bh=j1hxL5Vx5A9KnVBhUwPUidWdTjrb+vaRaMmz7WAa6Bw=;
+        b=f1Ka3DmRtNb9zOcgqCErfq2cFg6rv04vxsJ8Fto67HG5w42RCxHdou6XGpUQsz/JSI
+         ULvAZMa2kLEAQIrkkTFDFshYuIrqpw7asyAZnK49Ebdo/IjpWiPz5e+BMyy3CV8wKkVn
+         SqqmuJccRnGS5hzxP5fqB1jZEbMCSgv611o3w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753900837; x=1754505637;
+        d=1e100.net; s=20230601; t=1753900865; x=1754505665;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IonUsexfFJI2Qe7J6Ag5z9tijA0TPXif9Ty5AL7Fkk8=;
-        b=Q4wLKSQS0gGGcUFxceRi0/mNj9iJO5xwvXihwjO65lbWC64TLTymPbRvA2uNKQtlax
-         oA5VgaArL7icrqg0QBx34cyZ4F4AUqv7keUn9nHq7vVW5ajvLagJgbGwzc/bu8yGsXZ4
-         sgyf/VrAhwRB3bvUUGfCdHxph+juvivYm1hIj8J5ET1h2DHhbEXkyzfHJ4R+GElMkBio
-         HVSmkQ4i3ogbCNjTkF4DgDBUrO0KYARUdVLuKFzmn2wfn5mEIdtAHmrCL22qU/mMml/5
-         nKe8QhWTAuzn/sfR7Zlsne/Czm/+faJKkpB0OHmZFapltSvGDGa7Tmy9UWcU5y7Uhr82
-         EnSw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2z9sv2qYdtInkKZwDpfbMjv+TVUBEihZnBY7EOjQFaqpMCG0Tj4tRskBzQ9FGaYYKjJe0iDA9raz6c4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYHh14j7U1OYjkRvsQBZGzmWvn8JDzHsYkWwRsb9piQne90K89
-	Lunc2681i92XqKp7EjLaeRmHcD7loTuWKPjD3AmUZ/J6n8TGSP11EobGi8gjcKCHtQ==
-X-Gm-Gg: ASbGncsU1HJrXcrojMT6hmCtzGvIue3unC1WSir0av54wNJY1UhgvrxGFA+7P2OQULh
-	lzwU/EJ0TEeFKxhmja1pBhYKpmnLVSNzZvE1g9iClNArt36DgPYFJ59qr7MwchQUziPShoeijEC
-	9aJPS28S5w0AY53Rffg19KBUHoQAXqrVdzT/5HaL9P/7j4MTEHE+sqZqsppInhTX91gsQKu0a9F
-	SanXBw28YLUvloavAov0WtVjsd97jTAKJ+TLLJM7PNpFz23v5p5QcGVaef8cBYifMZQ+uDKdjji
-	yPOFULP7dmOLOSvO596brWxQC/y1gnAM0oHKMhNBh+gZ1fsbOyLkhmU8USjw/uMit8dxZfP9kI6
-	KNEj47g+cAcVVTWAaA9N8oEDhWgoi7q4eljqXanuRf5jH3+f4jWlT15NH3ZZNIphE1ARO6AeJ
-X-Google-Smtp-Source: AGHT+IE3inDhWohOYETkhYbohWJXCAMzVVHXaHtt0AxBFNb4I9F3zUPQuGJUH+H69GHCagCIYEv1cg==
-X-Received: by 2002:a05:620a:a20d:b0:7d5:e4a2:2374 with SMTP id af79cd13be357-7e66ef7f88dmr578892785a.8.1753900836997;
-        Wed, 30 Jul 2025 11:40:36 -0700 (PDT)
+        bh=j1hxL5Vx5A9KnVBhUwPUidWdTjrb+vaRaMmz7WAa6Bw=;
+        b=GdmuCQtsYsShO4jmihVEc+8mEa6ngF/ZajXtNGlE5oTJFGWpgEqYYJAlSKfK1kSiHJ
+         RxUmiqm3oLDXWYM8OLhm16yKpCMuqAX4msu8NhDLo+tYR6J9RmOvY6OD+n0JpUFTKQXZ
+         IBOc6oERRwSQuH1Ad0XMBRWuxxequJP5bWOqZYbbiuFFjUzwqbGkYnf+LYp4k7wO4Oew
+         JN2IP07kC4A53xo2XxA4ooduvWdEoo8JNXaODRpf+a7dthFexfztHhOnWsEzyNwIywED
+         qzI+MZEkJsx2aLkP7ynpxBIphGy6DPrQSodpg9woBFZIt4/WzfWxliDW0kjqCzWsUUET
+         sb2w==
+X-Forwarded-Encrypted: i=1; AJvYcCV1cMuqPGvIYNlk1ylDMgR337K+l35EEdylj5Nbh/qnJ6hC4yAxvrcTkIhisALQOUMoBoCt7llnsq9Pg7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvg3ZXBnhVMUjpxjbs+xfLMmS6WRVf61a4oNf0YBNjZqVi1pf1
+	nHBG/YyM9KaFHd7KQFGrBBvxpu2v6MLggaevjuFSVVswCeACIOBw8VqPvFLJ4KYBNw==
+X-Gm-Gg: ASbGncvh25BRC3WvwrqUZRl8T293S8lFTNSEzQYN3dvLZhWPlKn/8dhe/Fr41eUJt1P
+	KsnLL6NQEj7qktDt9zbMU13f4J67ok8+xmcqasmedb+azFkVBz7V6+xVMlgAfrsIs2HIK/BdKZv
+	2uLVDGZu2GPSKtmVg3it/Ehr4RKHOkJkf2olVLsut+TGFr7Pbn1oGYakrsGVAHCVye1Jodltrzr
+	g6UsumuALpZtF5TSGD/Y+uLG2y+mLNSnIcym/DglXblc6aQ+PVyLGSICFKyvv/7zaGvLp1mb+ym
+	UKV6XCWo5whXKuWskQ3C+JoL5HOHAOCcIPMT5qt/6bwwjW8jvr8q6WOxZYL60r2dA+t562ewVmH
+	0j42S8a+fiVkE1Em28I0xAX5trGxf/pugFYrGGCCqO6a6v1L9xQvz4ssGgv0pQQ==
+X-Google-Smtp-Source: AGHT+IG3MV2lDcwBFqjZSW+SRBYzdliL7B6DW5UaA3OyG1yEKduZx+x6LLWdvH0Y3ExSLnQyDkGKCg==
+X-Received: by 2002:a05:620a:17a6:b0:7e3:4413:e492 with SMTP id af79cd13be357-7e66f3f8bacmr526967585a.62.1753900865037;
+        Wed, 30 Jul 2025 11:41:05 -0700 (PDT)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432928fasm604278385a.21.2025.07.30.11.40.34
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e6432a2199sm609191085a.31.2025.07.30.11.41.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 11:40:36 -0700 (PDT)
-Message-ID: <1d12c152-d248-499f-a3e0-53d02b7c873f@broadcom.com>
-Date: Wed, 30 Jul 2025 11:40:33 -0700
+        Wed, 30 Jul 2025 11:41:03 -0700 (PDT)
+Message-ID: <ec68a220-53c9-459f-9bb7-7d48da1a3e77@broadcom.com>
+Date: Wed, 30 Jul 2025 11:41:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,8 +79,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] net: dsa: b53: mmap: Add gphy port to phy
- info for bcm63268
+Subject: Re: [PATCH net-next 2/2] net: dsa: b53: mmap: Implement bcm63268 gphy
+ power control
 To: Kyle Hendry <kylehendrydev@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
  Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
  <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
@@ -88,7 +88,7 @@ To: Kyle Hendry <kylehendrydev@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
 Cc: noltari@gmail.com, jonas.gorski@gmail.com, netdev@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20250730020338.15569-1-kylehendrydev@gmail.com>
- <20250730020338.15569-2-kylehendrydev@gmail.com>
+ <20250730020338.15569-3-kylehendrydev@gmail.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -123,12 +123,13 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250730020338.15569-2-kylehendrydev@gmail.com>
+In-Reply-To: <20250730020338.15569-3-kylehendrydev@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 7/29/25 19:03, Kyle Hendry wrote:
-> Add gphy mask to bcm63xx phy info struct and add data for bcm63268
+> Add check for gphy in enable/disable phy calls and set power bits
+> in gphy control register.
 > 
 > Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
 
