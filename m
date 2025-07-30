@@ -1,155 +1,122 @@
-Return-Path: <linux-kernel+bounces-750841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816A5B161AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:39:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44C18B161AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C799547CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:39:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C2E53AE3A3
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3C92D6617;
-	Wed, 30 Jul 2025 13:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FAA2D6407;
+	Wed, 30 Jul 2025 13:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pFZmi5Gq"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYvRGx1H"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7415414D70E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C01F29E0F8;
+	Wed, 30 Jul 2025 13:39:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753882774; cv=none; b=IAEpEHKAsBWeTh5MjwNIZCYXg32JfS5PYUZQRyQWcJdKpJUumJ8/nMjBatUEOZ0CwpTUyf5PPtpadZSgCK7tUMTR0PbK/msSSBvQsELW1ABks/xlG/oJ7fCfgX6kSuY1bRH1g77B7uSWnAB+2mHV5AlK+laerMkqtsuUZA+GRrE=
+	t=1753882798; cv=none; b=GSAVtROC5fE/LI07O2jkc92NgdGHJ9/SfRucKtHA1dE9fdo9jUZ/C4GINJS1D/F8oINFFL6RUNrb9JrUdnpllSJCYabzXve/ULvwpnRmQpcpTvDfv8Vbz4IQkayRavW9dMbyHDEFzD9KWoWaMKBxkLa293HknWSrD3hN06Dwo1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753882774; c=relaxed/simple;
-	bh=8msNZxV4vzYZHV5zdjpoumhb4VdGCiYWL1hPZvJX9ZE=;
+	s=arc-20240116; t=1753882798; c=relaxed/simple;
+	bh=FvpLspMfizkDeBxIkg/xekgU7Uyfj0y7AN+Zs4GVRs0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cnREWXyh6T7z+9bAAjWGxUQCILHzNElSzdG2DdsEVVajvh8Ja+LAs9pdAM7RJN8+CCrN7Wc18WsDNTv+ocB9SYvjIrRxS+s3wp58+ogjDTUbzm3NRX3F8gs1X4zGNha01/99N3kSjwqg4eL8bkyx+yFDPVZ6L63/dq3V618CplI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pFZmi5Gq; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b783ea5014so2376656f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 06:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753882771; x=1754487571; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ItEELH3cRLVD+iAArrenHRjEW7ZVw4L4zIbc9jOQ2nI=;
-        b=pFZmi5GqnR6GCsyM7o5Av0AxoSdCeD7pPeOmwSCVKPQplZBdXensaOdktyKZ1qdsa+
-         9AFPFuxDmgPN4meywZDgABDdxhK9uP6cugI6sFD+cELkcoRoJW4m1JJE8ziFdQHYfBJP
-         jwHbG1n5xbsTb++splsKifgnu1aBlavrAjoWI9QDlP49P7W1rYSDvHOjrBR78Ilsecap
-         mfzAVOoGiX9L/a3iYTBA6gnYPJfXzSoW3lEgMa/410Pz6XhKhNw+YiXC+uImFs1ZdAZ3
-         xeKgfuJhiAxowTu4nyIv9YBIuUrf+yB+ATSXWfcJjmQ76lUZf+N2MrOmKK+aHICjluyu
-         xR6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753882771; x=1754487571;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ItEELH3cRLVD+iAArrenHRjEW7ZVw4L4zIbc9jOQ2nI=;
-        b=g/kdmY8nj+imM61bmItGcnxnAn9aDhdzCsNfTZO8KEpejtlv7qp00GpSsDYx2BtcPn
-         EXPlQ9UC0hxuzc1mq0skihAY24JeVY4/vuEG8JO1dj5xKfRGsgNqtwhLyURYuymBhF8A
-         XJzmGSM4SY6VREhmJ83UIHd//KbATZkF+FtDmIOCt9Qf+IH9WQrJNrVKDJXpuWr4liUx
-         U1l15SjnQR1bW5yFXVrCD/N1IrCGiVx2rxtWHkdg5lsCg6O34oXPOEdODdaeQM0V2wHj
-         ciUJpUt1n5iT09IRtWYDi09xTDbGJa4zhoAtO69+zherxG2dR+h2+hdwOHFZiT9wgsQZ
-         fa8w==
-X-Forwarded-Encrypted: i=1; AJvYcCWw6cpFzMADVOoWVO4P2JfGoiBcFiB9oPHGzMfA2lt7wQjvdnHxdGCV9xUPuthWmHBwubkSBchiJ0k8OtU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySYhqafc46c1C6nqtApUIlVzK4oz0tax+2VoEIBMttfAPV+7ZN
-	2fCm9eEhZNE7IQptUdXM2YKHiTV7j/l4UlhauZ6uu7MhTRs8ABrTwOMfHzphA9K/nYPi8mET+lm
-	S+MwJ+0xgHrpYfjXF81a2n27Ypr0vtjxsdtDM8BxW
-X-Gm-Gg: ASbGncuJ4IrgrVGoCLBEVjDBoJ0SsSS5ry4hyz3xqpiNp254kRl4FvnC3MxYwH49ac5
-	j0H54SFqCPMUNvjte5IkJM+a4tGo4isZ2htE0xl80//3DgQXj84/qMVUCs1cg4iLzgf3Vx5jCFt
-	TdXlLaFdC0oUAOka9ME9s/OweR84Jp9FZywSLeuwYA5Gy+1M0YuK3g5PNFi0GMDOdxTHC3LChL7
-	tIJu7pU
-X-Google-Smtp-Source: AGHT+IEyr2t9aHif2RFUX92J/+mKbiL5ER5m1V7hwBgTcdhRVH7lV6emYSvc7TOE1oUP0faIrNPGeGeGOw3MAShGOAw=
-X-Received: by 2002:a05:6000:288c:b0:3a4:eae1:a79f with SMTP id
- ffacd0b85a97d-3b794ffd043mr2795662f8f.33.1753882770587; Wed, 30 Jul 2025
- 06:39:30 -0700 (PDT)
+	 To:Cc:Content-Type; b=Kwy1M/XCsMGXr6b1Alz79xzSipLb0IDLvu6pUITLa5lsTMmp5KibnHXo0930VzlveW2+G0MwjnhV65qCBZK0TCotnY70rRgObyEyiX1y5Go47zgFYCLQc2lLIYdlCs+JyuPCtAcVntkXs6vrxNKWvN/8/UxtwgcIy1GuCdzsSp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYvRGx1H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDB4AC4CEFA;
+	Wed, 30 Jul 2025 13:39:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753882797;
+	bh=FvpLspMfizkDeBxIkg/xekgU7Uyfj0y7AN+Zs4GVRs0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UYvRGx1HOii8U2PLosDu5LSfDQtE9dwk+Aet8Pe1cQHnOVjMRGtlwwyZ53J2OmU1F
+	 qA9BM+treVzWycMpomTkJrWFSYbNfwzMlOt2Zr40zlawQzOL5zt0K3q7qt55+CXfHi
+	 OQahU+HDeqNVc1RS59Vk5p2cuvsLqj6277aeCrWUseUMcCYMMdlB78+fqnIbbRUKX8
+	 njaQ7NYU5vwvwUlV9GChZkN2sHg0Gn6mdW5b0G5seUusE7fL2BpKDCEYF7Ycm1Qsrc
+	 1Jp8oH6WEshdbhc4DIcwirth+9r5N9gIDRVxRfWgM5dopld/WDffT6dGaXnwyH88kk
+	 bBCZ6TgHsGOxQ==
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ae360b6249fso1240737166b.1;
+        Wed, 30 Jul 2025 06:39:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWp1Xf01L/yHqOFpJtMXYuNj17sssAkNKbZGSZ43JcrdkUhMGhPKFIY2JTbPlaO+vPKpGmrgRfmTw1S@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywtjw1o0gFxEu78qIMXzdWJZIGQ0Dt94wb103zbpIa2k5JP42IQ
+	nyX1ZHAWGb0ktvStuxtzBd81tF86BUvmbXULnqltUxDY9ud3aUiWhJ59aAassf9lwyTJjNUxDVY
+	x4eiMdF+hm/H61VzYdVUWb3+934whaw==
+X-Google-Smtp-Source: AGHT+IGPoa94KZMO3CxT5BHxcNLbFX0ka6sBY/j36WnCxd4454EPYg+eCD7JAlMEsyTiIf2ckWZOq3V0iWduPco48Ro=
+X-Received: by 2002:a17:907:9410:b0:af8:f58f:89dc with SMTP id
+ a640c23a62f3a-af8fd9ed6afmr432683766b.41.1753882796266; Wed, 30 Jul 2025
+ 06:39:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
- <fc26c393-5c4b-48a8-a7ac-12558f79b140@sedlak.dev> <DBP8RFDV59PF.1OV46P0UYKOGM@kernel.org>
- <07575756-58EA-4245-B837-AEC4DDCD0DB5@collabora.com> <20cc8581-0af2-47b3-9fdd-584ff0ef36ab@sedlak.dev>
-In-Reply-To: <20cc8581-0af2-47b3-9fdd-584ff0ef36ab@sedlak.dev>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 30 Jul 2025 15:39:18 +0200
-X-Gm-Features: Ac12FXzumko90MY33tXnHyIvT1ML5t_t7BouF-ETji09Sr887Pkg4SW4INEXrAY
-Message-ID: <CAH5fLgjBQF+AGWQ-rKowViiL1kK47FZ80QfEa58Cx9bk11cjAw@mail.gmail.com>
-Subject: Re: [PATCH] rust: clk: use the type-state pattern
-To: Daniel Sedlak <daniel@sedlak.dev>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Viresh Kumar <viresh.kumar@linaro.org>, Alexandre Courbot <acourbot@nvidia.com>, linux-clk@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
+References: <cover.1753865268.git.viresh.kumar@linaro.org>
+In-Reply-To: <cover.1753865268.git.viresh.kumar@linaro.org>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 30 Jul 2025 08:39:44 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJn2XtvWaDBSqYPUe2ZVxE7t4EbAt8OPncbQaKjh1jY5w@mail.gmail.com>
+X-Gm-Features: Ac12FXxEywWNtZl5abfalLDGdegqDfPIjD9L5lbHvRJWQgO4YCOCdgR-mgr7rc8
+Message-ID: <CAL_JsqJn2XtvWaDBSqYPUe2ZVxE7t4EbAt8OPncbQaKjh1jY5w@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/6] virtio: Add support for Virtio message transport
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-kernel@vger.kernel.org, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Jason Wang <jasowang@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+	Saravana Kannan <saravanak@google.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	Arnd Bergmann <arnd@kernel.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	=?UTF-8?B?QWxleCBCZW5uw6ll?= <alex.bennee@linaro.org>, 
+	Bill Mills <bill.mills@linaro.org>, devicetree@vger.kernel.org, 
+	virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>, 
+	Bertrand Marquis <bertrand.marquis@arm.com>, "Edgar E . Iglesias" <edgar.iglesias@amd.com>, 
+	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 3:27=E2=80=AFPM Daniel Sedlak <daniel@sedlak.dev> w=
-rote:
+On Wed, Jul 30, 2025 at 4:29=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
+>
+> Hello,
+>
+> This RFC series introduces support for a new Virtio transport type:
+> "virtio-msg", as proposed in [1]. Unlike existing transport types like
+> virtio-mmio or virtio-pci, which rely on memory-mapped registers, virtio-=
+msg
+> implements transport operations via structured messages. Those messages c=
+an be
+> transported through different mechanisms such as mailboxes, shared memory=
+ based
+> FIFO or specific protocols such as FF-A on Arm.
+>
+> This series includes:
+> - Core virtio-msg transport support.
+> - Two message transport bus implementations:
+>   - virtio-msg-ffa: based on ARM's Firmware Framework for Arm (FF-A).
+>   - virtio-msg-loopback: a loopback device for testing and validation.
+>
+> The code is available here for reference: [2] and virtio-msg loopback and=
+ FF-A
+> test setups are explained here: [3] and [4].
+>
+> This series is based on v6.16 and depends on commit [5].
 >
 >
-> On 7/30/25 2:59 PM, Daniel Almeida wrote:
-> > [=E2=80=A6]
-> >
-> >> We essentially would like to have a `#[sealed]` attribute that we can
-> >> put on a trait to avoid the `mod private { pub trait Sealed }` dance.
-> >> (so a trait that cannot be implemented outside of the module declaring
-> >> it)
-> >>
-> >> ---
-> >> Cheers,
-> >> Benno
-> >
-> > This is not exactly what you said, but how about a declarative macro? e=
-.g.:
-> >
-> > macro_rules! sealed {
-> >      ($($ty:ident),* $(,)?) =3D> {
-> >          mod private {
-> >              pub trait Sealed {}
-> >              $(impl Sealed for super::$ty {})*
-> >          }
-> >          use private::Sealed;
-> >      };
-> > }
-> >
-> > sealed!(Unprepared, Prepared, Enabled)
-> >
-> > Note that I am just brainstorming the general idea here, I did not test=
- it yet.
+> ### Memory Mapping and Reserved Memory Usage
 >
-> I think that API-wise it would be better to have a proc-macro #[sealed],
-> something similar to [1], as it may provide better error messages, when
-> used incorrectly. So the outcome could look like.
->
->         #[sealed]
->         pub trait ClkState {
->         =E2=80=A6
->         }
->
-> And then
->
->         #[sealed]
->         impl ClkState for XXX {
->         =E2=80=A6
->         }
->
-> If you are interested, I can try to look into that.
->
-> Link: https://crates.io/crates/sealed [1]
+> The first two patches enhance the reserved-memory subsystem to support at=
+taching
+> struct device`s that do not originate from DT nodes =E2=80=94 essential f=
+or virtual or
+> dynamically discovered devices like the FF-A or loopback buses.
 
-It seems a bit much to have macros for everything.
+We support creating devices from reserved-memory nodes. Just add a
+compatible which you should do anyways because node names are not
+supposed to be that specific or an ABI.
+
+Rob
 
