@@ -1,184 +1,131 @@
-Return-Path: <linux-kernel+bounces-750097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 691D6B15746
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:55:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D0D7B15756
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C594D5A0138
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:54:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CCEC3A1B66
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C951F4E4F;
-	Wed, 30 Jul 2025 01:53:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBB722318;
+	Wed, 30 Jul 2025 01:55:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="svg6MmGy"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="LiSxqmh+"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F091F418E
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C63C1A3154
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753840436; cv=none; b=i6RkvO7LmMLMx6n0nDKmmp/d8lsJTBSmV7CbrmSHsXnMmHrCPuTDH7eWetJEBHYggdUy0yV0w3JqWRYzfagMNoPuE0kBNyWgce3S/F4M3d9KbwccK4XsYQrhkIfYD/GeyRXP6MG1dEoAEkNgm4MHDzwz6fYGGzq4ypOpCWshtCA=
+	t=1753840504; cv=none; b=LRGeSfc1YpRLotnsARCWMF3RHQrQ8o1D9IxFKf+fR0TiqdT3a0hXGCdGqjkWc/WMktyRbvev7fTto6XTz5LetWNaCRK7sQh3MFYbD/YmmibtqGdhMMvtZtmTM5N++ukjH9t0rLUrBbxq8E91Iq3+hfHNE9P9L7j48nc7HBdPXYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753840436; c=relaxed/simple;
-	bh=9mfsWfmUsxiv7jb5H3bplGyE+CRlpRWvLjb17tNh4ZQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=vGrFXSUjMvkwEye7FSWwj6R1zVh+K8SECuNDy4P1BQVLkEoro+s0JevvSCZ26VDg2bD/KPWzsA/4Ebl5Hx+JjFh/z8uGmgjNM1f2plAXt4X/fPCTnVU9XMuXhlN968Hqq6YoTxg4ikUtJso4o5KLCNmLrL8pZbMqWdqw32OuKaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=svg6MmGy; arc=none smtp.client-ip=209.85.210.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-74ea83a6c1bso2854049b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753840434; x=1754445234; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwXkEgtGYM3RCYPAf/S015/LYrl5duHz2m34ToaHnr4=;
-        b=svg6MmGyfOKx08O0A3abaM+xLLcqsEcALD/Q7I3yRozU6pxAkk3ekTg2HZevrtaQZ+
-         FpYnQ5quEVAZSXk3jUkZ0+ukL6mp7/QEMUoEkJUE+BRPUiGg2uXH9zLs87ilup/jjWwU
-         Tz6NP0PsFblDjcxJ9rHy/2g1BWvA4raTpmLee88ehQFXV8LPYL0wk5syIwMQp0ZYMzNS
-         eIrnC8gGiP4sf7fFm6hd5ZkQja8ieJMOJcrwJDtx/A9G83UqOamfHM3T+3II2Mry1O6p
-         apyZakltT7N8BEySZQ24/iuTTsKFudx4niFFI92WJvIZWjsUrtDFJ+FD5bjc9qUtS0Iz
-         f5Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753840434; x=1754445234;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwXkEgtGYM3RCYPAf/S015/LYrl5duHz2m34ToaHnr4=;
-        b=rf9irFbXYESY1kbNiys8HNZG25GMW3on2bMXEd7aCtrYewPAf//xA+9B9diRd6q0I3
-         rNW4N5CQMvS8N+XjaXa3cps1LP3jGH4/8odrnUct831tM0uc0qOkQTD5GMME84oMv253
-         45A5Z4g+qXd28ocdHqIsjh9+IQneaWQ4dxhguDXcESWx6gtlH1mQ3Sdf29+UBQ07mNo8
-         fice/BJdYp/cyL+k8l/g8Mk/5mfh7B8Qblo99zXjxhmqfd4lSYJQPGvX5nsIUWECxWV4
-         pP4TFkkgwHE3nk8L1PgJXkNvKUeIpyYKWWVjeLAMHp/u9KlmzIPsopdIBLCj/Ta3cnef
-         UE2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUflYf7j7UaftxcmzqgJAQkIc5+ExKComofW3aX7GgoaEYoZNuJ7nuJsEiI2WlBomQdNxJBwMIeeMW32ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWOASAYyVLtL/PMKlVofuZ6hWbFQgrsAP85Pk9Tucu2G2wA2jO
-	QzHbrRAIxwQXaIJM0uYzuEkphMMIQd57c0c7XftkQpnn/xJC/xSULXSvUzRUUtoL4wtQkEWa3gD
-	yT/8V1OG4CliDSjPMtnVGxt6cYTNwgkSnBi017Q==
-X-Google-Smtp-Source: AGHT+IH1AvyPnDW93f3cl3PVqwaolEhEGQVuwzCzNqoa+5pNrn3QdavhvOcgjwdA1mw0vjYabUuMNZ2mYEiEpRLgtzeFsw==
-X-Received: from pfgt1.prod.google.com ([2002:a05:6a00:1381:b0:747:a8ac:ca05])
- (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a00:3d12:b0:749:122f:5fe5 with SMTP id d2e1a72fcca58-76ab306ce78mr2455485b3a.18.1753840434349;
- Tue, 29 Jul 2025 18:53:54 -0700 (PDT)
-Date: Tue, 29 Jul 2025 18:53:33 -0700
-In-Reply-To: <20250730015337.31730-1-isaacmanjarres@google.com>
+	s=arc-20240116; t=1753840504; c=relaxed/simple;
+	bh=mkmA8L5rsx2MksgjFal39snv5i1UbsJ3M4tQZEhMjxs=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=Qio7gfFb25EVTkFFDwN0whx4qCFPWJQ5pMq4EDhZqIthdc8s5m5+5yIF0AV2Z3FKueRgSHymAv4DjYzj5fj0kq2m54NNJC6xWT7bZXVm04eyV6EOEVOOVv5E3e2o84noBuLw4N5tq4Unrti/sJ/LkYrmwiLuSHeupgRDa8y9c4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=LiSxqmh+; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250730015458epoutp010fc47a8e581bf1fc28e2db567769cba9~W5KQwp-nW0481004810epoutp01Z
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:54:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250730015458epoutp010fc47a8e581bf1fc28e2db567769cba9~W5KQwp-nW0481004810epoutp01Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1753840498;
+	bh=mkmA8L5rsx2MksgjFal39snv5i1UbsJ3M4tQZEhMjxs=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=LiSxqmh+ZPIM3WXBGd2858RoeKQitcx9ZWHJ7kRsBhbrMYzw0cjqZ39O8xt4DMnFc
+	 YWKYq+dnKhT/569s6gDzyWEk+e/n6F8/doD8aBovp+IGBxZrXrIVjra4OQcmgY0c2V
+	 LMmVVtKCpeFShZPVINAfHgwdCjI8QBBpDthvAwiA=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPS id
+	20250730015458epcas2p1331d15b6c940b2d88cfed36dcc7d56f6~W5KQfPUgJ0505705057epcas2p16;
+	Wed, 30 Jul 2025 01:54:58 +0000 (GMT)
+Received: from epcas2p3.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bsFdt0qHSz6B9mK; Wed, 30 Jul
+	2025 01:54:58 +0000 (GMT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250730015337.31730-1-isaacmanjarres@google.com>
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250730015337.31730-5-isaacmanjarres@google.com>
-Subject: [PATCH 5.15.y 4/4] selftests/memfd: add test for mapping write-sealed
- memfd read-only
-From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
-	Shuah Khan <shuah@kernel.org>
-Cc: aliceryhl@google.com, surenb@google.com, stable@vger.kernel.org, 
-	"Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
-	Jann Horn <jannh@google.com>, Julian Orth <ju.orth@gmail.com>, 
-	"Liam R. Howlett" <Liam.Howlett@Oracle.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: [PATCH] f2fs: don't break allocation when crossing contiguous
+ sections
+Reply-To: daejun7.park@samsung.com
+Sender: Daejun Park <daejun7.park@samsung.com>
+From: Daejun Park <daejun7.park@samsung.com>
+To: Chao Yu <chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>
+CC: "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Daejun Park <daejun7.park@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20250721020231.2482090-1-chao@kernel.org>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20250730015357epcms2p63d8a9d98265a526f959e33fa2d7c610b@epcms2p6>
+Date: Wed, 30 Jul 2025 10:53:57 +0900
+X-CMS-MailID: 20250730015357epcms2p63d8a9d98265a526f959e33fa2d7c610b
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+cpgsPolicy: CPGSC10-223,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250721020241epcas2p1481962181d9f81f127e122736923fe20
+References: <20250721020231.2482090-1-chao@kernel.org>
+	<CGME20250721020241epcas2p1481962181d9f81f127e122736923fe20@epcms2p6>
 
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hi Chao Yu,
 
-[ Upstream commit ea0916e01d0b0f2cce1369ac1494239a79827270 ]
-
-Now we have reinstated the ability to map F_SEAL_WRITE mappings read-only,
-assert that we are able to do this in a test to ensure that we do not
-regress this again.
-
-Link: https://lkml.kernel.org/r/a6377ec470b14c0539b4600cf8fa24bf2e4858ae.1732804776.git.lorenzo.stoakes@oracle.com
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Julian Orth <ju.orth@gmail.com>
-Cc: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
----
- tools/testing/selftests/memfd/memfd_test.c | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index 94df2692e6e4..15a90db80836 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -186,6 +186,24 @@ static void *mfd_assert_mmap_shared(int fd)
- 	return p;
- }
- 
-+static void *mfd_assert_mmap_read_shared(int fd)
-+{
-+	void *p;
-+
-+	p = mmap(NULL,
-+		 mfd_def_size,
-+		 PROT_READ,
-+		 MAP_SHARED,
-+		 fd,
-+		 0);
-+	if (p == MAP_FAILED) {
-+		printf("mmap() failed: %m\n");
-+		abort();
-+	}
-+
-+	return p;
-+}
-+
- static void *mfd_assert_mmap_private(int fd)
- {
- 	void *p;
-@@ -802,6 +820,30 @@ static void test_seal_future_write(void)
- 	close(fd);
- }
- 
-+static void test_seal_write_map_read_shared(void)
-+{
-+	int fd;
-+	void *p;
-+
-+	printf("%s SEAL-WRITE-MAP-READ\n", memfd_str);
-+
-+	fd = mfd_assert_new("kern_memfd_seal_write_map_read",
-+			    mfd_def_size,
-+			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
-+
-+	mfd_assert_add_seals(fd, F_SEAL_WRITE);
-+	mfd_assert_has_seals(fd, F_SEAL_WRITE);
-+
-+	p = mfd_assert_mmap_read_shared(fd);
-+
-+	mfd_assert_read(fd);
-+	mfd_assert_read_shared(fd);
-+	mfd_fail_write(fd);
-+
-+	munmap(p, mfd_def_size);
-+	close(fd);
-+}
-+
- /*
-  * Test SEAL_SHRINK
-  * Test whether SEAL_SHRINK actually prevents shrinking
-@@ -1056,6 +1098,7 @@ int main(int argc, char **argv)
- 
- 	test_seal_write();
- 	test_seal_future_write();
-+	test_seal_write_map_read_shared();
- 	test_seal_shrink();
- 	test_seal_grow();
- 	test_seal_resize();
--- 
-2.50.1.552.g942d659e1b-goog
-
+> + =C2=A0=20=C2=A0=20=C2=A0=20=C2=A0lfs_dio_write=20=3D=20(flag=20=3D=3D=
+=20F2FS_GET_BLOCK_DIO=20&&=20f2fs_lfs_mode(sbi)=20&&=0D=0A>=20+=20=C2=A0=20=
+=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0map->m_may_create)=
+;=0D=0A>=20+=0D=0A=0D=0AConsider=20moving=20the=20lfs_dio_write=20assignmen=
+t=20to=20just=20after=20the=20if=20(=21map->m_may_create=20=E2=80=A6)=20che=
+ck=0D=0Aso=20it=20isn=E2=80=99t=20evaluated=20when=20creation=20isn=E2=80=
+=99t=20allowed.=0D=0A=0D=0A>=20=40=40=20-4171,6=20+4172,10=20=40=40=20stati=
+c=20int=20f2fs_iomap_begin(struct=20inode=20*inode,=20loff_t=20offset,=20lo=
+ff_t=20length,=0D=0A>=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0map.m_nex=
+t_pgofs=20=3D=20&next_pgofs;=0D=0A>=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0map.m_seg_type=20=3D=20f2fs_rw_hint_to_seg_type(F2FS_I_SB(inode),=0D=
+=0A>=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=
+=C2=A0inode->i_write_hint);=0D=0A>=20+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0i=
+f=20(flags=20&=20IOMAP_WRITE=20&&=20iomap->private)=20=7B=0D=0A=0D=0ASince=
+=20iomap->private=20is=20only=20set=20on=20the=20LFS=20DIO=20path,=20you=20=
+can=20drop=20the=20flags=20&=20IOMAP_WRITE=20and=0D=0Atest=20the=20pointer=
+=20directly.=0D=0A=0D=0A>=20+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0map.m_last_pblk=20=3D=20(unsigned=20long)iomap->=
+private;=0D=0A>=20+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0iomap->private=20=3D=20NULL;=0D=0A>=20+=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=7D=0D=0A>=20=0D=0A>=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0/*=0D=0A>=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20*=20If=20=
+the=20blocks=20being=20overwritten=20are=20already=20allocated,=0D=0A>=20=
+=40=40=20-4209,6=20+4214,9=20=40=40=20static=20int=20f2fs_iomap_begin(struc=
+t=20inode=20*inode,=20loff_t=20offset,=20loff_t=20length,=0D=0A>=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0iom=
+ap->flags=20=3D=20IOMAP_F_MERGED;=0D=0A>=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0iomap->bdev=20=3D=20map.m_b=
+dev;=0D=0A>=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0iomap->addr=20=3D=20F2FS_BLK_TO_BYTES(map.m_pblk);=0D=0A>=
+=20+=0D=0A>=20+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=
+=A0=20=C2=A0if=20(flags=20&=20IOMAP_WRITE=20&&=20map.m_last_pblk)=0D=0A>=20=
++=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0=
+=20=C2=A0=20=C2=A0=20=C2=A0=20=C2=A0iomap->private=20=3D=20(void=20*)map.m_=
+last_pblk;=0D=0A=0D=0ALikewise,=20checking=20only=20map.m_last_pblk=20is=20=
+sufficient=20for=20restoring.=0D=0A=0D=0AReviewed-by:=20Daejun=20Park=20<da=
+ejun7.park=40samsung.com>=0D=0A
 
