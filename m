@@ -1,111 +1,78 @@
-Return-Path: <linux-kernel+bounces-750040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95A5B15650
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:20:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61375B15657
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8D68548034
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:20:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898A45A143B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA9638F91;
-	Wed, 30 Jul 2025 00:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6317D3A1B6;
+	Wed, 30 Jul 2025 00:23:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F2MxhTaX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUBDBASd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560813C0C;
-	Wed, 30 Jul 2025 00:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C089EA921;
+	Wed, 30 Jul 2025 00:23:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753834807; cv=none; b=s1sMuWIp4A3MXuDd23KwIG1rSJX8Nf74zUMXKXSnuMx+I22Hu41cOAtY9BghAMOIi2lkj4j4M+JZ7mX7FeYBFU+vxjv6OzD7hZ6XON/BSNMQIcTXU+V+DJQgS/EGOGX9RnUqKja1F5yrsxbV/CTu6yt0LehtqmYwRtjuYGcdoGQ=
+	t=1753835015; cv=none; b=dEPnhwSbWCOq1abHwHdks3wPLso1FnTFSIeGgNdF+ZbMvA+0HDj2koN36iDfNw1HSt2QnQowEii9E51U1xsXANCursTijSi8Pj+hqWg6azvec1pddT7nEqEE2fX+JeTxX5gnn839mqBfCZsw6+KT20lu0VHq4zxiUkwsV5ZdpM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753834807; c=relaxed/simple;
-	bh=g0JC2xHN7N0cJc0XrGjRCh6w8tJJXklpdHokno9uyro=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ZUr3ZiXnURv7HX0JU94dyHoijg93arvwLIqgHPfYQNzmW7lTywKnXv8xRvlivZQUaIkjshmWx1cmBaniyij6gwJo4r3V3ArrKVZ3bA4nDOY8JmfmOD7/xLBpHtyeNSDsBjHpdfNVSBVR2q0w6G4LbqXmALmv01l7Vy7ES+PuJ8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F2MxhTaX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8162C4CEEF;
-	Wed, 30 Jul 2025 00:20:05 +0000 (UTC)
+	s=arc-20240116; t=1753835015; c=relaxed/simple;
+	bh=XWFjsPB5rIt/Q2YFZ3XpWEmsKOYAGcRdZ3nOl1XgkUs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OnL5jYkuhwPSHxObgr/PMex+47Pu3tKm8wupulXEUu+masz34w7TT3HZHgJDXgROm+Tov0xoYoaQMj4XwPhVGi6cOoHsTZh6HBK2ud14onctdNEaI6qvGkZn16MZZjsdNpqtmkO4/FdFFNWqWNncf5CVkAu/e61YAQ/rySyT+SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUBDBASd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44434C4CEFE;
+	Wed, 30 Jul 2025 00:23:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753834806;
-	bh=g0JC2xHN7N0cJc0XrGjRCh6w8tJJXklpdHokno9uyro=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F2MxhTaXJ6M0sCsBvqFEM9FOXFskcgtNOLocGfEJ2/Y++MJGL2MeGHdetwvhiy82s
-	 6EbaeGMDS/USmFBpw6w66yQa2JJXTHUk5QSI2SMId0QGLivwlqSZI19L+BUFizWemI
-	 MxJCtN5aqIQOiIeEd9IpclU1+jKrA+UIKhIuPPVHNvZVe2Cr6VLWXbnSyQjFuWZvKN
-	 sa5fxwl08U2wCqpLWMvV8GvQiV06GvghCHmnlZq0ImWTxw0cLWXm+KnvRnTrbWW8vj
-	 95nLfSYVDXpoRMdi6TYEqt5CxcmYQh4J43mt2ObSaHZ77TrCu447Du95lpB6rWu7u5
-	 m8L2EfmdYxiqw==
-Date: Wed, 30 Jul 2025 09:20:03 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/1] tracing: Remove "__attribute__()" from the type
- field of event format
-Message-Id: <20250730092003.72fdfa30ea25a451e062f08d@kernel.org>
-In-Reply-To: <20250729123349.61dbcc92@batman.local.home>
-References: <175376582586.1688759.2122686728240441891.stgit@mhiramat.tok.corp.google.com>
-	<175376583493.1688759.12333973498014733551.stgit@mhiramat.tok.corp.google.com>
-	<20250729123349.61dbcc92@batman.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1753835014;
+	bh=XWFjsPB5rIt/Q2YFZ3XpWEmsKOYAGcRdZ3nOl1XgkUs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=TUBDBASdWthL2q4uiv6S+XB4NDL1+h+Gbzf7NzAVDHAXpPFpkCjJYaE1pYgQaPDyu
+	 Uu+1nTJInXTj26V9YCXeiwak0PHzIRrGix9TmMwKtxMWAkHDhTYDKH1lqg8iiUealg
+	 Oy2H86lFH34M7KQVWvYVwddGFo2AtXUojOlGNiMfF1OYsC6CN8NLCYOsB28X9YL7jR
+	 sLaeP00+DsVtX780iutGtQ27XlZv/j1KE0qgn7dyaUyZTzp8avRZQcM7urVmp1TRNV
+	 4LoI6QK2SrxGrZVpRfhGeCAlkPB3qxBR7ZNmfUDXeOSBBoNEZ6HCyxp7aGfYHeY0jY
+	 Xbg1Ay3ke+s5w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70FA2383BF5F;
+	Wed, 30 Jul 2025 00:23:51 +0000 (UTC)
+Subject: Re: [GIT PULL] EDAC updates for v6.17-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250728141521.GAaIeF-XYJVbfOQdT6@fat_crate.local>
+References: <20250728141521.GAaIeF-XYJVbfOQdT6@fat_crate.local>
+X-PR-Tracked-List-Id: <linux-edac.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250728141521.GAaIeF-XYJVbfOQdT6@fat_crate.local>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_updates_for_v6.17_rc1
+X-PR-Tracked-Commit-Id: 35928bc38db69a2af26624e35a250c1e0f9a6a3f
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d7223aed30cd77be31dabd635e709828f3255366
+Message-Id: <175383502994.1700147.17624701348929453468.pr-tracker-bot@kernel.org>
+Date: Wed, 30 Jul 2025 00:23:49 +0000
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-edac <linux-edac@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue, 29 Jul 2025 12:33:49 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+The pull request you sent on Mon, 28 Jul 2025 16:15:22 +0200:
 
-> On Tue, 29 Jul 2025 14:10:35 +0900
-> "Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-> 
-> >  static void update_event_fields(struct trace_event_call *call,
-> >  				struct trace_eval_map *map)
-> >  {
-> >  	struct ftrace_event_field *field;
-> > +	const char *eval_string = NULL;
-> >  	struct list_head *head;
-> > +	int len = 0;
-> >  	char *ptr;
-> >  	char *str;
-> > -	int len = strlen(map->eval_string);
-> >  
-> >  	/* Dynamic events should never have field maps */
-> > -	if (WARN_ON_ONCE(call->flags & TRACE_EVENT_FL_DYNAMIC))
-> > +	if (call->flags & TRACE_EVENT_FL_DYNAMIC)
-> >  		return;
-> 
-> Is there a reason you removed the WARN_ON_ONCE()?
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/ras/ras.git tags/edac_updates_for_v6.17_rc1
 
-Yeah, I removed that, but maybe I misunderstood.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d7223aed30cd77be31dabd635e709828f3255366
 
-> 
-> Even for the attribute, this shouldn't be called by dynamic events. Or
-> do you know of a case?
-
-Yeah, with this change, trace_event_update_all() is changed to call
-update_event_fields() on all events even if there is no eval map.
-And this trace_event_update_all() is called from the below call chain;
-
-trace_module_notify() -> trace_module_add_evals() -> trace_event_update_with_eval_map().
-
-So, IIUC, if there is any dynamic events on the list, and a module is
-loaded, trace_event_update_all() is called.
-
-Hmm, if so, this is really inefficient. We need to introduce build-time
-sanitize routine.
-
-Thank you,
+Thank you!
 
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
