@@ -1,113 +1,125 @@
-Return-Path: <linux-kernel+bounces-750837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83EDB1619B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:34:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99831B16196
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D722B7A4F3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48DA018C83AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D772B2D46A2;
-	Wed, 30 Jul 2025 13:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XrspX88k"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E7602D3A80;
+	Wed, 30 Jul 2025 13:32:43 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23AD2D375D;
-	Wed, 30 Jul 2025 13:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADA52905;
+	Wed, 30 Jul 2025 13:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753882470; cv=none; b=qLrBQ95cvdwQbJGspbnArTlTQfWXru1dXw8LexkPNlCESXsbhlgfXDBDNa/JqonsYKPs4LWB7VEBh5GXvskwezzLP/IQBkIuDQ8Ggwa1WiOMKZx/jdNkiI5EREGaFJ+lTSZq0YZGoZGvINL6yPNDkYT+sfzYBHmUG6WVsMaeMYw=
+	t=1753882362; cv=none; b=AIAsEWBlwTZuOq57zPvLKQlvTXxwMkqCtUoC3dXeMZPMF9JM17RfgoAGQt/NkjPli4NhFFOgmuWHJXXJjZrFBhvVUQTmTsVGBIm/g819Va5bzjiXt7gntp6QCB/pnTG4A9fpO6Q5FECgz693N7SyKfAz4bF6gQk4IIZxxRya6v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753882470; c=relaxed/simple;
-	bh=MG+BKYbIMINkVluK+N+beHrXIhRtKeLgcqbEkaRnyHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UhlwWXugv5gpyl7OzNoCMhZRV+yBhpWp5IX0UYfln8vgylUcjhLr8sKTQP5GV/4gQT3y8vndJBwPyOY9XuOi6lRhCAGF0iWaRK5VkoXPUbmuhYZzcoc5iEdi8KJoU1/19kTC05mZ+HHiVdl+nTnJdoEvshmtXeqpUJhMecBp5pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XrspX88k; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753882469; x=1785418469;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=MG+BKYbIMINkVluK+N+beHrXIhRtKeLgcqbEkaRnyHU=;
-  b=XrspX88kH9jjSJY9SENi8OLutMrwZisO4JXLSEc6EsKyYYmcQUiNpNU3
-   cmdONlbky5CGYeM+nALcS5972JWQOpBUgG8IOiVcGreaBNnd/40oB0mRs
-   UD0UALxVi7viumhZPXBsrZrHu4+IuM5/N0uG5go27FpPkfIRxiine+Ss3
-   cE2abZZMiFbiAjKwA/5XNp+s0oswvZsBcCAxR8IHnjhmOToY4wH8O/5tf
-   9HEC6pHdq/OrEss/llh8oI6VEe+I9HmhrrhGZVNolEmcVxaWTzPYTm9kq
-   t9msqVMagbuVJj5214LHlZCUQpcGVp+8UTH0wMN+MjQRmEbjF61ciynCw
-   w==;
-X-CSE-ConnectionGUID: G5W0vlG+TbWvrHfz+9+gzg==
-X-CSE-MsgGUID: jXQa0JgGR1uW5/8whPdsRg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="66456721"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="66456721"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 06:34:28 -0700
-X-CSE-ConnectionGUID: PM++2oJnR1S9e4zE5drCyA==
-X-CSE-MsgGUID: inK3wZKoSs+eAjyStpkIMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="167241363"
-Received: from mylly.fi.intel.com (HELO [10.237.72.51]) ([10.237.72.51])
-  by fmviesa005.fm.intel.com with ESMTP; 30 Jul 2025 06:32:21 -0700
-Message-ID: <262e1907-5b11-40ca-8fdb-852c38244cdc@linux.intel.com>
-Date: Wed, 30 Jul 2025 16:32:21 +0300
+	s=arc-20240116; t=1753882362; c=relaxed/simple;
+	bh=6uFfGAQV7cgrKKnXB1JGe2mG0Z0YD47d4ZFRY0z7Ckc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=brC3nvAwwIls2KOSh5/xwnrad+xEQsxsiP7vVeWaga2JJmb3OH0fQNGlDlT2uwgtCX1X/bY/ZAWyiV6wKAaAX49kLq/MBn6vIt0UHu3dcI5E4jCjfscf/EoHWWsLJ4+HFyiGd4Ozr2MDp5VaxqxQY+yKSNh30rjrKgm3fVbcLEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf01.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id A51191A02A4;
+	Wed, 30 Jul 2025 13:32:37 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf01.hostedemail.com (Postfix) with ESMTPA id ED81A6000C;
+	Wed, 30 Jul 2025 13:32:32 +0000 (UTC)
+Date: Wed, 30 Jul 2025 09:32:48 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Indu Bhagat <indu.bhagat@oracle.com>
+Cc: Steven Rostedt <rostedt@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung
+ Kim <namhyung@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Andrii
+ Nakryiko <andrii@kernel.org>, "Jose E. Marchesi" <jemarch@gnu.org>, Beau
+ Belgrave <beaub@linux.microsoft.com>, Jens Remus <jremus@linux.ibm.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>, Florian Weimer
+ <fweimer@redhat.com>, Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v16 03/10] unwind_user/deferred: Add unwind cache
+Message-ID: <20250730093249.4833be14@gandalf.local.home>
+In-Reply-To: <e0f46e35-5152-4d0a-a2f2-54b2f83a56c7@oracle.com>
+References: <20250729182304.965835871@kernel.org>
+	<20250729182405.319691167@kernel.org>
+	<e0f46e35-5152-4d0a-a2f2-54b2f83a56c7@oracle.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] i2c: designware: Add disabling clocks when probe
- fails
-To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>
-Cc: Kohei Ito <ito.kohei@socionext.com>, linux-i2c@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250724042211.2160339-1-hayashi.kunihiko@socionext.com>
- <20250724042211.2160339-3-hayashi.kunihiko@socionext.com>
-Content-Language: en-US
-From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
-In-Reply-To: <20250724042211.2160339-3-hayashi.kunihiko@socionext.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: ED81A6000C
+X-Stat-Signature: o3gkgf6eo17d3nki4ps63qk1wsfopo7j
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX19xsM8tnGAIisXJruvhPpHwVj5oc3Osvxc=
+X-HE-Tag: 1753882352-735597
+X-HE-Meta: U2FsdGVkX1+tJp5TqRCHYBSniBRLbLZApCZJq89h04qR4uX/FtozNxT46TQJfSzSBnPcZ9CyVoZRo2SquhLr7e2QaUGtW9tDUaB0pLxonNodn4Bywwy/iKpj3r3DI2WuIu/Mwg6/Gd5pCNOeyVNN9Y+V5/BnBoHOmi8nEbCb1Ia22wrNa9AeDSdTuvQGfwwg8aTb/v4rKTqeE0l7xFwvH+ODlynhBtg3gv50olVFzk+WUnRKNLG5kzjhMjVE3/6p66+u7s0dZu90xIe9LqFk33NFRXwtTkotxAP5bL0b3ZNU+UTYwtqQ9Od2z16pseYnzWBGANyTj26Zfk/7vyiX0MCnwwLB29pB
 
-Hi
+On Tue, 29 Jul 2025 21:55:39 -0700
+Indu Bhagat <indu.bhagat@oracle.com> wrote:
 
-On 7/24/25 7:22 AM, Kunihiko Hayashi wrote:
-> After an error occurs during probing state, dw_i2c_plat_pm_cleanup() is
-> called. However, this function doesn't disable clocks and the clock-enable
-> count keeps increasing. Should disable these clocks explicitly.
+> > diff --git a/include/linux/unwind_deferred.h b/include/linux/unwind_deferred.h
+> > index a5f6e8f8a1a2..baacf4a1eb4c 100644
+> > --- a/include/linux/unwind_deferred.h
+> > +++ b/include/linux/unwind_deferred.h
+> > @@ -12,6 +12,12 @@ void unwind_task_free(struct task_struct *task);
+> >   
+> >   int unwind_user_faultable(struct unwind_stacktrace *trace);
+> >   
+> > +static __always_inline void unwind_reset_info(void)
+> > +{
+> > +	if (unlikely(current->unwind_info.cache))
+> > +		current->unwind_info.cache->nr_entries = 0;
+> > +}  
 > 
-> Co-developed-by: Kohei Ito <ito.kohei@socionext.com>
-> Signed-off-by: Kohei Ito <ito.kohei@socionext.com>
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
->   drivers/i2c/busses/i2c-designware-platdrv.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-> index edaebfb165f9..f6424dcfdff6 100644
-> --- a/drivers/i2c/busses/i2c-designware-platdrv.c
-> +++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-> @@ -308,6 +308,7 @@ static int dw_i2c_plat_probe(struct platform_device *pdev)
->   
->   exit_probe:
->   	dw_i2c_plat_pm_cleanup(dev);
-> +	i2c_dw_prepare_clk(dev, false);
->   exit_reset:
->   	reset_control_assert(dev->rst);
->   	return ret;
+> Should the entries[] items upto nr_entries (stack trace info from the 
+> previous request) also be reset to 0 here ?
 
-Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+This is in a critical path, there's no reason to reset to zero. The data will
+just be stale. Nothing should care about anything over nr_entries.
+
+> > diff --git a/include/linux/unwind_deferred_types.h b/include/linux/unwind_deferred_types.h
+> > index aa32db574e43..db5b54b18828 100644
+> > --- a/include/linux/unwind_deferred_types.h
+> > +++ b/include/linux/unwind_deferred_types.h
+> > @@ -2,8 +2,13 @@
+> >   #ifndef _LINUX_UNWIND_USER_DEFERRED_TYPES_H
+> >   #define _LINUX_UNWIND_USER_DEFERRED_TYPES_H
+> >   
+> > +struct unwind_cache {
+> > +	unsigned int		nr_entries;
+> > +	unsigned long		entries[];
+> > +};
+> > +  
+> 
+> Should we use __counted_by ?
+
+The size of entries[] is not determined by nr_entries. It is allocated on
+the first use, and not freed until the task exits. It's a fixed size
+defined by:
+
+/* Make the cache fit in a 4K page */
+#define UNWIND_MAX_ENTRIES					\
+	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
+
+
+-- Steve
+
+	
 
