@@ -1,96 +1,161 @@
-Return-Path: <linux-kernel+bounces-750947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C502B1632C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:51:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508DBB1632D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:51:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 974727AFE31
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:49:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE34F7B3634
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D0072DBF75;
-	Wed, 30 Jul 2025 14:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7A02DBF49;
+	Wed, 30 Jul 2025 14:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Orzv+H6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KcJvjZk7"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2AB277036;
-	Wed, 30 Jul 2025 14:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7004D2C324F
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 14:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753887068; cv=none; b=gTb7hKEG1Dg6TTkFXIavQWM9qxFihitTSFyqDYemfl6/U8Ajbd4giBbMYtOuIltwhTBmo1MN9OrkMg1Xm/e48tzo17JSGSpxlhV6jBXfIId/gkr9Uo6hxrdo4qAT3T7w4f0R8+OSUPPr1uQcumHqZ3zIeTSThe9fnHNPFcbeVzw=
+	t=1753887097; cv=none; b=ZmDVFCbcx5+yT4lO98BFACFF9ZpQ99ZqaIviVjFqKpequv7FDXGRgYvi5dQuTs3U7f8uDDc9aorMdv2EjrQ77ULrM+CLscZSJIHG+ToCfgyymoEH7qIRanMgvrv0tMAYUcxEFxs8re1GyuAWSHMoRbXSaKKXoFUkng4PzoT4jTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753887068; c=relaxed/simple;
-	bh=16P5bJs+DSDc/BjPMR9Go7+cwZRcZib97tLNoQMS560=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uiMHbmne0QLv/oF3w3kpNTpESjKjlMn1cO73/i6KwhnOJqXrt+9ppqb8khVg2V1BlwF1yD2ZSfEvcq2r6UottVpKge7Ri4MNAzzj48p1yDM3M6Cj9i21f/67vG4JojL/FzUqPxITsQBKltDX+/uVZf1Q5rLYuwMh9UAd0bcT/cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Orzv+H6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAC63C4CEE3;
-	Wed, 30 Jul 2025 14:51:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753887068;
-	bh=16P5bJs+DSDc/BjPMR9Go7+cwZRcZib97tLNoQMS560=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Orzv+H6tINJf2jMXAqag/2hlzgi49AmaSDRnL9MhklbvGcjN1pi3yw4uEFi2lTpZg
-	 3lwlhBWxQtH5UqRvAJKEZWUe4tjaMcoCPMzKAklGRwio/GzocdrjFGixBs0vLrl4rd
-	 bHKjz+y5Prb/TfSC7f7pzF0G1bVB2R6MqNyny0JgZifRPWvjHQ7kc0qQXRbe3FLDRP
-	 M4manPrF/C1KU22Hzb4dv+p9teKDVyAwBgEdaTUui80kS3+QMum3NBTu4z/5+dTScF
-	 ChqvKJx4ymmEw4pdsSz3DxPRyMi/ih0QSfLfk/i5jGdeI2brM/sgFt/Gp+rUGRrOfx
-	 SgYpcQ9h7ygHQ==
-Date: Wed, 30 Jul 2025 15:51:00 +0100
-From: Lee Jones <lee@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
-Message-ID: <20250730145100.GA6782@google.com>
-References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org>
+	s=arc-20240116; t=1753887097; c=relaxed/simple;
+	bh=AvX6DV9MZeEEGnxMTsiMzU9R6U+GhYhri4HxSIUZVcg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ij6fDWpOjyvVeOgG3yzK9MfR7IWAZjnFmmPceLqk6CzV0iKXZ2NYzPi7e8eN5tmDN1NmEAqhKuf5aI2OXwCYsAkRYpYEhdHXN5NSXZmVrVDSDcUoLhRSEhH9sh2OZAY4nUSx2TjgXXmy5lXG16l3yzPIAOvse/FaU0K/KDyBzCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KcJvjZk7; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55b73f4ead1so2315120e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 07:51:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753887093; x=1754491893; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A7NiWxPTKOFYM9uonseM4vMrBQ8wN02nGWedXjPFtiw=;
+        b=KcJvjZk7EEVmcCsWGIMUwJ/happltqEiJysuwTu78Gb22uxsbl7UpbVoqEcRQaD5U7
+         z3R/DkZtKnWogBJyCuJWH/u4+1MSTcIwXfXLcGr2MApTpYrXgaZxTtvNLf5bs2ZXpCNL
+         tTiKXdGQhJyuGQbV8SClXO48cT/S/qBXd7hFgDZseE5/fZhL/GPb2JyIXhPVpNc7Btf1
+         3qIqaMuI/rr4ld1P2Q/VF/SQ+QWvY44IG9XkyTXAqGKUMNUCC9IM2E/gJHvET3yJYiVK
+         ilWMkUxQCCl9LQBhpmuAjrnutmqQwPwn4o5wOD/xt5+ZBELBBn6G9V2CIi9uWvkFSBMB
+         Jtyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753887093; x=1754491893;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A7NiWxPTKOFYM9uonseM4vMrBQ8wN02nGWedXjPFtiw=;
+        b=pZ1kHSMIDjo0kF67tQwkAFPYcvNuypRWyBofqloBxt5xU6mhBBPWu5ITwGenf/mKwN
+         PETD2rmx44aZOHiVzpfZ6eqzz2iGccEftGAw0R3wCFhV/SXTvasjQwpHhGym8HcA+9Xd
+         l2vCPJhQ2uIaZggRYvUdDVfs70v+qjguGDi/BnLp21o9uYdv/YR/9wvj5RtEJpcfuX2m
+         HNdFgmQx15VPI1gS8gI4I4IojPWohDE7E7zBb9BNanTnKSml45haLX6eT5cdyct1LWSA
+         TOsQkv/dZAB4VdleB6oe5TaEB4IVJvccAV80LnsPdB1sX1+RNc5ZyzX17BAvh3NHl/um
+         xHiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUcyH+H4axPPbb7/QPJYoNvYfNpdCDCe5khvyo9wLuXX2OIP8/P0OdD6clLSxUW9LWrwWUfo1DP4iqeFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6h4hOfCZehWw188CP5HRRJDWPk6EbS1Mf3hIv4ZAoPgcTCNKF
+	/rFQpu97g1k4PC0yk0iAdSpjn29nrVWPKeUn6iFmQJwxW1+6dIdLgXXgVU6AMswQsATJ849oRSj
+	XobOH8ny/AKL7sieXzWxmhbP/oXx/Jls=
+X-Gm-Gg: ASbGnct7e3U3c2k3rRKEbr5hmLXIXUPx93DKNGTwbT1RWZtCwYI5ffG7tarnwIhgvnI
+	lnxtrLTajGDOSb+P8PgWgUFp6DroA1OGzZh+jEkS0Vlk8TXwXVkMap39t4SO/7MrTb+zohD5w89
+	T0myLjNJ0312v3BkzLWGXRc52E9AxJqgc/eDOpeCENiOMc3AQzK9jII5c86j/Hdkf0kEePwAjkL
+	pMAGjr0ZGr0zRGaU4SX5MR4TLQ9Q/ftbpcohCXYrQ==
+X-Google-Smtp-Source: AGHT+IEgEmq4syI9+uAid95y/R35+yJJ48ObJP6+pf2CLRAl6znW8QzofACTPgJiAcWHclppjwRXGeQ3u9SrRiIwgDk=
+X-Received: by 2002:a05:6512:39c4:b0:553:adf2:38bb with SMTP id
+ 2adb3069b0e04-55b7c0986ddmr1271842e87.46.1753887093209; Wed, 30 Jul 2025
+ 07:51:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org>
+References: <20250607064444.4310-1-pranav.tyagi03@gmail.com>
+ <87cybdp7to.ffs@tglx> <CAH4c4jLjSBxbd3bqkdgcCSWqXURratANgnbq9negrSU283xHpg@mail.gmail.com>
+ <87frg3ss9s.ffs@tglx>
+In-Reply-To: <87frg3ss9s.ffs@tglx>
+From: Pranav Tyagi <pranav.tyagi03@gmail.com>
+Date: Wed, 30 Jul 2025 20:21:21 +0530
+X-Gm-Features: Ac12FXySoXDJCYsfTOJ1c18ryEETA_OYD0DDbNocu3gc910feNbr76AnTiqvAps
+Message-ID: <CAH4c4jKmj2gwmW2LS8CuGyw6phtiN+=_Bef8_pSEzjnbsqPOeg@mail.gmail.com>
+Subject: Re: [PATCH] futex: don't leak robust_list pointer on exec race
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Darren Hart <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, 
+	=?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>, 
+	linux-kernel@vger.kernel.org, jann@thejh.net, keescook@chromium.org, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Jul 2025, André Draszik wrote:
+On Fri, Jun 13, 2025 at 6:38=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+>
+> On Wed, Jun 11 2025 at 19:33, Pranav Tyagi wrote:
+> > On Mon, Jun 9, 2025 at 3:15=E2=80=AFPM Thomas Gleixner <tglx@linutronix=
+.de> wrote:
+> > Does the revised version below address the concerns more effectively
+> > or does it still need a bit more seasoning?
+> >
+> > "Currently, sys_get_robust_list() and compat_get_robust_list() perform =
+a
+> > ptrace_may_access() check to verify if the calling task is allowed to
+> > query another task=E2=80=99s robust_list pointer. However, this check i=
+s racy
+> > against a concurrent exec() in the target process.
+> >
+> > During exec(), a task's credentials and memory mappings can change, and
+> > the task may transition from a non-privileged binary to a privileged on=
+e
+> > (e.g., a setuid binary). If get_robust_list() performs ptrace_may_acces=
+s()
+> > before this transition, it may wrongly allow access to sensitive
+> > information after the target becomes privileged.
+> >
+> > To address this, a read lock is taken on signal->exec_update_lock prior
+> > to invoking ptrace_may_access() and accessing the robust_list. This
+> > ensures that the target task's exec state remains stable during the
+> > check, allowing for consistent and synchronized validation of
+> > credentials."
+>
+> That's way better, but it still does not explain what the consequences
+> of the racy access are.
+> >>
+> >> You really did not have a better idea than copying all of that logic
+> >> into the compat code?
+> >
+> > As I=E2=80=99m still learning, I wasn=E2=80=99t quite sure how to avoid
+> > duplication there. Would factoring out the common logic into a helper f=
+unction
+> > be the right direction? I=E2=80=99d be grateful for your suggestion.
+>
+> Exactly.
+>
+Hi,
 
-> Original cover letter further down.
-> 
-> This is a resend of two patches from the original series that haven't
-> been merged yet. That series was merged except for the attached two
-> patches here. Other than rebasing against next-20250729 there are no
-> changes to them.
-> 
-> Lee, I think Stephen's intention was to get these two merged via the
-> MFD tree please.
+I face a small issue while refactoring the common code in a helper.
 
-Although I have no issue with this, it does seem a little odd now that
-the set consists of only Clk patches.  Let me know what you / Stephen
-decide.
+The main obstacle to a full refactor is that the native and compat
+syscalls use different user-visible types (size_t vs compat_size_t,
+struct robust_list_head * vs compat_uptr_t). Because put_user() is
+type-checked at compile-time, I can=E2=80=99t unify both into one function
+without either unsafe casting or weakening type safety (this is as far
+as I understand).
 
--- 
-Lee Jones [李琼斯]
+The best I can do is refactor the common task lookup/permission
+logic into a helper, and leave ABI-specific put_user() calls in thin wrappe=
+rs.
+
+I=E2=80=99d be grateful for your suggestion.
+
+Regards
+Pranav Tyagi
+
+> Thanks,
+>
+>         tglx
 
