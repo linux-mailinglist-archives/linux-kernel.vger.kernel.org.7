@@ -1,132 +1,125 @@
-Return-Path: <linux-kernel+bounces-751406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777FEB16939
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:09:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10626B1693D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 814F75A48C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:08:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A18165305
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:15:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159EC230BF2;
-	Wed, 30 Jul 2025 23:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148881DE89A;
+	Wed, 30 Jul 2025 23:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTs1OBkN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KECMClRa"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750A5376;
-	Wed, 30 Jul 2025 23:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D227677111
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 23:15:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753916960; cv=none; b=QxTdAKhzET4LrberWOfdCbGeJBM83fvXrGT+6XOHY7H4AWGm35Daqm7kS/VHAZ7WBIUd86/o+szJL/ThFb+jh/C5colAuo6bFMkhxgR0qPikIEI/TsN5VCn4RXaW686wXsFekixl2uzoiTfTCGsI+AvlVtKyxkbKQ3LSZqzTsAI=
+	t=1753917343; cv=none; b=qtm3Nfjc4bmxnsodYkUblW0G+ALmEaE+RJ0P76dVuCJjycGvySrmG+1eLbkUnHgPnE1MUfeAhBY4Mo4BvJC+op/dYUknpdX3SiyYbjw22eJ1jUWfT/JuujMcAW7IEQjHrg6ZsLJJ7Wkq6ZAZ4L/GWGKVDFg6ZIF9SKSqlxXlk74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753916960; c=relaxed/simple;
-	bh=jWK+2vcwMV2X7+9pqxnzwY6rxLt7ezaNRM0TqULxrN4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=AYgAvVjLuOz7q8ill0az0BNzHaMXZSklQ7SttbSdCmOEMYwWa0Qyx1cYd7+GIxFM+VdnY5LGe2faOFY02Oyyb4QcLUjDPNgJXMVLQ55PIiSAVz8NZiNbBhOAccy2+413Fb36aOn2rf3RyEnH1JUlmLIVEaDz0Le6/7eODGfkvfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTs1OBkN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6190C4CEE3;
-	Wed, 30 Jul 2025 23:09:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753916958;
-	bh=jWK+2vcwMV2X7+9pqxnzwY6rxLt7ezaNRM0TqULxrN4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=DTs1OBkNgdCk7RyTLwscW4dVwBlor0BZrGT5WVrTNfsmqKE2vam/1eLmFy05sNvCU
-	 HvQMCJ5dxKxtQayVwcaFB3HTT0aQWxTKdEW7s1wajJP0n1YYRTEsNMzlv0HjVzaOgT
-	 lCnHVm8hIjEJya+nG5qFgmb2M/9PY2uSdNnATm9nfI78zknglBhAu/PkPzMPmOoAwq
-	 gNSGR4mUibWOARhClj2BnxWvEUs+QPAMgqOBj+20Hs6K7yx/Y8LlRiIWl0DJekZVDZ
-	 drJlK0TiGPjrfyMzoNctuZGk8nRjxLKH3EhuIEISk48WT4to8tadH1Z4LAWpoHfqkX
-	 GwCXAR0Dai8aA==
-Date: Wed, 30 Jul 2025 13:09:17 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] cgroup: Changes for v6.17
-Message-ID: <aIqmHVGyKjFG8agb@slm.duckdns.org>
+	s=arc-20240116; t=1753917343; c=relaxed/simple;
+	bh=VaBo0qMXBUw6Qukm5bA/FuEZBJqFMknhXsZYWUD5ilA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qo+LdU9fduBHTLeuIhuwQblH+CtI1d39sgS5oPxJsRmbK13UcHSu8tTWEZAm7OcPnKLAAeEKIFL7KDo2UsYc3xUlYDTmeDCRAazZu+mi22qoFr2L+69uuijYZm4rJSu2RloG54Pmf/0PtEWKEiwZqlFGBnWwtc3gwu0QlMk0WG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KECMClRa; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af90fd52147so51984066b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:15:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1753917339; x=1754522139; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zrorEb+Zqet9C5+oVSXh5W5YSkHv0u4TJBOY75jsBGM=;
+        b=KECMClRaz2Zbmav2cF5uL/MrzLCUtllOt2js8WGtrfik7iQubWJfo4CUddtIUf53xO
+         HRvRImj51v4J5mtRoJvHFh9HENd98cXxE+WhacaIsE5oKOBqlt9Kt4SP9uEkgYczEikU
+         N6hUDNomH1gOP/neVjiA6vTRww2dJqRtx0CGo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753917339; x=1754522139;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zrorEb+Zqet9C5+oVSXh5W5YSkHv0u4TJBOY75jsBGM=;
+        b=eJV0M1B0tSEOrvDyRB8xVJnv2QmOFN4zojwpNhD2zh7eNnDKjPcitCMW4cOo9x7ztB
+         i97NPJYVukZ5or2//IvwUpZph1QZJAL+DDFsof8HM3v/Hb1Kkqoyfx5xYikxxF0GvQNb
+         Egh9Igo8TQXFBa3SV70pM7E2LuFl1RkdFyRs2og8eaMByBQThQ1Kzsjq0deILdE+v7GS
+         o6jI5n/FKiIkXWNXFsswMVBsTpAg+7ABywKDUY14bdFHdwtOWKKcjJArFFQMvyJXa7yV
+         /TtaBKwy5cu72vzmP/QUF9u0Z6fSX5APgHZ4mSw1xGEBxBs4blfzRbI9OATYxr+OqjZt
+         s8ig==
+X-Gm-Message-State: AOJu0YzWCqfXwDZ2jg8jHzxOs6EWHDBMmLjW4pR1TZlRiIzALnaxcloy
+	HkdUOEHzs+wyE3AG63DPv72GH9NzpQnne8I2p3sdSd5n8r2Ln1Cb0ID4PHsSqMT0S4yvchH//Aq
+	mTBcLzP4=
+X-Gm-Gg: ASbGncvyq2psyfD2jJtCyKhaNYIZiKo82St+C1rxChbWmKYOfL/EpoGqAgU9wHV2pqV
+	HoPOJ259rzfHNfF8+TWJkbXc+mPl28iJmHyPI7qRNca7q5tNjwNEtK2KOc3tTa8pOV/Wn4nKTxr
+	Pw/OPQStzwUHFowq0DNXsz8WXfm/1I6NOZuM0cMkTTuVlBQyusmE1diT0n272jVeOCrWc60ez7g
+	09VHFLDymlSf02pqrKEm9B1EI5Pe4lGwEbNUXKsyZO0nyTYT5xYYGQQYmhcOoTDI4Dt1xQxBGra
+	kjIth86aaFQCwVwF4OXDkghVoer/UATUwPdaPImOCwlqw27TpenuOy6ETQEBhJ8FIvZL0gCrj6O
+	1I48NJb6B0LeYaISJZkoi2zVFVCXengGwL6CRyjZ4suJiWoreerJYbKQknWI0+pOXNWQ7nH0F
+X-Google-Smtp-Source: AGHT+IFux6zY/0ZyogCV9ld9emENWrqpTu3vdNia+KuCyOy3tWacNhxaQ9eXH7rKP/qXDfWIOMHlGQ==
+X-Received: by 2002:a17:906:4fc4:b0:ae6:a8c1:c633 with SMTP id a640c23a62f3a-af8fd919698mr495384166b.34.1753917338827;
+        Wed, 30 Jul 2025 16:15:38 -0700 (PDT)
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com. [209.85.208.51])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3cb7sm13337766b.55.2025.07.30.16.15.37
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 16:15:37 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-6157b5d0cc2so342270a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:15:37 -0700 (PDT)
+X-Received: by 2002:a05:6402:42c2:b0:615:8db4:2602 with SMTP id
+ 4fb4d7f45d1cf-6158db428a8mr4340389a12.22.1753917337349; Wed, 30 Jul 2025
+ 16:15:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20250729144226.6b72dca7@batman.local.home>
+In-Reply-To: <20250729144226.6b72dca7@batman.local.home>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 30 Jul 2025 16:15:21 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh+h2WR6f2g+3HyLD1Zjg-fXC8yOE5bQmetrPvWHCU-2w@mail.gmail.com>
+X-Gm-Features: Ac12FXxFAH_zh2hgF6gUml--thoWzLsAGhMoPLICse8K6Cyzt_tZ0d_YEdj5GsU
+Message-ID: <CAHk-=wh+h2WR6f2g+3HyLD1Zjg-fXC8yOE5bQmetrPvWHCU-2w@mail.gmail.com>
+Subject: Re: [GIT PULL] ftrace: Changes for v6.17
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Artem Sadovnikov <a.sadovnikov@ispras.ru>
+Content-Type: text/plain; charset="UTF-8"
 
-The following changes since commit 2043ae9019e0f75c7785048230586c3f3ca0a2a4:
+On Tue, 29 Jul 2025 at 11:42, Steven Rostedt <rostedt@goodmis.org> wrote:
+>
+>   In print_graph_proc() the pid_ptr string is of size 11, but the comment says
+>   /* sign + log10(MAX_INT) + '\0' */ which is actually 12.
 
-  Merge tag 'hid-for-linus-2025060301' of git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid (2025-06-03 10:34:36 -0700)
+Lol. Quoting the ancient Greeks: "Math is hard, let's go shopping".
 
-are available in the Git repository at:
+That said, the comment is garbage anyway.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git/ tags/cgroup-for-6.17
+Because "sign + log10(MAX_INT) + '\0'" really is just 11 - if you
+round or truncate.
 
-for you to fetch changes up to 646faf36d7271c597497ca547a59912fcab49be9:
+So somebody may have actually done the math "correctly", but the math
+was just stated wrongly.
 
-  cgroup: Add compatibility option for content of /proc/cgroups (2025-07-19 06:14:44 -1000)
+Much better to actually write things out properly instead of trying to be fancy.
 
-----------------------------------------------------------------
-cgroup: Changes for v6.17
+Becasue might be more legible to actually write it out and let the
+compiler do things, ie just do
 
-- Allow css_rstat_updated() in NMI context to enable memory accounting for
-  allocations in NMI context.
+   // This includes the sign and the terminating '\0'
+   #define MAX_INT_CHARACTERS sizeof("-2147483648")
 
-- /proc/cgroups doesn't contain useful information for cgroup2 and was
-  updated to only show v1 controllers. This unfortunately broke something in
-  the wild. Add an option to bring back the old behavior to ease transition.
+which doesn't require people to know - or think they know - logarithms.
 
-- selftest updates and other cleanups.
+Random rule for the day: don't ask people to do more than third-grade math.
 
-----------------------------------------------------------------
-Michal Koutný (6):
-      cgroup: Drop sock_cgroup_classid() dummy implementation
-      selftests: cgroup_util: Add helpers for testing named v1 hierarchies
-      selftests: cgroup: Add support for named v1 hierarchies in test_core
-      selftests: cgroup: Optionally set up v1 environment
-      selftests: cgroup: Fix compilation on pre-cgroupns kernels
-      cgroup: Add compatibility option for content of /proc/cgroups
-
-Sebastian Chlad (2):
-      selftests: cgroup: Allow longer timeout for kmem_dead_cgroups cleanup
-      selftests: cgroup: Fix missing newline in test_zswap_writeback_one
-
-Shakeel Butt (5):
-      cgroup: support to enable nmi-safe css_rstat_updated
-      cgroup: make css_rstat_updated nmi safe
-      cgroup: remove per-cpu per-subsystem locks
-      memcg: cgroup: call css_rstat_updated irrespective of in_nmi()
-      cgroup: llist: avoid memory tears for llist_node
-
-Shashank Balaji (1):
-      selftests/cgroup: fix cpu.max tests
-
-Tejun Heo (1):
-      Merge branch 'for-6.16-fixes' into for-6.17
-
-Vishal Chourasia (1):
-      Documentation: cgroup: add section explaining controller availability
-
- Documentation/admin-guide/cgroup-v2.rst            |   9 +
- Documentation/admin-guide/kernel-parameters.txt    |   8 +
- include/linux/cgroup-defs.h                        |  21 +--
- include/linux/llist.h                              |   6 +-
- include/trace/events/cgroup.h                      |  47 ------
- kernel/cgroup/cgroup-v1.c                          |  14 +-
- kernel/cgroup/rstat.c                              | 184 ++++++++++-----------
- mm/memcontrol.c                                    |  10 +-
- tools/testing/selftests/cgroup/lib/cgroup_util.c   |   4 +-
- .../selftests/cgroup/lib/include/cgroup_util.h     |   5 +
- tools/testing/selftests/cgroup/test_core.c         |  84 ++++++++--
- tools/testing/selftests/cgroup/test_cpu.c          |  63 ++++---
- tools/testing/selftests/cgroup/test_kmem.c         |   5 +-
- tools/testing/selftests/cgroup/test_zswap.c        |   2 +-
- 14 files changed, 264 insertions(+), 198 deletions(-)
-
--- 
-tejun
+         Linus
 
