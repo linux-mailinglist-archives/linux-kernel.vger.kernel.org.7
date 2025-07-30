@@ -1,108 +1,153 @@
-Return-Path: <linux-kernel+bounces-751062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61900B164D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:37:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE47B16461
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E46189619C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:38:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 744271AA47BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:13:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60782DE70B;
-	Wed, 30 Jul 2025 16:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b="hclBiAz5"
-Received: from kylie.crudebyte.com (kylie.crudebyte.com [5.189.157.229])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDF32DE71E;
+	Wed, 30 Jul 2025 16:09:38 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3DB190692;
-	Wed, 30 Jul 2025 16:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.189.157.229
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A180E2DE711
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 16:09:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753893466; cv=none; b=bMlJmvickD+8nm8caZA7wdGvdjynell4WBxDfWweCoEsIrWzQDrK2dFNVTl7tHIqJ5CQQvPCb075HVUzefByYI2gpPhUcv1VZ7/+RX/oaXYgZnOt+CpDOadwDddYXAQkom94BpzQ2E4wMW94bBYW5tExNWSZQQ8xDuoGIyrhS5Y=
+	t=1753891778; cv=none; b=S2mXw06TK6p7Dk6g61U2ILd+YC2il2HvENGqhvUWYhnrWlzl9WG5I5Zy0jTJcPYi5DCxovF9UeeUJ+XNMDjD7NUrT/U0WrGWp6czsZyb1nfjpkuE30bUtICGnURVTf7ByW6mpd6aANejCNHdHmTpmGTsFAWDlOL4W19xGw0HyZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753893466; c=relaxed/simple;
-	bh=0C0KsPi9Xafpx8vSaO7NnuYX2LgMpY46VySoYhdbHeA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GiXDhO4c+gz64QNZka+H/LDED9PEhAVU7KVXLunmqlsUbOgd55FnarcRpJYo1gW4NE2HkglbFvvYNjROr+n2nVyT+bmi5OIcFxmc7lFNyW5vJjQ/mvbquDdga2cMcCui7aNTp0MeZHtJvb57NztPSQnn4zJvjk6nBvBobSvtIoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com; spf=pass smtp.mailfrom=crudebyte.com; dkim=pass (4096-bit key) header.d=crudebyte.com header.i=@crudebyte.com header.b=hclBiAz5; arc=none smtp.client-ip=5.189.157.229
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=crudebyte.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=crudebyte.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=crudebyte.com; s=kylie; h=Content-Type:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Content-ID:Content-Description;
-	bh=6WzFyA7HHnsN0YX0BqT+sbS2GLp4HfpygWNA1sHG2qA=; b=hclBiAz56+bxfks6IKny9sWiCZ
-	jQoQkRoa5oVm0TQejM5rrKbmeb2XyRSlxuFMcqXp3CZq3ZWab5/zMHJPrtU6P6BcNeThuC/LHCGF3
-	njZmGfkU3/DDeh05Uka4WpkVCdPlqsbdcdPVipCvx7A1nyMknpmK6dcIw4YBflPLA+sFBX4WKghJ1
-	m4BKUuFaZy+/g/LorgBsNVoLzHY1tCU6LRk7HtNXzfgsoL04GDz8eaSJss/Of7zhkt/2a69xY1vrx
-	GaD6w1prP3wxhLJJz0H7YbVec6Og6suugJRC3ElLKShYAPWePDgMy9SDuowNsOHcpie6MHfsY3A/j
-	PScQy7ssolPiKR33AaurA32/d5RyoY2xRnjVGoS6z3cwmvfr/tCfYN30fFAAl8uZR0K2VH4w7HnZm
-	6xRoTgn3rEYPOewFOqYMhZ3RPthxOBY0b1emvMVB4/Tg+qagpGKhGs6MfRk8fvIj8uWQXAX0vXGZ8
-	/C3IMYWDmvmZm/5vNHc3DFY2N82mWnnzuKwHkHAFY7KyFBXTOH0n/h61dL2XD9fPbBvyUsPG4LnP3
-	kF759PRQn1pWJkkiJuAz4XoHK//J2uT+Zkurjdo2HYYfDB+1DovmVI5DkPVoL9zreJcnw4zKVSME/
-	0TYT8MqVgj03RawFZIMUaIshc5JIlmoCeb/gUdGZA=;
-From: Christian Schoenebeck <linux_oss@crudebyte.com>
-To: v9fs@lists.linux.dev, Pierre Barre <pierre@barre.sh>
-Cc: ericvh@kernel.org, lucho@ionkov.net, asmadeus@codewreck.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] 9p: Use kvmalloc for message buffers
-Date: Wed, 30 Jul 2025 18:08:13 +0200
-Message-ID: <2989343.ydHz1Oe0dO@silver>
-In-Reply-To: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
-References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+	s=arc-20240116; t=1753891778; c=relaxed/simple;
+	bh=kRMFaP3uDFy9AtnSJJbnU7XeE3l2zaYmlEcIV6keUYs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AhLVn2zIARJPyes3SvtAdPGFk9MCask2s/Q9RXqg9MQi0iUTdJAhfMWfDjTz6OiFJX7y/hSLDym3Pmk9q+5TZxaJd7paLOcXq2q/PqJuQcyUrTMg0QaPfGyBTzguJQ7HBvFhsTmUTfrDNnRlOYoGDbvFd0TfLPVsYCH9JhIwzQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3e3f6ae4d0fso14230285ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:09:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753891776; x=1754496576;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=V6sU9wcsAFaB8MjEXUXjl60SDL+4Ms1KtUD6ELWGeD8=;
+        b=Lo6mxuOS/yJS4gNwXC6a8GvV6iQ/C3vxKl6vkX4dOKtV3VhQ0REssbHlP1/A2EDJ3P
+         fQDqWxqZ7lSeNI62rmU/zPdm7FZ6cHVauYDEJ51mqeK7XpTQfPeLUT5Ciwel//BUhj5e
+         Hy2aotbZ9BaaKoHjoHS/ER9jwVCtoM373EVCdEN1Z/mq/Bh6IdFIEQVrrxu7RiDwhVoR
+         2Ngx3ZvZlLs6pNYfhDAkppkSr1EtThgotQUW4Ige/lsubL+WkmbOPDHWa/8wxgL6K3Ll
+         e8fijZKxhYq9MEM6PdlEX/vAY7Wu0mdnVU65nZnn6EibSxzL93klSvoY84uJBZok4fE7
+         z6jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSyqXQwnZ+7rDNkMtS9IXjoz7sEF0SxJcBeRFwMRNqBDtfflY0TJlzyIQC3aCLNwjNAJDK/lOfNvVUC/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH3bwowdwHds4emnhLzaootH++wnlMmNp4KXfG9HCMJdk39qoR
+	wgwOvwB3nWe4DzOUz7V27pDc0593fM2xngvxwoywfJp7z3vnjLOJZATrPGML4dMdGIi3Vt4Zuji
+	2LFsBUFH+6d4FKhtDGt8Gg5nbMUcenKmwuhkF+jtddbPPIpMAo6Tlm7lYw4s=
+X-Google-Smtp-Source: AGHT+IHofyv55TPFRJtG29cCv7oY5anOxPw9dQhV3YeIrZXjGKHsY+hOqswB+cCAwc/JEIpgDTfwEFT42d90jwXtxxDd+ccyeDrA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+X-Received: by 2002:a05:6e02:2388:b0:3e3:b4ff:15e3 with SMTP id
+ e9e14a558f8ab-3e3f621a48emr56479425ab.4.1753891775703; Wed, 30 Jul 2025
+ 09:09:35 -0700 (PDT)
+Date: Wed, 30 Jul 2025 09:09:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688a43bf.050a0220.5d226.000a.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_bio_compress (3)
+From: syzbot <syzbot+1733f08e3b98628b164a@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wednesday, July 30, 2025 5:08:05 PM CEST Pierre Barre wrote:
-> While developing a 9P server (https://github.com/Barre/ZeroFS) and testing it under high-load, I was running into allocation failures. The failures occur even with plenty of free memory available because kmalloc requires contiguous physical memory.
-> 
-> This results in errors like:
-> ls: page allocation failure: order:7, mode:0x40c40(GFP_NOFS|__GFP_COMP)
+Hello,
 
-What was msize?
+syzbot found the following issue on:
 
-> Signed-off-by: Pierre Barre <pierre@barre.sh>
-> ---
->  net/9p/client.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/9p/client.c b/net/9p/client.c
-> index 5c1ca57ccd28..f82b5674057c 100644
-> --- a/net/9p/client.c
-> +++ b/net/9p/client.c
-> @@ -230,7 +230,7 @@ static int p9_fcall_init(struct p9_client *c, struct p9_fcall *fc,
->  		fc->sdata = kmem_cache_alloc(c->fcall_cache, GFP_NOFS);
->  		fc->cache = c->fcall_cache;
->  	} else {
-> -		fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
-> +		fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+HEAD commit:    5f33ebd2018c Merge tag 'drm-fixes-2025-07-26' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15fa4034580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8adfe52da0de2761
+dashboard link: https://syzkaller.appspot.com/bug?extid=1733f08e3b98628b164a
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 
-That would work with certain transports like fd I guess, but not via
-virtio-pci transport for instance, since PCI-DMA requires physical pages. Same
-applies to Xen transport I guess.
+Unfortunately, I don't have any reproducer for this issue yet.
 
->  		fc->cache = NULL;
->  	}
->  	if (!fc->sdata)
-> @@ -252,7 +252,7 @@ void p9_fcall_fini(struct p9_fcall *fc)
->  	if (fc->cache)
->  		kmem_cache_free(fc->cache, fc->sdata);
->  	else
-> -		kfree(fc->sdata);
-> +		kvfree(fc->sdata);
->  }
->  EXPORT_SYMBOL(p9_fcall_fini);
->  
-> 
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-5f33ebd2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/a554f67105dc/vmlinux-5f33ebd2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b3d52a10bce9/bzImage-5f33ebd2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1733f08e3b98628b164a@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/compress.c:525!
+Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5346 Comm: bch-copygc/loop Not tainted 6.16.0-rc7-syzkaller-00120-g5f33ebd2018c #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__bio_compress fs/bcachefs/compress.c:525 [inline]
+RIP: 0010:bch2_bio_compress+0x14b1/0x14c0 fs/bcachefs/compress.c:555
+Code: fd 90 0f 0b e8 20 30 90 fd 90 0f 0b e8 18 30 90 fd 90 0f 0b e8 10 30 90 fd 90 0f 0b e8 08 30 90 fd 90 0f 0b e8 00 30 90 fd 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000f51e600 EFLAGS: 00010293
+RAX: ffffffff84300110 RBX: 0000000000000003 RCX: ffff88803d990000
+RDX: 0000000000000000 RSI: 0000000000000800 RDI: 0000000000000000
+RBP: ffffc9000f51e850 R08: 0000000000000005 R09: 0000000000000003
+R10: ffffc90001a23033 R11: fffff52000344800 R12: 0000000000000800
+R13: 0000000100000001 R14: 0000000000000000 R15: 0000000000002800
+FS:  0000000000000000(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005555e44a5168 CR3: 0000000011b80000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ bch2_write_extent fs/bcachefs/io_write.c:1060 [inline]
+ __bch2_write+0xfb5/0x3900 fs/bcachefs/io_write.c:1554
+ move_write fs/bcachefs/move.c:217 [inline]
+ bch2_moving_ctxt_do_pending_writes+0x5a7/0xe60 fs/bcachefs/move.c:248
+ bch2_move_ratelimit+0x8e8/0x1330 fs/bcachefs/move.c:585
+ __bch2_move_data_phys+0x110f/0x1c50 fs/bcachefs/move.c:904
+ bch2_evacuate_bucket+0x228/0x3a0 fs/bcachefs/move.c:1082
+ bch2_copygc+0x3be3/0x4510 fs/bcachefs/movinggc.c:234
+ bch2_copygc_thread+0x97a/0xe00 fs/bcachefs/movinggc.c:409
+ kthread+0x711/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__bio_compress fs/bcachefs/compress.c:525 [inline]
+RIP: 0010:bch2_bio_compress+0x14b1/0x14c0 fs/bcachefs/compress.c:555
+Code: fd 90 0f 0b e8 20 30 90 fd 90 0f 0b e8 18 30 90 fd 90 0f 0b e8 10 30 90 fd 90 0f 0b e8 08 30 90 fd 90 0f 0b e8 00 30 90 fd 90 <0f> 0b 66 66 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90 90 90 90
+RSP: 0018:ffffc9000f51e600 EFLAGS: 00010293
+RAX: ffffffff84300110 RBX: 0000000000000003 RCX: ffff88803d990000
+RDX: 0000000000000000 RSI: 0000000000000800 RDI: 0000000000000000
+RBP: ffffc9000f51e850 R08: 0000000000000005 R09: 0000000000000003
+R10: ffffc90001a23033 R11: fffff52000344800 R12: 0000000000000800
+R13: 0000000100000001 R14: 0000000000000000 R15: 0000000000002800
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
