@@ -1,114 +1,256 @@
-Return-Path: <linux-kernel+bounces-750983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D63EB163AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:25:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4C8B15E4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18D0218C78C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:24:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C8A07A61D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7A62E173D;
-	Wed, 30 Jul 2025 15:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="d8595H4/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD5E279DAE;
+	Wed, 30 Jul 2025 10:35:56 +0000 (UTC)
+Received: from mx1.zhaoxin.com (MX1.ZHAOXIN.COM [210.0.225.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C682E0B42;
-	Wed, 30 Jul 2025 15:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9AC27FB3A
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.0.225.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753888963; cv=none; b=CESlktoDR5H6hkg6hrS4ErQfTYLN7Ir8jGgis9E3VqtBUlheeKSML3P0oxR7LCnIEnSP6GNivA2j9J2hUSman5O+tTqjPJEZeWhCkDJ/1yJAS+LAuO7d0fWZb71nn+3yPiTpDuiLlT+hPs213Adx0QeXed9f5AYsZeI+CUExZLY=
+	t=1753871755; cv=none; b=TQZkziA/CXuayhl2Z3Bxy0ZJAgpwcMU5SzvdQxUEV45gU09OGGzImylmNHVZwuNc4Co4qN/eCBuJAQz6SntxX7p+vd0wlq7GBJxphDbisj0a03KU21YHQqV9giTOUgOLBKi/K1VrRugwjJC9oWpJnWn3Wcv2WNvJjlXrP/JJrv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753888963; c=relaxed/simple;
-	bh=Hn1macxBsiwE8zIVXtjtrzSVv+kL8zbKJT5C2OuAsOM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=AbQRX9lWHuMKwbSNXnaC4l7UaEJivWfExPjMB0VD0zerw4HCo9cEN7vqau7Wgj76efMsGQKmnoJOEMXVD0ESAm9XEzxBeAm5r6NtIoHanOGGizBFJqQ6XlY77kj1tSjJ5J4d+Ez3jRZg5bNC7Z0fn4QfdfC5Mifsoi0hMMvm1mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=d8595H4/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753888960;
-	bh=Hn1macxBsiwE8zIVXtjtrzSVv+kL8zbKJT5C2OuAsOM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=d8595H4/FxuZuk/QCIb+PXEPxoFNt6QxfKgDuQUz6v+RDVaefb8DuTmutdarVe5m3
-	 TSzeC7uLRfMHEBc5jVOhv5RsQVzqCKFWMBG0KogqiIB+29t5n6+AAkYe9T4fci3O2F
-	 IrYY8XB61nbZI7Cruy4xymeabhnTudTpybiWQvzpzbFEe14IeSugacbfhJh74TWLas
-	 3j5dIx2G1zenqrO0oDhLQbdZmOqMrTGzScP5N/LrpIPgNTuyKr+hrSbMJL3nXW2B12
-	 kVk3UTX87NubKeMhGNn+YUKMrJa8l0iaTwzcH3X5Y0iOf6aMnE57vPl9flx00hyFSR
-	 65O8mmbhSD5sQ==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:41d5:bfd6:7c6f:85ff])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 4F1F817E1315;
-	Wed, 30 Jul 2025 17:22:39 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: srini@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com
-Cc: wenst@chromium.org,
-	nfraprado@collabora.com,
-	arnd@arndb.de,
-	colin.i.king@gmail.com,
-	u.kleine-koenig@baylibre.com,
-	andrew-ct.chen@mediatek.com,
-	lala.lin@mediatek.com,
-	bchihi@baylibre.com,
-	frank-w@public-files.de,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com,
-	Laura Nao <laura.nao@collabora.com>
-Subject: [PATCH v2 9/9] dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
-Date: Wed, 30 Jul 2025 17:21:28 +0200
-Message-Id: <20250730152128.311109-10-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250730152128.311109-1-laura.nao@collabora.com>
-References: <20250730152128.311109-1-laura.nao@collabora.com>
+	s=arc-20240116; t=1753871755; c=relaxed/simple;
+	bh=qweWPyKEs3pN6MuNg0KaCYdJj9vxUHHf8MFrmW68PPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=GZOeyWvb/WdVWGaz1KiltVbet6MKUsfrD79BUvFxtNj5GFFkIbyJDNjY24AGZyXorC2mBPO9N67aLL6VMSfqoBkss9UTarODssA7WZ0Rd8B6+dyc3OjRD6YWoJhrfJY7ZjV23USPy3sNgQNV/Z76UUFaIoqBJX3/Xu+2ysg2f2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com; spf=pass smtp.mailfrom=zhaoxin.com; arc=none smtp.client-ip=210.0.225.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=zhaoxin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zhaoxin.com
+X-ASG-Debug-ID: 1753871743-086e23295483150001-xx1T2L
+Received: from ZXBJMBX02.zhaoxin.com (ZXBJMBX02.zhaoxin.com [10.29.252.6]) by mx1.zhaoxin.com with ESMTP id EoKJyGyVHCBkiczC (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO); Wed, 30 Jul 2025 18:35:43 +0800 (CST)
+X-Barracuda-Envelope-From: WeitaoWang-oc@zhaoxin.com
+X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
+Received: from ZXSHMBX1.zhaoxin.com (10.28.252.163) by ZXBJMBX02.zhaoxin.com
+ (10.29.252.6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 30 Jul
+ 2025 18:35:36 +0800
+Received: from ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f]) by
+ ZXSHMBX1.zhaoxin.com ([fe80::cd37:5202:5b71:926f%7]) with mapi id
+ 15.01.2507.044; Wed, 30 Jul 2025 18:35:36 +0800
+X-Barracuda-RBL-Trusted-Forwarder: 10.29.252.6
+Received: from [10.29.8.21] (10.29.8.21) by zxbjmbx1.zhaoxin.com
+ (10.29.252.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.44; Wed, 30 Jul
+ 2025 15:21:49 +0800
+Message-ID: <683553fc-3874-0c31-d317-03b28dc3431e@zhaoxin.com>
+Date: Wed, 30 Jul 2025 23:21:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Subject: Re: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
+Content-Language: en-US
+X-ASG-Orig-Subj: Re: [PATCH v2] usb:xhci:Fix slot_id resource race conflict
+To: Mathias Nyman <mathias.nyman@linux.intel.com>,
+	<gregkh@linuxfoundation.org>, <mathias.nyman@intel.com>,
+	<linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <WeitaoWang@zhaoxin.com>, <wwt8723@163.com>, <CobeChen@zhaoxin.com>,
+	<stable@vger.kernel.org>
+References: <20250725185101.8375-1-WeitaoWang-oc@zhaoxin.com>
+ <094f9822-9f12-4c67-b648-84a48c2e154b@linux.intel.com>
+ <dec32556-c28e-aeed-8516-2e0bb56c3a58@zhaoxin.com>
+ <855b4621-fc40-4281-9e44-7a2ac861dd4b@linux.intel.com>
+From: "WeitaoWang-oc@zhaoxin.com" <WeitaoWang-oc@zhaoxin.com>
+In-Reply-To: <855b4621-fc40-4281-9e44-7a2ac861dd4b@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: ZXSHCAS2.zhaoxin.com (10.28.252.162) To
+ zxbjmbx1.zhaoxin.com (10.29.252.163)
+X-Moderation-Data: 7/30/2025 6:35:34 PM
+X-Barracuda-Connect: ZXBJMBX02.zhaoxin.com[10.29.252.6]
+X-Barracuda-Start-Time: 1753871743
+X-Barracuda-Encrypted: ECDHE-RSA-AES128-GCM-SHA256
+X-Barracuda-URL: https://10.28.252.35:4443/cgi-mod/mark.cgi
+X-Virus-Scanned: by bsmtpd at zhaoxin.com
+X-Barracuda-Scan-Msg-Size: 5302
+X-Barracuda-BRTS-Status: 1
+X-Barracuda-Bayes: INNOCENT GLOBAL 0.0000 1.0000 -2.0210
+X-Barracuda-Spam-Score: -1.60
+X-Barracuda-Spam-Status: No, SCORE=-1.60 using global scores of TAG_LEVEL=1000.0 QUARANTINE_LEVEL=1000.0 KILL_LEVEL=9.0 tests=DATE_IN_FUTURE_03_06, DATE_IN_FUTURE_03_06_2
+X-Barracuda-Spam-Report: Code version 3.2, rules version 3.2.3.145035
+	Rule breakdown below
+	 pts rule name              description
+	---- ---------------------- --------------------------------------------------
+	0.01 DATE_IN_FUTURE_03_06   Date: is 3 to 6 hours after Received: date
+	0.42 DATE_IN_FUTURE_03_06_2 DATE_IN_FUTURE_03_06_2
 
-The MT8196 eFuse layout is compatible with MT8186 and shares the same
-decoding scheme for the gpu-speedbin cell.
+On 2025/7/29 23:00, Mathias Nyman wrote:
+>=20
+> On 29.7.2025 20.25, WeitaoWang-oc@zhaoxin.com wrote:
+>> On 2025/7/28 21:16, Mathias Nyman wrote:
+>>>
+>>> On 25.7.2025 21.51, Weitao Wang wrote:
+>>>> In such a scenario, device-A with slot_id equal to 1 is disconnecting
+>>>> while device-B is enumerating, device-B will fail to enumerate in the
+>>>> follow sequence.
+>>>>
+>>>> 1.[device-A] send disable slot command
+>>>> 2.[device-B] send enable slot command
+>>>> 3.[device-A] disable slot command completed and wakeup waiting thread
+>>>> 4.[device-B] enable slot command completed with slot_id equal to 1 and
+>>>> wakeup waiting thread
+>>>> 5.[device-B] driver check this slot_id was used by someone(device-A) i=
+n
+>>>> xhci_alloc_virt_device, this device fails to enumerate as this conflic=
+t
+>>>> 6.[device-A] xhci->devs[slot_id] set to NULL in xhci_free_virt_device
+>>>>
+>>>> To fix driver's slot_id resources conflict, let the xhci_free_virt_dev=
+ice
+>>>> functionm call in the interrupt handler when disable slot command succ=
+ess.
+>>>>
+>>>> Cc: stable@vger.kernel.org
+>>>> Fixes: 7faac1953ed1 ("xhci: avoid race between disable slot command an=
+d host runtime=20
+>>>> suspend")
+>>>> Signed-off-by: Weitao Wang <WeitaoWang-oc@zhaoxin.com>
+>>>
+>>> Nice catch, good to get this fixed.
+>>>
+>>> This however has the downside of doing a lot in interrupt context.
+>>>
+>>> what if we only clear some strategic pointers in the interrupt context,
+>>> and then do all the actual unmapping and endpoint ring segments freeing=
+,
+>>> contexts freeing ,etc later?
+>>>
+>>> Pseudocode:
+>>>
+>>> xhci_handle_cmd_disable_slot(xhci, slot_id, comp_code)
+>>> {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 if (cmd_comp_code =3D=3D COMP_SUCCESS) {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci->dcbaa->dev_conte=
+xt_ptrs[slot_id] =3D 0;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci->devs[slot_id] =
+=3D NULL;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> }
+>>>
+>>> xhci_disable_and_free_slot(xhci, slot_id)
+>>> {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 struct xhci_virt_device *vdev =3D xhci->devs[s=
+lot_id];
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 xhci_disable_slot(xhci, slot_id);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 xhci_free_virt_device(xhci, vdev, slot_id);
+>>> }
+>>>
+>>> xhci_free_virt_device(xhci, vdev, slot_id)
+>>> {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 if (xhci->dcbaa->dev_context_ptrs[slot_id] =3D=
+=3D vdev->out_ctx->dma)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci->dcbaa->dev_conte=
+xt_ptrs[slot_id] =3D 0;
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 // free and unmap things just like before
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 ...
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 if (xhci->devs[slot_id] =3D=3D vdev)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci->devs[slot_id] =
+=3D NULL;
+>>>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 kfee(vdev);
+>>> }
+>>
+>> Hi Mathias,
+>>
+>> Yes, your suggestion is a better revision, I made some modifications
+>> to the patch which is listed below. Please help to review again.
+>> Thanks for your help.
+>>
+>> ---
+>> =C2=A0 drivers/usb/host/xhci-hub.c=C2=A0 |=C2=A0 3 +--
+>> =C2=A0 drivers/usb/host/xhci-mem.c=C2=A0 | 21 ++++++++++-----------
+>> =C2=A0 drivers/usb/host/xhci-ring.c |=C2=A0 9 +++++++--
+>> =C2=A0 drivers/usb/host/xhci.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 23 ++++++=
+++++++++++-------
+>> =C2=A0 drivers/usb/host/xhci.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +=
++-
+>> =C2=A0 5 files changed, 36 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
+>> index 92bb84f8132a..b3a59ce1b3f4 100644
+>> --- a/drivers/usb/host/xhci-hub.c
+>> +++ b/drivers/usb/host/xhci-hub.c
+>> @@ -704,8 +704,7 @@ static int xhci_enter_test_mode(struct xhci_hcd *xhc=
+i,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!xhci->devs[i=
+])
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 continue;
+>>
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retval =3D xhci_disable_slot=
+(xhci, i);
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xhci_free_virt_device(xhci, =
+i);
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retval =3D xhci_disable_and_=
+free_slot(xhci, i);
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (retval)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 xhci_err(xhci, "Failed to disable slot %d, %d. Enter test mode anywa=
+y\n",
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i, retval);
+>> diff --git a/drivers/usb/host/xhci-mem.c b/drivers/usb/host/xhci-mem.c
+>> index 6680afa4f596..fc4aca2e65bc 100644
+>> --- a/drivers/usb/host/xhci-mem.c
+>> +++ b/drivers/usb/host/xhci-mem.c
+>> @@ -865,21 +865,18 @@ int xhci_alloc_tt_info(struct xhci_hcd *xhci,
+>> =C2=A0=C2=A0 * will be manipulated by the configure endpoint, allocate d=
+evice, or update
+>> =C2=A0=C2=A0 * hub functions while this function is removing the TT entr=
+ies from the list.
+>> =C2=A0=C2=A0 */
+>> -void xhci_free_virt_device(struct xhci_hcd *xhci, int slot_id)
+>> +void xhci_free_virt_device(struct xhci_hcd *xhci, struct xhci_virt_devi=
+ce *dev,
+>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int slot_id)
+>> =C2=A0 {
+>> -=C2=A0=C2=A0=C2=A0 struct xhci_virt_device *dev;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int i;
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int old_active_eps =3D 0;
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Slot ID 0 is reserved */
+>> -=C2=A0=C2=A0=C2=A0 if (slot_id =3D=3D 0 || !xhci->devs[slot_id])
+>> +=C2=A0=C2=A0=C2=A0 if (slot_id =3D=3D 0 || !dev)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>>
+>> -=C2=A0=C2=A0=C2=A0 dev =3D xhci->devs[slot_id];
+>> -
+>> -=C2=A0=C2=A0=C2=A0 xhci->dcbaa->dev_context_ptrs[slot_id] =3D 0;
+>> -=C2=A0=C2=A0=C2=A0 if (!dev)
+>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return;
+>> +=C2=A0=C2=A0=C2=A0 if (xhci->dcbaa->dev_context_ptrs[slot_id] =3D=3D de=
+v->out_ctx->dma)
+>=20
+> forgot that dev_context_ptrs[] values are stored as le64 while
+> out_ctx->dma=C2=A0 is in whatever cpu uses.
+>=20
+> So above should be:
+> if (xhci->dcbaa->dev_context_ptrs[slot_id] =3D=3D cpu_to_le64(dev->out_ct=
+x->dma))
+>=20
+> Otherwise it looks good to me
 
-Signed-off-by: Laura Nao <laura.nao@collabora.com>
----
- Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 1 +
- 1 file changed, 1 insertion(+)
+Ok, I got it. I'll submit a new version with this issue fix.
 
-diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-index 4dc0d42df3e6..455b96c1e1f4 100644
---- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-+++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
-@@ -25,6 +25,7 @@ properties:
-   compatible:
-     oneOf:
-       - items:
-+          - const: mediatek,mt8196-efuse
-           - const: mediatek,mt8188-efuse
-           - const: mediatek,mt8186-efuse
-       - const: mediatek,mt8186-efuse
--- 
-2.39.5
-
+Best Regards,
+weitao
 
