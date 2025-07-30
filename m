@@ -1,154 +1,205 @@
-Return-Path: <linux-kernel+bounces-750570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2D6B15E2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:30:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0599DB15E2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6716E16A79D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:30:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DBF816D417
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2226226B95A;
-	Wed, 30 Jul 2025 10:29:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0C532853F1;
+	Wed, 30 Jul 2025 10:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JBzaE8mt"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0sM8WI0F"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6ACE21323C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 10:29:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753871394; cv=none; b=asK9uPr7u+2f7adOxL1SH1OW3epbvMiqJPXlXBtEU4Zh/8uc1af36D3CUtxJg6EhoTUAOHVMvawqjP/zp3osCkKX+D85fE8nzvvCurRnXnk8LTVgOLOGkIUHxboo4KTBt85kz+lMGrSiEtWpM5+8U83Qplv4zTW81DmEe6y149Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753871394; c=relaxed/simple;
-	bh=g32rR9qU4kIiq4ZDdhalVntuHNQUFPPPoLfAdLm96tM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qKoAV7l+plAlAgvh70eLLZtSBasscoWJtx6BTdfLi7xcj8R//2TH23AHwhMnaHBkJRBdXS0P6Unc1GawZIXEC5B8VevmjW5f0othSqNJkLU2hZNUCGWSxRCErB5yBsWf03v2cti4E/s2TSgfM8rdi6aS1BYRXsS4LnALLLcAu4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JBzaE8mt; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-719f5a141a3so4894547b3.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:29:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753871392; x=1754476192; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8DfRGBX3mcpytWgeuQOoQcWlLUxxXP7ehgwEP8S8+jQ=;
-        b=JBzaE8mtJ3Ny2bHKAB30lPQDy6AaMbEqiAEki77two5pZm+C3NT/o1khfRr8Hr5hpB
-         iTecnffx+lLkLzO7BadFmMgBJcxYzmKYq/UsTJ4jBS6C08L4ynvd9xH/FjZiBN6kPen9
-         4NThFlbcG5c/EV5Eqtkc3I+wyV7R64ghPBPMKYRZaeYDj5kf155ocwhLrbhKXGeCxK/p
-         ukV3m2kivRp754NLy7GFzIbh1VQ8F/vIJpNUNsdQ3eLJSJCXj3mYMtjB8V8bZyjlskLb
-         RPQpbHGraTLpy5zN/r3LlpyAzgfsA+xpjcvJsbi2WSpWrF9MQjBdO2dgcukFbf1SXFDW
-         8buQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753871392; x=1754476192;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8DfRGBX3mcpytWgeuQOoQcWlLUxxXP7ehgwEP8S8+jQ=;
-        b=psVtArXm9D1XYAOLoB9DJ06bra+BRq9vS5nDXZhw9WpDtH69jo7lDCN+vOHcNkOugi
-         ILhvsdpFAVvjDuzrPj5lpZ2CvS8pEMaAOMLA+ejsYOrQ2i++3zA3bi9vVDPFIePr2O/6
-         5dd7e4J1CDAisuyw7sFEkAD4BYEFWF7pkTVlbG75+7r0ozwtaEuAwtaWz58wWP/lIIXI
-         63Q+Yu9vlBAos2T8SmaYr+3SkOotuC/hzdkFomoBaIyRFzcCXU6NYYQNVbnWagPUJ6Zt
-         o+jSHb8GCDAvhi61ofB8wzCBgMxXqlyZwJa4iW37Pjfaeo3bP7ki4HkRhs/QEpWqn5od
-         Px4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXaBrialQBJ90DsMzA84n1HNHS/r+ZegApHFOOHnZQZOYqDn1Dn5R6er3v+xYqSRytgOtib1gMjaqhyndc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCNYfX97QkVPpns6h2Bt5aVHaDbkexl2T2dFWhVt6U9ZQDt2he
-	nrp0Ch9U723vvSVaAaP02+KHIkyIWnhFd2zL/Xz280mCR9McizKeHJl46VezZj6ctKQMxWwBlOl
-	1tiuCnNVDLi38MmoIvNnVVijiCS8YAZB72gWZeRGa1w==
-X-Gm-Gg: ASbGncs9g4NJ9OiIYt2PB5uqsE+oXCmheqXRvtct/Tj2b+ApNtR6wOXH/N18bIS23th
-	rD1hHjaWKBAz1RRUJnabHOQN9r72qEQSFj/6qW3IIlCFnkMMVw3B2At/MwarBseMsFxe9faoem1
-	80G1HS8b1YZMA/AhHhjiX78X7GQ+d3r1eDiHz6E36SrnDEAsshyirzaaoBAnRflhT2bTlDBrGbr
-	8MifsMiJiC8soHipTU=
-X-Google-Smtp-Source: AGHT+IGFQjbmfwQ2KygX5zLfPtAfVRDoKZEoCDWpl15Tj6cbjvtyN/moXAbjn/fUqackhgtTl9hi4qXu0QdfTHnMzRw=
-X-Received: by 2002:a05:690c:3686:b0:71a:2178:3e70 with SMTP id
- 00721157ae682-71a4745d2abmr37909517b3.8.1753871391946; Wed, 30 Jul 2025
- 03:29:51 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8665239E81;
+	Wed, 30 Jul 2025 10:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753871417; cv=fail; b=WF/0aVq+hYwISoCy2TYiNWri7lLX7zZELy2ENUEKf2WPTV1GiGLWQcneTkhqdmYo+Rd3J3Xe4euZFXxK8fM2qguDBtaMzsTzrp053gyj3as1Z63nPTZgyvWxYx/HDsa8y3EAx8B25k/rxtZN/9sF5JWCH7PmYVAisCS6Yf9EsOA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753871417; c=relaxed/simple;
+	bh=oR0DBEz9ATfyKW3c9xHBYU6DLF+Z2TmJCfUnn0zK4hk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gi8naaoBjPJNLuMtQNJV63x6mqbkYVCQLN3xpoWagApfPPNrT5JuvxOkGZSayAZw3kDSI1p+jO1BqCeu//08aoxHP7TsCZ9DEomCa45QdMq5JmmaRghelVULNlCoqYDyuCAwxp88DSlY5nclIfmknuqUDkDuCDR44ITctNMYGTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0sM8WI0F; arc=fail smtp.client-ip=40.107.244.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=meGqUdjJxuUBWzWTxMnhbnckOg5Lu2/YejOWGGz2mJvAD9700S1ew+nPhnTHlwZQS98UqjeyPFusEtxenMhJq610zLgGxcCnxzjuZc4Trx8kKaZb6hvfAbizXpDT6/ktEuF3H1l8wQ4ZZzSjGDG1F/j/W/rfcyyPWwrzgt4IxvronnbX8riXNAbfW+t6fz5CISyVavQ9CKMUZ/xV5Jtj5AqBQk+MOdj5kb0EtjtKesZIxuRF/IYjbT0wQybtiOtDHK1qBt/f0zrFBicfZwS1c+7vTuO37/8ISyi7iyfGMLqPbAo3SUJqYUSdMOXnKEkLJjq2F+z0XFpYgBjzzZ6vqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8FiMtBeE7XQ2cWZ2CaPS+Ip8BDHFPPKgVM1s0BzdyXM=;
+ b=PHr+fT9KcXRDpucivci8AUZuUzv9PkeqVYCXPx0+LKt9B1VhsOMK6iNtTdeNkdI5dAmDI2Lby6etGG+gPMBJDE+K/CZHXucmUkxCGeUMmajR3teBrFk2C/hPyIaGjEqiYXnCXt4RHgvvgvwAZuAggtNKr0Z1ciItTXiATL7sz3r0niqwZTIJ0uHvY7aUd/lCy83sML1I9t3I7Dy6lCtJhY3LZwooV2gXaVp576vkZGIcTpkUo/KZNCEC0CVkzFD/fEUEcTeovnkdccieIfY+53P+/L484YDEJWAw0ZVRFbi70/Y532ItmlEG1hoCo3WSr81a3K+9yMuo53IuEtTo5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8FiMtBeE7XQ2cWZ2CaPS+Ip8BDHFPPKgVM1s0BzdyXM=;
+ b=0sM8WI0FFhi6xOn+70o/+Lo1bB+sbOENffYKCRG6bM+d3u9RIXas8669eVc+++At3iyeX2BD64a8/NMJIZRJuv6939dfOZ6HrU4Hy4RwQ3VKfdrzVSfFbYgbJWIxKDn/EHLfv6ZpjRtTrRSqIl91y7YA7/fubFMBZt0QKb9xYqg=
+Received: from SA0PR11CA0168.namprd11.prod.outlook.com (2603:10b6:806:1bb::23)
+ by MN2PR12MB4374.namprd12.prod.outlook.com (2603:10b6:208:266::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.25; Wed, 30 Jul
+ 2025 10:30:09 +0000
+Received: from SA2PEPF00003F68.namprd04.prod.outlook.com
+ (2603:10b6:806:1bb:cafe::a3) by SA0PR11CA0168.outlook.office365.com
+ (2603:10b6:806:1bb::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.11 via Frontend Transport; Wed,
+ 30 Jul 2025 10:30:08 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF00003F68.mail.protection.outlook.com (10.167.248.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8989.10 via Frontend Transport; Wed, 30 Jul 2025 10:30:08 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Jul
+ 2025 05:30:04 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 30 Jul
+ 2025 05:30:04 -0500
+Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Wed, 30 Jul 2025 05:30:02 -0500
+From: Devendra K Verma <devverma@amd.com>
+To: <mani@kernel.org>, <vkoul@kernel.org>
+CC: <dmaengine@vger.kernel.org>, <michal.simek@amd.com>,
+	<linux-kernel@vger.kernel.org>
+Subject: [RESEND PATCH] dmaengine: dw-edma: Set status for callback_result
+Date: Wed, 30 Jul 2025 16:00:01 +0530
+Message-ID: <20250730103001.1646225-1-devverma@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250701114733.636510-1-ulf.hansson@linaro.org>
- <CAPDyKFr=u0u2ijczExkntHK1miWZ6hRrEWBMiyUwShS3m6c29g@mail.gmail.com> <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
-In-Reply-To: <CAMuHMdX1BacUfqtmV8g7NpRnY9aTdL=fh+jC7OryMLz4ijaOCg@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Wed, 30 Jul 2025 12:29:13 +0200
-X-Gm-Features: Ac12FXyYhnc-5Yj1CQN0T9Q5i6IKPQAs_4KsBvKN_tu1xC2bA9MW4FBogdA1snU
-Message-ID: <CAPDyKFqANQZmGXd8ccA5qWiGrCor2N=W_7dmV+OK8hMd_+zmmw@mail.gmail.com>
-Subject: Re: [PATCH v3 00/24] pmdomain: Add generic ->sync_state() support to genpd
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Saravana Kannan <saravanak@google.com>, Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Michael Grzeschik <m.grzeschik@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@oss.nxp.com>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Johan Hovold <johan@kernel.org>, 
-	Maulik Shah <maulik.shah@oss.qualcomm.com>, Michal Simek <michal.simek@amd.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Hiago De Franco <hiago.franco@toradex.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F68:EE_|MN2PR12MB4374:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f0ecca1-9fd4-49ed-24f0-08ddcf540eaf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zzdoshpq/P+vkH0PZ4khCNWJuE4rPYieQaW0RiJLFFDoarzLLfnHM4pZHyS/?=
+ =?us-ascii?Q?yFfFUsN1bOOzhf7XeRm5+nRW5W2iZ84xIKb0QN6t93c/5OLsa/pD9PObafkI?=
+ =?us-ascii?Q?Hz3x1nw8TV/uWbgpnFpN/pxkTGkPYXnuYDfxJiNh66kkp9rP0ZULw95MFwX8?=
+ =?us-ascii?Q?OSiPU1QSrJc75BNXALOkfVpBLhwuQbhi4gt0z8RisT1qSlkWAWCs3DPLx+PI?=
+ =?us-ascii?Q?7vG6CKS6mRxdLt8EZ7hMriGSKo1ol8uUR4jQaHtgv3yJMZwS3uPcASHZIYxJ?=
+ =?us-ascii?Q?lw1ndAJASRnbdaSZRyX29NU+c5t8JQ8sWIM+xGzgTmAkA585MfhdNNd1Ye6C?=
+ =?us-ascii?Q?MqZ4ZdnxFRuiuZ15AOvshKXWRNdgPJA0MGnR6ok8nqwCTnu6QRyHei8sLJ8R?=
+ =?us-ascii?Q?Rh0ua9eDHP4fs/u70e/KP21LprkELlU7FD7Tm2jgJFI6swi07FHtuxr/l3uw?=
+ =?us-ascii?Q?tDeWLYm/bjWeZ7410dDcgB1WPeyACv+/f98Qgb6pEuD7PsxYfb/kDY0Ibx09?=
+ =?us-ascii?Q?UqTjut7AjnqE2XM2vtmlV6djytsCL0V1Od5PcZZEuWOscEtKo+5SRsBFpPSm?=
+ =?us-ascii?Q?iuSm10UAfm/DlUU95CYUkZYpoB3E3/XmxJTwL4FGhsKsZVGhb0J3dIoF9OtG?=
+ =?us-ascii?Q?aGtjp3HWs9DyT82Mx47XHdG2DZjw1xQILTiX3vzjisO1wuexxLxrvBW//9Qj?=
+ =?us-ascii?Q?AEAu8Qcbl89e9hJBzu0gFdIsqbRFyUbIWNbd7VtIarmJ+daNsChQdxQune8E?=
+ =?us-ascii?Q?EhQUPMvHRhE2tuuma65ZpKhbsE2kyJ2+i57MZX/EKSoPiUBIgii77w1UAedN?=
+ =?us-ascii?Q?jImDMFTIuwpL2T/YPpOBfjUFLMrxHDYliz51ue4uthrWatwy18lwKK7doiql?=
+ =?us-ascii?Q?HJ5QPkOIQWKNXOMM0tNEzi8+c8Y7x+IwBhlYWV+SdcZ77n5uTXFekJv2NmyA?=
+ =?us-ascii?Q?8nqSAx6/Z1K+M1O06t6J5rfiuNJrdJWTO7Rhp2YFVs99ZWG6wffwkJnxGBle?=
+ =?us-ascii?Q?U/4/GcdGxqZAlNWwA1KD5O2Xw95B0g3n7OfebH4px4c7EhViFm/1GVqLwOtT?=
+ =?us-ascii?Q?kK2bV9+QcW83e4zrHOvoiR/lQBk3lu4DvMQSTrO16+2iY/SIP1+1PwxAowkI?=
+ =?us-ascii?Q?YymCSdCeNtA3un0Kn++tPePh0hJlKy4PSC7ZGRdBUJW2rtVj/ShVqjLG2Mzd?=
+ =?us-ascii?Q?Kwz9OSs8mD8Y7kA78cWMTKxBbuiqc4L2hJjkMd5TaGChiQJaTTpklHTBZHDj?=
+ =?us-ascii?Q?c6lgRBeNreS4E2BUNQReAJXpgzng9gCYNe6wMbAwvy5N7/5BSFCAGG6UA8kF?=
+ =?us-ascii?Q?83+vaCRItqvgjdP1VUDbytP3NCnRGuXXthPW3NhWfmc7uIxhXyS+f62L8ft9?=
+ =?us-ascii?Q?dy059LtM0GmBlnSpF293GsVPQO/O4CbfqMQBZ140glTFNxrKPmw+Nq9qyPWE?=
+ =?us-ascii?Q?PUsoCUnQBcn/c7qERwY6zwjkO1PM34VeVkFcVs05Dt6cpKvz2aXP0oEbDTy4?=
+ =?us-ascii?Q?tpk3df61sL53Sr3Gzgf8xkICBfzHrnyvxv7v?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jul 2025 10:30:08.6371
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f0ecca1-9fd4-49ed-24f0-08ddcf540eaf
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003F68.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4374
 
-On Wed, 30 Jul 2025 at 11:56, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Ulf,
->
-> On Wed, 9 Jul 2025 at 13:31, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > On Tue, 1 Jul 2025 at 13:47, Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > Changes in v3:
-> > >         - Added a couple of patches to adress problems on some Renesas
-> > >         platforms. Thanks Geert and Tomi for helping out!
-> > >         - Adressed a few comments from Saravanna and Konrad.
-> > >         - Added some tested-by tags.
-> >
-> > I decided it was time to give this a try, so I have queued this up for
-> > v6.17 via the next branch at my pmdomain tree.
-> >
-> > If you encounter any issues, please let me know so I can help to fix them.
->
-> Thanks for your series!  Due to holidays, I only managed to test
-> this very recently.
->
-> Unfortunately I have an issue with unused PM Domains no longer being
-> disabled on R-Car:
->   - On R-Car Gen1/2/3, using rcar-sysc.c, unused PM Domains are never
->     disabled.
->   - On R-Car Gen4, using rcar-gen4-sysc.c, unused PM Domains are
->     sometimes not disabled.
->     At first, I noticed the IOMMU driver was not enabled in my config,
->     and enabling it did fix the issue.  However, after that I still
->     encountered the issue in a different config that does have the
->     IOMMU driver enabled...
->
-> FTR, unused PM Domains are still disabled correctly on R/SH-Mobile
-> (using rmobile-sysc.c) and on BeagleBone Black. Note that these use
-> of_genpd_add_provider_simple(), while all R-Car drivers use
-> of_genpd_add_provider_onecell().  Perhaps there is an issue with
-> the latter?  If you don't have a clue, I plan to do some more
-> investigation later...
+DMA Engine has support for the callback_result which provides
+the status of the request and the residue. This helps in
+determining the correct status of the request and in
+efficient resource management of the request.
+The 'callback_result' method is preferred over the deprecated
+'callback' method.
 
-Geert, thanks for reporting!
+Signed-off-by: Devendra K Verma <devverma@amd.com>
+---
+ drivers/dma/dw-edma/dw-edma-core.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
->
-> BTW, the "pending due to"-messages look weird to me.
-> On R-Car M2-W (r8a7791.dtsi) I see e.g.:
->
->     genpd_provider ca15-cpu0: sync_state() pending due to e6020000.watchdog
->     renesas-cpg-mssr e6150000.clock-controller: sync_state() pending
-> due to e6020000.watchdog
->
-> ca15-cpu0 is the PM Domain holding the first CPU core, while
-> the watchdog resides in the always-on Clock Domain, and uses the
-> clock-controller for PM_CLK handling.
+diff --git a/drivers/dma/dw-edma/dw-edma-core.c b/drivers/dma/dw-edma/dw-edma-core.c
+index c2b88cc99e5d..0db618806c1c 100644
+--- a/drivers/dma/dw-edma/dw-edma-core.c
++++ b/drivers/dma/dw-edma/dw-edma-core.c
+@@ -596,6 +596,25 @@ dw_edma_device_prep_interleaved_dma(struct dma_chan *dchan,
+ 	return dw_edma_device_transfer(&xfer);
+ }
+ 
++static void dw_hdma_set_callback_result(struct virt_dma_desc *vd,
++					enum dmaengine_tx_result result)
++{
++	u32 residue = 0;
++	struct dw_edma_desc *desc;
++	struct dmaengine_result *res;
++
++	if (!vd->tx.callback_result)
++		return;
++
++	desc = vd2dw_edma_desc(vd);
++	if (desc)
++		residue = desc->alloc_sz - desc->xfer_sz;
++
++	res = &vd->tx_result;
++	res->result = result;
++	res->residue = residue;
++}
++
+ static void dw_edma_done_interrupt(struct dw_edma_chan *chan)
+ {
+ 	struct dw_edma_desc *desc;
+@@ -609,6 +628,8 @@ static void dw_edma_done_interrupt(struct dw_edma_chan *chan)
+ 		case EDMA_REQ_NONE:
+ 			desc = vd2dw_edma_desc(vd);
+ 			if (!desc->chunks_alloc) {
++				dw_hdma_set_callback_result(vd,
++							    DMA_TRANS_NOERROR);
+ 				list_del(&vd->node);
+ 				vchan_cookie_complete(vd);
+ 			}
+@@ -645,6 +666,7 @@ static void dw_edma_abort_interrupt(struct dw_edma_chan *chan)
+ 	spin_lock_irqsave(&chan->vc.lock, flags);
+ 	vd = vchan_next_desc(&chan->vc);
+ 	if (vd) {
++		dw_hdma_set_callback_result(vd, DMA_TRANS_ABORTED);
+ 		list_del(&vd->node);
+ 		vchan_cookie_complete(vd);
+ 	}
+-- 
+2.43.0
 
-I will have a closer look as soon as I can  to see if I can find some
-potential problems.
-
-Kind regards
-Uffe
 
