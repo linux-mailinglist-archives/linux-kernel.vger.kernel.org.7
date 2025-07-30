@@ -1,229 +1,246 @@
-Return-Path: <linux-kernel+bounces-751198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6B2B16651
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:33:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 340DFB16653
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A5FA623E65
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7BE162404B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A842E1C5D;
-	Wed, 30 Jul 2025 18:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4772DC32A;
+	Wed, 30 Jul 2025 18:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EeEi2PDn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XEgCSfkT"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F771F4C89;
-	Wed, 30 Jul 2025 18:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753900405; cv=fail; b=IgFWDVx9KQgtNYEy8s1hsGvS/V+4Pp13G5wqhYauCSwaYs7uP6s9EqQ5+FH3A5NeexrL1GHJ874DrgHMNCJHeDdXP5cuX6hs2rKk9vCJGA3OJ5SRmceDfd5JPHbHbjx0IBQpSQLt64x54ZOyYE6ukDrbmAt2+OzVNCG/YHv2Ro0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753900405; c=relaxed/simple;
-	bh=1tNhke+TG3JQ/TVGgyX0LujpChBWugMvoLo+JsiwDIY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=uy/TK6yH+hhjL3aFI/GzSovbNP8Yg1y+MC6vIBwYOd/iwRjrgmi2/rIJLsB2f8yzrDyHeJ0XlhcIVjAKJNwkPjCZIOjvGr4AhycZr0iU4o8FXAt9cWJysgG2Mx3GJiRI7sCNP/oae0b3dL57gUL0OktQgqlDrP/h7VJH9HzDtbI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EeEi2PDn; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753900404; x=1785436404;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=1tNhke+TG3JQ/TVGgyX0LujpChBWugMvoLo+JsiwDIY=;
-  b=EeEi2PDnBHH4mNIhDuy29AG3xX6vJDFREn88b/T6880ovPWcMB2Ashrr
-   HRzdJ+/e/DJFFjLVe3HqQ71wKNI+vuzQYb+HRKQwyp1ajN+Cmfwr9wfbI
-   wkl7PVxTZ06rHiCd7nnDIISVtXaa3qee3yE+X4mH+WoQZshb0y2gWivFA
-   6dLLlXKfoCvNWsjC/R86ZcXmnVFW/vXv17jFXafvaVupNinIqTQjN/zpO
-   sIn/2f7bgky897ijPH3rdVeSBcfJ2A1sGsYtZ7CT+IPztWrbKJTA/mwTU
-   9nQ6Zq8DRhQOvQVGcFfbYHFdRXvvGfuxX8IlaXVSoHuxwGyI1lsDnC+f2
-   A==;
-X-CSE-ConnectionGUID: jsyBr0cCRgeKnykS+y8opg==
-X-CSE-MsgGUID: IFMAVVxzQfGSJjtNu/pVaQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="60036256"
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="60036256"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 11:33:23 -0700
-X-CSE-ConnectionGUID: ao19sIoZQgavRbdPqPUFxQ==
-X-CSE-MsgGUID: 9NHE0V2dSvS0hLAAKD5auw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
-   d="scan'208";a="194032167"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 11:33:24 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 30 Jul 2025 11:33:23 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 30 Jul 2025 11:33:23 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (40.107.220.85)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 30 Jul 2025 11:33:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yoXoxHgHLfy5fMev+HOYmjilhwAa5yvKAuDRWTVHZeUYY9OT5qy0KM+7804XVgy7fhGsNbsvDqbdkRimfte6qdaAHbeke8bt1L9Xd6zhnUVTpJuHlUWTZ8feRWS+TteshSFFZVrSamKe0FU2+Y/g6nVmEaCERMzfvaElzQk6sCQ95uFvsoWsgyAYcH4yimcW5hBD0LWh4O3jBYVJwi5DIYc8l6g4GjE/mb0Q9HdBUxkMne2HCiRiRhWb91cCrfnrEEsC392nR+dn5zDN+562jhebYM5fRbupaPZFLn0guuWEb/NAmkQvZmkPFSzzegxGF4H/M+CL0q/Fi3PP/eYG1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1tNhke+TG3JQ/TVGgyX0LujpChBWugMvoLo+JsiwDIY=;
- b=DbGb2WolUaoyI1mnCaQ0aIVv3N0PK8yuacvkrtfkLSO4NsMf+5+llVtlgYPPYNlrS443kCjxzSoAqsW4oi2RGzTSBkxjZ99KXj2MqVmrvP1tLzjJaIJpvGEz9Ul3mr6G00bjGEPRc/0x0GkSz3SLmXsU4ekSA3pu3j/fvuvl/dRYSOlT/85NjCRRuPb7G9OxRuUICf4GayIWWHBtp/YKLu1WAuAuxb90y2MT1sZcefKd9NburMEsl8D8c1IEL6BQczmiwzJEC12JS9EaghcMnide+wXIcKTnF6JFgmawfYjnxA2f/gp1dxJOWmcIL01e42VT9g3YAjRgs+R76TRxxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com (2603:10b6:208:372::10)
- by IA3PR11MB9352.namprd11.prod.outlook.com (2603:10b6:208:575::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.25; Wed, 30 Jul
- 2025 18:33:07 +0000
-Received: from MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9]) by MN0PR11MB5963.namprd11.prod.outlook.com
- ([fe80::edb2:a242:e0b8:5ac9%5]) with mapi id 15.20.8964.025; Wed, 30 Jul 2025
- 18:33:07 +0000
-From: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
-To: "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>, "Hansen, Dave"
-	<dave.hansen@intel.com>, "seanjc@google.com" <seanjc@google.com>, "Huang,
- Kai" <kai.huang@intel.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>
-CC: "Gao, Chao" <chao.gao@intel.com>, "x86@kernel.org" <x86@kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>, "mingo@redhat.com" <mingo@redhat.com>, "Zhao,
- Yan Y" <yan.y.zhao@intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "linux-coco@lists.linux.dev"
-	<linux-coco@lists.linux.dev>, "Yamahata, Isaku" <isaku.yamahata@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv2 01/12] x86/tdx: Consolidate TDX error handling
-Thread-Topic: [PATCHv2 01/12] x86/tdx: Consolidate TDX error handling
-Thread-Index: AQHb2XKrlmf/Zzss+E+nUDEbBxD0tLQUQqeAgABmnYCANqSeAA==
-Date: Wed, 30 Jul 2025 18:33:07 +0000
-Message-ID: <e49e0cbdf781944fe133ad589b438604122e2fa4.camel@intel.com>
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
-	 <20250609191340.2051741-2-kirill.shutemov@linux.intel.com>
-	 <5cfb2e09-7ecb-4144-9122-c11152b18b5e@intel.com>
-	 <013baf358a7cfb958df6e44df0ccd518470a4d39.camel@intel.com>
-In-Reply-To: <013baf358a7cfb958df6e44df0ccd518470a4d39.camel@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Evolution 3.44.4-0ubuntu2 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MN0PR11MB5963:EE_|IA3PR11MB9352:EE_
-x-ms-office365-filtering-correlation-id: 949eb7d1-341e-4e5c-9146-08ddcf978753
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?Sk9aWXcrQmUzbUdDNXpERCthWE5mSFIydHFCanlJQTBKbHhWWHJ2bXE0eFlQ?=
- =?utf-8?B?STcwK3RDV09YVkxmUlYrMndibmVGMWljNnU1UlQxcmNZcEZVdDhzYzBTaWJU?=
- =?utf-8?B?bVZyVERidmptWHB6ZjJTNW9KRkxrWld6aDBqMnliSUFkVlpKaTVWZ2pKM0p2?=
- =?utf-8?B?MmpDR2Y4UENQTGhvZVhsdC9Ya2lNdlNCY3dldHFCdUdDalBSb2dWaWRnb3pG?=
- =?utf-8?B?U0UwNFN3S1d6ZjM4YVBkOFpDUllxdGlPeHdkWmF1Nk5xcVYyR3FXWG9sMHRz?=
- =?utf-8?B?V1BaN25LaFZaWnlnZmgrT3pGbWFjb2JhNGd5VTB3TUV1ODdsU0t5N0VBeUNv?=
- =?utf-8?B?QWdPazB0bk44VEYrTzVQbDlPZDhVVzBCdU41UXNrSWpTOFgrWmhNYi95TWdq?=
- =?utf-8?B?cU1SYzFPWVlLT1Q4ZzJYR3NYU3RCVGtYVGR6OEsyM2dBT2lCbHkxVVZ2SlA2?=
- =?utf-8?B?K1RnbkFmaFFMMHJXMldSbTRHdVY4RkFHeGhlSzZhK1dldjhGTis1QkhOelZV?=
- =?utf-8?B?ZllINm9VNGRmTjg2QmJhOWhKUitYajJnNHRBTmxzZlNWb2NRVFBFK1Jxd2Nj?=
- =?utf-8?B?T3hyNHQyMTB4UVVPMnplTGxHUnNhREY0Q3lrUTFSaUVvMm1FcEpQUDMrM3dY?=
- =?utf-8?B?Zmp3UUF5UFNUQmovdmt1VFZud2NkbFp5cDQ5UU5PTmxhcDI2dHM2TEczazFO?=
- =?utf-8?B?SUpHc0VtUTFwZDJCbkNHK0RqNFg0ZGZtcUw2a3hqcHZHZHZYMkdySW1PYzY0?=
- =?utf-8?B?M0RuclJJWXJFeGFVSFVWUERsQmZxYjZXWHZXNEpnWXIvSHhKbWhIMXYxQUNp?=
- =?utf-8?B?OXlRR3cyNDNubXJwcTBNT1lPbUE4K2J4YnRkZjJXa25PZDgwVmNVa2ZUTTky?=
- =?utf-8?B?K2VmRFlMZ3dOc0g1Y0hRRkdBS2hyV2lyMGIxVFk1b0NVZUk1dERlOTJrVFhC?=
- =?utf-8?B?ZCtkUi9ncTVra3ovd3EzelQ3L0VNUWpoV2h0U3RtaklDeWMyS3ZSNVBpVTZT?=
- =?utf-8?B?S0g4MWhrSVZHQTV6ZU85MmNMTXkrWjYxcnp4cEs5S0NMS2RrQWpMQzl5Qk92?=
- =?utf-8?B?c0hMOUxqZ3NWNzNhL3dSTGpvaGkybW5QODhIS281a3BzRXA2elk5QTB6NHFO?=
- =?utf-8?B?QTFvRm03UnRGajdtV1pEUExjKzNBYmVteVFpemdoNVRNRW1PVXF2S2hhSVdJ?=
- =?utf-8?B?WHhxRFBFQUZZNFhJUmk3aHRBazJJWWt2MlZZZzJyY0hUb3pMQy8vT1FqQWcx?=
- =?utf-8?B?V1FlcEpTcmdnZWZ6bGlkUWVMS2pDQ2JLVEgrWDdyVEY5SUJHZnA3VTFNKzRv?=
- =?utf-8?B?ZDhtYmRua2xWZndteWVEZGNBM1J3Z3JrWlpnNTN0RlY0dmJpWndnY3pmdW0y?=
- =?utf-8?B?aGhWZ01IV2JrbFlDemhmZTRSaCtqaUhCSU1tcFo1ckdIVGVJdFRjYk40Zytn?=
- =?utf-8?B?cEZEeVZXQjhCeTh5K0JHeXVQcStzY21LZ21QSmtyK0FKa2ExNVUzMUFHU1c4?=
- =?utf-8?B?VHJzMmxGbEpHeFU0Q0lxTSs4TUVsVE42NmMzNlRqc2pITnEzQnhWV3JhZHcx?=
- =?utf-8?B?YXZZTkhXVnp4QXFtZEthcmNiNWFYVnhFSkhseW5IdUlyMU5FTGlrK3dyR3JJ?=
- =?utf-8?B?MjZlNFVJR2UwMkV1NHg5Vnp3RGg0ekl6ZlBzdXU3RWhDc1dxQi9TQXBQNktq?=
- =?utf-8?B?UkdOQ2I0WFI2d0E1UC9BSDh4NnRuZ1Q5UzJoWkRLR2JPbUNoZWtkM2Y1NmFE?=
- =?utf-8?B?TlUxYmtSczJVR1pBYXN6cnFYOURxdS84dEpxeHE1QkpkNGhUNVpUcTcxV0lp?=
- =?utf-8?B?YWN3ZVdUTnY0UTUrQUNWOUFSYmF0WnVlVDNYcEordmk0MVJBK2kxZjlHczhr?=
- =?utf-8?B?dnpwV0lhUUtsK2ozS0NVNEJPU0VkU09hOE1yellHY2xSNm02L3U4YlNPNEJq?=
- =?utf-8?B?azhIMzE3R1l5eGI5Rnp1cmgxQ2pGN2U4bFE2N2lIVytsN3Zsb3JIakViWWEy?=
- =?utf-8?Q?WJyELt0X9WAENYftUWShJGOf9eT0I4=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB5963.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?UVd2cHViZDFrZ21tcE5RQnRFR2ZIM25OVVpGYkpZa0lLRS9Qd2crUmRaNjlT?=
- =?utf-8?B?TDlOaVFPQ1d3M1BvU2ptOE5iWkQ2eW1Pbjc0SG5GOVRlNXB2UnZqVzhkai9M?=
- =?utf-8?B?UGNCcXcrRXB0cE8wQTJ2dTJsamp1YU94a2prUktpVkFDanFueVVaeVpvUlNN?=
- =?utf-8?B?dWxYV2d1VzlQV1Awb1dndUtHSnBBQUpMMWlsd1pVWmIxWU5oWXpjS0ZXaFFH?=
- =?utf-8?B?cTQvRmM3UU5BeTB3a1hWVFBJUXNnY21HZWo4TjBraUJ1amZxNk1sK1pUSWJE?=
- =?utf-8?B?QnFDUVZjcExCcnJCcE1zYW96R0oxc3RSRVFvdXlNL3ZTRVZUcStTRUxNdXRY?=
- =?utf-8?B?dmFtNG5EV1ExcWZ4YzE4Ulp3S3BBa3hvc2FaODJ1eE91Nm81RHJoQ0pEVW5l?=
- =?utf-8?B?RlRQS2NCWG0xVnpRb3pFS1g3SVowbG9RUlhhRVpJbmMrMmpwQXVXeHl4dnZw?=
- =?utf-8?B?SC9sT29TeVZXRXA2eGh6M0dKZ25SUGhVbVY4SGR1ZVE0ZEY3UmhsOTcvdGFo?=
- =?utf-8?B?djhHV2VVY0ZFQndiTVJmc0JzK3JuY2gvQm05NCtQTStwRmZ0bmVqNE0zWUJG?=
- =?utf-8?B?SWxOVS9kVzdGUVgrbnY4VzN2aGs4S2dNUW9QMlduQzhtTzlRUlBuWE1kV0Fs?=
- =?utf-8?B?RHh6SlZoRHUxVlhoMTlLWncrcmdlZHZrZ0I1ZkhzNllBanRud0FJWUxNN1Nj?=
- =?utf-8?B?dTR2bmdDb3oxTDhwQ1htNXZ6V0VXYm9ZU04rNnl1MlFxdUdpeDNxbTFXTTRK?=
- =?utf-8?B?Q2ZTZVl3ZVBjVERXR01MVlFWSiszU1RVdG0zeHE2bXRVdmFOUXpGeEVyemJY?=
- =?utf-8?B?VDRGVzMvY2Vrb0NDWTdNUkd1SWQ4WXZrZitwUExOaXdMYmJpYTZsaGw3YWtt?=
- =?utf-8?B?bXZSc3ZidXdvZWtKM2Q5em5Oa1hva2pFNnNOTnplb1dka0VzdHdxNzJudjJD?=
- =?utf-8?B?LzEvd1JNeEY4TXhrTmJQU1A4eis3b0dnV1lOaWJjQk5mRE8wM2xvb2l4RGFL?=
- =?utf-8?B?VEhJN05jWkw1VTE1V3JsVFpiM1V2am1UdjZIdFA4d3Y0RVRtSXp5ZDUzSXdF?=
- =?utf-8?B?dlVuTnVrMWw1K3Z3S2dVK3N1elBTcnU4cTlHSGpUTU54ZXM5bExCZE5TclRI?=
- =?utf-8?B?a1NIdzBad01pK1hSVjBPVWNFS1FqSUh1RFhFVHFmVTBMQlVZcG9WejE2UGVi?=
- =?utf-8?B?YlQ3UUhNYzNuSlppOHVuWlMvd3lWY2h1RlMycW1mdTBFcmNEdHlHYStTNlZ1?=
- =?utf-8?B?YUJsYVpxK3lIL2NuaWtkVnRHNTkzRzVuTFhKcmlEeTVGbVZNcDZGNy80LzZo?=
- =?utf-8?B?L1d3VWQ2cHpNSkJyckhVc3NZZnZ3RFd1RUEvcDk2YTFPdHVHYy9oS3M3SGFH?=
- =?utf-8?B?NzBDYU96RllWK1Bid2xDRHE2SUtqYmE3K1lLdDFETlBoNDdjZ0ZsOHhFTlUr?=
- =?utf-8?B?cm5aREZLNS90Um9xYjJIVDVTY2RSeGltaE9ZdzBKblBPRlo5czdOMDZnMGdp?=
- =?utf-8?B?NUlvdnY1TENybTNqaGEraFlNbExSK3RXdlA3MWMvNVBnbTRPQkNDalh6SjU3?=
- =?utf-8?B?N2pJdzlMcUt6b0lUSnYyeGM2eEhFdFMwQ0RSQ2RwbGVrWnRZaVlpN2hHWktV?=
- =?utf-8?B?MHFvZzNCYUIyWlhya0tZbkRsQVFHT0k4TVZSRjcwTGoyQlUvUU1GK3ZiYTU2?=
- =?utf-8?B?YlJ6VThtM0JJWThjSHpsK25paG9HNWtPQVZVbU9XTkc0NCs0dDl6dVZoMjJW?=
- =?utf-8?B?ZXpHNUc3ZmVCOHc0SWVHSng4NlVrdWhSaVdWMnZrSmwvVDNxbi8zb1lpUmF5?=
- =?utf-8?B?dE5kYU1kdk91c3VoQk9Xenp1b0dNU2tCVXBVMFhocGlVeHFiRDJBUWJRc3Ft?=
- =?utf-8?B?L1c3SUNmd2FqcEFGOFZmRkU1ODM1bFBxSklXcnMwZXl6MmpaVTJhalpRVU1P?=
- =?utf-8?B?MHZ2Z3gzSGdIVGpWNzhVbk1jQzFkMXUva3BaZ0V5UEwvbldJcUtYbzg4Skgy?=
- =?utf-8?B?WEhKaHd4SmVXVXpsVnFldzNRa0JBMUpZdGE3elRSbjVQYWluRkdSWnBHZDlw?=
- =?utf-8?B?YkJHTjlLWEpKWmRQQ2xWMjZya2hMMmd0OXhWRXlvc3hEU0c0b0thRE15RS9S?=
- =?utf-8?B?eURMalAvZG9rMFBiaU9pUDV2ZjhWb1dQNmVTQ045VCtqejZMMEFUTVhQNGNv?=
- =?utf-8?B?YWc9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <05A7E91410A92D49A78BC3BB3D67A0AF@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA65B15D1;
+	Wed, 30 Jul 2025 18:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753900416; cv=none; b=mLYaHd7HyWcU5iyCEWRdVUxhWzCtlDWVkkcHwlj4JvxR7ry6OMsuTdSoKcm0BuvoivCiUjwl0pN1UDOx3oIH/tN1FRKuCwPxeIEuVl79DcJn3YSU+hH1HuOxq0+ITNm7m44/VAunwyzOyx9q/UhliblF4OjW3YTeqrn1XNjvMXE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753900416; c=relaxed/simple;
+	bh=K75OD8oDjI/AOWUQUKexEk5vDgahZSkGDyUgITfjITc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uslNbtWZvkxaiMdWfQzGbIv/I1dSNH3WgaFAjXbmehc2fsAP7Xk7kzksDI+hFWuCQ9zjarNBxZZu8ILDn9pRlDATbd+fl3BSUqzEfCAJMVZNxlqvli5wXppL1Cpd5A/Gb/zZr+C1GQPIHCAWvExujDT2KtXmOO2srewP1p009R4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XEgCSfkT; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-240418cbb8bso954235ad.2;
+        Wed, 30 Jul 2025 11:33:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753900414; x=1754505214; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/LXC/P3UhtK4ADtDq003zjxL7YJD8iyJ1al2gSLKcFg=;
+        b=XEgCSfkTMQPmvhQ5FCPzyW0hHvGPRoEVIav36jcDexUN5QJDkauu29ybhBHuvZkg0g
+         jE1dS0l7RcjMYERN0oDgWUmJbZAOAyXih40b4afyj3P4BKJk8cOND5DdU/KOHDegmHZY
+         R4edQsIhpZAi7lke3EgkiLxWegSpQOxjszlMja+glVo33pAFp0XgjQFlTed6lxpUoOH2
+         hDmImDGHHCc30SnkDn9JVsJu9bihbTl37VknIEDnX6rJjAKsMsrrTaQCyHmloY0SO4SS
+         MsZcWHB5XE4TGlcV+PoDLShDHTxc5f5wpbh/a5WkeuQm9OVtYkPkkxsMCkMAWCq/q/35
+         61+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753900414; x=1754505214;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/LXC/P3UhtK4ADtDq003zjxL7YJD8iyJ1al2gSLKcFg=;
+        b=lS/B37vBU57P4dBYWokVqTLi+1rd8cPOaS0rWTdjzaP1sErt0nj5xR6b9I5xl6FUO/
+         CIdM7jSR6AO4Y0iHY+9Rcu+KUshR+8Wf+eRD+Glc7wcas2RHV4iQE0CVF9oxXGK0g93X
+         2KRllhg8wh4Sfz8s9VfxwlEgiXOq4WPIsqGZC+kNgzd8ld7BwAcJIuuD9yTECFqCZKYN
+         L4vphayNfHakT8O7+OSZbXAiu0FK/50HAmjzTtMVklBhE6B64XvK0HP1mDrV9EhD2oaB
+         B8tL2cyAwOgWkdb6+wnmjOHOyYzT8Mm3Og12pRkiywNovoglDRRjxm87o2fRUcdlNNZ2
+         Hcqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXS/cASSsE29ya6vZ+xF61Ctz8IicAPswutDBhE5qY8j9Ms7ahFxbF2vJGDe5JxAob5+6rUfi5ScpQvHiA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjP5y6yuW62zOkUXOgUFHDmVuxLoNXpfC566UBhjUBzt4hUQEc
+	m6CNStWXPly4SFLdnzXbayLcLYKMSf8hIRYaL5lVna0dVoZfaSlmimzo
+X-Gm-Gg: ASbGncuL/inWvf5WugRcmQn35rcsgf/98gCqAzAkwNwd/cBpAHpclYiSjFwQh4LXRSI
+	X771ZpbIwTrpAcsRaQv65EbKr0j9c0WiUmJfllzMKCWKdTkk9nkI6yPZJ2h5A4gBHvwZn13b/he
+	aeWuWADQ6PlAYwnJjA4m/IsQyaI2H02jTAp/GUB6T/Zp8WHTP0I8bmNUW74ET7fBcwHxViHpr4H
+	ed5yCTrEhySgjKnSk1zP3jmoM82PVLx2g44VKNsgxpy8lDWY/fYpU2gqXGSaSkpTTQe0UXEA/ol
+	Hkhm0Hw6fYsaH60vwKQVUTcVlVIGitiIp2ewPR3WIMRXaOmIk81ueePcn9HyiKOMxe4oCHhcI5a
+	vF92SOVbtFp5NfsaZfbrUWe2asbqUpxiSYmcrbYFdLbG6AhU1KbAh
+X-Google-Smtp-Source: AGHT+IHpBy+0LBCwjzZmW3aB+1tGd+YleBhuJ3andCoDufWYPAvK8XzlVHgKxfLqC4B5sYbKRBXdmQ==
+X-Received: by 2002:a17:903:198d:b0:23f:b112:2eaa with SMTP id d9443c01a7336-24096b23962mr61649835ad.41.1753900413613;
+        Wed, 30 Jul 2025 11:33:33 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:d021:481c:67c7:4b27:6088:74d5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23fc5a9d219sm104643095ad.98.2025.07.30.11.33.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 11:33:32 -0700 (PDT)
+From: Vishal Parmar <vishistriker@gmail.com>
+To: skhan@linuxfoundation.org
+Cc: linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vishal Parmar <vishistriker@gmail.com>
+Subject: [PATCH v2] Subject: [PATCH] selftests: panic: Add test module to trigger kernel panic
+Date: Thu, 31 Jul 2025 00:03:27 +0530
+Message-Id: <20250730183327.1001875-1-vishistriker@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250730172707.999401-1-vishistriker@gmail.com>
+References: <20250730172707.999401-1-vishistriker@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB5963.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 949eb7d1-341e-4e5c-9146-08ddcf978753
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Jul 2025 18:33:07.3667
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zK6VwtLYVjc7JC1OE9Rn2c9LSGRdcMgFBbUsqPNgVhWkKk0gl/+i9Ngrs5qJGNNxxmo9yO4ZuL/XWlQW565uoJlYgnldcscyDjcPHIQ6og8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA3PR11MB9352
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-T24gVGh1LCAyMDI1LTA2LTI2IGF0IDAwOjA1ICswMDAwLCBIdWFuZywgS2FpIHdyb3RlOg0KPiBC
-dXQgYXMgeW91IHN1Z2dlc3RlZCwgSSB0aGluayBpdCdzIGJldHRlciB0byBzcGxpdCB0aGlzIHBh
-dGNoIGludG8gdHdvOg0KPiANCj4gwqAtIE9uZSBwYXRjaCB0byBqdXN0IG1vdmUgZXJyb3IgY29k
-ZSBmcm9tIHRkeF9lcnJvci5oIGluIEtWTSBhbmQgVERYIGd1ZXN0DQo+IGNvZGUgdG8gPGFzbS90
-ZHhfZXJyb3IuaD4uDQo+IMKgLSBPbmUgcGF0Y2ggdG8gZnVydGhlciBpbnRyb2R1Y2UgdGhvc2Ug
-aGVscGVycyAodGR4X3JuZF9ub19lbnRyb3B5KCkgZXRjKQ0KPiBhbmQgYWN0dWFsbHkgdXNlIHRo
-ZW0gaW4gdGhlIGNvZGUuDQo+IA0KPiBJdCB3aWxsIGJlIGVhc2llciB0byByZXZpZXcgYW55d2F5
-Lg0KDQpBZ3JlZSwgdGhpcyBwYXRjaCB0cmllcyB0byBkbyB0b28gbXVjaC4NCg==
+This patch adds a new test module under tools/testing/selftests/panic
+that intentionally triggers a kernel panic for test and diagnostic
+purposes. The goal is to provide a reproducible and isolated kernel
+panic event for testing crash dump mechanisms or validating kernel
+panic handling behavior.
+
+The test includes:
+- A kernel module that calls panic() in init.
+- A Makefile to build the kernel module.
+- A run.sh script to load the module and capture panic logs.
+
+Changes in v2:
+- Added run.sh
+- Added reference output log of run.sh
+
+Signed-off-by: Vishal Parmar <vishistriker@gmail.com>
+---
+ tools/testing/selftests/Makefile              |  1 +
+ tools/testing/selftests/panic/Makefile        | 13 +++++++++
+ .../selftests/panic/panic_trigger_test.c      | 26 +++++++++++++++++
+ .../selftests/panic/reference_output_log.txt  | 29 +++++++++++++++++++
+ tools/testing/selftests/panic/run.sh          | 17 +++++++++++
+ 5 files changed, 86 insertions(+)
+ create mode 100644 tools/testing/selftests/panic/Makefile
+ create mode 100644 tools/testing/selftests/panic/panic_trigger_test.c
+ create mode 100644 tools/testing/selftests/panic/reference_output_log.txt
+ create mode 100755 tools/testing/selftests/panic/run.sh
+
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index 339b31e6a6b5..7b824470a9b3 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -78,6 +78,7 @@ TARGETS += net/packetdrill
+ TARGETS += net/rds
+ TARGETS += net/tcp_ao
+ TARGETS += nsfs
++TARGETS += panic
+ TARGETS += pci_endpoint
+ TARGETS += pcie_bwctrl
+ TARGETS += perf_events
+diff --git a/tools/testing/selftests/panic/Makefile b/tools/testing/selftests/panic/Makefile
+new file mode 100644
+index 000000000000..e4a1b88a63b2
+--- /dev/null
++++ b/tools/testing/selftests/panic/Makefile
+@@ -0,0 +1,13 @@
++# SPDX-License-Identifier: GPL-2.0
++
++obj-m := panic_trigger_test.o
++
++KDIR := $(abspath ../../../../)
++PWD  := $(shell pwd)
++
++all:
++	$(MAKE) -C $(KDIR) M=$(PWD) modules
++
++clean:
++	$(MAKE) -C $(KDIR) M=$(PWD) clean
++	rm -f *.mod.c *.o *.ko *.order *.symvers
+diff --git a/tools/testing/selftests/panic/panic_trigger_test.c b/tools/testing/selftests/panic/panic_trigger_test.c
+new file mode 100644
+index 000000000000..4e2e043fe3ad
+--- /dev/null
++++ b/tools/testing/selftests/panic/panic_trigger_test.c
+@@ -0,0 +1,26 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * panic_test.c - Module to test kernel panic
++ */
++
++#include <linux/module.h>
++#include <linux/init.h>
++
++static int __init panic_test_init(void)
++{
++    pr_info("Triggering a deliberate kernel panic now.\n");
++    panic("Triggered by panic_test module.");
++    return 0;
++}
++
++static void __exit panic_test_exit(void)
++{
++    pr_info("This should not be printed, as system panics on init.\n");
++}
++
++module_init(panic_test_init);
++module_exit(panic_test_exit);
++
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Vishal Parmar");
++MODULE_DESCRIPTION("Module to trigger kernel panic for testing");
+diff --git a/tools/testing/selftests/panic/reference_output_log.txt b/tools/testing/selftests/panic/reference_output_log.txt
+new file mode 100644
+index 000000000000..2c8143bf6c4a
+--- /dev/null
++++ b/tools/testing/selftests/panic/reference_output_log.txt
+@@ -0,0 +1,29 @@
++[*] Inserting module: panic_trigger_test.ko
++[   30.377307] panic_trigger_test: loading out-of-tree module taints kernel.
++[   30.380328] Triggering a deliberate kernel panic now.
++[   30.382369] Kernel panic - not syncing: Triggered by panic_test module.
++[   30.383349] CPU: 1 UID: 0 PID: 99 Comm: insmod Tainted: G           O        6.16.0-rc7-00140-gec2df4364666 #1 PREEMPT(voluntary) 
++[   30.383349] Tainted: [O]=OOT_MODULE
++[   30.383349] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
++[   30.383349] Call Trace:
++[   30.383349]  <TASK>
++[   30.383349]  panic+0x325/0x380
++[   30.383349]  ? __pfx_panic_test_init+0x10/0x10 [panic_trigger_test]
++[   30.383349]  panic_test_init+0x1c/0xff0 [panic_trigger_test]
++[   30.383349]  do_one_initcall+0x55/0x220
++[   30.383349]  do_init_module+0x5b/0x230
++[   30.383349]  __do_sys_init_module+0x150/0x180
++[   30.383349]  do_syscall_64+0xa4/0x260
++[   30.383349]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
++[   30.383349] RIP: 0033:0x7f88f09177d9
++[   30.383349] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d f7 05 8
++[   30.383349] RSP: 002b:00007ffc16317848 EFLAGS: 00000206 ORIG_RAX: 00000000000000af
++[   30.383349] RAX: ffffffffffffffda RBX: 000055a4a84b0eae RCX: 00007f88f09177d9
++[   30.383349] RDX: 000055a4a84b0eae RSI: 00000000000019e8 RDI: 000055a4c9b4b370
++[   30.383349] RBP: 00007ffc16317bd0 R08: 000055a4c9b4b310 R09: 00000000000019e8
++[   30.383349] R10: 0000000000000007 R11: 0000000000000206 R12: 00007ffc16317bd8
++[   30.383349] R13: 00007ffc16317be0 R14: 000055a4a84b0eae R15: 00007f88f0b25020
++[   30.383349]  </TASK>
++[   30.383349] Kernel Offset: 0x10000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
++[   30.383349] ---[ end Kernel panic - not syncing: Triggered by panic_test module. ]---
++
+diff --git a/tools/testing/selftests/panic/run.sh b/tools/testing/selftests/panic/run.sh
+new file mode 100755
+index 000000000000..ffa20dc22708
+--- /dev/null
++++ b/tools/testing/selftests/panic/run.sh
+@@ -0,0 +1,17 @@
++# tools/testing/selftests/panic/run.sh
++
++#!/bin/sh
++set -e
++
++MOD_NAME="panic_trigger_test.ko"
++LOG_FILE="panic_log.txt"
++
++echo "[*] Clearing dmesg..."
++dmesg -c
++
++echo "[*] Inserting module: $MOD_NAME"
++insmod ./$MOD_NAME
++
++echo "[*] Capturing dmesg..."
++dmesg > "$LOG_FILE"
++
+-- 
+2.39.5
+
 
