@@ -1,123 +1,97 @@
-Return-Path: <linux-kernel+bounces-751330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D1EB167C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:51:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B87B167C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:51:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64D2D582DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:51:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 514205829B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:51:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C0B221F02;
-	Wed, 30 Jul 2025 20:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83A2221F02;
+	Wed, 30 Jul 2025 20:51:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="A8ytBZnL"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="U39lTtPt"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7027421C16D
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C09D221294;
+	Wed, 30 Jul 2025 20:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753908674; cv=none; b=EXIAioB0XFqxYtWfDG6qWSI4ticYa1hpayVjfvKbBzjyXluiCTeOH727DhC9Nc0NU19ebynZEH32cqIK3Yj9eYuZI+xsmraW4fRp8/OronCDVnZOCyGGdsVww+4v7jV/uPEf7lIyOt3uw50C5qpN/akAqDZGAGOg05rUEoXdfpE=
+	t=1753908689; cv=none; b=OVRQJrB5/4ygZ/CClKTAe9m6Uyd7mLzEROTfJzNQ2pPIGfG8PALF5OnKZdSggv2bPH4trEn50w16EQc4WOGIXgzR4UKm8fcgCHB24MQ87jsS6wVWzz+VdffaLDg49+bQ6mwGFpCCxdGcllADyMfZsXotHtgI1bv8g7YKJb1awjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753908674; c=relaxed/simple;
-	bh=hhMKBAzrnRQl6txKRP0hLxiLCdDTj9HHm440OXhcwWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mkpYFAHevU+B8xqPsvVi+xh3Ex3JZYTJUGyEKlKoVjjuq/TrFr2F8obrUYC5g+qog5S9CwwEBk3dqjgPJpsCH5TDu4vlHAZv86DHIawphSCs8g5l1Fs0mUFcekkSQwsfzLA0N1E5U2D8jP6FPLS9lRgx3rBuaegb6jpWyAi1hVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=A8ytBZnL; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-87c26c9e8d5so12607839f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 13:51:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1753908670; x=1754513470; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3JJbV23d59Z4sZveYEfYuzl8tte3y6HxEdrJPwkO/5c=;
-        b=A8ytBZnLIukLczHjgJyIRPXRyTPrGBz3ye0L3qunVVjzMA9ofUACcUa+vO5PFWU5c4
-         tZfxOLEpsQWM1yK0rUYR34uQGn8T9agvIKh9RxiutlLsLSzkPOPDnSIl5EItMKEGWy4M
-         16nVZGEn6a0rivM+FgHhnHT9kb4RwuMNgMS3M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753908670; x=1754513470;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3JJbV23d59Z4sZveYEfYuzl8tte3y6HxEdrJPwkO/5c=;
-        b=FjYN22rRU4J9NcXFHiFV4LEvBmD+MuC3GPToXgPgWhVLVkptdMOvz6MSo9MYfVQhbB
-         5TvTlyalfxrHP3Ak/ZJ9dMwCBnOCnBNdFFYXKl6WsH8L1pglmZM25m8O+ef6gYo1ntY0
-         Whrgdnc0F8jCc6t9rKVjVPfIXKjGEZCrv3NQUsyhCda/wfpJWLShHmQECgjoimaSxLP7
-         V2S8lSrUMHdWPJ9qGSVY8LB3d381CEO/ho9VLBs4sgiZ5YRUWgs43x0lr/IvaSqPg+ka
-         JKtf9g3C/M6GTpuxw3gILp1h1dzAp35Pd351qzpk1QJ0JGF9zOSVp9Y4G/GPrksWQNuf
-         O76Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUERWYQfRGSYGFRrkcQbZ5HK0an+W0CnWzxFJslOZUT4eh2Fof+4nLKsglU/7vUQiU2TQ0Pex47+mivFZ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUwCmWP7wBFbrtGs72/e9EOxER0Y0BToY20S4nuxBtlZ4HheXJ
-	yUx0XkbJuOpvb3eEVSeb4GGSEpeRbTfZA/y6tl9I48WAadI3vA95r2CYdh27tBE3SgQ=
-X-Gm-Gg: ASbGncseQXWzob9deSG3koWzmuNeCaKcCEE5ea1DLgnmLPzEuaAvpuO5Y0RH9PTlmrq
-	P2XNTsXK+Bu3KHv1KJsoeiORPQNA0PYf9ucwpFonLi8AOs8B83V3Tp+OGjy+Y+JZZFmeJ8Nc+/j
-	+eg1k4yTjGCAGI5jj78YCdawmsNgRQzkmIqYZ1HwtmP4CxHMR0F1Z1zMOn+b/CcdgJq+MX00ZMr
-	qUJfCKe7EozzJE2bBRglLou9NFbNIC7uFTsslMt4FQmpzshD3SPTgklMF5mUAfMXoz4Aq58S5P1
-	Ljpn6Vye7EzZeHRVID9LIUba8syFZf1VNFCFb/Js0xN0PfkC++qTYZcBpAVPY3+F3XXBw7rmIja
-	GbzELg6DIaFunCe4kOoL2rFntSheMkzk7vg==
-X-Google-Smtp-Source: AGHT+IGbmO2V5F215bA9RT9gWwFSgBF+ew+cMJpwjD2+M8EuTWMQXWowzEwtpAbPaXPzXHu0c0lOcg==
-X-Received: by 2002:a05:6602:48c:b0:880:f288:e8e5 with SMTP id ca18e2360f4ac-8813770b6c8mr801463139f.5.1753908670514;
-        Wed, 30 Jul 2025 13:51:10 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55def302sm45454173.101.2025.07.30.13.51.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 13:51:09 -0700 (PDT)
-Message-ID: <271e8a46-6763-488d-9c60-e4c103b605aa@linuxfoundation.org>
-Date: Wed, 30 Jul 2025 14:51:08 -0600
+	s=arc-20240116; t=1753908689; c=relaxed/simple;
+	bh=+Bgteg8oaAVo/cV3WkvBBwkTzRwzmbZj0bECgoudcpY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=gIkWhv4/Wy2NXDFMuY5GKw06HsnztFR2ZJnrrktNUvghWsRyRbPE8WBuEnCHEtokTtRHRofGUcNyRCxmK+L8oaT2lmJ4Z22n8DzkSeJoGH9kkPQ8cR66bOC2SCW02C0cJEDb62SEvC3HEmhInVwYclJFsILF888J7bAALrleKKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=U39lTtPt; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 1A49D406F8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1753908681; bh=02MqzAQL13wGSkiV79PTgEwMNUoLXFSOZapwySxtdHs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=U39lTtPtf4k9A2d2EgfZUKo2Ists2QHrOkoBrC7tz7IDvbDfTiLnYdeaQE6c2wiRA
+	 JGpMR+9yUCXoFuz5Ki76yYTxkKZOoPiQbWyrvfMEhGlRHOyqIP4Z/Bil7Pm2fHwjdN
+	 POfd4IK2EchMQYKKsIg9aZWKClpCV+vDcavVNtQPhOOjmGCY2J4VBzAgTkvHgFqVmy
+	 qZNS2GYGNab3u/1N4JM79Unz8qGnaNFPe5IeKeZkhr/OAnVbJD8NGZfhlACNwvGf/b
+	 KmBB3Z3LIBvQFFpz2qjBawRdx62UvZVYaJI+Iw73nfoplxq1OMK7KsyGG8btXlMVX4
+	 sOelNx303hhuA==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 1A49D406F8;
+	Wed, 30 Jul 2025 20:51:21 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Kriish Sharma <kriish.sharma2006@gmail.com>, skhan@linuxfoundation.org,
+ maddy@linux.ibm.com, mpe@ellerman.id.au
+Cc: linuxppc-dev@lists.ozlabs.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, christophe.leroy@csgroup.eu,
+ npiggin@gmail.com, linux-kernel-mentees@lists.linux.dev, Kriish Sharma
+ <kriish.sharma2006@gmail.com>
+Subject: Re: [PATCH] docs/powerpc: add htm.rst to toctree to fix warning
+In-Reply-To: <20250730202752.8508-1-kriish.sharma2006@gmail.com>
+References: <20250730202752.8508-1-kriish.sharma2006@gmail.com>
+Date: Wed, 30 Jul 2025 14:51:20 -0600
+Message-ID: <87qzxxtnav.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250730093230.629234025@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250730093230.629234025@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 7/30/25 03:35, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.15.9 release.
-> There are 92 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Kriish Sharma <kriish.sharma2006@gmail.com> writes:
 
-Compiled and booted on my test system. No dmesg regressions.
+> The htm.rst file was not included in any toctree, leading to a Sphinx
+> warning when building documentation.
+>
+> Include it in Documentation/arch/powerpc/index.rst to fix the warning.
+>
+> Signed-off-by: Kriish Sharma <kriish.sharma2006@gmail.com>
+> ---
+>  Documentation/arch/powerpc/index.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
+> index 0560cbae5fa1..ae0280383315 100644
+> --- a/Documentation/arch/powerpc/index.rst
+> +++ b/Documentation/arch/powerpc/index.rst
+> @@ -36,7 +36,7 @@ powerpc
+>      vas-api
+>      vcpudispatch_stats
+>      vmemmap_dedup
+> -
+> +    htm
+>      features
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+Thanks...but we already have two conflicting versions of this fix headed
+upstream, so a third is probably not needed :)
 
-thanks,
--- Shuah
+jo
 
