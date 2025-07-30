@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-750062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B18CB156D2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:59:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1E94B156D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8310D4E00CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27B5189233E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 657331A7AE3;
-	Wed, 30 Jul 2025 00:58:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6408B1991D4;
+	Wed, 30 Jul 2025 00:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fG4jeJr/"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q0MaheOB"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBE61A23B6
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A87E187FEC
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753837124; cv=none; b=QeqndqYzksccePKUvFypTemf3jgd68aDj6IaoM0/IGneuYobgE1pau65izpuBCeNjGtCYrjUnQSA/v3OEGKBemCo6gFwWtA9PP8c6i+mrw6xIwtqW/alrXJU1vYHsdO4ZAavFWr8XxKctqB1uv1KdCC2Hk/hINuJMa0nl/XO1Wg=
+	t=1753837140; cv=none; b=L6MdqFrWkHzJCetiDhEmGVw+PQWtLlKblm3y+XKQxozpDh4Quddzf7N2H3baRKK/XXOGy3Z1iJ5nz8fUTGWD+3zg6OX4LRj8YtTrfjWItqao2KeA43aE4TcBWwRevt1jvdeRLSX+kPcHpqge82belsHx2OaksuQNOZ01cUkevN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753837124; c=relaxed/simple;
-	bh=bYYBIY+R2ybqqUZSXToBTBV9G5yjx4LIU3VfXNJeE9s=;
+	s=arc-20240116; t=1753837140; c=relaxed/simple;
+	bh=52dGNsfCzYMNb7XqIBXnTCNHJh+uI7s3tVSTq3e1Zzs=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uMPkZ6dGOTp3PwN9COk0D9DAw8CwBSacJfLCG8barYGMvUv0EyX2rO9Qo6Qe4/v3V00+9MMF+4YKrD9O5OQQK1836dDu4LXX6oeEr/kuIdFiG5FopjfJGoJEMzCOWqQHvETUaAvVfdMKo8ZGydNS9FsuwyYnseyiOIbmPtT8zZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fG4jeJr/; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=UM72phakmsJopk22oUX12MynuYkD86DKYEr/AmdkFz61qEkYh7zX3KLUQ2RmLJeMHeJuMarGUXTA4X6Gu78k9y+o1GlteaOkSNR8VlQJshlOp67F1lrBXHA9IimhDWp15CN9x9tuUzj07E70849MbaLGKHMkhaJZrB6JCVlPTmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q0MaheOB; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b421d38d138so23584a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:58:42 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31edd69d754so2918754a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:58:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753837122; x=1754441922; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1753837138; x=1754441938; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WHML0fVTZol4DLLRqimo4jzJSjhp3AKS45z0vIHCf/Y=;
-        b=fG4jeJr/MXueyShYCJKLpXPkNXCLyJkZZvZSqrKQ0Ekqe5+SiWgOwE2372Rx0miiRz
-         8Y/xN6cyqROc1ouRvs/tO7WcP496pZNbErhIGWW+wL4Zz5VbHb26PzNdWXQ46Ozubk5P
-         de5ES52oyhJHd9RqbT4sLnE9UxHIE9dCbvBesE5I7ZTe500M+HJ7LQGANKuUkp9GISEM
-         +B7Xh282wBrkPufvc+R0tmtr7YtCyyjE06z1ZI/fTojI2jQLBOcb/uD3lIKVvfG7RFJl
-         tPGLxqBB0R/oqgCkyjw5F5HZe8kEClQSEt2wVQeP1gqnxzRt7OeHM1/cuxvadMjuwFhc
-         x5qA==
+        bh=jDQwseaUqKXgQMG0PL1emMIiquT/LrlyEZB+aSduFZ4=;
+        b=Q0MaheOBcbEG6J8+lt/BqQSuEcsw7jVNhnVHmOLbnMJVHdfxQcISW1u+7F+eJCNhgm
+         3aWS7b2hPt0rdLxLVF/imiQdCJsBwvseeJyQzdcM1ScupDFcQPqX7hiCamVpQ3dTYrTo
+         faQpQ+7b3M292knHogrqwwV9V4C7NApQWEOH/z2WWPSRm2Ff5pmHTYn/+QFH/3ePL0JZ
+         Ofetf0TwdpK8CZBjtrNgIapV9o0W1p+/akoLVBwyQX1fnhgBNXRufiku3/PzfJcHlP2L
+         CaWQwj9+mtVxlPIC3CgThVonCl6OA/YMYayOhqqoAJ/BGjoJtsTmOUVvGkfZAJLxb7tg
+         8t9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753837122; x=1754441922;
+        d=1e100.net; s=20230601; t=1753837138; x=1754441938;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WHML0fVTZol4DLLRqimo4jzJSjhp3AKS45z0vIHCf/Y=;
-        b=it0eczAJuttag8P7guQcYATMoA+HWx8SfV8XtrGO9Q8ogRzGdBl0mVwoGntiesLNlq
-         mZ8TdRjuUCmthHIjvVPrQrAJRSigi1nUxofOJMn5tKQyarFsMQpBVej5ff5BKJFE5dvV
-         74FU7WaNWDVXOrlFYoPEovXLTLK5fOi1UblXuc44QAsEPKiOfaeFajts1eEwyeO84shL
-         KQIGxr7EA03Kb1LYDi7BxtA1+76D3xfXHEEswBbmIkph+0hiyKnLq8sG7349/A4WX7ex
-         36U04UjDnEHMadn8JTx+qvxiFLErY8ZxrTn4ry23/IJezOWJxcMHpN4+TyrxsWYxhaNA
-         x55A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWjMMcXTHOmbR9AdwotHV+zUPsxHYKdm+gTF2C71FW6Gwp5b7fi+YU7l8AWOuAZiWz2g/M9dYCB7XvotI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHB1UEHepHq7PpMEYJ65LiJ5QnfaylnxNGVQW7twAIUQXAO/Wi
-	bQbydwGrf6D0nKjsRBlsOBa/mM7GXtQ3XOZY30exqr15a++g9Da2qUsr1C6tcRZc3VZPdO6u+zN
-	fxV2ZmQqu60Ui0IQ0tWnllg24fO2RCFqb44zdFQ==
-X-Google-Smtp-Source: AGHT+IGKKEl35BJsLTBrUz3LPVkFRFj381DprHeoXqPOiIsnE2zVrxKnAt1I6K+wzrAviCs9wMxmhgog+ERuVKqxrX5d2w==
-X-Received: from pfbbw8.prod.google.com ([2002:a05:6a00:4088:b0:741:8e1a:2d09])
+        bh=jDQwseaUqKXgQMG0PL1emMIiquT/LrlyEZB+aSduFZ4=;
+        b=QoQFElWJZTZ+6xCeR2X6c75vnNzZfuxWbfrpg/f5cmgQnMl8p3fo1J0+jj5i34GUoH
+         T3FKBMCx6OGBDp9vyUIwhOCChwP/2zYcVM2Uwl8Qmvn6s4v8VUX1MKSylTaGIouu+88n
+         XGdSXdcDoc2J6ZKn5GIPOyFHChVPKjdDQncESrZJnlQpG9uik87w0WR6pkV+atUlEMaW
+         f3SD1hMu5CetSFrWMLPJeC4LlhP9oWwzbOqP0O7T3vsFGUDrS/zF6FN09buEcc7xsnWW
+         yLP46sRt6YqwYpHeI4fw7nnSxQ5r/bCM/efbP7rLWajEBr5I8/N0GuADZsGTrEHiuRpP
+         9iyA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+sqxe0/Kg6UtJd+4pObmw1an2N0s7ujrTz5p5jnnyO0AR0pb0d4p1+KrdrZrpb4BSBdUm41j+AJDpImI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzyc9HvV9AUXMG0lHSA1YjMqPAjA5VU5VMC/7tIVgvKJ018PEDD
+	Oi1jo1wxrLD9W585KvosfD/lsvZKThTq/R/4CcA8arQ1pv7ziIkFVcN13kBMM+b6sj2rKA/G3eX
+	RqTH58Q1AUxEz2ES1U+AmfQFwrijUjzYQWLrsqA==
+X-Google-Smtp-Source: AGHT+IEGVoBAYELfdRdZ8xP5oRpoU0bK+jZlnzB/TmwUAobgxp21zhLfsqJQJKUf5/TTCLpNwHYxnC3kjLaDYc3GnzINcA==
+X-Received: from pjbpm8.prod.google.com ([2002:a17:90b:3c48:b0:31e:a865:8b32])
  (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a21:32a6:b0:21d:a9d:ba3b with SMTP id adf61e73a8af0-23dc10a54edmr1953340637.39.1753837122323;
- Tue, 29 Jul 2025 17:58:42 -0700 (PDT)
-Date: Tue, 29 Jul 2025 17:58:07 -0700
+ 2002:a17:90b:4b83:b0:31c:3872:9411 with SMTP id 98e67ed59e1d1-31f5de63c28mr2092662a91.33.1753837138329;
+ Tue, 29 Jul 2025 17:58:58 -0700 (PDT)
+Date: Tue, 29 Jul 2025 17:58:08 -0700
 In-Reply-To: <20250730005818.2793577-1-isaacmanjarres@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250730005818.2793577-1-isaacmanjarres@google.com>
 X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250730005818.2793577-3-isaacmanjarres@google.com>
-Subject: [PATCH 5.4.y 2/3] mm: update memfd seal write check to include F_SEAL_WRITE
+Message-ID: <20250730005818.2793577-4-isaacmanjarres@google.com>
+Subject: [PATCH 5.4.y 3/3] mm: perform the mapping_map_writable() check after call_mmap()
 From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
 To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
 	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
@@ -98,23 +98,30 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Lorenzo Stoakes <lstoakes@gmail.com>
 
-[ Upstream commit 28464bbb2ddc199433383994bcb9600c8034afa1 ]
+[ Upstream commit 158978945f3173b8c1a88f8c5684a629736a57ac ]
 
-The seal_check_future_write() function is called by shmem_mmap() or
-hugetlbfs_file_mmap() to disallow any future writable mappings of an memfd
-sealed this way.
+In order for a F_SEAL_WRITE sealed memfd mapping to have an opportunity to
+clear VM_MAYWRITE, we must be able to invoke the appropriate
+vm_ops->mmap() handler to do so.  We would otherwise fail the
+mapping_map_writable() check before we had the opportunity to avoid it.
 
-The F_SEAL_WRITE flag is not checked here, as that is handled via the
-mapping->i_mmap_writable mechanism and so any attempt at a mapping would
-fail before this could be run.
+This patch moves this check after the call_mmap() invocation.  Only memfd
+actively denies write access causing a potential failure here (in
+memfd_add_seals()), so there should be no impact on non-memfd cases.
 
-However we intend to change this, meaning this check can be performed for
-F_SEAL_WRITE mappings also.
+This patch makes the userland-visible change that MAP_SHARED, PROT_READ
+mappings of an F_SEAL_WRITE sealed memfd mapping will now succeed.
 
-The logic here is equally applicable to both flags, so update this
-function to accommodate both and rename it accordingly.
+There is a delicate situation with cleanup paths assuming that a writable
+mapping must have occurred in circumstances where it may now not have.  In
+order to ensure we do not accidentally mark a writable file unwritable by
+mistake, we explicitly track whether we have a writable mapping and unmap
+only if we do.
 
-Link: https://lkml.kernel.org/r/913628168ce6cce77df7d13a63970bae06a526e0.1697116581.git.lstoakes@gmail.com
+[lstoakes@gmail.com: do not set writable_file_mapping in inappropriate case]
+  Link: https://lkml.kernel.org/r/c9eb4cc6-7db4-4c2b-838d-43a0b319a4f0@lucifer.local
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=217238
+Link: https://lkml.kernel.org/r/55e413d20678a1bb4c7cce889062bbb07b0df892.1697116581.git.lstoakes@gmail.com
 Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
 Reviewed-by: Jan Kara <jack@suse.cz>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>
@@ -126,77 +133,81 @@ Cc: Mike Kravetz <mike.kravetz@oracle.com>
 Cc: Muchun Song <muchun.song@linux.dev>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Cc: stable@vger.kernel.org
+[isaacmanjarres: added error handling to cleanup the work done by the
+mmap() callback and removed unused label.]
 Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
 ---
- fs/hugetlbfs/inode.c |  2 +-
- include/linux/mm.h   | 15 ++++++++-------
- mm/shmem.c           |  2 +-
- 3 files changed, 10 insertions(+), 9 deletions(-)
+ mm/mmap.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index 47b292f9b4f8..c18a47a86e8b 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -152,7 +152,7 @@ static int hugetlbfs_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	vma->vm_flags |= VM_HUGETLB | VM_DONTEXPAND;
- 	vma->vm_ops = &hugetlb_vm_ops;
- 
--	ret = seal_check_future_write(info->seals, vma);
-+	ret = seal_check_write(info->seals, vma);
- 	if (ret)
- 		return ret;
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 47d56c96447a..57cba6e4fdcd 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2946,25 +2946,26 @@ static inline int pages_identical(struct page *page1, struct page *page2)
- }
- 
- /**
-- * seal_check_future_write - Check for F_SEAL_FUTURE_WRITE flag and handle it
-+ * seal_check_write - Check for F_SEAL_WRITE or F_SEAL_FUTURE_WRITE flags and
-+ *                    handle them.
-  * @seals: the seals to check
-  * @vma: the vma to operate on
-  *
-- * Check whether F_SEAL_FUTURE_WRITE is set; if so, do proper check/handling on
-- * the vma flags.  Return 0 if check pass, or <0 for errors.
-+ * Check whether F_SEAL_WRITE or F_SEAL_FUTURE_WRITE are set; if so, do proper
-+ * check/handling on the vma flags.  Return 0 if check pass, or <0 for errors.
-  */
--static inline int seal_check_future_write(int seals, struct vm_area_struct *vma)
-+static inline int seal_check_write(int seals, struct vm_area_struct *vma)
+diff --git a/mm/mmap.c b/mm/mmap.c
+index cb712ae731cd..e591a82a26a8 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1718,6 +1718,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
  {
--	if (seals & F_SEAL_FUTURE_WRITE) {
-+	if (seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE)) {
- 		/*
- 		 * New PROT_WRITE and MAP_SHARED mmaps are not allowed when
--		 * "future write" seal active.
-+		 * write seals are active.
- 		 */
- 		if ((vma->vm_flags & VM_SHARED) && (vma->vm_flags & VM_WRITE))
- 			return -EPERM;
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma, *prev;
++	bool writable_file_mapping = false;
+ 	int error;
+ 	struct rb_node **rb_link, *rb_parent;
+ 	unsigned long charged = 0;
+@@ -1785,11 +1786,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 			if (error)
+ 				goto free_vma;
+ 		}
+-		if (is_shared_maywrite(vm_flags)) {
+-			error = mapping_map_writable(file->f_mapping);
+-			if (error)
+-				goto allow_write_and_free_vma;
+-		}
  
- 		/*
--		 * Since an F_SEAL_FUTURE_WRITE sealed memfd can be mapped as
-+		 * Since an F_SEAL_[FUTURE_]WRITE sealed memfd can be mapped as
- 		 * MAP_SHARED and read-only, take care to not allow mprotect to
- 		 * revert protections on such mappings. Do this only for shared
- 		 * mappings. For private mappings, don't need to mask
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 264229680ad7..8475d56f5977 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2215,7 +2215,7 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
- 	struct shmem_inode_info *info = SHMEM_I(file_inode(file));
- 	int ret;
+ 		/* ->mmap() can change vma->vm_file, but must guarantee that
+ 		 * vma_link() below can deny write-access if VM_DENYWRITE is set
+@@ -1801,6 +1797,14 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 		if (error)
+ 			goto unmap_and_free_vma;
  
--	ret = seal_check_future_write(info->seals, vma);
-+	ret = seal_check_write(info->seals, vma);
- 	if (ret)
- 		return ret;
++		if (vma_is_shared_maywrite(vma)) {
++			error = mapping_map_writable(file->f_mapping);
++			if (error)
++				goto close_and_free_vma;
++
++			writable_file_mapping = true;
++		}
++
+ 		/* Can addr have changed??
+ 		 *
+ 		 * Answer: Yes, several device drivers can do it in their
+@@ -1823,7 +1827,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
+ 	vma_link(mm, vma, prev, rb_link, rb_parent);
+ 	/* Once vma denies write, undo our temporary denial count */
+ 	if (file) {
+-		if (is_shared_maywrite(vm_flags))
++		if (writable_file_mapping)
+ 			mapping_unmap_writable(file->f_mapping);
+ 		if (vm_flags & VM_DENYWRITE)
+ 			allow_write_access(file);
+@@ -1858,15 +1862,17 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
  
+ 	return addr;
+ 
++close_and_free_vma:
++	if (vma->vm_ops && vma->vm_ops->close)
++		vma->vm_ops->close(vma);
+ unmap_and_free_vma:
+ 	vma->vm_file = NULL;
+ 	fput(file);
+ 
+ 	/* Undo any partial mapping done by a device driver. */
+ 	unmap_region(mm, vma, prev, vma->vm_start, vma->vm_end);
+-	if (is_shared_maywrite(vm_flags))
++	if (writable_file_mapping)
+ 		mapping_unmap_writable(file->f_mapping);
+-allow_write_and_free_vma:
+ 	if (vm_flags & VM_DENYWRITE)
+ 		allow_write_access(file);
+ free_vma:
 -- 
 2.50.1.552.g942d659e1b-goog
 
