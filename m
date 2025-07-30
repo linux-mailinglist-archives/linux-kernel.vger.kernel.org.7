@@ -1,158 +1,127 @@
-Return-Path: <linux-kernel+bounces-750832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB10DB16191
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:31:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380FBB16193
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 611657B23F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:29:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EF8F566216
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9882D46CC;
-	Wed, 30 Jul 2025 13:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9624F29DB8F;
+	Wed, 30 Jul 2025 13:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="G/58tk3U"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DgiGaKK6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F27920E70B;
-	Wed, 30 Jul 2025 13:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753882265; cv=pass; b=ddetZQW5UGAEp9atz7tbIkUC4yS4vTZM9m67clKlkXvIKN0M9VuTCK9USqL6l2DdI+ZKgbGKjG1ERdw7YpFtxXcgG2Vwz31nPnXx149XId6vbMxNqVbp7YxBwq753aN1gDP1gUU9uRLph2vr0v65aCnC9qsl6OiwHf+C3DGoXRM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753882265; c=relaxed/simple;
-	bh=E1E/UGq3BHcSE9fkbNu6GvSmIKiyx2JmdosOu7FR3c0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=MzGo7QNHulz1XxNjzEwgESjLqNDcPqxcNTuImyGUUdVHJmvoRjLFFAcc3PFdJaYHD3KOGDxBB6B6PGYZ6c99Yhz3fqLwze+g1b2IM+LhXgh5beAMC7NJMMD21LP+f/PvCE3k91qiaQ2qo6mWpD60u2YiZ1aF9OhSXTKJup+04Sk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=G/58tk3U; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753882234; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=BSYbWpitIzZqpGdBXTmdG1G3kFYDxy0zB5a2/xc5vQL35zZqYxmNvyrCR2lZucNRIP2B8iMHCEq9neYLopCDOYJ06ZIAyC1dAxYKd31qIVJXWLYNCDqRrczh7ilQ11gyJ3cC8V87h/5m6kwp0TKVooCLqJ7B9A29SdrjrNDkGiw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753882234; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=aOG5i7XVJ7pIXErWvvzQMg1MUQ9EHQQty2uAGcXcAlM=; 
-	b=asvpx5PBcp2iRqClZpeawHaf0ICRY0KpNMnXD1S6fM22UkX3jhedvkfhzAxrlMvKmLlnKeZJitYjrkYm3ihZW3AjF0FsTFOrUW2OrkklnSc/aJ6G8GW1Y2Kx9Nz3Valqjdboca7Z3hRmxcdDG49b8tEaZLXLui0HjD8nTe6eGds=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753882234;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=aOG5i7XVJ7pIXErWvvzQMg1MUQ9EHQQty2uAGcXcAlM=;
-	b=G/58tk3UU5GIcv3Ka2mO06gz3eHJFQql93iK5BODhbGuMgV10AbobqBuQ2xZH1iz
-	HXYqypHqjlplTVXn5thnWrmZqryfDPaYefo4kd7rPHWR1FhgWmtXRvdrljGwFz4PjiJ
-	0EyD9jLf9CNjkjJVq/GmZIEAQ9F/I/Ru/OjmuYEQ=
-Received: by mx.zohomail.com with SMTPS id 1753882229988414.0615538796012;
-	Wed, 30 Jul 2025 06:30:29 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 588592905;
+	Wed, 30 Jul 2025 13:31:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753882305; cv=none; b=NCGSq8yB4XXLfmm6A2rDTi8GQzZogxQFrpM4VEnwkIrK2vkXEnxNRoJ5X+LwvJYR02+StSVz6wZaxhVEGaeqdHuQ4zHDzQCQeUq6Ki5gIP2u9RZZYsFvK69k2e6Rz+aUTxj6oAXwSCu7Z7ALQRq2C9gnuLOxq3yd0MeF8zjnTMg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753882305; c=relaxed/simple;
+	bh=32UX8JXuUGyGSGlifVuoyArglRHWLRbygc+imo84SQg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CDMI/A92yvkYjS3eKzpsZaNIZXTKDuBiIZLedw8ohi2TDWT7/E23UHnep/6CcEoLDJmc6goG2gSFtjEtVSYiNNFS0br2Kyf+9pg8i58BottSlm0urmeWL3TYCb65eN6UsiDWXRGhGKFhsXJ7q4P7zbO1KYeMGLXB+bCg3oa7r5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DgiGaKK6; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753882303; x=1785418303;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=32UX8JXuUGyGSGlifVuoyArglRHWLRbygc+imo84SQg=;
+  b=DgiGaKK6/0KhowpR1belonkDvHZqckLihGUP0ebuNqUz43MIuZEh9oYN
+   u60rGEeOPaFkQFHEKFIqmSlPvuLXrq0YX/k6XASs6x6d1jNdGUJ5j/Taz
+   ZLuS12+TM7xVkqCzBTMMDkJIZgYz9ggCmA7X7VdEeI1EAJFPPktKl46bn
+   Df3xqtXjSwgRges7aHJuJU63X6Of4v2/PF8Zx66ebqYHnM2s0P07OPklx
+   7Sxz0z1H6s//IZt+NB7s3cMUmeNizxx0fuh3X8IIICtJBjlvmMXiMnhSa
+   dPI71W8F+X6IK5xhrm3T+7jaDXKw8qrcBjV8T/ksPtnYBD9g38LQS/AIA
+   Q==;
+X-CSE-ConnectionGUID: Hul0MLgFS5WOZV/sILjeVw==
+X-CSE-MsgGUID: Nu0kgvoiRw6+HJxIEUpWcA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="66456381"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="66456381"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 06:31:42 -0700
+X-CSE-ConnectionGUID: YF3g1y/YTa++KBmWWPqVEQ==
+X-CSE-MsgGUID: 7Mfwb/ISSX6lQMw44wQECQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="167240932"
+Received: from mylly.fi.intel.com (HELO [10.237.72.51]) ([10.237.72.51])
+  by fmviesa005.fm.intel.com with ESMTP; 30 Jul 2025 06:31:40 -0700
+Message-ID: <97091c58-b893-46cd-aae9-18b04bd2ae58@linux.intel.com>
+Date: Wed, 30 Jul 2025 16:31:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] rust: clk: use the type-state pattern
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20cc8581-0af2-47b3-9fdd-584ff0ef36ab@sedlak.dev>
-Date: Wed, 30 Jul 2025 10:30:12 -0300
-Cc: Benno Lossin <lossin@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>,
- Alexandre Courbot <acourbot@nvidia.com>,
- linux-clk@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <01963F16-1956-4474-AF8D-68E9C5CB45BF@collabora.com>
-References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
- <fc26c393-5c4b-48a8-a7ac-12558f79b140@sedlak.dev>
- <DBP8RFDV59PF.1OV46P0UYKOGM@kernel.org>
- <07575756-58EA-4245-B837-AEC4DDCD0DB5@collabora.com>
- <20cc8581-0af2-47b3-9fdd-584ff0ef36ab@sedlak.dev>
-To: Daniel Sedlak <daniel@sedlak.dev>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] i2c: designware: Fix clock issue when PM is
+ disabled
+To: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>
+Cc: Kohei Ito <ito.kohei@socionext.com>, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250724042211.2160339-1-hayashi.kunihiko@socionext.com>
+ <20250724042211.2160339-2-hayashi.kunihiko@socionext.com>
+Content-Language: en-US
+From: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+In-Reply-To: <20250724042211.2160339-2-hayashi.kunihiko@socionext.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hi
 
+On 7/24/25 7:22 AM, Kunihiko Hayashi wrote:
+> When removing the driver, enable the clocks once by calling
+> pm_runtime_get_sync(), and call pm_runtime_put_sync() to disable
+> the clocks.
+> 
+> If CONFIG_PM=y, clocks for this controller are disabled when it's in
+> the idle state. So the clocks are properly disabled when the driver
+> exits.
+> 
+> Othewise, the clocks are always enabled and the PM functions have
+> no effect. Therefore, the driver exits without disabling the clocks.
+> 
+>      # cat /sys/kernel/debug/clk/clk-pclk/clk_enable_count
+>      18
+>      # echo 1214a000.i2c > /sys/bus/platform/drivers/i2c_designware/bind
+>      # cat /sys/kernel/debug/clk/clk-pclk/clk_enable_count
+>      20
+>      # echo 1214a000.i2c > /sys/bus/platform/drivers/i2c_designware/unbind
+>      # cat /sys/kernel/debug/clk/clk-pclk/clk_enable_count
+>      20
+> 
+> To ensure that the clocks can be disabled correctly even without
+> CONFIG_PM=y, should add the following fixes:
+> 
+> - Replace with pm_runtime_put_noidle(), which only decrements the runtime
+>    PM usage count.
+> - Call i2c_dw_prepare_clk(false) to explicitly disable the clocks.
+> 
+> Fixes: 7272194ed391f ("i2c-designware: add minimal support for runtime PM")
+> Co-developed-by: Kohei Ito <ito.kohei@socionext.com>
+> Signed-off-by: Kohei Ito <ito.kohei@socionext.com>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
+>   drivers/i2c/busses/i2c-designware-platdrv.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+Good catch!
 
-> On 30 Jul 2025, at 10:27, Daniel Sedlak <daniel@sedlak.dev> wrote:
->=20
->=20
-> On 7/30/25 2:59 PM, Daniel Almeida wrote:
->> [=E2=80=A6]
->>> We essentially would like to have a `#[sealed]` attribute that we =
-can
->>> put on a trait to avoid the `mod private { pub trait Sealed }` =
-dance.
->>> (so a trait that cannot be implemented outside of the module =
-declaring
->>> it)
->>>=20
->>> ---
->>> Cheers,
->>> Benno
->> This is not exactly what you said, but how about a declarative macro? =
-e.g.:
->> macro_rules! sealed {
->>     ($($ty:ident),* $(,)?) =3D> {
->>         mod private {
->>             pub trait Sealed {}
->>             $(impl Sealed for super::$ty {})*
->>         }
->>         use private::Sealed;
->>     };
->> }
->> sealed!(Unprepared, Prepared, Enabled)
->> Note that I am just brainstorming the general idea here, I did not =
-test it yet.
->=20
-> I think that API-wise it would be better to have a proc-macro =
-#[sealed], something similar to [1], as it may provide better error =
-messages, when used incorrectly. So the outcome could look like.
->=20
-> #[sealed]
-> pub trait ClkState {
-> =E2=80=A6
-> }
->=20
-> And then
->=20
-> #[sealed]
-> impl ClkState for XXX {
-> =E2=80=A6
-> }
->=20
-> If you are interested, I can try to look into that.
->=20
-> Link: https://crates.io/crates/sealed [1]
->=20
-> Thanks!
-> Daniel
-
-If you have the bandwidth, that would be nice indeed! :)
-
-=E2=80=94 Daniel
-
-
-
-
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Acked-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
 
