@@ -1,147 +1,136 @@
-Return-Path: <linux-kernel+bounces-750838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED5FB1619F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:35:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25F06B161A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117F8189142B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:36:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFB0F7A3AE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 026DE2D46BC;
-	Wed, 30 Jul 2025 13:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40A22D46CA;
+	Wed, 30 Jul 2025 13:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ayb5eRPh"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="Cd3pxApB"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C58293454;
-	Wed, 30 Jul 2025 13:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753882535; cv=none; b=NeNj3ihSl6MByuf7f+Ghupp0Ki1zjyHvFEaICheb6tElEaMvNR2YWTDDBZwvunwhYINYbvSjEWAJLPD+3KV1gtWqJNawlgl5LWgJ3Zd40FNoL0v7DIg7jpE/AvIJdHcFDoi91JA/wOSac29cAmZRUGAW8FFR3K3URugwwJpnm5U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753882535; c=relaxed/simple;
-	bh=XsOyt6jx81m1qv/c8su3RFx8DyPQ1EF58G8hWi3Q7A4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FPqQKaDQNnVW/r9O8cd0pxADFR+Ho5Xve63OXVvdgmrYEQwfMKs1fKWYuF3ZbRqHeln0Y4U3axdierR6J2wWxMeYxRv0Vi3pM1Brb9mDe/hdnOrQz2MYEay5LYOsQkekbbPZkbLDiIpvSTr3o34bj75D7VZKsLUUviCj2UG9gYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ayb5eRPh; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b791736d12so1451488f8f.1;
-        Wed, 30 Jul 2025 06:35:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753882532; x=1754487332; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DgvKS8DaDiL/wBtkxwBKkV0gJ6kZM0mGIKOU+fc9kg8=;
-        b=ayb5eRPh9JyBnRgEu82EUGHH4YapiiAJdjYEhkqXKTU1p+5LM5GSj0L7wtAxm8oWiS
-         c6QiJYqpIEmKcTUTmNA3Xt2PMUrpbl33x4EOPbAuk/JQyaen4X8Ki6mPbsCvvg+deFrG
-         ixoSzzWan0DsS80sUq9oZnEibTp7sC1NZIxWQ2zfkGsOf00t2oZYkzVHPqOlgKrFHxWD
-         GIC5TqyGSDJWJdAXWByxEXEUOvBenDAq1f/zYHz3untmfUNLRunMdSH/Y455anmvoej5
-         NBPDo701EhQXu1i0Ld7D3GKRmICy0T5XN9YKOGBmU5CLTjLov8oQ1PqxHfkfV00ebLXn
-         h+iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753882532; x=1754487332;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DgvKS8DaDiL/wBtkxwBKkV0gJ6kZM0mGIKOU+fc9kg8=;
-        b=rPOQb1Wa7oe2PwBgmnY35CO48AfrQ3lrl18PVCc/6M/2YXBo0eIbI928BF2JGH0rQW
-         5pyxi1x94zAXKo2vw/ejhJDr3kftiniQtf7zqWFsmpFJ2ZyYEX6JxpMPabu7B71jfwed
-         x9QO7EDlRxh5DLsbGC/InbtABuaDbN+PpJcxyq8L/OyijSjTb3It6UAPpsQ3/l4FutTk
-         L064rfCNSRZqJ7Cw1DMck+oigVOgAXiHyle0MptrqsqjSQ1KZ2LP9JvQSEAwY7M8wR7V
-         r/z/bXIEDzjfcUu2o62pbMzA8NIgLHupYKU9MnwKqs6We3vPBsmIJHAgSqkqr6t9OJWk
-         fZmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXpHt8T6tawZSOWzl5ZLTFMfbg2vMNsUTh2LQAFE9cconvbo9IxoHQl50CVsTf6bAA26s6XQVSoS+/YQ7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXH1DHl2plBoJ+J2vNKvdSBZaZ5Er/mSnj2Wvp6rTLSzU8B0Ci
-	KaU8t3VGe7kssnmxdg9dsXMuUA11Nin68RqG0qnPX6/V0/T2eaO2OICw
-X-Gm-Gg: ASbGncuAYVVs0JXHpmX9JgptcNblK9gFFuuvZaUKouEeElgX9ojUI9QfaHcWftnuHc+
-	IXbHYEpoI38rgwZKzRBmqb8br72v0zlKnmXsFoIhVBROe4vIZ6XXS1blS69WyiQ3vs5+WId7j3k
-	cGpjUMtjgCs9W3H1wcRz14/3oodbG4OAalPZLYWGAFSgIxHbjdobgF8Z4HMmOZn3hC7HOzD1mhn
-	DY6Wk4S3bkF9kclrhBW8PGZ8SlMdVQrUMJfewToHw2GlBrhQEz4f3kP8R8UpYkTD0YuxPaRATva
-	G3ITDdJTsg2uzmCeG49u97zi3lqwVywX8y/qyTQsl0+Dsf2o6QBWnPrBoD4we4qT7YcTaib8qNG
-	bUFDFmZNam7jFeImggu4wfABeHSajUnY=
-X-Google-Smtp-Source: AGHT+IGxvs6MD8s+eM6heMdRcLibqqQD+sjLFfiyGfps4+dBebSFKDUzokFvJFWoYKvyRnAss8ibdA==
-X-Received: by 2002:a05:6000:1888:b0:3b7:739d:b4bf with SMTP id ffacd0b85a97d-3b79501de12mr2280627f8f.51.1753882531799;
-        Wed, 30 Jul 2025 06:35:31 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b78d45d010sm7204560f8f.8.2025.07.30.06.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 06:35:31 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Anitha Chrisanthus <anitha.chrisanthus@intel.com>,
-	Edmund Dea <edmund.j.dea@intel.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	=?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= <ville.syrjala@linux.intel.com>,
-	dri-devel@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] drm/kmb: Fix dereference of pointer plane before a null check
-Date: Wed, 30 Jul 2025 14:34:57 +0100
-Message-ID: <20250730133457.2076784-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84485293454;
+	Wed, 30 Jul 2025 13:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753882638; cv=pass; b=JRyWkOrxy6EIngV1dLcYDdWV0UdRf0hawXZB08XbCrnSJUaGa25GU17JmPDmz+EAlJCwyaUBrzpb28yIQ3g3aua4tUetxOUXC4FkB61MSEEKjXVXOk9DRgSEoeXx2/SqlV+RDGjb7d3TCLJSxowslNNELEGSG+aecR8/EBN4T1Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753882638; c=relaxed/simple;
+	bh=0KmMvxy+SwDmjTd5hYeEPgp70c7lySC5m8i2ZH16PSM=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=sfZUel6CT//inmt6nMtE8AUV+4JJWZpbtUyHTtiItvOEQjY0B/K5WmaStU5TqcDPjXq6pNS8huDhpnWDl8VLwK18a8aQvw+7rtortTXmLzs2W7zHeIPER4zZz5MBISOM5DKzMcl8UWd9rge3rBR4uI5e2Vc4HE1acwXYLdYoqvQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=Cd3pxApB; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753882611; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=KeGIAGDAWludj9s2OsBdrrpPcSWLcy/g6IcjI2qEQumzqvim3m0+G5U7zV7FiK/mOzBgOJNkz7kIKeZ49zTzg03nu97CuV45VQa30koNkQOl8zlsxHUlK2jFKDDYAljNgotAtb3sKOH878EkJQgpF/R1reW6UCALridvm2cpOWQ=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753882611; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=ipBuX+007QmZGVBwckpwz4LW/7znlRX+ZLBlKNFcy5A=; 
+	b=J/ZEP3VHk8nmnH6k2vfTzTwFl+F2gxWoxYKo1chVvFgh5rRwjGekMPhVMz/olxLfL7H9vDFMb6ogFOyBmREVtvqvpOua0wSu7qXUNAYys/KqKeo37I33JpIm1TvkLKb1ykph41RW9lDxsPMOEF50hbMhPigm3qMFO/1rOO1xCDQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753882611;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=ipBuX+007QmZGVBwckpwz4LW/7znlRX+ZLBlKNFcy5A=;
+	b=Cd3pxApBJw0djL6h99BVSWsO9A9AWTc/OwKTpEyNOcnPgGsKbcdtPZl4LPotcWsU
+	pHMcLpg0/FBAdfZM6MEW/nowl/7f9nNCclIPLvgsXZSgy2EUx8UgyGq3C5/4VsXT5XX
+	1M6ZOA84lCqZ6YzylpwMZr74fCcBfirrXRc7pCBc=
+Received: by mx.zohomail.com with SMTPS id 1753882609215993.1319746622694;
+	Wed, 30 Jul 2025 06:36:49 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH 0/3] Fix broken `srctree/` links and warn about them
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250730130716.3278285-1-ojeda@kernel.org>
+Date: Wed, 30 Jul 2025 10:36:33 -0300
+Cc: Alex Gaynor <alex.gaynor@gmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-block@vger.kernel.org,
+ dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <8CCB36E4-4C5D-4E2F-BC58-255770AA4904@collabora.com>
+References: <20250730130716.3278285-1-ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Currently pointer plane is being dereferenced on the calls to
-drm_atomic_get_old_plane_state and drm_atomic_get_new_plane_state
-when assigning old_plane_state and new_plane_state, this could
-lead to a null pointer dereference. Fix this by first performing
-a null pointer check on plane, then assigning old_plane_state and
-new_plance_state and then null pointer checking these.
+Hi Miguel, this is indeed nice!
 
-Fixes: 977697e20b3d ("drm/atomic: Pass the full state to planes atomic disable and update")
-Fixes: 37418bf14c13 ("drm: Use state helper instead of the plane state pointer")
+> On 30 Jul 2025, at 10:07, Miguel Ojeda <ojeda@kernel.org> wrote:
+>=20
+> This fixes a handful of broken links and introduces a warning to
+> prevent them from happening in the future.
+>=20
+> Relatedly, we could also perhaps check the other side of the links, =
+but
+> perhaps there are cases we want to customize. Alternatively, we could
+> also in the future introduce custom syntax for these that avoids
+> repetition or a fancier preprocessing step.
+>=20
+> Miguel Ojeda (3):
+>  rust: block: fix `srctree/` links
+>  rust: drm: fix `srctree/` links
+>  rust: warn if `srctree/` links do not exist
+>=20
+> rust/Makefile                    | 6 ++++++
+> rust/kernel/block/mq/gen_disk.rs | 2 +-
+> rust/kernel/drm/device.rs        | 2 +-
+> rust/kernel/drm/driver.rs        | 2 +-
+> rust/kernel/drm/file.rs          | 2 +-
+> rust/kernel/drm/gem/mod.rs       | 2 +-
+> rust/kernel/drm/ioctl.rs         | 2 +-
+> 7 files changed, 12 insertions(+), 6 deletions(-)
+>=20
+> =E2=80=94
+> 2.50.1
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/gpu/drm/kmb/kmb_plane.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Reviewed-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-diff --git a/drivers/gpu/drm/kmb/kmb_plane.c b/drivers/gpu/drm/kmb/kmb_plane.c
-index 9e0562aa2bcb..07498deba1b6 100644
---- a/drivers/gpu/drm/kmb/kmb_plane.c
-+++ b/drivers/gpu/drm/kmb/kmb_plane.c
-@@ -341,10 +341,8 @@ static void kmb_plane_set_alpha(struct kmb_drm_private *kmb,
- static void kmb_plane_atomic_update(struct drm_plane *plane,
- 				    struct drm_atomic_state *state)
- {
--	struct drm_plane_state *old_plane_state = drm_atomic_get_old_plane_state(state,
--										 plane);
--	struct drm_plane_state *new_plane_state = drm_atomic_get_new_plane_state(state,
--										 plane);
-+	struct drm_plane_state *old_plane_state;
-+	struct drm_plane_state *new_plane_state;
- 	struct drm_framebuffer *fb;
- 	struct kmb_drm_private *kmb;
- 	unsigned int width;
-@@ -359,7 +357,12 @@ static void kmb_plane_atomic_update(struct drm_plane *plane,
- 	static dma_addr_t addr[MAX_SUB_PLANES];
- 	struct disp_cfg *init_disp_cfg;
- 
--	if (!plane || !new_plane_state || !old_plane_state)
-+	if (!plane)
-+		return;
-+
-+	old_plane_state = drm_atomic_get_old_plane_state(state, plane);
-+	new_plane_state = drm_atomic_get_new_plane_state(state, plane);
-+	if (!old_plane_state || !new_plane_state)
- 		return;
- 
- 	fb = new_plane_state->fb;
--- 
-2.50.0
+Patch 3 alone indeed produces the following warnings:
 
+warning: srctree/ link to include/linux/blk_mq.h does not exist
+warning: srctree/ link to include/linux/drm/drm_device.h does not exist
+warning: srctree/ link to include/linux/drm/drm_ioctl.h does not exist
+warning: srctree/ link to include/linux/drm/drm_file.h does not exist
+warning: srctree/ link to include/linux/drm/drm_drv.h does not exist
+warning: srctree/ link to include/linux/drm/drm_gem.h does not exist
+
+So you can add my Tested-by for that one.
+
+Cheers,
+=E2=80=94 Daniel=
 
