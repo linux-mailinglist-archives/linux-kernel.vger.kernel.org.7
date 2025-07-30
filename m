@@ -1,110 +1,367 @@
-Return-Path: <linux-kernel+bounces-750925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B406B162E2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:33:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B70B162E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 16:33:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4284E5A3EA4
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D292A16156A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2C12D97B0;
-	Wed, 30 Jul 2025 14:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NteU1UWF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E9D2DA75C;
+	Wed, 30 Jul 2025 14:33:21 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86F3284B37;
-	Wed, 30 Jul 2025 14:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE041DE3D6;
+	Wed, 30 Jul 2025 14:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753885986; cv=none; b=EzaJlJ4fzPe/bZR/WszkI++FeGyvM4zc8tJI+95VTlKL+jGd/N1wEWSDRh8JnvW2mzzsCz0wPzE7D6qvoZE5z7X1oxkU/YSd8RWWwMvujFdv7UnHBavFF66pFrflOFyaH24VZoK5Ef76QkxHXCPvfwQqkdsThdZgLsR+T6sUhP4=
+	t=1753886001; cv=none; b=ip2th2lmz60sbQsb0sHz/xoQE+sNp4EcVXBicyTCvwoAQ4Njt6MCJVBsVb/oQ2EHl9sLfEqvINS/yPZVCBGbf5mvXtHM+ECtwYaZtMqaoqlXm2qxisbxoqry025X2XmpotSZRstJmDkFt2rxQnvuURa9gRrbsbIxkwgYNo75b4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753885986; c=relaxed/simple;
-	bh=XgUa47oZeKfYuz+h12vt7dwd0niKW9e7i9+8fLGebrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PUBuBq1WD0nmqUGGUTk9fVSiRgqnSHHArxUJ/aJ1btvizIkLsZueAir18APGDWIPimZPDua1JoUsVnkXZ8+iHQUWTFZbI50F32hGDNyenG3UEoQZgLnXW4c8t3uYD/J2shr621tNxdYBU/O1z10xc2LddJOAbBF94LnhKs4p/GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NteU1UWF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 030CBC4CEE3;
-	Wed, 30 Jul 2025 14:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753885985;
-	bh=XgUa47oZeKfYuz+h12vt7dwd0niKW9e7i9+8fLGebrY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NteU1UWFAPOC8sKm1Rl/BKx96qbL7umCKGMqQminNHz8NfmFy+as/DWnyhSGp+heV
-	 6WJzl95zSF1wY5DhoAwhtZcVcHjSEpheXdijo2SeqNchHKvjEXNXVU9tvi905HQi++
-	 Hr62esqIPLG5t4YL4Ek6HT1i7CFOF3HhJb4zOuBMp4iL370d1lslYOgYh1S+dfOgrb
-	 +CEby4Tp1KkmXeCacippPJSV6vlBfgSleNCSSMh5r0NaWOLFACJVgEVnmC362Owirf
-	 izshVudW2ZqiugELEMuMeHy+/8AvjJUjFTzMvrIiN6qRJ1jbLONgAQUcldBs/xCeAG
-	 zmdw2Ra2vWTTw==
-Date: Wed, 30 Jul 2025 15:33:00 +0100
-From: Simon Horman <horms@kernel.org>
-To: Florian Fainelli <florian.fainelli@broadcom.com>
-Cc: netdev@vger.kernel.org, Doug Berger <opendmb@gmail.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net] net: mdio: mdio-bcm-unimac: Correct rate fallback
- logic
-Message-ID: <20250730143300.GI1877762@horms.kernel.org>
-References: <20250729213148.3403882-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1753886001; c=relaxed/simple;
+	bh=PlM6vG64I7c9NulyIvT028yULjYuIv0uAORqJQLB7Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=icBfK0prgktdpYXQ1GPgIaBRc+MnpoOtjJmMg3P4q+06N10bIQGakULqtN0I5ATQVm3mG2LPKThs6WVRgmcp1xk/pYlVImhzYt73g+HdmR5e6G9LaG3d0Yi9dBq0M80RjgyK0ky/+tUnok4LDd0BN0hadhOVE917k79YQWM9108=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay09.hostedemail.com (Postfix) with ESMTP id 82C3A8029E;
+	Wed, 30 Jul 2025 14:33:15 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id 5B6A732;
+	Wed, 30 Jul 2025 14:33:12 +0000 (UTC)
+Date: Wed, 30 Jul 2025 10:33:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
+ <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Mark Rutland
+ <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>, Namhyung Kim
+ <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>, Douglas Raillard
+ <douglas.raillard@arm.com>, Tom Zanussi <zanussi@kernel.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Ian
+ Rogers <irogers@google.com>, aahringo@redhat.com
+Subject: Re: [PATCH] tracing/probes: Allow use of BTF names to dereference
+ pointers
+Message-ID: <20250730103328.40bb6da5@gandalf.local.home>
+In-Reply-To: <20250730225340.92ead36268880e0bc098f12e@kernel.org>
+References: <20250729113335.2e4f087d@batman.local.home>
+	<20250730225340.92ead36268880e0bc098f12e@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729213148.3403882-1-florian.fainelli@broadcom.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: owht7mijtbqgypkt8zazaa3mkppuz44d
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 5B6A732
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18KjGCoIIafpUQP6IflbDC2HCE3gjnzJUw=
+X-HE-Tag: 1753885992-619570
+X-HE-Meta: U2FsdGVkX1/uAB27RqUDe8L3UhaDhi+jNIDHMCg5551QroW6nIJzxG79cAkGo7qKAtEV+reGYZwKCbaNHq7Ux5XR6zwIQonhyqcX5eJmJmVfGyh3Kub/R5CfINaXsnvAMca+ZHfNOAkGN+AXMZ7crdG0izHXlwyN4RqrInJzuD5ykkDMDANkVKOGjalCDeKnerN2EoUp83W1iAz7Dc/3+sPlXAPvdXyMv6kL9JEKwoIj9WxuE7ck7URQb2fY+LOZTdVetE4U6MqM9taeG0r8rAjlUD2EyLWBMpHiFbBhS3lFOl5a2pqBhDB1miKuGrvItP3YYnja2uhAIrVFWISg13Z1YPV6J9NnwrA10KfS3LCkgz6I7m/PZt62SHqNJqjW
 
-On Tue, Jul 29, 2025 at 02:31:48PM -0700, Florian Fainelli wrote:
-> In case the rate for the parent clock is zero, make sure that we still
-> fallback to using a fixed rate for the divider calculation, otherwise we
-> simply ignore the desired MDIO bus clock frequency which can prevent us
-> from interfacing with Ethernet PHYs properly.
-> 
-> Fixes: ee975351cf0c ("net: mdio: mdio-bcm-unimac: Manage clock around I/O accesses")
-> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> ---
->  drivers/net/mdio/mdio-bcm-unimac.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/mdio/mdio-bcm-unimac.c b/drivers/net/mdio/mdio-bcm-unimac.c
-> index b6e30bdf5325..9c0a11316cfd 100644
-> --- a/drivers/net/mdio/mdio-bcm-unimac.c
-> +++ b/drivers/net/mdio/mdio-bcm-unimac.c
-> @@ -209,10 +209,9 @@ static int unimac_mdio_clk_set(struct unimac_mdio_priv *priv)
->  	if (ret)
->  		return ret;
->  
-> -	if (!priv->clk)
-> +	rate = clk_get_rate(priv->clk);
-> +	if (!priv->clk || !rate)
+On Wed, 30 Jul 2025 22:53:40 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-If priv->clk is NULL then drivers/clk/clk.c:clk_get_rate()
-(are there other relevant implementations?) will return 0.
-So I think the condition above is tautological, and could be expressed as:
 
-	if (!rate)
+> > If BTF is in the kernel, it can be used to find this with names, where the
+> > user doesn't need to find the actual offset:
+> > 
+> >  # echo 'f:cache kmem_cache_alloc_noprof size=+kmem_cache.size($arg1):u32' >> dynamic_events  
+> 
+> Great! This is something like a evolution of assembler to "symbolic"
+> assembler. ;)
 
->  		rate = 250000000;
-> -	else
-> -		rate = clk_get_rate(priv->clk);
->  
->  	div = (rate / (2 * priv->clk_freq)) - 1;
->  	if (div & ~MDIO_CLK_DIV_MASK) {
-> -- 
-> 2.34.1
+Yep!
+
+> 
+> > 
+> > Instead of the "+0x18", it would have "+kmem_cache.size" where the format is:
+> > 
+> >   +STRUCT.MEMBER[.MEMBER[..]]  
+> 
+> Yeah, and using '.' delimiter looks nice to me.
+
+I know I initially suggested using ':' but then it hit me that a structure
+uses '.' and that made a lot more sense. Also, it made parsing easier as I
+had a hack to get around the ':' parsing that extracted the "type"
+(like :u64 or :string)
+
+> 
+> > 
+> > The delimiter is '.' and the first item is the structure name. Then the
+> > member of the structure to get the offset of. If that member is an
+> > embedded structure, another '.MEMBER' may be added to get the offset of
+> > its members with respect to the original value.
+> > 
+> >   "+kmem_cache.size($arg1)" is equivalent to:
+> > 
+> >   (*(struct kmem_cache *)$arg1).size
+> > 
+> > Anonymous structures are also handled:
+> > 
+> >   # echo 'e:xmit net.net_dev_xmit +net_device.name(+sk_buff.dev($skbaddr)):string' >> dynamic_events  
+> 
+> So this only replaces the "offset" part. So we still need to use
+> +OFFS() syntax for dereferencing the pointer.
+
+Correct.
+
+
+> > And produces:
+> > 
+> >        trace-cmd-1381    [002] ...1.  2082.676268: read: (filemap_readahead.isra.0+0x0/0x150) file="trace.dat"
+> >   
+> 
+> OK, the desgin looks good to me. I have some comments below.
+
+I'd expected as much ;-)
+
+This is for the next merge window so we have plenty of time.
+
+> >  
+> > +#define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
+> > +
+> > +static int find_member(const char *ptr, struct btf *btf,
+> > +		       const struct btf_type **type, int level)
+> > +{
+> > +	const struct btf_member *member;
+> > +	const struct btf_type *t = *type;
+> > +	int i;
+> > +
+> > +	/* Max of 3 depth of anonymous structures */
+> > +	if (level > 3)
+> > +		return -1;  
+> 
+> Please return an error code, maybe this is -E2BIG?
+
+OK.
+
+I was thinking that perhaps we should update the error_log to handle these
+cases too.
+
+> 
+> > +
+> > +	for_each_member(i, t, member) {
+> > +		const char *tname = btf_name_by_offset(btf, member->name_off);
+> > +
+> > +		if (strcmp(ptr, tname) == 0) {
+> > +			*type = btf_type_by_id(btf, member->type);
+> > +			return BITS_ROUNDDOWN_BYTES(member->offset);
+> > +		}
+> > +
+> > +		/* Handle anonymous structures */
+> > +		if (strlen(tname))
+> > +			continue;
+> > +
+> > +		*type = btf_type_by_id(btf, member->type);
+> > +		if (btf_type_is_struct(*type)) {
+> > +			int offset = find_member(ptr, btf, type, level + 1);
+> > +
+> > +			if (offset < 0)
+> > +				continue;
+> > +
+> > +			return offset + BITS_ROUNDDOWN_BYTES(member->offset);
+> > +		}
+> > +	}
+> > +
+> > +	return -1;  
+> 
+> 	return -ENOENT;
+
+Ah. This return doesn't propagate up to the caller. It's a static function
+and just returns "not found". Which means that the "-E2BIG" will not be used.
+
+If we want the -E2BIG to be used as well, then we can return the result of
+this function.
+
+
+> 
+> > +}
+> > +
+> > +/**
+> > + * btf_find_offset - Find an offset of a member for a structure
+> > + * @arg: A structure name followed by one or more members
+> > + * @offset_p: A pointer to where to store the offset
+> > + *
+> > + * Will parse @arg with the expected format of: struct.member[[.member]..]
+> > + * It is delimited by '.'. The first item must be a structure type.
+> > + * The next are its members. If the member is also of a structure type it
+> > + * another member may follow ".member".
+> > + *
+> > + * Note, @arg is modified but will be put back to what it was on return.
+> > + *
+> > + * Returns: 0 on success and -EINVAL if no '.' is present
+> > + *    or -ENXIO if the structure or member is not found.
+> > + *    Returns -EINVAL if BTF is not defined.
+> > + *  On success, @offset_p will contain the offset of the member specified
+> > + *    by @arg.
+> > + */
+> > +int btf_find_offset(char *arg, long *offset_p)
+> > +{
+> > +	const struct btf_type *t;
+> > +	struct btf *btf;
+> > +	long offset = 0;
+> > +	char *ptr;
+> > +	int ret;
+> > +	s32 id;
+> > +
+> > +	ptr = strchr(arg, '.');
+> > +	if (!ptr)
+> > +		return -EINVAL;  
+> 
+> Instead of just returning error, can't we log an error for helping user?
+
+Yeah, but that will require the caller of this to handle it. I rather not
+have the probe error logging code put in this file.
+
+That means the negative numbers will need to mean something so that the
+trace probe logic can know what to report.
+
+> 
+> trace_probe_log_err(BYTE_OFFSET, ERROR_CODE);
+> 
+> The base offset is stored in ctx->offset, so you can use it.
+> ERROR_CODE is defined in trace_probe.h. 
+> 
+> Maybe you can add something like
+> 
+> 	C(BAD_STRUCT_FMT,		"Symbolic offset must be +STRUCT.MEMBER format"),\
+> 
+> And for other cases, you can use
+> 
+> 	C(BAD_BTF_TID,		"Failed to get BTF type info."),\
+
+OK, so the caller can handle this (see below).
+
+> 
+> > +
+> > +	*ptr = '\0';
+> > +
+> > +	id = bpf_find_btf_id(arg, BTF_KIND_STRUCT, &btf);
+> > +	if (id < 0)
+> > +		goto error;
+> > +
+> > +	/* Get BTF_KIND_FUNC type */
+> > +	t = btf_type_by_id(btf, id);
+> > +
+> > +	/* May allow more than one member, as long as they are structures */
+> > +	do {
+> > +		if (!t || !btf_type_is_struct(t))
+> > +			goto error;
+> > +
+> > +		*ptr++ = '.';
+> > +		arg = ptr;
+> > +		ptr = strchr(ptr, '.');
+> > +		if (ptr)
+> > +			*ptr = '\0';
+> > +
+> > +		ret = find_member(arg, btf, &t, 0);
+> > +		if (ret < 0)
+> > +			goto error;
+> > +
+> > +		offset += ret;
+> > +
+> > +	} while (ptr);
+> > +
+> > +	*offset_p = offset;
+> > +	return 0;
+> > +
+> > +error:
+> > +	if (ptr)
+> > +		*ptr = '.';
+> > +	return -ENXIO;
+> > +}
+> > diff --git a/kernel/trace/trace_btf.h b/kernel/trace/trace_btf.h
+> > index 4bc44bc261e6..7b0797a6050b 100644
+> > --- a/kernel/trace/trace_btf.h
+> > +++ b/kernel/trace/trace_btf.h
+> > @@ -9,3 +9,13 @@ const struct btf_member *btf_find_struct_member(struct btf *btf,
+> >  						const struct btf_type *type,
+> >  						const char *member_name,
+> >  						u32 *anon_offset);
+> > +
+> > +#ifdef CONFIG_PROBE_EVENTS_BTF_ARGS
+> > +/* Will modify arg, but will put it back before returning. */
+> > +int btf_find_offset(char *arg, long *offset);
+> > +#else
+> > +static inline int btf_find_offset(char *arg, long *offset)
+> > +{  
+> 
+> Here also should use 
+> 
+> 	C(NOSUP_BTFARG,		"BTF is not available or not supported"),	\
+> 
+
+Again, this should be from the caller.
+
+> 
+> Thank you,
+> 
+> > +	return -EINVAL;
+
+So this can return -ENODEV;
+
+
+> > +}
+> > +#endif
+> > diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
+> > index 424751cdf31f..4c13e51ea481 100644
+> > --- a/kernel/trace/trace_probe.c
+> > +++ b/kernel/trace/trace_probe.c
+> > @@ -1137,7 +1137,7 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
+> >  
+> >  	case '+':	/* deref memory */
+> >  	case '-':
+> > -		if (arg[1] == 'u') {
+> > +		if (arg[1] == 'u' && isdigit(arg[2])) {
+> >  			deref = FETCH_OP_UDEREF;
+> >  			arg[1] = arg[0];
+> >  			arg++;
+> > @@ -1150,7 +1150,10 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
+> >  			return -EINVAL;
+> >  		}
+> >  		*tmp = '\0';
+> > -		ret = kstrtol(arg, 0, &offset);
+> > +		if (arg[0] != '-' && !isdigit(*arg))
+> > +			ret = btf_find_offset(arg, &offset);
+
+Here we could have:
+
+			if (ret < 0) {
+				int err = 0;
+				switch (ret) {
+				case -ENODEV: err = NOSUP_BTFARG; break;
+				case -E2BIG: err = MEMBER_TOO_DEEP; break;
+				case -EINVAL: err = BAD_STRUCT_FMT; break;
+				case -ENXIO: err = BAD_BTF_TID; break;
+				}
+				if (err)
+					trace_probe_log_err(ctx->offset, err);
+				return ret;
+			}
+
+-- Steve
+
+			
+
+
+> > +		else
+> > +			ret = kstrtol(arg, 0, &offset);
+> >  		if (ret) {
+> >  			trace_probe_log_err(ctx->offset, BAD_DEREF_OFFS);
+> >  			break;
+> > -- 
+> > 2.47.2
+> >   
 > 
 > 
+
 
