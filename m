@@ -1,110 +1,87 @@
-Return-Path: <linux-kernel+bounces-750873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D7CB16214
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:58:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71CACB16218
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A8875A7F4F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B53A1723D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D3B2DA76D;
-	Wed, 30 Jul 2025 13:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C197E2D94B4;
+	Wed, 30 Jul 2025 13:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlcCrv2I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCnRjt9W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5882D9EF8;
-	Wed, 30 Jul 2025 13:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE762D9482;
+	Wed, 30 Jul 2025 13:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753883848; cv=none; b=YwgLO9CiyVl//n8ry9Yh5qcuv2O6rkEs+wC8jAY0lPC/jcVqYCiM1TR0mX2seXY7stUe8OShniQCYipljR3bRUhrLdAFMbbPinsQlLcdODLW9P2UkMB19y7+lMRBuBFu8f/iNUBf/4IFKHgDjucTv00WIT2BvVzV8DaUQ7cicjk=
+	t=1753883859; cv=none; b=BLt5CzW4M79de08QFco0p2K42OdEVZhwJUGsTpcYqE2JwYVq/FhYh9aUjj7FFncDEJwAqvp/FSUwqgP6B7EAOSkxvbw1LPp9GiONZed2Arv4RWgCiz8Yi9+wjvJhj/kRMFy/hZygJ9pQGyYCivyqO5r2gkEnaO8hcMBnDU09Nic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753883848; c=relaxed/simple;
-	bh=JA07ZI7KstV+Tv5KxzbLM2UL0i9UfNUTw3ZAdpaDeHE=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Z2vYx12RtT/jSnGWzZI+xO5A+3lAEAZPnccCDmjbaPymaiNc91rPD9E36Z0dwlvOVvkNuGkaRl5Ofa9vK+mEzHGlQAb0gkuuZmRm+WGKgg+F+fQOyGkn6jHpBCeN+GvQEtBEizeKs6fpnh1VYnoC/ZJXXoSyDJEv9d5MbQahVJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlcCrv2I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 680CAC4CEE3;
-	Wed, 30 Jul 2025 13:57:25 +0000 (UTC)
+	s=arc-20240116; t=1753883859; c=relaxed/simple;
+	bh=1LsoPXULwa19yD1hsUghgaJhhSgb4fsudezH6xVcUl8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Aqxd60Q3DefsT9Q3kIhiEF3loIIhx73zJpLRoQ80aogAXhpB4FyqHF+hkTFePRj1PT7b5yHNhPQMPs+w+rfrCqHioYc2XKNWXBwM8OqNU6IY1/0ylESM0oyvmAhSERKwnwdynrFKdzCiOuQAKBuI0Mc0pM2hGkK/L0XkKKryFmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCnRjt9W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD3AC4CEE3;
+	Wed, 30 Jul 2025 13:57:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753883848;
-	bh=JA07ZI7KstV+Tv5KxzbLM2UL0i9UfNUTw3ZAdpaDeHE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IlcCrv2IwsieOCCkD0nyxBFZTqN8qBdFPnXa36F9WnZopnckl2WvGCoEiiDhS2ryY
-	 hYRyqomh352HnUtEUQsWSZI9YKJGw4xlR+q2NhzKU/0RWOUuMdllNjgK+3v6OtXVB4
-	 QQwYmLneRmQp/iionec/qXW6TFheSEA3S8YGlSE8vxG0kdLQeBHPE0icTmc+OHG3gJ
-	 vLwhMgQ2paCpyxbQ9bc5E2viSDAaRpbrm9NeB/hN0wHjgnqtwGmJeLtHDO9MczebED
-	 eA+r1/RJ1uGbGsm4tYR9f1VHAJ1HyOLTB3BHyQM+95bjEhCwTr1peZ0GrwLxUuOTnP
-	 VODxAkHvqe/Gg==
-Date: Wed, 30 Jul 2025 22:57:22 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: kernel test robot <lkp@intel.com>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- oe-kbuild-all@lists.linux.dev, Mark Rutland <mark.rutland@arm.com>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Linux Memory Management List
- <linux-mm@kvack.org>, Namhyung Kim <namhyung@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH v2 1/2] tracing: Have eprobes have their own config
- option
-Message-Id: <20250730225722.c88d2dbd3dfa07310de7edd4@kernel.org>
-In-Reply-To: <20250730091727.7b3a8b96@gandalf.local.home>
-References: <20250729161912.056641407@kernel.org>
-	<202507301452.JPAcMvT0-lkp@intel.com>
-	<20250730191101.7e6203f21b94c3f932fa8348@kernel.org>
-	<20250730091727.7b3a8b96@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1753883858;
+	bh=1LsoPXULwa19yD1hsUghgaJhhSgb4fsudezH6xVcUl8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jCnRjt9WICdEy7fOXeBxQVXQHO1t+Q8YpV0bD55UmFW7rYn3oRY3UJQwJ8wxHjrmO
+	 w8i9u0wQKazmW5Ff0rOvXA0RZrCfoKXju9uGk11n8NCsbaqnEUUVN5/LW17ngrGKGh
+	 LAnA4P6/lhP2tT3oO97sxJYU3pXPXDN37GYe8r62VoHjq0pK+4YKCQWMe5XH1HT2Yr
+	 6eCdTH+3hpP6TlGTzknX8JkWxIYLQA9FHyKaSnhrlTYZs1CPZxjEQg6rOzU3l3O/gf
+	 V07LCKRCFyN3p9s7S0ddf+rqQW1pvvHBDJ04nJXF0ZDAjaAQ497Bm0sfmDhCDnQ+yc
+	 LQsgDlqtHo3Gg==
+From: Chuck Lever <cel@kernel.org>
+To: Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	NeilBrown <neil@brown.name>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org,
+	Colin Ian King <colin.i.king@gmail.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] lockd: Remove space before newline
+Date: Wed, 30 Jul 2025 09:57:34 -0400
+Message-ID: <175388383179.79309.545309960517317887.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250729130709.1932507-1-colin.i.king@gmail.com>
+References: <20250729130709.1932507-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 30 Jul 2025 09:17:27 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Chuck Lever <chuck.lever@oracle.com>
 
-> On Wed, 30 Jul 2025 19:11:01 +0900
-> Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+On Tue, 29 Jul 2025 14:07:09 +0100, Colin Ian King wrote:
+> There is an extraneous space before a newline in a dprintk message.
+> Remove the space.
 > 
-> > Interesting, this find another issue. Since this is provided by
-> > CONFIG_PROBE_EVENTS, we need to fix CONFIG_PROBE_EVENTS depending
-> > on HAVE_REGS_AND_STACK_ACCESS_API.
-> > 
-> > diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-> > index a3f35c7d83b6..cd239240b0ef 100644
-> > --- a/kernel/trace/Kconfig
-> > +++ b/kernel/trace/Kconfig
-> > @@ -792,6 +792,7 @@ config DYNAMIC_EVENTS
-> >         def_bool n
-> >  
-> >  config PROBE_EVENTS
-> > +       depends on HAVE_REGS_AND_STACK_ACCESS_API
-> >         def_bool n
-> >  
-> >  config BPF_KPROBE_OVERRIDE
 > 
-> OK, I'll send a v2.
-> 
-> Did you want to take this in the tracing pull request?
-> 
-> I see you already did the probe pull request.
 
-Ah, I thought this was for the next one... (but I think it is a kind of bugfix?)
+Applied to nfsd-testing, thanks!
 
-Thank you,
+[1/1] lockd: Remove space before newline
+      commit: fbdcd36f30cbf78f39c731a30337251d9f1e91a3
 
-> 
-> -- Steve
+--
+Chuck Lever
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
