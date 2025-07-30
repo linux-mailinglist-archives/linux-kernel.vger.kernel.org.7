@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-751097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F908B1653A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:15:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0681EB1653B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 19:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 546A018C243C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CB7D54734F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 17:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42B5D2DFA31;
-	Wed, 30 Jul 2025 17:15:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A672DF3D9;
+	Wed, 30 Jul 2025 17:15:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mK7n2jUa"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jcDi7oVG"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931A82DFA24;
-	Wed, 30 Jul 2025 17:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 396C82DECB9;
+	Wed, 30 Jul 2025 17:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753895708; cv=none; b=JVzpAJuTPsgJRb+WjhLnIdpnAk9L3fOdgtEcFxfqQmjrrSDDHZmPYALlFVB7Ms+/M8w7Qg27uVfQsMXdrWX2OOQUmbFJ07TfYWO6V/gVerJWeDkqm8OodBPaS9X2D2Y+FbGkbeXcb518ZGOZ+Cwyh0+w77r1PtYuEgFLmtSDVEc=
+	t=1753895711; cv=none; b=teG5mQ6W47V1b01q/kSnZ7UacjQjYw1bm/BW3Zty/UigFbyYGVPiY0wvcBvXfqpPCzN4Y5ENcb+M0fLicyZr4TgrUpeDln/LDkkaeFIsxzAsUvqX3w07E1Blq71EQIA3ofvMCNTgSm0lKFO7j5Vl4/BTzJ/d3kzT7yCeKpkZ27w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753895708; c=relaxed/simple;
-	bh=vF1DNUNq3jV+3EkVfXZWIIzpTAJKBi2uQXnVAWMnJA4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=isoevQJ3OdJsvihRIynAQUgCRmVZIGOCrFYFMY1Iklo9ouUtTTDjA8eSAuVg9QEymH08Z8g2Wd0AIEOVUPJlya10ZefHtEBjQzgWeQABf5nnZUUOs0lbv3Pyd1+PN3jCva1DzEjW0LxVCaLImQAnTjKouNROIqMRaw5dgnIQQQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mK7n2jUa; arc=none smtp.client-ip=148.251.105.195
+	s=arc-20240116; t=1753895711; c=relaxed/simple;
+	bh=s+sx+hOclSZjyk1wL29+d+rxmeuUWcBNu0h4lfKEe88=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=uS7yUrjgHhc9T+s4waRnTUeK0zrKl0wV62nZ07z70iYL4dAmqjAJWtAkwhttg/A37ghtSsqJueCFVKngO+zngx14JeZ4aPGlwl7Di492xZmFphXUCY1/HEHRTHlfclECswxUCvJ15XiCbsKwakbsliUjD4qZ0R4lNZJElfr7LJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jcDi7oVG; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753895704;
-	bh=vF1DNUNq3jV+3EkVfXZWIIzpTAJKBi2uQXnVAWMnJA4=;
-	h=From:Subject:Date:To:Cc:From;
-	b=mK7n2jUa21SxcYa9oPrzg28EIipLiBKAmrToqjevnG7+v0vcq2u/BECvqiM16OyjF
-	 InOf1euaYH5hDjN0BnmspvAUIYv5/x+IkOvOOMfp69Qw8VeHWyL7vwazbPGwJnO/mW
-	 1d2BhBRvAMTz5D+L4QKT1VrFT4kj/aiNYZ//0Jutb+kvwdyIjr+sIKazeNWZ9WGhWb
-	 jQfvdO9qbzDD2GNC+qY2DKGx0pJaBTwpqlEKdtIRv74qy9GEY58U9XRzKr73lQIzey
-	 jHtMw2NiTIjMapBk4CaU3bO3Fyx5dK8ajN99pIl+02/4Po7slDrLXEbcXBWMaWs5bL
-	 OGGeQyNhlkBqA==
+	s=mail; t=1753895707;
+	bh=s+sx+hOclSZjyk1wL29+d+rxmeuUWcBNu0h4lfKEe88=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=jcDi7oVGc+WysbOnMe1u9dnWyB9WedNAZUKfLdGc9khdr0+XV48iUiYi8RPH0LQr8
+	 65iQNijBMZu4/1gYTU9Kg+pofKT+s2snC4wo2ReyB0U/FQl6vezRztmPZ+sukDzndv
+	 8fD7FM3IiXtZXEo9erBbnjuynDPXP70F90sa7figEsbi5KsLu/Omkp7fJpYI/05I9G
+	 bzuSDB/SKWCkIZhNRbOIkMhJUhf6i3mjwU68kw6TOaxPYWpgfbnNVLM7neAFgPDojR
+	 ELh9gl+5XRDxGApRCRNS/Epk+wW3TiCJdlIYjGGByb+8E+4tU0tUpVepYflf7C/DfY
+	 /FjeHVsff0AYg==
 Received: from [192.168.0.7] (unknown [IPv6:2804:14d:72b4:82f6:67c:16ff:fe57:b5a3])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: dwlsalmeida)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0280017E129D;
-	Wed, 30 Jul 2025 19:15:01 +0200 (CEST)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id E3B2017E130E;
+	Wed, 30 Jul 2025 19:15:04 +0200 (CEST)
 From: Daniel Almeida <daniel.almeida@collabora.com>
-Subject: [PATCH 0/3] Groundwork for Lock<T> when T is pinned
-Date: Wed, 30 Jul 2025 14:14:43 -0300
-Message-Id: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com>
+Date: Wed, 30 Jul 2025 14:14:44 -0300
+Subject: [PATCH 1/3] rust: lock: pin the inner data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,10 +58,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAANTimgC/x2MQQ5AMBAAvyJ7tklVpeEr4kAt3ZAlrSARf9c4T
- eYw80CkwBShyR4IdHLkTZIUeQbO9zIT8pgctNKVsqXCdXMLHnh5kgSOuLMIjahrbayplOndAKn
- eA018/+e2e98PW/F1V2kAAAA=
-X-Change-ID: 20250730-lock-t-when-t-is-pinned-292474504acb
+Message-Id: <20250730-lock-t-when-t-is-pinned-v1-1-1b97d5f28aa2@collabora.com>
+References: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com>
+In-Reply-To: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
  Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
  Waiman Long <longman@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
@@ -74,72 +73,61 @@ Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
  Daniel Almeida <daniel.almeida@collabora.com>
 X-Mailer: b4 0.14.2
 
-It's currently impossible to have a pinned struct within the Lock<T> type.
-This is problematic, because drivers might want to do this for various
-reasons, specially as they grow in complexity.
+In preparation to support Lock<T> where T is pinned, the first thing that
+needs to be done is to structurally pin the 'data' member. This switches
+the 't' parameter in Lock<T>::new() to take in an impl PinInit<T> instead
+of a plain T. This in turn uses the blanket implementation "impl PinInit<T>
+for T".
 
-A trivial example is:
+Subsequent patches will touch on Guard<T>.
 
-struct Foo {
-  #[pin]
-  bar: Mutex<Bar>,
-  #[pin]
-  p: PhantomPinned,
-}
-
-struct Bar {
-  #[pin]
-  baz: Mutex<Baz>,
-  #[pin]
-  p: PhantomPinned,
-}
-
-Note that Bar is pinned, so having it in a Mutex makes it impossible to
-instantiate a Foo that pins the Bar in bar. This is specially undesirable,
-since Foo is already pinned, and thus, it could trivially enforce that its
-bar field is pinned as well.
-
-This can be trivially solved by using Pin<KBox<Bar>> instead of
-structurally pinning, at the cost of an extra (completely unneeded)
-allocation and ugly syntax.
-
-This series lays out the groundwork to make the above possible without any
-extra allocations.
-
-- Patch 1 structurally pins the 'data' field in Lock<T>
-- Patch 2 constrains the DerefMut implementation for safety reasons
-- Patch 3 adds an accessor to retrieve a Pin<&mut T>
-
-Note that this is just the beginning of the work needed to make a Pin<&mut
-T> actually useful due to pin projections being currently unsupported.
-
-In other words, it is currently impossible (even with the current patch) to
-do this:
-
-let mut data: MutexGuard<'_, Data> = mutex.lock();
-let mut data: Pin<&mut Data> = data.as_mut();
-let foo = &mut data.foo; // <- won't compile
-
-The above is something that Benno is working on.
-
-Thanks Boqun, Benno and the rest of the team for brainstorming the issue
-and for and laying out a series of steps to implement a solution.
-
+Link: https://github.com/Rust-for-Linux/linux/issues/1181
+Suggested-by: Benno Lossin <lossin@kernel.org>
+Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 ---
-Daniel Almeida (3):
-      rust: lock: pin the inner data
-      rust: lock: guard: add T: Unpin bound to DerefMut
-      rust: lock: add a Pin<&mut T> accessor
+ rust/kernel/sync/lock.rs | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
- rust/kernel/sync/lock.rs        | 35 +++++++++++++++++++++++++++++++----
- rust/kernel/sync/lock/global.rs |  5 ++++-
- 2 files changed, 35 insertions(+), 5 deletions(-)
----
-base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
-change-id: 20250730-lock-t-when-t-is-pinned-292474504acb
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index e82fa5be289c169b0c9cfe277e15988958563430..9715463cbab867a2cf59e75f03001d75e91bd7b6 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -11,7 +11,7 @@
+     types::{NotThreadSafe, Opaque, ScopeGuard},
+ };
+ use core::{cell::UnsafeCell, marker::PhantomPinned, pin::Pin};
+-use pin_init::{pin_data, pin_init, PinInit};
++use pin_init::{pin_data, pin_init, PinInit, Wrapper};
+ 
+ pub mod mutex;
+ pub mod spinlock;
+@@ -115,6 +115,7 @@ pub struct Lock<T: ?Sized, B: Backend> {
+     _pin: PhantomPinned,
+ 
+     /// The data protected by the lock.
++    #[pin]
+     pub(crate) data: UnsafeCell<T>,
+ }
+ 
+@@ -127,9 +128,13 @@ unsafe impl<T: ?Sized + Send, B: Backend> Sync for Lock<T, B> {}
+ 
+ impl<T, B: Backend> Lock<T, B> {
+     /// Constructs a new lock initialiser.
+-    pub fn new(t: T, name: &'static CStr, key: Pin<&'static LockClassKey>) -> impl PinInit<Self> {
++    pub fn new(
++        t: impl PinInit<T>,
++        name: &'static CStr,
++        key: Pin<&'static LockClassKey>,
++    ) -> impl PinInit<Self> {
+         pin_init!(Self {
+-            data: UnsafeCell::new(t),
++            data <- UnsafeCell::pin_init(t),
+             _pin: PhantomPinned,
+             // SAFETY: `slot` is valid while the closure is called and both `name` and `key` have
+             // static lifetimes so they live indefinitely.
 
-Best regards,
 -- 
-Daniel Almeida <daniel.almeida@collabora.com>
+2.50.1
 
 
