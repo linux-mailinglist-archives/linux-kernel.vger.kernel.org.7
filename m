@@ -1,62 +1,94 @@
-Return-Path: <linux-kernel+bounces-750434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C79FBB15B4C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:15:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585C5B15B50
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 11:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDDF956062C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6401A3ABDB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 09:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B9626D4E6;
-	Wed, 30 Jul 2025 09:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9581C84A0;
+	Wed, 30 Jul 2025 09:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cmssj2vS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T6xLMsBt";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ujvIOBrz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="I4EpAC/Q";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7oHL5EC/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2C8919BBC;
-	Wed, 30 Jul 2025 09:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A602D10E3
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 09:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753866899; cv=none; b=r3/URJpWZXLWaRFivhBMXaG+lfg/nj5JLeRtLuCTNX/MJxQMT7bIcT9wxGhYN2s8hHkmf1ICK2GclklubSzongYOi+D+ZyVV9aO+RaEbFD2BvfkZkgjIugEZkenpnKH33DYc6Y6DWdM+pzauWQbRfaoEU8DNnJdgjScWmOVujmo=
+	t=1753867026; cv=none; b=qCjQTPouuC+IMBEvnWojkUq0YRS9uphXVr9ZBhX8XuQTiRMIaBzMBZ1IfXYFmTRPTH+0iKDNX0jRHhlY1R/iVhvA/e2lBtGwwBYYgWpw0DpldB/EqrJQ9cjquShGAPVLNe+i/HyhE745DPGwxnZiGb3tzEohUiNBuP9ioRvgeCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753866899; c=relaxed/simple;
-	bh=kJO0vzOaPSzZxij2RzFRAkEe3cNJ0y+SKvCYc8G3+ug=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=K2JStLoQ0gy5DJQmH2D1bWW6mkQgtD8hZs6LWf7XZVbBk6jAYuq1us7/FJPN6bHsqC8vCq7NNd6so1lsdUNQaHwNNr92N794YyV9na6QZGwM8qasxf9NX8WBbsmjfSsVDWBjOGT/iMryka5grzMM25hMRfpCEISH7XZ8lZpjAIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cmssj2vS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56U7ZiNM029390;
-	Wed, 30 Jul 2025 09:14:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Klm1jGxRU1aBci00RNv4sJxrp2NGO1/0bQLdFIYy0jg=; b=Cmssj2vS39HDYSon
-	6RuOHWvH9Z3ZT47yHTJboU01oa6MRHmXB+8yAuaNM2Q8u3lQIDpvN4SRXAyjlpL3
-	NJ6FPxJLw5dyPicRq2sDjdzIc2tGCzVKl0d3CmkfGg/H1/gFhiLaSBuvlHMJJq2q
-	LrvxFm6P6TBWB4ULp0nWDejpRH+TsnHzhk5x3SiZqQmIlUjquBMpoM7kpwaCKYtI
-	/CUb0e35vyTf4T6R37MXz4UNgvIpZUf1zmJS9tBUViX9SIc7FsRYjUxbN9fnKgrb
-	IjhgyJRSJ1jF4GU6nYHS689Cx2SntOcIxZIMeLF2LGcgnoI1P5/+eq6q+SlS4g4/
-	/OvlAQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484qda31wp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 09:14:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56U9EhJr019108
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Jul 2025 09:14:43 GMT
-Received: from [10.206.106.133] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Wed, 30 Jul
- 2025 02:14:37 -0700
-Message-ID: <a5fa79e2-0c44-48fc-b863-46b4c0a599d5@quicinc.com>
-Date: Wed, 30 Jul 2025 14:44:28 +0530
+	s=arc-20240116; t=1753867026; c=relaxed/simple;
+	bh=sd1hwqGknesAWFyz4gWdFs5KDPlVQMMOBlMdOMOzJv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sddu95ChHFXdFu8Pel52FJIvy29Ojc4Ccv4jNiEcQlV0vsXRjszSaawVxw7DJqzUk9ZRIYhP3ZmGI4MBNd3UtyTJiRgNm+bKk1RS7xd/KD01HT4YCGSdZK0yz+r0bGXbVa8uKOO8ZsTPbjjw+f1QJ8u60OBlmH2T848CsmEkygs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T6xLMsBt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ujvIOBrz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=I4EpAC/Q; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7oHL5EC/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id DC8381F385;
+	Wed, 30 Jul 2025 09:16:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753867017; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fxv796BLHEU1HhOUKFxcqZahPQ+5Hc8Qams6OBkyyHY=;
+	b=T6xLMsBt/L2+qtNKFM/r0thMmtXo8qWTXlPEkTyxhBma1bguKmqI99zv2xzqZiwz+Q6jka
+	DWOvkB9RgbcwEhKnwmytIjz2NEZ1/4Q728fx/Zg/4rcNZGH39onfH+lZyiT1plCwLKigSE
+	rHmhVqyRVuAAvhW+vU82D/L9HNma9/E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753867017;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fxv796BLHEU1HhOUKFxcqZahPQ+5Hc8Qams6OBkyyHY=;
+	b=ujvIOBrzlr3Taby2iJuxU8MpMeQv8xcXT9AoKrFEDBw2y2jVI7n+rMruKI//D+qV+CvOL0
+	nupy7l9HACAG9aDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1753867016; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fxv796BLHEU1HhOUKFxcqZahPQ+5Hc8Qams6OBkyyHY=;
+	b=I4EpAC/Q0BrvTxpw5SCoMHqCAmH8NCg3pUIQdxaAhQ00H0IwMs/TW/4fJpvjw9VatCr30j
+	r9/w8nm6nBNWLWgqroS9oLhxx5qnyH6Cuxs0Q0vayCf1zQ5xk0yp58HXBRkvkq1mS4Xog3
+	4EiXAh1FwI6XyeycSn0Ngz0X8lLQnAY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1753867016;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=fxv796BLHEU1HhOUKFxcqZahPQ+5Hc8Qams6OBkyyHY=;
+	b=7oHL5EC/LkMsLcXsENcSdwY8UYDQ85TaqJOTpXHS71nyDH+eae9gEuNp84KqixpRgRfImX
+	xOCeL+gPcffuuRCg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C4DC213942;
+	Wed, 30 Jul 2025 09:16:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tLS/LwjjiWjbZQAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 30 Jul 2025 09:16:56 +0000
+Message-ID: <b084962f-b702-42fb-b2ab-345c57f837d5@suse.cz>
+Date: Wed, 30 Jul 2025 11:16:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,477 +96,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/9] media: dt-bindings: Add qcom,sa8775p-camss
- compatible
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <hverkuil-cisco@xs4all.nl>,
-        <cros-qcom-dts-watchers@chromium.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_svankada@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Wenmeng Liu
-	<quic_wenmliu@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-References: <20250703171938.3606998-1-quic_vikramsa@quicinc.com>
- <20250703171938.3606998-4-quic_vikramsa@quicinc.com>
- <6560f783-c50d-4509-8937-f76553c8bbb4@linaro.org>
+Subject: Re: [PATCH] mm: correct type for vmalloc vm_flags fields
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Mike Rapoport <rppt@kernel.org>, David Hildenbrand <david@redhat.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+ Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Harry Yoo <harry.yoo@oracle.com>, Uladzislau Rezki <urezki@gmail.com>
+References: <20250729114906.55347-1-lorenzo.stoakes@oracle.com>
 Content-Language: en-US
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-In-Reply-To: <6560f783-c50d-4509-8937-f76553c8bbb4@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: v8jHdNx2afGSSyMdTfKddhFo2WaQ7qWv
-X-Authority-Analysis: v=2.4 cv=Pfv/hjhd c=1 sm=1 tr=0 ts=6889e284 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=gEfo2CItAAAA:8
- a=VwQbUJbxAAAA:8 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=YL23fqL2OaiSwc5Xt98A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22
- a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: v8jHdNx2afGSSyMdTfKddhFo2WaQ7qWv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDA2MyBTYWx0ZWRfX0cqdAFItWKx1
- J8rgA7jnDYyvBKOyDuC/7jCt+ySNBmuxCH32c8lJhaI+IJAigQaGE+lfXWOsgJvyNmaTYbNb5fd
- RwFbFGOVyGERPKmYjHK8lu159xMO0ZCWE7RCwLUmaUp/36LYHGoadKEcBIvr/jOYhU4/tbIWINT
- nNwxh1p19VHP8sPkQsf8HdFLP6rg0fV5kapfWJ++XaoqkvV5e2uoOM+VwfDkR/k/Yecd2BSoM6l
- r/SxmpRUrStysojd8oTK7myFZzHUGQ49lHPcoA0PaNsznVPD8uzmTzla7ExODKldQI2y2Njum1K
- Hum7Zi5AItR+4AlgitxnS+UmuPAdZDqjxcEJdTw5Gx1ASm/0vyZ50/uY91HMXqr8PHizKl8cCsQ
- NMBAfyHNTGT3fCJgVuOgMXXbCROEzCZPgtDUrB5ySyJLlu42c9wligZLwNOO2yu2Z5qi/etu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_03,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 clxscore=1015 adultscore=0 priorityscore=1501 mlxscore=0
- spamscore=0 suspectscore=0 phishscore=0 lowpriorityscore=0 malwarescore=0
- impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507300063
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250729114906.55347-1-lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,redhat.com,oracle.com,google.com,suse.com,suse.de,kvack.org,vger.kernel.org,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[suse.cz:email,suse.cz:mid,oracle.com:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
+On 7/29/25 13:49, Lorenzo Stoakes wrote:
+> Several functions refer to the unfortunately named 'vm_flags' field when
+> referencing vmalloc flags, which happens to be the precise same name used
+> for VMA flags.
+> 
+> As a result these were erroneously changed to use the vm_flags_t type
+> (which currently is a typedef equivalent to unsigned long).
+> 
+> Currently this has no impact, but in future when vm_flags_t changes this
+> will result in issues, so change the type to unsigned long to account for
+> this.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Reported-by: Harry Yoo <harry.yoo@oracle.com>
+> Closes: https://lore.kernel.org/all/aIgSpAnU8EaIcqd9@hyeyoo/
 
-On 7/28/2025 7:17 PM, Bryan O'Donoghue wrote:
-> WARNING: This email originated from outside of Qualcomm. Please be 
-> wary of any links or attachments, and do not enable macros.
->
-> On 03/07/2025 18:19, Vikram Sharma wrote:
->> Add the compatible string "qcom,sa8775p-camss" to support the
->> Camera Subsystem (CAMSS) on the Qualcomm SA8775P platform.
->>
->> The SA8775P platform provides:
->> - 2 x VFE (version 690), each with 3 RDI
->> - 5 x VFE Lite (version 690), each with 6 RDI
->> - 2 x CSID (version 690)
->> - 5 x CSID Lite (version 690)
->> - 4 x CSIPHY (version 690)
->> - 3 x TPG
->>
->> SA8775P is the first Qualcomm SoC to introduce a CSIPHY-based
->> Test Pattern Generator (TPG).
->>
->> Co-developed-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
->> Signed-off-by: Wenmeng Liu <quic_wenmliu@quicinc.com>
->> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> ---
->>   .../bindings/media/qcom,sa8775p-camss.yaml    | 361 ++++++++++++++++++
->>   1 file changed, 361 insertions(+)
->>   create mode 100644 
->> Documentation/devicetree/bindings/media/qcom,sa8775p-camss.yaml
->>
->> diff --git 
->> a/Documentation/devicetree/bindings/media/qcom,sa8775p-camss.yaml 
->> b/Documentation/devicetree/bindings/media/qcom,sa8775p-camss.yaml
->> new file mode 100644
->> index 000000000000..b9f351546cd1
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/qcom,sa8775p-camss.yaml
->> @@ -0,0 +1,361 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/media/qcom,sa8775p-camss.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Qualcomm SA8775P CAMSS ISP
->> +
->> +maintainers:
->> +  - Vikram Sharma <quic_vikramsa@quicinc.com>
->> +
->> +description:
->> +  The CAMSS IP is a CSI decoder and ISP present on Qualcomm platforms.
->> +
->> +properties:
->> +  compatible:
->> +    const: qcom,sa8775p-camss
->> +
->> +  reg:
->> +    maxItems: 22
->> +
->> +  reg-names:
->> +    items:
->> +      - const: csid0
->> +      - const: csid1
->> +      - const: csid_lite0
->> +      - const: csid_lite1
->> +      - const: csid_lite2
->> +      - const: csid_lite3
->> +      - const: csid_lite4
->> +      - const: csid_wrapper
->> +      - const: csiphy0
->> +      - const: csiphy1
->> +      - const: csiphy2
->> +      - const: csiphy3
->> +      - const: tpg0
->> +      - const: tpg1
->> +      - const: tpg2
->> +      - const: vfe0
->> +      - const: vfe1
->> +      - const: vfe_lite0
->> +      - const: vfe_lite1
->> +      - const: vfe_lite2
->> +      - const: vfe_lite3
->> +      - const: vfe_lite4
->> +
->> +  clocks:
->> +    maxItems: 28
->> +
->> +  clock-names:
->> +    items:
->> +      - const: camnoc_axi
->> +      - const: core_ahb
->> +      - const: cpas_ahb
->> +      - const: cpas_fast_ahb_clk
->> +      - const: cpas_vfe_lite
->> +      - const: cpas_vfe0
->> +      - const: cpas_vfe1
->> +      - const: csid
->> +      - const: csiphy0
->> +      - const: csiphy0_timer
->> +      - const: csiphy1
->> +      - const: csiphy1_timer
->> +      - const: csiphy2
->> +      - const: csiphy2_timer
->> +      - const: csiphy3
->> +      - const: csiphy3_timer
->> +      - const: csiphy_rx
->> +      - const: gcc_axi_hf
->> +      - const: gcc_axi_sf
->> +      - const: icp_ahb
->> +      - const: vfe0
->> +      - const: vfe0_fast_ahb
->> +      - const: vfe1
->> +      - const: vfe1_fast_ahb
->> +      - const: vfe_lite
->> +      - const: vfe_lite_ahb
->> +      - const: vfe_lite_cphy_rx
->> +      - const: vfe_lite_csid
->> +
->> +  interrupts:
->> +    maxItems: 21
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: csid0
->> +      - const: csid1
->> +      - const: csid_lite0
->> +      - const: csid_lite1
->> +      - const: csid_lite2
->> +      - const: csid_lite3
->> +      - const: csid_lite4
->> +      - const: csiphy0
->> +      - const: csiphy1
->> +      - const: csiphy2
->> +      - const: csiphy3
->> +      - const: tpg0
->> +      - const: tpg1
->> +      - const: tpg2
->> +      - const: vfe0
->> +      - const: vfe1
->> +      - const: vfe_lite0
->> +      - const: vfe_lite1
->> +      - const: vfe_lite2
->> +      - const: vfe_lite3
->> +      - const: vfe_lite4
->> +
->> +  interconnects:
->> +    maxItems: 2
->> +
->> +  interconnect-names:
->> +    items:
->> +      - const: ahb
->> +      - const: hf_0
->> +
->> +  iommus:
->> +    maxItems: 1
->> +
->> +  power-domains:
->> +    items:
->> +      - description: Titan GDSC - Titan ISP Block, Global 
->> Distributed Switch Controller.
->> +
->> +  power-domain-names:
->> +    items:
->> +      - const: top
->> +
->> +  vdda-phy-supply:
->> +    description:
->> +      Phandle to a regulator supply to PHY core block.
->> +
->> +  vdda-pll-supply:
->> +    description:
->> +      Phandle to 1.8V regulator supply to PHY refclk pll block.
->> +
->> +  ports:
->> +    $ref: /schemas/graph.yaml#/properties/ports
->> +
->> +    description:
->> +      CSI input ports.
->> +
->> +    patternProperties:
->> +      "^port@[0-3]+$":
->> +        $ref: /schemas/graph.yaml#/$defs/port-base
->> +        unevaluatedProperties: false
->> +        description:
->> +          Input port for receiving CSI data on CSIPHY 0-3.
->> +
->> +        properties:
->> +          endpoint:
->> +            $ref: video-interfaces.yaml#
->> +            unevaluatedProperties: false
->> +
->> +            properties:
->> +              data-lanes:
->> +                minItems: 1
->> +                maxItems: 4
->> +
->> +            required:
->> +              - data-lanes
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - reg-names
->> +  - clocks
->> +  - clock-names
->> +  - interrupts
->> +  - interrupt-names
->> +  - interconnects
->> +  - interconnect-names
->> +  - iommus
->> +  - power-domains
->> +  - power-domain-names
->> +  - vdda-phy-supply
->> +  - vdda-pll-supply
->> +  - ports
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/qcom,sa8775p-camcc.h>
->> +    #include <dt-bindings/clock/qcom,sa8775p-gcc.h>
->> +    #include <dt-bindings/interconnect/qcom,sa8775p-rpmh.h>
->> +    #include <dt-bindings/interconnect/qcom,icc.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +    #include <dt-bindings/power/qcom-rpmpd.h>
->> +
->> +    soc {
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        isp@ac7a000 {
->> +            compatible = "qcom,sa8775p-camss";
->> +
->> +            reg = <0x0 0xac7a000 0x0 0x0f00>,
->> +                  <0x0 0xac7c000 0x0 0x0f00>,
->> +                  <0x0 0xac84000 0x0 0x0f00>,
->> +                  <0x0 0xac88000 0x0 0x0f00>,
->> +                  <0x0 0xac8c000 0x0 0x0f00>,
->> +                  <0x0 0xac90000 0x0 0x0f00>,
->> +                  <0x0 0xac94000 0x0 0x0f00>,
->> +                  <0x0 0xac78000 0x0 0x1000>,
->> +                  <0x0 0xac9c000 0x0 0x2000>,
->> +                  <0x0 0xac9e000 0x0 0x2000>,
->> +                  <0x0 0xaca0000 0x0 0x2000>,
->> +                  <0x0 0xaca2000 0x0 0x2000>,
->> +                  <0x0 0xacac000 0x0 0x0400>,
->> +                  <0x0 0xacad000 0x0 0x0400>,
->> +                  <0x0 0xacae000 0x0 0x0400>,
->> +                  <0x0 0xac4d000 0x0 0xd000>,
->> +                  <0x0 0xac5a000 0x0 0xd000>,
->> +                  <0x0 0xac85000 0x0 0x0d00>,
->> +                  <0x0 0xac89000 0x0 0x0d00>,
->> +                  <0x0 0xac8d000 0x0 0x0d00>,
->> +                  <0x0 0xac91000 0x0 0x0d00>,
->> +                  <0x0 0xac95000 0x0 0x0d00>;
->> +            reg-names = "csid0",
->> +                        "csid1",
->> +                        "csid_lite0",
->> +                        "csid_lite1",
->> +                        "csid_lite2",
->> +                        "csid_lite3",
->> +                        "csid_lite4",
->> +                        "csid_wrapper",
->
-> csid_wrapper is IMO the "main" register bank and as such should come
-> first in the list of registers.
->
-> Please update this description to reflect, remembering to amend your
-> isp@address here and in your dts.
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
-Thanks for your comment Bryan.
+also for "mm: fixup very disguised vmalloc flags parameter" later in this thread
 
-As per our earlier discussion we agreed to keep it as per 8550. Please 
-confirm if we need to change that?
-https://lore.kernel.org/all/b1ea0500-595f-48d6-9358-649c25fd4ee9@linaro.org/#t
+> ---
+>  mm/execmem.c  | 8 ++++----
+>  mm/internal.h | 2 +-
+>  mm/nommu.c    | 2 +-
+>  3 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> diff --git a/mm/execmem.c b/mm/execmem.c
+> index 627e6cf64f4f..2b683e7d864d 100644
+> --- a/mm/execmem.c
+> +++ b/mm/execmem.c
+> @@ -26,7 +26,7 @@ static struct execmem_info default_execmem_info __ro_after_init;
+> 
+>  #ifdef CONFIG_MMU
+>  static void *execmem_vmalloc(struct execmem_range *range, size_t size,
+> -			     pgprot_t pgprot, vm_flags_t vm_flags)
+> +			     pgprot_t pgprot, unsigned long vm_flags)
+>  {
+>  	bool kasan = range->flags & EXECMEM_KASAN_SHADOW;
+>  	gfp_t gfp_flags = GFP_KERNEL | __GFP_NOWARN;
+> @@ -82,7 +82,7 @@ struct vm_struct *execmem_vmap(size_t size)
+>  }
+>  #else
+>  static void *execmem_vmalloc(struct execmem_range *range, size_t size,
+> -			     pgprot_t pgprot, vm_flags_t vm_flags)
+> +			     pgprot_t pgprot, unsigned long vm_flags)
+>  {
+>  	return vmalloc(size);
+>  }
+> @@ -256,7 +256,7 @@ static void *__execmem_cache_alloc(struct execmem_range *range, size_t size)
+> 
+>  static int execmem_cache_populate(struct execmem_range *range, size_t size)
+>  {
+> -	vm_flags_t vm_flags = VM_ALLOW_HUGE_VMAP;
+> +	unsigned long vm_flags = VM_ALLOW_HUGE_VMAP;
+>  	struct vm_struct *vm;
+>  	size_t alloc_size;
+>  	int err = -ENOMEM;
+> @@ -373,7 +373,7 @@ void *execmem_alloc(enum execmem_type type, size_t size)
+>  {
+>  	struct execmem_range *range = &execmem_info->ranges[type];
+>  	bool use_cache = range->flags & EXECMEM_ROX_CACHE;
+> -	vm_flags_t vm_flags = VM_FLUSH_RESET_PERMS;
+> +	unsigned long vm_flags = VM_FLUSH_RESET_PERMS;
+>  	pgprot_t pgprot = range->pgprot;
+>  	void *p;
+> 
+> diff --git a/mm/internal.h b/mm/internal.h
+> index 28d2d5b051df..142d9302c2ae 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1391,7 +1391,7 @@ int migrate_device_coherent_folio(struct folio *folio);
+> 
+>  struct vm_struct *__get_vm_area_node(unsigned long size,
+>  				     unsigned long align, unsigned long shift,
+> -				     vm_flags_t vm_flags, unsigned long start,
+> +				     unsigned long vm_flags, unsigned long start,
+>  				     unsigned long end, int node, gfp_t gfp_mask,
+>  				     const void *caller);
+> 
+> diff --git a/mm/nommu.c b/mm/nommu.c
+> index 87e1acab0d64..07504d666d6a 100644
+> --- a/mm/nommu.c
+> +++ b/mm/nommu.c
+> @@ -126,7 +126,7 @@ void *vrealloc_noprof(const void *p, size_t size, gfp_t flags)
+> 
+>  void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+>  		unsigned long start, unsigned long end, gfp_t gfp_mask,
+> -		pgprot_t prot, vm_flags_t vm_flags, int node,
+> +		pgprot_t prot, unsigned long vm_flags, int node,
+>  		const void *caller)
+>  {
+>  	return __vmalloc_noprof(size, gfp_mask);
+> --
+> 2.50.1
 
->
->> +                        "csiphy0",
->> +                        "csiphy1",
->> +                        "csiphy2",
->> +                        "csiphy3",
->> +                        "tpg0",
->> +                        "tpg1",
->> +                        "tpg2",
->> +                        "vfe0",
->> +                        "vfe1",
->> +                        "vfe_lite0",
->> +                        "vfe_lite1",
->> +                        "vfe_lite2",
->> +                        "vfe_lite3",
->> +                        "vfe_lite4";
->> +
->> +            clocks = <&camcc CAM_CC_CAMNOC_AXI_CLK>,
->> +                     <&camcc CAM_CC_CORE_AHB_CLK>,
->> +                     <&camcc CAM_CC_CPAS_AHB_CLK>,
->> +                     <&camcc CAM_CC_CPAS_FAST_AHB_CLK>,
->> +                     <&camcc CAM_CC_CPAS_IFE_LITE_CLK>,
->> +                     <&camcc CAM_CC_CPAS_IFE_0_CLK>,
->> +                     <&camcc CAM_CC_CPAS_IFE_1_CLK>,
->> +                     <&camcc CAM_CC_CSID_CLK>,
->> +                     <&camcc CAM_CC_CSIPHY0_CLK>,
->> +                     <&camcc CAM_CC_CSI0PHYTIMER_CLK>,
->> +                     <&camcc CAM_CC_CSIPHY1_CLK>,
->> +                     <&camcc CAM_CC_CSI1PHYTIMER_CLK>,
->> +                     <&camcc CAM_CC_CSIPHY2_CLK>,
->> +                     <&camcc CAM_CC_CSI2PHYTIMER_CLK>,
->> +                     <&camcc CAM_CC_CSIPHY3_CLK>,
->> +                     <&camcc CAM_CC_CSI3PHYTIMER_CLK>,
->> +                     <&camcc CAM_CC_CSID_CSIPHY_RX_CLK>,
->> +                     <&gcc GCC_CAMERA_HF_AXI_CLK>,
->> +                     <&gcc GCC_CAMERA_SF_AXI_CLK>,
->> +                     <&camcc CAM_CC_ICP_AHB_CLK>,
->> +                     <&camcc CAM_CC_IFE_0_CLK>,
->> +                     <&camcc CAM_CC_IFE_0_FAST_AHB_CLK>,
->> +                     <&camcc CAM_CC_IFE_1_CLK>,
->> +                     <&camcc CAM_CC_IFE_1_FAST_AHB_CLK>,
->> +                     <&camcc CAM_CC_IFE_LITE_CLK>,
->> +                     <&camcc CAM_CC_IFE_LITE_AHB_CLK>,
->> +                     <&camcc CAM_CC_IFE_LITE_CPHY_RX_CLK>,
->> +                     <&camcc CAM_CC_IFE_LITE_CSID_CLK>;
->> +            clock-names = "camnoc_axi",
->> +                          "core_ahb",
->> +                          "cpas_ahb",
->> +                          "cpas_fast_ahb_clk",
->> +                          "cpas_vfe_lite",
->> +                          "cpas_vfe0",
->> +                          "cpas_vfe1",
->> +                          "csid",
->> +                          "csiphy0",
->> +                          "csiphy0_timer",
->> +                          "csiphy1",
->> +                          "csiphy1_timer",
->> +                          "csiphy2",
->> +                          "csiphy2_timer",
->> +                          "csiphy3",
->> +                          "csiphy3_timer",
->> +                          "csiphy_rx",
->> +                          "gcc_axi_hf",
->> +                          "gcc_axi_sf",
->> +                          "icp_ahb",
->> +                          "vfe0",
->> +                          "vfe0_fast_ahb",
->> +                          "vfe1",
->> +                          "vfe1_fast_ahb",
->> +                          "vfe_lite",
->> +                          "vfe_lite_ahb",
->> +                          "vfe_lite_cphy_rx",
->> +                          "vfe_lite_csid";
->> +
->> +            interrupts = <GIC_SPI 565 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 564 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 759 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 758 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 604 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 545 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 546 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 547 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 761 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 760 IRQ_TYPE_EDGE_RISING>,
->> +                         <GIC_SPI 605 IRQ_TYPE_EDGE_RISING>;
->> +            interrupt-names = "csid0",
->> +                              "csid1",
->> +                              "csid_lite0",
->> +                              "csid_lite1",
->> +                              "csid_lite2",
->> +                              "csid_lite3",
->> +                              "csid_lite4",
->> +                              "csiphy0",
->> +                              "csiphy1",
->> +                              "csiphy2",
->> +                              "csiphy3",
->> +                              "tpg0",
->> +                              "tpg1",
->> +                              "tpg2",
->> +                              "vfe0",
->> +                              "vfe1",
->> +                              "vfe_lite0",
->> +                              "vfe_lite1",
->> +                              "vfe_lite2",
->> +                              "vfe_lite3",
->> +                              "vfe_lite4";
->> +
->> +            interconnects = <&gem_noc MASTER_APPSS_PROC 
->> QCOM_ICC_TAG_ACTIVE_ONLY
->> +                             &config_noc SLAVE_CAMERA_CFG 
->> QCOM_ICC_TAG_ACTIVE_ONLY>,
->> +                            <&mmss_noc MASTER_CAMNOC_HF 
->> QCOM_ICC_TAG_ALWAYS
->> +                             &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
->> +            interconnect-names = "ahb",
->> +                                 "hf_0";
->> +
->> +            iommus = <&apps_smmu 0x3400 0x20>;
->> +
->> +            power-domains = <&camcc CAM_CC_TITAN_TOP_GDSC>;
->> +            power-domain-names = "top";
->> +
->> +            vdda-phy-supply = <&vreg_l4a_0p88>;
->> +            vdda-pll-supply = <&vreg_l1c_1p2>;
->> +
->> +            ports {
->> +                #address-cells = <1>;
->> +                #size-cells = <0>;
->> +            };
->> +        };
->> +    };
->
-> Otherwise that this looks fine, please fix and then add.
->
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
