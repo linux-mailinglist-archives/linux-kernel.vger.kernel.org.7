@@ -1,89 +1,67 @@
-Return-Path: <linux-kernel+bounces-750169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E96B15815
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:20:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D34AB15816
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 06:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402E318A293B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:21:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95BB85408BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 04:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9351D7E54;
-	Wed, 30 Jul 2025 04:20:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0574E1DC9A3;
+	Wed, 30 Jul 2025 04:21:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QkWlfhNn"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aMfnaGa+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65CF618B0F
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 04:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3080D18B0F;
+	Wed, 30 Jul 2025 04:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753849253; cv=none; b=j+js4h1dMAx8bNdgqCtrc7h+x0j9I7XSc0BXEZuInyIiIWtdws0t/oJ8ZLgbA8QXnJwYq/EFPJgWJ+xyZYkA3Dr7BAxkZS2I+V05lxVG1r1wmPxLOMrcEngjQkuc6Y5cML/L/AK3/ZH/et5dqlYGj688gzNVCmCDKHSOm7QPadA=
+	t=1753849270; cv=none; b=bxOwRmsP9HAUhpsQnP70LwmjmjWiSf4g/5RtEcjzFNKJaCcxt8XIBWW62zDskBt8gf52/OLRlUoamMPSDD9hXO9oia5M01HzSXJpe1z8r909OGZ37zdk5NsIM7tUdpUHLLV13iYsR6dVJhdEibYHhPbO9DbnU/I7WmmmxrkwZVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753849253; c=relaxed/simple;
-	bh=VtlbEUvC+1Ke27heP7oXzNDycF7JeErvTwnIj32oDFs=;
+	s=arc-20240116; t=1753849270; c=relaxed/simple;
+	bh=k/8G8hyODNHd1MnxESyODVAtIvqlJqbAiUqU3GNVU9k=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UBz3Sr1kWrj0LtllhzYXQoAZmGQ7GwXAcrFXCXyJDDBqkiryIXmHsL5QwaoeXBJFcHm+3v2ZILermc185HRa0VzoSSDU0e19Zozh2j0TQkfSpDEnJDDxQFguwxPtlNVGC1vIDqVebK+bgKuywWdqjVRGgE8IbyhGU1wlSj264v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QkWlfhNn; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4aedd1b006bso5204811cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 21:20:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753849251; x=1754454051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GBDrP8+XAiCQt11h5ERJV6IvzsZGdQ/fB3B4Nudc+Fg=;
-        b=QkWlfhNnZfRipIPksf5BoGk4IQvpkx+JOuWPmNezlF/ae0RE/6ahnh9FeACM5eJ8N0
-         fTIjETyOwNpVCBVhSHI9YaE7vhn89+j1KEVlPdORjhO6fZ/OnggYxRY1Vicm9kycyEnY
-         49qKvc89YH9D55TpyAVE6k7Nn4VAXfEkmGq3G5MTvkpeRVRarinuR+OK1Y1kpPDql4Kg
-         Qz2Fur03wcY8jZTGQ8KlXwHUcmoB195WPeEsQCo1ZnMS2+thIXs5uvzP4YTaPS0VD83+
-         9E8wEC1mCBnyHopPGtEoSl1TrCERjXjLUyAMENnpso7dmWlM8LvbM5FJmMyE5Q+8fy17
-         aZ6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753849251; x=1754454051;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GBDrP8+XAiCQt11h5ERJV6IvzsZGdQ/fB3B4Nudc+Fg=;
-        b=YNHWsYUeUx5p2lVT2PXTUmXib02SrV0vk2vDmk7lrTCAps6RM5GJComYwT71s8cz91
-         Qt7xHAg0yI7kq4Hh1aNUo3oG/G0RLfyvs5QMRLnPebvlVJp1ut4p4YhaGwylUMBKrZws
-         Jixh7QXsHhZS4jLCSg9Kvs3jYlYnUL6wyTZsTLmbQezLgIvZ75Cz01M72yP4iRF2GFmu
-         fgO241hp4AErhlvZ+mNOzu8IBw6/IrsTYfSiOHoUD2/0qxPMKKnaepriDSfPGU2oEdj6
-         7kAgAlE497vmLBEEGOZSboK/d7/XUtRbn7tLAREWKyl8Ri8XX6N9z3wZCEHO0CKC/rKd
-         oZVw==
-X-Forwarded-Encrypted: i=1; AJvYcCX9YLMWmmhVm/lhaNgIoz/cXIWv4iOSHJ/L3E5c4D9iR3LkpLFW7LJ4n6w2X+2qJSAmZR0t6Pty621L4U4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7vPt7ZuQVotR8uOooUzbosPaDzMjv+lcGotdMLLcHy91AQowQ
-	g7qauTOLtqX9LxxrsYJwqdpcIi9oejmh/CA/DBPp3GVDVws+SE4CTeQMiMEeDDvy
-X-Gm-Gg: ASbGnctxJIj95gsRscORhfafr0/9Rt9ZP/bxpzd+SlrC+DDUjbO8dXqviBNCDrJBtXW
-	99WT/NCcuda2pI8jpvZXwM1Vz5V8AQ0YEQF/cL5JEpHIbW0edd+lMi5BtG1JYbVfgCa+51J2Zqh
-	lx3SzFSM7qywIXChsRFqCxez/fu8XgykNP+BfEun4BFUwHgOVJ/g+HddMxB1i4yqqTI9Cw5usn3
-	rh3t9gEv883YNu1FuQ7S2xN6Yak/Pw/xKX+xOXarVIY2X/dxXF0sdr1XVGdd+jO0fd3xwwOfgWG
-	30KLqAc6pMmDbl+M7tSbsdOrb8439j5/s84R01iKwnwDcnOvUC8wNF9RHoS1ACZ4XGjxJidAwVj
-	MdnDrCKGMlVDy2cVu6Y2jvluSdY26Nl1tdZPQTRXNY2Qo/KmkJG0LykFA7eCCBw==
-X-Google-Smtp-Source: AGHT+IHz+lZhDxmH6jA3pyAfmQkH6IxnMd6r6bPodgf2EeznfTLaqQFGNquzoDmjbIcO0X4/Bu60tA==
-X-Received: by 2002:ac8:7f8d:0:b0:4ab:667e:2db5 with SMTP id d75a77b69052e-4aedb9e2501mr28267311cf.20.1753849251261;
-        Tue, 29 Jul 2025 21:20:51 -0700 (PDT)
-Received: from linux-kernel-dev-start.. ([159.203.26.228])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aeadea8b61sm46472761cf.24.2025.07.29.21.20.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Jul 2025 21:20:50 -0700 (PDT)
-From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: Markus.Elfring@web.de,
+	 MIME-Version; b=hEnnJ8LLb1J4KTUw9osTBej8pLgk2jwLJYKbQ9urNg8/NB8t2HgN0IPS9155/+dywAHXM9lj5cpiOQ28W60npL/X2z17Eu/4BdV21pn1+9mbyG8VtEkMJHwS+sXNwIsvCn1ylJT9eILTy9rhY4b6WyQPtHIOkhN6uE2boCcxxsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aMfnaGa+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E5ACC4CEE7;
+	Wed, 30 Jul 2025 04:21:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753849269;
+	bh=k/8G8hyODNHd1MnxESyODVAtIvqlJqbAiUqU3GNVU9k=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aMfnaGa+CQK2SCh2aG8cBF1BxlKL67zP5Bb0V7EECsve3ZlcwQGiBjtw++2of2VCU
+	 1f6pgkcCr97tmBUag60Cov86CkuhLnLzFgFRTn50SF99uZ225eKvUUh9BbM/bNPapg
+	 Xu81K3LsGq7D6zNG599XqcbHJbnhvqjedYrGv1RseNFCCkxBJNXNehUmTiC0xPw1e/
+	 vPjOOc+m4Nsh/P9r05aB6h1P4mvnv3jauAzxmBoL9r0A92OdVqj+EfO+relPCB4lRq
+	 F3KuikQ9d6xEFLp2QnCKtT+lrP4jaW8yTwEK8FOCXZqb2Uat7iq4V8kCfIQMhY7oLu
+	 vPrrDF3DYTuEw==
+From: SeongJae Park <sj@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Jann Horn <jannh@google.com>,
+	Michal Hocko <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	vivek.balachandhar@gmail.com
-Subject: [PATCH v3 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
-Date: Wed, 30 Jul 2025 04:20:32 +0000
-Message-Id: <20250730042032.488456-1-vivek.balachandhar@gmail.com>
+	linux-mm@kvack.org
+Subject: Re: [RFC v2 5/7] mm/memory: implement MM_CP_DAMON
+Date: Tue, 29 Jul 2025 21:21:06 -0700
+Message-Id: <20250730042106.54750-1-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250730040402.488284-1-vivek.balachandhar@gmail.com>
-References: <20250730040402.488284-1-vivek.balachandhar@gmail.com>
+In-Reply-To: <5acc6af3-91da-4dd3-834c-e8923e5d3320@lucifer.local>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,43 +70,224 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a blank line after the definition of rtw_roaming() to separate it from
-the following function (_rtw_roaming()), improving readability and matching
-kernel coding style guidelines.
+On Tue, 29 Jul 2025 10:40:11 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
 
-No functional changes.
+> On Mon, Jul 28, 2025 at 08:06:32PM -0700, SeongJae Park wrote:
+> > On Mon, 28 Jul 2025 06:19:35 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+> >
+> > > On Sun, Jul 27, 2025 at 01:18:11PM -0700, SeongJae Park wrote:
+> > > > DAMON is using Accessed bits of page table entries as the major source
+> > > > of the access information.  It lacks some additional information such as
+> > > > which CPU was making the access.  Page faults could be another source of
+> > > > information for such additional information.
+> > > >
+> > > > Implement another change_protection() flag for such use case, namely
+> > > > MM_CP_DAMON.  DAMON will install PAGE_NONE protections using the flag.
+> > > > To avoid interfering with NUMA_BALANCING, which is also using PAGE_NON
+> > > > protection, pass the faults to DAMON only when NUMA_BALANCING is
+> > > > disabled.
+> > > >
+> > > > Signed-off-by: SeongJae Park <sj@kernel.org>
+> > >
+> > > This seems to not be an upstreamable series right now unless I'm missing
+> > > something.
+> > >
+> > > Firstly, you're making a change in behaviour even when CONFIG_DAMON is not
+> > > specified, and Linus already told you we can't have that default-on.
+> > >
+> > > I'm very very much not happy with us doing something for 'damon'
+> > > unconditionaly when !CONFIG_DAMON on the assumption that an acessible
+> > > mapping has PROT_NONE set.
+> > >
+> > > This change makes me nervous in general ANYWAY as you are now changing core
+> > > mm and introducing a new faulting mechanism specifically for DAMON.
+> > >
+> > > And we are assuming that NUMA balancing being disabled is not racey in a
+> > > way that will cause things to break.
+> > >
+> > > I really also dislike the idea of an _implicit_ assumption that we are good
+> > > to use the NUMA balancing faulting mechanism to 'tack on' DAMON stuff.
+> > >
+> > > Is it really all that useful to provide a method that requires NUMA
+> > > balancing to be diabled?
+> > >
+> > > Finally, you're making it so DAMON can mprotect() something to use the
+> > > DAMON/NUMA balancing fault handler, which doesn't appaer to check to see if
+> > > NUMA balacing is disabled, but anyway it could be re-enabled?
+> > >
+> > > And then now DAMON is making stuff fault as NUMA balancing faults
+> > > incorrectly?
+> > >
+> > > This just seems broken.
+> > >
+> > > Unless there's really good justification I'm really not inclined for us to
+> > > merge this as-is right now unfortunately.
+> >
+> > Thank you for review and comments, Lorenzo.  I fundamentally agree all your
+> > points.  I don't aim to merge this as-is.  Actually this patch series is more
+> > like POC, but apparently I was rushing.  I will try to adjust your concerns in
+> > the next version.
+> 
+> Thanks.
+> 
+> I do wonder whether we really can have a whole new faulting mechanism just for
+> DAMON. Because if in future, we wanted to change how this worked, we'd be
+> constrained, and it is a very specific user.
+> 
+> The issue is you need the PTE to be restored to its previous state, just like
+> NUMA balancing.
+> 
+> And I really really do not like this 'oh if you turn it off you can use it for
+> DAMON' thing, it's just really odd and asking for trouble.
+> 
+> I think the only _workable_ version of this would be to convert the numa
+> handling to a generic 'fault then restore' type mechanism that could be hooked
+> in to by either NUMA or DAMON.
 
-Identified using checkpatch.pl.
+I agree, and this is my current plan for the next version of this patch.
 
-Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
----
-Changes since v2:
-- Moved version change notes below the '---' line
+> 
+> But really I think you'd _need_ to not have significantly different behaviour
+> between the two and _not_ constrain this to being only when NUMA balancing is
+> disabled.
 
-v2:
-- Moved the '---' marker line below the Signed-off-by tag as per kernel
-  patch formatting rules
+I agree all the points.  Especially the current interface is ambiguous and easy
+to mistake.
 
-v1:
-- Addressed review comments from Markus Elfring on changing the description
-  of the patch regarding readability and separation between function definitions
----
- drivers/staging/rtl8723bs/core/rtw_mlme.c | 1 +
- 1 file changed, 1 insertion(+)
+> 
+> But then you'd need to know _this_ PTE is for NUMA balancing vs. another is for
+> this stuff.
 
-diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-index 24e505111f1f..b1a427a655ef 100644
---- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
-+++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
-@@ -2449,6 +2449,7 @@ void rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
- 	_rtw_roaming(padapter, tgt_network);
- 	spin_unlock_bh(&pmlmepriv->lock);
- }
-+
- void _rtw_roaming(struct adapter *padapter, struct wlan_network *tgt_network)
- {
- 	struct mlme_priv *pmlmepriv = &padapter->mlmepriv;
--- 
-2.39.5
+Yes, this would be the ideal.  But, memorizing something in page level is ...
+always an interesting challenge in my opinion, and I have no good idea to do
+this for now :)
 
+> 
+> I'm not really sure there is an upstreamable version of this, but it'd need to
+> be made generic like that if there were.
+> 
+> I think it might be worth taking some time to examine whether a version of this
+> that can be sensibly generic (which could have hooks for things) is _possible_
+> before sending a v2.
+
+Agreed, I don't need to rush.  Let's take time and discuss sufficiently. :)
+
+Nonetheless, I may post a followup version of this patch series that contains
+this one, even before we get a conclusion about this specific one.  I think I
+may have to do that, for sharing the future idea in a way easy to understand
+and test.  I think it might also help us at understanding the real ROI of this
+patch, and if there is another option to move forward.  In the case, I will of
+course keep RFC tag and clearly note that this patch is still under the
+discussion and not willing to be merged as is before the discussion is done.
+
+> 
+> > >
+> > > Also are we 100% sure that there's no races here? When we disable numa
+> > > balancing do we correctly ensure that absolutely no racing NUMA balancing
+> > > faults can happen whatsever at this juncture?
+> >
+> > Enabling CONFIG_DAMON will not automatically invoke change_protection() with
+> > MM_CP_DAMON.  Such invocations will be made only if the user disables NUMA
+> > balancing and run DAMON in the reporting mode.
+> >
+> > So there can be two racy cases.
+> >
+> > If the user enables NUMA balancing and then disables it after a while, page
+> > faults for MM_CP_PROT_NUMA can be handled by DAMON.  That could look odd, but
+> > there should be no real problem in practice.  DAMON's fault handling will
+> > cleanup the PAGE_NONE protection like NUMA balancing, and DAMON has no problem
+> > at receiving such additional reports from MM_CP_PROT_NUMA-caused faults.  DAMON
+> > may show a few more than expected accesses, but that's no problem for DAMON.
+> >
+> > Similarly, if the user starts DAMON in the report mode, stops DAMON, and then
+> > enables NUMA balancing, faults for MM_CP_DAMON that installed while DAMON was
+> > running in the report mode can be handled by NUMA balancing.  This should also
+> > not make real problems in practice in my opinion.  NUMA balancing could see
+> > more accesses and migrate pages little bit more than expected, but that should
+> > be just for a moment.
+> 
+> I'm really concerned about these.
+> 
+> We're now introducing unexpected behaviour based on a race and allowing faults
+> to be mis-handled.
+> 
+> I'm maybe not as confident as you are that everything will 'just work' and it
+> seems like we're asking for obscure bugs in the future.
+> 
+> > > You really have to be 100% certain you're not going to wrongly handle NUMA
+> > > page faults this way, on a potentially non-CONFIG_DAMON kernel to boot.
+> >
+> > I will ensure that never happens on CONFIG_DAMON disabled kernels, in the next
+> > version.
+> 
+> Well, in the above you say that you can't help but do that when a race occurs?
+
+I mean, I can't help when CONFIG_DAMON is enabled.
+
+The race (or, handling faults that caused by other entity) can hppen if and
+only if all below things happen.
+
+1. CONFIG_DAMON is enbled.
+2. CONFIG_NUMA_BALANCING is enabled.
+3. The user repeatedly turns on and off NUMA balancing and fault-based mode
+   DAMON in runtime.
+
+If any of these are not true, the race can completely avoided.  I was saying
+about the case that the first condition is not met.
+
+> 
+> >
+> > >
+> > > Keep in mind fault handling is verrrry racey (purposefully) and can be done
+> > > under VMA read lock alone (and that's only very loosely a lock!).
+> > >
+> > > This is just, yeah, concerning.
+> >
+> > Thank you for the caution.  DAMON's fault handling code only saves the
+> > information in its internal ring buffer.  It doesn't touch vmas.  So I think
+> > there should be no such problems.  I will add the clarification on the next
+> > version.
+> 
+> Right, I'm just saying that this all being super racey between NUMA
+> enabled/disabled seems pretty unavoidable, but we covered above.
+> 
+> > >
+> > > Secondly, somebody can disable/enable NUMA balancing, and thus you are now
+> > > allowing this function to, when somebody specifies 'DAMON', get NUMA
+> > > balancing fault handling??
+> > >
+> > > If you don't bother checking whether NUMA balancing is disabled when you
+> > > set it, then boom - you've broken the faulting mechanism, but even if you
+> > > _do_, somebody can just switch it on again...
+> >
+> > As I explained on the two racy cases aboe, faults that caused by DAMON or NUMA
+> > balancing can be handled by the other's handling code, but only for a limited
+> > time under the user's controls.  But to my understanding that should not cause
+> > real problems in the practice, and users wouldn't be suggested to operate the
+> > system in such a way.  I will add more documents and cautions about that in the
+> > next version.
+> 
+> I really don't think a version of the code that results in the wrong handler
+> being used is upstreamable, sorry.
+> 
+> I've not dug into the nitty gritty details on what would happen in both cases,
+> but even if it were 100% fine _now_, this is _exactly_ the kind of thing that
+> results in horrible hard-to-debug issues later, should something change.
+> 
+> Implicitly 'just having to know' that we might be in the wrong fault handler
+> seems like asking for trouble, and the RoI on an optional profiling tool (this
+> is not to take away from DAMON which is a _great_ utility, I'm saying it's
+> simply not part of the _core_) isn't there.
+
+I completely understand your concerns, thank you for nicely and patiently
+keeping this discussion.  I don't need to upstream this in short term, and open
+to every option.  So let's take sufficient time and discussions.
+
+I will take more time to think about a few potential options to move forward,
+and share those with a level of details that can help us easily further
+discuss, hopefully in a few days.
+
+
+Thanks,
+SJ
 
