@@ -1,100 +1,102 @@
-Return-Path: <linux-kernel+bounces-750344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1036B15A62
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:20:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81E49B15A65
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 10:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 831DE54534F
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD49E1899610
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 08:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E68256C9B;
-	Wed, 30 Jul 2025 08:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E74F9254AE7;
+	Wed, 30 Jul 2025 08:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujUMUQwd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIU54rE/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F127187326;
-	Wed, 30 Jul 2025 08:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DCEB187326;
+	Wed, 30 Jul 2025 08:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753863616; cv=none; b=n2UZNjatVxqYdA9hkuQwwNGeHLhORD9N1haZHUj7BbAAY8DEepYCZoAXBBLNjjZCrOzW3VY4a9xBWnrbJZmDCOZEKU4ERczZPyLS/gk0TQsWxu+GA1J7HoeUBNItBWnREGdKm4IKpteoxgse+9fFdfC5J62TIVZIYGXTg6jIA9c=
+	t=1753863624; cv=none; b=UQfK/IfWocvLr7SrWjTJhiSP3qc+NkCk5MTxPWfVj2oZQrmurjwcikaM8F31lNDPufOlnb00p/tygkFHD95qUgRlOdghz/fRJByWvXuuEEEh5ad8PP9/+JDCHKcL/nw32BbWS4PlhRrcI0sE3+IxBXJzmyhPPV3oz3PaQt/B7sY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753863616; c=relaxed/simple;
-	bh=Phr/wSUV51OEITszg2jpDf0As0Xj1xb0ldJvvV08SSk=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=SQxYiZVlmg/px2Mxw7bKOJWmB5bPHHNj0DjIhrQhvaK0KQiZH9+GbpdySulm4ccGCiEU6TbQg5FFG/owP3ehNigRUFAEDAZaZ5LJmnBlLdxIvzxe/0KaJ90t5eLxk4VIanlrPttiYGx8mg3GXcLKDRPZUo2lahpWO47mdHCctM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujUMUQwd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F288AC4CEE7;
-	Wed, 30 Jul 2025 08:20:11 +0000 (UTC)
+	s=arc-20240116; t=1753863624; c=relaxed/simple;
+	bh=G2xhbiG9MhxwFQfbZuB+oDrqa9cbn97T9Zn90EGVbF0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=PhYVSl1H/XgR6MVVA927vDVOsKlHdE546rjiFy/Ebo5rkgDoSXPCvdTYbflmsouBwjV79zx77fRX4tH8SliRuJI+xkib9s79n/XGfMQdZNxZmxwT0MjLkxC0VZXDbeDgVs1CATmL9ArCTq4OWGcEXtKdyBa3mY8KdaSY8QXAWvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIU54rE/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE72C4CEF5;
+	Wed, 30 Jul 2025 08:20:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753863615;
-	bh=Phr/wSUV51OEITszg2jpDf0As0Xj1xb0ldJvvV08SSk=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=ujUMUQwdpi9GTAiTU4VMsiaGO6jWXajJ7UTBEXRzWLx+5gsKj2amEtx/tEsADmfU0
-	 m1w2EawF2e9WWQvCWQdV4jURjTn/L9D8avLtR6+VqCzafSTVFZXeVoNMbeKoaOWjsO
-	 A4OiFV/ghM7Phw/Zt+HWUNL3Sx90jLUby56WuQDoTn5J0EaMTXawn00AYWGcItAgEZ
-	 2vwUEvplAFUtLhN0bk94J2GgBlsC2Le8TKlh/kMyd3VS0AFVlbXgJwPuN49PaPUH+n
-	 KeIDYAqxcA8oN5GcxdH8Tchjyu7MGmV2aXRvFtUbQtcbOZuFp2NIzcbxyJ3P6Jg8z3
-	 BznIejWeHaqSQ==
+	s=k20201202; t=1753863623;
+	bh=G2xhbiG9MhxwFQfbZuB+oDrqa9cbn97T9Zn90EGVbF0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=gIU54rE/53PmhiwB/a0q1TUMwg6FBnJm8rOIhcfkpcIf3TnXT5tJYQOq2om+0SfAb
+	 va+0nhaPM2mySuzIQuHiRS1yF9fJr0KHugT9fcDyKZJE9VBTJA3mcKm2C4vv22HEqP
+	 MSj4+h89kLmi6G5zTK2s4WChbvBA74cevzu5iY3BCf7hEJNh2Q9uxXVa+6YZdAy/1B
+	 VtMhDon9WBCd8SUPzQycZt1H+gAvrZokQx7ucmeRl+EGdVQ5BD7xi4Z0AJxjtZW4L0
+	 EzmBm56rCDVMlOUjWy1Qd1MnpwEG+3wggI+on2PDjIFhlF6Y87UPOB/kJvP4uXUsQx
+	 /RO/Zw4u25ebg==
+Date: Wed, 30 Jul 2025 17:20:20 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, "Alan J. Wylie"
+ <alan@wylie.me.uk>, linux-kernel@vger.kernel.org,
+ regressions@lists.linux.dev, stable@vger.kernel.org, Linus Torvalds
+ <torvalds@linux-foundation.org>
+Subject: Re: "stack state/frame" and "jump dest instruction" errors (was Re:
+ Linux 6.16)
+Message-Id: <20250730172020.00a4dd1ad453d94c7ef47f30@kernel.org>
+In-Reply-To: <20250729224000.2f23f59acc79a78f47c1624f@kernel.org>
+References: <CAHk-=wh0kuQE+tWMEPJqCR48F4Tip2EeYQU-mi+2Fx_Oa1Ehbw@mail.gmail.com>
+	<871pq06728.fsf@wylie.me.uk>
+	<hla34nepia6wyi2fndx5ynud4dagxd7j75xnkevtxt365ihkjj@4p746zsu6s6z>
+	<20250729224000.2f23f59acc79a78f47c1624f@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 30 Jul 2025 10:20:09 +0200
-Message-Id: <DBP8RFDV59PF.1OV46P0UYKOGM@kernel.org>
-Cc: "Alexandre Courbot" <acourbot@nvidia.com>, <linux-clk@vger.kernel.org>,
- <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH] rust: clk: use the type-state pattern
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Daniel Sedlak" <daniel@sedlak.dev>, "Daniel Almeida"
- <daniel.almeida@collabora.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Miguel
- Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
- Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Viresh Kumar"
- <viresh.kumar@linaro.org>
-X-Mailer: aerc 0.20.1
-References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
- <fc26c393-5c4b-48a8-a7ac-12558f79b140@sedlak.dev>
-In-Reply-To: <fc26c393-5c4b-48a8-a7ac-12558f79b140@sedlak.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed Jul 30, 2025 at 9:29 AM CEST, Daniel Sedlak wrote:
-> On 7/29/25 11:38 PM, Daniel Almeida wrote:
->> +    mod private {
->> +        pub trait Sealed {}
->> +
->> +        impl Sealed for super::Unprepared {}
->> +        impl Sealed for super::Prepared {}
->> +        impl Sealed for super::Enabled {}
->> +    }
->
-> I just noticed we have plenty of Sealed traits scattered across rust/=20
-> folder. Do you think we would benefit from unifying it to a single=20
-> location to prevent duplication?
+On Tue, 29 Jul 2025 22:40:00 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-I don't think we can merge the various `Sealed` traits we have. They are
-implemented for different types and ensure that only those selected
-types are allowed when `T: Sealed`. If we merge them, then that is no
-longer the case.
+> On Mon, 28 Jul 2025 08:42:44 -0700
+> Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> 
+> > On Mon, Jul 28, 2025 at 09:41:35AM +0100, Alan J. Wylie wrote:
+> > > #regzbot introduced: 6.15.8..6.16
+> 
+> > I don't have time to look at this for at least the next few days, but I
+> > suspect this one:
+> > 
+> >      1a3:	8f ea 78 10 c3 0a 06 00 00 	bextr  $0x60a,%ebx,%eax
+> 
+> Thanks for finding!
+> Indeed, this is encoded by XOP which is not currently supported
+> by x86 decodeer. 
+> 
+> > 
+> > in which case the kernel's x86 decoder (which objtool also uses) needs
+> > to be updated.
+> 
+> OK, let me see how XOP works.
 
-We essentially would like to have a `#[sealed]` attribute that we can
-put on a trait to avoid the `mod private { pub trait Sealed }` dance.
-(so a trait that cannot be implemented outside of the module declaring
-it)
+I've sent it to;
 
----
-Cheers,
-Benno
+https://lore.kernel.org/all/175386161199.564247.597496379413236944.stgit@devnote2/
+
+I confirmed it worked with the XOP encoded "bextr".
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
