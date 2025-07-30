@@ -1,106 +1,136 @@
-Return-Path: <linux-kernel+bounces-751175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85018B1660E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB682B16615
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:12:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80BA06225A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:10:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DD7B16AF33
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 18:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612B62222C4;
-	Wed, 30 Jul 2025 18:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B932D9ECD;
+	Wed, 30 Jul 2025 18:12:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ar0QA19a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZelQSJGz"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B02A29;
-	Wed, 30 Jul 2025 18:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE0F1EE019
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753899028; cv=none; b=iA0FVbApznrlMWYPBWK9ut1ZOwAs8lp+Nlu3yaWLTB88Qe5dQQF2iW/Ar484ItZMtjLRqkk35oAr+lWJSwx7piZIehK7HlGCeb/7vBZ9IvXnGIUq+t9OjLiLvpt/O6B4hITnHQN/4265nWCi3Bawl+Qwv/JFDQzBbReQ7udf5JY=
+	t=1753899125; cv=none; b=l7zdUzZ6Dt8VU/7rU16tBf0bJczrsk8yjTvH9TSS3CSJrbezs9gNEt/hHX4a1XWiIADnVv24SoJkru98VHyrI0buATBUpBp+ubipxn1U8hdnW4a4fnwIrbnT4Mk65AxPNGy55Pi7fEqqzGR848l8vkaWt0Vpma9/F0aRKU3KPWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753899028; c=relaxed/simple;
-	bh=2+R6QBBiXLtCm2dPQUTelWWWq1hY2KaY+Tb24j6CjyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NcqKoJyQMKVXVPiMc1JBB6BeDfX11HOwlfvDFVLDDETHu2dBlgO10uFMNIRFYNiqQgIVT9kYGknWdst5rMfj1syKllqJ2kWsOEzh0jG+dpthVk12VnUts2QnqBpd/kOoqLtBmMQGKt6pi+sR8YAPBDgm6NGRm2p3+u7l+KUc+Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ar0QA19a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20FEEC4CEE3;
-	Wed, 30 Jul 2025 18:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753899028;
-	bh=2+R6QBBiXLtCm2dPQUTelWWWq1hY2KaY+Tb24j6CjyY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ar0QA19asK/AQNJyoyOQ2w/sGosbf8SDpOd/P132AXVm+m7DJ9+LvKA0CavfA+2Hh
-	 0isWY5jr6KLguy1gIVuiyWzN38cXhaXhFmTwTweWT2C5sSGNyAP0AHM9ruveKQnzfH
-	 oad9ZbTEt/uka09a/9LAqWHtGP+J20Zb2P2Thz3jHt2OXVoLICf2v/p752KFREAcII
-	 BfJvCrr8C+2rTagHHhu0aZE4/7N7nsuRK6TViK1Sz5YKrBtXASMfoo5R4CjSsYzIL2
-	 NdxQaq7nO0dg2bguxXJU0uLe6xY1uUJfUxnK37Ve+k1iGZdghO8xeFqYC9ErnH4C/S
-	 CGn+aNo5ErIVg==
-Date: Wed, 30 Jul 2025 14:10:26 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Greg KH <greg@kroah.com>, corbet@lwn.net, linux-doc@vger.kernel.org,
-	workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <aIpgEpe6z2Ykyymh@lappy>
-References: <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local>
- <2025072854-earthen-velcro-8b32@gregkh>
- <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local>
- <20250730112753.17f5af13@gandalf.local.home>
- <158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local>
- <20250730121829.0c89228d@gandalf.local.home>
- <aIpKCXrc-k2Dx43x@lappy>
- <20250730130531.4855a38b@gandalf.local.home>
- <aIpah6DTRd99mMqb@lappy>
- <20250730175909.GO222315@ZenIV>
+	s=arc-20240116; t=1753899125; c=relaxed/simple;
+	bh=hoh4HkXnDmJqJw/WrI6ycq/Ao/21Hcg9bbQopwz4GGQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DiW4zYsnzNXzUkQlu4yFw6XQYADCjZD/I7/SyDLPRRl1QNm75tOuPUi2jweQrGLG584mt0+BBBWKJdfV+MFt9cPFJlC4wEGKRvlfDkh0s2+/BYXslKP3uHP6Aml2vCm3xd/593JKfgRSgrzyNCG3IqIaZ+x5ua/fmfR7Iw+IHYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZelQSJGz; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-6152faff57eso65209a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:12:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1753899121; x=1754503921; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PoKxUWsGJ0drWlCsSRpNM9dExZbd5oNyuJwK6uC033Y=;
+        b=ZelQSJGzbR6mnaeIn2LdddI69XhtVxHXVvDS8o5o5eKdinMMZa5tXCKg8ocs0po8qe
+         7vbxQeaRTwdan5ONEmQ43mBElLNXL4CbD8YQPE9KbBsiUOHkcT+gzWWRl7BVbXPhtNmO
+         NeE7lW6vn8gT1zJZg7diygH8HzMdqBRedKShM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753899121; x=1754503921;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PoKxUWsGJ0drWlCsSRpNM9dExZbd5oNyuJwK6uC033Y=;
+        b=ZBjQqzdvPh1ttrfqa8BBVKvWrkZVGLyjd29vtjpVzDmwKn7aDxX8mqoEH/ALjqpvBj
+         9cnJJBzXCPMTjXhhFv99EN1Vw8zMokkGFVg9aocJbdrJZ6lqY+sItVmGXDtO9CnMugvk
+         TwbeYMRg4Ppemza4Aj4drNZibsUFR21svBEgxoxokTEOyeA+A09ccJqZYaSgEVR1kJbg
+         CceEMoZg3g6dO5jAfN1UADjMo696lTdVrghy2TU/x8f+E4X3sMZQbejXCOkonFZTQq1C
+         y2NZ/5OYY70k7THB7/NJGU8fFYQIcjvQ4/UHDMcBhXOT9LP1bGL/JfcRueJWHL/GKY2P
+         3UVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5U5GFC1pJn1l0a6Y2evQrpHGIKVHdVfQfDdKjfaLviJAeQknFnJ8iD84vep6+PLUEn6YSTbic6bPUMf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmHB3FYS7E8IIL0nuwOaqVzPHw4So+wA9raesJl8IDLieeg44p
+	rPiBjX2I1gUISoyaKDkRhrbUTbGE5nw26uabuIq9G99QIciSfTKNpPM7dQwoZp7P38iEPGC0FiH
+	cFie0ydQ=
+X-Gm-Gg: ASbGncuLWG5yyUOv+gkT2f6yw2t2ESXKBTME3bF8Y1zeEAzvFmErMfRk3S9nbwTyydj
+	/7On12N6PTNb/iki0/ZZncxCAcoBwuTVKb79750+AThQGLV4vz+60iwXqotXaFHnpCEh4pC3ymz
+	ouC2HCKb+OA+Jo7Al1fYfkb4KKI1VLZs10ebUUM5YNJ7eAjj3f0WPDr1SSlCkBAduE+PP4kFlpo
+	IirPGLDS9gFAF1eAo8edlHCMLBt8LPYq2UjLmOUhNAkH7S3/L2LfiwnJCjjvYDqbcH9uGr+kGDR
+	TSLmJ9ZqbbihYQpYxR1Cy8YqtXIXb5FVL3DDycocaZR2C7IWqDeVXmJJCc9RmVWHGqNqUoG9K8J
+	ldvnCoekoi0e64cPcskfmSg5JBr6M45oNKDmG7elpYc4Ngq+x3u6USjg7Dmx1c8igKobFT+OC
+X-Google-Smtp-Source: AGHT+IH2lFJcFhSDKUTW1nOOm0oZ/dOsBkF5aEcD2hM3kUCOtPBmlmW+7BBgOlUC0vRxQIkbaMNTjA==
+X-Received: by 2002:a05:6402:180d:b0:606:a26c:6f46 with SMTP id 4fb4d7f45d1cf-615870b14ebmr4096182a12.19.1753899121178;
+        Wed, 30 Jul 2025 11:12:01 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a5e2988bsm95028a12.23.2025.07.30.11.11.59
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 11:12:00 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-60c5b8ee2d9so52935a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 11:11:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX7IjNsS3m+4AJ1gR4jQIq+AnLNwPORqTg/w5xhIEuD023SdIryMiJHkjtFQQ0Y66XJYvS41Lzmjymjq9E=@vger.kernel.org
+X-Received: by 2002:a05:6402:350a:b0:615:9c88:59e8 with SMTP id
+ 4fb4d7f45d1cf-6159c885b1dmr2065764a12.4.1753899119478; Wed, 30 Jul 2025
+ 11:11:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250730175909.GO222315@ZenIV>
+References: <20250726024605.GA17131@neeraj.linux>
+In-Reply-To: <20250726024605.GA17131@neeraj.linux>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 30 Jul 2025 11:11:43 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh1Cjqv08fdm3T3ZSBGN2vhMm00Ud+JjbWthK0RygMF0Q@mail.gmail.com>
+X-Gm-Features: Ac12FXzcgjM63YExZi8MiZ1Su9hIEpeaVi0WR1ZQE39K8u8IrcOTSogonMnM4a0
+Message-ID: <CAHk-=wh1Cjqv08fdm3T3ZSBGN2vhMm00Ud+JjbWthK0RygMF0Q@mail.gmail.com>
+Subject: Re: [GIT PULL] RCU changes for v6.17
+To: Neeraj Upadhyay <Neeraj.Upadhyay@kernel.org>
+Cc: paulmck@kernel.org, joelagnelf@nvidia.com, frederic@kernel.org, 
+	boqun.feng@gmail.com, urezki@gmail.com, qiang.zhang1211@gmail.com, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com, rcu@vger.kernel.org, 
+	Tze-nan.Wu@mediatek.com, a.sadovnikov@ispras.ru
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jul 30, 2025 at 06:59:09PM +0100, Al Viro wrote:
->On Wed, Jul 30, 2025 at 01:46:47PM -0400, Sasha Levin wrote:
+On Fri, 25 Jul 2025 at 19:46, Neeraj Upadhyay
+<Neeraj.Upadhyay@kernel.org> wrote:
 >
->> Similarily the argument around not trusting the code is equivalent to
->> not trusting the person who sent the code in. AI doesn't send patches on
->> it's own - humans do. This is basically saying "I didn't even look at
->> your patch because I don't trust you".
+> This pull request contains the following branches:
 >
->One name: Markus Elfring.  Ever tried to reason with that one?  Or Hillf
->Danton, for that matter.
->
->And I absolutely will refuse to take patches from somebody who would
->consistently fail to explain why the patch is correct and needed.  Sasha,
->this is the elephant in the room: we *ALREADY* get "contributions" that
->very clearly stem from "$TOOL says so, what else do you need?" kind of
->reasoning and some of that dreck ends up in the tree.  AI will serve as
->a force multiplier for those...  persons.
+> rcu-exp.23.07.2025 [..]
 
-This is exactly my argument Al :)
+I've pulled this, but I do have a request (or two, really)..
 
-You, as a maintainer, should be able to just reject patches without
-having to provide a technical explanation for each patch you ignore.
+The octopus merges look cool, but they have the problem that if there
+are subtle bugs introduced by interactions between branches, they are
+a pain to bisect. So in general, I advise people to avoid them.
 
-If someone new comes along and bombards you with AI generated crap and
-useless review comments, you should be able to just block him and point
-to something under Documentation/ that will support that decision.
+But the *real* thing I note is that merges are more subtle than normal
+commits in the first place, and octopus merges are subtler still - and
+your have no explanation at all outside of the 'merge X Y and Z into
+ABC'.
 
--- 
-Thanks,
-Sasha
+Please write more of a commit message explaining what those branches
+*are* that you are merging.
+
+Which is the second part of the request: when you ask me to merge "the
+following branches", the branch names are basically line noise. I'm
+not in the least interested in seeing what the date of a branch is.
+That adds no value.
+
+So can you please instead describe the branches by what they do than
+by some internal branch name you used. I made up my own "names" for
+the sub-branches in the merge message, but it would be much nicer if
+you did it in the pull request.
+
+So, for example, I changed "rcu-exp.23.07.2025" to be "Expedited grace
+period", which seems to be what that branch name was cryptically
+trying to say.
+
+            Linus
 
