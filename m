@@ -1,112 +1,195 @@
-Return-Path: <linux-kernel+bounces-751319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47EEEB167A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AFA3CB167BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 22:44:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 473B31AA55D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:31:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65E191886B0D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 20:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A3921CC6D;
-	Wed, 30 Jul 2025 20:31:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EC2220F35;
+	Wed, 30 Jul 2025 20:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlcMn17K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W+D9R1GR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BCD23741;
-	Wed, 30 Jul 2025 20:31:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B3218633F
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753907480; cv=none; b=JmknpSZf/StGW/oNdYpB6ya4+CJmEf8D/SZ7a202MuONJCXUalX5boVRV/KWQlg/9+2N+4+aaqTrwxD8M7/0qUhV89+aGc/eBLfP/mYXOI1BBgPPaNb0EZGUy94XGO+whdblF8LNYhFvLr7cs7fz3pBQZ9wmJykjFaPAVNDJ2Hw=
+	t=1753908248; cv=none; b=IVfF9X/Dac5n5k5mNpSFsGH7meCYnuYXsqzoxNDVWoswITvVyWct1yj4AGSmv9JoB1BjJZtgvHStDKbp/jhEFpuyYyszrWk97p9Jn64KypLef8z1RMFFAe1cOw9XcxIlS1N0PnWkCKn3moC0OhgIeYi5TeqNjpLop/s3WA1aPPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753907480; c=relaxed/simple;
-	bh=pzIlKTqc6PooF0HdTDP7xCXB+NOAd4uVr/p9iM+zgsc=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=IGi37Zi23wBOXk4dZsaSwxUWmyhx3ex4a7cTeKn9AF6R7rhI91+raqqb8VHR7h45nUO9i6s1eXVRGMGaLkGy/xeJSSMGubOXxdim+o7rUj62IyumCdL0sa4RKMOmEyONdLHbDHh5kZgwiH0HMSRZ6dCMiyxWerl+v8t3f/JnfTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlcMn17K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78BB3C4CEE3;
-	Wed, 30 Jul 2025 20:31:19 +0000 (UTC)
+	s=arc-20240116; t=1753908248; c=relaxed/simple;
+	bh=9DGGOM6EwJkIBDAlhMmSBcz1QoJ4tVGZFEhbp72aT4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ujVFrkVb3w3Z6qW9idh6Nd7EJGirVp74Rrd4S7UzsSGbbJcp6Wty4ZOPjRJD2CDh9nQg4wesFn9vO06YjLTkJf8m8lrK8Kz/puMkq47W9JLPxVGG53609NxU8elRJmRERnsaBirvn3A7KvEFCjSTM8/DtYSBnGUk2cbNHH79N0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W+D9R1GR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D83A6C4CEE3;
+	Wed, 30 Jul 2025 20:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753907479;
-	bh=pzIlKTqc6PooF0HdTDP7xCXB+NOAd4uVr/p9iM+zgsc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=IlcMn17KsB3VwtN7o4M4reHgTOgUef9hT6mMZoXwt6rrDRNAfcbSkgPSpxKiHi7Gq
-	 Kkgex52i4mOQIfIdDMJtb4EwV5EiHAXjrnxw27wd9ar1fmye86XJOThGTioOp7zisw
-	 HNBrttKNorvrl2ZfO+kp+s64LUiuwcSV2cWDZqdVsmJfc6Q9qv79kMbHV2v+kPjV4d
-	 dak18jPu0dhQtuS+j13SpN6tFgvshGwVoy06cjYTxsyLXNXlp4oLs7b/tx15KDaQ9D
-	 1IGJK2j3QbaiOBoDvnYcph8ALn+RBmKXc0Vh8Z5t9NugxIEXUcFkqFB/a8EMw74Q7W
-	 +u2BwlCPOoo7g==
-Date: Wed, 30 Jul 2025 15:31:18 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1753908248;
+	bh=9DGGOM6EwJkIBDAlhMmSBcz1QoJ4tVGZFEhbp72aT4o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=W+D9R1GR4Tykso/U8BLc/iPWkdl6T6lr2XR6f+oc2MvT6VbaSrJFe3HF8e8FClgRq
+	 rCq+krrpCxpi80UYdb00d4GVLnEQIwZ8G/K1E/cgeAiYqUfulMbYPusVPJ5WqxDq6p
+	 zakJF6v/vd1zS9YOYLMp84c81jT31vMhseYC9uz/X5yvWaLRj3XQFrqxBZSSY7hQSQ
+	 gIfJsaBgokcIes/D48u5oacmIkvQB5V5uK2qaDvmqpolyiPSdDJCNLZv0mfD9GUNU3
+	 T9/meV+X/AmOKr4RXVXpZMIz60cOYhclRNyVxvYAvTmnZyJTax34aAFfyIQRjFwGf7
+	 yjLsjSa/ezLkg==
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Keith Busch <kbusch@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>
+Cc: Chaitanya Kulkarni <kch@nvidia.com>,
+	linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Casey Chen <cachen@purestorage.com>,
+	Yuanyuan Zhong <yzhong@purestorage.com>
+Subject: [PATCH v2] nvme: Fix typos
+Date: Wed, 30 Jul 2025 15:32:45 -0500
+Message-ID: <20250730204353.3383702-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, Kuogee Hsieh <quic_khsieh@quicinc.com>, 
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Rob Clark <robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, 
- Thomas Zimmermann <tzimmermann@suse.de>, 
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, 
- Konrad Dybcio <konradybcio@kernel.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- freedreno@lists.freedesktop.org, Abhinav Kumar <abhinav.kumar@linux.dev>, 
- linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Dmitry Baryshkov <lumag@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, dri-devel@lists.freedesktop.org, 
- Simona Vetter <simona@ffwll.ch>, Maxime Ripard <mripard@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, David Airlie <airlied@gmail.com>
-To: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <20250730-mdssdt_qcs8300-v5-3-bc8ea35bbed6@quicinc.com>
-References: <20250730-mdssdt_qcs8300-v5-0-bc8ea35bbed6@quicinc.com>
- <20250730-mdssdt_qcs8300-v5-3-bc8ea35bbed6@quicinc.com>
-Message-Id: <175390746243.1660386.11206814214268936734.robh@kernel.org>
-Subject: Re: [PATCH v5 3/5] dt-bindings: display/msm: Document MDSS on
- QCS8300
+Content-Transfer-Encoding: 8bit
 
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-On Wed, 30 Jul 2025 17:42:28 +0800, Yongxing Mou wrote:
-> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
-> 
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> ---
->  .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 284 +++++++++++++++++++++
->  1 file changed, 284 insertions(+)
-> 
+Fix typos in comments.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
+---
+v1: https://lore.kernel.org/r/20250723202801.2909506-1-helgaas@kernel.org
 
-yamllint warnings/errors:
+This v2 based on nvme/nvme-6.17 (e97c0040215f ("nvme-auth: remove unneeded
+semicolon"))
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb: phy@aec2a00 (qcom,qcs8300-edp-phy): compatible:0: 'qcom,qcs8300-edp-phy' is not one of ['qcom,sa8775p-edp-phy', 'qcom,sc7280-edp-phy', 'qcom,sc8180x-edp-phy', 'qcom,sc8280xp-dp-phy', 'qcom,sc8280xp-edp-phy', 'qcom,x1e80100-dp-phy']
-	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb: phy@aec2a00 (qcom,qcs8300-edp-phy): compatible: ['qcom,qcs8300-edp-phy', 'qcom,sa8775p-edp-phy'] is too long
-	from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+Changes from v1:
+  - Drop drivers/nvme/host/apple.c fix; already fixed by 164c187d25b6
+    ("nvme: fix multiple spelling and grammar issues in host drivers")
+  - Drop hunks from drivers/nvme/host/fc.c; also fixed by 164c187d25b6
+  - Drop drivers/nvme/host/pci.c nvme_setup_io_queues() fix; the comment
+    added by e4b9852a0f4a ("nvme-pci: fix multiple races in
+    nvme_setup_io_queues") needs more grammatical work than I can do to be
+    intelligible; authors cc'd
+  - Drop drivers/nvme/host/rdma.c fix; also fixed by 164c187d25b6
+  - Add Chaitanya's Reviewed-by since I only dropped hunks, nothing new
+    added
 
-doc reference errors (make refcheckdocs):
+ drivers/nvme/host/fc.c     | 4 ++--
+ drivers/nvme/host/tcp.c    | 2 +-
+ drivers/nvme/target/fc.c   | 6 +++---
+ drivers/nvme/target/rdma.c | 6 +++---
+ 4 files changed, 9 insertions(+), 9 deletions(-)
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250730-mdssdt_qcs8300-v5-3-bc8ea35bbed6@quicinc.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+diff --git a/drivers/nvme/host/fc.c b/drivers/nvme/host/fc.c
+index 08a5ea3e9383..3e12d4683ac7 100644
+--- a/drivers/nvme/host/fc.c
++++ b/drivers/nvme/host/fc.c
+@@ -1363,7 +1363,7 @@ nvme_fc_disconnect_assoc_done(struct nvmefc_ls_req *lsreq, int status)
+  * down, and the related FC-NVME Association ID and Connection IDs
+  * become invalid.
+  *
+- * The behavior of the fc-nvme initiator is such that it's
++ * The behavior of the fc-nvme initiator is such that its
+  * understanding of the association and connections will implicitly
+  * be torn down. The action is implicit as it may be due to a loss of
+  * connectivity with the fc-nvme target, so you may never get a
+@@ -2777,7 +2777,7 @@ nvme_fc_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	 * as WRITE ZEROES will return a non-zero rq payload_bytes yet
+ 	 * there is no actual payload to be transferred.
+ 	 * To get it right, key data transmission on there being 1 or
+-	 * more physical segments in the sg list. If there is no
++	 * more physical segments in the sg list. If there are no
+ 	 * physical segments, there is no payload.
+ 	 */
+ 	if (blk_rq_nr_phys_segments(rq)) {
+diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+index 9233f088fac8..c0fe8cfb7229 100644
+--- a/drivers/nvme/host/tcp.c
++++ b/drivers/nvme/host/tcp.c
+@@ -2179,7 +2179,7 @@ static int nvme_tcp_configure_io_queues(struct nvme_ctrl *ctrl, bool new)
+ 
+ 	/*
+ 	 * Only start IO queues for which we have allocated the tagset
+-	 * and limitted it to the available queues. On reconnects, the
++	 * and limited it to the available queues. On reconnects, the
+ 	 * queue number might have changed.
+ 	 */
+ 	nr_queues = min(ctrl->tagset->nr_hw_queues + 1, ctrl->queue_count);
+diff --git a/drivers/nvme/target/fc.c b/drivers/nvme/target/fc.c
+index 25598a46bf0d..a9b18c051f5b 100644
+--- a/drivers/nvme/target/fc.c
++++ b/drivers/nvme/target/fc.c
+@@ -459,7 +459,7 @@ nvmet_fc_disconnect_assoc_done(struct nvmefc_ls_req *lsreq, int status)
+  * down, and the related FC-NVME Association ID and Connection IDs
+  * become invalid.
+  *
+- * The behavior of the fc-nvme target is such that it's
++ * The behavior of the fc-nvme target is such that its
+  * understanding of the association and connections will implicitly
+  * be torn down. The action is implicit as it may be due to a loss of
+  * connectivity with the fc-nvme host, so the target may never get a
+@@ -2313,7 +2313,7 @@ nvmet_fc_transfer_fcp_data(struct nvmet_fc_tgtport *tgtport,
+ 	ret = tgtport->ops->fcp_op(&tgtport->fc_target_port, fod->fcpreq);
+ 	if (ret) {
+ 		/*
+-		 * should be ok to set w/o lock as its in the thread of
++		 * should be ok to set w/o lock as it's in the thread of
+ 		 * execution (not an async timer routine) and doesn't
+ 		 * contend with any clearing action
+ 		 */
+@@ -2629,7 +2629,7 @@ nvmet_fc_handle_fcp_rqst(struct nvmet_fc_tgtport *tgtport,
+  * and the api of the FC LLDD which may issue a hw command to send the
+  * response, but the LLDD may not get the hw completion for that command
+  * and upcall the nvmet_fc layer before a new command may be
+- * asynchronously received - its possible for a command to be received
++ * asynchronously received - it's possible for a command to be received
+  * before the LLDD and nvmet_fc have recycled the job structure. It gives
+  * the appearance of more commands received than fits in the sq.
+  * To alleviate this scenario, a temporary queue is maintained in the
+diff --git a/drivers/nvme/target/rdma.c b/drivers/nvme/target/rdma.c
+index 67f61c67c167..0485e25ab797 100644
+--- a/drivers/nvme/target/rdma.c
++++ b/drivers/nvme/target/rdma.c
+@@ -1731,7 +1731,7 @@ static void nvmet_rdma_queue_connect_fail(struct rdma_cm_id *cm_id,
+  * We registered an ib_client to handle device removal for queues,
+  * so we only need to handle the listening port cm_ids. In this case
+  * we nullify the priv to prevent double cm_id destruction and destroying
+- * the cm_id implicitely by returning a non-zero rc to the callout.
++ * the cm_id implicitly by returning a non-zero rc to the callout.
+  */
+ static int nvmet_rdma_device_removal(struct rdma_cm_id *cm_id,
+ 		struct nvmet_rdma_queue *queue)
+@@ -1742,7 +1742,7 @@ static int nvmet_rdma_device_removal(struct rdma_cm_id *cm_id,
+ 		/*
+ 		 * This is a queue cm_id. we have registered
+ 		 * an ib_client to handle queues removal
+-		 * so don't interfear and just return.
++		 * so don't interfere and just return.
+ 		 */
+ 		return 0;
+ 	}
+@@ -1760,7 +1760,7 @@ static int nvmet_rdma_device_removal(struct rdma_cm_id *cm_id,
+ 
+ 	/*
+ 	 * We need to return 1 so that the core will destroy
+-	 * it's own ID.  What a great API design..
++	 * its own ID.  What a great API design..
+ 	 */
+ 	return 1;
+ }
+-- 
+2.43.0
 
 
