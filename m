@@ -1,118 +1,233 @@
-Return-Path: <linux-kernel+bounces-750140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02AF0B157D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:37:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6563B157DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 05:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08A9A5403C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:37:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9961A3B1C80
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADB61DDA31;
-	Wed, 30 Jul 2025 03:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5240E1E25F9;
+	Wed, 30 Jul 2025 03:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ZWQS7OOk"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GPBIW0Jo"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D281F1DACA7
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 03:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38E61D5ACE;
+	Wed, 30 Jul 2025 03:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753846623; cv=none; b=NG58MwKIB6VGjPsdF9hG0cv8iLPdLBkfqnP7BbPff85Wr7RrvJQ+D17NosP9pmMe0YBj1a+NZPsl2Fjq73bHMFDDZuwDiw3UOjBc2bJgVkroL9AXDWaz5jFlY2HG/VuCq8mGjZLLQzN+lvAAK7R5lt/kNPgeFfP6D8R6Hb2DjFk=
+	t=1753846648; cv=none; b=kZusPYVBAdZgDWi+PRqwubROCx0ttgNkM4e/ygwImmeOabaEEyIcty3f/ls0c0Tpt9urkjA3Qit+KpCSyqdNUjbVtoBUOtgDG5OCHlpwnEg+8bQK8wF4WSUfInrTA9nLRMv/zU3q2xPIsOkgzx0YBBpzuXUpxCwUYUUnOc/qn+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753846623; c=relaxed/simple;
-	bh=pvUw3HOxO3kubIOU4lbfo6vjGrJWhVYRfVOKaI+9+8Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nS7qOAQeEEBrtYW5qSw/AIi0w5/k3+cwcfTManTGRnAbtewB1SkKiupocRav2EmS60OAKoVOfAniUJQ5CheRFaVPKwNTS9gFbuTz5MXRIm4ym/WFuz7AUUJxgO2o9uK/VTPLJslmrQVCguDQrT++nGIm15uuCAxVof8doxda1gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ZWQS7OOk; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753846620;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NL2NutqI3C7y42/84zE/Wv89v2yejsQI2VaLqtRerjo=;
-	b=ZWQS7OOklMFC9W+ul+VI4zzg8VSkwyMOMMCucZcuPFggFQbbPgvcAMKkmYU0n1hcfhf1HF
-	Lo+6JUnF/JU5C1ezmtOeFazDHaoSXitcs5UfnA2FKhIq/8VmH3YmBkjZ3tJwV0C0GlkmLB
-	w1NM+2lc/T3ebLela9Xh/M8NHQU2KjM=
-From: Hui Zhu <hui.zhu@linux.dev>
-To: Danilo Krummrich <dakr@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	vitaly.wool@konsulko.se
-Cc: Hui Zhu <zhuhui@kylinos.cn>,
-	Geliang Tang <geliang@kernel.org>
-Subject: [PATCH v6 2/2] rust: alloc: kvec: add doc example for as_slice method
-Date: Wed, 30 Jul 2025 11:35:22 +0800
-Message-ID: <786e88abea2557080bde65fa9892df3b956731f2.1753841900.git.zhuhui@kylinos.cn>
-In-Reply-To: <cover.1753841900.git.zhuhui@kylinos.cn>
-References: <cover.1753841900.git.zhuhui@kylinos.cn>
+	s=arc-20240116; t=1753846648; c=relaxed/simple;
+	bh=Ymk96y7FUWnE0zbfR0VLJRsckN/JMqE00GtgLPj0qRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tRjW2AZPjDZqx4CHIj5mCCJ4N98FsCGQ9bY+qcWx2HIThGlt/BAUVATRL425Ssjnk1eRx0JmRzTpRk0hSh/WIrtef3vvnN8YqM/Sf9/hpp+0rbDy9KfMaxH+HN2ZsdbHFBijhYVZTGBDOrs1s6czehIb8aI85JvN4dkvwOeJVPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GPBIW0Jo; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753846646; x=1785382646;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Ymk96y7FUWnE0zbfR0VLJRsckN/JMqE00GtgLPj0qRo=;
+  b=GPBIW0JoswrYZqLOFl7JfU/8JWFEUAfQdQwlfNEopqH/geapbwQuk5NU
+   qRiLceCkZ/ygzPiuB3jxFHvcpK9smITH4ymYNSedD1Cdf4kT5iPkmLXIl
+   FvQT5bGHgb5gyU8V8PZFFFk8ZvfRN+LUtWXiun1t/cZt+8WAj/+nXV8po
+   Ho4f8I0A7+lIvhOKAdPjT4MrqjqLQSLo4lq7TeH8VMR3NolNKqJZ8xMLR
+   /DpVZvgqIwKtrakvlyxocODfa7Rx+orqk7AA0JpWxE6cpKyfe/ctWZC0p
+   c6dox8TWVPN+XDpuYDZlIGmXDVjbN9Qt6OAq/5v61K7l4nPuAs/CvC25Y
+   A==;
+X-CSE-ConnectionGUID: KcpYhl+bRXeBjapDLBHZSA==
+X-CSE-MsgGUID: 4vo5y8HYS0yqgnd6UC4Shw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11506"; a="81578758"
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="81578758"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Jul 2025 20:37:26 -0700
+X-CSE-ConnectionGUID: ar/G3DOGS8uedznncdnXVw==
+X-CSE-MsgGUID: H23rFKPZQJqYSvne5Xy7JA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,350,1744095600"; 
+   d="scan'208";a="167077052"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 29 Jul 2025 20:37:22 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ugxd1-0001y2-21;
+	Wed, 30 Jul 2025 03:37:19 +0000
+Date: Wed, 30 Jul 2025 11:36:21 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>
+Subject: Re: [PATCH net-next v2 1/2] drivers: net: stmmac: handle start time
+ set in the past for flexible PPS
+Message-ID: <202507301148.TVzOecMo-lkp@intel.com>
+References: <20250729-relative_flex_pps-v2-1-3e5f03525c45@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729-relative_flex_pps-v2-1-3e5f03525c45@foss.st.com>
 
-From: Hui Zhu <zhuhui@kylinos.cn>
+Hi Gatien,
 
-Add a practical usage example to the documentation of KVec::as_slice()
-showing how to:
-Create a new KVec.
-Push elements into it.
-Convert to a slice via as_slice().
+kernel test robot noticed the following build warnings:
 
-Co-developed-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
----
- rust/kernel/alloc/kvec.rs | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+[auto build test WARNING on fa582ca7e187a15e772e6a72fe035f649b387a60]
 
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index 92d0ed3f302e..f57e08c64929 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -224,6 +224,16 @@ unsafe fn dec_len(&mut self, count: usize) -> &mut [T] {
-     }
- 
-     /// Returns a slice of the entire vector.
-+    ///
-+    /// # Examples
-+    ///
-+    /// ```
-+    /// let mut v = KVec::new();
-+    /// v.push(1, GFP_KERNEL)?;
-+    /// v.push(2, GFP_KERNEL)?;
-+    /// assert_eq!(v.as_slice(), &[1, 2]);
-+    /// # Ok::<(), Error>(())
-+    /// ```
-     #[inline]
-     pub fn as_slice(&self) -> &[T] {
-         self
+url:    https://github.com/intel-lab-lkp/linux/commits/Gatien-Chevallier/drivers-net-stmmac-handle-start-time-set-in-the-past-for-flexible-PPS/20250729-225635
+base:   fa582ca7e187a15e772e6a72fe035f649b387a60
+patch link:    https://lore.kernel.org/r/20250729-relative_flex_pps-v2-1-3e5f03525c45%40foss.st.com
+patch subject: [PATCH net-next v2 1/2] drivers: net: stmmac: handle start time set in the past for flexible PPS
+config: x86_64-buildonly-randconfig-002-20250730 (https://download.01.org/0day-ci/archive/20250730/202507301148.TVzOecMo-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250730/202507301148.TVzOecMo-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507301148.TVzOecMo-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c:177:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+     177 |                 struct timespec64 curr_time;
+         |                 ^
+   1 warning generated.
+
+
+vim +177 drivers/net/ethernet/stmicro/stmmac/stmmac_ptp.c
+
+   163	
+   164	static int stmmac_enable(struct ptp_clock_info *ptp,
+   165				 struct ptp_clock_request *rq, int on)
+   166	{
+   167		struct stmmac_priv *priv =
+   168		    container_of(ptp, struct stmmac_priv, ptp_clock_ops);
+   169		void __iomem *ptpaddr = priv->ptpaddr;
+   170		struct stmmac_pps_cfg *cfg;
+   171		int ret = -EOPNOTSUPP;
+   172		unsigned long flags;
+   173		u32 acr_value;
+   174	
+   175		switch (rq->type) {
+   176		case PTP_CLK_REQ_PEROUT:
+ > 177			struct timespec64 curr_time;
+   178			u64 target_ns = 0;
+   179			u64 ns = 0;
+   180	
+   181			/* Reject requests with unsupported flags */
+   182			if (rq->perout.flags)
+   183				return -EOPNOTSUPP;
+   184	
+   185			cfg = &priv->pps[rq->perout.index];
+   186	
+   187			cfg->start.tv_sec = rq->perout.start.sec;
+   188			cfg->start.tv_nsec = rq->perout.start.nsec;
+   189	
+   190			/* A time set in the past won't trigger the start of the flexible PPS generation for
+   191			 * the GMAC5. For some reason it does for the GMAC4 but setting a time in the past
+   192			 * should be addressed anyway. Therefore, any value set it the past is considered as
+   193			 * an offset compared to the current MAC system time.
+   194			 * Be aware that an offset too low may not trigger flexible PPS generation
+   195			 * if time spent in this configuration makes the targeted time already outdated.
+   196			 * To address this, add a safe time offset.
+   197			 */
+   198			if (!cfg->start.tv_sec && cfg->start.tv_nsec < PTP_SAFE_TIME_OFFSET_NS)
+   199				cfg->start.tv_nsec += PTP_SAFE_TIME_OFFSET_NS;
+   200	
+   201			target_ns = cfg->start.tv_nsec + ((u64)cfg->start.tv_sec * NSEC_PER_SEC);
+   202	
+   203			stmmac_get_systime(priv, priv->ptpaddr, &ns);
+   204			if (ns > TIME64_MAX - PTP_SAFE_TIME_OFFSET_NS)
+   205				return -EINVAL;
+   206	
+   207			curr_time = ns_to_timespec64(ns);
+   208			if (target_ns < ns + PTP_SAFE_TIME_OFFSET_NS) {
+   209				cfg->start = timespec64_add_safe(cfg->start, curr_time);
+   210				if (cfg->start.tv_sec == TIME64_MAX)
+   211					return -EINVAL;
+   212			}
+   213	
+   214			cfg->period.tv_sec = rq->perout.period.sec;
+   215			cfg->period.tv_nsec = rq->perout.period.nsec;
+   216	
+   217			write_lock_irqsave(&priv->ptp_lock, flags);
+   218			ret = stmmac_flex_pps_config(priv, priv->ioaddr,
+   219						     rq->perout.index, cfg, on,
+   220						     priv->sub_second_inc,
+   221						     priv->systime_flags);
+   222			write_unlock_irqrestore(&priv->ptp_lock, flags);
+   223			break;
+   224		case PTP_CLK_REQ_EXTTS: {
+   225			u8 channel;
+   226	
+   227			mutex_lock(&priv->aux_ts_lock);
+   228			acr_value = readl(ptpaddr + PTP_ACR);
+   229			channel = ilog2(FIELD_GET(PTP_ACR_MASK, acr_value));
+   230			acr_value &= ~PTP_ACR_MASK;
+   231	
+   232			if (on) {
+   233				if (FIELD_GET(PTP_ACR_MASK, acr_value)) {
+   234					netdev_err(priv->dev,
+   235						   "Cannot enable auxiliary snapshot %d as auxiliary snapshot %d is already enabled",
+   236						rq->extts.index, channel);
+   237					mutex_unlock(&priv->aux_ts_lock);
+   238					return -EBUSY;
+   239				}
+   240	
+   241				priv->plat->flags |= STMMAC_FLAG_EXT_SNAPSHOT_EN;
+   242	
+   243				/* Enable External snapshot trigger */
+   244				acr_value |= PTP_ACR_ATSEN(rq->extts.index);
+   245				acr_value |= PTP_ACR_ATSFC;
+   246			} else {
+   247				priv->plat->flags &= ~STMMAC_FLAG_EXT_SNAPSHOT_EN;
+   248			}
+   249			netdev_dbg(priv->dev, "Auxiliary Snapshot %d %s.\n",
+   250				   rq->extts.index, on ? "enabled" : "disabled");
+   251			writel(acr_value, ptpaddr + PTP_ACR);
+   252			mutex_unlock(&priv->aux_ts_lock);
+   253			/* wait for auxts fifo clear to finish */
+   254			ret = readl_poll_timeout(ptpaddr + PTP_ACR, acr_value,
+   255						 !(acr_value & PTP_ACR_ATSFC),
+   256						 10, 10000);
+   257			break;
+   258		}
+   259	
+   260		default:
+   261			break;
+   262		}
+   263	
+   264		return ret;
+   265	}
+   266	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
