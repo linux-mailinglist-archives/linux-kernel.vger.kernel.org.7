@@ -1,214 +1,1210 @@
-Return-Path: <linux-kernel+bounces-750063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1E94B156D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 02:59:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6CFB156E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:07:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B27B5189233E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 00:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9271E3BE923
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:07:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6408B1991D4;
-	Wed, 30 Jul 2025 00:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7401917D0;
+	Wed, 30 Jul 2025 01:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Q0MaheOB"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="YHHC1Q4e"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A87E187FEC
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 00:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4413B7A8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753837140; cv=none; b=L6MdqFrWkHzJCetiDhEmGVw+PQWtLlKblm3y+XKQxozpDh4Quddzf7N2H3baRKK/XXOGy3Z1iJ5nz8fUTGWD+3zg6OX4LRj8YtTrfjWItqao2KeA43aE4TcBWwRevt1jvdeRLSX+kPcHpqge82belsHx2OaksuQNOZ01cUkevN4=
+	t=1753837659; cv=none; b=BhP/axzbZfuGL9/WpEop0Xxkg20QJm22Kvn6wE002dOd/Ue/8rEdLkSD7cphxK5ReLqirdUwAwYnW3axuptftBpfms+XP4fjrQX4KvnHi9ne8ZmbK/VgFc8qbSs3VGqzpVpgCw5Fq3VS2xy3beBKlK1J/pfaKqMuYETXn6okpmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753837140; c=relaxed/simple;
-	bh=52dGNsfCzYMNb7XqIBXnTCNHJh+uI7s3tVSTq3e1Zzs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=UM72phakmsJopk22oUX12MynuYkD86DKYEr/AmdkFz61qEkYh7zX3KLUQ2RmLJeMHeJuMarGUXTA4X6Gu78k9y+o1GlteaOkSNR8VlQJshlOp67F1lrBXHA9IimhDWp15CN9x9tuUzj07E70849MbaLGKHMkhaJZrB6JCVlPTmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Q0MaheOB; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31edd69d754so2918754a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 17:58:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753837138; x=1754441938; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDQwseaUqKXgQMG0PL1emMIiquT/LrlyEZB+aSduFZ4=;
-        b=Q0MaheOBcbEG6J8+lt/BqQSuEcsw7jVNhnVHmOLbnMJVHdfxQcISW1u+7F+eJCNhgm
-         3aWS7b2hPt0rdLxLVF/imiQdCJsBwvseeJyQzdcM1ScupDFcQPqX7hiCamVpQ3dTYrTo
-         faQpQ+7b3M292knHogrqwwV9V4C7NApQWEOH/z2WWPSRm2Ff5pmHTYn/+QFH/3ePL0JZ
-         Ofetf0TwdpK8CZBjtrNgIapV9o0W1p+/akoLVBwyQX1fnhgBNXRufiku3/PzfJcHlP2L
-         CaWQwj9+mtVxlPIC3CgThVonCl6OA/YMYayOhqqoAJ/BGjoJtsTmOUVvGkfZAJLxb7tg
-         8t9w==
+	s=arc-20240116; t=1753837659; c=relaxed/simple;
+	bh=0o5GCuxJ26hbOMWxYpDUV565+NjJFqiiZTwIzjCSQMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jUeeGWaM9VYkJ7KPoRJjyjuG1YWvL2wtXQy8CjMesdQku4WvhjuNK8FNUw7RoqcvYT/3GsS6nD8dh//hW8hitC42eOkyXgYOI8jiWWdOTe5x2AUzsrcWjwhhX3DyYT3MLu9O9p/54i3RMWMJjnZUMRJEBHuAk8K8ZZesmcvXUDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=YHHC1Q4e; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56TK73qx016216
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:07:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	9b8nceYhkIBnOga0zcO3rPr5yt0ZEpFTBjcmcJTA57g=; b=YHHC1Q4e+vC+jtZb
+	es83dwMH3fkMCyJxFdJOLJMUa5/tItHPMX+mdCsETk7dqp6DEhG149ywZCBxUma4
+	Zs/zslV4SYzVnUiI5n87yuTX2slf4dF2ZFOpEephgOevIvMdoJ5mwfXtGHX7Eg8Q
+	Hz4ZCjVCY05hbPB8m1ZqHaYDaSFGfbalP5ajfoIrg3kTEGh2ezbJ7hGfNo7RlaNB
+	PGIGafQqqxPM25Y8mQ2JgsS+wdTUoWFA9fpkZD4tiRpMVy02vK6KRhsR8vNfdmSL
+	8KnyXYoOm/Gkmljp/jmhSOFCJL/nIdYnlz1sV90DYHG8PbBN+O5jMIpcDPI5SoTl
+	mkCuAQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 486v6y2amg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:07:35 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23fed1492f6so48151505ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:07:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753837138; x=1754441938;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDQwseaUqKXgQMG0PL1emMIiquT/LrlyEZB+aSduFZ4=;
-        b=QoQFElWJZTZ+6xCeR2X6c75vnNzZfuxWbfrpg/f5cmgQnMl8p3fo1J0+jj5i34GUoH
-         T3FKBMCx6OGBDp9vyUIwhOCChwP/2zYcVM2Uwl8Qmvn6s4v8VUX1MKSylTaGIouu+88n
-         XGdSXdcDoc2J6ZKn5GIPOyFHChVPKjdDQncESrZJnlQpG9uik87w0WR6pkV+atUlEMaW
-         f3SD1hMu5CetSFrWMLPJeC4LlhP9oWwzbOqP0O7T3vsFGUDrS/zF6FN09buEcc7xsnWW
-         yLP46sRt6YqwYpHeI4fw7nnSxQ5r/bCM/efbP7rLWajEBr5I8/N0GuADZsGTrEHiuRpP
-         9iyA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+sqxe0/Kg6UtJd+4pObmw1an2N0s7ujrTz5p5jnnyO0AR0pb0d4p1+KrdrZrpb4BSBdUm41j+AJDpImI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyc9HvV9AUXMG0lHSA1YjMqPAjA5VU5VMC/7tIVgvKJ018PEDD
-	Oi1jo1wxrLD9W585KvosfD/lsvZKThTq/R/4CcA8arQ1pv7ziIkFVcN13kBMM+b6sj2rKA/G3eX
-	RqTH58Q1AUxEz2ES1U+AmfQFwrijUjzYQWLrsqA==
-X-Google-Smtp-Source: AGHT+IEGVoBAYELfdRdZ8xP5oRpoU0bK+jZlnzB/TmwUAobgxp21zhLfsqJQJKUf5/TTCLpNwHYxnC3kjLaDYc3GnzINcA==
-X-Received: from pjbpm8.prod.google.com ([2002:a17:90b:3c48:b0:31e:a865:8b32])
- (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4b83:b0:31c:3872:9411 with SMTP id 98e67ed59e1d1-31f5de63c28mr2092662a91.33.1753837138329;
- Tue, 29 Jul 2025 17:58:58 -0700 (PDT)
-Date: Tue, 29 Jul 2025 17:58:08 -0700
-In-Reply-To: <20250730005818.2793577-1-isaacmanjarres@google.com>
+        d=1e100.net; s=20230601; t=1753837654; x=1754442454;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9b8nceYhkIBnOga0zcO3rPr5yt0ZEpFTBjcmcJTA57g=;
+        b=RvkRHgfwjSDUdXKTGjQ+55JhWNjwHGXia7Z4/ZqMr675sHQUL89ScL3fPFlA2ZwkWX
+         HQo2UciKRfky9Kyte2GAXWb2HMjk4Hoq1XszS8W3bm3XejFZ0n5o/Gbrcb8c4HBum6sC
+         O6XxZ/dDmDbuG1E3Q7KCcekze9zBNMrZRH0Hag+VAnLVx48T6CvQCN/lM7GJnTd2X3hx
+         QcYVVfXtnRrm3RxmYJz9DotRFmL7WbKZWpcm5OeJeIN5QvgElg3nIDRw2u+KGvB44U7l
+         /QWtkV69EI/bTwADv0dwb4Miswj4CnBuIOxTCxPjvkLuc9oXFPvQHYy7DGWjv30jQyKI
+         M07Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXExSJUW11uuuTn5VyhnnbLclG6moZZApJ1QG+TVqTIin8Sgka9sKncTtGqyHoSzm500FXqRJlbGGd4JF4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8pTsPEtYSefCyBiwazJrUG+F3gv3PbGgXNVUFtwGoomWrrcm8
+	8uv5J84RVOceGvev1EzDVZa9DlprmfZNZECI2P+6j/on6+racQt71wS6DF0KozsCqwy5bEWWGhv
+	//574TxQeQTAt5yWGCaHMEBQLz4SZBQj5MBUh99SQWh16Xz87W2xFQA3B+4fb0Fr1qlw=
+X-Gm-Gg: ASbGncvLoNiv96VoRDvUJnD//b6/e9v7T6pfgTSLIl3N/AxLkYpOGr4P1CQnhdlMBXe
+	u1ZP1o7jHf/I0/YvXQvmfeNfbIUiIgHVVTmDKa0B/uHv4oPF1bbUgyQ8mpU64XqsP1MvmEmZSpI
+	lZl4wrvaPNIRiUiL8zBY3n0CgLjXlDkMgimlGHO2uN7nsASNohVaoxbk5rsMp+e3wpKQ4hiPto6
+	9uD4aTHMN/MZUCNVcS9OEoZDH6RHIrqJzlP3bwBlUktmOyy5hJOVbRVK2+SFpy07cU7Wv2pPIek
+	Gt8l5ZprmuyizYB9zR4KKgFxaUbwieqnS/zXk69/uZbA/xy5PeSsyZewf2UoffLUOa2kFY2f3ck
+	kQC0g2etQj3i7CiFCP1G/z43p6uyy
+X-Received: by 2002:a17:903:1aa5:b0:240:41a3:c18a with SMTP id d9443c01a7336-24096a72c27mr18873345ad.6.1753837653955;
+        Tue, 29 Jul 2025 18:07:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHN55eG7g7A+6uencanHV1jkt67ryQJNo1LEwo9LKkb13/fdpc7dlLE5jk48aKDE/Hm2AdGWg==
+X-Received: by 2002:a17:903:1aa5:b0:240:41a3:c18a with SMTP id d9443c01a7336-24096a72c27mr18872875ad.6.1753837653350;
+        Tue, 29 Jul 2025 18:07:33 -0700 (PDT)
+Received: from [10.133.33.126] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2408cc22cecsm12287315ad.162.2025.07.29.18.07.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Jul 2025 18:07:32 -0700 (PDT)
+Message-ID: <1e34840a-d300-4f8c-94be-2ba63a86a020@oss.qualcomm.com>
+Date: Wed, 30 Jul 2025 09:07:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250730005818.2793577-1-isaacmanjarres@google.com>
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250730005818.2793577-4-isaacmanjarres@google.com>
-Subject: [PATCH 5.4.y 3/3] mm: perform the mapping_map_writable() check after call_mmap()
-From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
-	Muchun Song <muchun.song@linux.dev>, Oscar Salvador <osalvador@suse.de>, 
-	David Hildenbrand <david@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Kees Cook <kees@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>
-Cc: aliceryhl@google.com, stable@vger.kernel.org, 
-	"Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Lorenzo Stoakes <lstoakes@gmail.com>, Andy Lutomirski <luto@kernel.org>, 
-	Mike Kravetz <mike.kravetz@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/4] arm64: dts: qcom: Add base HAMOA-IOT-EVK board
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250729-hamoa_initial-v3-0-806e092789dc@oss.qualcomm.com>
+ <20250729-hamoa_initial-v3-4-806e092789dc@oss.qualcomm.com>
+ <pbvyog477v32s4lu72z52dhsond5yud5w3nxmcouvr6ljlndlh@ws46dncy35c6>
+Content-Language: en-US
+From: Yijie Yang <yijie.yang@oss.qualcomm.com>
+In-Reply-To: <pbvyog477v32s4lu72z52dhsond5yud5w3nxmcouvr6ljlndlh@ws46dncy35c6>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMwMDAwNCBTYWx0ZWRfX8cmrhunDNsMe
+ 4TP+dwUFo5P9LYSzUGf7DkPNUhRgwyvCSZNnPMUJ++vUbwVtrzctJvG7ZpP2OcJU8bwNnpDLh6k
+ 2oetAyfQbLSMei91tFCTohTNAlEfCYmvGTn4i5bVz6rtWiF8cblduZoF0jePsmIpRogARS/McD/
+ XZVQ0MNemHBhNvU28MiSEN7ub6b60BGSvTiTSh+FAkzEkquBmZpcAG5z7D2/wrOalcYARtW1ukE
+ IJAStgYozsasUbDBlM9cS8L6FK9JqXmFX4Vho/qmwpGsD1NzEylK+BQPcJIvgSGggsIWbRIj+hw
+ 3SktTZ1WWRdrWMjg3CQRVfY0RCaRhLvrx/jvJz+ISxtV8AWiS6lrcPJSSCN8jcmEn6Njb2z8GzF
+ +UrO1B6b94jjXTGUlHroj1aldzhOJnx8ItsAAri+0KG+jJ0WrX4V82Io9EEkHxqtUrQPbBuz
+X-Proofpoint-GUID: dyC67lRyAberutyo9jpe-TwFQtQ82gWn
+X-Proofpoint-ORIG-GUID: dyC67lRyAberutyo9jpe-TwFQtQ82gWn
+X-Authority-Analysis: v=2.4 cv=QYlmvtbv c=1 sm=1 tr=0 ts=68897057 cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=N3c1US3UlBgHhiaUDIUA:9 a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-29_05,2025-07-28_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ malwarescore=0 phishscore=0 clxscore=1015 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 spamscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507300004
 
-From: Lorenzo Stoakes <lstoakes@gmail.com>
 
-[ Upstream commit 158978945f3173b8c1a88f8c5684a629736a57ac ]
 
-In order for a F_SEAL_WRITE sealed memfd mapping to have an opportunity to
-clear VM_MAYWRITE, we must be able to invoke the appropriate
-vm_ops->mmap() handler to do so.  We would otherwise fail the
-mapping_map_writable() check before we had the opportunity to avoid it.
+On 2025-07-29 18:37, Dmitry Baryshkov wrote:
+> On Tue, Jul 29, 2025 at 09:32:00AM +0800, Yijie Yang wrote:
+>> The HAMOA-IOT-EVK is an evaluation platform for IoT products, composed of
+>> the Hamoa IoT SoM and a carrier board. Together, they form a complete
+>> embedded system capable of booting to UART.
+>>
+>> This change enables and overlays the following peripherals on the carrier
+>> board:
+>> - UART
+>> - On-board regulators
+>> - USB Type-C mux
+>> - Pinctrl
+>> - Embedded USB (EUSB) repeaters
+>> - NVMe
+>> - pmic-glink
+>> - USB DisplayPorts
+>>
+>> Written with contributions from Shuai Zhang (added Bluetooth) and Yongxing
+>> Mou (added USB DisplayPorts).
+> 
+> Please use S-o-B + Co-developed-by instead. You can add comments on the
+> tag line after the hash sign.
 
-This patch moves this check after the call_mmap() invocation.  Only memfd
-actively denies write access causing a potential failure here (in
-memfd_add_seals()), so there should be no impact on non-memfd cases.
+Sure, I'll take care of it.
 
-This patch makes the userland-visible change that MAP_SHARED, PROT_READ
-mappings of an F_SEAL_WRITE sealed memfd mapping will now succeed.
+> 
+>>
+>> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/Makefile          |   1 +
+>>   arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts | 992 +++++++++++++++++++++++++++++
+>>   2 files changed, 993 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+>> index 4bfa926b6a0850c3c459bcba28129c559d50a7cf..c5994b75d3e56e74ffb64b2389ee1bcc086f3065 100644
+>> --- a/arch/arm64/boot/dts/qcom/Makefile
+>> +++ b/arch/arm64/boot/dts/qcom/Makefile
+>> @@ -13,6 +13,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= apq8039-t2.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= apq8094-sony-xperia-kitakami-karin_windy.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-db820c.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= apq8096-ifc6640.dtb
+>> +dtb-$(CONFIG_ARCH_QCOM)	+= hamoa-iot-evk.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-rdp432-c2.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5018-tplink-archer-ax55-v1.dtb
+>>   dtb-$(CONFIG_ARCH_QCOM)	+= ipq5332-rdp441.dtb
+>> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..02daec04f933c0b3ab9bd329f56ac1ba0401ddef
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-evk.dts
+>> @@ -0,0 +1,992 @@
+>> +// SPDX-License-Identifier: BSD-3-Clause
+>> +/*
+>> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+>> + */
+>> +
+>> +/dts-v1/;
+>> +
+>> +#include "hamoa-iot-som.dtsi"
+>> +
+>> +/ {
+>> +	model = "Qualcomm Technologies, Inc. Hamoa IoT EVK";
+>> +	compatible = "qcom,hamoa-iot-evk", "qcom,hamoa-iot-som", "qcom,x1e80100";
+>> +	chassis-type = "embedded";
+>> +
+>> +	aliases {
+>> +		serial0 = &uart21;
+>> +		serial1 = &uart14;
+>> +	};
+>> +
+>> +	chosen {
+>> +		stdout-path = "serial0:115200n8";
+>> +	};
+>> +
+>> +	pmic-glink {
+>> +		compatible = "qcom,x1e80100-pmic-glink",
+>> +			     "qcom,sm8550-pmic-glink",
+>> +			     "qcom,pmic-glink";
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +		orientation-gpios = <&tlmm 121 GPIO_ACTIVE_HIGH>,
+>> +				    <&tlmm 123 GPIO_ACTIVE_HIGH>,
+>> +				    <&tlmm 125 GPIO_ACTIVE_HIGH>;
+>> +
+>> +		connector@0 {
+>> +			compatible = "usb-c-connector";
+>> +			reg = <0>;
+>> +			power-role = "dual";
+>> +			data-role = "dual";
+>> +
+>> +			ports {
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> +				port@0 {
+>> +					reg = <0>;
+>> +
+>> +					pmic_glink_ss0_hs_in: endpoint {
+>> +						remote-endpoint = <&usb_1_ss0_dwc3_hs>;
+>> +					};
+>> +				};
+>> +
+>> +				port@1 {
+>> +					reg = <1>;
+>> +
+>> +					pmic_glink_ss0_ss_in: endpoint {
+>> +						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
+> 
+> No retimers on SS0?
+> 
+>> +					};
+>> +				};
+>> +
+>> +				port@2 {
+>> +					reg = <2>;
+>> +
+>> +					pmic_glink_ss0_sbu: endpoint {
+>> +						remote-endpoint = <&usb_1_ss0_sbu_mux>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		connector@1 {
+>> +			compatible = "usb-c-connector";
+>> +			reg = <1>;
+>> +			power-role = "dual";
+>> +			data-role = "dual";
+>> +
+>> +			ports {
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> +				port@0 {
+>> +					reg = <0>;
+>> +
+>> +					pmic_glink_ss1_hs_in: endpoint {
+>> +						remote-endpoint = <&usb_1_ss1_dwc3_hs>;
+>> +					};
+>> +				};
+>> +
+>> +				port@1 {
+>> +					reg = <1>;
+>> +
+>> +					pmic_glink_ss1_ss_in: endpoint {
+>> +						remote-endpoint = <&retimer_ss1_ss_out>;
+>> +					};
+>> +				};
+>> +
+>> +				port@2 {
+>> +					reg = <2>;
+>> +
+>> +					pmic_glink_ss1_con_sbu_in: endpoint {
+>> +						remote-endpoint = <&retimer_ss1_con_sbu_out>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		connector@2 {
+>> +			compatible = "usb-c-connector";
+>> +			reg = <2>;
+>> +			power-role = "dual";
+>> +			data-role = "dual";
+>> +
+>> +			ports {
+>> +				#address-cells = <1>;
+>> +				#size-cells = <0>;
+>> +
+>> +				port@0 {
+>> +					reg = <0>;
+>> +
+>> +					pmic_glink_ss2_hs_in: endpoint {
+>> +						remote-endpoint = <&usb_1_ss2_dwc3_hs>;
+>> +					};
+>> +				};
+>> +
+>> +				port@1 {
+>> +					reg = <1>;
+>> +
+>> +					pmic_glink_ss2_ss_in: endpoint {
+>> +						remote-endpoint = <&retimer_ss2_ss_out>;
+>> +					};
+>> +				};
+>> +
+>> +				port@2 {
+>> +					reg = <2>;
+>> +
+>> +					pmic_glink_ss2_con_sbu_in: endpoint {
+>> +						remote-endpoint = <&retimer_ss2_con_sbu_out>;
+>> +					};
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	vph_pwr: regulator-vph-pwr {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "vph_pwr";
+>> +		regulator-min-microvolt = <3700000>;
+>> +		regulator-max-microvolt = <3700000>;
+>> +
+>> +		regulator-always-on;
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_edp_3p3: regulator-edp-3p3 {
+> 
+> regulator-edp-3p3 < regulator-vph-pwr
+> 
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_EDP_3P3";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>> +		gpio = <&tlmm 70 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&edp_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-always-on;
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_nvme: regulator-nvme {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_NVME_3P3";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>> +		gpio = <&tlmm 18 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&nvme_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
+> 
+> Hmm, so there are regulators for the retimer, but they are not used.
+> Could you please point out, why?
+> 
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR0_1P15";
+>> +		regulator-min-microvolt = <1150000>;
+>> +		regulator-max-microvolt = <1150000>;
+>> +
+>> +		gpio = <&pmc8380_5_gpios 8 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb0_pwr_1p15_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr0_1p8: regulator-rtmr0-1p8 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR0_1P8";
+>> +		regulator-min-microvolt = <1800000>;
+>> +		regulator-max-microvolt = <1800000>;
+>> +
+>> +		gpio = <&pm8550ve_9_gpios 8 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb0_1p8_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr0_3p3: regulator-rtmr0-3p3 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR0_3P3";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>> +		gpio = <&pm8550_gpios 11 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb0_3p3_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr1_1p15: regulator-rtmr1-1p15 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR1_1P15";
+>> +		regulator-min-microvolt = <1150000>;
+>> +		regulator-max-microvolt = <1150000>;
+>> +
+>> +		gpio = <&tlmm 188 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb1_pwr_1p15_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr1_1p8: regulator-rtmr1-1p8 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR1_1P8";
+>> +		regulator-min-microvolt = <1800000>;
+>> +		regulator-max-microvolt = <1800000>;
+>> +
+>> +		gpio = <&tlmm 175 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb1_pwr_1p8_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr1_3p3: regulator-rtmr1-3p3 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR1_3P3";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>> +		gpio = <&tlmm 186 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb1_pwr_3p3_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr2_1p15: regulator-rtmr2-1p15 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR2_1P15";
+>> +		regulator-min-microvolt = <1150000>;
+>> +		regulator-max-microvolt = <1150000>;
+>> +
+>> +		gpio = <&tlmm 189 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb2_pwr_1p15_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr2_1p8: regulator-rtmr2-1p8 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR2_1P8";
+>> +		regulator-min-microvolt = <1800000>;
+>> +		regulator-max-microvolt = <1800000>;
+>> +
+>> +		gpio = <&tlmm 126 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb2_pwr_1p8_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	vreg_rtmr2_3p3: regulator-rtmr2-3p3 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_RTMR2_3P3";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>> +		gpio = <&tlmm 187 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&usb2_pwr_3p3_reg_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	usb-1-ss0-sbu-mux {
+>> +		compatible = "onnn,fsusb42", "gpio-sbu-mux";
+>> +
+>> +		enable-gpios = <&tlmm 168 GPIO_ACTIVE_LOW>;
+>> +		select-gpios = <&tlmm 167 GPIO_ACTIVE_HIGH>;
+>> +
+>> +		pinctrl-0 = <&usb_1_ss0_sbu_default>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		mode-switch;
+>> +		orientation-switch;
+>> +
+>> +		port {
+>> +			usb_1_ss0_sbu_mux: endpoint {
+>> +				remote-endpoint = <&pmic_glink_ss0_sbu>;
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	vreg_wcn_3p3: regulator-wcn-3p3 {
+> 
+> regulator-wcn-3p3 < usb-1-ss0-sbu-mux
+> 
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_WCN_3P3";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>> +		gpio = <&tlmm 214 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&wcn_sw_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	/*
+>> +	 * TODO: These two regulators are actually part of the removable M.2
+>> +	 * card and not the CRD mainboard. Need to describe this differently.
+>> +	 * Functionally it works correctly, because all we need to do is to
+>> +	 * turn on the actual 3.3V supply above.
+>> +	 */
+>> +	vreg_wcn_0p95: regulator-wcn-0p95 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_WCN_0P95";
+>> +		regulator-min-microvolt = <950000>;
+>> +		regulator-max-microvolt = <950000>;
+>> +
+>> +		vin-supply = <&vreg_wcn_3p3>;
+>> +	};
+>> +
+>> +	vreg_wcn_1p9: regulator-wcn-1p9 {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "VREG_WCN_1P9";
+>> +		regulator-min-microvolt = <1900000>;
+>> +		regulator-max-microvolt = <1900000>;
+>> +
+>> +		vin-supply = <&vreg_wcn_3p3>;
+>> +	};
+>> +
+>> +	vreg_wwan: regulator-wwan {
+>> +		compatible = "regulator-fixed";
+>> +
+>> +		regulator-name = "SDX_VPH_PWR";
+>> +		regulator-min-microvolt = <3300000>;
+>> +		regulator-max-microvolt = <3300000>;
+>> +
+>> +		gpio = <&tlmm 221 GPIO_ACTIVE_HIGH>;
+>> +		enable-active-high;
+>> +
+>> +		pinctrl-0 = <&wwan_sw_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulator-boot-on;
+>> +	};
+>> +
+>> +	wcn7850-pmu {
+>> +		compatible = "qcom,wcn7850-pmu";
+>> +
+>> +		vdd-supply = <&vreg_wcn_0p95>;
+>> +		vddio-supply = <&vreg_l15b_1p8>;
+>> +		vddaon-supply = <&vreg_wcn_0p95>;
+>> +		vdddig-supply = <&vreg_wcn_0p95>;
+>> +		vddrfa1p2-supply = <&vreg_wcn_1p9>;
+>> +		vddrfa1p8-supply = <&vreg_wcn_1p9>;
+>> +
+>> +		bt-enable-gpios = <&tlmm 116 GPIO_ACTIVE_HIGH>;
+>> +
+>> +		pinctrl-0 = <&wcn_bt_en>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		regulators {
+>> +			vreg_pmu_rfa_cmn: ldo0 {
+>> +				regulator-name = "vreg_pmu_rfa_cmn";
+>> +			};
+>> +
+>> +			vreg_pmu_aon_0p59: ldo1 {
+>> +				regulator-name = "vreg_pmu_aon_0p59";
+>> +			};
+>> +
+>> +			vreg_pmu_wlcx_0p8: ldo2 {
+>> +				regulator-name = "vreg_pmu_wlcx_0p8";
+>> +			};
+>> +
+>> +			vreg_pmu_wlmx_0p85: ldo3 {
+>> +				regulator-name = "vreg_pmu_wlmx_0p85";
+>> +			};
+>> +
+>> +			vreg_pmu_btcmx_0p85: ldo4 {
+>> +				regulator-name = "vreg_pmu_btcmx_0p85";
+>> +			};
+>> +
+>> +			vreg_pmu_rfa_0p8: ldo5 {
+>> +				regulator-name = "vreg_pmu_rfa_0p8";
+>> +			};
+>> +
+>> +			vreg_pmu_rfa_1p2: ldo6 {
+>> +				regulator-name = "vreg_pmu_rfa_1p2";
+>> +			};
+>> +
+>> +			vreg_pmu_rfa_1p8: ldo7 {
+>> +				regulator-name = "vreg_pmu_rfa_1p8";
+>> +			};
+>> +
+>> +			vreg_pmu_pcie_0p9: ldo8 {
+>> +				regulator-name = "vreg_pmu_pcie_0p9";
+>> +			};
+>> +
+>> +			vreg_pmu_pcie_1p8: ldo9 {
+>> +				regulator-name = "vreg_pmu_pcie_1p8";
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&i2c1 {
+>> +	clock-frequency = <400000>;
+>> +	status = "okay";
+>> +
+>> +	typec-mux@8 {
+>> +		compatible = "parade,ps8830";
+>> +		reg = <0x08>;
+>> +
+>> +		clocks = <&rpmhcc RPMH_RF_CLK5>;
+>> +
+>> +		vdd-supply = <&vreg_rtmr2_1p15>;
+>> +		vdd33-supply = <&vreg_rtmr2_3p3>;
+>> +		vdd33-cap-supply = <&vreg_rtmr2_3p3>;
+>> +		vddar-supply = <&vreg_rtmr2_1p15>;
+>> +		vddat-supply = <&vreg_rtmr2_1p15>;
+>> +		vddio-supply = <&vreg_rtmr2_1p8>;
+>> +
+>> +		reset-gpios = <&tlmm 185 GPIO_ACTIVE_LOW>;
+>> +
+>> +		pinctrl-0 = <&rtmr2_default>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		orientation-switch;
+>> +		retimer-switch;
+>> +
+>> +		ports {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			port@0 {
+>> +				reg = <0>;
+>> +
+>> +				retimer_ss2_ss_out: endpoint {
+>> +					remote-endpoint = <&pmic_glink_ss2_ss_in>;
+>> +				};
+>> +			};
+>> +
+>> +			port@1 {
+>> +				reg = <1>;
+>> +
+>> +				retimer_ss2_ss_in: endpoint {
+>> +					remote-endpoint = <&usb_1_ss2_qmpphy_out>;
+>> +				};
+>> +			};
+>> +
+>> +			port@2 {
+>> +				reg = <2>;
+>> +
+>> +				retimer_ss2_con_sbu_out: endpoint {
+>> +					remote-endpoint = <&pmic_glink_ss2_con_sbu_in>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&i2c5 {
+>> +	clock-frequency = <400000>;
+>> +	status = "okay";
+>> +
+>> +	eusb3_repeater: redriver@47 {
+>> +		compatible = "nxp,ptn3222";
+>> +		reg = <0x47>;
+>> +		#phy-cells = <0>;
+>> +
+>> +		vdd3v3-supply = <&vreg_l13b_3p0>;
+>> +		vdd1v8-supply = <&vreg_l4b_1p8>;
+>> +
+>> +		reset-gpios = <&tlmm 6 GPIO_ACTIVE_LOW>;
+>> +
+>> +		pinctrl-0 = <&eusb3_reset_n>;
+>> +		pinctrl-names = "default";
+>> +	};
+>> +
+>> +	eusb5_repeater: redriver@43 {
+>> +		compatible = "nxp,ptn3222";
+>> +		reg = <0x43>;
+>> +		#phy-cells = <0>;
+>> +
+>> +		vdd3v3-supply = <&vreg_l13b_3p0>;
+>> +		vdd1v8-supply = <&vreg_l4b_1p8>;
+>> +
+>> +		reset-gpios = <&tlmm 7 GPIO_ACTIVE_LOW>;
+>> +
+>> +		pinctrl-0 = <&eusb5_reset_n>;
+>> +		pinctrl-names = "default";
+>> +	};
+>> +
+>> +	eusb6_repeater: redriver@4f {
+>> +		compatible = "nxp,ptn3222";
+>> +		reg = <0x4f>;
+>> +		#phy-cells = <0>;
+>> +
+>> +		vdd3v3-supply = <&vreg_l13b_3p0>;
+>> +		vdd1v8-supply = <&vreg_l4b_1p8>;
+>> +
+>> +		reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
+>> +
+>> +		pinctrl-0 = <&eusb6_reset_n>;
+>> +		pinctrl-names = "default";
+>> +	};
+>> +};
+>> +
+>> +&i2c7 {
+>> +	clock-frequency = <400000>;
+>> +
+>> +	status = "okay";
+>> +
+>> +	typec-mux@8 {
+>> +		compatible = "parade,ps8830";
+>> +		reg = <0x8>;
+>> +
+>> +		clocks = <&rpmhcc RPMH_RF_CLK4>;
+>> +
+>> +		vdd-supply = <&vreg_rtmr1_1p15>;
+>> +		vdd33-supply = <&vreg_rtmr1_3p3>;
+>> +		vdd33-cap-supply = <&vreg_rtmr1_3p3>;
+>> +		vddar-supply = <&vreg_rtmr1_1p15>;
+>> +		vddat-supply = <&vreg_rtmr1_1p15>;
+>> +		vddio-supply = <&vreg_rtmr1_1p8>;
+>> +
+>> +		reset-gpios = <&tlmm 176 GPIO_ACTIVE_LOW>;
+>> +
+>> +		pinctrl-0 = <&rtmr1_default>;
+>> +		pinctrl-names = "default";
+>> +
+>> +		retimer-switch;
+>> +		orientation-switch;
+>> +
+>> +		ports {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			port@0 {
+>> +				reg = <0>;
+>> +
+>> +				retimer_ss1_ss_out: endpoint {
+>> +					remote-endpoint = <&pmic_glink_ss1_ss_in>;
+>> +				};
+>> +			};
+>> +
+>> +			port@1 {
+>> +				reg = <1>;
+>> +
+>> +				retimer_ss1_ss_in: endpoint {
+>> +					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
+>> +				};
+>> +			};
+>> +
+>> +			port@2 {
+>> +				reg = <2>;
+>> +
+>> +				retimer_ss1_con_sbu_out: endpoint {
+>> +					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&mdss {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss_dp0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss_dp0_out {
+>> +	data-lanes = <0 1>;
+>> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+>> +};
+>> +
+>> +&mdss_dp1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss_dp1_out {
+>> +	data-lanes = <0 1>;
+>> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+>> +};
+>> +
+>> +&mdss_dp2 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&mdss_dp2_out {
+>> +	data-lanes = <0 1>;
+>> +	link-frequencies = /bits/ 64 <1620000000 2700000000 5400000000 8100000000>;
+>> +};
+>> +
+>> +&mdss_dp3 {
+>> +	/delete-property/ #sound-dai-cells;
+>> +
+>> +	status = "okay";
+>> +
+>> +	aux-bus {
+>> +		panel {
+>> +			compatible = "edp-panel";
+>> +			power-supply = <&vreg_edp_3p3>;
+>> +
+>> +			port {
+>> +				edp_panel_in: endpoint {
+>> +					remote-endpoint = <&mdss_dp3_out>;
+>> +				};
+>> +			};
+>> +		};
+>> +	};
+>> +
+>> +	ports {
+>> +		port@1 {
+> 
+> Rebase on top of https://lore.kernel.org/r/20250724-move-edp-endpoints-v1-0-6ca569812838@oss.qualcomm.com
+> 
+>> +			reg = <1>;
+>> +
+>> +			mdss_dp3_out: endpoint {
+>> +				data-lanes = <0 1 2 3>;
+>> +				link-frequencies = /bits/ 64 <1620000000 2700000000
+>> +							      5400000000 8100000000>;
+>> +
+>> +				remote-endpoint = <&edp_panel_in>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&mdss_dp3_phy {
+>> +	vdda-phy-supply = <&vreg_l3j_0p8>;
+>> +	vdda-pll-supply = <&vreg_l2j_1p2>;
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pcie6a {
+>> +	vddpe-3v3-supply = <&vreg_nvme>;
+>> +};
+>> +
+>> +&pm8550_gpios {
+>> +	rtmr0_default: rtmr0-reset-n-active-state {
+>> +		pins = "gpio10";
+>> +		function = "normal";
+>> +		power-source = <1>; /* 1.8V */
+>> +		bias-disable;
+>> +		input-disable;
+>> +		output-enable;
+>> +	};
+>> +
+>> +	usb0_3p3_reg_en: usb0-3p3-reg-en-state {
+>> +		pins = "gpio11";
+>> +		function = "normal";
+>> +		power-source = <1>; /* 1.8V */
+>> +		bias-disable;
+>> +		input-disable;
+>> +		output-enable;
+>> +	};
+>> +};
+>> +
+>> +&pm8550ve_9_gpios {
+>> +	usb0_1p8_reg_en: usb0-1p8-reg-en-state {
+>> +		pins = "gpio8";
+>> +		function = "normal";
+>> +		power-source = <1>; /* 1.8V */
+>> +		bias-disable;
+>> +		input-disable;
+>> +		output-enable;
+>> +	};
+>> +};
+>> +
+>> +&pmc8380_5_gpios {
+>> +	usb0_pwr_1p15_reg_en: usb0-pwr-1p15-reg-en-state {
+>> +		pins = "gpio8";
+>> +		function = "normal";
+>> +		power-source = <1>; /* 1.8V */
+>> +		bias-disable;
+>> +		input-disable;
+>> +		output-enable;
+>> +	};
+>> +};
+>> +
+>> +&smb2360_0 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&smb2360_0_eusb2_repeater {
+>> +	vdd18-supply = <&vreg_l3d_1p8>;
+>> +	vdd3-supply = <&vreg_l2b_3p0>;
+>> +};
+>> +
+>> +&smb2360_1 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&smb2360_1_eusb2_repeater {
+>> +	vdd18-supply = <&vreg_l3d_1p8>;
+>> +	vdd3-supply = <&vreg_l14b_3p0>;
+>> +};
+>> +
+>> +&smb2360_2 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&smb2360_2_eusb2_repeater {
+>> +	vdd18-supply = <&vreg_l3d_1p8>;
+>> +	vdd3-supply = <&vreg_l8b_3p0>;
+>> +};
+>> +
+>> +&tlmm {
+>> +	edp_reg_en: edp-reg-en-state {
+>> +		pins = "gpio70";
+>> +		function = "gpio";
+>> +		drive-strength = <16>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	eusb3_reset_n: eusb3-reset-n-state {
+>> +		pins = "gpio6";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +		output-low;
+>> +	};
+>> +
+>> +	eusb5_reset_n: eusb5-reset-n-state {
+>> +		pins = "gpio7";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-pull-up;
+>> +		output-low;
+>> +	};
+>> +
+>> +	eusb6_reset_n: eusb6-reset-n-state {
+>> +		pins = "gpio184";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-pull-up;
+>> +		output-low;
+>> +	};
+>> +
+>> +	nvme_reg_en: nvme-reg-en-state {
+>> +		pins = "gpio18";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	rtmr1_default: rtmr1-reset-n-active-state {
+>> +		pins = "gpio176";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	rtmr2_default: rtmr2-reset-n-active-state {
+>> +		pins = "gpio185";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	usb1_pwr_1p15_reg_en: usb1-pwr-1p15-reg-en-state {
+>> +		pins = "gpio188";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	usb1_pwr_1p8_reg_en: usb1-pwr-1p8-reg-en-state {
+>> +		pins = "gpio175";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	usb1_pwr_3p3_reg_en: usb1-pwr-3p3-reg-en-state {
+>> +		pins = "gpio186";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	usb2_pwr_1p15_reg_en: usb2-pwr-1p15-reg-en-state {
+>> +		pins = "gpio189";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	usb2_pwr_1p8_reg_en: usb2-pwr-1p8-reg-en-state {
+>> +		pins = "gpio126";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	usb2_pwr_3p3_reg_en: usb2-pwr-3p3-reg-en-state {
+>> +		pins = "gpio187";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	usb_1_ss0_sbu_default: usb-1-ss0-sbu-state {
+>> +		mode-pins {
+>> +			pins = "gpio166";
+>> +			function = "gpio";
+>> +			bias-disable;
+>> +			drive-strength = <2>;
+>> +			output-high;
+> 
+> What does this pin do? It's not recommended to set GPIO values through
+> pinctrl.
+> 
+>> +		};
+>> +
+>> +		oe-n-pins {
+>> +			pins = "gpio168";
+>> +			function = "gpio";
+>> +			bias-disable;
+>> +			drive-strength = <2>;
+>> +		};
+>> +
+>> +		sel-pins {
+>> +			pins = "gpio167";
+>> +			function = "gpio";
+>> +			bias-disable;
+>> +			drive-strength = <2>;
+>> +		};
+>> +	};
+>> +
+>> +	wcn_bt_en: wcn-bt-en-state {
+>> +		pins = "gpio116";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	wwan_sw_en: wwan-sw-en-state {
+>> +		pins = "gpio221";
+>> +		function = "gpio";
+>> +		drive-strength = <4>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	wcn_sw_en: wcn-sw-en-state {
+>> +		pins = "gpio214";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +	};
+>> +
+>> +	wcn_usb_sw_n: wcn-usb-sw-n-state {
+> 
+> What does this pin do? Using pinctrl to set GPIO values is not
+> recommended AFAIR.
+> 
+>> +		pins = "gpio225";
+>> +		function = "gpio";
+>> +		drive-strength = <2>;
+>> +		bias-disable;
+>> +		output-high;
+>> +	};
+>> +};
+>> +
+>> +&uart14 {
+>> +	status = "okay";
+>> +
+>> +	bluetooth {
+>> +		compatible = "qcom,wcn7850-bt";
+>> +		max-speed = <3200000>;
+>> +
+>> +		vddaon-supply = <&vreg_pmu_aon_0p59>;
+>> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
+>> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
+>> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
+>> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
+>> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
+>> +		vddrfa1p8-supply = <&vreg_pmu_rfa_1p8>;
+>> +	};
+>> +};
+>> +
+>> +&uart21 {
+>> +	compatible = "qcom,geni-debug-uart";
+>> +
+>> +	status = "okay";
+>> +};
+>> +
+>> +&usb_1_ss0_dwc3_hs {
+>> +	remote-endpoint = <&pmic_glink_ss0_hs_in>;
+>> +};
+>> +
+>> +&usb_1_ss0_hsphy {
+>> +	phys = <&smb2360_0_eusb2_repeater>;
+>> +};
+>> +
+>> +&usb_1_ss0_qmpphy_out {
+>> +	remote-endpoint = <&pmic_glink_ss0_ss_in>;
+>> +};
+>> +
+>> +&usb_1_ss1_dwc3_hs {
+>> +	remote-endpoint = <&pmic_glink_ss1_hs_in>;
+>> +};
+>> +
+>> +&usb_1_ss1_hsphy {
+>> +	phys = <&smb2360_1_eusb2_repeater>;
+>> +};
+>> +
+>> +&usb_1_ss1_qmpphy_out {
+>> +	remote-endpoint = <&retimer_ss1_ss_in>;
+>> +};
+>> +
+>> +&usb_1_ss2_dwc3_hs {
+>> +	remote-endpoint = <&pmic_glink_ss2_hs_in>;
+>> +};
+>> +
+>> +&usb_1_ss2_hsphy {
+>> +	phys = <&smb2360_2_eusb2_repeater>;
+>> +};
+>> +
+>> +&usb_1_ss2_qmpphy_out {
+>> +	remote-endpoint = <&retimer_ss2_ss_in>;
+>> +};
+>> +
+>> +&usb_2_hsphy {
+>> +	phys = <&eusb5_repeater>;
+>> +
+>> +	pinctrl-0 = <&wcn_usb_sw_n>;
+>> +	pinctrl-names = "default";
+>> +};
+>> +
+>> +&usb_mp_hsphy0 {
+>> +	phys = <&eusb6_repeater>;
+>> +};
+>> +
+>> +&usb_mp_hsphy1 {
+>> +	phys = <&eusb3_repeater>;
+>> +};
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
-There is a delicate situation with cleanup paths assuming that a writable
-mapping must have occurred in circumstances where it may now not have.  In
-order to ensure we do not accidentally mark a writable file unwritable by
-mistake, we explicitly track whether we have a writable mapping and unmap
-only if we do.
-
-[lstoakes@gmail.com: do not set writable_file_mapping in inappropriate case]
-  Link: https://lkml.kernel.org/r/c9eb4cc6-7db4-4c2b-838d-43a0b319a4f0@lucifer.local
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=217238
-Link: https://lkml.kernel.org/r/55e413d20678a1bb4c7cce889062bbb07b0df892.1697116581.git.lstoakes@gmail.com
-Signed-off-by: Lorenzo Stoakes <lstoakes@gmail.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Muchun Song <muchun.song@linux.dev>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: stable@vger.kernel.org
-[isaacmanjarres: added error handling to cleanup the work done by the
-mmap() callback and removed unused label.]
-Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
----
- mm/mmap.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index cb712ae731cd..e591a82a26a8 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1718,6 +1718,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- {
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma, *prev;
-+	bool writable_file_mapping = false;
- 	int error;
- 	struct rb_node **rb_link, *rb_parent;
- 	unsigned long charged = 0;
-@@ -1785,11 +1786,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 			if (error)
- 				goto free_vma;
- 		}
--		if (is_shared_maywrite(vm_flags)) {
--			error = mapping_map_writable(file->f_mapping);
--			if (error)
--				goto allow_write_and_free_vma;
--		}
- 
- 		/* ->mmap() can change vma->vm_file, but must guarantee that
- 		 * vma_link() below can deny write-access if VM_DENYWRITE is set
-@@ -1801,6 +1797,14 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 		if (error)
- 			goto unmap_and_free_vma;
- 
-+		if (vma_is_shared_maywrite(vma)) {
-+			error = mapping_map_writable(file->f_mapping);
-+			if (error)
-+				goto close_and_free_vma;
-+
-+			writable_file_mapping = true;
-+		}
-+
- 		/* Can addr have changed??
- 		 *
- 		 * Answer: Yes, several device drivers can do it in their
-@@ -1823,7 +1827,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	vma_link(mm, vma, prev, rb_link, rb_parent);
- 	/* Once vma denies write, undo our temporary denial count */
- 	if (file) {
--		if (is_shared_maywrite(vm_flags))
-+		if (writable_file_mapping)
- 			mapping_unmap_writable(file->f_mapping);
- 		if (vm_flags & VM_DENYWRITE)
- 			allow_write_access(file);
-@@ -1858,15 +1862,17 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 
- 	return addr;
- 
-+close_and_free_vma:
-+	if (vma->vm_ops && vma->vm_ops->close)
-+		vma->vm_ops->close(vma);
- unmap_and_free_vma:
- 	vma->vm_file = NULL;
- 	fput(file);
- 
- 	/* Undo any partial mapping done by a device driver. */
- 	unmap_region(mm, vma, prev, vma->vm_start, vma->vm_end);
--	if (is_shared_maywrite(vm_flags))
-+	if (writable_file_mapping)
- 		mapping_unmap_writable(file->f_mapping);
--allow_write_and_free_vma:
- 	if (vm_flags & VM_DENYWRITE)
- 		allow_write_access(file);
- free_vma:
 -- 
-2.50.1.552.g942d659e1b-goog
+Best Regards,
+Yijie
 
 
