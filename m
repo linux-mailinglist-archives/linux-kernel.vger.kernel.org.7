@@ -1,184 +1,84 @@
-Return-Path: <linux-kernel+bounces-750092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 236D4B1573A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:54:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C9CB1573C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 03:54:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E1BE188EFED
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:54:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97A8B3B72A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 01:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2B91E833C;
-	Wed, 30 Jul 2025 01:53:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA071DE8BE;
+	Wed, 30 Jul 2025 01:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XGnvmT4F"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HcIUVfRu"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1BC71DB34C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 01:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D05A7E0E4;
+	Wed, 30 Jul 2025 01:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753840387; cv=none; b=jYdjMOrR/4IGD+IYyDyZs0IKjqZgLhFkHGtN6p+mJPiZ12vMHX2ayxelz/m7/ruC//4m/6w9MnWsF/l4dQH+N1iP+1XoU4oRNNhv5kHzgP47OUmt1DqqUI56dWUprQBsPJ2kvppO0y4bxof2OPPejjREAKC9KFWGO4afCa35mpQ=
+	t=1753840404; cv=none; b=DaGmiq95in2Ru///boYl0CwXPkczB2pLb3Wp5z+jE9cyVwtjAKaMqKyZ4H51URJQAAAegSFs05+nQ8Q5DyMrzxpjLm5cnf8z/Et3oKg6zNNxRNIZwHkXXP4RqKde1n0N6m9ZiNTLRQEgrggtUlFbHJHPu+8dJDMirW2lDMF4LlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753840387; c=relaxed/simple;
-	bh=9mfsWfmUsxiv7jb5H3bplGyE+CRlpRWvLjb17tNh4ZQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PI4K/PGOlQOZ4RraobCqR+7msSThgKGH2AIt9DPh1ZZXHP58RpsXxH7ES8wtfufKOzAqJ7UJonEyqwS1+82Xh4I+ilvJh7nGpzHA1bRBL2FsojT1J5AVkeZY/j4Pqj0M04oFH53HNShxCIqHiEaygTColfRnhSGP5+xrmOSQD8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XGnvmT4F; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--isaacmanjarres.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e8e0f471340so3362087276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Jul 2025 18:53:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753840385; x=1754445185; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwXkEgtGYM3RCYPAf/S015/LYrl5duHz2m34ToaHnr4=;
-        b=XGnvmT4FZkWNJnA+CoRcSrPJbdTvpsu7qIg5P/cXi3Gc436+eTrcGlIUo2Y2CxFFPk
-         HKT2CPdPqJjvUKFLwznA+WB6Eigr/u4OQ2udiDYqnjrhybLT5fOdDrF8GOYU2FcT5sD9
-         +9Y5Hssp+EDog0kHCNJQW/leQOGjcadjZGj+kWKX0k12z2+pQ/jnPtlcOi4BZOCKAais
-         85LXpj40z55LhReBZkaBMoIEGzGpUI6s5lCXHJMXdjxHYPaONR5IEYBe/V4IiAvlrqUx
-         YyXeN+SUFD77aRxQym9zgNLUG92UkSxC9eSLnGJw3Qs05qovF45RUNnWIlchTkz9oLI7
-         Mmog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753840385; x=1754445185;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WwXkEgtGYM3RCYPAf/S015/LYrl5duHz2m34ToaHnr4=;
-        b=XMNW56eObstOtoJyuYS5+dT3gJuqrx9BDWt4p8sAyabtHsDOzNdCuaKl8r07KqbLK8
-         NTK7B9hEaGwp0VyZTOdmCWhTWdYO1VxBwQtIwtDtPAj3Ru/NEy+GJGI62IqHJSIumsF4
-         bt4z9nbFfLa0R84M5IQB64MrG68tBvadTgPwVHGTP6PUUeTUlcURiYukd5QmUSMqoZtq
-         maCxlE7qsPRPsUrkAqMMjqn6gRXKo5+BvDOjpgpi+NvsrLcTy9DkSTVsiMwMAQ2hcXl9
-         MYdt2Gn+ivX5lLDd69idnB1R2XHQyjEIl60Sc4KQScqY1zFQPEGSgNQlw+iTJcep/f4N
-         4vrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWV16uv+eqMNUI1AZf/aOwf1LePIwkYp4htNvneTWYgMrmFJACsnpvRdWQT3YJdvOkdRL2xs5Ai/UXMEaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRUcEnxI6onrOakqeNfnFGqv6aQVZl4tz8zxusQUez4IQlfsuw
-	vWHm752ZsdVPJWPQM2Rix8MnGYaehcwYT2rZgTyfFhcu8VzuNsV40Q197YqfaUw3NDhQ+ZF9on/
-	YT+ZfKiz/zpkbLz3C1yGWtp3aZhvho+mn6V4vwA==
-X-Google-Smtp-Source: AGHT+IFMN87Pheb34MK37buANyT4ygN7EuRFMXC1Jr/7dhlCcyElEAYQTT7X5PQ8XI+jtHMXndENYbmFMJ7WOBut09j/6Q==
-X-Received: from ybbgf9.prod.google.com ([2002:a05:6902:6009:b0:e8e:19a8:976a])
- (user=isaacmanjarres job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6902:1604:b0:e8e:219f:a662 with SMTP id 3f1490d57ef6-e8e315b5213mr2128772276.26.1753840384801;
- Tue, 29 Jul 2025 18:53:04 -0700 (PDT)
-Date: Tue, 29 Jul 2025 18:52:43 -0700
-In-Reply-To: <20250730015247.30827-1-isaacmanjarres@google.com>
+	s=arc-20240116; t=1753840404; c=relaxed/simple;
+	bh=MbevhLJLZZVcRGBlOkzhU/9EDSdDrwTOH3ukDEeaPpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LzsyE8KGx4tOXMwgRNc3EIvB4QhUipG5preecUnDgRQcXI5/EEe29wPnUhs6CrFouGThpXQO3243zP1a89OXU7VdJvbS1265WyPtV3+8FgvIoPOGLvCVOme+oEA2e9Z7khgNz11bWdUwz8l1cfdS6DGgEBjfKZ/ERVdbEr1UMLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HcIUVfRu; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NygeRnfCY0oBxJ3XVGkqvf9s8LTdUkkjjW96dSx+rJQ=; b=HcIUVfRuV/GIiPUzkgM7lBx1Qx
+	HCqHmsWDHcdBySI6ChwUqehlYJQt+FkPbA6VEGDooRZf90LxDBxCXiSyZ/diJHaVtow2W/TKareS/
+	va6+L7VtjEJ8dRqp5zsiuLvsg71pnGhz+fLGbjttwFPZOfqzQ5M4mANCP2ZYf5nAwHUcTsKtqx8hD
+	ivNFoNclCT6HI9RGGLStDe1BU31oogjzXkxqGUqvJe6NpkeD6U2x2uqwe8NxxHLcjcBZkMFVQMQhu
+	pt0rfmNquw8f2uV7ffyFxqG1/KdaBv3/e9qVXErAED8+5D8ewlNRfM0NuHDxPHalupnKmzYAVi0tb
+	VTk2V45A==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ugw0L-00000004KJl-0hQT;
+	Wed, 30 Jul 2025 01:53:17 +0000
+Date: Wed, 30 Jul 2025 02:53:16 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] Documentation for 6.17
+Message-ID: <aIl7DKlKcy7vauos@casper.infradead.org>
+References: <87y0s81lqe.fsf@trenco.lwn.net>
+ <aIl3j8klCw6xWyH3@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250730015247.30827-1-isaacmanjarres@google.com>
-X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250730015247.30827-5-isaacmanjarres@google.com>
-Subject: [PATCH 6.1.y 4/4] selftests/memfd: add test for mapping write-sealed
- memfd read-only
-From: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-To: lorenzo.stoakes@oracle.com, gregkh@linuxfoundation.org, 
-	Shuah Khan <shuah@kernel.org>
-Cc: aliceryhl@google.com, surenb@google.com, stable@vger.kernel.org, 
-	"Isaac J. Manjarres" <isaacmanjarres@google.com>, kernel-team@android.com, 
-	Jann Horn <jannh@google.com>, Julian Orth <ju.orth@gmail.com>, 
-	"Liam R. Howlett" <Liam.Howlett@Oracle.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIl3j8klCw6xWyH3@archie.me>
 
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Wed, Jul 30, 2025 at 08:38:23AM +0700, Bagas Sanjaya wrote:
+> On Mon, Jul 28, 2025 at 07:35:53AM -0600, Jonathan Corbet wrote:
+> > The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+> > 
+> >   Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+> > 
+> > are available in the Git repository at:
+> > 
+> >   git://git.lwn.net/linux.git tags/docs-6.17
+> 
+> Hi,
+> 
+> It looks like this PR slips through the cracks (not merged yet?).
 
-[ Upstream commit ea0916e01d0b0f2cce1369ac1494239a79827270 ]
+Patience.  Linus will pull this at some time during the merge window.
+Probably by the end of the first week.
 
-Now we have reinstated the ability to map F_SEAL_WRITE mappings read-only,
-assert that we are able to do this in a test to ensure that we do not
-regress this again.
-
-Link: https://lkml.kernel.org/r/a6377ec470b14c0539b4600cf8fa24bf2e4858ae.1732804776.git.lorenzo.stoakes@oracle.com
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Julian Orth <ju.orth@gmail.com>
-Cc: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: stable@vger.kernel.org
-Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
----
- tools/testing/selftests/memfd/memfd_test.c | 43 ++++++++++++++++++++++
- 1 file changed, 43 insertions(+)
-
-diff --git a/tools/testing/selftests/memfd/memfd_test.c b/tools/testing/selftests/memfd/memfd_test.c
-index 94df2692e6e4..15a90db80836 100644
---- a/tools/testing/selftests/memfd/memfd_test.c
-+++ b/tools/testing/selftests/memfd/memfd_test.c
-@@ -186,6 +186,24 @@ static void *mfd_assert_mmap_shared(int fd)
- 	return p;
- }
- 
-+static void *mfd_assert_mmap_read_shared(int fd)
-+{
-+	void *p;
-+
-+	p = mmap(NULL,
-+		 mfd_def_size,
-+		 PROT_READ,
-+		 MAP_SHARED,
-+		 fd,
-+		 0);
-+	if (p == MAP_FAILED) {
-+		printf("mmap() failed: %m\n");
-+		abort();
-+	}
-+
-+	return p;
-+}
-+
- static void *mfd_assert_mmap_private(int fd)
- {
- 	void *p;
-@@ -802,6 +820,30 @@ static void test_seal_future_write(void)
- 	close(fd);
- }
- 
-+static void test_seal_write_map_read_shared(void)
-+{
-+	int fd;
-+	void *p;
-+
-+	printf("%s SEAL-WRITE-MAP-READ\n", memfd_str);
-+
-+	fd = mfd_assert_new("kern_memfd_seal_write_map_read",
-+			    mfd_def_size,
-+			    MFD_CLOEXEC | MFD_ALLOW_SEALING);
-+
-+	mfd_assert_add_seals(fd, F_SEAL_WRITE);
-+	mfd_assert_has_seals(fd, F_SEAL_WRITE);
-+
-+	p = mfd_assert_mmap_read_shared(fd);
-+
-+	mfd_assert_read(fd);
-+	mfd_assert_read_shared(fd);
-+	mfd_fail_write(fd);
-+
-+	munmap(p, mfd_def_size);
-+	close(fd);
-+}
-+
- /*
-  * Test SEAL_SHRINK
-  * Test whether SEAL_SHRINK actually prevents shrinking
-@@ -1056,6 +1098,7 @@ int main(int argc, char **argv)
- 
- 	test_seal_write();
- 	test_seal_future_write();
-+	test_seal_write_map_read_shared();
- 	test_seal_shrink();
- 	test_seal_grow();
- 	test_seal_resize();
--- 
-2.50.1.552.g942d659e1b-goog
 
 
