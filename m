@@ -1,250 +1,294 @@
-Return-Path: <linux-kernel+bounces-750720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6685EB16038
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:22:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 347F7B16004
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 14:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C101AA10C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261B518C6EE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 12:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673E229A9CD;
-	Wed, 30 Jul 2025 12:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFAD5296165;
+	Wed, 30 Jul 2025 12:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="k9mAIX15"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="OwvZ+7jR"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C705B2BD03C
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753877869; cv=none; b=M74JB5fh4hA3mBf7pvWqB8TvUAyWtOfOf1uyTpIWKCeCW8hIHCC8nvGo/AbGXDrnSsVs9lB6yoCeBKp0wNx/ArXaH7uypD2g2zLe+u6V0YwM+vBw32wdW4Ct3JTLs34O68/trHqfZFmvOV56+XLJfdIRtdmoDIHPqxfulekKXNY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753877869; c=relaxed/simple;
-	bh=+tfJ6kmI5TyWd3CwPGoTz3jWuNKpu0Bg1vj5zTULf+c=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=i07eEhEOdQTGzsnBTDoixOVHG1mkONo6tfd3ONcbXOfgTu+20o2D/btQ5Sw/IIoEeeN5UHo/WILDDghm1/k0QQ04BEruYBVx2Bxiocj2+O++GmzQHtoCfEkXog5FHBI28BgbAv8EcjMDXZnd/wuUa8B1woSoVQEsCJlXz0h+008=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=k9mAIX15; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250730121746epoutp048ff36f79b5e38d7f09c2bed3972282e9~XBqBwOZtu1461214612epoutp04d
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 12:17:46 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250730121746epoutp048ff36f79b5e38d7f09c2bed3972282e9~XBqBwOZtu1461214612epoutp04d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1753877866;
-	bh=tr+z8UkyvssMX2E0j//VujZShPXWDtOnp74X2w/XQTo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=k9mAIX15KGIBncZOsXLfylxopm9B1mCLXn/PvCmTAqOJfdn07qAlwF3BK6sV4qXZc
-	 omG4ZkPaFXtlO8yYMSXQVezPRNZ9IgQJvqv4fGYKAs+H7BlQtG5YZbytuW8FXB4WKZ
-	 ZFiyzBF4cu5TXimcQXUY5RwvcQvu/ua8+C+tgVC8=
-Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250730121742epcas5p320273f99e305038dc6257047c093693f~XBp_ylszK2824128241epcas5p3w;
-	Wed, 30 Jul 2025 12:17:42 +0000 (GMT)
-Received: from epcas5p2.samsung.com (unknown [182.195.38.89]) by
-	epsnrtp03.localdomain (Postfix) with ESMTP id 4bsWSP6Rg5z3hhT3; Wed, 30 Jul
-	2025 12:17:41 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250730121249epcas5p249c2e3fec3464cfea3a1c84bc285cd49~XBltWzLs70097800978epcas5p2p;
-	Wed, 30 Jul 2025 12:12:49 +0000 (GMT)
-Received: from test-PowerEdge-R740xd.samsungds.net (unknown [107.99.41.79])
-	by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250730121248epsmtip1b44e851ee72a608296b27f03b1168fdd~XBlsUBEkq0450704507epsmtip1V;
-	Wed, 30 Jul 2025 12:12:48 +0000 (GMT)
-From: Neeraj Kumar <s.neeraj@samsung.com>
-To: linux-cxl@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, gost.dev@samsung.com
-Cc: a.manzanares@samsung.com, vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	Neeraj Kumar <s.neeraj@samsung.com>
-Subject: [PATCH V2 20/20] cxl/pmem_region: Add sysfs attribute cxl region
- label updation/deletion
-Date: Wed, 30 Jul 2025 17:42:09 +0530
-Message-Id: <20250730121209.303202-21-s.neeraj@samsung.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250730121209.303202-1-s.neeraj@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2253FE5;
+	Wed, 30 Jul 2025 12:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753877696; cv=pass; b=o7+IXwjnYgMXfIObDegS/Ly36JXyLKV1t+TtBpjVRwsg5MKRlmxlxe11A6dINJhOi9F6Qk28vIum9YNDqQ0BuznIMMDe5T7u7ESNPHmA2wMsDx/LkMCyu5AidOYbEHcyu2E04xp3FhfSkoSaKd6+JfS5WzPfNrKHpxC3g+H98sM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753877696; c=relaxed/simple;
+	bh=MJr6t1BtBiLGwOJrWZI3GkXsGiXtGndz3Bsl8aCXD+g=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=I79CsgIZhSHdeEYoeylVPF7zxpSRJx9P3QiHIaOCRdd8gGn1ha9+2y+85Qf0mG1QxIJa9vB/sNBgJjWG75S+3iup0YGp/x8RVn+wzzh+u+NvyODv94s0FDaXSRDA8LeekQtw8x46V5TiXPFsn0ftbJT0/IhLfVsjki6z2oqQjhk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=OwvZ+7jR; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753877660; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BTtWjBu78T4K4p4DAbV00CQxqFcyQX//7jU/o2Ent7wT62szX9hAczBtFfalr5q4WF/AQPOgDIAS3OEWjUCMXHtYn5t+CuT8JApMULgK7bsmuL7g68Yk5aXLcJtQrm6e4RFiEllohlOzSiBnJUId62cnWWTb8paHI4XcK13e3NU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753877660; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Cvk/NZkWXutHuBZDgvvw0GnGlhYqcEb5gqbSSddkwpE=; 
+	b=NUyAscFzvgevk/dDAFGjTPvPFsnVfBo+l/B9JyGluJzGB12zCVxJykjKErPRLv8ObNmtDPl9HEvMPEqmxjAS7Qm9oKpCa0o1fDQn/yn5QoY2yg3FibTNU1GN3y/2vfoelH9CooqesHAMUziBrtv8JdDgc//cZZv4bHrF5kF4qYs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753877660;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=Cvk/NZkWXutHuBZDgvvw0GnGlhYqcEb5gqbSSddkwpE=;
+	b=OwvZ+7jRT07UJCP6CeqVSPLqXrDu5ElvsX51d7TTTsiFP95uTDfJm9GqRuvLs0C3
+	SLTMf29rTLIqls6QAn5VwqBAfnDREOo3cc9iDj6FkiuE5B+mOqQN8EfbVO8ictn+80z
+	7fXhyAu/ORQRu+ndu/gH+xiJEgho50V8WR5z0ImI=
+Received: by mx.zohomail.com with SMTPS id 1753877656376634.2090583909618;
+	Wed, 30 Jul 2025 05:14:16 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250730121249epcas5p249c2e3fec3464cfea3a1c84bc285cd49
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250730121249epcas5p249c2e3fec3464cfea3a1c84bc285cd49
-References: <20250730121209.303202-1-s.neeraj@samsung.com>
-	<CGME20250730121249epcas5p249c2e3fec3464cfea3a1c84bc285cd49@epcas5p2.samsung.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] rust: clk: use the type-state pattern
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <DBP8EWLCAE4B.34Y4FBSH5BTB6@kernel.org>
+Date: Wed, 30 Jul 2025 09:13:59 -0300
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <086CDFC4-A9EE-40C7-89BB-D3B8CBFA01EA@collabora.com>
+References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
+ <DBP8EWLCAE4B.34Y4FBSH5BTB6@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-Using these attributes region label is added/deleted into LSA. These
-attributes are called from userspace (ndctl) after region creation.
 
-Signed-off-by: Neeraj Kumar <s.neeraj@samsung.com>
----
- Documentation/ABI/testing/sysfs-bus-cxl | 22 ++++++
- drivers/cxl/core/pmem_region.c          | 94 ++++++++++++++++++++++++-
- drivers/cxl/cxl.h                       |  1 +
- 3 files changed, 116 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-bus-cxl b/Documentation/ABI/testing/sysfs-bus-cxl
-index 6b4e8c7a963d..5b47a02a99ef 100644
---- a/Documentation/ABI/testing/sysfs-bus-cxl
-+++ b/Documentation/ABI/testing/sysfs-bus-cxl
-@@ -615,3 +615,25 @@ Description:
- 		The count is persistent across power loss and wraps back to 0
- 		upon overflow. If this file is not present, the device does not
- 		have the necessary support for dirty tracking.
-+
-+
-+What:		/sys/bus/cxl/devices/regionZ/pmem_regionZ/region_label_update
-+Date:		July, 2025
-+KernelVersion:	v6.16
-+Contact:	linux-cxl@vger.kernel.org
-+Description:
-+		(RW) Write a boolean 'true' string value to this attribute to
-+		update cxl region information into LSA as region label. It
-+		uses nvdimm nd_region_label_update() to update cxl region
-+		information saved during cxl region creation into LSA. This
-+		attribute must be called at last during cxl region creation.
-+
-+
-+What:		/sys/bus/cxl/devices/regionZ/pmem_regionZ/region_label_delete
-+Date:		July, 2025
-+KernelVersion:	v6.16
-+Contact:	linux-cxl@vger.kernel.org
-+Description:
-+		(WO) When a boolean 'true' is written to this attribute then
-+		pmem_region driver deletes cxl region label from LSA using
-+		nvdimm nd_region_label_delete()
-diff --git a/drivers/cxl/core/pmem_region.c b/drivers/cxl/core/pmem_region.c
-index cd1177d345e6..cc9ef2f9a2b3 100644
---- a/drivers/cxl/core/pmem_region.c
-+++ b/drivers/cxl/core/pmem_region.c
-@@ -45,9 +45,101 @@ static void cxl_pmem_region_release(struct device *dev)
- 	kfree(cxlr_pmem);
- }
- 
-+static ssize_t region_label_update_store(struct device *dev,
-+					 struct device_attribute *attr,
-+					 const char *buf, size_t len)
-+{
-+	struct cxl_pmem_region *cxlr_pmem = to_cxl_pmem_region(dev);
-+	struct cxl_region *cxlr = cxlr_pmem->cxlr;
-+	struct cxl_region_params *p = &cxlr->params;
-+	ssize_t rc;
-+	bool update;
-+
-+	rc = kstrtobool(buf, &update);
-+	if (rc)
-+		return rc;
-+
-+	ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
-+	rc = ACQUIRE_ERR(rwsem_write_kill, &rwsem);
-+	if (rc)
-+		return rc;
-+
-+	/* Region not yet committed */
-+	if (update && p->state != CXL_CONFIG_COMMIT) {
-+		dev_dbg(dev, "region not committed, can't update into LSA\n");
-+		return -ENXIO;
-+	}
-+
-+	if (cxlr && cxlr->cxlr_pmem && cxlr->cxlr_pmem->nd_region) {
-+		rc = nd_region_label_update(cxlr->cxlr_pmem->nd_region);
-+		if (!rc)
-+			p->region_label_state = 1;
-+	}
-+
-+	if (rc)
-+		return rc;
-+
-+	return len;
-+}
-+
-+static ssize_t region_label_update_show(struct device *dev,
-+		struct device_attribute *attr,
-+		char *buf)
-+{
-+	struct cxl_pmem_region *cxlr_pmem = to_cxl_pmem_region(dev);
-+	struct cxl_region *cxlr = cxlr_pmem->cxlr;
-+	struct cxl_region_params *p = &cxlr->params;
-+	ssize_t rc;
-+
-+	ACQUIRE(rwsem_read_intr, rwsem)(&cxl_rwsem.region);
-+	rc = ACQUIRE_ERR(rwsem_read_intr, &rwsem);
-+	if (rc)
-+		return rc;
-+
-+	return sysfs_emit(buf, "%d\n", p->region_label_state);
-+}
-+static DEVICE_ATTR_RW(region_label_update);
-+
-+static ssize_t region_label_delete_store(struct device *dev,
-+				   struct device_attribute *attr,
-+				   const char *buf, size_t len)
-+{
-+	struct cxl_pmem_region *cxlr_pmem = to_cxl_pmem_region(dev);
-+	struct cxl_region *cxlr = cxlr_pmem->cxlr;
-+	struct cxl_region_params *p = &cxlr->params;
-+	ssize_t rc;
-+
-+	ACQUIRE(rwsem_write_kill, rwsem)(&cxl_rwsem.region);
-+	rc = ACQUIRE_ERR(rwsem_write_kill, &rwsem);
-+	if (rc)
-+		return rc;
-+
-+	if (cxlr && cxlr->cxlr_pmem && cxlr->cxlr_pmem->nd_region) {
-+		rc = nd_region_label_delete(cxlr->cxlr_pmem->nd_region);
-+		if (rc)
-+			return rc;
-+	}
-+
-+	p->region_label_state = 0;
-+
-+	return len;
-+}
-+DEVICE_ATTR_WO(region_label_delete);
-+
-+static struct attribute *cxl_pmem_region_attrs[] = {
-+	&dev_attr_region_label_update.attr,
-+	&dev_attr_region_label_delete.attr,
-+	NULL
-+};
-+
-+struct attribute_group cxl_pmem_region_group = {
-+	.attrs = cxl_pmem_region_attrs,
-+};
-+
- static const struct attribute_group *cxl_pmem_region_attribute_groups[] = {
- 	&cxl_base_attribute_group,
--	NULL,
-+	&cxl_pmem_region_group,
-+	NULL
- };
- 
- const struct device_type cxl_pmem_region_type = {
-diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-index b7592cc76192..f3faa419ddc5 100644
---- a/drivers/cxl/cxl.h
-+++ b/drivers/cxl/cxl.h
-@@ -475,6 +475,7 @@ enum cxl_config_state {
-  */
- struct cxl_region_params {
- 	enum cxl_config_state state;
-+	int region_label_state;
- 	uuid_t uuid;
- 	int interleave_ways;
- 	int interleave_granularity;
--- 
-2.34.1
+> On 30 Jul 2025, at 05:03, Danilo Krummrich <dakr@kernel.org> wrote:
+>=20
+> On Tue Jul 29, 2025 at 11:38 PM CEST, Daniel Almeida wrote:
+>> In light of the Regulator abstraction that was recently merged, =
+switch this
+>> abstraction to use the type-state pattern instead. It solves both a) =
+and b)
+>> by establishing a number of states and the valid ways to transition =
+between
+>> them. It also automatically undoes any call to clk_get(), =
+clk_prepare() and
+>> clk_enable() as applicable on drop(), so users do not have to do =
+anything
+>> special before Clk goes out of scope.
+>=20
+> That's a great improvement, thanks! Some questions / comments below.
+>=20
+>>     /// A reference-counted clock.
+>>     ///
+>>     /// Rust abstraction for the C [`struct clk`].
+>>     ///
+>> +    /// A [`Clk`] instance represents a clock that can be in one of =
+several
+>> +    /// states: [`Unprepared`], [`Prepared`], or [`Enabled`].
+>> +    ///
+>> +    /// No action needs to be taken when a [`Clk`] is dropped. The =
+calls to
+>> +    /// `clk_unprepare()` and `clk_disable()` will be placed as =
+applicable.
+>> +    ///
+>> +    /// An optional [`Clk`] is treated just like a regular [`Clk`], =
+but its
+>> +    /// inner `struct clk` pointer is `NULL`. This interfaces =
+correctly with the
+>> +    /// C API and also exposes all the methods of a regular [`Clk`] =
+to users.
+>> +    ///
+>>     /// # Invariants
+>>     ///
+>>     /// A [`Clk`] instance holds either a pointer to a valid [`struct =
+clk`] created by the C
+>> @@ -99,20 +160,39 @@ mod common_clk {
+>>     /// Instances of this type are reference-counted. Calling =
+[`Clk::get`] ensures that the
+>>     /// allocation remains valid for the lifetime of the [`Clk`].
+>>     ///
+>> -    /// ## Examples
+>> +    /// The [`Prepared`] state is associated with a single count of
+>> +    /// `clk_prepare()`, and the [`Enabled`] state is associated =
+with a single
+>> +    /// count of `clk_enable()`, and the [`Enabled`] state is =
+associated with a
+>> +    /// single count of `clk_prepare` and `clk_enable()`.
+>> +    ///
+>> +    /// All states are associated with a single count of =
+`clk_get()`.
+>> +    ///
+>> +    /// # Examples
+>>     ///
+>>     /// The following example demonstrates how to obtain and =
+configure a clock for a device.
+>>     ///
+>>     /// ```
+>>     /// use kernel::c_str;
+>> -    /// use kernel::clk::{Clk, Hertz};
+>> +    /// use kernel::clk::{Clk, Enabled, Hertz, Unprepared, =
+Prepared};
+>>     /// use kernel::device::Device;
+>>     /// use kernel::error::Result;
+>>     ///
+>>     /// fn configure_clk(dev: &Device) -> Result {
+>> -    ///     let clk =3D Clk::get(dev, Some(c_str!("apb_clk")))?;
+>> +    ///     // The fastest way is to use a version of `Clk::get` for =
+the desired
+>> +    ///     // state, i.e.:
+>> +    ///     let clk: Clk<Enabled> =3D Clk::<Enabled>::get(dev, =
+Some(c_str!("apb_clk")))?;
+>=20
+> Given that this is a driver API, why do we allow obtaining and =
+configuring
+> clocks of any device, i.e. also unbound devices?
+>=20
+> I think Clk::<T>::get() should take a &Device<Bound> instead.
+
+Ah, this was a question I had, but that I forgot to mention here.
+
+The same can probably be said of the regulator series? i.e.:
+
+impl Regulator<Disabled> {
+    /// Obtains a [`Regulator`] instance from the system.
+    pub fn get(dev: &Device, name: &CStr) -> Result<Self> {
+        Regulator::get_internal(dev, name)
+    }
+
+>=20
+>> -    ///     clk.prepare_enable()?;
+>> +    ///     // Any other state is also possible, e.g.:
+>> +    ///     let clk: Clk<Prepared> =3D Clk::<Prepared>::get(dev, =
+Some(c_str!("apb_clk")))?;
+>> +    ///
+>> +    ///     // Later:
+>> +    ///     let clk: Clk<Enabled> =3D clk.enable().map_err(|error| {
+>> +    ///         error.error
+>> +    ///     })?;
+>> +    ///
+>> +    ///     // Note that error.clk is the original `clk` if the =
+operation
+>> +    ///     // failed. It is provided as a convenience so that the =
+operation may be
+>> +    ///     // retried in case of errors.
+>>     ///
+>>     ///     let expected_rate =3D Hertz::from_ghz(1);
+>>     ///
+>> @@ -120,104 +200,172 @@ mod common_clk {
+>>     ///         clk.set_rate(expected_rate)?;
+>>     ///     }
+>>     ///
+>> -    ///     clk.disable_unprepare();
+>> +    ///     // Nothing is needed here. The drop implementation will =
+undo any
+>> +    ///     // operations as appropriate.
+>> +    ///     Ok(())
+>> +    /// }
+>> +    ///
+>> +    /// fn shutdown(dev: &Device, clk: Clk<Enabled>) -> Result {
+>=20
+> You don't need the dev argument here.
+>=20
+>> +    ///     // The states can be traversed "in the reverse order" as =
+well:
+>> +    ///     let clk: Clk<Prepared> =3D clk.disable().map_err(|error| =
+{
+>> +    ///         error.error
+>> +    ///     })?;
+>> +    ///
+>> +    ///     let clk: Clk<Unprepared> =3D clk.unprepare();
+>=20
+> I know you want to showcase the type state, yet I don't know if we =
+should
+> explicitly declare the type if not necessary. People will likely just =
+copy
+> things. Maybe a comment is better to emphasize it?
+
+Ok
+
+>=20
+>> +    ///
+>>     ///     Ok(())
+>>     /// }
+>>     /// ```
+>>     ///
+>>     /// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
+>>     #[repr(transparent)]
+>> -    pub struct Clk(*mut bindings::clk);
+>> +    pub struct Clk<T: ClkState> {
+>> +        inner: *mut bindings::clk,
+>> +        _phantom: core::marker::PhantomData<T>,
+>> +    }
+>=20
+> <snip>
+>=20
+>> +    impl<T: ClkState> Drop for Clk<T> {
+>> +        fn drop(&mut self) {
+>> +            if T::DISABLE_ON_DROP {
+>> +                // SAFETY: By the type invariants, self.as_raw() is =
+a valid argument for
+>> +                // [`clk_disable`].
+>> +                unsafe { bindings::clk_disable(self.as_raw()) };
+>> +            }
+>> +
+>> +            if T::UNPREPARE_ON_DROP {
+>> +                // SAFETY: By the type invariants, self.as_raw() is =
+a valid argument for
+>> +                // [`clk_unprepare`].
+>> +                unsafe { bindings::clk_unprepare(self.as_raw()) };
+>> +            }
+>=20
+> Nice! I like this cleanup. However, don't you still need to call =
+clk_put() to
+> drop the reference count?
+
+Right, clk_put() was totally forgotten.
+
+>=20
+> Also, given that this is a device resource, don't we want to take it =
+away from
+> drivers once the corresponding device has been unbound, i.e. use =
+Devres?
+
+Do you mean to have the get() functions return Devres<Clk>?
+
+Also, is this applicable for Regulator as well?
+
+>=20
+>>         }
+>>     }
+>> }
+>=20
+
+=E2=80=94 Daniel
 
 
