@@ -1,163 +1,158 @@
-Return-Path: <linux-kernel+bounces-750831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBA07B1618E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:30:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB10DB16191
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDE853A8CB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:30:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 611657B23F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B9D2D3A96;
-	Wed, 30 Jul 2025 13:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9882D46CC;
+	Wed, 30 Jul 2025 13:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XXGIxDbQ"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="G/58tk3U"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0F72D3730;
-	Wed, 30 Jul 2025 13:30:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753882246; cv=none; b=YG3yCi9FYmyW8weN+EsEm1HuNv/R5qPgCMxOB2XJE1lkIzVubD4OEcn4AqpqHMfHFMMjt077VU1gGP6PFUTSOz7sFWjrgW5pJQo5FwizJLvHJIwnpSkQNvzdGWoptl8DEEVLIyBM0J9h60dmUMX9of82MrVaQ/wozMwhzDnK+fg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753882246; c=relaxed/simple;
-	bh=8ONcE8oQ6Ovxim91GXFYg9iUHoLisltD7bWCaIaZE7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VTQGcgyRn4WmWkqP64GtskoXvTsZcexZhvPOUFWU5qz3r2xOG006FMDagfOFNqmxxi+clPItbJMuKjYVhW59yWq22NrdKhgMZXYD4kkXOeTiAWGVNg8nK47AMWvorFnHcz8z701ZAuPaRpY31V44LS7H4uxICp6BMafsXKftvVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XXGIxDbQ; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af66f444488so494854366b.0;
-        Wed, 30 Jul 2025 06:30:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753882243; x=1754487043; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qi9l6TBdgjaQnQAqpjO6D0pjlwGQDGt3b3+CN6Y3/yI=;
-        b=XXGIxDbQgUFtyfBsiUhmmtuDMRBamLuWISnO9xdTQF/YAQ8WANE9CZvOqvJxvQftjo
-         veUyXpuqERLCF1u+hgKEmk1YBCxNHtuNYWFbfXaqrmhqRZ7P5l3ZU+FBvyRcvLoS+IDg
-         24uU4nabWjNkcyYdk5KN5pntSEfseKkrsGCmhhJcwkzKGl7VyI8oo/m+7ldXcdyi+pP/
-         aPff05j7XsXRmSPfEZHJ0dFYnx6W4rUMe6b6ccFga3Odbb7aLvlxN+Kl+UJLXs1SbGT/
-         rzOf67HGCELMZeaBHd0czDvOGHEGlGWQSpanulTHNQViqXTfTopHRhOM86mBmgnKz8oI
-         sEoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753882243; x=1754487043;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qi9l6TBdgjaQnQAqpjO6D0pjlwGQDGt3b3+CN6Y3/yI=;
-        b=phAso52mGoBHFyZkp0DlaBkyB9T4jn9hZkhp0di5/folX5q/ce/Egp7CzVpS/v20aI
-         O2Fpgmpa8cbw+DG6mDCTkVRLWXhz4VipX0nA7vOuH7JWUvz/cyLCN05ldMMfNwgPWmXB
-         KxeJqsr0XAsbgX8cB7NhsOBWJMLN5E+zKN4Q/PZLvEPG4g/7cvKGJAfWCDqt1zEUu4dS
-         AvWJmccr88XO5DE514guSZ5f6eT2Tcmk/aUaq0xcaU5mviBcP53SY+LkK0RvzZPc8PB7
-         JvycNsG+XnKqXpzhwjOgMgAevbiwywlNsxTDS8BoUMpUJDiZgR8TIYrRRQcJ8tFY9wN/
-         0UKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUghB4NKzq1UKJ6JtGBF0T3HfYkkLaqx5TehD994Gc5yJz1YZ43CkFRP1w8C4qudvFfnGUQ0QZfbUGpPA==@vger.kernel.org, AJvYcCVWOjxdQ8yRBaL3EMd0bTZGIcPsEVBmoS109dHedLroHhx6ZK+xOcaSkAgkGTltSNgE3iCzI8u43+lyiw==@vger.kernel.org, AJvYcCVmEOJfEeQTPHUeIquLEkeBV1I/TOzkMnwdLql9BruT5Bl0HWiG1SD5Uk52oSe4Tuq6LGvKjNewFYpu/nK4z5Vt/Tg=@vger.kernel.org, AJvYcCW7TdmarISvfHFMqh6Vz04SgPNH7a4i0QSyTpeqxa+N3oVsHkjtxtP1IHJGTciG5KxZ9G2trz6MiachTrtbvje/@vger.kernel.org, AJvYcCWRR6QRIzCpZPxb2O4RjOKzcALg/XmGmk4JMzhOBcNSDjuVz5fV9xCTJBvlN1If/FiDnaTfqJHo0F1kWjiz@vger.kernel.org, AJvYcCX/x2cAhZeGKc5Hlem2la7wocuSCT+m1TS/dmPwrfX7YSOuSDOMZbo9sSzuMElcqwmw8xGElmurwXgXCiTI@vger.kernel.org, AJvYcCXk2paaTIFp057xMFhZBUX4ne0MP/ArqGhRSoB/lYvPvIc+lZaW2i+klLxZlcqipT8z4BFlX5ABFxn7KQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnTnHTzzY+UpszFobwBpkFac2Dw3G7WijzArDjDD4fv8VXnlKn
-	ueoErsC3TXnGtBFUyakO6zL50PfvSO05lqKvDm4rndc3EQ6w6EuG61WIVTwh84BPa0Sf5xKLu+o
-	FE/MhvLKBy76T2uXpYBgZV0cgGJnptII=
-X-Gm-Gg: ASbGnctjCOoHz2FKEAKZ60ryb1/XGNJ/tXr8uDufUsHONcXrEpyI+txILJXl9+q92St
-	o/ilXlISXAiDHbgl3d8rje3/ZUVrCx3Y3PAMIJFg8Bs/EIVs4ck6oOqN3QmhCV39dYvgZva/5mR
-	8KOcsI8md2xqeauvTZMEnvZVIhHxwbG68OL/c7RGOxApbi+0TQY6qdgTy+RKVnBm0rme6NmxPIF
-	VS9Bmaa+OE8IT3JL9uR
-X-Google-Smtp-Source: AGHT+IE7FH6m4Dj0jSn6Xv2SOxyVdUI56jx+oEPv/YLtr96ycR8jtmVTuCl5DRsdQyIzWn8vHcnXCm+w9rLeyqQEmTc=
-X-Received: by 2002:a17:907:dab:b0:ae3:60fb:1b3b with SMTP id
- a640c23a62f3a-af8fda93d6emr386293566b.58.1753882242487; Wed, 30 Jul 2025
- 06:30:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F27920E70B;
+	Wed, 30 Jul 2025 13:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753882265; cv=pass; b=ddetZQW5UGAEp9atz7tbIkUC4yS4vTZM9m67clKlkXvIKN0M9VuTCK9USqL6l2DdI+ZKgbGKjG1ERdw7YpFtxXcgG2Vwz31nPnXx149XId6vbMxNqVbp7YxBwq753aN1gDP1gUU9uRLph2vr0v65aCnC9qsl6OiwHf+C3DGoXRM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753882265; c=relaxed/simple;
+	bh=E1E/UGq3BHcSE9fkbNu6GvSmIKiyx2JmdosOu7FR3c0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=MzGo7QNHulz1XxNjzEwgESjLqNDcPqxcNTuImyGUUdVHJmvoRjLFFAcc3PFdJaYHD3KOGDxBB6B6PGYZ6c99Yhz3fqLwze+g1b2IM+LhXgh5beAMC7NJMMD21LP+f/PvCE3k91qiaQ2qo6mWpD60u2YiZ1aF9OhSXTKJup+04Sk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=G/58tk3U; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753882234; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BSYbWpitIzZqpGdBXTmdG1G3kFYDxy0zB5a2/xc5vQL35zZqYxmNvyrCR2lZucNRIP2B8iMHCEq9neYLopCDOYJ06ZIAyC1dAxYKd31qIVJXWLYNCDqRrczh7ilQ11gyJ3cC8V87h/5m6kwp0TKVooCLqJ7B9A29SdrjrNDkGiw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753882234; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=aOG5i7XVJ7pIXErWvvzQMg1MUQ9EHQQty2uAGcXcAlM=; 
+	b=asvpx5PBcp2iRqClZpeawHaf0ICRY0KpNMnXD1S6fM22UkX3jhedvkfhzAxrlMvKmLlnKeZJitYjrkYm3ihZW3AjF0FsTFOrUW2OrkklnSc/aJ6G8GW1Y2Kx9Nz3Valqjdboca7Z3hRmxcdDG49b8tEaZLXLui0HjD8nTe6eGds=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753882234;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=aOG5i7XVJ7pIXErWvvzQMg1MUQ9EHQQty2uAGcXcAlM=;
+	b=G/58tk3UU5GIcv3Ka2mO06gz3eHJFQql93iK5BODhbGuMgV10AbobqBuQ2xZH1iz
+	HXYqypHqjlplTVXn5thnWrmZqryfDPaYefo4kd7rPHWR1FhgWmtXRvdrljGwFz4PjiJ
+	0EyD9jLf9CNjkjJVq/GmZIEAQ9F/I/Ru/OjmuYEQ=
+Received: by mx.zohomail.com with SMTPS id 1753882229988414.0615538796012;
+	Wed, 30 Jul 2025 06:30:29 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250724-pinctrl-gpio-pinfuncs-v3-0-af4db9302de4@linaro.org>
- <20250724-pinctrl-gpio-pinfuncs-v3-12-af4db9302de4@linaro.org>
- <CAHp75Vc4vsJh_-GbP+YO50veoGoGtfAPL4tjcF+73uophfmnGw@mail.gmail.com>
- <CAMRc=Mc1ophkofB6MmtD4adBAi69C3JyovM-S9YD_y7UA3V1qA@mail.gmail.com>
- <CAHp75VcV=K-DfOGs0z64==nO+wQNoEB2Ngd2vc+dLYr3WLChjg@mail.gmail.com> <CAMRc=MeVOEFkdqf+SwQ-a=7ZPvpoerb4G_kn-aZgNLR3aTTUog@mail.gmail.com>
-In-Reply-To: <CAMRc=MeVOEFkdqf+SwQ-a=7ZPvpoerb4G_kn-aZgNLR3aTTUog@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 30 Jul 2025 15:30:04 +0200
-X-Gm-Features: Ac12FXyFKinLiyKOfaCHk8Jvp-MCK0UJT4pw-WeZSCiJVFAceB4TVkbq9UOtwlo
-Message-ID: <CAHp75Vd_5HVwzuiV17XKkzpEvzd8dzPDRRx5w-VqZnjuCz6m6A@mail.gmail.com>
-Subject: Re: [PATCH v3 12/15] pinctrl: allow to mark pin functions as
- requestable GPIOs
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Alexey Klimov <alexey.klimov@linaro.org>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, Sean Wang <sean.wang@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Paul Cercueil <paul@crapouillou.net>, Kees Cook <kees@kernel.org>, 
-	Andy Shevchenko <andy@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, NXP S32 Linux Team <s32@nxp.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Tony Lindgren <tony@atomide.com>, 
-	Haojian Zhuang <haojian.zhuang@linaro.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mips@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, imx@lists.linux.dev, 
-	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] rust: clk: use the type-state pattern
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20cc8581-0af2-47b3-9fdd-584ff0ef36ab@sedlak.dev>
+Date: Wed, 30 Jul 2025 10:30:12 -0300
+Cc: Benno Lossin <lossin@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ linux-clk@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
 Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jul 30, 2025 at 2:53=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
-> On Wed, Jul 30, 2025 at 2:50=E2=80=AFPM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Wed, Jul 30, 2025 at 11:54=E2=80=AFAM Bartosz Golaszewski <brgl@bgde=
-v.pl> wrote:
-> > > On Thu, Jul 24, 2025 at 2:22=E2=80=AFPM Andy Shevchenko
-> > > <andy.shevchenko@gmail.com> wrote:
-> > > >
-> > > > >  struct pinfunction {
-> > > > >         const char *name;
-> > > > >         const char * const *groups;
-> > > > >         size_t ngroups;
-> > > > > +       unsigned long flags;
-> > > >
-> > > > Not sure we need this. If the function is GPIO, pin control already
-> > > > knows about this. The pin muxing has gpio request / release callbac=
-ks
-> > > > that change the state. Why do we need an additional flag(s)?
-> > >
-> > > I'm not following, how does the pin controller know that the function
-> > > is GPIO exactly, other than by the bit set in this field?
-> >
-> > AFAICS the gpio_owner !=3D NULL means that. No need to have a duplicate
-> > of this information.
->
-> No, that's not at all what this series does... gpio_owner is the
-> consumer label of a pin used by the GPIOLIB framework. The flag I'm
-> introducing it telling the pinctrl core - before GPIOLIB is ever
-> involved - that *this pin can be requested as a GPIO by GPIOLIB*.
-
-The certain pin control driver may even not know about this. But even
-though the proposed change is an overkill. If it indeed needs to be
-done, the solution of valid_mask approach sounds to me much better. It
-will be a single bitmask per pin control to tell this.
-
-> It's
-> the other way around - without knowing this, for strict pinmuxers,
-> GPIOLIB would never be able to request this pin if it was muxed to a
-> function (even if the function is called "GPIO").
-
-I need to read the series again, but I truly believe we don't need
-this new field in the struct pinfunction.
+Message-Id: <01963F16-1956-4474-AF8D-68E9C5CB45BF@collabora.com>
+References: <20250729-clk-type-state-v1-1-896b53816f7b@collabora.com>
+ <fc26c393-5c4b-48a8-a7ac-12558f79b140@sedlak.dev>
+ <DBP8RFDV59PF.1OV46P0UYKOGM@kernel.org>
+ <07575756-58EA-4245-B837-AEC4DDCD0DB5@collabora.com>
+ <20cc8581-0af2-47b3-9fdd-584ff0ef36ab@sedlak.dev>
+To: Daniel Sedlak <daniel@sedlak.dev>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
 
 
---=20
-With Best Regards,
-Andy Shevchenko
+> On 30 Jul 2025, at 10:27, Daniel Sedlak <daniel@sedlak.dev> wrote:
+>=20
+>=20
+> On 7/30/25 2:59 PM, Daniel Almeida wrote:
+>> [=E2=80=A6]
+>>> We essentially would like to have a `#[sealed]` attribute that we =
+can
+>>> put on a trait to avoid the `mod private { pub trait Sealed }` =
+dance.
+>>> (so a trait that cannot be implemented outside of the module =
+declaring
+>>> it)
+>>>=20
+>>> ---
+>>> Cheers,
+>>> Benno
+>> This is not exactly what you said, but how about a declarative macro? =
+e.g.:
+>> macro_rules! sealed {
+>>     ($($ty:ident),* $(,)?) =3D> {
+>>         mod private {
+>>             pub trait Sealed {}
+>>             $(impl Sealed for super::$ty {})*
+>>         }
+>>         use private::Sealed;
+>>     };
+>> }
+>> sealed!(Unprepared, Prepared, Enabled)
+>> Note that I am just brainstorming the general idea here, I did not =
+test it yet.
+>=20
+> I think that API-wise it would be better to have a proc-macro =
+#[sealed], something similar to [1], as it may provide better error =
+messages, when used incorrectly. So the outcome could look like.
+>=20
+> #[sealed]
+> pub trait ClkState {
+> =E2=80=A6
+> }
+>=20
+> And then
+>=20
+> #[sealed]
+> impl ClkState for XXX {
+> =E2=80=A6
+> }
+>=20
+> If you are interested, I can try to look into that.
+>=20
+> Link: https://crates.io/crates/sealed [1]
+>=20
+> Thanks!
+> Daniel
+
+If you have the bandwidth, that would be nice indeed! :)
+
+=E2=80=94 Daniel
+
+
+
+
 
