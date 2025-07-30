@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-751417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F4052B16953
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:40:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4AF6B16954
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5BE116CD33
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:40:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55C137B4EFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 23:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60FFB2367B2;
-	Wed, 30 Jul 2025 23:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFCB239E88;
+	Wed, 30 Jul 2025 23:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FiPDKj8p"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mxbHuJwB"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF4E2367A3;
-	Wed, 30 Jul 2025 23:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F532367AB
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 23:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753918841; cv=none; b=ZnuZLkvmJnbJinoCYp/hhlkT7azCULMRdAWQ8R7u41ZXKV1cRFNcuWG6VgKpMZofUhWcAyV58VFAyGt2oWNUsZPO+5HbJqA34O/3yBRAbmBtRq52zfujghv82xhpfi0Q3hB7NjO2ZpDrcWsIuUVgiskGHuWNIOPPuCxw7CDh57U=
+	t=1753918849; cv=none; b=I1bj27IduqSqydG9UnEMBukmcLjDqSPxyBsRj/db8erJV5B5lVOjd+qQXrKFrDMsJt8aquQsqMjqUzjH81sOiGk8qEe7oFS2mL0GP/HG0Wkpjo7K9Q3B881g+AJaI9it9w0OM/AUAD4Dj7QiUu3pHHBKPPrjrQmfzWG0+1kywDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753918841; c=relaxed/simple;
-	bh=MfvAOrEMREnBy2TDLYttGKn6mlg56GMwqovDTbFfeN8=;
+	s=arc-20240116; t=1753918849; c=relaxed/simple;
+	bh=xQ1ekwyaAny+xsaD4PFLtl5nwzzTN8WV69sYffvh/HU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rT+YPSJDYpoDhh7Xl4bcJHO/4SlO9BCokWn0T6HIpvTDOFO8rp/WMEBtpXhlV4Hik8yj0U+u27lyjFP5T+ASNnQMAEP1LUq6ged+SuJPf14tIJfj5sWcO5qQn3kgW4nsydmH5gXVQouQ/VYKbTQDhp2Y+dIAcA4nGAY7HJ0Pido=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FiPDKj8p; arc=none smtp.client-ip=217.70.183.197
+	 Content-Type:Content-Disposition:In-Reply-To; b=V4y0Wn7WhKmVC9pDRmc/FiNCPcRBpwzgt5ynJDrXbANYX/Ln+j4ZcuRVER2dXBvCEHn3z9hRw7LexT2anXGnqTKFmhFRUBQD8dFcigTNgDWm1ReE+m3C76R1AC9f9I9oHAnI5SpdpHp+n1W7OOS97TsHpJ4oVmRCQ5CEBmoRYHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mxbHuJwB; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7E9A24328A;
-	Wed, 30 Jul 2025 23:40:36 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8645E1F68D;
+	Wed, 30 Jul 2025 23:40:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753918836;
+	t=1753918845;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2gSvoo+xeA/2kQRaK3UuSoEFac1ckG9fNOJ2Jo8dGuM=;
-	b=FiPDKj8p4lRJhZwJJCKYppDVNG8Z+82N2nzDROP2QzuBdIkR75kdz3S65VZzIZJKjrFOMS
-	+LezKvtLaf8p8UKT4xFnWhopcOvv631Ly4u4t3vnUU5FND6nVhop+wDftU44rLy3D0kpfe
-	gwnya0O7OM/H53cF6INxIrfM+nVXgBM7BQL+pUvsp7wNFijCUrpd3QKyVaiYn8Nqp+aFIG
-	AOpq8GSypyi27YXgIx1INIMeBvqEL1iJSkD7AtGPRg5ofHftzoH7NZGq+4SjRTYMFVagmP
-	+v9NmRtXk387jR5/uDe00do1fRqjyENNyYhEAeruJmnvHJh6/R/pa7UsaXaqKA==
-Date: Thu, 31 Jul 2025 01:40:36 +0200
+	bh=bR3JGxpKyku1jgrheb1S4khIcDg46stmRh2K5BKlf64=;
+	b=mxbHuJwBJf35OEJAIbOS6ZMU31IlF1Ipvs1fwvwHElAXPFfEHFQUN784gGTIxTgiWjL1M1
+	N2V7GVNv0J3cK9ZKjq2LKYUobssHWdw3G2bH0NuvAna61l0BtMBg9qOXDow8Lqaz67d+Aj
+	NAQN+fdIZPgZZRylKyglX56srZRe80MEIB/Yfp5QDMY5VjSzQhdZ/iWAI3LUSPbevxQWGb
+	X5r+dTn7PeSsWaDvdmut/AVTUT+3/v/nsVays72/a/9RKNL/8fU8t/XO2nmJMXI+w5Jmdv
+	J1/4ADzgqaLzacHCKPDS7uUEgBhhEHwJGJXS21MI3o1PRSPBO2FmNTovAkQMSw==
+Date: Thu, 31 Jul 2025 01:40:43 +0200
 From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-pm@vger.kernel.org, Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: (subset) [PATCH 00/80] treewide: Remove redundant
- pm_runtime_mark_last_busy() calls
-Message-ID: <175391871302.1768453.3711812427284825013.b4-ty@bootlin.com>
-References: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+To: frank.li@nxp.com, miquel.raynal@bootlin.com,
+	linux-i3c@lists.infradead.org,
+	Stanley Chu <stanley.chuys@gmail.com>
+Cc: linux-kernel@vger.kernel.org, tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com, yschu@nuvoton.com
+Subject: Re: [PATCH v3] i3c: master: svc: Fix npcm845 FIFO_EMPTY quirk
+Message-ID: <175391871301.1768453.9271887329370264388.b4-ty@bootlin.com>
+References: <20250730003719.1825593-1-yschu@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,32 +61,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250704075225.3212486-1-sakari.ailus@linux.intel.com>
+In-Reply-To: <20250730003719.1825593-1-yschu@nuvoton.com>
 X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelledvkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeijeefhfffkeejueehveeuveejvdelveejteduffehuedtffdufeejudffuedvtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdgumeeifeejtdemudgvfeefmehfledvleemhegvsgekmeduudegfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdgumeeifeejtdemudgvfeefmehfledvleemhegvsgekmeduudegfedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepgedprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehsrghkrghrihdrrghilhhusheslhhinhhugidrihhnthgvl
- hdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhg
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelledvjecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfitefpfffkpdcuggftfghnshhusghstghrihgsvgenuceurghilhhouhhtmecufedtudenucenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepieejfefhffekjeeuheevueevjedvleevjeetudffheeutdffudefjeduffeuvddtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddumegvtdgrmedvugemieefjedtmeduvgeffeemfhelvdelmeehvggskeemuddugeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvugemieefjedtmeduvgeffeemfhelvdelmeehvggskeemuddugeefpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeekpdhrtghpthhtohepfhhrrghnkhdrlhhisehngihprdgtohhmpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehlihhnuhigqdhifegtsehlihhsthhsrdhin
+ hhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhtrghnlhgvhidrtghhuhihshesghhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhmvghrrdhmrghimhhonhesnhhuvhhothhonhdrtghomhdprhgtphhtthhopehkfihlihhusehnuhhvohhtohhnrdgtohhmpdhrtghpthhtohephihstghhuhesnhhuvhhothhonhdrtghomh
 X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Fri, 04 Jul 2025 10:52:25 +0300, Sakari Ailus wrote:
-> Late last year I posted a set to switch to __pm_runtime_mark_last_busy()
-> and gradually get rid of explicit pm_runtime_mark_last_busy() calls in
-> drivers, embedding them in the appropriate pm_runtime_*autosuspend*()
-> calls. The overall feedback I got at the time was that this is an
-> unnecessary intermediate step, and removing the
-> pm_runtime_mark_last_busy() calls can be done after adding them to the
-> relevant Runtime PM autosuspend related functions. The latter part has
-> been done and is present in Rafael's tree at the moment, also see
-> <URL:https://lore.kernel.org/linux-pm/CAJZ5v0g7-8UWp6ATOy+=oGdxDaCnfKHBG_+kbiTr+VeuXZsUFQ@mail.gmail.com/>:
+On Wed, 30 Jul 2025 08:37:19 +0800, Stanley Chu wrote:
+> In a private write transfer, the driver pre-fills the FIFO to work around
+> the FIFO_EMPTY quirk. However, if an IBIWON event occurs, the hardware
+> emits a NACK and the driver initiates a retry. During the retry, driver
+> attempts to pre-fill the FIFO again if there is remaining data, but since
+> the FIFO is already full, this leads to data loss.
+> 
+> Check available space in FIFO to prevent overflow.
 > 
 > [...]
 
 Applied, thanks!
 
-[24/80] i3c: master: svc: Remove redundant pm_runtime_mark_last_busy() calls
-        https://git.kernel.org/abelloni/c/0c2ce4fba48c
-[25/80] i3c: dw: Remove redundant pm_runtime_mark_last_busy() calls
-        https://git.kernel.org/abelloni/c/5fa62d4ec49a
+[1/1] i3c: master: svc: Fix npcm845 FIFO_EMPTY quirk
+      https://git.kernel.org/abelloni/c/bc4a09d8e79c
 
 Best regards,
 
