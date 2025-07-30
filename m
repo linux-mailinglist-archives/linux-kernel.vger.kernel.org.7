@@ -1,114 +1,99 @@
-Return-Path: <linux-kernel+bounces-750779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-750780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F687B160F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:06:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C82ADB160FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 15:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298EC16E15A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:06:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E12B17A9DC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Jul 2025 13:06:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D577D296150;
-	Wed, 30 Jul 2025 13:06:21 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E9D298CBC;
+	Wed, 30 Jul 2025 13:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBHRoL/i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD53224898;
-	Wed, 30 Jul 2025 13:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236D8DDC1;
+	Wed, 30 Jul 2025 13:07:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753880781; cv=none; b=PWqFmvSmju65FpOib5utCF5EDPJIWYhOCEQuViZXlx83nzVgY+4m0/VaheMHNdR9Bh/k03Cxr44vEaQs+JQ5IybULov6CCRWfbU/f6yVe07CfRhlFpHy1Wi9yBcRJSK1aji/e8V7YISt7BIavUkHrJ8bkZ50npvX+XLEY4KyC+Y=
+	t=1753880848; cv=none; b=o4iiRCZT675aJ/3j8VhMPjMXHBWn6jb0vLPLzseAN/Uyu04pWOXipE1FvBrkx80fbj8XpK4m4WhtQ43r41DM4VlwgsACQbypMyqqWH5agSq93YSzWN5hNydQmpZgi4S18vh4J0uwpQPZ5XkveZtVs44yC0BtsfuEdDzzLPam1gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753880781; c=relaxed/simple;
-	bh=jK42f7rbDddqApZMNBx4yN+EyqOmwpVWL3zq1JEOfdE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RWh+TkEdPyV5oYruvcRRFVJVTdD0LPxpjmb1mao+rGIOkk8in4FI3IzM/V5BJe1q9T8+U74q+pbGff8v6LiWgLKLOfZslhM+5SbGc+lQQ4dU7Zg1yQDnn2vgDUrF5B/ce+06VpMA/S1i0LzHRqJyAx2OmcJfYgDL7MLNcfKTQgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from localhost (unknown [14.116.239.35])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1dc0b96c7;
-	Wed, 30 Jul 2025 21:06:06 +0800 (GMT+08:00)
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-To: miklos@szeredi.hu
-Cc: mszeredi@redhat.com,
-	amir73il@gmail.com,
-	linux-fsdevel@vger.kernel.org,
+	s=arc-20240116; t=1753880848; c=relaxed/simple;
+	bh=pi2a7GnrhCAqcsm+sfSbg+NpUqiSUzYvwlb+GLh/v0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Yw1f4V+AxJC6rApILW9Ozcd1PgxMqUT6WAkbAEXOP9gR60YnzzE9+spcyXgjCCnFzYQUKDovQ2CUFcWJJ0lCWzYB2WOsuSh7/RZ/9xZr5UTffp/0pW2EsfcI8LvlGvFjOjPuwL+zBMJ0XBHUo85/D4nw7vTJr8QkkR49B5SI/3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBHRoL/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86555C4CEE7;
+	Wed, 30 Jul 2025 13:07:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753880847;
+	bh=pi2a7GnrhCAqcsm+sfSbg+NpUqiSUzYvwlb+GLh/v0A=;
+	h=From:To:Cc:Subject:Date:From;
+	b=CBHRoL/icwQ6+Mnzy0gpLoncSiBBNfdVoReTQsgdMr7uWpY5SpiLhN5LjydwTPqhS
+	 gkoReMcZez/a8Y7ioc+6oPbNMjFK8yb7PI+GIk0MxRR3TXxdohex09/XLKVavKm5jA
+	 oAwgarUCyCu0XTnRnJWkloO16Zhf6BhYL9tYjTtGtakRoMCYpxF1mCC+uadNRHjRTG
+	 zSjh0vWLFgyBcveit5PvjiuqrMYfxW0idDa61w5ek9kNIlRAZKEjKm3X02H8cas8Nc
+	 /JMpBSIk44M12REke/StKsklFhnzRM++4Pmqpx4Q2bExGHiM3JePsKAPSzakzTL2D3
+	 Kle0SI7wP4qyQ==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	rust-for-linux@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Chunsheng Luo <luochunsheng@ustc.edu>
-Subject: [PATCH] fuse: remove unused 'inode' parameter in fuse_passthrough_open
-Date: Wed, 30 Jul 2025 21:06:03 +0800
-Message-ID: <20250730130604.4374-1-luochunsheng@ustc.edu>
-X-Mailer: git-send-email 2.43.0
+	patches@lists.linux.dev
+Subject: [PATCH 0/3] Fix broken `srctree/` links and warn about them
+Date: Wed, 30 Jul 2025 15:07:13 +0200
+Message-ID: <20250730130716.3278285-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a985b70a8a203a2kunm841eb85624d4d8
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHUxCVklJTEtOHkJPSB5CQlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKT1VKSk1VSUhCVUhOWVdZFhoPEhUdFFlBWUtVS1VLVUtZBg++
 
-The 'inode' parameter in fuse_passthrough_open() is never referenced
-in the function implementation.
+This fixes a handful of broken links and introduces a warning to
+prevent them from happening in the future.
 
-Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
----
- fs/fuse/fuse_i.h      | 4 +---
- fs/fuse/iomode.c      | 3 +--
- fs/fuse/passthrough.c | 4 +---
- 3 files changed, 3 insertions(+), 8 deletions(-)
+Relatedly, we could also perhaps check the other side of the links, but
+perhaps there are cases we want to customize. Alternatively, we could
+also in the future introduce custom syntax for these that avoids
+repetition or a fancier preprocessing step.
 
-diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index ec248d13c8bf..92c2932daea1 100644
---- a/fs/fuse/fuse_i.h
-+++ b/fs/fuse/fuse_i.h
-@@ -1538,9 +1538,7 @@ void fuse_backing_files_free(struct fuse_conn *fc);
- int fuse_backing_open(struct fuse_conn *fc, struct fuse_backing_map *map);
- int fuse_backing_close(struct fuse_conn *fc, int backing_id);
- 
--struct fuse_backing *fuse_passthrough_open(struct file *file,
--					   struct inode *inode,
--					   int backing_id);
-+struct fuse_backing *fuse_passthrough_open(struct file *file, int backing_id);
- void fuse_passthrough_release(struct fuse_file *ff, struct fuse_backing *fb);
- 
- static inline struct file *fuse_file_passthrough(struct fuse_file *ff)
-diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-index c99e285f3183..3728933188f3 100644
---- a/fs/fuse/iomode.c
-+++ b/fs/fuse/iomode.c
-@@ -177,8 +177,7 @@ static int fuse_file_passthrough_open(struct inode *inode, struct file *file)
- 	    (ff->open_flags & ~FOPEN_PASSTHROUGH_MASK))
- 		return -EINVAL;
- 
--	fb = fuse_passthrough_open(file, inode,
--				   ff->args->open_outarg.backing_id);
-+	fb = fuse_passthrough_open(file, ff->args->open_outarg.backing_id);
- 	if (IS_ERR(fb))
- 		return PTR_ERR(fb);
- 
-diff --git a/fs/fuse/passthrough.c b/fs/fuse/passthrough.c
-index 607ef735ad4a..0c8e36db41ba 100644
---- a/fs/fuse/passthrough.c
-+++ b/fs/fuse/passthrough.c
-@@ -301,9 +301,7 @@ int fuse_backing_close(struct fuse_conn *fc, int backing_id)
-  *
-  * Returns an fb object with elevated refcount to be stored in fuse inode.
-  */
--struct fuse_backing *fuse_passthrough_open(struct file *file,
--					   struct inode *inode,
--					   int backing_id)
-+struct fuse_backing *fuse_passthrough_open(struct file *file, int backing_id)
- {
- 	struct fuse_file *ff = file->private_data;
- 	struct fuse_conn *fc = ff->fm->fc;
--- 
-2.43.0
+Miguel Ojeda (3):
+  rust: block: fix `srctree/` links
+  rust: drm: fix `srctree/` links
+  rust: warn if `srctree/` links do not exist
 
+ rust/Makefile                    | 6 ++++++
+ rust/kernel/block/mq/gen_disk.rs | 2 +-
+ rust/kernel/drm/device.rs        | 2 +-
+ rust/kernel/drm/driver.rs        | 2 +-
+ rust/kernel/drm/file.rs          | 2 +-
+ rust/kernel/drm/gem/mod.rs       | 2 +-
+ rust/kernel/drm/ioctl.rs         | 2 +-
+ 7 files changed, 12 insertions(+), 6 deletions(-)
+
+--
+2.50.1
 
