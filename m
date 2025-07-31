@@ -1,240 +1,303 @@
-Return-Path: <linux-kernel+bounces-752255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621B5B1730C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:18:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8601B17316
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8865B581779
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30905840D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E5D13C9A6;
-	Thu, 31 Jul 2025 14:18:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8640E130A54;
+	Thu, 31 Jul 2025 14:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5esVpAGz"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2041.outbound.protection.outlook.com [40.107.92.41])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KrwX3gXf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10AE878C91;
-	Thu, 31 Jul 2025 14:17:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.41
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753971479; cv=fail; b=cjiJeLqNVzHmqfAn+lNhe/S01UPFf4zvJbDre+G8dN94n82Azhr4cw4AAvnoMIs8fNDuew8Gep0AQYTqxH38DwxudyOwsLBgL536HJOcS2W/DHbFDVy+e38kHann2uPKA6JCSLiK9lN8It9ikZZFwPHkL/LgwCv2TyAzFjYsczU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753971479; c=relaxed/simple;
-	bh=atoNN2wA9CU/LU5N73jCplAuIRN0WcrIo3w0t+N+Pg4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MAV61UY9hB1wmYfMkGls0UsfNHglRDsNcOQT0ORcvgKllj8C6m2tduvtYZ2lBYRFqnS6qmfvwSSNaHwDsCn3aF/WWsbdNW8SRnFTGSa6sw0vCpbrciP46Ege5yZ15+wPGnzAYs5hBDWrTGsxVita3n5w2sjPufNrjFteCcNzCK0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5esVpAGz; arc=fail smtp.client-ip=40.107.92.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wdsbp0K9pnHUE6+qWthk9zG7JTELuVxmkd+OoVW0t0AB/pH81XYetQuxg9n7TjSGozXG6wBa4Bs3jvXmPUNlbEVmN1Wjk3ILwtMM9+1tE6rr3ViIuZ50D/VWMLI3xAt+EDxDmpWOnAAPpTdijbxdgJU5mB6zCVrE2dFSKDrdu1KPOnP/KV+XOYsM8IE0F7Cnwfsrnw2SieX+JP67cwPBmdOKdEWihlRQ5DS5BF3rBfdde8EY+tWnep+m+76fGrQuHbI0Pg8bepS5MVB5rwAViJiEFsdW9BPRXpt+1dyN4fc49Y6XZPhu37c6VP5PPkduRxJiefh6oXC0AdwT4BVvoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Mqff3Wu4ulzZ9IADFSqUkiAnR5cAHVAsepHDR1vsuGs=;
- b=qnQM+8JRQ4ig1IWmpLD9780h6pNJM1nDMpU6Lqb28a6yIsNAmI1sAMA3WGV1Z0zZdrZq8q+2UYNsnacLU68PmdAPQr/kyIMJ8048PMj2wnOt+4KnooAPZEGtuOwIwjp6XS+LWcAObnD2aEqDKOFX1oivWVo3U5mlNFoBcx6NY0SxHgdeYmCOYxN+3wAd1HixPqaEnlE1IQOhlBTBNzlEOpQlx1lETMTwaIgHptSaTACAgUFn2Zxt4UvKqGVo2Lh7TU2JcMmGSbYbWWwP+CyfnDk1ZKQbz1Anz36/Q1XYKvMNPYk0+eZZuU104LzbJJ+r2qNdlZ3qgRTt2rXVPJgKxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Mqff3Wu4ulzZ9IADFSqUkiAnR5cAHVAsepHDR1vsuGs=;
- b=5esVpAGzj214+KEE2VcsVWgS0V2N3wBtszHrC5RMHIoPuscIo31tG8dzeDebaBTKNY0j2p3xL605BXGd+mPEsG2GU2FwRdTeesR3m2f6Z4+hYbtuPbjH9leCYLWkyAwzDj2ELePokSGYXWfhCQQMjfpkdJwbY3Xcyj1S9yThzLU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc) by IA0PR12MB7628.namprd12.prod.outlook.com
- (2603:10b6:208:436::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.12; Thu, 31 Jul
- 2025 14:17:55 +0000
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16%7]) with mapi id 15.20.8989.011; Thu, 31 Jul 2025
- 14:17:48 +0000
-Message-ID: <85069db7-63bb-40a2-bd03-0fe7e2e82d4f@amd.com>
-Date: Thu, 31 Jul 2025 09:17:36 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v16 00/34] x86,fs/resctrl: Support AMD Assignable
- Bandwidth Monitoring Counters (ABMC)
-To: Reinette Chatre <reinette.chatre@intel.com>,
- Babu Moger <babu.moger@amd.com>, corbet@lwn.net, tony.luck@intel.com,
- james.morse@arm.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: Dave.Martin@arm.com, x86@kernel.org, hpa@zytor.com,
- akpm@linux-foundation.org, paulmck@kernel.org, rostedt@goodmis.org,
- Neeraj.Upadhyay@amd.com, david@redhat.com, arnd@arndb.de, fvdl@google.com,
- seanjc@google.com, jpoimboe@kernel.org, pawan.kumar.gupta@linux.intel.com,
- xin@zytor.com, manali.shukla@amd.com, tao1.su@linux.intel.com,
- sohil.mehta@intel.com, kai.huang@intel.com, xiaoyao.li@intel.com,
- peterz@infradead.org, xin3.li@intel.com, kan.liang@linux.intel.com,
- mario.limonciello@amd.com, thomas.lendacky@amd.com, perry.yuan@amd.com,
- gautham.shenoy@amd.com, chang.seok.bae@intel.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, peternewman@google.com, eranian@google.com
-References: <cover.1753467772.git.babu.moger@amd.com>
- <a259ff37-9e3e-4b4f-970f-04610c35f4cf@intel.com>
- <1a916a0a-66da-455b-9b09-4eae42e6eb1c@amd.com>
- <eaa518e8-2864-4b6a-91a0-4b92b5acc777@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <bmoger@amd.com>
-In-Reply-To: <eaa518e8-2864-4b6a-91a0-4b92b5acc777@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SN6PR01CA0035.prod.exchangelabs.com (2603:10b6:805:b6::48)
- To IA0PPF9A76BB3A6.namprd12.prod.outlook.com (2603:10b6:20f:fc04::bdc)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9F52F24
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753971563; cv=none; b=eJak/cy+VP2VSfwJAZwOsb1fsU36d5UYK+Ld49YixWfZeKaXrI/wjH2/W1E1vDRjXtpKQUAcWFoauj3jm4UFiouST9mXxW0ybtZDudvoefsfhTuX7asu8+RGkFDnLcpXbkDi2iPR+rmnwSTvp7yi+1KxC7vZ6f/Nf3ToydFA3x0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753971563; c=relaxed/simple;
+	bh=Qw4pFHrzOdxadPlOIEaNsBko7KznwCW6BqAbKVS6rLg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fku9A1C3iAz6rkIUsCA4CtbWJcv9YTeDuyRG82VrHy9O1013pnxEVNPMUNc4Y8Cf0FmDfQCBcTTPoE240guKQJPJe9/7aFNoLEvayH4jZcEJ+NaJx0VFYcoPu7pugM+9XVzBrwuIFSMTP1Nym554m6k3uypCH2tmPP1uOCS73GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KrwX3gXf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VDf4f8021637
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:19:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/SNOf+4G4zyCZV6YFfxz7XUorkDY17ov7WJ2xEOK/BA=; b=KrwX3gXfqJhv1dUm
+	l9T/1v1Hdec0nMGMmfNqC3FcNmuZzw+JCUoHXDCzwwjsP7qFa4SFwRLXz87uyP7e
+	bDQnRn0YYetO1e3l1uwe5gD4pNePvuA8q5njCclZSn45opp4YpJIvShYH6vXoQgt
+	xyDXhrkLLz6YnogY+/lcKAhWMD9UA/0LOFg9PhevZVGlZ1SPaWko2Yqs9st49RiR
+	wzWn6tjZM4kS5oURlz30KB1w6t0SFhRE7lLPWdnH2N5opIYfHia/tRo8SD6k5+iQ
+	QOq6LM5NKDE5gIhAN4eJ5sW511MNVwaLcGpNN3gXyFLFCepYLAElL6jNEWV/gg9Z
+	3KRgNQ==
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcrg83f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:19:20 +0000 (GMT)
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-41b357bd679so404091b6e.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:19:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753971559; x=1754576359;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/SNOf+4G4zyCZV6YFfxz7XUorkDY17ov7WJ2xEOK/BA=;
+        b=TnxNYZ+mG/nMUxBjZLNLT2Z+99qkRi9IFMCdHjQ0QGXczrTE+B+/SlSGhPZyijJvrf
+         yBgguRAEr5XHPI0b0fyKELPr8w9sWe4t0sIdHaMA4j5sAtsDYwcdCkaLfcQDa+nZAYzi
+         FuMWB9YEF/rVedP/Z4umGfhe1urUxyuTI42ijN2mgVK0SlXo0iG+zPZWDlTnmSW8CBSS
+         P7aWjZ7sDdLwDigj5YgeWeLD5VEXVoJMYxTbGuX/EZWdwKS6sl+6bK5p5XdkJ4E5S8xE
+         dxbzJ9OP8cpR+7RwdLRDbHdRqSJcnMzG9n5CiGYEaXcr7XIoKljIntrSzWNjbQukPkSX
+         k3Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCXeJL8wwGdSk0hDoJTifABa/xwY1J8Xhp9QuKcTWiDGQeSmokOW4lVc61iki+XqQZ0KLM403s0p28i8Eac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKs8QiV/V3udmtLmHVKuRAQnAQiQPWwMFUTsT7/5zYQHNpaEvu
+	pG9MlRBDYcCSBLJeOeOQc8xyI6o9TMQUj3quwjXaKyuQ5OHzuCFobgvR6zA7FI+SSSJz20Qi8WN
+	CZCuETTx+IKQyTTDrvGyH3QOKj6uC1hXjGOEcY6cgooSGVBHOdn5Y1/mGJ4KfHT6a9JI=
+X-Gm-Gg: ASbGncv4dXG1MzPDje4TrDswGv0eYUjpBJP8eh5BAio67cR8u8h2gfgpU5vdwoO64To
+	ChaqgxQeYECvWfZ4VDWwdOnw9b2+B7yCRBu3QAILVU0+0Hqo7LyGQWL29EUV9egZvjaLM3C9dp5
+	LqfHY86+jf3mHJ6OAaywEjGtuqZXFZ5wspq1AzUnex0TKIrUKF6WnicodQpFjW3EOK2T0Tl3HJA
+	5dw7VJtZid11J28RdItfZzaDI2gcAmEqPuSGPnVJZoCXSorJjk/EdrlgdqfXcabPMaUILOjMwh9
+	MXK9QBSzMtbRUUERANgrwgOJ3IJNe3QgobQyikAuxJK+mx6H5lHk0rLqFzT1w77Qzr2OMn8+6AG
+	XDx8CztVOs0sOtg==
+X-Received: by 2002:a05:6808:3998:b0:40b:4230:387f with SMTP id 5614622812f47-4319bfee52bmr4796538b6e.32.1753971559322;
+        Thu, 31 Jul 2025 07:19:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHhExdeYZh9bGg37wkHjZqMBXQhg07o4VOQ+HBvIRZQY6XYxO2AVM5PEjkgZ/Xq6HBYLOpDRg==
+X-Received: by 2002:a05:6808:3998:b0:40b:4230:387f with SMTP id 5614622812f47-4319bfee52bmr4796485b6e.32.1753971558771;
+        Thu, 31 Jul 2025 07:19:18 -0700 (PDT)
+Received: from [10.148.43.238] (87-95-32-33.bb.dnainternet.fi. [87.95.32.33])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332382a6ac3sm2618651fa.22.2025.07.31.07.19.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 07:19:17 -0700 (PDT)
+Message-ID: <1f910d65-de34-424d-adf9-7669c22afeaa@oss.qualcomm.com>
+Date: Thu, 31 Jul 2025 17:19:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|IA0PR12MB7628:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66783869-c6be-4d2d-a902-08ddd03d06e7
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZUZhaTJrNGtzeitVd2tjMW51SnBjYStKeEx3R0VFOTEvUGRkb1dUVXp0eGxa?=
- =?utf-8?B?SDhrWkx0YTlXV0ZKN0dOTU9UY3g0OGg1bzcvemdUUTJPWWU1UHgxZkI5TTB5?=
- =?utf-8?B?ejhZa3NaSW56R2JvS3hNeHlvUXhDT1ZBeElDLzd3ZHpVZXgvekN5dklpNkZ2?=
- =?utf-8?B?QTJsMisyMFFJVTNhdW1ySlRlREJXVGMvY0c5a1FjcSt2ckN0MGJTQVFIRTBK?=
- =?utf-8?B?Z01PVmZDanA4UUFUSzQ5Q0FHV2Y3YnNjNmJjNGQ5Vm9NdHRKRHYvczh5L1Qw?=
- =?utf-8?B?ditBU1dqYVdmT0hjbzBjNkRORVFjQlBBOGhjQkx1WkNJNUM0cW9ZMTdnaSs5?=
- =?utf-8?B?cENTZFpsSWhxNUVPblBBNGoxa3FhSTdhU3JSQUVISlhuU2NnNHpidEZUNkZK?=
- =?utf-8?B?dkltZ2dVdU1SWlI1T1o2NUcrL3ZYVkNOc3RlZ2ZHTmRJc21TeDVNQXdqTFlI?=
- =?utf-8?B?bnVqZFI3SExET3dnbFdvN1NSYUhwTHI5bUFWT3VKU2FZeXFSZ29Zdjlrc3hk?=
- =?utf-8?B?eWJWd0orT21zMlR0UlBWU1ZOWXJNMDNFby9MT3kybFFHNzVBOEQwVVpVek5L?=
- =?utf-8?B?MGFJVE84Yjk1SVh2MGRwZThrdHNIT096WmdnTzZZVzFYRHpxZm40a2RWYzR6?=
- =?utf-8?B?MkMvTkdZWmRNa0JManNteFEvR0lUVkw3RnI0eGRob0svaENzenBUbjNjOUVB?=
- =?utf-8?B?YkZxTXpFeEdXU1lRaUNKT0ZjUG1KTmVoamFYMVNGOFBHVkRIcWQxa3lRZlQz?=
- =?utf-8?B?Z3ZqOHR1MUlPTjNLMnZuQ25FeEljVWU5dXJuQlhVd3RpUG9kbm5uV2l2L05w?=
- =?utf-8?B?RXFib3hyaTBwNnVLNHhObldBcVRacWVXK2diMGpJZjFhVTN1RE1GK3pBNUM3?=
- =?utf-8?B?UFdEUkJrWlZ0SkxmQ1lYWEtwdkxKS2J3Ym9LQlVEWGV2RVhjVVJ6YjBzL1lZ?=
- =?utf-8?B?cTJYc1lwOXZKZVNSTC9qRVF5YUVweS9iSzZsby9FMkZUbnFDZFBQYTZYQmJV?=
- =?utf-8?B?Qk0zM2dwc2VZWHFBV0VBZWNYQWErSXFMRGNYNm5OUWszMVh5Yy9WamJ3Qk5J?=
- =?utf-8?B?emNNcE9mdnYwakYySkhRUmRsRDIyMHA2NDg4bzdZWEJyWW9qR3hFcElPV1Z3?=
- =?utf-8?B?NnptOEM0MnpiZ3NTaTMzWWl3QlVSRFdjdVVKenVUb3ppQnNqbys1bmppQlJo?=
- =?utf-8?B?d1Q3MVpwbUpPRXZtZzQ4YnBlMHlQUnBRRXVEZnRYYUFod01tZklYWW54akZ3?=
- =?utf-8?B?bHJ4aE9mZGY3ZHBEUmdQQUNPK1dhQWdKVUYrc3orMjJRSWNmSWNWWWk4ZkhX?=
- =?utf-8?B?VDkwVmdUb3JQRWR0Sm5RQ0pvVDdHd1JveERZTXF4czhRWnl3eHdaMHRkK3Jh?=
- =?utf-8?B?eEt3aC9WVlUwdjlCVzhUcnl4cFFDTndkSHRJZ0EwTEZYdGNPUXg2Ym1mcXI0?=
- =?utf-8?B?anNxUk9rYWpyM3dUNlVQWFVKNmptOEZld2t5TnYyR2xLR3JqeVVrM1BmQTcv?=
- =?utf-8?B?a1pqcDhNWHFNY1ZrSTRzaVlUaXBLVVlQWng2WUpvTUMwWjFkVGpmUTNlVnBj?=
- =?utf-8?B?Yi9POUJNZytMTVVHYXd5N2RDQ3E5OXUrSWZrMUJMRkR4aUlOZ1A3VkRrdDBz?=
- =?utf-8?B?WXFpWCs0T1VwVGNZZE1QeVI3SEdTNXAwc1RNT01zWE95Z0h0Wmk2YkRvdits?=
- =?utf-8?B?eU9JcGtrUEF3RkUveDFxOXZvWm9aUzdCWThnemcwc3RCeGNTbUZIa241YkNn?=
- =?utf-8?B?WnNMcGRVYlZnY3pZeVNUbHNucjVsQ2hkMnhOaW9UcHJwM3MwM3laS0JWYlJN?=
- =?utf-8?B?RFdBVXQ4ejJiNGRSaWt4VE5rMG9TVmlWVWwyRklDRGQrbGZFVmU4SmVmMjIw?=
- =?utf-8?B?aVpKbVpxaGhNbU9GSVdDNDdJYkZxM2lpU2pNc0JSRERTSi94UWZMYk1vVjdW?=
- =?utf-8?Q?yPNH+436UcY=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Ti9ZYXQ0aEk4V01rQmFERGplRW9QdlRWZC9PQ3VZVGVVNXpGU1NFL3h0Ui8y?=
- =?utf-8?B?OEhxMllEUUVjYWtzR3JHVWpQK05GR21SaWJKU3dGZEQ4ZGRoL0xKN3lCbFlk?=
- =?utf-8?B?NmVDWDV1TFlZODlpMkJOak0wQ2x0aTJLeFFQUGZVUFlXVm5MRW1FOXFzcjR4?=
- =?utf-8?B?Ri9Ud1RUeno0TWRNcVBnVXVkdmtmYnZOTW5IUlFLMExkdmp2U3d3TndKZWZt?=
- =?utf-8?B?dFJSUlUzRERsekVIbDJtdXVsNDRTVGZuYkxpVHpoNHl6dDA4ZS9hRmk0b3Jy?=
- =?utf-8?B?L0J0UGxRRkVhSm0xSk0rZE82dW42ZHdCTG44YkVnSEZOY3doK2tGakwvREt1?=
- =?utf-8?B?ZE5PT1lmZVBjR1BQOFFkb2ZsaFdtcGR2cnNlTXhnOVhvOEFVeEN3ZDlpa0Y0?=
- =?utf-8?B?dGZ2Nlg3UmZGMWlxdDZQNit2OTFtVGx6V3NBSUQ2SzZGMTR2QStSOG5WZHZa?=
- =?utf-8?B?cjlVUjY1WU1kOVBGdzkwMFgyNDkwK3lic3o3ck9UdG85cTlJV0kwaCtza1Vp?=
- =?utf-8?B?Ykx6M3JBekdyVTZINXpjdnpKV0I2aHFDVEtJem5UUENIb3o2UnZla2FqK3Aw?=
- =?utf-8?B?cTA4eSttQlFWM0dtZmVWK2p3L3JNSmdreGhoQXVqRkFPUkV5QnkzZkY0R0Zw?=
- =?utf-8?B?SitzL1ZPSzJjQzUxbkUxRkdYcTFPdkNqMVlaS0N2Qm5BeWdpSXptMWUvZVc0?=
- =?utf-8?B?RXhLWCtSQUZQcUFjUUJKd25mR2ZvTjZjZ25UNm9iTmZYdk1qTW1udThVd25D?=
- =?utf-8?B?b29nVm1NcTBpV3IxR2Vlc2cwMVQwYmlFNFlqVFVzclZtOE16N3l6UysvR1pQ?=
- =?utf-8?B?NDRZWlBnWjZaR2VlVFYyMit2YnZIQTMrSUFSRTVuQW1GYU16UkpDTlJ0a01M?=
- =?utf-8?B?ZnoyNEtiNXZUY3NBSDhqNWI2VkRGSjBIcVozYWo3d1ZmZ3lSKzUwK2V3QjV0?=
- =?utf-8?B?Y08xYmlQVURwaHo4dmhvOXYrUjVGQzd3S3BzRVpxKzlQK0g5TkJRakhZOFBM?=
- =?utf-8?B?c0Z4OGtRbVd4NzBJek8rZGg3SFJxbHBOcnNRNW9BbDZZcUFxMUljR2F3b0Jq?=
- =?utf-8?B?SFRNNUlJNXVoZ25vZnZFdnJENGpSWnpnY0xyV1l5MFl5dURYdmxiMm92anhV?=
- =?utf-8?B?ZEMwd2RRN1RPUnptWEMrT3pDdTZkcDhhK1VpcTdrOXlFN2xReXB6aVVqTHF0?=
- =?utf-8?B?bzlxMTF5aDdidEpSSHphZ1N5U2kwVW5Walk2dTNJRVhFY3ZxR29yeGVMR05I?=
- =?utf-8?B?Rmc3ZW5KaTRQK0hRdDlGdUljb2M4bENQNW9NWE1mYUZxSmhtenl1YVplNHpt?=
- =?utf-8?B?RExEYUJhdE9Ma1ZwMHRtRHkxcjdnRVBHR29pNDUxa05rQ3NkV2tYYUtWK1Fn?=
- =?utf-8?B?U0N3N0I2STEyb0Q5ZUdMYzVjWFNoVWVxNnFQMjRtRytHRVpONElXd3RCMnFZ?=
- =?utf-8?B?VVFMa2ppaERacm0vb3hYekw0Zmpyd0ZoK2VSODlmTEZqSUd4STlkTDhvV2NG?=
- =?utf-8?B?VzY3VmpVTlhVQjlkbmszVHFRanJiaXBaZ3JGZklNUHlyOEQ0NUVnV1AyekJF?=
- =?utf-8?B?N2NwekNBdGlxZllsOGtpVGZZU3VyMmNydENvMzZubWQzVEFOYlg1T0lQaFhw?=
- =?utf-8?B?TTBCdmRlYzgwcC96TTh2MW9PWE9oOUdnQ1E4QVlLeW1sc0hoNXF3Qnh0RW1s?=
- =?utf-8?B?MlNiK3R0V1BQejQvTHhRZ0g1VVU4bURZVlhOcmIxeXFHSy91UjNYdWZabjJO?=
- =?utf-8?B?N0dhOVFNQXM1TFpKYmpsWGlCMnZmVXZsL1Zub2R4Q0EvZWtWMThpZ3E0S2xn?=
- =?utf-8?B?ZU1OVmJLRU02YWRwVldjbXNlTHhQSHRtVjY3VTU5RzB0UktiL09nV3BrWWl2?=
- =?utf-8?B?TWZ5ZTgzbkZhVWFXUTFBRDl2YUM2eXFjajUvV1ZFVkVTdit2bm8wMWpDK2Nu?=
- =?utf-8?B?UHZsNWN4eHdpS05ac3FuTmE0YkZkeDY4b2tzRWEySk00TGNKYWcybmhoT2Mz?=
- =?utf-8?B?YkRoaE1KNFJENndiTDVqYXQ5REtUUnYwTGxGWUdMUEo0bnZuRHNrajczajFN?=
- =?utf-8?B?ZFRhakNlN2prQlA1QmxvbFVSNk14UG9QNHJIR3VhbExDc1BEK1VTRDVRSUNZ?=
- =?utf-8?Q?P3svvx/FJVBNNl9JOpq362+Yo?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66783869-c6be-4d2d-a902-08ddd03d06e7
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 14:17:48.5530
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qYSLYPSB3WSmogAhhYduC9uqNv+90FGU/YbN1f9ncdBMJx/KiT6LvEftZI3L8xyD
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7628
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/2] mmc: sdhci-msm: Rectify DLL programming sequence
+ for SDCC
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sachin Gupta <quic_sachgupt@quicinc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+ <ulf.hansson@linaro.org>, linux-arm-msm@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
+        quic_bhaskarv@quicinc.com, quic_mapa@quicinc.com,
+        quic_nitirawa@quicinc.com, quic_sartgarg@quicinc.com
+References: <20241218091057.15625-1-quic_sachgupt@quicinc.com>
+ <20241218091057.15625-3-quic_sachgupt@quicinc.com>
+ <a2mnkliubpdryxdwsd33kccvnlb4fnyzik5ywxw4xhnimwdwsm@oxe34zogzfot>
+ <bb60a145-1e8f-4004-b266-9f26a11440b9@quicinc.com>
+ <otfof56qvqxyjaq6onor2f3egrt57h2xazncias72qnn4xjgz5@2aj2pyj5xmyl>
+ <a885b32c-c59f-4fb6-b2cb-7955d2d3ae69@quicinc.com>
+ <mpuyg4ndd7xvfpwd6oubn7zmzkuienyrig5pmkrd4badlpebvf@h6weyimpcfv2>
+ <769268c2-9a7f-4b6e-aabd-a6cf5a744d5b@quicinc.com>
+ <d5ykzwuk3wrwycol3wpeontfp5t7h7vfrfcxnmxei3qs74xsp7@ihtzne5wbytf>
+ <81323b02-a7be-847a-b973-ca0cdb906558@quicinc.com>
+ <p7o2ykmpghx5jqagpkhd2rfqgizcdagn366rltyn4gmbmnmpje@vcygaqcaowkn>
+ <82d11cf6-bfed-9b73-c697-c692d1c7e02d@quicinc.com>
+Content-Language: en-US
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+In-Reply-To: <82d11cf6-bfed-9b73-c697-c692d1c7e02d@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDA5NyBTYWx0ZWRfX5Inx42J+O+23
+ 2o1jvu9RVnCCOh3V7LKChBOinp1vP1EHp2MQGtLph6f021thslXgsJBUPqO29Z4T8v8TsD9DZD6
+ 6rYgLvkiYqoXmFZ1yrkVuizkCh/varYD82uLgjeW4QK+kbcTxKiupd7d64Zo1RzCar1UUEr7mPd
+ YWiLdaw+v7zOQxEnEf9uPnlPFWzI24bvI05rB/oC0bA/12E1ddUsPXd8ZTgml4JVuYp4/Bt5UIk
+ qpGKw/b4lq4iPwFPb+TnKiZumdRVoD1QQUWAJsvrJLDxfG43AmlDL3D9axj34g2QEpvoxMPhrHY
+ swkPV7nrXvnL/NUwmMMYTdOZJndIbOYx/qo/vYH2BRao0fYPQ8vEIKDTiQZ1rCDLTg0HvnZRsWK
+ F7wSevJsiiSEYDtToRI+ERZf/qCHwIlOHfNMzETb/5sVRJhNFwh8soPPWHtMWr0n7wLFc2bI
+X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=688b7b68 cx=c_pps
+ a=yymyAM/LQ7lj/HqAiIiKTw==:117 a=H8T8cKqSsIHj2cBiWKmgXw==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=y10v7vMIaVi46rMawBgA:9
+ a=QEXdDO2ut3YA:10 a=efpaJB4zofY2dbm2aIRb:22
+X-Proofpoint-GUID: gDZlXdy0vol6Oz_Amhlmhx3oGrSPzsvo
+X-Proofpoint-ORIG-GUID: gDZlXdy0vol6Oz_Amhlmhx3oGrSPzsvo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-31_02,2025-07-31_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015
+ spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507310097
 
-Hi Reinette,
-
-On 7/30/2025 6:57 PM, Reinette Chatre wrote:
-> Hi Babu,
+On 31/07/2025 14:46, Ram Prakash Gupta wrote:
 > 
-> On 7/30/25 4:31 PM, Moger, Babu wrote:
->> Hi Reinette,,
->>
->> On 7/30/2025 2:47 PM, Reinette Chatre wrote:
->>> Hi Babu,
->>>
->>> On 7/25/25 11:29 AM, Babu Moger wrote:
->>>> i. Change the event configuration for mbm_local_bytes.
+> On 7/30/2025 11:26 PM, Dmitry Baryshkov wrote:
+>> On Wed, Jul 23, 2025 at 03:43:37PM +0530, Ram Prakash Gupta wrote:
+>>> On 1/22/2025 3:20 PM, Dmitry Baryshkov wrote:
+>>>> On Wed, Jan 22, 2025 at 02:57:59PM +0530, Sachin Gupta wrote:
+>>>>> On 1/7/2025 8:38 PM, Dmitry Baryshkov wrote:
+>>>>>> On Tue, Jan 07, 2025 at 11:13:32AM +0530, Sachin Gupta wrote:
+>>>>>>> On 12/27/2024 12:23 AM, Dmitry Baryshkov wrote:
+>>>>>>>> On Thu, Dec 26, 2024 at 11:22:40AM +0530, Sachin Gupta wrote:
+>>>>>>>>> On 12/19/2024 11:24 AM, Dmitry Baryshkov wrote:
+>>>>>>>>>> On Wed, Dec 18, 2024 at 02:40:57PM +0530, Sachin Gupta wrote:
+>>>>>>>>>>> +
+>>>>>>>>>>> +static unsigned int sdhci_msm_get_clk_rate(struct sdhci_host *host, u32 req_clk)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>>>>>>>>> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>>>>>>>>>>> +	struct clk *core_clk = msm_host->bulk_clks[0].clk;
+>>>>>>>>>>> +	unsigned int sup_clk;
+>>>>>>>>>>> +
+>>>>>>>>>>> +	if (req_clk < sdhci_msm_get_min_clock(host))
+>>>>>>>>>>> +		return sdhci_msm_get_min_clock(host);
+>>>>>>>>>>> +
+>>>>>>>>>>> +	sup_clk = clk_round_rate(core_clk, clk_get_rate(core_clk));
+>>>>>>>>>>> +
+>>>>>>>>>>> +	if (host->clock != msm_host->clk_rate)
+>>>>>>>>>>> +		sup_clk = sup_clk / 2;
+>>>>>>>>>>> +
+>>>>>>>>>>> +	return sup_clk;
+>>>>>>>>>> Why?
+>>>>>>>>> Sorry, I did not understand your question. Can you please explain in detail.
+>>>>>>>> Please explain the maths. You get the rate from the clock, then you
+>>>>>>>> round it, but it is the rate that has just been returned, so there
+>>>>>>>> should be no need to round it. And after that there a division by two
+>>>>>>>> for some reason. So I've asked for an explanation for that code.
+>>>>>>>>
+>>>>>>> clk_round_rate is used in case of over clocking issue we can round it to the
+>>>>>>> usable frequency.
+>>>>>> If it is a frequency _returned_ by the clock driver, why do you need to
+>>>>>> round it? It sounds like that freq should be usable anyway.
+>>>>>>
+>>>>> I agree, rounding will be taken care by clock driver. Will remove in my next
+>>>>> patch.
+>>>>>
+>>>>>>> Divide by 2 is used as for HS400 the tuning happens in
+>>>>>>> HS200 mode only so to update the frequency to 192 Mhz.
+>>>>>> Again, is it really 192 MHz? Or 19.2 MHz?
+>>>>>> Also if it is for HS400, then shouldn't /2 be limited to that mode?
+>>>>>>
+>>>>> Yes, It is 192 MHz.
+>>>> Good, thanks for the confirmation.
 >>>>
->>>>      # echo "local_reads, local_non_temporal_writes, local_reads_slow_memory, remote_reads" >
->>>>      /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_local_bytes/event_filter
->>>>
->>>>      # cat /sys/fs/resctrl/info/L3_MON/counter_configs/mbm_local_bytes/event_filter
->>>>      local_reads,local_non_temporal_writes,local_reads_slow_memory,remote_reads
+>>>>> As part of eMMC Init, driver will try to init with the best mode supported
+>>>>> by controller and device. In this case it is HS400 mode, But as part of
+>>>>> HS400 mode, we perform Tuning in HS200 mode only where we need to configure
+>>>>> half of the clock.
+>>>> This isn't an answer to the question. Let me rephrase it for you: if the
+>>>> /2 is only used for HS400, why should it be attempted in all other
+>>>> modes? Please limit the /2 just to HS400.
+>>> Hi Dmitry,
 >>>
->>> Above are some more "counter_configs" stragglers.
+>>> like updated earlier by Sachin, HS400 tuning happens in HS200 mode, so if
+>>> we try to use "ios->timing == MMC_TIMING_MMC_HS400" that wont help, as at
+>>> this stage timing can be MMC_TIMING_MMC_HS200/MMC_TIMING_MMC_HS400 for
+>>> hs200 tuning and hs400 selection. In this case we must divide clk by 2
+>>> to get 192MHz and we find this as host->clock wont be equal to
+>>> msm_host->clk_rate.
+>> What are host->clock and msm_host->clk_rate at this point?
+>> What is the host->flags value? See sdhci_msm_hc_select_mode().
+> 
+> There are 2 paths which are traced to this function when card initializes
+> in HS400 mode, please consider below call stack in 2 paths
+> 
+> sdhci_msm_configure_dll
+> sdhci_msm_dll_config
+> sdhci_msm_execute_tuning
+> mmc_execute_tuning
+> mmc_init_card
+> _mmc_resume
+> mmc_runtime_resume
+> 
+> with values of host->clock as 200000000 & msm_host-clk_rate as 400000000
+
+Please check the rates explicitly in the code rather than just checking 
+that they are not equal.
+
+> and host->flags as 0x90c6.
+> 
+> and
+> 
+> sdhci_msm_configure_dll
+> sdhci_msm_dll_config
+> sdhci_msm_set_uhs_signaling
+> sdhci_set_ios
+> mmc_set_clock
+> mmc_set_bus_speed
+> mmc_select_hs400
+> mmc_init_card
+> _mmc_resume
+> mmc_runtime_resume
+> 
+> with values of host->clock as 200000000 & msm_host-clk_rate as 400000000
+> and host->flags as 0x90c6 which are same as 1st.
+> 
+> Now if card is initialized in HS200 mode only below is the call stack
+> 
+> sdhci_msm_configure_dll
+> sdhci_msm_dll_config
+> sdhci_msm_execute_tuning
+> mmc_execute_tuning
+> mmc_init_card
+> _mmc_resume
+> mmc_runtime_resume
+> 
+> with values of host->clock as 200000000 & msm_host-clk_rate as 200000000
+> and host->flags as 0x90c6.
+> 
+> now if you see the host->flags value, its same across the modes, and if
+> I am getting it right from the pointed out function
+> sdhci_msm_hc_select_mode(), your suggestion seems to be using the check
+> host->flags & SDHCI_HS400_TUNING which is bit[13], but in above dumped
+> host->flags SDHCI_HS400_TUNING bit is not set where we are using the /2.
+> 
+> and the reason is, this bit is getting cleared in sdhci_msm_execute_tuning()
+> before sdhci_msm_dll_config() call.
+> 
+> so this /2, is eventually called only for HS400 mode.
+> 
+> Thanks,
+> Ram
+> 
 >>
->> Yea. Sure. Missed that.
+>>> Now if we go for only HS200 mode supported card, there
+>>> the supported clock value would be 192Mhz itself and we need to pass
+>>> clk freq as 192MHz itself, hence division by 2 wont be needed, that is
+>>> achieved there as host->clock would be equal to msm_host->clk_rate. Hence
+>>> no other check is needed here.
+>> Please think about the cause, not about the symptom. Clocks being
+>> unequal is a result of some other checks being performed by the driver.
+>> Please use those checks too.
 >>
+>>> sorry for it took time to update as I was gathering all this data.
+>> 6 months? Well, that's a nice time to "gather all this data".
+> 
+> Took it up from sachin last month but still its a long gap.
+> Thanks for helping revive.
+> 
+>>
+>>> since Sachin have already pushed patchset #3, and if this explanation
+>>> helps, let me know if we can continue on patchset #3.
 >>>
->>> Also, while considering our exchange in [1], I encountered quite a few functions doing
->>> counter management work for which I believe monitor.c would be more appropriate. Centralizing
->>> MBM counter management code to monitor.c was something that you planned for this version
->>> so I may be missing why you decided to keep some of these functions in rdtgroup.c? I
->>> highlighted these functions as I noticed them.
+>>> Thanks,
+>>> Ram
 >>>
->>
->> I looked at them. Most of the functions you mentioned are directly referenced in res_common_files[] (show or write) and some of them are even named as rdtgroup_<>. So, was not sure about moving them.
-> 
-> If you prefer a precedent you can compare with rdtgroup_schemata_write()/rdtgroup_schemata_show()
-> that is directly referenced in res_common_files[] while the implementation can be found in
-> ctrlmondata.c that is intended to contain the "Cache allocation code".
-> 
-> I assumed we agreed on this since I specifically highlighted the topic of the handlers in [1] and you
-> responded to referring to the handler event_filter_show() and mentioned that you plan to consider the
-> others. This version thus looks different from what I thought we agreed on :/
 
-Looks like I misunderstood few things here.  Will take care of it in 
-next revision.
 
-Thanks
-Babu
-
-> 
->> Sure, I will move them one by one to monitor.c
-> 
-> [1] https://lore.kernel.org/lkml/0fa9a12b-e900-4ceb-b59c-e653ec3db0ca@intel.com/
-> 
-
+-- 
+With best wishes
+Dmitry
 
