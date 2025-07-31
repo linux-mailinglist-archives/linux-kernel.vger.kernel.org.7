@@ -1,218 +1,274 @@
-Return-Path: <linux-kernel+bounces-751538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1629EB16AAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:08:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D874B16AB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5162818C871D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:08:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13161176067
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87F223B63D;
-	Thu, 31 Jul 2025 03:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DD723B633;
+	Thu, 31 Jul 2025 03:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OFWReJVy"
-Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013047.outbound.protection.outlook.com [40.107.44.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i/60mbN9"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF0C22A4EE;
-	Thu, 31 Jul 2025 03:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753931290; cv=fail; b=HtJXuysVmi1iNaLb77vXS3Hf0NFUBc7UBTdbFc5CvkHmK+F+xCoEF1Is0LR0x+frJ0KJYrAOwjf+QOR/mU8QTwJXuhge6rx7tSmSn1il4tmgbY65U36rCZttNOKJcE+u4KcAKTwCB56b62jw7rFd3HqjOHQuRc2qwj8fpsEuId8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753931290; c=relaxed/simple;
-	bh=R4cfA3hyzsUxC/BC3xBo46djaQ+rSHsb5xAe+Qeg3so=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=KGEUrOcxFqdY57aShLNqcR2O2Bq2loDi0HRupLOuGXFy1yXRnpiCJNOhxMyzPr5kY35kPemVBRk3WNiYs38WaB6LuIbZJ07AQ2iQvd+c+b7GPKglJhVMDW86Ukkus/CBBJAfZ4K4+D8DeVfq7tqqAMEQ45btBmwGNqbx7pRvwOo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OFWReJVy; arc=fail smtp.client-ip=40.107.44.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=URBDWTk37CurAg/bQyt37nWWzYAcHWSHLN879kx0xKPXoclMrfwi/vIqpOjBBtnkh+VgJh6Q0wN6DjFe0GYDi9pjq6pV9MsKKfMW6JzKLDC/RmlQJgLegQP6ypA/zviF0eue8tEhKLdhDVum2GfrEFTikPZ+GLuCAtzWOMHajP7BI69fsQZ0pQE88rjDcaT8deJ7RnxyAGzFQNuCvZ3rbEucdWMfxY5co7TidQ1cvHLSfnjaFr5XYvu9eQoVcvXUdQbPjMTrs9UvQrt1yNO0FEwGTAPKNk/bh1SomU4vpr0C93NA3m/lHUEtH8fL2X9knVEagfQ3M0ArjNQS4yOCMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zCRl16/9wiZ18n8n1k/udUfiW/YzMHEBJA4hYyizW5w=;
- b=a8CZS0sx/X8o9FnGtK3Rt8aO9Prt2RkFL2oVjX1hCRUtxnsqC9RoN8v9eGLmQHQqZpysSU+XqkuX9LYwjG6g+GilySkzKMwYFO/lpcTAlzjsW+m8vpsIvbQwOlrsRRiNW7Qh+Gle6W4KxeGfz7FrDqy6wRVd8LKzQI5mVHmUUDUyO9lkTl/fnJDkjHK5gkvpMwtnXORJSd/vNq7DfAxN+EpkjBjx5vyItHe08oDrrOwk3Cipl7ny3B2Ia2PuZ5+E7+aGg7/4FJUrAQPXibTkFFT9LseLp2sdt69UfQbBzKCTgo7ItWGG5XU2fZAA7GkOmbexVL2ti6GUsiWFR8qiLg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zCRl16/9wiZ18n8n1k/udUfiW/YzMHEBJA4hYyizW5w=;
- b=OFWReJVyQchnnlW16mpK0BTSwuZWp8z+QB/RIRis36lTHunvG2i6CdXv15o7EmSohyyct/pzI/vveixm+QAFPgsP3abfeCkPn5f6yzBbQVl4Wb5xZG4V/fVgVTc5Z8e/JepYTesiDLFyXD7oMMK2mNObqjLSpb1KV4bU8R0XV910sQzWU5GwAmsk5JIK4nCNKmllonLWf5oH35LyxRKCCzdxj+uwsdpU9wFJ6KAFWikDcZI2S6QRgIKocrmGB6htG8aDXH6f/43Ni+vARsxohg1ZyS/mmc/f3j8NkHiaCXlMqRW03/u4vsB+1Eqg5R7YRb7LpDt3lAgrpSemqoUmGw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEYPR06MB8068.apcprd06.prod.outlook.com (2603:1096:101:2d4::11)
- by KL1PR06MB6649.apcprd06.prod.outlook.com (2603:1096:820:fc::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.13; Thu, 31 Jul
- 2025 03:08:01 +0000
-Received: from SEYPR06MB8068.apcprd06.prod.outlook.com
- ([fe80::e524:973f:e6ef:299b]) by SEYPR06MB8068.apcprd06.prod.outlook.com
- ([fe80::e524:973f:e6ef:299b%6]) with mapi id 15.20.8989.011; Thu, 31 Jul 2025
- 03:08:01 +0000
-Message-ID: <c80a1b5d-c577-4216-9ebb-00a4cecbdde1@vivo.com>
-Date: Thu, 31 Jul 2025 11:07:56 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/1] genirq/devres: Add dev_err_probe() in
- devm_request_threaded_irq() and devm_request_any_context_irq()
-To: Thomas Gleixner <tglx@linutronix.de>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
- miquel.raynal@bootlin.com, Jonathan.Cameron@Huawei.com,
- u.kleine-koenig@pengutronix.de, angeg.delregno@collabora.com,
- krzk@kernel.org, a.fatoum@pengutronix.de, frank.li@vivo.com
-References: <20250730062554.269151-1-panchuang@vivo.com>
- <20250730062554.269151-2-panchuang@vivo.com>
- <2afd89be-713e-4075-b91b-36ec7fb6072d@wanadoo.fr> <87ms8lio7i.ffs@tglx>
-From: PanChuang <panchuang@vivo.com>
-In-Reply-To: <87ms8lio7i.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR02CA0116.apcprd02.prod.outlook.com
- (2603:1096:4:92::32) To SEYPR06MB8068.apcprd06.prod.outlook.com
- (2603:1096:101:2d4::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F384374F1
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753931457; cv=none; b=MT/p4aAuildBQ6gkjfWYXWKm+XeMIwzgfiG8a3yKPa58ZU9P/2RV2v7Fj9szuF19Uc+U9RRgx64HKe4IMx7+g3cYcYhx4SvwLiwSfxGOVDCJY2ByuYw5ChyyZu0RJLE2q3bYr7eF9xM9ufFXqn4paagltqAJqfP7rV3GcxsVYZA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753931457; c=relaxed/simple;
+	bh=DIM3U/viUk7et9FK4/5wZRJ741E/C+ZgyDud3Xa0d+8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IngHrDJoBlCB02DtSTQMG8NVDuSb+qKr8dv3QgBNu+efCsim0gx9yRzBBQetseYaXU2Ccl3dU3sfSbs3Z0eD0/FR++Ib9ZwdJtCwh8Gu3yl7MbCEww6/0tConGPV9p8YFBv4F4pKqi1PgwAD/u5bwBAL+j7NUgzZjh98Wb6QGtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=i/60mbN9; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5390fce74a8so195151e0c.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:10:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753931453; x=1754536253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IQz3EwDsCOo1XFmvxHoa4HIcyhVHPzzMG2oMGGNImxA=;
+        b=i/60mbN9KAiBXMeC3ZJHbvLzcalVVSH/StByGr52gIESE/NRy3pbHSyPsGnsc7n4y8
+         62R/589S8n/vwPa6vTz5lz0O2fIwDJtRmIAfCTjuZ1PwsLML5tdFJW+9eRSkOyqW8dsz
+         0KOAQGf3pHY/iqtJG2KH0UBC8QW2auyUxKA/M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753931453; x=1754536253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IQz3EwDsCOo1XFmvxHoa4HIcyhVHPzzMG2oMGGNImxA=;
+        b=dd83Zml/A3hXpaLFc3vT30TPNcmw22c27qS0s+mqLDF/RhmWf1GTJ5bDGOorVGB2Az
+         Vi/VggGJMKlT+m42dQwljJoVDTFOng7VwaQFYIC1k25eWAVOkvr08HmDKr5L6UmCefUO
+         gk+YnhAgxRQIp613b2fmjYxBpVUAF/CynvkHg/jMqjWhDve5AIQvQM+n1MKkMoG0BKGm
+         OAYdDusqkLFmigDV59K1xlOGwl7w87IaE/MRIKGsRfn1KCWsZy1Pg+W5osxolWDqTG6V
+         aYQ4YKpVcfEUkjvgG7hj/SMjwYm16YbbHH3hzzJesY9HBQyQEiqJ41mwEeOkDOnK9Q20
+         MFEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXzVHNPMtBg3fRZuiB3FVwtcheEwiN8Wzj967M0oiQdSMen6PI8bIaMHuckrfviqgX2bFm5Nc60Rpwdio=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA1H8mfi0ugngQFEnONaa+Ine2s4BteAmQqTI0SoQpggidjhDF
+	BH5obezR0s5Gx1vYi4wqYGn84jvZ8wYmZP82gEXcAlzfn1FZbiSsqsH8jKRiUgBSixkV5ZKnMOp
+	pVo4=
+X-Gm-Gg: ASbGncu/JiMWY7L/05sMq8Tnyc7wguVJ7+gw5w9y7CJq8jGvqWEm1JmUXzh1rb1Zvnu
+	ewmkcEM3rhUYF3mJ1eZTj7bzPSxwSIMtgCoygRpeb7SD2AmlACO+xFOPUSLfFOhRi5yrCF+6WOQ
+	F4bgOownY4/sDZkCkzLicM+31JW/GEOAG2pWKUJ/k4s58LikTRQxxAtIxzXePO/OcOw89UraAt2
+	EMQvNftyz1QnuFOkVnY9f9DtRyQffCvF1m83oAEjFdO8xX/SpUmTvaOFy0rQA7tbNj/+RI1Pd9z
+	zGzEUaS8KIMSqmvSq1TRB+Wk9QCUePi10PqO/VzbjvBdd4dKuTW7U8tJ+npbnvLSIDkRGKxLDgm
+	nuHzBRVyNaaflsZ99wTwxTcrr1PvRlfdXM5nTp7Z8H52MYgoj1qUew6I9PuPseXkaspBQ
+X-Google-Smtp-Source: AGHT+IGT8B49r1DsjyMGSrhKlWbY5dQzNZ0yI89nmhDOfRJ+SEWtSyd3erM8cflOsya3QkTbqc8YsA==
+X-Received: by 2002:a05:6122:8ce:b0:531:2f9f:8026 with SMTP id 71dfb90a1353d-5391ce9632dmr3555164e0c.1.1753931452987;
+        Wed, 30 Jul 2025 20:10:52 -0700 (PDT)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88d8f3f0b11sm180818241.14.2025.07.30.20.10.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 20:10:52 -0700 (PDT)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4fbed2d9e61so190986137.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:10:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUcnXSY3x5FW/Xd4lTkem4Bvardl5FNY4tOb6pDk9sSx3Hb8wEkoPElyqdgQs/6U4/2dW4Tsry+cLNLPUI=@vger.kernel.org
+X-Received: by 2002:a05:6102:3e86:b0:4f9:d929:8558 with SMTP id
+ ada2fe7eead31-4fbe7f5a8ecmr3674144137.10.1753931451474; Wed, 30 Jul 2025
+ 20:10:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEYPR06MB8068:EE_|KL1PR06MB6649:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0e7c27c3-483a-4d67-4d40-08ddcfdf759c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TzBWK25tZjlVT3BISGlYMGNSZm9YWHJSVWI4NlZTTlhPUU1LcHlKTG90N2VX?=
- =?utf-8?B?aWp5MEFZK0g2TUNKQTR3UjdqVmRFREorY0VEVnB4VGFTdERPQ3h3VFVGTERT?=
- =?utf-8?B?QWx3R01UT3QzbHlob2pDS1o4VEhqQnR1TXlDenIwaDY0NnE3QUU0eHRUTjFY?=
- =?utf-8?B?UnU3WkJ5dy8rd3BNRm9kRGZrLzhZWE1lWDU5NDJvRFpKcTNYSmN1dktnWkdj?=
- =?utf-8?B?SVExRWE2M2JGNXUyVzZBdkNMdFF0dVNHN05TbUlSZkRrbUdoS2liVURoU0lo?=
- =?utf-8?B?eXRNNXhTQ3lHbGxmSVYzZjh3cUpVOGFpOHVralNrZXFSLytrRStMSHJxZ1Ft?=
- =?utf-8?B?b20rT2pnWnpOUTNVNHJEa3dLTWlzc1BBa1pvV0RlVVpIRDFQUUVMTHJ1U1Zi?=
- =?utf-8?B?SVFOWkVYYjcxczlpYXYwMXpWcWlsNDZzVmpuK1ByVHNKeExxVkg0dlI2WDBG?=
- =?utf-8?B?SHBiLzFMVXhVZFViVGVlUTRpTUFiQklXUWRsdWNqcFdQMVdrcWl1T21sT1M3?=
- =?utf-8?B?WTRtamM5aWhCWGU4VXN3RlB1UG13QkRPeXZrQ2NFd3lIc01aaDliT3IrSFYr?=
- =?utf-8?B?ZzJ3ZWtjaEdaYk13c29xVkJWOFpIN1VnMmd6UEdnU1kvYW1mdk1KRlhLM2lL?=
- =?utf-8?B?TGpHNXNhMGFuVzFBMG93WWZQSTU4d1B6QW05U3BYU3FiTmJZSkRSOUNDNHRW?=
- =?utf-8?B?MDhEUFpQbTl2R0NMamtoWGN6RytDbk5ZK1p3bTdWakJXdlZqOTQ5ZVFaczly?=
- =?utf-8?B?YXdpQmZKMXhsekFmaXh4aDU4OHU4cCs1bEV0TUxNR2orQS91MmRxQUgwQWNU?=
- =?utf-8?B?d1BoaXJWYWU3alhzUlFJaE1wWlQvbUZDOEZ0WjM1aWxieVYrZVVkcENXRjUr?=
- =?utf-8?B?YktqU0UxREE2RmtPVG1zUDkxMlNpU3FWRlJqOG1ERnVORjl2RzZnVk5JdjVU?=
- =?utf-8?B?eDRiVkF2T0U0bndSS3EvRlBFY3k1c0t4UFhqdUtyVm1WTXJueUI5Y1lMc2x1?=
- =?utf-8?B?RTFqNFdvSUJjRU9hM3lHenk5dlRUSnVOUTNnYWNUY1QxVFVldEluZVFtd1FO?=
- =?utf-8?B?eTNhMTRyayt2TjE1WkU2WGNrOGlSOCs3OCtjdHFkN2plLzJoODdxakt2UWs3?=
- =?utf-8?B?TlpZMkVoNUdDcVNJMCtYazlhdVdDUkc0VFdtRDdPemNjWVRuQnRST1ZzeFlP?=
- =?utf-8?B?TlU5TzNjT09jU0RucW9MUVhsRVphWVpGbHJsSkJMUlh0Z25rZnVqcUc0bWd3?=
- =?utf-8?B?L3RjeUZ1YjZYdzZmdytLRGNoa1hUNDF6Y2FsanZxbDFKbjN0dTZ5YXZMZk8x?=
- =?utf-8?B?M2VvRFE2ZlJJbDFUMnd3Ym5HUjlwK0xnTVp3NGNqdk5TVUFUR2ZDZW94NEEv?=
- =?utf-8?B?ZFZQakZYcmV3V3dTSm4vOWhMZ0ZWaG5uRG1nN2w1NzZRL0JrMHEzN1YzOHNQ?=
- =?utf-8?B?akY2YmJGZ1dOTWFHd2FzbW9WbE9ZUndaY0pPRkNkY1ozZUdJWXFnbXRlbzA0?=
- =?utf-8?B?RXNJSlVLVGZhdFVILzJTWktIMm1KVWhYR1BpTGV2a2RQbHNIbDJzdzVvWmo3?=
- =?utf-8?B?cE51cXh2SzF1Tk1Kc3lvbmpaYVgzZ09hYi9YWDZmVklGalM5Z2FVdFpwSXRp?=
- =?utf-8?B?eTZpT3FOSXkwdEo2bVJ1MmFudjJLQ2FFUGUrbUlSdU1ReXEwUWRLTGVpVC9S?=
- =?utf-8?B?UlRQaVpsWW0zWXl5SnBzVFpjUGlmcEJXN2l5Rkc2aVVTcHpqcmcvVVpJU0RQ?=
- =?utf-8?B?eVRyRWxaUTM5MEJ5a1luMVNCZ1lqYzhLdDNuWDVYYWpORlJZaE5FNDdYSlhF?=
- =?utf-8?B?cXdaTEM2Y1VVakZwWmJaaGl1U241VmVwSTc2RnFTa2llOFVKQVVPd2xxS253?=
- =?utf-8?B?RHlCYTd6bEQ2RzlYRVJUZUlUbVVmSEk0OWhGVVg4amY1RVZiOTg5bEc2K0FE?=
- =?utf-8?Q?i/cw8Rh9WbU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB8068.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UVhUbzMrQVc1em1TdVVkMEFhUTFYaWQ0a21zQXF3MzZiUkZEMzFCbXRSRkJE?=
- =?utf-8?B?a0FncTBtVy9EbnVBN3FGR0FyRWRuZDBEVWhwU0dMZ0dxMUIzdGFPOGJ6K0cy?=
- =?utf-8?B?VWdNbzNUVzNHZFRqZFAwcUN3OUxISlZEbktWaUcwYnBrZGtBeXVjSmgvU1FY?=
- =?utf-8?B?d3BqOWFyWWFEamVFdEZhaWl3UEVSK1dtU203Z0JDaFNCMmlTdW1KdG9MN3N2?=
- =?utf-8?B?V3VGQXVKOEpFSVR6YVZnTFdMS2xRQnBvUHdrS051dSsvZlRyT2Z2VWZISXdh?=
- =?utf-8?B?a05idS8yMktGY1JhZEZGa1dKVXBLUE5RU2FDVnliaS8wYmFaY2Jvb01aTjlH?=
- =?utf-8?B?dlB4VkxnVStVenkwbjRWQmJOajYvQktYTzgxbmlHZ3NXTEw4VFQwWFQySFht?=
- =?utf-8?B?Sk1QRnhjRzNoZ1hTazhmWUNoWEsweE95YkEwVTVSejZ6RHFHVHNKWWM5L05Q?=
- =?utf-8?B?SGxSSTRzVnpZa1dyTXlEVVROcnFWNHljczNic21rSld2LzZnL0ovTTBweTNz?=
- =?utf-8?B?a2QxZVAwS1JQc3BnZFMwcklFd1ZWWEI0Z2ZtQXE4ajNzSTdxU205SGxTS08v?=
- =?utf-8?B?b3pMODMrOUFlZGgxMDJ6T0xMK1pXbHVhWWNCcmRSdkdFODRDNW96cC9rNnF6?=
- =?utf-8?B?dWJmdEhxUmd4TlNQWjNMWDl0OXdLWE8wVUtxWTEzcURET2hXM0xCcEVNS2N6?=
- =?utf-8?B?dWlRR2g5VEJ6bVFGSXg1T0tHRGZiam5mQ3JlTUhFVUFrWG0xTzc0YmFLS2NS?=
- =?utf-8?B?YjFBaGcxazIzT1pqTCsvdTZOektMSTNZNTRGY1U1c29HL080NktBd3dQdjBn?=
- =?utf-8?B?N2h1aEVGUm95dTUvMFRxTzZsL2tvMC9kamRPSmwrUnkxMjA2R1Y4amRRT0VO?=
- =?utf-8?B?VTF2M2p5cnJOQzd4My9wbnVBMGtkcHFOVUNwYzE5ckRYVEJuYVJjcWV4MFZy?=
- =?utf-8?B?ZmZMRUkybHBZVnFWOUQwNGMydUFyNEVnNHRJUjZLYy80d3k3V3lyZlZHUU8r?=
- =?utf-8?B?MkxWWGxZckxZMkcyTTFDOGNVL25vRnpZbTdEMlRzdk1tMEY4Mnk2dUw1MDE4?=
- =?utf-8?B?QUh3U3o0TXAraWlFRGZwNENlTC9kZTdTQVFFaC94WU10dVRFallrTTdNOGhO?=
- =?utf-8?B?L2pvVUp2SjhlclU3V3BJTkI5Qk1KcG8xa1F0bVA2b0Z2QTQyUDdURGllMTFU?=
- =?utf-8?B?RTZCU2JlZFBObEhpQVlzSHJMS2tlMTdTdjBObFRtOER5UTZlNDBLanVMbmhQ?=
- =?utf-8?B?TlRLOGxQM1ZPREFZamwvQUwraVJtbjQrUUVjMFFJWUZXZkJKTlJ1S3hoUVZp?=
- =?utf-8?B?ZE9zNjZlK2tBNDFud1Z2aW5hRlFCZldsSVVhS2JtMWtoTWJFZVJPMERZdXRh?=
- =?utf-8?B?bWpNSjgxMHhUclVxMmo3bUd3NmZSK0g4L0k2T242WEo2NEM0T2kwUU41aUFF?=
- =?utf-8?B?NWVRc0daTUZ2aytndVZLdkozM2wxWnA4dGk1LzNZMzM0S0J4UzlhRkplbE5i?=
- =?utf-8?B?ZHdZQlA5dFI4aDd3TnQzL0tIeU9hTWw5V25YNmhSbEdVUS9leW93Sm1ETGsy?=
- =?utf-8?B?ZVNYakdmSkJYWDM0UHR5WWZUbWNSNE9tSHRzTmZpdGlRTnFFS3pocVZITEp0?=
- =?utf-8?B?ZnF2ZVpiMVVVMnlxMGdOc05MWXRKVWliQ2YyRXpGaUNhbnBSRCs3TGI3RUxk?=
- =?utf-8?B?Vk5KRkdRejVEaVY1MDNmRlFtRzF0cCtrbkNWU0wzYmdENkFFTTVYWDk2OUQ5?=
- =?utf-8?B?cVJFckRHNmxoeTllb2h1QXNnQUxSZ1dlRU9idlJ6NUtLbFladDdkc01FUzJh?=
- =?utf-8?B?WXcwNldFYU51UnBKVU4vNklEWTNpRzA3TlNPeHNhdTFXbmJYalRKOVFXaTVG?=
- =?utf-8?B?LzNhYno2dDhrRGVEVXBLK0RUZ0JyVDlXbEVaSVFXUHZ2cXNJZGcvY2RQNENt?=
- =?utf-8?B?NU92aUhXQ2pHTnJUaE5mVFhtYVg3WVBrTUNnMWs0aWdENm1ZZmt6azl4NEhW?=
- =?utf-8?B?TzVKZGRHSExsR1RidlE0SG1aODBTSGljcUxCR1BpTThac2JTR3Q4Y2loZExI?=
- =?utf-8?B?ekpkRitiWVBpdHhEbitQL2hyNUZ3TWVPdWZacjVvSWlDWVdENUtnTFcyRUt4?=
- =?utf-8?Q?dx7Zfk/QC/ax4Vne33szuo3rM?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0e7c27c3-483a-4d67-4d40-08ddcfdf759c
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB8068.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 03:08:01.5503
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tO4+ykeDw+1Hpd1fmJXUrET1sS1DTUgq1K0ZAO8qqJt5XNMRa2z0ZO0/C87ofDufcTcYwZu86BghV5IG921LNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6649
+References: <20250730152128.311109-1-laura.nao@collabora.com> <20250730152128.311109-3-laura.nao@collabora.com>
+In-Reply-To: <20250730152128.311109-3-laura.nao@collabora.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Thu, 31 Jul 2025 11:10:15 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nhEiWmFkVMVGqg97TqXQqLhP0KZkQvq+F=k_hS_Jg297Q@mail.gmail.com>
+X-Gm-Features: Ac12FXxQNf_MHWgJFTLhQCBFRAD1HLcfHVxkjg6vNoUDqC6XlmkmVeEw5sZ-QQw
+Message-ID: <CAC=S1nhEiWmFkVMVGqg97TqXQqLhP0KZkQvq+F=k_hS_Jg297Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/9] thermal/drivers/mediatek/lvts: Make number of
+ calibration offsets configurable
+To: Laura Nao <laura.nao@collabora.com>
+Cc: srini@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	rafael@kernel.org, daniel.lezcano@linaro.org, rui.zhang@intel.com, 
+	lukasz.luba@arm.com, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, andrew-ct.chen@mediatek.com, 
+	kernel@collabora.com, nfraprado@collabora.com, arnd@arndb.de, 
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, u.kleine-koenig@baylibre.com, 
+	linux-arm-kernel@lists.infradead.org, wenst@chromium.org, 
+	linux-mediatek@lists.infradead.org, bchihi@baylibre.com, 
+	colin.i.king@gmail.com, lala.lin@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, tglx
-
-在 2025/7/31 1:27, Thomas Gleixner 写道:
->>   From my PoV, it would look more logical to have the same logic in
->> devm_request_threaded_irq() and in devm_request_any_context_irq().
-> As they print the same thing the right thing to do is:
+On Wed, Jul 30, 2025 at 11:30=E2=80=AFPM Laura Nao <laura.nao@collabora.com=
+> wrote:
 >
->          int rc = __devm_request_any_context_irq(....);
+> MT8196/MT6991 use 2-byte eFuse calibration data, whereas other SoCs
+> supported by the driver rely on 3 bytes. Make the number of calibration
+> bytes per sensor configurable, enabling support for SoCs with varying
+> calibration formats.
 >
->          return devm_request_result(dev, rc, irq, handler, NULL, devname);
+> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+
+Reviewed-by: Fei Shao <fshao@chromium.org>
+
+> ---
+>  drivers/thermal/mediatek/lvts_thermal.c | 32 +++++++++++++++++--------
+>  1 file changed, 22 insertions(+), 10 deletions(-)
 >
-> and in devm_request_threaded_irq() invoke it with:
+> diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/me=
+diatek/lvts_thermal.c
+> index f4d1e66d7db9..05aa8895ccce 100644
+> --- a/drivers/thermal/mediatek/lvts_thermal.c
+> +++ b/drivers/thermal/mediatek/lvts_thermal.c
+> @@ -96,12 +96,14 @@
 >
->          return devm_request_result(dev, rc, irq, handler, thread_fn, devname);
+>  #define LVTS_MINIMUM_THRESHOLD         20000
 >
-> and let that function return rc if (rc >= 0), which handles both cases.
-
-Could you please confirm if this implementation aligns with your vision?
-
-I'm happy to refine it further based on your guidance.
-
- >        int rc = __devm_request_any_context_irq(dev, irq, handler, 
-irqflags,
- >                                                devname, dev_id);
- >-       if (rc < 0) {
- >-               return dev_err_probe(dev, rc, "request_irq(%u) %ps %s\n",
- >-                                    irq, handler, devname ? : "");
- >-       }
- >+       if (rc >= 0)
- >+               return rc;
- >
- >-       return rc;
- >+       return dev_err_probe(dev, rc, "request_irq(%u) %ps %s\n",
- >+                            irq, handler, devname ? : "");
-  >}
-
-
-Thanks,
-
-     Pan Chuang
-
+> +#define LVTS_MAX_CAL_OFFSETS           3
+> +
+>  static int golden_temp =3D LVTS_GOLDEN_TEMP_DEFAULT;
+>  static int golden_temp_offset;
+>
+>  struct lvts_sensor_data {
+>         int dt_id;
+> -       u8 cal_offsets[3];
+> +       u8 cal_offsets[LVTS_MAX_CAL_OFFSETS];
+>  };
+>
+>  struct lvts_ctrl_data {
+> @@ -127,6 +129,7 @@ struct lvts_data {
+>         const struct lvts_ctrl_data *lvts_ctrl;
+>         const u32 *conn_cmd;
+>         const u32 *init_cmd;
+> +       int num_cal_offsets;
+>         int num_lvts_ctrl;
+>         int num_conn_cmd;
+>         int num_init_cmd;
+> @@ -711,7 +714,7 @@ static int lvts_calibration_init(struct device *dev, =
+struct lvts_ctrl *lvts_ctrl
+>                                         u8 *efuse_calibration,
+>                                         size_t calib_len)
+>  {
+> -       int i;
+> +       int i, j;
+>         u32 gt;
+>
+>         /* A zero value for gt means that device has invalid efuse data *=
+/
+> @@ -720,17 +723,18 @@ static int lvts_calibration_init(struct device *dev=
+, struct lvts_ctrl *lvts_ctrl
+>         lvts_for_each_valid_sensor(i, lvts_ctrl_data) {
+>                 const struct lvts_sensor_data *sensor =3D
+>                                         &lvts_ctrl_data->lvts_sensor[i];
+> +               u32 calib =3D 0;
+>
+> -               if (sensor->cal_offsets[0] >=3D calib_len ||
+> -                   sensor->cal_offsets[1] >=3D calib_len ||
+> -                   sensor->cal_offsets[2] >=3D calib_len)
+> -                       return -EINVAL;
+> +               for (j =3D 0; j < lvts_ctrl->lvts_data->num_cal_offsets; =
+j++) {
+> +                       u8 offset =3D sensor->cal_offsets[j];
+> +
+> +                       if (offset >=3D calib_len)
+> +                               return -EINVAL;
+> +                       calib |=3D efuse_calibration[offset] << (8 * j);
+> +               }
+>
+>                 if (gt) {
+> -                       lvts_ctrl->calibration[i] =3D
+> -                               (efuse_calibration[sensor->cal_offsets[0]=
+] << 0) +
+> -                               (efuse_calibration[sensor->cal_offsets[1]=
+] << 8) +
+> -                               (efuse_calibration[sensor->cal_offsets[2]=
+] << 16);
+> +                       lvts_ctrl->calibration[i] =3D calib;
+>                 } else if (lvts_ctrl->lvts_data->def_calibration) {
+>                         lvts_ctrl->calibration[i] =3D lvts_ctrl->lvts_dat=
+a->def_calibration;
+>                 } else {
+> @@ -1763,6 +1767,7 @@ static const struct lvts_data mt7988_lvts_ap_data =
+=3D {
+>         .temp_factor    =3D LVTS_COEFF_A_MT7988,
+>         .temp_offset    =3D LVTS_COEFF_B_MT7988,
+>         .gt_calib_bit_offset =3D 24,
+> +       .num_cal_offsets =3D 3,
+>  };
+>
+>  static const struct lvts_data mt8186_lvts_data =3D {
+> @@ -1776,6 +1781,7 @@ static const struct lvts_data mt8186_lvts_data =3D =
+{
+>         .temp_offset    =3D LVTS_COEFF_B_MT7988,
+>         .gt_calib_bit_offset =3D 24,
+>         .def_calibration =3D 19000,
+> +       .num_cal_offsets =3D 3,
+>  };
+>
+>  static const struct lvts_data mt8188_lvts_mcu_data =3D {
+> @@ -1789,6 +1795,7 @@ static const struct lvts_data mt8188_lvts_mcu_data =
+=3D {
+>         .temp_offset    =3D LVTS_COEFF_B_MT8195,
+>         .gt_calib_bit_offset =3D 20,
+>         .def_calibration =3D 35000,
+> +       .num_cal_offsets =3D 3,
+>  };
+>
+>  static const struct lvts_data mt8188_lvts_ap_data =3D {
+> @@ -1802,6 +1809,7 @@ static const struct lvts_data mt8188_lvts_ap_data =
+=3D {
+>         .temp_offset    =3D LVTS_COEFF_B_MT8195,
+>         .gt_calib_bit_offset =3D 20,
+>         .def_calibration =3D 35000,
+> +       .num_cal_offsets =3D 3,
+>  };
+>
+>  static const struct lvts_data mt8192_lvts_mcu_data =3D {
+> @@ -1815,6 +1823,7 @@ static const struct lvts_data mt8192_lvts_mcu_data =
+=3D {
+>         .temp_offset    =3D LVTS_COEFF_B_MT8195,
+>         .gt_calib_bit_offset =3D 24,
+>         .def_calibration =3D 35000,
+> +       .num_cal_offsets =3D 3,
+>  };
+>
+>  static const struct lvts_data mt8192_lvts_ap_data =3D {
+> @@ -1828,6 +1837,7 @@ static const struct lvts_data mt8192_lvts_ap_data =
+=3D {
+>         .temp_offset    =3D LVTS_COEFF_B_MT8195,
+>         .gt_calib_bit_offset =3D 24,
+>         .def_calibration =3D 35000,
+> +       .num_cal_offsets =3D 3,
+>  };
+>
+>  static const struct lvts_data mt8195_lvts_mcu_data =3D {
+> @@ -1841,6 +1851,7 @@ static const struct lvts_data mt8195_lvts_mcu_data =
+=3D {
+>         .temp_offset    =3D LVTS_COEFF_B_MT8195,
+>         .gt_calib_bit_offset =3D 24,
+>         .def_calibration =3D 35000,
+> +       .num_cal_offsets =3D 3,
+>  };
+>
+>  static const struct lvts_data mt8195_lvts_ap_data =3D {
+> @@ -1854,6 +1865,7 @@ static const struct lvts_data mt8195_lvts_ap_data =
+=3D {
+>         .temp_offset    =3D LVTS_COEFF_B_MT8195,
+>         .gt_calib_bit_offset =3D 24,
+>         .def_calibration =3D 35000,
+> +       .num_cal_offsets =3D 3,
+>  };
+>
+>  static const struct of_device_id lvts_of_match[] =3D {
+> --
+> 2.39.5
+>
+>
 
