@@ -1,258 +1,128 @@
-Return-Path: <linux-kernel+bounces-751916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625DCB16F47
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:14:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02B94B16F4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:16:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F40447AF7CB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:13:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA818913BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2951B2BE02D;
-	Thu, 31 Jul 2025 10:14:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44FE2BE030;
+	Thu, 31 Jul 2025 10:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EW2fLpcS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="njKKHKIz"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E384299928;
-	Thu, 31 Jul 2025 10:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0189C746E;
+	Thu, 31 Jul 2025 10:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753956869; cv=none; b=DKuUQ1oEIqfU5wp8zBbjyOXNt+zm4L7BL75HtlNIaLTI4w2fEpI3TaIBdo87DTeTp+Gbwdnm8v1Fyd30cRIsDVsnQB3fruziD8L5JPexN5PeyEK7xQfzcJ5JxqSI9LGR2YQDUy8HjkHZUqQFq2tARJcTKE8z7tsO3JCjVLT0Ajk=
+	t=1753956952; cv=none; b=klhxDCihRbAB2uiml9ecbE1MtZ0X/0GBVmvZfTJB4yrn5l//2NJuuSINihhxIuOysUjuYVTYWZiL3Ow0fdsTiR67l/L0+i8tfnYhmFMIUoyOcMHkTq9VCILVfifX2SeaHzPq/eDqSayAFMkcIe0gag8ESX5htSVavZePzGiEdQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753956869; c=relaxed/simple;
-	bh=I0BZILQoozjQVpBXvKZeoZ4fl7KSMXkO6kJQgJ7dzfA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lEkDqdtWTLQDKpUr4vZZJFcVXkw0nPIJ5GjOtGgVZe6TbnNN8dYvP8vvEbo07atrQdfJ78BFFqS+o6mZ0d/dOZZYOrG2UuNT88L4Ip6yNlLs0ONRFxUMe6JA974u/ZMXn9tZ4JtdRfUeOnQoZXwdWazQ4hGj2CrFwySbeETNcAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EW2fLpcS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F40C4CEEF;
-	Thu, 31 Jul 2025 10:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753956868;
-	bh=I0BZILQoozjQVpBXvKZeoZ4fl7KSMXkO6kJQgJ7dzfA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EW2fLpcSa8NLVfMN54PwfLbPEbNPhzouqZEhIZ1Otsw/Cs/7e4wWSoVkgBwIciRe2
-	 hE+Y2oKieUEEDTfAe5renRy1O7MC1m93++DqBzGiIdKsyXbkaRAzZCbZHauDr5a4D5
-	 eSvvTmzYYqHp4IQaw1eLE/oBsZpD/3pStNPHr+q6f5LA5/UYTFu2t7unIqEMrxRb4I
-	 7cUD14IbnwTUVB99iLOazo2TmIWVxIyxI9poTsnE7mijeT47Yhz+YygV1yiXYm7LWm
-	 QzSMmNztHFpE7pOHSaJnJHqvA0LJoMEbgzh89m4Zcr7DlA493Rz/6nFTFuvrjoIKaj
-	 5//JcXfurgKLg==
-Date: Thu, 31 Jul 2025 12:14:26 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Hans Verkuil <hans@jjverkuil.nl>
-Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Mats Randgaard <matrandg@cisco.com>, Alain Volmat <alain.volmat@foss.st.com>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] media: tc358743: Fix the RGB MBUS format
-Message-ID: <20250731-teal-oryx-of-shopping-ced228@houat>
-References: <20250612-csi-bgr-rgb-v1-0-dc8a309118f8@kernel.org>
- <20250612-csi-bgr-rgb-v1-3-dc8a309118f8@kernel.org>
- <CAPY8ntCYG8ufxpMkgBj1ZpSW-H2HObpcbQNg9tj+EXUM4PGkfQ@mail.gmail.com>
- <e9b61666-6bf0-4ec2-8524-0b6d94f028ef@jjverkuil.nl>
- <20250618-dancing-rare-skua-eb7ffd@houat>
+	s=arc-20240116; t=1753956952; c=relaxed/simple;
+	bh=RJiuaDp9mWdvOO/DBR0WGEM4OUuHTFOlawmLNB3P+G4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ORZgAnofMzTXlw8KcJAZY+0PT8HTe9XCqqRdJI7zDjY17x0EviZkpUm6lk4dWNNRzTfAxZwbim3CY14caA+sL//mFr17Wz+FjPwk4C9n9hkKGCBb11p+XkzKmzGuOAuB6q3azf5hSvKRiWUNI66pmradVvq1GGQJsg+YtdMgJdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=njKKHKIz; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1753956948;
+	bh=RJiuaDp9mWdvOO/DBR0WGEM4OUuHTFOlawmLNB3P+G4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=njKKHKIzlvWFgIIXcjpz+iskyPm9MiUUMKAUvxUtiG1R1CgxIxZBHbJjZBHW5uq3u
+	 jiKMiAau9Fc3+HFgb86VauHp12rel7f8aFYebPkZHci0x0Q4agt18ckSKOTwDUSiXb
+	 naWk8UpG8LvfB6reJg+U+S8i3x6yNwU06vqxE3Kyj96t372JvbxtEv/FS4iQrpm52A
+	 vdIHItdj2KWjh0XbwNH5BTVLH4H5lanquQcnsqIyYj2ZbiVAP0rTJRA1kwIUkRMD4m
+	 Q1HrtCVCOmc4oY9mqSYISE9uT3ccecOvDRfl1rFvwg8v0pC2d75f+fEShZd3VCvuCk
+	 ohEj4DvNj4y8A==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:e229:d0be:3141:7dd2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8432E17E05F0;
+	Thu, 31 Jul 2025 12:15:38 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: fshao@chromium.org
+Cc: andrew-ct.chen@mediatek.com,
+	angelogioacchino.delregno@collabora.com,
+	arnd@arndb.de,
+	bchihi@baylibre.com,
+	colin.i.king@gmail.com,
+	conor+dt@kernel.org,
+	daniel.lezcano@linaro.org,
+	devicetree@vger.kernel.org,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	lala.lin@mediatek.com,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	lukasz.luba@arm.com,
+	matthias.bgg@gmail.com,
+	nfraprado@collabora.com,
+	rafael@kernel.org,
+	robh@kernel.org,
+	rui.zhang@intel.com,
+	srini@kernel.org,
+	u.kleine-koenig@baylibre.com,
+	wenst@chromium.org
+Subject: Re: [PATCH v2 6/9] thermal/drivers/mediatek/lvts: Add support for ATP mode
+Date: Thu, 31 Jul 2025 12:14:41 +0200
+Message-Id: <20250731101441.142132-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <CAC=S1njcFhyY6+dT2MHU02ZsLDq+k_vAVv==bWuoGt3KA18PHg@mail.gmail.com>
+References: <CAC=S1njcFhyY6+dT2MHU02ZsLDq+k_vAVv==bWuoGt3KA18PHg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="k6dm4cewj3qobmxo"
-Content-Disposition: inline
-In-Reply-To: <20250618-dancing-rare-skua-eb7ffd@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi Fei,
 
---k6dm4cewj3qobmxo
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 3/4] media: tc358743: Fix the RGB MBUS format
-MIME-Version: 1.0
+On 7/31/25 06:25, Fei Shao wrote:
+> On Wed, Jul 30, 2025 at 11:40 PM Laura Nao <laura.nao@collabora.com> wrote:
+>>
+>> MT8196/MT6991 uses ATP (Abnormal Temperature Prevention) mode to detect
+>> abnormal temperature conditions, which involves reading temperature data
+>> from a dedicated set of registers separate from the ones used for
+>> immediate and filtered modes.
+>>
+>> Add support for ATP mode and its relative registers to ensure accurate
+>> temperature readings and proper thermal management on MT8196/MT6991
+>> devices.
+>>
+>> While at it, convert mode defines to enum.
+>>
+>> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+>> Signed-off-by: Laura Nao <laura.nao@collabora.com>
+>
+> It's not visible in this patch, but a heads-up that I see
+> lvts_ctrl_start() also depends on whether lvts is in immediate mode. I
+> wonder if anything is needed there for ATP mode e.g. a new
+> sensor_atp_bitmap.
+> Feel free to ignore if this is a false alarm.
+>
 
-Hi Hans,
+Thanks for the heads up - the bitmap for ATP mode is the same as 
+sensor_filt_bitmap, so the function is already working as intended.
 
-On Wed, Jun 18, 2025 at 04:54:07PM +0200, Maxime Ripard wrote:
-> On Mon, Jun 16, 2025 at 10:02:17AM +0200, Hans Verkuil wrote:
-> > On 12/06/2025 19:01, Dave Stevenson wrote:
-> > > On Thu, 12 Jun 2025 at 13:54, Maxime Ripard <mripard@kernel.org> wrot=
-e:
-> > >>
-> > >> The tc358743 is an HDMI to MIPI-CSI2 bridge. It supports two of the
-> > >> three HDMI 1.4 video formats: RGB 4:4:4 and YCbCr 422.
-> > >>
-> > >> RGB 4:4:4 is converted to the MIPI-CSI2 RGB888 video format, and lis=
-ted
-> > >> in the driver as MEDIA_BUS_FMT_RGB888_1X24.
-> > >>
-> > >> Most CSI2 receiver drivers then map MEDIA_BUS_FMT_RGB888_1X24 to
-> > >> V4L2_PIX_FMT_RGB24.
-> > >>
-> > >> However, V4L2_PIX_FMT_RGB24 is defined as having its color component=
-s in
-> > >> the R, G and B order, from left to right. MIPI-CSI2 however defines =
-the
-> > >> RGB888 format with blue first.
-> > >>
-> > >> This essentially means that the R and B will be swapped compared to =
-what
-> > >> V4L2_PIX_FMT_RGB24 defines.
-> > >>
-> > >> The proper MBUS format would be BGR888, so let's use that.
-> > >=20
-> > > I know where you're coming from, but this driver has been in the tree
-> > > since 2015, so there is a reasonable expectation of users. I've had an
-> > > overlay for it in our kernel tree since 4.14 (July 2018), and I know
-> > > of at least PiKVM [1] as a product based on it. I don't know if Cisco
-> > > are still supporting devices with it in.
-> >=20
-> > Those are all EOL, so no need to be concerned about that.
-> >=20
-> > But it is the most commonly used HDMI-to-CSI bridge, so breaking uAPI is
-> > a real concern.
->=20
-> Is it really broken?
->=20
-> Discussing it with Laurent and Sakari last week, we couldn't find any
-> example of a userspace where the media format was set in stone and not
-> propagated across the pipeline.
->=20
-> The uAPI however is *definitely* broken with unicam right now.
->=20
-> > See more in my review comment in the code below.
-> >=20
-> > > Whilst the pixel format may now be considered to be incorrect,
-> > > changing it will break userspace applications that have been using it
-> > > for those 10 years if they're explicitly looking for
-> > > MEDIA_BUS_FMT_RGB888_1X24 or the mapping of it through to
-> > > V4L2_PIX_FMT_RGB24.
-> > > The kernel docs at [2] quote Linus as saying
-> > > "If you break existing user space setups THAT IS A REGRESSION.
-> > > It's not ok to say "but we'll fix the user space setup"
-> > > Really. NOT OK."
-> > >=20
-> > > I'm thinking of GStreamer if the format has been specified explicitly
-> > > - it'll fail to negotiate due to v4l2src saying it can't handle the
-> > > caps.
-> > >=20
-> > > Yes it sucks as a situation, but I'm not sure what the best solution
-> > > is. Potentially accepting both MEDIA_BUS_FMT_RGB888_1X24 and
-> > > MEDIA_BUS_FMT_BGR888_1X24 as valid MBUS codes for RGB, alongside
-> > > MEDIA_BUS_FMT_UYVY8_1X16 for UYVY?
-> > >=20
-> > >   Dave
-> > >=20
-> > > [1] https://pikvm.org/
-> > > [2] https://www.kernel.org/doc/html/latest/process/handling-regressio=
-ns.html#quotes-from-linus-about-regression
-> > >=20
-> > >> Fixes: d32d98642de6 ("[media] Driver for Toshiba TC358743 HDMI to CS=
-I-2 bridge")
-> > >> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> > >> ---
-> > >>  drivers/media/i2c/tc358743.c | 10 +++++-----
-> > >>  1 file changed, 5 insertions(+), 5 deletions(-)
-> > >>
-> > >> diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc3587=
-43.c
-> > >> index ca0b0b9bda1755313f066ba36ab218873b9ae438..a1c164a7716a10b0cb9f=
-f38f88c0513b45f24771 100644
-> > >> --- a/drivers/media/i2c/tc358743.c
-> > >> +++ b/drivers/media/i2c/tc358743.c
-> > >> @@ -688,11 +688,11 @@ static void tc358743_set_csi_color_space(struc=
-t v4l2_subdev *sd)
-> > >>                 mutex_lock(&state->confctl_mutex);
-> > >>                 i2c_wr16_and_or(sd, CONFCTL, ~MASK_YCBCRFMT,
-> > >>                                 MASK_YCBCRFMT_422_8_BIT);
-> > >>                 mutex_unlock(&state->confctl_mutex);
-> > >>                 break;
-> > >> -       case MEDIA_BUS_FMT_RGB888_1X24:
-> > >> +       case MEDIA_BUS_FMT_BGR888_1X24:
-> > >>                 v4l2_dbg(2, debug, sd, "%s: RGB 888 24-bit\n", __fun=
-c__);
-> > >>                 i2c_wr8_and_or(sd, VOUT_SET2,
-> > >>                                 ~(MASK_SEL422 | MASK_VOUT_422FIL_100=
-) & 0xff,
-> > >>                                 0x00);
-> > >>                 i2c_wr8_and_or(sd, VI_REP, ~MASK_VOUT_COLOR_SEL & 0x=
-ff,
-> > >> @@ -1353,11 +1353,11 @@ static int tc358743_log_status(struct v4l2_s=
-ubdev *sd)
-> > >>                         (i2c_rd16(sd, CSI_STATUS) & MASK_S_HLT) ?
-> > >>                         "yes" : "no");
-> > >>         v4l2_info(sd, "Color space: %s\n",
-> > >>                         state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_UY=
-VY8_1X16 ?
-> > >>                         "YCbCr 422 16-bit" :
-> > >> -                       state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_RG=
-B888_1X24 ?
-> > >> +                       state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_BG=
-R888_1X24 ?
-> > >>                         "RGB 888 24-bit" : "Unsupported");
-> > >>
-> > >>         v4l2_info(sd, "-----%s status-----\n", is_hdmi(sd) ? "HDMI" =
-: "DVI-D");
-> > >>         v4l2_info(sd, "HDCP encrypted content: %s\n",
-> > >>                         hdmi_sys_status & MASK_S_HDCP ? "yes" : "no"=
-);
-> > >> @@ -1691,11 +1691,11 @@ static int tc358743_enum_mbus_code(struct v4=
-l2_subdev *sd,
-> > >>                 struct v4l2_subdev_state *sd_state,
-> > >>                 struct v4l2_subdev_mbus_code_enum *code)
-> > >>  {
-> > >>         switch (code->index) {
-> > >>         case 0:
-> > >> -               code->code =3D MEDIA_BUS_FMT_RGB888_1X24;
-> > >> +               code->code =3D MEDIA_BUS_FMT_BGR888_1X24;
-> >=20
-> > So would this change break or fix the formats[] table in:
-> >=20
-> > drivers/media/platform/raspberrypi/rp1-cfe/cfe-fmts.h
->=20
-> It's pretty much the same table than unicam, and I don't believe it
-> does. For both those drivers the pixels are stored in memory in the CSI
-> wire order, so the proper format to use is BGR24 for CSI, not RGB24.
->=20
-> > Are there other bridge drivers that misinterpret MEDIA_BUS_FMT_RGB888_1=
-X24
-> > and/or MEDIA_BUS_FMT_RGB888_1X24?
->=20
-> Yes, it's kind of a mess.
->=20
-> adv748x, ds90ub960 and tc358743 report RGB888, and ov5640 reports
-> BGR888.
->=20
-> Then we have alvium CSI2 that supports both, and can swap color
-> components, so that one isn't a concern.
->=20
-> And finally, we have st-mipid02 which is also affected, but is a
-> receiver so it's easier to solve.
->=20
-> For RGB565, ov5640, mt9m114 and gc2145 are in that list, but the pixel
-> representation isn't the same than RGB888, so it's not clear to me how
-> they are affected.
->=20
-> For RGB666, no v4l2 drivers are affected, but a fair bit of KMS drivers
-> that use media bus formats still might.
+Best,
 
-Can we make some progress on this, one way or another?
+Laura
 
-Maxime
+> Regards,
+> Fei
 
---k6dm4cewj3qobmxo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaItCAQAKCRAnX84Zoj2+
-djwxAX9oiNCwAp5Rv5e4+zQf+6a/zStk7HUhKO7SWqhWWox0c1YGZ0sKUCE5mNku
-F1Tx66MBgNO5drBlwCc8Yp3/KKDvY6zqFhSjdViWU5Arb6RF55ZPd/a6dPJ9Dqep
-YUUjbqICsg==
-=kqak
------END PGP SIGNATURE-----
-
---k6dm4cewj3qobmxo--
 
