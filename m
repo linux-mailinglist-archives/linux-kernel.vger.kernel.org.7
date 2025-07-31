@@ -1,152 +1,87 @@
-Return-Path: <linux-kernel+bounces-751497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B663B16A50
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:08:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 952B5B16A64
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E76566767
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:08:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0722B18C6820
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:21:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1D51DEFF3;
-	Thu, 31 Jul 2025 02:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F33923643E;
+	Thu, 31 Jul 2025 02:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YExX0o6u"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ZT1Knmkf"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5021C1DED5D;
-	Thu, 31 Jul 2025 02:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EC6339A1;
+	Thu, 31 Jul 2025 02:20:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753927698; cv=none; b=uNDJHgLe0XOY9NLvVBD3/J4rk2voL98e5bssiDVepp7rMmta9jnsd05kKWqJmg8lt1QQ5HJkvurqIduXWzB+XHswslC+7wuSvXFwD0VWsbdehHzUMdBAH87Mh23q3krO3NR5tRlGS8o1kk2/2jFOY0oMJ9GeAy64WhQIHIwrrhk=
+	t=1753928443; cv=none; b=j4oMKmiCn4h28MI4hBVubdDTfAGLdjCuxjozIG2YBkhK0unJxc3Q7rd5Bwhe2q9xs8wK6DvoUHwghGQIcbUSevNukdkkPYBNXWoTPF/sA01XxjnSCYpRd8xqYSqNRk3W2v7DlsfxiGJye729PgHztG88P9XjfxiM9kAZHYQxLoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753927698; c=relaxed/simple;
-	bh=jYjmmUbhAo5Rx12q31rCMDi0MJPFmBegHSkQ5/vkesA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Z6/fALs3mWdhY1hELT2p0Vc8DOrCeVLOWvXdZ2z8+kkr1Op9Sfz8QCz/9Z6AGO+wmkXEVxD3LK26kDkiu0apxCTD2lGNpkadJmho9l18+Y/z97k9+HUWylvgk+B3uLFYrrOz8T4Z4gCkJHT4eILyY25sjEnK41oFAl8gaxMz+zM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YExX0o6u; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45629702e52so1485395e9.2;
-        Wed, 30 Jul 2025 19:08:16 -0700 (PDT)
+	s=arc-20240116; t=1753928443; c=relaxed/simple;
+	bh=/+TfOEWR0Nli29bN6WrEzJLsG9aHc0r+gNTRjB2A+GM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hBnYjelAklUNeZk6bgrVR916e5/KeTK+nDCyxZTHreoE960Oko9M8xcIvTMG1d7mLszY1k1+GwkI/hBLPUhC2ELsJqmTjxausa1LikBxDUI5PB06AIk+fS+M/MY+sOnco/yz3jstwbrGeM/b9Azy99TTwKK7EPcNDgPhEUGBGHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ZT1Knmkf; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753927694; x=1754532494; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ttbMdEkxoTUOprk+YRVdSAOn6EZRYe2hYPzeU8X5k20=;
-        b=YExX0o6uGhpDg8P6to+jWGY8mqmJ7GBLtUPzyJALeSlsow5EzSSiSJzSZexO3PkmTh
-         k0ixiFnIHoi2SpzUhqZSb79RJeK7s+AA2r8u7A6kWDdF/WhaQzHRdiqfomzX8xsejoxr
-         65Lkwfpe85bQVuy5s3D1hN/ZJkFTkuIgG6m6t8367RNHJillYizWUuCxN3Gdks3OLnZ9
-         J701P9+BdvePT28h1rklEFHwgbHj3X0NzQs+2bilTgJINFCMwsO+r7shaTU201+OY4/C
-         MdHY3NDxmCAJPNb71YT579HnMGhx0O9RUJzCLywLOvAykh8Bn4vy/Obgy5vm5BJW5hdG
-         F3tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753927694; x=1754532494;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ttbMdEkxoTUOprk+YRVdSAOn6EZRYe2hYPzeU8X5k20=;
-        b=tTuY47GOldmLL9Seive35c8A2otdF5TJTBhXz+EnxAUcMzsLhYjkgXC4QNqrJMIlmN
-         7NqfP0OX6uY/ckfjgtS4TKXUsf15j8JDyoVrGQHWmn95XBHZE9YqYa16XbS2zZAkemoz
-         KflQGwvSzrf+ZVncOGOioP8QslIw+3ciyZrzKYpR7TnJt4cLF0mEaJMH9jdTVAk9uqAI
-         olulsiJCQLsdrXbqRT+u6w5SEfs9VrBNvk8Lp49sOHmlbK5cGE5ud9um59Uw8sk9REgN
-         g1Ph1SEkg0DBJ9OwcsdU0WzjeRQ333G0kFVGOwHIkq+PtT9hxd1kx+dOC9PM7RiyZT8v
-         N4Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCU7jf3igBf826PUqwFBAOtn5NYe6CDh529UdFgpvNl53oQhNnc1WzC63DKUvwSYcWrkt2Z6Xr+cZrmQrlU=@vger.kernel.org, AJvYcCVxOi7UBHXxF/jv0ANJeMkTcdyaP//BU2BMnZfhySc6EYP1CW9//Y/bLxH4LgdtYx9z2kp+paF4@vger.kernel.org
-X-Gm-Message-State: AOJu0YylZSiG/VmUN1e5pcdUFJXDY5OqJ9aedrjDCWqTO0XhAuDlxloq
-	cZrs8WJIJxCsheuR74LvF2b4pFN3g0nswf6JDKBs6isjjxPSMVFXihvQ
-X-Gm-Gg: ASbGncuQAXpJR02jUFqEN39QfZM1VjDrxloMNbdzjQvscnElL5xkNc2xlicBwZj3z74
-	yMDD1YpIiSvcczauYs3uFVueUqRNWvDnswG2x9Gtmyab8n7xmCkZNwIPOudCUDzZu0/MQDyeSlH
-	IccTdoYiATgwTPafYzVSi3iXrHUxDloZNwW49Oimj62GSPdhSJPA8cNMkRVCmZIhl/VeNrnQQjb
-	TzZNRGIvgf0R92GJ6L8kunDaFg2AXwm1IDIM4KC2wLaws/wqIXZV+uQ7BidOCxgtRQejUjaT3om
-	7zmivdColZevG/tHwB5Up34WWM9MdoOOLbq6D8u8jkwWUSWxYpyz6voo5wbQcA9v4TyKpK6OftC
-	dNfVKdw81xu+lozwuMJ1wgg==
-X-Google-Smtp-Source: AGHT+IHsylB7+NHRuBW9mU53rbrnh3rovtARDLzE2S2cbV7OlcCzjAu5Wxz6+1u5fMJj5KOTcLkQ5g==
-X-Received: by 2002:a05:600d:108:20b0:456:26ad:46d2 with SMTP id 5b1f17b1804b1-45893943cefmr25724855e9.6.1753927694491;
-        Wed, 30 Jul 2025 19:08:14 -0700 (PDT)
-Received: from pc ([165.51.119.21])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee4f239sm7657055e9.21.2025.07.30.19.08.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 19:08:14 -0700 (PDT)
-Date: Thu, 31 Jul 2025 03:08:11 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH V2] drm/amdgpu: check return value of xa_store()
-Message-ID: <aIrQC78VWg17Iqhf@pc>
+	d=codeconstruct.com.au; s=2022a; t=1753927882;
+	bh=/+TfOEWR0Nli29bN6WrEzJLsG9aHc0r+gNTRjB2A+GM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=ZT1KnmkfhOaJuo/p5h6IVFRznALO76XlJ+P7ddQ5Flf3pmvBxi2pO8e3vOFv6Vkvi
+	 aAeCv8ORPyqaUSuNoJl5JZXACdozJcdnThpGcjeX5Vob97c2cR7gNP+/DhIX2Hm9J/
+	 MucMr7u76yYSOrLlZ1al+FxuhjMQSP3Xez2lv0/84y0cxXffF+icO7Rv+V7SmWzx3T
+	 6IMAX3CjnOpj3oKhk7px0mFuLwD3Qxt4bNymA+mzz1DO/fa4j/mlQwoOluBPvV3mt3
+	 dojq2p5DGHhCRH8mh3w9XT87GBJgtrjWCiW/MzNVNNYeNvzmUe4sUhcK8LXOaXbETJ
+	 ZbJVaPUlNdBSA==
+Received: from [192.168.68.112] (unknown [180.150.112.70])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7D5B569374;
+	Thu, 31 Jul 2025 10:11:20 +0800 (AWST)
+Message-ID: <2de9da0e95d3e1284a29170c99f7b69baadb9518.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v7 0/2] Adding device tree and binding for NVIDIA
+ GB200-UT3.0b
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Rob Herring <robh@kernel.org>, Donald Shannon <donalds@nvidia.com>
+Cc: conor+dt@kernel.org, openbmc@lists.ozlabs.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	krzk+dt@kernel.org, joel@jms.id.au, linux-aspeed@lists.ozlabs.org, 
+	devicetree@vger.kernel.org
+Date: Thu, 31 Jul 2025 11:41:19 +0930
+In-Reply-To: <CAL_JsqJwgbWa0sPVgdxMchPfa1hR8o-=wRh4UgoK3QfDdW+S+g@mail.gmail.com>
+References: <20250723222350.200094-1-donalds@nvidia.com>
+	 <175341328135.3754696.5873094296930738476.robh@kernel.org>
+	 <CAL_JsqJwgbWa0sPVgdxMchPfa1hR8o-=wRh4UgoK3QfDdW+S+g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 
-The `xa_store()` function can fail due to memory allocation issues or other
-internal errors. Currently, the return value of `xa_store()` is not
-checked, which can lead to a memory leak if it fails to store `numa_info`.
+On Thu, 2025-07-24 at 22:25 -0500, Rob Herring wrote:
+>=20
+> All of the below warnings you are introducing...
+>=20
+> And yeah, all the ones above are existing, but I don't see a lot of
+> progress fixing them. It seems no one adding their board cares about
+> the SoC warnings given the lack of progress on aspeed stuff. Maybe new
+> boards need to be rejected without some improvements...
+>=20
 
-This patch checks the return value of `xa_store()`. If an error is
-detected, the allocated `numa_info` is freed, and NULL is returned to
-indicate the failure, preventing a memory leak and ensuring proper error
-handling.
+I had an old branch with a series that reduces the warnings. I'll
+rebase it and tidy it up a bit wrt more recent binding submissions.
+Once it's mostly sensible I'll consider pointing people to it as
+suggestions for fixing existing issues on the path to getting their own
+devicetrees merged.
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
-Fixes: 1cc823011a23f ("drm/amdgpu: Store additional numa node information")
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: Christian König <christian.koenig@amd.com>
-Cc: David Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>
-Cc: amd-gfx@lists.freedesktop.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
----
-Changes in v2:
-    - Improve description
-    - Add tags Fixes and Cc
-
- drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-index f5466c592d94..b4a3e4d3e957 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
-@@ -876,7 +876,7 @@ static inline uint64_t amdgpu_acpi_get_numa_size(int nid)
- 
- static struct amdgpu_numa_info *amdgpu_acpi_get_numa_info(uint32_t pxm)
- {
--	struct amdgpu_numa_info *numa_info;
-+	struct amdgpu_numa_info *numa_info, *old;
- 	int nid;
- 
- 	numa_info = xa_load(&numa_info_xa, pxm);
-@@ -898,7 +898,11 @@ static struct amdgpu_numa_info *amdgpu_acpi_get_numa_info(uint32_t pxm)
- 		} else {
- 			numa_info->size = amdgpu_acpi_get_numa_size(nid);
- 		}
--		xa_store(&numa_info_xa, numa_info->pxm, numa_info, GFP_KERNEL);
-+		old = xa_store(&numa_info_xa, numa_info->pxm, numa_info, GFP_KERNEL);
-+		if (xa_is_err(old)) {
-+			kfree(numa_info);
-+			return NULL;
-+		}
- 	}
- 
- 	return numa_info;
--- 
-2.43.0
-
+Andrew
 
