@@ -1,128 +1,114 @@
-Return-Path: <linux-kernel+bounces-751917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02B94B16F4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:16:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 087E7B16F4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DAA818913BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:16:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C778F7B5947
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44FE2BE030;
-	Thu, 31 Jul 2025 10:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE4C2BE030;
+	Thu, 31 Jul 2025 10:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="njKKHKIz"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="kYOsmPY2"
+Received: from sinmsgout03.his.huawei.com (sinmsgout03.his.huawei.com [119.8.177.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0189C746E;
-	Thu, 31 Jul 2025 10:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ED57746E;
+	Thu, 31 Jul 2025 10:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753956952; cv=none; b=klhxDCihRbAB2uiml9ecbE1MtZ0X/0GBVmvZfTJB4yrn5l//2NJuuSINihhxIuOysUjuYVTYWZiL3Ow0fdsTiR67l/L0+i8tfnYhmFMIUoyOcMHkTq9VCILVfifX2SeaHzPq/eDqSayAFMkcIe0gag8ESX5htSVavZePzGiEdQ4=
+	t=1753957030; cv=none; b=LkXhk5H+UZwS22NZ/2KHHIkMpssDVBaLE+nqjbg7Yf2FhH+lJiJoj8y3MNGDoRAc86aDaXBwjMJWyS1bDdu7GAmjC1uP99W60+ujxutNNKJqu0cuODGdbMTA7dLhggBcduFi4FafFx+/v6GQRW/Vlt1+REZri6zQAB2/j7uPwwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753956952; c=relaxed/simple;
-	bh=RJiuaDp9mWdvOO/DBR0WGEM4OUuHTFOlawmLNB3P+G4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ORZgAnofMzTXlw8KcJAZY+0PT8HTe9XCqqRdJI7zDjY17x0EviZkpUm6lk4dWNNRzTfAxZwbim3CY14caA+sL//mFr17Wz+FjPwk4C9n9hkKGCBb11p+XkzKmzGuOAuB6q3azf5hSvKRiWUNI66pmradVvq1GGQJsg+YtdMgJdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=njKKHKIz; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753956948;
-	bh=RJiuaDp9mWdvOO/DBR0WGEM4OUuHTFOlawmLNB3P+G4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=njKKHKIzlvWFgIIXcjpz+iskyPm9MiUUMKAUvxUtiG1R1CgxIxZBHbJjZBHW5uq3u
-	 jiKMiAau9Fc3+HFgb86VauHp12rel7f8aFYebPkZHci0x0Q4agt18ckSKOTwDUSiXb
-	 naWk8UpG8LvfB6reJg+U+S8i3x6yNwU06vqxE3Kyj96t372JvbxtEv/FS4iQrpm52A
-	 vdIHItdj2KWjh0XbwNH5BTVLH4H5lanquQcnsqIyYj2ZbiVAP0rTJRA1kwIUkRMD4m
-	 Q1HrtCVCOmc4oY9mqSYISE9uT3ccecOvDRfl1rFvwg8v0pC2d75f+fEShZd3VCvuCk
-	 ohEj4DvNj4y8A==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:e229:d0be:3141:7dd2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8432E17E05F0;
-	Thu, 31 Jul 2025 12:15:38 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: fshao@chromium.org
-Cc: andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com,
-	arnd@arndb.de,
-	bchihi@baylibre.com,
-	colin.i.king@gmail.com,
-	conor+dt@kernel.org,
-	daniel.lezcano@linaro.org,
-	devicetree@vger.kernel.org,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	lala.lin@mediatek.com,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	lukasz.luba@arm.com,
-	matthias.bgg@gmail.com,
-	nfraprado@collabora.com,
-	rafael@kernel.org,
-	robh@kernel.org,
-	rui.zhang@intel.com,
-	srini@kernel.org,
-	u.kleine-koenig@baylibre.com,
-	wenst@chromium.org
-Subject: Re: [PATCH v2 6/9] thermal/drivers/mediatek/lvts: Add support for ATP mode
-Date: Thu, 31 Jul 2025 12:14:41 +0200
-Message-Id: <20250731101441.142132-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <CAC=S1njcFhyY6+dT2MHU02ZsLDq+k_vAVv==bWuoGt3KA18PHg@mail.gmail.com>
-References: <CAC=S1njcFhyY6+dT2MHU02ZsLDq+k_vAVv==bWuoGt3KA18PHg@mail.gmail.com>
+	s=arc-20240116; t=1753957030; c=relaxed/simple;
+	bh=1ge10SimQgClwKzIPVT8dLGvqbktLvZclq3HaYeWrlw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ASEGjlU8LOhasqv61cVsRxoO+bHoX4koQSZLE1uHaNJbN1ZXEXwUX6cJWXZ2AE/pO95RxGB24XisQnrloSU23Npzni7D/9bX+azJ9VDRIE6GNOD0WT1dOFxaQKNWRedDdT0m4QH1HYZq2e3qBHwYZswDZ51QE8m/7+BWaRfUS9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=kYOsmPY2; arc=none smtp.client-ip=119.8.177.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
+	c=relaxed/relaxed; q=dns/txt;
+	h=From;
+	bh=elVMsWjrXDTFJwMh0ONTgI3nc4OnW+eMijfTpCVJyec=;
+	b=kYOsmPY2snO9PX46f1o4SYGURcTdTmBNTzUAdw1KMcrmXyuDbTl00ESC6oSt9s6hnonj1HZQk
+	bBQchkFwKEIXdszWEkjERdR/4gffGTYSCCl3GA8zKKXSLFt2hCS/HJgh2Y+KJ2VIVZJP+YeV1i0
+	RWznSPQGusCWEtWjI+gBtyo=
+Received: from frasgout.his.huawei.com (unknown [172.18.146.36])
+	by sinmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4bt4hy1XsXzMktC;
+	Thu, 31 Jul 2025 18:15:30 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bt4hQ0tQgz6J66k;
+	Thu, 31 Jul 2025 18:15:02 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id B07331402F4;
+	Thu, 31 Jul 2025 18:17:00 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 31 Jul
+ 2025 12:16:59 +0200
+Date: Thu, 31 Jul 2025 11:16:58 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
+	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
+	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
+	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
+ Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 37/38] coco: guest: arm64: Add support for
+ fetching device measurements
+Message-ID: <20250731111658.00006492@huawei.com>
+In-Reply-To: <20250728135216.48084-38-aneesh.kumar@kernel.org>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+	<20250728135216.48084-38-aneesh.kumar@kernel.org>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Hi Fei,
+On Mon, 28 Jul 2025 19:22:14 +0530
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
 
-On 7/31/25 06:25, Fei Shao wrote:
-> On Wed, Jul 30, 2025 at 11:40 PM Laura Nao <laura.nao@collabora.com> wrote:
->>
->> MT8196/MT6991 uses ATP (Abnormal Temperature Prevention) mode to detect
->> abnormal temperature conditions, which involves reading temperature data
->> from a dedicated set of registers separate from the ones used for
->> immediate and filtered modes.
->>
->> Add support for ATP mode and its relative registers to ensure accurate
->> temperature readings and proper thermal management on MT8196/MT6991
->> devices.
->>
->> While at it, convert mode defines to enum.
->>
->> Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->
-> It's not visible in this patch, but a heads-up that I see
-> lvts_ctrl_start() also depends on whether lvts is in immediate mode. I
-> wonder if anything is needed there for ATP mode e.g. a new
-> sensor_atp_bitmap.
-> Feel free to ignore if this is a false alarm.
->
+> Fetch device measurements using RSI_RDEV_GET_MEASUREMENTS.
+> 
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+One completely trivial comment.
 
-Thanks for the heads up - the bitmap for ATP mode is the same as 
-sensor_filt_bitmap, so the function is already working as intended.
+J
+> diff --git a/drivers/virt/coco/arm-cca-guest/rsi-da.c b/drivers/virt/coco/arm-cca-guest/rsi-da.c
+> index 64034d220e02..6222b10964ee 100644
+> --- a/drivers/virt/coco/arm-cca-guest/rsi-da.c
+> +++ b/drivers/virt/coco/arm-cca-guest/rsi-da.c
 
-Best,
+> @@ -213,6 +245,13 @@ int rsi_device_lock(struct pci_dev *pdev)
+>  		return -EIO;
+>  	}
+>  
+> +	ret = rhi_get_report(vdev_id, RHI_DA_OBJECT_MEASUREMENT,
+> +			     &dsm->measurements, &dsm->measurements_size);
+> +	if (ret) {
+> +		pci_err(pdev, "failed to get device certificate from the host (%lu)\n", ret);
+> +		return -EIO;
+> +	}
+> +
+>  	return ret;
 
-Laura
+return 0;  Always good to make it explicit when it can't take any other values.
+Looks like that belong sin an earlier patch though based on this snippet.
 
-> Regards,
-> Fei
+
+>  }
 
 
