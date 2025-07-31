@@ -1,159 +1,189 @@
-Return-Path: <linux-kernel+bounces-752353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43003B1747E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B1D0B1746E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:58:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7A7A83AA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB50CA82AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:58:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A012248B0;
-	Thu, 31 Jul 2025 15:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1E5223339;
+	Thu, 31 Jul 2025 15:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Iz5bA0fG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MiZ1DpWc"
+Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C092576;
-	Thu, 31 Jul 2025 15:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBED1B87F2
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753977579; cv=none; b=o0RcauB08UmBb/C2nY8xOOIFGGcG7WUly1NIQ96NvOA1FLzP4oQHD2zMYnSFTkaNDd9PUw/Swy9lvlVYZEIggCTNxrjx2s7I6LUkStYIGItJAd8cds/cXN7iEd3nbgk8IEv/ja1BcuzTGSSLFJzmKAkRVMFC/3glkQP4h4TSZxg=
+	t=1753977515; cv=none; b=t3skF4OGgFhnyxjNmymcmgN/tPtGthx2gI0UHlkjpxDI1Rnqq/86UntiA+rf38Mf4rE0nyDs4vYGVjDtpIYsrBhqq+OqDmcrDwKbqVyZDVDkU0fCNDWOqwS2qo68ewPFY0HDKzPjKzgqLtzn1aLO/AWwjsLyX9IN9JStKWEGtRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753977579; c=relaxed/simple;
-	bh=mmRcCImDzrZp0hu+IQGRPIsQJTluZBrHvuO0Rqa2YB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ogArPHzB3PqCJjQLBeoQf2S1KvP16VYKxG0KXsGF9hif61YblQpuN90rjOLvdBTTfeJUM5aoxIZcNw3NQb2ds8+7yhdGQOyqCUz6fW7dRGDY8bxaj9sarLHdbySDEqwoZ861vUX+a1c3W9KsprEnMYOhmZ2sHLuPKAHykgnbOsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Iz5bA0fG; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753977578; x=1785513578;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mmRcCImDzrZp0hu+IQGRPIsQJTluZBrHvuO0Rqa2YB4=;
-  b=Iz5bA0fGOKfakZAl69NDqEB6paQeUpvVueYo96BDp+ZWWZS4Itzlq2Id
-   SKgmTo+C2PZDs8alCw9y7LXZMIBWmEPMdT4bZ8DhPyPa0Il1YlECux5jd
-   IqWbJGx4o/bFTvdusam23li7VWvzzM8HlFwTCa9HNtFK+y6kF6BF1tmuw
-   E5Xp78BWhDYROzIskiUJ5fnX8Mik7A2qQYpdvfGdG6PSGnqnbnPnQk+K+
-   H0Pf21pdeAN75rfEDkp6MUM3kmRqbIju0Ha7wMRXw/vIuTXp0QzApI2e4
-   uHd18ILWqPRDzyC9abnW9d61WzMSfFNu3NLUsbgyzSCRtrb4CF36bNwe/
-   g==;
-X-CSE-ConnectionGUID: pGQIEJVlS5ecQGh8ouQCQw==
-X-CSE-MsgGUID: ztmqVeuIRr6ppKhC/nv/bw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="73765840"
-X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; 
-   d="scan'208";a="73765840"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 08:57:49 -0700
-X-CSE-ConnectionGUID: 8cIJHB/3SUmlM0a4cX/yPQ==
-X-CSE-MsgGUID: XqtxjqHFRdi3S8nGUSXvgQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; 
-   d="scan'208";a="162575528"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.125.109.198]) ([10.125.109.198])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 08:57:47 -0700
-Message-ID: <3093fd14-d57a-4fc6-9e15-d9ce8b075b30@intel.com>
-Date: Thu, 31 Jul 2025 08:57:47 -0700
+	s=arc-20240116; t=1753977515; c=relaxed/simple;
+	bh=gmzrttWeWDT3PGDpJ2II7NY3KHDvCISiDvnyW1TVYP8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=K2agpuuG0dL+7m3eddcy5JGa7T1KdQS8As1lxgUOzyS8iXncPH8BlCwczY89BWQg1gnRp6o5lsssL5YEMvQ5pPQKjLFmEvkEqTij091suYLmHIUYT719/dZ09hREjihDj1L96QhwEml2bM2glJ2ItmTu22LncBB3wsT+asehhfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MiZ1DpWc; arc=none smtp.client-ip=209.85.217.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f42.google.com with SMTP id ada2fe7eead31-4fbf1326dfeso783688137.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:58:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753977513; x=1754582313; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jKKboCZbQOuMPhW93A7UzwoZX1h4N/abO1uaKk6KKOQ=;
+        b=MiZ1DpWcnlQphGiqsN6vVD56SYrHaGYJqvLS5bZ/19Z8pAgVFylNUH5duiEEZf64A+
+         GRUcFp0IPzttfViNGNB0Sk8ed12VAOBhR4Ujyyqdfz9TqpGAe8iB52eUzORV6cyNXgZQ
+         2Ctju5zMO78qKuzacXrEnpsAhYWZunpBC5WgbKdmSBn93r4Ibqd7PlYQSeIczLLQ0yD8
+         Bjm7rkuLEv3T6ebm8nAT4w4oPDfqv6KnYjTj37aLRekmohMctDqb50Wg2tefCkJH3pXI
+         YGEvb0xPsjxObCSTKGVcEkqqPGcy4bb/9P24YmkITNSxli5w6OLOgDdM3J+oJP0EnyaC
+         JsHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753977513; x=1754582313;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jKKboCZbQOuMPhW93A7UzwoZX1h4N/abO1uaKk6KKOQ=;
+        b=canmCek2qfhtlrv3p3xUZndiBAxqab+8pRwSnbySbeaIa+jNUzyVTY5wlyVESxuJUf
+         YeXBSzGx1try4M7muU8q0bZ3UOa8RaK4iDmcKMMF7fhiDra2VLOPnY+MWah87O8DOFKT
+         wpks+DTpdSNhtmIu+RDVQgxhPNAmhGXbWmDaJ7tJyhkk4bCe45jZlXg+zfxhmBkgT5a2
+         fWJ0gjnOlsr6SknId6hci0Yrkd0hvSUW5Ga9XDCCOgiMAyPAbSYujPsm7R7frkUHJVjE
+         YzAUqEJDV/4bK9haS1wZS/rUAulN07t83cynODPOZAm00XqowLGiDEhMbjqC2FKM5sN2
+         GOQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWSmxg9ML+6LHzR3L51i9PZMFEhFSq/TqdzGpQ9PC6k1QlLf1zqQE2F2SrGWboNq/5RrQJAUkxoEcSA1/o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV7eBuvYFAABxDqst3OdinKnrD/T64C9DMuOGHc0niqPD/rxSN
+	zaii4QGwuy8eX/aqt50tJ2215hiuWjgLkMQHmvYvpMKwkgUyRjVJiZfiCOTlFY+mYm0=
+X-Gm-Gg: ASbGncsEkGrveOeFd6gCFmXO72AFEJnJ/5Js/Z1dC6nm5d7A0bMZ0BIyGa8j3pnKPkH
+	2jobG91XBSVCLv9/itOEusaNkqFBvZ4GLFLrmn6YBjKmpcoTKtgHMzkCIQ4JTFSkJxz5TzDZwgF
+	xMM6w87O8t8T9AgyFdV/unpTc97krJtms9U2WJf1zyFxU7+zCqOmbuFpe+FBdQxks7P/e9y9q0e
+	7eMGdODbzOeJ5ICU3yR62r9SABdUovfEAfbBobv9D2cOSXBxUCfgbM9Z+nTuId97XFLlUj40QLC
+	i4uFf5y8x7S1LvIbmkSVvyqAZJ0M5iJ1lvP5YRGuuikLpHNLswHepJ5Wj2NKmfJavZ4rMTmFcKA
+	3wyw4If8CDtPyTAwLMg/9TmHBuXg=
+X-Google-Smtp-Source: AGHT+IFlKXeAtHhTk1SLO+CqePwO/w0WEyRur6i2wT7kumlydhvgPfkl/quSflZO/twV73QrziIhPg==
+X-Received: by 2002:a05:6102:5686:b0:4e7:3e76:cd21 with SMTP id ada2fe7eead31-4fbe7f376f5mr4909961137.9.1753977512820;
+        Thu, 31 Jul 2025 08:58:32 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88d8f422459sm431284241.21.2025.07.31.08.58.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 08:58:32 -0700 (PDT)
+Date: Thu, 31 Jul 2025 18:58:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Marie Zhussupova <marievic@google.com>,
+	rmoar@google.com, davidgow@google.com, shuah@kernel.org,
+	brendan.higgins@linux.dev
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, elver@google.com,
+	dvyukov@google.com, lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com, rodrigo.vivi@intel.com,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Marie Zhussupova <marievic@google.com>
+Subject: Re: [PATCH 6/9] kunit: Enable direct registration of parameter
+ arrays to a KUnit test
+Message-ID: <5683507a-dacc-4e46-893f-d1e775d2ef22@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/cpu/intel: Fix the constant_tsc model check for
- Pentium 4s
-To: Suchit Karunakaran <suchitkarunakaran@gmail.com>, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- darwi@linutronix.de, sohil.mehta@intel.com, peterz@infradead.org,
- ravi.bangoria@amd.com
-Cc: skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250730042617.5620-1-suchitkarunakaran@gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250730042617.5620-1-suchitkarunakaran@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729193647.3410634-7-marievic@google.com>
 
-On 7/29/25 21:26, Suchit Karunakaran wrote:
-> The logic to synthesize constant_tsc for Pentium 4s (Family 15) is
-> wrong. Since INTEL_P4_PRESCOTT is numerically greater than
-> INTEL_P4_WILLAMETTE, the logic always results in false and never sets
-> X86_FEATURE_CONSTANT_TSC for any Pentium 4 model.
-> The error was introduced while replacing the x86_model check with a VFM
-> one. The original check was as follows:
->         if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
->                 (c->x86 == 0x6 && c->x86_model >= 0x0e))
->                 set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
-> 
-> Fix the logic to cover all Pentium 4 models from Prescott (model 3) to
-> Cedarmill (model 6) which is the last model released in Family 15.
+Hi Marie,
 
-Could we have a slightly different changelog, please? The fact that the
-logic results in the bit never getting set for P4's is IMNHO immaterial.
-This looks like a plain and simple typo, not a logical error on the
-patch author's part.
+kernel test robot noticed the following build warnings:
 
-How about this as a changelog?
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---
+url:    https://github.com/intel-lab-lkp/linux/commits/Marie-Zhussupova/kunit-Add-parent-kunit-for-parameterized-test-context/20250730-033818
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git kunit
+patch link:    https://lore.kernel.org/r/20250729193647.3410634-7-marievic%40google.com
+patch subject: [PATCH 6/9] kunit: Enable direct registration of parameter arrays to a KUnit test
+config: nios2-randconfig-r072-20250731 (https://download.01.org/0day-ci/archive/20250731/202507310854.pZvIcswn-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 8.5.0
 
-Pentium 4's which are INTEL_P4_PRESCOTT (mode 0x03) and later have a
-constant TSC. This was correctly captured until fadb6f569b10
-("x86/cpu/intel: Limit the non-architectural constant_tsc model
-checks"). In that commit, the model was transposed from 0x03 to
-INTEL_P4_WILLAMETTE, which is just plain wrong. That was presumably a
-simple typo, probably just copying and pasting the wrong P4 model.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202507310854.pZvIcswn-lkp@intel.com/
 
-Fix the constant TSC logic to cover all later P4 models. End at
-INTEL_P4_CEDARMILL which is the last P4 model.
+New smatch warnings:
+lib/kunit/test.c:723 kunit_run_tests() error: we previously assumed 'test_case->generate_params' could be null (see line 714)
+
+vim +723 lib/kunit/test.c
+
+914cc63eea6fbe Brendan Higgins     2019-09-23  681  int kunit_run_tests(struct kunit_suite *suite)
+914cc63eea6fbe Brendan Higgins     2019-09-23  682  {
+fadb08e7c7501e Arpitha Raghunandan 2020-11-16  683  	char param_desc[KUNIT_PARAM_DESC_SIZE];
+914cc63eea6fbe Brendan Higgins     2019-09-23  684  	struct kunit_case *test_case;
+acd8e8407b8fcc David Gow           2021-08-03  685  	struct kunit_result_stats suite_stats = { 0 };
+acd8e8407b8fcc David Gow           2021-08-03  686  	struct kunit_result_stats total_stats = { 0 };
+8631cd2cf5fbf2 Marie Zhussupova    2025-07-29  687  	const void *curr_param;
+914cc63eea6fbe Brendan Higgins     2019-09-23  688  
+c272612cb4a2f7 David Gow           2022-07-01  689  	/* Taint the kernel so we know we've run tests. */
+c272612cb4a2f7 David Gow           2022-07-01  690  	add_taint(TAINT_TEST, LOCKDEP_STILL_OK);
+c272612cb4a2f7 David Gow           2022-07-01  691  
+1cdba21db2ca31 Daniel Latypov      2022-04-29  692  	if (suite->suite_init) {
+1cdba21db2ca31 Daniel Latypov      2022-04-29  693  		suite->suite_init_err = suite->suite_init(suite);
+1cdba21db2ca31 Daniel Latypov      2022-04-29  694  		if (suite->suite_init_err) {
+1cdba21db2ca31 Daniel Latypov      2022-04-29  695  			kunit_err(suite, KUNIT_SUBTEST_INDENT
+1cdba21db2ca31 Daniel Latypov      2022-04-29  696  				  "# failed to initialize (%d)", suite->suite_init_err);
+1cdba21db2ca31 Daniel Latypov      2022-04-29  697  			goto suite_end;
+1cdba21db2ca31 Daniel Latypov      2022-04-29  698  		}
+1cdba21db2ca31 Daniel Latypov      2022-04-29  699  	}
+1cdba21db2ca31 Daniel Latypov      2022-04-29  700  
+cae56e1740f559 Daniel Latypov      2022-04-29  701  	kunit_print_suite_start(suite);
+914cc63eea6fbe Brendan Higgins     2019-09-23  702  
+fadb08e7c7501e Arpitha Raghunandan 2020-11-16  703  	kunit_suite_for_each_test_case(suite, test_case) {
+fadb08e7c7501e Arpitha Raghunandan 2020-11-16  704  		struct kunit test = { .param_value = NULL, .param_index = 0 };
+acd8e8407b8fcc David Gow           2021-08-03  705  		struct kunit_result_stats param_stats = { 0 };
+fadb08e7c7501e Arpitha Raghunandan 2020-11-16  706  
+887d85a0736ff3 Rae Moar            2023-03-08  707  		kunit_init_test(&test, test_case->name, test_case->log);
+03806177fa4cbb Marie Zhussupova    2025-07-29  708  		__kunit_init_parent_test(test_case, &test);
+03806177fa4cbb Marie Zhussupova    2025-07-29  709  
+529534e8cba3e6 Rae Moar            2023-07-25  710  		if (test_case->status == KUNIT_SKIPPED) {
+529534e8cba3e6 Rae Moar            2023-07-25  711  			/* Test marked as skip */
+529534e8cba3e6 Rae Moar            2023-07-25  712  			test.status = KUNIT_SKIPPED;
+529534e8cba3e6 Rae Moar            2023-07-25  713  			kunit_update_stats(&param_stats, test.status);
+44c50ed8e59936 Marie Zhussupova    2025-07-29 @714  		} else if (!test_case->generate_params && !test.params_data.params) {
+                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Imagine ->generate_parms is NULL but test.params_data.params is
+non-NULL.
+
+37dbb4c7c7442d David Gow           2021-11-02  715  			/* Non-parameterised test. */
+529534e8cba3e6 Rae Moar            2023-07-25  716  			test_case->status = KUNIT_SKIPPED;
+37dbb4c7c7442d David Gow           2021-11-02  717  			kunit_run_case_catch_errors(suite, test_case, &test);
+37dbb4c7c7442d David Gow           2021-11-02  718  			kunit_update_stats(&param_stats, test.status);
+03806177fa4cbb Marie Zhussupova    2025-07-29  719  		} else if (test_case->status != KUNIT_FAILURE) {
+fadb08e7c7501e Arpitha Raghunandan 2020-11-16  720  			/* Get initial param. */
+fadb08e7c7501e Arpitha Raghunandan 2020-11-16  721  			param_desc[0] = '\0';
+8631cd2cf5fbf2 Marie Zhussupova    2025-07-29  722  			/* TODO: Make generate_params try-catch */
+13ee0c64bd88a3 Marie Zhussupova    2025-07-29 @723  			curr_param = test_case->generate_params(&test, NULL, param_desc);
+                                                                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Then this could crash.
+
+I suspect that this is fine, but I bet that in the previous
+condition, just testing one would probably have been sufficient
+or maybe we could have change && to ||.
+
+529534e8cba3e6 Rae Moar            2023-07-25  724  			test_case->status = KUNIT_SKIPPED;
+6c738b52316c58 Rae Moar            2022-11-23  725  			kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
+6c738b52316c58 Rae Moar            2022-11-23  726  				  "KTAP version 1\n");
+44b7da5fcd4c99 David Gow           2021-11-02  727  			kunit_log(KERN_INFO, &test, KUNIT_SUBTEST_INDENT KUNIT_SUBTEST_INDENT
+44b7da5fcd4c99 David Gow           2021-11-02  728  				  "# Subtest: %s", test_case->name);
+fadb08e7c7501e Arpitha Raghunandan 2020-11-16  729  
+8631cd2cf5fbf2 Marie Zhussupova    2025-07-29  730  			while (curr_param) {
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
