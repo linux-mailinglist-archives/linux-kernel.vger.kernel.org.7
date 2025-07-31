@@ -1,101 +1,142 @@
-Return-Path: <linux-kernel+bounces-752713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B29DB17A12
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:31:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A54B17A10
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F16C7AE6E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A20517B78C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:31:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6766B289357;
-	Thu, 31 Jul 2025 23:31:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uKPRRf/T"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5843B288C81;
+	Thu, 31 Jul 2025 23:31:14 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85924288C13
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 23:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CC8288C13;
+	Thu, 31 Jul 2025 23:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754004677; cv=none; b=tD0TZN4iLSyRDSo+IJ5zlwPGEprcwxD7Fwg5pt+4TExjEIS5Ir/n+5pl0+fSv15ETsjftwKhdtAGXe9TBa74NDZKUnMKV6k681cBrT+eMoT3bPymUCP18e6jFIt9vR26Gt4ZfhvhliS28g76nOdrMlnAhv0I8M9MGHlBWun/Ck4=
+	t=1754004674; cv=none; b=UMOcp9tM91Bfzbs8aRWz5czirVyZbbU8y2rK6n9i0GEt8maAaBRlGxwjooPcR4buZ7TpiGjp++L4DsfBhYysmxglvX8O5gihsfpwDwz41NdX6YQbS9wCorGXPld9ugCsslikRJZDDFvARobxZeif8PHvopBN1viBXxQGDrUQmQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754004677; c=relaxed/simple;
-	bh=2NaScNcdaGcrj1b9CsW2e7a605w4dLrZuMpOBsYF0u8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=shO6TuyqkDDS6hI5ki2tZolhpDRj+UkscuDdCs3pMDkagWCrshZyq3dyw4Gj+y26v/7PbSM9uRI2Uq2ZNM5DfOLhB7eqd0F+GzGbZkILx3iyzwX0vUGxzMuCoG2DrU85psmeHtlhN5fQYa2vEPxnp1vm7h+n2S/Mo1xD3jtCBWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uKPRRf/T; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b34fa832869so2065618a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754004675; x=1754609475; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2NaScNcdaGcrj1b9CsW2e7a605w4dLrZuMpOBsYF0u8=;
-        b=uKPRRf/T84txVo+TPHddoYsuYZS4+PQXNSrI0WHD+ZgXjG/oabPB0oMpGcc9g3rh3L
-         Sblhc74/6P9JeUCumgsdH/8fZ0hv7Nx5pHj9WyZO3rLINCqrGEzsvzchxWsH0g8Hdaad
-         CgefxOTYzRfQsK99+Cg5DrS7qYF1HFOV7BQrlhdi2mEf+5DVYlD/1DSRxchjKzYdZn8i
-         +4kdwYKG8YUOK8gJL92D564UGjQxXkG/IOgItJiX6UKP2n8QbGHaaGQv7SgFreWBysTc
-         IZb3rhUHOrObLdnk6y0Sst7pBaJO766jzoIfx+AJeJOm9rhQ9XZZiidAe3YB/mmVDB2w
-         lIqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754004675; x=1754609475;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2NaScNcdaGcrj1b9CsW2e7a605w4dLrZuMpOBsYF0u8=;
-        b=lfKrgpdpj7YBiKIqWS/re0/NoVq+Ln0MvkZCNfErYZyUcbnpX8pO3sA4YA5q98IFqu
-         F/rOkN09gWJzeTJ5WR6LaglQygpG1zcL8i8OyJTOR7zHElpLB6DP/2mCFQ6UtSaJNdKK
-         xWT8eh9GeyaAhf8nxklizEZK5yDU8s4PKwenlXpkoFDMPdlLEUbxdi2DZa8l8mZPIOOd
-         6zBcd3XEixPTgXhYzPypbjJXebSySLDL4oDUmL1+5w6WRUYeV/0MUrxpk6NmwsrhzZI/
-         LXjDs4Xx2vGYB0FY3L7P6+S5q4igMXq050ovN1lHT6eALCJGAZYVhCbsZx5Bny31ecFj
-         KDEg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOiuDMH6zd/KvOvCkhX4UkX7iJHihRAPfEd2uVJWOX0PQYBoVsHRDjAYHewgQslYdWk0b/ln5yg1ZIDkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqe8U7i88g4Wi2sbHSkpMgUexcL24WgjSV+JC15902FKBGe+6B
-	Mhe0W3rbuZm4dl//OqRrFLXTdU0oS1lQsnHX+eY42w0ixpC9sUdmKV6DaBw3sdiO3TIf4oB3D3Z
-	Vr3f8sA==
-X-Google-Smtp-Source: AGHT+IGryvmAT3lqluwhQwi1mQ7FX1BibAY6piThiCuH2qx4zB0PIPWm+u9AgX1LOvUYyklReyoB9RUyx2Y=
-X-Received: from pji15.prod.google.com ([2002:a17:90b:3fcf:b0:311:ef56:7694])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:1cb:b0:23f:fa47:f933
- with SMTP id d9443c01a7336-24200a5a8aamr57745545ad.8.1754004674734; Thu, 31
- Jul 2025 16:31:14 -0700 (PDT)
-Date: Thu, 31 Jul 2025 16:31:13 -0700
-In-Reply-To: <70484aa1b553ca250d893f80b2687b5d915e5309.camel@intel.com>
+	s=arc-20240116; t=1754004674; c=relaxed/simple;
+	bh=X6ag863tsAMX72vxVmuzaAl3aNsCRnexcpmqmW3S/bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TgJeAeXmmojF9VvrJN34wteNuVRQzOxWPNfLnel18NoT4DJPsUr0XXLbkwadlVeoTq7Ipo9stMIp2KspnPM8gSIVPuYUFHLxTAAraGTl1y4j4+nHlm0bi1rsxVrpOadGjOGy+hVc1nDLIAMVNIjr0T0Q4YaXr2I/HwVV6f1p2CY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 348081A0B32;
+	Thu, 31 Jul 2025 23:31:09 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 8082B20025;
+	Thu, 31 Jul 2025 23:31:07 +0000 (UTC)
+Date: Thu, 31 Jul 2025 19:31:26 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, bpf@vger.kernel.org, Douglas Raillard
+ <douglas.raillard@arm.com>
+Subject: [PATCH] tracing: Have unsigned int function args displayed as
+ hexadecimal
+Message-ID: <20250731193126.2eeb21c6@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250609191340.2051741-1-kirill.shutemov@linux.intel.com>
- <20250609191340.2051741-2-kirill.shutemov@linux.intel.com>
- <5cfb2e09-7ecb-4144-9122-c11152b18b5e@intel.com> <d897ab70d48be4508a8a9086de1ff3953041e063.camel@intel.com>
- <aFxpuRLYA2L6Qfsi@google.com> <vgk3ql5kcpmpsoxfw25hjcw4knyugszdaeqnzur6xl4qll73xy@xi7ttxlxot2r>
- <3e55fd58-1d1c-437a-9e0a-72ac92facbb5@intel.com> <aF1sjdV2UDEbAK2h@google.com>
- <1fbdfffa-ac43-419c-8d96-c5bb1bdac73f@intel.com> <70484aa1b553ca250d893f80b2687b5d915e5309.camel@intel.com>
-Message-ID: <aIv8wZzs1oXDCXSU@google.com>
-Subject: Re: [PATCHv2 01/12] x86/tdx: Consolidate TDX error handling
-From: Sean Christopherson <seanjc@google.com>
-To: Rick P Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
-	Kai Huang <kai.huang@intel.com>, "bp@alien8.de" <bp@alien8.de>, 
-	"mingo@redhat.com" <mingo@redhat.com>, 
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>, 
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
-	Yan Y Zhao <yan.y.zhao@intel.com>, 
-	"linux-coco@lists.linux.dev" <linux-coco@lists.linux.dev>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
-	"tglx@linutronix.de" <tglx@linutronix.de>, Isaku Yamahata <isaku.yamahata@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: afjqzmu6nzyhwkeonr138bmxsjxupxw3
+X-Rspamd-Server: rspamout08
+X-Rspamd-Queue-Id: 8082B20025
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1/YeDc0ItVMUA3mLMe0onyOkUEa2serYZM=
+X-HE-Tag: 1754004667-959313
+X-HE-Meta: U2FsdGVkX1+z+Dq5IE/EHdZLBzL2QtoUEsiLkpqrXCweM9zvEJ9RW3b7LYH5RoEWW4wV8oerCSaWKgX4HFYmGFtJSAtXaCdwOoRibagsLWbukgTeUY623Ue9piuaZkRJmCuuPkduW528/ME/qIOceA/NZ3GDmW+wssgNvwjpS2HDurBz3VG/rVN9ZlbN8nr4rtWZ4lU1nBO1YMXwqjSsMX3FdKpAPa3qEq51DdiBwXP22xpabwLns5Pwc0s4wbRHebj9NTGbuNaocvEvO9ZCUCvns9ZW4z3ZVG4Ow+yXmaofZ7AfuCu4pePE4GsNEPOPaBwOiEvIzdfmAhQTadIhnQluSBHuziRJJVkOx64yARTdh2zmgpO0vX0ShDIqOkHs
 
-On Wed, Jul 30, 2025, Rick P Edgecombe wrote:
-> So STATUS_OPERAND_BUSY() seems like an ok thing to try next for v3 of this
-> series at least. Unless anyone has any strong objections ahead of time.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Can you make it IS_TDX_STATUS_OPERAND_BUSY() so that it's obviously a check and
-not a statement/value, and to scope it to TDX?
+Most function arguments that are passed in as unsigned int or unsigned
+long are better displayed as hexadecimal than normal integer. For example,
+the functions:
+
+static void __create_object(unsigned long ptr, size_t size,
+				int min_count, gfp_t gfp, unsigned int objflags);
+
+static bool stack_access_ok(struct unwind_state *state, unsigned long _addr,
+			    size_t len);
+
+void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
+
+Show up in the trace as:
+
+    __create_object(ptr=-131387050520576, size=4096, min_count=1, gfp=3264, objflags=0) <-kmem_cache_alloc_noprof
+    stack_access_ok(state=0xffffc9000233fc98, _addr=-60473102566256, len=8) <-unwind_next_frame
+    __local_bh_disable_ip(ip=-2127311112, cnt=256) <-handle_softirqs
+
+Instead, by displaying unsigned as hexadecimal, they look more like this:
+
+    __create_object(ptr=0xffff8881028d2080, size=0x280, min_count=1, gfp=0x82820, objflags=0x0) <-kmem_cache_alloc_node_noprof
+    stack_access_ok(state=0xffffc90000003938, _addr=0xffffc90000003930, len=0x8) <-unwind_next_frame
+    __local_bh_disable_ip(ip=0xffffffff8133cef8, cnt=0x100) <-handle_softirqs
+
+Which is much easier to understand as most unsigned longs are usually just
+pointers. Even the "unsigned int cnt" in __local_bh_disable_ip() looks
+better as hexadecimal as a lot of flags are passed as unsigned.
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_output.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 0b3db02030a7..b18393d66a7f 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -690,6 +690,12 @@ int trace_print_lat_context(struct trace_iterator *iter)
+ }
+ 
+ #ifdef CONFIG_FUNCTION_TRACE_ARGS
++
++static u32 btf_type_int(const struct btf_type *t)
++{
++	return *(u32 *)(t + 1);
++}
++
+ void print_function_args(struct trace_seq *s, unsigned long *args,
+ 			 unsigned long func)
+ {
+@@ -701,6 +707,8 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
+ 	struct btf *btf;
+ 	s32 tid, nr = 0;
+ 	int a, p, x;
++	int int_data;
++	u16 encode;
+ 
+ 	trace_seq_printf(s, "(");
+ 
+@@ -744,7 +752,14 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
+ 			trace_seq_printf(s, "0x%lx", arg);
+ 			break;
+ 		case BTF_KIND_INT:
+-			trace_seq_printf(s, "%ld", arg);
++			/* Get the INT encodoing */
++			int_data = btf_type_int(t);
++                        encode = BTF_INT_ENCODING(int_data);
++                        /* Print unsigned ints as hex */
++                        if (encode & BTF_INT_SIGNED)
++				trace_seq_printf(s, "%ld", arg);
++                        else
++                                trace_seq_printf(s, "0x%lx", arg);
+ 			break;
+ 		case BTF_KIND_ENUM:
+ 			trace_seq_printf(s, "%ld", arg);
+-- 
+2.47.2
+
 
