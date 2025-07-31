@@ -1,121 +1,219 @@
-Return-Path: <linux-kernel+bounces-752564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A52EB17743
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:38:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB028B17745
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:40:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7BE87B62ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:37:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21EDA3AE1C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:40:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCB22512C3;
-	Thu, 31 Jul 2025 20:38:25 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6468B2571AC;
+	Thu, 31 Jul 2025 20:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PssxvYfD"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA0B13A258
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 20:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B1D021D3F8;
+	Thu, 31 Jul 2025 20:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753994305; cv=none; b=cw4d1vpy+QcJil7EhS0t+1xU33tYJsbTjF5QKJaokH2KKHpyXkov+KRF9FdRVOo47j5Hcm7POReVxOGnHhl3+mo8RX2uNZHpmmNabLEWD05waHfNHISAI8RuetEQFMUT8U/9Zpp2Cd+XcilHbU7pffsvra0XbNjk/6QAUA/pFd8=
+	t=1753994413; cv=none; b=o0aYk4Nv8D2eM2ODZ9YgLOuijyLb/ba4GUup76IdqiZhZmpXPeFuSJ2okLenmeP49NXf57AQ6DFVwt/JfAWDcm4N7NBYuXpnsWOqmJzH2eGtAcSaPThjI3tzC94TYfYR34P9ARqhXCevwJxgllsorSlGyaMWsyL4ziwPbO0ygRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753994305; c=relaxed/simple;
-	bh=1KPaxC0K1jqzqH1DBJnT9tvxhl2GYbl459Kl5KPn0AE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b0BbEg9icBthbZnIvLwrdrqasbIVz6RRzg04ObKow+r6Fb9eB03+T7LTvMTDNchDnui4ggBH+z40VUMpZenHdgMtp7kw0gyLkpfesNX1jkr9paFedHRWUIXzwQyp00VYgdXAmXAnIKlo2mvOvca2ycHvThOK1F29DU+WJOXRbrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 63EFC11494F;
-	Thu, 31 Jul 2025 20:38:15 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 307CA20025;
-	Thu, 31 Jul 2025 20:38:13 +0000 (UTC)
-Date: Thu, 31 Jul 2025 16:38:31 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML
- <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Mark Rutland <mark.rutland@arm.com>, Arnd
- Bergmann <arnd@arndb.de>, Nam Cao <namcao@linutronix.de>, Ricardo Neri
- <ricardo.neri-calderon@linux.intel.com>, Yury Norov <yury.norov@gmail.com>
-Subject: Re: [GIT PULL] tracing: Updates for v6.17
-Message-ID: <20250731163831.3149a14a@gandalf.local.home>
-In-Reply-To: <6z7h63sg3ljhy2k2ymnysm7hhcmtb76follkdy2y2iu54npxqj@wppxbg2qok2p>
-References: <20250731101717.6c340b66@gandalf.local.home>
-	<6z7h63sg3ljhy2k2ymnysm7hhcmtb76follkdy2y2iu54npxqj@wppxbg2qok2p>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753994413; c=relaxed/simple;
+	bh=inVa1LGB4oH7vDHQdafLXK3uqBgxi40KPmhmoCIdyGk=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7NU9MtwPOH9eAhmsqKfchq+e6mj05D/FrfWZSFPC2JzLJ8sgZW9uIwB8YhM5XfPkVrc4FHH3AFI0RDuLy3VzeZ2dBPHLNhKF/MphkaFhtJ40cq3KVTGBauE3/ZX0WOgZ+LSSJQ4PNm5yksX7ezhN/lP5WXH3fwHfb//Ccm4aBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PssxvYfD; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af66d49daffso33435166b.1;
+        Thu, 31 Jul 2025 13:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753994410; x=1754599210; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/AAkvvpbQOhTuAwe9EJHG3ghOkBXusQx1F2hWyP1fLc=;
+        b=PssxvYfDdq9l2hRGv9uXkVK/TAfyK+6YPFOKy7GbGpyHsyOH44okqEIsGfxDUQM9Bu
+         vVW3n1KXlLu9NWHioDNm2N6yOxrQDCXwoGkmSsHeRzsw55O7luf4gEzM04cpvaCo4zSB
+         A/K3pg2jk3GzBXXQXizTe3tIYzLEJDOIg+XSu8amSV7MCzrfX+b9UN9G+aykK1lTDveg
+         ap/d80qFOyzlEAPgPHnEsrWOt4vHm2KrOb57nAeDUjRp1Bi9gKNeKyMrpcDTSvL15Ers
+         cK3pIN9yDWqdeEc1P2ibpJYTZ7OmhqDku3RhUqk1OL86gOKt0vlfv83u5xxFQCKLf+Po
+         wpnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753994410; x=1754599210;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/AAkvvpbQOhTuAwe9EJHG3ghOkBXusQx1F2hWyP1fLc=;
+        b=NUzgyHDFqZ+itxQHtvDi6h0Bi8sPFL7ViackubyReOYvpe2w1nq/7roy6rVPhvOFOA
+         2vGVRoJbNVhcdRlN4RGs4DTIAZJViTlIDd/cN4mDUgrpzYrmnA/ahtdS4HFvnOXKTqPk
+         U/f/D4j0LMUKk/zpy0vltFNXxKOgIxz+Z8/NmGn8N2ktpbAJCn35p33SbBSQ/8Q/0Syl
+         8wHlcr0KlPnt8xoEqVtZebAhRvOWw+iFaXfikAo61UniYjBdYhAOAQZJmBq10XvC7SaT
+         UrOXYJqim1MlYJkOh5WAdnIT+3MQe3jetG/ee0qfOeATvLONt109Ves8V/nHdbD0sAmF
+         tSUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBcyTPMT3eseb4UXFcTkSASzCQgd8B2to4hE0IUls8rspJKXEreiHNJD83g4ypwa1EhfM=@vger.kernel.org, AJvYcCVcp5xyn5TpcjKlXj2MdlRchIk1QE8ctx22HeIaln31VHiMrZ2ebvndrBCxwIEIYpNzKjYB0WocPWwXN9vwkhsaHnux@vger.kernel.org, AJvYcCXHUL6pYaSZjPx30ZY+afcILjxC4Q1SQSeMu0dKlMVQGkXW0v0wxyY3h0ftzKtkjnM+EsImojgIYXc3nhAy@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxP8iP9XMsMrptuha4FbL5Fs5fyMAHsp1gvNHC4L1r/2raNkjW
+	qmkUnnBV1PSjKpa5Fn2Rulf7kiGtTZoDvYF2Bt2+araWCePmQoj7Q++u
+X-Gm-Gg: ASbGncuOOvkoSZ394w/JbWs5txQlf088QWefgS+uLu5ftzYi2JRnkBZDi1c3v24UuB2
+	VPgwWWWi66Q6biNyBugvAw6xricXejuLT5Q8O2EM0tZ+82pTCm1UP5fmrqLJ6WbbereGZPjRvEv
+	0nFNtKcyFt8F0SUzumPtpsqBMfMgxt5qfyxqqWQ+T96EQIyOyFK2W7F3x1W9hO+DDVApOkRIrHG
+	E8a+4mm0wTrIOhwzgMqRsNZm6TiLttZyohwLX2gS5GTUYWHhFxErccfOjw2nCAI+ZoWfc7uq2ev
+	j4sGt6RdEnoojiQiJxy8kiWeX21pR/+4kzEFoD+YagJVQiw5T6UavmBdIMjrB1A69k7FTee3IcC
+	2yEiywR01fA==
+X-Google-Smtp-Source: AGHT+IH35GZfVfrFy+4u5JJvJfBMXKVCGrjrhAiwGxS9sqsd6tRiJOQQ6uPYqZ73ZuJ5boDADFvL5w==
+X-Received: by 2002:a17:907:3cca:b0:aec:f8bb:abeb with SMTP id a640c23a62f3a-af8fd9a5c45mr987006766b.42.1753994409970;
+        Thu, 31 Jul 2025 13:40:09 -0700 (PDT)
+Received: from krava ([176.74.159.170])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e8359sm166233666b.89.2025.07.31.13.40.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 13:40:09 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 31 Jul 2025 22:40:07 +0200
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Mark Rutland <mark.rutland@arm.com>,
+	Steven Rostedt <rostedt@kernel.org>,
+	Florent Revest <revest@google.com>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Menglong Dong <menglong8.dong@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [RFC 00/10] ftrace,bpf: Use single direct ops for bpf trampolines
+Message-ID: <aIvUp_88v84Uw-lQ@krava>
+References: <20250729102813.1531457-1-jolsa@kernel.org>
+ <aIkLlB7Z7V--BeGi@J2N7QTR9R3.cambridge.arm.com>
+ <aIn_12KHz7ikF2t1@krava>
+ <20250730095641.660800b1@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: fhaikc453petwypw16czn5gh1emf6uuk
-X-Rspamd-Server: rspamout01
-X-Rspamd-Queue-Id: 307CA20025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18JfQkqqQdY9w/KYroK2NkBsJKzvkobai0=
-X-HE-Tag: 1753994293-27466
-X-HE-Meta: U2FsdGVkX18NB+2JuNBVBKqnW6z9/5A4Kq6RXgc219zpoObWYT/y9IPp3RFQtVczCsrjsJg+2DxMSG1Yu2mIyT9bz55BOxEhT1Q06xeq3JU9/5wMss9O3mmiQCNfsa02fHTxc5n1rk1jrFbOlMsWHF/tah+ZwMnqFfepT3bBFOfCUjL2K7mFPHFUFUyGkbb/FohXS+Ss87ZciJ010eGDo4atmZ1xpRjrH8n1PqryibtjMirbYJqm124E3PU2Bar+lt31qllef5E+WThSvRJTBV0290GCA2AI/+56aClYwoRV/PwrvsZd+8JVUVgqdeWHwsEpynuTQBcT4F8LkJwoOlaF1g5PyCODgKZk5HMJrHPBxWPQf976gw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730095641.660800b1@gandalf.local.home>
 
-On Thu, 31 Jul 2025 10:29:49 -0700
-Alexei Starovoitov <alexei.starovoitov@gmail.com> wrote:
+On Wed, Jul 30, 2025 at 09:56:41AM -0400, Steven Rostedt wrote:
+> On Wed, 30 Jul 2025 13:19:51 +0200
+> Jiri Olsa <olsajiri@gmail.com> wrote:
+> 
+> > so it's all work on PoC stage, the idea is to be able to attach many
+> > (like 20,30,40k) functions to their trampolines quickly, which at the
+> > moment is slow because all the involved interfaces work with just single
+> > function/tracempoline relation
+> 
+> Sounds like you are reinventing the ftrace mechanism itself. Which I warned
+> against when I first introduced direct trampolines, which were purposely
+> designed to do a few functions, not thousands. But, oh well.
+> 
+> 
+> > Steven, please correct me if/when I'm wrong ;-)
+> > 
+> > IIUC in x86_64, IF there's just single ftrace_ops defined for the function,
+> > it will bypass ftrace trampoline and call directly the direct trampoline
+> > for the function, like:
+> > 
+> >    <foo>:
+> >      call direct_trampoline
+> >      ...
+> 
+> Yes.
+> 
+> And it will also do the same for normal ftrace functions. If you have:
+> 
+> struct ftrace_ops {
+> 	.func = myfunc;
+> };
+> 
+> It will create a trampoline that has:
+> 
+>       <tramp>
+> 	...
+> 	call myfunc
+> 	...
+> 	ret
+> 
+> On x86, I believe the ftrace_ops for myfunc is added to the trampoline,
+> where as in arm, it's part of the function header. To modify it, it
+> requires converting to the list operation (which ignores the ops
+> parameter), then the ops at the function gets changed before it goes to the
+> new function.
+> 
+> And if it is the only ops attached to a function foo, the function foo
+> would have:
+> 
+>       <foo>
+> 	call tramp
+> 	...
+> 
+> But what's nice about this is that if you have 12 different ftrace_ops that
+> each attach to a 1000 different functions, but no two ftrace_ops attach to
+> the same function, they all do the above. No hash needed!
+> 
+> > 
+> > IF there are other ftrace_ops 'users' on the same function, we execute
+> > each of them like:
+> > 
+> >   <foo>:
+> >     call ftrace_trampoline
+> >       call ftrace_ops_1->func
+> >       call ftrace_ops_2->func
+> >       ...
+> > 
+> > with our direct ftrace_ops->func currently using ftrace_ops->direct_call
+> > to return direct trampoline for the function:
+> > 
+> > 	-static void call_direct_funcs(unsigned long ip, unsigned long pip,
+> > 	-                             struct ftrace_ops *ops, struct ftrace_regs *fregs)
+> > 	-{
+> > 	-       unsigned long addr = READ_ONCE(ops->direct_call);
+> > 	-
+> > 	-       if (!addr)
+> > 	-               return;
+> > 	-
+> > 	-       arch_ftrace_set_direct_caller(fregs, addr);
+> > 	-}
+> > 
+> > in the new changes it will do hash lookup (based on ip) for the direct
+> > trampoline we want to execute:
+> > 
+> > 	+static void call_direct_funcs_hash(unsigned long ip, unsigned long pip,
+> > 	+                                  struct ftrace_ops *ops, struct ftrace_regs *fregs)
+> > 	+{
+> > 	+       unsigned long addr;
+> > 	+
+> > 	+       addr = ftrace_find_rec_direct(ip);
+> > 	+       if (!addr)
+> > 	+               return;
+> > 	+
+> > 	+       arch_ftrace_set_direct_caller(fregs, addr);
+> > 	+}
+> 
+> I think the above will work.
+> 
+> > 
+> > still this is the slow path for the case where multiple ftrace_ops objects use
+> > same function.. for the fast path we have the direct attachment as described above
+> > 
+> > sorry I probably forgot/missed discussion on this, but doing the fast path like in
+> > x86_64 is not an option in arm, right?
+> 
+> That's a question for Mark, right?
 
-> In 5 years all these tools can switch the order, no problem,
-> but I don't get the point. Most, it not all tools, have similar tracefs
-> detection logic. Just remove automount right now without warn,
-> since the warn is only noise and churn to tools to swap the order
-> of detection ?
+yes, thanks for the other details
 
-The issue is that if we just remove it now, it *will* break a lot of
-scripts. I know many people that have scripts hardcoded with just
-/sys/kernel/debug/tracing in use (Peter Zijlstra for one).
-
-tracefs has been in the kernel for over 5 years and there's still kernel
-developers that are unaware that it has its own directory! After posting
-this patch to the public, a had a couple of people tell me privately that
-they didn't know about /sys/kernel/tracing. That's why I want the warning.
-
-I'd suggest to switch the logic, or do what libtracefs does and parse the
-/proc/mounts directory:
-
-  https://git.kernel.org/pub/scm/libs/libtrace/libtracefs.git/tree/src/tracefs-utils.c#n89
-
-It only uses debugfs if tracefs isn't found.
-
-Even my own scripts have been doing this for years: (from the ftrace kselftests):
-
-TRACING_DIR=`grep tracefs /proc/mounts | cut -f2 -d' ' | head -1`
-if [ -z "$TRACING_DIR" ]; then
-    DEBUGFS_DIR=`grep debugfs /proc/mounts | cut -f2 -d' ' | head -1`
-    if [ -z "$DEBUGFS_DIR" ]; then
-        # If tracefs exists, then so does /sys/kernel/tracing
-        if [ -d "/sys/kernel/tracing" ]; then
-            mount -t tracefs nodev /sys/kernel/tracing ||
-              errexit "Failed to mount /sys/kernel/tracing"
-            TRACING_DIR="/sys/kernel/tracing"
-            UMOUNT_DIR=${TRACING_DIR}
-        # If debugfs exists, then so does /sys/kernel/debug
-        elif [ -d "/sys/kernel/debug" ]; then
-            mount -t debugfs nodev /sys/kernel/debug ||
-              errexit "Failed to mount /sys/kernel/debug"
-            TRACING_DIR="/sys/kernel/debug/tracing"
-            UMOUNT_DIR=${TRACING_DIR}
-        else
-            err_ret=$err_skip
-            errexit "debugfs and tracefs are not configured in this kernel"
-        fi
-    else
-        TRACING_DIR="$DEBUGFS_DIR/tracing"
-    fi
-fi
-
-
--- Steve
+jirka
 
