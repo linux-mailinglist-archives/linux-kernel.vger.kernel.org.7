@@ -1,144 +1,170 @@
-Return-Path: <linux-kernel+bounces-752172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54968B17216
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:32:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59874B17218
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 094645470E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D5641890191
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:33:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A5582C3273;
-	Thu, 31 Jul 2025 13:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD602C3257;
+	Thu, 31 Jul 2025 13:32:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="x3NX7dX0"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gGc86efY"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60503239E7A;
-	Thu, 31 Jul 2025 13:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4195E2C159E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753968723; cv=none; b=RMdpI/+uoCy8p/fz9jAAHhHIOD9nabKz3cblqVQqDiy6I4tsnOLkd2u2ZUzuM45bcIY4MlGkFE8+NHs2gEyVqbJBOAOICsR6O1VFD6LOpoAgACWIqMnvtPpu3mTnq0Kkz4O6KDvdugojW34T03NCZB8fl6Nm2xPeNJKE1kPkjSc=
+	t=1753968754; cv=none; b=Cf2y3SiE7TbUh4T6zWnUNPg/yRUzUHVzPnUT6EEDqsL1gV+eYiZFz3+LijvzGUAmVDebpaAtEoCwk8aLW3omnW93zjfNam3gfXdyxk65nbniw/36yh7RDos7OG4nHx8e8PcqOaigCoYhrNEJlvzkgf5dIDPI4XvEWVbHRGBApts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753968723; c=relaxed/simple;
-	bh=NQF0ivw1/JKZj7VbBqG6KaLfselrKLlIz/Qzt/4hPKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mv5ljKCYJ9lE68MtT/d9+lZnExb2AK8GGN4Weg0Lc4QYoCBpaA1pPtk1l/Cd/rnQY9GAKfr+DBY3zN/XuW0JDK82tM2Tfz19G/NzgdGD53pFMdOl+6+N5x8ydJEuBk5cm3Ev/fXpGPhDObAFKFH41P0Dv9Tg50hFyn+VTZznDl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=x3NX7dX0; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Disposition:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Content-Disposition:
-	In-Reply-To:References; bh=yfEHBZ02wUVwRXSKBRQb6U57So6qITtjQ8Vyh+zAsHY=; b=x3
-	NX7dX0lbkdeNEwffn13vC0JOlNuFr3f1HVsqcNK8OqvHLEdXSwBn/QQXiGa8FBSzv+ylFNEoLS7Dg
-	OKoeKKITgmI3sB4qVJJgpux2oJguBXJXMW4GU9o09ogE+ldh7Jn1K1+33vCOMBv7zEp9RHE7hXQSB
-	4GtOvSKCAlpfPn8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uhTNw-003N6x-RK; Thu, 31 Jul 2025 15:31:52 +0200
-Date: Thu, 31 Jul 2025 15:31:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: =?utf-8?B?5p2O5b+X?= <lizhi2@eswincomputing.com>
-Cc: weishangjuan@eswincomputing.com, andrew+netdev@lunn.ch,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, rmk+kernel@armlinux.org.uk,
-	yong.liang.choong@linux.intel.com, vladimir.oltean@nxp.com,
-	jszhang@kernel.org, jan.petrous@oss.nxp.com,
-	prabhakar.mahadev-lad.rj@bp.renesas.com, inochiama@gmail.com,
-	boon.khai.ng@altera.com, dfustini@tenstorrent.com, 0x1207@gmail.com,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, ningyu@eswincomputing.com,
-	linmin@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: Re: Re: Re: [PATCH v3 2/2] ethernet: eswin: Add eic7700
- ethernet driver
-Message-ID: <bad83fec-afca-4c41-bee4-e4e4f9ced57a@lunn.ch>
-References: <20250703091808.1092-1-weishangjuan@eswincomputing.com>
- <20250703092015.1200-1-weishangjuan@eswincomputing.com>
- <c212c50e-52ae-4330-8e67-792e83ab29e4@lunn.ch>
- <7ccc507d.34b1.1980d6a26c0.Coremail.lizhi2@eswincomputing.com>
- <e734f2fd-b96f-4981-9f00-a94f3fd03213@lunn.ch>
- <6c5f12cd.37b0.1982ada38e5.Coremail.lizhi2@eswincomputing.com>
- <6b3c8130-77f0-4266-b1ed-2de80e0113b0@lunn.ch>
- <006c01dbfafb$3a99e0e0$afcda2a0$@eswincomputing.com>
- <28a48738-af05-41a4-be4c-5ca9ec2071d3@lunn.ch>
- <2b4deeba.3f61.1985fb2e8d4.Coremail.lizhi2@eswincomputing.com>
+	s=arc-20240116; t=1753968754; c=relaxed/simple;
+	bh=DwLv3NVgK+NLuVZxUkGdJBfD5FPTwniAQK5bZRxIfmU=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=a+y27PTtyb/rXDzJEyG0wG3RLTi29eV99Xowft1gejg3lCAAkIpN3/6afwiZ17L/bimCIgCUJZQnXDOvHw/zBSJIDyS/68CFm/MpqGbNJw29+byEtt4BC7j2L+kzLPn87E3/ByW5KAzl+h2szPr130w9smSTq3lSigi2HQeZrhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gGc86efY; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-240763b322fso3930215ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:32:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753968752; x=1754573552; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=cmXYzT6zJ9rS420ixrln5bVB+UwoUFt5tecWAfMb5OA=;
+        b=gGc86efYP2En6YuMKLUdrZOq0nhhITXlO5//ZBQ11e3Q0NPHvOnY4sbUr/XtJ4BHJL
+         Gx+PPlUqXPznxtXp9jQiKZQO/+2NwosveIjW5qmuOOd+cEcqAd111WYWVL2zx9MpPbXI
+         5hrtUXGqi5O4yilelYqyRFUrz3fszr8AxcIn5UAeZqeHCb4YENlTi3eE3+XR5ndyfFD8
+         iz7t5mKmVnydNrl8IgHwrbkqN949PS0necqiRPHrbJMwE/c1cPoHO3AM7xG8PRsm6rXv
+         rt4rXFH0wC8tIlFRCIVuDyF7Us1haFRookHHGy8W8yoMIuwb/8Nnf8E6uXnFixEsKEOo
+         ES/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753968752; x=1754573552;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cmXYzT6zJ9rS420ixrln5bVB+UwoUFt5tecWAfMb5OA=;
+        b=FroWqm/WN5WPOCQEJi1W/6hG+DzOuOWkFnNqJfZ+6+IyATpvsEzVGhul7xFnoEwcQR
+         SkPrYUVEA6A6jSBx0hZISNFBEa0wRTqmQOwtQIt1e2HEz50rzqJqNIrD3Hd7nZU4qRRS
+         /gwe05rwL2hdcHc+LbH9j6SskSmopQib6NtSqu+JmBJAXfgsax6cFvH9dS8g5N1UV6Tq
+         n733f7+khYD1y5yfQd/MR2AOoa8e+RXI+Mon93cbrxr3rcFtKJatFaNa9YWd7Ghvfnf1
+         mYteJ7dlLTlCRbbNywQg1o83FgR/JmnHbtMklCIDuBKrM5QmNgJRsD3BTOaP+SwhLHD9
+         BJoQ==
+X-Gm-Message-State: AOJu0YxoOAGQj48V0PZBnoXyer5Oj1/50P/CEqHYvyBvKARY65QKghTs
+	wQVNnnRu1HV0Jv40EKnX98rdN7rgkkcR6d+avP53au1zm28Ls6XHVk4mkO8xa41ohwx2gpHzyqT
+	t9HNzr8ETQ9LJEh6vdq7WHO83QjyEj9qb3Axu2oYo7lVAD7N4j5ENf8U=
+X-Gm-Gg: ASbGncsA7wanrkJyo4LKinqOCZa1UVSOltDLili9yGNonDfkxRsXWz+yUk+nYpBW8t6
+	tfVZz5TF5qY/Wl5QC54vfK6kgNpTiqkEPYyrh53phpkw1gNE19/GyfDtFcvMHLQGAMJg+GTwwjo
+	Zwmee6IICuADNKPgpBT7uBQGtQ4ejqoZ4iV/oV80KSlQrBP19qhWTTLBDx2Q832Kp7BFQto+yF+
+	tjmx/HuiPnLNmxmLF/7TyWIfoKYx/sE2qmIUbFD
+X-Google-Smtp-Source: AGHT+IHMOlGLBVMZYIfdD8TgOlG751bAmep6oG9qqVy6znDcDyIXiYVE8rT/XtpzFlKEZWKLciEH9UdIeYkn8YVABic=
+X-Received: by 2002:a17:902:ef11:b0:240:725d:c396 with SMTP id
+ d9443c01a7336-24096b17fb3mr112149505ad.34.1753968752058; Thu, 31 Jul 2025
+ 06:32:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2b4deeba.3f61.1985fb2e8d4.Coremail.lizhi2@eswincomputing.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 31 Jul 2025 19:02:20 +0530
+X-Gm-Features: Ac12FXz5D2sJ8CLUiMTBbTCix6pCoDq6lk-VMWBeOCc2LNXohdtN5ecn-7jz4iY
+Message-ID: <CA+G9fYv-c6D6tJKw9x05+U_VxrpTAQCKADTeYg4jsjaJkX+isw@mail.gmail.com>
+Subject: next-20250730 x86, s390, riscv gcc-8 hardening.config vmlinux symbol
+ `.modinfo' required but not present
+To: open list <linux-kernel@vger.kernel.org>, linux-hardening@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, Linux Regressions <regressions@lists.linux.dev>
+Cc: kees@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Ben Copeland <benjamin.copeland@linaro.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-> > You hardware has a lot of flexibility, but none of if should actually
-> > be needed, if you follow the standard.
-> > 
-> > So phy-mode = "rgmii-id"; should be all you need for most boards.
-> > Everything else should be optional, with sensible defaults.
-> > 
-> 
-> On our platform, the vendor-specific attributes eswin,dly-param-* were
-> initially introduced to compensate for board-specific variations in RGMII
-> signal timing, primarily due to differences in PCB trace lengths.
+Regressions while building x86, S390 and riscv64 with hardening.config on the
+Linux next-20250730 and next-20250731.
 
-So it seems like, because you have the flexibility in the hardware,
-you designed your PCB poorly, breaking the standard, so now must have
-these properties.  It would of been much better if you had stuck to
-the standard...
+Build pass with gcc-13 with hardening.config fails with gcc-8
 
-Please ensure your default values, when nothing is specified in DT,
-correspond to a board which actually fulfils the standard. The next
-board which is made using this device can then avoid having anything
-special in there DT blob.
+Regression Analysis:
+- New regression? Yes
+- Reproducibility? Yes
 
-> These attributes allow fine-grained, per-signal delay control for RXD, TXD,
-> TXEN, RXDV, RXCLK, and TXCLK, based on empirically derived optimal phase
-> settings.
-> In our experience, setting phy-mode = "rgmii-id" alone, along with only
-> the standard properties rx-internal-delay-ps and tx-internal-delay-ps,
-> has proven insufficient to meet our hardware's timing requirements.
+First seen on the next-20250730
+Good: next-20250729
+Bad: next-20250730
 
-You don't need vendor properties for RXCLK and TXCLK, that is what
-tx-internal-delay-ps and rx-internal-delay-ps do. They change the
-clock signal relative to TX and RX data. So you only need properties
-for TXEN and RXDV. You should probably call these
-eswin,txen-internal-delay-ps and eswin,rxdv-internal-delay-ps.  In the
-binding you need to clearly define what these mean, for your hardware,
-i.e.  what is the delay relative to?
+Build regression: next-20250730 x86 gcc-8 hardening.config vmlinux
+symbol `.modinfo' required but not present
+Build regression: next-20250730 S390 gcc-8 hardening.config vmlinux
+symbol `.modinfo' required but not present
+Build regression: next-20250730 riscv64 gcc-8 hardening.config vmlinux
+symbol `__rela_dyn_end' required but not present
 
-> 1. Setting all delay parameters (RXD, TXD, TXEN, RXDV, RXCLK, and TXCLK)
->    using vendor-specific attributes eswin,dly-param-*.
->    e.g.
->    eswin,dly-param-1000m = <0x20202020 0x96205A20 0x20202020>;
-> 2. Setting delay parameters (RXD, TXD, TXEN, RXDV) using vendor-specific
->    attributes eswin,dly-param-* , RXCLK using rx-internal-delay-ps and
->    TXCLK using tx-internal-delay-ps.
->    e.g
->    eswin,dly-param-1000m = <0x20202020 0x80200020 0x20202020>;
->    rx-internal-delay-ps = <9000>;
->    tx-internal-delay-ps = <2200>;
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-Neither. DT should not contain HW values you poke into registers. They
-should be SI using, in this case, pico seconds. From these delays in
-picoseconds, have the driver calculate what values should be written
-into the registers.
+## Build log x86
+x86_64-linux-gnu-objcopy: vmlinux: symbol `.modinfo' required but not present
+x86_64-linux-gnu-objcopy:vmlinux: no symbols
+make[3]: *** [scripts/Makefile.vmlinux:97: vmlinux] Error 1
+make[3]: Target '__default' not remade because of errors.
 
-And these delay values are unlikely to be correct. You are using
-rgmii-id, so the PHY is adding 2ns. You want the MAC to make small
-tuning adjustments, so 200 could be reasonable, but 9000ps is way too
-big.
+## Build log S390
+s390x-linux-gnu-ld: .tmp_vmlinux1: warning: allocated section
+`.got.plt' not in segment
+s390x-linux-gnu-ld: .tmp_vmlinux2: warning: allocated section
+`.got.plt' not in segment
+s390x-linux-gnu-ld: vmlinux.unstripped: warning: allocated section
+`.got.plt' not in segment
+s390x-linux-gnu-objcopy: vmlinux: warning: allocated section
+`.got.plt' not in segment
+s390x-linux-gnu-objcopy: vmlinux: symbol `.modinfo' required but not present
+s390x-linux-gnu-objcopy:vmlinux: no symbols
+make[3]: *** [scripts/Makefile.vmlinux:97: vmlinux] Error
 
-	Andrew
+## Build log riscv64
+riscv64-linux-gnu-objcopy: vmlinux.unstripped: warning: empty loadable
+segment detected at vaddr=0xffffffff81e5b000, is this intentional?
+riscv64-linux-gnu-objcopy: vmlinux: symbol `__rela_dyn_end' required
+but not present
+riscv64-linux-gnu-objcopy:vmlinux: no symbols
+make[3]: *** [scripts/Makefile.vmlinux:97: vmlinux] Error 1
+
+## Source
+* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
+* Git sha: 84b92a499e7eca54ba1df6f6c6e01766025943f1
+* Git describe: next-20250731
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250731
+* Architectures: x86, s390, riscv
+* Toolchains: gcc-8
+* Kconfigs: hardening.config
+
+## Build
+* Build details 1:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250731/testrun/29316787/suite/build/test/gcc-8-lkftconfig-hardening/details/
+* Build details 2:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250731/testrun/29317240/suite/build/test/gcc-8-lkftconfig-hardening/details/
+* Build details 3:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250731/testrun/29317236/suite/build/test/gcc-8-lkftconfig-hardening/details/
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250731/testrun/29316787/suite/build/test/gcc-8-lkftconfig-hardening/history/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/30cmb9OdgONks9mQHuMJ5hkW09f/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/30cmb9OdgONks9mQHuMJ5hkW09f/config
+
+## Steps to reproduce
+ * tuxmake --runtime podman --target-arch x86_64 --toolchain gcc-8
+--kconfig defconfig \
+           --kconfig-add CONFIG_DEBUG_INFO_REDUCED=y \
+           --kconfig-add CONFIG_DEBUG_INFO_DWARF_TOOLCHAIN_DEFAULT=y \
+           --kconfig-add CONFIG_IGB=y \
+           --kconfig-add hardening.config
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
