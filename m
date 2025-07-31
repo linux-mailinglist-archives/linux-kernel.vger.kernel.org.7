@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-752568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC81BB1774B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:45:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D604EB1774C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:45:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DCF0587151
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:45:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE6024E753F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302022561C5;
-	Thu, 31 Jul 2025 20:45:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7613260587;
+	Thu, 31 Jul 2025 20:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2xbbct1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCDdjhTA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882BF13A258
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 20:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 210FA25A2C9
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 20:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753994700; cv=none; b=EN9xexRHm1rPtUHwynv4ITm3fD53+XLC3/0GzVooXboolTPansGb1DjujnbUW2j2sy9JibUgy2ay7bCsFuaR3llvlQPpNq6oHYoKO42rEm8AyE6dCJcRYfjt/mx9U2apW2SuZV/ufJzZb/VqHRsytF78GhYtlImtqKm7g5hwTOY=
+	t=1753994702; cv=none; b=srOPr5B2K2FIVpElGw/d3rVsf4DRVyvYEMdhLCeGoubOdZhdx7hIOwffv8kGaBo+I6AMrSLciziENjj0Gnl3PzeoQEPyvliSDgfmuwb892girt53LMQ6twNDz4gdXv9XBENWOSOX2w/Ei3vWRnrBHG2EPQP2GsyqZcDRrMeJa5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753994700; c=relaxed/simple;
-	bh=7DZFscx/zUQAE+CwN/WvqEagWcG2FAbzwc3W0mBDlNs=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sOaeK9a53lQjxtYKUhx8/zp+M59jdhd5qRsAHvPUNT49WnHYIxWH5X/8JJWfScJTk7VdLgPrZNYQiUiuwUKFUV4NTOoQnI+pWXMGDo4UMxfbrASVnOLrSv1j58fnt6fwlkAiQocaUpKNhSl92yokyWsqq9jVUTujI8KObea1kl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2xbbct1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08901C4CEEF;
-	Thu, 31 Jul 2025 20:44:58 +0000 (UTC)
+	s=arc-20240116; t=1753994702; c=relaxed/simple;
+	bh=ppP8qxkYkHvFmAhOckOs6AleU2TACL5lKaMhhb9n2p0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=iIxsiLqW2DeklKvaTer5vFZnoosj2YMuOBPyOowO2T/IKuoHrLPm49KeyHmbGSAjGwyFPyjv8C7HUov1xsrr10rHBBF4YJJrxhhWoSZT++/oiH7DdWxK+EYP4v59YDRc7R3VmGu5m3iTgd5UL5raJMGj5jV/K2Qld6lIpBJ7arc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCDdjhTA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87118C4CEF4;
+	Thu, 31 Jul 2025 20:45:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753994700;
-	bh=7DZFscx/zUQAE+CwN/WvqEagWcG2FAbzwc3W0mBDlNs=;
-	h=From:Subject:Date:To:Cc:From;
-	b=q2xbbct1CyemFNk3e6stq4bft5itNiUSfUeuLmoRmtjiP0oa3ODaxFCkpzczUcptK
-	 kiApCmlF0T8vnLWEFy3y8jX6w/T1U1cPCKSyBlJRqaY6kKpcDqwAXxylpryhI42sq0
-	 f8829kv3Gk5EKtu2qZCPdhks1PgYqnrRe95f0qhAybIkruZC/0ZMtBN6hFYg/dJc5P
-	 ThlSxrPsupjAgW1X52OHaNAac9l2zVSNziDCdjuE3OAOLOERq0HC0HknMAQdMTmagn
-	 3NrUnHWIerdhi7wgvOz3o4RN30fcQsLTdlw3Sd2ixu2laIYQwkcThwfqtwjKp8ceVO
-	 jB97epkbuVHzg==
+	s=k20201202; t=1753994701;
+	bh=ppP8qxkYkHvFmAhOckOs6AleU2TACL5lKaMhhb9n2p0=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=lCDdjhTAlAxQHukS4QVfbEtDf74kv7NukNO4N9bz7GVm0Cq97YingUzJ6Pc1pJ+lP
+	 f9xv9GoSN3tnH3QTL3hCNSPFdiNeyIr9oDerTAGEIMs5uVDrqsaZ0npfAnYs82N8I/
+	 75fpUEeFodnK4XfhY7MSrwxRJaqwAmXwYe6HaxDJgWEWK8JP1WWOBLzBfjSPi9UVHa
+	 EZI3L+b1nt8Qi3rllq7M7JU0wRBIiRtlwEm3pwt3LVZfznzo1vmGWZRN6DqnFdDCX2
+	 +yWdpP7qlgVhiJXUieLPrpxlbVqmlu4CNlboPnmc5vcQh6Cu5fzety2wLrION3HdEK
+	 oat0mo62Iqyog==
 From: Mark Brown <broonie@kernel.org>
-Subject: [PATCH 0/2] regmap: Fix lockdep warnings for nested regmap-irqs
-Date: Thu, 31 Jul 2025 21:38:17 +0100
-Message-Id: <20250731-regmap-irq-nesting-v1-0-98b4d1bf20f0@kernel.org>
+Date: Thu, 31 Jul 2025 21:38:18 +0100
+Subject: [PATCH 1/2] regmap: irq: Free the regmap-irq mutex
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,52 +51,128 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIADnUi2gC/x3MQQqAIBBA0avErBtQK6SuEi1CJ5tFVmNEIN09a
- fkW/2dIJEwJhiqD0M2J91ig6wrcOsdAyL4YjDKdso1GobDNB7KcGCldHAO2qrfKWa0Xb6CEh9D
- Czz8dp/f9AP9XWoZkAAAA
-X-Change-ID: 20250731-regmap-irq-nesting-40970c711fd2
+Message-Id: <20250731-regmap-irq-nesting-v1-1-98b4d1bf20f0@kernel.org>
+References: <20250731-regmap-irq-nesting-v1-0-98b4d1bf20f0@kernel.org>
+In-Reply-To: <20250731-regmap-irq-nesting-v1-0-98b4d1bf20f0@kernel.org>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
 Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, 
  linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
 X-Mailer: b4 0.15-dev-cff91
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1064; i=broonie@kernel.org;
- h=from:subject:message-id; bh=7DZFscx/zUQAE+CwN/WvqEagWcG2FAbzwc3W0mBDlNs=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoi9XIw6PByEh6vhNcQdEzokhF3liVUrW1Q+yGg
- lyxt2pZSH6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaIvVyAAKCRAk1otyXVSH
- 0M7LB/9aKDwut+FwzGyBKxgCPlZQKNHj0HD/NEZLC3Xouz/EFZVLQRYpH0TjgALByhnyEJ2NTac
- amvfl+hapdrS3JuNhmRi0r0w5VSgOm7f0CJmUCIowltQhyKZqb9o07Go2ILFBuCU9TicDCThU7e
- BrjkifVYg/sDGzgAcZ0P2drlM1ajGVEyr0aw8U5oJbdLKSwt6RuiG6aNPOmnkKvjuncQpQwnRnM
- XqPa2b5FqLZrPB4MbLhV88T7AocIYnsiIvmQF6JMGvDWNUP4s199h5PvKtBTa61VOkQUTPi0S5N
- RM2DvZdpHkQSjcfUCO95VqLNCREmD/OWJpBKl6bspLm0dt0Z
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3021; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=ppP8qxkYkHvFmAhOckOs6AleU2TACL5lKaMhhb9n2p0=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoi9XJMbQpgy/qrQ5HiM4tAL9tVTpwvUCnMv4gF
+ hRbEK0bAs+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaIvVyQAKCRAk1otyXVSH
+ 0DrpB/4heRJgsPUqJDffZwmjdfWYv6HbN2nPYkT42k7/e55LkTBpJ19xfOzMTdu6UXixGfi0GDV
+ 2FK5LJU48ZBgMaowUmYjD7oM3O9598s/a8nOKKa/QDkmqzUI3MCuxKUXkwtqcr0aXo52ack23yl
+ ApBxWd+Y+UxLWY1fGBNe4aCueXmcDjgJctFo/EZJJxuF9IGeIiDAlwSjAvkuvd4132MbxDMpW18
+ RsTS4UelZTWv/saIOpgVvoNwCoEGktBVUeOnXVwMR/20+1Zl3mxWl++qGSj7u/0F91ZReSNqhpY
+ NLxvEQfknONk5rpwQ+UKoRHuS290n5iM+vmXZ4Jx6kELaDtG
 X-Developer-Key: i=broonie@kernel.org; a=openpgp;
  fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Russell King reported that lockdep warns when it sees nested regmap-irq
-interrupt controllers since it defaults to using a single lock class for
-all mutexes allocated from a single place in the code.  We end up with
-both the parent and child regmap-irq locked simultaneously.  The second
-patch here uses an explicit lockdep key to disambiguate things for
-regmap, the first adds missing mutex cleanup which I noticed while
-writing that patch.
-
-I don't have an affected system so this is written blind, I should
-really write some KUnit tests for regmap-irq but didn't yet.
+We do not currently free the mutex allocated by regmap-irq, do so.
 
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
-Mark Brown (2):
-      regmap: irq: Free the regmap-irq mutex
-      regmap: irq: Avoid lockdep warnings with nested regmap-irq chips
+ drivers/base/regmap/regmap-irq.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
- drivers/base/regmap/regmap-irq.c | 30 +++++++++++++++++++++---------
- 1 file changed, 21 insertions(+), 9 deletions(-)
----
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250731-regmap-irq-nesting-40970c711fd2
+diff --git a/drivers/base/regmap/regmap-irq.c b/drivers/base/regmap/regmap-irq.c
+index d1585f073776..4aac12d38215 100644
+--- a/drivers/base/regmap/regmap-irq.c
++++ b/drivers/base/regmap/regmap-irq.c
+@@ -816,7 +816,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 						     d->mask_buf[i],
+ 						     chip->irq_drv_data);
+ 			if (ret)
+-				goto err_alloc;
++				goto err_mutex;
+ 		}
+ 
+ 		if (chip->mask_base && !chip->handle_mask_sync) {
+@@ -827,7 +827,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 			if (ret) {
+ 				dev_err(map->dev, "Failed to set masks in 0x%x: %d\n",
+ 					reg, ret);
+-				goto err_alloc;
++				goto err_mutex;
+ 			}
+ 		}
+ 
+@@ -838,7 +838,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 			if (ret) {
+ 				dev_err(map->dev, "Failed to set masks in 0x%x: %d\n",
+ 					reg, ret);
+-				goto err_alloc;
++				goto err_mutex;
+ 			}
+ 		}
+ 
+@@ -855,7 +855,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 			if (ret != 0) {
+ 				dev_err(map->dev, "Failed to read IRQ status: %d\n",
+ 					ret);
+-				goto err_alloc;
++				goto err_mutex;
+ 			}
+ 		}
+ 
+@@ -879,7 +879,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 			if (ret != 0) {
+ 				dev_err(map->dev, "Failed to ack 0x%x: %d\n",
+ 					reg, ret);
+-				goto err_alloc;
++				goto err_mutex;
+ 			}
+ 		}
+ 	}
+@@ -901,7 +901,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 			if (ret != 0) {
+ 				dev_err(map->dev, "Failed to set masks in 0x%x: %d\n",
+ 					reg, ret);
+-				goto err_alloc;
++				goto err_mutex;
+ 			}
+ 		}
+ 	}
+@@ -910,7 +910,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 	if (chip->status_is_level) {
+ 		ret = read_irq_data(d);
+ 		if (ret < 0)
+-			goto err_alloc;
++			goto err_mutex;
+ 
+ 		memcpy(d->prev_status_buf, d->status_buf,
+ 		       array_size(d->chip->num_regs, sizeof(d->prev_status_buf[0])));
+@@ -918,7 +918,7 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 
+ 	ret = regmap_irq_create_domain(fwnode, irq_base, chip, d);
+ 	if (ret)
+-		goto err_alloc;
++		goto err_mutex;
+ 
+ 	ret = request_threaded_irq(irq, NULL, regmap_irq_thread,
+ 				   irq_flags | IRQF_ONESHOT,
+@@ -935,6 +935,8 @@ int regmap_add_irq_chip_fwnode(struct fwnode_handle *fwnode,
+ 
+ err_domain:
+ 	/* Should really dispose of the domain but... */
++err_mutex:
++	mutex_destroy(&d->lock);
+ err_alloc:
+ 	kfree(d->type_buf);
+ 	kfree(d->type_buf_def);
+@@ -1027,6 +1029,7 @@ void regmap_del_irq_chip(int irq, struct regmap_irq_chip_data *d)
+ 			kfree(d->config_buf[i]);
+ 		kfree(d->config_buf);
+ 	}
++	mutex_destroy(&d->lock);
+ 	kfree(d);
+ }
+ EXPORT_SYMBOL_GPL(regmap_del_irq_chip);
 
-Best regards,
---  
-Mark Brown <broonie@kernel.org>
+-- 
+2.39.5
 
 
