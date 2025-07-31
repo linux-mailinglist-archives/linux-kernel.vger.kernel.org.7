@@ -1,137 +1,98 @@
-Return-Path: <linux-kernel+bounces-751922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75D11B16F5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:21:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C0DCB16F61
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:22:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1DE91AA737E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:21:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0636B620C46
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:22:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96022BE034;
-	Thu, 31 Jul 2025 10:21:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016BB2BE043;
+	Thu, 31 Jul 2025 10:22:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DdtIclw1"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sxhnobS4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9852BD034
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ABF529B8E0;
+	Thu, 31 Jul 2025 10:22:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753957262; cv=none; b=UVBMTlaC4ilHtkdrvGIl2saSBAj1iLw4dTYCejdCtgQRlbSscIwIj4yAi7vWYgxEdI2YEwitnsvypyNbVLrfL5r3YD0jT4Myxx7ddNMz/LYRL0FbSG+7KSgrFfZrUQH/kMrzSzEGELYHq/vPmCOvng7dxhRfJ7v3t/WBTznZMEc=
+	t=1753957358; cv=none; b=ewYA6OUuPv2+g/ICPc/346HJffB9YAbQK0DfLQmW+Toqj8lui7VTzID289ZFaR3b7rRIbAMvL/mU8tE9MC6Moi3op/WkB7VdZNLhzoRI+/2zNqmWwnrdYgTngG38YjzpIViHAtyutHQxEl12srWvsLZu7i5CoIzMR2ZbNr++LKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753957262; c=relaxed/simple;
-	bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BdULhwTO5wy3Bnco0VKbd2rnCYpcz/qsF2ln2VQAULCOvjNZM+prk3zPXHYyRy3qa3qUjRziApnvCMIMQnR5u3KG02eUEcYR6w6umCPUZ+DFuhmSa3RbsrY7BF/iHFX+XfMOF/7kwWeLEaRDfbeX4RcdeDvRjhVpXR1TanYTbiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DdtIclw1; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b7862bd22bso1108230f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:21:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753957259; x=1754562059; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
-        b=DdtIclw12SBilY5CAMUdd7ccs+qeIRvc729/Y/7UPBM7zvnOIkCTQa+PU+3MJJUsN9
-         dG4R06mRsp1hbfYxL0kgmbOvYyVuNrNNosd+NSNRlaAT6OSliYUNJpvgFcnT1TOVWyt+
-         8c7bL1pH+7uBj8YRe0k7lF/fsw8je13pwwN+jhYH1k+D1kuA/QwxHF9165P6WVWnYkpf
-         hbRbRzV0eQiXOwOqcY8rEACSBKl2hBMWHJbBi0jH9aqO+Mu2UcuadTpkzcbfLpLlyNi4
-         0i7yimw64ONL2CPFVzcT9ic3bY7oTJBjqUot7A2wNJVQ49S8+MMJ7NBSgzO7czvp7MsG
-         YM3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753957259; x=1754562059;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eeZqZiIDDXHwWP76HNKsyEyhco1yGowTasqjD2qFGQY=;
-        b=CO6UviF3rOVEYEmQA/gdStBrg395+DcMbP293JLTUhYXnTA9HoczPQCAoc/ayaqpdy
-         66S2Xm6kRsi15juQuMp8og9b1Zwz2hvNX6YbxO+Ca8nPzegl320ob1icnEh5AUkpqMZz
-         PecsoucDmeJnDcmmr2cqvsdJ35L0BM6K5+m5A6xwudLCKgA7DaP8lws8cwfLo9e1fO6e
-         hqAmgHTR3ngit9JXu8f5CM8RTuqscWyYna+8fCC9+C7OeByEMipujpem5ph429IPLK0x
-         bmxwcioGdiVcM0NM1CoMh8keEr9L097MUnlBJM8r7XhjvcsnyYI43Zj9tA29ly4EPYKg
-         0gpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWH0mdF2pUQLk66tHnR/lq+z2GSbgyJuDj2r3Bzb+QaUDx+5BdTpkrmRiCHiWKWJa3fTXd0oBUyMWqyL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhWEujCheQEC4xBRk5CPLpBE6ZbCouah2P2NH4+j6B2OrXli7F
-	vT/ffuSCr4CA9gxJ8QiVqTBgih8yZ5yhQ5m4kZjfg1Qukp+N0+KiIjoCTu5tF5K8qU0=
-X-Gm-Gg: ASbGncuvb33Fv3qpA+aOiuwtmKWzU8ZEipGqkr21dSuenAqjDu0BnfyvSVge0BN+dRH
-	6aJQ+zUsY6PpsC0qy/Fcv8AeLb+HCjIsYYtj2z9BwoH0imQBRs9jSQGCU69L1MISCXYnecWJODj
-	oSftvIoc6+pEN/r/ssgkdgAPfu/7bTGZNFadSx4KK1x/wsXQz3Ted7ojhmxhRIZYDTjWR8x9J0I
-	z0ZjsSYduuA4VP3k1EHCA0kAWQaHXE5YlxJ0yCY56AJ39K4mPhwPNYW8bevBmPWOptF40qN6/Ct
-	hMSqjTh5uCroxcapmVPfpUgfLKacvT1N9YZZxwyVxkCIDQCif4L8QtPldSqB6pno6MO5iIH+st9
-	y+rtoIse/98lxBxlXUS/wrZnMJQ==
-X-Google-Smtp-Source: AGHT+IFVEwLIcO4fNKnjyIY1mnWetXH6kHJKTnn/c6Wln21XoHb709OPThVEb0OesSZIKjx5gzja4Q==
-X-Received: by 2002:a05:6000:22c8:b0:3a4:cec5:b59c with SMTP id ffacd0b85a97d-3b79d812bc8mr1195293f8f.25.1753957258867;
-        Thu, 31 Jul 2025 03:20:58 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4588d89c50fsm60787795e9.0.2025.07.31.03.20.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 03:20:58 -0700 (PDT)
-Message-ID: <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
-Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Lee Jones <lee@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki
- <s.nawrocki@samsung.com>, Chanwoo Choi	 <cw00.choi@samsung.com>, Alim
- Akhtar <alim.akhtar@samsung.com>, Michael Turquette
- <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Catalin
- Marinas	 <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Alexandre Belloni	 <alexandre.belloni@bootlin.com>, Peter Griffin
- <peter.griffin@linaro.org>,  Tudor Ambarus <tudor.ambarus@linaro.org>, Will
- McVicker <willmcvicker@google.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof
- Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Thu, 31 Jul 2025 11:20:56 +0100
-In-Reply-To: <20250730145100.GA6782@google.com>
-References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org>
-	 <20250730145100.GA6782@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build2 
+	s=arc-20240116; t=1753957358; c=relaxed/simple;
+	bh=LsAVB4URHYUtUc9wzp9DbpjAeZ9WpNGB0M83y8BWXS4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N/ON8F8JaAc5mFmoiiySOT3UO0nOSKdR72oQsvIfi7kJ5WNR4PBARJIRuNg0WIkEebIYuEvFeBlFu0B89d36/I3slfBH6l4XlcNa3rd+oEREHApgpq7nK5qwkTqWstuUGH7f1HTgAW8hzfTRBNA2T55ROnSxG0/F7i6wtJDTd5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sxhnobS4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70053C4CEEF;
+	Thu, 31 Jul 2025 10:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753957357;
+	bh=LsAVB4URHYUtUc9wzp9DbpjAeZ9WpNGB0M83y8BWXS4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sxhnobS4XO6hJmQMUhCSaw2g3fu1nK1app29c4wkaDKKckB7p1U8DXdOzgzc+6mBX
+	 pAaugCkxPFl4chtEinKicYOMZOT+lrW0AQPVXArEsNHHbxJKvkySUD6KT+rqOOE730
+	 86HbikIwGTc4lHhz6plbQCFn4s+uOSbjuhlakv3SCAzIx03pvkZzZKpx99EuNTKNgB
+	 ncPTRD0YqzYynWo/9oamNv7yiBYZf/scY8PQg+NU3WUFuZPeBUzc6FY+zWOYmffyoh
+	 mGOr6u5FqKWOtUvWfYvldDkOvuA6UUBTHbav3bdAdMx06VfT/W2WHnwCpZLtlG+Dun
+	 x9vdpAxptjMAA==
+Date: Thu, 31 Jul 2025 12:22:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Christoph Hellwig <hch@lst.de>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH bpf-next 2/2] umd: Remove usermode driver framework
+Message-ID: <20250731-kavaliersdelikt-geprobt-eb7e802ba673@brauner>
+References: <20250721-remove-usermode-driver-v1-0-0d0083334382@linutronix.de>
+ <20250721-remove-usermode-driver-v1-2-0d0083334382@linutronix.de>
+ <20250722063411.GC15403@lst.de>
+ <20250723-heuballen-episch-f2b25d1f61a6@brauner>
+ <CAADnVQKDwEPa0hQFqdoPUGt9bsx6V1xt_HJ=uhxWACoy4+KvQQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQKDwEPa0hQFqdoPUGt9bsx6V1xt_HJ=uhxWACoy4+KvQQ@mail.gmail.com>
 
-On Wed, 2025-07-30 at 15:51 +0100, Lee Jones wrote:
-> On Wed, 30 Jul 2025, Andr=C3=A9 Draszik wrote:
->=20
-> > Original cover letter further down.
-> >=20
-> > This is a resend of two patches from the original series that haven't
-> > been merged yet. That series was merged except for the attached two
-> > patches here. Other than rebasing against next-20250729 there are no
-> > changes to them.
-> >=20
-> > Lee, I think Stephen's intention was to get these two merged via the
-> > MFD tree please.
->=20
-> Although I have no issue with this, it does seem a little odd now that
-> the set consists of only Clk patches.=C2=A0 Let me know what you / Stephe=
-n
-> decide.
+On Wed, Jul 23, 2025 at 10:27:42AM -0600, Alexei Starovoitov wrote:
+> On Wed, Jul 23, 2025 at 5:49 AM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Tue, Jul 22, 2025 at 08:34:11AM +0200, Christoph Hellwig wrote:
+> > > On Mon, Jul 21, 2025 at 11:04:42AM +0200, Thomas Weißschuh wrote:
+> > > > The code is unused since commit 98e20e5e13d2 ("bpfilter: remove bpfilter"),
+> > >
+> > > Overly long commit message here.
+> > >
+> > > > remove it.
+> > >
+> > > Otherwise looks good:
+> > >
+> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> >
+> > Reviewed-by: Christian Brauner <brauner@kernel.org>
+> 
+> Fair enough. Democracy wins.
+> Will apply once I'm back from pto.
 
-Thanks Lee.
-
-I simply went by Stephen's ACK, which to me implies he wanted it merged
-via a different tree (mfd). I guess at this stage it doesn't matter anymore=
-,
-since all the core changes are in already.
-
-I'll defer to Stephen :-)
-
-
-Cheers,
-Andre'
-
+Fwiw, I honestly don't care that much. I think the removal makes sense
+precisely because having unused code is usually not a good idea. If you
+really want that infra you can always reintroduce it once someone
+actually ends up using it.
 
