@@ -1,78 +1,184 @@
-Return-Path: <linux-kernel+bounces-751450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58950B169B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:36:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF730B169B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16127622228
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:35:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34C3A1AA53CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46B51ABED9;
-	Thu, 31 Jul 2025 00:35:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B210E29D19;
+	Thu, 31 Jul 2025 00:37:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S62bSBTS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b="HO0jQh7f";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fQINKw/L"
+Received: from fhigh-a1-smtp.messagingengine.com (fhigh-a1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 030E61B3930;
-	Thu, 31 Jul 2025 00:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE2D25760
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 00:37:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753922114; cv=none; b=LVozedLbP/Z0We4L8rQjuJEKuUtDhVjL9bcm5fHnxeakpXDM97Ff3XTuy8YWGmTxDdUT4veqUGxd/r6fbNnM8ZPCd7KHxLj8xfkbZPZoeMvJCQosQJ2dLH9vPjyzEhL5ZkNlSVMCKUHA5lsG9sKpNHD5Q0MWHIN7yZ8JUkOtcCE=
+	t=1753922231; cv=none; b=tXiQcRHt+0y4/2X9PxaUS82yqJS+z5FRfA0qOj8BX6CIL1vUGTa05LTjhoqykh6/9nkkRkELKf8fjO2ulx2uNIYHVYPo8YlY5Xxx9VTQaotdXyk3MlnmklX9gVPA1ekrJiUpax1jfLnLCE7sHmeFT5IUrBoyjjVQCgLdzfuLFLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753922114; c=relaxed/simple;
-	bh=f4OCDP3VI8oYRCUsmX363nzELsnnz7LFD5EZ//Bn7JQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aohPy6QzzDzk3GTApaJJAbukVAUzWs6MbFzHCccklA+FRRD+dz/Bg4hjXHFjfiVfQcifLe/OtKthoXr8ruEzw0/3bJmEN7TZShE/7658Vb8c8v8jeVY7EJ8VdxyGa6O8QaB+fSrWeQWNdD4LTo/39AGbp+85FDAGvL7PIFQ5LY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S62bSBTS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD58C4CEEB;
-	Thu, 31 Jul 2025 00:35:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753922113;
-	bh=f4OCDP3VI8oYRCUsmX363nzELsnnz7LFD5EZ//Bn7JQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=S62bSBTSscBgpnmUtYgbQ0sBLCvMKx3Fltwr7HZiJV/t2LbRzu927cv6iZO4rP6zD
-	 5578EZ9pyw82cbZUSvwcDHwDloMl+ARkTasi0UmGz1FaBgc+nTnxZZPsHeKtW3hrp2
-	 DeRIJfNnr1v9lmcBS/JFd4LmMxm2QtRmgtlH5u2TlY2qEV7PTw2TxjjwCqy/nVRhkR
-	 sn1ptw4Xp7s+TYhaTOdaF/iZ2Bq19aRPfVb+/XMfTqqW7Sj9vGVv5KndyaTA6U/bKP
-	 P/rWH6yQnTeVAhN0BtlM5G/1MtUUiXTuaATCTIatxLn5j28ixYjHIGNTH9U8FPxPwY
-	 BfmGC07Srr3xA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAED3383BF5F;
-	Thu, 31 Jul 2025 00:35:30 +0000 (UTC)
-Subject: Re: [GIT PULL] KVM changes for Linux 6.17 merge window
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250730181703.113459-1-pbonzini@redhat.com>
-References: <20250730181703.113459-1-pbonzini@redhat.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250730181703.113459-1-pbonzini@redhat.com>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-X-PR-Tracked-Commit-Id: 196d9e72c4b0bd68b74a4ec7f52d248f37d0f030
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 63eb28bb1402891b1ad2be02a530f29a9dd7f1cd
-Message-Id: <175392212951.2556608.680633563748117193.pr-tracker-bot@kernel.org>
-Date: Thu, 31 Jul 2025 00:35:29 +0000
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+	s=arc-20240116; t=1753922231; c=relaxed/simple;
+	bh=RzDD8ToDp7xXYPGQS0zB5SbXNYFXgpiw9LuDmN+k7dY=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Agucu8H/dDrzibv3I71ncpqUdkd4m581dzt9LBI4MXJsNc+Q2XLJA+9C+L8JRgAxpNWaUE3AdFy577oeTKa4caVuLbNJxd4jwmNFTDPDGXIgP381TSdjMr3wfAcZgJGSMBc/retAffoQL/jeacZKQGfHtwNUobGIBfjAMWwVpMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh; spf=pass smtp.mailfrom=barre.sh; dkim=pass (2048-bit key) header.d=barre.sh header.i=@barre.sh header.b=HO0jQh7f; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fQINKw/L; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=barre.sh
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=barre.sh
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 150791400083;
+	Wed, 30 Jul 2025 20:37:09 -0400 (EDT)
+Received: from phl-imap-04 ([10.202.2.82])
+  by phl-compute-01.internal (MEProxy); Wed, 30 Jul 2025 20:37:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=barre.sh; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1753922229;
+	 x=1754008629; bh=Jr1/yeTTFM1cng/NygQCTPklievovyhPIMSJcmVhPVc=; b=
+	HO0jQh7foKrZQWTgC7Ej9N7BkIMmaYCNdtFtu/I0lpq97/KwfukPPewFD975XeNb
+	EZiKiFNaCLwd6GHbmRiHBbtZk72/T90BNlmXMdxcmAaDRhD8qUyDQl6ZvxYDonl7
+	R7p9lyGPAX01FkZn4/rz8W/iTT/YICUACw3OL1y2aO8mMhEbJf3AT/hxOuEeuLzB
+	SMhbSxSQsOtpuU63Klcyh7Qt4ACKxg1ri8cSh9p0rEjoUvz8qaaKwOz0E03S+/Eo
+	z7l2J3NtFqduZ57i6iw2f7KC1HEUrh9Wis1n+RCjSbYDS287CuRpBfulceDkudg5
+	n03HLsEHMBLjkK3bFBczYQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1753922229; x=
+	1754008629; bh=Jr1/yeTTFM1cng/NygQCTPklievovyhPIMSJcmVhPVc=; b=f
+	QINKw/LDNPtxwkwsCxSP9e3VUdTSUT/vbJSrCHaW4z/X7kFx3SJMnZ5ktpbKzAMY
+	Vpash00iwplb+4GEUm9vnDOl8+zAsepsXmfo5BTYVgJKmBy3i14qg0UwA9QhOGxc
+	V6esRbce9uknfx/zGKjMWSRaZ760Rr0s+50/PNnuNeh2xwZ6SiJh83m8zNXHpXZ8
+	pUY0V79xEyBeqT27TrVMG3EbNq8NN24sug8lDrhxQlmcbCKYi5/X3Tcwj8Bhgpbs
+	VO7MzTt1ZLkL+sw3J0bSmqZCY443IP9WNYD4Cv+tRaYHgcCgcSx5AfoUjgSMx1to
+	KfWAhUgL+MW7oH2xrxaag==
+X-ME-Sender: <xms:tLqKaPkqmJS20Vtr3HKky34HBJtKEoDtDQ0D9VGWSrLWTTmpqV6vUA>
+    <xme:tLqKaC0e6M5HyC4bTt76tHOjt1xujg_3DsdfBuFLMkpvf0WCwZpkK5x4Odb3e0zYV
+    C6LCh_yHCQdz9uYxd0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdelleeflecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpuffrtefokffrpgfnqfghnecuuegr
+    ihhlohhuthemuceftddtnecunecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertd
+    ertddtnecuhfhrohhmpedfrfhivghrrhgvuceurghrrhgvfdcuoehpihgvrhhrvgessggr
+    rhhrvgdrshhhqeenucggtffrrghtthgvrhhnpeetgeeivdffhfeihedvkeefueekgeeivd
+    ekheekjeeuieejiedtffdtjeetvdffjeenucevlhhushhtvghrufhiiigvpedtnecurfgr
+    rhgrmhepmhgrihhlfhhrohhmpehpihgvrhhrvgessggrrhhrvgdrshhhpdhnsggprhgtph
+    htthhopeejpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrshhmrgguvghushes
+    tghouggvfihrvggtkhdrohhrghdprhgtphhtthhopehlihhnuhigpghoshhssegtrhhuug
+    gvsgihthgvrdgtohhmpdhrtghpthhtohepfihilhhlhiesihhnfhhrrgguvggrugdrohhr
+    ghdprhgtphhtthhopehluhgthhhosehiohhnkhhovhdrnhgvthdprhgtphhtthhopegvrh
+    hitghvhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhelfhhssehlihhsthhsrdhl
+    ihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:tLqKaD9GhCHMys031UlbL-qqC26v1UlJLBRITnN-XTSHjWjiALOAkA>
+    <xmx:tLqKaHXeXPTJrHsPaEnKhPX3iV4YNpiPYiTZWpxxyvBTa4Gt-_fu0Q>
+    <xmx:tLqKaOrQrJP0qv-e0b_MI60lTni6moggU05sKLa2StZWiW-WTkrLBw>
+    <xmx:tLqKaJntizu6QZTjxo_5TtW0iwpWkrCvCwsbDgGeVNGngbPEvUyKCg>
+    <xmx:tbqKaGfeFLf27Q3WFGuGeVIZfpSayIbrzEYp859vECCuJSi1fXo5Wg3_>
+Feedback-ID: i97614980:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 49152B6006B; Wed, 30 Jul 2025 20:37:08 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-ThreadId: Tea62be34c8f8a220
+Date: Thu, 31 Jul 2025 02:36:41 +0200
+From: "Pierre Barre" <pierre@barre.sh>
+To: asmadeus <asmadeus@codewreck.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc: "Christian Schoenebeck" <linux_oss@crudebyte.com>, v9fs@lists.linux.dev,
+ ericvh@kernel.org, lucho@ionkov.net, linux-kernel@vger.kernel.org
+Message-Id: <e42edd55-2559-437b-a2e3-2773b18d0cc5@app.fastmail.com>
+In-Reply-To: <aIqXi6uBaWXtvgm3@codewreck.org>
+References: <1fb9c439-73f3-4a00-8a8b-45eeb85883eb@app.fastmail.com>
+ <2989343.ydHz1Oe0dO@silver>
+ <1fcc97fd-bf32-4ea1-82c1-74a8efb6359b@app.fastmail.com>
+ <2026737.7mX0AZtNi0@silver>
+ <bbf2ae2f-d0e6-4f8f-b359-128cd8d5539f@app.fastmail.com>
+ <aIqXi6uBaWXtvgm3@codewreck.org>
+Subject: Re: [PATCH] 9p: Use kvmalloc for message buffers
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-The pull request you sent on Wed, 30 Jul 2025 14:17:02 -0400:
+> First - thanks for starting this thread, large contiguous allocations
+> has been a problem reported regularly in the past, and no-one has had
+> the energy to address it yet, but it's definitely something worth
+> tackling.
 
-> https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+Glad that I didn't just create noise. I implemented 9P in addition to NFS in my server because fsyncing on NFS didn't give me what I wanted (fsync doesn't call commit when write is communicated to be "durable" by the server, but that's a story for an other day...). 
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/63eb28bb1402891b1ad2be02a530f29a9dd7f1cd
+I am very grateful that this client implementation exists.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+On Thu, Jul 31, 2025, at 00:07, asmadeus@codewreck.org wrote:
+> (Added Willy in To, if you have time to advise on what's appropriate
+> wrt. memory allocation here to use either as a contiguous virtual memory
+> buffer or a scatterlist for various kind of dma used by transports
+> that'd be appreciated)
+>
+>
+> First - thanks for starting this thread, large contiguous allocations
+> has been a problem reported regularly in the past, and no-one has had
+> the energy to address it yet, but it's definitely something worth
+> tackling.
+>
+>
+> Pierre Barre wrote on Wed, Jul 30, 2025 at 10:16:13PM +0200:
+>> As a middle-ground, would it be acceptable to add a transport
+>> capability flag indicating whether the transport requires contiguous
+>> memory for DMA?
+>
+> I think such a flag will be needed even if we do what Christian suggested:
+>>> So a more reasonable solution instead might be using kvmalloc(), as suggested
+>>> by you, and adjusting the individual transports such that they translate a
+>>> virtual memory address to a list of physical addresses via e.g.
+>>> vmalloc_to_page() if needed.
+>
+> Start with a requires contiguous flag set for all transports except
+> trans_fd (I'm not sure about usb, but I'm pretty sure all the rest need
+> it); then each transport can figure out how to get a scatterlist or
+> something they need from the allocation, so we don't need to have a big
+> bang that breaks everything at the same time.
+>
+> I'm sure virtio's implem will come soon enough, but I don't see anyone
+> working on RDMA or xen so fast.
+>
+>> 1. Add a P9_TRANS_REQUIRES_CONTIGUOUS flag to struct p9_trans_module
+>> 2. Set this flag for virtio, xen, and rdma transports
+>
+> This is a nit but I'd rather the flag go the other way around, e.g. no
+> flag means requires contiguous and it's only set after confirming the
+> transport works
+> (I just looked at usb and struct usb_request makes me think some drivers
+> use dma, so, yeah..)
+>
+> We can always turn it around later if the majority of transports handle
+> it.
+>
+>
+>> 3. Modify p9_fcall_init to check the flag:
+>>      if (c->trans_mod->caps & P9_TRANS_REQUIRES_CONTIGUOUS)
+>>         fc->sdata = kmalloc(alloc_msize, GFP_NOFS);
+>>      else
+>>         fc->sdata = kvmalloc(alloc_msize, GFP_NOFS);
+>
+> I'm also curious if there's something more appropriate than kvmalloc wrt
+> using either as a contiguous virtual memory buffer or a scatterlist, but
+> I think this is fine for now unless someone knows of something more
+> appropriate.
+>
+>
+> Thanks,
+> -- 
+> Dominique Martinet | Asmadeus
 
