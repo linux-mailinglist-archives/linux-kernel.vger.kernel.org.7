@@ -1,303 +1,276 @@
-Return-Path: <linux-kernel+bounces-752256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8601B17316
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:19:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C3B68B17327
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C30905840D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:19:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D96417B82B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8640E130A54;
-	Thu, 31 Jul 2025 14:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D708E176ADE;
+	Thu, 31 Jul 2025 14:22:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="KrwX3gXf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="fSxhT26R"
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9F52F24
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996E72F24;
+	Thu, 31 Jul 2025 14:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753971563; cv=none; b=eJak/cy+VP2VSfwJAZwOsb1fsU36d5UYK+Ld49YixWfZeKaXrI/wjH2/W1E1vDRjXtpKQUAcWFoauj3jm4UFiouST9mXxW0ybtZDudvoefsfhTuX7asu8+RGkFDnLcpXbkDi2iPR+rmnwSTvp7yi+1KxC7vZ6f/Nf3ToydFA3x0=
+	t=1753971723; cv=none; b=KgyX3WVZ7HrO7lUIQ7Sg5m+HZ2pjE237dmRpvTmnUkecG4AWMWa0F35dJZUuzaMVyS8Kb+ghZKJaUYGozF2itgudnxQ89uRnz9V5bAAR3iv145aZ3LgqMa9NdjdcB1SAR+OFC8uyeIu9qBwBABkUAL0igLJmuHYlCLBP/JitgIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753971563; c=relaxed/simple;
-	bh=Qw4pFHrzOdxadPlOIEaNsBko7KznwCW6BqAbKVS6rLg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fku9A1C3iAz6rkIUsCA4CtbWJcv9YTeDuyRG82VrHy9O1013pnxEVNPMUNc4Y8Cf0FmDfQCBcTTPoE240guKQJPJe9/7aFNoLEvayH4jZcEJ+NaJx0VFYcoPu7pugM+9XVzBrwuIFSMTP1Nym554m6k3uypCH2tmPP1uOCS73GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=KrwX3gXf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VDf4f8021637
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:19:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/SNOf+4G4zyCZV6YFfxz7XUorkDY17ov7WJ2xEOK/BA=; b=KrwX3gXfqJhv1dUm
-	l9T/1v1Hdec0nMGMmfNqC3FcNmuZzw+JCUoHXDCzwwjsP7qFa4SFwRLXz87uyP7e
-	bDQnRn0YYetO1e3l1uwe5gD4pNePvuA8q5njCclZSn45opp4YpJIvShYH6vXoQgt
-	xyDXhrkLLz6YnogY+/lcKAhWMD9UA/0LOFg9PhevZVGlZ1SPaWko2Yqs9st49RiR
-	wzWn6tjZM4kS5oURlz30KB1w6t0SFhRE7lLPWdnH2N5opIYfHia/tRo8SD6k5+iQ
-	QOq6LM5NKDE5gIhAN4eJ5sW511MNVwaLcGpNN3gXyFLFCepYLAElL6jNEWV/gg9Z
-	3KRgNQ==
-Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com [209.85.167.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcrg83f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:19:20 +0000 (GMT)
-Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-41b357bd679so404091b6e.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:19:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753971559; x=1754576359;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/SNOf+4G4zyCZV6YFfxz7XUorkDY17ov7WJ2xEOK/BA=;
-        b=TnxNYZ+mG/nMUxBjZLNLT2Z+99qkRi9IFMCdHjQ0QGXczrTE+B+/SlSGhPZyijJvrf
-         yBgguRAEr5XHPI0b0fyKELPr8w9sWe4t0sIdHaMA4j5sAtsDYwcdCkaLfcQDa+nZAYzi
-         FuMWB9YEF/rVedP/Z4umGfhe1urUxyuTI42ijN2mgVK0SlXo0iG+zPZWDlTnmSW8CBSS
-         P7aWjZ7sDdLwDigj5YgeWeLD5VEXVoJMYxTbGuX/EZWdwKS6sl+6bK5p5XdkJ4E5S8xE
-         dxbzJ9OP8cpR+7RwdLRDbHdRqSJcnMzG9n5CiGYEaXcr7XIoKljIntrSzWNjbQukPkSX
-         k3Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCXeJL8wwGdSk0hDoJTifABa/xwY1J8Xhp9QuKcTWiDGQeSmokOW4lVc61iki+XqQZ0KLM403s0p28i8Eac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKs8QiV/V3udmtLmHVKuRAQnAQiQPWwMFUTsT7/5zYQHNpaEvu
-	pG9MlRBDYcCSBLJeOeOQc8xyI6o9TMQUj3quwjXaKyuQ5OHzuCFobgvR6zA7FI+SSSJz20Qi8WN
-	CZCuETTx+IKQyTTDrvGyH3QOKj6uC1hXjGOEcY6cgooSGVBHOdn5Y1/mGJ4KfHT6a9JI=
-X-Gm-Gg: ASbGncv4dXG1MzPDje4TrDswGv0eYUjpBJP8eh5BAio67cR8u8h2gfgpU5vdwoO64To
-	ChaqgxQeYECvWfZ4VDWwdOnw9b2+B7yCRBu3QAILVU0+0Hqo7LyGQWL29EUV9egZvjaLM3C9dp5
-	LqfHY86+jf3mHJ6OAaywEjGtuqZXFZ5wspq1AzUnex0TKIrUKF6WnicodQpFjW3EOK2T0Tl3HJA
-	5dw7VJtZid11J28RdItfZzaDI2gcAmEqPuSGPnVJZoCXSorJjk/EdrlgdqfXcabPMaUILOjMwh9
-	MXK9QBSzMtbRUUERANgrwgOJ3IJNe3QgobQyikAuxJK+mx6H5lHk0rLqFzT1w77Qzr2OMn8+6AG
-	XDx8CztVOs0sOtg==
-X-Received: by 2002:a05:6808:3998:b0:40b:4230:387f with SMTP id 5614622812f47-4319bfee52bmr4796538b6e.32.1753971559322;
-        Thu, 31 Jul 2025 07:19:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHhExdeYZh9bGg37wkHjZqMBXQhg07o4VOQ+HBvIRZQY6XYxO2AVM5PEjkgZ/Xq6HBYLOpDRg==
-X-Received: by 2002:a05:6808:3998:b0:40b:4230:387f with SMTP id 5614622812f47-4319bfee52bmr4796485b6e.32.1753971558771;
-        Thu, 31 Jul 2025 07:19:18 -0700 (PDT)
-Received: from [10.148.43.238] (87-95-32-33.bb.dnainternet.fi. [87.95.32.33])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332382a6ac3sm2618651fa.22.2025.07.31.07.19.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Jul 2025 07:19:17 -0700 (PDT)
-Message-ID: <1f910d65-de34-424d-adf9-7669c22afeaa@oss.qualcomm.com>
-Date: Thu, 31 Jul 2025 17:19:16 +0300
+	s=arc-20240116; t=1753971723; c=relaxed/simple;
+	bh=IraNA8HTuhadpvynlNEEmtD7drpccg1KpgtEBN3GQWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WFxVGh0GcMe+w2uE6oeVVLU095BEWXEzk1Ci193e1igaDdN13U3x8HsogqVa1bnqTrgNVRMDyfRmza9sztKLtbWk9NXDd8g8zmQ6rJyAHhgx5zODGs5/Dv8CNnEzA11cU83PcqKQ8vvEIE2l3Q4pgpCUZbY29SxnAsMmehTOSgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=fSxhT26R; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4btB9C2WM7z9sQm;
+	Thu, 31 Jul 2025 16:21:51 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1753971711;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nx7s0z1EH5FszrdcRN7llIs5P/UhYM04dWI3hk+qTCc=;
+	b=fSxhT26R7FIdX7IsYL6TTqWc7hAA8xDFEG7EooVGRkH4Xvx17IgMaxM9Nx5o5ce8bgXYhE
+	SxtHz2Sxy96iUsi0+CyrFad/uWxefqow3XNHHuJ8R3Z6XTYLt7zxifpbtiQYqOgXcLnpHQ
+	ITXjikMtUK8NUBdfL1EW8vrL6HQKJbDIOJrAbaOzG1wSN3uKmskmwpaSP7BykvGwr5inyv
+	40JO2o+wdhzOLuwyrCH7PJNXMPZbQK3LXusXsDAuYHjRBWAYBOYmCLU2xv3Hm4b/YOM90u
+	ZQSqMTxdJMfR6uOBWcS9lfkJRRxJvm2JO47853ZKmXPDTOd3iMLnaAQV00lRTQ==
+Date: Fri, 1 Aug 2025 00:21:37 +1000
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC v2 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+Message-ID: <2025-07-31.1753971633-unlucky-spatula-dismal-smirk-chalky-beasts-Secy8D@cyphar.com>
+References: <20250723-procfs-pidns-api-v2-0-621e7edd8e40@cyphar.com>
+ <20250723-procfs-pidns-api-v2-3-621e7edd8e40@cyphar.com>
+ <20250724-beobachten-verfassen-9a39c0318341@brauner>
+ <2025-07-25.1753409614-vile-track-icky-epidemic-frail-antidote-d7NYuu@cyphar.com>
+ <20250731-angliederung-mahlt-9e5811969817@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/2] mmc: sdhci-msm: Rectify DLL programming sequence
- for SDCC
-To: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sachin Gupta <quic_sachgupt@quicinc.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson
- <ulf.hansson@linaro.org>, linux-arm-msm@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
-        quic_bhaskarv@quicinc.com, quic_mapa@quicinc.com,
-        quic_nitirawa@quicinc.com, quic_sartgarg@quicinc.com
-References: <20241218091057.15625-1-quic_sachgupt@quicinc.com>
- <20241218091057.15625-3-quic_sachgupt@quicinc.com>
- <a2mnkliubpdryxdwsd33kccvnlb4fnyzik5ywxw4xhnimwdwsm@oxe34zogzfot>
- <bb60a145-1e8f-4004-b266-9f26a11440b9@quicinc.com>
- <otfof56qvqxyjaq6onor2f3egrt57h2xazncias72qnn4xjgz5@2aj2pyj5xmyl>
- <a885b32c-c59f-4fb6-b2cb-7955d2d3ae69@quicinc.com>
- <mpuyg4ndd7xvfpwd6oubn7zmzkuienyrig5pmkrd4badlpebvf@h6weyimpcfv2>
- <769268c2-9a7f-4b6e-aabd-a6cf5a744d5b@quicinc.com>
- <d5ykzwuk3wrwycol3wpeontfp5t7h7vfrfcxnmxei3qs74xsp7@ihtzne5wbytf>
- <81323b02-a7be-847a-b973-ca0cdb906558@quicinc.com>
- <p7o2ykmpghx5jqagpkhd2rfqgizcdagn366rltyn4gmbmnmpje@vcygaqcaowkn>
- <82d11cf6-bfed-9b73-c697-c692d1c7e02d@quicinc.com>
-Content-Language: en-US
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-In-Reply-To: <82d11cf6-bfed-9b73-c697-c692d1c7e02d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDA5NyBTYWx0ZWRfX5Inx42J+O+23
- 2o1jvu9RVnCCOh3V7LKChBOinp1vP1EHp2MQGtLph6f021thslXgsJBUPqO29Z4T8v8TsD9DZD6
- 6rYgLvkiYqoXmFZ1yrkVuizkCh/varYD82uLgjeW4QK+kbcTxKiupd7d64Zo1RzCar1UUEr7mPd
- YWiLdaw+v7zOQxEnEf9uPnlPFWzI24bvI05rB/oC0bA/12E1ddUsPXd8ZTgml4JVuYp4/Bt5UIk
- qpGKw/b4lq4iPwFPb+TnKiZumdRVoD1QQUWAJsvrJLDxfG43AmlDL3D9axj34g2QEpvoxMPhrHY
- swkPV7nrXvnL/NUwmMMYTdOZJndIbOYx/qo/vYH2BRao0fYPQ8vEIKDTiQZ1rCDLTg0HvnZRsWK
- F7wSevJsiiSEYDtToRI+ERZf/qCHwIlOHfNMzETb/5sVRJhNFwh8soPPWHtMWr0n7wLFc2bI
-X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=688b7b68 cx=c_pps
- a=yymyAM/LQ7lj/HqAiIiKTw==:117 a=H8T8cKqSsIHj2cBiWKmgXw==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=y10v7vMIaVi46rMawBgA:9
- a=QEXdDO2ut3YA:10 a=efpaJB4zofY2dbm2aIRb:22
-X-Proofpoint-GUID: gDZlXdy0vol6Oz_Amhlmhx3oGrSPzsvo
-X-Proofpoint-ORIG-GUID: gDZlXdy0vol6Oz_Amhlmhx3oGrSPzsvo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-31_02,2025-07-31_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507310097
-
-On 31/07/2025 14:46, Ram Prakash Gupta wrote:
-> 
-> On 7/30/2025 11:26 PM, Dmitry Baryshkov wrote:
->> On Wed, Jul 23, 2025 at 03:43:37PM +0530, Ram Prakash Gupta wrote:
->>> On 1/22/2025 3:20 PM, Dmitry Baryshkov wrote:
->>>> On Wed, Jan 22, 2025 at 02:57:59PM +0530, Sachin Gupta wrote:
->>>>> On 1/7/2025 8:38 PM, Dmitry Baryshkov wrote:
->>>>>> On Tue, Jan 07, 2025 at 11:13:32AM +0530, Sachin Gupta wrote:
->>>>>>> On 12/27/2024 12:23 AM, Dmitry Baryshkov wrote:
->>>>>>>> On Thu, Dec 26, 2024 at 11:22:40AM +0530, Sachin Gupta wrote:
->>>>>>>>> On 12/19/2024 11:24 AM, Dmitry Baryshkov wrote:
->>>>>>>>>> On Wed, Dec 18, 2024 at 02:40:57PM +0530, Sachin Gupta wrote:
->>>>>>>>>>> +
->>>>>>>>>>> +static unsigned int sdhci_msm_get_clk_rate(struct sdhci_host *host, u32 req_clk)
->>>>>>>>>>> +{
->>>>>>>>>>> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>>>>>>>>>> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->>>>>>>>>>> +	struct clk *core_clk = msm_host->bulk_clks[0].clk;
->>>>>>>>>>> +	unsigned int sup_clk;
->>>>>>>>>>> +
->>>>>>>>>>> +	if (req_clk < sdhci_msm_get_min_clock(host))
->>>>>>>>>>> +		return sdhci_msm_get_min_clock(host);
->>>>>>>>>>> +
->>>>>>>>>>> +	sup_clk = clk_round_rate(core_clk, clk_get_rate(core_clk));
->>>>>>>>>>> +
->>>>>>>>>>> +	if (host->clock != msm_host->clk_rate)
->>>>>>>>>>> +		sup_clk = sup_clk / 2;
->>>>>>>>>>> +
->>>>>>>>>>> +	return sup_clk;
->>>>>>>>>> Why?
->>>>>>>>> Sorry, I did not understand your question. Can you please explain in detail.
->>>>>>>> Please explain the maths. You get the rate from the clock, then you
->>>>>>>> round it, but it is the rate that has just been returned, so there
->>>>>>>> should be no need to round it. And after that there a division by two
->>>>>>>> for some reason. So I've asked for an explanation for that code.
->>>>>>>>
->>>>>>> clk_round_rate is used in case of over clocking issue we can round it to the
->>>>>>> usable frequency.
->>>>>> If it is a frequency _returned_ by the clock driver, why do you need to
->>>>>> round it? It sounds like that freq should be usable anyway.
->>>>>>
->>>>> I agree, rounding will be taken care by clock driver. Will remove in my next
->>>>> patch.
->>>>>
->>>>>>> Divide by 2 is used as for HS400 the tuning happens in
->>>>>>> HS200 mode only so to update the frequency to 192 Mhz.
->>>>>> Again, is it really 192 MHz? Or 19.2 MHz?
->>>>>> Also if it is for HS400, then shouldn't /2 be limited to that mode?
->>>>>>
->>>>> Yes, It is 192 MHz.
->>>> Good, thanks for the confirmation.
->>>>
->>>>> As part of eMMC Init, driver will try to init with the best mode supported
->>>>> by controller and device. In this case it is HS400 mode, But as part of
->>>>> HS400 mode, we perform Tuning in HS200 mode only where we need to configure
->>>>> half of the clock.
->>>> This isn't an answer to the question. Let me rephrase it for you: if the
->>>> /2 is only used for HS400, why should it be attempted in all other
->>>> modes? Please limit the /2 just to HS400.
->>> Hi Dmitry,
->>>
->>> like updated earlier by Sachin, HS400 tuning happens in HS200 mode, so if
->>> we try to use "ios->timing == MMC_TIMING_MMC_HS400" that wont help, as at
->>> this stage timing can be MMC_TIMING_MMC_HS200/MMC_TIMING_MMC_HS400 for
->>> hs200 tuning and hs400 selection. In this case we must divide clk by 2
->>> to get 192MHz and we find this as host->clock wont be equal to
->>> msm_host->clk_rate.
->> What are host->clock and msm_host->clk_rate at this point?
->> What is the host->flags value? See sdhci_msm_hc_select_mode().
-> 
-> There are 2 paths which are traced to this function when card initializes
-> in HS400 mode, please consider below call stack in 2 paths
-> 
-> sdhci_msm_configure_dll
-> sdhci_msm_dll_config
-> sdhci_msm_execute_tuning
-> mmc_execute_tuning
-> mmc_init_card
-> _mmc_resume
-> mmc_runtime_resume
-> 
-> with values of host->clock as 200000000 & msm_host-clk_rate as 400000000
-
-Please check the rates explicitly in the code rather than just checking 
-that they are not equal.
-
-> and host->flags as 0x90c6.
-> 
-> and
-> 
-> sdhci_msm_configure_dll
-> sdhci_msm_dll_config
-> sdhci_msm_set_uhs_signaling
-> sdhci_set_ios
-> mmc_set_clock
-> mmc_set_bus_speed
-> mmc_select_hs400
-> mmc_init_card
-> _mmc_resume
-> mmc_runtime_resume
-> 
-> with values of host->clock as 200000000 & msm_host-clk_rate as 400000000
-> and host->flags as 0x90c6 which are same as 1st.
-> 
-> Now if card is initialized in HS200 mode only below is the call stack
-> 
-> sdhci_msm_configure_dll
-> sdhci_msm_dll_config
-> sdhci_msm_execute_tuning
-> mmc_execute_tuning
-> mmc_init_card
-> _mmc_resume
-> mmc_runtime_resume
-> 
-> with values of host->clock as 200000000 & msm_host-clk_rate as 200000000
-> and host->flags as 0x90c6.
-> 
-> now if you see the host->flags value, its same across the modes, and if
-> I am getting it right from the pointed out function
-> sdhci_msm_hc_select_mode(), your suggestion seems to be using the check
-> host->flags & SDHCI_HS400_TUNING which is bit[13], but in above dumped
-> host->flags SDHCI_HS400_TUNING bit is not set where we are using the /2.
-> 
-> and the reason is, this bit is getting cleared in sdhci_msm_execute_tuning()
-> before sdhci_msm_dll_config() call.
-> 
-> so this /2, is eventually called only for HS400 mode.
-> 
-> Thanks,
-> Ram
-> 
->>
->>> Now if we go for only HS200 mode supported card, there
->>> the supported clock value would be 192Mhz itself and we need to pass
->>> clk freq as 192MHz itself, hence division by 2 wont be needed, that is
->>> achieved there as host->clock would be equal to msm_host->clk_rate. Hence
->>> no other check is needed here.
->> Please think about the cause, not about the symptom. Clocks being
->> unequal is a result of some other checks being performed by the driver.
->> Please use those checks too.
->>
->>> sorry for it took time to update as I was gathering all this data.
->> 6 months? Well, that's a nice time to "gather all this data".
-> 
-> Took it up from sachin last month but still its a long gap.
-> Thanks for helping revive.
-> 
->>
->>> since Sachin have already pushed patchset #3, and if this explanation
->>> helps, let me know if we can continue on patchset #3.
->>>
->>> Thanks,
->>> Ram
->>>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vqlqvmb7rrrsrgkq"
+Content-Disposition: inline
+In-Reply-To: <20250731-angliederung-mahlt-9e5811969817@brauner>
 
 
--- 
-With best wishes
-Dmitry
+--vqlqvmb7rrrsrgkq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC v2 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+MIME-Version: 1.0
+
+On 2025-07-31, Christian Brauner <brauner@kernel.org> wrote:
+> On Fri, Jul 25, 2025 at 12:24:28PM +1000, Aleksa Sarai wrote:
+> > On 2025-07-24, Christian Brauner <brauner@kernel.org> wrote:
+> > > On Wed, Jul 23, 2025 at 09:18:53AM +1000, Aleksa Sarai wrote:
+> > > > /proc has historically had very opaque semantics about PID namespac=
+es,
+> > > > which is a little unfortunate for container runtimes and other prog=
+rams
+> > > > that deal with switching namespaces very often. One common issue is=
+ that
+> > > > of converting between PIDs in the process's namespace and PIDs in t=
+he
+> > > > namespace of /proc.
+> > > >=20
+> > > > In principle, it is possible to do this today by opening a pidfd wi=
+th
+> > > > pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
+> > > > contain a PID value translated to the pid namespace associated with=
+ that
+> > > > procfs superblock). However, allocating a new file for each PID to =
+be
+> > > > converted is less than ideal for programs that may need to scan pro=
+cfs,
+> > > > and it is generally useful for userspace to be able to finally get =
+this
+> > > > information from procfs.
+> > > >=20
+> > > > So, add a new API for this in the form of an ioctl(2) you can call =
+on
+> > > > the root directory of procfs. The returned file descriptor will have
+> > > > O_CLOEXEC set. This acts as a sister feature to the new "pidns" mou=
+nt
+> > > > option, finally allowing userspace full control of the pid namespac=
+es
+> > > > associated with procfs instances.
+> > > >=20
+> > > > The permission model for this is a bit looser than that of the "pid=
+ns"
+> > > > mount option, but this is mainly because /proc/1/ns/pid provides the
+> > > > same information, so as long as you have access to that magic-link =
+(or
+> > > > something equivalently reasonable such as privileges with CAP_SYS_A=
+DMIN
+> > > > or being in an ancestor pid namespace) it makes sense to allow user=
+space
+> > > > to grab a handle. setns(2) will still have their own permission che=
+cks,
+> > > > so being able to open a pidns handle doesn't really provide too many
+> > > > other capabilities.
+> > > >=20
+> > > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > > ---
+> > > >  Documentation/filesystems/proc.rst |  4 +++
+> > > >  fs/proc/root.c                     | 54 ++++++++++++++++++++++++++=
+++++++++++--
+> > > >  include/uapi/linux/fs.h            |  3 +++
+> > > >  3 files changed, 59 insertions(+), 2 deletions(-)
+> > > >=20
+> > > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/fil=
+esystems/proc.rst
+> > > > index c520b9f8a3fd..506383273c9d 100644
+> > > > --- a/Documentation/filesystems/proc.rst
+> > > > +++ b/Documentation/filesystems/proc.rst
+> > > > @@ -2398,6 +2398,10 @@ pidns=3D specifies a pid namespace (either a=
+s a string path to something like
+> > > >  will be used by the procfs instance when translating pids. By defa=
+ult, procfs
+> > > >  will use the calling process's active pid namespace.
+> > > > =20
+> > > > +Processes can check which pid namespace is used by a procfs instan=
+ce by using
+> > > > +the `PROCFS_GET_PID_NAMESPACE` ioctl() on the root directory of th=
+e procfs
+> > > > +instance.
+> > > > +
+> > > >  Chapter 5: Filesystem behavior
+> > > >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > =20
+> > > > diff --git a/fs/proc/root.c b/fs/proc/root.c
+> > > > index 057c8a125c6e..548a57ec2152 100644
+> > > > --- a/fs/proc/root.c
+> > > > +++ b/fs/proc/root.c
+> > > > @@ -23,8 +23,10 @@
+> > > >  #include <linux/cred.h>
+> > > >  #include <linux/magic.h>
+> > > >  #include <linux/slab.h>
+> > > > +#include <linux/ptrace.h>
+> > > > =20
+> > > >  #include "internal.h"
+> > > > +#include "../internal.h"
+> > > > =20
+> > > >  struct proc_fs_context {
+> > > >  	struct pid_namespace	*pid_ns;
+> > > > @@ -418,15 +420,63 @@ static int proc_root_readdir(struct file *fil=
+e, struct dir_context *ctx)
+> > > >  	return proc_pid_readdir(file, ctx);
+> > > >  }
+> > > > =20
+> > > > +static long int proc_root_ioctl(struct file *filp, unsigned int cm=
+d, unsigned long arg)
+> > > > +{
+> > > > +	switch (cmd) {
+> > > > +#ifdef CONFIG_PID_NS
+> > > > +	case PROCFS_GET_PID_NAMESPACE: {
+> > > > +		struct pid_namespace *active =3D task_active_pid_ns(current);
+> > > > +		struct pid_namespace *ns =3D proc_pid_ns(file_inode(filp)->i_sb);
+> > > > +		bool can_access_pidns =3D false;
+> > > > +
+> > > > +		/*
+> > > > +		 * If we are in an ancestors of the pidns, or have join
+> > > > +		 * privileges (CAP_SYS_ADMIN), then it makes sense that we
+> > > > +		 * would be able to grab a handle to the pidns.
+> > > > +		 *
+> > > > +		 * Otherwise, if there is a root process, then being able to
+> > > > +		 * access /proc/$pid/ns/pid is equivalent to this ioctl and so
+> > > > +		 * we should probably match the permission model. For empty
+> > > > +		 * namespaces it seems unlikely for there to be a downside to
+> > > > +		 * allowing unprivileged users to open a handle to it (setns
+> > > > +		 * will fail for unprivileged users anyway).
+> > > > +		 */
+> > > > +		can_access_pidns =3D pidns_is_ancestor(ns, active) ||
+> > > > +				   ns_capable(ns->user_ns, CAP_SYS_ADMIN);
+> > >=20
+> > > This seems to imply that if @ns is a descendant of @active that the
+> > > caller holds privileges over it. Is that actually always true?
+> > >=20
+> > > IOW, why is the check different from the previous pidns=3D mount opti=
+on
+> > > check. I would've expected:
+> > >=20
+> > > ns_capable(_no_audit)(ns->user_ns) && pidns_is_ancestor(ns, active)
+> > >=20
+> > > and then the ptrace check as a fallback.
+> >=20
+> > That would mirror pidns_install(), and I did think about it. The primary
+> > (mostly handwave-y) reasoning I had for making it less strict was that:
+> >=20
+> >  * If you are in an ancestor pidns, then you can already see those
+> >    processes in your own /proc. In theory that means that you will be
+> >    able to access /proc/$pid/ns/pid for at least some subprocess there
+> >    (even if some subprocesses have SUID_DUMP_DISABLE, that flag is
+> >    cleared on ).
+> >=20
+> >    Though hypothetically if they are all running as a different user,
+> >    this does not apply (and you could create scenarios where a child
+> >    pidns is owned by a userns that you do not have privileges over -- if
+> >    you deal with setuid binaries). Maybe that risk means we should just
+> >    combine them, I'm not sure.
+> >=20
+> >  * If you have CAP_SYS_ADMIN permissions over the pidns, it seems
+> >    strange to disallow access even if it is not in an ancestor
+> >    namespace. This is distinct to pidns_install(), where you want to
+> >    ensure you cannot escape to a parent pid namespace, this is about
+> >    getting a handle to do other operations (i.e. NS_GET_{P,TG}ID_*_PIDN=
+S).
+> >=20
+> > Maybe they should be combined to match pidns_install(), but then I would
+> > expect the ptrace_may_access() check to apply to all processes in the
+> > pidns to make it less restrictive, which is not something you can
+> > practically do (and there is a higher chance that pid1 will have
+> > SUID_DUMP_DISABLE than some random subprocess, which almost certainly
+> > will not be SUID_DUMP_DISABLE).
+> >=20
+> > Fundamentally, I guess I'm still trying to see what the risk is of
+> > allowing a process to get a handle to a pidns that they have some kind
+> > of privilege over (whether it's CAP_SYS_ADMIN, or by the virtue of being
+>=20
+> There shouldn't be. For example, you kinda implicitly do that with a
+> pidfd, no? Because you can pass the pidfd to setns() instead of a
+> namespace fd itself. Maybe that's the argument you're lookin for?
+
+That argument works for me! I'll rewrite the commit message to make sure
+it sounds like I came up with it. ;)
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+https://www.cyphar.com/
+
+--vqlqvmb7rrrsrgkq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaIt78QAKCRAol/rSt+lE
+b4KJAP9yYgg+3KR8dfc439kDY8r9NIKyuj6dnu3tOYDwDw54KQD/WA6Kev9V9C0u
+YQgoYZsOxr+MhZz9igC+/6ZSuFIAXg0=
+=WpMr
+-----END PGP SIGNATURE-----
+
+--vqlqvmb7rrrsrgkq--
 
