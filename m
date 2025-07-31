@@ -1,150 +1,95 @@
-Return-Path: <linux-kernel+bounces-751511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ADCDB16A79
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:35:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3938B16A5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:20:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51DF016AAA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0277E5A723E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C87A2356DA;
-	Thu, 31 Jul 2025 02:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF38323644F;
+	Thu, 31 Jul 2025 02:19:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="RO16iif7"
-Received: from mail-m49211.qiye.163.com (mail-m49211.qiye.163.com [45.254.49.211])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aM8F3D3a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF45F18A6B0;
-	Thu, 31 Jul 2025 02:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B6241991B2;
+	Thu, 31 Jul 2025 02:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753929332; cv=none; b=Ubkr11nXEeoaSCaB2ObhXJDX9tboNePtoaHa+DE3iWJiIltLokSpjrHy05I5iMa/tSJnGWIfHzPu1UrdJwsd1q3pluVYKscgVBTOSHK9n8f3SSZlVCVOdC+nWaDtP9TCjUPdQ4fyBj0/HEBsoeTp1sRChSS4YsY4wExKJXUG7P0=
+	t=1753928393; cv=none; b=FtlM0fODC+2PG6b1Tk700ygwjt9QZXc7gWCybHwxmd7Heeqiiac3SxrHhXDM+KOxIlZlCztnU/T/50EuT24JC9a0rVU9j1uhiXVn23WqdLluJmngTn4uFaSpXj9Hiw3v7hLW10f0Vkux041K5uWRZuHWmk1XKJ9lOXK26EKlMoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753929332; c=relaxed/simple;
-	bh=wGt+oJ2eiVfWy1iDzM9o28FJTuvh0pyWGCVFXYKv6Qc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WU2nx0DraczQwOEUVoyD7yV0iNOcgAe00mfUQDV+SgFVtpcFYD6HUJyPrqIIEtqf6Dyz9E2X8tg9RhGOsQwcM7y4PfoD/KE4sjhFr1J4o1mbc4yOvo1LV0Ut07fqm8IaXbgZbgmGDJRc9nJoMGQFZLl7Kn1bIZtQyLJByfSfZ08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=RO16iif7; arc=none smtp.client-ip=45.254.49.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
-Received: from [172.16.12.153] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [58.22.7.114])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1dcdf18ba;
-	Thu, 31 Jul 2025 10:19:51 +0800 (GMT+08:00)
-Message-ID: <63ec11cf-7927-431a-995e-a5fc35ef1ba7@rock-chips.com>
-Date: Thu, 31 Jul 2025 10:19:49 +0800
+	s=arc-20240116; t=1753928393; c=relaxed/simple;
+	bh=i/6GAdG5KEczQqUZSzP9yW8+aVRd+1iYuI/ibGxBFlw=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ucUlGiXTo/9ljGirT/2laO9O1ryGQMVHjZ6438SkaKfWSEBDEREe9BFI+wHe69cudPs9KflgjhosVALgGOiMeHlXWNtsERjNLFZCg63Q7BudcRcxFdx+0qRixn4mtAqpjdB5pGPfNuCPYOzGCNSnzim6OaZ/etwLZ294+Ej7gSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aM8F3D3a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A6DBC4CEE7;
+	Thu, 31 Jul 2025 02:19:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753928392;
+	bh=i/6GAdG5KEczQqUZSzP9yW8+aVRd+1iYuI/ibGxBFlw=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=aM8F3D3aHGYDz+x4OX+u9cnySDroze/EXqOCQD/w08JdkMQbjpFZi2upL1WmvWowR
+	 tiZrE/tsjwVf3FJZnRbz8Z0guBNI0U+5cuVZqn2k6udraXayY3cmgBlne5IcBW/8Hw
+	 vikhXMLGSPYQ1ar0ludAtMo5IenUaZY3xjOIUgr97L95wupueGB/sr7wsPK3RhVllw
+	 gsU2/ZU8VrcjTNEfBfnLyf6T0rlpTGot4eCA3v/5qvXFTI/5QTprDjwGe8ZToZy9rS
+	 9o+hbEzGG0qK1mdysrnbvtavnySjk8pX0k/1OWHFTwmroz2o/f1Gmwrs12y4vuG/z5
+	 Dx+XD8puy+glg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADC70383BF5F;
+	Thu, 31 Jul 2025 02:20:09 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/5] Add Type-C DP support for RK3399 EVB IND board
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
- <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
- Andy Yan <andy.yan@rock-chips.com>,
- Yubing Zhang <yubing.zhang@rock-chips.com>,
- Frank Wang <frank.wang@rock-chips.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Amit Sunil Dhamne <amitsd@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Chaoyi Chen <chaoyi.chen@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
- Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
- Peter Robinson <pbrobinson@gmail.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- dri-devel@lists.freedesktop.org
-References: <20250729090032.97-1-kernel@airkyi.com>
- <3kefqzjewmsyzfvyi33kvlgjd6jphjg3fsnixb3of7yb3xkgs2@hgi6xfkgd653>
-From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
-In-Reply-To: <3kefqzjewmsyzfvyi33kvlgjd6jphjg3fsnixb3of7yb3xkgs2@hgi6xfkgd653>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a985e475b1003abkunm77c0d17969e27b
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhpLHlZKTE5DQhgfSUsZSBlWFRQJFh
-	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
-	xVSktLVUpCS0tZBg++
-DKIM-Signature: a=rsa-sha256;
-	b=RO16iif7fvE2I/NqgFVWubst7c5eff+ThID3ba+yjSGE1Deh2av4GXUdv8xcfOjIoQRF5I8v1uaoBxKb/+DD1K1YmFe3nXoNmqmLqsqYOc6GjQA/eU0CqsQeM8yRVB7HTls4tRM/6RHXOdZnkUd6HI2cIMr02K/o8X0yNF8Ofbc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
-	bh=+TiEqyL1AH0iOF6kXInInA83bu0TufgWM4xm6RFb5sQ=;
-	h=date:mime-version:subject:message-id:from;
+Subject: Re: [PATCH net] net: mdio_bus: Use devm for getting reset GPIO
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <175392840851.2582155.14607525521532592549.git-patchwork-notify@kernel.org>
+Date: Thu, 31 Jul 2025 02:20:08 +0000
+References: <20250728153455.47190-2-csokas.bence@prolan.hu>
+In-Reply-To: <20250728153455.47190-2-csokas.bence@prolan.hu>
+To: =?utf-8?b?QmVuY2UgQ3PDs2vDoXMgPGNzb2thcy5iZW5jZUBwcm9sYW4uaHU+?=@codeaurora.org
+Cc: geert+renesas@glider.be, sergei.shtylyov@cogentembedded.com,
+ davem@davemloft.net, robh@kernel.org, andrew@lunn.ch,
+ andriy.shevchenko@linux.intel.com, dmitry.torokhov@gmail.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org, buday.csaba@prolan.hu,
+ hkallweit1@gmail.com, linux@armlinux.org.uk, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
 
-Hi Dmitry,
+Hello:
 
-On 7/31/2025 3:13 AM, Dmitry Baryshkov wrote:
-> On Tue, Jul 29, 2025 at 05:00:27PM +0800, Chaoyi Chen wrote:
->> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
->>
->> This series focuses on adding Type-C DP support for USBDP PHY and DP
->> driver. The USBDP PHY and DP will perceive the changes in cable status
->> based on the USB PD and Type-C state machines provided by TCPM. Before
->> this, the USBDP PHY and DP controller of RK3399 sensed cable state
->> changes through extcon, and devices such as the RK3399 Gru-Chromebook
->> rely on them. This series should not break them.
->>
-> [....]
->
->> ====
->> 2. DP HPD event notify
->>
->> The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
->> the CDN-DP can be switched to output to one of the PHYs.
->>
->> USB/DP PHY0 ---+
->>                 | <----> CDN-DP controller
->> USB/DP PHY1 ---+
-> Could you please clarify this, can you switch DP stream between two
-> USB-C outputs? What happens if user plugs in DP dongles in both USB-C
-> ports?
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Currently, the software simply selects the first available port. So if 
-user plugs in DP dongles in both USB-C ports, the DP driver will select 
-the first port. This process is implemented in cdn_dp_connected_port() .
+On Mon, 28 Jul 2025 17:34:55 +0200 you wrote:
+> Commit bafbdd527d56 ("phylib: Add device reset GPIO support") removed
+> devm_gpiod_get_optional() in favor of the non-devres managed
+> fwnode_get_named_gpiod(). When it was kind-of reverted by commit
+> 40ba6a12a548 ("net: mdio: switch to using gpiod_get_optional()"), the devm
+> functionality was not reinstated. Nor was the GPIO unclaimed on device
+> remove. This leads to the GPIO being claimed indefinitely, even when the
+> device and/or the driver gets removed.
+> 
+> [...]
+
+Here is the summary with links:
+  - [net] net: mdio_bus: Use devm for getting reset GPIO
+    https://git.kernel.org/netdev/net/c/3b98c9352511
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
 
-
->
->> BTW, one of the important things to do is to implement extcon-like
->> notifications. I found include/drm/bridge/aux-bridge.h , but if the
->> aux-bridge is used, the bridge chain would look like this:
->>
->> PHY0 aux-bridge ---+
->>                     | ----> CDN-DP bridge
->> PHY1 aux-bridge ---+
->>
->> Oh, CDN-DP bridge has two previous aux-bridge!
->>
->> Now, I try to use drm_connector_oob_hotplug_event() to notify HPD
->> state between PHY and CDN-DP controller.
-> Does it actually work? The OOB HPD event will be repoted for the usb-c
-> connector's fwnode, but the DP controller isn't connected to that node
-> anyhow. If I'm not mistaken, the HPD signal will not reach DP driver in
-> this case.
-
-Yes.  What you mentioned is the case in 
-drivers/usb/typec/altmodes/displayport.c . I have also added a new OOB 
-event notify in the PHY driver in Patch 3, where the expected fwnode is 
-used in the PHY. So now we have two OOB HPD events, one from 
-altmodes/displayport.c and the other from PHY. Only the HPD from PHY is 
-eventually passed to the DP driver.
-
-
-
->
->> Patch1 add new Type-C mode switch for RK3399 USBDP phy binding.
->> Patch2 add typec_mux and typec_switch for RK3399 USBDP PHY.
->> Patch3 drops CDN-DP's extcon dependency when Type-C is present.
->> Patch4 add missing dp_out port for RK3399 CDN-DP.
->> Patch5 add Type-C DP support for RK3399 EVB IND board.
->>
 
