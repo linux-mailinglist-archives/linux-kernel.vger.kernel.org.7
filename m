@@ -1,45 +1,44 @@
-Return-Path: <linux-kernel+bounces-752052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD862B170D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:00:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 059C4B170D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF9218C4AE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:00:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3E72188C303
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2372C08D7;
-	Thu, 31 Jul 2025 12:00:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="qiBwFNCr"
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83DF2376EC;
+	Thu, 31 Jul 2025 12:03:57 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A39230BE0;
-	Thu, 31 Jul 2025 12:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A68E2E3716;
+	Thu, 31 Jul 2025 12:03:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753963204; cv=none; b=BSN9f45s5ltUug11gg5D+wnTOmUY4hUxmLire0dOjeH2CnMh473QOqwKuwFJYksGlWyq5/D8s1FK5OH3rSZQbxsxpSct8Vsiq83G8zEwRMI+xpe6vPn7LILfmTATgokOMNgpYayTqaNvgSWqnSCnKM+pf1x/RQx0uow6g6jHg4Y=
+	t=1753963437; cv=none; b=KEn+zxTgXuXchVgGG5AIO8uWGR04ocsws6Cc0rTzQFfWtI0yyTDxLB1l8YXY2Ylj8DSE1PFmTmZdKKgVffeSP+918nxF0Oo++HyNBRtDusreFcI4JOc0d9Jcq+8KR2kNfyFmTOWLRjufouSyy409a7ZS2usWm/XNHRznzm/3KGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753963204; c=relaxed/simple;
-	bh=aibPBLNYWIL74po7BMss9c7mqz313WqahZSr+AaxYQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L434XxMHbBbPe4WziBeAi5N4dLmi3zWsB2Bv/L+v1ivKoSXD590mK9Ieurcueb/XZPbqNpEVTyWutAZQPAtGLKHUS5dopoXFyt+Iy7AzKXP1u8uGsejV0c+OeYpF8zxd4mLazp/vGRGn7afk1TlazkK/fcPa0sm086Wr7Efx6ME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=qiBwFNCr; arc=none smtp.client-ip=115.124.30.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753963196; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=aZdbPjoxwu8ynLp8BFCHS5jhMrTGpZfUnUf2R/AhC0M=;
-	b=qiBwFNCrSEj+/nb4RcMMYJN7uehkKctcK9rutgXWmgM0z8GDIZOROmrYRwfheiI4kCfQH66x0uMOtgf6kABR0UF/y7lQjLGa/u5SOGlUwbgnf6z4d0mL0gS9DLe0+ro8AwhYetDa+M4jytxCNAv3+18gPYGHLoOU0R5f6XNtd0M=
-Received: from 30.246.163.44(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0WkY6GDQ_1753963195 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 31 Jul 2025 19:59:55 +0800
-Message-ID: <2aa4da27-28fc-46e0-8d1a-d9e63b03d502@linux.alibaba.com>
-Date: Thu, 31 Jul 2025 19:59:54 +0800
+	s=arc-20240116; t=1753963437; c=relaxed/simple;
+	bh=ORO7TG+S9C7CvE0Y+18SIuOv1fq0sPwIkWY9tUAbqBU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=XExmlxAoT7KEP4YCAlr/SVDZRl4otbpmwj897HB+q1gOBzggPKNXJkYz32kny018R8z5aDRalfoVDqIkYG2CgBTZ3PR6E9jmlAsVcHXB5ZpAy174tU3SoF/EHkDWyzvFUibIlvevIjgrJl74alxWrpc6TiNCO6oSSwWxqgU6mxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bt75z2CDSzKHMpV;
+	Thu, 31 Jul 2025 20:03:51 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 397C11A0840;
+	Thu, 31 Jul 2025 20:03:50 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgB3NbejW4toLyJJCA--.19748S2;
+	Thu, 31 Jul 2025 20:03:48 +0800 (CST)
+Message-ID: <2c0b1511-b216-4f92-84c7-482f510cef7e@huaweicloud.com>
+Date: Thu, 31 Jul 2025 20:03:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,84 +46,105 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
+Subject: Re: [PATCH v3] sched/core: Skip user_cpus_ptr masking if no online
+ CPU left
+From: Chen Ridong <chenridong@huaweicloud.com>
+To: Waiman Long <longman@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+References: <20250718164143.31338-1-longman@redhat.com>
+ <20250718164857.31963-1-longman@redhat.com>
+ <0532c73c-fda0-4f12-b4ce-f84a74bc2f21@huaweicloud.com>
 Content-Language: en-US
-To: Paul Moore <paul@paul-moore.com>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
- <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
- <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
-From: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <0532c73c-fda0-4f12-b4ce-f84a74bc2f21@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:Syh0CgB3NbejW4toLyJJCA--.19748S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF43JF4UXr17uw4kGw1rWFg_yoW5Jw4UpF
+	WvkFWUCFWqqF1jyaySv39Fkr1FqanxJ3W3XF1Syr1FkFWYqF1UCry0gFnxXrn0qrsakFW5
+	tF4ag3yIvFyqqrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	0PfPUUUUU==
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
 
-On 7/29/25 11:09 PM, Paul Moore wrote:
-> On Tue, Jul 29, 2025 at 10:43 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
->>> The implementation of function security_inode_copy_up_xattr can be
->>> simplified to directly call call_int_hook().
->>>
->>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->>> ---
->>>   security/security.c | 8 +-------
->>>   1 file changed, 1 insertion(+), 7 deletions(-)
->>>
->>> diff --git a/security/security.c b/security/security.c
->>> index 596d41818577..a5c2e5a8009f 100644
->>> --- a/security/security.c
->>> +++ b/security/security.c
->>> @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
->>>    */
->>>   int security_inode_copy_up_xattr(struct dentry *src, const char *name)
->>>   {
->>> -     int rc;
->>> -
->>> -     rc = call_int_hook(inode_copy_up_xattr, src, name);
->>> -     if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
->>> -             return rc;
->>> -
->>> -     return LSM_RET_DEFAULT(inode_copy_up_xattr);
->>> +     return call_int_hook(inode_copy_up_xattr, src, name);
+On 2025/7/23 9:58, Chen Ridong wrote:
+> 
+> 
+> On 2025/7/19 0:48, Waiman Long wrote:
+>> Chen Ridong reported that cpuset could report a kernel warning for a task
+>> due to set_cpus_allowed_ptr() returning failure in the corner case that:
 >>
->> Both the existing code and the proposed change are incorrect.
->> If two LSMs supply the hook, and the first does not recognize
->> the attribute, the second, which might recognize the attribute,
->> will not be called. As SELinux and EVM both supply this hook
->> there may be a real problem here.
+>> 1) the task used sched_setaffinity(2) to set its CPU affinity mask to
+>>    be the same as the cpuset.cpus of its cpuset,
+>> 2) all the CPUs assigned to that cpuset were taken offline, and
+>> 3) cpuset v1 is in use and the task had to be migrated to the top cpuset.
+>>
+>> Due to the fact that CPU affinity of the tasks in the top cpuset are
+>> not updated when a CPU hotplug online/offline event happens, offline
+>> CPUs are included in CPU affinity of those tasks. It is possible
+>> that further masking with user_cpus_ptr set by sched_setaffinity(2)
+>> in __set_cpus_allowed_ptr() will leave only offline CPUs in the new
+>> mask causing the subsequent call to __set_cpus_allowed_ptr_locked()
+>> to return failure with an empty CPU affinity.
+>>
+>> Fix this failure by skipping user_cpus_ptr masking if there is no online
+>> CPU left.
+>>
+>> Reported-by: Chen Ridong <chenridong@huaweicloud.com>
+>> Closes: https://lore.kernel.org/lkml/20250714032311.3570157-1-chenridong@huaweicloud.com/
+>> Fixes: da019032819a ("sched: Enforce user requested affinity")
+>> Signed-off-by: Waiman Long <longman@redhat.com>
+>> ---
+>>  kernel/sched/core.c | 7 ++++---
+>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+>> index 81c6df746df1..208f8af73134 100644
+>> --- a/kernel/sched/core.c
+>> +++ b/kernel/sched/core.c
+>> @@ -3170,12 +3170,13 @@ int __set_cpus_allowed_ptr(struct task_struct *p, struct affinity_context *ctx)
+>>  
+>>  	rq = task_rq_lock(p, &rf);
+>>  	/*
+>> -	 * Masking should be skipped if SCA_USER or any of the SCA_MIGRATE_*
+>> -	 * flags are set.
+>> +	 * Masking should be skipped if SCA_USER, any of the SCA_MIGRATE_*
+>> +	 * flags are set or no online CPU left.
+>>  	 */
+>>  	if (p->user_cpus_ptr &&
+>>  	    !(ctx->flags & (SCA_USER | SCA_MIGRATE_ENABLE | SCA_MIGRATE_DISABLE)) &&
+>> -	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr))
+>> +	    cpumask_and(rq->scratch_mask, ctx->new_mask, p->user_cpus_ptr) &&
+>> +	    cpumask_intersects(rq->scratch_mask, cpu_active_mask))
+>>  		ctx->new_mask = rq->scratch_mask;
+>>  
+>>  	return __set_cpus_allowed_ptr_locked(p, ctx, rq, &rf);
 > 
-> It appears that Smack also supplies a inode_copy_up_xattr() callback
-> via smack_inode_copy_up_xattr().
-> 
-> Someone should double check this logic, but looking at it very
-> quickly, it would appear that LSM framework should run the individual
-> LSM callbacks in order so long as they return -EOPNOTSUPP, if they do
-> not return -EOPNOTSUPP, the return value should be returned to the
-> caller without executing any further callbacks.  As a default return
-> value, or if all of the LSM callbacks succeed with -EOPNOTSUPP, the
-> hook should return -EOPNOTSUPP.
-> 
-> Tianjia Zhang, would you be able to develop and test a patch for this?
+> Tested-by:  Chen Ridong <chenridong@huawei.com>
 > 
 
-I carefully checked the logic of security_inode_copy_up_xattr(). I think
-there is no problem with the current code. The default return value of
-inode_copy_up_xattr LSM is -EOPNOTSUPP. Therefore, when -EOPNOTSUPP is
-returned in the LSM callback, the next callback function will be called
-in a loop. When an LSM module recognizes the attribute name that needs
-to be ignored, it will return -ECANCELED to indicate
-security_inode_copy_up_xattr() to jump out of the loop and ignore the
-copy of this attribute in overlayfs.
+Friendly ping.
 
-Currently, the SELinux, EVM, and Smack that supply inode_copy_up_xattr
-callback all return -ECANCELED after recognizing the extended attribute
-name they are concerned about, to indicate overlayfs to discard the
-copy_up operation of this attribute. I think this is in line with
-expectations.
+Best regards,
+Ridong
 
-Tianjia,
-Cheers
 
