@@ -1,188 +1,388 @@
-Return-Path: <linux-kernel+bounces-751792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF91FB16D88
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:30:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA564B16D8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4D53ABB09
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:29:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A5073AA76C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:30:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13322989A2;
-	Thu, 31 Jul 2025 08:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15D88241670;
+	Thu, 31 Jul 2025 08:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aI+4ClAV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC14D2AE74
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PaMKRwVb"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ED401482F5
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753950584; cv=none; b=WTzs2umatb+z/ojRZ4XGGWVM8x4bdSKkTbq7UBYk8Rupq0AulxqRLtZLYdHtjuRhsf4YokBr+IMMbXOUJatWOzq/1gGrXQj7eoENEZUr37SkKOp4Tgg2Bt0cyyak/kF7z+49ASI9qdsKIhXrPTLthkENBwgIMXlr6DQilbgq8gg=
+	t=1753950619; cv=none; b=amX0JnDT9t3BBdDKGPKWBpDHieV1hcNxLbhL3cVR14M4lvr58VkkzzHiTqr3oAuqrCUbhuMD2oMWw00T1OeACT13UqYWkWFAiCCyQIiS1D4zm+Csx61dxR6OGlfX1wHnyZpR38Fqo0JkkVeWxiRTImjdXxDdfgpIRaP3puA4jg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753950584; c=relaxed/simple;
-	bh=AMsJabH4uTEQwdU7p1aCd3u4s3N0oQl/CFz7UNeKcEw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rFUOGxIogZkO9zQUTIqfMPHKuge1WoMxJ7ys7z2W6B0/4JbUoFl/FbNjgS0Ty5mx+A1LfU4K/cw1dSVAxsz1OeflM0iw+wlsqkKaPx+kF5bL2GrUJcH0dAYgcRvXZ2Bki793nW2i0NPPxAgteSnQoD+CMQIyNnXCqygQkMArztM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aI+4ClAV; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753950580;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=UOsdViaGVxWnczW9b3BcwanE5/c/ybe0wyeENLeFccE=;
-	b=aI+4ClAVLOJ4BPSeo7ek/PM4kHFgFIkXOIU//RFZbt8fqXkOPklYwo5XTdwtNq2W5SBfsI
-	fdaRSzTqaOmvECYYJQ7NGICKYxxsIRU8kDhd17S8Ser0gU82vLoYc3rpxz1+EqLOj7hYjA
-	lLQ9NPNzeUOOP9Lk5Jura18CK8Q/XZE=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-CXEe-MMIOmm64_RL0VaZqw-1; Thu, 31 Jul 2025 04:29:38 -0400
-X-MC-Unique: CXEe-MMIOmm64_RL0VaZqw-1
-X-Mimecast-MFC-AGG-ID: CXEe-MMIOmm64_RL0VaZqw_1753950577
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b7889c8d2bso55181f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:29:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753950577; x=1754555377;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UOsdViaGVxWnczW9b3BcwanE5/c/ybe0wyeENLeFccE=;
-        b=FoCRhYvekayx7K8s30/fzN9O/WrFM8IoLhJ1483yqsaegI2G9Tuoks+HRR0gdRrD4Z
-         6pj8o54LsNJHW8qm1eA02y5mhTXEF+LMNzAyRH4kygb2I91QCYoAuB6dA+8eL7YzEoq6
-         dNDACvG/gqDjiq4vjndN2RoSvu8UyrZZLSuQDgu3k5/vnZ2qrIdMqHe/GpMmTGVe7Naq
-         LfxGcJXaS/Gi9BsCkr8BGwNq9TqjPHmMxdmkI9BybL/+4bSQeHb9cdiSNRniosIHhoHB
-         9jvMnTT5kgs/daFHbT3ADnVJkmD6mUrSC3UWQuKMv1puEl3/YQby9lmR+s1aIL/rXG1j
-         tWvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwrioWkxQ4EwcdlXLHCbw1E1FFsj3SB3FsFNcpyR/cknGIpJicn6/NpQhXuER68Xo+QAO/073kosJ5ASw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylgIWXGBXHOUbV2/kpSzqkYz9ElXh/Kl04PyPLfZUAUnJjqyQ3
-	tLHXpcCAL3oJVir6slZZmQcj0lcYIzAGCk33Cv1j2WqvNtAa1HoNhLIgnQWOP9jI/3xAyXqyS4A
-	wxMcEnf548kiB59ZngQJV91S81J0giw4ZsgW09DSTig7wUp1Z/XI07z6FpFrZ4Qvs1g==
-X-Gm-Gg: ASbGnctI7rocMEk6UUaiLHBBNflIF77+1HvkDZJhVnJnFFJtyde4Q8QlRPOcSOZyrZY
-	gNBAOME58Pl0eNst7g4IZvSLv604uXTUG8qAbkjC3uVUc/Yzy4m/eKXtMcLo8h1bY1I1FBTJHUp
-	LUGtrSCOGZIsDqzaEAy0gekvK4Fi8Bi0cEX4Q72pUltEu1tHPxveSojeufVt3qbxfPhXlu5XmmH
-	ndCQg9ADACNn5l9P7/wYIdhNEPI+uqx1BCJ827iPqJwElARqP2Pj6vdHto7tuYmImd5/J2uOhZH
-	5ksow9Ze4UGpKEE2FCDT5VqacjzGNehnkgRy3ZCy7bpxliNddvSdtQN5n+7AX0rC0e5+InCkTIz
-	Wgk6hWkM3m1aJzQBbpgU3y4mw7bxe0s6ee2NhtcuA34QhoNkw/TQxbOSExJMMfEJVIKI=
-X-Received: by 2002:a05:6000:24c9:b0:3b7:9c88:daac with SMTP id ffacd0b85a97d-3b79c88dbc7mr1204227f8f.53.1753950576899;
-        Thu, 31 Jul 2025 01:29:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHD9vjWTXx6+eu57zSZvMsNC7w4A10Bd7geesiciB9rOpCXqiI0Bh3Cw4/xj0sZFbPQ7RH2cA==
-X-Received: by 2002:a05:6000:24c9:b0:3b7:9c88:daac with SMTP id ffacd0b85a97d-3b79c88dbc7mr1204197f8f.53.1753950576339;
-        Thu, 31 Jul 2025 01:29:36 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f44:3700:be07:9a67:67f7:24e6? (p200300d82f443700be079a6767f724e6.dip0.t-ipconnect.de. [2003:d8:2f44:3700:be07:9a67:67f7:24e6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9386sm1588913f8f.18.2025.07.31.01.29.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Jul 2025 01:29:35 -0700 (PDT)
-Message-ID: <c320b7a3-bf75-4f9e-bd72-4290fd9fe9d9@redhat.com>
-Date: Thu, 31 Jul 2025 10:29:34 +0200
+	s=arc-20240116; t=1753950619; c=relaxed/simple;
+	bh=71A10EnoM8VbuBcyaW9SLsjfGE/7bzAU1p2Amlz7pOo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=khnGcogqcOb1cS0f6jnnDvSIaQLFHj1VOAXo63kVOWoRIXSkW75nMb2ih7HBMLMTbdve4ZcDK0wzOfz9QPjq79yBK4kt4IM23Eve4bL+pQdZQ0lTmiFKdmSSNmxtVVJhxauLkuj/S8DiULohWT0PrTiKW5aDP+1sm1EQkQjlD1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PaMKRwVb; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Qe
+	26NsUXhixAI64uFV4t/uGxaqu3ZDizLlrJAbwVBog=; b=PaMKRwVbGqiNWmjkR+
+	8lYA5JNbBInmpf+xoIsiNZucwQ8fnVKZwW/4ff5DXW206koeqVSqoE8uLV47IAKr
+	JPwsF28hghaQ1fTUwwA9sXWcZNLREt8VVokyu5W02hR8xZ1CUcHgavgGDzVCLC0+
+	5802uVLs+HxCSjqtTHSJg0b5o=
+Received: from phoenix.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wBHQ7eBKYtojcZXIw--.60600S2;
+	Thu, 31 Jul 2025 16:29:55 +0800 (CST)
+From: Jiawei Zhao <phoenix500526@163.com>
+To: andrii@kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/bpf: Add missing kfunc declarations to fix build errors
+Date: Thu, 31 Jul 2025 08:29:50 +0000
+Message-ID: <20250731082951.439101-1-phoenix500526@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 12/24] KVM: x86/mmu: Rename
- .private_max_mapping_level() to .gmem_max_mapping_level()
-To: Fuad Tabba <tabba@google.com>, Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Gavin Shan <gshan@redhat.com>, Shivank Garg <shivankg@amd.com>,
- Vlastimil Babka <vbabka@suse.cz>, Xiaoyao Li <xiaoyao.li@intel.com>,
- Ackerley Tng <ackerleytng@google.com>, Tao Chan <chentao@kylinos.cn>,
- James Houghton <jthoughton@google.com>
-References: <20250729225455.670324-1-seanjc@google.com>
- <20250729225455.670324-13-seanjc@google.com>
- <CA+EHjTwuXT_wcDAOwwKP+yBetE9N46QMb+hUKAOsxBVkkOgCTw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <CA+EHjTwuXT_wcDAOwwKP+yBetE9N46QMb+hUKAOsxBVkkOgCTw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wBHQ7eBKYtojcZXIw--.60600S2
+X-Coremail-Antispam: 1Uf129KBjvAXoWfJw15Cr48Kw1DAr48XF1DZFb_yoW8XFy8Wo
+	Z3KF98X3W8urWxAryDAr1fJa4kuws2grWrAr4fGr98WFyjy34Y9ryxCw4xJrW2qw1rXa40
+	9asxA390vFy8GFykn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU5nmRDUUUU
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBgAebiGiLIjms2wAAsb
 
-On 31.07.25 10:15, Fuad Tabba wrote:
-> On Tue, 29 Jul 2025 at 23:55, Sean Christopherson <seanjc@google.com> wrote:
->>
->> From: Ackerley Tng <ackerleytng@google.com>
->>
->> Rename kvm_x86_ops.private_max_mapping_level() to .gmem_max_mapping_level()
->> in anticipation of extending guest_memfd support to non-private memory.
->>
->> No functional change intended.
->>
->> Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
->> Acked-by: David Hildenbrand <david@redhat.com>
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> Signed-off-by: Fuad Tabba <tabba@google.com>
->> Co-developed-by: Sean Christopherson <seanjc@google.com>
->> Signed-off-by: Sean Christopherson <seanjc@google.com>
->> ---
-> 
-> nit: remove my "Signed-off-by", since I'm not a co-developer, and instead:
+A number of BPF selftests that utilize kernel functions (kfuncs) fail
+to build due to missing function prototypes. This results in compilation
+errors, as implicit function declarations are treated as errors:
 
-The patch went "through your hands", right? In that case, a SOB is the 
-right thing to do.
+  error: call to undeclared function 'bpf_copy_from_user_task_str';
+         ISO C99 and later do not support implicit function declarations
 
-"The Signed-off-by: tag indicates that the signer was involved in the
-development of the patch, or that he/she was in the patch's delivery path."
+Unlike BPF helpers, kfuncs are not automatically available to BPF
+programs and must be explicitly declared before use.
 
+To resolve this, centralize all the necessary kfunc declarations into
+the `bpf_kfuncs.h` header file. This header is then included in all the
+test programs that were previously missing these declarations.
+
+This approach also allows for the removal of redundant local `extern`
+declarations from individual source files (e.g., in `irq.c`), leading
+to cleaner and more maintainable code.
+
+Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
+---
+ tools/testing/selftests/bpf/bpf_kfuncs.h      | 64 +++++++++++++++++++
+ .../selftests/bpf/progs/bpf_iter_tasks.c      |  1 +
+ .../bpf/progs/bpf_qdisc_fail__incompl_ops.c   |  1 +
+ .../selftests/bpf/progs/bpf_qdisc_fifo.c      |  1 +
+ .../selftests/bpf/progs/bpf_qdisc_fq.c        |  1 +
+ .../selftests/bpf/progs/cgroup_read_xattr.c   |  1 +
+ .../testing/selftests/bpf/progs/dmabuf_iter.c |  1 +
+ .../selftests/bpf/progs/dynptr_success.c      |  1 +
+ tools/testing/selftests/bpf/progs/irq.c       |  6 +-
+ .../selftests/bpf/progs/linked_list_peek.c    |  1 +
+ .../selftests/bpf/progs/rbtree_search.c       |  1 +
+ .../selftests/bpf/progs/rcu_read_lock.c       |  1 +
+ .../selftests/bpf/progs/read_cgroupfs_xattr.c |  1 +
+ .../selftests/bpf/progs/res_spin_lock.c       |  1 +
+ .../selftests/bpf/progs/res_spin_lock_fail.c  |  1 +
+ .../struct_ops_refcounted_fail__tail_call.c   |  1 +
+ .../selftests/bpf/progs/test_spin_lock_fail.c |  1 +
+ 17 files changed, 80 insertions(+), 5 deletions(-)
+
+diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
+index 8215c9b3115e..f4704b0a36a7 100644
+--- a/tools/testing/selftests/bpf/bpf_kfuncs.h
++++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
+@@ -2,6 +2,7 @@
+ #define __BPF_KFUNCS__
+ 
+ struct bpf_sock_addr_kern;
++struct bpf_res_spin_lock;
+ 
+ /* Description
+  *  Initializes an skb-type dynptr
+@@ -42,6 +43,28 @@ extern bool bpf_dynptr_is_null(const struct bpf_dynptr *ptr) __ksym __weak;
+ extern bool bpf_dynptr_is_rdonly(const struct bpf_dynptr *ptr) __ksym __weak;
+ extern __u32 bpf_dynptr_size(const struct bpf_dynptr *ptr) __ksym __weak;
+ extern int bpf_dynptr_clone(const struct bpf_dynptr *ptr, struct bpf_dynptr *clone__init) __ksym __weak;
++extern int bpf_dynptr_copy(struct bpf_dynptr *dst_ptr, __u32 dst_off, struct bpf_dynptr *src_ptr,
++				__u32 src_off, __u32 size) __ksym __weak;
++extern int bpf_probe_read_user_dynptr(struct bpf_dynptr *dptr, __u32 off,
++				__u32 size, const void *unsafe_ptr__ign) __ksym __weak;
++extern int bpf_probe_read_kernel_dynptr(struct bpf_dynptr *dptr, __u32 off,
++				__u32 size, const void *unsafe_ptr__ign) __ksym __weak;
++extern int bpf_probe_read_user_str_dynptr(struct bpf_dynptr *dptr, __u32 off,
++				__u32 size, const void *unsafe_ptr__ign) __ksym __weak;
++extern int bpf_probe_read_kernel_str_dynptr(struct bpf_dynptr *dptr, __u32 off,
++				__u32 size, const void *unsafe_ptr__ign) __ksym __weak;
++extern int bpf_copy_from_user_dynptr(struct bpf_dynptr *dptr, __u32 off,
++				__u32 size, const void *unsafe_ptr__ign) __ksym __weak;
++extern int bpf_copy_from_user_str_dynptr(struct bpf_dynptr *dptr, __u32 off,
++				__u32 size, const void *unsafe_ptr__ign) __ksym __weak;
++extern int bpf_copy_from_user_task_dynptr(struct bpf_dynptr *dptr, __u32 off,
++				__u32 size, const void *unsafe_ptr__ign,
++				struct task_struct *tsk) __ksym __weak;
++extern int bpf_copy_from_user_task_str_dynptr(struct bpf_dynptr *dptr, __u32 off,
++				__u32 size, const void *unsafe_ptr__ign,
++				struct task_struct *tsk) __ksym __weak;
++extern int bpf_copy_from_user_task_str(void *dst, __u32, const void *,
++				struct task_struct *, __u64) __ksym __weak;
+ 
+ /* Description
+  *  Modify the address of a AF_UNIX sockaddr.
+@@ -92,4 +115,45 @@ extern int bpf_set_dentry_xattr(struct dentry *dentry, const char *name__str,
+ 				const struct bpf_dynptr *value_p, int flags) __ksym __weak;
+ extern int bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str) __ksym __weak;
+ 
++extern void bpf_local_irq_save(unsigned long *) __ksym __weak;
++extern void bpf_local_irq_restore(unsigned long *) __ksym __weak;
++extern int bpf_copy_from_user_str(void *dst, __u32 dst__sz,
++				const void *unsafe_ptr__ign, __u64 flags) __ksym __weak;
++extern int bpf_res_spin_lock_irqsave(struct bpf_res_spin_lock *lock,
++				unsigned long *flags__irq_flag) __ksym __weak;
++extern void bpf_res_spin_unlock_irqrestore(struct bpf_res_spin_lock *lock,
++				unsigned long *flags__irq_flag) __ksym __weak;
++extern int bpf_res_spin_lock(struct bpf_res_spin_lock *lock) __ksym __weak;
++extern void bpf_res_spin_unlock(struct bpf_res_spin_lock *lock) __ksym __weak;
++
++extern struct bpf_list_node *bpf_list_front(struct bpf_list_head *head) __ksym __weak;
++extern struct bpf_list_node *bpf_list_back(struct bpf_list_head *head) __ksym __weak;
++
++struct bpf_sk_buff_ptr;
++struct sk_buff;
++struct Qdisc;
++
++extern void bpf_qdisc_skb_drop(struct sk_buff *skb,
++				    struct bpf_sk_buff_ptr *to_free_list) __ksym __weak;
++extern void bpf_qdisc_bstats_update(struct Qdisc *sch, const struct sk_buff *skb) __ksym __weak;
++extern void bpf_kfree_skb(struct sk_buff *skb) __ksym __weak;
++extern __u32 bpf_skb_get_hash(struct sk_buff *) __ksym __weak;
++extern void bpf_qdisc_watchdog_schedule(struct Qdisc *sch, __u64 expire,
++		__u64 delta_ns) __ksym __weak;
++
++extern struct cgroup *bpf_cgroup_from_id(__u64 cgid) __ksym __weak;
++extern void bpf_cgroup_release(struct cgroup *cgrp) __ksym __weak;
++extern void bpf_rcu_read_lock(void) __ksym __weak;
++extern void bpf_rcu_read_unlock(void) __ksym __weak;
++extern struct cgroup *bpf_cgroup_ancestor(struct cgroup *cgrp, int level) __ksym __weak;
++
++
++extern struct bpf_rb_node *bpf_rbtree_root(struct bpf_rb_root *root) __ksym __weak;
++extern struct bpf_rb_node *bpf_rbtree_left(struct bpf_rb_root *root,
++		struct bpf_rb_node *node) __ksym __weak;
++extern struct bpf_rb_node *bpf_rbtree_right(struct bpf_rb_root *root,
++		struct bpf_rb_node *node) __ksym __weak;
++
++extern void bpf_task_release(struct task_struct *p) __ksym __weak;
++
+ #endif
+diff --git a/tools/testing/selftests/bpf/progs/bpf_iter_tasks.c b/tools/testing/selftests/bpf/progs/bpf_iter_tasks.c
+index 966ee5a7b066..63daf05366df 100644
+--- a/tools/testing/selftests/bpf/progs/bpf_iter_tasks.c
++++ b/tools/testing/selftests/bpf/progs/bpf_iter_tasks.c
+@@ -3,6 +3,7 @@
+ #include <vmlinux.h>
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_tracing.h>
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/bpf_qdisc_fail__incompl_ops.c b/tools/testing/selftests/bpf/progs/bpf_qdisc_fail__incompl_ops.c
+index f188062ed730..7f1a5a1b5dac 100644
+--- a/tools/testing/selftests/bpf/progs/bpf_qdisc_fail__incompl_ops.c
++++ b/tools/testing/selftests/bpf/progs/bpf_qdisc_fail__incompl_ops.c
+@@ -3,6 +3,7 @@
+ #include <vmlinux.h>
+ #include "bpf_experimental.h"
+ #include "bpf_qdisc_common.h"
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/bpf_qdisc_fifo.c b/tools/testing/selftests/bpf/progs/bpf_qdisc_fifo.c
+index 1de2be3e370b..9ae41518d578 100644
+--- a/tools/testing/selftests/bpf/progs/bpf_qdisc_fifo.c
++++ b/tools/testing/selftests/bpf/progs/bpf_qdisc_fifo.c
+@@ -3,6 +3,7 @@
+ #include <vmlinux.h>
+ #include "bpf_experimental.h"
+ #include "bpf_qdisc_common.h"
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/bpf_qdisc_fq.c b/tools/testing/selftests/bpf/progs/bpf_qdisc_fq.c
+index 1a3233a275c7..f86981bc2a09 100644
+--- a/tools/testing/selftests/bpf/progs/bpf_qdisc_fq.c
++++ b/tools/testing/selftests/bpf/progs/bpf_qdisc_fq.c
+@@ -37,6 +37,7 @@
+ #include <bpf/bpf_helpers.h>
+ #include "bpf_experimental.h"
+ #include "bpf_qdisc_common.h"
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c b/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
+index 092db1d0435e..50162ca905cc 100644
+--- a/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
++++ b/tools/testing/selftests/bpf/progs/cgroup_read_xattr.c
+@@ -7,6 +7,7 @@
+ #include <bpf/bpf_core_read.h>
+ #include "bpf_experimental.h"
+ #include "bpf_misc.h"
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/dmabuf_iter.c b/tools/testing/selftests/bpf/progs/dmabuf_iter.c
+index 13cdb11fdeb2..df0021dc54da 100644
+--- a/tools/testing/selftests/bpf/progs/dmabuf_iter.c
++++ b/tools/testing/selftests/bpf/progs/dmabuf_iter.c
+@@ -3,6 +3,7 @@
+ #include <vmlinux.h>
+ #include <bpf/bpf_core_read.h>
+ #include <bpf/bpf_helpers.h>
++#include "bpf_experimental.h"
+ 
+ /* From uapi/linux/dma-buf.h */
+ #define DMA_BUF_NAME_LEN 32
+diff --git a/tools/testing/selftests/bpf/progs/dynptr_success.c b/tools/testing/selftests/bpf/progs/dynptr_success.c
+index a0391f9da2d4..95bcdf465c4b 100644
+--- a/tools/testing/selftests/bpf/progs/dynptr_success.c
++++ b/tools/testing/selftests/bpf/progs/dynptr_success.c
+@@ -8,6 +8,7 @@
+ #include <bpf/bpf_tracing.h>
+ #include "bpf_misc.h"
+ #include "errno.h"
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/irq.c b/tools/testing/selftests/bpf/progs/irq.c
+index 74d912b22de9..ce3b2509e6f1 100644
+--- a/tools/testing/selftests/bpf/progs/irq.c
++++ b/tools/testing/selftests/bpf/progs/irq.c
+@@ -4,13 +4,9 @@
+ #include <bpf/bpf_helpers.h>
+ #include "bpf_misc.h"
+ #include "bpf_experimental.h"
++#include "bpf_kfuncs.h"
+ 
+ unsigned long global_flags;
+-
+-extern void bpf_local_irq_save(unsigned long *) __weak __ksym;
+-extern void bpf_local_irq_restore(unsigned long *) __weak __ksym;
+-extern int bpf_copy_from_user_str(void *dst, u32 dst__sz, const void *unsafe_ptr__ign, u64 flags) __weak __ksym;
+-
+ struct bpf_res_spin_lock lockA __hidden SEC(".data.A");
+ struct bpf_res_spin_lock lockB __hidden SEC(".data.B");
+ 
+diff --git a/tools/testing/selftests/bpf/progs/linked_list_peek.c b/tools/testing/selftests/bpf/progs/linked_list_peek.c
+index 264e81bfb287..00d5299eeb0a 100644
+--- a/tools/testing/selftests/bpf/progs/linked_list_peek.c
++++ b/tools/testing/selftests/bpf/progs/linked_list_peek.c
+@@ -5,6 +5,7 @@
+ #include <bpf/bpf_helpers.h>
+ #include "bpf_misc.h"
+ #include "bpf_experimental.h"
++#include "bpf_kfuncs.h"
+ 
+ struct node_data {
+ 	struct bpf_list_node l;
+diff --git a/tools/testing/selftests/bpf/progs/rbtree_search.c b/tools/testing/selftests/bpf/progs/rbtree_search.c
+index 098ef970fac1..681ea24d6877 100644
+--- a/tools/testing/selftests/bpf/progs/rbtree_search.c
++++ b/tools/testing/selftests/bpf/progs/rbtree_search.c
+@@ -5,6 +5,7 @@
+ #include <bpf/bpf_helpers.h>
+ #include "bpf_misc.h"
+ #include "bpf_experimental.h"
++#include "bpf_kfuncs.h"
+ 
+ struct node_data {
+ 	struct bpf_refcount ref;
+diff --git a/tools/testing/selftests/bpf/progs/rcu_read_lock.c b/tools/testing/selftests/bpf/progs/rcu_read_lock.c
+index 43637ee2cdcd..386559f026dd 100644
+--- a/tools/testing/selftests/bpf/progs/rcu_read_lock.c
++++ b/tools/testing/selftests/bpf/progs/rcu_read_lock.c
+@@ -6,6 +6,7 @@
+ #include <bpf/bpf_tracing.h>
+ #include "bpf_tracing_net.h"
+ #include "bpf_misc.h"
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c b/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
+index 855f85fc5522..0575e08ae108 100644
+--- a/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
++++ b/tools/testing/selftests/bpf/progs/read_cgroupfs_xattr.c
+@@ -6,6 +6,7 @@
+ #include <bpf/bpf_helpers.h>
+ #include <bpf/bpf_core_read.h>
+ #include "bpf_experimental.h"
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/res_spin_lock.c b/tools/testing/selftests/bpf/progs/res_spin_lock.c
+index 22c4fb8b9266..8d21b7ae0a18 100644
+--- a/tools/testing/selftests/bpf/progs/res_spin_lock.c
++++ b/tools/testing/selftests/bpf/progs/res_spin_lock.c
+@@ -4,6 +4,7 @@
+ #include <bpf/bpf_tracing.h>
+ #include <bpf/bpf_helpers.h>
+ #include "bpf_misc.h"
++#include "bpf_kfuncs.h"
+ 
+ #define EDEADLK 35
+ #define ETIMEDOUT 110
+diff --git a/tools/testing/selftests/bpf/progs/res_spin_lock_fail.c b/tools/testing/selftests/bpf/progs/res_spin_lock_fail.c
+index 330682a88c16..d643ff783798 100644
+--- a/tools/testing/selftests/bpf/progs/res_spin_lock_fail.c
++++ b/tools/testing/selftests/bpf/progs/res_spin_lock_fail.c
+@@ -6,6 +6,7 @@
+ #include <bpf/bpf_core_read.h>
+ #include "bpf_misc.h"
+ #include "bpf_experimental.h"
++#include "bpf_kfuncs.h"
+ 
+ struct arr_elem {
+ 	struct bpf_res_spin_lock lock;
+diff --git a/tools/testing/selftests/bpf/progs/struct_ops_refcounted_fail__tail_call.c b/tools/testing/selftests/bpf/progs/struct_ops_refcounted_fail__tail_call.c
+index 3b125025a1f2..7661658848f4 100644
+--- a/tools/testing/selftests/bpf/progs/struct_ops_refcounted_fail__tail_call.c
++++ b/tools/testing/selftests/bpf/progs/struct_ops_refcounted_fail__tail_call.c
+@@ -4,6 +4,7 @@
+ #include <bpf/bpf_tracing.h>
+ #include "../test_kmods/bpf_testmod.h"
+ #include "bpf_misc.h"
++#include "bpf_kfuncs.h"
+ 
+ char _license[] SEC("license") = "GPL";
+ 
+diff --git a/tools/testing/selftests/bpf/progs/test_spin_lock_fail.c b/tools/testing/selftests/bpf/progs/test_spin_lock_fail.c
+index f678ee6bd7ea..aee2791ad863 100644
+--- a/tools/testing/selftests/bpf/progs/test_spin_lock_fail.c
++++ b/tools/testing/selftests/bpf/progs/test_spin_lock_fail.c
+@@ -3,6 +3,7 @@
+ #include <bpf/bpf_tracing.h>
+ #include <bpf/bpf_helpers.h>
+ #include "bpf_experimental.h"
++#include "bpf_kfuncs.h"
+ 
+ struct foo {
+ 	struct bpf_spin_lock lock;
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
