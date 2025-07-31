@@ -1,131 +1,208 @@
-Return-Path: <linux-kernel+bounces-752673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E7B0B17935
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:54:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3360DB1793A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:03:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5EE1C248CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:55:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5D7C3AEBAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4902B27F010;
-	Thu, 31 Jul 2025 22:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2614B27E1D7;
+	Thu, 31 Jul 2025 23:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gqu/qKrg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pq3bKOm9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F29427EC73
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 22:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72918265CCB;
+	Thu, 31 Jul 2025 23:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754002480; cv=none; b=dbUF/Jz2efr1tPA40eM6wOygW6zj9FfsDCIqayEcHzbySU7ulTZXfZvMBja0967XCFymz839AcSXCSCs10x6u+eX0OI4TEYOcWIcKEqNQD9Bgr4unptLLlJLzNXzvdu1ZCaRLmbxmeCLP75E9G288wnL7IIaxGi13u/W+ZTvxxo=
+	t=1754003010; cv=none; b=kMW12rrvpl/iDmSzmwlI88cMaf3iXTh0AYGYuuAiFyqWzEXNtOIUsEHFgmNO/J4hnc4AaFfSQuAPpggT1XCJbm79FvnZ9OKvdms7rux5oRw3v4CB/RLqD1oYiriXpJX/0nhj9RDTVteC4Gg3jr++MGZ3zDeQI1FehVQe7ffESpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754002480; c=relaxed/simple;
-	bh=1c18v8PDnN/LBJvUPvFVu6eW13LKMcTFSGS+VNQHBxk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ttyVeVCvxEqZ0txjrpw36gQVxxQ1NSD8tVoqP7VKx5UDLeNKBqFTDx/K7GRwRg/kYqRW6SxNR/bDJriFGPXPjtb89PC+qs3zQYHekCRiW5Pu8Zd1RQmiB7ItYgX8sKP07FF3mV+1o9Rx0r2Biee5jjlwh8YW+FMFShfpqE1r2U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gqu/qKrg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A6C8C4CEEF;
-	Thu, 31 Jul 2025 22:54:40 +0000 (UTC)
+	s=arc-20240116; t=1754003010; c=relaxed/simple;
+	bh=bByVB3eFZz3ChERtbjPjYgUzCCYFldGuSuFxTrRGkgE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DiJS8MUmGPgY/QTy1NkZoqvzW0zINg08X/XXlICIB4WwTBiOzM+EF7fhfMRdhhJXIakFQ9J/erhBMFBu+f8VSg7Kp/1Sxz78QHX0aRlL/bpBdF67zsV/7mcpTqUXvNumAZgheQmUIPATE658mLDZaFAeN8bgl7jJqEbPrPmVMnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pq3bKOm9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E2BB9C4CEEF;
+	Thu, 31 Jul 2025 23:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754002480;
-	bh=1c18v8PDnN/LBJvUPvFVu6eW13LKMcTFSGS+VNQHBxk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=Gqu/qKrgI96cWLCe8CiNebb7hZR0x1V/VjXSJHdx+axQNWHeHlfZYTusS/SzQUqx+
-	 krKJIwTrvB29m3OKHGsFLArin6QEXopNQIyHSwPbWOFPf9YYugB+/fPO/7jygUfp3v
-	 /CQ00djVjpINCC7iFEwrscOePAhKFp1yISb0LiJkX8l9gWu+h0r2LjPytbXXOtdwtm
-	 IPpcDNsMCcjMztzDvmM9RSVqZpOSyWWniXFONgieFQ/4HbGuLsdPcqx2x5N0PROgwX
-	 VO9oZw6e7+g2FREDJGKRJmKunzxtc/c988V1XKNIMgwtPGMcCcd/CknYyIH11K4Pcl
-	 mQ9eJUzR2sa0w==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id BBA03CE09FA; Thu, 31 Jul 2025 15:54:39 -0700 (PDT)
-Date: Thu, 31 Jul 2025 15:54:39 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Jiri Wiesner <jwiesner@suse.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>, Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH] clocksource: Print durations for sync check
- unconditionally
-Message-ID: <d8aa492c-a5b3-46d5-986e-6e6aa5260d21@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <aIuXXfdITXdI0lLp@incl>
+	s=k20201202; t=1754003010;
+	bh=bByVB3eFZz3ChERtbjPjYgUzCCYFldGuSuFxTrRGkgE=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=Pq3bKOm9i4fPKtbkZppBRgIxAd1W85N7EiXpA9c7HcfFcQMWyAoxCWKC3xJNhVL+D
+	 4NQUkA6Wkz5HIzByZbJPcnR/6IUGo8/E3FL4lbXPO172GOCKUzfLbJ5Q9XOqQQOZIN
+	 RcZaNzwoqJuKnA1s3xyN7sSUAJvXkft0VgqOf9CUxdPCyD7r7k0cwOleUKwf052u70
+	 yrNOhbsDbz8Rj4J4BLcMk/KAizyoUHvIIZJQ41TXHG/cb/A/my012IC9cWRpumOd70
+	 /hDiqe5HKZ3e1jtyB0AzYvbbT28Z0soWAeVmGYj5kJu1izGsQUvzQglAwbev7KVDz2
+	 Pd/5Cu+CPD5VA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6DBBC87FD3;
+	Thu, 31 Jul 2025 23:03:29 +0000 (UTC)
+From: Demi Marie Obenour via B4 Relay <devnull+demiobenour.gmail.com@kernel.org>
+Date: Thu, 31 Jul 2025 19:03:29 -0400
+Subject: [PATCH RFC net] af_unix: allow disabling connections to abstract
+ sockets
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIuXXfdITXdI0lLp@incl>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250731-no-abstract-v1-1-a4e6e23521a3@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAED2i2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc2ND3bx83cSk4pKixOQSXTMzc6NUi8QUA+NUQyWgjoKi1LTMCrBp0Up
+ Bbs4gsbzUEqXY2loAaxSdmmkAAAA=
+X-Change-ID: 20250731-no-abstract-6672e8ad03e1
+To: Kuniyuki Iwashima <kuniyu@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Demi Marie Obenour <demiobenour@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754003009; l=4404;
+ i=demiobenour@gmail.com; s=20250731; h=from:subject:message-id;
+ bh=P7P0D821FG7jnQ4Yv8OJFhXxaN7sjGrTD1AHkxfAEfw=;
+ b=7rRHXR7v2m3QdnngMduiUvvCOD7xiUK8I0VSnsA1PQXg1x317xH0h1h7Aw1zso3eSG6JCaPHR
+ LJ9H4IVrLe9C20Soet8Ggre9zg2ki4UH9APzOL0+LwTZSzFg/5wwDcL
+X-Developer-Key: i=demiobenour@gmail.com; a=ed25519;
+ pk=4iGY+ynEKxIfs+fIUK9EzsvZ44yGE0GvXLeLTPKKPhI=
+X-Endpoint-Received: by B4 Relay for demiobenour@gmail.com/20250731 with
+ auth_id=473
+X-Original-From: Demi Marie Obenour <demiobenour@gmail.com>
+Reply-To: demiobenour@gmail.com
 
-On Thu, Jul 31, 2025 at 06:18:37PM +0200, Jiri Wiesner wrote:
-> A typical set of messages that gets printed as a result of the clocksource
-> watchdog finding the TSC unstable usually does not contain messages
-> indicating CPUs being ahead of or behind the CPU from which the check is
-> carried out. That fact suggests that the TSC does not experience time skew
-> between CPUs (if the clocksource.verify_n_cpus parameter is set to a
-> negative value) but quantitative information is missing.
-> 
-> The cs_nsec_max value printed by the "CPU %d check durations" message
-> actually provides a worst case estimate of the time skew. If all CPUs have
-> been checked, the cs_nsec_max value multiplied by 2 is the maximum
-> possible time skew between the TSCs of any two CPUs on the system. The
-> worst case estimate is derived from two boundary cases:
-> 
-> 1. No time is consumed to execute instructions between csnow_begin and
-> csnow_mid while all the cs_nsec_max time is consumed by the code between
-> csnow_mid and csnow_end. In this case, the maximum undetectable time skew
-> of a CPU being ahead would be cs_nsec_max.
-> 
-> 2. All the cs_nsec_max time is consumed to execute instructions between
-> csnow_begin and csnow_mid while no time is consumed by the code between
-> csnow_mid and csnow_end. In this case, the maximum undetectable time skew
-> of a CPU being behind would be cs_nsec_max.
-> 
-> The worst case estimate assumes a system experiencing a corner case
-> consisting of the two boundary cases.
-> 
-> Always print the "CPU %d check durations" message so that the maximum
-> possible time skew measured by the TSC sync check can be compared to the
-> time skew measured by the clocksource watchdog.
-> 
-> Signed-off-by: Jiri Wiesner <jwiesner@suse.de>
+From: Demi Marie Obenour <demiobenour@gmail.com>
 
-Works at this end:
+Abstract sockets have been a security risk in the past.  Since they
+aren't associated with filesystem paths, they bypass all filesystem
+access controls.  This means that they can allow file descriptors to be
+passed out of sandboxes that do not allow connecting to named sockets.
+On systems using the Nix daemon, this allowed privilege escalation to
+root, and fixing the bug required Nix to use a complete user-mode
+network stack.  Furthermore, anyone can bind to any abstract socket
+path, so anyone connecting to an abstract socket has no idea who they
+are connecting to.
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
+This allows disabling the security hole by preventing all connections to
+abstract sockets.  For compatibility, it is still possible to bind to
+abstract socket paths, but such sockets will never receive any
+connections or datagrams.
 
-> ---
->  kernel/time/clocksource.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-> index e400fe150f9d..3eeb18233a6b 100644
-> --- a/kernel/time/clocksource.c
-> +++ b/kernel/time/clocksource.c
-> @@ -410,9 +410,8 @@ void clocksource_verify_percpu(struct clocksource *cs)
->  	if (!cpumask_empty(&cpus_behind))
->  		pr_warn("        CPUs %*pbl behind CPU %d for clocksource %s.\n",
->  			cpumask_pr_args(&cpus_behind), testcpu, cs->name);
-> -	if (!cpumask_empty(&cpus_ahead) || !cpumask_empty(&cpus_behind))
-> -		pr_warn("        CPU %d check durations %lldns - %lldns for clocksource %s.\n",
-> -			testcpu, cs_nsec_min, cs_nsec_max, cs->name);
-> +	pr_info("        CPU %d check durations %lldns - %lldns for clocksource %s.\n",
-> +		testcpu, cs_nsec_min, cs_nsec_max, cs->name);
->  }
->  EXPORT_SYMBOL_GPL(clocksource_verify_percpu);
->  
-> -- 
-> 2.43.0
-> 
-> 
-> -- 
-> Jiri Wiesner
-> SUSE Labs
+Signed-off-by: Demi Marie Obenour <demiobenour@gmail.com>
+---
+ net/unix/Kconfig   | 12 ++++++++++++
+ net/unix/af_unix.c | 18 +++++++++++++-----
+ 2 files changed, 25 insertions(+), 5 deletions(-)
+
+diff --git a/net/unix/Kconfig b/net/unix/Kconfig
+index 6f1783c1659b81c3c3c89cb7634a9ce780144f26..c34f222f21b097ce4a735ce02d8ce11fc71bde19 100644
+--- a/net/unix/Kconfig
++++ b/net/unix/Kconfig
+@@ -16,6 +16,18 @@ config UNIX
+ 
+ 	  Say Y unless you know what you are doing.
+ 
++config UNIX_ABSTRACT
++	bool "UNIX: abstract sockets"
++	depends on UNIX
++	default y
++	help
++	  Support for "abstract" sockets (those not bound to a path).
++	  These have been used in the past, but they can also represent
++	  a security risk because anyone can bind to any abstract
++	  socket.  If you disable this option, programs can still bind
++	  to abstract sockets, but any attempt to connect to one fails
++	  with -ECONNREFUSED.
++
+ config	AF_UNIX_OOB
+ 	bool "UNIX: out-of-bound messages"
+ 	depends on UNIX
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 52b155123985a18632fc12dc986150e38f2fee70..81d55849dac58e4e68c28ed03a9bc978777cfe4f 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -332,7 +332,8 @@ static inline void unix_release_addr(struct unix_address *addr)
+  *		- if started by zero, it is abstract name.
+  */
+ 
+-static int unix_validate_addr(struct sockaddr_un *sunaddr, int addr_len)
++static int unix_validate_addr(struct sockaddr_un *sunaddr, int addr_len,
++			      bool bind)
+ {
+ 	if (addr_len <= offsetof(struct sockaddr_un, sun_path) ||
+ 	    addr_len > sizeof(*sunaddr))
+@@ -341,6 +342,9 @@ static int unix_validate_addr(struct sockaddr_un *sunaddr, int addr_len)
+ 	if (sunaddr->sun_family != AF_UNIX)
+ 		return -EINVAL;
+ 
++	if (!bind && !IS_ENABLED(CONFIG_UNIX_ABSTRACT) && !sunaddr->sun_path[0])
++		return -ECONNREFUSED; /* pretend nobody is listening */
++
+ 	return 0;
+ }
+ 
+@@ -1253,6 +1257,8 @@ static struct sock *unix_find_other(struct net *net,
+ 
+ 	if (sunaddr->sun_path[0])
+ 		sk = unix_find_bsd(sunaddr, addr_len, type, flags);
++	else if (!IS_ENABLED(CONFIG_UNIX_ABSTRACT))
++		sk = ERR_PTR(-EPERM);
+ 	else
+ 		sk = unix_find_abstract(net, sunaddr, addr_len, type);
+ 
+@@ -1444,7 +1450,7 @@ static int unix_bind(struct socket *sock, struct sockaddr *uaddr, int addr_len)
+ 	    sunaddr->sun_family == AF_UNIX)
+ 		return unix_autobind(sk);
+ 
+-	err = unix_validate_addr(sunaddr, addr_len);
++	err = unix_validate_addr(sunaddr, addr_len, true);
+ 	if (err)
+ 		return err;
+ 
+@@ -1493,7 +1499,7 @@ static int unix_dgram_connect(struct socket *sock, struct sockaddr *addr,
+ 		goto out;
+ 
+ 	if (addr->sa_family != AF_UNSPEC) {
+-		err = unix_validate_addr(sunaddr, alen);
++		err = unix_validate_addr(sunaddr, alen, false);
+ 		if (err)
+ 			goto out;
+ 
+@@ -1612,7 +1618,7 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+ 	long timeo;
+ 	int err;
+ 
+-	err = unix_validate_addr(sunaddr, addr_len);
++	err = unix_validate_addr(sunaddr, addr_len, false);
+ 	if (err)
+ 		goto out;
+ 
+@@ -2048,7 +2054,9 @@ static int unix_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
+ 	}
+ 
+ 	if (msg->msg_namelen) {
+-		err = unix_validate_addr(msg->msg_name, msg->msg_namelen);
++		err = unix_validate_addr(msg->msg_name,
++					 msg->msg_namelen,
++					 false);
+ 		if (err)
+ 			goto out;
+ 
+
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250731-no-abstract-6672e8ad03e1
+
+Best regards,
+-- 
+Demi Marie Obenour <demiobenour@gmail.com>
+
+
 
