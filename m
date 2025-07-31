@@ -1,139 +1,168 @@
-Return-Path: <linux-kernel+bounces-751466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AD83B169DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:08:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E6EB169DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:07:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A0A5A46F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5BBF5A1424
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA598146593;
-	Thu, 31 Jul 2025 01:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F025F2D023;
+	Thu, 31 Jul 2025 01:07:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gS166KaG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UnYE8I/W"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8B712CDAE
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7A8615442A;
+	Thu, 31 Jul 2025 01:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753924065; cv=none; b=F1qk75771MjVgV+rJeIdektr8oKriUYps5YnXu4W/5gPVdG+9mb9M6xBq6EwsuT2RplWAh2vrKFGxoLqVmXsMlK1MUmReHflfqViRK6g45YLKV5+Q1I3iu5iSKiUr92iT/0sFua8hr6axU4gNAcVQVnWzwVUr3oqqNaEtuCRhak=
+	t=1753924052; cv=none; b=BG+GAR8rxc4DIZOUtad8rKmlMyDpr/w1Gafnqr+kLrZcnZhEZqoNCrrDkTSdCQB56lAiY1g5R0MdysLoia3Ntgai9LxXgvDDZmfzoWQy6t0V6/o2nKaT4CQ+ogeypFym4RvSbePmfM251NbE6Qn6ML4v5yOiTDxw1WcbzpNKzPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753924065; c=relaxed/simple;
-	bh=RwCqBhqd4SGtljt8ozavaYhxd2dZWBQTZl0x74OfiRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=teykxFGofpaI48DcuXlVuLG7ZSaYxwuhMLU7VtIfFWwD0mLmE/0dhrAJmGAAflyKeFoI0e6GbxSNAYA1BDSn0Fac3wR5pP33O5fFw8WZX1M+e5WhvRkxsBbYtt8gB1uU7Zoz36xQ7F+aZszM1pwFu7/sd4hSvg68xJQvaQaaWTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gS166KaG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753924062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RwCqBhqd4SGtljt8ozavaYhxd2dZWBQTZl0x74OfiRg=;
-	b=gS166KaGpyyu5CZBt6Ly4KJUGXrppjmkRCIL+50O5O06A1mz1lNpdv9B4fOg5CPfzHSHJm
-	/OrCAyH2lmbh4K5Wa5wtNDRxiKGd6v1ICJRWuIPk07UnpEdMQsLpZQpwOGflzZK/evOTEa
-	ppJkkLAFLj2pjb0/uGwNmyzDWU2p2dE=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-cr8GHlNcPL-eHAtEm2Sydw-1; Wed, 30 Jul 2025 21:07:40 -0400
-X-MC-Unique: cr8GHlNcPL-eHAtEm2Sydw-1
-X-Mimecast-MFC-AGG-ID: cr8GHlNcPL-eHAtEm2Sydw_1753924060
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3139c0001b5so431339a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:07:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753924060; x=1754528860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RwCqBhqd4SGtljt8ozavaYhxd2dZWBQTZl0x74OfiRg=;
-        b=oAllIEvuhM2LDkIIKEwQ19SQaI9/0Y4h7XmjXNGs2U0MCVrkGMf1daJ9nP/lG55rwA
-         VLRAyo/etF95O0IftKDDr/NmY+DG4Vw6E2IkvfCSYY0Jxrl3DccEWy1RWdZROQLw5huw
-         CpZVOov3yLmWQZN0p40XPPeH1lxxaZETE2uEVmjC1FXC0WB4I0RrutEqOBDeSRL0v0R/
-         8M7yq/l09/y10qCY1nyJ35o2JFCfoICjpdimPWA6RV2aunp1S5cTDE3SnZOWNH3omEVK
-         b0RBOvEBbNzscZku+Ui7pZwYrIl7Hly7h4jmn2/k/62tSTtgtvxSqpb9QnqW5uydVQHB
-         E7/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXlwlNw8D2OoY+Bh0g5u9HmGxQhgqLPPbeD7zDq/CP2nq1vvwUQoRyvfkYeaXhpvmrYGNWzk11l4M+ppnM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtEP8lHXVm/YdXjWLn8+hNbEC773CM8WpC2FICsmmH5MnmYffy
-	8tPLouRok6mGlYBcu/tcX/3oJBNpjsKzbj1aOUmxwPacSXe1GpGh6DLUGe2kwn/EqRO7p3VZDrz
-	bXEz3OjeVYY1XElY5xhUNwREIcvtYAECmx3ZJoY6kbGb4GYlVGkmzv9JzWsA+1jooAWBZ0HJOIe
-	zJHkcRk+PfQaw92mNJwXi8IGbD1C51OyWr+/3z7ne7
-X-Gm-Gg: ASbGncuex2+nhivonEmH944fgjw63+QjlZVoGvH3WfHfQme3wQ7wgwz6Q85a//9RbUv
-	F59j6geoQuSXVO6poQKzagQEbuHciq5iIbHnfOaSSGveMqev7tuUtiLGmBd7JcWSMq331VkKLTL
-	Tg8mCbfIXnay3d0sG+BeM=
-X-Received: by 2002:a17:90b:4b11:b0:313:5d2f:54f8 with SMTP id 98e67ed59e1d1-31f5ea6b571mr8104414a91.33.1753924059805;
-        Wed, 30 Jul 2025 18:07:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHBTkvTlCrxS4KqWqX9J2caauKKosURWKkzL9ddM8eH3KW10NDC7rPZNwPk748PPfO7GuO55un+fWqFpNss2fo=
-X-Received: by 2002:a17:90b:4b11:b0:313:5d2f:54f8 with SMTP id
- 98e67ed59e1d1-31f5ea6b571mr8104373a91.33.1753924059373; Wed, 30 Jul 2025
- 18:07:39 -0700 (PDT)
+	s=arc-20240116; t=1753924052; c=relaxed/simple;
+	bh=t+YhfT27uWWB0wdrWk21wODn8AeEf/aiFh0l/5kWXaU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BNy7salv5ReTB4j5xYlhSlHI0drCke9WyPqEA7I33A0QHj4OYIzgDxjtSsEywtJ8sDfEam8b/yBNpOlZviaGddyhiYBuZF8moAYiBIOtgtvTVcSkXLXT/+fjzRsR2gW2rK6+dHbTidUpScTSqVEspnipg4/ldxDjYWaQ9jljEao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UnYE8I/W; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753923826;
+	bh=JU7519F7Sf4/nQLnsL65ShBgjJnS2iRXYWUGF273tCI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UnYE8I/WI0q2EzZHNGrO+4sheYMzcA++lzy6xT7t8nP0Umf7z+gVPafdwGmXEhsDx
+	 tjnagkQ6TKiIaiuortxkpaW6ihP0fUHaVZ/wkacBkVtCoTtEe8k+aT5Ff9I2xmPR9l
+	 CZzX4AVUWkvCMsviso5GsexEQDO9y765ZxVC2JHpd9CEQcx+RjMiQJ9/L0G54d6grd
+	 GT8nXQTS7udBtoMYwJJ9tLmGXrKjG31j5DyX+0kFxBbBXL3Ut0BdDBga+OaNUEY4sS
+	 ndS9S4bqqrFJF8JOFzqP3nkBWtG/k9Uimw4WQvtKzy0GYbcYPSdFSNqQC/fChXXmj0
+	 6UoilrcKZBSvQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsrSL315Hz4x4w;
+	Thu, 31 Jul 2025 11:03:46 +1000 (AEST)
+Date: Thu, 31 Jul 2025 11:07:27 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Subject: Re: linux-next: manual merge of the paulmck tree with the
+ mm-nonmm-unstable tree
+Message-ID: <20250731110727.5de9db79@canb.auug.org.au>
+In-Reply-To: <20250729104245.6be6957a@canb.auug.org.au>
+References: <20250729104245.6be6957a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250718061812.238412-1-lulu@redhat.com> <20250721162834.484d352a@kernel.org>
- <CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
- <20250721181807.752af6a4@kernel.org> <CACGkMEtEvkSaYP1s+jq-3RPrX_GAr1gQ+b=b4oytw9_dGnSc_w@mail.gmail.com>
- <20250723080532.53ecc4f1@kernel.org>
-In-Reply-To: <20250723080532.53ecc4f1@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Thu, 31 Jul 2025 09:07:27 +0800
-X-Gm-Features: Ac12FXyltfKnkJ6WA6PQZrqMC6on4IVMKH4G4mZZ6ShVaStyC948R-LQlIsa18c
-Message-ID: <CACGkMEuvBU+ke7Pu1yGyhkzpr_hjSEJTq+PcV1jbZWcBFm-k1w@mail.gmail.com>
-Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Cindy Lu <lulu@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Michael Kelley <mhklinux@outlook.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>, 
-	Kees Cook <kees@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki Iwashima <kuniyu@google.com>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, Guillaume Nault <gnault@redhat.com>, 
-	Joe Damato <jdamato@fastly.com>, Ahmed Zaki <ahmed.zaki@intel.com>, 
-	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, 
-	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="Sig_/5W47mCtKBPrvaIxEiD27_NO";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/5W47mCtKBPrvaIxEiD27_NO
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jakub,
+Hi all,
 
-On Wed, Jul 23, 2025 at 11:05=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
-rote:
+On Tue, 29 Jul 2025 10:42:45 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
 >
-> On Wed, 23 Jul 2025 14:00:47 +0800 Jason Wang wrote:
-> > > > But this fixes a real problem, otherwise nested VM performance will=
- be
-> > > > broken due to the GSO software segmentation.
-> > >
-> > > Perhaps, possibly, a migration plan can be devised, away from the
-> > > netvsc model, so we don't have to deal with nuggets of joy like:
-> > > https://lore.kernel.org/all/1752870014-28909-1-git-send-email-haiyang=
-z@linux.microsoft.com/
-> >
-> > Btw, if I understand this correctly. This is for future development so
-> > it's not a blocker for this patch?
->
-> Not a blocker, I'm just giving an example of the netvsc auto-weirdness
-> being a source of tech debt and bugs. Commit d7501e076d859d is another
-> recent one off the top of my head. IIUC systemd-networkd is broadly
-> deployed now. It'd be great if there was some migration plan for moving
-> this sort of VM auto-bonding to user space (with the use of the common
-> bonding driver, not each hypervisor rolling its own).
->
+> Today's linux-next merge of the paulmck tree got a conflict in:
+>=20
+>   lib/Kconfig.debug
+>=20
+> between commit:
+>=20
+>   c2d288f7ab13 ("kho: add test for kexec handover")
+>=20
+> from the mm-nonmm-unstable tree and commit:
+>=20
+>   d19e9fa61f60 ("lib: Add trivial kunit test for ratelimit")
+>=20
+> from the paulmck tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+>=20
+> diff --cc lib/Kconfig.debug
+> index 54f11c2713b9,d69d27f80834..000000000000
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@@ -3235,27 -3225,17 +3235,38 @@@ config TEST_OBJPOO
+>  =20
+>   	  If unsure, say N.
+>  =20
+>  +config TEST_KEXEC_HANDOVER
+>  +	bool "Test for Kexec HandOver"
+>  +	default n
+>  +	depends on KEXEC_HANDOVER
+>  +	help
+>  +	  This option enables test for Kexec HandOver (KHO).
+>  +	  The test consists of two parts: saving kernel data before kexec and
+>  +	  restoring the data after kexec and verifying that it was properly
+>  +	  handed over. This test module creates and saves data on the boot of
+>  +	  the first kernel and restores and verifies the data on the boot of
+>  +	  kexec'ed kernel.
+>  +
+>  +	  For detailed documentation about KHO, see Documentation/core-api/kho.
+>  +
+>  +	  To run the test run:
+>  +
+>  +	  tools/testing/selftests/kho/vmtest.sh -h
+>  +
+>  +	  If unsure, say N.
+>  +
+>  +
+> + config RATELIMIT_KUNIT_TEST
+> + 	tristate "KUnit Test for correctness and stress of ratelimit" if !KUNI=
+T_ALL_TESTS
+> + 	depends on KUNIT
+> + 	default KUNIT_ALL_TESTS
+> + 	help
+> + 	  This builds the "test_ratelimit" module that should be used
+> + 	  for correctness verification and concurrent testings of rate
+> + 	  limiting.
+> +=20
+> + 	  If unsure, say N.
+> +=20
+>   config INT_POW_KUNIT_TEST
+>   	tristate "Integer exponentiation (int_pow) test" if !KUNIT_ALL_TESTS
+>   	depends on KUNIT
 
-Please let me know if you want to merge this patch or not. If not, how
-to proceed.
+This is now a conflict between the mm-nonmm-unstable tree and Linus' tree.
 
-Thanks
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/5W47mCtKBPrvaIxEiD27_NO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiKwc8ACgkQAVBC80lX
+0Gwt+gf9FG8kn4rDuYvQeiJMtTm5eYWDYLIoNIy5eM+Cb/gx4/oZ9ba+QNZ6+/i6
+hF++4QaSiLdpslfQZiXgfAraRqHnzBbIPwR11SeS+R7W5lvxrJKH5mETT8yL1ASe
+IqFNrLTvPanLskoh/oBGRmorxuCX9lEwCOd9tF/kpBuDafXVfmHFYewbaTx7T5aQ
+JBTJ64f3AqoI0MzzemFM4RTsCyQSENnV5yOfHxR6tX9qN3WrC/5no+D7Wr72q0SR
+5QvXF9n5ZgnYVR8LFapeseZBcBwrqsjCUsbUqpSdeO1X25ryo7Ig/SoxUrI9h2Ls
+3bp8yXozMFYY14F2LgqUX1asGm7ynA==
+=ny4u
+-----END PGP SIGNATURE-----
+
+--Sig_/5W47mCtKBPrvaIxEiD27_NO--
 
