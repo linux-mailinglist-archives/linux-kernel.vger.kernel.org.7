@@ -1,118 +1,237 @@
-Return-Path: <linux-kernel+bounces-751894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE7FB16EF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:47:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70969B16EF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06FD83A9FB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:46:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9884D541FB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF48290DAC;
-	Thu, 31 Jul 2025 09:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D08929CB52;
+	Thu, 31 Jul 2025 09:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UCQq51sO"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C6H1Zc5F"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F68CEAF6;
-	Thu, 31 Jul 2025 09:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2BA2EAF6;
+	Thu, 31 Jul 2025 09:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753955213; cv=none; b=V6qoaBOgGa2BnTVACyIQDBXHkEZLvAr6TgafpJj9VmAy+JYwX778JQWogkzpI4+gHIS+523I61bEcOHGBpa/4TQ/JzCGLKM3wx9EK9NGVakuIPnyZnZRUJQcfq3qnwH1SK2rNhUjaz7SdwbTg1MAO50MbiJT2VxkDPp29xBiHAI=
+	t=1753955232; cv=none; b=YKUkUjz3yFf+VJHEpJAIT3/vxazKR5kAyRBoMgWMbl0Lscz4EiUHz925xPCEckPkNwKLCKX1BpN/+MembnxWsdHWu9HUlShoCFFVNySrBqMHPlz5EYxmwBP3h8XYore/3qRtv7H6aN9SjPgO6noNSDbSnubKZMpjjWpc06vth2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753955213; c=relaxed/simple;
-	bh=xXPpGX7ZBjJ1xdWVAl1wkJNiB3J4P2aSQW5HUTyyQh4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=knd8m0+0hLTbNmeOEwG5IsvHDbYGyCw15ZLe2KXoV8e86Y96iHiUXGNO63iZUm4yQmLprmq5LjPjJS8QBSGnE5PI/PoLN9GlOhL+BcAW6ycRIpwabbgDfplky6gyc9hF/+SU7Zdob/1oxPGwJ5T9W+ln4v5CKWJin6PuXXmx9rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UCQq51sO; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1753955232; c=relaxed/simple;
+	bh=R+1bOSzZEqjFRCaNxT2wWiERvGTBCi+5k0ZAbCRUBUI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g1VqSSj06/9E3FBd3+f0rzbPrbH+j4v3R+bTN7331zBsyU/cjQrgQGgaHHHPuqSMDZbUxaR4SRYeih3QKq924ZAGe/DeBG0GeE4Lq5UvwZ5DOTpydy1/duUVMYN8zzSJkYVuG+ITH5HUZvIvv/nvfqZQrAnKOdry8ynGWq7QCWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C6H1Zc5F; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so4534015e9.1;
-        Thu, 31 Jul 2025 02:46:51 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-af8ffa04463so128846566b.2;
+        Thu, 31 Jul 2025 02:47:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753955210; x=1754560010; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7FvYfWmJZ20gWyOT8n3+HXUa94Fj4Gkd8CfUCWJIkuY=;
-        b=UCQq51sOvkcNr4EkK+s9G4pGImwv+d7PHjJ4G9tdNt0e1/BM54u1P4wt8ugxqpPHhY
-         r78WrvNwiGB74Me911rzMWa+3+kOB5hJmgkViku/Q3Vw67yG4KNRFOo/mVNIoFfoyH82
-         p+vERXth4h5wREAUCIt0LJmaPxdCLDURlUw4N4Ny6cNH+eY1G+gWuvmGmrjQ8JHrAR7s
-         9YMhaJntZzquhlD21zvxCoT5nbMxt1HnrJziUygkDcEoK3VJLa7lj7gdsimPM8rRnSNw
-         6RIFmvVZJnBs8fFV3OMe45B9kkYUzsupjJUjfB1TcmY0T4bnEnNZIU9gecTZbO8F3b2t
-         pIhQ==
+        d=gmail.com; s=20230601; t=1753955229; x=1754560029; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f8kXnSi2qDjtJhPZO3//zalJFhKJqhERDRrBw8g/t2Q=;
+        b=C6H1Zc5Fd8buGagEwEOb8XF7E2FHFQ48AkzVtcUnafQCf0jjsbY67MartWTy52fg+t
+         +/HfzDgzlkvBe0iaUKgNNLJFZgaSxZZo7lqcZToEjC3tWGP2nUiOvCWPInstyrKXwsDT
+         ibQ4SA+UmRqxTH48MLsWVUETq7uPz9D6Xvy24WgbP5XW7VEqD4IZlDelf7bcPioG1RWA
+         P47/zBLGCwQXRssYwgv5Ubmc59u1vt2meX59HpENTS3HMBpWv1ovodE1eWBnW4lZJz9w
+         hx7JBMeghaFeSbyW9yo0QBjAGaZnBpsdHnJssGCKaMm7DP9YcWcgFCw/e1QBPJg3ks4V
+         V7sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753955210; x=1754560010;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7FvYfWmJZ20gWyOT8n3+HXUa94Fj4Gkd8CfUCWJIkuY=;
-        b=IaWrqWw1GntzIVgNW4BLQpDyGJeoYPNdOmfxC0oGR7iYlwhqLcy8C1ajFmSjabsYkQ
-         ryMIpiVVkNgoAXYbUmKdTJ2vmgqnBK6GBMYYUZsuAO3EtWEe14V3u5c+jqy8IZYYo3tM
-         0WFDITAOoDVHzSDM2jjLFupBcSBxxTpxBFj0W/BYKa0u9UoO7XLyH3Q4mGiPLccIGljP
-         /0yALMqfi2cvXcf/RSidjWcFQLk5R3mN88djxzeDC0j7+5Q6sfNGjAOpj1TkGaet3HYi
-         yPVEGYNGVgOmKkMYSoeSYI8O8Lf0gwgTnhI+cx3C1ujwIf28Wygk61OnibAqicUzWD6q
-         iDjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHI3BQtVS6L9/HHEon6+AHE56SnLqodLiGgHxv0dBms6dLznPa5Sc9UAaxE1v55p00T9cCQw1ddpAkPew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYnHV5D6rnQYKB6S1HNEA66m+2BpGdrjnjIxkdUzBRKJ0JHByK
-	RxkgqrF088eqZYRmU906N6rxsFUu3ju/7S2yVo/WduUrDELaHDkJu0bB
-X-Gm-Gg: ASbGncsi99LWO7VI0K9ZVd21QD7FELvwItRMhUdtcPemKdeiVhEQ/gyIF4RD18S6hPO
-	r24E1IbGJEJJeWIUB0yA9Nlgbuh4/0UnbXoijIIx8UH28jOotiHeXOBW1/wf1zz4aSj3OGWwl72
-	aSXMIYHPtYhcOMU41RSVud/4R90ChOstND5A1cJCi/y0SoreQqDAli1yxuiez/TX0MqkH+VgLCs
-	Me+GnHNQasY9re+caQDxsnwIW2NCGDBBNjEEZPrv1KNFZi6Nu1yzmXIV2Z6BP5LAcRXJeZSa+67
-	pdFmIamALPxO4Mg4LYSH7JHJ+djzXKBLXwn4mxE+GOD7+WxeAULHZ97LbzC1AZWoorYVMnGVLTh
-	x48QMZ+VhmgZcIctecKSu/4if4jmUAjQ=
-X-Google-Smtp-Source: AGHT+IECIlKob6XVGKXqPkIouz4B7PwUNLICavEgKGFiyCNrN7e+75j3b8k5cwiFz9G2EqNmg5hHVw==
-X-Received: by 2002:a05:600c:8b81:b0:456:eb9:5236 with SMTP id 5b1f17b1804b1-45892ba3686mr67809105e9.15.1753955210391;
-        Thu, 31 Jul 2025 02:46:50 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458981d0b06sm60091895e9.5.2025.07.31.02.46.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 02:46:49 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	linux-mtd@lists.infradead.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mtd: jedec_probe: Remove space before newline
-Date: Thu, 31 Jul 2025 10:46:13 +0100
-Message-ID: <20250731094613.2164604-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        d=1e100.net; s=20230601; t=1753955229; x=1754560029;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f8kXnSi2qDjtJhPZO3//zalJFhKJqhERDRrBw8g/t2Q=;
+        b=RjcrPCIdMiHRdKIOMr8bDvqIrBISpQaHJuUlV1YRCTSYawPfbpUFM+ncXPfm5E6/gg
+         RjmJu9qtl87yqpWIgCGsfk3gf4H7tTC56Lfbk35baAM3aYVvxpLdc1tu2/nTkVBS2deQ
+         Sujzq5JMIGEHn/WhH7h5bTcOwQkmccSs7JcTd90eygvCyiS6Tfata7Wh1z+jUKTW2eZI
+         pgU6oVgqpVhTlNKan9wC1XHNjP7luOz5V4w37OWxQEkjz9qxwSzn1O3HRm40MwLraYZU
+         eoRJ91CEeV+/kjxdrfQPp805qnFzbTrw9voJMwW7DYzJGbBHhSW6d1CMo+Mbquv8fvJP
+         QRbg==
+X-Forwarded-Encrypted: i=1; AJvYcCUB2NjeURraGgeSWllQ8M5LBYlaKvBlVxOA7utc1ZAqjfXMoxEAf+osfneWmsiq1B2xTNKVxChMYeA=@vger.kernel.org, AJvYcCWVDtYw0cuJNjCf0EaXYX4gr/v3s25v7I2ctyBjgmyTB4gZzkqcJJN5qK96xi6W6qnc/hvmjEEBd8sj8tfg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/eaFFM/Mhv41IRl/8V/m5pO9/cKBy/LDV4ZPoI26QT+LlS0+6
+	xFm4e3O1ho/AmyJHm+eAg2ecBKnyE1c4+eWH2FUGFQrHRQMbYCiSpwjaBdw3rceVrAjLkeNQMG0
+	cUIUsI9yzSiAh5wlOYMkmwMGgh5OBcjQ=
+X-Gm-Gg: ASbGncseZtoz355olgqChO82N16K2Ox/6vk4x5NbMDBR4oybZNUXtoCoSWOWyHtsNbJ
+	3QthZpCeJ9MSF54ZQ8E/9x2nMqXGIZuCwaWUtdfRWx2BBeJVZ5302fYNUwDbSDwgsT9mTSbFaXp
+	F/2qvD1qXn/7CFaQDAt8sAuqVVPD7S+eS8bTqJCx4Nei6pGpaLlLqI7SLznNESSY3t8p2tzUhhP
+	AlaLzoflQ==
+X-Google-Smtp-Source: AGHT+IGd53bTbRTN2ktOmG30+LUtJwMrDXeN2lT3oxeRZupwIyA9V2Vf0XZ7qlLMiLHm8VHmYyIvDkxm5Pt+Dxhwk3s=
+X-Received: by 2002:a17:906:7951:b0:ae0:b49d:9cd with SMTP id
+ a640c23a62f3a-af8fda128f6mr783942666b.58.1753955228206; Thu, 31 Jul 2025
+ 02:47:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20250730-bmi270-gpd-acpi-v1-1-1ffc85b17266@uniontech.com>
+ <CAHp75Vc2K3AmPhwme3+7cCGwDTA6V+4Ug8f++iFr8gCThCOnQw@mail.gmail.com> <8C57A7CCEBFAEA59+b36cfd0d-2cd9-413e-b658-e82938f9d947@uniontech.com>
+In-Reply-To: <8C57A7CCEBFAEA59+b36cfd0d-2cd9-413e-b658-e82938f9d947@uniontech.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 31 Jul 2025 11:46:30 +0200
+X-Gm-Features: Ac12FXx5V893iJMc7AvTeeQ6CM-nzlKlyoj-bP22QpfuRTUdxPh0XqJuY983hHU
+Message-ID: <CAHp75Vcr2nVHAgvegW=t70bBFhhk3w23HkT_Y+MZM00nkziZSQ@mail.gmail.com>
+Subject: Re: [PATCH] iio: imu: bmi270: Match ACPI ID found on newer GPD firmware
+To: Cryolitia PukNgae <liziyao@uniontech.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Lars-Peter Clausen <lars@metafoo.de>, David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yao Zi <ziyao@disroot.org>, WangYuli <wangyuli@uniontech.com>, 
+	Jun Zhan <zhanjun@uniontech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is a extraneous space before a newline in a pr_debug message.
-Remove the space and remove a space after ( and before literal string
-to clean up checkpatch warning.
+On Thu, Jul 31, 2025 at 5:06=E2=80=AFAM Cryolitia PukNgae <liziyao@uniontec=
+h.com> wrote:
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/mtd/chips/jedec_probe.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+First of all, please do not top-post!
 
-diff --git a/drivers/mtd/chips/jedec_probe.c b/drivers/mtd/chips/jedec_probe.c
-index 23c32fe584b7..6a583418788d 100644
---- a/drivers/mtd/chips/jedec_probe.c
-+++ b/drivers/mtd/chips/jedec_probe.c
-@@ -1953,7 +1953,7 @@ static void jedec_reset(u32 base, struct map_info *map, struct cfi_private *cfi)
- 	 * as they will ignore the writes and don't care what address
- 	 * the F0 is written to */
- 	if (cfi->addr_unlock1) {
--		pr_debug( "reset unlock called %x %x \n",
-+		pr_debug("reset unlock called %x %x\n",
- 		       cfi->addr_unlock1,cfi->addr_unlock2);
- 		cfi_send_gen_cmd(0xaa, cfi->addr_unlock1, base, map, cfi, cfi->device_type, NULL);
- 		cfi_send_gen_cmd(0x55, cfi->addr_unlock2, base, map, cfi, cfi->device_type, NULL);
--- 
-2.50.0
+> Thank you for your reply. I apologize for the confusion regarding the
+> PNP VID assignment - you are absolutely correct that "BMI0260" is not an
+> official Bosch PNP ID. Let me provide a more detailed context.
+>
+> GPD devices originally used BMI160 sensors with the "BMI0160" PNP ID.
+> When they switched to BMI260 sensors in newer hardware, they reused the
+> existing Windows driver which accepts both "BMI0160" and "BMI0260" IDs.
 
+This part is missing in the commit message.
+But the question is how many DSDTs we know that are using it?
+I have checked
+
+- https://www.catalog.update.microsoft.com/Search.aspx?q=3Dbosch%20BMI0260
+  (no results)
+
+- duckduckgo.com gives many links, one of which is interesting, i.e.
+  https://treexy.com/products/driver-fusion/database/sensors/bosch/accelero=
+meter/
+  that gives the list of the IDs in I assume Bosch issued drivers.
+
+Can you find the link to the official Bosch sensor driver for this
+family of sensors with the ID list provided (line on that link I
+found)?
+This may give us a reference and actually make it more clear in the
+future (also this makes an evidence for these IDs to be
+official which I was asking for during review of
+https://lore.kernel.org/lkml/20241020220011.212395-1-justin@justinweiss.com=
+/.
+
+> Consequently, they kept "BMI0160" in DSDT tables for new BMI260 devices,
+> causing driver mismatches in Linux.
+
+No doubts.
+
+> Current Situation:
+>    1. GPD updated BIOS v0.40+ for newer devices to report "BMI0260" for
+> BMI260 sensors to avoid loading bmi160 driver on Linux. While this isn't
+> Bosch's VID:
+>    2. Bosch's official Windows driver uses "BMI0260" as a compatible ID
+
+Yeah, please provide a link.
+
+>    3. The ID "BMI0160" already exists in mainline (drivers/iio/imu/bmi160=
+)
+
+Yes, I know, and that is a problem, but we can't solve it as that boat
+already sailed.
+
+>    4. We're seeing real devices shipping with "BMI0260" in DSDT
+
+Can you list them in the commit message?
+
+> Given the challenges we've faced in communicating with GPD regarding
+> Linux support, it seems unlikely that we can push for another change;
+> they are solely focused on ensuring compatibility with Bosch's official
+> Windows driver. Unfortunately, I do not have the means to contact Bosch
+> and urge them to abandon the use of these non-standard IDs.
+>
+> Given existing devices use "BMI0260" and Windows drivers validate this
+> ID pattern, I propose temporarily adding it to bmi270_acpi_match as a
+> compatibility measure. This would immediately benefit already existing
+> users.
+
+Right, but the problem with the fake IDs that already existed in the
+devices on the market is the justification when adding them to Linux.
+I also request to have a communication between vendors of the device
+(HW) and platform that uses that HW with a fake (wrong) ID to make it
+clear that this is a clear abuse of the ACPI specification. And next
+time they should be aware of this.
+
+> I'm happy to provide DSDT excerpts from GPD Win Max 2 2023 devices
+> showing the "BMI0260" declaration if needed.
+
+Yes, this is a must (but not limited to, see above what else is required).
+
+> Thank you for your time and guidance.
+
+> =E5=9C=A8 2025/7/31 04:57, Andy Shevchenko =E5=86=99=E9=81=93:
+> > On Wed, Jul 30, 2025 at 2:56=E2=80=AFPM Cryolitia PukNgae via B4 Relay
+> > <devnull+liziyao.uniontech.com@kernel.org> wrote:
+> >>
+> >> From: Cryolitia PukNgae <liziyao@uniontech.com>
+> >>
+> >> Some GPD devices ship a buggy firmware that describes on-device BMI260
+> >> with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40,
+> >> let's match the correct ID to detect the device. The buggy ID "BMI0160=
+"
+> >> is kept as well to maintain compatibility with older firmwares.
+> >
+> > No, it's not true. See below why,
+> >
+> >> ---
+> >> Some GPD devices ship a buggy firmware that describes on-device BMI260
+> >> with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40[1],
+> >> let's match the correct ID to detect the device. The buggy ID "BMI0160=
+"
+> >> is kept as well to maintain compatibility with older firmwares.
+> >>
+> >> Link: http://download.softwincn.com/WIN%20Max%202024/Max2-7840-BIOS-V0=
+.41.zip
+> >>
+> >> [1]. See the update nodes in the archive file above
+> >
+> > Yeah... I think you need one more attempt to fix it right.
+
+It looks like BOSC0260 is also listed in the driver. Why can't you use that=
+ one?
+
+...
+
+> >>   static const struct acpi_device_id bmi270_acpi_match[] =3D {
+> >>          /* GPD Win Mini, Aya Neo AIR Pro, OXP Mini Pro, etc. */
+> >>          { "BMI0160",  (kernel_ulong_t)&bmi260_chip_info },
+> >
+> > Unbelievable! How is the above supposed to work? Do we have DMI quirks
+> > in both drivers (bmi160 and bmi270)?
+> >
+> >> +       /* GPD Win Max 2 2023(sincice BIOS v0.40), etc. */
+> >> +       { "BMI0260",  (kernel_ulong_t)&bmi260_chip_info },
+> >
+> > For the record this is incorrect ACPI ID, nor PNP ID for Bosh, unless
+> > I missed that https://www.bensonmedical.com/ is bought by Bosh or part
+> > of the groups of the companies.,
+> >
+> >>          { }
+> >>   };
+> >
+> > Can you work with Bosh to resolve this as soon as possible and use a
+> > real Bosh ACPI ID (BOSCxxxx) or PNP ID (BSGxxxx)?
+> > Also, each ACPI ID adding patch (when it's incorrect) must provide a
+> > DSDT excerpt in the commit message to show this. Ideally this also
+> > should be confirmed by the vendor of the device (GPD) that the ID is
+> > incorrect and a correct one needs to be used.
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
