@@ -1,261 +1,146 @@
-Return-Path: <linux-kernel+bounces-752600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42FC8B177CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:07:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50FA6B177CF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:09:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1A7C4E0F1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:07:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C63F31C219C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00E7269AFB;
-	Thu, 31 Jul 2025 21:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE87B2571D8;
+	Thu, 31 Jul 2025 21:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eY5+g//L"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiaAxa8O"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E4125A2AA;
-	Thu, 31 Jul 2025 21:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988502222A9
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 21:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753996034; cv=none; b=WuWs0Ah+/M0YAYT52qkxdSkpTt9M3aX+VCW2s8eNGUoCmoPC9INPjYlKqKlSnJGTISbVtDMewoIuwVKjDSOlEhHi4RRonGKdpR+wiHofycZGpKY+7S+nqwNclAzEs51E+jkYdrxZMfv5MOG07q5FTIWofuJKBrqEWwNkF1BeFGk=
+	t=1753996062; cv=none; b=C0s676bTOqTkwCniACjk+YQJzShGw9rPM86HMAJWI9XZUJJIfHvpooZjxc7q0ewq9r4+xs1XctE6eXH0BrzsPPCjyh3629edKc5ZWi895Jz+R/aL6SVjYzLrfQ0FEFqn0IXIkE34LrmcRP+gaTvl9dQuywxTmxb+zNaeEzvfoFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753996034; c=relaxed/simple;
-	bh=wt3tMAQNjH7QXUaT5eywmVu/MXm11C/CrJGLDrJreYA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FLSzZ70PsUmeEDOdczBEA6KIHi8eOFvAnFa8ZM5M5wQo29OHXkGXW/awpz6jKhhCb0VbH7e5dWfQl0G/FXgS+EWALmMuTlJ34mfa6eSqec9clcA8zkMCEwVfASm+hJKf6JPybh77YZZAqBiNVxONK2cc0cIwK+lkQFfBB0UPq7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eY5+g//L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8CB22C4CEFA;
-	Thu, 31 Jul 2025 21:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753996034;
-	bh=wt3tMAQNjH7QXUaT5eywmVu/MXm11C/CrJGLDrJreYA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=eY5+g//LlTwO25ZbP4CL0rUVWZn5nYE77o+W9iUMc425RaeIzE1lKd4eO8UpoIQys
-	 zKAoRfsYqugYOiXbyiFEF40UeF+ln823vEk5qkZyFw+L4OiPGvWfhdDQY8F1LHuMOV
-	 yob+YKlgflwEC1SuNK/qWZbmbufpkUXowfO+3bOYwGS/HZINHzcpqJaL0qMZdfiIhZ
-	 2hERSwPxkdiAB1OOVV/GHAlPWxtE9JAO7YLDK4Lt4uxCWbS8QH+soK/2zJxS6yrXXz
-	 TJ8WKH8qKGlOwN8zk6O0zmPaYkwzmXZ2P/BQbCyHpHuyWh+m9shlJpK/W0FAV3wIWe
-	 UEcdzvqFOEEbw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82C88C87FDA;
-	Thu, 31 Jul 2025 21:07:14 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Thu, 31 Jul 2025 23:06:57 +0200
-Subject: [PATCH RESEND v5 7/7] Input: synaptics-rmi4 - support fallback
- values for PDT descriptor bytes
+	s=arc-20240116; t=1753996062; c=relaxed/simple;
+	bh=NuznBOivsDuTg4wdSZyNNrC9hNG2lQz8th2T6wKyRYs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qkYYkIRa02lHBo9c5UQxxH6rUn5PjLMpgwY5tvajqV28DVhBlicJY9paDO6RrCHP3uNOduJmgmhHjRNN31iysOWN/w7BHCWsSba0M4H5Q7Du6lZ9yU516RWAzczQwrjmcOvVODY8qkNxga2bKkZwgwCup1mwwjFmfNoDNLbhr6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiaAxa8O; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-71b5279714cso7700827b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:07:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753996059; x=1754600859; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ys/9FFyQ9hB8hcspnWH+yLefcO8HOj7bglv0EmfT7S0=;
+        b=MiaAxa8ODHktQFV60OUwm2ZJT20WKvS7ehkRoGbEeQFoV8utfHsdkvLd3p+MD+HEHz
+         WX49imsHU8Nn++YeG8Zt5kr+UtCFJcWo1jtKNT+BkKQ1iX/S4lzWXy+DccxxWrnXGUSa
+         /Nt8RweNxoa2FvTLRngBQFBvp0NaO6SkFK8UKY0ntFer0CvvxcOLgvVurnTEwX45PPkh
+         IhPXjhoeMC7gL3he+Ff3m2kIRmHk1JX3Ho9AlT9EO32Fk9qPH1cOwqUyXZc+LaUQNiqW
+         EqMC69dymQE6oPhsB3KaG+H4m6HGUNoNm/ROeP/4/YYrW5xPPIioCf8j9Yl1RydAA8nN
+         4bVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753996059; x=1754600859;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ys/9FFyQ9hB8hcspnWH+yLefcO8HOj7bglv0EmfT7S0=;
+        b=kQqh5Bd3m2XWDiWdkjHLEztGUnBwp42JEASwIf6zi4UkPz+bdvnsL/hw45NBg3/Ckv
+         Jj997ELe7oYEgey4dpXRR9X+fASAlWU5HsGF9esccLmv/qGKgEr0tbXgRlJ/8dwGLx4r
+         FgTGsrrW2YDEKyrELIqp3sKaYpDcDR03424u+Rqy7QhWV4zqdQTnXkOP4QskXh+brcai
+         8qPtiRWh05Xe7eKVErxoQSY1oxpN333QD6WlWwq6tzJsuMErpDR9xxPkBxdUz3IAGTQZ
+         k1UoFy1r5Gl0Yo8TKzlHqGPU0LOtXsRqCv171MBSmVaaITO0Nj724HSkO0E79Wshm5sR
+         U0dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0adxLkW3ZNxfizTqKxdJTHIOORGciVlWdF1d2cPh6FbUbtgd4KZ8xSc05XrTPne3rs4b6DKahQOeCir0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/lI187bE03fAyJXgIZgDC+bBXUdxsI4MkzFqpsMMdlSEsozQK
+	Y+gJ+lrWVdZdKsSCIoSAxUCPVSnkEUc30tn68zFPtHLT9+h7WFzjwTKa
+X-Gm-Gg: ASbGnct/4OIqMBOyp5ljZEzLlD4oAp2z1iAMosC3SycE+VSO+UwS2jZU0BKg6DB54la
+	KjCefm8B1lLoZMfFMQzkS1lBlAA6MP76b0zZ2dmPSUHqUtqM+waAu9oIyKxZA8Z3jvdJI0+BB9J
+	qCLhTIWG+oCekM68qP00fMYGHbQ37uPIbYh4UHWC2mYRVuq3d7Jq3F5gEZBZmnzVoYJhbR0toyL
+	ZmaX6trpdBCu+0KjuWil7NvMQxFBM9IzqYZx/16mGwpUDuC7snwbHpWw7xPrH+bBg1PtP9TMXuk
+	jkxqaWrvC7cW1WJkNTBMPAijx24IyECHCp0miKdCZg+I9UL05l0u59/1/AsFMSJ9PYnf8n48oz+
+	xUNpHf+5AmEwQb8OTtibw4g==
+X-Google-Smtp-Source: AGHT+IEMI4Rge8h7u3jlBR8l6CqYjTTPAtN94om3FOQ2i4u9MwmNuiAviKSmWcF0hf66oLb+CK8DIw==
+X-Received: by 2002:a05:690c:3581:b0:70e:1771:c165 with SMTP id 00721157ae682-71b6d7f8699mr2349177b3.29.1753996059192;
+        Thu, 31 Jul 2025 14:07:39 -0700 (PDT)
+Received: from localhost ([2a03:2880:25ff:42::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a59e009sm5975527b3.53.2025.07.31.14.07.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 14:07:38 -0700 (PDT)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	SeongJae Park <sj@kernel.org>,
+	Ying Huang <ying.huang@linux.alibaba.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Zi Yan <ziy@nvidia.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Alistair Popple <apopple@nvidia.com>,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com
+Subject: [PATCH v2] mempolicy: Clarify what zone reclaim means
+Date: Thu, 31 Jul 2025 14:07:37 -0700
+Message-ID: <20250731210738.1451854-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.47.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250731-synaptics-rmi4-v5-7-cd0d87d34afa@ixit.cz>
-References: <20250731-synaptics-rmi4-v5-0-cd0d87d34afa@ixit.cz>
-In-Reply-To: <20250731-synaptics-rmi4-v5-0-cd0d87d34afa@ixit.cz>
-To: Kaustabh Chakraborty <kauschluss@disroot.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, "Jason A. Donenfeld" <Jason@zx2c4.com>, 
- Matthias Schiffer <matthias.schiffer@ew.tq-group.com>, 
- Vincent Huang <vincent.huang@tw.synaptics.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, phone-devel@vger.kernel.org, 
- ~postmarketos/upstreaming@lists.sr.ht, 
- Casey Connolly <casey.connolly@linaro.org>, 
- David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5812; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=ydrRSeYmz91rM0r0O51CFGQGWObxeUx/kic8zsab5pU=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBoi9sA62W8kpS2OpUixDcfLR+/8BrR6vclDOk42
- wshGTV0+omJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaIvbAAAKCRBgAj/E00kg
- cppaD/9LTKRWfrwP+q5uMdfCLQ3ye+gWB93AYjKrF9B4aD0WbLljUlsjSgm8h8GQ7mZhTmQwd8v
- F/Df6SBrC9A+JrLdTK/DJbqbCyRLRqzykRWKcso2SvWdAZCGPyXvR09lgmoy0uy4wgSJgC30ZlX
- +GJHcWkY776skUedrynlHk3v4IDn1enRxLLLB9h2QXEy8rhAMgMM06tJCXIhFEAqyzRamGWbNB3
- XkO0zgeAekobK/r6UxERU2t4hhnwXAei74SbLYW8Dys9/I1N5lX+1EzKUGGAVQHMZvf55j2u100
- nTTGYJrVqoFuCArOLNrLF2nVNWx8sU2xB7QmSo8yw7yc9DymRs1+vrdzLv0HvxSOv/JAkhfooy1
- giFtnB4V/QL5kgoB6tDbDlH8ZmHAIX9P6APvN2a4sb2lWlZ3WnUcs4A1VS7dD7BirLMvs777BXO
- frrrTIYdwagNWGr9oQLIeZzgMEIQxl3OxgVlwPGTNmCVwCEdVn6olxrBJx5DEqTSr1m7BqDBjTX
- +yw6ZRPUXzDeNMgip+QTuVRcf1mxQvXJ34Roun2Bv75+LMKd8N1SllMWobm65zVAOhZJ3eMh4P4
- MhsZ9EcX+keIUFlvXed3l+MwJ5OLDpv6ea1jzq74Q+xNnVctPzvHtED10q88svoF6Tvs5uVmkF8
- JL8xAkKrG8WHaFA==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+Content-Transfer-Encoding: 8bit
 
-From: Kaustabh Chakraborty <kauschluss@disroot.org>
+The zone_reclaim_mode API controls the reclaim behavior when a node runs out of
+memory. Contrary to its user-facing name, it is internally referred to as
+"node_reclaim_mode".
 
-Some replacement displays include third-party touch ICs which do not
-expose the function number and the interrupt status in its PDT entries.
+This can be confusing. But because we cannot change the name of the API since
+it has been in place since at least 2.6, let's try to be more explicit about
+what the behavior of this API is. 
 
-OnePlus 6 (original touch IC)
-  rmi4_i2c 12-0020: read 6 bytes at 0x00e3: 0 (2b 22 0d 06 01 01)
+Change the description to clarify what zone reclaim entails, and be explicit
+about the RECLAIM_ZONE bit, whose purpose has led to some confusion in the
+past already [1] [2].
 
-OnePlus 6 (aftermarket touch IC)
-  rmi4_i2c 12-0020: read 6 bytes at 0x00e3: 0 (2c 23 0d 06 00 00)
+[1] https://lore.kernel.org/linux-mm/1579005573-58923-1-git-send-email-alex.shi@linux.alibaba.com/
+[2] https://lore.kernel.org/linux-mm/20200626003459.D8E015CA@viggo.jf.intel.com/
 
-Signed-off-by: Kaustabh Chakraborty <kauschluss@disroot.org>
-[codeflow adjustments, checkpatch fixes, wording]
-Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
-Co-developed-by: David Heidelberg <david@ixit.cz>
-Signed-off-by: David Heidelberg <david@ixit.cz>
+Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 ---
- drivers/input/rmi4/rmi_driver.c | 62 +++++++++++++++++++++++++++++++++++------
- drivers/input/rmi4/rmi_driver.h |  2 ++
- include/linux/rmi.h             |  3 ++
- 3 files changed, 59 insertions(+), 8 deletions(-)
+ include/uapi/linux/mempolicy.h | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/input/rmi4/rmi_driver.c b/drivers/input/rmi4/rmi_driver.c
-index f977541d8913525d53a59e1d53c33897f1c93901..e736e90c071466cc61a441bcb3061564e039bfc8 100644
---- a/drivers/input/rmi4/rmi_driver.c
-+++ b/drivers/input/rmi4/rmi_driver.c
-@@ -461,9 +461,10 @@ static int rmi_driver_reset_handler(struct rmi_device *rmi_dev)
- 	return 0;
- }
+diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+index 1f9bb10d1a47..6c9c9385ff89 100644
+--- a/include/uapi/linux/mempolicy.h
++++ b/include/uapi/linux/mempolicy.h
+@@ -66,10 +66,16 @@ enum {
+ #define MPOL_F_MORON	(1 << 4) /* Migrate On protnone Reference On Node */
  
--static int rmi_read_pdt_entry(struct rmi_device *rmi_dev,
--			      struct pdt_entry *entry, u16 pdt_address)
-+static int rmi_read_pdt_entry(struct rmi_device *rmi_dev, struct pdt_entry *entry,
-+			      struct pdt_scan_state *state, u16 pdt_address)
- {
-+	const struct rmi_device_platform_data *pdata = rmi_get_platform_data(rmi_dev);
- 	u8 buf[RMI_PDT_ENTRY_SIZE];
- 	int error;
+ /*
++ * Enabling zone reclaim means the page allocator will attempt to fulfill
++ * the allocation request on the current node by triggering reclaim and
++ * trying to shrink the current node.
++ * Fallback allocations on the next candidates in the zonelist are considered
++ * zone when reclaim fails to free up enough memory in the current node/zone.
++ *
+  * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+  * ABI.  New bits are OK, but existing bits can never change.
+  */
+-#define RECLAIM_ZONE	(1<<0)	/* Run shrink_inactive_list on the zone */
++#define RECLAIM_ZONE	(1<<0)	/* Enable zone reclaim */
+ #define RECLAIM_WRITE	(1<<1)	/* Writeout pages during reclaim */
+ #define RECLAIM_UNMAP	(1<<2)	/* Unmap pages during reclaim */
  
-@@ -474,6 +475,21 @@ static int rmi_read_pdt_entry(struct rmi_device *rmi_dev,
- 		return error;
- 	}
- 
-+	if (pdata->pdt_fallback_size > state->pdt_count * RMI_OF_PDT_DESC_CELLS + 1) {
-+		/* Use the description bytes from the driver */
-+		buf[5] = pdata->pdt_fallback_desc[state->pdt_count * RMI_OF_PDT_DESC_CELLS];
-+		buf[4] = pdata->pdt_fallback_desc[state->pdt_count * RMI_OF_PDT_DESC_CELLS + 1];
-+
-+		error = rmi_read_block(rmi_dev, pdt_address, buf,
-+				RMI_PDT_ENTRY_SIZE - 2);
-+		if (error) {
-+			dev_err(&rmi_dev->dev,
-+					"Read PDT entry at %#06x failed, code: %d.\n",
-+					pdt_address, error);
-+			return error;
-+		}
-+	}
-+
- 	entry->page_start = pdt_address & RMI4_PAGE_MASK;
- 	entry->query_base_addr = buf[0];
- 	entry->command_base_addr = buf[1];
-@@ -546,7 +562,7 @@ static int rmi_scan_pdt_page(struct rmi_device *rmi_dev,
- 	int retval;
- 
- 	for (addr = pdt_start; addr >= pdt_end; addr -= RMI_PDT_ENTRY_SIZE) {
--		error = rmi_read_pdt_entry(rmi_dev, &pdt_entry, addr);
-+		error = rmi_read_pdt_entry(rmi_dev, &pdt_entry, state, addr);
- 		if (error)
- 			return error;
- 
-@@ -1023,9 +1039,13 @@ static int rmi_driver_remove(struct device *dev)
- }
- 
- #ifdef CONFIG_OF
--static int rmi_driver_of_probe(struct device *dev,
--				struct rmi_device_platform_data *pdata)
-+static const u8 rmi_s3706_fallback_pdt[] = {34, 41, 01, 01, 12, 01};
-+
-+static int rmi_driver_of_probe(struct rmi_device *rmi_dev,
-+			       struct rmi_device_platform_data *pdata)
- {
-+	struct device *dev = rmi_dev->xport->dev;
-+	u8 buf[RMI_PDT_ENTRY_SIZE];
- 	int retval;
- 
- 	retval = rmi_of_property_read_u32(dev, &pdata->reset_delay_ms,
-@@ -1033,11 +1053,37 @@ static int rmi_driver_of_probe(struct device *dev,
- 	if (retval)
- 		return retval;
- 
-+	/*
-+	 * In some aftermerket touch ICs, the first PDT entry is empty and
-+	 * the function number register is 0. If so, the driver
-+	 * may have provide backup PDT entries.
-+	 */
-+
-+	retval = rmi_read_block(rmi_dev, PDT_START_SCAN_LOCATION,
-+			buf, RMI_PDT_ENTRY_SIZE);
-+	if (retval) {
-+		dev_err(dev, "Read PDT entry at %#06x failed, code: %d.\n",
-+			PDT_START_SCAN_LOCATION, retval);
-+		return retval;
-+	}
-+
-+	if (!RMI4_END_OF_PDT(buf[5]))
-+		return 0;
-+
-+	/* List of known PDT entries per compatible. */
-+	if (of_device_is_compatible(dev->of_node, "syna,rmi4-s3706b")) {
-+		pdata->pdt_fallback_desc = rmi_s3706_fallback_pdt;
-+		pdata->pdt_fallback_size = ARRAY_SIZE(rmi_s3706_fallback_pdt);
-+	} else {
-+		dev_err(dev, "First PDT entry is empty and no backup values provided.\n");
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- #else
--static inline int rmi_driver_of_probe(struct device *dev,
--					struct rmi_device_platform_data *pdata)
-+static inline int rmi_driver_of_probe(struct rmi_device *rmi_dev,
-+				      struct rmi_device_platform_data *pdata)
- {
- 	return -ENODEV;
- }
-@@ -1158,7 +1204,7 @@ static int rmi_driver_probe(struct device *dev)
- 	pdata = rmi_get_platform_data(rmi_dev);
- 
- 	if (rmi_dev->xport->dev->of_node) {
--		retval = rmi_driver_of_probe(rmi_dev->xport->dev, pdata);
-+		retval = rmi_driver_of_probe(rmi_dev, pdata);
- 		if (retval)
- 			return retval;
- 	}
-diff --git a/drivers/input/rmi4/rmi_driver.h b/drivers/input/rmi4/rmi_driver.h
-index cb1cacd013a3f39db96935f705f18018bf15adff..3b87d177db59591691a56ce7ac03dd2e8671421d 100644
---- a/drivers/input/rmi4/rmi_driver.h
-+++ b/drivers/input/rmi4/rmi_driver.h
-@@ -31,6 +31,8 @@
- #define RMI_PDT_FUNCTION_VERSION_MASK   0x60
- #define RMI_PDT_INT_SOURCE_COUNT_MASK   0x07
- 
-+#define RMI_OF_PDT_DESC_CELLS 2
-+
- #define PDT_START_SCAN_LOCATION 0x00e9
- #define PDT_END_SCAN_LOCATION	0x0005
- #define RMI4_END_OF_PDT(id) ((id) == 0x00 || (id) == 0xff)
-diff --git a/include/linux/rmi.h b/include/linux/rmi.h
-index ab7eea01ab4274bfc9efcefcdb0cced6ec34966f..4ba2cefac85583a4ba65c70dca418a2c7c65362a 100644
---- a/include/linux/rmi.h
-+++ b/include/linux/rmi.h
-@@ -214,6 +214,9 @@ struct rmi_device_platform_data {
- 	int reset_delay_ms;
- 	int irq;
- 
-+	unsigned int pdt_fallback_size;
-+	const u8 *pdt_fallback_desc;
-+
- 	struct rmi_device_platform_data_spi spi_data;
- 
- 	/* function handler pdata */
 
+base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
 -- 
-2.50.1
-
-
+2.47.3
 
