@@ -1,201 +1,163 @@
-Return-Path: <linux-kernel+bounces-751667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ADB0B16C1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:36:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE5F0B16C1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DD9518C68DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:37:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 323357B2D40
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB03625F7A4;
-	Thu, 31 Jul 2025 06:36:36 +0000 (UTC)
-Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazon11020140.outbound.protection.outlook.com [52.101.227.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431E9266573;
+	Thu, 31 Jul 2025 06:36:42 +0000 (UTC)
+Received: from mail-ot1-f77.google.com (mail-ot1-f77.google.com [209.85.210.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F789A923;
-	Thu, 31 Jul 2025 06:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.227.140
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753943796; cv=fail; b=aLIvPVTrrWeaXVZ7bCQ3CEieUQd9bGowc+b1iYARMBV6PBeTUpyiC2g+p0/A7yolS57QAdvSndrwcLG/EWZtQ2OHDo/INCk92+5x+8WoocThB6vS0CioaaSRy+KLAVHEiiAf4PfPPeXuEC7aqoSWolDtdSept89XzHFgBUkVT+0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753943796; c=relaxed/simple;
-	bh=JHMzQgHkcM8dUa0RLXhRgmabq6wPtQHBCKba81tFmhY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JQJubzVXd698P3G85so8LywJHejfZc8FIPbFltsXmc9Andrq4QtwKA1LN3QvNb7/G2BnXsmnr8qgAH0t3QbdwQj7EF9g9rLAfyjvpQ18yTGhRT1XQR3bsPSd1zaBt6we+eQUeFQMmnPYGGH5UA4Cb5zQdHrwQDL9usqrZc7aeyw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=fail smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.227.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=siliconsignals.io
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ScU7l13+ttEZkURVe1z6l5ep6Wspp+89r2zrAXsCqoFL5/IoyqE8pRUDHVC6eBSKgBEMxAyrKkQRS6IRb9aFeOfYAN4f6dN1yNjQIDfrkUamO4In2PeVrWJLB88VioY1ARgW9dpf70XnPeNBSid78UKppjxER1fMF1faagKrRXZyEEvcqGPl75QvxEtMNEquqLyfrXrYGl9PC/1fmJpqMtmefG7pbwAnYtyHiAyBXfkCoVgX5bQiqOxfiClU37wgcNEPDh21IgYzMs84ze2MGCYYmHv69Bmme7U95lbVY0IBJkqlM2mE04GhbR79BULJE0KXug6ArV27RPILfbpRIg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JHMzQgHkcM8dUa0RLXhRgmabq6wPtQHBCKba81tFmhY=;
- b=YkxlUnik7i5/YYisyNyy4XBybMHIc/sAezEo5w7EqsjzEirSEfnOz9ND/IBe7RDO/4Al6E1dnqIPCR0AH9N9jCNI0G0a39SCk/Yi7/6zYtGZswYfn0gnZd2HWhr6L4H7Kvj6WeEIAJSkDhOWrAZ+loT2xKnexAIpHAOiwcOqMh/h28EEA/5bXrF0dq+xWpkDFxqIldYQNdHdEkwv9vKDLpAyBcNLVz8iaxr1XOmAjKMATIfXscVlUkCK1Q1DpLCPCAaqPnol5NJt1YS086OBoGCo6/M2EOKJ+n3zIxQGf/J52BQM6lrrXeY/UJsqHKOB0+7M8DjHCkPAfDV3iFvtPQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
- header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
-Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:229::21)
- by PNZP287MB4154.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:282::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.14; Thu, 31 Jul
- 2025 06:36:25 +0000
-Received: from PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
- ([fe80::5c9a:906e:318b:c418]) by PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
- ([fe80::5c9a:906e:318b:c418%6]) with mapi id 15.20.8989.013; Thu, 31 Jul 2025
- 06:36:25 +0000
-From: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
-	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
-	"laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>,
-	"kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>, Himanshu
- Bhavani <himanshu.bhavani@siliconsignals.io>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
-	Ricardo Ribalda <ribalda@chromium.org>, Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>, Hans de Goede <hansg@kernel.org>,
-	=?Windows-1252?Q?Andr=E9_Apitzsch?= <git@apitzsch.eu>, Matthias Fend
-	<matthias.fend@emfend.at>, Tarang Raval <tarang.raval@siliconsignals.io>,
-	Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>, Jingjing Xiong
-	<jingjing.xiong@intel.com>, Dongcheng Yan <dongcheng.yan@intel.com>, Benjamin
- Mugnier <benjamin.mugnier@foss.st.com>, Sylvain Petinot
-	<sylvain.petinot@foss.st.com>, Arnd Bergmann <arnd@arndb.de>,
-	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-Thread-Topic: [PATCH v6 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-Thread-Index: AQHcAeHa9HY47390u0OJlhyWta8pG7RLwMcAgAAF2LM=
-Date: Thu, 31 Jul 2025 06:36:25 +0000
-Message-ID:
- <PN3P287MB3519C0DB4796E4D73411A549FF27A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM>
-References: <20250731061004.5447-1-hardevsinh.palaniya@siliconsignals.io>
- <20250731061004.5447-2-hardevsinh.palaniya@siliconsignals.io>
- <28ba8a6d-a180-485d-9bfd-d5ac8783831d@kernel.org>
-In-Reply-To: <28ba8a6d-a180-485d-9bfd-d5ac8783831d@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=siliconsignals.io;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PN3P287MB3519:EE_|PNZP287MB4154:EE_
-x-ms-office365-filtering-correlation-id: 02081e7e-fa7c-428c-e6f5-08ddcffc926b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?Windows-1252?Q?QEcpMkTPLg0Xp5aFUiZPhLIXR5jefPv477RWvYOcRvBc9kULj0WP/c/S?=
- =?Windows-1252?Q?0ifvccfLETVxJenotQHLQnMZBnEcKCVfpe9nWaLliW/REmGf0SA+q/xt?=
- =?Windows-1252?Q?0EVnAZDLjXfZg54ok+Y2KLhX9yNDHzWdRW6GgRKaKPWy80c4/FKB1GuJ?=
- =?Windows-1252?Q?/uPwpvDqnwI/Io4P2yg/Pl1JYiQluXCHLBdi5Fmqb0aic2YIXZ7ZvbUE?=
- =?Windows-1252?Q?arPOD6PvqUBLXvSNjNQnH5krmUSXwCPxGI6/aXHQ8V3eL2BMxqfiF8f0?=
- =?Windows-1252?Q?qvoMtYXQvS4RwmhqY+pzrFqG7vlSVSxvxGRu2jwIPIKI/EALjlP1mvlj?=
- =?Windows-1252?Q?Zhur6jAaXEnaGirBWqroZUN2ih1gF+4HTLvO78eUcdxjQmvOfj7B/+v/?=
- =?Windows-1252?Q?wdBh0Ba26zU/V6IBx4DvFqZ96vUjpQqVt2fiRntJrdHUYcD/IF+XrN5T?=
- =?Windows-1252?Q?JoPtZRzoUoQxjhzNDJ0j9iz0UIQ3dkEaUMNLipQSrqqw+mE15qbvAbDV?=
- =?Windows-1252?Q?23YjrnSiV9aqWMufl6Es2cGP9HEFbV+YYfyPDp0g1uID0ErJbr2z/csx?=
- =?Windows-1252?Q?MLdZq0s73kKUL3C5HFGS0+JaO0yn9lab92Aw64WgKjAl9jjN2TIgmBK5?=
- =?Windows-1252?Q?kgFFYdxyzeah/N9uBKZf250w2k01iiUVMc8Z3SNmH3PAxwwRZyywrJeT?=
- =?Windows-1252?Q?I0ADdyZAuNHeNe4LSatAKvHgBNFIjm2L1NMf/C35rAghzHe5QrFj5mNe?=
- =?Windows-1252?Q?3MEB/K0DVi6klunfZEeWyj8u2g+X3adeapLumxt39vQz+HLvoEtLIoOg?=
- =?Windows-1252?Q?/7UiZi4b8NFhw89g5Z4nMHhTGNHJzeUP4Qmt6fSk6rRcDpqi5DvFgQOq?=
- =?Windows-1252?Q?VXyGPREVJIyul7rqq69VRpCRxEbMnjgwv3y0TfBq90sSH4vn38VH+tl4?=
- =?Windows-1252?Q?moy+LkXs5RrDC0ta6QmdC2uNHzYFXfuz6MkZZ6L4XT9BdCfQLKde3zZ0?=
- =?Windows-1252?Q?2N8dpAI1UBBXt5gXlsDCf0muxPFNBwYkBrN2o/C/6JAjUDhR2lSIkUlu?=
- =?Windows-1252?Q?yNxbCqiVYRC82Nn184tnEJSxTBs51uoti5tMDpdvD+sb1UAp60lbheNk?=
- =?Windows-1252?Q?zlRZIFDxk+HN1xfsX/i9eVZ/bWMryrgdSEWseTPCuNDpGGhNtGZKwR2g?=
- =?Windows-1252?Q?KJruqONn9FpWq0hrdgOKwPHhGH0JbUv8xJ7iTd7XdqLGKrPBad0cMSc7?=
- =?Windows-1252?Q?R36mHag66jJJIGKOVlDBmPdiiRTmrBjyrdZaJaN1OauDf2OEk41fHhrA?=
- =?Windows-1252?Q?Y0/wuLmG25DudXnwQB2/7C/I+9FPE0np+UFE4LaaCwqGQ3SMm609bHLz?=
- =?Windows-1252?Q?pL7Ge5zVIeAr23WpmCw/RHa6WhHZI84LlCpt9CG/PUUMWc/rEf5HLXOw?=
- =?Windows-1252?Q?gbVVV41Q3RX9bExQnUDT6Dz8HRpTWG1aU87nNXAcBQNGvWoF+kQOkEZw?=
- =?Windows-1252?Q?5PJ0TZIvEnpDYs7n5HclKAMn8/GgCw/CLBpdUnu0LyJZUC3McwUoEVGp?=
- =?Windows-1252?Q?WUwMbl3zQZlSwOQuRfBt6dGUvqUdNJWuPx29qMI7+eOHbD8S21MWEghE?=
- =?Windows-1252?Q?my0=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB3519.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?Windows-1252?Q?piREkwqiILa7OaWrEoaPAU23QaugrxcMJBzOsQa76ZSGF6XrBSBvJ3GZ?=
- =?Windows-1252?Q?lJ3eEZGKp9eZb8rmTsn2h9EP7K69xtGxH0td/ftXieTx9UM5VL50/K1T?=
- =?Windows-1252?Q?NfDKsUQHfCdWlumEQOlu3zmtpZ0HqbgnpE4tWkjgLAMV/Vq3we3bk2yp?=
- =?Windows-1252?Q?rF6Yp64RoRFpLhlTdxlZ8e1UC2TaCt7Vi5+UXnpxJrmQDX/iCpVUbEjp?=
- =?Windows-1252?Q?woag+XkAJHb0dQaGnse5jaEgP66PRx3C3CwYaFti+oHaULXEYym3taNV?=
- =?Windows-1252?Q?tDSXXguODg6VEIBmm+9R1pnhLUluzsc+ohBqH4yKBb690giFRibJCKbs?=
- =?Windows-1252?Q?w3dY3OEN74cJmaKHRyGYJitrYDGI0Fkh3/u6TrRNgEzdtimtfkM3ucuV?=
- =?Windows-1252?Q?TGrZMXZnnUCyP87JlLrjVBERULBd0vNxTc9d4WqfBoGpciY+BIWheDoR?=
- =?Windows-1252?Q?5NnmsxsMqtMK/S9ifXULPqQbckt7Zr/76Km+R8WvvxFvuTxJGcFfUFLJ?=
- =?Windows-1252?Q?gKMzJ6tOYU0nokr0Uq1cP3hF4z1kkp3TJYDy9ajwAuw0t0lPZq4uqKXM?=
- =?Windows-1252?Q?Y9dmMd3G1plIGdcAaihRLPb08ksUTkD2hDVRiXPOGdspP6etqNfVfyaF?=
- =?Windows-1252?Q?H9ZzZML8+8M3eCoADQq6yWO3NIkaRpvwm7TDz15ZeW9Br7dWYFyUEZuk?=
- =?Windows-1252?Q?e8t61W2Cki46ANgcoP0JC8eyQVY3KJJmXt0jk2ssm+jdPNN+Cmv+tqfN?=
- =?Windows-1252?Q?CmVXZOZTgJJQrj/mtx8O1ZBZBLKa7e9MHluqu2uNKwLtfD6vFWxAIJTf?=
- =?Windows-1252?Q?ZJ98hlv8wPf/2D8pM8BYE896sCPUnSc7xg6+hPKbOlw5p1DWdf9Eb/T/?=
- =?Windows-1252?Q?guNcJ9JoTg3pFSlG15jMRR8n/udTmkFQLhSqiLZ6r9CRdTruOW5QCUBE?=
- =?Windows-1252?Q?vDO68WgXEbPTM6X8hsydTDTeInCenbHbS9+b6fpfYLUpRK+rDROfO5ba?=
- =?Windows-1252?Q?sfrAAY3brUM7H4hojUwLE4ch4Lucb33epCx/vZBGREU3sYiURfCk72V/?=
- =?Windows-1252?Q?wQ1bWr9v4Ht6/CnQq2rQD+K8F1BAFKGg4vLrjd9DjWDtjMdahvkxmR4A?=
- =?Windows-1252?Q?ay04desJPhXjUw2AnDHAIvwFF1ZkBNmoPT8o0IDJ9yhnB7TIPnDg4yqL?=
- =?Windows-1252?Q?hllbER8I+IMeIuQup4pTrISccbUXGSoI59pxFrX9+gWEhuWLHLE5tVnK?=
- =?Windows-1252?Q?hAFpDeRWSEcRR9YiyYMVcr7aZrkK2QS5fxPfZJ+Z8f/Z6/c9+GcagviQ?=
- =?Windows-1252?Q?1FATS9JwbxV3snzuxiE/5s7j/t0e3O+xVAjAXN4ETdM677B7xi9/bObL?=
- =?Windows-1252?Q?O8NERI2XqBF/qIcJTj5rur8n0FMiSHZYyoNI1f0QSKdWsxpnSvRLUyTA?=
- =?Windows-1252?Q?1x0RkIq/HeQSlP6c4XxZ4mcLVm3c0BNSLUfaYVOPkKBQ8aR78IBUx+qm?=
- =?Windows-1252?Q?ynzQaPp8fx6kPJSmtnAEVuOdHvoiPAc+sRTkA1zYWDdcVB5Vjml4xCAP?=
- =?Windows-1252?Q?8PVQ5q4Eesw23/ZuV3XG0UoZPbcEHFahHX3myMxvrNQTyFQeYZV8IOom?=
- =?Windows-1252?Q?uGOuvPtJe3WBitDF5jxV6DMZpbj0DwVRJoCAnom3xDhCuzscZ3V7B1p8?=
- =?Windows-1252?Q?xLrXCvk7/dm3qfpFnSH/fJSkW3EQpJXRZuXPjsIUjPZX4JVT1q6trg?=
- =?Windows-1252?Q?=3D=3D?=
-Content-Type: text/plain; charset="Windows-1252"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 598E925F986
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.77
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753943801; cv=none; b=E+/yoMGQs/LuG1gZ1piM4HE8nTODEhUJaTwiohkR7Gw1QjaD5q4Fz66PwhZ9yG92NZSZint0h4Ga6irulTxvqCVGALT0YRENcaAP5/0NdZZ88cMzUAtGlbASbivBba2+JO4xjp/QP14hTOr57B+9cA+kfxJRi/oMoier+vewkuo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753943801; c=relaxed/simple;
+	bh=FMUEz3kyF6fRRppi9amB0j1l46ys6lLiLGlQan8pkMw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=r+ORdWoOS8HFc6aaFqlmlSi/FdChbprfy/K2375ksw/wSovfcMNgD03MEUerxl1v/khhkQsnStiafxyCspbTtgyg3d/xqSNWugVsK/qWmwl+KQDwvIdMVDrGxYbFAGAvNgMiJA8SvXTe0LToBEtvCcPj+ikd/Rg/G7AOrQToeA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.210.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-ot1-f77.google.com with SMTP id 46e09a7af769-73e8ddac4d2so978688a34.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 23:36:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753943795; x=1754548595;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OHacPjXHmhT4gSFFAUsf+PSG0JpJkx0CNYn0jXCCrJk=;
+        b=tkisUDs2DSq4rhOsgQdyJtS70hoMVJJyVRu5Q8MjFxgZlwScC7YT+8y1hAm8uydyXt
+         SD1dYWm6/yRHVdKLW0m7v9RTWsmO4bBaQfwx3RLxfCke3tjdeFFU+fnMrYKHjxTF4vEc
+         iq/5aK9lzGz6bY7/sfJw91Ekz1lDwjMiS1PZDW4ULIOTfLZxJCJMX3/nem8sGlRQDRsg
+         v4Su3yiJXwXaSxhA3kqrq/ffN2bfShAo0KUh1CzYijmY2GMS7gbdeFku3NSl/IBpfmq8
+         DcqKKV2paU08DO5iYHKV6V82YjpBgUg/WNfSBa4cMfjSLMemaoGpBaZju+x97FjTS1/a
+         cxEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXoaoFVG3KNNcwSUSxyDv5qhle1djTx/vNAFfdRHPLBo1O54y06AdpwFTdzbJq5332gwOe0SMXvszcBgmw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0/OPGpqPUHkIL4ULkvr6tSNpjk0HAfVURVhJJhQTwULRBDLqK
+	gXM/Kacxqf6V2dRdl+Pl2es0eUeJq1J6Z0pWcYKlGn7HlCfZgEK1MKnXyB2x9dYbvahZ+HN+B6X
+	NTunR5F0UIyvF6gYox7T+VH/G7v4LHmZUcXa09bdP/56JCA8Y+pnuuwbINKE=
+X-Google-Smtp-Source: AGHT+IEeVII6Nr0rcVGr0qWvBULevzjLKnmb8lk2m6/X6rSx/Y/eF5oMsEBhzBa8B4iYZ0Gu0ho/Q99ZjfvDsj08YId7m16SL7Cy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: siliconsignals.io
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB3519.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02081e7e-fa7c-428c-e6f5-08ddcffc926b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2025 06:36:25.1447
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: E6otoJnVWbTiFU3RXTcLuujtB91cDVRJCeE+X8qC+nf7tUN4BNW3gCxuK4f2/xNGIExHsoUCh1NygvcITEIjCBDYHyBqAwKiqotOEFOTHCW2sxELJ4d58vE9m5OUjZb4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PNZP287MB4154
+X-Received: by 2002:a05:6830:3483:b0:73e:643f:5b29 with SMTP id
+ 46e09a7af769-74177a4aaafmr4973749a34.3.1753943795474; Wed, 30 Jul 2025
+ 23:36:35 -0700 (PDT)
+Date: Wed, 30 Jul 2025 23:36:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688b0ef3.a00a0220.26d0e1.0038.GAE@google.com>
+Subject: [syzbot] [udf?] WARNING in __getblk_slow
+From: syzbot <syzbot+89fa933c2012e808890e@syzkaller.appspotmail.com>
+To: jack@suse.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> On 31/07/2025 08:09, Hardevsinh Palaniya wrote:=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0 properties:=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 data-lanes:=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 items:=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - const: 1=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 - const: 2=0A=
-> > +=A0=A0=A0=A0=A0=A0=A0=A0=A0 link-frequencies: true=0A=
-> Nothing improved. My comments from versions before still apply.=0A=
-=0A=
-I asked you in v4, but you didn=92t respond.=0A=
-=0A=
-Could you please check?=0A=
-=0A=
-Link:https://lore.kernel.org/linux-media/PN3P287MB351999B4DB533CCA9C6E6567F=
-F51A@PN3P287MB3519.INDP287.PROD.OUTLOOK.COM/=0A=
-=0A=
-The driver will always rely on the device tree for the link frequency.=0A=
-Without it, the driver will fail to probe.=0A=
-=0A=
-So, the bindings need this property, just like other camera sensors do.=0A=
-=0A=
-Best Regards,=0A=
-Hardev =
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    ced1b9e0392d Merge tag 'ata-6.17-rc1' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=154e9782580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a6d3e67bfa86ec9a
+dashboard link: https://syzkaller.appspot.com/bug?extid=89fa933c2012e808890e
+compiler:       gcc (Debian 12.2.0-14+deb12u1) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11da74a2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12af8cf0580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7992028cc1d8/disk-ced1b9e0.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/21e8b1538aee/vmlinux-ced1b9e0.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/04d1cab11b26/bzImage-ced1b9e0.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+89fa933c2012e808890e@syzkaller.appspotmail.com
+
+syz.1.17: attempt to access beyond end of device
+nbd1: rw=0, sector=64, nr_sectors = 1 limit=0
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6081 at fs/buffer.c:1125 __getblk_slow+0x4cc/0x560 fs/buffer.c:1125
+Modules linked in:
+CPU: 1 UID: 0 PID: 6081 Comm: syz.1.17 Not tainted 6.16.0-syzkaller-00857-gced1b9e0392d #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:__getblk_slow+0x4cc/0x560 fs/buffer.c:1125
+Code: c0 8b 48 89 df e8 04 43 bc ff 90 0f 0b e8 4c 7f 74 ff 48 c7 c6 e0 49 c0 8b 48 89 df e8 ed 42 bc ff 90 0f 0b e8 35 7f 74 ff 90 <0f> 0b 90 8b 74 24 0c 89 ea 48 c7 c7 40 4b c0 8b 31 db e8 4d 92 53
+RSP: 0018:ffffc90003a3f7f0 EFLAGS: 00010293
+
+RAX: 0000000000000000 RBX: 0000000000000200 RCX: ffffffff824775a6
+RDX: ffff88802d388000 RSI: ffffffff824779eb RDI: 0000000000000005
+RBP: 0000000000000400 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000200 R11: 0000000000000001 R12: ffff8880240db980
+R13: 0000000000000100 R14: 0000000000000200 R15: ffff8880240db980
+FS:  00007fc5345f26c0(0000) GS:ffff8881247f9000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000200000004a00 CR3: 00000000638a0000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ bdev_getblk+0xd4/0xe0 fs/buffer.c:1461
+ __bread_gfp+0x86/0x3c0 fs/buffer.c:1515
+ sb_bread include/linux/buffer_head.h:346 [inline]
+ udf_read_tagged+0xae/0x740 fs/udf/misc.c:199
+ udf_check_anchor_block+0x89/0x4b0 fs/udf/super.c:1912
+ udf_scan_anchors fs/udf/super.c:1952 [inline]
+ udf_load_vrs+0x3b8/0x1070 fs/udf/super.c:2033
+ udf_fill_super+0x791/0x1df0 fs/udf/super.c:2201
+ get_tree_bdev_flags+0x389/0x620 fs/super.c:1692
+ vfs_get_tree+0x8e/0x340 fs/super.c:1815
+ do_new_mount fs/namespace.c:3805 [inline]
+ path_mount+0x1482/0x1fd0 fs/namespace.c:4120
+ do_mount fs/namespace.c:4133 [inline]
+ __do_sys_mount fs/namespace.c:4344 [inline]
+ __se_sys_mount fs/namespace.c:4321 [inline]
+ __x64_sys_mount+0x28d/0x310 fs/namespace.c:4321
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc53378e9a9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc5345f2038 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007fc5339b5fa0 RCX: 00007fc53378e9a9
+RDX: 0000200000000080 RSI: 0000200000004a00 RDI: 0000200000000000
+RBP: 00007fc533810d69 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000014 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fc5339b5fa0 R15: 00007ffcecbba4c8
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
