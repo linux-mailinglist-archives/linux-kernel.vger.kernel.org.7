@@ -1,173 +1,110 @@
-Return-Path: <linux-kernel+bounces-751488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A30B16A3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:49:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16773B16A40
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:49:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F705A7D11
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:49:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BF547A4BA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:48:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADCFC130A54;
-	Thu, 31 Jul 2025 01:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="iW3lBMCI"
-Received: from out30-131.freemail.mail.aliyun.com (out30-131.freemail.mail.aliyun.com [115.124.30.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C268018858C;
+	Thu, 31 Jul 2025 01:49:34 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0AA910785
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E771F176AC5;
+	Thu, 31 Jul 2025 01:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753926566; cv=none; b=panlDayheIwWWyTSrU4hpYYNQhzbCiDYlC2bA1nF/l7bwbFAG3gnJ5+Tr9X8lKxGTR2gR6nny2ZUPvWL9or/uDATAb/G+b2CmMJhmxToCCzF54Dy6zrPibWPPApLxgDq4USUq3JKsRLiNv36+5IgjZl0+/Us+VArS/30HWhl6Mg=
+	t=1753926574; cv=none; b=hVnxMHih4jOgOamAKRD7ERLQmFG3uEwZsOEQpFeQWRZwb3lje615jjfYJbPOWUumjFjjV7+gqUKK4LmTeqNbhHu2FeCQrxe5vhxHnm2ik+i1axf3ngisV/zbzUI984Rt2hVOQ1rO9g3o28FkO3sOTyhQ9g/0zNwB5kqI/GsmTZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753926566; c=relaxed/simple;
-	bh=tNPiBujisFHb997GEtpT9Y1QYvcWujeiJOwyNJVXRM4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=B5TOcsc3IKtPx6nqVlIZiNsXx0DCtDnG7pAuFEFNKP0B4XtjuTzx8q73+Gh5/SBWwh+VG+c+T2iTshckSojS5wYFQONv98Yjnv1tLo9X1i9o1GnjRIgtkTFVrONl79e071gTfsykOW6+HDG/3bB1PPhGbTI/9QpSY0zqhKnjOxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=iW3lBMCI; arc=none smtp.client-ip=115.124.30.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1753926556; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	bh=FoVQBKqrO0J50OdfYlBRAT9heWx+qni6PljTTrIPCl4=;
-	b=iW3lBMCIEhMek+VOvbjIDEjTYOw0ONTDHCRWEH0PPO6TpKzfcP5lOyrQ8ival9oZLFvgFTzkQKtJ94IiOhjxL0qQw1+sdOVsrfob8wQMmg6oSx32PnIbCXH1HOlF3He2Hh80wtc+ML2/JJainzcedKXNkImmQkOVJKz+9u+sHqI=
-Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WkWQwrt_1753926535 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 31 Jul 2025 09:49:14 +0800
-From: "Huang, Ying" <ying.huang@linux.alibaba.com>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  David Hildenbrand
- <david@redhat.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Zi Yan
- <ziy@nvidia.com>,  Matthew Brost <matthew.brost@intel.com>,  Rakie Kim
- <rakie.kim@sk.com>,  Byungchul Park <byungchul@sk.com>,  Gregory Price
- <gourry@gourry.net>,  Alistair Popple <apopple@nvidia.com>,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  kernel-team@meta.com,
-  Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH] mempolicy: Clarify what RECLAIM_ZONE means
-In-Reply-To: <20250730201908.2395933-1-joshua.hahnjy@gmail.com> (Joshua Hahn's
-	message of "Wed, 30 Jul 2025 13:19:07 -0700")
-References: <20250730201908.2395933-1-joshua.hahnjy@gmail.com>
-Date: Thu, 31 Jul 2025 09:48:54 +0800
-Message-ID: <87tt2t9lkp.fsf@DESKTOP-5N7EMDA>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1753926574; c=relaxed/simple;
+	bh=NnMgq53QVCwA/CighbaGjo9jhrRKNRuqjx0ity8ATSE=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=oW3m4LoZNf8gMcurP2NaRk7HzJZ2XtvmIAKRz9bbgpp8WiYoPqFzHotsySjWa7dn+g/sJM2m1TneD+eNg1CZtFRF40x/8k763Lcp2YZ6fDd+HRFh8yJH1lkPk9rn02h4TnHpYSd7vpGaO/8TwHbTOw/bj+t1omRIBwdyx/nUjsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bssT64GqlzYQtyd;
+	Thu, 31 Jul 2025 09:49:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 4548C1A0902;
+	Thu, 31 Jul 2025 09:49:29 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgDXUxSny4poelM2CA--.34795S3;
+	Thu, 31 Jul 2025 09:49:29 +0800 (CST)
+Subject: Re: [bug report] dm: 'tried to init an initialized object' error
+ triggered during device creation
+To: Hou Tao <houtao@huaweicloud.com>, Li Lingfeng <lilingfeng3@huawei.com>,
+ agk@redhat.com, Mike Snitzer <snitzer@kernel.org>,
+ Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-block@vger.kernel.org
+Cc: zhengqixing@huawei.com, yangerkun <yangerkun@huawei.com>,
+ "zhangyi (F)" <yi.zhang@huawei.com>,
+ "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+ Li Lingfeng <lilingfeng@huaweicloud.com>, "yukuai (C)" <yukuai3@huawei.com>
+References: <83591d0b-2467-433c-bce0-5581298eb161@huawei.com>
+ <f9c385b3-2426-13a1-bc4b-54c3fb402704@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <09e676c5-8407-a0a6-313c-22fcfee4e488@huaweicloud.com>
+Date: Thu, 31 Jul 2025 09:49:27 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+In-Reply-To: <f9c385b3-2426-13a1-bc4b-54c3fb402704@huaweicloud.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDXUxSny4poelM2CA--.34795S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrKr1xur1DGF47Gw1UJw43Jrb_yoW3GrX_JF
+	ZxKa4rWrs8Gr4Y9w10kw4fAFZ5G343JwsxJrZ8XF98Gr15Xw45J3yDuw4rCr4UJ3y7GF9F
+	kr48W348ZrW7ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Joshua Hahn <joshua.hahnjy@gmail.com> writes:
+Hi,
 
-> On Tue, 29 Jul 2025 08:58:49 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
->
->> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
->> 
->> > On Mon, 28 Jul 2025 09:44:06 +0800 "Huang, Ying" <ying.huang@linux.alibaba.com> wrote:
->> >
->> >> Hi, Joshua,
->> >> 
->> >> Joshua Hahn <joshua.hahnjy@gmail.com> writes:
->> >> 
->> >> > The zone_reclaim_mode API controls reclaim behavior when a node runs out of
->> >> > memory. Contrary to its user-facing name, it is internally referred to as
->> >> > "node_reclaim_mode". This is slightly confusing but there is not much we can
->> >> > do given that it has already been exposed to userspace (since at least 2.6).
->> >> >
->> >> > However, what we can do is to make sure the internal description of what the
->> >> > bits inside zone_reclaim_mode aligns with what it does in practice.
->> >> > Setting RECLAIM_ZONE does indeed run shrink_inactive_list, but a more holistic
->> >> > description would be to explain that zone reclaim modulates whether page
->> >> > allocation (and khugepaged collapsing) prefers reclaiming & attempting to
->> >> > allocate locally or should fall back to the next node in the zonelist.
->> >> >
->> >> > Change the description to clarify what zone reclaim entails.
->> >> >
->> >> > Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
->> >> > ---
->> >> >  include/uapi/linux/mempolicy.h | 2 +-
->> >> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >> >
->> >> > diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
->> >> > index 1f9bb10d1a47..24083809d920 100644
->> >> > --- a/include/uapi/linux/mempolicy.h
->> >> > +++ b/include/uapi/linux/mempolicy.h
->> >> > @@ -69,7 +69,7 @@ enum {
->> >> >   * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
->> >> >   * ABI.  New bits are OK, but existing bits can never change.
->> >> >   */
->> >> > -#define RECLAIM_ZONE	(1<<0)	/* Run shrink_inactive_list on the zone */
->> >> > +#define RECLAIM_ZONE	(1<<0)	/* Prefer reclaiming & allocating locally */
->> >> >  #define RECLAIM_WRITE	(1<<1)	/* Writeout pages during reclaim */
->> >> >  #define RECLAIM_UNMAP	(1<<2)	/* Unmap pages during reclaim */
->> >> >  
->> >> >
->> >> > base-commit: 25fae0b93d1d7ddb25958bcb90c3c0e5e0e202bd
->> >
->> > Hi Ying, thanks for your review, as always!
->> >
->> >> Please consider the document of zone_reclaim_mode in
->> >> Documentation/admin-guide/sysctl/vm.rst too.
->> >
->> > Yes, will do. Along with SJ's comment, I think that the information in the
->> > admin-guide should be sufficient enough to explain what these bits do, so
->> > I think my patch is not very necessary.
->> >
->> >> And, IIUC, RECLAIM_ZONE doesn't mean "locally" exactly.  It's legal to
->> >> bind to some node other than "local node".
->> >
->> > You are correct, it seems you can also reclaim on non-local nodes once you
->> > go further down in the zonelist. I think my intent with the new comment was just
->> > to indicate a preference to reclaim and allocate on the *current* node, as
->> > opposed to falling back to the next node in the zonelist.
->> >
->> > With that said, I think your comment along with SJ's feedback have gotten me
->> > to understand that we proably don't need this change : -) 
->> 
->> TBH, I think that it's good to make some change to the comments.
->> Because IMHO, the original comments are bound to some specific
->> implementation details.  Some more general words may be better for the
->> user space API description.
->
-> Hi Ying, sorry for the late reply.
->
-> I think that is a good point. Then maybe in that case, we can take SJ's comment
-> and leave information about both the implementation detail (i.e. that it will
-> perform shrink inactive_list on the zone), and that it will prefer this over
-> allocating on the next node as a general description of what happens?
+在 2025/07/31 9:28, Hou Tao 写道:
+> cc +linux-block
+> 
+> The disk->queue_kobj is initialized in add_disk() and is uninitialized
+> in del_disk(). And it seems that blk_unregister_queue() in del_disk()
+> doesn't uninitialize the queue_kobj completely, because it doesn't
+> expect the queue_kobj will be added again. I think the right place to
+> fix the problem is blk_unregister_queue(). How about just memset the
+> queue_kobj as zero after deleting the queue_kobj in blk_unregister_queue() ?
 
-Yes.  Something like this, or
+I think it's better to move kobject_init to allocate disk:
 
-Try to reclaim in the current node/zone before allocating on the fallback.
+1) alloc disk, kobject_init
+2) register q, kobject_add
+3) unregister q, kobject_del
+4) free disk, kobject_put
 
-> On that note, one thing that I felt was slightly undercaptured in
-> Documentation/admin-guide is what "zone reclaim" actually means. What it does
-> is of course well captured by its name, but it misses the nuance of preferring
-> reclaim over fallback allocation.
->
-> Actually the whole motivation behind all of this conversation is because I saw
-> zone reclaim preventing allocation into a second node in a 2-NUMA node system
-> and was a bit confused until I understood what the implication of having
-> zone reclaim was.
+With this, it's safe to add the kobject again.
 
-Yes.  It's good to improve the document.  If it makes you confusing, it
-may make others confusing too.
+Thanks,
+Kuai
 
-> Anyways, I can probably spin the patch to include information about what
-> zone reclaim is, in the comment block above the bits.
->
-> But please feel free to correct me if you feel that the descriptions available
-> in both the mempolicy.h uapi file or the Documentation/admin-guide is already
-> enough.
-
-Thanks for doing this.
-
----
-Best Regards,
-Huang, Ying
 
