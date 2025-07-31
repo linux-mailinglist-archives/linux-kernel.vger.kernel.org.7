@@ -1,192 +1,196 @@
-Return-Path: <linux-kernel+bounces-752631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914D9B17861
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:43:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40D40B17868
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCCD91C23EAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 142635432D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61306267F53;
-	Thu, 31 Jul 2025 21:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A23126B2D3;
+	Thu, 31 Jul 2025 21:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gjHSYwVl"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PkEPpbFA"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C343C38;
-	Thu, 31 Jul 2025 21:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BDB2907;
+	Thu, 31 Jul 2025 21:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753998221; cv=none; b=PMvfG7rU6Jvadalvx18Muc1gc4yBIcfpdlb1VNZKBsaaJxv8ElhCeVix2JUesnOkoV4WJE/Q7rRQcBU3nFT15oP3rJgQe8z+SiK3x5ZsSyn7JOUrdq8GJBYKBvhLkJ0Hx29jGRGQjD0slAedE6elLPCjC2wPlPeWN1WXxszQX2Q=
+	t=1753998366; cv=none; b=tEYNFrp0MnjrJ0wUaCSoX0cklfJL2tvbrnuB6q4A9jpMKp9+A2MWmBuL+OsQlmZefOhVINX2QD6q+IM0gGJMUFi0UJNELl1QC0TnhjjKjUP438YL3qZqNNvs5q/Rgs6tVlCXGd1SCQ4PlIvu/gjx5aMHJCKfxCYiOmen43Kx+5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753998221; c=relaxed/simple;
-	bh=WgyFwq8wPQfOS2gYZg3qreYEkQfmXIGbIkQtMqzdcG4=;
+	s=arc-20240116; t=1753998366; c=relaxed/simple;
+	bh=EAi11GnM5NOpqtZGQP1+CvoqjqN0gawbLhNDx0WJK9Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=amfMGRjHr2vvNKEZE2uXk/3Gm5hByWkUumS2g2OhC/OTiQ9Y35ErnCDOTswNezPcMk6H2aAaY4D+CE9RreVCLBo9GdYNHrfqxPIHFwtz2f8YjdwWbiCZSTAlp4nLw1wrvJJuTkhahxg8+Uqx3BtbZ8KTwIKLs0ksFmPDVtHW24Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gjHSYwVl; arc=none smtp.client-ip=209.85.128.42
+	 To:Cc:Content-Type; b=ktWLiyskBy/EV9OjED/7oEs587ZAvIDGsuYiCHSFYUUEHxSDIn5b33EMOvKSW/VnDd/mKUsolMyf/K3OS1GvDNDpNnjQ9QabRBiPhYGuVSJYnNjTSvR8L4Quj/YMbQgQnIUwSKL0166k5YpeZWlZhKk6+tVMgSqmjJ8r/gy3RR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PkEPpbFA; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45634205adaso1073175e9.2;
-        Thu, 31 Jul 2025 14:43:36 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-33216091f46so1914131fa.3;
+        Thu, 31 Jul 2025 14:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753998215; x=1754603015; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753998363; x=1754603163; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mVuwC8UGnhHwVB50C+DPCf7wPw8Gtqu+iJNVt6eueag=;
-        b=gjHSYwVlOSyO6IXq+xDLhyTOMyQcBCsXDAQgYk/62ERnqp8yWzhRySgFQIvHAAV4YL
-         SqpLvAKguOe3Ty2XFlWmeixWPI8C/XSGG/ueKj8IjOGCa9g3FdqrHMPcj4X9nQP8/UBD
-         y2gqi3QCb21rKDHol2+iwmhaycTXhg0gHJ4f++7sjAGvNM8A1JrjNwftcTPlo2RHMLzq
-         apbqA0A5rCKaMLPH89GKt98/tQjO02Elic2L8boMeVaS2RRYb2QK9VbQOFNUe0OZDyti
-         R5yv3xW9HynYkp2iW6TkJhrbzKHUbtxbl38+fEDTaDWa3y0raTUZeVwF7EN1kBr25Kkj
-         P4uQ==
+        bh=M5O3S8YHjEKxf35I4HemjKP04DsSFKh+k5HBzaaWKAg=;
+        b=PkEPpbFAnzme0GCIYc7NsFX2BJjflYaBTj+VN/wpl8d66/i9KQYA28eVI+xIO6WBdj
+         KAsSXLMshqgYk5Y/bbHO8GqbTqeBMFeMrszZRvtjn1tJvFyjXGM4yyphygyAb8F9iran
+         1QS84LrRnTZBvF7DUSAPbioWJM77gjY5qqatg0RUFMXwfrp44pTJnxUbbS8AfAcD1OTG
+         vqoMHlIsS71OMCAWaRVh1ZTVuoPQ4qXgCB+f6LlPKOg5s7pwlNQzq5acMMnff2Rq2zzY
+         3JiuB9Bp8YLjjkluXpHExYMqTD/7jegN3POZzqswhxJcAqT9df9tuUpYO1oW2sd9BAur
+         9WbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753998215; x=1754603015;
+        d=1e100.net; s=20230601; t=1753998363; x=1754603163;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mVuwC8UGnhHwVB50C+DPCf7wPw8Gtqu+iJNVt6eueag=;
-        b=OQrCSC8j6QOvWYrbEnY85b+T8L32wrGBbMxkAjJFuAMRM1u4Rq+GMLSyyTbEMszLTt
-         r9gpFR0BGj0uM1pe+th0J14ZOX+Q+t3WM6y3iBXdI7iKamADmyHIzwg8Qjt2xENVpCOM
-         xPGsbEShAlEmcCQA9QT2cX9iIzRb810KgQ6/WoVnvDUkzLOn1SgcArMmAyBOTtd5EQFC
-         LcRHR1vXcu+K3nNpQv90W4o0fWlqJxcIneiox6VSKCmHIyLOI8Jk4DTbqpj0jBsWt46a
-         cXFFzjtaE+dQaT0Zm1s97IU6ZyYgqopqb+vBpiGRqDmiJEtV/u4dukvRw0eHnVnLwIR5
-         0iag==
-X-Forwarded-Encrypted: i=1; AJvYcCUabhZyEoAGs9yJ5YaPTkl3DwyiecZT1bYBqLG4FSvrQY3VGfWYqLErU4cVcoJLRgKAlXqOp+ymNvUP@vger.kernel.org, AJvYcCUfm3r8wg2ngqutjGSJeeaSJTSE4uGv6Vkj/13aRjylgV5Usd71w9/dNk6ZzyNIS+GacyKgRwCvu4G0QkE8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBHFOW3u/2ActC6Cl22rO3MvGMyAEdYF+Bb+YQ4rn5Q+BH9QZB
-	MA76P1IVvyPWMIT4be4ceZUM41dBydZXWTea/y6OtJKdM3I1mWyWya3QCRM4kww5ztQV52s7sig
-	nwEdW5cBhmFh889BV8qH814bx9JyRQQ==
-X-Gm-Gg: ASbGncvL15rp2dD85dXW23irmwIwGIdKx19CrEGy4gzRd4tjGyzEReogy9+56ilmM+M
-	dCDvjpCTw/WyEmg/9ZgNbodJKsZMfLGBgNnRUUulsl7UE2ppMKfJna/Z0cr0HzMsVrtJIkiy2Ca
-	75cFloZQcumDLxgPLzVPCS6gMob31WTENeHuqouDJ1iywGj8j6LXXgAEzUQTmjCNPb3yzaKa7cI
-	JC/Itg=
-X-Google-Smtp-Source: AGHT+IHpB6Hl4ZebtAfNcyc2eS73Ko83njTG1t6gr49Z9kbw/LLnTogLy3mZ7uIf6yNx3otUoSfmmusKFErOVSMXlfQ=
-X-Received: by 2002:a05:600c:8b65:b0:441:b698:3431 with SMTP id
- 5b1f17b1804b1-45892bcfaf9mr70317255e9.28.1753998214809; Thu, 31 Jul 2025
- 14:43:34 -0700 (PDT)
+        bh=M5O3S8YHjEKxf35I4HemjKP04DsSFKh+k5HBzaaWKAg=;
+        b=exgbEPu9TZPoFRz0P8k0/thsddWNazC1UePwoMLYX5Juro8DDcpO4KqtbasM6J89v7
+         deHhRBMXqj3zVYqPVLsfxO+fD1XrOoV/+uTSeMg8V88DFS6qdi/0iXK5igsmGfl9eCjM
+         cmC2EzAfqNoGusXOMjwAegxLPiEA3U3ESSetaRuv0jgaZiFLeZmOW6xBLCV2MQ0Gvg3L
+         EMGVrhx4zDd/wyoH9U67PdmM/2c9/d6ZHWmvBol7nXj6OZuoY0y2ByePYBST+LA6s2lg
+         IcosHumGpxAFwnSMF13ts+kQ+VxPhoJK8fqtPohN+aW3lKs5mIQGbySPiStvv7VhvTXW
+         O/mA==
+X-Forwarded-Encrypted: i=1; AJvYcCUe+zi9Mq0WRY2GjJXwP219T3yHgdlXijvejjRYCsJeQe8Md4/QbDZVZia6KU6Tz6eg6iuC9PazqUE=@vger.kernel.org, AJvYcCV8phsYteUbWwpNFeoBl2oE3ePhn/Z8Pi4Sga4stlBeD13aD0JbWmM7V4Tuj9KFRF4t8qs39iWrZ0Fr@vger.kernel.org, AJvYcCVgYCDJz4+gouLdgioNAh4FOc4OQ+KkFQQA7q1o969/K7pwjjKE6kHJD7SV6xDHm8GBO5ayrzSG0HJ0PTm9@vger.kernel.org, AJvYcCWXnmSjJ4yZunxJMWHSuka0f8vMJvZS1mN1p/n1lMnP64q88mNRDZDeDLeyZDbKhy6z82meAfh1w3DWyUA=@vger.kernel.org, AJvYcCWxFTmZtIpeCkeJXx45bKSEZEZd/ydUucTzQpItXS/A9pc4KCi6IyeV3JNI4y5m4qZvxHvoDwah0xf9@vger.kernel.org, AJvYcCXZ7XMAgAEoJAB0sfAYS0I77SJRTqZEbL9MpkYQeuU9ODjG0czuxsQpEPsR1EOAvQp+rkz7IJjlQVKv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyd3IhTbNRDte6CqPxB/tl5Kl6HnuY2dpMYBi8mfGqKmweFUoa6
+	cFL14/l4G5puXMikfFFLzYJ8N33If3NPr9I2XYDSvbMqTTVAfx4FIm674tGAWRYmd6DcxhPnv+B
+	Bb150N70dP7SE2SfkGydqfx3iLolBdN4=
+X-Gm-Gg: ASbGnct8M7100N1MRwp0VV8r6EVAo4OKfH1TzcWYLQ8Odm612iytQ2OKJsGbUEwGT6b
+	uU007S1dSff4I2eSX641O0id7WbRRI5QejUZgmnrT/go5rqS3d4gFbShEssXh/Wy4E+jn8WOnGr
+	jSgY7A+A2kJf3mxjr0SYZzkdbJ6HcbvOamVjXvYTlG1pSNKQlpMv06aPjMkzJELBJyBIoNqttpC
+	720olQz3kH/yz0bOviYEU6rJ7Io
+X-Google-Smtp-Source: AGHT+IE68ugzaerYztp5XTRePDBYmlv+5hk7MWpjNQloFG3z43Am06Y5klzWQnNYHpsFYONif7VtzQJSYSRafwvOkDU=
+X-Received: by 2002:a05:651c:508:b0:32a:8591:6689 with SMTP id
+ 38308e7fff4ca-33224a725fbmr23822031fa.7.1753998362736; Thu, 31 Jul 2025
+ 14:46:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727165846.38186-1-alex.vinarskis@gmail.com>
- <20250727165846.38186-4-alex.vinarskis@gmail.com> <CAD=FV=Xd_xL=PYvVNqQWFZGmqN+Q=SvvaBTfbv9k+fDb8QwUtQ@mail.gmail.com>
- <CAMcHhXp47zmpoNYLCVRWWBk4HcYepgWX=3kWWzW8c8+a=2kE6A@mail.gmail.com> <CAD=FV=XT-BBRDBHVh2KBpJydSje7_eUF19OMu9e3CcRvDf7ung@mail.gmail.com>
-In-Reply-To: <CAD=FV=XT-BBRDBHVh2KBpJydSje7_eUF19OMu9e3CcRvDf7ung@mail.gmail.com>
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Date: Thu, 31 Jul 2025 23:43:23 +0200
-X-Gm-Features: Ac12FXza9SHOkn8kXzmnifFDDxgM-t8FELZFnQEfBU0CoG5aGwgQRlmAo1iH0MM
-Message-ID: <CAMcHhXrStcuc-ORy7_zhjwDv=r_bUONb812VGGp_5DYatNWhaw@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] drm/panel-edp: Add BOE NV140WUM-N64
-To: Doug Anderson <dianders@chromium.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
+In-Reply-To: <20250720-t210b01-v2-0-9cb209f1edfc@gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Thu, 31 Jul 2025 16:45:51 -0500
+X-Gm-Features: Ac12FXwmiSNEzxCmapZYKElVAjT1-RsIDF_NIv5WiOavZcEcHwc6rmCyCZHdaRw
+Message-ID: <CALHNRZ992mowGjQY7U6hLRsPemaE6AikK-rDp+_CZkGruzP2Qw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/17] arm64: tegra: Add Tegra210B01 support
+To: webgeek1234@gmail.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Nagarjuna Kristam <nkristam@nvidia.com>, JC Kuo <jckuo@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Mathias Nyman <mathias.nyman@intel.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-usb@vger.kernel.org, 
+	Thierry Reding <treding@nvidia.com>, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Azkali Manad <a.ffcc7@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 30 Jul 2025 at 23:44, Doug Anderson <dianders@chromium.org> wrote:
+On Sun, Jul 20, 2025 at 9:17=E2=80=AFPM Aaron Kling via B4 Relay
+<devnull+webgeek1234.gmail.com@kernel.org> wrote:
 >
-> Hi,
+> Also known as Tegra X1+, the Tegra210B01 has higher CPU and GPU clocks
+> than the original Tegra210.
 >
-> On Wed, Jul 30, 2025 at 1:38=E2=80=AFPM Aleksandrs Vinarskis
-> <alex.vinarskis@gmail.com> wrote:
-> >
-> > On Tue, 29 Jul 2025 at 17:50, Doug Anderson <dianders@chromium.org> wro=
-te:
-> > >
-> > > Hi,
-> > >
-> > > On Sun, Jul 27, 2025 at 9:58=E2=80=AFAM Aleksandrs Vinarskis
-> > > <alex.vinarskis@gmail.com> wrote:
-> > > >
-> > > > Timings taken from NV140WUM-N41. It is found in some arm64 laptops,
-> > > > eg. Asus Zenbook A14 UX3407QA.
-> > > >
-> > > > The raw edid of the panel is:
-> > > > 00 ff ff ff ff ff ff 00 09 e5 f6 0c 00 00 00 00
-> > > > 10 22 01 04 a5 1e 13 78 07 8e 95 a6 52 4c 9d 26
-> > > > 0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-> > > > 01 01 01 01 01 01 5d 30 80 a0 70 b0 28 40 30 20
-> > > > 36 00 2e bc 10 00 00 1a 00 00 00 fd 00 28 3c 4a
-> > > > 4a 0f 01 0a 20 20 20 20 20 20 00 00 00 fe 00 3d
-> > > > 4c 33 30 20 20 20 20 20 20 20 20 ff 00 00 00 fc
-> > > > 00 4e 56 31 34 30 57 55 4d 2d 4e 36 34 0a 01 f8
-> > > >
-> > > > 70 20 79 02 00 21 00 1d c8 0b 5d 07 80 07 b0 04
-> > > > 88 66 ea 51 cc 74 9d 66 52 0f 02 35 54 40 5e 40
-> > > > 5e 00 44 12 78 22 00 14 7f 5c 02 85 7f 07 9f 00
-> > > > 2f 00 1f 00 af 04 27 00 02 00 05 00 2b 00 0c 27
-> > > > 00 28 3b 00 00 27 00 28 2f 00 00 2e 00 06 00 44
-> > > > 40 5e 40 5e 81 00 1e 72 1a 00 00 03 71 28 3c 00
-> > > > 00 60 ff 60 ff 3c 00 00 00 00 e3 05 04 00 e6 06
-> > > > 01 01 60 60 ff 00 00 00 00 00 00 00 00 00 de 90
-> > > >
-> > > > Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-> > > > ---
-> > > >  drivers/gpu/drm/panel/panel-edp.c | 1 +
-> > > >  1 file changed, 1 insertion(+)
-> > > >
-> > > > diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/pa=
-nel/panel-edp.c
-> > > > index 9a56e208cbdd..b334926e96ed 100644
-> > > > --- a/drivers/gpu/drm/panel/panel-edp.c
-> > > > +++ b/drivers/gpu/drm/panel/panel-edp.c
-> > > > @@ -1947,6 +1947,7 @@ static const struct edp_panel_entry edp_panel=
-s[] =3D {
-> > > >         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c20, &delay_200_500_e80, =
-"NT140FHM-N47"),
-> > > >         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c93, &delay_200_500_e200,=
- "Unknown"),
-> > > >         EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200,=
- "NT116WHM-N44"),
-> > > > +       EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cf6, &delay_200_500_e50_p=
-2e80, "NV140WUM-N64"),
-> > >
-> > > Since this is a "guess" timing without any datasheet, I'd be more
-> > > comfortable picking the most conservative of the "cousin" timings. Ca=
-n
-> > > you re-send with "delay_200_500_e200" instead?
-> >
-> > Sure.
-> >
-> > Do I understand correctly that more conservative delay_200_500_e200
-> > will for sure not make it worse, since its more conservative? In that
-> > case can re-spin right away. Otherwise I would prefer to re-test it
-> > first, may take a few days as I do not own the hardware so need to
-> > propagate the change and get some feedback.
+> This series adds Tegra210B01 support to several drivers, as a slight
+> extension to the existing Tegra210 support. Then adds a generic soc dtsi
+> in the same vein as other tegra archs. And finally adds a barebones
+> device dts to be used for dt checks. Further device support will be
+> submitted in later series.
 >
-> Is anything really for sure? No. :-)
+> Earlier internal revisions of this series included changes to the dfll
+> driver to support Tegra210B01, but those did not work in testing, thus
+> was dropped from the series. A bindings update to match is still in the
+> series so the soc dtsi can declare a separate compatible from Tegra210,
+> preventing the driver from attempting incorrect initialization on
+> Tegra210B01.
 >
-> ...but it's _highly_ likely to not make it worse. Presumably you
-> tested without ${SUBJECT} patch and things worked OK aside from the
-> big warning splat in your logs about using the conservative timings.
-> Those conservative timings basically give you:
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v2:
+> - Fix patch 1 subject
+> - Add descriptive name in patch 8
+> - Fix copy-paste error in patch 13, discovered by kernel ci
+> - Link to v1: https://lore.kernel.org/r/20250714-t210b01-v1-0-e3f5f7de5dc=
+e@gmail.com
 >
-> desc->delay.enable =3D 200;
+> ---
+> Aaron Kling (16):
+>       dt-bindings: soc: tegra: pmc: Document Tegra210B01
+>       dt-bindings: phy: tegra-xusb: Document Tegra210B01
+>       dt-bindings: usb: tegra-xusb: Document Tegra210B01
+>       dt-bindings: usb: tegra-xudc: Document Tegra210B01
+>       dt-bindings: thermal: tegra: Document Tegra210B01
+>       dt-bindings: clock: tegra: Document Tegra210B01
+>       dt-bindings: clock: tegra124-dfll: Document Tegra210B01
+>       dt-bindings: tegra: Document Shield TV 2019
+>       phy: tegra: xusb: Add Tegra201B01 Support
+>       usb: xhci: tegra: Add Tegra210B01 support
+>       usb: gadget: tegra-xudc: Add Tegra210B01 Support
+>       thermal: tegra: Add Tegra210B01 Support
+>       clk: tegra: Add Tegra210B01 support
+>       arm64: tegra: Add BPMP node for Tegra210
+>       arm64: tegra: Add Tegra210B01 support
+>       arm64: tegra: Add support for NVIDIA Shield TV Pro 2019
 >
-> ...so you probably already tested with an enable timing of 200 and
-> using 200 here will give you the same conservative number for
-> "enable", will avoid some other conservative timings, and will avoid
-> the warning splat.
+> Azkali Manad (1):
+>       soc/tegra: pmc: Add Tegra210B01 support
+>
+>  Documentation/devicetree/bindings/arm/tegra.yaml   |    6 +
+>  .../bindings/clock/nvidia,tegra124-dfll.txt        |    1 +
+>  .../bindings/clock/nvidia,tegra20-car.yaml         |    1 +
+>  .../bindings/phy/nvidia,tegra210-xusb-padctl.yaml  |    4 +-
+>  .../bindings/soc/tegra/nvidia,tegra20-pmc.yaml     |    5 +-
+>  .../bindings/thermal/nvidia,tegra124-soctherm.yaml |    2 +
+>  .../devicetree/bindings/usb/nvidia,tegra-xudc.yaml |    2 +
+>  .../bindings/usb/nvidia,tegra210-xusb.yaml         |    4 +-
+>  arch/arm64/boot/dts/nvidia/Makefile                |    1 +
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   11 +
+>  .../boot/dts/nvidia/tegra210b01-p2894-0050-a08.dts |   10 +
+>  arch/arm64/boot/dts/nvidia/tegra210b01-p2894.dtsi  |   70 +
+>  arch/arm64/boot/dts/nvidia/tegra210b01.dtsi        |   64 +
+>  drivers/clk/tegra/Makefile                         |    1 +
+>  drivers/clk/tegra/clk-tegra-periph.c               |    3 +
+>  drivers/clk/tegra/clk-tegra210b01.c                | 3758 ++++++++++++++=
+++++++
+>  drivers/clk/tegra/clk-utils.c                      |    5 +-
+>  drivers/clk/tegra/clk.c                            |   19 +-
+>  drivers/clk/tegra/clk.h                            |    6 +
+>  drivers/phy/tegra/xusb-tegra210.c                  |   41 +
+>  drivers/phy/tegra/xusb.c                           |    4 +
+>  drivers/phy/tegra/xusb.h                           |    1 +
+>  drivers/soc/tegra/pmc.c                            |  117 +
+>  drivers/thermal/tegra/soctherm.c                   |    4 +
+>  drivers/thermal/tegra/soctherm.h                   |    1 +
+>  drivers/thermal/tegra/tegra210-soctherm.c          |   78 +
+>  drivers/usb/gadget/udc/tegra-xudc.c                |   20 +
+>  drivers/usb/host/xhci-tegra.c                      |   25 +
+>  include/dt-bindings/clock/tegra210-car.h           |    5 +-
+>  29 files changed, 4262 insertions(+), 7 deletions(-)
+> ---
+> base-commit: 347e9f5043c89695b01e66b3ed111755afcf1911
+> change-id: 20250509-t210b01-c154ca0f8994
+>
+> Best regards,
+> --
+> Aaron Kling <webgeek1234@gmail.com>
+>
+>
 
-Indeed, this is mostly to get rid of the warning, and it worked
-perfectly fine without adjusted timings.
-Thanks for the explanation! Will re-spin shortly.
+Reminder about this series.
 
-Alex
-
->
-> ...and the "p2e80" doesn't do anything useful when enable is 200.
->
->
-> -Doug
+Aaron
 
