@@ -1,127 +1,152 @@
-Return-Path: <linux-kernel+bounces-752015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75952B17066
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:33:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20B8B17068
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:33:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E303B6B2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:32:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D0AE7B185F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AEE2BFC8F;
-	Thu, 31 Jul 2025 11:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C90A2C08D4;
+	Thu, 31 Jul 2025 11:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e/qe3p+e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g/Fc1qAt";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ybpRAbVe";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="g/Fc1qAt";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ybpRAbVe"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377D22C9A;
-	Thu, 31 Jul 2025 11:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679252264C7
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 11:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753961594; cv=none; b=iKIZaSICEhDCkFq/TKCFbsCFice1Pe+TISfBxivRkc5wpR0Z7kjCXg2l8yus1jzQRecTc3/c1y8so+qhCBfV0rjiHdoz6kbTgNYJMexahm0uB5Cu6ohEia9NpvzpFQaWUwKQVsV2lhByyao3QjTu6VWM+vjRCVfQUQgkqYIZIJo=
+	t=1753961604; cv=none; b=GsICFEdtjrW94b+RQ6Yy64McXpSXLOeELjYGEWNj6hRDUciEwAM88N0fgdRKDUCpOja7LTYdLTolnCMO5k3ZMWEjkwJOGmEBDsDtkCioQbyAA4CYibBcflW8F4q1Le3jPjaxpfjyQ/f+gfUyZJ6ltHPz4gc2ORgF67HG5J5mLJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753961594; c=relaxed/simple;
-	bh=sTbx7McNSccTMzi7rESQoqeGOeBghvgV4NqCILAaT3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krV+Sbyqe//1+E7z1LV91p6CGlKRR/RdLdFX2BnPcGRWg6wJ6DdvImU22m8cPYE0085w5vYivzgW/6QAh2G6dYa9e3Vkm8W6q2tTR/4f7ueLTnHR8hU+UmK6qGI57JZp8YA/rHejROS0Q/ONTgp7UlzJoV7C8hecx7I9e58vBYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e/qe3p+e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25382C4CEEF;
-	Thu, 31 Jul 2025 11:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753961593;
-	bh=sTbx7McNSccTMzi7rESQoqeGOeBghvgV4NqCILAaT3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e/qe3p+eRLamN7D5azYA3q3rxP2X2iSZAfM7QwsPKP6E8FP9Yg2Nv8oesgdd0gTUT
-	 S1ZgL+2m0/CRdjMDGQJl4qYVlbJ7Ms6xuSLFxMczXq/egP8WqscurAeOHlMs0m5amy
-	 MEazmBmhAIK9DVgJSBi4JkJEpIZ/ozykpJAQJixkeKNijlMmK5NFEdPrMnkYbZivJf
-	 wUnO3nm65BPSCDjrmPt95WU80G7p6nPChf97RLIepkPaWqB8mjx9d4GXOANIkpPaeU
-	 KTwQjdavFgRJV3sBYBWcIvVdUwfrutgOTc8bFqi0wCnfQfiZOK4EfIDCTaLg+WO2C+
-	 BZsgjIxE10qZg==
-Date: Thu, 31 Jul 2025 13:33:09 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Luis Henriques <luis@igalia.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-Message-ID: <20250731-diamant-kringeln-7f16e5e96173@brauner>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs>
- <87freddbcf.fsf@igalia.com>
+	s=arc-20240116; t=1753961604; c=relaxed/simple;
+	bh=g3TkOqEUdhM1Xe1A8vnvnXNQBwm1iUoPYCFQf2FKwEw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=T1YMjanVW0qwbma2fXBT/S0orJ3TjtPTLEqML090g5z/qhARMeit8iIk7TpqSKmR6uj8m+SS+jzHgDpdMfYrUYH8FhkmPV0SNKEQssb4VrEsAcKtU5Xer227Ho6PGXjCp7CiyZOQ08cfDGYLxseQ2IhioJuUvEaxhsDjAhGCP5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g/Fc1qAt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ybpRAbVe; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=g/Fc1qAt; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ybpRAbVe; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7113421197;
+	Thu, 31 Jul 2025 11:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753961594; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XgIYys/l/TmjNRph/+0+wqV0Ch8g097vPIK0jopUOqo=;
+	b=g/Fc1qAtOvUTTGFMj61yxfAkEQ41w/KSAkUk99ljPg1t+EfJnglJ3hn8b0PiaSNdw//DXZ
+	FiaG+YBMnIgXsqUabIyQvYQs90qnB3vagA2CFU1b/Q/qMr0NtSiXjVZ3n3qv//0XvugY7O
+	KDhY5ZegHtR78BeXsitKsBMgjPC+gGE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753961594;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XgIYys/l/TmjNRph/+0+wqV0Ch8g097vPIK0jopUOqo=;
+	b=ybpRAbVeUCkXZPH313A8I6L6Nk5uqMoz1CQGXlUpWuDy+RbMQV1YzUHOsq80A8MZg7Luf+
+	8JdlODa07+vytiBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753961594; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XgIYys/l/TmjNRph/+0+wqV0Ch8g097vPIK0jopUOqo=;
+	b=g/Fc1qAtOvUTTGFMj61yxfAkEQ41w/KSAkUk99ljPg1t+EfJnglJ3hn8b0PiaSNdw//DXZ
+	FiaG+YBMnIgXsqUabIyQvYQs90qnB3vagA2CFU1b/Q/qMr0NtSiXjVZ3n3qv//0XvugY7O
+	KDhY5ZegHtR78BeXsitKsBMgjPC+gGE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753961594;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XgIYys/l/TmjNRph/+0+wqV0Ch8g097vPIK0jopUOqo=;
+	b=ybpRAbVeUCkXZPH313A8I6L6Nk5uqMoz1CQGXlUpWuDy+RbMQV1YzUHOsq80A8MZg7Luf+
+	8JdlODa07+vytiBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2B19713A43;
+	Thu, 31 Jul 2025 11:33:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YY2OCHpUi2h/RQAAD6G6ig
+	(envelope-from <jdelvare@suse.de>); Thu, 31 Jul 2025 11:33:14 +0000
+Date: Thu, 31 Jul 2025 13:33:11 +0200
+From: Jean Delvare <jdelvare@suse.de>
+To: linux-scsi@vger.kernel.org
+Cc: James Smart <james.smart@broadcom.com>, Dick Kennedy
+ <dick.kennedy@broadcom.com>, "James E.J. Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] scsi: lpfc: Fix wrong function reference in a comment
+Message-ID: <20250731133311.52034cc4@endymion>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87freddbcf.fsf@igalia.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	HAS_ORG_HEADER(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
 
-On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
-> Hi Darrick,
-> 
-> On Tue, Jul 29 2025, Darrick J. Wong wrote:
-> 
-> > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
-> >> Hi!
-> >> 
-> >> I know this has been discussed several times in several places, and the
-> >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
-> >> able to restart a user-space FUSE server.
-> >> 
-> >> While looking at how to restart a server that uses the libfuse lowlevel
-> >> API, I've created an RFC pull request [1] to understand whether adding
-> >> support for this operation would be something acceptable in the project.
-> >
-> > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> > could restart itself.  It's unclear if doing so will actually enable us
-> > to clear the condition that caused the failure in the first place, but I
-> > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> > aren't totally crazy.
-> 
-> Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
-> the restart itself.  Instead, it simply adds some visibility into the
-> opaque data structures so that a FUSE server could re-initialise a session
-> without having to go through a full remount.
-> 
-> But sure, there are other things that could be added to the library as
-> well.  For example, in my current experiments, the FUSE server needs start
-> some sort of "file descriptor server" to keep the fd alive for the
-> restart.  This daemon could be optionally provided in libfuse itself,
-> which could also be used to store all sorts of blobs needed by the file
-> system after recovery is done.
+Function scsi_host_remove doesn't exist, the actual function name is
+scsi_remove_host.
 
-Fwiw, for most use-cases you really just want to use systemd's file
-descriptor store to persist the /dev/fuse connection:
-https://systemd.io/FILE_DESCRIPTOR_STORE/
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+---
+ drivers/scsi/lpfc/lpfc_vport.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
-> >> libfuse data structures so that a server could set some of the sessions'
-> >> fields.
-> >> 
-> >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
-> >> pass it to libfuse while recovering, after a restart or a crash.  The
-> >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
-> >> course.  And there are probably other data structures that user-space file
-> >> systems will have to keep track as well, so that everything can be
-> >> restored.  (The parameters set in the INIT phase, for example.)
-> >
-> > Yeah, I don't know how that would work in practice.  Would the kernel
-> > send back the old connection flags and whatnot via some sort of
-> > FUSE_REINIT request, and the fuse server can either decide that it will
-> > try to recover, or just bail out?
-> 
-> That would be an option.  But my current idea would be that the server
-> would need to store those somewhere and simply assume they are still OK
+--- linux-6.16.orig/drivers/scsi/lpfc/lpfc_vport.c
++++ linux-6.16/drivers/scsi/lpfc/lpfc_vport.c
+@@ -666,7 +666,7 @@ lpfc_vport_delete(struct fc_vport *fc_vp
+ 	 * Take early refcount for outstanding I/O requests we schedule during
+ 	 * delete processing for unreg_vpi.  Always keep this before
+ 	 * scsi_remove_host() as we can no longer obtain a reference through
+-	 * scsi_host_get() after scsi_host_remove as shost is set to SHOST_DEL.
++	 * scsi_host_get() after scsi_remove_host as shost is set to SHOST_DEL.
+ 	 */
+ 	if (!scsi_host_get(shost))
+ 		return VPORT_INVAL;
 
-The fdstore currently allows to associate a name with a file descriptor
-in the fdstore. That name would allow you to associate the options with
-the fuse connection. However, I would not rule it out that additional
-metadata could be attached to file descriptors in the fdstore if that's
-something that's needed.
+
+-- 
+Jean Delvare
+SUSE L3 Support
 
