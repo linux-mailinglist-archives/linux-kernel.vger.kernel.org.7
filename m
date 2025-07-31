@@ -1,154 +1,163 @@
-Return-Path: <linux-kernel+bounces-751808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4841AB16DB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:39:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D543B16D9F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245864E66EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:39:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B2303BB913
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D2729DB99;
-	Thu, 31 Jul 2025 08:39:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F0029E110;
+	Thu, 31 Jul 2025 08:34:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="sY/HNNYy"
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p8G/WOVv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE7AA29E110;
-	Thu, 31 Jul 2025 08:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1045220C009;
+	Thu, 31 Jul 2025 08:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753951186; cv=none; b=GXo56YxfZFCIkbhM3koy01PaYd81qmqtey0vQ0KA/BnHUj4V8tkrrH8L9re/TpGE4CUTPn2FaQ6fehvbDbd+9g3IsjIeU1v+NHcScruuO2s2OIokWPShjrX1PQ5aHLRkIopl39p8QJsSP5b4FXzqA0hAHVV+Qq33GJ2d9SdzJfk=
+	t=1753950898; cv=none; b=t8BnTOzQ4Ovy1xydlfRsDleNP0EYbHzKfiYBbAvSf5X9D1B4umIu3tLQng0T6bMSqhkSzO4shD3NYa+XXwzkPXSeeiOYvDfjJ/E0ZzKbz0Pfuj/ZFjvwNU4y9KxSpZXBhjJjxN4T7o6nkEdkjS5CGB3ulIbeWe+TYvqjTYuPo/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753951186; c=relaxed/simple;
-	bh=NxSgPn38YiZ7O0Zhbkwfd9x5HK3nHhT92+wFPLIaR1Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qe7h3uP6kyaA6h2KECVtdXqPSy2BB5DdHI8t3fbxMSxv0tKY7VvZoUvimtHVy4PCuAO6USAk26rD5VPUerhKujMvPfv+qP7Nco+c+PWMIv2C7FnOecJBAZLf01ZyVMU9zKsNBshwo2UbyZD0lWtP02DAk8pSmE4Ix46mPUbJwK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=sY/HNNYy; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 237E81489CC2;
-	Thu, 31 Jul 2025 10:33:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1753950840; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=zc3Mx14j8K80xB0lRd9HDLb8Pz9PXWcCBqfYHc925VM=;
-	b=sY/HNNYyiMmkn4S1KEzQCimuzxSbRTRnnZ/kMULW5UTOdF773t8T3R7UQl4NWwYr0bBfT8
-	QDgakuhwq8NMo/XbLR8QYWBDLoxe/KWgFmueynJmzYTX2vZTbhhnHXiKMNLqU3InIRSOtP
-	z6iNOjBafb7Ns24Gws9mpjhDPWtdkqxPRp+yzjbtnF4wtZ8+ZlyEoESlwrQhy4REPuMbxc
-	UToPwhbDNQF2A1pPfDYlMs4o4axJXYEgTryDNrHfu1PAu8UtyUDwqFlrqsaLfe3bnnhHRH
-	azgFqqgobF+DnFZLnCLhWB2cDj7AQhaHNjORNHeijxTBPGjmNX7ZPHEwwqdiVw==
-Date: Thu, 31 Jul 2025 10:33:55 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: Rob Herring <robh@kernel.org>
-Cc: Shiji Yang <yangshiji66@outlook.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/2] dt-bindings: nvmem: add env-size property for u-boot
- env layout
-Message-ID: <20250731-banana-doormat-bd7d3a484dfc@thorsis.com>
-Mail-Followup-To: Rob Herring <robh@kernel.org>,
-	Shiji Yang <yangshiji66@outlook.com>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-References: <OSBPR01MB1670FF3930C3B1736E7EFC23BC24A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
- <OSBPR01MB16702D6947772E526F64D63CBC24A@OSBPR01MB1670.jpnprd01.prod.outlook.com>
- <20250730235214.GA1907865-robh@kernel.org>
+	s=arc-20240116; t=1753950898; c=relaxed/simple;
+	bh=VCSvo3FC7RmoaRuh+VHn0AuTpu+7KIZOOhf/Aea7hhk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=m/dfC/PLDVJvj7+x4NJgHzBwCdRlV2OwNUUHnLybGUT/QuP4tytXmexxeR++7le7qkxiKtog5sYRmyXS4VL7tro9wlvXFhaHb57n3GrNtJ2l9KqKJPm29xGXQUSsM43Ybw2m1YBfUOD4WpLYeNN+jP3uTtD4vwIcJWVNyB8Fphg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p8G/WOVv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56V1fPxG031810;
+	Thu, 31 Jul 2025 08:34:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	N1hpmdvYzgq5FYOLzTDfoQbbdXIbPlXHF+uABAReT/w=; b=p8G/WOVvjUiIk0wR
+	5uVFfXMM9cJp1vJbcFWbL2QxFso9goXnt2/gbsGYvzGi+ZSO6qfKxdBfV+na5muB
+	w/PygNZpUItknXwIoe+y6ZNMdh4Pla7XGzARcAb2IpNlHPJt2vjjV3yQCLCVFumk
+	QSd3HQfrxD/J+djZneahU5PPLIJNeGJeT2ietqa8Yddd3PW0BWv3/trTj6mpaqog
+	licWV2OtC2wZG2rMa6bF5+uHaRK+M+fGXyEzMovI5mz2zcYk5yGxDANcaD0ycG+T
+	8DYG28i+tvSfyrJiHIujuxMhl7EzIOsTTctXaJcpkzTXQkqeJTclkMi7IpszXVGV
+	WDkkJg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 485v1xmey3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 08:34:36 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56V8YaGN004767
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 08:34:36 GMT
+Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 31 Jul
+ 2025 01:34:31 -0700
+Message-ID: <40ace3bc-7e5d-417a-b51a-148c5f498992@quicinc.com>
+Date: Thu, 31 Jul 2025 14:04:26 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730235214.GA1907865-robh@kernel.org>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Enable MCQ support for
+ UFS controller
+To: Krzysztof Kozlowski <krzk@kernel.org>, <mani@kernel.org>,
+        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>, <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
+ <20250730082229.23475-3-quic_rdwivedi@quicinc.com>
+ <eab85cb3-7185-4474-9428-8699fbe4a8e5@kernel.org>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <eab85cb3-7185-4474-9428-8699fbe4a8e5@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDA1OCBTYWx0ZWRfX3PSo2kA0jfdI
+ j104pu3PEbEv2O7UB8ikFcC7SDFNHvsyHR1URyx9QBBV1JPlOnclQYtIUfKjXi71KlGsQlaY+8C
+ Aju492vgefYdvbM6mxL92DKV7rmdrxmZxnArQqQ7Opy816BQo2Wntecx/qOa87GNOMBO2WHNDuw
+ jRw5d4tZ4kxfiSy1nB2KTOfMsiVBRLEX60GhzgNcEhMBjFTRzegzdKYjaaalaCI0/N+YMmbN6EP
+ jb2fn7vBgTPDAJ//Z9bD24zYUlvcKy1atXbZ/co5yY3VLlArov6iCynq0P3FYuOLAvHoM9l86Dk
+ HJviXwBli9JRdmcFyivQTGytQZsjpZlxwghyD26pHSKDu4uNqEBLZGjla67rP1af0eJWSKaoU/r
+ cMSdiNYxcid0uykTXN4umaPFU9JgBiWGfs6tGm63iL+wEtk7ynwxSGT5MMjCbKAGACe49H7L
+X-Authority-Analysis: v=2.4 cv=JKw7s9Kb c=1 sm=1 tr=0 ts=688b2a9c cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=tmieQKLTGtwJ4DsHDJoA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: beaF7mcItC4dzvdkle8yG7bLbbMdBIjS
+X-Proofpoint-GUID: beaF7mcItC4dzvdkle8yG7bLbbMdBIjS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-31_01,2025-07-31_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 mlxscore=0 priorityscore=1501 spamscore=0 suspectscore=0
+ phishscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0 clxscore=1015
+ mlxlogscore=999 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507310058
 
-Hei hei,
 
-just hooking in, because it relates to a U-Boot feature I'm using, too.
 
-Am Wed, Jul 30, 2025 at 06:52:14PM -0500 schrieb Rob Herring:
-> On Wed, Jul 30, 2025 at 09:17:47PM +0800, Shiji Yang wrote:
-> > This newly introduced property allows users to declare the size of
-> > the environment storage area.
+On 31-Jul-25 12:15 PM, Krzysztof Kozlowski wrote:
+> On 30/07/2025 10:22, Ram Kumar Dwivedi wrote:
+>> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
+>> on the Qualcomm SM8650 platform by updating the device tree node. This
+>> includes adding new register regions and specifying the MSI parent
+>> required for MCQ operation.
+>>
+>> MCQ is a modern queuing model for UFS that improves performance and
+>> scalability by allowing multiple hardware queues. 
+>>
+>> Changes:
+>> - Add reg entries for mcq_sqd and mcq_vs regions.
+>> - Define reg-names for the new regions.
+>> - Specify msi-parent for interrupt routing.
+>>
+>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 9 ++++++++-
+>>  1 file changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> index e14d3d778b71..5d164fe511ba 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> @@ -3982,7 +3982,12 @@ ufs_mem_phy: phy@1d80000 {
+>>  
+>>  		ufs_mem_hc: ufshc@1d84000 {
+>>  			compatible = "qcom,sm8650-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
+>> -			reg = <0 0x01d84000 0 0x3000>;
+>> +			reg = <0 0x01d84000 0 0x3000>,
+>> +			      <0 0x01da5000 0 0x2000>,
+>> +			      <0 0x01da4000 0 0x0010>;
 > 
-> Why do you need it to be less than the partition size? They commit msg 
-> needs to explain that.
-
-+1
-
-> The partition size for fixed partitions in particular are purely a DT 
-> construct. No reason the partition size can't always be the env size.
-
-You can set CONFIG_ENV_RANGE and CONFIG_ENV_SIZE to different values
-in U-Boot to allow bad block handling.  I have a board here where the
-U-Boot env is stored directly in NAND flash.  The mtd partition size
-is 2 times the nand block size (ENV_RANGE=0x40000) while the env size
-is exactly one nand block size (ENV_SIZE=0x20000).  So the partition
-is 2 blocks, but the env size is only 1 block.  This way the first
-block can become bad and U-Boot will skip it and use the second block.
-This would not be possible if the env would always use the whole
-partition.  The usable size of the partition would be too small to
-keep the env then.
-
-The help text for this is present in U-Boot since 2010, so I guess the
-feature is there even longer:
-
-  - CONFIG_ENV_RANGE (optional):
-  
-    Specifies the length of the region in which the environment
-    can be written.  This should be a multiple of the NAND device's
-    block size.  Specifying a range with more erase blocks than
-    are needed to hold CONFIG_ENV_SIZE allows bad blocks within
-    the range to be avoided.
-
-HTH & Greets
-Alex
-
 > 
-> > Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
-> > ---
-> >  .../devicetree/bindings/nvmem/layouts/u-boot,env.yaml      | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml b/Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml
-> > index 56a8f55d4..e0b65a53e 100644
-> > --- a/Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml
-> > +++ b/Documentation/devicetree/bindings/nvmem/layouts/u-boot,env.yaml
-> > @@ -46,6 +46,12 @@ properties:
-> >      type: object
-> >      description: Command to use for automatic booting
-> >  
-> > +  env-size:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    description:
-> > +      Size of the environment storage area in bytes. If this property
-> > +      is not defined, the default size is the partition size.
-> > +
-> >    ethaddr:
-> >      type: object
-> >      description: Ethernet interfaces base MAC address.
-> > @@ -85,6 +91,7 @@ examples:
-> >          env: partition@40000 {
-> >              compatible = "u-boot,env";
-> >              reg = <0x40000 0x10000>;
-> > +            env-size = <0x1000>;
-> >  
-> >              mac: ethaddr {
-> >                  #nvmem-cell-cells = <1>;
-> > -- 
-> > 2.50.0
-> > 
+> These are wrong address spaces. Open your datasheet and look there.
+>
+Hi Krzysztof,
+
+I’ve reviewed it again, and it is correct and functioning as expected both on our upstream and downstream codebase.
+I think it is probably overlooked by you. Can you please double check from your end?
+
+Thanks,
+Ram.
+ 
 > 
+> Best regards,
+> Krzysztof
+
+
+
 
