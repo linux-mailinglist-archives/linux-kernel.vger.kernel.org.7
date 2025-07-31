@@ -1,146 +1,155 @@
-Return-Path: <linux-kernel+bounces-752159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 278ABB171F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:23:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F5C3B17201
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 625F15855DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:23:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE5161AA7BA2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592222C3258;
-	Thu, 31 Jul 2025 13:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658552C15BD;
+	Thu, 31 Jul 2025 13:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="jrorTtlG"
-Received: from sinmsgout01.his.huawei.com (sinmsgout01.his.huawei.com [119.8.177.36])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2UHhW/3q"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF258A94A;
-	Thu, 31 Jul 2025 13:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F238A94A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753968189; cv=none; b=ZlzUZE8+Fok922RcIEeCp79SH1Ffp0+lkMutI8jTBGJXzO1UpT9RtyPNSrTXWz4n+IYMYMMUR62Ndii7Anzp2I3npTwakKqL7bNjb29Cif+zYVHGgvOQ8uZQSq+Nc4uumSZf4wBTXIGgdeVnzSW0fopqqM8+lyz13bsWk0+rGSg=
+	t=1753968415; cv=none; b=Qxcbkxus65F38ZrS/WEQprhAQowsc3KG/SDzVzog/PnNzRxx37d3LswyV5oPf4nU8erZA0QlFgYG1EpAZBjC/T1w3X4wWdsTfix5HZgU+MK2Hk/m8QQGJRNQPr9om/d9iqpMZlv7rWe5QLzCsEL2oDGYUj92g51woOcRJCIwlkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753968189; c=relaxed/simple;
-	bh=ylSWYew4DfoO+Ep4rDDeoRAOzKWkyzsvf10jdAPVJKs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dr1SISY586NIsuVVIWVkhibouiEsZweZSwzjGRNnbBrmo4zwU1xezw5g65zDn40YPAkF6RHir2tyB3OuUrjqkAct4ZjwgbgQDUQJYl7yDEqxvW1q8Pvg4cVmCtLzN5qPv3KgAnE2KmZ9xDhjyndbOBC0pQuJfiSvMOgB9cXFn4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=jrorTtlG; arc=none smtp.client-ip=119.8.177.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=++Ul7pOXhQYTZqPFLwUChurRVzJ0hpxMT+1uztC97zc=;
-	b=jrorTtlGUACY8MmSwYPSOO/hRhiHt/OPDkn5sJe79/18ur0SnNXeM0hAVOpnMKascymsch3pd
-	iSMH5orswV5xVxBDRUSMBrF6lPmVarteVIBUNYr50kJalaHWE4I1ciniVVsNXRx9DpjGEmYOH/o
-	uo5Z/mnqudZINFvTnLHB4lE=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.35])
-	by sinmsgout01.his.huawei.com (SkyGuard) with ESMTPS id 4bt8qd4P3Bz1P7Jt;
-	Thu, 31 Jul 2025 21:21:33 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bt8qH75V2z6D9Ym;
-	Thu, 31 Jul 2025 21:21:15 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8373A1402EA;
-	Thu, 31 Jul 2025 21:22:53 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 31 Jul
- 2025 15:22:52 +0200
-Date: Thu, 31 Jul 2025 14:22:50 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-CC: Aneesh Kumar K.V <aneesh.kumar@kernel.org>, Dan Williams
-	<dan.j.williams@intel.com>, <linux-coco@lists.linux.dev>,
-	<kvmarm@lists.linux.dev>, <linux-pci@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <aik@amd.com>, <lukas@wunner.de>, Samuel
- Ortiz <sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>, Suzuki K
- Poulose <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
-	"Catalin Marinas" <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
-	"Will Deacon" <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
-	<gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH v1 11/38] KVM: arm64: CCA: register host tsm
- platform device
-Message-ID: <20250731142250.00005651@huawei.com>
-In-Reply-To: <20250731121133.GP26511@ziepe.ca>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
-	<20250728135216.48084-12-aneesh.kumar@kernel.org>
-	<20250729181045.0000100b@huawei.com>
-	<20250729231948.GJ26511@ziepe.ca>
-	<yq5aqzxy9ij1.fsf@kernel.org>
-	<20250730113827.000032b8@huawei.com>
-	<20250731121133.GP26511@ziepe.ca>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753968415; c=relaxed/simple;
+	bh=s5K60HuqKi/KQbAabFyUuU+SYNPEWKz7ZtckeT8XJU0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Content-Type; b=kpWaZDBdQku9ZzFyGYDVgsuIGQnmReVI9DoLlXV0/GsSEj4YS8ZbFSbyW79tnWY5TAJomaDh5HVCFict5ZqLSWFkeXpAGpT+MOHTWALaLB4F9XA8U18OMj6skYNe7vebhvw4GfA2+EOtWmKr6u4qKFt8zHJheaRYmG1OAHlFobE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2UHhW/3q; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-2400499ab2fso7932265ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:26:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753968413; x=1754573213; darn=vger.kernel.org;
+        h=to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=CZ1BBbI1GI1D/xuoVq0pA5HecVEJHni+Sx/JIlmlZeo=;
+        b=2UHhW/3qo+XvNklpx2Zf1cfUe9FQqfhaMUfmHQxTDwO3sf90WFgsZmSNcqd1/T0MZQ
+         fLdVeEbDlzhh/gG2sq6RSARPcr5cKL4hgh6jrIuqAJG0ERhcql+PIOjN3iHGcFTE+sWR
+         lTF8nfsWL5HdFUwLk4rjKP+VcYNyqu8pfC8dEBXypVaf/5GQiX31vc0ZQJU71zw7IRKw
+         9dQwvemEsVf4Qy3m9YUb6E8kh7zto0h9cuRi7bAnkTv6W0bYLdj6/Ylnzj6eVn2nAcyb
+         eomdToUfwI+LQzNCyU4rx1Ots75Yllo0YvbUDakVlNC797EB6PN42vJjLpY6dScSS5Yj
+         eZ/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753968413; x=1754573213;
+        h=to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CZ1BBbI1GI1D/xuoVq0pA5HecVEJHni+Sx/JIlmlZeo=;
+        b=GzZOgjsotUX/HsT2Y6YBMYZDeH0Hr+KY6cgffh+HPiXHug8Oxn9QrHujMDuvmM5ehE
+         sQjkNQ4sP5g7N3OkrpD6lblaaQPRCes6ldJm0y83bBhFtoAxG4gkAD2PtfCNiZpCdjti
+         Usv+ntp0r9nIn5+l9t79ou0I1fp0C4mUfs0j4yG4c7iYa9XPOIavRW9pCJ8+oSdfvkY1
+         gmcbuAwVoKQu/VGrMJler9IJ2fbk8E3OHA+u2OVh5wjMPsPIsJVcnbVeJb1q8I0XXW7p
+         gLp7G/y01egTZtkQB+TrMkaZUjicXWF18+7OE6oGwmotz0gT/uJgvbPOLNodjghhrmiG
+         Sa7g==
+X-Forwarded-Encrypted: i=1; AJvYcCUnjqzZjRwXUCC4rSEgfOPPkXZj9MMZF3bqf80O3fqox6wukVORcj90nsH4aHeHJlIWtJVfzFjfnyAh0Cg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTLxTMjhaSTA69WqgLKoJD+1tW0pLoabQnsp5I+LbgZ9qsIFQO
+	nSLt2YRqzrhnAOLh+cEG5L30MV7cgkbsMUsLVq0iC6v0QmHqNt7UUc+mtGiWNnNCK9zs8anx0bP
+	cYvgLDw==
+X-Google-Smtp-Source: AGHT+IF4XYHD6g0RpVLaPA/Z9xhsLWnh9zkljcdbfUmKINOz5fbgty3pEv0DxmPz+MtPY4xGE8tILDoyq3E=
+X-Received: from plsk22.prod.google.com ([2002:a17:902:ba96:b0:23f:ecf6:4649])
+ (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:eb8b:b0:240:6fd0:25b7
+ with SMTP id d9443c01a7336-24096b1fed8mr105313315ad.38.1753968413449; Thu, 31
+ Jul 2025 06:26:53 -0700 (PDT)
+Date: Thu, 31 Jul 2025 06:26:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250731132615.938435-1-yuzhuo@google.com>
+Subject: [PATCH v1 0/5] perf bench: Add rcu to the 'bench sync' collection
+From: Yuzhuo Jing <yuzhuo@google.com>
+To: Davidlohr Bueso <dave@stgolabs.net>, "Paul E . McKenney" <paulmck@kernel.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Frederic Weisbecker <frederic@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang@linux.dev>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Liang Kan <kan.liang@linux.intel.com>, Yuzhuo Jing <yzj@umich.edu>, 
+	Yuzhuo Jing <yuzhuo@google.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org, 
+	rcu@vger.kernel.org, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 31 Jul 2025 09:11:33 -0300
-Jason Gunthorpe <jgg@ziepe.ca> wrote:
+Add an 'bench sync rcu' benchmark, using the kernel's rcuscale module.
 
-> On Wed, Jul 30, 2025 at 11:38:27AM +0100, Jonathan Cameron wrote:
-> > On Wed, 30 Jul 2025 14:12:26 +0530
-> > "Aneesh Kumar K.V" <aneesh.kumar@kernel.org> wrote:
-> >   
-> > > Jason Gunthorpe <jgg@ziepe.ca> writes:
-> > >   
-> > > > On Tue, Jul 29, 2025 at 06:10:45PM +0100, Jonathan Cameron wrote:
-> > > >    
-> > > >> > +static struct platform_device cca_host_dev = {    
-> > > >> Hmm. Greg is getting increasingly (and correctly in my view) grumpy with
-> > > >> platform devices being registered with no underlying resources etc as glue
-> > > >> layers.  Maybe some of that will come later.    
-> > > >
-> > > > Is faux_device a better choice? I admit to not knowing entirely what
-> > > > it is for..  
-> > 
-> > I'll go with a cautious yes to faux_device. This case of a glue device
-> > with no resources and no reason to be on a particular bus was definitely
-> > the intent but I'm not 100% sure without trying it that we don't run
-> > into any problems.
-> > 
-> > Not that many examples yet, but cpuidle-psci.c looks like a vaguely similar
-> > case to this one.  
-> > 
-> > All it really does is move the location of the device and
-> > smash together the device registration with probe/remove.
-> > That means the device disappears if probe() fails, which is cleaner
-> > in many ways than leaving a pointless stub behind.
-> > 
-> > Maybe it isn't appropriate it if is actually useful to rmmod/modprobe the
-> > driver.   
-> 
-> Yeah, exactly. Can a TSM driver even be modular? If it has to be built
-> in then there is no reason to do this:
-> 
-> > > The goal is to have tsm class device to be parented by the platform
-> > > device.  
-> 
-> IMHO the only real point of that is to trigger module autoloading.
-> 
-> Otherwise the tsm core should accept NULL as the parent pointer during
-> registration, it probably already does..
+This patch series adds the following features:
+  * Automatic rcuscale module load/unload and grace-period statistics.
+    (The statistics feature was derived from
+    tools/testing/selftests/rcutorture/bin/kvm-recheck-rcuscale.sh.)
+    (patch 1)
+  * Simple benchmark specifying a list of parameters supported by
+    rcuscale. (patch 1)
+  * A feature to execute child process, and automatically replace
+    reader/writer threads ID placeholder strings.  This allows child
+    process to attach to kernel threads to collect performance
+    statistics. (patch 2)
+  * Range-based benchmark that enumerates all combinations of parameter
+    ranges (patch 3).
+  * Ratio-based benchmark that scales between two parameters. (patch 4)
+Example usages have been added to each patch commit message.
 
-If you mean create a class device with no parent, that's also something
-we are slowly trying to fix.  Reminds me that fixing up more perf devices
-is still on my todo list.
+This patch series depends on the new features of an ongoing patch series
+that exposes rcuscale module internal states and experiment results
+through debugfs.  That patch series is also required for programmatic
+experiment start/finish controls.
+Link: https://lore.kernel.org/lkml/20250730022347.71722-1-yuzhuo@google.com/T/
 
-Should be a child of something, so maybe that is a good reason for a
-faux_device here if there is nothing else to use.
+RFCs:
+  * This patch series depends on the behavior of rcuscale kernel module.
+    In case of interface changes, especially aforementioned
+    "experiment results" format changes, this benchmark may break.
+  * The tools/testing/selftests/rcutorture suite provides a set of
+    scripts to run rcuscale, rcutorture, refscale in KVM, but left out
+    bare-metal testing.  This patch series provides direct benchmarking
+    without KVM indirection.  However, they reside in different folders.
+    Is there a better way to integrate both suites?
+  * (Patch 3) What would be a better range format?  The current format
+    is defined as start[:end:step], and is only for integers.
+    Potentially we may want ranges for non-integers, or relationships
+    from expressions.
 
-Jonathan
+The patches are based on an ongoing series.  Specifically, the minor
+changes in builtin-bench.c may prevent applying change cleanly to
+master/HEAD.  Though the sync-rcu.c itself is independent of the lock
+benchmarks from previous series.
+Link: https://lore.kernel.org/lkml/20250729022640.3134066-1-yuzhuo@google.com/T/
+Link: https://lore.kernel.org/lkml/20250729081256.3433892-1-yuzhuo@google.com/T/
 
-> 
-> Jason
+Yuzhuo Jing (5):
+  perf bench: Add RCU benchmark using rcuscale kernel module
+  perf bench: Implement subprocess execution for 'sync rcu'
+  perf bench: Add 'range' mode to 'sync rcu'
+  perf bench: Add 'ratio' mode to 'sync rcu'
+  perf bench: Add documentation for 'sync rcu' suite
+
+ tools/perf/Documentation/perf-bench.txt |  131 +++
+ tools/perf/bench/Build                  |    1 +
+ tools/perf/bench/bench.h                |    1 +
+ tools/perf/bench/sync-rcu.c             | 1319 +++++++++++++++++++++++
+ tools/perf/builtin-bench.c              |    1 +
+ 5 files changed, 1453 insertions(+)
+ create mode 100644 tools/perf/bench/sync-rcu.c
+
+-- 
+2.50.1.565.gc32cd1483b-goog
 
 
