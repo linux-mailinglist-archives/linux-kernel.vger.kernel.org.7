@@ -1,110 +1,153 @@
-Return-Path: <linux-kernel+bounces-751523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E960B16A8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:52:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59296B16A91
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADCC3B7624
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26A755679C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C174D23B60E;
-	Thu, 31 Jul 2025 02:51:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E802A19309C;
+	Thu, 31 Jul 2025 02:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SoQOXwF5"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F9723C514
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:51:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="FnjEUdBt"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C8D2192FC;
+	Thu, 31 Jul 2025 02:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753930307; cv=none; b=miCvllbwEl8a1krkpDsVZH7rUi53Z14r597vSUNuKTLGwQH6CHjh+9cLCz93gkT01yfQzDtcMxBhugmZLmJAMaFQM/IkM/iXfEADtGCem4K7FdIqJEMvU/XfSw7m4z4OiKgboAOS3s9P4JnxOTM/AYn9KclTf8guNEEr8HMq14k=
+	t=1753930447; cv=none; b=PaKcMyMHX1EpnxpBr9NmqxR6/zeHvfXGdc+d9KYJCdB3TL2yRNf7iAKnTpHArVZw29OYy11mth2/PxKoyBQECv/nPoWkVadWSYdmQp9kUDUNJAGh9S7C3dGb8wkzC27YzvOaB/DIicsPhPc3BOsdbrC00TZ7NHqH6oe41o+eWgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753930307; c=relaxed/simple;
-	bh=RDlfNfQEHhiICjk1uvGjpCw6/n4I2MukkpEFDaUNPdM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G83vV69E0YCTqqEuOlZTVudNKX28p1L7hwYYPMYRmH52+m7Pzi+F9j7pG3wOHuTBhWx8bx4dbzeFnqgNk84fsnEmvxCQT5aNvc2YiHuQEipfO9pITsYCD1D86Kxc9ta5VXf9xlvpcusYfECz1IrVe6n3xjNG1yrQRtbpKuHRhZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SoQOXwF5; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753930303;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vWVEKjQhtRSvkjvWgOZqR1GFKXNm3YpoxK5+J0Ifg7w=;
-	b=SoQOXwF5nEytYZZuLlDZQn3YAZXDsEjvEtKLZ/R87bb3J5OP1zpN3c9h5mbVLemitBTyl+
-	iw8Dm/HGe0dfravTXtAlMSnF/gfZ/eLewnKktx31XPqxdckK6F0vVAYZAM/Eja0RhxyvYi
-	kAYnNr0Fkfp/hcitcbrAZRnj3vVrb3E=
-From: Hui Zhu <hui.zhu@linux.dev>
-To: Danilo Krummrich <dakr@kernel.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	bjorn3_gh@protonmail.com,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org,
-	vitaly.wool@konsulko.se
-Cc: Hui Zhu <zhuhui@kylinos.cn>,
-	Geliang Tang <geliang@kernel.org>
-Subject: [PATCH v7 3/3] rust: alloc: kvec: simplify KUnit test module name to "rust_kvec"
-Date: Thu, 31 Jul 2025 10:50:07 +0800
-Message-ID: <4eb554c3bf03dd4f9e6dea659497938baab61dba.1753929369.git.zhuhui@kylinos.cn>
-In-Reply-To: <cover.1753929369.git.zhuhui@kylinos.cn>
-References: <cover.1753929369.git.zhuhui@kylinos.cn>
+	s=arc-20240116; t=1753930447; c=relaxed/simple;
+	bh=HW/b2spO6igiTuBEPCZxJKREgXrKAcG245Cq0rdBwFQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=nWo27y1CUNGTp9Kpf1aE7AgmGtmKrSCH90DqyDH51HRd3lh4fE8yvKYIy7h3l/eQw/RxlKTo6gBINuUzYbMiTwxKgeEW5Ihd02hdI/eyvQrCAHzQY5+OmEH9LDQ5QXONroUxzoOndd+AuuEY8fRlWC8GOZVpQa48hjGfadpIdag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=FnjEUdBt reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=i4q4vAwvrtsGAsI2xJ7dj3RYSF+Dg7GuGqgKNXJO4wI=; b=F
+	njEUdBtGApk+zvVvFqcr6uTdp/npFHFGLFq8t6Cn+qEL3yS2KCDI/mWC3+4QABJY
+	HrkbBl8I8G3XhbXttd/LUU33EaLcbS+gvRgZNwocdkfN+gM4SERQ4Ua1lb4FcLs1
+	M+//3d+SnyZYE8VIzBXv6YdIZPn8fr/90WhAd8jbVo=
+Received: from andyshrk$163.com ( [103.29.142.67] ) by
+ ajax-webmail-wmsvr-40-100 (Coremail) ; Thu, 31 Jul 2025 10:52:49 +0800
+ (CST)
+Date: Thu, 31 Jul 2025 10:52:49 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Sebastian Reichel" <sebastian.reichel@collabora.com>
+Cc: dmitry.baryshkov@oss.qualcomm.com, neil.armstrong@linaro.org,
+	heiko@sntech.de, stephen@radxa.com, dri-devel@lists.freedesktop.org,
+	hjc@rock-chips.com, mripard@kernel.org, linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+	yubing.zhang@rock-chips.com, naoki@radxa.com,
+	Laurent.pinchart@ideasonboard.com,
+	"Andy Yan" <andy.yan@rock-chips.com>, krzk+dt@kernel.org,
+	robh@kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re:Re:Re: [PATCH v6 09/10] arm64: dts: rockchip: Enable DisplayPort
+ for rk3588s Cool Pi 4B
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <5deac95c.8ec2.1985b428b0b.Coremail.andyshrk@163.com>
+References: <20250728082846.3811429-1-andyshrk@163.com>
+ <20250728082846.3811429-10-andyshrk@163.com>
+ <hbvwlucm5mnjpve6hb6h7dusgrokvdxzbpq5zrwib4yesrdakp@v77ofq7u2vv2>
+ <5deac95c.8ec2.1985b428b0b.Coremail.andyshrk@163.com>
+X-NTES-SC: AL_Qu2eAfWYv0st7yeQZekfmkcVgOw9UcO5v/Qk3oZXOJF8jCrp+T8Sd2ZaF1DE/tCJOQeHiwGOexp84/ZoY4N9R58oT+R9drh8m7TZL7FtHtaLMA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Message-ID: <6c84556c.29cb.1985e658afb.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZCgvCgDnTyGB2opoljMKAA--.20578W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gObXmiK0YynmQADsW
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-From: Hui Zhu <zhuhui@kylinos.cn>
-
-Remove redundant "_kunit" suffix from test module name.
-
-The naming is now consistent with other Rust components as the test
-context is already implied by the #[kunit_tests] macro and test module
-location.
-
-Co-developed-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Hui Zhu <zhuhui@kylinos.cn>
----
- rust/kernel/alloc/kvec.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/rust/kernel/alloc/kvec.rs b/rust/kernel/alloc/kvec.rs
-index f57e08c64929..d71f6a1513e2 100644
---- a/rust/kernel/alloc/kvec.rs
-+++ b/rust/kernel/alloc/kvec.rs
-@@ -1311,7 +1311,7 @@ fn drop(&mut self) {
-     }
- }
- 
--#[macros::kunit_tests(rust_kvec_kunit)]
-+#[macros::kunit_tests(rust_kvec)]
- mod tests {
-     use super::*;
-     use crate::prelude::*;
--- 
-2.43.0
-
+CkhlbGxvIFNlYmFzdGlhbu+8jAoK5ZyoIDIwMjUtMDctMzAgMjA6MTU6NDTvvIwiQW5keSBZYW4i
+IDxhbmR5c2hya0AxNjMuY29tPiDlhpnpgZPvvJoKPgo+Cj5IZWxsbyBTZWJhc3RpYW7vvIwKPgo+
+QXQgMjAyNS0wNy0zMCAwMTowOTo0MSwgIlNlYmFzdGlhbiBSZWljaGVsIiA8c2ViYXN0aWFuLnJl
+aWNoZWxAY29sbGFib3JhLmNvbT4gd3JvdGU6Cj4+SGksCj4+Cj4+T24gTW9uLCBKdWwgMjgsIDIw
+MjUgYXQgMDQ6Mjg6MzRQTSArMDgwMCwgQW5keSBZYW4gd3JvdGU6Cj4+PiBGcm9tOiBBbmR5IFlh
+biA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cj4+PiAKPj4+IEVuYWJsZSB0aGUgTWluaSBEaXNw
+bGF5UG9ydCBvbiB0aGlzIGJvYXJkLgo+Pj4gTm90ZSB0aGF0IFJPQ0tDSElQX1ZPUDJfRVBfRFAw
+IGlzIGRlZmluZWQgYXMgMTAgaW4gZHQtYmluZGluZyBoZWFkZXIsCj4+PiBidXQgaXQgd2lsbCB0
+cmlnZ2VyIGEgZHRjIHdhcm5pbmcgbGlrZSAiZ3JhcGggbm9kZSB1bml0IGFkZHJlc3MgZXJyb3Is
+Cj4+PiBleHBlY3RlZCAiYSIiIGlmIHdlIHVzZSBpdCBkaXJlY3RseSBhZnRlciBlbmRwb2ludCwg
+c28gd2UgdXNlICJhIgo+Pj4gaW5zdGVhZCBoZXJlLgo+Pj4gCj4+PiBTaWduZWQtb2ZmLWJ5OiBB
+bmR5IFlhbiA8YW5keS55YW5Acm9jay1jaGlwcy5jb20+Cj4+PiBSZXZpZXdlZC1ieTogRG1pdHJ5
+IEJhcnlzaGtvdiA8ZG1pdHJ5LmJhcnlzaGtvdkBvc3MucXVhbGNvbW0uY29tPgo+Pj4gLS0tCj4+
+Cj4+VGhlIGdyYXBoIGN1cnJlbnRseSBsb29rcyBsaWtlIHRoaXM6Cj4+Cj4+Vk9QIDwtPiBEUCBj
+b250cm9sbGVyIDwtPiBEUCBDb25uZWN0b3IKPj4KPj5JSVVJQyB0aGlzIGRvZXMgbm90IHdvcmsg
+Zm9yIFVTQi1DIGFuZCBuZWVkcyB0byBsb29rIGxpa2UgdGhpcywKPj5iZWNhdXNlIHRoZSBVU0JE
+UCBQSFkgaGFuZGxlcyB0aGUgbGFuZSBtdXhpbmcgYW5kIHRodXMgbXVzdCBiZQo+PnRoZSB0aGlu
+ZyBjb25uZWN0ZWQgdG8gdGhlIFVTQi1DIGNvbnRyb2xsZXIvY29ubmVjdG9yOgo+Cj5JIHByZXZp
+b3VzbHkgdGVzdHMgVVNCLUMgQWx0bW9kZSBvbiBMaW51eCA1LjE1IHVzaW5nIFJvY2sgNWIsICB0
+aGlzIGZ1bmN0aW9uIHdvcmtzIHdlbGwuIAo+SG93ZXZlciwgd2hlbiB0aGUgc2FtZSBkdHMgY29u
+ZmlndXJhdGlvbiBpcyB1c2VkIG9uIExpbnV4IDYuMTYgYW5kIHRlc3RlZCB3aXRoIFJvY2sgNWIg
+aW4gVVNCLUMgQWx0bW9kZSwgCj50aGUgSFBEIGludGVycnVwdCBvZiBEUCBjYW5ub3QgYmUgdHJp
+Z2dlcmVkLiBJJ20gbm90IHN1cmUgeWV0IHdoYXQgY2hhbmdlcyBoYXZlIG9jY3VycmVkIGJldHdl
+ZW4gdGhlbS4KPk1vcmVvdmVyLCBJIG5vdGljZWQgdGhhdCBvbiB5b3VyIHRlc3QgYnJhbmNoWzFd
+LCB0aGUgRFRTIGNvbmZpZ3VyYXRpb24gaGFzIGFsc28gY2hhbmdlZCBjb21wYXJlZCB0byBiZWZv
+cmUuCj5JIHdvdWxkIGdyZWF0bHkgYXBwcmVjaWF0ZSBpdCBpZiB5b3UgY291bGQgc2hhcmUgc29t
+ZSBkZXRhaWxzLgoKU29tZSB1cGRhdGVzOgogICAgICBBZnRlciBjb21tZW50IG91dCBwZC12ZXJz
+aW9uKFlvdXIgcHJldmlvdXMgRFRTIGRpZG4ndCBpbmNsdWRlIHRoaXMgcHJvcGVydHkuKSBvbiBs
+aW51eCA2LjE2WzJdCiAgICAgLy9wZC1yZXZpc2lvbiA9IC9iaXRzLyA4IDwweDIgMHgwIDB4MSAw
+eDI+OwogICAgVGhlIFVTQi1DIEFsdCBNb2RlIG91dHB1dCBjYW4gd29yayBhcyBiZWZvcmXjgIIK
+ICAgIEkgc3RpbGwgaGF2ZSByZWxhdGl2ZWx5IGxpbWl0ZWQga25vd2xlZGdlIGFib3V0IFVTQi1D
+LCBzbyBJIGhvcGUgdG8gaGVhciBtb3JlIG9mIHlvdXIgb3BpbmlvbnMuCgoKPgo+Cj4KPlswXWh0
+dHBzOi8vZ2l0aHViLmNvbS9hbmR5c2hyay9saW51eC9jb21taXQvYjlmODdhNTYyZDQzMWZiNTli
+NjY0YjdhZWQ0MTg2OWE4ZjE4NGRlMwo+WzFdaHR0cHM6Ly9naXRsYWIuY29sbGFib3JhLmNvbS9o
+YXJkd2FyZS1lbmFibGVtZW50L3JvY2tjaGlwLTM1ODgvbGludXgvLS9jb21taXQvMGU3ZTkwNDk0
+NDgyY2Y3N2Q1YmIwNThhNDc1ODNiNjc0N2IxNDBmNAogIFsyXWh0dHBzOi8vZ2l0aHViLmNvbS9h
+bmR5c2hyay9saW51eC90cmVlL3JrMzU4OC1kcC11cHN0cmVhbS12NgoKPj4KPj5WT1AgPC0+IERQ
+IGNvbnRyb2xsZXIgPC0+IFVTQkRQIFBIWSA8LT4gVVNCLUMgQ29ubmVjdG9yCj4+Cj4+SSB3b25k
+ZXIgaWYgdGhlIHNpbXBsZSBjYXNlIG5vdCBpbnZvbHZpbmcgVVNCLUMgc2hvdWxkIGFsc28gaGF2
+ZQo+PnRoZSBVU0JEUCBQSFkgZGVzY3JpYmVkIGluIHRoZSBncmFwaCBhcyBhIHRyYW5zcGFyZW50
+IGJyaWRnZT8KPj5Ob3RlLCB0aGF0IHRoZSBVU0JEUCBQSFkgRFQgYmluZGluZyBpcyBjdXJyZW50
+bHkgbm90IHJlYWR5IGZvcgo+PnRoaXMgKHRoaXMgYWxzbyBhZmZlY3RzIHRoZSBuZXh0IHBhdGNo
+LCBidXQgc2hvdWxkIGJlIGVub3VnaCB0bwo+PmRpc2N1c3MgdGhpcyBvbmNlIDopKS4KPj4KPj5H
+cmVldGluZ3MsCj4+Cj4+LS0gU2ViYXN0aWFuCj4+Cj4+PiAKPj4+IChubyBjaGFuZ2VzIHNpbmNl
+IHYyKQo+Pj4gCj4+PiBDaGFuZ2VzIGluIHYyOgo+Pj4gLSBTb3J0IGluIGFscGhhYmV0aWNhbCBv
+cmRlcgo+Pj4gCj4+PiAgLi4uL2Jvb3QvZHRzL3JvY2tjaGlwL3JrMzU4OHMtY29vbHBpLTRiLmR0
+cyAgIHwgMzcgKysrKysrKysrKysrKysrKysrKwo+Pj4gIDEgZmlsZSBjaGFuZ2VkLCAzNyBpbnNl
+cnRpb25zKCspCj4+PiAKPj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybTY0L2Jvb3QvZHRzL3JvY2tj
+aGlwL3JrMzU4OHMtY29vbHBpLTRiLmR0cyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvcm9ja2NoaXAv
+cmszNTg4cy1jb29scGktNGIuZHRzCj4+PiBpbmRleCA4YjcxN2M0MDE3YTQ2Li41MzkzYzZjYzQ5
+M2MzIDEwMDY0NAo+Pj4gLS0tIGEvYXJjaC9hcm02NC9ib290L2R0cy9yb2NrY2hpcC9yazM1ODhz
+LWNvb2xwaS00Yi5kdHMKPj4+ICsrKyBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvcm9ja2NoaXAvcmsz
+NTg4cy1jb29scGktNGIuZHRzCj4+PiBAQCAtMzksNiArMzksMTggQEAgY2hvc2VuIHsKPj4+ICAJ
+CXN0ZG91dC1wYXRoID0gInNlcmlhbDI6MTUwMDAwMG44IjsKPj4+ICAJfTsKPj4+ICAKPj4+ICsJ
+ZHAtY29uIHsKPj4+ICsJCWNvbXBhdGlibGUgPSAiZHAtY29ubmVjdG9yIjsKPj4+ICsJCWxhYmVs
+ID0gIkRQIE9VVCI7Cj4+PiArCQl0eXBlID0gIm1pbmkiOwo+Pj4gKwo+Pj4gKwkJcG9ydCB7Cj4+
+PiArCQkJZHBfY29uX2luOiBlbmRwb2ludCB7Cj4+PiArCQkJCXJlbW90ZS1lbmRwb2ludCA9IDwm
+ZHAwX291dF9jb24+Owo+Pj4gKwkJCX07Cj4+PiArCQl9Owo+Pj4gKwl9Owo+Pj4gKwo+Pj4gIAlo
+ZG1pLWNvbiB7Cj4+PiAgCQljb21wYXRpYmxlID0gImhkbWktY29ubmVjdG9yIjsKPj4+ICAJCXR5
+cGUgPSAiZCI7Cj4+PiBAQCAtMjE1LDYgKzIyNywyNCBAQCAmY3B1X2IyIHsKPj4+ICAJY3B1LXN1
+cHBseSA9IDwmdmRkX2NwdV9iaWcxX3MwPjsKPj4+ICB9Owo+Pj4gIAo+Pj4gKyZkcDAgewo+Pj4g
+KwlzdGF0dXMgPSAib2theSI7Cj4+PiArCXBpbmN0cmwtMCA9IDwmZHAwbTBfcGlucz47Cj4+PiAr
+CXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7Cj4+PiArfTsKPj4+ICsKPj4+ICsmZHAwX2luIHsK
+Pj4+ICsJZHAwX2luX3ZwMjogZW5kcG9pbnQgewo+Pj4gKwkJcmVtb3RlLWVuZHBvaW50ID0gPCZ2
+cDJfb3V0X2RwMD47Cj4+PiArCX07Cj4+PiArfTsKPj4+ICsKPj4+ICsmZHAwX291dCB7Cj4+PiAr
+CWRwMF9vdXRfY29uOiBlbmRwb2ludCB7Cj4+PiArCQlyZW1vdGUtZW5kcG9pbnQgPSA8JmRwX2Nv
+bl9pbj47Cj4+PiArCX07Cj4+PiArfTsKPj4+ICsKPj4+ICAmZ3B1IHsKPj4+ICAJbWFsaS1zdXBw
+bHkgPSA8JnZkZF9ncHVfczA+Owo+Pj4gIAlzdGF0dXMgPSAib2theSI7Cj4+PiBAQCAtODg5LDMg
+KzkxOSwxMCBAQCB2cDBfb3V0X2hkbWkwOiBlbmRwb2ludEBST0NLQ0hJUF9WT1AyX0VQX0hETUkw
+IHsKPj4+ICAJCXJlbW90ZS1lbmRwb2ludCA9IDwmaGRtaTBfaW5fdnAwPjsKPj4+ICAJfTsKPj4+
+ICB9Owo+Pj4gKwo+Pj4gKyZ2cDIgewo+Pj4gKwl2cDJfb3V0X2RwMDogZW5kcG9pbnRAYSB7Cj4+
+PiArCQlyZWcgPSA8Uk9DS0NISVBfVk9QMl9FUF9EUDA+Owo+Pj4gKwkJcmVtb3RlLWVuZHBvaW50
+ID0gPCZkcDBfaW5fdnAyPjsKPj4+ICsJfTsKPj4+ICt9Owo+Pj4gLS0gCj4+PiAyLjQzLjAKPj4+
+IAo+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPkxpbnV4
+LXJvY2tjaGlwIG1haWxpbmcgbGlzdAo+TGludXgtcm9ja2NoaXBAbGlzdHMuaW5mcmFkZWFkLm9y
+Zwo+aHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1yb2Nr
+Y2hpcAo=
 
