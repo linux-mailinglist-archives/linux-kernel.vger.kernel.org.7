@@ -1,169 +1,199 @@
-Return-Path: <linux-kernel+bounces-751806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E19BB16DB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:39:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B04CB16DBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58FE56828E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:39:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93AEC1896904
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4CFA29346F;
-	Thu, 31 Jul 2025 08:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71F129DB99;
+	Thu, 31 Jul 2025 08:39:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CqoEq+sB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fUTaOyK/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1D429E108;
-	Thu, 31 Jul 2025 08:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646462957AD
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753951142; cv=none; b=s3GmT95n9B41TJHEMLABygK85NyYK6K8HgJXss1CeHZCG5dmFbbjP2r7nIKwSWz8R3ZJkmyzGYySp0eXV8J+i9W4qIubCqBAtj9x9a4gvRw2MLoauOqZvHqiyfh5mkNuHe/w668yOgT2alpfITYkhTgy0cN1HHuubUey73EtVqQ=
+	t=1753951174; cv=none; b=Gyy75/FNjavqiAbdkGGVfQBqw+oPb0TXQPE1u7KmIxg6L02oBymm+26nww8URxnVxjfIi6/0ujsobjZ8TAxdCSGKw7Zw5GQkozY2zLDi3DAhStbW5+fAMnx/UKGnHYeplTjm9nw5BHaB/eOtGTWW1k0XuqcPkO+jLMhGFAiMSz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753951142; c=relaxed/simple;
-	bh=0mLjmbSSfci8f9ILPlm18mO5eYHj3mkielXeDPsLt1E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aNUs3HDTRifc2uR3kWF+UTADM/92oUHdEfzf55cAMgIWj/TrryEYQ8zQHXiFeRbUXCgxO0eabp3/iv1AE1oraR+AqMxlw7iRw8j1yCAxpcRAVDNZDcLWg6CiHcafo5S5LPbh0C+13VZ7Z3xmyCvcP6TWsW+DPdZ/antiJ+YEIeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CqoEq+sB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B94DC4CEEF;
-	Thu, 31 Jul 2025 08:38:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753951141;
-	bh=0mLjmbSSfci8f9ILPlm18mO5eYHj3mkielXeDPsLt1E=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CqoEq+sBP6c7D0nCcCOz950lxcIYLATqFURIMEkzajqYcjxlZWjSolyUyNIJhFwnw
-	 ZbiW0bsvQrQLwORUh0zmRrBzSEItKt92eHUWyr0Y8tIAPtPEBaAkLIMW62ZywM52Wy
-	 88y4TyBonueKioMBcyBytT4DDJ7bZyr4M2v86kEIcrHDEIwMyRX68J2lZusmTtRx76
-	 +OccUinZdXkVd+PG6yuezGwotHGCQ5M5ezxoQ3BwAOh/z9skAhPbDo4IdF91jFoB45
-	 Jv+LJzWZsKIvaqatXVtbrD4Oc12Ah9N2Ldn1M2MLcFOVGvhZDZBZDcUK9bNjux2cvh
-	 WNBZ8zjN7JOgA==
-Message-ID: <2a7bf809-73d9-4cb6-bcc9-3625ef1eb1fa@kernel.org>
-Date: Thu, 31 Jul 2025 10:38:56 +0200
+	s=arc-20240116; t=1753951174; c=relaxed/simple;
+	bh=hxPsiLd1gVzDHcLACswmRB/4fo7ZC0IBGMWiKvUf56M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ihEUpbfHm0ptFnE9sQ/6eNWSrYESm3PO0oxtV1ol3RD1aKbX2E/wrmr+TUKYJtANy1dCluywd25eJwIJWOO9A3N/nQKjK+YYiz4vmDaoS7JhtM/2+oHGU58GtDAx7Y10fYuk3NNh7oh6al6n4SuUv4gYGNOlHrGwk8ZVP2Ssni4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fUTaOyK/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753951171;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=F7yP0szGzNbiy8cyqFmK1DSuaFl+Rz6XKugDUijkRpE=;
+	b=fUTaOyK/ziW4zEYYdyT+GwIPZWGQJzYI+XI+8ZmgqWwibQGHUXved5UUrJ5snKYDFYQk87
+	QbokhhFslyiQVr3zwNsuew9R+se1wiAaARMkjArbyCnkz/5zE16w2UdshLbxn33KJn1l8y
+	am2p6zD/qJdQEwITw+NMueFFVI7ye0s=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-481-c0bjpffGM0649YvEBEGA0g-1; Thu, 31 Jul 2025 04:39:29 -0400
+X-MC-Unique: c0bjpffGM0649YvEBEGA0g-1
+X-Mimecast-MFC-AGG-ID: c0bjpffGM0649YvEBEGA0g_1753951168
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b7961b3c82so325155f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:39:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753951168; x=1754555968;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=F7yP0szGzNbiy8cyqFmK1DSuaFl+Rz6XKugDUijkRpE=;
+        b=IizrHRCPQVGc/cl9ffaBuPZg0/YeoO1/8zAui17wfEDtqkCncDkoJ028Dkv/7Ncbe/
+         kKDG454JxsfQgkFt/yrWCfT2gMDXPS+AMteGoGTgXBmjY4oOAE+riHa8EMujjINu2cm7
+         DI8cz6flgQWAdw6s15tHbbbGcOWX+ht7dPfsnpF7qaP0uD8DTbPcZKuiIpFdsVLun9pO
+         q/x/9OmTgDypUSAQ3FhtfIJiK3VjDCmiMaYDAKd5ZKXKJCLTyMAVyhuNZcrZbVMc64s7
+         2gbvhCSMEcATrakTNpu5Y9fvGHVMsyOK0cP0eqMgaeTIs/0eqBs58LeFfZ6mNOV+KEzW
+         z/8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVNXHFlmjr01Tt8oWGSc5CNKw7SXEK+euaC80svESIjJQnKPhhe47nic+M8y7T5Sx3b9lAcIyCxbBuFOf4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUJdLGd+9xo+9og0Hehiy5ojTlythxrr6nlnzyfoqnQ7O5wrSN
+	R0rsfwtRgeqTbw3wm1uRrlp3GJdEu/quuiDdl4n9+LcZGJ2fW7pq+YGqFSQ/gPLXVS7flyYFo35
+	8YdC85pv+/LTrb/l+j+oWOpeJZdZpi752fshgmYBkO47R6TsOKFdUak8DguSq+Pq7lg==
+X-Gm-Gg: ASbGncs7WTd4j031BeCXpY6eRuIS3WQ3lvH0UqPDTU19Fq1H3qpFwJZ3LUUkZNwFejx
+	Fhre8HiRasolfIJIBOMD0cKErurxtlKKlVEgAXOE+/LK3W5lgrOMg4mxJAAPMicp+h/jyVLkKe4
+	oxqu5RTuokZvAGskNgPfuBoIWIzQs6em59zSiYUcH5zNAf1yPJ40TAUek18lMjMycuQVC2khedf
+	MMLHoM8utrB/lv3pko4qkqVWleZqeg5ZZkccBwtPqrLc6DBHM+Hs5Nr5PeMMGLwpvIJ1BSd7KZY
+	sJVlXwjqS+IzdvfRYOR3oAE13W8BIGNl1Vfv4bY09y+zckgr7UT2sPHjPoShD/dKiw==
+X-Received: by 2002:adf:8b59:0:b0:3a6:d95e:f38c with SMTP id ffacd0b85a97d-3b79501e606mr3553014f8f.33.1753951168417;
+        Thu, 31 Jul 2025 01:39:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFlb7Q8yPGsqPrhTD0Y5orBknXFGcVgXJ65AHafvMuaqJXp4tRD1gmzSipBYjnC3cMeTlLrew==
+X-Received: by 2002:adf:8b59:0:b0:3a6:d95e:f38c with SMTP id ffacd0b85a97d-3b79501e606mr3552988f8f.33.1753951167972;
+        Thu, 31 Jul 2025 01:39:27 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9c7dsm1589327f8f.26.2025.07.31.01.39.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 01:39:27 -0700 (PDT)
+Message-ID: <5a7c492bbad7d56f347ee629734fdbab275d6333.camel@redhat.com>
+Subject: Re: [PATCH 4/5] sched: Add rt task enqueue/dequeue trace points
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,  Ingo
+ Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
+ Lelli <juri.lelli@redhat.com>,  Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Ben Segall	 <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
+ Schneider	 <vschneid@redhat.com>
+Date: Thu, 31 Jul 2025 10:39:25 +0200
+In-Reply-To: <20250731073520.ktIOaGts@linutronix.de>
+References: <cover.1753879295.git.namcao@linutronix.de>
+	 <8f83869a5040bd7cd3096bd12090c1ab110ae5c4.1753879295.git.namcao@linutronix.de>
+	 <767a9d59081220594d21856f329fb35988ef7925.camel@redhat.com>
+	 <20250730151818.7RemAREO@linutronix.de>
+	 <5065c29035be39dee954f2b233a40ae15dcc5035.camel@redhat.com>
+	 <20250731073520.ktIOaGts@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Enable MCQ support for
- UFS controller
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, mani@kernel.org,
- alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, agross@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
- <20250730082229.23475-3-quic_rdwivedi@quicinc.com>
- <eab85cb3-7185-4474-9428-8699fbe4a8e5@kernel.org>
- <40ace3bc-7e5d-417a-b51a-148c5f498992@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <40ace3bc-7e5d-417a-b51a-148c5f498992@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-On 31/07/2025 10:34, Ram Kumar Dwivedi wrote:
-> 
-> 
-> On 31-Jul-25 12:15 PM, Krzysztof Kozlowski wrote:
->> On 30/07/2025 10:22, Ram Kumar Dwivedi wrote:
->>> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
->>> on the Qualcomm SM8650 platform by updating the device tree node. This
->>> includes adding new register regions and specifying the MSI parent
->>> required for MCQ operation.
->>>
->>> MCQ is a modern queuing model for UFS that improves performance and
->>> scalability by allowing multiple hardware queues. 
->>>
->>> Changes:
->>> - Add reg entries for mcq_sqd and mcq_vs regions.
->>> - Define reg-names for the new regions.
->>> - Specify msi-parent for interrupt routing.
->>>
->>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->>> ---
->>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 9 ++++++++-
->>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>> index e14d3d778b71..5d164fe511ba 100644
->>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>> @@ -3982,7 +3982,12 @@ ufs_mem_phy: phy@1d80000 {
->>>  
->>>  		ufs_mem_hc: ufshc@1d84000 {
->>>  			compatible = "qcom,sm8650-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
->>> -			reg = <0 0x01d84000 0 0x3000>;
->>> +			reg = <0 0x01d84000 0 0x3000>,
->>> +			      <0 0x01da5000 0 0x2000>,
->>> +			      <0 0x01da4000 0 0x0010>;
->>
->>
->> These are wrong address spaces. Open your datasheet and look there.
->>
-> Hi Krzysztof,
-> 
-> I’ve reviewed it again, and it is correct and functioning as expected both on our upstream and downstream codebase.
-> I think it is probably overlooked by you. Can you please double check from your end?
-> 
+On Thu, 2025-07-31 at 09:35 +0200, Nam Cao wrote:
+> On Wed, Jul 30, 2025 at 06:18:45PM +0200, Gabriele Monaco wrote:
+> > Well, thinking about it again, these tracepoints might simplify
+> > things
+> > considerably when tasks change policy..
+> >=20
+> > Syscalls may fail, for that you could register to sys_exit and
+> > check
+> > the return value, but at that point the policy changed already, so
+> > you
+> > cannot tell if it's a relevant event or not (e.g. same policy).
+> > Also sched_setscheduler_nocheck would be out of the picture here,
+> > not
+> > sure how recurrent that is though (and might not matter if you only
+> > focus on userspace tasks).
+> >=20
+> > If you go down the route of adding tracepoints, why not have other
+> > classes benefit too? I believe calling them from the enqueue_task /
+> > dequeue_task in sched/core.c would allow you to easily filter out
+> > by
+> > policy anyway (haven't tested).
+>=20
+> Something like the untested patch below?
+>=20
+> Will you have a use case for it too? Then I will try to accommodate
+> your use case, otherwise I will do just enough for my case.
 
-No, it is not overlooked. There is no address space of length 0x10 at
-0x01da4000 in qcom doc/datasheet system. Just open the doc and look
-there by yourself. The size is 0x15000.
+Well, I'm still defining the best set of tracepoints I need, if you see
+it cleaner go ahead the way you're currently doing, then.
+Unless anyone else complains let's keep it like this.
 
-You are talking now about driver and this proves my point here:
-https://lore.kernel.org/linux-devicetree/1547e339-5be2-4d87-ab35-98a9be0d250e@kernel.org/
+Thanks,
+Gabriele
 
+>=20
+> Nam
+>=20
+> diff --git a/include/trace/events/sched.h
+> b/include/trace/events/sched.h
+> index c38f12f7f903..b50668052f99 100644
+> --- a/include/trace/events/sched.h
+> +++ b/include/trace/events/sched.h
+> @@ -906,6 +906,14 @@ DECLARE_TRACE(dequeue_task_rt,
+> =C2=A0	TP_PROTO(int cpu, struct task_struct *task),
+> =C2=A0	TP_ARGS(cpu, task));
+> =C2=A0
+> +DECLARE_TRACE(enqueue_task,
+> +	TP_PROTO(int cpu, struct task_struct *task),
+> +	TP_ARGS(cpu, task));
+> +
+> +DECLARE_TRACE(dequeue_task,
+> +	TP_PROTO(int cpu, struct task_struct *task),
+> +	TP_ARGS(cpu, task));
+> +
+> =C2=A0#endif /* _TRACE_SCHED_H */
+> =C2=A0
+> =C2=A0/* This part must be outside protection */
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index b485e0639616..2af90532982a 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -2077,6 +2077,8 @@ unsigned long get_wchan(struct task_struct *p)
+> =C2=A0
+> =C2=A0void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
+> =C2=A0{
+> +	trace_enqueue_task_tp(rq->cpu, p);
+> +
+> =C2=A0	if (!(flags & ENQUEUE_NOCLOCK))
+> =C2=A0		update_rq_clock(rq);
+> =C2=A0
+> @@ -2103,6 +2105,8 @@ void enqueue_task(struct rq *rq, struct
+> task_struct *p, int flags)
+> =C2=A0 */
+> =C2=A0inline bool dequeue_task(struct rq *rq, struct task_struct *p, int
+> flags)
+> =C2=A0{
+> +	trace_dequeue_task_tp(rq->cpu, p);
+> +
+> =C2=A0	if (sched_core_enabled(rq))
+> =C2=A0		sched_core_dequeue(rq, p, flags);
+> =C2=A0
 
-
-Best regards,
-Krzysztof
 
