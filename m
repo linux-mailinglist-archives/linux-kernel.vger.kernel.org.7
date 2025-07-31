@@ -1,218 +1,250 @@
-Return-Path: <linux-kernel+bounces-751899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25F9B16F03
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:50:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5338DB16F06
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C78983B0093
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:50:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4996F3ADDD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA6D12BE03C;
-	Thu, 31 Jul 2025 09:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FA729CB52;
+	Thu, 31 Jul 2025 09:51:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="O2s09FwL"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b/htALRZ"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825CF2BD5A7;
-	Thu, 31 Jul 2025 09:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E448BF4FA
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753955428; cv=none; b=rU/ZAhvi730vBHUpJt/f/KYhzygIyFeDgijfhTqO1qOClBrTBkQmx9MMn8Ry9ABlIFcfy1Vx2lIl4ph+083zD2BhHcho/DJc8MfS8YA8MkSiYVkhWnu0OS3wOpRjDLJrZbtbFJY3FAt+9dxlH/5pXnkj65pLTJLIOtWnoAYPOUk=
+	t=1753955488; cv=none; b=Skldxu4w9rbliYdblPnO4sgsoxGzibaG/OQoqdsrk4JNX85zHV08XQ/gYHZos62z5usE7H5N1zebtv3ltf70Vrhd3pufL3QC6lAujh5v90yoFLTuJ0eGPC2OI+G+P5GqrTAGRJ5R6MO5JUu8ByyeTGE8Tx1N4raKTE5nA12i9Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753955428; c=relaxed/simple;
-	bh=L4wEv5yD2YGJZlT2oppXRQ7NXwcHptUuqESz0gDytiw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gnlwFMKYfz8inwSVbuF32dX04Z4Yc3c5kVNU8cNBaChAHuxzE4srYAS8FsuX3cHaVxkcafOzxTvGO8agT9aM4Eu4mdj2g0JxUDrrLsWA8gzfcjh5dnU+hqwoc4RiPEUrOkAk0blDf1Qyqo0OqJcH1+tvFWkFsBm8EZ7Kirazdrw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=O2s09FwL; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 15CA243854;
-	Thu, 31 Jul 2025 09:50:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1753955418;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=oQZaEeF9d7skWsfawRi1lhOPl2zgtzHvwTKPULZo3oY=;
-	b=O2s09FwLDoyIJnk/6dSjw3g3U7UcPzW9P4u7udmFTu0FSLNhbqZQgC/L851x4QIWbNeiKX
-	CAj03MM4/ipe3/IALyAtpEt5XGCb3vgZJMxfOp5ltuwCjQneLW5kXWPVrbkQOrQpVXZRBj
-	iHqp9cjZdA6QvsgcyAlhnwdpt5F9LIAnxoiOGGLUyXxTzJ1kG8/3vS5M3jI583MVUsrgVz
-	uu0tUdBY7rS7YZU06ZK7VJKL8q93C+bkD7asgweDVaPfcbEQ+SIUi1POmbRJgY//OXC//W
-	OVtPn3yZyla+Y4O6BNxt18eYzPukHlBkwPQDf5CBvX5H0wftyH0LwYWpxFVm4A==
-Message-ID: <8a2b1876-d1d4-4523-ae6a-bd14875772cf@bootlin.com>
-Date: Thu, 31 Jul 2025 11:50:16 +0200
+	s=arc-20240116; t=1753955488; c=relaxed/simple;
+	bh=eYUeaKiCmL/zOn7Jm80x6klMLR2T92q9Blw1PdGs2nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jdkIzCezppfQi9K1OJ0XYUQuQKhnQG49rUFPBoAmxCToWsM0AWQMvZCoWolKhS5l6v574Y9TZV2nDh3iFx6yakm3Bru2AcgxUOalW3DQomimQlMtgw0VWhE6k7VkEWC0uQpj9JZN2GS+j3ZY7ewsYKxWNr+YHrb1D46cqunTml4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b/htALRZ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2406fe901fcso8783165ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:51:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1753955485; x=1754560285; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kKKKnXRg7JsP7e6OYP4fYKsmB1zCRKVCmYDMPFZVSmM=;
+        b=b/htALRZMlGl7kAFFZv12YW2zN+W+jUc4AAp8dy4t0O68Y+MBVYOXukTCUAc7qIBB2
+         56LmK1mPIZZJxYkAwlN4W7iKQxuSNOXmsvMDiBQtQZ5bUaeUK+OSa33CPgVpvs9oB7vB
+         DYzNJVjnWSHND3HwOzp4n3QOIMlUi4mSTpFjQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753955485; x=1754560285;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kKKKnXRg7JsP7e6OYP4fYKsmB1zCRKVCmYDMPFZVSmM=;
+        b=Dx0e/6cDd+RBJGm3JuP1rNed/pMFZKN+Z5jmpQ7uuHiZ8aXGy47VmprdU+ZUy/HXFs
+         EQV2AOza581Kq2ksKunQbDUIiD3KN3/M3yLooGWsfKcPJw7CVJOR2a3HwjzV+ATFo60U
+         Im7P/td4mBWAPJv5hk1jlHnyi5SaDJeRiuWdc4TXHDXbUjTaD8MptRrgW+8MOZSFDIKT
+         3gKLyJav8DyjAJRokXUDv0jLCiYWg+mKQKM4limOEQ9ZEtuMClnagp0URYB+wr5npOOH
+         gJDfy7X2muhpJrfsK0fiDA+I5mrYT1J6cI39yypsUIjVn/BTgNU5iHw3QPpHcp63dbYO
+         1KDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7SjXbbLKE40BMyn8pExKl/MbR/53KdV0quObQzQuGYcer0DMSaz5Fmql/9xMF9/APS93l0Cbs6pwslHk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr/bhM9ZSXndycsOsWXyShRkRsKDdNI7kTz5HzZGU+/mi471W2
+	uCmN9xkOjxAUoGNQrSNGZiSYJRw4NX1zgVqlCIN8kg4F2n3wIzv0VII39c/78DkaS7CcytaseLA
+	Eku8=
+X-Gm-Gg: ASbGncsIB216oo+YCkw1nkJidGY6WX4zUswGWI4ptfVJnn4BNS9K9Cfic/FMCvtZ1AW
+	pfuxsjUfTRE+4z4S7i6qZt1DWQUi1MN5UI6rcYKmRak0RT7a+EqETUbhx3/ICEAdSeaEVu00P0p
+	0ZEzBjp/HyFj2Zr/06jPbRdsI1Ra8xcXGWnebd0IrUp46tutd5u0qSQxdo73kEBFriMwFlKKgAA
+	6Glu4icpZo+oDgtzPzMN53aHfhAFkMOuzxPKtFftTVIjesWLCvjSZARa5ltYNn8zQoQNsdiN1sg
+	+LCV45m4UP25H8optTJDxkOK6RgDQiAZ4H+Vi4C30D1YrjPjmpfniZtYzwscB+Bwh8eOJ4WfRDI
+	JPKaP9kYQK2fQZWcsfwYyCFES/TLhcbIe8Hwy
+X-Google-Smtp-Source: AGHT+IFa9U2uuxyoQGvOPEFv6OcRf+BqEtrGBqSTLKMrKEgEVDOVjm8xxg2Pky+0U6FFsXe+u7mNSA==
+X-Received: by 2002:a17:903:240c:b0:240:3ef:e17d with SMTP id d9443c01a7336-24096b3551bmr93714765ad.40.1753955485092;
+        Thu, 31 Jul 2025 02:51:25 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:9455:d03d:1e86:6ce4])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef7d96sm13499995ad.18.2025.07.31.02.51.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 02:51:24 -0700 (PDT)
+Date: Thu, 31 Jul 2025 18:51:20 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: John Ogness <john.ogness@linutronix.de>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>, 
+	Feng Tang <feng.tang@linux.alibaba.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] panic: remove redundant panic-cpu backtrace
+Message-ID: <af77hin3ywef3kpw6p6mpfdkukxwfrwh5cvyozlgtvq4pefgl7@3eozofs75xfo>
+References: <20250731030314.3818040-1-senozhatsky@chromium.org>
+ <84seichm5t.fsf@jogness.linutronix.de>
+ <2kwymhiz4fcozfmbmj6ju2qatsbmnrtiidfa4nxrqutgwa6xfy@dbf3caohbbay>
+ <84pldghkho.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: ti: k3-am62-main: Add tidss clk-ctrl
- property
-To: Rob Herring <robh@kernel.org>
-Cc: Jyri Sarha <jyri.sarha@iki.fi>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Sam Ravnborg <sam@ravnborg.org>,
- Benoit Parrot <bparrot@ti.com>, Lee Jones <lee@kernel.org>,
- Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Tero Kristo <kristo@kernel.org>, thomas.petazzoni@bootlin.com,
- Jyri Sarha <jsarha@ti.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- stable@vger.kernel.org
-References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
- <20250730-fix-edge-handling-v1-3-1bdfb3fe7922@bootlin.com>
- <20250731001725.GA1938112-robh@kernel.org>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- xsFNBGCG5KEBEAD1yQ5C7eS4rxD0Wj7JRYZ07UhWTbBpbSjHjYJQWx/qupQdzzxe6sdrxYSY
- 5K81kIWbtQX91pD/wH5UapRF4kwMXTAqof8+m3XfYcEDVG31Kf8QkJTG/gLBi1UfJgGBahbY
- hjP40kuUR/mr7M7bKoBP9Uh0uaEM+DuKl6bSXMSrJ6fOtEPOtnfBY0xVPmqIKfLFEkjh800v
- jD1fdwWKtAIXf+cQtC9QWvcdzAmQIwmyFBmbg+ccqao1OIXTgu+qMAHfgKDjYctESvo+Szmb
- DFBZudPbyTAlf2mVKpoHKMGy3ndPZ19RboKUP0wjrF+Snif6zRFisHK7D/mqpgUftoV4HjEH
- bQO9bTJZXIoPJMSb+Lyds0m83/LYfjcWP8w889bNyD4Lzzzu+hWIu/OObJeGEQqY01etOLMh
- deuSuCG9tFr0DY6l37d4VK4dqq4Snmm87IRCb3AHAEMJ5SsO8WmRYF8ReLIk0tJJPrALv8DD
- lnLnwadBJ9H8djZMj24+GC6MJjN8dDNWctpBXgGZKuCM7Ggaex+RLHP/+14Vl+lSLdFiUb3U
- ljBXuc9v5/9+D8fWlH03q+NCa1dVgUtsP2lpolOV3EE85q1HdMyt5K91oB0hLNFdTFYwn1bW
- WJ2FaRhiC1yV4kn/z8g7fAp57VyIb6lQfS1Wwuj5/53XYjdipQARAQABzSlMb3VpcyBDaGF1
- dmV0IDxsb3Vpcy5jaGF1dmV0QGJvb3RsaW4uY29tPsLBlAQTAQgAPgIbAwULCQgHAgYVCgkI
- CwIEFgIDAQIeAQIXgBYhBItxBK6aJy1mk/Un8uwYg/VeC0ClBQJod7hIBQkJ0gcjAAoJEOwY
- g/VeC0ClghwP/RQeixyghRVZEQtZO5/UsHkNkRRUWeVF9EoFXqFFnWqh4XXKos242btk5+Ew
- +OThuqDx9iLhLJLUc8XXuVw6rbJEP5j5+z0jI40e7Y+kVWCli/O2H/CrK98mGWwicBPEzrDD
- 4EfRgD0MeQ9fo2XJ3Iv+XiiZaBFQIKMAEynYdbqECIXxuzAnofhq2PcCrjZmqThwu8jHSc55
- KwdknZU3aEKSrTYiCIRrsHHi1N6vwiTZ098zL1efw7u0Q8rcqxHu3OWNIAeKHkozsMy9yo1h
- h3Yc7CA1PrKDGcywuY4MrV726/0VlrWcypYOCM1XG+/4ezIChYizpAiBNlAmd7witTK0d2HT
- UNSZF8KAOQRlHsIPrkA5qLr94OrFHYx6Ek07zS8LmVTtHricbYxFAXnQ5WbugNSE0uwRyrL/
- Kies5F0Sst2PcVYguoWcHfoNxes6OeU3xDmzclnpYQTanIU7SBzWXB1fr5WgHF7SAcAVxPY8
- wAlJBe+zMeA6oWidrd1u37eaEhHfpKX38J1VaSDTNRE+4SPQ+hKGDuMrDn0mXfcqR5wO7n1Z
- Q6uhKj3k6SJNksAWh1u13NP0DRS6rpRllvGWIyp+653R03NN8TE9JNRWAtSqoGvsiryhQyCE
- FlPOsv6+Ed/5a4dfLcO1qScJwiuP/XjFHAaWFK9RoOX52lR4zsFNBGCG6KUBEADZhvm9TZ25
- JZa7wbKMOpvSH36K8wl74FhuVuv7ykeFPKH2oC7zmP1oqs1IF1UXQQzNkCHsBpIZq+TSE74a
- mG4sEhZP0irrG/w3JQ9Vbxds7PzlQzDarJ1WJvS2KZ4AVnwc/ucirNuxinAuAmmNBUNF8w6o
- Y97sdgFuIZUP6h972Tby5bu7wmy1hWL3+2QV+LEKmRpr0D9jDtJrKfm25sLwoHIojdQtGv2g
- JbQ9Oh9+k3QG9Kh6tiQoOrzgJ9pNjamYsnti9M2XHhlX489eXq/E6bWOBRa0UmD0tuQKNgK1
- n8EDmFPW3L0vEnytAl4QyZEzPhO30GEcgtNkaJVQwiXtn4FMw4R5ncqXVvzR7rnEuXwyO9RF
- tjqhwxsfRlORo6vMKqvDxFfgIkVnlc2KBa563qDNARB6caG6kRaLVcy0pGVlCiHLjl6ygP+G
- GCNfoh/PADQz7gaobN2WZzXbsVS5LDb9w/TqskSRhkgXpxt6k2rqNgdfeyomlkQnruvkIIjs
- Sk2X68nwHJlCjze3IgSngS2Gc0NC/DDoUBMblP6a2LJwuF/nvaW+QzPquy5KjKUO2UqIO9y+
- movZqE777uayqmMeIy4cd/gg/yTBBcGvWVm0Dh7dE6G6WXJUhWIUtXCzxKMmkvSmZy+gt1rN
- OyCd65HgUXPBf+hioCzGVFSoqQARAQABwsOyBBgBCAAmAhsuFiEEi3EErponLWaT9Sfy7BiD
- 9V4LQKUFAmh3uH8FCQnSA1kCQMF0IAQZAQgAHRYhBE+PuD++eDwxDFBZBCCtLsZbECziBQJg
- huilAAoJECCtLsZbECziB8YQAJwDRdU16xtUjK+zlImknL7pyysfjLLbfegZyVfY/ulwKWzn
- nCJXrLAK1FpdYWPO1iaSVCJ5pn/Or6lS5QO0Fmj3mtQ/bQTnqBhXZcUHXxZh56RPAfl3Z3+P
- 77rSIcTFZMH6yAwS/cIQaKRQGPuJoxfYq1oHWT0r7crp3H+zUpbE4KUWRskRX+2Z6rtNrwuL
- K1Az1vjJjnnS3MLSkQR4VwsVejWbkpwlq5icCquU5Vjjw0WkVR32gBl/8/OnegSz7Of/zMrY
- 8GtlkIPoCGtui1HLuKsTl6KaHFywWbX4wbm5+dpBRYetFhdW4WG+RKipnyMY+A8SkWivg2NH
- Jf88wuCVDtLmyeS8pyvcu6fjhrJtcQer/UVPNbaQ6HqQUcUU49sy/W+gkowjOuYOgNL7EA23
- 8trs7CkLKUKAXq32gcdNMZ8B/C19hluJ6kLroUN78m39AvCQhd4ih5JLU7jqsl0ZYbaQe2FQ
- z64htRtpElbwCQmnM/UzPtOJ5H/2M7hg95Sb20YvmQ/bLI23MWKVyg56jHU1IU0A/P7M9yi9
- WbEBpIMZxLOFBUlWWTzE+JvyDh+cjyoncaPvHLDwP13PGEJHYMgWZkvzgSc3tGP6ThUgZjsz
- 9xW/EvzWOVswYwREyZv3oK5r3PVE6+IYDUd7aBsc5ynqqYs27eemuV4bw8tlCRDsGIP1XgtA
- pT1zD/0dT+clFbGoCMaIQ5qXypYoO0DYLmBD1aFjJy1YLsS1SCzuwROy4qWWaFMNBoDMF2cY
- D+XbM+C/4XBS8/wruAUrr+8RSbABBI/rfiVmqv0gPQWDm676V8iMDgyyvMG2DotMjnG/Dfxj
- w9WVnQUs/kQSPD8GZCZZ3AcycFmxN24ibGHo4zC947VKR5ZYdFHknX+Dt92TdNDkmoBg2CEm
- 9S2Skki9Pwyvb/21zCYq/o4pRMfKmQgpF2LT2m51rdtmNg9oj9F4+BJUmkgyNxMyGEA1V1jM
- xQaVX4mRY61O4CimPByUDp2EH2VaEr2rEwvHszaWqFJdSQE8hdSDc4cqhik7rznNBjwgZAzq
- cefLctAVnKjasfKEWp0VhgkIVB8/Sos4S8YaG4qbeGviSfIQJ2GO1Vd9WQ2n1XGth3cY2Qwk
- dIo13GCFJF7b6y0J13bm+siRpPZQ3aOda7pn07GXqREjFsfq5gF04/9am5x/haehPse2yzcP
- wDN7ORknPndzxrq3CyB7b/Tk1e8Qx+6HU/pnMb4ZqwwMwZAMk24TZpsgg28o9MQiUNzad0h2
- gIszbeej9ryrtLHxMzyK8yKhHoI2i2ovxy5O+hsWeAoCPE9xwbqnAjLjOn4Jzd/pPovizrq/
- kUoX66YgvCuHfQMC/aBPLnVunZSP23J2CrkTrnsUzw==
-In-Reply-To: <20250731001725.GA1938112-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutddtgeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeetieekffetjeeugfdvfefhudetueelleetuddvtddtvdehgefgudeugfehgeelfeenucffohhmrghinhepthhirdgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopegludelvddrudeikedrtddrvddtngdpmhgrihhlfhhrohhmpehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvgedprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhihrhhirdhsrghrhhgrsehikhhirdhfihdprhgtphhtthhopehtohhmihdrvhgrlhhkvghinhgvnhesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhug
- idrihhnthgvlhdrtghomhdprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtoheprghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopehsihhmohhnrgesfhhffihllhdrtghh
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84pldghkho.fsf@jogness.linutronix.de>
 
-
-
-Le 31/07/2025 à 02:17, Rob Herring a écrit :
-> On Wed, Jul 30, 2025 at 07:02:46PM +0200, Louis Chauvet wrote:
->> For am62 processors, we need to use the newly created clk-ctrl property to
->> properly handle data edge sampling configuration. Add them in the main
->> device tree.
->>
->> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
->> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->> ---
->>
->> Cc: stable@vger.kernel.org
->> ---
->>   arch/arm64/boot/dts/ti/k3-am62-main.dtsi | 6 ++++++
->>   1 file changed, 6 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->> index 9e0b6eee9ac77d66869915b2d7bec3e2275c03ea..d3131e6da8e70fde035d3c44716f939e8167795a 100644
->> --- a/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-am62-main.dtsi
->> @@ -76,6 +76,11 @@ audio_refclk1: clock-controller@82e4 {
->>   			assigned-clock-parents = <&k3_clks 157 18>;
->>   			#clock-cells = <0>;
->>   		};
->> +
->> +		dss_clk_ctrl: dss_clk_ctrl@8300 {
->> +			compatible = "ti,am625-dss-clk-ctrl", "syscon";
->> +			reg = <0x8300 0x4>;
+On (25/07/31 09:51), John Ogness wrote:
+> > Another way to get backtrace on panic CPU is via BUG(), which routes
+> > through die()->__die_body(), which prints registers, stack trace,
+> > and so on, before it calls into panic().  This might be x86 specific,
+> > though.
 > 
-> H/w blocks are rarely only 4 bytes of registers... Does this belong to
-> some larger block. The problem with bindings defining single registers
-> like this is they don't get defined until needed and you have a constant
-> stream of DT updates.
+> So in that case you see 2 stack traces if CONFIG_DEBUG_BUGVERBOSE=y?
 
-In this case, I don't think there is a "larger block". This register 
-exists only because TI had issues in the display controller [1].
+Yes.
 
-Here is the extract of MMR registers ([2], page 4311):
+Triggering BUG() with panic_print=0x40 generates two panic CPU
+backtraces - one from die() trap handler and one from NMI:
 
-[...]
-A2E4h AUDIO_REFCLK1_CTRL_PROXY <unrelated>
-A300h DPI0_CLK_CTRL_PROXY <this register, 32 bits>
-<nothing between 0xA304 and 0xA319>
-A320h DSS_DISPC0_CLKSEL1_PROXY <an other dss clock stuff, 32 bits>
-A330h MCASP0_CLKSEL_PROXY <unrelated>
-[...]
+[..]
+<2>[   44.003032] kernel BUG at fs/drop_caches.c:68!
+<4>[   44.003138] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+<4>[   44.003302] CPU: 2 UID: 0 PID: 3560 Comm: bash Not tainted 6.12.24-kasan-00964-gcf04fce2879f-dirty #1 77a011f1de55cafdc697f1d21852e4a93167feea
+<4>[   44.003624] RIP: 0010:drop_caches_sysctl_handler+0xe5/0xf0
+<4>[   44.003732] Code: ...
+<4>[   44.003954] RSP: 0018:ffff888053cd7cd8 EFLAGS: 00010202
+<4>[   44.004058] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000002
+<4>[   44.004215] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000000
+<4>[   44.004369] RBP: ffff888053cd7cf0 R08: ffff888053cd7be8 R09: 0000000000000001
+<4>[   44.004461] R10: ffff888053cd7b00 R11: ffffffff888ce910 R12: ffff888053cd7db8
+<4>[   44.004617] R13: dffffc0000000000 R14: 0000000000000001 R15: 1ffffffff1ad5821
+<4>[   44.004773] FS:  000078fd06d9f740(0000) GS:ffff88810b100000(0000) knlGS:0000000000000000
+<4>[   44.004868] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[   44.005022] CR2: 00005a31efb86c60 CR3: 00000001021f8000 CR4: 00000000003506f0
+<4>[   44.005178] Call Trace:
+<4>[   44.005268]  <TASK>
+<4>[   44.005360]  proc_sys_call_handler+0x34a/0x550
+<4>[   44.005467]  vfs_write+0x76a/0xa80
+<4>[   44.005628]  ? proc_sys_read+0x20/0x20
+<4>[   44.005734]  ksys_write+0xb4/0x160
+<4>[   44.005835]  do_syscall_64+0x6a/0xe0
+<4>[   44.006715]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
+<4>[   44.006876] RIP: 0033:0x78fd06ec1594
+<4>[   44.006973] Code: ...
+<4>[   44.007195] RSP: 002b:00007ffe87fcd618 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+<4>[   44.007297] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 000078fd06ec1594
+<4>[   44.007451] RDX: 0000000000000002 RSI: 0000573b1ca40130 RDI: 0000000000000001
+<4>[   44.007626] RBP: 00007ffe87fcd640 R08: 0000000000000001 R09: 0000000000000001
+<4>[   44.007731] R10: 000078fd06f55820 R11: 0000000000000202 R12: 0000000000000002
+<4>[   44.007906] R13: 0000573b1ca40130 R14: 000078fd06f945c0 R15: 000078fd06f91f20
+<4>[   44.008093]  </TASK>
+<4>[   44.008192] Modules linked in: [...]
+<0>[   44.017630] gsmi: Log Shutdown Reason 0x03
+<4>[   44.017886] ---[ end trace 0000000000000000 ]---
+<4>[   44.037806] RIP: 0010:drop_caches_sysctl_handler+0xe5/0xf0
+<4>[   44.037926] Code: ...
+<4>[   44.038078] RSP: 0018:ffff888053cd7cd8 EFLAGS: 00010202
+<4>[   44.038143] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000002
+<4>[   44.038249] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000000
+<4>[   44.038310] RBP: ffff888053cd7cf0 R08: ffff888053cd7be8 R09: 0000000000000001
+<4>[   44.038416] R10: ffff888053cd7b00 R11: ffffffff888ce910 R12: ffff888053cd7db8
+<4>[   44.038521] R13: dffffc0000000000 R14: 0000000000000001 R15: 1ffffffff1ad5821
+<4>[   44.038581] FS:  000078fd06d9f740(0000) GS:ffff88810b100000(0000) knlGS:0000000000000000
+<4>[   44.038688] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[   44.038803] CR2: 00005a31efb86c60 CR3: 00000001021f8000 CR4: 00000000003506f0
+<0>[   44.038865] Kernel panic - not syncing: Fatal exception
+<4>[   44.038971] NMI backtrace for cpu 2
+<4>[   44.038978] CPU: 2 UID: 0 PID: 3560 Comm: bash Tainted: G      D            6.12.24-kasan-00964-gcf04fce2879f-dirty #1 77a011f1de55cafdc697f1d21852e4a93167feea
+<4>[   44.038988] Tainted: [D]=DIE
+<4>[   44.038996] Call Trace:
+<4>[   44.039001]  <TASK>
+<4>[   44.039005]  nmi_cpu_backtrace+0x14c/0x1a0
+<4>[   44.039016]  ? arch_trigger_cpumask_backtrace+0x20/0x20
+<4>[   44.039026]  nmi_trigger_cpumask_backtrace+0xd8/0x1b0
+<4>[   44.039035]  panic_other_cpus_shutdown+0x2d/0x80
+<4>[   44.039045]  panic+0x199/0x450
+<4>[   44.039055]  oops_end+0xb9/0xc0
+<4>[   44.039062]  do_trap+0x10c/0x330
+<4>[   44.039089]  handle_invalid_op+0x95/0xd0
+<4>[   44.039095]  ? drop_caches_sysctl_handler+0xe5/0xf0
+<4>[   44.039102]  exc_invalid_op+0x3c/0x50
+<4>[   44.039110]  asm_exc_invalid_op+0x16/0x20
+<4>[   44.039118] RIP: 0010:drop_caches_sysctl_handler+0xe5/0xf0
+<4>[   44.039124] Code: ...
+<4>[   44.039129] RSP: 0018:ffff888053cd7cd8 EFLAGS: 00010202
+<4>[   44.039135] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000002
+<4>[   44.039139] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000000
+<4>[   44.039143] RBP: ffff888053cd7cf0 R08: ffff888053cd7be8 R09: 0000000000000001
+<4>[   44.039148] R10: ffff888053cd7b00 R11: ffffffff888ce910 R12: ffff888053cd7db8
+<4>[   44.039152] R13: dffffc0000000000 R14: 0000000000000001 R15: 1ffffffff1ad5821
+<4>[   44.039158]  ? proc_dointvec_minmax+0xe0/0xe0
+<4>[   44.039168]  ? drop_caches_sysctl_handler+0x15/0xf0
+<4>[   44.039174]  proc_sys_call_handler+0x34a/0x550
+<4>[   44.039184]  vfs_write+0x76a/0xa80
+<4>[   44.039191]  ? proc_sys_read+0x20/0x20
+<4>[   44.039201]  ksys_write+0xb4/0x160
+<4>[   44.039208]  do_syscall_64+0x6a/0xe0
+<4>[   44.039259]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
+<4>[   44.039265] RIP: 0033:0x78fd06ec1594
+<4>[   44.039273] Code: ...
+<4>[   44.039278] RSP: 002b:00007ffe87fcd618 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+<4>[   44.039285] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 000078fd06ec1594
+<4>[   44.039289] RDX: 0000000000000002 RSI: 0000573b1ca40130 RDI: 0000000000000001
+<4>[   44.039294] RBP: 00007ffe87fcd640 R08: 0000000000000001 R09: 0000000000000001
+<4>[   44.039298] R10: 000078fd06f55820 R11: 0000000000000202 R12: 0000000000000002
+<4>[   44.039302] R13: 0000573b1ca40130 R14: 000078fd06f945c0 R15: 000078fd06f91f20
+<4>[   44.039310]  </TASK>
+<6>[   44.039314] Sending NMI from CPU 2 to CPUs 0-1,3:
+[..]
 
-I agree that DSS_DISPC_CLKSEL_PROXY is also related to DSS clock stuff, 
-so may be included in the same block, but there is also a big hole in 
-between. What do you think is better?
+panic() with DEBUG_BUGVERBOSE and panic_print=0x40, two backtraces
+on the panic CPU:
 
-[1]:https://e2e.ti.com/support/processors-group/processors/f/processors-forum/1228207/am62a7-rgb-display-flickering-and-pixel-issue/4687209#4687209
-[2]:https://www.ti.com/lit/ug/spruiv7b/spruiv7b.pdf#page=4311
-
->> +		};
->>   	};
->>   
->>   	dmss: bus@48000000 {
->> @@ -787,6 +792,7 @@ dss: dss@30200000 {
->>   			 <&k3_clks 186 2>;
->>   		clock-names = "fck", "vp1", "vp2";
->>   		interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
->> +		ti,clk-ctrl = <&dss_clk_ctrl>;
->>   		status = "disabled";
->>   
->>   		dss_ports: ports {
->>
->> -- 
->> 2.50.1
->>
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+[..]
+<0>[   45.149482] Kernel panic - not syncing: BOOM
+<4>[   45.149792] CPU: 1 UID: 0 PID: 3512 Comm: bash Not tainted 6.12.24-kasan-00964-gcf04fce2879f-dirty #1 221d6609d9c374a289b848042333fd4fa6f5bddd
+<4>[   45.150176] Call Trace:
+<4>[   45.150285]  <TASK>
+<4>[   45.150394]  panic+0x190/0x450
+<4>[   45.150529]  drop_caches_sysctl_handler+0xb4/0xe0
+<4>[   45.150727]  proc_sys_call_handler+0x34a/0x550
+<4>[   45.150858]  vfs_write+0x76a/0xa80
+<4>[   45.150978]  ? proc_sys_read+0x20/0x20
+<4>[   45.151182]  ksys_write+0xb4/0x160
+<4>[   45.151303]  do_syscall_64+0x6a/0xe0
+<4>[   45.154298]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
+<4>[   45.154490] RIP: 0033:0x797c7ab90594
+<4>[   45.154608] Code: ...
+<4>[   45.154866] RSP: 002b:00007fff4f3ae9f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+<4>[   45.154998] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 0000797c7ab90594
+<4>[   45.155183] RDX: 0000000000000002 RSI: 0000577d00a03130 RDI: 0000000000000001
+<4>[   45.155365] RBP: 00007fff4f3aea20 R08: 0000000000000001 R09: 0000000000000001
+<4>[   45.155478] R10: 0000797c7ac24820 R11: 0000000000000202 R12: 0000000000000002
+<4>[   45.155689] R13: 0000577d00a03130 R14: 0000797c7ac635c0 R15: 0000797c7ac60f20
+<4>[   45.155884]  </TASK>
+<4>[   45.155992] NMI backtrace for cpu 1
+<4>[   45.156005] CPU: 1 UID: 0 PID: 3512 Comm: bash Not tainted 6.12.24-kasan-00964-gcf04fce2879f-dirty #1 221d6609d9c374a289b848042333fd4fa6f5bddd
+<4>[   45.156042] Call Trace:
+<4>[   45.156054]  <TASK>
+<4>[   45.156065]  nmi_cpu_backtrace+0x14c/0x1a0
+<4>[   45.156094]  ? arch_trigger_cpumask_backtrace+0x20/0x20
+<4>[   45.156122]  nmi_trigger_cpumask_backtrace+0xd8/0x1b0
+<4>[   45.156149]  panic_other_cpus_shutdown+0x2d/0x80
+<4>[   45.156176]  panic+0x199/0x450
+<4>[   45.156206]  drop_caches_sysctl_handler+0xb4/0xe0
+<4>[   45.156229]  proc_sys_call_handler+0x34a/0x550
+<4>[   45.156259]  vfs_write+0x76a/0xa80
+<4>[   45.156279]  ? proc_sys_read+0x20/0x20
+<4>[   45.156313]  ksys_write+0xb4/0x160
+<4>[   45.156338]  do_syscall_64+0x6a/0xe0
+<4>[   45.156788]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
+<4>[   45.156810] RIP: 0033:0x797c7ab90594
+<4>[   45.156829] Code: ...
+<4>[   45.156846] RSP: 002b:00007fff4f3ae9f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+<4>[   45.156869] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 0000797c7ab90594
+<4>[   45.156884] RDX: 0000000000000002 RSI: 0000577d00a03130 RDI: 0000000000000001
+<4>[   45.156899] RBP: 00007fff4f3aea20 R08: 0000000000000001 R09: 0000000000000001
+<4>[   45.156913] R10: 0000797c7ac24820 R11: 0000000000000202 R12: 0000000000000002
+<4>[   45.156927] R13: 0000577d00a03130 R14: 0000797c7ac635c0 R15: 0000797c7ac60f20
+<4>[   45.156954]  </TASK>
+<6>[   45.156965] Sending NMI from CPU 1 to CPUs 0,2-3:
+[..]
 
