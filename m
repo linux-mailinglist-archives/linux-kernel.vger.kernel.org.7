@@ -1,438 +1,292 @@
-Return-Path: <linux-kernel+bounces-751529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91FBBB16A96
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:56:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C848EB16A99
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB893A9663
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:55:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D24173A80
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0476323AB95;
-	Thu, 31 Jul 2025 02:56:09 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC9320E702;
+	Thu, 31 Jul 2025 02:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d/heq9cv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1431315383A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CF815383A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753930568; cv=none; b=JfAOIQpk47hYjhbovcTYRWahXKBRV/ZSGRGyB06g9h3Bm7qpAdbciRx4Y/6RTXkZlbQrf01mj4ZzcPyxz3tO36UcGRdRFSaUgCE6OekL1rZUUCwexYIHhZnQxy1gnMMuQFeNW5dxpRJZuEHQ3B5ePGQ9ri4aYEt+DkukELUDpc8=
+	t=1753930608; cv=none; b=tU6NkXJH41SgjLsvCJqIMEuDSzBv7OChiho5pQF9X6tZT9CgjuLsKx+a/f5YSubAZIfFojj5sKsxhNbWFUQv7hbiMfrd+OoeGCK051Df8TBQopPb97RKY3iQe+R+phtwUfRSvaxAMZMgTMuBXCB7u71JpxssaaISdQqpAg/w90k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753930568; c=relaxed/simple;
-	bh=v4VPBc96U7tyZhGGTeIMdly1mv2l7kYE1iAvqFoOQP4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XZgTLIYi6UTGHsEc66bJvkkyL0m2vvDT7C9pZMgXil7EvGMGDI3gcb3WBLQMy+h6ZmCFDXwyvpbY93LnJLzribURVeJz1BKC6Lxp78dWXjgkWkPTsqcoPkBTcoeT5Ez+/tZ6GU5fYBqzMGOj/wxoY1jRmzGg65JLCs5x2vLlUjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-87c056ae7c0so91792339f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:56:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753930565; x=1754535365;
-        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
-         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QcXKiPfwmHjQGd9OlGsZJblr9zhP6Wg9iPtuchythkk=;
-        b=PIwacZy3AcDxFmNzz8S+o/QUqNNse2ZLvfzZjvR9r3sOXfWIbNpCSg0EJM87n0vJw9
-         hSp/p42NmXgFTAo/TeD0GZWaRhVBAzF1One09eA2ssaStUIdAxZgOpNXhy+q6hLBXFCS
-         kor9Oo1dxe7n6XX2At8FspUdxvlzkxfrQrIkTJlpUgCuan+9X0xrR0YY/0SxKJWkzBnQ
-         WJtGV84v0D1U7CqIXqPy/mJU3Zcv/vjPVKNgSawJHGEiMhJtqaaHVwwVzwnbiG0YT5c8
-         2DzsdhoDXqrlUqgBdOyAkkkU9Ql77MZTnshiWzedCueO0CzAblxylhluMzlrgmf5fwxZ
-         vYMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXT9KRz+ku0fnDdnA7uZADMToG3RzbKjICxWWxP9R+zz/SubmXYEPG8DWkjQwbVPHqlGakemTDIvOfb1aQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf3kr6ezmumSGHyiCpDTax54ms8mD7MkVdy9eVKV9PPJ8Asd5+
-	p6rWq/WhWqdYkzn0JZ87YuvftVibrvhe/Ah/LjhIodTEl/ptlt6fVDZ2kjVZ8CmQ8264qr+ZKvC
-	MO2tHV3DjzDlZK2YlvdY8K/r568aZ/zuOJcYRS181xIoG8gpuqA6plKn321w=
-X-Google-Smtp-Source: AGHT+IHVOiwNmwDIz7MJoIfXI+MLX29s0YhmFGSgKyKOoRXQCnEwdSMKBr3PMCSfLaFsMf2P9Y3LDfzmACLOHONpZsVUYl084+Pb
+	s=arc-20240116; t=1753930608; c=relaxed/simple;
+	bh=oo7rQERvLXJ+qXxeAvJHTDBIvLuAcldgZkVC342F380=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Jhh8peXg4UjgIGvEkf+WZp9Bd3HS8CbqWWMfVnw0TkMtjQQtienrTaN2x4+MdHqK7KbeZQROa+hgLGwQj+c/VsJBWznoUQ8etO4EWU4/nuWdZq8ZjDBiXRAaQesD/nCpvsQ2if6NtZYF33zfC5D4O0U9qvbqswUbo3G91Y/6wA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d/heq9cv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B805C4CEE7;
+	Thu, 31 Jul 2025 02:56:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753930607;
+	bh=oo7rQERvLXJ+qXxeAvJHTDBIvLuAcldgZkVC342F380=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=d/heq9cva3KCSUH8/tE1oOcI4Tu2iQR0JdrkGHDPDKhQK6KGLogMQF6aRERdQY6Xm
+	 6uW0fKIQWwnpla4EfA090BoDrochxF7oVEFR/k9/B20rC0fcg5L4QXWsJsS4PkKyiI
+	 hA2yOLuHF+SFqu4S6cEuhY5M98HD32vzMEzd6+kT8O/OgM/huwfZTKW9erEEt8OfLr
+	 21JFiBph5xzAzrhUApitSPSI16ST49a0x8yCAUO/uw1SWLXF+kfUq6AKS0i3OIMSEa
+	 boXrVXmwOle1fz4tAUi2jgtB4KxZtWC/XNWBfxywqAnoxufM651huMmaXzM02dajMx
+	 CjIj57vkHFqEQ==
+Message-ID: <526cac92-29eb-42a4-bf56-220e3b1f7c0c@kernel.org>
+Date: Thu, 31 Jul 2025 10:56:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2198:b0:3e3:f95b:bc5c with SMTP id
- e9e14a558f8ab-3e3f95bbe01mr78786285ab.15.1753930565116; Wed, 30 Jul 2025
- 19:56:05 -0700 (PDT)
-Date: Wed, 30 Jul 2025 19:56:05 -0700
-In-Reply-To: <20250731015241.3576-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688adb45.a00a0220.26d0e1.0036.GAE@google.com>
-Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in move_pages
-From: syzbot <syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lokeshgidra@google.com, peterx@redhat.com, 
-	stable@vger.kernel.org, surenb@google.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] f2fs: add reserved nodes for privileged users
+To: Chunhai Guo <guochunhai@vivo.com>, jaegeuk@kernel.org
+References: <20250730141540.603144-1-guochunhai@vivo.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250730141540.603144-1-guochunhai@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 7/30/25 22:15, Chunhai Guo wrote:
+> This patch allows privileged users to reserve nodes via the
+> 'reserve_node' mount option, which is similar to the existing
+> 'reserve_root' option.
+> 
+> "-o reserve_node=<N>" means <N> nodes are reserved for privileged
+> users only.
+> 
+> Signed-off-by: Chunhai Guo <guochunhai@vivo.com>
+> ---
+> v2->v3: Apply Chao's suggestion from v2.
+> v1->v2: Add two missing handling parts.
+> v1: https://lore.kernel.org/linux-f2fs-devel/20250729095238.607433-1-guochunhai@vivo.com/
+> ---
+>  Documentation/filesystems/f2fs.rst |  9 ++++---
+>  fs/f2fs/f2fs.h                     | 17 +++++++-----
+>  fs/f2fs/super.c                    | 43 +++++++++++++++++++++++++-----
+>  3 files changed, 53 insertions(+), 16 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+> index 03b1efa6d3b2..95dbcd7ac9a8 100644
+> --- a/Documentation/filesystems/f2fs.rst
+> +++ b/Documentation/filesystems/f2fs.rst
+> @@ -173,9 +173,12 @@ data_flush		 Enable data flushing before checkpoint in order to
+>  			 persist data of regular and symlink.
+>  reserve_root=%d		 Support configuring reserved space which is used for
+>  			 allocation from a privileged user with specified uid or
+> -			 gid, unit: 4KB, the default limit is 0.2% of user blocks.
+> -resuid=%d		 The user ID which may use the reserved blocks.
+> -resgid=%d		 The group ID which may use the reserved blocks.
+> +			 gid, unit: 4KB, the default limit is 12.5% of user blocks.
+> +reserve_node=%d		 Support configuring reserved nodes which are used for
+> +			 allocation from a privileged user with specified uid or
+> +			 gid, the default limit is 12.5% of all nodes.
+> +resuid=%d		 The user ID which may use the reserved blocks and nodes.
+> +resgid=%d		 The group ID which may use the reserved blocks and nodes.
+>  fault_injection=%d	 Enable fault injection in all supported types with
+>  			 specified injection rate.
+>  fault_type=%d		 Support configuring fault injection type, should be
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 97c1a2a3fbd7..70f32c118dac 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -131,6 +131,7 @@ extern const char *f2fs_fault_name[FAULT_MAX];
+>   * string rather than using the MS_LAZYTIME flag, so this must remain.
+>   */
+>  #define F2FS_MOUNT_LAZYTIME		0x40000000
+> +#define F2FS_MOUNT_RESERVE_NODE		0x80000000
+>  
+>  #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
+>  #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
+> @@ -172,6 +173,7 @@ struct f2fs_rwsem {
+>  struct f2fs_mount_info {
+>  	unsigned int opt;
+>  	block_t root_reserved_blocks;	/* root reserved blocks */
+> +	block_t root_reserved_nodes;	/* root reserved nodes */
+>  	kuid_t s_resuid;		/* reserved blocks for uid */
+>  	kgid_t s_resgid;		/* reserved blocks for gid */
+>  	int active_logs;		/* # of active logs */
+> @@ -2355,13 +2357,11 @@ static inline bool f2fs_has_xattr_block(unsigned int ofs)
+>  	return ofs == XATTR_NODE_OFFSET;
+>  }
+>  
+> -static inline bool __allow_reserved_blocks(struct f2fs_sb_info *sbi,
+> +static inline bool __allow_reserved_root(struct f2fs_sb_info *sbi,
+>  					struct inode *inode, bool cap)
+>  {
+>  	if (!inode)
+>  		return true;
+> -	if (!test_opt(sbi, RESERVE_ROOT))
+> -		return false;
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Oh, I just notice this condition is wrong, let me submit a patch
+to fix this, as I hope it can go into stable correctly.
 
+Thanks,
 
-[   28.845257][    T1] Demotion targets for Node 1: null
-[   28.850968][    T1] debug_vm_pgtable: [debug_vm_pgtable         ]: Valid=
-ating architecture page table helpers
-[   31.966884][    T1] Key type .fscrypt registered
-[   31.971683][    T1] Key type fscrypt-provisioning registered
-[   31.981903][    T1] kAFS: Red Hat AFS client v0.1 registering.
-[   32.015243][    T1] Btrfs loaded, assert=3Don, ref-verify=3Don, zoned=3D=
-yes, fsverity=3Dyes
-[   32.023899][    T1] Key type big_key registered
-[   32.028720][    T1] Key type encrypted registered
-[   32.033688][    T1] AppArmor: AppArmor sha256 policy hashing enabled
-[   32.040442][    T1] ima: No TPM chip found, activating TPM-bypass!
-[   32.047114][    T1] Loading compiled-in module X.509 certificates
-[   32.084977][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
-ey: 9e306c316bea685e5e2c978a84108ea320e0bb8d'
-[   32.096049][    T1] ima: Allocated hash algorithm: sha256
-[   32.102136][    T1] ima: No architecture policies found
-[   32.108474][    T1] evm: Initialising EVM extended attributes:
-[   32.114683][    T1] evm: security.selinux (disabled)
-[   32.120010][    T1] evm: security.SMACK64 (disabled)
-[   32.125234][    T1] evm: security.SMACK64EXEC (disabled)
-[   32.130721][    T1] evm: security.SMACK64TRANSMUTE (disabled)
-[   32.136717][    T1] evm: security.SMACK64MMAP (disabled)
-[   32.142322][    T1] evm: security.apparmor
-[   32.146620][    T1] evm: security.ima
-[   32.150513][    T1] evm: security.capability
-[   32.155010][    T1] evm: HMAC attrs: 0x1
-[   32.161853][    T1] PM:   Magic number: 1:781:764
-[   32.167399][    T1] tty ptyp0: hash matches
-[   32.171863][    T1] event_source breakpoint: hash matches
-[   32.177883][    T1] netconsole: network logging started
-[   32.184127][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
-[   32.196802][    T1] rdma_rxe: loaded
-[   32.202557][    T1] cfg80211: Loading compiled-in X.509 certificates for=
- regulatory database
-[   32.214150][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-[   32.222646][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06=
-c7248db18c600'
-[   32.233530][    T1] clk: Disabling unused clocks
-[   32.238743][    T1] ALSA device list:
-[   32.240606][ T1232] faux_driver regulatory: Direct firmware load for reg=
-ulatory.db failed with error -2
-[   32.242690][    T1]   #0: Dummy 1
-[   32.252694][ T1232] faux_driver regulatory: Falling back to sysfs fallba=
-ck for: regulatory.db
-[   32.255969][    T1]   #1: Loopback 1
-[   32.268969][    T1]   #2: Virtual MIDI Card 1
-[   32.277374][    T1] check access for rdinit=3D/init failed: -2, ignoring
-[   32.284083][    T1] md: Waiting for all devices to be available before a=
-utodetect
-[   32.291864][    T1] md: If you don't use raid, use raid=3Dnoautodetect
-[   32.298455][    T1] md: Autodetecting RAID arrays.
-[   32.303602][    T1] md: autorun ...
-[   32.307281][    T1] md: ... autorun DONE.
-[   32.462042][    T1] EXT4-fs (sda1): orphan cleanup on readonly fs
-[   32.471960][    T1] EXT4-fs (sda1): mounted filesystem 4f91c6db-4997-4bb=
-4-91b8-7e83a20c1bf1 ro with ordered data mode. Quota mode: none.
-[   32.484967][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
-ce 8:1.
-[   32.495205][    T1] devtmpfs: mounted
-[   32.588172][    T1] Freeing unused kernel image (initmem) memory: 26168K
-[   32.600162][    T1] Write protecting the kernel read-only data: 215040k
-[   32.623912][    T1] Freeing unused kernel image (text/rodata gap) memory=
-: 1780K
-[   32.638083][    T1] Freeing unused kernel image (rodata/data gap) memory=
-: 1392K
-[   32.848558][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
-ound.
-[   32.856738][    T1] x86/mm: Checking user space page tables
-[   33.038272][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
-ound.
-[   33.052334][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_pan=
-ic=3D1': parameter not found
-[   33.062661][    T1] Run /sbin/init as init process
-[   33.861085][ T5182] mount (5182) used greatest stack depth: 24104 bytes =
-left
-[   33.936286][ T5183] EXT4-fs (sda1): re-mounted 4f91c6db-4997-4bb4-91b8-7=
-e83a20c1bf1 r/w.
-mount: mounting devtmpfs on /dev failed: Device or resource busy
-mount: mounting smackfs on /sys/fs/smackfs failed: No such file or director=
-y
-mount: mounting selinuxfs on /sys/fs/selinux failed: No such file or direct=
-ory
-[   34.124544][ T5187] mount (5187) used greatest stack depth: 21768 bytes =
-left
-Starting syslogd: OK
-Starting acpid: OK
-Starting klogd: OK
-Running sysctl: [   35.067485][ T5215] logger (5215) used greatest stack de=
-pth: 20232 bytes left
-OK
-Populating /dev using udev: [   35.630326][ T5217] udevd[5217]: starting ve=
-rsion 3.2.14
-[   35.905047][ T5218] udevd[5218]: starting eudev-3.2.14
-[   35.910508][ T5217] udevd (5217) used greatest stack depth: 18888 bytes =
-left
-[   45.256949][ T5311] ------------[ cut here ]------------
-[   45.262574][ T5311] AppArmor WARN apparmor_unix_stream_connect: ((({ typ=
-eof(*(new_ctx->label)) *__UNIQUE_ID_rcu2215 =3D (typeof(*(new_ctx->label)) =
-*)({ do { __attribute__((__noreturn__)) extern void __compiletime_assert_22=
-16(void) __attribute__((__error__("Unsupported access size for {READ,WRITE}=
-_ONCE()."))); if (!((sizeof((new_ctx->label)) =3D=3D sizeof(char) || sizeof=
-((new_ctx->label)) =3D=3D sizeof(short) || sizeof((new_ctx->label)) =3D=3D =
-sizeof(int) || sizeof((new_ctx->label)) =3D=3D sizeof(long)) || sizeof((new=
-_ctx->label)) =3D=3D sizeof(long long))) __compiletime_assert_2216(); } whi=
-le (0); (*(const volatile typeof( _Generic(((new_ctx->label)), char: (char)=
-0, unsigned char: (unsigned char)0, signed char: (signed char)0, unsigned s=
-hort: (unsigned short)0, signed short: (signed short)0, unsigned int: (unsi=
-gned int)0, signed int: (signed int)0, unsigned long: (unsigned long)0, sig=
-ned long: (signed long)0, unsigned long long: (unsigned long long)0, signed=
- long long: (signed long long)0, default: ((new_ctx->label)))) *)&((new_ctx=
-->label))); }); ;=20
-[   45.263241][ T5311] WARNING: security/apparmor/lsm.c:1211 at apparmor_un=
-ix_stream_connect+0x5fa/0x650, CPU#1: udevadm/5311
-[   45.366388][ T5311] Modules linked in:
-[   45.370460][ T5311] CPU: 1 UID: 0 PID: 5311 Comm: udevadm Not tainted 6.=
-16.0-next-20250730-syzkaller-g79fb37f39b77-dirty #0 PREEMPT(full)=20
-[   45.383250][ T5311] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 07/12/2025
-[   45.393425][ T5311] RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650
-[   45.400386][ T5311] Code: 2b 39 fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff f=
-f e8 fb 2a 39 fd 90 48 c7 c7 80 49 fd 8b 48 c7 c6 55 fd c6 8d e8 07 b2 fc f=
-c 90 <0f> 0b 90 90 e9 27 fe ff ff e8 d8 2a 39 fd be 02 00 00 00 eb 0a e8
-[   45.420317][ T5311] RSP: 0018:ffffc90002fe7ba8 EFLAGS: 00010246
-[   45.426486][ T5311] RAX: 9dc56ab1cd53fc00 RBX: 1ffff1100f9680a8 RCX: fff=
-f88802573bc00
-[   45.434510][ T5311] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
-0000000000002
-[   45.442606][ T5311] RBP: ffff88801ba8f8f8 R08: ffff8880b8724253 R09: 1ff=
-ff110170e484a
-[   45.450777][ T5311] R10: dffffc0000000000 R11: ffffed10170e484b R12: fff=
-f88807cb40540
-[   45.458900][ T5311] R13: 1ffff1100652ff20 R14: 0000000000000000 R15: 000=
-000000000002f
-[   45.466941][ T5311] FS:  00007f76c2063880(0000) GS:ffff8881258ff000(0000=
-) knlGS:0000000000000000
-[   45.475912][ T5311] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   45.482735][ T5311] CR2: 00007f76c187ae00 CR3: 000000007703c000 CR4: 000=
-00000003526f0
-[   45.490960][ T5311] Call Trace:
-[   45.494279][ T5311]  <TASK>
-[   45.497315][ T5311]  security_unix_stream_connect+0xcb/0x2c0
-[   45.503280][ T5311]  unix_stream_connect+0x9bc/0x1140
-[   45.508693][ T5311]  ? __pfx_unix_stream_connect+0x10/0x10
-[   45.514371][ T5311]  ? apparmor_socket_connect+0xd1/0x1c0
-[   45.520004][ T5311]  ? bpf_lsm_socket_connect+0x9/0x20
-[   45.525337][ T5311]  __sys_connect+0x313/0x440
-[   45.530054][ T5311]  ? count_memcg_event_mm+0x21/0x260
-[   45.535468][ T5311]  ? __pfx___sys_connect+0x10/0x10
-[   45.540839][ T5311]  __x64_sys_connect+0x7a/0x90
-[   45.545652][ T5311]  do_syscall_64+0xfa/0x3b0
-[   45.550262][ T5311]  ? lockdep_hardirqs_on+0x9c/0x150
-[   45.555504][ T5311]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   45.561680][ T5311]  ? clear_bhb_loop+0x60/0xb0
-[   45.566469][ T5311]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   45.572402][ T5311] RIP: 0033:0x7f76c18a7407
-[   45.577029][ T5311] Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 0=
-0 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0=
-f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
-[   45.596931][ T5311] RSP: 002b:00007fff51b7aea0 EFLAGS: 00000202 ORIG_RAX=
-: 000000000000002a
-[   45.605391][ T5311] RAX: ffffffffffffffda RBX: 00007f76c2063880 RCX: 000=
-07f76c18a7407
-[   45.613557][ T5311] RDX: 0000000000000013 RSI: 000055c6cf4e5948 RDI: 000=
-0000000000003
-[   45.621707][ T5311] RBP: 000000000000001e R08: 0000000000000000 R09: 000=
-0000000000000
-[   45.629803][ T5311] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
-07fff51b7af00
-[   45.637970][ T5311] R13: 0000000000000000 R14: 0000000000000007 R15: 000=
-0000000000000
-[   45.646036][ T5311]  </TASK>
-[   45.649515][ T5311] Kernel panic - not syncing: kernel: panic_on_warn se=
-t ...
-[   45.656924][ T5311] CPU: 1 UID: 0 PID: 5311 Comm: udevadm Not tainted 6.=
-16.0-next-20250730-syzkaller-g79fb37f39b77-dirty #0 PREEMPT(full)=20
-[   45.669550][ T5311] Hardware name: Google Google Compute Engine/Google C=
-ompute Engine, BIOS Google 07/12/2025
-[   45.679726][ T5311] Call Trace:
-[   45.683035][ T5311]  <TASK>
-[   45.686086][ T5311]  dump_stack_lvl+0x99/0x250
-[   45.690702][ T5311]  ? __asan_memcpy+0x40/0x70
-[   45.695331][ T5311]  ? __pfx_dump_stack_lvl+0x10/0x10
-[   45.700632][ T5311]  ? __pfx__printk+0x10/0x10
-[   45.705252][ T5311]  vpanic+0x281/0x750
-[   45.709254][ T5311]  ? __pfx_vpanic+0x10/0x10
-[   45.713769][ T5311]  ? is_bpf_text_address+0x292/0x2b0
-[   45.719065][ T5311]  ? is_bpf_text_address+0x26/0x2b0
-[   45.724280][ T5311]  panic+0xb9/0xc0
-[   45.728191][ T5311]  ? __pfx_panic+0x10/0x10
-[   45.732652][ T5311]  __warn+0x334/0x4c0
-[   45.736661][ T5311]  ? apparmor_unix_stream_connect+0x5fa/0x650
-[   45.742751][ T5311]  ? apparmor_unix_stream_connect+0x5fa/0x650
-[   45.748855][ T5311]  report_bug+0x2be/0x4f0
-[   45.753201][ T5311]  ? apparmor_unix_stream_connect+0x5fa/0x650
-[   45.759287][ T5311]  ? apparmor_unix_stream_connect+0x5fa/0x650
-[   45.765369][ T5311]  ? apparmor_unix_stream_connect+0x5fc/0x650
-[   45.771457][ T5311]  handle_bug+0x84/0x160
-[   45.775713][ T5311]  exc_invalid_op+0x1a/0x50
-[   45.780229][ T5311]  asm_exc_invalid_op+0x1a/0x20
-[   45.785090][ T5311] RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650
-[   45.791785][ T5311] Code: 2b 39 fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff f=
-f e8 fb 2a 39 fd 90 48 c7 c7 80 49 fd 8b 48 c7 c6 55 fd c6 8d e8 07 b2 fc f=
-c 90 <0f> 0b 90 90 e9 27 fe ff ff e8 d8 2a 39 fd be 02 00 00 00 eb 0a e8
-[   45.811507][ T5311] RSP: 0018:ffffc90002fe7ba8 EFLAGS: 00010246
-[   45.817614][ T5311] RAX: 9dc56ab1cd53fc00 RBX: 1ffff1100f9680a8 RCX: fff=
-f88802573bc00
-[   45.825597][ T5311] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
-0000000000002
-[   45.833592][ T5311] RBP: ffff88801ba8f8f8 R08: ffff8880b8724253 R09: 1ff=
-ff110170e484a
-[   45.841787][ T5311] R10: dffffc0000000000 R11: ffffed10170e484b R12: fff=
-f88807cb40540
-[   45.849789][ T5311] R13: 1ffff1100652ff20 R14: 0000000000000000 R15: 000=
-000000000002f
-[   45.857797][ T5311]  ? apparmor_unix_stream_connect+0x5f9/0x650
-[   45.863898][ T5311]  security_unix_stream_connect+0xcb/0x2c0
-[   45.869723][ T5311]  unix_stream_connect+0x9bc/0x1140
-[   45.874965][ T5311]  ? __pfx_unix_stream_connect+0x10/0x10
-[   45.880638][ T5311]  ? apparmor_socket_connect+0xd1/0x1c0
-[   45.886338][ T5311]  ? bpf_lsm_socket_connect+0x9/0x20
-[   45.891652][ T5311]  __sys_connect+0x313/0x440
-[   45.896264][ T5311]  ? count_memcg_event_mm+0x21/0x260
-[   45.901585][ T5311]  ? __pfx___sys_connect+0x10/0x10
-[   45.906836][ T5311]  __x64_sys_connect+0x7a/0x90
-[   45.911620][ T5311]  do_syscall_64+0xfa/0x3b0
-[   45.916226][ T5311]  ? lockdep_hardirqs_on+0x9c/0x150
-[   45.921443][ T5311]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   45.927532][ T5311]  ? clear_bhb_loop+0x60/0xb0
-[   45.932230][ T5311]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   45.938138][ T5311] RIP: 0033:0x7f76c18a7407
-[   45.942597][ T5311] Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 0=
-0 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0=
-f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
-[   45.962764][ T5311] RSP: 002b:00007fff51b7aea0 EFLAGS: 00000202 ORIG_RAX=
-: 000000000000002a
-[   45.971201][ T5311] RAX: ffffffffffffffda RBX: 00007f76c2063880 RCX: 000=
-07f76c18a7407
-[   45.979193][ T5311] RDX: 0000000000000013 RSI: 000055c6cf4e5948 RDI: 000=
-0000000000003
-[   45.987272][ T5311] RBP: 000000000000001e R08: 0000000000000000 R09: 000=
-0000000000000
-[   45.995541][ T5311] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
-07fff51b7af00
-[   46.003610][ T5311] R13: 0000000000000000 R14: 0000000000000007 R15: 000=
-0000000000000
-[   46.011603][ T5311]  </TASK>
-[   46.021763][ T5311] Kernel Offset: disabled
-[   46.026647][ T5311] Rebooting in 86400 seconds..
-
-
-syzkaller build log:
-go env (err=3D<nil>)
-AR=3D'ar'
-CC=3D'gcc'
-CGO_CFLAGS=3D'-O2 -g'
-CGO_CPPFLAGS=3D''
-CGO_CXXFLAGS=3D'-O2 -g'
-CGO_ENABLED=3D'1'
-CGO_FFLAGS=3D'-O2 -g'
-CGO_LDFLAGS=3D'-O2 -g'
-CXX=3D'g++'
-GCCGO=3D'gccgo'
-GO111MODULE=3D'auto'
-GOAMD64=3D'v1'
-GOARCH=3D'amd64'
-GOAUTH=3D'netrc'
-GOBIN=3D''
-GOCACHE=3D'/syzkaller/.cache/go-build'
-GOCACHEPROG=3D''
-GODEBUG=3D''
-GOENV=3D'/syzkaller/.config/go/env'
-GOEXE=3D''
-GOEXPERIMENT=3D''
-GOFIPS140=3D'off'
-GOFLAGS=3D''
-GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
- -ffile-prefix-map=3D/tmp/go-build3145104381=3D/tmp/go-build -gno-record-gc=
-c-switches'
-GOHOSTARCH=3D'amd64'
-GOHOSTOS=3D'linux'
-GOINSECURE=3D''
-GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
-mod'
-GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
-GONOPROXY=3D''
-GONOSUMDB=3D''
-GOOS=3D'linux'
-GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
-GOPRIVATE=3D''
-GOPROXY=3D'https://proxy.golang.org,direct'
-GOROOT=3D'/usr/local/go'
-GOSUMDB=3D'sum.golang.org'
-GOTELEMETRY=3D'local'
-GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
-GOTMPDIR=3D''
-GOTOOLCHAIN=3D'auto'
-GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
-GOVCS=3D''
-GOVERSION=3D'go1.24.4'
-GOWORK=3D''
-PKG_CONFIG=3D'pkg-config'
-
-git status (err=3D<nil>)
-HEAD detached at 44f8051e44
-nothing to commit, working tree clean
-
-
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
-s/syz-sysgen
-make .descriptions
-tput: No value for $TERM and no -T specified
-tput: No value for $TERM and no -T specified
-Makefile:31: run command via tools/syz-env for best compatibility, see:
-Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
-ing.md#using-syz-env
-bin/syz-sysgen
-touch .descriptions
-GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
-/syzkaller/prog.GitRevision=3D44f8051e446824395d02720c745353cd454d9553 -X g=
-ithub.com/google/syzkaller/prog.gitRevisionDate=3D20250716-133924"  -o ./bi=
-n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
-mkdir -p ./bin/linux_amd64
-g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
-	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
-ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
-t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
-static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
-_amd64=3D1 \
-	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"44f8051e446824395d02720c745353cd45=
-4d9553\"
-/usr/bin/ld: /tmp/ccnhngWI.o: in function `Connection::Connect(char const*,=
- char const*)':
-executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
-KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
-ions requires at runtime the shared libraries from the glibc version used f=
-or linking
-
-
-Error text is too large and was truncated, full error text is at:
-https://syzkaller.appspot.com/x/error.txt?x=3D11622cf0580000
-
-
-Tested on:
-
-commit:         79fb37f3 Add linux-next specific files for 20250730
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1f38ce0ee8aa681=
-d
-dashboard link: https://syzkaller.appspot.com/bug?extid=3Db446dbe27035ef6bd=
-6c2
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-=
-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D114e48345800=
-00
+>  	if (IS_NOQUOTA(inode))
+>  		return true;
+>  	if (uid_eq(F2FS_OPTION(sbi).s_resuid, current_fsuid()))
+> @@ -2382,7 +2382,8 @@ static inline unsigned int get_available_block_count(struct f2fs_sb_info *sbi,
+>  	avail_user_block_count = sbi->user_block_count -
+>  					sbi->current_reserved_blocks;
+>  
+> -	if (!__allow_reserved_blocks(sbi, inode, cap))
+> +	if (test_opt(sbi, RESERVE_ROOT) &&
+> +			!__allow_reserved_root(sbi, inode, cap))
+>  		avail_user_block_count -= F2FS_OPTION(sbi).root_reserved_blocks;
+>  
+>  	if (unlikely(is_sbi_flag_set(sbi, SBI_CP_DISABLED))) {
+> @@ -2740,7 +2741,7 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+>  					struct inode *inode, bool is_inode)
+>  {
+>  	block_t	valid_block_count;
+> -	unsigned int valid_node_count;
+> +	unsigned int valid_node_count, avail_user_node_count;
+>  	unsigned int avail_user_block_count;
+>  	int err;
+>  
+> @@ -2769,8 +2770,12 @@ static inline int inc_valid_node_count(struct f2fs_sb_info *sbi,
+>  		goto enospc;
+>  	}
+>  
+> +	avail_user_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+> +	if (test_opt(sbi, RESERVE_NODE) &&
+> +			!__allow_reserved_root(sbi, inode, false))
+> +		avail_user_node_count -= F2FS_OPTION(sbi).root_reserved_nodes;
+>  	valid_node_count = sbi->total_valid_node_count + 1;
+> -	if (unlikely(valid_node_count > sbi->total_node_count)) {
+> +	if (unlikely(valid_node_count > avail_user_node_count)) {
+>  		spin_unlock(&sbi->stat_lock);
+>  		goto enospc;
+>  	}
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 30c038413040..a24e855a38ed 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -143,6 +143,7 @@ enum {
+>  	Opt_extent_cache,
+>  	Opt_data_flush,
+>  	Opt_reserve_root,
+> +	Opt_reserve_node,
+>  	Opt_resgid,
+>  	Opt_resuid,
+>  	Opt_mode,
+> @@ -265,6 +266,7 @@ static const struct fs_parameter_spec f2fs_param_specs[] = {
+>  	fsparam_flag_no("extent_cache", Opt_extent_cache),
+>  	fsparam_flag("data_flush", Opt_data_flush),
+>  	fsparam_u32("reserve_root", Opt_reserve_root),
+> +	fsparam_u32("reserve_node", Opt_reserve_node),
+>  	fsparam_gid("resgid", Opt_resgid),
+>  	fsparam_uid("resuid", Opt_resuid),
+>  	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
+> @@ -336,6 +338,7 @@ static match_table_t f2fs_checkpoint_tokens = {
+>  #define F2FS_SPEC_discard_unit			(1 << 21)
+>  #define F2FS_SPEC_memory_mode			(1 << 22)
+>  #define F2FS_SPEC_errors			(1 << 23)
+> +#define F2FS_SPEC_reserve_node			(1 << 24)
+>  
+>  struct f2fs_fs_context {
+>  	struct f2fs_mount_info info;
+> @@ -437,22 +440,30 @@ static void f2fs_destroy_casefold_cache(void) { }
+>  
+>  static inline void limit_reserve_root(struct f2fs_sb_info *sbi)
+>  {
+> -	block_t limit = min((sbi->user_block_count >> 3),
+> +	block_t block_limit = min((sbi->user_block_count >> 3),
+>  			sbi->user_block_count - sbi->reserved_blocks);
+> +	block_t node_limit = sbi->total_node_count >> 3;
+>  
+>  	/* limit is 12.5% */
+>  	if (test_opt(sbi, RESERVE_ROOT) &&
+> -			F2FS_OPTION(sbi).root_reserved_blocks > limit) {
+> -		F2FS_OPTION(sbi).root_reserved_blocks = limit;
+> +			F2FS_OPTION(sbi).root_reserved_blocks > block_limit) {
+> +		F2FS_OPTION(sbi).root_reserved_blocks = block_limit;
+>  		f2fs_info(sbi, "Reduce reserved blocks for root = %u",
+>  			  F2FS_OPTION(sbi).root_reserved_blocks);
+>  	}
+> -	if (!test_opt(sbi, RESERVE_ROOT) &&
+> +	if (test_opt(sbi, RESERVE_NODE) &&
+> +			F2FS_OPTION(sbi).root_reserved_nodes > node_limit) {
+> +		F2FS_OPTION(sbi).root_reserved_nodes = node_limit;
+> +		f2fs_info(sbi, "Reduce reserved nodes for root = %u",
+> +			  F2FS_OPTION(sbi).root_reserved_nodes);
+> +	}
+> +	if (!test_opt(sbi, RESERVE_ROOT) && !test_opt(sbi, RESERVE_NODE) &&
+>  		(!uid_eq(F2FS_OPTION(sbi).s_resuid,
+>  				make_kuid(&init_user_ns, F2FS_DEF_RESUID)) ||
+>  		!gid_eq(F2FS_OPTION(sbi).s_resgid,
+>  				make_kgid(&init_user_ns, F2FS_DEF_RESGID))))
+> -		f2fs_info(sbi, "Ignore s_resuid=%u, s_resgid=%u w/o reserve_root",
+> +		f2fs_info(sbi, "Ignore s_resuid=%u, s_resgid=%u w/o reserve_root"
+> +				" and reserve_node",
+>  			  from_kuid_munged(&init_user_ns,
+>  					   F2FS_OPTION(sbi).s_resuid),
+>  			  from_kgid_munged(&init_user_ns,
+> @@ -841,6 +852,11 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  		F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
+>  		ctx->spec_mask |= F2FS_SPEC_reserve_root;
+>  		break;
+> +	case Opt_reserve_node:
+> +		ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
+> +		F2FS_CTX_INFO(ctx).root_reserved_nodes = result.uint_32;
+> +		ctx->spec_mask |= F2FS_SPEC_reserve_node;
+> +		break;
+>  	case Opt_resuid:
+>  		F2FS_CTX_INFO(ctx).s_resuid = result.uid;
+>  		ctx->spec_mask |= F2FS_SPEC_resuid;
+> @@ -1424,6 +1440,14 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
+>  		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
+>  		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_ROOT;
+>  	}
+> +	if (test_opt(sbi, RESERVE_NODE) &&
+> +			(ctx->opt_mask & F2FS_MOUNT_RESERVE_NODE) &&
+> +			ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_NODE)) {
+> +		f2fs_info(sbi, "Preserve previous reserve_node=%u",
+> +			F2FS_OPTION(sbi).root_reserved_nodes);
+> +		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_NODE);
+> +		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_NODE;
+> +	}
+>  
+>  	err = f2fs_check_test_dummy_encryption(fc, sb);
+>  	if (err)
+> @@ -1623,6 +1647,9 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+>  	if (ctx->spec_mask & F2FS_SPEC_reserve_root)
+>  		F2FS_OPTION(sbi).root_reserved_blocks =
+>  					F2FS_CTX_INFO(ctx).root_reserved_blocks;
+> +	if (ctx->spec_mask & F2FS_SPEC_reserve_node)
+> +		F2FS_OPTION(sbi).root_reserved_nodes =
+> +					F2FS_CTX_INFO(ctx).root_reserved_nodes;
+>  	if (ctx->spec_mask & F2FS_SPEC_resgid)
+>  		F2FS_OPTION(sbi).s_resgid = F2FS_CTX_INFO(ctx).s_resgid;
+>  	if (ctx->spec_mask & F2FS_SPEC_resuid)
+> @@ -2342,9 +2369,11 @@ static int f2fs_show_options(struct seq_file *seq, struct dentry *root)
+>  	else if (F2FS_OPTION(sbi).fs_mode == FS_MODE_FRAGMENT_BLK)
+>  		seq_puts(seq, "fragment:block");
+>  	seq_printf(seq, ",active_logs=%u", F2FS_OPTION(sbi).active_logs);
+> -	if (test_opt(sbi, RESERVE_ROOT))
+> -		seq_printf(seq, ",reserve_root=%u,resuid=%u,resgid=%u",
+> +	if (test_opt(sbi, RESERVE_ROOT) || test_opt(sbi, RESERVE_NODE))
+> +		seq_printf(seq, ",reserve_root=%u,reserve_node=%u,resuid=%u,"
+> +				"resgid=%u",
+>  				F2FS_OPTION(sbi).root_reserved_blocks,
+> +				F2FS_OPTION(sbi).root_reserved_nodes,
+>  				from_kuid_munged(&init_user_ns,
+>  					F2FS_OPTION(sbi).s_resuid),
+>  				from_kgid_munged(&init_user_ns,
 
 
