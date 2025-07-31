@@ -1,156 +1,157 @@
-Return-Path: <linux-kernel+bounces-752035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD05B170AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:53:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570A8B170B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00301624FC1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A271C1AA812A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886742C3769;
-	Thu, 31 Jul 2025 11:52:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57F492D1F45;
+	Thu, 31 Jul 2025 11:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWRtu991"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="p96UlHqi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BBF2C08DB;
-	Thu, 31 Jul 2025 11:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F0312C08C1;
+	Thu, 31 Jul 2025 11:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753962722; cv=none; b=i9k+B5YyK+J2F5VL0JdoFXTvho7dRC1kaS8W+C06gTr1onNVijJwvcimkPjLgbzd/WGj22QTGZHmYwWX/O1ar9A6J5ZMCFuL+UUoJDsBMN0AvpxfFhZo6TfQJnYPTsZzH1ll95avLyQDOT4IXIidY2RCYULNFH0wVsU4JWaOs68=
+	t=1753962752; cv=none; b=MPeHrxZDz3+Q6xWUJAWMe1NOsu5jGp2Aakr2uYdx+Je8r6KrNXFAufdMFDWDeRCNsdZqfuS/mgxo6UfHghh8sIU9+JX5jEHLRUDn+fc2mie1/WmxJfNduSrzHtOmHceLLp6Ii6QJGMs6yI+qzlZuHLwmK6MJggMhr46pogk2w3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753962722; c=relaxed/simple;
-	bh=Z83uWHM+h223rV4Zk4J8by6vpmxft3lhwsCh7wcDG1M=;
+	s=arc-20240116; t=1753962752; c=relaxed/simple;
+	bh=L+Oj+lgcb5CliM2jzbx09ewH/vd7ovKgOLBsvX7o3ck=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=edRe6EKTaqs2OBaTHL6wxOrsKghvuaBn5dbFbO3iyLPhIOu4lYg1hoc/d3r4J/UCDYIXF0Td/06tcKN076gAn31haL7aILaUKK0EeRifUnzIG4K2wp1hBwGvlNCK16eL8KkUHeWp8hMiUOZz6JnZTHi4Wy+PRv9jQdoiQUBem+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kWRtu991; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 918BEC4CEEF;
-	Thu, 31 Jul 2025 11:51:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753962721;
-	bh=Z83uWHM+h223rV4Zk4J8by6vpmxft3lhwsCh7wcDG1M=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZG8xzk1yzmtwXpq7gxJSGY51dW5p4Q8BMqi2I6zO9VUA/j8y56netJzKuSam/zhbCeVD3zvQCvFhFxvEa6WoInuu203N4SWyfAu6kwM4XTnF+oLmrYUCYkifuZH5g4gzncgan3Drd+RlMUy9CRzzoEvSQu1t7+4sQkeuSELMhYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=p96UlHqi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A852FC4CEEF;
+	Thu, 31 Jul 2025 11:52:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753962752;
+	bh=L+Oj+lgcb5CliM2jzbx09ewH/vd7ovKgOLBsvX7o3ck=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kWRtu9919bXLAuc8u4SEP7dZPQ4aengs3q/wqG8zTS4R+yDqmljGznFziysZi1/0+
-	 sGi8f6KCq+Xf/uNHEZqqR2rJA4aI+S7KQaiv+fyC1uI2nzidqZFXi8nX7yR++pQYvY
-	 zDPDh+3jw99WBsbm1Fxjz4hki88/SFYwOvu0UHRR2m9RQ9IND6D3SxBQOpA9zgOF2+
-	 GNT0VZwVXdPw4j6n3yrZVUKs0ZtcZD/KpTPAbJy5PEmw7z/cqnBtrHPLYTy0JuYPbG
-	 nGUHo9hBMEerWS5IQ3nwata/IJnsLesmFLU+G5/fp2WF0rWgR23MDf65nHM0z4fmkF
-	 n2l8FxiHYIa5g==
-Date: Thu, 31 Jul 2025 12:51:56 +0100
-From: Lee Jones <lee@kernel.org>
-To: Lukas Timmermann <linux@timmermann.space>
-Cc: pavel@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/2] leds: as3668: Driver for the ams Osram 4-channel
- i2c LED driver
-Message-ID: <20250731115156.GF1049189@google.com>
-References: <20250708141114.134950-1-linux@timmermann.space>
- <20250708141114.134950-3-linux@timmermann.space>
- <20250723093108.GQ11056@google.com>
- <a028730a-a51c-4595-992e-e1e082329850@timmermann.space>
+	b=p96UlHqiFFrkaTDbfQuB/eKt9KJY/OkRMDTR2favyWTiCBGEB5YJ5ybcg1BuwJ680
+	 6tBXJ6R25SZ85H+UTR2mix4hbrxIq5T6jMQU+6c8WsL4o/3Yu4nwARid+m2zaNiu+L
+	 6ZynRgXd/O6yJCS7wXTHN+rr4VgtZmH7MNI5dAE8=
+Date: Thu, 31 Jul 2025 13:52:25 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Salah Triki <salah.triki@gmail.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH V3] Bluetooth: bfusb: Fix use-after-free and memory leak
+ in device lifecycle
+Message-ID: <2025073152-molecular-porthole-c949@gregkh>
+References: <aIrSp18mz3GS67a1@pc>
+ <2025073101-upon-lilac-9d22@gregkh>
+ <aItRhGyTWNCJmXFA@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a028730a-a51c-4595-992e-e1e082329850@timmermann.space>
+In-Reply-To: <aItRhGyTWNCJmXFA@pc>
 
-On Sun, 27 Jul 2025, Lukas Timmermann wrote:
-
-> Formatting was malformed in the last message, sorry. Next try:
+On Thu, Jul 31, 2025 at 12:20:36PM +0100, Salah Triki wrote:
+> Hello Greg,
 > 
-> > > +#define AS3668_CHIP_REV1 0x01
+> Thanks for your feedback.
+> 
+> On Thu, Jul 31, 2025 at 06:32:35AM +0200, Greg KH wrote:
+> > On Thu, Jul 31, 2025 at 03:19:19AM +0100, Salah Triki wrote:
+> > > The driver stores a reference to the `usb_device` structure (`udev`)
+> > > in its private data (`data->udev`), which can persist beyond the
+> > > immediate context of the `bfusb_probe()` function.
+> > > 
+> > > Without proper reference count management, this can lead to two issues:
+> > > 
+> > > 1. A `use-after-free` scenario if `udev` is accessed after its main
+> > >    reference count drops to zero (e.g., if the device is disconnected
+> > >    and the `data` structure is still active).
 > > 
-> > How many REVs can one chip have?
+> > How can that happen as during the probe/remove cycle, the reference
+> > count is always properly incremetned.
 > > 
-> Would be 4-bit/16. I thought I do a little check about the revision and
-> print a warning message to inform about the probably untested revision. Or
-> is that not necessary?
-> Removing the REV constant results in an if-statement similar to
-> if(rev == 1). Is this considered a magic number?
-
-I would omit this until there is another revision.
-
-> > > +static int as3668_read_value(struct i2c_client *client, u8 reg)
-> > > +{
-> > > +	return i2c_smbus_read_byte_data(client, reg);
-> > > +}
-> > > +
-> > > +static int as3668_write_value(struct i2c_client *client, u8 reg, u8 value)
-> > > +{
-> > > +	int err = i2c_smbus_write_byte_data(client, reg, value);
-> > > +
-> > > +	if (err)
-> > > +		dev_err(&client->dev, "error writing to reg 0x%02x, returned %d\n", reg, err);
-> > > +
-> > > +	return err;
-> > > +}
+> > > 2. A `memory leak` if `udev`'s reference count is not properly
+> > >    decremented during driver disconnect, preventing the `usb_device`
+> > >    object from being freed.
 > > 
-> > These look like abstractions for the sake of abstractions.
+> > There is no leak here at all, sorry.
 > > 
-> > Just use the i2c_smbus_*() calls directly.
+> 
+> I understand your concern about the existence of a memory leak or 
+> use-after-free scenario in the driver's current context.
+> 
+> My intention with this patch is to ensure the driver adheres to best
+> practices for managing `usb_device` structure references, as outlined in
+> the kernel's documentation. The `usb_get_dev()` function is explicitly
+> designed for use when a driver stores a reference to a `usb_device`
+> structure in its private data, which is the case here with `data->udev`.
+> 
+> As the documentation for `usb_get_dev()` states:
+> 
+> ``Each live reference to a device should be refcounted. Drivers for USB
+> interfaces should normally record such references in their probe()
+> methods, when they bind to an interface, and release them by calling
+> usb_put_dev(), in their disconnect() methods.``
+> 
+> By following this recommendation, adding `usb_get_dev(udev)` in
+> `bfusb_probe()` and `usb_put_dev(data->udev)` in `bfusb_disconnect()`
+> ensures the `udev` structure's lifetime is explicitly managed by the driver
+> as long as it's being referenced. This proactively prevents potential
+> issues that could arise in future scenarios, even if a specific problem
+> hasn't been observed or reported yet.
+
+Yes, I agree with the documentation, I wrote it :)
+
+But, I am saying, you are NOT actually fixing anything here.  It's a
+"best practice" but due to the fact that the dev pointer is only being
+reference counted by your change across the probe/release function, it
+is a pointless change.
+
+It's also a "dangerous" change in that you are trying to say "this fixes
+a security issue!" when it does not do anything like that at all.
+
+> > > To correctly manage the `udev` lifetime, explicitly increment its
+> > > reference count with `usb_get_dev(udev)` when storing it in the
+> > > driver's private data. Correspondingly, decrement the reference count
+> > > with `usb_put_dev(data->udev)` in the `bfusb_disconnect()` callback.
+> > > 
+> > > This ensures `udev` remains valid while referenced by the driver's
+> > > private data and is properly released when no longer needed.
 > > 
-> Should I omit the write function as well? I do some error handling there. Is
-> it okay to err |= write() the returned error codes in init or should I
-> handle every possible write error by itself?
-
-The handling in write() is standard error handling.
-
-It doesn't justify another function.
-
-> > > +	/* Read identifier from chip */
-> > > +	chip_id1 = as3668_read_value(client, AS3668_CHIP_ID1);
-> > > +
-> > > +	if (chip_id1 != AS3668_CHIP_IDENT)
-> > > +		return dev_err_probe(&client->dev, -ENODEV,
-> > > +				"chip reported wrong id: 0x%02x\n", chip_id1);
+> > How was this tested?
 > > 
-> > Unlikely.  This too is unexpected, as above.
+> > I'm not saying the change is wrong, just that I don't think it's
+> > actually a leak, or fix of anything real.
 > > 
-> Error message not descriptive, understood. Changing that to "unexpected ..."
-> as above. Or am I misunderstanding and the check should be omitted entirely?
-
-No, that's fine.
-
-> > > +	/* Check the revision */
-> > > +	chip_id2 = as3668_read_value(client, AS3668_CHIP_ID2);
+> > Or do you have a workload that shows this is needed?  If so, what is the
+> > crash reported?
 > > 
-> > Is child_id2 not for another chip?
-> > 
-> > This is ambiguous, please improve the variable nomenclature.
-> > 
-> chip_id2 is directly related to the defined register CHIP_ID2 which name is
-> taken from the datasheet of the AS3668. (Not sure if I'm allowed to link it)
-> Should we diverge from the datasheet in case of naming?
-> Or is only chip_id2 to be renamed, even tho it holds the values of CHIP_ID2?
-> I would consider chip_ident for chip_id1 and chip_subident for chip_id2.
-> chip_subident would break down into chip_rev and chip_serial.
-> Of course reading chip_id2 would be unnecessary if I omit checking the
-> revision in the first place (see above).
+> 
+> While I don't have a specific workload that reproduces a current crash or
+> memory leak, this patch aims to enhance the driver's robustness by
+> aligning its behavior with the established conventions for managing
+> `usb_device` object references. It's a preventive measure to ensure the
+> driver correctly handles the lifetime of the `usb_device` object it
+> references, even in scenarios of unexpected disconnection or re-enumeration
+> that might otherwise have unforeseen consequences.
+> 
+> Please let me know if you have any further questions.
 
-I would encourage people to match up defines with the datasheet.
+Please test this to see if it actually makes any difference in the code
+before making claims that it fixes a real bug.
 
-Variables should instead be easy to read / maintain.
+thanks,
 
-> > > +	err = as3668_dt_init(as3668);
-> > > +	if (err)
-> > > +		return dev_err_probe(&client->dev, err, "failed to initialize device\n");
-> > 
-> > No need for 2 error messages.
-> > 
-> Doing if(error) return error; then...?
-
-Right.
-
--- 
-Lee Jones [李琼斯]
+greg k-h
 
