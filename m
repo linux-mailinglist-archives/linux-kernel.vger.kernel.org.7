@@ -1,120 +1,92 @@
-Return-Path: <linux-kernel+bounces-751838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C592B16E16
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:03:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9720B16E15
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:02:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 942E616E70C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:03:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8F361AA7FEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:03:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B40290D81;
-	Thu, 31 Jul 2025 09:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="e/0ZkerW";
-	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="24f4CS50"
-Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B38275844
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057FA28F520;
+	Thu, 31 Jul 2025 09:02:53 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD34428D8E1
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753952583; cv=none; b=eHCHzW/f3eErIm3TecZkWr3TiehqwtwB6JXxlDtfinLsRuOgHYPxmzmRTCA2qLFhCR4AkyTkeYd/uU8D4y10xfbqFZQ2RtO0Ofbie9FiBE1z+n9SOO6ecA0A/h6XbDcAlPrCU3h2DRpAIwsCwMZk5MsEcg01q42ybJ+gMEuxEAY=
+	t=1753952572; cv=none; b=SppcAOpCW4vpOREc7ZHPuzAPjbjMlKnPcpOcRUmNE0XWKFccGc7Dd7PK8iB2rnA6/jBjMrpyFKLhgsMhLuTv8+QCIlsRM/jx9kj/L8iX1iT9248S4EJcOP2QuZ0u4R4SU/0LmD8oHFjf90CaEXScv8VjRrMADhr1+F14q6yPOgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753952583; c=relaxed/simple;
-	bh=aGrAH/Tbb6SSGgZDJ06gVdgOyL4PKYXs6RPb1SJ9MZU=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=javuIudG6f1D0HeEvhGiB6Mnz2+DoDeEtlspexMRztJVpqmNfndYfCAR1CX5Jd0i8oTlL9zKFHvKDbwRN80RvGGuiykaIjSA0nDmvtYOZUsNb83Ccg6BY0q8RIWT0FDPLoGjOkkmq3oNz7DBLs3JKONlvnvyIzCaFyoIhH+Loqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=e/0ZkerW; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=24f4CS50; arc=none smtp.client-ip=46.30.212.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1753952578; x=1754557378;
-	d=konsulko.se; s=rsa1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=8BwiugyGiIx5huwWXGhp1Gaxm7XgAQiVNO4WhfBafE8=;
-	b=e/0ZkerWldZOJhyo3/TNKzQlyQwDWSN/m8zXlitwCXnrR+wG+qmSEqSaHodl8x+XmshVpWl4zg6DU
-	 Jf1Rb6ChBQ8hoVKTkpzYFz29jcnxVQ+9Xoh0CemHD+keH9kdizHHIsPh+KTfqEiIHl1uOrqhO50bxJ
-	 REYRelU9ufsTV7QIVSiqII3DTovBqwLvZIF5yTvR+ZFkd1XdlfnaJx4L6TtVy50eV/+WO1lXvd1g7x
-	 CZOmMHmOID250oilyVtZgMagshmylzUruRzOzhkbPRBIbpR1VmSiTrx0RCcQWVbw55ZnASQ3TZN8YG
-	 vxwXpZ8Bk4lYEXJuR40QklGd6jlpolA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1753952578; x=1754557378;
-	d=konsulko.se; s=ed1;
-	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
-	 subject:mime-version:content-type:from;
-	bh=8BwiugyGiIx5huwWXGhp1Gaxm7XgAQiVNO4WhfBafE8=;
-	b=24f4CS50xBjUkRcbBmrVztFzUeo6tMFD47Di0TF9dCJJwkK5aDnTsR71NoAxweYI7Q+NCT9HWK1vM
-	 x30J+0ZCw==
-X-HalOne-ID: 25f7a752-6ded-11f0-b15b-d510462faafc
-Received: from smtpclient.apple (unknown [2a01:cb1d:9264:6f00:816e:7fc8:3908:5295])
-	by mailrelay4.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
-	id 25f7a752-6ded-11f0-b15b-d510462faafc;
-	Thu, 31 Jul 2025 09:02:57 +0000 (UTC)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1753952572; c=relaxed/simple;
+	bh=F+y61gsUMAmZYcwZ60ImnU6Lx7hjWXMO7ut87ZX0g5k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hjNf+9JdyHs7hmtJNixnGOlhEFARFhbpTt+LioiY8qW7Giiw1Cya9KbnnPNKMCL+eo08UPIGIDRQl7ZKtfVHbdc8Rbgsz4PN7PHOYgBljGP1gPAk1avmnsyzTPxwZDm0qQlh+1MKvNlFuNCI4zFuprJLPA45bSlELhW8b3JkHxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4607A1D13;
+	Thu, 31 Jul 2025 02:02:42 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A62AB3F66E;
+	Thu, 31 Jul 2025 02:02:48 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: ryabinin.a.a@gmail.com,
+	glider@google.com,
+	andreyknvl@gmail.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org
+Cc: kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH] kasan: disable kasan_strings() kunit test when CONFIG_FORTIFY_SOURCE enabled
+Date: Thu, 31 Jul 2025 10:02:46 +0100
+Message-Id: <20250731090246.887442-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
-Subject: Re: [PATCH v14 4/4] rust: support large alignments in allocations
-From: Vitaly Wool <vitaly.wool@konsulko.se>
-In-Reply-To: <DBPO1RQMZDH2.2WFOZO0X4DODN@kernel.org>
-Date: Thu, 31 Jul 2025 11:02:45 +0200
-Cc: linux-mm@kvack.org,
- akpm@linux-foundation.org,
- linux-kernel@vger.kernel.org,
- Uladzislau Rezki <urezki@gmail.com>,
- Alice Ryhl <aliceryhl@google.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- rust-for-linux@vger.kernel.org,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org,
- bpf@vger.kernel.org,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Jann Horn <jannh@google.com>,
- Pedro Falcato <pfalcato@suse.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <933C4F7E-0E14-4C6A-AA18-ADB21CE1953F@konsulko.se>
-References: <20250730191921.352591-1-vitaly.wool@konsulko.se>
- <20250730192101.358943-1-vitaly.wool@konsulko.se>
- <DBPO1RQMZDH2.2WFOZO0X4DODN@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-X-Mailer: Apple Mail (2.3826.200.121)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
+When CONFIG_FORTIFY_SOURCE is enabled, invalid access from source
+triggers __fortify_panic() which kills running task.
 
+This makes failured of kasan_strings() kunit testcase since the
+kunit-try-cacth kthread running kasan_string() dies before checking the
+fault.
 
-> On Jul 30, 2025, at 10:18=E2=80=AFPM, Danilo Krummrich =
-<dakr@kernel.org> wrote:
->=20
-> On Wed Jul 30, 2025 at 9:21 PM CEST, Vitaly Wool wrote:
->> diff --git a/rust/kernel/alloc/allocator_test.rs =
-b/rust/kernel/alloc/allocator_test.rs
->> index d19c06ef0498..17b27c6e9e37 100644
->> --- a/rust/kernel/alloc/allocator_test.rs
->> +++ b/rust/kernel/alloc/allocator_test.rs
->> @@ -40,6 +40,7 @@ unsafe fn realloc(
->>         layout: Layout,
->>         old_layout: Layout,
->>         flags: Flags,
->> +        nid: NumaNode,
->>     ) -> Result<NonNull<[u8]>, AllocError> {
->>         let src =3D match ptr {
->>             Some(src) =3D> {
->=20
-> I think this hunk should be on patch 3.
->=20
-> Also, don't you see a warning when running the rusttest target? I =
-think it has
-> to be _nid, given that the argument is unused.
+To address this, skip kasan_strings() kunit test when
+CONFIG_FORTIFY_SOURCE is enabled.
 
-Indeed, thanks. I=E2=80=99ll respin the patchset shortly.
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+---
+ mm/kasan/kasan_test_c.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-~Vitaly=
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index 5f922dd38ffa..1577d3edabb4 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1576,6 +1576,12 @@ static void kasan_strings(struct kunit *test)
+ 	 */
+ 	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_AMD_MEM_ENCRYPT);
+
++	/*
++	 * Harden common str/mem functions kills the kunit-try-catch thread
++	 * before checking the fault.
++	 */
++	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_FORTIFY_SOURCE);
++
+ 	ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
+
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
 
