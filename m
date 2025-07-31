@@ -1,616 +1,438 @@
-Return-Path: <linux-kernel+bounces-751528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 590E4B16A95
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:56:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91FBBB16A96
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58D663AAA51
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDB893A9663
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3BA7236A9F;
-	Thu, 31 Jul 2025 02:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mf03bHau"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0476323AB95;
+	Thu, 31 Jul 2025 02:56:09 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B41A15383A;
-	Thu, 31 Jul 2025 02:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753930557; cv=fail; b=RHZfXzdZOxGPT3R4Cn5rCldMYIH1Q+B52NrZiYFpyoaN9/SzHIuRy/736+A2VrbaBUrHxfFUKWbcKAsR5FIunL391UB8J5hjiPT6YPNSsoIOZFPSOQA4WeaGSKFY5Lcs5csC4Qe9L9ixt+OHTzSio7WH81hzBmkJ2Jjp59MDcV8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753930557; c=relaxed/simple;
-	bh=6XnpGzKvPFdvuIrLhYF3jxKTsH3gLyW17EmEC9k3Kfw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=AgezKZuc4ZFN3mx7sjTAV30CAeoI54G7U8FFhWs55ND3aJKie4Z9VNmxLiWdNpOAVHjRqb4xZ8h5+VA0cdr1n+fn5c8q4cQ2WQgWcOQdwUlX+d6N05RTKOpGWZyPaXxGCsTs4z7ewiVXOOY7wotgRs+iFd+llnk2YocOZ8iYhpU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mf03bHau; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753930554; x=1785466554;
-  h=date:from:to:cc:subject:message-id:references:
-   content-transfer-encoding:in-reply-to:mime-version;
-  bh=6XnpGzKvPFdvuIrLhYF3jxKTsH3gLyW17EmEC9k3Kfw=;
-  b=Mf03bHauAU7U2GuN42LUNj6Z6yXpuUWL8ej5jrCQCcNl0G3ouJP9SzU8
-   9AvvN/3m04GxGwbfNTVY6kwgsqmXs4ZQ652gmX5Y4x5DuEXMI8I/BrJCh
-   xwFHwqxeBkkVcYvYW2f3iTMuNU4TRGBz6vs0fKQJMu0ejqrNMKB0evUZf
-   BV2e7QypGhwicDQDXLYwQWi5QmBMFXGGW3fS7X45Hb8NkAjnbrmiNN5k1
-   L++CmzHabQ4P+ujupQm2FmWTgj/vdnNIni7hQwoNqsAO/DYDQqN0mKvtw
-   CEdONSX9zfi9+3aDIsYssYr58KMXxWIEvBxplWHNWnNqPWdiEFkIaxenX
-   w==;
-X-CSE-ConnectionGUID: 5iuVFfYdRsS1DzzUFPINOg==
-X-CSE-MsgGUID: GtsVuDRKQnqWDQLqHYDavQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="58865995"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="58865995"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 19:55:52 -0700
-X-CSE-ConnectionGUID: WsPBLYssTJOMay2jAVgSsQ==
-X-CSE-MsgGUID: ireEiTp3SxyJVM/UXdUYnQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="163178726"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 19:55:51 -0700
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 30 Jul 2025 19:55:49 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 30 Jul 2025 19:55:49 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.89)
- by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Wed, 30 Jul 2025 19:55:49 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=JwvX/Yegc4ysazXReygxFsutFndtswTf92+fawS7U9cQ9mNRfYNXR+S5t6XCPhTwUS1fy4USKL2TQqdjZRoDUjHyCdGjCBOUwokZakrwcOvhrc7oTqWEZg8iigv8djt6YVf9ANR/ljAdDKQEv2bQ36w9F2/Ul/mpg8PcvEOUpwgflzB/hpY5FKnbRGPdhCdYCvv2HdCtMlh9AEIZ7kOO89WNEexsleWuJXmpuNfqc/SHA22QvgnWtv4B1Y3k7u5gjkBwchJpP/GVWBTX5gomkukep1kk//snneQHI9NOHWnZ/OARaXVIu73TkD26hOfYXBlx1lCzG8RxqdvFbmNADw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kM1u5WpsXehMmVc5nqyhVb+07D7c0eK7gV+XUAtqAUY=;
- b=U0CpYR16e60yqCU+H4m1gLOTt48Ry/ha58325MXC1KlrByOulvtIYngYsQ1mEKw9nqPKEYS5O75Um0rGNO/JC11MhYz2rc1xUKTccxT/QABojQ6o1NnNpivH+S1D0HdtBlk+B4Sz4X4y5yg0j+hVeOYMuCKFKJE8Ra9ASOg2pTg+CUWTSaP92BrnVse0+h3ZIbuA04+bZjhF/e+I7gC206WGF4LcoaeJkWxAsfa8COixG89HPFY1SjxFfxBbdy6QAPd601C8FO2+H1cAXwXZh+qoHPrWg83KsZ/b2c9FD4qnirCguDtK1sML30Z3/veub1rFKMQWQ10m+YkHTg1oVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
- by PH7PR11MB5981.namprd11.prod.outlook.com (2603:10b6:510:1e0::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Thu, 31 Jul
- 2025 02:55:47 +0000
-Received: from LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
- ([fe80::4622:29cf:32b:7e5c%3]) with mapi id 15.20.8964.026; Thu, 31 Jul 2025
- 02:55:47 +0000
-Date: Thu, 31 Jul 2025 10:55:35 +0800
-From: Oliver Sang <oliver.sang@intel.com>
-To: Jonathan Denose <jdenose@google.com>
-CC: Philip Li <philip.li@intel.com>, kernel test robot <lkp@intel.com>, "Jiri
- Kosina" <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, "Dmitry
- Torokhov" <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Henrik Rydberg <rydberg@bitmath.org>, <oe-kbuild-all@lists.linux.dev>,
-	<linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, Angela Czubak <aczubak@google.com>, Sean O'Brien
-	<seobrien@google.com>, <oliver.sang@intel.com>
-Subject: Re: [PATCH 11/11] HID: multitouch: add haptic multitouch support
-Message-ID: <aIrbJy7Rb6aVNOk9@xsang-OptiPlex-9020>
-References: <20250714-support-forcepads-v1-11-71c7c05748c9@google.com>
- <202507151942.94dhYylY-lkp@intel.com>
- <CAMCVhVNYePCuCw_SSTxwAdcastPP_azik44kG18o0_QK37OiZA@mail.gmail.com>
- <aHmOZiQ7TAQ3TjpQ@rli9-mobl>
- <CAMCVhVNTWKg89MhPJeVvKK5ZhXYy2WCJFBGJo2Hg5=aCUZz32A@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMCVhVNTWKg89MhPJeVvKK5ZhXYy2WCJFBGJo2Hg5=aCUZz32A@mail.gmail.com>
-X-ClientProxiedBy: SI2P153CA0032.APCP153.PROD.OUTLOOK.COM
- (2603:1096:4:190::23) To LV3PR11MB8603.namprd11.prod.outlook.com
- (2603:10b6:408:1b6::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1431315383A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753930568; cv=none; b=JfAOIQpk47hYjhbovcTYRWahXKBRV/ZSGRGyB06g9h3Bm7qpAdbciRx4Y/6RTXkZlbQrf01mj4ZzcPyxz3tO36UcGRdRFSaUgCE6OekL1rZUUCwexYIHhZnQxy1gnMMuQFeNW5dxpRJZuEHQ3B5ePGQ9ri4aYEt+DkukELUDpc8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753930568; c=relaxed/simple;
+	bh=v4VPBc96U7tyZhGGTeIMdly1mv2l7kYE1iAvqFoOQP4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=XZgTLIYi6UTGHsEc66bJvkkyL0m2vvDT7C9pZMgXil7EvGMGDI3gcb3WBLQMy+h6ZmCFDXwyvpbY93LnJLzribURVeJz1BKC6Lxp78dWXjgkWkPTsqcoPkBTcoeT5Ez+/tZ6GU5fYBqzMGOj/wxoY1jRmzGg65JLCs5x2vLlUjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-87c056ae7c0so91792339f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:56:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753930565; x=1754535365;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QcXKiPfwmHjQGd9OlGsZJblr9zhP6Wg9iPtuchythkk=;
+        b=PIwacZy3AcDxFmNzz8S+o/QUqNNse2ZLvfzZjvR9r3sOXfWIbNpCSg0EJM87n0vJw9
+         hSp/p42NmXgFTAo/TeD0GZWaRhVBAzF1One09eA2ssaStUIdAxZgOpNXhy+q6hLBXFCS
+         kor9Oo1dxe7n6XX2At8FspUdxvlzkxfrQrIkTJlpUgCuan+9X0xrR0YY/0SxKJWkzBnQ
+         WJtGV84v0D1U7CqIXqPy/mJU3Zcv/vjPVKNgSawJHGEiMhJtqaaHVwwVzwnbiG0YT5c8
+         2DzsdhoDXqrlUqgBdOyAkkkU9Ql77MZTnshiWzedCueO0CzAblxylhluMzlrgmf5fwxZ
+         vYMg==
+X-Forwarded-Encrypted: i=1; AJvYcCXT9KRz+ku0fnDdnA7uZADMToG3RzbKjICxWWxP9R+zz/SubmXYEPG8DWkjQwbVPHqlGakemTDIvOfb1aQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxf3kr6ezmumSGHyiCpDTax54ms8mD7MkVdy9eVKV9PPJ8Asd5+
+	p6rWq/WhWqdYkzn0JZ87YuvftVibrvhe/Ah/LjhIodTEl/ptlt6fVDZ2kjVZ8CmQ8264qr+ZKvC
+	MO2tHV3DjzDlZK2YlvdY8K/r568aZ/zuOJcYRS181xIoG8gpuqA6plKn321w=
+X-Google-Smtp-Source: AGHT+IHVOiwNmwDIz7MJoIfXI+MLX29s0YhmFGSgKyKOoRXQCnEwdSMKBr3PMCSfLaFsMf2P9Y3LDfzmACLOHONpZsVUYl084+Pb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|PH7PR11MB5981:EE_
-X-MS-Office365-Filtering-Correlation-Id: 26423380-1fef-492c-7194-08ddcfddbfdc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|13003099007;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WjZVZVZDQ0lJR3c2cFJ6VHJBMzl0a0JDblhqaFBrdVUrU3pjdHVtczFONnNT?=
- =?utf-8?B?OXc2Q3NGbFZldU5CckRNMExQTnVWRHg0akF5ZHZVWHlQenhKemIvWjFKYk1F?=
- =?utf-8?B?WDZ4bzB3TnNFVDZzR0xqU1AwTEFoWlYwVTVSdmNUUmpISzk2S3hwS28wU0x0?=
- =?utf-8?B?K3pCN2l4VklxZGg2MHpQVU4yaTluZ2hyR2NDcUViZTRBSFFrRlRYL0hCVUow?=
- =?utf-8?B?cTZVN0wvWVNXc3JRR3UzWXVlekh1bWRvSUNvaHhmSU9LWDY0eTVjaFlPNUty?=
- =?utf-8?B?VkF2eCtqVDFGaTJ6RmFJTnBiaDAyMlRhYUVvdGtwd1VSTG1hcDNna2lhU2Z0?=
- =?utf-8?B?VXkrd1VydTVUdWVGSmNGZjlzT1lNZVN4bDVIb2FZYmRCeVFaMnVoZmlwL0wv?=
- =?utf-8?B?UGVDT1JnY25lSGk3Q29ZRVZBaFBpenc2eitFTnR3TEpLV0dLTis5OW5CM0M3?=
- =?utf-8?B?bHlMRGduY0hSQ2hhTXBzWHB2Ri9vUU83ZDk3dE4xeFc1bVF4MTVZbmVuRW1O?=
- =?utf-8?B?emdJMnpvNHpPQW85QWwrNzdIM3dVanVhSHFpdnJSOG5VK0RROG9EQktxVE90?=
- =?utf-8?B?OXZNeXBDNWhzb3BtS3h3MDlwUUxtUDUycnpNVkJEVnVheUN2SForREt1MUZK?=
- =?utf-8?B?Q0J3NysyYlYvMUZNREgyMkdDU3BZYTFLdlFpbXRtSUl1dE10TC9vRzJzeTVv?=
- =?utf-8?B?eEJ0K012d0p6QWQ2YUtrMm1VYlB4UERBOVM1Vk9adjBOcHVQaTRHcndPVlI1?=
- =?utf-8?B?V0kwZlhCUDZTVTJZallMZXh6UlUvOXlmM0RUdUVQT3N1QTVTWjFTMFBxbTV4?=
- =?utf-8?B?cVNVTkxXYXk5TjFub2xWb2Z6cExDekY2dzRYSTFXVk03TERBSzFwcTFBTmdB?=
- =?utf-8?B?bEp0aXNLU0E1VHViazM4NTZGdGt5SUZWYmh3S3RSUzAwVkFNejRzVXdaM0hk?=
- =?utf-8?B?M0g5a2F5ZzU3aFh6R2VyNVZMUTdqSjN4TmdydUtQSUJyNG1TNlFUNmlDRjAv?=
- =?utf-8?B?aGNyNzNkSlVSb3RKSm53NnF3UWdRNDVmWEtPakwzV2RKWWZZWk1hZHZicTZO?=
- =?utf-8?B?UFlnUXo5SVhTcEdJR1dDN2pMc2NhcDhiUHNhR29SU2lpSmMzQ2o2Nkd5eHJt?=
- =?utf-8?B?eitEaVdxdGJPdjVERGZOM1Y3aVpDdVkvK1NjVXNSaVNhNEgzREx4c0RpUmk2?=
- =?utf-8?B?aUpHQnUreTVDS1dpWitnODRHbUxSdDNqVHpjYUoxWlFWdk0zUUs3bHlBUmZa?=
- =?utf-8?B?Qm5NYzh0WWk1SzIvYXlPNVpZOTR2WExDRkdST2kvcWp1VlFzUlBHYkJ6U2JZ?=
- =?utf-8?B?L3ViUHNDaEFkNVVRU0hxOVFTSkFaYklWdWhZZllPc3BDd2FjT3VkUHRNSDR4?=
- =?utf-8?B?S3Q0OVgvY1BvV0cwNmpyeDZnM3dGV2ZueFRuT2VvNlJMaDloYkpqbUczTGNB?=
- =?utf-8?B?dU9wenM2WlU3N3FiMmRLbmoveVJMbGxqVm9YVWVSamk4L3hValpoK09HdEtJ?=
- =?utf-8?B?b1YvdGs3RnlnbnEycHNMQlJkVitQQXl3SEhXandqMDVmWmxkcTIrMWwrd212?=
- =?utf-8?B?Q0tUTUNicUFDYzkrT2o1ZEZMRnp5dk1UWGZNMUpVZUl2bEpKZ3N1aldueWR5?=
- =?utf-8?B?T0MwdVFwZzI4aWRKY0hNSkk2UU8rc0dSMlIrNHRpb1VmZDZERjREdFk4RmZh?=
- =?utf-8?B?L2w0QnF5NU5kNTNKaG00ai9UeXFOUlUvT2lGNnFKRnRpUnpmeGxNRmQyN2hC?=
- =?utf-8?B?bm5Zelo1T05qd0F5a3dYc25tMUpMWVpVbnVTSXRKb05FcUZwRjZaRE9Famo3?=
- =?utf-8?B?eHlJQ3dSQzQ5aDdFaG0xNWkzWUNCZ1paR0F3MHVOVHl6SGo4QnFnTzhjODJI?=
- =?utf-8?Q?Q2cgAQhshmn6p?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(13003099007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?ODBmL2tRbGFLaVNZQ1Zkb0l2b01XcHZvSGt4MjhpbUdtS0NFV3krc0RwcndF?=
- =?utf-8?B?RXRZbk5GRGlKVGhmMExqUTBlR0JhT0VoNnUwVWJYQnlOamZERi9YR3RjRGhX?=
- =?utf-8?B?ZUxJcUhVTWNnb3JxQy95SCtwMGxGM0ZBQ1ZWbUcwejBuQVg3bUtDQnR1M1Ev?=
- =?utf-8?B?cjZGZWNzeVU1UWZyNW96OWp4UDFXa1ZydkJmMjE4dFlGWStacjJhYktRS25E?=
- =?utf-8?B?V1RwQjR0aklOM3ZwV2ZpQ2tkcmF1alRCd3k5cXM4Vmg3Rzd2dGxRNWFVL3lU?=
- =?utf-8?B?VXc0K0NlcHN2Rm9mdS9hVWhsVzRhNXNCZzRDOTZvcEV0dy8xblNsTkdVNVdx?=
- =?utf-8?B?UzRNYWQzNE5kV1BCRytCZDF6MUJETm9sNFNzVEVSb0ZZOEFKVU9lZnFzTmxh?=
- =?utf-8?B?bmdOZGlhVktMZURuYVlhUEREbFJPNHhUQTR2eURjZC91cnBlWW5sQVU2ME9U?=
- =?utf-8?B?LzZLaENGNDd4YnJ0OWFMZ3JENGtLeXpWUjFPeFhXOEZ6WVlTYXdxTzFRMXRP?=
- =?utf-8?B?bCtGMG1JUlhkd1orODRQSEJEZ1gzMFRvdGdhQXZXUXlKSGRBMDQvNEJYUUtC?=
- =?utf-8?B?OVd4ZHJweUlCdHl5SFJseTRMc0hUSXczcUJDTjVoblZOdlJvTUxkVVJKWHRL?=
- =?utf-8?B?TGluZy8yTHNzVitNUEFTZ3N2YlIyOTVSTzhZdll1bWIvTlZhMTltNW9oaDZp?=
- =?utf-8?B?REpwZ2tITktNNWgxcEw2YlRqczBWcDJrV1ZVaHdHTHVFVXdWU0tWb0J4ajNK?=
- =?utf-8?B?Sm9NanVCSEx1ZVlFV2ZKRkVHQVFCZmR6dmdKOFRDSWkvNDJWQXVDM2dsa1Q0?=
- =?utf-8?B?Z251WGJPMGlQQ09ETE90OEtrRGtWMmhTdThTd3d1OEpJOGhsa1dzTVNtcGxj?=
- =?utf-8?B?bzk1cWJkejFtcnkxOEFnYzRjbUtDYm1TV0xYR1B0dFBib2VldjNnK2tVRHly?=
- =?utf-8?B?K29OVlpwcTd2eFFsTFpZRlJzVUtESXJYZVN2T2F2QjVDaEZuUERaWG5xckhV?=
- =?utf-8?B?dFZxcWU0VWhkNE9GdkwzLzNyT2I2cE0xZFZwNHBrL3lSckVDQXFpVWY4MFVa?=
- =?utf-8?B?dytHZzYya0NPMytwbGtObGxCOWpSN0xUNVB5RmJMNXVBRnRhVGZ5bkhsN3VM?=
- =?utf-8?B?TEFVV0Y2NU8zY3RCZjh6MEN5OVJwdkt0NjdUR05XQUhUeTJlMjBoaU8yb3BJ?=
- =?utf-8?B?bHdhWHczYVJ4bnlhT09teWVqVGpLM25xSHVKY0s0Vk1vUkppYTZIWjZNNnBm?=
- =?utf-8?B?aE9pZWRPQ3ZITjVTWERBOWhWVGFUQmF0ZVdRMUpBNHFZQUlWV1hySUlBMFNM?=
- =?utf-8?B?MllJQnV5WVFQRXU4K1hYNFplemloWDM1S0lOVXM0T3VJaDVMU2FhWEtHSU5H?=
- =?utf-8?B?cHJVSS9TL3lBdkl0K05LTHlia1VacHdtbnEraUl5OHhNa3d1M2lhRjAvTTA5?=
- =?utf-8?B?QW85Rkw1VVZNczFUT0huSnV6UXY3WlRFcHRoZm5GTTlHRXZYUEViZitHYkpT?=
- =?utf-8?B?UEtLUHZva3dhZnFGK0ZhMmxzbzkrYlMvb3FkQ04zQ0RwTGExSi9rZ0RCWTdD?=
- =?utf-8?B?bW9PM3RLdUw1WG1pMHg2Qk9lY05EMkhNZzJtdXdpY0hveno0S3QxczJhcXY3?=
- =?utf-8?B?TnJlWWY1Vjh2KzV6UVhaSjFHUG9oa1l4em43WkJpM0lhb1ZPTFVteUgvY0lw?=
- =?utf-8?B?enUycTF1dW5rajd0K2VmZ1poK1dteUNWeWE3N2hwblEwTE1zVElTRTNUUlpz?=
- =?utf-8?B?eXlTYmhLUDRGTTc4bUpLR2U3V0hyZTRGaFJwTzZTdGkrMFNEb1RlRHFVQ3hs?=
- =?utf-8?B?UXBGbVZjZnJiKzBzbEROajVzd0xXRnp4YWVVd2hndXhMUXZzMXlHNWVrUDB3?=
- =?utf-8?B?NFFuTUowc2xEdytvUVQrR0sra2l0NUlEMHlqbWNVL3lGY0w3NWJyMW9XV1B1?=
- =?utf-8?B?MHRMZXg0WEdJa2ZJdUdkR3pGc2RPWDhnaWVzS1ArVWhRRzVlcDQxTUtUOFJF?=
- =?utf-8?B?UnYrMXlOVUJBYTNjUlZ3YzlRMHhDWHByMEFZdmxjSEQ5T0daM2oxcVdVVjU1?=
- =?utf-8?B?ZHgxREVXRmtqUG4yTlJaS3ZYd25obnVsL1QwQ0MwenkwdVRSYzA0aU9aU1RO?=
- =?utf-8?B?ZUdlbWtWRDJrTGlPZXRBRTByR0h3ckZ6dkVPbUZGV204YXdaWTE0SHFYY3A0?=
- =?utf-8?B?cHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 26423380-1fef-492c-7194-08ddcfddbfdc
-X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 02:55:47.1829
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ui6KyqCsbD6qxMDF1TjrWjPhVEl8FNqtgqekNYXeEqKkuYZK+g/juojPwySHlTXzMbSWhDUI7a2yv8Vvw8sr1g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5981
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6e02:2198:b0:3e3:f95b:bc5c with SMTP id
+ e9e14a558f8ab-3e3f95bbe01mr78786285ab.15.1753930565116; Wed, 30 Jul 2025
+ 19:56:05 -0700 (PDT)
+Date: Wed, 30 Jul 2025 19:56:05 -0700
+In-Reply-To: <20250731015241.3576-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688adb45.a00a0220.26d0e1.0036.GAE@google.com>
+Subject: Re: [syzbot] [mm?] BUG: unable to handle kernel paging request in move_pages
+From: syzbot <syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, lokeshgidra@google.com, peterx@redhat.com, 
+	stable@vger.kernel.org, surenb@google.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-hi, Jonathan,
+Hello,
 
-On Mon, Jul 21, 2025 at 11:06:33AM -0500, Jonathan Denose wrote:
-> On Thu, Jul 17, 2025 at 6:59 PM Philip Li <philip.li@intel.com> wrote:
-> >
-> > On Thu, Jul 17, 2025 at 01:43:28PM -0500, Jonathan Denose wrote:
-> > > On Tue, Jul 15, 2025 at 6:36 AM kernel test robot <lkp@intel.com> wrote:
-> > > > kernel test robot noticed the following build errors:
-> > > >
-> > > > [auto build test ERROR on 86731a2a651e58953fc949573895f2fa6d456841]
-> > > >
-> > > > url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Denose/HID-add-haptics-page-defines/20250714-231444
-> > > > base:   86731a2a651e58953fc949573895f2fa6d456841
-> > > > patch link:    https://lore.kernel.org/r/20250714-support-forcepads-v1-11-71c7c05748c9%40google.com
-> > > > patch subject: [PATCH 11/11] HID: multitouch: add haptic multitouch support
-> > > > config: hexagon-randconfig-r112-20250715 (https://download.01.org/0day-ci/archive/20250715/202507151942.94dhYylY-lkp@intel.com/config)
-> > > > compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-> > > > reproduce: (https://download.01.org/0day-ci/archive/20250715/202507151942.94dhYylY-lkp@intel.com/reproduce)
-> > >
-> > > I'm having trouble reproducing this build error. I tried following the
-> >
-> > Sorry Jonathan, the reproduce step we provide is wrong, would you mind to give
-> > a try similar to the steps in [1]? We will resolve the bug as early as possible.
-> >
-> > [1] https://download.01.org/0day-ci/archive/20250717/202507170506.Wzz1lR5I-lkp@intel.com/reproduce
-> >
-> > > steps in the linked reproduce file, but when running:
-> > > COMPILER_INSTALL_PATH=$HOME/0day ~/lkp-tests/kbuild/make.cross C=1
-> > > CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__ -fmax-errors=unlimited
-> > > -fmax-warnings=unlimited' O=build_dir ARCH=hexagon olddefconfig
-> > >
-> > > I get the errors:
-> > > 0day/gcc-4.6.1-nolibc/hexagon-linux/bin/hexagon-linux-gcc: unknown C compiler
-> > > scripts/Kconfig.include:45: Sorry, this C compiler is not supported.
-> > >
-> > > It looks to me like the hexagon-linux-gcc compiler is correctly
-> > > installed at $HOME/0day so I'm not sure what to do from here. Can
-> > > someone please assist me with this?
-> > >
-> > > --
-> > > Jonathan
-> > >
-> Great! Thanks for providing the correct reproduce steps Phillip.
-> 
-> I tried them and both of the make.cross steps completed successfully.
-> I am not getting the build errors that the test bot is reporting.
-
-sorry for this. just want to confirm one thing, did you follow below steps?
-(the link [1] above is just for example, we need do small modification to
-reproduce the issue in original report, there are 4 diff in below with [1],
-(1) use your commit, (2) 'wget' command to get correct config (3) change to
-use clang-17, btw, clang-20 can also reproduce the issue (4) change build
-source to 'drivers/hid')
-
-reproduce:
-        git clone https://github.com/intel/lkp-tests.git ~/lkp-tests
-        # https://github.com/intel-lab-lkp/linux/commit/4ccef2fdc95970f67857113edb4103d53205ac9c
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Jonathan-Denose/HID-add-haptics-page-defines/20250714-231444
-        git checkout 4ccef2fdc95970f67857113edb4103d53205ac9c
-        # save the config file
-        wget https://download.01.org/0day-ci/archive/20250715/202507151942.94dhYylY-lkp@intel.com/config
-        mkdir build_dir && cp config build_dir/.config
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang-17 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=hexagon olddefconfig
-        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang-17 ~/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/hid/
+syzbot tried to test the proposed patch but the build/boot failed:
 
 
-I can reproduce the issue with above steps, if you still cannot reproduce,
-could you give me your full log? below is mine just FYI (this is for clang-20,
-and I use some different folders but not important)
-
-xsang@xsang-OptiPlex-9020:~/linux$ COMPILER_INSTALL_PATH=/home/xsang/cross-compiler/ COMPILER=clang-20 /home/xsang/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=hexagon olddefconfig
-Compiler will be installed in /home/xsang/cross-compiler/
-lftpget -c https://cdn.kernel.org/pub/tools/llvm/files/./llvm-20.1.8-x86_64.tar.xz
-/home/xsang/linux
-tar Jxf /home/xsang/cross-compiler//./llvm-20.1.8-x86_64.tar.xz -C /home/xsang/cross-compiler/
-PATH=/home/xsang/cross-compiler//llvm-20.1.8-x86_64/bin:/home/xsang/.local/bin:/home/xsang/bin:/home/xsang/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/xsang/.local/bin
-make --keep-going LLVM=1 CROSS_COMPILE=hexagon-linux- --jobs=72 KCFLAGS= -Wno-error=return-type -Wreturn-type -funsigned-char -Wundef W=1 O=build_dir ARCH=hexagon olddefconfig
-make[1]: Entering directory '/home/xsang/linux/build_dir'
-  GEN     Makefile
-  HOSTCC  scripts/basic/fixdep
-  HOSTCC  scripts/kconfig/conf.o
-  HOSTCC  scripts/kconfig/confdata.o
-  HOSTCC  scripts/kconfig/expr.o
-  LEX     scripts/kconfig/lexer.lex.c
-  YACC    scripts/kconfig/parser.tab.[ch]
-  HOSTCC  scripts/kconfig/menu.o
-  HOSTCC  scripts/kconfig/preprocess.o
-  HOSTCC  scripts/kconfig/symbol.o
-  HOSTCC  scripts/kconfig/util.o
-  HOSTCC  scripts/kconfig/lexer.lex.o
-  HOSTCC  scripts/kconfig/parser.tab.o
-  HOSTLD  scripts/kconfig/conf
-#
-# configuration written to .config
-#
-make[1]: Leaving directory '/home/xsang/linux/build_dir'
-
-
-xsang@xsang-OptiPlex-9020:~/linux$ COMPILER_INSTALL_PATH=/home/xsang/cross-compiler/ COMPILER=clang-20 /home/xsang/lkp-tests/kbuild/make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/hid/
-Compiler will be installed in /home/xsang/cross-compiler/
-PATH=/home/xsang/cross-compiler//llvm-20.1.8-x86_64/bin:/home/xsang/.local/bin:/home/xsang/bin:/home/xsang/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/home/xsang/.local/bin
-make --keep-going LLVM=1 CROSS_COMPILE=hexagon-linux- --jobs=72 KCFLAGS= -Wno-error=return-type -Wreturn-type -funsigned-char -Wundef W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash drivers/hid/
-make[1]: Entering directory '/home/xsang/linux/build_dir'
-  GEN     Makefile
-  GENSEED scripts/basic/randstruct.seed
-  WRAP    arch/hexagon/include/generated/uapi/asm/ucontext.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/auxvec.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/bitsperlong.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/bpf_perf_event.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/errno.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/fcntl.h
-  UPD     include/generated/uapi/linux/version.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/ioctl.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/ipcbuf.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/ioctls.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/mman.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/msgbuf.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/poll.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/posix_types.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/resource.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/sembuf.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/shmbuf.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/siginfo.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/sockios.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/socket.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/stat.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/statfs.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/termbits.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/types.h
-  WRAP    arch/hexagon/include/generated/uapi/asm/termios.h
-  SYSHDR  arch/hexagon/include/generated/uapi/asm/unistd_32.h
-  UPD     include/config/kernel.release
-  UPD     include/generated/compile.h
-  HOSTCC  scripts/dtc/dtc.o
-  HOSTCC  scripts/dtc/flattree.o
-  HOSTCC  scripts/dtc/fstree.o
-  HOSTCC  scripts/dtc/data.o
-  HOSTCC  scripts/dtc/livetree.o
-  HOSTCC  scripts/dtc/treesource.o
-  HOSTCC  scripts/dtc/srcpos.o
-  HOSTCC  scripts/dtc/checks.o
-  HOSTCC  scripts/dtc/util.o
-  LEX     scripts/dtc/dtc-lexer.lex.c
-  YACC    scripts/dtc/dtc-parser.tab.[ch]
-  HOSTCC  scripts/dtc/libfdt/fdt.o
-  HOSTCC  scripts/dtc/libfdt/fdt_ro.o
-  UPD     include/generated/utsrelease.h
-  HOSTCC  scripts/dtc/libfdt/fdt_wip.o
-  HOSTCC  scripts/dtc/libfdt/fdt_sw.o
-  HOSTCC  scripts/dtc/libfdt/fdt_rw.o
-  HOSTCC  scripts/dtc/libfdt/fdt_strerror.o
-  HOSTCC  scripts/dtc/libfdt/fdt_empty_tree.o
-  HOSTCC  scripts/dtc/libfdt/fdt_addresses.o
-  HOSTCC  scripts/dtc/libfdt/fdt_overlay.o
-  HOSTCC  scripts/dtc/fdtoverlay.o
-  WRAP    arch/hexagon/include/generated/asm/extable.h
-  WRAP    arch/hexagon/include/generated/asm/iomap.h
-  WRAP    arch/hexagon/include/generated/asm/kvm_para.h
-  WRAP    arch/hexagon/include/generated/asm/mcs_spinlock.h
-  WRAP    arch/hexagon/include/generated/asm/text-patching.h
-  WRAP    arch/hexagon/include/generated/asm/archrandom.h
-  WRAP    arch/hexagon/include/generated/asm/barrier.h
-  WRAP    arch/hexagon/include/generated/asm/bug.h
-  WRAP    arch/hexagon/include/generated/asm/cfi.h
-  WRAP    arch/hexagon/include/generated/asm/compat.h
-  WRAP    arch/hexagon/include/generated/asm/current.h
-  WRAP    arch/hexagon/include/generated/asm/device.h
-  WRAP    arch/hexagon/include/generated/asm/div64.h
-  WRAP    arch/hexagon/include/generated/asm/dma-mapping.h
-  WRAP    arch/hexagon/include/generated/asm/emergency-restart.h
-  WRAP    arch/hexagon/include/generated/asm/ftrace.h
-  WRAP    arch/hexagon/include/generated/asm/hardirq.h
-  WRAP    arch/hexagon/include/generated/asm/hw_irq.h
-  WRAP    arch/hexagon/include/generated/asm/irq_regs.h
-  WRAP    arch/hexagon/include/generated/asm/irq_work.h
-  WRAP    arch/hexagon/include/generated/asm/kdebug.h
-  WRAP    arch/hexagon/include/generated/asm/kmap_size.h
-  WRAP    arch/hexagon/include/generated/asm/kprobes.h
-  WRAP    arch/hexagon/include/generated/asm/local.h
-  WRAP    arch/hexagon/include/generated/asm/local64.h
-  WRAP    arch/hexagon/include/generated/asm/mmiowb.h
-  WRAP    arch/hexagon/include/generated/asm/module.h
-  WRAP    arch/hexagon/include/generated/asm/module.lds.h
-  WRAP    arch/hexagon/include/generated/asm/msi.h
-  WRAP    arch/hexagon/include/generated/asm/pci.h
-  WRAP    arch/hexagon/include/generated/asm/percpu.h
-  WRAP    arch/hexagon/include/generated/asm/preempt.h
-  WRAP    arch/hexagon/include/generated/asm/rqspinlock.h
-  WRAP    arch/hexagon/include/generated/asm/runtime-const.h
-  WRAP    arch/hexagon/include/generated/asm/rwonce.h
-  WRAP    arch/hexagon/include/generated/asm/sections.h
-  WRAP    arch/hexagon/include/generated/asm/serial.h
-  WRAP    arch/hexagon/include/generated/asm/shmparam.h
-  WRAP    arch/hexagon/include/generated/asm/simd.h
-  WRAP    arch/hexagon/include/generated/asm/softirq_stack.h
-  WRAP    arch/hexagon/include/generated/asm/topology.h
-  WRAP    arch/hexagon/include/generated/asm/trace_clock.h
-  WRAP    arch/hexagon/include/generated/asm/vga.h
-  WRAP    arch/hexagon/include/generated/asm/video.h
-  WRAP    arch/hexagon/include/generated/asm/word-at-a-time.h
-  WRAP    arch/hexagon/include/generated/asm/xor.h
-  SYSTBL  arch/hexagon/include/generated/asm/syscall_table_32.h
-  HOSTCC  scripts/dtc/dtc-lexer.lex.o
-  HOSTCC  scripts/dtc/dtc-parser.tab.o
-  HOSTLD  scripts/dtc/fdtoverlay
-  HOSTLD  scripts/dtc/dtc
-  HOSTCC  scripts/kallsyms
-  HOSTCC  scripts/asn1_compiler
-  HOSTCC  scripts/insert-sys-cert
-  CC      scripts/mod/empty.o
-  HOSTCC  scripts/mod/mk_elfconfig
-  CC      scripts/mod/devicetable-offsets.s
-  UPD     scripts/mod/devicetable-offsets.h
-  MKELF   scripts/mod/elfconfig.h
-  HOSTCC  scripts/mod/modpost.o
-  HOSTCC  scripts/mod/file2alias.o
-  HOSTCC  scripts/mod/sumversion.o
-  HOSTCC  scripts/mod/symsearch.o
-  HOSTLD  scripts/mod/modpost
-  CC      kernel/bounds.s
-  CHKSHA1 ../include/linux/atomic/atomic-arch-fallback.h
-  CHKSHA1 ../include/linux/atomic/atomic-instrumented.h
-  CHKSHA1 ../include/linux/atomic/atomic-long.h
-  UPD     include/generated/timeconst.h
-  UPD     include/generated/bounds.h
-  CC      arch/hexagon/kernel/asm-offsets.s
-  UPD     include/generated/asm-offsets.h
-  CALL    ../scripts/checksyscalls.sh
-  CC      drivers/hid/hid-core.o
-  CC      drivers/hid/hid-input.o
-  CC      drivers/hid/hid-quirks.o
-  CC      drivers/hid/hid-debug.o
-  CC      drivers/hid/hid-haptic.o
-  CC [M]  drivers/hid/usbhid/hid-core.o
-  CC      drivers/hid/hidraw.o
-  CC [M]  drivers/hid/usbhid/hiddev.o
-  CC [M]  drivers/hid/usbhid/hid-pidff.o
-  CC      drivers/hid/hid-a4tech.o
-  CC      drivers/hid/hid-alps.o
-  CC      drivers/hid/hid-apple.o
-  CC      drivers/hid/hid-belkin.o
-  CC      drivers/hid/hid-cherry.o
-  CC      drivers/hid/hid-cmedia.o
-  CC      drivers/hid/hid-cougar.o
-  CC      drivers/hid/hid-ezkey.o
-  CC      drivers/hid/hid-icade.o
-  CC      drivers/hid/hid-ite.o
-  CC      drivers/hid/hid-jabra.o
-  CC      drivers/hid/hid-kensington.o
-  CC      drivers/hid/hid-ortek.o
-  CC      drivers/hid/hid-razer.o
-  CC      drivers/hid/hid-rmi.o
-  CC      drivers/hid/hid-saitek.o
-  CC      drivers/hid/hid-sjoy.o
-  CC      drivers/hid/hid-tivo.o
-  CC      drivers/hid/hid-udraw-ps3.o
-  CC      drivers/hid/hid-led.o
-  CC      drivers/hid/hid-wiimote-core.o
-  CC      drivers/hid/hid-wiimote-modules.o
-  CC      drivers/hid/hid-wiimote-debug.o
-  CC [M]  drivers/hid/uhid.o
-  CC [M]  drivers/hid/hid-generic.o
-  CC [M]  drivers/hid/hid-axff.o
-  CC [M]  drivers/hid/hid-appleir.o
-  CC [M]  drivers/hid/hid-asus.o
-  CC [M]  drivers/hid/hid-aureal.o
-  CC [M]  drivers/hid/hid-betopff.o
-  CC [M]  drivers/hid/hid-bigbenff.o
-  CC [M]  drivers/hid/hid-chicony.o
-  CC [M]  drivers/hid/hid-corsair.o
-  CC [M]  drivers/hid/hid-corsair-void.o
-  CC [M]  drivers/hid/hid-cp2112.o
-  CC [M]  drivers/hid/hid-cypress.o
-  CC [M]  drivers/hid/hid-emsff.o
-  CC [M]  drivers/hid/hid-elan.o
-  CC [M]  drivers/hid/hid-elo.o
-  CC [M]  drivers/hid/hid-gembird.o
-  CC [M]  drivers/hid/hid-gfrm.o
-  CC [M]  drivers/hid/hid-vivaldi-common.o
-  CC [M]  drivers/hid/hid-google-stadiaff.o
-  CC [M]  drivers/hid/hid-vivaldi.o
-  CC [M]  drivers/hid/hid-gt683r.o
-  CC [M]  drivers/hid/hid-gyration.o
-  CC [M]  drivers/hid/hid-holtek-kbd.o
-  CC [M]  drivers/hid/hid-holtek-mouse.o
-  CC [M]  drivers/hid/hid-holtekff.o
-  CC [M]  drivers/hid/hid-kye.o
-  CC [M]  drivers/hid/hid-kysona.o
-  CC [M]  drivers/hid/hid-letsketch.o
-  CC [M]  drivers/hid/hid-macally.o
-  CC [M]  drivers/hid/hid-magicmouse.o
-  CC [M]  drivers/hid/hid-mcp2221.o
-  CC [M]  drivers/hid/hid-megaworld.o
-  CC [M]  drivers/hid/hid-microsoft.o
-  CC [M]  drivers/hid/hid-nintendo.o
-  CC [M]  drivers/hid/hid-nti.o
-  CC [M]  drivers/hid/hid-pl.o
-  CC [M]  drivers/hid/hid-penmount.o
-  CC [M]  drivers/hid/hid-picolcd_core.o
-  CC [M]  drivers/hid/hid-picolcd_fb.o
-  CC [M]  drivers/hid/hid-picolcd_backlight.o
-  CC [M]  drivers/hid/hid-picolcd_leds.o
-  CC [M]  drivers/hid/hid-picolcd_cir.o
-  CC [M]  drivers/hid/hid-picolcd_debugfs.o
-../drivers/hid/hid-haptic.c:13:6: error: redefinition of 'hid_haptic_feature_mapping'
-   13 | void hid_haptic_feature_mapping(struct hid_device *hdev,
-      |      ^
-../drivers/hid/hid-haptic.h:83:6: note: previous definition is here
-   83 | void hid_haptic_feature_mapping(struct hid_device *hdev,
-      |      ^
-../drivers/hid/hid-haptic.c:51:6: error: redefinition of 'hid_haptic_check_pressure_unit'
-   51 | bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
-      |      ^
-../drivers/hid/hid-haptic.h:89:6: note: previous definition is here
-   89 | bool hid_haptic_check_pressure_unit(struct hid_haptic_device *haptic,
-      |      ^
-../drivers/hid/hid-haptic.c:65:5: error: redefinition of 'hid_haptic_input_mapping'
-   65 | int hid_haptic_input_mapping(struct hid_device *hdev,
-      |     ^
-../drivers/hid/hid-haptic.h:95:5: note: previous definition is here
-   95 | int hid_haptic_input_mapping(struct hid_device *hdev,
-      |     ^
-../drivers/hid/hid-haptic.c:81:5: error: redefinition of 'hid_haptic_input_configured'
-   81 | int hid_haptic_input_configured(struct hid_device *hdev,
-      |     ^
-../drivers/hid/hid-haptic.h:104:5: note: previous definition is here
-  104 | int hid_haptic_input_configured(struct hid_device *hdev,
-      |     ^
-../drivers/hid/hid-haptic.c:403:5: error: redefinition of 'hid_haptic_init'
-  403 | int hid_haptic_init(struct hid_device *hdev,
-      |     ^
-../drivers/hid/hid-haptic.h:114:5: note: previous definition is here
-  114 | int hid_haptic_init(struct  CC [M]  drivers/hid/hid-redragon.o
- hid_device *hdev, struct hid_haptic_device **haptic_ptr)
-      |     ^
-../drivers/hid/hid-haptic.c:569:6: error: redefinition of 'hid_haptic_pressure_reset'
-  569 | void hid_haptic_pressure_reset(struct hid_haptic_device *haptic)
-      |      ^
-../drivers/hid/hid-haptic.h:126:6: note: previous definition is here
-  126 | void hid_haptic_pressure_reset(struct hid_haptic_device *haptic) {}
-      |      ^
-../drivers/hid/hid-haptic.c:575:6: error: redefinition of 'hid_haptic_pressure_increase'
-  575 | void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
-      |      ^
-../drivers/hid/hid-haptic.h:128:6: note: previous definition is here
-  128 | void hid_haptic_pressure_increase(struct hid_haptic_device *haptic,
-      |   CC [M]  drivers/hid/hid-retrode.o
-     ^
-7 errors generated.
-make[5]: *** [../scripts/Makefile.build:287: drivers/hid/hid-haptic.o] Error 1
-  CC [M]  drivers/hid/hid-roccat.o
-  CC [M]  drivers/hid/hid-roccat-common.o
-  CC [M]  drivers/hid/hid-roccat-arvo.o
-  CC [M]  drivers/hid/hid-roccat-isku.o
-  CC [M]  drivers/hid/hid-roccat-kone.o
-  CC [M]  drivers/hid/hid-roccat-koneplus.o
-  CC [M]  drivers/hid/hid-roccat-konepure.o
-  CC [M]  drivers/hid/hid-roccat-kovaplus.o
-  CC [M]  drivers/hid/hid-roccat-lua.o
-  CC [M]  drivers/hid/hid-roccat-pyra.o
-  CC [M]  drivers/hid/hid-roccat-ryos.o
-  CC [M]  drivers/hid/hid-roccat-savu.o
-  CC [M]  drivers/hid/hid-samsung.o
-  CC [M]  drivers/hid/hid-sony.o
-  CC [M]  drivers/hid/hid-steam.o
-  CC [M]  drivers/hid/hid-sunplus.o
-  CC [M]  drivers/hid/hid-gaff.o
-  CC [M]  drivers/hid/hid-tmff.o
-  CC [M]  drivers/hid/hid-thrustmaster.o
-  CC [M]  drivers/hid/hid-uclogic-core.o
-  CC [M]  drivers/hid/hid-uclogic-rdesc.o
-  CC [M]  drivers/hid/hid-uclogic-params.o
-  CC [M]  drivers/hid/hid-xinmo.o
-  CC [M]  drivers/hid/hid-zpff.o
-  CC [M]  drivers/hid/hid-vrc2.o
-  CC [M]  drivers/hid/wacom_sys.o
-  CC [M]  drivers/hid/wacom_wac.o
-  CC [M]  drivers/hid/hid-waltop.o
-  CC [M]  drivers/hid/hid-winwing.o
-  CC [M]  drivers/hid/hid-uclogic-rdesc-test.o
-  LD [M]  drivers/hid/usbhid/usbhid.o
-  LD [M]  drivers/hid/hid-uclogic-test.o
-  LD [M]  drivers/hid/hid-picolcd.o
-  LD [M]  drivers/hid/hid-uclogic.o
-  LD [M]  drivers/hid/wacom.o
-make[5]: Target 'drivers/hid/' not remade because of errors.
-make[4]: *** [../scripts/Makefile.build:554: drivers/hid] Error 2
-make[4]: Target 'drivers/hid/' not remade because of errors.
-make[3]: *** [../scripts/Makefile.build:554: drivers] Error 2
-make[3]: Target 'drivers/hid/' not remade because of errors.
-make[2]: *** [/home/xsang/linux/Makefile:2003: .] Error 2
-make[2]: Target 'drivers/hid/' not remade because of errors.
-make[1]: *** [/home/xsang/linux/Makefile:248: __sub-make] Error 2
-make[1]: Target 'drivers/hid/' not remade because of errors.
-make[1]: Leaving directory '/home/xsang/linux/build_dir'
-make: *** [Makefile:248: __sub-make] Error 2
-make: Target 'drivers/hid/' not remade because of errors.
+[   28.845257][    T1] Demotion targets for Node 1: null
+[   28.850968][    T1] debug_vm_pgtable: [debug_vm_pgtable         ]: Valid=
+ating architecture page table helpers
+[   31.966884][    T1] Key type .fscrypt registered
+[   31.971683][    T1] Key type fscrypt-provisioning registered
+[   31.981903][    T1] kAFS: Red Hat AFS client v0.1 registering.
+[   32.015243][    T1] Btrfs loaded, assert=3Don, ref-verify=3Don, zoned=3D=
+yes, fsverity=3Dyes
+[   32.023899][    T1] Key type big_key registered
+[   32.028720][    T1] Key type encrypted registered
+[   32.033688][    T1] AppArmor: AppArmor sha256 policy hashing enabled
+[   32.040442][    T1] ima: No TPM chip found, activating TPM-bypass!
+[   32.047114][    T1] Loading compiled-in module X.509 certificates
+[   32.084977][    T1] Loaded X.509 cert 'Build time autogenerated kernel k=
+ey: 9e306c316bea685e5e2c978a84108ea320e0bb8d'
+[   32.096049][    T1] ima: Allocated hash algorithm: sha256
+[   32.102136][    T1] ima: No architecture policies found
+[   32.108474][    T1] evm: Initialising EVM extended attributes:
+[   32.114683][    T1] evm: security.selinux (disabled)
+[   32.120010][    T1] evm: security.SMACK64 (disabled)
+[   32.125234][    T1] evm: security.SMACK64EXEC (disabled)
+[   32.130721][    T1] evm: security.SMACK64TRANSMUTE (disabled)
+[   32.136717][    T1] evm: security.SMACK64MMAP (disabled)
+[   32.142322][    T1] evm: security.apparmor
+[   32.146620][    T1] evm: security.ima
+[   32.150513][    T1] evm: security.capability
+[   32.155010][    T1] evm: HMAC attrs: 0x1
+[   32.161853][    T1] PM:   Magic number: 1:781:764
+[   32.167399][    T1] tty ptyp0: hash matches
+[   32.171863][    T1] event_source breakpoint: hash matches
+[   32.177883][    T1] netconsole: network logging started
+[   32.184127][    T1] gtp: GTP module loaded (pdp ctx size 128 bytes)
+[   32.196802][    T1] rdma_rxe: loaded
+[   32.202557][    T1] cfg80211: Loading compiled-in X.509 certificates for=
+ regulatory database
+[   32.214150][    T1] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   32.222646][    T1] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06=
+c7248db18c600'
+[   32.233530][    T1] clk: Disabling unused clocks
+[   32.238743][    T1] ALSA device list:
+[   32.240606][ T1232] faux_driver regulatory: Direct firmware load for reg=
+ulatory.db failed with error -2
+[   32.242690][    T1]   #0: Dummy 1
+[   32.252694][ T1232] faux_driver regulatory: Falling back to sysfs fallba=
+ck for: regulatory.db
+[   32.255969][    T1]   #1: Loopback 1
+[   32.268969][    T1]   #2: Virtual MIDI Card 1
+[   32.277374][    T1] check access for rdinit=3D/init failed: -2, ignoring
+[   32.284083][    T1] md: Waiting for all devices to be available before a=
+utodetect
+[   32.291864][    T1] md: If you don't use raid, use raid=3Dnoautodetect
+[   32.298455][    T1] md: Autodetecting RAID arrays.
+[   32.303602][    T1] md: autorun ...
+[   32.307281][    T1] md: ... autorun DONE.
+[   32.462042][    T1] EXT4-fs (sda1): orphan cleanup on readonly fs
+[   32.471960][    T1] EXT4-fs (sda1): mounted filesystem 4f91c6db-4997-4bb=
+4-91b8-7e83a20c1bf1 ro with ordered data mode. Quota mode: none.
+[   32.484967][    T1] VFS: Mounted root (ext4 filesystem) readonly on devi=
+ce 8:1.
+[   32.495205][    T1] devtmpfs: mounted
+[   32.588172][    T1] Freeing unused kernel image (initmem) memory: 26168K
+[   32.600162][    T1] Write protecting the kernel read-only data: 215040k
+[   32.623912][    T1] Freeing unused kernel image (text/rodata gap) memory=
+: 1780K
+[   32.638083][    T1] Freeing unused kernel image (rodata/data gap) memory=
+: 1392K
+[   32.848558][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
+ound.
+[   32.856738][    T1] x86/mm: Checking user space page tables
+[   33.038272][    T1] x86/mm: Checked W+X mappings: passed, no W+X pages f=
+ound.
+[   33.052334][    T1] Failed to set sysctl parameter 'max_rcu_stall_to_pan=
+ic=3D1': parameter not found
+[   33.062661][    T1] Run /sbin/init as init process
+[   33.861085][ T5182] mount (5182) used greatest stack depth: 24104 bytes =
+left
+[   33.936286][ T5183] EXT4-fs (sda1): re-mounted 4f91c6db-4997-4bb4-91b8-7=
+e83a20c1bf1 r/w.
+mount: mounting devtmpfs on /dev failed: Device or resource busy
+mount: mounting smackfs on /sys/fs/smackfs failed: No such file or director=
+y
+mount: mounting selinuxfs on /sys/fs/selinux failed: No such file or direct=
+ory
+[   34.124544][ T5187] mount (5187) used greatest stack depth: 21768 bytes =
+left
+Starting syslogd: OK
+Starting acpid: OK
+Starting klogd: OK
+Running sysctl: [   35.067485][ T5215] logger (5215) used greatest stack de=
+pth: 20232 bytes left
+OK
+Populating /dev using udev: [   35.630326][ T5217] udevd[5217]: starting ve=
+rsion 3.2.14
+[   35.905047][ T5218] udevd[5218]: starting eudev-3.2.14
+[   35.910508][ T5217] udevd (5217) used greatest stack depth: 18888 bytes =
+left
+[   45.256949][ T5311] ------------[ cut here ]------------
+[   45.262574][ T5311] AppArmor WARN apparmor_unix_stream_connect: ((({ typ=
+eof(*(new_ctx->label)) *__UNIQUE_ID_rcu2215 =3D (typeof(*(new_ctx->label)) =
+*)({ do { __attribute__((__noreturn__)) extern void __compiletime_assert_22=
+16(void) __attribute__((__error__("Unsupported access size for {READ,WRITE}=
+_ONCE()."))); if (!((sizeof((new_ctx->label)) =3D=3D sizeof(char) || sizeof=
+((new_ctx->label)) =3D=3D sizeof(short) || sizeof((new_ctx->label)) =3D=3D =
+sizeof(int) || sizeof((new_ctx->label)) =3D=3D sizeof(long)) || sizeof((new=
+_ctx->label)) =3D=3D sizeof(long long))) __compiletime_assert_2216(); } whi=
+le (0); (*(const volatile typeof( _Generic(((new_ctx->label)), char: (char)=
+0, unsigned char: (unsigned char)0, signed char: (signed char)0, unsigned s=
+hort: (unsigned short)0, signed short: (signed short)0, unsigned int: (unsi=
+gned int)0, signed int: (signed int)0, unsigned long: (unsigned long)0, sig=
+ned long: (signed long)0, unsigned long long: (unsigned long long)0, signed=
+ long long: (signed long long)0, default: ((new_ctx->label)))) *)&((new_ctx=
+->label))); }); ;=20
+[   45.263241][ T5311] WARNING: security/apparmor/lsm.c:1211 at apparmor_un=
+ix_stream_connect+0x5fa/0x650, CPU#1: udevadm/5311
+[   45.366388][ T5311] Modules linked in:
+[   45.370460][ T5311] CPU: 1 UID: 0 PID: 5311 Comm: udevadm Not tainted 6.=
+16.0-next-20250730-syzkaller-g79fb37f39b77-dirty #0 PREEMPT(full)=20
+[   45.383250][ T5311] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 07/12/2025
+[   45.393425][ T5311] RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650
+[   45.400386][ T5311] Code: 2b 39 fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff f=
+f e8 fb 2a 39 fd 90 48 c7 c7 80 49 fd 8b 48 c7 c6 55 fd c6 8d e8 07 b2 fc f=
+c 90 <0f> 0b 90 90 e9 27 fe ff ff e8 d8 2a 39 fd be 02 00 00 00 eb 0a e8
+[   45.420317][ T5311] RSP: 0018:ffffc90002fe7ba8 EFLAGS: 00010246
+[   45.426486][ T5311] RAX: 9dc56ab1cd53fc00 RBX: 1ffff1100f9680a8 RCX: fff=
+f88802573bc00
+[   45.434510][ T5311] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
+0000000000002
+[   45.442606][ T5311] RBP: ffff88801ba8f8f8 R08: ffff8880b8724253 R09: 1ff=
+ff110170e484a
+[   45.450777][ T5311] R10: dffffc0000000000 R11: ffffed10170e484b R12: fff=
+f88807cb40540
+[   45.458900][ T5311] R13: 1ffff1100652ff20 R14: 0000000000000000 R15: 000=
+000000000002f
+[   45.466941][ T5311] FS:  00007f76c2063880(0000) GS:ffff8881258ff000(0000=
+) knlGS:0000000000000000
+[   45.475912][ T5311] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   45.482735][ T5311] CR2: 00007f76c187ae00 CR3: 000000007703c000 CR4: 000=
+00000003526f0
+[   45.490960][ T5311] Call Trace:
+[   45.494279][ T5311]  <TASK>
+[   45.497315][ T5311]  security_unix_stream_connect+0xcb/0x2c0
+[   45.503280][ T5311]  unix_stream_connect+0x9bc/0x1140
+[   45.508693][ T5311]  ? __pfx_unix_stream_connect+0x10/0x10
+[   45.514371][ T5311]  ? apparmor_socket_connect+0xd1/0x1c0
+[   45.520004][ T5311]  ? bpf_lsm_socket_connect+0x9/0x20
+[   45.525337][ T5311]  __sys_connect+0x313/0x440
+[   45.530054][ T5311]  ? count_memcg_event_mm+0x21/0x260
+[   45.535468][ T5311]  ? __pfx___sys_connect+0x10/0x10
+[   45.540839][ T5311]  __x64_sys_connect+0x7a/0x90
+[   45.545652][ T5311]  do_syscall_64+0xfa/0x3b0
+[   45.550262][ T5311]  ? lockdep_hardirqs_on+0x9c/0x150
+[   45.555504][ T5311]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   45.561680][ T5311]  ? clear_bhb_loop+0x60/0xb0
+[   45.566469][ T5311]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   45.572402][ T5311] RIP: 0033:0x7f76c18a7407
+[   45.577029][ T5311] Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 0=
+0 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0=
+f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[   45.596931][ T5311] RSP: 002b:00007fff51b7aea0 EFLAGS: 00000202 ORIG_RAX=
+: 000000000000002a
+[   45.605391][ T5311] RAX: ffffffffffffffda RBX: 00007f76c2063880 RCX: 000=
+07f76c18a7407
+[   45.613557][ T5311] RDX: 0000000000000013 RSI: 000055c6cf4e5948 RDI: 000=
+0000000000003
+[   45.621707][ T5311] RBP: 000000000000001e R08: 0000000000000000 R09: 000=
+0000000000000
+[   45.629803][ T5311] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
+07fff51b7af00
+[   45.637970][ T5311] R13: 0000000000000000 R14: 0000000000000007 R15: 000=
+0000000000000
+[   45.646036][ T5311]  </TASK>
+[   45.649515][ T5311] Kernel panic - not syncing: kernel: panic_on_warn se=
+t ...
+[   45.656924][ T5311] CPU: 1 UID: 0 PID: 5311 Comm: udevadm Not tainted 6.=
+16.0-next-20250730-syzkaller-g79fb37f39b77-dirty #0 PREEMPT(full)=20
+[   45.669550][ T5311] Hardware name: Google Google Compute Engine/Google C=
+ompute Engine, BIOS Google 07/12/2025
+[   45.679726][ T5311] Call Trace:
+[   45.683035][ T5311]  <TASK>
+[   45.686086][ T5311]  dump_stack_lvl+0x99/0x250
+[   45.690702][ T5311]  ? __asan_memcpy+0x40/0x70
+[   45.695331][ T5311]  ? __pfx_dump_stack_lvl+0x10/0x10
+[   45.700632][ T5311]  ? __pfx__printk+0x10/0x10
+[   45.705252][ T5311]  vpanic+0x281/0x750
+[   45.709254][ T5311]  ? __pfx_vpanic+0x10/0x10
+[   45.713769][ T5311]  ? is_bpf_text_address+0x292/0x2b0
+[   45.719065][ T5311]  ? is_bpf_text_address+0x26/0x2b0
+[   45.724280][ T5311]  panic+0xb9/0xc0
+[   45.728191][ T5311]  ? __pfx_panic+0x10/0x10
+[   45.732652][ T5311]  __warn+0x334/0x4c0
+[   45.736661][ T5311]  ? apparmor_unix_stream_connect+0x5fa/0x650
+[   45.742751][ T5311]  ? apparmor_unix_stream_connect+0x5fa/0x650
+[   45.748855][ T5311]  report_bug+0x2be/0x4f0
+[   45.753201][ T5311]  ? apparmor_unix_stream_connect+0x5fa/0x650
+[   45.759287][ T5311]  ? apparmor_unix_stream_connect+0x5fa/0x650
+[   45.765369][ T5311]  ? apparmor_unix_stream_connect+0x5fc/0x650
+[   45.771457][ T5311]  handle_bug+0x84/0x160
+[   45.775713][ T5311]  exc_invalid_op+0x1a/0x50
+[   45.780229][ T5311]  asm_exc_invalid_op+0x1a/0x20
+[   45.785090][ T5311] RIP: 0010:apparmor_unix_stream_connect+0x5fa/0x650
+[   45.791785][ T5311] Code: 2b 39 fd 48 89 ef e8 35 4d 00 00 e9 09 fe ff f=
+f e8 fb 2a 39 fd 90 48 c7 c7 80 49 fd 8b 48 c7 c6 55 fd c6 8d e8 07 b2 fc f=
+c 90 <0f> 0b 90 90 e9 27 fe ff ff e8 d8 2a 39 fd be 02 00 00 00 eb 0a e8
+[   45.811507][ T5311] RSP: 0018:ffffc90002fe7ba8 EFLAGS: 00010246
+[   45.817614][ T5311] RAX: 9dc56ab1cd53fc00 RBX: 1ffff1100f9680a8 RCX: fff=
+f88802573bc00
+[   45.825597][ T5311] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 000=
+0000000000002
+[   45.833592][ T5311] RBP: ffff88801ba8f8f8 R08: ffff8880b8724253 R09: 1ff=
+ff110170e484a
+[   45.841787][ T5311] R10: dffffc0000000000 R11: ffffed10170e484b R12: fff=
+f88807cb40540
+[   45.849789][ T5311] R13: 1ffff1100652ff20 R14: 0000000000000000 R15: 000=
+000000000002f
+[   45.857797][ T5311]  ? apparmor_unix_stream_connect+0x5f9/0x650
+[   45.863898][ T5311]  security_unix_stream_connect+0xcb/0x2c0
+[   45.869723][ T5311]  unix_stream_connect+0x9bc/0x1140
+[   45.874965][ T5311]  ? __pfx_unix_stream_connect+0x10/0x10
+[   45.880638][ T5311]  ? apparmor_socket_connect+0xd1/0x1c0
+[   45.886338][ T5311]  ? bpf_lsm_socket_connect+0x9/0x20
+[   45.891652][ T5311]  __sys_connect+0x313/0x440
+[   45.896264][ T5311]  ? count_memcg_event_mm+0x21/0x260
+[   45.901585][ T5311]  ? __pfx___sys_connect+0x10/0x10
+[   45.906836][ T5311]  __x64_sys_connect+0x7a/0x90
+[   45.911620][ T5311]  do_syscall_64+0xfa/0x3b0
+[   45.916226][ T5311]  ? lockdep_hardirqs_on+0x9c/0x150
+[   45.921443][ T5311]  ? entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   45.927532][ T5311]  ? clear_bhb_loop+0x60/0xb0
+[   45.932230][ T5311]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   45.938138][ T5311] RIP: 0033:0x7f76c18a7407
+[   45.942597][ T5311] Code: 48 89 fa 4c 89 df e8 38 aa 00 00 8b 93 08 03 0=
+0 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0=
+f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+[   45.962764][ T5311] RSP: 002b:00007fff51b7aea0 EFLAGS: 00000202 ORIG_RAX=
+: 000000000000002a
+[   45.971201][ T5311] RAX: ffffffffffffffda RBX: 00007f76c2063880 RCX: 000=
+07f76c18a7407
+[   45.979193][ T5311] RDX: 0000000000000013 RSI: 000055c6cf4e5948 RDI: 000=
+0000000000003
+[   45.987272][ T5311] RBP: 000000000000001e R08: 0000000000000000 R09: 000=
+0000000000000
+[   45.995541][ T5311] R10: 0000000000000000 R11: 0000000000000202 R12: 000=
+07fff51b7af00
+[   46.003610][ T5311] R13: 0000000000000000 R14: 0000000000000007 R15: 000=
+0000000000000
+[   46.011603][ T5311]  </TASK>
+[   46.021763][ T5311] Kernel Offset: disabled
+[   46.026647][ T5311] Rebooting in 86400 seconds..
 
 
+syzkaller build log:
+go env (err=3D<nil>)
+AR=3D'ar'
+CC=3D'gcc'
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_ENABLED=3D'1'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+CXX=3D'g++'
+GCCGO=3D'gccgo'
+GO111MODULE=3D'auto'
+GOAMD64=3D'v1'
+GOARCH=3D'amd64'
+GOAUTH=3D'netrc'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOCACHEPROG=3D''
+GODEBUG=3D''
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFIPS140=3D'off'
+GOFLAGS=3D''
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build3145104381=3D/tmp/go-build -gno-record-gc=
+c-switches'
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMOD=3D'/syzkaller/jobs-2/linux/gopath/src/github.com/google/syzkaller/go.=
+mod'
+GOMODCACHE=3D'/syzkaller/jobs-2/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs-2/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTELEMETRY=3D'local'
+GOTELEMETRYDIR=3D'/syzkaller/.config/go/telemetry'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.24.4'
+GOWORK=3D''
+PKG_CONFIG=3D'pkg-config'
 
-> -- 
-> Jonathan
-> 
+git status (err=3D<nil>)
+HEAD detached at 44f8051e44
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build -ldflags=3D"-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D44f8051e446824395d02720c745353cd454d9553 -X g=
+ithub.com/google/syzkaller/prog.gitRevisionDate=3D20250716-133924"  -o ./bi=
+n/linux_amd64/syz-execprog github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include   -DGOOS_linux=3D1 -DGOARCH=
+_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"44f8051e446824395d02720c745353cd45=
+4d9553\"
+/usr/bin/ld: /tmp/ccnhngWI.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+
+
+Error text is too large and was truncated, full error text is at:
+https://syzkaller.appspot.com/x/error.txt?x=3D11622cf0580000
+
+
+Tested on:
+
+commit:         79fb37f3 Add linux-next specific files for 20250730
+git tree:       linux-next
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1f38ce0ee8aa681=
+d
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Db446dbe27035ef6bd=
+6c2
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-=
+1~exp1~20250616065826.132), Debian LLD 20.1.7
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D114e48345800=
+00
+
 
