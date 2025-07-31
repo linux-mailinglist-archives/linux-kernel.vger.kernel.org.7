@@ -1,107 +1,116 @@
-Return-Path: <linux-kernel+bounces-751897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D78B16EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:49:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F379B16ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12A293A6985
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:49:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B25B7A384B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:40:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C807A2BD595;
-	Thu, 31 Jul 2025 09:49:26 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C70223DD6;
-	Thu, 31 Jul 2025 09:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90522BD019;
+	Thu, 31 Jul 2025 09:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCYwW3NY"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CC881E;
+	Thu, 31 Jul 2025 09:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753955366; cv=none; b=NRTWDOsERqSf/He5wOR8dslDcMW4q1jkXNKgUMy0TivJ7qHZ9Of/P8R/mpBgItjm8qAnK9dQEnOV0Za1PJwYUNavZCd5IyUq//74lmlEJOD9nEHBWSbEsCXttbRLe5zhrZKViJUw1Tx+XXkBDOgrP9SSAXcXu9DdBEdB1edBtwY=
+	t=1753954915; cv=none; b=keKrEF5Gfppa46nkT/9JUIruj8sad3qDA2ijEIUtXBz7FXscpv8vuGz7LFTkAXyf9ThJJISJ5NYK7R0yoJ/LFFnTbR+VumB4whmdvD6oW8d+R69u+Eag5BOvEiA9kQu6PYImiGe4BJClIPVSYkEAqBUkoMbkCuG9sC3nWDRFNbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753955366; c=relaxed/simple;
-	bh=vjvN1SaonJhbMKKt4uXmQHHCbIqO+IeGWQop9HuKB78=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=UBB18lWh96s6fuqXO49JrVXFi81rFgAdQSLzHeZZrxK8cEr3rR1Mt/wE4+Y6SyuaIAj1ZeObG7yqy9ggBQ12LjkiMoTlDy/OdqAA8kgVx+NPVTKO0IpZfzEhTm1aQ2lglhwvKiL3MRO0rZ/Lum08Nh2FXv/d0oCXrKc8yPhc46w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id 483BC92009C; Thu, 31 Jul 2025 11:40:49 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id 461A592009B;
-	Thu, 31 Jul 2025 10:40:49 +0100 (BST)
-Date: Thu, 31 Jul 2025 10:40:49 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Magnus Lindholm <linmag7@gmail.com>
-cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
-    linux-alpha@vger.kernel.org, martin.petersen@oracle.com, 
-    James.Bottomley@HansenPartnership.com, hch@infradead.org
-Subject: Re: [PATCH 0/1] scsi: qla1280: Make 64-bit DMA addressing a Kconfig
- option
-In-Reply-To: <20250728163752.9778-1-linmag7@gmail.com>
-Message-ID: <alpine.DEB.2.21.2507291750390.5060@angie.orcam.me.uk>
-References: <20250728163752.9778-1-linmag7@gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1753954915; c=relaxed/simple;
+	bh=i2/nMy7FKYTyjoOb6CSTRUZssDpBCdS9RZdlFSAXfls=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SaoUQqPIelGT0gr986mOdR1pM9kMYzrSRmJOMnX9aPq6R2e5egztnvTJpKTEoY5fo9R4J8anx2zjOW9nnpNvwCe2P0Ah61vS20oYO3t1HU6TeqX5MrFczYSnUaiNxFE44csUUe3ZSwvd/9m/Tv9ViJSY8uGuP1WAp3GWGDDIAdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCYwW3NY; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00339c8so1773665e9.3;
+        Thu, 31 Jul 2025 02:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753954912; x=1754559712; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ylc4ZxnLD2CbRkm680HNmR2pGWeedE4Tq4BAYLGyBVc=;
+        b=VCYwW3NYAZ0/cVfSaJh8PsHFc51hr5mYu5Eylzm0aem2n0obygz8fH+OF7lUR4XjTu
+         30SkYFa5p+xouMnrVg+beAOtvvTKwO2R0rEJjBOAqOJWlNDn83PcuboYz4KYX2t8ARB8
+         90ztcVSU8BbMUqBn027yU16fwsUNidwmMmc1xo3XdgRtu8ZkYk24kzTx4/y9JABjmecQ
+         k8mINmGnbl5AE4HUSjG/PEPjgOE3blpmNv04UgcGyJcHgc98vZwCQxPu59p8cuIBXbmo
+         GYydzZuaCHZ1/rrYrPt6u0kqngOTW2u+P4KP7SxsQHexc9Z1INDkug2LAbKOxu4BLgdW
+         SH2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753954912; x=1754559712;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ylc4ZxnLD2CbRkm680HNmR2pGWeedE4Tq4BAYLGyBVc=;
+        b=MkjujIR2uis19Sl8+RWoLyZ4gEEIm0ARKcTQIH59y50ef2Yf8OzaRzxwPiMOmAdahv
+         DhzzcfiUO5/JMBDNovcSPQhFdvwaWe/t9qsRhl691FlCcbLMxkH+8rlH18aqUvNfdO3H
+         APhknwrkmzACtIOzYj6zxaMqtXbMELy54StX6iFpQ071DC7fXwD6oJyD3bU8HTM/xZTy
+         jylkQCyckOm7DIj8MeVUYijuX6j2RXNj3oYyvkObRxd9RtfFdRc4z/mDkU+TX1wsFBRX
+         +0pIL265/Zsfp90YoEzroWKNwStVbZ5c5zMgt+SgCv8PZxU+pPc13EGmsi4D13fouyS+
+         fCdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUETHwXudgQnU/Lbt2t8EaDrTNaa9Mq4aEAT1WYIOpiVo1hWvQw1lccKFl7EEoEe2c6s6MRUe4j4d14@vger.kernel.org, AJvYcCV6YCAC1nI5YJoTv9VXQxwW6i1/BK9/5paKPDNCJ02uvhaFtXigJosoVhdipXkwv9xt6xLmCrtJg5PIdnY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyIVuKpGZiDI846C6/ghCBjdBxYhbJaTE6OfqQldfK+8EsUbR9
+	PMIe/3hws5QEsjzbzUcuBDLLiSi7HOd9oPtDw67ZIUbMaUth+AmML36V
+X-Gm-Gg: ASbGncuZaCMdte218h1dFkovkuLnK8rhLB1xgpJC+3fHKl5Fu0Ksd7c/OF8f7Eh1Jqg
+	+X1IAVcBZVDZqFl69IdK+hxsUM+IQbXJSRs3wExhjXzWgHz3CjqZ2xeZsFYe45Tw2MnMt4m5MHx
+	33FfXpolHlMi0RM3vvIo/GlWWOGtrLcgULMckCks+DS40WloTL47GYtinJZdDx4CuGHbNqhcBcZ
+	WHZVoatTzu4Z24FCcQj08eNZKIL2V0buD5y7JU07AZZ4ebF/lDxCGv9Gagw9jYtsLQ4lWXa+tiO
+	G5XFnLUtmniiAX7rTNWAL1afwIDfHtKjwQlo4SJWe8RlBPmM5RA+RbARw20FumgvXaJYLTNbOF7
+	OA/sNP7828sUdrRE+Icy9
+X-Google-Smtp-Source: AGHT+IGje8yg8iNAPGrk4uFHpWmJ4AyuhPlf+5JK0IMwP0mZvBIu+DXEedc841mCBEGmi3Fx/5xZWg==
+X-Received: by 2002:a05:600c:5185:b0:456:1846:6566 with SMTP id 5b1f17b1804b1-45892bee39cmr54428715e9.29.1753954911810;
+        Thu, 31 Jul 2025 02:41:51 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458953787a8sm58153325e9.14.2025.07.31.02.41.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 02:41:51 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	linux-mmc@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mmc: davinci: Remove space before newline
+Date: Thu, 31 Jul 2025 10:41:16 +0100
+Message-ID: <20250731094116.2163061-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Jul 2025, Magnus Lindholm wrote:
+There is a extraneous space before a newline in a dev_err message.
+Remove the space.
 
-> Some platforms like for example the SGI Octace2, require full 64-bit
-> addressing in order for the qla1280 driver to work. On other systems,
-> like the tsunami based Alpha systems, 32-bit PCI Qlogic SCSI controllers
-> (like the ISP1040 series) will not work properly on systems with more
-> than 2GB RAM installed. For some reason the combination of using PCI DAC
-> cycles and the enabling the DMA "monster window" on the tsunami based
-> alphas will result in file system corruption with the Qlogic ISP driver.
-> This is not the case on other alpha systems, such as rawhide based
-> systems, like the Alphaserver 4100, on this platform cards like
-> the qlogic 32-bit PCI (ISP1040B) works fine with PCI DAC cycles and
-> the "monster window" enabled. In order for the qla1280 driver to work
-> with ISP1040 chips on tsunami based alphas the driver must be compiled
-> with 32-bit DMA addressing. Most SRM firmware versions allow alphas to
-> boot from Qlogic ISP1040 SCSI controllers and hence having a simple way
-> to limit DMA addressing to 32-bits is relevant.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/mmc/host/davinci_mmc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Given the description it seems to me it will best be handled as a quirk 
-in arch/alpha/kernel/pci.c, at least in the interim.
+diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
+index c691f1b60395..2a3c8058b0fb 100644
+--- a/drivers/mmc/host/davinci_mmc.c
++++ b/drivers/mmc/host/davinci_mmc.c
+@@ -588,7 +588,7 @@ static void mmc_davinci_request(struct mmc_host *mmc, struct mmc_request *req)
+ 		cpu_relax();
+ 	}
+ 	if (mmcst1 & MMCST1_BUSY) {
+-		dev_err(mmc_dev(host->mmc), "still BUSY? bad ... \n");
++		dev_err(mmc_dev(host->mmc), "still BUSY? bad ...\n");
+ 		req->cmd->error = -ETIMEDOUT;
+ 		mmc_request_done(mmc, req);
+ 		return;
+-- 
+2.50.0
 
- If it turns out a generic issue with DAC handling in the Tsunami chipset, 
-then a better approach would be a generic workaround for all potentially 
-affected devices, but it does not appear we have existing infrastructure 
-for that.  Just setting the global DMA mask would unnecessarily cripple 
-64-bit option cards as well, but it seems to me there might be something 
-relevant in arch/mips/pci/fixup-sb1250.c; see `quirk_sb1250_pci_dac' and 
-the comments above it.
-
- The situation is a bit different here as the bus is a proper 64-bit one, 
-but the quirk could only limit the individual DMA mask to 32 bits for 
-devices that have no 64-bit memory BARs.  I suspect there are no proper 
-64-bit PCI option cards that only have I/O bars and I don't think there's 
-any explicit status bit to tell 32-bit and 64-bit option cards apart.
-
- FWIW I was able to obtain such an option card and try it with my HiFive 
-Unmatched RISC-V system, which has 16GiB of RAM.  It turned out picky 
-though and despite being DEC-branded it refused to talk to a number of 
-SCSI 1 CCS DEC disks, which work just fine with an Adaptec host adapter 
-using the same cables and with DECstation systems they came with, but also 
-break with a BusLogic MultiMaster host adapter (which seems odd as these 
-host adapters have been reputably very robust).
-
- So I could only do limited testing with a single SCSI 2 disk that works 
-everywhere, and that triggered no issues.  As I wanted to retain remote 
-access to said problematic disks from the Unmatched machine I have left 
-them wired to the Adaptec device, but I'll see if I can do more testing at 
-my next visit to the lab around the weekend after next as I'm going to 
-disassemble the Unmatched system anyway.
-
- HTH,
-
-  Maciej
 
