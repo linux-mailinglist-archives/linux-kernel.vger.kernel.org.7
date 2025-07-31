@@ -1,183 +1,112 @@
-Return-Path: <linux-kernel+bounces-751778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F5AB16D51
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:18:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA390B16D5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F94171B65
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:18:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0E821776B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119D41F1505;
-	Thu, 31 Jul 2025 08:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9E529CB52;
+	Thu, 31 Jul 2025 08:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E932SuCC"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heyOzePL"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E758682C60
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35BF82C60;
+	Thu, 31 Jul 2025 08:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753949909; cv=none; b=F4YvqId0Nno6Xz/bga9viOo0W/kxUc2g5odLmDjsjAcIUJSNgxHrex7eTPbDrEceBIY4TGraq/U6bL4PBjpQqH97HXCoaVi32uSDFpzZt3VN1/zfQks6VkDxqmAI/0Urf/+UQa0EnR0j26NPcOQkhO2Svy/sg3Y8Qbag8SPQU58=
+	t=1753949973; cv=none; b=Sa9FR6Q1FZnXQG8Chafd1a/yVcOTE7hGkAz2uD6o9BtNHmkmmbdHxj5UGhCh01mWmV3zRhD+Jwh4Xppli/d5V4YpfbQrTsbG4bgzDp1LHLpn/kopMtmsap/g9N/ZWETpBHiduzjiUzHZuKFS0Kru7A5eE/OMw6fIDCG+8XzYzII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753949909; c=relaxed/simple;
-	bh=TpJnwz5jWr5OonsdFvsUU4fF/z2r+LxLaUCEUMSlxNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L92+svd5xPUjPw2KNDqeLUQQUPRE+laAm5ZKAjFE8Am+bhiJ9a9VsWscvXdjftRG+5d2C5/bEtUD64bvx9ZSlCVNpIP73r1LCLt1Ig8uIVx1pLgwcnpDhx1O80Xdj4VBxGbgMi9Y75vOWT9OgdmTnazsoC/RYtyklPVkEuSB8T8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E932SuCC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753949907;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6katTsCF1LMthpbb9w2c3s1PekN7Dr6xyf8vleDZvrI=;
-	b=E932SuCCK+IU4ecIKm5IHnnZ+XfU34yfS0ksXQppog26+fHtV1AG52oqiBwO9KPydI2QkX
-	xsAWBMDIv27B0t5d8oVaD8JdOIa6nB5RrNCN81tiULa7uIn56IypOsp+qJTwV/gAI8Q1+v
-	zFSdBg4kA1iEUs88AJJ+6UozZ1XxwWQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-591-LnhF8j-xNvSP2Ytu6eNHZA-1; Thu,
- 31 Jul 2025 04:18:23 -0400
-X-MC-Unique: LnhF8j-xNvSP2Ytu6eNHZA-1
-X-Mimecast-MFC-AGG-ID: LnhF8j-xNvSP2Ytu6eNHZA_1753949901
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 41B4B195609E;
-	Thu, 31 Jul 2025 08:18:20 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.62])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B215418003FC;
-	Thu, 31 Jul 2025 08:18:11 +0000 (UTC)
-Date: Thu, 31 Jul 2025 16:18:06 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: dlemoal@kernel.org, hare@suse.de, jack@suse.cz, tj@kernel.org,
-	josef@toxicpanda.com, axboe@kernel.dk, yukuai3@huawei.com,
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, yi.zhang@huawei.com,
-	yangerkun@huawei.com, johnny.chenyi@huawei.com
-Subject: Re: [PATCH v2 0/5] blk-mq-sched: support request batch dispatching
- for sq elevator
-Message-ID: <aIsmvj_lxLA6ZaWe@fedora>
-References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1753949973; c=relaxed/simple;
+	bh=0vaKqZvrPhHzumwCUnkmhXEhTuQii5LkNmupw+sVC/w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=chMrb6FjHQS+k0NDi2WayFZIQx+gcL6hJOwE4IyprD7WE8uMWL7KAhnccIAVtglBAbJ+nk70KHK4AoFV1XCDCPkFwgccsicih1qv/69DTKzVf766bQ8bYlr2dBCcJ7IKhai6jvdpMTrI6ej1cMUdZTuap6zIvxy5fUFvdb5XrZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heyOzePL; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so5862115e9.3;
+        Thu, 31 Jul 2025 01:19:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753949970; x=1754554770; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PkEegUpZ9ZzAqOYrg/wkR0sKWBlbmTquOxH2q3dqSXQ=;
+        b=heyOzePL7DdjvGg8m+ZWWoOW4A3fblXWp2GJ6RSlYynC3Pd6FJzKCYafG3b5C/LsBP
+         x5TM3mLls2V7Ogd7/ZYyB0U2iUqD/fOdtvOCj8iUbnAK/E3GnmQN/TkbbnLmQkckx+HZ
+         KPGMWF9ZcvF8bV9vX/KgOACpCdtDDWsJ/t6vmP5IxMxygo2SrkgCZL6NfrzkmTBjk1ne
+         hwtEafyaCgpbZ+s2IHPubZnsrXvE/GrKuxfiDWkAQimXS54zptjjwEzSt/dxwLBXvkze
+         Q8GAmHY9T9fIw19tG+y2pTGx3OoYldPnd4+7efOGc9PwHNoiDPHpIcd46jIOpnDNu4Tx
+         DSIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753949970; x=1754554770;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PkEegUpZ9ZzAqOYrg/wkR0sKWBlbmTquOxH2q3dqSXQ=;
+        b=moBi9rr4FJJB35ynLqqfR3n0S4T5GqADm2xbnyTEQd2krk+XuOLcpFMH5LMXk3xX0L
+         W5qpagEt5OO1nj6WiovT2261ubzNqjKG+7cCZTov9oB+shASYJjcf4XgBZcowgeFMp/k
+         3ZMnZ4st6E7M3oUCGJZcoyXygjWMCtZb8tVAAM9G34fiVv53tkziJwILtJ7USJpyQoQk
+         /Kt8r9s7eGbE40Ve9EM7VJSVZ6bH9b5xFH4oC7nwWX2ZhP90Kpm8EbcL12AZ4bPi5pDV
+         x6nzjTRVlnoa6ohJ00nIemrWgRwN6wnJ9vU7BVEHYhXPb5zZ9w6ncFdmecvN8l2H+BRE
+         0Frw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3qDqMsqewvgA35juJy5/nIw9tR5hyt2iKVYcNasq/aarRppICwP8Rd2Y7TFtqtqRZqgQ+qeVj9wX5y414@vger.kernel.org, AJvYcCX/0c+oC2qbRIf71Z6xufXaY4hXSo1RDGMqjKICFMygGZC4BPwSX1Pj86AS10gVhHG3a2beqXKuBy4n4u28@vger.kernel.org
+X-Gm-Message-State: AOJu0YypM7hG69E84vw97eLi2t5JXKcdQjkhE/etDAxzciTLhkGtuEFl
+	Nh60mktuyrLH6srjpijc9aL7+PaXayoyjj0p/YCDBSzot93//gWwNClx/gMOtwFv7Hrjlw==
+X-Gm-Gg: ASbGncu8HmPo3AFKq/hqV1qaB0RgNxf3wlXVKkHjWMmyUpoLTMl3ZyRBtvS4BAhm0tV
+	OhV77hrLlMg94VKxtPZMV/T3cdXvX1UnAoiNJh7EgwesEsqODd66TBPn6YhloiXiA4X0AsvOedF
+	yZ+r2KNPf42bzACA4rPXi5BsVraY7nG2H7SMS28FvSIjKQ379cSAt8G9wkqTZqLrEdCVc37AZuE
+	/ksxHI6h7dPUkZB49yXd+jg0MzXFfL8dn3Kp4RZ6th2v5kwkRbpyEDrg7Xr25jXrqJFqnRA7aEz
+	ppkhwb61ixq4Q58pL7SPcVbL5LmRUIaLDcoWfomnp3WKxydpjMqbGlH5aXiEymkLOFcuVPqXf7c
+	N5JLilaeKnw65j3TH5Ypr
+X-Google-Smtp-Source: AGHT+IEPDaMVhWW2n1WGfzfBPNzx+lnFtPTcM8Lln0dXEBRsQakWJcRvnKqucP1A7XtQmDuBApddnQ==
+X-Received: by 2002:a05:600c:1d23:b0:453:483b:626c with SMTP id 5b1f17b1804b1-45892bd06e6mr45659025e9.23.1753949969880;
+        Thu, 31 Jul 2025 01:19:29 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589ee578e4sm16780525e9.26.2025.07.31.01.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 01:19:29 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Rob Clark <robin.clark@oss.qualcomm.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] drm/msm: Fix pointer dereference and use dev->dev
+Date: Thu, 31 Jul 2025 09:18:52 +0100
+Message-ID: <20250731081854.2120404-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 30, 2025 at 04:22:02PM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> Changes from v1:
->  - the ioc changes are send separately;
->  - change the patch 1-3 order as suggested by Damien;
-> 
-> Currently, both mq-deadline and bfq have global spin lock that will be
-> grabbed inside elevator methods like dispatch_request, insert_requests,
-> and bio_merge. And the global lock is the main reason mq-deadline and
-> bfq can't scale very well.
-> 
-> For dispatch_request method, current behavior is dispatching one request at
-> a time. In the case of multiple dispatching contexts, This behavior, on the
-> one hand, introduce intense lock contention:
-> 
-> t1:                     t2:                     t3:
-> lock                    lock                    lock
-> // grab lock
-> ops.dispatch_request
-> unlock
->                         // grab lock
->                         ops.dispatch_request
->                         unlock
->                                                 // grab lock
->                                                 ops.dispatch_request
->                                                 unlock
-> 
-> on the other hand, messing up the requests dispatching order:
-> t1:
-> 
-> lock
-> rq1 = ops.dispatch_request
-> unlock
->                         t2:
->                         lock
->                         rq2 = ops.dispatch_request
->                         unlock
-> 
-> lock
-> rq3 = ops.dispatch_request
-> unlock
-> 
->                         lock
->                         rq4 = ops.dispatch_request
->                         unlock
-> 
-> //rq1,rq3 issue to disk
->                         // rq2, rq4 issue to disk
-> 
-> In this case, the elevator dispatch order is rq 1-2-3-4, however,
-> such order in disk is rq 1-3-2-4, the order for rq2 and rq3 is inversed.
-> 
-> While dispatching request, blk_mq_get_disatpch_budget() and
-> blk_mq_get_driver_tag() must be called, and they are not ready to be
-> called inside elevator methods, hence introduce a new method like
-> dispatch_requests is not possible.
-> 
-> In conclusion, this set factor the global lock out of dispatch_request
-> method, and support request batch dispatch by calling the methods
-> multiple time while holding the lock.
-> 
-> nullblk setup:
-> modprobe null_blk nr_devices=0 &&
->     udevadm settle &&
->     cd /sys/kernel/config/nullb &&
->     mkdir nullb0 &&
->     cd nullb0 &&
->     echo 0 > completion_nsec &&
->     echo 512 > blocksize &&
->     echo 0 > home_node &&
->     echo 0 > irqmode &&
->     echo 128 > submit_queues &&
->     echo 1024 > hw_queue_depth &&
->     echo 1024 > size &&
->     echo 0 > memory_backed &&
->     echo 2 > queue_mode &&
->     echo 1 > power ||
->     exit $?
-> 
-> Test script:
-> fio -filename=/dev/$disk -name=test -rw=randwrite -bs=4k -iodepth=32 \
->   -numjobs=16 --iodepth_batch_submit=8 --iodepth_batch_complete=8 \
->   -direct=1 -ioengine=io_uring -group_reporting -time_based -runtime=30
-> 
-> Test result: iops
-> 
-> |                 | deadline | bfq      |
-> | --------------- | -------- | -------- |
-> | before this set | 263k     | 124k     |
-> | after this set  | 475k     | 292k     |
+Fix a potential null pointer dereference issue and replace
+minor->dev->dev with dev->dev in error messages.
 
-batch dispatch may hurt io merge performance which is important for
-elevator, so please provide test data on real HDD. & SSD., instead of
-null_blk only, and it can be perfect if merge sensitive workload
-is evaluated.
+Colin Ian King (2):
+  Fix dereference of pointer minor before null check
+  drm/msm: replace minor->dev->dev with dev->dev
 
+ drivers/gpu/drm/msm/msm_debugfs.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-
-Thanks,
-Ming
+-- 
+2.50.0
 
 
