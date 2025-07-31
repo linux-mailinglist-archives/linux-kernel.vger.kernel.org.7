@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-752450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9047B175B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:39:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D45B175BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1793A5676C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:39:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E59D9567B1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF5B264F81;
-	Thu, 31 Jul 2025 17:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDB79243379;
+	Thu, 31 Jul 2025 17:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zq+NX9St"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ur0Jxm83"
+Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552901DE4E7;
-	Thu, 31 Jul 2025 17:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E175F1DE4E7;
+	Thu, 31 Jul 2025 17:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753983539; cv=none; b=RpAH/+oYPG3VPV7VZtFcUNvhuAU8j7iYSdFUqKY+v3ySaJaHE8F1yIl1dU0Rn3v23bHlNKz78dzDa0JhUEuVxJiYHsJsGScrypup2H1Yl8gIKetkwE+iF4aJLoJc7D0usLAQa3nOzFf3fpdKK9+QQLEzDoCUO4mKBNByKE/7fJA=
+	t=1753983594; cv=none; b=u0qCIrwdiXzftDIsQlGttThhnU1lBxehx7TUyC9wBRoI+AB39TTZbbVOn/PN8MyIzngXapWFm692WAWE0T5+7VntejTuMLYJlJmzEqaBWpYyFMGGmLokoxTW6ONMni4YqbXex8qwBGjEJwcWjkmsOHE6xJRqfMf047nTduQUOG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753983539; c=relaxed/simple;
-	bh=PNvkXf7OS106jn4+imCBnvISQ62wa1QgitNZbGwFm0w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LnLgBWhHxUkJQxI+Dydd0yUuzEZAjQa50j2VqHgg6fslWh4sgtnDvRc6QiO6jw7AxL946yB3SXJSkElntelDMCqg1yueiANtD8jrWjtwsgdEpM+gn5J3z8hONoIXJ8lxPbk4qZ3gCOdgZdlD62ZPHqSBoMA3KVWl2l1dp260KYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zq+NX9St; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAE4BC4CEF6;
-	Thu, 31 Jul 2025 17:38:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753983538;
-	bh=PNvkXf7OS106jn4+imCBnvISQ62wa1QgitNZbGwFm0w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Zq+NX9StgL8hIcpiakj9b5cfqREMxjPbXPHS9h2zb2ufk3LAmm9grkwhuOMFEMKvs
-	 H53VlwH3paHB5vDc8bxqIG+aQXxfXwcyjOz6es9aZWwp3FZcWWTGPavaRfIlkNi8sZ
-	 4Oczte/vMY+NqusrqgtGOlFzKqhw6H2Z+I531rGvTnibEMOLL80OLtJ4xMuyANEFE0
-	 hkRDlZsMV0J/vN0ZSgyNIopZnnmXdyUkFoJYXcYGyBWxfICxCchZCsExvrYNaz9wl0
-	 4KFGqNMqeiGWCGGXChYmUQ+1QYrt9eemuH6JBN8JU2OB7BgxjbmqRgONBdGfiyjSgl
-	 VbL1U/ZldSmpg==
-Date: Thu, 31 Jul 2025 10:38:58 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-Message-ID: <20250731173858.GE2672029@frogsfrogsfrogs>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs>
- <20250731130458.GE273706@mit.edu>
+	s=arc-20240116; t=1753983594; c=relaxed/simple;
+	bh=D0eyeakQXkUoxnhS6LOjXaO2NDWgEEQN8gNn6R8fmQE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eTRNTPanMkCBJQqPlkQwpBElNLShGEPhWd5M/G9qIAW8rxSfJVLn19G1xjMIKirsVWuZwAYosqD6q3k+fZCt7opt5faO4hXblkVtAh87qj2uNZyi+YhCAPsEpdiBv64mmKWoR+A8mBx0IFcNBam8o7RwO/vWtWxUmWS7Adx5zEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ur0Jxm83; arc=none smtp.client-ip=209.85.160.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2ffbbe6ec3eso511075fac.1;
+        Thu, 31 Jul 2025 10:39:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753983592; x=1754588392; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JQSkOyzA6O++KgoodZR4f5SJR35/IGJdbUx6uOChaLk=;
+        b=Ur0Jxm83/y+AN/7DPXXHUxJf/O/AkO+36kVxZ59BxyA3KLlXsMGYoch9PCco/LDWxW
+         +xEpBPc7AAPUpvVlQFn1xNtO7Dv+fEHKS7BVvA8bDYUEBVZAj6Tj9nCRg9IfdwKUMu3Q
+         m/G3tbE7aJmI5tdKUHgu2A7ULal06W9U7avX078xbOSbcIQ1jfcIMex/IDdTeKHA6j/f
+         ZSgHBfywWl/Icd1xi1sr2stt7oXcN0PMLPUNrjbbI399pove6hsoZV90cJhOh5X1ORcf
+         tKglx7BR5yEdkGddW1x9muCjWErfWIGO94PSz18YdpcXRizWv1qXtRwnRsNSLrIavqKS
+         MITw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753983592; x=1754588392;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JQSkOyzA6O++KgoodZR4f5SJR35/IGJdbUx6uOChaLk=;
+        b=A1fSn6FG2jizi7hpbFGBQDD+lwzMlMprtH4T8R3VbK4cIWMy/SwUdAzv5hNbTEEkID
+         4lPRDJQENiWtGhMvmyM2Akna5741CN+c7f3BGH8aL7JE4RiD8vEw61uvYkgo+GnvBwbm
+         9yxI+SwinzNuWHbe9JaH/quOBVEa667cXHBSchP2FUmMmXhsQb5UpR/0NFT06RRJX7tL
+         9cgIEwwb3VMYpOJjqYzUPX5Di9omQDsb+56AoKddc8ycm6OkAe5UMftbhUINV9MpIVsT
+         zKZR+HhBz+KX4P713s48yKLWfUDtwBPL5cyoFG6lo0/4YuX0l2DEvrGMTDGINnjY9uIK
+         sn+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVFuVN1HuMf0oMO+1amMt/pFBL2g2nZHuxdHT4yecSdyvERZYPR18KBjjBgpgz91QvN0PSlISwHJEnqSkY=@vger.kernel.org, AJvYcCWr4PfOnLUE+vy9SzpLrOLWCTyseo7RSUTnXj/E0yOeLYvxFmu64MPWQMmi5RqE1f0UrOWY4my5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb10WGLr7Few51EKR2DOB+rI1FO03bY4wTRll2IheALX6lNC0Y
+	sdHQBJBaqeZ0NL3kuBbTdLotdwcJCQPZvAjeBW1ZqIgYYqsgfync/Mlk1sBFjPfT+R2Du3u5PHC
+	HwsFzkzAnl9j1V2ac00oOUa4p78XHtTioc+aZm/0=
+X-Gm-Gg: ASbGncvz6sJY0Yl/zEG31dm9GEGMNVBFN5U2piGAmCFNYfQLY5pPlN9ts5qy92WGmRe
+	EHjqJWf5/2H52yEwJ0l9OfejeQBNamyQueEhQP5VOnXpMz/yq5JL1PC5S7a4/tGj4SaBezJBFLH
+	+qWw1+mWV2TkjuizyvO95jOcln5CbyVKMCYOeCBjKGlWU1TDStlpZG9UjoYBJgOMIie7kz1aGLf
+	KC8uPQP
+X-Google-Smtp-Source: AGHT+IF8K1aMntK0gup5gkIQtDoiv/HeMVtZBk8VrB6eUvqSgNrGCf42CNoqy8Qy6/0IJ5evV/G3Q9oWUL49MuaiG6Y=
+X-Received: by 2002:a05:6870:702b:b0:306:eb45:960c with SMTP id
+ 586e51a60fabf-307859bfb80mr5396845fac.5.1753983591809; Thu, 31 Jul 2025
+ 10:39:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731130458.GE273706@mit.edu>
+References: <20250730042617.5620-1-suchitkarunakaran@gmail.com> <3093fd14-d57a-4fc6-9e15-d9ce8b075b30@intel.com>
+In-Reply-To: <3093fd14-d57a-4fc6-9e15-d9ce8b075b30@intel.com>
+From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
+Date: Thu, 31 Jul 2025 23:09:40 +0530
+X-Gm-Features: Ac12FXz5Tlex75MwJYIHpIkLDLQm1GiTbT22FXNrlirDozssD_dMrPmRplEz7ws
+Message-ID: <CAO9wTFjaQZFg3U7eGjk+xXV6S-gKSAoV5sz7fqsuyYUkAMu_4g@mail.gmail.com>
+Subject: Re: [PATCH v3] x86/cpu/intel: Fix the constant_tsc model check for
+ Pentium 4s
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, darwi@linutronix.de, 
+	sohil.mehta@intel.com, peterz@infradead.org, ravi.bangoria@amd.com, 
+	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
-> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
-> > 
-> > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> > could restart itself.  It's unclear if doing so will actually enable us
-> > to clear the condition that caused the failure in the first place, but I
-> > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> > aren't totally crazy.
-> 
-> I'm trying to understand what the failure scenario is here.  Is this
-> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
-> is supposed to happen with respect to open files, metadata and data
-> modifications which were in transit, etc.?  Sure, fuse2fs could run
-> e2fsck -fy, but if there are dirty inode on the system, that's going
-> potentally to be out of sync, right?
-> 
-> What are the recovery semantics that we hope to be able to provide?
+On Thu, 31 Jul 2025 at 21:29, Dave Hansen <dave.hansen@intel.com> wrote:
+>
+> On 7/29/25 21:26, Suchit Karunakaran wrote:
+> > The logic to synthesize constant_tsc for Pentium 4s (Family 15) is
+> > wrong. Since INTEL_P4_PRESCOTT is numerically greater than
+> > INTEL_P4_WILLAMETTE, the logic always results in false and never sets
+> > X86_FEATURE_CONSTANT_TSC for any Pentium 4 model.
+> > The error was introduced while replacing the x86_model check with a VFM
+> > one. The original check was as follows:
+> >         if ((c->x86 == 0xf && c->x86_model >= 0x03) ||
+> >                 (c->x86 == 0x6 && c->x86_model >= 0x0e))
+> >                 set_cpu_cap(c, X86_FEATURE_CONSTANT_TSC);
+> >
+> > Fix the logic to cover all Pentium 4 models from Prescott (model 3) to
+> > Cedarmill (model 6) which is the last model released in Family 15.
+>
+> Could we have a slightly different changelog, please? The fact that the
+> logic results in the bit never getting set for P4's is IMNHO immaterial.
+> This looks like a plain and simple typo, not a logical error on the
+> patch author's part.
+>
+> How about this as a changelog?
+>
+> --
+>
+> Pentium 4's which are INTEL_P4_PRESCOTT (mode 0x03) and later have a
+> constant TSC. This was correctly captured until fadb6f569b10
+> ("x86/cpu/intel: Limit the non-architectural constant_tsc model
+> checks"). In that commit, the model was transposed from 0x03 to
+> INTEL_P4_WILLAMETTE, which is just plain wrong. That was presumably a
+> simple typo, probably just copying and pasting the wrong P4 model.
+>
+> Fix the constant TSC logic to cover all later P4 models. End at
+> INTEL_P4_CEDARMILL which is the last P4 model.
 
-<echoing what we said on the ext4 call this morning>
-
-With iomap, most of the dirty state is in the kernel, so I think the new
-fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
-would initiate GETATTR requests on all the cached inodes to validate
-that they still exist; and then resend all the unacknowledged requests
-that were pending at the time.  It might be the case that you have to
-that in the reverse order; I only know enough about the design of fuse
-to suspect that to be true.
-
-Anyhow once those are complete, I think we can resume operations with
-the surviving inodes.  The ones that fail the GETATTR revalidation are
-fuse_make_bad'd, which effectively revokes them.
-
-All of this of course relies on fuse2fs maintaining as little volatile
-state of its own as possible.  I think that means disabling the block
-cache in the unix io manager, and if we ever implemented delalloc then
-either we'd have to save the reservations somewhere or I guess you could
-immediately syncfs the whole filesystem to try to push all the dirty
-data to disk before we start allowing new free space allocations for new
-changes.
-
---D
-
->      	     	      		     	     - Ted
-> 
+Yeah, I agree it's more of a typo than a logical error.
 
