@@ -1,196 +1,245 @@
-Return-Path: <linux-kernel+bounces-752318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B05EB173F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:28:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25025B173F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:29:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5797F3B9FEB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:28:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65F9A1C263F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8FE1DEFF3;
-	Thu, 31 Jul 2025 15:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F40A1DE3B5;
+	Thu, 31 Jul 2025 15:29:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pouDA+xs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="en1IieXc"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A030315A8;
-	Thu, 31 Jul 2025 15:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB56C15A8;
+	Thu, 31 Jul 2025 15:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753975706; cv=none; b=bmHx0TpNdZojnvzVBQEUWTVfAsvu/8wOr5Ybkz5pJ6GLQi0a9j/J31k4n3kKgpLYdSHLTs4M/IjHergzGMSIIdgsgpZCjwGSa05DjSNZyEVu/r0ZnIQpw+KA3ISp6ZDeigDynM2boIP9KQ2JBClIZydr0N9dkBXzE+M+jwRVDkM=
+	t=1753975762; cv=none; b=jM09hrkHVzxfBC32nrv2DafoFsEHgtwse5Kuoeq+SS88fcENmuAhJiS4O49v0HTKiZhKUiQrMiFim5C1uv2DG/vz6Vv5p2OtgbB+zmnFc9aZFZm8nps2Xscz98+tI+kaP29y3kldMiYWZhts2LhilHYQO49hIDBMe+HC3lZYzTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753975706; c=relaxed/simple;
-	bh=qxfnXXWeaVOCUelIn6+ZGC8f/+ytl31N9N1rR7TsrTc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RikKPc3TVzgwmn5kkZnCBaYPv4Mz2NSG45PB/d82ZebEz3L7PH9Q1PgHPtz3VLeyZqeCbWQOTVgERVo1GVXrABxzaXsBIVbAVWPuHVYvNeJ29x5hCiMXl/sqB+0qVB9tkoxhuO6/5f7nuwxcCT4L8GyUUpR8sq6R8RnosBDPNw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pouDA+xs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E930C4CEF6;
-	Thu, 31 Jul 2025 15:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753975706;
-	bh=qxfnXXWeaVOCUelIn6+ZGC8f/+ytl31N9N1rR7TsrTc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pouDA+xsslD3GuTAf2Nng5+he6p61GI6mtuaYV/gKjrmCW36LmAlg74rOV/5eru8A
-	 szG+YmLZGaIoLO0ufr+hiJeZUfa/l6abNXt+Rwrn3zelRibepG4BbFC8TF4hRGUrDZ
-	 BVR8cV89+k3nURlsNJL8ZH7mBZEBkwBQ1TWabizuSRdRYaEARfVGxSrxljg+8aQNrp
-	 ULPApV/aNLnpNcBvfHBcgy+Ce6b1kZzEKTRAo9sRbNDM3cQqd6aL77L+W4v/Y83E4G
-	 aUz3mvjY5mjKt8zNr1ihPJZKmyVmSC6xjXdjVXrBcwtaIBgEqB6swgx2tdJRWlKbrm
-	 gYawInK3r3MNQ==
-Message-ID: <90baea21-6e0a-4274-bda0-43ccad796f2a@kernel.org>
-Date: Thu, 31 Jul 2025 17:28:18 +0200
+	s=arc-20240116; t=1753975762; c=relaxed/simple;
+	bh=2+mUQiKiuWzw6WjcmwDiosR9Hq7NuSOMNICfktBl33Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=as+R2iNnr++zB12g8mlawq5F0Xv80u0hdYPeowkOj99NvZHTFhKPf6yQqKMDuuyGDSVkuZoiJV5CyeNtX2zh7JmwzcpGC1RjC0DERHkgDF+wrxpzEPwG3TI4kjkAy0vpQi2F4f4yWs/7ueUCj1M0wRMIciP1J1nBHPbPA5K5d+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=en1IieXc; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2405c0c431cso10985415ad.1;
+        Thu, 31 Jul 2025 08:29:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753975759; x=1754580559; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=iYFHZI/5B0GCvAoflxVUeJyW0/UpBT4sBWf2nNoQX2w=;
+        b=en1IieXcbGB0dPOHLvtddC0wb3TeibpxOxovNYncYPclQih+CAKsgo+5KI9pWsnwc5
+         xn55sg1gbp0gv3eaCxYw4Krtl4swW3ngEz2BNho9OKi5PUkaV8n/9NcfRNFPTwoXnWIK
+         JTiwdbA5zp05z3UhjFOOOfh7r7JKL1FmTBR6G3U8+zWJf6IzrevAGVIN724dZzv6Bn6t
+         /wPMJh1OZa6O56fBDd3sEmkc5oxDY89GW553R6soKz3XTzU5EHcJoP0qa8WiCGHg3lDH
+         HwslXWeVVe/FuF+Gg8BP8sDxhz/T7xssPGBIQFWNZGS4wNChUn6rBeLm8AUh7jYTjG1J
+         SExg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753975759; x=1754580559;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iYFHZI/5B0GCvAoflxVUeJyW0/UpBT4sBWf2nNoQX2w=;
+        b=Gnw2VJV1xx57dJS0f51lwNrGj78I3SKyDKC0lZS9KW9Q3wa8YVXsEtnCrE/MHT1eMs
+         K/26ChO9iHiIfEEO1svvnifmrdzzjvmdoxq3gHzkx5k1e8BgyoB7ovonexXivaNSQslI
+         cgYx9QgXRO9IlHL69FJQZrsLUDBTY16sAFMG8R/VbV4us2vKD8AnfYjqYzakkUcFtyT8
+         j4apqwR+PoG+IfokVShJaF+YCn02RvR+yr/bcV0qNmKPUsi8RZ8iZtmqESnLqpzRstB8
+         pLE3/22HxBZ9Ug10jCmwFGeeuxk5vUiHlEIOPTwRa2jOYv5JF02GsggmYR8+gusZufL7
+         cJag==
+X-Forwarded-Encrypted: i=1; AJvYcCV0/eegz2g99FG66K6NRNfvCuaVw4XpkSvlDi4WwgPm/ti/j/jfOTlboowXoQ2PyF/ifZCVmju+HtuRIek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwl41y+y/8Zwb2XOUVj6+HDTXUBfDosMvzapGhi4OuGl1OQ9+0
+	OITW6wG6fYCIlgFz26dBlWiYh1SfNxmkAb0yhEw4+MzQ9ylb+2brwCiYuYx8Zw==
+X-Gm-Gg: ASbGncteICBMZka5kS2k0o5Ffr+fVZsq+oNi6StZw4XyOpwZJYa+gbcHVeRZLCssSlg
+	OLvF2kF9vzM+ALqsePxBdM0L32Qfs9dW9FR89qD+D8haXiLEvCbU0bqApU3HitqD0A2bioFoNhs
+	fJ/2X3Zdm4esfC095tORdFIpb4yME3HchoNnYQKcarHfsNPTRvFu/6u8J3DsqdX1R8/i8rLTqu0
+	JmxWveSo8U6RLoH1Jjxh02f1u9Qlt1dE+lfExOj0mx2McYtJdKVfbTDmur71ytzjNsOlNGVEwR4
+	aFjx3CEKbGZrZs8qO8A+MG0gZrcNMPoTQ9ZHNeWnNu6jdnz/TjJU7nouMNGdHIc8yVxO7fa0t/Y
+	qTNLG1w7s+JEc1f/QdljfAF3SwIU1MU7qIWDn78PuZoEnKQ==
+X-Google-Smtp-Source: AGHT+IHrlu9d1ZZfXQ0Inw/ewtXGf3Wl0BR4l+UlKxpFz5BFYd4FdTzZZnPW5rvqGSe++IHNVPQpgg==
+X-Received: by 2002:a17:902:f70a:b0:234:a139:11fb with SMTP id d9443c01a7336-24096b039eemr99922355ad.27.1753975758740;
+        Thu, 31 Jul 2025 08:29:18 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aafa77sm20861995ad.174.2025.07.31.08.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 08:29:18 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon updates for v6.17
+Date: Thu, 31 Jul 2025 08:29:14 -0700
+Message-ID: <20250731152917.1864644-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 3/5] dt-bindings: gpu: img,powervr-rogue: Add TH1520
- GPU compatible
-To: Michal Wilczynski <m.wilczynski@samsung.com>, Guo Ren
- <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
- Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns
- <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Drew Fustini <fustini@kernel.org>
-Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-References: <20250731-apr_14_for_sending-v9-0-c242dc1ffc14@samsung.com>
- <CGME20250731135020eucas1p1e8f286222a03ec9b63a7409ff66c3238@eucas1p1.samsung.com>
- <20250731-apr_14_for_sending-v9-3-c242dc1ffc14@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250731-apr_14_for_sending-v9-3-c242dc1ffc14@samsung.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 31/07/2025 15:50, Michal Wilczynski wrote:
-> Update the img,powervr-rogue.yaml to include the T-HEAD TH1520 SoC's
-> specific GPU compatible string.
-> 
-> The thead,th1520-gpu compatible, along with its full chain
-> img,img-bxm-4-64, and img,img-rogue, is added to the
-> list of recognized GPU types.
-> 
-> While the BXM-4-64 GPU IP is designed with two distinct power domains,
-> the TH1520 SoC integrates it with only a single, unified power gate that
-> is controllable by the kernel.
-> 
-> The binding enforces this with a specific if block for the
-> thead,th1520-gpu compatible that requires a single power-domains entry
-> and disallows power-domain-names.
-> 
-> The B-series GPU rule is also updated to include img,img-bxm-4-64
-> and to explicitly exclude the TH1520.
-> 
-> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
-> ---
->  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 29 +++++++++++++++++++++-
->  1 file changed, 28 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> index 24ce46ba0b7015fca799f045ee2ccdd258088068..e47e0f3d1b5078b3050e26f6c1ac175edec528ec 100644
-> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> @@ -21,6 +21,11 @@ properties:
->            # work with newer dts.
->            - const: img,img-axe
->            - const: img,img-rogue
-> +      - items:
-> +          - enum:
-> +              - thead,th1520-gpu
-> +          - const: img,img-bxm-4-64
-> +          - const: img,img-rogue
->        - items:
->            - enum:
->                - ti,j721s2-gpu
-> @@ -96,7 +101,29 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: img,img-bxs-4-64
-> +            const: thead,th1520-gpu
-> +    then:
-> +      properties:
-> +        power-domains:
-> +          items:
-> +            - description: The single, unified power domain for the GPU on the
-> +                TH1520 SoC, integrating all internal IP power domains.
-> +        power-domain-names: false
-> +      required:
-> +        - power-domains
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - img,img-bxm-4-64
+Hi Linus,
 
+Please pull hwmon updates for Linux v6.17 from signed tag:
 
-I don't understand this. There is no such variant like not thead and
-img,img-bxm-4-64.
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.17
 
-So same comment as last time: this is overcomplicated. Use simple
-clauses covering all possible variants. Do not add clauses for
-impossible combinations.
+Thanks,
+Guenter
+------
 
-Best regards,
-Krzysztof
+The following changes since commit 89be9a83ccf1f88522317ce02f854f30d6115c41:
+
+  Linux 6.16-rc7 (2025-07-20 15:18:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.17
+
+for you to fetch changes up to de1fffd88600c5ee1c095c84b86484cd0329a9e8:
+
+  dt-bindings: hwmon: Replace bouncing Alexandru Tachici emails (2025-07-27 16:01:56 -0700)
+
+----------------------------------------------------------------
+hwmon updates for v6.17
+
+* Updated chip support in existing drivers
+
+  - ina238: Support for INA228
+
+  - pmbus/tps53679: Support for TPS53685
+
+  - pmbus/adp1050: Support for adp1051, adp1055 and ltp8800
+
+  - corsair-psu: Support for HX1200i Series 2025
+
+  - pmbus/isl68137: Support for RAA229621
+
+  - asus-ec-sensors: Support for ProArt X870E-CREATOR WIFI and
+
+* Other notable changes
+
+  - adt7475: Support for #pwm-cells = <3>
+
+  - amc6821: Cooling device support
+
+  - emc2305: Support for PWM frequency, polarity and output
+
+  - Add missing compatible entries to various devicetree bindings
+
+* Various other minor fixes and improvements
+
+----------------------------------------------------------------
+Brian Masney (1):
+      hwmon: (ltc4282) convert from round_rate() to determine_rate()
+
+Cedric Encarnacion (3):
+      dt-bindings: hwmon: pmbus/adp1050: Add adp1051, adp1055 and ltp8800
+      hwmon: (pmbus/adp1050) Add support for adp1051, adp1055 and ltp8800
+      hwmon: (pmbus/adp1050) Add regulator support for ltp8800
+
+Chiang Brian (4):
+      dt-bindings: hwmon: (pmbus/isl68137) Add RAA229621 support
+      hwmon: (pmbus/isl68137) Add support for RAA229621
+      dt-bindings: trivial: Add tps53685 support
+      hwmon: (pmbus/tps53679) Add support for TPS53685
+
+Colin Ian King (1):
+      hwmon: (w83627ehf) make the read-only arrays 'bit' static const
+
+Eugene Shalygin (1):
+      hwmon: (asus-ec-sensors) add ProArt X870E-CREATOR WIFI
+
+Florin Leotescu (4):
+      hwmon: (emc2305) Add support for PWM frequency, polarity and output
+      hwmon: (emc2305) Configure PWM channels based on DT properties
+      hwmon: (emc2305) Enable PWM polarity and output configuration
+      hwmon: (emc2305) Set initial PWM minimum value during probe based on thermal state
+
+Jonas Rebmann (3):
+      hwmon: (ina238) Fix inconsistent whitespace
+      dt-bindings: Add INA228 to ina2xx devicetree bindings
+      hwmon: (ina238) Add support for INA228
+
+João Paulo Gonçalves (3):
+      dt-bindings: hwmon: amc6821: Add cooling levels
+      hwmon: (amc6821) Move reading fan data from OF to a function
+      hwmon: (amc6821) Add cooling device support
+
+Khaled Elnaggar (1):
+      hwmon: (max31827) use sysfs_emit() in temp1_resolution_show()
+
+Krzysztof Kozlowski (1):
+      dt-bindings: hwmon: Replace bouncing Alexandru Tachici emails
+
+Nuno Sá (1):
+      hwmon: (ltc4282) fix copy paste on variable name
+
+Qiushi Wu (1):
+      hwmon: (ibmaem) match return type of wait_for_completion_timeout
+
+Rob Herring (Arm) (5):
+      dt-bindings: hwmon: national,lm90: Add missing Dallas max6654 and onsemi nct72, nct214, and nct218
+      dt-bindings: hwmon: ti,lm87: Add adi,adm1024 compatible
+      dt-bindings: hwmon: lltc,ltc2978: Add lltc,ltc713 compatible
+      dt-bindings: hwmon: maxim,max20730: Add maxim,max20710 compatible
+      dt-bindings: hwmon: pmbus: ti,ucd90320: Add missing compatibles
+
+Roy Seitz (1):
+      hwmon: (asus-ec-sensors) add support for ROG STRIX Z490-F GAMING
+
+Shantanu Tushar (1):
+      hwmon: (corsair-psu) add support for HX1200i Series 2025
+
+Tim Harvey (1):
+      hwmon: (gsc-hwmon) fix fan pwm setpoint show functions
+
+Uwe Kleine-König (2):
+      hwmon: (adt7475) Implement support for #pwm-cells = <3>
+      dt-bindings: hwmon: adt7475: Allow and recommend #pwm-cells = <3>
+
+ .../devicetree/bindings/hwmon/adi,adm1266.yaml     |   2 +-
+ .../devicetree/bindings/hwmon/adi,ltc2992.yaml     |   2 +-
+ .../devicetree/bindings/hwmon/adt7475.yaml         |  15 +-
+ .../devicetree/bindings/hwmon/lltc,ltc2978.yaml    |   2 +
+ .../devicetree/bindings/hwmon/maxim,max20730.yaml  |   1 +
+ .../devicetree/bindings/hwmon/national,lm90.yaml   |   8 +
+ .../bindings/hwmon/pmbus/adi,adp1050.yaml          |  15 +-
+ .../bindings/hwmon/pmbus/isil,isl68137.yaml        |   1 +
+ .../bindings/hwmon/pmbus/ti,ucd90320.yaml          |   6 +
+ .../devicetree/bindings/hwmon/ti,amc6821.yaml      |   6 +
+ .../devicetree/bindings/hwmon/ti,ina2xx.yaml       |   2 +
+ .../devicetree/bindings/hwmon/ti,lm87.yaml         |   4 +-
+ .../devicetree/bindings/trivial-devices.yaml       |   2 +
+ Documentation/hwmon/adp1050.rst                    |  71 +++++++-
+ Documentation/hwmon/asus_ec_sensors.rst            |   2 +
+ Documentation/hwmon/corsair-psu.rst                |   2 +-
+ Documentation/hwmon/tps53679.rst                   |   8 +
+ drivers/hwmon/adt7475.c                            |  20 ++-
+ drivers/hwmon/amc6821.c                            | 127 ++++++++++++++-
+ drivers/hwmon/asus-ec-sensors.c                    |  60 +++++++
+ drivers/hwmon/corsair-psu.c                        |   1 +
+ drivers/hwmon/emc2305.c                            | 181 ++++++++++++++++++---
+ drivers/hwmon/gsc-hwmon.c                          |   4 +-
+ drivers/hwmon/ibmaem.c                             |  27 +--
+ drivers/hwmon/ina238.c                             | 134 ++++++++++++---
+ drivers/hwmon/ltc4282.c                            |  16 +-
+ drivers/hwmon/max31827.c                           |   2 +-
+ drivers/hwmon/pmbus/Kconfig                        |   9 +
+ drivers/hwmon/pmbus/adp1050.c                      |  72 +++++++-
+ drivers/hwmon/pmbus/isl68137.c                     |   3 +
+ drivers/hwmon/pmbus/tps53679.c                     |  37 ++++-
+ drivers/hwmon/w83627ehf.c                          |   9 +-
+ include/linux/platform_data/emc2305.h              |   6 +
+ 33 files changed, 743 insertions(+), 114 deletions(-)
 
