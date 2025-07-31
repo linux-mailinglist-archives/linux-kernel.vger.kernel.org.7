@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-751533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 046F9B16AA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:01:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49C2B16AA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:03:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D8C3A7817
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:01:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D8718C799C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F86238C2C;
-	Thu, 31 Jul 2025 03:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9F91F4262;
+	Thu, 31 Jul 2025 03:03:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EvzORfuq"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZVtE8rdq"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A093719CC28
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34BD8219ED
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753930898; cv=none; b=CazYvpd76MbJdp99aPVwl4hc02k0vj/t+3K28qDZpsk0/s/CjxSxn2RBomXwDptBdFVx0RIU6wg6ES1Ks0IV62aR9xorv3SPyhQcr0noy5dP8LtfyElFocTATDFZYHHJ4bXfpEnJKuoLRIDOlIb5x7w80G6Pp7cPE0hfXSiCUVs=
+	t=1753931007; cv=none; b=N3O5EppQySfO1LUXLv/Rym+l2chbsOByFhhRf0prxXYvIsooxUBetQPkqt2Lhz1o2k/6r0XoRa+HtJ/t7+n/lTbbZx2823Y1Q0mcVwDNcsFo4UJ90JiEq9pRgsJYkXpv4ssroECxSvWVnN9tQ/9tN4/Hs628sNYCXdmjg+8dL0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753930898; c=relaxed/simple;
-	bh=QdQlM5yMQAEwRneaaxLhcq9g0/bjhiVLJ3LCkWRWd2E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wn5rLGxV4+iOMklCy4o38L3QBm6Lja/W29/NomAyQI53/XkwZxfIB1VNcqwoIL7Yw6YtrNJERPttcZO86dDnd4LRH+LiEvP+5im5f8/igLypdpuEFJa9cSrNsMlCp6r877WDO1WziNXxzzQsfhlXLpHCXSfQ6FygNcOdJIVJ+UE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EvzORfuq; arc=none smtp.client-ip=209.85.210.175
+	s=arc-20240116; t=1753931007; c=relaxed/simple;
+	bh=7Irgzgha0DuZmhmsq5hqVvPdraoFqDxdn9SlLSg0v9c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TwC19deMikxJKS4Ute0JiawwUOaAgCH/Aw18hHhepmDfm7O/NmylEpBSWYaNy0HyPbyCIXx/xPJnSZzLufPDeDnhqaW3BkommrYlSoEA8rvlws3iHQXp1AYU3AGwmRce8p4FpWhwsXoWYMdwlu84FQ/pylNREyjCPLFE5GZKB+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZVtE8rdq; arc=none smtp.client-ip=209.85.210.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-74b52bf417cso311090b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:01:36 -0700 (PDT)
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76aea119891so1372861b3a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:03:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753930896; x=1754535696; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1753931005; x=1754535805; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WphqwsREfEv0c6rKHtoH+E0qlMlDl7K7sqJR1TqWs4g=;
-        b=EvzORfuqEkML2k/kZwd8Pr/3DBSm4z5pNwnvbTGalbEl/Cs3XqLpcGPjLAEBzeAxzv
-         Byyf4OSCBvT3DAQI/3N1RPRWU/3QLUsNhWI410DpIPKAkIgfLLSl8HtnRFY1X53j6rcG
-         xPPEvIqnlwGOyCjsawAgVGSzrjW8zuXKKuf6k=
+        bh=7HcVlcPsgEhYoPClv50jryiEw6txeqnarkLjEHm8jWI=;
+        b=ZVtE8rdqCm7L41bka5W0JZlD2V7DP4O49azoyjN8wqrUG923rHIq8W15yUdAWc3qrf
+         CCkNWtVfkODB6eJN9rM81WeJJUUcRMyAqX633nqX4WlHgif2lufWwD2pQHjk3ZA5gmUy
+         8MGHV29/+G0juQwh2Z04sfWMii0zrRG7lrDP0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753930896; x=1754535696;
+        d=1e100.net; s=20230601; t=1753931005; x=1754535805;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WphqwsREfEv0c6rKHtoH+E0qlMlDl7K7sqJR1TqWs4g=;
-        b=LxOtO7gpxA5YrOZoM0Et5hccCIM/A87qU1lKVM5vbpSr3/Y1dpIhC/tiWctY07LRC7
-         a3sRm9p0egdT6u+TFbu98TUsuHjXUrn7A86as48A9/9VcLpTTNDUMY2l/W4u5XmhMXf8
-         XaJnrrAH3nUshwuUDTfx31cvGpNYcu3oBpLCSywsWbCYIucg/PU44zEG8HHGhVARX8+A
-         thMuSRqrLTDtOQV+8g2Rrm49TCPcDo9br/J1lQ7jYQjVK7kPglFiBVOdPH4LtNgXPt0L
-         sbfdxXHpsglWYobNo//2Z9Wxs5wKgsBzT4Zg2RA4DsD/hztlvaCeuHo1JcCbb5pM+DuU
-         zepg==
-X-Forwarded-Encrypted: i=1; AJvYcCV38oG0QPvkxhO8vXvNTY56Mui+QeKZVYdna91qekBMWcfpB1w7C7Fu95dQuBSbq4IdXsiE3x8WTO1vSeI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvZC8CX+FLSRudJ5Ob6wnYZK6V+Wg+7Sb8dGiNH/W6iHiEbsxg
-	cBC5Zc5zZ+6p/mYql+eGQnD/khW+dvHUCtxUdrA65UmjqVq5v10z2IvJLvC6iOjYKw==
-X-Gm-Gg: ASbGncv4k9XoeEVMUBiWZFOoOhBWclWDkIrkikacIQLTw07aspa4Mi7ismfw5dvzN8r
-	DCxxBozIVgktT5PfK7rwpYlBsDR3b+GQAZVoIWDaO28SSQkpjDfWCwMT6YOf+EteH8YwONaSk7K
-	+ou5ptyRrBY084aMORjLG/qfvkTkise+KH7U5TLMp2ynNRTkYssrPMtZkPWUxGk8TImiEGwNMPx
-	p/PdrzddhByR4Ig6fqv8BPkJ+ZqamGyq2ckc1wpTMq4o7Icl8J0j9LzmuO1b093i6jeAuBe5Ekk
-	uoMOKEgPpzSYVg8qQg/hdvZmDkJWR2SRGPWF1/yQhfvpGUF+IFUmp8N5OXeAJNH7wGrB/+4+klK
-	C5KQIWj/iyAiG/9zt8N8Xn1IIYh95ScywJbXY2efnZW6o700=
-X-Google-Smtp-Source: AGHT+IGf1Elb5/v72sFdHsDdA3IITX1NlNAge4BGlFtV8tf2Eu+DVvC9IJvUfXSKnV02Hza0sTy7yQ==
-X-Received: by 2002:a05:6a21:32a6:b0:21d:a9d:ba3b with SMTP id adf61e73a8af0-23dc10a54edmr8712455637.39.1753930895774;
-        Wed, 30 Jul 2025 20:01:35 -0700 (PDT)
+        bh=7HcVlcPsgEhYoPClv50jryiEw6txeqnarkLjEHm8jWI=;
+        b=rw12Helh2ZNH9Sv2EnrUqAuy+Jc86+QctQEyRTYNNYPuDaKqa0x5cPUY7DZeiQ05GL
+         FPnhi9Bcq3vCPCoqKO2TlUPl9jj+Tmni87xLJiZCgegLg/dX2uWv0I7vM01LLZ5JTUye
+         lWFlpMzy1nLd7J8h8FW7lcjZ006zKYAzz3p/nAZfKG4m5WuYec5om9VREsysQ/a1EifD
+         oWTVfw9Tc7JoiETjbSoc59zYGysdF8s6wtoYr98k/1JuMSFIQ7w19GtGizUZrFl4uTWP
+         NYla1/w3/cV1YZRyFk8eoxYEMmlSP3yAZNp7hs2LoEwtESRlh3TnQxRNX6/99Ch09/u9
+         X5Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUxBGrHUYMfX8lpaErblJNPutk7NWhpBMMYJlobqp9dk0qsTkcv3/SRPTLVki+3bleiIIx4U88Z/DPM7QY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUp/hf2Pm6YyX498EgzcHbhqpP7L2pBs5cY1NhXF1gtg7Zcm1I
+	aFy3iTRCTjAK+4Bs6p0bK6+vStotRB7uXF4NgIGMr9Onyg5Bzifn4NOksmJ8RGyp/w==
+X-Gm-Gg: ASbGncsmS/MxT6MVTkp3n5ipj048wjN3qCEtVq77T95Yp+4w+VJAUKlWgraZdwN4b6y
+	hJLitE22L/OZQ3LEdYDffL2osxoK6T0oXxsNRmXWZUlVPxNSOfpDs08tqrleKz4u6IMPqAG/QAq
+	SParhCN2lt9+EaNm2zAYTe7GgFTwnDaIVuGsVUcfswHO0SmiypmllGxSFnMs8R27DhUGCCohbHs
+	LD4kgjXUaTNapDV9d/bjjXE3sZ7vbkBr+zgPHCdMsQTB9iioQ5B4SelEiRsqsvIakyuvMQal58T
+	Zav4vYYy7VGsoZ8qfpFMKqVRj0TwfBhRGiwqOVMbQnXR3TfZ/ZM6PztYQgkdz4XQKH8fiYxVt9D
+	ylpGtlWrLMcacGeJJsgnYwCwOYB/TEoFK+5QmRrng/iyL7HE=
+X-Google-Smtp-Source: AGHT+IEFe8O8zpgMFSy3UVaiG9pKyg3BJpQPtmCfoiUrYUFn7NNWZG2byACseSDNhlWvw6hpdfIgfQ==
+X-Received: by 2002:a17:902:f68d:b0:237:e3bc:7691 with SMTP id d9443c01a7336-24200ac174bmr9912585ad.13.1753931005508;
+        Wed, 30 Jul 2025 20:03:25 -0700 (PDT)
 Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:6490:361:df77:361d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0f7ccsm4531435ad.57.2025.07.30.20.01.33
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef67cfsm4628595ad.2.2025.07.30.20.03.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 20:01:35 -0700 (PDT)
+        Wed, 30 Jul 2025 20:03:25 -0700 (PDT)
 From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>
-Cc: Tomasz Figa <tfiga@chromium.org>,
-	linux-pm@vger.kernel.org,
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Petr Mladek <pmladek@suse.com>
+Cc: Feng Tang <feng.tang@linux.alibaba.com>,
+	John Ogness <john.ogness@linutronix.de>,
 	linux-kernel@vger.kernel.org,
 	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH] PM: dpm: add module param to backtrace all CPUs
-Date: Thu, 31 Jul 2025 12:01:08 +0900
-Message-ID: <20250731030125.3817484-1-senozhatsky@chromium.org>
+Subject: [PATCH] panic: remove redundant panic-cpu backtrace
+Date: Thu, 31 Jul 2025 12:02:57 +0900
+Message-ID: <20250731030314.3818040-1-senozhatsky@chromium.org>
 X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -86,51 +86,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add dpm_all_cpu_backtrace module parameter which controls
-all CPU backtrace dump before DPM panics the system.  This
-is expected to help understanding what might have caused
-device timeout.
+SYS_INFO_ALL_CPU_BT sends NMI backtrace request to
+all CPUs, which dumps an extra backtrace on panic CPU.
+Exclude panic CPU from SYS_INFO_ALL_CPU_BT cpu-mask.
 
 Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 ---
- drivers/base/power/main.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ kernel/panic.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/power/main.c b/drivers/base/power/main.c
-index dbf5456cd891..23abad9f039f 100644
---- a/drivers/base/power/main.c
-+++ b/drivers/base/power/main.c
-@@ -34,6 +34,7 @@
- #include <linux/cpufreq.h>
- #include <linux/devfreq.h>
- #include <linux/timer.h>
-+#include <linux/nmi.h>
- 
- #include "../base.h"
- #include "power.h"
-@@ -517,6 +518,9 @@ struct dpm_watchdog {
- #define DECLARE_DPM_WATCHDOG_ON_STACK(wd) \
- 	struct dpm_watchdog wd
- 
-+static bool __read_mostly dpm_all_cpu_backtrace;
-+module_param(dpm_all_cpu_backtrace, bool, 0644);
+diff --git a/kernel/panic.c b/kernel/panic.c
+index 27747cecb1af..c08f2695cf42 100644
+--- a/kernel/panic.c
++++ b/kernel/panic.c
+@@ -335,9 +335,11 @@ void check_panic_on_warn(const char *origin)
+ static void panic_other_cpus_shutdown(bool crash_kexec)
+ {
+ 	if (panic_print & SYS_INFO_ALL_CPU_BT) {
++		unsigned int this_cpu = raw_smp_processor_id();
 +
- /**
-  * dpm_watchdog_handler - Driver suspend / resume watchdog handler.
-  * @t: The timer that PM watchdog depends on.
-@@ -532,8 +536,12 @@ static void dpm_watchdog_handler(struct timer_list *t)
- 	unsigned int time_left;
- 
- 	if (wd->fatal) {
-+		unsigned int this_cpu = smp_processor_id();
-+
- 		dev_emerg(wd->dev, "**** DPM device timeout ****\n");
- 		show_stack(wd->tsk, NULL, KERN_EMERG);
-+		if (dpm_all_cpu_backtrace)
-+			trigger_allbutcpu_cpu_backtrace(this_cpu);
- 		panic("%s %s: unrecoverable failure\n",
- 			dev_driver_string(wd->dev), dev_name(wd->dev));
+ 		/* Temporary allow non-panic CPUs to write their backtraces. */
+ 		panic_triggering_all_cpu_backtrace = true;
+-		trigger_all_cpu_backtrace();
++		trigger_allbutcpu_cpu_backtrace(this_cpu);
+ 		panic_triggering_all_cpu_backtrace = false;
  	}
+ 
 -- 
 2.50.1.565.gc32cd1483b-goog
 
