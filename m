@@ -1,157 +1,126 @@
-Return-Path: <linux-kernel+bounces-752136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 539ACB171AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:01:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC315B171B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09595A8127C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:01:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4D893B126F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67AF82C1595;
-	Thu, 31 Jul 2025 13:01:34 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6782C3242;
+	Thu, 31 Jul 2025 13:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NLcpojFu"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6BF7DA95;
-	Thu, 31 Jul 2025 13:01:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEFC6241671
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753966894; cv=none; b=RYkjLLi+YrQ2u85x0aVWXh5aPty6yG2MB78iCyB6YIIVcqDRa11s01pUG64WzXM0d+Augz4ZlhLa3y8J/uHIK8k6riPS/Hx8T5p5NlbGY6fGuFVu68suwbcXtt1HWx6brPtOUPezJl6d9/eRi2nocafkKbuu/6VvCR4dkCv7+hk=
+	t=1753966920; cv=none; b=QMR3fM+eMjNoGV515cmcAeO7tg4dN39mDGI4UkvQhTCurOdg6gFdguasjOPH/obkarN3baAx6mb/VLIiNDOBZTryPTc9us9ds936/jLBUh3SWf1TjO9AAjfy8txtM6d1pzwDEled7qptec3PGUStJufgPVlERqVuWee11fRziyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753966894; c=relaxed/simple;
-	bh=10Nc3UvULvBe/f+PVIKkbmId2QepTNuYHQwTmW4WA9Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rVJt384+880O9Z9ZWujwDOlkwJ3DJbVj3Cq37L3OGeOHixSDwgpJ7tdKfjX0UlCa0sGUYmIWB7eQK79tg7RhlHK5+hHriBYmCPnQJrRl1VsA3oY263IUgezPGjSqo5rNh9ILtA1bjexNiYYXMoKb0tZ1ng1FeDiubNk+57UKMT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 6C3922C06E34;
-	Thu, 31 Jul 2025 15:01:28 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 550D02A060F; Thu, 31 Jul 2025 15:01:28 +0200 (CEST)
-Date: Thu, 31 Jul 2025 15:01:28 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Linas Vepstas <linasvepstas@gmail.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Peter Oberparleiter <oberpar@linux.ibm.com>,
-	Matthew Rosato <mjrosato@linux.ibm.com>,
-	Oliver O'Halloran <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v3 1/2] PCI/AER: Fix missing uevent on recovery when a
- reset is requested
-Message-ID: <aItpKIhYr0T8jf7A@wunner.de>
-References: <20250730-add_err_uevents-v3-0-540b158c070f@linux.ibm.com>
- <20250730-add_err_uevents-v3-1-540b158c070f@linux.ibm.com>
- <aIp6LiKJor9KLVpv@wunner.de>
- <aIp_Z9IdwSjMtDho@wunner.de>
+	s=arc-20240116; t=1753966920; c=relaxed/simple;
+	bh=wbrWiEhfPScCVolNfyyjt22cIB4PfoD6ZusxuW+Alzw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lLetwRE2Kj+eu1KuIYezcx/hWbYfMyyLhQOQeXUf6PZTF282XTSsJIFTFVRSk+5olVmkIfYcIDGI2htExCrO3A0kRQXnppblnQojQUth1nuJHlG1h2yAyN8Ik4dxBN1wYGBChQ+NKdD9begVT4Obc/7mVyuSajjHnovYG4wBbaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NLcpojFu; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-71a44abb9f2so9748327b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:01:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753966918; x=1754571718; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=76yABaBlU6UDoYWb5i2vJYe7/HG6gZqjh5DtuXEh0wE=;
+        b=NLcpojFuFw8S/OG/15nv1iVIWYN3JlD4dc2+ppR+dH4lnbLWw5yfvKUijDlN8mdWKB
+         KPCwc1xlgalprjWM8coJuan/v0vb5lkh2gTv6gYaGnxOGozx2PWRYe91F5nXR+D/nOQF
+         V90dUnvsJB3FvYjDKgdmSbnSlllK6h02hNJ1jpooHyQ7nSVbSwl+xv2Nu/T6BOAXILSo
+         suatKbnIWwW+P8dHIvtEpMzj3Me57fFqxWckLgbqpXEhle47zBcqvFQkIlnx3f6sLX4Q
+         h8F7YhJvFhDy7SgDgZqV2lS/KnM/oA26J4gUk6pi9tn8N6+Vxtg6l7nNIqk7u1Q+QPta
+         /u4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753966918; x=1754571718;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=76yABaBlU6UDoYWb5i2vJYe7/HG6gZqjh5DtuXEh0wE=;
+        b=hSeuv6fD1UW8N/82AIiMalMJ/DFvfQvdO5lt8BP9EOGgqdWdHjAj3h7fN8AAD95ed4
+         rlQIQPYtUx85WT58LXgMdf+EMdfP1v8UfMimm9+lKITrak1VwoOjkQ5d2MWgfI0k+j6I
+         z1Od+bFpCtieY8wg9cb+hnT0QeKOhg5ysjM6NBxpJbxTUaRYTF+NIWIzjSSSxTBcZCyP
+         RGXOH+xwxS8BylLsWfz13R9SoKI+CJJtklswHLq7p+fXdjzoeH5dNFoZdQ/+0uZiW23V
+         03M7WCl3x96aZZcFhWrgPGC3U4X8G9irw2wkNja/6YAzQINH2GMmqKJ8HU/cF5mfvuFS
+         o70Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUysnW27jCnT4L62X7sm7kz/kwZ2q1SF0oFInF3tjuzOvtvaihjb804Lt4yLHdoYBaXw13hZKyXbxCmV+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvOhrvWrzSL/tqjVG1xNQPkK1/+dZJEmkFPjtj+GqJAwKEt849
+	tGoJQ91VQvce6ZIdlHwtDBGRjILSyUS3kpUa3++ycHsjN4WcgmD4Sdg7H34ObJwxtihRenuPZPE
+	nqPYGKeqraYPBI/RXtKFRDJEF5WQTM4JiXm1OXJox
+X-Gm-Gg: ASbGncukD4Ot396IRWRKLHfkTsR3mrqJgWeTl0v4wMp1KXEW32f67ng0XLtKf9MDTqS
+	Rl2RCYVuvBA2y6Sk9bHXgXoTg4J3wFwEDJF261y8zMULuipaE/3MI1ojfwBPlM30heYj2TBLzbG
+	6ymzpfw5USXhXvUnlBD3Wpxv3OIOpTXPIonm42nGsKFMKOaMtanfDDsdNF02gDyib3jKn+AZwb7
+	nCccw==
+X-Google-Smtp-Source: AGHT+IFHsQKKy19b+mkI6T4bmaLpNZ271aXwL3PfIOVfg50ihjyeftIyzuwnKyjumfnAE6VOghd4+JlOFr33u9sCgpQ=
+X-Received: by 2002:a05:690c:a84:b0:71a:3484:abfe with SMTP id
+ 00721157ae682-71a466ea559mr100356227b3.38.1753966917367; Thu, 31 Jul 2025
+ 06:01:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIp_Z9IdwSjMtDho@wunner.de>
+References: <20250731123309.184496-1-dongml2@chinatelecom.cn>
+In-Reply-To: <20250731123309.184496-1-dongml2@chinatelecom.cn>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 31 Jul 2025 06:01:46 -0700
+X-Gm-Features: Ac12FXxSBgXO3zoKmReetkU124ejSczJm6Q2NNCXYd_q6u_vkqdJE5hWUIcIcf4
+Message-ID: <CANn89iKRkHyg4nZFwiSWPXsVEyVTSouDcfvULbge4BvOGPEPog@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ip: lookup the best matched listen socket
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: ncardwell@google.com, kuniyu@google.com, davem@davemloft.net, 
+	dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Martin KaFai Lau <kafai@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 10:24:07PM +0200, Lukas Wunner wrote:
-> On Wed, Jul 30, 2025 at 10:01:50PM +0200, Lukas Wunner wrote:
-> > On Wed, Jul 30, 2025 at 01:20:57PM +0200, Niklas Schnelle wrote:
-> > > Since commit 7b42d97e99d3 ("PCI/ERR: Always report current recovery
-> > > status for udev") AER uses the result of error_detected() as parameter
-> > > to pci_uevent_ers(). As pci_uevent_ers() however does not handle
-> > > PCI_ERS_RESULT_NEED_RESET this results in a missing uevent for the
-> > > beginning of recovery if drivers request a reset. Fix this by treating
-> > > PCI_ERS_RESULT_NEED_RESET as beginning recovery.
-> > [...]
-> > > +++ b/drivers/pci/pci-driver.c
-> > > @@ -1592,6 +1592,7 @@ void pci_uevent_ers(struct pci_dev *pdev, enum pci_ers_result err_type)
-> > >  	switch (err_type) {
-> > >  	case PCI_ERS_RESULT_NONE:
-> > >  	case PCI_ERS_RESULT_CAN_RECOVER:
-> > > +	case PCI_ERS_RESULT_NEED_RESET:
-> > >  		envp[idx++] = "ERROR_EVENT=BEGIN_RECOVERY";
-> > >  		envp[idx++] = "DEVICE_ONLINE=0";
-> > >  		break;
-> > 
-> > I note that PCI_ERS_RESULT_NO_AER_DRIVER is also missing in that
-> > switch/case statement.  I guess for the patch to be complete,
-> > it needs to be added to the PCI_ERS_RESULT_DISCONNECT case.
-> > Do you agree?
-> 
-> I realize now there's a bigger problem here:  In pcie_do_recovery(),
-> when control reaches the "failed:" label, a uevent is only signaled
-> for the *bridge*.  Shouldn't a uevent instead be signaled for every
-> device *below* the bridge?  (And possibly the bridge itself if it was
-> the device reporting the error.)
+On Thu, Jul 31, 2025 at 5:33=E2=80=AFAM Menglong Dong <menglong8.dong@gmail=
+.com> wrote:
+>
+> For now, the socket lookup will terminate if the socket is reuse port in
+> inet_lhash2_lookup(), which makes the socket is not the best match.
+>
+> For example, we have socket1 and socket2 both listen on "0.0.0.0:1234",
+> but socket1 bind on "eth0". We create socket1 first, and then socket2.
+> Then, all connections will goto socket2, which is not expected, as socket=
+1
+> has higher priority.
+>
+> This can cause unexpected behavior if TCP MD5 keys is used, as described
+> in Documentation/networking/vrf.rst -> Applications.
+>
+> Therefor, we lookup the best matched socket first, and then do the reuse
+> port logic. This can increase some overhead if there are many reuse port
+> socket :/
+>
+> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
 
-The small patch below should resolve this issue.
-Please let me know what you think.
+I do not think net-next is open yet ?
 
-> In that case you don't need to add PCI_ERS_RESULT_NO_AER_DRIVER to
-> the switch/case statement because we wouldn't want to have multiple
-> uevents reporting disconnect, so the one emitted below the "failed:"
-> label would be sufficient.
+It seems this would be net material.
 
-I'll send a separate Reviewed-by for your original patch as the small
-patch below should resolve my concern about PCI_ERS_RESULT_NO_AER_DRIVER.
+Any way you could provide a test ?
 
-> This all looks so broken that I'm starting to wonder if there's any
-> user space application at all that takes advantage of these uevents?
+Please CC Martin KaFai Lau <kafai@fb.com>, as this was added in :
 
-I'd still be interested to know which user space application you're
-using to track these uevents?
+commit 61b7c691c7317529375f90f0a81a331990b1ec1b
+Author: Martin KaFai Lau <kafai@fb.com>
+Date:   Fri Dec 1 12:52:31 2017 -0800
 
-Thanks,
-
-Lukas
-
--- >8 --
-
-diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-index e795e5ae..3a95aa2 100644
---- a/drivers/pci/pcie/err.c
-+++ b/drivers/pci/pcie/err.c
-@@ -165,6 +165,12 @@ static int report_resume(struct pci_dev *dev, void *data)
- 	return 0;
- }
- 
-+static int report_disconnect(struct pci_dev *dev, void *data)
-+{
-+	pci_uevent_ers(dev, PCI_ERS_RESULT_DISCONNECT);
-+	return 0;
-+}
-+
- /**
-  * pci_walk_bridge - walk bridges potentially AER affected
-  * @bridge:	bridge which may be a Port, an RCEC, or an RCiEP
-@@ -272,7 +278,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
- failed:
- 	pci_walk_bridge(bridge, pci_pm_runtime_put, NULL);
- 
--	pci_uevent_ers(bridge, PCI_ERS_RESULT_DISCONNECT);
-+	pci_walk_bridge(bridge, report_disconnect, NULL);
- 
- 	pci_info(bridge, "device recovery failed\n");
- 
+    inet: Add a 2nd listener hashtable (port+addr)
 
