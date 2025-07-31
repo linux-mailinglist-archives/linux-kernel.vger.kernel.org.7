@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-752446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA3EB175A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:35:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC1AB175AA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A6BA174140
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:35:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C5A4567816
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE59268FF1;
-	Thu, 31 Jul 2025 17:35:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4931124293B;
+	Thu, 31 Jul 2025 17:36:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbKdcQ2O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b="Qh2rPqu5"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464111DE4E7;
-	Thu, 31 Jul 2025 17:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753983301; cv=none; b=LQN5t6sM2IlVeCqs3vcyo35Ue85+1IP20YpTRhQhNLROHBMhsMoF6RgpsWQOFMhHJa2Z8Q67SkzAnuZQQsy+9fJuy6tZfwwoRESiUQaL6QE0q7b79B+XfiT+P8hUO1CGr2q+Cb/12wt6m9MpJuDHrqXoE8+9ROW5DsidhNmocW4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753983301; c=relaxed/simple;
-	bh=JiDnKF3IpXc6rXBjO09bRRekZPcZX7iA0oknDyM6mEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ODec9+SEDsVWok/V4Y5CiYol/KYscx6PbImcPoQRCD48GuSTPhG9M5EtpL+3G3fw7FBmBQa0w5f/znuhcEZvnzuopQNGXJPy6rcvbj3OoNyNWKBcrWzCnNwu6l1xS/CXdtEY4KryoYlfusFEq3BwEOpybSqz60AttJCXaldPjOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbKdcQ2O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E50C4CEEF;
-	Thu, 31 Jul 2025 17:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753983299;
-	bh=JiDnKF3IpXc6rXBjO09bRRekZPcZX7iA0oknDyM6mEY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nbKdcQ2OgY058bckyN1Zy0YS9uHrbuEtjZ1fLW5Y2tHDn70v3HHHABJnYuPDYPbRb
-	 WplMlFwaFxahfBqTrT8Rf5EAOv7wMuYHKh1bjMrs0d/F8sp3kWgWE819PNDhX4GWZ2
-	 MVdK66sAo3x/oitCPPq81RHZjuMmTld+Wv3HpAOMruDM5cYQ237g+N6pjEqHcx+FAM
-	 f/KKMZbcH+3oRDOT7TdP8u1/87tK4isWghSnUm5/0wfqnqxmFBlxek/pPt5aTsiovw
-	 ufJ5ppk6cXOfoKRWn0RflKjzeASBcDpOZtd5WzxPurQivLDSdjpw4kvNk2kMYzB+tk
-	 xy8glo9jP5UEw==
-Date: Thu, 31 Jul 2025 12:34:58 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>, linux-scsi@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v2 3/3] dt-bindings: ufs: qcom: Split SM8650 and similar
-Message-ID: <175398329829.2268219.10303422532695900388.robh@kernel.org>
-References: <20250731-dt-bindings-ufs-qcom-v2-0-53bb634bf95a@linaro.org>
- <20250731-dt-bindings-ufs-qcom-v2-3-53bb634bf95a@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DEEF22FF2E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753983376; cv=pass; b=MlAinPeV8GTNQBiDFJlFXlMSnfu+fGg5lXrQzsgEkt6TC3K+qveGCvmwpp1pX6nQLFPpRLSRVBu74xgx4W06t5078jWNEuPk90tC6t7Z6p70uyEyrGEZBv9tTQEf2gRH/iKQiRthoQnGHFAjPF+7PhjNxFmnqVqq1jOUnTUm0MU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753983376; c=relaxed/simple;
+	bh=mgU0ukzGRx6HifD/OjoG1vGcTl6xieGyjo7UdiC0bWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kPc94OTogRFq4TdNPyNfoDvEC/JwKhTCOt8M15o4foh9i/8+RecFDzeYhJwq7IshuiPlqWNYmF0y9HjdiTpy3jD2//0ABIXS1SYTPIquXBablxHmJ57Hafb/xZ7usKnsMRh8WM482bZkysu2oI9BY8qVzCUFUcVKMB2BGJ5q2YY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=adrian.larumbe@collabora.com header.b=Qh2rPqu5; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753983353; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=d0rphQD1NV5MZLKXTj7YMoCVTtDDKuPZ09MR/OVXU1siMNuX88XwsBGJftaPsagSqGT3OUf2iG+3/JgyW71SmsF/xHg5jHvppfV/LNv6oYFNnGeOaMLAbiKogIx/nFw+PDKzqprz6M/xhW6XYGeTRY/Zb0H7y3E2Ok08k3NNW/I=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753983353; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=GjGC/nyiqA9GedJj8NrTQ/0E23UNoK83tKxKWa7ZgOg=; 
+	b=ah3uXx1B2o3HvdWbgzD8X3KhKsELvQ88LY1npiCxxHRoTWE7j7HrfeFMF+xPX5KCeNmE9S5ZlWIrwRtJUH/kRFQVxdhKZYX0Z2kxJcERFb6h5Ii/BX/QMHMObBLTOznANg/UKAMeW/J1iSSKqRnbkknk49V+B+WHIioTDbn12b8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=adrian.larumbe@collabora.com;
+	dmarc=pass header.from=<adrian.larumbe@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753983353;
+	s=zohomail; d=collabora.com; i=adrian.larumbe@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=GjGC/nyiqA9GedJj8NrTQ/0E23UNoK83tKxKWa7ZgOg=;
+	b=Qh2rPqu5fqQxZvRfaNsZSqptfiAI+IUECXmH126biBY6ofMc6MRTmlyC5Nb6gVFN
+	2SwuIZcWDQDHp7FylH7N1EwHptLyB3x4MqRO1jLeQQi0HJMYFkjw6TwrxqEt5u8hVi8
+	Sr9crUJwsVJjd4bXjGK/lo5GT9XhHU9VQMOKDmks=
+Received: by mx.zohomail.com with SMTPS id 1753983350584774.4939370221103;
+	Thu, 31 Jul 2025 10:35:50 -0700 (PDT)
+From: =?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	kernel@collabora.com,
+	=?UTF-8?q?Adri=C3=A1n=20Larumbe?= <adrian.larumbe@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Steven Price <steven.price@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH] drm/panfrost: Print RSS for tiler heap BO's in debugfs GEMS file
+Date: Thu, 31 Jul 2025 18:35:31 +0100
+Message-ID: <20250731173534.3494324-1-adrian.larumbe@collabora.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731-dt-bindings-ufs-qcom-v2-3-53bb634bf95a@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Otherwise it would display the virtual allocation size, which is often
+much bigger than the RSS.
 
-On Thu, 31 Jul 2025 09:15:54 +0200, Krzysztof Kozlowski wrote:
-> The binding for Qualcomm SoC UFS controllers grew and it will grow
-> further.  Split SM8650 and SM8750 UFS controllers which:
-> 1. Do not reference ICE as IO address space, but as phandle,
-> 2. Have same order of clocks.
-> 3. Have MCQ IO address space. Document that MCQ address space as
->    optional to maintain backwards compatibility and because Linux
->    drivers can operate perfectly fine without it (thus without MCQ
->    feature).  Linux driver already uses "mcq" as possible name for
->    "reg-names" property.
-> 
-> The split allows easier review and maintenance of the binding.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  .../devicetree/bindings/ufs/qcom,sm8650-ufshc.yaml | 178 +++++++++++++++++++++
->  .../devicetree/bindings/ufs/qcom,ufs.yaml          |  32 ----
->  2 files changed, 178 insertions(+), 32 deletions(-)
-> 
+Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+Fixes: e48ade5e23ba ("drm/panfrost: show device-wide list of DRM GEM objects over DebugFS")
+---
+ drivers/gpu/drm/panfrost/panfrost_gem.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
+index bb73f2a68a12..da7613801ac0 100644
+--- a/drivers/gpu/drm/panfrost/panfrost_gem.c
++++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
+@@ -432,7 +432,8 @@ static void panfrost_gem_debugfs_bo_print(struct panfrost_gem_object *bo,
+ 	if (!refcount)
+ 		return;
+ 
+-	resident_size = bo->base.pages ? bo->base.base.size : 0;
++	resident_size = bo->base.pages ?
++		(bo->is_heap ? bo->heap_rss_size : bo->base.base.size) : 0;
+ 
+ 	snprintf(creator_info, sizeof(creator_info),
+ 		 "%s/%d", bo->debugfs.creator.process_name, bo->debugfs.creator.tgid);
+
+base-commit: 934452cbb16e1e3609ba52acb48c503b9aaf3154
+-- 
+2.50.0
 
 
