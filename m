@@ -1,154 +1,91 @@
-Return-Path: <linux-kernel+bounces-752293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E80DB1739A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:00:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2413B1739D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 633CB58025A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:00:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6D927B2886
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F35C1D6193;
-	Thu, 31 Jul 2025 15:00:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41022A8C1
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9A218DB03;
+	Thu, 31 Jul 2025 15:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Nvj3uKfc"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6DB2A8C1;
+	Thu, 31 Jul 2025 15:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753974017; cv=none; b=Eo8Z1LMHoMrBFOsmKuHnwHgRTAzYfSHsm89NQ8eDILJ2VWR7OYvL82999FrrRQLBsOEB3VT6S/0QnUFNlliR8NkdOEevgVnB+qkwpTXp6i7+Gb/SzZoPz1OnYK/TEwsGLqlEumMvkF6AL21ZU8sqwMZlV4x1L7AM2uOb1n6qus4=
+	t=1753974022; cv=none; b=c58idmFBkTCqg78imGCH+YRgZGbjm0n2KseSUKoPi8Zx9OPv3EPzixl+0deZ4iuMQQzFQUcokAJWlBeo1cC+R6Tr6PLuwx+NInK76cbZeRlbQIfFzJ1kWXBKcfUbY6CNFJu+rFmiASoNHtjAAqAUIHplOj0GyroDIOru1N0lJHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753974017; c=relaxed/simple;
-	bh=4IFRiv9fjPG+5vdtrTheT5TfgT13RGbDqLNISf9IOBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O58Bu1eweXVgICJgkeQeTXJ+A4vgyiEgqAC7cwPcsXt7K+v03q9PmOxy9O7HT9oWN9g9wKA8SpOsZsJjWoXYYP793zbBhK1ynshPjANKvxE3sjIvgNLCjotNJoXcf2VwVOZ81RjNIB+NKAd9dK8Nu7MccBWfwE2XKHu6535j2vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C43E21D13;
-	Thu, 31 Jul 2025 08:00:06 -0700 (PDT)
-Received: from [10.1.33.50] (e127648.arm.com [10.1.33.50])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 08A3E3F66E;
-	Thu, 31 Jul 2025 08:00:11 -0700 (PDT)
-Message-ID: <2990c9d8-c957-4443-a2c5-4b62e48dc818@arm.com>
-Date: Thu, 31 Jul 2025 16:00:09 +0100
+	s=arc-20240116; t=1753974022; c=relaxed/simple;
+	bh=eCTn1VeRML+5mh2D5tkVcMytlldvLgIzq8h2lGxp500=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uurfp1quNuCFsGA6zCB8EN9QGGWD7V8in5C4OLZyD+5JHOPh7zK1DXm5FV190w4uELajePKQLys29umEZiOYRcJQVHV8OVXXTTbF/hmV8Z3lFdSKNQ0PMWZjVdDRn0zgI2evrZgMWACUBQCbsRIfbUCw+lwp+7hFJ/lnQfb6Qys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Nvj3uKfc; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=2BsDj+OD3jmm2d0vUWYrsDBY27j7hSBdc7EYok2mERc=; b=Nvj3uKfcgNT4vQpK0q6CpPxUSo
+	6cnf9DJvy5RE0nKp2DUu2vCr8H0Q/QaqHQrBng7OYduawjQrfL+Tv15KieEdEjrAuS78PzWuNp8ZQ
+	xgpok0OiGR8dd25lkOaSSex2FPAqKAdF0VcmBlg2eDFLbJMLKyWmZDq29jOZzlp/Mmy0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1uhUlQ-003NgA-99; Thu, 31 Jul 2025 17:00:12 +0200
+Date: Thu, 31 Jul 2025 17:00:12 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Meghana Malladi <m-malladi@ti.com>,
+	Himanshu Mittal <h-mittal1@ti.com>,
+	Ravi Gunasekaran <r-gunasekaran@ti.com>,
+	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, srk@ti.com,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH net] net: ti: icssg-prueth: Fix emac link speed handling
+Message-ID: <e9a886f2-527b-4375-bb2c-15f38b56675f@lunn.ch>
+References: <20250731120812.1606839-1-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/1] sched/deadline: Fix RT task potential starvation
- when expiry time passed
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
- Kuyo Chang <kuyo.chang@mediatek.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- jstultz <jstultz@google.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20250615131129.954975-1-kuyo.chang@mediatek.com>
- <CAMuHMdWZHwr_nmMbVREKC9nQCYigT_gvKH3M9v+oyYqk6FLONw@mail.gmail.com>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <CAMuHMdWZHwr_nmMbVREKC9nQCYigT_gvKH3M9v+oyYqk6FLONw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731120812.1606839-1-danishanwar@ti.com>
 
-On 7/30/25 11:06, Geert Uytterhoeven wrote:
-> Hi Kuyo,
+On Thu, Jul 31, 2025 at 05:38:12PM +0530, MD Danish Anwar wrote:
+> When link settings are changed emac->speed is populated by
+> emac_adjust_link(). The link speed and other settings are then written into
+> the DRAM. However if both ports are brought down after this and brought up
+> again or if the operating mode is changed and a firmware reload is needed,
+> the DRAM is cleared by icssg_config(). As a result the link settings are
+> lost.
 > 
-> On Mon, 16 Jun 2025 at 14:39, Kuyo Chang <kuyo.chang@mediatek.com> wrote:
->> From: kuyo chang <kuyo.chang@mediatek.com>
->>
->> [Symptom]
->> The fair server mechanism, which is intended to prevent fair starvation
->> when higher-priority tasks monopolize the CPU.
->> Specifically, RT tasks on the runqueue may not be scheduled as expected.
->>
->> [Analysis]
->> ---------
->> The log "sched: DL replenish lagged too much" triggered.
->>
->> By memory dump of dl_server:
->> --------------
->>     curr = 0xFFFFFF80D6A0AC00 (
->>       dl_server = 0xFFFFFF83CD5B1470(
->>         dl_runtime = 0x02FAF080,
->>         dl_deadline = 0x3B9ACA00,
->>         dl_period = 0x3B9ACA00,
->>         dl_bw = 0xCCCC,
->>         dl_density = 0xCCCC,
->>         runtime = 0x02FAF080,
->>         deadline = 0x0000082031EB0E80,
->>         flags = 0x0,
->>         dl_throttled = 0x0,
->>         dl_yielded = 0x0,
->>         dl_non_contending = 0x0,
->>         dl_overrun = 0x0,
->>         dl_server = 0x1,
->>         dl_server_active = 0x1,
->>         dl_defer = 0x1,
->>         dl_defer_armed = 0x0,
->>         dl_defer_running = 0x1,
->>         dl_timer = (
->>           node = (
->>             expires = 0x000008199756E700),
->>           _softexpires = 0x000008199756E700,
->>           function = 0xFFFFFFDB9AF44D30 = dl_task_timer,
->>           base = 0xFFFFFF83CD5A12C0,
->>           state = 0x0,
->>           is_rel = 0x0,
->>           is_soft = 0x0,
->>     clock_update_flags = 0x4,
->>     clock = 0x000008204A496900,
->>
->> - The timer expiration time (rq->curr->dl_server->dl_timer->expires)
->>   is already in the past, indicating the timer has expired.
->> - The timer state (rq->curr->dl_server->dl_timer->state) is 0.
->>
->> [Suspected Root Cause]
->> --------------------
->> The relevant code flow in the throttle path of
->> update_curr_dl_se() as follows:
->>
->> dequeue_dl_entity(dl_se, 0);                // the DL entity is dequeued
->>
->> if (unlikely(is_dl_boosted(dl_se) || !start_dl_timer(dl_se))) {
->>     if (dl_server(dl_se))                   // timer registration fails
->>         enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);//enqueue immediately
->>     ...
->> }
->>
->> The failure of `start_dl_timer` is caused by attempting to register a
->> timer with an expiration time that is already in the past. When this
->> situation persists, the code repeatedly re-enqueues the DL entity
->> without properly replenishing or restarting the timer, resulting in RT
->> task may not be scheduled as expected.
->>
->> [Proposed Solution]:
->> ------------------
->> Instead of immediately re-enqueuing the DL entity on timer registration
->> failure, this change ensures the DL entity is properly replenished and
->> the timer is restarted, preventing RT potential starvation.
->>
->> Signed-off-by: kuyo chang <kuyo.chang@mediatek.com>
-> 
-> Thanks, this fixes the issue I was seeing!
-> 
-> Closes: https://lore.kernel.org/CAMuHMdXn4z1pioTtBGMfQM0jsLviqS2jwysaWXpoLxWYoGa82w@mail.gmail.com
-> Tested-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> 
+> Fix this by calling emac_adjust_link() after icssg_config(). This re
+> populates the settings in the DRAM after a new firmware load.
 
-FWIW the reported issue is also present on an arm64 rk3399 and
-$SUBJECT fixes that.
+It is only safe to access phydev members when the phydev lock is
+held. When phylib calls emac_adjust_link() it is holding this lock, so
+MAC drivers don't need to worry about it. However, if you call it
+directly, without the lock, bad things will happen.
 
+    Andrew
+
+---
+pw-bot: cr
 
