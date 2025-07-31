@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-751463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1D6B169D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:07:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD83B169DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D57247B6120
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:05:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66A0A5A46F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:07:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BE56F073;
-	Thu, 31 Jul 2025 01:07:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA598146593;
+	Thu, 31 Jul 2025 01:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KjZnkhNC"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gS166KaG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D6017BD9;
-	Thu, 31 Jul 2025 01:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8B712CDAE
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753924034; cv=none; b=E8gF5Nw0rswGYCjg9ffoimp4QHHlgfi4+NqwiBylIvF2R0Iu87p6u3UhI5JpoBx0/EqDypizqrB5sFsnbB6g3g32DIIi9wtm3O8CnhFG+qvxfFmvZ3XTuaJgmXhjSEEVOuOPuPqifntOJac4enz3kXvEJAdsdAu7JvdHtIeGQ70=
+	t=1753924065; cv=none; b=F1qk75771MjVgV+rJeIdektr8oKriUYps5YnXu4W/5gPVdG+9mb9M6xBq6EwsuT2RplWAh2vrKFGxoLqVmXsMlK1MUmReHflfqViRK6g45YLKV5+Q1I3iu5iSKiUr92iT/0sFua8hr6axU4gNAcVQVnWzwVUr3oqqNaEtuCRhak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753924034; c=relaxed/simple;
-	bh=uQZ2TkinihEE7f4FnyWXjFhyaModpjj42SkfhUQHim4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=rKWMP1KG+YAnD9Y/+13ssOH9nVz8WkDS7sl/D1InETBOUX/rA02mksIdKItKTgJxwa8rh7QtCzS6fyzZ6YkVDyFNttQkLiCMUkpc3licuI5qZWHTGYmjcjJTGJ+LRDEJMSJVOzpCqZE0W2Nmw9si8I4MvjsQoLPURnWP/ldfKA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KjZnkhNC; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-45622a1829eso1231655e9.1;
-        Wed, 30 Jul 2025 18:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753924031; x=1754528831; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZuT2LVa9fLR1pGvMOUNWaZ+NGAP76vcbuWZ1eRXnIAY=;
-        b=KjZnkhNC3ePa3fgIYaUsVjG39oms3Sk/+BP0UuOqTiQ3zGk23gi+IafqUd8/jQXzUm
-         8esVekPT3IZ36kSc1ymfeKRx8CsYbujnLiqPL55w5znd4RJYCl4V6KX2oDq7P+besM35
-         dC5QVgTu00F6ujxk365oR7S3GDtGB6M+Mvy0yjPIN9dBqEp8KIjcbB9o4+kWYrx1zEz7
-         gSIt9J6IlJE0k24YYbmxguYtOGXeD27A6QO/W8+YH9qqg4WmvF/+mCOmNrMq0q3zNH8a
-         bAzdRN6XPPSo6IPx1H6NJFrkYlXmBei7kTg6v9trYuY04UasSWzWnMfbgCQBe+JG2pkQ
-         kGPQ==
+	s=arc-20240116; t=1753924065; c=relaxed/simple;
+	bh=RwCqBhqd4SGtljt8ozavaYhxd2dZWBQTZl0x74OfiRg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=teykxFGofpaI48DcuXlVuLG7ZSaYxwuhMLU7VtIfFWwD0mLmE/0dhrAJmGAAflyKeFoI0e6GbxSNAYA1BDSn0Fac3wR5pP33O5fFw8WZX1M+e5WhvRkxsBbYtt8gB1uU7Zoz36xQ7F+aZszM1pwFu7/sd4hSvg68xJQvaQaaWTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gS166KaG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753924062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RwCqBhqd4SGtljt8ozavaYhxd2dZWBQTZl0x74OfiRg=;
+	b=gS166KaGpyyu5CZBt6Ly4KJUGXrppjmkRCIL+50O5O06A1mz1lNpdv9B4fOg5CPfzHSHJm
+	/OrCAyH2lmbh4K5Wa5wtNDRxiKGd6v1ICJRWuIPk07UnpEdMQsLpZQpwOGflzZK/evOTEa
+	ppJkkLAFLj2pjb0/uGwNmyzDWU2p2dE=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-460-cr8GHlNcPL-eHAtEm2Sydw-1; Wed, 30 Jul 2025 21:07:40 -0400
+X-MC-Unique: cr8GHlNcPL-eHAtEm2Sydw-1
+X-Mimecast-MFC-AGG-ID: cr8GHlNcPL-eHAtEm2Sydw_1753924060
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-3139c0001b5so431339a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:07:40 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753924031; x=1754528831;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZuT2LVa9fLR1pGvMOUNWaZ+NGAP76vcbuWZ1eRXnIAY=;
-        b=f0lJOT0OfBm1HZANrOyYjBP6WGaihZT6u1s6f0O5szDVp1SaPw5NwHemR96c/6L3OS
-         S5fuIRPb2xGhv8fJfZsM7MBIeU1sfwDi9jOXQExFBZIrln0Ig5aWP7BGKMvlgEEHPopZ
-         AEX2tb7KLRPCapuYY6So1XBMiZmSfx5AGnocGAhII81I7j9LYARaYWBn7akNm2JSUNki
-         v+9oHDO3l7Z8eY8dGWdKc3qyQbh8T7sVbvnSrYGJ4NTMQTXmGzm5gan0FC18PHxjRHX7
-         Rc0pjl/3Fm9/BogUBXERisFKbib8qOqxm+ns9o0jT3EqzMXWZMlOIzp7tOD1a0ZnmD1/
-         M7Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4BD1lmU1oHBf3tEM7wbvGKOYOXJmYotnXCjs3dFyIjxyUJN+vlYFyXVI9tl6ivUYlxU+9PyegCq73oLqAgMI=@vger.kernel.org, AJvYcCVTX/XMm+TkK1dp2SVjh+b5FA+he6hgtVxBNJp9ZIM0yD9sVtIM9B1yLhXb9GgNXvK6sot3O+gpdPeJrptY@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh7MuV/DeZuqkDc9P/xOSfP9W/pmeg9Z14paD1hEG7dnK2RGmO
-	ngSygJARo0q00CaBesuTPAKvPT0bmzGP0z9G7OGHC8Il0jwkGzw/60/i
-X-Gm-Gg: ASbGncuyTqOF778CAYKHQoUzaODI5g5VwkLQiDeFDE4S5WUVuERpRHu1Ptyxw+oN+sh
-	UR4K65z4lq0PpPg1PIKofYCPhVJQ5bNn90zT7XagURQBrOBeud8Kx28ITEqzFDgOexpdWavssGu
-	ezd0YmfjvEebff1ZfuHQ7EPQbe39q9NjfiwNQMuxOdu2nH/fFeNygQjklaeQIlmPJU+hh9mkifc
-	HVU8q9BxO1Im0jeSfxmfnRzWsEdIeI567HC1IgIkH2fcu/BWzVkmm/cx75zakZzPA297Nj5Dl0K
-	Jd1b5ZKj/awupPhE3XssD394GFL6TXxXhR1NuukmRZYa0ii/MURO7Q8zbNEevT0f8SMn2rtdpRi
-	f2+UGji4M1VA=
-X-Google-Smtp-Source: AGHT+IG4IbJCF0W3UCi9QUXOrv6co+/9dRLrwLc8oQdmCNaZ9Y4QLoTnUEN1lyBZ8KzQEfJxbWYh2A==
-X-Received: by 2002:a05:600c:4f0d:b0:455:ed0f:e8ec with SMTP id 5b1f17b1804b1-45892b9ce3emr59639325e9.9.1753924030930;
-        Wed, 30 Jul 2025 18:07:10 -0700 (PDT)
-Received: from pc ([165.51.119.21])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953eba17sm43868745e9.24.2025.07.30.18.07.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 18:07:09 -0700 (PDT)
-Date: Thu, 31 Jul 2025 02:07:07 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Paul Menzel <pmenzel@molgen.mpg.de>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH V2] Bluetooth: bcm203x: Fix use-after-free and memory leak in
- device lifecycle
-Message-ID: <aIrBu8VK8FgYm7bV@pc>
+        d=1e100.net; s=20230601; t=1753924060; x=1754528860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RwCqBhqd4SGtljt8ozavaYhxd2dZWBQTZl0x74OfiRg=;
+        b=oAllIEvuhM2LDkIIKEwQ19SQaI9/0Y4h7XmjXNGs2U0MCVrkGMf1daJ9nP/lG55rwA
+         VLRAyo/etF95O0IftKDDr/NmY+DG4Vw6E2IkvfCSYY0Jxrl3DccEWy1RWdZROQLw5huw
+         CpZVOov3yLmWQZN0p40XPPeH1lxxaZETE2uEVmjC1FXC0WB4I0RrutEqOBDeSRL0v0R/
+         8M7yq/l09/y10qCY1nyJ35o2JFCfoICjpdimPWA6RV2aunp1S5cTDE3SnZOWNH3omEVK
+         b0RBOvEBbNzscZku+Ui7pZwYrIl7Hly7h4jmn2/k/62tSTtgtvxSqpb9QnqW5uydVQHB
+         E7/g==
+X-Forwarded-Encrypted: i=1; AJvYcCXlwlNw8D2OoY+Bh0g5u9HmGxQhgqLPPbeD7zDq/CP2nq1vvwUQoRyvfkYeaXhpvmrYGNWzk11l4M+ppnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtEP8lHXVm/YdXjWLn8+hNbEC773CM8WpC2FICsmmH5MnmYffy
+	8tPLouRok6mGlYBcu/tcX/3oJBNpjsKzbj1aOUmxwPacSXe1GpGh6DLUGe2kwn/EqRO7p3VZDrz
+	bXEz3OjeVYY1XElY5xhUNwREIcvtYAECmx3ZJoY6kbGb4GYlVGkmzv9JzWsA+1jooAWBZ0HJOIe
+	zJHkcRk+PfQaw92mNJwXi8IGbD1C51OyWr+/3z7ne7
+X-Gm-Gg: ASbGncuex2+nhivonEmH944fgjw63+QjlZVoGvH3WfHfQme3wQ7wgwz6Q85a//9RbUv
+	F59j6geoQuSXVO6poQKzagQEbuHciq5iIbHnfOaSSGveMqev7tuUtiLGmBd7JcWSMq331VkKLTL
+	Tg8mCbfIXnay3d0sG+BeM=
+X-Received: by 2002:a17:90b:4b11:b0:313:5d2f:54f8 with SMTP id 98e67ed59e1d1-31f5ea6b571mr8104414a91.33.1753924059805;
+        Wed, 30 Jul 2025 18:07:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHBTkvTlCrxS4KqWqX9J2caauKKosURWKkzL9ddM8eH3KW10NDC7rPZNwPk748PPfO7GuO55un+fWqFpNss2fo=
+X-Received: by 2002:a17:90b:4b11:b0:313:5d2f:54f8 with SMTP id
+ 98e67ed59e1d1-31f5ea6b571mr8104373a91.33.1753924059373; Wed, 30 Jul 2025
+ 18:07:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250718061812.238412-1-lulu@redhat.com> <20250721162834.484d352a@kernel.org>
+ <CACGkMEtqhjTjdxPc=eqMxPNKFsKKA+5YP+uqWtonm=onm0gCrg@mail.gmail.com>
+ <20250721181807.752af6a4@kernel.org> <CACGkMEtEvkSaYP1s+jq-3RPrX_GAr1gQ+b=b4oytw9_dGnSc_w@mail.gmail.com>
+ <20250723080532.53ecc4f1@kernel.org>
+In-Reply-To: <20250723080532.53ecc4f1@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Thu, 31 Jul 2025 09:07:27 +0800
+X-Gm-Features: Ac12FXyltfKnkJ6WA6PQZrqMC6on4IVMKH4G4mZZ6ShVaStyC948R-LQlIsa18c
+Message-ID: <CACGkMEuvBU+ke7Pu1yGyhkzpr_hjSEJTq+PcV1jbZWcBFm-k1w@mail.gmail.com>
+Subject: Re: [PATCH RESEND] netvsc: transfer lower device max tso size
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Cindy Lu <lulu@redhat.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Michael Kelley <mhklinux@outlook.com>, Shradha Gupta <shradhagupta@linux.microsoft.com>, 
+	Kees Cook <kees@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Kuniyuki Iwashima <kuniyu@google.com>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, Guillaume Nault <gnault@redhat.com>, 
+	Joe Damato <jdamato@fastly.com>, Ahmed Zaki <ahmed.zaki@intel.com>, 
+	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>, 
+	"open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The driver stores a reference to the `usb_device` structure (`udev`)
-in its private data (`data->udev`), which can persist beyond the
-immediate context of the `bcm203x_probe()` function.
+Hi Jakub,
 
-Without proper reference count management, this can lead to two issues:
+On Wed, Jul 23, 2025 at 11:05=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> w=
+rote:
+>
+> On Wed, 23 Jul 2025 14:00:47 +0800 Jason Wang wrote:
+> > > > But this fixes a real problem, otherwise nested VM performance will=
+ be
+> > > > broken due to the GSO software segmentation.
+> > >
+> > > Perhaps, possibly, a migration plan can be devised, away from the
+> > > netvsc model, so we don't have to deal with nuggets of joy like:
+> > > https://lore.kernel.org/all/1752870014-28909-1-git-send-email-haiyang=
+z@linux.microsoft.com/
+> >
+> > Btw, if I understand this correctly. This is for future development so
+> > it's not a blocker for this patch?
+>
+> Not a blocker, I'm just giving an example of the netvsc auto-weirdness
+> being a source of tech debt and bugs. Commit d7501e076d859d is another
+> recent one off the top of my head. IIUC systemd-networkd is broadly
+> deployed now. It'd be great if there was some migration plan for moving
+> this sort of VM auto-bonding to user space (with the use of the common
+> bonding driver, not each hypervisor rolling its own).
+>
 
-1. A `use-after-free` scenario if `udev` is accessed after its main
-   reference count drops to zero (e.g., if the device is disconnected
-   and the `data` structure is still active).
-2. A `memory leak` if `udev`'s reference count is not properly
-   decremented during driver disconnect, preventing the `usb_device`
-   object from being freed.
+Please let me know if you want to merge this patch or not. If not, how
+to proceed.
 
-To correctly manage the `udev` lifetime, explicitly increment its
-reference count with `usb_get_dev(udev)` when storing it in the
-driver's private data. Correspondingly, decrement the reference count
-with `usb_put_dev(data->udev)` in the `bcm203x_disconnect()` callback.
-
-This ensures `udev` remains valid while referenced by the driver's
-private data and is properly released when no longer needed.
-
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
----
-Changes in V2:
-    - Add tag Fixes
-
- drivers/bluetooth/bcm203x.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/bluetooth/bcm203x.c b/drivers/bluetooth/bcm203x.c
-index c738ad0408cb..c91eaba33905 100644
---- a/drivers/bluetooth/bcm203x.c
-+++ b/drivers/bluetooth/bcm203x.c
-@@ -165,7 +165,7 @@ static int bcm203x_probe(struct usb_interface *intf, const struct usb_device_id
- 	if (!data)
- 		return -ENOMEM;
- 
--	data->udev  = udev;
-+	data->udev  = usb_get_dev(udev);
- 	data->state = BCM203X_LOAD_MINIDRV;
- 
- 	data->urb = usb_alloc_urb(0, GFP_KERNEL);
-@@ -243,6 +243,8 @@ static void bcm203x_disconnect(struct usb_interface *intf)
- 
- 	usb_set_intfdata(intf, NULL);
- 
-+	usb_put_dev(data->udev);
-+
- 	usb_free_urb(data->urb);
- 	kfree(data->fw_data);
- 	kfree(data->buffer);
--- 
-2.43.0
+Thanks
 
 
