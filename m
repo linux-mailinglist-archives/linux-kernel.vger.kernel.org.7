@@ -1,47 +1,94 @@
-Return-Path: <linux-kernel+bounces-751654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038B7B16BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:15:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E09D5B16BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69B4B7ABD42
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 399041888084
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D52624E4AF;
-	Thu, 31 Jul 2025 06:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A32248F60;
+	Thu, 31 Jul 2025 06:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XpVwwhlX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="U5liEMpJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9E6R/+VS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="U5liEMpJ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9E6R/+VS"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662DA248F60;
-	Thu, 31 Jul 2025 06:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1148FA29
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753942509; cv=none; b=XJEkrYtTyb2QD29Gkdn9f57M/qwZL12tvWhBbUvvRpJb5bshJ14WTiy+iK9PoUyGcJQViCXm+T1S0KHRJPVFNwFKoCWvAUpAyFCArE+QPn7lYFawhuVnYMIIHMHp0AMgsKFmRJfBgqAh0i69KzUUGSrvT+S4OI/Pki/Bf64khS8=
+	t=1753942629; cv=none; b=iBDI8kanhFmDQdvWkrVIAAZrWkBO8IQC4O2dmM4shJWrNO26/eH1Q4/svLdH73GE0c737X39w5MVxLh1fuzAivD+l8mZlcY5QqE1qYUAKo/1AiefVywXXcDYV2VpAe2nqZgy1IvQKKvFvn/ssTWT3C2mnqXZB6wxwBXINZCZHZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753942509; c=relaxed/simple;
-	bh=IHLvN+bSRL5qsAC8AZSEoz9lgePwb/RVVil4oXLXbes=;
+	s=arc-20240116; t=1753942629; c=relaxed/simple;
+	bh=x/7ISYe+ra92U7mEGKum1EGwAI6PhKEhNlWjSeeslwE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BettXJXoA7qaDC79RzmWyHYLM/nIoMEQbzew29DLbqa4RSAcCaC3bDmOgKIAJ8UZtDAX3U4hLKCWHoCaq4G8ORqZoWWHIOJLrh3nA309Rs7VDWF/nm17rNAkyhgTnD8NlmK0qZcNPh74mzjNmCDEUdlu/ehK531JJVHiu6eS/H8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XpVwwhlX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2249C4CEEF;
-	Thu, 31 Jul 2025 06:15:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753942508;
-	bh=IHLvN+bSRL5qsAC8AZSEoz9lgePwb/RVVil4oXLXbes=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XpVwwhlXhJR92x9pYwcE6WoBoY4agNtbc07pOGbr5OYP3tsztgqvLP33zFK78TR9B
-	 /xrhSTouj30lLJjoplHvS+Jb5R6TQHUV5PrnY3/mLKpi5hiUcE7iimiLmXu+3OjCmj
-	 0kDRrfTYsov9GlKv7GwUZ74wcwowSVheHgGh2f1RVguy8R3xlgFSXPKA+SSkU5oTd+
-	 vp5850Te8ekgWsSw3TN+JTl2GjDPa6Doul9y+C6tD5mMnOtfBd07jZ+FfiXe2mxis4
-	 lgp9cC7RRMxNE6dBzTMFyiMqqzYM168/M2+gs62xkLFK7xDt1Cqofnh++ek0qs5LuF
-	 0OKruxgnpQKWg==
-Message-ID: <d143e454-1994-4dbb-a7f2-bbb693405376@kernel.org>
-Date: Thu, 31 Jul 2025 08:15:06 +0200
+	 In-Reply-To:Content-Type; b=Tx+1LsfRAnh2iugSknCuGsAbWHxQdTpvkvsCzRbnJ/my0cubVA5aqi8S+r5MLhfO7N30nG7tYoYF4nbGdQorNtADvEJJAxiCAArVOP4eTmtzdJlyyXE4lkAw7Ax9CXzHZ8E8Z2zG4K6Mlta7fpy+nNOBl0/oBVHkiCSGoAZ1Zvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=U5liEMpJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9E6R/+VS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=U5liEMpJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9E6R/+VS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4509621AD0;
+	Thu, 31 Jul 2025 06:17:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753942626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hzKTYAqAl9fpWihL/+OJ3DluaJ+8rt7w9fbrtBjG12E=;
+	b=U5liEMpJQ33BzBuEnWnIZ3KFPUPDhDMRoq4mZheQcLOXBzzPfnqUKH6xVPlIrtci8ZEQPQ
+	SZu9mE03GA07VxlOwJRRdll/PAMzbR+1lyyRvvwTa21QaOJqO/1mqwTb6DD4TI1f6p4O76
+	Mbr7L4u8ZJhO0FvO8I8juLsizBVW2j0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753942626;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hzKTYAqAl9fpWihL/+OJ3DluaJ+8rt7w9fbrtBjG12E=;
+	b=9E6R/+VSaoahAxF8mRUTl6WdUwV1xMLmIBOzv8qusnCHPNTrI8VElQzMAtrNCwzSP8aV94
+	It1hNqlIXTNXeDAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753942626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hzKTYAqAl9fpWihL/+OJ3DluaJ+8rt7w9fbrtBjG12E=;
+	b=U5liEMpJQ33BzBuEnWnIZ3KFPUPDhDMRoq4mZheQcLOXBzzPfnqUKH6xVPlIrtci8ZEQPQ
+	SZu9mE03GA07VxlOwJRRdll/PAMzbR+1lyyRvvwTa21QaOJqO/1mqwTb6DD4TI1f6p4O76
+	Mbr7L4u8ZJhO0FvO8I8juLsizBVW2j0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753942626;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hzKTYAqAl9fpWihL/+OJ3DluaJ+8rt7w9fbrtBjG12E=;
+	b=9E6R/+VSaoahAxF8mRUTl6WdUwV1xMLmIBOzv8qusnCHPNTrI8VElQzMAtrNCwzSP8aV94
+	It1hNqlIXTNXeDAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CF52F13876;
+	Thu, 31 Jul 2025 06:17:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jfQvMWEKi2h+WgAAD6G6ig
+	(envelope-from <hare@suse.de>); Thu, 31 Jul 2025 06:17:05 +0000
+Message-ID: <05c6e25d-4c61-417d-b916-7e91f5195b39@suse.de>
+Date: Thu, 31 Jul 2025 08:17:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,78 +96,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ALSA: hda: Fix arch defconfigs
-To: Takashi Iwai <tiwai@suse.de>, linux-sound@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-References: <20250731053031.27121-1-tiwai@suse.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 1/5] blk-mq-sched: introduce high level elevator lock
+To: Yu Kuai <yukuai1@huaweicloud.com>, dlemoal@kernel.org, jack@suse.cz,
+ tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, yukuai3@huawei.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
+ <20250730082207.4031744-2-yukuai1@huaweicloud.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250731053031.27121-1-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250730082207.4031744-2-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,imap1.dmz-prg2.suse.org:helo,huawei.com:email]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-On 31/07/2025 07:30, Takashi Iwai wrote:
-> The Realtek and HDMI HD-audio codec configs have been slightly updated
-> again since the previous change.  Follow the new kconfig changes for
-> arch defconfigs that contain CONFIG_SND_HDA_* items.
+On 7/30/25 10:22, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
 > 
-> Fixes: 1d8dd982c409 ("ALSA: hda/realtek: Enable drivers as default")
-> Fixes: 81231ad173d8 ("ALSA: hda/hdmi: Enable drivers as default")
-> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> Currently, both mq-deadline and bfq have global spin lock that will be
+> grabbed inside elevator methods like dispatch_request, insert_requests,
+> and bio_merge. And the global lock is the main reason mq-deadline and
+> bfq can't scale very well.
+> 
+> While dispatching request, blk_mq_get_disatpch_budget() and
+> blk_mq_get_driver_tag() must be called, and they are not ready to be called
+> inside elevator methods, hence introduce a new method like
+> dispatch_requests is not possible.
+> 
+> Hence introduce a new high level elevator lock, currently it is protecting
+> dispatch_request only. Following patches will convert mq-deadline and bfq
+> to use this lock and finally support request batch dispatching by calling
+> the method multiple time while holding the lock.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 > ---
->  arch/arm/configs/multi_v7_defconfig        | 3 ++-
->  arch/arm/configs/tegra_defconfig           | 3 +++
->  arch/loongarch/configs/loongson3_defconfig | 2 ++
->  arch/mips/configs/loongson2k_defconfig     | 1 +
->  arch/mips/configs/loongson3_defconfig      | 3 ++-
+>   block/blk-mq-sched.c | 6 ++++++
+>   block/elevator.c     | 1 +
+>   block/elevator.h     | 4 ++--
+>   3 files changed, 9 insertions(+), 2 deletions(-)
+> 
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 
+Cheers,
 
-This is not ALSA change at all. Please use correct subject prefixes
-after splitting the patch per subsystem.
-
-Best regards,
-Krzysztof
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
