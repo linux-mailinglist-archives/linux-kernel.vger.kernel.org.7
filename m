@@ -1,287 +1,467 @@
-Return-Path: <linux-kernel+bounces-751956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D396B16FDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:52:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D575AB16FE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33C52582997
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:52:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13EAC58400A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A942BDC17;
-	Thu, 31 Jul 2025 10:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 297BC2BDC1E;
+	Thu, 31 Jul 2025 10:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d8YHkASB"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XdLBImUD"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63282F4FA;
-	Thu, 31 Jul 2025 10:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 334B2221FBE
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753959126; cv=none; b=YU+HKrQSZpGHU5taGQbGfA1avBhGZ/ByMVE0+794OaQierh8O2ovHEeh/K2s6jBtfjqLqHLNpb2lmrvJOjC+vwkUbU0ghZeStheCLk/q2fpHa3ZdNdVOTKyfNJrLXroZMS/1Lr8RO871jtt2NqrKQwSLeTzzpVe/2IJ3ZXPU7iE=
+	t=1753959161; cv=none; b=TesZ0IOlttPj9e6m2D0SHHIiJjzBwFdhsC4Hx1ImQ723XXS/T0EA0Cy+oWi55Knh8xWJHoBkXchQezmGRLfHb5HuHo0B+wjB2dlN7LlZvtmJfv4aJ381ohwuaSA/Ki+YAZl1K/FzQIoCKabWmuVCW+iC5v4QEj9xNIx+ZRTgZ+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753959126; c=relaxed/simple;
-	bh=09eUtxy7BEVelvmPkGEU/1pIx6WqhhrhifwI4fNz/5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I37lqUrRhK+o1KzYIMApHjzbQDn95XLXndHVdVKNOIBsCuIyQDBP4HgjoapHTm145qSSWx4HL2o53BuaOTppDsJlusa6am8DG999Sj+wk9QU5FD7EA0NLNm391e0TM2i9p9nB8qnY1k/3HP/nCrTgbsI9ubaBmvWEK6LtJR4Fd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d8YHkASB; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76bd041c431so325056b3a.2;
-        Thu, 31 Jul 2025 03:52:04 -0700 (PDT)
+	s=arc-20240116; t=1753959161; c=relaxed/simple;
+	bh=VL3VFuQgNeBGI92xGmBCF5wmqrBH0JWWZ/JVBOBtTw0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IuKEQAu6vCv0MAndKv82Bh0GbLTz0L7ILyRNtxRnMdi4SnhfwiTsWFI3kfNXgbGT7XtGkzSzeK4XbJVKZBb8jNg3QPQMEX5H1q831jtfz0vbyIaviVBpIJTUhtmTB/yKZ3yF4sm04P+JdIDPLMlSnAx4M88rCsRk4e0jnkH+RA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XdLBImUD; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71a3f7f0addso7564037b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753959123; x=1754563923; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6BNm2GTevFRvXJYfacbCY9tU3bk2KY3Lo3LH5vZNBH4=;
-        b=d8YHkASBecPls/MrQyu9w2eSwyMYebviY2YfjOhTnlApVFCV2ElfFbyupobcbEgUNY
-         Y0zb2YZhFQjIku9JtJAlkpJ3V0kfqZjGvPOOzY+v4Aj+pkbaH9pT5MVQmPK/4PU59ZPU
-         IbdMr49uydy+T1tljIoUS1XnF8v4AbLkVVFk3wKIaRLFvo9t/npA//NaukMvAGfa//zk
-         ZzfeWHORNnp8YrMwcI9jbNYYBAf+kaGRv/1bbk2kOrwNqd55OYy+OJnkQM3rbBFMVywa
-         Gml4d3yioJL7AtH0Qrq61hi8cxWNZWOGvq4SPBOsOxK8VWsW/KecG0/3PzR4of9dwF9T
-         ootA==
+        d=linaro.org; s=google; t=1753959158; x=1754563958; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sj/cic72rW3vzkgaoo3LbEi14h1ZdonLVH0p9rxyNnY=;
+        b=XdLBImUDNQpbainiLCX4/A845jHk+8usRb//SMzLdMAlZ+h47/96yRN4Jp17Tpw/yV
+         xGpKNkrNE2TQd42XzPHqledPHgRY76BbrKjn2AS7zMnccnVkszUU2eBKrwbnITs64voe
+         gL9xr2TKmLpJ0EhoDWoU4QZ9h70rFlOa7XtWHyI7C5iBL4mAdGtELyR8GkVHcmneiI0Q
+         W0GZ8zZRA7wpCxD4Ybnh6jXkzR8Hih5ob0Isq1IFDbk+JEN+penpZlDNe4/iZ/nCjwOA
+         9TuPKFthUIkP6JeQHyKGdP4APSoUrKFaHzJzY58W+fgR6oMJTcneWGzVjS4aRAbcDkrf
+         azoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753959123; x=1754563923;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6BNm2GTevFRvXJYfacbCY9tU3bk2KY3Lo3LH5vZNBH4=;
-        b=FXSKIWwwXsZhayZfIGcrzKyHMHhR+MBV53B5BIFeQ0KvX4q1mOwBFP4zGor2oq3h6w
-         KQ1QqcW3eu8cpvYoh38wv8WPKSj5H10SQ9I+mtbxdHKArXladuzkBZv+WIF708tvX2JF
-         HGTvOHC4QXtyW4sC9H5rbfkDebF6sOmzM/TLqy9gdIBIOrzpdG1j7jBiogK+nr9ZZPY1
-         eqsVDrhl1+S3xbiEotCJQc/y55iSatoPIFpBCwjUmDNM1moXk7qkHK1JR0fyPLi3tQW2
-         W9oel1SQ5leP7WCRFf9d2OZa48xxpdjk+GO1bb7O69m0b6Xko96udN5atD96OT+PyDCP
-         e7mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVqfNi0cmBiUxVs4KAxUMVBEAmKmgciEFMNk5MSK5EpKw5YmxEgu1mzLTOpcuAjA9zPFSGSLz+/Neq@vger.kernel.org, AJvYcCWV3LfCTh95OrxEi2JKoTKpcBNa35A+SvnECdQj3sZd9O6YxT9iMGmmBYbSsiSZbykJidD/pV8MYsR0ZQ==@vger.kernel.org, AJvYcCXApArLqWsWao9rlkZQriODxXiHaE0rJeAcDR/D0wD2MDcCxzDiFzimmGkoemmhO2doIsyFmqEsPbI1H/lQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxdiGm93WaGm5U5dEx33vVBj+3+0HleRwUatkNjbZKeJYI2NFW
-	C3t+aobAcb394Ie4jLkzXO4BUCCc8+Yb68DSdVuYXVdaZVgthuEsSZiN
-X-Gm-Gg: ASbGncvQqsQopd6lmLtna3rGY8+DySv9IxWVZQapV3fxc9m4Z7OqFuDWFZ+JIxoQPyJ
-	OGP3eCjcUOJ26xcbELsSctPae/CMBmuHHi3voBoF8dAy7/ADirFjFBLlh66dW05Ro7O8xiB8BDy
-	bemgOq1fYQrB9pt/bMRDbkfNoAZ9I5YjIu2eaGYnXtNrmIEDk3pG+c/mKMfxHuFXBeqBSlomtvh
-	28mPT+5K2mNnLU7FYZ91VNMN7LgAkUbCpDTJeevQnj5VhaG8uYHAZ5I/HeOlFpuPK6bP9Abqse+
-	xT+xjxSO4CYnosi4ElEDS2shaMPKcsFAkI+KE1JWZNAi1/WkIyU+HMEOu5rpuqsOH39LOUz5DKz
-	zmlzmVHnkWZ6v
-X-Google-Smtp-Source: AGHT+IEpUbFQBDbBzG/lmEXfkVk7OLRqFxEmhc33scO+8gpDjGb2RBZveXq6rfWnEpiuwIUpv5arlg==
-X-Received: by 2002:a05:6a00:ad6:b0:742:3fe0:8289 with SMTP id d2e1a72fcca58-76ab2b566b7mr10264426b3a.20.1753959123515;
-        Thu, 31 Jul 2025 03:52:03 -0700 (PDT)
-Received: from nsa ([45.248.78.239])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce89104sm1324539b3a.35.2025.07.31.03.51.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 03:52:02 -0700 (PDT)
-Date: Thu, 31 Jul 2025 11:52:10 +0100
-From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-To: Sean Anderson <sean.anderson@linux.dev>
-Cc: Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	Andy Shevchenko <andy@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-Subject: Re: [PATCH 7/7] hwmon: iio: Add alarm support
-Message-ID: <pblyblite64vy5ghk77crga5y6f2a6bmngtxu6rlqmq3p7rzxt@srquqhwt43nr>
-References: <20250715012023.2050178-1-sean.anderson@linux.dev>
- <20250715012023.2050178-8-sean.anderson@linux.dev>
- <afc6aa6ad4b633f9d834acf933734985f14c5563.camel@gmail.com>
- <6455be16-d287-4d5e-9556-e1789d43708c@linux.dev>
- <9c6f99e022270b1b9c2f178f8f415270f11e59df.camel@gmail.com>
- <11735f77-25cc-4220-b7be-e6fda8f72161@linux.dev>
+        d=1e100.net; s=20230601; t=1753959158; x=1754563958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Sj/cic72rW3vzkgaoo3LbEi14h1ZdonLVH0p9rxyNnY=;
+        b=edOyrJK74v8VzVHL2oHXx9NAL6W5cf9s701ksdk01ABbjhu1U2EWKGHMPDTIxtmW3Y
+         BeWGc1mMqv5CbnfEueiBTm5xtQi+pX4YDOL28W+YTXFapeBWUNEukJuDNiK5YSpP6fAR
+         ajhGmEJBlKECKGgD97fwiEv0gj/33uRxTptON1wWRH+gsKItxekelKi11wY4RPY5AU27
+         0lOPeHK43nyMleMdtCXCtRXoibEN2P9gBczPacOpjtuyLZt0IVU2bgGlxehdXT1LD7DR
+         LYMzAB06Hbvd+nmqDOLouTTSxO4hW0NYj/dj+z5sPVeSbQhuc2w1CgNIu2/LWZILepWd
+         9O0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUxaRMTZjFxPgY8SffjAdTEGJ7WBclM8gH9tymHTN+x+O6sn8IZWrvDkA2o6ndSIx+q1HbqZns4yGasQrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwB2rmkF46UCKkEwHcH7V2bd1/Cc5a67y4p69V32Ptamm0292Yu
+	4+EigriEkick0w3M02oNjOxvcvqSr0XgZXJ4AOwHE6CvwsTxigwqsEL1wCfxyLZF6L1Om2T13IC
+	Gsl6DOUEGRWQh+cMKX5thenftW1OBanHOj2hJEp4UkA==
+X-Gm-Gg: ASbGncuvEZ4KK+pociG34R/qvHcJpkYgYoFwSi8FdDdFdzGlBPqhxEp6C3HL/bgwGxK
+	APaEkWIDFznBmRtRujK61Fj+JpId/Dq8mFLHg7xvzxO6g0sLyYl1OJeAnMO8RkE1oj2167zud4I
+	Y3HSsu1FeGL8F4K50PoLYeE5ArpHrh7wPc8ARR6vFS1KIP20X95zTMxWdn4dalxkqGFvJTgaLqr
+	7FBa9HZPMc5b910xg==
+X-Google-Smtp-Source: AGHT+IHR/XhhCQrku5Wtt42Uzh/v8VDjDa79z/Pt9EIzsoR3dvddrg+UUlc63lIi9/3QIboav8AxkR0sSCS4QFuaMxg=
+X-Received: by 2002:a05:6902:1204:b0:e8f:d693:9ab with SMTP id
+ 3f1490d57ef6-e8fd6930e27mr1286944276.13.1753959157975; Thu, 31 Jul 2025
+ 03:52:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <11735f77-25cc-4220-b7be-e6fda8f72161@linux.dev>
+References: <20250728-v6-16-rc2-quad-pipe-upstream-v13-0-954e4917fe4f@linaro.org>
+ <20250728-v6-16-rc2-quad-pipe-upstream-v13-10-954e4917fe4f@linaro.org> <4dpeif7wynynbsccbhc253wkshuylnsjslsosmrnyld3bmot5l@yqrmpln44qe2>
+In-Reply-To: <4dpeif7wynynbsccbhc253wkshuylnsjslsosmrnyld3bmot5l@yqrmpln44qe2>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Thu, 31 Jul 2025 18:52:26 +0800
+X-Gm-Features: Ac12FXy4uMWg6MVwlItUiDaEBwOnGEiMYLHy6vqLkyh8oXU__oPmyxki3UUHino
+Message-ID: <CABymUCMa06E0zavQsKeDw_rjTW5F9o4ancxWuQynMO3wsHKFwA@mail.gmail.com>
+Subject: Re: [PATCH v13 10/12] drm/msm/dpu: support SSPP assignment for
+ quad-pipe case
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 17, 2025 at 12:00:13PM -0400, Sean Anderson wrote:
-> On 7/16/25 02:37, Nuno Sá wrote:
-> > On Tue, 2025-07-15 at 13:02 -0400, Sean Anderson wrote:
-> >> On 7/15/25 07:28, Nuno Sá wrote:
-> >> > On Mon, 2025-07-14 at 21:20 -0400, Sean Anderson wrote:
-> >> > > Add alarm support based on IIO threshold events. The alarm is cleared on
-> >> > > read, but will be set again if the condition is still present. This is
-> >> > > detected by disabling and re-enabling the event. The same trick is done
-> >> > > when creating the attribute to detect already-triggered events.
-> >> > > 
-> >> > > The alarms are updated by an event listener. To keep the notifier call
-> >> > > chain short, we create one listener per iio device, shared across all
-> >> > > hwmon devices.
-> >> > > 
-> >> > > To avoid dynamic creation of alarms, alarms for all possible events are
-> >> > > allocated at creation. Lookup is done by a linear scan, as I expect
-> >> > > events to occur rarely. If performance becomes an issue, a binary search
-> >> > > could be done instead (or some kind of hash lookup).
-> >> > > 
-> >> > > Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
-> >> > > ---
-> >> > > 
-> >> > >  drivers/hwmon/iio_hwmon.c | 322 +++++++++++++++++++++++++++++++++++++-
-> >> > >  1 file changed, 321 insertions(+), 1 deletion(-)
-> >> > > 
-> >> > > diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
-> >> > > index 3db4d4b30022..c963bc5452ba 100644
-> >> > > --- a/drivers/hwmon/iio_hwmon.c
-> >> > > +++ b/drivers/hwmon/iio_hwmon.c
-> >> > > @@ -8,6 +8,7 @@
-> >> > >  #include <linux/slab.h>
-> >> > >  #include <linux/mod_devicetable.h>
-> >> > >  #include <linux/module.h>
-> >> > > +#include <linux/notifier.h>
-> >> > >  #include <linux/err.h>
-> >> > >  #include <linux/platform_device.h>
-> >> > >  #include <linux/property.h>
-> >> > > @@ -15,7 +16,192 @@
-> >> > >  #include <linux/hwmon.h>
-> >> > >  #include <linux/hwmon-sysfs.h>
-> >> > >  #include <linux/iio/consumer.h>
-> >> > > +#include <linux/iio/events.h>
-> >> > > +#include <linux/iio/iio.h>
-> >> > >  #include <linux/iio/types.h>
-> >> > > +#include <uapi/linux/iio/events.h>
-> >> > > +
-> >> > > +/* Protects iio_hwmon_listeners and listeners' refcnt */
-> >> > > +DEFINE_MUTEX(iio_hwmon_listener_lock);
-> >> > > +LIST_HEAD(iio_hwmon_listeners);
-> >> > > +
-> >> > > +/**
-> >> > > + * struct iio_hwmon_listener - Listener for IIO events
-> >> > > + * @block: Notifier for events
-> >> > > + * @ids: Array of IIO event ids, one per alarm
-> >> > > + * @alarms: Bitmap of alarms
-> >> > > + * @num_alarms: Length of @ids and @alarms
-> >> > > + * @indio_dev: Device we are listening to
-> >> > > + * @list: List of all listeners
-> >> > > + * @refcnt: Reference count
-> >> > > + */
-> >> > > +struct iio_hwmon_listener {
-> >> > > +	struct notifier_block block;
-> >> > > +	u64 *ids;
-> >> > > +	unsigned long *alarms;
-> >> > > +	size_t num_alarms;
-> >> > > +
-> >> > > +	struct iio_dev *indio_dev;
-> >> > > +	struct list_head list;
-> >> > > +	unsigned int refcnt;
-> >> > > +};
-> >> > > +
-> >> > > +/**
-> >> > > + * iio_hwmon_lookup_alarm() - Find an alarm by id
-> >> > > + * @listener: Event listener
-> >> > > + * @id: IIO event id
-> >> > > + *
-> >> > > + * Return: index of @id in @listener->ids, or -1 if not found
-> >> > > + */
-> >> > > +static ssize_t iio_hwmon_lookup_alarm(struct iio_hwmon_listener *listener,
-> >> > > +				      u64 id)
-> >> > > +{
-> >> > > +	ssize_t i;
-> >> > > +
-> >> > > +	for (i = 0; i < listener->num_alarms; i++)
-> >> > > +		if (listener->ids[i] == id)
-> >> > > +			return i;
-> >> > > +
-> >> > > +	return -1;
-> >> > > +}
-> >> > > +
-> >> > > +static int iio_hwmon_listener_callback(struct notifier_block *block,
-> >> > > +				       unsigned long action, void *data)
-> >> > > +{
-> >> > > +	struct iio_hwmon_listener *listener =
-> >> > > +		container_of(block, struct iio_hwmon_listener, block);
-> >> > > +	struct iio_event_data *ev = data;
-> >> > > +	ssize_t i;
-> >> > > +
-> >> > > +	if (action != IIO_NOTIFY_EVENT)
-> >> > > +		return NOTIFY_DONE;
-> >> > > +
-> >> > > +	i = iio_hwmon_lookup_alarm(listener, ev->id);
-> >> > > +	if (i >= 0)
-> >> > > +		set_bit(i, listener->alarms);
-> >> > > +	else
-> >> > > +		dev_warn_once(&listener->indio_dev->dev,
-> >> > > +			      "unknown event %016llx\n", ev->id);
-> >> > > +
-> >> > > +	return NOTIFY_DONE;
-> >> > > +}
-> >> > > +
-> >> > > +/**
-> >> > > + * iio_event_id() - Calculate an IIO event id
-> >> > > + * @channel: IIO channel for this event
-> >> > > + * @type: Event type (theshold, rate-of-change, etc.)
-> >> > > + * @dir: Event direction (rising, falling, etc.)
-> >> > > + *
-> >> > > + * Return: IIO event id corresponding to this event's IIO id
-> >> > > + */
-> >> > > +static u64 iio_event_id(struct iio_chan_spec const *chan,
-> >> > > +			enum iio_event_type type,
-> >> > > +			enum iio_event_direction dir)
-> >> > > +{
-> >> > > +	if (chan->differential)
-> >> > > +		return IIO_DIFF_EVENT_CODE(chan->type, chan->channel,
-> >> > > +					   chan->channel2, type, dir);
-> >> > > +	if (chan->modified)
-> >> > > +		return IIO_MOD_EVENT_CODE(chan->type, chan->channel,
-> >> > > +					  chan->channel2, type, dir);
-> >> > > +	return IIO_UNMOD_EVENT_CODE(chan->type, chan->channel, type, dir);
-> >> > > +}
-> >> > > +
-> >> > > +/**
-> >> > > + * iio_hwmon_listener_get() - Get a listener for an IIO device
-> >> > > + * @indio_dev: IIO device to listen to
-> >> > > + *
-> >> > > + * Look up or create a new listener for @indio_dev. The returned listener is
-> >> > > + * registered with @indio_dev, but events still need to be manually enabled.
-> >> > > + * You must call iio_hwmon_listener_put() when you are done.
-> >> > > + *
-> >> > > + * Return: Listener for @indio_dev, or an error pointer
-> >> > > + */
-> >> > > +static struct iio_hwmon_listener *iio_hwmon_listener_get(struct iio_dev
-> >> > > *indio_dev)
-> >> > > +{
-> >> > > +	struct iio_hwmon_listener *listener;
-> >> > > +	int err = -ENOMEM;
-> >> > > +	size_t i, j;
-> >> > > +
-> >> > > +	guard(mutex)(&iio_hwmon_listener_lock);
-> >> > > +	list_for_each_entry(listener, &iio_hwmon_listeners, list) {
-> >> > > +		if (listener->indio_dev == indio_dev) {
-> >> > > +			if (likely(listener->refcnt != UINT_MAX))
-> >> > > +				listener->refcnt++;
-> >> > 
-> >> > I dunno for the above to ever happen :).
-> >> 
-> >> Well, I can remove it if you like.
-> >> 
-> >> > And as Andy stated, let's just use proper refcount APIs.
-> >> 
-> >> No point in using atomic ops if they are only accessed under a mutex.
-> > 
-> > Not the point... If there are proper APIs for handling things like this, not sure why
-> > not using and then coming up with things like the above? And the same goes to the
-> > release path.
-> 
-> The API is for doing reference counts *atomically*. If you do not need
-> atomic reference counting, then it is the *wrong* API. I suggest reading
+Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> =E4=BA=8E2025=E5=B9=B4=
+7=E6=9C=8831=E6=97=A5=E5=91=A8=E5=9B=9B 02:52=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Mon, Jul 28, 2025 at 09:14:34PM +0800, Jun Nie wrote:
+> > Currently, SSPPs are assigned to a maximum of two pipes. However,
+> > quad-pipe usage scenarios require four pipes and involve configuring
+> > two stages. In quad-pipe case, the first two pipes share a set of
+> > mixer configurations and enable multi-rect mode when certain
+> > conditions are met. The same applies to the subsequent two pipes.
+> >
+> > Assign SSPPs to the pipes in each stage using a unified method and
+> > to loop the stages accordingly.
+> >
+> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > ---
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 160 ++++++++++++++++++----=
+--------
+> >  1 file changed, 99 insertions(+), 61 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/dr=
+m/msm/disp/dpu1/dpu_plane.c
+> > index 55429f29a4b95594771d930efe42aaa4126f6f07..e1e16a8d5ac55ba52a0f460=
+d62901dced65e3a9e 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > @@ -959,6 +959,30 @@ static int dpu_plane_is_multirect_parallel_capable=
+(struct dpu_hw_sspp *sspp,
+> >  }
+> >
+> >
+> > +static bool dpu_plane_get_single_pipe_in_stage(struct dpu_plane_state =
+*pstate,
+> > +                                            struct dpu_sw_pipe **singl=
+e_pipe,
+> > +                                            struct dpu_sw_pipe_cfg **s=
+ingle_pipe_cfg,
+> > +                                            int stage_index)
+> > +{
+> > +     int pipe_idx, i, valid_pipe =3D 0;
+> > +
+> > +     for (i =3D 0; i < PIPES_PER_STAGE; i++) {
+>
+> Why do you need to loop here? Is there a case when pipe 0 is not
+> assigned, but pipe 1 is?
 
-Well, It won't make your code wrong. It's just about re-using what we have already.
-But my main complain was about having your own saturation checks in here.
-I also dislike the release path where you do have to explicitly check for 0 to
-call the cleanup API. That is all handled already. Not to mention that it is a fairly
-common pattern to use these APIs even if you don't really __need__ it's atomicity. 
+Loop the pipe in a stage to count the valid pipes. If there are 2 valid
+pipes in stage of the current plane, this function will return false.
+Or you prefer the below coding?
 
-> the block comment at the beginning of refcnt.h to see the sorts of
-> contortions it has to go through because it is an atomic API. Since we
+1029         pipe_idx =3D stage_index * PIPES_PER_STAGE;
+1030         if (drm_rect_width(&pstate->pipe_cfg[pipe_idx].src_rect) !=3D =
+0 &&
+1031             drm_rect_width(&pstate->pipe_cfg[pipe_idx +
+1].src_rect) =3D=3D 0) {
+1032                         if (single_pipe)
+1033                                 *single_pipe =3D &pstate->pipe[pipe_id=
+x];
+1034                         if (single_pipe_cfg)
+1035                                 *single_pipe_cfg =3D
+&pstate->pipe_cfg[pipe_idx];
+1036                 return true;
+1037         }
+1038
+1039         return false;
 
-And? It's very well hidden in the API... This is also not a fastpath at
-all so performance is also not a concern AFAICT.
+>
+> > +             pipe_idx =3D stage_index * PIPES_PER_STAGE + i;
+> > +             if (drm_rect_width(&pstate->pipe_cfg[pipe_idx].src_rect) =
+!=3D 0) {
+> > +                     valid_pipe++;
+> > +                     if (valid_pipe > 1)
+> > +                             return false;
+> > +
+> > +                     if (single_pipe)
+> > +                             *single_pipe =3D &pstate->pipe[pipe_idx];
+> > +                     if (single_pipe_cfg)
+> > +                             *single_pipe_cfg =3D &pstate->pipe_cfg[pi=
+pe_idx];
+> > +             }
+> > +     }
+> > +
+> > +     return valid_pipe =3D=3D 1;
+> > +}
+> > +
+> >  static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
+> >                                      struct drm_atomic_state *state,
+> >                                      const struct drm_crtc_state *crtc_=
+state)
+> > @@ -1023,17 +1047,20 @@ static bool dpu_plane_try_multirect_parallel(st=
+ruct dpu_sw_pipe *pipe, struct dp
+> >  static int dpu_plane_try_multirect_shared(struct dpu_plane_state *psta=
+te,
+> >                                         struct dpu_plane_state *prev_ad=
+jacent_pstate,
+> >                                         const struct msm_format *fmt,
+> > -                                       uint32_t max_linewidth)
+> > +                                       uint32_t max_linewidth, int sta=
+ge_index)
+> >  {
+> > -     struct dpu_sw_pipe *pipe =3D &pstate->pipe[0];
+> > -     struct dpu_sw_pipe *r_pipe =3D &pstate->pipe[1];
+> > -     struct dpu_sw_pipe_cfg *pipe_cfg =3D &pstate->pipe_cfg[0];
+> > -     struct dpu_sw_pipe *prev_pipe =3D &prev_adjacent_pstate->pipe[0];
+> > -     struct dpu_sw_pipe_cfg *prev_pipe_cfg =3D &prev_adjacent_pstate->=
+pipe_cfg[0];
+> > +     struct dpu_sw_pipe *pipe, *prev_pipe;
+> > +     struct dpu_sw_pipe_cfg *pipe_cfg, *prev_pipe_cfg;
+> >       const struct msm_format *prev_fmt =3D msm_framebuffer_format(prev=
+_adjacent_pstate->base.fb);
+> >       u16 max_tile_height =3D 1;
+> >
+> > -     if (prev_adjacent_pstate->pipe[1].sspp !=3D NULL ||
+> > +     if (!dpu_plane_get_single_pipe_in_stage(pstate, &pipe,
+> > +                                             &pipe_cfg, stage_index))
+> > +             return false;
+> > +
+> > +     if (!dpu_plane_get_single_pipe_in_stage(prev_adjacent_pstate,
+> > +                                             &prev_pipe, &prev_pipe_cf=
+g,
+> > +                                             stage_index) ||
+> >           prev_pipe->multirect_mode !=3D DPU_SSPP_MULTIRECT_NONE)
+> >               return false;
+> >
+> > @@ -1048,11 +1075,6 @@ static int dpu_plane_try_multirect_shared(struct=
+ dpu_plane_state *pstate,
+> >       if (MSM_FORMAT_IS_UBWC(prev_fmt))
+> >               max_tile_height =3D max(max_tile_height, prev_fmt->tile_h=
+eight);
+> >
+> > -     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > -
+> > -     r_pipe->sspp =3D NULL;
+> > -
+> >       if (dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewidth) &=
+&
+> >           dpu_plane_is_parallel_capable(prev_pipe_cfg, prev_fmt, max_li=
+newidth) &&
+> >           (pipe_cfg->dst_rect.x1 >=3D prev_pipe_cfg->dst_rect.x2 ||
+> > @@ -1181,36 +1203,69 @@ static int dpu_plane_virtual_atomic_check(struc=
+t drm_plane *plane,
+> >       return 0;
+> >  }
+> >
+> > +static int dpu_plane_assign_resource_in_stage(struct dpu_sw_pipe *pipe=
+,
+> > +                                           struct dpu_sw_pipe_cfg *pip=
+e_cfg,
+> > +                                           struct drm_plane_state *pla=
+ne_state,
+> > +                                           struct dpu_global_state *gl=
+obal_state,
+> > +                                           struct drm_crtc *crtc,
+> > +                                           struct dpu_rm_sspp_requirem=
+ents *reqs)
+> > +{
+> > +     struct drm_plane *plane =3D plane_state->plane;
+> > +     struct dpu_kms *dpu_kms =3D _dpu_plane_get_kms(plane);
+> > +     struct dpu_sw_pipe *r_pipe =3D pipe + 1;
+> > +     struct dpu_sw_pipe_cfg *r_pipe_cfg =3D pipe_cfg + 1;
+> > +
+> > +     if (drm_rect_width(&pipe_cfg->src_rect) !=3D 0) {
+> > +             pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, global_s=
+tate, crtc, reqs);
+> > +             if (!pipe->sspp)
+> > +                     return -ENODEV;
+> > +             pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > +             pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > +     }
+> > +
+> > +     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0 &&
+> > +         dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, r_pi=
+pe_cfg,
+> > +                                           pipe->sspp,
+> > +                                           msm_framebuffer_format(plan=
+e_state->fb),
+> > +                                           dpu_kms->catalog->caps->max=
+_linewidth))
+> > +             goto stage_assinged;
+> > +
+> > +     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0) {
+> > +             r_pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, global=
+_state, crtc, reqs);
+> > +             if (!r_pipe->sspp)
+> > +                     return -ENODEV;
+> > +             r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > +             r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > +     }
+> > +
+> > +stage_assinged:
+> > +     return 0;
+> > +}
+> > +
+> >  static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
+> >                                             struct dpu_global_state *gl=
+obal_state,
+> >                                             struct drm_atomic_state *st=
+ate,
+> >                                             struct drm_plane_state *pla=
+ne_state,
+> > -                                           struct drm_plane_state *pre=
+v_adjacent_plane_state)
+> > +                                           struct drm_plane_state **pr=
+ev_adjacent_plane_state)
+> >  {
+> >       const struct drm_crtc_state *crtc_state =3D NULL;
+> >       struct drm_plane *plane =3D plane_state->plane;
+> >       struct dpu_kms *dpu_kms =3D _dpu_plane_get_kms(plane);
+> >       struct dpu_rm_sspp_requirements reqs;
+> > -     struct dpu_plane_state *pstate, *prev_adjacent_pstate;
+> > +     struct dpu_plane_state *pstate, *prev_adjacent_pstate[STAGES_PER_=
+PLANE];
+> >       struct dpu_sw_pipe *pipe;
+> > -     struct dpu_sw_pipe *r_pipe;
+> >       struct dpu_sw_pipe_cfg *pipe_cfg;
+> > -     struct dpu_sw_pipe_cfg *r_pipe_cfg;
+> >       const struct msm_format *fmt;
+> > -     int i;
+> > +     int i, ret;
+> >
+> >       if (plane_state->crtc)
+> >               crtc_state =3D drm_atomic_get_new_crtc_state(state,
+> >                                                          plane_state->c=
+rtc);
+> >
+> >       pstate =3D to_dpu_plane_state(plane_state);
+> > -     prev_adjacent_pstate =3D prev_adjacent_plane_state ?
+> > -             to_dpu_plane_state(prev_adjacent_plane_state) : NULL;
+> > -
+> > -     pipe =3D &pstate->pipe[0];
+> > -     r_pipe =3D &pstate->pipe[1];
+> > -     pipe_cfg =3D &pstate->pipe_cfg[0];
+> > -     r_pipe_cfg =3D &pstate->pipe_cfg[1];
+> > +     for (i =3D 0; i < STAGES_PER_PLANE; i++)
+> > +             prev_adjacent_pstate[i] =3D prev_adjacent_plane_state[i] =
+?
+> > +                     to_dpu_plane_state(prev_adjacent_plane_state[i]) =
+: NULL;
+> >
+> >       for (i =3D 0; i < PIPES_PER_PLANE; i++)
+> >               pstate->pipe[i].sspp =3D NULL;
+> > @@ -1225,42 +1280,27 @@ static int dpu_plane_virtual_assign_resources(s=
+truct drm_crtc *crtc,
+> >
+> >       reqs.rot90 =3D drm_rotation_90_or_270(plane_state->rotation);
+> >
+> > -     if (drm_rect_width(&r_pipe_cfg->src_rect) =3D=3D 0) {
+> > -             if (!prev_adjacent_pstate ||
+> > -                 !dpu_plane_try_multirect_shared(pstate, prev_adjacent=
+_pstate, fmt,
+> > -                                                 dpu_kms->catalog->cap=
+s->max_linewidth)) {
+> > -                     pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, =
+global_state, crtc, &reqs);
+> > -                     if (!pipe->sspp)
+> > -                             return -ENODEV;
+> > -
+> > -                     r_pipe->sspp =3D NULL;
+> > +     for (i =3D 0; i < STAGES_PER_PLANE; i++) {
+> > +             if (!prev_adjacent_pstate[i])
+> > +                     goto assignment;
+> >
+> > -                     pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -                     pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > -
+> > -                     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -                     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NON=
+E;
+> > -             }
+> > -     } else {
+> > -             pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, global_s=
+tate, crtc, &reqs);
+> > -             if (!pipe->sspp)
+> > -                     return -ENODEV;
+> > -
+> > -             if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_p=
+ipe, r_pipe_cfg,
+> > -                                                   pipe->sspp,
+> > -                                                   msm_framebuffer_for=
+mat(plane_state->fb),
+> > -                                                   dpu_kms->catalog->c=
+aps->max_linewidth)) {
+> > -                     /* multirect is not possible, use two SSPP blocks=
+ */
+> > -                     r_pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm=
+, global_state, crtc, &reqs);
+> > -                     if (!r_pipe->sspp)
+> > -                             return -ENODEV;
+> > +             if (dpu_plane_try_multirect_shared(pstate, prev_adjacent_=
+pstate[i], fmt,
+> > +                                                dpu_kms->catalog->caps=
+->max_linewidth,
+> > +                                                i))
+> > +                     continue;
+>
+>
+> if (prev_adjacent_pstate[i] &&
+>     dpu_plane_try_multirect_shared())
+>         continue;
+>
+> No need for the goto.
 
-Up to the maintainers anyways but I cannot say I agree with it. So, I
-guess we can agree in disagreeing :)
+Right, it will be simpler.
+>
+> >
+> > -                     pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -                     pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
+> > +assignment:
+> > +             if (dpu_plane_get_single_pipe_in_stage(pstate, NULL, NULL=
+, i))
+> > +                     prev_adjacent_plane_state[i] =3D plane_state;
+> >
+> > -                     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
+> > -                     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NON=
+E;
+> > -             }
+> > +             pipe =3D &pstate->pipe[i * PIPES_PER_STAGE];
+> > +             pipe_cfg =3D &pstate->pipe_cfg[i * PIPES_PER_STAGE];
+> > +             ret =3D dpu_plane_assign_resource_in_stage(pipe, pipe_cfg=
+,
+> > +                                                      plane_state,
+> > +                                                      global_state,
+> > +                                                      crtc, &reqs);
+> > +             if (ret)
+> > +                     return ret;
+> >       }
+> >
+> >       return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
+> > @@ -1273,7 +1313,7 @@ int dpu_assign_plane_resources(struct dpu_global_=
+state *global_state,
+> >                              unsigned int num_planes)
+> >  {
+> >       unsigned int i;
+> > -     struct drm_plane_state *prev_adjacent_plane_state =3D NULL;
+> > +     struct drm_plane_state *prev_adjacent_plane_state[STAGES_PER_PLAN=
+E] =3D { NULL };
+> >
+> >       for (i =3D 0; i < num_planes; i++) {
+> >               struct drm_plane_state *plane_state =3D states[i];
+> > @@ -1284,11 +1324,9 @@ int dpu_assign_plane_resources(struct dpu_global=
+_state *global_state,
+> >
+> >               int ret =3D dpu_plane_virtual_assign_resources(crtc, glob=
+al_state,
+> >                                                            state, plane=
+_state,
+> > -                                                          prev_adjacen=
+t_plane_state);
+> > +                                                          &prev_adjace=
+nt_plane_state[0]);
+>
+> It's exactly the prev_adjacent_plane_state.
 
-- Nuno Sá
+Yes, I will change it.
+
+>
+> >               if (ret)
+> >                       break;
+> > -
+> > -             prev_adjacent_plane_state =3D plane_state;
+> >       }
+> >
+> >       return 0;
+> >
+> > --
+> > 2.34.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
