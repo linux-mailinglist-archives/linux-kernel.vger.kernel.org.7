@@ -1,253 +1,183 @@
-Return-Path: <linux-kernel+bounces-752716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85946B17A1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:38:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7386EB17A1F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:39:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B8317A8FD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:36:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9651E568035
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F5828934A;
-	Thu, 31 Jul 2025 23:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0E3289346;
+	Thu, 31 Jul 2025 23:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="utqVJN6C"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOH+cjZz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D507218D643
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 23:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9698328002B;
+	Thu, 31 Jul 2025 23:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754005083; cv=none; b=nzMIvWK6izKrEnuMSUSSw/oaJN10hEGNDV5CHcVCgPnRQ+9A5GJz3uG4ZNSR4UWahUGK04Sj75wDIpkXxXOgB6593rPyUoG738iWpDvVPOIC9AtmSkYDZZAdaQ2sG4ybaPhqPJblN63OWcGTDBnJ068wZHQQEPxeBHJdZZt6V2M=
+	t=1754005133; cv=none; b=T21p5SHCuEuD/mvT8eQGxZENH2qkNp5i8C6jKVOu4CbaZTlyhXKLoOdw6oBHMTiPWyLYDQD4bYinLpqfk9vMwILEW39RmF0GQTV0tVdNrX7oqQULKwb7FREqhFECl+X34UBaUVBfW0yDpQyck6azSIWp/2/6d4u9mwVltP55IQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754005083; c=relaxed/simple;
-	bh=f6qUX6gGho971LALBNjFf8VqlKQhpBsP6YCT1TMXfg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SIYzGV+lrWVMMDqnVJF6hqFHTOHHJNZzbbbW06eF15MKdISmGM+WZ5P67GMxI5hLTRZQJDIcx9QT6f/Tt6eT+z0GSzGQksgSd2xf8nqLBg4mZoa60/k+vYF2HPYbIFJrgqAKPqlZyLIFV2KJ1nllUCrYwB8LI63XiSU9REVA1DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=utqVJN6C; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b421b70f986so1326423a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754005081; x=1754609881; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CGJHRsg5iCjQoTSgwUklPXzEBYJzmQNlQF6qaBtA8NE=;
-        b=utqVJN6CGmDyw/nRBnDsno2DQ1sossv5Vq675xHC2mo1uV53fwgWLsz2+ODVT1nW8P
-         oVpDE0RSBQicxoMuyZDT68mIJVPlMrlVPhw0tXJK/Gz84qn5eCn5TfVRBWVF8Dc6SX3V
-         yLz797DRNP+kioQMCmMC8GvLjD8ERAztlhu/mDKtue/g8CITjLPetJM37OcMu6r6XIaV
-         V+x8S4Bd2519bU78Dpdr4//08EuMOimB1WAHmWPFcd1SdqKQjxoH+t0TLDpga4xclUq2
-         6c6h5r+PtNFj4yBiucMA+1xx2B/urQtzTp/WpSCt3wN1/kfGjD1tzjZazSf0w63/nGYD
-         ZjCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754005081; x=1754609881;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CGJHRsg5iCjQoTSgwUklPXzEBYJzmQNlQF6qaBtA8NE=;
-        b=dE6QeFLraXQaVmAX7xgflUyoNh7E5PeqMo57y0J3OpYR8N7Zz3uv9gn0xdi7YJGCOF
-         dy/KpausU9dHPEt5mS8TIVdFyFPcii+4+kqSAxR5zkx1hqN9yo7Pcs/Y96TqTg1q5bqQ
-         rPHuUlzmFXMU2L3xC1LwICs7SsJlvbWsIm6zZ53m7x3yoA0shzxTDP6CTqv8IN4I9NGQ
-         RENON+renYhvcCs4B0OVuT5qSvsEDtANoDLytswYiAO8/5mIm2nJyK3tG/vKMatEjx8F
-         j+8VmvS6ta+7rjwadORqvyXtOFuvoZ2+AGlii3o0p4bDfKQe/pW1QudhiEfhrnf/ySHe
-         zqdg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5GA9be4Ed/38l7ihwOcUY0bZfGCMita/Md+bWvEw6LCLgvb4jf4eUPC677w7bkT4mwDopUEDsMg6DoL4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvctQB0UZJ8flctN6Yp5ixKmqM6cD6uxvTuq45X9LcQ0VQwQNE
-	f6EgZBUAi29L1sk6LiKCXNip3llBIvWbqwhC9P+qkfFj6nUfDN54zCYUHTNj7NFrPR7CVVYVIRv
-	5C5oX6cbIpy5/S2S8+WRxvJ2rT5Jh92aH9+LYNT2w
-X-Gm-Gg: ASbGnctRkw/+Ho8xuL1Yn+AjA4GDLcBjD1XmT/nVYcWpi/0K8FDezx1JSgp0ucKaA7P
-	PTFCVbPhZPqG/xXzo+3Zq1YYZ6hVnw+dq16SE7E8EL2ic1lFiWyg49cH/Uf51/hxYHzjhmZrmZZ
-	As1lsxJ8AyHezNr7OSYRswjqvucPJ2EPRhw4LQT7qAkobDtH4PXoefFVPF3zWhxwByq53RCU+1a
-	2bxqEqGhX92akZdRyRlBLHeUNIEd3VXdNZr4g==
-X-Google-Smtp-Source: AGHT+IH3+rIwn54Da+ICd4tBOgXwOPHz3yPdEo3e4muMjMz3VkS8jC3tBS6JachPLqAkDX8B7TTY0RFSnjFHVKtvw6Q=
-X-Received: by 2002:a17:90a:d404:b0:31e:3d06:739c with SMTP id
- 98e67ed59e1d1-31f5de85bbbmr12557172a91.31.1754005080821; Thu, 31 Jul 2025
- 16:38:00 -0700 (PDT)
+	s=arc-20240116; t=1754005133; c=relaxed/simple;
+	bh=ORv11BBiZIIxB64dqC73Reod0GBkNGunSRKP0P9RJkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpccA6Wj08TuYSc4O2779gBqZJoAoQu99xBPx1IXdTSyGSc7obNehfow8qODH8rUOGw4BaRLECOTEELku76JMjbVAJqbdE7nDSIUeOs8HwI5vvbUglfUzYmjJ5Eav7PSe40Dkt25JtT0SVNd0QaSfiHzTRKt+R8ujaDkJij3eTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOH+cjZz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2E9C4CEEF;
+	Thu, 31 Jul 2025 23:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754005133;
+	bh=ORv11BBiZIIxB64dqC73Reod0GBkNGunSRKP0P9RJkE=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=gOH+cjZz85UXcqUOBspAaljr2Q8fhdksocWrc3mSqcar3rvVhx5CEmtzT00J+j8Wa
+	 hoi+qUkBIaejm2lRq0BeRo0QjnYNrZiUimiWaypivJl5ZPcafeCF1v/X6pBqWu15Jr
+	 aaEFXN9hOETgbwpdFTDWoH4LbuCNV9lao+iMBwIdEI0A9eiWl86Pfq/EnXoP9Px/Ab
+	 kCFwRYm8O/En7zMLwS/3XKOPiihed4NZih0YyH5Ig2UYR/XNn12Ut8xjkvpOIbNYBD
+	 Cn0SOZSykGWyHCU/+fDzSoen4s93faGh1puj5Yq3LWFvgF2yt0jmX9J/1g6AUUvK55
+	 kzdl/HYFvBiQQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id AD740CE09FA; Thu, 31 Jul 2025 16:38:52 -0700 (PDT)
+Date: Thu, 31 Jul 2025 16:38:52 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Yuzhuo Jing <yuzhuo@google.com>
+Cc: Ian Rogers <irogers@google.com>, Yuzhuo Jing <yzj@umich.edu>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Frank van der Linden <fvdl@google.com>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [PATCH v1 0/4] rcuscale: Add debugfs file based controls and CPU
+ affinity offset
+Message-ID: <185c8c12-4d6d-41a2-bb04-dfe1d00d01c4@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250730022347.71722-1-yuzhuo@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731-no-abstract-v1-1-a4e6e23521a3@gmail.com>
-In-Reply-To: <20250731-no-abstract-v1-1-a4e6e23521a3@gmail.com>
-From: Kuniyuki Iwashima <kuniyu@google.com>
-Date: Thu, 31 Jul 2025 16:37:49 -0700
-X-Gm-Features: Ac12FXw-uBDMi0rpYeSk4vgpVGnOIW87IPuefoui5ML0xX5hXHN7zoUervKq4fU
-Message-ID: <CAAVpQUCLoYa8YbaPSMHJcFQarz9hMo6-BQ1OJiF+GwcF5bb6hQ@mail.gmail.com>
-Subject: Re: [PATCH RFC net] af_unix: allow disabling connections to abstract sockets
-To: demiobenour@gmail.com
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730022347.71722-1-yuzhuo@google.com>
 
-On Thu, Jul 31, 2025 at 4:03=E2=80=AFPM Demi Marie Obenour via B4 Relay
-<devnull+demiobenour.gmail.com@kernel.org> wrote:
->
-> From: Demi Marie Obenour <demiobenour@gmail.com>
->
-> Abstract sockets have been a security risk in the past.  Since they
-> aren't associated with filesystem paths, they bypass all filesystem
-> access controls.  This means that they can allow file descriptors to be
-> passed out of sandboxes that do not allow connecting to named sockets.
+On Tue, Jul 29, 2025 at 07:23:43PM -0700, Yuzhuo Jing wrote:
+> In an effort to add RCU benchmarks to the perf tool and to improve
+> the base-metal rcuscale tests, this patch series adds several auxiliary
+> features useful for testing tools.
+> 
+> This series introduces a few rcuscale options:
+>   * writer_no_print: skip writer duration printing during shutdown, but
+>     instead let users read from the new "writer_durations" debugfs file.
+>     This drastically improves cleanup speed.
 
-I just thought that what's you need is unshare(CLONE_NEWNET)
+But existing scripts running something like this will continue to
+work, correct?  (It looks like they do, just checking.)
 
-and started reading this...
-https://labs.snyk.io/resources/nixos-deep-dive/
+tools/testing/selftests/rcutorture/bin/kvm.sh --torture rcuscale --allcpus --duration 5
 
-and stopped reading here.
+Don't get me wrong, your debugfs read-out performance increase looks
+quite good, but these tests run in a guest OS with minimal userspace.
+And by "minimal", I mean that they run out of an initrd having a root
+filesystem consisting of a single statically linked "init" program.  ;-)
 
----8<---
-Nix builds offer a second, slightly less restrictive type of sandbox
-for use in =E2=80=98Fixed output derivations=E2=80=99. These build types ar=
-e expected
-to retrieve files from the internet (for example, cloning a git repository
-for later building); as such, they are not isolated in a network namespace
-and are instead in the main network namespace ...
----8<---
+>   * block_start: an option to hold all worker thread until the new
+>     debugfs "should_start" file is written.
+>   * {reader,writer,kfree}_cpu_offset: the starting value of CPU affinity
+>     for each type of threads.  This can be used to avoid scheduling
+>     different types of threads on the same CPU.  The 4th patch in this
+>     series shows drastic performance differences w/ and w/o overlaps.
 
-The 2nd thought is you just need CLONE_NEWNET and proper
-setup to connect two netns.
+The usual use cases run only writers except for stress tests, but this
+seems like a good capability.
 
+> This patch series creates an "rcuscale" folder in debugfs, containing
+> the following files:
+>   * writer_durations: a CSV formatted file containing writer id and
+>     writer durations.
+>   * {reader,writer,kfree}_tasks: the list of kernel task PIDs for
+>     external tools to attach to.
+>   * should_start: a writable file to signal the start of the experiment,
+>     used in conjunction with the new "block_start" option.
+>   * test_complete: a readable file to indicate whether the experiment has
+>     finished or not.
+> 
+> RFCs:
+>   * Should those new files reside in debugfs or in procfs?
 
-> On systems using the Nix daemon, this allowed privilege escalation to
-> root, and fixing the bug required Nix to use a complete user-mode
-> network stack.  Furthermore, anyone can bind to any abstract socket
-> path, so anyone connecting to an abstract socket has no idea who they
-> are connecting to.
->
-> This allows disabling the security hole by preventing all connections to
-> abstract sockets.  For compatibility, it is still possible to bind to
-> abstract socket paths, but such sockets will never receive any
-> connections or datagrams.
->
-> Signed-off-by: Demi Marie Obenour <demiobenour@gmail.com>
-> ---
->  net/unix/Kconfig   | 12 ++++++++++++
->  net/unix/af_unix.c | 18 +++++++++++++-----
->  2 files changed, 25 insertions(+), 5 deletions(-)
->
-> diff --git a/net/unix/Kconfig b/net/unix/Kconfig
-> index 6f1783c1659b81c3c3c89cb7634a9ce780144f26..c34f222f21b097ce4a735ce02=
-d8ce11fc71bde19 100644
-> --- a/net/unix/Kconfig
-> +++ b/net/unix/Kconfig
-> @@ -16,6 +16,18 @@ config UNIX
->
->           Say Y unless you know what you are doing.
->
-> +config UNIX_ABSTRACT
-> +       bool "UNIX: abstract sockets"
-> +       depends on UNIX
-> +       default y
-> +       help
-> +         Support for "abstract" sockets (those not bound to a path).
-> +         These have been used in the past, but they can also represent
-> +         a security risk because anyone can bind to any abstract
-> +         socket.  If you disable this option, programs can still bind
-> +         to abstract sockets, but any attempt to connect to one fails
-> +         with -ECONNREFUSED.
-> +
->  config AF_UNIX_OOB
->         bool "UNIX: out-of-bound messages"
->         depends on UNIX
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index 52b155123985a18632fc12dc986150e38f2fee70..81d55849dac58e4e68c28ed03=
-a9bc978777cfe4f 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -332,7 +332,8 @@ static inline void unix_release_addr(struct unix_addr=
-ess *addr)
->   *             - if started by zero, it is abstract name.
->   */
->
-> -static int unix_validate_addr(struct sockaddr_un *sunaddr, int addr_len)
-> +static int unix_validate_addr(struct sockaddr_un *sunaddr, int addr_len,
-> +                             bool bind)
->  {
->         if (addr_len <=3D offsetof(struct sockaddr_un, sun_path) ||
->             addr_len > sizeof(*sunaddr))
-> @@ -341,6 +342,9 @@ static int unix_validate_addr(struct sockaddr_un *sun=
-addr, int addr_len)
->         if (sunaddr->sun_family !=3D AF_UNIX)
->                 return -EINVAL;
->
-> +       if (!bind && !IS_ENABLED(CONFIG_UNIX_ABSTRACT) && !sunaddr->sun_p=
-ath[0])
-> +               return -ECONNREFUSED; /* pretend nobody is listening */
-> +
->         return 0;
->  }
->
-> @@ -1253,6 +1257,8 @@ static struct sock *unix_find_other(struct net *net=
-,
->
->         if (sunaddr->sun_path[0])
->                 sk =3D unix_find_bsd(sunaddr, addr_len, type, flags);
-> +       else if (!IS_ENABLED(CONFIG_UNIX_ABSTRACT))
-> +               sk =3D ERR_PTR(-EPERM);
->         else
->                 sk =3D unix_find_abstract(net, sunaddr, addr_len, type);
->
-> @@ -1444,7 +1450,7 @@ static int unix_bind(struct socket *sock, struct so=
-ckaddr *uaddr, int addr_len)
->             sunaddr->sun_family =3D=3D AF_UNIX)
->                 return unix_autobind(sk);
->
-> -       err =3D unix_validate_addr(sunaddr, addr_len);
-> +       err =3D unix_validate_addr(sunaddr, addr_len, true);
->         if (err)
->                 return err;
->
-> @@ -1493,7 +1499,7 @@ static int unix_dgram_connect(struct socket *sock, =
-struct sockaddr *addr,
->                 goto out;
->
->         if (addr->sa_family !=3D AF_UNSPEC) {
-> -               err =3D unix_validate_addr(sunaddr, alen);
-> +               err =3D unix_validate_addr(sunaddr, alen, false);
->                 if (err)
->                         goto out;
->
-> @@ -1612,7 +1618,7 @@ static int unix_stream_connect(struct socket *sock,=
- struct sockaddr *uaddr,
->         long timeo;
->         int err;
->
-> -       err =3D unix_validate_addr(sunaddr, addr_len);
-> +       err =3D unix_validate_addr(sunaddr, addr_len, false);
->         if (err)
->                 goto out;
->
-> @@ -2048,7 +2054,9 @@ static int unix_dgram_sendmsg(struct socket *sock, =
-struct msghdr *msg,
->         }
->
->         if (msg->msg_namelen) {
-> -               err =3D unix_validate_addr(msg->msg_name, msg->msg_namele=
-n);
-> +               err =3D unix_validate_addr(msg->msg_name,
-> +                                        msg->msg_namelen,
-> +                                        false);
->                 if (err)
->                         goto out;
->
->
-> ---
-> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-> change-id: 20250731-no-abstract-6672e8ad03e1
->
-> Best regards,
-> --
-> Demi Marie Obenour <demiobenour@gmail.com>
->
->
+New files in procfs face serious scrutiny, so your choice of debugfs
+is a good one.
+
+>   * What format should be used for the writer_duartions file, and what
+>     documentations should be updated for the file format definition?
+
+Back in the old days, I would have insisted on space/tab separated fields.
+But gawk now supports a --csv flag, so I don't feel strongly about this.
+
+>   * In the 4th patch, we see different characteristics between overlap
+>     and non-overlap.  Current rcuscale creates nr_cpu readers and nr_cpu
+>     writers, thus scheduling 2nr_cpu tasks on nr_cpu CPUs.  Should we
+>     consider changes to this behavior?  Or add automatic conflict
+>     resolutions when total threads <= nr_cpu.
+
+The theory back in the day was that the updater would spend enough time
+blocked that this would not matter.  However, you have shown that it
+clearly does matter.
+
+Except that running the reader and writer on the same CPU seems to
+*improve* grace-period latency, with P99 value duration of 121,004
+microseconds for overlapping (your first patch 4/4 experiment) and of
+218,018 microseconds for non-overlapping.  Since shorter grace periods
+are usually considered better, this suggests better performance with
+the reader and writer running on the same thread.
+
+Or am I misreading your commit log?
+
+It would not be too surprising for the overlapping case to provide
+faster grace periods because you are running PREEMPT=n and the writer
+kthread would force context switches more frequently.  But I figured
+that I should check.
+
+> Thank you!
+> 
+> Yuzhuo Jing (4):
+>   rcuscale: Create debugfs file for writer durations
+>   rcuscale: Create debugfs files for worker thread PIDs
+>   rcuscale: Add file based start/finish control
+
+This does not apply on the dev branch of my -rcu tree.  Which is not too
+surprising because kernel-parameters.txt is subject to change.  But when
+you repost to fix the bug that kernel test robot detected, could you
+please let me know what mainline version you are developing against?
+That would allow me to apply it there and then to rebase and resolve
+conflicts as needed.
+
+							Thanx, Paul
+
+>   rcuscale: Add CPU affinity offset options
+> 
+>  .../admin-guide/kernel-parameters.txt         |  29 ++
+>  kernel/rcu/rcuscale.c                         | 361 +++++++++++++++++-
+>  2 files changed, 377 insertions(+), 13 deletions(-)
+> 
+> -- 
+> 2.50.1.552.g942d659e1b-goog
+> 
 
