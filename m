@@ -1,103 +1,116 @@
-Return-Path: <linux-kernel+bounces-751906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BBC6B16F1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:02:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C79B16F21
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811491641F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:02:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9EFE7A1628
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:02:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740D0290DB2;
-	Thu, 31 Jul 2025 10:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DEB28726E;
+	Thu, 31 Jul 2025 10:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mL1VMlDD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="NvdMJhJV"
+Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12E62A8C1;
-	Thu, 31 Jul 2025 10:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9FE2745E;
+	Thu, 31 Jul 2025 10:03:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753956130; cv=none; b=DjOWzJrqQQ8nWepRlo1Rh+KSzCtVuuxRXDDQ6HFUO+xkNMOPIc10hZWzZWEJCHyfACToiujDIqmdgZPAvt7BGuEacq/QMmM7yu/Z6WL/j8VBbGmQEo7vngx2XgZvnMUkEUd76DcuidF4vlnJZKKTULnqHEIiOijbmgAuzJO7No8=
+	t=1753956229; cv=none; b=d1w1dayfr+PJlzsizUGz7n6/j/Lm33neqJp3hRcGys4sRoCCcB5Is0Urz8QvU21c96crfU+qqWPcdmB4I1Bu+gSxDTWsSCZhxMeO1J5MXi1kwDH2CzUZuWYaNprNF9kGmcFvpmedjYW3Tstnf9qTlATapo7q7nS1K7lKVM0JHoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753956130; c=relaxed/simple;
-	bh=B/lWDLuFzb4pOBkoCFR5w3l5ZJ+vboDdpy+Z+WH8fek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TZ8clcCxeGJH/g+PbdyqRghxJD/Ez7cSlQk8GD6rx2jIPdSCvPHtDwEMvxp26yst+7UXbHJwojthccEeWuw2VLM1bqsYZDSLQOarSlbgwKRcA5j9DZNWo55bALYYb6R2Q1vTwlaPJAWwuUlYTITw/N2AomoAH+bzfMzXbMiQSao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mL1VMlDD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C70C4CEEF;
-	Thu, 31 Jul 2025 10:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753956130;
-	bh=B/lWDLuFzb4pOBkoCFR5w3l5ZJ+vboDdpy+Z+WH8fek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mL1VMlDDH/oVTIVTnEG3D7rrmjfs7K5dbdnHeg+hN7wnsyuYgviEwfqQXd+RkNe/o
-	 zdbJBI5OF7VoOz4kmHFIlqbh2LizzJi5jp/ntL180nWQJZv2y+lHmclEQWi78kB0ZX
-	 InhuLL4DkASKFQcjtLVI+LRoVMNgbULrWKhc4YwpHMwz9g0DHtd18CWeVKKi8Faq+K
-	 PKyUyZAIqydRawc+Rv56aWqRMWAomzcuAYBqj3O/soEHAL4+olpdmjUGM1mJq0KH8d
-	 NeTuYWMRojDQf48/hny4yov93RmQgu9KKYIfMl8nZeT859tAbIe1zf2Q2o2e+xBYPT
-	 Aleo8b3o3UROQ==
-Date: Thu, 31 Jul 2025 11:02:02 +0100
-From: Lee Jones <lee@kernel.org>
-To: Mathieu Dubois-Briand <mathieu.dubois-briand@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Michael Walle <mwalle@kernel.org>, Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-pwm@vger.kernel.org,
-	andriy.shevchenko@intel.com,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH v12 00/10] Add support for MAX7360
-Message-ID: <20250731100202.GB1049189@google.com>
-References: <20250722-mdb-max7360-support-v12-0-3747721a8d02@bootlin.com>
+	s=arc-20240116; t=1753956229; c=relaxed/simple;
+	bh=NYyUk0BfoxJSHgtRZxMOL66q4WnmVTwmsB+hSch+B8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OZ6ksSuPiMZXxPeSbpMTdfgx3J7w8uDERxkoAm2+qDaUNQuYLp1BYSDRMN6A2aq5OlCwvSDzcmuIAQwn9Y3icQTLL6H6AFw+fOWe0o/Lae0fIS2vLkasJ18550A2As9bQORxtrLxx653qWFQ7QWVNoQrv82uxIMB2QJNGOiRAlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=NvdMJhJV; arc=none smtp.client-ip=54.92.39.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1753956168;
+	bh=rjKuTPuvn/0L3fRxtEWaPjXi65f2W4SFl25Z6EWsa9w=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=NvdMJhJVEZA3BkeEmxiy/vk2Zgp+fln9XT34EfpZaKM4Pdfg0frx8ETWUMmX0Grfx
+	 ecfRv0LsRvaNfh3/WZYXF2mD+LK4d1orTLnOCfSfiZgTRzNRYXGFuBuzoEYW74lgs6
+	 AoLI9F8f6LtlJ1pyKaCeQMrjd7PfLWgnEZm0dxdc=
+X-QQ-mid: zesmtpip3t1753956155ta94c3d12
+X-QQ-Originating-IP: lFlTdFOtv/vQ4PDmfG4jxZM+QUOL3f0Kjketi0kav9A=
+Received: from avenger-e500 ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 31 Jul 2025 18:02:33 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 11522875294285116563
+EX-QQ-RecipientCnt: 11
+From: WangYuli <wangyuli@uniontech.com>
+To: broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	shuah@kernel.org
+Cc: linux-sound@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>,
+	Jun Zhan <zhanjun@uniontech.com>
+Subject: [PATCH] selftests: ALSA: fix memory leak in utimer test
+Date: Thu, 31 Jul 2025 18:02:22 +0800
+Message-ID: <DE4D931FCF54F3DB+20250731100222.65748-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250722-mdb-max7360-support-v12-0-3747721a8d02@bootlin.com>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: NE5ka7lUpzLLneh95ioFD3VaxWF0GXWLqZk+7lJBUb14pvtdzJD4jQRh
+	IICcyN9E0JOU4TdGvLyLSj4L1faAxhmIW9znn9Ku96Y1fG1eICSyr1Xib7S0J+4R4uMnfNe
+	KZ639Cz08d3etYugVyzXiNcULXnDE5+vXmoWaB0PQVNaowSxrWKL/mAAQX+NZLJdUxMIZxy
+	pSAP86B5+005eh0LPVGNK+gTWCgpw4pOmuRgOO3/iTk+dEsojER+9zXvEHLJnNX7KUVdSCW
+	WeEpVsA42HAV0ifEI7sFb+Qtq8Sjq8x54fNgn7eK0lf6Jo+EJVCI18DebFxhFWv9nufdPPK
+	8M348hzx8vm5bRiiO/FAm14vKV5lGuIqNCTyn1r4dMcVWdfMhJbiZrD9yUHaPcbfTWQQ4GE
+	BuJ/RV5WRVbp76R8+HWSX/ztqEftV94rBDxlTc9bJJJOhkVFZkqhN3kACYCaBcBTLMlD58D
+	OqIKpU4k0Ul3J4yOKme5RZKDb2BR4A4Wbp0pqQfHvxxcoIJLE+cSS8whEkoSmX5K1OpjroA
+	joZ+6tgvnmzCmsIDEVQ7ftrw2X0fRB6rDuJbc9g3jXR0i5OpxLQvRmuVO15D3ogzTm9Q3a6
+	CUOVGks2C1gZevz/N4+rNHEz5OkiQ/xroD/IW9kkq466csGyFhkW7olkP6Fw+1YW41Tq/ci
+	bnAti+UGUGIJhaw1TiFkri7ZtaSjF54xpkyQp9amDPvRdefvF490XheoNsM8WwWdUollyRa
+	65cbxmjFfAHiP8ZEO0UO4L2LOSos3yFUSHxBqL9U+5lu4cw9zY8Zee4u972GCqJ4wyXmay0
+	52fMUAR4EtQh/40exJdnGS/uT3U7ceZ3gDUCjUnHAfk6WcVno8xk83lTcuypFr9nt5bm5UM
+	i0ZYlazgtE8N2b4WQdr+Wy0uEObxESXcjhv7nr9raTqyolcTegrKZRzAHI9zN0SmltUV03O
+	+lUxr4N2R8t3/t3/jHuD6wgxNC0Kk7hqQmhvRtjBU7PmgJE0F9aD8SPuWYsc32ZFFfEMfUn
+	ec07qMTVaeXEM69UCd2Zc50saWswRCQK4SCVl3Vd5hSRy0ght6
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-On Tue, 22 Jul 2025, Mathieu Dubois-Briand wrote:
+Free the malloc'd buffer in TEST_F(timer_f, utimer) to prevent
+memory leak.
 
-> This series implements a set of drivers allowing to support the Maxim
-> Integrated MAX7360 device.
-> 
-> The MAX7360 is an I2C key-switch and led controller, with following
-> functionalities:
-> - Keypad controller for a key matrix of up to 8 rows and 8 columns.
-> - Rotary encoder support, for a single rotary encoder.
-> - Up to 8 PWM outputs.
-> - Up to 8 GPIOs with support for interrupts and 6 GPOs.
-> 
-> Chipset pins are shared between all functionalities, so all cannot be
-> used at the same time.
-> 
-> Lee Jones suggested the whole series goes through MFD subsystem, once
-> all patches got the needed Acks.
+Reported-by: Jun Zhan <zhanjun@uniontech.com>
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
+---
+ tools/testing/selftests/alsa/utimer-test.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-MFD looks good.
-
-Let me know when you get all (PWM?) the Acks and I'll merge the set.
-
+diff --git a/tools/testing/selftests/alsa/utimer-test.c b/tools/testing/selftests/alsa/utimer-test.c
+index 32ee3ce57721..37964f311a33 100644
+--- a/tools/testing/selftests/alsa/utimer-test.c
++++ b/tools/testing/selftests/alsa/utimer-test.c
+@@ -135,6 +135,7 @@ TEST_F(timer_f, utimer) {
+ 	pthread_join(ticking_thread, NULL);
+ 	ASSERT_EQ(total_ticks, TICKS_COUNT);
+ 	pclose(rfp);
++	free(buf);
+ }
+ 
+ TEST(wrong_timers_test) {
 -- 
-Lee Jones [李琼斯]
+2.50.1
+
 
