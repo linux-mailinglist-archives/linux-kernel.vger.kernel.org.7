@@ -1,447 +1,252 @@
-Return-Path: <linux-kernel+bounces-752154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BC8B171E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:19:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2663FB171ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:20:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0AC5848CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:19:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0CEB4E7290
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:20:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC342C15A8;
-	Thu, 31 Jul 2025 13:19:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95D3E2C3259;
+	Thu, 31 Jul 2025 13:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zSOUiJfd"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YqretgIi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D702BE65B
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A334A94A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:20:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753967989; cv=none; b=b6Qiz34dxDfH63D6LgbFSMkYYAB3jZyLOxeualjHaPe0fDL06rWRbjNVc5HO3Zw8oQd17NoeTDj08ORg86uNaa4G0JABJr/O6K2okpBkZQQc/gUCGVSRRGsZGwft4wEMgxHDgmLhXlv0KimVa5wj1MFCnbb+ifNQoLF1rmApJQA=
+	t=1753968031; cv=none; b=n3EpOO+l3ShYl9CmtWO3/SC1Ql3H+2K93OLwdRmJE44CnNHMgI+9uQF5qGt05PM3Ke04LZGmbHIp5rNavz84sg0wHAVB3JOBVT9liSunCrOtGvnQKibZRnUe/BHY5tojGwG5Ah0+CNQvpWQRQJi3QJYajHd/RfZ4sTikuYx7Zi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753967989; c=relaxed/simple;
-	bh=q/0CwU72oOdZIuLDyG6/09Fp7D/WRRSWRcFUYu9Yd8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cR/DOOaJDKU8g0zt9EaYcwM+kPrHCyu6CVwnP6Fn4UETvVp37NBYcdxRdhUueImaWEod8vGQNIeYIrFKGwWvn8jHWmrb1G5nlWEmPFXQ+Mt2VjvyLHjbOPP/SDhycQx5IUqRN49I1c+EvpSlvPUaFU9MT1FAU6pJuzyms6dpaMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zSOUiJfd; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae9c2754a00so212569666b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:19:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753967984; x=1754572784; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=erlQ/LLHQExO1WKTcytAJrwyzb9h0x78zkEBmeizUwE=;
-        b=zSOUiJfdgmNG2vH3VgmRvHRp8FCHOxkSawu/pXo3+b50162lQcIebl/cBqBvFNk4OA
-         ou0+LxoyLKg6mNFm1WbDoggtnkN5y28/lc5qorcH0Hiw4zB+TvwGnsEzmM7P2Q4jzoiq
-         qa1gVRcV220NSAgLEREVTkRhd8gWsHS8y4BoObVsTA9dVIOgbZMgQGvGU2LVsN8jhZsA
-         /ZnFdECpqL+nVpDLUqBAWQNS3IOM1ixMetZ2S49lxormy9kXYiWv7JPLbMruEb89gZz3
-         lMEPKJxVEiD4nifGv3SUeI16p/QSRsefkM3rfZzwBpgIXwoU4ROdlFg6a1gzhZhoOk/d
-         ISNQ==
+	s=arc-20240116; t=1753968031; c=relaxed/simple;
+	bh=3KLuyMr0bSxLI5U8RI1yZL2Yv96hPijFT8J7biGE2dk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gf60n+uGy+HmvYZL+vcIVkn1u+MXRrTSypKEB7ILkz4kAZV8rGNMJtSXplzlgZkUn7qMFvE1lU0QeDZ/CKALAf8SEvO1vrdTPXisrB0ex7dROurkm3fLcRfPhJx/3gn79+h2zK0G50VXS/F7wwbCV6BGokRyIfTVfgFTlE370fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YqretgIi; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753968029;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=H8cVWOuIO40JfoYuCXD6TQrtJBGKCxwzWML3Rk1WtL4=;
+	b=YqretgIiAFFBSngl6dORxhgnCkUyuszeKkSlPftVxMNReIT2w2P2phDcBGht2JLPs8R3hl
+	1L16JzYza/Lb2K3lBvQXqPBMj2gTUj8pk9wQmiBdmGbsspCfh3UIjsF63TW7mjgu4btTMM
+	UjOBthEaaDGQzNSliRlaSJNmV+RvpAs=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-562-0upRLdnpMe68Ypk-s1lq1w-1; Thu, 31 Jul 2025 09:20:26 -0400
+X-MC-Unique: 0upRLdnpMe68Ypk-s1lq1w-1
+X-Mimecast-MFC-AGG-ID: 0upRLdnpMe68Ypk-s1lq1w_1753968025
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4562985ac6aso6641555e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:20:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753967984; x=1754572784;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=erlQ/LLHQExO1WKTcytAJrwyzb9h0x78zkEBmeizUwE=;
-        b=igNdKFJb6+GdAQCpBbpvcEQ36xqvd6yxKVTWZF3Gnw7SOFtBkCBXhrPzUQgeaecBBv
-         DJm8p898Y1qEaXeaTgruWWHY9mywR4A8qmxYP7FOIS8p9iVw/2qB7RZDEsnxvfyXM6mQ
-         S5Ns35FHnJsCKT9EjIzqQp+NszjqWswyhNQdeOh9xX5uXHgGj33nFGPJBfjPr5J6V0ib
-         hyrOcD14KzgTLrX3bum7p3GPkBaPUROu14sjkC5cGwTyN6Phs45LC+kubRIcq/5ACflW
-         ovRysaJSj4N1UEZoeaEu893K+Dlwdt/+RpchS3xd5loZquJCzBZCupETwkStM1GfVhlZ
-         ckHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOS094ytkMyVa1Go/e1fXRcxWlxFzeWyNKDBcoJW1+yNIPGLEbtV3iyVIIPCmUpiA5IDciIPB551aXkck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0x6gNURHdwXEBMGheMZnJQQfLIqlE85vUtyS8UC32YYJeHpBl
-	smuIx+pylwO9E4xLZciopTfSgU9rTT09xSjVMwywNRKpsLDMatDfU+2fje1Y97s9LQ7crlf/Ot3
-	YfklzrOhnHGng0yN6YPWbHl83l1UMoOgTahdS1dV/
-X-Gm-Gg: ASbGnctmkxQgVi+eClWPdTtsY21+BVC9XFXFh69q3bz3V+AxKotSBT49MIAKuj7ZjAh
-	zCJzjQBTLPZsZBFj77LTsphAItN3U9AR1Phj0exr+L+yLilA9qZXk/F5/DhkBtw1twXZRxHnUtg
-	32l4LHGEjd7yOUPZK4WTRdX3QTxkZaVfZeo8qGVZUjfBKAQPb5r4upPdtI2hJ3XhwrbLZV8EI02
-	qaFzet0pDsEL3dCrob39plXLHavDMNe30os1D9q
-X-Google-Smtp-Source: AGHT+IFqJJo1pb4T1+KNXxezny+BBoZpYPMQq8AGiOdfWPyUnAoxZrfZYRXDPA8u8ryltt6YnqLcEfI+U+GvrQxoCfc=
-X-Received: by 2002:a17:906:9e16:b0:af9:10c7:59b6 with SMTP id
- a640c23a62f3a-af910c75f97mr317417566b.32.1753967984155; Thu, 31 Jul 2025
- 06:19:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753968025; x=1754572825;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=H8cVWOuIO40JfoYuCXD6TQrtJBGKCxwzWML3Rk1WtL4=;
+        b=vH+XysRa+YeHbyFNgXmotFHHuqchfe9py2i63Ccx4PKyhWk5iJZAmxjZDXR1rNdt+D
+         E5EWW91QCt7JBK4+HbuGoNuCgeVhG1R3DoSIs8hlDTYvTx5Ga7YZqptsggY7x9ZU/mUO
+         DUDdZypzyZlvNsjBVbbsNJ3nBCbQetBN7AyQvU22VioKp1H2pQAETs94ZJ3RCYmPOqhE
+         7ob5PVi/U14l44OLuTurdy4ATzF4VN27bSYwFgCNtFL9kS7uOEHRcdefAAhMtI1Bj/sf
+         LfGeIXqV7sLsfvaEpinPce00M5u7YXcxSJ+00Rq5iO94Nz9OCysbguRnm391oISCTpYg
+         yrsA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0stwIHRYQrDkDwY5I2t40b2qDqJPhG4xmoMOgvSuEYFQegV4Dnh1rHQO/6n7TrKev2GpuntnBvo+ETgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIPbeYgektB8onRq+EDPMQkDW3+3MqZEzNVGEdZlEBNYdUKCvI
+	Z0ADjfhblzv8vG2QaSyYHQwB+9pL+N4nDPn96m7cUP2Kfqb70IOdmEy9+AwrDrIZ++MwU9vrdKN
+	Ynsnp5YmnENpgnBTRANAKDF1gCYIfdsjQGDgtpWI79vMsG3yBf8X8R2sRm9jXaGl47w==
+X-Gm-Gg: ASbGncsUPvhGSgaBTDdpTbZJ9XEccswjuiShNPhgBy1xuMyG8Br4dEIgVlw1P7yNEYS
+	8th56+WCJw2U3C5jcV8gQJGSxl4Q6UxhH8dsVKFR6uyYvw+G+iCVNCJqwpm18MF1UWnRBjbNJA6
+	nPF5nsjUPoswm1+K7Kfi3cgkwzZTHbspMNocmJYCmx+RoHZX91omDWEFrMW6wRaavpBOiwqRsni
+	2cTXxf8dDP2bCx4oZ8PG8Mtl+RabI5nswKS18ZVzDAjylzn371aWHaIvXFoDC0cgVm80IkDLMPF
+	JQvJj1JcxJZAO9nTHJRzg5qsRgnZh7VfjTJuEz8um4yIHyy2WKIUy64F+1FelptggwEdN2uNIo0
+	cCFU1aDvfzZ7ixvrB8mXeKrX/gfZ5LUtsx5R09/bAp7WkXSAUiYa7fRQWkRCMRZB7QNc=
+X-Received: by 2002:a05:600c:35d4:b0:439:643a:c8d5 with SMTP id 5b1f17b1804b1-45892a38f57mr77121265e9.0.1753968024920;
+        Thu, 31 Jul 2025 06:20:24 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFw7izoet6gCRjloh7faX2I/dT1hRt2aBMnfvHniM+pSH974YB03S1kXDORrNyqMh7/oaxdrw==
+X-Received: by 2002:a05:600c:35d4:b0:439:643a:c8d5 with SMTP id 5b1f17b1804b1-45892a38f57mr77120805e9.0.1753968024404;
+        Thu, 31 Jul 2025 06:20:24 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f44:3700:be07:9a67:67f7:24e6? (p200300d82f443700be079a6767f724e6.dip0.t-ipconnect.de. [2003:d8:2f44:3700:be07:9a67:67f7:24e6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458a22365c0sm23257955e9.3.2025.07.31.06.20.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 06:20:23 -0700 (PDT)
+Message-ID: <e496bf28-ed56-4935-8ac4-994e297506ee@redhat.com>
+Date: Thu, 31 Jul 2025 15:20:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729022640.3134066-1-yuzhuo@google.com> <20250729022640.3134066-7-yuzhuo@google.com>
- <aIr8JuprT1JPNJsq@google.com>
-In-Reply-To: <aIr8JuprT1JPNJsq@google.com>
-From: Yuzhuo Jing <yuzhuo@google.com>
-Date: Thu, 31 Jul 2025 06:19:26 -0700
-X-Gm-Features: Ac12FXyIhUFDytjG41oc7SOsf47Ir-TzU6_QHAFGK9ZpLkho8cN3fMKcIYXZnI4
-Message-ID: <CADQikVDgFa2pHHsUERpxsEj6ufZYp5cwgQ7z5xXUhvOnmSNk0g@mail.gmail.com>
-Subject: Re: [PATCH v1 6/7] perf bench: Add 'bench sync qspinlock' subcommand
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Liang Kan <kan.liang@linux.intel.com>, Yuzhuo Jing <yzj@umich.edu>, 
-	Andrea Parri <parri.andrea@gmail.com>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Barret Rhoden <brho@google.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Guo Ren <guoren@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] prctl: extend PR_SET_THP_DISABLE to optionally
+ exclude VM_HUGEPAGE
+To: Usama Arif <usamaarif642@gmail.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>
+References: <20250731122825.2102184-1-usamaarif642@gmail.com>
+ <20250731122825.2102184-2-usamaarif642@gmail.com>
+ <dda2e42f-7c20-4530-93f9-d3a73bb1368b@lucifer.local>
+ <c9896875-fb86-4b6c-8091-27c8152ba6d0@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
+ 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
+ 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
+ OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
+ kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
+ GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
+ s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
+ Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
+ FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
+ OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
+ NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
+ Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
+ 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
+ /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
+ bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
+ RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
+ m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
+ CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
+ vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
+ WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <c9896875-fb86-4b6c-8091-27c8152ba6d0@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 30, 2025 at 10:16=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> On Mon, Jul 28, 2025 at 07:26:39PM -0700, Yuzhuo Jing wrote:
-> > Benchmark kernel queued spinlock implementation in user space.  Support
-> > settings of the number of threads and the number of acquire/releases.
->
-> My general advice is that you'd better add an example command line and
-> output in the commit message if you add any user-visible changes.  Also
-> please update the Documentation/perf-bench.txt.
->
-> Thanks,
-> Namhyung
+On 31.07.25 15:12, Usama Arif wrote:
+> 
+> 
+> On 31/07/2025 13:40, Lorenzo Stoakes wrote:
+>> On Thu, Jul 31, 2025 at 01:27:18PM +0100, Usama Arif wrote:
+>> [snip]
+>>> Acked-by: Usama Arif <usamaarif642@gmail.com>
+>>> Tested-by: Usama Arif <usamaarif642@gmail.com>
+>>> Cc: Jonathan Corbet <corbet@lwn.net>
+>>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>> Cc: Zi Yan <ziy@nvidia.com>
+>>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>>> Cc: Nico Pache <npache@redhat.com>
+>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>> Cc: Dev Jain <dev.jain@arm.com>
+>>> Cc: Barry Song <baohua@kernel.org>
+>>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>>> Cc: Mike Rapoport <rppt@kernel.org>
+>>> Cc: Suren Baghdasaryan <surenb@google.com>
+>>> Cc: Michal Hocko <mhocko@suse.com>
+>>> Cc: Usama Arif <usamaarif642@gmail.com>
+>>> Cc: SeongJae Park <sj@kernel.org>
+>>> Cc: Jann Horn <jannh@google.com>
+>>> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+>>> Cc: Yafang Shao <laoar.shao@gmail.com>
+>>> Cc: Matthew Wilcox <willy@infradead.org>
+>>
+>> You don't need to include these Cc's, Andrew will add them for you.
+>>
+>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>>
+>> Shouldn't this also be signed off by you? 2/5 and 3/5 has S-o-b for both
+>> David and yourself?
+>>
+>> This is inconsistent at the very least.
+>>
+> 
+> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> 
+> The Ccs were added by David, and I didn't want to remove them.
 
-Hi Namhyung. Thanks for the review and for the advice! I will update
-the commit messages and documentation later in a v2 patch.
+They were still part of the first submission without cover letter, so 
+you should drop them from here now that you are sending it as part of a 
+series.
 
-Best regards,
-Yuzhuo
+> 
+>>>
+>>> ---
+>>>
+>>
+>> Nothing below the --- will be included in the patch, so we can drop the
+>> below, it's just noise that people can find easily if needed.
+>>
+>>> At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
+>>> think there might be real use cases where we want to disable any THPs --
+>>> in particular also around debugging THP-related problems, and
+>>> "never" not meaning ... "never" anymore ever since we add MADV_COLLAPSE.
+>>> PR_SET_THP_DISABLE will also block MADV_COLLAPSE, which can be very
+>>> helpful for debugging purposes. Of course, I thought of having a
+>>> system-wide config option to modify PR_SET_THP_DISABLE behavior, but
+>>> I just don't like the semantics.
+>>
+>> [snip]
+>>
+>>>
+>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>
+>> This S-o-b is weird, it's in a comment essentially. Let's drop that too
+>> please.
 
-> >
-> > Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
-> > ---
-> >  tools/perf/bench/Build     |   2 +
-> >  tools/perf/bench/bench.h   |   1 +
-> >  tools/perf/bench/sync.c    | 234 +++++++++++++++++++++++++++++++++++++
-> >  tools/perf/builtin-bench.c |   7 ++
-> >  4 files changed, 244 insertions(+)
-> >  create mode 100644 tools/perf/bench/sync.c
-> >
-> > diff --git a/tools/perf/bench/Build b/tools/perf/bench/Build
-> > index b558ab98719f..13558279fa0e 100644
-> > --- a/tools/perf/bench/Build
-> > +++ b/tools/perf/bench/Build
-> > @@ -19,6 +19,8 @@ perf-bench-y +=3D evlist-open-close.o
-> >  perf-bench-y +=3D breakpoint.o
-> >  perf-bench-y +=3D pmu-scan.o
-> >  perf-bench-y +=3D uprobe.o
-> > +perf-bench-y +=3D sync.o
-> > +perf-bench-y +=3D qspinlock.o
-> >
-> >  perf-bench-$(CONFIG_X86_64) +=3D mem-memcpy-x86-64-asm.o
-> >  perf-bench-$(CONFIG_X86_64) +=3D mem-memset-x86-64-asm.o
-> > diff --git a/tools/perf/bench/bench.h b/tools/perf/bench/bench.h
-> > index 9f736423af53..dd6c8b6126d3 100644
-> > --- a/tools/perf/bench/bench.h
-> > +++ b/tools/perf/bench/bench.h
-> > @@ -22,6 +22,7 @@ int bench_numa(int argc, const char **argv);
-> >  int bench_sched_messaging(int argc, const char **argv);
-> >  int bench_sched_pipe(int argc, const char **argv);
-> >  int bench_sched_seccomp_notify(int argc, const char **argv);
-> > +int bench_sync_qspinlock(int argc, const char **argv);
-> >  int bench_syscall_basic(int argc, const char **argv);
-> >  int bench_syscall_getpgid(int argc, const char **argv);
-> >  int bench_syscall_fork(int argc, const char **argv);
-> > diff --git a/tools/perf/bench/sync.c b/tools/perf/bench/sync.c
-> > new file mode 100644
-> > index 000000000000..2685cb66584c
-> > --- /dev/null
-> > +++ b/tools/perf/bench/sync.c
-> > @@ -0,0 +1,234 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Synchronization benchmark.
-> > + *
-> > + * 2025  Yuzhuo Jing <yuzhuo@google.com>
-> > + */
-> > +#include <bits/time.h>
-> > +#include <err.h>
-> > +#include <inttypes.h>
-> > +#include <perf/cpumap.h>
-> > +#include <pthread.h>
-> > +#include <stdbool.h>
-> > +#include <string.h>
-> > +#include <subcmd/parse-options.h>
-> > +#include <sys/cdefs.h>
-> > +
-> > +#include "bench.h"
-> > +
-> > +#include "include/qspinlock.h"
-> > +
-> > +#define NS 1000000000ull
-> > +#define CACHELINE_SIZE 64
-> > +
-> > +static unsigned int nthreads;
-> > +static unsigned long nspins =3D 10000ul;
-> > +
-> > +struct barrier_t;
-> > +
-> > +typedef void(*lock_fn)(void *);
-> > +
-> > +/*
-> > + * Lock operation definition to support multiple implmentations of loc=
-ks.
-> > + *
-> > + * The lock and unlock functions only take one variable, the data poin=
-ter.
-> > + */
-> > +struct lock_ops {
-> > +     lock_fn lock;
-> > +     lock_fn unlock;
-> > +     void *data;
-> > +};
-> > +
-> > +struct worker {
-> > +     pthread_t thd;
-> > +     unsigned int tid;
-> > +     struct lock_ops *ops;
-> > +     struct barrier_t *barrier;
-> > +     u64 runtime;            // in nanoseconds
-> > +};
-> > +
-> > +static const struct option options[] =3D {
-> > +     OPT_UINTEGER('t',       "threads",      &nthreads,
-> > +             "Specify number of threads (default: number of CPUs)."),
-> > +     OPT_ULONG('n',          "spins",        &nspins,
-> > +             "Number of lock acquire operations per thread (default: 1=
-0,000 times)."),
-> > +     OPT_END()
-> > +};
-> > +
-> > +static const char *const bench_sync_usage[] =3D {
-> > +     "perf bench sync qspinlock <options>",
-> > +     NULL
-> > +};
-> > +
-> > +/*
-> > + * A atomic-based barrier.  Expect to have lower latency than pthread =
-barrier
-> > + * that sleeps the thread.
-> > + */
-> > +struct barrier_t {
-> > +     unsigned int count __aligned(CACHELINE_SIZE);
-> > +};
-> > +
-> > +/*
-> > + * A atomic-based barrier.  Expect to have lower latency than pthread =
-barrier
-> > + * that sleeps the thread.
-> > + */
-> > +__always_inline void wait_barrier(struct barrier_t *b)
-> > +{
-> > +     if (__atomic_sub_fetch(&b->count, 1, __ATOMIC_RELAXED) =3D=3D 0)
-> > +             return;
-> > +     while (__atomic_load_n(&b->count, __ATOMIC_RELAXED))
-> > +             ;
-> > +}
-> > +
-> > +static int bench_sync_lock_generic(struct lock_ops *ops, int argc, con=
-st char **argv);
-> > +
-> > +/*
-> > + * Benchmark of linux kernel queued spinlock in user land.
-> > + */
-> > +int bench_sync_qspinlock(int argc, const char **argv)
-> > +{
-> > +     struct qspinlock lock =3D __ARCH_SPIN_LOCK_UNLOCKED;
-> > +     struct lock_ops ops =3D {
-> > +             .lock =3D (lock_fn)queued_spin_lock,
-> > +             .unlock =3D (lock_fn)queued_spin_unlock,
-> > +             .data =3D &lock,
-> > +     };
-> > +     return bench_sync_lock_generic(&ops, argc, argv);
-> > +}
-> > +
-> > +/*
-> > + * A busy loop to acquire and release the given lock N times.
-> > + */
-> > +static void lock_loop(const struct lock_ops *ops, unsigned long n)
-> > +{
-> > +     unsigned long i;
-> > +
-> > +     for (i =3D 0; i < n; ++i) {
-> > +             ops->lock(ops->data);
-> > +             ops->unlock(ops->data);
-> > +     }
-> > +}
-> > +
-> > +/*
-> > + * Thread worker function.  Runs lock loop for N/5 times before and af=
-ter
-> > + * the main timed loop.
-> > + */
-> > +static void *sync_workerfn(void *args)
-> > +{
-> > +     struct worker *worker =3D (struct worker *)args;
-> > +     struct timespec starttime, endtime;
-> > +
-> > +     set_this_cpu_id(worker->tid);
-> > +
-> > +     /* Barrier to let all threads start together */
-> > +     wait_barrier(worker->barrier);
-> > +
-> > +     /* Warmup loop (not counted) to keep the below loop contended. */
-> > +     lock_loop(worker->ops, nspins / 5);
-> > +
-> > +     clock_gettime(CLOCK_THREAD_CPUTIME_ID, &starttime);
-> > +     lock_loop(worker->ops, nspins);
-> > +     clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endtime);
-> > +
-> > +     /* Tail loop (not counted) to keep the above loop contended. */
-> > +     lock_loop(worker->ops, nspins / 5);
-> > +
-> > +     worker->runtime =3D (endtime.tv_sec - starttime.tv_sec) * NS
-> > +             + endtime.tv_nsec - starttime.tv_nsec;
-> > +
-> > +     return NULL;
-> > +}
-> > +
-> > +/*
-> > + * Generic lock synchronization benchmark function.  Sets up threads a=
-nd
-> > + * thread affinities.
-> > + */
-> > +static int bench_sync_lock_generic(struct lock_ops *ops, int argc, con=
-st char **argv)
-> > +{
-> > +     struct perf_cpu_map *online_cpus;
-> > +     unsigned int online_cpus_nr;
-> > +     struct worker *workers;
-> > +     u64 totaltime =3D 0, total_spins, avg_ns, avg_ns_dot;
-> > +     struct barrier_t barrier;
-> > +     cpu_set_t *cpuset;
-> > +     size_t cpuset_size;
-> > +
-> > +     argc =3D parse_options(argc, argv, options, bench_sync_usage, 0);
-> > +     if (argc) {
-> > +             usage_with_options(bench_sync_usage, options);
-> > +             exit(EXIT_FAILURE);
-> > +     }
-> > +
-> > +     /* CPU count setup. */
-> > +     online_cpus =3D perf_cpu_map__new_online_cpus();
-> > +     if (!online_cpus)
-> > +             err(EXIT_FAILURE, "No online CPUs available");
-> > +     online_cpus_nr =3D perf_cpu_map__nr(online_cpus);
-> > +
-> > +     if (!nthreads) /* default to the number of CPUs */
-> > +             nthreads =3D online_cpus_nr;
-> > +
-> > +     workers =3D calloc(nthreads, sizeof(*workers));
-> > +     if (!workers)
-> > +             err(EXIT_FAILURE, "calloc");
-> > +
-> > +     barrier.count =3D nthreads;
-> > +
-> > +     printf("Running with %u threads.\n", nthreads);
-> > +
-> > +     cpuset =3D CPU_ALLOC(online_cpus_nr);
-> > +     if (!cpuset)
-> > +             err(EXIT_FAILURE, "Cannot allocate cpuset.");
-> > +     cpuset_size =3D CPU_ALLOC_SIZE(online_cpus_nr);
-> > +
-> > +     /* Create worker data structures, set CPU affinity, and create   =
-*/
-> > +     for (unsigned int i =3D 0; i < nthreads; ++i) {
-> > +             pthread_attr_t thread_attr;
-> > +             int ret;
-> > +
-> > +             /* Basic worker thread information */
-> > +             workers[i].tid =3D i;
-> > +             workers[i].barrier =3D &barrier;
-> > +             workers[i].ops =3D ops;
-> > +
-> > +             /* Set CPU affinity */
-> > +             pthread_attr_init(&thread_attr);
-> > +             CPU_ZERO_S(cpuset_size, cpuset);
-> > +             CPU_SET_S(perf_cpu_map__cpu(online_cpus, i % online_cpus_=
-nr).cpu,
-> > +                     cpuset_size, cpuset);
-> > +
-> > +             if (pthread_attr_setaffinity_np(&thread_attr, cpuset_size=
-, cpuset))
-> > +                     err(EXIT_FAILURE, "Pthread set affinity failed");
-> > +
-> > +             /* Create and block thread */
-> > +             ret =3D pthread_create(&workers[i].thd, &thread_attr, syn=
-c_workerfn, &workers[i]);
-> > +             if (ret !=3D 0)
-> > +                     err(EXIT_FAILURE, "Error creating thread: %s", st=
-rerror(ret));
-> > +
-> > +             pthread_attr_destroy(&thread_attr);
-> > +     }
-> > +
-> > +     CPU_FREE(cpuset);
-> > +
-> > +     for (unsigned int i =3D 0; i < nthreads; ++i) {
-> > +             int ret =3D pthread_join(workers[i].thd, NULL);
-> > +
-> > +             if (ret)
-> > +                     err(EXIT_FAILURE, "pthread_join");
-> > +     }
-> > +
-> > +     /* Calculate overall average latency. */
-> > +     for (unsigned int i =3D 0; i < nthreads; ++i)
-> > +             totaltime +=3D workers[i].runtime;
-> > +
-> > +     total_spins =3D (u64)nthreads * nspins;
-> > +     avg_ns =3D totaltime / total_spins;
-> > +     avg_ns_dot =3D (totaltime % total_spins) * 10000 / total_spins;
-> > +
-> > +     printf("Lock-unlock latency of %u threads: %"PRIu64".%"PRIu64" ns=
-.\n",
-> > +                     nthreads, avg_ns, avg_ns_dot);
-> > +
-> > +     free(workers);
-> > +
-> > +     return 0;
-> > +}
-> > diff --git a/tools/perf/builtin-bench.c b/tools/perf/builtin-bench.c
-> > index 2c1a9f3d847a..cfe6f6dc6ed4 100644
-> > --- a/tools/perf/builtin-bench.c
-> > +++ b/tools/perf/builtin-bench.c
-> > @@ -52,6 +52,12 @@ static struct bench sched_benchmarks[] =3D {
-> >       { NULL,         NULL,                                           N=
-ULL                    }
-> >  };
-> >
-> > +static struct bench sync_benchmarks[] =3D {
-> > +     { "qspinlock",  "Benchmark for queued spinlock",                b=
-ench_sync_qspinlock    },
-> > +     { "all",        "Run all synchronization benchmarks",           N=
-ULL                    },
-> > +     { NULL,         NULL,                                           N=
-ULL                    }
-> > +};
-> > +
-> >  static struct bench syscall_benchmarks[] =3D {
-> >       { "basic",      "Benchmark for basic getppid(2) calls",         b=
-ench_syscall_basic     },
-> >       { "getpgid",    "Benchmark for getpgid(2) calls",               b=
-ench_syscall_getpgid   },
-> > @@ -122,6 +128,7 @@ struct collection {
-> >
-> >  static struct collection collections[] =3D {
-> >       { "sched",      "Scheduler and IPC benchmarks",                 s=
-ched_benchmarks        },
-> > +     { "sync",       "Synchronization benchmarks",                   s=
-ync_benchmarks         },
-> >       { "syscall",    "System call benchmarks",                       s=
-yscall_benchmarks      },
-> >       { "mem",        "Memory access benchmarks",                     m=
-em_benchmarks          },
-> >  #ifdef HAVE_LIBNUMA_SUPPORT
-> > --
-> > 2.50.1.487.gc89ff58d15-goog
-> >
+That just got added automatically while modifying the patch.
+
+> 
+> 
+> Everything below --- was added by David I believe to provide further explanation that
+> doesn't need to be included in the commit message, and I didn't want to remove it
+> or his 2nd sign-off, as its discarded anyways. Its useful info that can just be
+> ignored.
+
+
+Best to drop under the "---" I think it was most important for the PoC 
+to give more context.
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
