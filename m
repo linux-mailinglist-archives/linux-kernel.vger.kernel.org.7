@@ -1,165 +1,128 @@
-Return-Path: <linux-kernel+bounces-752417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7208AB1754F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:53:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A7C6B17556
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA96C18C2B54
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:53:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730361894585
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:55:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ED828E607;
-	Thu, 31 Jul 2025 16:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA242286884;
+	Thu, 31 Jul 2025 16:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Zs9UvslR"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="nTEEJREF"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83624DCF8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8BD241C89;
+	Thu, 31 Jul 2025 16:54:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753980785; cv=none; b=N0nJKFNu09LEYFICRNBHVCUT7Zmm2RcF8U6iLflr08SS0XcPwueEhAksbooASBiqhZDK+0qSwj1+MVdLX21+96hATbfMrO+VNE6n2pr32GaX4PK20KXbl4XSvEl/NWoqBTT/XEP1+JtGIhXc4H1+iyOtqX/2t1Z5NJS1duaU4a8=
+	t=1753980865; cv=none; b=GavoWq3mBK4QE6fBpvthyPqUA9FNESvBTiBCMLyZ7CL7xHaUAb94oh/65Oszm4JFe+2yHu9ZTX6/iijnn5uCJlmdH6Ywz2m06Vcnq84QELAxhuicASqZtpCS161IQRs8qPH5eOyn/+iEQQNTZH1UGUaYgbg8QeVgo4C2E1ahqA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753980785; c=relaxed/simple;
-	bh=pZ8JW4BupERaCqn+7ehMHUhgMaXIyZtrBvv8TKORWvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+twxJi6RN7dH16Wi820uOy3FCyp0SKd8oTRL0dW3efXY03dbcnKFJT5WSiFBHwGUZraZ6J/0hmZZ4/2v77+z/ET+po8dRLUa6T0Xagcldh7SZ9Aq9YEqbGbnEzucAY9H54QkgrEIB+C33wqvfrbhitCJ1WIEkMc/DtnRT7RXSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Zs9UvslR; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7dd8773f9d9so92696685a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:53:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1753980782; x=1754585582; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ge8sFkdUD5dsmHZi6nhZDTs93Pw2wZ3dkBFapdPEw0U=;
-        b=Zs9UvslRTgz6E55v8B7c2Jadpo09wvghL4NqoXx9WmGhULRAJntAGfFZiCo3SoyNge
-         BbuWQbgthZ59HyrQMZJ5TXr7/zsovLi8hlsIeDy+ERKJrpOydsNIgfnCLBEqggKhGAWc
-         V7F9yzToWc4KjSTgotmjRO+W/lGqOs55jSyk5OLkhJTsVH97PUAaXhTy3jH+iZHiH1Kn
-         liYvCM2TDHmZToa04HFTyLrWTWPhkvhQC1j38+4lgcyL9+Xg1ISCG3nM5SNE8Z+0tHbL
-         +5+Uq2/is0dmDULstCDnfW/Ce9oINBLnEfM2J2FdEbA35xe2rF3CX92GkA41lFHQpOPE
-         If2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753980782; x=1754585582;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ge8sFkdUD5dsmHZi6nhZDTs93Pw2wZ3dkBFapdPEw0U=;
-        b=abphip9mwMBTBFndLUUTZI1YyekJS/iUMj+lQQS2EGeoqQLKqac0pj2IclWzmSg3lM
-         3KL1t0mpFNmNZiBj3LoMM0/kWhN5JPKSeEwHjZD25FnrIT4aEbtCefa0nyKvvvSlhF/j
-         r8Ch/nznvL1ctY1u+KsvyAocpGzklJWqcOliimn2CAvTC8GxG8/GuF3aNKmuQRdjTP5X
-         VzlJpVGBbQBgWm3wslQGUt+cuVKx9jLhAa+MRXVlfUVoy1zKd/OoirdUWbSyVNopsHlu
-         6WXv44eSM5DY5cb6YODv0gVT8XmWbhjdfNvp2EX4+Oi4My8kenuaNc62tu+HWfYfeXjB
-         2S9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX124s9bNOnOH15JAfRz018NAFX0setBXeumQu0vM+/52Rtkk4bkUJFk9Ly7F8G58IzVLWNOdZAxxuo8dw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIC061lw4J2i+bvGFdN7hiPpdalDvD0choZTUkxsyWnBvXQalU
-	9llBu8h5IQrWJtOJBsodFO+rSK6wya+VDhxNRlETDSGfo2OY9lXsPTh3C8wP9SxsbKY=
-X-Gm-Gg: ASbGnctTLxYGzwmLE5nMB971olNsZOtQKZDE9gy2esc/GfXviQyk25OtAKuYC+jaZX7
-	Y3O82/FpCATQBVl1ekl6XPHUTWSJfoHu4Ni4hMoaNkt9k0NWvIkqJ/MNJ05H9tcRYDEjidDO3aR
-	UaLah3z6zeumhv0HOnftSROCMrjmIzZHBVv/OU+Y/r7TebvgzurEvEgS5z3KOgUbq1wqkhfXvHt
-	530Wom1caoxwixM0dL9ArWCG38hBBaONkoL5f5cSfMKTLFJP9yt/mNUse162dpq2k4l07QHWbKz
-	rViMdpw8iuUHD7pjkcvxYIBML8jle5ZjPERME2cO+Cyzd4TbQW10iCyJNdMm0NIuRv9JNjFVKzx
-	QU2GYp0NrgVo5flDSy641Mf3TwIdpUsHKJlx4LPR42tXSPPSlraqG/XAVj1KmOH6EVlyOqMjU21
-	y/mPY=
-X-Google-Smtp-Source: AGHT+IFxkpl6QnLP1d2Hal87IlMNzkW4ERQZ01Eb9frEOc1Kw3im7nXPwCw8k1/LtI/6s3msgQWswQ==
-X-Received: by 2002:a05:620a:2808:b0:7e3:4b7c:40a0 with SMTP id af79cd13be357-7e66f3e29c2mr1060489785a.51.1753980782245;
-        Thu, 31 Jul 2025 09:53:02 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f5c5537sm108625985a.35.2025.07.31.09.53.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 09:53:01 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uhWWb-00000000qDo-1Gf4;
-	Thu, 31 Jul 2025 13:53:01 -0300
-Date: Thu, 31 Jul 2025 13:53:01 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Arto Merilainen <amerilainen@nvidia.com>
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>, kvmarm@lists.linux.dev,
-	linux-coco@lists.linux.dev
-Subject: Re: [RFC PATCH v1 34/38] coco: guest: arm64: Validate mmio range
- found in the interface report
-Message-ID: <20250731165301.GY26511@ziepe.ca>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-35-aneesh.kumar@kernel.org>
- <d57d12ce-78c6-4381-80eb-03e9e94f9903@nvidia.com>
+	s=arc-20240116; t=1753980865; c=relaxed/simple;
+	bh=NGYe/4bHwxEsCtXRlSZjhwJ1rnKJGVKblpFSRZKfBR8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Qte5CqeuEXYadJIv18tm0vryO6CYprhSM7RpCMMO5mACaUJCqfHjRRxR2eEaO/unF+yh140JrFflJ8rF5FlXnAu0KICTIEupJ9ToXDAiajA/OQldEA5bmTxqnc1zzY5n4WFSGQjtFP402dPhWIK726/QeU7Q0xpCortnZY6hzGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=nTEEJREF; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56VGrvlx2190036
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 31 Jul 2025 09:53:58 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56VGrvlx2190036
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1753980839;
+	bh=NHqv9gvDFInVKj8zR5ZINGbGJDd8Q9i7tTunKoh0LqQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nTEEJREFOYlhBUz4+HJVKwqjdGT1Rbvbv3lVnp6qg8HLbjNdaU/Qf16FXmD8KqPq4
+	 va4VqywHykDr/Ujx401IzjGVOZeB53blQOX4Sc61ZRp+upWUxUdZjiskeKHK5t1jzz
+	 QIETXcc6xipae6k4FW3sx+TiS9JxfuSgVILd9y/apcEK/+N6nTtUDh3hoZovnguId1
+	 TFqJuAsfCEnbczV7YECkD3VKOv0tfSaB5srDmn1tbViWz2NOsh6Tz+jtKGV+ETYoZl
+	 aW6w4rv2IWvytM8VhLvRsnLsvfH5rZzyTjt4nzyvuRQSUcuqdhU86wsXtGIYc8kMfr
+	 qNFLrZHIZsKng==
+Message-ID: <f20842af-2bc1-4002-a6eb-84c33408d0ea@zytor.com>
+Date: Thu, 31 Jul 2025 09:53:57 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d57d12ce-78c6-4381-80eb-03e9e94f9903@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] KVM: VMX: Handle the immediate form of MSR
+ instructions
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
+        seanjc@google.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
+References: <20250730174605.1614792-1-xin@zytor.com>
+ <20250730174605.1614792-4-xin@zytor.com> <aItNtifaItfXhXnu@intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aItNtifaItfXhXnu@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 31, 2025 at 02:39:09PM +0300, Arto Merilainen wrote:
-> On 28.7.2025 16.52, Aneesh Kumar K.V (Arm) wrote:
+On 7/31/2025 4:04 AM, Chao Gao wrote:
+> On Wed, Jul 30, 2025 at 10:46:04AM -0700, Xin Li (Intel) wrote:
+>> Handle two newly introduced VM exit reasons associated with the
+>> immediate form of MSR instructions.
+>>
+>> For proper virtualization of the immediate form of MSR instructions,
+>> Intel VMX architecture adds the following changes:
 > 
-> > +	for (int i = 0; i < interface_report->mmio_range_count; i++, mmio_range++) {
-> > +
-> > +		/*FIXME!! units in 4K size*/
-> > +		range_id = FIELD_GET(TSM_INTF_REPORT_MMIO_RANGE_ID, mmio_range->range_attributes);
-> > +
-> > +		/* no secure interrupts */
-> > +		if (msix_tbl_bar != -1 && range_id == msix_tbl_bar) {
-> > +			pr_info("Skipping misx table\n");
-> > +			continue;
-> > +		}
-> > +
-> > +		if (msix_pba_bar != -1 && range_id == msix_pba_bar) {
-> > +			pr_info("Skipping misx pba\n");
-> > +			continue;
-> > +		}
-> > +
+> The CPUID feature bit also indicates support for the two new VM-exit reasons.
+> Therefore, KVM needs to reflect EXIT_REASON_MSR_READ/WRITE_IMM VM-exits to
+> L1 guests in nested cases if KVM claims it supports the new form of MSR
+> instructions.
+
+Damn, forgot about nested...
+
 > 
-> 
-> MSI-X and PBA can be placed to a BAR that has other registers as well. While
-> the PCIe specification recommends BAR-level isolation for MSI-X structures,
-> it is not mandated.
+> I'm also wondering if the emulator needs to support this new instruction. I
+> suppose it does.
 
-Right, there are not enough BARs in most devices to give MSI its own
-BAR.
+Yes, I thought about it.  However the new instructions use the VEX
+prefix, which KVM doesn't support today.
 
->  It is enough to have sufficient isolation within the
-> BAR. Therefore, skipping the MSI-X and PBA BARs altogether may leave
-> registers unintentionally mapped via unprotected IPA when they
-> should have been mapped via protected IPA.
-
-Right, this sounds bad.
-
-> Instead of skipping the whole BAR, would it make sense to determine
-> where the MSI-X related regions reside, and skip validation only from these
-> regions?
-
-IMHO this is a mess. The virtualization must end up putting a shared
-page(s) covering the MSI space in the middle of the MMIO region.
-
-I think this should be done by fragmenting the layout in the IPA where
-the private MMIO is within the protected IPA space with an unmapped
-hole covering the MSIX registers. The acceptance process should
-validate this.
-
-The MSIX registers would then be located in the shared IPA space.
-
-A normal driver mmaping it's BAR will then crash if it tries to access
-the MSIX registers. This is good, we want to catch these non-secure
-configurations and block them.
-
-The MSI code will have to know to compute the shared IPA alias and use
-that.
-
-Jason
 
