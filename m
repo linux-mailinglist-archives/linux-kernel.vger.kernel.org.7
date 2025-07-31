@@ -1,66 +1,149 @@
-Return-Path: <linux-kernel+bounces-751889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2F6B16ECE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:40:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFC3B17303
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B528C18C6ABD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:40:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E073117E641
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52842BD019;
-	Thu, 31 Jul 2025 09:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n4g1iD7N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4FE76034;
+	Thu, 31 Jul 2025 14:16:44 +0000 (UTC)
+Received: from mail-m3285.qiye.163.com (mail-m3285.qiye.163.com [220.197.32.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F79427CCE2;
-	Thu, 31 Jul 2025 09:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D6F23BE;
+	Thu, 31 Jul 2025 14:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.85
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753954816; cv=none; b=GEHISpzprNSsC223q0jtsI0M6f6SiZZ1ASlD1ArC5OxgWqzjU8jSdPUPQagewp9wMjilP43uYpwZoPgJvrn4aXrVFNvxS/+EPbg0rDUg2BEH3Nc3Hqpjen/8bEWSeTMQDVYVj1Dcx4FWcLC1KmQ7SF2FS1nPVvbMfrdHndrFhAo=
+	t=1753971403; cv=none; b=bYmTgehk7Xt8Lp/QjVzNiMvUoNAGydMJaBNOS8bcSEmf9/FakO1kDlrv4K5/0E2Yzir5LDWWGsNnCazUKgyS5LvOYfBA6DN+w+JWnuwCCByZFbuhGKAf0DCsEqzoHno1hlEucaNTBOlsnVzfiueoT/eHv/OSUFGFjWhaJwaDAYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753954816; c=relaxed/simple;
-	bh=/v4W+ecBJEKcoK16F3xL7ibkkRyri3KAZESkCFC+vpk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YD9ZjEcHdtcpSSmhw3JsDOob80o52lShX2snr+XdKx9I//mdydT1Xe5O9wvuGm3DfAvkx4sPsBeKGmPO3yNK/g5ctUI5a+i/koWZEl2Z8MOkqgko6dpSq7nrbhVClxJrJUy4nxY0rg+WsjeM274cdbxgbAlWveQgKv1GA4FkBc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n4g1iD7N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D113CC4CEEF;
-	Thu, 31 Jul 2025 09:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753954815;
-	bh=/v4W+ecBJEKcoK16F3xL7ibkkRyri3KAZESkCFC+vpk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n4g1iD7NO7JAppxw0XxuCQnUXtdsv/XvQ79mFzAAL8cEZXR+acbyrEJnJhsfD63jP
-	 qqRwpJcIh/Yp231HcBNVPXLGIoMZiZyraKH0+SnD48BUX57Tgt3A2WSrlRyfoVSUk8
-	 xzZrKHcL2+3sZxDMZ/KgQnucuqug5kMDAKhF3cGPPEk7NAO6BRAvQlomjsjeSS4irR
-	 lQSoIMBE98VPJDeCyU7pLB0XMXQRDM6/l6XOKvKZJlKdtP8ohvK4k01QmKYncRGcoh
-	 aX+9r6Q4KgOp+f3KhNvaMIba7kysp00dQdk9M0xGam/Vn3G5V73HXadLEZvUEJ0gQF
-	 sbmH1Bz/pKMYQ==
-Date: Thu, 31 Jul 2025 11:40:12 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL 00/14 for v6.17] vfs 6.17
-Message-ID: <20250731-vorschau-erziehen-82e6753df3af@brauner>
-References: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
+	s=arc-20240116; t=1753971403; c=relaxed/simple;
+	bh=UW8GLbU03FCsMjccf40Jm+8x7OkSG2Tz5Njj2gbNmQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q5Ll36nzUGhH1fBGR+WjfyLu5t4qiJXwtS9S0jVsWgWEMY1DmMY/msJg/KTS6gNGd5ew96sGT5YxzACyGAsN8c/N8+8PDgXx9r5TJhmovBM2DpcrBdd4QyZ+wvO5HdGx0dv379SfQc+r9F/NWirN1FjEznemmZGu+nXM5mVTgII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=220.197.32.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
+Received: from [192.168.1.94] (unknown [218.94.118.90])
+	by smtp.qiye.163.com (Hmail) with ESMTP id dee002b7;
+	Thu, 31 Jul 2025 17:40:26 +0800 (GMT+08:00)
+Message-ID: <5b4dc6a3-f6fd-4bf7-a84e-3d79db8d062e@easystack.cn>
+Date: Thu, 31 Jul 2025 17:40:26 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250725-vfs-617-1bcbd4ae2ea6@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: samsung: exynos-srom: Fix of_iomap leak in
+ exynos_srom_probe
+To: Krzysztof Kozlowski <krzk@kernel.org>, alim.akhtar@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
+ <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
+From: "zhen.ni" <zhen.ni@easystack.cn>
+In-Reply-To: <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a985fdab9b90229kunm51918700f3967
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDShkZVkgZHk9NT08aHk8fT1YVFAkWGhdVGRETFh
+	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
+	VKQktLWQY+
 
-> Lucky for me the v6.17 merge window coincides with me moving. IOW, I'm
-> currently getting squashed by moving boxes and disassembled furniture.
+Hi,
 
-Fyi, the move is now mostly over. We're not really done yet setting
-everything up and so on but I managed to get back behind a computer for
-once. So I'm slowly trying to catch up with everything.
+During static analysis with Smatch, I identified the following issue:
+
+```
+drivers/memory/samsung/exynos-srom.c:155 exynos_srom_probe()
+warn: 'srom->reg_base' from of_iomap() not released on lines: 155.
+```
+
+Problem analysis:
+1. In exynos_srom_probe(), the reg_base resource is acquired via of_iomap()
+2. The of_platform_populate() call at the end of the function has a 
+possible failure path:
+```
+root = root ? of_node_get(root) : of_find_node_by_path("/");
+if (!root)
+      return -EINVAL; // Failure return point
+```
+3. When this path is taken, reg_base is not released, causing a resource 
+leak
+
+Verification:
+After applying the patch, the Smatch warning is resolved
+
+
+Best regards,
+Zhen
+
+
+在 2025/7/31 17:06, Krzysztof Kozlowski 写道:
+> On 31/07/2025 10:33, Zhen Ni wrote:
+>> The current error handling in exynos_srom_probe() has a resource leak
+>> in the of_platform_populate() failure path. When this function fails
+>> after successful resource allocation, srom->reg_base is not released.
+>>
+>> To fix this issue, replace of_iomap() with
+>> devm_platform_ioremap_resource(). devm_platform_ioremap_resource()
+>> is a specialized function for platform devices.
+> 
+> Don't explain us kernel code. Drop sentence.
+> 
+>> It allows 'srom->reg_base' to be automatically released whether the
+>> probe function succeeds or fails.
+> 
+> It's obvious.
+> 
+>>
+>> Besides, use IS_ERR() instead of !srom->reg_base
+> 
+> I don't understand this. You keep explaining the code and this suggests
+> you made change here not related to original case. Can you return
+> srom->reg_base here? No?
+> 
+> 
+>> as the return value of devm_platform_ioremap_resource()
+>> can either be a pointer to the remapped memory or
+>> an ERR_PTR() encoded error code if the operation fails.
+>>
+> 
+> Missing fixes and cc-stable.
+> 
+>> Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
+>> ---
+>>   drivers/memory/samsung/exynos-srom.c | 10 ++++------
+>>   1 file changed, 4 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
+>> index e73dd330af47..d913fb901973 100644
+>> --- a/drivers/memory/samsung/exynos-srom.c
+>> +++ b/drivers/memory/samsung/exynos-srom.c
+>> @@ -121,20 +121,18 @@ static int exynos_srom_probe(struct platform_device *pdev)
+>>   		return -ENOMEM;
+>>   
+>>   	srom->dev = dev;
+>> -	srom->reg_base = of_iomap(np, 0);
+>> -	if (!srom->reg_base) {
+>> +	srom->reg_base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(srom->reg_base)) {
+>>   		dev_err(&pdev->dev, "iomap of exynos srom controller failed\n");
+>> -		return -ENOMEM;
+>> +		return PTR_ERR(srom->reg_base);
+> 
+> How did you test it?
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
 
