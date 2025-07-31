@@ -1,139 +1,182 @@
-Return-Path: <linux-kernel+bounces-752371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6922AB174B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA269B174BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06F71188A312
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B5B41C21768
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BDB21516E;
-	Thu, 31 Jul 2025 16:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1207C21FF54;
+	Thu, 31 Jul 2025 16:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dZegm/RM"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="PTBofRPe"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E761DED5D
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6192154425
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753978184; cv=none; b=dmmF4G/VhlVaftwfDCRickZ1rsRPdl8efM4jBT8nPI0BplISrb8LnhiJeLDAMwjlbG+U3xKv11T4f3SOPKCob0dWGnHE6MiGRWGZoj+JAcHc6ad6N5cI6zHxu7TjIIbG0HJEjBMdJmNsRIJ5F6pGM3G+Sk5UQHGxIrMYkzpbKfM=
+	t=1753978256; cv=none; b=HDAWMRu443tb2L7Cf0/o6O1BAIS7Q1qboyxvRBcZV33w9ld83XL3Hsvg7gZaSHEZm5gQT8MYxfDzXlPjrplY1V5+8sMaNlqEJqe3pp8yv5GTDgqNIM5mVaE/+pDoU3A3iu+r++U4NE6mqfNFef1Ut+DYgq+CY9mDIdftyQ62KUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753978184; c=relaxed/simple;
-	bh=UUbVgaWG1FBSW2udf9aTCPmOnPAnABB3Ya1UbXyvUfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jsJn23FJm92MazWPljJ9XJz88EFVPp05ZSNO6fO3KOOhJf/inO9NbvKWC3g8Y2qdWh7oo+jnAcVLXROkESVsVV/29T7T9zld3MGeigUgCTh6vI0537Yu6/j0tD0ZT8Y6JdEBu0wgUv87vlw+E6ICISaMRO5D6JfDrGzeSImDIgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dZegm/RM; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31f4e49dca0so664175a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753978183; x=1754582983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v8c1vs297OuDQhw1rF/WqVEVYzpa4jaap14+9/4mG/U=;
-        b=dZegm/RMZT4fpOJyAljY872rGRhIhTwh/Q1jO1MjTsBJ3CmLDgR9/53u1eWH+/xACa
-         bkTIi9Ionq3ckaH83QaMcKwzqLKy9+hWckxale2KwDRAlRFiCyU2ifioRHdjVVSMkZKd
-         z5WAX929e2LPu1thpxJ/l5+xarQu0RifzbbDA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753978183; x=1754582983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v8c1vs297OuDQhw1rF/WqVEVYzpa4jaap14+9/4mG/U=;
-        b=P9i+VYFYUuro6DBLPN0iql2r2OLbyDT6TmcQ/YVcPoTwlh1Kco9HpQKiJ8L4fNe8iV
-         /2suXUl/V5lL37onY+zW1IXdjdP+8tezFlSl9IZGFPqUvQWbKeWhZwTtqmqvkXzF+SEo
-         3m1ZonFkr0Isd0OUi5DQ2K+GmRIVigrvEHPlcxIxMP3g62tvfpDaopeCSn6bGzZcVC67
-         vQezLRxZ0mmAMVB37TnuLkqZqCdadBW+Zona+rUBMhA5PRs6RUKeLLggmg4PFB4/KxnN
-         McFW9ST+evUAXcc3K41q87zkwJ1cMBv1mcPpgCiUaMGsjT5WcijOuUVzGKW/0cwlefL3
-         JeSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXtzrVnCqsHw3OwxNaWiLm7eF97ek3PGqRy5bRb9WnkpIESb3vNX7ZWJfuL8t9oABPX/rnn1oBdGl0+KzQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIJm4XKKllKh5hLehSIcXofExipc7vjr2z2Yq4WhEuNnVzbL6V
-	YptOaR9VcIem+fyDKpP6ULR7X/3wD3Oi8DkSK3cEtPBwp7sXDTfKvfXJD4N4tJkbprEq7iyMPgO
-	7b/0f+pMtNHOpm86ujFyZoiq164FcrJNs2rnWu2uP
-X-Gm-Gg: ASbGncsMqRUDRv7/aT+Vg6Eu26zv6PKQ2egwmB6e8PbXmnpdvqxew9tw1Bb3E7hiA6C
-	d60/Wu1E16t+znE3jb2lufM7+1LcGfmbPPvCuyVaLh88O5H3oYFQYCLDQk7Yc5BalLVXo0Kh2gD
-	Ae4M6wQGxqDg+vWn9shIatQgukSxs8bIYyq3RFD3M2SbKabDUsVWH5ihP6FW2f78nh1/5LuU2Pb
-	I1smCjmafvCHosVu8oYLAmtfoPk2r0sUQ==
-X-Google-Smtp-Source: AGHT+IH+w2hB9w50GxzxGlBRwTPS/DAt66aQNsJJcSJh0eSSExp3OpaWYiihvtaGYVhasRRauJvVuomLJpIbicNxMs8=
-X-Received: by 2002:a17:90b:3d07:b0:31f:1a3e:fe31 with SMTP id
- 98e67ed59e1d1-31f5dde8755mr12579873a91.11.1753978182602; Thu, 31 Jul 2025
- 09:09:42 -0700 (PDT)
+	s=arc-20240116; t=1753978256; c=relaxed/simple;
+	bh=GTzIpXhuJt9ZCxkKMJvT70X4dnEfvC0X5rEKRSP22O4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qQzg1lLu6PMLoGG/JwIdi2q4lK2Q4Cxi1RKDitBF70rtHVnI/ve98DRERbkUS3jyuagqUr3i2ZoTECJU/3NnwIB7kC636oAMRMgQBqmOpnU3Q5vPxk9LrA9E5KvekQddHTdqIcDj4OBtpxz/yvGKC54Of1tlyodbJ55SmfBze50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=PTBofRPe; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VBNhuc001913;
+	Thu, 31 Jul 2025 16:10:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=AC7F7aSZ9IffCIsiUEpNx/AhsUPU
+	BFRG5nFMl9MhQ9E=; b=PTBofRPeebA02tXMmXNTks7YHMYRipuBcN5p4RJY4TKD
+	Oepdwly+TUcX4meWBQDySM3ahVdNuOqtsagxcg2cAiUsPiUWorb1MMfZbrWwZIuK
+	jxzVYyQUbfz+xEAvuQeeK0S8o83rTQvlPjbQRyeXnwyi4ctZ/iVV1wy5b6rsd6I9
+	rQEW+KiCzbD2LR1IebgZspSUPWziR8IJCdK+zNLZD6aJXztan0+Z8pKDh0QmZNBH
+	J+LGdndzZhxXe2kaxUJevKhLv5EI65ObMRfLky3Xml6/WMQG2T6KqQWFsJdRyBEc
+	X5vToNAtr7gKuRURfvasV6gKSTVgs8EOKHGb9pJ14A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6j1sn6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 16:10:41 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56VG1niK019275;
+	Thu, 31 Jul 2025 16:10:40 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6j1smu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 16:10:40 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56VCYKrK028728;
+	Thu, 31 Jul 2025 16:10:39 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 485c22vwhu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 16:10:39 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56VGAaS218940160
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Jul 2025 16:10:36 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 24E552004F;
+	Thu, 31 Jul 2025 16:10:36 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D31382004B;
+	Thu, 31 Jul 2025 16:10:32 +0000 (GMT)
+Received: from li-06431bcc-2712-11b2-a85c-a6fe68df28f9.ibm.com.com (unknown [9.39.19.108])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 31 Jul 2025 16:10:32 +0000 (GMT)
+From: Donet Tom <donettom@linux.ibm.com>
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Vishal Chourasia <vishalc@linux.ibm.com>,
+        Donet Tom <donettom@linux.ibm.com>
+Subject: [PATCH] powerpc/mm: Switch MMU context on hash MMU if SLB preload cache is aged
+Date: Thu, 31 Jul 2025 21:40:27 +0530
+Message-ID: <20250731161027.966196-1-donettom@linux.ibm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250630141239.3174390-1-akuchynski@chromium.org>
- <20250630141239.3174390-6-akuchynski@chromium.org> <2025070143-safeness-prewashed-6e9f@gregkh>
- <CAMMMRMeKyi56Pha-X86BaQwcHGCx-xu5F67HCGZg=Yhxuk==OQ@mail.gmail.com> <CAMMMRMf_qc342=azkU-ceg=f-db2Z9NiONOu1_oRk8tmRL4RGg@mail.gmail.com>
-In-Reply-To: <CAMMMRMf_qc342=azkU-ceg=f-db2Z9NiONOu1_oRk8tmRL4RGg@mail.gmail.com>
-From: Andrei Kuchynski <akuchynski@chromium.org>
-Date: Thu, 31 Jul 2025 18:09:30 +0200
-X-Gm-Features: Ac12FXx94P8Xkhok4AYIXJ8K2qdSo2AVg2OAPp7s8VPn2NpKyCMBWlD2bnynfvo
-Message-ID: <CAMMMRMeYG-bvYSiE7K8AutorvyoiXypHXv_1z62Rvh_JNazd9g@mail.gmail.com>
-Subject: Re: [PATCH v2 05/10] usb: typec: Implement automated mode selection
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
-	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
-	Dmitry Baryshkov <lumag@kernel.org>, "Christian A. Ehrhardt" <lk@c--e.de>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: AQlI__8eaXMhKdwYoEHMRrMuB_H_qp-d
+X-Authority-Analysis: v=2.4 cv=Mbtsu4/f c=1 sm=1 tr=0 ts=688b9581 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8
+ a=FINkVeRlo5BJDc_9tkUA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: qTxxwih5DL7kS9UKzzfvZAzwrcxzWN2m
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDEwOCBTYWx0ZWRfX26fCvGxZwzzh
+ I7EzrPxxTYACk3kMHw2R3w7KCHVr01z2AIVO6WTYxkma9XK81vjHqZ3wlblz16eB4Fc9VV3405a
+ wiIwDBpbVM/HmSuVCUfvvxltO1v0Ae74XSGAfu0fVx3e+WPKWPQnpz2clo7SzlwIR0nTzvViZm0
+ 1Uq3262jFvAsaUIsBf7fxEehAq7uFlLQTawktjK8NIRj0s8X1ShGRUSH2dfGK6fX+vASSJNGT93
+ c5WCubiOKmfbFJfRTtWQKpUPekR+G6v671ngzZo2MvJsx6Mj64EThMRIcksP7Df/T+ttu6ADx3O
+ QH4oheAFiVAnqRnAzRLqAowKiwlFRP2ExVjThaGyFKb8VTAOqQbESWpBhDeVbTsfEPOvZehvPza
+ 80G2g7+WLC7dhkxn3dG/uiwU1+aUfsROheG2W2NdQ8Upj7+UEeA6I1yKt4Xg0vUuCJX8ykQs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-31_03,2025-07-31_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1011 adultscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507310108
 
-On Thu, Jul 24, 2025 at 10:39=E2=80=AFAM Andrei Kuchynski
-<akuchynski@chromium.org> wrote:
->
-> Proposed sysfs entries for V3:
->
-> - portN/portN.M/priority, RW.
-> This attribute assigns a unique priority to each mode. If a user
-> attempts to input a value that is already in use, the existing mode at
-> that priority will have its priority incremented by one to accommodate
-> the new input. Users cannot disable a mode via this entry; disabling
-> is handled by `active` for altmodes and `usb_capability` for USB4 mode
->
-> - portN/mode_priorities, RO.
-> Provides a prioritized list of all available modes for the port,
-> formatted as a space-separated string (e.g., "USB4 TBT DP").
->
-> - portN-partner/mode_selection, RW.
-> Write: 1/0 to trigger or cancel mode selection.
-> Read:  Provides a prioritized list of all available modes for the
-> partner. Modes currently in progress are indicated by parentheses
-> (e.g., "USB4 (TBT) DP"). Active modes are enclosed in brackets
-> (e.g., "USB4 [TBT] DP").
->
-> - portN-partner.M/entry_result, RO.
-> Represents a mode state for this altmode, e.g. "none", "active",
-> "in progress", "cable error", "timeout".
->
-> - portN/usb4_priority, RW.
-> - portN-partner/usb4_entry_result, RO.
-> USB4 mode, not being part of `typec_altmode_group`, introduces
-> additional attributes with the same meaning as alternate modes
-> attributes.
->
-> Please let me know if you have any questions, require further
-> clarification on these proposed sysfs entries, or have objections to
-> them.
+On systems using the hash MMU, there is a software SLB preload cache that
+mirrors the entries loaded into the hardware SLB buffer. This preload
+cache is subject to periodic eviction — typically after every 256 context
+switches — to remove old entry.
 
-Regarding the sysfs attributes, Heikki, do you have any suggestions or
-disagreements? Please let me know your thoughts.
+Currently, the kernel skips the MMU context switch in switch_mm_irqs_off()
+if the prev and next mm_struct are the same, as an optimization. However,
+this behavior can lead to problems on hash MMU systems.
 
-Additionally, for consistency, it would be beneficial to use names
-"DisplayPort" and "Thunderbolt3" since they are already recognized
-within the kernel. Using these full names rather than "DP" and "TBT"
-would be preferable
+Consider the following scenario: a process is running on CPU A and gets
+context-switched to CPU B. During this time, one of its SLB preload cache
+entries is evicted. Later, the process is rescheduled on CPU A, which was
+running swapper in the meantime, using the same mm_struct. Because
+prev == next, the kernel skips the MMU context switch. As a result, the
+hardware SLB buffer still contains the entry, but the software preload
+cache does not.
 
-Thanks,
-Andrei
+The absence of the entry in the preload cache causes it to attempt to
+reload the SLB. However, since the entry is already present in the hardware
+SLB, this leads to a SLB multi-hit error.
+
+To fix this issue, we add a code change to always switch the MMU context on
+hash MMU if the SLB preload cache has aged. With this change, the
+SLB multi-hit error no longer occurs.
+
+Fixes: 5434ae74629a ("powerpc/64s/hash: Add a SLB preload cache")
+Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+---
+ arch/powerpc/mm/book3s64/slb.c | 2 +-
+ arch/powerpc/mm/mmu_context.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/powerpc/mm/book3s64/slb.c b/arch/powerpc/mm/book3s64/slb.c
+index 6b783552403c..08daac3f978c 100644
+--- a/arch/powerpc/mm/book3s64/slb.c
++++ b/arch/powerpc/mm/book3s64/slb.c
+@@ -509,7 +509,7 @@ void switch_slb(struct task_struct *tsk, struct mm_struct *mm)
+ 	 * SLB preload cache.
+ 	 */
+ 	tsk->thread.load_slb++;
+-	if (!tsk->thread.load_slb) {
++	if (tsk->thread.load_slb == U8_MAX) {
+ 		unsigned long pc = KSTK_EIP(tsk);
+ 
+ 		preload_age(ti);
+diff --git a/arch/powerpc/mm/mmu_context.c b/arch/powerpc/mm/mmu_context.c
+index 3e3af29b4523..d7b9ac8c9971 100644
+--- a/arch/powerpc/mm/mmu_context.c
++++ b/arch/powerpc/mm/mmu_context.c
+@@ -84,7 +84,7 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+ 	switch_mm_pgdir(tsk, next);
+ 
+ 	/* Nothing else to do if we aren't actually switching */
+-	if (prev == next)
++	if ((prev == next) && (tsk->thread.load_slb != U8_MAX))
+ 		return;
+ 
+ 	/*
+-- 
+2.50.1
+
 
