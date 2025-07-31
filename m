@@ -1,123 +1,123 @@
-Return-Path: <linux-kernel+bounces-752375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9427EB174C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:13:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 410CDB174C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:13:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7AC2170ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:13:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40601173307
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16072223714;
-	Thu, 31 Jul 2025 16:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CF8223714;
+	Thu, 31 Jul 2025 16:13:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YO/g3ZQU"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="TO2TwJhu"
+Received: from mail-10696.protonmail.ch (mail-10696.protonmail.ch [79.135.106.96])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF99F1FDA8E;
-	Thu, 31 Jul 2025 16:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1736D481A3
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753978374; cv=none; b=uiY5LAO6byuwSrH449BzH9Y7Z3NiNu1Fdl6W5fXHmy7zI5gOdsWnmiRDkzV8aieFcxkVNhYnk9tCOG4ew32IgSSJrcXDOBtFbvDAUCDdUA95pVaZTttBTpe7bKDQpd8lJP0na0BzLhYDdFWs/C2e/gDuxKEndMPFkQVI8Abj+nA=
+	t=1753978388; cv=none; b=Gsxy43CEsPkY8p5Dp2RB5FRd3i4+rxRRN8yn0YLTKy05VWOVOfoUejf6uzFqQbpR8cayV/weR25gRyw39dhSlgZc8KNWZbtodmfKGwy/2wETeq5JFge38UcKaEOUjuVYxtzwajh9ckyBuq9PwfuUXAj+mtsiMHOo3rLbROdcHcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753978374; c=relaxed/simple;
-	bh=gNSM6zGqUrZRsYnMJQe7Za6UJQwzVnvrC3QwIkpt8r4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ep88Xamrx8LSc4Mlr9Ni8EivO7BJrvH98SGIM1I8fg2BOnkhX0P96r0r0x9bLtRLBOrq4wJTbdYEJz4PG6JGSDy67mousY23LuX3Sazj1rfJKEUaeB5RoRyo7iz1/c+h3UkpF0dNb8LCG93+b5lK7re6BasfX+AXMNjb94yrqpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YO/g3ZQU; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af91a6b7a06so170399466b.2;
-        Thu, 31 Jul 2025 09:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753978371; x=1754583171; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xHS4hiX+qVisM233YfJkSDJSauegSg9zG27O8j1/3Rk=;
-        b=YO/g3ZQUsAXkFLQpvgCvQMqTU7uM9KrivLNZ0wcpMlkjKaBMDX3kq1FXVJvT4Pzags
-         VECa5YELU39u1AGxt7TAG2NKFxtYoyCilVgn2z5sizmnNMbLLoTAa9Zk+3yLYEXxF54h
-         BNTnARoMGUy12pPOairEkK0Pw813YWhGXj9waY8vGCZyxZCmSM25Dzhoq3PhcqeJ1/tz
-         dY/BtkYNHl+R5qyXny43PxYc3gQTuo19/onBlPCh+vudmBi1tjWksmF+KqGjUiwq4XPF
-         3hNlkgRyXnfbbhO9BcVc6kYQc+AT9l8h2aoACkghHqDxQ9XpYLneR8Ua1ovWWeibnBeD
-         4bPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753978371; x=1754583171;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xHS4hiX+qVisM233YfJkSDJSauegSg9zG27O8j1/3Rk=;
-        b=HfKprwc7liS4oxfrTZVC3Yr8KZi8fLkl7McxFk73hOAgYMTQ7IxWUx3YZboYuZJBxv
-         ZYp+zXNj4HvN69+oHGr2DlTA+bjQ1PaIvphT1yuXNY2L1YXi0LRN/nyhdBKUTyMAFTKR
-         UG0nMz8BD86cxX55Ah6mZ2b2kw64Xcb3u8dy6cjpNwvjS31efDaYbGW+wKS2HVCuYL3a
-         o+AzqeROqTcQEONhrFU4AXd2imlHvD0hgtTIaYcMpRcshoV+diZa5wUNYbbY7PovLB8x
-         sVrVOaLQidAiErCS9KoAMjvO1QxNNCemKgivg5p2EuTyDSuC4Hr+QIuwnq7A0Fd5vt7/
-         b2+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVsb+bUQL8CYMv+RLDmILe0lE0+sjcVFmRlgj8BJE4+JQIRBXHe/I0i02Y6MG10p6ELLVNteerbWCgjgBzRY6qL@vger.kernel.org, AJvYcCXX0EPqZhohXdQERw0DR/09RbHuU462JBeyoQpT1UH4vbz/MmLuMvm2wc1VohP9Esz290p3cZb7FntVMFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKmGPs0OZ70bvYZ5lfyb/4ZnUboGznwFeoICUoMRvV6SPeepXY
-	Ph99/nVSyfEJ1kz4iiI/h53awEyGY4DY1Y06OXbaWBQ34MgKAp7AUucUMQMocNjFYBjQJtvB20/
-	f9yaKeENvk/6nDp6hPrp+Ew8NQn37crc=
-X-Gm-Gg: ASbGncvcFMssmbK/CL6w2LmGjJy2VxRO2cupaNLHiBoDnVj38A/8nVqzVPzZHqcICzI
-	Z7GZwcHSr2mYoGdMe0U/6783SoGJsz0Q3kccyOenZIg0wCXSdHZMpdJ3AwG0bgZpwSifIcL6X9M
-	GdN+hNT95w9X9EEbYkHYrg7hYYOmPQ/pTbjyA4x/fg0MXqNV+b6e/PVGWFC8pw+grdu/9R9eMWe
-	Uj9EAItwMCPMZhebKx6EvPyf8TIF3tGq1xw9+9d
-X-Google-Smtp-Source: AGHT+IHzwWlmwlPhofR9vtCOjturw1dP55qMgSVbqBO3f2zFd/BL0vru7pfUMcsvroa/FhjGmEiwPsiEwaxaastVyKw=
-X-Received: by 2002:a17:907:724b:b0:ae0:d019:dac7 with SMTP id
- a640c23a62f3a-af8fd773bc2mr943475366b.23.1753978370805; Thu, 31 Jul 2025
- 09:12:50 -0700 (PDT)
+	s=arc-20240116; t=1753978388; c=relaxed/simple;
+	bh=aI1FVzVfrDeaTWiVhLom4GmGgm/c+7E5j1bMQKatl6I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CSZGyL5seOLCSK9twBRIXqBT/5OoAtC1YJQ2A21+TLoSsNGmUMMPmenrafs0NYw3fgn8koveWFNLwQwGM1VgF86KK6Vf4Ax8V1/dFnUmP3BggIb7YI020aualIOQ82MnbFsH/kq+gNf1V45oBkGKHufoYP6DYi+qfHOVW9pMD/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=TO2TwJhu; arc=none smtp.client-ip=79.135.106.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1753978378; x=1754237578;
+	bh=ReuuQ2WpSSBdPU9V3Nd3gVcOly6NwjGCUI1vmWY1pPU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=TO2TwJhu29yI/BivJboZ0hx4f3XWM3A5FIhGKSHp7vHPDYn6xkEyw8psOXFdl0a9H
+	 UfXJfNMDoWdJfteBeHEXuwcIadbQmHA17U0IFQ75/TBe7+ioxJNGGgLVJXhar0S+zc
+	 yi2w7Ic0S9tDiF9cDwmzKpWCzv4NGRIEPBVH1HoClVUUqjXKdBSdiMGaHTotgN2VR+
+	 3imjLB5STLw9+V46WamkEYOCB5enUTMcPvuCzWq9tF130uMrP+uzMYb7cauWXAaRWX
+	 X/kvyAe+k7KQVqugFrMTbhw2yhJ627C8S7mcVh3ZX5DnYllkEeSNZZmbbGsliMw27m
+	 CsC+VTpCA9Lvg==
+Date: Thu, 31 Jul 2025 16:12:52 +0000
+To: Jiri Slaby <jirislaby@kernel.org>
+From: Jari Ruusu <jariruusu@protonmail.com>
+Cc: Yi Yang <yiyang13@huawei.com>, GONG Ruiqi <gongruiqi1@huawei.com>, Helge Deller <deller@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Sasha Levin <sashal@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, "stable@vger.kernel.org" <stable@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Text mode VGA-console scrolling is broken in upstream & stable trees
+Message-ID: <7_oOa5sZXTsEK5rGL7HpT4HfjvhfpGa8r69NDAZWuKTxWP1ONLD9yDbrfJ3nzfducuK8TpC-fF1llnfVjpGHzdmhdzDq7FvvoOYU9eEX9Uc=@protonmail.com>
+In-Reply-To: <a1d0172f-5f3c-4f3e-9362-d9de0192e8b2@kernel.org>
+References: <C4_ogGo3eSdgo3wcbkdIXQDoGk2CShDfiQEjnwmgLUvd1cVp5kKguDC4M7KlWO4Tg9Ny3joveq7vH9K_zpBGvIA8-UkU2ogSE1T9Y6782js=@protonmail.com> <a1d0172f-5f3c-4f3e-9362-d9de0192e8b2@kernel.org>
+Feedback-ID: 22639318:user:proton
+X-Pm-Message-ID: f232cd1324770b9f5fd19ca58bf498644d43c660
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728160304.929942-1-vishistriker@gmail.com>
- <CANDhNCpp5DxzRufL9iVj8p0tpNSXG7WPEcTDpLbb2TzrY9HyOw@mail.gmail.com>
- <CAEOVoRwsHdAmn1d_SekD+ddWeUDJCooNsK_wDHxEyvtqkDXQZw@mail.gmail.com> <877bzoihsb.ffs@tglx>
-In-Reply-To: <877bzoihsb.ffs@tglx>
-From: Vishal Parmar <vishistriker@gmail.com>
-Date: Thu, 31 Jul 2025 21:42:38 +0530
-X-Gm-Features: Ac12FXz7w34-A-6I7UybI_pM8uVm8mpdtUN1ptsLyQ-s4j4fIadS69IIVh9buTs
-Message-ID: <CAEOVoRxst5dJendvy-rG7+WFj1C2VtFXZP-iKQmfxC8Tr+A4dg@mail.gmail.com>
-Subject: Re: [PATCH] selftests: timers: improve adjtick output readability
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: John Stultz <jstultz@google.com>, shuah@kernel.org, anna-maria@linutronix.de, 
-	frederic@kernel.org, sboyd@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-hi Thomas,
+On Thursday, July 31st, 2025 at 10:22, Jiri Slaby <jirislaby@kernel.org> wr=
+ote:
+> At the time this was posted (privately and on security@), I commented:
+> =3D=3D=3D=3D=3D
+>  > --- a/drivers/video/console/vgacon.c
+>  > +++ b/drivers/video/console/vgacon.c
+>  > @@ -1168,7 +1168,7 @@ static bool vgacon_scroll(struct vc_data *c, uns=
+igned int t, unsigned int b,
+>  >                                    c->vc_screenbuf_size - delta);
+>  >                       c->vc_origin =3D vga_vram_end - c->vc_screenbuf_=
+size;
+>  >                       vga_rolled_over =3D 0;
+>  > -             } else
+>  > +             } else if (oldo - delta >=3D (unsigned long)c->vc_screen=
+buf)
+>  >                       c->vc_origin -=3D delta;
+>=20
+> IMO you should also add:
+>     else
+>       c->vc_origin =3D c->vc_screenbuf;
+>=20
+> Or clamp 'delta' beforehand and don't add the 'if'.
+> =3D=3D=3D=3D=3D
+> That did not happen, AFAICS. Care to test the above suggestion?
 
-> Please do not top-post and trim your replies.
-Thanks, I learned about this netiquette today.
-I hope this reply is in the correct format.
+My reading of the code in vgacon_scroll() is that it directly
+bit-bangs video-RAM and checks that scroll read/write accesses
+stay in range vga_vram_base...vga_vram_end-1.
 
-> The point John was making:
->
-> >> So it might be worth looking into getting the output to be happy with
-> >> TAP while you're tweaking things here.
->
-> The kernel selftests are converting over to standardized TAP output
-> format, which is intended to aid automated testing.
->
-> So if we change the outpot format of this test, then we switch it over to
-> TAP format and do not invent yet another randomized output scheme.
+Checking that c->vc_origin end up being >=3D c->vc_screenbuf is
+wrong because in text mode it should be index to video-RAM.
 
-oh okay, please ignore this patch. no need to review it further.
+Quote from original "messed up" patch, fix for CVE-2025-38213:
+> By analyzing the vmcore, we found that vc->vc_origin was somehow placed
+> one line prior to vc->vc_screenbuf when vc was in KD_TEXT mode, and
+> further writings to /dev/vcs caused out-of-bounds reads (and writes
+> right after) in vcs_write_buf_noattr().
+>=20
+> Our further experiments show that in most cases, vc->vc_origin equals to
+> vga_vram_base when the console is in KD_TEXT mode, and it's around
+> vc->vc_screenbuf for the KD_GRAPHICS mode. But via triggerring a
+> TIOCL_SETVESABLANK ioctl beforehand, we can make vc->vc_origin be around
+> vc->vc_screenbuf while the console is in KD_TEXT mode, and then by
+> writing the special 'ESC M' control sequence to the tty certain times
+> (depends on the value of `vc->state.y - vc->vc_top`), we can eventually
+> move vc->vc_origin prior to vc->vc_screenbuf. Here's the PoC, tested on
+> QEMU:
 
-> For the success case, the actual numbers are uninteresting. In the
-> failure case it's sufficient to emit:
->
->         ksft_test_result_fail("Req: NNNN, Exp: $MMMM, Res: $LLLL\n", ...);
->
-> In case of regressions (fail), a report providing this output is good
-> enough for the relevant maintainer/developer to start investigating
-> No?
+To me that sounds like the bug is in TIOCL_SETVESABLANK ioctl().
+It should not be changing c->vc_origin to point elsewhere
+other than video-RAM when the console is in text mode.
 
-yes understood, thanks for the explanation.
+How about adding a check to begining of vgacon_scroll() that
+bails out early if c->vc_origin is not a valid index to video-RAM?
 
-Thanks,
-Vishal
+--
+Jari Ruusu=C2=A0 4096R/8132F189 12D6 4C3A DCDA 0AA4 27BD=C2=A0 ACDF F073 3C=
+80 8132 F189
+
 
