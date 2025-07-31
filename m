@@ -1,133 +1,98 @@
-Return-Path: <linux-kernel+bounces-751945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0EF1B16FB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:40:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B83E0B16FBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43C511890CA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:41:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13D237B36F7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C8D225A38;
-	Thu, 31 Jul 2025 10:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9390A225417;
+	Thu, 31 Jul 2025 10:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b="eVACV8He"
-Received: from sinmsgout03.his.huawei.com (sinmsgout03.his.huawei.com [119.8.177.38])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H+yuWJcN"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B42113B284;
-	Thu, 31 Jul 2025 10:40:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=119.8.177.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD0E20AF9C;
+	Thu, 31 Jul 2025 10:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753958443; cv=none; b=Xv2/V4m0jkLc5t1ifIJBer1zK2eSY88gs1mk44WX63Yi8SHzB+a93IWHIWdUm8PLa2pBPszuI/W+sAoLjtFQ6UnF6alo9MZCXflB8z6h6Fb8n0g55kB6xeeri/w/pJ0AO9HGRViPhTCxnHh2CaLhRV709z5+HD6o35m6sfNZ9Lg=
+	t=1753958524; cv=none; b=HZF3lR2H4wemVHRpcKnGZUPuHU+Cnk/Bks4V/zIwaKAVvrLCS9avsHpMc+DPVvujK1tRKr7G+gc2hnMFWMRClKSYMHWXFROy7vrWu317t6v2gPh9lvbrNRaZEREFxwQHwMaPKXjb5UAonCKcu0S75yjTqdLSYJNw14MnE8u9VXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753958443; c=relaxed/simple;
-	bh=+wJssKv4e7UyzpwRDkCiJ5WGBV31Ks8I2JWVKGV7Pns=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nMXCwtA43A/wjv8gsPRo5n8hq+szAVkCxG9OaaTA/CouCKe25nhcKAg0zUwvNxux6v0MLxTBoHVTdERoLE6u1xovmR0C98rYbxih2PbQqdwCuzrRvD0z96D7JStcGXQCdW8a98HSCXNdPypdyTiijOEAtM5bD5ckM2NZ+bqxi4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; dkim=pass (1024-bit key) header.d=huawei.com header.i=@huawei.com header.b=eVACV8He; arc=none smtp.client-ip=119.8.177.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-dkim-signature: v=1; a=rsa-sha256; d=huawei.com; s=dkim;
-	c=relaxed/relaxed; q=dns/txt;
-	h=From;
-	bh=b8FdFV7RBSfnH3zcisKWjNGIFNA1AIhN1FHFQh4X284=;
-	b=eVACV8HeH5ntk82EoCcT+opWY0Lv6x5aXTKbwhLSwEgX4IueO/vghmWDhPXOxEse4k7sXJKoH
-	qw8lnlpXgwE52aUHa6UBdl0AjxIcwHKW2jdwq+X3UyCQKwBRGC4/XlDfDzmBB8xffyghetKYQ9c
-	be3XQikWpzrAS7XaC21vI1Q=
-Received: from frasgout.his.huawei.com (unknown [172.18.146.37])
-	by sinmsgout03.his.huawei.com (SkyGuard) with ESMTPS id 4bt5D83M2szN121;
-	Thu, 31 Jul 2025 18:39:04 +0800 (CST)
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bt58z3Mtkz6HJfg;
-	Thu, 31 Jul 2025 18:36:19 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id F344314038F;
-	Thu, 31 Jul 2025 18:40:34 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 31 Jul
- 2025 12:40:34 +0200
-Date: Thu, 31 Jul 2025 11:40:32 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-CC: <linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>, "Suzuki K
- Poulose" <Suzuki.Poulose@arm.com>, Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
-	Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 35/38] coco: guest: arm64: Add Realm device start
- and stop support
-Message-ID: <20250731114032.00007c72@huawei.com>
-In-Reply-To: <20250728135216.48084-36-aneesh.kumar@kernel.org>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
-	<20250728135216.48084-36-aneesh.kumar@kernel.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1753958524; c=relaxed/simple;
+	bh=qRkWUT21KCGiimgUoK6QG0N/s/cSD0B0lcRtMsovMVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mpO8nCpbT6kTZ0KM7WwPoaYnrQwvMwrWr9877vEuzqrqlIHNTtGHTJbKLA5X6yRrylHcMrIgMDvhU2vc/efS2XTq/m6yN6cKAPRciomSE7dvn/86iM1AyIv/dCYyO9yMG8jQKji+4C1mkV+wpewW83cOJdmboQsreoeJffkxcx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H+yuWJcN; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6E5B91F68D;
+	Thu, 31 Jul 2025 10:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753958520;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Lq/eijQgI55h142GKNEKrN3qWvYFmQuBOjaMycA3eaA=;
+	b=H+yuWJcNrffRFeKD6s/SMGLFOmhg7j/wBX7PIUdVhbUHrTkAWe6XLchIdTgJIWq7iz3Iey
+	oY4a1AzAJssYtxjTlf9PmcKzjBLMU4N/b82VcADg1qjZeuBCcslKFaYlgA/WAV531QRSNx
+	+RTt7ThNW8tbsKHr3EugMzwwrPo5N6NnyV9/h7obOLtR1WHHmu93IpCOW5+wM31fUjIUus
+	Hi0REZYmhX8wXG6qxa/HVjzYILRgIeb6YC0ukHbqBrM1Q89tFU0C4gKK963FOxOe9yWjif
+	ttJEa3FKkbltyy75yVsIbUb5vRdZiLpITHTg2HOtTNUB8vIN5cef6NERxL9H9A==
+Date: Thu, 31 Jul 2025 12:41:58 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Fixes tag needs some work in the i3c tree
+Message-ID: <20250731104158beab8423@mail.local>
+References: <20250731094944.4c547f36@canb.auug.org.au>
+ <aIsg4Supas6vh8er@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIsg4Supas6vh8er@shikoro>
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutddtiedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeeiudeuteehhfekgeejveefhfeiudejuefhgfeljefgjeegkeeujeeugfehgefgnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudegmeehheeimeejrgdttdemvgdtfhgvmeegfhdvfhemvdelvgegmeehudejtgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudegmeehheeimeejrgdttdemvgdtfhgvmeegfhdvfhemvdelvgegmeehudejtgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepiedprhgtphhtthhopeifshgrodhrvghnvghsrghssehsrghnghdqvghnghhinhgvvghrihhnghdrtghomhdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdpr
+ hgtphhtthhopegsohhrihhsrdgsrhgviihilhhlohhnsegtohhllhgrsghorhgrrdgtohhmpdhrtghpthhtohephfhrrghnkhdrnfhisehngihprdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Mon, 28 Jul 2025 19:22:12 +0530
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
-
-> Writing 1 to 'tsm/acceept' will initiate the TDISP RUN sequence.
+On 31/07/2025 09:53:05+0200, Wolfram Sang wrote:
+> Stephen,
 > 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> > Maybe you meant
+> > 
+> > Fixes: 733b439375b4 ("i3c: master: Add inline i3c_readl_fifo() and i3c_writel_fifo()")
+> 
+> Absolutely correct. This is likely my fault, sorry for mixing up my
+> branches :( And thank you for pointing it out!
+> 
 
-A few more trivial things on this first read through.
+I removed the Fixes tag yesterday as the commit is going to be in the same PR as
+the one it is fixing.
 
-Jonathan
-
-> diff --git a/drivers/virt/coco/arm-cca-guest/rsi-da.c b/drivers/virt/coco/arm-cca-guest/rsi-da.c
-> index 936f844880de..64034d220e02 100644
-> --- a/drivers/virt/coco/arm-cca-guest/rsi-da.c
-> +++ b/drivers/virt/coco/arm-cca-guest/rsi-da.c
-
-> +int rsi_device_stop(struct pci_dev *pdev)
-> +{
-> +	int ret;
-> +	struct cca_guest_dsc *dsm = to_cca_guest_dsc(pdev);
-> +	int vdev_id = (pci_domain_nr(pdev->bus) << 16) |
-> +		PCI_DEVID(pdev->bus->number, pdev->devfn);
-
-Feels like this occurs so often we should add a helper.
-Can't be completely generic as pci_domain_nr can have more bits
-than I guess we are assuming here, but we can have something for
-use in the rsi code.
+> All the best,
+> 
+>    Wolfram
+> 
 
 
-> +
-> +	ret = rsi_rdev_stop(pdev, vdev_id, dsm->instance_id);
-> +	if (ret != RSI_SUCCESS) {
-> +		pci_err(pdev, "failed to stop the device (%u)\n", ret);
-> +		return -EIO;
-> +	}
->  	return 0;
->  }
-> diff --git a/drivers/virt/coco/arm-cca-guest/rsi-da.h b/drivers/virt/coco/arm-cca-guest/rsi-da.h
-> index 0d6e1c0ada4a..71ee1edb832e 100644
-> --- a/drivers/virt/coco/arm-cca-guest/rsi-da.h
-> +++ b/drivers/virt/coco/arm-cca-guest/rsi-da.h
-> @@ -54,5 +54,5 @@ static inline struct cca_guest_dsc *to_cca_guest_dsc(struct pci_dev *pdev)
->  int rsi_update_interface_report(struct pci_dev *pdev, bool validate);
->  int rsi_device_lock(struct pci_dev *pdev);
->  int rsi_device_start(struct pci_dev *pdev);
-> -
 
-Tidy this up.
-
-> +int rsi_device_stop(struct pci_dev *pdev);
->  #endif
-
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
