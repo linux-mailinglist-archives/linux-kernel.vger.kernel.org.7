@@ -1,161 +1,107 @@
-Return-Path: <linux-kernel+bounces-752160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 542A3B17200
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:26:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DECB1720A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703A5585A58
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:26:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0F31AA88E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E662C08C1;
-	Thu, 31 Jul 2025 13:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8F82D12F4;
+	Thu, 31 Jul 2025 13:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5NuxDTc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="bQFaVW1u"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25324A94A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753968406; cv=none; b=X0nKPMtLzeeExHR2FKSQHjjHSmNwzXPJEQ6qtVL7omlLuPbb590gtcl65bIUWzhEVdHj0F2xYCxETDGwyc67DZjHB02O7wlQ/qt5pvG6NjFD3hqRG/27c/YluHtOoXR+xieXb90BVobbchwfq8R7mgnsXcqOR/nv+I+0ghePnh4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753968406; c=relaxed/simple;
-	bh=lCLyuq53vp4e9L0JS6snSzvaxB/qbfCtw9F8FZNhjCY=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C832C1597;
+	Thu, 31 Jul 2025 13:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753968468; cv=pass; b=roNDtHZ/AHNY9v9i1qXsRG4FQQbgetfqg+zKhWVeSe9bzu2HscUdfGds8UTLP0ArvE9tdQWp/NgyMEQtAZgCCDkeBaDtENezRfUcdSy92Dy+OKUSONyolOaM35flO2ZPN9+5NNZlF5YKNRwnyjFB9AUI1emy2omdTYb3GHmTEmk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753968468; c=relaxed/simple;
+	bh=COOo3jiK9lz3rMXgTzpbFodohMhA2czPItwQ82+elrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E3ODP3qT47V7Je1bYiVRBQ7FyqXtomp2jhoMkMPcL0K3Qdkv5eVFvO4cXLUZ9VuK+5On6DENaWK42OH2ZSPqS5tZtySojQXTiM9BkmCaCjfVtM0C43LQ40YMsYAM2MGgOfopRHz8lNiRVTuFKeYE9c0Cz3cC5jgtYtdiBmfix3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5NuxDTc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B9DC4CEEF;
-	Thu, 31 Jul 2025 13:26:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753968405;
-	bh=lCLyuq53vp4e9L0JS6snSzvaxB/qbfCtw9F8FZNhjCY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p5NuxDTcXtwhVbrPCDjI9v84xzkZE1D4MgiqhNUUPu/gRixKgIWZ8nST23lDwSq8o
-	 NJfzQkkpEdU3WbxcjV8YHQhWXMM9deH23bMcomOQ2H1/DmZBurj+h1cU6NHA4WOPNp
-	 hJObCrnm3foM2HWZTF6WRJAdowTq2g4N+R8d6fVcpDjbdB5CL4a3d53MfQJDVrgOTt
-	 6pHWiOkUyuKbd/MgNwm86u2zNUwKrnXpulzKa4grmf3LPESruiJ0s99GOkKBhOp5no
-	 +4xkPmIPkkkOqjsg8ujFPrteCybIDGn4c3WB+3cKfpFYeqhDkxjGcWrITdG6RZnbPm
-	 /UrMSq8zPJr2Q==
-Date: Thu, 31 Jul 2025 15:26:42 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Louis Chauvet <louis.chauvet@bootlin.com>
-Cc: Jyri Sarha <jyri.sarha@iki.fi>, 
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/14] drm/tidss: dispc: Convert to FIELD_* API
-Message-ID: <20250731-powerful-termite-of-inspiration-13f36d@houat>
-References: <20250730-drm-tidss-field-api-v1-0-a71ae8dd2782@kernel.org>
- <15f0b568-3d59-4f0c-b390-4e3d3623136a@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DSjqYpcbZpI9BcZl4Bbsz6HvzcOwCstc3Av53Jx4Z7SPysDwXs4xpMcdyfUKrIN4YsjxUN9JXDuxhfuPosWrpoew7aBMhiNHDh70gc/3VVfLVLehmUomqRxgKq2tOGQ+GuI/3K5EwP0DLJGiFQlgkGrGv+N4YXz05/0q3mCE0Ws=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=bQFaVW1u; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1753968430; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Wd157ipHbyNwRd7zSLEBZrjL1NwE7wlcP7m29JHZAl4aMg4StR8Ewkw/JhmY3EjbCNZNTXM4DQXv54EwRb4mHSAJdQXOp9b946vc5Z+TwmfAZjnDqfaiokG8wLtxt09CtEEy3wCY7TuJUy475xOAMr0MA9lAyH7meSZGglcEQ4w=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1753968430; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=COOo3jiK9lz3rMXgTzpbFodohMhA2czPItwQ82+elrw=; 
+	b=c/93OTp41HKxDz/ybAc59tvWucKS6YrIVxmfDdwX8QaU9UxYAyo4Ji6EYjsg5M4l2H312fi/hVX77IDTyZMrhseiy96V2y9yNdUTFkza1BSbHaMUmlWX/UJ6jsoIcdVHtwCp7LVgd/cTkF+Ab9q4vIr3aAjRvF+OTvP+KdH1Ma8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753968430;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=COOo3jiK9lz3rMXgTzpbFodohMhA2czPItwQ82+elrw=;
+	b=bQFaVW1uRX2HVR53bZ84cWiKsIqBWo72ciak7k08lk82m40VDwUpzVYL1XfVLSdE
+	JUYf2Q+Smzow4HogkIHAASadzJPcBckDF0tYa0enXzQcSKhatZxAHMZh789ELm1YIjU
+	RMfLfnh1WJ0PdHjyEypz5p2GbA+yd1z1NcAUUGYE=
+Received: by mx.zohomail.com with SMTPS id 1753968428292555.3333899104606;
+	Thu, 31 Jul 2025 06:27:08 -0700 (PDT)
+Received: by venus (Postfix, from userid 1000)
+	id 1F6881807CE; Thu, 31 Jul 2025 15:27:03 +0200 (CEST)
+Date: Thu, 31 Jul 2025 15:27:03 +0200
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Alexey Charkov <alchark@gmail.com>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonas Karlman <jonas@kwiboo.se>, kernel@collabora.com, linux-pm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Ye Zhang <ye.zhang@rock-chips.com>
+Subject: Re: [PATCH v6 0/7] RK3576 thermal sensor support, including OTP trim
+ adjustments
+Message-ID: <iafobb7h4nphjcujm34gig6vwlzfveegwewpayehb4h3tayzgv@bxpdfmhf2hfa>
+References: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
+ <14c91ee4-3a09-4ec9-966f-0d563d7c8966@linaro.org>
+ <CABjd4YzJeNf0Qq9qFeMcoYQV5erZGUeOpmJynRW88AeL9dJNhQ@mail.gmail.com>
+ <3560770.QJadu78ljV@diego>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="livjto5renz64lpa"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <15f0b568-3d59-4f0c-b390-4e3d3623136a@bootlin.com>
-
-
---livjto5renz64lpa
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <3560770.QJadu78ljV@diego>
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 00/14] drm/tidss: dispc: Convert to FIELD_* API
-MIME-Version: 1.0
+X-ZohoMailClient: External
 
-Hi Louis,
+Hi,
 
-On Thu, Jul 31, 2025 at 03:04:49PM +0200, Louis Chauvet wrote:
-> Le 30/07/2025 =E0 10:57, Maxime Ripard a =E9crit=A0:
-> > Hi,
-> >=20
-> > The tidss driver rolls its own API equivalent to the FIELD_* API already
-> > provided the kernel.
-> >=20
-> > Since it's an ad-hoc implementation, it also is less convenient and
-> > doesn't provide some useful features like being able to share the field
-> > definitions that will come handy in the future.
-> >=20
-> > Thus, this series converts the driver to that API and drops its own
-> > version.
->
-> I just saw your series after sending mine [2]. I checked, there is only o=
-ne
-> minor conflict that can be easly fixed.
+On Thu, Jul 31, 2025 at 10:11:23AM +0200, Heiko St=FCbner wrote:
+> Right now we're in the middle of the merge-window though, so everything
+> I apply now, I'd need to rebase onto -rc1 in slightly more than a week,
+> invalidating all those nice commit hashes that end up in the "applied" =
+mails.
 >=20
-> But when applied on drm-misc/drm-misc-next, your series raises:
->=20
-> In file included from <command-line>:
-> drivers/gpu/drm/tidss/tidss_dispc.c: In function 'FLD_MOD':
-> ././include/linux/compiler_types.h:568:45: error: call to
-> '__compiletime_assert_589' declared with attribute error: FIELD_PREP: mask
-> is not constant
->   568 |         _compiletime_assert(condition, msg, __compiletime_assert_,
-> __COUNTER__)
->       |                                             ^
-> ././include/linux/compiler_types.h:549:25: note: in definition of macro
-> '__compiletime_assert'
->   549 |                         prefix ## suffix();         \
->       |                         ^~~~~~
-> ././include/linux/compiler_types.h:568:9: note: in expansion of macro
-> '_compiletime_assert'
->   568 |         _compiletime_assert(condition, msg, __compiletime_assert_,
-> __COUNTER__)
->       |         ^~~~~~~~~~~~~~~~~~~
-> ./include/linux/build_bug.h:39:37: note: in expansion of macro
-> 'compiletime_assert'
->    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), m=
-sg)
->       |                                     ^~~~~~~~~~~~~~~~~~
-> ./include/linux/bitfield.h:65:17: note: in expansion of macro
-> 'BUILD_BUG_ON_MSG'
->    65 |                 BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),
-> \
->       |                 ^~~~~~~~~~~~~~~~
-> ./include/linux/bitfield.h:115:17: note: in expansion of macro
-> '__BF_FIELD_CHECK'
->   115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: =
-");
-> \
->       |                 ^~~~~~~~~~~~~~~~
-> drivers/gpu/drm/tidss/tidss_dispc.c:599:33: note: in expansion of macro
-> 'FIELD_PREP'
->   599 |         return (orig & ~mask) | FIELD_PREP(mask, val);
->       |                                 ^~~~~~~~~~
->=20
->=20
-> This seems to be a limitation of FIELD_PREP [1].
-> I think the only way to avoid this issue is to use macros and not functio=
-ns.
->=20
-> [1]:https://elixir.bootlin.com/linux/v6.16/source/include/linux/bitfield.=
-h#L65-L66
-> [2]:https://lore.kernel.org/all/20250730-fix-edge-handling-v1-0-1bdfb3fe7=
-922@bootlin.com/
+> So I'm struggling with myself on every merge window about that.
 
-Weird, it compiles without warning for me here. Which compiler do you use?
+Your are not supposed to merge anything to your for-next branch
+during the merge window anyways. See first sentence of Stephen
+Rothwell's mails [0]:
 
-Thanks!
-Maxime
+> Please do not add any v6.18 material to your linux-next included
+> branches until after v6.17-rc1 has been released.
 
---livjto5renz64lpa
-Content-Type: application/pgp-signature; name="signature.asc"
+[0] https://lore.kernel.org/all/20250731133311.1a3e3867@canb.auug.org.au/
 
------BEGIN PGP SIGNATURE-----
+Greetings,
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaItvEgAKCRAnX84Zoj2+
-doX8AYCMBVPvxu8o9TOyCn7lBbNCgS3knFU+dNmItt8BbDwrf771Slu0wBc/AS26
-rS5kbMgBgLJs0oaq3MszcBvisk3p+uCLxfQLOTUpTXrXdigK3eR7LEZz6ewrk7Gn
-ZafbXk/c4g==
-=Oj/Q
------END PGP SIGNATURE-----
-
---livjto5renz64lpa--
+-- Sebastian
 
