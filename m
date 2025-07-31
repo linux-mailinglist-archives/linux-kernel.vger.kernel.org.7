@@ -1,92 +1,129 @@
-Return-Path: <linux-kernel+bounces-751801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8E7B16DA2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E85BB16DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 424877AE2C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:34:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1B387B302F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:35:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0981B29DB77;
-	Thu, 31 Jul 2025 08:35:23 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E1129CB5A;
+	Thu, 31 Jul 2025 08:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="0vA0tvCc"
+Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB2C3597E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E5CF20C009
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753950922; cv=none; b=hWDoUI2KnLZBba25JApuNhmaLYenbB3QDCKfzWXnYroxvWmQ9e6P08lHJ+G3yaPgmm4jKoz4NmJ7olYGQ1jtOYTqBxM+wClZeDs8sK/0jwNl5p7c6eJvk7DMQ+SfSv+ctOqhqwy7HAhSvGejGYEBrVQKb07ayHvWred7HW9Giqg=
+	t=1753951027; cv=none; b=Ghk9qZHAlbmPQDYLrzrE+Zwzc9xiMxcdAVvd51kzV4GX2Qi1Zh9/r0ZyffvZoqj3YIvHIkXjsJNHm0X92YOsXDkDn4SrEh0TpZ9Lumdx8PLUd3CAEKSvAqt3OEdyg4nkFIZwajk1qftgXrHZsnNqQMInurmy8Vzj2uJ3xvHIRSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753950922; c=relaxed/simple;
-	bh=9ZzfdDqkqPAnIGIP9V1bnNr9rTdSPGJsjPzr9hqHgQM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wi8nS1qnVeDRfK4Ac6L0/YJ9YyCH9wa94bSOV6iLk2YIjUtfpownjWtcGzfCq/p4QRUQn4WVAKxWXUxSwKw9Y0qQihTJvYY/4O55jV2LMCDluImPgqfV6q1sG/pLV60XRWuFFsb7F/HJtLfpZ7l9yvz+EjUPn2461hFiPpdRJUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BAD0C4CEF7;
-	Thu, 31 Jul 2025 08:35:19 +0000 (UTC)
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tomas Winkler <tomasw@gmail.com>,
-	Alexander Usyskin <alexander.usyskin@intel.com>,
-	Raag Jadav <raag.jadav@intel.com>,
-	Jani Nikula <jani.nikula@linux.intel.com>
-Cc: linux-mtd@lists.infradead.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] mtd: MTD_INTEL_DG should depend on DRM_I915 or DRM_XE
-Date: Thu, 31 Jul 2025 10:35:14 +0200
-Message-ID: <def775b1d7afe43720d2a1778735e764a01cb017.1753950712.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753951027; c=relaxed/simple;
+	bh=d6vv6eakRyIvuGiDTGqAt739nwa+GVzji5Ne7c0xBtc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ifwWZfjGA0Ym8g+HTy5v7CprK/NC8kZ6bDVhVbazH1kAoJYl7+MSh6BT2e5QRXlKYnGkvwbDS2+z9QtJxg3u2sj6+SB9UriNDfyQIaAOa1xGsOmEWQVIs4gpuyBcF6P0IJDrE966mZT+NqahpH1paQ5/FqI4ejd9TumFJcEn0aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=0vA0tvCc; arc=none smtp.client-ip=44.202.169.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6001b.ext.cloudfilter.net ([10.0.30.143])
+	by cmsmtp with ESMTPS
+	id hDRguvWofcOgkhOmYumt4x; Thu, 31 Jul 2025 08:36:58 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id hOmXuM6sdWvdBhOmXuePFT; Thu, 31 Jul 2025 08:36:57 +0000
+X-Authority-Analysis: v=2.4 cv=cZfSrmDM c=1 sm=1 tr=0 ts=688b2b29
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=v0eEEZAoNUg_BbrKGCsA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=Wh1V8bzkS9CpCxOpQUxp:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=tc+flYPvwVIjvmZiDyrWijlUd6u0n/v8BfGnNJ0OMJ8=; b=0vA0tvCceErZnzHg2aG1u0rtCk
+	NIdiTGLrUNSbCoi/YXZO1UEBVDMvYaacHdDTUm8WcLsKdyN2siu5vJmIarzIqy2Ggf8t0PfFoVFNb
+	fMJtIP6a8Ghmx+Qtk+XH2Cy9+j9/liOFi+9FewmM+J1e6DbLArp80LV1VUNgEc0wKgwoGcThEgJga
+	48QPa7YvBIZVoRulnLydohK63Xg0jW7xWlw7Zr3Ys5+CcnncbE7OBVSjW+MajymfGEoE2LSpCuyfs
+	TD/ArQwJK/P7bPCdXJBV8BTva09wi65PTRtsmLp1VaQ1JvNi4hTt2TsIBO3X1ZBpj4+p/4giuHiJb
+	5WEdaMPQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:42876 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1uhOmW-00000001Xok-0m5L;
+	Thu, 31 Jul 2025 02:36:56 -0600
+Message-ID: <41fdee77-7652-4310-ba4f-2ff56ec6fec5@w6rz.net>
+Date: Thu, 31 Jul 2025 01:36:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250730093230.629234025@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250730093230.629234025@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1uhOmW-00000001Xok-0m5L
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:42876
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfDZ4a5jgc5HMDRCyZdr9QXz926emqrzSqyGklsQCKro0cVCp9OMbTQNNTaQbC9tQvEsd56CMQ25ASzsBzdC55X4H7y9BNZuFLJ4gGk1+e25RaNTw8J9H
+ C3/eN+oeHFZm+D55PjaKR+sZ9zm5q5WuahgIxcLg1DgDXzyvhnlvFqJxLJFMLg4qfUNaQDlbj+GHIQz1xYbg48DY8deq9Lhdw4M=
 
-Intel Discrete Graphics non-volatile memory is only present on Intel
-discrete graphics devices, and its auxiliary device is instantiated by
-the Intel i915 and Xe2 DRM drivers.  Hence add dependencies on DRM_I915
-and DRM_XE, to prevent asking the user about this driver when
-configuring a kernel without Intel graphics support.
+On 7/30/25 02:35, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.15.9 release.
+> There are 92 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 01 Aug 2025 09:32:07 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.15.9-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Fixes: ceb5ab3cb6463795 ("mtd: add driver for intel graphics non-volatile memory device")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-v2:
-  - Use !=n as MTD_INTEL_DG can be built-in when DRM_I915 and DRM_XE are
-    modular,
-  - s/onlt/only/,
-  - s/intel/Intel/.
----
- drivers/mtd/devices/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-diff --git a/drivers/mtd/devices/Kconfig b/drivers/mtd/devices/Kconfig
-index 46cebde79f34b0b7..e518dfeee654268a 100644
---- a/drivers/mtd/devices/Kconfig
-+++ b/drivers/mtd/devices/Kconfig
-@@ -185,8 +185,8 @@ config MTD_POWERNV_FLASH
- 
- config MTD_INTEL_DG
- 	tristate "Intel Discrete Graphics non-volatile memory driver"
--	depends on AUXILIARY_BUS
--	depends on MTD
-+	depends on AUXILIARY_BUS && MTD
-+	depends on DRM_I915!=n || DRM_XE!=n || COMPILE_TEST
- 	help
- 	  This provides an MTD device to access Intel Discrete Graphics
- 	  non-volatile memory.
--- 
-2.43.0
+Tested-by: Ron Economos <re@w6rz.net>
 
 
