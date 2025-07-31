@@ -1,125 +1,143 @@
-Return-Path: <linux-kernel+bounces-752483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96FF8B1761F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:39:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA49B17625
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C55580646
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:39:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C9F6A82712
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD2F3246762;
-	Thu, 31 Jul 2025 18:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E20E246765;
+	Thu, 31 Jul 2025 18:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fmwE7aFN"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MAtUgPYs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BDD189F5C;
-	Thu, 31 Jul 2025 18:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAAF0189F5C;
+	Thu, 31 Jul 2025 18:39:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753987146; cv=none; b=F2utgHN0SE3afn3+uOwIuTCrSsyj/1jjZE7qUj2Yr/1ZnRWB6BOBAAK/T/DHAiELPvhAN11eyOwIUWPOgFrx3AwbR510paSnBOS5wI7wZnYQPfsa7DClQNQS66kAOzTN5EMc6VT5GQLbv54ipuHQCzKWctLhUt7hzeBpXudNm1I=
+	t=1753987186; cv=none; b=qQ0whBruHjgFooXyp4a0kYBYqvP9fT3HngsIGCcadTuxmC8ZkJOqxZHspqQTiYR/PInZrARUfQERPC3bSXnNny1IDMTE9gX2zwn3DgsmHJXGrZl2Nk1T+1jAUYstuYHhU37NhqwMAVjWi4MaIa/SaUCslTvhNxeV8PUffOYUFYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753987146; c=relaxed/simple;
-	bh=PxMcmEzVm3WDriTzl+CQSmXbbYSRZyP1GfHg/qIUeik=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SiR62j2PPghncFrX3DRQnTciQTCjRYocfKFHd2Y3evt66iB1ks01cI42oLLLt/uis5DGlaOn/ExdERTyZUf2dZ4vi++UYh3wXFE65tQL4DyJj2YvY7Z8opjQPep8QHuqSRMsA/ljPANDXfnR5qOzgdUw3wC/X+yYn9KqmcZcHxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fmwE7aFN; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4563cfac19cso13181975e9.2;
-        Thu, 31 Jul 2025 11:39:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753987143; x=1754591943; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KdM/4c0BaGsTBzjmE3nYXMTVYUgF5F0VUqduP5rOLl4=;
-        b=fmwE7aFNPTMtqmng0V2+cu0vjveNUA3p1cT2gTW6I+QgKnFnP2uFtu3ciHmawNZn7c
-         p9sjvOijDAvxIOXRvaH7xCXu5FtbppMQdFA1SDjeAZqhwCQztZPJKR5PWElIn41htwZY
-         EqoYAh3pILNu8Nh2csX1X0ILEkdMAlnr0WS3b2ul87O+Ywr2HiNS4h0WcvMcTMtlWVBK
-         DXg+WZp/xNGxeAYOAmU8XN5RELbb2spUJhWW9M78J3WQGuY/lZW9IUhdV30ihDvmuhni
-         Lzi+DSXU4dZCvslTh/k3AqQUUxvgD1bgG9pSdYf+K+suBeZaOrmC6cJ1C1XDZgXXGly7
-         p/ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753987143; x=1754591943;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KdM/4c0BaGsTBzjmE3nYXMTVYUgF5F0VUqduP5rOLl4=;
-        b=e4B6Gh0TQHpwyTCMt9jmSmTIR3TfVzkIx4yaicAAMwP0gcbOBsQYweGDPdtTAi4KCq
-         jdNqPvpwF8chQzNIUcnVExmVrmi693osKJ7VcC/2XalatYd6swD8YLTXpXdmA3Ob82vI
-         TRuk3DLwdN/BNc+B8r4Yit+s3CSL6Mon0d87SdRVLnscTDo4sw8XWk70DqlV+AOncJZW
-         Zh5qDYjqmjozG36QcTMBEo2/B2qfrXVQbUBJX5Bm0DQTg/PIxhDEKXoc6Cn7abwHyOxe
-         +inAeCJJzPOGadGJUZBOspEmbQVS6lrIIG/GoPP3v9fHBDy9VlqfvlZRTUN3ARpmYXca
-         PBCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqrsmNxOnJuh8zn6vsFM8brReST+VR0BjvGuQBvvAmW/UQon+e4kFtWf0qFITBBiA9pKxs7maYgn3iVw4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5N1E+MLohyYXuZIudePlsmwNLeOoYAoyRIiCCgrqo6sL2i0hf
-	1lAmNc5TZlwHfMm0yGoKanVuRrrQ85pHFHrUui01+wwfkCDhJ1WT7dsqxRUIBVmHBVcjhzYHVYf
-	G/JD4D4U8Rrxu45PnJVoCop3Bvr7LYwc=
-X-Gm-Gg: ASbGnct6ThZ67knHc0D0psm4jgYcRmj2WcRt3/DlV72piLLz0BvnDlDfkB08LSS+QJQ
-	XcQJnl2uReltPVFI0yOF3cG2nXgElZxgOa+Dw1RpH7EuTMhX3j3G9HB0C1DJ4FZO/T+eauU18sd
-	a5jtXglvYBBLYocDSuUE4pWBUzoqXVa8fEJjBTSRCpy4SrsVEjcE5EwdKRLAOVehD1c2909HX7r
-	+UDY1IYEp6+CQcyDFAjhn4=
-X-Google-Smtp-Source: AGHT+IFJL8NBAWQY02zy0tEAWl/qP3DrbLkDthNjpOnxX6jcZZ0At+S8eHNdcBVEIsN3QGpLJ1a9BHZMro9h9uBqIE8=
-X-Received: by 2002:a05:6000:4312:b0:3b6:936:976c with SMTP id
- ffacd0b85a97d-3b794fecc6cmr6327698f8f.17.1753987142650; Thu, 31 Jul 2025
- 11:39:02 -0700 (PDT)
+	s=arc-20240116; t=1753987186; c=relaxed/simple;
+	bh=5fw3ei2yI3vTaXizsPz3XqYTiDEdgvZfCsRY6Bk+K2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=nV368PxCuhJ5l9wsDt4Y9NQIs8q4Lp5tHQNvKcseGuvZZuSr/Fxx4SGxfjm3L6LCeD4L4VOgkgFQhmQ/9KGDaq4ZH2tIEmi/+EZ8t1MoLOnu5ezJQ5IOJjCYL/g1/lOM1bLG64uWpzP0g0yaV//I5/oKMcz0Z9Am9QAISuJd6x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MAtUgPYs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1B5CC4CEEF;
+	Thu, 31 Jul 2025 18:39:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753987186;
+	bh=5fw3ei2yI3vTaXizsPz3XqYTiDEdgvZfCsRY6Bk+K2Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=MAtUgPYsC7nckHguK5XMBl1TsjgtKdhivYob4fXL36qYn1R8ijruQOKV+zlG1/ESP
+	 /Wxsca6F5NKVcJo5BcGg8S5ydVz2q0qfHCMNRetW4UDOP11Tr3H+ZHb7xHvPClOP/I
+	 VL828sxH/jiIitooLtJrhRL5tE+RV9mKg/LKKBqfXxGvc0Tqos9Rqlecxhq+rLI7ks
+	 DpX+oyKld+qkbcwHK32StJxTd8JM/y42lBOiyGp70bJef26FIVSpmdlfxxk5QrZ2cO
+	 dfEMqDHq7JAuRH7N9kKDWnISadiEO9DP/wzTvln4QRClwF+LZkCSTkKKGF0haL7ifZ
+	 mzPHluttlbGEw==
+Date: Thu, 31 Jul 2025 13:39:44 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Gerd Bayer <gbayer@linux.ibm.com>
+Cc: Hans Zhang <18255117159@163.com>, bhelgaas@google.com,
+	agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+	ilpo.jarvinen@linux.intel.com, jingoohan1@gmail.com,
+	kwilczynski@kernel.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-next@vger.kernel.org,
+	linux-pci@vger.kernel.org, lpieralisi@kernel.org, mani@kernel.org,
+	robh@kernel.org, schnelle@linux.ibm.com,
+	Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
+Message-ID: <20250731183944.GA3424583@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722205357.3347626-5-samitolvanen@google.com> <20250722205357.3347626-8-samitolvanen@google.com>
-In-Reply-To: <20250722205357.3347626-8-samitolvanen@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 31 Jul 2025 11:38:49 -0700
-X-Gm-Features: Ac12FXw1CsiGw1xqnFICxDSaAwN-blfRuazTaEhPIwPWVxcnOPQAXUsIGCjRDVQ
-Message-ID: <CAADnVQ+FeGjNAJFyvpF_POB8tZUMXDN3cz_oBFNZZS_jOMXSAQ@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v13 3/3] arm64/cfi,bpf: Support kCFI + BPF on arm64
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: bpf <bpf@vger.kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Maxwell Bland <mbland@motorola.com>, Puranjay Mohan <puranjay12@gmail.com>, 
-	Dao Huang <huangdao1@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731173858.1173442-1-gbayer@linux.ibm.com>
 
-On Tue, Jul 22, 2025 at 1:54=E2=80=AFPM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
->
-> From: Puranjay Mohan <puranjay12@gmail.com>
->
-> Currently, bpf_dispatcher_*_func() is marked with `__nocfi` therefore
-> calling BPF programs from this interface doesn't cause CFI warnings.
->
-> When BPF programs are called directly from C: from BPF helpers or
-> struct_ops, CFI warnings are generated.
->
-> Implement proper CFI prologues for the BPF programs and callbacks and
-> drop __nocfi for arm64. Fix the trampoline generation code to emit kCFI
-> prologue when a struct_ops trampoline is being prepared.
->
-> Signed-off-by: Puranjay Mohan <puranjay12@gmail.com>
-> Co-developed-by: Maxwell Bland <mbland@motorola.com>
-> Signed-off-by: Maxwell Bland <mbland@motorola.com>
-> Co-developed-by: Sami Tolvanen <samitolvanen@google.com>
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Tested-by: Dao Huang <huangdao1@oppo.com>
-> Acked-by: Will Deacon <will@kernel.org>
+[+cc Arnd]
+
+On Thu, Jul 31, 2025 at 07:38:58PM +0200, Gerd Bayer wrote:
+> Simple pointer-casts to map byte and word reads from PCI config space
+> into dwords (i.e. u32) produce unintended results on big-endian systems.
+> Add the necessary adjustments under compile-time switch
+> CONFIG_CPU_BIG_ENDIAN.
+> 
+> pci_bus_read_config() was just introduced with
+> https://lore.kernel.org/all/20250716161203.83823-2-18255117159@163.com/
+> 
+> Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
 > ---
->  arch/arm64/include/asm/cfi.h  |  7 +++++++
->  arch/arm64/net/bpf_jit_comp.c | 30 +++++++++++++++++++++++++++---
+> 
+> Hi Hans, hi Bjorn,
+> 
+> Sorry to spill this endianness aware code into drivers/pci, feel free to
+> suggest a cleaner approach. This has fixed the issues seen on s390 systems
+> Otherwise it is just compile-tested for x86 and arm64.
+> 
+> Since this is still sitting in the a pull-request for upstream, I'm not sure if this
+> warrants a Fixes: tag.
+> 
+> Thanks,
+> Gerd
+> ---
+>  drivers/pci/access.c | 25 +++++++++++++++++--------
+>  1 file changed, 17 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+> index ba66f55d2524..77a73b772a28 100644
+> --- a/drivers/pci/access.c
+> +++ b/drivers/pci/access.c
+> @@ -89,15 +89,24 @@ int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
+>  			u32 *val)
+>  {
+>  	struct pci_bus *bus = priv;
+> +	int rc;
+>  
+> -	if (size == 1)
+> -		return pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+> -	else if (size == 2)
+> -		return pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
+> -	else if (size == 4)
+> -		return pci_bus_read_config_dword(bus, devfn, where, val);
+> -	else
+> -		return PCIBIOS_BAD_REGISTER_NUMBER;
+> +	if (size == 1) {
+> +		rc = pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+> +#if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN))
+> +		*val = ((*val >> 24) & 0xff);
+> +#endif
 
-Unfortunately there is a conflict. Please respin.
+Yeah, this is all pretty ugly.  Obviously the previous code in
+__pci_find_next_cap_ttl() didn't need this.  My guess is that was
+because the destination for the read data was always the correct type
+(u8/u16/u32), but here we always use a u32 and cast it to the
+appropriate type.  Maybe we can use the correct types here instead of
+the casts?
 
---
-pw-bot: cr
+> +	} else if (size == 2) {
+> +		rc = pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
+> +#if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN))
+> +		*val = ((*val >> 16) & 0xffff);
+> +#endif
+> +	} else if (size == 4) {
+> +		rc = pci_bus_read_config_dword(bus, devfn, where, val);
+> +	} else {
+> +		rc =  PCIBIOS_BAD_REGISTER_NUMBER;
+> +	}
+> +	return rc;
+>  }
+>  
+>  int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
+> -- 
+> 2.48.1
+> 
 
