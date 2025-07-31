@@ -1,72 +1,81 @@
-Return-Path: <linux-kernel+bounces-751567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDEC9B16AF5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:48:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E31CEB16AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C19D18C60E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:48:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0AC73A8866
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53481FAC48;
-	Thu, 31 Jul 2025 03:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2661FAC54;
+	Thu, 31 Jul 2025 03:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVoBqUaH"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TaH9o1Su"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D7812F41
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3DD1CAA4
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753933677; cv=none; b=uuD9bozIhuVbsMosxAiJbXYoFwe7aTB2/v3VzH5lKrdrPyLdRiU9aYifyD5g7lo2nOobDe4FoU86OBq1AFMPAUg7L4TyEbizHLu7jjwzanzfJRUZYgxv0Z477qzIOMgwyGL5GSbuxhkd6nww5jc8xmbp39DeKgj1o9vMfbE62fo=
+	t=1753933772; cv=none; b=B4EuN0ivyOWwofSi4JDEJuZlkImigTP/Lj9FZt6HZA6MSryI9PSXaHdrDCTM9/BJqriRtW03YIyu1F77pYB5fW/WWnolk4gPvJ9JYYGAf46WvS51Gh/BJp9OX35xwNq2w61a/yTyrqnUvVJZkV0K5Q8/q7EEJWiOXoreia0NFUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753933677; c=relaxed/simple;
-	bh=QiAbcnoqzswL6KgBgm0UrfO52wb+Jm7aPysoeMwjEV8=;
+	s=arc-20240116; t=1753933772; c=relaxed/simple;
+	bh=fhawINARRJygDq0po3THoPnjgxj7yf1fdKxoQSioVSw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vAs15xY9yosPLq97ybR2fRowHruqdvOrMDXMgvi6kq+obrFRyVnN1yYmlleR/daqLuuqZGHwMGfk8rS2K6K0flMfGULIwsm2ROhASc0YFRUHbrRMRuAk4IbIm1jMfXBWTlyuzv8ZdwCMQXU45rNaXJ3ozDJlZlnstuuOawzmtG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GVoBqUaH; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-61543f03958so596792a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:47:55 -0700 (PDT)
+	 To:Cc:Content-Type; b=svJD51rHSaV86R8CVjtSD8xU313K9dQ6mXPpRPbF4dJSdFlzAG8xdqCKxVVh8LqS/FiDCzPfj/Se/JcSo0xuWVbRKFu4H21cfWbQhwWYG9rw6AiHRJf1Rc4JPgzhY4PGIGY4obskkOiw0GNno31tU6i8srp+6SEJNTY+XzvqBE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=TaH9o1Su; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae9c2754a00so109066366b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:49:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753933674; x=1754538474; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1753933769; x=1754538569; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TipReVIbHYikOGm96b9ccV0Al10yALQ5vwodidB34xQ=;
-        b=GVoBqUaHPRFNsLoOGSVlWInt0rm7/h02b/wRlXF3SjezvdBzDArX7VsxMWM/cgXtS1
-         2Km/ZTn54T2JhJdw8P3Y/tzdpp6ttDX76xY3JFocEjOcMad97TPlSMY5YteEM+Dm1S/L
-         EfLOD9eJVzFMR6McHjdeKKihvJGhep9aG/3Okgc6pkLdxYpo3aD8fD5bNUG33lAwc5zb
-         9wtSOULYp7X1WpsSAwZeDe9jZbuBZBaAP+tvb3UNXNWowVWvstehTzvKveZRI9mXhK//
-         gJyWNW04spnPyywHj/zFqP2LCfff+0QEB1g6dm4lca08DdNDcAxcUxxUOP6TEAPU5SPh
-         ORDA==
+        bh=O4eEVtAEJDb2ctLJ++Vqx913Dg03dcfMbig7xRZPFfM=;
+        b=TaH9o1SuM9FZc9hvVC4ib/VwYz1BzscM4i7X3lng9tZnJUvT3mZHZ5kxqVBFLsK4JG
+         KGSzbh3YFm2adQIzkviGgDhuW9CSHHEwZhG6ym5BNNCVD+uO9+8UVUNo9a3N8k9OMVpb
+         yXzAKcthkWpUOklhdoKrP2qhACuK6tvyKS2d4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753933674; x=1754538474;
+        d=1e100.net; s=20230601; t=1753933769; x=1754538569;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TipReVIbHYikOGm96b9ccV0Al10yALQ5vwodidB34xQ=;
-        b=qpLY8k1wPYyJ3ZFtH+M4HBT5kbBq3T1lqiBXY5c7pXRfifW4oY/0Ib/Qyak8iZEugK
-         r9HH/yoCa6ekq6xw8jdf2gqBvHZmEx/9SD/oBkSm+BhbB/Yfu1FPZfAkvXE74oTdnCnO
-         /CjoubNhyaHJmW0BOhcRZJshNBPGCzvwDAVR2QcXn0UuRJ3Xg8iOO5LJOkG3iOfoeGZo
-         tYOrfxpJqxLLWP2qlhMCT9sjUXal4zQh7l+VNXVIFlccVlxM2W/X4BRR9zvH60d37Czp
-         8F3hDwH9tIQOoyZy2U4SLaFlOa4XIkX4zUA1jNg2Sg7JIgIL4vs0xERnHuz6vJhTeG4Z
-         jItQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0/lbVSBHyynGEciQBdFY14/FTm5RVyrIw4y/dAgInndVbh9ZugGvTDmorcS+e4ThW+Gtz111ibNdaWWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA8B0UQeABzVMH8u24inzy3r3QphWxH1tgnTrM42spFq0GRyH9
-	G7avs4uOablFiS742BaNM2dXm8cQAae2lWC48elR6HSvvmX9Slo6dFuXQT4KWYnXxiTIPgpMJ/k
-	OIcdUoYP44bT526jfDEQydmMYfibA2rc=
-X-Gm-Gg: ASbGnctZwV6baCBx67lUiodNnvhLG4gRMKhaorgcdL1VMYdO8+aSk8IZFafjkw4tDSW
-	Lqq9DF3WcP8Xmr0E2OPT4zvUifIn7zXa9tuOZSsy/W3PSHKjulTmIXO6frkl60sL7+M2LxPgmzE
-	GfRTmP5tN6GQJTU2HMmhNxJ2hNvKkBQkpBOKk26A1jV9SCrdlAQVzXdHD+VdWnMliIsFtECjSKe
-	7VxOxD8TXjQM6Wd
-X-Google-Smtp-Source: AGHT+IEvTAydO0B8dvzIZ0V9dPskizzLo7/Pc73sLswWKrpceGhyGfj+u9TePveB4an+PFx0VzXm+x86pMJ7Umh2hIY=
-X-Received: by 2002:a17:907:7ba3:b0:ae3:7113:d6f1 with SMTP id
- a640c23a62f3a-af8fd77fd70mr767905066b.25.1753933673729; Wed, 30 Jul 2025
- 20:47:53 -0700 (PDT)
+        bh=O4eEVtAEJDb2ctLJ++Vqx913Dg03dcfMbig7xRZPFfM=;
+        b=PEKWs0/lbeAL4jVGkrJFb0AGdfyCdCxmT7l69afEIn0PshZsmdhyeCyiVldMjXe/ch
+         96Kx7TrBVA3eb+w18PuNphHNtPfc0Jan3wsOia4OZYvklXR/HHl5Z2dolOIyt/jzRCfc
+         O/z61rsmiaCfuE2VVkMl//7In2KxYuQq+/Nk6r6FAsF13bUWXGD08sgSGwexE/X71GTr
+         /r7n6lNeB4wYnh+rG9r65g3V/DpJdEOa70W1Bpzd2Gkee1/jjBLqcbe9SmDbrUfcaFoa
+         peudsdUEOuIA4YgdfivByWmlAvVNrhJv9FegFOkLvcED0J5i0yScPCba1CCn8Y2BVwWu
+         1E6A==
+X-Forwarded-Encrypted: i=1; AJvYcCX9PVb+ENDoqG50R/9tGWmFo6dINreqScqptmXvLZG1CEe+c6LjwZw3IwLZrAuBi3jETgzw1ynjlTg0CgM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU0yr/Xwj+OxIDSufwMg1oFdkbubzBXO0hId0kEbAX0DK3bUTE
+	6uJcEdnHYBYRru8xLSQEMt0xrCO+/zm2HF1sq6IxKlIzgTDItO+g4nT+E5yMiQKe5dxD7cbgwWa
+	3sIukdRc=
+X-Gm-Gg: ASbGncvO0me63FnMpLt4KrZUdsJQzeiErTchGfzE8w/p6rqK6/0aO7RQZ8XKX9IeAkO
+	V3HwKIcETf6BqMBx56afnamsn7SbA7blJnuhDuYnCtqW8vaf6oY21dlcfUGK/uaQ6XaqbKR5qvI
+	+oO9QhlnDLeCOfmvSdk371bxG/6JNYmDwgWYfgoPjhCjlD/7HONkEg/xadgSWadvR3XYRMarZ+D
+	ukKSoE2xWk09ALwTx+9HKDueqeG4lrD6yH0/nFabCBguo6IUyQxq7jPunxBpwwEjUo/+R2nmrFR
+	wEodFSBnk6e7ELmKU39EYEjYxU3X40pz73R8l1Yan56N3hvv7mP1IY60g0mknUChh17EQiNBqk1
+	ba8BdulhgI7Fao/MxSINOqFXHbevoDz495JA6sLJSIyf8x4TPDCHor/dDIqKpfLWlqK3jLQ+T
+X-Google-Smtp-Source: AGHT+IGu1dL8VfdXqRhczcsYUUeQqNjT7qEhX0PyF4/iIWrQZevL0DrIIkFhr3z3X1wGLxrEIbo56Q==
+X-Received: by 2002:a17:907:94c4:b0:ade:4121:8d52 with SMTP id a640c23a62f3a-af8fd728dbfmr708992666b.16.1753933768706;
+        Wed, 30 Jul 2025 20:49:28 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e82fbsm40216366b.88.2025.07.30.20.49.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 20:49:28 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-61589705b08so956659a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:49:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVfnYX0UICadxPQppEtbC7RO0G9vA7MYEwD213/vD8V3bm2DyjRqMwNUBHZcMo0gZ3B1bGIkKXq3r2WNn0=@vger.kernel.org
+X-Received: by 2002:a05:6402:234c:b0:615:aa8e:a19c with SMTP id
+ 4fb4d7f45d1cf-615aa8ea47bmr1012635a12.32.1753933767648; Wed, 30 Jul 2025
+ 20:49:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,39 +83,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
- <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com> <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
-In-Reply-To: <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Thu, 31 Jul 2025 13:47:42 +1000
-X-Gm-Features: Ac12FXwzj7aR8cH3Q3BwHUffq5oqwa0xpVNoHkTPAr_dHLtsTxCt0qqTKuewNo8
-Message-ID: <CAPM=9tze2EcWTyi7VZxEY6Ys+YSrep4U15TtizZghFSD6eWjsQ@mail.gmail.com>
+ <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com> <CAPM=9twG7By95nYrkoyLtAT5YPV9WdMUgVPwjuZ9kiZFuse+Fg@mail.gmail.com>
+In-Reply-To: <CAPM=9twG7By95nYrkoyLtAT5YPV9WdMUgVPwjuZ9kiZFuse+Fg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 30 Jul 2025 20:49:11 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whCQ5fYwt0X3mzD8zXK=pzWNYeFEUX=H6n4TWdjkOXbDw@mail.gmail.com>
+X-Gm-Features: Ac12FXynvzq3d8ZVSwaZILoYPT2AjueV5j_-TkKoD5yqQDDlVrC4n1M2fNlJ904
+Message-ID: <CAHk-=whCQ5fYwt0X3mzD8zXK=pzWNYeFEUX=H6n4TWdjkOXbDw@mail.gmail.com>
 Subject: Re: [git pull] drm for 6.17-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: Dave Airlie <airlied@gmail.com>
 Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
 	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 31 Jul 2025 at 13:41, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Wed, 30 Jul 2025 at 20:05, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
+On Wed, 30 Jul 2025 at 20:39, Dave Airlie <airlied@gmail.com> wrote:
 > >
-> > Again: I'm not going to guarantee that I got it right. I *think* I did
-> > - I'm not feeling particularly unhappy with my merge end result.
+> > But I do think that the drm people are doing actively wrong things
+> > with the random cherry-picks back and forth: they cause these
+> > conflicts, and I *really* think you should look at maybe using stable
+> > fixes branches instead.
+> >
+> > Would that require more care and cleaner trees? Yes. And that's kind
+> > of the point. You are being messy, and it's affecting the quality of
+> > the end result.
 >
-> I spoke too soon.
->
-> I'm very unhappy with the end result, because it just results in a
-> black screen at boot for me. No signal.
->
-> It works on my laptop (Intel i915), but my Radeon desktop is very very dead.
+> I'm not sure how to parse, stable fixes branch, do you mean stable as
+> in a special branch for stable tree? or a fixes tree we don't rebase
+> every rc?
 
-Is that the Polaris card still? I don't think the merge would cause
-too many problems in that area,
+I mean as in "don't cherry-pick fixes between trees".
 
-I'll pull out my Polaris card and run some builds here as well just to check.
+Create a separate fixes branch that is *stable* and that is *shared*
+between the trees.\
 
-Dave.
->                Linus
+> Currently all the base (drm, intel, xe, amdgpu) fixes branches are
+> stable, we backmerge into them after rc1, and very occasionally
+> afterwards if a backmerge from rc5/6 is needed.
+
+Not at all.
+
+What you do ihas absolutely *nothing* to do with stable fixes branches.
+
+You do random development in the main branch, and then when you make a
+fix, you just do that in the main branch, and do a cherry-pick into
+some other random branch.
+
+Search for "cherry picked from commit" in your logs. There were *92*
+duplicate patches that were randomly cherry-picked from on ebranch to
+another.
+
+That is *NOT* a "shared fixes branch". That's just throwing patches aroung.
+
+And that is literally what is causing all the conflicts - you have
+those duplicate commits in multiple branches, and then you do other
+random development around them.
+
+> We should only cherry-pick one direction,
+
+That's nonsensical. There is no such thing as "cherry-pick one direction".
+
+Direction doesn't matter at all. A cherry-pick is a cherry-pick.
+
+It doesn't make one whit of difference whether you cherry-pick
+backwards or forwards, rightside up or upside down, or while sitting
+in a tree singing the national anthem.
+
+The end result is the exact same thing. You have two different commits
+in two different branches, and then you have unrelated changes around
+them in those branches.
+
+               Linus
 
