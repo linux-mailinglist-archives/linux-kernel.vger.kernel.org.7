@@ -1,767 +1,218 @@
-Return-Path: <linux-kernel+bounces-751536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71111B16AA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:06:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1629EB16AAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:08:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E2587B54DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5162818C871D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9554823ABBF;
-	Thu, 31 Jul 2025 03:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87F223B63D;
+	Thu, 31 Jul 2025 03:08:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2JNhpPV"
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com [209.85.222.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="OFWReJVy"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013047.outbound.protection.outlook.com [40.107.44.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B633157A67;
-	Thu, 31 Jul 2025 03:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753931183; cv=none; b=tdcqt4WxQ4UNx7DxCQTWqPP3m4KXUX1fmzXkLlgjEQMWGH9Vtkn2raRyuQrXGGVyUkdU0rLF0nP5GnxnDqTr/HYfdVi2p0eODUqiEu5oFOqU0lPTb4quYtHU4Sry5h6ED/fJrJeyKFg1z/Qd6Fxqd4NpNGCcqBVLde0iOwPtvtE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753931183; c=relaxed/simple;
-	bh=KelJFHQRK3opy3nfBk8HKTenF4Nnj/uw2cFFRvif3SY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gr+SfMeamR6UcHMVgK9ujEzfQTj7cV/LVFDsTX/MuF9Q31O0dRMPiX2QZswKhev8Erj90Uquz8N287E+ehtNFzJBn19DZeayvAHR/+WfHGCDyBboiNJ1E4V7aHRZjfVhaUAzwRO4Ng/4fepcw93SBlwrqWxGt6EBOR8kPadz6rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l2JNhpPV; arc=none smtp.client-ip=209.85.222.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-88bab5ffd32so120401241.0;
-        Wed, 30 Jul 2025 20:06:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753931179; x=1754535979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rdIQRM17i0mm4SeGMxvMivXKuV+q3OHXrIS+nMHooOQ=;
-        b=l2JNhpPV8UY/wao2aFpSpxEwjQlV+4iCSM72PNTK3bQVS8aZixIudlD5qQD+9GZT+G
-         6c55xzLc78Wp2XVQof/3UAhyUOdmxyDhfCVSaZJyQnznRu/QdRhWF/h5tMRPHzzbubMg
-         v+ZPKkwqnzLd9WMv2NzCGkl3ZfTrYJ/6NjhnZu0UWRM7nLtCaHoOwYnmB7I7ur+p546e
-         sV+jrgzNGU9cv0p2XI9K32oCVjO7rvhZj7ycWIJkKxUOhC7gziu/wYgLkrqIgEoyp6Zr
-         p8OFPe5fZgEpNmg3LOvhJ7mvOwSzLoUMOMvpRYl6yrptlKuXR7vpv9TMut7FMh0/bSWY
-         fsEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753931179; x=1754535979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rdIQRM17i0mm4SeGMxvMivXKuV+q3OHXrIS+nMHooOQ=;
-        b=SF51SQvnYwIKslMU+xCaTN1+smpDvCX6IA66HSlOU+orUgGBNa4hCtBlhg08EXPg2c
-         3mnEt0H4ijAtsWFRm3lrb9blP8rjEDtfFtcFQgfm+KEWaRCS5Thbx1LnIM1XP8JO7Lxi
-         0bOVe9TSOlOyrqPF/s9sK7PVcxk+qSFCYoc+8ffEh/ZZomOIzXM77G9fL+fgrrz5A/KZ
-         jrJdoP4+K8FR/JfAM0oJnTq9UHBfvfYYgMk4IiAluhDdPXsNeVb28wCOcyUFSm/PjtQ7
-         gtNVFviOvDfcXeZn6r5PieJgtmEbymOMWfMrgQMAozNRebsW0xAwiOCEA9WQ6obnpwFf
-         ysXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOHNnRxx9cZyf5wOIy2LzIfBekw3JRda5hJ7YYLXgVH0XdmsU5ZJIEyiOkXde0iWbvjl7ttRBMg0Koj+1mUg==@vger.kernel.org, AJvYcCWgwNPQZ8VUCmwzhirBL+HPR/BqjvNS93FRo77KwtCWCx5aBt+R4hcP1CJnOgLoQH0JugYUgUVTf7oRlaO5@vger.kernel.org, AJvYcCXr9WIybPhsf+npUACUjkdDd/0dBZabKRz671maS4GRXg8K9P0pwErIZuEoOSZGlNh07tFM46pMNxfp@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDK+AgLIzQs5/m4KDfo6xUHJaRP+rj0WK2bS5aQKDQgbepxHwh
-	izy4SfGjnzR2NuwgxnLMiy6yPPW0XfTwHPZ6kgAahakjw964Li5kYRfi5PQLaWhCmL1CGix98Kc
-	W/TzJTqDQA5LPHBzvLFINnSow9RACyW0=
-X-Gm-Gg: ASbGncv2tiEE9mCxdzS8u5nbNzRA2ZB1vwZVyoBwduG+0AyJHPl9R1ShQ8otVSJhSEN
-	RlEHgTPL1JEnvX9jA0EjznY1JIhjDQHnlJmyNeYR9OPsLGkMwzSqF2hwJmpLyfsdU2sKxB9lFDT
-	9L5KHk4lSfZrNYo9l625tvlB1J606KWf2HfOWnoaUFzKgudT1EVsFMYMUFyaOWInFQOFn0IMN/J
-	dcL79Amr3nB+uXtxAPHDqaowQ==
-X-Google-Smtp-Source: AGHT+IF/KnO+mUw24cSBnBZw2wrx9Ws/jAXDsvTjl5dkTAmxJZWUX+YRpN8oBGcQpjCAsGGRCTvxPEte6uBzsBFea0Y=
-X-Received: by 2002:a05:6102:370f:b0:4ec:d3a:46e9 with SMTP id
- ada2fe7eead31-4fbe7f21993mr3294842137.1.1753931179048; Wed, 30 Jul 2025
- 20:06:19 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF0C22A4EE;
+	Thu, 31 Jul 2025 03:08:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753931290; cv=fail; b=HtJXuysVmi1iNaLb77vXS3Hf0NFUBc7UBTdbFc5CvkHmK+F+xCoEF1Is0LR0x+frJ0KJYrAOwjf+QOR/mU8QTwJXuhge6rx7tSmSn1il4tmgbY65U36rCZttNOKJcE+u4KcAKTwCB56b62jw7rFd3HqjOHQuRc2qwj8fpsEuId8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753931290; c=relaxed/simple;
+	bh=R4cfA3hyzsUxC/BC3xBo46djaQ+rSHsb5xAe+Qeg3so=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=KGEUrOcxFqdY57aShLNqcR2O2Bq2loDi0HRupLOuGXFy1yXRnpiCJNOhxMyzPr5kY35kPemVBRk3WNiYs38WaB6LuIbZJ07AQ2iQvd+c+b7GPKglJhVMDW86Ukkus/CBBJAfZ4K4+D8DeVfq7tqqAMEQ45btBmwGNqbx7pRvwOo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=OFWReJVy; arc=fail smtp.client-ip=40.107.44.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=URBDWTk37CurAg/bQyt37nWWzYAcHWSHLN879kx0xKPXoclMrfwi/vIqpOjBBtnkh+VgJh6Q0wN6DjFe0GYDi9pjq6pV9MsKKfMW6JzKLDC/RmlQJgLegQP6ypA/zviF0eue8tEhKLdhDVum2GfrEFTikPZ+GLuCAtzWOMHajP7BI69fsQZ0pQE88rjDcaT8deJ7RnxyAGzFQNuCvZ3rbEucdWMfxY5co7TidQ1cvHLSfnjaFr5XYvu9eQoVcvXUdQbPjMTrs9UvQrt1yNO0FEwGTAPKNk/bh1SomU4vpr0C93NA3m/lHUEtH8fL2X9knVEagfQ3M0ArjNQS4yOCMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zCRl16/9wiZ18n8n1k/udUfiW/YzMHEBJA4hYyizW5w=;
+ b=a8CZS0sx/X8o9FnGtK3Rt8aO9Prt2RkFL2oVjX1hCRUtxnsqC9RoN8v9eGLmQHQqZpysSU+XqkuX9LYwjG6g+GilySkzKMwYFO/lpcTAlzjsW+m8vpsIvbQwOlrsRRiNW7Qh+Gle6W4KxeGfz7FrDqy6wRVd8LKzQI5mVHmUUDUyO9lkTl/fnJDkjHK5gkvpMwtnXORJSd/vNq7DfAxN+EpkjBjx5vyItHe08oDrrOwk3Cipl7ny3B2Ia2PuZ5+E7+aGg7/4FJUrAQPXibTkFFT9LseLp2sdt69UfQbBzKCTgo7ItWGG5XU2fZAA7GkOmbexVL2ti6GUsiWFR8qiLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zCRl16/9wiZ18n8n1k/udUfiW/YzMHEBJA4hYyizW5w=;
+ b=OFWReJVyQchnnlW16mpK0BTSwuZWp8z+QB/RIRis36lTHunvG2i6CdXv15o7EmSohyyct/pzI/vveixm+QAFPgsP3abfeCkPn5f6yzBbQVl4Wb5xZG4V/fVgVTc5Z8e/JepYTesiDLFyXD7oMMK2mNObqjLSpb1KV4bU8R0XV910sQzWU5GwAmsk5JIK4nCNKmllonLWf5oH35LyxRKCCzdxj+uwsdpU9wFJ6KAFWikDcZI2S6QRgIKocrmGB6htG8aDXH6f/43Ni+vARsxohg1ZyS/mmc/f3j8NkHiaCXlMqRW03/u4vsB+1Eqg5R7YRb7LpDt3lAgrpSemqoUmGw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEYPR06MB8068.apcprd06.prod.outlook.com (2603:1096:101:2d4::11)
+ by KL1PR06MB6649.apcprd06.prod.outlook.com (2603:1096:820:fc::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.13; Thu, 31 Jul
+ 2025 03:08:01 +0000
+Received: from SEYPR06MB8068.apcprd06.prod.outlook.com
+ ([fe80::e524:973f:e6ef:299b]) by SEYPR06MB8068.apcprd06.prod.outlook.com
+ ([fe80::e524:973f:e6ef:299b%6]) with mapi id 15.20.8989.011; Thu, 31 Jul 2025
+ 03:08:01 +0000
+Message-ID: <c80a1b5d-c577-4216-9ebb-00a4cecbdde1@vivo.com>
+Date: Thu, 31 Jul 2025 11:07:56 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 1/1] genirq/devres: Add dev_err_probe() in
+ devm_request_threaded_irq() and devm_request_any_context_irq()
+To: Thomas Gleixner <tglx@linutronix.de>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
+ miquel.raynal@bootlin.com, Jonathan.Cameron@Huawei.com,
+ u.kleine-koenig@pengutronix.de, angeg.delregno@collabora.com,
+ krzk@kernel.org, a.fatoum@pengutronix.de, frank.li@vivo.com
+References: <20250730062554.269151-1-panchuang@vivo.com>
+ <20250730062554.269151-2-panchuang@vivo.com>
+ <2afd89be-713e-4075-b91b-36ec7fb6072d@wanadoo.fr> <87ms8lio7i.ffs@tglx>
+From: PanChuang <panchuang@vivo.com>
+In-Reply-To: <87ms8lio7i.ffs@tglx>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0116.apcprd02.prod.outlook.com
+ (2603:1096:4:92::32) To SEYPR06MB8068.apcprd06.prod.outlook.com
+ (2603:1096:101:2d4::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <de111b27-9126-4c03-a7bb-8cce9ea2780e@oss.qualcomm.com>
- <20250706034303.5404-1-mitltlatltl@gmail.com> <f2f0f25b-40b0-452c-ad9e-01b84b32e163@oss.qualcomm.com>
- <CAH2e8h6XWAz-pqmuvzK8JqOb=ggiDGb2U3TvAR2+43D_zdsZpQ@mail.gmail.com> <9efafa16-e6db-4227-9b47-5803f5933a7d@oss.qualcomm.com>
-In-Reply-To: <9efafa16-e6db-4227-9b47-5803f5933a7d@oss.qualcomm.com>
-From: Pengyu Luo <mitltlatltl@gmail.com>
-Date: Thu, 31 Jul 2025 11:05:30 +0800
-X-Gm-Features: Ac12FXz5h1Hmft999_7yIDT9h5Mos65O00UcB_IQmY5tNi5ijYJ-CIQ9PAC5ejY
-Message-ID: <CAH2e8h5Eov+827X3W_EZSHRoaUHgP119fXJA+WEUdmdJ6f3gkg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: sc8280xp: Add initial support for
- Ntmer TW220
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: aliceryhl@google.com, andersson@kernel.org, conor+dt@kernel.org, 
-	devicetree@vger.kernel.org, ebiggers@google.com, 
-	ilpo.jarvinen@linux.intel.com, joel.granados@kernel.org, 
-	konradybcio@kernel.org, krzk+dt@kernel.org, len.brown@intel.com, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	lossin@kernel.org, mingo@kernel.org, ojeda@kernel.org, robh@kernel.org, 
-	sfr@canb.auug.org.au, vanyang@smail.nju.edu.cn, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR06MB8068:EE_|KL1PR06MB6649:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e7c27c3-483a-4d67-4d40-08ddcfdf759c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TzBWK25tZjlVT3BISGlYMGNSZm9YWHJSVWI4NlZTTlhPUU1LcHlKTG90N2VX?=
+ =?utf-8?B?aWp5MEFZK0g2TUNKQTR3UjdqVmRFREorY0VEVnB4VGFTdERPQ3h3VFVGTERT?=
+ =?utf-8?B?QWx3R01UT3QzbHlob2pDS1o4VEhqQnR1TXlDenIwaDY0NnE3QUU0eHRUTjFY?=
+ =?utf-8?B?UnU3WkJ5dy8rd3BNRm9kRGZrLzhZWE1lWDU5NDJvRFpKcTNYSmN1dktnWkdj?=
+ =?utf-8?B?SVExRWE2M2JGNXUyVzZBdkNMdFF0dVNHN05TbUlSZkRrbUdoS2liVURoU0lo?=
+ =?utf-8?B?eXRNNXhTQ3lHbGxmSVYzZjh3cUpVOGFpOHVralNrZXFSLytrRStMSHJxZ1Ft?=
+ =?utf-8?B?b20rT2pnWnpOUTNVNHJEa3dLTWlzc1BBa1pvV0RlVVpIRDFQUUVMTHJ1U1Zi?=
+ =?utf-8?B?SVFOWkVYYjcxczlpYXYwMXpWcWlsNDZzVmpuK1ByVHNKeExxVkg0dlI2WDBG?=
+ =?utf-8?B?SHBiLzFMVXhVZFViVGVlUTRpTUFiQklXUWRsdWNqcFdQMVdrcWl1T21sT1M3?=
+ =?utf-8?B?WTRtamM5aWhCWGU4VXN3RlB1UG13QkRPeXZrQ2NFd3lIc01aaDliT3IrSFYr?=
+ =?utf-8?B?ZzJ3ZWtjaEdaYk13c29xVkJWOFpIN1VnMmd6UEdnU1kvYW1mdk1KRlhLM2lL?=
+ =?utf-8?B?TGpHNXNhMGFuVzFBMG93WWZQSTU4d1B6QW05U3BYU3FiTmJZSkRSOUNDNHRW?=
+ =?utf-8?B?MDhEUFpQbTl2R0NMamtoWGN6RytDbk5ZK1p3bTdWakJXdlZqOTQ5ZVFaczly?=
+ =?utf-8?B?YXdpQmZKMXhsekFmaXh4aDU4OHU4cCs1bEV0TUxNR2orQS91MmRxQUgwQWNU?=
+ =?utf-8?B?d1BoaXJWYWU3alhzUlFJaE1wWlQvbUZDOEZ0WjM1aWxieVYrZVVkcENXRjUr?=
+ =?utf-8?B?YktqU0UxREE2RmtPVG1zUDkxMlNpU3FWRlJqOG1ERnVORjl2RzZnVk5JdjVU?=
+ =?utf-8?B?eDRiVkF2T0U0bndSS3EvRlBFY3k1c0t4UFhqdUtyVm1WTXJueUI5Y1lMc2x1?=
+ =?utf-8?B?RTFqNFdvSUJjRU9hM3lHenk5dlRUSnVOUTNnYWNUY1QxVFVldEluZVFtd1FO?=
+ =?utf-8?B?eTNhMTRyayt2TjE1WkU2WGNrOGlSOCs3OCtjdHFkN2plLzJoODdxakt2UWs3?=
+ =?utf-8?B?TlpZMkVoNUdDcVNJMCtYazlhdVdDUkc0VFdtRDdPemNjWVRuQnRST1ZzeFlP?=
+ =?utf-8?B?TlU5TzNjT09jU0RucW9MUVhsRVphWVpGbHJsSkJMUlh0Z25rZnVqcUc0bWd3?=
+ =?utf-8?B?L3RjeUZ1YjZYdzZmdytLRGNoa1hUNDF6Y2FsanZxbDFKbjN0dTZ5YXZMZk8x?=
+ =?utf-8?B?M2VvRFE2ZlJJbDFUMnd3Ym5HUjlwK0xnTVp3NGNqdk5TVUFUR2ZDZW94NEEv?=
+ =?utf-8?B?ZFZQakZYcmV3V3dTSm4vOWhMZ0ZWaG5uRG1nN2w1NzZRL0JrMHEzN1YzOHNQ?=
+ =?utf-8?B?akY2YmJGZ1dOTWFHd2FzbW9WbE9ZUndaY0pPRkNkY1ozZUdJWXFnbXRlbzA0?=
+ =?utf-8?B?RXNJSlVLVGZhdFVILzJTWktIMm1KVWhYR1BpTGV2a2RQbHNIbDJzdzVvWmo3?=
+ =?utf-8?B?cE51cXh2SzF1Tk1Kc3lvbmpaYVgzZ09hYi9YWDZmVklGalM5Z2FVdFpwSXRp?=
+ =?utf-8?B?eTZpT3FOSXkwdEo2bVJ1MmFudjJLQ2FFUGUrbUlSdU1ReXEwUWRLTGVpVC9S?=
+ =?utf-8?B?UlRQaVpsWW0zWXl5SnBzVFpjUGlmcEJXN2l5Rkc2aVVTcHpqcmcvVVpJU0RQ?=
+ =?utf-8?B?eVRyRWxaUTM5MEJ5a1luMVNCZ1lqYzhLdDNuWDVYYWpORlJZaE5FNDdYSlhF?=
+ =?utf-8?B?cXdaTEM2Y1VVakZwWmJaaGl1U241VmVwSTc2RnFTa2llOFVKQVVPd2xxS253?=
+ =?utf-8?B?RHlCYTd6bEQ2RzlYRVJUZUlUbVVmSEk0OWhGVVg4amY1RVZiOTg5bEc2K0FE?=
+ =?utf-8?Q?i/cw8Rh9WbU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR06MB8068.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UVhUbzMrQVc1em1TdVVkMEFhUTFYaWQ0a21zQXF3MzZiUkZEMzFCbXRSRkJE?=
+ =?utf-8?B?a0FncTBtVy9EbnVBN3FGR0FyRWRuZDBEVWhwU0dMZ0dxMUIzdGFPOGJ6K0cy?=
+ =?utf-8?B?VWdNbzNUVzNHZFRqZFAwcUN3OUxISlZEbktWaUcwYnBrZGtBeXVjSmgvU1FY?=
+ =?utf-8?B?d3BqOWFyWWFEamVFdEZhaWl3UEVSK1dtU203Z0JDaFNCMmlTdW1KdG9MN3N2?=
+ =?utf-8?B?V3VGQXVKOEpFSVR6YVZnTFdMS2xRQnBvUHdrS051dSsvZlRyT2Z2VWZISXdh?=
+ =?utf-8?B?a05idS8yMktGY1JhZEZGa1dKVXBLUE5RU2FDVnliaS8wYmFaY2Jvb01aTjlH?=
+ =?utf-8?B?dlB4VkxnVStVenkwbjRWQmJOajYvQktYTzgxbmlHZ3NXTEw4VFQwWFQySFht?=
+ =?utf-8?B?Sk1QRnhjRzNoZ1hTazhmWUNoWEsweE95YkEwVTVSejZ6RHFHVHNKWWM5L05Q?=
+ =?utf-8?B?SGxSSTRzVnpZa1dyTXlEVVROcnFWNHljczNic21rSld2LzZnL0ovTTBweTNz?=
+ =?utf-8?B?a2QxZVAwS1JQc3BnZFMwcklFd1ZWWEI0Z2ZtQXE4ajNzSTdxU205SGxTS08v?=
+ =?utf-8?B?b3pMODMrOUFlZGgxMDJ6T0xMK1pXbHVhWWNCcmRSdkdFODRDNW96cC9rNnF6?=
+ =?utf-8?B?dWJmdEhxUmd4TlNQWjNMWDl0OXdLWE8wVUtxWTEzcURET2hXM0xCcEVNS2N6?=
+ =?utf-8?B?dWlRR2g5VEJ6bVFGSXg1T0tHRGZiam5mQ3JlTUhFVUFrWG0xTzc0YmFLS2NS?=
+ =?utf-8?B?YjFBaGcxazIzT1pqTCsvdTZOektMSTNZNTRGY1U1c29HL080NktBd3dQdjBn?=
+ =?utf-8?B?N2h1aEVGUm95dTUvMFRxTzZsL2tvMC9kamRPSmwrUnkxMjA2R1Y4amRRT0VO?=
+ =?utf-8?B?VTF2M2p5cnJOQzd4My9wbnVBMGtkcHFOVUNwYzE5ckRYVEJuYVJjcWV4MFZy?=
+ =?utf-8?B?ZmZMRUkybHBZVnFWOUQwNGMydUFyNEVnNHRJUjZLYy80d3k3V3lyZlZHUU8r?=
+ =?utf-8?B?MkxWWGxZckxZMkcyTTFDOGNVL25vRnpZbTdEMlRzdk1tMEY4Mnk2dUw1MDE4?=
+ =?utf-8?B?QUh3U3o0TXAraWlFRGZwNENlTC9kZTdTQVFFaC94WU10dVRFallrTTdNOGhO?=
+ =?utf-8?B?L2pvVUp2SjhlclU3V3BJTkI5Qk1KcG8xa1F0bVA2b0Z2QTQyUDdURGllMTFU?=
+ =?utf-8?B?RTZCU2JlZFBObEhpQVlzSHJMS2tlMTdTdjBObFRtOER5UTZlNDBLanVMbmhQ?=
+ =?utf-8?B?TlRLOGxQM1ZPREFZamwvQUwraVJtbjQrUUVjMFFJWUZXZkJKTlJ1S3hoUVZp?=
+ =?utf-8?B?ZE9zNjZlK2tBNDFud1Z2aW5hRlFCZldsSVVhS2JtMWtoTWJFZVJPMERZdXRh?=
+ =?utf-8?B?bWpNSjgxMHhUclVxMmo3bUd3NmZSK0g4L0k2T242WEo2NEM0T2kwUU41aUFF?=
+ =?utf-8?B?NWVRc0daTUZ2aytndVZLdkozM2wxWnA4dGk1LzNZMzM0S0J4UzlhRkplbE5i?=
+ =?utf-8?B?ZHdZQlA5dFI4aDd3TnQzL0tIeU9hTWw5V25YNmhSbEdVUS9leW93Sm1ETGsy?=
+ =?utf-8?B?ZVNYakdmSkJYWDM0UHR5WWZUbWNSNE9tSHRzTmZpdGlRTnFFS3pocVZITEp0?=
+ =?utf-8?B?ZnF2ZVpiMVVVMnlxMGdOc05MWXRKVWliQ2YyRXpGaUNhbnBSRCs3TGI3RUxk?=
+ =?utf-8?B?Vk5KRkdRejVEaVY1MDNmRlFtRzF0cCtrbkNWU0wzYmdENkFFTTVYWDk2OUQ5?=
+ =?utf-8?B?cVJFckRHNmxoeTllb2h1QXNnQUxSZ1dlRU9idlJ6NUtLbFladDdkc01FUzJh?=
+ =?utf-8?B?WXcwNldFYU51UnBKVU4vNklEWTNpRzA3TlNPeHNhdTFXbmJYalRKOVFXaTVG?=
+ =?utf-8?B?LzNhYno2dDhrRGVEVXBLK0RUZ0JyVDlXbEVaSVFXUHZ2cXNJZGcvY2RQNENt?=
+ =?utf-8?B?NU92aUhXQ2pHTnJUaE5mVFhtYVg3WVBrTUNnMWs0aWdENm1ZZmt6azl4NEhW?=
+ =?utf-8?B?TzVKZGRHSExsR1RidlE0SG1aODBTSGljcUxCR1BpTThac2JTR3Q4Y2loZExI?=
+ =?utf-8?B?ekpkRitiWVBpdHhEbitQL2hyNUZ3TWVPdWZacjVvSWlDWVdENUtnTFcyRUt4?=
+ =?utf-8?Q?dx7Zfk/QC/ax4Vne33szuo3rM?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e7c27c3-483a-4d67-4d40-08ddcfdf759c
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR06MB8068.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 03:08:01.5503
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tO4+ykeDw+1Hpd1fmJXUrET1sS1DTUgq1K0ZAO8qqJt5XNMRa2z0ZO0/C87ofDufcTcYwZu86BghV5IG921LNQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6649
 
-On Thu, Jul 31, 2025 at 4:32=E2=80=AFAM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 7/30/25 5:29 PM, Pengyu Luo wrote:
-> > On Wed, Jul 30, 2025 at 8:53=E2=80=AFPM Konrad Dybcio
-> > <konrad.dybcio@oss.qualcomm.com> wrote:
-> >>
-> >> On 7/6/25 5:43 AM, Pengyu Luo wrote:
-> >>> On Sat, Jun 28, 2025 at 3:48=E2=80=AFAM Konrad Dybcio <konrad.dybcio@=
-oss.qualcomm.com> wrote:
-> >>>> On 6/17/25 11:29 AM, Pengyu Luo wrote:
-> >>>>> The Ntmer TW220 is a WOS tablet based on the Qualcomm SC8280XP plat=
-form,
-> >>>>> also known as the Robo&Kala 2-in-1 Laptop. Thanks to Hong for provi=
-ding
-> >>>>> the unlocked device and early development work. This patch adds an
-> >>>>> initial device tree to enable basic functionality.
-> >>>>>
-> >>>>> Currently supported components include:
-> >>>>> - Bluetooth & Wi-Fi (board file regeneration required)
-> >>>>> - Battery charging (up to 15V/3A fixed PDO) and reporting via pmic-=
-glink
-> >>>>> - Flash LEDs (front and rear)
-> >>>>> - Hall sensor (lid detection)
-> >>>>> - Keyboard (via Bluetooth or USB)
-> >>>>> - NVMe SSD
-> >>>>> - Power and volume keys
-> >>>>> - Simple-framebuffer
-> >>>>> - Sound (playback and capture; top-left DMIC only, top-right works =
-only
-> >>>>>   on Windows)
-> >>>>> - Touchscreen and stylus (requires GPI DMA support [1] and stylus s=
-upport [2])
-> >>>>> - USB Type-C ports
-> >>>>>
-> >>>>> The following components are currently non-functional:
-> >>>>> - Cameras (GalaxyCore GC5035; only sensor ID is detectable, no fram=
-es in libcamera;
-> >>>>>   partial driver can be found on LKML archives)
-> >>>>> - DSI display (blank screen with `dsi_err_worker: status=3D4`; prim=
-ary DSI register
-> >>>>>   dump included below)
-> >>>>> - Stylus wireless charger (CPS4035)
-> >>>>> - UCSI over GLINK
-> >>>>>
-> >>>>> [1]: https://lore.kernel.org/linux-arm-msm/20250617090032.1487382-3=
--mitltlatltl@gmail.com
-> >>>>> [2]: https://lore.kernel.org/linux-input/20250605054855.403487-2-mi=
-tltlatltl@gmail.com
-> >>>>>
-> >>>>> Note: This series does **not** include any confidential material. T=
-hose
-> >>>>> who wish to run Linux on this device should contact Ntmer, as the
-> >>>>> bootloader is locked via secure boot.
-> >>>>>
-> >>>>> Co-developed-by: Hong Zhu <vanyang@smail.nju.edu.cn>
-> >>>>> Signed-off-by: Hong Zhu <vanyang@smail.nju.edu.cn>
-> >>>>> Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> >>>>>
-> >>>>> dsi_ctrl, reg =3D <0 0x0ae94000 0 0x400>;
-> >>>>> 0xae94000 20050001 000001f3 0000000b dddd1011
-> >>>>
-> >>>> This is not something we want in the commit log
-> >>>>
-> >>>
-> >>> I will remove it. I need help, then I attached it, two of my sc8280xp
-> >>> devices require dsi to work. Reversing and guessing wasted a lot of
-> >>> time. I will appreciate it if qcom could support it.
-> >>
-> >> There should be nothing interesting compared to what's on SM8350 when =
-it
-> >> comes to DSI on 8280.
-> >>
-> >> I would assume something's wrong with how your panel is being set up.
-> >
-> > Just to mention it. According to some public sources, the Adreno 1095 D=
-PU
-> > is included in the sm8350, while the Adreno 1199 DPU is included in the
-> > sc8280xp, they are slightly different. Here is a quick comparison
-> >
-> >                    dpu_version     dsi_version     dsi_phy_version
-> > Adreno 1095 DPU:     7.0            2.5.0           4.2
-> > Adreno 1199 DPU:     8.0            2.5.1           4.2
->
-> Patchlevel/step versions are usually not supposed to break any software
-> interfaces, so I'd be *really* surprised if this is the case
->
-> DPU is rather different (the one on 8280 is way larger than 8350's), but
-> ultimately they're built of the same bricks
->
-> >
-> > The panel setup has been tweaked and tested countless times, I really d=
-on't
-> > think I screwed it up. I had already brought up a lcd video panel with =
-dual
-> > dsi and dual dsc on the sm8650. On the sc8280xp, I=E2=80=99ve worked wi=
-th two
-> > different panels:
-> >
-> > - One LCD video panel with dual DSI and dual DSC
-> > - One OLED video panel with dual DSI only
-> >
-> > Both fail to display anything and complain about DSI FIFO errors
-> > (dsi_err_worker: status=3D4). Someone also encountered a similar issue =
-on
-> > the SC8180X([1]), another WoA platform.
-> >
-> > Anyway, I had quit. This doesn=E2=80=99t bother me anymore. Just mentio=
-ning the
-> > info for reference.
->
-> Sad to see you go.
->
-> If you still want to, I saw a fix for a sneaky bug earlier today on
-> LKML that may actually be related to your issue, given you seem to
-> have a really high res panel..
->
-> https://lore.kernel.org/linux-arm-msm/20250730123938.1038640-1-quic_amakh=
-ija@quicinc.com/
->
-Thanks for the suggestion. Unfortunately, that won=E2=80=99t help here. Bot=
-h
-panels are 2560x1600, and both horizontal and vertical values are far
-less than BIT(12) with one of them being halved.
+Hi, tglx
 
-Since I had shared the Linux register dump earlier, here=E2=80=99s the Wind=
-ows
-snippet as well. Let=E2=80=99s do a quick comparison:
+在 2025/7/31 1:27, Thomas Gleixner 写道:
+>>   From my PoV, it would look more logical to have the same logic in
+>> devm_request_threaded_irq() and in devm_request_any_context_irq().
+> As they print the same thing the right thing to do is:
+>
+>          int rc = __devm_request_any_context_irq(....);
+>
+>          return devm_request_result(dev, rc, irq, handler, NULL, devname);
+>
+> and in devm_request_threaded_irq() invoke it with:
+>
+>          return devm_request_result(dev, rc, irq, handler, thread_fn, devname);
+>
+> and let that function return rc if (rc >= 0), which handles both cases.
 
-Linux:
-> ae94000 20050001 000001f3 0000000b dddd1011
-> ae94010 00009130 31211101 3e2e1e0e 00001900
-> ae94020 00000000 05190019 064c000c 065f0528
-> ae94030 00060000 00000000 00040000 14000000
-> ae94040 06100006 00003c2c 00001000 00000008
+Could you please confirm if this implementation aligns with your vision?
 
-Windows:
-> ae94000 20050001 000001f7 00000008 00001010
-> ae94010 00009130 31211101 3e2e1e0e 00001900
-> ae94020 00000000 05320032 064c000c 065f0551
-> ae94030 000c0000 00000000 00040000 14000000
-> ae94040 00100008 00013c2c 9bb9b000 00000004
+I'm happy to refine it further based on your guidance.
 
-REG_DSI_TOTAL is at offset 0x2c, since msm_host->ctrl_base +=3D cfg->io_off=
-set,
-the offset is 4 as Dmitry noted.
+ >        int rc = __devm_request_any_context_irq(dev, irq, handler, 
+irqflags,
+ >                                                devname, dev_id);
+ >-       if (rc < 0) {
+ >-               return dev_err_probe(dev, rc, "request_irq(%u) %ps %s\n",
+ >-                                    irq, handler, devname ? : "");
+ >-       }
+ >+       if (rc >= 0)
+ >+               return rc;
+ >
+ >-       return rc;
+ >+       return dev_err_probe(dev, rc, "request_irq(%u) %ps %s\n",
+ >+                            irq, handler, devname ? : "");
+  >}
 
-Comparing 0x065f0528 (Linux) vs 0x065f0551 (Windows), the H_TOTAL clearly
-does not overflow. Although the timings differ slightly, IIRC I had gone
-through most of the registers earlier and tried tweaking some values to
-match, but it was in vain. (Unfortunately, I didn=E2=80=99t save the final =
-dump,
-what=E2=80=99s attached here isn=E2=80=99t the last version.)
 
-Just leaving this here in case it helps someone else down the line.
+Thanks,
 
-DSI0 on Windows:
-# ae94000 20050001 000001f7 00000008 00001010
-# ae94010 00009130 31211101 3e2e1e0e 00001900
-# ae94020 00000000 05320032 064c000c 065f0551
-# ae94030 000c0000 00000000 00040000 14000000
-# ae94040 00100008 00013c2c 9bb9b000 00000004
-# ae94050 00000000 00000900 00000000 00000000
-# ae94060 00000000 00000000 00000000 00000000
-# ae94070 00000000 00000000 00000000 22211211
-# ae94080 001c1a02 00000004 00000000 00000000
-# ae94090 00000001 00000000 00000000 00000000
-# ae940a0 00000000 00000000 00001f00 00000000
-# ae940b0 00000000 00088888 ffffffff 0004ea60
-# ae940c0 00000000 00000000 010f0f08 00000001
-# ae940d0 00000000 00000000 00000000 00000000
-# ae940e0 00000000 00000000 00000000 00000000
-# ae940f0 00000000 00000000 00000000 00000000
-# ae94100 00000000 00000000 00000000 7ffffbff
-# ae94110 00010000 00000000 00000000 0000023f
-# ae94120 008067c3 00000000 00000000 00000000
-# ae94130 00000000 ffffffff ffffffff ffffffff
-# ae94140 ffffffff 00000000 0000ffff 0000ffff
-# ae94150 0000ffff 0000ffff 00000000 00000000
-# ae94160 00000000 00000000 00000000 00000000
-# ae94170 00000000 00000000 00000000 00000000
-# ae94180 00000000 00000000 00000000 00000000
-# ae94190 00000000 00000000 00000000 00000000
-# ae941a0 00000000 00000001 00ff0000 00400040
-# ae941b0 000000ff 00000024 00010006 00000000
-# ae941c0 00000000 00000000 ffffffff 00000000
-# ae941d0 00290000 00000000 00000000 00000000
-# ae941e0 00000000 00000000 00000000 00000000
-# ae941f0 00000000 03000104 00000001 00000000
-# ae94200 80000000 00000000 00000000 00000000
-# ae94210 00000000 00000000 00000000 00000000
-# ae94220 00000000 00000000 00000000 00000000
-# ae94230 00000000 00000000 00000000 00000000
-# ae94240 00000000 00000000 00000000 00000000
-# ae94250 00000000 00000000 00000000 00000000
-# ae94260 00000000 00000000 00000000 00000000
-# ae94270 00000000 00000000 00000000 00000000
-# ae94280 00000000 00000000 00000000 00000000
-# ae94290 00000000 00000000 00000000 00000000
-# ae942a0 00000b00 00000000 39003900 00000000
-# ae942b0 00000000 00000000 3e2e0600 0000f000
-# ae942c0 00000000 00000000 00000004 00000000
-# ae942d0 00000000 00000000 00000000 00000000
-# ae942e0 00000000 00000000 00000000 00000000
-# ae942f0 00000000 00000000 00000000 00000000
-# ae94300 0000ffff 00000000 00000000 00000000
-# ae94310 00008421 0033ffff 0002a300 00000043
-# ae94320 10ffffff 0000b81f 00000000 000c2c0d
-# ae94330 33533000 ffffffff ffffffff ffffffff
-# ae94340 00000000 00000000 00000000 00000000
-# ae94350 00000000 00000000 00000000 00000000
-# ae94360 00000000 01000000 00000000 00000000
-# ae94370 00000000 00000000 00000000 00000000
-# ae94380 00000000 00000000 00000000 00000000
-# ae94390 00000000 00000000 00000000 00000000
-# ae943a0 00000000 00000000 00000000 00000000
-# ae943b0 00000000 00000000 00000000 00000000
-# ae943c0 00000000 00000000 00000000 00000000
-# ae943d0 00000000 00000000 00000000 00000000
-# ae943e0 00000000 00000000 00000000 00000000
-# ae943f0 00000000 00000000 00000000 00000000
-# ae94400 00000024 00000000 00000000 00000000
-# ae94410 00000031 00000031 00000000 00000001
-# ae94420 00000053 0000007f 00000000 00000040
-# ae94430 00000004 00000021 00000084 00000001
-# ae94440 000000b8 00000000 0000007f 0000007f
-# ae94450 00000000 000000ff 000000ff 00000000
-# ae94460 0000003f 0000003f 0000003e 00000041
-# ae94470 00000041 0000007f 00000000 00000000
-# ae94480 00000000 00000000 000000ff 000000ff
-# ae94490 000000ff 00000010 00000000 00000000
-# ae944a0 0000001f 00000000 00000000 00000000
-# ae944b0 00000000 00000000 0000001c 00000007
-# ae944c0 00000007 00000017 00000015 00000007
-# ae944d0 00000007 00000008 00000002 00000004
-# ae944e0 00000000 00000018 0000000c 00000088
-# ae944f0 00000000 0000003c 00000038 00000000
-# ae94500 00000055 00000000 00000000 00000000
-# ae94510 0000005c 00000004 00000000 00000000
-# ae94520 00000000 000000ff 00000000 00000000
-# ae94530 00000000 00000000 00000086 0000000a
-# ae94540 00000007 00000057 0000001f 0000001f
-# ae94550 000000ff 000000ff 000000ff 000000ff
-# ae94560 000000ff 000000ff 000000ff 000000ff
-# ae94570 00000000 00000000 00000000 00000000
-# ae94580 00000000 00000001 000000ff 0000000f
-# ae94590 000000f0 00000000 00000000 00000005
-# ae945a0 000000ff 00000000 00000000 00000000
-# ae945b0 00000001 00000000 00000000 00000000
-# ae945c0 00000000 00000000 00000000 00000000
-# ae945d0 00000000 00000000 00000000 00000000
-# ae945e0 00000000 00000000 00000000 00000000
-# ae945f0 00000000 00000000 00000000 00000000
-# ae94600 00000000 00000000 0000000a 00000000
-# ae94610 00000000 00000003 00000040 00000000
-# ae94620 000000ff 00000000 00000000 00000000
-# ae94630 00000000 00000000 00000055 000000ff
-# ae94640 00000000 00000000 00000000 00000000
-# ae94650 00000000 00000000 00000000 00000000
-# ae94660 000000ff 000000ff 000000ff 00000000
-# ae94670 00000000 00000000 00000000 0000002a
-# ae94680 00000000 00000000 0000000a 00000000
-# ae94690 00000000 00000000 00000040 00000000
-# ae946a0 000000ff 00000000 00000000 00000000
-# ae946b0 00000000 00000000 00000055 000000ff
-# ae946c0 00000000 00000000 00000000 00000000
-# ae946d0 00000000 00000000 00000000 00000000
-# ae946e0 000000ff 000000ff 000000ff 00000000
-# ae946f0 00000000 00000000 00000000 0000002a
-# ae94700 00000000 00000000 0000000a 00000000
-# ae94710 00000000 00000000 00000040 00000000
-# ae94720 000000ff 00000000 00000000 00000000
-# ae94730 00000000 00000000 00000055 000000ff
-# ae94740 00000000 00000000 00000000 00000000
-# ae94750 00000000 00000000 00000000 00000000
-# ae94760 000000ff 000000ff 000000ff 00000000
-# ae94770 00000000 00000000 00000000 0000002a
-# ae94780 00000000 00000000 0000000a 00000000
-# ae94790 00000000 00000000 00000046 00000000
-# ae947a0 000000ff 00000000 00000000 00000000
-# ae947b0 00000000 00000000 00000055 000000ff
-# ae947c0 00000000 00000000 00000000 00000000
-# ae947d0 00000000 00000000 00000000 00000000
-# ae947e0 000000ff 000000ff 000000ff 00000000
-# ae947f0 00000000 00000000 00000000 0000002a
-# ae94800 00000000 00000000 0000008a 00000000
-# ae94810 00000000 00000000 00000041 00000000
-# ae94820 000000ff 00000000 00000000 00000000
-# ae94830 00000000 00000000 00000055 000000ff
-# ae94840 00000000 00000000 00000000 00000000
-# ae94850 00000000 00000000 00000000 00000000
-# ae94860 000000ff 000000ff 000000ff 00000000
-# ae94870 00000000 00000000 00000000 0000002a
-# ae94880 00000000 00000000 00000000 00000000
-# ae94890 00000000 00000000 00000000 00000000
-# ae948a0 00000000 00000000 00000000 00000000
-# ae948b0 00000000 00000000 00000000 00000000
-# ae948c0 00000000 00000000 00000000 00000000
-# ae948d0 00000000 00000000 00000000 00000000
-# ae948e0 00000000 00000000 00000000 00000000
-# ae948f0 00000000 00000000 00000000 00000000
-# ae94900 00000000 00000003 0000003f 00000000
-# ae94910 00000000 00000000 00000001 00000080
-# ae94920 00000000 0000004e 000000c0 00000000
-# ae94930 00000010 00000020 00000010 00000002
-# ae94940 0000001c 00000040 00000000 00000002
-# ae94950 00000020 00000000 000000ff 00000000
-# ae94960 0000000a 00000025 000000ba 0000004f
-# ae94970 0000000a 00000000 0000000c 00000020
-# ae94980 00000000 000000ff 00000010 00000046
-# ae94990 0000002f 0000003f 00000054 00000000
-# ae949a0 00000000 00000040 00000000 00000004
-# ae949b0 00000000 00000000 00000000 00000012
-# ae949c0 00000000 00000008 00000008 00000041
-# ae949d0 000000ab 0000006a 00000000 00000000
-# ae949e0 00000014 0000000a 0000005a 00000003
-# ae949f0 00000027 00000000 00000040 00000000
-# ae94a00 00000003 00000000 00000000 00000000
-# ae94a10 00000000 00000000 00000000 00000000
-# ae94a20 00000000 00000000 00000000 00000000
-# ae94a30 00000000 00000000 00000000 00000000
-# ae94a40 00000000 00000000 00000000 00000000
-# ae94a50 00000000 00000000 00000040 00000040
-# ae94a60 0000000a 0000000a 000000c0 00000000
-# ae94a70 00000082 00000054 0000004c 0000004c
-# ae94a80 00000003 00000000 00000000 00000000
-# ae94a90 00000080 00000006 00000019 00000000
-# ae94aa0 00000000 00000040 00000020 00000000
-# ae94ab0 00000051 00000008 00000055 000000d5
-# ae94ac0 000000ac 0000001d 00000004 00000000
-# ae94ad0 00000000 00000002 00000011 00000000
-# ae94ae0 00000000 00000080 00000000 00000000
-# ae94af0 00000000 0000005d 00000003 00000000
-# ae94b00 00000000 00000000 00000000 00000000
-# ae94b10 00000000 00000000 00000055 00000082
-# ae94b20 00000000 00000000 0000001d 0000001c
-# ae94b30 000000ff 00000022 00000009 00000000
-# ae94b40 00000008 00000000 000000a0 00000000
-# ae94b50 00000010 00000010 00000001 00000003
-# ae94b60 00000022 00000000 00000000 00000000
-# ae94b70 00000000 0000009b 00000000 00000000
-# ae94b80 00000000 00000000 00000000 00000000
-# ae94b90 00000000 00000000 00000000 00000000
-# ae94ba0 00000000 00000000 00000000 00000000
-# ae94bb0 00000000 00000000 00000000 00000000
-# ae94bc0 00000000 00000000 00000000 00000000
-# ae94bd0 00000000 00000000 00000000 00000000
-# ae94be0 00000000 00000000 00000000 00000000
-# ae94bf0 00000000 00000000 00000000 00000000
-# ae94c00 00000000 00000000 00000000 00000000
-# ae94c10 00000000 00000000 00000000 00000000
-# ae94c20 00000000 00000000 00000000 00000000
-# ae94c30 00000000 00000000 00000000 00000000
-# ae94c40 00000000 00000000 00000000 00000000
-# ae94c50 00000000 00000000 00000000 00000000
-# ae94c60 00000000 00000000 00000000 00000000
-# ae94c70 00000000 00000000 00000000 00000000
-# ae94c80 00000000 00000000 00000000 00000000
-# ae94c90 00000000 00000000 00000000 00000000
-# ae94ca0 00000000 00000000 00000000 00000000
-# ae94cb0 00000000 00000000 00000000 00000000
-# ae94cc0 00000000 00000000 00000000 00000000
-# ae94cd0 00000000 00000000 00000000 00000000
-# ae94ce0 00000000 00000000 00000000 00000000
-# ae94cf0 00000000 00000000 00000000 00000000
-# ae94d00 00000000 00000000 00000000 00000000
-# ae94d10 00000000 00000000 00000000 00000000
-# ae94d20 00000000 00000000 00000000 00000000
-# ae94d30 00000000 00000000 00000000 00000000
-# ae94d40 00000000 00000000 00000000 00000000
-# ae94d50 00000000 00000000 00000000 00000000
-# ae94d60 00000000 00000000 00000000 00000000
-# ae94d70 00000000 00000000 00000000 00000000
-# ae94d80 00000000 00000000 00000000 00000000
-# ae94d90 00000000 00000000 00000000 00000000
-# ae94da0 00000000 00000000 00000000 00000000
-# ae94db0 00000000 00000000 00000000 00000000
-# ae94dc0 00000000 00000000 00000000 00000000
-# ae94dd0 00000000 00000000 00000000 00000000
-# ae94de0 00000000 00000000 00000000 00000000
-# ae94df0 00000000 00000000 00000000 00000000
-# ae94e00 00000000 00000000 00000000 00000000
-# ae94e10 00000000 00000000 00000000 00000000
-# ae94e20 00000000 00000000 00000000 00000000
-# ae94e30 00000000 00000000 00000000 00000000
-# ae94e40 00000000 00000000 00000000 00000000
-# ae94e50 00000000 00000000 00000000 00000000
-# ae94e60 00000000 00000000 00000000 00000000
-# ae94e70 00000000 00000000 00000000 00000000
-# ae94e80 00000000 00000000 00000000 00000000
-# ae94e90 00000000 00000000 00000000 00000000
-# ae94ea0 00000000 00000000 00000000 00000000
-# ae94eb0 00000000 00000000 00000000 00000000
-# ae94ec0 00000000 00000000 00000000 00000000
-# ae94ed0 00000000 00000000 00000000 00000000
-# ae94ee0 00000000 00000000 00000000 00000000
-# ae94ef0 00000000 00000000 00000000 00000000
-# ae94f00 00000000 00000000 00000000 00000000
-# ae94f10 00000000 00000000 00000000 00000000
-# ae94f20 00000000 00000000 00000000 00000000
-# ae94f30 00000000 00000000 00000000 00000000
-# ae94f40 00000000 00000000 00000000 00000000
-# ae94f50 00000000 00000000 00000000 00000000
-# ae94f60 00000000 00000000 00000000 00000000
-# ae94f70 00000000 00000000 00000000 00000000
-# ae94f80 00000000 00000000 00000000 00000000
-# ae94f90 00000000 00000000 00000000 00000000
-# ae94fa0 00000000 00000000 00000000 00000000
-# ae94fb0 00000000 00000000 00000000 00000000
-# ae94fc0 00000000 00000000 00000000 00000000
-# ae94fd0 00000000 00000000 00000000 00000000
-# ae94fe0 00000000 00000000 00000000 00000000
-# ae94ff0 00000000 00000000 00000000 00000000
-# ae95000 00000000 00000000 00000000 00000000
-# ae95010 00000000 00000000 00000000 00000000
-# ae95020 00000000 00000000 00000000 00000000
-# ae95030 00000000 00000000 00000000 00000000
-# ae95040 00000000 00000000 00000000 00000000
-# ae95050 00000000 00000000 00000000 00000000
-# ae95060 00000000 00000000 00000000 00000000
-# ae95070 00000000 00000000 00000000 00000000
-# ae95080 00000000 00000000 00000000 00000000
-# ae95090 00000000 00000000 00000000 00000000
-# ae950a0 00000000 00000000 00000000 00000000
-# ae950b0 00000000 00000000 00000000 00000000
-# ae950c0 00000000 00000000 00000000 00000000
-# ae950d0 00000000 00000000 00000000 00000000
-# ae950e0 00000000 00000000 00000000 00000000
-# ae950f0 00000000 00000000 00000000 00000000
-# ae95100 00000000 00000000 00000000 00000000
-# ae95110 00000000 00000000 00000000 00000000
-# ae95120 00000000 00000000 00000000 00000000
-# ae95130 00000000 00000000 00000000 00000000
-# ae95140 00000000 00000000 00000000 00000000
-# ae95150 00000000 00000000 00000000 00000000
-# ae95160 00000000 00000000 00000000 00000000
-# ae95170 00000000 00000000 00000000 00000000
-# ae95180 00000000 00000000 00000000 00000000
-# ae95190 00000000 00000000 00000000 00000000
-# ae951a0 00000000 00000000 00000000 00000000
-# ae951b0 00000000 00000000 00000000 00000000
-# ae951c0 00000000 00000000 00000000 00000000
-# ae951d0 00000000 00000000 00000000 00000000
-# ae951e0 00000000 00000000 00000000 00000000
-# ae951f0 00000000 00000000 00000000 00000000
-# ae95200 00000000 00000000 00000000 00000000
-# ae95210 00000000 00000000 00000000 00000000
-# ae95220 00000000 00000000 00000000 00000000
-# ae95230 00000000 00000000 00000000 00000000
-# ae95240 00000000 00000000 00000000 00000000
-# ae95250 00000000 00000000 00000000 00000000
-# ae95260 00000000 00000000 00000000 00000000
-# ae95270 00000000 00000000 00000000 00000000
-# ae95280 00000000 00000000 00000000 00000000
-# ae95290 00000000 00000000 00000000 00000000
-# ae952a0 00000000 00000000 00000000 00000000
-# ae952b0 00000000 00000000 00000000 00000000
-# ae952c0 00000000 00000000 00000000 00000000
-# ae952d0 00000000 00000000 00000000 00000000
-# ae952e0 00000000 00000000 00000000 00000000
-# ae952f0 00000000 00000000 00000000 00000000
-# ae95300 00000000 00000000 00000000 00000000
-# ae95310 00000000 00000000 00000000 00000000
-# ae95320 00000000 00000000 00000000 00000000
-# ae95330 00000000 00000000 00000000 00000000
-# ae95340 00000000 00000000 00000000 00000000
-# ae95350 00000000 00000000 00000000 00000000
-# ae95360 00000000 00000000 00000000 00000000
-# ae95370 00000000 00000000 00000000 00000000
-# ae95380 00000000 00000000 00000000 00000000
-# ae95390 00000000 00000000 00000000 00000000
-# ae953a0 00000000 00000000 00000000 00000000
-# ae953b0 00000000 00000000 00000000 00000000
-# ae953c0 00000000 00000000 00000000 00000000
-# ae953d0 00000000 00000000 00000000 00000000
-# ae953e0 00000000 00000000 00000000 00000000
-# ae953f0 00000000 00000000 00000000 00000000
-# ae95400 00000000 00000000 00000000 00000000
-# ae95410 00000000 00000000 00000000 00000000
-# ae95420 00000000 00000000 00000000 00000000
-# ae95430 00000000 00000000 00000000 00000000
-# ae95440 00000000 00000000 00000000 00000000
-# ae95450 00000000 00000000 00000000 00000000
-# ae95460 00000000 00000000 00000000 00000000
-# ae95470 00000000 00000000 00000000 00000000
-# ae95480 00000000 00000000 00000000 00000000
-# ae95490 00000000 00000000 00000000 00000000
-# ae954a0 00000000 00000000 00000000 00000000
-# ae954b0 00000000 00000000 00000000 00000000
-# ae954c0 00000000 00000000 00000000 00000000
-# ae954d0 00000000 00000000 00000000 00000000
-# ae954e0 00000000 00000000 00000000 00000000
-# ae954f0 00000000 00000000 00000000 00000000
-# ae95500 00000000 00000000 00000000 00000000
-# ae95510 00000000 00000000 00000000 00000000
-# ae95520 00000000 00000000 00000000 00000000
-# ae95530 00000000 00000000 00000000 00000000
-# ae95540 00000000 00000000 00000000 00000000
-# ae95550 00000000 00000000 00000000 00000000
-# ae95560 00000000 00000000 00000000 00000000
-# ae95570 00000000 00000000 00000000 00000000
-# ae95580 00000000 00000000 00000000 00000000
-# ae95590 00000000 00000000 00000000 00000000
-# ae955a0 00000000 00000000 00000000 00000000
-# ae955b0 00000000 00000000 00000000 00000000
-# ae955c0 00000000 00000000 00000000 00000000
-# ae955d0 00000000 00000000 00000000 00000000
-# ae955e0 00000000 00000000 00000000 00000000
-# ae955f0 00000000 00000000 00000000 00000000
-# ae95600 00000000 00000000 00000000 00000000
-# ae95610 00000000 00000000 00000000 00000000
-# ae95620 00000000 00000000 00000000 00000000
-# ae95630 00000000 00000000 00000000 00000000
-# ae95640 00000000 00000000 00000000 00000000
-# ae95650 00000000 00000000 00000000 00000000
-# ae95660 00000000 00000000 00000000 00000000
-# ae95670 00000000 00000000 00000000 00000000
-# ae95680 00000000 00000000 00000000 00000000
-# ae95690 00000000 00000000 00000000 00000000
-# ae956a0 00000000 00000000 00000000 00000000
-# ae956b0 00000000 00000000 00000000 00000000
-# ae956c0 00000000 00000000 00000000 00000000
-# ae956d0 00000000 00000000 00000000 00000000
-# ae956e0 00000000 00000000 00000000 00000000
-# ae956f0 00000000 00000000 00000000 00000000
-# ae95700 00000000 00000000 00000000 00000000
-# ae95710 00000000 00000000 00000000 00000000
-# ae95720 00000000 00000000 00000000 00000000
-# ae95730 00000000 00000000 00000000 00000000
-# ae95740 00000000 00000000 00000000 00000000
-# ae95750 00000000 00000000 00000000 00000000
-# ae95760 00000000 00000000 00000000 00000000
-# ae95770 00000000 00000000 00000000 00000000
-# ae95780 00000000 00000000 00000000 00000000
-# ae95790 00000000 00000000 00000000 00000000
-# ae957a0 00000000 00000000 00000000 00000000
-# ae957b0 00000000 00000000 00000000 00000000
-# ae957c0 00000000 00000000 00000000 00000000
-# ae957d0 00000000 00000000 00000000 00000000
-# ae957e0 00000000 00000000 00000000 00000000
-# ae957f0 00000000 00000000 00000000 00000000
-# ae95800 00000000 00000000 00000000 00000000
-# ae95810 00000000 00000000 00000000 00000000
-# ae95820 00000000 00000000 00000000 00000000
-# ae95830 00000000 00000000 00000000 00000000
-# ae95840 00000000 00000000 00000000 00000000
-# ae95850 00000000 00000000 00000000 00000000
-# ae95860 00000000 00000000 00000000 00000000
-# ae95870 00000000 00000000 00000000 00000000
-# ae95880 00000000 00000000 00000000 00000000
-# ae95890 00000000 00000000 00000000 00000000
-# ae958a0 00000000 00000000 00000000 00000000
-# ae958b0 00000000 00000000 00000000 00000000
-# ae958c0 00000000 00000000 00000000 00000000
-# ae958d0 00000000 00000000 00000000 00000000
-# ae958e0 00000000 00000000 00000000 00000000
-# ae958f0 00000000 00000000 00000000 00000000
-# ae95900 00000000 00000000 00000000 00000000
-# ae95910 00000000 00000000 00000000 00000000
-# ae95920 00000000 00000000 00000000 00000000
-# ae95930 00000000 00000000 00000000 00000000
-# ae95940 00000000 00000000 00000000 00000000
-# ae95950 00000000 00000000 00000000 00000000
-# ae95960 00000000 00000000 00000000 00000000
-# ae95970 00000000 00000000 00000000 00000000
-# ae95980 00000000 00000000 00000000 00000000
-# ae95990 00000000 00000000 00000000 00000000
-# ae959a0 00000000 00000000 00000000 00000000
-# ae959b0 00000000 00000000 00000000 00000000
-# ae959c0 00000000 00000000 00000000 00000000
-# ae959d0 00000000 00000000 00000000 00000000
-# ae959e0 00000000 00000000 00000000 00000000
-# ae959f0 00000000 00000000 00000000 00000000
-# ae95a00 00000000 00000000 00000000 00000000
-# ae95a10 00000000 00000000 00000000 00000000
-# ae95a20 00000000 00000000 00000000 00000000
-# ae95a30 00000000 00000000 00000000 00000000
-# ae95a40 00000000 00000000 00000000 00000000
-# ae95a50 00000000 00000000 00000000 00000000
-# ae95a60 00000000 00000000 00000000 00000000
-# ae95a70 00000000 00000000 00000000 00000000
-# ae95a80 00000000 00000000 00000000 00000000
-# ae95a90 00000000 00000000 00000000 00000000
-# ae95aa0 00000000 00000000 00000000 00000000
-# ae95ab0 00000000 00000000 00000000 00000000
-# ae95ac0 00000000 00000000 00000000 00000000
-# ae95ad0 00000000 00000000 00000000 00000000
-# ae95ae0 00000000 00000000 00000000 00000000
-# ae95af0 00000000 00000000 00000000 00000000
-# ae95b00 00000000 00000000 00000000 00000000
-# ae95b10 00000000 00000000 00000000 00000000
-# ae95b20 00000000 00000000 00000000 00000000
-# ae95b30 00000000 00000000 00000000 00000000
-# ae95b40 00000000 00000000 00000000 00000000
-# ae95b50 00000000 00000000 00000000 00000000
-# ae95b60 00000000 00000000 00000000 00000000
-# ae95b70 00000000 00000000 00000000 00000000
-# ae95b80 00000000 00000000 00000000 00000000
-# ae95b90 00000000 00000000 00000000 00000000
-# ae95ba0 00000000 00000000 00000000 00000000
-# ae95bb0 00000000 00000000 00000000 00000000
-# ae95bc0 00000000 00000000 00000000 00000000
-# ae95bd0 00000000 00000000 00000000 00000000
-# ae95be0 00000000 00000000 00000000 00000000
-# ae95bf0 00000000 00000000 00000000 00000000
-# ae95c00 00000000 00000000 00000000 00000000
-# ae95c10 00000000 00000000 00000000 00000000
-# ae95c20 00000000 00000000 00000000 00000000
-# ae95c30 00000000 00000000 00000000 00000000
-# ae95c40 00000000 00000000 00000000 00000000
-# ae95c50 00000000 00000000 00000000 00000000
-# ae95c60 00000000 00000000 00000000 00000000
-# ae95c70 00000000 00000000 00000000 00000000
-# ae95c80 00000000 00000000 00000000 00000000
-# ae95c90 00000000 00000000 00000000 00000000
-# ae95ca0 00000000 00000000 00000000 00000000
-# ae95cb0 00000000 00000000 00000000 00000000
-# ae95cc0 00000000 00000000 00000000 00000000
-# ae95cd0 00000000 00000000 00000000 00000000
-# ae95ce0 00000000 00000000 00000000 00000000
-# ae95cf0 00000000 00000000 00000000 00000000
-# ae95d00 00000000 00000000 00000000 00000000
-# ae95d10 00000000 00000000 00000000 00000000
-# ae95d20 00000000 00000000 00000000 00000000
-# ae95d30 00000000 00000000 00000000 00000000
-# ae95d40 00000000 00000000 00000000 00000000
-# ae95d50 00000000 00000000 00000000 00000000
-# ae95d60 00000000 00000000 00000000 00000000
-# ae95d70 00000000 00000000 00000000 00000000
-# ae95d80 00000000 00000000 00000000 00000000
-# ae95d90 00000000 00000000 00000000 00000000
-# ae95da0 00000000 00000000 00000000 00000000
-# ae95db0 00000000 00000000 00000000 00000000
-# ae95dc0 00000000 00000000 00000000 00000000
-# ae95dd0 00000000 00000000 00000000 00000000
-# ae95de0 00000000 00000000 00000000 00000000
-# ae95df0 00000000 00000000 00000000 00000000
-# ae95e00 00000000 00000000 00000000 00000000
-# ae95e10 00000000 00000000 00000000 00000000
-# ae95e20 00000000 00000000 00000000 00000000
-# ae95e30 00000000 00000000 00000000 00000000
-# ae95e40 00000000 00000000 00000000 00000000
-# ae95e50 00000000 00000000 00000000 00000000
-# ae95e60 00000000 00000000 00000000 00000000
-# ae95e70 00000000 00000000 00000000 00000000
-# ae95e80 00000000 00000000 00000000 00000000
-# ae95e90 00000000 00000000 00000000 00000000
-# ae95ea0 00000000 00000000 00000000 00000000
-# ae95eb0 00000000 00000000 00000000 00000000
-# ae95ec0 00000000 00000000 00000000 00000000
-# ae95ed0 00000000 00000000 00000000 00000000
-# ae95ee0 00000000 00000000 00000000 00000000
-# ae95ef0 00000000 00000000 00000000 00000000
-# ae95f00 00000000 00000000 00000000 00000000
-# ae95f10 00000000 00000000 00000000 00000000
-# ae95f20 00000000 00000000 00000000 00000000
-# ae95f30 00000000 00000000 00000000 00000000
-# ae95f40 00000000 00000000 00000000 00000000
-# ae95f50 00000000 00000000 00000000 00000000
-# ae95f60 00000000 00000000 00000000 00000000
-# ae95f70 00000000 00000000 00000000 00000000
-# ae95f80 00000000 00000000 00000000 00000000
-# ae95f90 00000000 00000000 00000000 00000000
-# ae95fa0 00000000 00000000 00000000 00000000
-# ae95fb0 00000000 00000000 00000000 00000000
-# ae95fc0 00000000 00000000 00000000 00000000
-# ae95fd0 00000000 00000000 00000000 00000000
-# ae95fe0 00000000 00000000 00000000 00000000
-# ae95ff0 00000000 00000000 00000000 00000000
+     Pan Chuang
+
 
