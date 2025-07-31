@@ -1,57 +1,53 @@
-Return-Path: <linux-kernel+bounces-752264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFDF2B1734F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:35:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3F28B1736B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2991616FC4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0195A82DE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:50:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC0619CD0B;
-	Thu, 31 Jul 2025 14:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b="jAbMVuG3"
-Received: from sender4-op-o14.zoho.com (sender4-op-o14.zoho.com [136.143.188.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6E51189B80
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753972552; cv=pass; b=Zeo+NSu2dp3/EfswFdXktAOZeL/zoIlcg4mslAlVfBpXOyD/88fbub8z/iLry9xmfE3dBNH/rq1IypV2mF5Jw+eyIQX1jW+SnbPTFRkjYvMnR2eaI0q2YYzCXO7iYQjmNoTutbeVvw96AWbxRgqnWBBzac2UgdNI3Ofu1W4Q71A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753972552; c=relaxed/simple;
-	bh=rKcAcr2DwC7zTd6PfcPIGNAWLmYsXKMR8BuUiIJfbTg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=MGOQNWbYJxo9EZHDGh8AXdVhXcd5461puIrDTYvP94nyxcFLGWRxbpla5jIgXNacKr6QVeIYcdNuJrKH/OYYIbVEaweuJrm0S+m3KLIVmeSIhINyZdZXCathbqWpptw0xkm0b7UTcHtbRRR2Vjhcfh/IDcuP4ylWktdujrWbLhY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=mary.guillemard@collabora.com header.b=jAbMVuG3; arc=pass smtp.client-ip=136.143.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753972537; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cwVndOAnBquabL2/M1yBGYfepdBwW+X4OctQEiIvtWZLbTuSn3VeYSy6kQITRM8zNp9m9nymXMidH+jgujEKUu+8DNI96ZNWLn48LLz7qP5tM4zJEoNDVF0dAjfiAWw/p/dRCKlpyGNF62IKwpySVnoNo7uDNBpxHHcb+enyKv4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753972537; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=rKcAcr2DwC7zTd6PfcPIGNAWLmYsXKMR8BuUiIJfbTg=; 
-	b=Tayiukse9FS1xYP31XxyC/YnuDA4kA00IZ9y4wodzvw8dc77+53EO2riFeh0s0eWRENClpriY34IoTv/h299j639eZc+Dh1yfTYR0hrA0QZ7xBxG36y8/7CBl2g20qlPyYe1RQHw9uLq9yXlOWW1OyEKT8YpUai/GX2Jq+pmFmM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=mary.guillemard@collabora.com;
-	dmarc=pass header.from=<mary.guillemard@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753972537;
-	s=zohomail; d=collabora.com; i=mary.guillemard@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:To:To:Cc:Cc:References:Subject:Subject:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=rKcAcr2DwC7zTd6PfcPIGNAWLmYsXKMR8BuUiIJfbTg=;
-	b=jAbMVuG3sknuTodVk0cimWo79+TEk7/kCj1JHHo6Qc72H6gWZOLVqnpm3vxepSZR
-	U1KJvCUGeOnbEKwc8V4DWnhdH5V7ASYfjZS97KUP5OveOVIJuQr8OQe42izDuN1ZLX9
-	okvQdwTml+ne95k6AEqZfVYH+t+KRkQG5+MvTDPo=
-Received: by mx.zohomail.com with SMTPS id 1753972535514926.5704440251537;
-	Thu, 31 Jul 2025 07:35:35 -0700 (PDT)
-Message-ID: <783cfede-8b79-49c7-bf7c-fa3a67cc0f56@collabora.com>
-Date: Thu, 31 Jul 2025 16:35:31 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735FA1A2632;
+	Thu, 31 Jul 2025 14:50:37 +0000 (UTC)
+Received: from pegase1.c-s.fr (pegase1.c-s.fr [93.17.236.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCEB18A921;
+	Thu, 31 Jul 2025 14:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.236.30
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753973437; cv=none; b=mbtVcVqhqhIPfYtaOY04UBZsA5aAgS26+aCUUgDwi1MgC5Jk62e4azE9CmpUJ/hxIyXyMXyAivk0Lvp8Q5bcnctF0vVXxyqmu/4v569Gk3/gq6p5I9WTrQiTdsLLxX4FjYbkPUzRaCk/v+UCesgVYG0vhHTdSUdqIZYCznhiQYk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753973437; c=relaxed/simple;
+	bh=5nJwEKl86KfPhEN1fVi/ls4u4h/LG0UACScgfWSWJ2M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vfaji+G+1dii5DnJOXCVT6qHA1RC2nvE3bA7Nmq5+slhUso0u8lE4QqMUhehJfWmlIBHcH80/87A4AoIgC0CzYG1whEzXe+sMh2PMOty1Rj0h4lf7KLamP8+AWMCYlnX+o4Oq14uQvnC4lKHqWwVjrijw6LDM4sAhZjvlRcedlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.236.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [192.168.12.233])
+	by localhost (Postfix) with ESMTP id 4btBTZ5DWGz9v2F;
+	Thu, 31 Jul 2025 16:36:02 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+	by localhost (pegase1.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id WZlP0oQyI-4P; Thu, 31 Jul 2025 16:36:02 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase1.c-s.fr (Postfix) with ESMTP id 4btBTT42bZz9tt4;
+	Thu, 31 Jul 2025 16:35:57 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 85BCB8B76E;
+	Thu, 31 Jul 2025 16:35:57 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id V6oOUUz4ZD7m; Thu, 31 Jul 2025 16:35:57 +0200 (CEST)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 19FCF8B763;
+	Thu, 31 Jul 2025 16:35:57 +0200 (CEST)
+Message-ID: <97ec2636-915a-498c-903b-d66957420d21@csgroup.eu>
+Date: Thu, 31 Jul 2025 16:35:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,22 +55,140 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: karunika.choo@arm.com
-Cc: airlied@gmail.com, boris.brezillon@collabora.com, dennis.tsiang@arm.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- liviu.dudau@arm.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- nd@arm.com, simona@ffwll.ch, steven.price@arm.com, tzimmermann@suse.de
-References: <20250730174338.1650212-1-karunika.choo@arm.com>
-Subject: Re: [PATCH v1] drm/panthor: Serialize GPU cache flush operations
-Content-Language: en-US
-From: Mary Guillemard <mary.guillemard@collabora.com>
-In-Reply-To: <20250730174338.1650212-1-karunika.choo@arm.com>
+Subject: Re: [PATCH 07/33] tty: vt: use _IO() to define ioctl numbers
+To: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>, gregkh@linuxfoundation.org,
+ Christian Zigotzky <chzigotzky@xenosoft.de>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Nicolas Pitre <nico@fluxnic.net>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <20250611100319.186924-1-jirislaby@kernel.org>
+ <20250611100319.186924-8-jirislaby@kernel.org>
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+Content-Language: fr-FR
+In-Reply-To: <20250611100319.186924-8-jirislaby@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Tested and passing VKCTS on G925-Immortalis.
+Hi Jiri,
 
-Tested-by: Mary Guillemard <mary.guillemard@collabora.com>
+Le 11/06/2025 à 12:02, Jiri Slaby (SUSE) a écrit :
+> _IO*() is the proper way of defining ioctl numbers. All these vt numbers
+> were synthetically built up the same way the _IO() macro does.
+> 
+> So instead of implicit hex numbers, use _IO() properly.
+> 
+> To not change the pre-existing numbers, use only _IO() (and not _IOR()
+> or _IOW()). The latter would change the numbers indeed.
+
+On powerpc your assumption is wrong, because _IOC_NONE is not 0:
+
+$ git grep _IOC_NONE arch/powerpc/
+arch/powerpc/include/uapi/asm/ioctl.h:#define _IOC_NONE 1U
+
+Therefore the value changes even with _IO(), leading to failure of Xorg 
+as reported by Christian.
+
+Christophe
+
+> 
+> Objdump of vt_ioctl.o reveals no difference with this patch.
+> 
+> Again, VT_GETCONSIZECSRPOS already uses _IOR(), so everything is paved
+> for this patch.
+> 
+> Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
+> Cc: Nicolas Pitre <nico@fluxnic.net>
+> ---
+>   include/uapi/linux/vt.h | 34 +++++++++++++++++-----------------
+>   1 file changed, 17 insertions(+), 17 deletions(-)
+> 
+> diff --git a/include/uapi/linux/vt.h b/include/uapi/linux/vt.h
+> index 714483d68c69..b60fcdfb2746 100644
+> --- a/include/uapi/linux/vt.h
+> +++ b/include/uapi/linux/vt.h
+> @@ -14,9 +14,9 @@
+>   		/* Note: the ioctl VT_GETSTATE does not work for
+>   		   consoles 16 and higher (since it returns a short) */
+>   
+> -/* 0x56 is 'V', to avoid collision with termios and kd */
+> +/* 'V' to avoid collision with termios and kd */
+>   
+> -#define VT_OPENQRY	0x5600	/* find available vt */
+> +#define VT_OPENQRY		_IO('V', 0x00)	/* find available vt */
+>   
+>   struct vt_mode {
+>   	__u8 mode;		/* vt mode */
+> @@ -25,8 +25,8 @@ struct vt_mode {
+>   	__s16 acqsig;		/* signal to raise on acquisition */
+>   	__s16 frsig;		/* unused (set to 0) */
+>   };
+> -#define VT_GETMODE	0x5601	/* get mode of active vt */
+> -#define VT_SETMODE	0x5602	/* set mode of active vt */
+> +#define VT_GETMODE		_IO('V', 0x01)	/* get mode of active vt */
+> +#define VT_SETMODE		_IO('V', 0x02)	/* set mode of active vt */
+>   #define		VT_AUTO		0x00	/* auto vt switching */
+>   #define		VT_PROCESS	0x01	/* process controls switching */
+>   #define		VT_ACKACQ	0x02	/* acknowledge switch */
+> @@ -36,21 +36,21 @@ struct vt_stat {
+>   	__u16 v_signal;	/* signal to send */
+>   	__u16 v_state;		/* vt bitmask */
+>   };
+> -#define VT_GETSTATE	0x5603	/* get global vt state info */
+> -#define VT_SENDSIG	0x5604	/* signal to send to bitmask of vts */
+> +#define VT_GETSTATE		_IO('V', 0x03)	/* get global vt state info */
+> +#define VT_SENDSIG		_IO('V', 0x04)	/* signal to send to bitmask of vts */
+>   
+> -#define VT_RELDISP	0x5605	/* release display */
+> +#define VT_RELDISP		_IO('V', 0x05)	/* release display */
+>   
+> -#define VT_ACTIVATE	0x5606	/* make vt active */
+> -#define VT_WAITACTIVE	0x5607	/* wait for vt active */
+> -#define VT_DISALLOCATE	0x5608  /* free memory associated to vt */
+> +#define VT_ACTIVATE		_IO('V', 0x06)	/* make vt active */
+> +#define VT_WAITACTIVE		_IO('V', 0x07)	/* wait for vt active */
+> +#define VT_DISALLOCATE		_IO('V', 0x08)  /* free memory associated to vt */
+>   
+>   struct vt_sizes {
+>   	__u16 v_rows;		/* number of rows */
+>   	__u16 v_cols;		/* number of columns */
+>   	__u16 v_scrollsize;	/* number of lines of scrollback */
+>   };
+> -#define VT_RESIZE	0x5609	/* set kernel's idea of screensize */
+> +#define VT_RESIZE		_IO('V', 0x09)	/* set kernel's idea of screensize */
+>   
+>   struct vt_consize {
+>   	__u16 v_rows;	/* number of rows */
+> @@ -60,10 +60,10 @@ struct vt_consize {
+>   	__u16 v_vcol;	/* number of pixel columns on screen */
+>   	__u16 v_ccol;	/* number of pixel columns per character */
+>   };
+> -#define VT_RESIZEX      0x560A  /* set kernel's idea of screensize + more */
+> -#define VT_LOCKSWITCH   0x560B  /* disallow vt switching */
+> -#define VT_UNLOCKSWITCH 0x560C  /* allow vt switching */
+> -#define VT_GETHIFONTMASK 0x560D  /* return hi font mask */
+> +#define VT_RESIZEX		_IO('V', 0x0A)  /* set kernel's idea of screensize + more */
+> +#define VT_LOCKSWITCH		_IO('V', 0x0B)  /* disallow vt switching */
+> +#define VT_UNLOCKSWITCH		_IO('V', 0x0C)  /* allow vt switching */
+> +#define VT_GETHIFONTMASK	_IO('V', 0x0D)  /* return hi font mask */
+>   
+>   struct vt_event {
+>   	__u32 event;
+> @@ -77,14 +77,14 @@ struct vt_event {
+>   	__u32 pad[4];		/* Padding for expansion */
+>   };
+>   
+> -#define VT_WAITEVENT	0x560E	/* Wait for an event */
+> +#define VT_WAITEVENT		_IO('V', 0x0E)	/* Wait for an event */
+>   
+>   struct vt_setactivate {
+>   	__u32 console;
+>   	struct vt_mode mode;
+>   };
+>   
+> -#define VT_SETACTIVATE	0x560F	/* Activate and set the mode of a console */
+> +#define VT_SETACTIVATE		_IO('V', 0x0F)	/* Activate and set the mode of a console */
+>   
+>   /* get console size and cursor position */
+>   struct vt_consizecsrpos {
 
 
