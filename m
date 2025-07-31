@@ -1,174 +1,172 @@
-Return-Path: <linux-kernel+bounces-752295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7D2B1739F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:01:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DCBB173A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:01:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D6E16213C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:00:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7005A8310F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12E4F1A7AE3;
-	Thu, 31 Jul 2025 15:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8541DDC15;
+	Thu, 31 Jul 2025 15:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qULecYV7"
-Received: from sonic.asd.mail.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="obvIInBR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="uG0wPfh9";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t6N4CZeK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="mUAfWiPs"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFD72A8C1
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF1401D7E54
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753974072; cv=none; b=T+D3S796Otfww9FUYPECYbvfuHSHX5zOnof6FbyglZDjB7s//B93jjstnvPeT/zdIrNSWHaUokaPC/y8wqion6k1JJp1GwBMn1klgB7zZuqfzXCxL2ePsKkV/CTJjzgKkcdboB3WedOYVMXyMxpd3vRoS6vfnb5uWcXljtdGKlM=
+	t=1753974078; cv=none; b=Mf16h2EMMN2y6lju28jdpgiLklpkV/ldRMVohUmTTMzWqfm9i0D/cGWASj1hM5La2+6fb8bZhCiv/k+WppzSDboqUk6zG47H6wIUvkyE9GQI4Za1DPwk8gclP/p56UxjPMtuEvGdqu4fqCO6jGSnNid8pVKPUi/HdruYqH1nlN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753974072; c=relaxed/simple;
-	bh=yF70jT5zZihJChERM7/8WsqLm75Xwk4VVMdeZOCWEGo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ernw66R8jTNvatA73ZVyKIE72w16UOdCUCnQ1Q4cWvxFxVqbgYk8zYsFrAer4RoVhJkntqllDnn2uDNB7tB738aRuvfZgDnymdN1sDIGEqXG0dmoturqtlJJAInbDwIwyofRILC7nH4vypj9ctGu0duNOLKvBByclGqPjqXd08w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qULecYV7; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753974063; bh=yF70jT5zZihJChERM7/8WsqLm75Xwk4VVMdeZOCWEGo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qULecYV7ZKv3DcGJP7YAKTPw1Et8pq2u80jal+2b8VOfFVJmHMCnsfXthf1JUWY4WdeUXRQV8Qe417pG6n4HvMsfd/09o/bufrfL1gzm7uxwMZXcAvhoz+eyq6kZlgf03LAqXqSGJkyDSEDSOzJv3KcB90O1aM7QPW5zbLUeLt1A1kQPuLajX9fowZghT2b0CztdHfru5fPsvyDwAccplRjvucHbjU67SzvHL1T3LEa4QWWUNJCcRY6gY9KwAawAJGMd9LzXVUeDK22+c0NEc7hXXatavty3D4vWmvdjpcEH95KdazDmiTfLwRy6ery9A2gvFpGyxiqqWyurRr9+3A==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753974063; bh=gP2lmCIzQWZVtg3PpiJsfmyKf4DpqJPtggQ3WJ3ZDQm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=AUcoGv6UTDQ+T9OrExnKgjrDWOJloqZC9AyOqqlWyPskm+ExbqEeOG7/S7Q1e+dgpMJdty24eaeK2jzf+kqr7R8VNHPM6kepEbd2djcxNvNkbh/E/alm07+86MGvJUC7FD9BgK7cIfcPqnh+tBxTvwiYT+3TGRAp8YW+qDCA9pZXfw7lfzw+fCpP+mf6wS4N3A4RC6bBAzd70woH2X+8D8sLn7fzaTnX1XOELJc6/umwwCF2wq+6CVQR3NbAsjKI7ae+2qv6dxAJc4GYHD7q31r+SU9XkkC8CLu9l1H9OwPj2xYuNxPJggm3dEOEhUM6j17VzJ+W0U030JADqTbGiQ==
-X-YMail-OSG: HfvcoZgVM1ki3y_4yxzOigsPq6lpUGl95H2IQG.AEE2bpqDPbUEEveSHBxrCzTV
- MwQf5vxglMY8Ni3MxvbLRgwH5cZR6WREwSuQis2_U5_K563rm9ISCryg_WGC1zDOY5OnKndpc.QS
- dz2g.0zbHNlYTGM35rnrIzxfl5t5luYxjtjbwisPRRn3bB50J7BEsui9ai4t4sW6zxVFQ6qbCuKO
- L0RzJSKgJvNv1n38Re1x9DU6DNkf7oW3dYYHP9yZoPLZ0YyDgEM1Rm8Xag2HTI6OKNxDGJsRn44R
- fxyL4i4Aue_rYSQSg.q8NHdNK6.3xrv7zGKxRlN7DahkQLAH86BD7WnWmw99MmX5bRiLSYhc5H0k
- 923X0KMmyW8FF6knw0Uf0HSiH7AgIuXMpz4.Z2IC82rerCMSwHVPRhBVfQOKfPWgJCergb2YeNAx
- GHPvkz8oXxhtyV6bYAjQuJ3eHBEmyG62jMELx5iXY9sqNop4geYxXci98sIEqfQ1SQKmMezKM47G
- Osrr9tb1GyXseXZePwCiZXQDO7MNewKpSZrGgrqSClhgMoW3_B78O.VcFc5dLxJ31IoEelwJdCnm
- PpESrWA7FaFS1QUotsQyw6PkXojEQiX_UpunlYGTGMLAj3GfKZyUC2UZ_rhUOyiYFWcoWsEzD0HC
- eKprd_PGshRUqOVvWRk3sM7VW1FMoRoxDGUzbJd9ehC5F7Cdh4KnOrvyuaPPAFVNEikAK5wJ68Uq
- AiS9v0.Rt.InfvzgUCWiwKhZxYWDzu_Vwo.pdLyHwIjU0sqHGOZnGMqD7xkZNhtAzlL3_5Hw4vqm
- jq.7bfwX7OodGCup7ht_MlPSAm4AGoo_Dtgw_nAih0L1ftNINDYuQsA4wXzuZ.2qEbqBfelJuwMN
- 2OrrpIP_gokTUkQc4qVPHhKAWIidXQEa6PBtvLgu0W.PxiwmokKcmRqlPis4UIvawR2nPMwJpT8l
- GsLHiiqRL1Rc1fHuhBERYT8TVaQdY6cA77ulVWMck2KR_IXQ8wKgkzO.jM.VqSvOjdbboEY0_Tw4
- f1acIaGD7x8bemaaKRwZbr8GhYzO.4AWS3.A3HV9AluQvfmYj4OMjqbBqt1dVZPBdiwFRMdiwVcp
- 0F27RuxsdUuxw4TfLl5Vxde8H9ZQ1jJrF00mwsZFRuKcG.Vjr_vrcRhBT5eZoMBgJsnzbHOwRqq.
- bO0.5ySXoCFsz4HJL2ojroSi1zhFDdBBd7h.1yPJEtl9JqHyK7XHNq7p23Q0SyDDqklRfO647Kap
- Pja.y14eo1e2tbn0JWuUjX_YNMWcVOqoWBewQrdLKEFLaq521tMj2Yewb0pf9rrnBVwE06pi.3SV
- 4CFI1jrkIV.A99qKHgeeMofELPaI_6XyIFNyY5oKgmzAAN2cF0oXgMI_59gs2m.Vpnw7kirJuCss
- 2S5PaS86oc96x70kAhuCXwHiuwxNqXT4NPh_4uKRphZpMO5gMLmy8QbzTUlZ86vSQSODiItW2VfC
- mgMm_8lj5xqfMS3m_tKLVTtFMHHF801bbIEHu2fGiU4J2P3uM30ACRkvCLEwZgdveTQa1tCLhyzX
- zW5xauAjA8WJNTEjoY4pJdM3sFbk8EhrSXNoIFm_s.QdrwWd1TriYQnzgdSAbvokczkFnwTMEvjn
- UY_kWu_4uYH9ZeGGxb7mUallrpRPgs9pXWhTIkJj_0GtFdCmj39oUwDFtZxoivLSuvfr3nV3_ulf
- SFMoxWAqpy5lYi4WLns_YYAYi5rq8jdTkzAHeWumdx0wmBQyPOjvutqsZb_OwFTjh2VURGHEER6L
- MvwT1Qs3V84aRFRzHQ.Ysho0R4CIDmfDFmWprDzo3HhETSGmoKodrNstY.aSOv.I1pHB6ZBvn8_.
- gHUSLLYvhfQrrs.Jtct1DB8KpvtOFax8yqGixRKrYx.6.SZTlfwL0Xx_NPr2kt62uIewfamoVFqS
- 9reZ4pAjFQssQK72mzdnddyRXPdB2GJ3wrPtbdtntLyv7X4FIWu4u3gexIK7UqgtgDD_QLoXcoEd
- lWoGfCq0qzp.a7C5aXU8yQ18rUpobWtOrV1griSnuFefhQ.jiVmVvPQXRKMjFJqbWhAn523naylc
- bWh6rVm717E9yEOnpMypxVMJwN4n7RKFJWAqUOQ3QFH4gI.u8xZE0bEgZb9AaIrNyG7pa.EvZ4ip
- 1i9sCq20Cn4WKAlF4nPcr8aL.nz3FLvgKoVpSBOZ5cD8N8cLMMNyaYNZ.sMvIMc8dPOQ6ybYs3Vd
- LxMh90dzTM.it7k2PZjmeaXHicfKqKHfmVca09Do.ol8lnO9aNfEjEVaOc5rON71Y.brrwyemCz2
- dBnlLqQyERhNMKpc-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 8b95bc7b-b260-44f9-b6a1-9753808c2201
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Thu, 31 Jul 2025 15:01:03 +0000
-Received: by hermes--production-gq1-74d64bb7d7-74ntb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID da4533f52ef555abea23905bd1b25012;
-          Thu, 31 Jul 2025 15:00:57 +0000 (UTC)
-Message-ID: <9dc21c28-1a4b-4d88-a67c-7b5050cdf0b8@schaufler-ca.com>
-Date: Thu, 31 Jul 2025 08:00:54 -0700
+	s=arc-20240116; t=1753974078; c=relaxed/simple;
+	bh=tX0sLmZ4usnOl0vNommFRZXu6h5rRawTfuBmrTDBT3A=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XpSATsbuqd/WgUvCyZFpq2wD0qpyvz955BI0/KiXsHe8s2T3PTTqwdtbbaEQJXQbQmoKi0nZyV3CuoU93CrbzEfHKU980IpR1lcP88WFyJEby7ER7b8u8UKKXh1qOc6hyI/DMBu0c2j9gMdJJ4xfDLd5I3j8/KZUM80wOplUyFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=obvIInBR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=uG0wPfh9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t6N4CZeK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=mUAfWiPs; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3B5DE21B1F;
+	Thu, 31 Jul 2025 15:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753974071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QmhA9IC2ENmhsJp5JcAl0jJa35akCc0R8z+TgcMb6oY=;
+	b=obvIInBRkLngks1+lEPKK6tcqFQMbmt/isOteDxTsgUu/yzrjvH+FbLzbtPSaNhRCAP7aI
+	am6zqndEXyOyOabw4i4mPI1nOB80o/ddWvEuf176AZ9jaMvWv8VdKLl6Df1fhnavzf0m0Y
+	JbR5rN1PEfNIEsW/lT5R2FyPmESqook=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753974071;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QmhA9IC2ENmhsJp5JcAl0jJa35akCc0R8z+TgcMb6oY=;
+	b=uG0wPfh9O/M0FhgV3ogl9Tzn98tbIVzyo2pivgqT58OF5XPMQA5NDEu9aQ1eQIZ7ZIrdH5
+	uMyvnsnYuT+FcaBQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=t6N4CZeK;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=mUAfWiPs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753974066; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QmhA9IC2ENmhsJp5JcAl0jJa35akCc0R8z+TgcMb6oY=;
+	b=t6N4CZeKLkwRdJcyvy3K+9dBopfyb/51bs3HIRfahWpKwxdlVSBIAWvCQKZBecak+N+w+o
+	uLDI5N4ilMMffa+d3nFe7gLUhuxrdJqXhk3grI63WZtkwt+9YOP7+VBaudSYGgltlJ8B25
+	aVx6Nd6xNk1DbH05h2sna9Cg+FFsRPU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753974066;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QmhA9IC2ENmhsJp5JcAl0jJa35akCc0R8z+TgcMb6oY=;
+	b=mUAfWiPslKRnTd3CoMRNjeDyIz/yLdepkmZqSNRZLvhycbJHdJBvC0RJw//DZh9Gbbbzex
+	H6e7ZWLP4ZP0ffBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E758113876;
+	Thu, 31 Jul 2025 15:01:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NJtENzGFi2gnDAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 31 Jul 2025 15:01:05 +0000
+Date: Thu, 31 Jul 2025 17:01:05 +0200
+Message-ID: <87h5ysqua6.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: noble228@gmail.com
+Cc: tiwai@suse.com,
+	perex@perex.cz,
+	hulianqin@vivo.com,
+	lina+kernel@asahilina.net,
+	cyan.vtb@gmail.com,
+	dan.carpenter@linaro.org,
+	bsevens@google.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"noble.yang" <noble.yang@comtrue-inc.com>
+Subject: Re: [PATCH] ALSA: usb-audio: Add DSD support for Comtrue USB Audio device
+In-Reply-To: <20250731110614.4070-1-noble228@gmail.com>
+References: <20250731110614.4070-1-noble228@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: simplify security_inode_copy_up_xattr()
-To: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>,
- Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250729090933.94942-1-tianjia.zhang@linux.alibaba.com>
- <e81ba8e7-8938-4b76-ae7b-bfee6021aeac@schaufler-ca.com>
- <CAHC9VhQAVvvXUoFu7xnh0uBhmvgYinP=AhiC4y17JJ02M9s5Nw@mail.gmail.com>
- <2aa4da27-28fc-46e0-8d1a-d9e63b03d502@linux.alibaba.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <2aa4da27-28fc-46e0-8d1a-d9e63b03d502@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Rspamd-Queue-Id: 3B5DE21B1F
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[suse.com,perex.cz,vivo.com,asahilina.net,gmail.com,linaro.org,google.com,vger.kernel.org,comtrue-inc.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[kernel];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[comtrue-inc.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
+X-Spam-Score: -2.01
 
-On 7/31/2025 4:59 AM, tianjia.zhang wrote:
->
->
-> On 7/29/25 11:09 PM, Paul Moore wrote:
->> On Tue, Jul 29, 2025 at 10:43 AM Casey Schaufler
->> <casey@schaufler-ca.com> wrote:
->>> On 7/29/2025 2:09 AM, Tianjia Zhang wrote:
->>>> The implementation of function security_inode_copy_up_xattr can be
->>>> simplified to directly call call_int_hook().
->>>>
->>>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->>>> ---
->>>>   security/security.c | 8 +-------
->>>>   1 file changed, 1 insertion(+), 7 deletions(-)
->>>>
->>>> diff --git a/security/security.c b/security/security.c
->>>> index 596d41818577..a5c2e5a8009f 100644
->>>> --- a/security/security.c
->>>> +++ b/security/security.c
->>>> @@ -2774,13 +2774,7 @@ EXPORT_SYMBOL(security_inode_copy_up);
->>>>    */
->>>>   int security_inode_copy_up_xattr(struct dentry *src, const char
->>>> *name)
->>>>   {
->>>> -     int rc;
->>>> -
->>>> -     rc = call_int_hook(inode_copy_up_xattr, src, name);
->>>> -     if (rc != LSM_RET_DEFAULT(inode_copy_up_xattr))
->>>> -             return rc;
->>>> -
->>>> -     return LSM_RET_DEFAULT(inode_copy_up_xattr);
->>>> +     return call_int_hook(inode_copy_up_xattr, src, name);
->>>
->>> Both the existing code and the proposed change are incorrect.
->>> If two LSMs supply the hook, and the first does not recognize
->>> the attribute, the second, which might recognize the attribute,
->>> will not be called. As SELinux and EVM both supply this hook
->>> there may be a real problem here.
->>
->> It appears that Smack also supplies a inode_copy_up_xattr() callback
->> via smack_inode_copy_up_xattr().
->>
->> Someone should double check this logic, but looking at it very
->> quickly, it would appear that LSM framework should run the individual
->> LSM callbacks in order so long as they return -EOPNOTSUPP, if they do
->> not return -EOPNOTSUPP, the return value should be returned to the
->> caller without executing any further callbacks.  As a default return
->> value, or if all of the LSM callbacks succeed with -EOPNOTSUPP, the
->> hook should return -EOPNOTSUPP.
->>
->> Tianjia Zhang, would you be able to develop and test a patch for this?
->>
->
-> I carefully checked the logic of security_inode_copy_up_xattr(). I think
-> there is no problem with the current code. The default return value of
-> inode_copy_up_xattr LSM is -EOPNOTSUPP. Therefore, when -EOPNOTSUPP is
-> returned in the LSM callback, the next callback function will be called
-> in a loop. When an LSM module recognizes the attribute name that needs
-> to be ignored, it will return -ECANCELED to indicate
-> security_inode_copy_up_xattr() to jump out of the loop and ignore the
-> copy of this attribute in overlayfs.
->
-> Currently, the SELinux, EVM, and Smack that supply inode_copy_up_xattr
-> callback all return -ECANCELED after recognizing the extended attribute
-> name they are concerned about, to indicate overlayfs to discard the
-> copy_up operation of this attribute. I think this is in line with
-> expectations.
+On Thu, 31 Jul 2025 13:06:14 +0200,
+noble228@gmail.com wrote:
+> 
+> From: "noble.yang" <noble.yang@comtrue-inc.com>
+> 
+> The vendor Comtrue Inc. (0x2fc6) produces USB audio chipsets like
+> the CT7601 which are capable of Native DSD playback.
+> 
+> This patch adds QUIRK_FLAG_DSD_RAW for Comtrue (VID 0x2fc6), which enables
+> native DSD playback (DSD_U32_LE) on their USB Audio device. This has been
+> verified under Ubuntu 25.04 with JRiver.
+> 
+> 
+> Signed-off-by: noble.yang <noble.yang@comtrue-inc.com>
 
-I looked at the code more carefully and I think you're right.
-My objection was based on the behavior of a much earlier version
-of call_int_hook(). With that, I think your proposed change is
-reasonable.
+Thanks, applied now.
 
->
-> Tianjia,
-> Cheers
+There were still a bit of white-space issues and I fixed in my side.
+At the next time, please try to run scripts/checkpatch.pl before
+submission.
+
+
+Takashi
 
