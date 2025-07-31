@@ -1,101 +1,131 @@
-Return-Path: <linux-kernel+bounces-752558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BD7B1772C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:31:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B39B1772F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:31:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BDF95843E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:31:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5579E3A19DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC3FB260587;
-	Thu, 31 Jul 2025 20:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D7702586C5;
+	Thu, 31 Jul 2025 20:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iuGphA9r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kokyeCcp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E0C19ABAC;
-	Thu, 31 Jul 2025 20:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F4B23C4E6;
+	Thu, 31 Jul 2025 20:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753993878; cv=none; b=iWm2e3H3IjZ16uYDQ2xFeiyxlOCBHl2x7cYrAUEXGd+IWbo2CoTOVVbb3JNdt1ovIm+A3jJ0QkcX26xGdyfZsEpdsZgcKoRtBhnKvgveSoH23XFnq3VAmLurQOOuuwmHYXMGCFiIu/AQDzYcLWF1Ww8G7Ln81NJmpucJqX7citw=
+	t=1753993892; cv=none; b=IrawvuOWqscC7l8Y7UJ6nN3EOywP+oEAU4ooURd1JWj/Bt+kS/Fd+mpur3J3YcJlzMzBF08TSBc1RAYA/uzuTTtQt7smSVUkhh7AWnHDJHmdNXMz229lC2myLqUp/ES6EITk5qpQw2CzNAUjiIvlBm9KpLKF/3uN1k72d/RmxLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753993878; c=relaxed/simple;
-	bh=6Z7i5YajHNTIkkMs+weIqxL2dvnDzhrWWIA+qiSFCgc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=I1LTqN56OY9fq/Nbr1Jdg9mxI44KPnLGUzgcyHjexRNR8fDZctHzFKTmmLpUlJ9VfB4foFwd8ZL7vnLHeh/6qtFTW0plqOxNck8XiaheiTbPCbmJCJMTOMEYDD97ycKqY/XksPiYPNqFArsmIZXyYajx2RLfaB2YuSudhzYwIks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iuGphA9r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFBB9C4CEF4;
-	Thu, 31 Jul 2025 20:31:15 +0000 (UTC)
+	s=arc-20240116; t=1753993892; c=relaxed/simple;
+	bh=Lf39aKIK+Wi8Gtf922wlnQNbCXTgqYiV4+0YQZJFf3g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apbWYK/z1uLm2JP+NhVRZQv3cbJKXdusM+hUybYKvCwLi7G+BbvUr9uUb9Ai/NG+3FpavH3Eq+PDSjUoMRHf58JzA5gTeSRVA8ZWSYXiMqycICx/LslUocrKc4d+7q6HpvXPc+Uj4FflnjOg9O2BhCtFBIpXqW+PtxxD1+YyLsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kokyeCcp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11137C4CEEF;
+	Thu, 31 Jul 2025 20:31:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753993876;
-	bh=6Z7i5YajHNTIkkMs+weIqxL2dvnDzhrWWIA+qiSFCgc=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iuGphA9rS3S7mKH6ysy2QJya1DG1fUPcHpIE2kds1BOd/w5drscSXcIwv2k/9eSAE
-	 kcvM+Z+xgQDVWcy91MLg0CrcC319I1pSxb0YrYrqLBLqLOdXLfQoLSZ+0RODT2dRpN
-	 i4+6S7/zjeBraQ/uaglXYL/psy5Q/CcedK5LqHxQEqreHumOhattZ7F++xQS/0417t
-	 DYq9lsxxa/q7GRorWUnATAZH+ePWxCcM5U2bMAgfJAWmCW0QkuhXJrq/coSkL9HCVJ
-	 bEFGEDgl/BLL97HN8gIaezIuCRIWJVFH0c5QpkOi/frFKHsDhxBRfP5NtDWHXwLcPP
-	 ny67fa1/XbJLg==
-From: Mark Brown <broonie@kernel.org>
-To: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: linux-spi@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-In-Reply-To: <20250731160109.1547131-1-simont@opensource.cirrus.com>
-References: <20250731160109.1547131-1-simont@opensource.cirrus.com>
-Subject: Re: [PATCH] spi: cs42l43: Property entry should be a
- null-terminated array
-Message-Id: <175399387554.235090.10856142124114737348.b4-ty@kernel.org>
-Date: Thu, 31 Jul 2025 21:31:15 +0100
+	s=k20201202; t=1753993891;
+	bh=Lf39aKIK+Wi8Gtf922wlnQNbCXTgqYiV4+0YQZJFf3g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kokyeCcpna9aZUCilkj4+R2eDTrhga0wIlwIcLnsZeITMhyJUj/7uTWNmFUTFHMvt
+	 vDpiXZSwUk1voxowgvC8U99LMZhDIWLb9rCZ0gPBvSaSTlC9/PiF1ZkvfBUWRTXoV4
+	 geGjVfX0r0Mn1a/kBPCUN2PppB/o/Inx7MR+nc2IF9zk4Uz4N24Hggha7iqk1csUpd
+	 6Ef6tss7kWpSzSOZQH3wQU6TdUTlWragCOmCnqL1IDMXdPNxH9wUoI8tgXMtFHH+2y
+	 +ZReiMKR5PteVyTJwEwl4z2jPWje9d/K6wdslpCydHIxGZ3tQ7TZj60qHsrUqNB+/X
+	 YUNtf5hZWJlYw==
+Date: Thu, 31 Jul 2025 21:31:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Gur Stavi <gur.stavi@huawei.com>
+Cc: andrew+netdev@lunn.ch, christophe.jaillet@wanadoo.fr, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, fuguiming@h-partners.com,
+	gongfan1@huawei.com, guoxin09@huawei.com, helgaas@kernel.org,
+	jdamato@fastly.com, kuba@kernel.org, lee@trager.us,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	luosifu@huawei.com, meny.yossefi@huawei.com, mpe@ellerman.id.au,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	przemyslaw.kitszel@intel.com, shenchenyang1@hisilicon.com,
+	shijing34@huawei.com, sumang@marvell.com, vadim.fedorenko@linux.dev,
+	wulike1@huawei.com, zhoushuai28@huawei.com,
+	zhuyikai1@h-partners.com
+Subject: Re: [PATCH net-next v10 1/8] hinic3: Async Event Queue interfaces
+Message-ID: <20250731203124.GI8494@horms.kernel.org>
+References: <20250731140404.GD8494@horms.kernel.org>
+ <20250731183420.1138336-1-gur.stavi@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cff91
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731183420.1138336-1-gur.stavi@huawei.com>
 
-On Thu, 31 Jul 2025 16:01:09 +0000, Simon Trimmer wrote:
-> The software node does not specify a count of property entries, so the
-> array must be null-terminated.
+On Thu, Jul 31, 2025 at 09:34:20PM +0300, Gur Stavi wrote:
+> > On Thu, Jul 31, 2025 at 03:58:39PM +0300, Gur Stavi wrote:
+
+...
+
+> > Thanks, I think I am closer to understanding things now.
+> >
+> > Let me try and express things in my own words:
+> >
+> > 1. On the hardware side, things are stored in a way that may be represented
+> >    as structures with little-endian values. The members of the structures may
+> >    have different sizes: 8-bit, 16-bit, 32-bit, ...
+> >
+> > 2. The hardware runs the equivalent of swab32_array() over this data
+> >    when writing it to (or reading it from) the host. So we get a
+> >    "byte jumble".
+> >
+> > 3. In this patch, the hinic3_cmdq_buf_swab32 reverses this jumbling
+> >    by running he equivalent of swab32_array() over this data again.
+> >
+> >    As 3 exactly reverses 2, what is left are structures exactly as in 1.
+> >
 > 
-> When unterminated, this can lead to a fault in the downstream cs35l56
-> amplifier driver, because the node parse walks off the end of the
-> array into unknown memory.
+> Yes. Your understanding matches mine.
+
+Great. Sorry for taking a while to get there.
+
+> > If so, I agree this makes sense and I am sorry for missing this before.
+> >
+> > And if so, is the intention for the cmdq "coherent structs" in the driver
+> > to look something like this.
+> >
+> >    struct {
+> > 	u8 a;
+> > 	u8 b;
+> > 	__le16 c;
+> > 	__le32 d;
+> >    };
+> >
+> > If so, this seems sensible to me.
+> >
+> > But I think it would be best so include some code in this patchset
+> > that makes use of such structures - sorry if it is there, I couldn't find
+> > it just now.
+> >
+> > And, although there is no intention for the driver to run on big endian
+> > systems, the __le* fields should be accessed using cpu_to_le*/le*_to_cpu
+> > helpers.
 > 
-> [...]
+> There was a long and somewhat heated debate about this issue.
+> https://lore.kernel.org/netdev/20241230192326.384fd21d@kernel.org/
+> I agree that having __le in the code is better coding practice.
+> But flooding the code with cpu_to_le and le_to_cpu does hurt readability.
+> And there are precedences of drivers that avoid it.
+> 
+> However, our dev team (I am mostly an advisor) decided to give it a try anyway.
+> I hope they manage to survive it.
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] spi: cs42l43: Property entry should be a null-terminated array
-      commit: a735ee58c0d673d630a10ac2939dccb54df0622a
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Thanks, I appreciate it.
+I look forward to reviewing what they come up with.
 
