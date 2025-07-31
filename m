@@ -1,149 +1,107 @@
-Return-Path: <linux-kernel+bounces-752252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAFC3B17303
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:16:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17D78B16EFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E073117E641
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12A293A6985
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4FE76034;
-	Thu, 31 Jul 2025 14:16:44 +0000 (UTC)
-Received: from mail-m3285.qiye.163.com (mail-m3285.qiye.163.com [220.197.32.85])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4D6F23BE;
-	Thu, 31 Jul 2025 14:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.85
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C807A2BD595;
+	Thu, 31 Jul 2025 09:49:26 +0000 (UTC)
+Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C70223DD6;
+	Thu, 31 Jul 2025 09:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753971403; cv=none; b=bYmTgehk7Xt8Lp/QjVzNiMvUoNAGydMJaBNOS8bcSEmf9/FakO1kDlrv4K5/0E2Yzir5LDWWGsNnCazUKgyS5LvOYfBA6DN+w+JWnuwCCByZFbuhGKAf0DCsEqzoHno1hlEucaNTBOlsnVzfiueoT/eHv/OSUFGFjWhaJwaDAYs=
+	t=1753955366; cv=none; b=NRTWDOsERqSf/He5wOR8dslDcMW4q1jkXNKgUMy0TivJ7qHZ9Of/P8R/mpBgItjm8qAnK9dQEnOV0Za1PJwYUNavZCd5IyUq//74lmlEJOD9nEHBWSbEsCXttbRLe5zhrZKViJUw1Tx+XXkBDOgrP9SSAXcXu9DdBEdB1edBtwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753971403; c=relaxed/simple;
-	bh=UW8GLbU03FCsMjccf40Jm+8x7OkSG2Tz5Njj2gbNmQo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q5Ll36nzUGhH1fBGR+WjfyLu5t4qiJXwtS9S0jVsWgWEMY1DmMY/msJg/KTS6gNGd5ew96sGT5YxzACyGAsN8c/N8+8PDgXx9r5TJhmovBM2DpcrBdd4QyZ+wvO5HdGx0dv379SfQc+r9F/NWirN1FjEznemmZGu+nXM5mVTgII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=220.197.32.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from [192.168.1.94] (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTP id dee002b7;
-	Thu, 31 Jul 2025 17:40:26 +0800 (GMT+08:00)
-Message-ID: <5b4dc6a3-f6fd-4bf7-a84e-3d79db8d062e@easystack.cn>
-Date: Thu, 31 Jul 2025 17:40:26 +0800
+	s=arc-20240116; t=1753955366; c=relaxed/simple;
+	bh=vjvN1SaonJhbMKKt4uXmQHHCbIqO+IeGWQop9HuKB78=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=UBB18lWh96s6fuqXO49JrVXFi81rFgAdQSLzHeZZrxK8cEr3rR1Mt/wE4+Y6SyuaIAj1ZeObG7yqy9ggBQ12LjkiMoTlDy/OdqAA8kgVx+NPVTKO0IpZfzEhTm1aQ2lglhwvKiL3MRO0rZ/Lum08Nh2FXv/d0oCXrKc8yPhc46w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
+Received: by angie.orcam.me.uk (Postfix, from userid 500)
+	id 483BC92009C; Thu, 31 Jul 2025 11:40:49 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by angie.orcam.me.uk (Postfix) with ESMTP id 461A592009B;
+	Thu, 31 Jul 2025 10:40:49 +0100 (BST)
+Date: Thu, 31 Jul 2025 10:40:49 +0100 (BST)
+From: "Maciej W. Rozycki" <macro@orcam.me.uk>
+To: Magnus Lindholm <linmag7@gmail.com>
+cc: linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org, 
+    linux-alpha@vger.kernel.org, martin.petersen@oracle.com, 
+    James.Bottomley@HansenPartnership.com, hch@infradead.org
+Subject: Re: [PATCH 0/1] scsi: qla1280: Make 64-bit DMA addressing a Kconfig
+ option
+In-Reply-To: <20250728163752.9778-1-linmag7@gmail.com>
+Message-ID: <alpine.DEB.2.21.2507291750390.5060@angie.orcam.me.uk>
+References: <20250728163752.9778-1-linmag7@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] memory: samsung: exynos-srom: Fix of_iomap leak in
- exynos_srom_probe
-To: Krzysztof Kozlowski <krzk@kernel.org>, alim.akhtar@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org
-References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
- <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
-From: "zhen.ni" <zhen.ni@easystack.cn>
-In-Reply-To: <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a985fdab9b90229kunm51918700f3967
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDShkZVkgZHk9NT08aHk8fT1YVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
-	VKQktLWQY+
+Content-Type: text/plain; charset=US-ASCII
 
-Hi,
+On Mon, 28 Jul 2025, Magnus Lindholm wrote:
 
-During static analysis with Smatch, I identified the following issue:
+> Some platforms like for example the SGI Octace2, require full 64-bit
+> addressing in order for the qla1280 driver to work. On other systems,
+> like the tsunami based Alpha systems, 32-bit PCI Qlogic SCSI controllers
+> (like the ISP1040 series) will not work properly on systems with more
+> than 2GB RAM installed. For some reason the combination of using PCI DAC
+> cycles and the enabling the DMA "monster window" on the tsunami based
+> alphas will result in file system corruption with the Qlogic ISP driver.
+> This is not the case on other alpha systems, such as rawhide based
+> systems, like the Alphaserver 4100, on this platform cards like
+> the qlogic 32-bit PCI (ISP1040B) works fine with PCI DAC cycles and
+> the "monster window" enabled. In order for the qla1280 driver to work
+> with ISP1040 chips on tsunami based alphas the driver must be compiled
+> with 32-bit DMA addressing. Most SRM firmware versions allow alphas to
+> boot from Qlogic ISP1040 SCSI controllers and hence having a simple way
+> to limit DMA addressing to 32-bits is relevant.
 
-```
-drivers/memory/samsung/exynos-srom.c:155 exynos_srom_probe()
-warn: 'srom->reg_base' from of_iomap() not released on lines: 155.
-```
+ Given the description it seems to me it will best be handled as a quirk 
+in arch/alpha/kernel/pci.c, at least in the interim.
 
-Problem analysis:
-1. In exynos_srom_probe(), the reg_base resource is acquired via of_iomap()
-2. The of_platform_populate() call at the end of the function has a 
-possible failure path:
-```
-root = root ? of_node_get(root) : of_find_node_by_path("/");
-if (!root)
-      return -EINVAL; // Failure return point
-```
-3. When this path is taken, reg_base is not released, causing a resource 
-leak
+ If it turns out a generic issue with DAC handling in the Tsunami chipset, 
+then a better approach would be a generic workaround for all potentially 
+affected devices, but it does not appear we have existing infrastructure 
+for that.  Just setting the global DMA mask would unnecessarily cripple 
+64-bit option cards as well, but it seems to me there might be something 
+relevant in arch/mips/pci/fixup-sb1250.c; see `quirk_sb1250_pci_dac' and 
+the comments above it.
 
-Verification:
-After applying the patch, the Smatch warning is resolved
+ The situation is a bit different here as the bus is a proper 64-bit one, 
+but the quirk could only limit the individual DMA mask to 32 bits for 
+devices that have no 64-bit memory BARs.  I suspect there are no proper 
+64-bit PCI option cards that only have I/O bars and I don't think there's 
+any explicit status bit to tell 32-bit and 64-bit option cards apart.
 
+ FWIW I was able to obtain such an option card and try it with my HiFive 
+Unmatched RISC-V system, which has 16GiB of RAM.  It turned out picky 
+though and despite being DEC-branded it refused to talk to a number of 
+SCSI 1 CCS DEC disks, which work just fine with an Adaptec host adapter 
+using the same cables and with DECstation systems they came with, but also 
+break with a BusLogic MultiMaster host adapter (which seems odd as these 
+host adapters have been reputably very robust).
 
-Best regards,
-Zhen
+ So I could only do limited testing with a single SCSI 2 disk that works 
+everywhere, and that triggered no issues.  As I wanted to retain remote 
+access to said problematic disks from the Unmatched machine I have left 
+them wired to the Adaptec device, but I'll see if I can do more testing at 
+my next visit to the lab around the weekend after next as I'm going to 
+disassemble the Unmatched system anyway.
 
+ HTH,
 
-在 2025/7/31 17:06, Krzysztof Kozlowski 写道:
-> On 31/07/2025 10:33, Zhen Ni wrote:
->> The current error handling in exynos_srom_probe() has a resource leak
->> in the of_platform_populate() failure path. When this function fails
->> after successful resource allocation, srom->reg_base is not released.
->>
->> To fix this issue, replace of_iomap() with
->> devm_platform_ioremap_resource(). devm_platform_ioremap_resource()
->> is a specialized function for platform devices.
-> 
-> Don't explain us kernel code. Drop sentence.
-> 
->> It allows 'srom->reg_base' to be automatically released whether the
->> probe function succeeds or fails.
-> 
-> It's obvious.
-> 
->>
->> Besides, use IS_ERR() instead of !srom->reg_base
-> 
-> I don't understand this. You keep explaining the code and this suggests
-> you made change here not related to original case. Can you return
-> srom->reg_base here? No?
-> 
-> 
->> as the return value of devm_platform_ioremap_resource()
->> can either be a pointer to the remapped memory or
->> an ERR_PTR() encoded error code if the operation fails.
->>
-> 
-> Missing fixes and cc-stable.
-> 
->> Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
->> ---
->>   drivers/memory/samsung/exynos-srom.c | 10 ++++------
->>   1 file changed, 4 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
->> index e73dd330af47..d913fb901973 100644
->> --- a/drivers/memory/samsung/exynos-srom.c
->> +++ b/drivers/memory/samsung/exynos-srom.c
->> @@ -121,20 +121,18 @@ static int exynos_srom_probe(struct platform_device *pdev)
->>   		return -ENOMEM;
->>   
->>   	srom->dev = dev;
->> -	srom->reg_base = of_iomap(np, 0);
->> -	if (!srom->reg_base) {
->> +	srom->reg_base = devm_platform_ioremap_resource(pdev, 0);
->> +	if (IS_ERR(srom->reg_base)) {
->>   		dev_err(&pdev->dev, "iomap of exynos srom controller failed\n");
->> -		return -ENOMEM;
->> +		return PTR_ERR(srom->reg_base);
-> 
-> How did you test it?
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+  Maciej
 
