@@ -1,306 +1,447 @@
-Return-Path: <linux-kernel+bounces-752155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B139B171E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:20:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BC8B171E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF19C1AA5DC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:20:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0AC5848CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:19:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659E82C17B4;
-	Thu, 31 Jul 2025 13:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC342C15A8;
+	Thu, 31 Jul 2025 13:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GyRezrCL";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="CwR15ER0"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zSOUiJfd"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DAD235056;
-	Thu, 31 Jul 2025 13:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753968011; cv=fail; b=Qw5TcsCzhVmYdcD/oSnRXoER5+9JTd5Y7NBH7h0GD3+w/+2DP2MGz9Gt38EsEVu3gEWhmds1LMqPOJrhmStRd6J8fRHE+FsBh84Re37GI0VtXCOYlsfj/Ogc4N+WZlg4MR3KlZv8iPypl6NfEm0deJhvOvGaXY2lUstfkciviBk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753968011; c=relaxed/simple;
-	bh=1nBxsFsN6FCBs/B9nOuehH5wuNqDHWqFE8vPYWmY7Mk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=QbfpA4ntbkNu3JOTiG+asD5D18DfVeIDeYZohJNQmT9V+c8nC+dlMswd2lP9e59ZdrZTvjHBrr4w2MXNWoKwIuTpK4c8cpTN7fqrX+Ar4fBQ9X7VVbNyew03c0qm336wYeAYV5xBTTdF+Vrv6q2dykVu+rMukiizukZIv+ZQ4xQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=GyRezrCL; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=CwR15ER0; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VAskbc021994;
-	Thu, 31 Jul 2025 13:19:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=1nBxsFsN6FCBs/B9nO
-	uehH5wuNqDHWqFE8vPYWmY7Mk=; b=GyRezrCL2o52xzzn6TJDU4kcdvT57w/zDn
-	XSe9GxZSWPgG7UNAQ7yD8goUStt8ZxSYqQasciaH2CBiyo9cZf+NUm7/IhtlC8RY
-	Ajn3w0VyYON/d8PIGmmKd+fpathWhoclR2YXRSAlcyM5/frVUhr97yW3GC2AkhC2
-	wX8aGqBSEEdruPBtJ+o4hL52FLs5Qynj42EfPNCGBgfW7SVKsWuXLv49v2+GXvaC
-	q7r1gkrNNOB8m2PFnhwvJJwjHRinTr/1DrfmydzkP0RAkB17ak7YEECJrHRM5JM2
-	2Nq1ZE59xzEkk5eDPhPSbDZ/yrT2i4KjGLsIj8gCAjQSh25BxHyA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 484q4ec7nu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Jul 2025 13:19:08 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56VBf86q016740;
-	Thu, 31 Jul 2025 13:19:06 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2066.outbound.protection.outlook.com [40.107.92.66])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 484nfjtber-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Jul 2025 13:19:06 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DckqCcmYUnM5DGeQMnSKIsd+VNdNzOiQV3qS8GDJRqkQy6QuuORc9pk3o+pNf+vQ6oiM/K+VtP7iRJ62+NBf7QjuMgYBpZ8yOknnW3ePXUUvYwBPSA0oW+T7vNcuQQ8sjN4UDi6bBgkSl1Nd6xzcQGg7Q/4el07rg9p/Z3UgXBsSueaBXQEOIjXuH2VxQAmRVi2XvJ0PgndoWobLSQT4+9vdNutr76/AOfBEI+eDzHrws6fIngFwMWAo9X7SvRXcrCHxOGVOzBTWyDD3i1sgK4kJbzUTUXJuu/gG8KW5uai6JoBfK49HzgT3hDmrIBfdHA9YPi7vRM79ND5s9QtU9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1nBxsFsN6FCBs/B9nOuehH5wuNqDHWqFE8vPYWmY7Mk=;
- b=YLygBaa7y4otkg7BQ1LS4VRxqnmI9qbq+7mcPQgS9VVtHSs8HfU2OlQKLKr1qgeAy4cwibSWBYDguerFZP1m5wVcetq1L4L2Y5OBPlKlrZbTL9t9Hxs6sJEfIkTjfcARj3NH+DFTiJmTSvdwgZXrohc4Cv9pSybDaD8+HU4MoVOWX1AI35wqHa1vCuewtdqDFNf/WvDJlb9OSWsbpUyWuB4dkqrBUcTl9455P2nXm7prp60aEuquOfKE5fnneEMA3R41eV4xpMquYMJe2Pz5e+6Qomq3H2e6k0W0ZZQUceR6yyREOhoV/0Z34Io0XJjBYy59TuCBtWzBagCEu/RXYw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46D702BE65B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753967989; cv=none; b=b6Qiz34dxDfH63D6LgbFSMkYYAB3jZyLOxeualjHaPe0fDL06rWRbjNVc5HO3Zw8oQd17NoeTDj08ORg86uNaa4G0JABJr/O6K2okpBkZQQc/gUCGVSRRGsZGwft4wEMgxHDgmLhXlv0KimVa5wj1MFCnbb+ifNQoLF1rmApJQA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753967989; c=relaxed/simple;
+	bh=q/0CwU72oOdZIuLDyG6/09Fp7D/WRRSWRcFUYu9Yd8k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cR/DOOaJDKU8g0zt9EaYcwM+kPrHCyu6CVwnP6Fn4UETvVp37NBYcdxRdhUueImaWEod8vGQNIeYIrFKGwWvn8jHWmrb1G5nlWEmPFXQ+Mt2VjvyLHjbOPP/SDhycQx5IUqRN49I1c+EvpSlvPUaFU9MT1FAU6pJuzyms6dpaMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zSOUiJfd; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ae9c2754a00so212569666b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:19:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1nBxsFsN6FCBs/B9nOuehH5wuNqDHWqFE8vPYWmY7Mk=;
- b=CwR15ER0F5IhNscnbPnMqlken+0xedwoXdWDz4XPioLNq90N1a8m1vqZab7OLWWfSgoGkAcj6hfJ18y0TNc/pUn/p2WH9wnVrvaQH1icy9FquPNpbQ62qqy0Hj5XVDrN+0zC9oYRgvssDPbfX6bCkS9GbVRkZN4D8udiF6RuZxI=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH8PR10MB6646.namprd10.prod.outlook.com (2603:10b6:510:222::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Thu, 31 Jul
- 2025 13:19:04 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8989.013; Thu, 31 Jul 2025
- 13:19:04 +0000
-Date: Thu, 31 Jul 2025 14:18:59 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
-        rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-        hannes@cmpxchg.org, baohua@kernel.org, shakeel.butt@linux.dev,
-        riel@surriel.com, ziy@nvidia.com, laoar.shao@gmail.com,
-        dev.jain@arm.com, baolin.wang@linux.alibaba.com, npache@redhat.com,
-        Liam.Howlett@oracle.com, ryan.roberts@arm.com, vbabka@suse.cz,
-        jannh@google.com, Arnd Bergmann <arnd@arndb.de>, sj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v2 1/5] prctl: extend PR_SET_THP_DISABLE to optionally
- exclude VM_HUGEPAGE
-Message-ID: <f1b0ee33-fa64-4802-a575-c843ec459b7b@lucifer.local>
-References: <20250731122825.2102184-1-usamaarif642@gmail.com>
- <20250731122825.2102184-2-usamaarif642@gmail.com>
- <dda2e42f-7c20-4530-93f9-d3a73bb1368b@lucifer.local>
- <c9896875-fb86-4b6c-8091-27c8152ba6d0@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9896875-fb86-4b6c-8091-27c8152ba6d0@gmail.com>
-X-ClientProxiedBy: AM9P192CA0028.EURP192.PROD.OUTLOOK.COM
- (2603:10a6:20b:21d::33) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=google.com; s=20230601; t=1753967984; x=1754572784; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=erlQ/LLHQExO1WKTcytAJrwyzb9h0x78zkEBmeizUwE=;
+        b=zSOUiJfdgmNG2vH3VgmRvHRp8FCHOxkSawu/pXo3+b50162lQcIebl/cBqBvFNk4OA
+         ou0+LxoyLKg6mNFm1WbDoggtnkN5y28/lc5qorcH0Hiw4zB+TvwGnsEzmM7P2Q4jzoiq
+         qa1gVRcV220NSAgLEREVTkRhd8gWsHS8y4BoObVsTA9dVIOgbZMgQGvGU2LVsN8jhZsA
+         /ZnFdECpqL+nVpDLUqBAWQNS3IOM1ixMetZ2S49lxormy9kXYiWv7JPLbMruEb89gZz3
+         lMEPKJxVEiD4nifGv3SUeI16p/QSRsefkM3rfZzwBpgIXwoU4ROdlFg6a1gzhZhoOk/d
+         ISNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753967984; x=1754572784;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=erlQ/LLHQExO1WKTcytAJrwyzb9h0x78zkEBmeizUwE=;
+        b=igNdKFJb6+GdAQCpBbpvcEQ36xqvd6yxKVTWZF3Gnw7SOFtBkCBXhrPzUQgeaecBBv
+         DJm8p898Y1qEaXeaTgruWWHY9mywR4A8qmxYP7FOIS8p9iVw/2qB7RZDEsnxvfyXM6mQ
+         S5Ns35FHnJsCKT9EjIzqQp+NszjqWswyhNQdeOh9xX5uXHgGj33nFGPJBfjPr5J6V0ib
+         hyrOcD14KzgTLrX3bum7p3GPkBaPUROu14sjkC5cGwTyN6Phs45LC+kubRIcq/5ACflW
+         ovRysaJSj4N1UEZoeaEu893K+Dlwdt/+RpchS3xd5loZquJCzBZCupETwkStM1GfVhlZ
+         ckHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOS094ytkMyVa1Go/e1fXRcxWlxFzeWyNKDBcoJW1+yNIPGLEbtV3iyVIIPCmUpiA5IDciIPB551aXkck=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0x6gNURHdwXEBMGheMZnJQQfLIqlE85vUtyS8UC32YYJeHpBl
+	smuIx+pylwO9E4xLZciopTfSgU9rTT09xSjVMwywNRKpsLDMatDfU+2fje1Y97s9LQ7crlf/Ot3
+	YfklzrOhnHGng0yN6YPWbHl83l1UMoOgTahdS1dV/
+X-Gm-Gg: ASbGnctmkxQgVi+eClWPdTtsY21+BVC9XFXFh69q3bz3V+AxKotSBT49MIAKuj7ZjAh
+	zCJzjQBTLPZsZBFj77LTsphAItN3U9AR1Phj0exr+L+yLilA9qZXk/F5/DhkBtw1twXZRxHnUtg
+	32l4LHGEjd7yOUPZK4WTRdX3QTxkZaVfZeo8qGVZUjfBKAQPb5r4upPdtI2hJ3XhwrbLZV8EI02
+	qaFzet0pDsEL3dCrob39plXLHavDMNe30os1D9q
+X-Google-Smtp-Source: AGHT+IFqJJo1pb4T1+KNXxezny+BBoZpYPMQq8AGiOdfWPyUnAoxZrfZYRXDPA8u8ryltt6YnqLcEfI+U+GvrQxoCfc=
+X-Received: by 2002:a17:906:9e16:b0:af9:10c7:59b6 with SMTP id
+ a640c23a62f3a-af910c75f97mr317417566b.32.1753967984155; Thu, 31 Jul 2025
+ 06:19:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH8PR10MB6646:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac53375c-0695-4258-a826-08ddd034d25b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|366016|376014|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GCaEhiGHE6N6T0BfuFKWzwV32mUbwNiFkgQuU0ENA6BoDK1YqXsfztAzcAX+?=
- =?us-ascii?Q?PadD9gRCX8EYmpYP6j/GWLCj2MEmwca+LJU80Z8n7cwIy+ZEqKQqm1qVPeYh?=
- =?us-ascii?Q?wFDV/QyB8/BvJE0ndQcu0mRcv03E2ZUq8zRT3BuZgIojeN2D7UZcCWi56d1x?=
- =?us-ascii?Q?GYueT5d/21DfCC5VuhFS+QWZcuooBg3sx9Qhkj5nITvBGWIHqwZ559dpgRRh?=
- =?us-ascii?Q?FqMSnpqz5XnMxWyF/anYffUMZimAni/0dUN+hmDEgtdr3o81A3lhAiBmfH7U?=
- =?us-ascii?Q?cON9npigmVQEvFMFXOpJ9heHsQ0XMGiiBWA630dUqya9sWimxVdDHQNKN9Pn?=
- =?us-ascii?Q?oe9bWnm9atET3Yij6Kx2Ecte6aDvw5lXlQV8ncqGjOcojfRjOuqVvcZ1owxT?=
- =?us-ascii?Q?ee4ghgefZElElnv83vlb+33KMTyQ4EMXUNJIrbJoCMeDIQSGEXfqN0HxoNzi?=
- =?us-ascii?Q?dXg2in5lpMndVwdXdqDgZ/2easuOGRTZ4Jq4E21TuSqPSbV7N6nmosBrExai?=
- =?us-ascii?Q?RpBfZJG344bQM6p7/izRLJMZ6hK+mbUhe3n8yk1ewSjlKt30rJC7NLBkFIhN?=
- =?us-ascii?Q?FOFj2cdD/IFKBOUXODTRhEp95YYvtlX0JPCsWKgBtYWa8wfkAc7fAKZAYAJu?=
- =?us-ascii?Q?noTFh/nWQYHOo1uXrnkELIEQtkFeD+iXySSs+3fFGRIjEJJiimLOitc/JpTY?=
- =?us-ascii?Q?HMc1eJUj8uwdCgvMl3RS+b1Jxsxxft8VhrnwROVTAv45plVSCNh1o0pPOA5I?=
- =?us-ascii?Q?3R1MBnzrXMd3Cb60kvPMWAriQ6sMOn4h1siOaqNAvAoozNT0fwa4/D7Gxwi2?=
- =?us-ascii?Q?kS2nljf2H60Bxzh7cz70A8CZGIB3OymH5KndLWKm/BikewL/p5SD32djrhU5?=
- =?us-ascii?Q?VXurTRdma4sw7LkfFkzzIvBHqWp8ui6CtZ7XeRVUKk0/IJlN5Z+lBANuGX2s?=
- =?us-ascii?Q?D5RhM7tLcjzSAzQ+k285dLne3g6VS0XSs06dSvItEGIIwEVEoIUV9XaEcD7O?=
- =?us-ascii?Q?GLfB03YRse1HtbUXLBKZMy7AUKUY3X7Vo6KygiHEE0H/pHtBRZauRWRZlfMT?=
- =?us-ascii?Q?3IdQjSwAS4R6hAmQeFuBhrRM0yZr8KHVzrV95efRr60QOb1WAk3WMZVtrr88?=
- =?us-ascii?Q?13gg/ikrf53yMc5AEqCV1oIuHl91etstA7OVK9WUcU51BjvIBg9FBEPwSWr+?=
- =?us-ascii?Q?9t7e73UQQksv5t/vk4eFSTiLP94vxHNNDlaA0Tu5n6KWM2wJHnOpV5m32qSK?=
- =?us-ascii?Q?0S2AhwvbuukwOFU1jEhpe/rDwBNySf3gAoTdpRTe8oykY+FcHP/QPTS8BfsW?=
- =?us-ascii?Q?LKDzxomHRvxeN5VBp8RZlgfJba8Q1vtlZBA5BNi6submP5JACE8LwI2c0Na1?=
- =?us-ascii?Q?voudlnQuhYBikmvwMvG5jNyQvyis5g5/Roy7ngpWAr6N9QNXG51eXjGWagkm?=
- =?us-ascii?Q?UvdIGrI3qyQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?vRdnoxmypXG2HOyiAXm8e/W7wopwkCG9W28asfN+nnxG5oJZVnV5Iw3Y98k2?=
- =?us-ascii?Q?+dvV8QALQ96YhLHXfgrX7+uBGD36qobQqe9i9sytnL5skBYo0r6jnkmO2mcO?=
- =?us-ascii?Q?lyIDhgFefTp48nvv339AX4Vep7HiEa9WaBQlSyHbEyapnWQorOY10oi0CtNr?=
- =?us-ascii?Q?4HQALXaTKhlQmsTdrbTQ4hnDr9sA0gsgGq1UyNNZ3IEigeDieN6g8qN1z0f0?=
- =?us-ascii?Q?8DvBszOg5kJuploENJx5PjehTSwLOvw6YQnvV0GT1oMhpV0Du72Tebh4r+fI?=
- =?us-ascii?Q?6F0IS/26I5OScsQQm4H3d1BLSiOo2oNIDROcB4sDO2KxBA0oA/G1zm3Fr+x3?=
- =?us-ascii?Q?66ZB5df8fU0mZxYv15lb2Q5UXbVaVQfFnR44QgBtpQh96Cvw/L/mYnD1TEej?=
- =?us-ascii?Q?MWVHUoXZ9K0gP0bgfyLVEBg9CUqBWw0Uk2fIHHu1nH/4v82ahvR89FTSJ8Uj?=
- =?us-ascii?Q?lDHIq+T7uC4cAVgRpVtL4uxgBi5+JS6EO4wjFOLm67+wkUP1FQK6T/Ss11Jx?=
- =?us-ascii?Q?8/kf8l4yIi5KY7mCvO0/gmRpOFco5Bhl7hNx9/HodbfVmK39pB7+jFU9GMI1?=
- =?us-ascii?Q?AQ862wqm2JP5rHFQqzWKeqw4kPigtMscw2rLDAdQ78MQXg4BOp6wA1imEFPm?=
- =?us-ascii?Q?JlYHShZg5WHxtJ797uW5y4yOe2GBcSRHkHb8Q7NMZC3KEum6gV4mALnfJZxO?=
- =?us-ascii?Q?Kj9cFhfYnlOXUNvhwTQ5UoJi5d41gjgwKCl9Kw3ER1Zne+kSQjQ3zbr4i4Kl?=
- =?us-ascii?Q?qPDCQUZFrp9adLkzCuU0Xt62QQA/HRWZuPB+ny12GcrE7tnEoo/QsdXoa+26?=
- =?us-ascii?Q?wr7nL3U9Y56DYseyCK2svuKPdgL+G9dwd8n1AYoIY73EJ04mJqvigWpkFb/M?=
- =?us-ascii?Q?KPO1W4loWUAZGfBrIeaIKV3tp8cZvxS2nss2fnxMIoZSl9fxmg9WyztU9U+J?=
- =?us-ascii?Q?V4j1aNEd2K/L4shT/zNaxtj6U0EGug+QGdAU9hvgJXuPmUNh+PpJmAFM4Ryn?=
- =?us-ascii?Q?IXbyQKDFOm4e5TcoC9ITE6FTf8sUwDv8ibAd4tSIqUopv0SxRZfkmxYaLLGt?=
- =?us-ascii?Q?CKxafTKWR1Gmc3xSBMPVRCivvVsb7KZNkGKilOsHEzrQN5eHxMxNb3LunvXT?=
- =?us-ascii?Q?oW4kwRRet8NvmNjrdoT41WPHcvLWSICJNQhn/RS3BT1xNpEwD3JpTljZrJyP?=
- =?us-ascii?Q?IambstJSeAhLzBt2o0rvTPoJ7WnfB18AMsJkPWMcDXMbRsIstVT/rkWF/+74?=
- =?us-ascii?Q?B30IhTHNNaTMs/6ol3v5SVgKcuIhUTgf2Cjnmz11MdjsohzjjF/DS/s9TOiZ?=
- =?us-ascii?Q?dIfp6Wx0RRy5zARcoZfz1D+p5QZVCsxNW3jRzb50I72VCTmU37P+Y3xc95ki?=
- =?us-ascii?Q?i4RctNlL4l67dS7JAZxSFrS6JFWw1R6WLe3wbk2FNxX5BLq50jqQqDtwds+k?=
- =?us-ascii?Q?RRPRdDLh7tcalLwP0UgHMWG2JM64JMGrbA4EaluffNbBGlgFjqhPYqsWf4xc?=
- =?us-ascii?Q?/HoT+vsaX+4YWkd2dX4c4GVr6Na7DhPPETMLkF4zfaruWylrOIJrHqw/sfqY?=
- =?us-ascii?Q?k5U5JaKFizY20g657X/UHB05Te4/aPgAz9TwF0KnaMNEajf8aLdDI6Z6Drvn?=
- =?us-ascii?Q?rA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	jXBUb9I0GomsJ5lGL7xBEZ77CgyW+GuVHpHVDt9tA1P8VP6aGiao+/KWqq+fJ1angIeTtyAkUjicSnGj+wqlqqAHepG0mnM7PZeKWmAHE9U0dByyK/096Mh/LT5fJuAE02eV9k0DgJeYSkxAYobjJKacL2CNGBx6WGJDzx1IRhRd3xNlh+WAq0lOewlCNt8BNwQLmB0xfZ+ebtSCoSvGhuhCWRGGkGEPwXvdErU3wqjcbFN372ilegkwekD/6uUNI/THV5xCl5GphNWVkoiR2GrpjkWwVMEP2egpbEjL4Bfeca6/EHdGS3oQDfOuio4Ha7dQ1/JHqsfoLkc0rILvUxSXA1qkF87wZ8ZMdf6hr3i86Kw1WrZ9n5RSaXsJjFqJhAQvCSVkRyuDC4rvagxJD0Nuw/f8X9Dg16E+jaR56T5Y64U8m/jkFRP6bNuuWyMEd+q+ZNwTxgmREFsoBQBQjpGqcgfpeNzBiDC8mIE/EWK3Bl9wvpw+edBsZKBMD0C0hVGB0wfFW01S+QTmmatwFtoLLDnLIAcU0rccoXMExplzEt9a2+/3x4mZHSFdjBpoVI3dbc/2uC0did2t/Zgn4BOfYI9pM+3o7E+77Bjs53Y=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac53375c-0695-4258-a826-08ddd034d25b
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 13:19:04.3423
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p5lgFJIp0PSaOrVZV3IYEpLD1RNk8fH9mG0zNaiFglrPjyT0AcDcKCE68c5oPyPK7l62lmTN3w7ClZuzXVrz5KOHJUpq3ZSV9fc4ttaK4GE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6646
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-31_02,2025-07-31_02,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxscore=0
- phishscore=0 suspectscore=0 mlxlogscore=841 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2507310092
-X-Proofpoint-ORIG-GUID: Vs2D5Woop29wf3ByAo8th1Htw1wB-gsN
-X-Proofpoint-GUID: Vs2D5Woop29wf3ByAo8th1Htw1wB-gsN
-X-Authority-Analysis: v=2.4 cv=QZtmvtbv c=1 sm=1 tr=0 ts=688b6d4c b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=Wb1JkmetP80A:10 a=GoEa3M9JfhUA:10 a=pGLkceISAAAA:8 a=07d9gI8wAAAA:8
- a=Z4Rwk6OoAAAA:8 a=yPCof4ZbAAAA:8 a=Ikd4Dj_1AAAA:8 a=SRrdq9N9AAAA:8
- a=20KFwNOVAAAA:8 a=7CQSdrXTAAAA:8 a=VwQbUJbxAAAA:8 a=1XWaLZrsAAAA:8
- a=iox4zFpeAAAA:8 a=JfrnYn6hAAAA:8 a=gmp_2V53UkDn_K6tnJEA:9 a=CjuIK1q_8ugA:10
- a=e2CUPOnPG4QKp8I52DXD:22 a=HkZW87K1Qel5hWWM3VKY:22 a=a-qgeE7W1pNrGK8U0ZQC:22
- a=WzC6qhA0u3u7Ye7llzcV:22 a=1CNFftbPRP8L7MoqJWF3:22 cc=ntf awl=host:12070
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDA5MiBTYWx0ZWRfXxGd4oAVQjWua
- 7AKLOG0edP+2wfjasDXU12+AbhpOwRgPF8ZIf0j5Kt9ydI4GY6CKlKSUxuCuRW85cQYgMReIzCZ
- NmAUGHWRLPcFiZhccCNpbWdX8OvgFF/gbgaWt3jn6wFlKjGElIzcztj38r0Tu2DnhQjCSqZWq/S
- Cpk8AIJP4UfMg87n592ho/G19upJwqgWslJ9x/04ndu/TmtQzISucNa7a6hnNieh/AY94Eq3DEf
- XNH2ojE8ZZgXn9K92avjS+WTcDkstY70/jIW6uZr7knzHDBeS/snNJ/0iYcbe0OesWgl2WfbNHu
- 6/sjXza2t7lxoJuEQPH8tKeKPcsYg4ZnYjtNxPr+bd9EgdS4ba41W6jWMUrHU0bxRikiOPAAI/E
- XX6fhn/42atJe1JfXIianTNw9Qh7a6iYAI72luHMmtZUS6HBBv9VleFq4HlEBp3welj9Qoaj
+References: <20250729022640.3134066-1-yuzhuo@google.com> <20250729022640.3134066-7-yuzhuo@google.com>
+ <aIr8JuprT1JPNJsq@google.com>
+In-Reply-To: <aIr8JuprT1JPNJsq@google.com>
+From: Yuzhuo Jing <yuzhuo@google.com>
+Date: Thu, 31 Jul 2025 06:19:26 -0700
+X-Gm-Features: Ac12FXyIhUFDytjG41oc7SOsf47Ir-TzU6_QHAFGK9ZpLkho8cN3fMKcIYXZnI4
+Message-ID: <CADQikVDgFa2pHHsUERpxsEj6ufZYp5cwgQ7z5xXUhvOnmSNk0g@mail.gmail.com>
+Subject: Re: [PATCH v1 6/7] perf bench: Add 'bench sync qspinlock' subcommand
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Liang Kan <kan.liang@linux.intel.com>, Yuzhuo Jing <yzj@umich.edu>, 
+	Andrea Parri <parri.andrea@gmail.com>, Charlie Jenkins <charlie@rivosinc.com>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Kumar Kartikeya Dwivedi <memxor@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Barret Rhoden <brho@google.com>, 
+	Alexandre Ghiti <alexghiti@rivosinc.com>, Guo Ren <guoren@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 31, 2025 at 02:12:44PM +0100, Usama Arif wrote:
+On Wed, Jul 30, 2025 at 10:16=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
+> On Mon, Jul 28, 2025 at 07:26:39PM -0700, Yuzhuo Jing wrote:
+> > Benchmark kernel queued spinlock implementation in user space.  Support
+> > settings of the number of threads and the number of acquire/releases.
 >
-> On 31/07/2025 13:40, Lorenzo Stoakes wrote:
-> > On Thu, Jul 31, 2025 at 01:27:18PM +0100, Usama Arif wrote:
-> > [snip]
-> >> Acked-by: Usama Arif <usamaarif642@gmail.com>
-> >> Tested-by: Usama Arif <usamaarif642@gmail.com>
-> >> Cc: Jonathan Corbet <corbet@lwn.net>
-> >> Cc: Andrew Morton <akpm@linux-foundation.org>
-> >> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >> Cc: Zi Yan <ziy@nvidia.com>
-> >> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
-> >> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-> >> Cc: Nico Pache <npache@redhat.com>
-> >> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> >> Cc: Dev Jain <dev.jain@arm.com>
-> >> Cc: Barry Song <baohua@kernel.org>
-> >> Cc: Vlastimil Babka <vbabka@suse.cz>
-> >> Cc: Mike Rapoport <rppt@kernel.org>
-> >> Cc: Suren Baghdasaryan <surenb@google.com>
-> >> Cc: Michal Hocko <mhocko@suse.com>
-> >> Cc: Usama Arif <usamaarif642@gmail.com>
-> >> Cc: SeongJae Park <sj@kernel.org>
-> >> Cc: Jann Horn <jannh@google.com>
-> >> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
-> >> Cc: Yafang Shao <laoar.shao@gmail.com>
-> >> Cc: Matthew Wilcox <willy@infradead.org>
-> >
-> > You don't need to include these Cc's, Andrew will add them for you.
-> >
-> >> Signed-off-by: David Hildenbrand <david@redhat.com>
-> >> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >
-> > Shouldn't this also be signed off by you? 2/5 and 3/5 has S-o-b for both
-> > David and yourself?
-> >
-> > This is inconsistent at the very least.
-> >
+> My general advice is that you'd better add an example command line and
+> output in the commit message if you add any user-visible changes.  Also
+> please update the Documentation/perf-bench.txt.
 >
-> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->
-> The Ccs were added by David, and I didn't want to remove them.
+> Thanks,
+> Namhyung
 
-Let's not add this noise on respins please, it makes review harder. No
-other patch in the series, including ones by David, do it.
+Hi Namhyung. Thanks for the review and for the advice! I will update
+the commit messages and documentation later in a v2 patch.
 
->
-> >>
-> >> ---
-> >>
-> >
-> > Nothing below the --- will be included in the patch, so we can drop the
-> > below, it's just noise that people can find easily if needed.
-> >
-> >> At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
-> >> think there might be real use cases where we want to disable any THPs --
-> >> in particular also around debugging THP-related problems, and
-> >> "never" not meaning ... "never" anymore ever since we add MADV_COLLAPSE.
-> >> PR_SET_THP_DISABLE will also block MADV_COLLAPSE, which can be very
-> >> helpful for debugging purposes. Of course, I thought of having a
-> >> system-wide config option to modify PR_SET_THP_DISABLE behavior, but
-> >> I just don't like the semantics.
-> >
-> > [snip]
-> >
-> >>
-> >> Signed-off-by: David Hildenbrand <david@redhat.com>
-> >
-> > This S-o-b is weird, it's in a comment essentially. Let's drop that too
-> > please.
->
->
-> Everything below --- was added by David I believe to provide further explanation that
-> doesn't need to be included in the commit message, and I didn't want to remove it
-> or his 2nd sign-off, as its discarded anyways. Its useful info that can just be
-> ignored.
+Best regards,
+Yuzhuo
 
-Yup I get that, you've posted this several times now, anybody who needs it can
-find it. Please remove on future respins to save me having to page through
-noise.
-
-The S-o-b was actively confusing, and this whole block of noise hid the
-fact you got the S-o-b wrong on this patch.
-
-Thanks
+> >
+> > Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
+> > ---
+> >  tools/perf/bench/Build     |   2 +
+> >  tools/perf/bench/bench.h   |   1 +
+> >  tools/perf/bench/sync.c    | 234 +++++++++++++++++++++++++++++++++++++
+> >  tools/perf/builtin-bench.c |   7 ++
+> >  4 files changed, 244 insertions(+)
+> >  create mode 100644 tools/perf/bench/sync.c
+> >
+> > diff --git a/tools/perf/bench/Build b/tools/perf/bench/Build
+> > index b558ab98719f..13558279fa0e 100644
+> > --- a/tools/perf/bench/Build
+> > +++ b/tools/perf/bench/Build
+> > @@ -19,6 +19,8 @@ perf-bench-y +=3D evlist-open-close.o
+> >  perf-bench-y +=3D breakpoint.o
+> >  perf-bench-y +=3D pmu-scan.o
+> >  perf-bench-y +=3D uprobe.o
+> > +perf-bench-y +=3D sync.o
+> > +perf-bench-y +=3D qspinlock.o
+> >
+> >  perf-bench-$(CONFIG_X86_64) +=3D mem-memcpy-x86-64-asm.o
+> >  perf-bench-$(CONFIG_X86_64) +=3D mem-memset-x86-64-asm.o
+> > diff --git a/tools/perf/bench/bench.h b/tools/perf/bench/bench.h
+> > index 9f736423af53..dd6c8b6126d3 100644
+> > --- a/tools/perf/bench/bench.h
+> > +++ b/tools/perf/bench/bench.h
+> > @@ -22,6 +22,7 @@ int bench_numa(int argc, const char **argv);
+> >  int bench_sched_messaging(int argc, const char **argv);
+> >  int bench_sched_pipe(int argc, const char **argv);
+> >  int bench_sched_seccomp_notify(int argc, const char **argv);
+> > +int bench_sync_qspinlock(int argc, const char **argv);
+> >  int bench_syscall_basic(int argc, const char **argv);
+> >  int bench_syscall_getpgid(int argc, const char **argv);
+> >  int bench_syscall_fork(int argc, const char **argv);
+> > diff --git a/tools/perf/bench/sync.c b/tools/perf/bench/sync.c
+> > new file mode 100644
+> > index 000000000000..2685cb66584c
+> > --- /dev/null
+> > +++ b/tools/perf/bench/sync.c
+> > @@ -0,0 +1,234 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Synchronization benchmark.
+> > + *
+> > + * 2025  Yuzhuo Jing <yuzhuo@google.com>
+> > + */
+> > +#include <bits/time.h>
+> > +#include <err.h>
+> > +#include <inttypes.h>
+> > +#include <perf/cpumap.h>
+> > +#include <pthread.h>
+> > +#include <stdbool.h>
+> > +#include <string.h>
+> > +#include <subcmd/parse-options.h>
+> > +#include <sys/cdefs.h>
+> > +
+> > +#include "bench.h"
+> > +
+> > +#include "include/qspinlock.h"
+> > +
+> > +#define NS 1000000000ull
+> > +#define CACHELINE_SIZE 64
+> > +
+> > +static unsigned int nthreads;
+> > +static unsigned long nspins =3D 10000ul;
+> > +
+> > +struct barrier_t;
+> > +
+> > +typedef void(*lock_fn)(void *);
+> > +
+> > +/*
+> > + * Lock operation definition to support multiple implmentations of loc=
+ks.
+> > + *
+> > + * The lock and unlock functions only take one variable, the data poin=
+ter.
+> > + */
+> > +struct lock_ops {
+> > +     lock_fn lock;
+> > +     lock_fn unlock;
+> > +     void *data;
+> > +};
+> > +
+> > +struct worker {
+> > +     pthread_t thd;
+> > +     unsigned int tid;
+> > +     struct lock_ops *ops;
+> > +     struct barrier_t *barrier;
+> > +     u64 runtime;            // in nanoseconds
+> > +};
+> > +
+> > +static const struct option options[] =3D {
+> > +     OPT_UINTEGER('t',       "threads",      &nthreads,
+> > +             "Specify number of threads (default: number of CPUs)."),
+> > +     OPT_ULONG('n',          "spins",        &nspins,
+> > +             "Number of lock acquire operations per thread (default: 1=
+0,000 times)."),
+> > +     OPT_END()
+> > +};
+> > +
+> > +static const char *const bench_sync_usage[] =3D {
+> > +     "perf bench sync qspinlock <options>",
+> > +     NULL
+> > +};
+> > +
+> > +/*
+> > + * A atomic-based barrier.  Expect to have lower latency than pthread =
+barrier
+> > + * that sleeps the thread.
+> > + */
+> > +struct barrier_t {
+> > +     unsigned int count __aligned(CACHELINE_SIZE);
+> > +};
+> > +
+> > +/*
+> > + * A atomic-based barrier.  Expect to have lower latency than pthread =
+barrier
+> > + * that sleeps the thread.
+> > + */
+> > +__always_inline void wait_barrier(struct barrier_t *b)
+> > +{
+> > +     if (__atomic_sub_fetch(&b->count, 1, __ATOMIC_RELAXED) =3D=3D 0)
+> > +             return;
+> > +     while (__atomic_load_n(&b->count, __ATOMIC_RELAXED))
+> > +             ;
+> > +}
+> > +
+> > +static int bench_sync_lock_generic(struct lock_ops *ops, int argc, con=
+st char **argv);
+> > +
+> > +/*
+> > + * Benchmark of linux kernel queued spinlock in user land.
+> > + */
+> > +int bench_sync_qspinlock(int argc, const char **argv)
+> > +{
+> > +     struct qspinlock lock =3D __ARCH_SPIN_LOCK_UNLOCKED;
+> > +     struct lock_ops ops =3D {
+> > +             .lock =3D (lock_fn)queued_spin_lock,
+> > +             .unlock =3D (lock_fn)queued_spin_unlock,
+> > +             .data =3D &lock,
+> > +     };
+> > +     return bench_sync_lock_generic(&ops, argc, argv);
+> > +}
+> > +
+> > +/*
+> > + * A busy loop to acquire and release the given lock N times.
+> > + */
+> > +static void lock_loop(const struct lock_ops *ops, unsigned long n)
+> > +{
+> > +     unsigned long i;
+> > +
+> > +     for (i =3D 0; i < n; ++i) {
+> > +             ops->lock(ops->data);
+> > +             ops->unlock(ops->data);
+> > +     }
+> > +}
+> > +
+> > +/*
+> > + * Thread worker function.  Runs lock loop for N/5 times before and af=
+ter
+> > + * the main timed loop.
+> > + */
+> > +static void *sync_workerfn(void *args)
+> > +{
+> > +     struct worker *worker =3D (struct worker *)args;
+> > +     struct timespec starttime, endtime;
+> > +
+> > +     set_this_cpu_id(worker->tid);
+> > +
+> > +     /* Barrier to let all threads start together */
+> > +     wait_barrier(worker->barrier);
+> > +
+> > +     /* Warmup loop (not counted) to keep the below loop contended. */
+> > +     lock_loop(worker->ops, nspins / 5);
+> > +
+> > +     clock_gettime(CLOCK_THREAD_CPUTIME_ID, &starttime);
+> > +     lock_loop(worker->ops, nspins);
+> > +     clock_gettime(CLOCK_THREAD_CPUTIME_ID, &endtime);
+> > +
+> > +     /* Tail loop (not counted) to keep the above loop contended. */
+> > +     lock_loop(worker->ops, nspins / 5);
+> > +
+> > +     worker->runtime =3D (endtime.tv_sec - starttime.tv_sec) * NS
+> > +             + endtime.tv_nsec - starttime.tv_nsec;
+> > +
+> > +     return NULL;
+> > +}
+> > +
+> > +/*
+> > + * Generic lock synchronization benchmark function.  Sets up threads a=
+nd
+> > + * thread affinities.
+> > + */
+> > +static int bench_sync_lock_generic(struct lock_ops *ops, int argc, con=
+st char **argv)
+> > +{
+> > +     struct perf_cpu_map *online_cpus;
+> > +     unsigned int online_cpus_nr;
+> > +     struct worker *workers;
+> > +     u64 totaltime =3D 0, total_spins, avg_ns, avg_ns_dot;
+> > +     struct barrier_t barrier;
+> > +     cpu_set_t *cpuset;
+> > +     size_t cpuset_size;
+> > +
+> > +     argc =3D parse_options(argc, argv, options, bench_sync_usage, 0);
+> > +     if (argc) {
+> > +             usage_with_options(bench_sync_usage, options);
+> > +             exit(EXIT_FAILURE);
+> > +     }
+> > +
+> > +     /* CPU count setup. */
+> > +     online_cpus =3D perf_cpu_map__new_online_cpus();
+> > +     if (!online_cpus)
+> > +             err(EXIT_FAILURE, "No online CPUs available");
+> > +     online_cpus_nr =3D perf_cpu_map__nr(online_cpus);
+> > +
+> > +     if (!nthreads) /* default to the number of CPUs */
+> > +             nthreads =3D online_cpus_nr;
+> > +
+> > +     workers =3D calloc(nthreads, sizeof(*workers));
+> > +     if (!workers)
+> > +             err(EXIT_FAILURE, "calloc");
+> > +
+> > +     barrier.count =3D nthreads;
+> > +
+> > +     printf("Running with %u threads.\n", nthreads);
+> > +
+> > +     cpuset =3D CPU_ALLOC(online_cpus_nr);
+> > +     if (!cpuset)
+> > +             err(EXIT_FAILURE, "Cannot allocate cpuset.");
+> > +     cpuset_size =3D CPU_ALLOC_SIZE(online_cpus_nr);
+> > +
+> > +     /* Create worker data structures, set CPU affinity, and create   =
+*/
+> > +     for (unsigned int i =3D 0; i < nthreads; ++i) {
+> > +             pthread_attr_t thread_attr;
+> > +             int ret;
+> > +
+> > +             /* Basic worker thread information */
+> > +             workers[i].tid =3D i;
+> > +             workers[i].barrier =3D &barrier;
+> > +             workers[i].ops =3D ops;
+> > +
+> > +             /* Set CPU affinity */
+> > +             pthread_attr_init(&thread_attr);
+> > +             CPU_ZERO_S(cpuset_size, cpuset);
+> > +             CPU_SET_S(perf_cpu_map__cpu(online_cpus, i % online_cpus_=
+nr).cpu,
+> > +                     cpuset_size, cpuset);
+> > +
+> > +             if (pthread_attr_setaffinity_np(&thread_attr, cpuset_size=
+, cpuset))
+> > +                     err(EXIT_FAILURE, "Pthread set affinity failed");
+> > +
+> > +             /* Create and block thread */
+> > +             ret =3D pthread_create(&workers[i].thd, &thread_attr, syn=
+c_workerfn, &workers[i]);
+> > +             if (ret !=3D 0)
+> > +                     err(EXIT_FAILURE, "Error creating thread: %s", st=
+rerror(ret));
+> > +
+> > +             pthread_attr_destroy(&thread_attr);
+> > +     }
+> > +
+> > +     CPU_FREE(cpuset);
+> > +
+> > +     for (unsigned int i =3D 0; i < nthreads; ++i) {
+> > +             int ret =3D pthread_join(workers[i].thd, NULL);
+> > +
+> > +             if (ret)
+> > +                     err(EXIT_FAILURE, "pthread_join");
+> > +     }
+> > +
+> > +     /* Calculate overall average latency. */
+> > +     for (unsigned int i =3D 0; i < nthreads; ++i)
+> > +             totaltime +=3D workers[i].runtime;
+> > +
+> > +     total_spins =3D (u64)nthreads * nspins;
+> > +     avg_ns =3D totaltime / total_spins;
+> > +     avg_ns_dot =3D (totaltime % total_spins) * 10000 / total_spins;
+> > +
+> > +     printf("Lock-unlock latency of %u threads: %"PRIu64".%"PRIu64" ns=
+.\n",
+> > +                     nthreads, avg_ns, avg_ns_dot);
+> > +
+> > +     free(workers);
+> > +
+> > +     return 0;
+> > +}
+> > diff --git a/tools/perf/builtin-bench.c b/tools/perf/builtin-bench.c
+> > index 2c1a9f3d847a..cfe6f6dc6ed4 100644
+> > --- a/tools/perf/builtin-bench.c
+> > +++ b/tools/perf/builtin-bench.c
+> > @@ -52,6 +52,12 @@ static struct bench sched_benchmarks[] =3D {
+> >       { NULL,         NULL,                                           N=
+ULL                    }
+> >  };
+> >
+> > +static struct bench sync_benchmarks[] =3D {
+> > +     { "qspinlock",  "Benchmark for queued spinlock",                b=
+ench_sync_qspinlock    },
+> > +     { "all",        "Run all synchronization benchmarks",           N=
+ULL                    },
+> > +     { NULL,         NULL,                                           N=
+ULL                    }
+> > +};
+> > +
+> >  static struct bench syscall_benchmarks[] =3D {
+> >       { "basic",      "Benchmark for basic getppid(2) calls",         b=
+ench_syscall_basic     },
+> >       { "getpgid",    "Benchmark for getpgid(2) calls",               b=
+ench_syscall_getpgid   },
+> > @@ -122,6 +128,7 @@ struct collection {
+> >
+> >  static struct collection collections[] =3D {
+> >       { "sched",      "Scheduler and IPC benchmarks",                 s=
+ched_benchmarks        },
+> > +     { "sync",       "Synchronization benchmarks",                   s=
+ync_benchmarks         },
+> >       { "syscall",    "System call benchmarks",                       s=
+yscall_benchmarks      },
+> >       { "mem",        "Memory access benchmarks",                     m=
+em_benchmarks          },
+> >  #ifdef HAVE_LIBNUMA_SUPPORT
+> > --
+> > 2.50.1.487.gc89ff58d15-goog
+> >
 
