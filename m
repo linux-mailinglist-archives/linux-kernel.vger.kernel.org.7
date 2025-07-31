@@ -1,98 +1,80 @@
-Return-Path: <linux-kernel+bounces-751831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886B1B16E06
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:59:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E797FB16E08
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88DBD3AC3E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:59:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A29EF7B08FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA3D29827E;
-	Thu, 31 Jul 2025 08:59:33 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B100290DB2;
+	Thu, 31 Jul 2025 08:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSzHP8yH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF747218E99
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:59:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE32D218E99
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753952373; cv=none; b=m9ejIphqL7kjTVyV10V/clRELzoaBiHXBGuC603UPlBEEeacv2bceqZHCyp48CAZKhXeaFYkPCdymI6iH7uafKUYUyBXRwwmPghxsfOKU88IFZX+j2TTR2DtDQ4EtNlGIHz7FMkY6b9DamrtodNrdqxt2/gKalD7UyQdxq0v6nA=
+	t=1753952380; cv=none; b=pDi/CwbeW2ELLtLA+D0KMb4crzwvnX/2Lrs9wHLLGUEOTNG3yk/x7MwZRoqMpe+faJdFcZmVJMTsAXP41l6vh9uXv33ZElHCvE6d6ISyW3zFz/VwyLntc5ithOkZMlOPSda934hgOot2sfUsRJ/+Gz5qCLlqWXmCrBnOdE+bMnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753952373; c=relaxed/simple;
-	bh=3mEddPHZsFvJ9Cwt+PYalgpR4EylEMSlJ1PF5CyMsOY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Tgufheb+kAe82fIOrlLAOiNCk57msQH78Dc9JidKUrxc5Dz/MlUM0ht3hQl+Ewve4IcYLTk92VoqjcTCIBQeiwNO9DOTs1KfDkfKmJ7ixpliri5sUybwH8cIevxto4OfVTb+MsJmiIH9VaEHSb6FKz5sJ9JVuhFQ5A5lZy1nqLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3e3e69b2951so6457615ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:59:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753952371; x=1754557171;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bpD3IXUoJUWT7+mzB7fHXG7BExrdSpXHnx0WRFCL1Ls=;
-        b=KjkMADV82KxfZv7dyK17tTQqt5kigeIRl552I8UYOrgxZz4h/li+Bcn7sck8BfHQLW
-         jHy5nBwvt9zI3yiHMnqhr1hxuIK5cpA9sNlS0jJp9YPJNPHgfC8Q8UO7NU0CT3qLUMcu
-         KsZoHg5pyUiC5BG3OtX8Kp2F9pyKW6ymug/ZiFYII2+/tw3XGKsMvXGNgreBPuUSPml+
-         Wk29P1rLeDESIcXgtqFywlqoMsAjk2kaOKAiYS5GgCguJ32444mB9xQnlfkmxs+cxxGI
-         QbhCZpSBYuNyAigOam4gLdQODQZSHfou8h+0ajspWwSNXFeYir5wXwX+ltJMcmbBK2zF
-         zsJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWXY6FE+5+ZpYWZDMTDQUNs4tc2TjZ7hWomDOscUAhD+A06i2TYnrD+u3EI+sce/w9AMXbcYvj8oufk1VU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3Ss+JY2+CFUW70CuxkA4561LWlAMJ6VxM0Qmu3p4PImgDwB0S
-	LDkNTX3l1bPdrinM29Io15Dp3cYXcD0ZibI6nDA9lsR2VhPfD1tFWSEM00m0zf6RMxeL4qttJTD
-	tWD4s/8eVIOHVTrGCT3SEyqz+gZESglxl/6/Zz4zote3p/Nt5qSJeVQKJa5U=
-X-Google-Smtp-Source: AGHT+IE98xAoVtpMaY/lDFNzB73p9SJWWnoamk12G3HWmE0rJr+lqsqLsAldxvjeC52RzI3naksfv8UQaoLGmvUOT4/mclx1lgx8
+	s=arc-20240116; t=1753952380; c=relaxed/simple;
+	bh=wF3sqtw8d08ZFqjdL5Eoz/8zYvcLTNhMrj6Qf8+JNfU=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JiKRUP9HuWeEDxbtHbAK8DjTsM2eiPsKFdCELx6NEwrR3EA3O1hI0PSNEFMYzrvb6UE5JabXzeods85xjkbXucUE8pBqautHyGtiPpRH0Yk24s8jBXjAIs79hJqbJH7XoF0dzpDf5WKgVkRc1vQlvXoBgAufQ+//8+IdDL0dicQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSzHP8yH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3520C4CEEF;
+	Thu, 31 Jul 2025 08:59:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753952380;
+	bh=wF3sqtw8d08ZFqjdL5Eoz/8zYvcLTNhMrj6Qf8+JNfU=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=dSzHP8yHwNHEhCMG3uhvP5yafZt80hbKg0d8MwYSyWGWi5UJYS7QkWJWeWGd0JPh6
+	 onUKp+/pCJPMYHpy3dKEDK8vix//BgqgdBUFcWYnSjjAydaHgsZbt1dhZNAfG37Iyl
+	 KldJnM61bLUgm2lmVHGsoAA5kTu4Fb62pZXDD34Hfg8Wu0HekHQ8QqKv67k/r2R0MA
+	 vMW09xCAuQQAAxZiwjkAwQjUvaajqY2N8wId15yjnItDcUQl+mELoJArU2GFVMW+qH
+	 F2dk22BCduhN4IZJo0+PjD/JMQjVZhNh7XI3l5f+G48pSOiBSmwT9WOe2S2Q8+nwB4
+	 huMaw59hPhz0g==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, 
+ Ioana Ciornei <ioana.ciornei@nxp.com>
+In-Reply-To: <20250707153120.1371719-1-ioana.ciornei@nxp.com>
+References: <20250707153120.1371719-1-ioana.ciornei@nxp.com>
+Subject: Re: (subset) [PATCH] mfd: simple-mfd-i2c: add compatible strings
+ for Layerscape QIXIS FPGA
+Message-Id: <175395237951.1066658.3222139000178153711.b4-ty@kernel.org>
+Date: Thu, 31 Jul 2025 09:59:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a4b:b0:3e3:f47e:815e with SMTP id
- e9e14a558f8ab-3e4058e8c65mr16279685ab.6.1753952371137; Thu, 31 Jul 2025
- 01:59:31 -0700 (PDT)
-Date: Thu, 31 Jul 2025 01:59:31 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688b3073.050a0220.5d226.0015.GAE@google.com>
-Subject: [syzbot] Monthly kvm report (Jul 2025)
-From: syzbot <syzbot+listb4a8dca9c06e0ff0ef85@syzkaller.appspotmail.com>
-To: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-Hello kvm maintainers/developers,
+On Mon, 07 Jul 2025 18:31:20 +0300, Ioana Ciornei wrote:
+> The QIXIS FPGA found on Layerscape boards such as LX2160AQDS, LS1028AQDS
+> etc deals with power-on-reset timing, muxing etc. Use the simple-mfd-i2c
+> as its core driver by adding its compatible string (already found in
+> some dt files). By using the simple-mfd-i2c driver, any child device
+> will have access to the i2c regmap created by it.
+> 
+> 
+> [...]
 
-This is a 31-day syzbot report for the kvm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/kvm
+Applied, thanks!
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 63 have already been fixed.
+[1/1] mfd: simple-mfd-i2c: add compatible strings for Layerscape QIXIS FPGA
+      commit: d3a09d5e5ce66a91acfdbcf09d7193d2167b69c9
 
-Some of the still happening issues:
+--
+Lee Jones [李琼斯]
 
-Ref Crashes Repro Title
-<1> 613     Yes   WARNING: locking bug in kvm_xen_set_evtchn_fast
-                  https://syzkaller.appspot.com/bug?extid=919877893c9d28162dc2
-<2> 4       Yes   WARNING in kvm_read_guest_offset_cached
-                  https://syzkaller.appspot.com/bug?extid=bc0e18379a290e5edfe4
-<3> 3       Yes   BUG: unable to handle kernel paging request in vgic_its_save_tables_v0
-                  https://syzkaller.appspot.com/bug?extid=4ebd710a879482a93f8f
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
