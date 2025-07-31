@@ -1,224 +1,439 @@
-Return-Path: <linux-kernel+bounces-751478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838C4B16A23
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:28:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B865B16A21
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB72718C7A0B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:29:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CF625A632B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BBA6145FE8;
-	Thu, 31 Jul 2025 01:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f8Q+1f6j"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666D715383A;
+	Thu, 31 Jul 2025 01:28:29 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758D42F41;
-	Thu, 31 Jul 2025 01:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753925322; cv=fail; b=qgNIRBN5LpbuJGPNRidisx36gPfIF4quzlU8ALRwW13527ye+SlgZcHc2BTFyOvW73KmGaZthAW3tILY3h1uPLiw98Aiy0gEgTnYPI3gAMazsiXqru5J5t6knw3+vF2Y4bi5QMZNDEBjkj+hSdE1K1OMlmUvv5i08suwWNPJf4Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753925322; c=relaxed/simple;
-	bh=TIT3KoEjzYntf3E1eiNd0DIk5q35zxoFxOQEb8ajfiU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rueYJn4rfSVjYtM8qP0va/cY5LHp3h79YOImCitKhz5JZjGEtmNZ10rVrFZWwr/OV6CiOFfsvneINi4Xj6stbzy0/hW7xvFhpAAIGMr4xqrR0y12j0sOaH2J/gcBNSKP+EX2AlcqlHni61OD4pqtlXPzo332pveFALXY5CF1BCY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f8Q+1f6j; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753925321; x=1785461321;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=TIT3KoEjzYntf3E1eiNd0DIk5q35zxoFxOQEb8ajfiU=;
-  b=f8Q+1f6jmfny4rlux68/sFsIPOz23Oa5l+ON5GiPP41aGI44CELr6/6o
-   PxM47mL2dHIQNB63jSeEEE01SL9OlaB44UszUtxqASiX7bKLBYH1y+T5n
-   FyPXLULyoBmGkQH/AHDTYrphIjhs55sN+cm0vX+1nYZEfYFTZOMoS8gZU
-   6ccmsNEL2DxKxFcqMEWjA3kDLvpnVLvvkFOiOQSM9hK8GF/bVA+fpiq5h
-   Z6kHD1ICGI8TSKI9BdOr5HzWRbQejtoc2zb5zEyDG+2cOPPOwJNfXPrEQ
-   04/FSMUEZ6MHiwRxuAPukTCgTkk2qVLjNLB530I7zJ+7zJPjyQVeoYaHb
-   A==;
-X-CSE-ConnectionGUID: WSkHqqy1Q9yvpsQ9ZytxGw==
-X-CSE-MsgGUID: R9DgPCdOQj6E9UWBZtUYvA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="81692636"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="81692636"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 18:28:26 -0700
-X-CSE-ConnectionGUID: MQOF7QuQTLC9Ie2HCkGKWA==
-X-CSE-MsgGUID: IXvc4AqUQj2GzFO6bC1fDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="167306683"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 18:28:25 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 30 Jul 2025 18:28:24 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Wed, 30 Jul 2025 18:28:24 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.40)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Wed, 30 Jul 2025 18:28:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dRQRCfzMKDPhF+Xj2WcN0RDSyIDV6ItHKG46l3xd6nlQh12nN/qOmC7Qs3PPp+3QXsHgF2R8r4maGR4bA853GQwumv7JNiZ96dUZ0ZgAd8x0oGyHuqjO++hxuxy4efF3gEQmwPcYuahwCm4hl2hf7jHndl0bY6uW/YxQK6p0uJhjgAHovuTbuTI9FF55+RS91pYpQWp7FOBDHonLrvsSMHPTlJyLJmxlFrHHYu3v8ci4awbeO614XRmvMccIJmIT91Lx+jzmsF8Q2b/nhuiLVGAuXTHK/RVVLuvbFoHbH2MLQnpX3Z9VUqkWHh/UQslrsYKGGf7WeYfago8ssxgbpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=TIT3KoEjzYntf3E1eiNd0DIk5q35zxoFxOQEb8ajfiU=;
- b=jWO+xZfHajKBs/zVLyHsoxWpPid6LK+OSsuB/xHkWkvJrMRdMRZYXpTqOwDgRz2bLjD3ECWP81fQAjcGs5IUgiXpO7ZumzPGF4FEwGsog8CK15+zUQl/rwQEggeVOFBVwf7Pt3vU8rkOnfxhYYWg70xvOHCQQNJs3hunzS/FStopNVDT6vYDPf6fmUz1OrZnbYwy9UYT8tua66DintfAMh0rflpSDoanBHX+uKggMVaRxaBXhXYTYLKPvuVAqL5r4uDbRTLm2XQxUJvayj0OY3YkPaDJQcKTUWnl95D6bZkd0PmblCqHn4fyM18FA6FGXs/ZJAE/ityDdZMehm2qlA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
- by PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Thu, 31 Jul
- 2025 01:27:38 +0000
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d%7]) with mapi id 15.20.8922.037; Thu, 31 Jul 2025
- 01:27:37 +0000
-From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-To: "kao, acelan" <acelan.kao@canonical.com>
-CC: "Luck, Tony" <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>, "James
- Morse" <james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] EDAC/skx_common: Fix potential negative values in DIMM
- size calculation
-Thread-Topic: [PATCH] EDAC/skx_common: Fix potential negative values in DIMM
- size calculation
-Thread-Index: AQHcARutltp8VFr67UKnYaFhiZ8S4LRKSp5ggAAEGYCAAIr7oIAAjK6AgAALNpA=
-Date: Thu, 31 Jul 2025 01:27:37 +0000
-Message-ID: <CY8PR11MB7134022A4A28EC6D8D8154E18927A@CY8PR11MB7134.namprd11.prod.outlook.com>
-References: <20250730063155.2612379-1-acelan.kao@canonical.com>
- <CY8PR11MB7134149FA7DF6E6C0FC7A9BD8924A@CY8PR11MB7134.namprd11.prod.outlook.com>
- <CAFv23Qk3vHFk36deq4NUPsE7gihqa9vdSVM2irnEye-KKLpBMg@mail.gmail.com>
- <CY8PR11MB7134BDC448F3DB558917DFCF8924A@CY8PR11MB7134.namprd11.prod.outlook.com>
- <CAFv23Qk-ypdyDDwNyeSeSWwirE19UtgdR38zWy2NRC+iJVk18w@mail.gmail.com>
-In-Reply-To: <CAFv23Qk-ypdyDDwNyeSeSWwirE19UtgdR38zWy2NRC+iJVk18w@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|PH7PR11MB6522:EE_
-x-ms-office365-filtering-correlation-id: 6406f113-67de-4cf6-aae3-08ddcfd16f11
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?TnU2bG04aFRRTC9KbW00RERyVFhUMkdaTTVyZ0IwemZmb3ZjR3QxNVU5blE5?=
- =?utf-8?B?T0Zxcjgwd0hIYmRLVlUwdmVOYjlmVC95ZEZSTG1zQ1lOTk1kU0xmdTZxMmlD?=
- =?utf-8?B?WnBoY0I2M3RQdDdlb0xyWmxiNzc2cnpDbkwzcE83K0pOSXI4VTZtb3FKS1Nm?=
- =?utf-8?B?L1UySEVCMTRrUCtwdHQ1N0FyOVF0NVd5cEVrdVFOU2JBWk5sU2JVUFZDR1cv?=
- =?utf-8?B?Q0wwUFczWUtsbDVnSTZieElnR0YxVkFnc2VTalcxMUdlaWNVN1VwcGZYNDIy?=
- =?utf-8?B?NXZDQXltUHBpN2dId0FNV2lsUmRZWmFpaW5HTHlnWHI5OVZjTzY1bGlXZ0lV?=
- =?utf-8?B?YlAybXZheEZtRkFESGh6azAveXFmNWNoRTNBUWdLNmVqQ1d0TlpzVkRCak1k?=
- =?utf-8?B?MkIwQ0kvV2Y5bklDUFFBbkZhMTZWZWlOOXc0cy9WQWlqZWZva1JVUmp4VXBn?=
- =?utf-8?B?RGJsVituWDBENHVoOHZKUEFMRFd3cFNmSEVkNDJKRi8yV2tUMUEvWXlxNXAv?=
- =?utf-8?B?QklEU3FocXFxR0Q1aCtib0MrcTVYUTZxaTVwZFlBamtwU1VDVmxSZHR3MEZF?=
- =?utf-8?B?Snk0Y0pmUThGbkpEaTVXd1ZSVkpQS0FsRmdyT0JwVGdDbEZ0TGNHSjFsNHRZ?=
- =?utf-8?B?UmlCaWhaTzgzSko1NUcvaytjWUc0eVlkbC81VzE3TmlhWDd6NjEvOWQrRUU0?=
- =?utf-8?B?dTBDRWp5SzFPTkdWeWczZjJTTWZSTVJSM1RKYXJBVVNiSERiYVVhcUlidG5s?=
- =?utf-8?B?NkNaWHlmOEh4bXlIckFVNTl2NnNhQm0wNk8zZXJ2ZkpYQTl0VzFkamdqMzQ4?=
- =?utf-8?B?Rmp5M2U5YVdZaTFWZHJhK0NobWJnMUNPY3lzS0dZTytXSU0xd0gvOE1CT1Jh?=
- =?utf-8?B?RkZFUEU3cXZlcmpFVkNBMEljZDN4OFU0d3d3S3FEcUlvVDZTcUpuT256bjRQ?=
- =?utf-8?B?ekZlNjVSckdmSThLdlpzRVprNkp6Q0VKYXRSREV1cFJlU3VLbEwrZTBHQytZ?=
- =?utf-8?B?aWozUHljK2dOL1hwdDlYeEdPa1kxL0oyWkxYczBqS2hWL09XY0FtZUU5TitK?=
- =?utf-8?B?NkhQN240ZHVQMDI5MkgrZTlrZEk4U2hnTHFKQ3p2dVUyOHgyMDFXbFh1Tk4x?=
- =?utf-8?B?dGpxeGM4ZHB3SzlzWlZJU0swWjVQVUZvcWNCdmJXRnRvOXFlVkEyWjM0UmMr?=
- =?utf-8?B?KzF0TFlnN2t6N29HdXVHR2drMkJzbWFWR2liT3V5TGZMYm5CbUN3L1prNWYz?=
- =?utf-8?B?TUJ6c3hDbDlTM0RramhwVmtpOWV2M2p2WGNRUHRCOWZtUVc1dWhjQlRXNzVS?=
- =?utf-8?B?Zk05MllSMFpHdUxjVWVjbXFycWdTbG0wc3lFWVg1OGZDVkorTjRKQzdXWkNO?=
- =?utf-8?B?eWZxL0gzZ21TU0hmQk4yUGRKTVVOQXJNWlRGekZDc29ZY2Z4YWRUdW01WFJQ?=
- =?utf-8?B?VnYrTzBHSVRlQ1BBWXBKZmorRmdBNkhuWnU3amZWOG95bXltQWtGdjNUWi9N?=
- =?utf-8?B?enhkTkNVY0QvSU5lMmdGSXI5TTZmMGdtSm1TWDZFd0UzSlpGWVVlOVVBSVNv?=
- =?utf-8?B?NlNDN0txamJUbkpGd2pWUzF1MnU5Y2hxaDBVaTVGRERzSnp1UjhwTXZuUWpk?=
- =?utf-8?B?NkJocWF5TVRQUk04RGxtaFBSdHoxYkpZbWtINGlxNEpwNlBsNnNDOHJJRFVH?=
- =?utf-8?B?R3J5WjVBU2hqUnVlakhIbzJ6V3diUk5UWFdPckJnbEU4bVZHaHlVL1lwS1I0?=
- =?utf-8?B?REtwUlUrS1R1YTcrUHlpVXFPcW1IZklkR013aGpGRDN3amV2UnNmcWk3dXBp?=
- =?utf-8?B?aWlRanJxOGt0ZnA0VlZhcWN5NHlpQXZHQ08rSDFPcndzK29QMGNPaEdWbUVi?=
- =?utf-8?B?cmp1cUhzTE9RaWFuTVNydUNVdlk3cFg3cUhnVjhyWjVUOUhxYzhyVG1iREhm?=
- =?utf-8?B?RnU2MjJkaEF0Y2NQOGwwUFlRUFZva0thUEJkZ2MvT2tTRmJhbUxFNW5WY2NZ?=
- =?utf-8?B?ZFNOUmxCaEF3PT0=?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?REJPTWdOcnpaajVHb2pTUWdvRGxSZGdSRWloU1c3NFdZdVJBV0lUd2dZVHpQ?=
- =?utf-8?B?THlGTk4yblEvSTBUNlkyMzkvRTFIczg4QVJDT1JlRXd1bnkwWU90eVpxQ3lt?=
- =?utf-8?B?Mk9OdGEzYldRTWlYYXQ5WUZWamUwdCtYMWM1eWtCWDJqVEFic2gxTFpmNUtE?=
- =?utf-8?B?Ny9uMFdyYndlVmhOcjhXZ2k4NzgvVTczVzI3RzA5ejY3RDFta1Bxd3RqQnFJ?=
- =?utf-8?B?RlR0emNFeHNjOWs2U3c1UjQ4aXNvSnBkRnlIUFFNSmoxOEdYYmEvaU1pczN6?=
- =?utf-8?B?WmxnalEzRklHZ2w1UUVBd3hwQ1pzUVJlTnY3QlgwVG1TUEpYdnhoQ2hObG5D?=
- =?utf-8?B?SXdwbEJQQ1FaQXpTeGZDTC82QmlWVUxMRi9FTkQ4dkhESEptYXBoY3pmRlRJ?=
- =?utf-8?B?c0RSd2hQZTJSancxK0Q1S2YybUJQQkRqQ2lQQ096eXpvSE1QNWZxckRBV2xM?=
- =?utf-8?B?SFFUU1QxUml1Z2JUdnRwSXQzT2FPYXZuRFczbVJDUG56S1dyNjZrVUpHOEQv?=
- =?utf-8?B?c3NodEFUcHJTWkdWd21LbkY2Nm5XRFY4YlErNlhoSWdjM2JhclZCbTNTRC9K?=
- =?utf-8?B?V1lxZDdab1U0RlNyVkZsTlU3ZlpaZ2lKOGZXV3FwcEVtN0pFMVZCR0NrZGgz?=
- =?utf-8?B?RTlGNmVHbUpRaXNMZG9SUkNjVlZ2ZnErR3BnTjdaQUtqejh0THJVbXpmVmRi?=
- =?utf-8?B?MzFFLzhvMHh1UDQ0LzhGOEtBRkppejRyclpJSVRwYVdkSzZGYUhFN3cxd0hm?=
- =?utf-8?B?dGNBZ1FoTmVPaExlN1ZBQlJEVE9qdmhLK1A4bC9IT0wxamhNMFpjaTJTbkww?=
- =?utf-8?B?U3dxQzRVYWIvVmg5SUxKWVRpT1QrYTBUN0JOaHZhU3h6VHNTc3M2T3hXWmFo?=
- =?utf-8?B?NDh1UzFNWWgxWnJySG1RUXoyV3BMUVo1aXNkUkdXaktUWWJUYWwzNlEvTFVk?=
- =?utf-8?B?V3hmWkpvRjU0MGhLeVNhMWNySlgvNXJ0YXBOSnM0K0RweDdXN1NDSW44djFv?=
- =?utf-8?B?d1lhQ3FzYXBiSTIyNitCNzZKMloySkUwSkRMUE5aWGpoQU1hek02L0Q5VzlG?=
- =?utf-8?B?SGp2ekxoMm9wblE0MUpxUGpRNzFxR0RPZlJ1RmVGZ1E0dktWMmNaZnlRbkFD?=
- =?utf-8?B?TC9yRnVxWmZTWXJkbGZKbFI4WE1iNW5pc1RBVVdqTkh2ckhyWSsvNnc1aFVH?=
- =?utf-8?B?WTJzcXc2VGJkeU16dGJEeHJFMHp3VllFUW1WYkpSZjlxckxLRkE2Z0hUMEFJ?=
- =?utf-8?B?cW8rVUFIWUpnd0VhYTFyZkJMUTVpSmxCL2NINCt0bVRucG5TMmhBS3krd1gw?=
- =?utf-8?B?OVdMQzBoVFh0RW0weDlMVjJJOFpNbXhQRDdhYndFQnJVZ0NobVFQMit2RzBD?=
- =?utf-8?B?c2o0cE9yVTBtZUhaMXVzWS9UcVdpKzdnVnUzWVkyWXdTbWttYmxnU21FREMr?=
- =?utf-8?B?NFFMYVJNQUovd0t1Z3ZudEVVREF4STdNN1VRMVUyUzdrTm8yWDdiOHBCRExJ?=
- =?utf-8?B?eExyOGVzZVFGNERpUDcwYUlHempXNEx0SUUrV3hlR0pkY1FsRjZreVpGb3Y1?=
- =?utf-8?B?SnQzY25uMnh2L1BXV3pvYy9NaS9HRktPVnNPR1ZieU9jOTFPMCthYktpQi9N?=
- =?utf-8?B?WU92QVpkelp2K2hTYW11WWRQTDRrbkFFdU1sRVRhY1NkTyttUktVZlhvUCtT?=
- =?utf-8?B?SGZTak9qWVhIU3VkYVJkZ0xtakxiOVNjWjNOQXVnWmc2dnk3VWJGckVWeEZH?=
- =?utf-8?B?MHdwRkpLd2RjQzBIOTE1azVLeGpwNTR3aUdlNWkyTENBdG1tdUVSQmRxNFBs?=
- =?utf-8?B?Tmc0cE9TMXRDcUVHS1VNckNVTlU1VVVNQzVwN1ZlQVdIZ3RuNXRhUjBZRUow?=
- =?utf-8?B?U2lWWFZUWDhRbXRjTHRUSUYzeDVjQWtpM2UxMFpFbDNHMkZ4TGt2Ky9lUlZX?=
- =?utf-8?B?ajgvb3RCTzg2em5DYk1wZTVmem93dmFOc3hGSUJkYUxaUG9TbzJjS29jeklx?=
- =?utf-8?B?L2Rrb1pTK1hiTndIVFI0dlhVc1lraldja2FPS21QbTJWZ0VSTWdNb0IvSm9Z?=
- =?utf-8?B?Nm5yOEU3b0FxSENWVnI0K2hOSW41T2oza3p5WmVlaGxFU0tNWmNiTTdIQmZI?=
- =?utf-8?Q?ePvbltRrWErvpruaUG2Uve/4f?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0E513632B;
+	Thu, 31 Jul 2025 01:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753925308; cv=none; b=j/Vx9146MiP9epaCYbSZRKgebgWIJpw6Vov9yHEHcgwTXkCA6ddXoR2e4/lv6st/SAAjEIhccmBq93VBMWv442UD/Su8mEPO/Ov2HG3KJe8izblpiS/uiDT90E3fRld/CmfZml5HELIUqwwuW7KeUd1Ar9YHeU9DiXGMte0qdV4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753925308; c=relaxed/simple;
+	bh=soRlVWTU+S3Yjtj+b/Yr1nADmTNgP+F9kx0R2EjrJGw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=pbktNHSKtPGGLqBLr46sWVmTXNFim4+7mINYDB1hZu/mNFaLzOZaeR5aRm/i5XhoAB4B5SBqfavQduaF+xeEx56CtYbBRnsqBDwJlTykT4gfSMhTIixoJZ+dXb4qq2wf3eCqDpeCf2c02VMBSQY9WmjMD2WIZhYpOWi2WQtiPkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bss0m3nfPzYQtw2;
+	Thu, 31 Jul 2025 09:28:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 352BE1A0D98;
+	Thu, 31 Jul 2025 09:28:23 +0800 (CST)
+Received: from [10.174.177.163] (unknown [10.174.177.163])
+	by APP1 (Coremail) with SMTP id cCh0CgBXE6+zxopojqYOCA--.18579S2;
+	Thu, 31 Jul 2025 09:28:23 +0800 (CST)
+Subject: Re: [bug report] dm: 'tried to init an initialized object' error
+ triggered during device creation
+To: Li Lingfeng <lilingfeng3@huawei.com>, agk@redhat.com,
+ Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>,
+ dm-devel@lists.linux.dev,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-block@vger.kernel.org
+Cc: zhengqixing@huawei.com, yangerkun <yangerkun@huawei.com>,
+ "zhangyi (F)" <yi.zhang@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>,
+ "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+ Li Lingfeng <lilingfeng@huaweicloud.com>
+References: <83591d0b-2467-433c-bce0-5581298eb161@huawei.com>
+From: Hou Tao <houtao@huaweicloud.com>
+Message-ID: <f9c385b3-2426-13a1-bc4b-54c3fb402704@huaweicloud.com>
+Date: Thu, 31 Jul 2025 09:28:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6406f113-67de-4cf6-aae3-08ddcfd16f11
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jul 2025 01:27:37.4588
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 12lCJj1xJIAbDclq2Toph2cDhUyi5LUMTWp9f1Y7sFD5dvTSBtS47w/wGIf2gOHAsN2Y/tnR3oolFQb33ZXZnA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6522
-X-OriginatorOrg: intel.com
+In-Reply-To: <83591d0b-2467-433c-bce0-5581298eb161@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:cCh0CgBXE6+zxopojqYOCA--.18579S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfGr13ur13Gr18Wr4kKFy8Zrb_yoW8Jw4xZo
+	WfKw1F9F4rWryDKw1jyr1DJry3Wr4UK3ZFgF12krnxAwn7J3Z8t348Ja40y343Kr4xKayx
+	Zr1ftayrtayq9395n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUYv7kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
+	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF
+	7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7
+	CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI
+	62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026x
+	CaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_
+	JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r
+	1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_
+	Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8Jr
+	UvcSsGvfC2KfnxnUUI43ZEXa7IU17KsUUUUUU==
+X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
 
-PiBGcm9tOiBBY2VMYW4gS2FvIDxhY2VsYW4ua2FvQGNhbm9uaWNhbC5jb20+DQo+IFsuLi5dDQo+
-ID4gQXR0YWNoZWQgaXMgYSBwYXRjaCB0aGF0IHNraXBzIERJTU0gZW51bWVyYXRpb24gb24gYSBk
-aXNhYmxlZCBtZW1vcnkNCj4gPiBjb250cm9sbGVyIHRvIGZpeCB0aGUgY2FsbCB0cmFjZS4gQ291
-bGQgeW91IHBsZWFzZSB0ZXN0IHRoaXMgcGF0Y2ggb24NCj4gPiB5b3VyIG1hY2hpbmVzIGFuZCBz
-aGFyZSB0aGUgZG1lc2cgbG9nPw0KPiBZZXMsIHRoaXMgd29ya3MgZm9yIG1lLg0KDQpUaGFua3Mg
-Zm9yIHlvdXIgdGVzdGluZyBmZWVkYmFjay4NCg0KPiANCj4gVGVzdGVkLWJ5OiAgQ2hpYS1MaW4g
-S2FvIChBY2VMYW4pIDxhY2VsYW4ua2FvQGNhbm9uaWNhbC5jb20+DQoNCkknbGwgYWRkIHlvdXIg
-IlRlc3RlZC1ieSIgaW4gdGhlIGNvbW1pdCBtZXNzYWdlLg0KDQpUaGFua3MhDQotUWl1eHUNCg==
+
+
+On 7/30/2025 8:00 PM, Li Lingfeng wrote:
+> Hi all,
+>
+> Recently, when creating dm-mpath devices based on iSCSI devices, we
+> encountered a 'tried to init an initialized object' error triggered
+> by one DM_DEV_CREATE and two DM_TABLE_LOAD operations.
+>
+> // DM_DEV_CREATE
+> dev_create
+>  dm_create
+>   alloc_dev
+>    blk_alloc_disk // alloc gendisk for md->disk
+>
+> // first DM_TABLE_LOAD
+> table_load
+>  dm_get_md_type // md->type is DM_TYPE_NONE
+>  dm_setup_md_queue
+>   dm_mq_init_request_queue
+>    add_disk // add md->disk
+>     device_add_disk
+>      add_disk_fwnode
+>       __add_disk
+>        blk_register_queue
+>         kobject_init
+>          kobject_init_internal
+>           // set kobj->state_initialized
+>  bd_link_disk_holder
+>   // return -ENODEV since iscsi device has been logged out
+>  // skip setting md->type and leave it as DM_TYPE_NONE
+>
+> // second DM_TABLE_LOAD
+> table_load
+>  dm_get_md_type // md->type is DM_TYPE_NONE
+>  dm_setup_md_queue
+>   dm_mq_init_request_queue
+>    add_disk // add md->disk
+>     device_add_disk
+>      add_disk_fwnode
+>       __add_disk
+>        blk_register_queue
+>         kobject_init
+>          // dump_stack since kobj->state_initialized has been set
+>
+> Resetting state_initialized after the first failed DM_TABLE_LOAD might
+> resolve this issue, but it seems weird — I think state_initialized is
+> designed to ​never be reset during the object lifecycle.
+>
+
+cc +linux-block
+
+The disk->queue_kobj is initialized in add_disk() and is uninitialized
+in del_disk(). And it seems that blk_unregister_queue() in del_disk()
+doesn't uninitialize the queue_kobj completely, because it doesn't
+expect the queue_kobj will be added again. I think the right place to
+fix the problem is blk_unregister_queue(). How about just memset the
+queue_kobj as zero after deleting the queue_kobj in blk_unregister_queue() ?
+
+> Any suggestions would be appreciated.
+>
+> Thanks,
+> Lingfeng
+>
+> *Reproduction steps are as follows:*
+> Base:
+> master   4b290aae788e
+>
+> Diff:
+> diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+> index abfe0392b5a4..b41f5a6f3e72 100644
+> --- a/drivers/md/dm.c
+> +++ b/drivers/md/dm.c
+> @@ -2598,6 +2598,9 @@ int dm_setup_md_queue(struct mapped_device *md,
+> struct dm_table *t)
+>         if (r)
+>                 return r;
+>
+> +       printk("%s sleep before link disk holder\n", __func__);
+> +       msleep(10 * 1000);
+> +       printk("%s sleep done\n", __func__);
+>         /*
+>          * Register the holder relationship for devices added before
+> the disk
+>          * was live.
+>
+> Procedures:
+> [root@nfs_test3 test]# lsblk
+> NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+> sda    8:0    0  10G  0 disk
+> sdb    8:16   0  10G  0 disk
+> sdc    8:32   0  30G  0 disk
+> vda  253:0    0  20G  0 disk /
+> [root@nfs_test3 test]# ifconfig lo:0 127.0.0.2 up
+> [root@nfs_test3 test]# ifconfig lo:1 127.0.0.3 up
+> [root@nfs_test3 test]# service tgtd restart
+> Redirecting to /bin/systemctl restart tgtd.service
+> [root@nfs_test3 test]# service iscsid restart
+> Redirecting to /bin/systemctl restart iscsid.service
+> [root@nfs_test3 test]# iscsiadm -m discovery -p 127.0.0.2 -t st
+> 127.0.0.2:3260,1 iqn.2019-04.jenkins.disk
+> [root@nfs_test3 test]# iscsiadm -m discovery -p 127.0.0.3 -t st
+> 127.0.0.3:3260,1 iqn.2019-04.jenkins.disk
+> [root@nfs_test3 test]# iscsiadm -m node -l
+> Logging in to [iface: default, target: iqn.2020-05.com.bdqn:disk1,
+> portal: 192.168.240.250,3260] (multiple)
+> Logging in to [iface: default, target: iqn.2019-04.jenkins.disk,
+> portal: 127.0.0.2,3260] (multiple)
+> Logging in to [iface: default, target: iqn.2019-04.jenkins.disk,
+> portal: 127.0.0.3,3260] (multiple)
+> Logging in to [iface: default, target: , portal: ,3260] (multiple)
+> [  275.687170][   C10] sd 3:0:0:1: Power-on or device reset occurred
+> [  275.708911][   C10] sd 4:0:0:1: Power-on or device reset occurred
+> iscsiadm: caught SIGINT, exiting...
+> [root@nfs_test3 test]# lsblk
+> NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+> sda    8:0    0  10G  0 disk
+> sdb    8:16   0  10G  0 disk
+> sdc    8:32   0  30G  0 disk
+> sdd    8:48   0  10G  0 disk
+> sde    8:64   0  10G  0 disk
+> vda  253:0    0  20G  0 disk /
+> [root@nfs_test3 test]# ./dmtest &
+> [1] 2742
+> [root@nfs_test3 test]# DM_VERSION 4 50 0
+> [  294.101770][ T2742] dm_setup_md_queue sleep before link disk holder
+> [root@nfs_test3 test]#
+> [root@nfs_test3 test]# iscsiadm -m node -u
+> Logging out of session [sid: 1, target: iqn.2019-04.jenkins.disk,
+> portal: 127.0.0.2,3260]
+> Logging out of session [sid: 2, target: iqn.2019-04.jenkins.disk,
+> portal: 127.0.0.3,3260]
+> Logout of [sid: 1, target: iqn.2019-04.jenkins.disk, portal:
+> 127.0.0.2,3260] successful.
+> Logout of [sid: 2, target: iqn.2019-04.jenkins.disk, portal:
+> 127.0.0.3,3260] successful.
+> [root@nfs_test3 test]#
+> [root@nfs_test3 test]#
+> [root@nfs_test3 test]# [  304.185384][ T2742] dm_setup_md_queue sleep
+> done
+> [  304.280823][ T2742] device-mapper: ioctl: unable to set up device
+> queue for new table.
+> delay before second table_load...
+> [root@nfs_test3 test]#
+> [root@nfs_test3 test]# iscsiadm -m node -l
+> Logging in to [iface: default, target: iqn.2020-05.com.bdqn:disk1,
+> portal: 192.168.240.250,3260] (multiple)
+> Logging in to [iface: default, target: iqn.2019-04.jenkins.disk,
+> portal: 127.0.0.2,3260] (multiple)
+> Logging in to [iface: default, target: iqn.2019-04.jenkins.disk,
+> portal: 127.0.0.3,3260] (multiple)
+> iscsiadm: could not read session targetname: 5
+> iscsiadm: could not find session info for session3
+> Logging in to [iface: default, target: , portal: ,3260] (multiple)
+> [  307.357847][   C10] sd 3:0:0:1: Power-on or device reset occurred
+> [  307.372301][   C10] sd 4:0:0:1: Power-on or device reset occurred
+> iscsiadm: caught SIGINT, exiting...
+> [root@nfs_test3 test]#
+> [root@nfs_test3 test]#
+> [root@nfs_test3 test]# lsblk
+> NAME MAJ:MIN RM SIZE RO TYPE MOUNTPOINT
+> sda    8:0    0  10G  0 disk
+> sdb    8:16   0  10G  0 disk
+> sdc    8:32   0  30G  0 disk
+> sdd    8:48   0  10G  0 disk
+> sde    8:64   0  10G  0 disk
+> vda  253:0    0  20G  0 disk /
+> [root@nfs_test3 test]# delay done
+> [  314.938868][ T2742] kobject: kobject (ffff88810c27bb90): tried to
+> init an initialized object, something is seriously wrong.
+> [  314.940322][ T2742] CPU: 6 UID: 0 PID: 2742 Comm: dmtest Not
+> tainted 6.16.0-04405-g4b290aae788e-dirty #21 PREEMPT(none)
+> [  314.940331][ T2742] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> 1996), BIOS 1.16.3-2.fc40 04/01/2014
+> [  314.940335][ T2742] Call Trace:
+> [  314.940339][ T2742]  <TASK>
+> [  314.940345][ T2742]  dump_stack_lvl+0x5b/0x80
+> [  314.940370][ T2742]  kobject_init.cold+0x43/0x51
+> [  314.940380][ T2742]  blk_register_queue+0x46/0x280
+> [  314.940399][ T2742]  __add_disk+0x385/0x5d0
+> [  314.940413][ T2742]  add_disk_fwnode+0xb5/0x280
+> [  314.940425][ T2742]  dm_setup_md_queue+0x194/0x1c0
+> [  314.940434][ T2742]  ? mempool_init_noprof+0x16/0x20
+> [  314.940443][ T2742]  ? __pfx_dm_setup_md_queue+0x10/0x10
+> [  314.940476][ T2742]  table_load+0x297/0x2d0
+> [  314.940484][ T2742]  ? __pfx_table_load+0x10/0x10
+> [  314.940489][ T2742]  ? _inline_copy_from_user+0x6c/0x90
+> [  314.940499][ T2742]  ? copy_params+0xa6/0x330
+> [  314.940513][ T2742]  ctl_ioctl+0x2a2/0x480
+> [  314.940520][ T2742]  ? __pfx_table_load+0x10/0x10
+> [  314.940528][ T2742]  ? __pfx_ctl_ioctl+0x10/0x10
+> [  314.940564][ T2742]  ? __free_zapped_classes+0x70/0x120
+> [  314.940572][ T2742]  ? exc_page_fault+0x61/0xa0
+> [  314.940591][ T2742]  dm_ctl_ioctl+0xe/0x20
+> [  314.940598][ T2742]  __x64_sys_ioctl+0xc7/0x110
+> [  314.940605][ T2742]  ? rcu_is_watching+0x20/0x50
+> [  314.940616][ T2742]  do_syscall_64+0x72/0x390
+> [  314.940624][ T2742]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> [  314.940631][ T2742] RIP: 0033:0x7f8ce1106577
+> [  314.940639][ T2742] Code: b3 66 90 48 8b 05 11 89 2c 00 64 c7 00 26
+> 00 00 00 48 c7 c0 ff ff ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 b8 10
+> 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 018
+> [  314.940645][ T2742] RSP: 002b:00007fff58708438 EFLAGS: 00000202
+> ORIG_RAX: 0000000000000010
+> [  314.940652][ T2742] RAX: ffffffffffffffda RBX: 0000000000000000
+> RCX: 00007f8ce1106577
+> [  314.940657][ T2742] RDX: 0000000008355010 RSI: 00000000c138fd09
+> RDI: 0000000000000003
+> [  314.940661][ T2742] RBP: 00007fff587084d0 R08: 0000000000000000
+> R09: 0000000000000000
+> [  314.940665][ T2742] R10: 0000000000400e00 R11: 0000000000000202
+> R12: 3120312030206874
+> [  314.940669][ T2742] R13: 6563697672657320 R14: 5f65756575712031
+> R15: 61705f6f6e5f6669
+> [  314.940686][ T2742]  </TASK>
+> [  315.026828][ T2742] dm_setup_md_queue sleep before link disk holder
+> [root@nfs_test3 test]# [  325.177205][ T2742] dm_setup_md_queue sleep
+> done
+>
+>
+> dmtest.c
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <fcntl.h>
+> #include <unistd.h>
+> #include <string.h>
+> #include <errno.h>
+> #include <linux/dm-ioctl.h>
+> #include <sys/ioctl.h>
+>
+> #define DM_EXISTS_FLAG 0x00000004
+>
+> int main(int argc, char *argv[]) {
+>     int ret, fd, index;
+>     int in_data;
+>
+>     struct dm_ioctl *param = calloc(1, sizeof(struct dm_ioctl) + 16384);
+>     struct dm_target_spec sp;
+>     char *target = (char *)(param + 1);
+>     char *last_param = target + sizeof(struct dm_target_spec);
+>
+>     struct dm_target_msg tmsg;
+>     fd = open("/dev/mapper/control", O_RDWR);
+>     if (fd < 0) {
+>         printf("Failed to open device /dev/mapper/control: %s\n",
+> strerror(errno));
+>         return -1;
+>     }
+>
+>     // DM_VERSION
+>     param->version[0] = 4;
+>     param->version[1] = 0;
+>     param->version[2] = 0;
+>     param->data_size = 16384;
+>     param->flags = DM_EXISTS_FLAG;
+>
+>     ret = ioctl(fd, DM_VERSION, param);
+>     if (ret < 0) {
+>         printf("Failed to send DM_VERSION: %s\n", strerror(errno));
+>         close(fd);
+>         return -1;
+>     }
+>     printf("DM_VERSION %d %d %d\n", param->version[0],
+> param->version[1], param->version[2]);
+>
+>     // DM_DEV_CREATE
+>     param->data_start = 312;
+>     strncpy(param->name, "multipath-dev", sizeof(param->name));
+>
+>     // clear
+>     memset(target, 0, 16384);
+>
+>     param->data_size = 16384;
+>     param->dev = 0;
+>
+>     ret = ioctl(fd, DM_DEV_CREATE, param);
+>     if (ret < 0) {
+>         printf("Failed to send DM_DEV_CREATE: %s\n", strerror(errno));
+>         close(fd);
+>         return -1;
+>     }
+>
+>     // DM_TABLE_LOAD
+>     memset(param->name, 0, sizeof(param->name));
+>     param->flags = DM_EXISTS_FLAG;
+>     param->data_start = 312;
+>     param->data_size = 16384;
+>     //param->dev = 64514; // makedev(252, 2)
+>     param->target_count = 1;
+>
+>     sp.sector_start = 0;
+>     sp.length = 20971520;
+>     strncpy(sp.target_type, "multipath", sizeof(sp.target_type) - 1);
+>     sp.target_type[sizeof(sp.target_type) - 1] = '\0';
+>
+>     memcpy(target, &sp, sizeof(struct dm_target_spec));
+>     strcpy(last_param, "1 queue_if_no_path 0 1 1 service-time 0 1 1
+> 8:48 1");
+>
+>     ret = ioctl(fd, DM_TABLE_LOAD, param);
+> //    if (ret < 0) {
+> //        printf("Failed to send DM_TABLE_LOAD: %s\n", strerror(errno));
+> //        close(fd);
+> //        return -1;
+> //    }
+>
+>     printf("delay before second table_load...\n");
+>     sleep(10);
+>     printf("delay done\n");
+>     memset(param->name, 0, sizeof(param->name));
+>     param->flags = DM_EXISTS_FLAG;
+>     param->data_start = 312;
+>     param->data_size = 16384;
+>     param->target_count = 1;
+>
+>     sp.sector_start = 0;
+>     sp.length = 20971520;
+>     strncpy(sp.target_type, "multipath", sizeof(sp.target_type) - 1);
+>     sp.target_type[sizeof(sp.target_type) - 1] = '\0';
+>
+>     memcpy(target, &sp, sizeof(struct dm_target_spec));
+>     strcpy(last_param, "1 queue_if_no_path 0 1 1 service-time 0 1 1
+> 8:48 1");
+>
+>     ret = ioctl(fd, DM_TABLE_LOAD, param);
+>     if (ret < 0) {
+>         printf("Failed to send DM_TABLE_LOAD: %s\n", strerror(errno));
+>         close(fd);
+>         return -1;
+>     }
+>
+>     // DM_DEV_SUSPEND
+>     param->flags = DM_EXISTS_FLAG; // continue creating
+>     param->event_nr = 6345265;
+>     param->data_size = 16384;
+>     param->dev = 0;
+>     strncpy(param->name, "multipath-dev", sizeof(param->name));
+>
+>     ret = ioctl(fd, DM_DEV_SUSPEND, param);
+>     if (ret < 0) {
+>         printf("Failed to send DM_DEV_SUSPEND: %s\n", strerror(errno));
+>         close(fd);
+>         return -1;
+>     }
+>     printf("DM_DEV_SUSPEND sent successfully\n");
+>     close(fd);
+>
+>     return 0;
+> }
+>
+>
+> .
+
 
