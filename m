@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-751653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569DAB16BF0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:14:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 038B7B16BF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:15:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7443A1881E21
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:14:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69B4B7ABD42
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B54246787;
-	Thu, 31 Jul 2025 06:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D52624E4AF;
+	Thu, 31 Jul 2025 06:15:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpcaHYF+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XpVwwhlX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66D72C9A;
-	Thu, 31 Jul 2025 06:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662DA248F60;
+	Thu, 31 Jul 2025 06:15:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753942434; cv=none; b=CfvBgHskAUHAN7dPUpxNlTbFWIOHk6/Gc7xThbBSfawNKkGrtNIDm2waq4h9hvo3Ap4xtHrLGPKgm0fMXSSM03uSFWdgHl3lqkuRUWY1D4DpeqwgJuj5Rfdxmf8mOkmU/J1QW0kpKgPvPQTrTY6ywBu4R+RrVU0ghgvLz9sSV6g=
+	t=1753942509; cv=none; b=XJEkrYtTyb2QD29Gkdn9f57M/qwZL12tvWhBbUvvRpJb5bshJ14WTiy+iK9PoUyGcJQViCXm+T1S0KHRJPVFNwFKoCWvAUpAyFCArE+QPn7lYFawhuVnYMIIHMHp0AMgsKFmRJfBgqAh0i69KzUUGSrvT+S4OI/Pki/Bf64khS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753942434; c=relaxed/simple;
-	bh=HnFr5Rr4lc3XsUAnWFUC3pWDPvfXeIPgwcZcKQ4sbzU=;
+	s=arc-20240116; t=1753942509; c=relaxed/simple;
+	bh=IHLvN+bSRL5qsAC8AZSEoz9lgePwb/RVVil4oXLXbes=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YVM4YJX/pLs2g6a4/nhp/FE7vSLW9hdeNwG6etz6caoHMT94r+7mfqti5yYNlyhdeJHS5sa2tTpOhai/pY2htKmjH+lmqmRmp8wNqOhRTS1DrpWUjUGMn4g66BR5aHMeLlIm2irt8cHSVax9em87vGG2M5QI3+F3hyhehhVwirE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpcaHYF+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D66BC4CEEF;
-	Thu, 31 Jul 2025 06:13:48 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=BettXJXoA7qaDC79RzmWyHYLM/nIoMEQbzew29DLbqa4RSAcCaC3bDmOgKIAJ8UZtDAX3U4hLKCWHoCaq4G8ORqZoWWHIOJLrh3nA309Rs7VDWF/nm17rNAkyhgTnD8NlmK0qZcNPh74mzjNmCDEUdlu/ehK531JJVHiu6eS/H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XpVwwhlX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2249C4CEEF;
+	Thu, 31 Jul 2025 06:15:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753942434;
-	bh=HnFr5Rr4lc3XsUAnWFUC3pWDPvfXeIPgwcZcKQ4sbzU=;
+	s=k20201202; t=1753942508;
+	bh=IHLvN+bSRL5qsAC8AZSEoz9lgePwb/RVVil4oXLXbes=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KpcaHYF+rBpYXZciXschkR0xF22RqA7ifPDXfnGELHmiQk4YkRl4Vh+wLINpA/dof
-	 g5ZqW/eCrPkMCE1n70Lgc8zO/wEjaA96fU400YMXS+oLbPsyT1nPp1cf+LEpZpqWNQ
-	 S68mr8UovEVNYFsPJWS7lKjFC4MESTgrIN3ZsmUg/39e7UkD9o9x8S8vpgkiGk+vZx
-	 IMreT7ArihBms4JiBqNMGM4+/sV/jfvdQMUBUIMDIy+JkMXYdbZCIBudHRPcBGOVVs
-	 7SF4qXERWiVMCk4fxmKc7gc47wJITkN+o8fldWJg1bwkBzzMo0QgSmPNCUloB03hcA
-	 aZXNuYYVF27eA==
-Message-ID: <28ba8a6d-a180-485d-9bfd-d5ac8783831d@kernel.org>
-Date: Thu, 31 Jul 2025 08:13:46 +0200
+	b=XpVwwhlXhJR92x9pYwcE6WoBoY4agNtbc07pOGbr5OYP3tsztgqvLP33zFK78TR9B
+	 /xrhSTouj30lLJjoplHvS+Jb5R6TQHUV5PrnY3/mLKpi5hiUcE7iimiLmXu+3OjCmj
+	 0kDRrfTYsov9GlKv7GwUZ74wcwowSVheHgGh2f1RVguy8R3xlgFSXPKA+SSkU5oTd+
+	 vp5850Te8ekgWsSw3TN+JTl2GjDPa6Doul9y+C6tD5mMnOtfBd07jZ+FfiXe2mxis4
+	 lgp9cC7RRMxNE6dBzTMFyiMqqzYM168/M2+gs62xkLFK7xDt1Cqofnh++ek0qs5LuF
+	 0OKruxgnpQKWg==
+Message-ID: <d143e454-1994-4dbb-a7f2-bbb693405376@kernel.org>
+Date: Thu, 31 Jul 2025 08:15:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,29 +49,10 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 1/2] dt-bindings: media: i2c: Add ov2735 sensor
-To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
- sakari.ailus@linux.intel.com, andriy.shevchenko@linux.intel.com
-Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
- Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
- Ricardo Ribalda <ribalda@chromium.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Hans de Goede <hansg@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?=
- <git@apitzsch.eu>, Matthias Fend <matthias.fend@emfend.at>,
- Tarang Raval <tarang.raval@siliconsignals.io>,
- Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
- Jingjing Xiong <jingjing.xiong@intel.com>,
- Dongcheng Yan <dongcheng.yan@intel.com>,
- Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
- Sylvain Petinot <sylvain.petinot@foss.st.com>, Arnd Bergmann
- <arnd@arndb.de>, linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250731061004.5447-1-hardevsinh.palaniya@siliconsignals.io>
- <20250731061004.5447-2-hardevsinh.palaniya@siliconsignals.io>
+Subject: Re: [PATCH] ALSA: hda: Fix arch defconfigs
+To: Takashi Iwai <tiwai@suse.de>, linux-sound@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+References: <20250731053031.27121-1-tiwai@suse.de>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -117,18 +98,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250731061004.5447-2-hardevsinh.palaniya@siliconsignals.io>
+In-Reply-To: <20250731053031.27121-1-tiwai@suse.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/07/2025 08:09, Hardevsinh Palaniya wrote:
-> +        properties:
-> +          data-lanes:
-> +            items:
-> +              - const: 1
-> +              - const: 2
-> +          link-frequencies: true
-Nothing improved. My comments from versions before still apply.
+On 31/07/2025 07:30, Takashi Iwai wrote:
+> The Realtek and HDMI HD-audio codec configs have been slightly updated
+> again since the previous change.  Follow the new kconfig changes for
+> arch defconfigs that contain CONFIG_SND_HDA_* items.
+> 
+> Fixes: 1d8dd982c409 ("ALSA: hda/realtek: Enable drivers as default")
+> Fixes: 81231ad173d8 ("ALSA: hda/hdmi: Enable drivers as default")
+> Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> ---
+>  arch/arm/configs/multi_v7_defconfig        | 3 ++-
+>  arch/arm/configs/tegra_defconfig           | 3 +++
+>  arch/loongarch/configs/loongson3_defconfig | 2 ++
+>  arch/mips/configs/loongson2k_defconfig     | 1 +
+>  arch/mips/configs/loongson3_defconfig      | 3 ++-
+
+
+This is not ALSA change at all. Please use correct subject prefixes
+after splitting the patch per subsystem.
 
 Best regards,
 Krzysztof
