@@ -1,112 +1,118 @@
-Return-Path: <linux-kernel+bounces-752335-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81469B17431
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:52:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98E10B17466
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:58:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A229169631
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:51:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDB345861AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A66451E9B0B;
-	Thu, 31 Jul 2025 15:51:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D45221297;
+	Thu, 31 Jul 2025 15:58:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8XCqO/G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="LIDPdUCT"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EADC1E377F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2282576;
+	Thu, 31 Jul 2025 15:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753977111; cv=none; b=fdBkgaJ0Tv31SIB3CvdCd9/CxEp9eChJocWuhfQzgY9x0o5gBNPbs5wt/TuFVAfKvGfOqGqL4/BFaCUTEbmdO0QkxWYqPkA2kqYynehbjTwg5jXaejnSJrnsK0s2GJ1kz/TAYanDyPyIkzz29YDJ5Yl8IvMFldWQUKrKJD6lBx4=
+	t=1753977483; cv=none; b=rOZMCrEMiywE9238REuVsak/GxOi8ESeD8Qyd1IjGqclQe8LsbiXFwr6CsWIs4TnMMOCuYZblMpKJivQF/OmUc/+bSF7+S2swmfiUzE76NVx0WJGZFomaR+fBEvZvKbhrGPULXQ5gxp4xiZo2ZZLlk1/EANgaQtwFiD/hXgBWmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753977111; c=relaxed/simple;
-	bh=sGB12Nb5+7kiLqTzx0SVj+FvEp/whs1svfbRU12ISY0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b1def0zQe8a0T2w87LMBLwyC0dTz5cyibFTYu0esL9+Rvql24I7UY9e3yKxb2k6NB4zihlvpd0Rxt/2k8WbyYdkca6KRAxCGUXxYILOsQy2eOKJvcDPOavvml43qSpAS08jLvuhoHGiIzEJV5nkERQz2qYUK57NJcupx3DMd1+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8XCqO/G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53349C4CEEF;
-	Thu, 31 Jul 2025 15:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753977110;
-	bh=sGB12Nb5+7kiLqTzx0SVj+FvEp/whs1svfbRU12ISY0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t8XCqO/GhtH9dT78GjZw3Ht8IVHNOMOQXw5NRBmbC0W2r1Hg8sqDKmlDtpDH25NYC
-	 hsIwOBM90sqaAXiiP8NKqpMO+l2x98oGSSc8Si2QvQf9s+8BZJwsptUF9s73+NyCsP
-	 gzgJik7DoTZgNpFV5Suuh8Z36XcObm5EoVqqUqemJEwMH9+5GdHY6FouCmDb6WHs4n
-	 6s0OAcsyiIqu2RcEisfeB5YUZ6gm9lKszOyXW5qI5bTxORieuydauGUNbiJz7ebpUX
-	 4qTeH1f4uMokhttn5nuTm45EiUEoXXFNlSGQs+uavcqzOIGo0GDJVanb65Y5pMdaxG
-	 Kjc6/ADOGqPLw==
-Message-ID: <af513e6e-b6a0-40ba-acf8-258bd4b95106@kernel.org>
-Date: Thu, 31 Jul 2025 17:51:47 +0200
+	s=arc-20240116; t=1753977483; c=relaxed/simple;
+	bh=NnOFvtAhasoDMaNzs29uzhKFQ/AOM0pOvWOPrPDQqTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X05Xc5dL5ee7Ikm06CvNzehjSyDAbvKBsG2cPbVasmCpY06e63hx+8uH94szKo9XVdz8Uli8kqgkrJ+xOZQlVVsdj+NlXTYv3p6BDYb8WwYRoTv848iUZ9AerPgD2pjofoVpJDc2jqAmtqEagQBgcG9FW7PvRA9Zs0C/gdZAgDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=LIDPdUCT; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=7Ohqtk4ILA9GIa5jOmf23ccmCkNfdCR1xKx8go53Xfc=; b=LIDPdUCTkzfHNnYA85IoqJ5CgT
+	gz2ebMInBlyGdQdfE3arPrhbS8bq7z92iR6D7LLG12btRnApeCgvOVqSREklf8EscGN7IET2sWlKK
+	9BF/7y+NEFaCvDGyID8fzE8WT+bWSxBNXuQBagJfYQ/VVIQehQ0IkErhdWpZAHU3lqi3s78AOsWCY
+	2CyXXihiMHIkosSaBHBkOwncH1WBcsbkg+FTcxL5Ven8D0v2Q1qpKYNWK0FOJ/ThyIIB6R4/wllPD
+	kJ8Z9Jk14xeTz/XWBl5kmFzlkZuOs9WZb3SxrPL22C1YWG8KdVDtU9ZpQNCgQgV5XX4UMsKQvYO6/
+	GOkN/zjQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39258)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uhVf8-0005E5-0E;
+	Thu, 31 Jul 2025 16:57:46 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uhVf4-00019T-2O;
+	Thu, 31 Jul 2025 16:57:42 +0100
+Date: Thu, 31 Jul 2025 16:57:42 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Mark Brown <broonie@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: [BUG] 6.16-rc7: lockdep failure with max77620-gpio/max77686-rtc
+Message-ID: <aIuSdnV8sWnUqLOq@shell.armlinux.org.uk>
+References: <aIpdVejR3Jkh9Z_I@shell.armlinux.org.uk>
+ <97f0e27f-3128-4821-bc09-2acde1ebf81a@kernel.org>
+ <aItfC4AjjH-IdBfy@shell.armlinux.org.uk>
+ <68c210a2-49b2-4fd2-97ad-27af85369d9f@sirena.org.uk>
+ <aItk4vWPnFk6lYjn@shell.armlinux.org.uk>
+ <4f80be02-0bbe-4c10-a3d2-324916ea2ca4@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/nouveau: Remove forgotten TODO
-To: phasta@kernel.org
-Cc: David Airlie <airlied@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
- Simona Vetter <simona@ffwll.ch>, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250409091413.94102-2-phasta@kernel.org>
- <Z_ZTrZ-dcD5YiSm4@cassiopeiae>
- <481a2808c235f95726d17803503b2b6dc2746dc3.camel@mailbox.org>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <481a2808c235f95726d17803503b2b6dc2746dc3.camel@mailbox.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4f80be02-0bbe-4c10-a3d2-324916ea2ca4@sirena.org.uk>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-
-On 7/31/25 5:46 PM, Philipp Stanner wrote:
-> On Wed, 2025-04-09 at 13:02 +0200, Danilo Krummrich wrote:
->> (+ Ben)
->>
->> On Wed, Apr 09, 2025 at 11:14:14AM +0200, Philipp Stanner wrote:
->>> commit ebb945a94bba ("drm/nouveau: port all engines to new engine module
->>> format") introduced a TODO to nouveau_chan.h, stating that an
->>> unspecified rework would take place in the "near future".
->>>
->>> Almost 13 years have passed since this "near future", so it can be
->>> safely assumed that the TODO is not needed anymore. Besides, its content
->>> is useless anyways since it does not specify *what* should have been
->>> done.
->>>
->>> Remove the TODO.
->>>
->>> Signed-off-by: Philipp Stanner <phasta@kernel.org>
->>> ---
->>>   drivers/gpu/drm/nouveau/nouveau_chan.h | 1 -
->>>   1 file changed, 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/nouveau/nouveau_chan.h b/drivers/gpu/drm/nouveau/nouveau_chan.h
->>> index 016f668c0bc1..3b73ec91c4ff 100644
->>> --- a/drivers/gpu/drm/nouveau/nouveau_chan.h
->>> +++ b/drivers/gpu/drm/nouveau/nouveau_chan.h
->>> @@ -33,7 +33,6 @@ struct nouveau_channel {
->>>   		u64 addr;
->>>   	} push;
->>>   
->>> -	/* TODO: this will be reworked in the near future */
->>>   	bool accel_done;
->>
->> After having a brief look, it seems that it may has actually been reworked;
->> there is only a single use of accel_done, which is in FIRE_RING(), where it is
->> set to true. But it doesn't seem to be read from anywhere.
->>
->> So, I think we should remove both, the TODO and the accel_done field.
->>
->> @Ben: Maybe you remember the history of this.
+On Thu, Jul 31, 2025 at 02:18:24PM +0100, Mark Brown wrote:
+> On Thu, Jul 31, 2025 at 01:43:14PM +0100, Russell King (Oracle) wrote:
+> > On Thu, Jul 31, 2025 at 01:31:32PM +0100, Mark Brown wrote:
 > 
-> Since we didn't get an answer – how do we want to continue with that,
-> Danilo?
+> > > Yes, your analysis is right here - it's not come up before because it's
+> > > very rare to chain regmap-irq chips.
+> 
+> > Yep, I just changed all the "d" variables in regmap-irq to "ricd"
+> > (first letter of the each word of the struct name), and lockdep
+> > confirms that it's the mutex.
+> 
+> > I'm not familiar enough with lockdep to know how to fix this, so what's
+> > the solution here?
+> 
+> I *think* mutex_lock_nested() is what we're looking for here, with the
+> depth information from the irq_desc but I'm also not super familiar with
+> this stuff.
 
-Removing the unused accel_done and the corresponding TODO should be fine, let's
-do that.
+I'm not sure about that, because the irq_desc locks don't nest:
+
+        raw_spin_lock_init(&desc->lock);
+        lockdep_set_class(&desc->lock, &irq_desc_lock_class);
+
+What saves irq_desc lock nesting in this case is that
+__irq_put_desc_unlock() unlocks desc->lock calling the
+irq_bus_sync_unlock() method. So, I don't think we have anything at
+the irq_desc level which deals with lock-nesting.
+
+I guess I'll just ignore the lockdep warning or turn lockdep off,
+one or other is probably like everyone else does.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
