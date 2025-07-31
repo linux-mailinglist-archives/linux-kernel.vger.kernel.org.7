@@ -1,165 +1,106 @@
-Return-Path: <linux-kernel+bounces-752428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC692B17575
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:09:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37AB1B17577
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8560189290B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D09B1897EA6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911D423E33D;
-	Thu, 31 Jul 2025 17:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8D023E32D;
+	Thu, 31 Jul 2025 17:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrYhVc0x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MbXYenEA"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1111DE8A8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B007C21CFF6
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753981767; cv=none; b=phDemJ0XjJyiH13AhRXIgoXbCnKdsLU3GIHEwwC0ZwBvjnbl5MCm6X6a1Nd/Z3v1E/Wc5wIBzCYXuVhNcj2W48e4CAnmxbrNiaDz0MOm0wWrE/DsBldB8kM/3H3oAz187T3GXOOd68vEEJHWRkawlvkQQXYvu0y8R00CgTG5czM=
+	t=1753981852; cv=none; b=TEnHi/HKdVLxkBji2lD4jwEdb1LVYFfnss4Paq9WB5zFVcyONzAji5ccHg4+D8LwrJjb025OjQl66XSwUQacv3+KNQGGd6fsqjTO7okpkHerWagqJyGVs2BWLtgqLhi6vEn1UXgZsh9P7TMT0fRYe7I8AREiu6KTWBLv3It2CzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753981767; c=relaxed/simple;
-	bh=6bPNipU0whTXeXOhptgV+3Q6u/o8UbEZkKzhgED/zPE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=jG1OZYm0ONzcB1XIMkKR9HqezFBuldjUbEiuawJEv6O9qUDXnZQhYsg3wOYQDXrj5nLMkk/okGWfBmhPyv9/NVWXAjSo24TQ21cMrpd/Hau+WftunaA7t1awgLjC5PzKn40gfQ9r9ZQULN9haFzTAqyVOCb0b9DetShEfl+/ry8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrYhVc0x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 578C8C4CEEF;
-	Thu, 31 Jul 2025 17:09:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753981766;
-	bh=6bPNipU0whTXeXOhptgV+3Q6u/o8UbEZkKzhgED/zPE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JrYhVc0xd4AcMXOGqQ0Y8GmkjSdg4OTi0uigcLGh+9hlV3+eXpAjERV3Hsn8+YCNO
-	 yMswq5UkElC8KNPSPq9U0jOFCe/y8L1d/vQaMuaCsg37rKV1gM6cI7VyVoj7HLOWYS
-	 puzRJgmPQG59HL3sa5iOt6oMiixqKGRuX1OTZDA/CoLyJONtreMK+SNqXpp2DLrYZn
-	 ekwVF4HXof5kTPFidO2CcwRshg11Hv0Lj1/iaCBHQsPktfSVN5f9kwEniUVutlGT3u
-	 XwcRFccN2PnUXNqED+fIbFbzahSuZiX0Yti0nBNLs5J6XcLU4ZqF/XkLIDt3JRi3w1
-	 1LKe03BYd1KIw==
-From: SeongJae Park <sj@kernel.org>
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Takero Funaki <flintglass@gmail.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH] mm/zswap: store compression failed page as-is
-Date: Thu, 31 Jul 2025 10:09:22 -0700
-Message-Id: <20250731170922.15509-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250731152701.GA1055539@cmpxchg.org>
-References: 
+	s=arc-20240116; t=1753981852; c=relaxed/simple;
+	bh=dyRDhTOVyF16pOrySSSfQhRdw4SXfIfFB4wTi+vHY6o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bhz/tpIyoJlg8cgGeuIjPe+9GAN1iHE8q/9za4kaxrftV8l8TVZgPIDNPvB3D3OOqSrq8tsKusHUi+LVkscsiyNf5rmCt1cKWGAJskF6ZyKqrH4S7/R79IsC/mL7sN+hVAUKPNoS8Qid2V7h+krwfAGudhhsf8leiQzdCtSaVAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MbXYenEA; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ae9c2754a00so275197866b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:10:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1753981848; x=1754586648; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pnzLH6uf3DEV9O17GgRnugOfi8Wzn+Qhiwp4n865PpQ=;
+        b=MbXYenEAnqXNmi/uYXUanB5ZqDASBTpPeOaWfs32M9laQyA4mgQn14QjC8shhO4cWb
+         JCP5pmkEB5NTvwubY6O0vtnp4BIzU/bh3/MlWiZWwTnMrIIarLo2Vf/milI200GeXUFj
+         Zm8fFxplxh9UnTTserSHp30R3u5udxs66Il+M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753981848; x=1754586648;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pnzLH6uf3DEV9O17GgRnugOfi8Wzn+Qhiwp4n865PpQ=;
+        b=fzNv4AtEYGH2jeB1INtUmx3Or5xU2uVrIe3RmGLZRSFoA8GHp+WYtlw366m9neRdxu
+         vI75gZX8AT5oero6L91TumXmyf9t/rKh+CZB1D6rXB9UUFGWDC+ihrwB1GyMEOA0BX9n
+         acYq+IRLO0wX0ERwPmQygXmpmPz0G+BoBSjmnOpLcTnc57kEtJ7bU9yeB2Y6Hhw4++Wd
+         +VbGzG34ErsEBvUBa2cHIxZGgd0Hd3iJGR0q6x70mKk5SFnNyPdtFneT00wYU51b4WZd
+         q0Wns2znvxHtD1msexLKjKStWGrLIocSAj5lv6de2XkPKYWjkm3zelusDrI+5fxBThuq
+         0i8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9qcxqjXM2A6hF9mp0oiuu9zHFH0vRr5z8vu6ejzYb2p1rjqS+Tn8E71777Clrp4/hREnfZ3RzQq2ha5w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqXV9yExBzta8FKOTspU6i4OH8qK0M5+A42lJEq/c3T3RQu/H6
+	yy/mjN6y2xnb3KSQGkqqTCDPYOxR1VLveLLn9Y2O4UqJRYfTlR4PJYtNbL52UWZYinBqEJxkgFe
+	rYIo2JXw=
+X-Gm-Gg: ASbGncuIBC48yTSb+6mQaOvxS4PhxB5RGnfhY5m3dhwMCk7Ny1T2/fdl0mduSTp9eLc
+	bAwMGVXippSHWQ9YimtXAN9gXLhE4VRBgT3M8fvyfZOTKLKgORFRxuEeJqfa3UEwnAIHoI/hise
+	orbTlnGaKudH5YNh0EfZJCWles9WhTpPdYIuHDP3L5JrB/stxwrTIOgarsLTojdNDhjGwQtAjYw
+	0ttQMmMatgpoj/KUqNxwjebLC5sTj4lokw+B1UEmjBqz3wdPGQ3P8IOkz6Yaak+1CXKw+Pr7AHo
+	5ox15hZndkfHy5Qy9P+WE3+jAi+sDa/MPwtGt9p28e0Rd6rSGK7cDI3rlS6bFZ74O5q9Z6lD2JP
+	qgI5kFnmlIKKLjRQJ1DQy296j82q9WLAJFobTCvsWVr+eocDDIum6stGkWHXdNWk0lxI947OG
+X-Google-Smtp-Source: AGHT+IEd32hx/CinlFfFQr9390mw9HHeYMbCYxUi6XLDgSpQL/1IIkhE3uQVouMEkOE1CueUxp0oQA==
+X-Received: by 2002:a17:906:ee8e:b0:ae6:f163:5d75 with SMTP id a640c23a62f3a-af8fd69b8b6mr844220966b.11.1753981847691;
+        Thu, 31 Jul 2025 10:10:47 -0700 (PDT)
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c10asm139418066b.116.2025.07.31.10.10.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 10:10:46 -0700 (PDT)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-61589705b08so2322307a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:10:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWgEWPqNxS8mZL4bRZHSWGM/B0vO3N4dtnUKyr9yCQHgo2WY603F7G17t0uIbg6cV1Odz9PoakwyMBm2mg=@vger.kernel.org
+X-Received: by 2002:a05:6402:51d0:b0:615:9242:df7e with SMTP id
+ 4fb4d7f45d1cf-6159242e195mr6154463a12.18.1753981846212; Thu, 31 Jul 2025
+ 10:10:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <7787490.DFzTOozpa1@nailgun>
+In-Reply-To: <7787490.DFzTOozpa1@nailgun>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 31 Jul 2025 10:10:28 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgNLbhDHSqVke1=b0QV_CNpLhLxnELVK=5arNVsT0eRxA@mail.gmail.com>
+X-Gm-Features: Ac12FXzs9mAsXY6GkKaxy_rsJ7KQpBBHN9lOKvPvbNi4FOy2MbcwFyubn9YlRn4
+Message-ID: <CAHk-=wgNLbhDHSqVke1=b0QV_CNpLhLxnELVK=5arNVsT0eRxA@mail.gmail.com>
+Subject: Re: [GIT PULL] UBI and UBIFS changes for v6.17-rc1
+To: Richard Weinberger <richard@sigma-star.at>
+Cc: linux-mtd <linux-mtd@lists.infradead.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 31 Jul 2025 11:27:01 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
+On Tue, 29 Jul 2025 at 13:10, Richard Weinberger <richard@sigma-star.at> wrote:
+>
+> This time I'm sending from my business account because Google still hates
+> my mail setup at nod.at.
 
-> Hi SJ,
-> 
-> On Wed, Jul 30, 2025 at 04:40:59PM -0700, SeongJae Park wrote:
-> > When zswap writeback is enabled and it fails compressing a given page,
-> > zswap lets the page be swapped out to the backing swap device.  This
-> > behavior breaks the zswap's writeback LRU order, and hence users can
-> > experience unexpected latency spikes.
-> 
-> +1 Thanks for working on this!
+My workflow checks the pgp signing of the tag, so I didn't even notice
+until you mentioned it...
 
-My pleasure :)
-
-[...]
-> >     config            0       1-1     1-2      1-3      2-1     2-2      2-3
-> >     perf_normalized   1.0000  0.0060  0.0230   0.0310   0.0030  0.0116   0.0003
-> >     perf_stdev_ratio  0.06    0.04    0.11     0.14     0.03    0.05     0.26
-> >     zswpin            0       0       1701702  6982188  0       2479848  815742
-> >     zswpout           0       0       1725260  7048517  0       2535744  931420
-> >     zswpwb            0       0       0        0        0       0        0
-> >     pswpin            0       468612  481270   0        476434  535772   0
-> >     pswpout           0       574634  689625   0        612683  591881   0
-> 
-> zswpwb being zero across the board suggests the zswap shrinker was not
-> enabled. Can you double check that?
-
-You're correct, I didn't.
-
-> 
-> We should only take on incompressible pages to maintain LRU order on
-> their way to disk. If we don't try to move them out, then it's better
-> to reject them and avoid the metadata overhead.
-
-I agree.  I will update the test to explore the writeback effect, and share the
-results, by the posting of the next version of this patch.
-
-[...]
-> > +/*
-> > + * If the compression is failed, try saving the content as is without
-> > + * compression, to keep the LRU order.  This can increase memory overhead from
-> > + * metadata, but in common zswap use cases where there are sufficient amount of
-> > + * compressible pages, the overhead should be not ciritical, and can be
-> > + * mitigated by the writeback.  Also, the decompression overhead is optimized.
-> > + *
-> > + * When the writeback is disabled, however, the additional overhead could be
-> > + * problematic.  For the case, just return the failure.  swap_writeout() will
-> > + * put the page back to the active LRU list in the case.
-> > + */
-> > +static int zswap_handle_compression_failure(int comp_ret, struct page *page,
-> > +		struct zswap_entry *entry)
-> > +{
-> > +	if (!zswap_save_incompressible_pages)
-> > +		return comp_ret;
-> > +	if (!mem_cgroup_zswap_writeback_enabled(
-> > +				folio_memcg(page_folio(page))))
-> > +		return comp_ret;
-> > +
-> > +	entry->orig_data = kmalloc_node(PAGE_SIZE, GFP_NOWAIT | __GFP_NORETRY |
-> > +			__GFP_HIGHMEM | __GFP_MOVABLE, page_to_nid(page));
-> > +	if (!entry->orig_data)
-> > +		return -ENOMEM;
-> > +	memcpy_from_page(entry->orig_data, page, 0, PAGE_SIZE);
-> > +	entry->length = PAGE_SIZE;
-> > +	atomic_long_inc(&zswap_stored_uncompressed_pages);
-> > +	return 0;
-> > +}
-> 
-> Better to still use the backend (zsmalloc) for storage. It'll give you
-> migratability, highmem handling, stats etc.
-
-Nhat also pointed out the migratability.  Thank you for further letting me know
-even more benefits from zsmalloc reuse.  As I also replied to Nhat, I agree
-those are important benefits, and I will rework on the next version to use the
-backend.
-
-> 
-> So if compression fails, still do zpool_malloc(), but for PAGE_SIZE
-> and copy over the uncompressed page contents.
-> 
-> struct zswap_entry has a hole after bool referenced, so you can add a
-> flag to mark those uncompressed entries at no extra cost.
-> 
-> Then you can detect this case in zswap_decompress() and handle the
-> uncompressed copy into @folio accordingly.
-
-I think we could still use 'zswap_entry->length == PAGE_SIZE' as the indicator,
-As long as we ensure that always means the content is incompressed, following
-Nhat's suggestion[1].
-
-Please let me know if I'm missing something.
-
-[1] https://lore.kernel.org/CAKEwX=Py+yvxtR5zt-1DtskhGWWHkRP_h8kneEHSrcQ947=m9Q@mail.gmail.com
-
-
-Thanks,
-SJ
+              Linus
 
