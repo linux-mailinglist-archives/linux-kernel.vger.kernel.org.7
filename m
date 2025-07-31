@@ -1,106 +1,89 @@
-Return-Path: <linux-kernel+bounces-752617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AE5B1780D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:21:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 605F1B17813
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:24:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C711C1C807A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:22:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE62B1C80750
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:24:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DEB1DDA32;
-	Thu, 31 Jul 2025 21:20:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71339265CA0;
+	Thu, 31 Jul 2025 21:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvQGE3Ur"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAogXx0q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB55265626;
-	Thu, 31 Jul 2025 21:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C355E2641E3;
+	Thu, 31 Jul 2025 21:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753996832; cv=none; b=tJvUhAiIaVgccT7Q64qfuAoLz6OqIeUxmo5j2mOxMklcAJ2P3huqviwIOdAmtfhMAi4X3EWx6yDt1EiR1+0QVjTq21amLxa3RcgsUPuijhjk0CYrbRTLQ8p1G4UMNeQvvjaXzqN6Ewt7XUMTRWC9HD3UKAKeYmtbF62DWQ8B5mU=
+	t=1753997047; cv=none; b=WByW2zvqk07t/lrHky3b17uFXxDLMHDRT/VFN58dituK3Yo+Kw2UDb5FqOz1h5Yp9gsv85p6ZgZsVGczdV6DuVuizh5LkHu8elV2U9w0OL1+6ClP8rZS8Gn4XW6jZrV3zJdZFGxpd5IbzgkWX1h42RsMxPDIGugpVJEWYaI+Wao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753996832; c=relaxed/simple;
-	bh=ymCaajYIOvdIdSPg8VNqjdX25oNynJ9eq49Th9n64yU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jf9gw9FNiqWyR+cwr0NdclyObukv81why7jHQZ0iAe1ywKhnSGRJ49gwRvfvD4nmaNQG0SUa9aoWjpZNBTMiTWRRH3niS9vFzcRHu8RgiBNMCWAUCuvEA2+VGSg41E8FAPBds5HVVzSWSXWfvoWRMmY9aAXkpcUY4rYK6zQlHE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvQGE3Ur; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7183d264e55so16202407b3.2;
-        Thu, 31 Jul 2025 14:20:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753996830; x=1754601630; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xr78egQa9CU9pRH3DKxqELY+v2oEDMraNPH15ogCD/g=;
-        b=lvQGE3UrG90SSqc6pAV5bMWB2SyzQdjDAPSYoATZDvnZNUQ/TRM83RB0Ub2BX2In9g
-         yZHHbO6H3Do7uPkrHcMXVP57IOTuBZt2nYZriPE4V+sDOaO4wSmmWg+s9t/3aLh4Lg4+
-         FzYsvWU3SO3FyqKv2sl6864FFXAIvJzPOmwPLPr2iCaF3OwspOzseyh9mGSX0RdmCytN
-         i4w2gHLqNozNFWELfOs8RH8QK9x5Oc+jN/lSGYfy99Y3qCqhFjB9Cga0o9VLwVfZOmC6
-         WM1FlkWkrT2+bIkVs9z7pIn2+2/5UYECmwjDD9Yjcln3rT5PMvVSm0gPyIAixw/t9CRX
-         UXEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753996830; x=1754601630;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xr78egQa9CU9pRH3DKxqELY+v2oEDMraNPH15ogCD/g=;
-        b=eQ0L6uZMEqcYM8VolGgZM51XfDFX00n0p5PxdOUdr76t1d48htMFl0Ws/cwR1lx9IS
-         gteFDJo78odvkhtYQAHF9j/7AOqzVFOLs6SdgkJKAuRK7o9N1dt3s9fVqFujXHfdx9fM
-         HragNAQDiv1JDVVfeaHMQUgvyEKo2/81+Ve4s/s+fTXQm7uGPEYnx75HMJaF/Q2j1Sl8
-         hlPAmVJVzrYEWm7YrPLKklyWqxTe6hEyxpvKRXmxKB43NOTc98QW3WW+IWR1/wlJL5YX
-         nYBPu0L8LhuCml1lqTJZ8k+AphtLMB3Z5DKNt0yg/JJjnx9yFsUfGaN8q2TqdzSCAoZT
-         x08Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1ezkIRC2n8OVCInkT6ezYusXCUe8ZWrprT3kLcw8FkUxex1voYzMkWf17kB6BxlDjjX0ds0ytCKa4OoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmMq7GpLYWsx2dhEIN+mI7nvjd2/MNAauJ9B7sHDkdNa09nlWG
-	xQbr03y5SA8e+LlDT95ew9xRfoI9+syc0SnsqAM7XQeLjaleVgVdOWgm2it7zjfX2vz9UyBY/GV
-	aLntYHE6DzKaR+RLsZFX2s4t6xV1RPZdZoziX
-X-Gm-Gg: ASbGnctaqFBxSBrTnrZqHoxon+hPZbFhHYet1nabEXUmdpHxra+uY/gAtVPFV8zxPAD
-	9G/U8eDkSPM6loLnXOgLbR8aRpqLbHuKggY3+WtVPBmLsJg/zrCOWDG2mLTVUkaB5zp6Z6pmkuc
-	oQe77J4luvM956aNTM7F1C8TIWhuGVUvx8wNsQjamYbfpZr51wdfJhYEZFOT8qwvXXipRYViJ7v
-	EwzB4Bg4Lz1kf0dohAa
-X-Google-Smtp-Source: AGHT+IF6XvaEEsS5J1qd3aGi/yemIaHhoxMrYLWmTrK7aEhBX42m6rTnFpPky9gjAIlGVOuFKcWxdXacuQgdoYbxXVc=
-X-Received: by 2002:a05:690c:610c:b0:719:d975:d487 with SMTP id
- 00721157ae682-71a466bf172mr128721827b3.34.1753996829726; Thu, 31 Jul 2025
- 14:20:29 -0700 (PDT)
+	s=arc-20240116; t=1753997047; c=relaxed/simple;
+	bh=UL7oPBmm/2o9dRG3W1uktjE4qXZumpiZOugTd+UoTAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=s1Q8Ka9hO4YUxWRO5gHZoJUYIPA5UmlQcETVUytwR0cA6UkAyx0Dg5qw1WrlwW1XNpGHpB/we2iXqkNlJp67nxQQmmgWaeD60gjcLekNU39xYA0frfjJ94IQu/G9bQfDRrgsAKSMjOq9fl/3NdZNZSDMAC7nYfy9DLWKXQLNlW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAogXx0q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03CF4C4CEEF;
+	Thu, 31 Jul 2025 21:24:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753997047;
+	bh=UL7oPBmm/2o9dRG3W1uktjE4qXZumpiZOugTd+UoTAQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SAogXx0quX+hQweAx8DxuQrAVA/V6971OG5LXkiv2R7epalX8E57If8GoLpPuyMdg
+	 dhMkQ+nLcC6zUfoDVMLnBdWvqNXG6WL12UzA3Cdczy0GpU1kooKv96mpGf63bNxIZL
+	 CVo+Iqj9r0LeTVUJWwdj70brdwLYhCC6n3B6a/j5bM3/v6N0OY2ScXeLrY04M+LRTq
+	 xUxOCjVn0HuSXd/Pii8IcrCroo3xxqfgm5pCz1s/DUvUQb/Rz13fpAg7rcHC9eDERI
+	 GQefiqGY1edTD9pI/Gx80fQlAHjjL255pLY61XE22SZSv/m9wOJ47RWD9Gxwv2+Wi3
+	 2pmICkpcCnmsg==
+From: Eric Biggers <ebiggers@kernel.org>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	keyrings@vger.kernel.org
+Cc: David Howells <dhowells@redhat.com>,
+	linux-integrity@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/3] KEYS: trusted_tpm1: HMAC fix and cleanup
+Date: Thu, 31 Jul 2025 14:23:51 -0700
+Message-ID: <20250731212354.105044-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250726025541.11331-1-rosenp@gmail.com> <a2dbed0d6d0e529e4ced7e838455345b1ae11a23.camel@sipsolutions.net>
-In-Reply-To: <a2dbed0d6d0e529e4ced7e838455345b1ae11a23.camel@sipsolutions.net>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Thu, 31 Jul 2025 14:20:18 -0700
-X-Gm-Features: Ac12FXxmxN5xqdlUqmtyQBOkBLE8mDt4ER_HtkkrvhECiJi7x7gjxeN-XGwCpsw
-Message-ID: <CAKxU2N-gfnVFej+AwSSjMZHX54rpRTepyC5o9KCm3w3W4xrPMA@mail.gmail.com>
-Subject: Re: [PATCHv2 wireless-next] wifi: ath9k: add OF dependency to AHB
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Jeff Johnson <jeff.johnson@oss.qualcomm.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 31, 2025 at 1:15=E2=80=AFPM Johannes Berg <johannes@sipsolution=
-s.net> wrote:
->
-> On Fri, 2025-07-25 at 19:55 -0700, Rosen Penev wrote:
-> > The conversion to OF missed adding a Kconfig dependency.
-> >
-> > Fixes: 2fa490c0d7 ("wifi: ath9k: ahb: replace id_table with of")
-> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> > ---
-> >  v2: Resend to satisfy bot as the commit is now present
->
-> Well, bot points out the fixes tag is wrong :)
-Ugh yeah. Will fix.
->
-> johannes
+Patch 1 fixes the HMAC-SHA1 comparison in trusted_tpm1 to be
+constant-time.
+
+Patch 2 simplifies the SHA-1 and HMAC-SHA1 computation in trusted_tpm1
+by using library APIs instead of crypto_shash.  Note that this depends
+on the SHA-1 and HMAC-SHA1 library APIs that were merged for v6.17-rc1.
+
+Patch 3 is a trusted_tpm1 cleanup that moves private functionality out
+of a public header.
+
+Eric Biggers (3):
+  KEYS: trusted_tpm1: Compare HMAC values in constant time
+  KEYS: trusted_tpm1: Use SHA-1 library instead of crypto_shash
+  KEYS: trusted_tpm1: Move private functionality out of public header
+
+ include/keys/trusted_tpm.h                |  79 ------
+ security/keys/trusted-keys/Kconfig        |   5 +-
+ security/keys/trusted-keys/trusted_tpm1.c | 284 ++++++++--------------
+ 3 files changed, 100 insertions(+), 268 deletions(-)
+
+
+base-commit: d6084bb815c453de27af8071a23163a711586a6c
+-- 
+2.50.1
+
 
