@@ -1,138 +1,206 @@
-Return-Path: <linux-kernel+bounces-752627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 720EAB1784C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:40:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CAD30B17851
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:41:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AE031C23DAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:40:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 201B91C23D44
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2124267B02;
-	Thu, 31 Jul 2025 21:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 970582676CD;
+	Thu, 31 Jul 2025 21:41:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHx4qHE1"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pe8JTTT9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA79213E89;
-	Thu, 31 Jul 2025 21:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AF5C25A2BF
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 21:41:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753998025; cv=none; b=n3WSHXW1G3gbFp4HOcG+vYLRg1DMKSZCJ8x2S9PzIZVFpTsi7F9mtNY4EZrrfcNafQwkyxMpk/w+rneYgkvThChllzbcmR4lZrG8vj9zCYWGAYLzN46BDecGDozFXKInsgJoaHgcV5NKw8ItkD9IEol53AZheUJmy4vUrhQ/zxc=
+	t=1753998063; cv=none; b=FrQ6WZnBgzwkL7wbuNUvPG+B3ctyyo6479P54w5IMAPLLlVFLvhsKNQOix/Nzq4bspFuAkxEKGTWjWTttDWWPihX9Dptd+rDQpb4dSgRCXTs//Ynitoj4wSUBRWElpRwDvzjBMYfqUjacNo3LvLXYVyAfC0jAlYUN4NIYd+BE2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753998025; c=relaxed/simple;
-	bh=g9C7f4/NamjEq9bbxW2RtwQtfUwkLaMh38JA8Z+lWME=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qbOW472wwcdXRy0EJgBdCPnFCG7CMZsIbBq1wYNmgxkI/NsUgoWF8K9BGpR5dRC8ZjlEKjfQajtcKkvGijCMl6ksSm4cNxKAlr72cu4+wT9RMl+dIbff5hRLcIe+A0eWnNj2Y7Z2VWmL0G7aiu/d4Dddemn85kr7ni/uqhJXMBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHx4qHE1; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3322fef6d72so7547851fa.0;
-        Thu, 31 Jul 2025 14:40:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753998021; x=1754602821; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8QtGhZs2srmlQhaTfv88KdFGJoQGcdL3FTrplLzIh9o=;
-        b=OHx4qHE1Ff9+JIEI5MmjvSH6JjZCGeYO2sIF87s8E4LKaxjtPff2FDs2bbjpbf7TmQ
-         eht5bZI8NIiQoEjKq46BjY6Pw+Qn0f1qk4CGvRxA1UYn4lp72Y71dCwLFWc7IDeyLQK+
-         gZHgKTMl05dpYobDHP5SCJkWC6JqTVLsnCmzZ4eLOUMtXKWdrGJ8yoKYlZODWGlf2F9Y
-         xFAGnH6p+SG6Zxe/lN1jlw21jYU/n3vPgH6iRJrYxBGSSvjvXc/vQcDECMRrAOSIfUlw
-         mDLlGYoLzytMAOIlKfB5WYCTfsVX6dcunI+N35ggILnSwvz3Fy8mX3tUhLkdZzCyYkBq
-         2JOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753998021; x=1754602821;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8QtGhZs2srmlQhaTfv88KdFGJoQGcdL3FTrplLzIh9o=;
-        b=dpLljWi/Rv+gQHzW3BE47dnP8wouh3xAC/W3IYpGs1JCyPD+jhpC50VWndLzz7QxNK
-         8JVpePgBYxQHc4A0TcG1YbbeW2I3xpccKMeyGAjOksso0HDKbQbq2tRz9cTZQo8XaUTr
-         stkhdas8M8fa/lSZoc+9608gYpcbehNUOLtRXRSOu28sscVn6dOWDWFTDeYqtgKQoDck
-         gIZl/eyTP++sxFLj+vxPyGL48YoWg9L1DTqbWEQeqJYZIGjSzTbHH4xDgPcTCWbjruxN
-         Bm7TgSNlq2tsr76s+VnQ4o9ji2z8GBhEx6N6PHaw2/4QWKXkZkYZmBvZD08HmVt8vmID
-         00Gg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9zER31d/kaUoAylPNHsePw5qhU5/ZtZQVPDkR7NaSNG8V6jlIHCAHPRCaft0IsfYueG+1fk3BHDM/DdSd@vger.kernel.org, AJvYcCWkirMhJP7vPuCVn1mZuvHO8vKNX+heVBA3jdp7030yConPEUHibRbXTR+AZXIB3xktycPP6MsoOn1w@vger.kernel.org, AJvYcCXzflG9/elwcOQOVKklOTFuCaoTurc6xfZmZTLTaCWXwzp46KG0WQVWHqqfm+RSChfsIslBjeYJcCNTsjw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9VfTV7xpKlvnxJHTTaahH7tEokGk7k7IPgxwdoigy9pPn+g68
-	x6LVQy6YD6tm3YC7OeFxLWVEKtldQ/OHt0k0qzKRWsdgOq/i+0ytnsIgclWGejK+532ESY62EyA
-	k+svZWiAzuLwrN/bG+1Ifrk/IyhjQ/VCnIgHoTt8=
-X-Gm-Gg: ASbGnctLtC2F0cuTGmtrsGJSYJr+cICPh39ySdiEDAy8yiVBl20B5AX6DHCZuVMBrNr
-	X4BoADrlh8W0TKYPpUW8Lq1x9jkvP5e/ZAOaX9YEIMldustN72xa+t8hIE2oSL9sgPvNGwgUyxH
-	Nv4xBeRUNpUzD6tG2VSibvbBUNz9F4SZ1xzYRzTpYrdjrxNbG/MUgAA4CxGqOW0o2pPLuhvm5H8
-	0sAY4Q=
-X-Google-Smtp-Source: AGHT+IElN+FIpsd2J0WRiDT4CWwAotPcep9zR7TyWwQz36spG9/MrdE91/BSM58CI35VCr+PcKXhAcaNn7z8pOYaM78=
-X-Received: by 2002:a05:6512:15a3:b0:553:263d:ab90 with SMTP id
- 2adb3069b0e04-55b7c0041f2mr2769883e87.18.1753998021253; Thu, 31 Jul 2025
- 14:40:21 -0700 (PDT)
+	s=arc-20240116; t=1753998063; c=relaxed/simple;
+	bh=1QEBbb5c5dmy4QsQb9cUaMCH81Db/nTlobChevVjku4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m0k4lTwe6Sc1+aTt4MxfwztITjCFuMbD4uORJrnej9J6ry71jxpQTZTBU1gZghDrSWW4mg5jxfYrUBY+3DIqmCJzJIsE5uCWdp+HKcwe6judXnhKQ8EFxx+nWG9hV/8Id80SuITmUYzUb0wZXXBSnwCT3yfuzgbeiHxIVxAoMVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pe8JTTT9; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753998060;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JlsU4UAqSZQRdqGvx8oaC4/kh3OoM15U/EG/gdrxGFs=;
+	b=Pe8JTTT9RqxCpfsfzX1k0V+fBW8axIj1mvWgJ7OoipHx89htP2s8SX0G7eVuOW8y+Z+Bpe
+	8eIQSCtmx0ICXrVifp8cgXNdLkTRUEPihW/4AP8i6MDZSIT11CN9VZovJNiiOx7I3Dlt1A
+	wpQUu6skHpXIDPJ9igt578HgrpPhd4g=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-543-WG9EfwGcNjK5HLMRx3-M5A-1; Thu,
+ 31 Jul 2025 17:40:54 -0400
+X-MC-Unique: WG9EfwGcNjK5HLMRx3-M5A-1
+X-Mimecast-MFC-AGG-ID: WG9EfwGcNjK5HLMRx3-M5A_1753998054
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 954861800360;
+	Thu, 31 Jul 2025 21:40:53 +0000 (UTC)
+Received: from redhat.com (unknown [10.96.134.7])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B1523180035E;
+	Thu, 31 Jul 2025 21:40:52 +0000 (UTC)
+From: "Herton R. Krzesinski" <herton@redhat.com>
+To: linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org,
+	akpm@linux-foundation.org,
+	herton@redhat.com,
+	anshuman.khandual@arm.com
+Subject: [PATCH] mm/debug_vm_pgtable: clear page table entries at destroy_args()
+Date: Thu, 31 Jul 2025 18:40:51 -0300
+Message-ID: <20250731214051.4115182-1-herton@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250526-p3450-otg-v1-1-acb80ca2dc63@gmail.com> <CALHNRZ-pE4EA=x-7LuJev60=aOwGt2eDf9mGVHWJ8SPGisBchg@mail.gmail.com>
-In-Reply-To: <CALHNRZ-pE4EA=x-7LuJev60=aOwGt2eDf9mGVHWJ8SPGisBchg@mail.gmail.com>
-From: Aaron Kling <webgeek1234@gmail.com>
-Date: Thu, 31 Jul 2025 16:40:05 -0500
-X-Gm-Features: Ac12FXw56s_NT2GacikX5J5EJ6FNZ9rvz6qR61PvGkrAr-Xj1IEPIZhEqHbqCfQ
-Message-ID: <CALHNRZ_W6gQknMr=eKEcB6-k5HBBkE6JfJ9LFntX9L+NTo5hUQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Set usb micro-b port to otg mode on P3450
-To: webgeek1234@gmail.com
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Mon, Jun 30, 2025 at 2:35=E2=80=AFPM Aaron Kling <webgeek1234@gmail.com>=
- wrote:
->
-> On Mon, May 26, 2025 at 8:22=E2=80=AFPM Aaron Kling via B4 Relay
-> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
-> >
-> > From: Aaron Kling <webgeek1234@gmail.com>
-> >
-> > The usb micro-b port on p3450 is capable of otg and doesn't need
-> > hardcoded to peripheral. No other supported tegra device is set up like
-> > this, so align for consistency.
-> >
-> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts b/arch/=
-arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> > index 0ecdd7243b2eb1abba9adbe9a404b226c29b85ef..019484a271c396edc30200e=
-8592c713455a8e1a4 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra210-p3450-0000.dts
-> > @@ -514,7 +514,7 @@ pcie-6 {
-> >                 ports {
-> >                         usb2-0 {
-> >                                 status =3D "okay";
-> > -                               mode =3D "peripheral";
-> > +                               mode =3D "otg";
-> >                                 usb-role-switch;
-> >
-> >                                 vbus-supply =3D <&vdd_5v0_usb>;
-> >
-> > ---
-> > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
-> > change-id: 20250513-p3450-otg-b947f31843d8
-> >
-> > Best regards,
-> > --
-> > Aaron Kling <webgeek1234@gmail.com>
->
-> Friendly reminder about this patch.
+The mm/debug_vm_pagetable test allocates manually page table entries for the
+tests it runs, using also its manually allocated mm_struct. That in itself is
+ok, but when it exits, at destroy_args() it fails to clear those entries with
+the *_clear functions.
 
-Re-reminder about this patch.
+The problem is that leaves stale entries. If another process allocates
+an mm_struct with a pgd at the same address, it may end up running into
+the stale entry. This is happening in practice on a debug kernel with
+CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
+extra debugging I added (it prints a warning trace if pgtables_bytes goes
+negative, in addition to the warning at check_mm() function):
 
-Aaron
+[    2.539353] debug_vm_pgtable: [get_random_vaddr         ]: random_vaddr is 0x7ea247140000
+[    2.539366] kmem_cache info
+[    2.539374] kmem_cachep 0x000000002ce82385 - freelist 0x0000000000000000 - offset 0x508
+[    2.539447] debug_vm_pgtable: [init_args                ]: args->mm is 0x000000002267cc9e
+(...)
+[    2.552800] WARNING: CPU: 5 PID: 116 at include/linux/mm.h:2841 free_pud_range+0x8bc/0x8d0
+[    2.552816] Modules linked in:
+[    2.552843] CPU: 5 UID: 0 PID: 116 Comm: modprobe Not tainted 6.12.0-105.debug_vm2.el10.ppc64le+debug #1 VOLUNTARY
+[    2.552859] Hardware name: IBM,9009-41A POWER9 (architected) 0x4e0202 0xf000005 of:IBM,FW910.00 (VL910_062) hv:phyp pSeries
+[    2.552872] NIP:  c0000000007eef3c LR: c0000000007eef30 CTR: c0000000003d8c90
+[    2.552885] REGS: c0000000622e73b0 TRAP: 0700   Not tainted  (6.12.0-105.debug_vm2.el10.ppc64le+debug)
+[    2.552899] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24002822  XER: 0000000a
+[    2.552954] CFAR: c0000000008f03f0 IRQMASK: 0
+[    2.552954] GPR00: c0000000007eef30 c0000000622e7650 c000000002b1ac00 0000000000000001
+[    2.552954] GPR04: 0000000000000008 0000000000000000 c0000000007eef30 ffffffffffffffff
+[    2.552954] GPR08: 00000000ffff00f5 0000000000000001 0000000000000048 0000000000004000
+[    2.552954] GPR12: 00000003fa440000 c000000017ffa300 c0000000051d9f80 ffffffffffffffdb
+[    2.552954] GPR16: 0000000000000000 0000000000000008 000000000000000a 60000000000000e0
+[    2.552954] GPR20: 4080000000000000 c0000000113af038 00007fffcf130000 0000700000000000
+[    2.552954] GPR24: c000000062a6a000 0000000000000001 8000000062a68000 0000000000000001
+[    2.552954] GPR28: 000000000000000a c000000062ebc600 0000000000002000 c000000062ebc760
+[    2.553170] NIP [c0000000007eef3c] free_pud_range+0x8bc/0x8d0
+[    2.553185] LR [c0000000007eef30] free_pud_range+0x8b0/0x8d0
+[    2.553199] Call Trace:
+[    2.553207] [c0000000622e7650] [c0000000007eef30] free_pud_range+0x8b0/0x8d0 (unreliable)
+[    2.553229] [c0000000622e7750] [c0000000007f40b4] free_pgd_range+0x284/0x3b0
+[    2.553248] [c0000000622e7800] [c0000000007f4630] free_pgtables+0x450/0x570
+[    2.553274] [c0000000622e78e0] [c0000000008161c0] exit_mmap+0x250/0x650
+[    2.553292] [c0000000622e7a30] [c0000000001b95b8] __mmput+0x98/0x290
+[    2.558344] [c0000000622e7a80] [c0000000001d1018] exit_mm+0x118/0x1b0
+[    2.558361] [c0000000622e7ac0] [c0000000001d141c] do_exit+0x2ec/0x870
+[    2.558376] [c0000000622e7b60] [c0000000001d1ca8] do_group_exit+0x88/0x150
+[    2.558391] [c0000000622e7bb0] [c0000000001d1db8] sys_exit_group+0x48/0x50
+[    2.558407] [c0000000622e7be0] [c00000000003d810] system_call_exception+0x1e0/0x4c0
+[    2.558423] [c0000000622e7e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+(...)
+[    2.558892] ---[ end trace 0000000000000000 ]---
+[    2.559022] BUG: Bad rss-counter state mm:000000002267cc9e type:MM_ANONPAGES val:1
+[    2.559037] BUG: non-zero pgtables_bytes on freeing mm: -6144
+
+Here the modprobe process ended up with an allocated mm_struct from the
+mm_struct slab that was used before by the debug_vm_pgtable test. That is not a
+problem, since the mm_struct is initialized again etc., however, if it ends up
+using the same pgd table, it bumps into the old stale entry when clearing/freeing
+the page table entries, so it tries to free an entry already gone (that one
+which was allocated by the debug_vm_pgtable test), which also explains the
+negative pgtables_bytes since it's accounting for not allocated entries in the
+current process. As far as I looked pgd_{alloc,free} etc. does not clear entries,
+and clearing of the entries is explicitly done in the free_pgtables->
+free_pgd_range->free_p4d_range->free_pud_range->free_pmd_range->
+free_pte_range path. However, the debug_vm_pgtable test does not call
+free_pgtables, since it allocates mm_struct and entries manually for its test
+and eg. not goes through page faults. So it also should clear manually the
+entries before exit at destroy_args().
+
+This problem was noticed on a reboot X number of times test being done
+on a powerpc host, with a debug kernel with CONFIG_DEBUG_VM_PGTABLE
+enabled. Depends on the system, but on a 100 times reboot loop the
+problem could manifest once or twice, if a process ends up getting the
+right mm->pgd entry with the stale entries used by mm/debug_vm_pagetable.
+After using this patch, I couldn't reproduce/experience the problems
+anymore. I was able to reproduce the problem as well on latest upstream
+kernel (6.16).
+
+I also modified destroy_args() to use mmput() instead of mmdrop(), there
+is no reason to hold mm_users reference and not release the mm_struct
+entirely, and in the output above with my debugging prints I already
+had patched it to use mmput, it did not fix the problem, but helped
+in the debugging as well.
+
+Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+---
+ mm/debug_vm_pgtable.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+index 7731b238b534..0f5ddefd128a 100644
+--- a/mm/debug_vm_pgtable.c
++++ b/mm/debug_vm_pgtable.c
+@@ -1041,29 +1041,34 @@ static void __init destroy_args(struct pgtable_debug_args *args)
+ 
+ 	/* Free page table entries */
+ 	if (args->start_ptep) {
++		pmd_clear(args->pmdp);
+ 		pte_free(args->mm, args->start_ptep);
+ 		mm_dec_nr_ptes(args->mm);
+ 	}
+ 
+ 	if (args->start_pmdp) {
++		pud_clear(args->pudp);
+ 		pmd_free(args->mm, args->start_pmdp);
+ 		mm_dec_nr_pmds(args->mm);
+ 	}
+ 
+ 	if (args->start_pudp) {
++		p4d_clear(args->p4dp);
+ 		pud_free(args->mm, args->start_pudp);
+ 		mm_dec_nr_puds(args->mm);
+ 	}
+ 
+-	if (args->start_p4dp)
++	if (args->start_p4dp) {
++		pgd_clear(args->pgdp);
+ 		p4d_free(args->mm, args->start_p4dp);
++	}
+ 
+ 	/* Free vma and mm struct */
+ 	if (args->vma)
+ 		vm_area_free(args->vma);
+ 
+ 	if (args->mm)
+-		mmdrop(args->mm);
++		mmput(args->mm);
+ }
+ 
+ static struct page * __init
+-- 
+2.47.1
+
 
