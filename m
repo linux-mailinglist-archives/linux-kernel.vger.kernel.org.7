@@ -1,109 +1,123 @@
-Return-Path: <linux-kernel+bounces-751644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A18AB16BCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:59:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23785B16BD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7189618C62E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F7FD18C6510
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:01:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18BE3198E81;
-	Thu, 31 Jul 2025 05:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFA7241662;
+	Thu, 31 Jul 2025 06:01:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G7zb/vq7"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DKKF3Cek"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258F7323D;
-	Thu, 31 Jul 2025 05:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1848E1876;
+	Thu, 31 Jul 2025 06:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753941589; cv=none; b=KBrw8HkwWTJbuop5Z4zQQdNgXlDjJZ2Z/1DDWnbxuk2FGGkBBvLDvqzVzvjnZ4ZleyqgStGeLvrX5+tGFY85wCxWo70n0xdNpX1C8gw1iiDpv1Jj5T23Fo2kKZth6rVmBmTR0etcBYD7Nsiv3WaudgCiW3pREJ5+iIBWp21gZ5A=
+	t=1753941683; cv=none; b=nNK/eq3dxS6OeieXtZp3boBqeNFAthrCKLKMDTg5oIKuT++I75veOE43Qrc+K1cW8oert4DS/9ZS4ILO/dFTR9/pa0dTEtgAgtZJvayQgUulwhwbRhBQkDDo06By4s9QLE+ARichyGBEohB3KNtK76qsXn6LtLskhABsHFumka8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753941589; c=relaxed/simple;
-	bh=J8rLlA5rFoSxe/LBQNtFHx8yM/xQnHQuZGw9cloIMwg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HJaLiuD+KW8JOH9KMyK95KzaXyIoFi2nNhl5QEIerf0WSbScmrQoIP7H4A5JKlQ6VU1R6C5zTztUGCLdbboyAc2ZIa6EPIPdfPkOnDPUceQUa7j0B/diK/NOu47U3S6KK/+uTSYqOtVUHiEnoDJx2FVz67gZdW6LzZrsd3+Q1j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G7zb/vq7; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e8fd5f99bc5so12115276.3;
-        Wed, 30 Jul 2025 22:59:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753941587; x=1754546387; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9dQ53H+TOKm58J6xbivZa5XJg+//Guq+YDIyJd62miY=;
-        b=G7zb/vq76kAJRZegvzL1loptz6RGJx8SIKVt90OAJdL7pw2s8ffqipgX1/OJGGnVwx
-         WiFcZa7Iej75ibnVPnUaxjELx3wJQvf3auXe0zPYzM03UMG5Quw7t9Iws0bi9o6vKsR+
-         ttiFB32fYoeEFivSeHuBx+pg2JX+mo0nnCUG1YUOx4woG9PHyY+AY5nJUBc0NScQZA53
-         Uklp5Cm3FnsnaQksxlOJ6prsEtcMRC8+w8l/MveL/IgQzKX8cTTqQcPeWuJY5eHzs6VF
-         ZxOWtnM0m1/Kjycov3daelxYpui8GxjSbuCv6YsWx4rrpHlv7KI1Y+szjt2fm0wJcDP4
-         W+lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753941587; x=1754546387;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9dQ53H+TOKm58J6xbivZa5XJg+//Guq+YDIyJd62miY=;
-        b=JKgySIe6Sz4qSmdlCkq7Qvw+IIuNkuz04kgAjm6p3pCenoxvSpHJDCF3AF9z+9cpWR
-         SwJqQQQIHn3x1ne6+0sfYgIFlF6bWS5GYQMOQ/CByEMgpe880hLzYYEzWeA5aKzRQYi0
-         qhiWQjGb1TLqBdRvSfA7220U0PLaTtnqnFS34CEfHd1OImOC8j392JS77jvSrIMEeufX
-         fkrpoWLdkObfCKqEubkp9dijjqhIUJ8DWhLS74j7B42CtWfDV4cTYToqyTEwPqSdqdo+
-         SE2MYn9GDNfp5BSixf/N/NjbDuN0DytUpjWnw47C9GEPnwAV99BxJkzO8CgR0YE65/wY
-         s01w==
-X-Forwarded-Encrypted: i=1; AJvYcCVr2gioEe+aS2183Q7ulI7kDwYar4DXeoEy4xPweRp7ytpsWorz78IbsT9nd6/yvrA8R0DF2+FyZFAQhQ0=@vger.kernel.org, AJvYcCWpZLuDIXMlxkDQXSn3xx+D2WWmfw5NvnRn06Tmqp7a3mR0fY7FSxwfrqBD4ljXJ1IGEiiA1+YUis+7xm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBWVGARYSVT4q+Twm8iKljR3GOuonPIzcIRBk6AyoqqId/O62U
-	raMsqPam8q0EuFgdeYS6Dkpis1N9D3wxrs8EPhR/3nCySXGA5OFEYHylh0j/29aMeY6t2XI5htI
-	UCqs0UPSh48XwMtnRyHiLbR7zbeP7QeA=
-X-Gm-Gg: ASbGncvdSF/I7/EIoeDYM5FI/xCc9U3OF+T23U27/I63s3MHtwkkulUZYwmSF7mJLkr
-	7qdDKIXrUaZbWAKgXYn36BNR9L9k4c2LZVKQA7gFzPCK3W5XWeJtiDBXSJP5Z5rhtjU1CURRyYB
-	KSRcgO5ETRqASarBK7X96jgKHW7UJ81wmP/LUazhDMccGla2+jL0JyoKRsTvwFhKKUrz9ECLthX
-	gpBU2Yu3Q==
-X-Google-Smtp-Source: AGHT+IHV1FOZO6uXbkwgGN6sg7ti/JeFYC05gD1OlE+HgiaqFCp2b8NgXZyaJzEa/fHMB5YZYgcVeHujYfx9w6/LZRM=
-X-Received: by 2002:a05:6902:128b:b0:e8e:e44:36f0 with SMTP id
- 3f1490d57ef6-e8e3147a230mr4186168276.2.1753941586965; Wed, 30 Jul 2025
- 22:59:46 -0700 (PDT)
+	s=arc-20240116; t=1753941683; c=relaxed/simple;
+	bh=I82Ku1sBUzvQwy4NqAe/XyR//viXY99kTa/2l5/jmhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zm8UFiBZljZaBkeYvr0gPHO2gL3rTdm26w2ts24RZArdeEsxtuP1dZvCE8maDhSH4Ke65BxsZj6ZimUwN0ZNUdBF4Z47e+irs+rmVlQPTeyUIOoYuWT8ZbKvofv5nMgQ3ZwoDMwWpjNx8s9VNd6UzrvAfUVqpD6+9oUVcmO4VgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DKKF3Cek; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8ED7C4CEEF;
+	Thu, 31 Jul 2025 06:01:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753941682;
+	bh=I82Ku1sBUzvQwy4NqAe/XyR//viXY99kTa/2l5/jmhM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DKKF3Cekf++SZHUOWA04jjlZuOEM8jGgJfAc0aVSPmvXHb//UmelF3TSqVbMPTbIj
+	 MP6ZY5kK/EHxFqzZkhJ00XfylribvAhaYrLfaOpKcfokV5B/m/YCRirZ6t18pB4ZsQ
+	 bsaI+/poV49jhLpK/ZRr0Q26G8cpUoxT/F6a+V9gIC9BqoNiSkyVuYGzpHG8jsb4gD
+	 kIHsaNE1F48jrFXtV51opjZqdV2cVTpPGIvzjcT2MgCfaAhoBQdDME7Z3UNkBRnB9F
+	 9X1Zop5ceYd7F2qaq0bvgxU4gZ8+qznN5tM1C/ZQL7YhzeOUqryCvMmIs0/hr+BEoT
+	 BFZZ8xU/xu5mA==
+Date: Thu, 31 Jul 2025 09:01:17 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Christoph Hellwig <hch@lst.de>, Jonathan Corbet <corbet@lwn.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Alexander Potapenko <glider@google.com>,
+	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, iommu@lists.linux.dev,
+	virtualization@lists.linux.dev, kasan-dev@googlegroups.com,
+	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 0/8] dma-mapping: migrate to physical address-based API
+Message-ID: <20250731060117.GR402218@unreal>
+References: <CGME20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf@eucas1p2.samsung.com>
+ <cover.1750854543.git.leon@kernel.org>
+ <35df6f2a-0010-41fe-b490-f52693fe4778@samsung.com>
+ <20250627170213.GL17401@unreal>
+ <20250630133839.GA26981@lst.de>
+ <69b177dc-c149-40d3-bbde-3f6bad0efd0e@samsung.com>
+ <f912c446-1ae9-4390-9c11-00dce7bf0fd3@arm.com>
+ <20250730134026.GQ402218@unreal>
+ <20250730142818.GL26511@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250712191325.132666-1-abdelrahmanfekry375@gmail.com>
- <eb7fd8f3-1d6e-421f-b5d9-f9e2d2992da5@suswa.mountain> <CAGn2d8Mkfdmd3Td3aKQwaa539nMfL0rmJ5d6tLr9A12HSkCUzg@mail.gmail.com>
- <CAGn2d8O0TMqBR0wvBVbWzKKKqQyLWzn9Rn-8bhYTC6wR7-HwcA@mail.gmail.com> <2025073142-unwarlike-shining-c534@gregkh>
-In-Reply-To: <2025073142-unwarlike-shining-c534@gregkh>
-From: Abdelrahman Fekry <abdelrahmanfekry375@gmail.com>
-Date: Thu, 31 Jul 2025 08:59:35 +0300
-X-Gm-Features: Ac12FXyj7e58j5vXnodDMSrmXuhb3ICXzfvYlPPqgKf27RAemXdLC8KbtxQ5lnA
-Message-ID: <CAGn2d8O_OpgKP1_JO4Ha1jFx8_Yx_w1P-5_dyWwLYHD9mVD5dw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] staging: media: atomisp: More Cleanup on driver AtomIsp
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, hansg@kernel.org, mchehab@kernel.org, 
-	sakari.ailus@linux.intel.com, andy@kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
-	linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730142818.GL26511@ziepe.ca>
 
-On Thu, Jul 31, 2025 at 7:35=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org=
-> wrote:
->
-> On Thu, Jul 31, 2025 at 06:24:09AM +0300, Abdelrahman Fekry wrote:
-> > Hi Maintainers,
-> > I'm just bringing attention to this patch series as I have a lot of
-> > other patches that build on it .
->
-> It is the middle of the merge window.  Please wait for -rc1 to be
-> released, there is no rush.
-noted, thank you!
->
-> thanks,
->
-> greg k-h
+On Wed, Jul 30, 2025 at 11:28:18AM -0300, Jason Gunthorpe wrote:
+> On Wed, Jul 30, 2025 at 04:40:26PM +0300, Leon Romanovsky wrote:
+
+<...>
+
+> > The most reasonable way to prevent DMA_ATTR_SKIP_CPU_SYNC leakage is to
+> > introduce new DMA attribute (let's call it DMA_ATTR_MMIO for now) and
+> > pass it to both dma_map_phys() and dma_iova_link(). This flag will
+> > indicate that p2p type is PCI_P2PDMA_MAP_THRU_HOST_BRIDGE and call to
+> > right callbacks which will set IOMMU_MMIO flag and skip CPU sync,
+> 
+> So the idea is if the memory is non-cachable, no-KVA you'd call
+> dma_iova_link(phys_addr, DMA_ATTR_MMIO) and dma_map_phys(phys_addr,
+> DMA_ATTR_MMIO) ?
+
+Yes
+
+> 
+> And then internally the dma_ops and dma_iommu would use the existing
+> map_page/map_resource variations based on the flag, thus ensuring that
+> MMIO is never kmap'd or cache flushed?
+> 
+> dma_map_resource is really then just
+> dma_map_phys(phys_addr, DMA_ATTR_MMIO)?
+> 
+> I like this, I think it well addresses the concerns.
+
+Yes, I had this idea and implementation before. :(
+
+> 
+> Jason
+> 
 
