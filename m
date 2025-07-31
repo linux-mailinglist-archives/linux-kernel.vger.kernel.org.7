@@ -1,156 +1,131 @@
-Return-Path: <linux-kernel+bounces-751542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2DD7B16AB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:15:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E18B16AB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67E2A6247B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:14:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 789235858B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8BCA23C4EC;
-	Thu, 31 Jul 2025 03:15:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B825421D001;
+	Thu, 31 Jul 2025 03:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C5vIZhW+"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B9y3v2BE"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8D423B633;
-	Thu, 31 Jul 2025 03:14:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72ACE374F1;
+	Thu, 31 Jul 2025 03:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753931701; cv=none; b=gQGJKSujVMStjDyWCnvHrte+yVispC1aSjdylWE3vdiZRh1AuS0AhmjeXpRhoZ3EP1fU6ORtpktJRQAxrgG6D/ERjHvLXHyGmWhn7/MQp/yop8ZnNrZsW8msfIBMVGPCMlog5tqgrRpmuCn9ly+XXwpLgxp8OxZR+kXokyOZtog=
+	t=1753931735; cv=none; b=tCedjT6MvcYwgo5lGNOaWRrO7wN+pOtSIxkqZO/xr3Gi33KJYYGoG5aWyPRCfw/efOpQ2yJRUZYQo+G3dEaO3ArC+JgenoJXW/H9ML5yNkaEoqiw/EnuJPZWV7sQmwGOkwbf1wZYYiG72j0cG8oDVlhu+FKsGJIBj7zG9yiNvmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753931701; c=relaxed/simple;
-	bh=ikTEp9LiFmXNGSR8YYEQh4lnqfKSUXj8SkD4ux/kLBs=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=UqeEe87+O+0ELiDEbFcosuAyYnrSPDgvUtkhqgiyADGV4rgGFeeYOoQbYsvkemjWoYPc2qass8yqqwH03zOL27DlXOP3+NR2m4zZz8XzuXr5sY8X/VKSBScgLFZmLf36fqwJjxVf2o8Rxi1Fnros003M23Z863MQAL86y2oImIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C5vIZhW+; arc=none smtp.client-ip=209.85.214.172
+	s=arc-20240116; t=1753931735; c=relaxed/simple;
+	bh=4ubK10nlNLXRxHgE8dqebb95hXJg0647eX02sXWOHLI=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NEphxBWsae732iT4LvBbVSvMq7g3ZuDX9OOUTCzu2YOCAfi0j244KeQf9+ezsyaO98QG5bvOq1RC6UVpzDq5iAZeKO39WCpWLzyOAe/Escrbgn190TkLYASeRomXJ71mqFOgWR/9ePBsiyyWBO2aSzGk8G+0Wd08lfwCpQ0KKoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B9y3v2BE; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2401b855635so4204615ad.2;
-        Wed, 30 Jul 2025 20:14:59 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45619d70c72so11519525e9.0;
+        Wed, 30 Jul 2025 20:15:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753931698; x=1754536498; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FlUn0AMl+wjuNGnj7NGLqH/4T6CpK18vMCU4Bo5pArM=;
-        b=C5vIZhW+TAosf2PoLxqJEkMAx42RImmPhS3SoSyurGmYTUJ2thKsoqKAxPPSyRezZH
-         Amts6XzR19xJ8CRL2Rvaky2cqKAkUMrvX7BsjmiQIFvALKmdUbOdj6xmE1wLf+qdjhc1
-         0ofa86TRVgFFRVEXZcWw5XpJO/1iZUD5kTSuZkQ9lJyHOLJljfHHVv4V/DgFhXUEKkRb
-         h50RTvBfa943fzn8q1EBaMScN85uowezqiGkXQksFPhV+HY++4Me0OKSoTb50H9BqQEo
-         WPmb9znVvEFvy5suy2knYxLBUpFqINoOv32p08iykfwSUHQoK3ooh6pwEfQCH8uzKTIP
-         O+Mg==
+        d=gmail.com; s=20230601; t=1753931732; x=1754536532; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LacnAABHDrKn9Xt5O+74YJcJtH11ROxmKsUHtO4Nna8=;
+        b=B9y3v2BEjDbIv9eOpcCcGfFu7UuvFu+ooYwswy0F7QKPucGrW3tBCLi+BIqQlW/x2s
+         hBNs9XO257PBBW7P3MSI7naiEsZHDvJcqv2brRS03wwFq28UK0Oze9aje/jzZ8MF//vr
+         kVoTwjJ4TwCu9PQfj3tZMznYZ9NZxLpZg0uumyw4cAINEl/wrageDqqsZHPsC6s0FWKp
+         cMkWp6U77E8ioPrIbC0vJsLhSIDNeD6jE1ATpBfPDoj3LoFBLt8EEQ1uIXl44pswcXQB
+         lnhOtBrqAj9v8wbYVEvSokGEA324XJOwVYb80CZuTAjTYdAlwNTohK+yGrWxExXiRYS8
+         mmtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753931698; x=1754536498;
-        h=content-transfer-encoding:in-reply-to:from:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1753931732; x=1754536532;
+        h=content-disposition:mime-version:message-id:subject:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FlUn0AMl+wjuNGnj7NGLqH/4T6CpK18vMCU4Bo5pArM=;
-        b=AlbU7i5ukczlsiss6IQY9ZBhm9ekDPbU2l4okPFuRIhDXitwWhcwtWAOjP+1y7VldR
-         VjpBUdET25HDjz4+u/aTEFynEs1jOTKY5aPiezrOTH3N/6uQViqDk5/LfHpoIiyCKryi
-         bQMSNoi0E4vrLUPC5wu8UhpufoeLa916wkNcdRNJ7rmL6FxI/DMM/cUYQhCVrr8WJiSW
-         XV0jXgEhIdqFznRjDhxyogJIGRhsD01Hto07idfWaysTUytkp7Wf1xk9Xn1elCdxFm4p
-         daEeZMDeqjG59pdvb37r6pfByvLb6C7MKGxu2f7bJf3pVI+GkWkIKmm0tfhUJLJ6L+QK
-         iYBg==
-X-Forwarded-Encrypted: i=1; AJvYcCVWWiNXtQNTzEiKXGl5oiTPtqRCvEiElLVsXoL7+PoRlsf9aJfeB9rKJOul+EbePotzYfRkxaKugEoM224k@vger.kernel.org, AJvYcCVyDn+/G+e3I1Ic92O+HVYAYGEICI5rNedO7qBIQkw/lOeh5N70NemWo/T1A3fd7ber0X9GV58MwSU=@vger.kernel.org, AJvYcCWTXfxQ4rIlKk8BX73rayg5fAvPN29ny4EfFHxCnl+sECqj/oegNN/3I7diNGT+IClh3/74SzOlD1dr@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOkmg965t4HNgwhqDIXy9y09m6np83ysxWoBJ18jFzSjl5xhie
-	XVtN3uOFZ/73e5AbnDzjFv8vj2VDB0PJRmDWrWUL5hHnkuaGRJcLIkmfIIoyRQ==
-X-Gm-Gg: ASbGnctSNxM2wlKkWlGJ9M3KISahyP7CEm5FhPDH/YdFv7GaAHLnBv3ZTczKUVaekeh
-	pCOs8/vHmfcQ+1MNjfDghWu3bR0ltJf/Bz5k6BIuorUpBat+22OlsgDrpr/NcRJRiyfdjsiQxNf
-	LQtNVG4mnmT7rZCBtWbRl4Dm+gtBsLu4vIqyL+3mmcQLMcSK3s5/zkj+ZpjfHwEhRrmOI0RPS84
-	+0XkgGYBgfxrgnLtSxJEzOp/YXKRr7ClM8aEwngjtzqUWV7CZFfuf+UrXp9nj8cCdx7B9IIYA8e
-	ilN+8YjxbaAcE6oBlB4nKfZcCSieIrCaDIJobgi64ql4MxQSEZK8lKSNYqBrZo96XMneTovB+8v
-	V+D/F1rx3/d1fWNZLVbar/P1fCO6j4JJwOB8JJ0KUPY6SaChM4+wMU4rc50u4QgQDcLYtvCADlj
-	GQw5E=
-X-Google-Smtp-Source: AGHT+IFnPbEiNQ+bx42jpz4b3DzT71R99kNkgHE4vssHbdCc/I98r322iHqp4OJWwPFZKuLSEbRUBA==
-X-Received: by 2002:a17:902:ec85:b0:240:66ff:b253 with SMTP id d9443c01a7336-24096b5d423mr75316495ad.46.1753931698428;
-        Wed, 30 Jul 2025 20:14:58 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef5934sm4741315ad.21.2025.07.30.20.14.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 20:14:58 -0700 (PDT)
-Message-ID: <aa15a1f3-0efc-419a-845c-d34937eedb0f@gmail.com>
-Date: Thu, 31 Jul 2025 12:14:55 +0900
+        bh=LacnAABHDrKn9Xt5O+74YJcJtH11ROxmKsUHtO4Nna8=;
+        b=m+pUAw/1BYDSgg1srjHWlacR0ZYjQfORPMDoSSemMSEc4A3Pw9xqIAAsmusWcwBB51
+         D+uB2VA5CsRf3fE8hXdMUhOYq+ftUhiaIErFnhxD56cuw9uyaZ3RHKyd50gJmW5n3H1X
+         UO4NA88aC7+AfkV6lxQaZ35aBArapDgJMRKORZjySQlSMswXst0pSt75JUIl9gjlr477
+         18yOVlnNkLrwR7GlzizrV5Rg1mxTBHCHb9veIEDaP4l6H0tASzq04aa6wfWKA2CL2cv5
+         FckTQt9zklOdCnlW1tWn13tkdKc+Simg06Iuf0MeRzhpBgPaqMHFkzMvGuVMjV1QtRti
+         M01A==
+X-Forwarded-Encrypted: i=1; AJvYcCVb0Kbsm6uaNd2NO8VppNOJyxtOfnNWwB+uoCHpwnVBovr/oT6mOB/Ds3zXv0Zjb5s5MKU+D2Ve@vger.kernel.org, AJvYcCW8QC3JBjfMfdlwkwIO/UWWpbBMTgK2dtGEmxa6TV+TUobSNqm7JNhBvr9YXxeJV2M9DIyovR0JfTf0eXXm@vger.kernel.org, AJvYcCX8IbtCJ1kR9lb42jtZuUtR1tZZ4GEjT6rd2GOoYJQ/tMK9AkPpWQ91hUqG2ITeKUYsjwBVIWOPauT5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVc/maOWrtaKKJeyIOySOv8dlVJfV/kU1Q91P79Cem9i4Bhww+
+	HZou9V3HTgpNf7mt4xNhxAHO72DHdKeVeyD3aLwwqPhDLraSOyjBq+v0
+X-Gm-Gg: ASbGncuHIGqEmfX83LUMVHbZ7s+Uo3XfhhhL48y/wpDXTu0qecxQNsbB0ATWvrU+BmB
+	N8vhaHngmnX3iVqdzR1QYYpBeS2zt4q/Yru5Q6xBTw3lFMbXi/6mVDpYWdCi9gfrQL4qL4J+Bzx
+	r3f95HBeAxal7U01mqudwwm36i78gTgw3LpFIcZ/sX4Eudl7jMUl37kMV261awaF7pl8lVlGnma
+	nAklMa8bKISD6agaXxmq1GDOTf4mbFpVkxnE+HndXo9gX6ZJyZ3/B7fOsm8/GZj0UDLMmDCTSgn
+	wINSYh4Op0vyAzJQh3xiPmhUFiIWweqXnYCcB6N7G0bKHy1wHU8Nn0sh4aoaOQfUSUotzWVD0YX
+	sX4eWRwO0rvk=
+X-Google-Smtp-Source: AGHT+IGK+50QwO8pdNFjDIvuoc5BDp7ah4zpf7VTDHZMXZYtttLO72d8HZmZal2SToqmSuZT6FcLZA==
+X-Received: by 2002:a05:600c:c093:b0:456:2257:3777 with SMTP id 5b1f17b1804b1-458a20032cfmr2162615e9.4.1753931731316;
+        Wed, 30 Jul 2025 20:15:31 -0700 (PDT)
+Received: from pc ([165.51.119.21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45895377708sm45913035e9.8.2025.07.30.20.15.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 20:15:30 -0700 (PDT)
+Date: Thu, 31 Jul 2025 04:15:27 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>,
+	Dinh Nguyen <dinguyen@kernel.org>, Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>, James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>, linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: [PATCH] EDAC: altera: Delete an inappropriate dma_free_coherent()
+ call in altr_sdr_mc_err_inject_write()
+Message-ID: <aIrfzzqh4IzYtDVC@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: mchehab+huawei@kernel.org
-Cc: corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- workflows@vger.kernel.org
-References: <b03b95b8d09358e81e4f27942839191f49b0ba80.1753806485.git.mchehab+huawei@kernel.org>
-Subject: Re: [PATCH v2 2/2] docs: changes: better document Python needs
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <b03b95b8d09358e81e4f27942839191f49b0ba80.1753806485.git.mchehab+huawei@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, 29 Jul 2025 18:43:04 +0200, Mauro Carvalho Chehab wrote:
-> Python is listed as an optional dependency, but this is not
-> true, as:
-> 
-> 1) arm (multi_v7_defconfig and other defconfigs) and arm64 defconfig
->    needs it due to DRM_MSM dependencies;
-> 
-> 2) CONFIG_LTO_CLANG runs a python script at scripts/Makefile.vmlinux_o;
-> 
-> 3) kernel-doc is called during compilation when some DRM options
->    like CONFIG_DRM_I915_WERROR are enabled;
-> 
-> 4) allyesconfig/allmodconfig will enable CONFIG_* dependencies
->    that needs it;
-> 
-> 5) besides DRM, other subsystems seem to have logic calling *.py
->    scripts.
-> 
+`dma_free_coherent()` must only be called if the corresponding
+`dma_alloc_coherent()` call has succeeded. Calling it when the allocation
+fails leads to undefined behavior.
 
-OK. This sounds convincing enough.
+Add a check to ensure that the memory is only freed when the allocation
+was successful.
 
-> So, better document that and change the dependency from optional
-> to mandatory to reflect the current needs.
-> 
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-> ---
->  Documentation/process/changes.rst | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-> index bccfa19b45df..4c9088e429c8 100644
-> --- a/Documentation/process/changes.rst
-> +++ b/Documentation/process/changes.rst
-> @@ -61,7 +61,7 @@ Sphinx\ [#f1]_         3.4.3            sphinx-build --version
->  GNU tar                1.28             tar --version
->  gtags (optional)       6.6.5            gtags --version
->  mkimage (optional)     2017.01          mkimage --version
-> -Python (optional)      3.9.x            python3 --version
-> +Python                 3.9.x            python3 --version
->  GNU AWK (optional)     5.1.0            gawk --version
->  ====================== ===============  ========================================
->  
-> @@ -154,6 +154,13 @@ Perl
->  You will need perl 5 and the following modules: ``Getopt::Long``,
->  ``Getopt::Std``, ``File::Basename``, and ``File::Find`` to build the kernel.
->  
-> +Python
-> +------
-> +
-> +Several config options require it: it is required for arm/arm64
-> +default configs, CONFIG_LTO_CLANG, some DRM optional configs,
-> +the kernel-doc tool, and docs build (Sphinx), among others.
-> +
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+Fixes: 71bcada88b0f3 ("edac: altera: Add Altera SDRAM EDAC support")
+Cc: Markus Elfring <Markus.Elfring@web.de>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Robert Richter <rric@kernel.org>
+Cc: linux-edac@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+---
+ drivers/edac/altera_edac.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Looks much better.  Feel free to add:
-
-Acked-by: Akira Yokosawa <akiyks@gmail.com>
-
-Thanks.
+diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+index cae52c654a15..7685a8550d4b 100644
+--- a/drivers/edac/altera_edac.c
++++ b/drivers/edac/altera_edac.c
+@@ -128,7 +128,6 @@ static ssize_t altr_sdr_mc_err_inject_write(struct file *file,
+ 
+ 	ptemp = dma_alloc_coherent(mci->pdev, 16, &dma_handle, GFP_KERNEL);
+ 	if (!ptemp) {
+-		dma_free_coherent(mci->pdev, 16, ptemp, dma_handle);
+ 		edac_printk(KERN_ERR, EDAC_MC,
+ 			    "Inject: Buffer Allocation error\n");
+ 		return -ENOMEM;
+-- 
+2.43.0
 
 
