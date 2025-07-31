@@ -1,258 +1,161 @@
-Return-Path: <linux-kernel+bounces-752166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E15B9B17207
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:28:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542A3B17200
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E5441AA87BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:28:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703A5585A58
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A682D2382;
-	Thu, 31 Jul 2025 13:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E662C08C1;
+	Thu, 31 Jul 2025 13:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tMfqJ82Z"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p5NuxDTc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2A92D0C9B
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25324A94A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753968424; cv=none; b=TUOujHZGRijmEpKW7L4gAmBaajjA1RkFS3DMxfXfADskSYSz8W0yYqDrB20qdXcqXFjyoZjp4LOuoB2cHzF5ARbHbB9Vu5Ska+btyOdTMoY00Jqkqh/UVGCuK29dD6VAubsAfQ/0gz1c43alVx383TShsYyPRhAWAxUOd+7ZoE8=
+	t=1753968406; cv=none; b=X0nKPMtLzeeExHR2FKSQHjjHSmNwzXPJEQ6qtVL7omlLuPbb590gtcl65bIUWzhEVdHj0F2xYCxETDGwyc67DZjHB02O7wlQ/qt5pvG6NjFD3hqRG/27c/YluHtOoXR+xieXb90BVobbchwfq8R7mgnsXcqOR/nv+I+0ghePnh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753968424; c=relaxed/simple;
-	bh=IvE7wbOfiky5gP1/JdKf1HJsEXUXuz12TG0IoOAqx3U=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=P74hg9UeeG6cn/JE7XmRD/XK3UWqhWVxI1TdbervJJZQAPL4KXpot2uxXh8/q701FegUHbNvywMIGrZIfmGU70xsDDa9Nr/TJa+c+SWrD5oLoL8iumZ0OuJuAWnDJs4cXXcuQ4zpe8T11Iw6M9gnYYWYECLMF8F8YwU6DMcyijE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tMfqJ82Z; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhuo.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74928291bc3so1058042b3a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:27:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753968422; x=1754573222; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9D+1SkLUHFp3CL6p6s9XNodFOnizBfge5u1xSj5q/5M=;
-        b=tMfqJ82Z05i8Mg0BYhuYG0kBYmCOeFUL9mvvU5abyEG1YqbgDAxn1ApFiy6E90mfDn
-         EN/6DbGJmy1JLTksnZbnAIz3nDfHvP7/hjDEIKnxcQXuNERzy78jFsSlLXVs+2aVsDTS
-         f2fnllV8pqwibDbRCkrTxVOJlMoyLheMZBDiPaPy7XledeP7RvT21t9DZlGXDiL1Wp4U
-         gWQRbO8qs6IZ6K6cqCQKxiL0TQ7+ODh1GLTwyO+NnMNvPKLJKn4Fjn5iITzpP0XqL9kc
-         qqIDt44Osc3ADUKRae4vJGb31ektm+jLmWTr0Eda/xROokUGvO1Jv/eYelG3R3uKi73q
-         2InA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753968422; x=1754573222;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9D+1SkLUHFp3CL6p6s9XNodFOnizBfge5u1xSj5q/5M=;
-        b=efgZQEi3pM7uHhpexn8fBn8JFfMY3l0DOEfoOKNjP8pQwJMoB49QlxuG+APvif3fh/
-         9JKWGA1N4pL51WqPdffM5HsmgoZRCFyMpRNDW+DkVM5O1VUTORpCBJgMhqqP+f9KEzPm
-         +yBGwlPNYg7MYLE3bpw6owwwUHTWTK/Zzi2LcENFpL67v5frFiXusW0g6YxBL0Z2/w1M
-         9ZJbmDeBOsmwx7brJb4tSZUntTsJWlJOJVdpxyaNHESWKizGj5A6mTT7R47hFX6DIGEa
-         gbMJqi+PdPt/lF0MrmG6TI458BY+p92Hx5DPo4HFCFYTiS33SU1ZYclthlRRPAHquZo6
-         c/jg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ5QzffFucPQdT54pfPgkqERNf3+6L8uFtXNjoSXj5JZuHl2ND1uTXzDww676HfPR8CDsi6AhLg+0nb0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuVW4+zQDlVb+zSq8koQAQimZyugFkK9jfbOl31Q0T/ltcf6Rc
-	uNxzM9w6xD3uF/rn/gtSsqRzSxoTWwqvMAxRRAKcZcob4odjG+ZaBgwvxrBYQ/smGOz5X/YsU3C
-	NU253WA==
-X-Google-Smtp-Source: AGHT+IHobDSGcus+S94g4r7tqFvwsqp38RnMHKYwOWfldZixh8KyWZx+bTZ3gtJnbMQKBH3kowT2EzQj/94=
-X-Received: from pgar7.prod.google.com ([2002:a05:6a02:2e87:b0:b2c:4548:13d0])
- (user=yuzhuo job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:258a:b0:232:ddc1:f22b
- with SMTP id adf61e73a8af0-23dc0d5f6bdmr10780967637.19.1753968422122; Thu, 31
- Jul 2025 06:27:02 -0700 (PDT)
-Date: Thu, 31 Jul 2025 06:26:15 -0700
-In-Reply-To: <20250731132615.938435-1-yuzhuo@google.com>
+	s=arc-20240116; t=1753968406; c=relaxed/simple;
+	bh=lCLyuq53vp4e9L0JS6snSzvaxB/qbfCtw9F8FZNhjCY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3ODP3qT47V7Je1bYiVRBQ7FyqXtomp2jhoMkMPcL0K3Qdkv5eVFvO4cXLUZ9VuK+5On6DENaWK42OH2ZSPqS5tZtySojQXTiM9BkmCaCjfVtM0C43LQ40YMsYAM2MGgOfopRHz8lNiRVTuFKeYE9c0Cz3cC5jgtYtdiBmfix3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p5NuxDTc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24B9DC4CEEF;
+	Thu, 31 Jul 2025 13:26:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753968405;
+	bh=lCLyuq53vp4e9L0JS6snSzvaxB/qbfCtw9F8FZNhjCY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p5NuxDTcXtwhVbrPCDjI9v84xzkZE1D4MgiqhNUUPu/gRixKgIWZ8nST23lDwSq8o
+	 NJfzQkkpEdU3WbxcjV8YHQhWXMM9deH23bMcomOQ2H1/DmZBurj+h1cU6NHA4WOPNp
+	 hJObCrnm3foM2HWZTF6WRJAdowTq2g4N+R8d6fVcpDjbdB5CL4a3d53MfQJDVrgOTt
+	 6pHWiOkUyuKbd/MgNwm86u2zNUwKrnXpulzKa4grmf3LPESruiJ0s99GOkKBhOp5no
+	 +4xkPmIPkkkOqjsg8ujFPrteCybIDGn4c3WB+3cKfpFYeqhDkxjGcWrITdG6RZnbPm
+	 /UrMSq8zPJr2Q==
+Date: Thu, 31 Jul 2025 15:26:42 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/14] drm/tidss: dispc: Convert to FIELD_* API
+Message-ID: <20250731-powerful-termite-of-inspiration-13f36d@houat>
+References: <20250730-drm-tidss-field-api-v1-0-a71ae8dd2782@kernel.org>
+ <15f0b568-3d59-4f0c-b390-4e3d3623136a@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250731132615.938435-1-yuzhuo@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250731132615.938435-6-yuzhuo@google.com>
-Subject: [PATCH v1 5/5] perf bench: Add documentation for 'sync rcu' suite
-From: Yuzhuo Jing <yuzhuo@google.com>
-To: Davidlohr Bueso <dave@stgolabs.net>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Josh Triplett <josh@joshtriplett.org>, Frederic Weisbecker <frederic@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joelagnelf@nvidia.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Uladzislau Rezki <urezki@gmail.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang@linux.dev>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Liang Kan <kan.liang@linux.intel.com>, Yuzhuo Jing <yzj@umich.edu>, 
-	Yuzhuo Jing <yuzhuo@google.com>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org, 
-	rcu@vger.kernel.org, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="livjto5renz64lpa"
+Content-Disposition: inline
+In-Reply-To: <15f0b568-3d59-4f0c-b390-4e3d3623136a@bootlin.com>
 
-Add documentation for 'perf bench sync rcu'.  This benchmark has three
-modes or subcommands that takes positional arguments.  In addition,
-*kernel* module parameters are directly specified in the form of
-"name=value", without "--name".  Multiple subsections are thus added to
-the 'sync' section for illustration.
 
-Signed-off-by: Yuzhuo Jing <yuzhuo@google.com>
----
- tools/perf/Documentation/perf-bench.txt | 131 ++++++++++++++++++++++++
- 1 file changed, 131 insertions(+)
+--livjto5renz64lpa
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 00/14] drm/tidss: dispc: Convert to FIELD_* API
+MIME-Version: 1.0
 
-diff --git a/tools/perf/Documentation/perf-bench.txt b/tools/perf/Documentation/perf-bench.txt
-index 8331bd28b10e..786c6e6880f5 100644
---- a/tools/perf/Documentation/perf-bench.txt
-+++ b/tools/perf/Documentation/perf-bench.txt
-@@ -49,6 +49,9 @@ SUBSYSTEM
- 'sched'::
- 	Scheduler and IPC mechanisms.
- 
-+'sync'::
-+	Synchronization primitives.
-+
- 'syscall'::
- 	System call performance (throughput).
- 
-@@ -162,6 +165,134 @@ Example of *pipe*
- 
- ---------------------
- 
-+SUITES FOR 'sync'
-+~~~~~~~~~~~~~~~~~
-+*rcu*::
-+Suite for RCU performance.  Depends on rcuscale kernel module.
-+This benchmark has three modes: once, range, ratio.  Usage is defined as below.
-+
-+'perf bench sync rcu' [options..] [-- <command>..]
-+'perf bench sync rcu' [options..] once  <gp_type> [<param=value>..] [-- <command>..]
-+'perf bench sync rcu' [options..] range <gp_type> [<param=range>..] [-- <command>..]
-+'perf bench sync rcu' [options..] ratio <gp_type> <total> <param1_range> <param1_name> <param2_name> [<param=value>..] [-- <command>..]
-+
-+Modes for *rcu*
-+^^^^^^^^^^^^^^^
-+
-+default::
-+Run 'once sync'.",
-+
-+once::
-+Run benchmark once, with all parameters passed through to the kernel rcuscale
-+module.
-+
-+range::
-+Run benchmark multiple times, with parameters as ranges.  Range format is
-+defined as start[:end[:step]], inclusive, non-negative.  The benchmark
-+instantiates all combinations of all ranges.
-+
-+ratio::
-+Run benchmark that changes the ratio between two parameters. 'total' specifies
-+the sum of 'param1' and 'param2', and 'param1_range' is the range of 'param1'
-+values.  'param2' is calculated by 'total-param1'.  Additional non-range
-+parameters may also be specified.
-+
-+Positional arguments for *rcu*
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+gp_type::
-+The type of grace period to use: sync, async, exp (expedited)
-+
-+param::
-+Any parameter of the rcuscale kernel module, except for "gp_exp",
-+"gp_async" and "block_start" that are managed by this benchmark.
-+Valid options can be found from "modinfo rcuscale".
-+
-+command::
-+A child command to run during the experiment.  If the command line
-+string contains {READER,WRITER,KFREE}_TASKS placeholders, they will be
-+substituted with the tasks PIDs, separated by comma.
-+
-+Options for *rcu*
-+^^^^^^^^^^^^^^^^^
-+-c::
-+--cooldown::
-+Sleep time between each experiment (default: 3 seconds).
-+
-+-n::
-+--dryrun::
-+Dry run mode.  Do not run experiments, but instead print what parameter
-+combination will run.
-+
-+--child-delay=::
-+Wait for child startup before starting experiment (default: 1 second).
-+
-+--debugfs=::
-+Debugfs mount point used to interact with the rcuscale kernel module. (default:
-+/sys/kernel/debug).
-+
-+--hist::
-+Show the histogram of writer durations.
-+
-+Example of *rcu*
-+^^^^^^^^^^^^^^^^
-+
-+---------------------
-+% perf bench sync rcu once exp nreaders=1 nwriters=1
-+# Running 'sync/rcu' benchmark:
-+Running experiment with options: gp_exp=1 nreaders=1 nwriters=1
-+Experiment finished.
-+Average grace-period duration: 124.236 microseconds
-+Minimum grace-period duration: 8.783
-+50th percentile grace-period duration: 9.033
-+90th percentile grace-period duration: 9.665
-+99th percentile grace-period duration: 20.911
-+Maximum grace-period duration: 6025.167
-+
-+% perf bench sync rcu range exp nreaders=1 nwriters=1 writer_cpu_offset=0:1 -- \
-+          perf stat -e ipi:ipi_send_cpu,rcu:rcu_grace_period \
-+          -t READER_TASKS,WRITER_TASKS
-+# Running 'sync/rcu' benchmark:
-+Running experiment with options: gp_exp=1 nreaders=1 nwriters=1 writer_cpu_offset=0
-+Running child command: perf stat -e ipi:ipi_send_cpu,rcu:rcu_grace_period -t 2061441,2061442
-+
-+ Performance counter stats for thread id '2061441,2061442':
-+
-+              2400      ipi:ipi_send_cpu
-+               100      rcu:rcu_grace_period
-+
-+       6.006040148 seconds time elapsed
-+
-+Experiment finished.
-+Waiting for child process to exit.
-+Average grace-period duration: 301.177 microseconds
-+Minimum grace-period duration: 9.064
-+50th percentile grace-period duration: 9.394
-+90th percentile grace-period duration: 10.977
-+99th percentile grace-period duration: 5926.781
-+Maximum grace-period duration: 6011.067
-+Cooling down (3s)..
-+
-+Running experiment with options: gp_exp=1 nreaders=1 nwriters=1 writer_cpu_offset=1
-+Running child command: perf stat -e ipi:ipi_send_cpu,rcu:rcu_grace_period -t 2061461,2061462
-+
-+ Performance counter stats for thread id '2061461,2061462':
-+
-+              2144      ipi:ipi_send_cpu
-+               201      rcu:rcu_grace_period
-+
-+       6.006110747 seconds time elapsed
-+
-+Experiment finished.
-+Waiting for child process to exit.
-+Average grace-period duration: 12.23 microseconds
-+Minimum grace-period duration: 9.134
-+50th percentile grace-period duration: 9.475
-+90th percentile grace-period duration: 11.897
-+99th percentile grace-period duration: 38.057
-+Maximum grace-period duration: 67.19
-+---------------------
-+
- SUITES FOR 'syscall'
- ~~~~~~~~~~~~~~~~~~
- *basic*::
--- 
-2.50.1.565.gc32cd1483b-goog
+Hi Louis,
 
+On Thu, Jul 31, 2025 at 03:04:49PM +0200, Louis Chauvet wrote:
+> Le 30/07/2025 =E0 10:57, Maxime Ripard a =E9crit=A0:
+> > Hi,
+> >=20
+> > The tidss driver rolls its own API equivalent to the FIELD_* API already
+> > provided the kernel.
+> >=20
+> > Since it's an ad-hoc implementation, it also is less convenient and
+> > doesn't provide some useful features like being able to share the field
+> > definitions that will come handy in the future.
+> >=20
+> > Thus, this series converts the driver to that API and drops its own
+> > version.
+>
+> I just saw your series after sending mine [2]. I checked, there is only o=
+ne
+> minor conflict that can be easly fixed.
+>=20
+> But when applied on drm-misc/drm-misc-next, your series raises:
+>=20
+> In file included from <command-line>:
+> drivers/gpu/drm/tidss/tidss_dispc.c: In function 'FLD_MOD':
+> ././include/linux/compiler_types.h:568:45: error: call to
+> '__compiletime_assert_589' declared with attribute error: FIELD_PREP: mask
+> is not constant
+>   568 |         _compiletime_assert(condition, msg, __compiletime_assert_,
+> __COUNTER__)
+>       |                                             ^
+> ././include/linux/compiler_types.h:549:25: note: in definition of macro
+> '__compiletime_assert'
+>   549 |                         prefix ## suffix();         \
+>       |                         ^~~~~~
+> ././include/linux/compiler_types.h:568:9: note: in expansion of macro
+> '_compiletime_assert'
+>   568 |         _compiletime_assert(condition, msg, __compiletime_assert_,
+> __COUNTER__)
+>       |         ^~~~~~~~~~~~~~~~~~~
+> ./include/linux/build_bug.h:39:37: note: in expansion of macro
+> 'compiletime_assert'
+>    39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), m=
+sg)
+>       |                                     ^~~~~~~~~~~~~~~~~~
+> ./include/linux/bitfield.h:65:17: note: in expansion of macro
+> 'BUILD_BUG_ON_MSG'
+>    65 |                 BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask),
+> \
+>       |                 ^~~~~~~~~~~~~~~~
+> ./include/linux/bitfield.h:115:17: note: in expansion of macro
+> '__BF_FIELD_CHECK'
+>   115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_PREP: =
+");
+> \
+>       |                 ^~~~~~~~~~~~~~~~
+> drivers/gpu/drm/tidss/tidss_dispc.c:599:33: note: in expansion of macro
+> 'FIELD_PREP'
+>   599 |         return (orig & ~mask) | FIELD_PREP(mask, val);
+>       |                                 ^~~~~~~~~~
+>=20
+>=20
+> This seems to be a limitation of FIELD_PREP [1].
+> I think the only way to avoid this issue is to use macros and not functio=
+ns.
+>=20
+> [1]:https://elixir.bootlin.com/linux/v6.16/source/include/linux/bitfield.=
+h#L65-L66
+> [2]:https://lore.kernel.org/all/20250730-fix-edge-handling-v1-0-1bdfb3fe7=
+922@bootlin.com/
+
+Weird, it compiles without warning for me here. Which compiler do you use?
+
+Thanks!
+Maxime
+
+--livjto5renz64lpa
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaItvEgAKCRAnX84Zoj2+
+doX8AYCMBVPvxu8o9TOyCn7lBbNCgS3knFU+dNmItt8BbDwrf771Slu0wBc/AS26
+rS5kbMgBgLJs0oaq3MszcBvisk3p+uCLxfQLOTUpTXrXdigK3eR7LEZz6ewrk7Gn
+ZafbXk/c4g==
+=Oj/Q
+-----END PGP SIGNATURE-----
+
+--livjto5renz64lpa--
 
