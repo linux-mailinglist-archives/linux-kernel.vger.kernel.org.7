@@ -1,83 +1,58 @@
-Return-Path: <linux-kernel+bounces-752449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84BCB175B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A4EB175AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:37:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3691C22240
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:38:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DB301C2216D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D13268FF1;
-	Thu, 31 Jul 2025 17:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B239264615;
+	Thu, 31 Jul 2025 17:37:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iKWwh1a8"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VAvimPmH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30521DE4E7;
-	Thu, 31 Jul 2025 17:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01BB22FF2E;
+	Thu, 31 Jul 2025 17:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753983469; cv=none; b=QtdnoSCB1APPAUE0K8Vg5GeL9VsoogNbG11sf+WntPXvE/A/kTM20qpvZ0SwSnHoi6CZrhrisFHToiAHZQ0FHUk+R+4gGClQwlODH0SISSfoEGK34z66Tw/8m6qbGGVVE/j5qepE2MhIREarbnlJlp3KmFn9H/ozHAEFMU7mFIY=
+	t=1753983435; cv=none; b=jYJ+MvibBavrqlLrN+5hHSQdruOO5scu3SrzmR+kBa+w7vd1DR7UogzyRU075FR2uFL/yn0iLNhdpkudA2k4UaHBRHYEaDxZarmIsfmVMPyuHbGMEQpuaourZQ4gCFiIayRKJmT+IfvSbRWRdKrXx1lNoWJn9YpOPJcxtiWdxuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753983469; c=relaxed/simple;
-	bh=fC5Kj2P9hQGv6REhbUedHA1baP40WX3wJpYks9ETIRA=;
+	s=arc-20240116; t=1753983435; c=relaxed/simple;
+	bh=ywlvPM717dLhVttjQEnvzvv1noJR+G4RB/Fn/JLZAQc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=punSK1KeXwIaenIBU3V0v9tYgJwJ9uuzM2vdsQXqiiz7uzVJmWYouCOVa1i/L5YGj0iZ7UvSiS8D7JluEj6Pd9zhA+/lyJ13a0worymnsJ93YCGVcuUIdhmTJvH0td3qzve4td2qL+OHmkON/j4xo/WhagpPDS+y93WB5dOAPvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=iKWwh1a8; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=p81bLGAEXCTve0S2bSlDolWBTWQ0gkC1ozZDbrTl9gw=; b=iKWwh1a88Q0pAf4bvxfAD5Txdc
-	EE90MjrkC8Uduz8SZ6vXiansbV8frsRKlWXThc48w73PhEqccyoX4tMljfHq+8Rhz9i2ceiiTpnNQ
-	7hjsoOf+OUPX+pHbDNVQLDykrMSNBfUePqaONzx/4EcyEuzR/wo0kYwvkbEPCkU9M1bzxAWY1d2bj
-	ohP5kNlKgUTJVA9ZUQHkyV+nsX3SWV9d4/YDSTVwIwFe2VNJRwzXwJ/sEIwEa9qaSxvuX+eYykKKV
-	Yo/BB2cxQ9KFglR+QaHCwdd6BFZFTPe+0RrFxYMe0Vnzv0Y1POwKGhi1jrFc7WsVSY+Z/IRvpV2Bt
-	sXEcrVpw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uhXDL-0000000H6sX-2SDg;
-	Thu, 31 Jul 2025 17:37:11 +0000
-Date: Thu, 31 Jul 2025 18:37:11 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>,
-	Christoph Hellwig <hch@lst.de>, Leon Romanovsky <leon@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-	Alexander Potapenko <glider@google.com>,
-	Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, iommu@lists.linux.dev,
-	virtualization@lists.linux.dev, kasan-dev@googlegroups.com,
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Subject: Re: [PATCH 0/8] dma-mapping: migrate to physical address-based API
-Message-ID: <aIupx_8vOg8wQh6w@casper.infradead.org>
-References: <CGME20250625131920eucas1p271b196cde042bd39ac08fb12beff5baf@eucas1p2.samsung.com>
- <cover.1750854543.git.leon@kernel.org>
- <35df6f2a-0010-41fe-b490-f52693fe4778@samsung.com>
- <20250627170213.GL17401@unreal>
- <20250630133839.GA26981@lst.de>
- <69b177dc-c149-40d3-bbde-3f6bad0efd0e@samsung.com>
- <f912c446-1ae9-4390-9c11-00dce7bf0fd3@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C19i+FqgOVIKR+c2theVg/FmWDg/Qo1wpAizT8dX7KL+bEnRZXsnVOprGqEfrleEppL0YvWjODxHAu/MFAr713MeYqNy3waHInY3byZDW8HMkwd1EiEjPmb6LkPOAZAHEZsnc9QOthpqUepadNcIm+j9DNerlc0ZPnDsCdN7dmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VAvimPmH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E45C4CEEF;
+	Thu, 31 Jul 2025 17:37:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753983435;
+	bh=ywlvPM717dLhVttjQEnvzvv1noJR+G4RB/Fn/JLZAQc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VAvimPmHvyHLSkWLKue9aYm6eJpiGPpaftzUIyA9Socrc35CEJARj3SDFWyC7zyN5
+	 mLg6zpHtK0spOpe68k8DIW6eNaU6lqLm/8oIEs/j1FBp/ppvB84kRIL9X5Z6ySTi0i
+	 V4x9QfOhfQZCfm9jSTPawAYLXx6rAlXG5Z70GXudBwLIAmH9waUUaV/cYd3T19ejPl
+	 iIhYHsxs6YwbJnjwQMakrL2z6DtiUCWEF+5p/hhaQXs3GcHrVh7HDquISrlXvqNQ7u
+	 eAPIPfCmvrfMgIoTarFV4P7bLhXM0UXEmNjSz8b4C6cnTzmiBi/d8bv7XOEgbD0iJ2
+	 +LEK98xsdgrTw==
+Date: Thu, 31 Jul 2025 12:37:14 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Akhil R <akhilrajeev@nvidia.com>
+Cc: linux-i2c@vger.kernel.org, andi.shyti@kernel.org, digetx@gmail.com,
+	linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+	ldewangan@nvidia.com, conor+dt@kernel.org, thierry.reding@gmail.com,
+	linux-kernel@vger.kernel.org, jonathanh@nvidia.com,
+	krzk+dt@kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: i2c: nvidia,tegra20-i2c: Add Tegra256
+ I2C compatible
+Message-ID: <175398343346.2270652.1269106467992234487.robh@kernel.org>
+References: <20250731091122.53921-1-akhilrajeev@nvidia.com>
+ <20250731091122.53921-2-akhilrajeev@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,49 +61,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f912c446-1ae9-4390-9c11-00dce7bf0fd3@arm.com>
+In-Reply-To: <20250731091122.53921-2-akhilrajeev@nvidia.com>
 
-Hi Robin,
 
-I don't know the DMA mapping code well and haven't reviewed this
-patch set in particular, but I wanted to comment on some of the things
-you say here.
+On Thu, 31 Jul 2025 14:41:21 +0530, Akhil R wrote:
+> Add compatible for Tegra256 I2C controllers. Tegra256 consists of
+> 8 generic Tegra I2C controllers similar to previous generations.
+> The parent clock frequency is different in these controllers and
+> hence the timing parameter values are different from the previous
+> ones.
+> 
+> Signed-off-by: Akhil R <akhilrajeev@nvidia.com>
+> ---
+>  .../devicetree/bindings/i2c/nvidia,tegra20-i2c.yaml         | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
-> Marek, I'm surprised that even you aren't seeing why that would at best be
-> pointless churn. The fundamental design of dma_map_page() operating on
-> struct page is that it sits in between alloc_pages() at the caller and
-> kmap_atomic() deep down in the DMA API implementation (which also subsumes
-> any dependencies on having a kernel virtual address at the implementation
-> end). The natural working unit for whatever replaces dma_map_page() will be
-> whatever the replacement for alloc_pages() returns, and the replacement for
-> kmap_atomic() operates on. Until that exists (and I simply cannot believe it
-> would be an unadorned physical address) there cannot be any *meaningful*
-> progress made towards removing the struct page dependency from the DMA API.
-> If there is also a goal to kill off highmem before then, then logically we
-> should just wait for that to land, then revert back to dma_map_single()
-> being the first-class interface, and dma_map_page() can turn into a trivial
-> page_to_virt() wrapper for the long tail of caller conversions.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-While I'm sure we'd all love to kill off highmem, that's not a realistic
-goal for another ten years or so.  There are meaningful improvements we
-can make, for example pulling page tables out of highmem, but we need to
-keep file data and anonymous memory in highmem, so we'll need to support
-DMA to highmem for the foreseeable future.
-
-The replacement for kmap_atomic() is already here -- it's
-kmap_(atomic|local)_pfn().  If a simple wrapper like kmap_local_phys()
-would make this more palatable, that would be fine by me.  Might save
-a bit of messing around with calculating offsets in each caller.
-
-As far as replacing alloc_pages() goes, some callers will still use
-alloc_pages().  Others will use folio_alloc() or have used kmalloc().
-Or maybe the caller won't have used any kind of page allocation because
-they're doing I/O to something that isn't part of Linux's memory at all.
-Part of the Grand Plan here is for Linux to catch up with Xen's ability
-to do I/O to guests without allocating struct pages for every page of
-memory in the guests.
-
-You say that a physical address will need some adornment -- can you
-elaborate on that for me?  It may be that I'm missing something
-important here.
 
