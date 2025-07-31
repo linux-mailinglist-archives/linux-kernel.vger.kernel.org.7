@@ -1,155 +1,150 @@
-Return-Path: <linux-kernel+bounces-751502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEDB7B16A5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:19:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADCDB16A79
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C679918C68B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:19:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51DF016AAA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B324D23643E;
-	Thu, 31 Jul 2025 02:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C87A2356DA;
+	Thu, 31 Jul 2025 02:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6jaJoQR"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="RO16iif7"
+Received: from mail-m49211.qiye.163.com (mail-m49211.qiye.163.com [45.254.49.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775AA22318;
-	Thu, 31 Jul 2025 02:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF45F18A6B0;
+	Thu, 31 Jul 2025 02:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753928367; cv=none; b=fsu/XdmRa6+kHsx9o2KZRiBRoRjlCJ0RmXU810LC4BuAcwPx9PUNzaGHQuGkF8Crb6xrnbEGqil1ZQTREFaoFnriXR77jGLXzjfSh+QSzWmYdOBMFCvxDJf7f6VBhvLz/wx5uj26CgMWg9ET98Iqib9RVncQZrw0wh6Ickguchg=
+	t=1753929332; cv=none; b=Ubkr11nXEeoaSCaB2ObhXJDX9tboNePtoaHa+DE3iWJiIltLokSpjrHy05I5iMa/tSJnGWIfHzPu1UrdJwsd1q3pluVYKscgVBTOSHK9n8f3SSZlVCVOdC+nWaDtP9TCjUPdQ4fyBj0/HEBsoeTp1sRChSS4YsY4wExKJXUG7P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753928367; c=relaxed/simple;
-	bh=/EMZUGIb+jSGRcKKS31fRFqZ32wWToO8WQ5zfarulMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZeoIrJVFTX6IHRQzIutwztBEuJ6shpKzgSvEeXfIgtK8m2RDDU5+MnmBHDTEBjrQUXQ3inLF170/vlSgVJT+SmutrIb0r4Zdi/xR2q8Hlt6YkxqZGZEMsH2WhlfvedixgvhV/bQ2jyWJlviWBO2Z9ovlLYBJKEhtqqFAs2BcPBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6jaJoQR; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so4045895e9.1;
-        Wed, 30 Jul 2025 19:19:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753928364; x=1754533164; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b/rG/4GRP2jN1wvu1hAC2b4sTXSJWfazoIpwk4Gm8xA=;
-        b=F6jaJoQR+E8uIGYSNJTAEVBN3Y02LtYrI/QwUUhAC9z1PcRQRBSxBGAQG9c3fle5TA
-         J+1USHXhnLoTw5fhE930OwCJtpGD2hHP66AcI712e53DRlfIo7pfXMZXHqBYX4P3kQRg
-         4yE9oRTy0nfEM6C2ofTy7t6xJ1zchp3a5pckRwoDJR+vo5HSJQo7ZXQLwZgiWaBBlyl+
-         IlVLmUhd7V+CRdfBdAsYCuxuj7w6mA/8p3HI1yf+h4liHq7h9hTfM4SOokjvfrn4+ta4
-         Q8gwUUCa79PcqK4Kg2WE/QwJRQS1drZKjJJBkZ4AtgypugDria1DOPlOKc2iFZ9G0omK
-         7sHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753928364; x=1754533164;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b/rG/4GRP2jN1wvu1hAC2b4sTXSJWfazoIpwk4Gm8xA=;
-        b=JkBYlNxUldnC5MQNsxdMkHZW+sBHL6G3o0z2HKHgUMlgR5lcsvuL7XJNZeuLizujF5
-         UcjU3neNZzAEnTOA6qNt0Lj3keW24ww1xGpbj/ZqKpImVy1McjBcUUXQ+Dyvu9eqCkxI
-         WpTxtyR49/qRy34NsA6SoyiJlR+0XbOdGtVZs2QKmN/pBbd3+1kbp9NGEaVN9nPRvNCF
-         h/YFieNHdFpFncewzqEV8ZTSVSXOagSCN7UOEpVc4yxWr8hv91X2DQQ/j07SABggK+rm
-         eE8Ecl3y2hvCScCWw4PYN7PHM+kqE3wyX+QeZZM0J8fi2lJeioTMAzLbWtT5nqRnPJEb
-         ZX3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVya+KhdyO4/tN/62ad1jw1hTnZcECtEfKGTuX7/IHc87R3ptiZLd2zjUe0sZUjhS+ayKJGAtzI@vger.kernel.org, AJvYcCXQz1RltgycgJYlVUdaYsQxXhm70rc2Z5hDcsyVnzU4fPxwxLDLWWE+VKdeo+488BW9YU4IPzJEwyIt9o6A@vger.kernel.org, AJvYcCXkn7e90E0/jXFbUnNAs5im4DVy3HHqu0d+PI8cWzGqsxK0j2Df3yfQQwidNlJrZRWUeGHZMfQJauGpjr+p7Vo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvMvRGlblT9h8O0NcvXy+bmDnCZsb2N15SdZMVM3Ku1M/nSu61
-	T8LK2D7HOvErAcSvrQ/OWB27h9+nDy3FDqLYToF2ZNJ2fEsd5k7/De/xh91dmFYr
-X-Gm-Gg: ASbGncsuRu7MKhNeX1ASsxgFv3WSOK5DdOWqadNvYVpGkDYEysM81/EzFzw0xyGXFog
-	Lk3Gr3UWjvfXyFyzlbtXSkf0heBm13keiTW5utmNYx8/gHUXA3z4LUuDRazDfGPFwMSpmsZdG/H
-	wSqhAn9MbFbG1CVVYXFTtfeVhPKU7jUbMPAs1TI5uaJL7mmVgr6LJIIgMWV4yvYAW+vbBAPxKYK
-	LbH8AmiVSsMsrWYT9F5qbbfm2hqH7BYK1BEv7SuO6UM3/rQZ3HphSBCCTaqRNrjH7sUiuHdjg8x
-	lnnBidT/8eoH3RzlPJTbkEaxxiSlY0+9LQmQ8+dHkXxpsfSsWOftyt1unf0zW6rTGUNgcA5XzCe
-	NuWhveEKV74Q=
-X-Google-Smtp-Source: AGHT+IFO4MHztFKSK6takGVorJXNttTmeTk7NbkHF16a2QXKUseuUs1uqQ2pxHvICB01OcSO4cpZAQ==
-X-Received: by 2002:a05:600c:3ba1:b0:456:1fd9:c8f0 with SMTP id 5b1f17b1804b1-45892b947c9mr57241695e9.2.1753928363779;
-        Wed, 30 Jul 2025 19:19:23 -0700 (PDT)
-Received: from pc ([165.51.119.21])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48de68sm719878f8f.67.2025.07.30.19.19.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 19:19:22 -0700 (PDT)
-Date: Thu, 31 Jul 2025 03:19:19 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Markus Elfring <Markus.Elfring@web.de>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: salah.triki@gmail.com
-Subject: [PATCH V3] Bluetooth: bfusb: Fix use-after-free and memory leak in
- device lifecycle
-Message-ID: <aIrSp18mz3GS67a1@pc>
+	s=arc-20240116; t=1753929332; c=relaxed/simple;
+	bh=wGt+oJ2eiVfWy1iDzM9o28FJTuvh0pyWGCVFXYKv6Qc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WU2nx0DraczQwOEUVoyD7yV0iNOcgAe00mfUQDV+SgFVtpcFYD6HUJyPrqIIEtqf6Dyz9E2X8tg9RhGOsQwcM7y4PfoD/KE4sjhFr1J4o1mbc4yOvo1LV0Ut07fqm8IaXbgZbgmGDJRc9nJoMGQFZLl7Kn1bIZtQyLJByfSfZ08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=RO16iif7; arc=none smtp.client-ip=45.254.49.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.153] (gy-adaptive-ssl-proxy-4-entmail-virt151.gy.ntes [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 1dcdf18ba;
+	Thu, 31 Jul 2025 10:19:51 +0800 (GMT+08:00)
+Message-ID: <63ec11cf-7927-431a-995e-a5fc35ef1ba7@rock-chips.com>
+Date: Thu, 31 Jul 2025 10:19:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/5] Add Type-C DP support for RK3399 EVB IND board
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, Sandy Huang <hjc@rock-chips.com>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Yubing Zhang <yubing.zhang@rock-chips.com>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Amit Sunil Dhamne <amitsd@google.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Chaoyi Chen <chaoyi.chen@rock-chips.com>, Dragan Simic <dsimic@manjaro.org>,
+ Johan Jonker <jbx6244@gmail.com>, Diederik de Haas <didi.debian@cknow.org>,
+ Peter Robinson <pbrobinson@gmail.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ dri-devel@lists.freedesktop.org
+References: <20250729090032.97-1-kernel@airkyi.com>
+ <3kefqzjewmsyzfvyi33kvlgjd6jphjg3fsnixb3of7yb3xkgs2@hgi6xfkgd653>
+From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+In-Reply-To: <3kefqzjewmsyzfvyi33kvlgjd6jphjg3fsnixb3of7yb3xkgs2@hgi6xfkgd653>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-HM-Tid: 0a985e475b1003abkunm77c0d17969e27b
+X-HM-MType: 1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQhpLHlZKTE5DQhgfSUsZSBlWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSEpPSE
+	xVSktLVUpCS0tZBg++
+DKIM-Signature: a=rsa-sha256;
+	b=RO16iif7fvE2I/NqgFVWubst7c5eff+ThID3ba+yjSGE1Deh2av4GXUdv8xcfOjIoQRF5I8v1uaoBxKb/+DD1K1YmFe3nXoNmqmLqsqYOc6GjQA/eU0CqsQeM8yRVB7HTls4tRM/6RHXOdZnkUd6HI2cIMr02K/o8X0yNF8Ofbc=; c=relaxed/relaxed; s=default; d=rock-chips.com; v=1;
+	bh=+TiEqyL1AH0iOF6kXInInA83bu0TufgWM4xm6RFb5sQ=;
+	h=date:mime-version:subject:message-id:from;
 
-The driver stores a reference to the `usb_device` structure (`udev`)
-in its private data (`data->udev`), which can persist beyond the
-immediate context of the `bfusb_probe()` function.
+Hi Dmitry,
 
-Without proper reference count management, this can lead to two issues:
+On 7/31/2025 3:13 AM, Dmitry Baryshkov wrote:
+> On Tue, Jul 29, 2025 at 05:00:27PM +0800, Chaoyi Chen wrote:
+>> From: Chaoyi Chen <chaoyi.chen@rock-chips.com>
+>>
+>> This series focuses on adding Type-C DP support for USBDP PHY and DP
+>> driver. The USBDP PHY and DP will perceive the changes in cable status
+>> based on the USB PD and Type-C state machines provided by TCPM. Before
+>> this, the USBDP PHY and DP controller of RK3399 sensed cable state
+>> changes through extcon, and devices such as the RK3399 Gru-Chromebook
+>> rely on them. This series should not break them.
+>>
+> [....]
+>
+>> ====
+>> 2. DP HPD event notify
+>>
+>> The RK3399 has two USB/DP combo PHY and one CDN-DP controller. And
+>> the CDN-DP can be switched to output to one of the PHYs.
+>>
+>> USB/DP PHY0 ---+
+>>                 | <----> CDN-DP controller
+>> USB/DP PHY1 ---+
+> Could you please clarify this, can you switch DP stream between two
+> USB-C outputs? What happens if user plugs in DP dongles in both USB-C
+> ports?
 
-1. A `use-after-free` scenario if `udev` is accessed after its main
-   reference count drops to zero (e.g., if the device is disconnected
-   and the `data` structure is still active).
-2. A `memory leak` if `udev`'s reference count is not properly
-   decremented during driver disconnect, preventing the `usb_device`
-   object from being freed.
+Currently, the software simply selects the first available port. So if 
+user plugs in DP dongles in both USB-C ports, the DP driver will select 
+the first port. This process is implemented in cdn_dp_connected_port() .
 
-To correctly manage the `udev` lifetime, explicitly increment its
-reference count with `usb_get_dev(udev)` when storing it in the
-driver's private data. Correspondingly, decrement the reference count
-with `usb_put_dev(data->udev)` in the `bfusb_disconnect()` callback.
 
-This ensures `udev` remains valid while referenced by the driver's
-private data and is properly released when no longer needed.
 
-Signed-off-by: Salah Triki <salah.triki@gmail.com>
-Fixes: 9c724357f432d ("[Bluetooth] Code cleanup of the drivers source code")
-Cc: stable@vger.kernel.org
-Cc: Marcel Holtmann <marcel@holtmann.org>
-Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
-Changes in v3:
-    - Add tag Cc
+>
+>> BTW, one of the important things to do is to implement extcon-like
+>> notifications. I found include/drm/bridge/aux-bridge.h , but if the
+>> aux-bridge is used, the bridge chain would look like this:
+>>
+>> PHY0 aux-bridge ---+
+>>                     | ----> CDN-DP bridge
+>> PHY1 aux-bridge ---+
+>>
+>> Oh, CDN-DP bridge has two previous aux-bridge!
+>>
+>> Now, I try to use drm_connector_oob_hotplug_event() to notify HPD
+>> state between PHY and CDN-DP controller.
+> Does it actually work? The OOB HPD event will be repoted for the usb-c
+> connector's fwnode, but the DP controller isn't connected to that node
+> anyhow. If I'm not mistaken, the HPD signal will not reach DP driver in
+> this case.
 
-Changes in v2:
-    - Add tags Fixes and Cc
- drivers/bluetooth/bfusb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Yes.  What you mentioned is the case in 
+drivers/usb/typec/altmodes/displayport.c . I have also added a new OOB 
+event notify in the PHY driver in Patch 3, where the expected fwnode is 
+used in the PHY. So now we have two OOB HPD events, one from 
+altmodes/displayport.c and the other from PHY. Only the HPD from PHY is 
+eventually passed to the DP driver.
 
-diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
-index 8df310983bf6..f966bd8361b0 100644
---- a/drivers/bluetooth/bfusb.c
-+++ b/drivers/bluetooth/bfusb.c
-@@ -622,7 +622,7 @@ static int bfusb_probe(struct usb_interface *intf, const struct usb_device_id *i
- 	if (!data)
- 		return -ENOMEM;
- 
--	data->udev = udev;
-+	data->udev = usb_get_dev(udev);
- 	data->bulk_in_ep    = bulk_in_ep->desc.bEndpointAddress;
- 	data->bulk_out_ep   = bulk_out_ep->desc.bEndpointAddress;
- 	data->bulk_pkt_size = le16_to_cpu(bulk_out_ep->desc.wMaxPacketSize);
-@@ -701,6 +701,8 @@ static void bfusb_disconnect(struct usb_interface *intf)
- 
- 	usb_set_intfdata(intf, NULL);
- 
-+	usb_put_dev(data->udev);
-+
- 	bfusb_close(hdev);
- 
- 	hci_unregister_dev(hdev);
--- 
-2.43.0
 
+
+>
+>> Patch1 add new Type-C mode switch for RK3399 USBDP phy binding.
+>> Patch2 add typec_mux and typec_switch for RK3399 USBDP PHY.
+>> Patch3 drops CDN-DP's extcon dependency when Type-C is present.
+>> Patch4 add missing dp_out port for RK3399 CDN-DP.
+>> Patch5 add Type-C DP support for RK3399 EVB IND board.
+>>
 
