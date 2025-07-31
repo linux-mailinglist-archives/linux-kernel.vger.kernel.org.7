@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-751960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56991B16FE5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:56:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CE1B16FE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:56:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287C1170E11
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:56:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D14B172FEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB2B2BE035;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD1E2BE054;
 	Thu, 31 Jul 2025 10:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iqrfyk22"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CTTEAsU3"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0212BD031
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE6D2BD5A3
 	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753959349; cv=none; b=F0skDp7ayaccIDkbdQBgjWzWFd/v+Treqn7kmQX9EGi7LV8QzWsa0cYtiOwLCWdsRE2ZbVUOdAlNSJKeY0tvTXUC3aEDcWlp6CN/cIwTHHPUjdDhaRV1iSTW03DcV5aAYfV//fejZBd1k55vFflxnQdB6cdiFzr+A+c0GvqM6CI=
+	t=1753959349; cv=none; b=fzrV1DBznleiAjKgb1+EFCYb0hFfAxN5mK6mSMceeCLW+GbfVemtJMEgeiGuIaAFXIy3U+RmDZz0ic0y1nyp3+IdTk0NqXnCUTuGz/yLB4+v0CpnB0KcRgyuPHL0mzlD6sfIlJ3LZpcP8JyiWSurqoMImJ3QMTa0cEMgE1QFJcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753959349; c=relaxed/simple;
-	bh=vxUvAjFI51ozTe7TYJ58k74HV+/JXtcjWQqC1kYa5n8=;
+	bh=7zHuy3Bzmy3kpmP2kbCBpXVwxrJx8uxdFSO/UfUhAzw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WOaeY0AZIt1GOxJdXd98ylk2fIrOCpkvLsR8xHHOyfv7eNndwEAo6I2+/IhYe7xF8KNTeijoXc7TyQ3WBb8eT7veKPbcUBEBtQiZ3SLntZ/kRS37zWH8G4QfwonEpV/giVwg21cVHHWUid28gcvHAEOa9ZVs+6MwEeI3PXAUk1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iqrfyk22; arc=none smtp.client-ip=209.85.221.45
+	 MIME-Version; b=JmimCY/tOY1sMv6dxqhTMCTUbrda+NYzmYmiI3dAHQ0r1DSYjilh9UrqhouF08mT4AJBhjgyOHxZgqINTLnVH89C6zLcOwGI2Rcuoxk3m1G7GsXCuyrDmhhxc38wlnfkfRmJDYTz1YLDYXnOp1GlhEk/1q1iPqIGC4y0DWENe5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CTTEAsU3; arc=none smtp.client-ip=209.85.221.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b78310b296so471979f8f.2
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b7823559a5so488411f8f.0
         for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:55:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1753959346; x=1754564146; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=YtBTnswHJbWz9qX4CMvDbzP7yVZaNKyeALd7dwNWNtU=;
-        b=iqrfyk22xglFYuTYqZUu+vSIWm60SCppOlFrDb/bsgKngDsPMxY1GwQGt5yt9TVmJ8
-         DdjWCiC94GPZiJJBeNuSIqTvLoSJAgbuqrrBW5LZmTtL3zborWpTnuM7vxSgUGZ3su0O
-         SeOT7CvLvKg2HcHUDvugQ4GgojGbiOoObR57UImH9UKPg20qeKduXtXwQjFNsFGzYMjz
-         nOE5mm7bEu5CWguFlwz/p5z6Dpt7cbdIIYKSjQj1VLd40lA4wTHufWLEs7/pkJ1ofcwD
-         oTaBFvlrpwSPa2XrK8nAIDucGo0ndSoOQ47sc0oYIzos0JMW5/tHBbHXmoGC/vM0QD3t
-         KqJA==
+        bh=tzi2jPoOSdH5XG/gZrMJeOKkz0/pDG4/KykhFPpTSrE=;
+        b=CTTEAsU3+0Ro2/COg8j4nFQW89eo1OUdfv+6a9mhJZKqODxNr1z7+8w5kp20xT6AKu
+         dn6Ei9JzGVTJlTqyHSSUQ+0eEhqJ7Xdk0rqRZ2jVOTpfXI7DiXFlNbOKE2Bo1/9FbGps
+         jR3plHAHnvWl4bBrbB3XOuWz8WNoxC3IzKN7GE53HwxmOkN2TvFNRy9Zte9oTU6ne80O
+         azav6+jPysbw6L3n+W/S2P5Ir+JMZ33cp3cbWqSp04aB1v3FBOaArDwb94VhSnugtYud
+         wXKv446hO5YGeIqQ5423Jeir8BZKjF7lCU4rFCPQeXx/6YL1dI8i+elLsPPeIkPkKeu3
+         ZnRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1753959346; x=1754564146;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=YtBTnswHJbWz9qX4CMvDbzP7yVZaNKyeALd7dwNWNtU=;
-        b=eZoe/LplvG5iLpTWUYWC88oa6NglUJeiqObyxaJk/cSKUXERZC4OaXAdFdvLUEI2Fs
-         N+7cNS7859EMNXvlt3pysAWiubHjRZWTZHxhSAbaTxCKyPkyOLdO9TmYRmKDZCzFGSAV
-         3NGdyHZzUFfaDSGQ1mzNzoteN/c3CvdW4VcaUmXhoonMcvpaHsigcxDrXHqYE6oaXDQw
-         HnYbxMMYBrNWOTKkVg74ownQZNqYmATw6FPAliIbK0KO0up65JjEBSyHp4HN1RJOMXmN
-         tx1952EpB1RDQfmfXj4o/NNg+eM7NWcOYOrQMK+wnHdno4H57JxHMBZDbFW6MLhkDuhJ
-         iy7A==
-X-Gm-Message-State: AOJu0YwRWOH8/7O0XTS0oa/ZE2kYwVGcQn8yP7iP0Dvt4Ct+spn6PyAq
-	7wahOhn7dymokIkPp13k6XTVsQN3ZhwT4oUOx3N6CQ7pWTQ2udCN5gLE
-X-Gm-Gg: ASbGncseRzjTNYtqzop8NeFCd+tmcsiRzonnfEM08YyzE8zmhyxHvLHWFl5/z8l5ieO
-	y0wWnyf6N+XOPT4lM5XcIFU3SSgB7jr1zVocSbokIW9ZpxUHb3MqFuifz3QVgJTFxbiLWCDxYTz
-	a/FEQxpb8oziFvV0dYux/f43MAAdKsSad1MAwuoeEsdctn1HOT4wktkFoKHsn2f6fCa/418mwmX
-	u1wA4MuVekJxUcBug+8ZSK+6aQMe6ZsmSLl0v7tQ7ZLNnumJMqJ3pDK5rMMyJhXxQzxbo/M8zXR
-	NhwUxQSuynRrLtt/KCiDN0lWmkst9L6MRcC2viQ+PXvfLNHuD8Wh06pUJCIb67ExHF9dbdQMZ9Q
-	+AwQGcsROq4DyJSMy69k=
-X-Google-Smtp-Source: AGHT+IEQTOgRE7kWkIhApFMVKh0Arwhz81d+QiYAOCzqSinguylpX20jiLJLkn+G5YKgwD0a1l7MYw==
-X-Received: by 2002:a5d:5d89:0:b0:3a3:67bb:8f3f with SMTP id ffacd0b85a97d-3b795033f01mr5418674f8f.53.1753959345437;
-        Thu, 31 Jul 2025 03:55:45 -0700 (PDT)
+        bh=tzi2jPoOSdH5XG/gZrMJeOKkz0/pDG4/KykhFPpTSrE=;
+        b=DllsRjkrJVve9Vx/RgbInezSsGdMtmD5mREsZsp3M/HPDqkjr4BdDiWgCP3nC0bC9Z
+         SiuHLS+4UqLwGKxzQv42JWN2rB35Uo3M0fJ6ZQCxcyttzGQmkv10O2AG2gbInpH9QZLM
+         W3ndsVTzFGiqn0ynmdlWt5dGNGbdHu1kHQPtUrkq8zrx12iXAbDnG2Q9WJfhXxcmfW0Q
+         1Uao25tC2M0NnAcvcOn6XU4T+r8eRhXmrfMOIarbcyx1l/YN+D6Mi7jkRwEkuXae7zcz
+         8ANVxUzmHSMYOvmUCiBrEu0CXEfrFK0ei1LwHDGvJNf4MgxpkREXYOwLPFqyGKCO24Xm
+         5v4w==
+X-Gm-Message-State: AOJu0Yxs1zIIVC1uFcxkSsZAF8VkqQYp5k+aInefLsMEzFkB7P5jtx7h
+	8STO1RdTtMe4EPkGiSiBhj3RGen2pB4mgyC61IEsond50a0tMXGKdtfP
+X-Gm-Gg: ASbGncuH7qCIMj42J7+FIjx/hvCZM68vjMxhg0zeCKr8q/uwd5pg+BFp+mgiElKc7GU
+	1sOdtEJos2kYisss82vSHh6XjLE49/Zj+XXiS2xcTjT5CTeDANcA6XoiQCjy98PChVoJGcwI+1k
+	h+XCbjOn4+FuG7r85Z/MjNjWhJT8pshGAe3P135aeXOLHlkKVxzew70f7Q/YkwU6qR1w6XUNm2q
+	NWPij3Ud/aLPOodfgpbDkhbQxN9iJDPe/qknedjPbT7Y4mpOCUefgh0ox7nKCyR1tkA5uykVPOw
+	NMRdwSn0A2lIEqqOI4W9tBabXjLljSTcrj8nYDRRe5JLKf8ksAzWOkZwhxabNBg6HUGyfgDecs9
+	gjjrDYE+CvNaDe4sP/sk=
+X-Google-Smtp-Source: AGHT+IGuhmZKx5E9GRCc9EnhnDq0z3y7OE0+CKyG8WVwqqH7o54scX+YtHNHMWjn7N8aeWjjij8zug==
+X-Received: by 2002:a05:6000:1889:b0:3b3:9c75:acc6 with SMTP id ffacd0b85a97d-3b79503d7d3mr6049492f8f.59.1753959346211;
+        Thu, 31 Jul 2025 03:55:46 -0700 (PDT)
 Received: from victus-lab ([193.205.81.5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4696c8sm1946025f8f.55.2025.07.31.03.55.44
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4696c8sm1946025f8f.55.2025.07.31.03.55.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 31 Jul 2025 03:55:45 -0700 (PDT)
 From: Yuri Andriaccio <yurand2000@gmail.com>
@@ -84,9 +84,9 @@ To: Ingo Molnar <mingo@redhat.com>,
 Cc: linux-kernel@vger.kernel.org,
 	Luca Abeni <luca.abeni@santannapisa.it>,
 	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: [RFC PATCH v2 01/25] sched/deadline: Remove fair-servers from real-time task's bandwidth accounting
-Date: Thu, 31 Jul 2025 12:55:19 +0200
-Message-ID: <20250731105543.40832-2-yurand2000@gmail.com>
+Subject: [RFC PATCH v2 02/25] sched/deadline: Do not access dl_se->rq directly
+Date: Thu, 31 Jul 2025 12:55:20 +0200
+Message-ID: <20250731105543.40832-3-yurand2000@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250731105543.40832-1-yurand2000@gmail.com>
 References: <20250731105543.40832-1-yurand2000@gmail.com>
@@ -98,213 +98,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fair-servers are currently used in place of the old RT_THROTTLING mechanism to
-prevent the starvation of SCHED_OTHER (and other lower priority) tasks when
-real-time FIFO/RR processes are trying to fully utilize the CPU. To allow the
-RT_THROTTLING mechanism, the maximum allocatable bandwidth for real-time tasks
-has been limited to 95% of the CPU-time.
+From: luca abeni <luca.abeni@santannapisa.it>
 
-The RT_THROTTLING mechanism is now removed in favor of fair-servers, which are
-currently set to use, as expected, 5% of the CPU-time. Still, they share the
-same bandwidth that allows to run real-time tasks, and which is still set to 95%
-of the total CPU-time. This means that by removing the RT_THROTTLING mechanism,
-the bandwidth remaning for real-time SCHED_DEADLINE tasks and other dl-servers
-(FIFO/RR are not affected) is only 90%.
+Make deadline.c code access the runqueue of a scheduling entity saved in the
+sched_dl_entity data structure. This allows future patches to save different
+runqueues in sched_dl_entity other than the global runqueues.
 
-This patch reclaims the 5% lost CPU-time, which is definitely reserved for
-SCHED_OTHER tasks, but should not be accounted togheter with the other real-time
-tasks. More generally, the fair-servers' bandwidth must not be accounted with
-other real-time tasks.
-
-Updates:
-- Make the fair-servers' bandwidth not be accounted into the total allocated
-  bandwidth for real-time tasks.
-- Remove the admission control test when allocating a fair-server.
-- Do not account for fair-servers in the GRUB's bandwidth reclaiming mechanism.
-- Limit the max bandwidth to (BW_UNIT - max_rt_bw) when changing the parameters
-  of a fair-server, preventing overcommitment.
-- Add dl_bw_fair, which computes the total allocated bandwidth of the
-  fair-servers in the given root-domain.
-- Update admission tests (in sched_dl_global_validate) when changing the
-  maximum allocatable bandwidth for real-time tasks, preventing overcommitment.
-
-Since the fair-server's bandwidth can be changed through debugfs, it has not
-been enforced that a fair-server's bw must be always equal to (BW_UNIT -
-max_rt_bw), rather it must be less or equal to this value. This allows retaining
-the fair-servers' settings changed through the debugfs when chaning the
-max_rt_bw.
-
-This also means that in order to increase the maximum bandwidth for real-time
-tasks, the bw of fair-servers must be first decreased through debugfs otherwise
-admission tests will fail, and viceversa, to increase the bw of fair-servers,
-the bw of real-time tasks must be reduced beforehand.
-
-This v2 version addresses the compilation error on i386 reported at:
-https://lore.kernel.org/oe-kbuild-all/202507220727.BmA1Osdg-lkp@intel.com/
-
-v1: https://lore.kernel.org/all/20250721111131.309388-1-yurand2000@gmail.com/
-
+Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
 Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
 ---
- kernel/sched/deadline.c | 66 ++++++++++++++++++-----------------------
- kernel/sched/sched.h    |  1 -
- kernel/sched/topology.c |  8 -----
- 3 files changed, 29 insertions(+), 46 deletions(-)
+ kernel/sched/deadline.c | 27 ++++++++++++++-------------
+ 1 file changed, 14 insertions(+), 13 deletions(-)
 
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index e2d51f4306b..8ba6bf3ef68 100644
+index 8ba6bf3ef68..46b9b78cca2 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -141,6 +141,24 @@ static inline int dl_bw_cpus(int i)
- 	return cpus;
- }
+@@ -892,7 +892,7 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se)
+ 	 * and arm the defer timer.
+ 	 */
+ 	if (dl_se->dl_defer && !dl_se->dl_defer_running &&
+-	    dl_time_before(rq_clock(dl_se->rq), dl_se->deadline - dl_se->runtime)) {
++	    dl_time_before(rq_clock(rq), dl_se->deadline - dl_se->runtime)) {
+ 		if (!is_dl_boosted(dl_se) && dl_se->server_has_tasks(dl_se)) {
  
-+static inline u64 dl_bw_fair(int i)
-+{
-+	struct root_domain *rd = cpu_rq(i)->rd;
-+	u64 fair_server_bw = 0;
-+
-+	RCU_LOCKDEP_WARN(!rcu_read_lock_sched_held(),
-+			 "sched RCU must be held");
-+
-+	if (cpumask_subset(rd->span, cpu_active_mask))
-+		i = cpumask_first(rd->span);
-+
-+	for_each_cpu_and(i, rd->span, cpu_active_mask) {
-+		fair_server_bw += cpu_rq(i)->fair_server.dl_bw;
-+	}
-+
-+	return fair_server_bw;
-+}
-+
- static inline unsigned long __dl_bw_capacity(const struct cpumask *mask)
- {
- 	unsigned long cap = 0;
-@@ -1657,25 +1675,9 @@ void sched_init_dl_servers(void)
+ 			/*
+@@ -1202,11 +1202,11 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+ 			 * of time. The dl_server_min_res serves as a limit to avoid
+ 			 * forwarding the timer for a too small amount of time.
+ 			 */
+-			if (dl_time_before(rq_clock(dl_se->rq),
++			if (dl_time_before(rq_clock(rq),
+ 					   (dl_se->deadline - dl_se->runtime - dl_server_min_res))) {
+ 
+ 				/* reset the defer timer */
+-				fw = dl_se->deadline - rq_clock(dl_se->rq) - dl_se->runtime;
++				fw = dl_se->deadline - rq_clock(rq) - dl_se->runtime;
+ 
+ 				hrtimer_forward_now(timer, ns_to_ktime(fw));
+ 				return HRTIMER_RESTART;
+@@ -1217,7 +1217,7 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+ 
+ 		enqueue_dl_entity(dl_se, ENQUEUE_REPLENISH);
+ 
+-		if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &dl_se->rq->curr->dl))
++		if (!dl_task(rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+ 			resched_curr(rq);
+ 
+ 		__push_dl_task(rq, rf);
+@@ -1485,7 +1485,7 @@ static void update_curr_dl_se(struct rq *rq, struct sched_dl_entity *dl_se, s64
+ 
+ 		hrtimer_try_to_cancel(&dl_se->dl_timer);
+ 
+-		replenish_dl_new_period(dl_se, dl_se->rq);
++		replenish_dl_new_period(dl_se, rq);
+ 
+ 		/*
+ 		 * Not being able to start the timer seems problematic. If it could not
+@@ -1597,21 +1597,22 @@ void dl_server_update(struct sched_dl_entity *dl_se, s64 delta_exec)
+ 	/* 0 runtime = fair server disabled */
+ 	if (dl_se->dl_runtime) {
+ 		dl_se->dl_server_idle = 0;
+-		update_curr_dl_se(dl_se->rq, dl_se, delta_exec);
++		update_curr_dl_se(rq_of_dl_se(dl_se), dl_se, delta_exec);
  	}
  }
  
--void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq)
--{
--	u64 new_bw = dl_se->dl_bw;
--	int cpu = cpu_of(rq);
--	struct dl_bw *dl_b;
+ void dl_server_start(struct sched_dl_entity *dl_se)
+ {
+-	struct rq *rq = dl_se->rq;
++	struct rq *rq;
+ 
+ 	if (!dl_server(dl_se) || dl_se->dl_server_active)
+ 		return;
+ 
+ 	dl_se->dl_server_active = 1;
+ 	enqueue_dl_entity(dl_se, ENQUEUE_WAKEUP);
+-	if (!dl_task(dl_se->rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
+-		resched_curr(dl_se->rq);
++	rq = rq_of_dl_se(dl_se);
++	if (!dl_task(rq->curr) || dl_entity_preempt(dl_se, &rq->curr->dl))
++		resched_curr(rq);
+ }
+ 
+ void dl_server_stop(struct sched_dl_entity *dl_se)
+@@ -1667,9 +1668,9 @@ void sched_init_dl_servers(void)
+ 
+ 		WARN_ON(dl_server(dl_se));
+ 
+-		dl_server_apply_params(dl_se, runtime, period, 1);
 -
--	dl_b = dl_bw_of(cpu_of(rq));
--	guard(raw_spinlock)(&dl_b->lock);
--
--	if (!dl_bw_cpus(cpu))
--		return;
--
--	__dl_add(dl_b, new_bw, dl_bw_cpus(cpu));
--}
--
+ 		dl_se->dl_server = 1;
++		BUG_ON(dl_server_apply_params(dl_se, runtime, period, 1));
++
+ 		dl_se->dl_defer = 1;
+ 		setup_new_dl_entity(dl_se);
+ 	}
+@@ -1678,7 +1679,7 @@ void sched_init_dl_servers(void)
  int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 period, bool init)
  {
--	u64 old_bw = init ? 0 : to_ratio(dl_se->dl_period, dl_se->dl_runtime);
--	u64 new_bw = to_ratio(period, runtime);
-+	u64 max_bw, new_bw = to_ratio(period, runtime);
- 	struct rq *rq = dl_se->rq;
+ 	u64 max_bw, new_bw = to_ratio(period, runtime);
+-	struct rq *rq = dl_se->rq;
++	struct rq *rq = rq_of_dl_se(dl_se);
  	int cpu = cpu_of(rq);
  	struct dl_bw *dl_b;
-@@ -1688,17 +1690,14 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
- 
- 	cpus = dl_bw_cpus(cpu);
- 	cap = dl_bw_capacity(cpu);
-+	max_bw = div64_ul(cap_scale(BW_UNIT - dl_b->bw, cap), (unsigned long)cpus);
- 
--	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-+	if (new_bw > max_bw)
- 		return -EBUSY;
- 
- 	if (init) {
- 		__add_rq_bw(new_bw, &rq->dl);
--		__dl_add(dl_b, new_bw, cpus);
+ 	unsigned long cap;
+@@ -1752,7 +1753,7 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
+ 		p = dl_task_of(dl_se);
+ 		rq = task_rq_lock(p, &rf);
  	} else {
--		__dl_sub(dl_b, dl_se->dl_bw, cpus);
--		__dl_add(dl_b, new_bw, cpus);
--
- 		dl_rq_change_utilization(rq, dl_se, new_bw);
+-		rq = dl_se->rq;
++		rq = rq_of_dl_se(dl_se);
+ 		rq_lock(rq, &rf);
  	}
  
-@@ -2939,17 +2938,6 @@ void dl_clear_root_domain(struct root_domain *rd)
- 	rd->dl_bw.total_bw = 0;
- 	for_each_cpu(i, rd->span)
- 		cpu_rq(i)->dl.extra_bw = cpu_rq(i)->dl.max_bw;
--
--	/*
--	 * dl_servers are not tasks. Since dl_add_task_root_domain ignores
--	 * them, we need to account for them here explicitly.
--	 */
--	for_each_cpu(i, rd->span) {
--		struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
--
--		if (dl_server(dl_se) && cpu_active(i))
--			__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(i));
--	}
- }
- 
- void dl_clear_root_domain_cpu(int cpu)
-@@ -3133,9 +3121,10 @@ int sched_dl_global_validate(void)
- 	u64 period = global_rt_period();
- 	u64 new_bw = to_ratio(period, runtime);
- 	u64 cookie = ++dl_cookie;
-+	u64 fair_bw;
- 	struct dl_bw *dl_b;
--	int cpu, cpus, ret = 0;
--	unsigned long flags;
-+	int cpu, ret = 0;
-+	unsigned long cap, flags;
- 
- 	/*
- 	 * Here we want to check the bandwidth not being set to some
-@@ -3149,10 +3138,13 @@ int sched_dl_global_validate(void)
- 			goto next;
- 
- 		dl_b = dl_bw_of(cpu);
--		cpus = dl_bw_cpus(cpu);
-+		cap = dl_bw_capacity(cpu);
-+		fair_bw = dl_bw_fair(cpu);
- 
- 		raw_spin_lock_irqsave(&dl_b->lock, flags);
--		if (new_bw * cpus < dl_b->total_bw)
-+		if (cap_scale(new_bw, cap) < dl_b->total_bw)
-+			ret = -EBUSY;
-+		if (cap_scale(new_bw, cap) + fair_bw > cap_scale(BW_UNIT, cap))
- 			ret = -EBUSY;
- 		raw_spin_unlock_irqrestore(&dl_b->lock, flags);
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index d3f33d10c58..8719ab8a817 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -390,7 +390,6 @@ extern void sched_init_dl_servers(void);
- extern void dl_server_update_idle_time(struct rq *rq,
- 		    struct task_struct *p);
- extern void fair_server_init(struct rq *rq);
--extern void __dl_server_attach_root(struct sched_dl_entity *dl_se, struct rq *rq);
- extern int dl_server_apply_params(struct sched_dl_entity *dl_se,
- 		    u64 runtime, u64 period, bool init);
- 
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 977e133bb8a..4ea3365984a 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -500,14 +500,6 @@ void rq_attach_root(struct rq *rq, struct root_domain *rd)
- 	if (cpumask_test_cpu(rq->cpu, cpu_active_mask))
- 		set_rq_online(rq);
- 
--	/*
--	 * Because the rq is not a task, dl_add_task_root_domain() did not
--	 * move the fair server bw to the rd if it already started.
--	 * Add it now.
--	 */
--	if (rq->fair_server.dl_server)
--		__dl_server_attach_root(&rq->fair_server, rq);
--
- 	rq_unlock_irqrestore(rq, &rf);
- 
- 	if (old_rd)
 -- 
 2.50.1
 
