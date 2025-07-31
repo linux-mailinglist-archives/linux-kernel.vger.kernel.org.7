@@ -1,203 +1,135 @@
-Return-Path: <linux-kernel+bounces-751784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA1FFB16D6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:21:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183E7B16D71
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00315A1C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:20:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AE0D1AA34E8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0264525A2C7;
-	Thu, 31 Jul 2025 08:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251D424166B;
+	Thu, 31 Jul 2025 08:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GYRs2AzV"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XvpHxejh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A1D82C60;
-	Thu, 31 Jul 2025 08:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD9082C60
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:24:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753950054; cv=none; b=k6QCYae4fSOFIu3HNoQaYCJuJMxhPgXS3+12tXmNrpmX6PTfbHXhE3BPAqhPGVrZh7GcLBIl0lEoEfny3vHF/vmnDSsFbftuaRBsyP+TQPbcLGuFauGHo7Op1yzyuJky1VwyfuS6YJhhMhST7LhDJ0vTOUkNWmvdhb8TLdI3G5Q=
+	t=1753950244; cv=none; b=Sv+Uh4I0V/HRnWFS3iJ2/QvdK1uMGFNBxEJDCM8hB+fizvv0kkpIrmDqZU/vIel62NZyGFxgeg6nzku8Rtn5TJsEPE0wAigu/RA4NU1W5vM707bhTr4eEgcLBsiErGXQ09xB7ubUpPpzUJqaeBb8gj9oyUO2+HbDcxNBQWhEckY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753950054; c=relaxed/simple;
-	bh=DVVdYUQhNXrT8nIZN7oHoaqViY3lQdp3bi8pSnyiBuE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c62IUlo0hb/qZtf7Dt67Rn7t83OgGPSqri3Dh3ANrj0jYfsrCiyT9Xxsn/hoBGul4cJGtxGTGrYJopgGlFinrCm5WgnJIa30cVHAHfHjfcfUCgAXs2zgDXi2xcvRVAXxuD9QkOGzrrJU7RnbwmJcmv5mPJcmeIt+ib7EkY/Op8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GYRs2AzV; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56V1fXsi003474;
-	Thu, 31 Jul 2025 08:20:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=mG/9O/5shgU2wVXynKChJyvr
-	rVAhnyuanNYOCUrEHoo=; b=GYRs2AzVALbBtvVraYTN9CTHugzhVTJjJdqreJoi
-	mAn2RGkIv0TWZFZZj+k6H25riuyYmft1U/uNh78nPihtTQU9hmOvvrdpfQlcnBri
-	2QrVxvFT7aRAr3O05hgmdhJo1bR0/QqpW6RoIpHIebHF6x3IHw5J5ovRHEX6RoIb
-	db8L35fUpRwPA95w3a/s2B8t31cLh1fiiTG9kJ84Aw8Z+9dxzNV/8jE2lAFph9kA
-	OjS48ZRbMSWYds3AH4/LW6x6vrtji6UB1qFXQvD62L/77bZNhd9Fp0cBRLqFaCgx
-	TI215cPxSlXK0G1Nu5evsll+jWUNhwzWlxBLnMfrLwvT3w==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 487jwgbcpe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 08:20:48 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56V8Klx0012337
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 08:20:47 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.10; Thu, 31 Jul 2025 01:20:42 -0700
-Date: Thu, 31 Jul 2025 13:50:38 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_mdalam@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v4 4/4] arm64: dts: qcom: ipq5424: Enable cpufreq
-Message-ID: <aIsnVuWnwBisCm82@hu-varada-blr.qualcomm.com>
-References: <20250730081316.547796-1-quic_varada@quicinc.com>
- <20250730081316.547796-5-quic_varada@quicinc.com>
- <b51305cd-0e4f-49f9-adc1-fbe83b539e98@oss.qualcomm.com>
+	s=arc-20240116; t=1753950244; c=relaxed/simple;
+	bh=vZdZhm9xDF4gkYxa7DvvCi+1X0MEoSDFakhsxDjtwt4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sT//pb4w/vHMvWn57SOThBcd4QzOWunqfK3MHj044Z7z2PiGVyPFbzBiwER2DA38akCUzzYVDKNzUL/RRrHet/dwA0rMsbglIeMiz44zoemD+i4RUTyUh7lYS2yXwQHNsl/qqwapSvEKb9+7HuNsXD+EVx3w28LNO0P+pQpQ6Co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XvpHxejh; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753950243; x=1785486243;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=vZdZhm9xDF4gkYxa7DvvCi+1X0MEoSDFakhsxDjtwt4=;
+  b=XvpHxejhv49C9/qnzZfuvzeagEufTGiQvGCSo03mw+yXfQgFYBQGxEQw
+   IkZtDQnksIWvsktqauDhBuVNt+EZrCUGUeY4kvGz7OFAwnj4eMyFFgxdV
+   UTvOafXlk1pcemglrtZoHxaOGQQdj44TjZcrf0x0UrWYvHpTtwYAwCeUK
+   V5Z+1nY2JQ9AIBGAAmbBi5HORNnc7Yz/92aKSDtyMY5juuXljYNHGTb1y
+   9ayxVOREDT7dl170koiQkM1/GryVwni8degctRJ5+tCKg0LCrDvm6wJiQ
+   rbXhRFDFaYmH9pebezFi5GX0FWM1HCCeACc1lwUSZlPdKpAAJ5Wqa1qHB
+   w==;
+X-CSE-ConnectionGUID: 7XZQAVv3SJ25tq+jHLuhIA==
+X-CSE-MsgGUID: I4wTpeCLTSqmTj8B4fC/Cg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56196353"
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="56196353"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 01:24:02 -0700
+X-CSE-ConnectionGUID: CZfv+/DSRk+rl6+M54rjlQ==
+X-CSE-MsgGUID: +yLlr+rmT4aWzQ5IT7BDfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="167430187"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.108])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 01:23:58 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger
+ <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Rodrigo Vivi
+ <rodrigo.vivi@intel.com>, Tomas Winkler <tomasw@gmail.com>, Alexander
+ Usyskin <alexander.usyskin@intel.com>, Raag Jadav <raag.jadav@intel.com>,
+ linux-mtd@lists.infradead.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: MTD_INTEL_DG should depend on DRM_I915 or DRM_XE
+In-Reply-To: <CAMuHMdUJF6V4v1+zbKKG1A_UvHUXU-ySXe7Xj_ryZtRnk2B2nQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <07f67ab8ee78f6bf2559131e193381aafff7479a.1753870424.git.geert+renesas@glider.be>
+ <d947168fd02d6f820159b456099e6aa8f465b633@intel.com>
+ <CAMuHMdUJF6V4v1+zbKKG1A_UvHUXU-ySXe7Xj_ryZtRnk2B2nQ@mail.gmail.com>
+Date: Thu, 31 Jul 2025 11:23:54 +0300
+Message-ID: <b58c7cdee44b573c84e0f79dad2655f8286bc89a@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <b51305cd-0e4f-49f9-adc1-fbe83b539e98@oss.qualcomm.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=WvgrMcfv c=1 sm=1 tr=0 ts=688b2760 cx=c_pps
- a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
- a=RPjSdeSmNi3ZrBCKw2EA:9 a=CjuIK1q_8ugA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: Nq5ExcuO0SAtTQr9-7fWVEkMv8IrQ25o
-X-Proofpoint-GUID: Nq5ExcuO0SAtTQr9-7fWVEkMv8IrQ25o
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDA1NiBTYWx0ZWRfXwTStoN9aK3cq
- YX72oyK7bfMsLB2s7AZ/GTSK+Hat7xeTAV6ohC5eIzqPy8wXEfVeaA94nAP6Gjq+JnIOPWllZJy
- k5nb2hE/CuDafGiWP7V/QTTdiU+TFqopJt+ljoTX+WODzdh0avehoc0iWopb3ZvKRn7BFRQIysq
- eR+O1r6DaVzHxtOiH69v/ZbGb9kpx5uKm2Qa9kqcdmfqIYbPLAO0XtXsYe0VXDbvaF7VCQsYELi
- an/x2kAMZnKhuAbIiVG3jKV4f3ndh1COTtROWgEzo0Ai+8cBZV8BGwJvH522C0iy/T5WRAySrec
- 8OqWgx4Kc5ViXtEnVPFyEAf8WLNRttHTncuhWsmgJWNUNuKTuSMBvlv2k0P3ngSXnq1r9m3hAZW
- V1WE7EVqxCIJBhHfYaByY0b/0KWCot0L1AyGx4q564bTwCY+n7T/6PMl8BbORY9HWaREtdGy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-31_01,2025-07-31_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
- spamscore=0 mlxscore=0 impostorscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=585 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507310056
+Content-Type: text/plain
 
-On Wed, Jul 30, 2025 at 02:49:58PM +0200, Konrad Dybcio wrote:
-> On 7/30/25 10:13 AM, Varadarajan Narayanan wrote:
-> > From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> >
-> > Add the qfprom, cpu clocks, A53 PLL and cpu-opp-table required for
-> > CPU clock scaling.
-> >
-> > Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> > [ Added interconnect related entries, fix dt-bindings errors ]
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
+On Wed, 30 Jul 2025, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> Hi Jani,
 >
-> [...]
+> On Wed, 30 Jul 2025 at 12:32, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+>> On Wed, 30 Jul 2025, Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+>> > Intel Discrete Graphics non-volatile memory is onlt present on intel
+>> > discrete graphics devices, and its auxiliary device is instantiated by
+>> > the Intel i915 and Xe2 DRM drivers.  Hence add dependencies on DRM_I915
+>> > and DRM_XE, to prevent asking the user about this driver when
+>> > configuring a kernel without Intel graphics support.
+>> >
+>> > Fixes: ceb5ab3cb6463795 ("mtd: add driver for intel graphics non-volatile memory device")
+>> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> > ---
+>> >  drivers/mtd/devices/Kconfig | 4 ++--
+>> >  1 file changed, 2 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/drivers/mtd/devices/Kconfig b/drivers/mtd/devices/Kconfig
+>> > index 46cebde79f34b0b7..f0ab74d695347117 100644
+>> > --- a/drivers/mtd/devices/Kconfig
+>> > +++ b/drivers/mtd/devices/Kconfig
+>> > @@ -185,8 +185,8 @@ config MTD_POWERNV_FLASH
+>> >
+>> >  config MTD_INTEL_DG
+>> >       tristate "Intel Discrete Graphics non-volatile memory driver"
+>> > -     depends on AUXILIARY_BUS
+>> > -     depends on MTD
+>> > +     depends on AUXILIARY_BUS && MTD
+>> > +     depends on DRM_I915 || DRM_XE || COMPILE_TEST
+>>
+>> I understand the intent, but IIUC auxiliary bus usage should not require
+>> a "depends on" relationship. Couldn't you have MTD_INTEL_DG=y and
+>> DRM_I915=m just fine?
 >
-> > +	cpu_opp_table: opp-table-cpu {
-> > +		compatible = "operating-points-v2-kryo-cpu";
-> > +		opp-shared;
-> > +		nvmem-cells = <&cpu_speed_bin>;
-> > +
-> > +		opp-1416000000 {
+> That is indeed a good point!
 >
-> These rates seem quite high, are there no lower fstates for idling?
-
-Will check on this and update.
-
-> > +			opp-hz = /bits/ 64 <1416000000>;
-> > +			opp-microvolt = <1>;
-> > +			opp-supported-hw = <0x3>;
-> > +			clock-latency-ns = <200000>;
-> > +			opp-peak-kBps = <984000>;
-> > +		};
-> > +
-> > +		opp-1800000000 {
-> > +			opp-hz = /bits/ 64 <1800000000>;
-> > +			opp-microvolt = <2>;
-> > +			opp-supported-hw = <0x1>;
-> > +			clock-latency-ns = <200000>;
-> > +			opp-peak-kBps = <1272000>;
-> > +		};
-> > +	};
-> > +
-> >  	memory@80000000 {
-> >  		device_type = "memory";
-> >  		/* We expect the bootloader to fill in the size */
-> > @@ -388,6 +428,18 @@ system-cache-controller@800000 {
-> >  			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-> >  		};
-> >
-> > +		qfprom@a6000 {
-> > +			compatible = "qcom,ipq5424-qfprom", "qcom,qfprom";
-> > +			reg = <0x0 0x000a6000 0x0 0x1000>;
+> What about
 >
-> The block is a bit bigger
-
-Per the documentation, the block is 4KB. But the last register is at 0xa62bc.
-
-> On IPQ platforms, can the OS blow fuses directly without TZ
-> interference?
-
-No.
-
-> > +			#address-cells = <1>;
-> > +			#size-cells = <1>;
-> > +
-> > +			cpu_speed_bin: cpu-speed-bin@234 {
-> > +				reg = <0x234 0x1>;
-> > +				bits = <0 8>;
-> > +			};
-> > +		};
-> > +
-> >  		tlmm: pinctrl@1000000 {
-> >  			compatible = "qcom,ipq5424-tlmm";
-> >  			reg = <0 0x01000000 0 0x300000>;
-> > @@ -730,6 +782,15 @@ frame@f42d000 {
-> >  			};
-> >  		};
-> >
-> > +		apss_clk: clock@fa80000 {
-> > +			compatible = "qcom,ipq5424-apss-clk";
-> > +			reg = <0x0 0x0fa80000 0x0 0x20000>;
+>     depends on DRM_I915!=n || DRM_XE!=n || COMPILE_TEST
 >
-> Let's make it 0x30_000 to reserve the actual carved out reg space
+> instead?
 
-ok.
+Fine by me, up to Alexander.
 
-> > +			clocks = <&xo_board>, <&gcc GPLL0>;
-> > +			clock-names = "xo", "clk_ref";
->
-> 1 per line would be perfect
+BR,
+Jani.
 
-Sure.
 
-Thanks
-Varada
+
+-- 
+Jani Nikula, Intel
 
