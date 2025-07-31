@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-751965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9A90B16FEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:56:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39253B16FEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 256F916B70F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E414170664
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C46532BF001;
-	Thu, 31 Jul 2025 10:55:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE502BF015;
+	Thu, 31 Jul 2025 10:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jJsVUMqo"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9pOa4qd"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA462BE7B5
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B212BEC20
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753959354; cv=none; b=j7VwJqpdPQyozacSU4g5hO1Bk0ZVfOV8UF1J08zD2CEOa/8vDzjF504Bx9x3CN+Y7H/vR4CoqBO3FI/GV7uEHdIkglZVs2O18zeudLUaelX0N00c0b8aeeWhONVPXtsObQMT3+/8Ti37TAltTvHXNoEu9+y1igHXquXbaFD3mT8=
+	t=1753959354; cv=none; b=kt856km/iLmjrhgY45BvyuROyKXEfC340oGFklWKXBtxbiG/of3vrg1NBE0oWj3QjZ9ANSmB2MnaiLy+0qXTKWx60cFVxqDnJsVJ+TDM6O3Y5YolvHmq/7LoNJWsttjNc+ExrMpjyUSt5wKZitHZKc5kxib4ZAYjZ3r2t+IEl9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1753959354; c=relaxed/simple;
-	bh=2nNH86zTsg7R2fmNZl123xTHKQk9SLRGN74jQT1JzLs=;
+	bh=22/BBPVYAgcEcnh9sb9JTkNEXXz/AMYJeDNiGyEFh6M=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nGs/YCGJBwRmJdlatBGZ8x/7f/n9GSC5XMPskDzgOqpoeKwILk1ZTTn0YReXMxzbPw57YSFbqRQmKvp/sOQU1A2UdrHMRwLpNhs++VVfDetQzX+m/qDS20s1rlgNdG0cpjMlWTk5JFFBRo8MYXFWgU70fCN6pWMeTP7Q3o5CnVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jJsVUMqo; arc=none smtp.client-ip=209.85.221.41
+	 MIME-Version; b=kyUgj6FUrdKC1XUmttlD8e+y2eBSpmtO6QTNvIVSKWI80qSgMqAb2G8+oUMUVS4SoH+McAy4x4z/Ub70VRIVvtgIa+PnXLpeei5hl2ajpY4IPpVVC5npCB3QHgy8OCZgRNmx+xRp+MD+0rpEQyq3tWuyynj9JMF9j9/6woXbBQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9pOa4qd; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b79bddd604so211518f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:55:51 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b780bdda21so609802f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:55:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753959350; x=1754564150; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753959351; x=1754564151; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L0kWGTgavAow+H+0yQxg8Ps6erJvXQE/DQ1ARn7035s=;
-        b=jJsVUMqoJwjxZameiwcj3IYs99SiWiChMMUg1vYTQKGIdJmBQJOnnRROhghR/D75sk
-         bRHfPobIMwnbKV3b6QVV/bJyy5cpsA/xGSrDXnPeu/VrMyTM3RpXz9QlXS0PeU9BJjmQ
-         4Fu30TC7C08+GnWvVzhdKXeZ3uNo3Cbbfl62ztvANdk6hvWrH1QGBpZVjxKknHoRtHDM
-         DqnQdZG5osBiENIkIDYTKINbvsbGnaF8T/HzOs0u0pBmfwYvmRGxxwZ6QOPSemAM8Ysv
-         ks7MDz+fmXpYn14i1pV4cwR6intNlUY/jQXin2GVmNmeE550e79ycVDXf00I5bZDcbrh
-         9uJA==
+        bh=UwcLfkk7r5x07qaUEcnr0bt4ogsKgYoe5GuJmqfu0Uo=;
+        b=G9pOa4qdNhJ93Mkp3by0M1narOK8zw1X49G8quHE9CZplzOr/pTKUc1AeuUXD8s56u
+         k8w/bUEu9F+5MiAKqwGnHMIIBj7nRAbabo8voP4nCZ98HnSTGCXidRWyqjJ9c/p6yRmN
+         wJwGnT5EdpH7xST9wvNTNJpGd3pERXdmq4828IaRR0IzEYr2/wEFbCexHbLeiYAZUwdS
+         Ky7k5y8LUfA9/bhXyJDcfJ20gzAfc84YrJgmQTr7FhUq40eHgQN6kh2cCuj0j+8+owGW
+         Msxf+toL78bYVlfvFdZdNNkTDYSX6wQgKOikbTJz+Yor/o9uizoxfWSbOehwNnuhHyCk
+         9t4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753959350; x=1754564150;
+        d=1e100.net; s=20230601; t=1753959351; x=1754564151;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=L0kWGTgavAow+H+0yQxg8Ps6erJvXQE/DQ1ARn7035s=;
-        b=mUIkSgt9qSGlsW50yJPhICEk+raeiwmbGi47/BJ8s9Wi2xyQIUrYYFZp5patm9o3oZ
-         wV3smQAMTKmNxyKBpQs8sR3K0r6un1OoFyN14IOvsycrfnf/aJslfR9y3d1/rM/EtLgl
-         kwXgMsla6tJdD8Rr5YTIuYSOcq1XqzcghlzdmpvhniYQ63RQMgDYJvxotD5FzA+Pb4Ec
-         Lv3fBI64dTjUkIbjs81BhkyqjT59suuFYa9tcD825PLB91qOP2b6/yFHvCmSZ1Th4mqL
-         X5h3a3vLFoP4KZ2y2u8yKewTR3cA5SIZ+eFJxEEKyE4iEwnOXClQASJg5KJzgIOy5rWe
-         lQFA==
-X-Gm-Message-State: AOJu0YxwieaL1kACxu5e0zQUtMxoHe4/07mvEcXHKwxSzBn9GpbWLsy9
-	ZidxJ31IVb6V/jSwb2B+simDZOfOi/zu2HGnffTxVO+vh+hsGA9jxr0R
-X-Gm-Gg: ASbGncvbqtHimHbLQ7fvKanp/95sjw1yLNphBehggLaiWLLMk20dOoNNK8FXQJntHIp
-	sjLwozvx9EVF9jwpokPRF7v2SCQHUGy1pkzMg+YrT33Vucgn6GZYs7MGDKLRlf65WvGBHUSUryx
-	o0q1iXlENjDsQr9TMhuAX9xzCMsqzdH+k74/MATHRA/WgWSwOQmy30sQt+ltSuYpAj5rvsVMlba
-	bJwBaaerc6A4aTTM1nLTonPK1I4x8/rxKpUpFTmkK5W4Hn4k9rJ5RL77MB71Dgr90HmELo1+/v3
-	iQvwa/NotRIUoQembvpXrhmhq+G6x+FtokZs2GJduCl0lwC16McJKdTC7x4ewSpfzS91/ajkZBn
-	pSZZnx3j5TVfGpTSLtns=
-X-Google-Smtp-Source: AGHT+IER4w7Gv2HT+lC8OIjC2A2wM1LDd+FmczqJH8iIfDQUqrkmZjEiTLub/ovZQlhvGnrzY9zJKA==
-X-Received: by 2002:a05:6000:2381:b0:391:3aaf:1d5f with SMTP id ffacd0b85a97d-3b795009481mr5578956f8f.52.1753959350129;
+        bh=UwcLfkk7r5x07qaUEcnr0bt4ogsKgYoe5GuJmqfu0Uo=;
+        b=URcJULOaXQDa7OMeoqYBTwAcE4pYAMVAEs1i5+hbYWU4V0z7+ugNIMgdBsYrcIBqSa
+         c+V/ISB2RoXJiu2kwwESF8e29Rrh531Z36JeOpDOogVYmmnG1JcDwgauOeUeePENVtuq
+         PIPfVIlluy8vu0baRKPtm167ca1GU8eX5D9Gou2HWdAUMA6viwQvCVAveY1yQg5FDQFi
+         TudJzFIen1XdL9/onZBJOu88Z66hg8ND7bP1prdQ9ZlNrh1u1KbaudVQ2yuFpAfSalJD
+         Eiyt7+hzGIuGgZ7K1CM5vdOpPZ6DYPqU26BT78QsGMbu8Y2Tz5VhHWHB8Hz9o1lh6iXO
+         RcEQ==
+X-Gm-Message-State: AOJu0Yy58uMqMVQ8akLBNLKgZ6+jEZJJVMtUrvtFL5zSNfqu7jSBzGM4
+	8RKND/HK5FwHYBcbTxpGmglgFwuAckM4oURNiiJWcC3OJBdztT5CHbF7
+X-Gm-Gg: ASbGncsbgcOXJ2xzH+IhNYSld83FAuTk3BPV573rd12tqMX6GdA9jC7mCeQMXtXBmfg
+	DwcSwvR7X7VCL0/SPOMSrOJsvCGtzqsnoDKFhe7Nnr0IowB8RbDKCtNEddIMsdyK7krj8Htla0L
+	sNvbYEi3DVUhTcZgBtWUqtfWxD9OKYajYQ66pG+kuC4sOjIGx+1yf3qtDjgs5CAFxj2sNCTRnBK
+	Z+2D7/UpV75XwJQnZz62wCuV3TUkE7emLlr04Z0yzpKlu28hUlWt0VrAjZE8U1llHZ2NB4uYf0K
+	8ll4tWMPn/EMb5b236Ot3FOuMMtwgE2s9JJHZIfc3uSSxZcK0Ehpqi5a9Q2rphfNXcLf9pdBMcH
+	bBr1OgTHL6qLGDlfYKK4=
+X-Google-Smtp-Source: AGHT+IHIAMJQh9vdqcyDc46LIAaCbP2BCTOf9gMJ11VQgISefC0bY7ZfqeQx9HUNhCSGmDhUHbFiKA==
+X-Received: by 2002:a05:6000:144b:b0:3b5:f8b3:d4fc with SMTP id ffacd0b85a97d-3b7950190e7mr6416634f8f.53.1753959350947;
         Thu, 31 Jul 2025 03:55:50 -0700 (PDT)
 Received: from victus-lab ([193.205.81.5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4696c8sm1946025f8f.55.2025.07.31.03.55.49
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4696c8sm1946025f8f.55.2025.07.31.03.55.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 03:55:49 -0700 (PDT)
+        Thu, 31 Jul 2025 03:55:50 -0700 (PDT)
 From: Yuri Andriaccio <yurand2000@gmail.com>
 To: Ingo Molnar <mingo@redhat.com>,
 	Peter Zijlstra <peterz@infradead.org>,
@@ -84,9 +84,9 @@ To: Ingo Molnar <mingo@redhat.com>,
 Cc: linux-kernel@vger.kernel.org,
 	Luca Abeni <luca.abeni@santannapisa.it>,
 	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: [RFC PATCH v2 07/25] sched/rt: Introduce HCBS specific structs in task_group
-Date: Thu, 31 Jul 2025 12:55:25 +0200
-Message-ID: <20250731105543.40832-8-yurand2000@gmail.com>
+Subject: [RFC PATCH v2 08/25] sched/deadline: Account rt-cgroups bandwidth in deadline tasks schedulability tests.
+Date: Thu, 31 Jul 2025 12:55:26 +0200
+Message-ID: <20250731105543.40832-9-yurand2000@gmail.com>
 X-Mailer: git-send-email 2.50.1
 In-Reply-To: <20250731105543.40832-1-yurand2000@gmail.com>
 References: <20250731105543.40832-1-yurand2000@gmail.com>
@@ -100,9 +100,9 @@ Content-Transfer-Encoding: 8bit
 
 From: luca abeni <luca.abeni@santannapisa.it>
 
-Each task_group manages a number of new objects:
-- a sched_dl_entity/dl_server for each CPU
-- a dl_bandwidth object to keep track of its allocated dl_bandwidth
+Account the rt-cgroups hierarchy's reserved bandwidth in the schedulability
+test of deadline entities. This mechanism allows to completely reserve portion
+of the rt-bandwidth to rt-cgroups even if they do not use all of it.
 
 Co-developed-by: Alessio Balsini <a.balsini@sssup.it>
 Signed-off-by: Alessio Balsini <a.balsini@sssup.it>
@@ -112,58 +112,30 @@ Co-developed-by: Yuri Andriaccio <yurand2000@gmail.com>
 Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
 Signed-off-by: luca abeni <luca.abeni@santannapisa.it>
 ---
- kernel/sched/sched.h | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ kernel/sched/deadline.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 2f9035cb9e5..2a7601d400c 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -319,6 +319,13 @@ struct rt_bandwidth {
- 	unsigned int		rt_period_active;
- };
- 
-+struct dl_bandwidth {
-+	raw_spinlock_t          dl_runtime_lock;
-+	u64                     dl_runtime;
-+	u64                     dl_period;
-+};
-+
-+
- static inline int dl_bandwidth_enabled(void)
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 0640d0ca45b..43af48038b9 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -231,8 +231,15 @@ void __dl_add(struct dl_bw *dl_b, u64 tsk_bw, int cpus)
+ static inline bool
+ __dl_overflow(struct dl_bw *dl_b, unsigned long cap, u64 old_bw, u64 new_bw)
  {
- 	return sysctl_sched_rt_runtime >= 0;
-@@ -467,9 +474,15 @@ struct task_group {
- 
- #ifdef CONFIG_RT_GROUP_SCHED
- 	struct sched_rt_entity	**rt_se;
-+	/*
-+	 * The scheduling entities for the task group are managed as a single
-+	 * sched_dl_entity, each of them sharing the same dl_bandwidth.
-+	 */
-+	struct sched_dl_entity	**dl_se;
- 	struct rt_rq		**rt_rq;
- 
- 	struct rt_bandwidth	rt_bandwidth;
-+	struct dl_bandwidth	dl_bandwidth;
- #endif
- 
- #ifdef CONFIG_EXT_GROUP_SCHED
-@@ -819,12 +832,12 @@ struct rt_rq {
- 	raw_spinlock_t		rt_runtime_lock;
- 
- 	unsigned int		rt_nr_boosted;
--
--	struct rq		*rq; /* this is always top-level rq, cache? */
- #endif
- #ifdef CONFIG_CGROUP_SCHED
- 	struct task_group	*tg; /* this tg has "this" rt_rq on given CPU for runnable entities */
- #endif
++	u64 dl_groups_root = 0;
 +
-+	struct rq		*rq; /* cgroup's runqueue if the rt_rq entity belongs to a cgroup, otherwise top-level rq */
- };
++#ifdef CONFIG_RT_GROUP_SCHED
++	dl_groups_root = to_ratio(root_task_group.dl_bandwidth.dl_period,
++				  root_task_group.dl_bandwidth.dl_runtime);
++#endif
+ 	return dl_b->bw != -1 &&
+-	       cap_scale(dl_b->bw, cap) < dl_b->total_bw - old_bw + new_bw;
++	       cap_scale(dl_b->bw, cap) < dl_b->total_bw - old_bw + new_bw
++					+ cap_scale(dl_groups_root, cap);
+ }
  
- static inline bool rt_rq_is_runnable(struct rt_rq *rt_rq)
+ static inline
 -- 
 2.50.1
 
