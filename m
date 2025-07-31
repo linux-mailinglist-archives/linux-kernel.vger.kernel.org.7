@@ -1,102 +1,111 @@
-Return-Path: <linux-kernel+bounces-752043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD57B170B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:54:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D7FB170B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 83D83A82466
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:54:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEDE2585351
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606702C3761;
-	Thu, 31 Jul 2025 11:53:09 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DCF42C1593;
+	Thu, 31 Jul 2025 11:53:06 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0016.hostedemail.com [216.40.44.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61482C3246;
-	Thu, 31 Jul 2025 11:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76B802C08C1
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 11:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753962789; cv=none; b=tH0DzBmmpgU1In9C5Dno0GHjJseDMtVROhTUmucvwx/bORsVsGjWQ+oWgOJy0ahMZdkPzc7dQ9ysYHsYLgc9zFdbW3QsiJRDkUncCaVNt4zDH4obSTkrJRMsnTcXZRbXnQ0Qij2QHlv4Dn0wTwLTu+oudosdZ9ji2wHNPwGWGvI=
+	t=1753962786; cv=none; b=r21LfOLZM8yfUfyd3QxpwM1NULIxp4csz6cWUViVfpBy7L89GC0PfJBqr5CRjALryQLIqCQyNiNDcVTp0LFTkAY3uKK4nQKaQyFBkwpcOy9tA14APAq0CnpneqVBD2ghNRJgKil99zbmoKiNYZiaelDlNNTSychvG0WDtykLsAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753962789; c=relaxed/simple;
-	bh=4gSaWiwQEZvY2HR0uoKh1Gfjy+aPzU3Hy9DmKDta9JY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UqfYyOzXt+fZmIOCW0iv0hp2fXFJ/3K2TE0RbuWYNywWUUKFkhVMG6RnFXvHwWFzGHv4mXW7JRpDTiGVfDzS032ih9TTOFn2Yu7UFGcy6ULDE87DCif/bH75sl70bvjcrVg5RVAmLURc/vhk5wkedu80TR8GiPLjIqeo4Y6OIjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bt6sY2cd8zKHMl3;
-	Thu, 31 Jul 2025 19:53:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 45EF61A0B51;
-	Thu, 31 Jul 2025 19:53:04 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP3 (Coremail) with SMTP id _Ch0CgCHAdweWYtoViA_CA--.22541S2;
-	Thu, 31 Jul 2025 19:53:04 +0800 (CST)
-Message-ID: <4fdf0c5b-54ce-474a-a2c7-8b99322ff30e@huaweicloud.com>
-Date: Thu, 31 Jul 2025 19:53:02 +0800
+	s=arc-20240116; t=1753962786; c=relaxed/simple;
+	bh=ty/aQWoFWoglXOzoCEqI1vWtLgh0VPXHdfY4I6tZN40=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q0w7cRqCoZFDars5rMloV1nP3tyimUXDC7T+1k/dERddlSBD3A5BAasR4OL6S2zoMxCcLiOu3mfUR4TgWXvviooqwISaYzAZVwoY4TdQizgmY5f38MQobIALkEsuzPQ1acNzBsGfSHGhQZ2qmDRdDeoApc0uvKPGTjP92H11vUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf20.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay05.hostedemail.com (Postfix) with ESMTP id F10285AE84;
+	Thu, 31 Jul 2025 11:53:01 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf20.hostedemail.com (Postfix) with ESMTPA id 16EA62002B;
+	Thu, 31 Jul 2025 11:53:00 +0000 (UTC)
+Date: Thu, 31 Jul 2025 07:53:18 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Mark Rutland <mark.rutland@arm.com>, Artem Sadovnikov
+ <a.sadovnikov@ispras.ru>
+Subject: Re: [GIT PULL] ftrace: Changes for v6.17
+Message-ID: <20250731075318.45a2f84d@gandalf.local.home>
+In-Reply-To: <CAHk-=wh+h2WR6f2g+3HyLD1Zjg-fXC8yOE5bQmetrPvWHCU-2w@mail.gmail.com>
+References: <20250729144226.6b72dca7@batman.local.home>
+	<CAHk-=wh+h2WR6f2g+3HyLD1Zjg-fXC8yOE5bQmetrPvWHCU-2w@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 -next] cgroup: remove offline draining in root
- destruction to avoid hung_tasks
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: tj@kernel.org, hannes@cmpxchg.org, lizefan@huawei.com,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, lujialin4@huawei.com,
- chenridong@huawei.com, gaoyingjie@uniontech.com
-References: <20250722112733.4113237-1-chenridong@huaweicloud.com>
- <kfqhgb2qq2zc6aipz5adyrqh7mghd6bjumuwok3ie7bq4vfuat@lwejtfevzyzs>
- <7f36d0c7-3476-4bc6-b66e-48496a8be514@huaweicloud.com>
- <htzudoa4cgius7ncus67axelhv3qh6fgjgnvju27fuyw7gimla@uzrta5sfbh2w>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <htzudoa4cgius7ncus67axelhv3qh6fgjgnvju27fuyw7gimla@uzrta5sfbh2w>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_Ch0CgCHAdweWYtoViA_CA--.22541S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYU7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7
-	xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxAIw28IcxkI7VAKI48JMxAq
-	zxv26xkF7I0En4kS14v26r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUrR6zUU
-	UUU
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+X-Stat-Signature: t4y8jx7en7j9a114dawpp755thjapgaf
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: 16EA62002B
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+lu5QQkUWhiUiQw3t+qcXbDC8Pz8xaSQM=
+X-HE-Tag: 1753962780-564452
+X-HE-Meta: U2FsdGVkX18hKLzIQZKt/H1V/yrZnnqwVIMZKd0FPLd51CKYfC2H5LGp9T0HQY41U5dmx28ZPlMCpGe46WRx3jZahZKJyFXjGfKDu/veSHbKwPz1/Q2HNRGF0xgiZFt4tJsQbmYdU8Dz/+MX3xzpVukjlpls24lxjwIcXbVS/ES56yEvbeB2J1mwt9vHsSiBcEKRHm237c3Hdx/iw0ykbvyhRSRRPi8r3LJJ4S9kdsgoRk2vmFwWT91Ku3SZ6oX5DHQXoxYZP6gXa+t5ZRilJyDYmSY9QK0ZeC6dT2QPkUCK7XdoxuRgfzSUevMl/zJWE2Hv3mp1hPMgGDZqHbTaz2i9wW1FhfkS2hzmw7iV2hNAikoLJoRG8ljSAqQvE/11ZTjsozQDjUj6yDJkkaTi2azrsCVclCZ9f8aNxn4Q/IS10qfRb1zaAkAdq+mB00Op
 
+On Wed, 30 Jul 2025 16:15:21 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-> I acknowledge the issue (although rare in real world). Some entity will
-> always have to wait of the offlining. It may be OK in cgroup_kill_sb
-> (ideally, if this was bound to process context of umount caller, not
-> sure if that's how kill_sb works).
-> I slightly dislike the form of an empty lock/unlock -- which makes me
-> wonder if this is the best solution.
+> On Tue, 29 Jul 2025 at 11:42, Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> >   In print_graph_proc() the pid_ptr string is of size 11, but the comment says
+> >   /* sign + log10(MAX_INT) + '\0' */ which is actually 12.  
 > 
-> Let me think more about this...
+> Lol. Quoting the ancient Greeks: "Math is hard, let's go shopping".
 > 
-> Thanks,
-> Michal
+> That said, the comment is garbage anyway.
+> 
+> Because "sign + log10(MAX_INT) + '\0'" really is just 11 - if you
+> round or truncate.
 
-Hi Michal,
+I'm confused, sizeof("-2147483648") is equal to 12.
 
-Have you come up with a better solution for this?
-Would appreciate your thoughts when you have time.
+$ echo '
+#include <stdio.h>
+int main (int argc, char **argv)
+{
+        printf("%ld\n", sizeof("-2147483648"));
+        return 0;
+}' > maxchar.c
 
-Best regards,
-Ridong
+$ gcc -o maxchar maxchar.c
+$ ./maxchar
+12
 
+> 
+> So somebody may have actually done the math "correctly", but the math
+> was just stated wrongly.
+> 
+> Much better to actually write things out properly instead of trying to be fancy.
+> 
+> Becasue might be more legible to actually write it out and let the
+> compiler do things, ie just do
+> 
+>    // This includes the sign and the terminating '\0'
+>    #define MAX_INT_CHARACTERS sizeof("-2147483648")
+> 
+> which doesn't require people to know - or think they know - logarithms.
+
+Hmm, should we add that to a header file?
+
+-- Steve
 
