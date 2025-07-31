@@ -1,147 +1,146 @@
-Return-Path: <linux-kernel+bounces-752641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0078B17897
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:57:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9926EB1789B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CB635836D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:57:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B994C7B7653
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:56:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967BB270ED7;
-	Thu, 31 Jul 2025 21:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E9EA26AA98;
+	Thu, 31 Jul 2025 21:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bvnq6llF"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ar2q53Ks"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A47626D4DD;
-	Thu, 31 Jul 2025 21:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9315A921;
+	Thu, 31 Jul 2025 21:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753999005; cv=none; b=vBCYQRrLy+/CIGzklAEmyWOG2HNTY6iDqeAwroMW09+OsXB8+wSJIRPHo6glJVaejYvQRwUSk1pi+yFarzGvtZsG2X6raoIvlHJT1PBZflnNkE8MjFR3wXb/ohx5gqwAElBZelslSkMSMDXQUaAmDQ75PBiz0STq8n1V4yLtWQY=
+	t=1753999087; cv=none; b=W8vhTdK5b5BWpImGXEskhW7agwOTqGbJKnWQfQ4hSPJy1qxDtnGpRobaU7gwnt5MaCLEzcIN+APIz0r6laxKOGAa+DWKxXKeaOvjGF+rR+ivQCq/0f4oK3Rv8Oc1O+1P6h55sEUBZwl3eb37+DJ4wiKvd2PpAA5kADS3Fn/WEec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753999005; c=relaxed/simple;
-	bh=Cmz41QVhtMMOlilRXguR9/aenPq9lJbwgmAlJi1b3/k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X2yrzgYuKYPDlcTcwI0P6RlahIa5/cbWm77DRUG7rJHuKfclnHjKU+8+irvYb0jdCdZiuxc3cYIGidrnFKLF7q+wuFqUyG79Bu0xlYnx3uolxA2jFCMElSr7duIwuMIPVSiRioTH8lLESyZIoYJmZBvl4Pp8eifikeYPIjS9alM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bvnq6llF; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1753999087; c=relaxed/simple;
+	bh=8p0do9kr39Ovsj1Jt2Ef988sMv48J4IdqOMy8NWH3eg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dzHe8/ahXi5BPNb0MEoWmNX28/2+oNnJ4fptb6tV6uNvaeuo8f0Yxqj9l6zSwIfoE4lxQm17azciblnH37NJVDZhn/jJzmB/JLAAdpSiItl6HAqQwjMBgzxCXdoJ5rD2Snhn9WGVxBa1CU1XkrpB7ZgTfJytdChozIMSoW5GB9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ar2q53Ks; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b782cca9a0so165479f8f.1;
-        Thu, 31 Jul 2025 14:56:42 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b794a013bcso234976f8f.2;
+        Thu, 31 Jul 2025 14:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753999001; x=1754603801; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1753999084; x=1754603884; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Oikj3gJvT+h9/I8C9wpIBKyLSojiwJyw/hlHslq3TD8=;
-        b=Bvnq6llFzpqdftQqkDVu9mu7cBg73CMn9LUtbuE2MM3sYJhgchIDJf1R76wHN2T+nF
-         Q/84Ab1lcujnlH7AlyzSD2/WtUAHUI5xv98Z7ET9/U1C3CAJziI/CtnfykZrOPaCM19b
-         8QTtP5IzkeK2kuFUor92Tzzir14x3zvUZCgZzYbZp3tSxDuaC6QIo6uaLHhtqgBQXhwu
-         ZQeI8iQTiA3k6n7dWhc4V30WCba7F9+l+X64g5eT2lSDxpTnMmq+HpEg/N136bgg6kkw
-         XJWJrZYdsyX7moKunVee1bRpdlBnyK+E8fAZHUAvRJcA58kwPeaqx9ygAWHGPpxV+H3o
-         jHgg==
+        bh=8p0do9kr39Ovsj1Jt2Ef988sMv48J4IdqOMy8NWH3eg=;
+        b=ar2q53KsMve0gOZ8i5NFj2T3qT962EzZS2QlBTdUywXBTHmLPPdJSHQ0+ecK77xllM
+         7FOYZtYgyV9a+EFahnjSoWUmiga8chJeoTO0EWGGkRwnxPbbJ1MeQAMm22veu2IAWdOY
+         aqhg0TAcvr8O/geyqHQshEJne/KerWOmEV0ETIbvXEEkq4Vj/x6drfop21xDcLaa5j0P
+         /uFWxvnup1e1QPtsSKfXDcAX71KtmnRKy6dm7L/3/KvsqTA7BwepNlFwH4cQLb2CR1Hu
+         4Q1BUhqfONCHmpL/nBPaK0Q9hkOZE/kg8+FRWbB+gKQv203/ttowRfGjnvrSwcimjODs
+         8ipg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753999001; x=1754603801;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1753999084; x=1754603884;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Oikj3gJvT+h9/I8C9wpIBKyLSojiwJyw/hlHslq3TD8=;
-        b=j4i1VGQ+yrjQ0bFbJJMrp6hcYTgQK1tVgPCxTl7JTOF9rXCqu0irUiRxeuZDksit7P
-         KjGqGthPAixE11eMK3kurIqPbAMuQTvJp1AlA+aXznmi4a8nx9uNZ+MPNghGJCzj12HW
-         t1MyEeECIxdtCJcZ3/z3l5GgL+4UE76WHmrk3OlcB5zBTQ2sTeQpXVJ96d0B2Sl4tD1Z
-         0Ft3re8mNx/2vOssbw94C+c0XpOBkSOcaf9q9YE/1S2f8cVagAjMFE/2pbfGETfyVraT
-         QXNn9qeSI9w4pXI2AepLkc0gYbxZs78+sP6VkszhMcu6qKedt7+1ylMBgxdjlCmSzN1g
-         hFeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVP9/uJCOzOP/RVOrlk4kl3pkX1vWHJEZOeBfAaBMF6aCAMPgjAGaf7hEXOvFSCOaVW0X9Q/+6SGNns@vger.kernel.org, AJvYcCWohok6SJ/j8Mbhr/jL6Wfi0/l55JpZL1La065+hRqvfQotXyBdwLYhwJ/t8fqywrLcgWjEUMMdo8LHljly@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYoxHsL5R+QDvlxMIcrCpLHKcoQeXCjwmS8TwywhRg+0KoYVT7
-	t35m/EUJq4H75/YdqkVRCzDU/r8mxsgONIKcseui3fnH0IL9WAt3lAA=
-X-Gm-Gg: ASbGnctKw3e+I+8ofxKCu/ssAenyGynmfzM5LCi39e0JPVb2+W6uHtYaKl3uXLbMHb0
-	7NluFRanC+j7ZNr3kxCsT9U2zaM4OXhcLBOrwUfuuRC6zHgYZXEZtcr+p6y1OoFBQkVp7nmyHv0
-	pN+o8uPz2WlSOVvAbQIwcePXgUXV3QXcAPdZMrI6pd58TVRkNZkbC7j3sOhNsbnQI5fQtadxCDN
-	ykxlb+nAFSnBOrPN05PJH31veR/OgwhSQ9jrLLiyXs6Qk5diN5/71iFXoWOIVLJPUYxfaVPR9T7
-	qtiOaVhOYaO79mBZszicHAy20bHAIhdnQh213O7InSFSFH6vpw7MhZA7BIqPdxoTLraAGAw2oii
-	uDvBiOzzM0dTI+6E4KsjSO6Q1gQ35QmGuzSfaJrde
-X-Google-Smtp-Source: AGHT+IHOO1VhkE3sRaEGlsvQYc6q2XkaRNjDngyVISyPjIL3SY/LTSFSUCwqTeduXcndmXlSlX/sFw==
-X-Received: by 2002:a5d:5d12:0:b0:3b7:9ae0:2e5e with SMTP id ffacd0b85a97d-3b79ae02eb2mr4222065f8f.9.1753999000548;
-        Thu, 31 Jul 2025 14:56:40 -0700 (PDT)
-Received: from alex-x1e.localdomain ([84.226.118.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589536abb1sm86622565e9.4.2025.07.31.14.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 14:56:40 -0700 (PDT)
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-To: Douglas Anderson <dianders@chromium.org>,
-	dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Subject: [PATCH v2 3/3] drm/panel-edp: Add BOE NV140WUM-N64
-Date: Thu, 31 Jul 2025 23:55:10 +0200
-Message-ID: <20250731215635.206702-4-alex.vinarskis@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250731215635.206702-1-alex.vinarskis@gmail.com>
-References: <20250731215635.206702-1-alex.vinarskis@gmail.com>
+        bh=8p0do9kr39Ovsj1Jt2Ef988sMv48J4IdqOMy8NWH3eg=;
+        b=VH5+U3UVchpc+FPFfjxWlYh/9JxBXqJhcG6ZDeHFrbLPyiCj1ZZL8vhu/h6NB6vzbg
+         lmJuPno8ynGiOVlf+L+nyR3z1oJLwaeLfNIQhb1faO6Qb/oqBMXdc0etVge0/1T3ECG6
+         RgqUlB5XkGcNzt6e/e+PXCLgBVOggnTRJ5Xf38LUkJEMacxioXTmlpAdbDwB/9YAkKaH
+         ZyulfrxpwpRY51fJb7jNxsE2KXWxnYWZoSwYx+rnpl9+dUthZzBsPI2ro9K5fphbwtIi
+         83A7E8qDTuyblFs32fDwMhaT2RQFWe9+TEHLXr9YOnRKAY9knutsCpSaYQD4rpARCO9z
+         VcVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVP1uqtr3m073HrqXWQXlUGYuNB7SiSByWd+UXwDp6zAwa0V4/hIeZi2p1ALQ4K/VY5/7o=@vger.kernel.org, AJvYcCVu0LbDziW5Q3qucS3Tnsixj+ULQGAgGur9SDjcfNY4VcpyP3+MKcFSInEDbCt6FfPQPRdiqVFL726ETYdcqw==@vger.kernel.org, AJvYcCWOk6t7tivWDAmNpTmP20ZxjeWbGHj3OlgFZoGdz8I72zrc2XycLvdy/MIsfHCnTUJmD2660LV0YrA+UzaW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzb1mb950xUlyhTXljUtaXsH81PonjJ02VkKKOBJUj9dIjDnrax
+	7G7sMFIFPqvs4vSYb2tSSwEXzAX18xB+rL9HbU7l8GU+9wbOdyRRSSkfNKm9rxCZv3b0hZqw9u6
+	qCcjs/5fmlEo/p6/aGaeltmoO4e6MkZQ=
+X-Gm-Gg: ASbGncsb1MQJNHs6kM5O3SI4peyIN7dPMRsJ4IpjYZ4VUrfgaP+/4csyAp59/LO2KYs
+	RoUqtRRDbc9B0Zq/BrqD3tYo8Ahi5ClAwYT3HbVEZSrUnReZgoXfV9ekk7xEg2R5C+0ZSXeIZ7i
+	CktFppFqjF9Q5Fe1G4vlz9Yh/uH9KiYazMwSeDtujrBUABwrEOXi6g9U4x9Url1hO1+GU2h1WlV
+	Z9xg0EU2eyTPIy0e3oOFlokc/hfHXX1tZBEh7u7OSjvxj0=
+X-Google-Smtp-Source: AGHT+IG0e711nCZBo0LFDgFsHLegSjodIkLZxadsTGsG22z/JROwQjnbFz1X9q67z+tQ3FIhJavxLLOe2qR0sWT1Zio=
+X-Received: by 2002:a05:6000:2908:b0:3b7:83c0:a9e0 with SMTP id
+ ffacd0b85a97d-3b794fde526mr6033980f8f.25.1753999083973; Thu, 31 Jul 2025
+ 14:58:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250725-vfs-617-1bcbd4ae2ea6@brauner> <20250725-vfs-bpf-a1ee4bf91435@brauner>
+ <ysgjztjbsmjae3g4jybuzlmfljq5zog3eja7augtrjmji5pqw4@n3sc37ynny3t> <20250731-matrosen-zugluft-12a865db6ccb@brauner>
+In-Reply-To: <20250731-matrosen-zugluft-12a865db6ccb@brauner>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 31 Jul 2025 14:57:52 -0700
+X-Gm-Features: Ac12FXxHt58_Mh-eFyJd7LrI0WHgpz0ZviNHWw7vHHaiCNzygl-NAmedsTDIJCw
+Message-ID: <CAADnVQKMNq3vWDzYocS6QojBDXDzC2RdE=VzTnd7C_SN6Jhn_g@mail.gmail.com>
+Subject: Re: [GIT PULL 09/14 for v6.17] vfs bpf
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Timings taken from NV140WUM-N41. It is found in some arm64 laptops,
-eg. Asus Zenbook A14 UX3407QA.
+On Thu, Jul 31, 2025 at 1:28=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> It's been in -next a few days. Instead of slapping some hotfix on top
+> that leaves the tree in a broken state the fix was squashed. In other
+> words you would have to reapply the series anyway.
 
-The raw edid of the panel is:
-00 ff ff ff ff ff ff 00 09 e5 f6 0c 00 00 00 00
-10 22 01 04 a5 1e 13 78 07 8e 95 a6 52 4c 9d 26
-0f 50 54 00 00 00 01 01 01 01 01 01 01 01 01 01
-01 01 01 01 01 01 5d 30 80 a0 70 b0 28 40 30 20
-36 00 2e bc 10 00 00 1a 00 00 00 fd 00 28 3c 4a
-4a 0f 01 0a 20 20 20 20 20 20 00 00 00 fe 00 3d
-4c 33 30 20 20 20 20 20 20 20 20 ff 00 00 00 fc
-00 4e 56 31 34 30 57 55 4d 2d 4e 36 34 0a 01 f8
+That's not how stable branches work. The whole point of a stable
+branch is that sha-s should not change. You don't squash things
+after a branch is created.
+That extra fix could have been easily added on top.
 
-70 20 79 02 00 21 00 1d c8 0b 5d 07 80 07 b0 04
-88 66 ea 51 cc 74 9d 66 52 0f 02 35 54 40 5e 40
-5e 00 44 12 78 22 00 14 7f 5c 02 85 7f 07 9f 00
-2f 00 1f 00 af 04 27 00 02 00 05 00 2b 00 0c 27
-00 28 3b 00 00 27 00 28 2f 00 00 2e 00 06 00 44
-40 5e 40 5e 81 00 1e 72 1a 00 00 03 71 28 3c 00
-00 60 ff 60 ff 3c 00 00 00 00 e3 05 04 00 e6 06
-01 01 60 60 ff 00 00 00 00 00 00 00 00 00 de 90
+> I mean, your mail is very short of "Linus, I'm subtly telling you what
+> mean Christian did wrong and that he's rebased, which I know you hate
+> and you have to resolve merge conflicts so please yell at him.". Come
+> on.
 
-Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
----
- drivers/gpu/drm/panel/panel-edp.c | 1 +
- 1 file changed, 1 insertion(+)
+Not subtly. You made a mistake and instead of admitting it
+you're doubling down on your wrong git process.
 
-diff --git a/drivers/gpu/drm/panel/panel-edp.c b/drivers/gpu/drm/panel/panel-edp.c
-index 9a56e208cbdd..b241d1807002 100644
---- a/drivers/gpu/drm/panel/panel-edp.c
-+++ b/drivers/gpu/drm/panel/panel-edp.c
-@@ -1947,6 +1947,7 @@ static const struct edp_panel_entry edp_panels[] = {
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c20, &delay_200_500_e80, "NT140FHM-N47"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0c93, &delay_200_500_e200, "Unknown"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cb6, &delay_200_500_e200, "NT116WHM-N44"),
-+	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cf6, &delay_200_500_e200, "NV140WUM-N64"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0cfa, &delay_200_500_e50, "NV116WHM-A4D"),
- 	EDP_PANEL_ENTRY('B', 'O', 'E', 0x0d73, &delay_200_500_e80, "NE140WUM-N6S"),
- 
--- 
-2.48.1
+> I work hard to effectively cooperate with you but until there is a
+> good-faith mutual relationship on-list I don't want meaningful VFS work
+> going through the bpf tree. You can take it or leave it and I would
+> kindly ask Linus to respect that if he agrees.
 
+Look, you took bpf patches that BPF CI flagged as broken
+and bpf maintainers didn't even ack.
+Out of 4 patches that you applied one was yours that
+touched VFS and 3 were bpf related.
+That was a wtf moment, but we didn't complain,
+since the feature is useful, so we were happy to see
+it land even in this half broken form.
+We applied your "stable" branch to bpf-next and added fixes on top.
+Then you squashed "hotfix".
+That made all of our fixes in bpf-next to become conflicts.
+We cannot reapply your branch. We don't rebase the trees.
+That was the policy for years. Started long ago during
+net-next era and now in bpf-next too.
+This time we were lucky that conflicts were not that bad
+and it was easy enough for Linus to deal with them,
+but that must not repeat.
+
+Do not touch bpf patches if you refuse to follow
+stable branch process that everyone else does.
+And it's not VFS. It's really just you, Christian.
+Back in August 2024 Al created a true stable branch
+vfs/stable-struct_fd. We pulled it into bpf-next
+in commit 50470d3899cd ("Merge remote-tracking branch 'vfs/stable-struct_fd=
+'")
+While Al sent a PR for it during the merge window:
+https://lore.kernel.org/all/20240923034731.GF3413968@ZenIV/
+On the kernel/bpf/* side we added more changes on top of Al's work,
+and, surprise, there were no conflicts during the merge window.
+That's how stable branches meant to work.
 
