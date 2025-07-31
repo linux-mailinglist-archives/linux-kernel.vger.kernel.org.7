@@ -1,85 +1,140 @@
-Return-Path: <linux-kernel+bounces-752194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915B9B1724D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:48:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74167B1724F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:48:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9131C21047
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:48:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7FE47AFF45
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:47:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32792C15BE;
-	Thu, 31 Jul 2025 13:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPXZJa6g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1CA1E502;
-	Thu, 31 Jul 2025 13:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384A32D0275;
+	Thu, 31 Jul 2025 13:48:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65EC31E502;
+	Thu, 31 Jul 2025 13:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753969698; cv=none; b=tt7Mg6DDPG88JYosOv2PWXKFtmwI2tPSk1cG/cAYqzSPhNHTDd6DdYursIlD0oJeI3uguX2pI9T28LxJGVcFrXBDjuH83j7FJeXTD3Cl1Rfj8fYoeUx317jvP2HQpNi37wNTL0T6z4cHdBOVWn4+Xqa6UJZiDB2lliU5/5MI32Y=
+	t=1753969707; cv=none; b=s5xIaS4kz2ePLg4YE5kLQGo2k7+QTa3k0mQc8qjH1ZlB8vF5t4hesIXMB2m2P3iD2b5jWmzRglmAL7FJYIJEp1f/UH4bhEY7woTPqSlGwjdgwJh2ZZSK1P+2AcNgMIUEwDSJ1Zhphlx5J/TCL72ecfAeMdLPc3udRG1bpZqsVI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753969698; c=relaxed/simple;
-	bh=Q92AxWyd2wLBi6j5UGUyDa2dOb67fl0UgsLftyKpIik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQpZGXH9i3EABNvKRgkp+A0KWMJdz84LMYT6biNNgYS2mV9DyGovrvhwLu/SQ+69sXKEacxzDvYPzFVBxjoyuTcd9rcdYvyYiIr8Ak26DcFt3WYUEm7618DQGgHex3I/R5ZxvoZr9Q+ReOekB+nD6Zcy779kRlF7X9T0vKwUCe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPXZJa6g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06822C4CEEF;
-	Thu, 31 Jul 2025 13:48:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753969697;
-	bh=Q92AxWyd2wLBi6j5UGUyDa2dOb67fl0UgsLftyKpIik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BPXZJa6gj5rXxgdo/Xw79VqAJwhg31mBX5riQDGbZbbJZ8mdQNTdNozNBFd+pHfAK
-	 xPe95Gpba4YyMWCOO73WjN7rfBJxP1suTJQ2d4Z7YZ3RbhvkvK90tx13k8q8zpC7A0
-	 uNnx7rGE47Ro4dUFgB85nDS7/mNOfMU6ONTJvZ/+ZPh/c9cBoXsJxMGmzsfGopxAOj
-	 ifkFQbjDSpqKJsDgf1gdyzsKxVlbc95qvJci4+Jg5JoYonj1s0ZzWQjoDARLCG2EZR
-	 X5TdxzPrLma/hk5MIageLnK2665BSik4KfiLN4f5cQW19NPKLGMEmAqCkK7Xw1QpSw
-	 7Rxrzx3d0/UrQ==
-Date: Thu, 31 Jul 2025 14:48:13 +0100
-From: Lee Jones <lee@kernel.org>
-To: srini@kernel.org, Heiko Stuebner <heiko@sntech.de>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH 1/2] dt-bindings: mfd: qnap,ts433-mcu: allow
- nvmem-layout child node
-Message-ID: <20250731134813.GJ1049189@google.com>
-References: <20250730172248.1875122-2-heiko@sntech.de>
- <175396964012.1212829.4001330716835123166.b4-ty@kernel.org>
+	s=arc-20240116; t=1753969707; c=relaxed/simple;
+	bh=NloZ91FtjGRUUfozNMTh9M6AUWMCMkA/ecwZ7j8+wBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F/lQvBpdghtJjZb+jQ/Nw5/UtWaG+tI0tGC4/B5/9TTE2Ftpe0Rs/pYe9DYJOkQzjy5U5zQsyFGNTm2VP1k2DJgJ+7R9HU5B3ZmCMREWMCUp9Vc3pW5vvLvRZdNoL4IY8b2fn4YPySjW3OB4ek5qnWFz3e3Le+WHZ0GUluT9p8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C03181D13;
+	Thu, 31 Jul 2025 06:48:17 -0700 (PDT)
+Received: from [10.57.3.194] (unknown [10.57.3.194])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D0A433F66E;
+	Thu, 31 Jul 2025 06:48:23 -0700 (PDT)
+Message-ID: <1388fb70-3d2d-4c41-9526-521cb75eb422@arm.com>
+Date: Thu, 31 Jul 2025 14:48:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <175396964012.1212829.4001330716835123166.b4-ty@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 04/38] tsm: Support DMA Allocation from private
+ memory
+Content-Language: en-GB
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, linux-coco@lists.linux.dev,
+ kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
+ Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>,
+ Steven Price <steven.price@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-5-aneesh.kumar@kernel.org>
+ <20250728143318.GD26511@ziepe.ca> <yq5a5xfbbe35.fsf@kernel.org>
+ <20250729143339.GH26511@ziepe.ca>
+ <bbe2a41a-8f72-4224-a0bc-225c1e35a180@arm.com>
+ <20250731121740.GQ26511@ziepe.ca>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250731121740.GQ26511@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 31 Jul 2025, Lee Jones wrote:
-
-> On Wed, 30 Jul 2025 19:22:47 +0200, Heiko Stuebner wrote:
-> > The MCU has an eeprom memory connected internally, that for example
-> > contains some mac-addresses for the soc gmac controllers.
-> > 
-> > Therefore allow defining the nvmem-layout for the eeprom.
-> > 
-> > 
+On 31/07/2025 13:17, Jason Gunthorpe wrote:
+> On Wed, Jul 30, 2025 at 11:09:35AM +0100, Suzuki K Poulose wrote:
+>>>> It is unclear whether devices would need to perform DMA to shared
+>>>> (unencrypted) memory while operating in this mode, as TLPs with T=1
+>>>> are generally expected to target private memory.
+>>>
+>>> PCI SIG supports it, kernel should support it.
+>>
+>> ACK. On Arm CCA, the device can access shared IPA, with T=1 transaction
+>> as long as the mapping is active in the Stage2 managed by RMM.
 > 
-> Applied, thanks!
+> Right, I expect that the T=0 SMMU S2 translation is a perfect subset of
+> the T=1 S2 rmm translation. At most pages that are not available to
+> T=0 should be removed when making the subset.
+
+Yes, this is what the VMM is supposed to do today, see [0] & [1].
+
 > 
-> [1/2] dt-bindings: mfd: qnap,ts433-mcu: allow nvmem-layout child node
->       commit: 17edd13a0916c7c84966b4db96fe744986c3a04b
+> I'm not sure what the plan is here on ARM though, do you expect to
+> pre-load the entire T=0 SMMU S2 with the shared IPA aliases and rely
+> on the GPT for protection or will the hypervisor dynamically change
+> the T=0 SMMU S2 after each shared/private change? Same question for
 
-This should have been applied to the previous set.
+Yes, share/private transitions do go all the way back to VMM and it
+is supposed to make the necessary changes to the SMMU S2 (as in [1]).
 
-I eventually worked out why it wasn't applying cleanly.
+> the RMM S2?
+> 
 
--- 
-Lee Jones [李琼斯]
+As for the RMM S2, the current plan is to re-use the CPU S2 managed
+by RMM.
+
+> The first option sounds fairly appealing, IMHO
+> 
+>> Rather than mapping the entire memory from the host, it would be ideal
+>> if the Coco vms have some sort of a callback to "make sure the DMA
+>> wouldn't fault for a device".
+> 
+> Isn't that a different topic? For right now we expect that all pages
+> are pinned and loaded into both S2s. Upon any private/shared
+
+Actually it is. But might solve the problem for confidential VMs,
+where the S2 mapping is kind of pinned.
+
+Population of S2 is a bit tricky for CVMs, as there are restrictions
+due to :
+   1) Pre-boot measurements
+   2) Restrictions on modifying the S2 (at least on CCA).
+
+Thus, "the preload S2 and pin" must be done, after the "Initial images 
+are loaded". And that becomes tricky from the Hypervisor (thinking of 
+this, the VMM may be able to do this properly, as long as it remembers
+which areas where loaded).
+
+Filling in the S2, with already populated S2 is complicated for CCA
+(costly, but not impossible). But the easier way is for the Realm to
+fault in the pages before they are used for DMA (and S2 mappings can be
+pinned by the hyp as default). Hence that suggestion.
+
+Suzuki
+
+[0] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/7c34972ddc
+[1] https://gitlab.arm.com/linux-arm/kvmtool-cca/-/commit/ab4e654c4
+
+> conversion the pages should be reloaded into the appropriate S2s if
+> required. The VM never needs to tell the hypervisor that it wants to
+> do DMA.
+
+> 
+> There are all sorts of options here to relax this but exploring them
+> it an entirely different project that CCA, IMHO.
+> 
+> Jason
+
 
