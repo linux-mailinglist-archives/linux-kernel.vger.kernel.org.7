@@ -1,187 +1,149 @@
-Return-Path: <linux-kernel+bounces-752424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37470B17567
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:05:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35C43B1756B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:06:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD6D018C4F09
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:05:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2A21A820A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1CC23E32D;
-	Thu, 31 Jul 2025 17:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF28824293B;
+	Thu, 31 Jul 2025 17:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VApVAH+G"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G0ZCTUEK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9F572637;
-	Thu, 31 Jul 2025 17:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC991DE8A8;
+	Thu, 31 Jul 2025 17:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753981490; cv=none; b=AUeq4N4Ig929ffq24vHGOdIPjMTVCVboa88pZxS2TXrFpOCios0X2j9Kac0yVYCA18GityZqZ1zhXC1joaG5Hrnl+Febq77hdufwyqAQDZDWwF0GSx3fdOEvkzpPMQDFNXTya23iuCWaKfq/TGE+OH1uLnA41/oi3QtnKof/rYA=
+	t=1753981548; cv=none; b=XPZQXVKqzxxm0cKZRz+oGZ/8413KNN0ZsLsuaoZX3SKlZ3Wl2P+moBhKS8cjTfgrv+jmYCY8FA6sklRqezGajkPuRIrnu1R3rrjjpfWCifJa+97s75l925hBUIyoC4g50d8zrr3Kag5oyEuty+PULI5BCNBtrRPV4pg/J1wMCwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753981490; c=relaxed/simple;
-	bh=m0YH97sXQRmjbG9xHs4D9l3xM41GzX9EBnf6R6A8CU0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QG2l6FeR/v5AXucN5rJDPImxOVnO6OIMxILSH6UwLGWqg7Fo8nTetz87eQjyxyocST3sEJApwWwMBS/a/hiLJtAbaT1P7Y+XfYHHmXw6rf0f8mDMGe7NNmcwSROdvpPa6hxrNamrJYWP+bnI4uKoM5kFurXDtycpvnnJfAFSIu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VApVAH+G; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753981489; x=1785517489;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=m0YH97sXQRmjbG9xHs4D9l3xM41GzX9EBnf6R6A8CU0=;
-  b=VApVAH+G3ChjbL8cB4X/8CxISQyy7AsM1rlOZCFUH+GtroUJG2yi9fTJ
-   VpwZgxAF0CYpk4uKKzDVaomXsiB3bLN1UcCYIipQX2blYVlrUaaLOAIS0
-   2Cb9ez6TOg424MHRVBjrSls/v0heqpierr6CxkDbH2+HNgn1vnNC9yQZA
-   kPTm/3A/jGlOoLT3/irHMi0JCtT1w8yavnfg3SyoN0qik3TBJ+VDVLDPc
-   Muyb0DIc6qqGwz+KjmymRu+Wm5W1jfBvBugJc++jWYs6kQEH0yuwRNy5p
-   qq7FFuIEONYhxjqiFp1aEgXYzr0nEVp89QgWv3Ou0MgSClnQq2YpzQ9Gm
-   g==;
-X-CSE-ConnectionGUID: pKFMrZ0qSjCCDIm0K+Q/5A==
-X-CSE-MsgGUID: Wtl4W2yORjOTr5v/oE78MA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="73773596"
-X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; 
-   d="scan'208";a="73773596"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 10:04:39 -0700
-X-CSE-ConnectionGUID: /HdguQcrRuSrI4tW/hco+w==
-X-CSE-MsgGUID: 8Jq8hCUQSzSgrKeF61LPPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; 
-   d="scan'208";a="163327978"
-Received: from linux.intel.com ([10.54.29.200])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 10:04:40 -0700
-Received: from [10.124.222.117] (unknown [10.124.222.117])
-	by linux.intel.com (Postfix) with ESMTP id 861D620B571C;
-	Thu, 31 Jul 2025 10:04:38 -0700 (PDT)
-Message-ID: <4969c441-fe2a-470f-9efd-4661efca56ec@linux.intel.com>
-Date: Thu, 31 Jul 2025 10:04:38 -0700
+	s=arc-20240116; t=1753981548; c=relaxed/simple;
+	bh=cygdeMZgK8iW3+xuI2Q01zkcGjAmxwn4nIdnViALepc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tZyIcWKnBUqXTqeQKca8D7WnEWOPNaJxpEzMq6ODgPQNqUyMnq3/TrX2lSvXOZY3Srk97ql4AqyyLieEVKzIWIPmZ0JZz3vpxrgBvkOjDEYlf+Et2Yy8A6fvXAlUltnWUhhGLuUoQrMWIndc2Ql5TF0MBuqUyZTP5QTKpzZ1eM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G0ZCTUEK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09D6BC4CEEF;
+	Thu, 31 Jul 2025 17:05:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753981548;
+	bh=cygdeMZgK8iW3+xuI2Q01zkcGjAmxwn4nIdnViALepc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G0ZCTUEKD9dun9DBxQYzx4GHq2lIpW/KDI9pFeE32zJIBNpUzP/FFvrdecrjwQf84
+	 Snz90sAhbikpsX3fCAvtqQoNR3Yl8YuLiqUxPCciFpUuiRnX08tO6sxyKF7IpEYKay
+	 f3yvKnhu01DA9k4hwPs81dSCklqesFppVvmDhkQAKiugR48zYm890ZcmMWfHmLW+NS
+	 VnJc2mvnvy986vxxBto1dpRoyZH7KTIYtRUSqgVcoU6RknqiBrdTIanBJb7FM5aYIq
+	 OLyH7s5ANotGLlkRTto+hjErAZ07bXo2z5GGSRUYFjEfgGYMosqxpw43tMZzhRXjjI
+	 0NwDzzdyIGzhA==
+Date: Thu, 31 Jul 2025 10:05:47 -0700
+From: Kees Cook <kees@kernel.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	nxne.cnse.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH iwl-next v3 16/18] idpf: add support for XDP on Rx
+Message-ID: <202507310955.03E47CFA4@keescook>
+References: <20250730160717.28976-1-aleksander.lobakin@intel.com>
+ <20250730160717.28976-17-aleksander.lobakin@intel.com>
+ <20250731123734.GA8494@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] PCI/AER: Fix missing uevent on recovery when a
- reset is requested
-To: Lukas Wunner <lukas@wunner.de>, Niklas Schnelle <schnelle@linux.ibm.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Linas Vepstas <linasvepstas@gmail.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Manivannan Sadhasivam <mani@kernel.org>,
- Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Peter Oberparleiter <oberpar@linux.ibm.com>,
- Matthew Rosato <mjrosato@linux.ibm.com>, Oliver O'Halloran
- <oohall@gmail.com>, Sinan Kaya <okaya@kernel.org>,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- Keith Busch <kbusch@kernel.org>
-References: <20250730-add_err_uevents-v3-0-540b158c070f@linux.ibm.com>
- <20250730-add_err_uevents-v3-1-540b158c070f@linux.ibm.com>
- <aIp6LiKJor9KLVpv@wunner.de> <aIp_Z9IdwSjMtDho@wunner.de>
- <aItpKIhYr0T8jf7A@wunner.de>
-Content-Language: en-US
-From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
-In-Reply-To: <aItpKIhYr0T8jf7A@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731123734.GA8494@horms.kernel.org>
 
+On Thu, Jul 31, 2025 at 01:37:34PM +0100, Simon Horman wrote:
+> While I appreciate the desire for improved performance and nicer code
+> generation. I think the idea of writing 64 bits of data to the
+> address of a 32 bit member of a structure goes against the direction
+> of hardening work by Kees and others.
 
-On 7/31/25 6:01 AM, Lukas Wunner wrote:
-> On Wed, Jul 30, 2025 at 10:24:07PM +0200, Lukas Wunner wrote:
->> On Wed, Jul 30, 2025 at 10:01:50PM +0200, Lukas Wunner wrote:
->>> On Wed, Jul 30, 2025 at 01:20:57PM +0200, Niklas Schnelle wrote:
->>>> Since commit 7b42d97e99d3 ("PCI/ERR: Always report current recovery
->>>> status for udev") AER uses the result of error_detected() as parameter
->>>> to pci_uevent_ers(). As pci_uevent_ers() however does not handle
->>>> PCI_ERS_RESULT_NEED_RESET this results in a missing uevent for the
->>>> beginning of recovery if drivers request a reset. Fix this by treating
->>>> PCI_ERS_RESULT_NEED_RESET as beginning recovery.
->>> [...]
->>>> +++ b/drivers/pci/pci-driver.c
->>>> @@ -1592,6 +1592,7 @@ void pci_uevent_ers(struct pci_dev *pdev, enum pci_ers_result err_type)
->>>>   	switch (err_type) {
->>>>   	case PCI_ERS_RESULT_NONE:
->>>>   	case PCI_ERS_RESULT_CAN_RECOVER:
->>>> +	case PCI_ERS_RESULT_NEED_RESET:
->>>>   		envp[idx++] = "ERROR_EVENT=BEGIN_RECOVERY";
->>>>   		envp[idx++] = "DEVICE_ONLINE=0";
->>>>   		break;
->>> I note that PCI_ERS_RESULT_NO_AER_DRIVER is also missing in that
->>> switch/case statement.  I guess for the patch to be complete,
->>> it needs to be added to the PCI_ERS_RESULT_DISCONNECT case.
->>> Do you agree?
->> I realize now there's a bigger problem here:  In pcie_do_recovery(),
->> when control reaches the "failed:" label, a uevent is only signaled
->> for the *bridge*.  Shouldn't a uevent instead be signaled for every
->> device *below* the bridge?  (And possibly the bridge itself if it was
->> the device reporting the error.)
-> The small patch below should resolve this issue.
-> Please let me know what you think.
->
->> In that case you don't need to add PCI_ERS_RESULT_NO_AER_DRIVER to
->> the switch/case statement because we wouldn't want to have multiple
->> uevents reporting disconnect, so the one emitted below the "failed:"
->> label would be sufficient.
-> I'll send a separate Reviewed-by for your original patch as the small
-> patch below should resolve my concern about PCI_ERS_RESULT_NO_AER_DRIVER.
->
->> This all looks so broken that I'm starting to wonder if there's any
->> user space application at all that takes advantage of these uevents?
-> I'd still be interested to know which user space application you're
-> using to track these uevents?
->
-> Thanks,
->
-> Lukas
->
-> -- >8 --
->
-> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-> index e795e5ae..3a95aa2 100644
-> --- a/drivers/pci/pcie/err.c
-> +++ b/drivers/pci/pcie/err.c
-> @@ -165,6 +165,12 @@ static int report_resume(struct pci_dev *dev, void *data)
->   	return 0;
->   }
->   
-> +static int report_disconnect(struct pci_dev *dev, void *data)
-> +{
-> +	pci_uevent_ers(dev, PCI_ERS_RESULT_DISCONNECT);
-> +	return 0;
-> +}
+Agreed: it's better to avoid obscuring these details from the compiler
+so it can have an "actual" view of the object sizes involved.
 
-Since you are notifying the user space, I am wondering whether the drivers
-should be notified about the recovery failure?
+> Indeed, it seems to me this is the kind of thing that struct_group()
+> aims to avoid.
+> 
+> In this case struct group() doesn't seem like the best option,
+> because it would provide a 64-bit buffer that we can memcpy into.
+> But it seems altogether better to simply assign u64 value to a u64 member.
 
-> +
->   /**
->    * pci_walk_bridge - walk bridges potentially AER affected
->    * @bridge:	bridge which may be a Port, an RCEC, or an RCiEP
-> @@ -272,7 +278,7 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
->   failed:
->   	pci_walk_bridge(bridge, pci_pm_runtime_put, NULL);
->   
-> -	pci_uevent_ers(bridge, PCI_ERS_RESULT_DISCONNECT);
-> +	pci_walk_bridge(bridge, report_disconnect, NULL);
->   
->   	pci_info(bridge, "device recovery failed\n");
->   
->
+Agreed: with struct_group you get a sized pointer, and while you can
+provide a struct tag to make it an assignable object, it doesn't make
+too much sense here.
+
+> So I'm wondering if an approach along the following lines is appropriate
+> (Very lightly compile tested only!).
+> 
+> And yes, there is room for improvement of the wording of the comment
+> I included below.
+> 
+> diff --git a/include/net/libeth/xdp.h b/include/net/libeth/xdp.h
+> index f4880b50e804..a7d3d8e44aa6 100644
+> --- a/include/net/libeth/xdp.h
+> +++ b/include/net/libeth/xdp.h
+> @@ -1283,11 +1283,7 @@ static inline void libeth_xdp_prepare_buff(struct libeth_xdp_buff *xdp,
+>  	const struct page *page = __netmem_to_page(fqe->netmem);
+>  
+>  #ifdef __LIBETH_WORD_ACCESS
+> -	static_assert(offsetofend(typeof(xdp->base), flags) -
+> -		      offsetof(typeof(xdp->base), frame_sz) ==
+> -		      sizeof(u64));
+> -
+> -	*(u64 *)&xdp->base.frame_sz = fqe->truesize;
+> +	xdp->base.frame_sz_le_qword = fqe->truesize;
+>  #else
+>  	xdp_init_buff(&xdp->base, fqe->truesize, xdp->base.rxq);
+>  #endif
+> diff --git a/include/net/xdp.h b/include/net/xdp.h
+> index b40f1f96cb11..b5eedeb82c9b 100644
+> --- a/include/net/xdp.h
+> +++ b/include/net/xdp.h
+> @@ -85,8 +85,19 @@ struct xdp_buff {
+>  	void *data_hard_start;
+>  	struct xdp_rxq_info *rxq;
+>  	struct xdp_txq_info *txq;
+> -	u32 frame_sz; /* frame size to deduce data_hard_end/reserved tailroom*/
+> -	u32 flags; /* supported values defined in xdp_buff_flags */
+> +	union {
+> +		/* Allow setting frame_sz and flags as a single u64 on
+> +		 * little endian systems. This may may give optimal
+> +		 * performance. */
+> +		u64 frame_sz_le_qword;
+> +		struct {
+> +			/* Frame size to deduce data_hard_end/reserved
+> +			 * tailroom. */
+> +			u32 frame_sz;
+> +			/* Supported values defined in xdp_buff_flags. */
+> +			u32 flags;
+> +		};
+> +	};
+>  };
+
+Yeah, this looks like a nice way to express this, and is way more
+descriptive than "(u64 *)&xdp->base.frame_sz" :)
+
 -- 
-Sathyanarayanan Kuppuswamy
-Linux Kernel Developer
-
+Kees Cook
 
