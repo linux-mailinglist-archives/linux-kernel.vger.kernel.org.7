@@ -1,113 +1,101 @@
-Return-Path: <linux-kernel+bounces-751589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9100EB16B30
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:32:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3F21B16B32
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 642923AF3BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9BFA4E73E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2531A21CA07;
-	Thu, 31 Jul 2025 04:32:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2C721CA07;
+	Thu, 31 Jul 2025 04:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Som2U5oo"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Dy38XzYO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73905539A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 04:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3611EB3D;
+	Thu, 31 Jul 2025 04:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753936329; cv=none; b=eF6J1ADxmWQ7tery4XyPd4tvJqYtuM12cO0Bu7oVuyC1yw6pJZk+68gw86Vi3EtIsquAVKLVfNEK9R6rRfbm1sluSSm20IOLSnOgQ9FESVazq5mSYRoZPXbWFRw79Esa44/hDyoBPxwrr0X7sX5SPvUhrFzrSuK58Ih7TAAhO/s=
+	t=1753936360; cv=none; b=Pnzn6enXZ91edQ+buqewdcd/u0E8v+gJpmb71aHms5504ezeI3wZ2quMkhmfJh1r1lT30PECf116x5sZXX2fcxVWLmmCDJ0QcxIIs+OSsRZs8Pdqza+IVoTH+4HAp0oEF9Mo+G9wigSdPis0CseXkfiERt4+EP6nKXXUWALEuoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753936329; c=relaxed/simple;
-	bh=kAoPuD10AQSP2tFsBD/EZdNTcawqCqeDZob1pgtlPDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dKc4BPMpf2E53nhLmdtZKzgS0ULs5ifMw4kFzfk9VcjJjsFop5gnwNyudzYvV5vAM5zcq5TW6bNuzvaBG85Jpifq3Eqw9S6xlLanAoi/N+QkGIsPaajkdk5b03JMS440Fn5U2LsaOytqjFmEf309vMCq+QwzK3t8cThbJovYn+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Som2U5oo; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ae708b0e83eso103955466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:32:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753936325; x=1754541125; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JKl/pMmd47NVhGRT8Fp3Ui4+sG0khep9g6c9Lmy2ESE=;
-        b=Som2U5oo1RYQ3m/LX9SCqorxWoZLSzh96AinoppUrT71p95cYdqYARAFwdqxUfqgtJ
-         8FhjrhhW3LLEf09V0ZOE9sT5m4LsZmwe2veXrxtvK2o7dgpAXSAAzfdW38D3B5l303iE
-         xnBPT47F7en99RUVZY+0bUkam0xAevrAVOKr8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753936325; x=1754541125;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JKl/pMmd47NVhGRT8Fp3Ui4+sG0khep9g6c9Lmy2ESE=;
-        b=vsoTnsD9soAanffKORiqDeIoEtqLKE0t3JZWZo6fMGSj1VHelq1ELhi0nzWMp+WDyA
-         eMFU3PROnvGuNlkhpPm0YpJWfmL+LXXdNoAR9xqx3sQWOCx/SPqf6S2pur1exTVustJs
-         CCZHSecbOFfhsav6jTOlw8kwTppWQGv0Ug3rUNTbfahc3GNY5b0tZseVWlqR4p0zQs83
-         mLbjgRO/n+COqqisVTpChHNbh2iNrWK446sYK6zdiNA4QB59dpu7OrEfZXiwClg8eUSX
-         rw78Ul0tYfk69bkgUx6gOYowRTrpATOMXEvvv6zC5Hc9jrIK7wWicyRtTz56id7P3LuJ
-         LPPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjFCtA4q4O7KJvkBojc+XfwGZ53epfz0qHcm0gxlsenaRwexLyBkRZ4OS2j4Uk3qrp4ZhDBsxYhSYoYnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz40gscCmoKIKbhzQR5AxZeltNphzfOYWHvSucIJJxaDouUSEhP
-	v2uKM8fUfUyXSi7c0KDfsQhLwIvwbHb/2EKyTCV2FkB4MTChuglWjv1bfKe3hu0dc0tCo1ZBPTM
-	OIm/T/iA=
-X-Gm-Gg: ASbGncs0yexKTS+hGHYUpPh6zOlp5/kB9Aj3dPYP0mQPyNl8sTR6ublkTiAJceT76T0
-	expRkJ7ZB9v741H1SvNkgZwWsim1CAlcnW3VoKevMj2pbXlIlxCsRPqVs26Porfe5BFKyS0shEh
-	la9zGqBOuc3NaHk/CxEJ3teyP/5Pb+Ov4xath/tuunuXpaDuy9wKeMS9h5BrrIaIfw6HwtRx1OC
-	zE7RytbMoNIqmyaz/EOurlnME3RZIKVN6oq2kyc+xBsc7Mo3OTNiBKesARLJPniKOB9HAmKq0Zl
-	PhbHYqRz4Brf9UPw05HnXIp5N9SI2sqFqRZgfSj+2U+PhfHnVO9DSBoFlnXKu4z72zx1Q6HeO5y
-	z+cYIFMJkZ4kWNV5++HoPK4RyLbISJ2j5yHqjyLf369Mjp/nF1P02lkiqPXiO3/JR2Li83qAZ
-X-Google-Smtp-Source: AGHT+IHgEy6WO20ApuFAbTZIaUEvjSUUyif7iUg6bhDQYiJfrGruiaYfbd/UIt/+F/AwZYwJoeaiJQ==
-X-Received: by 2002:a17:907:cd07:b0:ae3:d1fe:f953 with SMTP id a640c23a62f3a-af8fd9e4659mr692716766b.43.1753936325459;
-        Wed, 30 Jul 2025 21:32:05 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a241bdfsm43413966b.131.2025.07.30.21.32.04
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 21:32:04 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6154655c8aeso697235a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:32:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWpSNZ8Mx9P8EfZbA6CkYsv+K4LqFKCXs4vJO0SA1/vEW1oWUv96M6KqVrqQ1PNDc62IeQu/b6etwS8s+g=@vger.kernel.org
-X-Received: by 2002:a05:6402:2355:b0:615:a3f9:7be5 with SMTP id
- 4fb4d7f45d1cf-615a3f99733mr2566183a12.25.1753936323939; Wed, 30 Jul 2025
- 21:32:03 -0700 (PDT)
+	s=arc-20240116; t=1753936360; c=relaxed/simple;
+	bh=NNClWWcmR2BWH2a2iNSt2rpiOcnkU6NNKfFasK5sQuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EH2Tc4P37iqSnRKYAtkvuDlVrLIZV+jMk+HQHeTs/JqRMNTRPCf74HLsYwAyZrhYNHZxg6ruzHqVNRNLo0c+YEUPF8/U95PS9ch/AxneakZHNDV9FnHkCIxSUweiz2YZ89AxiTq+A1CWXmPdK33+qHOOrlisCb/9HXKU7JYQ2uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Dy38XzYO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5752DC4CEEF;
+	Thu, 31 Jul 2025 04:32:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1753936358;
+	bh=NNClWWcmR2BWH2a2iNSt2rpiOcnkU6NNKfFasK5sQuA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dy38XzYO9fpk7Uv715Z6tY9sIMqZDtpXMTy7oTCih13ozJlRvo8VvVXb4U6Z7wBJV
+	 uIx3hoJOOmexTBMW3t2uK5nxEX0YB7ZjMjTD8w+nHj3NXIjTvlm/F2k/03RDgz0h2R
+	 dLT4ioek5nMWN8CKJjgGG0E0pwkiNta6YAtBY1DY=
+Date: Thu, 31 Jul 2025 06:32:35 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Salah Triki <salah.triki@gmail.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH V3] Bluetooth: bfusb: Fix use-after-free and memory leak
+ in device lifecycle
+Message-ID: <2025073101-upon-lilac-9d22@gregkh>
+References: <aIrSp18mz3GS67a1@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
- <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com>
- <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
- <CAHk-=whnuRuQEky2GsCDRQSf1dZbpoqnK+puw=qdR-D7aap9SQ@mail.gmail.com>
- <CAPM=9tygJqtbmYzB5gktxp-7fBfv_9gNq9p9+SdZ6wiYE2-6PQ@mail.gmail.com> <CAHk-=whB1X1c6rWbY34wZVGcnaY=yfPGLOtjd5h3mMDGV9Lbkg@mail.gmail.com>
-In-Reply-To: <CAHk-=whB1X1c6rWbY34wZVGcnaY=yfPGLOtjd5h3mMDGV9Lbkg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 30 Jul 2025 21:31:47 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgq9v6TWjO0QiG3OkvrUU1RL6wqsNHDjansGfEPn5HwCA@mail.gmail.com>
-X-Gm-Features: Ac12FXzF8dSyFCi3xpDHC2zrTkYczwDagbLbkfhvdeVqtRqioJqvlewvWWBto04
-Message-ID: <CAHk-=wgq9v6TWjO0QiG3OkvrUU1RL6wqsNHDjansGfEPn5HwCA@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.17-rc1
-To: Dave Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIrSp18mz3GS67a1@pc>
 
-On Wed, 30 Jul 2025 at 21:26, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> The good news is that it's bisecting without any ambiguity. So nowhere
-> near as painful as last merge window.
+On Thu, Jul 31, 2025 at 03:19:19AM +0100, Salah Triki wrote:
+> The driver stores a reference to the `usb_device` structure (`udev`)
+> in its private data (`data->udev`), which can persist beyond the
+> immediate context of the `bfusb_probe()` function.
+> 
+> Without proper reference count management, this can lead to two issues:
+> 
+> 1. A `use-after-free` scenario if `udev` is accessed after its main
+>    reference count drops to zero (e.g., if the device is disconnected
+>    and the `data` structure is still active).
 
-Right now it's in the range 1b556bcc3837..63b8c9fdfb7f.
+How can that happen as during the probe/remove cycle, the reference
+count is always properly incremetned.
 
-A few more bisections and I'll have it down to a dozen or fewer commits.
+> 2. A `memory leak` if `udev`'s reference count is not properly
+>    decremented during driver disconnect, preventing the `usb_device`
+>    object from being freed.
 
-          Linus
+There is no leak here at all, sorry.
+
+> To correctly manage the `udev` lifetime, explicitly increment its
+> reference count with `usb_get_dev(udev)` when storing it in the
+> driver's private data. Correspondingly, decrement the reference count
+> with `usb_put_dev(data->udev)` in the `bfusb_disconnect()` callback.
+> 
+> This ensures `udev` remains valid while referenced by the driver's
+> private data and is properly released when no longer needed.
+
+How was this tested?
+
+I'm not saying the change is wrong, just that I don't think it's
+actually a leak, or fix of anything real.
+
+Or do you have a workload that shows this is needed?  If so, what is the
+crash reported?
+
+thanks,
+
+greg k-h
 
