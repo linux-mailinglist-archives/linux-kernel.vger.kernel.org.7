@@ -1,122 +1,85 @@
-Return-Path: <linux-kernel+bounces-752216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F522B17297
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:56:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 915B9B1724D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:48:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B68F91C2293C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:56:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C9131C21047
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9912D1F40;
-	Thu, 31 Jul 2025 13:55:34 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32792C15BE;
+	Thu, 31 Jul 2025 13:48:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BPXZJa6g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8962D12F5;
-	Thu, 31 Jul 2025 13:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1CA1E502;
+	Thu, 31 Jul 2025 13:48:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753970134; cv=none; b=WqmnQ5/OpYt6QsvY2dZfWGmm5tI/79c7ykZyeMtoM2n7CxPuMHCCI8bjGhDd9zALWWDdvqT+8THfkDYIcufT8zH2ULnPv297evN+3SfpVGeAnnLs8DiplCyZqWWcr//ggO4wivzRBEJQSID+qmyaR1sOhtVtoM2yE0Q+YManMgU=
+	t=1753969698; cv=none; b=tt7Mg6DDPG88JYosOv2PWXKFtmwI2tPSk1cG/cAYqzSPhNHTDd6DdYursIlD0oJeI3uguX2pI9T28LxJGVcFrXBDjuH83j7FJeXTD3Cl1Rfj8fYoeUx317jvP2HQpNi37wNTL0T6z4cHdBOVWn4+Xqa6UJZiDB2lliU5/5MI32Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753970134; c=relaxed/simple;
-	bh=uzNDS/W4/Z9idSdDiNlbGbqsPoV54gSSlG/GepAK288=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uOmu9/Ok9tYWiOpRHmeypmxJ4Ggc07/pQE/BMOoNwLfuPz2GpP6bFbgq2s13ROll2UsAL8B2BK4Lw3FUfKv4JbTruSL+X1Wled1io9dNtRUCp3GR9LL13axMRBCGcu1UDC11V3sgXqS4rbzYAx1b8WMzJLcfifj3cVO22mtxyY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bt9Tn5nxNz2Cg0v;
-	Thu, 31 Jul 2025 21:51:09 +0800 (CST)
-Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9B3E51A016C;
-	Thu, 31 Jul 2025 21:55:23 +0800 (CST)
-Received: from localhost.localdomain (10.90.31.46) by
- kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 31 Jul 2025 21:55:17 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
-CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
-	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
-	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<shaojijie@huawei.com>
-Subject: [PATCH net 3/3] net: hibmcge: fix the np_link_fai error reporting issue
-Date: Thu, 31 Jul 2025 21:47:49 +0800
-Message-ID: <20250731134749.4090041-4-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250731134749.4090041-1-shaojijie@huawei.com>
-References: <20250731134749.4090041-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1753969698; c=relaxed/simple;
+	bh=Q92AxWyd2wLBi6j5UGUyDa2dOb67fl0UgsLftyKpIik=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rQpZGXH9i3EABNvKRgkp+A0KWMJdz84LMYT6biNNgYS2mV9DyGovrvhwLu/SQ+69sXKEacxzDvYPzFVBxjoyuTcd9rcdYvyYiIr8Ak26DcFt3WYUEm7618DQGgHex3I/R5ZxvoZr9Q+ReOekB+nD6Zcy779kRlF7X9T0vKwUCe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BPXZJa6g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06822C4CEEF;
+	Thu, 31 Jul 2025 13:48:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753969697;
+	bh=Q92AxWyd2wLBi6j5UGUyDa2dOb67fl0UgsLftyKpIik=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BPXZJa6gj5rXxgdo/Xw79VqAJwhg31mBX5riQDGbZbbJZ8mdQNTdNozNBFd+pHfAK
+	 xPe95Gpba4YyMWCOO73WjN7rfBJxP1suTJQ2d4Z7YZ3RbhvkvK90tx13k8q8zpC7A0
+	 uNnx7rGE47Ro4dUFgB85nDS7/mNOfMU6ONTJvZ/+ZPh/c9cBoXsJxMGmzsfGopxAOj
+	 ifkFQbjDSpqKJsDgf1gdyzsKxVlbc95qvJci4+Jg5JoYonj1s0ZzWQjoDARLCG2EZR
+	 X5TdxzPrLma/hk5MIageLnK2665BSik4KfiLN4f5cQW19NPKLGMEmAqCkK7Xw1QpSw
+	 7Rxrzx3d0/UrQ==
+Date: Thu, 31 Jul 2025 14:48:13 +0100
+From: Lee Jones <lee@kernel.org>
+To: srini@kernel.org, Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: (subset) [PATCH 1/2] dt-bindings: mfd: qnap,ts433-mcu: allow
+ nvmem-layout child node
+Message-ID: <20250731134813.GJ1049189@google.com>
+References: <20250730172248.1875122-2-heiko@sntech.de>
+ <175396964012.1212829.4001330716835123166.b4-ty@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemk100013.china.huawei.com (7.202.194.61)
+In-Reply-To: <175396964012.1212829.4001330716835123166.b4-ty@kernel.org>
 
-Currently, after modifying device port mode, the np_link_ok state
-is immediately checked. At this point, the device may not yet ready,
-leading to the querying of an intermediate state.
+On Thu, 31 Jul 2025, Lee Jones wrote:
 
-This patch will poll to check if np_link is ok after
-modifying device port mode, and only report np_link_fail upon timeout.
+> On Wed, 30 Jul 2025 19:22:47 +0200, Heiko Stuebner wrote:
+> > The MCU has an eeprom memory connected internally, that for example
+> > contains some mac-addresses for the soc gmac controllers.
+> > 
+> > Therefore allow defining the nvmem-layout for the eeprom.
+> > 
+> > 
+> 
+> Applied, thanks!
+> 
+> [1/2] dt-bindings: mfd: qnap,ts433-mcu: allow nvmem-layout child node
+>       commit: 17edd13a0916c7c84966b4db96fe744986c3a04b
 
-Fixes: e0306637e85d ("net: hibmcge: Add support for mac link exception handling feature")
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+This should have been applied to the previous set.
 
-diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-index 8cca8316ba40..d0aa0661ecd4 100644
---- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-+++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c
-@@ -12,6 +12,8 @@
- 
- #define HBG_HW_EVENT_WAIT_TIMEOUT_US	(2 * 1000 * 1000)
- #define HBG_HW_EVENT_WAIT_INTERVAL_US	(10 * 1000)
-+#define HBG_MAC_LINK_WAIT_TIMEOUT_US	(500 * 1000)
-+#define HBG_MAC_LINK_WAIT_INTERVAL_US	(5 * 1000)
- /* little endian or big endian.
-  * ctrl means packet description, data means skb packet data
-  */
-@@ -228,6 +230,9 @@ void hbg_hw_fill_buffer(struct hbg_priv *priv, u32 buffer_dma_addr)
- 
- void hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
- {
-+	u32 link_status;
-+	int ret;
-+
- 	hbg_hw_mac_enable(priv, HBG_STATUS_DISABLE);
- 
- 	hbg_reg_write_field(priv, HBG_REG_PORT_MODE_ADDR,
-@@ -239,8 +244,14 @@ void hbg_hw_adjust_link(struct hbg_priv *priv, u32 speed, u32 duplex)
- 
- 	hbg_hw_mac_enable(priv, HBG_STATUS_ENABLE);
- 
--	if (!hbg_reg_read_field(priv, HBG_REG_AN_NEG_STATE_ADDR,
--				HBG_REG_AN_NEG_STATE_NP_LINK_OK_B))
-+	/* wait MAC link up */
-+	ret = readl_poll_timeout(priv->io_base + HBG_REG_AN_NEG_STATE_ADDR,
-+				 link_status,
-+				 FIELD_GET(HBG_REG_AN_NEG_STATE_NP_LINK_OK_B,
-+					   link_status),
-+				 HBG_MAC_LINK_WAIT_INTERVAL_US,
-+				 HBG_MAC_LINK_WAIT_TIMEOUT_US);
-+	if (ret)
- 		hbg_np_link_fail_task_schedule(priv);
- }
- 
+I eventually worked out why it wasn't applying cleanly.
+
 -- 
-2.33.0
-
+Lee Jones [李琼斯]
 
