@@ -1,115 +1,132 @@
-Return-Path: <linux-kernel+bounces-752271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467F5B1735D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:44:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7801AB1735E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB5201C24440
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2A3E1C24411
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E67AB1A3155;
-	Thu, 31 Jul 2025 14:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90691C3306;
+	Thu, 31 Jul 2025 14:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z/wWLwah"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="0S7WDM/1"
+Received: from mx1.secunet.com (mx1.secunet.com [62.96.220.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 505FD1991D4
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:44:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A7731A23A6
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753973079; cv=none; b=EeWSnbEBVn5LRuky+bjoZuvVRniclBps157qL50/Bb0SYZ9pKMakp3KcHXiskpyqv4Mq3KqCrvnOCulz+aA7IXlyP9GLWVY0mLWKyX3B6nGvi7uPoY8wtBDaz4aIl0KVUIR6VMh/gpNAhuCfhlZ8w0eWrvO7451SR2T6iBM1iww=
+	t=1753973106; cv=none; b=uwbgick2O282OFdfyJ4IvCCNuX1WJUtQx+xef7Xp3nSII83eUSSGk4/MSlrW+gGWnOPYyDdenjkZ/t26TcNuKI+5HBrhK6gBC4cVwObx9ctzsf++e5tddWpUt48TNnlbGsQ+qZoj6Pxu9wR6pgDQEwQOGrXPb+xHxW+d2F4q2IA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753973079; c=relaxed/simple;
-	bh=uO6JqQZIr//xPPdRWmqTk0qzriWXeePZU1lNA+yO5hg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jpziooleThusbeww2w9fKfr8k3sg88UWtFdxFzbclkI3Mq0bkxAOz+o67637rFYBvRGKKsoWnXj3JUJBORD70Iv8i8drS8Se47FfHk9c+SWNVBC3lVjreNUWmGlXrmMMOmmcT4MwnOJQ9hPBOaWC/wIi9K2zBpE8Pg6NqGB2uBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z/wWLwah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C579C4CEEF;
-	Thu, 31 Jul 2025 14:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753973075;
-	bh=uO6JqQZIr//xPPdRWmqTk0qzriWXeePZU1lNA+yO5hg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Z/wWLwah4Li5c+pfrKApTo5VXzHxfARVihf4AGVCD3RuuhwAj3rtImIwXRqVIk9VJ
-	 bSzQcZRYsrg7fZWOcGarXnwD2+cP/KgFD8iq4ox1wcHHZoK4FD/dFa6oxFwn4yaScL
-	 rzSEL+bVcdeNocSoqrv4Ci5FRk5Cs06R48x8otlYn5WKb+ZlXz74NwJ7htNa5HFk2/
-	 2eDV/0CUMiZ4lbc9gY7W87l1urHZP0Wx3WrrFwnFTYCefnowfIWbS3p8Ab9mtR8oBl
-	 hRbmX+v9wQbuguQb7GnHUSL0hZV8GsOUEjtUIOEGCMDmnn7GUQTJ9n/pAIzhOT/1fJ
-	 ZrwIrY/rhClmA==
-From: Sasha Levin <sashal@kernel.org>
-To: akpm@linux-foundation.org
-Cc: david@redhat.com,
-	surenb@google.com,
-	aarcange@redhat.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH] mm/userfaultfd: fix kmap_local LIFO ordering for CONFIG_HIGHPTE
-Date: Thu, 31 Jul 2025 10:44:31 -0400
-Message-Id: <20250731144431.773923-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1753973106; c=relaxed/simple;
+	bh=VbZk0naDjC8ZePWABUYhTHspPTH9PL+GPWOLLLSK6iA=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Ip59ts5DZS3CWmfWak2tw28zlfoIFqVgCA9t7WFQv5dyOAtHNpq/0UH1eGlqiXdyWI7EzKer5QNcKsij/p550GBXyNn0BRSvmTWA2ts5AjIJrOdnfWt6Q6e66r3lGeDDy+MLGuAtaXj7jVV+T/gVUha67MWd7VIvIjbMzfRwbC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=0S7WDM/1; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by mx1.secunet.com (Postfix) with ESMTP id 95C55208B5;
+	Thu, 31 Jul 2025 16:45:02 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from mx1.secunet.com ([127.0.0.1])
+ by localhost (mx1.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+ with ESMTP id pxqNI8TkhTB9; Thu, 31 Jul 2025 16:45:02 +0200 (CEST)
+Received: from EXCH-03.secunet.de (unknown [10.32.0.243])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.secunet.com (Postfix) with ESMTPS id EA7C920892;
+	Thu, 31 Jul 2025 16:45:01 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.secunet.com EA7C920892
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1753973102;
+	bh=VbZk0naDjC8ZePWABUYhTHspPTH9PL+GPWOLLLSK6iA=;
+	h=From:To:CC:Subject:Date:From;
+	b=0S7WDM/1jAxNCYfcDspmt7shZjzkDIEog3adeVCoVx4Irn97uWDe72afUBvXvgacZ
+	 MMl1lvrV5uuQFMGe/SzSwGldGfaQXgBso/CvFZPXmrNv06IVrLlUl5xVYsRLQ++rSm
+	 Pteb4zln9cZnGkyQyRUh1FoPV0X0uxTFVBeAz6irxg2t+RuT8cPC4lI4PtYvkz8k1n
+	 /o3BC46qfvRuD6mxkzZJjbi0gunnFeuUPR+v5dm6GHpQwbBa97A4KmOS7m1H+f9NvY
+	 5gQ4D3TgCOHtojC4ptFCdXKUTwqWBx/gzBzHDitLDkNzSRv8JHsY+bhOt/14fUp+xP
+	 E9RFlAroMhZjA==
+Received: from mbx-dresden-01.secunet.de (10.53.40.199) by EXCH-03.secunet.de
+ (10.32.0.183) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1748.10; Thu, 31 Jul
+ 2025 16:45:01 +0200
+Received: from EXCH-04.secunet.de (10.32.0.184) by mbx-dresden-01.secunet.de
+ (10.53.40.199) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 31 Jul
+ 2025 16:45:00 +0200
+Received: from EXCH-04.secunet.de ([fe80::f0d0:317:aa9d:ee57]) by
+ EXCH-04.secunet.de ([fe80::f0d0:317:aa9d:ee57%4]) with mapi id
+ 15.02.1748.010; Thu, 31 Jul 2025 16:45:00 +0200
+From: "Heijligen, Thomas" <thomas.heijligen@secunet.com>
+To: "lee@kernel.org" <lee@kernel.org>, "andriy.shevchenko@linux.intel.com"
+	<andriy.shevchenko@linux.intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "Huber, Nico" <Nico.Huber@secunet.com>, "michael.brunner@kontron.com"
+	<michael.brunner@kontron.com>, "Schumann, Peter" <Peter.Schumann@secunet.com>
+Subject: [PATCH v2] mfd: kempld: Switch back to earlier ->init() behavior
+Thread-Topic: [PATCH v2] mfd: kempld: Switch back to earlier ->init() behavior
+Thread-Index: AQHcAimwhdkzkdq2i0C0BWDAKG+E9w==
+Date: Thu, 31 Jul 2025 14:45:00 +0000
+Message-ID: <7d2c7e92253d851194a781720051536cca2722b8.camel@secunet.com>
+Accept-Language: en-US, de-DE
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A1DB5E8229584345915CB260805D1696@secunet.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-With CONFIG_HIGHPTE on 32-bit ARM, move_pages_pte() maps PTE pages using
-kmap_local_page(), which requires unmapping in Last-In-First-Out order.
-
-The current code maps dst_pte first, then src_pte, but unmaps them in
-the same order (dst_pte, src_pte), violating the LIFO requirement.
-This causes the warning in kunmap_local_indexed():
-
-  WARNING: CPU: 0 PID: 604 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
-  addr \!= __fix_to_virt(FIX_KMAP_BEGIN + idx)
-
-Fix this by reversing the unmap order to respect LIFO ordering.
-
-This issue follows the same pattern as similar fixes:
-- commit eca6828403b8 ("crypto: skcipher - fix mismatch between mapping and unmapping order")
-- commit 8cf57c6df818 ("nilfs2: eliminate staggered calls to kunmap in nilfs_rename")
-
-Both of which addressed the same fundamental requirement that kmap_local
-operations must follow LIFO ordering.
-
-Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
-Co-developed-by: Claude claude-opus-4-20250514
-Signed-off-by: Sasha Levin <sashal@kernel.org>
-Acked-by: David Hildenbrand <david@redhat.com>
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
----
- mm/userfaultfd.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-index 8253978ee0fb..bf7a57ea71e0 100644
---- a/mm/userfaultfd.c
-+++ b/mm/userfaultfd.c
-@@ -1453,10 +1453,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
- 		folio_unlock(src_folio);
- 		folio_put(src_folio);
- 	}
--	if (dst_pte)
--		pte_unmap(dst_pte);
-+	/*
-+	 * Unmap in reverse order (LIFO) to maintain proper kmap_local
-+	 * index ordering when CONFIG_HIGHPTE is enabled. We mapped dst_pte
-+	 * first, then src_pte, so we must unmap src_pte first, then dst_pte.
-+	 */
- 	if (src_pte)
- 		pte_unmap(src_pte);
-+	if (dst_pte)
-+		pte_unmap(dst_pte);
- 	mmu_notifier_invalidate_range_end(&range);
- 	if (si)
- 		put_swap_device(si);
--- 
-2.39.5
-
+Q29tbWl0IDllMzY3NzVjMjJjNyAoIm1mZDoga2VtcGxkOiBSZW1vdmUgY3VzdG9tIERNSSBtYXRj
+aGluZyBjb2RlIikNCnJlbW92ZXMgdGhlIGFiaWxpdHkgdG8gbG9hZCB0aGUgZHJpdmVyIGlmIG5v
+IG1hdGNoaW5nIHN5c3RlbSBETUkgZGF0YQ0KaXMgZm91bmQuIEJlZm9yZSB0aGlzIGNvbW1pdCB0
+aGUgZHJpdmVyIGNvdWxkIGJlIGxvYWRlZCB1c2luZw0KYWx0ZXJuYXRpdmUgbWV0aG9kcyBzdWNo
+IGFzIEFDUEkgb3IgYGZvcmNlX2RldmljZV9pZGAgaW4gdGhlIGFic2VuY2UNCm9mIGEgbWF0Y2hp
+bmcgc3lzdGVtIERNSSBlbnRyeS4NCg0KUmVzdG9yZSB0aGlzIGFiaWxpdHkgd2hpbGUga2VlcGlu
+ZyB0aGUgcmVmYWN0b3JlZA0KYHBsYXRmb3JtX2RldmljZV9pbmZvYCB0YWJsZS4NCg0KU2lnbmVk
+LW9mZi1ieTogVGhvbWFzIEhlaWpsaWdlbiA8dGhvbWFzLmhlaWpsaWdlbkBzZWN1bmV0LmNvbT4N
+ClJldmlld2VkLWJ5OiBBbmR5IFNoZXZjaGVua28gPGFuZHJpeS5zaGV2Y2hlbmtvQGxpbnV4Lmlu
+dGVsLmNvbT4NCi0tLQ0KIGRyaXZlcnMvbWZkL2tlbXBsZC1jb3JlLmMgfCAzMiArKysrKysrKysr
+KysrKysrKystLS0tLS0tLS0tLS0tLQ0KIDEgZmlsZSBjaGFuZ2VkLCAxOCBpbnNlcnRpb25zKCsp
+LCAxNCBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWZkL2tlbXBsZC1jb3Jl
+LmMgYi9kcml2ZXJzL21mZC9rZW1wbGQtY29yZS5jDQppbmRleCBjNWJmYjY0NDBhOTMuLjc3OTgw
+YzdmYzMxZiAxMDA2NDQNCi0tLSBhL2RyaXZlcnMvbWZkL2tlbXBsZC1jb3JlLmMNCisrKyBiL2Ry
+aXZlcnMvbWZkL2tlbXBsZC1jb3JlLmMNCkBAIC03NzksMjIgKzc3OSwyNiBAQCBNT0RVTEVfREVW
+SUNFX1RBQkxFKGRtaSwga2VtcGxkX2RtaV90YWJsZSk7DQogc3RhdGljIGludCBfX2luaXQga2Vt
+cGxkX2luaXQodm9pZCkNCiB7DQogCWNvbnN0IHN0cnVjdCBkbWlfc3lzdGVtX2lkICppZDsNCi0J
+aW50IHJldCA9IC1FTk9ERVY7DQogDQotCWZvciAoaWQgPSBkbWlfZmlyc3RfbWF0Y2goa2VtcGxk
+X2RtaV90YWJsZSk7IGlkOyBpZCA9IGRtaV9maXJzdF9tYXRjaChpZCArIDEpKSB7DQotCQkvKiBD
+aGVjaywgaWYgdXNlciBhc2tlZCBmb3IgdGhlIGV4YWN0IGRldmljZSBJRCBtYXRjaCAqLw0KLQkJ
+aWYgKGZvcmNlX2RldmljZV9pZFswXSAmJiAhc3Ryc3RyKGlkLT5pZGVudCwgZm9yY2VfZGV2aWNl
+X2lkKSkNCi0JCQljb250aW51ZTsNCi0NCi0JCXJldCA9IGtlbXBsZF9jcmVhdGVfcGxhdGZvcm1f
+ZGV2aWNlKCZrZW1wbGRfcGxhdGZvcm1fZGF0YV9nZW5lcmljKTsNCi0JCWlmIChyZXQpDQotCQkJ
+Y29udGludWU7DQotDQotCQlicmVhazsNCisJLyoNCisJICogVGhpcyBjdXN0b20gRE1JIGl0ZXJh
+dGlvbiBhbGxvd3MgdGhlIGRyaXZlciB0byBiZSBpbml0aWFsaXplZCBpbiB0aHJlZSB3YXlzOg0K
+KwkgKiAtIFdoZW4gYSBmb3JjZWRfZGV2aWNlX2lkIHN0cmluZyBtYXRjaGVzIGFueSBpZGVudCBp
+biB0aGUga2VtcGxkX2RtaV90YWJsZSwNCisJICogICByZWdhcmRsZXNzIG9mIHdoZXRoZXIgdGhl
+IERNSSBkZXZpY2UgaXMgcHJlc2VudCBpbiB0aGUgc3lzdGVtIGRtaSB0YWJsZS4NCisJICogLSBX
+aGVuIGEgbWF0Y2hpbmcgZW50cnkgaXMgcHJlc2VudCBpbiB0aGUgRE1JIHN5c3RlbSB0YWJlLg0K
+KwkgKiAtIFRocm91Z2ggYWx0ZXJuYXRpdmUgbWVjaGFuaXNtcyBsaWtlIEFDUEkuDQorCSAqLw0K
+KwlpZiAoZm9yY2VfZGV2aWNlX2lkWzBdKSB7DQorCQlmb3IgKGlkID0ga2VtcGxkX2RtaV90YWJs
+ZTsgaWQtPm1hdGNoZXNbMF0uc2xvdCAhPSBETUlfTk9ORTsgaWQrKykNCisJCQlpZiAoc3Ryc3Ry
+KGlkLT5pZGVudCwgZm9yY2VfZGV2aWNlX2lkKSkNCisJCQkJaWYgKCFrZW1wbGRfY3JlYXRlX3Bs
+YXRmb3JtX2RldmljZSgma2VtcGxkX3BsYXRmb3JtX2RhdGFfZ2VuZXJpYykpDQorCQkJCQlicmVh
+azsNCisJCWlmIChpZC0+bWF0Y2hlc1swXS5zbG90ID09IERNSV9OT05FKQ0KKwkJCXJldHVybiAt
+RU5PREVWOw0KKwl9IGVsc2Ugew0KKwkJZm9yIChpZCA9IGRtaV9maXJzdF9tYXRjaChrZW1wbGRf
+ZG1pX3RhYmxlKTsgaWQ7IGlkID0gZG1pX2ZpcnN0X21hdGNoKGlkKzEpKQ0KKwkJCWlmIChrZW1w
+bGRfY3JlYXRlX3BsYXRmb3JtX2RldmljZSgma2VtcGxkX3BsYXRmb3JtX2RhdGFfZ2VuZXJpYykp
+DQorCQkJCWJyZWFrOw0KIAl9DQotCWlmIChyZXQpDQotCQlyZXR1cm4gcmV0Ow0KLQ0KIAlyZXR1
+cm4gcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCZrZW1wbGRfZHJpdmVyKTsNCiB9DQogDQotLSAN
+CjIuNTAuMA0KDQo=
 
