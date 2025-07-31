@@ -1,196 +1,134 @@
-Return-Path: <linux-kernel+bounces-751455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74056B169C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:49:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED56B169C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84CED188B9C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:49:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FCFC5636EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C10742A9D;
-	Thu, 31 Jul 2025 00:49:09 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A1B2CCC1;
+	Thu, 31 Jul 2025 00:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b="TLpF/+5I"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B58182B4;
-	Thu, 31 Jul 2025 00:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3860F10785
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 00:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753922948; cv=none; b=B6slSeSydOXKmtRata+ugF4P6XR2BaljpQQYqsXMBrCTzgblWUNB6UogrgqyhvXHGQOHB4T51EKOGDDcWL/EwE28O1fI1F+7vWGVy8IZBi3bs+WHpFmEHcVz2frLZFJwqau3veYotHad6LOF5ZuzqsbBpC93eQ7ZGbr0xzN0+uc=
+	t=1753922988; cv=none; b=dXtFJH0QzXW2UNYDITDQzyqylWwRPar7Eutkcgpxy8Pj8GFVZPF4vlQybqwqPMCNtbMK0jWyCI+oiojIRzbv7FZt5g8ossFoI91UxXvFDVpH91ek+1/N2jWZSL4NRZeMcHplxRnCb3k6dQPfe63Grs47P+JnvJqDB/WBk312wbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753922948; c=relaxed/simple;
-	bh=9g0VCYrUAF0fWXozlId8UzcBcu4y3H1iYuMW1FXK+Io=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FpxH3Ar6JjknyugDWcFaKLsakgMWRgMokuSGRQJCj25ea/XcHQMFDJVPDqWmG0Qr8Zv8xkTw6GeTvg8jOjVRQp/1/RB4lZTJ01gC9bkFVBR0QWSQj/E1O71xn+Jsc1YsJZNQ9q/OKDyjnIcf2LTsT6RdrjFpbkhawRBHAw85XcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bsr7N6PrHzYQvFS;
-	Thu, 31 Jul 2025 08:49:04 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8C8301A0B61;
-	Thu, 31 Jul 2025 08:49:03 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHERJ9vYpoOI0xCA--.22083S3;
-	Thu, 31 Jul 2025 08:49:03 +0800 (CST)
-Subject: Re: [PATCH v2 4/5] blk-mq-sched: refactor
- __blk_mq_do_dispatch_sched()
-To: Bart Van Assche <bvanassche@acm.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- dlemoal@kernel.org, hare@suse.de, jack@suse.cz, tj@kernel.org,
- josef@toxicpanda.com, axboe@kernel.dk
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
- <20250730082207.4031744-5-yukuai1@huaweicloud.com>
- <d5507645-6ad6-48a1-b429-c5bf7fda9523@acm.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <db66d308-5c3f-ee54-becf-682397b71b38@huaweicloud.com>
-Date: Thu, 31 Jul 2025 08:49:01 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753922988; c=relaxed/simple;
+	bh=vJDt2FYYLu2qEDdCbjucML8LgrSLjpCS+v7eTHCd5u4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=TzMtSYWms6T74q6XrROfd2yPOIeE6P3reKZNO2PJK9PynsXeLRsCi7qtNwx6Oi89r7C9+q6OdmmlbDDiTvt8Anc0NNCO0fpUuE+rmF09Gqk97tABUz2pIxeCftp4FcfXb7NwfvdVi6Qaf5XceYwC/WtxiIp9BM6pD1i2pj2MGJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com; spf=pass smtp.mailfrom=brighamcampbell.com; dkim=pass (2048-bit key) header.d=brighamcampbell.com header.i=@brighamcampbell.com header.b=TLpF/+5I; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=brighamcampbell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=brighamcampbell.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-23c8f179e1bso5591285ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 17:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brighamcampbell.com; s=google; t=1753922985; x=1754527785; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vJDt2FYYLu2qEDdCbjucML8LgrSLjpCS+v7eTHCd5u4=;
+        b=TLpF/+5IC1lRW1b8l6fLX6wkSbd09Twl0cVOjpU0CXczcY/b3V7xzQ/9C2qE89fqGm
+         0zg7vRhqdw0VL7pmOqVsy/7nw0myWrfCwGe1Vbf2+N+O26u2pmu7a81X53MYWONfpfza
+         uaR5uQgRTiIq/7hKjnm/CY5P/ls9SbAonrnXvvUHSaPBBmAuJEJnIkJGgjY4YePE7L3s
+         YwIququjRqOGG6nMV/7KApO4nGmxbigLysbT1xd+nGy0SclUAs/UjjjPqP9c2flW+0vI
+         8fWSQuHzY+ow3b6C37MWLKNZqIvH0HUDghR3OJ9pANgXaiAzpzxaqfx6ITRhoekv0Vuj
+         cavQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753922985; x=1754527785;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vJDt2FYYLu2qEDdCbjucML8LgrSLjpCS+v7eTHCd5u4=;
+        b=efh4ZHSB4Ub2qlX+iXKeOjJ0XBeuTMPPaCY8m0Z8+kB7RsXpFt77yW3ViJ3THno1Qd
+         N6Rr8kBGBC0rnEFhSPaOYTrvLque+H4JGGxUmMwFkm9MrAEO37ejxuQ1wFxLf+H/TDXR
+         UzrLa16nLPK8NjO8BTG4NKkNLd2Bv2zWWIBvtLc8aR2CKHKYGXqfq8i4Z5Y2tB7jnDSy
+         /LgHclwUca4FTeWlSw1ilJh29Jcp88tJt+/SS7etIQe+MspkG098wULkQ8BvfUGXkCQM
+         5frC5ad1KT+SM7kRj0cQVjZqlXzio5XqAnBIiYAculZB5PV883q7TsESIYXk31PYMd3u
+         MyNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvbUyDrosX+xF+nH+iTtrrkBQAJuy7yUd5F5SO1U0ulxb4b8ZCdvumCkM6hWYwaeQrVhHdW6Kbgq3mj9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKmy77S6uTrupF9iYPx/gTj/2mcL5EecXV9gN7TR8uHsGf9BI+
+	stSpLCfOOw6hpHaJ0xqx8mjwn0aZdq6oyz92UukUOkL0BMU//6KLHi0Iz1A4n4PuDw0=
+X-Gm-Gg: ASbGncsQ1W1ijDd1o9HV6vkEqgJuKvqC2JOmN9JZ8Hy22NKk1tG1sF/7O7zV+4S/2kv
+	OdAgcYD9K5Q7NCjbgjOF/M3q7UEoZ6MQCEuTJRkbYHbCfo3SMETwyrLXpxUjYFcjegr/iIeZbyn
+	AyB7y5C4zPuvaD+K7+muZzeCjoZwiOnHRFad/CF6AEyva3qYYmM8/785bptCaQznB2hrCkEtvzF
+	Ro0k0++IMO4nNtNVWtEKVwc3CcER1OBn9kwfM3wOMKNhOWrUJ4f/mZMaRe3b8cw7YFXO5DgqAOo
+	NfCh1ILeA3MGcIhiPkAjJAVfPXklC0XBzZLQvc4zrrNiaFTAJsspV84XtxqrLoqjNic8UxdQcKH
+	nlnFMqYC0qs0Hj35ZlNQ=
+X-Google-Smtp-Source: AGHT+IFRg4d14fwyDbWfm6s1XgJ9O3YqeFegbjebAyJ4PNp/hfmIOJ7UPSuIb8lsRamTPF40s9y5Jg==
+X-Received: by 2002:a17:903:238c:b0:240:150e:57ba with SMTP id d9443c01a7336-24096a72ffcmr57849285ad.3.1753922985361;
+        Wed, 30 Jul 2025 17:49:45 -0700 (PDT)
+Received: from localhost ([64.71.154.6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0e81dsm2897185ad.46.2025.07.30.17.49.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 17:49:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <d5507645-6ad6-48a1-b429-c5bf7fda9523@acm.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHERJ9vYpoOI0xCA--.22083S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw4UWF4xuw4kXryktFyfCrg_yoWrGr45pr
-	s5JFWUJrWDJFn5tF1UAr1UJFy3Ary7X3WDXr18WF1UJrsrZr10gr1UWFyq9F4UJr4kGFsr
-	Xr4UXr9xZF13JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 30 Jul 2025 18:49:42 -0600
+Message-Id: <DBPTT2WUK2CH.1V1KX11EJPIFB@brighamcampbell.com>
+From: "Brigham Campbell" <me@brighamcampbell.com>
+To: "Doug Anderson" <dianders@chromium.org>
+Cc: <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+ <linus.walleij@linaro.org>, <neil.armstrong@linaro.org>,
+ <jessica.zhang@oss.qualcomm.com>, <sam@ravnborg.org>,
+ <skhan@linuxfoundation.org>, <linux-kernel-mentees@lists.linux.dev>,
+ <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 2/3] drm: Add MIPI read_multi func and two write
+ macros
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250730061748.1227643-1-me@brighamcampbell.com>
+ <20250730061748.1227643-3-me@brighamcampbell.com>
+ <CAD=FV=WpbU-iuEDVRuMm87H48PKQ3pz5aBwTRyedguFQA3dvTQ@mail.gmail.com>
+In-Reply-To: <CAD=FV=WpbU-iuEDVRuMm87H48PKQ3pz5aBwTRyedguFQA3dvTQ@mail.gmail.com>
 
-Hi,
+On Wed Jul 30, 2025 at 9:56 AM MDT, Doug Anderson wrote:
+>> +/**
+>> + * mipi_dsi_dcs_write_var_seq_multi - transmit a DCS command with non-s=
+tatic
+>> + * payload
+>
+> I should have been explicit, but the above "non-static" should also be
+> "non-constant". ;-)
+>
+> I could probably fix that when applying, or you could send a v4. Up to yo=
+u.
 
-在 2025/07/31 2:32, Bart Van Assche 写道:
-> On 7/30/25 1:22 AM, Yu Kuai wrote:
->> Introduce struct sched_dispatch_ctx, and split the helper into
->> elevator_dispatch_one_request() and elevator_finish_dispatch(). Also
->> and comments about the non-error return value.
-> 
-> and -> add
-> 
->> +struct sched_dispatch_ctx {
->> +    struct blk_mq_hw_ctx *hctx;
->> +    struct elevator_queue *e;
->> +    struct request_queue *q;
-> 
-> 'e' is always equal to q->elevator so I'm not sure whether it's worth to
-> have the member 'e'?
-> 
->> +static bool elevator_can_dispatch(struct sched_dispatch_ctx *ctx)
->> +{
->> +    if (ctx->e->type->ops.has_work &&
->> +        !ctx->e->type->ops.has_work(ctx->hctx))
->> +        return false;
->> -        if (!list_empty_careful(&hctx->dispatch)) {
->> -            busy = true;
->> -            break;
->> -        }
->> +    if (!list_empty_careful(&ctx->hctx->dispatch)) {
->> +        ctx->busy = true;
->> +        return false;
->> +    }
->> -        budget_token = blk_mq_get_dispatch_budget(q);
->> -        if (budget_token < 0)
->> -            break;
->> +    return true;
->> +}
-> 
-> Shouldn't all function names in this file start with the blk_mq_ prefix?
-Ok
+Oops. This obviously needed to change as well, but I tunnel-visioned
+hard. I'll go ahead and fix it in v4.
 
-> 
-> Additionally, please rename elevator_can_dispatch() into
-> elevator_should_dispatch(). I think the latter name better reflects the
-> purpose of this function.
-Sounds good.
+Naturally, I wouldn't be at all opposed to you or any other maintainer
+making such a small change to one of my patches as it heads upstream,
+but I'd rather not ask you to remember to make that change after a long
+vacation and a busy merge window. There's no need for me to add even a
+little more cognitive load to your job than what's necessary.
 
-> 
->> +    if (sq_sched)
->> +        spin_lock_irq(&ctx->e->lock);
->> +    rq = ctx->e->type->ops.dispatch_request(ctx->hctx);
->> +    if (sq_sched)
->> +        spin_unlock_irq(&ctx->e->lock);
-> 
-> Same comment here as on patch 1/5: code like the above makes it
-> harder than necessary for static analyzers to verify this code.
-Ok
+> Speaking of applying this, I'll be on vacation next week, so I won't
+> be able to apply the patches until the week after. That will also give
+> anyone else on the list a chance to comment if they want...
 
-> 
->> +    if (!rq) {
->> +        blk_mq_put_dispatch_budget(ctx->q, budget_token);
->>           /*
->> -         * If we cannot get tag for the request, stop dequeueing
->> -         * requests from the IO scheduler. We are unlikely to be able
->> -         * to submit them anyway and it creates false impression for
->> -         * scheduling heuristics that the device can take more IO.
->> +         * We're releasing without dispatching. Holding the
->> +         * budget could have blocked any "hctx"s with the
->> +         * same queue and if we didn't dispatch then there's
->> +         * no guarantee anyone will kick the queue.  Kick it
->> +         * ourselves.
->>            */
-> 
-> Please keep the original comment. To me the new comment seems less clear
-> than the existing comment.
-Please note that I didn't change the comment here, above comment is for
-setting the run_queue. The original comment for blk_mq_get_driver_tag()
-is still there.
+Awesome! I'll plan to sit tight and act on whatever feedback I get on
+v4.
 
-> 
->> +static int __blk_mq_do_dispatch_sched(struct blk_mq_hw_ctx *hctx)
->> +{
->> +    unsigned int max_dispatch;
->> +    struct sched_dispatch_ctx ctx = {
->> +        .hctx    = hctx,
->> +        .q    = hctx->queue,
->> +        .e    = hctx->queue->elevator,
->> +    };
->> +
->> +    INIT_LIST_HEAD(&ctx.rq_list);
-> 
-> Please remove the INIT_LIST_HEAD() invocation and add the following in
-> the ctx declaration:
-> 
->      .rq_list = LIST_HEAD_INIT(ctx.rq_list),
-> 
-> This is a common pattern in kernel code. The following grep command
-> yields about 200 results:
-> 
-> $ git grep -nH '= LIST_HEAD_INIT.*\.'
-Ok
-> 
-> Otherwise this patch looks good to me.
-> 
-Thanks for the review!
-Kuai
+If you happen to be flying over northern Utah to get to your
+destination, look out the window. I'll wave as you go by.
 
-> Thanks,
-> 
-> Bart.
-> .
-> 
-
+Cheers,
+Brigham
 
