@@ -1,101 +1,138 @@
-Return-Path: <linux-kernel+bounces-751512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6856EB16A7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:37:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE966B16A7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:39:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C43651AA0B5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2659C56497F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFE21DA60D;
-	Thu, 31 Jul 2025 02:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ALoEcrxD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDF02367A9;
+	Thu, 31 Jul 2025 02:39:06 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7248F6C
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5A027450;
+	Thu, 31 Jul 2025 02:39:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753929445; cv=none; b=m8YzaSMCN4XvPZyqzUv/dsT0P6CJpr9Lv4RO/0M23S6+rg7NaHA+i7rHSLZRBFDQqDZagTm8ns6QPBSTkl5SDGy4FYk0lFQzPGrfE5dKoBI/6OB6xwN3xX/gzKXnhIHvU43vmsm9YiEyijhh4OW0+BgmnWUOZQluMEJ1vgBi8Fo=
+	t=1753929546; cv=none; b=qD4sPfgUIPubAfVwmrVZ2s6DhaGDzOEAJQ/Zpi6Sd2pLAiUAFYOgAswjzNw81yDJ0eukYd51RCusulrVdHWNYUYt8a89S5ceA0VEAWOq2j9O/ZYzf4PzSUwxNwpFQw7FVzv6a64MF2w3gl2H6kDIV0XInBlpviB15kO51DklDVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753929445; c=relaxed/simple;
-	bh=95Q2MQJpejoNqVfRLbKKN1BDQdWqt3GGKYHfRa8niks=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=cbr4O4fcvdemmchrgx/kYK/WsdqjTjs4kt3JUAvvZwTjFqrmGNW32DOERTR0huiAmZj3wW73OYJZPXTun/hASgPsI1T4yhIbmBU3dYp8qYXwAy2d+AtbqGpVp6KbEg4DkaVWn+Gn6jz9a1XBtZhW5EV71e6lHRBan71jn9Ozss0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ALoEcrxD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34767C4CEE7;
-	Thu, 31 Jul 2025 02:37:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753929444;
-	bh=95Q2MQJpejoNqVfRLbKKN1BDQdWqt3GGKYHfRa8niks=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=ALoEcrxD4fHEKfPUeLT+tI52XqhS2dGCVPl5Oq3VQweLKIhuOKMLI0w0e0l7l7HiD
-	 4L1Bg+ou/Xd6N86Ny+MZGuCKJdwu8cUE3qYeHraQXOFd4Qe88wqVhSzwHfMkkKyf/z
-	 +9SPnPqFeyxG8In/cVn1ZrnjqhZD4Jw30awjVxcJujCNE3cjvpjdZ6J7AElj1Oh7Yl
-	 Su86DA2oKWpy5RyFraVaRwbzD3a9vN/SbAxvDkDYGni+PMi8vL2SGn3oEHNZtt+Rgb
-	 oRIPvkcNRII4lgFFGhMHbiLr41xTI4X3ip+1XSCoRI/kq6EA8kbuxZ1gmJBYlG+efF
-	 lbHOEd2Fclg1w==
-Message-ID: <80904609-92b2-4e91-846d-d0c1c1afb513@kernel.org>
-Date: Thu, 31 Jul 2025 10:37:21 +0800
+	s=arc-20240116; t=1753929546; c=relaxed/simple;
+	bh=8V2vkQ4Paur/1HgNG/DwdwcZ95DNfzZ/MLpTsqpSrbY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=c5FYljHzrHKPQ8U1HkKnT0rlRKbkZz+NvQQAz0bbpurU7CYs5x8R6Y2wn6vpa1E1G8qWwHEq71n6tHRgLvcNA5XRE3XZ0rom17bhbENO9ipl28nhYao2rCnXHLmeM+6YOMa6Bf+q28QZGtXkw/R3YBEkt+efmvvfEFvRevcq3aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bstZF4tRdzKHLtS;
+	Thu, 31 Jul 2025 10:39:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 97BF51A1A77;
+	Thu, 31 Jul 2025 10:39:00 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCnIxRC14poXD46CA--.37766S3;
+	Thu, 31 Jul 2025 10:39:00 +0800 (CST)
+Subject: Re: [PATCH v2 1/2] lib/sbitmap: convert shallow_depth from one word
+ to the whole sbitmap
+To: yukuai@kernel.org, Jan Kara <jack@suse.cz>,
+ Yu Kuai <yukuai1@huaweicloud.com>
+Cc: axboe@kernel.dk, akpm@linux-foundation.org, yang.yang@vivo.com,
+ dlemoal@kernel.org, ming.lei@redhat.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, Omar Sandoval <osandov@fb.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20250729031906.3615228-1-yukuai1@huaweicloud.com>
+ <20250729031906.3615228-2-yukuai1@huaweicloud.com>
+ <ozjsdoiqa2uem65qqj4fjbrwm6toxlj5bzv7f5dg5xfiljv3zi@wcaamboo2r6h>
+ <8edcdef6-8749-aa45-e7d2-ada677645d76@huaweicloud.com>
+ <jr54uomodnzqyw4bu4hcdpllgafkhueyygiiempuudwjy3vir5@d7lv3jsxxqx2>
+ <223acbc1-60d4-4687-8eea-5306aa44ae24@kernel.org>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <c748a3ee-bf33-e13e-d507-984277acbb32@huaweicloud.com>
+Date: Thu, 31 Jul 2025 10:38:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] f2fs: add error checking in do_write_page()
-To: "mason.zhang" <masonzhang.linuxer@gmail.com>
-References: <20250730100633.26292-1-masonzhang.linuxer@gmail.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20250730100633.26292-1-masonzhang.linuxer@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <223acbc1-60d4-4687-8eea-5306aa44ae24@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnIxRC14poXD46CA--.37766S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF15Wr18AFyfJFW7Aw1rXrb_yoW8XF4Dpr
+	4UKw12k348tr1jkw1Yqa1DXF15uw13GwsxGF45Xw1xCrZ8Ja10qFyYqFy5ZF9rurW8Zayj
+	vFWfXry7Gw1UXaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On 7/30/25 18:06, mason.zhang wrote:
-> Otherwise, the filesystem may unaware of potential file corruption.
+Hi,
+
+在 2025/07/31 2:24, Yu Kuai 写道:
+> hi, Jan!
 > 
-> Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
-> ---
->  fs/f2fs/segment.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
+> 在 2025/7/30 21:03, Jan Kara 写道:
+>> I think having two APIs will be even more confusing than the current 
+>> state.
+>> But as I wrote I think you can have API to specify shallow depth in total
+>> size and in sbitmap_queue_get_shallow() do:
+>>
+>> shallow_per_word = (shallow_depth << sb->shift) / sb->depth;
+In order to consider the last word, I think we should use __map_depth()
+here.
+
+>> rounding_index = shallow_depth - shallow_per_word * sb->depth;
+And then it's not possible to calculate this rounding index easily. How
+about following, although the reminder handling is not perfect.
+
+  static unsigned int __map_depth_with_shallow(const struct sbitmap *sb,
+                                              int index,
+                                              unsigned int shallow_depth)
+  {
+         unsigned int word_depth = __map_depth(sb, index);
+         unsigned int shallow_word_depth = word_depth * shallow_depth;
+         unsigned reminder = do_div(shallow_word_depth, sb->depth);
+
+         if (reminder && !(index & 0x1))
+                 shallow_word_depth++;
+
+         return shallow_word_depth;
+  }
+
+
+>>
+>> and allow depth shallow_per_word + 1 if current index < rounding_index 
+>> and
+>> exactly shallow_per_word if current index >= rounding_index. This will
+>> still evenly distribute shallow depth among words and I don't think the
+>> additional overhead of the several arithmetic operations will be visible.
+> Yes, you're right, I did not get your idea before. Thanks for the 
+> explanation
+> and the suggestion :） Will follow this idea in the next version.
+
 > 
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index ae1223ef648f..10aaa32defca 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -3936,12 +3936,17 @@ static void do_write_page(struct f2fs_summary *sum, struct f2fs_io_info *fio)
->  	int seg_type = log_type_to_seg_type(type);
->  	bool keep_order = (f2fs_lfs_mode(fio->sbi) &&
->  				seg_type == CURSEG_COLD_DATA);
-> +	int err;
->  
->  	if (keep_order)
->  		f2fs_down_read(&fio->sbi->io_order_lock);
->  
-> -	if (f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
-> -			&fio->new_blkaddr, sum, type, fio)) {
-> +	err = f2fs_allocate_data_block(fio->sbi, fio->page, fio->old_blkaddr,
-> +			&fio->new_blkaddr, sum, type, fio);
-> +	if (unlikely(err)) {
-> +		f2fs_err_ratelimited(fio->sbi,
-> +			"%s Failed to allocate data block, ino:%u, type:%d, err:%d",
-> +			__func__, fio->ino, type, err);
-
-Can we print page->index, old_blkaddr, new_blkaddr as well?
-
-Thanks,
-
->  		if (fscrypt_inode_uses_fs_layer_crypto(folio->mapping->host))
->  			fscrypt_finalize_bounce_page(&fio->encrypted_page);
->  		folio_end_writeback(folio);
+> Thanks
+> 
+> .
+> 
 
 
