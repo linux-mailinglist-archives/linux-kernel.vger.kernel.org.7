@@ -1,218 +1,198 @@
-Return-Path: <linux-kernel+bounces-751461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0857B169D3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:05:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2601EB169D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD5653B631F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:05:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6491218C7476
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E01B42A9D;
-	Thu, 31 Jul 2025 01:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503C42E40E;
+	Thu, 31 Jul 2025 01:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ke6gF2Fh"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="bbUSthJZ"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55BD2EAFA;
-	Thu, 31 Jul 2025 01:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACBA8EAFA
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:06:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753923926; cv=none; b=qw6QHh+AKTjGeV3BZuG+1xpEw/UNuM/kfXZVX8urPR4VCaV5+mWY4UymInGI+TdfZvMhIYksc0W0kjPGLx4nDGdOgn4BK7rirM9ScDlVN7b+B3TjmJXhl++9X72F64sK0LSPdIxKJGaBUtlZ9+EYk3Fo1yFeUacw56DCjv8fL9Y=
+	t=1753923967; cv=none; b=FxEr3CcQ2U3YjWD6DtW5dhMgWIAnr9V7oJGkxM51C9XH1KuvBMDxLe5pnusGHyAYrNBTAh4+H4vN3/pKDpFHdfUag52tJZXqXFDyJlE28V511e9U2vzBiSOWUiPi55Qxb9QWxb1c1i8qGC0ZpZ/I9/TRXe8ag8pRQsV1KBbiwRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753923926; c=relaxed/simple;
-	bh=UvIwgOJRXIf1VXIpgoGWxB1WkI9XRDu5kbQjNYwPcYM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ChaeEm6FfPyTR3fgGx0I4MEcRpbygFVRk26RPnU3t7u+mk45/kj3Rsqv6SGI+qDFGB+8Pr54TNGqlk5fSUium3XkzE/cPXb/qw5MPPbYL25acOS0fDhIf44DvPKOe4L+6zeKDeAf5NpXQRIVJ5v+0j8EdPnEPTEJogrAh0w22XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ke6gF2Fh; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1753923700;
-	bh=EkYc18w0Q8BVRIbICnes4KWjn2XKjf+tuad2MYsKPSQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ke6gF2FhRT+GEwbxtFrfDHVFEjrpBqpfwDOSvQuv9vHl1xVifKdPArglRoTsOS1fU
-	 TsfIi9zC+5tO3mgVpvqE1UNi/iCRPxFAHAzXnYORBp5jIliUqa0paktG1jUUWuJmrc
-	 QsC14vzSvwVm11dpnvun+Zxpk0fL6rhu83B1Xp3H5AVnkkq37cXIke13dBY/JFJRus
-	 b6dk48EfXdr4sQ/UJSq/ZblyaLjOh52ttvnRqDe0qoM+XF0x2m9A/dGMJsVh+2A8h3
-	 ZZZbeU+AQcVZA9oNgrroO/DUG7G44Gp3oQqLSg0ouRPSeiD8s+zP3P1SolC3ZZox1d
-	 RpGUKjzTxCqxg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsrPw1RmCz4x4w;
-	Thu, 31 Jul 2025 11:01:40 +1000 (AEST)
-Date: Thu, 31 Jul 2025 11:05:21 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <kees@kernel.org>, Joel
- Granados <joel.granados@kernel.org>, Feng Tang
- <feng.tang@linux.alibaba.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the sysctl tree with the
- mm-nonmm-unstable tree
-Message-ID: <20250731110521.0cf9d6a2@canb.auug.org.au>
-In-Reply-To: <20250708190003.4eabc8ab@canb.auug.org.au>
-References: <20250708190003.4eabc8ab@canb.auug.org.au>
+	s=arc-20240116; t=1753923967; c=relaxed/simple;
+	bh=voUiPDD/VJwMqvklKyTXYB8JnNBbeLP5CuSUMC7uYPI=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=YdJkiAm/eTzpBH5lzUOGJcJUB3jGFM1gZq9mWyEMpEcZO6dmYn9HT8YRkHlJzVHk3rRvFghdypdqTHO8McCXt1be+HfFSxz6uw79f/JbJvpbYDHCJSu9WHiD1XHZm89YHAZ2oTE72mBUNn/BRIVo/2gvkrMjkgzjsSBsoX+vwos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=bbUSthJZ; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-31ee880f7d2so456912a91.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1753923961; x=1754528761; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fdyh6VXwkAfvxERUzBdY6UfC1oO6pBpGRvc13yyypPY=;
+        b=bbUSthJZ8YktetGm3exhbIN8zE14HHS6SWUOz69eHli7fbTnNS/dpnqE69kZ7auv3A
+         FtwN1RhyyQCWU3dcl8uw+FyOc+mGSJYtw05xv++8XS45m5Cj0Zg8LK/varsf9mLXpe2v
+         HfAwBMfDkv3PNRwczL1FuxeON/UrI39SI9XKRoNPwMzXWwMDYNp4Y36EWEjijyTn/5BX
+         ctWPnD47SnMINuXZ2HZYUnZI6byERxIirerCZpM9lR+E/1duJTf8nb0fjSDwaTFyopLl
+         CTn8FOFtfWNxeptsmTZJXEEli7RGhkyHPsOdr2lgUx53NGxPfE/o/lenqZmlI/NX11pa
+         fz1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753923961; x=1754528761;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fdyh6VXwkAfvxERUzBdY6UfC1oO6pBpGRvc13yyypPY=;
+        b=X7Di7BsZQxtGnuT8fgrhBvVJwUXL+ydyEMdnlS+HklJShvQxXgZBKOudGNV7g2U6XS
+         0MonMxjP90XuRYmcH2A5YRiQvYx2sbSM/k3gY4s/6If8WCnQtUJQ1CcJLcTz1rcUvFh8
+         MPnV0zQrBcZgby7l9b4A0tzsGJc9N1EUZsgAnla50Z1HyRdgFRZ/199XV0OtGNiT1aVa
+         dDsVJKUQFXOFGxBTdEweJzZaTKC5a2e8kIvuSvL3meLiZHq96iykzwGC468rysdar2X+
+         rAMJyndTTO213MSI1cV9z6B7UBEzszWTCzBESbVIZXVJrqkELYETD6XxHPkj5INxhEfn
+         ApSg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkYlihPAiQflV/DbCP3SX+5aVooRpwOJWz9iiSPpot8qDkuyfgs5Pic/ohC/BTF/LdRko8Si/Ahc0E4rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW2mGLDrZAQgmzlSKVMu9r+V4TItxdSkk4Mv8rrbSV/Uhv7GwD
+	qHRiGig1DOvgt0XTACvez0XyoaBM4dp/v+FKOFdYFjFcfYqyZQAFyDzrw5b/kKr5CZs=
+X-Gm-Gg: ASbGncsBcR3QCmVF+J9OxByJ5rKa7HMEgJ8CHh3hPUEwsnATZv2z2JvjWvjP58P/uwF
+	X8/I8wDb4XAiHVeEa8HXC+H8bvL3A7y/uFXxl0TgGL0O5zujTokLimMNBYczPij8O33ppgYCWlM
+	JJFHoPu7A+KCvgQRL3VrWZ3hN+cAZF7x4WtxYgsIKsUARhT2U37TzPXWoNi1l3B5FDpr3VIQbl8
+	/iJhkiW9j12+d7jVAf1SkUzP0MtTLShZmM2F9Tlwv8sF19enSYXEclCsHpKsGF6GsquzrKKXDX9
+	RLHH6NmDrSaO9YRvsRCkV0v24LHKpJnWjkEtVv0C8nLRy6B2g641KoireCKtX+aL88WISzGYRYF
+	Gr0nPbK4uhLgZzLzWOa+otp8/bFgbeCF6QLoyxlUqJiw74w==
+X-Google-Smtp-Source: AGHT+IFb66tbhTzdTWT9ySJpwp5cY+LGlbPQQrJtDC5ft56L8OAOgN+oAeGIQ0FHVWx/yxVsrp5u7w==
+X-Received: by 2002:a17:90b:388a:b0:313:fb08:4261 with SMTP id 98e67ed59e1d1-31f5de7b6c6mr6417950a91.32.1753923960683;
+        Wed, 30 Jul 2025 18:06:00 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-31f63f0cb39sm3076891a91.30.2025.07.30.18.05.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 18:05:59 -0700 (PDT)
+Date: Wed, 30 Jul 2025 18:05:59 -0700 (PDT)
+X-Google-Original-Date: Wed, 30 Jul 2025 18:02:07 PDT (-0700)
+Subject:     Re: [PATCH] riscv: Add sysctl to control discard of vstate during syscall
+In-Reply-To: <DBHTIDY0HRM0.2B8L1WG7IBCXM@ventanamicro.com>
+CC: fustini@kernel.org, Bjorn Topel <bjorn@rivosinc.com>,
+  Alexandre Ghiti <alex@ghiti.fr>, Paul Walmsley <paul.walmsley@sifive.com>, samuel.holland@sifive.com,
+  dfustini@tenstorrent.com, andybnac@gmail.com, Conor Dooley <conor.dooley@microchip.com>,
+  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, linux-riscv-bounces@lists.infradead.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: rkrcmar@ventanamicro.com
+Message-ID: <mhng-E49DDC7D-A330-4626-A122-4146AADDBB33@Palmers-Mini.rwc.dabbelt.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/TKiXJSJG5lz.5luU9IqRU+2";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/TKiXJSJG5lz.5luU9IqRU+2
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Tue, 8 Jul 2025 19:00:03 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
-rote:
+On Mon, 21 Jul 2025 07:54:25 PDT (-0700), rkrcmar@ventanamicro.com wrote:
+> 2025-07-21T14:35:38+02:00, Radim Krčmář <rkrcmar@ventanamicro.com>:
+>> Shouldn't the RISC-V Linux syscall ABI be defined somewhere?
 >
-> Today's linux-next merge of the sysctl tree got a conflict in:
->=20
->   kernel/panic.c
->=20
-> between commits:
->=20
->   f8dbd6138e05 ("panic: add 'panic_sys_info' sysctl to take human readabl=
-e string parameter")
->   3699d83ae18b ("panic: add note that panic_print sysctl interface is dep=
-recated")
->=20
-> from the mm-nonmm-unstable tree and commits:
->=20
->   48f1dc94d25e ("sysctl: Move tainted ctl_table into kernel/panic.c")
->   9aa4e27ef60c ("sysctl: Move sysctl_panic_on_stackoverflow to kernel/pan=
-ic.c")
->=20
-> from the sysctl tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
->=20
-> diff --cc kernel/panic.c
-> index df92b763f857,64e58835086d..000000000000
-> --- a/kernel/panic.c
-> +++ b/kernel/panic.c
-> @@@ -78,13 -84,50 +78,56 @@@ ATOMIC_NOTIFIER_HEAD(panic_notifier_lis
->   EXPORT_SYMBOL(panic_notifier_list);
->  =20
->   #ifdef CONFIG_SYSCTL
->  +static int sysctl_panic_print_handler(const struct ctl_table *table, in=
-t write,
->  +			   void *buffer, size_t *lenp, loff_t *ppos)
->  +{
->  +	pr_info_once("Kernel: 'panic_print' sysctl interface will be obsoleted=
- by both 'panic_sys_info' and 'panic_console_replay'\n");
->  +	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
->  +}
->  =20
-> + /*
-> +  * Taint values can only be increased
-> +  * This means we can safely use a temporary.
-> +  */
-> + static int proc_taint(const struct ctl_table *table, int write,
-> + 			       void *buffer, size_t *lenp, loff_t *ppos)
-> + {
-> + 	struct ctl_table t;
-> + 	unsigned long tmptaint =3D get_taint();
-> + 	int err;
-> +=20
-> + 	if (write && !capable(CAP_SYS_ADMIN))
-> + 		return -EPERM;
-> +=20
-> + 	t =3D *table;
-> + 	t.data =3D &tmptaint;
-> + 	err =3D proc_doulongvec_minmax(&t, write, buffer, lenp, ppos);
-> + 	if (err < 0)
-> + 		return err;
-> +=20
-> + 	if (write) {
-> + 		int i;
-> +=20
-> + 		/*
-> + 		 * If we are relying on panic_on_taint not producing
-> + 		 * false positives due to userspace input, bail out
-> + 		 * before setting the requested taint flags.
-> + 		 */
-> + 		if (panic_on_taint_nousertaint && (tmptaint & panic_on_taint))
-> + 			return -EINVAL;
-> +=20
-> + 		/*
-> + 		 * Poor man's atomic or. Not worth adding a primitive
-> + 		 * to everyone's atomic.h for this
-> + 		 */
-> + 		for (i =3D 0; i < TAINT_FLAGS_COUNT; i++)
-> + 			if ((1UL << i) & tmptaint)
-> + 				add_taint(i, LOCKDEP_STILL_OK);
-> + 	}
-> +=20
-> + 	return err;
-> + }
-> +=20
->   static const struct ctl_table kern_panic_table[] =3D {
->   #ifdef CONFIG_SMP
->   	{
-> @@@ -134,13 -183,16 +183,23 @@@
->   		.mode           =3D 0644,
->   		.proc_handler   =3D proc_douintvec,
->   	},
->  +	{
->  +		.procname	=3D "panic_sys_info",
->  +		.data		=3D &panic_print,
->  +		.maxlen         =3D sizeof(panic_print),
->  +		.mode		=3D 0644,
->  +		.proc_handler	=3D sysctl_sys_info_handler,
->  +	},
-> + #if (defined(CONFIG_X86_32) || defined(CONFIG_PARISC)) && \
-> + 	defined(CONFIG_DEBUG_STACKOVERFLOW)
-> + 	{
-> + 		.procname	=3D "panic_on_stackoverflow",
-> + 		.data		=3D &sysctl_panic_on_stackoverflow,
-> + 		.maxlen		=3D sizeof(int),
-> + 		.mode		=3D 0644,
-> + 		.proc_handler	=3D proc_dointvec,
-> + 	},
-> + #endif
->   };
->  =20
->   static __init int kernel_panic_sysctls_init(void)
+> To clarify this point.  My issue is with the following part in
+> Documentation/arch/riscv/vector.rst:
+>
+>>>  As indicated by version 1.0 of the V extension [1], vector registers are
+>>>  clobbered by system calls.
+>>>  [...]
+>>>  1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
+>
+> The ISA does not say that vector registers are clobbered by system
+> calls.  All the ISA says is:
+>
+>   "This Appendix is only a placeholder to help explain the conventions
+>    used in the code examples, and is not considered frozen or
+>    part of the ratification process.  The official RISC-V psABI document
+>    is being expanded to specify the vector calling conventions."
 
-This is now a conflict between the mm-nonmm-stable tree and Linus' tree.
+It also says
 
---=20
-Cheers,
-Stephen Rothwell
+    Executing a system call causes all caller-saved vector registers 
+    (v0-v31, vl, vtype) and vstart to become unspecied.
 
---Sig_/TKiXJSJG5lz.5luU9IqRU+2
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+in the ISA manual, a few sentences later in that page.  So that's what 
+we were trying to get at with the documentation pointer, but maybe it's 
+better to have something more explicit like
 
------BEGIN PGP SIGNATURE-----
+    diff --git a/Documentation/arch/riscv/vector.rst b/Documentation/arch/riscv/vector.rst
+    index 3987f5f76a9d..e8591660a7bb 100644
+    --- a/Documentation/arch/riscv/vector.rst
+    +++ b/Documentation/arch/riscv/vector.rst
+    @@ -134,7 +134,10 @@ processes in form of sysctl knob:
+     3.  Vector Register State Across System Calls
+     ---------------------------------------------
+    
+    -As indicated by version 1.0 of the V extension [1], vector registers are
+    -clobbered by system calls.
+    +Linux adopts the syscall ABI proposed  by version 1.0 of the V extension [1],
+    +where vector registers are clobbered by system calls.  Specifically
+    +
+    +    Executing a system call causes all caller-saved vector registers
+    +    (v0-v31, vl, vtype) and vstart to become unspecied.
+    
+     1: https://github.com/riscv/riscv-v-spec/blob/master/calling-convention.adoc
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiKwVEACgkQAVBC80lX
-0GzWzQf+ONt4uBsiN5b5SswIb19PXmoPfsUhw4hNnQ8SSLSSmZMM9oObS5xDP6Bm
-SSTn7O6Zi7N3cDZIQnKdKDFKJ6UhKaxMyRe6n7IAJnlqdbGmkFNbj1hePKdxZw/O
-rSnFOBk7CVTF9qy7k3/4gNfy0spKdAiFZTcBhC5f6qNRAN3qBg8BxwvOZAAymeS8
-ZO5Q3mTB2u/u5/Ue0vO6NXgWkL0UrYWeCnoixcpsImGhGg2pJNV0ErgwCnMzk08b
-8HAmz7kqPRDjM2fojhLr0ay253d6yAzvUeoDajeu/WyKyY1uEvf2hbI+q4LBInaB
-oqLcka8saK9cWpS2y7IN1BA8SNoEKw==
-=acao
------END PGP SIGNATURE-----
+> while the RISC-V psABI says:
+>
+>   "The calling convention for system calls does not fall within the
+>    scope of this document. Please refer to the documentation of the
+>    RISC-V execution environment interface (e.g OS kernel ABI, SBI)."
+>
+> We made a circular dependency, misinterpreted the ISA, and probably
+> implemented a suboptimal syscall ABI -- preserving vector registers
+> seems strictly better.
 
---Sig_/TKiXJSJG5lz.5luU9IqRU+2--
+We'd really need userspace to have an ABI that preserves vector 
+registers for it to be useful in the kernel.  As it stands there's 
+pretty much nothing that's going to have useful vector state over a 
+syscall, as they're almost always hidden behind some C function and 
+those clobber the vector state.  I have a patch out for GCC that enables 
+a system-wide vector ABI, but I don't have time to test/benchmark it so 
+it's kind of hard to justify.
+
+That said:
+
+My first guess here would be that trashing the V register 
+state is still faster on the machines that triggered this patch, it's 
+just that the way we're trashing it is slow.  We're doing some wacky 
+things in there (VILL, LMUL, clearing to -1), so it's not surprising 
+that some implementations are slow on these routines.
+
+This came up during the original patch and we decided to just go with 
+this way (which is recommended by the ISA) until someone could 
+demonstrate it's slow, so sounds like it's time to go revisit those.  
+
+So I'd start with something like
+
+    diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
+    index b61786d43c20..1fba33e62d2b 100644
+    --- a/arch/riscv/include/asm/vector.h
+    +++ b/arch/riscv/include/asm/vector.h
+    @@ -287,7 +287,6 @@ static inline void __riscv_v_vstate_discard(void)
+                    "vmv.v.i        v8, -1\n\t"
+                    "vmv.v.i        v16, -1\n\t"
+                    "vmv.v.i        v24, -1\n\t"
+    -               "vsetvl         %0, x0, %1\n\t"
+                    ".option pop\n\t"
+                    : "=&r" (vl) : "r" (vtype_inval));
+
+to try and see if we're tripping over bad implementation behavior, in 
+which case we can just hide this all in the kernel.  Then we can split 
+out these performance issues from other things like lazy save/restore 
+and a V-preserving uABI, as it stands this is all sort of getting mixed 
+up.
+
+>> How come we could have broken it with 9657e9b7d253?
+>
+> We changed the ABI once, so maybe we can change it back?
+
+We didn't change the ABI, the documentation always said "vector registers are
+clobbered by system calls".
 
