@@ -1,329 +1,158 @@
-Return-Path: <linux-kernel+bounces-751737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAC0B16CE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:47:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 336CDB16CE0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:47:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D9A561324
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:47:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 705411AA6F41
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:47:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D22E29E0FB;
-	Thu, 31 Jul 2025 07:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 400CD24676F;
+	Thu, 31 Jul 2025 07:47:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZILjyc2Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CV4KJm9O"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF5029DB61;
-	Thu, 31 Jul 2025 07:47:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D641DE2BC
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753948045; cv=none; b=aDmeB8+5BbaG55UI/nnWjvC+j8varaebbjlsckviPKSQaa48lfX50M3UEbEFnGRWR9hxrfaHTKZ9/EyiJOUXmV+TWzOKWeByfKrZauKnjPgUWC65zs0wtf4Ms++jKyzCLVKbitCnooQtOvtTTZb9+LTZiAzGqjXzzljmTAe5Tcc=
+	t=1753948039; cv=none; b=OEtveOe2HN6lLAFAHd2xEsBgWf0hfnOe1y8o5HYoGSqQnY4Lo01kBAo31wP2XQq0z9mwpvxpWynpR+cQKGmJwe1m2DIdTa4yzQXUmhKm3c06HEPHUOgTOkiRfkEqYsSObCt2pZvz7MREGvIudNTgUsYKE2wNBXFWGD6o67niCR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753948045; c=relaxed/simple;
-	bh=N4lFgM6enMi7egPgtoDq0LPj8fBAykO6vUSoTiVz3W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XlNsSJhD1NsrReM9ZrhECVHCukMuUZZSMgafp9Bs8q890iT4ScJkI+P8M5oHlalVUgRMpiuT1HY0nBLuP25cID1k3ji/puhVt+F+2cQe1ZB2uD8b8p0YuHlFkxn1cKEj0QHcQ6UeMD7XRtW4T7ETUIwKaUf92bdz64D0qHNNvQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZILjyc2Y; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753948044; x=1785484044;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=N4lFgM6enMi7egPgtoDq0LPj8fBAykO6vUSoTiVz3W4=;
-  b=ZILjyc2YYBuSbZCoWY6rO3msYXWxYE6j+PJtUhWznkjgpm8k8pQNRQzv
-   68T0czB9A5zd6lk7+yqP24A2iWQg7t0adqNRUOCNtk43S/buqLN8uGhId
-   oweatK/pg//lu88AXF5osXGobna0olDrNXNhbu9cWn8A4rS7e/kbArVc9
-   fxxTud5l5+d6rHr8QQC3ahOp1Owf0nVnp7I1lYplA1FyKlRpRy36kToET
-   bqB3GWh9cdlUOznn3PcrtFUT+6Xy4syBvezimBv3Zb5c98Xvkpt0DFs5a
-   pic+v1+/jJowL7ooRfif3NPFo2zQsSldSmqoMIpFZPnFbLaJ3XmLyqobQ
-   A==;
-X-CSE-ConnectionGUID: Ti3NgXgtRNiijX8T0h+Hjg==
-X-CSE-MsgGUID: uI30O8GfSY2dfiIhZJqwIw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="55467154"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="55467154"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 00:47:22 -0700
-X-CSE-ConnectionGUID: W6avIq26TRSoDeateIy+rA==
-X-CSE-MsgGUID: f7kTM5qYQVqW8c2vUKVuPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="163986194"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 31 Jul 2025 00:47:15 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhO0P-0003WW-1j;
-	Thu, 31 Jul 2025 07:47:13 +0000
-Date: Thu, 31 Jul 2025 15:47:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Yuzhuo Jing <yuzhuo@google.com>, Ian Rogers <irogers@google.com>,
-	Yuzhuo Jing <yzj@umich.edu>, Jonathan Corbet <corbet@lwn.net>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Zqiang <qiang.zhang@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Frank van der Linden <fvdl@google.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rcu@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>
-Subject: Re: [PATCH v1 1/4] rcuscale: Create debugfs file for writer durations
-Message-ID: <202507311504.ttQGhW04-lkp@intel.com>
-References: <20250730022347.71722-2-yuzhuo@google.com>
+	s=arc-20240116; t=1753948039; c=relaxed/simple;
+	bh=hDoP1W10jNqo9qA3kMnOqdZgkIrOXdnTsP7q7OohY3Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DoaAfa9hjdoILyNDSVHnG+pJVyN7fV3aeRv4VcuY3zCBPZQxo2+doq5sW//V3avLELgPSKuoFqQCBxropRsg+VTsOY4L42BSaf9ELRf6whMU+g74hDVRTntHbeXw2aa9jm+QgIBom/NTN3KIE7B6DE/+w03iO40awdarpqLprrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CV4KJm9O; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753948036;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=u4WTc+jWAbHGbFb5VbfFSzMl/4GvLeocQH3Zr49ewVE=;
+	b=CV4KJm9O4YIZnf2NyP8BqQ/bAQPMP2Oxs0DKw+2ujHVtoyvPHZl3GiXHEVZOipyO5tn/mm
+	pG8bjTUHniY9jbW0dY+Kjr4H8gmougS+CwOEfvDlnNaWd53hl36rg2Gop3nJQZ7ShYgw/R
+	LPWUcwBl87kKJ/uso1+fpAVtKBwhMTQ=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-683-awDHeyhBO1G4LansheHfKQ-1; Thu, 31 Jul 2025 03:47:14 -0400
+X-MC-Unique: awDHeyhBO1G4LansheHfKQ-1
+X-Mimecast-MFC-AGG-ID: awDHeyhBO1G4LansheHfKQ_1753948033
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7891afb31so392953f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 00:47:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753948033; x=1754552833;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u4WTc+jWAbHGbFb5VbfFSzMl/4GvLeocQH3Zr49ewVE=;
+        b=herMMpEqBy3CeFD8Fzc9ub3V1FPWPdA+GXoMh7ohZjhGVoPl5zx8z/PfEJyzEx9nJn
+         S8kUJHuQdeAktqDz0O+xOgHkSBTvEN/UMPUXe07g/6yfYMwVug6h+yPuyvjglibSDaso
+         qqoCCdItZqXnY+qscFGw8ZEnQYSHB1gKagApXWP35CYJza0/uM0hrwxTtK026my5UJun
+         KKo1jYIrvx2wc26SaAclPjVcjtxPvkxwuH63OvYwGAmMwHn7bX2DYJW0bEy3CJXshM/t
+         9lhOjMLB4DpCe9eAgT3QdL63PuB7B2uH8ay2Yjz/lzXS5XWz1t4Q+tBDt7R2quXCMypB
+         w1rg==
+X-Forwarded-Encrypted: i=1; AJvYcCVb7IjeJ7/LEMMi7qzyWQdMmiIZS6KGeZVEGvw0bqUJXpjwBu3gAdZrwOiW5Io1sxbqW8AQyBLdW514ePA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yywuajynaw7E9gXdKP48grsaRrOZPfRHqj/+o1Gi2afGVyfv6mc
+	VyINlWdfsWJbwacMopR0gzoALnQfKYwpSnTsqmzavMiNz+l+5iSfKgxhGiwm1zGvjoExcIPalUW
+	u+KdZYem8DCtRZMrlshWZy2zII+bKjXXxsDWs+Xtk8FjGLvOpP/v7aPg7oWrLR1N8/g==
+X-Gm-Gg: ASbGncvZgIyb2gp2v4BuqCI06vhauEbh5b6AmDZClw2Di9AHtiv7Nz+a71hHYHvBWVa
+	0oX8TwfjeK2aFcIGrvytwNobf8yaFkJT+8ldYN25FMnMJ62BmpNA/bM7aPSmWEJXPUfNI2FHd2u
+	hXxyq7zCxpKG/kbtIkHKHcBcGcn7ig1LekvNbYxc40/RBfmjpUw8DKDTL9Q92yy9HfrsqeHl2Zl
+	X6MlhwQFP4L4V417zFeg9d2qrcfmrYF++NchEsY5GFf4+v4X98ODTtXRF/MjlqE7vbmYajA7ng9
+	6mw85HWNvF2qhBkyXZOqVQ51lpuePCZTDlOIeomXXftIgMaPmg5vvQNfsi6zZuBTFQ==
+X-Received: by 2002:a05:6000:2210:b0:3b7:8a03:4b6f with SMTP id ffacd0b85a97d-3b794ffe6cemr4815808f8f.29.1753948033117;
+        Thu, 31 Jul 2025 00:47:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE0VQ95ntO8SN9nuejm/0tmsYLQ70eiLWLUlihGZM4cQBz/RjxhjCLEWGFz2CqM4EEiVZW7yg==
+X-Received: by 2002:a05:6000:2210:b0:3b7:8a03:4b6f with SMTP id ffacd0b85a97d-3b794ffe6cemr4815778f8f.29.1753948032655;
+        Thu, 31 Jul 2025 00:47:12 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453c75sm1476735f8f.41.2025.07.31.00.47.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 00:47:12 -0700 (PDT)
+Message-ID: <a78008bb05acae77f0572c3e5651cb2bceaaaf98.camel@redhat.com>
+Subject: Re: [PATCH 5/5] rv: Add rts monitor
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, 	linux-trace-kernel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann	 <dietmar.eggemann@arm.com>,
+ Ben Segall <bsegall@google.com>, Mel Gorman	 <mgorman@suse.de>, Valentin
+ Schneider <vschneid@redhat.com>
+Date: Thu, 31 Jul 2025 09:47:10 +0200
+In-Reply-To: <20834b8fcd4dfe75642cec2097e29f4c636a33fb.1753879295.git.namcao@linutronix.de>
+References: <cover.1753879295.git.namcao@linutronix.de>
+	 <20834b8fcd4dfe75642cec2097e29f4c636a33fb.1753879295.git.namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730022347.71722-2-yuzhuo@google.com>
 
-Hi Yuzhuo,
+On Wed, 2025-07-30 at 14:45 +0200, Nam Cao wrote:
+> Add "real-time scheduling" monitor, which validates that SCHED_RR and
+> SCHED_FIFO tasks are scheduled before tasks with normal and
+> extensible
+> scheduling policies
+>=20
 
-kernel test robot noticed the following build errors:
+Looks a very interesting monitor!
+A few questions:
 
-[auto build test ERROR on rcu/rcu/dev]
-[also build test ERROR on linus/master v6.16 next-20250731]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I assume this works with rt-throttle because it implies a dequeue,
+right?
+And you probably won't see that without explicit tracepoints..
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Yuzhuo-Jing/rcuscale-Create-debugfs-file-for-writer-durations/20250730-102613
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/rcu/linux.git rcu/dev
-patch link:    https://lore.kernel.org/r/20250730022347.71722-2-yuzhuo%40google.com
-patch subject: [PATCH v1 1/4] rcuscale: Create debugfs file for writer durations
-config: i386-randconfig-002-20250731 (https://download.01.org/0day-ci/archive/20250731/202507311504.ttQGhW04-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507311504.ttQGhW04-lkp@intel.com/reproduce)
+> +	/*
+> +	 * This may not be accurate, there may be enqueued RT tasks.
+> But
+> that's
+> +	 * okay, the worst we get is a false negative. It will be
+> accurate
+> as
+> +	 * soon as the CPU no longer has any queued RT task.
+> +	 */
+> +	ltl_atom_set(mon, LTL_RT_TASK_ENQUEUED, false);
+>=20
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507311504.ttQGhW04-lkp@intel.com/
+As far as I understand here the monitor would just miss RT tasks
+already running but would perfectly enforce the ones starting after
+initialisation, right?
 
-All errors (new ones prefixed by >>):
+> +RULE =3D always (RT_TASK_ENQUEUED imply SCHEDULE_RT_NEXT)
+> +
+> +SCHEDULE_RT_NEXT =3D (not SCHED_SWITCH) until (SCHED_SWITCH_RT or
+> EXCEPTIONS)
+> +
+> +EXCEPTIONS =3D SCHED_SWITCH_DL or not RT_TASK_ENQUEUED
 
-   In file included from <command-line>:
-   kernel/rcu/rcuscale.c: In function 'rcu_scale_writer':
->> kernel/rcu/rcuscale.c:630:44: error: 'test_complete' undeclared (first use in this function); did you mean 'complete'?
-     630 |                                 WRITE_ONCE(test_complete, true);
-         |                                            ^~~~~~~~~~~~~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:60:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      60 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   kernel/rcu/rcuscale.c:630:33: note: in expansion of macro 'WRITE_ONCE'
-     630 |                                 WRITE_ONCE(test_complete, true);
-         |                                 ^~~~~~~~~~
-   kernel/rcu/rcuscale.c:630:44: note: each undeclared identifier is reported only once for each function it appears in
-     630 |                                 WRITE_ONCE(test_complete, true);
-         |                                            ^~~~~~~~~~~~~
-   include/linux/compiler_types.h:548:23: note: in definition of macro '__compiletime_assert'
-     548 |                 if (!(condition))                                       \
-         |                       ^~~~~~~~~
-   include/linux/compiler_types.h:568:9: note: in expansion of macro '_compiletime_assert'
-     568 |         _compiletime_assert(condition, msg, __compiletime_assert_, __COUNTER__)
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:9: note: in expansion of macro 'compiletime_assert'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:36:28: note: in expansion of macro '__native_word'
-      36 |         compiletime_assert(__native_word(t) || sizeof(t) == sizeof(long long),  \
-         |                            ^~~~~~~~~~~~~
-   include/asm-generic/rwonce.h:60:9: note: in expansion of macro 'compiletime_assert_rwonce_type'
-      60 |         compiletime_assert_rwonce_type(x);                              \
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   kernel/rcu/rcuscale.c:630:33: note: in expansion of macro 'WRITE_ONCE'
-     630 |                                 WRITE_ONCE(test_complete, true);
-         |                                 ^~~~~~~~~~
-   kernel/rcu/rcuscale.c: In function 'writer_durations_start':
-   kernel/rcu/rcuscale.c:959:14: error: 'test_complete' undeclared (first use in this function); did you mean 'complete'?
-     959 |         if (!test_complete || writer_id < 0 || writer_id >= nrealwriters)
-         |              ^~~~~~~~~~~~~
-         |              complete
+This monitor allows non-RT tasks to run indefinitely before the switch,
+only when it happens, RT must run, right?
+Not sure you can do much about it though. (without falling into the
+need resched rabbithole I was trying to untangle)
 
+Thanks,
+Gabriele
 
-vim +630 kernel/rcu/rcuscale.c
-
-   534	
-   535	/*
-   536	 * RCU scale writer kthread.  Repeatedly does a grace period.
-   537	 */
-   538	static int
-   539	rcu_scale_writer(void *arg)
-   540	{
-   541		int i = 0;
-   542		int i_max;
-   543		unsigned long jdone;
-   544		long me = (long)arg;
-   545		bool selfreport = false;
-   546		bool started = false, done = false, alldone = false;
-   547		u64 t;
-   548		DEFINE_TORTURE_RANDOM(tr);
-   549		u64 *wdp;
-   550		u64 *wdpp = writer_durations[me];
-   551		struct writer_freelist *wflp = &writer_freelists[me];
-   552		struct writer_mblock *wmbp = NULL;
-   553	
-   554		VERBOSE_SCALEOUT_STRING("rcu_scale_writer task started");
-   555		WARN_ON(!wdpp);
-   556		set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
-   557		current->flags |= PF_NO_SETAFFINITY;
-   558		sched_set_fifo_low(current);
-   559	
-   560		if (holdoff)
-   561			schedule_timeout_idle(holdoff * HZ);
-   562	
-   563		/*
-   564		 * Wait until rcu_end_inkernel_boot() is called for normal GP tests
-   565		 * so that RCU is not always expedited for normal GP tests.
-   566		 * The system_state test is approximate, but works well in practice.
-   567		 */
-   568		while (!gp_exp && system_state != SYSTEM_RUNNING)
-   569			schedule_timeout_uninterruptible(1);
-   570	
-   571		t = ktime_get_mono_fast_ns();
-   572		if (atomic_inc_return(&n_rcu_scale_writer_started) >= nrealwriters) {
-   573			t_rcu_scale_writer_started = t;
-   574			if (gp_exp) {
-   575				b_rcu_gp_test_started =
-   576					cur_ops->exp_completed() / 2;
-   577			} else {
-   578				b_rcu_gp_test_started = cur_ops->get_gp_seq();
-   579			}
-   580		}
-   581	
-   582		jdone = jiffies + minruntime * HZ;
-   583		do {
-   584			bool gp_succeeded = false;
-   585	
-   586			if (writer_holdoff)
-   587				udelay(writer_holdoff);
-   588			if (writer_holdoff_jiffies)
-   589				schedule_timeout_idle(torture_random(&tr) % writer_holdoff_jiffies + 1);
-   590			wdp = &wdpp[i];
-   591			*wdp = ktime_get_mono_fast_ns();
-   592			if (gp_async && !WARN_ON_ONCE(!cur_ops->async)) {
-   593				if (!wmbp)
-   594					wmbp = rcu_scale_alloc(me);
-   595				if (wmbp && atomic_read(&wflp->ws_inflight) < gp_async_max) {
-   596					atomic_inc(&wflp->ws_inflight);
-   597					cur_ops->async(&wmbp->wmb_rh, rcu_scale_async_cb);
-   598					wmbp = NULL;
-   599					gp_succeeded = true;
-   600				} else if (!kthread_should_stop()) {
-   601					cur_ops->gp_barrier();
-   602				} else {
-   603					rcu_scale_free(wmbp); /* Because we are stopping. */
-   604					wmbp = NULL;
-   605				}
-   606			} else if (gp_exp) {
-   607				cur_ops->exp_sync();
-   608				gp_succeeded = true;
-   609			} else {
-   610				cur_ops->sync();
-   611				gp_succeeded = true;
-   612			}
-   613			t = ktime_get_mono_fast_ns();
-   614			*wdp = t - *wdp;
-   615			i_max = i;
-   616			writer_n_durations[me] = i_max + 1;
-   617			if (!started &&
-   618			    atomic_read(&n_rcu_scale_writer_started) >= nrealwriters)
-   619				started = true;
-   620			if (!done && i >= MIN_MEAS && time_after(jiffies, jdone)) {
-   621				done = true;
-   622				WRITE_ONCE(writer_done[me], true);
-   623				sched_set_normal(current, 0);
-   624				pr_alert("%s%s rcu_scale_writer %ld has %d measurements\n",
-   625					 scale_type, SCALE_FLAG, me, MIN_MEAS);
-   626				if (atomic_inc_return(&n_rcu_scale_writer_finished) >=
-   627				    nrealwriters) {
-   628					schedule_timeout_interruptible(10);
-   629					rcu_ftrace_dump(DUMP_ALL);
- > 630					WRITE_ONCE(test_complete, true);
-   631					SCALEOUT_STRING("Test complete");
-   632					t_rcu_scale_writer_finished = t;
-   633					if (gp_exp) {
-   634						b_rcu_gp_test_finished =
-   635							cur_ops->exp_completed() / 2;
-   636					} else {
-   637						b_rcu_gp_test_finished =
-   638							cur_ops->get_gp_seq();
-   639					}
-   640					if (shutdown) {
-   641						smp_mb(); /* Assign before wake. */
-   642						wake_up(&shutdown_wq);
-   643					}
-   644				}
-   645			}
-   646			if (done && !alldone &&
-   647			    atomic_read(&n_rcu_scale_writer_finished) >= nrealwriters)
-   648				alldone = true;
-   649			if (done && !alldone && time_after(jiffies, jdone + HZ * 60)) {
-   650				static atomic_t dumped;
-   651				int i;
-   652	
-   653				if (!atomic_xchg(&dumped, 1)) {
-   654					for (i = 0; i < nrealwriters; i++) {
-   655						if (writer_done[i])
-   656							continue;
-   657						pr_info("%s: Task %ld flags writer %d:\n", __func__, me, i);
-   658						sched_show_task(writer_tasks[i]);
-   659					}
-   660					if (cur_ops->stats)
-   661						cur_ops->stats();
-   662				}
-   663			}
-   664			if (!selfreport && time_after(jiffies, jdone + HZ * (70 + me))) {
-   665				pr_info("%s: Writer %ld self-report: started %d done %d/%d->%d i %d jdone %lu.\n",
-   666					__func__, me, started, done, writer_done[me], atomic_read(&n_rcu_scale_writer_finished), i, jiffies - jdone);
-   667				selfreport = true;
-   668			}
-   669			if (gp_succeeded && started && !alldone && i < MAX_MEAS - 1)
-   670				i++;
-   671			rcu_scale_wait_shutdown();
-   672		} while (!torture_must_stop());
-   673		if (gp_async && cur_ops->async) {
-   674			rcu_scale_free(wmbp);
-   675			cur_ops->gp_barrier();
-   676		}
-   677		torture_kthread_stopping("rcu_scale_writer");
-   678		return 0;
-   679	}
-   680	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
