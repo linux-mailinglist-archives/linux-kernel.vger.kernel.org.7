@@ -1,147 +1,158 @@
-Return-Path: <linux-kernel+bounces-752096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87435B17128
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:27:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72154B17118
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D08B3B17D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:26:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B249D58684A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DFE02C3258;
-	Thu, 31 Jul 2025 12:25:20 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A9F8F66
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6335D2C15A6;
+	Thu, 31 Jul 2025 12:23:56 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F73239562
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:23:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753964720; cv=none; b=qfMVPv4twQHTFchBgH/Zanqmj33dAtQGIHSp8JeYi8OlNXVgVMkUFiML0zv2c4XtYFfKYQ97hx9fGaFQgJmyWgHWwct08ac68MXcmTwbJuDECu8O+CWdcvF/E11odkA6AdbNE6QaIJA+IxRgUQG5tUTmDDhSQJurk5H3KmZvWpo=
+	t=1753964635; cv=none; b=X2j/oAvDl5YAyzHB8r9L/XEFEM18QLiA9NvAMeFVO7O4L+COUTnN6M4b2uhzByw1MY0NoNuvbVRzXAOLQ2eaFqLk/kMlDacDO35otXKUXLnpmVjx7wcUDcPrlBMrTmiN40yPsZzHqVenFN6SEnhkd8rWFMFeaArIHSx652BnIAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753964720; c=relaxed/simple;
-	bh=ne/wEhm2SsX3GajukXHa6Bh4mXJyWnemx4jMRZuVa00=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NYoHul6EzvmUFmGvo5nYQdHbr2gaDJ7TLPBthrde4PV9y8qxnZVSasQ2UVUk3KyN94RZY4vh1eNzZX1jTTskytNTk26pGzYExIPikDli0PLgzOR9+HgwzIByvtx7j8OJd2d+fSHTgKhB++Wi2qU05mgP8yDeirc6xniGvTV5m7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4bt7Td12hlzPtBZ;
-	Thu, 31 Jul 2025 20:20:53 +0800 (CST)
-Received: from dggpemf500012.china.huawei.com (unknown [7.185.36.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3400918007F;
-	Thu, 31 Jul 2025 20:25:07 +0800 (CST)
-Received: from huawei.com (10.175.124.71) by dggpemf500012.china.huawei.com
- (7.185.36.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 31 Jul
- 2025 20:25:06 +0800
-From: Zhang Qilong <zhangqilong3@huawei.com>
-To: <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <akpm@linux-foundation.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<lorenzo.stoakes@oracle.com>, <wangkefeng.wang@huawei.com>,
-	<sunnanyong@huawei.com>, Zhang Qilong <zhangqilong3@huawei.com>, David
- Hildenbrand <david@redhat.com>
-Subject: [PATCH v4] /dev/zero: try to align PMD_SIZE for private mapping
-Date: Thu, 31 Jul 2025 20:23:05 +0800
-Message-ID: <20250731122305.2669090-1-zhangqilong3@huawei.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753964635; c=relaxed/simple;
+	bh=0N4/UcZGlpKfMNYPPMVZGAeFZcrW4w1eiHheYBGfg98=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=TjSB6mJmwgYNzN7qIKocNkrelkEl4NPM/6V1g4zweEiQP1LVlt7GBOAHOkx2rnVOHXBd6dqKHobelUbtxy/KUD/N0NdZIep3IbXuckeN+D/zQGfY66tnsMz8FiFlwAwHZ+FCZmp/U8P6RX76m5W+VW9APvYxq+bJruWGQjM0RL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3BC441D13;
+	Thu, 31 Jul 2025 05:23:44 -0700 (PDT)
+Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 961AD3F673;
+	Thu, 31 Jul 2025 05:23:50 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH v6 00/10] coresight: Fix and improve clock usage
+Date: Thu, 31 Jul 2025 13:23:36 +0100
+Message-Id: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems500001.china.huawei.com (7.221.188.70) To
- dggpemf500012.china.huawei.com (7.185.36.8)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEhgi2gC/33NSw6CMBAG4KuYrq0ZSinFlfcwpsEylUahpjWNh
+ nB3BzZsjMls/nl8M7GE0WNix93EImaffBgpqP2O2b4db8h9R5kJEBUoUfM2DsYm4/zb2Eewd5M
+ lRyGvBRZONwIYXT4j0nxVzxfKvU+vED/rkyyX7n+PCjhYBIDGltrpE20dbBjYouVqE2ohfwsVC
+ ap0SuquRRDFJszz/AWhtjaA9gAAAA==
+X-Change-ID: 20250627-arm_cs_fix_clock_v4-e24b1e1f8920
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Anshuman Khandual <anshuman.khandual@arm.com>, 
+ Yeoreum Yun <yeoreum.yun@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Mark Brown <broonie@kernel.org>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753964630; l=4075;
+ i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
+ bh=0N4/UcZGlpKfMNYPPMVZGAeFZcrW4w1eiHheYBGfg98=;
+ b=oghc8hKq3Mr+SsKl2ihMcTvE/kZKPzQEzLvLxtivVo2yM7fhxeMEOwdi1W6tLN/Ac1b3Pqdh7
+ mpe08WruKR1B7huNMBDy0YRxXNm4oSDcQ+1syImrOdRoOuzAgAE9TaN
+X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
+ pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-Attempt to map aligned to huge page size for private mapping which
-could achieve performance gains, the mprot_tw4m in libMicro average
-execution time on arm64:
-  - Test case:        mprot_tw4m
-  - Before the patch:   22 us
-  - After the patch:    17 us
+This series fixes and improves clock usage in the Arm CoreSight drivers.
 
-If THP config is not set, we fall back to system page size mappings.
+Based on the DT binding documents, the trace clock (atclk) is defined in
+some CoreSight modules, but support is absent. In most cases, the issue
+is hidden because the atclk clock is shared by multiple CoreSight
+modules and the clock is enabled anyway by other drivers. The first
+three patches address this issue.
 
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Tested-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Zhang Qilong <zhangqilong3@huawei.com>
+The programming clock (pclk) management in CoreSight drivers does not
+use the devm_XXX() variant APIs, the drivers needs to manually disable
+and release clocks for errors and for normal module exit.  However, the
+drivers miss to disable clocks during module exit. The atclk may also
+not be disabled in CoreSight drivers during module exit. By using devm
+APIs, patches 04 and 05 fix clock disabling issues.
+
+Another issue is pclk might be enabled twice in init phase - once by
+AMBA bus driver, and again by CoreSight drivers. This is fixed in
+patch 06.
+
+Patches 07 to 10 refactor the clock related code. Patch 07 consolidates
+the clock initialization into a central place. Patch 08 polishes driver
+data allocation. Patch 09 makes the clock enabling sequence consistent.
+Patch 09 removes redundant condition checks and adds error handling in
+runtime PM.
+
+This series has been verified on Arm64 Juno platform, for both DT and
+ACPI modes.
+
+Also tested on Hikey960 for emulating static funnel and replicator
+without clock nodes. Mark kindly tested on imx8mp board.
+
 ---
-v4:
-- collect Tested-by and Reviewed-by
-- add comment for CONFIG_MMU #endif
+Changes in v6:
+- Changed to devm_clk_get_optional_enabled() for pclk, for fixing the
+  clock initialization failure reported by Mark.
+- Added James test tags as no change for ACPI.
+- Link to v5: https://lore.kernel.org/r/20250724-arm_cs_fix_clock_v4-v5-0-63f648dae021@arm.com
 
-v3:
-- collect Acked-by
-- factor out the #ifdef CONFIG_MMU in get_unmapped_area_zero(), per Lorenzo
-- explicitly use #ifdef CONFIG_TRANSPARENT_HUGEPAGE, per Lorenzo and Matthew
+Changes in v5:
+- Skip clock management for ACPI devices (Suzuki).
+- Link to v4: https://lore.kernel.org/r/20250627-arm_cs_fix_clock_v4-v4-0-0ce0009c38f8@arm.com
 
-v2:
-- add comments on code suggested by Lorenzo
-- use IS_ENABLED to check THP config
+Changes in v4:
+- Separated patch 07 into two patches, one is for clock consolidation
+  and another is for polishing driver data allocation (Anshuman).
 
- drivers/char/mem.c | 21 +++++++++++++++++----
- 1 file changed, 17 insertions(+), 4 deletions(-)
+Changes in v3:
+- Updated subjects for patches 04 and 05 (Anshuman).
+- Refined condition checking "if (dev_is_amba(dev))" in patch 07
+  (Anshuman).
 
-diff --git a/drivers/char/mem.c b/drivers/char/mem.c
-index 48839958b0b1..34b815901b20 100644
---- a/drivers/char/mem.c
-+++ b/drivers/char/mem.c
-@@ -510,31 +510,44 @@ static int mmap_zero(struct file *file, struct vm_area_struct *vma)
- 		return shmem_zero_setup(vma);
- 	vma_set_anonymous(vma);
- 	return 0;
- }
- 
-+#ifndef CONFIG_MMU
-+static unsigned long get_unmapped_area_zero(struct file *file,
-+				unsigned long addr, unsigned long len,
-+				unsigned long pgoff, unsigned long flags)
-+{
-+	return -ENOSYS;
-+}
-+#else
- static unsigned long get_unmapped_area_zero(struct file *file,
- 				unsigned long addr, unsigned long len,
- 				unsigned long pgoff, unsigned long flags)
- {
--#ifdef CONFIG_MMU
- 	if (flags & MAP_SHARED) {
- 		/*
- 		 * mmap_zero() will call shmem_zero_setup() to create a file,
- 		 * so use shmem's get_unmapped_area in case it can be huge;
- 		 * and pass NULL for file as in mmap.c's get_unmapped_area(),
- 		 * so as not to confuse shmem with our handle on "/dev/zero".
- 		 */
- 		return shmem_get_unmapped_area(NULL, addr, len, pgoff, flags);
- 	}
- 
--	/* Otherwise flags & MAP_PRIVATE: with no shmem object beneath it */
--	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
-+	/*
-+	 * Otherwise flags & MAP_PRIVATE: with no shmem object beneath it,
-+	 * attempt to map aligned to huge page size if possible, otherwise we
-+	 * fall back to system page size mappings.
-+	 */
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	return thp_get_unmapped_area(file, addr, len, pgoff, flags);
- #else
--	return -ENOSYS;
-+	return mm_get_unmapped_area(current->mm, file, addr, len, pgoff, flags);
- #endif
- }
-+#endif /* CONFIG_MMU */
- 
- static ssize_t write_full(struct file *file, const char __user *buf,
- 			  size_t count, loff_t *ppos)
- {
- 	return -ENOSPC;
+---
+Leo Yan (10):
+      coresight: tmc: Support atclk
+      coresight: catu: Support atclk
+      coresight: etm4x: Support atclk
+      coresight: Appropriately disable programming clocks
+      coresight: Appropriately disable trace bus clocks
+      coresight: Avoid enable programming clock duplicately
+      coresight: Consolidate clock enabling
+      coresight: Refactor driver data allocation
+      coresight: Make clock sequence consistent
+      coresight: Refactor runtime PM
+
+ drivers/hwtracing/coresight/coresight-catu.c       | 53 ++++++++---------
+ drivers/hwtracing/coresight/coresight-catu.h       |  1 +
+ drivers/hwtracing/coresight/coresight-core.c       | 48 ++++++++++++++++
+ drivers/hwtracing/coresight/coresight-cpu-debug.c  | 41 +++++---------
+ drivers/hwtracing/coresight/coresight-ctcu-core.c  | 24 +++-----
+ drivers/hwtracing/coresight/coresight-etb10.c      | 18 ++----
+ drivers/hwtracing/coresight/coresight-etm3x-core.c | 17 ++----
+ drivers/hwtracing/coresight/coresight-etm4x-core.c | 32 ++++++-----
+ drivers/hwtracing/coresight/coresight-etm4x.h      |  4 +-
+ drivers/hwtracing/coresight/coresight-funnel.c     | 66 ++++++++--------------
+ drivers/hwtracing/coresight/coresight-replicator.c | 63 ++++++++-------------
+ drivers/hwtracing/coresight/coresight-stm.c        | 34 +++++------
+ drivers/hwtracing/coresight/coresight-tmc-core.c   | 48 ++++++++--------
+ drivers/hwtracing/coresight/coresight-tmc.h        |  2 +
+ drivers/hwtracing/coresight/coresight-tpiu.c       | 36 +++++-------
+ include/linux/coresight.h                          | 31 +---------
+ 16 files changed, 228 insertions(+), 290 deletions(-)
+---
+base-commit: a80198ba650f50d266d7fc4a6c5262df9970f9f2
+change-id: 20250627-arm_cs_fix_clock_v4-e24b1e1f8920
+
+Best regards,
 -- 
-2.43.0
+Leo Yan <leo.yan@arm.com>
 
 
