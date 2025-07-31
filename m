@@ -1,147 +1,139 @@
-Return-Path: <linux-kernel+bounces-751493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 114C5B16A46
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:58:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F02E6B16A44
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4730E56227E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C191562098
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:57:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F09C1ACED9;
-	Thu, 31 Jul 2025 01:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oKPmhK4f"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1D1A01B9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3589D19E96A;
 	Thu, 31 Jul 2025 01:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OhtyFJpW"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1362019DF60
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753927065; cv=none; b=sYhvil16ogIlflfYfteSl99zJAEAIGpI1l8LjCuWP8lYEhr7gE7YEdk7a47xv7N80dvsqvO1Y54NdkRgPrWVY1sIDZ0Ao2jmak3wozLj5CoutjBqDkIzp2AGaBT965QC13o/klNC1SNtct4W6p+/zyWLWLDrUHYqRhKyJpWF63Y=
+	t=1753927062; cv=none; b=ZEFoqHZf3ZJTaPdMf+b4QhvBOKrwFJ14GvzXYe5LjwWnH7qppLBu16tQEy/PqPGwr0TDtlthAhA2Rdi16oRaYFtMYfdL8Fqfxtrj1tXPZks3P/LpKHShT++iWdHi6jyU33A4wyR5iCF/su+krLsJD1JCM3bCuUPKo25aP+vKgrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753927065; c=relaxed/simple;
-	bh=i05GmqM81zKS35wQtpZ3+0MsPEMFmnpy12k1LxdLkGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jscOFsmQ3eb2xBoUpQ4r9SVIrYrJjFqDlKAttkNKU+zHzeAc6BcL7CnmIOcaOsEM/r6AlOO4ZJhg+KbF08otZuDp1/en7UzLOJu5mucZ1XxfjcVHlNt6Ef8343ZgVc0SW+c4x0iRmonC5AGR+/xVyVIfMznmy8nLEnwHKH+Bbuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oKPmhK4f; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753927064; x=1785463064;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=i05GmqM81zKS35wQtpZ3+0MsPEMFmnpy12k1LxdLkGA=;
-  b=oKPmhK4f4gVYj5+jeWdG1qFn2/DfV87jEMtaiL464T+E3Kj3hDHNDhhH
-   x4HaKVDTZCdBWQ+FG3a0cg5BrCXcemOAR4jS5ijJ2PVCmgFbJFL7JWQpB
-   MvZ8sPCayVgjXF88kcGuRaTEMGQYcjCFU1eUF/HZ7VF6sUp9CqTIREFvj
-   6SMO9P8x3okbKAvnitdI+jAAIQm2RavX1gP+NbuiSWx5kP1id2IY8Y3Zw
-   ZsWdjefYcWtXCumhDorRO/GSRMK/dJ+RG39EId5jQved5xf0Mc/vTqc/k
-   J7fWqsiucQRJ1BwotdlWkhj8fpWwwIjWiqvCk6Smf3T/a+d0r8EgLjZ5O
-   g==;
-X-CSE-ConnectionGUID: tfPkaXQqT+i/D9goNOx3lQ==
-X-CSE-MsgGUID: XhVEiQ2zQWqACMdeUPydGw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="66510668"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="66510668"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 18:57:43 -0700
-X-CSE-ConnectionGUID: clCmJ5T7R6eZgGfcS5g4yg==
-X-CSE-MsgGUID: ALLHYw8VTNqYVqeJqdRkJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="163168924"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 30 Jul 2025 18:57:41 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhIY6-0003KS-2E;
-	Thu, 31 Jul 2025 01:57:38 +0000
-Date: Thu, 31 Jul 2025 09:57:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	gost.dev@samsung.com
-Cc: oe-kbuild-all@lists.linux.dev, a.manzanares@samsung.com,
-	vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	Neeraj Kumar <s.neeraj@samsung.com>
-Subject: Re: [PATCH V2 19/20] cxl/pmem_region: Prep patch to accommodate
- pmem_region attributes
-Message-ID: <202507310942.77glfQS3-lkp@intel.com>
-References: <20250730121209.303202-20-s.neeraj@samsung.com>
+	s=arc-20240116; t=1753927062; c=relaxed/simple;
+	bh=OlIrL6Hog/dZ62WUrRojLYWigmmMAaDAXzFUp5n1kYE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ncXznA5tk67cOQyMSG1g6Tar9hw+ljwqpjrMoLl8eXz2BdRlB10k75Wk36b8HSbcoxc9hkQ8hBwpo0Hl+w/EAQRA07JRCgaIu+tv+qdgzYdiYnCrTOswJQeR/SXJ9BguZHuRqtVqKlVtPpeFpeMoQ6C5FmwSHbcj7LPWtzxLzl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OhtyFJpW; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso5425386d6.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:57:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753927060; x=1754531860; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j7QTTqOawBYUYsYwroOVM1dcVFmIxvBI6lYBf0iVJfE=;
+        b=OhtyFJpWJlAP/3c1U/SA4qOZO6sSHicVla+/k5KSO47efk6rVArYwj2J9yHFMCoCSr
+         KgBheuacz60OYjXq2OF40RtGj5WPLdoiBryEISuwZ9ZOCMrLg7MsJ/Vd+JKsvbYIxNUX
+         1Cxi6p6/s1Y6eymiG06SwUGSomvcI3cSxs/VcEKwMxz3GXDE5OyfKao/VGw9/LDdbTYV
+         crJvs0TkVqAkUGxqvRkdu/YnRvX0V6ddR/de9HRfd0Ey5ibVQeG+CH+fj0gjD+mXHOqD
+         +IO6V2iaJ9vgXzBKzpGdSBpIbzAuRiYesrLNdrDszGty3BqrCPCCaCd+AxODVrqfChnU
+         sCXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753927060; x=1754531860;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j7QTTqOawBYUYsYwroOVM1dcVFmIxvBI6lYBf0iVJfE=;
+        b=gdDyjriVwgyYblBT26goF5kyVuGB0WzMf99inE40vTwim1pAEwW/r7hm/cdIGiD9Jx
+         ZtMGbAPtV3BD702vwBBDSt4KGmJ1bianskLPiDzIpyRzfkhC6EjPqaGh6AwtNm8CVJk4
+         FXYKT0/BOLK2fqlh7Qgk0HzOtNd0XHatCRyHGjOom9H8qTJqEu8kzDO5jaGnqo77ZRt5
+         +azZWDR6mA5ayaY7hjwmW07TWYo/um1fPsdXdKo9bgSy9i6QOJAOaU+b20kpJM6iuf88
+         D/ioud/KhOoPzGjeWEQh1Qx+tAnyCWGilA5pTHhwGRg+khM+tvW+mITpBS6Kl0RiUgUh
+         Hn+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVmBQ8NBgVcadrner2IEjPrtK4IqL4Janq5qDipbrTx3cSvxDtBOWQV9YYOnH5CVaYhNkmveZAQvgk9bz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA8LldnaRiTUZs7005d8KkPVrqx6LIUXKzJlCFacZ6xBIbH3dR
+	mQlbDLqPdegoOW8v1MZLawjke2LBsuGJEAfAJnsIxMyLoOVSP8a1IVCo
+X-Gm-Gg: ASbGnct4OBJGyST0BVQQQsZNwhwGPhVpit2oNUs5DCaPkzdDZ5Rx7r25N8crUt4VoU4
+	t3Itn3nt4dxkav93eUbdDTKspLQQuqqGs00jtF8Yg6sofGLG3oSTuioDUesUDf3tjpY9xhqRW2c
+	dsBjhHI4QP8AF6haSnErl/X3qNQpI/DDdlO5lVvjA5xMuTZuB4TZoLDqGGAlabt7nqzVfqGkgXA
+	YkBzGR1GsLV4qAispplkP8DGWLbJfcxHsHcbreaV/cG4N7iGwMl8m3LGWC2TqMhskUQWkUwDGpz
+	LcvGL3jQ/7DAA8qsRWvK4ZGX9fiQL2+6gXclKw333wt98TBw6gzZ7X2EF7kiUW2bs6K4DcdaYmR
+	1b5UBGIgYSjInsQSVP/iQwm6bGzVRadSFqhQgnEklcAGZ0fYa5TI=
+X-Google-Smtp-Source: AGHT+IGjMfT/cnEX10j+yG94taSRt9Nkr0BsX/6+hEgWyGGKuzSDLcKuHqrgx33PocGhmVFujg6VGg==
+X-Received: by 2002:ad4:5de7:0:b0:704:f7d8:edfe with SMTP id 6a1803df08f44-707674ba71cmr73600866d6.51.1753927059737;
+        Wed, 30 Jul 2025 18:57:39 -0700 (PDT)
+Received: from linux-kernel-dev-start.. ([159.203.26.228])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ce6ed90sm1335936d6.89.2025.07.30.18.57.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 18:57:39 -0700 (PDT)
+From: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+To: gregkh@linuxfoundation.org
+Cc: Markus.Elfring@web.de,
+	vivek.balachandhar@gmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH v4 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
+Date: Thu, 31 Jul 2025 01:57:23 +0000
+Message-Id: <20250731015723.507092-1-vivek.balachandhar@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250730080323.491138-1-vivek.balachandhar@gmail.com>
+References: <20250730080323.491138-1-vivek.balachandhar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730121209.303202-20-s.neeraj@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Neeraj,
+Remove redundant parentheses from a function in an if-condition.
 
-kernel test robot noticed the following build errors:
+These parentheses are not required and violate the kernel coding style.
+Dropping them simplifies the expression without changing its logic.
 
-[auto build test ERROR on f11a5f89910a7ae970fbce4fdc02d86a8ba8570f]
+Signed-off-by: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
+---
+v4:
+- Clarify the commit message regarding the removal of redundant parentheses in the
+  condition.
+- Use imperative mood as recommended.
+- Remove ambiguous phrase “around the function call”.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Neeraj-Kumar/nvdimm-label-Introduce-NDD_CXL_LABEL-flag-to-set-cxl-label-format/20250730-202209
-base:   f11a5f89910a7ae970fbce4fdc02d86a8ba8570f
-patch link:    https://lore.kernel.org/r/20250730121209.303202-20-s.neeraj%40samsung.com
-patch subject: [PATCH V2 19/20] cxl/pmem_region: Prep patch to accommodate pmem_region attributes
-config: i386-buildonly-randconfig-001-20250731 (https://download.01.org/0day-ci/archive/20250731/202507310942.77glfQS3-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507310942.77glfQS3-lkp@intel.com/reproduce)
+v3:
+- Improved explanation of why the parentheses were removed as per
+  Markus Elfring's suggestion.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507310942.77glfQS3-lkp@intel.com/
+v2:
+- Mentioned the wrong version number in the previous patch.
 
-All errors (new ones prefixed by >>):
+v1:
+- Fixed incorrect wording: the change was not around assignment
+- Addressed feedback from Markus Elfring.
+---
+ drivers/staging/rtl8723bs/core/rtw_mlme.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-   In file included from drivers/cxl/cxlmem.h:12,
-                    from drivers/cxl/pci.c:15:
->> drivers/cxl/cxl.h:921:20: error: redefinition of 'create_pmem_region'
-     921 | static inline void create_pmem_region(struct nvdimm *nvdimm)
-         |                    ^~~~~~~~~~~~~~~~~~
-   drivers/cxl/cxl.h:898:20: note: previous definition of 'create_pmem_region' with type 'void(struct nvdimm *)'
-     898 | static inline void create_pmem_region(struct nvdimm *nvdimm)
-         |                    ^~~~~~~~~~~~~~~~~~
-
-
-vim +/create_pmem_region +921 drivers/cxl/cxl.h
-
-   902	
-   903	#ifdef CONFIG_CXL_PMEM_REGION
-   904	bool is_cxl_pmem_region(struct device *dev);
-   905	struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
-   906	int devm_cxl_add_pmem_region(struct cxl_region *cxlr);
-   907	void create_pmem_region(struct nvdimm *nvdimm);
-   908	#else
-   909	static inline bool is_cxl_pmem_region(struct device *dev)
-   910	{
-   911		return false;
-   912	}
-   913	static inline struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev)
-   914	{
-   915		return NULL;
-   916	}
-   917	static inline int devm_cxl_add_pmem_region(struct cxl_region *cxlr)
-   918	{
-   919		return 0;
-   920	}
- > 921	static inline void create_pmem_region(struct nvdimm *nvdimm)
-   922	{
-   923	}
-   924	#endif
-   925	
-
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme.c b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+index b8d72d28178b..7552f7e4d14a 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme.c
+@@ -699,7 +699,7 @@ void rtw_surveydone_event_callback(struct adapter	*adapter, u8 *pbuf)
+ 	rtw_set_signal_stat_timer(&adapter->recvpriv);
+ 
+ 	if (pmlmepriv->to_join) {
+-		if ((check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true)) {
++		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) == true) {
+ 			if (check_fwstate(pmlmepriv, _FW_LINKED) == false) {
+ 				set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.39.5
+
 
