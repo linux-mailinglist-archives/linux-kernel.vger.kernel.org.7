@@ -1,204 +1,156 @@
-Return-Path: <linux-kernel+bounces-752442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CE13B17599
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:30:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6D72B17513
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:41:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 380B31657E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:30:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31686580E1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2821B87F2;
-	Thu, 31 Jul 2025 17:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD44523D284;
+	Thu, 31 Jul 2025 16:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="rohotRgQ"
-Received: from sonic.asd.mail.yahoo.com (sonic301-22.consmr.mail.gq1.yahoo.com [98.137.64.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SlRWJFm1"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399A9142E67
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:30:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.137.64.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E84BA33;
+	Thu, 31 Jul 2025 16:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753983045; cv=none; b=BvQ0BOYiplMgkJa5VDmitEdG1rdfHvj0kPXrpO5FumMz9ej+wtkRkxv6gtIBet8W1feHE1xDdOKLXu+VqQWULj7U6W2Bz36qH07QGo/ByDbYzRMUfwrauddsOs+PKiBoABCbxg07kv0VqaA2xX5tEqtGP5YsVAqINGvFYKpzHwI=
+	t=1753980077; cv=none; b=qBWez9CqFpeNNYcZZlFjhLiYWpJVbAB1JnlbatN1KqD6BzFjP04ReGCAM6kubouVcL8pGA2WxUCyYh98DxI1rcHzNWbL6TJvnl82Wvy3IzxilJ3bmt1XikTrfpII6f1EdmX3zT86w3ugbLDMA35l7j0Sg6VHSUsqoVQexPLCJQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753983045; c=relaxed/simple;
-	bh=iMnATmascgGeczYNNRglDU5ZHw3NEt2KENIz1qbn3Q8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pr+pwWh+CinbFkZ8z57dNjlnPd9Lb9sanRHfPQ09UxlP6Ro9hEo2ebnOFkReWHiiZ+Kgyqyjo5QfQfFMutmWbtx/b5pU6+WWmSO6NWMVWR+2jNLE0AlmzTa6K6/79QXZHn+n5Asb/LVYhKH6dIbkM60atiBn5+Mz1z29jCkMPCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com; spf=pass smtp.mailfrom=aol.com; dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b=rohotRgQ; arc=none smtp.client-ip=98.137.64.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=aol.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aol.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1753983043; bh=iMnATmascgGeczYNNRglDU5ZHw3NEt2KENIz1qbn3Q8=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=rohotRgQ9uHqDac4yYnMb0e6eZrqgK4bgypkgEYce6lFSJEBW6YEelcObqoUOJKSstpAwhwZts6HPWS317UiAPoJ2aaChQm71VMeYuW2dMVgDVW4gQTySiVDq28M5xTOMLBWFf2V8K3SzfcCN4XpeJvUQnauUxMEotMA2lYLUrpJOSmwYqdoHOm+1AZt3zWdEiLyGrWi4UXtmaiATTFrVaa9aLgB2X/7WdAuTOdQJzcTFhLc7tZgdUaZiuFACT7veA8BVWjlf67FRGxTkAmsIvRaXt8uKdQs6E4pA1KaGj6NHoN9MYxdMirGCAoMpRnXuMqjU2YNfpdfZ6eSXonUug==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1753983043; bh=OYSG3+OXV61S1zLYZ/eN9S3JbsSOt1KEeE/Gun/4mtS=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=ZcCO7/orVOOKKS/8OU2zzYiOKYI77S/3m6pGoBW8lF0i1ARwJbvzMeH+fn4Vro+K3kNmyF3evvXV65tjv3ccW+/6+rQq+Wk4nqgyJATdD20JijlW/AKKx+k912eHiEjuwGTmMx94xmkFCSxWIVOWErOCDrc1ZV4rCVh8A6u1ItKT/y0yHmKhmhxJ00ojhRhtvr55UJrwbZqItfIhnn737DUMT08A+ACq1lJuNdvl1e7I2GrR8X23gFGF5q56EhEnAVSawciFeFf6EZkr2RLnEXkGoBsk1ISHvAIzJdRGPhc4sKLDSkcTn0pMcn6aFVC8scg9DTf1dcizEJwL/JcMbA==
-X-YMail-OSG: kgh7gwoVM1mpHEWZyKNv4B1NlwMuyOdzYnZ_JwFzjWZSiMB17vhDp6mtFO8wFN6
- WMTJUHOy_ff.JHpBVkJZVde2bEHN13vcHLVUQKJdT0TUYMHpcK3Hb7MTZAd0z6KcHN5p5UGUM0zL
- Yjqn3yLr0hdjZde3DCJhvru8LcPWYuFHF6eQNaBkDTH2dKDMj_aiRgbNFDPFS2.NXBQluAnrmbcv
- Q.M2p5lo0WnR3XRCibcpQRCTfs3MFwVM0_oUZqXUfB8qx0oiwXcZx4oDCzSFTGrYBZIpR_vldHog
- t_jXoNXavHumW7hnzcqrT_85.4zi1w7VI4DeDJAd9fJB75z.1jpXDft6JyhTxsi.fqh6lAPD1GP6
- 2wLfbQDY9u2.pHosAlWe5HxHgdtCbs__SkPzIrtDjRJfPm5TUaQpRkWRjCMnijx5sdE4wzzx.jb8
- eWstmqXhK1lyxzBPGgkl9.CbhnnF_P12Tf0FuudSLgzPBzeNT7JFXV7rLY_qzYN7vAolo0CbCCns
- rJ3cU5cADUS9UzwWiGY3QlvIdCBNJjYaqgubFQnV3wX.7rTgox0odb2BawxtGt5MN4X2j9sRU77w
- MOg1eqVQgbdECT170xP.ADMqKuOF_pXOVCq2EJErTtiVKUvwzc28kfTkfkDO4su19QEQGrkbdTub
- .FMap440sxalHO0un_aBw7rA0rjorJC6bNvJF0V24QLMZnGUNXRz0or.UtbKeI5DwcGyLMoaL_q6
- Il0FoPboefWQOyqSUFH65wmndOinMcpU1J2oQFUv0_dl39sb8G0eWE5Kx6DrBUrbvQkTCcEMVfyf
- jFaKKvkfCUCCsDvmiRWyTEEgqqegErDtLx84VEK5yvtqCDRqaZtkdoM_KauT0h2psunAk7T_LAlH
- XLGEZIeFSprEEwSi4_i_vwjLAFwaCQFYdcI6AKRn92TrX.T1x5lSp8Q6UVtOnDEXkLE3UIdDecmM
- n.gscNeUocgs3jwJhnEx3dHU8tccUaQ9Jg_ytKz2s0ONXGGe0MHtnuToIi2Wh7x5meyldQZ.f1ol
- WYT17EP5fS4sZzXLz6Wb1lqPI9b31ZH2qKCj6UMU4mrA4KGYk5f6WBtj4ZO.C4bqpY8X22vFp852
- E4XCFpBNPCZXbYwNR5bWT3VbQwO5JiZ_JSczhg3OPQTnOOJLTgL0fp.slr1r5zQhN4a5SchIdOK4
- dSwKZu5Kldn8JPkJVLsR2EVgdB9iAEDn7yIQooXD3flAzszVGekAK_tqA8Myn.uUWEJdWrnKvVzv
- nPVrKehQum9StSfi28EToAn1t6yg_SKteeIt91weRB0lb4mWo_CkK3UG2R3r1rfckZe9MidwO1gR
- 0QbOwKqNXLEI9S8IQcwdlo8FnnrdYzGJ7j3jWfdYK.qXrLTiOOPgU5U.0zGK_qigBFyYeXNJOvl9
- yHkivzncKKPCCbZpa2I4Lw1vyiO89fa.wIEhB76TJhRUSyutA4XBzts.qa8WpdXOdiDODYhccEZQ
- q2E.3dXRzuS2IcY7CS8oyZdQMr8g4Aj87avPUPLAidieRTzVIYgRDMWv18BVotJhIP2dKSJaYSeP
- 6UZ5iyNZ.azRdUruMKKYXYK4lNKXqLWUQ2ZLB7WPrzW_KBiY1ZrvHUQNsIsxh9pY6GjHz21aoftY
- oNg6pS3.fUD0lClTGx9sT0bD4x81bz343nXw1XuwWvKxWXScr9xQv8_Q5.wLXzBXTHcL2h_Sfb3z
- fenT67eAfbZoMwBXcAUGSzsJWoCIfoOo9mJ4EgKWCADtLgeNycidHpThuKpMMpwh6Pc8t.zo5_Sq
- XLC5ZRA3Zax3rKLsnsrSUWK4CKDRDGt2hCm0IAjEiJbgX0EbTUvKXMhrZqdReWfppYbvr74oJXl0
- AB52SWm5l3Mh9gONy0UCShJb2g3cMgoJ8P2NBnVH5GR8Xe0T4dZ9aE714SejPkKm872YjkOMc9Yv
- GKFCFe_2ZK8ot.C_Qox6A7xYSBDiQPbK_QeBmSzxqtcpKAjGhIx6sOkZtSyuqLUOICvS8SAdz4cj
- Rp3nwnlAdd03ovvagD.XDVsJXm2lDQ8mOq.mSiHzUK5RbgxHUmbn6Dd5VY0kNiteJ6wIRY0aDvvl
- aDjMdmGElPFqtB713.rZjkEaRBgMbkcY58VriDskVAnzuIrZlxRvj3R0uH7iLN2cr6qXyBPIl8wz
- K3q6JCMHRPRVrc69QMJSTtuqtduxzcNUKKMCzZeSikDhKbLeLmwfVabuihqOYedY9s5RnhOW8wIl
- d_7kx6A--
-X-Sonic-MF: <rubenru09@aol.com>
-X-Sonic-ID: a36ced8b-cb9a-42a8-bef4-8460bcebc97d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Thu, 31 Jul 2025 17:30:43 +0000
-Received: by hermes--production-ir2-858bd4ff7b-9r9sx (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d00c2078b76ee3e43b9910e86da44ded;
-          Thu, 31 Jul 2025 16:40:07 +0000 (UTC)
-Message-ID: <8381a142d72f3cd0e92de4dac6acfc0241a87365.camel@aol.com>
-Subject: Re: [PATCH] powerpc/xmon: replace sizeof calculations with
- ARRAY_SIZE macro
-From: Ruben Wauters <rubenru09@aol.com>
-To: Christophe Leroy <christophe.leroy@csgroup.eu>, Madhavan Srinivasan	
- <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas
- Piggin	 <npiggin@gmail.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Date: Thu, 31 Jul 2025 17:40:05 +0100
-In-Reply-To: <62aa5231-ed31-43e2-84b7-d6b6ec86e78d@csgroup.eu>
-References: <20250719225225.2132-2-rubenru09.ref@aol.com>
-	 <20250719225225.2132-2-rubenru09@aol.com>
-	 <62aa5231-ed31-43e2-84b7-d6b6ec86e78d@csgroup.eu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1753980077; c=relaxed/simple;
+	bh=m5uXY5lnVsSAB6lYm8kAe3A3pZTyC1KyFFSC8PRe3sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=a/gNf5e4efAcf6FEOi9zLgw/dgxPIO9ntvJSJOyxeTg51L+KJJOhfWTXox80x0izSb8IF2D8wO/n9qn2law+FYxokmt3n7wzfXueBHuH9KyGsH4C37kwZLbxFSfS/hQzgOW8vPjN4I6o9oXokZ2QF0Px4wNNd33wcs4cds6aOXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SlRWJFm1; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56VGefKE2183353
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 31 Jul 2025 09:40:42 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56VGefKE2183353
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1753980043;
+	bh=llH8Ua0inzYLAWwMznknRFJtwCSgP28lmR1HuFj4h1E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SlRWJFm18Oh7B4IeeJWqEixiSNCQ8m0ItL44B/KO9AKWD3rDM1zsB/uDBf0/e8cyq
+	 AHaV+rhYSWMxFmPoaj628fAC8ZWrR9Qd8b/73K8ZO4S4M5vFEGAcldxKraTwH6ex3f
+	 RFbJMBmRzkfzBfbalmtGf+qxW1MIud0nrcI2MVA5AoKoBHhdWvD2z8BO2AD2AQM3xO
+	 wVJ02UImGXfLkAc4kJ1kR8QpmwDMJTTKFz0fNtG/Tuh4WHXMk7Y8rK79TJ3AwkFDI8
+	 hLlq8LUf0z/RuqRQ3MtTW2ABWYqFu2PahAi5HZdq4fpyUe763wpo8/z1gMFKq5x32h
+	 m8r3hnl4L/wdg==
+Message-ID: <7af6dcf5-fbcd-4173-a588-38cf6c536282@zytor.com>
+Date: Thu, 31 Jul 2025 09:40:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: WebService/1.1.24260 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/4] KVM: x86: Introduce MSR read/write emulation
+ helpers
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
+        seanjc@google.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
+References: <20250730174605.1614792-1-xin@zytor.com>
+ <20250730174605.1614792-3-xin@zytor.com> <aItGzjhpfzIbG+Op@intel.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <aItGzjhpfzIbG+Op@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-07-30 at 08:14 +0200, Christophe Leroy wrote:
->=20
->=20
-> Le 20/07/2025 =C3=A0 00:43, Ruben Wauters a =C3=A9crit=C2=A0:
-> > [Vous ne recevez pas souvent de courriers de rubenru09@aol.com.
-> > D=C3=A9couvrez pourquoi ceci est important =C3=A0
-> > https://aka.ms/LearnAboutSenderIdentification=C2=A0]
-> >=20
-> > The calculations for operand/opcode/macro numbers are done in an
-> > identical manner to the already existing ARRAY_SIZE macro in
-> > linux/array_size.h
-> >=20
-> > This patch replaces the sizeof calculations with the macro to make
-> > the
-> > code cleaner and more immediately obvious what it is doing.
-> >=20
-> > Signed-off-by: Ruben Wauters <rubenru09@aol.com>
-> > ---
-> > =C2=A0 arch/powerpc/xmon/ppc-opc.c | 16 ++++++----------
->=20
-> This file is mostly taken from binutils, refer commit 08d96e0b127e=20
-> ("powerpc/xmon: Apply binutils changes to upgrade disassembly").
->=20
-> I think your change should be done in binutils then backported to the
-> kernel. The more we diverge from binutils the worse it is
+On 7/31/2025 3:34 AM, Chao Gao wrote:
+>> -fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
+>> +static fastpath_t handle_set_msr_irqoff(struct kvm_vcpu *vcpu, u32 msr, int reg)
+> 
+> How about __handle_fastpath_set_msr_irqoff()? It's better to keep
+> "fastpath" in the function name to convey that this function is for
+> fastpath only.
 
-While this is somewhat reasonable, the header (linux/array_size.h) is
-linux specific, and is included through kernel.h
+This is now a static function with return type fastpath_t, so I guess
+it's okay to remove fastpath from its name (It looks that Sean prefers
+shorter function names if they contains enough information).
 
-I can probably see if binutils has a similar header, or if they would
-accept an equivalent header to make the file equivalent, but I'm unsure
-if they would
+But if the protocol is to have "fastpath" in all fast path function
+names, I can change it.
 
-Ruben
+> 
+>> {
+>> -	u32 msr = kvm_rcx_read(vcpu);
+>> 	u64 data;
+>> 	fastpath_t ret;
+>> 	bool handled;
+>> @@ -2174,11 +2190,19 @@ fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
+>>
+>> 	switch (msr) {
+>> 	case APIC_BASE_MSR + (APIC_ICR >> 4):
+>> -		data = kvm_read_edx_eax(vcpu);
+>> +		if (reg == VCPU_EXREG_EDX_EAX)
+>> +			data = kvm_read_edx_eax(vcpu);
+>> +		else
+>> +			data = kvm_register_read(vcpu, reg);
+> 
+> ...
+> 
+>> +
+>> 		handled = !handle_fastpath_set_x2apic_icr_irqoff(vcpu, data);
+>> 		break;
+>> 	case MSR_IA32_TSC_DEADLINE:
+>> -		data = kvm_read_edx_eax(vcpu);
+>> +		if (reg == VCPU_EXREG_EDX_EAX)
+>> +			data = kvm_read_edx_eax(vcpu);
+>> +		else
+>> +			data = kvm_register_read(vcpu, reg);
+>> +
+> 
+> Hoist this chunk out of the switch clause to avoid duplication.
 
-> Christophe
->=20
->=20
-> > =C2=A0 1 file changed, 6 insertions(+), 10 deletions(-)
-> >=20
-> > diff --git a/arch/powerpc/xmon/ppc-opc.c b/arch/powerpc/xmon/ppc-
-> > opc.c
-> > index 0774d711453e..de9b4236728c 100644
-> > --- a/arch/powerpc/xmon/ppc-opc.c
-> > +++ b/arch/powerpc/xmon/ppc-opc.c
-> > @@ -954,8 +954,7 @@ const struct powerpc_operand powerpc_operands[]
-> > =3D
-> > =C2=A0=C2=A0=C2=A0 { 0xff, 11, NULL, NULL, PPC_OPERAND_SIGNOPT },
-> > =C2=A0 };
-> >=20
-> > -const unsigned int num_powerpc_operands =3D (sizeof
-> > (powerpc_operands)
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 / sizeof
-> > (powerpc_operands[0]));
-> > +const unsigned int num_powerpc_operands =3D
-> > ARRAY_SIZE(powerpc_operands);
-> >=20
-> > =C2=A0 /* The functions used to insert and extract complicated
-> > operands.=C2=A0 */
-> >=20
-> > @@ -6968,9 +6967,8 @@ const struct powerpc_opcode powerpc_opcodes[]
-> > =3D {
-> > =C2=A0 {"fcfidu.",=C2=A0=C2=A0=C2=A0 XRC(63,974,1),=C2=A0 XRA_MASK, POW=
-ER7|PPCA2,
-> > PPCVLE,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {FRT, FRB}},
-> > =C2=A0 };
-> >=20
-> > -const int powerpc_num_opcodes =3D
-> > -=C2=A0 sizeof (powerpc_opcodes) / sizeof (powerpc_opcodes[0]);
-> > -
-> > +const int powerpc_num_opcodes =3D ARRAY_SIZE(powerpc_opcodes);
-> > +
-> > =C2=A0 /* The VLE opcode table.
-> >=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0 The format of this opcode table is the same as=
- the main opcode
-> > table.=C2=A0 */
-> > @@ -7207,9 +7205,8 @@ const struct powerpc_opcode vle_opcodes[] =3D {
-> > =C2=A0 {"se_bl",=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 BD8(58,0,1),=C2=A0=C2=A0=
-=C2=A0 BD8_MASK,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PPCVLE,
-> > 0,=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 {B8}},
-> > =C2=A0 };
-> >=20
-> > -const int vle_num_opcodes =3D
-> > -=C2=A0 sizeof (vle_opcodes) / sizeof (vle_opcodes[0]);
-> > -
-> > +const int vle_num_opcodes =3D ARRAY_SIZE(vle_opcodes);
-> > +
-> > =C2=A0 /* The macro table.=C2=A0 This is only used by the assembler.=C2=
-=A0 */
-> >=20
-> > =C2=A0 /* The expressions of the form (-x ! 31) & (x | 31) have the
-> > value 0
-> > @@ -7276,5 +7273,4 @@ const struct powerpc_macro powerpc_macros[] =3D
-> > {
-> > =C2=A0 {"e_clrlslwi",4, PPCVLE, "e_rlwinm %0,%1,%3,(%2)-(%3),31-(%3)"},
-> > =C2=A0 };
-> >=20
-> > -const int powerpc_num_macros =3D
-> > -=C2=A0 sizeof (powerpc_macros) / sizeof (powerpc_macros[0]);
-> > +const int powerpc_num_macros =3D ARRAY_SIZE(powerpc_macros);
-> > --
-> > 2.49.1
-> >=20
+I thought about it, but didn't do so because the original code doesn't 
+read the MSR data from registers when a MSR is not being handled in the
+fast path, which saves some cycles in most cases.
+
 
