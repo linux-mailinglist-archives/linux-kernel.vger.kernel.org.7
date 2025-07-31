@@ -1,212 +1,246 @@
-Return-Path: <linux-kernel+bounces-752132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08730B17199
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:56:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CFCB1719D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:56:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36D43173502
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:56:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7F11894A20
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BA42C08C4;
-	Thu, 31 Jul 2025 12:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4562BEC2C;
+	Thu, 31 Jul 2025 12:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Ds1Ud1Nt"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2064.outbound.protection.outlook.com [40.107.92.64])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aMOPoOOv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40F41E50E;
-	Thu, 31 Jul 2025 12:55:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.64
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753966552; cv=fail; b=Ays1Q1yBVtyur4JPmFzqiSbF8So5HQfa4OoCyQSj9qOiec/WOyg/Lv6XNbZKk3PLHB4uQdQ+aela/KsUvlhYwgHorx0I2Zs9oh+Vc8ouMmCq6rNx3aFxyvGta5ei1MIIwJ1D0gNKq/Pe3lTQ1rZzq+GOsshRXizWciLjtEe2IA8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753966552; c=relaxed/simple;
-	bh=W96AbO98u7bsCGZK7jzR4X/e6J0ATC7jaltcLowgJvE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CGKV6ERtf847AHlTSPNK9Ymr+0FS6rdH9yGe6xgW74yznhfTor30B5QnHw10I6yoRsFYBThJiDnLYI1uVqCOttXYPXzA5cpOffgfJa4rxjjbRpIv3CQ5tBaSi04aOTe7ACCJr1c7b09yB7UwH0fajvi+WGKx8Y5Cygo+At8Z1u8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Ds1Ud1Nt; arc=fail smtp.client-ip=40.107.92.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pog76DwrkyzQ3JD+RMwzdmAVNIV/O7+SNaSkurIOqrUSaBoi2YsU2G9xmIbFkdE6Mxkdty0D+Vnhwou7sr1qiv0wIJWxuN+8/mGYTQ/+KpiIZ9vhapzfmwxqb3DAiTQNjR01hPeVwB3c6HKEqophbht+UN/2DefiF3c5cCkIs04Xo5nlQ5QjvNL9+4kh6cxU0wBi/9rGmxbBc0Zd8FS2Mf+jdF22Ev6xVE2KjpKR/t+zXQ9ct95t7dXgvYYff7dQlXoHl1kiBakywFJ3IObal1gOqRBb0cEUjG7gxKuY6HuHjY00PuRgS7KMdiL6QqCHV4Rxrulfpoj3x1HHPSbGyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0Kh77+EGxofKsBzACGas8jZ9Nxmekz1SyutXkRXRlSQ=;
- b=Nbx6djfNYEE1Rukk0qA/FlybSkmRDz51cxirCpsV+Uqb6Ahc7g1jpvFPlWvQPPT0hyf6UNnGPftxH6UmMs1EWqQCrB4LIkzyEmDBdKA+F8OG7QqUz6GLaQYQO8G9cL8cJw5OM8W4hiL+tJ+qMFMCgSN2HmJX7yOc7yPUcQ7NHdl03VZ/T9s1xavVuKKSgW/pZyOjWhi836JUYf8pigZlklytqH/czVE+kATwzp7dto8klhCsQNLSu7Wa4raGH60AKuP9wGTk1fIJ0zfGaLBdeEtMPHHGj6APoZn7SSQXqbVVRUU7j8hQw4uhXaka/M6vejZre0uUZEAHN/+ZpzHHMg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=axentia.se smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0Kh77+EGxofKsBzACGas8jZ9Nxmekz1SyutXkRXRlSQ=;
- b=Ds1Ud1Nt+TPrq/0JWB63mQv0q+Gj+J53lssrrXNO3426pq6KwE36ZPV6XSVfqA++SOtvfSzKzHulhrk/ySMvCumO4i7NVzii5KbjhO4L0WbS4v+frzSOC2cVAq06Ph8RftCBX1bki9HDoZHDyph0Fxc0/j2ZmLXGdn6niNkh1R8=
-Received: from BL1PR13CA0327.namprd13.prod.outlook.com (2603:10b6:208:2c1::32)
- by MN2PR12MB4423.namprd12.prod.outlook.com (2603:10b6:208:24f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.26; Thu, 31 Jul
- 2025 12:55:48 +0000
-Received: from BL6PEPF00020E5F.namprd04.prod.outlook.com
- (2603:10b6:208:2c1:cafe::e0) by BL1PR13CA0327.outlook.office365.com
- (2603:10b6:208:2c1::32) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.11 via Frontend Transport; Thu,
- 31 Jul 2025 12:55:47 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
-Received: from SATLEXMB03.amd.com (165.204.84.17) by
- BL6PEPF00020E5F.mail.protection.outlook.com (10.167.249.20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8989.10 via Frontend Transport; Thu, 31 Jul 2025 12:55:47 +0000
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB03.amd.com
- (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 31 Jul
- 2025 07:55:45 -0500
-Received: from xhdradheys41.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Thu, 31 Jul 2025 07:55:42 -0500
-From: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
-To: <git@amd.com>, <michal.simek@amd.com>, <peda@axentia.se>,
-	<linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<wsa+renesas@sang-engineering.com>
-CC: <radhey.shyam.pandey@amd.com>, <srinivas.goud@amd.com>,
-	<shubhrajyoti.datta@amd.com>, <manion05gk@gmail.com>, Manikanta Guntupalli
-	<manikanta.guntupalli@amd.com>
-Subject: [PATCH V2] PCA9541: Use I2C adapter timeout value for arbitration timeout
-Date: Thu, 31 Jul 2025 18:25:35 +0530
-Message-ID: <20250731125535.22598-1-manikanta.guntupalli@amd.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43AF51E50E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753966592; cv=none; b=Pn8rqqeyw0fySC5Gw/4sNqboCRF3udIMQu+gtI7bgaQXafJLp3M1h5Fwj3U1vdJOcoqa9pi8OPqbadSXMYKoSEDzN1nuCnhmCPQkRC7hoQrkT9qYo0X0APpnZgglHGRwIDw/dkg0Vd1rC0eKJ4djmAn8t09PgRcKnLlzIIuKAA8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753966592; c=relaxed/simple;
+	bh=RXeuAfQ4YDNnIha6BAWXMlvxcMYbfJ3/NcxuDcOMFgM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FdvIk1b5cn4WVRP45VJe/Ea8y+89WpSuddV82LohUi3etitdEHgOEyopc2veEDA1lA2AQafxksZ+hL3aFt7On4fg9OzCQHHni9zfrYbWevwGSsG4+8VelEMDm/gIcp64XA0wT9OokpuSTs4J3fjGlYoyL4bSnFuuqc5QSfh720o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aMOPoOOv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753966590;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=UcOt3lDwl5HSBcRvfgdcxrISNXFWOJA2vLtr2p4qtLk=;
+	b=aMOPoOOvJ8OslHZw1KKiWKQCWJXBzRWBrgPV2NpxMEzbQs3ACGosCKvtlILXHssL2Qyk16
+	UTC8dCdWP12NhaZeZXaaR0Ya8qtntgyz+VptZfzuHXrnJ9OBq53RtpvoteWvzEJ4qYPL8Q
+	OD/S06SWV8/SCKsqZMXp7C2BFMgMGww=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-WRaCzg4rP7eTstVBR9fDqA-1; Thu, 31 Jul 2025 08:56:28 -0400
+X-MC-Unique: WRaCzg4rP7eTstVBR9fDqA-1
+X-Mimecast-MFC-AGG-ID: WRaCzg4rP7eTstVBR9fDqA_1753966588
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b7886bfc16so207354f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:56:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753966587; x=1754571387;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UcOt3lDwl5HSBcRvfgdcxrISNXFWOJA2vLtr2p4qtLk=;
+        b=wiQi/0F2F4RBN4a9fOXSz4PI45ueYE+gIy8PZ1srY3brhTWOdwZivz0kJKm1ms2fes
+         dtFMnLbZ55JunRtWwX7IIxuLGPPhwjUr/xVmWpY8Th/PV6O/P3otXvtoZgSExjLYEn5g
+         rpOw3rRK/Vux89bU6JW57DIOPn+MqArrJKakmSlEU7J+tRprR8KBB2iOYpOnXLBWWKIt
+         pabhCUKm2wn8SyH8NFFrOQElTZZiKCnfC8/haaxOjjSfwHe5xkCsUABt9CG6UXW1EUVP
+         CFdh3Xp8YMqLsb/dzG3l0dUcZH/izayaZyNFpRaREID/vY/MKLfv3AVZ/1uCJrrhqFzt
+         1NEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGwYqNBkLpgD4/dK4d+166V6cH81D37ESP+uDQfHIu87AeMTVLSom6XJvD3sOEvtPB4UtXRwyljMYeW8I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLxjDK2HVc5MlHB9mTfclFO+R41y1pxWCSBA5m6J38WfOXCfSt
+	/pHXBxWDU8Zma2HCMhar/QsU5RQgA8d1lYP7jn7HjG4aXuZuTjF/6k9hhFTxmi69lS6rPCfN2P6
+	2i4sC2FynTGXhbqYCU+yJ/j36qczrIaskwyMqjGUB9nF9S9eIQEcQBwVegduEm4N55w==
+X-Gm-Gg: ASbGncvr5qmlthU0krrGaTr248VDgl3FxEWTZKq+D9e6fthDl8072nK2GiNrdMZPlQH
+	fYFNbU21HEjUYpsDAA+EEquvoktGIdJiJr+ME/JjY/geHnjN97B0W225H+d/FcjuLuguszXjZ3R
+	KdG37RvwZ7ycHRub5xx8+vi1Ciu6Q0Lgslv9LZ3mCD7UnACkRNhXMZ9Q+G2fbLa3qY7bpz6xKFp
+	T8wIcL0Od1xCcb+jdyamskHvrXYdBtG+xVuUt1vD9pU+H/IjNmxAKfCDew7og3I/2WiRkW4k0Tv
+	5KUx0vJS9HtukVekjZPUI2TchPCWBoL2OEy1FgGMjC3OdYur9yrZVPJDT9vA2SxF8Y4hTuRJPJI
+	n9u4W8NW33zIZ/Dxnu0+3ZC/vtqBJGZS9H9RZbN6IprTW9sLpwJ4CsCiojwy1ixui2lM=
+X-Received: by 2002:a05:6000:2911:b0:3b7:9917:8b57 with SMTP id ffacd0b85a97d-3b799178f06mr4399056f8f.56.1753966587592;
+        Thu, 31 Jul 2025 05:56:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGEUGKyzKSROBWxRnVn35DU5KVo0FuypEf8UC38ej6rUCj170PDhpYsaBjudCBG7WOmh6rwMQ==
+X-Received: by 2002:a05:6000:2911:b0:3b7:9917:8b57 with SMTP id ffacd0b85a97d-3b799178f06mr4399028f8f.56.1753966587144;
+        Thu, 31 Jul 2025 05:56:27 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f44:3700:be07:9a67:67f7:24e6? (p200300d82f443700be079a6767f724e6.dip0.t-ipconnect.de. [2003:d8:2f44:3700:be07:9a67:67f7:24e6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a2f03sm2278296f8f.72.2025.07.31.05.56.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 05:56:26 -0700 (PDT)
+Message-ID: <214e78a0-7774-4b1e-8d85-9a66d2384744@redhat.com>
+Date: Thu, 31 Jul 2025 14:56:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-Received-SPF: None (SATLEXMB03.amd.com: manikanta.guntupalli@amd.com does not
- designate permitted sender hosts)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF00020E5F:EE_|MN2PR12MB4423:EE_
-X-MS-Office365-Filtering-Correlation-Id: a69812bf-022b-43b0-122a-08ddd03191f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?btombfaDMbbBlhAuocIK2O+1oEODn276HZgE2XXaqphHlRdXCjNRypcSqXCd?=
- =?us-ascii?Q?WDQ5bDzNMUCElcQ4SHHgzPC+6ZY1HvuRSMDsq3KkZYRDete1krMJNb/4LPoF?=
- =?us-ascii?Q?RGSqaj9tIZ1kVp54WwopMNilY4tfQqDk243LBuGI3CDXuxkB2i75GDepvo0k?=
- =?us-ascii?Q?UtnxIZ14/xqGRq0Qr17asmV5T129N18q5mWSoOb94Ih0cKXzt7a/SeNTavty?=
- =?us-ascii?Q?MU+AnQTZlPpFLB1iOzZMp3gCBobmA4tMBgPRXLduOr1k0PWhm8Yu+/cf/rkp?=
- =?us-ascii?Q?Npku396BchzesR5jgKbhHiWIPJS+mOJn7L4VoEamw7DzPf1vEn5srOWm5+jA?=
- =?us-ascii?Q?/HMtcbZ4HqKC0KFYoaoubw3YfcewFsi9PieoKsNN0P6+6sq2IvI4e39TLGDM?=
- =?us-ascii?Q?wIlH2p9cGWI+Pdi0Pn6ALuYvay5c4CtM4yoxTavxou+6ts1QDhfcvWLG4KBY?=
- =?us-ascii?Q?+jkKquEITchcfayiA4MhZEt9BqKu0z5UJV1Mq1E6NgJN2pP/9BZAEYfR8Qw1?=
- =?us-ascii?Q?DK7WYY1w7v5CdG5MdGty7ZPEc19jVuTYEDuDUklVz3n59OuV57KR1bG0UKKL?=
- =?us-ascii?Q?B9sQp6AzOnj8aEmBoIpM77ENRy0cKmfwuKRFcJ1SWvv3X3AXORKcr3Jyxt7A?=
- =?us-ascii?Q?tM/PfTvJtksnjJXixyKKiS8rGuLfynqdu6x1XQz4U8Nlo9+8o8u5fhDrstoI?=
- =?us-ascii?Q?QzIWVya8uKRLZqoM8Q5s8O8LAOGYZ9n8eR0izFnzW6uP0VIzRcRCsOQWMPx3?=
- =?us-ascii?Q?GDCSA4WDekjU415aQoBy1vd0FhnmOwcNCX15icy6CgSkrdKGduPL/jP16sZW?=
- =?us-ascii?Q?xrInspXBauqatqgbFcfYMWV+jaX81NtHWqmwvbIJGpWeTdOMDhJJ2wphcTJx?=
- =?us-ascii?Q?B/JHzfsn7gRhwW0Twj27JbxxA+5vM7S0RPGML5lTCXbArKrCyPF7XY4kvvgR?=
- =?us-ascii?Q?OmYWqWan7nQ4uAr8WRQDQ12z9743CRpYYl0dt+YVjZB9a175QV+gHM9VgEoz?=
- =?us-ascii?Q?bOhyS4ArUi6RTndq1lulQX+31K/5oTqYNBHHuhhwvsNZsP6cT8V9Z/vMOJYp?=
- =?us-ascii?Q?KiezboD5tYHeE72nuJYFVmXSwfjrqiU2qsNQxK4iKcu//r35FbIviB8YcR6m?=
- =?us-ascii?Q?s/KGfqG2WmD1lMNsyu6ukEkcNUU8g723GhJKH5vnvOeCGVoy/Ck7DP/IcJR2?=
- =?us-ascii?Q?ArI8l0v1FeZjSNca/yIAIn0r4eWarNd5zuylKeD6rZPhGtXnCcEoc6hv7kwq?=
- =?us-ascii?Q?H738oa8IglLnz+O+O7nLvCXV0aPT6Vrz5cgNw1x1Hohes0rfAqAgVGZrnQcx?=
- =?us-ascii?Q?JLZqzx8WLSyjq5qiRejZTzeGrkHaA7yNALJyx+zj0zqcsMksLAPutEPmcQ4S?=
- =?us-ascii?Q?AciEBCmYh+2fET2ezgt/FviPS/j6/IJRv3kh5I8b3dK7qwmO5WcpTcC2Wb9I?=
- =?us-ascii?Q?5AA2M9sPcZkP2WEF0KdBsvfTKbIDRQQHV8sjHHIoSCJsX3/0FJyaZrmsbeR8?=
- =?us-ascii?Q?8IkzpsiFTaNpAMJXUJpZdPrTaG3qPI9f8FQmqYbraIaR6FP3Z5bs8Jmrvw?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 12:55:47.6846
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a69812bf-022b-43b0-122a-08ddd03191f6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF00020E5F.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4423
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
+ entries
+To: Sasha Levin <sashal@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, peterx@redhat.com,
+ aarcange@redhat.com, surenb@google.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20250630031958.1225651-1-sashal@kernel.org>
+ <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
+ <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com> <aG06QBVeBJgluSqP@lappy>
+ <a8f863b1-ea06-4396-b4da-4dca41e3d9a5@redhat.com> <aItjffoR7molh3QF@lappy>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <aItjffoR7molh3QF@lappy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Remove existing arbitration timeout macros and use I2C adapter timeout
-value for arbitration timeout and forceful bus ownership.
+On 31.07.25 14:37, Sasha Levin wrote:
+> On Tue, Jul 08, 2025 at 05:42:16PM +0200, David Hildenbrand wrote:
+>> On 08.07.25 17:33, Sasha Levin wrote:
+>>> On Tue, Jul 08, 2025 at 05:10:44PM +0200, David Hildenbrand wrote:
+>>>> On 01.07.25 02:57, Andrew Morton wrote:
+>>>>> On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrote:
+>>>>>
+>>>>>> When handling non-swap entries in move_pages_pte(), the error handling
+>>>>>> for entries that are NOT migration entries fails to unmap the page table
+>>>>>> entries before jumping to the error handling label.
+>>>>>>
+>>>>>> This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE systems
+>>>>>> triggers a WARNING in kunmap_local_indexed() because the kmap stack is
+>>>>>> corrupted.
+>>>>>>
+>>>>>> Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
+>>>>>>    WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+>>>>>>    Call trace:
+>>>>>>      kunmap_local_indexed from move_pages+0x964/0x19f4
+>>>>>>      move_pages from userfaultfd_ioctl+0x129c/0x2144
+>>>>>>      userfaultfd_ioctl from sys_ioctl+0x558/0xd24
+>>>>>>
+>>>>>> The issue was introduced with the UFFDIO_MOVE feature but became more
+>>>>>> frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: add
+>>>>>> PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
+>>>>>> path more commonly executed during userfaultfd operations.
+>>>>>>
+>>>>>> Fix this by ensuring PTEs are properly unmapped in all non-swap entry
+>>>>>> paths before jumping to the error handling label, not just for migration
+>>>>>> entries.
+>>>>>
+>>>>> I don't get it.
+>>>>>
+>>>>>> --- a/mm/userfaultfd.c
+>>>>>> +++ b/mm/userfaultfd.c
+>>>>>> @@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+>>>>>>   		entry = pte_to_swp_entry(orig_src_pte);
+>>>>>>   		if (non_swap_entry(entry)) {
+>>>>>> +			pte_unmap(src_pte);
+>>>>>> +			pte_unmap(dst_pte);
+>>>>>> +			src_pte = dst_pte = NULL;
+>>>>>>   			if (is_migration_entry(entry)) {
+>>>>>> -				pte_unmap(src_pte);
+>>>>>> -				pte_unmap(dst_pte);
+>>>>>> -				src_pte = dst_pte = NULL;
+>>>>>>   				migration_entry_wait(mm, src_pmd, src_addr);
+>>>>>>   				err = -EAGAIN;
+>>>>>> -			} else
+>>>>>> +			} else {
+>>>>>>   				err = -EFAULT;
+>>>>>> +			}
+>>>>>>   			goto out;
+>>>>>
+>>>>> where we have
+>>>>>
+>>>>> out:
+>>>>> 	...
+>>>>> 	if (dst_pte)
+>>>>> 		pte_unmap(dst_pte);
+>>>>> 	if (src_pte)
+>>>>> 		pte_unmap(src_pte);
+>>>>
+>>>> AI slop?
+>>>
+>>> Nah, this one is sadly all me :(
+>>
+>> Haha, sorry :P
+> 
+> So as I was getting nowhere with this, I asked AI to help me :)
+> 
+> If you're not interested in reading LLM generated code, feel free to
+> stop reading now...
+> 
+> After it went over the logs, and a few prompts to point it the right
+> way, it ended up generating a patch (below) that made sense, and fixed
+> the warning that LKFT was being able to trigger.
+> 
+> If anyone who's more familiar with the code than me (and the AI) agrees
+> with the patch and ways to throw their Reviewed-by, I'll send out the
+> patch.
 
-I2C adapter timeout can be configurable from user space, so using it
-for arbitration timeout helps in configuring the arbitration timeout
-from user space depending on the use case.
+Seems to check out for me. In particular, out pte_unmap() everywhere 
+else in that function (and mremap.c:move_ptes) are ordered properly.
 
-Signed-off-by: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
----
-Changes for V2:
-Remove existing arbitration timeout macros and use i2c adapter timeout
-value.
-Change logging and commit details.
-Link for V1: https://lore.kernel.org/all/20250711124503.3390451-1-manikanta.guntupalli@amd.com/
----
- drivers/i2c/muxes/i2c-mux-pca9541.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+Even if it would not fix the issue, it would be a cleanup :)
 
-diff --git a/drivers/i2c/muxes/i2c-mux-pca9541.c b/drivers/i2c/muxes/i2c-mux-pca9541.c
-index 8663c8a7c269..3d8002caf703 100644
---- a/drivers/i2c/muxes/i2c-mux-pca9541.c
-+++ b/drivers/i2c/muxes/i2c-mux-pca9541.c
-@@ -63,10 +63,6 @@
- #define mybus(x)	(!((x) & MYBUS) || ((x) & MYBUS) == MYBUS)
- #define busoff(x)	(!((x) & BUSON) || ((x) & BUSON) == BUSON)
- 
--/* arbitration timeouts, in jiffies */
--#define ARB_TIMEOUT	(HZ / 8)	/* 125 ms until forcing bus ownership */
--#define ARB2_TIMEOUT	(HZ / 4)	/* 250 ms until acquisition failure */
--
- /* arbitration retry delays, in us */
- #define SELECT_DELAY_SHORT	50
- #define SELECT_DELAY_LONG	1000
-@@ -229,6 +225,9 @@ static int pca9541_arbitrate(struct i2c_client *client)
- 		 */
- 		data->select_timeout = SELECT_DELAY_LONG;
- 		if (time_is_before_eq_jiffies(data->arb_timeout)) {
-+			dev_warn(&client->dev,
-+				 "Arbitration timeout on I2C bus, forcing bus ownership\n");
-+
- 			/* Time is up, take the bus and reset it. */
- 			pca9541_reg_write(client,
- 					  PCA9541_CONTROL,
-@@ -251,10 +250,10 @@ static int pca9541_select_chan(struct i2c_mux_core *muxc, u32 chan)
- 	struct pca9541 *data = i2c_mux_priv(muxc);
- 	struct i2c_client *client = data->client;
- 	int ret;
--	unsigned long timeout = jiffies + ARB2_TIMEOUT;
-+	unsigned long timeout = jiffies + (2 * client->adapter->timeout);
- 		/* give up after this time */
- 
--	data->arb_timeout = jiffies + ARB_TIMEOUT;
-+	data->arb_timeout = jiffies + client->adapter->timeout;
- 		/* force bus ownership after this time */
- 
- 	do {
-@@ -267,6 +266,7 @@ static int pca9541_select_chan(struct i2c_mux_core *muxc, u32 chan)
- 		else
- 			msleep(data->select_timeout / 1000);
- 	} while (time_is_after_eq_jiffies(timeout));
-+	dev_warn(&client->dev, "Failed to acquire I2C bus, timed out\n");
- 
- 	return -ETIMEDOUT;
- }
+Acked-by: David Hildenbrand <david@redhat.com>
+
 -- 
-2.34.1
+Cheers,
+
+David / dhildenb
 
 
