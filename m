@@ -1,110 +1,149 @@
-Return-Path: <linux-kernel+bounces-751489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16773B16A40
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:49:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E105DB16A42
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BF547A4BA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:48:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E51FB62002B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:53:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C268018858C;
-	Thu, 31 Jul 2025 01:49:34 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C49188006;
+	Thu, 31 Jul 2025 01:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="TrYWBsEH"
+Received: from smtp153-165.sina.com.cn (smtp153-165.sina.com.cn [61.135.153.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E771F176AC5;
-	Thu, 31 Jul 2025 01:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FF6176AC8
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753926574; cv=none; b=hVnxMHih4jOgOamAKRD7ERLQmFG3uEwZsOEQpFeQWRZwb3lje615jjfYJbPOWUumjFjjV7+gqUKK4LmTeqNbhHu2FeCQrxe5vhxHnm2ik+i1axf3ngisV/zbzUI984Rt2hVOQ1rO9g3o28FkO3sOTyhQ9g/0zNwB5kqI/GsmTZ8=
+	t=1753926828; cv=none; b=ce8U+8UB3GwiY8A5rrzc72be3UtgrWqxSyvKILbIjWQAbq1ITqxSWZRjXwk7f3BIJcly24GMWa/4hJ28gKA59pl96WHf0nm2Zlx9YalimEHNuXdPm2SxySn3/+DcLggUCYsnzxHxDk7A/Vrw7hhOLbuFJfwHiHOMKvTE/miwFM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753926574; c=relaxed/simple;
-	bh=NnMgq53QVCwA/CighbaGjo9jhrRKNRuqjx0ity8ATSE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oW3m4LoZNf8gMcurP2NaRk7HzJZ2XtvmIAKRz9bbgpp8WiYoPqFzHotsySjWa7dn+g/sJM2m1TneD+eNg1CZtFRF40x/8k763Lcp2YZ6fDd+HRFh8yJH1lkPk9rn02h4TnHpYSd7vpGaO/8TwHbTOw/bj+t1omRIBwdyx/nUjsI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bssT64GqlzYQtyd;
-	Thu, 31 Jul 2025 09:49:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4548C1A0902;
-	Thu, 31 Jul 2025 09:49:29 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDXUxSny4poelM2CA--.34795S3;
-	Thu, 31 Jul 2025 09:49:29 +0800 (CST)
-Subject: Re: [bug report] dm: 'tried to init an initialized object' error
- triggered during device creation
-To: Hou Tao <houtao@huaweicloud.com>, Li Lingfeng <lilingfeng3@huawei.com>,
- agk@redhat.com, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, dm-devel@lists.linux.dev,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-block@vger.kernel.org
-Cc: zhengqixing@huawei.com, yangerkun <yangerkun@huawei.com>,
- "zhangyi (F)" <yi.zhang@huawei.com>,
- "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
- Li Lingfeng <lilingfeng@huaweicloud.com>, "yukuai (C)" <yukuai3@huawei.com>
-References: <83591d0b-2467-433c-bce0-5581298eb161@huawei.com>
- <f9c385b3-2426-13a1-bc4b-54c3fb402704@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <09e676c5-8407-a0a6-313c-22fcfee4e488@huaweicloud.com>
-Date: Thu, 31 Jul 2025 09:49:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753926828; c=relaxed/simple;
+	bh=o013fffBqmCmMLgo3PtHQdg7F8MxRApvjB+lgABcTJU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=NsaXri4VM6JlvBUI2dZomHkEGsEYqN2DQg4mnv1xZR038JnR9CI/SuOQTzPPynTvZ5wEgqgaY76BWLC/N/0jiAEFnWXQTJu2bObRSF9lM0h1lx5tt/DDFgFfUGQpkVrIuFpDfC8/EMZZooUH0syN5UN+HjG3yShzoAkTHDok3IU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=TrYWBsEH; arc=none smtp.client-ip=61.135.153.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753926819;
+	bh=ROXTcu3NC59udh5UXJspljhoslQrPWl0Sx4aF8K9Emw=;
+	h=From:Subject:Date:Message-ID;
+	b=TrYWBsEHCEiIlC3XYaDXOSbsnHFXbWeHZtPps82kboCPxLEXSqIiGwmTha4O8q8iV
+	 Lt9IQTBYa1wEbNDe7B58rblY1f9+hxigiuZPbCyga+APyMj4rlTwRj4iOTnU1gcnI4
+	 wkHccNLeTGZsQ2llyKHrYVd7ZQLQ9TADiLYTt1Ks=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.32) with ESMTP
+	id 688ACC73000065B1; Thu, 31 Jul 2025 09:52:53 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9109934456634
+X-SMAIL-UIID: E9F0BA989AA444DF88B0D3645AEDC517-20250731-095253-1
+From: Hillf Danton <hdanton@sina.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: akpm@linux-foundation.org,
+	peterx@redhat.com,
+	lokeshgidra@google.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot <syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles a THP hole
+Date: Thu, 31 Jul 2025 09:52:40 +0800
+Message-ID: <20250731015241.3576-1-hdanton@sina.com>
+In-Reply-To: <20250730170733.3829267-1-surenb@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f9c385b3-2426-13a1-bc4b-54c3fb402704@huaweicloud.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXUxSny4poelM2CA--.34795S3
-X-Coremail-Antispam: 1UD129KBjvdXoWrKr1xur1DGF47Gw1UJw43Jrb_yoW3GrX_JF
-	ZxKa4rWrs8Gr4Y9w10kw4fAFZ5G343JwsxJrZ8XF98Gr15Xw45J3yDuw4rCr4UJ3y7GF9F
-	kr48W348ZrW7ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbfAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi,
+#syz test
 
-在 2025/07/31 9:28, Hou Tao 写道:
-> cc +linux-block
-> 
-> The disk->queue_kobj is initialized in add_disk() and is uninitialized
-> in del_disk(). And it seems that blk_unregister_queue() in del_disk()
-> doesn't uninitialize the queue_kobj completely, because it doesn't
-> expect the queue_kobj will be added again. I think the right place to
-> fix the problem is blk_unregister_queue(). How about just memset the
-> queue_kobj as zero after deleting the queue_kobj in blk_unregister_queue() ?
+When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
+encounters a non-present THP, it fails to properly recognize an unmapped
+hole and tries to access a non-existent folio, resulting in
+a crash. Add a check to skip non-present THPs.
 
-I think it's better to move kobject_init to allocate disk:
+Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Cc: stable@vger.kernel.org
+---
+ mm/userfaultfd.c | 38 +++++++++++++++++++++++---------------
+ 1 file changed, 23 insertions(+), 15 deletions(-)
 
-1) alloc disk, kobject_init
-2) register q, kobject_add
-3) unregister q, kobject_del
-4) free disk, kobject_put
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index cbed91b09640..60be8080ddd0 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -1818,27 +1818,35 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
+ 
+ 		ptl = pmd_trans_huge_lock(src_pmd, src_vma);
+ 		if (ptl) {
+-			/* Check if we can move the pmd without splitting it. */
+-			if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+-			    !pmd_none(dst_pmdval)) {
+-				struct folio *folio = pmd_folio(*src_pmd);
++			if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)) {
++				/* Check if we can move the pmd without splitting it. */
++				if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
++				    !pmd_none(dst_pmdval)) {
++					if (pmd_present(*src_pmd)) {
++						struct folio *folio = pmd_folio(*src_pmd);
++
++						if (!folio || (!is_huge_zero_folio(folio) &&
++							       !PageAnonExclusive(&folio->page))) {
++							spin_unlock(ptl);
++							err = -EBUSY;
++							break;
++						}
++					}
+ 
+-				if (!folio || (!is_huge_zero_folio(folio) &&
+-					       !PageAnonExclusive(&folio->page))) {
+ 					spin_unlock(ptl);
+-					err = -EBUSY;
+-					break;
++					split_huge_pmd(src_vma, src_pmd, src_addr);
++					/* The folio will be split by move_pages_pte() */
++					continue;
+ 				}
+ 
++				err = move_pages_huge_pmd(mm, dst_pmd, src_pmd,
++							  dst_pmdval, dst_vma, src_vma,
++							  dst_addr, src_addr);
++			} else {
++				/* nothing to do to move a hole */
+ 				spin_unlock(ptl);
+-				split_huge_pmd(src_vma, src_pmd, src_addr);
+-				/* The folio will be split by move_pages_pte() */
+-				continue;
++				err = 0;
+ 			}
+-
+-			err = move_pages_huge_pmd(mm, dst_pmd, src_pmd,
+-						  dst_pmdval, dst_vma, src_vma,
+-						  dst_addr, src_addr);
+ 			step_size = HPAGE_PMD_SIZE;
+ 		} else {
+ 			if (pmd_none(*src_pmd)) {
 
-With this, it's safe to add the kobject again.
-
-Thanks,
-Kuai
-
+base-commit: 01da54f10fddf3b01c5a3b80f6b16bbad390c302
+-- 
+2.50.1.552.g942d659e1b-goog
 
