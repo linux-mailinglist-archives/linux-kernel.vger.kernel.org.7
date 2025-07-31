@@ -1,96 +1,92 @@
-Return-Path: <linux-kernel+bounces-752380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D68B174D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA29B174D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74A01C24C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:19:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62BBE1C21F76
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B027C21C19D;
-	Thu, 31 Jul 2025 16:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681E823E334;
+	Thu, 31 Jul 2025 16:20:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OPz1znPA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KGFQE5cs";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OPz1znPA";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KGFQE5cs"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vzaqlv72"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695D217C224
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071B923C8B3
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:20:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753978727; cv=none; b=RskdXXGMlTC2BR5u6sm+RBEX2NwQ+cj86660G/QudF4PmQiQrk2y0iFkQQ77YAaYHKTjSxNXWPTKxon5CwgnSNPVvDgCQThh23ykIHV3S0v68xo3SFJURx8WK4AMkWJdmucpV6Aw3XVYJe846E+J3sSaVannfKQGw4E+e8/fZ+E=
+	t=1753978813; cv=none; b=ALaEzCNefrvtUUtfDDCk8cyHraW7YUQTpbvCyechbib9a1A63GMjYile1Xc2lpsrui4N7M7zxbpkGWgMLU7d3fQD4k5cB4yL/u12gwGtANW2+XqmiZAgqllliQAiVfY4IF+cwUXc9u0fy7hJWFZVn40RXplUIsOvqYXVQAn9e2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753978727; c=relaxed/simple;
-	bh=lHikoxUjcjMrp68bQtQ12G0SPYVvZFsiAt+7SwJG1Dg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=g+gC5BkQZ/spP41436Er39fzJqKGSfuVnDteoX2FYt2dfI0EyxT+7jy1BkpZLACuup9RYBZ9weIGqkXnH5zYOLDY4Ay0bPDM9kOvw7Tmna50209uFOU1l2XNAawz0lJe7y4XigWL3K0Sv6xKYbogFOP5JbYy66asS/0cBa4IRQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OPz1znPA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KGFQE5cs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OPz1znPA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KGFQE5cs; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 681D521A9F;
-	Thu, 31 Jul 2025 16:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753978722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=xWJLcUVxV+vWt0myEmYah2yHxPs7UTYwRvpNlyn90EA=;
-	b=OPz1znPAqaFmVsaSyD20MC9V0T7aZH4/FOblMlCKFfhOtSSa+LHAkOs4rf37gRxQu9kmBr
-	yckfRkRoj4YqNrSxu4pRkDB5amsnkExZwDpLSHr52XI/i57wYydo57mqLNq+qL1/iRt+A7
-	PF06HNG5O57A2D/GzDUyf+N6acI8ncE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753978722;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=xWJLcUVxV+vWt0myEmYah2yHxPs7UTYwRvpNlyn90EA=;
-	b=KGFQE5csu3chqC7QseNQ9s2mEVsKY77YE43r7UwiVWLf6umotaFCdvYTDqb+IzTzaLY6Y/
-	kMCH4+FbA3kM7GAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=OPz1znPA;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=KGFQE5cs
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753978722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=xWJLcUVxV+vWt0myEmYah2yHxPs7UTYwRvpNlyn90EA=;
-	b=OPz1znPAqaFmVsaSyD20MC9V0T7aZH4/FOblMlCKFfhOtSSa+LHAkOs4rf37gRxQu9kmBr
-	yckfRkRoj4YqNrSxu4pRkDB5amsnkExZwDpLSHr52XI/i57wYydo57mqLNq+qL1/iRt+A7
-	PF06HNG5O57A2D/GzDUyf+N6acI8ncE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753978722;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type;
-	bh=xWJLcUVxV+vWt0myEmYah2yHxPs7UTYwRvpNlyn90EA=;
-	b=KGFQE5csu3chqC7QseNQ9s2mEVsKY77YE43r7UwiVWLf6umotaFCdvYTDqb+IzTzaLY6Y/
-	kMCH4+FbA3kM7GAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5DC7F13A43;
-	Thu, 31 Jul 2025 16:18:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id r9HeFmKXi2h0IwAAD6G6ig
-	(envelope-from <jwiesner@suse.de>); Thu, 31 Jul 2025 16:18:42 +0000
-Received: by incl.suse.cz (Postfix, from userid 1000)
-	id 113DDD43F2; Thu, 31 Jul 2025 18:18:38 +0200 (CEST)
-Date: Thu, 31 Jul 2025 18:18:37 +0200
-From: Jiri Wiesner <jwiesner@suse.de>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	John Stultz <jstultz@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>, Waiman Long <longman@redhat.com>
-Subject: [PATCH] clocksource: Print durations for sync check unconditionally
-Message-ID: <aIuXXfdITXdI0lLp@incl>
+	s=arc-20240116; t=1753978813; c=relaxed/simple;
+	bh=3Uzw4l/DadJpUNAI5j/MXwiKLFsLDzgdQXCiuDsi3QE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SkfiqL0hGrv03o13ktZ2Yj5UlHiSDXO6sCjaJlDiaJks4cFwh49VkSVgz91Qv3VBGyVfZYDt3k9Yv5AiD8Z+/Le1AGagdABufJ0TpSpCxYhhVTA9X6oETuP+bZL/WhgdbXNOGbuJsLiy4aKzyhQNN2gbw1TgBemOmSD993e4d/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vzaqlv72; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753978812; x=1785514812;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3Uzw4l/DadJpUNAI5j/MXwiKLFsLDzgdQXCiuDsi3QE=;
+  b=Vzaqlv728BPD0wU4mJvKG1NIdY8bDqeMKZp3XrmjL4he6Spgee7C/fmX
+   leqaO+b5bxzG8h8XBqZqpXLdqE4laTaqeoOnhdc8tgJArgLDzl6p/kojA
+   sriahE8iCn/K9fwFNmGhyKRJd6qnSJuooZeBOTUzPj1gaW39FY8hjA+jj
+   EmfAzLicwlBW1iyI6xCHlO726HygnW7d1+6ibXlefKaVnLzJYQOGP0dQM
+   XSJQ3+tefMuKF/NdNpowrtliOhS2WjFPOXgo+aETINEyU+SvVJzOntkti
+   fT7nVYcEfk2p2Z+JM/98ScoiCdJgvZnGujA/cIEyuJ1puKFOH2SMqS640
+   g==;
+X-CSE-ConnectionGUID: UggJJJtDQ9S6jnpxn33ehA==
+X-CSE-MsgGUID: vWudmf8qQbOYSd7rlml/xA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56455667"
+X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; 
+   d="scan'208";a="56455667"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 09:20:12 -0700
+X-CSE-ConnectionGUID: 1TSHb2rpQySMYDBl24Qimg==
+X-CSE-MsgGUID: gK+enTLiSlGTTNmrphHccQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; 
+   d="scan'208";a="167791054"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 31 Jul 2025 09:20:06 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uhW0h-0003um-2m;
+	Thu, 31 Jul 2025 16:20:03 +0000
+Date: Fri, 1 Aug 2025 00:19:52 +0800
+From: kernel test robot <lkp@intel.com>
+To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Balbir Singh <balbirs@nvidia.com>,
+	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
+	Zi Yan <ziy@nvidia.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Jane Chu <jane.chu@oracle.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Donet Tom <donettom@linux.ibm.com>,
+	Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Francois Dugast <francois.dugast@intel.com>,
+	Ralph Campbell <rcampbell@nvidia.com>
+Subject: Re: [v2 03/11] mm/migrate_device: THP migration of zone device pages
+Message-ID: <202507312342.dmLxVgli-lkp@intel.com>
+References: <20250730092139.3890844-4-balbirs@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,92 +95,184 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_DN_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Rspamd-Queue-Id: 681D521A9F
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
+In-Reply-To: <20250730092139.3890844-4-balbirs@nvidia.com>
 
-A typical set of messages that gets printed as a result of the clocksource
-watchdog finding the TSC unstable usually does not contain messages
-indicating CPUs being ahead of or behind the CPU from which the check is
-carried out. That fact suggests that the TSC does not experience time skew
-between CPUs (if the clocksource.verify_n_cpus parameter is set to a
-negative value) but quantitative information is missing.
+Hi Balbir,
 
-The cs_nsec_max value printed by the "CPU %d check durations" message
-actually provides a worst case estimate of the time skew. If all CPUs have
-been checked, the cs_nsec_max value multiplied by 2 is the maximum
-possible time skew between the TSCs of any two CPUs on the system. The
-worst case estimate is derived from two boundary cases:
+kernel test robot noticed the following build warnings:
 
-1. No time is consumed to execute instructions between csnow_begin and
-csnow_mid while all the cs_nsec_max time is consumed by the code between
-csnow_mid and csnow_end. In this case, the maximum undetectable time skew
-of a CPU being ahead would be cs_nsec_max.
+[auto build test WARNING on akpm-mm/mm-everything]
+[also build test WARNING on next-20250731]
+[cannot apply to akpm-mm/mm-nonmm-unstable shuah-kselftest/next shuah-kselftest/fixes linus/master v6.16]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-2. All the cs_nsec_max time is consumed to execute instructions between
-csnow_begin and csnow_mid while no time is consumed by the code between
-csnow_mid and csnow_end. In this case, the maximum undetectable time skew
-of a CPU being behind would be cs_nsec_max.
+url:    https://github.com/intel-lab-lkp/linux/commits/Balbir-Singh/mm-zone_device-support-large-zone-device-private-folios/20250730-172600
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250730092139.3890844-4-balbirs%40nvidia.com
+patch subject: [v2 03/11] mm/migrate_device: THP migration of zone device pages
+config: x86_64-randconfig-122-20250731 (https://download.01.org/0day-ci/archive/20250731/202507312342.dmLxVgli-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507312342.dmLxVgli-lkp@intel.com/reproduce)
 
-The worst case estimate assumes a system experiencing a corner case
-consisting of the two boundary cases.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507312342.dmLxVgli-lkp@intel.com/
 
-Always print the "CPU %d check durations" message so that the maximum
-possible time skew measured by the TSC sync check can be compared to the
-time skew measured by the clocksource watchdog.
+sparse warnings: (new ones prefixed by >>)
+>> mm/migrate_device.c:769:13: sparse: sparse: incorrect type in assignment (different base types) @@     expected int [assigned] ret @@     got restricted vm_fault_t @@
+   mm/migrate_device.c:769:13: sparse:     expected int [assigned] ret
+   mm/migrate_device.c:769:13: sparse:     got restricted vm_fault_t
+   mm/migrate_device.c:130:25: sparse: sparse: context imbalance in 'migrate_vma_collect_huge_pmd' - unexpected unlock
+   mm/migrate_device.c:815:16: sparse: sparse: context imbalance in 'migrate_vma_insert_huge_pmd_page' - different lock contexts for basic block
 
-Signed-off-by: Jiri Wiesner <jwiesner@suse.de>
----
- kernel/time/clocksource.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+vim +769 mm/migrate_device.c
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index e400fe150f9d..3eeb18233a6b 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -410,9 +410,8 @@ void clocksource_verify_percpu(struct clocksource *cs)
- 	if (!cpumask_empty(&cpus_behind))
- 		pr_warn("        CPUs %*pbl behind CPU %d for clocksource %s.\n",
- 			cpumask_pr_args(&cpus_behind), testcpu, cs->name);
--	if (!cpumask_empty(&cpus_ahead) || !cpumask_empty(&cpus_behind))
--		pr_warn("        CPU %d check durations %lldns - %lldns for clocksource %s.\n",
--			testcpu, cs_nsec_min, cs_nsec_max, cs->name);
-+	pr_info("        CPU %d check durations %lldns - %lldns for clocksource %s.\n",
-+		testcpu, cs_nsec_min, cs_nsec_max, cs->name);
- }
- EXPORT_SYMBOL_GPL(clocksource_verify_percpu);
- 
+   689	
+   690	#ifdef CONFIG_ARCH_ENABLE_THP_MIGRATION
+   691	/**
+   692	 * migrate_vma_insert_huge_pmd_page: Insert a huge folio into @migrate->vma->vm_mm
+   693	 * at @addr. folio is already allocated as a part of the migration process with
+   694	 * large page.
+   695	 *
+   696	 * @folio needs to be initialized and setup after it's allocated. The code bits
+   697	 * here follow closely the code in __do_huge_pmd_anonymous_page(). This API does
+   698	 * not support THP zero pages.
+   699	 *
+   700	 * @migrate: migrate_vma arguments
+   701	 * @addr: address where the folio will be inserted
+   702	 * @folio: folio to be inserted at @addr
+   703	 * @src: src pfn which is being migrated
+   704	 * @pmdp: pointer to the pmd
+   705	 */
+   706	static int migrate_vma_insert_huge_pmd_page(struct migrate_vma *migrate,
+   707						 unsigned long addr,
+   708						 struct page *page,
+   709						 unsigned long *src,
+   710						 pmd_t *pmdp)
+   711	{
+   712		struct vm_area_struct *vma = migrate->vma;
+   713		gfp_t gfp = vma_thp_gfp_mask(vma);
+   714		struct folio *folio = page_folio(page);
+   715		int ret;
+   716		spinlock_t *ptl;
+   717		pgtable_t pgtable;
+   718		pmd_t entry;
+   719		bool flush = false;
+   720		unsigned long i;
+   721	
+   722		VM_WARN_ON_FOLIO(!folio, folio);
+   723		VM_WARN_ON_ONCE(!pmd_none(*pmdp) && !is_huge_zero_pmd(*pmdp));
+   724	
+   725		if (!thp_vma_suitable_order(vma, addr, HPAGE_PMD_ORDER))
+   726			return -EINVAL;
+   727	
+   728		ret = anon_vma_prepare(vma);
+   729		if (ret)
+   730			return ret;
+   731	
+   732		folio_set_order(folio, HPAGE_PMD_ORDER);
+   733		folio_set_large_rmappable(folio);
+   734	
+   735		if (mem_cgroup_charge(folio, migrate->vma->vm_mm, gfp)) {
+   736			count_vm_event(THP_FAULT_FALLBACK);
+   737			count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+   738			ret = -ENOMEM;
+   739			goto abort;
+   740		}
+   741	
+   742		__folio_mark_uptodate(folio);
+   743	
+   744		pgtable = pte_alloc_one(vma->vm_mm);
+   745		if (unlikely(!pgtable))
+   746			goto abort;
+   747	
+   748		if (folio_is_device_private(folio)) {
+   749			swp_entry_t swp_entry;
+   750	
+   751			if (vma->vm_flags & VM_WRITE)
+   752				swp_entry = make_writable_device_private_entry(
+   753							page_to_pfn(page));
+   754			else
+   755				swp_entry = make_readable_device_private_entry(
+   756							page_to_pfn(page));
+   757			entry = swp_entry_to_pmd(swp_entry);
+   758		} else {
+   759			if (folio_is_zone_device(folio) &&
+   760			    !folio_is_device_coherent(folio)) {
+   761				goto abort;
+   762			}
+   763			entry = folio_mk_pmd(folio, vma->vm_page_prot);
+   764			if (vma->vm_flags & VM_WRITE)
+   765				entry = pmd_mkwrite(pmd_mkdirty(entry), vma);
+   766		}
+   767	
+   768		ptl = pmd_lock(vma->vm_mm, pmdp);
+ > 769		ret = check_stable_address_space(vma->vm_mm);
+   770		if (ret)
+   771			goto abort;
+   772	
+   773		/*
+   774		 * Check for userfaultfd but do not deliver the fault. Instead,
+   775		 * just back off.
+   776		 */
+   777		if (userfaultfd_missing(vma))
+   778			goto unlock_abort;
+   779	
+   780		if (!pmd_none(*pmdp)) {
+   781			if (!is_huge_zero_pmd(*pmdp))
+   782				goto unlock_abort;
+   783			flush = true;
+   784		} else if (!pmd_none(*pmdp))
+   785			goto unlock_abort;
+   786	
+   787		add_mm_counter(vma->vm_mm, MM_ANONPAGES, HPAGE_PMD_NR);
+   788		folio_add_new_anon_rmap(folio, vma, addr, RMAP_EXCLUSIVE);
+   789		if (!folio_is_zone_device(folio))
+   790			folio_add_lru_vma(folio, vma);
+   791		folio_get(folio);
+   792	
+   793		if (flush) {
+   794			pte_free(vma->vm_mm, pgtable);
+   795			flush_cache_page(vma, addr, addr + HPAGE_PMD_SIZE);
+   796			pmdp_invalidate(vma, addr, pmdp);
+   797		} else {
+   798			pgtable_trans_huge_deposit(vma->vm_mm, pmdp, pgtable);
+   799			mm_inc_nr_ptes(vma->vm_mm);
+   800		}
+   801		set_pmd_at(vma->vm_mm, addr, pmdp, entry);
+   802		update_mmu_cache_pmd(vma, addr, pmdp);
+   803	
+   804		spin_unlock(ptl);
+   805	
+   806		count_vm_event(THP_FAULT_ALLOC);
+   807		count_mthp_stat(HPAGE_PMD_ORDER, MTHP_STAT_ANON_FAULT_ALLOC);
+   808		count_memcg_event_mm(vma->vm_mm, THP_FAULT_ALLOC);
+   809	
+   810		return 0;
+   811	
+   812	unlock_abort:
+   813		spin_unlock(ptl);
+   814	abort:
+   815		for (i = 0; i < HPAGE_PMD_NR; i++)
+   816			src[i] &= ~MIGRATE_PFN_MIGRATE;
+   817		return 0;
+   818	}
+   819	#else /* !CONFIG_ARCH_ENABLE_THP_MIGRATION */
+   820	static int migrate_vma_insert_huge_pmd_page(struct migrate_vma *migrate,
+   821						 unsigned long addr,
+   822						 struct page *page,
+   823						 unsigned long *src,
+   824						 pmd_t *pmdp)
+   825	{
+   826		return 0;
+   827	}
+   828	#endif
+   829	
+
 -- 
-2.43.0
-
-
--- 
-Jiri Wiesner
-SUSE Labs
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
